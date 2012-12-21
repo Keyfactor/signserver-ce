@@ -73,7 +73,7 @@ public class Main {
         footer.append(NL)
                 .append("Sample usages:").append(NL)
                 .append("a) ").append(COMMAND)
-                .append(" -testsuite TimeStamp1 -threads 10 -maxwaittime 1 -tsaurl http://localhost:8080/signserver/process?workerId=1").append(NL);
+                .append(" -testsuite TimeStamp1 -threads 4 -maxwaittime 100 -tsaurl http://localhost:8080/signserver/tsa?workerId=1").append(NL);
                 
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         final HelpFormatter formatter = new HelpFormatter();

@@ -82,6 +82,10 @@ public class WorkerThread extends Thread {
         respTimes.add(time);
     }
     
+    /**
+     * Get average response time.
+     * @return Average response time
+     */
     public double getAverageResponseTime() {
         long sum = 0;
         
@@ -92,6 +96,10 @@ public class WorkerThread extends Thread {
         return (double) sum / respTimes.size();
     }
     
+    /**
+     * Get maximum response time.
+     * @return Maximum response time
+     */
     public long getMaxResponseTime() {
         long max = 0;
         
@@ -104,6 +112,10 @@ public class WorkerThread extends Thread {
         return max;
     }
     
+    /**
+     * Get minimum response time.
+     * @return Minimum response time
+     */
     public long getMinResponseTime() {
         long min = Long.MAX_VALUE;
         
@@ -116,6 +128,10 @@ public class WorkerThread extends Thread {
         return min;
     }
     
+    /**
+     * Get standard deviation of response time.
+     * @return Standard deviation
+     */
     public double getStdDevResponseTime() {
         double avg = getAverageResponseTime();
         double sqrSum = 0;

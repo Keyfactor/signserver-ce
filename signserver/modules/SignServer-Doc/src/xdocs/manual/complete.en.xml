@@ -5317,6 +5317,50 @@ defined for group 1
                     </subsubsection>
                     
                 </subsection>
+                
+                <subsection name="Stress testing">
+                                    <p>
+SignServer-Test-Performance is a tool for performance testing of SignServer. Currently it contains only one
+test suite for testing time stamping. See the source code for further details.
+                    </p>
+                    <subsubsection name="Building and running">
+                        <p>
+Build from modules/SignServer-Test-Performance/ using:
+                        </p>
+                        <source>ant jar</source>
+                        <p>
+It can then be run from SIGNSERVER_HOME using:
+                        </p>
+                        <source>bin/stresstest</source>
+                    </subsubsection>
+                    
+                    <subsubsection name="Usage">
+                        <source>
+usage: stresstest &lt;options&gt;
+Stress test tool:
+ -testsuite &lt;arg&gt;      Test suite to run. Currenly only [TimeStamp1] is supported.
+ -threads   &lt;arg&gt;      Number of threads to run.
+ -timelimit &lt;arg&gt;      Optional. Only run for the specified time (in
+                       milliseconds).
+ -warmuptime &lt;arg&gt;     Optional. Don't count number of signings and response time during this
+ 					   warmup period (in milliseconds). Defaults to 0 (no warmup period).
+ -tsaurl &lt;arg&gt;         URL to the TimeStamp worker to test with.
+ -maxwaittime &lt;arg&gt;    Maximum time (in milliseconds) each thread will wait until issuing the next request.
+                             The actual time will be uniformly pseudo-randomly selected between 0 and this time given.
+
+Sample usages:
+a) stresstest -testsuite TimeStamp1 -threads 4 -timelimit 30000 -tsaurl http://localhost:8080/signserver/tsa?workerId=1
+              -maxwaittime 100
+              			</source>
+              			
+              			<p>
+              				When finished (after time limit expires, or process is stopped using control+c) a statistic
+              				overview is printed for each thread containing number of signings, and statistics (average,
+              				minimum, maximum, and standard deviation) for response times.
+						</p>
+					</subsubsection>
+                </subsection>
+                
             </section>
         </chapter>
 

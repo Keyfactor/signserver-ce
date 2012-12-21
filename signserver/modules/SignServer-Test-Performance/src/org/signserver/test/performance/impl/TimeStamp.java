@@ -57,69 +57,69 @@ public class TimeStamp implements Task {
     }
 
     private void tsaRequest() throws TSPException, IOException {
-        final TimeStampRequestGenerator timeStampRequestGenerator =
-                new TimeStampRequestGenerator();
-        final int nonce = random.nextInt();
+    	final TimeStampRequestGenerator timeStampRequestGenerator =
+    			new TimeStampRequestGenerator();
+    	final int nonce = random.nextInt();
 
-        byte[] digest = new byte[20];
-        final TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
-                TSPAlgorithms.SHA1, digest, BigInteger.valueOf(nonce));
-        final byte[] requestBytes = timeStampRequest.getEncoded();
-        
-            URL url;
-            URLConnection urlConn;
-            DataOutputStream printout;
-            DataInputStream input;
+    	byte[] digest = new byte[20];
+    	final TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
+    			TSPAlgorithms.SHA1, digest, BigInteger.valueOf(nonce));
+    	final byte[] requestBytes = timeStampRequest.getEncoded();
 
-            url = new URL(tsaUrl);
+    	URL url;
+    	URLConnection urlConn;
+    	DataOutputStream printout;
+    	DataInputStream input;
 
-            // Take start time
-            final long startMillis = System.currentTimeMillis();
-            final long startTime = System.nanoTime();
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Sending request at: " + startMillis);
-            }
+    	url = new URL(tsaUrl);
 
-            urlConn = url.openConnection();
+    	// Take start time
+    	final long startMillis = System.currentTimeMillis();
+    	final long startTime = System.nanoTime();
+    	if (LOG.isDebugEnabled()) {
+    		LOG.debug("Sending request at: " + startMillis);
+    	}
 
-            urlConn.setDoInput(true);
-            urlConn.setDoOutput(true);
-            urlConn.setUseCaches(false);
-            urlConn.setRequestProperty("Content-Type",
-                    "application/timestamp-query");
-            
-            // Send POST output.
-            printout = new DataOutputStream(urlConn.getOutputStream());
-            printout.write(requestBytes);
-            printout.flush();
-            printout.close();
+    	urlConn = url.openConnection();
 
-            // Get response data.
-            input = new DataInputStream(urlConn.getInputStream());
+    	urlConn.setDoInput(true);
+    	urlConn.setDoOutput(true);
+    	urlConn.setUseCaches(false);
+    	urlConn.setRequestProperty("Content-Type",
+    			"application/timestamp-query");
 
-            byte[] ba = null;
-            final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            do {
-                if (ba != null) {
-                    baos.write(ba);
-                }
-                ba = new byte[input.available()];
+    	// Send POST output.
+    	printout = new DataOutputStream(urlConn.getOutputStream());
+    	printout.write(requestBytes);
+    	printout.flush();
+    	printout.close();
 
-            } while (input.read(ba) != -1);
+    	// Get response data.
+    	input = new DataInputStream(urlConn.getInputStream());
 
-            // Take stop time
-            final long estimatedTime = System.nanoTime() - startTime;
+    	byte[] ba = null;
+    	final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    	do {
+    		if (ba != null) {
+    			baos.write(ba);
+    		}
+    		ba = new byte[input.available()];
 
-            LOG.info("Got reply after "
-                + TimeUnit.NANOSECONDS.toMillis(estimatedTime) + " ms");
+    	} while (input.read(ba) != -1);
 
-            final byte[] replyBytes = baos.toByteArray();
+    	// Take stop time
+    	final long estimatedTime = System.nanoTime() - startTime;
+
+    	LOG.info("Got reply after "
+    			+ TimeUnit.NANOSECONDS.toMillis(estimatedTime) + " ms");
+
+    	final byte[] replyBytes = baos.toByteArray();
 
 
-            final TimeStampResponse timeStampResponse = new TimeStampResponse(
-                    replyBytes);
-            timeStampResponse.validate(timeStampRequest);
+    	final TimeStampResponse timeStampResponse = new TimeStampResponse(
+    			replyBytes);
+    	timeStampResponse.validate(timeStampRequest);
 
-            LOG.info("TimeStampRequest validated");
-        }
+    	LOG.info("TimeStampRequest validated");
+    }
 }

@@ -189,8 +189,6 @@ public class Main {
                     w.start();
                 }
 
-                System.out.println("time limit: " + limitedTime);
-                
                 // If time limited
                 if (limitedTime > 0) {
                     try {

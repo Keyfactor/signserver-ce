@@ -17,6 +17,8 @@
     <!-- Load properties before including files -->
     <property environment="env" />
     <property name="base" location="."/>
+    
+    <property name="platform.project.dir" location="."/>
 
     <!-- Import property file containing version numbers and other constants -->
     <property file="res/compile.properties"/>

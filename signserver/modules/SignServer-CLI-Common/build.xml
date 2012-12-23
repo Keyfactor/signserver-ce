@@ -10,7 +10,9 @@
 <project name="SignServer-CLI-Common" default="default" basedir=".">
     <description>Builds, tests, and runs the project SignServer-CLI-Common.</description>
     <import file="nbproject/build-impl.xml"/>
+    <import file="../modules.xml"/>
     
+    <target name="-pre-compile" depends="with.clover"/>
     <property name="dist-module.available" value="false"/>
     <target name="-do-clean-module" depends="clean"/>
     

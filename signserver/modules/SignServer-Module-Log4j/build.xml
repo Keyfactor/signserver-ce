@@ -15,6 +15,7 @@
     <property name="modulename" value="module.log4j"/>
     <property name="dist-module.available" value="true"/>
     <property name="clean.available" value="true"/>
+    <target name="-pre-compile" depends="with.clover"/>
     
     <target name="dist-module" depends="jar,descriptor,-do-module-dist"/>
     <target name="descriptor" depends="init,-init-macrodef-convertclasspath">

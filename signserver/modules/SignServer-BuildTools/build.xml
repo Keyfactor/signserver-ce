@@ -11,6 +11,7 @@
     <description>Builds, tests, and runs the project SignServer-BuildTools.</description>
     <import file="nbproject/build-impl.xml"/>
     <import file="../modules.xml"/>
+    <target name="-pre-compile" depends="with.clover"/>
     
     <target name="-post-jar">
         <copy todir="../../lib/">

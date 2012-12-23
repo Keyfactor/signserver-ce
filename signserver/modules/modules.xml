@@ -18,6 +18,9 @@
         <fail message="This script is not intented to run on its own"/>
     </target>
    
+    <!-- This file is normally not included from the root build.xml so we need 
+    to set up some properties otherwise defined there. -->
+    <property name="platform.project.dir" location="../../"/>
     <property name="signserver.home" location="../../"/>
     <property name="server.dist.dir" value="${signserver.home}/lib"/>
 
@@ -246,4 +249,53 @@
         </copy>
     </target>
 
+    <!-- =================================================================== -->
+    <!-- Clover stuff                                                        -->
+    <!--                                                                     -->
+    <!-- To run Clover put the clover installation as lib/ext/clover-dir. If -->
+    <!-- that folder is not available a dummy clover.jar is instead placed   -->
+    <!-- there by the code below.                                            -->
+    <!-- =================================================================== -->
+
+    <target name="-init-clover">
+        <available file="${platform.project.dir}/lib/ext/clover-dir/lib" property="cloverdir.available"/>
+    </target>
+    
+    <target name="-no-clover" unless="cloverdir.available">
+        <!-- Put a dummy clover.jar in clover-dir if Clover is not available. -->
+        <mkdir dir="${platform.project.dir}/lib/ext/clover-dir/lib"/>
+        <copy file="${platform.project.dir}/lib/ext/no-clover/clover.jar" todir="${platform.project.dir}/lib/ext/clover-dir/lib/"/>
+    </target>
+
+	<target name="-check.clover" depends="-init-clover, -no-clover">
+        <property name="clover.jar" value="${platform.project.dir}/lib/ext/clover-dir/lib/clover.jar"/>
+        <property name="clover.out.dir" value="${platform.project.dir}"/>
+        <property name="clover.db" location="${clover.out.dir}/.clover/clover.db"/>
+        <taskdef resource="cloverlib.xml" classpath="${clover.jar}" onerror="ignore"/>
+		<available property="clover.installed" classname="com.cenqua.clover.CloverInstr" />
+	</target>
+	<target name="with.clover" depends="-check.clover" if="clover.installed">
+		<clover-setup initstring="${clover.db}">
+			<fileset dir="${platform.project.dir}/modules">
+				<exclude name="**/org/apache/**/*.java"/>
+				<exclude name="**/com/novosec/**/*.java"/>
+			</fileset>
+		</clover-setup>			
+	</target>
+	<target name="clover.xml" depends="-check.clover" if="clover.installed">
+	    <clover-report initstring="${clover.db}">
+	       <current outfile="${clover.out.dir}/clover_html/clover.xml">
+	          <format type="xml"/>
+	       </current>
+	    </clover-report>
+	 </target>
+	<target name="clover.html" depends="-check.clover" if="clover.installed">
+		<clover-html-report initstring="${clover.db}" outdir="${clover.out.dir}/clover_html" title="SignServer"/>
+	 </target>
+	<target name="clover.clean" depends="-check.clover" if="clover.installed">
+		<clover-clean initstring="${clover.db}"/>
+	    <delete dir="${clover.out.dir}/clover_html"/>
+	</target>
+	<!-- End Clover stuff -->
+    
 </project>

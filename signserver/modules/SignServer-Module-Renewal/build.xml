@@ -53,7 +53,7 @@
         ===================
     -->
 
-    <target depends="init,deps-jar,wsimport-client-generate" name="-pre-compile">
+    <target depends="init,deps-jar,wsimport-client-generate,with.clover" name="-pre-compile">
         <mkdir dir="${build.classes.dir}"/>
     </target>
 

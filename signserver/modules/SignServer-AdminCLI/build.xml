@@ -15,6 +15,7 @@
     <property name="modulename" value="admincli"/>
     <property name="dist-module.available" value="true"/>
     <property name="clean.available" value="true"/>
+    <target name="-pre-compile" depends="with.clover"/>
 
     <!-- Copy to client-dist etc. -->
     <target name="dist-module" depends="jar,-do-client-dist">

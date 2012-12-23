@@ -19,6 +19,7 @@
     <property name="dist-module.available" value="true"/>
     <property name="clean.available" value="true"/>
     <property name="modulename" value="module.xmlvalidator"/>
+    <target name="-pre-compile" depends="with.clover"/>
 
     <!-- Create MAR: -->
     <target name="dist-module" depends="jar,descriptor,-do-module-dist"/>

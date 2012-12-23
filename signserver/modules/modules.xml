@@ -24,6 +24,8 @@
     <property name="signserver.home" location="../../"/>
     <property name="server.dist.dir" value="${signserver.home}/lib"/>
 
+    <property name="ignore.failing.tests" value="true"/>
+    
     <!-- Module conditionals -->
     <condition property="signserverws.conditionenabled">
         <istrue value="${signserverws.enabled}"/>

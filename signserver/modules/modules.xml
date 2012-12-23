@@ -274,7 +274,7 @@
         <property name="clover.out.dir" value="${platform.project.dir}"/>
         <property name="clover.db" location="${clover.out.dir}/.clover/clover.db"/>
         <taskdef resource="cloverlib.xml" classpath="${clover.jar}" onerror="ignore"/>
-		<available property="clover.installed" classname="com.cenqua.clover.CloverInstr" />
+		<available property="clover.installed" classname="com.cenqua.clover.CloverInstr" classpath="${clover.jar}" />
 	</target>
 	<target name="with.clover" depends="-check.clover" if="clover.installed">
 		<clover-setup initstring="${clover.db}">

@@ -1,35 +1,41 @@
+/*************************************************************************
+ *                                                                       *
+ *  SignServer: The OpenSource Automated Signing Server                  *
+ *                                                                       *
+ *  This software is free software; you can redistribute it and/or       *
+ *  modify it under the terms of the GNU Lesser General Public           *
+ *  License as published by the Free Software Foundation; either         *
+ *  version 2.1 of the License, or any later version.                    *
+ *                                                                       *
+ *  See terms of license at gnu.org.                                     *
+ *                                                                       *
+ *************************************************************************/
 package org.signserver.test.performance.impl;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.net.URL;
 import java.net.URLConnection;
-import java.security.MessageDigest;
-import java.security.cert.Certificate;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
-
 import org.apache.log4j.Logger;
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.cmp.PKIStatus;
 import org.bouncycastle.tsp.TSPAlgorithms;
 import org.bouncycastle.tsp.TSPException;
 import org.bouncycastle.tsp.TimeStampRequest;
 import org.bouncycastle.tsp.TimeStampRequestGenerator;
 import org.bouncycastle.tsp.TimeStampResponse;
-import org.bouncycastle.util.encoders.Base64;
-import org.bouncycastle.util.encoders.Hex;
-import org.signserver.common.GenericSignRequest;
-import org.signserver.common.GenericSignResponse;
-import org.signserver.ejb.interfaces.IWorkerSession;
-import org.signserver.ejb.interfaces.IWorkerSession.IRemote;
-import org.signserver.test.performance.Task;
 import org.signserver.test.performance.FailedException;
+import org.signserver.test.performance.Task;
 
+/**
+ * Requests a timestamp.
+ *
+ * @author Marcus Lundblad
+ * @version $Id$
+ */
 public class TimeStamp implements Task {
     /** Logger for this class */
     Logger LOG = Logger.getLogger(TimeStamp.class);
@@ -111,7 +117,9 @@ public class TimeStamp implements Task {
     	final long estimatedTime = System.nanoTime() - startTime;
     	final long timeInMillis = TimeUnit.NANOSECONDS.toMillis(estimatedTime);
     	
-    	LOG.info("Got reply after " + timeInMillis + " ms");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Got reply after " + timeInMillis + " ms");
+        }
 
     	final byte[] replyBytes = baos.toByteArray();
 
@@ -120,7 +128,7 @@ public class TimeStamp implements Task {
     			replyBytes);
     	timeStampResponse.validate(timeStampRequest);
 
-    	LOG.info("TimeStampRequest validated");
+    	LOG.debug("TimeStampRequest validated");
     	
     	return timeInMillis;
     }

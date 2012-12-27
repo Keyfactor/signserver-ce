@@ -18,7 +18,6 @@ import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -31,7 +30,8 @@ import org.signserver.test.performance.WorkerThread;
 import org.signserver.test.performance.impl.TimeStampThread;
 
 /**
- * Performance test tool
+ * Performance test tool.
+ *
  * @author Marcus Lundblad
  * @version $Id$
  *
@@ -52,6 +52,7 @@ public class Main {
     private static final String COMMAND = "stresstest";
     
     private static int exitCode;
+    private static long startTime;
     
     private enum TestSuites {
         TimeStamp1,
@@ -143,7 +144,9 @@ public class Main {
 
                 @Override
                 public void failed(WorkerThread thread, String message) {
-                    shutdown(threads);
+                    for (WorkerThread w : threads) {
+                        w.stopIt();
+                    }
                     
                     // Print message
                     LOG.error(thread + ": " + message);
@@ -184,6 +187,7 @@ public class Main {
                 Thread.sleep(1000);
             
                 // Start all threads
+                startTime = System.currentTimeMillis();
                 for (WorkerThread w : threads) {
                     w.setUncaughtExceptionHandler(handler);
                     w.start();
@@ -199,7 +203,6 @@ public class Main {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("About to shutdown");
                     }
-                    shutdown(threads);
                 } else {
                     try {
                         for (WorkerThread w : threads) {
@@ -215,10 +218,6 @@ public class Main {
                         LOG.error("Interupted when waiting for thread: " + ex.getMessage());
                     }
                 }
-                
-                // deactivate shutdown hook
-                Runtime.getRuntime().removeShutdownHook(shutdownHook);
-            
             } catch (Exception ex) {
                 LOG.error("Failed: " + ex.getMessage(), ex);
                 exitCode = -1;
@@ -237,6 +236,14 @@ public class Main {
             w.stopIt();
         }
         
+        // Total statistics
+        final long totalRunTime = System.currentTimeMillis() - startTime;
+        long totalOperationsPerformed = 0;
+        long totalResponseTime = 0;
+        double totalAverageResponseTime;
+        long totalMaxResponseTime = 0;
+        long totalMinResponseTime = Long.MAX_VALUE;
+        
         // Wait until all stopped
         try {
             for (WorkerThread w : threads) {
@@ -244,15 +251,49 @@ public class Main {
                     LOG.debug("Waiting for thread " + w.getName() + " to finish.");
                 }
                 w.join();
-                LOG.info(w + ": Operations performed: " + w.getOperationsPerformed() + NL +
-                        ": Average response time: " + w.getAverageResponseTime() + NL +
-                        ": Maximum response time: " + w.getMaxResponseTime() + NL +
-                        ": Minimum response time: " + w.getMinResponseTime() + NL +
-                        ": Standard deviation: " + w.getStdDevResponseTime());
+                
+                final long operationsPerformed = w.getOperationsPerformed();
+                final double averageResponseTime = w.getAverageResponseTime();
+                final long maxResponseTime = w.getMaxResponseTime();
+                final long minResponseTime = w.getMinResponseTime();
+                totalOperationsPerformed += operationsPerformed;
+                totalResponseTime += (double) operationsPerformed * averageResponseTime;
+                
+                LOG.info(w + ": Operations performed: " + operationsPerformed + NL +
+                        "   : Average response time: " + averageResponseTime + NL +
+                        "   : Maximum response time: " + maxResponseTime + NL +
+                        "   : Minimum response time: " + minResponseTime + NL +
+                        "   : Standard deviation: " + w.getStdDevResponseTime() + NL);
+                
+                totalMaxResponseTime = Math.max(totalMaxResponseTime, maxResponseTime);
+                totalMinResponseTime = Math.min(totalMinResponseTime, minResponseTime);
             }
         } catch (InterruptedException ex) {
             LOG.error("Interrupted: " + ex.getMessage());
         }
+        
+        if (totalOperationsPerformed > 0) {
+            totalAverageResponseTime = totalResponseTime / (double) totalOperationsPerformed;
+        } else {
+            totalAverageResponseTime = Double.NaN;
+        }
+        final double tps;
+        if (totalRunTime > 1000) {
+            tps = totalOperationsPerformed / (totalRunTime / 1000d);
+        } else {
+            tps = Double.NaN;
+        }
+        if (totalMinResponseTime == Long.MAX_VALUE) {
+            totalMinResponseTime = 0;
+        }
+        
+        LOG.info(String.format("Summary: %n"
+                + "   Operations performed:    %1$10d%n"
+                + "   Minimum response time:   %2$10d   ms%n"
+                + "   Average response time:   %3$12.1f ms%n"
+                + "   Maximum response time:   %4$10d   ms%n"
+                + "   Run time:                %5$10d   ms%n"
+                + "   Transactions per second: %6$12.1f tps%n", totalOperationsPerformed, totalMinResponseTime, totalAverageResponseTime, totalMaxResponseTime, totalRunTime, tps));
     }
     
     private static void timeStamp1(final List<WorkerThread> threads, final int numThreads, final FailureCallback failureCallback,

@@ -269,7 +269,7 @@
         <copy file="${platform.project.dir}/lib/ext/no-clover/clover.jar" todir="${platform.project.dir}/lib/ext/clover-dir/lib/"/>
     </target>
 
-	<target name="-check.clover" depends="-init-clover, -no-clover">
+	<target name="-check.clover" depends="-init-clover, -no-clover" unless="no.clover">
         <property name="clover.jar" value="${platform.project.dir}/lib/ext/clover-dir/lib/clover.jar"/>
         <property name="clover.out.dir" value="${platform.project.dir}"/>
         <property name="clover.db" location="${clover.out.dir}/.clover/clover.db"/>

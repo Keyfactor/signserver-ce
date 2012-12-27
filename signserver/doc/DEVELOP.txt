@@ -39,6 +39,9 @@ as we only require Ant 1.7.1.
 For trunk newer versions can be used as we require Ant 1.8.1 or later and 
 we target NetBeans IDE 7.2.
 
+When the projects are first opened there might be a missing dependency 
+"clover.jar". This will go away after building the project.
+
 
 Writing Documentation
 ---------------------
@@ -64,6 +67,24 @@ This is roughly how tests are currently organized:
 
 See also the "Testing" chapter of the manual for the prerequisites and 
 instructions for how to run the tests. 
+
+
+Test coverage with Clover
+-------------------------
+
+To run Clover, copy the Clover installation folder (or make a symlink to it) 
+and store it as lib/ext/clover-dir. If the project has been built already an 
+dummy Clover folder will already exist with that name so you will have to remove 
+it first.
+
+$ bin/ant clean clover.clean build deploy
+$ bin/ant ant test:run
+
+Stop the application server and then run the following to gather the report:
+$ ant clover.xml clover.html
+
+To disable Clover even if it is installed run Ant with -Dno.clover=true.
+
 
 Admin GUI Development
 ---------------------

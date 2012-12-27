@@ -1,13 +1,29 @@
+/*************************************************************************
+ *                                                                       *
+ *  SignServer: The OpenSource Automated Signing Server                  *
+ *                                                                       *
+ *  This software is free software; you can redistribute it and/or       *
+ *  modify it under the terms of the GNU Lesser General Public           *
+ *  License as published by the Free Software Foundation; either         *
+ *  version 2.1 of the License, or any later version.                    *
+ *                                                                       *
+ *  See terms of license at gnu.org.                                     *
+ *                                                                       *
+ *************************************************************************/
 package org.signserver.test.performance.impl;
 
 import java.util.Date;
 import java.util.Random;
-
 import org.apache.log4j.Logger;
+import org.signserver.test.performance.FailedException;
 import org.signserver.test.performance.FailureCallback;
 import org.signserver.test.performance.WorkerThread;
-import org.signserver.test.performance.FailedException;
 
+/**
+ * 
+ * @author Marcus Lundblad
+ * @version $Id$
+ */
 public class TimeStampThread extends WorkerThread {
     /** Logger for this class */
     Logger LOG = Logger.getLogger(TimeStampThread.class);
@@ -30,6 +46,8 @@ public class TimeStampThread extends WorkerThread {
     @Override
     public void run() {
         startTime = (new Date()).getTime();
+        
+        LOG.info("   Thread " + getName() + ": Started");
         
         try {
             while (!isStop()) {

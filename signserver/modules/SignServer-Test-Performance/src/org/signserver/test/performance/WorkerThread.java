@@ -14,8 +14,7 @@ package org.signserver.test.performance;
 
 import java.util.ArrayList;
 import java.util.Collection;
-
-import org.signserver.test.performance.FailureCallback;
+import org.apache.log4j.Logger;
 
 /**
  * Thread running tests.
@@ -25,6 +24,10 @@ import org.signserver.test.performance.FailureCallback;
  *
  */
 public class WorkerThread extends Thread {
+    
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(WorkerThread.class);
+    
     private final FailureCallback failureCallback;
     private volatile boolean stop;
     

@@ -15,9 +15,7 @@ package org.signserver.test.performance.cli;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 import java.rmi.RemoteException;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -139,6 +137,18 @@ public class Main {
                 warmupTime = 0;
             }
             
+            // Print info
+            LOG.info(String.format(
+                  "-- Configuration -----------------------------------------------------------%n"
+                + "   Start time:              %s%n"
+                + "   Test suite:              %s%n"
+                + "   Threads:                 %10d%n"
+                + "   Warm up time:            %10d ms%n"
+                + "   Max wait time:           %10d ms%n"
+                + "   Time limit:              %10d ms%n"
+                + "   TSA URL:                 %s%n"
+                + "-------------------------------------------------------------------------------%n", new Date(), ts.name(), numThreads, warmupTime, maxWaitTime, limitedTime, url));
+
             final LinkedList<WorkerThread> threads = new LinkedList<WorkerThread>();
             final FailureCallback callback = new FailureCallback() {
 
@@ -259,12 +269,13 @@ public class Main {
                 totalOperationsPerformed += operationsPerformed;
                 totalResponseTime += (double) operationsPerformed * averageResponseTime;
                 
-                LOG.info(w + ": Operations performed: " + operationsPerformed + NL +
-                        "   : Average response time: " + averageResponseTime + NL +
-                        "   : Maximum response time: " + maxResponseTime + NL +
-                        "   : Minimum response time: " + minResponseTime + NL +
-                        "   : Standard deviation: " + w.getStdDevResponseTime() + NL);
-                
+//                LOG.info(String.format("   %s:%n"
+//                        + "     : Operations performed: %d%n"
+//                        + "     : Average response time: %.1f%n"
+//                        + "     : Maximum response time: %d%n"
+//                        + "     : Minimum response time: %d%n"
+//                        + "     : Standard deviation: %.1f%n", w.getName(), operationsPerformed, averageResponseTime, maxResponseTime, minResponseTime, w.getStdDevResponseTime()));
+                        
                 totalMaxResponseTime = Math.max(totalMaxResponseTime, maxResponseTime);
                 totalMinResponseTime = Math.min(totalMinResponseTime, minResponseTime);
             }
@@ -287,13 +298,16 @@ public class Main {
             totalMinResponseTime = 0;
         }
         
-        LOG.info(String.format("Summary: %n"
-                + "   Operations performed:    %1$10d%n"
-                + "   Minimum response time:   %2$10d   ms%n"
-                + "   Average response time:   %3$12.1f ms%n"
-                + "   Maximum response time:   %4$10d   ms%n"
-                + "   Run time:                %5$10d   ms%n"
-                + "   Transactions per second: %6$12.1f tps%n", totalOperationsPerformed, totalMinResponseTime, totalAverageResponseTime, totalMaxResponseTime, totalRunTime, tps));
+        LOG.info(String.format(
+                  "%n-- Summary -------------------------------------------------------------------%n"
+                + "   End time:                %s%n"
+                + "   Operations performed:    %10d%n"
+                + "   Minimum response time:   %10d   ms%n"
+                + "   Average response time:   %12.1f ms%n"
+                + "   Maximum response time:   %10d   ms%n"
+                + "   Run time:                %10d   ms%n"
+                + "   Transactions per second: %12.1f tps%n"
+                + "------------------------------------------------------------------------------%n", new Date(), totalOperationsPerformed, totalMinResponseTime, totalAverageResponseTime, totalMaxResponseTime, totalRunTime, tps));
     }
     
     private static void timeStamp1(final List<WorkerThread> threads, final int numThreads, final FailureCallback failureCallback,

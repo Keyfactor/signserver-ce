@@ -1,3 +1,15 @@
+/*************************************************************************
+ *                                                                       *
+ *  SignServer: The OpenSource Automated Signing Server                  *
+ *                                                                       *
+ *  This software is free software; you can redistribute it and/or       *
+ *  modify it under the terms of the GNU Lesser General Public           *
+ *  License as published by the Free Software Foundation; either         *
+ *  version 2.1 of the License, or any later version.                    *
+ *                                                                       *
+ *  See terms of license at gnu.org.                                     *
+ *                                                                       *
+ *************************************************************************/
 package org.signserver.server;
 
 import java.util.Calendar;
@@ -68,14 +80,14 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
     }
     
     /**
-     * Test that the first second of January is detected as a potential leapsecond event.
+     * Test that the second second of January is detected as a potential leapsecond event.
      * (an interval around the actual second should be detected).
      * 
      * @throws Exception
      */
     public void test03PotentialLeapSecondJanuary() throws Exception {
         LOG.info("test03PotentialLeapSecondJanuary");
-        assertPotentialLeapsecond(2013, 1, 1, 0, 0, 0, 0);
+        assertPotentialLeapsecond(2013, 1, 1, 0, 0, 1, 0);
     }
     
     /**
@@ -372,13 +384,13 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
         assertNotPotentialLeapsecond(2013, 1, 1, 0, 0, 2, 0);
     }
     
-    /** Tests the border case time of 00:00:00,010
+    /** Tests the border case time of 00:00:01,010
      * 
      * @throws Exception
      */
     public void test19PotentialLeapSecondLastMilliSecond() throws Exception {
         LOG.info("test19PotentialLeapSecondLastMilliSecond");
-        assertPotentialLeapsecond(2013, 1, 1, 0, 0, 0, 010);
+        assertPotentialLeapsecond(2013, 1, 1, 0, 0, 1, 010);
     }
     
     /** 

@@ -2905,7 +2905,7 @@ Worker properties:
                                             </p>
                                             <p>
 <i>PAUSE</i>: The TimeSource will query the status property <i>LEAPSECOND</i> from the Status Repository.
-If this property is not expired, and has the value <i>POSITIVE</i> or <i>NEGATIVE</i> and current time is in the interval surrounding a potential leap second (23:59:58,989 - 00:00:00,010) (at month shifts, in UTC time),
+If this property is not expired, and has the value <i>POSITIVE</i> or <i>NEGATIVE</i> and current time is in the interval surrounding a potential leap second (23:59:58,989 - 00:00:01,010) (at month shifts, in UTC time),
 the TimeSource will make a pause to ensure the time value is not fetch on the leap second.
 The value <i>NONE</i> is interpreted as there is no leap second and the time value will be returned immediately as usual.
 If the value has expired, no valid time will be returned.

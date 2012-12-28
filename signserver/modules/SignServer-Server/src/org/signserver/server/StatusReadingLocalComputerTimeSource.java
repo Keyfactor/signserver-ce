@@ -236,16 +236,17 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
      * a leap second interval flagged by this method, to the end with the start and end of
      * positive and negative leap seconds marked within the overall interval.
      * 
-     * 2012-06-30 23:59:57,999 UTC
 	 * 2012-06-30 23:59:58,989 UTC <- interval start, negative start
 	 * ...
 	 * 2012-06-30 23:59:58,999 UTC <- negative end
 	 * 2012-06-30 23:59:59,000 UTC <- positive start
 	 * ...
 	 * 2012-06-30 23:59:59,999 UTC <- positive end
+     * 2012-07-01 00:00:00,000 UTC <- leap bug workaround start
 	 * ...
-	 * 2012-07-01 00:00:00,010 UTC <- interval end
-	 * 2012-07:01 00:00:01,000 UTC 
+     * 2012-07-01 00:00:00,999 UTC <- leap bug workaround end
+     * ...
+	 * 2012-07-01 00:00:01,010 UTC <- interval end
      * 
      * @param date
      * @return true if possible leapsecond
@@ -265,7 +266,7 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
         
         // check for the first two seconds following
         // a potential leapsecond month-shift
-        if ((day == 1 && hour == 0 && min == 0 && sec == 0 && milli <= 10) ||
+        if ((day == 1 && hour == 0 && min == 0 && sec <= 1 && milli <= 10) ||
         	(day == lastDayOfMonth && hour == 23 && min == 59 && ((sec == 58 && milli >= 989) || sec >= 59))) {
         	return true;
         }

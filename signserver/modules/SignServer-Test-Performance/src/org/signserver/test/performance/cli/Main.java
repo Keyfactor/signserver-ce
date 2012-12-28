@@ -53,6 +53,7 @@ public class Main {
     
     private static int exitCode;
     private static long startTime;
+    private static long warmupTime;
     
     private enum TestSuites {
         TimeStamp1,
@@ -136,7 +137,6 @@ public class Main {
                 throw new ParseException("Missing option: -" + TSA_URL);
             }
             
-            final long warmupTime;
             if (commandLine.hasOption(WARMUP_TIME)) {
                 warmupTime = Long.parseLong(commandLine.getOptionValue(WARMUP_TIME));
             } else {
@@ -177,7 +177,7 @@ public class Main {
                     }
                     
                     // Print message
-                    LOG.error(thread + ": " + message);
+                    LOG.error("   " + message);
                     exitCode = -1;
                 }
             };
@@ -205,7 +205,7 @@ public class Main {
             try {
                 switch (ts) {
                 case TimeStamp1:
-                    timeStamp1(threads, numThreads, callback, url, maxWaitTime, warmupTime, statFolder);
+                    timeStamp1(threads, numThreads, callback, url, maxWaitTime, warmupTime, limitedTime, statFolder);
                     break;
                 default:
                     throw new Exception("Unsupported test suite");
@@ -221,36 +221,27 @@ public class Main {
                     w.start();
                 }
 
-                // If time limited
-                if (limitedTime > 0) {
-                    try {
-                        Thread.sleep(limitedTime);   
-                    } catch (InterruptedException ex) {
-                        LOG.error("Interrupted: " + ex.getMessage());
-                    }
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("About to shutdown");
-                    }
-                } else {
-                    try {
-                        for (WorkerThread w : threads) {
-                            if (LOG.isDebugEnabled()) {
-                                LOG.debug("Waiting for thread " + w.getName());
-                            }
-                            w.join();
-                            if (LOG.isDebugEnabled()) {
-                                LOG.debug("Thread " + w.getName() + " stopped");
-                            }
+                // Wait for the threads to finish
+                try {
+                    for (WorkerThread w : threads) {
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Waiting for thread " + w.getName());
                         }
-                    } catch (InterruptedException ex) {
-                        LOG.error("Interupted when waiting for thread: " + ex.getMessage());
+                        w.join();
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Thread " + w.getName() + " stopped");
+                        }
                     }
-                }
+                } catch (InterruptedException ex) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Interupted when waiting for thread: " + ex.getMessage());
+                    }
+                }                
             } catch (Exception ex) {
                 LOG.error("Failed: " + ex.getMessage(), ex);
                 exitCode = -1;
             }
-
+                
             System.exit(exitCode);
         } catch (ParseException ex) {
             LOG.error("Parse error: " + ex.getMessage());
@@ -265,7 +256,7 @@ public class Main {
         }
         
         // Total statistics
-        final long totalRunTime = System.currentTimeMillis() - startTime;
+        long totalRunTime = System.currentTimeMillis() - startTime - warmupTime;
         long totalOperationsPerformed = 0;
         long totalResponseTime = 0;
         double totalAverageResponseTime;
@@ -286,13 +277,6 @@ public class Main {
                 final long minResponseTime = w.getMinResponseTime();
                 totalOperationsPerformed += operationsPerformed;
                 totalResponseTime += (double) operationsPerformed * averageResponseTime;
-                
-//                LOG.info(String.format("   %s:%n"
-//                        + "     : Operations performed: %d%n"
-//                        + "     : Average response time: %.1f%n"
-//                        + "     : Maximum response time: %d%n"
-//                        + "     : Minimum response time: %d%n"
-//                        + "     : Standard deviation: %.1f%n", w.getName(), operationsPerformed, averageResponseTime, maxResponseTime, minResponseTime, w.getStdDevResponseTime()));
                         
                 totalMaxResponseTime = Math.max(totalMaxResponseTime, maxResponseTime);
                 totalMinResponseTime = Math.min(totalMinResponseTime, minResponseTime);
@@ -315,6 +299,9 @@ public class Main {
         if (totalMinResponseTime == Long.MAX_VALUE) {
             totalMinResponseTime = 0;
         }
+        if (totalRunTime < 0) {
+            totalRunTime = 0;
+        }
         
         LOG.info(String.format(
                   "%n-- Summary -------------------------------------------------------------------%n"
@@ -329,7 +316,7 @@ public class Main {
     }
     
     private static void timeStamp1(final List<WorkerThread> threads, final int numThreads, final FailureCallback failureCallback,
-            final String url, int maxWaitTime, long warmupTime, final File statFolder) throws Exception {
+            final String url, int maxWaitTime, long warmupTime, final long limitedTime, final File statFolder) throws Exception {
         for (int i = 0; i < numThreads; i++) {
             final String name = "TimeStamp1-" + i;
             final File statFile;
@@ -338,8 +325,9 @@ public class Main {
             } else {
                 statFile = new File(statFolder, name + ".csv");
             }
+            // TODO: Seed
             threads.add(new TimeStampThread(name, failureCallback, url, maxWaitTime, 1,
-                    warmupTime, statFile));
+                    warmupTime, limitedTime, statFile));
         }
     }
 }

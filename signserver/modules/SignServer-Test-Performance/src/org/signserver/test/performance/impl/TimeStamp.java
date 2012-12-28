@@ -37,6 +37,7 @@ import org.signserver.test.performance.Task;
  * @version $Id$
  */
 public class TimeStamp implements Task {
+
     /** Logger for this class */
     Logger LOG = Logger.getLogger(TimeStamp.class);
     
@@ -56,10 +57,11 @@ public class TimeStamp implements Task {
             LOG.error("Verification error", ex);
             throw new FailedException("Response could not be verified: " + ex.getMessage());
         } catch (IOException ex) {
-            LOG.error("Could not create request", ex);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Could not create request", ex);
+            }
             throw new FailedException("Could not create request: " + ex.getMessage());
         }
-
     }
 
     private long tsaRequest() throws TSPException, IOException {

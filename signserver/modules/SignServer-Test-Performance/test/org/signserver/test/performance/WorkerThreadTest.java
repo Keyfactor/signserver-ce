@@ -11,10 +11,8 @@ package org.signserver.test.performance;
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-import org.apache.log4j.Logger;
-import org.signserver.test.performance.WorkerThread;
-
 import junit.framework.TestCase;
+import org.apache.log4j.Logger;
 
 /**
  * Test for the statistical methods of the performance tool.
@@ -24,45 +22,64 @@ import junit.framework.TestCase;
  *
  */
 public class WorkerThreadTest extends TestCase {
-	/** Logger for this class */
+	
+    /** Logger for this class */
 	private static Logger LOG = Logger.getLogger(WorkerThreadTest.class);
 		
+    /**
+     * Tests the calculation of average.
+     */
 	public void test01Average() throws Exception {
+        LOG.info("test01Average");
 		WorkerThread thread = new WorkerThread("test", null);
 		
+        assertEquals("Average no samples", Double.NaN, thread.getAverageResponseTime());
+        
 		thread.addResponseTime(42);
 		thread.addResponseTime(47);
 		thread.addResponseTime(43);
 		
 		assertEquals("Average", 44.0, thread.getAverageResponseTime());
+        assertEquals("Operations", 3, thread.getOperationsPerformed());
 	}
 	
+    /**
+     * Tests the calculation of the minimum value.
+     */
 	public void test02Min() throws Exception {
+        LOG.info("test02Min");
 		WorkerThread thread = new WorkerThread("test", null);
 		
+        assertEquals("Min no samples", Long.MAX_VALUE, thread.getMinResponseTime());
+        
 		thread.addResponseTime(42);
 		thread.addResponseTime(47);
 		thread.addResponseTime(43);
+        thread.addResponseTime(44);
 		
-		assertEquals("Average", 42, thread.getMinResponseTime());
+		assertEquals("Min", 42, thread.getMinResponseTime());
+        assertEquals("Operations", 4, thread.getOperationsPerformed());
 	}
 	
+    /**
+     * Tests the calculation of the maximum value.
+     */
 	public void test03Max() throws Exception {
+        LOG.info("test03Max");
 		WorkerThread thread = new WorkerThread("test", null);
 		
+        assertEquals("Max no samples", 0, thread.getMaxResponseTime());
+        
 		thread.addResponseTime(42);
 		thread.addResponseTime(47);
 		thread.addResponseTime(43);
 		
-		assertEquals("Average", 47, thread.getMaxResponseTime());
+		assertEquals("Max", 47, thread.getMaxResponseTime());
+        
+        thread.addResponseTime(59);
+        thread.addResponseTime(59);
+        thread.addResponseTime(48);
+        assertEquals("Max", 59, thread.getMaxResponseTime());
 	}
 	
-	public void test04StdDev() throws Exception {
-		WorkerThread thread = new WorkerThread("test", null);
-		
-		thread.addResponseTime(0);
-		thread.addResponseTime(1);
-		
-		assertEquals("Average", 0.5, thread.getStdDevResponseTime());
-	}
 }

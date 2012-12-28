@@ -21,7 +21,8 @@ import org.signserver.test.performance.FailureCallback;
 import org.signserver.test.performance.WorkerThread;
 
 /**
- * 
+ * Thread invoking the time-stamping requests and writing the statistics.
+ *
  * @author Marcus Lundblad
  * @version $Id$
  */
@@ -34,15 +35,17 @@ public class TimeStampThread extends WorkerThread {
     private Random random;
     private long startTime;
     private long warmupTime;
+    private final long limitedTime;
     private final File statFile;
     
     public TimeStampThread(final String name, final FailureCallback failureCallback, final String url, int maxWaitTime,
-    		int seed, long warmupTime, final File statFile) {
+    		int seed, long warmupTime, final long limitedTime, final File statFile) {
         super(name, failureCallback);
         this.maxWaitTime = maxWaitTime;
         this.random = new Random(seed);
         this.tsa = new TimeStamp(url, random);
         this.warmupTime = warmupTime;
+        this.limitedTime = limitedTime;
         this.statFile = statFile;
     }
 
@@ -61,10 +64,14 @@ public class TimeStampThread extends WorkerThread {
             	long currentTime = (new Date().getTime());
                 long estimatedTime;
                 
+                if (limitedTime > 0 && currentTime > startTime + limitedTime) {
+                    break;
+                }
+                
                 try {
                     estimatedTime = tsa.run();
                 } catch (FailedException ex) {
-                    fireFailure("THREAD " + getName() + " failed after " + getOperationsPerformed() + " signings: " + ex.getMessage());
+                    fireFailure("Thread " + getName() + ": Failed after " + getOperationsPerformed() + " signings: " + ex.getMessage());
                     break;
                 }
               
@@ -74,7 +81,6 @@ public class TimeStampThread extends WorkerThread {
                         out.write((System.currentTimeMillis() /*- startTime*/) + ";" + estimatedTime);
                         out.newLine();
                     }
-                    increaseOperationsPerformed();
                 }
                 
                 // Sleep

@@ -12,8 +12,6 @@
  *************************************************************************/
 package org.signserver.test.performance;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import org.apache.log4j.Logger;
 
 /**
@@ -32,13 +30,14 @@ public class WorkerThread extends Thread {
     private volatile boolean stop;
     
     protected long operationsPerformed;
-    protected Collection<Long> respTimes;
+    protected long respTimesSum;
+    protected long maxRespTime;
+    protected long minRespTime = Long.MAX_VALUE;
 
     
     public WorkerThread(final String name, final FailureCallback failureCallback) {
         super(name);
         this.failureCallback = failureCallback;
-        this.respTimes = new ArrayList<Long>();
     }
 
     /**
@@ -64,13 +63,6 @@ public class WorkerThread extends Thread {
     }
     
     /**
-     * Increases the counter for number of operations performed.
-     */
-    protected void increaseOperationsPerformed() {
-        operationsPerformed++;
-    }
-    
-    /**
      * @return The number of operations this thread has performed.
      */
     public long getOperationsPerformed() {
@@ -78,11 +70,18 @@ public class WorkerThread extends Thread {
     }
     
     /**
-     * Add response time to statistics list.
-     * @param time
+     * Add response time to statistics and increase number of operations.
+     * @param time the response time
      */
     public void addResponseTime(long time) {
-        respTimes.add(time);
+        operationsPerformed++;
+        respTimesSum += time;
+        if (time > maxRespTime) {
+            maxRespTime = time;
+        }
+        if (time < minRespTime) {
+            minRespTime = time;
+        }
     }
     
     /**
@@ -90,13 +89,7 @@ public class WorkerThread extends Thread {
      * @return Average response time
      */
     public double getAverageResponseTime() {
-        long sum = 0;
-        
-        for (long time : respTimes) {
-            sum += time;
-        }
-        
-        return (double) sum / respTimes.size();
+        return (double) respTimesSum / operationsPerformed;
     }
     
     /**
@@ -104,15 +97,7 @@ public class WorkerThread extends Thread {
      * @return Maximum response time
      */
     public long getMaxResponseTime() {
-        long max = 0;
-        
-        for (long time : respTimes) {
-            if (time > max) {
-                max = time;
-            }
-        }
-        
-        return max;
+        return maxRespTime;
     }
     
     /**
@@ -120,33 +105,7 @@ public class WorkerThread extends Thread {
      * @return Minimum response time
      */
     public long getMinResponseTime() {
-        long min = Long.MAX_VALUE;
-        
-        for (long time : respTimes) {
-            if (time < min) {
-                min = time;
-            }
-        }
-        
-        return min;
+        return minRespTime;
     }
     
-    /**
-     * Get standard deviation of response time.
-     * Uses the formula from {@link http://en.wikipedia.org/wiki/Standard_deviation}
-     * 
-     * @return Standard deviation
-     */
-    public double getStdDevResponseTime() {
-        double avg = getAverageResponseTime();
-        double sqrSum = 0;
-        
-        for (long time : respTimes) {
-            double diffSqr = (time - avg) * (time - avg);
-            
-            sqrSum += diffSqr;
-        }
-        
-        return Math.sqrt(sqrSum / respTimes.size());
-    }
 }

@@ -71,7 +71,7 @@ fi
 # Check that classes exist
 if [ ! -f ${SIGNSRV_HOME}/lib/${MAIN_JAR} ]
 then
-	echo "You must build SignServer Random Test CLI first."
+	echo "You must build SignServer Performance Test CLI first."
         exit 1
 fi
 

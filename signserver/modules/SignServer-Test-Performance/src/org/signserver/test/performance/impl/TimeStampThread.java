@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.test.performance.impl;
 
+import java.io.*;
 import java.util.Date;
 import java.util.Random;
 import org.apache.log4j.Logger;
@@ -33,14 +34,16 @@ public class TimeStampThread extends WorkerThread {
     private Random random;
     private long startTime;
     private long warmupTime;
+    private final File statFile;
     
     public TimeStampThread(final String name, final FailureCallback failureCallback, final String url, int maxWaitTime,
-    		int seed, long warmupTime) {
+    		int seed, long warmupTime, final File statFile) {
         super(name, failureCallback);
         this.maxWaitTime = maxWaitTime;
         this.random = new Random(seed);
         this.tsa = new TimeStamp(url, random);
         this.warmupTime = warmupTime;
+        this.statFile = statFile;
     }
 
     @Override
@@ -49,7 +52,11 @@ public class TimeStampThread extends WorkerThread {
         
         LOG.info("   Thread " + getName() + ": Started");
         
+        BufferedWriter out = null;
         try {
+            if (statFile != null) {
+                out = new BufferedWriter(new FileWriter(statFile));
+            }
             while (!isStop()) {
             	long currentTime = (new Date().getTime());
                 long estimatedTime;
@@ -57,20 +64,40 @@ public class TimeStampThread extends WorkerThread {
                 try {
                     estimatedTime = tsa.run();
                 } catch (FailedException ex) {
-                    fireFailure("THREAD" + getName() + " failed after " + getOperationsPerformed() + " signings: " + ex.getMessage());
+                    fireFailure("THREAD " + getName() + " failed after " + getOperationsPerformed() + " signings: " + ex.getMessage());
                     break;
                 }
               
                 if (currentTime > startTime + warmupTime) {
                     addResponseTime(estimatedTime);
+                    if (out != null) {
+                        out.write((System.currentTimeMillis() /*- startTime*/) + ";" + estimatedTime);
+                        out.newLine();
+                    }
                     increaseOperationsPerformed();
                 }
                 
                 // Sleep
                 Thread.sleep((int) (random.nextDouble() * maxWaitTime));
             }
+        } catch (IOException ex) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("File could not be written", ex);
+            }
+            LOG.error("File could not be written: " + ex.getMessage());
         } catch (InterruptedException ex) {
             LOG.error("Interrupted: " + ex.getMessage());
+        } finally {
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (IOException ex) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("File could not be closed", ex);
+                    }
+                    LOG.error("File could not be closed: " + ex.getMessage());
+                }
+            }
         }
     }
     

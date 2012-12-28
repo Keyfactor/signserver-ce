@@ -12,8 +12,7 @@
  *************************************************************************/
 package org.signserver.test.performance.cli;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.rmi.RemoteException;
 import java.util.*;
 import org.apache.commons.cli.CommandLine;
@@ -44,10 +43,13 @@ public class Main {
     private static final String TSA_URL = "tsaurl";
     private static final String MAX_WAIT_TIME = "maxwaittime";
     private static final String WARMUP_TIME = "warmuptime";
+    private static final String STAT_OUTPUT_DIR = "statoutputdir";
     private static final Options OPTIONS;
     
     private static final String NL = System.getProperty("line.separator");
     private static final String COMMAND = "stresstest";
+    
+    private static final int DEFUALT_MAX_WAIT_TIME = 100;
     
     private static int exitCode;
     private static long startTime;
@@ -62,9 +64,11 @@ public class Main {
         OPTIONS.addOption(TIME_LIMIT, true, "Optional. Only run for the specified time (in milliseconds).");
         OPTIONS.addOption(THREADS, true, "Number of threads requesting time stamps.");
         OPTIONS.addOption(TSA_URL, true, "URL to timestamp worker to use.");
-        OPTIONS.addOption(MAX_WAIT_TIME, true, "Maximum number of milliseconds for a thread to wait until issuing the next time stamp.");
+        OPTIONS.addOption(MAX_WAIT_TIME, true, "Maximum number of milliseconds for a thread to wait until issuing the next time stamp. Default=100");
         OPTIONS.addOption(WARMUP_TIME, true,
                 "Don't count number of signings and response times until after this time (in milliseconds). Default=0 (no warmup time).");
+        OPTIONS.addOption(STAT_OUTPUT_DIR, true,
+                "Optional. Directory to output statistics to. If set, each threads creates a file in this directory to output its response times to. The directory must exist.");
     }
 
     private static void printUsage() {
@@ -72,7 +76,9 @@ public class Main {
         footer.append(NL)
                 .append("Sample usages:").append(NL)
                 .append("a) ").append(COMMAND)
-                .append(" -testsuite TimeStamp1 -threads 4 -maxwaittime 100 -tsaurl http://localhost:8080/signserver/tsa?workerId=1").append(NL);
+                .append(" -testsuite TimeStamp1 -threads 4 -tsaurl http://localhost:8080/signserver/tsa?workerId=1").append(NL)
+                .append("b) ").append(COMMAND)
+                .append(" -testsuite TimeStamp1 -threads 4 -maxwaittime 100 -statoutputdir ./statistics/ -tsaurl http://localhost:8080/signserver/tsa?workerId=1").append(NL);
                 
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         final HelpFormatter formatter = new HelpFormatter();
@@ -120,7 +126,7 @@ public class Main {
             if (commandLine.hasOption(MAX_WAIT_TIME)) {
                 maxWaitTime = Integer.parseInt(commandLine.getOptionValue(MAX_WAIT_TIME));
             } else {
-                throw new ParseException("Missing option: -" + MAX_WAIT_TIME);
+                maxWaitTime = DEFUALT_MAX_WAIT_TIME;
             }
             
             final String url;
@@ -137,6 +143,17 @@ public class Main {
                 warmupTime = 0;
             }
             
+            // Time limit
+            final File statFolder;
+            if (commandLine.hasOption(STAT_OUTPUT_DIR)) {
+                statFolder = new File(commandLine.getOptionValue(STAT_OUTPUT_DIR));
+                if (!statFolder.exists() || !statFolder.isDirectory()) {
+                    throw new ParseException("Option -" + STAT_OUTPUT_DIR + " must be an existing directory");
+                }
+            } else {
+                statFolder = null;
+            }
+            
             // Print info
             LOG.info(String.format(
                   "-- Configuration -----------------------------------------------------------%n"
@@ -147,7 +164,8 @@ public class Main {
                 + "   Max wait time:           %10d ms%n"
                 + "   Time limit:              %10d ms%n"
                 + "   TSA URL:                 %s%n"
-                + "-------------------------------------------------------------------------------%n", new Date(), ts.name(), numThreads, warmupTime, maxWaitTime, limitedTime, url));
+                + "   Output statistics:       %s%n"
+                + "-------------------------------------------------------------------------------%n", new Date(), ts.name(), numThreads, warmupTime, maxWaitTime, limitedTime, url, statFolder == null ? "no" : statFolder.getAbsolutePath()));
 
             final LinkedList<WorkerThread> threads = new LinkedList<WorkerThread>();
             final FailureCallback callback = new FailureCallback() {
@@ -187,7 +205,7 @@ public class Main {
             try {
                 switch (ts) {
                 case TimeStamp1:
-                    timeStamp1(threads, numThreads, callback, url, maxWaitTime, warmupTime);
+                    timeStamp1(threads, numThreads, callback, url, maxWaitTime, warmupTime, statFolder);
                     break;
                 default:
                     throw new Exception("Unsupported test suite");
@@ -311,11 +329,17 @@ public class Main {
     }
     
     private static void timeStamp1(final List<WorkerThread> threads, final int numThreads, final FailureCallback failureCallback,
-            final String url, int maxWaitTime, long warmupTime) throws Exception {
+            final String url, int maxWaitTime, long warmupTime, final File statFolder) throws Exception {
         for (int i = 0; i < numThreads; i++) {
-            // TODO: fix random seed
-            threads.add(new TimeStampThread("TimeStamp1-" + i, failureCallback, url, maxWaitTime, 1,
-                    warmupTime));
+            final String name = "TimeStamp1-" + i;
+            final File statFile;
+            if (statFolder == null) {
+                statFile = null;
+            } else {
+                statFile = new File(statFolder, name + ".csv");
+            }
+            threads.add(new TimeStampThread(name, failureCallback, url, maxWaitTime, 1,
+                    warmupTime, statFile));
         }
     }
 }

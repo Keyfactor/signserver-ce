@@ -93,6 +93,13 @@ public class WorkerThread extends Thread {
     }
     
     /**
+     * @return Sum of all response times
+     */
+    public long getResponseTimeSum() {
+        return respTimesSum;
+    }
+    
+    /**
      * Get maximum response time.
      * @return Maximum response time
      */

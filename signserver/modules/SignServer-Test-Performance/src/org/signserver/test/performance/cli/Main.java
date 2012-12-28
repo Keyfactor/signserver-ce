@@ -272,11 +272,10 @@ public class Main {
                 w.join();
                 
                 final long operationsPerformed = w.getOperationsPerformed();
-                final double averageResponseTime = w.getAverageResponseTime();
                 final long maxResponseTime = w.getMaxResponseTime();
                 final long minResponseTime = w.getMinResponseTime();
                 totalOperationsPerformed += operationsPerformed;
-                totalResponseTime += (double) operationsPerformed * averageResponseTime;
+                totalResponseTime += w.getResponseTimeSum();
                         
                 totalMaxResponseTime = Math.max(totalMaxResponseTime, maxResponseTime);
                 totalMinResponseTime = Math.min(totalMinResponseTime, minResponseTime);
@@ -317,6 +316,7 @@ public class Main {
     
     private static void timeStamp1(final List<WorkerThread> threads, final int numThreads, final FailureCallback failureCallback,
             final String url, int maxWaitTime, long warmupTime, final long limitedTime, final File statFolder) throws Exception {
+        final Random random = new Random();
         for (int i = 0; i < numThreads; i++) {
             final String name = "TimeStamp1-" + i;
             final File statFile;
@@ -325,8 +325,7 @@ public class Main {
             } else {
                 statFile = new File(statFolder, name + ".csv");
             }
-            // TODO: Seed
-            threads.add(new TimeStampThread(name, failureCallback, url, maxWaitTime, 1,
+            threads.add(new TimeStampThread(name, failureCallback, url, maxWaitTime, random.nextInt(),
                     warmupTime, limitedTime, statFile));
         }
     }

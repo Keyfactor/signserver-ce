@@ -33,7 +33,7 @@ adds signature automatically to a uploaded OOXML document, and a validation serv
 lookup the validation of a given certificate.
                 </p>
                 <p>
-                    <a href="../docs/SignServer_Manual_3_0_odt_m6a7f442a.jpg"><img src="../docs/SignServer_Manual_3_0_odt_m6a7f442a.jpg" align="middle" border="0" width="493" height="252" ALT="architecture"/></a><br/>
+                    <a href="../images/architecture.png"><img src="../images/architecture.png" align="middle" border="0" width="641" height="305" ALT="architecture"/></a><br/>
                     Drawing 1: Overview of a possible set up of a highly available SignServer solution
                 </p>
             </section>
@@ -45,6 +45,8 @@ lookup the validation of a given certificate.
                         <li>New client web services API</li>
                         <li>MS Authenticode time-stamp signer</li>
                         <li>Support for archiving of time-stamp requests</li>
+                        <li>Logging of all changes to service components</li>
+                        <li>Stress test tool for measuring performance</li>
                         <li>Dropped support for JBoss 4.2.x.</li>
                         <li>Dropped support for cluster class loader</li>
                         <li>Dropped support for WSRA</li>
@@ -4577,20 +4579,9 @@ The fully qualified class name is: <b>org.signserver.server.archive.base64dbarch
             <p>
 This section describes the details of how to develop your own plug-ins for the SignServer API. It goes through most of the necessary interfaces to get going.
             </p>
-            <section name="Building customized code">
-                <p>
-It is possible to have your own code in a separate code tree to avoid a mix of custom code with SignServer project code. This makes it easier to maintain and update the code for future versions. This is done by configuring one or more of the 'custom.' parameters in the build configuration file. The are each described here:
-                </p>
-                <p>
-<b>custom.src.java</b> = Should point to an external directory containing the package base of the Java code. These are then included in the compilation at build time.
-                </p>
-                <p>
-<b>custom.src.web</b> = Should point to the base of a WAR source tree with WEB-INF/web.xml included. This will replace the default WAR deployed during the build.
-                </p>
-                <p>
-<b>custom.build.xml</b> = This can point to a custom build.xml that will be imported from the main build.xml and lets the developer include his own ant tasks if necessary.
-                </p>
-            </section>
+            <p>
+See also doc/DEVELOP.txt.                
+            </p>
             
             <section name="Custom modules">
                 <p>

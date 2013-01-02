@@ -11,7 +11,7 @@
 SignServer is a framework designed to perform different kind of digital signatures for different applications. 
 </p>
 <p>
-<a href="images/architecture.png"><img src="images/architecture.png" align="middle" border="0" width="523" height="359" ALT="architecture"/></a>
+<a href="images/architecture.png"><img src="images/architecture.png" align="middle" border="0" width="641" height="305" ALT="architecture"/></a>
 </p>
 <p>
 There are three kind of processable services.
@@ -28,10 +28,10 @@ In addition to processable services there also exists another concept called Tim
 Out-of-the-box are there several signers ready to be used. They can easily be configured after installation of SignServer. 
 </p>
 <p>
-The main way of communicating with the SignServer is through a WebService interface (previous versions had a RMI-SSL interface, but that have been replaced by the WS for platform independence). Signers are also available through HTTP communication and some signers (PDF, ODF, OOXML, XML, MRTD) have simple HTML pages that allows users to upload documents to be signed.
+The main way of communicating with the SignServer is through the web server interface or using the client web services (WS) interface.
 </p>
 <p>
-Administration is done through a command-line interface, where properties and access controls can be configured.
+Administration is done through a command-line interface where properties and access controls can be configured or using the Admin GUI remotely over the Admin web services (WS) interface.
 </p>
 <p>
 One instance of SignServer can have multiple signers for different purposes.

@@ -23,7 +23,7 @@
         <a href="http://ant.apache.org/">Ant web site</a>
         </p>
         <p>
-        Build tool used to build SignServer. Version 1.7.1 and up should work.
+        Build tool used to build SignServer. Version 1.8.0 and up should work.
         </p>
     </subsection>
     <subsection name="Application server">

@@ -366,21 +366,3 @@ j2ee.web-nohttps=true
 # Available options are: tomcat41, tomcat50, tomcat55
 # Default: tomcat55
 #deploy.tomcat.version=
-
-
-# ------------- Custom Code Configuration --------------------------------------
-# It is possible to have a custom code tree outside the sign server
-# for custom modifications.
-#
-# The external code will be copied into the temporary code tree
-# used for pre-processing
-#
-# Location of external java source directory
-#custom.src.java = <custom-code>/src/java
-#
-# Location of external web source directory
-#custom.src.web= <custom-code>/src/web
-#
-# Location of optional custom build xml that will be imported.
-#custom.build.xml= <custom-code>/build.xml
-#

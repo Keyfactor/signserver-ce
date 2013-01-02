@@ -238,7 +238,7 @@
 
 #macro (footer)
       <p class="copyright">
-        Copyright &copy; 2007-2012&nbsp;SignServer team. All rights reserved.
+        Copyright &copy; 2007-2013&nbsp;SignServer team. All rights reserved.
         <script type="text/javascript" language="JavaScript"><!--
                 document.write(" - "+"Last Published: " + document.lastModified);
               //  -->

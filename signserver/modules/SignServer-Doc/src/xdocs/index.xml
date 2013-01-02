@@ -49,11 +49,11 @@ new TWTR.Widget({
 <div class="label" style="font-size:120%; padding:1em; font-family: Georgia, new york;"><!--a style=" padding:1em 0.2em; color:white;" href="http://www.primekey.se/PKI+shop/">PKI SHOP</a> | --><a style="color:white; padding:1.0em 0.2em; " href="http://www.primekey.se/services/training" target="primekey">World-wide PKI Training</a>  |  <a style=" padding:1.0em 0.2em; color:white;" href="http://www.primekey.se/Services/Consulting/" target="primekey">Hire an expert to do the job for you!</a>
 </div>
 <div class="content first">
-<p style="font-size:1.4em; font-weight:bold; margin:0; color:#015a9c;">SignServer 3.2.2 is now out!</p>
+<p style="font-size:1.4em; font-weight:bold; margin:0; color:#015a9c;">SignServer 3.3.0 is now out!</p>
     <p style="margin-top:0.2em;">
         <!-- Read <a href="http://www.primekey.se/digitalAssets/2/2334_Product_Release_SignServer3.1.1.pdf">release notes</a>. | --> 
         <a href="download.html">Visit the download section to get SignServer.</a> There is also a LiveCD!<br/>
-  <span class="date"> Date: 2012-03-20</span> 
+  <span class="date"> Date: 2013-01-02</span> 
  </p>
  <p style="font-size:1.4em; font-weight:bold; margin:0; color:#015a9c;">Would you recommend SignServer?</p>
   <p style="margin-top:0.2em;">
@@ -61,7 +61,7 @@ new TWTR.Widget({
         Satisfied with SignServer? <a href="http://sourceforge.net/projects/signserver/reviews/">Let the world know of your opinion!</a><br/>
  </p>
  <p><a href="http://sourceforge.net/projects/signserver/reviews/"><img src="./images/SignServerUserRatings50.png" alt="SignServer user ratings" style="border:none" width="185" height="50"/></a>
-     <br/><span class="date"> Date: 2012-08-14</span></p>
+     <br/><span class="date"> Date: 2013-01-02</span></p>
  
  <p style="font-size:1.4em; font-weight:bold; margin:0; color:#015a9c;">Said about PrimeKey</p> 
  <p class="imp"><a href="http://www.primekey.se/" target="primekey"><q>In fact you probably have the most popular PKI in the world, and I have never met a company where the employees are so proud being part of this, and convinced doing the right thing[...] Such a great company culture is nothing you can buy, and there are companies which are spending millions

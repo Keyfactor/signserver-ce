@@ -1,26 +1,31 @@
 SignServer 3.3.0
 ----------------
-This is a major release - in total 51 features, options, bugs and stabilizations have been fixed or added. The most noteworthy changes can be seen below.
+This is a major release - in total 57 features, options, bugs and stabilizations have been fixed or added. The most noteworthy changes can be seen below.
 
 Major changes:
  - New client web services API 
  - MS Authenticode time-stamp signer
  - Support for archiving of time-stamp requests
+ - Logging of all changes to service components
+ - Stress test tool for measuring performance
  - Dropped support for JBoss 4.2.x.
  - Dropped support for cluster class loader
  - Dropped support for WSRA
- - Upgrade of cryptographic library
- - Many more minor changes
+ - Upgrade of internal cryptographic library
+ - Many more minor improvements
 
 Bug fixes:
- - Renewal worker requires truststore password even when truststore is not used
- - NPE trying to activate a worker of type Dispatcher
- - Can not archive the same document twice
- - Version of server printed by CLI is actually the client version
- - System tests can not be compiled after opening the project with NetBeans IDE 7.2
- - StatusPropertiesWorker requires a cryptotoken to be configured
- - AddressAuthorizers should return HTTP 403 (forbidden) and not 401
-
+ - Fixed the Renewal worker which required a trust store password even when a 
+   trust store was not used
+ - Fixed an NPE when trying to activate a worker of type Dispatcher
+ - Fixed archiving that could not be done twice for the same document
+ - Fixed printing of server version from CLI
+ - Fixed system tests that could not be compiled after opening the project with 
+   NetBeans IDE 7.2
+ - Fixed StatusPropertiesWorker so that it no longer requires a cryptotoken to 
+   be configured
+ - Fixed Address Authorizers to return HTTP 403 (forbidden) and not HTTP 401 
+   (unauthorized) as before
 
 Notice:
  - A database change were introduced. See UPGRADE.txt for details.
@@ -37,6 +42,8 @@ Notice:
    need to be updated.
  - As an alternative to the OldDatabaseArchiver a new archiver called 
    Base64DatabaseArchiver can also be used.
+
+Read the full changelog for details (https://jira.primekey.se/browse/DSS?report=com.atlassian.jira.plugin.system.project:changelog-panel#selectedTab=com.atlassian.jira.plugin.system.project%3Achangelog-panel).
 
 
 SignServer 3.2.4

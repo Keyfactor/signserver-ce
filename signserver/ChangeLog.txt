@@ -40,6 +40,8 @@ SignServer 3.3.0, 2013-01-xx
     * [DSS-562] - Add audit logging for events related to keys, certificates and time-sources
     * [DSS-565] - Include time-stamp token serial number in output from DefaultTimeStampLogger
     * [DSS-567] - Add automatic tests using HSM
+    * [DSS-573] - Log all changes to service components
+    * [DSS-580] - Print Signer ID in timestamp client
 
 ** New Feature
     * [DSS-287] - Plugins should be able to suggest file extension for the returned signed file
@@ -51,6 +53,10 @@ SignServer 3.3.0, 2013-01-xx
     * [DSS-563] - Include IP address from X-FORWARDED-FOR header in archive
     * [DSS-564] - AddressAuthorizer supporting X-FORWARDED-FOR and white/black-listing
     * [DSS-570] - Support for choosing signature algorithm for TimeStampSigner
+    * [DSS-572] - Leap second support in TimeStamp signer
+    * [DSS-574] - Stress test tool
+    * [DSS-581] - Leap second handling by not issuing tokens during the change
+    * [DSS-582] - Support for Clover test coverage
 
 ** Task
     * [DSS-403] - Drop support for clusterclassloader

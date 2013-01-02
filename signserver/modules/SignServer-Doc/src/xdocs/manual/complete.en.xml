@@ -5328,27 +5328,36 @@ It can then be run from SIGNSERVER_HOME using:
                     <subsubsection name="Usage">
                         <source>
 usage: stresstest &lt;options&gt;
-Stress test tool:
- -testsuite &lt;arg&gt;      Test suite to run. Currenly only [TimeStamp1] is supported.
- -threads   &lt;arg&gt;      Number of threads to run.
- -timelimit &lt;arg&gt;      Optional. Only run for the specified time (in
-                       milliseconds).
- -warmuptime &lt;arg&gt;     Optional. Don't count number of signings and response time during this
- 					   warmup period (in milliseconds). Defaults to 0 (no warmup period).
- -tsaurl &lt;arg&gt;         URL to the TimeStamp worker to test with.
- -maxwaittime &lt;arg&gt;    Maximum time (in milliseconds) each thread will wait until issuing the next request.
-                             The actual time will be uniformly pseudo-randomly selected between 0 and this time given.
+Performance testing tool
+ -maxwaittime &lt;arg&gt;     Maximum number of milliseconds for a thread to
+                        wait until issuing the next time stamp.
+                        Default=100
+ -statoutputdir &lt;arg&gt;   Optional. Directory to output statistics to. If
+                        set, each threads creates a file in this directory
+                        to output its response times to. The directory
+                        must exist.
+ -testsuite&lt;arg&gt;       Test suite to run. Any of [TimeStamp1].
+ -threads &lt;arg&gt;         Number of threads requesting time stamps.
+ -timelimit &lt;arg&gt;       Optional. Only run for the specified time (in
+                        milliseconds).
+ -tsaurl &lt;arg&gt;          URL to timestamp worker to use.
+ -warmuptime &lt;arg&gt;      Don't count number of signings and response times
+                        until after this time (in milliseconds). Default=0
+                        (no warmup time).
 
 Sample usages:
-a) stresstest -testsuite TimeStamp1 -threads 4 -timelimit 30000 -tsaurl http://localhost:8080/signserver/tsa?workerId=1
-              -maxwaittime 100
+a) stresstest -testsuite TimeStamp1 -threads 4 -tsaurl
+http://localhost:8080/signserver/tsa?workerId=1
+b) stresstest -testsuite TimeStamp1 -threads 4 -maxwaittime 100
+-statoutputdir ./statistics/ -tsaurl
+http://localhost:8080/signserver/tsa?workerId=1
               			</source>
               			
               			<p>
               				When finished (after time limit expires, or process is stopped using control+c) a statistic
-              				overview is printed for each thread containing number of signings, and statistics (average,
-              				minimum, maximum, and standard deviation) for response times.
-						</p>
+              				overview is printed containing number of signings, and statistics (average,
+              				minimum, and maximum) for response times.
+                                </p>
 					</subsubsection>
                 </subsection>
                 

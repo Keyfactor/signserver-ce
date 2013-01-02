@@ -84,7 +84,7 @@ public class Main {
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         final HelpFormatter formatter = new HelpFormatter();
         PrintWriter pw = new PrintWriter(bout);
-        formatter.printHelp(pw, HelpFormatter.DEFAULT_WIDTH, COMMAND + " <options>", "Random testing tool", OPTIONS, HelpFormatter.DEFAULT_LEFT_PAD, HelpFormatter.DEFAULT_DESC_PAD, footer.toString());
+        formatter.printHelp(pw, HelpFormatter.DEFAULT_WIDTH, COMMAND + " <options>", "Performance testing tool", OPTIONS, HelpFormatter.DEFAULT_LEFT_PAD, HelpFormatter.DEFAULT_DESC_PAD, footer.toString());
         pw.close();
         LOG.info(bout.toString());
     }

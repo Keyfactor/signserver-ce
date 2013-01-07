@@ -40,6 +40,9 @@
                 <library dirs="200">
                     <file>${libs.Quartz.classpath}</file>
                 </library>
+                <library dirs="200">
+                    <file>${libs.CESeCore.classpath}</file>
+                </library>
             </web-module-libraries>
             <web-module-additional-libraries/>
             <source-roots>

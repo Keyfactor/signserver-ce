@@ -14,6 +14,7 @@ package org.signserver.web;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import javax.ejb.EJB;
@@ -25,13 +26,20 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
+import org.cesecore.audit.enums.EventStatus;
+import org.cesecore.audit.log.AuditRecordStorageException;
+import org.cesecore.audit.log.SecurityEventsLoggerSessionLocal;
+import org.cesecore.authentication.tokens.AuthenticationToken;
+import org.cesecore.authentication.tokens.UsernamePrincipal;
 import org.signserver.common.CompileTimeSettings;
 import org.signserver.common.FileBasedDatabaseException;
 import org.signserver.common.ServiceLocator;
 import org.signserver.ejb.interfaces.IServiceTimerSession;
-import org.signserver.server.log.EventType;
+import org.signserver.server.cesecore.AlwaysAllowLocalAuthenticationToken;
 import org.signserver.server.log.ISystemLogger;
-import org.signserver.server.log.ModuleType;
+import org.signserver.server.log.SignServerEventTypes;
+import org.signserver.server.log.SignServerModuleTypes;
+import org.signserver.server.log.SignServerServiceTypes;
 import org.signserver.server.log.SystemLoggerException;
 import org.signserver.server.log.SystemLoggerFactory;
 import org.signserver.server.nodb.FileBasedDatabaseManager;
@@ -64,6 +72,9 @@ public class StartServicesServlet extends HttpServlet {
     @EJB
     private IStatusRepositorySession.IRemote statusRepositorySession;
 
+    @EJB
+    private SecurityEventsLoggerSessionLocal logSession;
+    
     private IServiceTimerSession.IRemote getTimedServiceSession(){
     	if(timedServiceSession == null) {
             try {
@@ -103,11 +114,11 @@ public class StartServicesServlet extends HttpServlet {
         try {
             final Map<String, String> fields = new HashMap<String, String>();
             fields.put(ISystemLogger.LOG_VERSION, version);
-            AUDITLOG.log(EventType.SIGNSERVER_SHUTDOWN, ModuleType.SERVICE, "", fields);
+            AUDITLOG.log(SignServerEventTypes.SIGNSERVER_SHUTDOWN, SignServerModuleTypes.SERVICE, "", fields);
         } catch (SystemLoggerException ex) {
             LOG.error("Audit log error", ex);
         }
-
+        
         // Try to unload the timers
         LOG.debug(">destroy calling ServiceSession.unload");
         try {
@@ -132,11 +143,22 @@ public class StartServicesServlet extends HttpServlet {
         try {
             final Map<String, String> fields = new HashMap<String, String>();
             fields.put(ISystemLogger.LOG_VERSION, version);
-            AUDITLOG.log(EventType.SIGNSERVER_STARTUP, ModuleType.SERVICE, "", fields);
+            AUDITLOG.log(SignServerEventTypes.SIGNSERVER_STARTUP, SignServerModuleTypes.SERVICE, "", fields);
         } catch (SystemLoggerException ex) {
             LOG.error("Audit log error", ex);
         }
         
+        // Make a log row that EJBCA is starting
+        AuthenticationToken admin = new AlwaysAllowLocalAuthenticationToken(new UsernamePrincipal("StartServicesServlet.init"));
+        Map<String, Object> details = new LinkedHashMap<String, Object>();
+        details.put("msg", "start services startup msg");
+        try {
+            logSession.log(SignServerEventTypes.SIGNSERVER_STARTUP, EventStatus.SUCCESS, SignServerModuleTypes.SERVICE, SignServerServiceTypes.SIGNSERVER, admin.toString(), null, null, null, details);
+        } catch (AuditRecordStorageException ex) {
+            LOG.error("Logging", ex);
+            throw new ServletException("Could not log", ex);
+        }
+
         // Cancel old timers as we can not rely on them being cancelled at shutdown
         LOG.debug(">init calling ServiceSession.unload");
         getTimedServiceSession().unload(0);

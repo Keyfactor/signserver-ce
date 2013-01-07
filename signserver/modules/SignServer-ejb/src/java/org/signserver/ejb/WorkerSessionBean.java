@@ -25,6 +25,7 @@ import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
+import org.cesecore.audit.log.SecurityEventsLoggerSessionLocal;
 import org.ejbca.util.CertTools;
 import org.signserver.common.*;
 import org.signserver.common.KeyTestResult;
@@ -82,6 +83,9 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     
     @EJB
     private IWorkerManagerSessionLocal workerManagerSession;
+    
+    @EJB
+    private SecurityEventsLoggerSessionLocal logSession;
 
     EntityManager em;
     
@@ -151,7 +155,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             logMap.put(IWorkerLogger.LOG_EXCEPTION, ex.getMessage());
             logMap.put(IWorkerLogger.LOG_PROCESS_SUCCESS, String.valueOf(false));
             try {
-                AUDITLOG.log(EventType.PROCESS, ModuleType.WORKER, "", logMap);
+                AUDITLOG.log(SignServerEventTypes.PROCESS, SignServerModuleTypes.WORKER, "", logMap);
             } catch (SystemLoggerException ex2) {
                 LOG.error("Audit log failure", ex2);
             }
@@ -402,6 +406,17 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             	logMap.put(IWorkerLogger.LOG_PROCESS_SUCCESS, String.valueOf(true));
             }
             workerLogger.log(logMap);
+            
+            // TODO: Worker log to secure log if configured to do so
+//            AuthenticationToken admin = new AlwaysAllowLocalAuthenticationToken(new UsernamePrincipal("StartServicesServlet.init"));
+//            Map<String, Object> details = new LinkedHashMap<String, Object>();
+//            details.put("msg", "start services startup msg");
+//            try {
+//                logSession.log(SignServerEventTypes.CA_RENEWED, EventStatus.SUCCESS, EjbcaModuleTypes.SERVICE, SignServerServiceTypes.SIGNSERVER, admin.toString(), null, null, null, details);				
+//                LOG.info("After logging");
+//            } catch (AuditRecordStorageException ex) {
+//                LOG.error("Logging", ex);
+//            }
 
             LOG.debug("<process");
             return res;
@@ -782,7 +797,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         auditMap.put("KEYALG", keyAlgorithm);
         auditMap.put("KEYSPEC", keySpec);
         auditMap.put("KEYALIAS", alias);
-        auditLog(EventType.KEYGEN, ModuleType.KEY_MANAGEMENT, String.valueOf(signerId), auditMap);
+        auditLog(SignServerEventTypes.KEYGEN, SignServerModuleTypes.KEY_MANAGEMENT, String.valueOf(signerId), auditMap);
         return alias;
     }
 
@@ -845,7 +860,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         final HashMap<String, String> auditMap = new HashMap<String, String>();
         auditMap.put("KEYALIAS", alias);
         auditMap.put("TESTRESULTS", createResultsReport(result));
-        auditLog(EventType.KEYTEST, ModuleType.KEY_MANAGEMENT, String.valueOf(signerId), auditMap);
+        auditLog(SignServerEventTypes.KEYTEST, SignServerModuleTypes.KEY_MANAGEMENT, String.valueOf(signerId), auditMap);
         
         return result;
     }
@@ -875,7 +890,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         if ("NODE".equalsIgnoreCase(scope)) {
             auditMap.put("NODE", node);
         }
-        auditLog(EventType.CERTINSTALLED, ModuleType.WORKER_CONFIG, String.valueOf(workerId), auditMap);
+        auditLog(SignServerEventTypes.CERTINSTALLED, SignServerModuleTypes.WORKER_CONFIG, String.valueOf(workerId), auditMap);
     }
     
     private void auditLogCertChainInstalled(final int workerId, final String value, final String scope, final String node) {
@@ -885,7 +900,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         if ("NODE".equalsIgnoreCase(scope)) {
             auditMap.put("NODE", node);
         }
-        auditLog(EventType.CERTCHAININSTALLED, ModuleType.WORKER_CONFIG, String.valueOf(workerId), auditMap);
+        auditLog(SignServerEventTypes.CERTCHAININSTALLED, SignServerModuleTypes.WORKER_CONFIG, String.valueOf(workerId), auditMap);
     }
 
     /* (non-Javadoc)
@@ -900,7 +915,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         if (config.getProperties().size() == 0) {
             workerConfigService.removeWorkerConfig(workerId);
             LOG.debug("WorkerConfig is empty and therefore removed.");
-            auditLog(EventType.SET_WORKER_CONFIG, ModuleType.WORKER_CONFIG, String.valueOf(workerId));
+            auditLog(SignServerEventTypes.SET_WORKER_CONFIG, SignServerModuleTypes.WORKER_CONFIG, String.valueOf(workerId));
         } else {
             setWorkerConfig(workerId, config, null, null);
         }
@@ -913,13 +928,13 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             final HashMap<String, String> auditMap = new HashMap<String, String>();
             auditMap.put("KEYALIAS", value);
             auditMap.put("SCOPE", "GLOBAL");
-            auditLog(EventType.KEYSELECTED, ModuleType.WORKER_CONFIG, String.valueOf(workerId), auditMap);
+            auditLog(SignServerEventTypes.KEYSELECTED, SignServerModuleTypes.WORKER_CONFIG, String.valueOf(workerId), auditMap);
         } else if (key != null && key.lastIndexOf(".") != -1 && key.substring(key.lastIndexOf(".")).equalsIgnoreCase(".DEFAULTKEY")) {
             final HashMap<String, String> auditMap = new HashMap<String, String>();
             auditMap.put("KEYALIAS", value);
             auditMap.put("SCOPE", "NODE");
             auditMap.put("NODE", key.substring(0, key.lastIndexOf(".")));
-            auditLog(EventType.KEYSELECTED, ModuleType.WORKER_CONFIG, String.valueOf(workerId), auditMap);
+            auditLog(SignServerEventTypes.KEYSELECTED, SignServerModuleTypes.WORKER_CONFIG, String.valueOf(workerId), auditMap);
         } else if (ProcessableConfig.SIGNERCERT.equalsIgnoreCase(key)) {
             auditLogCertInstalled(workerId, value, "GLOBAL", null);
         } else if (key != null && key.lastIndexOf(".") != -1 && key.substring(key.lastIndexOf(".")).equalsIgnoreCase("." + ProcessableConfig.SIGNERCERT)) {
@@ -1018,7 +1033,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         }
         
         auditMap.put("CSR", csr);
-        auditLog(EventType.GENCSR, ModuleType.KEY_MANAGEMENT, String.valueOf(signerId), auditMap);
+        auditLog(SignServerEventTypes.GENCSR, SignServerModuleTypes.KEY_MANAGEMENT, String.valueOf(signerId), auditMap);
         
         if (LOG.isTraceEnabled()) {
             LOG.trace("<getCertificateRequest: signerId=" + signerId);
@@ -1249,11 +1264,11 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         return workerManagerSession.getWorkers(workerType, globalConfigurationSession);
     }
     
-    private void auditLog(EventType eventType, ModuleType module, String customId) {
+    private void auditLog(SignServerEventTypes eventType, SignServerModuleTypes module, String customId) {
         auditLog(eventType, module, customId, Collections.<String, String>emptyMap());
     }
     
-    private void auditLog(EventType eventType, ModuleType module, String customId, Map<String, String> additionalDetails) {
+    private void auditLog(SignServerEventTypes eventType, SignServerModuleTypes module, String customId, Map<String, String> additionalDetails) {
         try {
             AUDITLOG.log(eventType, module, customId, additionalDetails);
         } catch (SystemLoggerException ex) {
@@ -1271,7 +1286,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         	configChanges.put(additionalLogKey, additionalLogValue);
         }
         
-        auditLog(EventType.SET_WORKER_CONFIG, ModuleType.WORKER_CONFIG, String.valueOf(workerId), configChanges);
+        auditLog(SignServerEventTypes.SET_WORKER_CONFIG, SignServerModuleTypes.WORKER_CONFIG, String.valueOf(workerId), configChanges);
         workerConfigService.setWorkerConfig(workerId, config);
     }
 

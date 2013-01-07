@@ -194,7 +194,7 @@ Configured ear file available at: ${ear.dist.file}
             <istrue value="${includemodulesinbuild}"/>
         </condition>
         
-        <mods modsDir="mods-available" libSet="toLibs" rootSet="toRoot" applicationXml="appXml" enabledModules="enabledModules" allEnabled="${allEnabled}"/>
+        <mods modsDir="mods-available" libSet="toLibs" rootSet="toRoot" configRootSet="toConfigRoot" configConfSet="toConfigConf" applicationXml="appXml" enabledModules="enabledModules" allEnabled="${allEnabled}"/>
 <!--        <echo>
 Enabled modules:
     ${enabledModules}</echo>-->
@@ -231,7 +231,31 @@ Libraries to include:
         
         <postprocess modules="${enabledModules}"/>
         
-<!--        <antcallforall names="${enabledModules}" target="-postprocess-module" newPropertyPrefix="_acfa" unlessEmpty="postprocess.files" />-->
+        <echo level="verbose">
+Configurations to include:
+  /
+    ${toConfigRoot}
+  /conf/
+    ${toConfigConf}
+            
+        </echo>
+        
+        <!-- Config -->
+        <property name="config.tmp.dir" location="${tmp}/config.jar"/>
+        <delete dir="${config.tmp.dir}"/>
+        <mkdir dir="${config.tmp.dir}"/>
+        <mkdir dir="${config.tmp.dir}/conf"/>
+        <copy todir="${config.tmp.dir}" flatten="true">
+            <fileset dir="." includes="-non-existing-,${toConfigRoot}"/>
+        </copy>
+        <copy todir="${config.tmp.dir}/conf" flatten="true">
+            <fileset dir="." includes="-non-existing-,${toConfigConf}"/>
+        </copy>
+        
+        <mkdir dir="${signserver.ear.dir}/lib"/>
+        <jar destfile="${signserver.ear.dir}/lib/config.jar">
+            <zipfileset dir="${config.tmp.dir}" />
+        </jar>
     </target>
     
 <!--    <target name="-postprocess-module">

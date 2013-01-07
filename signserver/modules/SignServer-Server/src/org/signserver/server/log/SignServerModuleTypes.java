@@ -12,32 +12,28 @@
  *************************************************************************/
 package org.signserver.server.log;
 
-import java.util.Map;
-import java.util.Properties;
+import org.cesecore.audit.enums.ModuleType;
 
 /**
- * Logger for system events. System events are all events that are not directly
- * associated with the processing performed by a worker.
- *
- * @see IWorkerLogger
+ * Different types of modules used by the SystemLogger.
  * @author Markus Kilås
  * @version $Id$
  */
-public interface ISystemLogger {
+public enum SignServerModuleTypes implements ModuleType {
 
-    // Log constants
-    String LOG_STARTUP_TIME = "STARTUP_TIME";
-    String LOG_REPLY_TIME = "REPLY_TIME";
-    String LOG_CLASS_NAME = "CLASS_NAME";
-    String LOG_WORKER_ID = "WORKER_ID";
-    String LOG_EVENT = "EVENT";
-    String LOG_VERSION = "VERSION";
+    SERVICE,
+    GLOBAL_CONFIG,
+    WORKER_CONFIG,
+    KEY_MANAGEMENT,   
+    WORKER, 
+    STATUS_REPOSITORY,; 
 
-    /**
-     * Method called after creation of instance.
-     * @param props the signers properties
-     */
-    void init(Properties props);
+    @Override
+    public boolean equals(ModuleType value) {
+        if (value == null) {
+            return false;
+        }
+        return this.toString().equals(value.toString());
+    }
 
-    void log(SignServerEventTypes eventType, SignServerModuleTypes module, String customId, Map<String, String> additionalDetails) throws SystemLoggerException;
 }

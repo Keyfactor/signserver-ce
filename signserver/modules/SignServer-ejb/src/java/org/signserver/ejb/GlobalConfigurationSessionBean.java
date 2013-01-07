@@ -28,10 +28,10 @@ import org.signserver.server.config.entities.FileBasedGlobalConfigurationDataSer
 import org.signserver.server.config.entities.GlobalConfigurationDataBean;
 import org.signserver.server.config.entities.GlobalConfigurationDataService;
 import org.signserver.server.config.entities.IGlobalConfigurationDataService;
-import org.signserver.server.log.EventType;
+import org.signserver.server.log.SignServerEventTypes;
 import org.signserver.server.log.ISystemLogger;
 import org.signserver.server.log.LogMap;
-import org.signserver.server.log.ModuleType;
+import org.signserver.server.log.SignServerModuleTypes;
 import org.signserver.server.log.SystemLoggerException;
 import org.signserver.server.log.SystemLoggerFactory;
 import org.signserver.server.nodb.FileBasedDatabaseManager;
@@ -92,7 +92,7 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
     @Override
     public void setProperty(String scope, String key, String value) {
 
-        auditLog(EventType.SET_GLOBAL_PROPERTY, scope + key, value);
+        auditLog(SignServerEventTypes.SET_GLOBAL_PROPERTY, scope + key, value);
 
         if (cache.getCurrentState().equals(GlobalConfiguration.STATE_OUTOFSYNC)) {
             cache.getCachedGlobalConfig().setProperty(propertyKeyHelper(scope, key), value);
@@ -125,7 +125,7 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
     public boolean removeProperty(String scope, String key) {
         boolean retval = false;
 
-        auditLog(EventType.REMOVE_GLOBAL_PROPERTY, scope + key, null);
+        auditLog(SignServerEventTypes.REMOVE_GLOBAL_PROPERTY, scope + key, null);
 
         if (cache.getCurrentState().equals(GlobalConfiguration.STATE_OUTOFSYNC)) {
             cache.getCachedGlobalConfig().remove(propertyKeyHelper(scope, key));
@@ -186,7 +186,7 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
     @Override
     public void resync() throws ResyncException {
 
-        auditLog(EventType.GLOBAL_CONFIG_RESYNC, null, null); // TODO Should handle errors
+        auditLog(SignServerEventTypes.GLOBAL_CONFIG_RESYNC, null, null); // TODO Should handle errors
 
         if (!cache.getCurrentState().equals(GlobalConfiguration.STATE_OUTOFSYNC)) {
             String message = "Error it is only possible to resync a database that have the state " + GlobalConfiguration.STATE_OUTOFSYNC;
@@ -249,7 +249,7 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
      */
     @Override
     public void reload() {
-        auditLog(EventType.GLOBAL_CONFIG_RELOAD, null, null);
+        auditLog(SignServerEventTypes.GLOBAL_CONFIG_RELOAD, null, null);
 
         workerManagerSession.flush();
         cache.setCachedGlobalConfig(null);
@@ -277,7 +277,7 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
 
     }
 
-    private static void auditLog(final EventType eventType, final String property,
+    private static void auditLog(final SignServerEventTypes eventType, final String property,
             final String value) {
         try {
             final LogMap logMap = new LogMap();
@@ -290,7 +290,7 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
                 logMap.put(IGlobalConfigurationSession.LOG_VALUE,
                         value);
             }
-            AUDITLOG.log(eventType, ModuleType.GLOBAL_CONFIG, "", logMap);
+            AUDITLOG.log(eventType, SignServerModuleTypes.GLOBAL_CONFIG, "", logMap);
         } catch (SystemLoggerException ex) {
             LOG.error("Audit log failure", ex);
             throw new EJBException("Audit log failure", ex);

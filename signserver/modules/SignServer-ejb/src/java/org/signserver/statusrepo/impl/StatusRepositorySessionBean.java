@@ -17,10 +17,10 @@ import java.util.Map;
 import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import org.apache.log4j.Logger;
-import org.signserver.server.log.EventType;
+import org.signserver.server.log.SignServerEventTypes;
 import org.signserver.server.log.ISystemLogger;
 import org.signserver.server.log.LogMap;
-import org.signserver.server.log.ModuleType;
+import org.signserver.server.log.SignServerModuleTypes;
 import org.signserver.server.log.SystemLoggerException;
 import org.signserver.server.log.SystemLoggerFactory;
 import org.signserver.statusrepo.IStatusRepositorySession;
@@ -141,7 +141,7 @@ public class StatusRepositorySessionBean implements
                     String.valueOf(expiration));
             }
 
-            AUDITLOG.log(EventType.SET_STATUS_PROPERTY, ModuleType.STATUS_REPOSITORY, "", logMap);
+            AUDITLOG.log(SignServerEventTypes.SET_STATUS_PROPERTY, SignServerModuleTypes.STATUS_REPOSITORY, "", logMap);
         } catch (SystemLoggerException ex) {
             LOG.error("Audit log failure", ex);
             throw new EJBException("Audit log failure", ex);

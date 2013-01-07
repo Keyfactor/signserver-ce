@@ -42,7 +42,7 @@ public class AllFieldsSystemLogger implements ISystemLogger {
      * @throws SystemLoggerException
      */
     @Override
-    public void log(EventType eventType, ModuleType module, String customId, Map<String, String> additionalDetails) throws SystemLoggerException {
+    public void log(SignServerEventTypes eventType, SignServerModuleTypes module, String customId, Map<String, String> additionalDetails) throws SystemLoggerException {
         final StringBuilder str = new StringBuilder();
         str.append("EVENT: ").append(eventType.name()).append("; ")
                 .append("MODULE: ").append(module.name()).append("; ")

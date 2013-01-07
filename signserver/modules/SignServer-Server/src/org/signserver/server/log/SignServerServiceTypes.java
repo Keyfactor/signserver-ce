@@ -12,16 +12,23 @@
  *************************************************************************/
 package org.signserver.server.log;
 
+import org.cesecore.audit.enums.ServiceType;
+
 /**
- * Different types of modules used by the SystemLogger.
+ * Different types of service log events used by the SystemLogger.
  * @author Markus Kilås
  * @version $Id$
  */
-public enum ModuleType {
-    SERVICE,
-    GLOBAL_CONFIG,
-    WORKER_CONFIG,
-    KEY_MANAGEMENT,   
-    WORKER, 
-    STATUS_REPOSITORY, 
+public enum SignServerServiceTypes implements ServiceType {
+
+    SIGNSERVER;
+
+    @Override
+    public boolean equals(ServiceType value) {
+        if (value == null) {
+            return false;
+        }
+        return this.toString().equals(value.toString());
+    }
+    
 }

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir=".." name="CESeCore-jars/NB">
+
+    <import file="../build.xml"/>
+    
+    <target name="debug" depends="compile,-jdk-presetdef-nbjpdastart">
+        <nbjpdastart addressproperty="jpda.address" name="CESeCore-jars" transport="dt_socket">
+            <classpath path="${run.cp}"/>
+        </nbjpdastart>
+        <java classname="${main.class}" failonerror="true" fork="true">
+            <classpath path="${run.cp}"/>
+            <jvmarg value="-ea"/>
+            <jvmarg value="-Xdebug"/>
+            <jvmarg value="-Xrunjdwp:transport=dt_socket,address=${jpda.address}"/>
+        </java>
+    </target>
+    
+    <target name="debug-test" depends="compile-tests,-jdk-presetdef-nbjpdastart">
+        <fail unless="test">Must set property 'test'</fail>
+        <mkdir dir="${test.results.dir}"/>
+        <nbjpdastart addressproperty="jpda.address" name="CESeCore-jars" transport="dt_socket">
+            <classpath path="${test.run.cp}"/>
+        </nbjpdastart>
+        <java classname="junit.textui.TestRunner" failonerror="true" fork="true">
+            <classpath path="${test.run.cp}"/>
+            <arg value="${test}"/>
+            <jvmarg value="-ea"/>
+            <jvmarg value="-Xdebug"/>
+            <jvmarg value="-Xrunjdwp:transport=dt_socket,address=${jpda.address}"/>
+        </java>
+    </target>
+    
+    <target name="debug-fix" depends="-init">
+        <depend srcdir="${src.dir}" destdir="${classes.dir}" cache="build/depcache">
+            <classpath path="${cp}"/>
+        </depend>
+        <javac srcdir="${src.dir}" destdir="${classes.dir}" source="1.5" debug="true" deprecation="${deprecation}" includeantruntime="false">
+            <classpath path="${cp}"/>
+            <compilerarg value="-Xlint:unchecked"/>
+            <include name="${class}.java"/>
+        </javac>
+        <nbjpdareload>
+            <fileset dir="${classes.dir}">
+                <include name="${class}.class"/>
+            </fileset>
+        </nbjpdareload>
+    </target>
+    
+    <target name="show-javadoc" depends="javadoc">
+        <nbbrowse file="${javadoc.dir}/index.html"/>
+    </target>
+    
+    <target name="profile" depends="compile">
+        <nbprofiledirect>
+            <classpath path="${run.cp}"/>
+        </nbprofiledirect>
+        <property environment="env"/>
+        <java classname="${main.class}" fork="true" failonerror="true" dir="${profiler.session.working.dir}" jvm="${profiler.info.jvm}">
+            <classpath path="${run.cp}"/>
+            <jvmarg value="${profiler.info.jvmargs.agent}"/>
+            <jvmarg line="${profiler.info.jvmargs}"/>
+            <env key="LD_LIBRARY_PATH" path="${profiler.info.agentpath}:${env.LD_LIBRARY_PATH}"/>
+            <env key="Path" path="${profiler.info.agentpath}:${env.Path}"/>
+        </java>
+    </target>
+    
+</project>

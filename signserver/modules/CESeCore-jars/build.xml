@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="CESeCore-jars" basedir="." default="jar">
+
+    <property file="nbproject/nbjdk.properties"/>
+    <property name="user.properties.file" location="${netbeans.user}/build.properties"/>
+    <property file="${user.properties.file}"/>
+    <import file="nbproject/jdk.xml"/>
+
+    <target name="-init" depends="-jdk-init">
+        <property file="user.build.properties"/>
+        <property file="build.properties"/>
+    </target>
+
+    <import file="../modules.xml" optional="false"/>
+
+    <property name="modulename" value="module.cesecore"/>
+    <property name="dist-module.available" value="true"/>
+    
+    <target name="dist-module" depends="-init">
+        <copy todir="../../mods-available">
+            <fileset file="src/12_module.cesecore.properties"/>
+        </copy>
+    </target>
+
+</project>

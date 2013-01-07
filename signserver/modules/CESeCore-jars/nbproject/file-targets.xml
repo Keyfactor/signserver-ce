@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir=".." name="CESeCore-jars/file">
+    
+    <import file="../build.xml"/>
+    
+    <target name="compile-selected" depends="-init">
+        <fail unless="includes">Must set property 'includes'</fail>
+        <mkdir dir="${classes.dir}"/>
+        <depend srcdir="${src.dir}" destdir="${classes.dir}" cache="build/depcache">
+            <classpath path="${cp}"/>
+        </depend>
+        <javac srcdir="${src.dir}" destdir="${classes.dir}" source="1.5" debug="${debug}" deprecation="${deprecation}" includes="${includes}" includeantruntime="false">
+            <classpath path="${cp}"/>
+            <compilerarg value="-Xlint:unchecked"/>
+        </javac>
+    </target>
+    
+    <target name="compile-selected-test" depends="compile">
+        <fail unless="includes">Must set property 'includes'</fail>
+        <mkdir dir="${test.classes.dir}"/>
+        <depend srcdir="${test.dir}" destdir="${test.classes.dir}" cache="build/test-depcache">
+            <classpath path="${test.cp}"/>
+        </depend>
+        <javac srcdir="${test.dir}" destdir="${test.classes.dir}" source="1.5" debug="true" deprecation="${deprecation}" includes="${includes}" includeantruntime="false">
+            <classpath path="${test.cp}"/>
+            <compilerarg value="-Xlint:unchecked"/>
+        </javac>
+    </target>
+    
+    <target name="run-selected-tests" depends="compile-tests">
+        <fail unless="includes">Must set property 'includes'</fail>
+        <mkdir dir="${test.results.dir}"/>
+        <junit failureproperty="tests.failed" showoutput="true" fork="true">
+            <batchtest todir="${test.results.dir}">
+                <fileset dir="${test.dir}" includes="${includes}"/>
+            </batchtest>
+            <classpath path="${test.run.cp}"/>
+            <formatter type="brief" usefile="false"/>
+            <formatter type="xml"/>
+        </junit>
+        <fail if="tests.failed">Some tests failed; see details above.</fail>
+    </target>
+    
+</project>

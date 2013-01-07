@@ -12,12 +12,14 @@
  *************************************************************************/
 package org.signserver.server.log;
 
+import org.cesecore.audit.enums.EventType;
+
 /**
  * Different types of log events used by the SystemLogger.
  * @author Markus Kilås
  * @version $Id$
  */
-public enum EventType {
+public enum SignServerEventTypes implements EventType {
     
     /** Logged at startup of the SignServer application. */
     SIGNSERVER_STARTUP,
@@ -53,5 +55,14 @@ public enum EventType {
     SET_STATUS_PROPERTY,
     
     /** Logged for events regarding worker processing but when a worker logger can not be used because the requested worker does not exist etc. */
-    PROCESS,
+    PROCESS;
+    
+   @Override
+   public boolean equals(EventType value) {
+       if (value == null) {
+           return false;
+       }
+       return this.toString().equals(value.toString());
+    }
+
 }

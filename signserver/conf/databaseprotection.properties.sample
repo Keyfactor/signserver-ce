@@ -5,7 +5,7 @@
 # databaseprotection.classname.0 = (classname, ex org.cesecore.keys.token.SoftCryptoToken)
 # databaseprotection.properties.0 = (serialized token properties)
 # databaseprotection.data.0 = (base64 encoded token data)
-# databaseprotection.tokenpin.0 = userpin1 (activation code for crypto token)
+# databaseprotection.tokenpin.0 = userpin1 (activation code for crypto token). Could be obfuscated with '$EJBCA_HOME/ECA-2655_5_0/bin/ejbca.sh encryptpwd'
 # databaseprotection.version.0 = 2 (1 = HMACSHA256, 2 = SHA256WithRSA, keys pointed by label must match type)
 #
 # Multiple crypto tokens can be repeated by using xx.1 etc, where keyid is an integer, defined by you.
@@ -17,13 +17,13 @@
 #databaseprotection.enableverify = false
 #databaseprotection.enablesign.AuditRecordData = true
 #databaseprotection.enableverify.AuditRecordData = true
-databaseprotection.enablesign = true
-databaseprotection.enableverify = true
+#databaseprotection.enablesign = true
+#databaseprotection.enableverify = true
 #databaseprotection.enablesign.LogManagementData = false
 #databaseprotection.enableverify.LogManagementData = false
 
 # Should the application stop working if we can not verify a row in the database? Default true.
-databaseprotection.erroronverifyfail = true
+#databaseprotection.erroronverifyfail = true
 
 # The id of the token that should be used for protection of new and updated database rows
 # You can configure different keys for different database tables.
@@ -62,3 +62,20 @@ databaseprotection.version.1 = 1
 #databaseprotection.data.2 = 
 #databaseprotection.tokenpin.2 = userpin1
 #databaseprotection.version.2 = 2
+
+# Definition of a crypto token that could only be used by the 'ejbca-db-cli' to
+# verify a version 2 table. 'data' could be either the public key in PEM format
+# or a certificate in PEM format for the key.
+# 'keyid' must be the same as the keyid used in the real CA configuration.
+# To get the public key from an HSM this could be done:
+# $CTB_HOME/ejbcaClientToolBox.sh PKCS11HSMKeyTool certreq /opt/PTK/lib/libcryptoki.so 1 dbProtKey
+# openssl req -in dbProtKey.pem -noout -pubkey > dbProtKeyPub.pem
+#databaseprotection.keyid.2 = 567
+#databaseprotection.keylabel.2 = dummy
+#databaseprotection.classname.2 = org.cesecore.keys.token.PublicCryptoToken
+#databaseprotection.version.2 = 2
+#databaseprotection.data.2 = \
+#MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCtn85gX3W0l2X5mYgApsx02JLO \
+#XKwirRFUpnY5AK4Re8FC5McbNGUFHPTvInJgwOZOOt5u4Gv6pwa1QhbFn5GxHXV/ \
+#S+fEVn6ZWfgCtuLTf64cDKyMmzFgKRUxMs7VttcE9yxaLpFPPHpQG71eQa3uIsaI \
+#P+JYTOtUjz7A4sgw8QIDAQAB

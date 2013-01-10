@@ -13,6 +13,7 @@
 package org.signserver.ejb;
 
 import java.util.*;
+
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.EJBException;
@@ -20,6 +21,9 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 import org.apache.log4j.Logger;
+import org.cesecore.audit.enums.EventStatus;
+import org.cesecore.audit.log.AuditRecordStorageException;
+import org.cesecore.audit.log.SecurityEventsLoggerSessionLocal;
 import org.signserver.common.*;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.worker.impl.IWorkerManagerSessionLocal;
@@ -32,6 +36,7 @@ import org.signserver.server.log.SignServerEventTypes;
 import org.signserver.server.log.ISystemLogger;
 import org.signserver.server.log.LogMap;
 import org.signserver.server.log.SignServerModuleTypes;
+import org.signserver.server.log.SignServerServiceTypes;
 import org.signserver.server.log.SystemLoggerException;
 import org.signserver.server.log.SystemLoggerFactory;
 import org.signserver.server.nodb.FileBasedDatabaseManager;
@@ -55,7 +60,9 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
     @EJB
     private IWorkerManagerSessionLocal workerManagerSession;
     
-
+    @EJB
+    private SecurityEventsLoggerSessionLocal logSession;
+    
     EntityManager em;
 
     private static final long serialVersionUID = 1L;
@@ -277,21 +284,28 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
 
     }
 
-    private static void auditLog(final SignServerEventTypes eventType, final String property,
+    private void auditLog(final SignServerEventTypes eventType, final String property,
             final String value) {
         try {
-            final LogMap logMap = new LogMap();
+            Map<String, Object> details = new LinkedHashMap<String, Object>();
+
+            //final LogMap logMap = new LogMap();
 
             if (property != null) {
-                logMap.put(IGlobalConfigurationSession.LOG_PROPERTY,
-                    property);
+                details.put(IGlobalConfigurationSession.LOG_PROPERTY, property);
+                /*logMap.put(IGlobalConfigurationSession.LOG_PROPERTY,
+                    property);*/
             }
             if (value != null) {
-                logMap.put(IGlobalConfigurationSession.LOG_VALUE,
-                        value);
+                details.put(IGlobalConfigurationSession.LOG_VALUE, value);
+                /*logMap.put(IGlobalConfigurationSession.LOG_VALUE,
+                        value);*/
             }
-            AUDITLOG.log(eventType, SignServerModuleTypes.GLOBAL_CONFIG, "", logMap);
-        } catch (SystemLoggerException ex) {
+            
+            logSession.log(eventType, EventStatus.SUCCESS, SignServerModuleTypes.GLOBAL_CONFIG, SignServerServiceTypes.SIGNSERVER, 
+                    "GlobalConfigurationSessionBean.auditLog", null, null, null, details);
+            //AUDITLOG.log(eventType, SignServerModuleTypes.GLOBAL_CONFIG, "", logMap);
+        } catch (AuditRecordStorageException ex) {
             LOG.error("Audit log failure", ex);
             throw new EJBException("Audit log failure", ex);
         }

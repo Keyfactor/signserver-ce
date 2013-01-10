@@ -13,14 +13,22 @@
 package org.signserver.statusrepo.impl;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+
+import javax.ejb.EJB;
 import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import org.apache.log4j.Logger;
 import org.signserver.server.log.SignServerEventTypes;
 import org.signserver.server.log.ISystemLogger;
+import org.cesecore.audit.enums.EventStatus;
+import org.cesecore.audit.log.AuditRecordStorageException;
+import org.cesecore.audit.log.SecurityEventsLoggerSession;
+import org.cesecore.audit.log.SecurityEventsLoggerSessionLocal;
 import org.signserver.server.log.LogMap;
 import org.signserver.server.log.SignServerModuleTypes;
+import org.signserver.server.log.SignServerServiceTypes;
 import org.signserver.server.log.SystemLoggerException;
 import org.signserver.server.log.SystemLoggerFactory;
 import org.signserver.statusrepo.IStatusRepositorySession;
@@ -31,8 +39,8 @@ import org.signserver.statusrepo.common.StatusName;
 /**
  * Session bean offering an interface towards the status repository.
  *
- * @author Markus Kilås
  * @version $Id$
+ * @author Markus Kilås
  */
 @Stateless
 public class StatusRepositorySessionBean implements
@@ -45,10 +53,12 @@ public class StatusRepositorySessionBean implements
     /** Audit logger. */
     private static final ISystemLogger AUDITLOG = SystemLoggerFactory
             .getInstance().getLogger(StatusRepository.class);
-
+    
     /** The repository instance. */
     private final StatusRepository repository;
 
+    @EJB
+    private SecurityEventsLoggerSessionLocal logSession;
     
     /**
      * Constructs this class.
@@ -127,22 +137,28 @@ public class StatusRepositorySessionBean implements
         return repository.getEntries();
     }
     
-    private static void auditLog(String property, String value, Long expiration) {
+    private void auditLog(String property, String value, Long expiration) {
         try {
-            final LogMap logMap = new LogMap();
+            final Map<String, Object> details = new LinkedHashMap<String, Object>();
+            //final LogMap logMap = new LogMap();
 
-            logMap.put(IStatusRepositorySession.LOG_PROPERTY, property);
+            details.put(IStatusRepositorySession.LOG_PROPERTY, property);
+            //logMap.put(IStatusRepositorySession.LOG_PROPERTY, property);
             if (value != null) {
-                logMap.put(IStatusRepositorySession.LOG_VALUE,
-                        value);
+                details.put(IStatusRepositorySession.LOG_VALUE, value);
+                /*logMap.put(IStatusRepositorySession.LOG_VALUE,
+                        value);*/
             }
             if (expiration != null) {
-                logMap.put(IStatusRepositorySession.LOG_EXPIRATION,
-                    String.valueOf(expiration));
+                details.put(IStatusRepositorySession.LOG_EXPIRATION, String.valueOf(expiration));
+                /*logMap.put(IStatusRepositorySession.LOG_EXPIRATION,
+                    String.valueOf(expiration));*/
             }
 
-            AUDITLOG.log(SignServerEventTypes.SET_STATUS_PROPERTY, SignServerModuleTypes.STATUS_REPOSITORY, "", logMap);
-        } catch (SystemLoggerException ex) {
+            logSession.log(SignServerEventTypes.SET_STATUS_PROPERTY, EventStatus.SUCCESS, SignServerModuleTypes.STATUS_REPOSITORY,
+                    SignServerServiceTypes.SIGNSERVER, "StatusRepositorySessionBean.auditLog", null, null, null, details);
+            //AUDITLOG.log(SignServerEventTypes.SET_STATUS_PROPERTY, SignServerModuleTypes.STATUS_REPOSITORY, "", logMap);
+        } catch (AuditRecordStorageException ex) {
             LOG.error("Audit log failure", ex);
             throw new EJBException("Audit log failure", ex);
         }

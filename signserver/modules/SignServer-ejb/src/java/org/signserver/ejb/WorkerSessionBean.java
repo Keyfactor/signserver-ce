@@ -65,11 +65,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     
     /** Log4j instance for this class. */
     private static final Logger LOG = Logger.getLogger(WorkerSessionBean.class);
-
-    /** Audit logger. */
-    private static final ISystemLogger AUDITLOG = SystemLoggerFactory
-            .getInstance().getLogger(WorkerSessionBean.class);
-    
+   
     /** The local home interface of Worker Config entity bean. */
     private IWorkerConfigDataService workerConfigService;
     
@@ -152,20 +148,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         final IWorker worker = workerManagerSession.getWorker(workerId, globalConfigurationSession);
 
         if (worker == null) {
-            final IllegalRequestException ex =
-                    new NoSuchWorkerException(String.valueOf(workerId));
-
-            logMap.put(IWorkerLogger.LOG_EXCEPTION, ex.getMessage());
-            logMap.put(IWorkerLogger.LOG_PROCESS_SUCCESS, String.valueOf(false));
-            try {
-                AUDITLOG.log(SignServerEventTypes.PROCESS, SignServerModuleTypes.WORKER, "", logMap);
-                
-                //logSession.log(SignServerEventTypes.PROCESS, EventStatus.FAILURE, SignServerModuleTypes.SERVICE, SignServerServiceTypes.SIGNSERVER, "WorkerSessionBean.process", null, null, null, null);                               
-
-            } catch (SystemLoggerException ex2) {
-                LOG.error("Audit log failure", ex2);
-            }
-            throw ex;
+            throw new NoSuchWorkerException(String.valueOf(workerId));
         }
         final WorkerConfig awc = worker.getConfig();
 
@@ -413,20 +396,19 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             	workerLogger.log(logMap);
             }
             
-            // TODO: Worker log to secure log if configured to do so
+            // TODO: make audit logging using CESeCore here configurable
+            /*
             Map<String, Object> details = new LinkedHashMap<String, Object>();
             details.put("msg", "start services startup msg");
             try {
-                // TODO: put in the log map here...
-                // TODO: make audit logging here configurable
-                /*logSession.log(SignServerEventTypes.PROCESS, EventStatus.SUCCESS, SignServerModuleTypes.SERVICE, SignServerServiceTypes.SIGNSERVER,
+                
+                logSession.log(SignServerEventTypes.PROCESS, EventStatus.SUCCESS, SignServerModuleTypes.SERVICE, SignServerServiceTypes.SIGNSERVER,
                         "WorkerSessionBean.process", null, null, null, null);                               
-                */
 
                 LOG.info("After logging");
             } catch (AuditRecordStorageException ex) {
                 LOG.error("Logging", ex);
-            }
+            }*/
 
             LOG.debug("<process");
             return res;
@@ -1280,8 +1262,6 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     
     private void auditLog(SignServerEventTypes eventType, SignServerModuleTypes module, String customId, Map<String, Object> additionalDetails) {
         try {
-            //AUDITLOG.log(eventType, module, customId, additionalDetails);
-            // TODO: fix detail map
             logSession.log(eventType, EventStatus.SUCCESS, module, SignServerServiceTypes.SIGNSERVER,
                     "WorkerSessionBean.auditLog", customId, null, null, additionalDetails);                               
 

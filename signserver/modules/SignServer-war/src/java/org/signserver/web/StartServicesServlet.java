@@ -13,7 +13,6 @@
 package org.signserver.web;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,12 +35,9 @@ import org.signserver.common.FileBasedDatabaseException;
 import org.signserver.common.ServiceLocator;
 import org.signserver.ejb.interfaces.IServiceTimerSession;
 import org.signserver.server.cesecore.AlwaysAllowLocalAuthenticationToken;
-import org.signserver.server.log.ISystemLogger;
 import org.signserver.server.log.SignServerEventTypes;
 import org.signserver.server.log.SignServerModuleTypes;
 import org.signserver.server.log.SignServerServiceTypes;
-import org.signserver.server.log.SystemLoggerException;
-import org.signserver.server.log.SystemLoggerFactory;
 import org.signserver.server.nodb.FileBasedDatabaseManager;
 import org.signserver.statusrepo.IStatusRepositorySession;
 import org.signserver.statusrepo.common.NoSuchPropertyException;
@@ -62,10 +58,6 @@ public class StartServicesServlet extends HttpServlet {
     private static final Logger LOG
             = Logger.getLogger(StartServicesServlet.class);
     
-    /** SystemLogger for this class. */
-    private static final ISystemLogger AUDITLOG = SystemLoggerFactory
-            .getInstance().getLogger(StartServicesServlet.class);
-
     @EJB
     private IServiceTimerSession.IRemote timedServiceSession;
 
@@ -110,14 +102,6 @@ public class StartServicesServlet extends HttpServlet {
                 CompileTimeSettings.SIGNSERVER_VERSION);
 
         LOG.info("Destroy,  " + version + " shutdown.");
-
-        try {
-            final Map<String, String> fields = new HashMap<String, String>();
-            fields.put(ISystemLogger.LOG_VERSION, version);
-            AUDITLOG.log(SignServerEventTypes.SIGNSERVER_SHUTDOWN, SignServerModuleTypes.SERVICE, "", fields);
-        } catch (SystemLoggerException ex) {
-            LOG.error("Audit log error", ex);
-        }
         
         // Try to unload the timers
         LOG.debug(">destroy calling ServiceSession.unload");
@@ -139,15 +123,7 @@ public class StartServicesServlet extends HttpServlet {
                 CompileTimeSettings.SIGNSERVER_VERSION);
         
         LOG.info("Init, " + version + " startup.");
-
-        try {
-            final Map<String, String> fields = new HashMap<String, String>();
-            fields.put(ISystemLogger.LOG_VERSION, version);
-            AUDITLOG.log(SignServerEventTypes.SIGNSERVER_STARTUP, SignServerModuleTypes.SERVICE, "", fields);
-        } catch (SystemLoggerException ex) {
-            LOG.error("Audit log error", ex);
-        }
-        
+      
         // Make a log row that EJBCA is starting
         AuthenticationToken admin = new AlwaysAllowLocalAuthenticationToken(new UsernamePrincipal("StartServicesServlet.init"));
         Map<String, Object> details = new LinkedHashMap<String, Object>();

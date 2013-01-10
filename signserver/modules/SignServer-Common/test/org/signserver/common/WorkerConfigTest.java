@@ -41,7 +41,7 @@ public class WorkerConfigTest extends TestCase {
         newConf.setProperty("foo", "bar");
         newConf.setProperty("newprop", "newval");
 
-        final Map<String, String> diff = WorkerConfig.propertyDiff(oldConf, newConf);
+        final Map<String, Object> diff = WorkerConfig.propertyDiff(oldConf, newConf);
 
         assertEquals("Number of diff entries", 1, diff.size());
         assertTrue("Cotains entry", "newval".equals(diff.get("added:newprop")));
@@ -60,7 +60,7 @@ public class WorkerConfigTest extends TestCase {
         newConf.setProperty("foo", "bar");
         newConf.setProperty("bar", "newval");
 
-        final Map<String, String> diff = WorkerConfig.propertyDiff(oldConf, newConf);
+        final Map<String, Object> diff = WorkerConfig.propertyDiff(oldConf, newConf);
 
         assertEquals("Number of diff entries", 1, diff.size());
         assertTrue("Cotains entry", "newval".equals(diff.get("changed:bar")));
@@ -78,7 +78,7 @@ public class WorkerConfigTest extends TestCase {
         oldConf.setProperty("bar", "foobar");
         newConf.setProperty("foo", "bar");
 
-        final Map<String, String> diff = WorkerConfig.propertyDiff(oldConf, newConf);
+        final Map<String, Object> diff = WorkerConfig.propertyDiff(oldConf, newConf);
 
         assertEquals("Number of diff entries", 1, diff.size());
         assertTrue("Contains entry", "foobar".equals(diff.get("removed:bar")));
@@ -96,7 +96,7 @@ public class WorkerConfigTest extends TestCase {
         newConf.setProperty("foo", "foobar");
         newConf.setProperty("bar", "foo");
 
-        final Map<String, String> diff = WorkerConfig.propertyDiff(oldConf, newConf);
+        final Map<String, Object> diff = WorkerConfig.propertyDiff(oldConf, newConf);
 
         assertEquals("Number of diff entries", 2, diff.size());
         assertTrue("Contains entries",
@@ -116,7 +116,7 @@ public class WorkerConfigTest extends TestCase {
         oldConf.setProperty("bar", "foo");
         newConf.setProperty("foo", "foobar");
 
-        final Map<String, String> diff = WorkerConfig.propertyDiff(oldConf, newConf);
+        final Map<String, Object> diff = WorkerConfig.propertyDiff(oldConf, newConf);
 
         assertEquals("Number of diff entries", 2, diff.size());
         assertTrue("Contains entries",
@@ -136,7 +136,7 @@ public class WorkerConfigTest extends TestCase {
         newConf.setProperty("bar", "foo");
         newConf.setProperty("foobar", "foobar");
 
-        final Map<String, String> diff = WorkerConfig.propertyDiff(oldConf, newConf);
+        final Map<String, Object> diff = WorkerConfig.propertyDiff(oldConf, newConf);
 
         assertEquals("Number of diff entries", 2, diff.size());
         assertTrue("Contains entries",

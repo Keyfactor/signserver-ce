@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings version="1.0"
+    xmlns="http://java.sun.com/xml/ns/persistence/orm"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_1_0.xsd">
+
+    <!-- 
+         This file contains mappings specific to MySQL.
+
+         Keep this in sync with orm-{database}.xml!
+
+         boolean: TINYINT(4)
+         int:     INT(11)
+         long:    BIGINT(20)
+         String:  VARCHAR(250) BINARY
+         CLOB:    LONGTEXT
+         Object:  LONGBLOB
+
+         Exceptions:
+         - HardTokenPropertyData.id: VARCHAR(80) BINARY [UTF-8 1000 bytes combined primary key limitation on MyISAM]
+         - KeyRecoveryData.certSN:   VARCHAR(80) BINARY [UTF-8 1000 bytes combined primary key limitation on MyISAM]
+         
+         Notes:
+         - VARCHAR(..) BINARY is case sensitive, e.g. "a" != "A"
+         - MyISAM engine does not support foreign keys.
+    --> 
+    
+   <entity class="org.cesecore.authorization.rules.AccessRuleData" access="PROPERTY" metadata-complete="false">
+        <attributes>
+            <id name="primaryKey"><column name="pK" column-definition="INT(11)"/></id>
+            <basic name="accessRuleName"><column name="accessRule" column-definition="VARCHAR(250) BINARY" nullable="false"/></basic>
+            <basic name="state"><column name="rule" column-definition="INT(11)" nullable="false"/></basic>
+            <basic name="recursiveBool"><column name="isRecursive" column-definition="TINYINT(4)" nullable="false"/></basic>
+            <basic name="rowProtection"><column name="rowProtection" column-definition="LONGTEXT"/><lob/></basic>
+            <version name="rowVersion"><column name="rowVersion" column-definition="INT(11)" nullable="false"/></version>
+            <transient name="recursiveInt"/>
+        </attributes>
+    </entity>
+    
+   <entity class="org.cesecore.authorization.cache.AccessTreeUpdateData" access="PROPERTY" metadata-complete="false">
+        <attributes>
+            <id name="primaryKey"><column name="pK" column-definition="INT(11)"/></id>
+            <basic name="accessTreeUpdateNumber"><column name="accessTreeUpdateNumber" column-definition="INT(11)" nullable="false"/></basic>
+            <basic name="rowProtection"><column name="rowProtection" column-definition="LONGTEXT"/><lob/></basic>
+            <version name="rowVersion"><column name="rowVersion" column-definition="INT(11)" nullable="false"/></version>
+        </attributes>
+    </entity>
+    
+ 	<entity class="org.cesecore.authorization.user.AccessUserAspectData" access="PROPERTY" metadata-complete="false">
+        <attributes>
+            <id name="primaryKey"><column name="pK" column-definition="INT(11)"/></id>
+            <basic name="matchWith"><column name="matchWith" column-definition="INT(11)" nullable="false"/></basic>
+            <basic name="matchType"><column name="matchType" column-definition="INT(11)" nullable="false"/></basic>
+            <basic name="matchValue"><column name="matchValue" column-definition="VARCHAR(250) BINARY"/></basic>
+            <basic name="caId"><column name="cAId" column-definition="INT(11)" nullable="false"/></basic>
+            <basic name="rowProtection"><column name="rowProtection" column-definition="LONGTEXT"/><lob/></basic>
+            <basic fetch="EAGER" name="tokenType"><column name="tokenType" column-definition="VARCHAR(250) BINARY"/></basic>
+            <version name="rowVersion"><column name="rowVersion" column-definition="INT(11)" nullable="false"/></version>
+        </attributes>
+    </entity>
+       
+   <entity class="org.cesecore.audit.impl.queued.entity.AuditLogCryptoTokenConfigData" access="PROPERTY" metadata-complete="false">
+        <attributes>
+            <id name="id">
+                <column name="id" column-definition="BIGINT(20)" nullable="false" updatable="false" unique="true"/>
+                <generated-value strategy="AUTO" />
+            </id>
+            <basic name="classname"><column name="classname" column-definition="VARCHAR(255)" nullable="false"/></basic>
+            <basic name="tokenProperties"><column name="tokenProperties" column-definition="TEXT" nullable="false"/></basic>
+            <basic name="data"><column name="data" column-definition="LONGTEXT" nullable="true"/></basic>
+            <basic name="rowProtection"><column name="rowProtection" column-definition="LONGTEXT"/><lob/></basic>
+            <version name="rowVersion"><column name="rowVersion" column-definition="INT(11)" nullable="false"/></version>
+        </attributes>
+   </entity>
+    
+    <entity class="org.cesecore.audit.impl.queued.entity.AuditLogData" access="PROPERTY" metadata-complete="false">
+        <attributes>
+            <id name="id">
+                <column name="id" column-definition="BIGINT(20)" nullable="false" updatable="false" unique="true"/>
+                <generated-value strategy="AUTO" />
+            </id>
+            <basic name="timeStamp">
+                <column name="timeStamp" column-definition="BIGINT(20)" nullable="false" updatable="false"/>
+            </basic>
+            <basic name="eventType"><column name="eventType" column-definition="VARCHAR(256)" nullable="false" updatable="false"/></basic>
+            <basic name="eventStatus">
+                <column name="eventStatus" column-definition="VARCHAR(31)" nullable="false" updatable="false"/>
+                <enumerated>STRING</enumerated>
+            </basic>
+            <basic name="authToken"><column name="authToken" column-definition="VARCHAR(256)" nullable="false" updatable="false"/></basic>
+            <basic name="service"><column name="service" column-definition="VARCHAR(256)" nullable="false" updatable="false"/></basic>
+            <basic name="module"><column name="module" column-definition="VARCHAR(256)" nullable="false" updatable="false"/></basic>
+            <basic name="additionalDetails">
+                <column name="additionalDetails" column-definition="TEXT" nullable="true" updatable="false"/>
+            </basic>
+            <basic name="signature"><column name="signature" column-definition="TEXT" nullable="true" updatable="false"/></basic>
+            <basic name="sequenceNumber"><column name="sequenceNumber" column-definition="BIGINT(20)" nullable="false" updatable="false"/></basic>
+            <many-to-one name="config"><join-column name="config_id"/></many-to-one>
+        </attributes>
+   </entity>
+
+    <entity class="org.cesecore.audit.impl.integrityprotected.AuditRecordData" access="PROPERTY" metadata-complete="false">
+        <attributes>
+            <id name="pk"><column name="pk" column-definition="VARCHAR(250) BINARY"/></id>
+            <basic name="nodeId"><column name="nodeId" column-definition="VARCHAR(250) BINARY" nullable="false" updatable="false"/></basic>
+            <basic name="sequenceNumber"><column name="sequenceNumber" column-definition="BIGINT(20)" nullable="false" updatable="false"/></basic>
+            <basic name="timeStamp"><column name="timeStamp" column-definition="BIGINT(20)" nullable="false" updatable="false"/></basic>
+            <basic name="eventType"><column name="eventType" column-definition="VARCHAR(250) BINARY" nullable="false" updatable="false"/></basic>
+            <basic name="eventStatus"><column name="eventStatus" column-definition="VARCHAR(250) BINARY" nullable="false" updatable="false"/></basic>
+            <basic name="authToken"><column name="authToken" column-definition="VARCHAR(250) BINARY" nullable="false" updatable="false"/></basic>
+            <basic name="service"><column name="service" column-definition="VARCHAR(250) BINARY" nullable="false" updatable="false"/></basic>
+            <basic name="module"><column name="module" column-definition="VARCHAR(250) BINARY" nullable="false" updatable="false"/></basic>
+            <basic name="customId"><column name="customId" column-definition="VARCHAR(250) BINARY" nullable="true" updatable="false"/></basic>
+            <basic name="searchDetail1"><column name="searchDetail1" column-definition="VARCHAR(250) BINARY" nullable="true" updatable="false"/></basic>
+            <basic name="searchDetail2"><column name="searchDetail2" column-definition="VARCHAR(250) BINARY" nullable="true" updatable="false"/></basic>
+            <basic name="additionalDetails"><column name="additionalDetails" column-definition="LONGTEXT" nullable="true" updatable="false"/></basic>
+            <basic name="rowProtection"><column name="rowProtection" column-definition="LONGTEXT"/><lob/></basic>
+            <version name="rowVersion"><column name="rowVersion" column-definition="INT(11)" nullable="false"/></version>
+        </attributes>
+    </entity>
+
+    <entity class="org.cesecore.certificates.ca.CAData" access="PROPERTY" metadata-complete="false">
+        <attributes>
+            <id name="caId"><column name="cAId" column-definition="INT(11)"/></id>
+            <basic name="name"><column name="name" column-definition="VARCHAR(250) BINARY"/></basic>
+            <basic name="subjectDN"><column name="subjectDN" column-definition="VARCHAR(250) BINARY"/></basic>
+            <basic name="status"><column name="status" column-definition="INT(11)" nullable="false"/></basic>
+            <basic name="expireTime"><column name="expireTime" column-definition="BIGINT(20)" nullable="false"/></basic>
+            <basic name="updateTime"><column name="updateTime" column-definition="BIGINT(20)" nullable="false"/></basic>
+            <basic name="data"><column name="data" column-definition="LONGTEXT" nullable="false"/><lob/></basic>
+            <basic name="rowProtection"><column name="rowProtection" column-definition="LONGTEXT"/><lob/></basic>
+            <version name="rowVersion"><column name="rowVersion" column-definition="INT(11)" nullable="false"/></version>
+        </attributes>
+    </entity>
+
+    <entity class="org.cesecore.certificates.certificate.CertificateData" access="PROPERTY" metadata-complete="false">
+        <attributes>
+            <id name="fingerprint"><column name="fingerprint" column-definition="VARCHAR(250) BINARY"/></id>
+            <basic name="issuerDN"><column name="issuerDN" column-definition="VARCHAR(250) BINARY" nullable="false"/></basic>
+            <basic name="subjectDN"><column name="subjectDN" column-definition="VARCHAR(250) BINARY" nullable="false"/></basic>
+            <basic name="caFingerprint"><column name="cAFingerprint" column-definition="VARCHAR(250) BINARY"/></basic>
+            <basic name="status"><column name="status" column-definition="INT(11)" nullable="false"/></basic>
+            <basic name="type"><column name="type" column-definition="INT(11)" nullable="false"/></basic>
+            <basic name="serialNumber"><column name="serialNumber" column-definition="VARCHAR(250) BINARY" nullable="false"/></basic>
+            <basic name="expireDate"><column name="expireDate" column-definition="BIGINT(20)" nullable="false"/></basic>
+            <basic name="revocationDate"><column name="revocationDate" column-definition="BIGINT(20)" nullable="false"/></basic>
+            <basic name="revocationReason"><column name="revocationReason" column-definition="INT(11)" nullable="false"/></basic>
+            <!-- We need to allow this field to be null in external OCSP responder mode and it's easier if the tables look the same! -->
+            <basic name="base64Cert"><column name="base64Cert" column-definition="LONGTEXT"/><lob/></basic>
+            <basic name="username"><column name="username" column-definition="VARCHAR(250) BINARY"/></basic>
+            <basic name="tag"><column name="tag" column-definition="VARCHAR(250) BINARY"/></basic>
+            <basic name="certificateProfileId"><column name="certificateProfileId" column-definition="INT(11)" nullable="false"/></basic>
+            <basic name="updateTime"><column name="updateTime" column-definition="BIGINT(20)" nullable="false"/></basic>
+            <basic name="subjectKeyId"><column name="subjectKeyId" column-definition="VARCHAR(250) BINARY"/></basic>
+            <basic name="rowProtection"><column name="rowProtection" column-definition="LONGTEXT"/><lob/></basic>
+            <version name="rowVersion"><column name="rowVersion" column-definition="INT(11)" nullable="false"/></version>
+        </attributes>
+    </entity>
+    
+   <entity class="org.cesecore.keys.key.management.CertificateKeyAssociationData" access="PROPERTY" metadata-complete="false">
+        <attributes>
+            <id name="fingerPrint">
+                <column name="fingerPrint" column-definition="VARCHAR(250) BINARY" nullable="false" updatable="false" unique="true"/>
+            </id>
+            <basic name="base64Cert"><column name="base64Cert" column-definition="LONGTEXT" nullable="false"/><lob/></basic>
+            <basic name="tags"><column name="tags" column-definition="VARCHAR(256)" nullable="false"/><lob/></basic>
+            <basic name="keyAlias"><column name="keyAlias" column-definition="VARCHAR(256)" nullable="false"/></basic>
+            <basic name="rowProtection"><column name="rowProtection" column-definition="LONGTEXT"/><lob/></basic>
+            <version name="rowVersion"><column name="rowVersion" column-definition="INT(11)" nullable="false"/></version>
+        </attributes>
+   </entity> 
+    
+    <entity class="org.cesecore.certificates.certificateprofile.CertificateProfileData" access="PROPERTY" metadata-complete="false">
+        <attributes>
+            <id name="id"><column name="id" column-definition="INT(11)"/></id>
+            <basic name="certificateProfileName"><column name="certificateProfileName" column-definition="VARCHAR(250) BINARY" nullable="false"/></basic>
+            <basic name="dataUnsafe"><column name="data" column-definition="LONGBLOB" nullable="false"/><lob/></basic>
+            <basic name="rowProtection"><column name="rowProtection" column-definition="LONGTEXT"/><lob/></basic>
+            <version name="rowVersion"><column name="rowVersion" column-definition="INT(11)" nullable="false"/></version>
+        </attributes>
+    </entity>
+    
+    <entity class="org.cesecore.certificates.crl.CRLData" access="PROPERTY" metadata-complete="false">
+        <attributes>
+            <id name="fingerprint"><column name="fingerprint" column-definition="VARCHAR(250) BINARY"/></id>
+            <basic name="crlNumber"><column name="cRLNumber" column-definition="INT(11)" nullable="false"/></basic>
+            <basic name="issuerDN"><column name="issuerDN" column-definition="VARCHAR(250) BINARY" nullable="false"/></basic>
+            <basic name="caFingerprint"><column name="cAFingerprint" column-definition="VARCHAR(250) BINARY" nullable="false"/></basic>
+            <basic name="thisUpdate"><column name="thisUpdate" column-definition="BIGINT(20)" nullable="false"/></basic>
+            <basic name="nextUpdate"><column name="nextUpdate" column-definition="BIGINT(20)" nullable="false"/></basic>
+            <basic name="deltaCRLIndicator"><column name="deltaCRLIndicator" column-definition="INT(11)" nullable="false"/></basic>
+            <basic name="base64Crl"><column name="base64Crl" column-definition="LONGTEXT" nullable="false"/><lob/></basic>
+            <basic name="rowProtection"><column name="rowProtection" column-definition="LONGTEXT"/><lob/></basic>
+            <version name="rowVersion"><column name="rowVersion" column-definition="INT(11)" nullable="false"/></version>
+        </attributes>
+    </entity>
+    
+   <entity class="org.cesecore.audit.impl.queued.entity.DigSignLogManagementData" access="PROPERTY" metadata-complete="false">
+   </entity>
+    
+   <entity class="org.cesecore.audit.impl.queued.entity.HmacLogManagementData" access="PROPERTY" metadata-complete="false">
+   </entity> 
+
+   <entity class="org.cesecore.audit.impl.queued.entity.LogManagementData" access="PROPERTY" metadata-complete="false">
+        <inheritance strategy="SINGLE_TABLE"/>
+        <discriminator-column name="signMode" discriminator-type="STRING"/>
+        <attributes>
+            <id name="id">
+                <column name="id" column-definition="BIGINT(20)" nullable="false" updatable="false" unique="true"/>
+                <generated-value strategy="AUTO" />
+            </id>
+            <basic name="timestamp">
+                <column name="timestamp" column-definition="BIGINT(20)" nullable="false" updatable="false" insertable="true"/>
+            </basic>
+            <basic name="signMode">
+                <column name="signMode" column-definition="VARCHAR(31)" nullable="false" updatable="false" insertable="false"/>
+            </basic>
+            <basic name="frequency"><column name="frequency" column-definition="BIGINT(20)" nullable="true" updatable="false"/></basic>
+            <basic name="details"><column name="details" column-definition="TEXT" nullable="true"/></basic>
+            <basic name="rowProtection"><column name="rowProtection" column-definition="LONGTEXT"/><lob/></basic>
+            <version name="rowVersion"><column name="rowVersion" column-definition="INT(11)" nullable="false"/></version>
+            <one-to-many name="logs" mapped-by="config"></one-to-many>
+            <one-to-one name="tokenConfig" target-entity="org.cesecore.audit.impl.queued.entity.AuditLogCryptoTokenConfigData">
+                <join-column name="token_id"/>
+            </one-to-one> 
+        </attributes>
+   </entity>
+    
+ 	 <entity class="org.cesecore.roles.RoleData" access="PROPERTY" metadata-complete="false">
+        <attributes>
+            <id name="primaryKey"><column name="pK" column-definition="INT(11)"/></id>
+            <basic name="roleName"><column name="adminGroupName" column-definition="VARCHAR(250) BINARY" nullable="false"/></basic>
+            <basic name="rowProtection"><column name="rowProtection" column-definition="LONGTEXT"/><lob/></basic>
+            <version name="rowVersion"><column name="rowVersion" column-definition="INT(11)" nullable="false"/></version>
+            <one-to-many name="accessRules" fetch="EAGER"><map-key name="primaryKey"/><join-column name="RoleData_accessRules" column-definition="INT(11)"/><cascade><cascade-all/></cascade></one-to-many>
+            <one-to-many name="accessUsers" fetch="EAGER"><map-key name="primaryKey"/><join-column name="RoleData_accessUsers" column-definition="INT(11)"/><cascade><cascade-all/></cascade></one-to-many>
+        </attributes>
+    </entity>
+</entity-mappings>

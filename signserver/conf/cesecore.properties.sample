@@ -90,7 +90,7 @@ securityeventsaudit.exporter.1=org.cesecore.audit.impl.AuditExporterXml
 
 # Example configuration of QueuedDevice that logs to the database
 # With JSON export to /tmp/ (default export dir)
-#securityeventsaudit.implementation.2=org.cesecore.audit.impl.queued.QueuedDevice
+securityeventsaudit.implementation.2=org.cesecore.audit.impl.queued.QueuedDevice
 securityeventsaudit.exporter.2=org.cesecore.audit.impl.AuditExporterJson
 #securityeventsaudit.deviceproperty.2.export.dir=/tmp/
 #securityeventsaudit.deviceproperty.2.export.fetchsize=1000

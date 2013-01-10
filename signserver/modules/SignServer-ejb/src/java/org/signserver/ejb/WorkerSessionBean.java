@@ -25,7 +25,10 @@ import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
+import org.cesecore.audit.enums.EventStatus;
+import org.cesecore.audit.log.AuditRecordStorageException;
 import org.cesecore.audit.log.SecurityEventsLoggerSessionLocal;
+
 import org.ejbca.util.CertTools;
 import org.signserver.common.*;
 import org.signserver.common.KeyTestResult;
@@ -156,6 +159,9 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             logMap.put(IWorkerLogger.LOG_PROCESS_SUCCESS, String.valueOf(false));
             try {
                 AUDITLOG.log(SignServerEventTypes.PROCESS, SignServerModuleTypes.WORKER, "", logMap);
+                
+                //logSession.log(SignServerEventTypes.PROCESS, EventStatus.FAILURE, SignServerModuleTypes.SERVICE, SignServerServiceTypes.SIGNSERVER, "WorkerSessionBean.process", null, null, null, null);                               
+
             } catch (SystemLoggerException ex2) {
                 LOG.error("Audit log failure", ex2);
             }
@@ -404,19 +410,23 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             // log process status true if not already set by the worker...
             if (logVal == null) {
             	logMap.put(IWorkerLogger.LOG_PROCESS_SUCCESS, String.valueOf(true));
+            	workerLogger.log(logMap);
             }
-            workerLogger.log(logMap);
             
             // TODO: Worker log to secure log if configured to do so
-//            AuthenticationToken admin = new AlwaysAllowLocalAuthenticationToken(new UsernamePrincipal("StartServicesServlet.init"));
-//            Map<String, Object> details = new LinkedHashMap<String, Object>();
-//            details.put("msg", "start services startup msg");
-//            try {
-//                logSession.log(SignServerEventTypes.CA_RENEWED, EventStatus.SUCCESS, EjbcaModuleTypes.SERVICE, SignServerServiceTypes.SIGNSERVER, admin.toString(), null, null, null, details);				
-//                LOG.info("After logging");
-//            } catch (AuditRecordStorageException ex) {
-//                LOG.error("Logging", ex);
-//            }
+            Map<String, Object> details = new LinkedHashMap<String, Object>();
+            details.put("msg", "start services startup msg");
+            try {
+                // TODO: put in the log map here...
+                // TODO: make audit logging here configurable
+                /*logSession.log(SignServerEventTypes.PROCESS, EventStatus.SUCCESS, SignServerModuleTypes.SERVICE, SignServerServiceTypes.SIGNSERVER,
+                        "WorkerSessionBean.process", null, null, null, null);                               
+                */
+
+                LOG.info("After logging");
+            } catch (AuditRecordStorageException ex) {
+                LOG.error("Logging", ex);
+            }
 
             LOG.debug("<process");
             return res;
@@ -793,7 +803,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         signer.generateKey(keyAlgorithm, keySpec, alias,
                 authCode);
         
-        final HashMap<String, String> auditMap = new HashMap<String, String>();
+        final HashMap<String, Object> auditMap = new HashMap<String, Object>();
         auditMap.put("KEYALG", keyAlgorithm);
         auditMap.put("KEYSPEC", keySpec);
         auditMap.put("KEYALIAS", alias);
@@ -857,7 +867,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         }
         
         final Collection<KeyTestResult> result = signer.testKey(alias, authCode);
-        final HashMap<String, String> auditMap = new HashMap<String, String>();
+        final HashMap<String, Object> auditMap = new HashMap<String, Object>();
         auditMap.put("KEYALIAS", alias);
         auditMap.put("TESTRESULTS", createResultsReport(result));
         auditLog(SignServerEventTypes.KEYTEST, SignServerModuleTypes.KEY_MANAGEMENT, String.valueOf(signerId), auditMap);
@@ -884,7 +894,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     }
     
     private void auditLogCertInstalled(final int workerId, final String value, final String scope, final String node) {
-        final HashMap<String, String> auditMap = new HashMap<String, String>();
+        final HashMap<String, Object> auditMap = new HashMap<String, Object>();
         auditMap.put("CERTIFICATE", value);
         auditMap.put("SCOPE", scope);
         if ("NODE".equalsIgnoreCase(scope)) {
@@ -894,7 +904,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     }
     
     private void auditLogCertChainInstalled(final int workerId, final String value, final String scope, final String node) {
-        final HashMap<String, String> auditMap = new HashMap<String, String>();
+        final HashMap<String, Object> auditMap = new HashMap<String, Object>();
         auditMap.put("CERTIFICATECHAIN", value);
         auditMap.put("SCOPE", scope);
         if ("NODE".equalsIgnoreCase(scope)) {
@@ -925,12 +935,12 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     
     private void auditLogWorkerPropertyChange(final int workerId, final String key, final String value) {
         if ("DEFAULTKEY".equalsIgnoreCase(key)) {
-            final HashMap<String, String> auditMap = new HashMap<String, String>();
+            final HashMap<String, Object> auditMap = new HashMap<String, Object>();
             auditMap.put("KEYALIAS", value);
             auditMap.put("SCOPE", "GLOBAL");
             auditLog(SignServerEventTypes.KEYSELECTED, SignServerModuleTypes.WORKER_CONFIG, String.valueOf(workerId), auditMap);
         } else if (key != null && key.lastIndexOf(".") != -1 && key.substring(key.lastIndexOf(".")).equalsIgnoreCase(".DEFAULTKEY")) {
-            final HashMap<String, String> auditMap = new HashMap<String, String>();
+            final HashMap<String, Object> auditMap = new HashMap<String, Object>();
             auditMap.put("KEYALIAS", value);
             auditMap.put("SCOPE", "NODE");
             auditMap.put("NODE", key.substring(0, key.lastIndexOf(".")));
@@ -1023,7 +1033,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                 explicitEccParameters, defaultKey);
         
         
-        final HashMap<String, String> auditMap = new HashMap<String, String>();
+        final HashMap<String, Object> auditMap = new HashMap<String, Object>();
         
         final String csr;
         if (ret instanceof Base64SignerCertReqData) {
@@ -1265,13 +1275,17 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     }
     
     private void auditLog(SignServerEventTypes eventType, SignServerModuleTypes module, String customId) {
-        auditLog(eventType, module, customId, Collections.<String, String>emptyMap());
+        auditLog(eventType, module, customId, Collections.<String, Object>emptyMap());
     }
     
-    private void auditLog(SignServerEventTypes eventType, SignServerModuleTypes module, String customId, Map<String, String> additionalDetails) {
+    private void auditLog(SignServerEventTypes eventType, SignServerModuleTypes module, String customId, Map<String, Object> additionalDetails) {
         try {
-            AUDITLOG.log(eventType, module, customId, additionalDetails);
-        } catch (SystemLoggerException ex) {
+            //AUDITLOG.log(eventType, module, customId, additionalDetails);
+            // TODO: fix detail map
+            logSession.log(eventType, EventStatus.SUCCESS, module, SignServerServiceTypes.SIGNSERVER,
+                    "WorkerSessionBean.auditLog", customId, null, null, additionalDetails);                               
+
+        } catch (AuditRecordStorageException ex) {
             LOG.error("Audit log failure", ex);
             throw new EJBException("Audit log failure", ex);
         }
@@ -1280,7 +1294,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     private void setWorkerConfig(final int workerId, final WorkerConfig config,
     		final String additionalLogKey, final String additionalLogValue) {
         final WorkerConfig oldConfig = workerConfigService.getWorkerProperties(workerId);       
-        Map<String, String> configChanges = WorkerConfig.propertyDiff(oldConfig, config);
+        Map<String, Object> configChanges = WorkerConfig.propertyDiff(oldConfig, config);
         
         if (additionalLogKey != null) {
         	configChanges.put(additionalLogKey, additionalLogValue);

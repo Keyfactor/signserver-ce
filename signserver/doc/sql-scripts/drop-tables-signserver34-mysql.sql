@@ -45,5 +45,9 @@ DROP TABLE IF EXISTS `groupkeydata`;
 --
 DROP TABLE IF EXISTS `SEQUENCE`;
 
+--
+-- Table structure for table 'AuditRecordData'
+--
+DROP TABLE IF EXISTS `AuditRecordData`;
 
 -- End

@@ -90,4 +90,27 @@ CREATE TABLE "GROUPKEYDATA" (
 CREATE SEQUENCE "HIBERNATE_SEQUENCE"  MINVALUE 1 MAXVALUE 999999999999999999999999999 INCREMENT BY 1;
 
 
+--
+-- Table structure for table `AuditRecordData`
+--
+CREATE TABLE AuditRecordData (
+    pk VARCHAR2(255 byte) NOT NULL,
+    additionalDetails CLOB,
+    authToken VARCHAR2(255 byte) NOT NULL,
+    customId VARCHAR2(255 byte),
+    eventStatus VARCHAR2(255 byte) NOT NULL,
+    eventType VARCHAR2(255 byte) NOT NULL,
+    module VARCHAR2(255 byte) NOT NULL,
+    nodeId VARCHAR2(255 byte) NOT NULL,
+    rowProtection CLOB,
+    rowVersion NUMBER(10) NOT NULL,
+    searchDetail1 VARCHAR2(255 byte),
+    searchDetail2 VARCHAR2(255 byte),
+    sequenceNumber NUMBER(19) NOT NULL,
+    service VARCHAR2(255 byte) NOT NULL,
+    timeStamp NUMBER(19) NOT NULL,
+    PRIMARY KEY (pk)
+);
+
+
 -- End

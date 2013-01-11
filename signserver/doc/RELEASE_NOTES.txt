@@ -1,3 +1,10 @@
+SignServer 3.4.0
+----------------
+
+Notice:
+ - Database changes were introduced. See UPGRADE.txt for details.
+ 
+
 SignServer 3.3.0
 ----------------
 This is a major release - in total 57 features, options, bugs and stabilizations have been fixed or added. The most noteworthy changes can be seen below.

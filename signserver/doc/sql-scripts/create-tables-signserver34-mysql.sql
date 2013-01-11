@@ -6,7 +6,7 @@
 --
 -- Table structure for table `GlobalConfigurationData`
 --
-CREATE TABLE `GlobalConfigurationData` (
+CREATE TABLE `GlobalConfigData` (
   `propertyKey` varchar(255) NOT NULL,
   `propertyValue` mediumtext,
   PRIMARY KEY (`propertyKey`)

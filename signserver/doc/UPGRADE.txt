@@ -24,7 +24,13 @@ From SignServer 3.3.x to SignServer 3.4.x
 
 1) Database schema change:
 
+Tables renamed:
+
+
 TODO: Add instructions for the new tables from CESeCore!!
+
+Table "GlobalConfigurationData" was renamed to 'GlobalConfigData'
+TODO: Add ALTER statement here
 
 
 From SignServer 3.2.x to SignServer 3.3.x

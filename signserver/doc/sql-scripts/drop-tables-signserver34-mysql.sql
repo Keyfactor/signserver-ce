@@ -5,9 +5,9 @@
 
 
 --
--- Table structure for table `GlobalConfigurationData`
+-- Table structure for table `GlobalConfigData`
 --
-DROP TABLE IF EXISTS `GlobalConfigurationData`;
+DROP TABLE IF EXISTS `GlobalConfigData`;
 
 
 --

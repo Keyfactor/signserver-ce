@@ -28,7 +28,7 @@ import javax.persistence.*;
  *
  */
 @Entity
-@Table(name = "GlobalConfigurationData")
+@Table(name = "GlobalConfigData")
 public class GlobalConfigurationDataBean implements Serializable {
 
     @Id

@@ -4,6 +4,16 @@
 -- Comment: 
 
 
+DROP TABLE "AccessRulesData";
+
+DROP TABLE "AuthorizationTreeUpdateData";
+
+DROP TABLE "AdminEntityData";
+
+DROP TABLE "AdminGroupData";
+
+DROP TABLE "AuditRecordData";
+
 --
 -- Table structure for table `GlobalConfigurationData`
 --

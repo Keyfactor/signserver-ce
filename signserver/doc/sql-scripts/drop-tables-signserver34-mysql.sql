@@ -4,6 +4,16 @@
 -- Comment: 
 
 
+DROP TABLE IF EXISTS `AccessRulesData`;
+
+DROP TABLE IF EXISTS `AuthorizationTreeUpdateData`;
+
+DROP TABLE IF EXISTS `AdminEntityData`;
+
+DROP TABLE IF EXISTS `AdminGroupData`;
+
+DROP TABLE IF EXISTS `AuditRecordData`;
+
 --
 -- Table structure for table `GlobalConfigData`
 --
@@ -45,9 +55,5 @@ DROP TABLE IF EXISTS `groupkeydata`;
 --
 DROP TABLE IF EXISTS `SEQUENCE`;
 
---
--- Table structure for table 'AuditRecordData'
---
-DROP TABLE IF EXISTS `AuditRecordData`;
 
 -- End

@@ -15,6 +15,27 @@ CREATE TABLE AccessRulesData (
     PRIMARY KEY (pK)
 );
 
+CREATE TABLE AdminEntityData (
+    pK NUMBER(10) NOT NULL,
+    cAId NUMBER(10) NOT NULL,
+    matchType NUMBER(10) NOT NULL,
+    matchValue VARCHAR2(255 byte),
+    matchWith NUMBER(10) NOT NULL,
+    rowProtection CLOB,
+    rowVersion NUMBER(10) NOT NULL,
+    tokenType VARCHAR2(255 byte),
+    AdminGroupData_adminEntities NUMBER(10),
+    PRIMARY KEY (pK)
+);
+
+CREATE TABLE AdminGroupData (
+    pK NUMBER(10) NOT NULL,
+    adminGroupName VARCHAR2(255 byte) NOT NULL,
+    rowProtection CLOB,
+    rowVersion NUMBER(10) NOT NULL,
+    PRIMARY KEY (pK)
+);
+
 --
 -- Table structure for table `AuditRecordData`
 --
@@ -130,6 +151,8 @@ CREATE TABLE "GROUPKEYDATA" (
 --
 CREATE SEQUENCE "HIBERNATE_SEQUENCE"  MINVALUE 1 MAXVALUE 999999999999999999999999999 INCREMENT BY 1;
 
+alter table AccessRulesData add constraint FKABB4C1DFDBBC970 foreign key (AdminGroupData_accessRules) references AdminGroupData;
 
+alter table AdminEntityData add constraint FKD9A99EBCB3A110AD foreign key (AdminGroupData_adminEntities) references AdminGroupData;
 
 -- End

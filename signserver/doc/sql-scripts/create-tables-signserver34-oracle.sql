@@ -4,6 +4,47 @@
 -- Comment: These definitions should work for SignServer 3.3.x, Oracle 10.x and the JDBC driver version 10.2.0.1.0.
 -- TODO: Update the versions above with what we tested with
 
+CREATE TABLE AccessRulesData (
+    pK NUMBER(10) NOT NULL,
+    accessRule VARCHAR2(255 byte) NOT NULL,
+    isRecursive NUMBER(1) NOT NULL,
+    rowProtection CLOB,
+    rowVersion NUMBER(10) NOT NULL,
+    rule NUMBER(10) NOT NULL,
+    AdminGroupData_accessRules NUMBER(10),
+    PRIMARY KEY (pK)
+);
+
+--
+-- Table structure for table `AuditRecordData`
+--
+CREATE TABLE AuditRecordData (
+    pk VARCHAR2(255 byte) NOT NULL,
+    additionalDetails CLOB,
+    authToken VARCHAR2(255 byte) NOT NULL,
+    customId VARCHAR2(255 byte),
+    eventStatus VARCHAR2(255 byte) NOT NULL,
+    eventType VARCHAR2(255 byte) NOT NULL,
+    module VARCHAR2(255 byte) NOT NULL,
+    nodeId VARCHAR2(255 byte) NOT NULL,
+    rowProtection CLOB,
+    rowVersion NUMBER(10) NOT NULL,
+    searchDetail1 VARCHAR2(255 byte),
+    searchDetail2 VARCHAR2(255 byte),
+    sequenceNumber NUMBER(19) NOT NULL,
+    service VARCHAR2(255 byte) NOT NULL,
+    timeStamp NUMBER(19) NOT NULL,
+    PRIMARY KEY (pk)
+);
+
+CREATE TABLE AuthorizationTreeUpdateData (
+    pK NUMBER(10) NOT NULL,
+    authorizationTreeUpdateNumber NUMBER(10) NOT NULL,
+    rowProtection CLOB,
+    rowVersion NUMBER(10) NOT NULL,
+    PRIMARY KEY (pK)
+);
+
 
 --
 -- Table structure for table `GlobalConfigurationData`
@@ -89,28 +130,6 @@ CREATE TABLE "GROUPKEYDATA" (
 --
 CREATE SEQUENCE "HIBERNATE_SEQUENCE"  MINVALUE 1 MAXVALUE 999999999999999999999999999 INCREMENT BY 1;
 
-
---
--- Table structure for table `AuditRecordData`
---
-CREATE TABLE AuditRecordData (
-    pk VARCHAR2(255 byte) NOT NULL,
-    additionalDetails CLOB,
-    authToken VARCHAR2(255 byte) NOT NULL,
-    customId VARCHAR2(255 byte),
-    eventStatus VARCHAR2(255 byte) NOT NULL,
-    eventType VARCHAR2(255 byte) NOT NULL,
-    module VARCHAR2(255 byte) NOT NULL,
-    nodeId VARCHAR2(255 byte) NOT NULL,
-    rowProtection CLOB,
-    rowVersion NUMBER(10) NOT NULL,
-    searchDetail1 VARCHAR2(255 byte),
-    searchDetail2 VARCHAR2(255 byte),
-    sequenceNumber NUMBER(19) NOT NULL,
-    service VARCHAR2(255 byte) NOT NULL,
-    timeStamp NUMBER(19) NOT NULL,
-    PRIMARY KEY (pk)
-);
 
 
 -- End

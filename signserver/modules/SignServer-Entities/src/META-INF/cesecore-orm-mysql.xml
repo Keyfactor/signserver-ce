@@ -26,6 +26,7 @@
     --> 
     
    <entity class="org.cesecore.authorization.rules.AccessRuleData" access="PROPERTY" metadata-complete="false">
+        <table name="AccessRulesData"/>
         <attributes>
             <id name="primaryKey"><column name="pK" column-definition="INT(11)"/></id>
             <basic name="accessRuleName"><column name="accessRule" column-definition="VARCHAR(250) BINARY" nullable="false"/></basic>
@@ -38,6 +39,7 @@
     </entity>
     
    <entity class="org.cesecore.authorization.cache.AccessTreeUpdateData" access="PROPERTY" metadata-complete="false">
+       <table name="AuthorizationTreeUpdateData"/>
         <attributes>
             <id name="primaryKey"><column name="pK" column-definition="INT(11)"/></id>
             <basic name="accessTreeUpdateNumber"><column name="accessTreeUpdateNumber" column-definition="INT(11)" nullable="false"/></basic>
@@ -46,7 +48,8 @@
         </attributes>
     </entity>
     
- 	<entity class="org.cesecore.authorization.user.AccessUserAspectData" access="PROPERTY" metadata-complete="false">
+    <entity class="org.cesecore.authorization.user.AccessUserAspectData" access="PROPERTY" metadata-complete="false">
+        <table name="AdminEntityData"/>
         <attributes>
             <id name="primaryKey"><column name="pK" column-definition="INT(11)"/></id>
             <basic name="matchWith"><column name="matchWith" column-definition="INT(11)" nullable="false"/></basic>
@@ -99,7 +102,8 @@
 
     <!-- SignServer: org.cesecore.audit.impl.queued.entity.LogManagementData removed -->
     
- 	 <entity class="org.cesecore.roles.RoleData" access="PROPERTY" metadata-complete="false">
+    <entity class="org.cesecore.roles.RoleData" access="PROPERTY" metadata-complete="false">
+        <table name="AdminGroupData"/>
         <attributes>
             <id name="primaryKey"><column name="pK" column-definition="INT(11)"/></id>
             <basic name="roleName"><column name="adminGroupName" column-definition="VARCHAR(250) BINARY" nullable="false"/></basic>

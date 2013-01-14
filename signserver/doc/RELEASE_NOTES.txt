@@ -1,9 +1,10 @@
 SignServer 3.4.0
+
 ----------------
 
 Notice:
  - Database changes were introduced. See UPGRADE.txt for details.
- 
+ - The category for the system logger has changed from org.signserver.server.log.ISystemLogger to org.signserver.server.log.SignServerLog4jDevice.
 
 SignServer 3.3.0
 ----------------

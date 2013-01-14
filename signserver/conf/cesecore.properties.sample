@@ -63,6 +63,7 @@
 # All security log events are written to all enabled/configured devices.
 # The following AuditLogDevice implementations are available:
 #securityeventsaudit.implementation.X=org.cesecore.audit.impl.log4j.Log4jDevice
+#securityeventsaudit.implementation.X=org.signserver.server.log.SignServerLog4jDevice
 #securityeventsaudit.implementation.X=org.cesecore.audit.impl.integrityprotected.IntegrityProtectedDevice
 #securityeventsaudit.implementation.X=org.cesecore.audit.impl.queued.QueuedDevice
 
@@ -77,7 +78,7 @@
 #securityeventsaudit.deviceproperty.X.key.subkey=value
 
 # Example configuration of Log4jDevice
-securityeventsaudit.implementation.0=org.cesecore.audit.impl.log4j.Log4jDevice
+securityeventsaudit.implementation.0=org.signserver.server.log.SignServerLog4jDevice
 
 # Example configuration of IntegrityProtectedDevice that logs to the database
 # With XML export to /tmp/ (default export dir)

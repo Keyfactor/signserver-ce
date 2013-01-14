@@ -148,7 +148,18 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         final IWorker worker = workerManagerSession.getWorker(workerId, globalConfigurationSession);
 
         if (worker == null) {
-            throw new NoSuchWorkerException(String.valueOf(workerId));
+            NoSuchWorkerException ex = new NoSuchWorkerException(String.valueOf(workerId));
+            Map<String, Object> details = new LinkedHashMap<String, Object>();
+            // produce backwards-compatible log entries here...
+            details.put(IWorkerLogger.LOG_EXCEPTION, ex.getMessage());
+            details.put(IWorkerLogger.LOG_PROCESS_SUCCESS, String.valueOf(false));
+            // duplicate entries that would have gone to the worker log
+            details.put(IWorkerLogger.LOG_TIME, String.valueOf(startTime));
+            details.put(IWorkerLogger.LOG_ID, transactionID);
+            details.put(IWorkerLogger.LOG_CLIENT_IP, (String) requestContext.get(RequestContext.REMOTE_IP));
+            logSession.log(SignServerEventTypes.PROCESS, EventStatus.FAILURE, SignServerModuleTypes.WORKER, SignServerServiceTypes.SIGNSERVER,
+                    "WorkerSessionBean.process", "", null, null, details);
+            throw ex;
         }
         final WorkerConfig awc = worker.getConfig();
 

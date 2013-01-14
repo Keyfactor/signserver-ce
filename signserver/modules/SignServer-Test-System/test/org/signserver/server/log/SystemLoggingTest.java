@@ -143,9 +143,9 @@ public class SystemLoggingTest extends ModulesTestCase {
     }
     
     public void test01LogStartup() throws Exception {
-        // Read first line of file
+        // Read second line of file
         LOG.info("Note: This test assumes the signserver_audit.log was cleared before the appserver started");
-        List<String> lines = readEntries(auditLogFile, 0, 1);
+        List<String> lines = readEntries(auditLogFile, 1, 1);
         final String line0 = lines.get(0);
         LOG.info(line0);
         assertTrue("Contains event", line0.contains("EVENT: SIGNSERVER_STARTUP"));

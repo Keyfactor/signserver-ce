@@ -54,6 +54,8 @@ public class StartServicesServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     
+    private static final String LOG_VERSION = "VERSION";
+    
     /** Logger for this class. */
     private static final Logger LOG
             = Logger.getLogger(StartServicesServlet.class);
@@ -128,6 +130,7 @@ public class StartServicesServlet extends HttpServlet {
         AuthenticationToken admin = new AlwaysAllowLocalAuthenticationToken(new UsernamePrincipal("StartServicesServlet.init"));
         Map<String, Object> details = new LinkedHashMap<String, Object>();
         details.put("msg", "start services startup msg");
+        details.put(LOG_VERSION, version);
         try {
             logSession.log(SignServerEventTypes.SIGNSERVER_STARTUP, EventStatus.SUCCESS, SignServerModuleTypes.SERVICE, SignServerServiceTypes.SIGNSERVER, admin.toString(), null, null, null, details);
         } catch (AuditRecordStorageException ex) {

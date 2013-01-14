@@ -33,7 +33,6 @@ import org.cesecore.audit.enums.EventStatus;
 import org.cesecore.audit.enums.EventType;
 import org.cesecore.audit.enums.ModuleType;
 import org.cesecore.audit.enums.ServiceType;
-import org.cesecore.audit.impl.log4j.Log4jDeviceErrorHandler;
 import org.cesecore.audit.log.AuditLogResetException;
 import org.cesecore.audit.log.AuditRecordStorageException;
 import org.cesecore.authentication.tokens.AuthenticationToken;

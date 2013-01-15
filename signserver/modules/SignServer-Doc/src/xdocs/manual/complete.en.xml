@@ -5399,7 +5399,6 @@ available where the first two can be useful for audit logging:
                 </p>
                 <ul>
                     <li>Worker Log (org.signserver.server.log.IWorkerLogger)</li>
-                    <li>System Log (org.signserver.server.log.ISystemLogger)</li>
                     <li>Debug Log (any other class name)</li>
                 </ul>
                 <subsection name="Worker Log">

@@ -5476,7 +5476,10 @@ LOG_FILE_PATH=/path/to/logfile
                 
                 <subsection name="System Log">
                     <p>
-The purpose of the system log is to log events concerning the SignServer application but not necessarily related to any signing transaction (that is covered by the Worker Log). The audit log covers key and certificate management events, status properties updates (for instance for the status of the time source) and to some extent also configuration changes. For details see the table of events below.
+The purpose of the system log is to log events concerning the SignServer application but not necessarily related to any signing transaction (that is covered by the Worker Log). The audit log covers key and certificate management events, status properties updates (for instance for the status of the time source) and to some extent also configuration changes. For details see the table of events below.<br/>
+From version 3.4.0 SignServer uses the CESeCore library to perform audit logging.
+An example configuration for CESeCore is provided in <code>conf/cesecore.properties.sample</code>.
+The default logging implementation, <code>org.signserver.server.log.SignServerLog4jDevice</code> uses Log4J and the same logging format as the old SystemLogger.
                     </p>
                     
                     <subsubsection name="Available log events">

@@ -73,4 +73,10 @@ public class PatternWorkerLogger implements IWorkerLogger {
         pl.writeln();
         pl.flush();
     }
+
+    @Override
+    public void setEjbs(Map<Class<?>, ?> ejbs) {
+        // NO-OP for this implementation    
+    }
+    
 }

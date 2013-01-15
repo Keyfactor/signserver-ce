@@ -82,4 +82,9 @@ public class FileWorkerLogger implements IWorkerLogger {
 			}
 		}
 	}
+
+    @Override
+    public void setEjbs(Map<Class<?>, ?> ejbs) {
+        // NO-OP for this implementation   
+    }
 }

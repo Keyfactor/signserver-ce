@@ -28,5 +28,8 @@ public class NullWorkerLogger implements IWorkerLogger {
 
     @Override
     public void log(Map<String, String> fields) throws WorkerLoggerException {}
-    
+
+    @Override
+    public void setEjbs(Map<Class<?>, ?> ejbs) {}
+
 }

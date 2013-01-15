@@ -64,4 +64,11 @@ public class AllFieldsWorkerLogger implements IWorkerLogger {
         // Do log
         ACCOUNTLOG.log(this.logLevel, str.toString());
     }
+
+    @Override
+    public void setEjbs(Map<Class<?>, ?> ejbs) {
+        // NO-OP for this implementation
+    }
+    
+    
 }

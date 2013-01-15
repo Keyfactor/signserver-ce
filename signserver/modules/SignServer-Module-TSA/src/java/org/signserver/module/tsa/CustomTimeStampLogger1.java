@@ -118,4 +118,10 @@ public class CustomTimeStampLogger1 implements ITimeStampLogger {
 
         ACCOUNTLOG.info(str.toString());
     }
+
+    @Override
+    public void setEjbs(Map<Class<?>, ?> ejbs) {
+        // NO-OP for this implementation   
+    }
+    
 }

@@ -14,10 +14,15 @@ package org.signserver.ejb.worker.impl;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+
+import org.cesecore.audit.audit.SecurityEventsAuditorSessionLocal;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.WorkerConfig;
@@ -190,6 +195,13 @@ public class WorkerManagerSessionBean implements IWorkerManagerSessionLocal {
             }
         }
         return retval;
+    }
+    
+    private Map<Class<?>, Object> getEjbs(final int workerId) {
+        final Map<Class<?>, Object> ejbs = new HashMap<Class<? extends Object>, Object>();
+        ejbs.put(SecurityEventsAuditorSessionLocal.class, workerId);
+        
+        return ejbs;
     }
     
 }

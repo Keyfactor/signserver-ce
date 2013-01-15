@@ -143,7 +143,7 @@ public class SystemLoggingTest extends ModulesTestCase {
     }
     
     public void test01LogStartup() throws Exception {
-        // Read second line of file
+        // Read second line of file (CESeCore outputs a time sync log line before the SignServer startup log line).
         LOG.info("Note: This test assumes the signserver_audit.log was cleared before the appserver started");
         List<String> lines = readEntries(auditLogFile, 1, 1);
         final String line0 = lines.get(0);

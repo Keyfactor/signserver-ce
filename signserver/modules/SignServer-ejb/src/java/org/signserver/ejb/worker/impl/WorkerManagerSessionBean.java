@@ -19,10 +19,12 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 
 import org.cesecore.audit.audit.SecurityEventsAuditorSessionLocal;
+import org.cesecore.audit.log.SecurityEventsLoggerSessionLocal;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.WorkerConfig;
@@ -62,6 +64,9 @@ public class WorkerManagerSessionBean implements IWorkerManagerSessionLocal {
     
     private SignServerContext workerContext;
     
+    @EJB
+    private SecurityEventsLoggerSessionLocal logSession;
+    
     @PostConstruct
     public void create() {
         if (em == null) {
@@ -100,8 +105,10 @@ public class WorkerManagerSessionBean implements IWorkerManagerSessionLocal {
 
     @Override
     public IWorkerLogger getWorkerLogger(int workerId, WorkerConfig awc) throws IllegalRequestException {
-        return workerFactory.getWorkerLogger(workerId, awc, em);
-
+        IWorkerLogger logger = workerFactory.getWorkerLogger(workerId, awc, em);
+        logger.setEjbs(getEjbs());
+        
+        return logger;
     }
 
     @Override
@@ -197,9 +204,9 @@ public class WorkerManagerSessionBean implements IWorkerManagerSessionLocal {
         return retval;
     }
     
-    private Map<Class<?>, Object> getEjbs(final int workerId) {
+    private Map<Class<?>, Object> getEjbs() {
         final Map<Class<?>, Object> ejbs = new HashMap<Class<? extends Object>, Object>();
-        ejbs.put(SecurityEventsAuditorSessionLocal.class, workerId);
+        ejbs.put(SecurityEventsLoggerSessionLocal.class, logSession);
         
         return ejbs;
     }

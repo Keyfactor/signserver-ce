@@ -5427,6 +5427,15 @@ WORKERLOGGER=org.signserver.server.log.AllFieldsWorkerLogger
 LOGLEVEL_DEFAULT=INFO
                         </source>
                     </subsubsection>
+                    <subsubsection name="SecurityEventsWorkerLogger">
+                        <p>
+Worker logger using the CESeCore security events logger.
+This logger included all fields in the additionalDetails fields in the audit log, except the worker ID, which is mapped to customID. 
+                        </p>
+                        <source>
+WORKERLOGGER=org.signserver.server.log.SecurityEventsWorkerLogger
+                        </source>
+                    </subsubsection>
                     <subsubsection name="PatternWorkerLogger">
                     	<p>
 The LOGLEVEL_DEFAULT property has the same behavior as for the AllFieldsWorkerLogger.

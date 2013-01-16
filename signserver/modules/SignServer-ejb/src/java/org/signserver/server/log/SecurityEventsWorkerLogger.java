@@ -47,7 +47,7 @@ public class SecurityEventsWorkerLogger implements IWorkerLogger {
             }
         }
         
-        logger.log(SignServerEventTypes.PROCESS, EventStatus.SUCCESS, SignServerModuleTypes.SERVICE, SignServerServiceTypes.SIGNSERVER,
+        logger.log(SignServerEventTypes.PROCESS, EventStatus.SUCCESS, SignServerModuleTypes.WORKER, SignServerServiceTypes.SIGNSERVER,
                 "SecurityEventsWorkerLogger.log", fields.get(IWorkerLogger.LOG_WORKER_ID), null, null, details);
     }
 

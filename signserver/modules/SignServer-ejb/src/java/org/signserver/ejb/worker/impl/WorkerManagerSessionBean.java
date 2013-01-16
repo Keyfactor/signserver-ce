@@ -104,7 +104,7 @@ public class WorkerManagerSessionBean implements IWorkerManagerSessionLocal {
 
     @Override
     public IWorkerLogger getWorkerLogger(int workerId, WorkerConfig awc) throws IllegalRequestException {
-        IWorkerLogger logger = workerFactory.getWorkerLogger(workerId, awc, em);
+        final IWorkerLogger logger = workerFactory.getWorkerLogger(workerId, awc, em);
         logger.setEjbs(getEjbs());
         
         return logger;

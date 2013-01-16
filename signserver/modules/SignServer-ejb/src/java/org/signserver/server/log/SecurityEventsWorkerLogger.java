@@ -41,6 +41,7 @@ public class SecurityEventsWorkerLogger implements IWorkerLogger {
     public void log(Map<String, String> fields) throws WorkerLoggerException {
         final Map<String, Object> details = new LinkedHashMap<String, Object>();
         
+        // strip out the worker ID from the additionalDetails field (it's put customID)
         for (String key : fields.keySet()) {
             if (!IWorkerLogger.LOG_WORKER_ID.equals(key)) {
                 details.put(key, fields.get(key));
@@ -53,7 +54,6 @@ public class SecurityEventsWorkerLogger implements IWorkerLogger {
 
     @Override
     public void setEjbs(Map<Class<?>, ?> ejbs) {
-        //throw new RuntimeException("setEjbs");
         logger = (SecurityEventsLoggerSessionLocal) ejbs.get(SecurityEventsLoggerSessionLocal.class);
     }
 

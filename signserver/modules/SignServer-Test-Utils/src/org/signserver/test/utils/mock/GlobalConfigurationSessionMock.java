@@ -17,6 +17,7 @@ import java.util.Properties;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.ResyncException;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
+import org.signserver.server.log.AdminInfo;
 
 /**
  * Mockup version of the GlobalConfigurationSessionBean.
@@ -40,9 +41,20 @@ public class GlobalConfigurationSessionMock implements
     public void setProperty(String scope, String key, String value) {
         config.setProperty(scope + key, value);
     }
+    
+    @Override
+    public void setProperty(AdminInfo adminInfo, String scope, String key, String value) {
+        config.setProperty(scope + key, value);
+    }
+
 
     @Override
     public boolean removeProperty(String scope, String key) {
+        return config.remove(scope + key) != null;
+    }
+
+    @Override
+    public boolean removeProperty(AdminInfo adminInfo, String scope, String key) {
         return config.remove(scope + key) != null;
     }
 
@@ -57,8 +69,19 @@ public class GlobalConfigurationSessionMock implements
     }
 
     @Override
+    public void resync(AdminInfo adminInfo) throws ResyncException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
+    @Override
     public void reload() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
+    public void reload(AdminInfo adminInfo) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    
 }

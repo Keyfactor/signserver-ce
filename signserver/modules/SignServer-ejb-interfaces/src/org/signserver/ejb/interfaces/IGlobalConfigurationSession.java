@@ -18,6 +18,7 @@ import javax.ejb.Remote;
 import org.signserver.common.GlobalConfiguration;
 
 import org.signserver.common.ResyncException;
+import org.signserver.server.log.AdminInfo;
 
 /**
  * Common interface containing all the session bean methods.
@@ -77,5 +78,13 @@ public interface IGlobalConfigurationSession {
     interface ILocal extends IGlobalConfigurationSession {
 
         String JNDI_NAME = "signserver/GlobalConfigurationSessionBean/local";
+        
+        void setProperty(final AdminInfo adminInfo, String scope, String key, String value);
+        
+        boolean removeProperty(final AdminInfo adminInfo, String scope, String key);
+        
+        void resync(final AdminInfo adminInfo) throws ResyncException;
+        
+        void reload(final AdminInfo adminInfo);
     }
 }

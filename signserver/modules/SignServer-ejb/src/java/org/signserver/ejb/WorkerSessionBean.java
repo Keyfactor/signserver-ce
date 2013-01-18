@@ -1348,9 +1348,8 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         try {
         	final String serialNo =
         			adminInfo.getCertSerialNumber() == null ? null : adminInfo.getCertSerialNumber().toString();
-        	additionalDetails.put(IWorkerLogger.LOG_WORKER_ID, workerId);
             logSession.log(eventType, EventStatus.SUCCESS, module, SignServerServiceTypes.SIGNSERVER,
-                    adminInfo.getSubjectDN(), adminInfo.getIssuerDN(), serialNo, null, additionalDetails);                               
+                    adminInfo.getSubjectDN(), adminInfo.getIssuerDN(), serialNo, workerId, additionalDetails);                               
 
         } catch (AuditRecordStorageException ex) {
             LOG.error("Audit log failure", ex);

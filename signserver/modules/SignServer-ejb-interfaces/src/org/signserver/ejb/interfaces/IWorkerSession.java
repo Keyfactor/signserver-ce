@@ -36,6 +36,7 @@ import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
+import org.signserver.server.log.AdminInfo;
 
 /**
  * Interface for the worker session bean.
@@ -389,5 +390,41 @@ public interface IWorkerSession {
     interface ILocal extends IWorkerSession {
 
         String JNDI_NAME = "signserver/WorkerSessionBean/local";
+
+        String generateSignerKey(final AdminInfo adminInfo, int signerId, String keyAlgorithm,
+                String keySpec, String alias, char[] authCode)
+                throws CryptoTokenOfflineException, InvalidWorkerIdException;
+        
+        Collection<KeyTestResult> testKey(final AdminInfo adminInfo, final int signerId, String alias,
+                char[] authCode)
+                throws CryptoTokenOfflineException, InvalidWorkerIdException,
+                KeyStoreException;
+        
+        void setWorkerProperty(final AdminInfo adminInfo, int workerId, String key, String value);
+        
+        boolean removeWorkerProperty(final AdminInfo adminInfo, int workerId, String key);
+        
+        void addAuthorizedClient(final AdminInfo adminInfo, int signerId, AuthorizedClient authClient);
+        
+        boolean removeAuthorizedClient(final AdminInfo adminInfo, int signerId,
+                AuthorizedClient authClient);
+        
+        ICertReqData getCertificateRequest(final AdminInfo adminInfo, int signerId,
+                ISignerCertReqInfo certReqInfo,
+                final boolean explicitEccParameters,
+                final boolean defaultKey) throws
+                CryptoTokenOfflineException, InvalidWorkerIdException;
+        
+        ICertReqData getCertificateRequest(final AdminInfo adminInfo, final int signerId,
+                final ISignerCertReqInfo certReqInfo,
+                final boolean explicitEccParameters) throws
+                CryptoTokenOfflineException, InvalidWorkerIdException;
+        
+        void uploadSignerCertificate(final AdminInfo adminInfo, int signerId, byte[] signerCert,
+                String scope) throws CertificateException;
+        
+        void uploadSignerCertificateChain(final AdminInfo adminInfo, int signerId,
+                Collection<byte[]> signerCerts, String scope) throws CertificateException;
+
     }
 }

@@ -656,10 +656,11 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     public int getWorkerId(String signerName) {
         return workerManagerSession.getIdFromName(signerName, globalConfigurationSession);
     }
-
+   
     /* (non-Javadoc)
      * @see org.signserver.ejb.interfaces.IWorkerSession#reloadConfiguration(int)
      */
+    @Override
     public void reloadConfiguration(int workerId) {
         if (workerId == 0) {
             globalConfigurationSession.reload();
@@ -754,12 +755,21 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         return signer.deactivateSigner();
     }
 
+    @Override
+    public String generateSignerKey(final int signerId, String keyAlgorithm,
+            String keySpec, String alias, final char[] authCode)
+            throws CryptoTokenOfflineException, InvalidWorkerIdException,
+                IllegalArgumentException {
+    	return generateSignerKey(new AdminInfo("CLI user", null, null), signerId, keyAlgorithm,
+    			keySpec, alias, authCode);
+    }
+    	
     /**
      * @see IWorkerSession#generateSignerKey(int, java.lang.String,
      *  java.lang.String, java.lang.String, char[])
      */
     @Override
-    public String generateSignerKey(final int signerId, String keyAlgorithm,
+    public String generateSignerKey(final AdminInfo adminInfo, final int signerId, String keyAlgorithm,
             String keySpec, String alias, final char[] authCode)
             throws CryptoTokenOfflineException, InvalidWorkerIdException,
                 IllegalArgumentException {
@@ -800,7 +810,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         auditMap.put("KEYALG", keyAlgorithm);
         auditMap.put("KEYSPEC", keySpec);
         auditMap.put("KEYALIAS", alias);
-        auditLog(SignServerEventTypes.KEYGEN, SignServerModuleTypes.KEY_MANAGEMENT, String.valueOf(signerId), auditMap);
+        auditLog(adminInfo, SignServerEventTypes.KEYGEN, SignServerModuleTypes.KEY_MANAGEMENT, String.valueOf(signerId), auditMap);
         return alias;
     }
 
@@ -832,11 +842,19 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         return prefix + nextSequence;
     }
 
+    @Override
+    public Collection<KeyTestResult> testKey(final int signerId, String alias,
+            char[] authCode)
+            throws CryptoTokenOfflineException, InvalidWorkerIdException,
+            KeyStoreException {
+    	return testKey(new AdminInfo("CLI user", null, null), signerId, alias, authCode);
+    }
+    
     /**
      * @see IWorkerSession#testKey(int, java.lang.String, char[])
      */
     @Override
-    public Collection<KeyTestResult> testKey(final int signerId, String alias,
+    public Collection<KeyTestResult> testKey(final AdminInfo adminInfo, final int signerId, String alias,
             char[] authCode)
             throws CryptoTokenOfflineException, InvalidWorkerIdException,
             KeyStoreException {
@@ -863,7 +881,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         final HashMap<String, Object> auditMap = new HashMap<String, Object>();
         auditMap.put("KEYALIAS", alias);
         auditMap.put("TESTRESULTS", createResultsReport(result));
-        auditLog(SignServerEventTypes.KEYTEST, SignServerModuleTypes.KEY_MANAGEMENT, String.valueOf(signerId), auditMap);
+        auditLog(adminInfo, SignServerEventTypes.KEYTEST, SignServerModuleTypes.KEY_MANAGEMENT, String.valueOf(signerId), auditMap);
         
         return result;
     }
@@ -874,43 +892,53 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     public WorkerConfig getCurrentWorkerConfig(int signerId) {
         return getWorkerConfig(signerId);
     }
+    
+    @Override
+    public void setWorkerProperty(int workerId, String key, String value) {
+    	setWorkerProperty(new AdminInfo("CLI user", null, null), workerId, key, value);
+    }
 
     /* (non-Javadoc)
      * @see org.signserver.ejb.interfaces.IWorkerSession#setWorkerProperty(int, java.lang.String, java.lang.String)
      */
     @Override
-    public void setWorkerProperty(int workerId, String key, String value) {
+    public void setWorkerProperty(final AdminInfo adminInfo, int workerId, String key, String value) {
         WorkerConfig config = getWorkerConfig(workerId);
         config.setProperty(key.toUpperCase(), value);
-        setWorkerConfig(workerId, config, null, null);
-        auditLogWorkerPropertyChange(workerId, key, value);
+        setWorkerConfig(adminInfo, workerId, config, null, null);
+        auditLogWorkerPropertyChange(adminInfo, workerId, key, value);
     }
     
-    private void auditLogCertInstalled(final int workerId, final String value, final String scope, final String node) {
+    private void auditLogCertInstalled(final AdminInfo adminInfo, final int workerId, final String value, final String scope, final String node) {
         final HashMap<String, Object> auditMap = new HashMap<String, Object>();
         auditMap.put("CERTIFICATE", value);
         auditMap.put("SCOPE", scope);
         if ("NODE".equalsIgnoreCase(scope)) {
             auditMap.put("NODE", node);
         }
-        auditLog(SignServerEventTypes.CERTINSTALLED, SignServerModuleTypes.WORKER_CONFIG, String.valueOf(workerId), auditMap);
+        auditLog(adminInfo, SignServerEventTypes.CERTINSTALLED, SignServerModuleTypes.WORKER_CONFIG, String.valueOf(workerId), auditMap);
     }
     
-    private void auditLogCertChainInstalled(final int workerId, final String value, final String scope, final String node) {
+    private void auditLogCertChainInstalled(final AdminInfo adminInfo, final int workerId, final String value, final String scope, final String node) {
         final HashMap<String, Object> auditMap = new HashMap<String, Object>();
         auditMap.put("CERTIFICATECHAIN", value);
         auditMap.put("SCOPE", scope);
         if ("NODE".equalsIgnoreCase(scope)) {
             auditMap.put("NODE", node);
         }
-        auditLog(SignServerEventTypes.CERTCHAININSTALLED, SignServerModuleTypes.WORKER_CONFIG, String.valueOf(workerId), auditMap);
+        auditLog(adminInfo, SignServerEventTypes.CERTCHAININSTALLED, SignServerModuleTypes.WORKER_CONFIG, String.valueOf(workerId), auditMap);
+    }
+    
+    @Override
+    public boolean removeWorkerProperty(int workerId, String key) {
+    	return removeWorkerProperty(new AdminInfo("CLI user", null, null), workerId, key);
     }
 
     /* (non-Javadoc)
      * @see org.signserver.ejb.interfaces.IWorkerSession#removeWorkerProperty(int, java.lang.String)
      */
     @Override
-    public boolean removeWorkerProperty(int workerId, String key) {
+    public boolean removeWorkerProperty(final AdminInfo adminInfo, int workerId, String key) {
         final boolean result;
         WorkerConfig config = getWorkerConfig(workerId);
 
@@ -918,34 +946,34 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         if (config.getProperties().size() == 0) {
             workerConfigService.removeWorkerConfig(workerId);
             LOG.debug("WorkerConfig is empty and therefore removed.");
-            auditLog(SignServerEventTypes.SET_WORKER_CONFIG, SignServerModuleTypes.WORKER_CONFIG, String.valueOf(workerId));
+            auditLog(adminInfo, SignServerEventTypes.SET_WORKER_CONFIG, SignServerModuleTypes.WORKER_CONFIG, String.valueOf(workerId));
         } else {
-            setWorkerConfig(workerId, config, null, null);
+            setWorkerConfig(adminInfo, workerId, config, null, null);
         }
-        auditLogWorkerPropertyChange(workerId, key, "");
+        auditLogWorkerPropertyChange(adminInfo, workerId, key, "");
         return result;
     }
     
-    private void auditLogWorkerPropertyChange(final int workerId, final String key, final String value) {
+    private void auditLogWorkerPropertyChange(final AdminInfo adminInfo, final int workerId, final String key, final String value) {
         if ("DEFAULTKEY".equalsIgnoreCase(key)) {
             final HashMap<String, Object> auditMap = new HashMap<String, Object>();
             auditMap.put("KEYALIAS", value);
             auditMap.put("SCOPE", "GLOBAL");
-            auditLog(SignServerEventTypes.KEYSELECTED, SignServerModuleTypes.WORKER_CONFIG, String.valueOf(workerId), auditMap);
+            auditLog(adminInfo, SignServerEventTypes.KEYSELECTED, SignServerModuleTypes.WORKER_CONFIG, String.valueOf(workerId), auditMap);
         } else if (key != null && key.lastIndexOf(".") != -1 && key.substring(key.lastIndexOf(".")).equalsIgnoreCase(".DEFAULTKEY")) {
             final HashMap<String, Object> auditMap = new HashMap<String, Object>();
             auditMap.put("KEYALIAS", value);
             auditMap.put("SCOPE", "NODE");
             auditMap.put("NODE", key.substring(0, key.lastIndexOf(".")));
-            auditLog(SignServerEventTypes.KEYSELECTED, SignServerModuleTypes.WORKER_CONFIG, String.valueOf(workerId), auditMap);
+            auditLog(adminInfo, SignServerEventTypes.KEYSELECTED, SignServerModuleTypes.WORKER_CONFIG, String.valueOf(workerId), auditMap);
         } else if (ProcessableConfig.SIGNERCERT.equalsIgnoreCase(key)) {
-            auditLogCertInstalled(workerId, value, "GLOBAL", null);
+            auditLogCertInstalled(adminInfo, workerId, value, "GLOBAL", null);
         } else if (key != null && key.lastIndexOf(".") != -1 && key.substring(key.lastIndexOf(".")).equalsIgnoreCase("." + ProcessableConfig.SIGNERCERT)) {
-            auditLogCertInstalled(workerId, value, "NODE", key.substring(0, key.lastIndexOf(".")));
+            auditLogCertInstalled(adminInfo, workerId, value, "NODE", key.substring(0, key.lastIndexOf(".")));
         } else if (ProcessableConfig.SIGNERCERTCHAIN.equalsIgnoreCase(key)) {
-            auditLogCertChainInstalled(workerId, value, "GLOBAL", null);
+            auditLogCertChainInstalled(adminInfo, workerId, value, "GLOBAL", null);
         } else if (key != null && key.lastIndexOf(".") != -1 && key.substring(key.lastIndexOf(".")).equalsIgnoreCase("." + ProcessableConfig.SIGNERCERTCHAIN)) {
-            auditLogCertChainInstalled(workerId, value, "NODE", key.substring(0, key.lastIndexOf(".")));
+            auditLogCertChainInstalled(adminInfo, workerId, value, "NODE", key.substring(0, key.lastIndexOf(".")));
         }
     }
 
@@ -957,20 +985,32 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                 getAuthorizedClients();
     }
 
+    @Override
+    public void addAuthorizedClient(int signerId, AuthorizedClient authClient) {
+    	addAuthorizedClient(new AdminInfo("CLI user", null, null), signerId, authClient);
+    }
+    
     /* (non-Javadoc)
      * @see org.signserver.ejb.interfaces.IWorkerSession#addAuthorizedClient(int, org.signserver.common.AuthorizedClient)
      */
-    public void addAuthorizedClient(int signerId, AuthorizedClient authClient) {
+    @Override
+    public void addAuthorizedClient(final AdminInfo adminInfo, int signerId, AuthorizedClient authClient) {
         WorkerConfig config = getWorkerConfig(signerId);
         (new ProcessableConfig(config)).addAuthorizedClient(authClient);
-        setWorkerConfig(signerId, config, "added:authorized_client",
+        setWorkerConfig(adminInfo, signerId, config, "added:authorized_client",
         		"SN: " + authClient.getCertSN() + ", issuer DN: " + authClient.getIssuerDN());
     }
 
+    @Override
+    public boolean removeAuthorizedClient(int signerId, AuthorizedClient authClient) {
+    	return removeAuthorizedClient(new AdminInfo("CLI user", null, null), signerId, authClient);
+    }
+    
     /* (non-Javadoc)
      * @see org.signserver.ejb.interfaces.IWorkerSession#removeAuthorizedClient(int, org.signserver.common.AuthorizedClient)
      */
-    public boolean removeAuthorizedClient(int signerId,
+    @Override
+    public boolean removeAuthorizedClient(final AdminInfo adminInfo, int signerId,
             AuthorizedClient authClient) {
         boolean result = false;
         WorkerConfig config = getWorkerConfig(signerId);
@@ -978,27 +1018,47 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
 
         result = (new ProcessableConfig(config)).removeAuthorizedClient(
                 authClient);
-        setWorkerConfig(signerId, config, "removed:authorized_client",
+        setWorkerConfig(adminInfo, signerId, config, "removed:authorized_client",
         		"SN: " + authClient.getCertSN() + ", issuer DN: " + authClient.getIssuerDN());
         return result;
     }
 
-    /* (non-Javadoc)
-     * @see org.signserver.ejb.interfaces.IWorkerSession#getCertificateRequest(int, org.signserver.common.ISignerCertReqInfo)
-     */
+    @Override
     public ICertReqData getCertificateRequest(final int signerId,
             final ISignerCertReqInfo certReqInfo,
             final boolean explicitEccParameters) throws
             CryptoTokenOfflineException, InvalidWorkerIdException {
-        return getCertificateRequest(signerId, certReqInfo, 
-                explicitEccParameters, true);
+    	return getCertificateRequest(new AdminInfo("CLI user", null, null), signerId, certReqInfo,
+    			explicitEccParameters);
     }
-
+    
     /* (non-Javadoc)
      * @see org.signserver.ejb.interfaces.IWorkerSession#getCertificateRequest(int, org.signserver.common.ISignerCertReqInfo)
      */
     @Override
+    public ICertReqData getCertificateRequest(final AdminInfo adminInfo, final int signerId,
+            final ISignerCertReqInfo certReqInfo,
+            final boolean explicitEccParameters) throws
+            CryptoTokenOfflineException, InvalidWorkerIdException {
+        return getCertificateRequest(adminInfo, signerId, certReqInfo, 
+                explicitEccParameters, true);
+    }
+
+    @Override
     public ICertReqData getCertificateRequest(int signerId,
+            ISignerCertReqInfo certReqInfo,
+            final boolean explicitEccParameters,
+            final boolean defaultKey) throws
+            CryptoTokenOfflineException, InvalidWorkerIdException {
+    	return getCertificateRequest(new AdminInfo("CLI user", null, null), signerId, certReqInfo,
+    			explicitEccParameters, defaultKey);
+    }
+    
+    /* (non-Javadoc)
+     * @see org.signserver.ejb.interfaces.IWorkerSession#getCertificateRequest(int, org.signserver.common.ISignerCertReqInfo)
+     */
+    @Override
+    public ICertReqData getCertificateRequest(final AdminInfo adminInfo, int signerId,
             ISignerCertReqInfo certReqInfo,
             final boolean explicitEccParameters,
             final boolean defaultKey) throws
@@ -1036,7 +1096,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         }
         
         auditMap.put("CSR", csr);
-        auditLog(SignServerEventTypes.GENCSR, SignServerModuleTypes.KEY_MANAGEMENT, String.valueOf(signerId), auditMap);
+        auditLog(adminInfo, SignServerEventTypes.GENCSR, SignServerModuleTypes.KEY_MANAGEMENT, String.valueOf(signerId), auditMap);
         
         if (LOG.isTraceEnabled()) {
             LOG.trace("<getCertificateRequest: signerId=" + signerId);
@@ -1121,27 +1181,39 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
 
         return signer.destroyKey(purpose);
     }
+    
+    @Override
+    public void uploadSignerCertificate(int signerId, byte[] signerCert,
+            String scope) throws CertificateException {
+    	uploadSignerCertificate(new AdminInfo("CLI user", null, null), signerId, signerCert, scope);
+    }
 
     /* (non-Javadoc)
      * @see org.signserver.ejb.interfaces.IWorkerSession#uploadSignerCertificate(int, java.security.cert.X509Certificate, java.lang.String)
      */
     @Override
-    public void uploadSignerCertificate(int signerId, byte[] signerCert,
+    public void uploadSignerCertificate(final AdminInfo adminInfo, int signerId, byte[] signerCert,
             String scope) throws CertificateException {
         WorkerConfig config = getWorkerConfig(signerId);
 
         final Certificate cert  = CertTools.getCertfromByteArray(signerCert);
         ( new ProcessableConfig(config)).setSignerCertificate((X509Certificate)cert,scope);
-        setWorkerConfig(signerId, config, null, null);
+        setWorkerConfig(adminInfo, signerId, config, null, null);
         final boolean scopeGlobal = GlobalConfiguration.SCOPE_GLOBAL.equalsIgnoreCase(scope);
-        auditLogCertInstalled(signerId, new String (CertTools.getPEMFromCerts(Arrays.asList(cert))), scopeGlobal ? "GLOBAL" : "NODE", scopeGlobal ? null : WorkerConfig.getNodeId());
+        auditLogCertInstalled(adminInfo, signerId, new String (CertTools.getPEMFromCerts(Arrays.asList(cert))), scopeGlobal ? "GLOBAL" : "NODE", scopeGlobal ? null : WorkerConfig.getNodeId());
     }
 
+    @Override
+    public void uploadSignerCertificateChain(int signerId, Collection<byte[]> signerCerts, String scope)
+    	throws CertificateException {
+    	uploadSignerCertificateChain(new AdminInfo("CLI user", null, null), signerId, signerCerts, scope);
+    }
+    
     /* (non-Javadoc)
      * @see org.signserver.ejb.interfaces.IWorkerSession#uploadSignerCertificateChain(int, java.util.Collection, java.lang.String)
      */
     @Override
-    public void uploadSignerCertificateChain(int signerId,
+    public void uploadSignerCertificateChain(final AdminInfo adminInfo, int signerId,
             Collection<byte[]> signerCerts, String scope) 
             throws CertificateException {
 
@@ -1156,9 +1228,9 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     	// Collections.reverse(certs); // TODO: Why?
 
         (new ProcessableConfig( config)).setSignerCertificateChain(certs, scope);
-        setWorkerConfig(signerId, config, null, null);
+        setWorkerConfig(adminInfo, signerId, config, null, null);
         final boolean scopeGlobal = GlobalConfiguration.SCOPE_GLOBAL.equalsIgnoreCase(scope);
-        auditLogCertChainInstalled(signerId, new String (CertTools.getPEMFromCerts(certs)), scopeGlobal ? "GLOBAL" : "NODE", scopeGlobal ? null : WorkerConfig.getNodeId());
+        auditLogCertChainInstalled(adminInfo, signerId, new String (CertTools.getPEMFromCerts(certs)), scopeGlobal ? "GLOBAL" : "NODE", scopeGlobal ? null : WorkerConfig.getNodeId());
     }
 
     /* (non-Javadoc)
@@ -1267,14 +1339,18 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         return workerManagerSession.getWorkers(workerType, globalConfigurationSession);
     }
     
-    private void auditLog(SignServerEventTypes eventType, SignServerModuleTypes module, String customId) {
-        auditLog(eventType, module, customId, Collections.<String, Object>emptyMap());
+    private void auditLog(final AdminInfo adminInfo, SignServerEventTypes eventType, SignServerModuleTypes module,
+    		final String workerId) {
+        auditLog(adminInfo, eventType, module, workerId, Collections.<String, Object>emptyMap());
     }
     
-    private void auditLog(SignServerEventTypes eventType, SignServerModuleTypes module, String customId, Map<String, Object> additionalDetails) {
+    private void auditLog(final AdminInfo adminInfo, SignServerEventTypes eventType, SignServerModuleTypes module, final String workerId, Map<String, Object> additionalDetails) {
         try {
+        	final String serialNo =
+        			adminInfo.getCertSerialNumber() == null ? null : adminInfo.getCertSerialNumber().toString();
+        	additionalDetails.put(IWorkerLogger.LOG_WORKER_ID, workerId);
             logSession.log(eventType, EventStatus.SUCCESS, module, SignServerServiceTypes.SIGNSERVER,
-                    "WorkerSessionBean.auditLog", customId, null, null, additionalDetails);                               
+                    adminInfo.getSubjectDN(), adminInfo.getIssuerDN(), serialNo, null, additionalDetails);                               
 
         } catch (AuditRecordStorageException ex) {
             LOG.error("Audit log failure", ex);
@@ -1282,7 +1358,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         }
     }
     
-    private void setWorkerConfig(final int workerId, final WorkerConfig config,
+    private void setWorkerConfig(final AdminInfo adminInfo, final int workerId, final WorkerConfig config,
     		final String additionalLogKey, final String additionalLogValue) {
         final WorkerConfig oldConfig = workerConfigService.getWorkerProperties(workerId);       
         Map<String, Object> configChanges = WorkerConfig.propertyDiff(oldConfig, config);
@@ -1291,7 +1367,8 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         	configChanges.put(additionalLogKey, additionalLogValue);
         }
         
-        auditLog(SignServerEventTypes.SET_WORKER_CONFIG, SignServerModuleTypes.WORKER_CONFIG, String.valueOf(workerId), configChanges);
+        auditLog(adminInfo, SignServerEventTypes.SET_WORKER_CONFIG, SignServerModuleTypes.WORKER_CONFIG,
+        		String.valueOf(workerId), configChanges);
         workerConfigService.setWorkerConfig(workerId, config);
     }
 

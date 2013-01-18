@@ -231,6 +231,10 @@ Libraries to include:
         
         <postprocess modules="${enabledModules}"/>
         
+        <echo/>
+        <echo>Filtering jars...</echo>
+        <antcall target="-filter-jars"/>
+        
         <echo level="verbose">
 Configurations to include:
   /
@@ -257,6 +261,35 @@ Configurations to include:
             <zipfileset dir="${config.tmp.dir}" />
         </jar>
     </target>
+    
+    <!-- 
+        Special trick to filter out different SessionBeans from cesecore-ejb
+        depending on if the NODB mode is used or not.
+    -->
+    <!-- TODO: This is SignServer and CESeCore specific but could be made more generic 
+        by adding properties to the module descriptors to configure what to filter etc. -->
+    <target name="-filter-jars" depends="-init-filter-jars-db,-init-filter-jars-nodb">
+        <property name="cesecore-ejb.jar" value="cesecore-ejb_1.1.2.jar"/>
+        <move todir="${tmp}" file="${signserver.ear.dir}/${cesecore-ejb.jar}"/>
+        <jar destfile="${signserver.ear.dir}/${cesecore-ejb.jar}">
+            <zipfileset src="${tmp}/${cesecore-ejb.jar}" excludes="${cesecore-ejb-excludes}"/>
+        </jar>
+        
+        <property name="signserver-ejb.jar" value="SignServer-ejb.jar"/>
+        <move todir="${tmp}" file="${signserver.ear.dir}/${signserver-ejb.jar}"/>
+        <jar destfile="${signserver.ear.dir}/${signserver-ejb.jar}">
+            <zipfileset src="${tmp}/${signserver-ejb.jar}" excludes="${signserver-ejb-excludes}"/>
+        </jar>
+    </target>
+    <target name="-init-filter-jars-db" unless="noDB">
+        <property name="cesecore-ejb-excludes" value=""/>
+        <property name="signserver-ejb-excludes" value="**/*/NoIntegrityProtectedLoggerSessionBean*.class, **/*/NoIntegrityProtectedAuditorSessionBean*.class"/>
+    </target>
+    <target name="-init-filter-jars-nodb" if="noDB">
+        <property name="cesecore-ejb-excludes" value="**/*/IntegrityProtectedLoggerSessionBean*.class, **/*/IntegrityProtectedAuditorSessionBean*.class"/>
+        <property name="signserver-ejb-excludes" value=""/>
+    </target>
+    
     
 <!--    <target name="-postprocess-module">
         <echo>Post processing module: ${_acfa.calledname}</echo>

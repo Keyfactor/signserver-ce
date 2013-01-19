@@ -1,3 +1,9 @@
+signserver3.3 (3.3.0beta8-0markus1) precise; urgency=low
+
+  * New upstream pre-release.
+
+ -- Markus Kilås <markus@markuspage.com>  Sat, 19 Jan 2013 21:16:30 +0100
+
 signserver3.3 (3.3.0beta1-0markus1) precise; urgency=low
 
   * New upstream pre-release.

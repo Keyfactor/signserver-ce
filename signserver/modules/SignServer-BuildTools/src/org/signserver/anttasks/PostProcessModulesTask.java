@@ -71,7 +71,7 @@ public class PostProcessModulesTask extends Task {
                             String destfile = getProject().getProperty("signserver.ear.dir") + "/" + dest + src;
                             
                             // Postprocess the files
-                            replaceInJar(includes, "lib/" + src, destfile, getProject().getProperties(), this);
+                            replaceInJar(includes, getProject().getBaseDir() + "/lib/" + src, destfile, getProject().getProperties(), this);
                         } catch (IOException ex) {
                             throw new BuildException(ex);
                         }

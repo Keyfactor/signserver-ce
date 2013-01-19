@@ -12,6 +12,13 @@ build-stamp:
 	mkdir -pv ${APPSRV_HOME}/lib
 	rm -f ${APPSRV_HOME}/lib/appserv-rt.jar
 	ln -s /usr/share/java/glassfish-appserv-rt.jar ${APPSRV_HOME}/lib/appserv-rt.jar
+
+# 	Clover
+	echo "<antlib/>" > cloverlib.xml
+	mkdir lib/ext
+	mkdir lib/ext/no-clover
+	jar cf lib/ext/no-clover/clover.jar cloverlib.xml
+	
 #	mkdir -p ${APPSRV_HOME}/client
 #	ln -s /usr/share/java/glassfish-javaee.jar ${APPSRV_HOME}/client/jboss-j2ee.jar
 

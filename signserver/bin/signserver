@@ -86,6 +86,7 @@ CP="$CP":${OPTIONAL_CLASSPATH}
 if [ -f $APPSRV_HOME/lib/appserv-rt.jar ]; then
     CP=$CP:"${SIGNSRV_HOME}/conf/glassfish"
     CP=$CP:"$APPSRV_HOME/lib/appserv-rt.jar"
+    CP="$APPSRV_HOME/lib/gf-client.jar":$CP
 fi
 if [ -f $APPSRV_HOME/client/jbossall-client.jar ]; then
     CP=$CP:"${SIGNSRV_HOME}/conf/jboss"

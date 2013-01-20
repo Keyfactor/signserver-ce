@@ -24,6 +24,7 @@ build-stamp:
 
 #	Configuration
 	echo "includemodulesinbuild=false" > conf/signserver_build.properties
+	echo "module.log4j.enabled=true" >> conf/signserver_build.properties
 
 #	Disable modules with unsatisfied dependencies
 	echo "module.odfsigner.enabled=false" >> conf/signserver_build.properties

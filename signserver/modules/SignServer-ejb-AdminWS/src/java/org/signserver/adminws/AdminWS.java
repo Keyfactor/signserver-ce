@@ -43,6 +43,7 @@ import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.server.CertificateClientCredential;
 import org.signserver.server.IClientCredential;
 import org.signserver.server.UsernamePasswordClientCredential;
+import org.signserver.server.log.AdminInfo;
 
 /**
  * Class implementing the Admin WS interface.
@@ -64,17 +65,17 @@ public class AdminWS {
     private WebServiceContext wsContext;
 
     @EJB
-    private IWorkerSession.IRemote worker;
+    private IWorkerSession.ILocal worker;
 
     @EJB
-    private IGlobalConfigurationSession.IRemote global;
+    private IGlobalConfigurationSession.ILocal global;
 
     @PostConstruct
     private void postConstruct() { // NOPMD
         if (worker == null) {
             try {
                 worker = ServiceLocator.getInstance().lookupRemote(
-                        IWorkerSession.IRemote.class);
+                        IWorkerSession.ILocal.class);
             } catch (NamingException ex) {
                 LOG.error("Error looking up WorkerSession", ex);
             }
@@ -82,7 +83,7 @@ public class AdminWS {
         if (global == null) {
             try {
                 global = ServiceLocator.getInstance().lookupRemote(
-                        IGlobalConfigurationSession.IRemote.class);
+                        IGlobalConfigurationSession.ILocal.class);
             } catch (NamingException ex) {
                 LOG.error("Error looking up GlobalConfigurationSession", ex);
             }
@@ -236,7 +237,7 @@ public class AdminWS {
         requireAdminAuthorization("setWorkerProperty",
                 String.valueOf(workerId), key);
 
-        worker.setWorkerProperty(workerId, key, value);
+        worker.setWorkerProperty(getAdminInfo(), workerId, key, value);
     }
 
     /**
@@ -254,7 +255,7 @@ public class AdminWS {
         requireAdminAuthorization("removeWorkerProperty",
                 String.valueOf(workerId), key);
         
-        return worker.removeWorkerProperty(workerId, key);
+        return worker.removeWorkerProperty(getAdminInfo(), workerId, key);
     }
 
     /**
@@ -496,7 +497,7 @@ public class AdminWS {
         requireAdminAuthorization("generateSignerKey", String.valueOf(signerId),
                 keyAlgorithm, keySpec, alias);
         
-        return worker.generateSignerKey(signerId, keyAlgorithm, keySpec, alias,
+        return worker.generateSignerKey(getAdminInfo(), signerId, keyAlgorithm, keySpec, alias,
                 authCode.toCharArray());
     }
 
@@ -523,7 +524,7 @@ public class AdminWS {
 
         // Workaround for KeyTestResult first placed in wrong package
         final Collection<KeyTestResult> results;
-        Collection<?> res = worker.testKey(signerId, alias, authCode.toCharArray());
+        Collection<?> res = worker.testKey(getAdminInfo(), signerId, alias, authCode.toCharArray());
         if (res.size() < 1) {
             results = new LinkedList<KeyTestResult>();
         } else {
@@ -567,7 +568,7 @@ public class AdminWS {
                 String.valueOf(signerId));
         
         try {
-            worker.uploadSignerCertificate(signerId, signerCert, scope);
+            worker.uploadSignerCertificate(getAdminInfo(), signerId, signerCert, scope);
         } catch (CertificateException ex) {
             // Log stacktrace and only pass on description to client
             LOG.error("Unable to parse certificate", ex);
@@ -592,7 +593,7 @@ public class AdminWS {
                 String.valueOf(signerId));
         
         try {
-            worker.uploadSignerCertificateChain(signerId, signerCerts, scope);
+            worker.uploadSignerCertificateChain(getAdminInfo(), signerId, signerCerts, scope);
         } catch (CertificateException ex) {
             // Log stacktrace and only pass on description to client
             LOG.error("Unable to parse certificate", ex);
@@ -615,7 +616,7 @@ public class AdminWS {
             throws AdminNotAuthorizedException {
         requireAdminAuthorization("setGlobalProperty", key);
         
-        global.setProperty(scope, key, value);
+        global.setProperty(getAdminInfo(), scope, key, value);
     }
 
     /**
@@ -632,7 +633,7 @@ public class AdminWS {
             throws AdminNotAuthorizedException {
         requireAdminAuthorization("removeGlobalProperty", key);
         
-        return global.removeProperty(scope, key);
+        return global.removeProperty(getAdminInfo(), scope, key);
     }
 
     /**
@@ -692,7 +693,7 @@ public class AdminWS {
     public void globalResync() throws ResyncException, AdminNotAuthorizedException {
         requireAdminAuthorization("globalResync");
         
-        global.resync();
+        global.resync(getAdminInfo());
     }
 
     /**
@@ -702,7 +703,7 @@ public class AdminWS {
     public void globalReload() throws AdminNotAuthorizedException {
         requireAdminAuthorization("globalReload");
         
-        global.reload();
+        global.reload(getAdminInfo());
     }
 
     /**
@@ -813,6 +814,21 @@ public class AdminWS {
                throw new AdminNotAuthorizedException(
                        "Administrator not authorized to resource.");
            }
+        }
+    }
+    
+    private AdminInfo getAdminInfo() {
+        LOG.debug(">getAdminInfo");
+        final X509Certificate[] certificates = getClientCertificates();
+        
+        if (certificates == null || certificates.length == 0) {
+            return null;
+        } else {
+            final X509Certificate cert = certificates[0];
+            
+            log(cert, true, "getAdminInfo");
+            
+            return new AdminInfo(cert.getSubjectDN().getName(), cert.getIssuerDN().getName(), cert.getSerialNumber());
         }
     }
 

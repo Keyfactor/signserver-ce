@@ -7,11 +7,11 @@
       <ejb-name>AdminWS</ejb-name>
       <ejb-ref>
         <ejb-ref-name>org.signserver.adminws.AdminWS/global</ejb-ref-name>
-        <jndi-name>org.signserver.ejb.interfaces.IGlobalConfigurationSession$IRemote</jndi-name>
+        <jndi-name>org.signserver.ejb.interfaces.IGlobalConfigurationSession$ILocal</jndi-name>
       </ejb-ref>
       <ejb-ref>
         <ejb-ref-name>org.signserver.adminws.AdminWS/worker</ejb-ref-name>
-        <jndi-name>org.signserver.ejb.interfaces.IWorkerSession$IRemote</jndi-name>
+        <jndi-name>org.signserver.ejb.interfaces.IWorkerSession$ILocal</jndi-name>
       </ejb-ref>
       <resource-ref>
         <res-ref-name>org.signserver.adminws.AdminWS/wsContext</res-ref-name>

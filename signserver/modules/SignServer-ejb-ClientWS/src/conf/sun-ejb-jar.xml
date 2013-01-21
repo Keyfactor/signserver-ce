@@ -17,6 +17,7 @@
       <webservice-endpoint>
         <port-component-name>ClientWS</port-component-name>
         <endpoint-address-uri>/signserver/ClientWSService/ClientWS</endpoint-address-uri>
+        <transport-guarantee>CONFIDENTIAL</transport-guarantee>
         <service-qname>
           <namespaceURI>http://clientws.signserver.org/</namespaceURI>
           <localpart>ClientWSService</localpart>

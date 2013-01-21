@@ -25,6 +25,7 @@
       <webservice-endpoint>
         <port-component-name>ValidationWS</port-component-name>
         <endpoint-address-uri>/signserver/ValidationWSService/ValidationWS</endpoint-address-uri>
+        <transport-guarantee>CONFIDENTIAL</transport-guarantee>
         <service-qname>
           <namespaceURI>gen.ws.validationservice.protocol.signserver.org</namespaceURI>
           <localpart>ValidationWSService</localpart>

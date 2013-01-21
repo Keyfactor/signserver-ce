@@ -17,6 +17,7 @@
       <webservice-endpoint>
         <port-component-name>SignServerWS</port-component-name>
         <endpoint-address-uri>/signserver/SignServerWSService/SignServerWS</endpoint-address-uri>
+        <transport-guarantee>CONFIDENTIAL</transport-guarantee>
         <service-qname>
           <namespaceURI>gen.ws.protocol.signserver.org</namespaceURI>
           <localpart>SignServerWSService</localpart>

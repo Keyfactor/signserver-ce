@@ -25,6 +25,7 @@
       <webservice-endpoint>
         <port-component-name>AdminWS</port-component-name>
         <endpoint-address-uri>/signserver/AdminWSService/AdminWS</endpoint-address-uri>
+        <transport-guarantee>CONFIDENTIAL</transport-guarantee>
         <service-qname>
           <namespaceURI>http://adminws.signserver.org/</namespaceURI>
           <localpart>AdminWSService</localpart>

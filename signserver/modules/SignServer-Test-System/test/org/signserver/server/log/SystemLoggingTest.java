@@ -145,7 +145,7 @@ public class SystemLoggingTest extends ModulesTestCase {
     public void test01LogStartup() throws Exception {
         // Read second line of file (CESeCore outputs a time sync log line before the SignServer startup log line).
         LOG.info("Note: This test assumes the signserver_audit.log was cleared before the appserver started");
-        List<String> lines = readEntries(auditLogFile, 1, 1);
+        List<String> lines = readEntries(auditLogFile, 0, 1);
         final String line0 = lines.get(0);
         LOG.info(line0);
         assertTrue("Contains event", line0.contains("EVENT: SIGNSERVER_STARTUP"));
@@ -215,7 +215,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         assertTrue("Contains event", line.contains("EVENT: SET_WORKER_CONFIG"));
         assertTrue("Contains value", line.contains("added:TESTPROPERTY11: TESTVALUE11"));
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
+        assertTrue("Contains worker id", line.contains("WORKER_ID: " + signerId));
         
         // Test setting a new value
         workerSession.setWorkerProperty(signerId, "TESTPROPERTY11", "TESTVALUE4711");
@@ -226,7 +226,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         assertTrue("Contains event", line.contains("EVENT: SET_WORKER_CONFIG"));
         assertTrue("Contains value", line.contains("changed:TESTPROPERTY11: TESTVALUE4711"));
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
+        assertTrue("Contains worker id", line.contains("WORKER_ID: " + signerId));
         
         // Test removeProperty
         workerSession.removeWorkerProperty(signerId, "TESTPROPERTY11");
@@ -237,7 +237,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         assertTrue("Contains event", line.contains("EVENT: SET_WORKER_CONFIG"));
         assertTrue("Contains value", line.contains("removed:TESTPROPERTY11: TESTVALUE4711"));
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
+        assertTrue("Contains worker id", line.contains("WORKER_ID: " + signerId));
     }
     
     
@@ -252,7 +252,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         assertTrue("Contains event", line.contains("EVENT: SET_WORKER_CONFIG"));
         assertTrue("Contains value", line.contains("added:authorized_client: SN: 1234567890, issuer DN: CN=Test"));
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
+        assertTrue("Contains worker id", line.contains("WORKER_ID: " + signerId));
     }
     
     public void test01LogRemoveAuthorizedClient() throws Exception {
@@ -266,7 +266,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         assertTrue("Contains event", line.contains("EVENT: SET_WORKER_CONFIG"));
         assertTrue("Contains value", line.contains("removed:authorized_client: SN: 1234567890, issuer DN: CN=Test"));
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
+        assertTrue("Contains worker id", line.contains("WORKER_ID: " + signerId));
     }
 
     
@@ -282,12 +282,12 @@ public class SystemLoggingTest extends ModulesTestCase {
         String line = getTheLineContaining(lines, "EVENT: SET_WORKER_CONFIG");
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
+        assertTrue("Contains worker id", line.contains("WORKER_ID: " + signerId));
         
         line = getTheLineContaining(lines, "EVENT: CERTINSTALLED");
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
+        assertTrue("Contains worker id", line.contains("WORKER_ID: " + signerId));
         String certLine = new String(CertTools.getPEMFromCerts(Arrays.asList(cert))).replace("\r\n", "\n");
         assertTrue("Contains certificate", line.contains(certLine));
         assertTrue("Contains scope", line.contains("SCOPE: GLOBAL"));
@@ -300,14 +300,14 @@ public class SystemLoggingTest extends ModulesTestCase {
         line = getTheLineContaining(lines, "EVENT: CERTINSTALLED");
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
+        assertTrue("Contains worker id", line.contains("WORKER_ID: " + signerId));
         assertTrue("Contains empty certificate", line.contains("CERTIFICATE: ;"));
         assertTrue("Contains scope", line.contains("SCOPE: GLOBAL"));
         
         line = getTheLineContaining(lines, "EVENT: SET_WORKER_CONFIG");
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
+        assertTrue("Contains worker id", line.contains("WORKER_ID: " + signerId));
         
         
         // Test with uploadSignerCertificate method (node scope)
@@ -319,12 +319,12 @@ public class SystemLoggingTest extends ModulesTestCase {
         line = getTheLineContaining(lines, "EVENT: SET_WORKER_CONFIG");
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
+        assertTrue("Contains worker id", line.contains("WORKER_ID: " + signerId));
         
         line = getTheLineContaining(lines, "EVENT: CERTINSTALLED");
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
+        assertTrue("Contains worker id", line.contains("WORKER_ID: " + signerId));
         assertTrue("Contains certificate", line.contains(new String(CertTools.getPEMFromCerts(Arrays.asList(cert))).replace("\r\n", "\n")));
         assertTrue("Contains scope", line.contains("SCOPE: NODE"));
         assertTrue("Contains node", line.contains("NODE: " + WorkerConfig.getNodeId()));
@@ -342,12 +342,12 @@ public class SystemLoggingTest extends ModulesTestCase {
         line = getTheLineContaining(lines, "EVENT: SET_WORKER_CONFIG");
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
+        assertTrue("Contains worker id", line.contains("WORKER_ID: " + signerId));
         
         line = getTheLineContaining(lines, "EVENT: CERTINSTALLED");
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
+        assertTrue("Contains worker id", line.contains("WORKER_ID: " + signerId));
         assertTrue("Contains certificate", line.contains(new String(CertTools.getPEMFromCerts(Arrays.asList(cert))).replace("\r\n", "\n")));
         assertTrue("Contains scope", line.contains("SCOPE: GLOBAL"));
         
@@ -364,12 +364,12 @@ public class SystemLoggingTest extends ModulesTestCase {
         line = getTheLineContaining(lines, "EVENT: SET_WORKER_CONFIG");
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
+        assertTrue("Contains worker id", line.contains("WORKER_ID: " + signerId));
         
         line = getTheLineContaining(lines, "EVENT: CERTINSTALLED");
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
+        assertTrue("Contains worker id", line.contains("WORKER_ID: " + signerId));
         assertTrue("Contains certificate", line.contains(new String(CertTools.getPEMFromCerts(Arrays.asList(cert))).replace("\r\n", "\n")));
         assertTrue("Contains scope", line.contains("SCOPE: NODE"));
         assertTrue("Contains node", line.contains("NODE: NODE47"));
@@ -392,12 +392,12 @@ public class SystemLoggingTest extends ModulesTestCase {
         String line = getTheLineContaining(lines, "EVENT: SET_WORKER_CONFIG");
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
+        assertTrue("Contains worker id", line.contains("WORKER_ID: " + signerId));
         
         line = getTheLineContaining(lines, "EVENT: CERTCHAININSTALLED");
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
+        assertTrue("Contains worker id", line.contains("WORKER_ID: " + signerId));
         assertTrue("Contains certificate", line.contains(new String(CertTools.getPEMFromCerts(Arrays.asList(cert, issuerCert))).replace("\r\n", "\n")));
         assertTrue("Contains scope", line.contains("SCOPE: GLOBAL"));
         
@@ -411,14 +411,14 @@ public class SystemLoggingTest extends ModulesTestCase {
         line = getTheLineContaining(lines, "EVENT: CERTCHAININSTALLED");
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
+        assertTrue("Contains worker id", line.contains("WORKER_ID: " + signerId));
         assertTrue("Contains empty certificate chain", line.contains("CERTIFICATECHAIN: ;"));
         assertTrue("Contains scope", line.contains("SCOPE: GLOBAL"));
         
         line = getTheLineContaining(lines, "EVENT: SET_WORKER_CONFIG");
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
+        assertTrue("Contains worker id", line.contains("WORKER_ID: " + signerId));
         
         
         // Test with uploadSignerCertificateChain method (node scope)
@@ -430,12 +430,12 @@ public class SystemLoggingTest extends ModulesTestCase {
         line = getTheLineContaining(lines, "EVENT: SET_WORKER_CONFIG");
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
+        assertTrue("Contains worker id", line.contains("WORKER_ID: " + signerId));
         
         line = getTheLineContaining(lines, "EVENT: CERTCHAININSTALLED");
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
+        assertTrue("Contains worker id", line.contains("WORKER_ID: " + signerId));
         assertTrue("Contains certificate", line.contains(new String(CertTools.getPEMFromCerts(Arrays.asList(cert, issuerCert))).replace("\r\n", "\n")));
         assertTrue("Contains scope", line.contains("SCOPE: NODE"));
         assertTrue("Contains node", line.contains("NODE: " + WorkerConfig.getNodeId()));
@@ -453,12 +453,12 @@ public class SystemLoggingTest extends ModulesTestCase {
         line = getTheLineContaining(lines, "EVENT: SET_WORKER_CONFIG");
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
+        assertTrue("Contains worker id", line.contains("WORKER_ID: " + signerId));
         
         line = getTheLineContaining(lines, "EVENT: CERTCHAININSTALLED");
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
+        assertTrue("Contains worker id", line.contains("WORKER_ID: " + signerId));
         assertTrue("Contains certificate", line.contains(new String(CertTools.getPEMFromCerts(Arrays.asList(cert, issuerCert))).replace("\r\n", "\n")));
         assertTrue("Contains scope", line.contains("SCOPE: GLOBAL"));
         
@@ -477,12 +477,12 @@ public class SystemLoggingTest extends ModulesTestCase {
         line = getTheLineContaining(lines, "EVENT: SET_WORKER_CONFIG");
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
+        assertTrue("Contains worker id", line.contains("WORKER_ID: " + signerId));
         
         line = getTheLineContaining(lines, "EVENT: CERTCHAININSTALLED");
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
+        assertTrue("Contains worker id", line.contains("WORKER_ID: " + signerId));
         assertTrue("Contains certificate", line.contains(new String(CertTools.getPEMFromCerts(Arrays.asList(cert, issuerCert))).replace("\r\n", "\n")));
         assertTrue("Contains scope", line.contains("SCOPE: NODE"));
         assertTrue("Contains node", line.contains("NODE: NODE47"));
@@ -501,12 +501,12 @@ public class SystemLoggingTest extends ModulesTestCase {
         String line = getTheLineContaining(lines, "EVENT: SET_WORKER_CONFIG");
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
+        assertTrue("Contains worker id", line.contains("WORKER_ID: " + signerId));
         
         line = getTheLineContaining(lines, "EVENT: KEYSELECTED");
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
+        assertTrue("Contains worker id", line.contains("WORKER_ID: " + signerId));
         assertTrue("Contains alias", line.contains("ALIAS: ts_key00002"));
         assertTrue("Contains scope", line.contains("SCOPE: GLOBAL"));
         
@@ -520,12 +520,12 @@ public class SystemLoggingTest extends ModulesTestCase {
         line = getTheLineContaining(lines, "EVENT: SET_WORKER_CONFIG");
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
+        assertTrue("Contains worker id", line.contains("WORKER_ID: " + signerId));
         
         line = getTheLineContaining(lines, "EVENT: KEYSELECTED");
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
+        assertTrue("Contains worker id", line.contains("WORKER_ID: " + signerId));
         assertTrue("Contains alias", line.contains("KEYALIAS: ;"));
         assertTrue("Contains scope", line.contains("SCOPE: GLOBAL"));
         
@@ -539,7 +539,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         line = getTheLineContaining(lines, "EVENT: SET_WORKER_CONFIG");
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + signerId));
+        assertTrue("Contains worker id", line.contains("WORKER_ID: " + signerId));
         
         line = getTheLineContaining(lines, "EVENT: KEYSELECTED");
         assertNotNull("Contains event", line);
@@ -593,7 +593,7 @@ public class SystemLoggingTest extends ModulesTestCase {
             String line = lines.get(0);
             assertTrue("Contains event", line.contains("EVENT: KEYGEN"));
             assertTrue("Contains module", line.contains("MODULE: KEY_MANAGEMENT"));
-            assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + p12SignerId));
+            assertTrue("Contains worker id", line.contains("WORKER_ID: " + p12SignerId));
             assertTrue("Contains alias", line.contains("KEYALIAS: ts_key00004"));
             assertTrue("Contains spec", line.contains("KEYSPEC: 512"));
             assertTrue("Contains alg", line.contains("KEYALG: RSA"));
@@ -607,7 +607,7 @@ public class SystemLoggingTest extends ModulesTestCase {
             line = lines.get(0);
             assertTrue("Contains event", line.contains("EVENT: KEYTEST"));
             assertTrue("Contains module", line.contains("MODULE: KEY_MANAGEMENT"));
-            assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + p12SignerId));
+            assertTrue("Contains worker id", line.contains("WORKER_ID: " + p12SignerId));
             assertTrue("Contains alias", line.contains("KEYALIAS: ts_key00004"));
             assertTrue("Contains test results", line.contains("KeyTestResult{alias=ts_key00004, success=true"));
             
@@ -620,7 +620,7 @@ public class SystemLoggingTest extends ModulesTestCase {
             line = lines.get(0);
             assertTrue("Contains event", line.contains("EVENT: GENCSR"));
             assertTrue("Contains module", line.contains("MODULE: KEY_MANAGEMENT"));
-            assertTrue("Contains worker id", line.contains("CUSTOM_ID: " + p12SignerId));
+            assertTrue("Contains worker id", line.contains("WORKER_ID: " + p12SignerId));
             assertTrue("Contains csr", line.contains("CSR: " + new String(reqData.getBase64CertReq())));
         } finally {
             removeWorker(p12SignerId);
@@ -658,7 +658,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         LOG.info(line);
         assertTrue("Contains event", line.contains("EVENT: PROCESS"));
         assertTrue("Contains module", line.contains("MODULE: WORKER"));
-        assertTrue("Contains no correct worker id", line.contains("CUSTOM_ID: ;"));
+        assertTrue("Contains no correct worker id", line.contains("WORKER_ID: "));
         assertTrue("Contains log id", line.contains("LOG_ID: "));
         assertTrue("Contains success false", line.contains("PROCESS_SUCCESS: false"));
         assertTrue("Contains exception", line.contains("EXCEPTION: No such worker: 1234567"));

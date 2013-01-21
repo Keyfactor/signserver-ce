@@ -106,7 +106,10 @@ public class SignServerLog4jDevice implements AuditLogDevice {
 		final StringBuilder str = new StringBuilder();	
 		str.append("EVENT: ").append(eventType.toString()).append("; ")
 		.append("MODULE: ").append(moduleType.toString()).append("; ")
-		.append("CUSTOM_ID: ").append(customId).append("; ");
+		.append("ADMINISTRATOR: ").append(authToken).append("; ")
+		.append("ISSUER: ").append(customId).append("; ")
+		.append("SERIAL_NUMBER: ").append(searchDetail1).append("; ")
+		.append("WORKER_ID: ").append(searchDetail2).append("; ");
 		
 		for (Map.Entry<String, Object> entry : additionalDetails.entrySet()) {
 			str.append(entry.getKey());

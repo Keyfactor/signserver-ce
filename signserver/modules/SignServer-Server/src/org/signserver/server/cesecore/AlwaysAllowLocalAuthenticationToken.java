@@ -24,13 +24,11 @@ import org.cesecore.authorization.user.matchvalues.AccessMatchValue;
  * 
  * Example usage: AuthenticationToken admin = new AlwaysAllowLocalAuthenticationToken(new UsernamePrincipal("Internal function abc"));
  * 
- * Based on cesecore version: AlwaysAllowLocalAuthenticationToken.java 948 2011-07-18 09:04:26Z mikek
- * 
  * @version $Id$
  */
 public class AlwaysAllowLocalAuthenticationToken extends LocalJvmOnlyAuthenticationToken {
 
-    private static final long serialVersionUID = -2779696224538433182L;
+    private static final long serialVersionUID = -3942437717641924829L;
 
     public AlwaysAllowLocalAuthenticationToken(final Principal principal) {
         super(new HashSet<Principal>() {
@@ -40,16 +38,17 @@ public class AlwaysAllowLocalAuthenticationToken extends LocalJvmOnlyAuthenticat
                 add(principal);
             }
         }, null);
+
     }
 
     @Override
     public boolean matches(AccessUserAspect accessUser) {
-        return super.isCreatedInThisJvm();
+       return super.isCreatedInThisJvm();  
     }
 
     @Override
     public boolean equals(Object authenticationToken) {
-        if (this == authenticationToken) {        
+        if (this == authenticationToken) {
             return true;
         }
         if (authenticationToken == null) {
@@ -66,7 +65,7 @@ public class AlwaysAllowLocalAuthenticationToken extends LocalJvmOnlyAuthenticat
     public int hashCode() {
         return "AlwaysAllowLocalAuthenticationToken".hashCode();
     }
-    
+
     @Override
     public boolean matchTokenType(String tokenType) {  
         return true;
@@ -74,7 +73,7 @@ public class AlwaysAllowLocalAuthenticationToken extends LocalJvmOnlyAuthenticat
 
     @Override
     public AccessMatchValue getDefaultMatchValue() {
-        return DefaultInternalMatchValue.INSTANCE;
+        return InternalMatchValue.DEFAULT;
     }
 
     @Override
@@ -83,35 +82,34 @@ public class AlwaysAllowLocalAuthenticationToken extends LocalJvmOnlyAuthenticat
     }
     
     private static enum InternalMatchValue implements AccessMatchValue {
-        INSTANCE;
+        INSTANCE(0), DEFAULT(Integer.MAX_VALUE);
 
         private static final String TOKEN_TYPE = "AlwaysAllowAuthenticationToken";
         
+        private final int numericValue;
+        
+        private InternalMatchValue(final int numericValue) {
+            this.numericValue = numericValue;
+        }
+        
         @Override
         public int getNumericValue() {         
-            return 0;
+            return numericValue;
         }
 
         @Override
         public String getTokenType() {           
             return TOKEN_TYPE;
         }
-        
-    }
-    
-    private static enum DefaultInternalMatchValue implements AccessMatchValue {
-        INSTANCE;
 
-        private static final String TOKEN_TYPE = "AlwaysAllowAuthenticationToken";
-        
         @Override
-        public int getNumericValue() {         
-            return Integer.MAX_VALUE;
+        public boolean isIssuedByCa() {
+            return false;
         }
 
         @Override
-        public String getTokenType() {           
-            return TOKEN_TYPE;
-        }    
+        public boolean isDefaultValue() {
+            return numericValue == DEFAULT.numericValue;
+        }
     }
 }

@@ -299,7 +299,8 @@ public class SignServerCLITest extends ModulesTestCase {
     	// execute test signing a PDF file with the client CLI in WS mode
     	clientCLI.execute("signdocument", "-protocol", "WEBSERVICES", "-workername", getSignerNamePDFSigner1(), "-infile",
     			getSignServerHome() + File.separator + "res" + File.separator + "test" + File.separator + "pdf" + File.separator + "sample.pdf",
-    			"-outfile", outFile.getAbsolutePath());
+    			"-outfile", outFile.getAbsolutePath(),
+                        "-truststore", getSignServerHome() + "/p12/truststore.jks", "-truststorepwd", "changeit");
    	
     	// check the log file to see that the FILENAME property was logged
     	BufferedReader reader = new BufferedReader(new FileReader(logFile));

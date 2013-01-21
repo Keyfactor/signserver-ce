@@ -1,58 +1,3 @@
-# Set to true to allow dynamic re-configuration using properties files in the file 
-# system. Using this you can place a file /etc/cesecore/conf/cesecore.properties in the file system and
-# override default values compiled into ejbca.ear.
-#
-# Default: false
-#allow.external-dynamic.configuration=false
-
-# ------------ Basic CA configuration ---------------------
-# This password is used internally to protect CA keystores in database (i.e. the CAs private key).
-#ca.keystorepass=foo123
-#ca.keystorepass=!secret!
-
-# Default Random Number Generator algorithm for certificate serial number generation.
-# Available algorithms are:
-# SHA1PRNG
-#ca.rngalgorithm=SHA1PRNG
-
-# The length in octets of certificate serial numbers generated. 8 octets is a 64 bit serial number.
-# It is really recommended to use at least 64 bits, so please leave as default unless you are really sure, 
-# and have a really good reason to change it.
-# Possible values: 8 or 4
-# Default: 8
-#ca.serialnumberoctetsize=8
-
-# The date and time from which an expire date of a certificate is to be considered to be too far in the future.
-# The time could be specified in two ways:
-# 1. The unix time see http://en.wikipedia.org/wiki/Unix_time given as an integer decoded to an hexadecimal string.
-#    The value 80000000 will give the time when the integer becomes negative if casted to 32 bit.
-#    This is when the year 2038 problem occurs. See http://en.wikipedia.org/wiki/Year_2038_problem .
-#    Set to this value if you don't want to issue any certificates that could cause this problem.
-# 2. For you convenience this could also be specified in the ISO8601 date format.
-# Default: no limitation
-# The 2038 problem:
-#ca.toolateexpiredate=80000000
-#ca.toolateexpiredate=2038-01-19 03:14:08+00:00
-
-
-# The idea of a HSM to use a HSM is to have the private keys protected. It should not be possible to extract them.
-# To prevent using a key with the private part extractable a test is made before activating a CA.
-# If this test shows that you can read the private part from the key the CA will not be activated unless the key is a SW key.
-# You may (but should not) permit using extractable private keys by setting this property to 'true'.
-# Default: false
-#ca.doPermitExtractablePrivateKeys=true
-
-# ------------- Core language configuration -------------
-# The language that should be used internally for logging, exceptions and approval notifications.
-# The languagefile is stored in './src/main/resources/intresources/intresources.xx.properties'.
-# Should be one of EN,FR,SE
-# Default: EN
-#intresources.preferredlanguage=EN
-
-# The language used internally if a resource not found in the preferred language
-# Default: SE
-#intresources.secondarylanguage=SE
-
 # ------------ Audit log configuration ---------------------
 # I you want to use integrity protection of the audit log (in the IntegrityProtectedDevice) you
 # must also configure integrity protection in conf/databaseprotection.properties
@@ -60,12 +5,15 @@
 
 #### Secure audit log configuration.
 
+# Nodeid used for integrity protected audit log. If not set the hostname of local host is used.
+# Default: not set
+#cluster.nodeid=
+
 # All security log events are written to all enabled/configured devices.
 # The following AuditLogDevice implementations are available:
-#securityeventsaudit.implementation.X=org.cesecore.audit.impl.log4j.Log4jDevice
 #securityeventsaudit.implementation.X=org.signserver.server.log.SignServerLog4jDevice
+#securityeventsaudit.implementation.X=org.cesecore.audit.impl.log4j.Log4jDevice
 #securityeventsaudit.implementation.X=org.cesecore.audit.impl.integrityprotected.IntegrityProtectedDevice
-#securityeventsaudit.implementation.X=org.cesecore.audit.impl.queued.QueuedDevice
 
 # Each device can have a different exporter.
 # The following AuditExporter implementations are available:
@@ -74,10 +22,7 @@
 #securityeventsaudit.exporter.X=org.cesecore.audit.impl.AuditExporterXml
 #securityeventsaudit.exporter.X=org.cesecore.audit.impl.AuditExporterJson
 
-# Device implementation specific parameters (e.g. "key.subkey=value") can be passed by using 
-#securityeventsaudit.deviceproperty.X.key.subkey=value
-
-# Example configuration of Log4jDevice
+# Example configuration of SignServerLog4jDevice
 securityeventsaudit.implementation.0=org.signserver.server.log.SignServerLog4jDevice
 
 # Example configuration of IntegrityProtectedDevice that logs to the database
@@ -88,20 +33,3 @@ securityeventsaudit.exporter.1=org.cesecore.audit.impl.AuditExporterXml
 #securityeventsaudit.deviceproperty.1.export.dir=/tmp/
 #securityeventsaudit.deviceproperty.1.export.fetchsize=1000
 #securityeventsaudit.deviceproperty.1.validate.fetchsize=1000
-
-# Example configuration of QueuedDevice that logs to the database
-# With JSON export to /tmp/ (default export dir)
-securityeventsaudit.implementation.2=org.cesecore.audit.impl.queued.QueuedDevice
-securityeventsaudit.exporter.2=org.cesecore.audit.impl.AuditExporterJson
-#securityeventsaudit.deviceproperty.2.export.dir=/tmp/
-#securityeventsaudit.deviceproperty.2.export.fetchsize=1000
-#securityeventsaudit.deviceproperty.2.validate.fetchsize=1000
-
-# Nodeid used for integrity protected audit log. If not set the hostname of local host is used.
-# Default: not set
-#cluster.nodeid=
-
-# When upgrading a 100% up-time cluster, all nodes should be deployed with db.keepjbossserialization=true.
-# Once all nodes are running > 4.0, set to false to increase efficiency and portability.
-# Default: false
-#db.keepjbossserialization=true

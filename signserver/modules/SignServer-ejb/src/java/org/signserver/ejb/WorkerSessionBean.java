@@ -25,10 +25,14 @@ import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
+import org.cesecore.audit.AuditLogEntry;
+import org.cesecore.audit.audit.SecurityEventsAuditorSessionLocal;
 import org.cesecore.audit.enums.EventStatus;
 import org.cesecore.audit.log.AuditRecordStorageException;
 import org.cesecore.audit.log.SecurityEventsLoggerSessionLocal;
-
+import org.cesecore.authentication.tokens.UsernamePrincipal;
+import org.cesecore.authorization.AuthorizationDeniedException;
+import org.cesecore.util.query.QueryCriteria;
 import org.ejbca.util.CertTools;
 import org.signserver.common.*;
 import org.signserver.common.KeyTestResult;
@@ -42,6 +46,7 @@ import org.signserver.server.archive.ArchiveException;
 import org.signserver.server.archive.Archiver;
 import org.signserver.server.archive.olddbarchiver.entities.ArchiveDataBean;
 import org.signserver.server.archive.olddbarchiver.entities.ArchiveDataService;
+import org.signserver.server.cesecore.AlwaysAllowLocalAuthenticationToken;
 import org.signserver.server.config.entities.FileBasedWorkerConfigDataService;
 import org.signserver.server.config.entities.IWorkerConfigDataService;
 import org.signserver.server.config.entities.WorkerConfigDataService;
@@ -86,6 +91,9 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     @EJB
     private SecurityEventsLoggerSessionLocal logSession;
 
+    @EJB
+    private SecurityEventsAuditorSessionLocal auditorSession;
+    
     EntityManager em;
     
 
@@ -1377,6 +1385,16 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             buff.append(result.toString()).append("\n");
         }
         return buff.toString();
+    }
+
+    @Override
+    public List<? extends AuditLogEntry> selectAuditLogs(AdminInfo adminInfo, int startIndex, int max, QueryCriteria criteria, String logDeviceId) throws AuthorizationDeniedException {
+        return auditorSession.selectAuditLogs(new AlwaysAllowLocalAuthenticationToken(new UsernamePrincipal(adminInfo.toString())), startIndex, max, criteria, logDeviceId);
+    }
+
+    @Override
+    public List<? extends AuditLogEntry> selectAuditLogs(int startIndex, int max, QueryCriteria criteria, String logDeviceId) throws AuthorizationDeniedException {
+        return selectAuditLogs(new AdminInfo("CLI user", null, null), startIndex, max, criteria, logDeviceId);
     }
     
 }

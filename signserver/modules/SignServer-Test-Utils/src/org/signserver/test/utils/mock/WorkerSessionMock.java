@@ -19,6 +19,9 @@ import java.security.cert.CertificateException;
 import java.util.*;
 
 import org.apache.log4j.Logger;
+import org.cesecore.audit.AuditLogEntry;
+import org.cesecore.authorization.AuthorizationDeniedException;
+import org.cesecore.util.query.QueryCriteria;
 import org.signserver.common.ArchiveDataVO;
 import org.signserver.common.AuthorizedClient;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
@@ -320,6 +323,16 @@ public class WorkerSessionMock implements IWorkerSession.ILocal,
     
     @Override
     public List<Integer> getWorkers(int workerType) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public List<? extends AuditLogEntry> selectAuditLogs(AdminInfo adminInfo, int startIndex, int max, QueryCriteria criteria, String logDeviceId) throws AuthorizationDeniedException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public List<? extends AuditLogEntry> selectAuditLogs(int startIndex, int max, QueryCriteria criteria, String logDeviceId) throws AuthorizationDeniedException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

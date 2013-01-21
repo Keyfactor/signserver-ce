@@ -21,6 +21,9 @@ import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
 import javax.ejb.Remote;
+import org.cesecore.audit.AuditLogEntry;
+import org.cesecore.authorization.AuthorizationDeniedException;
+import org.cesecore.util.query.QueryCriteria;
 import org.signserver.common.ArchiveDataVO;
 import org.signserver.common.AuthorizedClient;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
@@ -384,12 +387,28 @@ public interface IWorkerSession {
     interface IRemote extends IWorkerSession {
 
         String JNDI_NAME = "signserver/WorkerSessionBean/remote";
+        
+        List<? extends AuditLogEntry> selectAuditLogs(int startIndex, int max, QueryCriteria criteria, String logDeviceId) throws AuthorizationDeniedException;
     }
 
     @Local
     interface ILocal extends IWorkerSession {
 
         String JNDI_NAME = "signserver/WorkerSessionBean/local";
+        
+    /**
+     * Select a set of events to be audited.
+     * 
+     * @param token identifier of the entity performing the task.
+     * @param startIndex Index where select will start. Set to 0 to start from the beginning.
+     * @param max maximum number of results to be returned. Set to 0 to use no limit.
+     * @param criteria Criteria defining the subset of logs to be selected.
+     * @param logDeviceId identifier of the AuditLogDevice
+     * 
+     * @return The audit logs to the given criteria
+     * @throws AuthorizationDeniedException 
+     */
+    List<? extends AuditLogEntry> selectAuditLogs(AdminInfo adminInfo, int startIndex, int max, QueryCriteria criteria, String logDeviceId) throws AuthorizationDeniedException;
 
         String generateSignerKey(final AdminInfo adminInfo, int signerId, String keyAlgorithm,
                 String keySpec, String alias, char[] authCode)

@@ -15,6 +15,7 @@ package org.signserver.admin.cli.defaultimpl;
 import org.signserver.admin.cli.defaultimpl.archive.FindFromArchiveIdCommand;
 import org.signserver.admin.cli.defaultimpl.archive.FindFromRequestCertCommand;
 import org.signserver.admin.cli.defaultimpl.archive.FindFromRequestIPCommand;
+import org.signserver.admin.cli.defaultimpl.auditlog.QueryAuditLogCommand;
 import org.signserver.admin.cli.defaultimpl.groupkeyservice.PregenerateKeysCommand;
 import org.signserver.admin.cli.defaultimpl.groupkeyservice.RemoveGroupKeysCommand;
 import org.signserver.admin.cli.defaultimpl.groupkeyservice.SwitchEncKeyCommand;
@@ -70,6 +71,8 @@ public class DefaultAdminCommandFactory extends AbstractCommandFactory implement
         put("groupkeyservice", "pregeneratekeys", PregenerateKeysCommand.class);
         put("groupkeyservice", "removegroupkeys", RemoveGroupKeysCommand.class);
         put("groupkeyservice", "switchenckey", SwitchEncKeyCommand.class);
+        
+        put("auditlog", "query", QueryAuditLogCommand.class);
     }
 
 }

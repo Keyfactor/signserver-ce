@@ -45,7 +45,9 @@ public class NoIntegrityProtectedLoggerSessionBean implements IntegrityProtected
             log.trace(String.format(">log:%s:%s:%s:%s:%s:%s", eventType, eventStatus, module, service, authToken, additionalDetails));
         }
         
-        log.error("Not logging to database");
+        if (log.isDebugEnabled()) {
+            log.debug("Not logging to database");
+        }
         
         if (log.isTraceEnabled()) {
             log.trace("<log");

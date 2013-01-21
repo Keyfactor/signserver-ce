@@ -1389,7 +1389,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
 
     @Override
     public List<? extends AuditLogEntry> selectAuditLogs(AdminInfo adminInfo, int startIndex, int max, QueryCriteria criteria, String logDeviceId) throws AuthorizationDeniedException {
-        return auditorSession.selectAuditLogs(new AlwaysAllowLocalAuthenticationToken(new UsernamePrincipal(adminInfo.toString())), startIndex, max, criteria, logDeviceId);
+        return auditorSession.selectAuditLogs(new AlwaysAllowLocalAuthenticationToken(new UsernamePrincipal(adminInfo.getSubjectDN())), startIndex, max, criteria, logDeviceId);
     }
 
     @Override

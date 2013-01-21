@@ -1,4 +1,4 @@
-CESeCore is from cesecore.eu SVN revision 1419.
+CESeCore is from cesecore.eu SVN revision 1426.
 
 We build the CESeCore jars with some classes removed. Patch for being able to 
 exclude files from the jars:

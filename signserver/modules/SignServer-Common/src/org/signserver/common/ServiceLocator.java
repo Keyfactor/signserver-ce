@@ -117,18 +117,24 @@ public final class ServiceLocator {
      */
     private String getJBossJNDIName(final Class clazz,
             final boolean remote) {
+        final String result;
+        
+        if (clazz.getName().startsWith("org.cesecore")) {
+            result = "cesecore/" + clazz.getSimpleName();
+        } else {
 
-        String interfaceName = clazz.getSimpleName();
-        if (clazz.getEnclosingClass() != null
-                && ((remote && "IRemote".equals(interfaceName))
-                    || (!remote && "ILocal".equals(interfaceName)))) {
-            interfaceName = clazz.getEnclosingClass().getSimpleName();
+            String interfaceName = clazz.getSimpleName();
+            if (clazz.getEnclosingClass() != null
+                    && ((remote && "IRemote".equals(interfaceName))
+                        || (!remote && "ILocal".equals(interfaceName)))) {
+                interfaceName = clazz.getEnclosingClass().getSimpleName();
+            }
+            if (interfaceName.charAt(0) == 'I') {
+                interfaceName = interfaceName.substring(1);
+            }
+            result = "signserver/" + interfaceName + "Bean"
+                    + (remote ? "/remote" : "/local");
         }
-        if (interfaceName.charAt(0) == 'I') {
-            interfaceName = interfaceName.substring(1);
-        }
-        final String result = "signserver/" + interfaceName + "Bean"
-                + (remote ? "/remote" : "/local");
         if (LOG.isDebugEnabled()) {
             LOG.debug("JBoss JNDI name: " + result);
         }

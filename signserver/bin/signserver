@@ -80,6 +80,7 @@ OPTIONAL_CLASSPATH=
 # Construct the classpath
 CP="$SIGNSRV_HOME/lib/${ADMINCLI_JAR}"
 CP="${SIGNSRV_HOME}/conf":"$CP"
+CP="$CP:$SIGNSRV_HOME/res/cesecore"
 CP="$CP":${OPTIONAL_CLASSPATH}
 
 # Application server dependencies

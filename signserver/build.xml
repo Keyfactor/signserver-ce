@@ -269,12 +269,22 @@ Configurations to include:
     <!-- TODO: This is SignServer and CESeCore specific but could be made more generic 
         by adding properties to the module descriptors to configure what to filter etc. -->
     <target name="-filter-jars" depends="-init-filter-jars-db,-init-filter-jars-nodb">
+        
+        <!-- cesecore-ejb.jar -->
         <property name="cesecore-ejb.jar" value="cesecore-ejb_1.1.2.jar"/>
         <move todir="${tmp}" file="${signserver.ear.dir}/${cesecore-ejb.jar}"/>
         <jar destfile="${signserver.ear.dir}/${cesecore-ejb.jar}">
             <zipfileset src="${tmp}/${cesecore-ejb.jar}" excludes="${cesecore-ejb-excludes}"/>
         </jar>
         
+        <!-- cesecore-entities.jar -->
+        <property name="cesecore-entities.jar" value="cesecore-entity_1.1.2.jar"/>
+        <move todir="${tmp}" file="${signserver.ear.dir}/lib/${cesecore-entities.jar}"/>
+        <jar destfile="${signserver.ear.dir}/lib/${cesecore-entities.jar}">
+            <zipfileset src="${tmp}/${cesecore-entities.jar}" excludes="${cesecore.entities.excludes}"/>
+        </jar>
+        
+        <!-- signserver-ejb.jar -->
         <property name="signserver-ejb.jar" value="SignServer-ejb.jar"/>
         <move todir="${tmp}" file="${signserver.ear.dir}/${signserver-ejb.jar}"/>
         <jar destfile="${signserver.ear.dir}/${signserver-ejb.jar}">
@@ -282,12 +292,12 @@ Configurations to include:
         </jar>
     </target>
     <target name="-init-filter-jars-db" unless="noDB">
-        <property name="cesecore-ejb-excludes" value=""/>
-        <property name="signserver-ejb-excludes" value="**/*/NoIntegrityProtectedLoggerSessionBean*.class, **/*/NoIntegrityProtectedAuditorSessionBean*.class"/>
+        <property name="cesecore-ejb-excludes" value="${cesecore.ejb.withdb.excludes}"/>
+        <property name="signserver-ejb-excludes" value="${signserver.ejb.withdb.excludes}"/>
     </target>
     <target name="-init-filter-jars-nodb" if="noDB">
-        <property name="cesecore-ejb-excludes" value="**/*/IntegrityProtectedLoggerSessionBean*.class, **/*/IntegrityProtectedAuditorSessionBean*.class"/>
-        <property name="signserver-ejb-excludes" value=""/>
+        <property name="cesecore-ejb-excludes" value="${cesecore.ejb.nodb.excludes}"/>
+        <property name="signserver-ejb-excludes" value="${signserver.ejb.nodb.excludes}"/>
     </target>
     
     

@@ -1,40 +1,9 @@
--- DDL for SignServer 3.3.x on Oracle
+-- DDL for SignServer 3.4.x on Oracle
 -- ------------------------------------------------------
 -- Version: $Id$
 -- Comment: These definitions should work for SignServer 3.3.x, Oracle 10.x and the JDBC driver version 10.2.0.1.0.
 -- TODO: Update the versions above with what we tested with
 
-CREATE TABLE AccessRulesData (
-    pK NUMBER(10) NOT NULL,
-    accessRule VARCHAR2(255 byte) NOT NULL,
-    isRecursive NUMBER(1) NOT NULL,
-    rowProtection CLOB,
-    rowVersion NUMBER(10) NOT NULL,
-    rule NUMBER(10) NOT NULL,
-    AdminGroupData_accessRules NUMBER(10),
-    PRIMARY KEY (pK)
-);
-
-CREATE TABLE AdminEntityData (
-    pK NUMBER(10) NOT NULL,
-    cAId NUMBER(10) NOT NULL,
-    matchType NUMBER(10) NOT NULL,
-    matchValue VARCHAR2(255 byte),
-    matchWith NUMBER(10) NOT NULL,
-    rowProtection CLOB,
-    rowVersion NUMBER(10) NOT NULL,
-    tokenType VARCHAR2(255 byte),
-    AdminGroupData_adminEntities NUMBER(10),
-    PRIMARY KEY (pK)
-);
-
-CREATE TABLE AdminGroupData (
-    pK NUMBER(10) NOT NULL,
-    adminGroupName VARCHAR2(255 byte) NOT NULL,
-    rowProtection CLOB,
-    rowVersion NUMBER(10) NOT NULL,
-    PRIMARY KEY (pK)
-);
 
 --
 -- Table structure for table `AuditRecordData`
@@ -56,14 +25,6 @@ CREATE TABLE AuditRecordData (
     service VARCHAR2(255 byte) NOT NULL,
     timeStamp NUMBER(19) NOT NULL,
     PRIMARY KEY (pk)
-);
-
-CREATE TABLE AuthorizationTreeUpdateData (
-    pK NUMBER(10) NOT NULL,
-    authorizationTreeUpdateNumber NUMBER(10) NOT NULL,
-    rowProtection CLOB,
-    rowVersion NUMBER(10) NOT NULL,
-    PRIMARY KEY (pK)
 );
 
 
@@ -151,8 +112,5 @@ CREATE TABLE "GROUPKEYDATA" (
 --
 CREATE SEQUENCE "HIBERNATE_SEQUENCE"  MINVALUE 1 MAXVALUE 999999999999999999999999999 INCREMENT BY 1;
 
-alter table AccessRulesData add constraint FKABB4C1DFDBBC970 foreign key (AdminGroupData_accessRules) references AdminGroupData;
-
-alter table AdminEntityData add constraint FKD9A99EBCB3A110AD foreign key (AdminGroupData_adminEntities) references AdminGroupData;
 
 -- End

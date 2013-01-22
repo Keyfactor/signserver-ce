@@ -1,57 +1,52 @@
--- Dropping tables for SignServer 3.3.x on MySQL
+-- Dropping tables for SignServer 3.4.x on MySQL
 -- ------------------------------------------------------
 -- Version: $Id$
 -- Comment: 
 
 
-DROP TABLE IF EXISTS `AccessRulesData`;
-
-DROP TABLE IF EXISTS `AuthorizationTreeUpdateData`;
-
-DROP TABLE IF EXISTS `AdminEntityData`;
-
-DROP TABLE IF EXISTS `AdminGroupData`;
-
+--
+-- Drop table `AuditRecordData`
+--
 DROP TABLE IF EXISTS `AuditRecordData`;
 
 --
--- Table structure for table `GlobalConfigData`
+-- Drop table `GlobalConfigData`
 --
 DROP TABLE IF EXISTS `GlobalConfigData`;
 
 
 --
--- Table structure for table `signerconfigdata`
+-- Drop table `signerconfigdata`
 --
 DROP TABLE IF EXISTS `signerconfigdata`;
 
 
 --
--- Table structure for table `KeyUsageCounter`
+-- Drop table `KeyUsageCounter`
 --
 DROP TABLE IF EXISTS `KeyUsageCounter`;
 
 
 --
--- Table structure for table `ArchiveData`
+-- Drop table `ArchiveData`
 --
 DROP TABLE IF EXISTS `ArchiveData`;
 
 
 --
--- Table structure for table `enckeydata`
+-- Drop table `enckeydata`
 --
 DROP TABLE IF EXISTS `enckeydata`;
 
 
 --
--- Table structure for table `groupkeydata`
+-- Drop table `groupkeydata`
 --
 DROP TABLE IF EXISTS `groupkeydata`;
 
 
 --
--- Table structure for table `SEQUENCE`
+-- Drop table `SEQUENCE`
 --
 DROP TABLE IF EXISTS `SEQUENCE`;
 

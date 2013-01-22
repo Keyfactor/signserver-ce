@@ -1,39 +1,8 @@
--- DDL for SignServer 3.3.x on MySQL
+-- DDL for SignServer 3.4.x on MySQL
 -- ------------------------------------------------------
 -- Version: $Id$
 -- Comment: 
 
-CREATE TABLE AccessRulesData (
-    pK INT(11) NOT NULL,
-    accessRule VARCHAR(250) BINARY NOT NULL,
-    isRecursive TINYINT(4) NOT NULL,
-    rowProtection LONGTEXT,
-    rowVersion INT(11) NOT NULL,
-    rule INT(11) NOT NULL,
-    AdminGroupData_accessRules INT(11),
-    PRIMARY KEY (pK)
-);
-
-CREATE TABLE AdminEntityData (
-    pK INT(11) NOT NULL,
-    cAId INT(11) NOT NULL,
-    matchType INT(11) NOT NULL,
-    matchValue VARCHAR(250) BINARY,
-    matchWith INT(11) NOT NULL,
-    rowProtection LONGTEXT,
-    rowVersion INT(11) NOT NULL,
-    tokenType VARCHAR(250) BINARY,
-    AdminGroupData_adminEntities INT(11),
-    PRIMARY KEY (pK)
-);
-
-CREATE TABLE AdminGroupData (
-    pK INT(11) NOT NULL,
-    adminGroupName VARCHAR(250) BINARY NOT NULL,
-    rowProtection LONGTEXT,
-    rowVersion INT(11) NOT NULL,
-    PRIMARY KEY (pK)
-);
 
 CREATE TABLE AuditRecordData (
     pk VARCHAR(250) BINARY NOT NULL,
@@ -52,15 +21,8 @@ CREATE TABLE AuditRecordData (
     service VARCHAR(250) BINARY NOT NULL,
     timeStamp BIGINT(20) NOT NULL,
     PRIMARY KEY (pk)
-);
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 
-CREATE TABLE AuthorizationTreeUpdateData (
-    pK INT(11) NOT NULL,
-    authorizationTreeUpdateNumber INT(11) NOT NULL,
-    rowProtection LONGTEXT,
-    rowVersion INT(11) NOT NULL,
-    PRIMARY KEY (pK)
-);
 
 --
 -- Table structure for table `GlobalConfigurationData`
@@ -150,10 +112,5 @@ CREATE TABLE `SEQUENCE` (
   PRIMARY KEY (`SEQ_NAME`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 
-
-
-alter table AccessRulesData add index FKABB4C1DFDBBC970 (AdminGroupData_accessRules), add constraint FKABB4C1DFDBBC970 foreign key (AdminGroupData_accessRules) references AdminGroupData (pK);
-
-alter table AdminEntityData add index FKD9A99EBCB3A110AD (AdminGroupData_adminEntities), add constraint FKD9A99EBCB3A110AD foreign key (AdminGroupData_adminEntities) references AdminGroupData (pK);
 
 -- End

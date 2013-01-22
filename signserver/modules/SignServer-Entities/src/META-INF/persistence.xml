@@ -24,10 +24,6 @@
         <jta-data-source>${datasource.jndi-name-prefix}${datasource.jndi-name}</jta-data-source>        
         <mapping-file>META-INF/cesecore-orm-${database.name}.xml</mapping-file>
         <class>org.cesecore.audit.impl.integrityprotected.AuditRecordData</class>
-        <class>org.cesecore.authorization.cache.AccessTreeUpdateData</class>
-        <class>org.cesecore.authorization.rules.AccessRuleData</class>
-        <class>org.cesecore.authorization.user.AccessUserAspectData</class>
-        <class>org.cesecore.roles.RoleData</class>
         <properties>
             <property name="hibernate.dialect" value="${hibernate.dialect}"/>
             

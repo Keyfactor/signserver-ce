@@ -1,54 +1,49 @@
--- Dropping tables for SignServer 3.3.x on Oracle
+-- Dropping tables for SignServer 3.4.x on Oracle
 -- ------------------------------------------------------
 -- Version: $Id$
 -- Comment: 
 
 
-DROP TABLE "ACCESSRULESDATA";
-
-DROP TABLE "AUTHORIZATIONTREEUPDATEDATA";
-
-DROP TABLE "ADMINENTITYDATA";
-
-DROP TABLE "ADMINGROUPDATA";
-
+--
+-- Drop table `AuditRecordData`
+--
 DROP TABLE "AUDITRECORDDATA";
 
+
 --
--- Table structure for table `GlobalConfigurationData`
+-- Drop table `GlobalConfigurationData`
 --
 DROP TABLE "GLOBALCONFIG";
 
 
 --
--- Table structure for table `signerconfigdata`
+-- Drop table `signerconfigdata`
 --
 DROP TABLE "SIGNERCONFIGDATA";
 
 
 --
--- Table structure for table `KeyUsageCounter`
+-- Drop table `KeyUsageCounter`
 --
 DROP TABLE "KEYUSAGECOUNTER";
 
 
 --
--- Table structure for table `ArchiveData`
+-- Drop table `ArchiveData`
 --
 DROP TABLE "ARCHIVEDATA";
 
 
 --
--- Table structure for table `enckeydata`
+-- Drop table `enckeydata`
 --
 DROP TABLE "ENCKEYDATA";
 
 
 --
--- Table structure for table `groupkeydata`
+-- Drop table `groupkeydata`
 --
 DROP TABLE "GROUPKEYDATA";
-
 
 
 -- End

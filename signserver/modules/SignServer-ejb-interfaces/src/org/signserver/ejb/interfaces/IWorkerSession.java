@@ -410,6 +410,10 @@ public interface IWorkerSession {
      */
     List<? extends AuditLogEntry> selectAuditLogs(AdminInfo adminInfo, int startIndex, int max, QueryCriteria criteria, String logDeviceId) throws AuthorizationDeniedException;
 
+        boolean destroyKey(final AdminInfo adminInfo, int signerId, int purpose)
+            throws InvalidWorkerIdException;
+
+    
         String generateSignerKey(final AdminInfo adminInfo, int signerId, String keyAlgorithm,
                 String keySpec, String alias, char[] authCode)
                 throws CryptoTokenOfflineException, InvalidWorkerIdException;

@@ -1173,8 +1173,15 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     /* (non-Javadoc)
      * @see org.signserver.ejb.interfaces.IWorkerSession#destroyKey(int, int)
      */
-    public boolean destroyKey(int signerId, int purpose) throws
-            InvalidWorkerIdException {
+    public boolean destroyKey(int signerId, int purpose) throws InvalidWorkerIdException {
+        return destroyKey(new AdminInfo("CLI user", null, null), signerId, purpose);
+    }
+    
+    
+    
+    @Override
+    public boolean destroyKey(AdminInfo adminInfo, int signerId, int purpose)
+            throws InvalidWorkerIdException {
         IWorker worker = workerManagerSession.getWorker(signerId, globalConfigurationSession);
         if (worker == null) {
             throw new InvalidWorkerIdException("Given SignerId " + signerId
@@ -1189,7 +1196,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
 
         return signer.destroyKey(purpose);
     }
-    
+
     @Override
     public void uploadSignerCertificate(int signerId, byte[] signerCert,
             String scope) throws CertificateException {
@@ -1355,7 +1362,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     private void auditLog(final AdminInfo adminInfo, SignServerEventTypes eventType, SignServerModuleTypes module, final String workerId, Map<String, Object> additionalDetails) {
         try {
         	final String serialNo =
-        			adminInfo.getCertSerialNumber() == null ? null : adminInfo.getCertSerialNumber().toString();
+        			adminInfo.getCertSerialNumber() == null ? null : adminInfo.getCertSerialNumber().toString(16);
             logSession.log(eventType, EventStatus.SUCCESS, module, SignServerServiceTypes.SIGNSERVER,
                     adminInfo.getSubjectDN(), adminInfo.getIssuerDN(), serialNo, workerId, additionalDetails);                               
 

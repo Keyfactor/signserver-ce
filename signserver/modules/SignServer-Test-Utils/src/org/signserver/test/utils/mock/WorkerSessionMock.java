@@ -257,6 +257,11 @@ public class WorkerSessionMock implements IWorkerSession.ILocal,
             InvalidWorkerIdException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+    
+    public boolean destroyKey(final AdminInfo adminInfo, int signerId, int purpose) throws
+        InvalidWorkerIdException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
     public String generateSignerKey(int signerId, String keyAlgorithm, 
             String keySpec, String alias, char[] authCode) throws

@@ -289,7 +289,7 @@ public class AdminWS {
                 String.valueOf(workerId), authClient.getCertSN(),
                 authClient.getIssuerDN());
         
-        worker.addAuthorizedClient(workerId, authClient);
+        worker.addAuthorizedClient(getAdminInfo(), workerId, authClient);
     }
 
     /**
@@ -307,7 +307,7 @@ public class AdminWS {
                 String.valueOf(workerId), authClient.getCertSN(),
                 authClient.getIssuerDN());
         
-        return worker.removeAuthorizedClient(workerId, authClient);
+        return worker.removeAuthorizedClient(getAdminInfo(), workerId, authClient);
     }
 
     /**
@@ -331,7 +331,7 @@ public class AdminWS {
         requireAdminAuthorization("getPKCS10CertificateRequest",
                 String.valueOf(signerId));
         
-        final ICertReqData data = worker.getCertificateRequest(signerId,
+        final ICertReqData data = worker.getCertificateRequest(getAdminInfo(), signerId,
                 certReqInfo, explicitEccParameters);
         if (!(data instanceof Base64SignerCertReqData)) {
             throw new RuntimeException("Unsupported cert req data");
@@ -363,7 +363,7 @@ public class AdminWS {
         requireAdminAuthorization("getPKCS10CertificateRequestForKey",
                 String.valueOf(signerId));
         
-        final ICertReqData data = worker.getCertificateRequest(signerId,
+        final ICertReqData data = worker.getCertificateRequest(getAdminInfo(), signerId,
                 certReqInfo, explicitEccParameters, defaultKey);
         if (!(data instanceof Base64SignerCertReqData)) {
             throw new RuntimeException("Unsupported cert req data");
@@ -472,7 +472,7 @@ public class AdminWS {
             throws InvalidWorkerIdException, AdminNotAuthorizedException {
         requireAdminAuthorization("destroyKey", String.valueOf(signerId));
         
-        return worker.destroyKey(signerId, purpose);
+        return worker.destroyKey(getAdminInfo(), signerId, purpose);
     }
 
     /**

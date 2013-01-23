@@ -319,7 +319,7 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
             }
             
             final String serialNo =
-                    adminInfo.getCertSerialNumber() == null ? null : adminInfo.getCertSerialNumber().toString();
+                    adminInfo.getCertSerialNumber() == null ? null : adminInfo.getCertSerialNumber().toString(16);
             logSession.log(eventType, EventStatus.SUCCESS, SignServerModuleTypes.GLOBAL_CONFIG, SignServerServiceTypes.SIGNSERVER, 
                     adminInfo.getSubjectDN(), adminInfo.getIssuerDN(), serialNo, null, details);
         } catch (AuditRecordStorageException ex) {

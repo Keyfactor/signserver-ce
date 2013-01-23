@@ -5488,7 +5488,7 @@ LOG_FILE_PATH=/path/to/logfile
 The purpose of the system log is to log events concerning the SignServer application but not necessarily related to any signing transaction (that is covered by the Worker Log). The audit log covers key and certificate management events, status properties updates (for instance for the status of the time source) and to some extent also configuration changes. For details see the table of events below.<br/>
 From version 3.4.0 SignServer uses the CESeCore library to perform audit logging.
 An example configuration for CESeCore is provided in <code>conf/cesecore.properties.sample</code>.
-The default logging implementation, <code>org.signserver.server.log.SignServerLog4jDevice</code> uses Log4J and the same logging format as the old SystemLogger.
+The default logging implementation, <code>org.signserver.server.log.SignServerLog4jDevice</code> uses Log4J and a similar logging format as the old SystemLogger.
                     </p>
                     
                     <subsubsection name="Available log events">
@@ -5596,7 +5596,7 @@ Example:<br/>
 Logged when a worker's configuration was updated by adding and/or removing and/or changing any values.
                                     </p>
                                     <p>
-<b>CUSTOM_ID:</b> The ID of the worker.
+<b>WORKER_ID:</b> The ID of the worker.
                                     </p>
                                     <p>
 Changes in worker properties are logged with prefixes <b>added/changed/removed</b> followed by a colon and the property name a colon and the property value.<br/>
@@ -5605,19 +5605,19 @@ Authorized clients are shown as a property with the name <b>authorized_client</b
                                     </p>
                                     <p>
 Example:<br/>
-<pre class="code">EVENT: SET_WORKER_CONFIG; MODULE: WORKER_CONFIG; CUSTOM_ID: 100; added:FOO: bar; REPLY_TIME:1350657202773</pre>
+<pre class="code">EVENT: SET_WORKER_CONFIG; MODULE: WORKER_CONFIG; WORKER_ID: 100; added:FOO: bar; REPLY_TIME:1350657202773</pre>
                                     </p>
                                     <p>
-<pre class="code">EVENT: SET_WORKER_CONFIG; MODULE: WORKER_CONFIG; CUSTOM_ID: 100; changed:FOO: newvalue; REPLY_TIME:1350657202873</pre>
+<pre class="code">EVENT: SET_WORKER_CONFIG; MODULE: WORKER_CONFIG; WORKER_ID: 100; changed:FOO: newvalue; REPLY_TIME:1350657202873</pre>
                                     </p>
                                     <p>
-<pre class="code">EVENT: SET_WORKER_CONFIG; MODULE: WORKER_CONFIG; CUSTOM_ID: 100; removed:FOO: newvalue; REPLY_TIME:1350657202873</pre>
+<pre class="code">EVENT: SET_WORKER_CONFIG; MODULE: WORKER_CONFIG; WORKER_ID: 100; removed:FOO: newvalue; REPLY_TIME:1350657202873</pre>
                                     </p>
                                     <p>
-<pre class="code">EVENT: SET_WORKER_CONFIG; MODULE: WORKER_CONFIG; CUSTOM_ID: 100; added:FOO: bar; changed:BAR: newvalue; REPLY_TIME:1350657202873</pre>                                    
+<pre class="code">EVENT: SET_WORKER_CONFIG; MODULE: WORKER_CONFIG; WORKER_ID: 100; added:FOO: bar; changed:BAR: newvalue; REPLY_TIME:1350657202873</pre>                                    
                                     </p>
                                     <p>
-<pre class="code">EVENT: SET_WORKER_CONFIG; MODULE: WORKER_CONFIG; CUSTOM_ID: 100; added:authorized_client: SN: 1234567890, issuer DN: CN=Test; REPLY_TIME:1350657202873</pre>
+<pre class="code">EVENT: SET_WORKER_CONFIG; MODULE: WORKER_CONFIG; WORKER_ID: 100; added:authorized_client: SN: 1234567890, issuer DN: CN=Test; REPLY_TIME:1350657202873</pre>
                                     </p>
                                     
                                 </td>
@@ -5629,14 +5629,14 @@ Example:<br/>
 Logged when a certificate was uploaded to the worker configuration.
                                     </p>
                                     <p>
-<b>CUSTOM_ID:</b> The ID of the worker.<br/>
+<b>WORKER_ID:</b> The ID of the worker.<br/>
 <b>CERTIFICATE:</b> The certificate in PEM format.<br/>
 <b>SCOPE: </b> If the setting was at GLOBAL or NODE scope.<br/>
 <b>NODE: </b> The ID of the node if the setting was at NODE scope, otherwise not available.
                                     </p>
                                     <p>
 Example:<br/>
-<pre class="code">EVENT: CERTINSTALLED; MODULE: WORKER_CONFIG; CUSTOM_ID: 100; CERTIFICATE: Subject: CN=Anyone
+<pre class="code">EVENT: CERTINSTALLED; MODULE: WORKER_CONFIG; WORKER_ID: 100; CERTIFICATE: Subject: CN=Anyone
 Issuer: CN=Anyone
 -----BEGIN CERTIFICATE-----
 MIIBnTCCAQagAwIBAgIIWWNYSOeuN+swDQYJKoZIhvcNAQEFBQAwETEPMA0GA1UE
@@ -5660,14 +5660,14 @@ EK4rfPBXEl33gKbsO5aeMHd5iF2jtx7RfYMsOuHKoDSe
 Logged when a certificate chain was uploaded to the worker configuration.
                                     </p>
                                     <p>
-<b>CUSTOM_ID:</b> The ID of the worker.<br/>
+<b>WORKER_ID:</b> The ID of the worker.<br/>
 <b>CERTIFICATECHAIN:</b> The certificates in PEM format.<br/>
 <b>SCOPE: </b> If the setting was at GLOBAL or NODE scope.<br/>
 <b>NODE: </b> The ID of the node if the setting was at NODE scope, otherwise not available.
                                     </p>
                                     <p>
 Example:<br/>
-<pre class="code">EVENT: CERTCHAININSTALLED; MODULE: WORKER_CONFIG; CUSTOM_ID: 100; CERTIFICATECHAIN: Subject: CN=Signer,C=SE
+<pre class="code">EVENT: CERTCHAININSTALLED; MODULE: WORKER_CONFIG; WORKER_ID: 100; CERTIFICATECHAIN: Subject: CN=Signer,C=SE
 Issuer: CN=Issuer,C=SE
 -----BEGIN CERTIFICATE-----
 MIIBdjCCASCgAwIBAgIIE+fXOs/SAwMwDQYJKoZIhvcNAQEFBQAwHjEPMA0GA1UE
@@ -5702,14 +5702,14 @@ VAfkEktRrO04Hi5eLR+AxW7EVz6l
 Logged when the key-pair to use was selected by changing the value of the DEFAULTKEY worker property.
                                     </p>
                                     <p>
-<b>CUSTOM_ID:</b> The ID of the worker.<br/>
+<b>WORKER_ID:</b> The ID of the worker.<br/>
 <b>KEYALIAS:</b> The new key alias.<br/>
 <b>SCOPE: </b> If the setting was at GLOBAL or NODE scope.<br/>
 <b>NODE: </b> The ID of the node if the setting was at NODE scope, otherwise not available.
                                     </p>
                                     <p>
 Example:<br/>
-<pre class="code">EVENT: KEYSELECTED; MODULE: WORKER_CONFIG; CUSTOM_ID: 100; KEYALIAS: ts_key00002; SCOPE: GLOBAL; REPLY_TIME:1350891907048</pre>
+<pre class="code">EVENT: KEYSELECTED; MODULE: WORKER_CONFIG; WORKER_ID: 100; KEYALIAS: ts_key00002; SCOPE: GLOBAL; REPLY_TIME:1350891907048</pre>
                                     </p>
                                 </td>
                             </tr>
@@ -5724,14 +5724,14 @@ Example:<br/>
 Logged when a new key-pair was generated using the built-in key generation command.
                                     </p>
                                     <p>
-<b>CUSTOM_ID:</b> The ID of the worker.<br/>
+<b>WORKER_ID:</b> The ID of the worker.<br/>
 <b>KEYALIAS:</b> The new key alias.<br/>
 <b>KEYSPEC:</b> The key specification (ie. RSA/DSA bit length or EC curve).<br/>
 <b>KEYALG:</b> The key algorithm.
                                     </p>
                                     <p>
 Example:<br/>
-<pre class="code">EVENT: KEYGEN; MODULE: KEY_MANAGEMENT; CUSTOM_ID: 5676; KEYALIAS: ts_key00004; KEYSPEC: 2048; KEYALG: RSA; REPLY_TIME:135089190791</pre>
+<pre class="code">EVENT: KEYGEN; MODULE: KEY_MANAGEMENT; WORKER_ID: 5676; KEYALIAS: ts_key00004; KEYSPEC: 2048; KEYALG: RSA; REPLY_TIME:135089190791</pre>
                                     </p>
                                 </td>
                             </tr>
@@ -5742,13 +5742,13 @@ Example:<br/>
 Logged when the key test command was executed and a test signing with either the specified key or all keys in the slot if that was specified.
                                     </p>
                                     <p>
-<b>CUSTOM_ID:</b> The ID of the worker.<br/>
+<b>WORKER_ID:</b> The ID of the worker.<br/>
 <b>KEYALIAS:</b> Alias of the the key to test or "all" to test all available keys in the slot.<br/>
 <b>TESTRESULTS:</b> The test report with an entry for each tested key.
                                     </p>
                                     <p>
 Example:<br/>            
-<pre class="code">EVENT: KEYTEST; MODULE: KEY_MANAGEMENT; CUSTOM_ID: 47; KEYALIAS: all; TESTRESULTS: KeyTestResult{alias=tsu47_key00005, success=true, status=, publicKeyHash=979359e5261112b11fac341962bec1e7e6052d9e}
+<pre class="code">EVENT: KEYTEST; MODULE: KEY_MANAGEMENT; WORKER_ID: 47; KEYALIAS: all; TESTRESULTS: KeyTestResult{alias=tsu47_key00005, success=true, status=, publicKeyHash=979359e5261112b11fac341962bec1e7e6052d9e}
 KeyTestResult{alias=key5, success=true, status=, publicKeyHash=46b264e4892ef2e4fd9616e4927534ca3597fd9c}
 KeyTestResult{alias=key3, success=true, status=, publicKeyHash=ae64792f1f50e23eb54bf79d46d819bc07db2d79}
 KeyTestResult{alias=key2, success=true, status=, publicKeyHash=b1317f363e6124a8e15bba8c1adb9f20b2f4ef59}
@@ -5764,12 +5764,12 @@ KeyTestResult{alias=TS Signer 1, success=true, status=, publicKeyHash=8f6dfccdce
 Logged when a certificate signing request (CSR) was generated.
                                     </p>
                                     <p>
-<b>CUSTOM_ID:</b> The ID of the worker.<br/>
+<b>WORKER_ID:</b> The ID of the worker.<br/>
 <b>CSR:</b> Base64 encoded CSR (typically in PKCS#10 format).
                                     </p>
                                     <p>
 Example:<br/>
-<pre class="code">EVENT: GENCSR; MODULE: KEY_MANAGEMENT; CUSTOM_ID: 5676; CSR: MIIBYDCBygIBADAjMRQwEgYDVQQDDAtUUyBTaWduZXIgMTELMAkGA1UEBhMCU0Uw
+<pre class="code">EVENT: GENCSR; MODULE: KEY_MANAGEMENT; WORKER_ID: 5676; CSR: MIIBYDCBygIBADAjMRQwEgYDVQQDDAtUUyBTaWduZXIgMTELMAkGA1UEBhMCU0Uw
 gZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBAJt8F51wD+QcX+WLyIxjWu3at3q+
 IiJrL5jIenmggUhjOLHGHOStoNOiYEQAaiiTZ623m9y7O3zhqFdAdWZg+JrfsHQJ
 pjKV9RgvJznl6yk/K54BWOBgqjvbloAUGtn8y8Hf+5DYJUJNFqrzvRLcmCQ9JU0H
@@ -5812,12 +5812,12 @@ Example:<br/>
 Logged for events regarding worker processing but when a worker logger can not be used because the requested worker does not exist etc.
                                     </p>
                                     <p>
-<b>CUSTOM_ID:</b> The ID of the worker or empty in case of non existing worker.<br/>
+<b>WORKER_ID:</b> The ID of the worker or empty in case of non existing worker.<br/>
 <b>Worker logger fields:</b> All fields available to the worker logger.<br/>
                                     </p>
                                     <p>
 Example:<br/>
-<pre class="code">EVENT: PROCESS; MODULE: WORKER; CUSTOM_ID: ; LOG_ID: db517726-ff0d-40dd-8f2b-2297925cb4d3; CLIENT_IP: 127.0.0.1; PROCESS_SUCCESS: false; REQUEST_LENGTH: 0; XFORWARDEDFOR: null; FILENAME: noname.dat; 
+<pre class="code">EVENT: PROCESS; MODULE: WORKER; WORKER_ID: ; LOG_ID: db517726-ff0d-40dd-8f2b-2297925cb4d3; CLIENT_IP: 127.0.0.1; PROCESS_SUCCESS: false; REQUEST_LENGTH: 0; XFORWARDEDFOR: null; FILENAME: noname.dat; 
 REQUEST_FULLURL: http://localhost:8080/signserver/process?null; LOG_TIME: 1350628977410; WORKER_ID: 0; EXCEPTION: No such worker: 0; REPLY_TIME:1350628977411
 </pre>
                                     </p>

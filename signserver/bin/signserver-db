@@ -1,0 +1,102 @@
+#!/usr/bin/env bash
+
+# Find directory for this script
+SOURCE="${BASH_SOURCE[0]}"
+while [ -h "$SOURCE" ] ; do SOURCE="$(readlink -f "$SOURCE")"; done
+DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+
+# OS specific support.
+cygwin=false;
+case "`uname`" in
+  CYGWIN*) cygwin=true ;;
+esac
+
+JAVACMD=`which java`
+# Check that JAVA_HOME is set
+if [ ! -n "$JAVA_HOME" ]; then
+    if [ ! -n "$JAVACMD" ]
+    then
+        echo "You must set JAVA_HOME before running the SignServer cli."
+        exit 1
+    fi
+else
+    JAVACMD=$JAVA_HOME/bin/java
+fi
+
+
+class_name=org.signserver.db.cli.Main
+ADMINCLI_JAR=SignServer-DatabaseCLI.jar
+
+# discard $1 from the command line args
+#shift
+
+# J2EE server classpath
+if [ ! -n "$APPSRV_HOME" ]; then
+    if [ -n "$JBOSS_HOME" ]; then
+        APPSRV_HOME=$JBOSS_HOME
+    elif [ -n "$WEBLOGIC_HOME" ]; then
+        APPSRV_HOME=$WEBLOGIC_HOME
+    fi
+fi
+if [ ! -n "$APPSRV_HOME" ]; then
+    echo "You must set APPSRV_HOME before running the SignServer cli."
+    exit 1
+fi
+
+
+if [ ! -n "${SIGNSERVER_HOME}" ]; then
+  if [ -f $DIR/signserver ]; then
+    SIGNSRV_HOME=$DIR/..
+  fi
+  if [ -f /usr/share/signserver/bin/signserver ]; then
+     SIGNSRV_HOME=/usr/share/signserver
+  fi
+  if [ -f /opt/signserver/bin/signserver ]; then
+     SIGNSRV_HOME=/opt/signserver
+  fi
+  if [ -f /usr/local/signserver/bin/signserver ]; then
+     SIGNSRV_HOME=/usr/local/signserver
+  fi
+  if [ -f ./signserver ]; then
+     SIGNSRV_HOME=..
+  fi
+  if [ -f bin/signserver ]; then
+     SIGNSRV_HOME=.
+  fi
+else
+  SIGNSRV_HOME=$SIGNSERVER_HOME
+fi 
+
+# Check that classes exist
+if [ ! -f ${SIGNSRV_HOME}/lib/${ADMINCLI_JAR} ]
+then
+	echo "You must build SignServer before using the cli, use 'ant'."
+        exit 1
+fi
+
+
+# Construct the classpath
+CP="$SIGNSRV_HOME/lib/${ADMINCLI_JAR}"
+CP="${SIGNSRV_HOME}/conf":"$CP"
+CP="$CP:$SIGNSRV_HOME/res/cesecore"
+CP="$CP:$SIGNSRV_HOME"
+CP="$CP":${OPTIONAL_CLASSPATH:-}
+
+# Application server dependencies
+if [ -f $APPSRV_HOME/lib/appserv-rt.jar ]; then
+    CP=$CP:"${SIGNSRV_HOME}/conf/glassfish"
+    CP=$CP:"$APPSRV_HOME/lib/appserv-rt.jar"
+    CP="$APPSRV_HOME/lib/gf-client.jar":$CP
+fi
+if [ -f $APPSRV_HOME/client/jbossall-client.jar ]; then
+    CP=$CP:"${SIGNSRV_HOME}/conf/jboss"
+    CP=$CP:"$APPSRV_HOME/client/jbossall-client.jar"
+fi
+
+# For Cygwin, switch paths to Windows format before running java
+if $cygwin; then
+  CP=`cygpath --path --windows "$CP"`
+fi
+
+# Execute the command
+exec "$JAVACMD" -cp $CP $class_name "$@"

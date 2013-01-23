@@ -219,10 +219,9 @@
         <!-- Convert classpath to be relative to the lib folders -->
         <convertclasspath classpath="${javac.classpath}" id="libs" excludes="modules/" dir="${basedir}/../../lib" pathsep=" "/>
         <convertclasspath classpath="${javac.classpath}" id="mods" excludes="lib/" mapperType="flatten" mapperTo="*" pathsep=" "/>
-        <property name="jar.classpath" value="${libs} ${mods}"/>
         <jar file="${dist.jar}" update="true">
             <manifest>
-                <attribute name="Class-Path" value="${jar.classpath}"/>
+                <attribute name="Class-Path" value="${libs} ${mods}"/>
             </manifest>
         </jar>
         
@@ -241,7 +240,7 @@
             <manifest>
                 <attribute name="Class-Path" value="${localjar.classpath}"/>
             </manifest>
-        </jar>
+         </jar>
     </target>
     
     <!-- Copy all jars to lib without updating manifest file or anything. -->

@@ -5507,7 +5507,7 @@ Logged at startup of the SignServer application.
                                     </p>
                                     <p>
 Example:<br/>
-<pre class="code">EVENT: SIGNSERVER_STARTUP; MODULE: SERVICE; CUSTOM_ID: ; VERSION: SignServer 3.3.0alpha12; REPLY_TIME:1350562045545</pre>
+<pre class="code">EVENT: SIGNSERVER_STARTUP; MODULE: SERVICE; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: null; VERSION: SignServer 3.3.0alpha12; REPLY_TIME:1350562045545</pre>
                                     </p>
                                 </td>
                             </tr>
@@ -5522,7 +5522,7 @@ Logged at shutdown of the SignServer application.
                                     </p>
                                     <p>
 Example:<br/>
-<pre class="code">EVENT: SIGNSERVER_SHUTDOWN; MODULE: SERVICE; CUSTOM_ID: ; VERSION: SignServer 3.3.0alpha12; REPLY_TIME:1350562045545</pre>
+<pre class="code">EVENT: SIGNSERVER_SHUTDOWN; MODULE: SERVICE; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: null; VERSION: SignServer 3.3.0alpha12; REPLY_TIME:1350562045545</pre>
                                     </p>
                                 </td>
                             </tr>
@@ -5542,7 +5542,7 @@ Logged when a global configuration property was updated.
                                     </p>
                                     <p>
 Example:<br/>
-<pre class="code">EVENT: SET_GLOBAL_PROPERTY; MODULE: GLOBAL_CONFIG; CUSTOM_ID: ; GLOBALCONFIG_VALUE: TESTVALUE47; GLOBALCONFIG_PROPERTY: GLOB.TESTPROPERTY47; REPLY_TIME:1350657202153</pre>
+<pre class="code">EVENT: SET_GLOBAL_PROPERTY; MODULE: GLOBAL_CONFIG; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: null; GLOBALCONFIG_VALUE: TESTVALUE47; GLOBALCONFIG_PROPERTY: GLOB.TESTPROPERTY47; REPLY_TIME:1350657202153</pre>
                                     </p>
                                 </td>
                             </tr>
@@ -5557,7 +5557,7 @@ Logged when a global configuration property was removed.
                                     </p>
                                     <p>
 Example:<br/>
-<pre class="code">EVENT: REMOVE_GLOBAL_PROPERTY; MODULE: GLOBAL_CONFIG; CUSTOM_ID: ; GLOBALCONFIG_PROPERTY: GLOB.TESTPROPERTY47; REPLY_TIME:1350657202444</pre>
+<pre class="code">EVENT: REMOVE_GLOBAL_PROPERTY; MODULE: GLOBAL_CONFIG; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: null; GLOBALCONFIG_PROPERTY: GLOB.TESTPROPERTY47; REPLY_TIME:1350657202444</pre>
                                     </p>
                                 </td>
                             </tr>
@@ -5569,7 +5569,7 @@ Logged when the global configuration was reloaded from the database.
                                     </p>
                                     <p>
 Example:
-<pre class="code">EVENT: GLOBAL_CONFIG_RELOAD; MODULE: GLOBAL_CONFIG; CUSTOM_ID: ; REPLY_TIME:1350657202593</pre>
+<pre class="code">EVENT: GLOBAL_CONFIG_RELOAD; MODULE: GLOBAL_CONFIG; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: null; REPLY_TIME:1350657202593</pre>
                                     </p>
                                 </td>
                             </tr>
@@ -5581,7 +5581,7 @@ Logged when the resync command was executed.
                                     </p>
                                     <p>
 Example:<br/>
-<pre class="code">EVENT: GLOBAL_CONFIG_RESYNC; MODULE: GLOBAL_CONFIG; CUSTOM_ID: ; REPLY_TIME:1350894343902</pre>
+<pre class="code">EVENT: GLOBAL_CONFIG_RESYNC; MODULE: GLOBAL_CONFIG; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: null; REPLY_TIME:1350894343902</pre>
                                     </p>
                                 </td>
                             </tr>
@@ -5605,19 +5605,19 @@ Authorized clients are shown as a property with the name <b>authorized_client</b
                                     </p>
                                     <p>
 Example:<br/>
-<pre class="code">EVENT: SET_WORKER_CONFIG; MODULE: WORKER_CONFIG; WORKER_ID: 100; added:FOO: bar; REPLY_TIME:1350657202773</pre>
+<pre class="code">EVENT: SET_WORKER_CONFIG; MODULE: WORKER_CONFIG; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: 100; added:FOO: bar; REPLY_TIME:1350657202773</pre>
                                     </p>
                                     <p>
-<pre class="code">EVENT: SET_WORKER_CONFIG; MODULE: WORKER_CONFIG; WORKER_ID: 100; changed:FOO: newvalue; REPLY_TIME:1350657202873</pre>
+<pre class="code">EVENT: SET_WORKER_CONFIG; MODULE: WORKER_CONFIG; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: 100; changed:FOO: newvalue; REPLY_TIME:1350657202873</pre>
                                     </p>
                                     <p>
-<pre class="code">EVENT: SET_WORKER_CONFIG; MODULE: WORKER_CONFIG; WORKER_ID: 100; removed:FOO: newvalue; REPLY_TIME:1350657202873</pre>
+<pre class="code">EVENT: SET_WORKER_CONFIG; MODULE: WORKER_CONFIG; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: 100; removed:FOO: newvalue; REPLY_TIME:1350657202873</pre>
                                     </p>
                                     <p>
-<pre class="code">EVENT: SET_WORKER_CONFIG; MODULE: WORKER_CONFIG; WORKER_ID: 100; added:FOO: bar; changed:BAR: newvalue; REPLY_TIME:1350657202873</pre>                                    
+<pre class="code">EVENT: SET_WORKER_CONFIG; MODULE: WORKER_CONFIG; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: 100; added:FOO: bar; changed:BAR: newvalue; REPLY_TIME:1350657202873</pre>                                    
                                     </p>
                                     <p>
-<pre class="code">EVENT: SET_WORKER_CONFIG; MODULE: WORKER_CONFIG; WORKER_ID: 100; added:authorized_client: SN: 1234567890, issuer DN: CN=Test; REPLY_TIME:1350657202873</pre>
+<pre class="code">EVENT: SET_WORKER_CONFIG; MODULE: WORKER_CONFIG; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: 100; added:authorized_client: SN: 1234567890, issuer DN: CN=Test; REPLY_TIME:1350657202873</pre>
                                     </p>
                                     
                                 </td>
@@ -5636,7 +5636,7 @@ Logged when a certificate was uploaded to the worker configuration.
                                     </p>
                                     <p>
 Example:<br/>
-<pre class="code">EVENT: CERTINSTALLED; MODULE: WORKER_CONFIG; WORKER_ID: 100; CERTIFICATE: Subject: CN=Anyone
+<pre class="code">EVENT: CERTINSTALLED; MODULE: WORKER_CONFIG; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: 100; CERTIFICATE: Subject: CN=Anyone
 Issuer: CN=Anyone
 -----BEGIN CERTIFICATE-----
 MIIBnTCCAQagAwIBAgIIWWNYSOeuN+swDQYJKoZIhvcNAQEFBQAwETEPMA0GA1UE
@@ -5667,7 +5667,7 @@ Logged when a certificate chain was uploaded to the worker configuration.
                                     </p>
                                     <p>
 Example:<br/>
-<pre class="code">EVENT: CERTCHAININSTALLED; MODULE: WORKER_CONFIG; WORKER_ID: 100; CERTIFICATECHAIN: Subject: CN=Signer,C=SE
+<pre class="code">EVENT: CERTCHAININSTALLED; MODULE: WORKER_CONFIG; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: 100; CERTIFICATECHAIN: Subject: CN=Signer,C=SE
 Issuer: CN=Issuer,C=SE
 -----BEGIN CERTIFICATE-----
 MIIBdjCCASCgAwIBAgIIE+fXOs/SAwMwDQYJKoZIhvcNAQEFBQAwHjEPMA0GA1UE
@@ -5709,7 +5709,7 @@ Logged when the key-pair to use was selected by changing the value of the DEFAUL
                                     </p>
                                     <p>
 Example:<br/>
-<pre class="code">EVENT: KEYSELECTED; MODULE: WORKER_CONFIG; WORKER_ID: 100; KEYALIAS: ts_key00002; SCOPE: GLOBAL; REPLY_TIME:1350891907048</pre>
+<pre class="code">EVENT: KEYSELECTED; MODULE: WORKER_CONFIG; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: 100; KEYALIAS: ts_key00002; SCOPE: GLOBAL; REPLY_TIME:1350891907048</pre>
                                     </p>
                                 </td>
                             </tr>
@@ -5731,7 +5731,7 @@ Logged when a new key-pair was generated using the built-in key generation comma
                                     </p>
                                     <p>
 Example:<br/>
-<pre class="code">EVENT: KEYGEN; MODULE: KEY_MANAGEMENT; WORKER_ID: 5676; KEYALIAS: ts_key00004; KEYSPEC: 2048; KEYALG: RSA; REPLY_TIME:135089190791</pre>
+<pre class="code">EVENT: KEYGEN; MODULE: KEY_MANAGEMENT; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: 5676; KEYALIAS: ts_key00004; KEYSPEC: 2048; KEYALG: RSA; REPLY_TIME:135089190791</pre>
                                     </p>
                                 </td>
                             </tr>
@@ -5748,7 +5748,7 @@ Logged when the key test command was executed and a test signing with either the
                                     </p>
                                     <p>
 Example:<br/>            
-<pre class="code">EVENT: KEYTEST; MODULE: KEY_MANAGEMENT; WORKER_ID: 47; KEYALIAS: all; TESTRESULTS: KeyTestResult{alias=tsu47_key00005, success=true, status=, publicKeyHash=979359e5261112b11fac341962bec1e7e6052d9e}
+<pre class="code">EVENT: KEYTEST; MODULE: KEY_MANAGEMENT; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: 47; KEYALIAS: all; TESTRESULTS: KeyTestResult{alias=tsu47_key00005, success=true, status=, publicKeyHash=979359e5261112b11fac341962bec1e7e6052d9e}
 KeyTestResult{alias=key5, success=true, status=, publicKeyHash=46b264e4892ef2e4fd9616e4927534ca3597fd9c}
 KeyTestResult{alias=key3, success=true, status=, publicKeyHash=ae64792f1f50e23eb54bf79d46d819bc07db2d79}
 KeyTestResult{alias=key2, success=true, status=, publicKeyHash=b1317f363e6124a8e15bba8c1adb9f20b2f4ef59}
@@ -5769,7 +5769,7 @@ Logged when a certificate signing request (CSR) was generated.
                                     </p>
                                     <p>
 Example:<br/>
-<pre class="code">EVENT: GENCSR; MODULE: KEY_MANAGEMENT; WORKER_ID: 5676; CSR: MIIBYDCBygIBADAjMRQwEgYDVQQDDAtUUyBTaWduZXIgMTELMAkGA1UEBhMCU0Uw
+<pre class="code">EVENT: GENCSR; MODULE: KEY_MANAGEMENT; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: 5676; CSR: MIIBYDCBygIBADAjMRQwEgYDVQQDDAtUUyBTaWduZXIgMTELMAkGA1UEBhMCU0Uw
 gZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBAJt8F51wD+QcX+WLyIxjWu3at3q+
 IiJrL5jIenmggUhjOLHGHOStoNOiYEQAaiiTZ623m9y7O3zhqFdAdWZg+JrfsHQJ
 pjKV9RgvJznl6yk/K54BWOBgqjvbloAUGtn8y8Hf+5DYJUJNFqrzvRLcmCQ9JU0H
@@ -5797,7 +5797,7 @@ Logged when a status property was updated.
                                     </p>
                                     <p>
 Example:<br/>
-<pre class="code">EVENT: SET_STATUS_PROPERTY; MODULE: STATUS_REPOSITORY; CUSTOM_ID: ; STATUSREPO_EXPIRATION: 1350891909366; STATUSREPO_PROPERTY: TEST_PROPERTY1; STATUSREPO_VALUE: TESTVALUE47; REPLY_TIME:1350891908372</pre>
+<pre class="code">EVENT: SET_STATUS_PROPERTY; MODULE: STATUS_REPOSITORY; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: null; STATUSREPO_EXPIRATION: 1350891909366; STATUSREPO_PROPERTY: TEST_PROPERTY1; STATUSREPO_VALUE: TESTVALUE47; REPLY_TIME:1350891908372</pre>
                                     </p>
                                 </td>
                             </tr>
@@ -5817,7 +5817,7 @@ Logged for events regarding worker processing but when a worker logger can not b
                                     </p>
                                     <p>
 Example:<br/>
-<pre class="code">EVENT: PROCESS; MODULE: WORKER; WORKER_ID: ; LOG_ID: db517726-ff0d-40dd-8f2b-2297925cb4d3; CLIENT_IP: 127.0.0.1; PROCESS_SUCCESS: false; REQUEST_LENGTH: 0; XFORWARDEDFOR: null; FILENAME: noname.dat; 
+<pre class="code">EVENT: PROCESS; MODULE: WORKER; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: null; LOG_ID: db517726-ff0d-40dd-8f2b-2297925cb4d3; CLIENT_IP: 127.0.0.1; PROCESS_SUCCESS: false; REQUEST_LENGTH: 0; XFORWARDEDFOR: null; FILENAME: noname.dat; 
 REQUEST_FULLURL: http://localhost:8080/signserver/process?null; LOG_TIME: 1350628977410; WORKER_ID: 0; EXCEPTION: No such worker: 0; REPLY_TIME:1350628977411
 </pre>
                                     </p>

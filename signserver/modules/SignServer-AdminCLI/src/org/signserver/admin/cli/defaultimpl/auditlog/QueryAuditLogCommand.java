@@ -14,6 +14,11 @@ package org.signserver.admin.cli.defaultimpl.auditlog;
 
 import java.util.List;
 import java.util.Set;
+
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.GnuParser;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import org.cesecore.audit.AuditLogEntry;
 import org.cesecore.audit.impl.integrityprotected.AuditRecordData;
 import org.cesecore.dbprotection.DatabaseProtectionError;
@@ -36,24 +41,46 @@ public class QueryAuditLogCommand extends AbstractCommand {
     private AdminCommandHelper helper = new AdminCommandHelper();
     private ArchiveCLIUtils utils = new ArchiveCLIUtils();
     
+    public static final String QUERY = "query";
+    public static final String FROM = "from";
+    public static final String TO = "to";
+    
+    /** The command line options */
+    private static final Options OPTIONS;
+    
+    private int from = 0;
+    private int to = 0;
+    
     @Override
     public String getDescription() {
-        return "TODO";
+        return "Query the content of the audit log";
     }
 
+    static {
+        OPTIONS = new Options();
+        OPTIONS.addOption(QUERY, false, "Query the audit log");
+        OPTIONS.addOption(FROM, true, "Lower index in search result (0-based)");
+        OPTIONS.addOption(TO, true, "Upper index in search result (0-based)");
+    }
+    
     // TODO: Need to figure out a CLI syntax allowing an unbounded number of criterias to be specified, compare to how searching is done in the EJBCA GUI
     @Override
     public String getUsages() {
-        return "Usage: signserver auditlog query <TODO>\n"
-                    + "Example: signserver query TODO\n\n";
+        return "Usage: signserver auditlog -query <TODO>\n"
+                    + "Example: signserver -query TODO\n\n";
     }
     
     @Override
     public int execute(String[] args) throws IllegalCommandArgumentsException, CommandFailureException, UnexpectedCommandFailureException {
-        if (args.length != 1) {
-            throw new IllegalCommandArgumentsException("Wrong number of arguments");
-        }
         try {
+            // Parse the command line
+            parseCommandLine(new GnuParser().parse(OPTIONS, args));
+        } catch (ParseException ex) {
+            throw new IllegalCommandArgumentsException(ex.getMessage());
+        }
+        
+        try {
+            
             // For now we only query on of the available audit devices
             Set<String> devices = helper.getAuditorSession().getQuerySupportingLogDevices();
             if (devices.isEmpty()) {
@@ -67,7 +94,7 @@ public class QueryAuditLogCommand extends AbstractCommand {
             // TODO: Parse arguments and get row numbers to query
             
             // Perform the query
-            List<? extends AuditLogEntry> entries = helper.getWorkerSession().selectAuditLogs(0, 10, qc1, device);
+            List<? extends AuditLogEntry> entries = helper.getWorkerSession().selectAuditLogs(from, to, qc1, device);
             for (AuditLogEntry entry : entries) {
                 
                 // Render the result
@@ -104,6 +131,35 @@ public class QueryAuditLogCommand extends AbstractCommand {
                 return -1;
             } else {
                 throw new UnexpectedCommandFailureException(e);
+            }
+        }
+    }
+
+    private void parseCommandLine(CommandLine line) throws ParseException {
+        if (!line.hasOption(QUERY)) {
+            // for now, we expect the -query option, might add additional command options further on
+            throw new ParseException("Must specifiy the -query option");
+        }
+        
+        err.println("parseCommandLine");
+        
+        // TODO: we might want to enfore the range options to avoid possible memory exhaustion
+        final String fromString = line.getOptionValue(FROM);
+        final String toString = line.getOptionValue(TO);
+        
+        if (fromString != null) {
+            try {
+                from = Integer.parseInt(fromString);
+            } catch (NumberFormatException ex) {
+                throw new ParseException("Invalid from index value: " + fromString);
+            }
+        }
+        
+        if (toString != null) {
+            try {
+                to = Integer.parseInt(toString);
+            } catch (NumberFormatException ex) {
+                throw new ParseException("Invalid to index value: " + toString);
             }
         }
     }

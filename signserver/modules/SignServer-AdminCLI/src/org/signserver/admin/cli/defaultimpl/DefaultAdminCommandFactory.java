@@ -72,7 +72,7 @@ public class DefaultAdminCommandFactory extends AbstractCommandFactory implement
         put("groupkeyservice", "removegroupkeys", RemoveGroupKeysCommand.class);
         put("groupkeyservice", "switchenckey", SwitchEncKeyCommand.class);
         
-        put("auditlog", "query", QueryAuditLogCommand.class);
+        put("auditlog", QueryAuditLogCommand.class);
     }
 
 }

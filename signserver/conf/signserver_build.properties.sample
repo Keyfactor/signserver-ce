@@ -273,6 +273,9 @@ j2ee.web-nohttps=true
 # Default: true
 #clientcli.enabled=true
 
+# Set to enable build of the Database CLI
+# Default: true
+#databasecli.enabled=true
 
 # ------------ PrimeCardHSM ----------------------------------------------------
 

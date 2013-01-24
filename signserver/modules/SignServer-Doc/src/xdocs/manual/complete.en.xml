@@ -5835,6 +5835,38 @@ configuration problems etc.
                 </subsection>
 
             </section>
+            
+            <section name="Database Command Line Interface">
+                <p>
+The SignServer DB CLI can be run against a database. Currently it only supports 
+verifying the audit log.
+                </p>
+                <subsection name="Building">
+                    <p>
+The DB CLI is built if the property databasecli.enabled=true is specified in 
+signserver_build.properties. It can also be built using:
+                    </p>
+                    <source>
+$ bin/ant -f modules/SignServer-DatabaseCLI/build.xml dist-module
+                    </source>
+                </subsection>
+                
+                <subsection name="Configuring">
+                    <p>
+Configure the dbcli.* properties in conf/signserver_cli.properties.
+                    </p>
+                </subsection>
+                
+                <subsection name="Running">
+                    <p>
+There is start-up script available under bin. You might have specify a classpath
+containing the JDBC connectors for the specific database type. Example:
+                    </p>
+                    <source>
+$ OPTIONAL_CLASSPATH=/usr/share/java/mysql-connector-java.jar bin/signserver-db audit verifylog
+                    </source>
+                </subsection>
+            </section>
 
             <section name="SignServer without Database">
                 <p>

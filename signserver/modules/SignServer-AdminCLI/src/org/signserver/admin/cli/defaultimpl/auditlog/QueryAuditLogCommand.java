@@ -45,6 +45,20 @@ public class QueryAuditLogCommand extends AbstractCommand {
     public static final String FROM = "from";
     public static final String TO = "to";
     
+    public static final String COLUMN = "column";
+    
+    /** relational operations */
+    public static final String EQ = "eq";
+    public static final String NEQ = "neq";
+    public static final String LT = "lt";
+    public static final String GT = "gt";
+    public static final String LE = "le";
+    public static final String GE = "ge";
+    public static final String BETWEEN = "between";
+    public static final String LIKE = "like";
+    public static final String NULL = "null";
+    public static final String NOTNOLL = "notnull";
+    
     /** The command line options */
     private static final Options OPTIONS;
     

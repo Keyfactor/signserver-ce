@@ -1,7 +1,15 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+/*************************************************************************
+ *                                                                       *
+ *  SignServer: The OpenSource Automated Signing Server                  *
+ *                                                                       *
+ *  This software is free software; you can redistribute it and/or       *
+ *  modify it under the terms of the GNU Lesser General Public           *
+ *  License as published by the Free Software Foundation; either         *
+ *  version 2.1 of the License, or any later version.                    *
+ *                                                                       *
+ *  See terms of license at gnu.org.                                     *
+ *                                                                       *
+ *************************************************************************/
 package org.signserver.db.cli.defaultimpl.audit;
 
 import javax.persistence.EntityManager;
@@ -14,8 +22,10 @@ import org.signserver.cli.spi.UnexpectedCommandFailureException;
 import org.signserver.db.cli.defaultimpl.AbstractDatabaseCommand;
 
 /**
+ * Command for verifying the auditlog.
  *
- * @author markus
+ * @author Markus Kilås
+ * @version $Id$
  */
 public class VerifyLogCommand extends AbstractDatabaseCommand {
     
@@ -29,11 +39,17 @@ public class VerifyLogCommand extends AbstractDatabaseCommand {
 
     @Override
     public String getUsages() {
-        return "TODO 2";
+        return "Usage: verifylog\n"
+                + "\nThe JDBC connector of the database might have to be put on the classpath. See the example below.\n"
+                + "Example: a) OPTIONAL_CLASSPATH=/usr/share/java/mysql-connector-java.jar signserver-db audit verifylog";
     }
 
     @Override
     public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException, UnexpectedCommandFailureException {
+        
+        if (args.length > 0) {
+            throw new IllegalCommandArgumentsException("Unexpected argument specified");
+        }
         
         if (LOG.isDebugEnabled()) {
             LOG.debug("URL of config: " + VerifyLogCommand.class.getResource("/conf/databaseprotection.properties"));

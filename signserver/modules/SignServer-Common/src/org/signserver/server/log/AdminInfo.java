@@ -18,7 +18,7 @@ import java.security.cert.X509Certificate;
 
 /**
  * Class holding administrator logging information.
- * @author Marcus
+ * @author Marcus Lundblad
  * @version $Id$
  *
  */

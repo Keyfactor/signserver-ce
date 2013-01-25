@@ -51,87 +51,7 @@ import org.signserver.server.log.LogMap;
 public class WorkerSessionMock implements IWorkerSession.ILocal,
         IWorkerSession.IRemote {
 
-    @Override
-	public String generateSignerKey(AdminInfo adminInfo, int signerId,
-			String keyAlgorithm, String keySpec, String alias, char[] authCode)
-			throws CryptoTokenOfflineException, InvalidWorkerIdException {
-    	throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	@Override
-	public Collection<KeyTestResult> testKey(AdminInfo adminInfo, int signerId,
-			String alias, char[] authCode) throws CryptoTokenOfflineException,
-			InvalidWorkerIdException, KeyStoreException {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	@Override
-	public void setWorkerProperty(AdminInfo adminInfo, int workerId,
-			String key, String value) {
-		final Worker worker = workers.get(workerId);
-        if (worker == null) {
-            LOG.error("No such worker: " + workerId);
-        } else {
-            worker.getConfig().setProperty(key, value);
-        }
-	}
-
-	@Override
-	public boolean removeWorkerProperty(AdminInfo adminInfo, int workerId,
-			String key) {
-		final boolean result;
-        final Worker worker = workers.get(workerId);
-        if (worker == null) {
-            LOG.error("No such worker: " + workerId);
-            result = false;
-        } else {
-            result = worker.getConfig().removeProperty(key);
-        }
-        return result;
-	}
-
-	@Override
-	public void addAuthorizedClient(AdminInfo adminInfo, int signerId,
-			AuthorizedClient authClient) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	@Override
-	public boolean removeAuthorizedClient(AdminInfo adminInfo, int signerId,
-			AuthorizedClient authClient) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	@Override
-	public ICertReqData getCertificateRequest(AdminInfo adminInfo,
-			int signerId, ISignerCertReqInfo certReqInfo,
-			boolean explicitEccParameters, boolean defaultKey)
-			throws CryptoTokenOfflineException, InvalidWorkerIdException {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	@Override
-	public ICertReqData getCertificateRequest(AdminInfo adminInfo,
-			int signerId, ISignerCertReqInfo certReqInfo,
-			boolean explicitEccParameters) throws CryptoTokenOfflineException,
-			InvalidWorkerIdException {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	@Override
-	public void uploadSignerCertificate(AdminInfo adminInfo, int signerId,
-			byte[] signerCert, String scope) throws CertificateException {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	@Override
-	public void uploadSignerCertificateChain(AdminInfo adminInfo, int signerId,
-			Collection<byte[]> signerCerts, String scope)
-			throws CertificateException {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	private static final Logger LOG = Logger.getLogger(WorkerSessionMock.class);
+    private static final Logger LOG = Logger.getLogger(WorkerSessionMock.class);
     
     private GlobalConfigurationSessionMock globalConfig;
 
@@ -140,6 +60,86 @@ public class WorkerSessionMock implements IWorkerSession.ILocal,
 
     public WorkerSessionMock(GlobalConfigurationSessionMock globalConfig) {
         this.globalConfig = globalConfig;
+    }
+    
+    @Override
+    public String generateSignerKey(AdminInfo adminInfo, int signerId,
+            String keyAlgorithm, String keySpec, String alias, char[] authCode)
+                    throws CryptoTokenOfflineException, InvalidWorkerIdException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Collection<KeyTestResult> testKey(AdminInfo adminInfo, int signerId,
+            String alias, char[] authCode) throws CryptoTokenOfflineException,
+            InvalidWorkerIdException, KeyStoreException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void setWorkerProperty(AdminInfo adminInfo, int workerId,
+            String key, String value) {
+        final Worker worker = workers.get(workerId);
+        if (worker == null) {
+            LOG.error("No such worker: " + workerId);
+        } else {
+            worker.getConfig().setProperty(key, value);
+        }
+    }
+
+    @Override
+    public boolean removeWorkerProperty(AdminInfo adminInfo, int workerId,
+            String key) {
+        final boolean result;
+        final Worker worker = workers.get(workerId);
+        if (worker == null) {
+            LOG.error("No such worker: " + workerId);
+            result = false;
+        } else {
+            result = worker.getConfig().removeProperty(key);
+        }
+        return result;
+    }
+
+    @Override
+    public void addAuthorizedClient(AdminInfo adminInfo, int signerId,
+            AuthorizedClient authClient) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean removeAuthorizedClient(AdminInfo adminInfo, int signerId,
+            AuthorizedClient authClient) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public ICertReqData getCertificateRequest(AdminInfo adminInfo,
+            int signerId, ISignerCertReqInfo certReqInfo,
+            boolean explicitEccParameters, boolean defaultKey)
+                    throws CryptoTokenOfflineException, InvalidWorkerIdException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public ICertReqData getCertificateRequest(AdminInfo adminInfo,
+            int signerId, ISignerCertReqInfo certReqInfo,
+            boolean explicitEccParameters) throws CryptoTokenOfflineException,
+            InvalidWorkerIdException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void uploadSignerCertificate(AdminInfo adminInfo, int signerId,
+            byte[] signerCert, String scope) throws CertificateException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void uploadSignerCertificateChain(AdminInfo adminInfo, int signerId,
+            Collection<byte[]> signerCerts, String scope)
+                    throws CertificateException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override

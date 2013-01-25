@@ -42,7 +42,7 @@ import org.cesecore.util.query.QueryCriteria;
 
 /**
  * Audit log device implementing Log4J logging using
- * the log format used by the old SignServer SystemLogger
+ * the log format used by the old SignServer SystemLogger.
  * 
  * @author Marcus Lundblad
  * @version $Id$

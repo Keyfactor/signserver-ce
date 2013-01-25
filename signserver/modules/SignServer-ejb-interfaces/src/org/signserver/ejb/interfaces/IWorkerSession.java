@@ -391,15 +391,13 @@ public interface IWorkerSession {
         List<? extends AuditLogEntry> selectAuditLogs(int startIndex, int max, QueryCriteria criteria, String logDeviceId) throws AuthorizationDeniedException;
     }
 
+    /**
+     * Local EJB interface.
+     * This interface has mirror methods for all methods of the parent interface
+     * related to audit logging, taking an additional AdminInfo instance.
+     */
     @Local
-    interface ILocal extends IWorkerSession {
-
-        /**
-         * Local EJB interface, used by AdminWS
-         * this interface has mirror methods for all methods of the parent interface
-         * related to audit logging, taking an additional AdminInfo instance.
-         */
-        
+    interface ILocal extends IWorkerSession { 
         String JNDI_NAME = "signserver/WorkerSessionBean/local";
         
         /**

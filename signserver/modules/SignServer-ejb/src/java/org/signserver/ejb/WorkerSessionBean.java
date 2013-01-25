@@ -414,20 +414,6 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             	logMap.put(IWorkerLogger.LOG_PROCESS_SUCCESS, String.valueOf(true));
             	workerLogger.log(logMap);
             }
-            
-            // TODO: make audit logging using CESeCore here configurable
-            /*
-            Map<String, Object> details = new LinkedHashMap<String, Object>();
-            details.put("msg", "start services startup msg");
-            try {
-                
-                logSession.log(SignServerEventTypes.PROCESS, EventStatus.SUCCESS, SignServerModuleTypes.SERVICE, SignServerServiceTypes.SIGNSERVER,
-                        "WorkerSessionBean.process", null, null, null, null);                               
-
-                LOG.info("After logging");
-            } catch (AuditRecordStorageException ex) {
-                LOG.error("Logging", ex);
-            }*/
 
             LOG.debug("<process");
             return res;

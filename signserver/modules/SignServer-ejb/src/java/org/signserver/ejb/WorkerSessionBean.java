@@ -1159,12 +1159,11 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     /* (non-Javadoc)
      * @see org.signserver.ejb.interfaces.IWorkerSession#destroyKey(int, int)
      */
+    @Override
     public boolean destroyKey(int signerId, int purpose) throws InvalidWorkerIdException {
         return destroyKey(new AdminInfo("CLI user", null, null), signerId, purpose);
     }
-    
-    
-    
+
     @Override
     public boolean destroyKey(AdminInfo adminInfo, int signerId, int purpose)
             throws InvalidWorkerIdException {

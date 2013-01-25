@@ -74,13 +74,12 @@ public interface IGlobalConfigurationSession {
         String JNDI_NAME = "signserver/GlobalConfigurationSessionBean/remote";
     }
 
+    /**
+     * Local EJB interface.
+     * Mirrors methods which are audit-logged, taking an extra AdminInfo instance.
+     */
     @Local
     interface ILocal extends IGlobalConfigurationSession {
-        
-        /** local EJB interface, used by AdminWS
-         * Mirrors methods which are audit-logged, taking an extra AdminInfo instance.
-         */
-        
         String JNDI_NAME = "signserver/GlobalConfigurationSessionBean/local";
         
         /**

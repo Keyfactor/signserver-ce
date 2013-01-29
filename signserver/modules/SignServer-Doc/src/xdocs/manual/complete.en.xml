@@ -5430,7 +5430,7 @@ LOGLEVEL_DEFAULT=INFO
                     <subsubsection name="SecurityEventsWorkerLogger">
                         <p>
 Worker logger using the CESeCore security events logger.
-This logger included all fields in the additionalDetails fields in the audit log, except the worker ID, which is mapped to customID. 
+This logger included all fields in the additionalDetails fields in the audit log, except the worker ID, which is mapped to searchDetail2. 
                         </p>
                         <source>
 WORKERLOGGER=org.signserver.server.log.SecurityEventsWorkerLogger

@@ -725,7 +725,7 @@ public class AdminWS {
             throws InvalidWorkerIdException, IllegalRequestException,
             CryptoTokenOfflineException, SignServerException,
             AdminNotAuthorizedException {
-        requireAdminAuthorization("process", workerIdOrName);
+        final AdminInfo adminInfo = requireAdminAuthorization("process", workerIdOrName);
 
         final Collection<byte[]> result = new LinkedList<byte[]>();
 
@@ -787,7 +787,7 @@ public class AdminWS {
             }
             try {
                 result.add(RequestAndResponseManager.serializeProcessResponse(
-                    worker.process(workerId, req, requestContext)));
+                    worker.process(adminInfo, workerId, req, requestContext)));
             } catch (IOException ex) {
                 LOG.error("Error serializing process response", ex);
                 throw new IllegalRequestException(

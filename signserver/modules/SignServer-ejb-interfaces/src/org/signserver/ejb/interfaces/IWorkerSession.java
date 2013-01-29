@@ -557,5 +557,23 @@ public interface IWorkerSession {
         void uploadSignerCertificateChain(final AdminInfo adminInfo, int signerId,
                 Collection<byte[]> signerCerts, String scope) throws CertificateException;
 
+        
+        /**
+         * The Worker Beans main method. Takes  requests processes them
+         * and returns a response.
+         *
+         * @param adminInfo Administrator information
+         * @param workerId id of worker who should process the request
+         * @param request the request
+         * @param requestContext context of the request
+         * @throws CryptoTokenOfflineException if the signers token isn't activated.
+         * @throws IllegalRequestException if illegal request is sent to the method
+         * @throws SignServerException if some other error occurred server side
+         * during process.
+         */
+        ProcessResponse process(final AdminInfo info, int workerId, ProcessRequest request,
+                RequestContext requestContext)
+                throws IllegalRequestException, CryptoTokenOfflineException,
+                SignServerException;
     }
 }

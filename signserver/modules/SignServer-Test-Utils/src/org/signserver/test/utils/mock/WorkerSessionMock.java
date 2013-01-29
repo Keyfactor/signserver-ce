@@ -146,6 +146,13 @@ public class WorkerSessionMock implements IWorkerSession.ILocal,
     public ProcessResponse process(int workerId, ProcessRequest request,
             RequestContext requestContext) throws IllegalRequestException,
             CryptoTokenOfflineException, SignServerException {
+        return process(new AdminInfo("Mock user", null, null), workerId, request, requestContext);
+    }
+    
+    @Override
+    public ProcessResponse process(final AdminInfo adminInfo, int workerId, ProcessRequest request,
+            RequestContext requestContext) throws IllegalRequestException,
+            CryptoTokenOfflineException, SignServerException {
         Worker worker = workers.get(workerId);
         if (worker == null) {
             throw new CryptoTokenOfflineException("No such worker: "

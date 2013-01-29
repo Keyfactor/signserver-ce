@@ -115,11 +115,19 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         }
     }
 
-    /**
-     * @see org.signserver.ejb.interfaces.IWorkerSession#process(int, org.signserver.common.ProcessRequest, org.signserver.common.RequestContext)
-     */
     @Override
     public ProcessResponse process(final int workerId,
+            final ProcessRequest request, final RequestContext requestContext)
+            throws IllegalRequestException, CryptoTokenOfflineException,
+            SignServerException {
+        return process(new AdminInfo("Client user", null, null), workerId, request, requestContext);
+    }
+    
+    /**
+     * @see org.signserver.ejb.interfaces.IWorkerSession.ILocal#process(adminInfo, int, org.signserver.common.ProcessRequest, org.signserver.common.RequestContext)
+     */
+    @Override
+    public ProcessResponse process(final AdminInfo adminInfo, final int workerId,
             final ProcessRequest request, final RequestContext requestContext)
             throws IllegalRequestException, CryptoTokenOfflineException,
             SignServerException {
@@ -185,7 +193,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                 final IllegalRequestException ex = new IllegalRequestException(
                         "Worker exists but isn't a processable: " + workerId);
                 // auditLog(startTime, workerId, false, requestContext, ex);
-                logException(ex, logMap, workerLogger);
+                logException(adminInfo, ex, logMap, workerLogger);
                 throw ex;
             }
             final IProcessable processable = (IProcessable) worker;
@@ -209,7 +217,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                         + ex.getMessage(), ex);
                 logMap.put(IWorkerLogger.LOG_CLIENT_AUTHORIZED,
                         String.valueOf(false));
-                logException(ex, logMap, workerLogger);
+                logException(adminInfo, ex, logMap, workerLogger);
                 throw exception;
             } catch (SignServerException ex) {
                 final SignServerException exception =
@@ -217,7 +225,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                         + ex.getMessage(), ex);
                 logMap.put(IWorkerLogger.LOG_CLIENT_AUTHORIZED,
                         String.valueOf(false));
-                logException(ex, logMap, workerLogger);
+                logException(adminInfo, ex, logMap, workerLogger);
                 throw exception;
             }
 
@@ -241,7 +249,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                         new CryptoTokenOfflineException("Error Signer : "
                         + workerId
                         + " is disabled and cannot perform any signature operations");
-                logException(exception, logMap, workerLogger);
+                logException(adminInfo, exception, logMap, workerLogger);
                 throw exception;
             }
 
@@ -252,7 +260,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                 keyUsageLimit = Long.valueOf(awc.getProperty(SignServerConstants.KEYUSAGELIMIT, "-1"));
             } catch (NumberFormatException ex) {
                 final SignServerException exception = new SignServerException("Incorrect value in worker property " + SignServerConstants.KEYUSAGELIMIT, ex);
-                logException(exception, logMap, workerLogger);
+                logException(adminInfo, exception, logMap, workerLogger);
                 throw exception;
             }
             final boolean keyUsageLimitSpecified = keyUsageLimit != -1;
@@ -275,7 +283,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             } catch (CryptoTokenOfflineException ex) {
                 final CryptoTokenOfflineException exception =
                         new CryptoTokenOfflineException(ex);
-                logException(exception, logMap, workerLogger);
+                logException(adminInfo, exception, logMap, workerLogger);
                 throw exception;
             }
 
@@ -294,7 +302,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                         "SignServerException calling signer with id " + workerId
                         + " : " + e.getMessage(), e);
                 LOG.error(exception.getMessage(), exception);
-                logException(exception, logMap, workerLogger);
+                logException(adminInfo, exception, logMap, workerLogger);
                 throw exception;
             } catch (IllegalRequestException ex) {
                 final IllegalRequestException exception =
@@ -303,12 +311,12 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
 					LOG.info("Illegal request calling signer with id " + workerId
                         + " : " + ex.getMessage());
 				}
-				logException(exception, logMap, workerLogger);
+				logException(adminInfo, exception, logMap, workerLogger);
                 throw exception;
             } catch (CryptoTokenOfflineException ex) {
                 final CryptoTokenOfflineException exception =
                         new CryptoTokenOfflineException(ex);
-                logException(exception, logMap, workerLogger);
+                logException(adminInfo, exception, logMap, workerLogger);
                 throw exception;
             }
 
@@ -333,14 +341,14 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                     final SignServerException exception =
                             new SignServerException("Accounter failed: "
                             + ex.getMessage(), ex);
-                    logException(ex, logMap, workerLogger);
+                    logException(adminInfo, ex, logMap, workerLogger);
                     throw exception;
                 }
                 if (!purchased) {
                     final String error = "Purchase not granted";
                     logMap.put(IWorkerLogger.LOG_EXCEPTION, error);
                     logMap.put(IWorkerLogger.LOG_PROCESS_SUCCESS, String.valueOf(false));
-                    workerLogger.log(logMap);
+                    workerLogger.log(adminInfo, logMap);
                     throw new NotGrantedException(error);
                 }
             } else {
@@ -412,7 +420,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             // log process status true if not already set by the worker...
             if (logVal == null) {
             	logMap.put(IWorkerLogger.LOG_PROCESS_SUCCESS, String.valueOf(true));
-            	workerLogger.log(logMap);
+            	workerLogger.log(adminInfo, logMap);
             }
 
             LOG.debug("<process");
@@ -426,11 +434,11 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         }
     }
 
-    private void logException(Exception ex, LogMap logMap,
+    private void logException(final AdminInfo adminInfo, Exception ex, LogMap logMap,
     		IWorkerLogger workerLogger) throws WorkerLoggerException {
     	logMap.put(IWorkerLogger.LOG_EXCEPTION, ex.getMessage());
     	logMap.put(IWorkerLogger.LOG_PROCESS_SUCCESS, String.valueOf(false));
-    	workerLogger.log(logMap);
+    	workerLogger.log(adminInfo, logMap);
     }
     
     /**

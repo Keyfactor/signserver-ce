@@ -45,7 +45,7 @@ public class AllFieldsWorkerLogger implements IWorkerLogger {
      * @param fields The fields to include.
      * @throws WorkerLoggerException
      */
-    public void log(final Map<String, String> fields)
+    public void log(final AdminInfo adminInfo, final Map<String, String> fields)
             throws WorkerLoggerException {
         final StringBuilder str = new StringBuilder();
         str.append("AllVariablesLogger; ");

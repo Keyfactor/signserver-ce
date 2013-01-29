@@ -15,6 +15,7 @@ package org.signserver.module.tsa;
 import java.util.Map;
 import java.util.Properties;
 import org.apache.log4j.Logger;
+import org.signserver.server.log.AdminInfo;
 import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.log.WorkerLoggerException;
 
@@ -33,7 +34,7 @@ public class CustomTimeStampLogger1 implements ITimeStampLogger {
         // No properties
     }
 
-    public void log(final Map<String, String> entries)
+    public void log(final AdminInfo adminInfo, final Map<String, String> entries)
             throws WorkerLoggerException {
         final StringBuilder str = new StringBuilder();
         

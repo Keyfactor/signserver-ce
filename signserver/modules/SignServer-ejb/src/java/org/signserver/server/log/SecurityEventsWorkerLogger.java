@@ -37,7 +37,7 @@ public class SecurityEventsWorkerLogger implements IWorkerLogger {
     }
 
     @Override
-    public void log(Map<String, String> fields) throws WorkerLoggerException {
+    public void log(final AdminInfo adminInfo, Map<String, String> fields) throws WorkerLoggerException {
         final Map<String, Object> details = new LinkedHashMap<String, Object>();
         
         // strip out the worker ID from the additionalDetails field (it's put customID)
@@ -46,9 +46,9 @@ public class SecurityEventsWorkerLogger implements IWorkerLogger {
                 details.put(key, fields.get(key));
             }
         }
-        
+        final String serNo = adminInfo.getCertSerialNumber() != null ? adminInfo.getCertSerialNumber().toString(16) : null;
         logger.log(SignServerEventTypes.PROCESS, EventStatus.SUCCESS, SignServerModuleTypes.WORKER, SignServerServiceTypes.SIGNSERVER,
-                "SecurityEventsWorkerLogger.log", fields.get(IWorkerLogger.LOG_WORKER_ID), null, null, details);
+                adminInfo.getSubjectDN(), adminInfo.getIssuerDN(), serNo, fields.get(IWorkerLogger.LOG_WORKER_ID), details);
     }
 
     @Override

@@ -12,6 +12,9 @@
  *************************************************************************/
 package org.signserver.admin.cli.defaultimpl.auditlog;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -23,7 +26,11 @@ import org.cesecore.audit.AuditLogEntry;
 import org.cesecore.audit.impl.integrityprotected.AuditRecordData;
 import org.cesecore.dbprotection.DatabaseProtectionError;
 import org.cesecore.util.query.Criteria;
+import org.cesecore.util.query.Elem;
 import org.cesecore.util.query.QueryCriteria;
+import org.cesecore.util.query.elems.Operation;
+import org.cesecore.util.query.elems.RelationalOperator;
+import org.cesecore.util.query.elems.Term;
 import org.signserver.admin.cli.defaultimpl.AdminCommandHelper;
 import org.signserver.admin.cli.defaultimpl.archive.*;
 import org.signserver.cli.spi.AbstractCommand;
@@ -45,7 +52,7 @@ public class QueryAuditLogCommand extends AbstractCommand {
     public static final String FROM = "from";
     public static final String TO = "to";
     
-    public static final String COLUMN = "column";
+    public static final String CRITERIA = "criteria";
     
     /** relational operations */
     public static final String EQ = "eq";
@@ -61,9 +68,13 @@ public class QueryAuditLogCommand extends AbstractCommand {
     
     /** The command line options */
     private static final Options OPTIONS;
+    private static final Set<String> intFields;
+    
     
     private int from = 0;
     private int to = 0;
+    
+    private QueryCriteria qc;
     
     @Override
     public String getDescription() {
@@ -73,19 +84,27 @@ public class QueryAuditLogCommand extends AbstractCommand {
     static {
         OPTIONS = new Options();
         OPTIONS.addOption(QUERY, false, "Query the audit log");
+        OPTIONS.addOption(CRITERIA, true, "Search criteria (can specify multiple criterias)");
         OPTIONS.addOption(FROM, true, "Lower index in search result (0-based)");
         OPTIONS.addOption(TO, true, "Upper index in search result (0-based)");
+        
+        intFields = new HashSet<String>();
+        intFields.add(AuditRecordData.FIELD_TIMESTAMP);
+        intFields.add(AuditRecordData.FIELD_SEQUENCENUMBER);
     }
     
     // TODO: Need to figure out a CLI syntax allowing an unbounded number of criterias to be specified, compare to how searching is done in the EJBCA GUI
     @Override
     public String getUsages() {
-        return "Usage: signserver auditlog -query <TODO>\n"
+        return "Usage: signserver auditlog -query -critera  \"TIMESTAMP>4711\" -criteria \"\n"
                     + "Example: signserver -query TODO\n\n";
     }
     
     @Override
-    public int execute(String[] args) throws IllegalCommandArgumentsException, CommandFailureException, UnexpectedCommandFailureException {
+    public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException, UnexpectedCommandFailureException {
+        
+        qc = QueryCriteria.create().add(Criteria.orderDesc(AuditRecordData.FIELD_TIMESTAMP));
+        
         try {
             // Parse the command line
             parseCommandLine(new GnuParser().parse(OPTIONS, args));
@@ -101,14 +120,9 @@ public class QueryAuditLogCommand extends AbstractCommand {
                 throw new CommandFailureException("No log devices available for querying");
             }
             final String device = devices.iterator().next();
-            
-            // TODO: Parse arguments and build QueryCriteria
-            final QueryCriteria qc1 = QueryCriteria.create().add(Criteria.orderDesc(AuditRecordData.FIELD_TIMESTAMP));
-            
-            // TODO: Parse arguments and get row numbers to query
-            
+                       
             // Perform the query
-            List<? extends AuditLogEntry> entries = helper.getWorkerSession().selectAuditLogs(from, to, qc1, device);
+            List<? extends AuditLogEntry> entries = helper.getWorkerSession().selectAuditLogs(from, to, qc, device);
             for (AuditLogEntry entry : entries) {
                 
                 // Render the result
@@ -176,6 +190,44 @@ public class QueryAuditLogCommand extends AbstractCommand {
                 throw new ParseException("Invalid to index value: " + toString);
             }
         }
+        
+        final String[] criterias = line.getOptionValues(CRITERIA);
+        
+        final List<Elem> terms = new LinkedList<Elem>();
+        //terms.add(Criteria.orderDesc(AuditRecordData.FIELD_TIMESTAMP));
+        
+        for (final String criteria : criterias) {
+            final Term term = parseCriteria(criteria);
+            err.println("term: " + term);
+            terms.add(term);
+        }
+        
+        Elem all = andAll(terms, 0);
+        
+        qc.add(all);
     }
     
+    
+    
+    private Term parseCriteria(final String criteria) throws ParseException {
+    	// find an operator
+        final String[] parts = criteria.split(" ", 3);
+    	
+    	final String field = parts[0];
+    	final RelationalOperator op = RelationalOperator.valueOf(parts[1]);
+    	final Object value = intFields.contains(parts[2]) ? Long.parseLong(parts[2]) : parts[2];
+    	
+    	err.println("field: " + field);
+    	err.println("value: " + value);
+    	
+    	return new Term(op, field, value);
+    }
+    
+    protected Elem andAll(final List<Elem> elements, final int index) {
+        if (index >= elements.size() - 1) {
+            return elements.get(index);
+        } else {
+            return Criteria.and(elements.get(index), andAll(elements, index + 1));
+        }
+    }
 }

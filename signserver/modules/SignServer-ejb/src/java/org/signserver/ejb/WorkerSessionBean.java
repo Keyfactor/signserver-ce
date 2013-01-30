@@ -166,6 +166,8 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         if (worker == null) {
             NoSuchWorkerException ex = new NoSuchWorkerException(String.valueOf(workerId));
             Map<String, Object> details = new LinkedHashMap<String, Object>();
+            final String serNo = adminInfo.getCertSerialNumber() != null ? adminInfo.getCertSerialNumber().toString(16) : null;
+            
             // produce backwards-compatible log entries here...
             details.put(IWorkerLogger.LOG_EXCEPTION, ex.getMessage());
             details.put(IWorkerLogger.LOG_PROCESS_SUCCESS, String.valueOf(false));
@@ -174,7 +176,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             details.put(IWorkerLogger.LOG_ID, transactionID);
             details.put(IWorkerLogger.LOG_CLIENT_IP, (String) requestContext.get(RequestContext.REMOTE_IP));
             logSession.log(SignServerEventTypes.PROCESS, EventStatus.FAILURE, SignServerModuleTypes.WORKER, SignServerServiceTypes.SIGNSERVER,
-                    "WorkerSessionBean.process", "", null, null, details);
+                    adminInfo.getSubjectDN(), adminInfo.getIssuerDN(), serNo, null, details);
             throw ex;
         }
         final WorkerConfig awc = worker.getConfig();

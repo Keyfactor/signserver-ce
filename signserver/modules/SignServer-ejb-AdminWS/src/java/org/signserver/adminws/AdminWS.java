@@ -15,31 +15,40 @@ package org.signserver.adminws;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.security.KeyStoreException;
 import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import javax.ejb.EJB;
+import javax.ejb.Stateless;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.naming.NamingException;
-import org.signserver.common.*;
-import org.signserver.ejb.interfaces.IWorkerSession;
-import java.security.cert.X509Certificate;
-import java.security.KeyStoreException;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Properties;
-import javax.annotation.Resource;
-import javax.ejb.Stateless;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Base64;
+import org.cesecore.audit.AuditLogEntry;
+import org.cesecore.audit.audit.SecurityEventsAuditorSessionLocal;
+import org.cesecore.authorization.AuthorizationDeniedException;
+import org.cesecore.util.query.Criteria;
+import org.cesecore.util.query.Elem;
+import org.cesecore.util.query.QueryCriteria;
+import org.cesecore.util.query.elems.Term;
+import org.signserver.common.*;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
+import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.server.CertificateClientCredential;
 import org.signserver.server.IClientCredential;
 import org.signserver.server.UsernamePasswordClientCredential;
@@ -52,7 +61,7 @@ import org.signserver.server.log.AdminInfo;
  * @author Markus Kilås
  * @version $Id$
  */
-@WebService(wsdlLocation="META-INF/wsdl/AdminWSService.wsdl")
+@WebService(serviceName = "AdminWSService")
 @Stateless
 public class AdminWS {
 
@@ -60,6 +69,13 @@ public class AdminWS {
     private static final Logger LOG = Logger.getLogger(AdminWS.class);
 
     private static final String HTTP_AUTH_BASIC_AUTHORIZATION = "Authorization";
+    
+    private static final HashSet<String> LONG_COLUMNS = new HashSet<String>();
+    
+    static {
+        LONG_COLUMNS.add(AuditLogEntry.FIELD_TIMESTAMP);
+        LONG_COLUMNS.add(AuditLogEntry.FIELD_SEQUENCENUMBER);
+    }
 
     @Resource
     private WebServiceContext wsContext;
@@ -69,7 +85,10 @@ public class AdminWS {
 
     @EJB
     private IGlobalConfigurationSession.ILocal global;
-
+    
+    @EJB
+    private SecurityEventsAuditorSessionLocal auditor;
+    
     @PostConstruct
     private void postConstruct() { // NOPMD
         if (worker == null) {
@@ -795,6 +814,59 @@ public class AdminWS {
         }
         return result;
     }
+    
+    @WebMethod(operationName="queryAuditLog")
+    public List<LogEntry> queryAuditLog(@WebParam(name="startIndex") int startIndex, @WebParam(name="max") int max, @WebParam(name="condition") final List<QueryCondition> conditions) throws SignServerException, AdminNotAuthorizedException {
+        final AdminInfo adminInfo = requireAdminAuthorization("queryAuditLogs", String.valueOf(startIndex), String.valueOf(max));
+        
+        // For now we only query on of the available audit devices
+        Set<String> devices = auditor.getQuerySupportingLogDevices();
+        if (devices.isEmpty()) {
+            throw new SignServerException("No log devices available for querying");
+        }
+        final String device = devices.iterator().next();
+
+        final List<Elem> elements = toElements(conditions);
+        final Elem elem = andAll(elements, 0);
+        final QueryCriteria qc = QueryCriteria.create().add(elem);
+        
+        try {
+            return toLogEntries(worker.selectAuditLogs(adminInfo, startIndex, max, qc, device));
+        } catch (AuthorizationDeniedException ex) {
+            throw new AdminNotAuthorizedException(ex.getMessage());
+        }
+    }
+    
+    private List<LogEntry> toLogEntries(final List<? extends AuditLogEntry> entries) {
+        final List<LogEntry> results = new LinkedList<LogEntry>();
+        for (AuditLogEntry entry : entries) {
+            results.add(LogEntry.fromAuditLogEntry(entry));
+        }
+        return results;
+    }
+    
+    private List<Elem> toElements(List<QueryCondition> conditions) {
+        final LinkedList<Elem> results = new LinkedList<Elem>();
+        for (QueryCondition cond : conditions) {
+            final Object value;
+            if (LONG_COLUMNS.contains(cond.getColumn())) {
+                value = Long.parseLong(cond.getValue());
+            } else {
+                value = cond.getValue();
+            }
+            results.add(new Term(cond.getOperator(), cond.getColumn(), value));
+        }
+        return results;
+    }
+    
+    protected Elem andAll(final List<Elem> elements, final int index) {
+        if (index >= elements.size() - 1) {
+            return elements.get(index);
+        } else {
+            return Criteria.and(elements.get(index), andAll(elements, index + 1));
+        }
+    }
+    
 
     private AdminInfo requireAdminAuthorization(final String operation,
             final String... args) throws AdminNotAuthorizedException {
@@ -892,4 +964,6 @@ public class AdminWS {
     }
 
     // "Insert Code > Add Web Service Operation")
+
+    
 }

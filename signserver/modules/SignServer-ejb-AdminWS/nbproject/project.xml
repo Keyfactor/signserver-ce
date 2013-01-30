@@ -8,6 +8,7 @@
         <data xmlns="http://www.netbeans.org/ns/j2ee-ejbjarproject/3">
             <name>SignServer-ejb-AdminWS</name>
             <minimum-ant-version>1.6.5</minimum-ant-version>
+            <included-library dirs="200">libs.CESeCore.classpath</included-library>
             <source-roots>
                 <root id="src.dir"/>
             </source-roots>

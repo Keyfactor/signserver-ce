@@ -176,6 +176,10 @@ public class WorkerSessionMock implements IWorkerSession.ILocal,
     }
 
     public void reloadConfiguration(int workerId) {
+        reloadConfiguration(new AdminInfo("Mock user", null, null), workerId);
+    }
+    
+    public void reloadConfiguration(final AdminInfo adminInfo, int workerId) {
         final Worker worker = workers.get(workerId);
         if (worker == null) {
             LOG.error("No such worker: " + workerId);

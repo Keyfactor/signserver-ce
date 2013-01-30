@@ -659,15 +659,22 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         return workerManagerSession.getIdFromName(signerName, globalConfigurationSession);
     }
    
-    /* (non-Javadoc)
-     * @see org.signserver.ejb.interfaces.IWorkerSession#reloadConfiguration(int)
-     */
     @Override
     public void reloadConfiguration(int workerId) {
+        reloadConfiguration(new AdminInfo("CLI user", null, null), workerId);
+    }
+
+    /* (non-Javadoc)
+     * @see org.signserver.ejb.interfaces.IWorkerSession.ILocal#reloadConfiguration(adminInfo, int)
+     */
+    @Override
+    public void reloadConfiguration(final AdminInfo adminInfo, int workerId) {
         if (workerId == 0) {
-            globalConfigurationSession.reload();
+            globalConfigurationSession.reload(adminInfo);
         } else {
             workerManagerSession.reloadWorker(workerId, globalConfigurationSession);
+            auditLog(adminInfo, SignServerEventTypes.RELOAD_WORKER_CONFIG, SignServerModuleTypes.WORKER_CONFIG,
+                    Integer.toString(workerId), null);
 
             // Try to insert a key usage counter entry for this worker's public
             // key

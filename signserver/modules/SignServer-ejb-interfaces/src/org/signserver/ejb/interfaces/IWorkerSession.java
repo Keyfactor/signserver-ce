@@ -575,5 +575,16 @@ public interface IWorkerSession {
                 RequestContext requestContext)
                 throws IllegalRequestException, CryptoTokenOfflineException,
                 SignServerException;
+        
+        /**
+         * Method used when a configuration have been updated. And should be
+         * called from the commandline.
+         *
+         * @param adminInfo Administrator information
+         * @param workerId of the worker that should be reloaded, or 0 to reload
+         * reload of all available workers
+         */
+        void reloadConfiguration(final AdminInfo adminInfo, int workerId);
+
     }
 }

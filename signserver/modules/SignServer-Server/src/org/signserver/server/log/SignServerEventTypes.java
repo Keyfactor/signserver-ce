@@ -55,7 +55,10 @@ public enum SignServerEventTypes implements EventType {
     SET_STATUS_PROPERTY,
     
     /** Logged for events regarding worker processing but when a worker logger can not be used because the requested worker does not exist etc. */
-    PROCESS;
+    PROCESS,
+    
+    /** Logged when a worker's configuration was reloaded. */
+    RELOAD_WORKER_CONFIG;
     
    @Override
    public boolean equals(EventType value) {

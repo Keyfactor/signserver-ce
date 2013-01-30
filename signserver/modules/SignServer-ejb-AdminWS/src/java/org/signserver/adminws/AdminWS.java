@@ -153,10 +153,10 @@ public class AdminWS {
     @WebMethod(operationName = "reloadConfiguration")
     public void reloadConfiguration(@WebParam(name = "workerId") int workerId)
             throws AdminNotAuthorizedException {
-        requireAdminAuthorization("reloadConfiguration",
+        final AdminInfo adminInfo = requireAdminAuthorization("reloadConfiguration",
                 String.valueOf(workerId));
         
-        worker.reloadConfiguration(workerId);
+        worker.reloadConfiguration(adminInfo, workerId);
     }
 
     /**

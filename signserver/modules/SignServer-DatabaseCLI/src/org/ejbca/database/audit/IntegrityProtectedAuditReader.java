@@ -105,6 +105,7 @@ public class IntegrityProtectedAuditReader {
 		if ( nrRead<1 ) {// nothing more to read from this node
 			this.startIndex = 0;
 			this.currentNodeIndex++;
+			this.lastSeqNrFromPreviousChunk = -1;
 			return getNextVerifiedChunk();
 		}
 		this.lastSeqNrFromPreviousChunk = checkForMissingSequenceNrs(sequenceNrSet);

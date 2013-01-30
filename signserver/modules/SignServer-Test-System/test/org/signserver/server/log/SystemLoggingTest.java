@@ -677,6 +677,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         assertTrue("Contains event", line.contains("EVENT: RELOAD_WORKER_CONFIG"));
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
         assertTrue("Contains no correct worker id", line.contains("WORKER_ID: "));
+        assertTrue("Contains admin", line.contains("ADMINISTRATOR: CLI user"));
     }
     
     /**

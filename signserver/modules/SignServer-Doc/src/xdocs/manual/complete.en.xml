@@ -5863,6 +5863,15 @@ put the audit logs in a separate file.
 For GlassFish a similar setup is already configured in SIGNSERVER_HOME/modules/SignServer-Module-Log4j/src/log4j.properties. 
                     </p>
                 </subsection>
+                
+                <subsection name="Status Repository Logging">
+                    <p>
+By default the Status Repository produces a log entry for every update. This can 
+be disabled or changed in the configuration so that only changes are 
+logged. See the property <i>statusrepository.log</i> in 
+signserver_build.properties.sample.
+                    </p>
+                </subsection>
 
             </section>
             

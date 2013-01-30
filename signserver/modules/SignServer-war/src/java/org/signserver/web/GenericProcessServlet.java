@@ -282,7 +282,9 @@ public class GenericProcessServlet extends HttpServlet {
 
     private void processRequest(HttpServletRequest req, HttpServletResponse res, int workerId, byte[] data, String fileName, String pdfPassword) throws java.io.IOException, ServletException {
         final String remoteAddr = req.getRemoteAddr();
-        LOG.info("Recieved HTTP process request for worker " + workerId + ", from ip " + remoteAddr);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Recieved HTTP process request for worker " + workerId + ", from ip " + remoteAddr);
+        }
 
         // Client certificate
         Certificate clientCertificate = null;

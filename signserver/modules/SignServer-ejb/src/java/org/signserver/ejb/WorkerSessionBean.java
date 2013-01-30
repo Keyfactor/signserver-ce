@@ -399,13 +399,15 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             }
 
             // Output successfully
-            if (res instanceof ISignResponse) {
-                LOG.info("Worker " + workerId + " Processed request "
-                        + ((ISignResponse) res).getRequestID()
-                        + " successfully");
-            } else {
-                LOG.info("Worker " + workerId
-                        + " Processed request successfully");
+            if (LOG.isDebugEnabled()) {
+                if (res instanceof ISignResponse) {
+                    LOG.debug("Worker " + workerId + " Processed request "
+                            + ((ISignResponse) res).getRequestID()
+                            + " successfully");
+                } else {
+                    LOG.debug("Worker " + workerId
+                            + " Processed request successfully");
+                }
             }
 
             // Old log entries (SignServer 3.1) added for backward compatibility

@@ -664,6 +664,19 @@ public class SystemLoggingTest extends ModulesTestCase {
         assertTrue("Contains exception", line.contains("EXCEPTION: No such worker: 1234567"));
     }
     
+    public void test01LogWorkerConfigReload() throws Exception {
+        int linesBefore = readEntriesCount(auditLogFile);
+        
+        workerSession.reloadConfiguration(signerId);
+        
+        List<String> lines = readEntries(auditLogFile, linesBefore, 1);
+        String line = lines.get(0);
+        LOG.info(line);
+        assertTrue("Contains event", line.contains("EVENT: RELOAD_WORKER_CONFIG"));
+        assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
+        assertTrue("Contains no correct worker id", line.contains("WORKER_ID: "));
+    }
+    
     public void test99TearDownDatabase() throws Exception {
         removeWorker(signerId);
     }

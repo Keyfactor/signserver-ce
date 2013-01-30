@@ -119,7 +119,6 @@ public class AdminWS {
         requireAdminAuthorization("getStatus", String.valueOf(workerId));
 
         final WSWorkerStatus result;
-        //final X
         final WorkerStatus status = worker.getStatus(workerId);
         if (status == null) {
             result = null;

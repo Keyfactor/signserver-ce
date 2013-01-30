@@ -77,6 +77,8 @@ public class SystemLoggingTest extends ModulesTestCase {
     
     public void test00SetupDatabase() throws Exception {
         addSoftDummySigner(signerId, "TestSigner6000");
+        workerSession.setWorkerProperty(signerId, "WORKERLOGGER", "org.signserver.server.log.SecurityEventsWorkerLogger");
+        workerSession.reloadConfiguration(signerId);
     }
     
     public void test01ReadEntries() throws Exception {
@@ -690,13 +692,12 @@ public class SystemLoggingTest extends ModulesTestCase {
         List<String> lines = readEntries(auditLogFile, linesBefore, 1);
         String line = lines.get(0);
         LOG.info(line);
-        assertTrue("Contains event", line.contains("Event: PROCESS"));
+        assertTrue("Contains event", line.contains("EVENT: PROCESS"));
         assertTrue("Contains module", line.contains("MODULE: WORKER"));
         assertTrue("Contains success", line.contains("PROCESS_SUCCESS: true"));
         assertTrue("Contains worker id", line.contains("WORKER_ID: " + signerId));
         assertTrue("Contains log id", line.contains("LOG_ID:"));
-        assertTrue("Contains file name", line.contains("FILENAME: noname.dat"));
-        assertTrue("Contains client ip", line.contains("CLIENT_IP: 127.0.0.1"));
+        assertTrue("Contains client ip", line.contains("CLIENT_IP:"));
     }
     
     public void test99TearDownDatabase() throws Exception {

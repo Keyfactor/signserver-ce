@@ -674,7 +674,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         } else {
             workerManagerSession.reloadWorker(workerId, globalConfigurationSession);
             auditLog(adminInfo, SignServerEventTypes.RELOAD_WORKER_CONFIG, SignServerModuleTypes.WORKER_CONFIG,
-                    Integer.toString(workerId), null);
+                    Integer.toString(workerId), Collections.<String, Object>emptyMap());
 
             // Try to insert a key usage counter entry for this worker's public
             // key

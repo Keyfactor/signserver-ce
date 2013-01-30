@@ -14,15 +14,15 @@ package org.signserver.statusrepo.impl;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-
 import javax.ejb.EJB;
 import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import org.apache.log4j.Logger;
-import org.signserver.server.log.SignServerEventTypes;
 import org.cesecore.audit.enums.EventStatus;
 import org.cesecore.audit.log.AuditRecordStorageException;
 import org.cesecore.audit.log.SecurityEventsLoggerSessionLocal;
+import org.signserver.common.CompileTimeSettings;
+import org.signserver.server.log.SignServerEventTypes;
 import org.signserver.server.log.SignServerModuleTypes;
 import org.signserver.server.log.SignServerServiceTypes;
 import org.signserver.statusrepo.IStatusRepositorySession;
@@ -45,18 +45,21 @@ public class StatusRepositorySessionBean implements
             Logger.getLogger(StatusRepositorySessionBean.class);
    
     /** The repository instance. */
-    private final StatusRepository repository;
+    private static final StatusRepository repository = StatusRepository.getInstance();
 
     @EJB
     private SecurityEventsLoggerSessionLocal logSession;
     
-    /**
-     * Constructs this class.
-     */
-    public StatusRepositorySessionBean() {
-        repository = StatusRepository.getInstance();
-    }
+    private LogUpdates logUpdates;
 
+    public StatusRepositorySessionBean() {
+        String logTypes = CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.STATUSREPOSITORY_LOG);
+        if (logTypes == null) {
+            logTypes = LogUpdates.ALL.name();
+        }
+        logUpdates = LogUpdates.valueOf(logTypes);
+    }
+        
     /**
      * Get a property.
      *
@@ -112,8 +115,20 @@ public class StatusRepositorySessionBean implements
             final long expiration) throws NoSuchPropertyException {
         try {
             final long currentTime = System.currentTimeMillis();
-            repository.set(StatusName.valueOf(key), new StatusEntry(currentTime, value, expiration));
-            auditLog(key, value, expiration);
+            final StatusName name = StatusName.valueOf(key);
+            final StatusEntry entry;
+            
+            synchronized (repository) { // Synchronization only for writes so we can detect changes
+                // Get the old value
+                entry = repository.get(name);
+                // Set the new value
+                repository.set(name, new StatusEntry(currentTime, value, expiration));
+            }
+            
+            if (logUpdates == LogUpdates.ALL 
+                    || (logUpdates == LogUpdates.CHANGES && (entry == null || !entry.getValue().equals(value)))) {
+                auditLog(key, value, expiration);
+            }
         } catch (IllegalArgumentException ex) {
             throw new NoSuchPropertyException(key);
         }

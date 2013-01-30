@@ -61,6 +61,8 @@ public class CompileTimeSettings {
     public static final String FILEBASED_DB_FOLDER = "database.nodb.location";
     public static final String DATABASE_NAME = "database.name";
     
+    public static final String STATUSREPOSITORY_LOG = "statusrepository.log";
+    
     /** Default values for the compile-time properties. */
     private static final Properties DEFAULT_PROPERTIES = new Properties();
 

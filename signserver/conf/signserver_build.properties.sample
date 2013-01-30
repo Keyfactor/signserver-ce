@@ -328,6 +328,17 @@ j2ee.web-nohttps=true
 #healthcheck.maintenancepropertyname=DOWN_FOR_MAINTENANCE
 
 
+# ------------- Status Repository Configuration --------------------------------
+
+# Status Repository Audit Logging
+#
+# The following options are possible:
+#   ALL (default):  All updates are logged (even if the value did not change).
+#   CHANGES:        Only updates where the value is changed are logged.
+#   NONE:           No updates are logged.
+#statusrepository.log=ALL
+
+
 # ------------- Cluster Deployment Configuration -------------------------------
 # Configuration used to centrally deploy the application server in a
 # clustered environment. Currently are up to 6 nodes supported to

@@ -34,7 +34,7 @@ final class StatusRepository {
     private static final Logger LOG = Logger.getLogger(StatusRepository.class);
 
     /** The instance. */
-    private static StatusRepository instance = new StatusRepository();
+    private static final StatusRepository instance = new StatusRepository();
 
     /** Map of the data. */
     private Map<StatusName, EntryHolder> datas = new EnumMap<StatusName, EntryHolder>(StatusName.class);

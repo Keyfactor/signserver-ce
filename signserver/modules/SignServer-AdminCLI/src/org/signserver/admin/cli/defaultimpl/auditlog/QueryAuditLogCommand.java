@@ -200,20 +200,21 @@ public class QueryAuditLogCommand extends AbstractCommand {
         final List<Elem> terms = new LinkedList<Elem>();
         //terms.add(Criteria.orderDesc(AuditRecordData.FIELD_TIMESTAMP));
         
-        for (final String criteria : criterias) {
-            try {
-                final Term term = parseCriteria(criteria);
-                terms.add(term);
-            } catch (NumberFormatException e) {
-                throw new ParseException("Invalid critera, expected a numeric value: " + criteria);
-            } catch (IllegalArgumentException e) {
-                throw new ParseException("Invalid critera specified: " + criteria);
+        if (criterias != null && criterias.length > 0) {
+            for (final String criteria : criterias) {
+                try {
+                    final Term term = parseCriteria(criteria);
+                    terms.add(term);
+                } catch (NumberFormatException e) {
+                    throw new ParseException("Invalid critera, expected a numeric value: " + criteria);
+                } catch (IllegalArgumentException e) {
+                    throw new ParseException("Invalid critera specified: " + criteria);
+                }
             }
+        
+            Elem all = andAll(terms, 0);
+            qc.add(all);
         }
-        
-        Elem all = andAll(terms, 0);
-        
-        qc.add(all);
     }
     
     

@@ -37,7 +37,9 @@ import org.signserver.cli.spi.UnexpectedCommandFailureException;
 
 /**
  * 
- *
+ * AdminCLI command to query the audit log.
+ * 
+ * @author Marcus Lundblad
  * @version $Id$
  */
 public class QueryAuditLogCommand extends AbstractCommand {
@@ -49,19 +51,7 @@ public class QueryAuditLogCommand extends AbstractCommand {
     public static final String TO = "to";
     
     public static final String CRITERIA = "criteria";
-    
-    /** relational operations */
-    public static final String EQ = "eq";
-    public static final String NEQ = "neq";
-    public static final String LT = "lt";
-    public static final String GT = "gt";
-    public static final String LE = "le";
-    public static final String GE = "ge";
-    public static final String BETWEEN = "between";
-    public static final String LIKE = "like";
-    public static final String NULL = "null";
-    public static final String NOTNOLL = "notnull";
-    
+ 
     /** The command line options */
     private static final Options OPTIONS;
     private static final Set<String> intFields;
@@ -208,10 +198,8 @@ public class QueryAuditLogCommand extends AbstractCommand {
             qc.add(all);
         }
     }
-    
-    
-    
-    private Term parseCriteria(final String criteria) throws IllegalArgumentException, NumberFormatException {
+
+    static protected Term parseCriteria(final String criteria) throws IllegalArgumentException, NumberFormatException {
     	// find an operator
         final String[] parts = criteria.split(" ", 3);
     	

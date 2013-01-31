@@ -197,9 +197,14 @@ public class QueryAuditLogCommand extends AbstractCommand {
         //terms.add(Criteria.orderDesc(AuditRecordData.FIELD_TIMESTAMP));
         
         for (final String criteria : criterias) {
-            final Term term = parseCriteria(criteria);
-            err.println("term: " + term);
-            terms.add(term);
+            try {
+                final Term term = parseCriteria(criteria);
+                terms.add(term);
+            } catch (NumberFormatException e) {
+                throw new ParseException("Invalid critera, expected a numeric value: " + criteria);
+            } catch (IllegalArgumentException e) {
+                throw new ParseException("Invalid critera specified: " + criteria);
+            }
         }
         
         Elem all = andAll(terms, 0);
@@ -209,14 +214,20 @@ public class QueryAuditLogCommand extends AbstractCommand {
     
     
     
-    private Term parseCriteria(final String criteria) throws ParseException {
+    private Term parseCriteria(final String criteria) throws IllegalArgumentException, NumberFormatException {
     	// find an operator
         final String[] parts = criteria.split(" ", 3);
     	
     	final String field = parts[0];
     	final RelationalOperator op = RelationalOperator.valueOf(parts[1]);
-    	final Object value = intFields.contains(parts[2]) ? Long.parseLong(parts[2]) : parts[2];
+    	final Object value;
     	
+    	if (intFields.contains(parts[0])) {
+    	    value = Long.parseLong(parts[2]);
+    	} else {
+    	    value = parts[2];
+    	}
+
     	err.println("field: " + field);
     	err.println("value: " + value);
     	

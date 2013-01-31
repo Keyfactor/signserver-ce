@@ -173,8 +173,6 @@ public class QueryAuditLogCommand extends AbstractCommand {
             throw new ParseException("Must specifiy the -query option");
         }
         
-        err.println("parseCommandLine");
-        
         // TODO: we might want to enfore the range options to avoid possible memory exhaustion
         final String fromString = line.getOptionValue(FROM);
         final String toString = line.getOptionValue(TO);
@@ -232,10 +230,7 @@ public class QueryAuditLogCommand extends AbstractCommand {
     	} else {
     	    value = parts[2];
     	}
-
-    	err.println("field: " + field);
-    	err.println("value: " + value);
-    	
+   	
     	return new Term(op, field, value);
     }
     

@@ -44,7 +44,6 @@ import org.signserver.cli.spi.UnexpectedCommandFailureException;
 public class QueryAuditLogCommand extends AbstractCommand {
 
     private AdminCommandHelper helper = new AdminCommandHelper();
-    private ArchiveCLIUtils utils = new ArchiveCLIUtils();
     
     public static final String QUERY = "query";
     public static final String FROM = "from";
@@ -146,18 +145,16 @@ public class QueryAuditLogCommand extends AbstractCommand {
             out.println("\n\n");
             return 0;
 
-        } catch (Exception e) {
-            System.err.println("Exception: " + e.getClass() + ", caused by: " + e.getCause().getClass());
-            
+        } catch (Exception e) {            
             // Is it a verification failure?
             if (e.getCause() instanceof DatabaseProtectionError) {
                 DatabaseProtectionError error = (DatabaseProtectionError) e.getCause();
+                err.println(error.getMessage());
                 // TODO: (or not): Doesn't seems like we can do more than printing this error message
-//                if (error.getEntity() != null) {
-//                    System.err.println("Entity: " + error.getEntity() + ", data: " + error.getEntity().getRowProtection());
-//                }
-                System.err.println(error.getMessage());
-//                e.printStackTrace();
+                if (error.getEntity() != null) {
+                    System.err.println("Entity: " + error.getEntity() + ", data: " + error.getEntity().getRowProtection());
+                }
+
                 return -1;
             } else {
                 throw new UnexpectedCommandFailureException(e);

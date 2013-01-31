@@ -96,8 +96,12 @@ public class QueryAuditLogCommand extends AbstractCommand {
     // TODO: Need to figure out a CLI syntax allowing an unbounded number of criterias to be specified, compare to how searching is done in the EJBCA GUI
     @Override
     public String getUsages() {
-        return "Usage: signserver auditlog -query -critera  \"TIMESTAMP>4711\" -criteria \"\n"
-                    + "Example: signserver -query TODO\n\n";
+        return "Usage: signserver auditlog -query -criteria  \"<field> <op> <value>\" [-criteria...] [-from <index>] [-to <index>]\n"
+                + "<field> is a field name from the audit log: additionalDetails, authToken, customId, eventStatus, eventType, module, nodeId,\n"
+                + "searchDetail1, searchDetail2, sequenceNumber, service, timeStamp\n"
+                + "<op> is a relational operator: GT, GE, LT, LE, EQ, NEQ, LIKE, NULL, NOTNULL\n"
+                + "Example: signserver auditlog -query -criteria \"customId EQ 1\n"
+                + "Example: signserver auditlog -query -criteria \"timeStamp GT 1359623137000\" -criteria \"searchDetail2 EQ 1\"\n\n";
     }
     
     @Override

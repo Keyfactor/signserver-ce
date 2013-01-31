@@ -12,7 +12,6 @@
  *************************************************************************/
 package org.signserver.admin.cli.defaultimpl.auditlog;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,7 +27,6 @@ import org.cesecore.dbprotection.DatabaseProtectionError;
 import org.cesecore.util.query.Criteria;
 import org.cesecore.util.query.Elem;
 import org.cesecore.util.query.QueryCriteria;
-import org.cesecore.util.query.elems.Operation;
 import org.cesecore.util.query.elems.RelationalOperator;
 import org.cesecore.util.query.elems.Term;
 import org.signserver.admin.cli.defaultimpl.AdminCommandHelper;

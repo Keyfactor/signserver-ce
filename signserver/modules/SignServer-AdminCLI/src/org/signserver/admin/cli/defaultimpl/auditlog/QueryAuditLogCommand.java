@@ -207,6 +207,13 @@ public class QueryAuditLogCommand extends AbstractCommand {
     	final RelationalOperator op = RelationalOperator.valueOf(parts[1]);
     	final Object value;
     	
+    	// we will not handle the BETWEEN operator
+    	// to avoid complicating the parser, the same
+    	// result can be achieved with two criterias
+    	if (op == RelationalOperator.BETWEEN) {
+    	    throw new IllegalArgumentException("Operator BETWEEN is not supported");
+    	}
+    	
     	if (intFields.contains(parts[0])) {
     	    value = Long.parseLong(parts[2]);
     	} else {

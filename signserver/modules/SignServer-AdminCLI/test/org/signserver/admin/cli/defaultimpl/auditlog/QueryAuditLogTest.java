@@ -37,4 +37,29 @@ public class QueryAuditLogTest extends TestCase {
         assertEquals("Value", "1", term.getValue());
     }
     
+    public void test02ParseCriteriaInvalidOperator() throws Exception {
+        final String criteria = "customId FOO 1";
+        
+        try {
+            final Term term = QueryAuditLogCommand.parseCriteria(criteria);
+            fail("Should throw an IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+            // expected
+        } catch (Exception e) {
+            fail("Unexpected exception: " + e.getClass().getName());
+        }
+    }
+
+    public void test03ParseCriteriaBetween() throws Exception {
+        final String criteria = "customId BETWEEN 1";
+        
+        try {
+            final Term term = QueryAuditLogCommand.parseCriteria(criteria);
+            fail("Should throw an IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+            // expected
+        } catch (Exception e) {
+            fail("Unexpected exception: " + e.getClass().getName());
+        }
+    }
 }

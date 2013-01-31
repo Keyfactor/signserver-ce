@@ -2,509 +2,6 @@
 
 <Form version="1.6" maxVersion="1.7">
   <NonVisualComponents>
-    <Container class="javax.swing.JPanel" name="mainPanel">
-      <Properties>
-        <Property name="name" type="java.lang.String" value="mainPanel" noResource="true"/>
-      </Properties>
-
-      <Layout>
-        <DimensionLayout dim="0">
-          <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jSplitPane1" pref="1094" max="32767" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
-              </Group>
-          </Group>
-        </DimensionLayout>
-        <DimensionLayout dim="1">
-          <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jSplitPane1" pref="822" max="32767" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
-              </Group>
-          </Group>
-        </DimensionLayout>
-      </Layout>
-      <SubComponents>
-        <Container class="javax.swing.JSplitPane" name="jSplitPane1">
-          <Properties>
-            <Property name="name" type="java.lang.String" value="jSplitPane1" noResource="true"/>
-          </Properties>
-
-          <Layout class="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout"/>
-          <SubComponents>
-            <Container class="javax.swing.JScrollPane" name="jScrollPane2">
-              <Properties>
-                <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                  <Dimension value="[250, 26]"/>
-                </Property>
-                <Property name="name" type="java.lang.String" value="jScrollPane2" noResource="true"/>
-                <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                  <Dimension value="[550, 202]"/>
-                </Property>
-              </Properties>
-              <Constraints>
-                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
-                  <JSplitPaneConstraints position="left"/>
-                </Constraint>
-              </Constraints>
-
-              <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
-              <SubComponents>
-                <Component class="javax.swing.JList" name="jList1">
-                  <Properties>
-                    <Property name="name" type="java.lang.String" value="jList1" noResource="true"/>
-                  </Properties>
-                </Component>
-              </SubComponents>
-            </Container>
-            <Container class="javax.swing.JPanel" name="jPanel1">
-              <Properties>
-                <Property name="name" type="java.lang.String" value="jPanel1" noResource="true"/>
-              </Properties>
-              <Constraints>
-                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
-                  <JSplitPaneConstraints position="right"/>
-                </Constraint>
-              </Constraints>
-
-              <Layout>
-                <DimensionLayout dim="0">
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" alignment="1" attributes="0">
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="1" attributes="0">
-                              <Component id="workerTabbedPane" alignment="0" pref="814" max="32767" attributes="0"/>
-                              <Component id="workerComboBox" alignment="0" pref="814" max="32767" attributes="0"/>
-                          </Group>
-                          <EmptySpace max="-2" attributes="0"/>
-                      </Group>
-                  </Group>
-                </DimensionLayout>
-                <DimensionLayout dim="1">
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="workerComboBox" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Component id="workerTabbedPane" max="32767" attributes="0"/>
-                      </Group>
-                  </Group>
-                </DimensionLayout>
-              </Layout>
-              <SubComponents>
-                <Component class="javax.swing.JComboBox" name="workerComboBox">
-                  <Properties>
-                    <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                      <StringArray count="0"/>
-                    </Property>
-                    <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                      <Dimension value="[39, 60]"/>
-                    </Property>
-                    <Property name="name" type="java.lang.String" value="workerComboBox" noResource="true"/>
-                  </Properties>
-                </Component>
-                <Container class="javax.swing.JTabbedPane" name="workerTabbedPane">
-                  <Properties>
-                    <Property name="name" type="java.lang.String" value="workerTabbedPane" noResource="true"/>
-                  </Properties>
-
-                  <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
-                  <SubComponents>
-                    <Container class="javax.swing.JScrollPane" name="statusSummaryTab">
-                      <Properties>
-                        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-                          <Border info="org.netbeans.modules.form.compat2.border.EmptyBorderInfo">
-                            <EmptyBorder/>
-                          </Border>
-                        </Property>
-                        <Property name="verticalScrollBarPolicy" type="int" value="22"/>
-                        <Property name="name" type="java.lang.String" value="statusSummaryTab" noResource="true"/>
-                      </Properties>
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                          <JTabbedPaneConstraints tabName="Status Summary">
-                            <Property name="tabTitle" type="java.lang.String" resourceKey="statusSummaryTab.TabConstraints.tabTitle"/>
-                          </JTabbedPaneConstraints>
-                        </Constraint>
-                      </Constraints>
-
-                      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
-                      <SubComponents>
-                        <Component class="javax.swing.JTextPane" name="statusSummaryTextPane">
-                          <Properties>
-                            <Property name="editable" type="boolean" value="false"/>
-                            <Property name="text" type="java.lang.String" resourceKey="statusSummaryTextPane.text"/>
-                            <Property name="name" type="java.lang.String" value="statusSummaryTextPane" noResource="true"/>
-                          </Properties>
-                        </Component>
-                      </SubComponents>
-                    </Container>
-                    <Container class="javax.swing.JPanel" name="statusPropertiesTab">
-                      <Properties>
-                        <Property name="name" type="java.lang.String" value="statusPropertiesTab" noResource="true"/>
-                      </Properties>
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                          <JTabbedPaneConstraints tabName="Status Properties">
-                            <Property name="tabTitle" type="java.lang.String" resourceKey="statusPropertiesTab.TabConstraints.tabTitle"/>
-                          </JTabbedPaneConstraints>
-                        </Constraint>
-                      </Constraints>
-
-                      <Layout>
-                        <DimensionLayout dim="0">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="1" attributes="0">
-                                  <EmptySpace pref="710" max="32767" attributes="0"/>
-                                  <Component id="statusPropertiesDetailsButton" min="-2" pref="84" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                              </Group>
-                              <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <EmptySpace min="-2" max="-2" attributes="0"/>
-                                      <Component id="statusPropertiesScrollPane" pref="682" max="32767" attributes="0"/>
-                                      <EmptySpace min="-2" pref="112" max="-2" attributes="0"/>
-                                  </Group>
-                              </Group>
-                          </Group>
-                        </DimensionLayout>
-                        <DimensionLayout dim="1">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="statusPropertiesDetailsButton" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace pref="684" max="32767" attributes="0"/>
-                              </Group>
-                              <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="statusPropertiesScrollPane" pref="702" max="32767" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                  </Group>
-                              </Group>
-                          </Group>
-                        </DimensionLayout>
-                      </Layout>
-                      <SubComponents>
-                        <Container class="javax.swing.JScrollPane" name="statusPropertiesScrollPane">
-                          <Properties>
-                            <Property name="verticalScrollBarPolicy" type="int" value="22"/>
-                            <Property name="name" type="java.lang.String" value="statusPropertiesScrollPane" noResource="true"/>
-                          </Properties>
-
-                          <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
-                          <SubComponents>
-                            <Component class="javax.swing.JTable" name="propertiesTable">
-                              <Properties>
-                                <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                                  <Table columnCount="3" rowCount="8">
-                                    <Column editable="true" title="Property" type="java.lang.Object">
-                                      <Data value="ID"/>
-                                      <Data value="Name"/>
-                                      <Data value="Token status"/>
-                                      <Data value="Signatures:"/>
-                                      <Data value="Signature limit:"/>
-                                      <Data value="Validity not before:"/>
-                                      <Data value="Validity not after:"/>
-                                      <Data value="Certificate chain:"/>
-                                    </Column>
-                                    <Column editable="true" title="Value" type="java.lang.Object">
-                                      <Data value="71"/>
-                                      <Data value="Sod1"/>
-                                      <Data value="ACTIVE"/>
-                                      <Data value="0"/>
-                                      <Data value="100000"/>
-                                      <Data value="2010-05-20"/>
-                                      <Data value="2020-05-20"/>
-                                      <Data value="CN=Sod1, O=Document Signer Pecuela 11, C=PE issued by CN=CSCA Pecuela,O=Pecuela MOI,C=PE"/>
-                                    </Column>
-                                    <Column editable="true" title="" type="java.lang.String">
-                                      <Data value="null"/>
-                                      <Data value="null"/>
-                                      <Data value="null"/>
-                                      <Data value="null"/>
-                                      <Data value="null"/>
-                                      <Data value="null"/>
-                                      <Data value="null"/>
-                                      <Data value="..."/>
-                                    </Column>
-                                  </Table>
-                                </Property>
-                                <Property name="name" type="java.lang.String" value="propertiesTable" noResource="true"/>
-                                <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
-                                  <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
-                                </Property>
-                              </Properties>
-                            </Component>
-                          </SubComponents>
-                        </Container>
-                        <Component class="javax.swing.JButton" name="statusPropertiesDetailsButton">
-                          <Properties>
-                            <Property name="text" type="java.lang.String" resourceKey="statusPropertiesDetailsButton.text"/>
-                            <Property name="enabled" type="boolean" value="false"/>
-                            <Property name="name" type="java.lang.String" value="statusPropertiesDetailsButton" noResource="true"/>
-                          </Properties>
-                          <Events>
-                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="statusPropertiesDetailsButtonActionPerformed"/>
-                          </Events>
-                        </Component>
-                      </SubComponents>
-                    </Container>
-                    <Container class="javax.swing.JPanel" name="configurationTab">
-                      <Properties>
-                        <Property name="name" type="java.lang.String" value="configurationTab" noResource="true"/>
-                      </Properties>
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                          <JTabbedPaneConstraints tabName="Configuration">
-                            <Property name="tabTitle" type="java.lang.String" value="Configuration"/>
-                          </JTabbedPaneConstraints>
-                        </Constraint>
-                      </Constraints>
-
-                      <Layout>
-                        <DimensionLayout dim="0">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="1" attributes="0">
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="jScrollPane6" pref="672" max="32767" attributes="0"/>
-                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="1" attributes="0">
-                                      <Component id="addButton" linkSize="1" alignment="1" min="-2" max="-2" attributes="0"/>
-                                      <Component id="editButton" linkSize="1" alignment="1" min="-2" max="-2" attributes="0"/>
-                                      <Component id="removeButton" linkSize="1" alignment="1" min="-2" pref="98" max="-2" attributes="0"/>
-                                  </Group>
-                                  <EmptySpace max="-2" attributes="0"/>
-                              </Group>
-                          </Group>
-                        </DimensionLayout>
-                        <DimensionLayout dim="1">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="jScrollPane6" alignment="0" pref="702" max="32767" attributes="0"/>
-                                      <Group type="102" alignment="0" attributes="0">
-                                          <Component id="addButton" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                          <Component id="editButton" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="removeButton" min="-2" max="-2" attributes="0"/>
-                                      </Group>
-                                  </Group>
-                                  <EmptySpace max="-2" attributes="0"/>
-                              </Group>
-                          </Group>
-                        </DimensionLayout>
-                      </Layout>
-                      <SubComponents>
-                        <Container class="javax.swing.JScrollPane" name="jScrollPane6">
-                          <Properties>
-                            <Property name="verticalScrollBarPolicy" type="int" value="22"/>
-                            <Property name="name" type="java.lang.String" value="jScrollPane6" noResource="true"/>
-                          </Properties>
-
-                          <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
-                          <SubComponents>
-                            <Component class="javax.swing.JTable" name="configurationTable">
-                              <Properties>
-                                <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                                  <Table columnCount="3" rowCount="8">
-                                    <Column editable="true" title="Property" type="java.lang.Object">
-                                      <Data value="ID"/>
-                                      <Data value="Name"/>
-                                      <Data value="Token status"/>
-                                      <Data value="Signatures:"/>
-                                      <Data value="Signature limit:"/>
-                                      <Data value="Validity not before:"/>
-                                      <Data value="Validity not after:"/>
-                                      <Data value="Certificate chain:"/>
-                                    </Column>
-                                    <Column editable="true" title="Value" type="java.lang.Object">
-                                      <Data value="71"/>
-                                      <Data value="Sod1"/>
-                                      <Data value="ACTIVE"/>
-                                      <Data value="0"/>
-                                      <Data value="100000"/>
-                                      <Data value="2010-05-20"/>
-                                      <Data value="2020-05-20"/>
-                                      <Data value="CN=Sod1, O=Document Signer Pecuela 11, C=PE issued by CN=CSCA Pecuela,O=Pecuela MOI,C=PE"/>
-                                    </Column>
-                                    <Column editable="true" title="" type="java.lang.String">
-                                      <Data value="null"/>
-                                      <Data value="null"/>
-                                      <Data value="null"/>
-                                      <Data value="null"/>
-                                      <Data value="null"/>
-                                      <Data value="null"/>
-                                      <Data value="null"/>
-                                      <Data value="..."/>
-                                    </Column>
-                                  </Table>
-                                </Property>
-                                <Property name="name" type="java.lang.String" value="configurationTable" noResource="true"/>
-                                <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
-                                  <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
-                                </Property>
-                              </Properties>
-                            </Component>
-                          </SubComponents>
-                        </Container>
-                        <Component class="javax.swing.JButton" name="addButton">
-                          <Properties>
-                            <Property name="text" type="java.lang.String" resourceKey="addButton.text"/>
-                            <Property name="name" type="java.lang.String" value="addButton" noResource="true"/>
-                          </Properties>
-                          <Events>
-                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addButtonActionPerformed"/>
-                          </Events>
-                        </Component>
-                        <Component class="javax.swing.JButton" name="editButton">
-                          <Properties>
-                            <Property name="text" type="java.lang.String" resourceKey="editButton.text"/>
-                            <Property name="enabled" type="boolean" value="false"/>
-                            <Property name="name" type="java.lang.String" value="editButton" noResource="true"/>
-                          </Properties>
-                          <Events>
-                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editButtonActionPerformed"/>
-                          </Events>
-                        </Component>
-                        <Component class="javax.swing.JButton" name="removeButton">
-                          <Properties>
-                            <Property name="text" type="java.lang.String" resourceKey="removeButton.text"/>
-                            <Property name="enabled" type="boolean" value="false"/>
-                            <Property name="name" type="java.lang.String" value="removeButton" noResource="true"/>
-                          </Properties>
-                          <Events>
-                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="removeButtonActionPerformed"/>
-                          </Events>
-                        </Component>
-                      </SubComponents>
-                    </Container>
-                    <Container class="javax.swing.JPanel" name="authorizationTab">
-                      <Properties>
-                        <Property name="name" type="java.lang.String" value="authorizationTab" noResource="true"/>
-                      </Properties>
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                          <JTabbedPaneConstraints tabName="Authorization">
-                            <Property name="tabTitle" type="java.lang.String" resourceKey="authorizationTab.TabConstraints.tabTitle"/>
-                          </JTabbedPaneConstraints>
-                        </Constraint>
-                      </Constraints>
-
-                      <Layout>
-                        <DimensionLayout dim="0">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" attributes="0">
-                                  <EmptySpace pref="695" max="32767" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="authAddButton" linkSize="2" alignment="1" min="-2" max="-2" attributes="0"/>
-                                      <Component id="authEditButton" linkSize="2" alignment="1" min="-2" max="-2" attributes="0"/>
-                                      <Component id="authRemoveButton" linkSize="2" alignment="1" min="-2" pref="99" max="-2" attributes="0"/>
-                                  </Group>
-                                  <EmptySpace max="-2" attributes="0"/>
-                              </Group>
-                              <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
-                                      <Component id="jScrollPane7" pref="676" max="32767" attributes="0"/>
-                                      <EmptySpace min="-2" pref="124" max="-2" attributes="0"/>
-                                  </Group>
-                              </Group>
-                          </Group>
-                        </DimensionLayout>
-                        <DimensionLayout dim="1">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="authAddButton" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                  <Component id="authEditButton" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="authRemoveButton" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace pref="606" max="32767" attributes="0"/>
-                              </Group>
-                              <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="jScrollPane7" pref="702" max="32767" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                  </Group>
-                              </Group>
-                          </Group>
-                        </DimensionLayout>
-                      </Layout>
-                      <SubComponents>
-                        <Container class="javax.swing.JScrollPane" name="jScrollPane7">
-                          <Properties>
-                            <Property name="verticalScrollBarPolicy" type="int" value="22"/>
-                            <Property name="name" type="java.lang.String" value="jScrollPane7" noResource="true"/>
-                          </Properties>
-
-                          <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
-                          <SubComponents>
-                            <Component class="javax.swing.JTable" name="authTable">
-                              <Properties>
-                                <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                                  <Table columnCount="2" rowCount="8">
-                                    <Column editable="false" title="Certificate serial number" type="java.lang.String"/>
-                                    <Column editable="false" title="Issuer DN" type="java.lang.String"/>
-                                  </Table>
-                                </Property>
-                                <Property name="name" type="java.lang.String" value="authTable" noResource="true"/>
-                                <Property name="selectionModel" type="javax.swing.ListSelectionModel" editor="org.netbeans.modules.form.editors2.JTableSelectionModelEditor">
-                                  <JTableSelectionModel selectionMode="0"/>
-                                </Property>
-                                <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
-                                  <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
-                                </Property>
-                              </Properties>
-                            </Component>
-                          </SubComponents>
-                        </Container>
-                        <Component class="javax.swing.JButton" name="authAddButton">
-                          <Properties>
-                            <Property name="text" type="java.lang.String" resourceKey="authAddButton.text"/>
-                            <Property name="name" type="java.lang.String" value="authAddButton" noResource="true"/>
-                          </Properties>
-                          <Events>
-                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="authAddButtonActionPerformed"/>
-                          </Events>
-                        </Component>
-                        <Component class="javax.swing.JButton" name="authEditButton">
-                          <Properties>
-                            <Property name="text" type="java.lang.String" resourceKey="authEditButton.text"/>
-                            <Property name="enabled" type="boolean" value="false"/>
-                            <Property name="name" type="java.lang.String" value="authEditButton" noResource="true"/>
-                          </Properties>
-                          <Events>
-                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="authEditButtonActionPerformed"/>
-                          </Events>
-                        </Component>
-                        <Component class="javax.swing.JButton" name="authRemoveButton">
-                          <Properties>
-                            <Property name="text" type="java.lang.String" resourceKey="authRemoveButton.text"/>
-                            <Property name="enabled" type="boolean" value="false"/>
-                            <Property name="name" type="java.lang.String" value="authRemoveButton" noResource="true"/>
-                          </Properties>
-                          <Events>
-                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="authRemoveButtonActionPerformed"/>
-                          </Events>
-                        </Component>
-                      </SubComponents>
-                    </Container>
-                  </SubComponents>
-                </Container>
-              </SubComponents>
-            </Container>
-          </SubComponents>
-        </Container>
-      </SubComponents>
-    </Container>
     <Container class="javax.swing.JMenuBar" name="menuBar">
       <Properties>
         <Property name="name" type="java.lang.String" value="menuBar" noResource="true"/>
@@ -1119,10 +616,880 @@
         </Component>
       </SubComponents>
     </Container>
+    <Container class="javax.swing.JTabbedPane" name="jTabbedPane1">
+      <Properties>
+        <Property name="name" type="java.lang.String" value="jTabbedPane1" noResource="true"/>
+      </Properties>
+
+      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
+      <SubComponents>
+        <Container class="javax.swing.JPanel" name="mainPanel">
+          <Properties>
+            <Property name="name" type="java.lang.String" value="mainPanel" noResource="true"/>
+          </Properties>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+              <JTabbedPaneConstraints tabName="Workers">
+                <Property name="tabTitle" type="java.lang.String" resourceKey="mainPanel.TabConstraints.tabTitle"/>
+              </JTabbedPaneConstraints>
+            </Constraint>
+          </Constraints>
+
+          <Layout>
+            <DimensionLayout dim="0">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="jSplitPane1" pref="1086" max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+            <DimensionLayout dim="1">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="jSplitPane1" pref="784" max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+          </Layout>
+          <SubComponents>
+            <Container class="javax.swing.JSplitPane" name="jSplitPane1">
+              <Properties>
+                <Property name="name" type="java.lang.String" value="jSplitPane1" noResource="true"/>
+              </Properties>
+
+              <Layout class="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout"/>
+              <SubComponents>
+                <Container class="javax.swing.JScrollPane" name="jScrollPane2">
+                  <Properties>
+                    <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                      <Dimension value="[250, 26]"/>
+                    </Property>
+                    <Property name="name" type="java.lang.String" value="jScrollPane2" noResource="true"/>
+                    <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                      <Dimension value="[550, 202]"/>
+                    </Property>
+                  </Properties>
+                  <Constraints>
+                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
+                      <JSplitPaneConstraints position="left"/>
+                    </Constraint>
+                  </Constraints>
+
+                  <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+                  <SubComponents>
+                    <Component class="javax.swing.JList" name="jList1">
+                      <Properties>
+                        <Property name="name" type="java.lang.String" value="jList1" noResource="true"/>
+                      </Properties>
+                    </Component>
+                  </SubComponents>
+                </Container>
+                <Container class="javax.swing.JPanel" name="jPanel1">
+                  <Properties>
+                    <Property name="name" type="java.lang.String" value="jPanel1" noResource="true"/>
+                  </Properties>
+                  <Constraints>
+                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
+                      <JSplitPaneConstraints position="right"/>
+                    </Constraint>
+                  </Constraints>
+
+                  <Layout>
+                    <DimensionLayout dim="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" alignment="1" attributes="0">
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="1" attributes="0">
+                                  <Component id="workerTabbedPane" alignment="0" pref="806" max="32767" attributes="0"/>
+                                  <Component id="workerComboBox" alignment="0" pref="806" max="32767" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                    </DimensionLayout>
+                    <DimensionLayout dim="1">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="workerComboBox" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Component id="workerTabbedPane" pref="726" max="32767" attributes="0"/>
+                          </Group>
+                      </Group>
+                    </DimensionLayout>
+                  </Layout>
+                  <SubComponents>
+                    <Component class="javax.swing.JComboBox" name="workerComboBox">
+                      <Properties>
+                        <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+                          <StringArray count="0"/>
+                        </Property>
+                        <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                          <Dimension value="[39, 60]"/>
+                        </Property>
+                        <Property name="name" type="java.lang.String" value="workerComboBox" noResource="true"/>
+                      </Properties>
+                    </Component>
+                    <Container class="javax.swing.JTabbedPane" name="workerTabbedPane">
+                      <Properties>
+                        <Property name="name" type="java.lang.String" value="workerTabbedPane" noResource="true"/>
+                      </Properties>
+
+                      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
+                      <SubComponents>
+                        <Container class="javax.swing.JScrollPane" name="statusSummaryTab">
+                          <Properties>
+                            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                              <Border info="org.netbeans.modules.form.compat2.border.EmptyBorderInfo">
+                                <EmptyBorder/>
+                              </Border>
+                            </Property>
+                            <Property name="verticalScrollBarPolicy" type="int" value="22"/>
+                            <Property name="name" type="java.lang.String" value="statusSummaryTab" noResource="true"/>
+                          </Properties>
+                          <Constraints>
+                            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                              <JTabbedPaneConstraints tabName="Status Summary">
+                                <Property name="tabTitle" type="java.lang.String" resourceKey="statusSummaryTab.TabConstraints.tabTitle"/>
+                              </JTabbedPaneConstraints>
+                            </Constraint>
+                          </Constraints>
+
+                          <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+                          <SubComponents>
+                            <Component class="javax.swing.JTextPane" name="statusSummaryTextPane">
+                              <Properties>
+                                <Property name="editable" type="boolean" value="false"/>
+                                <Property name="text" type="java.lang.String" resourceKey="statusSummaryTextPane.text"/>
+                                <Property name="name" type="java.lang.String" value="statusSummaryTextPane" noResource="true"/>
+                              </Properties>
+                            </Component>
+                          </SubComponents>
+                        </Container>
+                        <Container class="javax.swing.JPanel" name="statusPropertiesTab">
+                          <Properties>
+                            <Property name="name" type="java.lang.String" value="statusPropertiesTab" noResource="true"/>
+                          </Properties>
+                          <Constraints>
+                            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                              <JTabbedPaneConstraints tabName="Status Properties">
+                                <Property name="tabTitle" type="java.lang.String" resourceKey="statusPropertiesTab.TabConstraints.tabTitle"/>
+                              </JTabbedPaneConstraints>
+                            </Constraint>
+                          </Constraints>
+
+                          <Layout>
+                            <DimensionLayout dim="0">
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="102" alignment="1" attributes="0">
+                                      <EmptySpace pref="702" max="32767" attributes="0"/>
+                                      <Component id="statusPropertiesDetailsButton" min="-2" pref="84" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
+                                      <Group type="102" alignment="0" attributes="0">
+                                          <EmptySpace min="-2" max="-2" attributes="0"/>
+                                          <Component id="statusPropertiesScrollPane" pref="674" max="32767" attributes="0"/>
+                                          <EmptySpace min="-2" pref="112" max="-2" attributes="0"/>
+                                      </Group>
+                                  </Group>
+                              </Group>
+                            </DimensionLayout>
+                            <DimensionLayout dim="1">
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="statusPropertiesDetailsButton" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace pref="646" max="32767" attributes="0"/>
+                                  </Group>
+                                  <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
+                                      <Group type="102" alignment="0" attributes="0">
+                                          <EmptySpace max="-2" attributes="0"/>
+                                          <Component id="statusPropertiesScrollPane" pref="664" max="32767" attributes="0"/>
+                                          <EmptySpace max="-2" attributes="0"/>
+                                      </Group>
+                                  </Group>
+                              </Group>
+                            </DimensionLayout>
+                          </Layout>
+                          <SubComponents>
+                            <Container class="javax.swing.JScrollPane" name="statusPropertiesScrollPane">
+                              <Properties>
+                                <Property name="verticalScrollBarPolicy" type="int" value="22"/>
+                                <Property name="name" type="java.lang.String" value="statusPropertiesScrollPane" noResource="true"/>
+                              </Properties>
+
+                              <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+                              <SubComponents>
+                                <Component class="javax.swing.JTable" name="propertiesTable">
+                                  <Properties>
+                                    <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
+                                      <Table columnCount="3" rowCount="8">
+                                        <Column editable="true" title="Property" type="java.lang.Object">
+                                          <Data value="ID"/>
+                                          <Data value="Name"/>
+                                          <Data value="Token status"/>
+                                          <Data value="Signatures:"/>
+                                          <Data value="Signature limit:"/>
+                                          <Data value="Validity not before:"/>
+                                          <Data value="Validity not after:"/>
+                                          <Data value="Certificate chain:"/>
+                                        </Column>
+                                        <Column editable="true" title="Value" type="java.lang.Object">
+                                          <Data value="71"/>
+                                          <Data value="Sod1"/>
+                                          <Data value="ACTIVE"/>
+                                          <Data value="0"/>
+                                          <Data value="100000"/>
+                                          <Data value="2010-05-20"/>
+                                          <Data value="2020-05-20"/>
+                                          <Data value="CN=Sod1, O=Document Signer Pecuela 11, C=PE issued by CN=CSCA Pecuela,O=Pecuela MOI,C=PE"/>
+                                        </Column>
+                                        <Column editable="true" title="" type="java.lang.String">
+                                          <Data value="null"/>
+                                          <Data value="null"/>
+                                          <Data value="null"/>
+                                          <Data value="null"/>
+                                          <Data value="null"/>
+                                          <Data value="null"/>
+                                          <Data value="null"/>
+                                          <Data value="..."/>
+                                        </Column>
+                                      </Table>
+                                    </Property>
+                                    <Property name="name" type="java.lang.String" value="propertiesTable" noResource="true"/>
+                                    <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
+                                      <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
+                                    </Property>
+                                  </Properties>
+                                </Component>
+                              </SubComponents>
+                            </Container>
+                            <Component class="javax.swing.JButton" name="statusPropertiesDetailsButton">
+                              <Properties>
+                                <Property name="text" type="java.lang.String" resourceKey="statusPropertiesDetailsButton.text"/>
+                                <Property name="enabled" type="boolean" value="false"/>
+                                <Property name="name" type="java.lang.String" value="statusPropertiesDetailsButton" noResource="true"/>
+                              </Properties>
+                              <Events>
+                                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="statusPropertiesDetailsButtonActionPerformed"/>
+                              </Events>
+                            </Component>
+                          </SubComponents>
+                        </Container>
+                        <Container class="javax.swing.JPanel" name="configurationTab">
+                          <Properties>
+                            <Property name="name" type="java.lang.String" value="configurationTab" noResource="true"/>
+                          </Properties>
+                          <Constraints>
+                            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                              <JTabbedPaneConstraints tabName="Configuration">
+                                <Property name="tabTitle" type="java.lang.String" value="Configuration"/>
+                              </JTabbedPaneConstraints>
+                            </Constraint>
+                          </Constraints>
+
+                          <Layout>
+                            <DimensionLayout dim="0">
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="102" alignment="1" attributes="0">
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="jScrollPane6" pref="664" max="32767" attributes="0"/>
+                                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="1" attributes="0">
+                                          <Component id="addButton" linkSize="1" alignment="1" min="-2" max="-2" attributes="0"/>
+                                          <Component id="editButton" linkSize="1" alignment="1" min="-2" max="-2" attributes="0"/>
+                                          <Component id="removeButton" linkSize="1" alignment="1" min="-2" pref="98" max="-2" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                  </Group>
+                              </Group>
+                            </DimensionLayout>
+                            <DimensionLayout dim="1">
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="jScrollPane6" alignment="0" pref="664" max="32767" attributes="0"/>
+                                          <Group type="102" alignment="0" attributes="0">
+                                              <Component id="addButton" min="-2" max="-2" attributes="0"/>
+                                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                              <Component id="editButton" min="-2" max="-2" attributes="0"/>
+                                              <EmptySpace max="-2" attributes="0"/>
+                                              <Component id="removeButton" min="-2" max="-2" attributes="0"/>
+                                          </Group>
+                                      </Group>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                  </Group>
+                              </Group>
+                            </DimensionLayout>
+                          </Layout>
+                          <SubComponents>
+                            <Container class="javax.swing.JScrollPane" name="jScrollPane6">
+                              <Properties>
+                                <Property name="verticalScrollBarPolicy" type="int" value="22"/>
+                                <Property name="name" type="java.lang.String" value="jScrollPane6" noResource="true"/>
+                              </Properties>
+
+                              <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+                              <SubComponents>
+                                <Component class="javax.swing.JTable" name="configurationTable">
+                                  <Properties>
+                                    <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
+                                      <Table columnCount="3" rowCount="8">
+                                        <Column editable="true" title="Property" type="java.lang.Object">
+                                          <Data value="ID"/>
+                                          <Data value="Name"/>
+                                          <Data value="Token status"/>
+                                          <Data value="Signatures:"/>
+                                          <Data value="Signature limit:"/>
+                                          <Data value="Validity not before:"/>
+                                          <Data value="Validity not after:"/>
+                                          <Data value="Certificate chain:"/>
+                                        </Column>
+                                        <Column editable="true" title="Value" type="java.lang.Object">
+                                          <Data value="71"/>
+                                          <Data value="Sod1"/>
+                                          <Data value="ACTIVE"/>
+                                          <Data value="0"/>
+                                          <Data value="100000"/>
+                                          <Data value="2010-05-20"/>
+                                          <Data value="2020-05-20"/>
+                                          <Data value="CN=Sod1, O=Document Signer Pecuela 11, C=PE issued by CN=CSCA Pecuela,O=Pecuela MOI,C=PE"/>
+                                        </Column>
+                                        <Column editable="true" title="" type="java.lang.String">
+                                          <Data value="null"/>
+                                          <Data value="null"/>
+                                          <Data value="null"/>
+                                          <Data value="null"/>
+                                          <Data value="null"/>
+                                          <Data value="null"/>
+                                          <Data value="null"/>
+                                          <Data value="..."/>
+                                        </Column>
+                                      </Table>
+                                    </Property>
+                                    <Property name="name" type="java.lang.String" value="configurationTable" noResource="true"/>
+                                    <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
+                                      <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
+                                    </Property>
+                                  </Properties>
+                                </Component>
+                              </SubComponents>
+                            </Container>
+                            <Component class="javax.swing.JButton" name="addButton">
+                              <Properties>
+                                <Property name="text" type="java.lang.String" resourceKey="addButton.text"/>
+                                <Property name="name" type="java.lang.String" value="addButton" noResource="true"/>
+                              </Properties>
+                              <Events>
+                                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addButtonActionPerformed"/>
+                              </Events>
+                            </Component>
+                            <Component class="javax.swing.JButton" name="editButton">
+                              <Properties>
+                                <Property name="text" type="java.lang.String" resourceKey="editButton.text"/>
+                                <Property name="enabled" type="boolean" value="false"/>
+                                <Property name="name" type="java.lang.String" value="editButton" noResource="true"/>
+                              </Properties>
+                              <Events>
+                                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editButtonActionPerformed"/>
+                              </Events>
+                            </Component>
+                            <Component class="javax.swing.JButton" name="removeButton">
+                              <Properties>
+                                <Property name="text" type="java.lang.String" resourceKey="removeButton.text"/>
+                                <Property name="enabled" type="boolean" value="false"/>
+                                <Property name="name" type="java.lang.String" value="removeButton" noResource="true"/>
+                              </Properties>
+                              <Events>
+                                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="removeButtonActionPerformed"/>
+                              </Events>
+                            </Component>
+                          </SubComponents>
+                        </Container>
+                        <Container class="javax.swing.JPanel" name="authorizationTab">
+                          <Properties>
+                            <Property name="name" type="java.lang.String" value="authorizationTab" noResource="true"/>
+                          </Properties>
+                          <Constraints>
+                            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                              <JTabbedPaneConstraints tabName="Authorization">
+                                <Property name="tabTitle" type="java.lang.String" resourceKey="authorizationTab.TabConstraints.tabTitle"/>
+                              </JTabbedPaneConstraints>
+                            </Constraint>
+                          </Constraints>
+
+                          <Layout>
+                            <DimensionLayout dim="0">
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="102" attributes="0">
+                                      <EmptySpace pref="687" max="32767" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="authAddButton" linkSize="2" alignment="1" min="-2" max="-2" attributes="0"/>
+                                          <Component id="authEditButton" linkSize="2" alignment="1" min="-2" max="-2" attributes="0"/>
+                                          <Component id="authRemoveButton" linkSize="2" alignment="1" min="-2" pref="99" max="-2" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
+                                      <Group type="102" alignment="0" attributes="0">
+                                          <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
+                                          <Component id="jScrollPane7" pref="668" max="32767" attributes="0"/>
+                                          <EmptySpace min="-2" pref="124" max="-2" attributes="0"/>
+                                      </Group>
+                                  </Group>
+                              </Group>
+                            </DimensionLayout>
+                            <DimensionLayout dim="1">
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="authAddButton" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                      <Component id="authEditButton" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="authRemoveButton" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace pref="568" max="32767" attributes="0"/>
+                                  </Group>
+                                  <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
+                                      <Group type="102" alignment="0" attributes="0">
+                                          <EmptySpace max="-2" attributes="0"/>
+                                          <Component id="jScrollPane7" pref="664" max="32767" attributes="0"/>
+                                          <EmptySpace max="-2" attributes="0"/>
+                                      </Group>
+                                  </Group>
+                              </Group>
+                            </DimensionLayout>
+                          </Layout>
+                          <SubComponents>
+                            <Container class="javax.swing.JScrollPane" name="jScrollPane7">
+                              <Properties>
+                                <Property name="verticalScrollBarPolicy" type="int" value="22"/>
+                                <Property name="name" type="java.lang.String" value="jScrollPane7" noResource="true"/>
+                              </Properties>
+
+                              <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+                              <SubComponents>
+                                <Component class="javax.swing.JTable" name="authTable">
+                                  <Properties>
+                                    <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
+                                      <Table columnCount="2" rowCount="8">
+                                        <Column editable="false" title="Certificate serial number" type="java.lang.String"/>
+                                        <Column editable="false" title="Issuer DN" type="java.lang.String"/>
+                                      </Table>
+                                    </Property>
+                                    <Property name="name" type="java.lang.String" value="authTable" noResource="true"/>
+                                    <Property name="selectionModel" type="javax.swing.ListSelectionModel" editor="org.netbeans.modules.form.editors2.JTableSelectionModelEditor">
+                                      <JTableSelectionModel selectionMode="0"/>
+                                    </Property>
+                                    <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
+                                      <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
+                                    </Property>
+                                  </Properties>
+                                </Component>
+                              </SubComponents>
+                            </Container>
+                            <Component class="javax.swing.JButton" name="authAddButton">
+                              <Properties>
+                                <Property name="text" type="java.lang.String" resourceKey="authAddButton.text"/>
+                                <Property name="name" type="java.lang.String" value="authAddButton" noResource="true"/>
+                              </Properties>
+                              <Events>
+                                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="authAddButtonActionPerformed"/>
+                              </Events>
+                            </Component>
+                            <Component class="javax.swing.JButton" name="authEditButton">
+                              <Properties>
+                                <Property name="text" type="java.lang.String" resourceKey="authEditButton.text"/>
+                                <Property name="enabled" type="boolean" value="false"/>
+                                <Property name="name" type="java.lang.String" value="authEditButton" noResource="true"/>
+                              </Properties>
+                              <Events>
+                                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="authEditButtonActionPerformed"/>
+                              </Events>
+                            </Component>
+                            <Component class="javax.swing.JButton" name="authRemoveButton">
+                              <Properties>
+                                <Property name="text" type="java.lang.String" resourceKey="authRemoveButton.text"/>
+                                <Property name="enabled" type="boolean" value="false"/>
+                                <Property name="name" type="java.lang.String" value="authRemoveButton" noResource="true"/>
+                              </Properties>
+                              <Events>
+                                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="authRemoveButtonActionPerformed"/>
+                              </Events>
+                            </Component>
+                          </SubComponents>
+                        </Container>
+                      </SubComponents>
+                    </Container>
+                  </SubComponents>
+                </Container>
+              </SubComponents>
+            </Container>
+          </SubComponents>
+        </Container>
+        <Container class="javax.swing.JPanel" name="auditPanel">
+          <Properties>
+            <Property name="name" type="java.lang.String" value="auditPanel" noResource="true"/>
+          </Properties>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+              <JTabbedPaneConstraints tabName="Audit log">
+                <Property name="tabTitle" type="java.lang.String" resourceKey="auditPanel.TabConstraints.tabTitle"/>
+              </JTabbedPaneConstraints>
+            </Constraint>
+          </Constraints>
+
+          <Layout>
+            <DimensionLayout dim="0">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <EmptySpace min="0" pref="1110" max="32767" attributes="0"/>
+                  <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="jSplitPane2" pref="1086" max="32767" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                      </Group>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+            <DimensionLayout dim="1">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <EmptySpace min="0" pref="808" max="32767" attributes="0"/>
+                  <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="jSplitPane2" pref="784" max="32767" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                      </Group>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+          </Layout>
+          <SubComponents>
+            <Container class="javax.swing.JSplitPane" name="jSplitPane2">
+              <Properties>
+                <Property name="orientation" type="int" value="0"/>
+                <Property name="name" type="java.lang.String" value="jSplitPane2" noResource="true"/>
+              </Properties>
+
+              <Layout class="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout"/>
+              <SubComponents>
+                <Container class="javax.swing.JPanel" name="jPanel2">
+                  <Properties>
+                    <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                      <Dimension value="[0, 123]"/>
+                    </Property>
+                    <Property name="name" type="java.lang.String" value="jPanel2" noResource="true"/>
+                    <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                      <Dimension value="[1086, 423]"/>
+                    </Property>
+                  </Properties>
+                  <Constraints>
+                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
+                      <JSplitPaneConstraints position="left"/>
+                    </Constraint>
+                  </Constraints>
+
+                  <Layout>
+                    <DimensionLayout dim="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
+                              <Group type="103" groupAlignment="1" attributes="0">
+                                  <Component id="jLabel3" alignment="0" pref="521" max="32767" attributes="1"/>
+                                  <Component id="jScrollPane3" alignment="0" pref="521" max="32767" attributes="2"/>
+                              </Group>
+                              <EmptySpace min="-2" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                  <Component id="jButtonAuditConditionRemove" max="32767" attributes="1"/>
+                                  <Component id="jButtonAuditConditionAdd" alignment="0" pref="114" max="32767" attributes="1"/>
+                              </Group>
+                              <EmptySpace min="-2" pref="439" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                    </DimensionLayout>
+                    <DimensionLayout dim="1">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Component id="jButtonAuditConditionAdd" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="jButtonAuditConditionRemove" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Component id="jScrollPane3" alignment="0" pref="87" max="32767" attributes="0"/>
+                              </Group>
+                              <EmptySpace min="-2" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                    </DimensionLayout>
+                  </Layout>
+                  <SubComponents>
+                    <Component class="javax.swing.JLabel" name="jLabel3">
+                      <Properties>
+                        <Property name="font" type="java.awt.Font" resourceKey="jLabel3.font"/>
+                        <Property name="text" type="java.lang.String" resourceKey="jLabel3.text"/>
+                        <Property name="name" type="java.lang.String" value="jLabel3" noResource="true"/>
+                      </Properties>
+                    </Component>
+                    <Container class="javax.swing.JScrollPane" name="jScrollPane3">
+                      <Properties>
+                        <Property name="name" type="java.lang.String" value="jScrollPane3" noResource="true"/>
+                      </Properties>
+
+                      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+                      <SubComponents>
+                        <Component class="javax.swing.JTable" name="conditionsTable">
+                          <Properties>
+                            <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
+                              <Table columnCount="3" rowCount="1">
+                                <Column editable="false" title="Column" type="java.lang.Object">
+                                  <Data value="Event"/>
+                                </Column>
+                                <Column editable="true" title="Condition" type="java.lang.Object">
+                                  <Data value="Not equals"/>
+                                </Column>
+                                <Column editable="true" title="Value" type="java.lang.Object">
+                                  <Data value="Access Control"/>
+                                </Column>
+                              </Table>
+                            </Property>
+                            <Property name="name" type="java.lang.String" value="conditionsTable" noResource="true"/>
+                            <Property name="selectionModel" type="javax.swing.ListSelectionModel" editor="org.netbeans.modules.form.editors2.JTableSelectionModelEditor">
+                              <JTableSelectionModel selectionMode="0"/>
+                            </Property>
+                          </Properties>
+                        </Component>
+                      </SubComponents>
+                    </Container>
+                    <Component class="javax.swing.JButton" name="jButtonAuditConditionAdd">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" resourceKey="jButtonAuditConditionAdd.text"/>
+                        <Property name="name" type="java.lang.String" value="jButtonAuditConditionAdd" noResource="true"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonAuditConditionAddActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JButton" name="jButtonAuditConditionRemove">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" resourceKey="jButtonAuditConditionRemove.text"/>
+                        <Property name="name" type="java.lang.String" value="jButtonAuditConditionRemove" noResource="true"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonAuditConditionRemoveActionPerformed"/>
+                      </Events>
+                    </Component>
+                  </SubComponents>
+                </Container>
+                <Container class="javax.swing.JPanel" name="jPanel3">
+                  <Properties>
+                    <Property name="name" type="java.lang.String" value="jPanel3" noResource="true"/>
+                  </Properties>
+                  <Constraints>
+                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
+                      <JSplitPaneConstraints position="right"/>
+                    </Constraint>
+                  </Constraints>
+
+                  <Layout>
+                    <DimensionLayout dim="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Component id="auditlogFirstButton" linkSize="3" min="-2" pref="83" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="auditlogPreviousButton" linkSize="3" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="auditlogReloadButton" linkSize="3" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="auditlogNextButton" linkSize="3" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="jLabel6" min="-2" pref="156" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="auditlogStartIndexTextfield" min="-2" pref="63" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="auditlogDisplayingToIndex" min="-2" pref="63" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="jLabel8" min="-2" pref="156" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="auditlogMaxEntriesTextfield" min="-2" pref="56" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Component id="jScrollPane4" alignment="0" pref="1062" max="32767" attributes="0"/>
+                              </Group>
+                              <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                    </DimensionLayout>
+                    <DimensionLayout dim="1">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" alignment="1" attributes="0">
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="auditlogPreviousButton" linkSize="4" alignment="0" min="-2" pref="23" max="-2" attributes="0"/>
+                                  <Component id="auditlogFirstButton" linkSize="4" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="auditlogReloadButton" linkSize="4" alignment="0" min="-2" pref="23" max="-2" attributes="0"/>
+                                  <Component id="auditlogNextButton" linkSize="4" alignment="0" min="-2" pref="23" max="-2" attributes="0"/>
+                                  <Group type="103" alignment="0" groupAlignment="3" attributes="0">
+                                      <Component id="jLabel6" linkSize="4" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="auditlogStartIndexTextfield" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="auditlogDisplayingToIndex" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="jLabel8" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="auditlogMaxEntriesTextfield" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                              </Group>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Component id="jScrollPane4" pref="601" max="32767" attributes="0"/>
+                          </Group>
+                      </Group>
+                    </DimensionLayout>
+                  </Layout>
+                  <SubComponents>
+                    <Component class="javax.swing.JButton" name="auditlogFirstButton">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" resourceKey="auditlogFirstButton.text"/>
+                        <Property name="enabled" type="boolean" value="false"/>
+                        <Property name="horizontalTextPosition" type="int" value="0"/>
+                        <Property name="name" type="java.lang.String" value="auditlogFirstButton" noResource="true"/>
+                        <Property name="verticalTextPosition" type="int" value="3"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="auditlogFirstButtonActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JButton" name="auditlogPreviousButton">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" resourceKey="auditlogPreviousButton.text"/>
+                        <Property name="enabled" type="boolean" value="false"/>
+                        <Property name="horizontalTextPosition" type="int" value="0"/>
+                        <Property name="name" type="java.lang.String" value="auditlogPreviousButton" noResource="true"/>
+                        <Property name="verticalTextPosition" type="int" value="3"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="auditlogPreviousButtonActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JButton" name="auditlogReloadButton">
+                      <Properties>
+                        <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
+                          <action class="org.signserver.admin.gui.MainView" id="auditlogReload" methodName="auditlogReload"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" resourceKey="auditlogReloadButton.text"/>
+                        <Property name="horizontalTextPosition" type="int" value="0"/>
+                        <Property name="name" type="java.lang.String" value="auditlogReloadButton" noResource="true"/>
+                        <Property name="verticalTextPosition" type="int" value="3"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JButton" name="auditlogNextButton">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" resourceKey="auditlogNextButton.text"/>
+                        <Property name="enabled" type="boolean" value="false"/>
+                        <Property name="horizontalTextPosition" type="int" value="0"/>
+                        <Property name="name" type="java.lang.String" value="auditlogNextButton" noResource="true"/>
+                        <Property name="verticalTextPosition" type="int" value="3"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="auditlogNextButtonActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="jLabel6">
+                      <Properties>
+                        <Property name="horizontalAlignment" type="int" value="4"/>
+                        <Property name="text" type="java.lang.String" resourceKey="jLabel6.text"/>
+                        <Property name="name" type="java.lang.String" value="jLabel6" noResource="true"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="auditlogStartIndexTextfield">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" resourceKey="auditlogStartIndexTextfield.text"/>
+                        <Property name="name" type="java.lang.String" value="auditlogStartIndexTextfield" noResource="true"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="auditlogDisplayingToIndex">
+                      <Properties>
+                        <Property name="horizontalAlignment" type="int" value="2"/>
+                        <Property name="text" type="java.lang.String" resourceKey="auditlogDisplayingToIndex.text"/>
+                        <Property name="name" type="java.lang.String" value="auditlogDisplayingToIndex" noResource="true"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="jLabel8">
+                      <Properties>
+                        <Property name="horizontalAlignment" type="int" value="4"/>
+                        <Property name="text" type="java.lang.String" resourceKey="jLabel8.text"/>
+                        <Property name="name" type="java.lang.String" value="jLabel8" noResource="true"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="auditlogMaxEntriesTextfield">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" resourceKey="auditlogMaxEntriesTextfield.text"/>
+                        <Property name="name" type="java.lang.String" value="auditlogMaxEntriesTextfield" noResource="true"/>
+                      </Properties>
+                    </Component>
+                    <Container class="javax.swing.JScrollPane" name="jScrollPane4">
+                      <Properties>
+                        <Property name="name" type="java.lang.String" value="jScrollPane4" noResource="true"/>
+                      </Properties>
+
+                      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+                      <SubComponents>
+                        <Component class="javax.swing.JTable" name="auditLogTable">
+                          <Properties>
+                            <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
+                              <Table columnCount="10" rowCount="1">
+                                <Column editable="true" title="Time" type="java.lang.Object">
+                                  <Data value="2013-01-19 11:47:52+0100"/>
+                                </Column>
+                                <Column editable="true" title="Event" type="java.lang.Object">
+                                  <Data value="EJBCA Node Start"/>
+                                </Column>
+                                <Column editable="true" title="Outcome" type="java.lang.Object">
+                                  <Data value="Success"/>
+                                </Column>
+                                <Column editable="true" title="Administrator" type="java.lang.Object">
+                                  <Data value="StartServicesServlet.init"/>
+                                </Column>
+                                <Column editable="true" title="Module" type="java.lang.Object">
+                                  <Data value="Service"/>
+                                </Column>
+                                <Column editable="true" title="Certificate Authority" type="java.lang.Object"/>
+                                <Column editable="true" title="Certificate" type="java.lang.Object"/>
+                                <Column editable="true" title="Username" type="java.lang.Object"/>
+                                <Column editable="true" title="Node" type="java.lang.Object">
+                                  <Data value="atitudem"/>
+                                </Column>
+                                <Column editable="true" title="Details" type="java.lang.Object">
+                                  <Data value="Init, EJBCA 5.0.5 (r14787) startup."/>
+                                </Column>
+                              </Table>
+                            </Property>
+                            <Property name="name" type="java.lang.String" value="auditLogTable" noResource="true"/>
+                            <Property name="selectionModel" type="javax.swing.ListSelectionModel" editor="org.netbeans.modules.form.editors2.JTableSelectionModelEditor">
+                              <JTableSelectionModel selectionMode="0"/>
+                            </Property>
+                          </Properties>
+                        </Component>
+                      </SubComponents>
+                    </Container>
+                  </SubComponents>
+                </Container>
+              </SubComponents>
+            </Container>
+          </SubComponents>
+        </Container>
+      </SubComponents>
+    </Container>
   </NonVisualComponents>
   <Properties>
     <Property name="component" type="javax.swing.JComponent" editor="org.netbeans.modules.form.ComponentChooserEditor">
-      <ComponentRef name="mainPanel"/>
+      <ComponentRef name="jTabbedPane1"/>
     </Property>
     <Property name="menuBar" type="javax.swing.JMenuBar" editor="org.netbeans.modules.form.ComponentChooserEditor">
       <ComponentRef name="menuBar"/>

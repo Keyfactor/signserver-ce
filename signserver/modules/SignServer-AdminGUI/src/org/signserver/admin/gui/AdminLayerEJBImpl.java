@@ -23,14 +23,27 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import javax.naming.NamingException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.log4j.Logger;
+import org.cesecore.audit.AuditLogEntry;
+import org.cesecore.audit.audit.SecurityEventsAuditorSessionRemote;
+import org.cesecore.authorization.AuthorizationDeniedException;
+import org.cesecore.util.query.Criteria;
+import org.cesecore.util.query.Elem;
+import org.cesecore.util.query.QueryCriteria;
+import org.cesecore.util.query.elems.RelationalOperator;
+import org.cesecore.util.query.elems.Term;
+import org.signserver.admin.gui.adminws.gen.AdminNotAuthorizedException;
 import org.signserver.admin.gui.adminws.gen
         .AdminNotAuthorizedException_Exception;
 import org.signserver.admin.gui.adminws.gen.AdminWS;
@@ -40,11 +53,16 @@ import org.signserver.admin.gui.adminws.gen
         .CryptoTokenAuthenticationFailureException_Exception;
 import org.signserver.admin.gui.adminws.gen
         .CryptoTokenOfflineException_Exception;
+import org.signserver.admin.gui.adminws.gen.EventStatus;
 import org.signserver.admin.gui.adminws.gen.IllegalRequestException_Exception;
 import org.signserver.admin.gui.adminws.gen.InvalidWorkerIdException_Exception;
 import org.signserver.admin.gui.adminws.gen.KeyStoreException_Exception;
 import org.signserver.admin.gui.adminws.gen.KeyTestResult;
+import org.signserver.admin.gui.adminws.gen.LogEntry;
+import org.signserver.admin.gui.adminws.gen.LogEntry.AdditionalDetails;
+import org.signserver.admin.gui.adminws.gen.ObjectFactory;
 import org.signserver.admin.gui.adminws.gen.Pkcs10CertReqInfo;
+import org.signserver.admin.gui.adminws.gen.QueryCondition;
 import org.signserver.admin.gui.adminws.gen.ResyncException_Exception;
 import org.signserver.admin.gui.adminws.gen.SignServerException_Exception;
 import org.signserver.admin.gui.adminws.gen.WsGlobalConfiguration;
@@ -76,8 +94,16 @@ import org.signserver.ejb.interfaces.IWorkerSession;
 public class AdminLayerEJBImpl implements AdminWS {
     private static final Logger LOG = Logger.getLogger(AdminLayerEJBImpl.class);
 
+    private static final HashSet<String> LONG_COLUMNS = new HashSet<String>();
+    
+    static {
+        LONG_COLUMNS.add(AuditLogEntry.FIELD_TIMESTAMP);
+        LONG_COLUMNS.add(AuditLogEntry.FIELD_SEQUENCENUMBER);
+    }
+    
     private IWorkerSession.IRemote worker;
     private IGlobalConfigurationSession.IRemote global;
+    private SecurityEventsAuditorSessionRemote auditor;
 
     public AdminLayerEJBImpl() throws NamingException {
         if (worker == null) {
@@ -87,6 +113,10 @@ public class AdminLayerEJBImpl implements AdminWS {
         if (global == null) {
             global = ServiceLocator.getInstance().lookupRemote(
                     IGlobalConfigurationSession.IRemote.class);
+        }
+        if (auditor == null) {
+            auditor = ServiceLocator.getInstance().lookupRemote(
+                    SecurityEventsAuditorSessionRemote.class);
         }
     }
 
@@ -886,6 +916,88 @@ public class AdminLayerEJBImpl implements AdminWS {
                 throw wrap(ex);
             }
         }
+        return result;
+    }
+
+    @Override
+    public List<LogEntry> queryAuditLog(int startIndex, int max, List<QueryCondition> conditions) throws AdminNotAuthorizedException_Exception, SignServerException_Exception {
+        // For now we only query on of the available audit devices
+        Set<String> devices = auditor.getQuerySupportingLogDevices();
+        if (devices.isEmpty()) {
+            throw wrap(new SignServerException("No log devices available for querying"));
+        }
+        final String device = devices.iterator().next();
+
+        final List<Elem> elements = toElements(conditions);
+        final QueryCriteria qc;
+        if (elements.isEmpty()) {
+            qc = QueryCriteria.create();
+        } else {
+            final Elem elem = andAll(elements, 0);
+            qc = QueryCriteria.create().add(elem);
+        }
+        
+        try {
+            return toLogEntries(worker.selectAuditLogs(startIndex, max, qc, device));
+        } catch (AuthorizationDeniedException ex) {
+            throw new AdminNotAuthorizedException_Exception(ex.getMessage(), new AdminNotAuthorizedException());
+        }
+    }
+    
+    private List<LogEntry> toLogEntries(final List<? extends AuditLogEntry> entries) {
+        final List<LogEntry> results = new LinkedList<LogEntry>();
+        for (AuditLogEntry entry : entries) {
+            results.add(fromAuditLogEntry(entry));
+        }
+        return results;
+    }
+    
+    private List<Elem> toElements(List<QueryCondition> conditions) {
+        final LinkedList<Elem> results = new LinkedList<Elem>();
+        for (QueryCondition cond : conditions) {
+            final Object value;
+            if (LONG_COLUMNS.contains(cond.getColumn())) {
+                value = Long.parseLong(cond.getValue());
+            } else {
+                value = cond.getValue();
+            }
+            results.add(new Term(RelationalOperator.valueOf(cond.getOperator().name()), cond.getColumn(), value));
+        }
+        return results;
+    }
+    
+    protected Elem andAll(final List<Elem> elements, final int index) {
+        if (index >= elements.size() - 1) {
+            return elements.get(index);
+        } else {
+            return Criteria.and(elements.get(index), andAll(elements, index + 1));
+        }
+    }
+    
+    public static LogEntry fromAuditLogEntry(final AuditLogEntry src) {
+        final LogEntry result = new LogEntry();
+
+        AdditionalDetails additionalDetails = new LogEntry.AdditionalDetails();
+        for (Map.Entry<String, Object> entry : src.getMapAdditionalDetails().entrySet()) {
+            AdditionalDetails.Entry dst = new AdditionalDetails.Entry();
+            dst.setKey(entry.getKey());
+            dst.setValue("" + entry.getValue());
+            additionalDetails.getEntry().add(dst);
+        }
+
+        result.setTimeStamp(src.getTimeStamp());
+        result.setEventType(src.getEventTypeValue().toString());
+        result.setEventStatus(EventStatus.fromValue(src.getEventStatusValue().toString()));
+        result.setAuthToken(src.getAuthToken());
+        result.setServiceType(src.getServiceTypeValue().toString());
+        result.setModuleType(src.getModuleTypeValue().toString());
+        result.setCustomId(src.getCustomId());
+        result.setSearchDetail1(src.getSearchDetail1());
+        result.setSearchDetail2(src.getSearchDetail2());
+        result.setAdditionalDetails(additionalDetails);
+        result.setSequenceNumber(src.getSequenceNumber());
+        result.setNodeId(src.getNodeId());
+        
         return result;
     }
 

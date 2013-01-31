@@ -57,6 +57,9 @@ import org.signserver.admin.gui.adminws.gen.AuthorizedClient;
 import org.signserver.admin.gui.adminws.gen.CryptoTokenAuthenticationFailureException_Exception;
 import org.signserver.admin.gui.adminws.gen.CryptoTokenOfflineException_Exception;
 import org.signserver.admin.gui.adminws.gen.InvalidWorkerIdException_Exception;
+import org.signserver.admin.gui.adminws.gen.LogEntry;
+import org.signserver.admin.gui.adminws.gen.RelationalOperator;
+import org.signserver.admin.gui.adminws.gen.SignServerException_Exception;
 import org.signserver.admin.gui.adminws.gen.WsWorkerConfig;
 import org.signserver.admin.gui.adminws.gen.WsWorkerStatus;
 import org.signserver.common.GlobalConfiguration;
@@ -80,6 +83,9 @@ public class MainView extends FrameView {
     private Worker selectedWorker;
     private Worker selectedWorkerBeforeRefresh;
     
+    private AuditlogTableModel auditlogModel = new AuditlogTableModel();
+    private ConditionsTableModel conditionsModel = new ConditionsTableModel();
+    
     
     private static String[] statusColumns = {
         "Property", "Value"
@@ -94,6 +100,10 @@ public class MainView extends FrameView {
         super(app);
 
         initComponents();
+        
+        conditionsModel.addCondition("eventType", RelationalOperator.NEQ, "Access Control");
+        auditLogTable.setModel(auditlogModel);
+        conditionsTable.setModel(conditionsModel);
 
         jList1.setCellRenderer(new MyListCellRenderer());
 
@@ -287,31 +297,6 @@ public class MainView extends FrameView {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        mainPanel = new javax.swing.JPanel();
-        jSplitPane1 = new javax.swing.JSplitPane();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList();
-        jPanel1 = new javax.swing.JPanel();
-        workerComboBox = new javax.swing.JComboBox();
-        workerTabbedPane = new javax.swing.JTabbedPane();
-        statusSummaryTab = new javax.swing.JScrollPane();
-        statusSummaryTextPane = new javax.swing.JTextPane();
-        statusPropertiesTab = new javax.swing.JPanel();
-        statusPropertiesScrollPane = new javax.swing.JScrollPane();
-        propertiesTable = new javax.swing.JTable();
-        statusPropertiesDetailsButton = new javax.swing.JButton();
-        configurationTab = new javax.swing.JPanel();
-        jScrollPane6 = new javax.swing.JScrollPane();
-        configurationTable = new javax.swing.JTable();
-        addButton = new javax.swing.JButton();
-        editButton = new javax.swing.JButton();
-        removeButton = new javax.swing.JButton();
-        authorizationTab = new javax.swing.JPanel();
-        jScrollPane7 = new javax.swing.JScrollPane();
-        authTable = new javax.swing.JTable();
-        authAddButton = new javax.swing.JButton();
-        authEditButton = new javax.swing.JButton();
-        authRemoveButton = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
         javax.swing.JMenu fileMenu = new javax.swing.JMenu();
         javax.swing.JMenuItem exitMenuItem = new javax.swing.JMenuItem();
@@ -369,345 +354,57 @@ public class MainView extends FrameView {
         passwordPanel = new javax.swing.JPanel();
         passwordPanelLabel = new javax.swing.JLabel();
         passwordPanelField = new javax.swing.JPasswordField();
-
-        mainPanel.setName("mainPanel"); // NOI18N
-
-        jSplitPane1.setName("jSplitPane1"); // NOI18N
-
-        jScrollPane2.setMinimumSize(new java.awt.Dimension(250, 26));
-        jScrollPane2.setName("jScrollPane2"); // NOI18N
-        jScrollPane2.setPreferredSize(new java.awt.Dimension(550, 202));
-
-        jList1.setName("jList1"); // NOI18N
-        jScrollPane2.setViewportView(jList1);
-
-        jSplitPane1.setLeftComponent(jScrollPane2);
-
-        jPanel1.setName("jPanel1"); // NOI18N
-
-        workerComboBox.setMinimumSize(new java.awt.Dimension(39, 60));
-        workerComboBox.setName("workerComboBox"); // NOI18N
-
-        workerTabbedPane.setName("workerTabbedPane"); // NOI18N
-
-        statusSummaryTab.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-        statusSummaryTab.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        statusSummaryTab.setName("statusSummaryTab"); // NOI18N
-
-        statusSummaryTextPane.setEditable(false);
-        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(org.signserver.admin.gui.SignServerAdminGUIApplication.class).getContext().getResourceMap(MainView.class);
-        statusSummaryTextPane.setText(resourceMap.getString("statusSummaryTextPane.text")); // NOI18N
-        statusSummaryTextPane.setName("statusSummaryTextPane"); // NOI18N
-        statusSummaryTab.setViewportView(statusSummaryTextPane);
-
-        workerTabbedPane.addTab(resourceMap.getString("statusSummaryTab.TabConstraints.tabTitle"), statusSummaryTab); // NOI18N
-
-        statusPropertiesTab.setName("statusPropertiesTab"); // NOI18N
-
-        statusPropertiesScrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        statusPropertiesScrollPane.setName("statusPropertiesScrollPane"); // NOI18N
-
-        propertiesTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {"ID", "71", null},
-                {"Name", "Sod1", null},
-                {"Token status", "ACTIVE", null},
-                {"Signatures:", "0", null},
-                {"Signature limit:", "100000", null},
-                {"Validity not before:", "2010-05-20", null},
-                {"Validity not after:", "2020-05-20", null},
-                {"Certificate chain:", "CN=Sod1, O=Document Signer Pecuela 11, C=PE issued by CN=CSCA Pecuela,O=Pecuela MOI,C=PE", "..."}
-            },
-            new String [] {
-                "Property", "Value", ""
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.Object.class, java.lang.Object.class, java.lang.String.class
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-        });
-        propertiesTable.setName("propertiesTable"); // NOI18N
-        statusPropertiesScrollPane.setViewportView(propertiesTable);
-
-        statusPropertiesDetailsButton.setText(resourceMap.getString("statusPropertiesDetailsButton.text")); // NOI18N
-        statusPropertiesDetailsButton.setEnabled(false);
-        statusPropertiesDetailsButton.setName("statusPropertiesDetailsButton"); // NOI18N
-        statusPropertiesDetailsButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                statusPropertiesDetailsButtonActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout statusPropertiesTabLayout = new javax.swing.GroupLayout(statusPropertiesTab);
-        statusPropertiesTab.setLayout(statusPropertiesTabLayout);
-        statusPropertiesTabLayout.setHorizontalGroup(
-            statusPropertiesTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, statusPropertiesTabLayout.createSequentialGroup()
-                .addContainerGap(710, Short.MAX_VALUE)
-                .addComponent(statusPropertiesDetailsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-            .addGroup(statusPropertiesTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(statusPropertiesTabLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(statusPropertiesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 682, Short.MAX_VALUE)
-                    .addGap(112, 112, 112)))
-        );
-        statusPropertiesTabLayout.setVerticalGroup(
-            statusPropertiesTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(statusPropertiesTabLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(statusPropertiesDetailsButton)
-                .addContainerGap(684, Short.MAX_VALUE))
-            .addGroup(statusPropertiesTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(statusPropertiesTabLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(statusPropertiesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 702, Short.MAX_VALUE)
-                    .addContainerGap()))
-        );
-
-        workerTabbedPane.addTab(resourceMap.getString("statusPropertiesTab.TabConstraints.tabTitle"), statusPropertiesTab); // NOI18N
-
-        configurationTab.setName("configurationTab"); // NOI18N
-
-        jScrollPane6.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        jScrollPane6.setName("jScrollPane6"); // NOI18N
-
-        configurationTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {"ID", "71", null},
-                {"Name", "Sod1", null},
-                {"Token status", "ACTIVE", null},
-                {"Signatures:", "0", null},
-                {"Signature limit:", "100000", null},
-                {"Validity not before:", "2010-05-20", null},
-                {"Validity not after:", "2020-05-20", null},
-                {"Certificate chain:", "CN=Sod1, O=Document Signer Pecuela 11, C=PE issued by CN=CSCA Pecuela,O=Pecuela MOI,C=PE", "..."}
-            },
-            new String [] {
-                "Property", "Value", ""
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.Object.class, java.lang.Object.class, java.lang.String.class
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-        });
-        configurationTable.setName("configurationTable"); // NOI18N
-        jScrollPane6.setViewportView(configurationTable);
-
-        addButton.setText(resourceMap.getString("addButton.text")); // NOI18N
-        addButton.setName("addButton"); // NOI18N
-        addButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addButtonActionPerformed(evt);
-            }
-        });
-
-        editButton.setText(resourceMap.getString("editButton.text")); // NOI18N
-        editButton.setEnabled(false);
-        editButton.setName("editButton"); // NOI18N
-        editButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                editButtonActionPerformed(evt);
-            }
-        });
-
-        removeButton.setText(resourceMap.getString("removeButton.text")); // NOI18N
-        removeButton.setEnabled(false);
-        removeButton.setName("removeButton"); // NOI18N
-        removeButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                removeButtonActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout configurationTabLayout = new javax.swing.GroupLayout(configurationTab);
-        configurationTab.setLayout(configurationTabLayout);
-        configurationTabLayout.setHorizontalGroup(
-            configurationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, configurationTabLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 672, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(configurationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(addButton)
-                    .addComponent(editButton)
-                    .addComponent(removeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
-        );
-
-        configurationTabLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {addButton, editButton, removeButton});
-
-        configurationTabLayout.setVerticalGroup(
-            configurationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(configurationTabLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(configurationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 702, Short.MAX_VALUE)
-                    .addGroup(configurationTabLayout.createSequentialGroup()
-                        .addComponent(addButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(editButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(removeButton)))
-                .addContainerGap())
-        );
-
-        workerTabbedPane.addTab("Configuration", configurationTab);
-
-        authorizationTab.setName("authorizationTab"); // NOI18N
-
-        jScrollPane7.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        jScrollPane7.setName("jScrollPane7"); // NOI18N
-
-        authTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null}
-            },
-            new String [] {
-                "Certificate serial number", "Issuer DN"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class
-            };
-            boolean[] canEdit = new boolean [] {
-                false, false
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        authTable.setName("authTable"); // NOI18N
-        authTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jScrollPane7.setViewportView(authTable);
-
-        authAddButton.setText(resourceMap.getString("authAddButton.text")); // NOI18N
-        authAddButton.setName("authAddButton"); // NOI18N
-        authAddButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                authAddButtonActionPerformed(evt);
-            }
-        });
-
-        authEditButton.setText(resourceMap.getString("authEditButton.text")); // NOI18N
-        authEditButton.setEnabled(false);
-        authEditButton.setName("authEditButton"); // NOI18N
-        authEditButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                authEditButtonActionPerformed(evt);
-            }
-        });
-
-        authRemoveButton.setText(resourceMap.getString("authRemoveButton.text")); // NOI18N
-        authRemoveButton.setEnabled(false);
-        authRemoveButton.setName("authRemoveButton"); // NOI18N
-        authRemoveButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                authRemoveButtonActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout authorizationTabLayout = new javax.swing.GroupLayout(authorizationTab);
-        authorizationTab.setLayout(authorizationTabLayout);
-        authorizationTabLayout.setHorizontalGroup(
-            authorizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(authorizationTabLayout.createSequentialGroup()
-                .addContainerGap(695, Short.MAX_VALUE)
-                .addGroup(authorizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(authAddButton, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(authEditButton, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(authRemoveButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
-            .addGroup(authorizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(authorizationTabLayout.createSequentialGroup()
-                    .addGap(6, 6, 6)
-                    .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 676, Short.MAX_VALUE)
-                    .addGap(124, 124, 124)))
-        );
-
-        authorizationTabLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {authAddButton, authEditButton, authRemoveButton});
-
-        authorizationTabLayout.setVerticalGroup(
-            authorizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(authorizationTabLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(authAddButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(authEditButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(authRemoveButton)
-                .addContainerGap(606, Short.MAX_VALUE))
-            .addGroup(authorizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(authorizationTabLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 702, Short.MAX_VALUE)
-                    .addContainerGap()))
-        );
-
-        workerTabbedPane.addTab(resourceMap.getString("authorizationTab.TabConstraints.tabTitle"), authorizationTab); // NOI18N
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(workerTabbedPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 814, Short.MAX_VALUE)
-                    .addComponent(workerComboBox, javax.swing.GroupLayout.Alignment.LEADING, 0, 814, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(workerComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(workerTabbedPane))
-        );
-
-        jSplitPane1.setRightComponent(jPanel1);
-
-        javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
-        mainPanel.setLayout(mainPanelLayout);
-        mainPanelLayout.setHorizontalGroup(
-            mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(mainPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1094, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        mainPanelLayout.setVerticalGroup(
-            mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(mainPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 822, Short.MAX_VALUE)
-                .addContainerGap())
-        );
+        jTabbedPane1 = new javax.swing.JTabbedPane();
+        mainPanel = new javax.swing.JPanel();
+        jSplitPane1 = new javax.swing.JSplitPane();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jList1 = new javax.swing.JList();
+        jPanel1 = new javax.swing.JPanel();
+        workerComboBox = new javax.swing.JComboBox();
+        workerTabbedPane = new javax.swing.JTabbedPane();
+        statusSummaryTab = new javax.swing.JScrollPane();
+        statusSummaryTextPane = new javax.swing.JTextPane();
+        statusPropertiesTab = new javax.swing.JPanel();
+        statusPropertiesScrollPane = new javax.swing.JScrollPane();
+        propertiesTable = new javax.swing.JTable();
+        statusPropertiesDetailsButton = new javax.swing.JButton();
+        configurationTab = new javax.swing.JPanel();
+        jScrollPane6 = new javax.swing.JScrollPane();
+        configurationTable = new javax.swing.JTable();
+        addButton = new javax.swing.JButton();
+        editButton = new javax.swing.JButton();
+        removeButton = new javax.swing.JButton();
+        authorizationTab = new javax.swing.JPanel();
+        jScrollPane7 = new javax.swing.JScrollPane();
+        authTable = new javax.swing.JTable();
+        authAddButton = new javax.swing.JButton();
+        authEditButton = new javax.swing.JButton();
+        authRemoveButton = new javax.swing.JButton();
+        auditPanel = new javax.swing.JPanel();
+        jSplitPane2 = new javax.swing.JSplitPane();
+        jPanel2 = new javax.swing.JPanel();
+        jLabel3 = new javax.swing.JLabel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        conditionsTable = new javax.swing.JTable();
+        jButtonAuditConditionAdd = new javax.swing.JButton();
+        jButtonAuditConditionRemove = new javax.swing.JButton();
+        jPanel3 = new javax.swing.JPanel();
+        auditlogFirstButton = new javax.swing.JButton();
+        auditlogPreviousButton = new javax.swing.JButton();
+        auditlogReloadButton = new javax.swing.JButton();
+        auditlogNextButton = new javax.swing.JButton();
+        jLabel6 = new javax.swing.JLabel();
+        auditlogStartIndexTextfield = new javax.swing.JTextField();
+        auditlogDisplayingToIndex = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        auditlogMaxEntriesTextfield = new javax.swing.JTextField();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        auditLogTable = new javax.swing.JTable();
 
         menuBar.setName("menuBar"); // NOI18N
 
         fileMenu.setMnemonic('F');
+        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(org.signserver.admin.gui.SignServerAdminGUIApplication.class).getContext().getResourceMap(MainView.class);
         fileMenu.setText(resourceMap.getString("fileMenu.text")); // NOI18N
         fileMenu.setName("fileMenu"); // NOI18N
 
@@ -1083,7 +780,575 @@ public class MainView extends FrameView {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        setComponent(mainPanel);
+        jTabbedPane1.setName("jTabbedPane1"); // NOI18N
+
+        mainPanel.setName("mainPanel"); // NOI18N
+
+        jSplitPane1.setName("jSplitPane1"); // NOI18N
+
+        jScrollPane2.setMinimumSize(new java.awt.Dimension(250, 26));
+        jScrollPane2.setName("jScrollPane2"); // NOI18N
+        jScrollPane2.setPreferredSize(new java.awt.Dimension(550, 202));
+
+        jList1.setName("jList1"); // NOI18N
+        jScrollPane2.setViewportView(jList1);
+
+        jSplitPane1.setLeftComponent(jScrollPane2);
+
+        jPanel1.setName("jPanel1"); // NOI18N
+
+        workerComboBox.setMinimumSize(new java.awt.Dimension(39, 60));
+        workerComboBox.setName("workerComboBox"); // NOI18N
+
+        workerTabbedPane.setName("workerTabbedPane"); // NOI18N
+
+        statusSummaryTab.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        statusSummaryTab.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        statusSummaryTab.setName("statusSummaryTab"); // NOI18N
+
+        statusSummaryTextPane.setEditable(false);
+        statusSummaryTextPane.setText(resourceMap.getString("statusSummaryTextPane.text")); // NOI18N
+        statusSummaryTextPane.setName("statusSummaryTextPane"); // NOI18N
+        statusSummaryTab.setViewportView(statusSummaryTextPane);
+
+        workerTabbedPane.addTab(resourceMap.getString("statusSummaryTab.TabConstraints.tabTitle"), statusSummaryTab); // NOI18N
+
+        statusPropertiesTab.setName("statusPropertiesTab"); // NOI18N
+
+        statusPropertiesScrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        statusPropertiesScrollPane.setName("statusPropertiesScrollPane"); // NOI18N
+
+        propertiesTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {"ID", "71", null},
+                {"Name", "Sod1", null},
+                {"Token status", "ACTIVE", null},
+                {"Signatures:", "0", null},
+                {"Signature limit:", "100000", null},
+                {"Validity not before:", "2010-05-20", null},
+                {"Validity not after:", "2020-05-20", null},
+                {"Certificate chain:", "CN=Sod1, O=Document Signer Pecuela 11, C=PE issued by CN=CSCA Pecuela,O=Pecuela MOI,C=PE", "..."}
+            },
+            new String [] {
+                "Property", "Value", ""
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Object.class, java.lang.Object.class, java.lang.String.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
+        propertiesTable.setName("propertiesTable"); // NOI18N
+        statusPropertiesScrollPane.setViewportView(propertiesTable);
+
+        statusPropertiesDetailsButton.setText(resourceMap.getString("statusPropertiesDetailsButton.text")); // NOI18N
+        statusPropertiesDetailsButton.setEnabled(false);
+        statusPropertiesDetailsButton.setName("statusPropertiesDetailsButton"); // NOI18N
+        statusPropertiesDetailsButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                statusPropertiesDetailsButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout statusPropertiesTabLayout = new javax.swing.GroupLayout(statusPropertiesTab);
+        statusPropertiesTab.setLayout(statusPropertiesTabLayout);
+        statusPropertiesTabLayout.setHorizontalGroup(
+            statusPropertiesTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, statusPropertiesTabLayout.createSequentialGroup()
+                .addContainerGap(702, Short.MAX_VALUE)
+                .addComponent(statusPropertiesDetailsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+            .addGroup(statusPropertiesTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(statusPropertiesTabLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(statusPropertiesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 674, Short.MAX_VALUE)
+                    .addGap(112, 112, 112)))
+        );
+        statusPropertiesTabLayout.setVerticalGroup(
+            statusPropertiesTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(statusPropertiesTabLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(statusPropertiesDetailsButton)
+                .addContainerGap(646, Short.MAX_VALUE))
+            .addGroup(statusPropertiesTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(statusPropertiesTabLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(statusPropertiesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 664, Short.MAX_VALUE)
+                    .addContainerGap()))
+        );
+
+        workerTabbedPane.addTab(resourceMap.getString("statusPropertiesTab.TabConstraints.tabTitle"), statusPropertiesTab); // NOI18N
+
+        configurationTab.setName("configurationTab"); // NOI18N
+
+        jScrollPane6.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        jScrollPane6.setName("jScrollPane6"); // NOI18N
+
+        configurationTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {"ID", "71", null},
+                {"Name", "Sod1", null},
+                {"Token status", "ACTIVE", null},
+                {"Signatures:", "0", null},
+                {"Signature limit:", "100000", null},
+                {"Validity not before:", "2010-05-20", null},
+                {"Validity not after:", "2020-05-20", null},
+                {"Certificate chain:", "CN=Sod1, O=Document Signer Pecuela 11, C=PE issued by CN=CSCA Pecuela,O=Pecuela MOI,C=PE", "..."}
+            },
+            new String [] {
+                "Property", "Value", ""
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Object.class, java.lang.Object.class, java.lang.String.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
+        configurationTable.setName("configurationTable"); // NOI18N
+        jScrollPane6.setViewportView(configurationTable);
+
+        addButton.setText(resourceMap.getString("addButton.text")); // NOI18N
+        addButton.setName("addButton"); // NOI18N
+        addButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addButtonActionPerformed(evt);
+            }
+        });
+
+        editButton.setText(resourceMap.getString("editButton.text")); // NOI18N
+        editButton.setEnabled(false);
+        editButton.setName("editButton"); // NOI18N
+        editButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editButtonActionPerformed(evt);
+            }
+        });
+
+        removeButton.setText(resourceMap.getString("removeButton.text")); // NOI18N
+        removeButton.setEnabled(false);
+        removeButton.setName("removeButton"); // NOI18N
+        removeButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removeButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout configurationTabLayout = new javax.swing.GroupLayout(configurationTab);
+        configurationTab.setLayout(configurationTabLayout);
+        configurationTabLayout.setHorizontalGroup(
+            configurationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, configurationTabLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 664, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(configurationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(addButton)
+                    .addComponent(editButton)
+                    .addComponent(removeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
+        );
+
+        configurationTabLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {addButton, editButton, removeButton});
+
+        configurationTabLayout.setVerticalGroup(
+            configurationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(configurationTabLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(configurationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 664, Short.MAX_VALUE)
+                    .addGroup(configurationTabLayout.createSequentialGroup()
+                        .addComponent(addButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(editButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(removeButton)))
+                .addContainerGap())
+        );
+
+        workerTabbedPane.addTab("Configuration", configurationTab);
+
+        authorizationTab.setName("authorizationTab"); // NOI18N
+
+        jScrollPane7.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        jScrollPane7.setName("jScrollPane7"); // NOI18N
+
+        authTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null}
+            },
+            new String [] {
+                "Certificate serial number", "Issuer DN"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        authTable.setName("authTable"); // NOI18N
+        authTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane7.setViewportView(authTable);
+
+        authAddButton.setText(resourceMap.getString("authAddButton.text")); // NOI18N
+        authAddButton.setName("authAddButton"); // NOI18N
+        authAddButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                authAddButtonActionPerformed(evt);
+            }
+        });
+
+        authEditButton.setText(resourceMap.getString("authEditButton.text")); // NOI18N
+        authEditButton.setEnabled(false);
+        authEditButton.setName("authEditButton"); // NOI18N
+        authEditButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                authEditButtonActionPerformed(evt);
+            }
+        });
+
+        authRemoveButton.setText(resourceMap.getString("authRemoveButton.text")); // NOI18N
+        authRemoveButton.setEnabled(false);
+        authRemoveButton.setName("authRemoveButton"); // NOI18N
+        authRemoveButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                authRemoveButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout authorizationTabLayout = new javax.swing.GroupLayout(authorizationTab);
+        authorizationTab.setLayout(authorizationTabLayout);
+        authorizationTabLayout.setHorizontalGroup(
+            authorizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(authorizationTabLayout.createSequentialGroup()
+                .addContainerGap(687, Short.MAX_VALUE)
+                .addGroup(authorizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(authAddButton, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(authEditButton, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(authRemoveButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
+            .addGroup(authorizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(authorizationTabLayout.createSequentialGroup()
+                    .addGap(6, 6, 6)
+                    .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 668, Short.MAX_VALUE)
+                    .addGap(124, 124, 124)))
+        );
+
+        authorizationTabLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {authAddButton, authEditButton, authRemoveButton});
+
+        authorizationTabLayout.setVerticalGroup(
+            authorizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(authorizationTabLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(authAddButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(authEditButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(authRemoveButton)
+                .addContainerGap(568, Short.MAX_VALUE))
+            .addGroup(authorizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(authorizationTabLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 664, Short.MAX_VALUE)
+                    .addContainerGap()))
+        );
+
+        workerTabbedPane.addTab(resourceMap.getString("authorizationTab.TabConstraints.tabTitle"), authorizationTab); // NOI18N
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(workerTabbedPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 806, Short.MAX_VALUE)
+                    .addComponent(workerComboBox, javax.swing.GroupLayout.Alignment.LEADING, 0, 806, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(workerComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(workerTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 726, Short.MAX_VALUE))
+        );
+
+        jSplitPane1.setRightComponent(jPanel1);
+
+        javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
+        mainPanel.setLayout(mainPanelLayout);
+        mainPanelLayout.setHorizontalGroup(
+            mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(mainPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1086, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        mainPanelLayout.setVerticalGroup(
+            mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(mainPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 784, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        jTabbedPane1.addTab(resourceMap.getString("mainPanel.TabConstraints.tabTitle"), mainPanel); // NOI18N
+
+        auditPanel.setName("auditPanel"); // NOI18N
+
+        jSplitPane2.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+        jSplitPane2.setName("jSplitPane2"); // NOI18N
+
+        jPanel2.setMinimumSize(new java.awt.Dimension(0, 123));
+        jPanel2.setName("jPanel2"); // NOI18N
+        jPanel2.setPreferredSize(new java.awt.Dimension(1086, 423));
+
+        jLabel3.setFont(resourceMap.getFont("jLabel3.font")); // NOI18N
+        jLabel3.setText(resourceMap.getString("jLabel3.text")); // NOI18N
+        jLabel3.setName("jLabel3"); // NOI18N
+
+        jScrollPane3.setName("jScrollPane3"); // NOI18N
+
+        conditionsTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {"Event", "Not equals", "Access Control"}
+            },
+            new String [] {
+                "Column", "Condition", "Value"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, true, true
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        conditionsTable.setName("conditionsTable"); // NOI18N
+        conditionsTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane3.setViewportView(conditionsTable);
+
+        jButtonAuditConditionAdd.setText(resourceMap.getString("jButtonAuditConditionAdd.text")); // NOI18N
+        jButtonAuditConditionAdd.setName("jButtonAuditConditionAdd"); // NOI18N
+        jButtonAuditConditionAdd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonAuditConditionAddActionPerformed(evt);
+            }
+        });
+
+        jButtonAuditConditionRemove.setText(resourceMap.getString("jButtonAuditConditionRemove.text")); // NOI18N
+        jButtonAuditConditionRemove.setName("jButtonAuditConditionRemove"); // NOI18N
+        jButtonAuditConditionRemove.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonAuditConditionRemoveActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 521, Short.MAX_VALUE)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 521, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jButtonAuditConditionRemove, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButtonAuditConditionAdd, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE))
+                .addGap(439, 439, 439))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jButtonAuditConditionAdd)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButtonAuditConditionRemove))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 87, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+
+        jSplitPane2.setLeftComponent(jPanel2);
+
+        jPanel3.setName("jPanel3"); // NOI18N
+
+        auditlogFirstButton.setText(resourceMap.getString("auditlogFirstButton.text")); // NOI18N
+        auditlogFirstButton.setEnabled(false);
+        auditlogFirstButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        auditlogFirstButton.setName("auditlogFirstButton"); // NOI18N
+        auditlogFirstButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        auditlogFirstButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                auditlogFirstButtonActionPerformed(evt);
+            }
+        });
+
+        auditlogPreviousButton.setText(resourceMap.getString("auditlogPreviousButton.text")); // NOI18N
+        auditlogPreviousButton.setEnabled(false);
+        auditlogPreviousButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        auditlogPreviousButton.setName("auditlogPreviousButton"); // NOI18N
+        auditlogPreviousButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        auditlogPreviousButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                auditlogPreviousButtonActionPerformed(evt);
+            }
+        });
+
+        auditlogReloadButton.setAction(actionMap.get("auditlogReload")); // NOI18N
+        auditlogReloadButton.setText(resourceMap.getString("auditlogReloadButton.text")); // NOI18N
+        auditlogReloadButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        auditlogReloadButton.setName("auditlogReloadButton"); // NOI18N
+        auditlogReloadButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+
+        auditlogNextButton.setText(resourceMap.getString("auditlogNextButton.text")); // NOI18N
+        auditlogNextButton.setEnabled(false);
+        auditlogNextButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        auditlogNextButton.setName("auditlogNextButton"); // NOI18N
+        auditlogNextButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        auditlogNextButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                auditlogNextButtonActionPerformed(evt);
+            }
+        });
+
+        jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel6.setText(resourceMap.getString("jLabel6.text")); // NOI18N
+        jLabel6.setName("jLabel6"); // NOI18N
+
+        auditlogStartIndexTextfield.setText(resourceMap.getString("auditlogStartIndexTextfield.text")); // NOI18N
+        auditlogStartIndexTextfield.setName("auditlogStartIndexTextfield"); // NOI18N
+
+        auditlogDisplayingToIndex.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        auditlogDisplayingToIndex.setText(resourceMap.getString("auditlogDisplayingToIndex.text")); // NOI18N
+        auditlogDisplayingToIndex.setName("auditlogDisplayingToIndex"); // NOI18N
+
+        jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel8.setText(resourceMap.getString("jLabel8.text")); // NOI18N
+        jLabel8.setName("jLabel8"); // NOI18N
+
+        auditlogMaxEntriesTextfield.setText(resourceMap.getString("auditlogMaxEntriesTextfield.text")); // NOI18N
+        auditlogMaxEntriesTextfield.setName("auditlogMaxEntriesTextfield"); // NOI18N
+
+        jScrollPane4.setName("jScrollPane4"); // NOI18N
+
+        auditLogTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {"2013-01-19 11:47:52+0100", "EJBCA Node Start", "Success", "StartServicesServlet.init", "Service", null, null, null, "atitudem", "Init, EJBCA 5.0.5 (r14787) startup."}
+            },
+            new String [] {
+                "Time", "Event", "Outcome", "Administrator", "Module", "Certificate Authority", "Certificate", "Username", "Node", "Details"
+            }
+        ));
+        auditLogTable.setName("auditLogTable"); // NOI18N
+        auditLogTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane4.setViewportView(auditLogTable);
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(auditlogFirstButton, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(auditlogPreviousButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(auditlogReloadButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(auditlogNextButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(auditlogStartIndexTextfield, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(auditlogDisplayingToIndex, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(auditlogMaxEntriesTextfield, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 1062, Short.MAX_VALUE))
+                .addGap(24, 24, 24))
+        );
+
+        jPanel3Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {auditlogFirstButton, auditlogNextButton, auditlogPreviousButton, auditlogReloadButton});
+
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(auditlogPreviousButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(auditlogFirstButton)
+                    .addComponent(auditlogReloadButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(auditlogNextButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel6)
+                        .addComponent(auditlogStartIndexTextfield, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(auditlogDisplayingToIndex)
+                        .addComponent(jLabel8)
+                        .addComponent(auditlogMaxEntriesTextfield, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 601, Short.MAX_VALUE))
+        );
+
+        jPanel3Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {auditlogFirstButton, auditlogNextButton, auditlogPreviousButton, auditlogReloadButton, jLabel6});
+
+        jSplitPane2.setRightComponent(jPanel3);
+
+        javax.swing.GroupLayout auditPanelLayout = new javax.swing.GroupLayout(auditPanel);
+        auditPanel.setLayout(auditPanelLayout);
+        auditPanelLayout.setHorizontalGroup(
+            auditPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 1110, Short.MAX_VALUE)
+            .addGroup(auditPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(auditPanelLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jSplitPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 1086, Short.MAX_VALUE)
+                    .addContainerGap()))
+        );
+        auditPanelLayout.setVerticalGroup(
+            auditPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 808, Short.MAX_VALUE)
+            .addGroup(auditPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(auditPanelLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jSplitPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 784, Short.MAX_VALUE)
+                    .addContainerGap()))
+        );
+
+        jTabbedPane1.addTab(resourceMap.getString("auditPanel.TabConstraints.tabTitle"), auditPanel); // NOI18N
+
+        setComponent(jTabbedPane1);
         setMenuBar(menuBar);
         setStatusBar(statusPanel);
         setToolBar(jToolBar1);
@@ -1381,6 +1646,51 @@ public class MainView extends FrameView {
         final AdministratorsFrame frame = new AdministratorsFrame();
         frame.setVisible(true);
     }//GEN-LAST:event_administratorsMenuActionPerformed
+
+private void auditlogNextButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_auditlogNextButtonActionPerformed
+    // Step forward
+    final int maxEntries = Integer.valueOf(auditlogMaxEntriesTextfield.getText());
+    final int index = Integer.valueOf(auditlogStartIndexTextfield.getText()) + maxEntries;
+    auditlogStartIndexTextfield.setText(String.valueOf(index));
+    
+    // Reload
+    getContext().getTaskService().execute(auditlogReload());
+}//GEN-LAST:event_auditlogNextButtonActionPerformed
+
+private void auditlogPreviousButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_auditlogPreviousButtonActionPerformed
+    // Step backwards
+    final int maxEntries = Integer.valueOf(auditlogMaxEntriesTextfield.getText());
+    int index = Integer.valueOf(auditlogStartIndexTextfield.getText()) - maxEntries;
+    if (index < 1) {
+        index = 1;
+    }
+    auditlogStartIndexTextfield.setText(String.valueOf(index));
+    
+    // Reload
+    getContext().getTaskService().execute(auditlogReload());
+}//GEN-LAST:event_auditlogPreviousButtonActionPerformed
+
+private void auditlogFirstButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_auditlogFirstButtonActionPerformed
+    auditlogStartIndexTextfield.setText(String.valueOf(1));
+    
+    // Reload
+    getContext().getTaskService().execute(auditlogReload());
+}//GEN-LAST:event_auditlogFirstButtonActionPerformed
+
+private void jButtonAuditConditionAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAuditConditionAddActionPerformed
+    AddConditionDialog dlg = new AddConditionDialog(getFrame(), true);
+    dlg.setVisible(true);
+    if (dlg.isOkPressed()) {
+        conditionsModel.addCondition(dlg.getColumn(), dlg.getCondition(), dlg.getValue());
+    }
+}//GEN-LAST:event_jButtonAuditConditionAddActionPerformed
+
+private void jButtonAuditConditionRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAuditConditionRemoveActionPerformed
+    int selected = conditionsTable.getSelectedRow();
+    if (selected > -1) {
+        conditionsModel.removeCondition(selected);
+    }
+}//GEN-LAST:event_jButtonAuditConditionRemoveActionPerformed
 
     private void displayWorker(final Worker worker) {
         LOG.debug("Display worker: " + worker);
@@ -1980,11 +2290,72 @@ public class MainView extends FrameView {
         }
     }
 
+    @Action(block = Task.BlockingScope.COMPONENT)
+    public Task auditlogReload() {
+        return new AuditlogReloadTask(getApplication());
+    }
+
+    private class AuditlogReloadTask extends org.jdesktop.application.Task<List<LogEntry>, Void> {
+        
+        private int startIndex;
+        private int maxEntries;
+        private Exception exception;
+        
+        AuditlogReloadTask(org.jdesktop.application.Application app) {
+            // Runs on the EDT.  Copy GUI state that
+            // doInBackground() depends on from parameters
+            // to AuditlogReloadTask fields, here.
+            super(app);
+            
+            startIndex = Integer.parseInt(auditlogStartIndexTextfield.getText()) - 1;
+            maxEntries = Integer.parseInt(auditlogMaxEntriesTextfield.getText());
+            
+        }
+        @Override protected List<LogEntry> doInBackground() {
+            try {
+                // Your Task's code here.  This method runs
+                // on a background thread, so don't reference
+                // the Swing GUI from here.
+                return SignServerAdminGUIApplication.getAdminWS().queryAuditLog(startIndex, maxEntries, conditionsModel.getEntries());
+            } catch (AdminNotAuthorizedException_Exception ex) {
+                exception = ex;
+            } catch (SignServerException_Exception ex) {
+                exception = ex;
+            }
+            return null;
+        }
+        @Override protected void succeeded(List<LogEntry> result) {
+            // Runs on the EDT.  Update the GUI based on
+            // the result computed by doInBackground().
+            if (exception != null) {
+                JOptionPane.showMessageDialog(getFrame(), "Reload failed:\n" + exception.getMessage(),
+                            "Activate workers", JOptionPane.ERROR_MESSAGE);
+            } else {
+                auditlogDisplayingToIndex.setText("to " + (startIndex + result.size()));
+                auditlogModel.setEntries(result);
+                
+                auditlogFirstButton.setEnabled(startIndex > 0);
+                auditlogPreviousButton.setEnabled(startIndex > 0);
+                auditlogNextButton.setEnabled(result.size() >= maxEntries);
+            }
+        }
+    }
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     javax.swing.JButton activateButton;
     javax.swing.JMenuItem activateMenu;
     javax.swing.JButton addButton;
     javax.swing.JMenuItem administratorsMenu;
+    javax.swing.JTable auditLogTable;
+    javax.swing.JPanel auditPanel;
+    javax.swing.JLabel auditlogDisplayingToIndex;
+    javax.swing.JButton auditlogFirstButton;
+    javax.swing.JTextField auditlogMaxEntriesTextfield;
+    javax.swing.JButton auditlogNextButton;
+    javax.swing.JButton auditlogPreviousButton;
+    javax.swing.JButton auditlogReloadButton;
+    javax.swing.JTextField auditlogStartIndexTextfield;
     javax.swing.JButton authAddButton;
     javax.swing.JButton authEditButton;
     javax.swing.JPanel authEditPanel;
@@ -1992,6 +2363,7 @@ public class MainView extends FrameView {
     javax.swing.JTable authTable;
     javax.swing.JPanel authorizationTab;
     javax.swing.JMenuItem authorizationsMenu;
+    javax.swing.JTable conditionsTable;
     javax.swing.JMenuItem configurationMenu;
     javax.swing.JPanel configurationTab;
     javax.swing.JTable configurationTable;
@@ -2010,14 +2382,23 @@ public class MainView extends FrameView {
     javax.swing.JMenuItem globalConfigurationMenu;
     javax.swing.JButton installCertificatesButton;
     javax.swing.JMenuItem installCertificatesMenu;
+    javax.swing.JButton jButtonAuditConditionAdd;
+    javax.swing.JButton jButtonAuditConditionRemove;
     javax.swing.JLabel jLabel1;
     javax.swing.JLabel jLabel2;
+    javax.swing.JLabel jLabel3;
     javax.swing.JLabel jLabel4;
     javax.swing.JLabel jLabel5;
+    javax.swing.JLabel jLabel6;
+    javax.swing.JLabel jLabel8;
     javax.swing.JList jList1;
     javax.swing.JPanel jPanel1;
+    javax.swing.JPanel jPanel2;
+    javax.swing.JPanel jPanel3;
     javax.swing.JScrollPane jScrollPane1;
     javax.swing.JScrollPane jScrollPane2;
+    javax.swing.JScrollPane jScrollPane3;
+    javax.swing.JScrollPane jScrollPane4;
     javax.swing.JScrollPane jScrollPane6;
     javax.swing.JScrollPane jScrollPane7;
     javax.swing.JToolBar.Separator jSeparator1;
@@ -2029,6 +2410,8 @@ public class MainView extends FrameView {
     javax.swing.JPopupMenu.Separator jSeparator7;
     javax.swing.JPopupMenu.Separator jSeparator8;
     javax.swing.JSplitPane jSplitPane1;
+    javax.swing.JSplitPane jSplitPane2;
+    javax.swing.JTabbedPane jTabbedPane1;
     javax.swing.JToolBar jToolBar1;
     javax.swing.JPanel mainPanel;
     javax.swing.JMenuBar menuBar;

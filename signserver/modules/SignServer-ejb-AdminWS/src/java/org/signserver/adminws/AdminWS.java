@@ -827,8 +827,13 @@ public class AdminWS {
         final String device = devices.iterator().next();
 
         final List<Elem> elements = toElements(conditions);
-        final Elem elem = andAll(elements, 0);
-        final QueryCriteria qc = QueryCriteria.create().add(elem);
+        final QueryCriteria qc;
+        if (elements.isEmpty()) {
+            qc = QueryCriteria.create();
+        } else {
+            final Elem elem = andAll(elements, 0);
+            qc = QueryCriteria.create().add(elem);
+        }
         
         try {
             return toLogEntries(worker.selectAuditLogs(adminInfo, startIndex, max, qc, device));

@@ -129,4 +129,21 @@ public class QueryAuditLogTest extends TestCase {
             fail("Unexpected exception: " + e.getClass().getName());
         }
     }
+    
+    /**
+     * Test that using an invalid field name is rejected.
+     * @throws Exception
+     */
+    public void test08ParseCriteriaInvalidField() throws Exception {
+        final String criteria = "dummyField EQ 0";
+        
+        try {
+            final Term term = QueryAuditLogCommand.parseCriteria(criteria);
+            fail("Should throw an IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+            // expected
+        } catch (Exception e) {
+            fail("Unexpected exception: " + e.getClass().getName());
+        }
+    }
 }

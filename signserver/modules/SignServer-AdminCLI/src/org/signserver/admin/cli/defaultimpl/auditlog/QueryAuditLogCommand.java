@@ -56,6 +56,7 @@ public class QueryAuditLogCommand extends AbstractCommand {
     private static final Options OPTIONS;
     private static final Set<String> intFields;
     private static final Set<RelationalOperator> noArgOps;
+    private static final Set<String> allowedFields;
     
     
     private int from = 0;
@@ -82,6 +83,23 @@ public class QueryAuditLogCommand extends AbstractCommand {
         noArgOps = new HashSet<RelationalOperator>();
         noArgOps.add(RelationalOperator.NULL);
         noArgOps.add(RelationalOperator.NOTNULL);
+        
+        // allowed fields from CESeCore
+        // TODO: should maybe define this in CESeCore?
+        allowedFields = new HashSet<String>();
+        allowedFields.add(AuditRecordData.FIELD_ADDITIONAL_DETAILS);
+        allowedFields.add(AuditRecordData.FIELD_AUTHENTICATION_TOKEN);
+        allowedFields.add(AuditRecordData.FIELD_CUSTOM_ID);
+        allowedFields.add(AuditRecordData.FIELD_EVENTSTATUS);
+        allowedFields.add(AuditRecordData.FIELD_EVENTTYPE);
+        allowedFields.add(AuditRecordData.FIELD_MODULE);
+        allowedFields.add(AuditRecordData.FIELD_NODEID);
+        allowedFields.add(AuditRecordData.FIELD_SEARCHABLE_DETAIL1);
+        allowedFields.add(AuditRecordData.FIELD_SEARCHABLE_DETAIL2);
+        allowedFields.add(AuditRecordData.FIELD_SERVICE);
+        allowedFields.add(AuditRecordData.FIELD_SEQUENCENUMBER);
+        allowedFields.add(AuditRecordData.FIELD_TIMESTAMP);
+        
     }
     
     // TODO: Need to figure out a CLI syntax allowing an unbounded number of criterias to be specified, compare to how searching is done in the EJBCA GUI
@@ -218,6 +236,10 @@ public class QueryAuditLogCommand extends AbstractCommand {
     	// result can be achieved with two criterias
     	if (op == RelationalOperator.BETWEEN) {
     	    throw new IllegalArgumentException("Operator BETWEEN is not supported");
+    	}
+    	
+    	if (!allowedFields.contains(field)) {
+    	    throw new IllegalArgumentException("Unrecognized field: " + field);
     	}
     	
     	if (!noArgOps.contains(op)) {

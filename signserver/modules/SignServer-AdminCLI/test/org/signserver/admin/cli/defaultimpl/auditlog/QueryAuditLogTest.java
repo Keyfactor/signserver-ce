@@ -116,4 +116,17 @@ public class QueryAuditLogTest extends TestCase {
             fail("Unexpect exception: " + e.getClass().getName());
         }
     }
+    
+    public void test07ParseCriteriaWithoutValue() throws Exception {
+        final String criteria = "authToken EQ";
+        
+        try {
+            final Term term = QueryAuditLogCommand.parseCriteria(criteria);
+            fail("Should throw an IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+            // expected
+        } catch (Exception e) {
+            fail("Unexpected exception: " + e.getClass().getName());
+        }
+    }
 }

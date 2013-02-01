@@ -195,7 +195,8 @@ public class QueryAuditLogCommand extends AbstractCommand {
                 } catch (NumberFormatException e) {
                     throw new ParseException("Invalid critera, expected a numeric value: " + criteria);
                 } catch (IllegalArgumentException e) {
-                    throw new ParseException("Invalid critera specified: " + criteria);
+                    throw new ParseException("Invalid critera specified: " + e.getMessage() + ": " + 
+                            criteria);
                 }
             }
         
@@ -223,6 +224,9 @@ public class QueryAuditLogCommand extends AbstractCommand {
     	    if (intFields.contains(parts[0])) {
     	        value = Long.parseLong(parts[2]);
     	    } else {
+    	        if (parts.length < 3) {
+    	            throw new IllegalArgumentException("Missing value");
+    	        }
     	        value = parts[2];
     	    }
     	}

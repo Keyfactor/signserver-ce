@@ -99,4 +99,21 @@ public class QueryAuditLogTest extends TestCase {
         assertEquals("Name", AuditRecordData.FIELD_SEARCHABLE_DETAIL2, term.getName());
         assertNull("Value", term.getValue());
     }
+    
+    /**
+     * Test that setting a non-numeric value for a numeric field fails.
+     * @throws Exception
+     */
+    public void test06ParseCriteriaInvalidValue() throws Exception {
+        final String criteria = "timeStamp EQ foo";
+        
+        try {
+            final Term term = QueryAuditLogCommand.parseCriteria(criteria);
+            fail("Should throw a NumberFormatException");
+        } catch (NumberFormatException e) {
+            // expected
+        } catch (Exception e) {
+            fail("Unexpect exception: " + e.getClass().getName());
+        }
+    }
 }

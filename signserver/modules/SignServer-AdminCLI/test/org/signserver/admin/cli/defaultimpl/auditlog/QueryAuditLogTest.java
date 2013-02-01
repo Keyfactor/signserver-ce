@@ -62,4 +62,17 @@ public class QueryAuditLogTest extends TestCase {
             fail("Unexpected exception: " + e.getClass().getName());
         }
     }
+    
+    /**
+     * Test that using numerical field yields a Long value (otherwise hibernate will get upset...)
+     * @throws Exception
+     */
+    public void test04ParseCriteriaNumericValue() throws Exception {
+        final String criteria = "sequenceNumber GT 1";
+        final Term term = QueryAuditLogCommand.parseCriteria(criteria);
+        
+        assertEquals("Operation", RelationalOperator.GT, term.getOperator());
+        assertEquals("Name", AuditRecordData.FIELD_SEQUENCENUMBER, term.getName());
+        assertEquals("Value", Long.valueOf(1), term.getValue());
+    }
 }

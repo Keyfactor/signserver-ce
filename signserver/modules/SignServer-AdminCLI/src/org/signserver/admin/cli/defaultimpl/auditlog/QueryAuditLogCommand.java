@@ -55,6 +55,7 @@ public class QueryAuditLogCommand extends AbstractCommand {
     /** The command line options */
     private static final Options OPTIONS;
     private static final Set<String> intFields;
+    private static final Set<RelationalOperator> noArgOps;
     
     
     private int from = 0;
@@ -77,6 +78,10 @@ public class QueryAuditLogCommand extends AbstractCommand {
         intFields = new HashSet<String>();
         intFields.add(AuditRecordData.FIELD_TIMESTAMP);
         intFields.add(AuditRecordData.FIELD_SEQUENCENUMBER);
+        
+        noArgOps = new HashSet<RelationalOperator>();
+        noArgOps.add(RelationalOperator.NULL);
+        noArgOps.add(RelationalOperator.NOTNULL);
     }
     
     // TODO: Need to figure out a CLI syntax allowing an unbounded number of criterias to be specified, compare to how searching is done in the EJBCA GUI
@@ -205,7 +210,7 @@ public class QueryAuditLogCommand extends AbstractCommand {
     	
     	final String field = parts[0];
     	final RelationalOperator op = RelationalOperator.valueOf(parts[1]);
-    	final Object value;
+    	Object value = null;
     	
     	// we will not handle the BETWEEN operator
     	// to avoid complicating the parser, the same
@@ -214,10 +219,12 @@ public class QueryAuditLogCommand extends AbstractCommand {
     	    throw new IllegalArgumentException("Operator BETWEEN is not supported");
     	}
     	
-    	if (intFields.contains(parts[0])) {
-    	    value = Long.parseLong(parts[2]);
-    	} else {
-    	    value = parts[2];
+    	if (!noArgOps.contains(op)) {
+    	    if (intFields.contains(parts[0])) {
+    	        value = Long.parseLong(parts[2]);
+    	    } else {
+    	        value = parts[2];
+    	    }
     	}
    	
     	return new Term(op, field, value);

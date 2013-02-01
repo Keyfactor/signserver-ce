@@ -28,6 +28,10 @@ import junit.framework.TestCase;
 
 public class QueryAuditLogTest extends TestCase {
 
+    /**
+     * Test with a valid criteria.
+     * @throws Exception
+     */
     public void test01ParseCriteria() throws Exception {
         final String criteria = "customId EQ 1";
         final Term term = QueryAuditLogCommand.parseCriteria(criteria);
@@ -37,6 +41,10 @@ public class QueryAuditLogTest extends TestCase {
         assertEquals("Value", "1", term.getValue());
     }
     
+    /**
+     * Test that a non-existing operator isn't accepted.
+     * @throws Exception
+     */
     public void test02ParseCriteriaInvalidOperator() throws Exception {
         final String criteria = "customId FOO 1";
         
@@ -50,6 +58,10 @@ public class QueryAuditLogTest extends TestCase {
         }
     }
 
+    /**
+     * Test that the BETWEEN operator is properly rejected.
+     * @throws Exception
+     */
     public void test03ParseCriteriaBetween() throws Exception {
         final String criteria = "customId BETWEEN 1";
         
@@ -74,5 +86,17 @@ public class QueryAuditLogTest extends TestCase {
         assertEquals("Operation", RelationalOperator.GT, term.getOperator());
         assertEquals("Name", AuditRecordData.FIELD_SEQUENCENUMBER, term.getName());
         assertEquals("Value", Long.valueOf(1), term.getValue());
+    }
+    
+    /**
+     * Test the NULL operator.
+     */
+    public void test05ParseCriteriaNull() throws Exception {
+        final String criteria = "searchDetail2 NULL";
+        final Term term = QueryAuditLogCommand.parseCriteria(criteria);
+        
+        assertEquals("Operation", RelationalOperator.NULL, term.getOperator());
+        assertEquals("Name", AuditRecordData.FIELD_SEARCHABLE_DETAIL2, term.getName());
+        assertNull("Value", term.getValue());
     }
 }

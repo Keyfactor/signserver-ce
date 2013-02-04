@@ -44,6 +44,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.log4j.Logger;
+import org.cesecore.audit.impl.integrityprotected.AuditRecordData;
 import org.ejbca.util.CertTools;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
@@ -101,7 +102,7 @@ public class MainView extends FrameView {
 
         initComponents();
         
-        conditionsModel.addCondition("eventType", RelationalOperator.NEQ, "Access Control");
+        conditionsModel.addCondition(AuditRecordData.FIELD_EVENTTYPE, RelationalOperator.NEQ, "Access Control");
         auditLogTable.setModel(auditlogModel);
         conditionsTable.setModel(conditionsModel);
 
@@ -1270,6 +1271,11 @@ public class MainView extends FrameView {
         ));
         auditLogTable.setName("auditLogTable"); // NOI18N
         auditLogTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        auditLogTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                auditLogTableMouseClicked(evt);
+            }
+        });
         jScrollPane4.setViewportView(auditLogTable);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
@@ -1681,7 +1687,7 @@ private void jButtonAuditConditionAddActionPerformed(java.awt.event.ActionEvent 
     AddConditionDialog dlg = new AddConditionDialog(getFrame(), true);
     dlg.setVisible(true);
     if (dlg.isOkPressed()) {
-        conditionsModel.addCondition(dlg.getColumn(), dlg.getCondition(), dlg.getValue());
+        conditionsModel.addCondition(dlg.getColumn().getName(), dlg.getCondition(), dlg.getValue());
     }
 }//GEN-LAST:event_jButtonAuditConditionAddActionPerformed
 
@@ -1691,6 +1697,16 @@ private void jButtonAuditConditionRemoveActionPerformed(java.awt.event.ActionEve
         conditionsModel.removeCondition(selected);
     }
 }//GEN-LAST:event_jButtonAuditConditionRemoveActionPerformed
+
+private void auditLogTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_auditLogTableMouseClicked
+    if (evt.getClickCount() > 1) {
+        int sel = auditLogTable.getSelectedRow();
+        if (sel >= 0) {
+            DisplayAuditlogEntryFrame frame = new DisplayAuditlogEntryFrame(auditlogModel.getRow(sel));
+            frame.setVisible(true);
+        }
+    }
+}//GEN-LAST:event_auditLogTableMouseClicked
 
     private void displayWorker(final Worker worker) {
         LOG.debug("Display worker: " + worker);

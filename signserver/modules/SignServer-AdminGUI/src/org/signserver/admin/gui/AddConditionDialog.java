@@ -1,26 +1,103 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/*
- * EditConditionDialog.java
- *
- * Created on Jan 31, 2013, 1:46:36 PM
- */
+/*************************************************************************
+ *                                                                       *
+ *  SignServer: The OpenSource Automated Signing Server                  *
+ *                                                                       *
+ *  This software is free software; you can redistribute it and/or       *
+ *  modify it under the terms of the GNU Lesser General Public           *
+ *  License as published by the Free Software Foundation; either         *
+ *  version 2.1 of the License, or any later version.                    *
+ *                                                                       *
+ *  See terms of license at gnu.org.                                     *
+ *                                                                       *
+ *************************************************************************/
 package org.signserver.admin.gui;
 
+import java.util.HashMap;
 import javax.swing.DefaultComboBoxModel;
+import org.cesecore.audit.impl.integrityprotected.AuditRecordData;
 import org.signserver.admin.gui.adminws.gen.RelationalOperator;
 
 /**
+ * Dialog for adding query conditions.
  *
- * @author markus
+ * @author Markus Kilås
+ * @version $Id$
  */
 public class AddConditionDialog extends javax.swing.JDialog {
 
+    private static final AuditlogColumn[] COLUMNS =  {
+        new AuditlogColumn(AuditRecordData.FIELD_ADDITIONAL_DETAILS, "Details"),
+        new AuditlogColumn(AuditRecordData.FIELD_AUTHENTICATION_TOKEN, "Administrator"),
+        new AuditlogColumn(AuditRecordData.FIELD_CUSTOM_ID, "Certificate Authority"),
+        new AuditlogColumn(AuditRecordData.FIELD_EVENTSTATUS, "Outcome"),
+        new AuditlogColumn(AuditRecordData.FIELD_EVENTTYPE, "Event"),
+        new AuditlogColumn(AuditRecordData.FIELD_MODULE, "Module"),
+        new AuditlogColumn(AuditRecordData.FIELD_NODEID, "Node"),
+        new AuditlogColumn(AuditRecordData.FIELD_SEARCHABLE_DETAIL1, "Certificate"),
+        new AuditlogColumn(AuditRecordData.FIELD_SEARCHABLE_DETAIL2, "Username"),
+        new AuditlogColumn(AuditRecordData.FIELD_SERVICE, "Service"),
+        new AuditlogColumn(AuditRecordData.FIELD_SEQUENCENUMBER, "Sequence Number"),
+        new AuditlogColumn(AuditRecordData.FIELD_TIMESTAMP, "Time")
+    };
+    
+    /** Relational operator used by each column. */
+    private static final HashMap<String, RelationalOperator[]> OPERATORS = new HashMap<String, RelationalOperator[]>();
+    
+    /** Available values by each column. */
+    private static final HashMap<String, String[]> VALUES = new HashMap<String, String[]>();
+    
+    /** Relational operators useful for text values. */
+    private static final RelationalOperator[] TEXT_OPERATORS = {
+        RelationalOperator.EQ,
+        RelationalOperator.LIKE,
+        RelationalOperator.NEQ,
+        RelationalOperator.NOTNULL,
+        RelationalOperator.NULL
+    };
+    
+    /** Relational operators useful for fixed-type values. */
+    private static final RelationalOperator[] TYPE_OPERATORS = {
+        RelationalOperator.EQ,
+        RelationalOperator.NEQ
+    };
+    
+    /** Relational operators useful for number values. */
+    private static final RelationalOperator[] NUMBER_OPERATORS = {
+        RelationalOperator.EQ,
+        RelationalOperator.NEQ,
+        RelationalOperator.GE,
+        RelationalOperator.GT,
+        RelationalOperator.LE,
+        RelationalOperator.LT,
+        RelationalOperator.NOTNULL,
+        RelationalOperator.NULL
+    };
+    
+    /** Available values for event status. */
+    private static final String[] STATUS_VALUES = {
+        "Success",
+        "Failure",
+        "Void"
+    };
+    
+    static {
+        OPERATORS.put(AuditRecordData.FIELD_ADDITIONAL_DETAILS, TEXT_OPERATORS);
+        OPERATORS.put(AuditRecordData.FIELD_AUTHENTICATION_TOKEN, TEXT_OPERATORS);
+        OPERATORS.put(AuditRecordData.FIELD_CUSTOM_ID, TEXT_OPERATORS);
+        OPERATORS.put(AuditRecordData.FIELD_EVENTSTATUS, TYPE_OPERATORS);
+        OPERATORS.put(AuditRecordData.FIELD_EVENTTYPE, TEXT_OPERATORS);
+        OPERATORS.put(AuditRecordData.FIELD_MODULE, TEXT_OPERATORS);
+        OPERATORS.put(AuditRecordData.FIELD_NODEID, TEXT_OPERATORS);
+        OPERATORS.put(AuditRecordData.FIELD_SEARCHABLE_DETAIL1, TEXT_OPERATORS);
+        OPERATORS.put(AuditRecordData.FIELD_SEARCHABLE_DETAIL2, TEXT_OPERATORS);
+        OPERATORS.put(AuditRecordData.FIELD_SERVICE, TEXT_OPERATORS);
+        OPERATORS.put(AuditRecordData.FIELD_SEQUENCENUMBER, NUMBER_OPERATORS);
+        OPERATORS.put(AuditRecordData.FIELD_TIMESTAMP, NUMBER_OPERATORS);
+        VALUES.put(AuditRecordData.FIELD_EVENTSTATUS, STATUS_VALUES);
+    }
+    
     private boolean okPressed;
-    private String column;
+    private AuditlogColumn column;
     private RelationalOperator condition;
     private String value;
     
@@ -28,6 +105,7 @@ public class AddConditionDialog extends javax.swing.JDialog {
     public AddConditionDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        columnCombobox.setModel(new DefaultComboBoxModel(COLUMNS));
         conditionCombobox.setModel(new DefaultComboBoxModel(RelationalOperator.values()));
     }
     
@@ -51,14 +129,21 @@ public class AddConditionDialog extends javax.swing.JDialog {
         jButtonCancel = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(org.signserver.admin.gui.SignServerAdminGUIApplication.class).getContext().getResourceMap(AddConditionDialog.class);
+        setTitle(resourceMap.getString("Form.title")); // NOI18N
+        setLocationByPlatform(true);
         setName("Form"); // NOI18N
 
-        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(org.signserver.admin.gui.SignServerAdminGUIApplication.class).getContext().getResourceMap(AddConditionDialog.class);
         jLabel1.setText(resourceMap.getString("jLabel1.text")); // NOI18N
         jLabel1.setName("jLabel1"); // NOI18N
 
         columnCombobox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Time", "EventType", "Outcome", "Administrator", "Module", "Certificate Authority", "Certificate", "Username", "Node", "Details" }));
         columnCombobox.setName("columnCombobox"); // NOI18N
+        columnCombobox.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                columnComboboxItemStateChanged(evt);
+            }
+        });
 
         jLabel2.setText(resourceMap.getString("jLabel2.text")); // NOI18N
         jLabel2.setName("jLabel2"); // NOI18N
@@ -138,7 +223,7 @@ public class AddConditionDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
 private void jButtonOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonOkActionPerformed
-    column = (String) columnCombobox.getSelectedItem();
+    column = (AuditlogColumn) columnCombobox.getSelectedItem();
     condition = (RelationalOperator) conditionCombobox.getSelectedItem();
     value = (String) valueCombobox.getSelectedItem();
     okPressed = true;
@@ -148,6 +233,19 @@ private void jButtonOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
 private void jButtonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelActionPerformed
     dispose();
 }//GEN-LAST:event_jButtonCancelActionPerformed
+
+private void columnComboboxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_columnComboboxItemStateChanged
+    final AuditlogColumn col = (AuditlogColumn) columnCombobox.getSelectedItem();
+    if (col != null) {
+        conditionCombobox.setModel(new DefaultComboBoxModel(OPERATORS.get(col.getName())));
+        final Object[] values = VALUES.get(col.getName());
+        if (values == null) {
+            valueCombobox.setModel(new DefaultComboBoxModel());
+        } else {
+            valueCombobox.setModel(new DefaultComboBoxModel(values));
+        }
+    }
+}//GEN-LAST:event_columnComboboxItemStateChanged
 
     /**
      * @param args the command line arguments
@@ -197,7 +295,7 @@ private void jButtonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN
         return okPressed;
     }
 
-    public String getColumn() {
+    public AuditlogColumn getColumn() {
         return column;
     }
 

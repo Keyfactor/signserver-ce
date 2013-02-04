@@ -61,4 +61,8 @@ public class AuditlogTableModel extends AbstractTableModel {
         this.entries = entries;
         fireTableDataChanged();
     }
+
+    public LogEntry getRow(int sel) {
+        return entries.get(sel);
+    }
 }

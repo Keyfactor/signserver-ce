@@ -37,7 +37,7 @@ public class ConditionsTableModel extends AbstractTableModel {
     public Object getValueAt(int rowIndex, int columnIndex) {
         final Object result;
         switch (columnIndex) {
-            case 0: result = entries.get(rowIndex).getColumn(); break;
+            case 0: result = AuditlogColumn.getDescription(entries.get(rowIndex).getColumn()) + " (" + entries.get(rowIndex).getColumn() + ")"; break;
             case 1: result = entries.get(rowIndex).getOperator(); break;
             case 2: result = entries.get(rowIndex).getValue(); break;
             default: result = "";

@@ -204,6 +204,15 @@ public class AdminWebServiceTest extends TestCase {
             // OK
         }
     }
+    
+    public void testQueryAuditLog() throws Exception {
+        try {
+            adminWS.queryAuditLog(0, 10, Collections.<QueryCondition>emptyList());
+            fail("Access should have been denied!");
+        } catch (AdminNotAuthorizedException_Exception ignored) {
+            // OK
+        }
+    }
 
     // TODO add test methods here. The name must begin with 'test'. For example:
     // public void testHello() {}

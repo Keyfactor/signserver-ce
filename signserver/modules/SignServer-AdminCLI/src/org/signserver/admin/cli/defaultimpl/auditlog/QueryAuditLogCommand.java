@@ -48,7 +48,7 @@ public class QueryAuditLogCommand extends AbstractCommand {
     
     public static final String QUERY = "query";
     public static final String FROM = "from";
-    public static final String TO = "to";
+    public static final String LIMIT = "limit";
     
     public static final String CRITERIA = "criteria";
  
@@ -60,7 +60,7 @@ public class QueryAuditLogCommand extends AbstractCommand {
     
     
     private int from = 0;
-    private int to = 0;
+    private int limit = 0;
     
     private QueryCriteria qc;
     
@@ -74,7 +74,7 @@ public class QueryAuditLogCommand extends AbstractCommand {
         OPTIONS.addOption(QUERY, false, "Query the audit log");
         OPTIONS.addOption(CRITERIA, true, "Search criteria (can specify multiple criterias)");
         OPTIONS.addOption(FROM, true, "Lower index in search result (0-based)");
-        OPTIONS.addOption(TO, true, "Upper index in search result (0-based)");
+        OPTIONS.addOption(LIMIT, true, "Maximum number of search results");
         
         intFields = new HashSet<String>();
         intFields.add(AuditRecordData.FIELD_TIMESTAMP);
@@ -105,12 +105,12 @@ public class QueryAuditLogCommand extends AbstractCommand {
     // TODO: Need to figure out a CLI syntax allowing an unbounded number of criterias to be specified, compare to how searching is done in the EJBCA GUI
     @Override
     public String getUsages() {
-        return "Usage: signserver auditlog -query -criteria  \"<field> <op> <value>\" [-criteria...] [-from <index>] [-to <index>]\n"
+        return "Usage: signserver auditlog -query -limit <number> [-criteria  \"<field> <op> <value>\" [-criteria...]] [-from <index>]\n"
                 + "<field> is a field name from the audit log: additionalDetails, authToken, customId, eventStatus, eventType, module, nodeId,\n"
                 + "searchDetail1, searchDetail2, sequenceNumber, service, timeStamp\n"
                 + "<op> is a relational operator: GT, GE, LT, LE, EQ, NEQ, LIKE, NULL, NOTNULL\n"
-                + "Example: signserver auditlog -query -criteria \"customId EQ 1\n"
-                + "Example: signserver auditlog -query -criteria \"timeStamp GT 1359623137000\" -criteria \"searchDetail2 EQ 1\"\n\n";
+                + "Example: signserver auditlog -query -limit 10 -criteria \"customId EQ 1\n"
+                + "Example: signserver auditlog -query -limit 10 -criteria \"timeStamp GT 1359623137000\" -criteria \"searchDetail2 EQ 1\"\n\n";
     }
     
     @Override
@@ -135,7 +135,7 @@ public class QueryAuditLogCommand extends AbstractCommand {
             final String device = devices.iterator().next();
                        
             // Perform the query
-            List<? extends AuditLogEntry> entries = helper.getWorkerSession().selectAuditLogs(from, to, qc, device);
+            List<? extends AuditLogEntry> entries = helper.getWorkerSession().selectAuditLogs(from, limit, qc, device);
             for (AuditLogEntry entry : entries) {
                 
                 // Render the result
@@ -182,7 +182,7 @@ public class QueryAuditLogCommand extends AbstractCommand {
         
         // TODO: we might want to enfore the range options to avoid possible memory exhaustion
         final String fromString = line.getOptionValue(FROM);
-        final String toString = line.getOptionValue(TO);
+        final String limitString = line.getOptionValue(LIMIT);
         
         if (fromString != null) {
             try {
@@ -192,12 +192,14 @@ public class QueryAuditLogCommand extends AbstractCommand {
             }
         }
         
-        if (toString != null) {
+        if (limitString != null) {
             try {
-                to = Integer.parseInt(toString);
+                limit = Integer.parseInt(limitString);
             } catch (NumberFormatException ex) {
-                throw new ParseException("Invalid to index value: " + toString);
+                throw new ParseException("Invalid limit value: " + limitString);
             }
+        } else {
+            throw new ParseException("Must specify a limit.");
         }
         
         final String[] criterias = line.getOptionValues(CRITERIA);

@@ -331,4 +331,26 @@ public class SignServerCLITest extends ModulesTestCase {
     	
     	assertTrue("FILENAME property is not logged", found);
     }
+    
+    /**
+     * 
+     */
+    public void testQueryAuditLog() throws Exception {
+        // make sure an error message is printed if not setting the mandatory -limit argument
+        assertEquals("", CommandLineInterface.RETURN_INVALID_ARGUMENTS, cli.execute("auditlog", "-query"));
+        assertPrinted("Should output error", cli.getOut(), "Must specify a limit");
+        
+        // test a simple criteria
+        cli.execute("setproperty", "global", "FOO", "BAR");
+        assertEquals(CommandLineInterface.RETURN_SUCCESS,
+                     cli.execute("auditlog","-query", "-limit", "1", "-criteria", "additionalDetails LIKE %foo%"));
+        assertPrinted("Should contain log record", cli.getOut(), "GLOBALCONFIG_PROPERTY=GLOB.FOO, GLOBALCONFIG_VALUE=BAR");
+        
+        // test with multiple criterias
+        assertEquals(CommandLineInterface.RETURN_SUCCESS,
+                cli.execute("auditlog", "-query", "-limit", "1", "-criteria", "authToken EQ CLI user", "-criteria", "additionalDetails LIKE %foo%"));
+        assertPrinted("Should contain log record", cli.getOut(), "GLOBALCONFIG_PROPERTY=GLOB.FOO, GLOBALCONFIG_VALUE=BAR");
+        
+
+    }
 }

@@ -17,6 +17,8 @@ import org.cesecore.audit.impl.integrityprotected.AuditRecordData;
 
 /**
  * Representation of an audit log column with name and description.
+ * 
+ * TODO: Refactor as enum
  *
  * @author Markus Kilås
  * @version $Id$

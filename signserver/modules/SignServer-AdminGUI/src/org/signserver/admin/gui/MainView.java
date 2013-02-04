@@ -105,6 +105,15 @@ public class MainView extends FrameView {
         conditionsModel.addCondition(AuditRecordData.FIELD_EVENTTYPE, RelationalOperator.NEQ, "Access Control");
         auditLogTable.setModel(auditlogModel);
         conditionsTable.setModel(conditionsModel);
+        conditionsTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    jButtonAuditConditionRemove.setEnabled(conditionsTable.getSelectedRowCount() > 0);
+                }
+            }
+        });
 
         jList1.setCellRenderer(new MyListCellRenderer());
 
@@ -1163,6 +1172,7 @@ public class MainView extends FrameView {
         });
 
         jButtonAuditConditionRemove.setText(resourceMap.getString("jButtonAuditConditionRemove.text")); // NOI18N
+        jButtonAuditConditionRemove.setEnabled(false);
         jButtonAuditConditionRemove.setName("jButtonAuditConditionRemove"); // NOI18N
         jButtonAuditConditionRemove.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1687,7 +1697,7 @@ private void jButtonAuditConditionAddActionPerformed(java.awt.event.ActionEvent 
     AddConditionDialog dlg = new AddConditionDialog(getFrame(), true);
     dlg.setVisible(true);
     if (dlg.isOkPressed()) {
-        conditionsModel.addCondition(dlg.getColumn().getName(), dlg.getCondition(), dlg.getValue());
+        conditionsModel.addCondition(dlg.getColumn().getName(), dlg.getCondition().getOperator(), dlg.getValue());
     }
 }//GEN-LAST:event_jButtonAuditConditionAddActionPerformed
 

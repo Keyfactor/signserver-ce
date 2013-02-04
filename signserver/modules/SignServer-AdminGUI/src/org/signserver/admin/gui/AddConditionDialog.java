@@ -41,36 +41,36 @@ public class AddConditionDialog extends javax.swing.JDialog {
     };
     
     /** Relational operator used by each column. */
-    private static final HashMap<String, RelationalOperator[]> OPERATORS = new HashMap<String, RelationalOperator[]>();
+    private static final HashMap<String, AuditlogOperator[]> OPERATORS = new HashMap<String, AuditlogOperator[]>();
     
     /** Available values by each column. */
     private static final HashMap<String, String[]> VALUES = new HashMap<String, String[]>();
     
     /** Relational operators useful for text values. */
-    private static final RelationalOperator[] TEXT_OPERATORS = {
-        RelationalOperator.EQ,
-        RelationalOperator.LIKE,
-        RelationalOperator.NEQ,
-        RelationalOperator.NOTNULL,
-        RelationalOperator.NULL
+    private static final AuditlogOperator[] TEXT_OPERATORS = {
+        AuditlogOperator.fromEnum(RelationalOperator.EQ),
+        AuditlogOperator.fromEnum(RelationalOperator.LIKE),
+        AuditlogOperator.fromEnum(RelationalOperator.NEQ),
+        AuditlogOperator.fromEnum(RelationalOperator.NOTNULL),
+        AuditlogOperator.fromEnum(RelationalOperator.NULL)
     };
     
     /** Relational operators useful for fixed-type values. */
-    private static final RelationalOperator[] TYPE_OPERATORS = {
-        RelationalOperator.EQ,
-        RelationalOperator.NEQ
+    private static final AuditlogOperator[] TYPE_OPERATORS = {
+        AuditlogOperator.fromEnum(RelationalOperator.EQ),
+        AuditlogOperator.fromEnum(RelationalOperator.NEQ)
     };
     
     /** Relational operators useful for number values. */
-    private static final RelationalOperator[] NUMBER_OPERATORS = {
-        RelationalOperator.EQ,
-        RelationalOperator.NEQ,
-        RelationalOperator.GE,
-        RelationalOperator.GT,
-        RelationalOperator.LE,
-        RelationalOperator.LT,
-        RelationalOperator.NOTNULL,
-        RelationalOperator.NULL
+    private static final AuditlogOperator[] NUMBER_OPERATORS = {
+        AuditlogOperator.fromEnum(RelationalOperator.EQ),
+        AuditlogOperator.fromEnum(RelationalOperator.NEQ),
+        AuditlogOperator.fromEnum(RelationalOperator.GE),
+        AuditlogOperator.fromEnum(RelationalOperator.GT),
+        AuditlogOperator.fromEnum(RelationalOperator.LE),
+        AuditlogOperator.fromEnum(RelationalOperator.LT),
+        AuditlogOperator.fromEnum(RelationalOperator.NOTNULL),
+        AuditlogOperator.fromEnum(RelationalOperator.NULL)
     };
     
     /** Available values for event status. */
@@ -98,7 +98,7 @@ public class AddConditionDialog extends javax.swing.JDialog {
     
     private boolean okPressed;
     private AuditlogColumn column;
-    private RelationalOperator condition;
+    private AuditlogOperator condition;
     private String value;
     
     /** Creates new form EditConditionDialog */
@@ -106,7 +106,7 @@ public class AddConditionDialog extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
         columnCombobox.setModel(new DefaultComboBoxModel(COLUMNS));
-        conditionCombobox.setModel(new DefaultComboBoxModel(RelationalOperator.values()));
+        columnComboboxItemStateChanged(null);
     }
     
     /** This method is called from within the constructor to
@@ -224,7 +224,7 @@ public class AddConditionDialog extends javax.swing.JDialog {
 
 private void jButtonOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonOkActionPerformed
     column = (AuditlogColumn) columnCombobox.getSelectedItem();
-    condition = (RelationalOperator) conditionCombobox.getSelectedItem();
+    condition = (AuditlogOperator) conditionCombobox.getSelectedItem();
     value = (String) valueCombobox.getSelectedItem();
     okPressed = true;
     dispose();
@@ -299,7 +299,7 @@ private void columnComboboxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN
         return column;
     }
 
-    public RelationalOperator getCondition() {
+    public AuditlogOperator getCondition() {
         return condition;
     }
 

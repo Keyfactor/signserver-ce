@@ -1181,6 +1181,12 @@ certificate serialnumber and issuer DN.
                         <p>
 Removes an administrator from the list of authorized administrators.
                         </p>
+                        <p>
+<b>auditlog -query:</b>
+                        </p>
+                        <p>
+Query the CESeCore audit log.
+                        </p>
                     </subsubsection>
                 </subsection>
 

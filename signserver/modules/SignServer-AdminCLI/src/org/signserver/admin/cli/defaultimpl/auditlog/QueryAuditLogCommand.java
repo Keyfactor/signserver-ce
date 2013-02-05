@@ -46,21 +46,24 @@ public class QueryAuditLogCommand extends AbstractCommand {
 
     private AdminCommandHelper helper = new AdminCommandHelper();
     
+    /** Option strings */
     public static final String QUERY = "query";
     public static final String FROM = "from";
     public static final String LIMIT = "limit";
-    
     public static final String CRITERIA = "criteria";
+    public static final String HEADER = "header";
  
     /** The command line options */
     private static final Options OPTIONS;
     private static final Set<String> intFields;
     private static final Set<RelationalOperator> noArgOps;
     private static final Set<String> allowedFields;
-    
-    
+
     private int from = 0;
     private int limit = 0;
+    private boolean printHeader = false;
+    
+    private static final String HEADER_TEXT = "timeStamp, eventType, eventStatus, authToken, moduleType, customId, searchDetail1, searchDetail2, additionalDetails";
     
     private QueryCriteria qc;
     
@@ -75,6 +78,7 @@ public class QueryAuditLogCommand extends AbstractCommand {
         OPTIONS.addOption(CRITERIA, true, "Search criteria (can specify multiple criterias)");
         OPTIONS.addOption(FROM, true, "Lower index in search result (0-based)");
         OPTIONS.addOption(LIMIT, true, "Maximum number of search results");
+        OPTIONS.addOption(HEADER, false, "Print a column header");
         
         intFields = new HashSet<String>();
         intFields.add(AuditRecordData.FIELD_TIMESTAMP);
@@ -105,7 +109,7 @@ public class QueryAuditLogCommand extends AbstractCommand {
     // TODO: Need to figure out a CLI syntax allowing an unbounded number of criterias to be specified, compare to how searching is done in the EJBCA GUI
     @Override
     public String getUsages() {
-        return "Usage: signserver auditlog -query -limit <number> [-criteria  \"<field> <op> <value>\" [-criteria...]] [-from <index>]\n"
+        return "Usage: signserver auditlog -query -limit <number> [-criteria  \"<field> <op> <value>\" [-criteria...]] [-from <index>] [-header]\n"
                 + "<field> is a field name from the audit log: additionalDetails, authToken, customId, eventStatus, eventType, module, nodeId,\n"
                 + "searchDetail1, searchDetail2, sequenceNumber, service, timeStamp\n"
                 + "<op> is a relational operator: GT, GE, LT, LE, EQ, NEQ, LIKE, NULL, NOTNULL\n"
@@ -134,6 +138,10 @@ public class QueryAuditLogCommand extends AbstractCommand {
             }
             final String device = devices.iterator().next();
                        
+            if (printHeader) {
+                getOutputStream().println(HEADER_TEXT);
+            }
+            
             // Perform the query
             List<? extends AuditLogEntry> entries = helper.getWorkerSession().selectAuditLogs(from, limit, qc, device);
             for (AuditLogEntry entry : entries) {
@@ -180,9 +188,10 @@ public class QueryAuditLogCommand extends AbstractCommand {
             throw new ParseException("Must specifiy the -query option");
         }
         
-        // TODO: we might want to enfore the range options to avoid possible memory exhaustion
         final String fromString = line.getOptionValue(FROM);
         final String limitString = line.getOptionValue(LIMIT);
+        
+        printHeader = line.hasOption(HEADER);
         
         if (fromString != null) {
             try {

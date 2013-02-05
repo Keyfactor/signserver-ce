@@ -5218,7 +5218,7 @@ has tests by executing the command from their project directory.
 If SignServer is configured to run without database some tests needs to be excluded by running like this:    
                     </p>
                     <source>
-bin/ant test:run -Dexcludes="**/ArchivingCLITest*,**/GroupKeyServiceCLITest*,**/Base64DatabaseArchiverTest*,**/OldDatabaseArchiverTest*,,**/GroupKeyServiceTest*,**/ArchiveTest*"
+bin/ant test:run -Dexcludes="**/ArchivingCLITest*,**/GroupKeyServiceCLITest*,**/Base64DatabaseArchiverTest*,**/OldDatabaseArchiverTest*,,**/GroupKeyServiceTest*,**/ArchiveTest*,**/AuditLogCLITest*"
                     </source>
                     
                     <subsubsection name="System tests with HSM">

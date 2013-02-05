@@ -333,7 +333,7 @@ public class SignServerCLITest extends ModulesTestCase {
     }
     
     /**
-     * 
+     * Test running the auditlog query command.
      */
     public void testQueryAuditLog() throws Exception {
         // make sure an error message is printed if not setting the mandatory -limit argument

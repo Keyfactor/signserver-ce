@@ -12,9 +12,8 @@
  *************************************************************************/
 package org.signserver.cli;
 
-import static org.signserver.testutils.CLITestHelper.assertPrinted;
-
 import org.signserver.testutils.CLITestHelper;
+import static org.signserver.testutils.CLITestHelper.assertPrinted;
 import org.signserver.testutils.ModulesTestCase;
 
 
@@ -37,15 +36,15 @@ public class AuditLogCLITest extends ModulesTestCase {
         assertPrinted("Should output error", cli.getOut(), "Must specify a limit");
         
         // test a simple criteria
-        cli.execute("setproperty", "global", "FOO", "BAR");
+        cli.execute("setproperty", "global", "FOO_PROPERTY_1234567", "BAR");
         assertEquals(CommandLineInterface.RETURN_SUCCESS,
-                     cli.execute("auditlog","-query", "-limit", "1", "-criteria", "additionalDetails LIKE %foo%"));
-        assertPrinted("Should contain log record", cli.getOut(), "GLOBALCONFIG_PROPERTY=GLOB.FOO, GLOBALCONFIG_VALUE=BAR");
+                     cli.execute("auditlog","-query", "-limit", "1", "-criteria", "additionalDetails LIKE %FOO_PROPERTY_1234567%"));
+        assertPrinted("Should contain log record", cli.getOut(), "GLOBALCONFIG_PROPERTY=GLOB.FOO_PROPERTY_1234567, GLOBALCONFIG_VALUE=BAR");
         
         // test with multiple criterias
         assertEquals(CommandLineInterface.RETURN_SUCCESS,
-                cli.execute("auditlog", "-query", "-limit", "1", "-criteria", "authToken EQ CLI user", "-criteria", "additionalDetails LIKE %foo%"));
-        assertPrinted("Should contain log record", cli.getOut(), "GLOBALCONFIG_PROPERTY=GLOB.FOO, GLOBALCONFIG_VALUE=BAR");
+                cli.execute("auditlog", "-query", "-limit", "1", "-criteria", "authToken EQ CLI user", "-criteria", "additionalDetails LIKE %FOO_PROPERTY_1234567%"));
+        assertPrinted("Should contain log record", cli.getOut(), "GLOBALCONFIG_PROPERTY=GLOB.FOO_PROPERTY_1234567, GLOBALCONFIG_VALUE=BAR");
         
 
     }

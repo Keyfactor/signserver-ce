@@ -63,7 +63,8 @@ public class QueryAuditLogCommand extends AbstractCommand {
     private int limit = 0;
     private boolean printHeader = false;
     
-    private static final String HEADER_TEXT = "timeStamp, eventType, eventStatus, authToken, moduleType, customId, searchDetail1, searchDetail2, additionalDetails";
+    private static final String HEADER_FIELDS = "timeStamp, eventStatus, eventType, module, authToken, customId, searchDetail1, searchDetail2, nodeId, additionalDetails";
+    private static final String HEADER_NAMES =  "Time, Outcome, Event, Module, Admin Subject, Admin Issuer, Admin Serial Number, Worker ID, Node, Details";
     
     private QueryCriteria qc;
     
@@ -139,7 +140,8 @@ public class QueryAuditLogCommand extends AbstractCommand {
             final String device = devices.iterator().next();
                        
             if (printHeader) {
-                getOutputStream().println(HEADER_TEXT);
+                getOutputStream().println(HEADER_NAMES);
+                getOutputStream().println(HEADER_FIELDS);
             }
             
             // Perform the query
@@ -151,8 +153,8 @@ public class QueryAuditLogCommand extends AbstractCommand {
                 buff.append(entry.getTimeStamp()).append(", ")
                         .append(entry.getEventTypeValue()).append(", ")
                         .append(entry.getEventStatusValue()).append(", ")
-                        .append(entry.getAuthToken()).append(", ")
                         .append(entry.getModuleTypeValue()).append(", ")
+                        .append(entry.getAuthToken()).append(", ")
                         .append(entry.getCustomId()).append(", ")
                         .append(entry.getSearchDetail1()).append(", ")
                         .append(entry.getSearchDetail2()).append(", ")
@@ -204,6 +206,10 @@ public class QueryAuditLogCommand extends AbstractCommand {
         if (limitString != null) {
             try {
                 limit = Integer.parseInt(limitString);
+                
+                if (limit <= 0) {
+                    throw new ParseException("Too small value specified for limit: " + limit);
+                }
             } catch (NumberFormatException ex) {
                 throw new ParseException("Invalid limit value: " + limitString);
             }

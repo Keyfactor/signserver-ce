@@ -27,14 +27,14 @@ public class AuditlogColumn {
     
     private static final AuditlogColumn[] COLUMNS =  {
         new AuditlogColumn(AuditRecordData.FIELD_ADDITIONAL_DETAILS, "Details"),
-        new AuditlogColumn(AuditRecordData.FIELD_AUTHENTICATION_TOKEN, "Administrator"),
-        new AuditlogColumn(AuditRecordData.FIELD_CUSTOM_ID, "Certificate Authority"),
+        new AuditlogColumn(AuditRecordData.FIELD_AUTHENTICATION_TOKEN, "Admin Subject"),
+        new AuditlogColumn(AuditRecordData.FIELD_CUSTOM_ID, "Admin Issuer"),
         new AuditlogColumn(AuditRecordData.FIELD_EVENTSTATUS, "Outcome"),
         new AuditlogColumn(AuditRecordData.FIELD_EVENTTYPE, "Event"),
         new AuditlogColumn(AuditRecordData.FIELD_MODULE, "Module"),
         new AuditlogColumn(AuditRecordData.FIELD_NODEID, "Node"),
-        new AuditlogColumn(AuditRecordData.FIELD_SEARCHABLE_DETAIL1, "Certificate"),
-        new AuditlogColumn(AuditRecordData.FIELD_SEARCHABLE_DETAIL2, "Username"),
+        new AuditlogColumn(AuditRecordData.FIELD_SEARCHABLE_DETAIL1, "Admin Serial Number"),
+        new AuditlogColumn(AuditRecordData.FIELD_SEARCHABLE_DETAIL2, "Worker ID"),
         new AuditlogColumn(AuditRecordData.FIELD_SERVICE, "Service"),
         new AuditlogColumn(AuditRecordData.FIELD_SEQUENCENUMBER, "Sequence Number"),
         new AuditlogColumn(AuditRecordData.FIELD_TIMESTAMP, "Time")

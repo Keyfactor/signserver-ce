@@ -88,13 +88,13 @@ public class DisplayAuditlogEntryFrame extends javax.swing.JFrame {
         
         buff.append("<html><body><table>\n");
         buff.append("<tr><td><b>Time:</b></td><td>").append(entry.getTimeStamp()).append("</td></tr>\n");
-        buff.append("<tr><td><b>Event:</b></td><td>").append(entry.getEventType()).append("</td></tr>\n");
         buff.append("<tr><td><b>Outcome:</b></td><td>").append(entry.getEventStatus()).append("</td></tr>\n");
-        buff.append("<tr><td><b>Administrator:</b></td><td>").append(entry.getAuthToken()).append("</td></tr>\n");
+        buff.append("<tr><td><b>Event:</b></td><td>").append(entry.getEventType()).append("</td></tr>\n");
         buff.append("<tr><td><b>Module:</b></td><td>").append(entry.getModuleType()).append("</td></tr>\n");
-        buff.append("<tr><td><b>Certificate Authority:</b></td><td>").append(entry.getCustomId()).append("</td></tr>\n");
-        buff.append("<tr><td><b>Certificate:</b></td><td>").append(entry.getSearchDetail1()).append("</td></tr>\n");
-        buff.append("<tr><td><b>Username:</b></td><td>").append(entry.getSearchDetail2()).append("</td></tr>\n");
+        buff.append("<tr><td><b>Admin Subject:</b></td><td>").append(entry.getAuthToken()).append("</td></tr>\n");
+        buff.append("<tr><td><b>Admin Serial Number:</b></td><td>").append(entry.getSearchDetail1()).append("</td></tr>\n");
+        buff.append("<tr><td><b>Admin Issuer:</b></td><td>").append(entry.getCustomId()).append("</td></tr>\n");
+        buff.append("<tr><td><b>Worker ID:</b></td><td>").append(entry.getSearchDetail2()).append("</td></tr>\n");
         buff.append("<tr><td><b>Node:</b></td><td>").append(entry.getNodeId()).append("</td></tr>\n");
         buff.append("<tr><td><b>Details:</b></td><td>&nbsp;</td></tr>\n")
                 .append("<tr><td colspan=\"2\">");

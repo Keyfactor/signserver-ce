@@ -12,9 +12,11 @@
  *************************************************************************/
 package org.signserver.server.log;
 
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import org.cesecore.audit.enums.EventStatus;
 import org.cesecore.audit.log.SecurityEventsLoggerSessionLocal;
@@ -28,12 +30,37 @@ import org.cesecore.audit.log.SecurityEventsLoggerSessionLocal;
  */
 
 public class SecurityEventsWorkerLogger implements IWorkerLogger {
-
     private SecurityEventsLoggerSessionLocal logger;
+    
+    /** configuration keys for selecting included/excluded fields. */
+    private static final String INCLUDE_FIELDS = "INCLUDEFIELDS";
+    private static final String EXCLUDE_FIELDS = "EXCLUDEFIELDS";
+    
+    private Set<String> includedFields;
+    private Set<String> excludedFields;
     
     @Override
     public void init(Properties props) {
-        // TODO: add the possibility to filter the fields logged
+        final String include = props.getProperty(INCLUDE_FIELDS);
+        final String exclude = props.getProperty(EXCLUDE_FIELDS);
+        
+        if (include != null) {
+            final String[] includes = include.split(",");
+            includedFields = new HashSet<String>();
+            
+            for (final String field : includes) {
+                includedFields.add(field.trim());
+            }
+        }
+        
+        if (exclude != null) {
+            final String[] excludes = exclude.split(",");
+            excludedFields = new HashSet<String>();
+            
+            for (final String field : excludes) {
+                excludedFields.add(field.trim());
+            }
+        }
     }
 
     @Override
@@ -42,7 +69,9 @@ public class SecurityEventsWorkerLogger implements IWorkerLogger {
         
         // strip out the worker ID from the additionalDetails field (it's put customID)
         for (String key : fields.keySet()) {
-            if (!IWorkerLogger.LOG_WORKER_ID.equals(key)) {
+            if (!IWorkerLogger.LOG_WORKER_ID.equals(key) &&
+                (includedFields == null || includedFields.contains(key)) &&
+                (excludedFields == null || !excludedFields.contains(key))) {
                 details.put(key, fields.get(key));
             }
         }

@@ -74,7 +74,10 @@ public class DatabaseCLITest extends TestCase {
     /**
      * Tests that the audit verifylog command completes successful.
      */
-    public void testVerifyLog() throws Exception {
+    /**
+     * TODO: This could be long-running...
+     * 
+     * public void testVerifyLog() throws Exception {
         LOG.info("testVerifyLog");
         try {
             final int actual = cli.execute(new String[] {"audit", "verifylog"});
@@ -82,7 +85,7 @@ public class DatabaseCLITest extends TestCase {
         } catch (PersistenceException ex) {
             throw new Exception(JDBC_ERROR, ex);
         }
-    }
+    }*/
     
     // TODO add test methods here. The name must begin with 'test'. For example:
     // public void testHello() {}

@@ -80,7 +80,7 @@ CP="$SIGNSRV_HOME/lib/${ADMINCLI_JAR}"
 CP="${SIGNSRV_HOME}/conf":"$CP"
 CP="$CP:$SIGNSRV_HOME/res/cesecore"
 CP="$CP:$SIGNSRV_HOME"
-CP="$CP":${OPTIONAL_CLASSPATH:-}
+CP="$CP":${OPTIONAL_CLASSPATH:-}:$SIGNSRV_HOME/lib/ext/jdbc/jdbc.jar
 
 # Application server dependencies
 if [ -f $APPSRV_HOME/lib/appserv-rt.jar ]; then

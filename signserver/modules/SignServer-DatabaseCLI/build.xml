@@ -24,17 +24,6 @@
         </copy>
     </target>
     
-    <target name="-pre-init">
-        <!-- 
-        Only for running from within the IDE:
-        Load the configuration so we get the appserver.home and can guess an 
-        JDBC connector to use. Hardcoded to MySQL for now.
-        This also requires compile-on-save to be turned off.
-        -->
-        <property file="../../conf/signserver_build.properties"/>
-        <property name="appserver.home" value="${env.APPSRV_HOME}"/>
-        <echo level="debug">Using appserver.home: ${appserver.home}</echo>
-    </target>
 
     <!--
 

@@ -5198,6 +5198,10 @@ properties should be set in signserver_build.properties:
                     </ul>
                     </p>
                     <p>
+For the Database CLI tests to run successfully you will need to put the JDBC 
+driver for your database as lib/ext/jdbc/jdbc.jar.
+                    </p>
+                    <p>
 To run the test suite do the following:
                     </p>
                     <ul>

@@ -1189,6 +1189,47 @@ Query the CESeCore audit log.
                         </p>
                     </subsubsection>
                 </subsection>
+                
+                <subsection name="Database CLI">
+                    <p>
+The SignServer Database CLI uses Java Persistence API (JPA) to connect to the 
+SignServer database. The CLI is configured by the dbcli.* properties in 
+signserver_cli.properties.
+                    </p>
+                    <p>
+The CLI needs to have the JDBC driver of the selected database available on the 
+classpath. This can be achieved by setting the OPTIONAL_CLASSPATH environment 
+variable when calling the bin/signserver-db script or by putting the JAR under
+lib/ext/jdbc/ and calling it jdbc.jar. The last method is required to be able 
+to run the JUnit tests. 
+                    </p>
+                    <p>
+Sample usage:
+                    </p>
+                    <source>
+OPTIONAL_CLASSPATH=/usr/share/java/mysql-connector-java.jar bin/signserver-db audit verifylog
+                    </source>
+                    <subsubsection name="Verify Auditlog Command">
+                        <p>
+The command can be run to verify the signature of every entry in the auditlog 
+as well as checking the sequence number in order to make sure that it does not 
+contain any gaps.
+                        </p>
+                        <p>
+The keys used to verify the log are configured in conf/databaseprotection.properties.
+                        </p>
+                        <p>
+Sample output:
+                        </p>
+                        <source>
+2013-02-08 21:26:13,067 INFO  [PKCS11CryptoToken] Activated Crypto Token with id 300.
+2013-02-08 21:26:13,203 INFO  [VerifyLogCommand] Progress: node=0 rowCount=63
+2013-02-08 21:26:13,685 INFO  [VerifyLogCommand] Progress: node=1 rowCount=701
+2013-02-08 21:26:13,690 INFO  [VerifyLogCommand] Audit log validation completed in 1 seconds. 701 rows found. Errors: 0 Warnings: 0
+2013-02-08 21:26:13,690 INFO  [VerifyLogCommand] Verification finished with success
+                        </source>
+                    </subsubsection>
+                </subsection>
 
                 <subsection name="Administration GUI">
                     <p>

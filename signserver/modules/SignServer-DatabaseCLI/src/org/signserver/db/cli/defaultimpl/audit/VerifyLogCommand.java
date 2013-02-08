@@ -78,7 +78,7 @@ public class VerifyLogCommand extends AbstractDatabaseCommand {
         final int errors = auditLogValidationReport.errors().size();
         final int warnings = auditLogValidationReport.warnings().size();
         LOG.info("Audit log validation completed in " + (System.currentTimeMillis()-startTime)/1000 + " seconds. " + rowCount
-                + " rows found. Errors: " + warnings + " Warnings: " + auditLogValidationReport.warnings().size());
+                + " rows found. Errors: " + errors + " Warnings: " + warnings);
         
         final int result;
         if (errors > 0) {

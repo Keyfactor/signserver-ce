@@ -28,7 +28,7 @@ public class DatabaseCLITest extends TestCase {
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(DatabaseCLITest.class);
     
-    private static final String JDBC_ERROR = "This test requires the JDBC drivers to be present on the classpath. Put the database connector as lib/ext/jdbc/jdbc.jar.";
+    private static final String JDBC_ERROR = "This test requires the JDBC drivers to be present on the classpath. Put the database connector as lib/ext/jdbc/jdbc.jar. Configure signserver_cli.properties.";
     
     private CLITestHelper cli = getDatabaseCLI();
     

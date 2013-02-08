@@ -22,19 +22,20 @@ hostname.allnodes=localhost
 # The database type
 # Available types are:
 #dbcli.database.name=hsqldb
-dbcli.database.name=mysql
+#dbcli.database.name=mysql
 #dbcli.database.name=oracle
 
 # Database connection URL
 #dbcli.database.url=jdbc:hsqldb:/opt/jboss-5.1.0.GA/server/default/data/hypersonic/SignServerLocalDB
-dbcli.database.url=jdbc:mysql://127.0.0.1:3306/signserver?characterEncoding=UTF-8
+#dbcli.database.url=jdbc:mysql://127.0.0.1:3306/signserver?characterEncoding=UTF-8
 #dbcli.database.url=jdbc:postgresql://127.0.0.1/signserver
 #dbcli.database.url=jdbc:oracle:thin:@127.0.0.1:1521:xe
 
 # Database username
 #dbcli.database.username=sa
-dbcli.database.username=signserver
+#dbcli.database.username=signserver
+#dbcli.database.username=ejbca
 
 # Database password
 #dbcli.database.password=
-dbcli.database.password=foo123
+#dbcli.database.password=foo123

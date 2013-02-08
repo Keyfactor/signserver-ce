@@ -698,13 +698,58 @@ public class SystemLoggingTest extends ModulesTestCase {
         assertTrue("Contains success", line.contains("PROCESS_SUCCESS: true"));
         assertTrue("Contains worker id", line.contains("WORKER_ID: " + signerId));
         assertTrue("Contains log id", line.contains("LOG_ID:"));
-        assertTrue("Contains client ip", line.contains("CLIENT_IP:"));
+        assertTrue("Contains client ip", line.contains("CLIENT_IP:"));       
+    }
+    
+    public void test02WorkerProcessExcludeFields() throws Exception {
+        int linesBefore = readEntriesCount(auditLogFile);
+        
+        setLoggingFields(null, "CLIENT_IP, LOG_ID");
+        
+        GenericSignRequest request = new GenericSignRequest(123, "<test/>".getBytes("UTF-8"));
+        workerSession.process(signerId, request, new RequestContext());
+        
+        List<String> lines = readEntries(auditLogFile, linesBefore, 1);
+        String line = lines.get(0);
+        LOG.info(line);
+        assertFalse("Shouldn't contain excluded field", line.contains("CLIENT_IP:"));
+        assertFalse("Shouldn't contain excluded field", line.contains("LOG_ID:"));
+    }
+    
+    public void test03WorkerProcessIncludeFields() throws Exception {
+        int linesBefore = readEntriesCount(auditLogFile);
+        
+        setLoggingFields("CLIENT_IP, LOG_ID", null);
+        
+        GenericSignRequest request = new GenericSignRequest(123, "<test/>".getBytes("UTF-8"));
+        workerSession.process(signerId, request, new RequestContext());
+        
+        List<String> lines = readEntries(auditLogFile, linesBefore, 1);
+        String line = lines.get(0);
+        LOG.info(line);
+        assertTrue("Should contain included field", line.contains("CLIENT_IP:"));
+        assertTrue("Should contain included field", line.contains("LOG_ID:"));
+        assertFalse("Shouldn't contain non-included field", line.contains("FILENAME:"));
     }
     
     public void test99TearDownDatabase() throws Exception {
         removeWorker(signerId);
     }
 
+    private void setLoggingFields(final String includeFields, final String excludeFields) {
+        if (includeFields != null) {
+            workerSession.setWorkerProperty(signerId, "LOGINCLUDEFIELDS", includeFields);
+        } else {
+            workerSession.removeWorkerProperty(signerId, "LOGINCLUDEFIELDS");
+        }
+        if (excludeFields != null) {
+            workerSession.setWorkerProperty(signerId, "LOGEXCLUDEFIELDS", excludeFields);
+        } else {
+            workerSession.removeWorkerProperty(signerId, "LOGEXCLUDEFIELDS");
+        }
+        workerSession.reloadConfiguration(signerId);
+    }
+    
     private int readEntriesCount(final File file) throws Exception {
         int result = 0;
         BufferedReader reader = null;

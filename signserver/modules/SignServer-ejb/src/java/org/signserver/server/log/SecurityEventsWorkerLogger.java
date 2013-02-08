@@ -33,8 +33,8 @@ public class SecurityEventsWorkerLogger implements IWorkerLogger {
     private SecurityEventsLoggerSessionLocal logger;
     
     /** configuration keys for selecting included/excluded fields. */
-    private static final String INCLUDE_FIELDS = "INCLUDEFIELDS";
-    private static final String EXCLUDE_FIELDS = "EXCLUDEFIELDS";
+    private static final String INCLUDE_FIELDS = "LOGINCLUDEFIELDS";
+    private static final String EXCLUDE_FIELDS = "LOGEXCLUDEFIELDS";
     
     private Set<String> includedFields;
     private Set<String> excludedFields;

@@ -1418,6 +1418,35 @@ the currently selected workers.
 the currently selected workers.
                         </p>
                     </subsubsection>
+                    
+                    <subsubsection name="Main window: Audit log">
+                        <p>
+In the "Audit log" tab controls for querying and filter the audit log exists.
+                        </p>
+                        <ul>
+<li><b>Current conditions</b>: Lists query conditions used to filter the search results.</li>
+<li><b>Add</b>: Opens a dialog box for adding query conditions.</li>
+<li><b>Remove</b>: Removes the selected query condition.</li>
+<li><b>First</b>: Go to the first search results page.</li>
+<li><b>Previous</b>: Go to the previous search results page.</li>
+<li><b>Reload</b>: Loads or reloads the search result according the the current 
+search condition(s), index and the selected number of entries per page.</li>
+<li><b>Next</b>: Go to the next search results page.</li>
+<li><b>Displaying results</b>: Displays the first row index and the last in the current result.</li>
+<li><b>Entries per page:</b>: The maximum number of rows to display in one page.</li>
+                        </ul>
+                        <p>
+Double clicking or pressing the Enter key on a selected row opens a window 
+showing details for the row.
+                        </p>
+                        <p>
+If databaseprotection.enableverify is enabled at the server side the signature 
+of each row displayed are verified. If the verification fails for any of the 
+rows in a page, an error message is displayed. The error message contains 
+information about the first row that failed.
+                        </p>
+                        
+                    </subsubsection>
 
                     <subsubsection name="Renew key dialog">
                         <p>

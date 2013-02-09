@@ -816,6 +816,17 @@ public class AdminWS {
         return result;
     }
     
+    /**
+     * Query the audit log.
+     *
+     * @param startIndex Index where select will start. Set to 0 to start from the beginning.
+     * @param max maximum number of results to be returned.
+     * @param conditions List of conditions defining the subset of logs to be selected.
+     * @param orderings List of ordering conditions for ordering the result.
+     * @return List of log entries
+     * @throws SignServerException In case of internal failures
+     * @throws AdminNotAuthorizedException  In case the administrator was not authorized to perform the operation
+     */
     @WebMethod(operationName="queryAuditLog")
     public List<LogEntry> queryAuditLog(@WebParam(name="startIndex") int startIndex, @WebParam(name="max") int max, @WebParam(name="condition") final List<QueryCondition> conditions, @WebParam(name="ordering") final List<QueryOrdering> orderings) throws SignServerException, AdminNotAuthorizedException {
         final AdminInfo adminInfo = requireAdminAuthorization("queryAuditLogs", String.valueOf(startIndex), String.valueOf(max));
@@ -845,6 +856,9 @@ public class AdminWS {
         }
     }
     
+    /**
+     * Convert to WS model LogEntry:s.
+     */
     private List<LogEntry> toLogEntries(final List<? extends AuditLogEntry> entries) {
         final List<LogEntry> results = new LinkedList<LogEntry>();
         for (AuditLogEntry entry : entries) {
@@ -853,6 +867,9 @@ public class AdminWS {
         return results;
     }
     
+    /**
+     * Convert to the CESeCore model Elem:s.
+     */
     private List<Elem> toElements(final List<QueryCondition> conditions) {
         final LinkedList<Elem> results = new LinkedList<Elem>();
         for (QueryCondition cond : conditions) {
@@ -867,6 +884,12 @@ public class AdminWS {
         return results;
     }
     
+    /**
+     * Tie together the list of Elem:s to a tree of AND operations.
+     * This uses a recursive implementation not expected to work for larger 
+     * lists of Elem:s, however as the number of columns are limited it is not 
+     * expected to be a real problem.
+     */
     protected Elem andAll(final List<Elem> elements, final int index) {
         if (index >= elements.size() - 1) {
             return elements.get(index);

@@ -12,7 +12,9 @@
  *************************************************************************/
 package org.signserver.admin.gui;
 
+import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
@@ -32,6 +34,8 @@ public class AuditlogTableModel extends AbstractTableModel {
                 "Time", "Outcome", "Event", "Module", "Admin Subject", "Admin Serial Number", "Admin Issuer", "Worker ID", "Node", "Details"
             };
     
+    private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ");
+    
     private List<LogEntry> entries = Collections.emptyList();
     
     @Override
@@ -48,7 +52,7 @@ public class AuditlogTableModel extends AbstractTableModel {
     public Object getValueAt(int rowIndex, int columnIndex) {
         final Object result;
         switch (columnIndex) {
-            case 0: result = entries.get(rowIndex).getTimeStamp(); break;
+            case 0: result = sdf.format(new Date(entries.get(rowIndex).getTimeStamp())); break;
             case 1: result = entries.get(rowIndex).getEventStatus(); break;
             case 2: result = entries.get(rowIndex).getEventType(); break;
             case 3: result = entries.get(rowIndex).getModuleType(); break;

@@ -23,7 +23,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -41,6 +40,7 @@ import org.cesecore.authorization.AuthorizationDeniedException;
 import org.cesecore.util.query.Criteria;
 import org.cesecore.util.query.Elem;
 import org.cesecore.util.query.QueryCriteria;
+import org.cesecore.util.query.clauses.Order;
 import org.cesecore.util.query.elems.RelationalOperator;
 import org.cesecore.util.query.elems.Term;
 import org.signserver.admin.gui.adminws.gen.AdminNotAuthorizedException;
@@ -60,9 +60,9 @@ import org.signserver.admin.gui.adminws.gen.KeyStoreException_Exception;
 import org.signserver.admin.gui.adminws.gen.KeyTestResult;
 import org.signserver.admin.gui.adminws.gen.LogEntry;
 import org.signserver.admin.gui.adminws.gen.LogEntry.AdditionalDetails;
-import org.signserver.admin.gui.adminws.gen.ObjectFactory;
 import org.signserver.admin.gui.adminws.gen.Pkcs10CertReqInfo;
 import org.signserver.admin.gui.adminws.gen.QueryCondition;
+import org.signserver.admin.gui.adminws.gen.QueryOrdering;
 import org.signserver.admin.gui.adminws.gen.ResyncException_Exception;
 import org.signserver.admin.gui.adminws.gen.SignServerException_Exception;
 import org.signserver.admin.gui.adminws.gen.WsGlobalConfiguration;
@@ -920,7 +920,7 @@ public class AdminLayerEJBImpl implements AdminWS {
     }
 
     @Override
-    public List<LogEntry> queryAuditLog(int startIndex, int max, List<QueryCondition> conditions) throws AdminNotAuthorizedException_Exception, SignServerException_Exception {
+    public List<LogEntry> queryAuditLog(int startIndex, int max, List<QueryCondition> conditions, List<QueryOrdering> ordering) throws AdminNotAuthorizedException_Exception, SignServerException_Exception {
         // For now we only query on of the available audit devices
         Set<String> devices = auditor.getQuerySupportingLogDevices();
         if (devices.isEmpty()) {
@@ -929,12 +929,14 @@ public class AdminLayerEJBImpl implements AdminWS {
         final String device = devices.iterator().next();
 
         final List<Elem> elements = toElements(conditions);
-        final QueryCriteria qc;
-        if (elements.isEmpty()) {
-            qc = QueryCriteria.create();
-        } else {
-            final Elem elem = andAll(elements, 0);
-            qc = QueryCriteria.create().add(elem);
+        final QueryCriteria qc = QueryCriteria.create();
+        
+        for (QueryOrdering order : ordering) {
+            qc.add(new Order(order.getColumn(), Order.Value.valueOf(order.getOrder().name())));
+        }
+        
+        if (!elements.isEmpty()) {
+            qc.add(andAll(elements, 0));
         }
         
         try {

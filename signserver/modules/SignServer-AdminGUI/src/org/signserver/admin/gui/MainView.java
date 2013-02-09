@@ -59,6 +59,9 @@ import org.signserver.admin.gui.adminws.gen.CryptoTokenAuthenticationFailureExce
 import org.signserver.admin.gui.adminws.gen.CryptoTokenOfflineException_Exception;
 import org.signserver.admin.gui.adminws.gen.InvalidWorkerIdException_Exception;
 import org.signserver.admin.gui.adminws.gen.LogEntry;
+import org.signserver.admin.gui.adminws.gen.Order;
+import org.signserver.admin.gui.adminws.gen.QueryCondition;
+import org.signserver.admin.gui.adminws.gen.QueryOrdering;
 import org.signserver.admin.gui.adminws.gen.RelationalOperator;
 import org.signserver.admin.gui.adminws.gen.SignServerException_Exception;
 import org.signserver.admin.gui.adminws.gen.WsWorkerConfig;
@@ -2342,7 +2345,11 @@ private void auditLogTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIR
                 // Your Task's code here.  This method runs
                 // on a background thread, so don't reference
                 // the Swing GUI from here.
-                return SignServerAdminGUIApplication.getAdminWS().queryAuditLog(startIndex, maxEntries, conditionsModel.getEntries());
+                final ArrayList<QueryCondition> conditions = new ArrayList<QueryCondition>(conditionsModel.getEntries());
+                final QueryOrdering order = new QueryOrdering();
+                order.setColumn(AuditRecordData.FIELD_TIMESTAMP);
+                order.setOrder(Order.DESC);
+                return SignServerAdminGUIApplication.getAdminWS().queryAuditLog(startIndex, maxEntries, conditions, Collections.singletonList(order));
             } catch (AdminNotAuthorizedException_Exception ex) {
                 exception = ex;
             } catch (SignServerException_Exception ex) {

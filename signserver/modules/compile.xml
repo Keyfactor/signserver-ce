@@ -555,7 +555,7 @@ SHA1 checksum: ${zip.bin.sha1}</echo>
                 <include name="ext/cert-cvc.jar"/>
                 <include name="ext/commons-collections-3.2.jar"/>
                 <include name="ext/commons-io-1.4.jar"/>
-                <include name="ext/commons-lang-2.4.jar"/>
+                <include name="ext/commons-lang-2.5.jar"/>
                 <include name="ext/commons-logging.jar"/>
                 <include name="ext/commons-configuration.jar"/>
                 <include name="ext/ejbca-util.jar"/>
@@ -747,7 +747,7 @@ SHA1 checksum: ${zip.bin.sha1}</echo>
         <!-- The task needs commons-lang to function so lets symlink it manually here first. -->
         <property file="${mappingsFile}"/>
         <mkdir dir="lib/ext"/>
-        <symlink link="lib/ext/commons-lang-2.4.jar" resource="${ext/commons-lang-2.4.jar}"/>
+        <symlink link="lib/ext/commons-lang-2.5.jar" resource="${ext/commons-lang-2.5.jar}"/>
     </target>
     <target name="unix-create-jar-symlinks" depends="-pre-symlink,-build-buildtools">
         <taskdef name="symlinklibs" classname="org.signserver.anttasks.UnixSymlinkLibsTask" classpath="lib/SignServer-BuildTools.jar"/>

@@ -16,9 +16,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-
 import javax.ejb.Stateless;
-
 import org.cesecore.audit.AuditLogEntry;
 import org.cesecore.audit.audit.AuditExporter;
 import org.cesecore.audit.audit.AuditLogExportReport;
@@ -34,6 +32,8 @@ import org.cesecore.util.query.QueryCriteria;
 /**
  * Mock implementation of QueuedDevice interface to allow the secure audit code imported from
  * CESeCore to stay the same without bundling the queued implementation.
+ * 
+ * Based on QueuedAuditorMockSessionBean.java from EJBCA.
  * 
  * @version $Id$
  */

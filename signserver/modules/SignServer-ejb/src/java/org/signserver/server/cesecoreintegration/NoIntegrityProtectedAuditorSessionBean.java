@@ -1,7 +1,15 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+/*************************************************************************
+ *                                                                       *
+ *  SignServer: The OpenSource Automated Signing Server                  *
+ *                                                                       *
+ *  This software is free software; you can redistribute it and/or       *
+ *  modify it under the terms of the GNU Lesser General Public           *
+ *  License as published by the Free Software Foundation; either         *
+ *  version 2.1 of the License, or any later version.                    *
+ *                                                                       *
+ *  See terms of license at gnu.org.                                     *
+ *                                                                       *
+ *************************************************************************/
 package org.signserver.server.cesecoreintegration;
 
 import java.util.Date;
@@ -24,8 +32,14 @@ import org.cesecore.keys.token.CryptoToken;
 import org.cesecore.util.query.QueryCriteria;
 
 /**
+ * An IntegrityProtectedAuditorSession throwing UnsupportedOperationException on 
+ * all EJB calls.
  *
- * @author markus
+ * This implementation is only included so that we can deploy SignServer without
+ * database in the NODB mode.
+ * 
+ * @author Markus Kilås
+ * @version $Id$
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)

@@ -15,7 +15,6 @@ package org.signserver.server.cesecoreintegration;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-
 import org.cesecore.time.TrustedTime;
 import org.cesecore.time.TrustedTimeWatcherSessionLocal;
 import org.cesecore.time.providers.TrustedTimeProviderException;

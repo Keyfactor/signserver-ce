@@ -1,37 +1,41 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+/*************************************************************************
+ *                                                                       *
+ *  SignServer: The OpenSource Automated Signing Server                  *
+ *                                                                       *
+ *  This software is free software; you can redistribute it and/or       *
+ *  modify it under the terms of the GNU Lesser General Public           *
+ *  License as published by the Free Software Foundation; either         *
+ *  version 2.1 of the License, or any later version.                    *
+ *                                                                       *
+ *  See terms of license at gnu.org.                                     *
+ *                                                                       *
+ *************************************************************************/
 package org.signserver.server.cesecoreintegration;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
-
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import org.cesecore.authorization.rules.AccessRuleData;
 import org.cesecore.authorization.rules.AccessRuleState;
 import org.cesecore.authorization.user.AccessMatchType;
 import org.cesecore.authorization.user.AccessUserAspectData;
-import org.cesecore.authorization.user.matchvalues.AccessMatchValue;
 import org.cesecore.authorization.user.matchvalues.X500PrincipalAccessMatchValue;
-
-import org.cesecore.config.CesecoreConfiguration;
 import org.cesecore.jndi.JndiConstants;
 import org.cesecore.roles.RoleData;
 import org.cesecore.roles.access.RoleAccessSessionLocal;
 import org.cesecore.roles.access.RoleAccessSessionRemote;
-import org.cesecore.util.QueryResultWrapper;
 
 /**
- * @version $Id: RoleAccessSessionBean.java 854 2011-05-24 12:57:17Z johane $
+ * Simplified RoleAccessSession as we don't use the access control mechanisms 
+ * from CESeCore.
  *
+ * Loosely based on RoleAccessSessionBean.java from CESeCore.
+ *
+ * @version $Id: RoleAccessSessionBean.java 854 2011-05-24 12:57:17Z johane $
+ * @author Markus Kilås
  */
 @Stateless(mappedName = JndiConstants.APP_JNDI_PREFIX + "RoleAccessSessionRemote")
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)

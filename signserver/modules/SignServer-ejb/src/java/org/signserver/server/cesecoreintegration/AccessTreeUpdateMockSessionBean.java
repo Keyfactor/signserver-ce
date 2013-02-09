@@ -1,13 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-package org.signserver.server.cesecoreintegration;
-
-import org.cesecore.authorization.cache.AccessTreeUpdateData;
-import org.cesecore.authorization.cache.AccessTreeUpdateSessionLocal;
-
-
 /*************************************************************************
  *                                                                       *
  *  CESeCore: CE Security Core                                           *
@@ -20,16 +10,15 @@ import org.cesecore.authorization.cache.AccessTreeUpdateSessionLocal;
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
+package org.signserver.server.cesecoreintegration;
 
 import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.log4j.Logger;
-import org.cesecore.config.CesecoreConfiguration;
+import org.cesecore.authorization.cache.AccessTreeUpdateData;
+import org.cesecore.authorization.cache.AccessTreeUpdateSessionLocal;
 import org.cesecore.internal.InternalResources;
 import org.cesecore.jndi.JndiConstants;
 
@@ -65,6 +54,7 @@ public class AccessTreeUpdateMockSessionBean implements AccessTreeUpdateSessionL
     /**
      * Returns a reference to the AuthorizationTreeUpdateData
      */
+    @Override
     public AccessTreeUpdateData getAccessTreeUpdateData() {
         if (authTreeData == null) {
             authTreeData = findByPrimaryKey(AccessTreeUpdateData.AUTHORIZATIONTREEUPDATEDATA);
@@ -86,6 +76,7 @@ public class AccessTreeUpdateMockSessionBean implements AccessTreeUpdateSessionL
     /**
      * Method incrementing the authorization tree update number and thereby signaling to other beans that they should reconstruct their access trees.
      */
+    @Override
     public void signalForAccessTreeUpdate() {
         getAccessTreeUpdateData().incrementAccessTreeUpdateNumber();
     }

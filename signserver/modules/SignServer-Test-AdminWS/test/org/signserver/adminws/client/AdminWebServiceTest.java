@@ -207,7 +207,7 @@ public class AdminWebServiceTest extends TestCase {
     
     public void testQueryAuditLog() throws Exception {
         try {
-            adminWS.queryAuditLog(0, 10, Collections.<QueryCondition>emptyList());
+            adminWS.queryAuditLog(0, 10, Collections.<QueryCondition>emptyList(), Collections.<QueryOrdering>emptyList());
             fail("Access should have been denied!");
         } catch (AdminNotAuthorizedException_Exception ignored) {
             // OK

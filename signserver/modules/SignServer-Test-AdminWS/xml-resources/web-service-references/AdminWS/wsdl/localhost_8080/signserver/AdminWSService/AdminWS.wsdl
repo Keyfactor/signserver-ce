@@ -524,7 +524,8 @@
     <xs:sequence>
      <xs:element name='startIndex' type='xs:int'/>
      <xs:element name='max' type='xs:int'/>
-     <xs:element maxOccurs='unbounded' minOccurs='0' name='conditions' type='tns:queryCondition'/>
+     <xs:element maxOccurs='unbounded' minOccurs='0' name='condition' type='tns:queryCondition'/>
+     <xs:element maxOccurs='unbounded' minOccurs='0' name='ordering' type='tns:queryOrdering'/>
     </xs:sequence>
    </xs:complexType>
    <xs:complexType name='queryCondition'>
@@ -532,6 +533,12 @@
      <xs:element minOccurs='0' name='column' type='xs:string'/>
      <xs:element minOccurs='0' name='operator' type='tns:relationalOperator'/>
      <xs:element minOccurs='0' name='value' type='xs:string'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='queryOrdering'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='column' type='xs:string'/>
+     <xs:element minOccurs='0' name='order' type='tns:order'/>
     </xs:sequence>
    </xs:complexType>
    <xs:complexType name='queryAuditLogResponse'>
@@ -580,6 +587,12 @@
      <xs:enumeration value='LIKE'/>
      <xs:enumeration value='NULL'/>
      <xs:enumeration value='NOTNULL'/>
+    </xs:restriction>
+   </xs:simpleType>
+   <xs:simpleType name='order'>
+    <xs:restriction base='xs:string'>
+     <xs:enumeration value='ASC'/>
+     <xs:enumeration value='DESC'/>
     </xs:restriction>
    </xs:simpleType>
    <xs:simpleType name='eventStatus'>

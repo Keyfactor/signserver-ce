@@ -45,6 +45,7 @@ import org.cesecore.authorization.AuthorizationDeniedException;
 import org.cesecore.util.query.Criteria;
 import org.cesecore.util.query.Elem;
 import org.cesecore.util.query.QueryCriteria;
+import org.cesecore.util.query.clauses.Order;
 import org.cesecore.util.query.elems.Term;
 import org.signserver.common.*;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
@@ -816,10 +817,10 @@ public class AdminWS {
     }
     
     @WebMethod(operationName="queryAuditLog")
-    public List<LogEntry> queryAuditLog(@WebParam(name="startIndex") int startIndex, @WebParam(name="max") int max, @WebParam(name="condition") final List<QueryCondition> conditions) throws SignServerException, AdminNotAuthorizedException {
+    public List<LogEntry> queryAuditLog(@WebParam(name="startIndex") int startIndex, @WebParam(name="max") int max, @WebParam(name="condition") final List<QueryCondition> conditions, @WebParam(name="ordering") final List<QueryOrdering> orderings) throws SignServerException, AdminNotAuthorizedException {
         final AdminInfo adminInfo = requireAdminAuthorization("queryAuditLogs", String.valueOf(startIndex), String.valueOf(max));
         
-        // For now we only query on of the available audit devices
+        // For now we only query one of the available audit devices
         Set<String> devices = auditor.getQuerySupportingLogDevices();
         if (devices.isEmpty()) {
             throw new SignServerException("No log devices available for querying");
@@ -827,12 +828,14 @@ public class AdminWS {
         final String device = devices.iterator().next();
 
         final List<Elem> elements = toElements(conditions);
-        final QueryCriteria qc;
-        if (elements.isEmpty()) {
-            qc = QueryCriteria.create();
-        } else {
-            final Elem elem = andAll(elements, 0);
-            qc = QueryCriteria.create().add(elem);
+        final QueryCriteria qc = QueryCriteria.create();
+        
+        for (QueryOrdering order : orderings) {
+            qc.add(new Order(order.getColumn(), Order.Value.valueOf(order.getOrder().name())));
+        }
+        
+        if (!elements.isEmpty()) {
+            qc.add(andAll(elements, 0));
         }
         
         try {
@@ -850,7 +853,7 @@ public class AdminWS {
         return results;
     }
     
-    private List<Elem> toElements(List<QueryCondition> conditions) {
+    private List<Elem> toElements(final List<QueryCondition> conditions) {
         final LinkedList<Elem> results = new LinkedList<Elem>();
         for (QueryCondition cond : conditions) {
             final Object value;

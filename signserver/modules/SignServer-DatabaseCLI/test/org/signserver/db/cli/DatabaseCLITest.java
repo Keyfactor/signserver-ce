@@ -74,18 +74,17 @@ public class DatabaseCLITest extends TestCase {
     /**
      * Tests that the audit verifylog command completes successful.
      */
-    /**
-     * TODO: This could be long-running...
-     * 
-     * public void testVerifyLog() throws Exception {
+     public void testVerifyLog() throws Exception {
         LOG.info("testVerifyLog");
+        LOG.info("Note: This could be long running. Clear the AuditRecordData table inbetween runs.\n"
+                + "For HSQLDB this test can not be run while the application server is running.");
         try {
             final int actual = cli.execute(new String[] {"audit", "verifylog"});
             assertEquals("return code", Main.RETURN_SUCCESS, actual);
         } catch (PersistenceException ex) {
             throw new Exception(JDBC_ERROR, ex);
         }
-    }*/
+    }
     
     // TODO add test methods here. The name must begin with 'test'. For example:
     // public void testHello() {}

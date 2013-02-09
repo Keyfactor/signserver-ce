@@ -12,9 +12,17 @@
  *************************************************************************/
 package org.signserver.admin.gui;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
 import org.cesecore.audit.impl.integrityprotected.AuditRecordData;
+import org.cesecore.util.ValidityDate;
+import org.signserver.admin.gui.adminws.gen.EventStatus;
 import org.signserver.admin.gui.adminws.gen.RelationalOperator;
 
 /**
@@ -45,7 +53,7 @@ public class AddConditionDialog extends javax.swing.JDialog {
     private static final HashMap<String, AuditlogOperator[]> OPERATORS = new HashMap<String, AuditlogOperator[]>();
     
     /** Available values by each column. */
-    private static final HashMap<String, String[]> VALUES = new HashMap<String, String[]>();
+    private static final HashMap<String, List<String>> VALUES = new HashMap<String, List<String>>();
     
     /** Relational operators useful for text values. */
     private static final AuditlogOperator[] TEXT_OPERATORS = {
@@ -75,11 +83,12 @@ public class AddConditionDialog extends javax.swing.JDialog {
     };
     
     /** Available values for event status. */
-    private static final String[] STATUS_VALUES = {
-        "Success",
-        "Failure",
-        "Void"
-    };
+    private static final List<String> STATUS_VALUES; 
+    
+    /** Available values for time. */
+    private static final List<String> TIME_VALUES;
+    
+    private static final SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ");
     
     static {
         OPERATORS.put(AuditRecordData.FIELD_ADDITIONAL_DETAILS, TEXT_OPERATORS);
@@ -94,7 +103,18 @@ public class AddConditionDialog extends javax.swing.JDialog {
         OPERATORS.put(AuditRecordData.FIELD_SERVICE, TEXT_OPERATORS);
         OPERATORS.put(AuditRecordData.FIELD_SEQUENCENUMBER, NUMBER_OPERATORS);
         OPERATORS.put(AuditRecordData.FIELD_TIMESTAMP, NUMBER_OPERATORS);
+                
+        STATUS_VALUES = new ArrayList<String>();
+        for (EventStatus st : EventStatus.values()) {
+            STATUS_VALUES.add(st.name());
+        }
         VALUES.put(AuditRecordData.FIELD_EVENTSTATUS, STATUS_VALUES);
+        
+        final long time = System.currentTimeMillis();
+        TIME_VALUES = new ArrayList<String>();
+        TIME_VALUES.add(SDF.format(new Date(time)));
+        TIME_VALUES.add(String.valueOf(time));
+        VALUES.put(AuditRecordData.FIELD_TIMESTAMP, TIME_VALUES);
     }
     
     private boolean okPressed;
@@ -227,6 +247,17 @@ private void jButtonOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
     column = (AuditlogColumn) columnCombobox.getSelectedItem();
     condition = (AuditlogOperator) conditionCombobox.getSelectedItem();
     value = (String) valueCombobox.getSelectedItem();
+
+    if (AuditRecordData.FIELD_TIMESTAMP.equals(column.getName())) {
+        final Long time = getTimeValue(value);
+        if (time == null) {
+            JOptionPane.showMessageDialog(this, "Incorrect value", "Add condition", JOptionPane.ERROR_MESSAGE);
+            return;
+        } else {
+            value = String.valueOf(time);
+        }
+    }
+
     okPressed = true;
     dispose();
 }//GEN-LAST:event_jButtonOkActionPerformed
@@ -239,58 +270,15 @@ private void columnComboboxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN
     final AuditlogColumn col = (AuditlogColumn) columnCombobox.getSelectedItem();
     if (col != null) {
         conditionCombobox.setModel(new DefaultComboBoxModel(OPERATORS.get(col.getName())));
-        final Object[] values = VALUES.get(col.getName());
+        final List<String> values = VALUES.get(col.getName());
         if (values == null) {
             valueCombobox.setModel(new DefaultComboBoxModel());
         } else {
-            valueCombobox.setModel(new DefaultComboBoxModel(values));
+            valueCombobox.setModel(new DefaultComboBoxModel(values.toArray()));
         }
     }
 }//GEN-LAST:event_columnComboboxItemStateChanged
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(AddConditionDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(AddConditionDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(AddConditionDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(AddConditionDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the dialog */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-
-            public void run() {
-                AddConditionDialog dialog = new AddConditionDialog(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        });
-    }
 
     public boolean isOkPressed() {
         return okPressed;
@@ -320,4 +308,16 @@ private void columnComboboxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN
     private javax.swing.JPanel jPanel1;
     private javax.swing.JComboBox valueCombobox;
     // End of variables declaration//GEN-END:variables
+
+    private Long getTimeValue(String value) {
+        Long result = null;
+        try {
+            result = Long.parseLong(value);
+        } catch (NumberFormatException ex) {
+            try {
+                result = ValidityDate.parseAsIso8601(value).getTime();
+            } catch (ParseException ignored) {} // NOPMD
+        }
+        return result;
+    }
 }

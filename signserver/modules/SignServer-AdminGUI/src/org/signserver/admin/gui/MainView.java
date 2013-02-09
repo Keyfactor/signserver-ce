@@ -105,7 +105,7 @@ public class MainView extends FrameView {
 
         initComponents();
         
-        conditionsModel.addCondition(AuditRecordData.FIELD_EVENTTYPE, RelationalOperator.NEQ, "Access Control");
+        conditionsModel.addCondition(AuditRecordData.FIELD_EVENTTYPE, RelationalOperator.NEQ, "ACCESS_CONTROL");
         auditLogTable.setModel(auditlogModel);
         conditionsTable.setModel(conditionsModel);
         conditionsTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {

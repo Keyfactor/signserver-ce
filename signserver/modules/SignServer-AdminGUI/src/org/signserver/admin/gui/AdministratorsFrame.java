@@ -13,9 +13,15 @@
 package org.signserver.admin.gui;
 
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
@@ -39,7 +45,9 @@ public class AdministratorsFrame extends javax.swing.JFrame {
 
     private static final String[] COLUMN_NAMES = new String[] {
         "Certificate serial number",
-        "Issuer DN"
+        "Issuer DN",
+        "Admin",
+        "Auditor"
     };
 
     private List<Entry> entries = Collections.emptyList();
@@ -61,12 +69,24 @@ public class AdministratorsFrame extends javax.swing.JFrame {
             }
 
             @Override
+            public Class<?> getColumnClass(int columnIndex) {
+                if (columnIndex == 2 || columnIndex == 3) {
+                    return Boolean.class;
+                }
+                return super.getColumnClass(columnIndex);
+            }
+
+            @Override
             public Object getValueAt(int rowIndex, int columnIndex) {
                 final Object result;
                 if (columnIndex == 0) {
-                    result = entries.get(rowIndex).getCertSerialNo();
+                    result = entries.get(rowIndex).getCredential().getCertSerialNo();
                 } else if (columnIndex == 1) {
-                    result = entries.get(rowIndex).getIssuerDN();
+                    result = entries.get(rowIndex).getCredential().getIssuerDN();
+                } else if (columnIndex == 2) {
+                    result = entries.get(rowIndex).isAdmin();
+                } else if (columnIndex == 3) {
+                    result = entries.get(rowIndex).isAuditor();
                 } else {
                     result = null;
                 }
@@ -115,6 +135,11 @@ public class AdministratorsFrame extends javax.swing.JFrame {
         editCertSerialNoTextField = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         editIssuerDNTextField = new javax.swing.JTextField();
+        editRoleAdminRadio = new javax.swing.JRadioButton();
+        editRoleAuditorRadio = new javax.swing.JRadioButton();
+        editRoleBothRadio = new javax.swing.JRadioButton();
+        jLabel3 = new javax.swing.JLabel();
+        buttonGroup1 = new javax.swing.ButtonGroup();
         jScrollPane6 = new javax.swing.JScrollPane();
         adminsTable = new javax.swing.JTable();
         addButton = new javax.swing.JButton();
@@ -140,6 +165,21 @@ public class AdministratorsFrame extends javax.swing.JFrame {
         editIssuerDNTextField.setText(resourceMap.getString("editIssuerDNTextField.text")); // NOI18N
         editIssuerDNTextField.setName("editIssuerDNTextField"); // NOI18N
 
+        buttonGroup1.add(editRoleAdminRadio);
+        editRoleAdminRadio.setText(resourceMap.getString("editRoleAdminRadio.text")); // NOI18N
+        editRoleAdminRadio.setName("editRoleAdminRadio"); // NOI18N
+
+        buttonGroup1.add(editRoleAuditorRadio);
+        editRoleAuditorRadio.setText(resourceMap.getString("editRoleAuditorRadio.text")); // NOI18N
+        editRoleAuditorRadio.setName("editRoleAuditorRadio"); // NOI18N
+
+        buttonGroup1.add(editRoleBothRadio);
+        editRoleBothRadio.setText(resourceMap.getString("editRoleBothRadio.text")); // NOI18N
+        editRoleBothRadio.setName("editRoleBothRadio"); // NOI18N
+
+        jLabel3.setText(resourceMap.getString("jLabel3.text")); // NOI18N
+        jLabel3.setName("jLabel3"); // NOI18N
+
         javax.swing.GroupLayout editPanelLayout = new javax.swing.GroupLayout(editPanel);
         editPanel.setLayout(editPanelLayout);
         editPanelLayout.setHorizontalGroup(
@@ -150,9 +190,19 @@ public class AdministratorsFrame extends javax.swing.JFrame {
                     .addComponent(editCertSerialNoTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE)
                     .addComponent(editIssuerDNTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE))
+                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE)
+                    .addGroup(editPanelLayout.createSequentialGroup()
+                        .addComponent(editRoleAdminRadio, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(editRoleAuditorRadio)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(editRoleBothRadio))
+                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE))
                 .addContainerGap())
         );
+
+        editPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {editRoleAdminRadio, editRoleAuditorRadio, editRoleBothRadio});
+
         editPanelLayout.setVerticalGroup(
             editPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(editPanelLayout.createSequentialGroup()
@@ -164,7 +214,14 @@ public class AdministratorsFrame extends javax.swing.JFrame {
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(editIssuerDNTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(editPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(editRoleAdminRadio)
+                    .addComponent(editRoleAuditorRadio)
+                    .addComponent(editRoleBothRadio))
+                .addContainerGap())
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -279,6 +336,8 @@ public class AdministratorsFrame extends javax.swing.JFrame {
             editCertSerialNoTextField.setText("");
             editCertSerialNoTextField.setEditable(true);
             editIssuerDNTextField.setText("");
+            final boolean admin = editRoleBothRadio.isSelected() || editRoleAdminRadio.isSelected();
+            final boolean auditor = editRoleBothRadio.isSelected() || editRoleAuditorRadio.isSelected();
 
             final int res = JOptionPane.showConfirmDialog(this, editPanel,
                     "Add property", JOptionPane.OK_CANCEL_OPTION,
@@ -287,18 +346,28 @@ public class AdministratorsFrame extends javax.swing.JFrame {
                 final String certSerialNo = editCertSerialNoTextField.getText();
                 final String issuerDN = editIssuerDNTextField.getText();
 
-                final List<Entry> admins = parseAdmins();
-                final Entry newEntry = new Entry(certSerialNo, issuerDN);
-                if (admins.contains(newEntry)) {
+                final HashMap<Credential, Entry> admins = parseAdmins();
+                final Credential cred = new Credential(certSerialNo, issuerDN);
+                
+                if (admins.containsKey(cred)) {
                     JOptionPane.showMessageDialog(this,
                             "The administrator already existed");
                 } else {
-                    admins.add(newEntry);
+                    final Entry newEntry = new Entry(cred, admin, auditor);
+                    admins.put(cred, newEntry);
 
-                    SignServerAdminGUIApplication.getAdminWS()
+                    if (admin) {
+                        SignServerAdminGUIApplication.getAdminWS()
                             .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
                             "WSADMINS",
                             serializeAdmins(admins));
+                    }
+                    if (auditor) {
+                        SignServerAdminGUIApplication.getAdminWS()
+                            .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
+                            "WSAUDITORS",
+                            serializeAuditors(admins));
+                    }
                 }
                 refreshButton.doClick();
             }
@@ -313,40 +382,47 @@ public class AdministratorsFrame extends javax.swing.JFrame {
             final int row = adminsTable.getSelectedRow();
 
             if (row != -1) {
-                final Entry oldEntry
-                        = new Entry(entries.get(row).getCertSerialNo(),
-                            entries.get(row).getIssuerDN());
+                final Entry oldEntry = entries.get(row);
 
-                editCertSerialNoTextField.setText(oldEntry.getCertSerialNo());
+                editCertSerialNoTextField.setText(oldEntry.getCredential().getCertSerialNo());
                 editCertSerialNoTextField.setEditable(true);
-                editIssuerDNTextField.setText(oldEntry.getIssuerDN());
+                editIssuerDNTextField.setText(oldEntry.getCredential().getIssuerDN());
+                editRoleAdminRadio.setSelected(oldEntry.isAdmin());
+                editRoleAuditorRadio.setSelected(oldEntry.isAuditor());
+                editRoleBothRadio.setSelected(oldEntry.isAdmin() && oldEntry.isAuditor());
 
                 final int res = JOptionPane.showConfirmDialog(this, editPanel,
                         "Edit administrator", JOptionPane.OK_CANCEL_OPTION,
                         JOptionPane.PLAIN_MESSAGE);
                 if (res == JOptionPane.OK_OPTION) {
-                    final Entry newEntry
-                        = new Entry(editCertSerialNoTextField.getText(), 
+                    
+                    HashMap<Credential, Entry> admins = parseAdmins();
+                    
+                    final Credential newCred = new Credential(editCertSerialNoTextField.getText(), 
                             editIssuerDNTextField.getText());
 
-                    final List<Entry> admins = parseAdmins();
-
-                    if (!admins.contains(oldEntry)) {
+                    if (!admins.containsKey(oldEntry.getCredential())) {
                         JOptionPane.showMessageDialog(this,
                                 "No such administrator");
                     } else {
-                        admins.remove(oldEntry);
+                        admins.remove(oldEntry.getCredential());
                         
-                        if (admins.contains(newEntry)) {
+                        final Entry newEntry = new Entry(newCred, editRoleAdminRadio.isSelected() || editRoleBothRadio.isSelected(), editRoleAuditorRadio.isSelected() || editRoleBothRadio.isSelected());
+                        
+                        if (admins.containsKey(newCred)) {
                             JOptionPane.showMessageDialog(this,
                             "The administrator already existed");
                         } else {
-                            admins.add(newEntry);
+                            admins.put(newCred, newEntry);
                         }
                         SignServerAdminGUIApplication.getAdminWS()
                             .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
                             "WSADMINS",
                             serializeAdmins(admins));
+                        SignServerAdminGUIApplication.getAdminWS()
+                            .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
+                            "WSAUDITORS",
+                            serializeAuditors(admins));
                     }
                     refreshButton.doClick();
                 }
@@ -367,22 +443,27 @@ public class AdministratorsFrame extends javax.swing.JFrame {
                         "Remove administrator", JOptionPane.YES_NO_CANCEL_OPTION,
                         JOptionPane.QUESTION_MESSAGE);
                 if (res == JOptionPane.YES_OPTION) {
-                    final Entry oldEntry
-                        = new Entry(entries.get(row).getCertSerialNo(),
-                            entries.get(row).getIssuerDN());
+                    final Entry oldEntry = entries.get(row);
+                    HashMap<Credential, Entry> admins = parseAdmins();
 
-                    final List<Entry> admins = parseAdmins();
-
-                    if (!admins.contains(oldEntry)) {
+                    if (!admins.containsKey(oldEntry.getCredential())) {
                         JOptionPane.showMessageDialog(this,
                                 "No such administrator");
                     } else {
-                        admins.remove(oldEntry);
+                        admins.remove(oldEntry.getCredential());
 
-                        SignServerAdminGUIApplication.getAdminWS()
-                            .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
-                            "WSADMINS",
-                            serializeAdmins(admins));
+                        if (oldEntry.isAdmin()) {
+                            SignServerAdminGUIApplication.getAdminWS()
+                                .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
+                                "WSADMINS",
+                                serializeAdmins(admins));
+                        }
+                        if (oldEntry.isAuditor()) {
+                            SignServerAdminGUIApplication.getAdminWS()
+                                .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
+                                "WSAUDITORS",
+                                serializeAuditors(admins));
+                        }
                     }
                     refreshButton.doClick();
                 }
@@ -427,7 +508,7 @@ public class AdministratorsFrame extends javax.swing.JFrame {
             List<Entry> result = null;
 
             try {
-               result = parseAdmins();
+               result = new ArrayList(parseAdmins().values());
             } catch (final AdminNotAuthorizedException_Exception ex) {
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
@@ -457,22 +538,28 @@ public class AdministratorsFrame extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addButton;
     private javax.swing.JTable adminsTable;
+    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton editButton;
     private javax.swing.JTextField editCertSerialNoTextField;
     private javax.swing.JTextField editIssuerDNTextField;
     private javax.swing.JPanel editPanel;
+    private javax.swing.JRadioButton editRoleAdminRadio;
+    private javax.swing.JRadioButton editRoleAuditorRadio;
+    private javax.swing.JRadioButton editRoleBothRadio;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JButton refreshButton;
     private javax.swing.JButton removeButton;
     // End of variables declaration//GEN-END:variables
 
-    private List<Entry> parseAdmins()
+    private LinkedHashMap<Credential, Entry> parseAdmins()
             throws AdminNotAuthorizedException_Exception {
         String admins = null;
+        String auditors = null;
 
         for (WsGlobalConfiguration.Config.Entry entry
                     : SignServerAdminGUIApplication.getAdminWS()
@@ -480,38 +567,76 @@ public class AdministratorsFrame extends javax.swing.JFrame {
             if (entry.getKey().equals(GlobalConfiguration.SCOPE_GLOBAL
                     + "WSADMINS")) {
                 admins = (String) entry.getValue();
+            } else if (entry.getKey().equals(GlobalConfiguration.SCOPE_GLOBAL
+                    + "WSAUDITORS")) {
+                auditors = (String) entry.getValue();
             }
         }
 
-        final List<Entry> entries = new LinkedList<Entry>();
+        final LinkedHashMap<Credential, Entry> entryMap = new LinkedHashMap<Credential, Entry>();
 
-        if (admins != null) {
-            if (admins.contains(";")) {
-                for (String entry : admins.split(";")) {
-                    final String[] parts = entry.split(",", 2);
-                    entries.add(new Entry(parts[0], parts[1]));
+        // Admins
+        if (admins != null && admins.contains(";")) {
+            for (String entryString : admins.split(";")) {
+                final String[] parts = entryString.split(",", 2);
+                final Credential cred = new Credential(parts[0], parts[1]);
+                Entry entry = entryMap.get(cred);
+                if (entry == null) {
+                    entry = new Entry(cred);
+                    entryMap.put(cred, entry);
                 }
+                entry.setAdmin(true);
             }
         }
-        return entries;
+
+        // Auditors
+        if (auditors != null && auditors.contains(";")) {
+            for (String entryString : auditors.split(";")) {
+                final String[] parts = entryString.split(",", 2);
+                final Credential cred = new Credential(parts[0], parts[1]);
+                Entry entry = entryMap.get(cred);
+                if (entry == null) {
+                    entry = new Entry(cred);
+                    entryMap.put(cred, entry);
+                }
+                entry.setAuditor(true);
+            }
+        }
+
+        return entryMap;
     }
 
-    private static String serializeAdmins(final List<Entry> entries) {
+    private static String serializeAdmins(final Map<Credential, Entry> entries) {
         final StringBuilder buff = new StringBuilder();
-        for (Entry entry : entries) {
-            buff.append(entry.getCertSerialNo());
-            buff.append(",");
-            buff.append(entry.getIssuerDN());
-            buff.append(";");
+        for (Entry entry : entries.values()) {
+            if (entry.isAdmin()) {
+                buff.append(entry.getCredential().getCertSerialNo());
+                buff.append(",");
+                buff.append(entry.getCredential().getIssuerDN());
+                buff.append(";");
+            }
         }
         return buff.toString();
     }
-
-    private static class Entry {
+    
+    private static String serializeAuditors(final Map<Credential, Entry> entries) {
+        final StringBuilder buff = new StringBuilder();
+        for (Entry entry : entries.values()) {
+            if (entry.isAuditor()) {
+                buff.append(entry.getCredential().getCertSerialNo());
+                buff.append(",");
+                buff.append(entry.getCredential().getIssuerDN());
+                buff.append(";");
+            }
+        }
+        return buff.toString();
+    }
+    
+    private static class Credential {
         private String certSerialNo;
         private String issuerDN;
 
-        public Entry(String certSerialNo, String issuerDN) {
+        public Credential(String certSerialNo, String issuerDN) {
             this.certSerialNo = certSerialNo;
             this.issuerDN = issuerDN;
         }
@@ -525,6 +650,14 @@ public class AdministratorsFrame extends javax.swing.JFrame {
         }
 
         @Override
+        public int hashCode() {
+            int hash = 7;
+            hash = 59 * hash + (this.certSerialNo != null ? this.certSerialNo.hashCode() : 0);
+            hash = 59 * hash + (this.issuerDN != null ? this.issuerDN.hashCode() : 0);
+            return hash;
+        }
+
+        @Override
         public boolean equals(Object obj) {
             if (obj == null) {
                 return false;
@@ -532,7 +665,7 @@ public class AdministratorsFrame extends javax.swing.JFrame {
             if (getClass() != obj.getClass()) {
                 return false;
             }
-            final Entry other = (Entry) obj;
+            final Credential other = (Credential) obj;
             if ((this.certSerialNo == null) ? (other.certSerialNo != null) : !this.certSerialNo.equals(other.certSerialNo)) {
                 return false;
             }
@@ -541,13 +674,73 @@ public class AdministratorsFrame extends javax.swing.JFrame {
             }
             return true;
         }
+        
+    }
+
+    private static class Entry {
+        
+        private final Credential credential;
+        private boolean admin;
+        private boolean auditor;
+
+        public Entry(final Credential credential, final boolean admin, final boolean auditor) {
+            this.credential = credential;
+            this.admin = admin;
+            this.auditor = auditor;
+        }
+
+        private Entry(final Credential cred) {
+            this.credential = cred;
+        }
+
+        public Credential getCredential() {
+            return credential;
+        }
+
+        public boolean isAdmin() {
+            return admin;
+        }
+
+        public boolean isAuditor() {
+            return auditor;
+        }
+
+        public void setAdmin(boolean admin) {
+            this.admin = admin;
+        }
+
+        public void setAuditor(boolean auditor) {
+            this.auditor = auditor;
+        }
 
         @Override
         public int hashCode() {
             int hash = 7;
-            hash = 89 * hash + (this.certSerialNo != null ? this.certSerialNo.hashCode() : 0);
-            hash = 89 * hash + (this.issuerDN != null ? this.issuerDN.hashCode() : 0);
+            hash = 53 * hash + (this.credential != null ? this.credential.hashCode() : 0);
+            hash = 53 * hash + (this.admin ? 1 : 0);
+            hash = 53 * hash + (this.auditor ? 1 : 0);
             return hash;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            final Entry other = (Entry) obj;
+            if (this.credential != other.credential && (this.credential == null || !this.credential.equals(other.credential))) {
+                return false;
+            }
+            if (this.admin != other.admin) {
+                return false;
+            }
+            if (this.auditor != other.auditor) {
+                return false;
+            }
+            return true;
         }
 
     }

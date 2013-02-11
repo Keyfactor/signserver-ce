@@ -829,7 +829,7 @@ public class AdminWS {
      */
     @WebMethod(operationName="queryAuditLog")
     public List<LogEntry> queryAuditLog(@WebParam(name="startIndex") int startIndex, @WebParam(name="max") int max, @WebParam(name="condition") final List<QueryCondition> conditions, @WebParam(name="ordering") final List<QueryOrdering> orderings) throws SignServerException, AdminNotAuthorizedException {
-        final AdminInfo adminInfo = requireAdminAuthorization("queryAuditLogs", String.valueOf(startIndex), String.valueOf(max));
+        final AdminInfo adminInfo = requireAuditorAuthorization("queryAuditLog", String.valueOf(startIndex), String.valueOf(max));
         
         // For now we only query one of the available audit devices
         Set<String> devices = auditor.getQuerySupportingLogDevices();
@@ -923,6 +923,31 @@ public class AdminWS {
                    cert.getIssuerDN().getName(), cert.getSerialNumber());
         }
     }
+    
+    private AdminInfo requireAuditorAuthorization(final String operation,
+            final String... args) throws AdminNotAuthorizedException {
+        LOG.debug(">requireAuditorAuthorization");
+
+        final X509Certificate[] certificates = getClientCertificates();
+        if (certificates == null || certificates.length == 0) {
+            throw new AdminNotAuthorizedException(
+                    "Auditor not authorized to resource. "
+                    + "Client certificate authentication required.");
+        } else {
+           final boolean authorized = isAuditorAuthorized(certificates[0]);
+           final X509Certificate cert = certificates[0];
+
+           log(cert, authorized, operation, args);
+
+           if (!authorized) {
+               throw new AdminNotAuthorizedException(
+                       "Auditor not authorized to resource.");
+           }
+           
+           return new AdminInfo(cert.getSubjectDN().getName(),
+                   cert.getIssuerDN().getName(), cert.getSerialNumber());
+        }
+    }
 
     private void log(final X509Certificate certificate, 
             final boolean authorized, final String operation,
@@ -973,6 +998,30 @@ public class AdminWS {
 
         if (admins == null) {
             LOG.warn("No WSADMINS global property set");
+        } else {
+            for (String entry : admins.split(";")) {
+                if (entry.trim().equalsIgnoreCase(admin)) {
+                    authorized = true;
+                    break;
+                }
+            }
+        }
+        return authorized;
+    }
+    
+    private boolean isAuditorAuthorized(final X509Certificate cert) { 
+        boolean authorized = false;
+        final String admins = global.getGlobalConfiguration().getProperty(
+                GlobalConfiguration.SCOPE_GLOBAL, "WSAUDITORS");
+        final String admin = cert.getSerialNumber().toString(16) + "," +
+                cert.getIssuerDN();
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("admin: " + admin + ", admins: " + admins);
+        }
+
+        if (admins == null) {
+            LOG.warn("No WSAUDITORS global property set");
         } else {
             for (String entry : admins.split(";")) {
                 if (entry.trim().equalsIgnoreCase(admin)) {

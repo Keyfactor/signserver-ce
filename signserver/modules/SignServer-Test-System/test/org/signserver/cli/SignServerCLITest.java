@@ -20,7 +20,6 @@ import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.bouncycastle.tsp.TimeStampResponse;
 import org.signserver.client.cli.defaultimpl.TimeStampCommand;
-import org.signserver.module.pdfsigner.PDFSigner;
 import org.signserver.testutils.CLITestHelper;
 import static org.signserver.testutils.CLITestHelper.assertNotPrinted;
 import static org.signserver.testutils.CLITestHelper.assertPrinted;
@@ -228,7 +227,7 @@ public class SignServerCLITest extends ModulesTestCase {
     }
 
     /**
-     * Test adding and removing WS admins using serial number and issuer DN directly
+     * Test adding and removing WS admins using serial number and issuer DN directly.
      * @throws Exception
      */
     public void testWSAdmins() throws Exception {
@@ -248,13 +247,11 @@ public class SignServerCLITest extends ModulesTestCase {
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,
         		cli.execute("wsadmins", "-list"));
         assertNotPrinted("", cli.getOut(), "EF34242D2324");
-        assertNotPrinted("", cli.getOut(), "CN=Test Root CA");
-     
-        
+        assertNotPrinted("", cli.getOut(), "CN=Test Root CA");   
     }
     
     /**
-     * Test adding WS admins using PEM and DER files
+     * Test adding WS admins using PEM and DER files.
      * @throws Exception
      */
     public void testWSAdminsFromFile() throws Exception {
@@ -273,6 +270,54 @@ public class SignServerCLITest extends ModulesTestCase {
         				"-cert", getSignServerHome() + "/res/test/dss10/dss10_signer2.der"));
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,
         		cli.execute("wsadmins", "-list"));
+        assertPrinted("", cli.getOut(), "53f6992d081248a");
+        assertPrinted("", cli.getOut(), "C=SE, O=SignServer, OU=Testing, CN=DSS Root CA 10");
+    }
+    
+    /**
+     * Test adding and removing WS auditors using serial number and issuer DN directly.
+     * @throws Exception
+     */
+    public void testWSAuditors() throws Exception {
+    	// Test adding wsadmin using explicit parameters
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+            cli.execute("wsauditors", "-add", "-certserialno", "EF34343D2428",
+            		"-issuerdn", "CN=Test Root CA 2"));
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS,
+        	cli.execute("wsauditors", "-list"));
+        assertPrinted("", cli.getOut(), "EF34343D2428");
+        assertPrinted("", cli.getOut(), "CN=Test Root CA 2");
+        
+        // Test removing previously added admin
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS,
+        		cli.execute("wsauditors", "-remove", "-certserialno", "EF34343D2428",
+            		"-issuerdn", "CN=Test Root CA 2"));
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS,
+        		cli.execute("wsauditors", "-list"));
+        assertNotPrinted("", cli.getOut(), "EF34343D2428");
+        assertNotPrinted("", cli.getOut(), "CN=Test Root CA 2");
+    }
+    
+    /**
+     * Test adding WS auditors using PEM and DER files.
+     * @throws Exception
+     */
+    public void testWSAuditorsFromFile() throws Exception {
+    	// Test adding wsadmin using a PEM file
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS,
+        		cli.execute("wsauditors", "-add",
+        				"-cert", getSignServerHome() + "/res/test/dss10/dss10_signer1.pem"));
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS,
+        		cli.execute("wsauditors", "-list"));
+        assertPrinted("", cli.getOut(), "1d9fa8b71c75b564");
+        assertPrinted("", cli.getOut(), "C=SE, O=SignServer, OU=Testing, CN=DSS Root CA 10");
+     
+        // Test adding wsadmin using a DER file
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS,
+        		cli.execute("wsauditors", "-add",
+        				"-cert", getSignServerHome() + "/res/test/dss10/dss10_signer2.der"));
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS,
+        		cli.execute("wsauditors", "-list"));
         assertPrinted("", cli.getOut(), "53f6992d081248a");
         assertPrinted("", cli.getOut(), "C=SE, O=SignServer, OU=Testing, CN=DSS Root CA 10");
     }

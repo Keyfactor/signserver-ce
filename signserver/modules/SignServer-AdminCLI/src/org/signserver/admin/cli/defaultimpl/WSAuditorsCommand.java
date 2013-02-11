@@ -27,11 +27,11 @@ import org.signserver.cli.spi.UnexpectedCommandFailureException;
 import org.signserver.common.GlobalConfiguration;
 
 /**
- * Command for managing the list of authorized WS admins.
+ * Command for managing the list of authorized WS auditors.
  *
  * @version $Id$
  */
-public class WSAdminsCommand extends AbstractAdminCommand {
+public class WSAuditorsCommand extends AbstractAdminCommand {
 
     public static final String ADD = "add";
     public static final String REMOVE = "remove";
@@ -44,20 +44,20 @@ public class WSAdminsCommand extends AbstractAdminCommand {
     private static final Options OPTIONS;
     
     private static final String USAGE =
-            "Usage: signserver wsadmins -add -certserialno <certificate serial number> -issuerdn <issuer DN>\n"
-    		+ "Usage: signserver wsadmins -add -cert <PEM or DER file>\n"
-            + "Usage: signserver wsadmins -remove -certserialno <certificate serial number> -issuerdn <issuer DN>\n"
-            + "Usage: signserver wsadmins -list\n"
-            + "Example 1: signserver wsadmins -add -certserialno 0123ABCDEF -issuerdn \"CN=Neo Morpheus, C=SE\"\n"
-            + "Example 2: signserver wsadmins -add -cert wsadmin.pem\n"
-            + "Example 3: signserver wsadmins -remove -certserialno 0123ABCDEF -issuerdn \"CN=Neo Morpheus, C=SE\"\n"
-            + "Example 4: signserver wsadmins -list";
+            "Usage: signserver wsauditors -add -certserialno <certificate serial number> -issuerdn <issuer DN>\n"
+    		+ "Usage: signserver wsauditors -add -cert <PEM or DER file>\n"
+            + "Usage: signserver wsauditors -remove -certserialno <certificate serial number> -issuerdn <issuer DN>\n"
+            + "Usage: signserver wsauditors -list\n"
+            + "Example 1: signserver wsauditors -add -certserialno 0123ABCDEF -issuerdn \"CN=Neo Morpheus, C=SE\"\n"
+            + "Example 2: signserver wsauditors -add -cert wsauditor.pem\n"
+            + "Example 3: signserver wsauditors -remove -certserialno 0123ABCDEF -issuerdn \"CN=Neo Morpheus, C=SE\"\n"
+            + "Example 4: signserver wsauditors -list";
 
     static {
         OPTIONS = new Options();
-        OPTIONS.addOption(ADD, false, "Add a new WS admin");
-        OPTIONS.addOption(REMOVE, false, "Remove a WS admin");
-        OPTIONS.addOption(LIST, false, "List all WS admins");
+        OPTIONS.addOption(ADD, false, "Add a new WS auditor");
+        OPTIONS.addOption(REMOVE, false, "Remove a WS auditor");
+        OPTIONS.addOption(LIST, false, "List all WS auditors");
 
         OPTIONS.addOption(CERTSERIALNO, true,
                 "Subject certificate serial number");
@@ -73,7 +73,7 @@ public class WSAdminsCommand extends AbstractAdminCommand {
 
     @Override
     public String getDescription() {
-        return "Manages authorizations for WS administrators";
+        return "Manages authorizations for WS auditors";
     }
 
     @Override
@@ -133,12 +133,12 @@ public class WSAdminsCommand extends AbstractAdminCommand {
         
         try {
             final String admins = getGlobalConfigurationSession().getGlobalConfiguration().getProperty(
-                    GlobalConfiguration.SCOPE_GLOBAL, "WSADMINS");
+                    GlobalConfiguration.SCOPE_GLOBAL, "WSAUDITORS");
             final List<Entry> entries = parseAdmins(admins);
 
             if (LIST.equals(operation)) {
                 final StringBuilder buff = new StringBuilder();
-                buff.append("Authorized administrators:");
+                buff.append("Authorized auditors:");
                 buff.append("\n");
                 for (Entry entry : entries) {
                     buff.append(String.format("%-20s %s",
@@ -170,17 +170,17 @@ public class WSAdminsCommand extends AbstractAdminCommand {
             		entries.add(new Entry(sn, buf.toString()));
             	}
                 getGlobalConfigurationSession().setProperty(
-                        GlobalConfiguration.SCOPE_GLOBAL, "WSADMINS",
+                        GlobalConfiguration.SCOPE_GLOBAL, "WSAUDITORS",
                         serializeAdmins(entries));
-                getOutputStream().println("Administrator added");
+                getOutputStream().println("Auditor added");
             } else if (REMOVE.equals(operation)) {
                 if (entries.remove(new Entry(certSerialNo, issuerDN))) {
                     getGlobalConfigurationSession().setProperty(
-                            GlobalConfiguration.SCOPE_GLOBAL, "WSADMINS",
+                            GlobalConfiguration.SCOPE_GLOBAL, "WSAUDITORS",
                             serializeAdmins(entries));
-                    getOutputStream().println("Administrator removed");
+                    getOutputStream().println("Auditor removed");
                 } else {
-                    getErrorStream().println("No such administrator");
+                    getErrorStream().println("No such auditor");
                 }
             }
             return 0;

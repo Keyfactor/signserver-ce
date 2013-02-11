@@ -1181,6 +1181,30 @@ certificate serialnumber and issuer DN.
                         <p>
 Removes an administrator from the list of authorized administrators.
                         </p>
+                        
+                        <p><b>Auditors Related</b></p>
+                        <p>
+<b>wsauditors -list:</b>
+                        </p>
+                        <p>
+Lists auditor certificates (certificate serial number and issuer DN) for
+administrators authorized to use the Admin Web Service interface to query the
+audit log of SignServer.
+                        </p>
+                        <p>
+<b>wsauditors -add:</b>
+                        </p>
+                        <p>
+Authorizes an auditor to use the Admin Web Service interface by
+certificate serialnumber and issuer DN.
+                        </p>
+                        <p>
+<b>wsauditors -remove:</b>
+                        </p>
+                        <p>
+Removes an auditor from the list of authorized administrators.
+                        </p>
+                        
                         <p>
 <b>auditlog -query:</b>
                         </p>
@@ -1533,8 +1557,8 @@ remove or edit properties.
 
                     <subsubsection name="Administrators dialog">
                         <p>
-Lists all the authorized WS administrators and gives the ability to add,
-remove or edit authorized administrators.
+Lists all the authorized WS administrators and auditors and gives the ability to add,
+remove or edit them.
                         </p>
                     </subsubsection>
 

@@ -1187,6 +1187,23 @@ Removes an administrator from the list of authorized administrators.
                         <p>
 Query the CESeCore audit log.
                         </p>
+                        <p>
+Usage:
+signserver auditlog -query -limit &lt;number&gt; [-criteria  "&lt;field&gt; &lt;op&gt; &lt;value&gt;" [-criteria...]] [-from &lt;index&gt;] [-header]
+                        </p>
+                        <p>
+&lt;field&gt; is a field name from the audit log: additionalDetails, authToken, customId, eventStatus, eventType, module, nodeId,
+searchDetail1, searchDetail2, sequenceNumber, service, timeStamp.
+                        </p>
+                        <p>
+&lt;op&gt; is a relational operator: GT, GE, LT, LE, EQ, NEQ, LIKE, NULL, NOTNULL
+                        </p>
+                        <p>
+If databaseprotection.enableverify is enabled at the server side the signature 
+of each row displayed are verified. If the verification fails for any of the 
+rows in a page, an error message is displayed. The error message contains 
+information about the first row that failed.
+                        </p>
                     </subsubsection>
                 </subsection>
                 

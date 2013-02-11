@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.admin.cli.defaultimpl.auditlog;
 
+import java.text.ParseException;
 import org.cesecore.audit.impl.integrityprotected.AuditRecordData;
 import org.cesecore.util.query.elems.RelationalOperator;
 import org.cesecore.util.query.elems.Term;
@@ -105,7 +106,7 @@ public class QueryAuditLogTest extends TestCase {
      * @throws Exception
      */
     public void test06ParseCriteriaInvalidValue() throws Exception {
-        final String criteria = "timeStamp EQ foo";
+        final String criteria = "sequenceNumber EQ foo";
         
         try {
             final Term term = QueryAuditLogCommand.parseCriteria(criteria);
@@ -141,6 +142,44 @@ public class QueryAuditLogTest extends TestCase {
             final Term term = QueryAuditLogCommand.parseCriteria(criteria);
             fail("Should throw an IllegalArgumentException");
         } catch (IllegalArgumentException e) {
+            // expected
+        } catch (Exception e) {
+            fail("Unexpected exception: " + e.getClass().getName());
+        }
+    }
+    
+    /**
+     * Test that parsing a criteria with a millisecond time stamp works.
+     * @throws Exception
+     */
+    public void test09DateMilliseconds() throws Exception {
+        final String criteria = "timeStamp EQ 1234567890";
+        final Term term = QueryAuditLogCommand.parseCriteria(criteria);
+        
+        assertEquals("Operation", RelationalOperator.EQ, term.getOperator());
+        assertEquals("Name", AuditRecordData.FIELD_TIMESTAMP, term.getName());
+        assertEquals("Value", Long.valueOf(1234567890), term.getValue());
+    }
+    
+    /**
+     * Test that parsing a date criteria using an ISO format date works.
+     * @throws Exception
+     */
+    public void test10DateISO() throws Exception {
+        final String criteria = "timeStamp EQ 2013-02-11 14:00:00+0100";
+        final Term term = QueryAuditLogCommand.parseCriteria(criteria);
+        
+        assertEquals("Operation", RelationalOperator.EQ, term.getOperator());
+        assertEquals("Name", AuditRecordData.FIELD_TIMESTAMP, term.getName());
+        assertEquals("Value", Long.valueOf(1360587600000L), term.getValue()); 
+    }
+    
+    public void test11DateInvalid() throws Exception {
+        final String criteria = "timeStamp EQ foobar";
+        
+        try {
+            final Term term = QueryAuditLogCommand.parseCriteria(criteria);
+        } catch (ParseException e) {
             // expected
         } catch (Exception e) {
             fail("Unexpected exception: " + e.getClass().getName());

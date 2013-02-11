@@ -27,6 +27,7 @@ import org.apache.commons.cli.ParseException;
 import org.cesecore.audit.AuditLogEntry;
 import org.cesecore.audit.impl.integrityprotected.AuditRecordData;
 import org.cesecore.dbprotection.DatabaseProtectionError;
+import org.cesecore.util.ValidityDate;
 import org.cesecore.util.query.Criteria;
 import org.cesecore.util.query.Elem;
 import org.cesecore.util.query.QueryCriteria;
@@ -59,6 +60,7 @@ public class QueryAuditLogCommand extends AbstractCommand {
     /** The command line options */
     private static final Options OPTIONS;
     private static final Set<String> intFields;
+    private static final Set<String> dateFields;
     private static final Set<RelationalOperator> noArgOps;
     private static final Set<String> allowedFields;
 
@@ -87,8 +89,10 @@ public class QueryAuditLogCommand extends AbstractCommand {
         OPTIONS.addOption(HEADER, false, "Print a column header");
         
         intFields = new HashSet<String>();
-        intFields.add(AuditRecordData.FIELD_TIMESTAMP);
         intFields.add(AuditRecordData.FIELD_SEQUENCENUMBER);
+        
+        dateFields = new HashSet<String>();
+        dateFields.add(AuditRecordData.FIELD_TIMESTAMP);
         
         noArgOps = new HashSet<RelationalOperator>();
         noArgOps.add(RelationalOperator.NULL);
@@ -235,6 +239,8 @@ public class QueryAuditLogCommand extends AbstractCommand {
                 } catch (IllegalArgumentException e) {
                     throw new ParseException("Invalid critera specified: " + e.getMessage() + ": " + 
                             criteria);
+                } catch (java.text.ParseException e) {
+                    throw new ParseException("Invalid date specified: " + criteria);
                 }
             }
         
@@ -243,7 +249,7 @@ public class QueryAuditLogCommand extends AbstractCommand {
         }
     }
 
-    static protected Term parseCriteria(final String criteria) throws IllegalArgumentException, NumberFormatException {
+    static protected Term parseCriteria(final String criteria) throws IllegalArgumentException, NumberFormatException, java.text.ParseException {
     	// find an operator
         final String[] parts = criteria.split(" ", 3);
     	
@@ -265,13 +271,19 @@ public class QueryAuditLogCommand extends AbstractCommand {
     	if (!noArgOps.contains(op)) {
     	    if (intFields.contains(parts[0])) {
     	        value = Long.parseLong(parts[2]);
+    	    } else if (dateFields.contains(parts[0])) {
+    	        try {
+    	            value = Long.parseLong(parts[2]);
+    	        } catch (NumberFormatException e) {
+    	            value = ValidityDate.parseAsIso8601(parts[2]).getTime();
+    	        }
     	    } else {
     	        if (parts.length < 3) {
     	            throw new IllegalArgumentException("Missing value");
     	        }
     	        value = parts[2];
     	    }
-    	}
+        }
    	
     	return new Term(op, field, value);
     }

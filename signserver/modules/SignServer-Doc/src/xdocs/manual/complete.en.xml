@@ -1192,6 +1192,9 @@ Usage:
 signserver auditlog -query -limit &lt;number&gt; [-criteria  "&lt;field&gt; &lt;op&gt; &lt;value&gt;" [-criteria...]] [-from &lt;index&gt;] [-header]
                         </p>
                         <p>
+-limit sets the maximum number of rows matched, this option is required to avoid putting too much load on the server.
+                        </p>
+                        <p>
 &lt;field&gt; is a field name from the audit log: additionalDetails, authToken, customId, eventStatus, eventType, module, nodeId,
 searchDetail1, searchDetail2, sequenceNumber, service, timeStamp.
                         </p>
@@ -1201,7 +1204,7 @@ searchDetail1, searchDetail2, sequenceNumber, service, timeStamp.
                         <p>
 If databaseprotection.enableverify is enabled at the server side the signature 
 of each row displayed are verified. If the verification fails for any of the 
-rows in a page, an error message is displayed. The error message contains 
+rows matching the search criteria, an error message is displayed. The error message contains 
 information about the first row that failed.
                         </p>
                     </subsubsection>

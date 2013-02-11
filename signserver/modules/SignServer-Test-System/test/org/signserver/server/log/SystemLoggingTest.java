@@ -701,6 +701,10 @@ public class SystemLoggingTest extends ModulesTestCase {
         assertTrue("Contains client ip", line.contains("CLIENT_IP:"));
     }
     
+    /**
+     * Test logging with excluded fields.
+     * @throws Exception
+     */
     public void test02WorkerProcessExcludeFields() throws Exception {
         setLoggingFields(null, "CLIENT_IP, LOG_ID");
         
@@ -716,6 +720,10 @@ public class SystemLoggingTest extends ModulesTestCase {
         assertFalse("Shouldn't contain excluded field", line.contains("LOG_ID:"));
     }
     
+    /**
+     * Test logging with included fields.
+     * @throws Exception
+     */
     public void test03WorkerProcessIncludeFields() throws Exception {
         setLoggingFields("CLIENT_IP, LOG_ID", null);
         
@@ -730,6 +738,24 @@ public class SystemLoggingTest extends ModulesTestCase {
         assertTrue("Should contain included field", line.contains("CLIENT_IP:"));
         assertTrue("Should contain included field", line.contains("LOG_ID:"));
         assertFalse("Shouldn't contain non-included field", line.contains("FILENAME:"));
+    }
+    
+    /**
+     * Test that setting both include and exclude fails.
+     * @throws Exception
+     */
+    public void test04WorkerProcessIncludeExcludeFields() throws Exception {
+        setLoggingFields("CLIENT_IP", "LOG_ID");
+        
+        try {
+            GenericSignRequest request = new GenericSignRequest(123, "<test/>".getBytes("UTF-8"));
+            workerSession.process(signerId, request, new RequestContext());
+        } catch (Exception e) {
+            // expected
+            return;
+        }
+        
+        fail("Should fail with inproperly configured logger");
     }
     
     public void test99TearDownDatabase() throws Exception {

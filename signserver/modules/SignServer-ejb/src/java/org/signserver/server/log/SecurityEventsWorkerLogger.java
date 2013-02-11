@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.cesecore.audit.enums.EventStatus;
 import org.cesecore.audit.log.SecurityEventsLoggerSessionLocal;
 
@@ -30,6 +31,9 @@ import org.cesecore.audit.log.SecurityEventsLoggerSessionLocal;
  */
 
 public class SecurityEventsWorkerLogger implements IWorkerLogger {
+    /** Logger for this class. */
+    private Logger LOG = Logger.getLogger(SecurityEventsWorkerLogger.class);
+    
     private SecurityEventsLoggerSessionLocal logger;
     
     /** configuration keys for selecting included/excluded fields. */
@@ -39,10 +43,17 @@ public class SecurityEventsWorkerLogger implements IWorkerLogger {
     private Set<String> includedFields;
     private Set<String> excludedFields;
     
+    private boolean configError;
+    
     @Override
     public void init(Properties props) {
         final String include = props.getProperty(INCLUDE_FIELDS);
         final String exclude = props.getProperty(EXCLUDE_FIELDS);
+        
+        if (include != null && exclude != null) {
+            LOG.error("Can only set one of " + INCLUDE_FIELDS + " and " + EXCLUDE_FIELDS);
+            configError = true;
+        }
         
         if (include != null) {
             final String[] includes = include.split(",");
@@ -66,6 +77,10 @@ public class SecurityEventsWorkerLogger implements IWorkerLogger {
     @Override
     public void log(final AdminInfo adminInfo, Map<String, String> fields) throws WorkerLoggerException {
         final Map<String, Object> details = new LinkedHashMap<String, Object>();
+        
+        if (configError) {
+            throw new WorkerLoggerException("Can only set one of " + INCLUDE_FIELDS + " and " + EXCLUDE_FIELDS);
+        }
         
         // strip out the worker ID from the additionalDetails field (it's put customID)
         for (String key : fields.keySet()) {

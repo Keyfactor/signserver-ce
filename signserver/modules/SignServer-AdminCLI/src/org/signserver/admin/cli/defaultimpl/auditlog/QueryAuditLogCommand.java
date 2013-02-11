@@ -12,6 +12,9 @@
  *************************************************************************/
 package org.signserver.admin.cli.defaultimpl.auditlog;
 
+import java.sql.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -67,6 +70,8 @@ public class QueryAuditLogCommand extends AbstractCommand {
     private static final String HEADER_NAMES =  "Time, Outcome, Event, Module, Admin Subject, Admin Issuer, Admin Serial Number, Worker ID, Node, Details";
     
     private QueryCriteria qc;
+    
+    private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ");
     
     @Override
     public String getDescription() {
@@ -149,7 +154,7 @@ public class QueryAuditLogCommand extends AbstractCommand {
                 
                 // Render the result
                 final StringBuilder buff = new StringBuilder();
-                buff.append(entry.getTimeStamp()).append(", ")
+                buff.append(sdf.format(new Date(entry.getTimeStamp()))).append(", ")
                         .append(entry.getEventTypeValue()).append(", ")
                         .append(entry.getEventStatusValue()).append(", ")
                         .append(entry.getModuleTypeValue()).append(", ")

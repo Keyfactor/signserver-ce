@@ -107,7 +107,6 @@ public class QueryAuditLogCommand extends AbstractCommand {
         
     }
     
-    // TODO: Need to figure out a CLI syntax allowing an unbounded number of criterias to be specified, compare to how searching is done in the EJBCA GUI
     @Override
     public String getUsages() {
         return "Usage: signserver auditlog -query -limit <number> [-criteria  \"<field> <op> <value>\" [-criteria...]] [-from <index>] [-header]\n"
@@ -220,7 +219,6 @@ public class QueryAuditLogCommand extends AbstractCommand {
         final String[] criterias = line.getOptionValues(CRITERIA);
         
         final List<Elem> terms = new LinkedList<Elem>();
-        //terms.add(Criteria.orderDesc(AuditRecordData.FIELD_TIMESTAMP));
         
         if (criterias != null && criterias.length > 0) {
             for (final String criteria : criterias) {

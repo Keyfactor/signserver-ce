@@ -5512,6 +5512,10 @@ LOGLEVEL_DEFAULT=INFO
 Worker logger using the CESeCore security events logger.
 This logger included all fields in the additionalDetails fields in the audit log, except the worker ID, which is mapped to searchDetail2. 
                         </p>
+                        <p>
+The properties LOGINCLUDEFIELDS and LOGEXCLUDEFIELDS can be used to restrict the fields included in additionalDetails by explicitly setting a
+comma-separated list of field names. Only one of these options can be set at a time.
+                        </p>
                         <source>
 WORKERLOGGER=org.signserver.server.log.SecurityEventsWorkerLogger
                         </source>

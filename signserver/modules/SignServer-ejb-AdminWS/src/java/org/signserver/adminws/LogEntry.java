@@ -59,7 +59,9 @@ public class LogEntry {
     public static LogEntry fromAuditLogEntry(final AuditLogEntry src) {
         HashMap<String, String> additionalDetails = new HashMap<String, String>();
         for (Map.Entry<String, Object> entry : src.getMapAdditionalDetails().entrySet()) {
-            additionalDetails.put(entry.getKey(), entry.getValue().toString());
+            if (entry.getKey() != null) {
+                additionalDetails.put(entry.getKey(), entry.getValue() == null ? null : entry.getValue().toString());
+            }
         }
         return new LogEntry(src.getTimeStamp(), src.getEventTypeValue().toString(), src.getEventStatusValue(), src.getAuthToken(), src.getServiceTypeValue().toString(), src.getModuleTypeValue().toString(), src.getCustomId(), src.getSearchDetail1(), src.getSearchDetail2(), additionalDetails, src.getSequenceNumber(), src.getNodeId());
     }

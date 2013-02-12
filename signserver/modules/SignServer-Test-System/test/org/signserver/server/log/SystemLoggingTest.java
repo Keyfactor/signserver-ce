@@ -36,6 +36,7 @@ import org.signserver.common.ICertReqData;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.PKCS10CertReqInfo;
 import org.signserver.common.RequestContext;
+import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.test.utils.builders.CertBuilder;
 import org.signserver.test.utils.builders.CryptoUtils;
@@ -716,8 +717,11 @@ public class SystemLoggingTest extends ModulesTestCase {
         List<String> lines = readEntries(auditLogFile, linesBefore, 1);
         String line = lines.get(0);
         LOG.info(line);
+        // check that the excluded fields are not present
         assertFalse("Shouldn't contain excluded field", line.contains("CLIENT_IP:"));
         assertFalse("Shouldn't contain excluded field", line.contains("LOG_ID:"));
+        // ensure that some other field didn't get excluded as well...
+        assertTrue("Should contain non-excluded field", line.contains("REQUEST_LENGTH:"));
     }
     
     /**
@@ -750,7 +754,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         try {
             GenericSignRequest request = new GenericSignRequest(123, "<test/>".getBytes("UTF-8"));
             workerSession.process(signerId, request, new RequestContext());
-        } catch (Exception e) {
+        } catch (SignServerException e) {
             // expected
             return;
         }

@@ -1213,8 +1213,10 @@ Query the CESeCore audit log.
                         </p>
                         <p>
 Usage:
-signserver auditlog -query -limit &lt;number&gt; [-criteria  "&lt;field&gt; &lt;op&gt; &lt;value&gt;" [-criteria...]] [-from &lt;index&gt;] [-header]
                         </p>
+                        <source>
+signserver auditlog -query -limit &lt;number&gt; [-criteria  "&lt;field&gt; &lt;op&gt; &lt;value&gt;" [-criteria...]] [-from &lt;index&gt;] [-header]
+                        </source>
                         <p>
 -limit sets the maximum number of rows matched, this option is required to avoid putting too much load on the server.
                         </p>
@@ -1224,6 +1226,9 @@ searchDetail1, searchDetail2, sequenceNumber, service, timeStamp.
                         </p>
                         <p>
 &lt;op&gt; is a relational operator: GT, GE, LT, LE, EQ, NEQ, LIKE, NULL, NOTNULL
+                        </p>
+                        <p>
+When given the -header option, a column header is outputted before the results.
                         </p>
                         <p>
 If databaseprotection.enableverify is enabled at the server side the signature 

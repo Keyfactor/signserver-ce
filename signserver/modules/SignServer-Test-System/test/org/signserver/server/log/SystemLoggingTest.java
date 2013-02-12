@@ -721,7 +721,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         assertFalse("Shouldn't contain excluded field", line.contains("CLIENT_IP:"));
         assertFalse("Shouldn't contain excluded field", line.contains("LOG_ID:"));
         // ensure that some other field didn't get excluded as well...
-        assertTrue("Should contain non-excluded field", line.contains("REQUEST_LENGTH:"));
+        assertTrue("Should contain non-excluded field", line.contains("REQUESTID:"));
     }
     
     /**

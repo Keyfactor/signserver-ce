@@ -550,7 +550,7 @@ module.log4j.include=true
                     </subsubsection>
                     
                     <p>
-See XX for how to configure for signed audit logs.
+See <a href="complete.en.html#Signed%20log">Signed log</a> for how to configure for signed audit logs in the database.
                     </p>
                 </subsection>
 
@@ -5997,6 +5997,13 @@ databaseprotection.version.0 = 2
                         <p>
 Note: each SignServer node writing to the audit log needs to use different node IDs. By default the hostname is used. If multiple instances 
 are running from the same host set the node id manually in conf/cesecore.properties as cluster.nodeid.
+                        </p>
+                        <p>
+If enableverify is set to true, all individual log entries that are displayed 
+using CLI, GUI or over web services are verified at the server side and in case 
+of inconsistent signatures an error message is displayed. This verification will 
+not discover missing log entries. To verify the complete log for all nodes as 
+well as detect gaps in the sequence numbering, run the <a href="complete.en.html#Database%20CLI">Database CLI</a>.
                         </p>
                     </subsubsection>
                 </subsection>

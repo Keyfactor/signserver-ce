@@ -166,6 +166,7 @@ public class AdministratorsFrame extends javax.swing.JFrame {
         editIssuerDNTextField.setName("editIssuerDNTextField"); // NOI18N
 
         buttonGroup1.add(editRoleAdminRadio);
+        editRoleAdminRadio.setSelected(true);
         editRoleAdminRadio.setText(resourceMap.getString("editRoleAdminRadio.text")); // NOI18N
         editRoleAdminRadio.setName("editRoleAdminRadio"); // NOI18N
 
@@ -336,13 +337,14 @@ public class AdministratorsFrame extends javax.swing.JFrame {
             editCertSerialNoTextField.setText("");
             editCertSerialNoTextField.setEditable(true);
             editIssuerDNTextField.setText("");
-            final boolean admin = editRoleBothRadio.isSelected() || editRoleAdminRadio.isSelected();
-            final boolean auditor = editRoleBothRadio.isSelected() || editRoleAuditorRadio.isSelected();
-
+            
             final int res = JOptionPane.showConfirmDialog(this, editPanel,
                     "Add property", JOptionPane.OK_CANCEL_OPTION,
                     JOptionPane.PLAIN_MESSAGE);
             if (res == JOptionPane.OK_OPTION) {
+                final boolean admin = editRoleBothRadio.isSelected() || editRoleAdminRadio.isSelected();
+                final boolean auditor = editRoleBothRadio.isSelected() || editRoleAuditorRadio.isSelected();
+                
                 final String certSerialNo = editCertSerialNoTextField.getText();
                 final String issuerDN = editIssuerDNTextField.getText();
 

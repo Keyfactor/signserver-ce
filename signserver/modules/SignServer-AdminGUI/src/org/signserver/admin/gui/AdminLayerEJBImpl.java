@@ -978,7 +978,6 @@ public class AdminLayerEJBImpl implements AdminWS {
     public static LogEntry fromAuditLogEntry(final AuditLogEntry src) {
         final LogEntry result = new LogEntry();
 
-        
         final Map<String, Object> mapAdditionalDetails = src.getMapAdditionalDetails();
         final AdditionalDetails additionalDetails = new LogEntry.AdditionalDetails();
         if (mapAdditionalDetails != null) {

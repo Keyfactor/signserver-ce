@@ -2426,6 +2426,7 @@ private void displayLogEntryAction() {
             } catch (SignServerException_Exception ex) {
                 exception = ex;
             } catch (Exception ex) {
+                LOG.error("Reload failed", ex);
                 exception = ex;
             }
             return null;

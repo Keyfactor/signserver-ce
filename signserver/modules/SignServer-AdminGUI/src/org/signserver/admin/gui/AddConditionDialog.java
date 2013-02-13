@@ -128,6 +128,7 @@ public class AddConditionDialog extends javax.swing.JDialog {
         initComponents();
         columnCombobox.setModel(new DefaultComboBoxModel(COLUMNS));
         columnComboboxItemStateChanged(null);
+        getRootPane().setDefaultButton(jButtonOk);
     }
     
     /** This method is called from within the constructor to
@@ -246,18 +247,23 @@ public class AddConditionDialog extends javax.swing.JDialog {
 private void jButtonOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonOkActionPerformed
     column = (AuditlogColumn) columnCombobox.getSelectedItem();
     condition = (AuditlogOperator) conditionCombobox.getSelectedItem();
-    value = (String) valueCombobox.getSelectedItem();
-
-    if (AuditRecordData.FIELD_TIMESTAMP.equals(column.getName())) {
-        final Long time = getTimeValue(value);
-        if (time == null) {
-            JOptionPane.showMessageDialog(this, "Incorrect value", "Add condition", JOptionPane.ERROR_MESSAGE);
-            return;
-        } else {
-            value = String.valueOf(time);
+    
+    if (RelationalOperator.NOTNULL.equals(condition.getOperator())
+                || RelationalOperator.NULL.equals(condition.getOperator())) {
+        value = null;
+    } else {
+        value = (String) valueCombobox.getSelectedItem();
+        if (AuditRecordData.FIELD_TIMESTAMP.equals(column.getName())) {    
+            final Long time = getTimeValue(value);
+            if (time == null) {
+                JOptionPane.showMessageDialog(this, "Incorrect value", "Add condition", JOptionPane.ERROR_MESSAGE);
+                return;
+            } else {
+                value = String.valueOf(time);
+            }
         }
     }
-
+    
     okPressed = true;
     dispose();
 }//GEN-LAST:event_jButtonOkActionPerformed

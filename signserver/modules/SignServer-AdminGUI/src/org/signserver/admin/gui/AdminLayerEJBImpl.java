@@ -958,7 +958,9 @@ public class AdminLayerEJBImpl implements AdminWS {
         final LinkedList<Elem> results = new LinkedList<Elem>();
         for (QueryCondition cond : conditions) {
             final Object value;
-            if (LONG_COLUMNS.contains(cond.getColumn())) {
+            if (LONG_COLUMNS.contains(cond.getColumn()) 
+                    && !cond.getOperator().equals(org.signserver.admin.gui.adminws.gen.RelationalOperator.NULL) 
+                    && !cond.getOperator().equals(org.signserver.admin.gui.adminws.gen.RelationalOperator.NOTNULL)) {
                 value = Long.parseLong(cond.getValue());
             } else {
                 value = cond.getValue();

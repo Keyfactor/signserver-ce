@@ -39,6 +39,14 @@ lookup the validation of a given certificate.
             </section>
 
             <section name="Changes from previous versions">
+                <subsection name="Changes between version 3.3 and 3.4">
+                    <ul>
+<!-- New major features -->
+                        <li>Secure logging to database from CESeCore</li>
+                        <li>Query audit log from CLI, GUI or over web services</li>
+                        <li>See ChangeLog.txt and RELASE_NOTES.txt for details.</li>
+                    </ul>
+                </subsection>
                 <subsection name="Changes between version 3.2 and 3.3">
                     <ul>
 <!-- New major features -->
@@ -380,7 +388,7 @@ you decide to run SignServer without a database management system.
 Create a database and user for SignServer. The application server will try to
 create tables during startup of SignServer but if the database user does not
 have table create permissions or if you run on GlassFish the tables must be
-created manually. See doc/sql-scripts/create-tables-signserver33-*.sql.
+created manually. See doc/sql-scripts/create-tables-signserver34-*.sql.
                     </p>
                     <p>
 Copy the driver for your database to the application server lib folder.
@@ -480,8 +488,8 @@ client authentication.
                         <source>
 httpserver.privhttps=8181
                         </source>
-                    </subsubsection>
-
+                    </subsubsection>    
+                        
                     <subsubsection name="Database configuration">
                         <p>
 For GlassFish make sure the datasource.jndi-name and datasource.jndi-name-prefix
@@ -540,7 +548,10 @@ module.log4j.enabled=true
 module.log4j.include=true
                         </source>
                     </subsubsection>
-
+                    
+                    <p>
+See XX for how to configure for signed audit logs.
+                    </p>
                 </subsection>
 
                 <subsection name="8. Build and deploy SignServer">
@@ -5523,13 +5534,11 @@ From the Admin CLI the status repository can be controlled using the <i>getstatu
 
             <section name="Logging">
                 <p>
-SignServer uses Log4j for logging and there are a few different loggers
-available where the first two can be useful for audit logging:
+SignServer uses Log4j for debug logging and the security events logger from CESeCore 
+for system/audit logging. In addition the worker logger (transaction log) can be configured 
+to use Log4j and/or the security events logger.
                 </p>
-                <ul>
-                    <li>Worker Log (org.signserver.server.log.IWorkerLogger)</li>
-                    <li>Debug Log (any other class name)</li>
-                </ul>
+
                 <subsection name="Worker Log">
                     <p>
 The purpose of the Worker Loggers are to log each transaction handled by the
@@ -5620,8 +5629,6 @@ LOG_FILE_PATH=/path/to/logfile
                     <p>
 The purpose of the system log is to log events concerning the SignServer application but not necessarily related to any signing transaction (that is covered by the Worker Log). The audit log covers key and certificate management events, status properties updates (for instance for the status of the time source) and to some extent also configuration changes. For details see the table of events below.<br/>
 From version 3.4.0 SignServer uses the CESeCore library to perform audit logging.
-An example configuration for CESeCore is provided in <code>conf/cesecore.properties.sample</code>.
-The default logging implementation, <code>org.signserver.server.log.SignServerLog4jDevice</code> uses Log4J and a similar logging format as the old SystemLogger.
                     </p>
                     
                     <subsubsection name="Available log events">
@@ -5957,6 +5964,40 @@ REQUEST_FULLURL: http://localhost:8080/signserver/process?null; LOG_TIME: 135062
                                 </td>
                             </tr>
                         </table>
+                    </subsubsection>
+                </subsection>
+ 
+                <subsection name="CESeCore Security Events Logger">
+                    <p>
+An example configuration for CESeCore is provided in <code>conf/cesecore.properties.sample</code>.
+The default logging implementation, <code>org.signserver.server.log.SignServerLog4jDevice</code> uses Log4J and a similar logging format as the old SystemLogger.
+                    </p>
+                    <subsubsection name="Signed log">
+                        <p>
+To enable signed audit logs configure conf/databaseprotection.properties (see conf/databaseprotection.properties.sample). And set the following which enables signing of the AuditRecordData table as well as verification of the log entries queried using for instance the CLI or GUI:
+                        </p>
+                        <source>
+databaseprotection.enablesign.AuditRecordData = true
+databaseprotection.enableverify.AuditRecordData = true
+                        </source>
+                        <p>
+Configure a key-pair to use for signing and verification of the log with something similar to this:
+                        </p>
+                        <source>
+databaseprotection.keyid = 400
+databaseprotection.keyid.0 = 400
+databaseprotection.keylabel.0 = dbProtKey
+databaseprotection.classname.0 = org.cesecore.keys.token.PKCS11CryptoToken
+databaseprotection.properties.0 = sharedLibrary=/etc/utimaco/libcs2_pkcs11.so, slot=1
+databaseprotection.data.0 =
+databaseprotection.tokenpin.0 = userpin1
+databaseprotection.version.0 = 2
+                        </source>
+                        
+                        <p>
+Note: each SignServer node writing to the audit log needs to use different node IDs. By default the hostname is used. If multiple instances 
+are running from the same host set the node id manually in conf/cesecore.properties as cluster.nodeid.
+                        </p>
                     </subsubsection>
                 </subsection>
  

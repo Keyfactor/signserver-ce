@@ -44,15 +44,12 @@ import org.cesecore.util.query.clauses.Order;
 import org.cesecore.util.query.elems.RelationalOperator;
 import org.cesecore.util.query.elems.Term;
 import org.signserver.admin.gui.adminws.gen.AdminNotAuthorizedException;
-import org.signserver.admin.gui.adminws.gen
-        .AdminNotAuthorizedException_Exception;
+import org.signserver.admin.gui.adminws.gen.AdminNotAuthorizedException_Exception;
 import org.signserver.admin.gui.adminws.gen.AdminWS;
 import org.signserver.admin.gui.adminws.gen.AuthorizedClient;
 import org.signserver.admin.gui.adminws.gen.Base64SignerCertReqData;
-import org.signserver.admin.gui.adminws.gen
-        .CryptoTokenAuthenticationFailureException_Exception;
-import org.signserver.admin.gui.adminws.gen
-        .CryptoTokenOfflineException_Exception;
+import org.signserver.admin.gui.adminws.gen.CryptoTokenAuthenticationFailureException_Exception;
+import org.signserver.admin.gui.adminws.gen.CryptoTokenOfflineException_Exception;
 import org.signserver.admin.gui.adminws.gen.EventStatus;
 import org.signserver.admin.gui.adminws.gen.IllegalRequestException_Exception;
 import org.signserver.admin.gui.adminws.gen.InvalidWorkerIdException_Exception;
@@ -981,12 +978,16 @@ public class AdminLayerEJBImpl implements AdminWS {
     public static LogEntry fromAuditLogEntry(final AuditLogEntry src) {
         final LogEntry result = new LogEntry();
 
-        AdditionalDetails additionalDetails = new LogEntry.AdditionalDetails();
-        for (Map.Entry<String, Object> entry : src.getMapAdditionalDetails().entrySet()) {
-            AdditionalDetails.Entry dst = new AdditionalDetails.Entry();
-            dst.setKey(entry.getKey());
-            dst.setValue("" + entry.getValue());
-            additionalDetails.getEntry().add(dst);
+        
+        final Map<String, Object> mapAdditionalDetails = src.getMapAdditionalDetails();
+        final AdditionalDetails additionalDetails = new LogEntry.AdditionalDetails();
+        if (mapAdditionalDetails != null) {
+            for (Map.Entry<String, Object> entry : mapAdditionalDetails.entrySet()) {
+                AdditionalDetails.Entry dst = new AdditionalDetails.Entry();
+                dst.setKey(entry.getKey());
+                dst.setValue("" + entry.getValue());
+                additionalDetails.getEntry().add(dst);
+            }
         }
 
         result.setTimeStamp(src.getTimeStamp());

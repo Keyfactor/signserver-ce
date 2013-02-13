@@ -22,15 +22,33 @@ RELEASE_NOTES.txt for more information about such upgrades.
 From SignServer 3.3.x to SignServer 3.4.x
 -----------------------------------------
 
-1) Database schema change:
+1) Database schema change: table renamed:
+   A table was renamed to GlobalConfigData. For Oracle this table was previously 
+   called "GLOBALCONFIG" while for all other it was called  
+   GlobalConfigurationData.
+   
+   - "GLOBALCONFIG" was renamed to "GlobalConfigData" (Oracle only)
+   - "GlobalConfigurationData" was renamed to "GlobalConfigData" (All other)
 
-Tables renamed:
+   For Oracle:
+   RENAME GLOBALCONFIG TO GlobalConfigData;
 
+   For MySQL:
+   RENAME TABLE GlobalConfigurationData TO GlobalConfigData;
 
-TODO: Add instructions for the new tables from CESeCore!!
+   Hibernate will not rename this table but add it as a new one. For an 
+   existing installation it is instead recommended to manually rename the table 
+   (using the RENAME statements described above) to not loose the existing 
+   configuration.
 
-Table "GlobalConfigurationData" was renamed to 'GlobalConfigData'
-TODO: Add ALTER statement here
+2) Database schema change: table added:
+   - "AuditRecordData"
+
+   Hibernate will try to add this table during startup of the application 
+   server. However, if the database user used by the data store does not have 
+   enough privileges the table has to be renamed manually. See 
+   doc/sql-scripts/create-tables-signserver34-*.sql for the  definitions for 
+   your DBMS.
 
 
 From SignServer 3.2.x to SignServer 3.3.x

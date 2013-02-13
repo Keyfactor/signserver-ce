@@ -13,7 +13,7 @@ DROP TABLE "AUDITRECORDDATA";
 --
 -- Drop table `GlobalConfigurationData`
 --
-DROP TABLE "GLOBALCONFIG";
+DROP TABLE "GLOBALCONFIGDATA";
 
 
 --

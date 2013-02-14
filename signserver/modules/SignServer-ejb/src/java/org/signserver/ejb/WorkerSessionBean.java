@@ -424,9 +424,9 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             // log process status true if not already set by the worker...
             if (logVal == null) {
             	logMap.put(IWorkerLogger.LOG_PROCESS_SUCCESS, String.valueOf(true));
-            	workerLogger.log(adminInfo, logMap);
             }
-
+            workerLogger.log(adminInfo, logMap);
+            
             LOG.debug("<process");
             return res;
 

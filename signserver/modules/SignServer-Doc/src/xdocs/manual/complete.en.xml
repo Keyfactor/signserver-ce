@@ -6006,6 +6006,175 @@ not discover missing log entries. To verify the complete log for all nodes as
 well as detect gaps in the sequence numbering, run the <a href="complete.en.html#Database%20CLI">Database CLI</a>.
                         </p>
                     </subsubsection>
+                    
+                    <subsubsection name="AuditRecordData table">
+                        <p>
+The exact database table structure is described in the SQL scripts available under doc/sql-scripts/.                            
+                        </p>
+                        <table border="1">
+                            <tr>
+                                <th>Friendly Name</th>
+                                <th>Table Name</th>
+                                <th>Description</th>
+                            </tr>
+
+                            <tr>
+                                <td>Time</td>
+                                <td>timeStamp</td>
+                                <td>
+                                    <p>
+Time stamp (number of milliseconds since January 1, 1970, 00:00:00 GMT). Example:
+                                    </p>
+                                    <pre class="code">1359550503607</pre>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Outcome</td>
+                                <td>eventStatus</td>
+                                <td>
+                                    <p>Status/result of the operation performed. Can be:</p>
+                                    <ul>
+                                        <li>SUCCESS</li>
+                                        <li>FAILURE</li>
+                                        <li>VOID</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Event</td>
+                                <td>eventType</td>
+                                <td>
+                                    <p>The event. Some examples:</p>
+                                    <ul>
+                                        <li>SIGNSERVER_STARTUP</li>
+                                        <li>SET_GLOBAL_PROPERTY</li>
+                                        <li>SET_WORKER_CONFIG</li>
+                                        <li>KEYGEN</li>
+                                        <li>PROCESS</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Module</td>
+                                <td>module</td>
+                                <td>
+                                    <p>The source module of the event. Some examples:</p>
+                                    <ul>
+                                        <li>SERVICE</li>
+                                        <li>GLOBAL_CONFIG</li>
+                                        <li>WORKER_CONFIG</li>
+                                        <li>KEY_MANAGEMENT</li>
+                                        <li>WORKER</li>
+                                        <li>STATUS_REPOSITORY</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Service</td>
+                                <td>service</td>
+                                <td>
+                                    <p>The service performing the operation. Some examples:</p>
+                                    <ul>
+                                        <li>CORE</li>
+                                        <li>SIGNSERVER</li>
+                                        <li>EJBCA</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Admin Subject</td>
+                                <td>authToken</td>
+                                <td>
+                                    <p>Information about which administrator performed the operation.</p>
+                                    <p>
+Subject DN from the administrator's certificate if the operation was performed 
+over web services, "CLI User" if the EJB remote interface was used, the name 
+of the service if it was an internal operation or "Client User" if the request 
+came from a client.
+                                    </p>
+                                    <p>Some examples:</p>
+                                    <pre class="code">C=SE, O=My Organization, CN=Admin 1</pre>
+                                    <pre class="code">CLI User</pre>
+                                    <pre class="code">StartServicesServlet.init</pre>
+                                    <pre class="code">Client User</pre>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Admin Serial Number</td>
+                                <td>searchDetail1</td>
+                                <td>
+                                    <p>Information about which administrator performed the operation.</p>
+                                    <p>Certificate serial number for the administrator performing the operation (if available). Example:</p>
+                                    <pre class="code">4a3442e98e3ce428</pre>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Admin Issuer</td>
+                                <td>customId</td>
+                                <td>
+                                    <p>Information about which administrator performed the operation.</p>
+                                    <p>
+Issuer DN from the administrator's certificate (if available). Example:
+                                    </p>
+                                    <pre class="code">C=SE, O=My Organization, CN=AdminCA1</pre>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Worker ID</td>
+                                <td>searchDetail2</td>
+                                <td>
+                                    <p>ID of worker involved in the operation (if any). Example:</p>
+                                    <pre class="code">71</pre>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Node</td>
+                                <td>nodeId</td>
+                                <td>
+                                    <p>ID of the node (typically the hostname if not explicitly specified). Example:</p>
+                                    <pre class="code">dsstsa1.example.com</pre>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Details</td>
+                                <td>additionalDetails</td>
+                                <td>
+                                    <p>Additional key-value pairs with information about the operation encoded with Java XML serialization. Example:</p>
+                                    <pre class="code">
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;java version="1.6.0_24" class="java.beans.XMLDecoder"&gt;
+ &lt;object class="org.cesecore.util.Base64PutHashMap"&gt;
+  &lt;void method="put"&gt;
+   &lt;string&gt;GLOBALCONFIG_PROPERTY&lt;/string&gt;
+   &lt;string&gt;GLOB.WORKER1.CLASSPATH&lt;/string&gt;
+  &lt;/void&gt;
+  &lt;void method="put"&gt;
+   &lt;string&gt;GLOBALCONFIG_VALUE&lt;/string&gt;
+   &lt;string&gt;org.signserver.module.xmlsigner.XMLSigner&lt;/string&gt;
+  &lt;/void&gt;
+ &lt;/object&gt;
+&lt;/java&gt;
+                                    </pre>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Sequence Number</td>
+                                <td>sequenceNumber</td>
+                                <td>
+                                    <p>Sequence number of the log entry. Should be unique and sequential per node.</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Row Protection</td>
+                                <td>rowProtection</td>
+                                <td>
+                                    <p>Contains information about wich key-pair and signature algorithm that has been used and the actual signature value (if the row is signed). Example:</p>
+                                    <pre class="code">1:2:400:079b6c2d89671702077b1802ff221cd7c6d71804ea3771b7d5f7cd1...</pre>
+                                </td>
+                            </tr>
+                        </table>
+                        
+                    </subsubsection>
                 </subsection>
  
                 <subsection name="Debug Log">

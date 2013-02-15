@@ -762,6 +762,27 @@ public class SystemLoggingTest extends ModulesTestCase {
         fail("Should fail with inproperly configured logger");
     }
     
+    /**
+     * Test that the SecurityEventsWorkerLogger is properly audit-logging process requests with failed status.
+     * @throws Exception
+     */
+    public void test05WorkerProcessNonSucess() throws Exception {
+        int linesBefore = readEntriesCount(auditLogFile);
+        
+        GenericSignRequest request = new GenericSignRequest(123, "bogus".getBytes("UTF-8"));
+        workerSession.process(signerId, request, new RequestContext());
+        
+        List<String> lines = readEntries(auditLogFile, linesBefore, 1);
+        String line = lines.get(0);
+        LOG.info(line);
+        assertTrue("Contains event", line.contains("EVENT: PROCESS"));
+        assertTrue("Contains module", line.contains("MODULE: WORKER"));
+        assertTrue("Contains success", line.contains("PROCESS_SUCCESS: false"));
+        assertTrue("Contains worker id", line.contains("WORKER_ID: " + signerId));
+        assertTrue("Contains log id", line.contains("LOG_ID:"));
+        assertTrue("Contains client ip", line.contains("CLIENT_IP:"));
+    }
+    
     public void test99TearDownDatabase() throws Exception {
         removeWorker(signerId);
     }

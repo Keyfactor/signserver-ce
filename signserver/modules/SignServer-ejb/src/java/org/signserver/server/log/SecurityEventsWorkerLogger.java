@@ -91,8 +91,11 @@ public class SecurityEventsWorkerLogger implements IWorkerLogger {
             }
         }
         final String serNo = adminInfo.getCertSerialNumber() != null ? adminInfo.getCertSerialNumber().toString(16) : null;
-        logger.log(SignServerEventTypes.PROCESS, EventStatus.SUCCESS, SignServerModuleTypes.WORKER, SignServerServiceTypes.SIGNSERVER,
-                adminInfo.getSubjectDN(), adminInfo.getIssuerDN(), serNo, fields.get(IWorkerLogger.LOG_WORKER_ID), details);
+        final String sucess = fields.get(IWorkerLogger.LOG_PROCESS_SUCCESS);
+        logger.log(SignServerEventTypes.PROCESS,
+                Boolean.toString(true).equals(sucess) ? EventStatus.SUCCESS : EventStatus.FAILURE,
+                SignServerModuleTypes.WORKER, SignServerServiceTypes.SIGNSERVER, adminInfo.getSubjectDN(),
+                adminInfo.getIssuerDN(), serNo, fields.get(IWorkerLogger.LOG_WORKER_ID), details);
     }
 
     @Override

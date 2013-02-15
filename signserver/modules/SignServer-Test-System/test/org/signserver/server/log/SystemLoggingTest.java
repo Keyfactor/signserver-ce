@@ -771,9 +771,13 @@ public class SystemLoggingTest extends ModulesTestCase {
         setLoggingFields(null, null);
         int linesBefore = readEntriesCount(auditLogFile);
         
-        GenericSignRequest request = new GenericSignRequest(123, "bogus".getBytes("UTF-8"));
-        workerSession.process(signerId, request, new RequestContext());
-        
+        try {
+            GenericSignRequest request = new GenericSignRequest(123, "bogus".getBytes("UTF-8"));
+            workerSession.process(signerId, request, new RequestContext());
+        } catch (IllegalRequestException e) {
+            // expected
+        }
+
         List<String> lines = readEntries(auditLogFile, linesBefore, 1);
         String line = lines.get(0);
         LOG.info(line);

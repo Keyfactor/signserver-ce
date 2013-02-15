@@ -767,6 +767,8 @@ public class SystemLoggingTest extends ModulesTestCase {
      * @throws Exception
      */
     public void test05WorkerProcessNonSucess() throws Exception {
+        // reset logging fields (all fields being logged)
+        setLoggingFields(null, null);
         int linesBefore = readEntriesCount(auditLogFile);
         
         GenericSignRequest request = new GenericSignRequest(123, "bogus".getBytes("UTF-8"));

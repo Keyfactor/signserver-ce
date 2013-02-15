@@ -38,7 +38,7 @@ databaseprotection.version.0 = 2
 #databaseprotection.keyid.1 = 401
 #databaseprotection.keylabel.1 = dbProtKey
 #databaseprotection.classname.1 = org.cesecore.keys.token.PKCS11CryptoToken
-#databaseprotection.properties.1 = sharedLibrary=/etc/utimaco/libcs2_pkcs11.so, slot=1
+#databaseprotection.properties.1 = sharedLibrary=/opt/utimaco/Software/PKCS11/lib/Linux-x86-64/libcs2_pkcs11.so, slot=1
 #databaseprotection.data.1 = 
 #databaseprotection.tokenpin.1 = userpin1
 #databaseprotection.version.1 = 2

@@ -46,7 +46,7 @@ From SignServer 3.3.x to SignServer 3.4.x
 
    Hibernate will try to add this table during startup of the application 
    server. However, if the database user used by the data store does not have 
-   enough privileges the table has to be renamed manually. See 
+   enough privileges the table has to be created manually. See 
    doc/sql-scripts/create-tables-signserver34-*.sql for the  definitions for 
    your DBMS.
 

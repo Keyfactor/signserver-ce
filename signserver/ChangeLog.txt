@@ -1,4 +1,30 @@
-SignServer 3.3.0, 2013-01-xx
+SignServer 3.4.0, 2013-03-yy
+----------------------------
+
+** Bug
+    * [DSS-601] - DB CLI verify reports error if multiple nodes are logging
+    * [DSS-604] - Wrong mapping for GroupKeyDataBean for PostgreSQL
+    * [DSS-608] - PublicCryptoToken missing in cesecore_client.jar
+
+** Improvement
+    * [DSS-585] - Replace usage of SystemLogger with the CESeCore Security event logger
+    * [DSS-590] - Audit log which administrator performed the operations
+    * [DSS-600] - Update manual for CESeCore
+
+** New Feature
+    * [DSS-575] - Secure logging from CESeCore
+    * [DSS-584] - Integration of CESeCore in the build script
+    * [DSS-586] - Worker logger using logger from CESeCore
+    * [DSS-593] - Support for querying audit log from CLI
+    * [DSS-594] - Support for querying audit log in Admin WS
+    * [DSS-595] - Support for querying audit log in Admin GUI
+    * [DSS-596] - Access group for auditors
+    * [DSS-598] - Database CLI for verifying the audit log
+    * [DSS-602] - Configurable which fields to log using SecurityEventsWorkerLogger
+    * [DSS-603] - Configurable which StatusRepository updates to log
+
+
+SignServer 3.3.0, 2013-02-xx
 ----------------------------
 
 ** Bug

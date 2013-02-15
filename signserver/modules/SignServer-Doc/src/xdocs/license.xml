@@ -436,7 +436,7 @@ END OF TERMS AND CONDITIONS
 <section name="Third party library licenses">
     <subsection name="EJBCA">
         <pre>
-EJBCA is released under the LGPL license (see LICENSE-LGPL or
+EJBCA is released under the LGPL license (see doc/lgpl-2.1.txt or
 http://www.opensource.org/licenses/lgpl-license.html).
 
 EJBCA is released under version 2.1 of the LGPL. EJBCA is committed to stay with
@@ -475,6 +475,13 @@ Using the plug-in APIs it is possible to add functionality to EJBCA that does no
 Implementing the plug-in API usually means implementing an interface in EJBCA and entering the
 classpath in a configuration page (for example custom publishers).
 A custom publisher would not have to be released as LGPL.            
+        </pre>
+    </subsection>
+    
+    <subsection name="CESeCore">
+        <pre>
+CESeCore is released under the LGPL license (see doc/lgpl-2.1.txt or
+http://www.opensource.org/licenses/lgpl-license.html).
         </pre>
     </subsection>
     

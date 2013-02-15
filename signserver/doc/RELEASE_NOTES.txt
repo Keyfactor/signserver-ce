@@ -1,10 +1,19 @@
 SignServer 3.4.0
-
 ----------------
+This is a major release - in total 16 features, options, bugs and stabilizations have been fixed or added. The most noteworthy changes can be seen below.
+
+Major changes:
+ - Secure logging to database using CESeCore.
+ - Support for querying audit log from CLI, GUI and web services.
+ - Configurable which Status Repository updates to log.
+
+Bug fixes:
+    * Fixed entity mappings for PostgreSQL.
 
 Notice:
  - Database changes were introduced. See UPGRADE.txt for details.
  - The category for the system logger has changed from org.signserver.server.log.ISystemLogger to org.signserver.server.log.SignServerLog4jDevice.
+
 
 SignServer 3.3.0
 ----------------

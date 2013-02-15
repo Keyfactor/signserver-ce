@@ -86,6 +86,9 @@ public class StatusRepositorySessionBeanTest extends TestCase {
         assertNull("Property 1 null", entry3.getValue());
         final StatusEntry entry4 = repository.getValidEntry(StatusName.TEST_PROPERTY2.name());
         assertNull("Property 2 null", entry4.getValue());
+        
+        // Setting the values to null again should not give a problem
+        repository.update(StatusName.TEST_PROPERTY1.name(), null);
     }
 
     /**

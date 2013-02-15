@@ -108,30 +108,70 @@ public class StatusRepositorySessionBean implements
      * After the expiration the get method will return null.
      *
      * @param key The key to set the value for
-     * @param value The value to set
+     * @param newValue The value to set
      */
     @Override
-    public void update(final String key, final String value,
+    public void update(final String key, final String newValue,
             final long expiration) throws NoSuchPropertyException {
         try {
             final long currentTime = System.currentTimeMillis();
             final StatusName name = StatusName.valueOf(key);
-            final StatusEntry entry;
+            final StatusEntry oldEntry;
             
             synchronized (repository) { // Synchronization only for writes so we can detect changes
                 // Get the old value
-                entry = repository.get(name);
+                oldEntry = repository.get(name);
                 // Set the new value
-                repository.set(name, new StatusEntry(currentTime, value, expiration));
+                repository.set(name, new StatusEntry(currentTime, newValue, expiration));
             }
             
-            if (logUpdates == LogUpdates.ALL 
-                    || (logUpdates == LogUpdates.CHANGES && (entry == null || !entry.getValue().equals(value)))) {
-                auditLog(key, value, expiration);
+            if (shouldLog(logUpdates, oldEntry, newValue)) {
+                auditLog(key, newValue, expiration);
             }
         } catch (IllegalArgumentException ex) {
             throw new NoSuchPropertyException(key);
         }
+    }
+    
+    /**
+     * @return if the change should be logged or not
+     */
+    private static boolean shouldLog(final LogUpdates logUpdates, final StatusEntry oldEntry, final String newValue) {
+        final boolean result;
+        switch (logUpdates) {
+            // Log all
+            case ALL: {
+                result = true;
+            } break;
+                
+            // Only log changes
+            case CHANGES: {
+                if (oldEntry == null) {
+                   // Log change (new entry)
+                    result = true;
+                } else if (oldEntry.getValue() == null) {
+                    if (newValue == null) {
+                        // No change as both are null
+                        result = false;
+                    } else {
+                        // Log change as new value is not null
+                        result = true;
+                    }
+                } else if (!oldEntry.getValue().equals(newValue)) {
+                    // Log change of existing entry
+                    result = true;
+                } else {
+                    // No change
+                    result = false;
+                }
+            } break;
+                
+            // No log as LogUpdates.NONE
+            default: {
+                result = false;
+            }
+        }
+        return result;
     }
 
     /**

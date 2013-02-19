@@ -92,6 +92,7 @@ public class SecondStatisticsCollectorTest extends TestCase {
     public void testFifoQueue() throws Exception {
         // start the mock timer at the current system time
         final long baseTime = System.currentTimeMillis();
+        LOG.info("baseTime: " + baseTime);
         SecondStatisticsCollectorMock mc = genSecondStatisticsCollector(baseTime, "3");
         
         long time = baseTime;

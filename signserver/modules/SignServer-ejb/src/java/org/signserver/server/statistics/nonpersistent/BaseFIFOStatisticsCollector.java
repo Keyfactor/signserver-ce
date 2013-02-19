@@ -35,7 +35,6 @@ import org.signserver.server.statistics.StatisticsEntry;
  * @version $Id$
  */
 public abstract class BaseFIFOStatisticsCollector implements IStatisticsCollector {
-
     protected int workerId = 0;
     protected WorkerConfig config;
     protected EntityManager em;
@@ -60,16 +59,16 @@ public abstract class BaseFIFOStatisticsCollector implements IStatisticsCollecto
         Date endPeriod = genCurrentEndPeriod();
         Date startPeriod = genCurrentStartPeriod();
         if (currentStatisticsEntry != null) {
-            if (endPeriod == null || getCurrentTime() > currentStatisticsEntry.getPeriodEnd().getTime()) {
+            if (endPeriod == null || System.currentTimeMillis() > currentStatisticsEntry.getPeriodEnd().getTime()) {
                 currentStatisticsEntry = null;
             }
         }
 
         if (currentStatisticsEntry == null) {
             if (endPeriod == null || startPeriod == null) {
-                currentStatisticsEntry = createStatisticsEntry(new Date(), new Date(), new Date(getExpireTime() + getCurrentTime()));
+                currentStatisticsEntry = new StatisticsEntry(new Date(), new Date(), new Date(getExpireTime() + System.currentTimeMillis()));
             } else {
-                currentStatisticsEntry = createStatisticsEntry(startPeriod, endPeriod, new Date(getExpireTime() + getCurrentTime()));
+                currentStatisticsEntry = new StatisticsEntry(startPeriod, endPeriod, new Date(getExpireTime() + System.currentTimeMillis()));
             }
             fIFOQueue.add(currentStatisticsEntry);
         }
@@ -130,6 +129,7 @@ public abstract class BaseFIFOStatisticsCollector implements IStatisticsCollecto
      */
     protected List<StatisticsEntry> fetchStatistics(Date startTime, Date endTime) {
         List<StatisticsEntry> retval = new ArrayList<StatisticsEntry>();
+        
         // First pop old statistics entries
         while (fIFOQueue.poll() != null);
 
@@ -142,24 +142,5 @@ public abstract class BaseFIFOStatisticsCollector implements IStatisticsCollecto
             }
         }
         return retval;
-    }
-    
-    /**
-     * Helper method to extract current system time, needed to be able to mock tests.
-     * @return
-     */
-    protected long getCurrentTime() {
-        return System.currentTimeMillis();
-    }
-    
-    /**
-     * Helper method to generate a statistics entry, needed to be able to mock tests.
-     * @param periodStart
-     * @param periodEnd
-     * @param expireDate
-     * @return
-     */
-    protected StatisticsEntry createStatisticsEntry(final Date periodStart, final Date periodEnd, final Date expireDate) {
-        return new StatisticsEntry(periodStart, periodEnd, expireDate);
     }
 }

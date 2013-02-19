@@ -106,12 +106,4 @@ public class Event {
     public Map<String, Integer> getCustomData() {
         return customData;
     }
-    
-    protected void setStartTimeStamp(final Date startTimeStamp) {
-        this.startTimeStamp = startTimeStamp;
-    }
-    
-    protected void setEndTimeStamp(final Date endTimeStamp) {
-        this.endTimeStamp = endTimeStamp;
-    }
 }

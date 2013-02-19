@@ -44,8 +44,9 @@ import org.apache.log4j.Logger;
  * by the public part of an asymmetric key.
  * 
  * TODO: Note: This file has been copied from CESeCore because of DSS-608/CESECORE-356 and a dependency from this project to the CESeCore library has been added. When this has been fixed this file and the dependency can be removed.
+ * Version in CESeCore was: PublicCryptoToken.java 1487 2013-01-21 13:36:11Z tomas
  * 
- * @version $Id: PublicCryptoToken.java 1487 2013-01-21 13:36:11Z tomas $
+ * @version $Id$
  */
 public class PublicCryptoToken implements CryptoToken {
 

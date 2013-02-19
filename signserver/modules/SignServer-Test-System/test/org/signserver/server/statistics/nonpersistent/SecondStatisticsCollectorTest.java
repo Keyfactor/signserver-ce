@@ -42,7 +42,7 @@ public class SecondStatisticsCollectorTest extends TestCase {
     public void testBasics() throws Exception {
         final long baseTime = System.currentTimeMillis();
         final Calendar currentTime = Calendar.getInstance();
-        currentTime.setTimeInMillis(System.currentTimeMillis());
+        currentTime.setTimeInMillis(baseTime);
         
         SecondStatisticsCollectorMock mc = genSecondStatisticsCollector(baseTime, null);
 

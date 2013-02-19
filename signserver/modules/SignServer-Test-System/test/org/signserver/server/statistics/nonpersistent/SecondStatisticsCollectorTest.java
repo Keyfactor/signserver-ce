@@ -14,11 +14,14 @@ package org.signserver.server.statistics.nonpersistent;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
+import org.apache.log4j.Logger;
 import org.signserver.common.NonPersistentStatisticsConstants;
 import org.signserver.common.StatisticsConstants;
 import org.signserver.common.WorkerConfig;
 import org.signserver.server.statistics.Event;
+import org.signserver.server.statistics.StatisticsEntry;
 
 import junit.framework.TestCase;
 
@@ -28,17 +31,20 @@ import junit.framework.TestCase;
  * @version $Id$
  */
 public class SecondStatisticsCollectorTest extends TestCase {
-
+    /** Logger for this class */
+    Logger LOG = Logger.getLogger(SecondStatisticsCollectorTest.class);
+    
     @Override
     protected void setUp() throws Exception {
         super.setUp();
     }
 
     public void testBasics() throws Exception {
-        SecondStatisticsCollector mc = genSecondStatisticsCollector(null);
-
-        Calendar currentTime = Calendar.getInstance();
+        final long baseTime = System.currentTimeMillis();
+        final Calendar currentTime = Calendar.getInstance();
         currentTime.setTimeInMillis(System.currentTimeMillis());
+        
+        SecondStatisticsCollectorMock mc = genSecondStatisticsCollector(baseTime, null);
 
         assertNotNull(mc.genCurrentStartPeriod());
         Calendar currentStartTime = Calendar.getInstance();
@@ -60,38 +66,63 @@ public class SecondStatisticsCollectorTest extends TestCase {
 
         assertTrue(mc.getExpireTime() == (Long.parseLong(NonPersistentStatisticsConstants.DEFAULT_SECONDSTATISTICS_EXPIRETIME) * 1000));
 
-        assertTrue(mc.fetchStatistics(StatisticsConstants.QUERYTYPE_ALL, null, null).size() == 0);
+        assertEquals(0, mc.fetchStatistics(StatisticsConstants.QUERYTYPE_ALL, null, null).size());
 
-        mc.addEvent(getEvent());
-        mc.addEvent(getEvent());
+        final long currTime = currentStartTime.getTimeInMillis();
+        mc.addEvent(getEvent(currTime));
+        // simulate that it took 10 ms to generate the event
+        mc.addTime(10);
+        
+        mc.addEvent(getEvent(currTime + 10));
+       
         assertEquals(1, mc.fetchStatistics(StatisticsConstants.QUERYTYPE_ALL, null, null).size());
 
-        Thread.sleep(1100);
-        mc.addEvent(getEvent());
-        assertTrue("" + mc.fetchStatistics(StatisticsConstants.QUERYTYPE_ALL, null, null).size(), mc.fetchStatistics(StatisticsConstants.QUERYTYPE_ALL, null, null).size() == 2);
+        // simulate sleeping
+        mc.addTime(1100);
 
+        mc.addEvent(getEvent(currTime + 1110));
+        
+        assertEquals(2, mc.fetchStatistics(StatisticsConstants.QUERYTYPE_ALL, null, null).size());
+
+       
         mc.flush();
-        assertTrue(mc.fetchStatistics(StatisticsConstants.QUERYTYPE_ALL, null, null).size() == 0);
+        assertEquals(0, mc.fetchStatistics(StatisticsConstants.QUERYTYPE_ALL, null, null).size());
     }
 
     public void testFifoQueue() throws Exception {
-        SecondStatisticsCollector mc = genSecondStatisticsCollector("3");
-        mc.addEvent(getEvent());
-        Thread.sleep(1050);
-        mc.addEvent(getEvent());
-        Thread.sleep(1050);
-        mc.addEvent(getEvent());
-        assertTrue(mc.fetchStatistics(StatisticsConstants.QUERYTYPE_ALL, null, null).size() == 3);
-        assertTrue("" + mc.fetchStatistics(StatisticsConstants.QUERYTYPE_ALL, new Date(System.currentTimeMillis() - 1000), null).size(), mc.fetchStatistics(StatisticsConstants.QUERYTYPE_ALL, new Date(System.currentTimeMillis() - 1000), null).size() == 1);
-        assertTrue(mc.fetchStatistics(StatisticsConstants.QUERYTYPE_ALL, new Date(System.currentTimeMillis() - 3100), new Date(System.currentTimeMillis() - 1100)).size() > 1);
-        assertTrue(mc.fetchStatistics(StatisticsConstants.QUERYTYPE_ALL, null, new Date(System.currentTimeMillis() - 1000)).size() == 2);
+        // start the mock timer at the current system time
+        final long baseTime = System.currentTimeMillis();
+        SecondStatisticsCollectorMock mc = genSecondStatisticsCollector(baseTime, "3");
+        
+        long time = baseTime;
+        mc.addEvent(getEvent(time));
+        // simulate sleeping plus extra time for generating the event
+        mc.addTime(1050 + 10);
+        time += 1050 + 10;
+        
+        mc.addEvent(getEvent(time));
+        // simulate sleeping plus extra time for generating the event
+        mc.addTime(1050 + 10);
+        time += 1050 + 10;
+        
+        mc.addEvent(getEvent(time));
+        // simulate generate the event taking 10 ms.
+        mc.addTime(10);
+        time += 10;
+               
+        assertEquals(3, mc.fetchStatistics(StatisticsConstants.QUERYTYPE_ALL, null, null).size());
+        assertEquals(1, mc.fetchStatistics(StatisticsConstants.QUERYTYPE_ALL, new Date(time - 1000), null).size());
+        assertTrue(mc.fetchStatistics(StatisticsConstants.QUERYTYPE_ALL, new Date(time - 3100), new Date(time - 1100)).size() > 1);
+        assertEquals(2, mc.fetchStatistics(StatisticsConstants.QUERYTYPE_ALL, null, new Date(time - 1000)).size());
 
-        Thread.sleep(1050);
-        assertTrue(mc.fetchStatistics(StatisticsConstants.QUERYTYPE_ALL, null, null).size() == 2);
+        // simulate sleeping
+        mc.addTime(1050);
+        assertEquals(2, mc.fetchStatistics(StatisticsConstants.QUERYTYPE_ALL, null, null).size());
     }
 
-    private SecondStatisticsCollector genSecondStatisticsCollector(String expireTime) {
-        SecondStatisticsCollector ret = new SecondStatisticsCollector();
+    private SecondStatisticsCollectorMock genSecondStatisticsCollector(final long baseTime, final String expireTime) {
+        SecondStatisticsCollectorMock ret = new SecondStatisticsCollectorMock(baseTime);
+
         WorkerConfig config = new WorkerConfig();
         if (expireTime != null) {
             config.setProperty(NonPersistentStatisticsConstants.SECONDSTATISTICS_EXPIRETIME, expireTime);
@@ -101,11 +132,67 @@ public class SecondStatisticsCollectorTest extends TestCase {
         return ret;
     }
 
-    private Event getEvent() throws InterruptedException {
-        Event event = new Event(123);
+    private Event getEvent(final long baseTime) throws InterruptedException {
+        Event event = new Event(123) {
+            @Override
+            public void start() {
+                setStartTimeStamp(new Date(baseTime));
+            }
+            
+            @Override
+            public void stop() {
+                setEndTimeStamp(new Date(baseTime + 10));
+            }
+        };
+        
         event.start();
-        Thread.sleep(10);
         event.stop();
+        
         return event;
+    }
+    
+    private class SecondStatisticsCollectorMock extends SecondStatisticsCollector {
+        private long currTime;
+        
+        public SecondStatisticsCollectorMock(final long baseTime) {
+            currTime = baseTime;
+        }
+
+        public void addTime(final long sleep) {
+            currTime += sleep;
+        }
+        
+        @Override
+        protected long getCurrentTime() {
+            return currTime;
+        }
+
+        @Override
+        protected Date genCurrentStartPeriod() {
+            Calendar cal = Calendar.getInstance();
+            cal.setTimeInMillis(currTime);
+            cal.set(Calendar.MILLISECOND, 0);
+            return cal.getTime();
+        }
+
+        @Override
+        protected Date genCurrentEndPeriod() {
+            Calendar cal = Calendar.getInstance();
+            cal.setTimeInMillis(currTime);
+            cal.set(Calendar.MILLISECOND, 999);
+            return cal.getTime();
+        }
+        
+        @Override
+        protected StatisticsEntry createStatisticsEntry(final Date periodStart, final Date periodEnd, final Date expireDate) {
+            // returns a StatisticsEntry entirely bound to the mock time
+            return new StatisticsEntry(periodStart, periodEnd, expireDate) {
+                @Override
+                public long getDelay(TimeUnit unit) {
+                    return unit.convert(expireDate.getTime() - currTime, TimeUnit.MILLISECONDS);
+                }
+            };
+        }
+        
     }
 }

@@ -60,16 +60,16 @@ public abstract class BaseFIFOStatisticsCollector implements IStatisticsCollecto
         Date endPeriod = genCurrentEndPeriod();
         Date startPeriod = genCurrentStartPeriod();
         if (currentStatisticsEntry != null) {
-            if (endPeriod == null || System.currentTimeMillis() > currentStatisticsEntry.getPeriodEnd().getTime()) {
+            if (endPeriod == null || getCurrentTime() > currentStatisticsEntry.getPeriodEnd().getTime()) {
                 currentStatisticsEntry = null;
             }
         }
 
         if (currentStatisticsEntry == null) {
             if (endPeriod == null || startPeriod == null) {
-                currentStatisticsEntry = new StatisticsEntry(new Date(), new Date(), new Date(getExpireTime() + System.currentTimeMillis()));
+                currentStatisticsEntry = createStatisticsEntry(new Date(), new Date(), new Date(getExpireTime() + getCurrentTime()));
             } else {
-                currentStatisticsEntry = new StatisticsEntry(startPeriod, endPeriod, new Date(getExpireTime() + System.currentTimeMillis()));
+                currentStatisticsEntry = createStatisticsEntry(startPeriod, endPeriod, new Date(getExpireTime() + getCurrentTime()));
             }
             fIFOQueue.add(currentStatisticsEntry);
         }
@@ -142,5 +142,24 @@ public abstract class BaseFIFOStatisticsCollector implements IStatisticsCollecto
             }
         }
         return retval;
+    }
+    
+    /**
+     * Helper method to extract current system time, needed to be able to mock tests.
+     * @return
+     */
+    protected long getCurrentTime() {
+        return System.currentTimeMillis();
+    }
+    
+    /**
+     * Helper method to generate a statistics entry, needed to be able to mock tests.
+     * @param periodStart
+     * @param periodEnd
+     * @param expireDate
+     * @return
+     */
+    protected StatisticsEntry createStatisticsEntry(final Date periodStart, final Date periodEnd, final Date expireDate) {
+        return new StatisticsEntry(periodStart, periodEnd, expireDate);
     }
 }

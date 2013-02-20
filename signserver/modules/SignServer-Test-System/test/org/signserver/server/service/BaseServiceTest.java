@@ -20,6 +20,7 @@ import java.util.Date;
 
 import junit.framework.TestCase;
 
+import org.apache.log4j.Logger;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.ServiceConfig;
 import org.signserver.common.ServiceStatus;
@@ -33,7 +34,8 @@ import org.signserver.ejb.interfaces.IWorkerSession;
  * @version $Id$
  */
 public class BaseServiceTest extends TestCase {
-
+    private static final Logger LOG = Logger.getLogger(BaseServiceTest.class);
+    
     private static IGlobalConfigurationSession.IRemote gCSession = null;
     private static IWorkerSession.IRemote sSSession = null;
     private static String tmpFile;
@@ -126,7 +128,7 @@ public class BaseServiceTest extends TestCase {
     }
 
     /**
-     * Only test that singleton mode works as nonsingleton service in one node services.
+     * Test the CRON-like interval syntax for setting update intervals.
      */
     public void test05TestCronExpression() throws Exception {
         sSSession.removeWorkerProperty(WORKER_ID, ServiceConfig.SINGLETON);
@@ -137,11 +139,14 @@ public class BaseServiceTest extends TestCase {
         sSSession.reloadConfiguration(WORKER_ID);
         final int oldReadCount = readCount();
 
+        final long before = System.currentTimeMillis();
         Thread.sleep(4 * INTERVAL);
+        final long after = System.currentTimeMillis();
         final int readCount = readCount();
-        System.out.println("readCount: " + readCount);
+        LOG.info("oldReadCount: " + oldReadCount);
+        LOG.info("readCount: " + readCount);
         assertTrue(readCount >= oldReadCount);
-        assertTrue(readCount <= oldReadCount + 1);
+        assertTrue(readCount <= oldReadCount + (after - before) / 1000 + 1);
     }
 
     /**
@@ -162,9 +167,11 @@ public class BaseServiceTest extends TestCase {
         Thread.sleep(3 * INTERVALMS + 1000);
         final long after = System.currentTimeMillis();
         final int readCount = readCount();
+        LOG.info("oldReadCount: " + oldReadCount);
+        LOG.info("readCount: " + readCount);
         assertTrue("readCount: " + readCount,
-                readCount >= oldReadCount + 3);
-        assertTrue(readCount <= oldReadCount + (after - before) / 1000 + 1);
+                readCount >= oldReadCount + (after - before) / INTERVALMS - 1);
+        assertTrue(readCount <= oldReadCount + (after - before) / INTERVALMS + 1);
     }
 
     public void test99TearDownDatabase() throws Exception {

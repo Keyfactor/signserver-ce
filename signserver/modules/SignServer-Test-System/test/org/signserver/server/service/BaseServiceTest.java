@@ -37,9 +37,10 @@ public class BaseServiceTest extends TestCase {
     private static IGlobalConfigurationSession.IRemote gCSession = null;
     private static IWorkerSession.IRemote sSSession = null;
     private static String tmpFile;
-    private static final int INTERVAL = 7;
-    private static final int INTERVALMS = 7000;
-
+    private static final int INTERVAL = 8;
+    private static final int INTERVALMS = INTERVAL * 1000;
+    private static final int WORKER_ID = 17;
+    
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -50,47 +51,58 @@ public class BaseServiceTest extends TestCase {
 
     public void test00SetupDatabase() throws Exception {
 
-        gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER17.CLASSPATH", "org.signserver.server.timedservices.DummyTimedService");
+        gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + WORKER_ID + ".CLASSPATH", "org.signserver.server.timedservices.DummyTimedService");
 
-        sSSession.setWorkerProperty(17, ServiceConfig.ACTIVE, "TRUE");
-        sSSession.setWorkerProperty(17, ServiceConfig.INTERVAL,
+        sSSession.setWorkerProperty(WORKER_ID, ServiceConfig.ACTIVE, "TRUE");
+        sSSession.setWorkerProperty(WORKER_ID, ServiceConfig.INTERVAL,
                 String.valueOf(INTERVAL));
         String signserverhome = System.getenv("SIGNSERVER_HOME");
         assertNotNull(signserverhome);
         tmpFile = signserverhome + "/tmp/testservicefile.tmp";
-        sSSession.setWorkerProperty(17, "OUTPATH", tmpFile);
+        sSSession.setWorkerProperty(WORKER_ID, "OUTPATH", tmpFile);
 
         resetCount();
 
-        sSSession.reloadConfiguration(17);
+        sSSession.reloadConfiguration(WORKER_ID);
     }
 
+    /**
+     * Test the counter is updated. The test checks the elapsed real time
+     * to avoid random failures due to i.e. GC runs.
+     * @throws Exception
+     */
     public void test01BasicService() throws Exception {
 
-
+        final long before = System.currentTimeMillis();
         Thread.sleep((3 * INTERVAL + 1) * 1000);
+        final long after = System.currentTimeMillis();
         final int readCount = readCount();
-        assertTrue("readCount: " + readCount,
-                readCount >= 3 && readCount <= 4);
+        assertTrue("readCount: " + readCount, readCount >= 2);
+        // check count based on elapsed time, plus some margin
+        assertTrue(readCount <= (after - before) / INTERVALMS + 2);
     }
 
     /*
      * Test method for 'org.signserver.server.MRTDSigner.getStatus()'
      */
     public void test02GetStatus() throws Exception {
-        ServiceStatus status = (ServiceStatus) sSSession.getStatus(17);
+        ServiceStatus status = (ServiceStatus) sSSession.getStatus(WORKER_ID);
         Date lastRun = new ServiceConfig(status.getActiveSignerConfig()).getLastRunTimestamp();
-        assertTrue(lastRun.before(new Date()) && lastRun.after(new Date(System.currentTimeMillis() - 14000)));
+        assertTrue(lastRun.before(new Date()));
+        assertTrue(lastRun.after(new Date(System.currentTimeMillis() - INTERVALMS * 2)));
         assertTrue(status.getActiveSignerConfig().getProperties().get("INTERVAL").equals(String.valueOf(INTERVAL)));
 
     }
 
+    /**
+     * Tests that the counter is not updated when setting ACTIVE=FALSE.
+     * @throws Exception
+     */
     public void test03TestInActive() throws Exception {
-        sSSession.setWorkerProperty(17, ServiceConfig.ACTIVE, "FALSE");
-        sSSession.reloadConfiguration(17);
+        sSSession.setWorkerProperty(WORKER_ID, ServiceConfig.ACTIVE, "FALSE");
+        sSSession.reloadConfiguration(WORKER_ID);
 
         final int readCount = readCount();
-
         Thread.sleep(2 * INTERVAL);
         assertEquals(readCount, readCount());
     }
@@ -101,15 +113,15 @@ public class BaseServiceTest extends TestCase {
     public void test04TestOneNodeSingleton() throws Exception {
 
         final int oldReadCount = readCount();
-        sSSession.setWorkerProperty(17, ServiceConfig.ACTIVE, "TRUE");
-        sSSession.setWorkerProperty(17, ServiceConfig.SINGLETON, "TRUE");
-        sSSession.reloadConfiguration(17);
+        sSSession.setWorkerProperty(WORKER_ID, ServiceConfig.ACTIVE, "TRUE");
+        sSSession.setWorkerProperty(WORKER_ID, ServiceConfig.SINGLETON, "TRUE");
+        sSSession.reloadConfiguration(WORKER_ID);
 
         Thread.sleep(3 * INTERVAL);
         final int readCount = readCount();
-        System.out.println("readCount: " + readCount);
-        assertTrue(readCount >= oldReadCount + 0
-                && readCount <= oldReadCount + 1);
+
+        assertTrue(readCount >= oldReadCount);
+        assertTrue(readCount <= oldReadCount + 1);
 
     }
 
@@ -117,36 +129,42 @@ public class BaseServiceTest extends TestCase {
      * Only test that singleton mode works as nonsingleton service in one node services.
      */
     public void test05TestCronExpression() throws Exception {
-        sSSession.removeWorkerProperty(17, ServiceConfig.SINGLETON);
-        sSSession.removeWorkerProperty(17, ServiceConfig.INTERVAL);
+        sSSession.removeWorkerProperty(WORKER_ID, ServiceConfig.SINGLETON);
+        sSSession.removeWorkerProperty(WORKER_ID, ServiceConfig.INTERVAL);
 
-        sSSession.setWorkerProperty(17, ServiceConfig.CRON, "* * * ? * *");
+        sSSession.setWorkerProperty(WORKER_ID, ServiceConfig.CRON, "* * * ? * *");
 
-        sSSession.reloadConfiguration(17);
+        sSSession.reloadConfiguration(WORKER_ID);
         final int oldReadCount = readCount();
 
         Thread.sleep(4 * INTERVAL);
         final int readCount = readCount();
         System.out.println("readCount: " + readCount);
-        assertTrue(readCount >= oldReadCount + 0
-                && readCount <= oldReadCount + 1);
+        assertTrue(readCount >= oldReadCount);
+        assertTrue(readCount <= oldReadCount + 1);
     }
 
+    /**
+     * Test setting an update interval based on a millisecond value.
+     * @throws Exception
+     */
     public void test06intervalMs() throws Exception {
-        sSSession.removeWorkerProperty(17, ServiceConfig.SINGLETON);
-        sSSession.removeWorkerProperty(17, ServiceConfig.INTERVAL);
-        sSSession.removeWorkerProperty(17, ServiceConfig.CRON);
-        sSSession.setWorkerProperty(17, ServiceConfig.INTERVALMS,
+        sSSession.removeWorkerProperty(WORKER_ID, ServiceConfig.SINGLETON);
+        sSSession.removeWorkerProperty(WORKER_ID, ServiceConfig.INTERVAL);
+        sSSession.removeWorkerProperty(WORKER_ID, ServiceConfig.CRON);
+        sSSession.setWorkerProperty(WORKER_ID, ServiceConfig.INTERVALMS,
                 String.valueOf(INTERVALMS));
-        sSSession.reloadConfiguration(17);
+        sSSession.reloadConfiguration(WORKER_ID);
 
         final int oldReadCount = readCount();
 
+        final long before = System.currentTimeMillis();
         Thread.sleep(3 * INTERVALMS + 1000);
+        final long after = System.currentTimeMillis();
         final int readCount = readCount();
         assertTrue("readCount: " + readCount,
-                readCount >= oldReadCount + 3
-                && readCount <= oldReadCount + 4);
+                readCount >= oldReadCount + 3);
+        assertTrue(readCount <= oldReadCount + (after - before) / 1000 + 1);
     }
 
     public void test99TearDownDatabase() throws Exception {
@@ -167,8 +185,18 @@ public class BaseServiceTest extends TestCase {
         FileInputStream fis = new FileInputStream(tmpFile);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         int next = 0;
-        while ((next = fis.read()) != -1) {
-            baos.write(next);
+        try {
+            while ((next = fis.read()) != -1) {
+                baos.write(next);
+            }
+        } finally {
+            if (fis != null) {
+                try {
+                    fis.close();
+                } catch (IOException e) {
+                    // ignored
+                }
+            }
         }
         return Integer.parseInt(new String(baos.toByteArray()));
     }

@@ -30,7 +30,7 @@ import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 
 /**
- * TODO: Document me!
+ * TODO: Document me! See issue DSS-610
  * @version $Id$
  */
 public class BaseServiceTest extends TestCase {
@@ -85,7 +85,7 @@ public class BaseServiceTest extends TestCase {
     }
 
     /*
-     * Test method for 'org.signserver.server.MRTDSigner.getStatus()'
+     * Test getting last run timestamp. Also check that the configured interval is correct.
      */
     public void test02GetStatus() throws Exception {
         ServiceStatus status = (ServiceStatus) sSSession.getStatus(WORKER_ID);

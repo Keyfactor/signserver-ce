@@ -51,8 +51,8 @@ public class StatisticsEntryTest extends TestCase {
         sE.addEvent(event2);
         sE.addEvent(event3);
 
-        assertTrue(sE.getNumberOfEvents() == 3);
-        assertTrue(sE.getCustomData().get("CUSTOMKEY").equals(246));
+        assertEquals(Integer.valueOf(3), sE.getNumberOfEvents());
+        assertEquals(Integer.valueOf(123 + 123), sE.getCustomData().get("CUSTOMKEY"));
     }
 
     public void test02GetExpireDate() {

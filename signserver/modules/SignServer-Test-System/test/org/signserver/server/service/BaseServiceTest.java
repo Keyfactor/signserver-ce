@@ -175,17 +175,17 @@ public class BaseServiceTest extends TestCase {
     }
 
     public void test99TearDownDatabase() throws Exception {
-        gCSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER17.CLASSPATH");
+        gCSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + WORKER_ID + ".CLASSPATH");
 
-        sSSession.removeWorkerProperty(17, "INTERVAL");
-        sSSession.removeWorkerProperty(17, "INTERVALMS");
-        sSSession.removeWorkerProperty(17, "CRON");
-        sSSession.removeWorkerProperty(17, ServiceConfig.SINGLETON);
+        sSSession.removeWorkerProperty(WORKER_ID, "INTERVAL");
+        sSSession.removeWorkerProperty(WORKER_ID, "INTERVALMS");
+        sSSession.removeWorkerProperty(WORKER_ID, "CRON");
+        sSSession.removeWorkerProperty(WORKER_ID, ServiceConfig.SINGLETON);
         String signserverhome = System.getenv("SIGNSERVER_HOME");
         assertNotNull(signserverhome);
-        sSSession.removeWorkerProperty(17, "OUTPATH");
+        sSSession.removeWorkerProperty(WORKER_ID, "OUTPATH");
 
-        sSSession.reloadConfiguration(17);
+        sSSession.reloadConfiguration(WORKER_ID);
     }
 
     private int readCount() throws IOException {

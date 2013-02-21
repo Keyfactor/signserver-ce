@@ -15,6 +15,8 @@ package org.signserver.server.statistics;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.log4j.Logger;
+
 import junit.framework.TestCase;
 
 /**
@@ -23,11 +25,20 @@ import junit.framework.TestCase;
  * @version $Id$
  */
 public class StatisticsEntryTest extends TestCase {
-
-    private static Date expireDate = new Date(System.currentTimeMillis() + 2000);
-    private static StatisticsEntry sE = new StatisticsEntry(new Date(System.currentTimeMillis() - 100), new Date(System.currentTimeMillis() + 100), expireDate);
-
-    public void testAddEvent() throws InterruptedException {
+    /** Logger for this class. */
+    Logger LOG = Logger.getLogger(StatisticsEntryTest.class);
+    
+    private Date expireDate;
+    private StatisticsEntry sE;
+  
+    @Override
+    protected void setUp() throws Exception {
+        final long now = System.currentTimeMillis();
+        expireDate = new Date(now + 2000);
+        sE = new StatisticsEntry(new Date(now - 100), new Date(now + 100), expireDate);
+    }
+    
+    public void test01AddEvent() throws InterruptedException {
         Event event1 = getEvent();
         event1.addCustomStatistics("CUSTOMKEY", 123);
         Thread.sleep(10);
@@ -44,15 +55,28 @@ public class StatisticsEntryTest extends TestCase {
         assertTrue(sE.getCustomData().get("CUSTOMKEY").equals(246));
     }
 
-    public void testGetExpireDate() {
+    public void test02GetExpireDate() {
         assertEquals(sE.getExpireDate(), expireDate);
     }
 
-    public void testGetDelay() throws InterruptedException {
+    public void test03GetDelay() throws InterruptedException {
+        final long before = System.currentTimeMillis();
+        final long delayBefore = sE.getDelay(TimeUnit.MILLISECONDS);
+        
         Thread.sleep(100);
-        assertTrue("" + sE.getDelay(TimeUnit.NANOSECONDS), sE.getDelay(TimeUnit.NANOSECONDS) > 0);
+        final long after = System.currentTimeMillis();
+        final long elapsed = after - before;
+        final long delayAfter = sE.getDelay(TimeUnit.MILLISECONDS);
+        final long delayDiff = delayBefore - delayAfter;
+        
+        LOG.info("testGetDelay: elapsed time: " + elapsed);
+        LOG.info("testGetDelay: delay diff: " + delayDiff);
+        assertTrue("Delay should have decreased: " + delayDiff, delayDiff > 0);
+        assertTrue("Delay should now have decreased more than elapsed time: " + delayDiff, delayDiff <= elapsed);
+        
+        // sleep for a period longer than the expire time, delay should have passed 0
         Thread.sleep(2100);
-        assertTrue(sE.getDelay(TimeUnit.NANOSECONDS) < 0);
+        assertTrue("Delay should have reached 0", sE.getDelay(TimeUnit.NANOSECONDS) < 0);
     }
 
     private Event getEvent() throws InterruptedException {

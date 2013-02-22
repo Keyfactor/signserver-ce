@@ -807,6 +807,28 @@ public class TimeStampSignerTest extends ModulesTestCase {
         }
     }
     
+    public void test22EmptyRequest() throws Exception {
+        int reqid = random.nextInt();
+
+        TimeStampRequestGenerator timeStampRequestGenerator =
+                new TimeStampRequestGenerator();
+        TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
+                TSPAlgorithms.SHA1, new byte[0], BigInteger.valueOf(100));
+        byte[] requestBytes = new byte[0];
+
+        GenericSignRequest signRequest =
+                new GenericSignRequest(reqid, requestBytes);
+
+        try {
+            final GenericSignResponse res = (GenericSignResponse) workerSession.process(
+                WORKER1, signRequest, new RequestContext());
+        } catch (IllegalRequestException e) {
+            // expected
+        } catch (Exception e) {
+            fail("Unexpected exception thrown: " + e.getClass().getName());
+        }
+    }
+    
     private void assertTokenGranted(int workerId) throws Exception {
         TimeStampRequestGenerator timeStampRequestGenerator =
                     new TimeStampRequestGenerator();

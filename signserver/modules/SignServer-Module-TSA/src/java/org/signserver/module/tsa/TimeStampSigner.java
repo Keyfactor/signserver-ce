@@ -402,9 +402,14 @@ public class TimeStampSigner extends BaseSigner {
         GenericSignResponse signResponse = null;
         try {
             final byte[] requestbytes = (byte[]) sReq.getRequestData();
+
+            if (requestbytes == null || requestbytes.length == 0) {
+                throw new IllegalRequestException("Request must contain data");
+            }
+            
             final TimeStampRequest timeStampRequest =
                     new TimeStampRequest(requestbytes);
-            
+
             // Log values for timestamp request
             logMap.put(ITimeStampLogger.LOG_TSA_TIMESTAMPREQUEST_CERTREQ,
                     String.valueOf(timeStampRequest.getCertReq()));

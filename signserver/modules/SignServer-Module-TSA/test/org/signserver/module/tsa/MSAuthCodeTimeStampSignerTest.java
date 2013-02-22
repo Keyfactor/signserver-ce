@@ -188,7 +188,7 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
         }
     }
     
-    public void test23BogusRequest() throws Exception {
+    public void testBogusRequest() throws Exception {
         try {
             testProcessDataWithAlgo("SHA1withRSA", SHA1_OID, "bogus request".getBytes());
         } catch (IllegalRequestException e) {
@@ -198,7 +198,7 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
         }
     }
     
-    public void test24NullRequest() throws Exception {
+    public void testNullRequest() throws Exception {
         try {
             testProcessDataWithAlgo("SHA1withRSA", SHA1_OID, null);
         } catch (IllegalRequestException e) {

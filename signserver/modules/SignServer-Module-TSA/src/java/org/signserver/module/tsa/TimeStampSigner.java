@@ -404,6 +404,7 @@ public class TimeStampSigner extends BaseSigner {
             final byte[] requestbytes = (byte[]) sReq.getRequestData();
 
             if (requestbytes == null || requestbytes.length == 0) {
+                LOG.error("Request must contain data");
                 throw new IllegalRequestException("Request must contain data");
             }
             

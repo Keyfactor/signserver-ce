@@ -388,6 +388,15 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
             logMap.put(ITimeStampLogger.LOG_TSA_EXCEPTION,
         	exception.getMessage());
             throw exception;
+        } catch (ArrayIndexOutOfBoundsException e) {
+            // the BC base64 decoder doesn't check the the base64 input length...
+            final IllegalRequestException exception =
+                    new IllegalRequestException(
+                    "ArrayIndexOutOfBoundsException: " + e.getMessage(), e);
+            LOG.error("ArrayIndexOutOfBoundsException: ", e);
+            logMap.put(ITimeStampLogger.LOG_TSA_EXCEPTION,
+                    exception.getMessage());
+            throw exception;
         }
     }
 

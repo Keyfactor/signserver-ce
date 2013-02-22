@@ -24,6 +24,7 @@ import org.bouncycastle.asn1.x509.Time;
 import org.bouncycastle.util.encoders.Base64;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
+import org.signserver.common.IllegalRequestException;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerUtil;
@@ -31,6 +32,7 @@ import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.test.utils.mock.GlobalConfigurationSessionMock;
 import org.signserver.test.utils.mock.WorkerSessionMock;
+import org.signserver.testutils.ModulesTestCase;
 
 /**
  * 
@@ -67,12 +69,7 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
 	private static final String MESSAGE_DIGEST_OID = "1.2.840.113549.1.9.4";
 	private static final String SHA1_OID = "1.3.14.3.2.26";
 	private static final String SHA256_OID = "2.16.840.1.101.3.4.2.1";
-	
-	
-    public MSAuthCodeTimeStampSignerTest(String testName) {
-        super(testName);
-    }
-    
+  
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -84,7 +81,8 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
     }
 
 
-    private void testProcessDataWithAlgo(final String signingAlgo, final String expectedDigestOID) throws Exception {
+    private void testProcessDataWithAlgo(final String signingAlgo, final String expectedDigestOID,
+            final byte[] requestData) throws Exception {
        SignServerUtil.installBCProvider();
         
         final String CRYPTOTOKEN_CLASSNAME =
@@ -117,7 +115,7 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
         workerMock.reloadConfiguration(SIGNER_ID);
         
         // create sample hard-coded request
-        signRequest = new GenericSignRequest(REQUEST_ID, REQUEST_DATA.getBytes());
+        signRequest = new GenericSignRequest(REQUEST_ID, requestData);
         
         GenericSignResponse resp = (GenericSignResponse) workerMock.process(SIGNER_ID, signRequest, new RequestContext());
         
@@ -173,10 +171,40 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
      * Test of processData method, of class MSAuthCodeTimeStampSigner.
      */
     public void testProcessDataSHA1withRSA() throws Exception {
-    	testProcessDataWithAlgo("SHA1withRSA", SHA1_OID);
+    	testProcessDataWithAlgo("SHA1withRSA", SHA1_OID, REQUEST_DATA.getBytes());
     }
     
     public void testProcessDataSHA256withRSA() throws Exception {
-    	testProcessDataWithAlgo("SHA256withRSA", SHA256_OID);
-    }    
+    	testProcessDataWithAlgo("SHA256withRSA", SHA256_OID, REQUEST_DATA.getBytes());
+    }
+    
+    public void testEmptyRequest() throws Exception {
+        try {
+            testProcessDataWithAlgo("SHA1withRSA", SHA1_OID, new byte[0]);
+        } catch (IllegalRequestException e) {
+            // expected
+        } catch (Exception e) {
+            fail("Unexpected exception thrown: " + e.getClass().getName());
+        }
+    }
+    
+    public void test23BogusRequest() throws Exception {
+        try {
+            testProcessDataWithAlgo("SHA1withRSA", SHA1_OID, "bogus request".getBytes());
+        } catch (IllegalRequestException e) {
+            // expected
+        } catch (Exception e) {
+            fail("Unexpected exception thrown: " + e.getClass().getName());
+        }
+    }
+    
+    public void test24NullRequest() throws Exception {
+        try {
+            testProcessDataWithAlgo("SHA1withRSA", SHA1_OID, null);
+        } catch (IllegalRequestException e) {
+            // expected
+        } catch (Exception e) {
+            fail("Unexpected exception thrown: " + e.getClass().getName());
+        }
+    }
 }

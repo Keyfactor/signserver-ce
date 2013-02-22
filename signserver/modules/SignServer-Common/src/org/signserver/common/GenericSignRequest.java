@@ -72,6 +72,10 @@ public class GenericSignRequest extends ProcessRequest implements ISignRequest {
     }
 
     public void serialize(DataOutput out) throws IOException {
+        if (requestData == null) {
+            throw new IOException("requestData can not be null");
+        }
+        
         out.writeInt(RequestAndResponseManager.REQUESTTYPE_GENERICSIGNREQUEST);
         out.writeInt(requestID);
         out.writeInt(requestData.length);

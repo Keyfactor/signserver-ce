@@ -812,8 +812,6 @@ public class TimeStampSignerTest extends ModulesTestCase {
 
         TimeStampRequestGenerator timeStampRequestGenerator =
                 new TimeStampRequestGenerator();
-        TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
-                TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
         byte[] requestBytes = new byte[0];
 
         GenericSignRequest signRequest =
@@ -834,8 +832,6 @@ public class TimeStampSignerTest extends ModulesTestCase {
 
         TimeStampRequestGenerator timeStampRequestGenerator =
                 new TimeStampRequestGenerator();
-        TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
-                TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
         byte[] requestBytes = "bogus request".getBytes();
 
         GenericSignRequest signRequest =

@@ -813,7 +813,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
         TimeStampRequestGenerator timeStampRequestGenerator =
                 new TimeStampRequestGenerator();
         TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
-                TSPAlgorithms.SHA1, new byte[0], BigInteger.valueOf(100));
+                TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
         byte[] requestBytes = new byte[0];
 
         GenericSignRequest signRequest =
@@ -835,7 +835,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
         TimeStampRequestGenerator timeStampRequestGenerator =
                 new TimeStampRequestGenerator();
         TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
-                TSPAlgorithms.SHA1, new byte[0], BigInteger.valueOf(100));
+                TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
         byte[] requestBytes = "bogus request".getBytes();
 
         GenericSignRequest signRequest =
@@ -850,7 +850,6 @@ public class TimeStampSignerTest extends ModulesTestCase {
             fail("Unexpected exception thrown: " + e.getClass().getName());
         }
     }
-    
     
     private void assertTokenGranted(int workerId) throws Exception {
         TimeStampRequestGenerator timeStampRequestGenerator =

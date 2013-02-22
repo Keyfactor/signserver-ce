@@ -809,9 +809,6 @@ public class TimeStampSignerTest extends ModulesTestCase {
     
     public void test22EmptyRequest() throws Exception {
         int reqid = random.nextInt();
-
-        TimeStampRequestGenerator timeStampRequestGenerator =
-                new TimeStampRequestGenerator();
         byte[] requestBytes = new byte[0];
 
         GenericSignRequest signRequest =
@@ -829,9 +826,6 @@ public class TimeStampSignerTest extends ModulesTestCase {
     
     public void test23BogusRequest() throws Exception {
         int reqid = random.nextInt();
-
-        TimeStampRequestGenerator timeStampRequestGenerator =
-                new TimeStampRequestGenerator();
         byte[] requestBytes = "bogus request".getBytes();
 
         GenericSignRequest signRequest =

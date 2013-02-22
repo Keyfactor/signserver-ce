@@ -178,6 +178,10 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
     	testProcessDataWithAlgo("SHA256withRSA", SHA256_OID, REQUEST_DATA.getBytes());
     }
     
+    /**
+     * Test with requestData with zero length. Shall give an IllegalRequestException.
+     * @throws Exception
+     */
     public void testEmptyRequest() throws Exception {
         try {
             testProcessDataWithAlgo("SHA1withRSA", SHA1_OID, new byte[0]);
@@ -188,6 +192,10 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
         }
     }
     
+    /**
+     * Test with an invalid requestData. Shall give an IllegalRequestException.
+     * @throws Exception
+     */
     public void testBogusRequest() throws Exception {
         try {
             testProcessDataWithAlgo("SHA1withRSA", SHA1_OID, "bogus request".getBytes());
@@ -198,6 +206,10 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
         }
     }
     
+    /**
+     * Test with a null requestData. Shall give an IllegalRequestException.
+     * @throws Exception
+     */
     public void testNullRequest() throws Exception {
         try {
             testProcessDataWithAlgo("SHA1withRSA", SHA1_OID, null);

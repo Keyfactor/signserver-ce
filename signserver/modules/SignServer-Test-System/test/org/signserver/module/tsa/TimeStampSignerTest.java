@@ -807,6 +807,10 @@ public class TimeStampSignerTest extends ModulesTestCase {
         }
     }
     
+    /**
+     * Test with requestData of zero length. Shall give an IllegalRequestException.
+     * @throws Exception
+     */
     public void test22EmptyRequest() throws Exception {
         int reqid = random.nextInt();
         byte[] requestBytes = new byte[0];
@@ -824,6 +828,10 @@ public class TimeStampSignerTest extends ModulesTestCase {
         }
     }
     
+    /**
+     * Test with an invalid requestData. Shall give an IllegalRequestException.
+     * @throws Exception
+     */
     public void test23BogusRequest() throws Exception {
         int reqid = random.nextInt();
         byte[] requestBytes = "bogus request".getBytes();
@@ -841,6 +849,10 @@ public class TimeStampSignerTest extends ModulesTestCase {
         }
     }
     
+    /**
+     * Test with setting requestData to null. Shall give an IllegalRequestException.
+     * @throws Exception
+     */
     public void test24NullRequest() throws Exception {
         int reqid = random.nextInt();
         byte[] requestBytes = "bogus request".getBytes();

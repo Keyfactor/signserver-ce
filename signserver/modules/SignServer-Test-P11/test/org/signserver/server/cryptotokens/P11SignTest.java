@@ -401,6 +401,18 @@ public class P11SignTest extends ModulesTestCase {
             
             // Test signing
             signGenericDocument(workerId, "<sampledata/>".getBytes());
+            
+            // Test removing the DEFAULTKEY property, should result in a CryptoTokenOfflineException
+            workerSession.removeWorkerProperty(workerId, "DEFAULTKEY");
+            workerSession.reloadConfiguration(workerId);
+            
+            try {
+                signGenericDocument(workerId, "<sampledata/>".getBytes());
+                fail("Should throw a CryptoTokenOfflineException");
+            } catch (CryptoTokenOfflineException e) {
+                // expected
+            }
+            
         } finally {
             removeWorker(workerId);
         }

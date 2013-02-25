@@ -22,6 +22,7 @@ import java.net.URLConnection;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import org.apache.log4j.Logger;
+import org.bouncycastle.asn1.cmp.PKIStatus;
 import org.bouncycastle.tsp.TSPAlgorithms;
 import org.bouncycastle.tsp.TSPException;
 import org.bouncycastle.tsp.TimeStampRequest;
@@ -64,7 +65,7 @@ public class TimeStamp implements Task {
         }
     }
 
-    private long tsaRequest() throws TSPException, IOException {
+    private long tsaRequest() throws TSPException, IOException, FailedException {
     	final TimeStampRequestGenerator timeStampRequestGenerator =
     			new TimeStampRequestGenerator();
     	final int nonce = random.nextInt();
@@ -129,8 +130,17 @@ public class TimeStamp implements Task {
     	final TimeStampResponse timeStampResponse = new TimeStampResponse(
     			replyBytes);
     	timeStampResponse.validate(timeStampRequest);
-
-    	LOG.debug("TimeStampRequest validated");
+    	LOG.debug("TimeStampResponse validated");
+        
+        // TODO: Maybe in the future we would like to make the below failure 
+        // check configurable or count the failure but without failing the test
+        if (timeStampResponse.getStatus() != PKIStatus.GRANTED
+                && timeStampResponse.getStatus() != PKIStatus.GRANTED_WITH_MODS) {
+            throw new FailedException("Token was not granted. Status was: " + timeStampResponse.getStatus()
+                    + " (" + timeStampResponse.getStatusString() + ")");
+        } else {
+            LOG.debug("TimeStampResponse granted");
+        }
     	
     	return timeInMillis;
     }

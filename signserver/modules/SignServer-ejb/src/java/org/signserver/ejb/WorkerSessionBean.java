@@ -1165,6 +1165,11 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             throws CryptoTokenOfflineException {
         final List<Certificate> certs = getSignerCertificateChain(signerId);
         final List<byte[]> res = new LinkedList<byte[]>();
+        
+        if (certs == null) {
+            return null;
+        }
+        
         try {
             for (Certificate cert : certs) {
                 res.add(cert.getEncoded());

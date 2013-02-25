@@ -16,6 +16,7 @@ import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
 import javax.crypto.Cipher;
 import org.signserver.common.*;
@@ -252,6 +253,19 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
             workerSession.removeWorkerProperty(getSignerIdDummy1(), "DISABLED");
             workerSession.reloadConfiguration(getSignerIdDummy1());
         }
+    }
+
+    /**
+     * Test the getSignerCertificateChainBytes method with a worker with no cert chain set.
+     * @throws Exception
+     */
+    public void test11noCertChain() throws Exception {
+        workerSession.removeWorkerProperty(getSignerIdDummy1(), "SIGNERCERTCHAIN");
+        workerSession.reloadConfiguration(getSignerIdDummy1());
+        
+        final List<byte[]> certs = workerSession.getSignerCertificateChainBytes(getSignerIdDummy1());
+        
+        assertNull("Cert chain should be null", certs);
     }
 
     public void test99TearDownDatabase() throws Exception {

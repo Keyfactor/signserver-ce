@@ -870,6 +870,82 @@ public class TimeStampSignerTest extends ModulesTestCase {
         }
     }
     
+    /**
+     * Test that the default behavior is to include the status string in the TSA response.
+     * @throws Exception
+     */
+    public void test25StatusStringIncluded() throws Exception {
+     // Test signing
+        final TimeStampResponse response = assertSuccessfulTimestamp(WORKER1);
+
+        assertEquals("Operation Okay", response.getStatusString());
+    }
+    
+    /**
+     * Test that setting the INCLUDESTATUSSTRING property to false results in no status string
+     * in the TSA response.
+     * @throws Exception
+     */
+    public void test26StatusStringExcluded() throws Exception {
+        workerSession.setWorkerProperty(WORKER1, TimeStampSigner.INCLUDESTATUSSTRING, "FALSE");
+        workerSession.reloadConfiguration(WORKER1);
+        
+        final TimeStampResponse response = assertSuccessfulTimestamp(WORKER1);
+        
+        assertNull(response.getStatusString());
+    }
+    
+    /**
+     * Test that the default behavior on rejection is to include a status string.
+     * @throws Exception
+     */
+    public void test27StatusStringIncludedFailure() throws Exception {
+        // WORKER2 has ACCEPTEDPOLICIES=1.2.3
+        // Create an request with another policy (1.2.3.5 != 1.2.3)
+        final TimeStampRequest timeStampRequest = new TimeStampRequest(
+                Base64.decode(REQUEST_WITH_POLICY1235.getBytes()));
+        
+        final byte[] requestBytes = timeStampRequest.getEncoded();
+
+        final GenericSignRequest signRequest = new GenericSignRequest(13,
+                requestBytes);
+
+        final GenericSignResponse res = (GenericSignResponse) workerSession.process(
+                WORKER2, signRequest, new RequestContext());
+
+        final TimeStampResponse timeStampResponse = new TimeStampResponse(
+            (byte[]) res.getProcessedData());
+        
+        assertNotNull(timeStampResponse.getStatusString());
+    }
+    
+    /**
+     * Test that setting the INCLUDESTATUSSTRING property to false results in no status string
+     * on rejection.
+     * @throws Exception
+     */
+    public void test28StatusStringExcludedFailure() throws Exception {
+        workerSession.setWorkerProperty(WORKER2, TimeStampSigner.INCLUDESTATUSSTRING, "FALSE");
+        workerSession.reloadConfiguration(WORKER2);
+        // WORKER2 has ACCEPTEDPOLICIES=1.2.3
+        // Create an request with another policy (1.2.3.5 != 1.2.3)
+        final TimeStampRequest timeStampRequest = new TimeStampRequest(
+                Base64.decode(REQUEST_WITH_POLICY1235.getBytes()));
+        
+        final byte[] requestBytes = timeStampRequest.getEncoded();
+
+        final GenericSignRequest signRequest = new GenericSignRequest(13,
+                requestBytes);
+
+        final GenericSignResponse res = (GenericSignResponse) workerSession.process(
+                WORKER2, signRequest, new RequestContext());
+
+        final TimeStampResponse timeStampResponse = new TimeStampResponse(
+            (byte[]) res.getProcessedData());
+        
+        assertNull(timeStampResponse.getStatusString());
+    }
+    
     private void assertTokenGranted(int workerId) throws Exception {
         TimeStampRequestGenerator timeStampRequestGenerator =
                     new TimeStampRequestGenerator();

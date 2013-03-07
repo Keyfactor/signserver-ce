@@ -3100,6 +3100,10 @@ The generated serial number will always be positive (so the sign bit is always a
                         <p>
 <b>WORKERLOGGER</b> = As for other workers this property can be used to specify which worker logger to use. By default the <a href="complete.en.html#DefaultTimeStampLogger">DefaultTimeStampLogger</a> is used.
                         </p>
+                        <p>
+<b>INCLUDESTATUSSTRING</b> = Specifies if the status string is to be included in the response. Setting this to true triggers a bug in some
+versions of OpenJDK's jarsigner utility. (OPTIONAL), default true.
+                        </p>
                     </subsubsection>
                     
                     <subsubsection name="TimeStampSigner Certificates">
@@ -3784,6 +3788,13 @@ See also the DispatchedAuthorizer which if configured by a signer can allow all 
                         <p><b>MAPPINGS</b> = Mapping from requested policy OID to a worker name.
                         <br/>The property is of the form:
                         <br/>POLICYOID1:WORKERNAMEORID1; POLICYOID2:WORKERNAMEORID2; POLICYOID3:WORKERNAMEORID3;</p>
+                        <p>
+<b>INCLUDESTATUSSTRING</b> = Specifies if the status string is to be included in the response. 
+This setting only affects the behavior when USEDEFAULTIFMISMATCH is false, and there is no mapping for the requested policy.
+In case there is a mapping (or no mapping and USEDEFAULTIFMISMATCH is true, the state of INCLUDESTATUSSTRING of the used signer is used
+to determine if the status string is included.
+Setting this to true triggers a bug in some versions of OpenJDK's jarsigner utility. (OPTIONAL), default true.
+                        </p>
                     </subsubsection>
                 </subsection>
             </section>

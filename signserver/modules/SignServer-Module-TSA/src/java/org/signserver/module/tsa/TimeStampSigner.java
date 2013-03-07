@@ -40,7 +40,13 @@ import org.bouncycastle.operator.DigestCalculatorProvider;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.bc.BcDigestCalculatorProvider;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
-import org.bouncycastle.tsp.*;
+import org.signserver.module.tsa.TimeStampResponseGenerator;
+import org.bouncycastle.tsp.TSPAlgorithms;
+import org.bouncycastle.tsp.TSPException;
+import org.bouncycastle.tsp.TimeStampRequest;
+import org.bouncycastle.tsp.TimeStampResponse;
+import org.bouncycastle.tsp.TimeStampToken;
+import org.bouncycastle.tsp.TimeStampTokenGenerator;
 import org.bouncycastle.util.Selector;
 import org.bouncycastle.util.Store;
 import org.ejbca.util.Base64;
@@ -189,7 +195,9 @@ public class TimeStampSigner extends BaseSigner {
     public static final String TSA = "TSA";
     public static final String REQUIREVALIDCHAIN = "REQUIREVALIDCHAIN";
     public static final String MAXSERIALNUMBERLENGTH = "MAXSERIALNUMBERLENGTH";
-
+    public static final String INCLUDESTATUSSTRING = "INCLUDESTATUSSTRING";
+    
+    
     private static final String DEFAULT_WORKERLOGGER =
             DefaultTimeStampLogger.class.getName();
 
@@ -261,6 +269,8 @@ public class TimeStampSigner extends BaseSigner {
     // note: the generated serial number will always be positive
     private static final int MAX_ALLOWED_MAXSERIALNUMBERLENGTH = 20;
     private static final int MIN_ALLOWED_MAXSERIALNUMBERLENGTH = 8;
+    
+    private boolean includeStatusString;
     
     @Override
     public void init(final int signerId, final WorkerConfig config,
@@ -345,6 +355,8 @@ public class TimeStampSigner extends BaseSigner {
                 }
             }
         }
+        
+        includeStatusString = Boolean.parseBoolean(config.getProperty(INCLUDESTATUSSTRING, "true"));
     }
 
     /**
@@ -441,11 +453,11 @@ public class TimeStampSigner extends BaseSigner {
             final TimeStampResponse timeStampResponse =
                     timeStampResponseGen.generate(timeStampRequest,
                     serialNumber,
-                    date);
+                    date, includeStatusString);
 
             final TimeStampToken token = timeStampResponse.getTimeStampToken();
             final byte[] signedbytes = timeStampResponse.getEncoded();
-
+            
             // Log values for timestamp response
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Time stamp response status: "

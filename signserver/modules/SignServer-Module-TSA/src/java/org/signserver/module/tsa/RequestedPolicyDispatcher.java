@@ -26,7 +26,6 @@ import org.bouncycastle.asn1.cmp.PKIStatus;
 import org.bouncycastle.tsp.TSPException;
 import org.bouncycastle.tsp.TimeStampRequest;
 import org.bouncycastle.tsp.TimeStampResponse;
-import org.bouncycastle.tsp.TimeStampResponseGenerator;
 import org.signserver.common.*;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.ejb.interfaces.IWorkerSession.IRemote;
@@ -74,6 +73,7 @@ public class RequestedPolicyDispatcher extends BaseDispatcher {
     
     private String defaultWorker;
     private boolean useDefaultIfMismatch;
+    private boolean includeStatusString;
     
     @Override
     public void init(final int workerId, final WorkerConfig config,
@@ -91,6 +91,7 @@ public class RequestedPolicyDispatcher extends BaseDispatcher {
             defaultWorker = config.getProperty(DEFAULTWORKER);
             
             useDefaultIfMismatch = Boolean.parseBoolean(config.getProperty(USEDEFAULTIFMISMATCH, "false"));
+            includeStatusString = Boolean.parseBoolean(config.getProperty(TimeStampSigner.INCLUDESTATUSSTRING, "true"));
             
             if (LOG.isDebugEnabled()) {
                 LOG.debug(new StringBuilder()
@@ -153,7 +154,8 @@ public class RequestedPolicyDispatcher extends BaseDispatcher {
             final String toWorker = lookupWorkerToDispatchTo(timeStampRequest, context);
             if (toWorker == null) {
                 final TimeStampResponseGenerator gen = new TimeStampResponseGenerator(null, null);
-                final TimeStampResponse resp = gen.generateFailResponse(PKIStatus.REJECTION, PKIFailureInfo.unacceptedPolicy, "request contains unknown policy.");
+                final String statusString = includeStatusString ? "request contains unkown policy." : null;
+                final TimeStampResponse resp = gen.generateFailResponse(PKIStatus.REJECTION, PKIFailureInfo.unacceptedPolicy, statusString);
 
                 // Auditlog
                 logMap.put(IWorkerLogger.LOG_CLIENT_AUTHORIZED, "false");

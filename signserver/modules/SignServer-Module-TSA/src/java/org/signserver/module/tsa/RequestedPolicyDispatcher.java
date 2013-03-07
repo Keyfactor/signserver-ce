@@ -154,7 +154,7 @@ public class RequestedPolicyDispatcher extends BaseDispatcher {
             final String toWorker = lookupWorkerToDispatchTo(timeStampRequest, context);
             if (toWorker == null) {
                 final TimeStampResponseGenerator gen = new TimeStampResponseGenerator(null, null);
-                final String statusString = includeStatusString ? "request contains unkown policy." : null;
+                final String statusString = includeStatusString ? "request contains unknown policy." : null;
                 final TimeStampResponse resp = gen.generateFailResponse(PKIStatus.REJECTION, PKIFailureInfo.unacceptedPolicy, statusString);
 
                 // Auditlog

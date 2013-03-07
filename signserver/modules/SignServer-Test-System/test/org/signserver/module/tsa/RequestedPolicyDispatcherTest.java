@@ -253,6 +253,45 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
     }
     
     /**
+     * Test that the status string is included by default when mismatched policy
+     * and no default worker is configured for mismatched policy.
+     * @throws Exception
+     */
+    public void test06IncludeStatusStringFailure() throws Exception {
+        TimeStampRequestGenerator gen = new TimeStampRequestGenerator();
+        TimeStampRequest req;
+        TimeStampResponse res;
+        
+        workerSession.setWorkerProperty(DISPATCHER0, TimeStampSigner.INCLUDESTATUSSTRING, "TRUE");
+        
+        // Test that an profile not known by DISPATCHER0 but by a TSUnit1 is not accepted (USEDEFAULTIFMISMATCH=false)
+        gen.setReqPolicy(WORKER1_ALTERNATIVE_PROFILE);
+        req = gen.generate(TSPAlgorithms.SHA256, new byte[32], createNounce());
+        res = requestTimeStamp(DISPATCHER0, req);
+        assertEquals("request contains unknown policy.", res.getStatusString());
+    }
+    
+    /**
+     * Test that the status string is not included when setting the INCLUDESTATUSSTRING to "FALSE"
+     * on the dispatcher and no default worker is configured for mismatched policy.
+     * @throws Exception
+     */
+    public void test07ExcludeStatusStringFailure() throws Exception {
+        TimeStampRequestGenerator gen = new TimeStampRequestGenerator();
+        TimeStampRequest req;
+        TimeStampResponse res;
+        
+        workerSession.setWorkerProperty(DISPATCHER0, TimeStampSigner.INCLUDESTATUSSTRING, "FALSE");
+        workerSession.reloadConfiguration(DISPATCHER0);
+        
+        // Test that an profile not known by DISPATCHER0 but by a TSUnit1 is not accepted (USEDEFAULTIFMISMATCH=false)
+        gen.setReqPolicy(WORKER1_ALTERNATIVE_PROFILE);
+        req = gen.generate(TSPAlgorithms.SHA256, new byte[32], createNounce());
+        res = requestTimeStamp(DISPATCHER0, req);
+        assertNull(res.getStatusString());
+    }
+    
+    /**
      * Clean up.
      */
     public void test99TearDownDatabase() throws Exception {

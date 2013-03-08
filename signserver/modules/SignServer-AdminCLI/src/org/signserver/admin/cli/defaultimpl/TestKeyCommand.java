@@ -116,7 +116,10 @@ public class TestKeyCommand extends AbstractAdminCommand {
             String alias = null;
 
             if (args.length >= 2) {
-                alias = args[1];
+                // don't treat the trailing arguments (-v, -authcode) as alias names
+                if (args[1].length() >= 1 && args[1].charAt(0) != '-') {
+                    alias = args[1];
+                }
             }
 
             if (alias == null) {

@@ -115,7 +115,7 @@ public class TestKeyCommand extends AbstractAdminCommand {
 
             String alias = null;
 
-            if (args.length > 2) {
+            if (args.length >= 2) {
                 alias = args[1];
             }
 

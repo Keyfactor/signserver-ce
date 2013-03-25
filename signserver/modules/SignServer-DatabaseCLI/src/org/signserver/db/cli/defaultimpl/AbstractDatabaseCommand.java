@@ -57,7 +57,7 @@ public abstract class AbstractDatabaseCommand extends AbstractCommand {
         DRIVERS.put(HSQLDB, "org.hsqldb.jdbcDriver");
         DRIVERS.put(MYSQL, "com.mysql.jdbc.Driver");
         DRIVERS.put(ORACLE, "oracle.jdbc.driver.OracleDriver");
-        DRIVERS.put(POSTGRES, "database.driver=org.postgresql.Driver");
+        DRIVERS.put(POSTGRES, "org.postgresql.Driver");
     }
     
     

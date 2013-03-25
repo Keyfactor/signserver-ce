@@ -438,26 +438,53 @@ public class ConnectDialog extends javax.swing.JDialog {
                 });
 
                 final KeyStore keystore;
+                final KeyManagerFactory kKeyManagerFactory = KeyManagerFactory.getInstance("SunX509");
 
                 if (settings.getKeystoreType().contains("Windows")) {
                     // CSP
                     keystore = getLoadedKeystoreCSP(settings.getKeystoreType(), pp);
+                    kKeyManagerFactory.init(keystore, null);
                 } else if (settings.getKeystoreType().equals("PKCS11")) {
                     // PKCS11
                     keystore = getLoadedKeystorePKCS11("PKCS11",
                             settings.getKeystoreFile(),
                             settings.getKeystorePassword(), pp);
-                } else if (settings.getKeystoreType().equals("PKCS12")) {
-                    // PKCS12
-                    keystore = getLoadedKeystorePKCS12(settings.getKeystoreFile());
+                    kKeyManagerFactory.init(keystore, null);
                 } else {
-                    // Other keystores for instance JKS
-                    keystore = getLoadedKeystore(settings.getKeystoreType(),
-                            settings.getKeystoreFile());
+                    // PKCS12 must use BC as provider but not JKS
+                    final String provider;
+                    if (settings.getKeystoreType().equals("PKCS12")) {
+                        provider = "BC";
+                    } else {
+                        provider = null;
                 }
 
-                final KeyManagerFactory kKeyManagerFactory = KeyManagerFactory.getInstance("SunX509");
-                kKeyManagerFactory.init(keystore, null);
+                    // Ask for password
+                    char[] authcode;
+                    passwordLabel.setText("Enter password for keystore:");
+                    passwordField.setText("");
+                    JOptionPane.showMessageDialog(
+                            ConnectDialog.this, passwordPanel,
+                            "Connect", JOptionPane.PLAIN_MESSAGE);
+                    if (passwordField.getPassword() != null) {
+                        authcode = passwordField.getPassword();
+                    } else {
+                        authcode = null;
+                    }
+    
+                    // Other keystores for instance JKS
+                    keystore = getLoadedKeystore(settings.getKeystoreFile(),
+                            authcode,
+                            settings.getKeystoreType(),
+                            provider);
+                 
+                    // JKS has password on keys and need to be inited with password
+                    if (settings.getKeystoreType().equals("JKS")) {
+                        kKeyManagerFactory.init(keystore, authcode);
+                    } else {
+                        kKeyManagerFactory.init(keystore, null);
+                    }
+                }
 
                 final KeyStore keystoreTrusted;
                 if (TRUSTSTORE_TYPE_PEM.equals(settings.getTruststoreType())) {
@@ -686,52 +713,29 @@ public class ConnectDialog extends javax.swing.JDialog {
         return keystore;
     }
 
-    private KeyStore getLoadedKeystorePKCS12(final String fileName) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException, NoSuchProviderException {
-        char[] authcode;
+    private KeyStore getLoadedKeystore(final String fileName, final char[] authcode, final String storeType,
+            final String provider) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException, NoSuchProviderException {
 
-        passwordLabel.setText("Enter password for keystore:");
-        passwordField.setText("");
-
-        JOptionPane.showMessageDialog(
-                ConnectDialog.this, passwordPanel,
-                "Connect", JOptionPane.PLAIN_MESSAGE);
-
-        if (passwordField.getPassword() != null) {
-            authcode = passwordField.getPassword();
+        final KeyStore keystore;
+        if (provider == null) {
+            keystore = KeyStore.getInstance(storeType);
         } else {
-            authcode = null;
+            keystore = KeyStore.getInstance(storeType, provider);
         }
-
-        final KeyStore keystore = KeyStore.getInstance("PKCS12", "BC");
-        keystore.load(new FileInputStream(new File(fileName)), authcode);
-
-        return keystore;
-    }
-
-    private KeyStore getLoadedKeystore(final String storeType,
-            final String fileName) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException, NoSuchProviderException {
-        char[] authcode;
-
-        passwordLabel.setText("Enter password for keystore:");
-        passwordField.setText("");
-
-        JOptionPane.showMessageDialog(
-                ConnectDialog.this, passwordPanel,
-                "Connect", JOptionPane.PLAIN_MESSAGE);
-
-        if (passwordField.getPassword() != null) {
-            authcode = passwordField.getPassword();
-        } else {
-            authcode = null;
-        }
-        
-        final KeyStore keystore = KeyStore.getInstance(storeType);
 
         InputStream in = null;
-        if (fileName != null && !fileName.isEmpty()) {
-            in = new FileInputStream(fileName);
+        try {
+            if (fileName != null && !fileName.isEmpty()) {
+                in = new FileInputStream(fileName);
+            }
+            keystore.load(in, authcode);
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException ignored) {} // NOPMD
+            }
         }
-        keystore.load(in, authcode);
 
         return keystore;
     }

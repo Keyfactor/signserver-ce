@@ -23,7 +23,7 @@ hostname.allnodes=localhost
 # Available types are:
 #dbcli.database.name=hsqldb
 #dbcli.database.name=mysql
-#dbcli.database.name=postres
+#dbcli.database.name=postgres
 #dbcli.database.name=oracle
 
 # Database connection URL

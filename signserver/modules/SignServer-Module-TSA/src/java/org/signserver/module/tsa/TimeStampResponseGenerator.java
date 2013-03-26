@@ -1,7 +1,14 @@
 /**
- * This file is originally from BouncyCastle 0.47 and modified to allow
+ * This file is originally from BouncyCastle 1.47 and modified to allow
  * to leave out the status string in the timestamp response.
  * This is as a work-around for a bug in OpenJDK's jarsigner utility.
+ * 
+ * @see <a href="https://jira.primekey.se/browse/DSS-378">Issue in SignServer</a>
+ * @see <a href="http://www.bouncycastle.org/jira/browse/BJA-433">Issue in BC</a>
+ * 
+ * This will be fixed in BC 1.49.
+ * Also newer versions of OpenJDK will not have this bug.
+ * 
  */
 package org.signserver.module.tsa;
 

@@ -208,7 +208,13 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
     	
     	try {
             final ISignRequest sReq = (ISignRequest) signRequest;
+            final byte[] requestbytes = (byte[]) sReq.getRequestData();
 
+            if (requestbytes == null || requestbytes.length == 0) {
+                LOG.error("Request must contain data");
+                throw new IllegalRequestException("Request must contain data");
+            }
+            
             // Check that the request contains a valid TimeStampRequest object.
             if (!(signRequest instanceof GenericSignRequest)) {
                     final IllegalRequestException exception =
@@ -232,7 +238,6 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
                     throw new CryptoTokenOfflineException("Certificate chain not correctly configured");
             }
 
-            byte[] requestbytes = (byte[]) sReq.getRequestData();
             ASN1Primitive asn1obj = ASN1Primitive.fromByteArray(Base64.decode(requestbytes));
             ASN1Sequence asn1seq = ASN1Sequence.getInstance(asn1obj);
 

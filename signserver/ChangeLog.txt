@@ -1,15 +1,27 @@
-SignServer 3.4.0, 2013-03-yy
+SignServer 3.4.0, 2013-04-03
 ----------------------------
+Release Notes - SignServer - Version SignServer 3.4
 
 ** Bug
+    * [DSS-106] - JUnit tests in SecondStatisticsCollectorTest fails randomly?
+    * [DSS-121] - JUnit test NonPersistentStatisticsCollectorTest.testBasics fails randomly
+    * [DSS-195] - JUnit test BaseServiceTest.test01BasicService fails randomly?
+    * [DSS-495] - NPE in CAToken trying to activate worker without DEFAULTKEY property
+    * [DSS-551] - NPE in getSignerCertificateChainBytes if signer is missing the certificate chain property
+    * [DSS-577] - Testkey command ignores alias unless -v specified
+    * [DSS-578] - Sending a bad request to the TimeStampSigner gives NPE
+    * [DSS-597] - Admin GUI fails to log in via webservices when using a JKS keystore
     * [DSS-601] - DB CLI verify reports error if multiple nodes are logging
     * [DSS-604] - Wrong mapping for GroupKeyDataBean for PostgreSQL
     * [DSS-608] - PublicCryptoToken missing in cesecore_client.jar
+    * [DSS-611] - StatisticsEntryTest.testGetDelay fails randomly som times
 
 ** Improvement
+    * [DSS-378] - Make it configurable to skip sending status message in the time-stamp response
     * [DSS-585] - Replace usage of SystemLogger with the CESeCore Security event logger
     * [DSS-590] - Audit log which administrator performed the operations
     * [DSS-600] - Update manual for CESeCore
+    * [DSS-612] - Check status of time-stamp response in performance test tool
 
 ** New Feature
     * [DSS-575] - Secure logging from CESeCore

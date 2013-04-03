@@ -1,14 +1,20 @@
 SignServer 3.4.0
 ----------------
-This is a major release - in total 16 features, options, bugs and stabilizations have been fixed or added. The most noteworthy changes can be seen below.
+This is a major release - in total 27 features, options, bugs and stabilizations have been fixed or added. The most noteworthy changes can be seen below.
 
 Major changes:
  - Secure logging to database using CESeCore.
  - Support for querying audit log from CLI, GUI and web services.
  - Configurable which Status Repository updates to log.
+ - Access group for auditors.
+ - Database CLI for verifying audit log.
+ - Support for PostgreSQL.
 
 Bug fixes:
-    * Fixed entity mappings for PostgreSQL.
+ - Fixed a couple of NPE bugs.
+ - Fixed logging in over webservices using a JKS keystore in the Admin GUI.
+ - Fixed some randomly failing unit tests.
+ - Other minor bugfixes.
 
 Notice:
  - Database changes were introduced. See UPGRADE.txt for details.

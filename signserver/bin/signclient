@@ -27,18 +27,6 @@ fi
 class_name=org.signserver.client.cli.ClientCLI
 MAIN_JAR=SignServer-Client-CLI.jar
 
-# discard $1 from the command line args
-#shift
-
-# J2EE server classpath
-if [ ! -n "$APPSRV_HOME" ]; then
-    if [ -n "$JBOSS_HOME" ]; then
-        APPSRV_HOME=$JBOSS_HOME
-    elif [ -n "$WEBLOGIC_HOME" ]; then
-        APPSRV_HOME=$WEBLOGIC_HOME
-    fi
-fi
-
 if [ ! -n "${SIGNSERVER_HOME}" ]; then
   if [ -f $DIR/signclient ]; then
     SIGNSRV_HOME=$DIR/..
@@ -82,16 +70,6 @@ OPTIONAL_CLASSPATH=${SIGNSRV_HOME}/lib/SignServer-Client-ValidationCLI.jar
 CP="${SIGNSRV_HOME}/lib/${MAIN_JAR}"
 CP="${SIGNSRV_HOME}/conf":"$CP"
 CP="$CP":${OPTIONAL_CLASSPATH}
-
-# Application server dependencies
-if [ -f $APPSRV_HOME/lib/appserv-rt.jar ]; then
-    CP=$CP:"${SIGNSRV_HOME}/conf/glassfish"
-    CP=$CP:"$APPSRV_HOME/lib/appserv-rt.jar"
-fi
-if [ -f $APPSRV_HOME/client/jbossall-client.jar ]; then
-    CP=$CP:"${SIGNSRV_HOME}/conf/jboss"
-    CP=$CP:"$APPSRV_HOME/client/jbossall-client.jar"
-fi
 
 # For Cygwin, switch paths to Windows format before running java
 if $cygwin; then

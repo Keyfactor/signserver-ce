@@ -16,12 +16,9 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
@@ -480,17 +477,6 @@ public class AdministratorsFrame extends javax.swing.JFrame {
         dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    /**
-    * @param args the command line arguments
-    */
-    public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new AdministratorsFrame().setVisible(true);
-            }
-        });
-    }
-
     @Action(block = Task.BlockingScope.WINDOW)
     public Task reloadGlobalConfiguration() {
         return new ReloadGlobalConfigurationTask(org.jdesktop.application.Application.getInstance(org.signserver.admin.gui.SignServerAdminGUIApplication.class));
@@ -510,7 +496,7 @@ public class AdministratorsFrame extends javax.swing.JFrame {
             List<Entry> result = null;
 
             try {
-               result = new ArrayList(parseAdmins().values());
+               result = new ArrayList<Entry>(parseAdmins().values());
             } catch (final AdminNotAuthorizedException_Exception ex) {
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override

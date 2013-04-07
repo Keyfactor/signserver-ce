@@ -32,6 +32,7 @@ public class NullTimeSource implements ITimeSource {
      * @param props unused
      * @see org.signserver.server.ITimeSource#init(java.util.Properties)
      */
+    @Override
     public void init(final Properties props) {
         // No properties defined
     }
@@ -40,6 +41,7 @@ public class NullTimeSource implements ITimeSource {
      * @return Always null simulating that the time source is not available.
      * @see org.signserver.server.ITimeSource#getGenTime()
      */
+    @Override
     public final Date getGenTime() {
         return null;
     }

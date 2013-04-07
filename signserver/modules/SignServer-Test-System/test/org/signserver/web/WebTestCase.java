@@ -22,6 +22,8 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Map;
 import java.util.Map.Entry;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.fail;
 import org.apache.log4j.Logger;
 import org.signserver.testutils.ModulesTestCase;
 
@@ -121,6 +123,26 @@ public abstract class WebTestCase extends ModulesTestCase {
     		LOG.error("IOException", ex);
     		fail(ex.getMessage());
     	}
+    }
+    
+    /**
+     * Query using the specified fields and HTTP method and returns the status
+     * code.
+     */
+    protected int queryStatusReturned(final Map<String, String> fields, final String method) throws IOException {
+        HttpURLConnection con = null;
+        try {
+            con = WebTestCase.send(getServletURL(), fields, method);
+
+            final int response = con.getResponseCode();
+            final String message = con.getResponseMessage();
+            LOG.info("Returned " + response + " " + message);
+            return response;  
+        } finally {
+            if (con != null) {
+                con.disconnect();
+            }
+        }
     }
 
     /**

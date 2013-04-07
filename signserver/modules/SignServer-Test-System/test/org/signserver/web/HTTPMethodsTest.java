@@ -14,6 +14,7 @@ package org.signserver.web;
 
 import java.util.HashMap;
 import java.util.Map;
+import static junit.framework.Assert.assertTrue;
 
 /**
  * Tests different HTTP methods to make sure only GET and POST are allowed
@@ -45,27 +46,25 @@ public class HTTPMethodsTest extends WebTestCase {
 		removeWorker(getSignerIdDummy1());
 	}
 
-	/**
-	 * Testing HTTP PUT
-	 * should fail with error 403
-	 */
-	public void test01HttpPUT() {
-		Map<String, String> fields = new HashMap<String, String>();
-		fields.put("data", "<root/>");
+    /**
+     * Testing HTTP PUT should fail with HTTP error 403 or 405.
+     */
+    public void test01HttpPUT() throws Exception {
+        final Map<String, String> fields = new HashMap<String, String>();
+        fields.put("data", "<root/>");
+        final int actual = queryStatusReturned(fields, "PUT");
+        assertTrue("status returned: " + actual, actual == 403 || actual == 405);
+    }
 
-		assertStatusReturned(fields, "PUT", 403);
-	}
-	
-	/**
-	 * Testing HTTP DELETE
-	 * should fail with error 403
-	 */
-	public void test02HttpDELETE() {
-		Map<String, String> fields = new HashMap<String, String>();
-		fields.put("data", "<root/>");
-
-		assertStatusReturned(fields, "DELETE", 403);
-	}
+    /**
+     * Testing HTTP DELETE should fail with HTTP error 403 or 405.
+     */
+    public void test02HttpDELETE() throws Exception {
+        final Map<String, String> fields = new HashMap<String, String>();
+        fields.put("data", "<root/>");
+        final int actual = queryStatusReturned(fields, "DELETE");
+        assertTrue("status returned: " + actual, actual == 403 || actual == 405);
+    }
 
 	/**
 	 * Testing HTTP OPTIONS

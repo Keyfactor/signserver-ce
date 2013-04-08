@@ -93,7 +93,11 @@ public class Main {
                 .append("a) ").append(COMMAND)
                 .append(" -testsuite TimeStamp1 -threads 4 -tsaurl http://localhost:8080/signserver/tsa?workerId=1").append(NL)
                 .append("b) ").append(COMMAND)
-                .append(" -testsuite TimeStamp1 -threads 4 -maxwaittime 100 -statoutputdir ./statistics/ -tsaurl http://localhost:8080/signserver/tsa?workerId=1").append(NL);
+                .append(" -testsuite TimeStamp1 -threads 4 -maxwaittime 100 -statoutputdir ./statistics/ -tsaurl http://localhost:8080/signserver/tsa?workerId=1").append(NL)
+                .append("c) ").append(COMMAND)
+                .append(" -testsuite DocumentSigner1 -threads 4 -processurl http://localhost:8080/signserver/process -worker PDFSigner -infile test.pdf").append(NL)
+                .append("d) ").append(COMMAND)
+                .append(" -testsuite DocumentSigner1 -threads 4 -processurl http://localhost:8080/signserver/process -worker XMLSigner -data \"<root/>\"").append(NL);
                 
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         final HelpFormatter formatter = new HelpFormatter();

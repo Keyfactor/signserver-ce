@@ -21,16 +21,16 @@ import org.signserver.test.performance.WorkerThread;
  * Thread invoking a document signer.
  * 
  * @author Marcus Lundblad
- * @version $Id$
+ * @version $Id: PDFSignerThread.java 3423 2013-04-08 11:18:17Z malu9369 $
  *
  */
-public class PDFSignerThread extends WorkerThread {
+public class DocumentSignerThread extends WorkerThread {
     
     
-    public PDFSignerThread(final String name, final FailureCallback failureCallback, final String url, final File infile, final String workerNameOrId,
+    public DocumentSignerThread(final String name, final FailureCallback failureCallback, final String url, final File infile, final String workerNameOrId,
             int maxWaitTime,
             int seed, long warmupTime, final long limitedTime, final File statFile) {
         super(name, failureCallback, limitedTime, seed, warmupTime, limitedTime, statFile);
-        this.task = new PDFSign(url, infile, workerNameOrId, random);
+        this.task = new DocumentSigner(url, infile, workerNameOrId, random);
     }
 }

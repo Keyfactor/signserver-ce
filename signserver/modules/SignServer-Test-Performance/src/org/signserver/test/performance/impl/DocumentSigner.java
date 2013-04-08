@@ -31,11 +31,11 @@ import org.signserver.test.performance.Task;
  * Invoke a document signer
  * 
  * @author Marcus Lundblad
- * @version $Id$
+ * @version $Id: PDFSign.java 3424 2013-04-08 11:33:56Z malu9369 $
  *
  */
-public class PDFSign implements Task {
-    private static Logger LOG = Logger.getLogger(PDFSign.class);
+public class DocumentSigner implements Task {
+    private static Logger LOG = Logger.getLogger(DocumentSigner.class);
     
     private static final String CRLF = "\r\n";
     private static final String BOUNDARY = "------------------signserver";
@@ -47,7 +47,7 @@ public class PDFSign implements Task {
 
     private File infile;
 
-    public PDFSign(final String url, final File infile, final String workerNameOrId, final Random random) {
+    public DocumentSigner(final String url, final File infile, final String workerNameOrId, final Random random) {
         this.url = url;
         this.workerNameOrId = workerNameOrId;
         

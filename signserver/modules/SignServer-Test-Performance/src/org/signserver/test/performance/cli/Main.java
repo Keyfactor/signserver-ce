@@ -24,6 +24,7 @@ import org.apache.log4j.Logger;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.test.performance.FailureCallback;
 import org.signserver.test.performance.WorkerThread;
+import org.signserver.test.performance.impl.PDFSignerThread;
 import org.signserver.test.performance.impl.TimeStampThread;
 
 /**
@@ -41,9 +42,12 @@ public class Main {
     private static final String TIME_LIMIT = "timelimit";
     private static final String THREADS = "threads";
     private static final String TSA_URL = "tsaurl";
+    private static final String PROCESS_URL = "processurl";
+    private static final String WORKER_NAME_OR_ID = "worker";
     private static final String MAX_WAIT_TIME = "maxwaittime";
     private static final String WARMUP_TIME = "warmuptime";
     private static final String STAT_OUTPUT_DIR = "statoutputdir";
+    private static final String INFILE = "infile";
     private static final Options OPTIONS;
     
     private static final String NL = System.getProperty("line.separator");
@@ -54,9 +58,12 @@ public class Main {
     private static int exitCode;
     private static long startTime;
     private static long warmupTime;
+
+    private static String infile;
     
     private enum TestSuites {
         TimeStamp1,
+        PDFSigner1,
     }
 
     static {
@@ -65,11 +72,14 @@ public class Main {
         OPTIONS.addOption(TIME_LIMIT, true, "Optional. Only run for the specified time (in milliseconds).");
         OPTIONS.addOption(THREADS, true, "Number of threads requesting time stamps.");
         OPTIONS.addOption(TSA_URL, true, "URL to timestamp worker to use.");
+        OPTIONS.addOption(PROCESS_URL, true, "URL to process servlet (for the PDFSigner1 testsuite).");
+        OPTIONS.addOption(WORKER_NAME_OR_ID, true, "Worker name or ID to use.");
         OPTIONS.addOption(MAX_WAIT_TIME, true, "Maximum number of milliseconds for a thread to wait until issuing the next time stamp. Default=100");
         OPTIONS.addOption(WARMUP_TIME, true,
                 "Don't count number of signings and response times until after this time (in milliseconds). Default=0 (no warmup time).");
         OPTIONS.addOption(STAT_OUTPUT_DIR, true,
                 "Optional. Directory to output statistics to. If set, each threads creates a file in this directory to output its response times to. The directory must exist.");
+        OPTIONS.addOption(INFILE, true, "Input file used for PDFSigner testsuite.");
     }
 
     private static void printUsage() {
@@ -132,9 +142,32 @@ public class Main {
             
             final String url;
             if (commandLine.hasOption(TSA_URL)) {
+                if (!ts.equals(TestSuites.TimeStamp1)) {
+                    throw new ParseException("Option " + TSA_URL + " can only be used with the " +
+                            TestSuites.TimeStamp1.toString() + " test suite.");
+                }
                 url = commandLine.getOptionValue(TSA_URL);
+            } else if (commandLine.hasOption(PROCESS_URL)) {
+                if (!ts.equals(TestSuites.PDFSigner1)) {
+                    throw new ParseException("Option " + TSA_URL + " can only be used with the " +
+                            TestSuites.TimeStamp1.toString() + " test suite.");
+                }
+                url = commandLine.getOptionValue(PROCESS_URL);
             } else {
                 throw new ParseException("Missing option: -" + TSA_URL);
+            }
+            
+            String workerNameOrId = null;
+            if (commandLine.hasOption(WORKER_NAME_OR_ID)) {
+                workerNameOrId = commandLine.getOptionValue(WORKER_NAME_OR_ID);
+            } else if (ts.equals(TestSuites.PDFSigner1)) {
+                throw new ParseException("Must specify worker name or ID.");
+            }
+            
+            if (commandLine.hasOption(INFILE)) {
+                infile = commandLine.getOptionValue(INFILE);
+            } else if (ts.equals(TestSuites.PDFSigner1)) {
+                throw new ParseException("Must specify an input file.");
             }
             
             if (commandLine.hasOption(WARMUP_TIME)) {
@@ -206,6 +239,9 @@ public class Main {
                 switch (ts) {
                 case TimeStamp1:
                     timeStamp1(threads, numThreads, callback, url, maxWaitTime, warmupTime, limitedTime, statFolder);
+                    break;
+                case PDFSigner1:
+                    pdfSigner1(threads, numThreads, callback, url, infile, workerNameOrId, maxWaitTime, warmupTime, limitedTime, statFolder);
                     break;
                 default:
                     throw new Exception("Unsupported test suite");
@@ -314,6 +350,7 @@ public class Main {
                 + "------------------------------------------------------------------------------%n", new Date(), totalOperationsPerformed, totalMinResponseTime, totalAverageResponseTime, totalMaxResponseTime, totalRunTime, tps));
     }
     
+    
     private static void timeStamp1(final List<WorkerThread> threads, final int numThreads, final FailureCallback failureCallback,
             final String url, int maxWaitTime, long warmupTime, final long limitedTime, final File statFolder) throws Exception {
         final Random random = new Random();
@@ -327,6 +364,24 @@ public class Main {
             }
             threads.add(new TimeStampThread(name, failureCallback, url, maxWaitTime, random.nextInt(),
                     warmupTime, limitedTime, statFile));
+        }
+    }
+    
+    private static void pdfSigner1(final List<WorkerThread> threads, final int numThreads,
+            final FailureCallback failureCallback, final String url, final String infile, final String workerNameOrId, 
+            int maxWaitTime, long warmupTime,
+            final long limitedTime, final File statFolder) throws Exception {
+        final Random random = new Random();
+        for (int i = 0; i < numThreads; i++) {
+            final String name = "PDFSigner1-" + i;
+            final File statFile;
+            if (statFolder == null) {
+                statFile = null;
+            } else {
+                statFile = new File(statFolder, name + ".csv");
+            }
+            threads.add(new PDFSignerThread(name, failureCallback, url, new File(infile), workerNameOrId, maxWaitTime,
+                    random.nextInt(), warmupTime, limitedTime, statFile));
         }
     }
 }

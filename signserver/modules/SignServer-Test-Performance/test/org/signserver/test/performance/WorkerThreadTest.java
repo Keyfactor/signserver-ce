@@ -31,7 +31,7 @@ public class WorkerThreadTest extends TestCase {
      */
 	public void test01Average() throws Exception {
         LOG.info("test01Average");
-		WorkerThread thread = new WorkerThread("test", null);
+		WorkerThread thread = new WorkerThread("test", null, 0, 0, 0, 0, null);
 		
         assertEquals("Average no samples", Double.NaN, thread.getAverageResponseTime());
         
@@ -48,7 +48,7 @@ public class WorkerThreadTest extends TestCase {
      */
 	public void test02Min() throws Exception {
         LOG.info("test02Min");
-		WorkerThread thread = new WorkerThread("test", null);
+		WorkerThread thread = new WorkerThread("test", null, 0, 0, 0, 0, null);
 		
         assertEquals("Min no samples", Long.MAX_VALUE, thread.getMinResponseTime());
         
@@ -66,7 +66,7 @@ public class WorkerThreadTest extends TestCase {
      */
 	public void test03Max() throws Exception {
         LOG.info("test03Max");
-		WorkerThread thread = new WorkerThread("test", null);
+		WorkerThread thread = new WorkerThread("test", null, 0, 0, 0, 0, null);
 		
         assertEquals("Max no samples", 0, thread.getMaxResponseTime());
         

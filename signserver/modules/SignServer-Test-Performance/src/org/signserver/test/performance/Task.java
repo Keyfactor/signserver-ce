@@ -24,5 +24,5 @@ public interface Task {
      * @return Estimated response time for worker in millisecond.
      * @throws Exception
      */
-	long run() throws Exception;
+	long run() throws FailedException;
 }

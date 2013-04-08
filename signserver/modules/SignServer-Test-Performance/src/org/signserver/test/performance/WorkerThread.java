@@ -12,6 +12,13 @@
  *************************************************************************/
 package org.signserver.test.performance;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Date;
+import java.util.Random;
+
 import org.apache.log4j.Logger;
 
 /**
@@ -34,12 +41,83 @@ public class WorkerThread extends Thread {
     protected long maxRespTime;
     protected long minRespTime = Long.MAX_VALUE;
 
-    
-    public WorkerThread(final String name, final FailureCallback failureCallback) {
+    private long startTime;
+    private long warmupTime;
+    private final long limitedTime;
+    private final long maxWaitTime;
+    private final File statFile;
+    protected Random random;
+    protected Task task;
+       
+    public WorkerThread(final String name, final FailureCallback failureCallback,
+            long maxWaitTime, int seed, long warmupTime, final long limitedTime, final File statFile) {
         super(name);
         this.failureCallback = failureCallback;
+        this.maxWaitTime = maxWaitTime;
+        this.warmupTime = warmupTime;
+        this.limitedTime = limitedTime;
+        this.statFile = statFile;
+        this.random = new Random(seed);
     }
 
+    @Override
+    public void run() {
+        startTime = (new Date()).getTime();
+        
+        LOG.info("   Thread " + getName() + ": Started");
+        
+        BufferedWriter out = null;
+        try {
+            if (statFile != null) {
+                out = new BufferedWriter(new FileWriter(statFile));
+            }
+            while (!isStop()) {
+                long currentTime = (new Date().getTime());
+                long estimatedTime;
+                
+                if (limitedTime > 0 && currentTime > startTime + limitedTime) {
+                    break;
+                }
+                
+                try {
+                    estimatedTime = task.run();
+                } catch (FailedException ex) {
+                    fireFailure("Thread " + getName() + ": Failed after " + getOperationsPerformed() + " signings: " + ex.getMessage());
+                    break;
+                }
+              
+                if (currentTime > startTime + warmupTime) {
+                    addResponseTime(estimatedTime);
+                    if (out != null) {
+                        out.write((System.currentTimeMillis() /*- startTime*/) + ";" + estimatedTime);
+                        out.newLine();
+                    }
+                }
+                
+                // Sleep
+                Thread.sleep((int) (random.nextDouble() * maxWaitTime));
+            }
+        } catch (IOException ex) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("File could not be written", ex);
+            }
+            LOG.error("File could not be written: " + ex.getMessage());
+        } catch (InterruptedException ex) {
+            LOG.error("Interrupted: " + ex.getMessage());
+        } finally {
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (IOException ex) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("File could not be closed", ex);
+                    }
+                    LOG.error("File could not be closed: " + ex.getMessage());
+                }
+            }
+        }
+    }
+    
     /**
      * Indicate that this thread has discovered a failure.
      * @param message A description of the problem

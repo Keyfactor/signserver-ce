@@ -12,9 +12,6 @@
  *************************************************************************/
 package org.signserver.test.performance.impl;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
@@ -45,27 +42,10 @@ public class DocumentSigner implements Task {
     private String workerNameOrId;
     private byte[] data;
 
-    private File infile;
-
-    public DocumentSigner(final String url, final File infile, final String workerNameOrId, final Random random) {
+    public DocumentSigner(final String url, final byte[] data, final String workerNameOrId, final Random random) {
         this.url = url;
         this.workerNameOrId = workerNameOrId;
-        
-        try {
-            final FileInputStream fis = new FileInputStream(infile);
-            
-            data = new byte[(int) infile.length()];
-            
-            try {
-                fis.read(data);
-            } catch (IOException e) {
-                // TODO: handle this..
-            }
-                
-        } catch (FileNotFoundException e) {
-            // TODO: handle this...
-        }
-        
+        this.data = data;
     }
     
     @Override

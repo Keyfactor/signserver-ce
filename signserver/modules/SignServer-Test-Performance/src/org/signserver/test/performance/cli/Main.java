@@ -48,6 +48,7 @@ public class Main {
     private static final String WARMUP_TIME = "warmuptime";
     private static final String STAT_OUTPUT_DIR = "statoutputdir";
     private static final String INFILE = "infile";
+    private static final String DATA = "data";
     private static final Options OPTIONS;
     
     private static final String NL = System.getProperty("line.separator");
@@ -60,6 +61,8 @@ public class Main {
     private static long warmupTime;
 
     private static String infile;
+
+    private static byte[] data;
     
     private enum TestSuites {
         TimeStamp1,
@@ -80,6 +83,7 @@ public class Main {
         OPTIONS.addOption(STAT_OUTPUT_DIR, true,
                 "Optional. Directory to output statistics to. If set, each threads creates a file in this directory to output its response times to. The directory must exist.");
         OPTIONS.addOption(INFILE, true, "Input file used for DocumentSigner1 testsuite.");
+        OPTIONS.addOption(DATA, true, "Input data to be used with the DocumentSigner1 testsuite using an XMLSigner.");
     }
 
     private static void printUsage() {
@@ -165,7 +169,33 @@ public class Main {
             }
             
             if (commandLine.hasOption(INFILE)) {
-                infile = commandLine.getOptionValue(INFILE);
+                final File infile = new File(commandLine.getOptionValue(INFILE));
+                FileInputStream fis = null;
+                
+                try {
+                    fis = new FileInputStream(infile);
+                
+                    data = new byte[(int) infile.length()];
+                
+                    try {
+                        fis.read(data);
+                    } catch (IOException e) {
+                        // TODO: handle this..
+                    }
+                } catch (FileNotFoundException e) {
+                    // TODO: handle this
+                } finally {
+                    if (fis != null) {
+                        try {
+                            fis.close();
+                        } catch (IOException ignored) {
+                            // ignored
+                        }
+                    }
+                }
+                
+            } else if (commandLine.hasOption(DATA)) {
+                data = commandLine.getOptionValue(DATA).getBytes();
             } else if (ts.equals(TestSuites.DocumentSigner1)) {
                 throw new ParseException("Must specify an input file.");
             }
@@ -380,7 +410,7 @@ public class Main {
             } else {
                 statFile = new File(statFolder, name + ".csv");
             }
-            threads.add(new DocumentSignerThread(name, failureCallback, url, new File(infile), workerNameOrId, maxWaitTime,
+            threads.add(new DocumentSignerThread(name, failureCallback, url, data, workerNameOrId, maxWaitTime,
                     random.nextInt(), warmupTime, limitedTime, statFile));
         }
     }

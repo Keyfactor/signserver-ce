@@ -27,10 +27,10 @@ import org.signserver.test.performance.WorkerThread;
 public class DocumentSignerThread extends WorkerThread {
     
     
-    public DocumentSignerThread(final String name, final FailureCallback failureCallback, final String url, final File infile, final String workerNameOrId,
+    public DocumentSignerThread(final String name, final FailureCallback failureCallback, final String url, final byte[] data, final String workerNameOrId,
             int maxWaitTime,
             int seed, long warmupTime, final long limitedTime, final File statFile) {
         super(name, failureCallback, limitedTime, seed, warmupTime, limitedTime, statFile);
-        this.task = new DocumentSigner(url, infile, workerNameOrId, random);
+        this.task = new DocumentSigner(url, data, workerNameOrId, random);
     }
 }

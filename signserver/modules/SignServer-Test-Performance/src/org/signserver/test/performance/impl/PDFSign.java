@@ -12,8 +12,6 @@
  *************************************************************************/
 package org.signserver.test.performance.impl;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

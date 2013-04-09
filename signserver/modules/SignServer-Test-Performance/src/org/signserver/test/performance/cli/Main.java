@@ -162,7 +162,11 @@ public class Main {
                 }
                 url = commandLine.getOptionValue(PROCESS_URL);
             } else {
-                throw new ParseException("Missing option: -" + TSA_URL);
+                if (ts.equals(TestSuites.TimeStamp1)) {
+                    throw new ParseException("Missing option: -" + TSA_URL);
+                } else {
+                    throw new ParseException("Missing option: -" + PROCESS_URL);
+                }
             }
             
             String workerNameOrId = null;

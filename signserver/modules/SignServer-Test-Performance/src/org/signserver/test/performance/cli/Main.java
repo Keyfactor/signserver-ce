@@ -177,7 +177,8 @@ public class Main {
             }
             
             if (commandLine.hasOption(INFILE)) {
-                final File infile = new File(commandLine.getOptionValue(INFILE));
+                final String file = commandLine.getOptionValue(INFILE);
+                final File infile = new File(file);
                 FileInputStream fis = null;
                 
                 try {
@@ -188,10 +189,10 @@ public class Main {
                     try {
                         fis.read(data);
                     } catch (IOException e) {
-                        // TODO: handle this..
+                        LOG.error("Failed to read input file: " + e.getMessage());
                     }
                 } catch (FileNotFoundException e) {
-                    // TODO: handle this
+                    LOG.error("File not found: " + file);
                 } finally {
                     if (fis != null) {
                         try {

@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.test.performance.impl;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
@@ -20,6 +21,7 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
+import java.io.InputStream;
 import org.signserver.test.performance.FailedException;
 import org.signserver.test.performance.Task;
 
@@ -75,9 +77,8 @@ public class DocumentSigner implements Task {
 
         urlConn = url.openConnection();
 
-        urlConn.setDoInput(true);
         urlConn.setDoOutput(true);
-        urlConn.setUseCaches(false);
+        urlConn.setAllowUserInteraction(false);
         
         final StringBuilder sb = new StringBuilder();
         sb.append("--" + BOUNDARY);
@@ -107,6 +108,13 @@ public class DocumentSigner implements Task {
         }
         sb.append(CRLF);
         
+        sb.append("--" + BOUNDARY);
+        sb.append(CRLF);
+        sb.append("Content-Disposition: form-data; name=\"datafile\"");
+        sb.append("; filename=\"");
+        // don't care about the actual file name for now...
+        sb.append("noname.dat");
+        
         sb.append("\"");
         sb.append(CRLF);
         sb.append("Content-Type: application/octet-stream");
@@ -121,12 +129,24 @@ public class DocumentSigner implements Task {
                 sb.toString().length() + BOUNDARY.length() + 8-1));
         
         out = urlConn.getOutputStream();
-        
+                
         out.write(sb.toString().getBytes());
         out.write(data);
         
         out.write(("\r\n--" + BOUNDARY + "--\r\n").getBytes());
         out.flush();
+        
+        // Get the response
+        final InputStream in = urlConn.getInputStream();
+        final ByteArrayOutputStream os = new ByteArrayOutputStream();
+        int len;
+        final byte[] buf = new byte[1024];
+        while ((len = in.read(buf)) > 0) {
+            os.write(buf, 0, len);
+        }
+        os.close();
+        out.close();
+        in.close();
         
         // Take stop time
         final long estimatedTime = System.nanoTime() - startTime;

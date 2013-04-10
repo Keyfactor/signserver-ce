@@ -53,7 +53,7 @@ public class DocumentSigner implements Task {
     @Override
     public long run() throws FailedException {
         try {
-            return pdfRequest();
+            return documentRequest();
         } catch (IOException ex) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Could not create request", ex);
@@ -62,7 +62,7 @@ public class DocumentSigner implements Task {
         }
     }
     
-    private long pdfRequest() throws IOException {
+    private long documentRequest() throws IOException {
         URL url;
         URLConnection urlConn;
 

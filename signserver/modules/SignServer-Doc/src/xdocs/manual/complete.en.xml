@@ -321,14 +321,14 @@ Make sure all required softwares are installed:
                     </p>
                     <ul>
                         <li>Java 6: Oracle JDK 6 Update 10 or later* or OpenJDK 6**</li>
-                        <li>Application server: JBoss 5.1.0.GA*** or GlassFish Server Open Source Edition 2.1.1</li>
+                        <li>Application server: JBoss 5.1.0.GA***, JBoss EAP 5.1 or GlassFish Server Open Source Edition 2.1.1</li>
                         <li>Database: HypersonicSQL (bundled with JBoss), MySQL 5.1, Oracle Database 10/11g or without****</li>
                         <li>Build tool: Apache Ant 1.8.0 or later</li>
                     </ul>
                     <p>
 * When using Oracle JDK you must install the 'Unlimited Strength Jurisdiction Policy Files' for JDK for the parts of SignServer that  makes use of strong crypto to work. The policy files can be found at the same place as the JDK download at Oracle. Further information on this can be found in the Oracle documentation on the JCE. <br/>
 ** The ODFSigner has issues with OpenJDK. Please see <a href="https://jira.primekey.se/browse/DSS-168">DSS-168</a> for a workaround.<br/>
-*** JBoss 5.1.0.GA is available in two different versions (standard and JDK6) which differs in web services stacks. The one called JBoss 5.1.0.GA-JDK6 should be used.
+*** JBoss 5.1.0.GA is available in two different versions (standard and JDK6) which differs in web services stacks. The one called JBoss 5.1.0.GA-JDK6 should be used.<br/>
 **** See <a href="complete.en.html#SignServer%20without%20Database">SignServer without Database</a>.
                     </p>
                 </subsection>

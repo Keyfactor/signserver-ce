@@ -4354,7 +4354,7 @@ The P12CryptoToken, doesn't support the destroyKey() method
 
                     <subsubsection name="SIGNERTOKEN.CLASSPATH">
                         <p>
-The fully qualified class name is: <b>org.signserver.server.cryptotokens.JKSCryptoToken</b>
+The fully qualified class name is: <b>org.signserver.server.cryptotokens.P12CryptoToken</b>
                         </p>
                     </subsubsection>
 
@@ -4386,7 +4386,7 @@ The JKSCryptoToken, doesn't support the destroyKey() method
 
                     <subsubsection name="SIGNERTOKEN.CLASSPATH">
                         <p>
-The fully qualified class name is: <b>org.signserver.server.cryptotokens.P12CryptoToken</b>
+The fully qualified class name is: <b>org.signserver.server.cryptotokens.JKSCryptoToken</b>
                         </p>
                     </subsubsection>
 

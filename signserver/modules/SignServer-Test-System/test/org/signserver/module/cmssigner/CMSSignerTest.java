@@ -119,6 +119,10 @@ public class CMSSignerTest extends ModulesTestCase {
         assertEquals("One certificate included", 1, signerCerts.size());
         assertEquals(signercert, signerCerts.iterator().next());
 
+        // check that the default signature algorithm is SHA1withRSA
+        assertEquals("Digest algorithm", "1.3.14.3.2.26", signer.getDigestAlgOID());
+        assertEquals("Encryption algorithm", "1.2.840.113549.1.1.1", signer.getEncryptionAlgOID());
+        
         LOG.debug("<test01BasicCMSSignRSA");
     }
 

@@ -14,9 +14,12 @@ package org.signserver.module.cmssigner;
 
 import java.io.IOException;
 import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
+import java.security.interfaces.DSAPublicKey;
+import java.security.interfaces.ECPublicKey;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -54,9 +57,7 @@ public class CMSSigner extends BaseSigner {
     
     // Property constants
     public static final String SIGNATUREALGORITHM = "SIGNATUREALGORITHM";
-    
-    private static final String DEFAULT_SIGNATUREALGORITHM = "SHA1withRSA";
-    
+
     private String signatureAlgorithm;
     
     @Override
@@ -65,7 +66,7 @@ public class CMSSigner extends BaseSigner {
         super.init(workerId, config, workerContext, workerEM);
         
         // Get the signature algorithm
-        signatureAlgorithm = config.getProperty(SIGNATUREALGORITHM, DEFAULT_SIGNATUREALGORITHM);
+        signatureAlgorithm = config.getProperty(SIGNATUREALGORITHM);
     }
 
     public ProcessResponse processData(final ProcessRequest signRequest,
@@ -113,7 +114,8 @@ public class CMSSigner extends BaseSigner {
         try {
             final CMSSignedDataGenerator generator
                     = new CMSSignedDataGenerator();
-            final ContentSigner contentSigner = new JcaContentSignerBuilder(signatureAlgorithm).setProvider(getCryptoToken().getProvider(ICryptoToken.PROVIDERUSAGE_SIGN)).build(privKey);
+            final String sigAlg = signatureAlgorithm == null ? getDefaultSignatureAlgorithm(cert.getPublicKey()) : signatureAlgorithm;
+            final ContentSigner contentSigner = new JcaContentSignerBuilder(sigAlg).setProvider(getCryptoToken().getProvider(ICryptoToken.PROVIDERUSAGE_SIGN)).build(privKey);
             generator.addSignerInfoGenerator(new JcaSignerInfoGeneratorBuilder(
                      new JcaDigestCalculatorProviderBuilder().setProvider("BC").build())
                      .build(contentSigner, (X509Certificate) cert));
@@ -156,5 +158,19 @@ public class CMSSigner extends BaseSigner {
             LOG.error("Error constructing CMS", ex);
             throw new SignServerException("Error constructing CMS", ex);
         }
+    }
+    
+    private String getDefaultSignatureAlgorithm(final PublicKey publicKey) {
+        final String result;
+
+        if (publicKey instanceof ECPublicKey) {
+            result = "SHA1withECDSA";
+        }  else if (publicKey instanceof DSAPublicKey) {
+            result = "SHA1withDSA";
+        } else {
+            result = "SHA1withRSA";
+        }
+
+        return result;
     }
 }

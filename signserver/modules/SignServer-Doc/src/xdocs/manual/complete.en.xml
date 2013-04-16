@@ -3722,7 +3722,8 @@ Currently the signed content is always embedded as well as the signer certificat
                     </subsubsection>
                     <subsubsection name="Available Properties">
                         <p>
-                            <b>SIGNATUREALGORITHM</b> = property specifying the algorithm used to sign the data (default: SHA1withRSA)
+                            <b>SIGNATUREALGORITHM</b> = property specifying the algorithm used to sign the data (default: depending on the signing key: SHA1withDSA for DSA keys,
+                                                        SHA1withECDSA for ECDSA keys, otherwise SHA1withRSA)
                         </p>
                     </subsubsection>
                 </subsection>

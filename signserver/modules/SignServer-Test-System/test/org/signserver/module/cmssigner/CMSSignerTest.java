@@ -95,6 +95,9 @@ public class CMSSignerTest extends ModulesTestCase {
         if (sigAlg != null) {
             workerSession.setWorkerProperty(getSignerIdDummy1(), CMSSigner.SIGNATUREALGORITHM, sigAlg);
             workerSession.reloadConfiguration(getSignerIdDummy1());
+        } else {
+            workerSession.removeWorkerProperty(getSignerIdDummy1(), CMSSigner.SIGNATUREALGORITHM);
+            workerSession.reloadConfiguration(getSignerIdDummy1());
         }
         
         final GenericSignResponse res =

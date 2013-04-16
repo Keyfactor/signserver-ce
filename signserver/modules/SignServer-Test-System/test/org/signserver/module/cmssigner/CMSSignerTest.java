@@ -63,12 +63,19 @@ public class CMSSignerTest extends ModulesTestCase {
      * Tests that the signer can produce a CMS structure and that it returns
      * the signer's certficate and that it is included in the structure and
      * that it can be used to verify the signature and that the signed content
-     * also is included.
+     * also is included. Also test that the default signature algorithm is SHA1withRSA
      * @throws Exception In case of error.
      */
     public void test01BasicCMSSignRSA() throws Exception {
         LOG.debug(">test01BasicCMSSignRSA");
 
+        testBasicCMSSign(null, "1.3.14.3.2.26", "1.2.840.113549.1.1.1");
+        
+        LOG.debug("<test01BasicCMSSignRSA");
+    }
+    
+    private void testBasicCMSSign(final String sigAlg, final String expectedDigAlgOID,
+            final String expectedEncAlgOID) throws Exception {
         final int reqid = 37;
 
         final String testDocument = "Something to sign...123";
@@ -81,6 +88,12 @@ public class CMSSignerTest extends ModulesTestCase {
                     signRequest, new RequestContext());
         final byte[] data = res.getProcessedData();
 
+        // override signature algorithm if set
+        if (sigAlg != null) {
+            workerSession.setWorkerProperty(getSignerIdDummy1(), CMSSigner.SIGNATUREALGORITHM, sigAlg);
+            workerSession.reloadConfiguration(getSignerIdDummy1());
+        }
+        
         // Answer to right question
         assertSame("Request ID", reqid, res.getRequestID());
 
@@ -120,10 +133,8 @@ public class CMSSignerTest extends ModulesTestCase {
         assertEquals(signercert, signerCerts.iterator().next());
 
         // check that the default signature algorithm is SHA1withRSA
-        assertEquals("Digest algorithm", "1.3.14.3.2.26", signer.getDigestAlgOID());
-        assertEquals("Encryption algorithm", "1.2.840.113549.1.1.1", signer.getEncryptionAlgOID());
-        
-        LOG.debug("<test01BasicCMSSignRSA");
+        assertEquals("Digest algorithm", expectedDigAlgOID, signer.getDigestAlgOID());
+        assertEquals("Encryption algorithm", expectedEncAlgOID, signer.getEncryptionAlgOID());
     }
 
     /**

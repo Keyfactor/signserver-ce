@@ -14,12 +14,9 @@ package org.signserver.module.cmssigner;
 
 import java.io.IOException;
 import java.security.PrivateKey;
-import java.security.PublicKey;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
-import java.security.interfaces.DSAPublicKey;
-import java.security.interfaces.ECPublicKey;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;

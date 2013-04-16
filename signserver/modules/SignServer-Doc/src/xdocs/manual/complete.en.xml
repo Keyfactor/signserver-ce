@@ -3720,6 +3720,11 @@ structure in binary format.
 Currently the signed content is always embedded as well as the signer certificate.
                         </p>
                     </subsubsection>
+                    <subsubsection name="Available Properties">
+                        <p>
+                            <b>SIGNATUREALGORITHM</b> = property specifying the algorithm used to sign the data (default: SHA1withRSA)
+                        </p>
+                    </subsubsection>
                 </subsection>
             </section>
 

@@ -55,10 +55,20 @@ public class CMSSigner extends BaseSigner {
     /** Content-type for the produced data. */
     private static final String CONTENT_TYPE = "application/pkcs7-signature";
     
+    // Property constants
+    public static final String SIGNATUREALGORITHM = "SIGNATUREALGORITHM";
+    
+    private static final String DEFAULT_SIGNATUREALGORITHM = "SHA1withRSA";
+    
+    private String signatureAlgorithm;
+    
     @Override
     public void init(final int workerId, final WorkerConfig config,
             final WorkerContext workerContext, final EntityManager workerEM) {
         super.init(workerId, config, workerContext, workerEM);
+        
+        // Get the signature algorithm
+        signatureAlgorithm = config.getProperty(SIGNATUREALGORITHM, DEFAULT_SIGNATUREALGORITHM);
     }
 
     public ProcessResponse processData(final ProcessRequest signRequest,
@@ -106,7 +116,7 @@ public class CMSSigner extends BaseSigner {
         try {
             final CMSSignedDataGenerator generator
                     = new CMSSignedDataGenerator();
-            final ContentSigner contentSigner = new JcaContentSignerBuilder(getDefaultSignatureAlgorithm(cert.getPublicKey())).setProvider(getCryptoToken().getProvider(ICryptoToken.PROVIDERUSAGE_SIGN)).build(privKey);
+            final ContentSigner contentSigner = new JcaContentSignerBuilder(signatureAlgorithm).setProvider(getCryptoToken().getProvider(ICryptoToken.PROVIDERUSAGE_SIGN)).build(privKey);
             generator.addSignerInfoGenerator(new JcaSignerInfoGeneratorBuilder(
                      new JcaDigestCalculatorProviderBuilder().setProvider("BC").build())
                      .build(contentSigner, (X509Certificate) cert));
@@ -149,17 +159,5 @@ public class CMSSigner extends BaseSigner {
             LOG.error("Error constructing CMS", ex);
             throw new SignServerException("Error constructing CMS", ex);
         }
-    }
-
-    private String getDefaultSignatureAlgorithm(final PublicKey publicKey) {
-        final String result;
-        if (publicKey instanceof ECPublicKey) {
-            result = "SHA1withECDSA";
-        }  else if (publicKey instanceof DSAPublicKey) {
-            result = "SHA1withDSA";
-        } else {
-            result = "SHA1withRSA";
-        }
-        return result;
     }
 }

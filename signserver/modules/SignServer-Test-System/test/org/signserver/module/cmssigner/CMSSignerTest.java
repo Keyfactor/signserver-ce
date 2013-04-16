@@ -74,6 +74,14 @@ public class CMSSignerTest extends ModulesTestCase {
         LOG.debug("<test01BasicCMSSignRSA");
     }
     
+    /**
+     * Test setting SIGNATUREALGORITHM to a non-default value.
+     * @throws Exception
+     */
+    public void test02BasicCMSSignSHA256withRSA() throws Exception {
+        testBasicCMSSign("SHA256withRSA", "2.16.840.1.101.3.4.2.1", "1.2.840.113549.1.1.1");
+    }
+    
     private void testBasicCMSSign(final String sigAlg, final String expectedDigAlgOID,
             final String expectedEncAlgOID) throws Exception {
         final int reqid = 37;
@@ -83,24 +91,24 @@ public class CMSSignerTest extends ModulesTestCase {
         final GenericSignRequest signRequest =
                 new GenericSignRequest(reqid, testDocument.getBytes());
 
-        final GenericSignResponse res =
-                (GenericSignResponse) workerSession.process(getSignerIdDummy1(),
-                    signRequest, new RequestContext());
-        final byte[] data = res.getProcessedData();
-
         // override signature algorithm if set
         if (sigAlg != null) {
             workerSession.setWorkerProperty(getSignerIdDummy1(), CMSSigner.SIGNATUREALGORITHM, sigAlg);
             workerSession.reloadConfiguration(getSignerIdDummy1());
         }
         
+        final GenericSignResponse res =
+                (GenericSignResponse) workerSession.process(getSignerIdDummy1(),
+                    signRequest, new RequestContext());
+        final byte[] data = res.getProcessedData();
+   
         // Answer to right question
         assertSame("Request ID", reqid, res.getRequestID());
 
         // Output for manual inspection
         final FileOutputStream fos = new FileOutputStream(
                 new File(getSignServerHome(),
-                "tmp" + File.separator + "signedcms_rsa.p7s"));
+                "tmp" + File.separator + "signedcms_" + sigAlg + ".p7s"));
         fos.write((byte[]) data);
         fos.close();
 
@@ -133,8 +141,8 @@ public class CMSSignerTest extends ModulesTestCase {
         assertEquals(signercert, signerCerts.iterator().next());
 
         // check that the default signature algorithm is SHA1withRSA
-        assertEquals("Digest algorithm", expectedDigAlgOID, signer.getDigestAlgOID());
-        assertEquals("Encryption algorithm", expectedEncAlgOID, signer.getEncryptionAlgOID());
+        assertEquals("Digest algorithm", expectedDigAlgOID, signer.getDigestAlgorithmID().getAlgorithm().getId());
+        assertEquals("Encryption algorithm", expectedEncAlgOID, signer.getEncryptionAlgOID());   
     }
 
     /**

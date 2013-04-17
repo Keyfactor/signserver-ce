@@ -88,12 +88,12 @@ public class ClientWS {
             @WebParam(name = "data") byte[] data) throws RequestFailedException, InternalServerException {
         final DataResponse result;
         try {
-            final RequestContext requestContext = handleRequestContext(requestMetadata);
             final int workerId = getWorkerId(workerIdOrName);
             if (workerId < 1) {
                 throw new RequestFailedException("No worker with the given name could be found");
             }
-            
+            final RequestContext requestContext = handleRequestContext(requestMetadata, workerId);
+
             final int requestId = random.nextInt();
             
             final ProcessRequest req = new GenericSignRequest(requestId, data);
@@ -156,8 +156,8 @@ public class ClientWS {
             @WebParam(name = "sodData") final SODRequest data) throws RequestFailedException, InternalServerException {
         final SODResponse result;
         try {
-            final RequestContext requestContext = handleRequestContext(requestMetadata);
             final int workerId = getWorkerId(workerIdOrName);
+            final RequestContext requestContext = handleRequestContext(requestMetadata, workerId);
             final int requestId = random.nextInt();
         
             // Collect all [dataGroup1, dataGroup2, ..., dataGroupN]
@@ -276,7 +276,7 @@ public class ClientWS {
         return retval;
     }
 
-    private RequestContext handleRequestContext(final List<Metadata> requestMetadata) {
+    private RequestContext handleRequestContext(final List<Metadata> requestMetadata, final int workerId) {
         final HttpServletRequest servletRequest =
                 (HttpServletRequest) wsContext.getMessageContext().get(MessageContext.SERVLET_REQUEST);
         String requestIP = getRequestIP();
@@ -321,6 +321,9 @@ public class ClientWS {
         logMap.put(IWorkerLogger.LOG_XFORWARDEDFOR,
                 servletRequest.getHeader("X-Forwarded-For"));
 
+        logMap.put(IWorkerLogger.LOG_WORKER_NAME,
+                getWorkerSession().getCurrentWorkerConfig(workerId).getProperty(ProcessableConfig.NAME));
+        
         if (requestMetadata == null) {
             requestContext.remove(RequestContext.REQUEST_METADATA);
         } else {

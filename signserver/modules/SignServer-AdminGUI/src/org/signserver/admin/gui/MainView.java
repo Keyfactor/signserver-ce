@@ -37,6 +37,7 @@ import javax.swing.AbstractListModel;
 import javax.swing.ComboBoxModel;
 import javax.swing.Icon;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -69,6 +70,7 @@ import org.signserver.admin.gui.adminws.gen.SignServerException_Exception;
 import org.signserver.admin.gui.adminws.gen.WsWorkerConfig;
 import org.signserver.admin.gui.adminws.gen.WsWorkerStatus;
 import org.signserver.common.GlobalConfiguration;
+import org.signserver.common.SignServerUtil;
 
 /**
  * The application's main frame.
@@ -367,6 +369,7 @@ public class MainView extends FrameView {
         jLabel5 = new javax.swing.JLabel();
         editIssuerDNTextfield = new javax.swing.JTextField();
         editUpdateAllCheckbox = new javax.swing.JCheckBox();
+        loadCertButton = new javax.swing.JButton();
         passwordPanel = new javax.swing.JPanel();
         passwordPanelLabel = new javax.swing.JLabel();
         passwordPanelField = new javax.swing.JPasswordField();
@@ -742,6 +745,14 @@ public class MainView extends FrameView {
         editUpdateAllCheckbox.setText(resourceMap.getString("editUpdateAllCheckbox.text")); // NOI18N
         editUpdateAllCheckbox.setName("editUpdateAllCheckbox"); // NOI18N
 
+        loadCertButton.setText(resourceMap.getString("loadCertButton.text")); // NOI18N
+        loadCertButton.setName("loadCertButton"); // NOI18N
+        loadCertButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                loadFromCertificateButtonPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout authEditPanelLayout = new javax.swing.GroupLayout(authEditPanel);
         authEditPanel.setLayout(authEditPanelLayout);
         authEditPanelLayout.setHorizontalGroup(
@@ -749,27 +760,30 @@ public class MainView extends FrameView {
             .addGroup(authEditPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(authEditPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(editSerialNumberTextfield, javax.swing.GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE)
-                    .addComponent(editIssuerDNTextfield, javax.swing.GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE)
-                    .addComponent(editUpdateAllCheckbox, javax.swing.GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE))
-                .addContainerGap())
+                    .addComponent(editSerialNumberTextfield, javax.swing.GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE)
+                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE)
+                    .addComponent(editIssuerDNTextfield, javax.swing.GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE)
+                    .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE)
+                    .addComponent(editUpdateAllCheckbox, javax.swing.GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(loadCertButton, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         authEditPanelLayout.setVerticalGroup(
             authEditPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(authEditPanelLayout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(51, 51, 51)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(editSerialNumberTextfield, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(authEditPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(editSerialNumberTextfield, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(loadCertButton))
                 .addGap(18, 18, 18)
                 .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(editIssuerDNTextfield, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGap(45, 45, 45)
                 .addComponent(editUpdateAllCheckbox)
-                .addContainerGap(28, Short.MAX_VALUE))
+                .addContainerGap(60, Short.MAX_VALUE))
         );
 
         passwordPanel.setName("passwordPanel"); // NOI18N
@@ -879,13 +893,13 @@ public class MainView extends FrameView {
         statusPropertiesTabLayout.setHorizontalGroup(
             statusPropertiesTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, statusPropertiesTabLayout.createSequentialGroup()
-                .addContainerGap(501, Short.MAX_VALUE)
+                .addContainerGap(793, Short.MAX_VALUE)
                 .addComponent(statusPropertiesDetailsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
             .addGroup(statusPropertiesTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(statusPropertiesTabLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(statusPropertiesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 473, Short.MAX_VALUE)
+                    .addComponent(statusPropertiesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 765, Short.MAX_VALUE)
                     .addGap(112, 112, 112)))
         );
         statusPropertiesTabLayout.setVerticalGroup(
@@ -893,11 +907,11 @@ public class MainView extends FrameView {
             .addGroup(statusPropertiesTabLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(statusPropertiesDetailsButton)
-                .addContainerGap(492, Short.MAX_VALUE))
+                .addContainerGap(463, Short.MAX_VALUE))
             .addGroup(statusPropertiesTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(statusPropertiesTabLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(statusPropertiesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 510, Short.MAX_VALUE)
+                    .addComponent(statusPropertiesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 484, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -966,7 +980,7 @@ public class MainView extends FrameView {
             configurationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, configurationTabLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 463, Short.MAX_VALUE)
+                .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 755, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(configurationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(addButton)
@@ -982,7 +996,7 @@ public class MainView extends FrameView {
             .addGroup(configurationTabLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(configurationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 510, Short.MAX_VALUE)
+                    .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 484, Short.MAX_VALUE)
                     .addGroup(configurationTabLayout.createSequentialGroup()
                         .addComponent(addButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -1064,7 +1078,7 @@ public class MainView extends FrameView {
         authorizationTabLayout.setHorizontalGroup(
             authorizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(authorizationTabLayout.createSequentialGroup()
-                .addContainerGap(486, Short.MAX_VALUE)
+                .addContainerGap(778, Short.MAX_VALUE)
                 .addGroup(authorizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(authAddButton, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(authEditButton, javax.swing.GroupLayout.Alignment.TRAILING)
@@ -1073,7 +1087,7 @@ public class MainView extends FrameView {
             .addGroup(authorizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(authorizationTabLayout.createSequentialGroup()
                     .addGap(6, 6, 6)
-                    .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 467, Short.MAX_VALUE)
+                    .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 759, Short.MAX_VALUE)
                     .addGap(124, 124, 124)))
         );
 
@@ -1088,11 +1102,11 @@ public class MainView extends FrameView {
                 .addComponent(authEditButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(authRemoveButton)
-                .addContainerGap(414, Short.MAX_VALUE))
+                .addContainerGap(379, Short.MAX_VALUE))
             .addGroup(authorizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(authorizationTabLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 510, Short.MAX_VALUE)
+                    .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 484, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -1105,8 +1119,8 @@ public class MainView extends FrameView {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(workerTabbedPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 605, Short.MAX_VALUE)
-                    .addComponent(workerComboBox, javax.swing.GroupLayout.Alignment.LEADING, 0, 605, Short.MAX_VALUE))
+                    .addComponent(workerTabbedPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 901, Short.MAX_VALUE)
+                    .addComponent(workerComboBox, javax.swing.GroupLayout.Alignment.LEADING, 0, 901, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -1115,7 +1129,7 @@ public class MainView extends FrameView {
                 .addContainerGap()
                 .addComponent(workerComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(workerTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 572, Short.MAX_VALUE))
+                .addComponent(workerTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 555, Short.MAX_VALUE))
         );
 
         jSplitPane1.setRightComponent(jPanel1);
@@ -1126,14 +1140,14 @@ public class MainView extends FrameView {
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(mainPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1185, Short.MAX_VALUE)
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1181, Short.MAX_VALUE)
                 .addContainerGap())
         );
         mainPanelLayout.setVerticalGroup(
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(mainPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 630, Short.MAX_VALUE)
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 616, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -1197,8 +1211,8 @@ public class MainView extends FrameView {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 798, Short.MAX_VALUE)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 798, Short.MAX_VALUE))
+                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 783, Short.MAX_VALUE)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 783, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jButtonAuditConditionRemove, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -1315,15 +1329,15 @@ public class MainView extends FrameView {
         auditlogTablePanel.setLayout(auditlogTablePanelLayout);
         auditlogTablePanelLayout.setHorizontalGroup(
             auditlogTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1161, Short.MAX_VALUE)
+            .addGap(0, 1157, Short.MAX_VALUE)
             .addGroup(auditlogTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(auditlogTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1161, Short.MAX_VALUE))
+                .addComponent(auditlogTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1157, Short.MAX_VALUE))
         );
         auditlogTablePanelLayout.setVerticalGroup(
             auditlogTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 430, Short.MAX_VALUE)
+            .addGap(0, 416, Short.MAX_VALUE)
             .addGroup(auditlogTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(auditlogTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 430, Short.MAX_VALUE))
+                .addComponent(auditlogTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 416, Short.MAX_VALUE))
         );
 
         auditlogPanel.add(auditlogTablePanel, "auditlogTableCard");
@@ -1340,11 +1354,11 @@ public class MainView extends FrameView {
         auditlogErrorPanel.setLayout(auditlogErrorPanelLayout);
         auditlogErrorPanelLayout.setHorizontalGroup(
             auditlogErrorPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1161, Short.MAX_VALUE)
+            .addComponent(jScrollPane5, javax.swing.GroupLayout.Alignment.TRAILING)
         );
         auditlogErrorPanelLayout.setVerticalGroup(
             auditlogErrorPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 430, Short.MAX_VALUE)
+            .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 416, Short.MAX_VALUE)
         );
 
         auditlogPanel.add(auditlogErrorPanel, "auditlogErrorCard");
@@ -1372,11 +1386,11 @@ public class MainView extends FrameView {
                 .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(auditlogMaxEntriesTextfield, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(275, Short.MAX_VALUE))
+                .addContainerGap(271, Short.MAX_VALUE))
             .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel3Layout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(auditlogPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 1161, Short.MAX_VALUE)
+                    .addComponent(auditlogPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 1157, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -1397,11 +1411,11 @@ public class MainView extends FrameView {
                         .addComponent(auditlogDisplayingToIndex)
                         .addComponent(jLabel8)
                         .addComponent(auditlogMaxEntriesTextfield, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(459, Short.MAX_VALUE))
+                .addContainerGap(442, Short.MAX_VALUE))
             .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                     .addGap(59, 59, 59)
-                    .addComponent(auditlogPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 430, Short.MAX_VALUE)
+                    .addComponent(auditlogPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 416, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -1415,14 +1429,14 @@ public class MainView extends FrameView {
             auditPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(auditPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jSplitPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 1185, Short.MAX_VALUE)
+                .addComponent(jSplitPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 1181, Short.MAX_VALUE)
                 .addContainerGap())
         );
         auditPanelLayout.setVerticalGroup(
             auditPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(auditPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jSplitPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 630, Short.MAX_VALUE)
+                .addComponent(jSplitPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 616, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -1783,6 +1797,25 @@ private void auditLogTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:
         displayLogEntryAction();
     }
 }//GEN-LAST:event_auditLogTableKeyReleased
+
+private void loadFromCertificateButtonPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadFromCertificateButtonPerformed
+    LOG.debug("Load from certificate file");
+    
+    final JFileChooser chooser = new JFileChooser();
+    final int res = chooser.showOpenDialog(authEditPanel);
+    
+    if (res == JFileChooser.APPROVE_OPTION) {
+        try {
+            final X509Certificate cert =
+                    SignServerUtil.getCertFromFile(chooser.getSelectedFile().getAbsolutePath());
+            editSerialNumberTextfield.setText(cert.getSerialNumber().toString(16));
+            editIssuerDNTextfield.setText(cert.getIssuerDN().getName());
+        } catch (IllegalArgumentException e) {
+            JOptionPane.showMessageDialog(authEditPanel, e.getMessage());
+        }
+    }
+    
+}//GEN-LAST:event_loadFromCertificateButtonPerformed
 
 private void displayLogEntryAction() {
     final int sel = auditLogTable.getSelectedRow();
@@ -2536,6 +2569,7 @@ private void displayLogEntryAction() {
     javax.swing.JSplitPane jSplitPane2;
     javax.swing.JTabbedPane jTabbedPane1;
     javax.swing.JToolBar jToolBar1;
+    javax.swing.JButton loadCertButton;
     javax.swing.JPanel mainPanel;
     javax.swing.JMenuBar menuBar;
     javax.swing.JPanel passwordPanel;

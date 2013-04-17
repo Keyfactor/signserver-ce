@@ -27,6 +27,7 @@ import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.cli.spi.UnexpectedCommandFailureException;
 import org.signserver.common.AuthorizedClient;
+import org.signserver.common.SignServerUtil;
 
 /**
  * Adds an authorized client to a signer
@@ -70,7 +71,7 @@ public class AddAuthorizedClientCommand extends AbstractAdminCommand {
             } else {
             	// read SN and DN from the supplied certificate...
             	String filename = args[1];
-            	X509Certificate cert = getCertFromFile(filename);	
+            	X509Certificate cert = SignServerUtil.getCertFromFile(filename);	
             	
             	sn = cert.getSerialNumber();
             	certsn = sn.toString(16);  // needed for the infomational output below
@@ -91,8 +92,8 @@ public class AddAuthorizedClientCommand extends AbstractAdminCommand {
             this.getOutputStream().println("\n\n");
             return 0;
 
-        } catch (IllegalCommandArgumentsException ex) {
-            throw ex;
+        } catch (IllegalArgumentException ex) {
+            throw new IllegalCommandArgumentsException(ex.getMessage());
         } catch (Exception e) {
             throw new UnexpectedCommandFailureException(e);
         }

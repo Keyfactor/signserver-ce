@@ -14,13 +14,18 @@ package org.signserver.common;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.security.Security;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Collection;
 
 import org.apache.log4j.Logger;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.ejbca.util.CertTools;
 
 /**
  * Containing common util methods used for various reasons.
@@ -111,5 +116,50 @@ public class SignServerUtil {
             }
         }
         return retval;
+    }
+    
+    /**
+     * Get a certificate from a file (PEM or binary cert)
+     * @param filename
+     * @return Certificate
+     * @throws IllegalCommandArgumentsException
+     */
+    public static X509Certificate getCertFromFile(final String filename)
+                throws IllegalArgumentException {
+        Collection<?> certs = null;
+        X509Certificate cert = null;
+        
+        try {
+                certs = CertTools.getCertsFromPEM(filename);
+                        
+                if (certs.isEmpty()) {
+                        throw new IllegalArgumentException("Invalid PEM file, couldn't find any certificate");
+                }
+                
+                cert = (X509Certificate) certs.iterator().next();
+        } catch (CertificateException cex) {
+                throw new IllegalArgumentException("Could not fetch certificate from PEM file: " + cex.getMessage());
+        } catch (IOException ioex) {
+                // try to treat the file as a binary certificate file
+                        FileInputStream fis = null;
+
+                try {
+                        fis = new FileInputStream(filename);
+                        byte[] content = new byte[fis.available()];
+                        fis.read(content, 0, fis.available());
+                        cert = (X509Certificate) CertTools.getCertfromByteArray(content);
+                } catch (Exception ex) {
+                        throw new IllegalArgumentException("Could not read certificate in DER format: " + ex.getMessage());
+                } finally {
+                        if (fis != null) {
+                                try {
+                                        fis.close();
+                                } catch (IOException ioe) {
+                                }
+                        }
+                }
+        }
+        
+        return cert;
     }
 }

@@ -13,10 +13,10 @@
               <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="editCertSerialNoTextField" alignment="0" pref="372" max="32767" attributes="0"/>
-                      <Component id="jLabel1" alignment="0" pref="372" max="32767" attributes="0"/>
-                      <Component id="editIssuerDNTextField" alignment="0" pref="372" max="32767" attributes="0"/>
-                      <Component id="jLabel2" alignment="0" pref="372" max="32767" attributes="0"/>
+                      <Component id="editCertSerialNoTextField" alignment="0" pref="368" max="32767" attributes="0"/>
+                      <Component id="jLabel1" alignment="0" pref="368" max="32767" attributes="0"/>
+                      <Component id="editIssuerDNTextField" alignment="0" pref="368" max="32767" attributes="0"/>
+                      <Component id="jLabel2" alignment="0" pref="368" max="32767" attributes="0"/>
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="editRoleAdminRadio" linkSize="2" min="-2" pref="110" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
@@ -24,9 +24,11 @@
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="editRoleBothRadio" linkSize="2" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <Component id="jLabel3" alignment="1" pref="372" max="32767" attributes="0"/>
+                      <Component id="jLabel3" alignment="1" pref="368" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
+                  <Component id="loadFromCertificateButton" min="-2" pref="43" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -36,8 +38,11 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="editCertSerialNoTextField" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="editCertSerialNoTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="loadFromCertificateButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace min="-2" pref="45" max="-2" attributes="0"/>
                   <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="editIssuerDNTextField" min="-2" max="-2" attributes="0"/>
@@ -114,9 +119,30 @@
             <Property name="name" type="java.lang.String" value="jLabel3" noResource="true"/>
           </Properties>
         </Component>
+        <Component class="javax.swing.JButton" name="loadFromCertificateButton">
+          <Properties>
+            <Property name="text" type="java.lang.String" resourceKey="loadFromCertificateButton.text"/>
+            <Property name="name" type="java.lang.String" value="loadFromCertificateButton" noResource="true"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="loadFromCertificateButtonPerformed"/>
+          </Events>
+        </Component>
       </SubComponents>
     </Container>
     <Component class="javax.swing.ButtonGroup" name="buttonGroup1">
+    </Component>
+    <Component class="javax.swing.JButton" name="jButton2">
+      <Properties>
+        <Property name="text" type="java.lang.String" resourceKey="jButton2.text"/>
+        <Property name="name" type="java.lang.String" value="jButton2" noResource="true"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JButton" name="jButton3">
+      <Properties>
+        <Property name="text" type="java.lang.String" resourceKey="jButton3.text"/>
+        <Property name="name" type="java.lang.String" value="jButton3" noResource="true"/>
+      </Properties>
     </Component>
   </NonVisualComponents>
   <Properties>

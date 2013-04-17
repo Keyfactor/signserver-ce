@@ -13,12 +13,14 @@
 package org.signserver.admin.gui;
 
 import java.awt.event.ActionEvent;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
@@ -30,6 +32,7 @@ import org.signserver.admin.gui.adminws.gen
         .AdminNotAuthorizedException_Exception;
 import org.signserver.admin.gui.adminws.gen.WsGlobalConfiguration;
 import  org.signserver.common.GlobalConfiguration;
+import org.signserver.common.SignServerUtil;
 
 /**
  * Frame for viewing and editing global configuration properties.
@@ -136,7 +139,10 @@ public class AdministratorsFrame extends javax.swing.JFrame {
         editRoleAuditorRadio = new javax.swing.JRadioButton();
         editRoleBothRadio = new javax.swing.JRadioButton();
         jLabel3 = new javax.swing.JLabel();
+        loadFromCertificateButton = new javax.swing.JButton();
         buttonGroup1 = new javax.swing.ButtonGroup();
+        jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
         jScrollPane6 = new javax.swing.JScrollPane();
         adminsTable = new javax.swing.JTable();
         addButton = new javax.swing.JButton();
@@ -178,6 +184,14 @@ public class AdministratorsFrame extends javax.swing.JFrame {
         jLabel3.setText(resourceMap.getString("jLabel3.text")); // NOI18N
         jLabel3.setName("jLabel3"); // NOI18N
 
+        loadFromCertificateButton.setText(resourceMap.getString("loadFromCertificateButton.text")); // NOI18N
+        loadFromCertificateButton.setName("loadFromCertificateButton"); // NOI18N
+        loadFromCertificateButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                loadFromCertificateButtonPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout editPanelLayout = new javax.swing.GroupLayout(editPanel);
         editPanel.setLayout(editPanelLayout);
         editPanelLayout.setHorizontalGroup(
@@ -185,18 +199,20 @@ public class AdministratorsFrame extends javax.swing.JFrame {
             .addGroup(editPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(editPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(editCertSerialNoTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE)
-                    .addComponent(editIssuerDNTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE)
+                    .addComponent(editCertSerialNoTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 368, Short.MAX_VALUE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 368, Short.MAX_VALUE)
+                    .addComponent(editIssuerDNTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 368, Short.MAX_VALUE)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 368, Short.MAX_VALUE)
                     .addGroup(editPanelLayout.createSequentialGroup()
                         .addComponent(editRoleAdminRadio, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(editRoleAuditorRadio)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(editRoleBothRadio))
-                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE))
-                .addContainerGap())
+                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 368, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(loadFromCertificateButton, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(12, 12, 12))
         );
 
         editPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {editRoleAdminRadio, editRoleAuditorRadio, editRoleBothRadio});
@@ -207,8 +223,10 @@ public class AdministratorsFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(editCertSerialNoTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(editPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(editCertSerialNoTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(loadFromCertificateButton))
+                .addGap(45, 45, 45)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(editIssuerDNTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -221,6 +239,12 @@ public class AdministratorsFrame extends javax.swing.JFrame {
                     .addComponent(editRoleBothRadio))
                 .addContainerGap())
         );
+
+        jButton2.setText(resourceMap.getString("jButton2.text")); // NOI18N
+        jButton2.setName("jButton2"); // NOI18N
+
+        jButton3.setText(resourceMap.getString("jButton3.text")); // NOI18N
+        jButton3.setName("jButton3"); // NOI18N
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle(resourceMap.getString("Form.title")); // NOI18N
@@ -477,6 +501,22 @@ public class AdministratorsFrame extends javax.swing.JFrame {
         dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void loadFromCertificateButtonPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadFromCertificateButtonPerformed
+        final JFileChooser chooser = new JFileChooser();
+        final int res = chooser.showOpenDialog(editPanel);
+    
+        if (res == JFileChooser.APPROVE_OPTION) {
+            try {
+                final X509Certificate cert =
+                        SignServerUtil.getCertFromFile(chooser.getSelectedFile().getAbsolutePath());
+                editCertSerialNoTextField.setText(cert.getSerialNumber().toString(16));
+                editIssuerDNTextField.setText(cert.getIssuerDN().getName());
+            } catch (IllegalArgumentException e) {
+                JOptionPane.showMessageDialog(editPanel, e.getMessage());
+            }
+        }
+    }//GEN-LAST:event_loadFromCertificateButtonPerformed
+
     @Action(block = Task.BlockingScope.WINDOW)
     public Task reloadGlobalConfiguration() {
         return new ReloadGlobalConfigurationTask(org.jdesktop.application.Application.getInstance(org.signserver.admin.gui.SignServerAdminGUIApplication.class));
@@ -535,11 +575,14 @@ public class AdministratorsFrame extends javax.swing.JFrame {
     private javax.swing.JRadioButton editRoleAuditorRadio;
     private javax.swing.JRadioButton editRoleBothRadio;
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JToolBar jToolBar1;
+    private javax.swing.JButton loadFromCertificateButton;
     private javax.swing.JButton refreshButton;
     private javax.swing.JButton removeButton;
     // End of variables declaration//GEN-END:variables

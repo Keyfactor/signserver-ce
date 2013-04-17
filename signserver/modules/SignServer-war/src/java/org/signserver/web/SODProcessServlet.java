@@ -34,12 +34,15 @@ import org.ejbca.util.Base64;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.NoSuchWorkerException;
+import org.signserver.common.ProcessableConfig;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SODSignRequest;
 import org.signserver.common.SODSignResponse;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerException;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.server.log.IWorkerLogger;
+import org.signserver.server.log.LogMap;
 
 /**
  * SODProcessServlet is a Servlet that takes data group hashes from a htto post and puts them in a Map for passing
@@ -228,10 +231,14 @@ public class SODProcessServlet extends HttpServlet {
             try {
                 final RequestContext context = new RequestContext((X509Certificate) clientCertificate, remoteAddr);
                 final String xForwardedFor = req.getHeader(RequestContext.X_FORWARDED_FOR);
+                final LogMap logMap = LogMap.getInstance(context);
                 
                 if (xForwardedFor != null) {
                     context.put(RequestContext.X_FORWARDED_FOR, xForwardedFor);
                 }
+                
+                logMap.put(IWorkerLogger.LOG_WORKER_NAME,
+                        getWorkerSession().getCurrentWorkerConfig(workerId).getProperty(ProcessableConfig.NAME));
                 
                 response = (SODSignResponse) getWorkerSession().process(workerId, signRequest, context);
 

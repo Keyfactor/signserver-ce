@@ -336,6 +336,8 @@ public class GenericProcessServlet extends HttpServlet {
                 String.valueOf(data.length));
         logMap.put(IWorkerLogger.LOG_FILENAME, fileName);
         logMap.put(IWorkerLogger.LOG_XFORWARDEDFOR, xForwardedFor);
+        logMap.put(IWorkerLogger.LOG_WORKER_NAME,
+                getWorkerSession().getCurrentWorkerConfig(workerId).getProperty(ProcessableConfig.NAME));
 
         if (xForwardedFor != null) {
             context.put(RequestContext.X_FORWARDED_FOR, xForwardedFor);

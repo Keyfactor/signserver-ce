@@ -25,6 +25,7 @@ import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.cli.spi.UnexpectedCommandFailureException;
 import org.signserver.common.GlobalConfiguration;
+import org.signserver.common.SignServerUtil;
 
 /**
  * Command for managing the list of authorized WS auditors.
@@ -152,7 +153,7 @@ public class WSAuditorsCommand extends AbstractAdminCommand {
             		entries.add(new Entry(certSerialNo, issuerDN));
             	} else {
             		// read serial number and issuer DN from cert file
-            		X509Certificate certificate = getCertFromFile(cert);
+            		X509Certificate certificate = SignServerUtil.getCertFromFile(cert);
             		String sn = certificate.getSerialNumber().toString(16);
             		String dn = certificate.getIssuerX500Principal().getName();
             		

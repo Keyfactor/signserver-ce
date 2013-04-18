@@ -1,4 +1,4 @@
--
+--
 -- Name: auditrecorddata; Type: TABLE; Schema: public; Owner: signserver; Tablespace: 
 --
 

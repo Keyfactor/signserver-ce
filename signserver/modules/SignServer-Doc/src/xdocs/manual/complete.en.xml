@@ -1466,6 +1466,8 @@ otherwise information about authorized clients might be taken from other sources
 <b>Add...</b>: Adds a new authorized client. If the option 
 "Apply changes to all selected workers" is checked the client is added to all 
 the currently selected workers.
+The "..." button can be used to read the values for serial number and issuer DN
+from a certificate file in PEM or DER format. 
                         </p>
                         <p>
 <b>Edit...</b>: Edits the selected authorized client. If the option 
@@ -1575,6 +1577,8 @@ remove or edit properties.
                         <p>
 Lists all the authorized WS administrators and auditors and gives the ability to add,
 remove or edit them.
+It is also possible to get the serial number and issuer DN from a certificate file
+in PEM or DER format by using the "..." button.
                         </p>
                     </subsubsection>
 

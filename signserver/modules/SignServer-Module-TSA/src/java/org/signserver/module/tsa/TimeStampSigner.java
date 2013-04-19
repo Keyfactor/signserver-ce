@@ -1034,6 +1034,11 @@ public class TimeStampSigner extends BaseSigner {
         if (serialNumberError != null) {
             result.add(serialNumberError);
         }
+        
+        // check default policy
+        if (defaultTSAPolicyOID == null) {
+            result.add("No policy OID has been configured, or is invalid");
+        }
 
         return result;
     }

@@ -61,11 +61,13 @@ public class OCSPValidator extends BaseValidator {
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(OCSPValidator.class);
 
+    @Override
     public void testConnection() throws ConnectException, SignServerException {
         // TODO Test Internet connectivity, which is needed to access ocsp servers.
         // throw exception if not online
     }
 
+    @Override
     public Validation validate(Certificate cert)
             throws IllegalRequestException, CryptoTokenOfflineException,
             SignServerException {

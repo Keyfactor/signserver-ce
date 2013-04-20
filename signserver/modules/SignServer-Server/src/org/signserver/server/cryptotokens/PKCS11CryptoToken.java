@@ -67,6 +67,7 @@ public class PKCS11CryptoToken extends CryptoTokenBase implements ICryptoToken,
      * Method initializing the PKCS11 device
      *
      */
+    @Override
     public void init(final int workerId, final Properties props) {
         LOG.debug(">init");
         String signaturealgoritm = props.getProperty(WorkerConfig.SIGNERPROPERTY_SIGNATUREALGORITHM);
@@ -99,6 +100,7 @@ public class PKCS11CryptoToken extends CryptoTokenBase implements ICryptoToken,
     /**
      * @see IKeyGenerator#generateKey(java.lang.String, java.lang.String, java.lang.String, char[])
      */
+    @Override
     public void generateKey(final String keyAlgorithm, String keySpec,
             String alias, char[] authCode) throws CryptoTokenOfflineException,
             IllegalArgumentException {
@@ -342,6 +344,7 @@ public class PKCS11CryptoToken extends CryptoTokenBase implements ICryptoToken,
         return retval;
     }
 
+    @Override
     public KeyStore getKeyStore() throws UnsupportedOperationException,
             CryptoTokenOfflineException, KeyStoreException {
         return getKeyStore(authenticationCode); // TODO: check loaded etc

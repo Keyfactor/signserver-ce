@@ -55,6 +55,7 @@ public class PatternWorkerLogger implements IWorkerLogger {
     public PatternWorkerLogger() {
     }
 
+    @Override
     public void init(Properties properties) {
         this.pattern = Pattern.compile(properties.getProperty("LOGPATTERN",
                 DEFAULT_LOGPATTERN));
@@ -65,6 +66,7 @@ public class PatternWorkerLogger implements IWorkerLogger {
         		DEFAULT_LOGLEVEL), Level.INFO);
     }
 
+    @Override
     public void log(final AdminInfo adminInfo, Map<String, String> entries) throws WorkerLoggerException {
         final EjbcaPatternLogger pl = new EjbcaPatternLogger(this.pattern.matcher(
                 this.orderString), this.orderString, ACCOUNTLOG,

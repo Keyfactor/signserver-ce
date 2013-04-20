@@ -34,6 +34,7 @@ public class AllFieldsWorkerLogger implements IWorkerLogger {
 
     private Level logLevel;
     
+    @Override
     public void init(final Properties props) {
         this.logLevel = Level.toLevel(props.getProperty("LOGLEVEL_DEFAULT",
         		DEFAULT_LOGLEVEL), Level.INFO);
@@ -45,6 +46,7 @@ public class AllFieldsWorkerLogger implements IWorkerLogger {
      * @param fields The fields to include.
      * @throws WorkerLoggerException
      */
+    @Override
     public void log(final AdminInfo adminInfo, final Map<String, String> fields)
             throws WorkerLoggerException {
         final StringBuilder str = new StringBuilder();

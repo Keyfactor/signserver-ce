@@ -64,25 +64,30 @@ public class GenericWSServlet extends HttpServlet implements ServletContextAttri
     @EJB
     private IWorkerSession.ILocal workersession;
 
+    @Override
     public void init(ServletConfig servletConfig) throws ServletException {
         super.init(servletConfig);
     }
 
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException {
         forwardRequest(GenericWSRequest.REQUESTTYPE_POST, request, response, getServletContext());
     }
 
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException {
 
         forwardRequest(GenericWSRequest.REQUESTTYPE_GET, request, response, getServletContext());
     }
 
+    @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response)
             throws ServletException {
         forwardRequest(GenericWSRequest.REQUESTTYPE_PUT, request, response, getServletContext());
     }
 
+    @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response)
             throws ServletException {
         forwardRequest(GenericWSRequest.REQUESTTYPE_DEL, request, response, getServletContext());

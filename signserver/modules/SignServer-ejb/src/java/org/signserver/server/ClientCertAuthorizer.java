@@ -47,6 +47,7 @@ public class ClientCertAuthorizer implements IAuthorizer {
      * @see org.signserver.server.IAuthorizer#init(int,
      * org.signserver.common.WorkerConfig, javax.persistence.EntityManager)
      */
+    @Override
     public void init(final int workerId, final WorkerConfig config,
             final EntityManager em)  throws SignServerException {
         this.config = new ProcessableConfig(config);
@@ -64,6 +65,7 @@ public class ClientCertAuthorizer implements IAuthorizer {
      * @see org.signserver.server.IAuthorizer#isAuthorized(ProcessRequest,
      * RequestContext)
      */
+    @Override
     public void isAuthorized(final ProcessRequest request,
             final RequestContext requestContext)
             throws SignServerException, IllegalRequestException {

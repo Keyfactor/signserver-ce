@@ -166,19 +166,23 @@ public class WorkerSessionMock implements IWorkerSession.ILocal,
         return worker.getProcessable().processData(request, requestContext);
     }
 
+    @Override
     public WorkerStatus getStatus(int workerId) throws
             InvalidWorkerIdException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public int getWorkerId(String workerName) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public void reloadConfiguration(int workerId) {
         reloadConfiguration(new AdminInfo("Mock user", null, null), workerId);
     }
     
+    @Override
     public void reloadConfiguration(final AdminInfo adminInfo, int workerId) {
         final Worker worker = workers.get(workerId);
         if (worker == null) {
@@ -189,42 +193,51 @@ public class WorkerSessionMock implements IWorkerSession.ILocal,
         }
     }
 
+    @Override
     public void activateSigner(int signerId, String authenticationCode)
             throws CryptoTokenAuthenticationFailureException,
             CryptoTokenOfflineException, InvalidWorkerIdException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public boolean deactivateSigner(int signerId) throws
             CryptoTokenOfflineException, InvalidWorkerIdException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public WorkerConfig getCurrentWorkerConfig(int signerId) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public void setWorkerProperty(int workerId, String key, String value) {
         setWorkerProperty(null, workerId, key, value);
     }
 
+    @Override
     public boolean removeWorkerProperty(int workerId, String key) {
         return removeWorkerProperty(null, workerId, key);
     }
 
+    @Override
     public Collection<AuthorizedClient> getAuthorizedClients(int signerId) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public void addAuthorizedClient(int signerId, AuthorizedClient authClient) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public boolean removeAuthorizedClient(int signerId,
             AuthorizedClient authClient) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public ICertReqData getCertificateRequest(int signerId, 
             ISignerCertReqInfo certReqInfo, final boolean explicitEccParameters)
             throws CryptoTokenOfflineException,
@@ -232,6 +245,7 @@ public class WorkerSessionMock implements IWorkerSession.ILocal,
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public ICertReqData getCertificateRequest(int signerId, 
             ISignerCertReqInfo certReqInfo, final boolean explicitEccParameters, 
             boolean defaultKey) throws CryptoTokenOfflineException,
@@ -239,63 +253,75 @@ public class WorkerSessionMock implements IWorkerSession.ILocal,
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public Certificate getSignerCertificate(int signerId) throws
             CryptoTokenOfflineException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public List<Certificate> getSignerCertificateChain(int signerId) throws
             CryptoTokenOfflineException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public Date getSigningValidityNotAfter(int workerId) throws
             CryptoTokenOfflineException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public Date getSigningValidityNotBefore(int workerId) throws
             CryptoTokenOfflineException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public long getKeyUsageCounterValue(int workerId) throws
             CryptoTokenOfflineException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public boolean destroyKey(int signerId, int purpose) throws
             InvalidWorkerIdException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
     
+    @Override
     public boolean destroyKey(final AdminInfo adminInfo, int signerId, int purpose) throws
         InvalidWorkerIdException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public String generateSignerKey(int signerId, String keyAlgorithm, 
             String keySpec, String alias, char[] authCode) throws
             CryptoTokenOfflineException, InvalidWorkerIdException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public Collection<KeyTestResult> testKey(int signerId, String alias, 
             char[] authCode) throws CryptoTokenOfflineException,
             InvalidWorkerIdException, KeyStoreException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public void uploadSignerCertificate(int signerId,
             byte[] signerCert, String scope) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public void uploadSignerCertificateChain(int signerId,
             Collection<byte[]> signerCerts, String scope) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public int genFreeWorkerId() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -329,10 +355,12 @@ public class WorkerSessionMock implements IWorkerSession.ILocal,
         workers.put(workerId, new Worker(worker, config));
     }
 
+    @Override
     public byte[] getSignerCertificateBytes(int signerId) throws CryptoTokenOfflineException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public List<byte[]> getSignerCertificateChainBytes(int signerId) throws CryptoTokenOfflineException {
         throw new UnsupportedOperationException("Not supported yet.");
     }

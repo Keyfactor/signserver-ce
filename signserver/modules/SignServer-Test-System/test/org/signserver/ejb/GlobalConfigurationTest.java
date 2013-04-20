@@ -28,6 +28,7 @@ public class GlobalConfigurationTest extends TestCase {
     private static IGlobalConfigurationSession.IRemote globalConfigSession;
     private static String signserverhome;
 
+    @Override
     protected void setUp() throws Exception {
         super.setUp();
 

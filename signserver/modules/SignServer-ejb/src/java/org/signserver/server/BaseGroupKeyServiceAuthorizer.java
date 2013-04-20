@@ -40,6 +40,7 @@ public abstract class BaseGroupKeyServiceAuthorizer implements IAuthorizer {
     protected WorkerConfig config;
     protected EntityManager em;
 
+    @Override
     public void init(int workerId, WorkerConfig config, EntityManager em)
             throws SignServerException {
         this.workerId = workerId;
@@ -50,6 +51,7 @@ public abstract class BaseGroupKeyServiceAuthorizer implements IAuthorizer {
     /**
      * Method that checks that all non-fetchkey requests is called from CLI.
      */
+    @Override
     public void isAuthorized(ProcessRequest request,
             RequestContext requestContext) throws IllegalRequestException,
             SignServerException {

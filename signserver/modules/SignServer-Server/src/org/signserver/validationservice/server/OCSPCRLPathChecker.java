@@ -64,6 +64,7 @@ public class OCSPCRLPathChecker extends OCSPPathChecker {
         this.cRLPaths = cRLPaths;
     }
 
+    @Override
     public void check(Certificate cert, Collection<String> unresolvedCritExts)
             throws CertPathValidatorException {
 
@@ -272,6 +273,7 @@ public class OCSPCRLPathChecker extends OCSPPathChecker {
         }
     }
 
+    @Override
     public Object clone() {
         try {
             OCSPCRLPathChecker clonedOCSPCRLPathChecker = null;

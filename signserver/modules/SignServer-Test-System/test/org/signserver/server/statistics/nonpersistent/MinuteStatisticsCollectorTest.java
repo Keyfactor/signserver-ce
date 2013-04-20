@@ -23,6 +23,7 @@ import org.signserver.server.statistics.Event;
 
 public class MinuteStatisticsCollectorTest extends TestCase {
 
+        @Override
 	protected void setUp() throws Exception {
 		super.setUp();
 	}

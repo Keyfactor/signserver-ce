@@ -209,6 +209,7 @@ public class DummyValidator extends BaseValidator {
     /**
      * @see org.signserver.validationservice.server.IValidator#testConnection()
      */
+    @Override
     public void testConnection() throws ConnectException, SignServerException {
         // Do nothing
     }

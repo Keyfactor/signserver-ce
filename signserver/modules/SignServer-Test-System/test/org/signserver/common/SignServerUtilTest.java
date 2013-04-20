@@ -28,6 +28,7 @@ public class SignServerUtilTest extends TestCase {
 
     private static String signserverhome;
 
+    @Override
     protected void setUp() throws Exception {
         super.setUp();
         signserverhome = System.getenv("SIGNSERVER_HOME");

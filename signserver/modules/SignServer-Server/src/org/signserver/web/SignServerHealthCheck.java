@@ -95,6 +95,7 @@ public class SignServerHealthCheck implements IHealthCheck {
         return signserversession;
     }
 
+    @Override
     public void init(ServletConfig config) {
         minfreememory = Integer.parseInt(config.getInitParameter("MinimumFreeMemory")) * 1024 * 1024;
         checkDBString = config.getInitParameter("checkDBString");

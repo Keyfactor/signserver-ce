@@ -54,6 +54,7 @@ public class PrimeCardHSMCryptoToken extends CryptoTokenBase implements ICryptoT
      * Method initializing the primecardHSM device 
      * 
      */
+    @Override
     public void init(int workerId, Properties props) {
         LOG.debug(">init");
         String signaturealgoritm = props.getProperty(WorkerConfig.SIGNERPROPERTY_SIGNATUREALGORITHM);
@@ -74,6 +75,7 @@ public class PrimeCardHSMCryptoToken extends CryptoTokenBase implements ICryptoT
         LOG.debug("<init");
     }
 
+    @Override
     public KeyStore getKeyStore() throws UnsupportedOperationException,
             CryptoTokenOfflineException, KeyStoreException {
         throw new UnsupportedOperationException(

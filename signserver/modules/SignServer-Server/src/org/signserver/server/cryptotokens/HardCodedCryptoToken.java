@@ -272,6 +272,7 @@ public class HardCodedCryptoToken implements ICryptoToken {
             + "uklHo0zDf8kcA7CIxK7qQkT1kLTfIL9B0lrwA3DCV/qOhNHaLzkJVSVS3ajNVGO9"
             + "H5OhnjyWBdTF7KL3KZJ1j9mJxn5pyDu1c1YMdgwr8RGN");
 
+    @Override
     public void init(int workerId, Properties props) throws CryptoTokenInitializationFailureException {
 
         final String defaultKey;
@@ -320,6 +321,7 @@ public class HardCodedCryptoToken implements ICryptoToken {
     /**
      * Always returns ICryptoToken.STATUS_ACTIVE
      */
+    @Override
     public int getCryptoTokenStatus() {
         return SignerStatus.STATUS_ACTIVE;
     }
@@ -327,6 +329,7 @@ public class HardCodedCryptoToken implements ICryptoToken {
     /**
      * Not used in current implementation
      */
+    @Override
     public void activate(String authenticationcode)
             throws CryptoTokenAuthenticationFailureException,
             CryptoTokenOfflineException {
@@ -338,6 +341,7 @@ public class HardCodedCryptoToken implements ICryptoToken {
     /**
      * Not used in current implementation
      */
+    @Override
     public boolean deactivate() {
         return true;
     }
@@ -347,6 +351,7 @@ public class HardCodedCryptoToken implements ICryptoToken {
      * 
      * @param purpose not used
      */
+    @Override
     public PrivateKey getPrivateKey(int purpose)
             throws CryptoTokenOfflineException {
         return privateKey;
@@ -357,15 +362,18 @@ public class HardCodedCryptoToken implements ICryptoToken {
      * 
      * @param purpose not used
      */
+    @Override
     public PublicKey getPublicKey(int purpose) throws CryptoTokenOfflineException {
 
         return cert.getPublicKey();
     }
 
+    @Override
     public String getProvider(int providerUsage) {
         return "BC";
     }
 
+    @Override
     public Certificate getCertificate(int purpose) throws CryptoTokenOfflineException {
         return cert;
     }
@@ -384,6 +392,7 @@ public class HardCodedCryptoToken implements ICryptoToken {
     /**
      * Method not supported
      */
+    @Override
     public ICertReqData genCertificateRequest(ISignerCertReqInfo info,
             final boolean explicitEccParameters, final boolean defaultKey)
             throws CryptoTokenOfflineException {
@@ -393,16 +402,19 @@ public class HardCodedCryptoToken implements ICryptoToken {
     /**
      * Method not supported
      */
+    @Override
     public boolean destroyKey(int purpose) {
         return true;
     }
 
+    @Override
     public Collection<KeyTestResult> testKey(final String alias,
             final char[] authCode)
             throws CryptoTokenOfflineException, KeyStoreException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public KeyStore getKeyStore() throws UnsupportedOperationException,
             CryptoTokenOfflineException, KeyStoreException {
         throw new UnsupportedOperationException(

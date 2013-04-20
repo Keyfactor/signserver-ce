@@ -37,6 +37,7 @@ public class FileWorkerLogger implements IWorkerLogger {
 
     private String logFilePath;
     
+    @Override
     public void init(final Properties props) {
     	logFilePath = props.getProperty(FILE_PATH_PROPERTY_NAME);
 

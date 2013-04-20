@@ -35,6 +35,7 @@ public class DefaultTimeStampSignerLookup implements ITimeStampSignerLookup {
 
     private IGlobalConfigurationSession.ILocal gCSession;
 
+    @Override
     public String lookupClientAuthorizedWorker(IClientCredential credential, RequestContext context) {
         if (LOG.isDebugEnabled()) {
             LOG.debug(">lockupClientAuthorizedWorker");

@@ -54,6 +54,7 @@ public class DummyTimedService extends BaseTimedService {
      * 
      * @see org.signserver.server.timedservices.ITimedService#work()
      */
+    @Override
     public void work() throws ServiceExecutionFailedException {
 
         int currentCount = 0;

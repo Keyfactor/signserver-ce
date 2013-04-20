@@ -39,6 +39,7 @@ public abstract class BaseTimedService extends BaseWorker implements ITimedServi
     /**
      * @see org.signserver.server.timedservices.ITimedService#getNextInterval()
      */
+    @Override
     public long getNextInterval() {
         long retval = DONT_EXECUTE;
     	final String interval
@@ -81,6 +82,7 @@ public abstract class BaseTimedService extends BaseWorker implements ITimedServi
     /**
      * @see org.signserver.server.timedservices.ITimedService#isActive()
      */
+    @Override
     public boolean isActive() {
         if (config.getProperties().getProperty(ServiceConfig.ACTIVE) == null) {
             return false;
@@ -94,6 +96,7 @@ public abstract class BaseTimedService extends BaseWorker implements ITimedServi
     /**
      * @see org.signserver.server.timedservices.ITimedService#isSingleton()
      */
+    @Override
     public boolean isSingleton() {
         if (config.getProperties().getProperty(ServiceConfig.SINGLETON) == null) {
             return false;

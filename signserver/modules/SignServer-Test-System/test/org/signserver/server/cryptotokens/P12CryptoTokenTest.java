@@ -28,6 +28,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
  */
 public class P12CryptoTokenTest extends TestCase {
 
+    @Override
     protected void setUp() throws Exception {
         super.setUp();
 

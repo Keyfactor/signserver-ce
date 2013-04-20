@@ -487,6 +487,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
      * @throws CryptoTokenOfflineException In case the cryptotoken is offline
      * for some reason.
      */
+    @Override
     public Date getSigningValidityNotAfter(final int workerId)
             throws CryptoTokenOfflineException {
         Date date = null;
@@ -511,6 +512,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
      * @throws CryptoTokenOfflineException In case the cryptotoken is offline
      * for some reason.
      */
+    @Override
     public Date getSigningValidityNotBefore(final int workerId)
             throws CryptoTokenOfflineException {
         Date date = null;
@@ -536,6 +538,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
      * @return Value of the key usage counter or -1
      * @throws CryptoTokenOfflineException
      */
+    @Override
     public long getKeyUsageCounterValue(final int workerId) 
             throws CryptoTokenOfflineException {
         long result;
@@ -659,6 +662,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     /* (non-Javadoc)
      * @see org.signserver.ejb.interfaces.IWorkerSession#getWorkerId(java.lang.String)
      */
+    @Override
     public int getWorkerId(String signerName) {
         return workerManagerSession.getIdFromName(signerName, globalConfigurationSession);
     }
@@ -730,6 +734,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     /* (non-Javadoc)
      * @see org.signserver.ejb.interfaces.IWorkerSession#activateSigner(int, java.lang.String)
      */
+    @Override
     public void activateSigner(int signerId, String authenticationCode)
             throws CryptoTokenAuthenticationFailureException,
             CryptoTokenOfflineException, InvalidWorkerIdException {
@@ -751,6 +756,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     /* (non-Javadoc)
      * @see org.signserver.ejb.interfaces.IWorkerSession#deactivateSigner(int)
      */
+    @Override
     public boolean deactivateSigner(int signerId)
             throws CryptoTokenOfflineException, InvalidWorkerIdException {
         IWorker worker = workerManagerSession.getWorker(signerId, globalConfigurationSession);
@@ -902,6 +908,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     /* (non-Javadoc)
      * @see org.signserver.ejb.IWorkerSession#getCurrentSignerConfig(int)
      */
+    @Override
     public WorkerConfig getCurrentWorkerConfig(int signerId) {
         return getWorkerConfig(signerId);
     }
@@ -993,6 +1000,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     /* (non-Javadoc)
      * @see org.signserver.ejb.interfaces.IWorkerSession#getAuthorizedClients(int)
      */
+    @Override
     public Collection<AuthorizedClient> getAuthorizedClients(int signerId) {
         return new ProcessableConfig(getWorkerConfig(signerId)).
                 getAuthorizedClients();
@@ -1120,6 +1128,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     /**
      * @see org.signserver.ejb.interfaces.IWorkerSession#getSignerCertificate(int)
      */
+    @Override
     public Certificate getSignerCertificate(final int signerId) throws CryptoTokenOfflineException {
         Certificate ret = null;
         final IWorker worker = workerManagerSession.getWorker(signerId, globalConfigurationSession);
@@ -1260,6 +1269,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     /* (non-Javadoc)
      * @see org.signserver.ejb.interfaces.IWorkerSession#genFreeWorkerId()
      */
+    @Override
     public int genFreeWorkerId() {
         Collection<Integer> ids = getWorkers(
                 GlobalConfiguration.WORKERTYPE_ALL);

@@ -26,6 +26,7 @@ import org.signserver.common.SignServerUtil;
  */
 public class HardCodedTestCryptoTokenTest extends TestCase {
 
+    @Override
     protected void setUp() throws Exception {
         super.setUp();
 

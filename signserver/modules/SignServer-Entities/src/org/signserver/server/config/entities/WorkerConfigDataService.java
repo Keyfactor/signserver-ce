@@ -47,6 +47,7 @@ public class WorkerConfigDataService implements IWorkerConfigDataService {
      * @param workerId uniqe Id of the worker 
      *
      */
+    @Override
     public void create(int workerId, String configClassPath) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Creating worker config data, id=" + workerId);
@@ -109,6 +110,7 @@ public class WorkerConfigDataService implements IWorkerConfigDataService {
     /**
      * Method that saves the Worker Config to database.
      */
+    @Override
     public void setWorkerConfig(int workerId, WorkerConfig signconf) {
         setWorkerConfig(workerId, signconf, null);
     }
@@ -118,6 +120,7 @@ public class WorkerConfigDataService implements IWorkerConfigDataService {
      * 
      * @return true if the removal was successful
      */
+    @Override
     public boolean removeWorkerConfig(int workerId) {
         boolean retval = false;
         WorkerConfigDataBean wcdb = em.find(WorkerConfigDataBean.class, workerId);

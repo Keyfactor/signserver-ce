@@ -47,6 +47,7 @@ public class SecondStatisticsCollector extends BaseFIFOStatisticsCollector {
         return cal.getTime();
     }
 
+    @Override
     public List<StatisticsEntry> fetchStatistics(String type, Date startTime,
             Date endTime) {
         List<StatisticsEntry> retval;

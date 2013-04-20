@@ -65,6 +65,7 @@ public class OCSPPathChecker extends PKIXCertPathChecker {
         this.authorizedOCSPResponderCerts = authorizedOCSPResponderCerts;
     }
 
+    @Override
     public void init(boolean forward) throws CertPathValidatorException {
         // initialize state of the checker
         cACert = null;
@@ -73,6 +74,7 @@ public class OCSPPathChecker extends PKIXCertPathChecker {
         }
     }
 
+    @Override
     public void check(Certificate cert, Collection<String> unresolvedCritExts)
             throws CertPathValidatorException {
 
@@ -113,10 +115,12 @@ public class OCSPPathChecker extends PKIXCertPathChecker {
         cACert = x509Cert;
     }
 
+    @Override
     public Set<String> getSupportedExtensions() {
         return null;
     }
 
+    @Override
     public boolean isForwardCheckingSupported() {
         return false;
     }
@@ -408,6 +412,7 @@ public class OCSPPathChecker extends PKIXCertPathChecker {
      * 
      * @throws SignServerException 
      */
+    @Override
     public Object clone() {
         try {
             OCSPPathChecker clonedOCSPPathChecker = null;

@@ -24,6 +24,7 @@ public class FaultCallback implements IFaultCallback {
 
     boolean callBackCalled = false;
 
+    @Override
     public void addCommunicationError(ICommunicationFault fault) {
         //System.err.println("ERROR : " + fault.getDescription() + ": HOST : " + fault.getHostName() );
 

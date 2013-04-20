@@ -93,6 +93,7 @@ public abstract class CryptoTokenBase implements ICryptoToken {
      * Method returning SignerStatus.STATUS_ACTIVE if every thing is OK, otherwise STATUS_OFFLINE.
      * 
      */
+    @Override
     public int getCryptoTokenStatus() {
         int status = catoken.getCATokenStatus();
         if (status == ICAToken.STATUS_ACTIVE) {
@@ -108,6 +109,7 @@ public abstract class CryptoTokenBase implements ICryptoToken {
      * @throws CryptoTokenOfflineException if connection to token could not be created.
      * 
      */
+    @Override
     public void activate(String authenticationcode) throws CryptoTokenAuthenticationFailureException, CryptoTokenOfflineException {
         try {
             catoken.activate(authenticationcode);
@@ -124,6 +126,7 @@ public abstract class CryptoTokenBase implements ICryptoToken {
      * 
      * @return true if everything went successful
      */
+    @Override
     public boolean deactivate() throws CryptoTokenOfflineException {
         boolean ret = false;
         try {
@@ -139,6 +142,7 @@ public abstract class CryptoTokenBase implements ICryptoToken {
      * 
      * @see org.signserver.server.cryptotokens.ICryptoToken 
      */
+    @Override
     public PrivateKey getPrivateKey(int purpose) throws CryptoTokenOfflineException {
         try {
             return catoken.getPrivateKey(purpose);
@@ -152,6 +156,7 @@ public abstract class CryptoTokenBase implements ICryptoToken {
      * 
      * @see org.signserver.server.cryptotokens.ICryptoToken 
      */
+    @Override
     public PublicKey getPublicKey(int purpose) throws CryptoTokenOfflineException {
         try {
             return catoken.getPublicKey(purpose);
@@ -164,10 +169,12 @@ public abstract class CryptoTokenBase implements ICryptoToken {
      * Returns the provider name that should be used.
      * @see ICryptoToken.PROVIDERUSAGE_SIGN
      */
+    @Override
     public String getProvider(int providerUsage) {
         return catoken.getProvider();
     }
 
+    @Override
     public Certificate getCertificate(int purpose) throws CryptoTokenOfflineException {
         return null;
     }
@@ -227,10 +234,12 @@ public abstract class CryptoTokenBase implements ICryptoToken {
     /**
      * Method not supported
      */
+    @Override
     public boolean destroyKey(int purpose) {
         return false;
     }
 
+    @Override
     public Collection<KeyTestResult> testKey(String alias, char[] authCode)
             throws CryptoTokenOfflineException, KeyStoreException {
         throw new UnsupportedOperationException("Not supported yet.");

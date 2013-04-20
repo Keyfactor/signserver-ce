@@ -99,6 +99,7 @@ public class KeystoreCryptoToken implements ICryptoToken,
      * @see org.signserver.server.cryptotokens.ICryptoToken#getCryptoTokenStatus()
      *
      */
+    @Override
     public int getCryptoTokenStatus() {
         if (entries != null && entries.get(PURPOSE_SIGN) != null
                 && (!properties.containsKey(NEXTKEY)
@@ -114,6 +115,7 @@ public class KeystoreCryptoToken implements ICryptoToken,
      *
      * @see org.signserver.server.cryptotokens.ICryptoToken#activate(java.lang.String)
      */
+    @Override
     public void activate(String authenticationcode)
             throws CryptoTokenAuthenticationFailureException,
             CryptoTokenOfflineException {
@@ -222,6 +224,7 @@ public class KeystoreCryptoToken implements ICryptoToken,
      *
      * @see org.signserver.server.cryptotokens.ICryptoToken#deactivate()
      */
+    @Override
     public boolean deactivate() {
         entries = null;
         ks = null;
@@ -236,6 +239,7 @@ public class KeystoreCryptoToken implements ICryptoToken,
      * 
      * @see org.signserver.server.cryptotokens.ICryptoToken#getPrivateKey(int)
      */
+    @Override
     public PrivateKey getPrivateKey(int purpose)
             throws CryptoTokenOfflineException {
 
@@ -268,6 +272,7 @@ public class KeystoreCryptoToken implements ICryptoToken,
      * 
      * @see org.signserver.server.cryptotokens.ICryptoToken#getPublicKey(int)
      */
+    @Override
     public PublicKey getPublicKey(int purpose) throws
             CryptoTokenOfflineException {
         final Certificate cert = getKeyEntry(purpose).getCertificate();
@@ -311,6 +316,7 @@ public class KeystoreCryptoToken implements ICryptoToken,
         return entry;
     }
 
+    @Override
     public Certificate getCertificate(int purpose) throws CryptoTokenOfflineException {
         try {
             final KeyEntry entry = getKeyEntry(purpose);
@@ -401,10 +407,12 @@ public class KeystoreCryptoToken implements ICryptoToken,
     /**
      * Method not supported
      */
+    @Override
     public boolean destroyKey(int purpose) {
         return false;
     }
 
+    @Override
     public Collection<KeyTestResult> testKey(final String alias,
             final char[] authCode) throws CryptoTokenOfflineException,
             KeyStoreException {
@@ -492,6 +500,7 @@ public class KeystoreCryptoToken implements ICryptoToken,
         return result;
     }
 
+    @Override
     public void generateKey(String keyAlgorithm, String keySpec, String alias, char[] authCode) throws CryptoTokenOfflineException, IllegalArgumentException {
         if (keySpec == null) {
             throw new IllegalArgumentException("Missing keyspec parameter");
@@ -543,6 +552,7 @@ public class KeystoreCryptoToken implements ICryptoToken,
         }
     }
 
+    @Override
     public KeyStore getKeyStore() throws UnsupportedOperationException,
             CryptoTokenOfflineException, KeyStoreException {
         return ks; // TODO: Should we load it first

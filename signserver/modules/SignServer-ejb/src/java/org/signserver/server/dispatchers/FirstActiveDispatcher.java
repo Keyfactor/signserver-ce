@@ -74,6 +74,7 @@ public class FirstActiveDispatcher extends BaseDispatcher {
         }
     }
 
+    @Override
     public ProcessResponse processData(final ProcessRequest signRequest,
             final RequestContext requestContext) throws IllegalRequestException,
             CryptoTokenOfflineException, SignServerException {

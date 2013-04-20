@@ -54,6 +54,7 @@ public class DefaultGroupKeyService extends BaseGroupKeyService {
     /**
      * @see org.signserver.groupkeyservice.server.IGroupKeyService#fetchGroupKey(org.signserver.groupkeyservice.common.FetchKeyRequest)
      */
+    @Override
     public FetchKeyResponse fetchGroupKey(FetchKeyRequest fetchKeyRequest)
             throws IllegalRequestException, CryptoTokenOfflineException,
             SignServerException {
@@ -109,6 +110,7 @@ public class DefaultGroupKeyService extends BaseGroupKeyService {
     /**
      * @see org.signserver.groupkeyservice.server.IGroupKeyService#pregenerateGroupKeys(org.signserver.groupkeyservice.common.PregenerateKeysRequest)
      */
+    @Override
     public PregenerateKeysResponse pregenerateGroupKeys(
             PregenerateKeysRequest pregenerateKeysRequest)
             throws IllegalRequestException, CryptoTokenOfflineException,
@@ -128,6 +130,7 @@ public class DefaultGroupKeyService extends BaseGroupKeyService {
     /**
      * @see org.signserver.groupkeyservice.server.IGroupKeyService#removeGroupKeys(org.signserver.groupkeyservice.common.IRemoveGroupKeyRequest)
      */
+    @Override
     public RemoveGroupKeyResponse removeGroupKeys(
             IRemoveGroupKeyRequest removeGroupKeyRequests)
             throws IllegalRequestException, CryptoTokenOfflineException,
@@ -138,6 +141,7 @@ public class DefaultGroupKeyService extends BaseGroupKeyService {
     /**
      * @see org.signserver.groupkeyservice.server.IGroupKeyService#switchEncryptionKey(org.signserver.groupkeyservice.common.SwitchEncKeyRequest)
      */
+    @Override
     public SwitchEncKeyResponse switchEncryptionKey(
             SwitchEncKeyRequest switchEncKeyRequest)
             throws IllegalRequestException, CryptoTokenOfflineException,

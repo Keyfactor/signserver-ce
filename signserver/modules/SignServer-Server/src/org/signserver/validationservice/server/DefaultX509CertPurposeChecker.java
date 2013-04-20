@@ -39,6 +39,7 @@ public class DefaultX509CertPurposeChecker implements ICertPurposeChecker {
      * </p>
      * @see org.signserver.validationservice.server.ICertPurposeChecker#checkCertPurposes(org.signserver.validationservice.common.ICertificate, String[])
      */
+    @Override
     public String[] checkCertPurposes(Certificate cert, String[] certPurposes) {
         String[] retval = null;
 
@@ -66,6 +67,7 @@ public class DefaultX509CertPurposeChecker implements ICertPurposeChecker {
     /**
      * @see org.signserver.validationservice.server.ICertPurposeChecker#init(org.signserver.common.WorkerConfig)
      */
+    @Override
     public void init(WorkerConfig config) {
         // Not used
     }

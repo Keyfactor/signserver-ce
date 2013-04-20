@@ -50,6 +50,7 @@ public class GenericServletResponse extends GenericSignResponse {
         this.contentType = contentType;
     }
 
+    @Override
     public void parse(DataInput in) throws IOException {
         super.parse(in);
         int stringSize = in.readInt();
@@ -58,6 +59,7 @@ public class GenericServletResponse extends GenericSignResponse {
         contentType = new String(data, "UTF-8");
     }
 
+    @Override
     public void serialize(DataOutput out) throws IOException {
         super.serialize(out);
         byte[] stringData = contentType.getBytes("UTF-8");

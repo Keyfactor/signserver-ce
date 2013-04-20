@@ -30,6 +30,7 @@ public class LocalComputerTimeSource implements ITimeSource {
     /**
      * @see org.signserver.server.ITimeSource#init(java.util.Properties)
      */
+    @Override
     public void init(final Properties props) {
         // No properties defined
     }
@@ -38,6 +39,7 @@ public class LocalComputerTimeSource implements ITimeSource {
      * Method taking the local clock as time source
      * @see org.signserver.server.ITimeSource#getGenTime()
      */
+    @Override
     public Date getGenTime() {
         return new Date();
     }

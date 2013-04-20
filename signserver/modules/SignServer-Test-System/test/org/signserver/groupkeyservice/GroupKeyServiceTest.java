@@ -66,6 +66,7 @@ public class GroupKeyServiceTest extends TestCase {
     private static Random rand = new Random();
     private static Date startDate = new Date();
 
+    @Override
     protected void setUp() throws Exception {
         super.setUp();
         SignServerUtil.installBCProvider();

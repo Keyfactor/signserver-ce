@@ -64,6 +64,7 @@ public class ValidationServiceWorkerTest extends TestCase {
     private static X509Certificate esigCert1;
     private static X509Certificate badKeyUsageCert1;
 
+    @Override
     protected void setUp() throws Exception {
         super.setUp();
         SignServerUtil.installBCProvider();

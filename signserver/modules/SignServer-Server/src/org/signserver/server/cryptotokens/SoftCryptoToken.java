@@ -129,6 +129,7 @@ public class SoftCryptoToken implements ICryptoToken {
      * @see org.signserver.server.cryptotokens.ICryptoToken#getCryptoTokenStatus()
      * 
      */
+    @Override
     public int getCryptoTokenStatus() {
         if (active) {
             return SignerStatus.STATUS_ACTIVE;
@@ -141,6 +142,7 @@ public class SoftCryptoToken implements ICryptoToken {
      * 
      * @see org.signserver.server.cryptotokens.ICryptoToken#activate(java.lang.String)
      */
+    @Override
     public void activate(String authenticationcode)
             throws CryptoTokenAuthenticationFailureException,
             CryptoTokenOfflineException {
@@ -152,6 +154,7 @@ public class SoftCryptoToken implements ICryptoToken {
      * 
      * @see org.signserver.server.cryptotokens.ICryptoToken#deactivate()
      */
+    @Override
     public boolean deactivate() {
         active = false;
         return true;
@@ -161,6 +164,7 @@ public class SoftCryptoToken implements ICryptoToken {
      * Returns the same private key for all purposes.
      * @see org.signserver.server.cryptotokens.ICryptoToken#getPrivateKey(int)
      */
+    @Override
     public PrivateKey getPrivateKey(int purpose)
             throws CryptoTokenOfflineException {
 
@@ -174,6 +178,7 @@ public class SoftCryptoToken implements ICryptoToken {
      * Returns the same public key for all purposes.
      * @see org.signserver.server.cryptotokens.ICryptoToken#getPublicKey(int)
      */
+    @Override
     public PublicKey getPublicKey(int purpose) throws CryptoTokenOfflineException {
 
         if (!active) {
@@ -191,6 +196,7 @@ public class SoftCryptoToken implements ICryptoToken {
         return "BC";
     }
 
+    @Override
     public Certificate getCertificate(int purpose) throws CryptoTokenOfflineException {
         return null;
     }
@@ -262,6 +268,7 @@ public class SoftCryptoToken implements ICryptoToken {
     /**
      * Method not supported
      */
+    @Override
     public boolean destroyKey(int purpose) {
         LOG.error("destroyKey method isn't supported");
         return false;
@@ -275,12 +282,14 @@ public class SoftCryptoToken implements ICryptoToken {
         return workerSession;
     }
 
+    @Override
     public Collection<KeyTestResult> testKey(final String alias,
             final char[] authCode) throws CryptoTokenOfflineException,
             KeyStoreException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public KeyStore getKeyStore() throws UnsupportedOperationException,
             CryptoTokenOfflineException, KeyStoreException {
         throw new UnsupportedOperationException(

@@ -70,6 +70,7 @@ public class CSVFileStatisticsCollector implements IStatisticsCollector {
     /**
      * Initializes the CSV File Writer statistics collector.
      */
+    @Override
     public void init(int workerId, WorkerConfig config, EntityManager em)
             throws SignServerException {
         this.workerId = workerId;
@@ -79,6 +80,7 @@ public class CSVFileStatisticsCollector implements IStatisticsCollector {
         minimumFlushInterval = getMinimumFlushInterval(config);
     }
 
+    @Override
     public void addEvent(Event event) throws SignServerException {
         if (!missConfigured) {
             if (customDataKeys.isEmpty()) {
@@ -176,11 +178,13 @@ public class CSVFileStatisticsCollector implements IStatisticsCollector {
      * Method not supported, will always return an empty list.
      * @see org.signserver.server.statistics.IStatisticsCollector#fetchStatistics(java.lang.String, java.util.Date, java.util.Date)
      */
+    @Override
     public List<StatisticsEntry> fetchStatistics(String type, Date startTime,
             Date endTime) {
         return new ArrayList<StatisticsEntry>();
     }
 
+    @Override
     public void flush() {
         file.delete();
     }

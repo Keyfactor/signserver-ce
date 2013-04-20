@@ -27,10 +27,12 @@ public class NoAccounter implements IAccounter {
 
     private static final Logger LOG = Logger.getLogger(NoAccounter.class);
 
+    @Override
     public void init(final Properties props) {
         LOG.debug("init");
     }
 
+    @Override
     public boolean purchase(final IClientCredential credential,
             final ProcessRequest request, final ProcessResponse response,
             final RequestContext context) throws AccounterException {

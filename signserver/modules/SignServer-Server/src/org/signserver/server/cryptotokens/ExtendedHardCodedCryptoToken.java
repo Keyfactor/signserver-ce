@@ -68,6 +68,7 @@ public class ExtendedHardCodedCryptoToken extends HardCodedCryptoToken
     /**
      * @see org.signserver.server.cryptotokens.IExtendedCryptoToken#decryptData(java.lang.String, byte[])
      */
+    @Override
     public byte[] decryptData(String keyRef, byte[] data)
             throws CryptoTokenOfflineException {
         byte[] retval = null;
@@ -100,6 +101,7 @@ public class ExtendedHardCodedCryptoToken extends HardCodedCryptoToken
     /**
      * @see org.signserver.server.cryptotokens.IExtendedCryptoToken#encryptData(java.lang.String, byte[])
      */
+    @Override
     public byte[] encryptData(String keyRef, byte[] data)
             throws CryptoTokenOfflineException {
         byte[] retval = null;
@@ -132,6 +134,7 @@ public class ExtendedHardCodedCryptoToken extends HardCodedCryptoToken
     /**
      * @see org.signserver.server.cryptotokens.IExtendedCryptoToken#genExportableKey(java.lang.String, java.lang.String)
      */
+    @Override
     public Serializable genExportableKey(String keyAlg, String keySpec)
             throws IllegalRequestException, CryptoTokenOfflineException {
         Serializable retval = null;
@@ -161,6 +164,7 @@ public class ExtendedHardCodedCryptoToken extends HardCodedCryptoToken
      * @param keySpec not used.
      * @see org.signserver.server.cryptotokens.IExtendedCryptoToken#genNonExportableKey(java.lang.String, java.lang.String)
      */
+    @Override
     public String genNonExportableKey(String keyAlg, String keySpec)
             throws IllegalRequestException, CryptoTokenOfflineException {
 

@@ -63,6 +63,7 @@ public class RemoteAddressAuthorizer implements IAuthorizer {
      * @param em
      * @throws SignServerException
      */
+    @Override
     public void init(final int workerId, final WorkerConfig config,
             final EntityManager em)
             throws SignServerException {

@@ -37,6 +37,7 @@ public class DefaultValidationService extends BaseValidationService {
     /**
      * @see org.signserver.validationservice.server.IValidationService#validate(org.signserver.validationservice.common.ValidateRequest)
      */
+    @Override
     public ValidateResponse validate(ValidateRequest validationRequest)
             throws IllegalRequestException, CryptoTokenOfflineException,
             SignServerException {

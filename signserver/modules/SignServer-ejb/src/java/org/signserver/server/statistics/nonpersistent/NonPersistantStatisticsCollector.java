@@ -39,6 +39,7 @@ public class NonPersistantStatisticsCollector implements IStatisticsCollector {
     private HourStatisticsCollector hourStatisticsCollector = new HourStatisticsCollector();
     private DayStatisticsCollector dayStatisticsCollector = new DayStatisticsCollector();
 
+    @Override
     public void init(int workerId, WorkerConfig config, EntityManager em) throws SignServerException {
         secondStatisticsCollector.init(workerId, config, em);
         minuteStatisticsCollector.init(workerId, config, em);
@@ -46,6 +47,7 @@ public class NonPersistantStatisticsCollector implements IStatisticsCollector {
         dayStatisticsCollector.init(workerId, config, em);
     }
 
+    @Override
     public void addEvent(Event event) throws SignServerException {
         if (secondStatisticsCollector.getExpireTime() != 0) {
             secondStatisticsCollector.addEvent(event);
@@ -61,6 +63,7 @@ public class NonPersistantStatisticsCollector implements IStatisticsCollector {
         }
     }
 
+    @Override
     public List<StatisticsEntry> fetchStatistics(String type, Date startTime,
             Date endTime) {
         List<StatisticsEntry> retval = secondStatisticsCollector.fetchStatistics(type, startTime, endTime);
@@ -70,6 +73,7 @@ public class NonPersistantStatisticsCollector implements IStatisticsCollector {
         return retval;
     }
 
+    @Override
     public void flush() {
         secondStatisticsCollector.flush();
         minuteStatisticsCollector.flush();

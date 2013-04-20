@@ -40,6 +40,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
     protected BaseProcessable() {
     }
 
+    @Override
     public void activateSigner(String authenticationCode)
             throws CryptoTokenAuthenticationFailureException,
             CryptoTokenOfflineException {
@@ -82,6 +83,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         }
     }
 
+    @Override
     public boolean deactivateSigner() throws CryptoTokenOfflineException {
         if (log.isTraceEnabled()) {
             log.trace(">deactivateSigner");
@@ -114,6 +116,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
      * 
      * default is client certificate authentication.
      */
+    @Override
     public String getAuthenticationType() {
         return config.getProperties().getProperty(WorkerConfig.PROPERTY_AUTHTYPE, IProcessable.AUTHTYPE_CLIENTCERT);
     }
@@ -152,6 +155,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         return cryptoToken;
     }
     
+    @Override
     public int getCryptoTokenStatus() {
         try {
             final int result;
@@ -250,6 +254,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
     /**
      * Method sending the removal request to the signtoken
      */
+    @Override
     public boolean destroyKey(int purpose) {
         try {
             return getCryptoToken().destroyKey(purpose);
@@ -263,6 +268,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
      * @see IKeyGenerator#generateKey(java.lang.String, java.lang.String,
      * java.lang.String, char[])
      */
+    @Override
     public void generateKey(final String keyAlgorithm, final String keySpec,
             final String alias, final char[] authCode)
             throws CryptoTokenOfflineException, IllegalArgumentException {

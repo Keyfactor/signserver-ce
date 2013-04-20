@@ -105,6 +105,7 @@ public class GroupKeyServiceWorker extends BaseProcessable implements IGroupKeyS
      * 
      * @see org.signserver.server.signers.IProcessable#processData(org.signserver.common.ProcessRequest, java.security.cert.X509Certificate)
      */
+    @Override
     public ProcessResponse processData(ProcessRequest processRequest,
             RequestContext requestContext) throws IllegalRequestException,
             CryptoTokenOfflineException, SignServerException {

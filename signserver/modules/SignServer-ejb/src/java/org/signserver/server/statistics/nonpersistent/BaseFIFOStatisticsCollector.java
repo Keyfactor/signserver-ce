@@ -46,6 +46,7 @@ public abstract class BaseFIFOStatisticsCollector implements IStatisticsCollecto
     /**
      * Initialization method that should be called directly after creation
      */
+    @Override
     public void init(int workerId, WorkerConfig config, EntityManager em) {
         this.workerId = workerId;
         this.config = config;
@@ -55,6 +56,7 @@ public abstract class BaseFIFOStatisticsCollector implements IStatisticsCollecto
     /**
      * @see org.signserver.server.statistics.IStatisticsCollector#addEvent(org.signserver.server.statistics.Event)
      */
+    @Override
     public void addEvent(Event event) throws SignServerException {
         Date endPeriod = genCurrentEndPeriod();
         Date startPeriod = genCurrentStartPeriod();
@@ -80,6 +82,7 @@ public abstract class BaseFIFOStatisticsCollector implements IStatisticsCollecto
     /**
      * @see org.signserver.server.statistics.IStatisticsCollector#flush()
      */
+    @Override
     public void flush() {
         fIFOQueue.clear();
     }

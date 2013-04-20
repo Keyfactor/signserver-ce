@@ -111,10 +111,12 @@ public class StatisticsEntry implements Delayed {
      * @param unit the time unit
      * @return the remaining time in the specified unit.
      */
+    @Override
     public long getDelay(TimeUnit unit) {
         return unit.convert(expireDate.getTime() - System.currentTimeMillis(), TimeUnit.MILLISECONDS);
     }
 
+    @Override
     public int compareTo(Delayed o) {
         if (o instanceof StatisticsEntry) {
             return expireDate.compareTo(((StatisticsEntry) o).getExpireDate());

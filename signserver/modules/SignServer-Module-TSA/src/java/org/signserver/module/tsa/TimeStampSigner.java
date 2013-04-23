@@ -769,40 +769,6 @@ public class TimeStampSigner extends BaseSigner {
 
         return timeStampTokenGen;
     }
-    
-    private Store getCertStoreWithChain(Certificate signingCert) throws InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchProviderException, CryptoTokenOfflineException, CertStoreException, CertificateEncodingException, IOException {
-        Collection<Certificate> signingCertificateChain = getSigningCertificateChain();
-        
-        if (signingCertificateChain == null) {
-            throw new CryptoTokenOfflineException("Certificate chain not available");
-        } else {
-            JcaCertStore certStore = new JcaCertStore(signingCertificateChain);
-
-            if (!containsCertificate(certStore, signingCert)) {
-                throw new CryptoTokenOfflineException("Signer certificate not included in certificate chain");
-            }
-            return certStore;
-        }
-    }
-    
-    /**
-     * @return True if the CertStore contained the Certificate
-     */
-    private boolean containsCertificate(final Store store, final Certificate subject) throws CertStoreException, IOException, CertificateEncodingException {
-        final X509CertificateHolder cert = new X509CertificateHolder(subject.getEncoded());
-        final Collection<?> matchedCerts = store.getMatches(new Selector() {
-            
-            public boolean match(Object obj) {
-                return cert.equals(obj);
-            }
-            
-            @Override
-            public Object clone() {
-                return this;
-            }
-        });
-        return matchedCerts.size() > 0;
-    }
 
     private TimeStampResponseGenerator getTimeStampResponseGenerator(
             TimeStampTokenGenerator timeStampTokenGen) {
@@ -955,36 +921,6 @@ public class TimeStampSigner extends BaseSigner {
         result.addAll(super.getFatalErrors());
         
         try {
-            // TODO: This test might be moved so that it is available to all signers
-            // Check that certificiate chain contains the signer certificate
-            final Certificate certificate = getSigningCertificate();
-            try {
-                getCertStoreWithChain(certificate);
-            } catch (NoSuchAlgorithmException ex) {
-                result.add("Unable to get certificate chain");
-                LOG.error("Signer " + workerId + ": Unable to get certificate chain: " + ex.getMessage());
-            } catch (NoSuchProviderException ex) {
-                result.add("Unable to get certificate chain");
-                LOG.error("Signer " + workerId + ": Unable to get certificate chain: " + ex.getMessage());
-            } catch (CertStoreException ex) {
-                result.add("Unable to get certificate chain");
-                LOG.error("Signer " + workerId + ": Unable to get certificate chain: " + ex.getMessage());
-            } catch (IOException ex) {
-                result.add("Unable to get certificate chain");
-                LOG.error("Signer " + workerId + ": Unable to get certificate chain: " + ex.getMessage());
-            } catch (CertificateEncodingException ex) {
-                result.add("Unable to get certificate chain");
-                LOG.error("Signer " + workerId + ": Unable to get certificate chain: " + ex.getMessage());
-            } catch (InvalidAlgorithmParameterException ex) {
-                result.add("Unable to get certificate chain");
-                LOG.error("Signer " + workerId + ": Unable to get certificate chain: " + ex.getMessage());
-            } catch (CryptoTokenOfflineException ex) {
-                result.add(ex.getMessage());
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Signer " + workerId + ": Could not get signer certificate in chain: " + ex.getMessage());
-                }
-            }
-
             // Check signer certificate chain if required
             if (!validChain) {
                 result.add("Not strictly valid chain and " + REQUIREVALIDCHAIN + " specified");
@@ -994,6 +930,7 @@ public class TimeStampSigner extends BaseSigner {
             }
 
             // Check if certificat has the required EKU
+            final Certificate certificate = getSigningCertificate();
             try {
                 if (certificate instanceof X509Certificate) {
                     final X509Certificate cert = (X509Certificate) certificate;

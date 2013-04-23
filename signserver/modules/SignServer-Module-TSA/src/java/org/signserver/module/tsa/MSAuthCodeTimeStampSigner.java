@@ -434,40 +434,6 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
         return timeSource;
     }
 
-    
-    private CertStore getCertStoreWithChain(Certificate signingCert) throws InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchProviderException, CryptoTokenOfflineException, CertStoreException {
-        Collection<Certificate> signingCertificateChain = getSigningCertificateChain();
-        
-        if (signingCertificateChain == null) {
-            throw new CryptoTokenOfflineException("Certificate chain not available");
-        } else {
-            final CertStore certStore = CertStore.getInstance("Collection",
-                    new CollectionCertStoreParameters(
-                        signingCertificateChain), "BC");
-
-            if (!containsCertificate(certStore, signingCert)) {
-                throw new CryptoTokenOfflineException("Signer certificate not included in certificate chain");
-            }
-            return certStore;
-        }
-    }
-    
-    /**
-     * @return True if the CertStore contained the Certificate
-     */
-    private boolean containsCertificate(final CertStore store, final Certificate subject) throws CertStoreException {
-        final Collection<? extends Certificate> matchedCerts = store.getCertificates(new CertSelector() {
-            @Override
-            public boolean match(Certificate cert) {
-                return subject.equals(cert);
-            }
-            @Override
-            public Object clone() {
-                return this;
-            }
-        });
-        return matchedCerts.size() > 0;
-    }
 
     /** Generates a number of serial number bytes. The number returned should
      * be a positive number.
@@ -567,30 +533,6 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
         result.addAll(super.getFatalErrors());
         
         try {
-            // TODO: This test might be moved so that it is available to all signers
-            // Check that certificiate chain contains the signer certificate
-            final Certificate certificate = getSigningCertificate();
-            try {
-                getCertStoreWithChain(certificate);
-            } catch (NoSuchAlgorithmException ex) {
-                result.add("Unable to get certificate chain");
-                LOG.error("Signer " + workerId + ": Unable to get certificate chain: " + ex.getMessage());
-            } catch (NoSuchProviderException ex) {
-                result.add("Unable to get certificate chain");
-                LOG.error("Signer " + workerId + ": Unable to get certificate chain: " + ex.getMessage());
-            } catch (CertStoreException ex) {
-                result.add("Unable to get certificate chain");
-                LOG.error("Signer " + workerId + ": Unable to get certificate chain: " + ex.getMessage());
-            } catch (InvalidAlgorithmParameterException ex) {
-                result.add("Unable to get certificate chain");
-                LOG.error("Signer " + workerId + ": Unable to get certificate chain: " + ex.getMessage());
-            } catch (CryptoTokenOfflineException ex) {
-                result.add(ex.getMessage());
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Signer " + workerId + ": Could not get signer certificate in chain: " + ex.getMessage());
-                }
-            }
-
             // Check signer certificate chain if required
             if (!validChain) {
                 result.add("Not strictly valid chain and " + REQUIREVALIDCHAIN + " specified");
@@ -600,6 +542,7 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
             }
 
             // Check if certificat has the required EKU
+            final Certificate certificate = getSigningCertificate();
             try {
                 if (certificate instanceof X509Certificate) {
                     final X509Certificate cert = (X509Certificate) certificate;

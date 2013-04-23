@@ -12,12 +12,23 @@
  *************************************************************************/
 package org.signserver.server.signers;
 
+import java.io.IOException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.cert.CertStoreException;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.log4j.Logger;
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cert.jcajce.JcaCertStore;
+import org.bouncycastle.util.Selector;
+import org.bouncycastle.util.Store;
 import org.signserver.common.*;
 import org.signserver.server.BaseProcessable;
 import org.signserver.server.KeyUsageCounterHash;
@@ -173,7 +184,69 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
                 }
             }
         }
+
+        // Check that certificiate chain contains the signer certificate
+        try {
+            getCertStoreWithChain(certificate);
+        } catch (NoSuchAlgorithmException ex) {
+            result.add("Unable to get certificate chain");
+            LOG.error("Signer " + workerId + ": Unable to get certificate chain: " + ex.getMessage());
+        } catch (NoSuchProviderException ex) {
+            result.add("Unable to get certificate chain");
+            LOG.error("Signer " + workerId + ": Unable to get certificate chain: " + ex.getMessage());
+        } catch (CertStoreException ex) {
+            result.add("Unable to get certificate chain");
+            LOG.error("Signer " + workerId + ": Unable to get certificate chain: " + ex.getMessage());
+        } catch (IOException ex) {
+            result.add("Unable to get certificate chain");
+            LOG.error("Signer " + workerId + ": Unable to get certificate chain: " + ex.getMessage());
+        } catch (CertificateEncodingException ex) {
+            result.add("Unable to get certificate chain");
+            LOG.error("Signer " + workerId + ": Unable to get certificate chain: " + ex.getMessage());
+        } catch (InvalidAlgorithmParameterException ex) {
+            result.add("Unable to get certificate chain");
+            LOG.error("Signer " + workerId + ": Unable to get certificate chain: " + ex.getMessage());
+        } catch (CryptoTokenOfflineException ex) {
+            result.add(ex.getMessage());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Signer " + workerId + ": Could not get signer certificate in chain: " + ex.getMessage());
+            }
+        }
         
         return result;
-    }    
+    }
+    
+    protected Store getCertStoreWithChain(Certificate signingCert) throws InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchProviderException, CryptoTokenOfflineException, CertStoreException, CertificateEncodingException, IOException {
+        Collection<Certificate> signingCertificateChain = getSigningCertificateChain();
+        
+        if (signingCertificateChain == null) {
+            throw new CryptoTokenOfflineException("Certificate chain not available");
+        } else {
+            JcaCertStore certStore = new JcaCertStore(signingCertificateChain);
+
+            if (!containsCertificate(certStore, signingCert)) {
+                throw new CryptoTokenOfflineException("Signer certificate not included in certificate chain");
+            }
+            return certStore;
+        }
+    }
+    
+    /**
+     * @return True if the CertStore contained the Certificate
+     */
+    private boolean containsCertificate(final Store store, final Certificate subject) throws CertStoreException, IOException, CertificateEncodingException {
+        final X509CertificateHolder cert = new X509CertificateHolder(subject.getEncoded());
+        final Collection<?> matchedCerts = store.getMatches(new Selector() {
+            
+            public boolean match(Object obj) {
+                return cert.equals(obj);
+            }
+            
+            @Override
+            public Object clone() {
+                return this;
+            }
+        });
+        return matchedCerts.size() > 0;
+    }
 }

@@ -1037,7 +1037,7 @@ public class TimeStampSigner extends BaseSigner {
         
         // check default policy
         if (defaultTSAPolicyOID == null) {
-            result.add("No policy OID has been configured, or is invalid");
+            result.add("No default TSA policy OID has been configured, or is invalid");
         }
 
         return result;

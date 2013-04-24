@@ -946,6 +946,36 @@ public class TimeStampSignerTest extends ModulesTestCase {
         assertNull(timeStampResponse.getStatusString());
     }
     
+    /**
+     * Test that omitting a default policy OID results in the correct fatal error.
+     * @throws Exception
+     */
+    public void test29NoDefaultPolicyOID() throws Exception {
+        workerSession.removeWorkerProperty(WORKER1, TimeStampSigner.DEFAULTTSAPOLICYOID);
+        workerSession.reloadConfiguration(WORKER1);
+        
+        final WorkerStatus status = workerSession.getStatus(WORKER1);
+        final List<String> errors = status.getFatalErrors();
+        
+        assertTrue("Should mention missing default policy OID: " + errors,
+                errors.contains("No default TSA policy OID has been configured, or is invalid"));
+    }
+    
+    /**
+     * Test that setting an invalid default policy OID results in the correct fatal error.
+     * @throws Exception
+     */
+    public void test30BogusDefaultPolicyOID() throws Exception {
+        workerSession.setWorkerProperty(WORKER1, TimeStampSigner.DEFAULTTSAPOLICYOID, "foobar");
+        workerSession.reloadConfiguration(WORKER1);
+        
+        final WorkerStatus status = workerSession.getStatus(WORKER1);
+        final List<String> errors = status.getFatalErrors();
+        
+        assertTrue("Should mention missing default policy OID: " + errors,
+                errors.contains("No default TSA policy OID has been configured, or is invalid"));
+    }
+    
     private void assertTokenGranted(int workerId) throws Exception {
         TimeStampRequestGenerator timeStampRequestGenerator =
                     new TimeStampRequestGenerator();

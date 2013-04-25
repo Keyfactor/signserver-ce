@@ -365,6 +365,10 @@ public class TimeStampSigner extends BaseSigner {
         
         tsaName = config.getProperty(TSA);
         tsaNameFromCert = Boolean.parseBoolean(config.getProperty(TSA_FROM_CERT, "false"));
+        
+        if (tsaName != null && tsaNameFromCert) {
+            LOG.error("Error: Can not set " + TSA_FROM_CERT + " to true and set " + TSA + " worker property at the same time");
+        }
     }
 
     /**
@@ -985,6 +989,11 @@ public class TimeStampSigner extends BaseSigner {
         // check default policy
         if (defaultTSAPolicyOID == null) {
             result.add("No default TSA policy OID has been configured, or is invalid");
+        }
+
+        // check TSA naming properties conflict
+        if (tsaName != null && tsaNameFromCert) {
+            result.add("Can not set " + TSA_FROM_CERT + " to true and set " + TSA + " worker property at the same time");
         }
 
         return result;

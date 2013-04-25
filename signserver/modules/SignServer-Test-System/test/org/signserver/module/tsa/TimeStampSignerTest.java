@@ -1041,6 +1041,28 @@ public class TimeStampSignerTest extends ModulesTestCase {
   
     }
     
+    /**
+     * Test setting both the TSA and TSA_FROM_CERT property, should result in an error.
+     * @throws Exception
+     */
+    public void test35TSANameExplicitAndFromCert() throws Exception {
+        workerSession.setWorkerProperty(WORKER1, TimeStampSigner.TSA, "CN=test");
+        workerSession.setWorkerProperty(WORKER1, TimeStampSigner.TSA_FROM_CERT, "true");
+        workerSession.reloadConfiguration(WORKER1);
+        
+        final WorkerStatus status = workerSession.getStatus(WORKER1);
+        final List<String> errors = status.getFatalErrors();
+        
+        assertTrue("Should mention conflicting TSA properties: " + errors,
+                errors.contains("Can not set " + TimeStampSigner.TSA_FROM_CERT + " to true and set " +
+                        TimeStampSigner.TSA + " worker property at the same time"));
+        
+        // restore
+        workerSession.removeWorkerProperty(WORKER1, TimeStampSigner.TSA);
+        workerSession.removeWorkerProperty(WORKER1, TimeStampSigner.TSA_FROM_CERT);
+        workerSession.reloadConfiguration(WORKER1);
+    }
+    
     private void assertTokenGranted(int workerId) throws Exception {
         TimeStampRequestGenerator timeStampRequestGenerator =
                     new TimeStampRequestGenerator();

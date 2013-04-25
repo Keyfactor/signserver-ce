@@ -32,6 +32,7 @@ import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.KeyPurposeId;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 import org.bouncycastle.cms.SignerInfoGenerator;
 import org.bouncycastle.cms.jcajce.JcaSignerInfoGeneratorBuilder;
 import org.bouncycastle.operator.ContentSigner;
@@ -193,6 +194,7 @@ public class TimeStampSigner extends BaseSigner {
     public static final String ACCURACYSECONDS = "ACCURACYSECONDS";
     public static final String ORDERING = "ORDERING";
     public static final String TSA = "TSA";
+    public static final String TSA_FROM_CERT = "TSA_FROM_CERT";
     public static final String REQUIREVALIDCHAIN = "REQUIREVALIDCHAIN";
     public static final String MAXSERIALNUMBERLENGTH = "MAXSERIALNUMBERLENGTH";
     public static final String INCLUDESTATUSSTRING = "INCLUDESTATUSSTRING";
@@ -271,6 +273,9 @@ public class TimeStampSigner extends BaseSigner {
     private static final int MIN_ALLOWED_MAXSERIALNUMBERLENGTH = 8;
     
     private boolean includeStatusString;
+    
+    private String tsaName;
+    private boolean tsaNameFromCert;
     
     @Override
     public void init(final int signerId, final WorkerConfig config,
@@ -357,6 +362,9 @@ public class TimeStampSigner extends BaseSigner {
         }
         
         includeStatusString = Boolean.parseBoolean(config.getProperty(INCLUDESTATUSSTRING, "true"));
+        
+        tsaName = config.getProperty(TSA);
+        tsaNameFromCert = Boolean.parseBoolean(config.getProperty(TSA_FROM_CERT, "false"));
     }
 
     /**
@@ -745,9 +753,11 @@ public class TimeStampSigner extends BaseSigner {
                             DEFAULT_ORDERING).equalsIgnoreCase("TRUE"));
             }
 
-            if (config.getProperties().getProperty(TSA) != null) {
-                final X500Name x500Name = new X500Name(config.getProperties()
-                            .getProperty(TSA));
+            if (tsaName != null) {
+                final X500Name x500Name = new X500Name(tsaName);
+                timeStampTokenGen.setTSA(new GeneralName(x500Name));
+            } else if (tsaNameFromCert) {
+                final X500Name x500Name = new JcaX509CertificateHolder(signingCert).getSubject();
                 timeStampTokenGen.setTSA(new GeneralName(x500Name));
             }
            

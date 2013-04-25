@@ -26,10 +26,15 @@ import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.cmp.PKIFailureInfo;
 import org.bouncycastle.asn1.cmp.PKIStatus;
+import org.bouncycastle.asn1.x500.RDN;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
+import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.KeyPurposeId;
 import org.bouncycastle.asn1.x509.X509Extension;
+import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.cms.SignerInformationVerifier;
@@ -959,6 +964,10 @@ public class TimeStampSignerTest extends ModulesTestCase {
         
         assertTrue("Should mention missing default policy OID: " + errors,
                 errors.contains("No default TSA policy OID has been configured, or is invalid"));
+        
+        // restore
+        workerSession.setWorkerProperty(WORKER1, TimeStampSigner.DEFAULTTSAPOLICYOID, "1.2.3");
+        workerSession.reloadConfiguration(WORKER1);
     }
     
     /**
@@ -974,6 +983,32 @@ public class TimeStampSignerTest extends ModulesTestCase {
         
         assertTrue("Should mention missing default policy OID: " + errors,
                 errors.contains("No default TSA policy OID has been configured, or is invalid"));
+        
+        // restore
+        workerSession.setWorkerProperty(WORKER1, TimeStampSigner.DEFAULTTSAPOLICYOID, "1.2.3");
+        workerSession.reloadConfiguration(WORKER1);
+    }
+    
+    /**
+     * Test that the default behavior is to not include the TSA field.
+     * @throws Exception
+     */
+    public void test31NoTSAName() throws Exception {
+        // Test signing
+        final TimeStampResponse response = assertSuccessfulTimestamp(WORKER1);
+
+        assertNull("No TSA set", response.getTimeStampToken().getTimeStampInfo().getTsa());
+    }
+    
+    public void test32ExplicitTSAName() throws Exception {
+        workerSession.setWorkerProperty(WORKER1, TimeStampSigner.TSA, "CN=test");
+        workerSession.reloadConfiguration(WORKER1);
+        
+        final TimeStampResponse response = assertSuccessfulTimestamp(WORKER1);
+        final GeneralName name = response.getTimeStampToken().getTimeStampInfo().getTsa();
+        final GeneralName expectedName = new GeneralName(new X500Name("CN=test"));
+        
+        assertEquals("TSA included", expectedName, name);
     }
     
     private void assertTokenGranted(int workerId) throws Exception {

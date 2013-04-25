@@ -3095,6 +3095,10 @@ Supported Algorithms are: GOST3411, MD5, SHA1, SHA224, SHA256, SHA384, SHA512, R
 <b>TSA</b> = General name of the Time Stamp Authority. (OPTIONAL)
                         </p>
                         <p>
+<b>TSA_FROM_CERT</b> = Setting this property to true sets the general name of the Time Stamp Authority to the subject DN of the
+signing certificate. This can not be set to true if the TSA property is set. (OPTIONAL) (the default is to not set the general name)
+                        </p>
+                        <p>
 <b>REQUIREVALIDCHAIN</b> = Set to true to perform an extra check that the SIGNERCERTCHAIN only contains certificates in the chain of the signer certificate. (OPTIONAL), default false.
                         </p>
                         <p>

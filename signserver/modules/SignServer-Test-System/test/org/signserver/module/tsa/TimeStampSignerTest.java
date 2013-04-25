@@ -1000,6 +1000,10 @@ public class TimeStampSignerTest extends ModulesTestCase {
         assertNull("No TSA set", response.getTimeStampToken().getTimeStampInfo().getTsa());
     }
     
+    /**
+     * Test setting the TSA worker property.
+     * @throws Exception
+     */
     public void test32ExplicitTSAName() throws Exception {
         workerSession.setWorkerProperty(WORKER1, TimeStampSigner.TSA, "CN=test");
         workerSession.reloadConfiguration(WORKER1);
@@ -1009,6 +1013,32 @@ public class TimeStampSignerTest extends ModulesTestCase {
         final GeneralName expectedName = new GeneralName(new X500Name("CN=test"));
         
         assertEquals("TSA included", expectedName, name);
+        
+        // restore
+        workerSession.removeWorkerProperty(WORKER1, TimeStampSigner.TSA);
+        workerSession.reloadConfiguration(WORKER1);
+    }
+    
+    /**
+     * Test using the TSA_FROM_CERT property to set the TSA name from
+     * the signing cert.
+     * 
+     * @throws Exception
+     */
+    public void test34TSANameFromCert() throws Exception {
+       workerSession.setWorkerProperty(WORKER1, TimeStampSigner.TSA_FROM_CERT, "true");
+       workerSession.reloadConfiguration(WORKER1);
+       
+       final TimeStampResponse response = assertSuccessfulTimestamp(WORKER1);
+       final GeneralName name = response.getTimeStampToken().getTimeStampInfo().getTsa();
+       final GeneralName expectedName = new GeneralName(new X500Name("CN=TS Signer 1,OU=Testing,O=SignServer,C=SE"));
+       
+       assertEquals("TSA included", expectedName, name);
+       
+       // restore
+       workerSession.removeWorkerProperty(WORKER1, TimeStampSigner.TSA_FROM_CERT);
+       workerSession.reloadConfiguration(WORKER1);
+  
     }
     
     private void assertTokenGranted(int workerId) throws Exception {

@@ -26,6 +26,7 @@ import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.cmp.PKIFailureInfo;
 import org.bouncycastle.asn1.cmp.PKIStatus;
+import org.bouncycastle.asn1.x500.RDN;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
@@ -33,6 +34,7 @@ import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.KeyPurposeId;
 import org.bouncycastle.asn1.x509.X509Extension;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.cms.SignerInformationVerifier;
 import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
@@ -1031,6 +1033,10 @@ public class TimeStampSignerTest extends ModulesTestCase {
        final GeneralName expectedName = new GeneralName(new X500Name("CN=TS Signer 1,OU=Testing,O=SignServer,C=SE"));
        
        assertEquals("TSA included", expectedName, name);
+       
+       final GeneralName certName =
+               new GeneralName(new JcaX509CertificateHolder((X509Certificate) workerSession.getSignerCertificate(WORKER1)).getSubject());
+       assertTrue("TSA name content equals cert", Arrays.equals(certName.getEncoded(), name.getEncoded()));
        
        // restore
        workerSession.removeWorkerProperty(WORKER1, TimeStampSigner.TSA_FROM_CERT);

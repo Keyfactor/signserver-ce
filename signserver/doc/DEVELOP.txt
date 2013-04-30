@@ -37,7 +37,7 @@ For the 3.2 branch don't let a newer version than 7.0.x update the build scripts
 as we only require Ant 1.7.1.
 
 For trunk newer versions can be used as we require Ant 1.8.1 or later and 
-we target NetBeans IDE 7.2.
+we target NetBeans IDE 7.3.
 
 When the projects are first opened there might be a missing dependency 
 "clover.jar". This will go away after building the project.

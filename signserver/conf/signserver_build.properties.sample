@@ -35,15 +35,6 @@
 #glassfish.server.home.dir=/home/markus/.netbeans/6.7/GlassFishV2Domain
 
 
-# ------------ Java ------------------------------------------------------------
-
-# Java version
-# Currently only 1.6 can be specified.
-# Default: 1.6
-#server.java.target=1.6
-#client.java.target=1.6
-
-
 # ------------ Web GUI configuration -------------------------------------------
 
 # Configure the web server in JBoss to use HTTPS and the specified bind address 

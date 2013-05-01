@@ -15,6 +15,7 @@ package org.signserver.client.cli;
 import java.io.*;
 import java.util.Properties;
 import org.apache.log4j.Logger;
+import org.junit.After;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.client.cli.defaultimpl.ValidateDocumentCommand;
@@ -22,8 +23,11 @@ import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.SignServerUtil;
 import org.signserver.module.xmlvalidator.XMLValidatorTestData;
 import org.signserver.testutils.ModulesTestCase;
-import org.signserver.testutils.TestUtils;
 import org.signserver.testutils.TestingSecurityManager;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
 
 /**
  * Tests for the validatedocument command of Client CLI.
@@ -31,6 +35,7 @@ import org.signserver.testutils.TestingSecurityManager;
  * @author Markus Kilås
  * @version $Id$
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class DocumentValidatorTest extends ModulesTestCase {
 
     /** Logger for this class. */
@@ -44,18 +49,16 @@ public class DocumentValidatorTest extends ModulesTestCase {
 
     private static String signserverhome;
 	
-    @Override
+    @Before
     protected void setUp() throws Exception {
-        super.setUp();
         SignServerUtil.installBCProvider();
         TestingSecurityManager.install();
         signserverhome = System.getenv("SIGNSERVER_HOME");
         assertNotNull("Please set SIGNSERVER_HOME environment variable", signserverhome);
     }
 
-    @Override
+    @After
     protected void tearDown() throws Exception {
-        super.tearDown();
         TestingSecurityManager.remove();
     }
 

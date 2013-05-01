@@ -21,9 +21,15 @@ import java.security.cert.Certificate;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.log4j.Logger;
+import org.junit.After;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
 import org.signserver.common.*;
 import org.signserver.testutils.ModulesTestCase;
 import org.w3c.dom.Document;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests for XMLSigner.
@@ -31,6 +37,7 @@ import org.w3c.dom.Document;
  * @author Markus Kilås
  * @version $Id$
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class XMLSignerTest extends ModulesTestCase {
 
     private static final Logger LOG = Logger.getLogger(XMLSignerTest.class);
@@ -45,19 +52,13 @@ public class XMLSignerTest extends ModulesTestCase {
 
     private static final String TESTXML1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><root><my-tag>My Data</my-tag></root>";
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }	
-	
+    @Test
     public void test00SetupDatabase() throws Exception {
-
         setProperties(new File(getSignServerHome(), "modules/SignServer-Module-XMLSigner/src/conf/junittest-part-config.properties"));
         workerSession.reloadConfiguration(WORKERID);
 
@@ -67,8 +68,8 @@ public class XMLSignerTest extends ModulesTestCase {
         workerSession.reloadConfiguration(WORKERID2);
     }
 
+    @Test
     public void test01BasicXmlSignRSA() throws Exception {
-
         final int reqid = 13;
 
         final GenericSignRequest signRequest =
@@ -101,11 +102,13 @@ public class XMLSignerTest extends ModulesTestCase {
                 "http://www.w3.org/2000/09/xmldsig#rsa-sha1"));
     }
 
+    @Test
     public void test02GetStatus() throws Exception {
         final SignerStatus stat = (SignerStatus) workerSession.getStatus(WORKERID);
         assertSame("Status", stat.getTokenStatus(), SignerStatus.STATUS_ACTIVE);
     }
 
+    @Test
     public void test03BasicXmlSignDSA() throws Exception {
         final int reqid = 15;
 
@@ -142,6 +145,7 @@ public class XMLSignerTest extends ModulesTestCase {
                 "http://www.w3.org/2000/09/xmldsig#dsa-sha1"));
     }
 
+    @Test
     public void test99TearDownDatabase() throws Exception {
         for (int workerId : WORKERS) {
             removeWorker(workerId);

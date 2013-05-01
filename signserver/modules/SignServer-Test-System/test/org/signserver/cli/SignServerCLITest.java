@@ -24,6 +24,10 @@ import org.signserver.testutils.CLITestHelper;
 import static org.signserver.testutils.CLITestHelper.assertNotPrinted;
 import static org.signserver.testutils.CLITestHelper.assertPrinted;
 import org.signserver.testutils.ModulesTestCase;
+import static org.junit.Assert.*;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
 /**
  * Class used to test the basic aspects of the SignServer CLI such
@@ -32,6 +36,7 @@ import org.signserver.testutils.ModulesTestCase;
  * @author Philip Vendil 21 okt 2007
  * @version $Id$
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class SignServerCLITest extends ModulesTestCase {
 
     /** Logger for this class. */
@@ -42,12 +47,9 @@ public class SignServerCLITest extends ModulesTestCase {
 
     private CLITestHelper cli = getAdminCLI();
     private CLITestHelper clientCLI = getClientCLI();
-    
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-    }
 
+
+    @Test
     public void testBasicSetup() throws Exception {
         
         assertEquals("No arguments", CommandLineInterface.RETURN_INVALID_ARGUMENTS, 
@@ -85,6 +87,7 @@ public class SignServerCLITest extends ModulesTestCase {
                 cli.execute("getconfig", "" + TESTID));
     }
 
+    @Test
     public void testSetupTimeStamp() throws Exception {
 
         assertTrue(new File(getSignServerHome() + "/res/test/test_add_timestamp_configuration.properties").exists());
@@ -208,6 +211,7 @@ public class SignServerCLITest extends ModulesTestCase {
         assertNotNull(archiveId);
     }
 
+    @Test
     public void testRemoveTimeStamp() throws Exception {
         // Remove and restore
         assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
@@ -230,6 +234,7 @@ public class SignServerCLITest extends ModulesTestCase {
      * Test adding and removing WS admins using serial number and issuer DN directly.
      * @throws Exception
      */
+    @Test
     public void testWSAdmins() throws Exception {
     	// Test adding wsadmin using explicit parameters
         assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
@@ -254,6 +259,7 @@ public class SignServerCLITest extends ModulesTestCase {
      * Test adding WS admins using PEM and DER files.
      * @throws Exception
      */
+    @Test
     public void testWSAdminsFromFile() throws Exception {
     	// Test adding wsadmin using a PEM file
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,
@@ -278,6 +284,7 @@ public class SignServerCLITest extends ModulesTestCase {
      * Test adding and removing WS auditors using serial number and issuer DN directly.
      * @throws Exception
      */
+    @Test
     public void testWSAuditors() throws Exception {
     	// Test adding wsadmin using explicit parameters
         assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
@@ -302,6 +309,7 @@ public class SignServerCLITest extends ModulesTestCase {
      * Test adding WS auditors using PEM and DER files.
      * @throws Exception
      */
+    @Test
     public void testWSAuditorsFromFile() throws Exception {
     	// Test adding wsadmin using a PEM file
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,

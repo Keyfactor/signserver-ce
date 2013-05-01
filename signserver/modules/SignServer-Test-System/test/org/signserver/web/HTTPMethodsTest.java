@@ -15,6 +15,12 @@ package org.signserver.web;
 import java.util.HashMap;
 import java.util.Map;
 import static junit.framework.Assert.assertTrue;
+import org.junit.After;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests different HTTP methods to make sure only GET and POST are allowed
@@ -23,7 +29,7 @@ import static junit.framework.Assert.assertTrue;
  * @version $Id$
  *
  */
-
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class HTTPMethodsTest extends WebTestCase {
 
 	private boolean useProcess = true;
@@ -33,15 +39,15 @@ public class HTTPMethodsTest extends WebTestCase {
 		return "http://localhost:8080/signserver" + (useProcess ? "/process" : "");
 	}
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		// set up dummy signer
 		addDummySigner1();
 		useProcess = true;
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		// remove dummy signer
 		removeWorker(getSignerIdDummy1());
 	}
@@ -49,6 +55,7 @@ public class HTTPMethodsTest extends WebTestCase {
     /**
      * Testing HTTP PUT should fail with HTTP error 403 or 405.
      */
+    @Test
     public void test01HttpPUT() throws Exception {
         final Map<String, String> fields = new HashMap<String, String>();
         fields.put("data", "<root/>");
@@ -59,6 +66,7 @@ public class HTTPMethodsTest extends WebTestCase {
     /**
      * Testing HTTP DELETE should fail with HTTP error 403 or 405.
      */
+    @Test
     public void test02HttpDELETE() throws Exception {
         final Map<String, String> fields = new HashMap<String, String>();
         fields.put("data", "<root/>");
@@ -70,6 +78,7 @@ public class HTTPMethodsTest extends WebTestCase {
 	 * Testing HTTP OPTIONS
 	 * should fail with error 403
 	 */
+    @Test
 	public void test03HttpOPTIONS() {
 		Map<String, String> fields = new HashMap<String, String>();
 		fields.put("data", "<root/>");
@@ -82,6 +91,7 @@ public class HTTPMethodsTest extends WebTestCase {
 	 * using the URL /signserver here, since there seems to be some bug related to
 	 * servlet injection in JBoss 5 that makes TRACE success on the servlet unless a GET was issued first.
 	 */
+    @Test
 	public void test04HttpTRACE() {
 		Map<String, String> fields = new HashMap<String, String>();
 		useProcess = false;

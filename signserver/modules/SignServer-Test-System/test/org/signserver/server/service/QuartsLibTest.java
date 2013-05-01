@@ -16,22 +16,18 @@ import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 
-import junit.framework.TestCase;
-
 import org.quartz.CronExpression;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
 /**
  * TODO: Document me!
  * 
  * @version $Id$
  */
-public class QuartsLibTest extends TestCase {
+public class QuartsLibTest {
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-    }
-
+    @Test
     public void test01CronExpressions() throws ParseException {
         CronExpression ce = new CronExpression("0/15 * * ? * *");
         Calendar c = Calendar.getInstance();

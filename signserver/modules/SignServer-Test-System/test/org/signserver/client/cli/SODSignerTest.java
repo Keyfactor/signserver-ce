@@ -17,6 +17,7 @@ import java.io.File;
 import java.util.Map;
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
+import org.junit.After;
 import org.signserver.admin.cli.AdminCLI;
 import org.signserver.cli.CommandLineInterface;
 import org.signserver.common.ServiceLocator;
@@ -25,6 +26,11 @@ import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.module.mrtdsodsigner.jmrtd.SODFile;
 import org.signserver.testutils.CLITestHelper;
 import org.signserver.testutils.TestingSecurityManager;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
 /**
  * Tests for the signdatagroups command of Client CLI.
@@ -32,7 +38,8 @@ import org.signserver.testutils.TestingSecurityManager;
  * @author Markus Kilås
  * @version $Id$
  */
-public class SODSignerTest extends TestCase {
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+public class SODSignerTest {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(SODSignerTest.class);
@@ -46,17 +53,15 @@ public class SODSignerTest extends TestCase {
     private CLITestHelper adminCLI = new CLITestHelper(AdminCLI.class);
     private CLITestHelper clientCLI = new CLITestHelper(ClientCLI.class);
 	
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
         workerSession = ServiceLocator.getInstance().lookupRemote(
                 IWorkerSession.IRemote.class);
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
+    @After
+    public void tearDown() throws Exception {
         TestingSecurityManager.remove();
     }
 
@@ -70,6 +75,7 @@ public class SODSignerTest extends TestCase {
         return signServerHome;
     }
 	
+    @Test
     public void test00SetupDatabase() throws Exception {
 
         assertEquals(CommandLineInterface.RETURN_SUCCESS, 
@@ -85,6 +91,7 @@ public class SODSignerTest extends TestCase {
         workerSession.reloadConfiguration(WORKERID);
     }
 
+    @Test
     public void test01missingArguments() throws Exception {
         assertEquals("missing arguments", CommandLineInterface.RETURN_INVALID_ARGUMENTS, 
                 clientCLI.execute("signdatagroups"));
@@ -97,6 +104,7 @@ public class SODSignerTest extends TestCase {
      * </pre>
      * @throws Exception
      */
+    @Test
     public void test02signDataFromParameter() throws Exception {
         assertEquals(CommandLineInterface.RETURN_SUCCESS, 
                 clientCLI.execute("signdatagroups", "-workername", "TestMRTDSODSigner1", "-data", "1=value1&2=value2&3=value3"));
@@ -112,6 +120,7 @@ public class SODSignerTest extends TestCase {
      * </pre>
      * @throws Exception
      */
+    @Test
     public void test02signDataFromParameterOverClientWS() throws Exception {
         assertEquals(CommandLineInterface.RETURN_SUCCESS, 
                 clientCLI.execute("signdatagroups", "-workername", "TestMRTDSODSigner1", "-data", "1=value1&2=value2&3=value3", "-protocol", "CLIENTWS", 
@@ -127,6 +136,7 @@ public class SODSignerTest extends TestCase {
         assertEquals("DG3", "value3", new String(dataGroupHashes.get(3)));
     }
 
+    @Test
     public void test99TearDownDatabase() throws Exception {
         assertEquals(CommandLineInterface.RETURN_SUCCESS, adminCLI.execute(
             "removeworker",

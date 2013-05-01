@@ -28,6 +28,8 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.ejbca.util.CertTools;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
 import org.signserver.common.AuthorizedClient;
 import org.signserver.common.Base64SignerCertReqData;
 import org.signserver.common.GenericSignRequest;
@@ -41,6 +43,9 @@ import org.signserver.common.WorkerConfig;
 import org.signserver.test.utils.builders.CertBuilder;
 import org.signserver.test.utils.builders.CryptoUtils;
 import org.signserver.testutils.ModulesTestCase;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests for audit logging using the System Logger.
@@ -51,6 +56,7 @@ import org.signserver.testutils.ModulesTestCase;
  * @author Markus Kilås
  * @version $Id: SignServerCLITest.java 2815 2012-10-09 14:41:38Z malu9369 $
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class SystemLoggingTest extends ModulesTestCase {
 
     /** Logger for this class. */
@@ -62,26 +68,25 @@ public class SystemLoggingTest extends ModulesTestCase {
     
     private File auditLogFile;
     
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        
+    @Before
+    public void setUp() throws Exception {
         auditLogFile = new File(getSignServerHome(), "signserver_audit.log");
         if (!auditLogFile.exists()) {
             final String error = "Test case requires Log4j to be configured for audit logging as described in the manual and with output to " + auditLogFile.getAbsolutePath() + " (or that being a symlink to the audit log file). The file is assumed to be truncated before (re)-starting the application server.";
             LOG.error(error);
             throw new Exception(error);
         }
-        
         CertTools.installBCProviderIfNotAvailable();
     }
     
+    @Test
     public void test00SetupDatabase() throws Exception {
         addSoftDummySigner(signerId, "TestSigner6000");
         workerSession.setWorkerProperty(signerId, "WORKERLOGGER", "org.signserver.server.log.SecurityEventsWorkerLogger");
         workerSession.reloadConfiguration(signerId);
     }
-    
+
+    @Test
     public void test01ReadEntries() throws Exception {
         final File testFile = File.createTempFile("testreadentries", "tmp");
         testFile.deleteOnExit();
@@ -144,7 +149,8 @@ public class SystemLoggingTest extends ModulesTestCase {
         assertEquals("read last2.1", line2, lines.get(0));
         assertEquals("read last2.2", line3, lines.get(1));
     }
-    
+
+    @Test
     public void test01LogStartup() throws Exception {
         // Read second line of file (CESeCore outputs a time sync log line before the SignServer startup log line).
         LOG.info("Note: This test assumes the signserver_audit.log was cleared before the appserver started");
@@ -160,7 +166,7 @@ public class SystemLoggingTest extends ModulesTestCase {
     // public void test01LogShutdown() throws Exception {
     //    fail("No implemented yet");
     // }
-    
+    @Test
     public void test01LogSetAndRemoveGlobalProperty() throws Exception {
         final int linesBefore = readEntriesCount(auditLogFile);
         
@@ -205,7 +211,8 @@ public class SystemLoggingTest extends ModulesTestCase {
     // public void test01LogGlobalConfigResync() throws Exception {
     //    fail("No implemented yet");
     // }
-    
+
+    @Test
     public void test01LogSetAndRemoveWorkerProperty() throws Exception {
         final int linesBefore = readEntriesCount(auditLogFile);
         
@@ -243,7 +250,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         assertTrue("Contains worker id", line.contains("WORKER_ID: " + signerId));
     }
     
-    
+    @Test
     public void test01LogAddAuthorizedClient() throws Exception {
         final int linesBefore = readEntriesCount(auditLogFile);
         
@@ -257,7 +264,8 @@ public class SystemLoggingTest extends ModulesTestCase {
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
         assertTrue("Contains worker id", line.contains("WORKER_ID: " + signerId));
     }
-    
+
+    @Test
     public void test01LogRemoveAuthorizedClient() throws Exception {
         final int linesBefore = readEntriesCount(auditLogFile);
         
@@ -272,7 +280,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         assertTrue("Contains worker id", line.contains("WORKER_ID: " + signerId));
     }
 
-    
+    @Test
     public void test01LogCertInstalled() throws Exception {
         int linesBefore = readEntriesCount(auditLogFile);
         
@@ -380,7 +388,8 @@ public class SystemLoggingTest extends ModulesTestCase {
         // Remove the property
         workerSession.removeWorkerProperty(signerId, "NODE47.SIGNERCERT");
     }
-    
+
+    @Test
     public void test01LogCertChainInstalled() throws Exception {
         int linesBefore = readEntriesCount(auditLogFile);
         
@@ -493,7 +502,8 @@ public class SystemLoggingTest extends ModulesTestCase {
         // Remove the property
         workerSession.removeWorkerProperty(signerId, "NODE47.SIGNERCERTCHAIN");
     }
-    
+
+    @Test
     public void test01LogKeySelected() throws Exception {
         // Test when setting the property manually (global scope)
         int linesBefore = readEntriesCount(auditLogFile);
@@ -554,7 +564,8 @@ public class SystemLoggingTest extends ModulesTestCase {
         // Remove the property
         workerSession.removeWorkerProperty(signerId, "NODE47.DEFAULTKEY");
     }
-    
+
+    @Test
     public void test01LogKeyGenAndTestAndCSR() throws Exception {
         final String signerName = "TestKeyGenAndCSR1";
         final int p12SignerId = 5980;
@@ -629,7 +640,8 @@ public class SystemLoggingTest extends ModulesTestCase {
             removeWorker(p12SignerId);
         }
     }
-    
+
+    @Test
     public void test01LogSetStatusProperty() throws Exception {
         int linesBefore = readEntriesCount(auditLogFile);
         final long expiration = System.currentTimeMillis() + 1000;
@@ -644,7 +656,8 @@ public class SystemLoggingTest extends ModulesTestCase {
         assertTrue("Contains value", line.contains("STATUSREPO_VALUE: TESTVALUE47"));
         assertTrue("Contains expiration", line.contains("STATUSREPO_EXPIRATION: " + expiration));
     }
-    
+
+    @Test
     public void test01LogProcessWorkerNotFound() throws Exception {
         int linesBefore = readEntriesCount(auditLogFile);
         
@@ -666,7 +679,8 @@ public class SystemLoggingTest extends ModulesTestCase {
         assertTrue("Contains success false", line.contains("PROCESS_SUCCESS: false"));
         assertTrue("Contains exception", line.contains("EXCEPTION: No such worker: 1234567"));
     }
-    
+
+    @Test
     public void test01LogWorkerConfigReload() throws Exception {
         int linesBefore = readEntriesCount(auditLogFile);
         
@@ -685,6 +699,7 @@ public class SystemLoggingTest extends ModulesTestCase {
      * Test that the SecurityEventsWorkerLogger is properly audit-logging process requests.
      * @throws Exception
      */
+    @Test
     public void test01WorkerProcess() throws Exception {
         int linesBefore = readEntriesCount(auditLogFile);
         
@@ -706,6 +721,7 @@ public class SystemLoggingTest extends ModulesTestCase {
      * Test logging with excluded fields.
      * @throws Exception
      */
+    @Test
     public void test02WorkerProcessExcludeFields() throws Exception {
         setLoggingFields(null, "CLIENT_IP, LOG_ID");
         
@@ -728,6 +744,7 @@ public class SystemLoggingTest extends ModulesTestCase {
      * Test logging with included fields.
      * @throws Exception
      */
+    @Test
     public void test03WorkerProcessIncludeFields() throws Exception {
         setLoggingFields("CLIENT_IP, LOG_ID", null);
         
@@ -748,6 +765,7 @@ public class SystemLoggingTest extends ModulesTestCase {
      * Test that setting both include and exclude fails.
      * @throws Exception
      */
+    @Test
     public void test04WorkerProcessIncludeExcludeFields() throws Exception {
         setLoggingFields("CLIENT_IP", "LOG_ID");
         
@@ -766,6 +784,7 @@ public class SystemLoggingTest extends ModulesTestCase {
      * Test that the SecurityEventsWorkerLogger is properly audit-logging process requests with failed status.
      * @throws Exception
      */
+    @Test
     public void test05WorkerProcessNonSucess() throws Exception {
         // reset logging fields (all fields being logged)
         setLoggingFields(null, null);
@@ -788,7 +807,8 @@ public class SystemLoggingTest extends ModulesTestCase {
         assertTrue("Contains log id", line.contains("LOG_ID:"));
         assertTrue("Contains client ip", line.contains("CLIENT_IP:"));
     }
-    
+
+    @Test
     public void test99TearDownDatabase() throws Exception {
         removeWorker(signerId);
     }

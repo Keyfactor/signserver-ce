@@ -20,6 +20,9 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.log4j.Logger;
 import org.ejbca.util.CertTools;
+import org.junit.Before;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
 import org.signserver.common.GenericSignResponse;
 import org.signserver.common.GenericValidationResponse;
 import org.signserver.common.GlobalConfiguration;
@@ -27,6 +30,8 @@ import org.signserver.server.cryptotokens.P12CryptoToken;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.validationservice.common.Validation;
 import org.w3c.dom.Document;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
 /**
  * Tests for client API with a CRLValidator.
@@ -34,6 +39,7 @@ import org.w3c.dom.Document;
  * @author Markus Kilås
  * @version $Id$
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class SigningAndValidationWithCRLTest extends ModulesTestCase {
 
     /** Logger for this class. */
@@ -58,9 +64,8 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
         setupSSLKeystores();
     }
 
-    @Override
+    @Before
     protected void setUp() throws Exception {
-        super.setUp();
 
         keystoreFileEndentity8 = new File(getSignServerHome() + File.separator + "res/test/org/signserver/client/api/endentity8.p12");
         if (!keystoreFileEndentity8.exists()) {
@@ -93,11 +98,6 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
         }
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
-
     /**
      * Other test cases can override this method to run with a different 
      * client API implementation.
@@ -113,6 +113,7 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
         }
     }
 
+    @Test
     public void test00SetupDatabase() throws Exception {
 
         // XMLSIGNER: module
@@ -162,6 +163,7 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
         workerSession.reloadConfiguration(CERTVALIDATION_WORKERID);
     }
 
+    @Test
     public void test01SignAndValidate() throws Exception {
 
         ISigningAndValidation signserver = getSigningAndValidationImpl();
@@ -187,6 +189,7 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
         assertTrue("valid document: " + getStatus(res), res.isValid());
     }
 
+    @Test
     public void test02SigOkCertOk() throws Exception {
 
         // OK signature, OK cert
@@ -202,6 +205,7 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
         assertTrue("valid document: " + getStatus(res), res.isValid());
     }
 
+    @Test
     public void test03SigInconsistentCertOk() throws Exception {
 
         // Inconsistent signature, OK cert
@@ -221,6 +225,7 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
         assertFalse("invalid document", res.isValid());
     }
 
+    @Test
     public void test04SigOkCertUntrusted() throws Exception {
 
         // OK signature, untrusted cert
@@ -235,6 +240,7 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
         assertFalse("invalid document", res.isValid());
     }
 
+    @Test
     public void test05SigOkCertInconsistent() throws Exception {
 
         // OK signature, inconsistent cert
@@ -250,6 +256,7 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
         // TODO: check that it was invalid for the right reason!
     }
 
+    @Test
     public void test06SigOkCertsMissing() throws Exception {
 
         // OK signature, wrong certificate
@@ -271,6 +278,7 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
         // TODO: check status (invalid for right reason)
     }
 
+    @Test
     public void test07SigOkCertWrong() throws Exception {
 
         // OK signature, wrong certificate
@@ -291,6 +299,7 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
         // TODO: check status (invalid for right reason)
     }
 
+    @Test
     public void test08SigOkCertInReverseOrder() throws Exception {
 
         // OK signature, first ca cert then signer cert
@@ -318,6 +327,7 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
      * Changes the CRL to a CRL with the certificate revoked.
      * @throws Exception
      */
+    @Test
     public void test09SigOkCertRevokedByUpdatingFile() throws Exception {
         LOG.info("test09SigOkCertRevocedByUpdatingFile");
 
@@ -334,6 +344,7 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
      * Changes the URL to point to a CRL which is revoked.
      * @throws Exception
      */
+    @Test
     public void test10SigOkCertRevoked() throws Exception {
         LOG.info("test10SigOkCertRevoced");
 
@@ -373,6 +384,7 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
         assertNotNull(cert);
     }
 
+    @Test
     public void test99TearDownDatabase() throws Exception {
         // XMLVALIDATOR
         removeWorker(XMLVALIDATOR_WORKERID);

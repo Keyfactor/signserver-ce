@@ -17,6 +17,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import org.apache.log4j.Logger;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
 import org.signserver.cli.spi.Command;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
@@ -28,6 +30,9 @@ import org.signserver.common.GenericSignRequest;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerUtil;
 import org.signserver.testutils.ModulesTestCase;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests for the UsernamePasswordAuthorizer.
@@ -35,20 +40,18 @@ import org.signserver.testutils.ModulesTestCase;
  * @author Markus Kilås
  * @version $Id$
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class UsernamePasswordAuthorizerTest extends ModulesTestCase {
 
     private static final Logger LOG = Logger.getLogger(
             UsernamePasswordAuthorizerTest.class);
 
-    @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-    }
-
+    @Test
     public void test00SetupDatabase() throws Exception {
         addDummySigner1();
         addSoftSODSigner(getSignerIdSODSigner1(), getSignerNameSODSigner1());
@@ -81,8 +84,8 @@ public class UsernamePasswordAuthorizerTest extends ModulesTestCase {
      * username/password is supplied.
      * @throws Exception in case of exception
      */
+    @Test
     public void test01AuthorizationRequired() throws Exception {
-
         final RequestContext context = new RequestContext();
 
         final GenericSignRequest request =
@@ -130,6 +133,7 @@ public class UsernamePasswordAuthorizerTest extends ModulesTestCase {
      * Tests that the worker accepts a correct user/password.
      * @throws Exception in case of exception
      */
+    @Test
     public void test02PlainTextPassword() throws Exception {
         final RequestContext context = new RequestContext();
 
@@ -153,6 +157,7 @@ public class UsernamePasswordAuthorizerTest extends ModulesTestCase {
      * Tests that the worker accepts a correct user/password.
      * @throws Exception in case of exception
      */
+    @Test
     public void test03HashedPassword() throws Exception {
         final RequestContext context = new RequestContext();
 
@@ -176,6 +181,7 @@ public class UsernamePasswordAuthorizerTest extends ModulesTestCase {
      * Tests that the worker accepts a correct user/password.
      * @throws Exception in case of exception
      */
+    @Test
     public void test04HashedAndSaltedPassword() throws Exception {
         final RequestContext context = new RequestContext();
 
@@ -195,6 +201,7 @@ public class UsernamePasswordAuthorizerTest extends ModulesTestCase {
         }
     }
     
+    @Test
     public void test04HashedAndSaltedPasswordOverClientWS() throws Exception {
         try {
             byte[] res = execute(new SignDocumentCommand(), "signdocument", "-workerid", 
@@ -209,6 +216,7 @@ public class UsernamePasswordAuthorizerTest extends ModulesTestCase {
         }
     }
     
+    @Test
     public void test04HashedAndSaltedPasswordSODOverClientWS() throws Exception {
         try {
             byte[] res = execute(new SignDataGroupsCommand(), "signdatagroups", "-workerid", 
@@ -223,6 +231,7 @@ public class UsernamePasswordAuthorizerTest extends ModulesTestCase {
         }
     }
 
+    @Test
     public void test99TearDownDatabase() throws Exception {
         removeWorker(getSignerIdDummy1());
         workerSession.reloadConfiguration(getSignerIdDummy1());

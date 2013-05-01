@@ -24,29 +24,34 @@ import java.util.Date;
 import junit.framework.TestCase;
 import org.ejbca.util.CertTools;
 import org.ejbca.util.keystore.KeyTools;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
 import org.signserver.common.SignServerUtil;
 import org.signserver.validationservice.common.Validation;
 import org.signserver.validationservice.common.Validation.Status;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * TODO: Document me!
  * 
  * @version $Id$
  */
-public class ValidationSerializationTest extends TestCase {
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+public class ValidationSerializationTest {
 
     private static X509Certificate validRootCA1;
     private static X509Certificate validSubCA1;
     private static X509Certificate validCert1;
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
     }
 
+    @Test
     public void test01ValidationSerialization() throws Exception {
-
         KeyPair keys = KeyTools.genKeys("1024", "RSA");
         validRootCA1 = ValidationTestUtils.genCert("CN=ValidRootCA1", "CN=ValidRootCA1", keys.getPrivate(), keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), true);
 
@@ -98,6 +103,5 @@ public class ValidationSerializationTest extends TestCase {
         assertTrue(CertTools.getSubjectDN(val2.getCertificate()).equals("CN=ValidCert1"));
         assertTrue(CertTools.getSubjectDN(val2.getCAChain().get(0)).equals("CN=ValidSubCA1"));
         assertTrue(CertTools.getSubjectDN(val2.getCAChain().get(1)).equals("CN=ValidRootCA1"));
-
     }
 }

@@ -26,6 +26,7 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.fail;
 import org.apache.log4j.Logger;
 import org.signserver.testutils.ModulesTestCase;
+import static org.junit.Assert.*;
 
 /**
  * Abstract test case that can be used by test cases that wants to the HTTP 

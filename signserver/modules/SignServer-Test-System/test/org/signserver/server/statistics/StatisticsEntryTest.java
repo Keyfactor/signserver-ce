@@ -18,26 +18,33 @@ import java.util.concurrent.TimeUnit;
 import org.apache.log4j.Logger;
 
 import junit.framework.TestCase;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * TODO: Document me!
  * 
  * @version $Id$
  */
-public class StatisticsEntryTest extends TestCase {
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+public class StatisticsEntryTest {
     /** Logger for this class. */
     Logger LOG = Logger.getLogger(StatisticsEntryTest.class);
     
     private Date expireDate;
     private StatisticsEntry sE;
   
-    @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         final long now = System.currentTimeMillis();
         expireDate = new Date(now + 2000);
         sE = new StatisticsEntry(new Date(now - 100), new Date(now + 100), expireDate);
     }
-    
+
+    @Test
     public void test01AddEvent() throws InterruptedException {
         Event event1 = getEvent();
         event1.addCustomStatistics("CUSTOMKEY", 123);
@@ -55,10 +62,12 @@ public class StatisticsEntryTest extends TestCase {
         assertEquals(Integer.valueOf(123 + 123), sE.getCustomData().get("CUSTOMKEY"));
     }
 
+    @Test
     public void test02GetExpireDate() {
         assertEquals(sE.getExpireDate(), expireDate);
     }
 
+    @Test
     public void test03GetDelay() throws InterruptedException {
         final long before = System.currentTimeMillis();
         final long delayBefore = sE.getDelay(TimeUnit.MILLISECONDS);

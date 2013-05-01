@@ -14,6 +14,10 @@ package org.signserver.client.cli;
 
 import java.io.*;
 import org.apache.log4j.Logger;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.client.cli.defaultimpl.SignDocumentCommand;
@@ -22,6 +26,8 @@ import org.signserver.common.SignServerUtil;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestingSecurityManager;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
 /**
  * Tests for the signdocument command of Client CLI.
@@ -29,6 +35,7 @@ import org.signserver.testutils.TestingSecurityManager;
  * @author Markus Kilås
  * @version $Id$
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class DocumentSignerTest extends ModulesTestCase {
 
     /** Logger for this class. */
@@ -46,9 +53,8 @@ public class DocumentSignerTest extends ModulesTestCase {
 
     private static String signserverhome;
     
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
         workerSession = ServiceLocator.getInstance().lookupRemote(
                 IWorkerSession.IRemote.class);
@@ -59,12 +65,12 @@ public class DocumentSignerTest extends ModulesTestCase {
         setupSSLKeystores();
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
+    @After
+    public void tearDown() throws Exception {
         TestingSecurityManager.remove();
     }	
 	
+    @Test
     public void test00SetupDatabase() throws Exception {
         // Worker 1
         setProperties(new File(signserverhome, "modules/SignServer-Module-XMLSigner/src/conf/junittest-part-config.properties"));
@@ -75,6 +81,7 @@ public class DocumentSignerTest extends ModulesTestCase {
         workerSession.reloadConfiguration(WORKERID2);
     }
 
+    @Test
     public void test01missingArguments() throws Exception {
         try {
             execute("signdocument");
@@ -89,6 +96,7 @@ public class DocumentSignerTest extends ModulesTestCase {
      * </pre>
      * @throws Exception
      */
+    @Test
     public void test02signDocumentFromParameter() throws Exception {
         try {
             String res =
@@ -108,6 +116,7 @@ public class DocumentSignerTest extends ModulesTestCase {
      * </pre>
      * @throws Exception
      */
+    @Test
     public void test02signDocumentFromFile() throws Exception {
         try {
             final File doc = File.createTempFile("test.xml", null);
@@ -138,6 +147,7 @@ public class DocumentSignerTest extends ModulesTestCase {
      * signdocument -workername TestPDFSigner -infile $SIGNSERVER_HOME/res/test/pdf/sample-open123.pdf
      * @throws Exception
      */
+    @Test
     public void test03signPDFwithPasswordOverHTTP() throws Exception {
         try {
 
@@ -157,6 +167,7 @@ public class DocumentSignerTest extends ModulesTestCase {
      * signdocument -workername TestPDFSigner -infile $SIGNSERVER_HOME/res/test/pdf/sample-open123.pdf -protocol WEBSERVICES
      * @throws Exception
      */
+    @Test
     public void test04signPDFwithPasswordOverWebservices() throws Exception {
         try {
             
@@ -177,6 +188,7 @@ public class DocumentSignerTest extends ModulesTestCase {
      * signdocument -workername TestPDFSigner -infile $SIGNSERVER_HOME/res/test/pdf/sample-open123.pdf -protocol CLIENTWS
      * @throws Exception
      */
+    @Test
     public void test04signPDFwithPasswordOverClientWS() throws Exception {
         try {
             
@@ -196,6 +208,7 @@ public class DocumentSignerTest extends ModulesTestCase {
      * Test signing over webservices with the -servlet argument set as SignServerWSService/SignServerWS
      * @throws Exception
      */
+    @Test
     public void test05signPDFOverWebservicesServletArg() throws Exception {
         try {
             final String res = new String(execute("signdocument", "-workername", "TestXMLSigner",
@@ -214,6 +227,7 @@ public class DocumentSignerTest extends ModulesTestCase {
      * Test signing over webservices with the -servlet argument set as ClientWSService/ClientWS
      * @throws Exception
      */
+    @Test
     public void test05signPDFOverClientWSServletArg() throws Exception {
         try {
             final String res = new String(execute("signdocument", "-workername", "TestXMLSigner",
@@ -232,6 +246,7 @@ public class DocumentSignerTest extends ModulesTestCase {
      * Test signing over webservices with the -servlet argument set as signserverws/signserverws
      * @throws Exception
      */
+    @Test
     public void test06signPDFOverWebservicesServletArg2() throws Exception {
         try {
             final String res = new String(execute("signdocument", "-workername", "TestXMLSigner",
@@ -250,6 +265,7 @@ public class DocumentSignerTest extends ModulesTestCase {
      * Test signing over webservices with the -servlet argument set as an invalid WS servlet URL
      * @throws Exception
      */
+    @Test
     public void test07signPDFOverWebservicesServletArgInvalid() throws Exception {
         try {
             final String res = new String(execute("signdocument", "-workername", "TestXMLSigner",
@@ -269,6 +285,7 @@ public class DocumentSignerTest extends ModulesTestCase {
      * Test signing over webservices with the -servlet argument set as an invalid WS servlet URL
      * @throws Exception
      */
+    @Test
     public void test07signPDFOverClientWSServletArgInvalid() throws Exception {
         try {
             final String res = new String(execute("signdocument", "-workername", "TestXMLSigner",
@@ -283,7 +300,8 @@ public class DocumentSignerTest extends ModulesTestCase {
             // this is expected for the invalid URL
         }
     }
-    
+
+    @Test
     public void test99TearDownDatabase() throws Exception {
         removeWorker(WORKERID2);
         for (int workerId : WORKERS) {

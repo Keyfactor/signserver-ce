@@ -15,7 +15,10 @@ package org.signserver.cli;
 import org.signserver.testutils.CLITestHelper;
 import static org.signserver.testutils.CLITestHelper.assertPrinted;
 import org.signserver.testutils.ModulesTestCase;
-
+import static org.junit.Assert.*;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
 /**
  * Test for the audit log query CLI command.
@@ -24,12 +27,14 @@ import org.signserver.testutils.ModulesTestCase;
  * @author Marcus Lundblad
  * @version $Id$
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class AuditLogCLITest extends ModulesTestCase { 
     private CLITestHelper cli = getAdminCLI();
     
     /**
      * Test running the auditlog query command.
      */
+    @Test
     public void testQueryAuditLog() throws Exception {
         // make sure an error message is printed if not setting the mandatory -limit argument
         assertEquals("", CommandLineInterface.RETURN_INVALID_ARGUMENTS, cli.execute("auditlog", "-query"));

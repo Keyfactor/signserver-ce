@@ -16,12 +16,17 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import org.apache.log4j.Logger;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
 import org.signserver.common.AccessDeniedException;
 import org.signserver.common.AuthorizationRequiredException;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerUtil;
 import org.signserver.testutils.*;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests for the RemoteAddressAuthorizer.
@@ -30,20 +35,18 @@ import org.signserver.testutils.*;
  * @author Markus Kilas
  * @version $Id$
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class RemoteAddressAuthorizerTest extends ModulesTestCase {
 
     private static final Logger LOG = Logger.getLogger(
             RemoteAddressAuthorizerTest.class);
 
-    @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-    }
-
+    @Test
     public void test00SetupDatabase() throws Exception {
         addDummySigner1();
 
@@ -62,8 +65,8 @@ public class RemoteAddressAuthorizerTest extends ModulesTestCase {
      * ALLOW_FROM is specified.
      * @throws Exception in case of exception
      */
+    @Test
     public void test01noAllowFrom() throws Exception {
-
         int responseCode = process(
                 new URL("http://localhost:" + getPublicHTTPPort()
                 + "/signserver/process?workerId="
@@ -77,6 +80,7 @@ public class RemoteAddressAuthorizerTest extends ModulesTestCase {
      * exception is thrown.
      * @throws Exception in case of exception
      */
+    @Test
     public void test02RequestFromLocalhost() throws Exception {
 
         workerSession.setWorkerProperty(getSignerIdDummy1(),
@@ -97,8 +101,8 @@ public class RemoteAddressAuthorizerTest extends ModulesTestCase {
      *
      * @throws Exception in case of exception
      */
+    @Test
     public void test03RequestFromOther() throws Exception {
-
         workerSession.setWorkerProperty(getSignerIdDummy1(),
                 "ALLOW_FROM", "113.113.113.113");
         workerSession.reloadConfiguration(getSignerIdDummy1());
@@ -116,8 +120,8 @@ public class RemoteAddressAuthorizerTest extends ModulesTestCase {
      * added to the list.
      * @throws Exception in case of exception
      */
+    @Test
     public void test04RequestFromOtherAllowed() throws Exception {
-
         workerSession.setWorkerProperty(getSignerIdDummy1(), "ALLOW_FROM",
                 "113.113.113.113, 127.0.0.1");
         workerSession.reloadConfiguration(getSignerIdDummy1());
@@ -136,8 +140,8 @@ public class RemoteAddressAuthorizerTest extends ModulesTestCase {
         assertEquals("HTTP response code", 200, responseCode);
     }
 
+    @Test
     public void test05RequestFromEJB() throws Exception {
-
         // No address is provided with EJB unless the requestor fills it in
         // manually so add null to be an accepted address
         workerSession.setWorkerProperty(getSignerIdDummy1(), "ALLOW_FROM",
@@ -176,6 +180,7 @@ public class RemoteAddressAuthorizerTest extends ModulesTestCase {
         return responseCode;
     }
 
+    @Test
     public void test99TearDownDatabase() throws Exception {
         removeWorker(getSignerIdDummy1());
         workerSession.reloadConfiguration(getSignerIdDummy1());

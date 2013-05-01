@@ -21,13 +21,16 @@ import org.ejbca.util.CertTools;
 import org.ejbca.util.keystore.KeyTools;
 import org.signserver.common.SignServerUtil;
 import org.signserver.validationservice.common.Validation;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * TODO: Document me!
  * 
  * @version $Id$
  */
-public class ValidationCacheTest extends TestCase {
+public class ValidationCacheTest {
 
     private static X509Certificate cert1;
     private static X509Certificate cert2;
@@ -36,11 +39,9 @@ public class ValidationCacheTest extends TestCase {
     /**
      * @see junit.framework.TestCase#setUp()
      */
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
-
 
         KeyPair keys = KeyTools.genKeys("512", "RSA");
         cert1 = (X509Certificate) CertTools.genSelfCert("CN=cert1", 367, null, keys.getPrivate(), keys.getPublic(), "SHA1WithRSA", false);
@@ -52,6 +53,7 @@ public class ValidationCacheTest extends TestCase {
      * Test method for {@link org.signserver.validationservice.server.validcache.ValidationCache}
      * @throws InterruptedException 
      */
+    @Test
     public void testValidationCache() throws InterruptedException {
         ArrayList<String> cachedIssuerDNs = new ArrayList<String>();
         cachedIssuerDNs.add(CertTools.getIssuerDN(cert1));

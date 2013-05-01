@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema version="1.0" targetNamespace="gen.ws.validationservice.protocol.signserver.org" xmlns:tns="gen.ws.validationservice.protocol.signserver.org" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:element name="IllegalRequestException" type="tns:IllegalRequestException"/>
+
+  <xs:element name="SignServerException" type="tns:SignServerException"/>
+
+  <xs:element name="getStatus" type="tns:getStatus"/>
+
+  <xs:element name="getStatusResponse" type="tns:getStatusResponse"/>
+
+  <xs:element name="isValid" type="tns:isValid"/>
+
+  <xs:element name="isValidResponse" type="tns:isValidResponse"/>
+
+  <xs:complexType name="getStatus">
+    <xs:sequence>
+      <xs:element name="serviceName" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="getStatusResponse">
+    <xs:sequence>
+      <xs:element name="return" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="IllegalRequestException">
+    <xs:sequence>
+      <xs:element name="message" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="isValid">
+    <xs:sequence>
+      <xs:element name="serviceName" type="xs:string" minOccurs="0"/>
+      <xs:element name="base64Cert" type="xs:string" minOccurs="0"/>
+      <xs:element name="certPurposes" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="isValidResponse">
+    <xs:sequence>
+      <xs:element name="return" type="tns:validationResponse" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="validationResponse">
+    <xs:sequence>
+      <xs:element name="revocationDate" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="revocationReason" type="xs:int"/>
+      <xs:element name="status" type="tns:status" minOccurs="0"/>
+      <xs:element name="statusMessage" type="xs:string" minOccurs="0"/>
+      <xs:element name="validCertificatePurposes" type="xs:string" minOccurs="0"/>
+      <xs:element name="validationDate" type="xs:dateTime" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="SignServerException">
+    <xs:sequence>
+      <xs:element name="message" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="status">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="VALID"/>
+      <xs:enumeration value="REVOKED"/>
+      <xs:enumeration value="NOTYETVALID"/>
+      <xs:enumeration value="EXPIRED"/>
+      <xs:enumeration value="DONTVERIFY"/>
+      <xs:enumeration value="CAREVOKED"/>
+      <xs:enumeration value="CANOTYETVALID"/>
+      <xs:enumeration value="CAEXPIRED"/>
+      <xs:enumeration value="BADCERTPURPOSE"/>
+      <xs:enumeration value="ISSUERNOTSUPPORTED"/>
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>
+

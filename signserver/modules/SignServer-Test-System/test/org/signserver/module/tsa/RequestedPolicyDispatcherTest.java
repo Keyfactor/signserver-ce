@@ -19,15 +19,22 @@ import java.util.Random;
 import org.bouncycastle.asn1.cmp.PKIFailureInfo;
 import org.bouncycastle.asn1.cmp.PKIStatus;
 import org.bouncycastle.tsp.*;
+import org.junit.After;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
 import org.signserver.common.*;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestingSecurityManager;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests for RequestedProfileDistpatcher.
  *
  * @version $Id$
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class RequestedPolicyDispatcherTest extends ModulesTestCase {
 
     /** Worker ID for test dispatcher. */
@@ -52,21 +59,20 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
     private Random random = new Random(4711);
 
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
     }
 
-    @Override
+    @After
     protected void tearDown() throws Exception {
-        super.tearDown();
         TestingSecurityManager.remove();
     }
 
     /**
      * Setup signers and dispatchers definied in ts-setup1.properties.
      */
+    @Test
     public void test00SetupDatabase() throws Exception {
         setProperties(getClass().getResourceAsStream("ts-setup1.properties"));
         workerSession.reloadConfiguration(DISPATCHER0);
@@ -80,6 +86,7 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
      * Some basic tests around generating timestamps.
      * @throws Exception in case of error
      */
+    @Test
     public void test01BasicTimeStamp() throws Exception {
         assertSuccessfulTimestamp(WORKER1);
         assertSuccessfulTimestamp(WORKER2);
@@ -89,6 +96,7 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
     /**
      * Tests that the signers only accepts requests with their profile.
      */
+    @Test
     public void test02AcceptedProfiles() throws Exception {
         TimeStampRequestGenerator gen = new TimeStampRequestGenerator();
         TimeStampRequest req;
@@ -160,6 +168,7 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
     /**
      * Tests that requests going through the dispatcher gets the right profiles.
      */
+    @Test
     public void test03AcceptedProfilesThroughDispatcher() throws Exception {
         TimeStampRequestGenerator gen = new TimeStampRequestGenerator();
         TimeStampRequest req;
@@ -208,6 +217,7 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
      * Tests that requests which does not request a certain profile gets dispatched 
      * to the default worker.
      */
+    @Test
     public void test04DefaultWorker() throws Exception {
         TimeStampRequestGenerator gen = new TimeStampRequestGenerator();
         TimeStampRequest req;
@@ -225,6 +235,7 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
      * Tests the USEDEFAULTIFMISMATCH option which dispatches requests to the 
      * default worker if no mapping matched.
      */
+    @Test
     public void test05UseDefaultIfMisMatch() throws Exception {
         TimeStampRequestGenerator gen = new TimeStampRequestGenerator();
         TimeStampRequest req;
@@ -257,6 +268,7 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
      * and no default worker is configured for mismatched policy.
      * @throws Exception
      */
+    @Test
     public void test06IncludeStatusStringFailure() throws Exception {
         TimeStampRequestGenerator gen = new TimeStampRequestGenerator();
         TimeStampRequest req;
@@ -276,6 +288,7 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
      * on the dispatcher and no default worker is configured for mismatched policy.
      * @throws Exception
      */
+    @Test
     public void test07ExcludeStatusStringFailure() throws Exception {
         TimeStampRequestGenerator gen = new TimeStampRequestGenerator();
         TimeStampRequest req;
@@ -294,6 +307,7 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
     /**
      * Clean up.
      */
+    @Test
     public void test99TearDownDatabase() throws Exception {
         removeWorker(DISPATCHER0);
         removeWorker(DISPATCHER9);

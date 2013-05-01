@@ -16,8 +16,13 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.security.cert.Certificate;
 import org.ejbca.util.Base64;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
 import org.signserver.common.*;
 import org.signserver.testutils.ModulesTestCase;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Test for ooxmlsigner. Worker ID of 5677 is hard coded here and used from module-configs/ooxmlsigner/junittest-part-config.properties
@@ -27,6 +32,7 @@ import org.signserver.testutils.ModulesTestCase;
  * @author Aziz Göktepe
  * @version $Id$
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class OOXMLSignerTest extends ModulesTestCase {
 
     /**
@@ -53,24 +59,19 @@ public class OOXMLSignerTest extends ModulesTestCase {
         }
     }
 
-    @Override
+    @Before
     protected void setUp() throws Exception {
-        super.setUp();
         SignServerUtil.installBCProvider();
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
-
+    @Test
     public void test00SetupDatabase() throws Exception {
         setProperties(new File(getSignServerHome(), "modules/SignServer-Module-OOXMLSigner/src/conf/junittest-part-config.properties"));
         workerSession.reloadConfiguration(WORKERID);
     }
 
+    @Test
     public void test01SignDocx() throws Exception {
-
         int reqid = 13;
 
         GenericSignRequest signRequest = new GenericSignRequest(reqid, Base64.decode(TEST_DOCX.getBytes()));
@@ -95,11 +96,13 @@ public class OOXMLSignerTest extends ModulesTestCase {
         assertNotNull(signercert);
     }
 
+    @Test
     public void test02GetStatus() throws Exception {
         SignerStatus stat = (SignerStatus) workerSession.getStatus(WORKERID);
         assertTrue(stat.getTokenStatus() == SignerStatus.STATUS_ACTIVE);
     }
 
+    @Test
     public void test99TearDownDatabase() throws Exception {
         removeWorker(WORKERID);
     }

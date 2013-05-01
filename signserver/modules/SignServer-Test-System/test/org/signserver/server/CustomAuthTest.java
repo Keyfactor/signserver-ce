@@ -19,6 +19,9 @@ import java.util.Properties;
 import org.bouncycastle.tsp.TSPAlgorithms;
 import org.bouncycastle.tsp.TimeStampRequest;
 import org.bouncycastle.tsp.TimeStampRequestGenerator;
+import org.junit.After;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
 import org.signserver.common.*;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
@@ -28,15 +31,18 @@ import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestUtils;
 import org.signserver.testutils.TestingSecurityManager;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class CustomAuthTest extends ModulesTestCase {
 
     private String signserverhome;
     private int moduleVersion;
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
         globalSession = ServiceLocator.getInstance().lookupRemote(
                 IGlobalConfigurationSession.IRemote.class);
@@ -49,12 +55,12 @@ public class CustomAuthTest extends ModulesTestCase {
     /* (non-Javadoc)
      * @see junit.framework.TestCase#tearDown()
      */
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
+    @After
+    public void tearDown() throws Exception {
         TestingSecurityManager.remove();
     }
 
+    @Test
     public void test00SetupDatabase() throws Exception {
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER9.CLASSPATH", "org.signserver.module.tsa.TimeStampSigner");
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER9.SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.P12CryptoToken");
@@ -72,6 +78,7 @@ public class CustomAuthTest extends ModulesTestCase {
         workerSession.reloadConfiguration(9);
     }
 
+    @Test
     public void test01TestCustomAuth() throws Exception {
         genTimeStampRequest(1, null, null);
 
@@ -120,6 +127,7 @@ public class CustomAuthTest extends ModulesTestCase {
         assertNotNull(signercert);
     }
 
+    @Test
     public void test99TearDownDatabase() throws Exception {
         removeWorker(9);
     }

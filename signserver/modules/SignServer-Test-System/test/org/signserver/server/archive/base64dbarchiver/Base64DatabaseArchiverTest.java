@@ -19,6 +19,9 @@ import org.apache.log4j.Logger;
 import org.bouncycastle.tsp.TSPAlgorithms;
 import org.bouncycastle.tsp.TimeStampRequest;
 import org.bouncycastle.tsp.TimeStampRequestGenerator;
+import org.junit.After;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
 import org.signserver.common.ArchiveDataVO;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
@@ -26,6 +29,9 @@ import org.signserver.common.RequestContext;
 import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.ArchiveTest;
 import org.signserver.server.archive.ArchiveTestCase;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests for the OldDatabaseArchiver.
@@ -33,6 +39,7 @@ import org.signserver.server.archive.ArchiveTestCase;
  * @author Markus Kilås
  * @version $Id$
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class Base64DatabaseArchiverTest extends ArchiveTestCase {
     
     /** Logger for this class. */
@@ -41,16 +48,19 @@ public class Base64DatabaseArchiverTest extends ArchiveTestCase {
     private static Random random = new Random();
     
     
+    @Before
     @Override
-    protected void setUp() throws Exception {
+    public void setUp() throws Exception  {
         super.setUp();
     }
 
+    @After
     @Override
-    protected void tearDown() throws Exception {
+    public void tearDown() throws Exception {
         super.tearDown();
     }	
-	
+
+    @Test
     public void test00SetupDatabase() throws Exception {
         addSoftDummySigner(getSignerIdDummy1(), getSignerNameDummy1());
         addSoftTimeStampSigner(getSignerIdTimeStampSigner1(), getSignerNameTimeStampSigner1());
@@ -60,6 +70,7 @@ public class Base64DatabaseArchiverTest extends ArchiveTestCase {
      * Tests archiving with the base64 database archiver.
      * @throws Exception In case of error.
      */
+    @Test
     public void test30archiveBase64() throws Exception {
         LOG.debug(">test30archiveTrueBase64");
         
@@ -73,7 +84,8 @@ public class Base64DatabaseArchiverTest extends ArchiveTestCase {
         
         LOG.debug("<test30archiveTrueBase64");
     }
-    
+
+    @Test
     public void test50archiveOnlyResponseIsDefault() throws Exception {
         LOG.debug(">test50archiveOnlyResponseIsDefault");
         
@@ -90,7 +102,8 @@ public class Base64DatabaseArchiverTest extends ArchiveTestCase {
         
         LOG.debug("<test50archiveOnlyResponseIsDefault");
     }
-    
+
+    @Test
     public void test50archiveOnlyResponse() throws Exception {
         LOG.debug(">test50archiveOnlyResponse");
         
@@ -107,7 +120,8 @@ public class Base64DatabaseArchiverTest extends ArchiveTestCase {
         
         LOG.debug("<test50archiveOnlyResponse");
     }
-    
+
+    @Test
     public void test50archiveOnlyRequest() throws Exception {
         LOG.debug(">test50archiveOnlyRequest");
         
@@ -124,7 +138,8 @@ public class Base64DatabaseArchiverTest extends ArchiveTestCase {
         
         LOG.debug("<test50archiveOnlyRequest");
     }
-    
+
+    @Test
     public void test50archiveRequestAndResponse() throws Exception {
         LOG.debug(">test50archiveRequestAndResponse");
         
@@ -147,6 +162,7 @@ public class Base64DatabaseArchiverTest extends ArchiveTestCase {
      * 
      * @throws Exception
      */
+    @Test
     public void test60archiveWithXForwardedFor() throws Exception {
         LOG.debug(">test60archiveWithXForwardedFor");
         
@@ -172,6 +188,7 @@ public class Base64DatabaseArchiverTest extends ArchiveTestCase {
      * 
      * @throws Exception
      */
+    @Test
     public void test60archiveWithXForwardedForNotUsed() throws Exception {
         LOG.debug(">test60archiveWithXForwardedForNotUsed");
         
@@ -198,6 +215,7 @@ public class Base64DatabaseArchiverTest extends ArchiveTestCase {
      *
      * @throws Exception
      */
+    @Test
     public void test60archiveWithXForwardedForFalse() throws Exception {
         LOG.debug(">test60archiveWithXForwardedForFalse");
         
@@ -223,6 +241,7 @@ public class Base64DatabaseArchiverTest extends ArchiveTestCase {
      *
      * @throws Exception
      */
+    @Test
     public void test60archiveWithXForwardedWithoutHeader() throws Exception {
         LOG.debug(">test60archiveWithXForwardedForWithoutHeader");
         
@@ -241,13 +260,13 @@ public class Base64DatabaseArchiverTest extends ArchiveTestCase {
         assertEquals("Archiver should use the request IP address", "1.2.3.4", ip);
         
         LOG.debug("<test60archiveWithXForwardedForWithoutHeader");
-
     }
     
     /**
      * Remove the workers created etc.
      * @throws Exception in case of error
      */
+    @Test
     public void test99TearDownDatabase() throws Exception {
         removeWorker(getSignerIdDummy1());
         removeWorker(getSignerIdTimeStampSigner1());

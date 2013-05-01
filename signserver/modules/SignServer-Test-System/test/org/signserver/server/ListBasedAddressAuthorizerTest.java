@@ -17,9 +17,14 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import org.apache.log4j.Logger;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerUtil;
 import org.signserver.testutils.ModulesTestCase;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests for the ListBasedAddressAuthorizer implementation.
@@ -28,21 +33,19 @@ import org.signserver.testutils.ModulesTestCase;
  * @version $Id$
  *
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
 
     /** Logger for this class */
     private static final Logger LOG = Logger.getLogger(
             ListBasedAddressAuthorizerTest.class);
 
-    @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-    }
-
+    @Test
     public void test00SetupDatabase() throws Exception {
         addDummySigner1();
 
@@ -60,6 +63,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      * 
      * @throws Exception
      */
+    @Test
     public void test01WhitelistedDirectAddressAllowed() throws Exception {
         setPropertiesAndReload("127.0.0.1", null, null, "1.2.3.4");
         
@@ -75,6 +79,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      * 
      * @throws Exception
      */
+    @Test
     public void test02WhitelistedDirectAddressNotAllowed() throws Exception {
        setPropertiesAndReload("1.2.3.4", null, null, "1.2.3.4");
        
@@ -92,6 +97,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      * 
      * @throws Exception
      */
+    @Test
     public void test03WhitelistedDirectAddressAllowedSeveral() throws Exception {
         setPropertiesAndReload("127.0.0.1, 1.2.3.4", null, null, "1.2.3.4");
       
@@ -109,6 +115,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      * 
      * @throws Exception
      */
+    @Test
     public void test04WhitelistedDirectAddressAndWhitelistedForwarded() throws Exception {
         setPropertiesAndReload("127.0.0.1", null, "42.42.42.42", null);
         
@@ -125,6 +132,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      * 
      * @throws Exception
      */
+    @Test
     public void test05WhitelistedDirectWithForwarding() throws Exception {
         setPropertiesAndReload("127.0.0.1", null, "1.2.3.4", null);
        
@@ -141,6 +149,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      * 
      * @throws Exception
      */
+    @Test
     public void test06WhitelistedDirectWithForwadingNotInWhitelist() throws Exception {
         setPropertiesAndReload("127.0.0.1", null, "42.42.42.42", null);
 
@@ -158,6 +167,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      * 
      * @throws Exception
      */
+    @Test
     public void test07WhitelistedDirectWithForwardingNotLastAddress() throws Exception {
         setPropertiesAndReload("127.0.0.1", null, "1.2.3.4", null);
 
@@ -174,6 +184,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      * 
      * @throws Exception
      */
+    @Test
     public void test08WhitelistedDirectWithBlacklistedForwarded() throws Exception {
         setPropertiesAndReload("127.0.0.1", null, null, "1.2.3.4");
       
@@ -189,6 +200,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      * 
      * @throws Exception
      */
+    @Test
     public void test09BlacklistedDirect() throws Exception {
         setPropertiesAndReload(null, "127.0.0.1", null, "1.2.3.4");
 
@@ -206,6 +218,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      * 
      * @throws Exception
      */
+    @Test
     public void test10WhitelistedDirectWithMultipleWhitelistedForwarded() throws Exception {
         setPropertiesAndReload("127.0.0.1", null, "1.2.3.4, 127.0.0.1", null);
         
@@ -222,6 +235,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      * 
      * @throws Exception
      */
+    @Test
     public void test11NoPropertiesSet() throws Exception {
        setPropertiesAndReload(null, null, null, null);
     
@@ -238,6 +252,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      * 
      * @throws Exception
      */
+    @Test
     public void test12BothDirectAddressPropertiesSet() throws Exception {
         setPropertiesAndReload("127.0.0.1", "127.0.0.1", "127.0.0.1", null);
        
@@ -254,6 +269,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      * 
      * @throws Exception
      */
+    @Test
     public void test13BothForwardedAddressPropertiesSet() throws Exception {
         setPropertiesAndReload(null, "127.0.0.1", "127.0.0.1", "127.0.0.1");
         
@@ -269,6 +285,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      * 
      * @throws Exception
      */
+    @Test
     public void test14MissingDirectAddresses() throws Exception {
         setPropertiesAndReload(null, null, null, "127.0.0.1");
        
@@ -284,6 +301,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      * 
      * @throws Exception
      */
+    @Test
     public void test15MissingForwardedAddresses() throws Exception {
         setPropertiesAndReload(null, "127.0.0.1", null, null);
        
@@ -338,6 +356,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
         return process(workerUrl, null);
     }
 
+    @Test
     public void test99TearDownDatabase() throws Exception {
         removeWorker(getSignerIdDummy1());
         workerSession.reloadConfiguration(getSignerIdDummy1());

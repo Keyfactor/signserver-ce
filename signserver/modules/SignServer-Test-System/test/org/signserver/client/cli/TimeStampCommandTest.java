@@ -20,10 +20,15 @@ import java.security.Security;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.cmp.PKIStatus;
 import org.bouncycastle.tsp.TimeStampResponse;
+import org.junit.Before;
+import org.junit.Test;
 import org.signserver.cli.CommandLineInterface;
 import org.signserver.common.SignServerUtil;
 import org.signserver.testutils.CLITestHelper;
 import org.signserver.testutils.ModulesTestCase;
+import static org.junit.Assert.*;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
 
 /**
  * Tests for the timestamp command of Client CLI.
@@ -31,6 +36,7 @@ import org.signserver.testutils.ModulesTestCase;
  * @author Markus Kilås
  * @version $Id$
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TimeStampCommandTest extends ModulesTestCase {
 
     /** Logger for this class. */
@@ -41,22 +47,18 @@ public class TimeStampCommandTest extends ModulesTestCase {
     private CLITestHelper cli = getClientCLI();
     
 	
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
     }
-
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }	
 	
+    @Test
     public void test00SetupDatabase() throws Exception {
         setProperties(getClass().getResourceAsStream("ts-cli-configuration1.properties"));
         workerSession.reloadConfiguration(WORKER1);
     }
 
+    @Test
     public void test01missingArguments() throws Exception {
         assertEquals("No arguments", CommandLineInterface.RETURN_INVALID_ARGUMENTS, 
                 cli.execute("timestamp"));
@@ -65,6 +67,7 @@ public class TimeStampCommandTest extends ModulesTestCase {
     /**
      * Tests getting a timestamp.
      */
+    @Test
     public void test02requestATimestamp() throws Exception {
         File responseFile = File.createTempFile("signserver-" + this.getClass().getName() + "-response1-", null);
         responseFile.deleteOnExit();
@@ -86,6 +89,7 @@ public class TimeStampCommandTest extends ModulesTestCase {
     /**
      * Tests getting a timestamp over HTTPS (port 8442).
      */
+    @Test
     public void test02requestATimestampOverHTTPS() throws Exception {
         File responseFile = File.createTempFile("signserver-" + this.getClass().getName() + "-response2-", null);
         responseFile.deleteOnExit();
@@ -109,11 +113,13 @@ public class TimeStampCommandTest extends ModulesTestCase {
      * should install it itself.
      * @throws Exception 
      */
+    @Test
     public void test03withoutBCalreadyInstalled() throws Exception {
         Security.removeProvider("BC");
         test02requestATimestamp();
     }
 
+    @Test
     public void test99TearDownDatabase() throws Exception {
         removeWorker(WORKER1);
     }

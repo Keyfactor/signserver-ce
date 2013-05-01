@@ -26,7 +26,11 @@ import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
 
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.IllegalRequestException;
@@ -53,7 +57,8 @@ import org.signserver.groupkeyservice.common.TimeRemoveGroupKeyRequest;
  * 
  * @version $Id$
  */
-public class GroupKeyServiceTest extends TestCase {
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+public class GroupKeyServiceTest {
 
     private static IGlobalConfigurationSession.IRemote gCSession = null;
     private static IWorkerSession.IRemote sSSession = null;
@@ -66,9 +71,8 @@ public class GroupKeyServiceTest extends TestCase {
     private static Random rand = new Random();
     private static Date startDate = new Date();
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
         gCSession = ServiceLocator.getInstance().lookupRemote(
                 IGlobalConfigurationSession.IRemote.class);
@@ -76,11 +80,10 @@ public class GroupKeyServiceTest extends TestCase {
                 IWorkerSession.IRemote.class);
     }
 
+    @Test
     public void test00SetupDatabase() throws Exception {
-
         gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER10.CLASSPATH", "org.signserver.groupkeyservice.server.GroupKeyServiceWorker");
         gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER10.SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.ExtendedHardCodedCryptoToken");
-
 
         sSSession.setWorkerProperty(10, "AUTHTYPE", "NOAUTH");
         sSSession.setWorkerProperty(10, GroupKeyServiceConstants.GROUPKEYDATASERVICE_KEYSWITCHTHRESHOLD, "30");
@@ -99,22 +102,18 @@ public class GroupKeyServiceTest extends TestCase {
 
     }
 
+    @Test
     public void test01GetStatus() throws Exception {
-
-
         GroupKeyServiceStatus stat = (GroupKeyServiceStatus) sSSession.getStatus(10);
         assertTrue(stat.getTokenStatus() == SignerStatus.STATUS_ACTIVE);
         startNumOfKeys = stat.getNumOfKeys();
         startNumOfAssKeys = stat.getNumOfAssignedKeys();
         startNumOfUnassKeys = stat.getNumOfUnassignedKeys();
         startEncKeyRef = stat.getCurrentEncKeyRef();
-
-
     }
 
+    @Test
     public void test02PregenerateKeys() throws Exception {
-
-
         PregenerateKeysRequest req = new PregenerateKeysRequest((int) keysToGen);
         PregenerateKeysResponse res = (PregenerateKeysResponse) sSSession.process(10, req, new RequestContext());
         assertTrue(res.getNumberOfKeysGenerated() == keysToGen);
@@ -126,8 +125,8 @@ public class GroupKeyServiceTest extends TestCase {
         assertTrue(stat.getCurrentEncKeyRef() != null);
     }
 
+    @Test
     public void test03FetchKey() throws Exception {
-
         long keysToFetch = 7;
 
         for (int i = 0; i < keysToFetch; i++) {
@@ -184,6 +183,7 @@ public class GroupKeyServiceTest extends TestCase {
 
     }
 
+    @Test
     public void test04SwitchEncKey() throws Exception {
         // Test key switch manually
         SwitchEncKeyRequest req = new SwitchEncKeyRequest();
@@ -216,9 +216,9 @@ public class GroupKeyServiceTest extends TestCase {
 
     }
 
+    @Test
     public void test05RemoveKeys() throws Exception {
         // test to remove by documentId
-
         String docId1 = "docId" + Integer.toHexString(rand.nextInt());
         String docId2 = "docId" + Integer.toHexString(rand.nextInt());
         fetchKey(docId1, rand, GroupKeyServiceConstants.KEYPART_SYMMETRIC, true);
@@ -246,6 +246,7 @@ public class GroupKeyServiceTest extends TestCase {
 
     }
 
+    @Test
     public void test06PregenerateRSAKeys() throws Exception {
         GroupKeyServiceStatus orgstat = (GroupKeyServiceStatus) sSSession.getStatus(12);
 
@@ -258,6 +259,7 @@ public class GroupKeyServiceTest extends TestCase {
         assertTrue(stat.getNumOfKeys() == orgstat.getNumOfKeys() + rSAkeysToGen);
     }
 
+    @Test
     public void test07FetchRSAKeys() throws Exception {
         long keysToFetch = 4;
 
@@ -302,6 +304,7 @@ public class GroupKeyServiceTest extends TestCase {
 
     }
 
+    @Test
     public void test99TearDownDatabase() throws Exception {
         gCSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER10.CLASSPATH");
         gCSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER10.SIGNERTOKEN.CLASSPATH");

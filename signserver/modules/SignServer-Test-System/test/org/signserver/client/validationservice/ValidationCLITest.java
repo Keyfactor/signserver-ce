@@ -18,10 +18,11 @@ import java.security.KeyPair;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
-import junit.framework.TestCase;
 import org.bouncycastle.jce.X509KeyUsage;
 import org.ejbca.util.Base64;
 import org.ejbca.util.keystore.KeyTools;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
 import org.signserver.cli.CommandLineInterface;
 import org.signserver.client.cli.ClientCLI;
 import org.signserver.client.cli.validationservice.ValidateCertificateCommand;
@@ -34,13 +35,17 @@ import org.signserver.testutils.CLITestHelper;
 import static org.signserver.testutils.CLITestHelper.assertPrinted;
 import org.signserver.testutils.TestingSecurityManager;
 import org.signserver.validationservice.server.ValidationTestUtils;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests for the ValidateCertificateCommand.
  *
  * @version $Id$
  */
-public class ValidationCLITest extends TestCase {
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+public class ValidationCLITest {
 
     private static String signserverhome;
     
@@ -55,10 +60,8 @@ public class ValidationCLITest extends TestCase {
 
     private CLITestHelper clientCLI = new CLITestHelper(ClientCLI.class);
     
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-
+    @Before
+    public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
         gCSession = ServiceLocator.getInstance().lookupRemote(
                 IGlobalConfigurationSession.IRemote.class);
@@ -68,6 +71,7 @@ public class ValidationCLITest extends TestCase {
         assertNotNull("SIGNSERVER_HOME env variable", signserverhome);
     }
 
+    @Test
     public void test00SetupDatabase() throws Exception {
 
         KeyPair validRootCA1Keys = KeyTools.genKeys("1024", "RSA");
@@ -118,6 +122,7 @@ public class ValidationCLITest extends TestCase {
         TestingSecurityManager.remove();
     }
 
+    @Test
     public void testHelp() throws Exception {
         int result = clientCLI.execute("validatecertificate");
         assertEquals(ValidateCertificateCommand.RETURN_BADARGUMENT, result);
@@ -127,6 +132,7 @@ public class ValidationCLITest extends TestCase {
         assertEquals(ValidateCertificateCommand.RETURN_BADARGUMENT, result);
     }
 
+    @Test
     public void testValidationCLI() throws Exception {
         final String jksFile = new File(new File(signserverhome), "p12/truststore.jks").getAbsolutePath();
 
@@ -147,6 +153,7 @@ public class ValidationCLITest extends TestCase {
         assertEquals(ValidateCertificateCommand.RETURN_BADCERTPURPOSE, result);
     }
 
+    @Test
     public void test99RemoveDatabase() throws Exception {
 
         gCSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER16.CLASSPATH");

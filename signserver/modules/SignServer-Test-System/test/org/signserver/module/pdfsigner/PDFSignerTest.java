@@ -23,15 +23,22 @@ import java.util.*;
 import java.util.regex.Pattern;
 import org.ejbca.util.Base64;
 import org.ejbca.util.CertTools;
+import org.junit.After;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
 import org.signserver.common.*;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestingSecurityManager;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit tests for the PDFSigner.
  *
  * @version $Id$
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class PDFSignerTest extends ModulesTestCase {
 
     private static final int WORKERID = 5675;
@@ -41,26 +48,26 @@ public class PDFSignerTest extends ModulesTestCase {
     private static final String TESTPDF_OK = "ok.pdf";
     private static final String TESTPDF_2CATALOGS = "2catalogs.pdf";
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
     }
 
     /* (non-Javadoc)
      * @see junit.framework.TestCase#tearDown()
      */
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
+    @After
+    public void tearDown() throws Exception {
         TestingSecurityManager.remove();
     }
 
+    @Test
     public void test00SetupDatabase() throws Exception {
         setProperties(new File(getSignServerHome(), "modules/SignServer-Module-PDFSigner/src/conf/junittest-part-config.properties"));
         workerSession.reloadConfiguration(WORKERID);
     }
 
+    @Test
     public void test01BasicPdfSign() throws Exception {
 
         final GenericSignResponse res = signGenericDocument(WORKERID, Base64.decode(
@@ -75,6 +82,7 @@ public class PDFSignerTest extends ModulesTestCase {
         fos.close();
     }
 
+    @Test
     public void test02GetStatus() throws Exception {
         SignerStatus stat = (SignerStatus) workerSession.getStatus(WORKERID);
         assertTrue(stat.getTokenStatus() == SignerStatus.STATUS_ACTIVE);
@@ -84,8 +92,8 @@ public class PDFSignerTest extends ModulesTestCase {
      * Tests default certification level.
      * @throws Exception in case of exception
      */
+    @Test
     public void test03CertificationLevelDefault() throws Exception {
-
         // Test default which is no certification
         workerSession.removeWorkerProperty(WORKERID, CERTIFICATION_LEVEL);
         workerSession.reloadConfiguration(WORKERID);
@@ -104,8 +112,8 @@ public class PDFSignerTest extends ModulesTestCase {
      * Tests certification level NOT_CERTIFIED.
      * @throws Exception in case of exception
      */
+    @Test
     public void test04CertificationLevelNotCertified() throws Exception {
-
         // Test default which is no certification
         workerSession.setWorkerProperty(WORKERID, CERTIFICATION_LEVEL, "NOT_CERTIFIED");
         workerSession.reloadConfiguration(WORKERID);
@@ -124,8 +132,8 @@ public class PDFSignerTest extends ModulesTestCase {
      * Tests certification level NO_CHANGES_ALLOWED.
      * @throws Exception in case of exception
      */
+    @Test
     public void test05CertificationLevelNoChangesAllowed() throws Exception {
-
         // Test default which is no certification
         workerSession.setWorkerProperty(WORKERID, CERTIFICATION_LEVEL, "NO_CHANGES_ALLOWED");
         workerSession.reloadConfiguration(WORKERID);
@@ -144,8 +152,8 @@ public class PDFSignerTest extends ModulesTestCase {
      * Tests certification level FORM_FILLING_AND_ANNOTATIONS
      * @throws Exception in case of exception
      */
+    @Test
     public void test06CertificationLevelFormFillingAndAnnotations() throws Exception {
-
         // Test default which is no certification
         workerSession.setWorkerProperty(WORKERID, CERTIFICATION_LEVEL, "FORM_FILLING_AND_ANNOTATIONS");
         workerSession.reloadConfiguration(WORKERID);
@@ -164,8 +172,8 @@ public class PDFSignerTest extends ModulesTestCase {
      * Tests certification level FORM_FILLING_AND_ANNOTATIONS
      * @throws Exception in case of exception
      */
+    @Test
     public void test07CertificationLevelFormFillingAndAnnotations() throws Exception {
-
         // Test default which is no certification
         workerSession.setWorkerProperty(WORKERID, CERTIFICATION_LEVEL, "FORM_FILLING");
         workerSession.reloadConfiguration(WORKERID);
@@ -180,8 +188,8 @@ public class PDFSignerTest extends ModulesTestCase {
                 reader.getCertificationLevel());
     }
 
+    @Test
     public void test08GetCrlDistributionPoint() throws Exception {
-
         Collection<Certificate> certs;
         URL url;
 
@@ -206,6 +214,7 @@ public class PDFSignerTest extends ModulesTestCase {
         }
     }
 
+    @Test
     public void test09FormatFromPattern() throws Exception {
         Pattern p1 = Pattern.compile("\\$\\{(.+?)\\}");
 
@@ -225,8 +234,8 @@ public class PDFSignerTest extends ModulesTestCase {
         assertEquals("4311/2010/" + expectedMonth, actual);
     }
 
+    @Test
     public void test10ArchiveToDisk() throws Exception {
-
         final File archiveFolder = new File(getSignServerHome() + File.separator
                 + "tmp" + File.separator + "archivetest");
 
@@ -261,6 +270,7 @@ public class PDFSignerTest extends ModulesTestCase {
         exptectedFile.delete();
     }
 
+    @Test
     public void test11RefuseDublicateObjects() throws Exception {
         final byte[] pdfOk = getTestFile(TESTPDF_OK);
         final byte[] pdf2Catalogs = getTestFile(TESTPDF_2CATALOGS);
@@ -292,6 +302,7 @@ public class PDFSignerTest extends ModulesTestCase {
         signGenericDocument(WORKERID, pdfOk);
     }
 
+    @Test
     public void test12VeryLongCertChain() throws Exception {
         final byte[] pdfOk = getTestFile(TESTPDF_OK);
         byte[] certFile = getTestFile("dss10" + File.separator + "long_chain.pem");
@@ -301,7 +312,8 @@ public class PDFSignerTest extends ModulesTestCase {
     	
     	signGenericDocument(WORKERID, pdfOk);
     }
-    
+
+    @Test
     public void test99TearDownDatabase() throws Exception {
         removeWorker(5675);
     }

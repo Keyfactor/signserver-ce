@@ -17,9 +17,14 @@ import java.net.HttpURLConnection;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.log4j.Logger;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.SignServerUtil;
 import org.signserver.web.WebTestCase;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests for SignerStatusReportTimedService.
@@ -27,6 +32,7 @@ import org.signserver.web.WebTestCase;
  * @author Markus Kilås
  * @version $Id$
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class SignerStatusReportWorkerTest extends WebTestCase {
 
     /** Logger for this class. */
@@ -68,21 +74,16 @@ public class SignerStatusReportWorkerTest extends WebTestCase {
         return "http://localhost:8080/signserver/process";
     }
     
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
     }
-
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }	
 
     /**
      * Create test workers.
      * @throws Exception
      */
+    @Test
     public void test00SetupDatabase() throws Exception {
 
         setProperties(new File(getSignServerHome(), "modules/SignServer-Module-XMLSigner/src/conf/junittest-part-config.properties"));
@@ -102,6 +103,7 @@ public class SignerStatusReportWorkerTest extends WebTestCase {
         workerSession.reloadConfiguration(WORKERID_WORKER);
     }
 
+    @Test
     public void test01Report() throws Exception {
 
         Map<String, String> fields = new HashMap<String, String>();
@@ -169,6 +171,7 @@ public class SignerStatusReportWorkerTest extends WebTestCase {
      * Removes all test workers.
      * @throws Exception
      */
+    @Test
     public void test99TearDownDatabase() throws Exception {
         removeWorker(WORKERID_WORKER);
         for (int workerId : WORKERS) {

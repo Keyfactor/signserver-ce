@@ -17,10 +17,15 @@ import java.io.FileOutputStream;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
 
 import org.signserver.common.ServiceLocator;
 import org.signserver.statusrepo.IStatusRepositorySession;
 import org.signserver.statusrepo.common.StatusName;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests the Health check.
@@ -28,6 +33,7 @@ import org.signserver.statusrepo.common.StatusName;
  * @author Markus Kilås
  * @version $Id$
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class HealthCheckTest extends WebTestCase {
 
     private static final Map<String, String> NO_FIELDS = Collections.emptyMap();
@@ -45,8 +51,8 @@ public class HealthCheckTest extends WebTestCase {
     
     
 
-    @Override
-	protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         repository = ServiceLocator.getInstance().lookupRemote(
                 IStatusRepositorySession.IRemote.class);
 	}
@@ -57,6 +63,7 @@ public class HealthCheckTest extends WebTestCase {
      * Sets up a dummy signer.
      * @throws Exception in case of error
      */
+    @Test
     public void test00SetupDatabase() throws Exception {
         addDummySigner1();
 //        addCMSSigner1();
@@ -65,6 +72,7 @@ public class HealthCheckTest extends WebTestCase {
     /**
      * Test that Health check returns ALLOK.
      */
+    @Test
     public void test01AllOk() throws Exception {
         assertStatusReturned(NO_FIELDS, 200);
         String body = new String(sendAndReadyBody(NO_FIELDS));
@@ -74,6 +82,7 @@ public class HealthCheckTest extends WebTestCase {
     /**
      * Tests that an error message is returned when the crypto token is offline.
      */
+    @Test
     public void test02CryptoTokenOffline() throws Exception {
         // Make sure one worker is offline
         getWorkerSession().removeWorkerProperty(getSignerIdDummy1(), "KEYDATA");
@@ -93,6 +102,7 @@ public class HealthCheckTest extends WebTestCase {
     /**
      * Tests that a time stamp signer with a timesource not insync results in a healthcheck error
      */
+    @Test
     public void test03TimeSourceNotInsync() throws Exception {
     	setProperties(new File(getSignServerHome(), "res/test/test_healthcheck_timestamp_configuration.properties"));
         workerSession.reloadConfiguration(TSA_WORKER);
@@ -117,6 +127,7 @@ public class HealthCheckTest extends WebTestCase {
     /**
      * Test the down-for-maintenance functionality
      */
+    @Test
     public void test04DownForMaintenance() throws Exception {
     	FileOutputStream fos = openMaintenanceProperties();
     	Properties properties = new Properties();
@@ -152,6 +163,7 @@ public class HealthCheckTest extends WebTestCase {
      * Remove the workers created etc.
      * @throws Exception in case of error
      */
+    @Test
     public void test99TearDownDatabase() throws Exception {
         
 //        removeWorker(getSignerIdCMSSigner1());

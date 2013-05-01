@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.crypto.Cipher;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
 
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
@@ -27,28 +29,24 @@ import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.SignerStatus;
 import org.signserver.testutils.ModulesTestCase;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * TODO: Document me!
  * 
  * @version $Id$
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MRTDSignerTest extends ModulesTestCase {
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
     }
 
-    /* (non-Javadoc)
-     * @see junit.framework.TestCase#tearDown()
-     */
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
-
+    @Test
     public void test00SetupDatabase() throws Exception {
         setProperties(new File(getSignServerHome(), "modules/SignServer-Module-MRTDSigner/src/conf/junittest-part-config.properties"));
         workerSession.reloadConfiguration(7890);
@@ -57,6 +55,7 @@ public class MRTDSignerTest extends ModulesTestCase {
     /*
      * Test method for 'org.signserver.server.MRTDSigner.signData(ISignRequest)'
      */
+    @Test
     public void testSignData() throws Exception {
         int reqid = 12;
         ArrayList<byte[]> signrequests = new ArrayList<byte[]>();
@@ -106,14 +105,15 @@ public class MRTDSignerTest extends ModulesTestCase {
     /*
      * Test method for 'org.signserver.server.MRTDSigner.getStatus()'
      */
+    @Test
     public void testGetStatus() throws Exception {
         SignerStatus stat = (SignerStatus) workerSession.getStatus(7890);
         assertTrue(stat.getTokenStatus() == SignerStatus.STATUS_ACTIVE);
 
     }
 
+    @Test
     public void testGenericSignData() throws Exception {
-
         int reqid = 13;
         byte[] signreq1 = "Hello World".getBytes();
 
@@ -131,6 +131,7 @@ public class MRTDSignerTest extends ModulesTestCase {
         assertTrue(Arrays.equals(signreq1, signres1));
     }
 
+    @Test
     public void test99TearDownDatabase() throws Exception {
         removeWorker(7890);
     }

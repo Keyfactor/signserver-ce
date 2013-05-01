@@ -38,6 +38,7 @@ import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.statusrepo.IStatusRepositorySession;
+import static org.junit.Assert.*;
 
 /**
  * Base class for test cases.

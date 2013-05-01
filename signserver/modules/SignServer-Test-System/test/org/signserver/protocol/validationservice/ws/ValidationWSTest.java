@@ -23,6 +23,10 @@ import javax.xml.namespace.QName;
 import org.bouncycastle.jce.X509KeyUsage;
 import org.ejbca.util.Base64;
 import org.ejbca.util.keystore.KeyTools;
+import org.junit.Before;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+import org.junit.runners.MethodSorters;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.ServiceLocator;
@@ -35,12 +39,14 @@ import org.signserver.testutils.ModulesTestCase;
 import org.signserver.validationservice.common.ValidationServiceConstants;
 import org.signserver.validationservice.common.Validation.Status;
 import org.signserver.validationservice.server.ValidationTestUtils;
+import static org.junit.Assert.*;
 
 /**
  * TODO: Document me!
  * 
  * @version $Id$
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ValidationWSTest extends ModulesTestCase {
 
     private static IGlobalConfigurationSession.IRemote gCSession = null;
@@ -54,20 +60,17 @@ public class ValidationWSTest extends ModulesTestCase {
         setupSSLKeystores();
     }
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-
+    @Before
+    public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
         gCSession = ServiceLocator.getInstance().lookupRemote(
                 IGlobalConfigurationSession.IRemote.class);
         sSSession = ServiceLocator.getInstance().lookupRemote(
                 IWorkerSession.IRemote.class);
-
     }
 
+    @Test
     public void test00SetupDatabase() throws Exception {
-
         QName qname = new QName("gen.ws.validationservice.protocol.signserver.org", "ValidationWSService");
         ValidationWSService validationWSService =
                 new ValidationWSService(new URL("https://localhost:"
@@ -106,6 +109,7 @@ public class ValidationWSTest extends ModulesTestCase {
         sSSession.reloadConfiguration(16);
     }
 
+    @Test
     public void test01TestWSStatus() throws Exception {
         String status = validationWS.getStatus("ValTest");
         assertTrue(status != null);
@@ -128,6 +132,7 @@ public class ValidationWSTest extends ModulesTestCase {
         }
     }
 
+    @Test
     public void test02TestWSisValid() throws Exception {
         ValidationResponse res = validationWS.isValid("ValTest", validCert1, ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
         assertTrue(res != null);
@@ -177,11 +182,10 @@ public class ValidationWSTest extends ModulesTestCase {
         assertTrue(res.getValidationDate() != null);
         assertTrue(res.getRevocationReason() == -1);
         assertTrue(res.getRevocationDate() == null);
-
     }
 
+    @Test
     public void test99RemoveDatabase() throws Exception {
-
         gCSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER16.CLASSPATH");
         gCSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER16.SIGNERTOKEN.CLASSPATH");
 
@@ -189,7 +193,6 @@ public class ValidationWSTest extends ModulesTestCase {
         sSSession.removeWorkerProperty(16, "VAL1.CLASSPATH");
         sSSession.removeWorkerProperty(16, "VAL1.TESTPROP");
         sSSession.removeWorkerProperty(16, "VAL1.ISSUER1.CERTCHAIN");
-
 
         sSSession.reloadConfiguration(16);
     }

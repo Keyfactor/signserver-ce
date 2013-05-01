@@ -13,11 +13,16 @@
 package org.signserver.server;
 
 import org.apache.log4j.Logger;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
 import org.signserver.common.AuthorizationRequiredException;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerUtil;
 import org.signserver.testutils.ModulesTestCase;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests for the UsernameAuthorizer.
@@ -26,20 +31,18 @@ import org.signserver.testutils.ModulesTestCase;
  * @author Markus Kilas
  * @version $Id$
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class UsernameAuthorizerTest extends ModulesTestCase {
 
     private static final Logger LOG = Logger.getLogger(
             UsernameAuthorizerTest.class);
 
-    @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-    }
-
+    @Test
     public void test00SetupDatabase() throws Exception {
         addDummySigner1();
 
@@ -55,8 +58,8 @@ public class UsernameAuthorizerTest extends ModulesTestCase {
      * username is supplied.
      * @throws Exception in case of exception
      */
+    @Test
     public void test01AuthorizationRequired() throws Exception {
-
         final RequestContext context = new RequestContext();
 
         final GenericSignRequest request =
@@ -105,12 +108,11 @@ public class UsernameAuthorizerTest extends ModulesTestCase {
      * Tests that the worker accepts a correct user/password.
      * @throws Exception in case of exception
      */
+    @Test
     public void test02AcceptUsernames() throws Exception {
-
         // Add users
         workerSession.setWorkerProperty(getSignerIdDummy1(), "ACCEPT_USERNAMES", "user1;user2;user3");
         workerSession.reloadConfiguration(getSignerIdDummy1());
-
 
         final RequestContext context = new RequestContext();
         final GenericSignRequest request =
@@ -199,8 +201,8 @@ public class UsernameAuthorizerTest extends ModulesTestCase {
      * Tests that the worker accepts any username.
      * @throws Exception in case of exception
      */
+    @Test
     public void test03AcceptAll() throws Exception {
-
         // Add users
         workerSession.setWorkerProperty(getSignerIdDummy1(), "ACCEPT_ALL_USERNAMES", "true");
         workerSession.removeWorkerProperty(getSignerIdDummy1(), "ACCEPT_USERNAMES");
@@ -235,6 +237,7 @@ public class UsernameAuthorizerTest extends ModulesTestCase {
         }
     }
 
+    @Test
     public void test99TearDownDatabase() throws Exception {
         removeWorker(getSignerIdDummy1());
         workerSession.reloadConfiguration(getSignerIdDummy1());

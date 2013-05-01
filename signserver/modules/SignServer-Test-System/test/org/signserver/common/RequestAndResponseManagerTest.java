@@ -17,23 +17,25 @@ import java.security.cert.X509Certificate;
 import java.util.Date;
 import java.util.Properties;
 
-import junit.framework.TestCase;
 import org.apache.log4j.Logger;
 
 import org.ejbca.util.keystore.KeyTools;
+import org.junit.Test;
 import org.signserver.validationservice.server.ValidationTestUtils;
+import static org.junit.Assert.*;
 
 /**
  * TODO: Document me!
  *
  * @version $Id$
  */
-public class RequestAndResponseManagerTest extends TestCase {
+public class RequestAndResponseManagerTest {
 
     /** Logger for this class. */
     private static final Logger LOG
             = Logger.getLogger(RequestAndResponseManagerTest.class);
 
+    @Test
     public void testParsing() throws Exception {
         SignServerUtil.installBCProvider();
 
@@ -66,6 +68,7 @@ public class RequestAndResponseManagerTest extends TestCase {
      * Tests externalization and parsing of a GenericPropertiesRequest.
      * @throws Exception In case of error.
      */
+    @Test
     public void testGenericPropertiesRequest() throws Exception {
 
         // Externalize a request
@@ -92,6 +95,7 @@ public class RequestAndResponseManagerTest extends TestCase {
      * Tests externalization and parsing of a GenericPropertiesResponse.
      * @throws Exception In case of error.
      */
+    @Test
     public void testGenericPropertiesResponse() throws Exception {
 
         // Externalize a response

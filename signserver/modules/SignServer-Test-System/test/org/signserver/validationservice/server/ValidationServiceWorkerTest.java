@@ -22,6 +22,8 @@ import junit.framework.TestCase;
 import org.bouncycastle.jce.X509KeyUsage;
 import org.ejbca.util.CertTools;
 import org.ejbca.util.keystore.KeyTools;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.RequestContext;
 import org.signserver.common.ServiceLocator;
@@ -32,13 +34,17 @@ import org.signserver.validationservice.common.ValidateRequest;
 import org.signserver.validationservice.common.ValidateResponse;
 import org.signserver.validationservice.common.Validation;
 import org.signserver.validationservice.common.ValidationServiceConstants;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * TODO: Document me!
  * 
  * @version $Id$
  */
-public class ValidationServiceWorkerTest extends TestCase {
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+public class ValidationServiceWorkerTest {
 
     private static IGlobalConfigurationSession.IRemote gCSession = null;
     private static IWorkerSession.IRemote sSSession = null;
@@ -64,20 +70,17 @@ public class ValidationServiceWorkerTest extends TestCase {
     private static X509Certificate esigCert1;
     private static X509Certificate badKeyUsageCert1;
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
         gCSession = ServiceLocator.getInstance().lookupRemote(
                 IGlobalConfigurationSession.IRemote.class);
         sSSession = ServiceLocator.getInstance().lookupRemote(
                 IWorkerSession.IRemote.class);
-
     }
 
+    @Test
     public void test00SetupDatabase() throws Exception {
-
-
         KeyPair validRootCA1Keys = KeyTools.genKeys("1024", "RSA");
         validRootCA1 = ValidationTestUtils.genCert("CN=ValidRootCA1", "CN=ValidRootCA1", validRootCA1Keys.getPrivate(), validRootCA1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), true);
 
@@ -159,12 +162,9 @@ public class ValidationServiceWorkerTest extends TestCase {
         sSSession.setWorkerProperty(15, "VAL2.ISSUER250.CERTCHAIN", ValidationTestUtils.genPEMStringFromChain(longChain));
 
         sSSession.reloadConfiguration(15);
-
-
-
-
     }
 
+    @Test
     public void test01BasicValidation() throws Exception {
         ValidateRequest req = new ValidateRequest(validCert1, ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
         ValidateResponse res = (ValidateResponse) sSSession.process(15, req, new RequestContext());
@@ -180,6 +180,7 @@ public class ValidationServiceWorkerTest extends TestCase {
 
     }
 
+    @Test
     public void test02RevokedCertificate() throws Exception {
         ValidateRequest req = new ValidateRequest(revokedCert1, ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
         ValidateResponse res = (ValidateResponse) sSSession.process(15, req, new RequestContext());
@@ -197,6 +198,7 @@ public class ValidationServiceWorkerTest extends TestCase {
 
     }
 
+    @Test
     public void test03ExpiredCertificate() throws Exception {
         ValidateRequest req = new ValidateRequest(expiredCert1, ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
         ValidateResponse res = (ValidateResponse) sSSession.process(15, req, new RequestContext());
@@ -211,6 +213,7 @@ public class ValidationServiceWorkerTest extends TestCase {
         assertTrue(CertTools.getSubjectDN(cAChain.get(1)).equals("CN=ValidRootCA1"));
     }
 
+    @Test
     public void test04NotYetValidCertificate() throws Exception {
         ValidateRequest req = new ValidateRequest(noYetValidCert1, ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
         ValidateResponse res = (ValidateResponse) sSSession.process(15, req, new RequestContext());
@@ -225,6 +228,7 @@ public class ValidationServiceWorkerTest extends TestCase {
         assertTrue(CertTools.getSubjectDN(cAChain.get(1)).equals("CN=ValidRootCA1"));
     }
 
+    @Test
     public void test05BadSignatureCertificate() throws Exception {
         ValidateRequest req = new ValidateRequest(badSigCert1, ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
         ValidateResponse res = (ValidateResponse) sSSession.process(15, req, new RequestContext());
@@ -239,6 +243,7 @@ public class ValidationServiceWorkerTest extends TestCase {
         assertTrue(CertTools.getSubjectDN(cAChain.get(1)).equals("CN=ValidRootCA1"));
     }
 
+    @Test
     public void test06signedByExpiredRootCertificate() throws Exception {
         ValidateRequest req = new ValidateRequest(certByExpiredRoot, ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
         ValidateResponse res = (ValidateResponse) sSSession.process(15, req, new RequestContext());
@@ -250,9 +255,9 @@ public class ValidationServiceWorkerTest extends TestCase {
         List<Certificate> cAChain = val.getCAChain();
         assertTrue(cAChain != null);
         assertTrue(CertTools.getSubjectDN(cAChain.get(0)).equals("CN=expiredRootCA1"));
-
     }
 
+    @Test
     public void test07signedByNotYetValidSubCA() throws Exception {
         ValidateRequest req = new ValidateRequest(certByNotYetValidSub, ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
         ValidateResponse res = (ValidateResponse) sSSession.process(15, req, new RequestContext());
@@ -265,9 +270,9 @@ public class ValidationServiceWorkerTest extends TestCase {
         assertTrue(cAChain != null);
         assertTrue(CertTools.getSubjectDN(cAChain.get(0)).equals("CN=notYetValidCA"));
         assertTrue(CertTools.getSubjectDN(cAChain.get(1)).equals("CN=ValidRootCA1"));
-
     }
 
+    @Test
     public void test08signedByNotYetValidSubCA() throws Exception {
         ValidateRequest req = new ValidateRequest(certByNotYetValidSub, ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
         ValidateResponse res = (ValidateResponse) sSSession.process(15, req, new RequestContext());
@@ -280,9 +285,9 @@ public class ValidationServiceWorkerTest extends TestCase {
         assertTrue(cAChain != null);
         assertTrue(CertTools.getSubjectDN(cAChain.get(0)).equals("CN=notYetValidCA"));
         assertTrue(CertTools.getSubjectDN(cAChain.get(1)).equals("CN=ValidRootCA1"));
-
     }
 
+    @Test
     public void test09signedByRevocedRootCA() throws Exception {
         ValidateRequest req = new ValidateRequest(certByRevocedRoot, null);
         ValidateResponse res = (ValidateResponse) sSSession.process(15, req, new RequestContext());
@@ -296,9 +301,9 @@ public class ValidationServiceWorkerTest extends TestCase {
         List<Certificate> cAChain = val.getCAChain();
         assertTrue(cAChain != null);
         assertTrue(CertTools.getSubjectDN(cAChain.get(0)).equals("CN=revocedRootCA1"));
-
     }
 
+    @Test
     public void test10LongChainValidation() throws Exception {
         ValidateRequest req = new ValidateRequest(certSignedByLongChain, null);
         ValidateResponse res = (ValidateResponse) sSSession.process(15, req, new RequestContext());
@@ -314,9 +319,9 @@ public class ValidationServiceWorkerTest extends TestCase {
         assertTrue(CertTools.getSubjectDN(cAChain.get(2)).equals("CN=ValidSubSubCA2"));
         assertTrue(CertTools.getSubjectDN(cAChain.get(3)).equals("CN=ValidSubCA2"));
         assertTrue(CertTools.getSubjectDN(cAChain.get(4)).equals("CN=ValidRootCA1"));
-
     }
 
+    @Test
     public void test11CertPurpose() throws Exception {
         ValidateRequest req = new ValidateRequest(identificationCert1, ValidationServiceConstants.CERTPURPOSE_IDENTIFICATION);
         ValidateResponse res = (ValidateResponse) sSSession.process(15, req, new RequestContext());
@@ -412,9 +417,9 @@ public class ValidationServiceWorkerTest extends TestCase {
         assertTrue(val != null);
         assertTrue(val.getStatus().equals(Validation.Status.VALID));
         assertTrue(res.getValidCertificatePurposes().equals(ValidationServiceConstants.CERTPURPOSE_IDENTIFICATION));
-
     }
 
+    @Test
     public void test12CertificateCache() throws Exception {
         sSSession.setWorkerProperty(15, "VAL1.WAITTIME", "1000");
         sSSession.setWorkerProperty(15, "CACHEDISSUERS", "CN=ValidSubCA1;CN=revocedRootCA1");
@@ -473,11 +478,10 @@ public class ValidationServiceWorkerTest extends TestCase {
         assertTrue(CertTools.getSubjectDN(cAChain.get(2)).equals("CN=ValidSubSubCA2"));
         assertTrue(CertTools.getSubjectDN(cAChain.get(3)).equals("CN=ValidSubCA2"));
         assertTrue(CertTools.getSubjectDN(cAChain.get(4)).equals("CN=ValidRootCA1"));
-
     }
 
+    @Test
     public void test99RemoveDatabase() throws Exception {
-
         gCSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER15.CLASSPATH");
         gCSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER15.SIGNERTOKEN.CLASSPATH");
 
@@ -492,7 +496,6 @@ public class ValidationServiceWorkerTest extends TestCase {
         sSSession.removeWorkerProperty(15, "VAL2.ISSUER250.CERTCHAIN");
         sSSession.removeWorkerProperty(15, "VAL1.WAITTIME");
         sSSession.removeWorkerProperty(15, "CACHEDISSUERS");
-
 
         sSSession.reloadConfiguration(15);
     }

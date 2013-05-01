@@ -17,19 +17,17 @@ import org.signserver.common.StatisticsConstants;
 import org.signserver.common.WorkerConfig;
 
 import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
 /**
  * TODO: Document me!
  * 
  * @version $Id$
  */
-public class StatisticsManagerTest extends TestCase {
+public class StatisticsManagerTest {
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-    }
-
+    @Test
     public void testAll() throws SignServerException {
         WorkerConfig wc = new WorkerConfig();
         assertNull(StatisticsManager.startEvent(123, wc, null));

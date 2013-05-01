@@ -15,9 +15,14 @@ package org.signserver.server.dispatchers;
 import java.io.File;
 import java.security.cert.X509Certificate;
 import org.apache.log4j.Logger;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
 import org.signserver.common.*;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.testutils.ModulesTestCase;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests for the FirstActiveDispatcher.
@@ -25,6 +30,7 @@ import org.signserver.testutils.ModulesTestCase;
  * @author Markus Kilås
  * @version $Id$
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class FirstActiveDispatcherTest extends ModulesTestCase {
 
     /**
@@ -46,19 +52,15 @@ public class FirstActiveDispatcherTest extends ModulesTestCase {
     /** Logger for this class */
     private static Logger LOG = Logger.getLogger(FirstActiveDispatcherTest.class);
     
-    @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
         workerSession = ServiceLocator.getInstance().lookupRemote(
                         IWorkerSession.IRemote.class);
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-    }
-
+    @Test
     public void test00SetupDatabase() throws Exception {
-
         setProperties(new File(getSignServerHome(), "modules/SignServer-Module-XMLSigner/src/conf/junittest-part-config.properties"));
 
         workerSession.reloadConfiguration(WORKERID_DISPATCHER);
@@ -72,8 +74,8 @@ public class FirstActiveDispatcherTest extends ModulesTestCase {
      * any of the configured workers.
      * @throws Exception in case of exception
      */
+    @Test
     public void test01Dispatched() throws Exception {
-
         final RequestContext context = new RequestContext();
 
         final GenericSignRequest request =
@@ -147,6 +149,7 @@ public class FirstActiveDispatcherTest extends ModulesTestCase {
      * 
      * @throws Exception
      */
+    @Test
     public void test02Activate() throws Exception {
     	try {
     		workerSession.activateSigner(WORKERID_DISPATCHER, DUMMY_AUTH_CODE);
@@ -160,6 +163,7 @@ public class FirstActiveDispatcherTest extends ModulesTestCase {
      * Test that trying to deactivate the dispatcher doesn't throw an exception (DSS-380)
      * @throws Exception
      */
+    @Test
     public void test03Deactivate() throws Exception {
     	try {
     		workerSession.deactivateSigner(WORKERID_DISPATCHER);
@@ -168,7 +172,8 @@ public class FirstActiveDispatcherTest extends ModulesTestCase {
     		fail("Failed to deactive the dispatcher");
     	}
     }
-    
+
+    @Test
     public void test99TearDownDatabase() throws Exception {
         removeWorker(WORKERID_DISPATCHER);
         for (int workerId : WORKERS) {

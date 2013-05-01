@@ -19,6 +19,10 @@ import org.apache.log4j.Logger;
 import org.signserver.testutils.CLITestHelper;
 import static org.signserver.testutils.CLITestHelper.assertPrinted;
 import org.signserver.testutils.ModulesTestCase;
+import static org.junit.Assert.*;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
 /** 
  * Class used to test the basic aspects of the SignServer CLI related to 
@@ -30,6 +34,7 @@ import org.signserver.testutils.ModulesTestCase;
  * 
  * @version $Id$
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class GroupKeyServiceCLITest extends ModulesTestCase {
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(SignServerCLITest.class);
@@ -38,11 +43,7 @@ public class GroupKeyServiceCLITest extends ModulesTestCase {
 
     private CLITestHelper cli = getAdminCLI();
     
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-    }
-    
+    @Test
     public void testSetupGroupKeyService() throws Exception {
         LOG.debug(">testSetupGroupKeyService");
         assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
@@ -94,7 +95,8 @@ public class GroupKeyServiceCLITest extends ModulesTestCase {
             cli.execute("groupkeyservice", "removegroupkeys", "" + TESTGSID, "LASTFETCHED", startDate, endDate));
         assertPrinted("", cli.getOut(), "0 Group keys removed");
     }
-        
+
+    @Test
     public void testRemoveGroupKeyService() throws Exception {
         LOG.debug(">testRemoveGroupKeyService");
         // Remove and restore

@@ -30,6 +30,8 @@ import org.bouncycastle.jce.X509KeyUsage;
 import org.ejbca.core.model.ca.crl.RevokedCertInfo;
 import org.ejbca.util.CertTools;
 import org.ejbca.util.keystore.KeyTools;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.RequestContext;
 import org.signserver.common.ServiceLocator;
@@ -40,6 +42,9 @@ import org.signserver.validationservice.common.ValidateRequest;
 import org.signserver.validationservice.common.ValidateResponse;
 import org.signserver.validationservice.common.Validation;
 import org.signserver.validationservice.common.ValidationServiceConstants;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests for the CRL Validator.
@@ -47,7 +52,8 @@ import org.signserver.validationservice.common.ValidationServiceConstants;
  * @author Markus Kilås
  * @version $Id$
  */
-public class CRLValidatorTest extends TestCase {
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+public class CRLValidatorTest {
 
     private static IGlobalConfigurationSession.IRemote gCSession;
     private static IWorkerSession.IRemote sSSession;
@@ -77,10 +83,8 @@ public class CRLValidatorTest extends TestCase {
     /** CRL for RootCA2 */
     private static X509CRL crlRootCA2;
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-
+    @Before
+    public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
 
         gCSession = ServiceLocator.getInstance().lookupRemote(
@@ -94,8 +98,8 @@ public class CRLValidatorTest extends TestCase {
         assertTrue(signServerHome.exists());
     }
 
+    @Test
     public void test00SetupDatabase() throws Exception {
-
         // Setup keys, certificates and CRLs: RootCA1
         File cdpFile1 = new File(signServerHome, "tmp" + File.separator + "rootca1.crl");
         URL cdpUrl1 = cdpFile1.toURI().toURL();
@@ -205,6 +209,7 @@ public class CRLValidatorTest extends TestCase {
      * The certificate is valid.
      * It has a distribution point with an URL.
      */
+    @Test
     public void test01NotRevoked() throws Exception {
         ValidateRequest req = new ValidateRequest(certEndEntity1, ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
         ValidateResponse res = (ValidateResponse) sSSession.process(15, req, new RequestContext());
@@ -224,6 +229,7 @@ public class CRLValidatorTest extends TestCase {
      * The certificate is revoked and included in the CRL.
      * It has a distribution point with an URL.
      */
+    @Test
     public void test02Revoked() throws Exception {
         ValidateRequest req = new ValidateRequest(certEndEntity2, ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
         ValidateResponse res = (ValidateResponse) sSSession.process(15, req, new RequestContext());
@@ -247,6 +253,7 @@ public class CRLValidatorTest extends TestCase {
      * The certificate is valid.
      * It has a distribution point with an issuer name.
      */
+    @Test
     public void test03NotRevokedDPWithIssuer() throws Exception {
         ValidateRequest req = new ValidateRequest(certEndEntity3, ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
         ValidateResponse res = (ValidateResponse) sSSession.process(15, req, new RequestContext());
@@ -266,6 +273,7 @@ public class CRLValidatorTest extends TestCase {
      * The certificate is revoked and included in the CRL.
      * It has a distribution point with an issuer name.
      */
+    @Test
     public void test04RevokedDPWithIssuer() throws Exception {
         ValidateRequest req = new ValidateRequest(certEndEntity4, ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
         ValidateResponse res = (ValidateResponse) sSSession.process(15, req, new RequestContext());
@@ -288,6 +296,7 @@ public class CRLValidatorTest extends TestCase {
      * Tests the certificate for EndEntity5 signed by RootCA1.
      * The certificate is expired.
      */
+    @Test
     public void test05Expired() throws Exception {
         ValidateRequest req = new ValidateRequest(certEndEntity5Expired, ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
         ValidateResponse res = (ValidateResponse) sSSession.process(15, req, new RequestContext());
@@ -306,6 +315,7 @@ public class CRLValidatorTest extends TestCase {
      * Tests the certificate for EndEntity6 signed by RootCA1.
      * The certificate is not yet valid.
      */
+    @Test
     public void test06NotYetValid() throws Exception {
         ValidateRequest req = new ValidateRequest(certEndEntity6NotYetValid, ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
         ValidateResponse res = (ValidateResponse) sSSession.process(15, req, new RequestContext());
@@ -324,6 +334,7 @@ public class CRLValidatorTest extends TestCase {
      * Tests the certificate for EndEntity7 signed by RootCA1.
      * The certificate is not valid as it is not signed width the right issuers key
      */
+    @Test
     public void test07WrongIssuer() throws Exception {
         ValidateRequest req = new ValidateRequest(certEndEntity7WrongIssuer, ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
         ValidateResponse res = (ValidateResponse) sSSession.process(15, req, new RequestContext());
@@ -342,8 +353,8 @@ public class CRLValidatorTest extends TestCase {
      * Tests the certificate for EndEntity1 signed by RootCA1.
      * The certificate is not valid as it is not signed width the right issuers key
      */
+    @Test
     public void test08KeyUsageSignature() throws Exception {
-
         // First: test one certificate that has CERTPURPOSE_ELECTRONIC_SIGNATURE and see that it works
         {
             ValidateRequest req = new ValidateRequest(certEndEntity8KeyUsageSig, ValidationServiceConstants.CERTPURPOSE_ELECTRONIC_SIGNATURE);
@@ -381,8 +392,8 @@ public class CRLValidatorTest extends TestCase {
      * The CRLPATHS property is removed which should make the validation fail.
      * Note: If this test fails the CRLPATHS property is not set, which might cause other tests to also fail.
      */
+    @Test
     public void test09NoCRLPath() throws Exception {
-
         String crlPaths = sSSession.getCurrentWorkerConfig(15).getProperty("VAL1.ISSUER2.CRLPATHS");
 
         sSSession.setWorkerProperty(15, "VAL1.ISSUER2.CRLPATHS", "");
@@ -405,6 +416,7 @@ public class CRLValidatorTest extends TestCase {
     }
 
     // TODO: Add more tests for the CRLValidator here
+    @Test
     public void test99RemoveDatabase() throws Exception {
         gCSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER15.CLASSPATH");
         gCSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER15.SIGNERTOKEN.CLASSPATH");

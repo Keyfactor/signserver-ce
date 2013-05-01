@@ -17,24 +17,26 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * TODO: Document me!
  *
  * @version @Id$
  */
-public class SignServerUtilTest extends TestCase {
+public class SignServerUtilTest {
 
     private static String signserverhome;
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         signserverhome = System.getenv("SIGNSERVER_HOME");
         assertNotNull(signserverhome);
     }
 
+    @Test
     public void testGetCollectionOfValuesFromProperties() {
         WorkerConfig wp = new WorkerConfig();
         wp.setProperty("test.test1.0", "VALID0");
@@ -63,6 +65,7 @@ public class SignServerUtilTest extends TestCase {
         assertTrue(values.size() == 0);
     }
 
+    @Test
     public void testReadValueFromConfigFile() throws IOException {
         String confPath = signserverhome + "/tmp/testsignserverutil.test";
         File confFile = new File(confPath);

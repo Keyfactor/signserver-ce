@@ -31,6 +31,9 @@ import org.bouncycastle.tsp.TimeStampRequestGenerator;
 import org.bouncycastle.tsp.TimeStampResponse;
 import org.ejbca.util.CertTools;
 import org.ejbca.util.keystore.KeyTools;
+import org.junit.After;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GenericSignRequest;
@@ -57,12 +60,16 @@ import org.signserver.validationservice.common.ValidateResponse;
 import org.signserver.validationservice.common.Validation;
 import org.signserver.validationservice.common.ValidationServiceConstants;
 import org.signserver.validationservice.server.ValidationTestUtils;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * TODO: Document me!
  * 
  * @version $Id$
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MainWebServiceTestSeparately extends ModulesTestCase {
 
     private static final Logger LOG = Logger.getLogger(MainWebServiceTestSeparately.class);
@@ -70,9 +77,8 @@ public class MainWebServiceTestSeparately extends ModulesTestCase {
     private static X509Certificate validCert1;
     private SignServerWS signServerWS;
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
 
         QName qname = new QName("gen.ws.protocol.signserver.org", "SignServerWSService");
@@ -83,12 +89,12 @@ public class MainWebServiceTestSeparately extends ModulesTestCase {
     /* (non-Javadoc)
      * @see junit.framework.TestCase#tearDown()
      */
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
+    @After
+    public void tearDown() throws Exception {
         TestingSecurityManager.remove();
     }
 
+    @Test
     public void test00SetupDatabase() throws Exception {
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER9.CLASSPATH", "org.signserver.module.tsa.TimeStampSigner");
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER9.SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.P12CryptoToken");
@@ -131,9 +137,8 @@ public class MainWebServiceTestSeparately extends ModulesTestCase {
         workerSession.reloadConfiguration(16);
     }
 
+    @Test
     public void test01BasicWSStatuses() throws MalformedURLException, InvalidWorkerIdException_Exception, CryptoTokenAuthenticationFailureException, CryptoTokenOfflineException, InvalidWorkerIdException {
-
-
         List<WorkerStatusWS> statuses = signServerWS.getStatus("9");
         assertTrue(statuses.size() == 1);
         assertTrue(statuses.get(0).getWorkerName().equals("9"));
@@ -166,8 +171,8 @@ public class MainWebServiceTestSeparately extends ModulesTestCase {
         }
     }
 
+    @Test
     public void test02BasicWSProcess() throws Exception {
-
         TimeStampRequestGenerator timeStampRequestGenerator = new TimeStampRequestGenerator();
         TimeStampRequest timeStampRequest1 = timeStampRequestGenerator.generate(TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
         byte[] requestBytes1 = timeStampRequest1.getEncoded();
@@ -240,8 +245,8 @@ public class MainWebServiceTestSeparately extends ModulesTestCase {
         assertTrue(CertTools.getSubjectDN(cAChain.get(1)).equals("CN=ValidRootCA1"));
     }
 
+    @Test
     public void test03CallFirstNodeWithStatusOKClient() throws Exception {
-
         FaultCallback callback = new FaultCallback();
 
         TimeStampRequestGenerator timeStampRequestGenerator = new TimeStampRequestGenerator();
@@ -297,10 +302,9 @@ public class MainWebServiceTestSeparately extends ModulesTestCase {
         resps = client.process("9", reqs);
         assertTrue(resps == null);
         assertTrue(callback.isCallBackCalled());
-
-
     }
 
+    @Test
     public void test99TearDownDatabase() throws Exception {
         removeWorker(9);
 

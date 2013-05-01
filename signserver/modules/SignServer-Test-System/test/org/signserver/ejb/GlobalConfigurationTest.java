@@ -12,26 +12,28 @@
  *************************************************************************/
 package org.signserver.ejb;
 
-import junit.framework.TestCase;
-
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.ServiceLocator;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
 /**
  * TODO: Document me!
  * 
  * @version $Id$
  */
-public class GlobalConfigurationTest extends TestCase {
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+public class GlobalConfigurationTest {
 
     private static IGlobalConfigurationSession.IRemote globalConfigSession;
     private static String signserverhome;
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-
+    @Before
+    public void setUp() throws Exception {
         globalConfigSession = ServiceLocator.getInstance().lookupRemote(
                 IGlobalConfigurationSession.IRemote.class);
 
@@ -42,6 +44,7 @@ public class GlobalConfigurationTest extends TestCase {
     /*
      * Test method for 'org.signserver.common.GlobalConfigurationFileParser.getBaseProperty(String)'
      */
+    @Test
     public void test01SetProperty() throws Exception {
         GlobalConfiguration gc = globalConfigSession.getGlobalConfiguration();
 

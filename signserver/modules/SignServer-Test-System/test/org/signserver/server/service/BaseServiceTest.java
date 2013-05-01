@@ -21,6 +21,8 @@ import java.util.Date;
 import junit.framework.TestCase;
 
 import org.apache.log4j.Logger;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.ServiceConfig;
 import org.signserver.common.ServiceStatus;
@@ -28,12 +30,16 @@ import org.signserver.common.SignServerUtil;
 import org.signserver.common.ServiceLocator;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * TODO: Document me! See issue DSS-610
  * @version $Id$
  */
-public class BaseServiceTest extends TestCase {
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+public class BaseServiceTest {
     private static final Logger LOG = Logger.getLogger(BaseServiceTest.class);
     
     private static IGlobalConfigurationSession.IRemote gCSession = null;
@@ -43,16 +49,15 @@ public class BaseServiceTest extends TestCase {
     private static final int INTERVALMS = INTERVAL * 1000;
     private static final int WORKER_ID = 17;
     
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
         gCSession = ServiceLocator.getInstance().lookupRemote(IGlobalConfigurationSession.IRemote.class);
         sSSession = ServiceLocator.getInstance().lookupRemote(IWorkerSession.IRemote.class);
     }
 
+    @Test
     public void test00SetupDatabase() throws Exception {
-
         gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + WORKER_ID + ".CLASSPATH", "org.signserver.server.timedservices.DummyTimedService");
 
         sSSession.setWorkerProperty(WORKER_ID, ServiceConfig.ACTIVE, "TRUE");
@@ -73,6 +78,7 @@ public class BaseServiceTest extends TestCase {
      * to avoid random failures due to i.e. GC runs.
      * @throws Exception
      */
+    @Test
     public void test01BasicService() throws Exception {
 
         final long before = System.currentTimeMillis();
@@ -87,19 +93,20 @@ public class BaseServiceTest extends TestCase {
     /*
      * Test getting last run timestamp. Also check that the configured interval is correct.
      */
+    @Test
     public void test02GetStatus() throws Exception {
         ServiceStatus status = (ServiceStatus) sSSession.getStatus(WORKER_ID);
         Date lastRun = new ServiceConfig(status.getActiveSignerConfig()).getLastRunTimestamp();
         assertTrue(lastRun.before(new Date()));
         assertTrue(lastRun.after(new Date(System.currentTimeMillis() - INTERVALMS * 2)));
         assertTrue(status.getActiveSignerConfig().getProperties().get("INTERVAL").equals(String.valueOf(INTERVAL)));
-
     }
 
     /**
      * Tests that the counter is not updated when setting ACTIVE=FALSE.
      * @throws Exception
      */
+    @Test
     public void test03TestInActive() throws Exception {
         sSSession.setWorkerProperty(WORKER_ID, ServiceConfig.ACTIVE, "FALSE");
         sSSession.reloadConfiguration(WORKER_ID);
@@ -112,8 +119,8 @@ public class BaseServiceTest extends TestCase {
     /**
      * Only test that singleton mode works as nonsingleton service in one node services.
      */
+    @Test
     public void test04TestOneNodeSingleton() throws Exception {
-
         final int oldReadCount = readCount();
         sSSession.setWorkerProperty(WORKER_ID, ServiceConfig.ACTIVE, "TRUE");
         sSSession.setWorkerProperty(WORKER_ID, ServiceConfig.SINGLETON, "TRUE");
@@ -124,12 +131,12 @@ public class BaseServiceTest extends TestCase {
 
         assertTrue(readCount >= oldReadCount);
         assertTrue(readCount <= oldReadCount + 1);
-
     }
 
     /**
      * Test the CRON-like interval syntax for setting update intervals.
      */
+    @Test
     public void test05TestCronExpression() throws Exception {
         sSSession.removeWorkerProperty(WORKER_ID, ServiceConfig.SINGLETON);
         sSSession.removeWorkerProperty(WORKER_ID, ServiceConfig.INTERVAL);
@@ -153,6 +160,7 @@ public class BaseServiceTest extends TestCase {
      * Test setting an update interval based on a millisecond value.
      * @throws Exception
      */
+    @Test
     public void test06intervalMs() throws Exception {
         sSSession.removeWorkerProperty(WORKER_ID, ServiceConfig.SINGLETON);
         sSSession.removeWorkerProperty(WORKER_ID, ServiceConfig.INTERVAL);
@@ -174,6 +182,7 @@ public class BaseServiceTest extends TestCase {
         assertTrue(readCount <= oldReadCount + (after - before) / INTERVALMS + 1);
     }
 
+    @Test    
     public void test99TearDownDatabase() throws Exception {
         gCSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + WORKER_ID + ".CLASSPATH");
 

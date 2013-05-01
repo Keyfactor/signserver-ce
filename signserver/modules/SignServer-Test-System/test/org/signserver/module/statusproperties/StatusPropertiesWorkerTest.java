@@ -20,9 +20,13 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import org.apache.log4j.Logger;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
 import org.signserver.statusrepo.common.StatusEntry;
 import org.signserver.statusrepo.common.StatusName;
 import org.signserver.web.*;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
 /**
  * Tests that the right HTTP status codes are returned in different situations.
@@ -30,6 +34,7 @@ import org.signserver.web.*;
  * @author Markus Kilås
  * @version $Id$
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class StatusPropertiesWorkerTest extends WebTestCase {
     
     /** Logger for this class. */
@@ -46,6 +51,7 @@ public class StatusPropertiesWorkerTest extends WebTestCase {
     /**
      * Sets up a StatusPropertiesWorker.
      */
+    @Test
     public void test00SetupDatabase() throws Exception {
         Properties properties = new Properties();
         properties.setProperty("GLOB.WORKER" + WORKERID + ".CLASSPATH", "org.signserver.module.statusproperties.StatusPropertiesWorker");
@@ -58,6 +64,7 @@ public class StatusPropertiesWorkerTest extends WebTestCase {
     /**
      * Test that a successful request returns status code 200.
      */
+    @Test
     public void test01HttpStatus200() {
         Map<String, String> fields = new HashMap<String, String>();
         fields.put("workerName", WORKERNAME);
@@ -71,6 +78,7 @@ public class StatusPropertiesWorkerTest extends WebTestCase {
      * Assumption: No other process is currently updating the status values 
      * while this test is running.
      */
+    @Test
     public void testNoArgumentsReturnsAll() throws Exception {
         Map<String, String> fields = new HashMap<String, String>();
         fields.put("workerName", WORKERNAME);
@@ -101,6 +109,7 @@ public class StatusPropertiesWorkerTest extends WebTestCase {
     /**
      * Tests querying one property only returns that property.
      */
+    @Test
     public void testGetAProperty() throws Exception {
         Map<String, String> fields = new HashMap<String, String>();
         fields.put("workerName", WORKERNAME);
@@ -129,6 +138,7 @@ public class StatusPropertiesWorkerTest extends WebTestCase {
      * Tests that querying for 3 properties where one is expired only returns
      * the two valid ones.
      */
+    @Test
     public void testGetMultipleProperties() throws Exception {
         Map<String, String> fields = new HashMap<String, String>();
         fields.put("workerName", WORKERNAME);
@@ -165,6 +175,7 @@ public class StatusPropertiesWorkerTest extends WebTestCase {
      * Test setting 3 status properties. Two with expiration and one without.
      * @throws Exception 
      */
+    @Test
     public void testSetProperties() throws Exception {
         long expiration1 = System.currentTimeMillis() + 10 * 60 * 1000;
         long expiration2 = System.currentTimeMillis() + 20 * 60 * 1000;
@@ -210,6 +221,7 @@ public class StatusPropertiesWorkerTest extends WebTestCase {
      * Remove the workers created etc.
      * @throws Exception in case of error
      */
+    @Test
     public void test99TearDownDatabase() throws Exception {
         removeWorker(WORKERID);
     }

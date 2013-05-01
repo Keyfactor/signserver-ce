@@ -18,6 +18,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 import org.apache.log4j.Logger;
+import org.junit.After;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
@@ -28,6 +31,9 @@ import org.signserver.server.archive.test1archiver.Test1Signer;
 import org.signserver.server.archive.test1archiver.Test2Archiver;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestingSecurityManager;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests for the Archiving API.
@@ -39,6 +45,7 @@ import org.signserver.testutils.TestingSecurityManager;
  * @see Test2Archiver
  * @see Test1Signer
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ArchiveAPITest extends ModulesTestCase {
 
     /** Logger for this class. */
@@ -48,9 +55,8 @@ public class ArchiveAPITest extends ModulesTestCase {
     private File archiver1File;
     private File archiver2File;
     
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
         TestingSecurityManager.install();
         String signserverhome = System.getenv("SIGNSERVER_HOME");
@@ -71,12 +77,12 @@ public class ArchiveAPITest extends ModulesTestCase {
         }
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
+    @After
+    public void tearDown() throws Exception {
         TestingSecurityManager.remove();
     }	
-	
+
+    @Test
     public void test00SetupDatabase() throws Exception {
         addSigner(Test1Signer.class.getName());
     }
@@ -86,6 +92,7 @@ public class ArchiveAPITest extends ModulesTestCase {
      * 
      * @throws Exception In case of error.
      */
+    @Test
     public void test01OneArchiverCalled() throws Exception {
         LOG.debug(">test01OneArchiverCalled");
 
@@ -126,6 +133,7 @@ public class ArchiveAPITest extends ModulesTestCase {
      * 
      * @throws Exception In case of error.
      */
+    @Test
     public void test02ThreeArchiversCalled() throws Exception {
         LOG.debug(">test02ThreeArchiversCalled");
 
@@ -193,6 +201,7 @@ public class ArchiveAPITest extends ModulesTestCase {
      * 
      * @throws Exception In case of error.
      */
+    @Test
     public void test03archiverNotArchiving() throws Exception {
         LOG.debug(">test03archiverNotArchiving");
 
@@ -255,6 +264,7 @@ public class ArchiveAPITest extends ModulesTestCase {
      * 
      * @throws Exception In case of error.
      */
+    @Test
     public void test04archiverFailsToArchive() throws Exception {
         LOG.debug(">test04archiverFailsToArchive");
 
@@ -291,6 +301,7 @@ public class ArchiveAPITest extends ModulesTestCase {
      * Remove the workers created etc.
      * @throws Exception in case of error
      */
+    @Test
     public void test99TearDownDatabase() throws Exception {
         removeWorker(getSignerIdDummy1());
     }

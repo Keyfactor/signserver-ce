@@ -13,19 +13,17 @@
 package org.signserver.server.statistics;
 
 import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
 /**
  * TODO: Document me!
  * 
  * @version $Id$
  */
-public class EventTest extends TestCase {
+public class EventTest {
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-    }
-
+    @Test
     public void testBasics() throws InterruptedException {
         Event event = new Event(123);
         assertTrue(event.getWorkerId() == 123);
@@ -39,6 +37,7 @@ public class EventTest extends TestCase {
         assertTrue(event.getStartTimeStamp().before(event.getEndTimeStamp()));
     }
 
+    @Test
     public void testCustomData() {
         Event event = new Event(123);
         assertNull(event.getCustomData());

@@ -14,6 +14,10 @@ package org.signserver.server.archive;
 
 import java.util.Random;
 import org.apache.log4j.Logger;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
 /**
  * Tests for archiving.
@@ -21,6 +25,7 @@ import org.apache.log4j.Logger;
  * @author Markus Kilås
  * @version $Id$
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ArchiveTest extends ArchiveTestCase {
 
     /** Logger for this class. */
@@ -28,7 +33,7 @@ public class ArchiveTest extends ArchiveTestCase {
 
     private static Random random = new Random();
     	
-	
+    @Test
     public void test00SetupDatabase() throws Exception {
         addSoftDummySigner(getSignerIdDummy1(), getSignerNameDummy1());
         getWorkerSession().setWorkerProperty(getSignerIdDummy1(), 
@@ -40,6 +45,7 @@ public class ArchiveTest extends ArchiveTestCase {
      * Test signing with archiving enabled for a new unique document.
      * @throws Exception In case of error.
      */
+    @Test
     public void test01archiveNewDocument() throws Exception {
         LOG.debug(">test01OneArchiverCalled");
         
@@ -52,6 +58,7 @@ public class ArchiveTest extends ArchiveTestCase {
      * Test signing with archiving disabled.
      * @throws Exception In case of error.
      */
+    @Test
     public void test02archivingDisabled() throws Exception {
         LOG.debug(">test02archivingDisabled");
         
@@ -68,6 +75,7 @@ public class ArchiveTest extends ArchiveTestCase {
      * Test signing without archiving properties.
      * @throws Exception In case of error.
      */
+    @Test
     public void test03archivingNotSpecified() throws Exception {
         LOG.debug(">test03archivingNotSpecified");
         
@@ -83,6 +91,7 @@ public class ArchiveTest extends ArchiveTestCase {
      * Test signing with archiving enabled for the same document twice.
      * @throws Exception In case of error.
      */
+    @Test
     public void test04archiveSameDocumentTwice() throws Exception {
         LOG.debug(">test04archiveSameDocumentTwice");
         
@@ -99,6 +108,7 @@ public class ArchiveTest extends ArchiveTestCase {
      * Remove the workers created etc.
      * @throws Exception in case of error
      */
+    @Test
     public void test99TearDownDatabase() throws Exception {
         removeWorker(getSignerIdDummy1());
     }

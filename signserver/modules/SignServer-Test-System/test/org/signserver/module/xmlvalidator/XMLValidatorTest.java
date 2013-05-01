@@ -21,17 +21,23 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.log4j.Logger;
 import org.ejbca.util.CertTools;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
 import org.signserver.common.*;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.validationservice.common.Validation;
 import org.signserver.validationservice.common.Validation.Status;
 import org.w3c.dom.Document;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * TODO: Document me!
  * 
  * @version $Id$
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class XMLValidatorTest extends ModulesTestCase {
 
     private static Logger log = Logger.getLogger(XMLValidatorTest.class);
@@ -47,17 +53,12 @@ public class XMLValidatorTest extends ModulesTestCase {
     private static final String SIGNER2_SUBJECTDN = "CN=Signer 2,OU=Testing,O=SignServer,C=SE";
 	
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
-
+    @Test
     public void test00SetupDatabase() throws Exception {
         // VALIDATION SERVICE
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER17.CLASSPATH", "org.signserver.validationservice.server.ValidationServiceWorker");
@@ -77,6 +78,7 @@ public class XMLValidatorTest extends ModulesTestCase {
         workerSession.reloadConfiguration(WORKERID);
     }
 
+    @Test
     public void test01GetStatus() {
         try {
             ValidatorStatus stat = (ValidatorStatus) workerSession.getStatus(WORKERID);
@@ -88,8 +90,8 @@ public class XMLValidatorTest extends ModulesTestCase {
         }
     }
 
+    @Test
     public void test02SigOkCertOk() {
-
         // OK signature, OK cert
         int reqid = 13;
 
@@ -127,8 +129,8 @@ public class XMLValidatorTest extends ModulesTestCase {
         }
     }
 
+    @Test
     public void test03SigInconsistentCertOk() throws Exception {
-
         // Inconsistent signature, OK cert
         int reqid = 14;
         {
@@ -155,8 +157,8 @@ public class XMLValidatorTest extends ModulesTestCase {
         }
     }
 
+    @Test
     public void test04SigOkCertUntrusted() throws Exception {
-
         // OK signature, untrusted cert
         int reqid = 15;
         {
@@ -175,8 +177,8 @@ public class XMLValidatorTest extends ModulesTestCase {
         }
     }
 
+    @Test
     public void test05SigOkCertInconsistent() throws Exception {
-
         // OK signature, inconsistent cert
         int reqid = 16;
         {
@@ -198,8 +200,8 @@ public class XMLValidatorTest extends ModulesTestCase {
         // TODO: check that it was invalid for the right reason!
     }
 
+    @Test
     public void test06SigOkCertsMissing() throws Exception {
-
         // OK signature, wrong certificate
         int reqid = 17;
         {
@@ -222,8 +224,8 @@ public class XMLValidatorTest extends ModulesTestCase {
         // TODO: check status (invalid for right reason)
     }
 
+    @Test
     public void test07SigOkCertWrong() throws Exception {
-
         // OK signature, wrong certificate
         int reqid = 17;
         {
@@ -246,8 +248,8 @@ public class XMLValidatorTest extends ModulesTestCase {
         // TODO: check status (invalid for right reason)
     }
 
+    @Test
     public void test08SigOkCertInReverseOrder() throws Exception {
-
         // OK signature, first ca cert then signer cert
         int reqid = 18;
         {
@@ -275,8 +277,8 @@ public class XMLValidatorTest extends ModulesTestCase {
         }
     }
 
+    @Test
     public void test09DocumentNotReturned() throws Exception {
-
         // Just some validation
         int reqid = 19;
         {
@@ -308,8 +310,8 @@ public class XMLValidatorTest extends ModulesTestCase {
         }
     }
 
+    @Test
     public void test19DocumentReturnedWithoutSignature() throws Exception {
-
         workerSession.setWorkerProperty(WORKERID, "RETURNDOCUMENT", "true");
         workerSession.setWorkerProperty(WORKERID, "STRIPSIGNATURE", "true");
         workerSession.reloadConfiguration(WORKERID);
@@ -348,8 +350,8 @@ public class XMLValidatorTest extends ModulesTestCase {
         }
     }
 
+    @Test
     public void test11SigOkCertRevoced() throws Exception {
-
         workerSession.setWorkerProperty(17, "VAL1.REVOKED", SIGNER2_SUBJECTDN);
         workerSession.reloadConfiguration(17);
 
@@ -378,8 +380,8 @@ public class XMLValidatorTest extends ModulesTestCase {
         }
     }
 
+    @Test
     public void test12SigOkCertOkDSA() {
-
         // OK signature, OK cert
         final int reqid = 18;
 
@@ -417,8 +419,8 @@ public class XMLValidatorTest extends ModulesTestCase {
         }
     }
 
+    @Test
     public void test99TearDownDatabase() throws Exception {
-
         removeWorker(WORKERID);
 
         workerSession.removeWorkerProperty(WORKERID, "RETURNDOCUMENT");

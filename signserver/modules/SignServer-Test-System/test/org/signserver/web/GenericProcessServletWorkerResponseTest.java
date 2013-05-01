@@ -14,6 +14,12 @@ package org.signserver.web;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.junit.After;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests worker override URL for the process servlet, tests that the worker name is overriding the corresponding
@@ -22,7 +28,7 @@ import java.util.Map;
  * @author Marcus Lundblad
  * @version $Id$
  */
-
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class GenericProcessServletWorkerResponseTest extends WebTestCase {
 
 	private final static String UNEXISTING_WORKER_NAME = "_NotExistingWorker123_";
@@ -46,8 +52,8 @@ public class GenericProcessServletWorkerResponseTest extends WebTestCase {
 				currentWorkerName;
 	}
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		addDummySigner1();
 		currentWorkerName = this.getSignerNameDummy1();
 		// test by default will use a URI on the form /signserver/worker/...
@@ -56,14 +62,15 @@ public class GenericProcessServletWorkerResponseTest extends WebTestCase {
 		extraSlashBeforeServletName = false;
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		removeWorker(getSignerIdDummy1());
 	}
     
 	/**
 	 * Test correct request with the worker addressed in the URL
 	 */
+        @Test
 	public void test01HttpStatus200() {
 		Map<String, String> fields = new HashMap<String, String>();
 		fields.put("data", "<root/>");
@@ -75,6 +82,7 @@ public class GenericProcessServletWorkerResponseTest extends WebTestCase {
 	 * Test correct request, overriding an unexisting worker name set by a request
 	 * parameter
 	 */
+        @Test
 	public void test02HttpStatus200_overrideRequestParamWorkerName() {
 		Map<String, String> fields = new HashMap<String, String>();
 		fields.put("data", "<root/>");
@@ -87,6 +95,7 @@ public class GenericProcessServletWorkerResponseTest extends WebTestCase {
 	 * Test correct request, overriding an unexisting worker ID set by a request
 	 * parameter.
 	 */
+        @Test
 	public void test03HttpStatus200_overrideRequestParamWorkerId() {
 		Map<String, String> fields = new HashMap<String, String>();
 		fields.put("data", "<root/>");
@@ -98,6 +107,7 @@ public class GenericProcessServletWorkerResponseTest extends WebTestCase {
 	/**
 	 * Test with incorrect worker name in the URL.
 	 */
+        @Test
 	public void test04HttpStatus404() {
 		currentWorkerName = UNEXISTING_WORKER_NAME;
 		Map<String, String> fields = new HashMap<String, String>();
@@ -112,6 +122,7 @@ public class GenericProcessServletWorkerResponseTest extends WebTestCase {
 	 * The name used in the URL should override the request parameter and result
 	 * in a 404.
 	 */
+        @Test
 	public void test05HttpStatus404_setCorrectWorkerNameRequestParam() {
 		currentWorkerName = UNEXISTING_WORKER_NAME;
 		Map<String, String> fields = new HashMap<String, String>();
@@ -127,6 +138,7 @@ public class GenericProcessServletWorkerResponseTest extends WebTestCase {
 	 * The name used in the URL should override the request parameter and result
 	 * in a 404.
 	 */
+        @Test
 	public void test06HttpStatus404_setCorrectWorkerIdRequestParam() {
 		currentWorkerName = UNEXISTING_WORKER_NAME;
 		Map<String, String> fields = new HashMap<String, String>();
@@ -142,6 +154,7 @@ public class GenericProcessServletWorkerResponseTest extends WebTestCase {
 	 * The name used in the URL should override the request parameter and result
 	 * in a 404.
 	 */
+        @Test
 	public void test07HttpStatus404_setCorrectWorkerIdAndNameRequestParam() {
 		currentWorkerName = UNEXISTING_WORKER_NAME;
 		Map<String, String> fields = new HashMap<String, String>();
@@ -156,6 +169,7 @@ public class GenericProcessServletWorkerResponseTest extends WebTestCase {
 	 * Test with an incomplete worker URI on the form /signserver/worker
 	 * this shall fail with a status 404
 	 */
+        @Test
 	public void test08HttpStatus404_emptyWorkerName() {
 		currentWorkerName = "";
 		Map<String, String> fields = new HashMap<String, String>();
@@ -169,6 +183,7 @@ public class GenericProcessServletWorkerResponseTest extends WebTestCase {
 	 * with a valid worker name supplied via a request parameter
 	 * this shall (still) fail with a status 404
 	 */
+        @Test
 	public void test09HttpStatus404_emptyWorkerNameWithWorkerNameRequestParam() {
 		currentWorkerName = "";
 		Map<String, String> fields = new HashMap<String, String>();
@@ -183,6 +198,7 @@ public class GenericProcessServletWorkerResponseTest extends WebTestCase {
 	 * with a valid worker ID supplied via a request parameter
 	 * this shall (still) fail with a status 404
 	 */
+        @Test
 	public void test10HttpStatus404_emptyWorkerNameWithWorkerIdRequestParam() {
 		currentWorkerName = "";
 		Map<String, String> fields = new HashMap<String, String>();
@@ -197,6 +213,7 @@ public class GenericProcessServletWorkerResponseTest extends WebTestCase {
 	 * the trailing /
 	 * This shall fail with a 404
 	 */
+        @Test
 	public void test11HttpStatus404_emptyWorkerNameNoSlash() {
 		trailingSlash = false;
 		currentWorkerName = "";
@@ -212,6 +229,7 @@ public class GenericProcessServletWorkerResponseTest extends WebTestCase {
 	 * with a valid worker name given as a request parameters
 	 * This shall fail with a 404
 	 */
+        @Test
 	public void test12HttpStatus404_emptyWorkerNameNoSlashWithWorkerNameRequestParam() {
 		trailingSlash = false;
 		currentWorkerName = "";
@@ -227,6 +245,7 @@ public class GenericProcessServletWorkerResponseTest extends WebTestCase {
 	 * the trailing /
 	 * This shall fail with a 404
 	 */
+        @Test
 	public void test13HttpStatus404_emptyWorkerNameNoSlashWithWorkerIdRequestParam() {
 		trailingSlash = false;
 		currentWorkerName = "";
@@ -241,6 +260,7 @@ public class GenericProcessServletWorkerResponseTest extends WebTestCase {
 	 * Test an invalid URL of the form /signserver/worker//<worker name>
 	 * This shall fail with a 404
 	 */
+        @Test
 	public void test14HttpStatus404_extraSlashBeforeWorkerName() {
 		extraSlashBeforeWorkerName = true;
 		Map<String, String> fields = new HashMap<String, String>();
@@ -256,6 +276,7 @@ public class GenericProcessServletWorkerResponseTest extends WebTestCase {
 	 * This should fail with a 404 (it should not "fall through" to the general
 	 * processing in this case).
 	 */
+        @Test
 	public void test15HttpStatus404_extraSlashBeforeServletName() {
 		extraSlashBeforeServletName = true;
 		currentWorkerName = UNEXISTING_WORKER_NAME;

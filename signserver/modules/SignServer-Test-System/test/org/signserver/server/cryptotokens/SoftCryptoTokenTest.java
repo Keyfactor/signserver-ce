@@ -21,30 +21,28 @@ import org.bouncycastle.jce.PKCS10CertificationRequest;
 import org.ejbca.util.Base64;
 import org.ejbca.util.CertTools;
 import org.ejbca.util.keystore.KeyTools;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
 import org.signserver.common.*;
 import org.signserver.testutils.ModulesTestCase;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * TODO: Document me!
  * 
  * @version $Id$
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class SoftCryptoTokenTest extends ModulesTestCase {
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
     }
 
-    /* (non-Javadoc)
-     * @see junit.framework.TestCase#tearDown()
-     */
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
-
+    @Test
     public void test00SetupDatabase() throws Exception {
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER88.CLASSPATH", "org.signserver.module.mrtdsigner.MRTDSigner");
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER88.SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.SoftCryptoToken");
@@ -58,6 +56,7 @@ public class SoftCryptoTokenTest extends ModulesTestCase {
         workerSession.reloadConfiguration(88);
     }
 
+    @Test
     public void test01BasicTests() throws Exception {
         SignerStatus stat = (SignerStatus) workerSession.getStatus(88);
         assertTrue(stat.getTokenStatus() == SignerStatus.STATUS_OFFLINE);
@@ -131,6 +130,7 @@ public class SoftCryptoTokenTest extends ModulesTestCase {
         res = (MRTDSignResponse) workerSession.process(88, new MRTDSignRequest(reqid, signrequests), new RequestContext());
     }
 
+    @Test
     public void test99TearDownDatabase() throws Exception {
         removeWorker(88);
     }

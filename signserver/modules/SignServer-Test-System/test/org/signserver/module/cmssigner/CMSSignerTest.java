@@ -24,6 +24,9 @@ import org.bouncycastle.x509.AttributeCertificateHolder;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.jce.X509Principal;
+import org.junit.After;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
 import org.signserver.common.RequestContext;
@@ -31,6 +34,9 @@ import org.signserver.common.SignServerUtil;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestUtils;
 import org.signserver.testutils.TestingSecurityManager;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests for CMSSigner.
@@ -38,23 +44,23 @@ import org.signserver.testutils.TestingSecurityManager;
  * @author Markus Kilås
  * @version $Id$
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class CMSSignerTest extends ModulesTestCase {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(CMSSignerTest.class);
 	
-    @Override
+    @Before
     protected void setUp() throws Exception {
-        super.setUp();
         SignServerUtil.installBCProvider();
     }
 
-    @Override
+    @After
     protected void tearDown() throws Exception {
-        super.tearDown();
         TestingSecurityManager.remove();
     }	
-	
+
+    @Test
     public void test00SetupDatabase() throws Exception {
         addSigner("org.signserver.module.cmssigner.CMSSigner");
     }
@@ -66,6 +72,7 @@ public class CMSSignerTest extends ModulesTestCase {
      * also is included. Also test that the default signature algorithm is SHA1withRSA
      * @throws Exception In case of error.
      */
+    @Test
     public void test01BasicCMSSignRSA() throws Exception {
         LOG.debug(">test01BasicCMSSignRSA");
 
@@ -78,10 +85,12 @@ public class CMSSignerTest extends ModulesTestCase {
      * Test setting SIGNATUREALGORITHM to a non-default value.
      * @throws Exception
      */
+    @Test
     public void test02BasicCMSSignSHA256withRSA() throws Exception {
         testBasicCMSSign("SHA256withRSA", "2.16.840.1.101.3.4.2.1", "1.2.840.113549.1.1.1");
     }
     
+    @Test
     private void testBasicCMSSign(final String sigAlg, final String expectedDigAlgOID,
             final String expectedEncAlgOID) throws Exception {
         final int reqid = 37;
@@ -152,6 +161,7 @@ public class CMSSignerTest extends ModulesTestCase {
      * Remove the workers created etc.
      * @throws Exception in case of error
      */
+    @Test
     public void test99TearDownDatabase() throws Exception {
         removeWorker(getSignerIdDummy1());
     }

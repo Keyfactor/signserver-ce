@@ -19,16 +19,18 @@ import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 
 import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
 /**
  * TODO: Document me!
  * 
  * @version $Id$
  */
-public class ValidationHelperTest extends TestCase {
+public class ValidationHelperTest {
 
+    @Test
     public void testGetValidatorProperties() {
-
         WorkerConfig config = new WorkerConfig();
         config.setProperty("SOMEGENDATA", "TESTDATA");
         config.setProperty("validator1.KEY1", "key1data");
@@ -59,6 +61,7 @@ public class ValidationHelperTest extends TestCase {
 
     }
 
+    @Test
     public void testgenValidators() throws SignServerException {
         WorkerConfig config = new WorkerConfig();
         config.setProperty("TESTPROP", "TESTDATA");
@@ -86,8 +89,8 @@ public class ValidationHelperTest extends TestCase {
 
     }
 
+    @Test
     public void testGetIssuerProperties() {
-
         Properties config = new Properties();
         config.setProperty("SOMEGENDATA", "TESTDATA");
         config.setProperty("issuer1.KEY1", "key1data");
@@ -113,6 +116,5 @@ public class ValidationHelperTest extends TestCase {
         assertTrue(ValidationHelper.getIssuerProperties(255, config).getProperty("KEY7").equals("key7data"));
         assertTrue(ValidationHelper.getIssuerProperties(255, config).getProperty("KEY8").equals("key8data"));
         assertTrue(ValidationHelper.getIssuerProperties(255, config).getProperty("SOMEGENDATA").equals("TESTDATA"));
-
     }
 }

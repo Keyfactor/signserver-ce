@@ -40,6 +40,9 @@ import org.bouncycastle.cms.SignerInformationVerifier;
 import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
 import org.bouncycastle.tsp.*;
 import org.ejbca.util.Base64;
+import org.junit.After;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
 import org.signserver.common.*;
 import org.signserver.statusrepo.IStatusRepositorySession;
 import org.signserver.statusrepo.common.StatusName;
@@ -47,12 +50,16 @@ import org.signserver.test.utils.builders.CertBuilder;
 import org.signserver.test.utils.builders.CertExt;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestingSecurityManager;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests for the TimeStampSigner.
  *
  * @version $Id$
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TimeStampSignerTest extends ModulesTestCase {
 
     /** Logger for class. */
@@ -106,9 +113,8 @@ public class TimeStampSignerTest extends ModulesTestCase {
     private Random random = new Random(4711);
 
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
 
         repository = ServiceLocator.getInstance().lookupRemote(
@@ -118,12 +124,12 @@ public class TimeStampSignerTest extends ModulesTestCase {
     /* (non-Javadoc)
      * @see junit.framework.TestCase#tearDown()
      */
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
+    @After
+    public void tearDown() throws Exception {
         TestingSecurityManager.remove();
     }
 
+    @Test
     public void test00SetupDatabase() throws Exception {
         setProperties(new File(getSignServerHome(), "modules/SignServer-Module-TSA/src/conf/junittest-part-config.properties"));
         workerSession.reloadConfiguration(WORKER1);
@@ -132,6 +138,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
         workerSession.reloadConfiguration(WORKER4);
     }
 
+    @Test
     public void test01BasicTimeStamp() throws Exception {
         // Test signing
         final TimeStampResponse response = assertSuccessfulTimestamp(WORKER1);
@@ -188,6 +195,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
     /**
      * Tests the status returned by the worker.
      */
+    @Test
     public void test02GetStatus() throws Exception {
         SignerStatus stat = (SignerStatus) workerSession.getStatus(8901);
         assertEquals("token status", SignerStatus.STATUS_ACTIVE, stat.getTokenStatus());
@@ -199,6 +207,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
      * ACCEPTEDPOLICIES and that a proper resoonse is sent back.
      * @throws Exception in case of exception
      */
+    @Test
     public void test03NotAcceptedPolicy() throws Exception {
         // WORKER2 has ACCEPTEDPOLICIES=1.2.3
         // Create an request with another policy (1.2.3.5 != 1.2.3)
@@ -228,6 +237,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
      * the timeNotAvailable status if the Date is null.
      * @throws Exception in case of exception
      */
+    @Test
     public void test04timeNotAvailable() throws Exception {
         assertTimeNotAvailable(WORKER3);
     }
@@ -237,8 +247,8 @@ public class TimeStampSignerTest extends ModulesTestCase {
      * is set.
      * @throws Exception in case of exception
      */
+    @Test
     public void test05ReadingStatusTimeSource() throws Exception {
-        
         // Test with insync
         repository.update(StatusName.TIMESOURCE0_INSYNC.name(), "true");
         assertSuccessfulTimestamp(WORKER4);
@@ -346,6 +356,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
      * 
      * @throws Exception
      */
+    @Test
     public void test06HashSHA256() throws Exception {
     	testWithHash(TSPAlgorithms.SHA256);
     }
@@ -356,6 +367,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
      * @param worker
      * @throws Exception
      */
+    @Test
     public void test07HashSHA512() throws Exception {
     	testWithHash(TSPAlgorithms.SHA512);
     }
@@ -366,6 +378,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
      * @param worker
      * @throws Exception
      */
+    @Test
     public void test08HashRIPE160() throws Exception {
     	testWithHash(TSPAlgorithms.RIPEMD160);
     }
@@ -378,6 +391,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
      * @param worker
      * @throws Exception
      */
+    @Test
     public void test09HashWithNotAllowedAlgorithm() throws Exception {
     	// set accepted algorithms to SHA1
     	workerSession.setWorkerProperty(WORKER1, TimeStampSigner.ACCEPTEDALGORITHMS, "SHA1");
@@ -393,6 +407,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
      * @param worker
      * @throws Exception
      */
+    @Test
     public void test10HashWithIllegalAlgorithm() throws Exception {
     	// reset accepted algorithms
     	workerSession.removeWorkerProperty(WORKER1, TimeStampSigner.ACCEPTEDALGORITHMS);
@@ -410,6 +425,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
      * @param worker
      * @throws Exception
      */
+    @Test
     public void test11HashWithAllowedAlgorithm() throws Exception {
     	// set accepted algorithms to SHA1
     	workerSession.setWorkerProperty(WORKER1, TimeStampSigner.ACCEPTEDALGORITHMS, "SHA1");
@@ -468,6 +484,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
      *  TSA in the certificates field from the SignedData structure in that
      *  response.  That field may also contain other certificates."
      */
+    @Test
     public void test09SignerCertificateMustBeIncluded() throws Exception {
         List<Certificate> chain = workerSession.getSignerCertificateChain(WORKER2);
         final X509Certificate subject = (X509Certificate) chain.get(0);
@@ -523,6 +540,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
      * to sign when the right signer certificate is not configured.
      *
      */
+    @Test
     public void test10WrongSignerCertificate() throws Exception {
         final List<Certificate> chain = workerSession.getSignerCertificateChain(WORKER2);
         final X509Certificate subject = (X509Certificate) workerSession.getSignerCertificate(WORKER2);
@@ -577,6 +595,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
      * certificate chain property.
      *
      */
+    @Test
     public void test10WrongSignerCertificate_InChain() throws Exception {
         final List<Certificate> chain = workerSession.getSignerCertificateChain(WORKER2);
         final X509Certificate subject = (X509Certificate) workerSession.getSignerCertificate(WORKER2);
@@ -638,6 +657,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
      * and its issuer (and its issuer and so on...) is allowed in the chain.
      * Also tests that the default is to not do this check.
      */
+    @Test
     public void test11RequireValidChain() throws Exception {
     
         // First make sure we don't have this property set
@@ -691,6 +711,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
      * to sign when the right signer certificate is not configured.
      *
      */
+    @Test
     public void test12WrongEkuInSignerCertificate() throws Exception {
         
         final List<Certificate> chain = workerSession.getSignerCertificateChain(WORKER2);
@@ -747,6 +768,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
     }
     
     /** Tests issuance of time-stamp token when an EC key is specified. */
+    @Test
     public void test20BasicTimeStampECDSA() throws Exception {
         final int workerId = WORKER20;
         try {
@@ -786,6 +808,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
     }
     
     /** Tests issuance of time-stamp token when an DSA key is specified. */
+    @Test
     public void test21BasicTimeStampDSA() throws Exception {
         final int workerId = WORKER20;
         try {
@@ -815,6 +838,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
      * Test with requestData of zero length. Shall give an IllegalRequestException.
      * @throws Exception
      */
+    @Test
     public void test22EmptyRequest() throws Exception {
         int reqid = random.nextInt();
         byte[] requestBytes = new byte[0];
@@ -836,6 +860,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
      * Test with an invalid requestData. Shall give an IllegalRequestException.
      * @throws Exception
      */
+    @Test
     public void test23BogusRequest() throws Exception {
         int reqid = random.nextInt();
         byte[] requestBytes = "bogus request".getBytes();
@@ -857,6 +882,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
      * Test with setting requestData to null. Shall give an IllegalRequestException.
      * @throws Exception
      */
+    @Test
     public void test24NullRequest() throws Exception {
         int reqid = random.nextInt();
         byte[] requestBytes = "bogus request".getBytes();
@@ -878,6 +904,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
      * Test that the default behavior is to include the status string in the TSA response.
      * @throws Exception
      */
+    @Test
     public void test25StatusStringIncluded() throws Exception {
      // Test signing
         final TimeStampResponse response = assertSuccessfulTimestamp(WORKER1);
@@ -890,6 +917,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
      * in the TSA response.
      * @throws Exception
      */
+    @Test
     public void test26StatusStringExcluded() throws Exception {
         workerSession.setWorkerProperty(WORKER1, TimeStampSigner.INCLUDESTATUSSTRING, "FALSE");
         workerSession.reloadConfiguration(WORKER1);
@@ -903,6 +931,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
      * Test that the default behavior on rejection is to include a status string.
      * @throws Exception
      */
+    @Test
     public void test27StatusStringIncludedFailure() throws Exception {
         // WORKER2 has ACCEPTEDPOLICIES=1.2.3
         // Create an request with another policy (1.2.3.5 != 1.2.3)
@@ -928,6 +957,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
      * on rejection.
      * @throws Exception
      */
+    @Test
     public void test28StatusStringExcludedFailure() throws Exception {
         workerSession.setWorkerProperty(WORKER2, TimeStampSigner.INCLUDESTATUSSTRING, "FALSE");
         workerSession.reloadConfiguration(WORKER2);
@@ -954,6 +984,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
      * Test that omitting a default policy OID results in the correct fatal error.
      * @throws Exception
      */
+    @Test
     public void test29NoDefaultPolicyOID() throws Exception {
         workerSession.removeWorkerProperty(WORKER1, TimeStampSigner.DEFAULTTSAPOLICYOID);
         workerSession.reloadConfiguration(WORKER1);
@@ -973,6 +1004,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
      * Test that setting an invalid default policy OID results in the correct fatal error.
      * @throws Exception
      */
+    @Test
     public void test30BogusDefaultPolicyOID() throws Exception {
         workerSession.setWorkerProperty(WORKER1, TimeStampSigner.DEFAULTTSAPOLICYOID, "foobar");
         workerSession.reloadConfiguration(WORKER1);
@@ -992,6 +1024,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
      * Test that the default behavior is to not include the TSA field.
      * @throws Exception
      */
+    @Test
     public void test31NoTSAName() throws Exception {
         // Test signing
         final TimeStampResponse response = assertSuccessfulTimestamp(WORKER1);
@@ -1003,6 +1036,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
      * Test setting the TSA worker property.
      * @throws Exception
      */
+    @Test
     public void test32ExplicitTSAName() throws Exception {
         workerSession.setWorkerProperty(WORKER1, TimeStampSigner.TSA, "CN=test");
         workerSession.reloadConfiguration(WORKER1);
@@ -1024,6 +1058,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
      * 
      * @throws Exception
      */
+    @Test
     public void test34TSANameFromCert() throws Exception {
        workerSession.setWorkerProperty(WORKER1, TimeStampSigner.TSA_FROM_CERT, "true");
        workerSession.reloadConfiguration(WORKER1);
@@ -1041,13 +1076,13 @@ public class TimeStampSignerTest extends ModulesTestCase {
        // restore
        workerSession.removeWorkerProperty(WORKER1, TimeStampSigner.TSA_FROM_CERT);
        workerSession.reloadConfiguration(WORKER1);
-  
     }
     
     /**
      * Test setting both the TSA and TSA_FROM_CERT property, should result in an error.
      * @throws Exception
      */
+    @Test
     public void test35TSANameExplicitAndFromCert() throws Exception {
         workerSession.setWorkerProperty(WORKER1, TimeStampSigner.TSA, "CN=test");
         workerSession.setWorkerProperty(WORKER1, TimeStampSigner.TSA_FROM_CERT, "true");
@@ -1110,6 +1145,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
         }
     }
 
+    @Test
     public void test99TearDownDatabase() throws Exception {
         removeWorker(WORKER1);
         removeWorker(WORKER2);

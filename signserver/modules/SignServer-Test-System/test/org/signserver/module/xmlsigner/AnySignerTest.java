@@ -21,12 +21,18 @@ import org.bouncycastle.jce.ECKeyUtil;
 import org.bouncycastle.jce.PKCS10CertificationRequest;
 import org.bouncycastle.util.encoders.Hex;
 import org.ejbca.util.Base64;
+import org.junit.After;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
 import org.signserver.common.Base64SignerCertReqData;
 import org.signserver.common.KeyTestResult;
 import org.signserver.common.PKCS10CertReqInfo;
 import org.signserver.common.SignServerUtil;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestingSecurityManager;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests for any Signer.
@@ -36,6 +42,7 @@ import org.signserver.testutils.TestingSecurityManager;
  * @author Markus Kilås
  * @version $Id$
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class AnySignerTest extends ModulesTestCase {
 
     /** WORKERID used in this test case as defined in 
@@ -48,20 +55,19 @@ public class AnySignerTest extends ModulesTestCase {
 
     private static File keystoreFile;
 	
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
         signserverhome = System.getenv("SIGNSERVER_HOME");
         assertNotNull("Please set SIGNSERVER_HOME environment variable", signserverhome);
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
+    @After
+    public void tearDown() throws Exception {
         TestingSecurityManager.remove();
     }	
-	
+
+    @Test
     public void test00SetupDatabase() throws Exception {
         setProperties(new File(signserverhome, "modules/SignServer-Module-XMLSigner/src/conf/junittest-part-config.properties"));
         workerSession.reloadConfiguration(WORKERID);
@@ -88,6 +94,7 @@ public class AnySignerTest extends ModulesTestCase {
         keystoreFile = newKeystore;
     }
 
+    @Test
     public void test01GenerateKey() throws Exception {
 
         final char[] authCode = "foo123".toCharArray();
@@ -140,6 +147,7 @@ public class AnySignerTest extends ModulesTestCase {
      * Test key generation of a ECDSA curve.
      * @throws Exception in case of error
      */
+    @Test
     public void test02GenerateKeyECDSA() throws Exception {
 
         final char[] authCode = "foo123".toCharArray();
@@ -186,7 +194,7 @@ public class AnySignerTest extends ModulesTestCase {
         assertEquals("key in request", pubKey, actualPubKey);
     }
 
-
+    @Test
     public void test03GenerateRequestNamedCurve() throws Exception {
 
         final boolean explicitEcc = false;
@@ -215,8 +223,8 @@ public class AnySignerTest extends ModulesTestCase {
                 actualPubKey.hashCode(), afterConvert.hashCode());
     }
 
+    @Test
     public void test04GenerateRequestExplicitParams() throws Exception {
-
         final boolean explicitEcc = true;
 
         // Generate CSR
@@ -243,6 +251,7 @@ public class AnySignerTest extends ModulesTestCase {
                 actualPubKey.hashCode() == afterConvert.hashCode());
     }
 
+    @Test
     public void test99TearDownDatabase() throws Exception {
         for (int workerId : WORKERS) {
             removeWorker(workerId);

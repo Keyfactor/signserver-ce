@@ -15,9 +15,14 @@ package org.signserver.module.signerstatusreport;
 import java.io.*;
 import java.util.Map;
 import org.apache.log4j.Logger;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.SignServerUtil;
 import org.signserver.testutils.ModulesTestCase;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests for SignerStatusReportTimedService.
@@ -25,6 +30,7 @@ import org.signserver.testutils.ModulesTestCase;
  * @author Markus Kilås
  * @version $Id$
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class SignerStatusReportTimedServiceTest extends ModulesTestCase {
 
     /** Logger for this class. */
@@ -65,9 +71,8 @@ public class SignerStatusReportTimedServiceTest extends ModulesTestCase {
     
     private SignerStatusReportParser parser = new SignerStatusReportParser();
 	
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
         
         outputFile = new File(getSignServerHome() + File.separator
@@ -77,19 +82,14 @@ public class SignerStatusReportTimedServiceTest extends ModulesTestCase {
                 fail("Could not remove: " + outputFile.getAbsolutePath());
             }
         }
-    }
-
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
     }	
 
     /**
      * Create test workers.
      * @throws Exception
      */
+    @Test
     public void test00SetupDatabase() throws Exception {
-
         setProperties(new File(getSignServerHome(), "modules/SignServer-Module-XMLSigner/src/conf/junittest-part-config.properties"));
         workerSession.reloadConfiguration(WORKERID_SIGNER1);
         workerSession.reloadConfiguration(WORKERID_SIGNER2);
@@ -111,8 +111,8 @@ public class SignerStatusReportTimedServiceTest extends ModulesTestCase {
         workerSession.reloadConfiguration(WORKERID_SERVICE);
     }
 
+    @Test
     public void test01Report() throws Exception {
-
         if (outputFile.exists()) {
             outputFile.delete();
             assertFalse("Removed outputfile", outputFile.exists());
@@ -178,6 +178,7 @@ public class SignerStatusReportTimedServiceTest extends ModulesTestCase {
      * Removes all test workers.
      * @throws Exception
      */
+    @Test
     public void test99TearDownDatabase() throws Exception {
         removeWorker(WORKERID_SERVICE);
         for (int workerId : WORKERS) {

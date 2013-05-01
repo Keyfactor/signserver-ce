@@ -21,31 +21,29 @@ import java.util.Properties;
 import javax.crypto.Cipher;
 import org.signserver.common.*;
 import org.signserver.testutils.ModulesTestCase;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
 /**
  * TODO: Document me!
  * 
  * @version $Id$
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class WorkerSessionBeanTest extends ModulesTestCase {
 
     /**
      * Set up the test case
      */
-    @Override
+    @Before
     protected void setUp() throws Exception {
-        super.setUp();
         SignServerUtil.installBCProvider();
     }
-    /* (non-Javadoc)
-     * @see junit.framework.TestCase#tearDown()
-     */
 
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
-
+    @Test
     public void test00SetupDatabase() throws Exception {
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
                 "WORKER3.CLASSPATH",
@@ -64,6 +62,7 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
     /*
      * Test method for 'org.signserver.ejb.SignSessionBean.signData(int, ISignRequest)'
      */
+    @Test
     public void test01SignData() throws Exception {
 
         int reqid = 11;
@@ -102,17 +101,20 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
     /*
      * Test method for 'org.signserver.ejb.SignSessionBean.getStatus(int)'
      */
+    @Test
     public void test02GetStatus() throws Exception {
         assertTrue(((SignerStatus) workerSession.getStatus(3)).getTokenStatus() == SignerStatus.STATUS_ACTIVE
                 || ((SignerStatus) workerSession.getStatus(3)).getTokenStatus() == SignerStatus.STATUS_OFFLINE);
     }
-     
+
+    @Test
     public void test02GetStatus_ok() throws Exception {
         final WorkerStatus actual = workerSession.getStatus(getSignerIdDummy1());
         assertEquals("getStatus: ", 0, actual.getFatalErrors().size());
         assertEquals(getSignerIdDummy1(), actual.getWorkerId());
     }
-    
+
+    @Test
     public void test02GetStatus_cryptoTokenOffline() throws Exception {
         // First check that there isn't any other problem
         final WorkerStatus before = workerSession.getStatus(getSignerIdDummy1());
@@ -138,10 +140,12 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
      * 
      * Test method for 'org.signserver.ejb.SignSessionBean.reloadConfiguration()'
      */
+    @Test
     public void test03ReloadConfiguration() throws Exception {
         workerSession.reloadConfiguration(0);
     }
 
+    @Test
     public void test04NameMapping() throws Exception {
         int id = workerSession.getWorkerId("testWorker");
         assertTrue("" + id, id == 3);
@@ -150,26 +154,29 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
     /*
      * Test method for 'org.signserver.ejb.SignSessionBean.SetProperty(int, String, String)'
      */
+    @Test
     public void test05SetProperty() throws Exception {
         workerSession.setWorkerProperty(3, "test", "Hello World");
 
         Properties props = workerSession.getCurrentWorkerConfig(3).getProperties();
         assertTrue(props.getProperty("TEST").equals("Hello World"));
     }
+
     /*
      * Test method for 'org.signserver.ejb.SignSessionBean.RemoveProperty(int, String)'
      */
-
+    @Test
     public void test06RemoveProperty() throws Exception {
         workerSession.removeWorkerProperty(3, "test");
 
         Properties props = workerSession.getCurrentWorkerConfig(3).getProperties();
         assertNull(props.getProperty("test"));
     }
+
     /*
      * Test method for 'org.signserver.ejb.SignSessionBean.AddAuthorizedClient(int, AuthorizedClient)'
      */
-
+    @Test
     public void test07AddAuthorizedClient() throws Exception {
         AuthorizedClient authClient = new AuthorizedClient("123456", "CN=testca");
         workerSession.addAuthorizedClient(3, authClient);
@@ -184,10 +191,11 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
 
         assertTrue(exists);
     }
+
     /*
      * Test method for 'org.signserver.ejb.SignSessionBean.RemoveAuthorizedClient(int, AuthorizedClient)'
      */
-
+    @Test
     public void test08RemoveAuthorizedClient() throws Exception {
         int initialsize = new ProcessableConfig(workerSession.getCurrentWorkerConfig(3)).getAuthorizedClients().size();
         AuthorizedClient authClient = new AuthorizedClient("123456", "CN=testca");
@@ -210,6 +218,7 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
      * Test for nextAliasInSequence.
      * @throws Exception in case of exception
      */
+    @Test
     public void test09nextAliasInSequence() throws Exception {
 
         assertEquals("KeyAlias2",
@@ -222,12 +231,12 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
                 WorkerSessionBean.nextAliasInSequence("MyKey00000"));
         assertEquals("MyKeys1_0038",
                 WorkerSessionBean.nextAliasInSequence("MyKeys1_0037"));
-
     }
     
     /**
      * Tests that a request to a disabled worker fails.
      */
+    @Test
     public void test10processForDisabledWorker() throws Exception {
         // Restore
         workerSession.removeWorkerProperty(getSignerIdDummy1(), "DISABLED");
@@ -259,6 +268,7 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
      * Test the getSignerCertificateChainBytes method with a worker with no cert chain set.
      * @throws Exception
      */
+    @Test
     public void test11noCertChain() throws Exception {
         workerSession.removeWorkerProperty(getSignerIdDummy1(), "SIGNERCERTCHAIN");
         workerSession.reloadConfiguration(getSignerIdDummy1());
@@ -268,6 +278,7 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
         assertNull("Cert chain should be null", certs);
     }
 
+    @Test
     public void test99TearDownDatabase() throws Exception {
         removeWorker(3);
         removeWorker(getSignerIdDummy1());

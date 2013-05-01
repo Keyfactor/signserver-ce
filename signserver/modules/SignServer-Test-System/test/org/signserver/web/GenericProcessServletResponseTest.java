@@ -15,9 +15,13 @@ package org.signserver.web;
 import java.net.HttpURLConnection;
 import java.util.HashMap;
 import java.util.Map;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.InvalidWorkerIdException;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
 /**
  * Tests that the right HTTP status codes are returned in different situations.
@@ -25,6 +29,7 @@ import org.signserver.common.InvalidWorkerIdException;
  * @author Markus Kilås
  * @version $Id$
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class GenericProcessServletResponseTest extends WebTestCase {
 
     private static final String KEYDATA = "KEYDATA";
@@ -38,6 +43,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
      * Sets up a dummy signer.
      * @throws Exception in case of error
      */
+    @Test
     public void test00SetupDatabase() throws Exception {
         addDummySigner1();
         addCMSSigner1();
@@ -46,6 +52,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
     /**
      * Test that a successful request returns status code 200.
      */
+    @Test
     public void test01HttpStatus200() {
         Map<String, String> fields = new HashMap<String, String>();
         fields.put("workerName", getSignerNameDummy1());
@@ -58,6 +65,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
      * Test that a bad request returns status code 400.
      * This request misses the "data" field.
      */
+    @Test
     public void test02HttpStatus400_missingField() {
         Map<String, String> fields = new HashMap<String, String>();
         fields.put("workerName", getSignerNameDummy1());
@@ -70,6 +78,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
      * Test that a bad request returns status code 400.
      * This request contains an invalid XML document.
      */
+    @Test
     public void test02HttpStatus400_invalidDocument() {
         final String invalidXMLDoc = "<noEndTagToThis>";
         Map<String, String> fields = new HashMap<String, String>();
@@ -83,6 +92,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
      * Test that a bad request returns status code 400.
      * This request contains an unknown encoding property.
      */
+    @Test
     public void test02HttpStatus400_unknownEncoding() {
         final String unknownEncoding = "_unknownEncoding123_";
         Map<String, String> fields = new HashMap<String, String>();
@@ -98,6 +108,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
     /**
      * Test that a request for non-existing worker returns status code 404.
      */
+    @Test
     public void test03HttpStatus404_nonExistingName() {
         final String nonExistingWorker = "_NotExistingWorker123_";
         Map<String, String> fields = new HashMap<String, String>();
@@ -110,6 +121,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
     /**
      * Test that a request for non-existing worker returns status code 404.
      */
+    @Test
     public void test03HttpStatus404_nonExistingId() {
         final int nonExistingId = 0;
         Map<String, String> fields = new HashMap<String, String>();
@@ -122,6 +134,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
     /**
      * Test that when the cryptotoken is offline the status code is 503.
      */
+    @Test
     public void test04HttpStatus503() {
         Map<String, String> fields = new HashMap<String, String>();
         fields.put("workerName", getSignerNameDummy1());
@@ -155,6 +168,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
     /**
      * Test that when an exception occurs status code 500 is returned.
      */
+    @Test
     public void test05HttpStatus500_exception() {
         Map<String, String> fields = new HashMap<String, String>();
         fields.put("workerName", getSignerNameDummy1());
@@ -177,7 +191,8 @@ public class GenericProcessServletResponseTest extends WebTestCase {
             getWorkerSession().reloadConfiguration(getSignerIdDummy1());
         }
     }
-    
+
+    @Test
     public void test06AttachmentFileName() throws Exception {
         Map<String, String> fields = new HashMap<String, String>();
         fields.put("workerName", getSignerNameCMSSigner1());
@@ -199,6 +214,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
      * Remove the workers created etc.
      * @throws Exception in case of error
      */
+    @Test
     public void test99TearDownDatabase() throws Exception {
         removeWorker(getSignerIdDummy1());
         removeWorker(getSignerIdCMSSigner1());

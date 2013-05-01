@@ -20,18 +20,25 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.*;
+import org.junit.After;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
 import org.signserver.cli.CommandLineInterface;
 import org.signserver.common.*;
 import org.signserver.module.mrtdsodsigner.jmrtd.SODFile;
 import org.signserver.server.cryptotokens.HardCodedCryptoToken;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestingSecurityManager;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests the MRTDSODSigner.
  *
  * @version $Id$
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MRTDSODSignerTest extends ModulesTestCase {
 
     /** Worker7897: Default algorithms, default hashing setting */
@@ -56,21 +63,20 @@ public class MRTDSODSignerTest extends ModulesTestCase {
     /** Worker7904: SHA256WithECDSA, DODATAGROUPHASHING=true */
     private static final int WORKER5 = 7904;
 
-    @Override
+    @Before
     protected void setUp() throws Exception {
-        super.setUp();
         SignServerUtil.installBCProvider();
     }
 
     /* (non-Javadoc)
      * @see junit.framework.TestCase#tearDown()
      */
-    @Override
+    @After
     protected void tearDown() throws Exception {
-        super.tearDown();
         TestingSecurityManager.remove();
     }
 
+    @Test
     public void test00SetupDatabase() throws Exception {
         assertEquals(CommandLineInterface.RETURN_SUCCESS, 
                 getAdminCLI().execute("setproperties", getSignServerHome().getAbsolutePath() + "/modules/SignServer-Module-MRTDSODSigner/src/conf/junittest-part-config.properties"));
@@ -132,6 +138,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
      * with different algorithms and verifies the result.
      * @throws Exception
      */
+    @Test
     public void test02SignData() throws Exception {
         // DG1, DG2 and default values
         Map<Integer, byte[]> dataGroups1 = new LinkedHashMap<Integer, byte[]>();
@@ -163,6 +170,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
      * hashing.
      * @throws Exception
      */
+    @Test
     public void test03SignUnhashedData() throws Exception {
         // DG1, DG2 and default values
         Map<Integer, byte[]> dataGroups1 = new LinkedHashMap<Integer, byte[]>();
@@ -185,8 +193,8 @@ public class MRTDSODSignerTest extends ModulesTestCase {
         signHelper(WORKER4, 17, dataGroups3, true, "SHA512", "SHA512withRSA");
     }
 
+    @Test
     public void test04MinRemainingCertVValidity() throws Exception {
-
         // A signing operation that will work
         Map<Integer, byte[]> dataGroups1 = new LinkedHashMap<Integer, byte[]>();
         dataGroups1.put(1, digestHelper("Dummy Value 1".getBytes(), "SHA256"));
@@ -215,9 +223,9 @@ public class MRTDSODSignerTest extends ModulesTestCase {
         assertTrue(errors, errors.contains("xpired"));
     }
 
+    @Test
     public void test04bMinRemainingCertVValidityWithSoftKeystore()
             throws Exception {
-
         // A signing operation that will work
         Map<Integer, byte[]> dataGroups1 = new LinkedHashMap<Integer, byte[]>();
         dataGroups1.put(1, digestHelper("Dummy Value 1".getBytes(), "SHA256"));
@@ -248,8 +256,8 @@ public class MRTDSODSignerTest extends ModulesTestCase {
      * Tests all validities: certificate, privatekey and min remaining period.
      * @throws Exception in case of error.
      */
+    @Test
     public void test04cRemainingValidity() throws Exception {
-
         Calendar cal = Calendar.getInstance();
 
         workerSession.setWorkerProperty(WORKER1C, "CHECKCERTVALIDITY", "True");
@@ -403,7 +411,6 @@ public class MRTDSODSignerTest extends ModulesTestCase {
     }
 
     private void signHelper(int workerId, int requestId, Map<Integer, byte[]> dataGroups, boolean signerDoesHashing, String digestAlg, String sigAlg) throws Exception {
-
         // Create expected hashes
         Map<Integer, byte[]> expectedHashes;
         if (signerDoesHashing) {
@@ -446,11 +453,13 @@ public class MRTDSODSignerTest extends ModulesTestCase {
     /**
      * Test method for 'org.signserver.server.MRTDSigner.getStatus()'
      */
+    @Test
     public void test05GetStatus() throws Exception {
         SignerStatus stat = (SignerStatus) workerSession.getStatus(7897);
         assertTrue(stat.getTokenStatus() == SignerStatus.STATUS_ACTIVE);
     }
 
+    @Test
     public void test99TearDownDatabase() throws Exception {
         removeWorker(WORKER1);
         removeWorker(WORKER2);

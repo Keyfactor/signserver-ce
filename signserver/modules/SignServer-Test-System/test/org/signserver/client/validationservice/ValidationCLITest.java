@@ -123,7 +123,7 @@ public class ValidationCLITest {
     }
 
     @Test
-    public void testHelp() throws Exception {
+    public void test01Help() throws Exception {
         int result = clientCLI.execute("validatecertificate");
         assertEquals(ValidateCertificateCommand.RETURN_BADARGUMENT, result);
         assertPrinted("", clientCLI.getOut(), "Usage: ");
@@ -133,7 +133,7 @@ public class ValidationCLITest {
     }
 
     @Test
-    public void testValidationCLI() throws Exception {
+    public void test02ValidationCLI() throws Exception {
         final String jksFile = new File(new File(signserverhome), "p12/truststore.jks").getAbsolutePath();
 
         assertEquals(CommandLineInterface.RETURN_SUCCESS, clientCLI.execute("validatecertificate", "-hosts", "localhost", "-service", "16", "-cert", validcert1path, "-truststore", jksFile, "-truststorepwd", "changeit"));

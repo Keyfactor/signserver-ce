@@ -44,7 +44,7 @@ public class GroupKeyServiceCLITest extends ModulesTestCase {
     private CLITestHelper cli = getAdminCLI();
     
     @Test
-    public void testSetupGroupKeyService() throws Exception {
+    public void test01SetupGroupKeyService() throws Exception {
         LOG.debug(">testSetupGroupKeyService");
         assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
             cli.execute("reload", "all"));
@@ -97,7 +97,7 @@ public class GroupKeyServiceCLITest extends ModulesTestCase {
     }
 
     @Test
-    public void testRemoveGroupKeyService() throws Exception {
+    public void test02RemoveGroupKeyService() throws Exception {
         LOG.debug(">testRemoveGroupKeyService");
         // Remove and restore
         assertEquals("", CommandLineInterface.RETURN_SUCCESS, 

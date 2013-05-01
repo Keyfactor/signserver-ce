@@ -56,7 +56,7 @@ public class MRTDSignerTest extends ModulesTestCase {
      * Test method for 'org.signserver.server.MRTDSigner.signData(ISignRequest)'
      */
     @Test
-    public void testSignData() throws Exception {
+    public void test01SignData() throws Exception {
         int reqid = 12;
         ArrayList<byte[]> signrequests = new ArrayList<byte[]>();
 
@@ -106,14 +106,14 @@ public class MRTDSignerTest extends ModulesTestCase {
      * Test method for 'org.signserver.server.MRTDSigner.getStatus()'
      */
     @Test
-    public void testGetStatus() throws Exception {
+    public void test02GetStatus() throws Exception {
         SignerStatus stat = (SignerStatus) workerSession.getStatus(7890);
         assertTrue(stat.getTokenStatus() == SignerStatus.STATUS_ACTIVE);
 
     }
 
     @Test
-    public void testGenericSignData() throws Exception {
+    public void test03GenericSignData() throws Exception {
         int reqid = 13;
         byte[] signreq1 = "Hello World".getBytes();
 

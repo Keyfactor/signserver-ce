@@ -79,7 +79,7 @@ public class StatusPropertiesWorkerTest extends WebTestCase {
      * while this test is running.
      */
     @Test
-    public void testNoArgumentsReturnsAll() throws Exception {
+    public void test02NoArgumentsReturnsAll() throws Exception {
         Map<String, String> fields = new HashMap<String, String>();
         fields.put("workerName", WORKERNAME);
         fields.put("data", "");
@@ -110,7 +110,7 @@ public class StatusPropertiesWorkerTest extends WebTestCase {
      * Tests querying one property only returns that property.
      */
     @Test
-    public void testGetAProperty() throws Exception {
+    public void test03GetAProperty() throws Exception {
         Map<String, String> fields = new HashMap<String, String>();
         fields.put("workerName", WORKERNAME);
         fields.put("data", "GET=SERVER_STARTED");
@@ -139,7 +139,7 @@ public class StatusPropertiesWorkerTest extends WebTestCase {
      * the two valid ones.
      */
     @Test
-    public void testGetMultipleProperties() throws Exception {
+    public void test04GetMultipleProperties() throws Exception {
         Map<String, String> fields = new HashMap<String, String>();
         fields.put("workerName", WORKERNAME);
         fields.put("data", "GET=TEST_PROPERTY1,TEST_PROPERTY2,TEST_PROPERTY3");
@@ -176,7 +176,7 @@ public class StatusPropertiesWorkerTest extends WebTestCase {
      * @throws Exception 
      */
     @Test
-    public void testSetProperties() throws Exception {
+    public void test05SetProperties() throws Exception {
         long expiration1 = System.currentTimeMillis() + 10 * 60 * 1000;
         long expiration2 = System.currentTimeMillis() + 20 * 60 * 1000;
         long expiration3 = 0;

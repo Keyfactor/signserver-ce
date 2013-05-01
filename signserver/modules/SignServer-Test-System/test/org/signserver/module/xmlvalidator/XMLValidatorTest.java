@@ -278,7 +278,7 @@ public class XMLValidatorTest extends ModulesTestCase {
     }
 
     @Test
-    public void test09DocumentNotReturned() throws Exception {
+    public void test090DocumentNotReturned() throws Exception {
         // Just some validation
         int reqid = 19;
         {
@@ -311,7 +311,7 @@ public class XMLValidatorTest extends ModulesTestCase {
     }
 
     @Test
-    public void test19DocumentReturnedWithoutSignature() throws Exception {
+    public void test091DocumentReturnedWithoutSignature() throws Exception {
         workerSession.setWorkerProperty(WORKERID, "RETURNDOCUMENT", "true");
         workerSession.setWorkerProperty(WORKERID, "STRIPSIGNATURE", "true");
         workerSession.reloadConfiguration(WORKERID);

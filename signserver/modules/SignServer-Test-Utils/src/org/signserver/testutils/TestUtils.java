@@ -47,7 +47,7 @@ public class TestUtils {
     
     private Properties buildConfig;
     
-    public void setupSSLTruststore() throws KeyStoreException, FileNotFoundException, IOException, NoSuchAlgorithmException, CertificateException, KeyManagementException, UnrecoverableKeyException {
+    public void setupSSLTruststore() {
         // This does not work on JDK 7 / GlassFish 3
 //        System.setProperty("javax.net.ssl.trustStore", trustStore);
 //        System.setProperty("javax.net.ssl.trustStorePassword",
@@ -56,8 +56,12 @@ public class TestUtils {
         //System.setProperty("javax.net.ssl.keyStorePassword", "foo123");
         
         // Instead set the socket factory
-        KeyStore truststore = loadKeyStore(getTruststoreFile(), getTrustStorePassword());
-        setDefaultSocketFactory(truststore, null, null, null);
+        try {
+            KeyStore truststore = loadKeyStore(getTruststoreFile(), getTrustStorePassword());
+            setDefaultSocketFactory(truststore, null, null, null);
+        } catch (Exception ex) {
+            throw new RuntimeException("Setup SSL truststore failed", ex);
+        }
     }
     
     private static KeyStore loadKeyStore(final File truststoreFile,

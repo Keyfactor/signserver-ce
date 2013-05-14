@@ -363,6 +363,22 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
     }
     
     /**
+     * Test that a blacklisted forwarded IPv6 address is rejected.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test19ForwardedBlacklistedIPv6() throws Exception {
+        setPropertiesAndReload("127.0.0.1", null, null, "3ffe:1900:4545:3:200:f8ff:fe21:67cf");
+        
+        int responseCode = process(
+                new URL("http://localhost:" + getPublicHTTPPort()
+                + "/signserver/process?workerId="
+                + getSignerIdDummy1() + "&data=%3Croot/%3E"), "3ffe:1900:4545:3:200:f8ff:fe21:67cf");
+        assertEquals("HTTP response code", 403, responseCode);
+    }
+    
+    /**
      * Utility method to set the access list properties (null removes a property)
      */
     private void setPropertiesAndReload(final String whitelistedDirect, final String blacklistedDirect,

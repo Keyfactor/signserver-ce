@@ -12,8 +12,11 @@
  *************************************************************************/
 package org.signserver.server;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import javax.persistence.EntityManager;
@@ -51,8 +54,10 @@ public class RemoteAddressAuthorizer implements IAuthorizer {
 
     private static final String PROPERTY_ALLOW_FROM = "ALLOW_FROM";
 
-    private Set<String> allowFrom;
-
+    private Set<InetAddress> allowFromAddresses;
+    private boolean allowEJB;
+    private List<String> fatalErrors;
+    
     private int workerId;
 
     /**
@@ -69,7 +74,8 @@ public class RemoteAddressAuthorizer implements IAuthorizer {
             throws SignServerException {
         this.workerId = workerId;
         
-        allowFrom = new HashSet<String>();
+        allowFromAddresses = new HashSet<InetAddress>();
+        fatalErrors = new LinkedList<String>();
         
         final String allowFromProperty = config.getProperty(PROPERTY_ALLOW_FROM);
         
@@ -78,7 +84,15 @@ public class RemoteAddressAuthorizer implements IAuthorizer {
             for (String allowFromString : allowFromStrings) {
                 allowFromString = allowFromString.trim();
                 if (allowFromString.length() > 0) {
-                    allowFrom.add(allowFromString);
+                    if ("null".equals(allowFromString)) {
+                        allowEJB = true;
+                    } else {
+                        try {
+                            allowFromAddresses.add(InetAddress.getByName(allowFromString));
+                        } catch (UnknownHostException e) {
+                            fatalErrors.add(e.getMessage());
+                        }
+                    }
                 }
             }
         }
@@ -98,24 +112,25 @@ public class RemoteAddressAuthorizer implements IAuthorizer {
             final RequestContext requestContext)
             throws AccessDeniedException, SignServerException, IllegalRequestException {
 
-        String remoteAddress
-                = (String) requestContext.get(RequestContext.REMOTE_IP);
-       
-        if (remoteAddress == null) {
-            remoteAddress = "null";
+        final String remote = (String) requestContext.get(RequestContext.REMOTE_IP);
+        InetAddress remoteAddress;
+        try {
+            remoteAddress = InetAddress.getByName(remote);
+        } catch (UnknownHostException e) {
+            throw new IllegalRequestException("Illegal remote address: " + remote);
         }
-        
-        if (!allowFrom.contains(remoteAddress)) {
+
+        if ((remote == null && !allowEJB) || (remote != null && !allowFromAddresses.contains(remoteAddress))) {
             LOG.error("Worker " + workerId + ": "
-                    + "Not authorized remote address: " + remoteAddress);
+                    + "Not authorized remote address: " + remote);
             throw new AccessDeniedException("Remote address not authorized");
         }
         
-        LogMap.getInstance(requestContext).put(IAuthorizer.LOG_REMOTEADDRESS, remoteAddress);
+        LogMap.getInstance(requestContext).put(IAuthorizer.LOG_REMOTEADDRESS, remote);
     }
 
     @Override
     public List<String> getFatalErrors() {
-        return Collections.emptyList();
+        return fatalErrors;
     }
 }

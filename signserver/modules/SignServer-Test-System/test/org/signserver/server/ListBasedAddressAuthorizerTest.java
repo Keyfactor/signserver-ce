@@ -313,6 +313,56 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
     }
     
     /**
+     * Tests that specifying a whitelisted forwarded IPv6 address and using the
+     * exact same form in the request works.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test16ForwardedIPv6SameForm() throws Exception {
+       setPropertiesAndReload("127.0.0.1", null, "3ffe:1900:4545:3:200:f8ff:fe21:67cf", null);
+       
+       int responseCode = process(
+               new URL("http://localhost:" + getPublicHTTPPort()
+               + "/signserver/process?workerId="
+               + getSignerIdDummy1() + "&data=%3Croot/%3E"), "3ffe:1900:4545:3:200:f8ff:fe21:67cf");
+       assertEquals("HTTP response code", 200, responseCode);
+    }
+    
+    /**
+     * Test that setting a forwarded whitelisted shortened IPv6 address and using
+     * the full form in the request works.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test17ForwardedIPv6LocalhostLongForm() throws Exception {
+       setPropertiesAndReload("127.0.0.1", null, "::1", null);
+       
+       int responseCode = process(
+               new URL("http://localhost:" + getPublicHTTPPort()
+               + "/signserver/process?workerId="
+               + getSignerIdDummy1() + "&data=%3Croot/%3E"), "0000:0000:0000:0000:0000:0000:0000:0001");
+       assertEquals("HTTP response code", 200, responseCode);
+    }
+    
+    /**
+     * Test that a request from a non-whitelisted forwarded IPv6 address is rejected.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test18ForwardedNotAllowedIPv6() throws Exception {
+        setPropertiesAndReload("127.0.0.1", null, "::1", null);
+        
+        int responseCode = process(
+                new URL("http://localhost:" + getPublicHTTPPort()
+                + "/signserver/process?workerId="
+                + getSignerIdDummy1() + "&data=%3Croot/%3E"), "3ffe:1900:4545:3:200:f8ff:fe21:67cf");
+        assertEquals("HTTP response code", 403, responseCode);
+    }
+    
+    /**
      * Utility method to set the access list properties (null removes a property)
      */
     private void setPropertiesAndReload(final String whitelistedDirect, final String blacklistedDirect,

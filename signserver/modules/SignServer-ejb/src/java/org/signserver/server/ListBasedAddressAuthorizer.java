@@ -82,19 +82,26 @@ public class ListBasedAddressAuthorizer implements IAuthorizer {
         isForwardedWhitelisting = whitelistedForwardedAddresses != null;
         
         if (whitelistedDirectAddresses != null) {
-            addressesDirect = splitAddresses(whitelistedDirectAddresses);
+            addressesDirect = splitAddresses(whitelistedDirectAddresses, PROPERTY_WHITELISTED_DIRECT_ADDRESSES);
         } else {
-            addressesDirect = splitAddresses(blacklistedDirectAddresses);
+            addressesDirect = splitAddresses(blacklistedDirectAddresses, PROPERTY_BLACKLISTED_DIRECT_ADDRESSES);
         }
         
         if (whitelistedForwardedAddresses != null) {
-            addressesForwarded = splitAddresses(whitelistedForwardedAddresses);
+            addressesForwarded = splitAddresses(whitelistedForwardedAddresses, PROPERTY_WHITELISTED_FORWARDED_ADDRESSES);
         } else {
-            addressesForwarded = splitAddresses(blacklistedForwardedAddresses);
+            addressesForwarded = splitAddresses(blacklistedForwardedAddresses, PROPERTY_BLACKLISTED_FORWARDED_ADDRESSES);
         }
     }
     
-    private Set<InetAddress> splitAddresses(final String addresses) {
+    /**
+     * Helper method to extract addresses from configuration properties. Will also set fatal errors for malformed addresses.
+     * 
+     * @param addresses Comma-separeated list of IP addresses (taken from the configuration)
+     * @param component Used to prefix a possible error string
+     * @return A set of InetAddress objects representing the list
+     */
+    private Set<InetAddress> splitAddresses(final String addresses, final String component) {
         final Set<InetAddress> res = new HashSet<InetAddress>();
         final String[] addressArr = addresses.split(",");
         
@@ -104,7 +111,7 @@ public class ListBasedAddressAuthorizer implements IAuthorizer {
                 try {
                     res.add(InetAddress.getByName(address));
                 } catch (UnknownHostException e) {
-                    fatalErrors.add(e.getMessage());
+                    fatalErrors.add(component + ", illegal address specified: " + address);
                 }
             }
         }

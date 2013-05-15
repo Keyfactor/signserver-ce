@@ -397,6 +397,23 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
     }
     
     /**
+     * Test that blacklisting forwarded localhost addresses using the full form
+     * also blocks requests using the shortened form.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test21ForwardedBlacklistedIPv6LocalhostShortForm() throws Exception {
+        setPropertiesAndReload("127.0.0.1", null, null, "0000:0000:0000:0000:0000:0000:0000:0001");
+        
+        int responseCode = process(
+                new URL("http://localhost:" + getPublicHTTPPort()
+                + "/signserver/process?workerId="
+                + getSignerIdDummy1() + "&data=%3Croot/%3E"), "::1");
+        assertEquals("HTTP response code", 403, responseCode);
+    }
+
+    /**
      * Utility method to set the access list properties (null removes a property)
      */
     private void setPropertiesAndReload(final String whitelistedDirect, final String blacklistedDirect,

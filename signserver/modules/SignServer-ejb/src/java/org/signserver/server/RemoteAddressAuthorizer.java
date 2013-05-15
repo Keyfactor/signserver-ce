@@ -90,7 +90,7 @@ public class RemoteAddressAuthorizer implements IAuthorizer {
                         try {
                             allowFromAddresses.add(InetAddress.getByName(allowFromString));
                         } catch (UnknownHostException e) {
-                            fatalErrors.add(e.getMessage());
+                            fatalErrors.add(PROPERTY_ALLOW_FROM + ", illegal address: " + allowFromString);
                         }
                     }
                 }

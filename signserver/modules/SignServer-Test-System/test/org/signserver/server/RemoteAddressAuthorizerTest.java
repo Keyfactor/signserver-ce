@@ -162,6 +162,25 @@ public class RemoteAddressAuthorizerTest extends ModulesTestCase {
             fail("Exception: " + ex.getMessage());
         }
     }
+    
+    /**
+     * Test with an additional IPv6 address added to the allow list.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test06RequestWithAdditionalIPv6Address() throws Exception {
+        workerSession.setWorkerProperty(getSignerIdDummy1(), "ALLOW_FROM",
+                "127.0.0.1, 3ffe:1900:4545:3:200:f8ff:fe21:67cf");
+        workerSession.reloadConfiguration(getSignerIdDummy1());
+        
+        int responseCode = process(
+                new URL("http://localhost:" + getPublicHTTPPort()
+                + "/signserver/process?workerId="
+                + getSignerIdDummy1() + "&data=%3Croot/%3E"));
+
+        assertEquals("HTTP response code", 200, responseCode);
+    }
 
     private int process(URL workerUrl) {
         int responseCode = -1;

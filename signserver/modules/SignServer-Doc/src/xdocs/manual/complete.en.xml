@@ -1297,8 +1297,8 @@ As a complement to the command line interface there is also a graphical user
 interface for managing some of the most basic administrative tasks.
                     </p>
                     <p>
-The SignServer AdminGUI can be build by running "ant admingui" and then started 
-using the script bin/admingui.sh. By default it tries to connect to a locally
+The SignServer AdminGUI is built by default (unless the property admingui.enabled is set to the value "false" in signserver_build.properties),
+and can be started using the script bin/admingui.sh. By default it tries to connect to a locally
 running SignServer instance using EJB calls. If that fails or if the command
 line option "-ws" is specified a connection dialog for connecting using web
 services is displayed instead.

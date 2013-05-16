@@ -73,14 +73,20 @@ public class RemoteAddressAuthorizer implements IAuthorizer {
             final EntityManager em)
             throws SignServerException {
         this.workerId = workerId;
-        
+
+        final String allowFromProperty = config.getProperty(PROPERTY_ALLOW_FROM);
+       
+        setAllowFromProperty(allowFromProperty);
+    }
+
+    // allow the test (same package) to set the allow list manually
+    void setAllowFromProperty(final String allowFromProperty) {
         allowFromAddresses = new HashSet<InetAddress>();
         fatalErrors = new LinkedList<String>();
-        
-        final String allowFromProperty = config.getProperty(PROPERTY_ALLOW_FROM);
-        
+
         if (allowFromProperty != null) {
             final String[] allowFromStrings = allowFromProperty.split(",");
+            
             for (String allowFromString : allowFromStrings) {
                 allowFromString = allowFromString.trim();
                 if (allowFromString.length() > 0) {
@@ -97,7 +103,7 @@ public class RemoteAddressAuthorizer implements IAuthorizer {
             }
         }
     }
-
+    
     /**
      * Throws AuthorizationRequiredException unless the requestor's IP address
      * is allowed.
@@ -113,14 +119,8 @@ public class RemoteAddressAuthorizer implements IAuthorizer {
             throws AccessDeniedException, SignServerException, IllegalRequestException {
 
         final String remote = (String) requestContext.get(RequestContext.REMOTE_IP);
-        InetAddress remoteAddress;
-        try {
-            remoteAddress = InetAddress.getByName(remote);
-        } catch (UnknownHostException e) {
-            throw new IllegalRequestException("Illegal remote address: " + remote);
-        }
 
-        if ((remote == null && !allowEJB) || (remote != null && !allowFromAddresses.contains(remoteAddress))) {
+        if (!isAddressAuthorized(remote)) {
             LOG.error("Worker " + workerId + ": "
                     + "Not authorized remote address: " + remote);
             throw new AccessDeniedException("Remote address not authorized");
@@ -129,6 +129,22 @@ public class RemoteAddressAuthorizer implements IAuthorizer {
         LogMap.getInstance(requestContext).put(IAuthorizer.LOG_REMOTEADDRESS, remote);
     }
 
+    // allow test (same package) to run the authorization functionallity directly
+    boolean isAddressAuthorized(final String address) throws IllegalRequestException {
+        InetAddress remoteAddress;
+        try {
+            remoteAddress = InetAddress.getByName(address);
+        } catch (UnknownHostException e) {
+            throw new IllegalRequestException("Illegal remote address: " + address);
+        }
+
+        if ((address == null && !allowEJB) || (address != null && !allowFromAddresses.contains(remoteAddress))) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+    
     @Override
     public List<String> getFatalErrors() {
         return fatalErrors;

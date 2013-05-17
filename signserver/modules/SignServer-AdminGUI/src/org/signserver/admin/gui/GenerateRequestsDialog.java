@@ -43,6 +43,7 @@ import org.signserver.admin.gui.adminws.gen.InvalidWorkerIdException_Exception;
 import org.signserver.admin.gui.adminws.gen.Pkcs10CertReqInfo;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GenericSignResponse;
+import org.signserver.common.WorkerConfig;
 
 /**
  * Dialog for generating certificate requests.
@@ -421,7 +422,8 @@ public class GenerateRequestsDialog extends JDialog {
 
                 FileOutputStream fos = null;
                 try {
-                    final boolean explicitEccParameters = false;
+                    final boolean explicitEccParameters =
+                            Boolean.parseBoolean(worker.getConfiguration().getProperty(WorkerConfig.PROPERTY_EXPLICITECC, "false"));
                     final Pkcs10CertReqInfo certReqInfo
                             = new Pkcs10CertReqInfo();
                     certReqInfo.setSignatureAlgorithm(sigAlg);

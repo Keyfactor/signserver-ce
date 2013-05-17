@@ -2934,6 +2934,10 @@ The key usage counter can not be disabled for a worker if KEYUSAGELIMIT is also 
                 <p>
 <b>DISABLED</b> = Setting this to true disables a worker. A disabled worker can not perform any operations and any requests to it will fail. However, disabled workers are not included in the Health check report. 
                 </p>
+                <p>
+<b>EXPLICITECC</b> = Setting this to true uses explicit domain parameters instead of NamedCurves when generating
+a certificate request using the RenewalWorker or through to admin GUI. (default: false)
+				</p> 
             </section>
 		</chapter>
 		

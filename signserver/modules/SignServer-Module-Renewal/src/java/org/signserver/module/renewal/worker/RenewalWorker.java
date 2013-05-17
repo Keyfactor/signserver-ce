@@ -69,7 +69,7 @@ public class RenewalWorker extends BaseSigner {
             = "SIGNATUREALGORITHM";
     public static final String PROPERTY_KEYALG = "KEYALG";
     public static final String PROPERTY_KEYSPEC = "KEYSPEC";
-    public static final String PROPERTY_EXPLICITECC = "EXPLICITECC";
+
     private static final String NEXTCERTSIGNKEY = "NEXTCERTSIGNKEY";
 
     private static final String TRUSTSTORE_TYPE_PEM = "PEM";
@@ -229,7 +229,7 @@ public class RenewalWorker extends BaseSigner {
             final String keySpec = workerConfig.getProperty(
                     PROPERTY_KEYSPEC);
             final String explicitEccParameters = workerConfig.getProperty(
-                    PROPERTY_EXPLICITECC, String.valueOf(false));
+                    WorkerConfig.PROPERTY_EXPLICITECC, String.valueOf(false));
             String nextCertSignKey
                     = workerConfig.getProperty(NEXTCERTSIGNKEY);
 
@@ -262,7 +262,7 @@ public class RenewalWorker extends BaseSigner {
                     .append(PROPERTY_REQUESTDN).append("=").append(subjectDN).append("\n\t")
                     .append(PROPERTY_KEYALG).append("=").append(keyAlg).append("\n\t")
                     .append(PROPERTY_KEYSPEC).append("=").append(keySpec).append("\n\t")
-                    .append(PROPERTY_EXPLICITECC).append("=").append(explicitEccParameters).append("\n\t")
+                    .append(WorkerConfig.PROPERTY_EXPLICITECC).append("=").append(explicitEccParameters).append("\n\t")
                     .append(PROPERTY_RENEWENDENTITY).append("=").append(endEntity).append("\n");
 
                 buff.append("Request config:\n\t");

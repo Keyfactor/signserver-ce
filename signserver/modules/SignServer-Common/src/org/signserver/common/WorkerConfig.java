@@ -63,6 +63,8 @@ public class WorkerConfig extends UpgradeableDataHashMap {
     protected static final String PROPERTIES = "PROPERTIES";
     
     public static final String CLASS = "CLASSPATH";
+    
+    public static final String PROPERTY_EXPLICITECC = "EXPLICITECC";
 
     private static String nodeId = null;
     

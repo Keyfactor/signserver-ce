@@ -534,7 +534,7 @@ public class RenewalWorker extends BaseSigner {
         }
     }
 
-    private IWorkerSession.IRemote getWorkerSession() {
+    protected IWorkerSession.IRemote getWorkerSession() {
         if (workerSession == null) {
             try {
                 workerSession = ServiceLocator.getInstance().lookupRemote(
@@ -702,7 +702,7 @@ public class RenewalWorker extends BaseSigner {
         responseData.setProperty(RenewalWorkerProperties.RESPONSE_MESSAGE,
                 message == null ? "" : message);
     }
-
+  
     class AliasKeyManager implements X509KeyManager {
 
         private final X509KeyManager base;

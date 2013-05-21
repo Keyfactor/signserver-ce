@@ -123,31 +123,31 @@ public class HealthCheckServlet extends HttpServlet {
     private void check(HttpServletRequest request, HttpServletResponse response){
     	boolean authorizedIP = false;
     	String remoteIP = request.getRemoteAddr();
-    	if ( (authIPs != null) && (authIPs.length > 0) ) {
-    		for(int i=0; i < authIPs.length ; i++) {
-    			if(remoteIP.equals(authIPs[i])) {
-    				authorizedIP = true;
-    			}
-    		}
+    	if ((authIPs != null) && (authIPs.length > 0)) {
+    	    for(int i=0; i < authIPs.length ; i++) {
+    	        if(remoteIP.equals(authIPs[i])) {
+    	            authorizedIP = true;
+    	        }
+    	    }
     	} else {
-    		String iMsg = intres.getLocalizedMessage("healthcheck.allipsauthorized");
-    		log.info(iMsg);
-    		authorizedIP = true;
+    	    String iMsg = intres.getLocalizedMessage("healthcheck.allipsauthorized");
+    	    log.info(iMsg);
+    	    authorizedIP = true;
     	}
 
     	if (authorizedIP) {    	
-    		healthresponse.respond(healthcheck.checkHealth(request),response);
+    	    healthresponse.respond(healthcheck.checkHealth(request),response);
     	} else {
-			if ((remoteIP == null) || (remoteIP.length() > 100) ) {
-				remoteIP="unknown";    			  
-			}
-    		try {
-    			response.sendError(HttpServletResponse.SC_UNAUTHORIZED,"ERROR : Healthcheck request recieved from an non authorized IP: "+remoteIP);
-    		} catch (IOException e) {
-    			log.error("ERROR : Problems generating unauthorized http response.");
-    		}
-    		String iMsg = intres.getLocalizedMessage("healthcheck.errorauth", remoteIP);
-    		log.error(iMsg);
+    	    if ((remoteIP == null) || (remoteIP.length() > 100) ) {
+		remoteIP = "unknown";    			  
+    	    }
+    	    try {
+    		response.sendError(HttpServletResponse.SC_UNAUTHORIZED,"ERROR : Healthcheck request recieved from an non authorized IP: "+remoteIP);
+    	    } catch (IOException e) {
+    	        log.error("ERROR : Problems generating unauthorized http response.");
+    	    }
+    	    String iMsg = intres.getLocalizedMessage("healthcheck.errorauth", remoteIP);
+    	    log.error(iMsg);
     	}
     }
 

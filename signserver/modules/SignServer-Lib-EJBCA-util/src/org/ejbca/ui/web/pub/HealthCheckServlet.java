@@ -26,6 +26,7 @@ import org.apache.log4j.Logger;
 import org.ejbca.core.model.InternalResources;
 import org.ejbca.ui.web.pub.cluster.IHealthCheck;
 import org.ejbca.ui.web.pub.cluster.IHealthResponse;
+import org.ejbca.ui.web.pub.SameRequestRateLimiter;
 import org.ejbca.util.CertTools;
 
 
@@ -55,6 +56,8 @@ public class HealthCheckServlet extends HttpServlet {
 
     private String[] authIPs = null;
     private boolean allIPsAuth;
+    
+    private static final SameRequestRateLimiter<String> rateLimiter = new SameRequestRateLimiter<String>();
     
     /**
      * Servlet init
@@ -140,8 +143,19 @@ public class HealthCheckServlet extends HttpServlet {
     	    }
     	}
 
-    	if (authorizedIP) {    	
-    	    healthresponse.respond(healthcheck.checkHealth(request),response);
+    	if (authorizedIP) {
+    	    final SameRequestRateLimiter<String>.Result result = rateLimiter.getResult();
+    	    
+    	    if (result.isFirst()) {
+    	        try {
+    	            result.setValue(healthcheck.checkHealth(request));
+    	        } catch (Throwable t) {
+    	            result.setError(t);
+    	        }
+    	    } else if (log.isDebugEnabled()) {
+    	        log.debug("Re-using health check answer from first concurrent request for this request to conserve server load.");
+    	    }
+    	    healthresponse.respond(result.getValue(), response);
     	} else {
     	    if ((remoteIP == null) || (remoteIP.length() > 100) ) {
 		remoteIP = "unknown";    			  

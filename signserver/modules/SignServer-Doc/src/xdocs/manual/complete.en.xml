@@ -1691,7 +1691,7 @@ The following configuration parameters may be set to configure authorization and
                     </p>
                     <p>
 <source>healthcheck.authorizedips</source> - A semicolon-delimited list of IP addresses authorized to access
-the healthcheck servlet (defaults to <source>127.0.0.1</source>).
+the healthcheck servlet, if the list contains the keyword "ANY", any IP address is authorized access (defaults to <source>127.0.0.1</source>).
                     </p>
                     <p>
 <source>healthcheck.minimumfreememory</source> - Number of megabytes of memory that must be free before removing     

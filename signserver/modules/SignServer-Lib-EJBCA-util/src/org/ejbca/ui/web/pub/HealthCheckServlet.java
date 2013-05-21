@@ -14,6 +14,7 @@
 package org.ejbca.ui.web.pub;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -26,7 +27,6 @@ import org.ejbca.core.model.InternalResources;
 import org.ejbca.ui.web.pub.cluster.IHealthCheck;
 import org.ejbca.ui.web.pub.cluster.IHealthResponse;
 import org.ejbca.util.CertTools;
-
 
 
 
@@ -53,7 +53,8 @@ public class HealthCheckServlet extends HttpServlet {
     private IHealthCheck healthcheck = null;
     private IHealthResponse healthresponse = null;
 
-    private String[] authIPs = null; 
+    private String[] authIPs = null;
+    private boolean allIPsAuth;
     
     /**
      * Servlet init
@@ -70,8 +71,12 @@ public class HealthCheckServlet extends HttpServlet {
             CertTools.installBCProvider();
 
             String authIPString = config.getInitParameter("AuthorizedIPs");
-            if(authIPString != null){
+            if (authIPString != null) {
             	authIPs = authIPString.split(";");
+            }
+
+            if (Arrays.asList(authIPs).contains("ANY")) {
+                allIPsAuth = true;
             }
             
             
@@ -123,16 +128,16 @@ public class HealthCheckServlet extends HttpServlet {
     private void check(HttpServletRequest request, HttpServletResponse response){
     	boolean authorizedIP = false;
     	String remoteIP = request.getRemoteAddr();
-    	if ((authIPs != null) && (authIPs.length > 0)) {
-    	    for(int i=0; i < authIPs.length ; i++) {
-    	        if(remoteIP.equals(authIPs[i])) {
-    	            authorizedIP = true;
-    	        }
-    	    }
-    	} else {
+    	if (allIPsAuth) {
     	    String iMsg = intres.getLocalizedMessage("healthcheck.allipsauthorized");
     	    log.info(iMsg);
     	    authorizedIP = true;
+    	} else {
+    	    for (final String ip : authIPs) {
+    	        if (remoteIP.equals(ip)) {
+    	            authorizedIP = true;
+    	        }
+    	    }
     	}
 
     	if (authorizedIP) {    	

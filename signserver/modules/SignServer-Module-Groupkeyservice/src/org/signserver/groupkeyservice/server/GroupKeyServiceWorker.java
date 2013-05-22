@@ -13,6 +13,7 @@
 package org.signserver.groupkeyservice.server;
 
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
@@ -46,7 +47,8 @@ public class GroupKeyServiceWorker extends BaseProcessable implements IGroupKeyS
     private transient Logger log = Logger.getLogger(this.getClass());
     
     private IGroupKeyService groupKeyService;
-
+    private List<String> fatalErrors;
+    
     /**
      * Initialization method creating the group key service
      * @see org.signserver.server.BaseWorker#init(int, org.signserver.common.WorkerConfig, org.signserver.server.WorkerContext, javax.persistence.EntityManager)
@@ -55,12 +57,18 @@ public class GroupKeyServiceWorker extends BaseProcessable implements IGroupKeyS
     public void init(int workerId, WorkerConfig config, WorkerContext workerContext, EntityManager workerEntityManager) {
         super.init(workerId, config, workerContext, workerEntityManager);
 
+        fatalErrors = new LinkedList<String>();
         groupKeyService = createGroupService(config);
     }
     
     @Override
     public List<String> getFatalErrors() {
-        return Collections.emptyList();
+        final List<String> errors = new LinkedList<String>();
+        
+        errors.addAll(super.getFatalErrors());
+        errors.addAll(fatalErrors);
+        
+        return errors;
     }
 
     /**
@@ -71,6 +79,7 @@ public class GroupKeyServiceWorker extends BaseProcessable implements IGroupKeyS
     private IGroupKeyService createGroupService(WorkerConfig config) {
         String classPath = config.getProperties().getProperty(GroupKeyServiceConstants.GROUPKEYDATASERVICE_TYPE, GroupKeyServiceConstants.DEFAULT_TYPE);
         IGroupKeyService retval = null;
+        String error = null;
         try {
             if (classPath != null) {
                 Class<?> implClass = Class.forName(classPath);
@@ -80,13 +89,21 @@ public class GroupKeyServiceWorker extends BaseProcessable implements IGroupKeyS
                 retval.init(workerId, config, em, getExtendedCryptoToken());
             }
         } catch (ClassNotFoundException e) {
-            log.error("Error instatiating Group Key Service, check that the TYPE setting of workerid : " + workerId + " have the correct class path.", e);
+            error = "Error instatiating Group Key Service, check that the TYPE setting of workerid : " + workerId + " have the correct class path.";
+            log.error(error, e);
         } catch (IllegalAccessException e) {
-            log.error("Error instatiating Group Key Service, check that the TYPE setting of workerid : " + workerId + " have the correct class path.", e);
+            error = "Error instatiating Group Key Service, check that the TYPE setting of workerid : " + workerId + " have the correct class path.";
+            log.error(error, e);
         } catch (InstantiationException e) {
-            log.error("Error instatiating Group Key Service, check that the TYPE setting of workerid : " + workerId + " have the correct class path.", e);
+            error = "Error instatiating Group Key Service, check that the TYPE setting of workerid : " + workerId + " have the correct class path.";
+            log.error(error, e);
         } catch (SignServerException e) {
-        	log.error("Error getting crypto token.", e);
+            error = "Error getting crypto token.";
+            log.error(error, e);
+        }
+        
+        if (error != null) {
+            fatalErrors.add(error);
         }
 
         return retval;

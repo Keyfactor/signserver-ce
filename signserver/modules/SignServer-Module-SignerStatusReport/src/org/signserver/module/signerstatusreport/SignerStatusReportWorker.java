@@ -67,6 +67,7 @@ public class SignerStatusReportWorker extends BaseSigner {
     private static final ICryptoToken CRYPTO_TOKEN = new NullCryptoToken(SignerStatus.STATUS_ACTIVE);
     
     private SignerStatusReportBuilder reportBuilder;
+    private List<String> workers;
 
     /** Workersession. */
     @EJB
@@ -75,7 +76,7 @@ public class SignerStatusReportWorker extends BaseSigner {
     @Override
     public void init(int workerId, WorkerConfig config, WorkerContext workerContext, EntityManager workerEM) {
         super.init(workerId, config, workerContext, workerEM);
-        List<String> workers = new LinkedList<String>();
+        workers = new LinkedList<String>();
         final String workersValue = config.getProperty(PROPERTY_WORKERS);
         if (workersValue == null) {
             LOG.error("Property WORKERS missing!");
@@ -133,5 +134,16 @@ public class SignerStatusReportWorker extends BaseSigner {
         }
 
         return result;
+    }
+
+    @Override
+    protected List<String> getFatalErrors() {
+        final List<String> fatalErrors = super.getFatalErrors();
+        
+        if (workers.isEmpty()) {
+            fatalErrors.add("Property WORKERS missing");
+        }
+        
+        return fatalErrors;
     }
 }

@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.validationservice.server;
 
+import java.util.LinkedList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
@@ -41,7 +42,8 @@ public class ValidationServiceWorker extends BaseProcessable {
     private static final Logger LOG = Logger.getLogger(ValidationServiceWorker.class);
     
     private IValidationService validationService;
-
+    private List<String> fatalErrors;
+    
     /**
      * Initialization method creating the validation service
      * @see org.signserver.server.BaseWorker#init(int, org.signserver.common.WorkerConfig, javax.persistence.EntityManager)
@@ -49,11 +51,14 @@ public class ValidationServiceWorker extends BaseProcessable {
     @Override
     public void init(int workerId, WorkerConfig config, WorkerContext workerContext, EntityManager workerEntityManager) {
         super.init(workerId, config, workerContext, workerEntityManager);
-
+        fatalErrors = new LinkedList<String>();
+        
         try {
             validationService = createValidationService(config);
         } catch (SignServerException e) {
-            LOG.error("Could not get crypto token: " + e.getMessage());
+            final String error = "Could not get crypto token: " + e.getMessage();
+            LOG.error(error);
+            fatalErrors.add(error);
         }
     }
 
@@ -65,6 +70,7 @@ public class ValidationServiceWorker extends BaseProcessable {
     private IValidationService createValidationService(WorkerConfig config) throws SignServerException {
         String classPath = config.getProperties().getProperty(ValidationServiceConstants.VALIDATIONSERVICE_TYPE, ValidationServiceConstants.DEFAULT_TYPE);
         IValidationService retval = null;
+        String error = null;
         try {
             if (classPath != null) {
                 Class<?> implClass = Class.forName(classPath);
@@ -73,13 +79,20 @@ public class ValidationServiceWorker extends BaseProcessable {
                 retval.init(workerId, config, em, getCryptoToken());
             }
         } catch (ClassNotFoundException e) {
-            LOG.error("Error instatiating Validation Service, check that the TYPE setting of workerid : " + workerId + " have the correct class path.", e);
+            error = "Error instatiating Validation Service, check that the TYPE setting of workerid : " + workerId + " have the correct class path.";
+            LOG.error(error, e);
         } catch (IllegalAccessException e) {
-            LOG.error("Error instatiating Validation Service, check that the TYPE setting of workerid : " + workerId + " have the correct class path.", e);
+            error = "Error instatiating Validation Service, check that the TYPE setting of workerid : " + workerId + " have the correct class path.";
+            LOG.error(error, e);
         } catch (InstantiationException e) {
-            LOG.error("Error instatiating Validation Service, check that the TYPE setting of workerid : " + workerId + " have the correct class path.", e);
+            error = "Error instatiating Validation Service, check that the TYPE setting of workerid : " + workerId + " have the correct class path.";
+            LOG.error(error, e);
         }
 
+        if (error != null) {
+            fatalErrors.add(error);
+        }
+        
         return retval;
     }
 
@@ -108,4 +121,16 @@ public class ValidationServiceWorker extends BaseProcessable {
     public WorkerStatus getStatus(final List<String> additionalFatalErrors) {
         return validationService.getStatus();
     }
+
+    @Override
+    protected List<String> getFatalErrors() {
+        final List<String> fatalErrors = new LinkedList<String>();
+        
+        fatalErrors.addAll(super.getFatalErrors());
+        fatalErrors.addAll(fatalErrors);
+
+        return fatalErrors;
+    }
+    
+    
 }

@@ -53,7 +53,8 @@ public class SignerStatusReportTimedService extends BaseTimedService {
     private File outputFile;
 
     private SignerStatusReportBuilder reportBuilder;
-
+    private List<String> workers;
+    
     /** Workersession. */
     @EJB
     private IWorkerSession workerSession; // FIXME: Better to somehow inject this
@@ -81,7 +82,7 @@ public class SignerStatusReportTimedService extends BaseTimedService {
             LOG.error("Property OUTPUTFILE missing!");
         }
 
-        List<String> workers = new LinkedList<String>();
+        workers = new LinkedList<String>();
         final String workersValue = config.getProperty(PROPERTY_WORKERS);
         if (workersValue == null) {
             LOG.error("Property WORKERS missing!");
@@ -135,5 +136,22 @@ public class SignerStatusReportTimedService extends BaseTimedService {
             }
         }
         return workerSession;
+    }
+
+    @Override
+    protected List<String> getFatalErrors() {
+        final List<String> fatalErrors = new LinkedList<String>();
+        
+        fatalErrors.addAll(super.getFatalErrors());
+        
+        if (workers.isEmpty()) {
+            fatalErrors.add("Property WORKERS missing");
+        }
+        
+        if (outputFile == null) {
+            fatalErrors.add("Property OUTPUTFILE missing");
+        }
+        
+        return fatalErrors;
     }
 }

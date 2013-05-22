@@ -13,12 +13,14 @@
 package org.signserver.module.signerstatusreport;
 
 import java.io.*;
+import java.util.List;
 import java.util.Map;
 import org.apache.log4j.Logger;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.SignServerUtil;
+import org.signserver.common.WorkerStatus;
 import org.signserver.testutils.ModulesTestCase;
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -172,6 +174,24 @@ public class SignerStatusReportTimedServiceTest extends ModulesTestCase {
         assertNotNull("Worker 3 present", status.get(WORKER_SIGNER3));
         assertEquals("Worker 3 active", "ACTIVE", status.get(WORKER_SIGNER3).get("status"));
         assertNotNull("Worker 3 signings", status.get(WORKER_SIGNER3).get("signings"));
+        
+        // test that removing the WORKERS and OUTPUTFILE property results in a fatal error
+        workerSession.removeWorkerProperty(WORKERID_SERVICE, "WORKERS");
+        workerSession.removeWorkerProperty(WORKERID_SERVICE, "OUTPUTFILE");
+        workerSession.reloadConfiguration(WORKERID_SERVICE);
+        
+        final WorkerStatus workerStatus = workerSession.getStatus(WORKERID_SERVICE);
+        final List<String> errors = workerStatus.getFatalErrors();
+        
+        assertTrue("Should mention missing WORKERS property", errors.contains("Property WORKERS missing"));
+        assertTrue("Should mention missing OUTPUTFILE property", errors.contains("Property OUTPUTFILE missing"));
+        
+        // restore
+        workerSession.setWorkerProperty(WORKERID_SERVICE, "WORKERS",
+                WORKER_SIGNER1+","+WORKER_SIGNER2+","+WORKER_SIGNER3);
+        workerSession.setWorkerProperty(WORKERID_SERVICE, "OUTPUTFILE",
+                outputFile.getAbsolutePath());
+        workerSession.reloadConfiguration(WORKERID_SERVICE);
     }
 
     /**

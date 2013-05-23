@@ -414,6 +414,41 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
     }
 
     /**
+     * Test that the default is checking only the last IP address for whitelisting.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test22ForwardedWhitelistDefaultMax() throws Exception {
+        setPropertiesAndReload("127.0.0.1", null, "1.2.3.4", null);
+        
+        
+        int responseCode = process(
+                new URL("http://localhost:" + getPublicHTTPPort()
+                + "/signserver/process?workerId="
+                + getSignerIdDummy1() + "&data=%3Croot/%3E"), "1.2.3.4, 42.42.42.42");
+        assertEquals("HTTP response code", 403, responseCode);
+    }
+    
+    /**
+     * Test that checking two proxy addresses works as expected.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test23ForwardedWhitelistTwoProxies() throws Exception {
+        setPropertiesAndReload("127.0.0.1", null, "1.2.3.4", null);
+        workerSession.setWorkerProperty(getSignerIdDummy1(), "MAX_FORWARDED_ADDRESSES", "2");
+        workerSession.reloadConfiguration(getSignerIdDummy1());
+        
+        int responseCode = process(
+                new URL("http://localhost:" + getPublicHTTPPort()
+                + "/signserver/process?workerId="
+                + getSignerIdDummy1() + "&data=%3Croot/%3E"), "1.2.3.4, 42.42.42.42");
+        assertEquals("HTTP response code", 200, responseCode);
+    }
+    
+    /**
      * Utility method to set the access list properties (null removes a property)
      */
     private void setPropertiesAndReload(final String whitelistedDirect, final String blacklistedDirect,

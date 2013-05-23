@@ -14,6 +14,7 @@ package org.signserver.server;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -48,6 +49,9 @@ public class ListBasedAddressAuthorizer implements IAuthorizer {
     private static final String PROPERTY_BLACKLISTED_DIRECT_ADDRESSES = "BLACKLISTED_DIRECT_ADDRESSES";
     private static final String PROPERTY_WHITELISTED_FORWARDED_ADDRESSES = "WHITELISTED_FORWARDED_ADDRESSES";
     private static final String PROPERTY_BLACKLISTED_FORWARDED_ADDRESSES = "BLACKLISTED_FORWARDED_ADDRESSES";
+    private static final String PROPERTY_MAX_FORWARDED_ADDRESSES = "MAX_FORWARDED_ADDRESSES";
+    
+    private static final int MAX_FORWARDED_ADDRESSES_DEFAULT = 1;
     
     private Set<InetAddress> addressesDirect;
     private Set<InetAddress> addressesForwarded;
@@ -57,7 +61,8 @@ public class ListBasedAddressAuthorizer implements IAuthorizer {
     private String blacklistedDirectAddresses;
     private String whitelistedForwardedAddresses;
     private String blacklistedForwardedAddresses;
-
+    private int maxForwardedAddresses;
+    
     private int workerId;
 
     private List<String> fatalErrors;
@@ -92,6 +97,9 @@ public class ListBasedAddressAuthorizer implements IAuthorizer {
         } else {
             addressesForwarded = splitAddresses(blacklistedForwardedAddresses, PROPERTY_BLACKLISTED_FORWARDED_ADDRESSES);
         }
+        
+        maxForwardedAddresses =
+                Integer.parseInt(config.getProperty(PROPERTY_MAX_FORWARDED_ADDRESSES, Integer.toString(MAX_FORWARDED_ADDRESSES_DEFAULT)));
     }
     
     /**
@@ -124,20 +132,14 @@ public class ListBasedAddressAuthorizer implements IAuthorizer {
             RequestContext requestContext) throws IllegalRequestException,
             AccessDeniedException, SignServerException {
         final String remote = (String) requestContext.get(RequestContext.REMOTE_IP);
-        final String forwarded = XForwardedForUtils.getXForwardedForIP(requestContext);
+        final String[] forwardedAddresses = XForwardedForUtils.getXForwardedForIPs(requestContext, maxForwardedAddresses);
         InetAddress remoteAddress;
         try {
             remoteAddress = InetAddress.getByName(remote);
         } catch (UnknownHostException e) {
             throw new IllegalRequestException("Illegal remote address in request: " + remote);
         }
-        InetAddress forwardedAddress;
-        try {
-            forwardedAddress = InetAddress.getByName(forwarded);
-        } catch (UnknownHostException e) {
-            throw new IllegalRequestException("Illegal forwarded address in request: " + forwarded);
-        }
-
+        
         // check direct address
         if ((isDirectWhitelisting && !addressesDirect.contains(remoteAddress)) ||
                 (!isDirectWhitelisting && addressesDirect.contains(remoteAddress))) {
@@ -146,7 +148,10 @@ public class ListBasedAddressAuthorizer implements IAuthorizer {
             throw new AccessDeniedException("Remote address not authorized");
         }
         
+        
+        
         // check the forwarded address
+        /*
         if (((isForwardedWhitelisting && (forwarded == null || !addressesForwarded.contains(forwardedAddress))) ||
                 (!isForwardedWhitelisting && addressesForwarded.contains(forwardedAddress)))) {
             LOG.error("Worker " + workerId + ": "
@@ -154,8 +159,55 @@ public class ListBasedAddressAuthorizer implements IAuthorizer {
 
             throw new AccessDeniedException("Forwarded address not authorized");
         }
+        */
+        if (isForwardedWhitelisting) {
+            // if there is no forwarded header, of if header is empty
+            if (forwardedAddresses == null || forwardedAddresses.length == 0) {
+                throw new AccessDeniedException("No forwarded address in request");
+            }
+            
+            boolean isAuthorized = false;
+            
+            for (final String forwarded : forwardedAddresses) {
+                InetAddress forwardedAddress;
+                try {
+                    forwardedAddress = InetAddress.getByName(forwarded);
+                } catch (UnknownHostException e) {
+                    throw new IllegalRequestException("Illegal forwarded address in request: " + forwarded);
+                }
+                
+                if (addressesForwarded.contains(forwardedAddress)) {
+                    isAuthorized = true;
+                    break;
+                    
+                }
+            }
+            
+            if (!isAuthorized) {
+                LOG.error("Worker " + workerId + ": "
+                        + "No authorized forwarded address among inspected addesses");
+                throw new AccessDeniedException("Forwarded address not athorized");
+            }
+        } else {
+            if (forwardedAddresses != null && forwardedAddresses.length > 0) {
+                for (final String forwarded : forwardedAddresses) {
+                    InetAddress forwardedAddress;
+                    try {
+                        forwardedAddress = InetAddress.getByName(forwarded);
+                    } catch (UnknownHostException e) {
+                        throw new IllegalRequestException("Illegal forwarded address in request: " + forwarded);
+                    }
+                    
+                    if (addressesForwarded.contains(forwardedAddress)) {
+                        LOG.error("Worker " + workerId + ": "
+                                + "Found blacklisted address among inspected addresses: " + forwarded);
+                        throw new AccessDeniedException("Forwarded address not athorized");
+                    }
+                }
+            }
+        }
         
-        logRemoteAddress(remote, forwarded, requestContext);
+        logRemoteAddress(remote, forwardedAddresses, requestContext);
     }
     
     private void setFatalErrors() {
@@ -188,10 +240,10 @@ public class ListBasedAddressAuthorizer implements IAuthorizer {
         return fatalErrors;
     }
     
-    private void logRemoteAddress(final String remoteAddress, final String forwardedAddress,
+    private void logRemoteAddress(final String remoteAddress, final String[] forwardedAddresses,
             final RequestContext requestContext) {
         final LogMap logMap = LogMap.getInstance(requestContext);
         logMap.put(IAuthorizer.LOG_REMOTEADDRESS, remoteAddress);
-        logMap.put(IAuthorizer.LOG_FORWARDED_ADDRESS, forwardedAddress);
+        logMap.put(IAuthorizer.LOG_FORWARDED_ADDRESS, StringUtils.join(forwardedAddresses, ","));
     }
 }

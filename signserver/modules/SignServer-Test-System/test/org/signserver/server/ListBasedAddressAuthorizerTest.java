@@ -468,6 +468,26 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
     }
     
     /**
+     * Test that blacklisting with maximum one checked address won't
+     * block an adress when it's not the last in the header.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test25ForwardedBlacklistTwoProxiesOneCheck() throws Exception {
+        setPropertiesAndReload("127.0.0.1", null, null, "1.2.3.4");
+        workerSession.setWorkerProperty(getSignerIdDummy1(), "MAX_FORWARDED_ADDRESSES", "1");
+        workerSession.reloadConfiguration(getSignerIdDummy1());
+        
+        int responseCode = process(
+                new URL("http://localhost:" + getPublicHTTPPort()
+                + "/signserver/process?workerId="
+                + getSignerIdDummy1() + "&data=%3Croot/%3E"),
+                "1.2.3.4, 42.42.42.42, 5.6.7.8");
+        assertEquals("HTTP response code", 200, responseCode);
+    }
+    
+    /**
      * Utility method to set the access list properties (null removes a property)
      */
     private void setPropertiesAndReload(final String whitelistedDirect, final String blacklistedDirect,

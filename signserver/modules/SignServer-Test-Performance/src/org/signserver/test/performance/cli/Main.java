@@ -20,6 +20,7 @@ import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.test.performance.FailureCallback;
@@ -179,30 +180,12 @@ public class Main {
             if (commandLine.hasOption(INFILE)) {
                 final String file = commandLine.getOptionValue(INFILE);
                 final File infile = new File(file);
-                FileInputStream fis = null;
                 
                 try {
-                    fis = new FileInputStream(infile);
-                
-                    data = new byte[(int) infile.length()];
-                
-                    try {
-                        fis.read(data);
-                    } catch (IOException e) {
-                        LOG.error("Failed to read input file: " + e.getMessage());
-                    }
-                } catch (FileNotFoundException e) {
-                    LOG.error("File not found: " + file);
-                } finally {
-                    if (fis != null) {
-                        try {
-                            fis.close();
-                        } catch (IOException ignored) {
-                            // ignored
-                        }
-                    }
+                    data = FileUtils.readFileToByteArray(infile);
+                } catch (IOException e) {
+                    LOG.error("Failed to read input file: " + e.getMessage());
                 }
-                
             } else if (commandLine.hasOption(DATA)) {
                 data = commandLine.getOptionValue(DATA).getBytes();
             } else if (ts.equals(TestSuites.DocumentSigner1)) {

@@ -79,9 +79,9 @@ public class HealthCheckServlet extends HttpServlet {
             }
 
             if (Arrays.asList(authIPs).contains("ANY")) {
+                log.info("All IP addresses authorized");
                 allIPsAuth = true;
             }
-            
             
             healthcheck = (IHealthCheck) HealthCheckServlet.class.getClassLoader().loadClass(config.getInitParameter("HealthCheckClassPath")).newInstance();
             healthcheck.init(config);
@@ -132,8 +132,6 @@ public class HealthCheckServlet extends HttpServlet {
     	boolean authorizedIP = false;
     	String remoteIP = request.getRemoteAddr();
     	if (allIPsAuth) {
-    	    String iMsg = intres.getLocalizedMessage("healthcheck.allipsauthorized");
-    	    log.info(iMsg);
     	    authorizedIP = true;
     	} else {
     	    for (final String ip : authIPs) {

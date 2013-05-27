@@ -62,6 +62,12 @@ public class DocumentSigner implements Task {
         }
     }
     
+    /**
+     * Issue a request to a documt signer as configured for the Task.
+     * 
+     * @return Run time (in ms).
+     * @throws IOException
+     */
     private long documentRequest() throws IOException {
         URL url;
         URLConnection urlConn;

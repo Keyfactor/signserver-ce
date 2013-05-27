@@ -87,6 +87,9 @@ public class Main {
         OPTIONS.addOption(DATA, true, "Input data to be used with the DocumentSigner1 testsuite using an XMLSigner.");
     }
 
+    /**
+     * Print usage message.
+     */
     private static void printUsage() {
         StringBuilder footer = new StringBuilder();
         footer.append(NL)
@@ -263,7 +266,7 @@ public class Main {
                     timeStamp1(threads, numThreads, callback, url, maxWaitTime, warmupTime, limitedTime, statFolder);
                     break;
                 case DocumentSigner1:
-                    documentSigner1(threads, numThreads, callback, url, infile, workerNameOrId, maxWaitTime, warmupTime, limitedTime, statFolder);
+                    documentSigner1(threads, numThreads, callback, url, workerNameOrId, maxWaitTime, warmupTime, limitedTime, statFolder);
                     break;
                 default:
                     throw new Exception("Unsupported test suite");
@@ -308,6 +311,11 @@ public class Main {
         }
     }
     
+    /**
+     * Shutdown worker threads.
+     * 
+     * @param threads
+     */
     private static void shutdown(final List<WorkerThread> threads) {
         for (WorkerThread w : threads) {
             w.stopIt();
@@ -373,6 +381,19 @@ public class Main {
     }
     
     
+    /**
+     * Initialize the worker thread list for the time stamp test suite.
+     * 
+     * @param threads A list to hold the worker threads. This list is filled by the method.
+     * @param numThreads Number of threads to create.
+     * @param failureCallback Callback to handle failures.
+     * @param url Time stamp signer URL.
+     * @param maxWaitTime Maximum waiting time between generated requests.
+     * @param warmupTime Warmup time, if set to > 0, will add a warmup period where no stats are collected.
+     * @param limitedTime Maximum run time, if set to -1, threads will run until interrupted.
+     * @param statFolder Output folder for statistics.
+     * @throws Exception
+     */
     private static void timeStamp1(final List<WorkerThread> threads, final int numThreads, final FailureCallback failureCallback,
             final String url, int maxWaitTime, long warmupTime, final long limitedTime, final File statFolder) throws Exception {
         final Random random = new Random();
@@ -389,8 +410,22 @@ public class Main {
         }
     }
     
+    /**
+     * Initialize the worker thread list for the document signer test suite.
+     * 
+     * @param threads A list to hold the worker threads. This list is filled by the method.
+     * @param numThreads Number of threads to create.
+     * @param failureCallback Callback to handle failures.
+     * @param url Base process URL.
+     * @param workerNameOrId Worker name of worker ID.
+     * @param maxWaitTime Maximum waiting time between generated requests.
+     * @param warmupTime Warmup time, if set to > 0, will add a warmup period where no stats are collected.
+     * @param limitedTime Maximum run time, if set to -1, threads will run until interrupted.
+     * @param statFolder Output folder for statistics.
+     * @throws Exception
+     */
     private static void documentSigner1(final List<WorkerThread> threads, final int numThreads,
-            final FailureCallback failureCallback, final String url, final String infile, final String workerNameOrId, 
+            final FailureCallback failureCallback, final String url, final String workerNameOrId, 
             int maxWaitTime, long warmupTime,
             final long limitedTime, final File statFolder) throws Exception {
         final Random random = new Random();

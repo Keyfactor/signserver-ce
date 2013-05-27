@@ -65,6 +65,14 @@ public class TimeStamp implements Task {
         }
     }
 
+    /**
+     * Issue a time stamp request.
+     * 
+     * @return Run time (in ms).
+     * @throws TSPException
+     * @throws IOException
+     * @throws FailedException
+     */
     private long tsaRequest() throws TSPException, IOException, FailedException {
     	final TimeStampRequestGenerator timeStampRequestGenerator =
     			new TimeStampRequestGenerator();

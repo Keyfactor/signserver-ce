@@ -5501,11 +5501,13 @@ Performance testing tool
  -maxwaittime &lt;arg&gt;     Maximum number of milliseconds for a thread to
                         wait until issuing the next time stamp.
                         Default=100
+ -processurl &lt;arg&gt;      URL to process servlet (for the DocumentSigner1
+                        testsuite).
  -statoutputdir &lt;arg&gt;   Optional. Directory to output statistics to. If
                         set, each threads creates a file in this directory
                         to output its response times to. The directory
                         must exist.
- -testsuite&lt;arg&gt;       Test suite to run. Any of [TimeStamp1].
+ -testsuite&lt;arg&gt;       Test suite to run. Any of [TimeStamp1, DocumentSigner1].
  -threads &lt;arg&gt;         Number of threads requesting time stamps.
  -timelimit &lt;arg&gt;       Optional. Only run for the specified time (in
                         milliseconds).
@@ -5513,6 +5515,7 @@ Performance testing tool
  -warmuptime &lt;arg&gt;      Don't count number of signings and response times
                         until after this time (in milliseconds). Default=0
                         (no warmup time).
+ -worker &lt;arg&gt;    Worker name or ID to use (with the DocumentSigner1 test suite).
 
 Sample usages:
 a) stresstest -testsuite TimeStamp1 -threads 4 -tsaurl
@@ -5520,6 +5523,11 @@ http://localhost:8080/signserver/tsa?workerId=1
 b) stresstest -testsuite TimeStamp1 -threads 4 -maxwaittime 100
 -statoutputdir ./statistics/ -tsaurl
 http://localhost:8080/signserver/tsa?workerId=1
+c) stresstest -testsuite DocumentSigner1 -threads 4 -processurl
+http://localhost:8080/signserver/process -worker PDFSigner -infile
+test.pdf
+d) stresstest -testsuite DocumentSigner1 -threads 4 -processurl
+http://localhost:8080/signserver/process -worker XMLSigner -data "<root/>"
               			</source>
               			
               			<p>

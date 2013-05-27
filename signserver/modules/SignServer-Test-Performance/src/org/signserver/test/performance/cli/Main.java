@@ -76,8 +76,8 @@ public class Main {
         OPTIONS.addOption(TIME_LIMIT, true, "Optional. Only run for the specified time (in milliseconds).");
         OPTIONS.addOption(THREADS, true, "Number of threads requesting time stamps.");
         OPTIONS.addOption(TSA_URL, true, "URL to timestamp worker to use.");
-        OPTIONS.addOption(PROCESS_URL, true, "URL to process servlet (for the DocumentSigner1 testsuite).");
-        OPTIONS.addOption(WORKER_NAME_OR_ID, true, "Worker name or ID to use.");
+        OPTIONS.addOption(PROCESS_URL, true, "URL to process servlet (for the DocumentSigner1 test suite).");
+        OPTIONS.addOption(WORKER_NAME_OR_ID, true, "Worker name or ID to use (with the DocumentSigner1 test suite).");
         OPTIONS.addOption(MAX_WAIT_TIME, true, "Maximum number of milliseconds for a thread to wait until issuing the next time stamp. Default=100");
         OPTIONS.addOption(WARMUP_TIME, true,
                 "Don't count number of signings and response times until after this time (in milliseconds). Default=0 (no warmup time).");
@@ -221,7 +221,7 @@ public class Main {
                 + "   Warm up time:            %10d ms%n"
                 + "   Max wait time:           %10d ms%n"
                 + "   Time limit:              %10d ms%n"
-                + "   TSA URL:                 %s%n"
+                + "   URL:                     %s%n"
                 + "   Output statistics:       %s%n"
                 + "-------------------------------------------------------------------------------%n", new Date(), ts.name(), numThreads, warmupTime, maxWaitTime, limitedTime, url, statFolder == null ? "no" : statFolder.getAbsolutePath()));
 

@@ -277,7 +277,8 @@ j2ee.web-nohttps=true
 # configured.
 # Sample url: http://localhost:8080/signserver/healthcheck/signserverhealth
 #
-# Setting specifying which remote IPs that may call this healthcheck servlet. Use ';' for between multiple IPs. 
+# Setting specifying which remote IPs that may call this healthcheck servlet. Use ';' for between multiple IPs.
+# If the setting contains the keyword ANY, access is granted from any IP address.
 # Default : 127.0.0.1
 #healthcheck.authorizedips=127.0.0.1;::1;0:0:0:0:0:0:0:1
 

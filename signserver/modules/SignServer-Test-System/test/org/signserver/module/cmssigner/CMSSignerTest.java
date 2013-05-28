@@ -21,24 +21,21 @@ import java.security.cert.Certificate;
 import java.util.Collection;
 
 import org.apache.log4j.Logger;
-import org.bouncycastle.x509.AttributeCertificateHolder;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.jce.X509Principal;
+import org.bouncycastle.x509.AttributeCertificateHolder;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.FixMethodOrder;
+import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerUtil;
-import org.signserver.module.tsa.TimeStampSigner;
 import org.signserver.testutils.ModulesTestCase;
-import org.signserver.testutils.TestUtils;
 import org.signserver.testutils.TestingSecurityManager;
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.Test;
 
 /**
  * Tests for CMSSigner.

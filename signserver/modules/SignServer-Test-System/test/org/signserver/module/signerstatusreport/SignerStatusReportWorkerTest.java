@@ -168,15 +168,18 @@ public class SignerStatusReportWorkerTest extends WebTestCase {
         assertEquals("Worker 3 active", "ACTIVE", status.get(WORKER_SIGNER3).get("status"));
         assertNotNull("Worker 3 signings", status.get(WORKER_SIGNER3).get("signings"));
         
+        // test that there is no fatal errors before removing the WORKERS property
+        WorkerStatus workerStatus = workerSession.getStatus(WORKERID_WORKER);
+        List<String> errors = workerStatus.getFatalErrors();
+        assertTrue("No fatal errors", errors.isEmpty());
+        
         // test that removing the WORKERS property results in a fatal error
         workerSession.removeWorkerProperty(WORKERID_WORKER, "WORKERS");
         workerSession.reloadConfiguration(WORKERID_WORKER);
-        
-        final WorkerStatus workerStatus = workerSession.getStatus(WORKERID_WORKER);
-        final List<String> errors = workerStatus.getFatalErrors();
-        
+        workerStatus = workerSession.getStatus(WORKERID_WORKER);
+        errors = workerStatus.getFatalErrors();
         assertTrue("Should mention missing WORKERS property", errors.contains("Property WORKERS missing"));
-        
+
         // restore
         workerSession.setWorkerProperty(WORKERID_WORKER, "WORKERS",
                 WORKER_SIGNER1+","+WORKER_SIGNER2+","+WORKER_SIGNER3);

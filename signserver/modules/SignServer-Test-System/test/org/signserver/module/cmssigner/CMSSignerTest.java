@@ -81,7 +81,7 @@ public class CMSSignerTest extends ModulesTestCase {
     public void test01BasicCMSSignRSA() throws Exception {
         LOG.debug(">test01BasicCMSSignRSA");
 
-        testBasicCMSSign(getSignerIdDummy1(), null, "1.3.14.3.2.26", "1.2.840.113549.1.1.1");
+        helperBasicCMSSign(getSignerIdDummy1(), null, "1.3.14.3.2.26", "1.2.840.113549.1.1.1");
         
         LOG.debug("<test01BasicCMSSignRSA");
     }
@@ -92,7 +92,7 @@ public class CMSSignerTest extends ModulesTestCase {
      */
     @Test
     public void test02BasicCMSSignSHA256withRSA() throws Exception {
-        testBasicCMSSign(getSignerIdDummy1(), "SHA256withRSA", "2.16.840.1.101.3.4.2.1", "1.2.840.113549.1.1.1");
+        helperBasicCMSSign(getSignerIdDummy1(), "SHA256withRSA", "2.16.840.1.101.3.4.2.1", "1.2.840.113549.1.1.1");
     }
     
     /**
@@ -110,7 +110,7 @@ public class CMSSignerTest extends ModulesTestCase {
         addP12DummySigner("org.signserver.module.cmssigner.CMSSigner", WORKERID_ECDSA, "TestCMSSignerP12ECDSA", keystore, "foo123");
         workerSession.reloadConfiguration(WORKERID_ECDSA);
         
-        testBasicCMSSign(WORKERID_ECDSA, "SHA1withECDSA", "1.3.14.3.2.26", "1.2.840.10045.4.1");
+        helperBasicCMSSign(WORKERID_ECDSA, "SHA1withECDSA", "1.3.14.3.2.26", "1.2.840.10045.4.1");
         
         removeWorker(WORKERID_ECDSA);
     }
@@ -130,13 +130,12 @@ public class CMSSignerTest extends ModulesTestCase {
         addJKSDummySigner("org.signserver.module.cmssigner.CMSSigner", WORKERID_DSA, "TestCMSSignerJKSDSA", keystore, "foo123");
         workerSession.reloadConfiguration(WORKERID_DSA);
         
-        testBasicCMSSign(WORKERID_DSA, "SHA1withDSA", "1.3.14.3.2.26", "1.2.840.10040.4.3");
+        helperBasicCMSSign(WORKERID_DSA, "SHA1withDSA", "1.3.14.3.2.26", "1.2.840.10040.4.3");
         
         removeWorker(WORKERID_DSA);
     }
-    
-    @Test
-    private void testBasicCMSSign(final int workerId, final String sigAlg, final String expectedDigAlgOID,
+
+    private void helperBasicCMSSign(final int workerId, final String sigAlg, final String expectedDigAlgOID,
             final String expectedEncAlgOID) throws Exception {
         final int reqid = 37;
 

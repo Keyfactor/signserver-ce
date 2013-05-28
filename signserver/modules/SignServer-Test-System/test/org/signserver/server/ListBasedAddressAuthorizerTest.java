@@ -437,7 +437,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      */
     @Test
     public void test23ForwardedWhitelistTwoProxies() throws Exception {
-        setPropertiesAndReload("127.0.0.1", null, "1.2.3.4", null);
+        setPropertiesAndReload("127.0.0.1", null, "1.2.3.4, 42.42.42.42", null);
         workerSession.setWorkerProperty(getSignerIdDummy1(), "MAX_FORWARDED_ADDRESSES", "2");
         workerSession.reloadConfiguration(getSignerIdDummy1());
         
@@ -485,6 +485,27 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
                 + getSignerIdDummy1() + "&data=%3Croot/%3E"),
                 "1.2.3.4, 42.42.42.42, 5.6.7.8");
         assertEquals("HTTP response code", 200, responseCode);
+    }
+    
+    /**
+     * Test that granting access to two forwarded addresses, checking two addresses with a header containing
+     * three entries with one of the last two (the checked ones) being not in the authorized list results in
+     * non-access.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test26ForwardedWhitelistThreeProxiesTwoCheckedOneUnauthorized() throws Exception {
+        setPropertiesAndReload("127.0.0.1", null, null, "1.2.3.4, 42.42.42.42");
+        workerSession.setWorkerProperty(getSignerIdDummy1(), "MAX_FORWARDED_ADDRESSES", "2");
+        workerSession.reloadConfiguration(getSignerIdDummy1());
+        
+        int responseCode = process(
+                new URL("http://localhost:" + getPublicHTTPPort()
+                + "/signserver/process?workerId="
+                + getSignerIdDummy1() + "&data=%3Croot/%3E"),
+                "47.47.47.47, 5.6.7.8, 1.2.3.4");
+        assertEquals("HTTP response code", 403, responseCode);
     }
     
     /**

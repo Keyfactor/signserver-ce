@@ -149,24 +149,13 @@ public class ListBasedAddressAuthorizer implements IAuthorizer {
         }
         
         
-        
-        // check the forwarded address
-        /*
-        if (((isForwardedWhitelisting && (forwarded == null || !addressesForwarded.contains(forwardedAddress))) ||
-                (!isForwardedWhitelisting && addressesForwarded.contains(forwardedAddress)))) {
-            LOG.error("Worker " + workerId + ": "
-                    + "Not authorized forwarded address: " + forwarded);
-
-            throw new AccessDeniedException("Forwarded address not authorized");
-        }
-        */
         if (isForwardedWhitelisting) {
             // if there is no forwarded header, of if header is empty
             if (forwardedAddresses == null || forwardedAddresses.length == 0) {
                 throw new AccessDeniedException("No forwarded address in request");
             }
             
-            boolean isAuthorized = false;
+            boolean isAuthorized = true;
             
             for (final String forwarded : forwardedAddresses) {
                 InetAddress forwardedAddress;
@@ -176,8 +165,8 @@ public class ListBasedAddressAuthorizer implements IAuthorizer {
                     throw new IllegalRequestException("Illegal forwarded address in request: " + forwarded);
                 }
                 
-                if (addressesForwarded.contains(forwardedAddress)) {
-                    isAuthorized = true;
+                if (!addressesForwarded.contains(forwardedAddress)) {
+                    isAuthorized = false;
                     break;
                     
                 }

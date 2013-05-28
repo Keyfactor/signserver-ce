@@ -529,6 +529,43 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
     }
     
     /**
+     * Test that setting MAX_FORWARDED_ADDRESSES to a negative value is not allowed.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test28NegativeMaxNotAllowed() throws Exception {
+        setPropertiesAndReload("127.0.0.1", null, "1.2.3.4, 42.42.42.42", null);
+        workerSession.setWorkerProperty(getSignerIdDummy1(), "MAX_FORWARDED_ADDRESSES", "-2");
+        workerSession.reloadConfiguration(getSignerIdDummy1());
+        
+        int responseCode = process(
+                new URL("http://localhost:" + getPublicHTTPPort()
+                + "/signserver/process?workerId="
+                + getSignerIdDummy1() + "&data=%3Croot/%3E"),
+                "1.2.3.4");
+        assertEquals("HTTP response code", 500, responseCode);
+    }
+    
+    /**
+     * Test that setting MAX_FORWARDED_ADDRESSES to some bogus non-numerical value is not allowed.
+     * @throws Exception
+     */
+    @Test
+    public void test29BogusMax() throws Exception {
+        setPropertiesAndReload("127.0.0.1", null, "1.2.3.4, 42.42.42.42", null);
+        workerSession.setWorkerProperty(getSignerIdDummy1(), "MAX_FORWARDED_ADDRESSES", "foo123");
+        workerSession.reloadConfiguration(getSignerIdDummy1());
+        
+        int responseCode = process(
+                new URL("http://localhost:" + getPublicHTTPPort()
+                + "/signserver/process?workerId="
+                + getSignerIdDummy1() + "&data=%3Croot/%3E"),
+                "1.2.3.4");
+        assertEquals("HTTP response code", 500, responseCode);
+    }
+    
+    /**
      * Utility method to set the access list properties (null removes a property)
      */
     private void setPropertiesAndReload(final String whitelistedDirect, final String blacklistedDirect,

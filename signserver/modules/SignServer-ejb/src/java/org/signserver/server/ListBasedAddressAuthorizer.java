@@ -79,7 +79,7 @@ public class ListBasedAddressAuthorizer implements IAuthorizer {
 
         maxForwardedAddresses =
                 Integer.parseInt(config.getProperty(PROPERTY_MAX_FORWARDED_ADDRESSES, Integer.toString(MAX_FORWARDED_ADDRESSES_DEFAULT)));
-        setFatalErrors();
+        setFatalErrors(config);
         
         if (fatalErrors.size() > 0) {
             throw new SignServerException("Invalid properties specified: " + StringUtils.join(fatalErrors, '\n'));
@@ -198,7 +198,12 @@ public class ListBasedAddressAuthorizer implements IAuthorizer {
         logRemoteAddress(remote, forwardedAddresses, requestContext);
     }
     
-    private void setFatalErrors() {
+    /**
+     * Sets fatal errors based on members set in init().
+     * 
+     * @param config The worker config
+     */
+    private void setFatalErrors(final WorkerConfig config) {
         fatalErrors = new LinkedList<String>();
         
         // check that one (and only one) each of the direct and forwarded properties at a time is specified
@@ -223,7 +228,7 @@ public class ListBasedAddressAuthorizer implements IAuthorizer {
         }
         
         if (maxForwardedAddresses < 1) {
-            fatalErrors.add(PROPERTY_MAX_FORWARDED_ADDRESSES + " must be at least 1.");
+            fatalErrors.add("Illegal value for " + PROPERTY_MAX_FORWARDED_ADDRESSES + ": " + config.getProperty(PROPERTY_MAX_FORWARDED_ADDRESSES));
         }
     }
     

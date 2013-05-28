@@ -23,7 +23,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.ejbca.core.model.InternalResources;
 import org.ejbca.ui.web.pub.cluster.IHealthCheck;
 import org.ejbca.ui.web.pub.cluster.IHealthResponse;
 import org.ejbca.ui.web.pub.SameRequestRateLimiter;
@@ -49,7 +48,6 @@ import org.ejbca.util.CertTools;
 public class HealthCheckServlet extends HttpServlet {
     private static final Logger log = Logger.getLogger(HealthCheckServlet.class);
     /** Internal localization of logs and errors */
-    private static final InternalResources intres = InternalResources.getInstance();
     
     private IHealthCheck healthcheck = null;
     private IHealthResponse healthresponse = null;
@@ -163,8 +161,7 @@ public class HealthCheckServlet extends HttpServlet {
     	    } catch (IOException e) {
     	        log.error("ERROR : Problems generating unauthorized http response.");
     	    }
-    	    String iMsg = intres.getLocalizedMessage("healthcheck.errorauth", remoteIP);
-    	    log.error(iMsg);
+    	    log.error("Healthcheck request recieved from an non authorized IP: " + remoteIP);
     	}
     }
 

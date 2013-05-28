@@ -2813,6 +2813,8 @@ One of each list (direct and forwarded) must be specified.
 When specifying a whitelist for forwarded addresses, requests without an X-Forwarded-For header will always be denied.
 When there are multiple addresses in the X-Forwarded-For header (in the case of using multiple proxies) the number of addresses specified in
 MAX_FORWARDED_ADDRESSES counting from the end of the list (or the entire list if it is shorter than this) is considered for white- and blacklisting.
+If specified, MAX_FORWARDED_ADDRESSES must have a value >= 1. It is not allowed to set it 0 to disable checking forwarded addresses.
+RemoteAddressAuthorizer should be used in this case.
                         </p>
                         <p>
 Examples:

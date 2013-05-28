@@ -496,7 +496,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      */
     @Test
     public void test26ForwardedWhitelistThreeProxiesTwoCheckedOneUnauthorized() throws Exception {
-        setPropertiesAndReload("127.0.0.1", null, null, "1.2.3.4, 42.42.42.42");
+        setPropertiesAndReload("127.0.0.1", null, "1.2.3.4, 42.42.42.42", null);
         workerSession.setWorkerProperty(getSignerIdDummy1(), "MAX_FORWARDED_ADDRESSES", "2");
         workerSession.reloadConfiguration(getSignerIdDummy1());
         
@@ -506,6 +506,26 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
                 + getSignerIdDummy1() + "&data=%3Croot/%3E"),
                 "47.47.47.47, 5.6.7.8, 1.2.3.4");
         assertEquals("HTTP response code", 403, responseCode);
+    }
+    
+    /**
+     * Test that setting MAX_FORWARDED_ADDRESSES to 0 will result in an internal server error
+     * (misconfiguration), for security reasons.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test27Max0NotAllowed() throws Exception {
+        setPropertiesAndReload("127.0.0.1", null, "1.2.3.4, 42.42.42.42", null);
+        workerSession.setWorkerProperty(getSignerIdDummy1(), "MAX_FORWARDED_ADDRESSES", "0");
+        workerSession.reloadConfiguration(getSignerIdDummy1());
+        
+        int responseCode = process(
+                new URL("http://localhost:" + getPublicHTTPPort()
+                + "/signserver/process?workerId="
+                + getSignerIdDummy1() + "&data=%3Croot/%3E"),
+                "1.2.3.4");
+        assertEquals("HTTP response code", 500, responseCode);
     }
     
     /**

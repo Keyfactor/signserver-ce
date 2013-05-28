@@ -77,6 +77,8 @@ public class ListBasedAddressAuthorizer implements IAuthorizer {
         whitelistedForwardedAddresses = config.getProperty(PROPERTY_WHITELISTED_FORWARDED_ADDRESSES);
         blacklistedForwardedAddresses = config.getProperty(PROPERTY_BLACKLISTED_FORWARDED_ADDRESSES);
 
+        maxForwardedAddresses =
+                Integer.parseInt(config.getProperty(PROPERTY_MAX_FORWARDED_ADDRESSES, Integer.toString(MAX_FORWARDED_ADDRESSES_DEFAULT)));
         setFatalErrors();
         
         if (fatalErrors.size() > 0) {
@@ -97,9 +99,6 @@ public class ListBasedAddressAuthorizer implements IAuthorizer {
         } else {
             addressesForwarded = splitAddresses(blacklistedForwardedAddresses, PROPERTY_BLACKLISTED_FORWARDED_ADDRESSES);
         }
-        
-        maxForwardedAddresses =
-                Integer.parseInt(config.getProperty(PROPERTY_MAX_FORWARDED_ADDRESSES, Integer.toString(MAX_FORWARDED_ADDRESSES_DEFAULT)));
     }
     
     /**
@@ -221,6 +220,10 @@ public class ListBasedAddressAuthorizer implements IAuthorizer {
         if (whitelistedForwardedAddresses == null && blacklistedForwardedAddresses == null) {
             fatalErrors.add("One of " + PROPERTY_WHITELISTED_FORWARDED_ADDRESSES  + " or " +
                     PROPERTY_BLACKLISTED_FORWARDED_ADDRESSES + " must be specified.");
+        }
+        
+        if (maxForwardedAddresses < 1) {
+            fatalErrors.add(PROPERTY_MAX_FORWARDED_ADDRESSES + " must be at least 1.");
         }
     }
     

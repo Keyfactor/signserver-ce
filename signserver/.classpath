@@ -93,30 +93,26 @@
 	<classpathentry kind="lib" path="lib/ext/commons-fileupload-1.2.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="var" path="JBOSS_HOME/client/jbossall-client.jar"/>
+	<classpathentry kind="var" path="JBOSS_HOME/client/activation.jar"/>
 	<classpathentry kind="var" path="JBOSS_HOME/lib/jboss-system.jar"/>
-	<classpathentry kind="var" path="JBOSS_HOME/client/jboss-j2ee.jar"/>
-	<classpathentry kind="var" path="JBOSS_HOME/client/ejb3-persistence.jar"/>
-	<classpathentry kind="var" path="JBOSS_HOME/client/jboss-ejb3x.jar"/>
-	<classpathentry kind="lib" path="lib/ext/commons-lang-2.4.jar"/>
-	<classpathentry kind="lib" path="lib/ext/log4j.jar"/>
+	<classpathentry kind="var" path="JBOSS_HOME/lib/jboss-system-jmx.jar"/>
+	<classpathentry kind="var" path="JBOSS_HOME/lib/jboss-j2se.jar"/>
+	<classpathentry kind="var" path="JBOSS_HOME/lib/jboss-kernel.jar"/>
+	<classpathentry kind="var" path="JBOSS_HOME/client/jboss-javaee.jar"/>
 	<classpathentry kind="var" path="JBOSS_HOME/client/jaxws-tools.jar"/>
+	<classpathentry kind="var" path="JBOSS_HOME/client/antlr.jar"/>
+	<classpathentry kind="var" path="JBOSS_HOME/common/lib/hsqldb.jar"/>
+	<classpathentry kind="var" path="JBOSS_HOME/lib/dom4j.jar"/>
+	<classpathentry kind="lib" path="lib/ext/commons-lang-2.5.jar"/>
+	<classpathentry kind="lib" path="lib/ext/log4j.jar"/>
 	<classpathentry kind="lib" path="lib/ext/quartz/quartz-1.6.0.jar"/>
-	<classpathentry kind="lib" path="lib/ext/asm/asm-3.1.jar"/>
-	<classpathentry kind="lib" path="lib/ext/asm/asm-commons-3.1.jar"/>
 	<classpathentry kind="lib" path="lib/ext/ext/servlet-2.3.jar"/>
-	<classpathentry kind="lib" path="lib/ext/ext/junit-3.8.1.jar"/>
+	<classpathentry kind="lib" path="lib/ext/ext/junit-4.11.jar"/>
 	<classpathentry kind="lib" path="lib/ext/reports/jcommon-1.0.12.jar"/>
 	<classpathentry kind="lib" path="lib/ext/reports/jfreechart-1.0.9.jar"/>
-	<classpathentry kind="var" path="JBOSS_HOME/server/default/lib/hsqldb.jar"/>
-	<classpathentry kind="var" path="JBOSS_HOME/server/default/lib/dom4j.jar"/>
-	<classpathentry kind="var" path="JBOSS_HOME/server/default/lib/cglib.jar"/>
-	<classpathentry kind="var" path="JBOSS_HOME/server/default/lib/antlr.jar"/>
 	<classpathentry kind="var" path="ANT_HOME/lib/ant.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
-	<classpathentry kind="lib" path="lib/ext/module/odfsigner/odfdom.jar"/>
-	<classpathentry kind="lib" path="lib/ext/module/pdfsigner/itext/itext.jar"/>
 	<classpathentry kind="lib" path="lib/ext/module/ooxmlsigner/xercesImpl.jar"/>
-	<classpathentry kind="lib" path="lib/ext/module/ooxmlsigner/openxml4j_beta_v538.jar"/>
 	<classpathentry kind="lib" path="bin/"/>
 	<classpathentry kind="lib" path="lib/ext/swing-app-framework/appframework-1.0.3.jar"/>
 	<classpathentry kind="lib" path="lib/ext/swing-app-framework/swing-worker-1.1.jar"/>
@@ -143,9 +139,8 @@
 			<attribute name="optional" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/ext/1.6/bcmail-jdk15on-147.jar"/>
-	<classpathentry kind="lib" path="lib/ext/1.6/bcpkix-jdk15on-147.jar" sourcepath="/home/marcus/Hämtningar/bcpkix-jdk15on-147/src.zip"/>
-	<classpathentry kind="lib" path="lib/ext/1.6/bcprov-jdk15on-147.jar" sourcepath="/home/marcus/Hämtningar/bcprov-jdk15on-147/src.zip"/>
+	<classpathentry kind="lib" path="lib/ext/1.6/bcpkix-jdk15on-147.jar"/>
+	<classpathentry kind="lib" path="lib/ext/1.6/bcprov-jdk15on-147.jar"/>
 	<classpathentry kind="lib" path="lib/ext/ext/commons-cli-1.2.jar"/>
 	<classpathentry kind="lib" path="lib/ext/cesecore/cesecore-client_1.1.2.jar"/>
 	<classpathentry kind="lib" path="lib/ext/cesecore/cesecore-ejb_1.1.2.jar"/>
@@ -158,6 +153,6 @@
 	<classpathentry kind="lib" path="lib/ext/cesecore/ehcache-core-2.3.2.jar"/>
 	<classpathentry kind="lib" path="lib/ext/cesecore/jackson-all-1.7.0.jar"/>
 	<classpathentry kind="lib" path="lib/ext/cesecore/ldap.jar"/>
-	<classpathentry kind="lib" path="/SignServer-TimeMonitor/dist/lib/commons-io-1.4.jar"/>
+	<classpathentry kind="lib" path="lib/ext/commons-io-1.4.jar"/>
 	<classpathentry kind="output" path=".eclipse/out"/>
 </classpath>

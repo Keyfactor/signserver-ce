@@ -159,7 +159,7 @@ public class SignServerCLITest extends ModulesTestCase {
         	cli.execute("addauthorizedclient", "TIMESTAMPSIGNER1000",
         			getSignServerHome() + "/res/test/dss10/dss10_signer1.pem"));
         assertPrinted("", cli.getOut(),
-        		"Adding the client certificate with sn 1d9fa8b71c75b564 and " +
+        		"Adding the client certificate with sn 4af1f6235699d0ad and " +
         	    "issuerDN : CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE");
         // test adding an authorized client via a DER file
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,
@@ -267,7 +267,7 @@ public class SignServerCLITest extends ModulesTestCase {
         				"-cert", getSignServerHome() + "/res/test/dss10/dss10_signer1.pem"));
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,
         		cli.execute("wsadmins", "-list"));
-        assertPrinted("", cli.getOut(), "1d9fa8b71c75b564");
+        assertPrinted("", cli.getOut(), "4af1f6235699d0ad");
         assertPrinted("", cli.getOut(), "C=SE, O=SignServer, OU=Testing, CN=DSS Root CA 10");
      
         // Test adding wsadmin using a DER file
@@ -317,7 +317,7 @@ public class SignServerCLITest extends ModulesTestCase {
         				"-cert", getSignServerHome() + "/res/test/dss10/dss10_signer1.pem"));
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,
         		cli.execute("wsauditors", "-list"));
-        assertPrinted("", cli.getOut(), "1d9fa8b71c75b564");
+        assertPrinted("", cli.getOut(), "4af1f6235699d0ad");
         assertPrinted("", cli.getOut(), "C=SE, O=SignServer, OU=Testing, CN=DSS Root CA 10");
      
         // Test adding wsadmin using a DER file

@@ -896,7 +896,7 @@ Before starting with an HSM installation you should read the about the
 section of the manual.
                         </p>
 <source>
-bin/signserver setproperties doc/sample-config/qs_mrtdsodsigner_configuration.properties
+bin/signserver setproperties doc/sample-configs/qs_mrtdsodsigner_configuration.properties
 bin/signserver getconfig 9
 bin/signserver reload 9
 bin/signserver generatecertreq 9 "C=SE,CN=MRTD SOD Signer" SHA256WithRSA mrtdsodsigner.req

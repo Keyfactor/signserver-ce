@@ -899,10 +899,12 @@ section of the manual.
 bin/signserver setproperties doc/sample-configs/qs_mrtdsodsigner_configuration.properties
 bin/signserver getconfig 9
 bin/signserver reload 9
+bin/signserver activatecryptotoken 9 tokenpin
 bin/signserver generatecertreq 9 "C=SE,CN=MRTD SOD Signer" SHA256WithRSA mrtdsodsigner.req
 </source>
                         <p>
 Where 9 is the signerId that you got when running the 'setproperties' command.<br/>
+Tokenpin is the password for the HSM slot configured in the properties file.<br/>
 This will create a certificate request that you can get signed by your CA. When you have received the response you can import it and the CA certficate.
 If you have the returned signer certificate as cert.pem and the CA certificate as cacert.pem, then:
                         </p>

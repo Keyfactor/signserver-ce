@@ -883,7 +883,7 @@ This HTML form also functions as a sample to show how you can make HTTP requests
                     <subsubsection name="Production configuration with HSM">
                         <p>
 To install a production signer using an HSM instead of the demo signer you can
-edit doc/sample-config/qs_mrtdsodsigner_configuration.properties and change from
+edit doc/sample-configs/qs_mrtdsodsigner_configuration.properties and change from
 SoftCryptoToken to PKCS11CryptoToken and comment all properties under
 SoftCryptoToken properties and instead fill in all properties under
 PKCS11CryptoToken properties and then run:

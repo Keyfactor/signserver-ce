@@ -30,6 +30,9 @@ import org.bouncycastle.asn1.DERSet;
 import org.bouncycastle.asn1.cms.AttributeTable;
 import org.bouncycastle.asn1.cms.CMSAttributes;
 import org.bouncycastle.asn1.cms.Time;
+import org.bouncycastle.asn1.ess.ESSCertID;
+import org.bouncycastle.asn1.ess.SigningCertificate;
+import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.x509.Attribute;
 import org.bouncycastle.asn1.x509.KeyPurposeId;
 import org.bouncycastle.cert.X509CertificateHolder;
@@ -114,6 +117,7 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
     public static final String ORDERING = "ORDERING";
     public static final String TSA = "TSA";
     public static final String REQUIREVALIDCHAIN = "REQUIREVALIDCHAIN";
+    public static final String INCLUDE_SIGNING_CERTIFICATE_ATTRIBUTE = "INCLUDE_SIGNING_CERTIFICATE_ATTRIBUTE";
     
     private static final String dataOID = "1.2.840.113549.1.7.1";
     private static final String msOID = "1.3.6.1.4.1.311.3.2.1";
@@ -136,6 +140,8 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
     private String signatureAlgo;
     
     private boolean validChain = true;
+    
+    private boolean includeSigningCertificateAttribute;
     
     @Override
     public void init(final int signerId, final WorkerConfig config,
@@ -185,6 +191,9 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
         if (Boolean.parseBoolean(requireValidChain)) {
             validChain = validateChain();
         }
+        
+        includeSigningCertificateAttribute =
+                Boolean.parseBoolean(config.getProperty(INCLUDE_SIGNING_CERTIFICATE_ATTRIBUTE, "false"));
     }
 
     /**
@@ -302,6 +311,17 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
             
             ASN1EncodableVector signedAttributes = new ASN1EncodableVector();
             signedAttributes.add(new Attribute(CMSAttributes.signingTime, new DERSet(new Time(date))));
+            
+            if (includeSigningCertificateAttribute) {
+                try {
+                    ESSCertID essCertid = new ESSCertID(MessageDigest.getInstance("SHA-1").digest(x509cert.getEncoded()));
+                    signedAttributes.add(new Attribute(PKCSObjectIdentifiers.id_aa_signingCertificate,
+                            new DERSet(new SigningCertificate(essCertid))));
+                } catch (NoSuchAlgorithmException e) {
+                    LOG.error("Can't find SHA-1 implementation: " + e.getMessage());
+                    throw new SignServerException("Can't find SHA-1 implementation", e);
+                }
+            }
 
             AttributeTable signedAttributesTable = new AttributeTable(signedAttributes);
             signedAttributesTable.toASN1EncodableVector();

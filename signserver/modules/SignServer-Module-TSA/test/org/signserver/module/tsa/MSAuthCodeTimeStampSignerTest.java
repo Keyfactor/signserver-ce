@@ -82,8 +82,8 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
 
 
     private void testProcessDataWithAlgo(final String signingAlgo, final String expectedDigestOID,
-            final byte[] requestData) throws Exception {
-       SignServerUtil.installBCProvider();
+            final byte[] requestData, final boolean includeSigningCertAttr) throws Exception {
+        SignServerUtil.installBCProvider();
         
         final String CRYPTOTOKEN_CLASSNAME =
                 "org.signserver.server.cryptotokens.HardCodedCryptoToken";
@@ -103,6 +103,9 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
         config.setProperty("TIMESOURCE", "org.signserver.server.ZeroTimeSource");
         config.setProperty("SIGNATUREALGORITHM", signingAlgo);
         
+        if (includeSigningCertAttr) {
+            config.setProperty("INCLUDE_SIGNING_CERTIFICATE_ATTRIBUTE", "true");
+        }
         
         workerMock.setupWorker(SIGNER_ID, CRYPTOTOKEN_CLASSNAME, config,
                     new MSAuthCodeTimeStampSigner() {
@@ -138,6 +141,11 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
         ASN1Sequence asn1seq5 = ASN1Sequence.getInstance(asn1seq3.getObjectAt(1));
         ASN1Sequence asn1seq6 = ASN1Sequence.getInstance(asn1seq3.getObjectAt(2));
         
+        // if INCLUDE_SIGNING_CERTIFICATE_ATTRIBUTE is set to false, the attribute should not be included
+        if (!includeSigningCertAttr) {
+            assertEquals("Number of attributes", 3, asn1seq3.size());
+        }
+        
         ASN1ObjectIdentifier ctOID = ASN1ObjectIdentifier.getInstance(asn1seq4.getObjectAt(0));
         assertEquals("Invalid OID for content type", CONTENT_TYPE_OID, ctOID.getId());
         
@@ -171,11 +179,11 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
      * Test of processData method, of class MSAuthCodeTimeStampSigner.
      */
     public void testProcessDataSHA1withRSA() throws Exception {
-    	testProcessDataWithAlgo("SHA1withRSA", SHA1_OID, REQUEST_DATA.getBytes());
+    	testProcessDataWithAlgo("SHA1withRSA", SHA1_OID, REQUEST_DATA.getBytes(), false);
     }
     
     public void testProcessDataSHA256withRSA() throws Exception {
-    	testProcessDataWithAlgo("SHA256withRSA", SHA256_OID, REQUEST_DATA.getBytes());
+    	testProcessDataWithAlgo("SHA256withRSA", SHA256_OID, REQUEST_DATA.getBytes(), false);
     }
     
     /**
@@ -184,7 +192,7 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
      */
     public void testEmptyRequest() throws Exception {
         try {
-            testProcessDataWithAlgo("SHA1withRSA", SHA1_OID, new byte[0]);
+            testProcessDataWithAlgo("SHA1withRSA", SHA1_OID, new byte[0], false);
         } catch (IllegalRequestException e) {
             // expected
         } catch (Exception e) {
@@ -198,7 +206,7 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
      */
     public void testBogusRequest() throws Exception {
         try {
-            testProcessDataWithAlgo("SHA1withRSA", SHA1_OID, "bogus request".getBytes());
+            testProcessDataWithAlgo("SHA1withRSA", SHA1_OID, "bogus request".getBytes(), false);
         } catch (IllegalRequestException e) {
             // expected
         } catch (Exception e) {
@@ -212,7 +220,7 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
      */
     public void testNullRequest() throws Exception {
         try {
-            testProcessDataWithAlgo("SHA1withRSA", SHA1_OID, null);
+            testProcessDataWithAlgo("SHA1withRSA", SHA1_OID, null, false);
         } catch (IllegalRequestException e) {
             // expected
         } catch (Exception e) {

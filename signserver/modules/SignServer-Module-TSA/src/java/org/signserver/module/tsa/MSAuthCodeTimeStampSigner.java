@@ -19,13 +19,16 @@ import java.security.cert.*;
 import java.security.cert.Certificate;
 import java.util.*;
 import javax.persistence.EntityManager;
+
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1EncodableVector;
+import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1TaggedObject;
+import org.bouncycastle.asn1.DERInteger;
 import org.bouncycastle.asn1.DERSet;
 import org.bouncycastle.asn1.cms.AttributeTable;
 import org.bouncycastle.asn1.cms.CMSAttributes;
@@ -33,7 +36,11 @@ import org.bouncycastle.asn1.cms.Time;
 import org.bouncycastle.asn1.ess.ESSCertID;
 import org.bouncycastle.asn1.ess.SigningCertificate;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
+import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.Attribute;
+import org.bouncycastle.asn1.x509.GeneralName;
+import org.bouncycastle.asn1.x509.GeneralNames;
+import org.bouncycastle.asn1.x509.IssuerSerial;
 import org.bouncycastle.asn1.x509.KeyPurposeId;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
@@ -57,6 +64,7 @@ import org.signserver.server.archive.DefaultArchivable;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.log.LogMap;
 import org.signserver.server.signers.BaseSigner;
+
 
 /**
  * A Signer signing Time-stamp request compatible with Microsoft Authenticode
@@ -314,7 +322,16 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
             
             if (includeSigningCertificateAttribute) {
                 try {
-                    ESSCertID essCertid = new ESSCertID(MessageDigest.getInstance("SHA-1").digest(x509cert.getEncoded()));
+                    final DERInteger serial = new DERInteger(x509cert.getSerialNumber());
+                    final X509CertificateHolder certHolder =
+                            new X509CertificateHolder(x509cert.getEncoded());
+                    final X500Name issuer = certHolder.getIssuer();                   
+                    final GeneralName name = new GeneralName(issuer);
+                    final GeneralNames names = new GeneralNames(name);
+                    final IssuerSerial is = new IssuerSerial(names, ASN1Integer.getInstance(serial));
+
+                    final ESSCertID essCertid =
+                            new ESSCertID(MessageDigest.getInstance("SHA-1").digest(x509cert.getEncoded()), is);
                     signedAttributes.add(new Attribute(PKCSObjectIdentifiers.id_aa_signingCertificate,
                             new DERSet(new SigningCertificate(essCertid))));
                 } catch (NoSuchAlgorithmException e) {

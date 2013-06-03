@@ -263,6 +263,12 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
         
         assertTrue("Contains fatal error",
                 fatalErrors.contains("Only one of WHITELISTED_DIRECT_ADDRESSES and BLACKLISTED_DIRECT_ADDRESSES can be specified."));
+        
+        int responseCode = process(
+                new URL("http://localhost:" + getPublicHTTPPort()
+                + "/signserver/process?workerId="
+                + getSignerIdDummy1() + "&data=%3Croot/%3E"));
+        assertEquals("HTTP response code", 500, responseCode);
     }
     
     /**
@@ -280,6 +286,12 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
         
         assertTrue("Contains fatal error",
                 fatalErrors.contains("Only one of WHITELISTED_FORWARDED_ADDRESSES and BLACKLISTED_FORWARDED_ADDRESSES can be specified."));
+        
+        int responseCode = process(
+                new URL("http://localhost:" + getPublicHTTPPort()
+                + "/signserver/process?workerId="
+                + getSignerIdDummy1() + "&data=%3Croot/%3E"));
+        assertEquals("HTTP response code", 500, responseCode);
     }
 
     /**
@@ -296,6 +308,12 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
         
         assertTrue("Contains fatal error",
                 fatalErrors.contains("One of WHITELISTED_DIRECT_ADDRESSES or BLACKLISTED_DIRECT_ADDRESSES must be specified."));
+        
+        int responseCode = process(
+                new URL("http://localhost:" + getPublicHTTPPort()
+                + "/signserver/process?workerId="
+                + getSignerIdDummy1() + "&data=%3Croot/%3E"));
+        assertEquals("HTTP response code", 500, responseCode);
     }
     
     /**
@@ -312,6 +330,12 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
         
         assertTrue("Contains fatal error",
                 fatalErrors.contains("One of WHITELISTED_FORWARDED_ADDRESSES or BLACKLISTED_FORWARDED_ADDRESSES must be specified."));
+        
+        int responseCode = process(
+                new URL("http://localhost:" + getPublicHTTPPort()
+                + "/signserver/process?workerId="
+                + getSignerIdDummy1() + "&data=%3Croot/%3E"));
+        assertEquals("HTTP response code", 500, responseCode);
     }
     
     /**
@@ -526,6 +550,12 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
         
         assertTrue("Contains fatal error",
                 fatalErrors.contains("Illegal value for MAX_FORWARDED_ADDRESSES: 0"));
+        
+        int responseCode = process(
+                new URL("http://localhost:" + getPublicHTTPPort()
+                + "/signserver/process?workerId="
+                + getSignerIdDummy1() + "&data=%3Croot/%3E"));
+        assertEquals("HTTP response code", 500, responseCode);
     }
     
     /**
@@ -544,6 +574,12 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
         
         assertTrue("Contains fatal error",
                 fatalErrors.contains("Illegal value for MAX_FORWARDED_ADDRESSES: -2"));
+        
+        int responseCode = process(
+                new URL("http://localhost:" + getPublicHTTPPort()
+                + "/signserver/process?workerId="
+                + getSignerIdDummy1() + "&data=%3Croot/%3E"));
+        assertEquals("HTTP response code", 500, responseCode);
     }
     
     /**
@@ -561,6 +597,12 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
         
         assertTrue("Contains fatal error",
                 fatalErrors.contains("Illegal value for MAX_FORWARDED_ADDRESSES: foo123"));
+        
+        int responseCode = process(
+                new URL("http://localhost:" + getPublicHTTPPort()
+                + "/signserver/process?workerId="
+                + getSignerIdDummy1() + "&data=%3Croot/%3E"));
+        assertEquals("HTTP response code", 500, responseCode);
     }
     
     /**

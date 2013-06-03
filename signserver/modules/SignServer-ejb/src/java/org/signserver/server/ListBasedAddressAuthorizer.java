@@ -145,6 +145,10 @@ public class ListBasedAddressAuthorizer implements IAuthorizer {
             throw new IllegalRequestException("Illegal remote address in request: " + e.getMessage());
         }
         
+        if (!fatalErrors.isEmpty()) {
+            throw new SignServerException("Misconfigured");
+        }
+        
         // check direct address
         if ((isDirectWhitelisting && !addressesDirect.contains(remoteAddress)) ||
                 (!isDirectWhitelisting && addressesDirect.contains(remoteAddress))) {

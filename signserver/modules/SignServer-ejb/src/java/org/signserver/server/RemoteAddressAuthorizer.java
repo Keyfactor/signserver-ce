@@ -120,6 +120,10 @@ public class RemoteAddressAuthorizer implements IAuthorizer {
 
         final String remote = (String) requestContext.get(RequestContext.REMOTE_IP);
 
+        if (!fatalErrors.isEmpty()) {
+            throw new SignServerException("Misconfigured");
+        }
+        
         if (!isAddressAuthorized(remote)) {
             LOG.error("Worker " + workerId + ": "
                     + "Not authorized remote address: " + remote);

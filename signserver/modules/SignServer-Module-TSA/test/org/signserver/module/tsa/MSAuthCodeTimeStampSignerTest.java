@@ -125,6 +125,37 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
     }
 
 
+    /**
+     * Performs test using specified signature algorithm, digest algorithm and with the optional SigningCertificate attribute included or not included.
+     * 
+     * The SigningCertificate attribute is specified in RFC 2634.
+     * 
+     * SigningCertificate ::=  SEQUENCE {
+     *  certs        SEQUENCE OF ESSCertID,
+     *  policies     SEQUENCE OF PolicyInformation OPTIONAL
+     * }
+     *
+     * id-aa-signingCertificate OBJECT IDENTIFIER ::= { iso(1)
+     *  member-body(2) us(840) rsadsi(113549) pkcs(1) pkcs9(9)
+     *  smime(16) id-aa(2) 12 }
+     *
+     * ESSCertID ::=  SEQUENCE {
+     *   certHash                 Hash,
+     *   issuerSerial             IssuerSerial OPTIONAL
+     * }
+     * Hash ::= OCTET STRING -- SHA1 hash of entire certificate
+     *
+     * IssuerSerial ::= SEQUENCE {
+     *   issuer                   GeneralNames,
+     *   serialNumber             CertificateSerialNumber
+     * }
+     * 
+     * @param signingAlgo Signature algorithm to use
+     * @param expectedDigestOID Expected digest OID
+     * @param requestData Request data to test with
+     * @param includeSigningCertAttr If true, include and test the SigningCertificate attribute
+     * @throws Exception
+     */
     private void testProcessDataWithAlgo(final String signingAlgo, final String expectedDigestOID,
             final byte[] requestData, final boolean includeSigningCertAttr) throws Exception {
         SignServerUtil.installBCProvider();

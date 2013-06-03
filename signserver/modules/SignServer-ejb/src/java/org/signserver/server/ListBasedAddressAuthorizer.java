@@ -71,39 +71,46 @@ public class ListBasedAddressAuthorizer implements IAuthorizer {
             throws SignServerException {
         this.workerId = workerId;
         
+        fatalErrors = new LinkedList<String>();
+        
         whitelistedDirectAddresses = config.getProperty(PROPERTY_WHITELISTED_DIRECT_ADDRESSES);
         blacklistedDirectAddresses = config.getProperty(PROPERTY_BLACKLISTED_DIRECT_ADDRESSES);
         whitelistedForwardedAddresses = config.getProperty(PROPERTY_WHITELISTED_FORWARDED_ADDRESSES);
         blacklistedForwardedAddresses = config.getProperty(PROPERTY_BLACKLISTED_FORWARDED_ADDRESSES);
 
-        maxForwardedAddresses =
+        try {
+            maxForwardedAddresses =
                 Integer.parseInt(config.getProperty(PROPERTY_MAX_FORWARDED_ADDRESSES, Integer.toString(MAX_FORWARDED_ADDRESSES_DEFAULT)));
-        setFatalErrors(config);
-        
-        if (fatalErrors.size() > 0) {
-            throw new SignServerException("Invalid properties specified: " + StringUtils.join(fatalErrors, '\n'));
+        } catch (NumberFormatException e) {
+            fatalErrors.add("Illegal value for MAX_FORWARDED_ADDRESSES specified: " + e.getMessage());
         }
-
+        
+        checkAndAddFatalErrors(config);
+        
         isDirectWhitelisting = whitelistedDirectAddresses != null;
         isForwardedWhitelisting = whitelistedForwardedAddresses != null;
         
         if (whitelistedDirectAddresses != null) {
             addressesDirect = splitAddresses(whitelistedDirectAddresses, PROPERTY_WHITELISTED_DIRECT_ADDRESSES);
-        } else {
+        } else if (blacklistedDirectAddresses != null) {
             addressesDirect = splitAddresses(blacklistedDirectAddresses, PROPERTY_BLACKLISTED_DIRECT_ADDRESSES);
         }
         
         if (whitelistedForwardedAddresses != null) {
             addressesForwarded = splitAddresses(whitelistedForwardedAddresses, PROPERTY_WHITELISTED_FORWARDED_ADDRESSES);
-        } else {
+        } else if (blacklistedForwardedAddresses != null) {
             addressesForwarded = splitAddresses(blacklistedForwardedAddresses, PROPERTY_BLACKLISTED_FORWARDED_ADDRESSES);
+        }
+         
+        if (fatalErrors.size() > 0) {
+            throw new SignServerException("Invalid properties specified: " + StringUtils.join(fatalErrors, '\n'));
         }
     }
     
     /**
      * Helper method to extract addresses from configuration properties. Will also set fatal errors for malformed addresses.
      * 
-     * @param addresses Comma-separeated list of IP addresses (taken from the configuration)
+     * @param addresses Comma-separated list of IP addresses (taken from the configuration)
      * @param component Used to prefix a possible error string
      * @return A set of InetAddress objects representing the list
      */
@@ -117,7 +124,7 @@ public class ListBasedAddressAuthorizer implements IAuthorizer {
                 try {
                     res.add(InetAddress.getByName(address));
                 } catch (UnknownHostException e) {
-                    fatalErrors.add(component + ", illegal address specified: " + address);
+                    fatalErrors.add(component + ", illegal address specified: " + e.getMessage());
                 }
             }
         }
@@ -135,7 +142,7 @@ public class ListBasedAddressAuthorizer implements IAuthorizer {
         try {
             remoteAddress = InetAddress.getByName(remote);
         } catch (UnknownHostException e) {
-            throw new IllegalRequestException("Illegal remote address in request: " + remote);
+            throw new IllegalRequestException("Illegal remote address in request: " + e.getMessage());
         }
         
         // check direct address
@@ -152,29 +159,21 @@ public class ListBasedAddressAuthorizer implements IAuthorizer {
             if (forwardedAddresses == null || forwardedAddresses.length == 0) {
                 throw new AccessDeniedException("No forwarded address in request");
             }
-            
-            boolean isAuthorized = true;
-            
+           
             for (final String forwarded : forwardedAddresses) {
                 InetAddress forwardedAddress;
                 try {
                     forwardedAddress = InetAddress.getByName(forwarded);
                 } catch (UnknownHostException e) {
-                    throw new IllegalRequestException("Illegal forwarded address in request: " + forwarded);
+                    throw new IllegalRequestException("Illegal forwarded address in request: " + e.getMessage());
                 }
                 
                 if (!addressesForwarded.contains(forwardedAddress)) {
-                    isAuthorized = false;
-                    break;
-                    
+                    LOG.error("Worker " + workerId + ": "
+                            + "No authorized forwarded address among inspected addesses");
+                    throw new AccessDeniedException("Forwarded address not athorized");
                 }
-            }
-            
-            if (!isAuthorized) {
-                LOG.error("Worker " + workerId + ": "
-                        + "No authorized forwarded address among inspected addesses");
-                throw new AccessDeniedException("Forwarded address not athorized");
-            }
+            }            
         } else {
             if (forwardedAddresses != null && forwardedAddresses.length > 0) {
                 for (final String forwarded : forwardedAddresses) {
@@ -182,7 +181,7 @@ public class ListBasedAddressAuthorizer implements IAuthorizer {
                     try {
                         forwardedAddress = InetAddress.getByName(forwarded);
                     } catch (UnknownHostException e) {
-                        throw new IllegalRequestException("Illegal forwarded address in request: " + forwarded);
+                        throw new IllegalRequestException("Illegal forwarded address in request: " + e.getMessage());
                     }
                     
                     if (addressesForwarded.contains(forwardedAddress)) {
@@ -202,9 +201,7 @@ public class ListBasedAddressAuthorizer implements IAuthorizer {
      * 
      * @param config The worker config
      */
-    private void setFatalErrors(final WorkerConfig config) {
-        fatalErrors = new LinkedList<String>();
-        
+    private void checkAndAddFatalErrors(final WorkerConfig config) {
         // check that one (and only one) each of the direct and forwarded properties at a time is specified
         if (whitelistedDirectAddresses != null && blacklistedDirectAddresses != null) {
             fatalErrors.add("Only one of " + PROPERTY_WHITELISTED_DIRECT_ADDRESSES + " and " +
@@ -212,8 +209,8 @@ public class ListBasedAddressAuthorizer implements IAuthorizer {
         }
         
         if (whitelistedForwardedAddresses != null && blacklistedForwardedAddresses != null) {
-            fatalErrors.add("Only one of " + PROPERTY_WHITELISTED_DIRECT_ADDRESSES + " and " +
-                    PROPERTY_BLACKLISTED_DIRECT_ADDRESSES + " can be specified.");
+            fatalErrors.add("Only one of " + PROPERTY_WHITELISTED_FORWARDED_ADDRESSES + " and " +
+                    PROPERTY_BLACKLISTED_FORWARDED_ADDRESSES + " can be specified.");
         }
         
         if (whitelistedDirectAddresses == null && blacklistedDirectAddresses == null) {

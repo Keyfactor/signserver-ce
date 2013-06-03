@@ -16,11 +16,14 @@ package org.signserver.server;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerUtil;
+import org.signserver.common.WorkerStatus;
 import org.signserver.testutils.ModulesTestCase;
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -230,8 +233,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
     }
     
     /**
-     * Test that setting none of the properties make requests fail
-     * with internal server error.
+     * Test that setting none of the properties generates the correct fatal error.
      * 
      * @throws Exception
      */
@@ -248,7 +250,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
     
     /**
      * Tests that setting both white- and blacklisting simultaniously for direct
-     * addresses makes requests fail with internal server error.
+     * addresses generates correct fatal error.
      * 
      * @throws Exception
      */
@@ -256,16 +258,16 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
     public void test12BothDirectAddressPropertiesSet() throws Exception {
         setPropertiesAndReload("127.0.0.1", "127.0.0.1", "127.0.0.1", null);
        
-        int responseCode = process(
-                new URL("http://localhost:" + getPublicHTTPPort()
-                + "/signserver/process?workerId="
-                + getSignerIdDummy1() + "&data=%3Croot/%3E"));
-        assertEquals("HTTP response code", 500, responseCode);
+        final WorkerStatus status = workerSession.getStatus(getSignerIdDummy1());
+        final List<String> fatalErrors = status.getFatalErrors();
+        
+        assertTrue("Contains fatal error",
+                fatalErrors.contains("Only one of WHITELISTED_DIRECT_ADDRESSES and BLACKLISTED_DIRECT_ADDRESSES can be specified."));
     }
     
     /**
      * Tests that setting both white- and blacklisting simultaniously for forwarded
-     * addresses makes requests fail with internal server error.
+     * addresses generates correct fatal error.
      * 
      * @throws Exception
      */
@@ -273,15 +275,15 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
     public void test13BothForwardedAddressPropertiesSet() throws Exception {
         setPropertiesAndReload(null, "127.0.0.1", "127.0.0.1", "127.0.0.1");
         
-        int responseCode = process(
-                new URL("http://localhost:" + getPublicHTTPPort()
-                + "/signserver/process?workerId="
-                + getSignerIdDummy1() + "&data=%3Croot/%3E"));
-        assertEquals("HTTP response code", 500, responseCode);
+        final WorkerStatus status = workerSession.getStatus(getSignerIdDummy1());
+        final List<String> fatalErrors = status.getFatalErrors();
+        
+        assertTrue("Contains fatal error",
+                fatalErrors.contains("Only one of WHITELISTED_FORWARDED_ADDRESSES and BLACKLISTED_FORWARDED_ADDRESSES can be specified."));
     }
 
     /**
-     * Tests that not specifying a list for direct address fails.
+     * Tests that not specifying a list for direct address generates the correct fatal error.
      * 
      * @throws Exception
      */
@@ -289,15 +291,15 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
     public void test14MissingDirectAddresses() throws Exception {
         setPropertiesAndReload(null, null, null, "127.0.0.1");
        
-        int responseCode = process(
-                new URL("http://localhost:" + getPublicHTTPPort()
-                + "/signserver/process?workerId="
-                + getSignerIdDummy1() + "&data=%3Croot/%3E"));
-        assertEquals("HTTP response code", 500, responseCode);
+        final WorkerStatus status = workerSession.getStatus(getSignerIdDummy1());
+        final List<String> fatalErrors = status.getFatalErrors();
+        
+        assertTrue("Contains fatal error",
+                fatalErrors.contains("One of WHITELISTED_DIRECT_ADDRESSES or BLACKLISTED_DIRECT_ADDRESSES must be specified."));
     }
     
     /**
-     * Tests that not specifying a list for forwarded addresses fails.
+     * Tests that not specifying a list for forwarded addresses generates the correct fatal error.
      * 
      * @throws Exception
      */
@@ -305,11 +307,11 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
     public void test15MissingForwardedAddresses() throws Exception {
         setPropertiesAndReload(null, "127.0.0.1", null, null);
        
-        int responseCode = process(
-                new URL("http://localhost:" + getPublicHTTPPort()
-                + "/signserver/process?workerId="
-                + getSignerIdDummy1() + "&data=%3Croot/%3E"));
-        assertEquals("HTTP response code", 500, responseCode);
+        final WorkerStatus status = workerSession.getStatus(getSignerIdDummy1());
+        final List<String> fatalErrors = status.getFatalErrors();
+        
+        assertTrue("Contains fatal error",
+                fatalErrors.contains("One of WHITELISTED_FORWARDED_ADDRESSES or BLACKLISTED_FORWARDED_ADDRESSES must be specified."));
     }
     
     /**
@@ -509,8 +511,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
     }
     
     /**
-     * Test that setting MAX_FORWARDED_ADDRESSES to 0 will result in an internal server error
-     * (misconfiguration), for security reasons.
+     * Test that setting MAX_FORWARDED_ADDRESSES to 0 will result in a fatal error, for security reasons
      * 
      * @throws Exception
      */
@@ -520,12 +521,11 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
         workerSession.setWorkerProperty(getSignerIdDummy1(), "MAX_FORWARDED_ADDRESSES", "0");
         workerSession.reloadConfiguration(getSignerIdDummy1());
         
-        int responseCode = process(
-                new URL("http://localhost:" + getPublicHTTPPort()
-                + "/signserver/process?workerId="
-                + getSignerIdDummy1() + "&data=%3Croot/%3E"),
-                "1.2.3.4");
-        assertEquals("HTTP response code", 500, responseCode);
+        final WorkerStatus status = workerSession.getStatus(getSignerIdDummy1());
+        final List<String> fatalErrors = status.getFatalErrors();
+        
+        assertTrue("Contains fatal error",
+                fatalErrors.contains("Illegal value for MAX_FORWARDED_ADDRESSES: 0"));
     }
     
     /**
@@ -539,12 +539,11 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
         workerSession.setWorkerProperty(getSignerIdDummy1(), "MAX_FORWARDED_ADDRESSES", "-2");
         workerSession.reloadConfiguration(getSignerIdDummy1());
         
-        int responseCode = process(
-                new URL("http://localhost:" + getPublicHTTPPort()
-                + "/signserver/process?workerId="
-                + getSignerIdDummy1() + "&data=%3Croot/%3E"),
-                "1.2.3.4");
-        assertEquals("HTTP response code", 500, responseCode);
+        final WorkerStatus status = workerSession.getStatus(getSignerIdDummy1());
+        final List<String> fatalErrors = status.getFatalErrors();
+        
+        assertTrue("Contains fatal error",
+                fatalErrors.contains("Illegal value for MAX_FORWARDED_ADDRESSES: -2"));
     }
     
     /**
@@ -557,12 +556,11 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
         workerSession.setWorkerProperty(getSignerIdDummy1(), "MAX_FORWARDED_ADDRESSES", "foo123");
         workerSession.reloadConfiguration(getSignerIdDummy1());
         
-        int responseCode = process(
-                new URL("http://localhost:" + getPublicHTTPPort()
-                + "/signserver/process?workerId="
-                + getSignerIdDummy1() + "&data=%3Croot/%3E"),
-                "1.2.3.4");
-        assertEquals("HTTP response code", 500, responseCode);
+        final WorkerStatus status = workerSession.getStatus(getSignerIdDummy1());
+        final List<String> fatalErrors = status.getFatalErrors();
+        
+        assertTrue("Contains fatal error",
+                fatalErrors.contains("Illegal value for MAX_FORWARDED_ADDRESSES: foo123"));
     }
     
     /**

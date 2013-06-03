@@ -502,19 +502,7 @@ public class AdministratorsFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void loadFromCertificateButtonPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadFromCertificateButtonPerformed
-        final JFileChooser chooser = new JFileChooser();
-        final int res = chooser.showOpenDialog(editPanel);
-    
-        if (res == JFileChooser.APPROVE_OPTION) {
-            try {
-                final X509Certificate cert =
-                        SignServerUtil.getCertFromFile(chooser.getSelectedFile().getAbsolutePath());
-                editCertSerialNoTextField.setText(cert.getSerialNumber().toString(16));
-                editIssuerDNTextField.setText(cert.getIssuerDN().getName());
-            } catch (IllegalArgumentException e) {
-                JOptionPane.showMessageDialog(editPanel, e.getMessage());
-            }
-        }
+        Utils.selectAndLoadFromCert(editPanel, editCertSerialNoTextField, editIssuerDNTextField);
     }//GEN-LAST:event_loadFromCertificateButtonPerformed
 
     @Action(block = Task.BlockingScope.WINDOW)

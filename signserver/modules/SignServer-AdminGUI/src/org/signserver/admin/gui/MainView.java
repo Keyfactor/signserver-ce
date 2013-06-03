@@ -1801,20 +1801,7 @@ private void auditLogTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:
 private void loadFromCertificateButtonPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadFromCertificateButtonPerformed
     LOG.debug("Load from certificate file");
     
-    final JFileChooser chooser = new JFileChooser();
-    final int res = chooser.showOpenDialog(authEditPanel);
-    
-    if (res == JFileChooser.APPROVE_OPTION) {
-        try {
-            final X509Certificate cert =
-                    SignServerUtil.getCertFromFile(chooser.getSelectedFile().getAbsolutePath());
-            editSerialNumberTextfield.setText(cert.getSerialNumber().toString(16));
-            editIssuerDNTextfield.setText(cert.getIssuerDN().getName());
-        } catch (IllegalArgumentException e) {
-            JOptionPane.showMessageDialog(authEditPanel, e.getMessage());
-        }
-    }
-    
+    Utils.selectAndLoadFromCert(authEditPanel, editSerialNumberTextfield, editIssuerDNTextfield);
 }//GEN-LAST:event_loadFromCertificateButtonPerformed
 
 private void displayLogEntryAction() {

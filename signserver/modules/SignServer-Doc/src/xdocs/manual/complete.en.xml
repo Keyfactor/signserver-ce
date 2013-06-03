@@ -2842,11 +2842,17 @@ BLACKLISTED_DIRECT_ADDRESSES=10.0.0.5<br/>
 WHITELISTED_FORWARDED_ADDRESS=216.34.181.97
                         </p>
                         <p>
-5. To accept direct request from a proxy server 10.0.0.1 allowing forwarding from another proxy 10.0.0.2 in turn proxying the request from the
-client with address 10.0.0.3 use:<br/>
-WHITELISTED_DIRECT_ADDRESSES=10.0.0.1<br/>
-WHITELISTED_FORWARDED_ADDRESSES=10.0.0.2,10.0.0.3<br/>
+5. To accept direct request from a proxy server 10.0.1.1 allowing forwarding from another proxy 10.0.2.2 in turn proxying the request from the
+client with address 192.0.43.10 use:<br/>
+WHITELISTED_DIRECT_ADDRESSES=10.0.1.1<br/>
+WHITELISTED_FORWARDED_ADDRESSES=10.0.2.2,192.0.43.10<br/>
 MAX_FORWARDED_ADDRESSES=2
+                        </p>
+                        <p>
+6. To blacklist a set of IP addresses, set the MAX_FORWARDED_ADDRESSES value to a value gauranteed to be larger than the number of
+proxies you have control over, like in the following example:
+BLACKLISTED_FORWARDED_ADDRESSES=10.0.1.1,10.0.2.2,10.0.3.3
+MAX_FORWARDED_ADDRESSES=10
                         </p>
                         <p>
 <b>Logging:</b> This authorizer will add the remote IP address to the log field AUTHORIZED_ADDRESS and the proxied address

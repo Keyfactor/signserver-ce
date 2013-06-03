@@ -13,6 +13,7 @@
 package org.signserver.module.tsa;
 
 import java.io.File;
+import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
@@ -21,12 +22,12 @@ import java.util.Date;
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1Encodable;
+import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.ASN1TaggedObject;
-import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.x509.Time;
 import org.bouncycastle.util.encoders.Base64;
 import org.ejbca.util.CertTools;
@@ -38,11 +39,9 @@ import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
-import org.signserver.server.cryptotokens.HardCodedCryptoToken;
-import org.signserver.server.cryptotokens.ICryptoToken;
+
 import org.signserver.test.utils.mock.GlobalConfigurationSessionMock;
 import org.signserver.test.utils.mock.WorkerSessionMock;
-import org.signserver.testutils.ModulesTestCase;
 
 import org.apache.commons.io.FileUtils;
 
@@ -198,7 +197,14 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
             
             assertTrue("Hash doesn't match", Arrays.equals(digest, hashOctetString.getOctets()));
             
+            // expected serial number
+            final BigInteger sn = ((X509Certificate) cert).getSerialNumber();
             
+            // find serial number in structure
+            final ASN1Sequence s4 = ASN1Sequence.getInstance(s3.getObjectAt(1));
+            final ASN1Integer snValue = ASN1Integer.getInstance(s4.getObjectAt(1));
+            
+            assertEquals("Serial number doesn't match", sn, snValue.getValue());
         }
         
         ASN1ObjectIdentifier ctOID = ASN1ObjectIdentifier.getInstance(asn1seq4.getObjectAt(0));

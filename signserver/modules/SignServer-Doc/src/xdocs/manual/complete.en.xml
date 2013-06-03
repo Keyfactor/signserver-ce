@@ -3164,6 +3164,9 @@ This property has the same values as for TimeStampSigner <a href="complete.en.ht
                         <p>
 <b>SIGNATUREALGORITHM</b> = property specifying the algorithm used to sign the timestamp (default: SHA1withRSA)
 						</p>
+						<p>
+<b>INCLUDE_SIGNING_CERTIFICATE_ATTRIBUTE</b> = Specifies if the signing certificate attribute should be included in the response (OPTIONAL, default: false).
+					    </p>
 					</subsubsection>
 					<subsubsection name="Howto">
 						<p>

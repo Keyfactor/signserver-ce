@@ -12,7 +12,6 @@
  *************************************************************************/
 package org.signserver.module.tsa;
 
-import java.io.File;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.cert.Certificate;
@@ -42,8 +41,6 @@ import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 
 import org.signserver.test.utils.mock.GlobalConfigurationSessionMock;
 import org.signserver.test.utils.mock.WorkerSessionMock;
-
-import org.apache.commons.io.FileUtils;
 
 /**
  * 
@@ -176,9 +173,6 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
         if (!includeSigningCertAttr) {
             assertEquals("Number of attributes", 3, asn1seq3.size());
         } else {
-            
-            FileUtils.writeStringToFile(new File("/tmp/test-resp.txt"), new String(buf));
-            
             final ASN1Sequence scAttr = ASN1Sequence.getInstance(asn1seq3.getObjectAt(3));
             final ASN1ObjectIdentifier scOid = ASN1ObjectIdentifier.getInstance(scAttr.getObjectAt(0));
             

@@ -17,6 +17,7 @@ import java.security.MessageDigest;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
 
@@ -32,8 +33,10 @@ import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.ASN1TaggedObject;
 import org.bouncycastle.asn1.DERPrintableString;
 import org.bouncycastle.asn1.DERUTF8String;
+import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.x509.Time;
 import org.bouncycastle.cms.CMSSignedData;
+import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.tsp.TimeStampRequest;
 import org.bouncycastle.util.encoders.Base64;
 import org.bouncycastle.util.encoders.Hex;
@@ -323,9 +326,26 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
 
         assertTrue("Contains request data", Arrays.equals(data.getOctets(), content));
     
+        // check the signing certificate
         final X509Certificate signercert = (X509Certificate) resp.getSignerCertificate();
         assertEquals("Serial number", sn, signercert.getSerialNumber());
         assertEquals("Issuer", cert.getIssuerDN(), signercert.getIssuerDN());
+        
+        // check ContentInfo, according to the Microsoft specification, the contentInfo in the response is
+        // identical to the contentInfo in the request
+        final ContentInfo expCi = new ContentInfo(seq2);
+        final ContentInfo ci = new ContentInfo(ASN1Sequence.getInstance(asn1seq1.getObjectAt(2)));
+        
+        assertEquals("Content info should match the request", expCi, ci);
+        
+        // Get signers
+        final Collection signers = signedData.getSignerInfos().getSigners();
+        final SignerInformation signer
+                = (SignerInformation) signers.iterator().next();
+
+        // Verify using the signer's certificate
+        assertTrue("Verification using signer certificate",
+                signer.verify(signercert.getPublicKey(), "BC"));
     }
     
     /**

@@ -24,6 +24,7 @@ import java.util.*;
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
+import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -33,6 +34,7 @@ import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.ASN1TaggedObject;
 import org.bouncycastle.asn1.BEROctetString;
+import org.bouncycastle.asn1.BERSet;
 import org.bouncycastle.asn1.DERInteger;
 import org.bouncycastle.asn1.DERSet;
 import org.bouncycastle.asn1.cms.AttributeTable;
@@ -69,6 +71,7 @@ import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.bouncycastle.tsp.*;
 import org.bouncycastle.util.Store;
 import org.bouncycastle.util.encoders.Hex;
+import org.bouncycastle.util.io.TeeOutputStream;
 import org.ejbca.util.Base64;
 import org.signserver.common.*;
 import org.signserver.server.ITimeSource;
@@ -675,10 +678,10 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
                     bOut = new ByteArrayOutputStream();
                 }
 
-                OutputStream cOut = CMSUtils.attachSignersToOutputStream(signerGens, bOut);
+                OutputStream cOut = attachSignersToOutputStream(signerGens, bOut);
 
                 // Just in case it's unencapsulated and there are no signers!
-                cOut = CMSUtils.getSafeOutputStream(cOut);
+                cOut = getSafeOutputStream(cOut);
 
                 try
                 {
@@ -717,14 +720,14 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
 
             if (certs.size() != 0)
             {
-                certificates = CMSUtils.createBerSetFromList(certs);
+                certificates = createBerSetFromList(certs);
             }
 
             ASN1Set certrevlist = null;
 
             if (crls.size() != 0)
             {
-                certrevlist = CMSUtils.createBerSetFromList(crls);
+                certrevlist = createBerSetFromList(crls);
             }
 
             ContentInfo encInfo = ci;
@@ -743,7 +746,7 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
         }
     
 
-    // copied from BouncyCastle
+    // the following static methods are copied from BouncyCastle org.bouncycaste.cms.CMSUtils
     private static List getCertificatesFromStore(Store certStore)
             throws CMSException
         {
@@ -766,4 +769,59 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
             }
         }
     
+    private static OutputStream attachSignersToOutputStream(Collection signers, OutputStream s)
+    {
+        OutputStream result = s;
+        Iterator it = signers.iterator();
+        while (it.hasNext())
+        {
+            SignerInfoGenerator signerGen = (SignerInfoGenerator)it.next();
+            result = getSafeTeeOutputStream(result, signerGen.getCalculatingOutputStream());
+        }
+        return result;
+    }
+    
+    private static OutputStream getSafeOutputStream(OutputStream s)
+    {
+        return s == null ? new NullOutputStream() : s;
+    }
+    
+    private static OutputStream getSafeTeeOutputStream(OutputStream s1,
+            OutputStream s2)
+    {
+        return s1 == null ? getSafeOutputStream(s2)
+                : s2 == null ? getSafeOutputStream(s1) : new TeeOutputStream(
+                        s1, s2);
+    }
+    
+    private static ASN1Set createBerSetFromList(List derObjects)
+    {
+        ASN1EncodableVector v = new ASN1EncodableVector();
+
+        for (Iterator it = derObjects.iterator(); it.hasNext();)
+        {
+            v.add((ASN1Encodable)it.next());
+        }
+
+        return new BERSet(v);
+    }
+    
+    // the following is copied from BouncyCastle org.bouncycastle.cms.NullOutputStream (used by the util methods)
+    private static class NullOutputStream extends OutputStream
+    {
+        public void write(byte[] buf)
+                throws IOException {
+            // do nothing
+        }
+
+        public void write(byte[] buf, int off, int len)
+                throws IOException {
+            // do nothing
+        }
+    
+        public void write(int b) throws IOException {
+            // do nothing
+        }
+    }
+
 }

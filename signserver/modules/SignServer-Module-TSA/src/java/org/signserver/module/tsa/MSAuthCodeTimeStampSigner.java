@@ -306,12 +306,7 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
 
             ASN1OctetString octets = ASN1OctetString.getInstance(tag.getObject());
             byte[] content = octets.getOctets();
-
-            System.out.print("bytes: " + new String(Hex.encode(content)));
-            //int bytes = Hex.encode(content, System.out);
-            //System.out.println("");
-            //System.out.println("" + bytes + " written");
-            
+           
             // get signing cert certificate chain and private key
             List<Certificate> certList = this.getSigningCertificateChain();
             if (certList == null) {
@@ -362,7 +357,6 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
             }
 
             AttributeTable signedAttributesTable = new AttributeTable(signedAttributes);
-            signedAttributesTable.toASN1EncodableVector();
             DefaultSignedAttributeTableGenerator signedAttributeGenerator = new DefaultSignedAttributeTableGenerator(signedAttributesTable);
 
             
@@ -376,8 +370,6 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
             contentSigner.setProvider(provider);
 
             final SignerInfoGenerator sig = signerInfoBuilder.build(contentSigner.build(pk), new X509CertificateHolder(x509cert.getEncoded()));
-            //cmssdg.addSignerInfoGenerator(signerInfoBuilder.build(contentSigner.build(pk),
-            //        new X509CertificateHolder(x509cert.getEncoded())));
 
             JcaCertStore cs = new JcaCertStore(certList);
             cmssdg.addCertificates(cs);

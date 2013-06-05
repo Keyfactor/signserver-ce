@@ -26,16 +26,21 @@ import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
+import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.ASN1TaggedObject;
 import org.bouncycastle.asn1.DERPrintableString;
 import org.bouncycastle.asn1.DERUTF8String;
 import org.bouncycastle.asn1.x509.Time;
+import org.bouncycastle.cms.CMSSignedData;
+import org.bouncycastle.tsp.TimeStampRequest;
 import org.bouncycastle.util.encoders.Base64;
+import org.bouncycastle.util.encoders.Hex;
 import org.ejbca.util.CertTools;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
+import org.signserver.common.ISignRequest;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.RequestContext;
@@ -213,6 +218,11 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
         ASN1Sequence asn1seq5 = ASN1Sequence.getInstance(asn1seq3.getObjectAt(1));
         ASN1Sequence asn1seq6 = ASN1Sequence.getInstance(asn1seq3.getObjectAt(2));
         
+        final X509Certificate cert =
+                (X509Certificate) CertTools.getCertfromByteArray(Base64.decode(SIGN_CERT.getBytes()));
+        // expected serial number
+        final BigInteger sn = cert.getSerialNumber();
+
         // if INCLUDE_SIGNING_CERTIFICATE_ATTRIBUTE is set to false, the attribute should not be included
         if (!includeSigningCertAttr) {
             assertEquals("Number of attributes", 3, asn1seq3.size());
@@ -223,7 +233,6 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
             assertEquals("Invalid OID for content", SIGNING_CERT_OID, scOid.getId());
             
             // calculate expected hash
-            final Certificate cert = CertTools.getCertfromByteArray(Base64.decode(SIGN_CERT.getBytes()));
             final byte[] digest = MessageDigest.getInstance("SHA-1").digest(cert.getEncoded());
             
             // find hash in returned structure
@@ -235,9 +244,7 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
             
             assertTrue("Hash doesn't match", Arrays.equals(digest, hashOctetString.getOctets()));
 
-            // expected serial number
-            final BigInteger sn = ((X509Certificate) cert).getSerialNumber();
-
+            
             // find serial number in structure
             final ASN1Sequence s4 = ASN1Sequence.getInstance(s3.getObjectAt(1));
             final ASN1Integer snValue = ASN1Integer.getInstance(s4.getObjectAt(1));
@@ -303,6 +310,22 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
         ASN1ObjectIdentifier algOid = ASN1ObjectIdentifier.getInstance(asn1seq7.getObjectAt(0));
         
         assertEquals("Unexpected digest OID in response", expectedDigestOID, algOid.getId());
+        
+        // check that the request is included
+        final CMSSignedData signedData = new CMSSignedData(asn1seq.getEncoded());
+        final byte[] content = (byte[]) signedData.getSignedContent()
+                .getContent();
+        
+        final ASN1Sequence seq = ASN1Sequence.getInstance(Base64.decode(requestData));
+        final ASN1Sequence seq2 = ASN1Sequence.getInstance(seq.getObjectAt(1));
+        final ASN1TaggedObject tag = ASN1TaggedObject.getInstance(seq2.getObjectAt(1));
+        final ASN1OctetString data = ASN1OctetString.getInstance(tag.getObject());
+
+        assertTrue("Contains request data", Arrays.equals(data.getOctets(), content));
+    
+        final X509Certificate signercert = (X509Certificate) resp.getSignerCertificate();
+        assertEquals("Serial number", sn, signercert.getSerialNumber());
+        assertEquals("Issuer", cert.getIssuerDN(), signercert.getIssuerDN());
     }
     
     /**

@@ -12,12 +12,15 @@
  *************************************************************************/
 package org.signserver.module.tsa;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.math.BigInteger;
 import java.security.*;
 import java.security.cert.*;
 import java.security.cert.Certificate;
 import java.util.*;
+
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
@@ -27,11 +30,17 @@ import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.ASN1TaggedObject;
+import org.bouncycastle.asn1.BEROctetString;
 import org.bouncycastle.asn1.DERInteger;
 import org.bouncycastle.asn1.DERSet;
 import org.bouncycastle.asn1.cms.AttributeTable;
 import org.bouncycastle.asn1.cms.CMSAttributes;
+import org.bouncycastle.asn1.cms.CMSObjectIdentifiers;
+import org.bouncycastle.asn1.cms.ContentInfo;
+import org.bouncycastle.asn1.cms.SignedData;
+import org.bouncycastle.asn1.cms.SignerInfo;
 import org.bouncycastle.asn1.cms.Time;
 import org.bouncycastle.asn1.ess.ESSCertID;
 import org.bouncycastle.asn1.ess.SigningCertificate;
@@ -42,6 +51,7 @@ import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.GeneralNames;
 import org.bouncycastle.asn1.x509.IssuerSerial;
 import org.bouncycastle.asn1.x509.KeyPurposeId;
+import org.bouncycastle.asn1.x509.X509CertificateStructure;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
 import org.bouncycastle.cms.CMSException;
@@ -50,11 +60,15 @@ import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.CMSSignedDataGenerator;
 import org.bouncycastle.cms.CMSTypedData;
 import org.bouncycastle.cms.DefaultSignedAttributeTableGenerator;
+import org.bouncycastle.cms.SignerInfoGenerator;
 import org.bouncycastle.cms.SignerInfoGeneratorBuilder;
+import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.bouncycastle.tsp.*;
+import org.bouncycastle.util.Store;
+import org.bouncycastle.util.encoders.Hex;
 import org.ejbca.util.Base64;
 import org.signserver.common.*;
 import org.signserver.server.ITimeSource;
@@ -266,6 +280,8 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
             ASN1ObjectIdentifier oid = ASN1ObjectIdentifier.getInstance(asn1seq.getObjectAt(0));
             ASN1Sequence asn1seq1 = ASN1Sequence.getInstance(asn1seq.getObjectAt(1));
 
+            final ContentInfo ci = new ContentInfo(asn1seq1);
+            
             if (!oid.getId().equals(msOID)) {
                     LOG.error("Invalid OID in request: " + oid.getId());
                     throw new IllegalRequestException("Invalid OID in request: " + oid.getId());
@@ -291,8 +307,13 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
             ASN1OctetString octets = ASN1OctetString.getInstance(tag.getObject());
             byte[] content = octets.getOctets();
 
+            System.out.print("bytes: " + new String(Hex.encode(content)));
+            //int bytes = Hex.encode(content, System.out);
+            //System.out.println("");
+            //System.out.println("" + bytes + " written");
+            
             // get signing cert certificate chain and private key
-            Collection<Certificate> certList = this.getSigningCertificateChain();
+            List<Certificate> certList = this.getSigningCertificateChain();
             if (certList == null) {
                 throw new SignServerException(
                         "Null certificate chain. This signer needs a certificate.");
@@ -354,14 +375,16 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
             JcaContentSignerBuilder contentSigner = new JcaContentSignerBuilder(signatureAlgo);
             contentSigner.setProvider(provider);
 
-            cmssdg.addSignerInfoGenerator(signerInfoBuilder.build(contentSigner.build(pk),
-                    new X509CertificateHolder(x509cert.getEncoded())));
+            final SignerInfoGenerator sig = signerInfoBuilder.build(contentSigner.build(pk), new X509CertificateHolder(x509cert.getEncoded()));
+            //cmssdg.addSignerInfoGenerator(signerInfoBuilder.build(contentSigner.build(pk),
+            //        new X509CertificateHolder(x509cert.getEncoded())));
 
             JcaCertStore cs = new JcaCertStore(certList);
             cmssdg.addCertificates(cs);
             
             CMSTypedData cmspba = new CMSProcessableByteArray(content);
-            CMSSignedData cmssd = cmssdg.generate(cmspba, true);
+            CMSSignedData cmssd = generate(cmspba, true, Arrays.asList(sig),
+                    getCertificatesFromStore(cs), Collections.emptyList(), ci);
 
             byte[] der = ASN1Primitive.fromByteArray(cmssd.getEncoded()).getEncoded(); 
 
@@ -617,5 +640,138 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
 
         return result;
     }
+    
+    // copied and modified from BouncyCastle
+    private CMSSignedData generate(
+            // FIXME Avoid accessing more than once to support CMSProcessableInputStream
+            CMSTypedData content,
+            boolean encapsulate, Collection signerGens, final List certs, final List crls, ContentInfo ci)
+            throws CMSException
+        {
+
+            ASN1EncodableVector  digestAlgs = new ASN1EncodableVector();
+            ASN1EncodableVector  signerInfos = new ASN1EncodableVector();
+
+            final Map digests = new HashMap();
+            digests.clear();  // clear the current preserved digest state
+
+            //
+            // add the precalculated SignerInfo objects.
+            //
+//            for (Iterator it = _signers.iterator(); it.hasNext();)
+//            {
+//                SignerInformation signer = (SignerInformation)it.next();
+//                digestAlgs.add(CMSSignedHelper.INSTANCE.fixAlgID(signer.getDigestAlgorithmID()));
+//
+//                // TODO Verify the content type and calculated digest match the precalculated SignerInfo
+//                signerInfos.add(signer.toASN1Structure());
+//            }
+
+            //
+            // add the SignerInfo objects
+            //
+            ASN1ObjectIdentifier contentTypeOID = content.getContentType();
+
+            ASN1OctetString octs = null;
+
+            if (content != null)
+            {
+                ByteArrayOutputStream bOut = null;
+
+                if (encapsulate)
+                {
+                    bOut = new ByteArrayOutputStream();
+                }
+
+                OutputStream cOut = CMSUtils.attachSignersToOutputStream(signerGens, bOut);
+
+                // Just in case it's unencapsulated and there are no signers!
+                cOut = CMSUtils.getSafeOutputStream(cOut);
+
+                try
+                {
+                    content.write(cOut);
+
+                    cOut.close();
+                }
+                catch (IOException e)
+                {
+                    throw new CMSException("data processing exception: " + e.getMessage(), e);
+                }
+
+                if (encapsulate)
+                {
+                    octs = new BEROctetString(bOut.toByteArray());
+                }
+            }
+
+            for (Iterator it = signerGens.iterator(); it.hasNext();)
+            {
+                SignerInfoGenerator sGen = (SignerInfoGenerator)it.next();
+                SignerInfo inf = sGen.generate(contentTypeOID);
+
+                digestAlgs.add(inf.getDigestAlgorithm());
+                signerInfos.add(inf);
+
+                byte[] calcDigest = sGen.getCalculatedDigest();
+
+                if (calcDigest != null)
+                {
+                    digests.put(inf.getDigestAlgorithm().getAlgorithm().getId(), calcDigest);
+                }
+            }
+
+            ASN1Set certificates = null;
+
+            if (certs.size() != 0)
+            {
+                certificates = CMSUtils.createBerSetFromList(certs);
+            }
+
+            ASN1Set certrevlist = null;
+
+            if (crls.size() != 0)
+            {
+                certrevlist = CMSUtils.createBerSetFromList(crls);
+            }
+
+            ContentInfo encInfo = ci;
+
+            SignedData  sd = new SignedData(
+                                     new DERSet(digestAlgs),
+                                     encInfo,
+                                     certificates,
+                                     certrevlist,
+                                     new DERSet(signerInfos));
+
+            ContentInfo contentInfo = new ContentInfo(
+                CMSObjectIdentifiers.signedData, sd);
+
+            return new CMSSignedData(content, contentInfo);
+        }
+    
+
+    // copied from BouncyCastle
+    private static List getCertificatesFromStore(Store certStore)
+            throws CMSException
+        {
+            List certs = new ArrayList();
+
+            try
+            {
+                for (Iterator it = certStore.getMatches(null).iterator(); it.hasNext();)
+                {
+                    X509CertificateHolder c = (X509CertificateHolder)it.next();
+
+                    certs.add(c.toASN1Structure());
+                }
+
+                return certs;
+            }
+            catch (ClassCastException e)
+            {
+                throw new CMSException("error processing certs", e);
+            }
+        }
     
 }

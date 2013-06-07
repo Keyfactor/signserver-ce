@@ -642,113 +642,112 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
             CMSTypedData content,
             boolean encapsulate, Collection signerGens, final List certs, final List crls, ContentInfo ci)
             throws CMSException
+    {
+
+        ASN1EncodableVector  digestAlgs = new ASN1EncodableVector();
+        ASN1EncodableVector  signerInfos = new ASN1EncodableVector();
+
+        final Map digests = new HashMap();
+        digests.clear();  // clear the current preserved digest state
+
+        //
+        // add the precalculated SignerInfo objects.
+        //
+        //            for (Iterator it = _signers.iterator(); it.hasNext();)
+        //            {
+        //                SignerInformation signer = (SignerInformation)it.next();
+        //                digestAlgs.add(CMSSignedHelper.INSTANCE.fixAlgID(signer.getDigestAlgorithmID()));
+        //
+        //                // TODO Verify the content type and calculated digest match the precalculated SignerInfo
+        //                signerInfos.add(signer.toASN1Structure());
+        //            }
+
+        //
+        // add the SignerInfo objects
+        //
+        ASN1ObjectIdentifier contentTypeOID = content.getContentType();
+
+        ASN1OctetString octs = null;
+
+        if (content != null)
         {
+            ByteArrayOutputStream bOut = null;
 
-            ASN1EncodableVector  digestAlgs = new ASN1EncodableVector();
-            ASN1EncodableVector  signerInfos = new ASN1EncodableVector();
-
-            final Map digests = new HashMap();
-            digests.clear();  // clear the current preserved digest state
-
-            //
-            // add the precalculated SignerInfo objects.
-            //
-//            for (Iterator it = _signers.iterator(); it.hasNext();)
-//            {
-//                SignerInformation signer = (SignerInformation)it.next();
-//                digestAlgs.add(CMSSignedHelper.INSTANCE.fixAlgID(signer.getDigestAlgorithmID()));
-//
-//                // TODO Verify the content type and calculated digest match the precalculated SignerInfo
-//                signerInfos.add(signer.toASN1Structure());
-//            }
-
-            //
-            // add the SignerInfo objects
-            //
-            ASN1ObjectIdentifier contentTypeOID = content.getContentType();
-
-            ASN1OctetString octs = null;
-
-            if (content != null)
+            if (encapsulate)
             {
-                ByteArrayOutputStream bOut = null;
-
-                if (encapsulate)
-                {
-                    bOut = new ByteArrayOutputStream();
-                }
-
-                OutputStream cOut = attachSignersToOutputStream(signerGens, bOut);
-
-                // Just in case it's unencapsulated and there are no signers!
-                cOut = getSafeOutputStream(cOut);
-
-                try
-                {
-                    content.write(cOut);
-
-                    cOut.close();
-                }
-                catch (IOException e)
-                {
-                    throw new CMSException("data processing exception: " + e.getMessage(), e);
-                }
-
-                if (encapsulate)
-                {
-                    octs = new BEROctetString(bOut.toByteArray());
-                }
+                bOut = new ByteArrayOutputStream();
             }
 
-            for (Iterator it = signerGens.iterator(); it.hasNext();)
+            OutputStream cOut = attachSignersToOutputStream(signerGens, bOut);
+
+            // Just in case it's unencapsulated and there are no signers!
+            cOut = getSafeOutputStream(cOut);
+
+            try
             {
-                SignerInfoGenerator sGen = (SignerInfoGenerator)it.next();
-                SignerInfo inf = sGen.generate(contentTypeOID);
+                content.write(cOut);
 
-                digestAlgs.add(inf.getDigestAlgorithm());
-                signerInfos.add(inf);
-
-                byte[] calcDigest = sGen.getCalculatedDigest();
-
-                if (calcDigest != null)
-                {
-                    digests.put(inf.getDigestAlgorithm().getAlgorithm().getId(), calcDigest);
-                }
+                cOut.close();
+            }
+            catch (IOException e)
+            {
+                throw new CMSException("data processing exception: " + e.getMessage(), e);
             }
 
-            ASN1Set certificates = null;
-
-            if (certs.size() != 0)
+            if (encapsulate)
             {
-                certificates = createBerSetFromList(certs);
+                octs = new BEROctetString(bOut.toByteArray());
             }
+        }
 
-            ASN1Set certrevlist = null;
+        for (Iterator it = signerGens.iterator(); it.hasNext();)
+        {
+            SignerInfoGenerator sGen = (SignerInfoGenerator)it.next();
+            SignerInfo inf = sGen.generate(contentTypeOID);
 
-            if (crls.size() != 0)
+            digestAlgs.add(inf.getDigestAlgorithm());
+            signerInfos.add(inf);
+
+            byte[] calcDigest = sGen.getCalculatedDigest();
+
+            if (calcDigest != null)
             {
-                certrevlist = createBerSetFromList(crls);
+                digests.put(inf.getDigestAlgorithm().getAlgorithm().getId(), calcDigest);
             }
+        }
 
-            ContentInfo encInfo = ci;
+        ASN1Set certificates = null;
 
-            SignedData  sd = new SignedData(
-                                     new DERSet(digestAlgs),
-                                     encInfo,
-                                     certificates,
-                                     certrevlist,
-                                     new DERSet(signerInfos));
+        if (certs.size() != 0)
+        {
+            certificates = createBerSetFromList(certs);
+        }
 
-            ContentInfo contentInfo = new ContentInfo(
+        ASN1Set certrevlist = null;
+
+        if (crls.size() != 0)
+        {
+            certrevlist = createBerSetFromList(crls);
+        }
+
+        ContentInfo encInfo = ci;
+
+        SignedData  sd = new SignedData(
+                new DERSet(digestAlgs),
+                encInfo,
+                certificates,
+                certrevlist,
+                new DERSet(signerInfos));
+
+        ContentInfo contentInfo = new ContentInfo(
                 CMSObjectIdentifiers.signedData, sd);
 
-            return new CMSSignedData(content, contentInfo);
-        }
-    
+        return new CMSSignedData(content, contentInfo);
+    }
+
 
     // the following static methods are copied from BouncyCastle org.bouncycaste.cms.CMSUtils
-    private static List getCertificatesFromStore(Store certStore)
-            throws CMSException
+    private static List getCertificatesFromStore(Store certStore) throws CMSException
     {
         List certs = new ArrayList();
 
@@ -768,7 +767,7 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
             throw new CMSException("error processing certs", e);
         }
     }
-
+    
     private static OutputStream attachSignersToOutputStream(Collection signers, OutputStream s)
     {
         OutputStream result = s;

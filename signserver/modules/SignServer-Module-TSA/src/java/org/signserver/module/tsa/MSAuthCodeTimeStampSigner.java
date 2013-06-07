@@ -749,26 +749,26 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
     // the following static methods are copied from BouncyCastle org.bouncycaste.cms.CMSUtils
     private static List getCertificatesFromStore(Store certStore)
             throws CMSException
+    {
+        List certs = new ArrayList();
+
+        try
         {
-            List certs = new ArrayList();
-
-            try
+            for (Iterator it = certStore.getMatches(null).iterator(); it.hasNext();)
             {
-                for (Iterator it = certStore.getMatches(null).iterator(); it.hasNext();)
-                {
-                    X509CertificateHolder c = (X509CertificateHolder)it.next();
+                X509CertificateHolder c = (X509CertificateHolder)it.next();
 
-                    certs.add(c.toASN1Structure());
-                }
+                certs.add(c.toASN1Structure());
+            }
 
-                return certs;
-            }
-            catch (ClassCastException e)
-            {
-                throw new CMSException("error processing certs", e);
-            }
+            return certs;
         }
-    
+        catch (ClassCastException e)
+        {
+            throw new CMSException("error processing certs", e);
+        }
+    }
+
     private static OutputStream attachSignersToOutputStream(Collection signers, OutputStream s)
     {
         OutputStream result = s;

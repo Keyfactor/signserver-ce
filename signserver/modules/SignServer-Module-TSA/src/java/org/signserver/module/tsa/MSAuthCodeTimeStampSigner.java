@@ -322,7 +322,6 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
                     ICryptoToken.PURPOSE_SIGN);
 
             // Sign
-            CMSSignedDataGenerator cmssdg = new CMSSignedDataGenerator();
             X509Certificate x509cert = (X509Certificate) certs[0]; 
             List<X509Certificate> certL = new ArrayList<X509Certificate>();
 
@@ -375,11 +374,10 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
             final SignerInfoGenerator sig = signerInfoBuilder.build(contentSigner.build(pk), new X509CertificateHolder(x509cert.getEncoded()));
 
             JcaCertStore cs = new JcaCertStore(certList);
-            cmssdg.addCertificates(cs);
             
             CMSTypedData cmspba = new CMSProcessableByteArray(content);
-            CMSSignedData cmssd = generate(cmspba, true, Arrays.asList(sig),
-                    getCertificatesFromStore(cs), Collections.emptyList(), ci);
+            CMSSignedData cmssd = MSAuthCodeCMSUtils.generate(cmspba, true, Arrays.asList(sig),
+                    MSAuthCodeCMSUtils.getCertificatesFromStore(cs), Collections.emptyList(), ci);
 
             byte[] der = ASN1Primitive.fromByteArray(cmssd.getEncoded()).getEncoded(); 
 
@@ -636,191 +634,6 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
         return result;
     }
     
-    // copied and modified from BouncyCastle
-    private CMSSignedData generate(
-            // FIXME Avoid accessing more than once to support CMSProcessableInputStream
-            CMSTypedData content,
-            boolean encapsulate, Collection signerGens, final List certs, final List crls, ContentInfo ci)
-            throws CMSException
-    {
 
-        ASN1EncodableVector  digestAlgs = new ASN1EncodableVector();
-        ASN1EncodableVector  signerInfos = new ASN1EncodableVector();
-
-        final Map digests = new HashMap();
-        digests.clear();  // clear the current preserved digest state
-
-        //
-        // add the precalculated SignerInfo objects.
-        //
-        //            for (Iterator it = _signers.iterator(); it.hasNext();)
-        //            {
-        //                SignerInformation signer = (SignerInformation)it.next();
-        //                digestAlgs.add(CMSSignedHelper.INSTANCE.fixAlgID(signer.getDigestAlgorithmID()));
-        //
-        //                // TODO Verify the content type and calculated digest match the precalculated SignerInfo
-        //                signerInfos.add(signer.toASN1Structure());
-        //            }
-
-        //
-        // add the SignerInfo objects
-        //
-        ASN1ObjectIdentifier contentTypeOID = content.getContentType();
-
-        ASN1OctetString octs = null;
-
-        if (content != null)
-        {
-            ByteArrayOutputStream bOut = null;
-
-            if (encapsulate)
-            {
-                bOut = new ByteArrayOutputStream();
-            }
-
-            OutputStream cOut = attachSignersToOutputStream(signerGens, bOut);
-
-            // Just in case it's unencapsulated and there are no signers!
-            cOut = getSafeOutputStream(cOut);
-
-            try
-            {
-                content.write(cOut);
-
-                cOut.close();
-            }
-            catch (IOException e)
-            {
-                throw new CMSException("data processing exception: " + e.getMessage(), e);
-            }
-
-            if (encapsulate)
-            {
-                octs = new BEROctetString(bOut.toByteArray());
-            }
-        }
-
-        for (Iterator it = signerGens.iterator(); it.hasNext();)
-        {
-            SignerInfoGenerator sGen = (SignerInfoGenerator)it.next();
-            SignerInfo inf = sGen.generate(contentTypeOID);
-
-            digestAlgs.add(inf.getDigestAlgorithm());
-            signerInfos.add(inf);
-
-            byte[] calcDigest = sGen.getCalculatedDigest();
-
-            if (calcDigest != null)
-            {
-                digests.put(inf.getDigestAlgorithm().getAlgorithm().getId(), calcDigest);
-            }
-        }
-
-        ASN1Set certificates = null;
-
-        if (certs.size() != 0)
-        {
-            certificates = createBerSetFromList(certs);
-        }
-
-        ASN1Set certrevlist = null;
-
-        if (crls.size() != 0)
-        {
-            certrevlist = createBerSetFromList(crls);
-        }
-
-        ContentInfo encInfo = ci;
-
-        SignedData  sd = new SignedData(
-                new DERSet(digestAlgs),
-                encInfo,
-                certificates,
-                certrevlist,
-                new DERSet(signerInfos));
-
-        ContentInfo contentInfo = new ContentInfo(
-                CMSObjectIdentifiers.signedData, sd);
-
-        return new CMSSignedData(content, contentInfo);
-    }
-
-
-    // the following static methods are copied from BouncyCastle org.bouncycaste.cms.CMSUtils
-    private static List getCertificatesFromStore(Store certStore) throws CMSException
-    {
-        List certs = new ArrayList();
-
-        try
-        {
-            for (Iterator it = certStore.getMatches(null).iterator(); it.hasNext();)
-            {
-                X509CertificateHolder c = (X509CertificateHolder)it.next();
-
-                certs.add(c.toASN1Structure());
-            }
-
-            return certs;
-        }
-        catch (ClassCastException e)
-        {
-            throw new CMSException("error processing certs", e);
-        }
-    }
-    
-    private static OutputStream attachSignersToOutputStream(Collection signers, OutputStream s)
-    {
-        OutputStream result = s;
-        Iterator it = signers.iterator();
-        while (it.hasNext())
-        {
-            SignerInfoGenerator signerGen = (SignerInfoGenerator)it.next();
-            result = getSafeTeeOutputStream(result, signerGen.getCalculatingOutputStream());
-        }
-        return result;
-    }
-    
-    private static OutputStream getSafeOutputStream(OutputStream s)
-    {
-        return s == null ? new NullOutputStream() : s;
-    }
-    
-    private static OutputStream getSafeTeeOutputStream(OutputStream s1,
-            OutputStream s2)
-    {
-        return s1 == null ? getSafeOutputStream(s2)
-                : s2 == null ? getSafeOutputStream(s1) : new TeeOutputStream(
-                        s1, s2);
-    }
-    
-    private static ASN1Set createBerSetFromList(List derObjects)
-    {
-        ASN1EncodableVector v = new ASN1EncodableVector();
-
-        for (Iterator it = derObjects.iterator(); it.hasNext();)
-        {
-            v.add((ASN1Encodable)it.next());
-        }
-
-        return new BERSet(v);
-    }
-    
-    // the following is copied from BouncyCastle org.bouncycastle.cms.NullOutputStream (used by the util methods)
-    private static class NullOutputStream extends OutputStream
-    {
-        public void write(byte[] buf)
-                throws IOException {
-            // do nothing
-        }
-
-        public void write(byte[] buf, int off, int len)
-                throws IOException {
-            // do nothing
-        }
-    
-        public void write(int b) throws IOException {
-            // do nothing
-        }
-    }
 
 }

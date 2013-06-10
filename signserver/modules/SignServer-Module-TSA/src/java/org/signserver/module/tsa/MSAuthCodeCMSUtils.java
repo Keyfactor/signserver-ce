@@ -66,7 +66,9 @@ class MSAuthCodeCMSUtils
 {
     /**
      * Modified from {@link org.bouncycastle.cms.CMSSignedDataGenerator#generate(CMSTypedData, boolean)}
-     * 
+     * Added parameters for passing certs, CRLs and the ContentInfo instance, since this method will be run as
+     * stand-alone invocation, instead using the CMSSignedGenerator instance as the origninal BC implementation, allowing
+     * the MSAuthCodeTimeStampSigner to generate the content info.
      * 
      * @param content
      * @param encapsulate

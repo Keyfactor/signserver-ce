@@ -1788,7 +1788,7 @@ Workers that are disabled by having the worker property DISABLED=true are not co
 
         <section name="Client Web Service">
             <p>
-The SignServer ClientWS interface can be used request signings from SignServer.
+The SignServer ClientWS interface can be used to request signings from SignServer.
             </p>
             <p>
 The WSDL file is located at the URL http://&lt;hostname&gt;:8080/signserver/ClientWSService/ClientWS?wsdl and locally in the sources under modules/SignServer-Client-ClientWS/xml-resources/web-service-references/ClientWS/wsdl/localhost_8080/signserver/ClientWSService/ClientWS.wsdl.
@@ -1835,7 +1835,7 @@ Identifier for the request if archiving was used.
                                     </li>
                                     <li>
 <b>data</b> (base64Binary)<br/>
-The SOD binary.
+The signed binary/document.
                                     </li>
                                     <li>
 <b>metadata</b> (sequence of key-value pairs)<br/>

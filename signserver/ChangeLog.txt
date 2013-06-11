@@ -1,3 +1,33 @@
+SignServer 3.4.1, 2013-06-11
+----------------------------
+
+** Bug
+    * [DSS-620] - Unathorized healthcheck queries incorrectly logged
+    * [DSS-634] - Double octet string encoded in MSAuthCodeSigner content
+
+** Improvement
+    * [DSS-383] - Remove unnecessary properties from signserver_build.properties
+    * [DSS-388] - Add @Override annotation to overriden and implemented methods
+    * [DSS-477] - Allow to import serial number and issuer DN from a certificate when adding admin rules from the admin GUI
+    * [DSS-522] - Add option to set the correct TSA name from the subject DN automatically
+    * [DSS-547] - Make all workers report themself as offline if they are misconfigured
+    * [DSS-618] - Allow any for authorized IPs in healthcheck
+    * [DSS-619] - Add health check rate limiter
+    * [DSS-621] - Add DDL for Postgres
+    * [DSS-622] - Upgrade to JUnit 4.11
+    * [DSS-625] - Support in ListBasedAddressAuthorizer to accept IPv6 addresses in any form
+    * [DSS-626] - Support in RemoteAddressAuthorizer to accept IPv6 addresses in any form
+    * [DSS-628] - Support in ListBasedAddressAuthorizer for multiple proxies
+
+
+** New Feature
+    * [DSS-338] - Support for generating CSR with ECDSA explicit parameters in AdminGUI and RenewalWorker
+    * [DSS-506] - Log worker name in the worker log
+    * [DSS-589] - Support for specifying signature algorithm in CMS Signer
+    * [DSS-617] - Add a document signer testsuite to the stresstest tool
+    * [DSS-629] - Support for signingCertificate attribute in MSAuthCodeTimeStampSigner
+
+
 SignServer 3.4.0, 2013-04-03
 ----------------------------
 Release Notes - SignServer - Version SignServer 3.4

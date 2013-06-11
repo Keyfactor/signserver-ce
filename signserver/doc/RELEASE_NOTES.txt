@@ -1,3 +1,24 @@
+SignServer 3.4.1
+----------------
+
+New features and improvements:
+ - Added support for IPv6 and multiple proxies in ListBasedAddressAuthorizer.
+ - Support for specifying the signature algorithm in CMS signer.
+ - Support for the signerCertificte attribute in the MS Authenticode time stamp signer.
+ - Support for generating CSR with EDSA explicit parameters in the admin GUI and the RenewalWorker.
+ - Log worker name in the worker log.
+ - Allow to import serial number and issuer DN from a certificate file when adding administrator rules in the admin GUI.
+ - Added an option to set the correct TSA name from the subject DN automatically for the time stamp signer.
+ - All workers report themselves as offline when misconfigured.
+ - Added health check rate limiter.
+ - Added database setup scripts for PostgreSQL.
+
+Bug fixes:
+ - ContentInfo contained a double encoded octet string in the MS Authenticode time stamp signer.
+ - Unauthorized health check queries incorrectly logged.
+
+Read the full changelog for details (https://jira.primekey.se/browse/DSS?report=com.atlassian.jira.plugin.system.project:changelog-panel#selectedTab=com.atlassian.jira.plugin.system.project%3Achangelog-panel).
+
 SignServer 3.4.0
 ----------------
 This is a major release - in total 27 features, options, bugs and stabilizations have been fixed or added. The most noteworthy changes can be seen below.

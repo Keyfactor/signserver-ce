@@ -4,10 +4,10 @@ SignServer 3.4.1
 New features and improvements:
  - Added support for IPv6 and multiple proxies in ListBasedAddressAuthorizer.
  - Support for specifying the signature algorithm in CMS signer.
- - Support for the signerCertificte attribute in the MS Authenticode time stamp signer.
+ - Support for the signerCertificate attribute in the MS Authenticode time stamp signer.
  - Support for generating CSR with EDSA explicit parameters in the admin GUI and the RenewalWorker.
  - Log worker name in the worker log.
- - Allow to import serial number and issuer DN from a certificate file when adding administrator rules in the admin GUI.
+ - Easy import of issuer and serial number from certificate in admin GUI, when adding administrator rules.
  - Added an option to set the correct TSA name from the subject DN automatically for the time stamp signer.
  - All workers report themselves as offline when misconfigured.
  - Added health check rate limiter.

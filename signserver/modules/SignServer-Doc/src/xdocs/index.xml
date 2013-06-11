@@ -49,7 +49,7 @@ new TWTR.Widget({
 <div class="label" style="font-size:120%; padding:1em; font-family: Georgia, new york;"><!--a style=" padding:1em 0.2em; color:white;" href="http://www.primekey.se/PKI+shop/">PKI SHOP</a> | --><a style="color:white; padding:1.0em 0.2em; " href="http://www.primekey.se/services/training" target="primekey">World-wide PKI Training</a>  |  <a style=" padding:1.0em 0.2em; color:white;" href="http://www.primekey.se/Services/Consulting/" target="primekey">Hire an expert to do the job for you!</a>
 </div>
 <div class="content first">
-<p style="font-size:1.4em; font-weight:bold; margin:0; color:#015a9c;">SignServer 3.4.0 is now out!</p>
+<p style="font-size:1.4em; font-weight:bold; margin:0; color:#015a9c;">SignServer 3.4.1 is now out!</p>
     <p style="margin-top:0.2em;">
         <!-- Read <a href="http://www.primekey.se/digitalAssets/2/2334_Product_Release_SignServer3.1.1.pdf">release notes</a>. | --> 
         <a href="download.html">Visit the download section to get SignServer.</a> There is also a LiveCD!<br/>

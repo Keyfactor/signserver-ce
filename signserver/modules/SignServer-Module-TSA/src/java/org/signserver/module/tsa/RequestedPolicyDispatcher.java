@@ -29,6 +29,7 @@ import org.bouncycastle.tsp.TimeStampResponse;
 import org.signserver.common.*;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.ejb.interfaces.IWorkerSession.IRemote;
+import org.signserver.module.tsa.bc.TimeStampResponseGenerator;
 import org.signserver.server.ITimeStampSignerLookup;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.dispatchers.BaseDispatcher;

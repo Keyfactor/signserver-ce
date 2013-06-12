@@ -1,4 +1,4 @@
-package org.signserver.module.tsa;
+package org.signserver.module.tsa.bc;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -53,6 +53,7 @@ import org.bouncycastle.util.Store;
 import org.bouncycastle.util.io.Streams;
 import org.bouncycastle.util.io.TeeInputStream;
 import org.bouncycastle.util.io.TeeOutputStream;
+import org.signserver.module.tsa.MSAuthCodeTimeStampSigner;
 
 /**
  * Utility class containing static methods based on modified code from BouncyCastle
@@ -62,7 +63,7 @@ import org.bouncycastle.util.io.TeeOutputStream;
  * @version $Id$
  *
  */
-class MSAuthCodeCMSUtils
+public class MSAuthCodeCMSUtils
 {
     /**
      * Modified from {@link org.bouncycastle.cms.CMSSignedDataGenerator#generate(CMSTypedData, boolean)}
@@ -79,7 +80,7 @@ class MSAuthCodeCMSUtils
      * @return
      * @throws CMSException
      */
-    static CMSSignedData generate(
+    public static CMSSignedData generate(
             // FIXME Avoid accessing more than once to support CMSProcessableInputStream
             CMSTypedData content,
             boolean encapsulate, Collection signerGens, final List certs, final List crls, ContentInfo ci)
@@ -199,7 +200,7 @@ class MSAuthCodeCMSUtils
      * @return
      * @throws CMSException
      */
-    static List getCertificatesFromStore(Store certStore) throws CMSException
+    public static List getCertificatesFromStore(Store certStore) throws CMSException
     {
         List certs = new ArrayList();
 

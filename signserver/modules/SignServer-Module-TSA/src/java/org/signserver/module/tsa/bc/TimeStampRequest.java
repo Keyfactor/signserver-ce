@@ -1,3 +1,4 @@
+// copied from BouncyCastle 1.47 (needed for the modified TimeStampTokenGenerator)
 package org.signserver.module.tsa.bc;
 
 import java.io.ByteArrayInputStream;

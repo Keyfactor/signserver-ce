@@ -1,3 +1,5 @@
+// copied from BouncyCastle 1.47, modified to include the IssuerSerial structure
+// in the signingCertificate CMS signed attribute in the response.
 package org.signserver.module.tsa.bc;
 
 import java.io.ByteArrayOutputStream;

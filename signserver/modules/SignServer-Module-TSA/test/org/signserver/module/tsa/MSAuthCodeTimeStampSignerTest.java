@@ -53,6 +53,7 @@ import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 
 import org.signserver.test.utils.mock.GlobalConfigurationSessionMock;
 import org.signserver.test.utils.mock.WorkerSessionMock;
+import org.signserver.testutils.TestUtils;
 
 /**
  * 
@@ -109,19 +110,9 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
     private static final String CONTENT_TYPE_OID = "1.2.840.113549.1.9.3";
     private static final String SIGNING_TIME_OID = "1.2.840.113549.1.9.5";
     private static final String MESSAGE_DIGEST_OID = "1.2.840.113549.1.9.4";
-    private static final String SIGNING_CERT_OID = "1.2.840.113549.1.9.16.2.12";
     private static final String SHA1_OID = "1.3.14.3.2.26";
     private static final String SHA256_OID = "2.16.840.1.101.3.4.2.1";
-    private static final String CN_OID = "2.5.4.3";
-    private static final String OU_OID = "2.5.4.11";
-    private static final String O_OID = "2.5.4.10";
-    private static final String C_OID = "2.5.4.6";
-    
-    private static final String CN = "DSS Root CA 10";
-    private static final String OU = "Testing";
-    private static final String O = "SignServer";
-    private static final String C = "SE";
-  
+
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -231,59 +222,7 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
             assertEquals("Number of attributes", 3, asn1seq3.size());
         } else {
             final ASN1Sequence scAttr = ASN1Sequence.getInstance(asn1seq3.getObjectAt(3));
-            final ASN1ObjectIdentifier scOid = ASN1ObjectIdentifier.getInstance(scAttr.getObjectAt(0));
-            
-            assertEquals("Invalid OID for content", SIGNING_CERT_OID, scOid.getId());
-            
-            // calculate expected hash
-            final byte[] digest = MessageDigest.getInstance("SHA-1").digest(cert.getEncoded());
-            
-            // find hash in returned structure
-            final ASN1Set set = ASN1Set.getInstance(scAttr.getObjectAt(1));
-            final ASN1Sequence s1 = ASN1Sequence.getInstance(set.getObjectAt(0));
-            final ASN1Sequence s2 = ASN1Sequence.getInstance(s1.getObjectAt(0));
-            final ASN1Sequence s3 = ASN1Sequence.getInstance(s2.getObjectAt(0));
-            final ASN1OctetString hashOctetString = ASN1OctetString.getInstance(s3.getObjectAt(0)); 
-            
-            assertTrue("Hash doesn't match", Arrays.equals(digest, hashOctetString.getOctets()));
-
-            
-            // find serial number in structure
-            final ASN1Sequence s4 = ASN1Sequence.getInstance(s3.getObjectAt(1));
-            final ASN1Integer snValue = ASN1Integer.getInstance(s4.getObjectAt(1));
-            
-            assertEquals("Serial number doesn't match", sn, snValue.getValue());
-            
-            // examine issuer
-            final ASN1Sequence s5 = ASN1Sequence.getInstance(s4.getObjectAt(0));
-            final ASN1TaggedObject obj = ASN1TaggedObject.getInstance(s5.getObjectAt(0));
-            final ASN1Sequence s6 = ASN1Sequence.getInstance(obj.getObject());
-            
-            // expect 4 DN components in the signing cert
-            assertEquals("Number of DN components", 4, s6.size());
-            
-            final Enumeration objects = s6.getObjects();
-            while (objects.hasMoreElements()) {
-                final ASN1Set component = ASN1Set.getInstance(objects.nextElement());
-                final ASN1Sequence seq = ASN1Sequence.getInstance(component.getObjectAt(0));
-                final ASN1ObjectIdentifier dnOid = ASN1ObjectIdentifier.getInstance(seq.getObjectAt(0));
-                
-                if (CN_OID.equals(dnOid.getId())) {
-                    final DERUTF8String cn = DERUTF8String.getInstance(seq.getObjectAt(1));
-                    assertEquals("Issuer CN doesn't match", CN, cn.getString());
-                } else if (OU_OID.equals(dnOid.getId())) {
-                    final DERUTF8String ou = DERUTF8String.getInstance(seq.getObjectAt(1));
-                    assertEquals("Issuer OU doesn't match", OU, ou.getString());
-                } else if (O_OID.equals(dnOid.getId())) {
-                    final DERUTF8String o = DERUTF8String.getInstance(seq.getObjectAt(1));
-                    assertEquals("Issuer O doesn't match", O, o.getString());
-                } else if (C_OID.equals(dnOid.getId())) {
-                    final DERPrintableString c = DERPrintableString.getInstance(seq.getObjectAt(1));
-                    assertEquals("Issuer C doesn't match", C, c.getString());
-                } else {
-                    fail("Unexpected issuer DN component");
-                }
-            }
+            TestUtils.checkSigningCertificateAttribute(scAttr, cert);
         }
         
         ASN1ObjectIdentifier ctOID = ASN1ObjectIdentifier.getInstance(asn1seq4.getObjectAt(0));

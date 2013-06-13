@@ -17,15 +17,27 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.security.MessageDigest;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.*;
+
 import org.apache.log4j.Logger;
+import org.bouncycastle.asn1.ASN1EncodableVector;
+import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.ASN1OctetString;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.ASN1Set;
+import org.bouncycastle.asn1.ASN1TaggedObject;
+import org.bouncycastle.asn1.DERPrintableString;
+import org.bouncycastle.asn1.DERUTF8String;
 import org.bouncycastle.asn1.cmp.PKIFailureInfo;
 import org.bouncycastle.asn1.cmp.PKIStatus;
+import org.bouncycastle.asn1.cms.AttributeTable;
+import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.x500.RDN;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
@@ -40,15 +52,18 @@ import org.bouncycastle.cms.SignerInformationVerifier;
 import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
 import org.bouncycastle.tsp.*;
 import org.ejbca.util.Base64;
+import org.ejbca.util.CertTools;
 import org.junit.After;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 import org.signserver.common.*;
+import org.bouncycastle.tsp.TimeStampRequest;
 import org.signserver.statusrepo.IStatusRepositorySession;
 import org.signserver.statusrepo.common.StatusName;
 import org.signserver.test.utils.builders.CertBuilder;
 import org.signserver.test.utils.builders.CertExt;
 import org.signserver.testutils.ModulesTestCase;
+import org.signserver.testutils.TestUtils;
 import org.signserver.testutils.TestingSecurityManager;
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -89,6 +104,17 @@ public class TimeStampSignerTest extends ModulesTestCase {
 
     /** Dummy OID used for testing an invalid hashing algorithm */
     private static String DUMMY_OID = "1.42.42.42.42";
+    
+    /** Expected values in the signingCertificate CMS attribute */
+    private static final String SIGNING_CERT_OID = "1.2.840.113549.1.9.16.2.12";
+    private static final String CN_OID = "2.5.4.3";
+    private static final String OU_OID = "2.5.4.11";
+    private static final String O_OID = "2.5.4.10";
+    private static final String C_OID = "2.5.4.6";
+    private static final String CN = "DSS Root CA 10";
+    private static final String OU = "Testing";
+    private static final String O = "SignServer";
+    private static final String C = "SE";
     
     /**
      * Base64 encoded request with policy 1.2.3.5.
@@ -298,6 +324,10 @@ public class TimeStampSignerTest extends ModulesTestCase {
         final GenericSignResponse res = (GenericSignResponse) workerSession.process(
                 WORKER1, signRequest, new RequestContext());
 
+        final CertificateFactory factory = CertificateFactory.getInstance("X.509");
+        final X509Certificate cert =
+                (X509Certificate) factory.generateCertificate(new ByteArrayInputStream(Base64.decode(CERTSTRING.getBytes())));
+        
         TimeStampResponse timeStampResponse = null;
         try {
         	// check response
@@ -325,6 +355,13 @@ public class TimeStampSignerTest extends ModulesTestCase {
         		// test the response signature algorithm
         		assertEquals("Timestamp used unexpected signature algorithm", TSPAlgorithms.SHA1.toString(), si.getDigestAlgOID());
         		assertEquals("Timestamp is signed with unexpected signature encryption algorithm", "1.2.840.113549.1.1.1", si.getEncryptionAlgOID());
+       		
+        		final AttributeTable attrs = si.getSignedAttributes();
+        		final ASN1EncodableVector scAttrs = attrs.getAll(PKCSObjectIdentifiers.id_aa_signingCertificate);
+        		
+        		assertEquals("Should contain a signingCertificate signed attribute", 1, scAttrs.size());
+        		
+        		TestUtils.checkSigningCertificateAttribute(ASN1Sequence.getInstance(scAttrs.get(0)), cert);
         	}
 
         	
@@ -338,9 +375,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
         final TimeStampToken token = timeStampResponse.getTimeStampToken();
         
         try {
-        	final CertificateFactory factory = CertificateFactory.getInstance("X.509");
-        	final X509Certificate cert =
-        		(X509Certificate) factory.generateCertificate(new ByteArrayInputStream(Base64.decode(CERTSTRING.getBytes())));
+        	
         	token.validate(cert, "BC");
         	
         } catch (TSPException e) {

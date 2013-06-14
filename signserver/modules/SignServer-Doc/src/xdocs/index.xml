@@ -12,35 +12,10 @@
 <tr>
 <td valign="top"><!--TWITTER WIDGET-->
 <div class="frame note" id="twitter" style="border:0;">
-<script type="text/javascript" charset="utf-8" src="https://widgets.twimg.com/j/2/widget.js">
-</script>
-<script type="text/javascript">
-new TWTR.Widget({
-  version: 2,
-  type: 'profile',
-  rpp: 7,
-  interval: 30000,
-  width: 0,
-  height: 0,
-  theme: {
-    shell: {
-      background: '#8ca8d0',
-      color: '#ffffff',
-    },
-    tweets: {
-      background: '#eee',
-      color: '#333',
-      links: '#5e87bb'
-    }
-  },
-  features: {
-    scrollbar: true,
-    loop: true,
-    live: false,
-    behavior: 'all'
-  }
-}).render().setUser('primekeyPKI').start();
-</script>
+
+<a class="twitter-timeline" width="360" height="390" data-dnt="true" href="https://twitter.com/primekeyPKI"  data-widget-id="344774465936306176">Tweets by @primekeyPKI</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+
 </div>
 </td>
 

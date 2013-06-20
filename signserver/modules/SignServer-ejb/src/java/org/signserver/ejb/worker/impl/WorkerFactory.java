@@ -131,8 +131,10 @@ public class WorkerFactory {
             Iterator<Integer> iter = workers.iterator();
             while (iter.hasNext()) {
                 Integer nextId = (Integer) iter.next();
+                final String classpath = gc.getWorkerClassPath(nextId.intValue());
+                
                 try {
-                    String classpath = gc.getWorkerClassPath(nextId.intValue());
+                    
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Loading worker with classpath: " + classpath);
                     }
@@ -155,11 +157,11 @@ public class WorkerFactory {
                         getWorkerStore().put(nextId, (IWorker) obj);
                     }
                 } catch (ClassNotFoundException e) {
-                    LOG.error("Error loading workers : " + e.getMessage(), e);
+                    LOG.error("Worker class not found (is the module included in the build?): " + classpath);
                 } catch (IllegalAccessException e) {
-                    LOG.error("Error loading workers : " + e.getMessage(), e);
+                    LOG.error("Could not access worker class: " + classpath);
                 } catch (InstantiationException e) {
-                    LOG.error("Error loading workers : " + e.getMessage(), e);
+                    LOG.error("Could not instantiate worker class: " + classpath);
                 }
             }
         }

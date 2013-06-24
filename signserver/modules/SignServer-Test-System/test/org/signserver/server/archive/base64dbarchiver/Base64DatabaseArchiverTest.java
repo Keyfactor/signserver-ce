@@ -263,6 +263,52 @@ public class Base64DatabaseArchiverTest extends ArchiveTestCase {
     }
     
     /**
+     * Test that the by default, the archiver will only archive the last IP address in the
+     * X-Forwarded-For header, when set to archive the the forwarded address.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test61archiveWithXForwardedForDefaultMax() throws Exception {        
+        final int signerId = getSignerIdDummy1();
+        
+        getWorkerSession().setWorkerProperty(signerId, "ARCHIVERS", 
+                "org.signserver.server.archive.base64dbarchiver.Base64DatabaseArchiver");
+        getWorkerSession().setWorkerProperty(signerId, "ARCHIVER0.USE_FORWARDED_ADDRESS", "true");
+        getWorkerSession().reloadConfiguration(signerId);
+        
+        ArchiveDataVO archiveData = testArchive("<document id=\"" + random.nextLong() + "\"/>",
+                "42.42.42.42", "42.42.42.42, 1.2.3.4");
+        
+        final String ip = archiveData.getRequestIP();
+        
+        assertEquals("Archiver should only archive the last IP address", "1.2.3.4", ip);
+    }
+    
+    /**
+     * Test setting a non-default value for MAX_FORWARDED_ADDRESSES.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test62archiveWithXForwardedFor2Addresses() throws Exception {
+        final int signerId = getSignerIdDummy1();
+        
+        getWorkerSession().setWorkerProperty(signerId, "ARCHIVERS", 
+                "org.signserver.server.archive.base64dbarchiver.Base64DatabaseArchiver");
+        getWorkerSession().setWorkerProperty(signerId, "ARCHIVER0.USE_FORWARDED_ADDRESS", "true");
+        getWorkerSession().setWorkerProperty(signerId, "ARCHIVER0.MAX_FORWARDED_ADDRESSES", "2");
+        getWorkerSession().reloadConfiguration(signerId);
+        
+        ArchiveDataVO archiveData = testArchive("<document id=\"" + random.nextLong() + "\"/>",
+                "42.42.42.42", "47.47.47.47, 42.42.42.42, 1.2.3.4");
+        
+        final String ip = archiveData.getRequestIP();
+        
+        assertEquals("Archiver should only archive the last IP address", "1.2.3.4, 42.42.42.42", ip);
+    }
+    
+    /**
      * Remove the workers created etc.
      * @throws Exception in case of error
      */

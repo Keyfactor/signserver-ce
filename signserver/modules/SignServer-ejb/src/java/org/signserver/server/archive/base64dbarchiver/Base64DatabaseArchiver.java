@@ -46,12 +46,15 @@ public class Base64DatabaseArchiver implements Archiver {
     
     private static final String PROPERTY_ARCHIVE_OF_TYPE = "ARCHIVE_OF_TYPE";
     private static final String PROPERTY_USE_FORWARDED_ADDRESS = "USE_FORWARDED_ADDRESS";
- 
+    private static final String PROPERTY_MAX_FORWARDED_ADDRESSES = "MAX_FORWARDED_ADDRESSES";
+    private static final int DEFAULT_MAX_FORWARDED_ADDRESSES = 1;
+    
     private ArchiveDataService dataService;
     
     private ArchiveOfTypes archiveOfTypes;
     
     private boolean useXForwardedFor = false;
+    private int maxForwardedAddresses;
 
     @Override
     public void init(int listIndex, WorkerConfig config, SignServerContext context) throws ArchiverInitException {
@@ -70,7 +73,12 @@ public class Base64DatabaseArchiver implements Archiver {
         
         // configuration for using the X-FORWARDED-FOR header to determine source IP
         final String propertyXForwardedFor = "ARCHIVER" + listIndex + "." + PROPERTY_USE_FORWARDED_ADDRESS;
+        final String propertyMaxForwardedAddresses =
+                "ARCHIVER" + listIndex + "." + PROPERTY_MAX_FORWARDED_ADDRESSES; 
         useXForwardedFor = Boolean.valueOf(config.getProperty(propertyXForwardedFor));
+        maxForwardedAddresses =
+                Integer.valueOf(config.getProperty(propertyMaxForwardedAddresses,
+                        String.valueOf(DEFAULT_MAX_FORWARDED_ADDRESSES)));
     }
 
     @Override
@@ -100,10 +108,19 @@ public class Base64DatabaseArchiver implements Archiver {
             final String uniqueId;
             
             if (useXForwardedFor) {
-                final String forwardedIp = XForwardedForUtils.getXForwardedForIP(requestContext);
+                final String[] forwardedIps =
+                        XForwardedForUtils.getXForwardedForIPs(requestContext, maxForwardedAddresses);
                 
-                if (forwardedIp != null) {
-                    remoteIp = forwardedIp;
+                if (forwardedIps != null) {
+                    final StringBuilder sb = new StringBuilder();
+                    for (final String forwardedIp : forwardedIps) {
+                        if (sb.length() > 0) {
+                            sb.append(", ");
+                        }
+                        sb.append(forwardedIp);
+                    }
+                    
+                    remoteIp = sb.toString();
                 }
             }
             

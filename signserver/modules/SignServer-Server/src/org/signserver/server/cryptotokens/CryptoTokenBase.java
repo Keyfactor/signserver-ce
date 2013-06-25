@@ -54,41 +54,9 @@ public abstract class CryptoTokenBase implements ICryptoToken {
      * always converted to upper case. The EJBCA CA Tokens usually use mixed case properties
      */
     protected Properties fixUpProperties(Properties props) {
-        String prop = props.getProperty("AUTHCODE");
-        if (prop != null) {
-            props.setProperty("authCode", prop);
-        }
-        prop = props.getProperty("DEFAULTKEY");
-        if (prop != null) {
-            props.setProperty("defaultKey", prop);
-        }
-        prop = props.getProperty("PIN");
-        if (prop != null) {
-            props.setProperty("pin", prop);
-        }
-        prop = props.getProperty("SHAREDLIBRARY");
-        if (prop != null) {
-            props.setProperty("sharedLibrary", prop);
-        }
-        prop = props.getProperty("SLOT");
-        if (prop != null) {
-            props.setProperty("slot", prop);
-        }
-        prop = props.getProperty("SLOTLISTINDEX");
-        if (prop != null) {
-            props.setProperty("slotListIndex", prop);
-        }
-        prop = props.getProperty("ATTRIBUTESFILE");
-        if (prop != null) {
-            props.setProperty("attributesFile", prop);
-        }
-        prop = props.getProperty("NEXTCERTSIGNKEY");
-        if (prop != null) {
-            props.setProperty("nextCertSignKey", prop);
-        }
-        return props;
+       return CryptoTokenHelper.fixP11Properties(props);
     }
-
+    
     /**
      * Method returning SignerStatus.STATUS_ACTIVE if every thing is OK, otherwise STATUS_OFFLINE.
      * 

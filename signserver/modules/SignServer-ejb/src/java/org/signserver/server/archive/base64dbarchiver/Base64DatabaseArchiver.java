@@ -15,6 +15,7 @@ package org.signserver.server.archive.base64dbarchiver;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -51,6 +52,7 @@ public class Base64DatabaseArchiver implements Archiver {
     private static final String PROPERTY_ARCHIVE_OF_TYPE = "ARCHIVE_OF_TYPE";
     private static final String PROPERTY_USE_FORWARDED_ADDRESS = "USE_FORWARDED_ADDRESS";
     private static final String PROPERTY_MAX_FORWARDED_ADDRESSES = "MAX_FORWARDED_ADDRESSES";
+    private static final String PROPERTY_INCLUDE_DIRECT_ADDRESS = "INCLUDE_DIRECT_ADDRESS";
     private static final int DEFAULT_MAX_FORWARDED_ADDRESSES = 1;
     
     private ArchiveDataService dataService;
@@ -59,6 +61,7 @@ public class Base64DatabaseArchiver implements Archiver {
     
     private boolean useXForwardedFor = false;
     private int maxForwardedAddresses;
+    private boolean includeDirectAddress;
 
     @Override
     public void init(int listIndex, WorkerConfig config, SignServerContext context) throws ArchiverInitException {
@@ -79,10 +82,12 @@ public class Base64DatabaseArchiver implements Archiver {
         final String propertyXForwardedFor = "ARCHIVER" + listIndex + "." + PROPERTY_USE_FORWARDED_ADDRESS;
         final String propertyMaxForwardedAddresses =
                 "ARCHIVER" + listIndex + "." + PROPERTY_MAX_FORWARDED_ADDRESSES; 
+        final String propertyIncludeDirect = "ARCHIVER" + listIndex + "." + PROPERTY_INCLUDE_DIRECT_ADDRESS;
         useXForwardedFor = Boolean.valueOf(config.getProperty(propertyXForwardedFor));
         maxForwardedAddresses =
                 Integer.valueOf(config.getProperty(propertyMaxForwardedAddresses,
                         String.valueOf(DEFAULT_MAX_FORWARDED_ADDRESSES)));
+        includeDirectAddress = Boolean.valueOf(config.getProperty(propertyIncludeDirect));
     }
 
     @Override
@@ -112,16 +117,25 @@ public class Base64DatabaseArchiver implements Archiver {
             final String uniqueId;
             
             if (useXForwardedFor) {
+                final List<String> ips = new LinkedList<String>();
                 final String[] forwardedIps =
                         XForwardedForUtils.getXForwardedForIPs(requestContext, maxForwardedAddresses);
                 
+                if (includeDirectAddress) {
+                    ips.add(remoteIp);
+                }
+
                 if (forwardedIps != null) {
-                    final List<String> ips = Arrays.asList(forwardedIps);
-                    Collections.reverse(ips);
+                    ips.addAll(Arrays.asList(forwardedIps));
+                }
+   
+                Collections.reverse(ips);
+                
+                if (!ips.isEmpty()) {
                     remoteIp = StringUtils.join(ips, ", ");
                 }
             }
-            
+
             uniqueId = dataService.create(archiveType,
                             workerId,
                             archivable.getArchiveId(),

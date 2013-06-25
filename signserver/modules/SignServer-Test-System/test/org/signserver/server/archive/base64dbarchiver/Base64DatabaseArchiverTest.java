@@ -305,7 +305,30 @@ public class Base64DatabaseArchiverTest extends ArchiveTestCase {
         
         final String ip = archiveData.getRequestIP();
         
-        assertEquals("Archiver should only archive the last IP address", "42.42.42.42, 1.2.3.4", ip);
+        assertEquals("Archiver should archive the last two IP addresses", "42.42.42.42, 1.2.3.4", ip);
+    }
+    
+    /**
+     * Test that setting MAX_FORWARDED_ADDRESSES to a higher value than the actual number of addresses works.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test63archiveWithXForwardedForMax2With1Address() throws Exception {
+        final int signerId = getSignerIdDummy1();
+        
+        getWorkerSession().setWorkerProperty(signerId, "ARCHIVERS", 
+                "org.signserver.server.archive.base64dbarchiver.Base64DatabaseArchiver");
+        getWorkerSession().setWorkerProperty(signerId, "ARCHIVER0.USE_FORWARDED_ADDRESS", "true");
+        getWorkerSession().setWorkerProperty(signerId, "ARCHIVER0.MAX_FORWARDED_ADDRESSES", "2");
+        getWorkerSession().reloadConfiguration(signerId);
+        
+        ArchiveDataVO archiveData = testArchive("<document id=\"" + random.nextLong() + "\"/>",
+                "42.42.42.42", "1.2.3.4");
+        
+        final String ip = archiveData.getRequestIP();
+        
+        assertEquals("Archiver should archive the last IP address", "1.2.3.4", ip);
     }
     
     /**

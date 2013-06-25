@@ -118,8 +118,10 @@ public class SignServerHealthCheck implements IHealthCheck {
         // Perform further checks unless Down for maintenance
         if (errors.size() == 0) { 
             if (FileBasedDatabaseManager.getInstance().isUsed()) {
+                LOG.debug("Checking file based database");
                 errors.addAll(FileBasedDatabaseManager.getInstance().getFatalErrors());
             } else {
+                LOG.debug("Checking real database");
                 errors.addAll(HealthCheckUtils.checkDB(checkDBString));
             }
             

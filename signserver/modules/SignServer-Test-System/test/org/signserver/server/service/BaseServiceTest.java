@@ -18,8 +18,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Date;
 
-import junit.framework.TestCase;
-
 import org.apache.log4j.Logger;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;

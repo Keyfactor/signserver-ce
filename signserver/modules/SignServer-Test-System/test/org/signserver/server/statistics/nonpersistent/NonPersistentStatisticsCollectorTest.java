@@ -12,15 +12,11 @@
  *************************************************************************/
 package org.signserver.server.statistics.nonpersistent;
 
-import java.util.List;
-
 import junit.framework.TestCase;
 
 import org.signserver.common.NonPersistentStatisticsConstants;
-import org.signserver.common.StatisticsConstants;
 import org.signserver.common.WorkerConfig;
 import org.signserver.server.statistics.Event;
-import org.signserver.server.statistics.StatisticsEntry;
 
 /**
  * TODO: Document me!

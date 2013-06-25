@@ -22,8 +22,6 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Map;
 import java.util.Map.Entry;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.fail;
 import org.apache.log4j.Logger;
 import org.signserver.testutils.ModulesTestCase;
 import static org.junit.Assert.*;

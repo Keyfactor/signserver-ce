@@ -18,7 +18,6 @@ import java.util.Properties;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 
-import junit.framework.TestCase;
 import static org.junit.Assert.*;
 import org.junit.Test;
 

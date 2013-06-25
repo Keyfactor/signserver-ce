@@ -14,7 +14,6 @@ package org.signserver.web;
 
 import java.util.HashMap;
 import java.util.Map;
-import static junit.framework.Assert.assertTrue;
 import org.junit.After;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;

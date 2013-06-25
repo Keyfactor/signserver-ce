@@ -12,7 +12,6 @@
  *************************************************************************/
 package org.signserver.server.statistics;
 
-import junit.framework.TestCase;
 import static org.junit.Assert.*;
 import org.junit.Test;
 

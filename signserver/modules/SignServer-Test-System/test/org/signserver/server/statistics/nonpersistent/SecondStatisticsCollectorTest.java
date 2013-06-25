@@ -13,7 +13,6 @@
 package org.signserver.server.statistics.nonpersistent;
 
 import java.util.Calendar;
-import java.util.Date;
 
 import org.signserver.common.NonPersistentStatisticsConstants;
 import org.signserver.common.StatisticsConstants;

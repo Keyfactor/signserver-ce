@@ -21,7 +21,6 @@ import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
-import junit.framework.TestCase;
 import org.ejbca.util.CertTools;
 import org.ejbca.util.keystore.KeyTools;
 import org.junit.FixMethodOrder;

@@ -18,7 +18,6 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import junit.framework.TestCase;
 import org.bouncycastle.jce.X509KeyUsage;
 import org.ejbca.util.CertTools;
 import org.ejbca.util.keystore.KeyTools;

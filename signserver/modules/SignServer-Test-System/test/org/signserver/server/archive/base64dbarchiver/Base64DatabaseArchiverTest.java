@@ -305,7 +305,7 @@ public class Base64DatabaseArchiverTest extends ArchiveTestCase {
         
         final String ip = archiveData.getRequestIP();
         
-        assertEquals("Archiver should only archive the last IP address", "1.2.3.4, 42.42.42.42", ip);
+        assertEquals("Archiver should only archive the last IP address", "42.42.42.42, 1.2.3.4", ip);
     }
     
     /**

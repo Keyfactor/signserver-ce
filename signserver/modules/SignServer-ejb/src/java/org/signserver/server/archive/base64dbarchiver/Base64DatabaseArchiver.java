@@ -13,7 +13,12 @@
 package org.signserver.server.archive.base64dbarchiver;
 
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Base64;
 import org.signserver.common.ArchiveDataVO;
@@ -112,15 +117,9 @@ public class Base64DatabaseArchiver implements Archiver {
                         XForwardedForUtils.getXForwardedForIPs(requestContext, maxForwardedAddresses);
                 
                 if (forwardedIps != null) {
-                    final StringBuilder sb = new StringBuilder();
-                    for (final String forwardedIp : forwardedIps) {
-                        if (sb.length() > 0) {
-                            sb.append(", ");
-                        }
-                        sb.append(forwardedIp);
-                    }
-                    
-                    remoteIp = sb.toString();
+                    final List<String> ips = Arrays.asList(forwardedIps);
+                    Collections.reverse(ips);
+                    remoteIp = StringUtils.join(ips, ", ");
                 }
             }
             

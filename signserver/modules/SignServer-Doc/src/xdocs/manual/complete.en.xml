@@ -4699,8 +4699,7 @@ Notice: This only indicates that the client certificate where used when establis
                             <tr>
                                 <td>requestIP</td>
                                 <td>
-IP address of the host connecting to SignServer.<br/>
-Currently X-FORWARDED-FOR headers are not considered.
+Either IP address of the host connecting, or a list of forwarded IP addresses from X-Forwarded-For when setting USE_FORWARDED_ADDRESS.<br/>
                                 </td>
                             </tr>
                             <tr>

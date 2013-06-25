@@ -51,6 +51,9 @@ j2ee.web-nohttps=true
 # When upgrading, the important options are:
 # - httpsserver.password
 
+# Password for java trust keystore (p12/truststore.jks), default is changeit.
+#java.trustpassword=changeit
+
 # The password used to protect the web servers SSL keystore.
 #httpsserver.password=serverpwd
 

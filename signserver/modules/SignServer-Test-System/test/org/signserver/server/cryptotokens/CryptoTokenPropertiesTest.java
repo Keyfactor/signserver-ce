@@ -34,7 +34,7 @@ public class CryptoTokenPropertiesTest extends TestCase {
         prop.put("SLOT", "1");
         prop.put("DEFAULTKEY", "default");
         prop.put("PIN", "1234");
-        Properties p = token.fixUpProperties(prop);
+        Properties p = CryptoTokenHelper.fixP11Properties(prop);
         assertEquals("{PIN=1234, DEFAULTKEY=default, sharedLibrary=/opt/nfast/toolkits/pkcs11/libcknfast.so, pin=1234, SLOT=1, defaultKey=default, SHAREDLIBRARY=/opt/nfast/toolkits/pkcs11/libcknfast.so, slot=1}", p.toString());
     }
 
@@ -46,7 +46,7 @@ public class CryptoTokenPropertiesTest extends TestCase {
         prop.put("SLOTLISTINDEX", "1");
         prop.put("DEFAULTKEY", "default");
         prop.put("PIN", "1234");
-        Properties p = token.fixUpProperties(prop);
+        Properties p = CryptoTokenHelper.fixP11Properties(prop);
         assertEquals("{PIN=1234, DEFAULTKEY=default, sharedLibrary=/opt/nfast/toolkits/pkcs11/libcknfast.so, pin=1234, SLOTLISTINDEX=1, defaultKey=default, SHAREDLIBRARY=/opt/nfast/toolkits/pkcs11/libcknfast.so, slotListIndex=1}", p.toString());
     }
 }

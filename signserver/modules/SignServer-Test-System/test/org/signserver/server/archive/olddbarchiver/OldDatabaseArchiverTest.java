@@ -376,6 +376,55 @@ public class OldDatabaseArchiverTest extends ArchiveTestCase {
         assertEquals("Archiver should only archive the last IP address", "1.2.3.4", ip);
     }
     
+    /**
+     * Test that INCLUDE_DIRECT_ADDRESS works as expected.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test65archiveWithXForwardedForAndDirectAddress() throws Exception {
+        final int signerId = getSignerIdDummy1();
+        
+        getWorkerSession().setWorkerProperty(signerId, "ARCHIVERS", 
+                "org.signserver.server.archive.olddbarchiver.OldDatabaseArchiver");
+        getWorkerSession().setWorkerProperty(signerId, "ARCHIVER0.USE_FORWARDED_ADDRESS", "true");
+        getWorkerSession().setWorkerProperty(signerId, "ARCHIVER0.MAX_FORWARDED_ADDRESSES", "2");
+        getWorkerSession().setWorkerProperty(signerId, "ARCHIVER0.INCLUDE_DIRECT_ADDRESS", "true");
+        getWorkerSession().reloadConfiguration(signerId);
+        
+        ArchiveDataVO archiveData = testArchive("<document id=\"" + random.nextLong() + "\"/>",
+                "47.47.47.47", "42.42.42.42, 1.2.3.4");
+        
+        final String ip = archiveData.getRequestIP();
+        
+        assertEquals("Archiver should include direct address", "42.42.42.42, 1.2.3.4, 47.47.47.47", ip);
+    }
+    
+    /**
+     * Test the corner case of setting max forwarded to 0 and including the direct address.
+     * Should be equal to the default behavior, just archiving the remote host address.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test66archiveMax0ForwardedIncludeDirectAddress() throws Exception {
+        final int signerId = getSignerIdDummy1();
+        
+        getWorkerSession().setWorkerProperty(signerId, "ARCHIVERS", 
+                "org.signserver.server.archive.olddbarchiver.OldDatabaseArchiver");
+        getWorkerSession().setWorkerProperty(signerId, "ARCHIVER0.USE_FORWARDED_ADDRESS", "true");
+        getWorkerSession().setWorkerProperty(signerId, "ARCHIVER0.MAX_FORWARDED_ADDRESSES", "0");
+        getWorkerSession().setWorkerProperty(signerId, "ARCHIVER0.INCLUDE_DIRECT_ADDRESS", "true");
+        getWorkerSession().reloadConfiguration(signerId);
+        
+        ArchiveDataVO archiveData = testArchive("<document id=\"" + random.nextLong() + "\"/>",
+                "47.47.47.47", "42.42.42.42, 1.2.3.4");
+        
+        final String ip = archiveData.getRequestIP();
+        
+        assertEquals("Archiver should include direct address", "47.47.47.47", ip);
+    }
+    
     protected Collection<? extends Archivable> archiveTimeStamp(int signerId) throws Exception {
         // Process
         int reqid = random.nextInt();

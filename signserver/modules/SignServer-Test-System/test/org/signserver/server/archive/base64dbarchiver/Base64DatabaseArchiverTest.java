@@ -169,7 +169,7 @@ public class Base64DatabaseArchiverTest extends ArchiveTestCase {
         final int signerId = getSignerIdDummy1();
         
         getWorkerSession().setWorkerProperty(signerId, "ARCHIVERS", 
-                "org.signserver.server.archive.olddbarchiver.OldDatabaseArchiver");
+                "org.signserver.server.archive.base64dbarchiver.Base64DatabaseArchiver");
         getWorkerSession().setWorkerProperty(signerId, "ARCHIVER0.USE_FORWARDED_ADDRESS", "true");
         getWorkerSession().reloadConfiguration(signerId);
         
@@ -195,7 +195,7 @@ public class Base64DatabaseArchiverTest extends ArchiveTestCase {
         final int signerId = getSignerIdDummy1();
         
         getWorkerSession().setWorkerProperty(signerId, "ARCHIVERS", 
-                "org.signserver.server.archive.olddbarchiver.OldDatabaseArchiver");
+                "org.signserver.server.archive.base64dbarchiver.Base64DatabaseArchiver");
         getWorkerSession().removeWorkerProperty(signerId, "ARCHIVER0.USE_FORWARDED_ADDRESS");
         getWorkerSession().reloadConfiguration(signerId);
         
@@ -222,7 +222,7 @@ public class Base64DatabaseArchiverTest extends ArchiveTestCase {
         final int signerId = getSignerIdDummy1();
         
         getWorkerSession().setWorkerProperty(signerId, "ARCHIVERS", 
-                "org.signserver.server.archive.olddbarchiver.OldDatabaseArchiver");
+                "org.signserver.server.archive.base64dbarchiver.Base64DatabaseArchiver");
         getWorkerSession().setWorkerProperty(signerId, "ARCHIVER0.USE_FORWARDED_ADDRESS", "false");
         getWorkerSession().reloadConfiguration(signerId);
         
@@ -248,7 +248,7 @@ public class Base64DatabaseArchiverTest extends ArchiveTestCase {
         final int signerId = getSignerIdDummy1();
         
         getWorkerSession().setWorkerProperty(signerId, "ARCHIVERS", 
-                "org.signserver.server.archive.olddbarchiver.OldDatabaseArchiver");
+                "org.signserver.server.archive.base64dbarchiver.Base64DatabaseArchiver");
         getWorkerSession().setWorkerProperty(signerId, "ARCHIVER0.USE_FORWARDED_ADDRESS", "true");
         getWorkerSession().reloadConfiguration(signerId);
         

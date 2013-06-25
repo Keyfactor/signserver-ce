@@ -13,7 +13,13 @@
 package org.signserver.server.archive.olddbarchiver;
 
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import javax.persistence.EntityManager;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.signserver.common.ArchiveData;
 import org.signserver.common.ArchiveDataVO;
@@ -42,12 +48,15 @@ public class OldDatabaseArchiver implements Archiver {
 
     private static final String PROPERTY_ARCHIVE_OF_TYPE = "ARCHIVE_OF_TYPE";
     private static final String PROPERTY_USE_FORWARDED_ADDRESS = "USE_FORWARDED_ADDRESS";
+    private static final String PROPERTY_MAX_FORWARDED_ADDRESSES = "MAX_FORWARDED_ADDRESSES";
+    private static final int DEFAULT_MAX_FORWARDED_ADDRESSES = 1;
     
     private ArchiveDataService dataService;
     
     private ArchiveOfTypes archiveOfTypes;
 
     private boolean useXForwardedFor = false;
+    private int maxForwardedAddresses;
     
     @Override
     public void init(int listIndex, WorkerConfig config, SignServerContext context) throws ArchiverInitException {
@@ -70,7 +79,12 @@ public class OldDatabaseArchiver implements Archiver {
         
         // configuration for using the X-FORWARDED-FOR header to determine source IP
         final String propertyXForwardedFor = "ARCHIVER" + listIndex + "." + PROPERTY_USE_FORWARDED_ADDRESS;
+        final String propertyMaxForwardedAddresses =
+                "ARCHIVER" + listIndex + "." + PROPERTY_MAX_FORWARDED_ADDRESSES; 
         useXForwardedFor = Boolean.valueOf(config.getProperty(propertyXForwardedFor));
+        maxForwardedAddresses =
+                Integer.valueOf(config.getProperty(propertyMaxForwardedAddresses,
+                        String.valueOf(DEFAULT_MAX_FORWARDED_ADDRESSES)));
     }
 
     @Override
@@ -105,10 +119,13 @@ public class OldDatabaseArchiver implements Archiver {
             String remoteIp = (String) requestContext.get(RequestContext.REMOTE_IP);
             
             if (useXForwardedFor) {
-                final String forwardedIp = XForwardedForUtils.getXForwardedForIP(requestContext);
+                final String[] forwardedIps =
+                        XForwardedForUtils.getXForwardedForIPs(requestContext, maxForwardedAddresses);
                 
-                if (forwardedIp != null) {
-                    remoteIp = forwardedIp;
+                if (forwardedIps != null) {
+                    final List<String> ips = Arrays.asList(forwardedIps);
+                    Collections.reverse(ips);
+                    remoteIp = StringUtils.join(ips, ", ");
                 }
             }
 

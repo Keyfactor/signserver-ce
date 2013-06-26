@@ -12,29 +12,19 @@
  *************************************************************************/
 package org.signserver.server.archive.base64dbarchiver;
 
-import java.math.BigInteger;
-import java.util.Collection;
 import java.util.Random;
 import org.apache.log4j.Logger;
-import org.bouncycastle.tsp.TSPAlgorithms;
-import org.bouncycastle.tsp.TimeStampRequest;
-import org.bouncycastle.tsp.TimeStampRequestGenerator;
 import org.junit.After;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 import org.signserver.common.ArchiveDataVO;
-import org.signserver.common.GenericSignRequest;
-import org.signserver.common.GenericSignResponse;
-import org.signserver.common.RequestContext;
-import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.ArchiveTest;
 import org.signserver.server.archive.ArchiveTestCase;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Tests for the OldDatabaseArchiver.
+ * Tests for the Base64DatabaseArchiver.
  *
  * @author Markus Kilås
  * @version $Id$

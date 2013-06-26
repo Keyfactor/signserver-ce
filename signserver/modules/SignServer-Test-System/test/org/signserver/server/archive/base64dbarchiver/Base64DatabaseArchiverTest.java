@@ -253,8 +253,8 @@ public class Base64DatabaseArchiverTest extends ArchiveTestCase {
     }
     
     /**
-     * Test that the by default, the archiver will only archive the last IP address in the
-     * X-Forwarded-For header, when set to archive the the forwarded address.
+     * Test that by default, the archiver will only archive the last IP address in the
+     * X-Forwarded-For header, when set to archive the forwarded address.
      * 
      * @throws Exception
      */

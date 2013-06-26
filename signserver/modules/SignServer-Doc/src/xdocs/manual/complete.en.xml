@@ -4707,7 +4707,8 @@ Notice: This only indicates that the client certificate where used when establis
                             <tr>
                                 <td>requestIP</td>
                                 <td>
-Either IP address of the host connecting, or a list of forwarded IP addresses from X-Forwarded-For when setting USE_FORWARDED_ADDRESS.<br/>
+By default IP address of the host connecting.
+When USE_FORWARDED_ADDRESS is set to "true" this contains a list of forwarded IP addresses from X-Forwarded-For optionally ending with the host address (when setting INCLUDE_DIRECT_ADDRESS to "true").<br/>
                                 </td>
                             </tr>
                             <tr>

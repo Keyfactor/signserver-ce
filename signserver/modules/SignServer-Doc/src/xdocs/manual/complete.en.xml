@@ -4576,6 +4576,24 @@ After the certificate chain has been uploaded to the server, the configuration m
                         </p>
                     </subsubsection>
                 </subsection>
+                
+                <subsection name="OldPKCS11CryptoToken">
+                    <subsubsection name="Overview">
+                        <p>
+The OldPKCS11CryptoToken implementation (before the use of CESeCore) is only available as a fallback for a limited time. This implementation is deprecated. The PKCS11CryptoToken should be used instead.
+                        </p>
+                    </subsubsection>
+                    <subsubsection name="SIGNERTOKEN.CLASSPATH">
+                        <p>
+The fully qualified class name is: <b>org.signserver.server.cryptotokens.OldPKCS11CryptoToken</b>
+                        </p>
+                    </subsubsection>
+                    <subsubsection name="Available Properties">
+                        <p>
+Currently most properties from the PKCS11CryptoToken can be used.
+                        </p>
+                    </subsubsection>
+                </subsection>
 
                 <subsection name="SoftCryptoToken">
                     <subsubsection name="Overview">

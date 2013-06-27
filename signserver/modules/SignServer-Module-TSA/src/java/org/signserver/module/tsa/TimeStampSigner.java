@@ -195,7 +195,7 @@ public class TimeStampSigner extends BaseSigner {
     public static final String REQUIREVALIDCHAIN = "REQUIREVALIDCHAIN";
     public static final String MAXSERIALNUMBERLENGTH = "MAXSERIALNUMBERLENGTH";
     public static final String INCLUDESTATUSSTRING = "INCLUDESTATUSSTRING";
-    
+    public static final String INCLUDESIGNINGTIMEATTRIBUTE = "INCLUDESIGNINGTIMEATTRIBUTE";
     
     private static final String DEFAULT_WORKERLOGGER =
             DefaultTimeStampLogger.class.getName();
@@ -273,6 +273,7 @@ public class TimeStampSigner extends BaseSigner {
     
     private String tsaName;
     private boolean tsaNameFromCert;
+    private boolean includeSigningTimeAttribute;
     
     @Override
     public void init(final int signerId, final WorkerConfig config,
@@ -366,6 +367,8 @@ public class TimeStampSigner extends BaseSigner {
         if (tsaName != null && tsaNameFromCert) {
             LOG.error("Error: Can not set " + TSA_FROM_CERT + " to true and set " + TSA + " worker property at the same time");
         }
+        
+        includeSigningTimeAttribute = Boolean.valueOf(config.getProperty(INCLUDESIGNINGTIMEATTRIBUTE, "true"));
     }
 
     /**
@@ -729,6 +732,10 @@ public class TimeStampSigner extends BaseSigner {
             		new JcaContentSignerBuilder(signatureAlgorithm).setProvider(this.getCryptoToken().getProvider(ICryptoToken.PROVIDERUSAGE_SIGN)).build(privKey);
             JcaSignerInfoGeneratorBuilder sigb = new JcaSignerInfoGeneratorBuilder(calcProv);
             X509CertificateHolder certHolder = new X509CertificateHolder(cert.getEncoded());
+            
+            sigb.setSignedAttributeGenerator(
+                    new OptionalSigningTimeSignedAttributeTableGenerator(includeSigningTimeAttribute));
+            
             SignerInfoGenerator sig = sigb.build(cs, certHolder);
             
             timeStampTokenGen = new TimeStampTokenGenerator(calc, sig, tSAPolicyOID);

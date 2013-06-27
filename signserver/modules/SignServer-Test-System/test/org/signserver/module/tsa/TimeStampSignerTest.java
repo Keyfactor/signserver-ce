@@ -29,7 +29,9 @@ import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.cmp.PKIFailureInfo;
 import org.bouncycastle.asn1.cmp.PKIStatus;
+import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.cms.AttributeTable;
+import org.bouncycastle.asn1.cms.CMSAttributes;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
@@ -158,7 +160,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
     @Test
     public void test01BasicTimeStamp() throws Exception {
         // Test signing
-        final TimeStampResponse response = assertSuccessfulTimestamp(WORKER1);
+        final TimeStampResponse response = assertSuccessfulTimestamp(WORKER1, true);
 
         // Test that it is using the right algorithm
         final TimeStampToken token = response.getTimeStampToken();
@@ -166,7 +168,16 @@ public class TimeStampSignerTest extends ModulesTestCase {
         assertEquals("sha1withrsa", "1.2.840.113549.1.1.1", si.getEncryptionAlgOID());
     }
 
-    private TimeStampResponse assertSuccessfulTimestamp(int worker) throws Exception {
+    /**
+     * Test successfully doing a TSA request.
+     * 
+     * @param worker Worker ID
+     * @param includeSigningTime If the signingTime signed CMS attribute is expected or not
+     * @return Time stamp response
+     * @throws Exception
+     */
+    private TimeStampResponse assertSuccessfulTimestamp(int worker,
+            final boolean includeSigningTime) throws Exception {
         int reqid = random.nextInt();
 
         TimeStampRequestGenerator timeStampRequestGenerator =
@@ -206,6 +217,16 @@ public class TimeStampSignerTest extends ModulesTestCase {
             fail("Token validation failed: " + ex.getMessage());
         }
         
+        // check the signingTime signed attribute
+        final AttributeTable attrs = timeStampResponse.getTimeStampToken().getSignedAttributes();
+        final Attribute attr = attrs.get(CMSAttributes.signingTime);
+        
+        if (includeSigningTime) {
+            assertNotNull("Should contain signingTime signed attribute", attr);
+        } else {
+            assertNull("Should not contain signingTime signed attribute", attr);
+        }
+            
         return timeStampResponse;
     }
 
@@ -268,7 +289,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
     public void test05ReadingStatusTimeSource() throws Exception {
         // Test with insync
         repository.update(StatusName.TIMESOURCE0_INSYNC.name(), "true");
-        assertSuccessfulTimestamp(WORKER4);
+        assertSuccessfulTimestamp(WORKER4, true);
 
         // Test without insync
         repository.update(StatusName.TIMESOURCE0_INSYNC.name(), "");
@@ -809,7 +830,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
             workerSession.reloadConfiguration(workerId);
             
             // Test signing
-            TimeStampResponse response = assertSuccessfulTimestamp(WORKER20);
+            TimeStampResponse response = assertSuccessfulTimestamp(WORKER20, true);
             
             // Test that it is using the right algorithm
             TimeStampToken token = response.getTimeStampToken();
@@ -821,7 +842,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
             workerSession.reloadConfiguration(workerId);
             
             // Test signing
-            response = assertSuccessfulTimestamp(WORKER20);
+            response = assertSuccessfulTimestamp(WORKER20, true);
             
             // Test that it is using the right algorithm
             token = response.getTimeStampToken();
@@ -849,7 +870,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
             workerSession.reloadConfiguration(workerId);
             
             // Test signing
-            TimeStampResponse response = assertSuccessfulTimestamp(WORKER20);
+            TimeStampResponse response = assertSuccessfulTimestamp(WORKER20, true);
             
             // Test that it is using the right algorithm
             TimeStampToken token = response.getTimeStampToken();
@@ -933,7 +954,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
     @Test
     public void test25StatusStringIncluded() throws Exception {
      // Test signing
-        final TimeStampResponse response = assertSuccessfulTimestamp(WORKER1);
+        final TimeStampResponse response = assertSuccessfulTimestamp(WORKER1, true);
 
         assertEquals("Operation Okay", response.getStatusString());
     }
@@ -948,7 +969,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
         workerSession.setWorkerProperty(WORKER1, TimeStampSigner.INCLUDESTATUSSTRING, "FALSE");
         workerSession.reloadConfiguration(WORKER1);
         
-        final TimeStampResponse response = assertSuccessfulTimestamp(WORKER1);
+        final TimeStampResponse response = assertSuccessfulTimestamp(WORKER1, true);
         
         assertNull(response.getStatusString());
     }
@@ -1053,7 +1074,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
     @Test
     public void test31NoTSAName() throws Exception {
         // Test signing
-        final TimeStampResponse response = assertSuccessfulTimestamp(WORKER1);
+        final TimeStampResponse response = assertSuccessfulTimestamp(WORKER1, true);
 
         assertNull("No TSA set", response.getTimeStampToken().getTimeStampInfo().getTsa());
     }
@@ -1067,7 +1088,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
         workerSession.setWorkerProperty(WORKER1, TimeStampSigner.TSA, "CN=test");
         workerSession.reloadConfiguration(WORKER1);
         
-        final TimeStampResponse response = assertSuccessfulTimestamp(WORKER1);
+        final TimeStampResponse response = assertSuccessfulTimestamp(WORKER1, true);
         final GeneralName name = response.getTimeStampToken().getTimeStampInfo().getTsa();
         final GeneralName expectedName = new GeneralName(new X500Name("CN=test"));
         
@@ -1089,7 +1110,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
        workerSession.setWorkerProperty(WORKER1, TimeStampSigner.TSA_FROM_CERT, "true");
        workerSession.reloadConfiguration(WORKER1);
        
-       final TimeStampResponse response = assertSuccessfulTimestamp(WORKER1);
+       final TimeStampResponse response = assertSuccessfulTimestamp(WORKER1, true);
        final GeneralName name = response.getTimeStampToken().getTimeStampInfo().getTsa();
        final GeneralName expectedName = new GeneralName(new X500Name("CN=TS Signer 1,OU=Testing,O=SignServer,C=SE"));
        
@@ -1125,6 +1146,30 @@ public class TimeStampSignerTest extends ModulesTestCase {
         workerSession.removeWorkerProperty(WORKER1, TimeStampSigner.TSA);
         workerSession.removeWorkerProperty(WORKER1, TimeStampSigner.TSA_FROM_CERT);
         workerSession.reloadConfiguration(WORKER1);
+    }
+    
+    /**
+     * Test that excluding signingTime signed CMS attribute works.
+     * @throws Exception
+     */
+    @Test
+    public void test36noSigningTimeAttribute() throws Exception {
+        workerSession.setWorkerProperty(WORKER1, TimeStampSigner.INCLUDESIGNINGTIMEATTRIBUTE, "false");
+        workerSession.reloadConfiguration(WORKER1);
+        
+        assertSuccessfulTimestamp(WORKER1, false);
+    }
+    
+    /**
+     * Test that explicitly including the signingTime signed attribute works.
+     * @throws Exception
+     */
+    @Test
+    public void test37explicitlyIncludeSigningTime() throws Exception {
+        workerSession.setWorkerProperty(WORKER1, TimeStampSigner.INCLUDESIGNINGTIMEATTRIBUTE, "true");
+        workerSession.reloadConfiguration(WORKER1);
+        
+        assertSuccessfulTimestamp(WORKER1, true);
     }
     
     private void assertTokenGranted(int workerId) throws Exception {

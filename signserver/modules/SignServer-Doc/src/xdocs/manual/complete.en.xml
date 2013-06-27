@@ -3137,6 +3137,9 @@ The generated serial number will always be positive (so the sign bit is always a
 <b>INCLUDESTATUSSTRING</b> = Specifies if the status string is to be included in the response. Setting this to true triggers a bug in some
 versions of OpenJDK's jarsigner utility. (OPTIONAL), default true.
                         </p>
+                        <p>
+<b>INCLUDESIGNINGTIMEATTRIBUTE</b> = Specifies if the signingTime signed CMS attribute should be included in the response. (OPTIONAL), default true.
+                        </p>
                     </subsubsection>
                     
                     <subsubsection name="TimeStampSigner Certificates">

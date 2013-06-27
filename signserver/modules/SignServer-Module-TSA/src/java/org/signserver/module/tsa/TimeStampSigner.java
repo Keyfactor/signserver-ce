@@ -733,6 +733,7 @@ public class TimeStampSigner extends BaseSigner {
             JcaSignerInfoGeneratorBuilder sigb = new JcaSignerInfoGeneratorBuilder(calcProv);
             X509CertificateHolder certHolder = new X509CertificateHolder(cert.getEncoded());
             
+            // set signed attribute table generator based on property
             sigb.setSignedAttributeGenerator(
                     new OptionalSigningTimeSignedAttributeTableGenerator(includeSigningTimeAttribute));
             

@@ -44,7 +44,7 @@ public class OptionalSigningTimeSignedAttributeTableGenerator extends
         final AttributeTable attrs = super.getAttributes(parameters);
         
         if (!includeSigningTime) {
-            attrs.remove(CMSAttributes.signingTime);
+            return attrs.remove(CMSAttributes.signingTime);
         }
         
         return attrs;

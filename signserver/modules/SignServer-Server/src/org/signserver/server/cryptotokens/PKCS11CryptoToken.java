@@ -155,7 +155,9 @@ public class PKCS11CryptoToken implements ICryptoToken, IKeyGenerator {
     public ICertReqData genCertificateRequest(ISignerCertReqInfo info,
             final boolean explicitEccParameters, boolean defaultKey)
             throws CryptoTokenOfflineException {
-        LOG.debug(">genCertificateRequest CESeCorePKCS11CryptoToken");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(">genCertificateRequest CESeCorePKCS11CryptoToken");
+        }
         Base64SignerCertReqData retval = null;
         if (info instanceof PKCS10CertReqInfo) {
             PKCS10CertReqInfo reqInfo = (PKCS10CertReqInfo) info;
@@ -213,7 +215,9 @@ public class PKCS11CryptoToken implements ICryptoToken, IKeyGenerator {
             }
 
         }
-        LOG.debug("<genCertificateRequest CESeCorePKCS11CryptoToken");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("<genCertificateRequest CESeCorePKCS11CryptoToken");
+        }
         return retval;
     }
 
@@ -227,7 +231,9 @@ public class PKCS11CryptoToken implements ICryptoToken, IKeyGenerator {
 
     @Override
     public Collection<KeyTestResult> testKey(String alias, char[] authCode) throws CryptoTokenOfflineException, KeyStoreException {
-        LOG.debug(">testKey");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(">testKey");
+        }
         final Collection<KeyTestResult> result = new LinkedList<KeyTestResult>();
 
         final byte signInput[] = "Lillan gick on the roaden ut.".getBytes();
@@ -287,7 +293,9 @@ public class PKCS11CryptoToken implements ICryptoToken, IKeyGenerator {
             throw new CryptoTokenOfflineException(ex);
         }
 
-        LOG.debug("<testKey");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("<testKey");
+        }
         return result;
     }
 

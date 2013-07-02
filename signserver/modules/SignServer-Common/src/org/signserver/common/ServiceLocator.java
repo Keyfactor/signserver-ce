@@ -77,8 +77,14 @@ public final class ServiceLocator {
                 beanInterface = (T) initialContext.lookup(
                         getGlassfishJNDIName(remoteInterface));
             } catch (NamingException ex) {
-                LOG.error("Error looking up signserver interface", ex);
-                throw ex;
+                try {
+                    // Then try using JBoss 7 JNDI
+                    beanInterface = (T) initialContext.lookup(
+                            getJBoss7JNDIName(remoteInterface, true));
+                } catch (NamingException exx) {
+                    LOG.error("Error looking up signserver interface", exx);
+                    throw ex;
+                }
             }
         }
         return beanInterface;
@@ -151,5 +157,26 @@ public final class ServiceLocator {
             LOG.debug("Glassfish JNDI name: " + result);
         }
         return result;
+    }
+    
+    private String getJBoss7JNDIName(final Class clazz, final boolean remote) {
+        final String module = "SignServer-ejb";
+        final String viewClassName = clazz.getName();
+        String beanName = clazz.getSimpleName();
+        if (clazz.getEnclosingClass() != null
+                && ((remote && "IRemote".equals(beanName))
+                    || (!remote && "ILocal".equals(beanName)))) {
+            beanName = clazz.getEnclosingClass().getSimpleName();
+        }
+        if (beanName.charAt(0) == 'I') {
+            beanName = beanName.substring(1);
+        }
+        beanName += "Bean";
+
+        final String jndiNameJEE6 = "ejb:signserver" + "/" + module + "//"  + beanName + "!" + viewClassName;
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("JBoss 7 JNDI name: " + jndiNameJEE6);
+        }
+        return jndiNameJEE6;
     }
 }

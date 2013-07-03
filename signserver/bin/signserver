@@ -94,10 +94,17 @@ if [ -f $APPSRV_HOME/client/jbossall-client.jar ]; then
     CP=$CP:"$APPSRV_HOME/client/jbossall-client.jar"
 fi
 
+if [ -f $APPSRV_HOME/bin/standalone.sh ]; then
+	echo JBoss7
+    CP="$APPSRV_HOME/bin/client/jboss-client.jar":$CP
+    CP="${SIGNSRV_HOME}/conf/jboss7":$CP
+fi
+
 # For Cygwin, switch paths to Windows format before running java
 if $cygwin; then
   CP=`cygpath --path --windows "$CP"`
 fi
 
 # Execute the command
+echo CP: $CP
 exec "$JAVACMD" -cp $CP $class_name "$@"

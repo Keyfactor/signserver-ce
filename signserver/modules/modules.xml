@@ -91,8 +91,10 @@
         <property file="../../signserver_build.properties" />
         <property file="../../conf/signserver_build.properties" />
 <!--        <echo message="appserver.home = ${appserver.home}"/>-->
-        <!-- JBoss -->
+        <!-- JBoss5 -->
         <available file="${appserver.home}/client/jbossall-client.jar" property="var.APPSRV_HOME" value="${appserver.home}" />
+        <!-- JBoss7 -->
+        <available file="${appserver.home}/bin/standalone.sh" property="var.APPSRV_HOME" value="${appserver.home}" />
         <!-- GlassFish -->
         <available file="${appserver.home}/lib/appserv-rt.jar" property="var.APPSRV_HOME" value="${appserver.home}"/>
     </target>
@@ -101,8 +103,10 @@
         <!-- Get property from environment variable -->
         <property environment="env" />
 <!--        <echo message="env.APPSRV_HOME = ${env.APPSRV_HOME}"/>-->
-        <!-- JBoss -->
+        <!-- JBoss5 -->
         <available file="${env.APPSRV_HOME}/client/jbossall-client.jar" property="var.APPSRV_HOME" value="${env.APPSRV_HOME}" />
+        <!-- JBoss7 -->
+        <available file="${env.APPSRV_HOME}/bin/standalone.sh" property="var.APPSRV_HOME" value="${env.APPSRV_HOME}" />
         <!-- GlassFish -->
         <available file="${env.APPSRV_HOME}/lib/appserv-rt.jar" property="var.APPSRV_HOME" value="${env.APPSRV_HOME}"/>
     </target>

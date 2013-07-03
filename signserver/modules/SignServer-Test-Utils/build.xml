@@ -20,11 +20,18 @@
     
     <target name="-post-compile-single" depends="-move-jndi-properties"/>
     <target name="-post-compile" depends="-move-jndi-properties"/>
-    <target name="-move-jndi-properties">
-        <echo>Using jndi.properties for application server type "${appserver.type}"</echo>
+    <target name="-move-jndi-properties" depends="-modules-set-appserver-home">
+        <!-- JBoss5 -->
+        <available file="${j2ee.server.home}/client/jbossall-client.jar" property="appserver.subtype" value="jboss" />
+        <!-- JBoss7 -->
+        <available file="${j2ee.server.home}/bin/standalone.sh" property="appserver.subtype" value="jboss7" />
+        <!-- GlassFish -->
+        <available file="${j2ee.server.home}/lib/appserv-rt.jar" property="appserver.subtype" value="glassfish"/>
+        
+        <echo>Using jndi.properties for application server type "${appserver.subtype}"</echo>
         <mkdir dir="../../tmp/conf/"/>
         <copy todir="../../tmp/conf/" overwrite="true">
-            <fileset dir="../../conf/${appserver.type}" includes="jndi.properties"/>
+            <fileset dir="../../conf/${appserver.subtype}" includes="*.properties"/>
         </copy>
     </target>
     

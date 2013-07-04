@@ -14,7 +14,11 @@ package org.ejbca.database.audit;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.SortedSet;
 import java.util.concurrent.ConcurrentSkipListSet;
 
@@ -56,6 +60,8 @@ public class IntegrityProtectedAuditReader {
 	private int currentNodeIndex = 0;
 	private long lastSeqNrFromPreviousChunk = -1;// The first sequence number should always be 0. -1 is the number before it. Used when no previous chunk.
 
+        private final Map<String, Long> startSequences;
+        
 	/**
 	 * Creates a new instance of this reader that can be used to fetch verified audit log data.
 	 * @param entityManager
@@ -63,17 +69,48 @@ public class IntegrityProtectedAuditReader {
 	 * @param timestampTo
 	 * @param maxFetchSize
 	 */
-	public IntegrityProtectedAuditReader(final EntityManager entityManager, long timestampFrom, long timestampTo, int maxFetchSize) {
+        public IntegrityProtectedAuditReader(final EntityManager entityManager, long timestampFrom, long timestampTo, int maxFetchSize) {
+            this(entityManager, timestampFrom, timestampTo, maxFetchSize, null);
+        }
+                
+        /**
+         * Creates an new instance of the IntegrityProtectedAuditReader.
+         * @param entityManager
+         * @param timestampFrom
+         * @param timestampTo
+         * @param maxFetchSize
+         * @param startSequences Map from nodeId to the start index. Only the 
+         * nodes listed will be considered or null if all nodes should be used 
+         * and start from 0.
+         */
+	public IntegrityProtectedAuditReader(final EntityManager entityManager, long timestampFrom, long timestampTo, int maxFetchSize, Map<String, Long> startSequences) {
 		this.entityManager = entityManager;
 		this.timestampFrom = timestampFrom;
 		this.timestampTo = timestampTo;
 		this.maxFetchSize = maxFetchSize;
+                
+                final List<String> availableNodes = getNodeIds();
+                if (startSequences == null) {
+                    startSequences = new HashMap<String, Long>();
+                    for (String node : availableNodes) {
+                        startSequences.put(node, 0L);
+                    }   
+                }
+                this.startSequences = startSequences;
 		// We fetch all the nodes, even if there are no events for a node in this time-span
-		this.nodes = getNodeIds();
+		this.nodes = new ArrayList<String>(startSequences.keySet());
+                
 		// Make sure that we really do verify and throw detectable DatabaseProtectionError if the verification fails.
 		ConfigurationHolder.instance();
 		ConfigurationHolder.updateConfiguration("databaseprotection.enableverify.AuditRecordData", "true");
 		ConfigurationHolder.updateConfiguration("databaseprotection.erroronverifyfail", "true");
+                
+                this.currentNodeIndex = 0;
+                if (nodes.size() < 1) {
+                    this.lastSeqNrFromPreviousChunk = -1;
+                } else {
+                    this.lastSeqNrFromPreviousChunk = startSequences.get(this.nodes.get(this.currentNodeIndex)) - 1;
+                }
 	}
 
 	public boolean isDone() {
@@ -85,8 +122,9 @@ public class IntegrityProtectedAuditReader {
 		return this.auditLogValidationReport;
 	}
 
-	public int getNodeId() {
-		return this.currentNodeIndex;
+        /** @return the Node id (name) **/
+	public String getNodeId() {
+		return this.nodes.get(this.currentNodeIndex);
 	}
 	/**
 	 * Fetch and verify the next chunk of AuditRecordData rows.
@@ -101,11 +139,14 @@ public class IntegrityProtectedAuditReader {
 		}
 		final SortedSet<Long> sequenceNrSet = new ConcurrentSkipListSet<Long>();
 		sequenceNrSet.add( Long.valueOf(this.lastSeqNrFromPreviousChunk) );
-		final int nrRead = read(this.startIndex, this.maxFetchSize, true, sequenceNrSet);
+		final int nrRead = read(startSequences.get(this.nodes.get(this.currentNodeIndex)) - 1, this.startIndex, this.maxFetchSize, true, sequenceNrSet);
 		if ( nrRead<1 ) {// nothing more to read from this node
 			this.startIndex = 0;
 			this.currentNodeIndex++;
-			this.lastSeqNrFromPreviousChunk = -1;
+                        if (isDone()) {
+                            return 0;
+                        }
+			this.lastSeqNrFromPreviousChunk = startSequences.get(this.nodes.get(this.currentNodeIndex)) - 1;
 			return getNextVerifiedChunk();
 		}
 		this.lastSeqNrFromPreviousChunk = checkForMissingSequenceNrs(sequenceNrSet);
@@ -137,7 +178,7 @@ public class IntegrityProtectedAuditReader {
 		}
 		return highestNr;
 	}
-	private int read(final long startPosition, final int maxResult, final boolean firstTime, final SortedSet<Long> sequenceNrSet) {
+	private int read(final long sequenceStart, final long startPosition, final int maxResult, final boolean firstTime, final SortedSet<Long> sequenceNrSet) {
 		if ( maxResult<1 ) {
 			return 0;// length of chunk must be >0 to read something
 		}
@@ -148,8 +189,10 @@ public class IntegrityProtectedAuditReader {
 				.create()
 				.add(Criteria.and(
 						Criteria.eq(AuditLogEntry.FIELD_NODEID, this.nodes.get(this.currentNodeIndex)),
-						Criteria.and(Criteria.geq(AuditLogEntry.FIELD_TIMESTAMP, Long.valueOf(this.timestampFrom)),
-								Criteria.leq(AuditLogEntry.FIELD_TIMESTAMP, Long.valueOf(this.timestampTo)))))
+                                                Criteria.and(
+                                                    Criteria.grt(AuditLogEntry.FIELD_SEQUENCENUMBER, Long.valueOf(sequenceStart)), 
+                                                    Criteria.and(Criteria.geq(AuditLogEntry.FIELD_TIMESTAMP, Long.valueOf(this.timestampFrom)),
+								Criteria.leq(AuditLogEntry.FIELD_TIMESTAMP, Long.valueOf(this.timestampTo))))))
 								.add(Criteria.orderAsc(AuditLogEntry.FIELD_SEQUENCENUMBER));
 		final List<AuditRecordData> rows;
 		try {
@@ -192,7 +235,7 @@ public class IntegrityProtectedAuditReader {
 				return maxResult;
 			}
 			for( int lengthToFailure=maxLengthToFailure; lengthToFailure+5>maxLengthToFailure&&lengthToFailure>0; lengthToFailure--) {
-				if ( lengthToFailure==1 || read(startPosition, lengthToFailure-1, false, sequenceNrSet)>0 ) {
+				if ( lengthToFailure==1 || read(startSequences.get(this.nodes.get(this.currentNodeIndex)) - 1, startPosition, lengthToFailure-1, false, sequenceNrSet)>0 ) {
 					return lengthToFailure;
 				}
 			}
@@ -221,9 +264,23 @@ public class IntegrityProtectedAuditReader {
 
 	/** @return a unique list of node identifiers that have been writing audit log to the database. */
 	@SuppressWarnings("unchecked")
-	private List<String> getNodeIds() {
+	public List<String> getNodeIds() {
 		return this.entityManager.createQuery("SELECT DISTINCT a.nodeId FROM AuditRecordData a").getResultList();
 	}
+
+        /**
+         * @return The last sequence number that was verified
+         */
+        public long getLastSeqNrFromPreviousChunk() {
+            return lastSeqNrFromPreviousChunk;
+        }
+
+        /**
+         * @return An read-only view of the map from all nodes that are considered to their start indexes
+         */
+        public Map<String, Long> getStartSequences() {
+            return Collections.unmodifiableMap(startSequences);
+        }        
 
 	/**
 	 * Build a JPA Query from the supplied queryStr and criteria.

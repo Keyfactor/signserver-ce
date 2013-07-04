@@ -15,11 +15,14 @@ package org.signserver.db.cli;
 import javax.persistence.PersistenceException;
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
+import org.junit.Test;
 import org.signserver.testutils.CLITestHelper;
 
 /**
  * Tests for the database CLI.
  *
+ * Tests in this class does not alter the database.
+ * 
  * @author Markus Kilås
  * @version $Id$
  */
@@ -56,6 +59,7 @@ public class DatabaseCLITest extends TestCase {
     /**
      * Tests that non-existing command gives an error return code.
      */
+    @Test
     public void testNonExistingCommand() throws Exception {
         LOG.info("testNonExistingCommand");
         final int actual = cli.execute(new String[] {"_any_non_existing_command_123_"});
@@ -65,6 +69,7 @@ public class DatabaseCLITest extends TestCase {
     /**
      * Tests that non-existing command argument gives an error return code.
      */
+    @Test
     public void testVerifyLogUnexpectedArgument() throws Exception {
         LOG.info("testVerifyLogUnexpectedArgument");
         final int actual = cli.execute(new String[] {"audit", "verifylog", "_invalid_argument_123_"});
@@ -74,12 +79,13 @@ public class DatabaseCLITest extends TestCase {
     /**
      * Tests that the audit verifylog command completes successful.
      */
+    @Test
      public void testVerifyLog() throws Exception {
         LOG.info("testVerifyLog");
         LOG.info("Note: This could be long running. Clear the AuditRecordData table inbetween runs.\n"
                 + "For HSQLDB this test can not be run while the application server is running.");
         try {
-            final int actual = cli.execute(new String[] {"audit", "verifylog"});
+            final int actual = cli.execute(new String[] {"audit", "verifylog", "-all"});
             assertEquals("return code", Main.RETURN_SUCCESS, actual);
         } catch (PersistenceException ex) {
             throw new Exception(JDBC_ERROR, ex);

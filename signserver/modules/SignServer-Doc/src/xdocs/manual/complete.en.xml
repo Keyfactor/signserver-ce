@@ -1269,9 +1269,21 @@ to run the JUnit tests.
 Sample usage:
                     </p>
                     <source>
-OPTIONAL_CLASSPATH=/usr/share/java/mysql-connector-java.jar bin/signserver-db audit verifylog
+bin/signserver-db audit
                     </source>
                     <subsubsection name="Verify Auditlog Command">
+                        <source>
+Usage: verifylog -all
+       verifylog [-node NODENAME[:OFFSET] ...]
+
+Verifies logs from all nodes starting at sequence number 0 or only from the specified nodes and optional sequence number offsets specified.
+If the nodename is suffixed with a colon and an number then the verification for that node is started from that sequence number.
+The JDBC connector of the database might have to be put on the classpath. See the example below.
+
+Example: a) signserver-db audit verifylog -all
+Example: b) signserver-db audit verifylog -node server1 -node server2:708
+Example: c) OPTIONAL_CLASSPATH=/usr/share/java/mysql-connector-java.jar signserver-db audit verifylog -all
+                        </source>
                         <p>
 The command can be run to verify the signature of every entry in the auditlog 
 as well as checking the sequence number in order to make sure that it does not 
@@ -1284,13 +1296,46 @@ The keys used to verify the log are configured in conf/databaseprotection.proper
 Sample output:
                         </p>
                         <source>
-2013-02-08 21:26:13,067 INFO  [PKCS11CryptoToken] Activated Crypto Token with id 300.
-2013-02-08 21:26:13,203 INFO  [VerifyLogCommand] Progress: node=0 rowCount=63
-2013-02-08 21:26:13,685 INFO  [VerifyLogCommand] Progress: node=1 rowCount=701
-2013-02-08 21:26:13,690 INFO  [VerifyLogCommand] Audit log validation completed in 1 seconds. 701 rows found. Errors: 0 Warnings: 0
-2013-02-08 21:26:13,690 INFO  [VerifyLogCommand] Verification finished with success
+2013-07-04 15:29:10,073 INFO  [VerifyLogCommand] The following nodes exists: [server1, server2]
+2013-07-04 15:29:10,074 INFO  [VerifyLogCommand] Start sequences: {server1=0, server2=0}
+2013-07-04 15:29:10,635 INFO  [SoftCryptoToken] Invalid authentication code. Token id=400.
+2013-07-04 15:29:10,716 INFO  [SoftCryptoToken] Activated Crypto Token with id 400.
+2013-07-04 15:29:10,722 INFO  [VerifyLogCommand] Progress: node=server1 rowCount=3
+2013-07-04 15:29:10,722 INFO  [VerifyLogCommand] Last sequence number: 2
+2013-07-04 15:29:10,745 INFO  [VerifyLogCommand] Progress: node=server2 rowCount=11
+2013-07-04 15:29:10,745 INFO  [VerifyLogCommand] Last sequence number: 7
+2013-07-04 15:29:10,747 INFO  [VerifyLogCommand] Audit log validation completed in 0 seconds. 11 rows found. Errors: 0 Warnings: 0
+2013-07-04 15:29:10,747 INFO  [VerifyLogCommand] Verification finished with success
+2013-07-04 15:29:10,747 INFO  [VerifyLogCommand] Last sequences: {server1=2, server2=7}
                         </source>
                     </subsubsection>
+                    
+                    <subsubsection name="Archiving of the audit log">
+                        <p>
+As the Database CLI audit verifylog command checks for gabs in the sequence numbering entries from the audit log can not be archived/moved to other storage without special care.
+However since the command now supports the option to specify from which sequence number to start the verification the following scheme for archiving is proposed:                            
+                        </p>
+                        <ol>
+                            <li>
+Run the command to verify the complete log audit log:
+<pre class="code">audit verifylog -all</pre>
+Note down the last sequence number for each node. Ie:
+<pre class="code">Last sequences: {server1=2, server2=7}</pre>
+                            </li>
+                            <li>
+All entries from 0 up to the entry before the last can now be archived and removed from the database. In our example that would be entry 0 and 1 for node server1 and entries from 0 to 6 for node server2.                                
+                            </li>
+                            <li>
+The next time the log should be verified start the verification from the last sequence numbers:
+<pre class="code">audit verifylog -node server1:2 -node server2:7</pre>
+Again note down the last sequence number for each node and all entries up to the sequence number before the last for each node can now be archived.
+                            </li>
+                        </ol>
+                        <note>
+It is important to not remove the row with the last sequence number for any node as if the application is restarted the sequence numbering would than start again from 0 for that node.
+                        </note>
+                    </subsubsection>
+                    
                 </subsection>
 
                 <subsection name="Administration GUI">

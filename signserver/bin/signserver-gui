@@ -100,4 +100,5 @@ if $cygwin; then
 fi
 
 # Execute the command
+#exec "$JAVACMD" -Djavax.net.debug=all -cp $CP -splash:$SIGNSRV_HOME/res/admingui-splash.png $class_name "$@" -connectfile $SIGNSRV_HOME/conf/admingui.properties -defaultconnectfile $SIGNSRV_HOME/conf/admingui_default.properties
 exec "$JAVACMD" -cp $CP -splash:$SIGNSRV_HOME/res/admingui-splash.png $class_name "$@" -connectfile $SIGNSRV_HOME/conf/admingui.properties -defaultconnectfile $SIGNSRV_HOME/conf/admingui_default.properties

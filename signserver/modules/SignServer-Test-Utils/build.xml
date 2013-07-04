@@ -28,6 +28,9 @@
         <!-- GlassFish -->
         <available file="${j2ee.server.home}/lib/appserv-rt.jar" property="appserver.subtype" value="glassfish"/>
         
+        <!-- Default value otherwise (works for tests not using an application server anyway) -->
+        <property name="appserver.subtype" value="jboss"/>
+        
         <echo>Using jndi.properties for application server type "${appserver.subtype}"</echo>
         <mkdir dir="../../tmp/conf/"/>
         <copy todir="../../tmp/conf/" overwrite="true">

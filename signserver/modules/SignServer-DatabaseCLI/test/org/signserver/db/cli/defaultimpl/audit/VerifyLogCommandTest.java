@@ -370,13 +370,16 @@ public class VerifyLogCommandTest extends TestCase {
         // Setup a log with two nodes, server1=ok, server2=missing entries
         // then verification should fail as one sequence number is missing
         clearLog();
-        fillLogServer1MissingSequence();
         
         try {
+            fillLogServer1MissingSequence();
             final int actual = command.validateAuditLog(getEntityManager(), null);
             assertEquals("return code", -1, actual);
         } catch (PersistenceException ex) {
             throw new Exception(JDBC_ERROR, ex);
+        } finally {
+            // We need to clean up the log otherwise other test cases might fail
+            clearLog();
         }
     }
      
@@ -389,13 +392,16 @@ public class VerifyLogCommandTest extends TestCase {
         // Setup a log with two nodes, the first entries are missing/archived
         // then verification should fail as verification can not start from 0
         clearLog();
-        fillLogArchived();
         
         try {
+            fillLogArchived();
             final int actual = command.validateAuditLog(getEntityManager(), null);
             assertEquals("return code", -1, actual);
         } catch (PersistenceException ex) {
             throw new Exception(JDBC_ERROR, ex);
+        } finally {
+            // We need to clean up the log otherwise other test cases might fail
+            clearLog();
         }
     }
      
@@ -408,15 +414,18 @@ public class VerifyLogCommandTest extends TestCase {
         // Setup a log with two nodes, server1=ok, server2=missing entries
         // then verification should succeed anyway as we only look at server1
         clearLog();
-        fillLogServer1MissingSequence();
         
         try {
+            fillLogServer1MissingSequence();
             HashMap<String, Long> sequences = new HashMap<String, Long>();
             sequences.put(SERVER2, 0L);
             final int actual = command.validateAuditLog(getEntityManager(), sequences);
             assertEquals("return code", Main.RETURN_SUCCESS, actual);
         } catch (PersistenceException ex) {
             throw new Exception(JDBC_ERROR, ex);
+        } finally {
+            // We need to clean up the log otherwise other test cases might fail
+            clearLog();
         }
     }
      
@@ -429,9 +438,9 @@ public class VerifyLogCommandTest extends TestCase {
         LOG.info("testVerifyLogArchivedAllNodesSpecified");
         
         clearLog();
-        fillLogArchived();
         
         try {
+            fillLogArchived();
             HashMap<String, Long> sequences = new HashMap<String, Long>();
             sequences.put(SERVER1, 7L);
             sequences.put(SERVER2, 5L);
@@ -439,6 +448,9 @@ public class VerifyLogCommandTest extends TestCase {
             assertEquals("return code", Main.RETURN_SUCCESS, actual);
         } catch (PersistenceException ex) {
             throw new Exception(JDBC_ERROR, ex);
+        } finally {
+            // We need to clean up the log otherwise other test cases might fail
+            clearLog();
         }
     }
 }

@@ -30,7 +30,6 @@ import org.cesecore.audit.enums.ServiceType;
 import org.cesecore.audit.impl.integrityprotected.AuditRecordData;
 import org.cesecore.audit.log.AuditRecordStorageException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
-import org.signserver.db.cli.DatabaseCLITest;
 import org.signserver.db.cli.Main;
 import org.signserver.db.cli.defaultimpl.DatabaseHelper;
 
@@ -44,7 +43,7 @@ import org.signserver.db.cli.defaultimpl.DatabaseHelper;
 public class VerifyLogCommandTest extends TestCase {
     
     /** Logger for this class. */
-    private static final Logger LOG = Logger.getLogger(DatabaseCLITest.class);
+    private static final Logger LOG = Logger.getLogger(VerifyLogCommandTest.class);
     
     private static final String JDBC_ERROR = "This test requires the JDBC drivers to be present on the classpath. Put the database connector as lib/ext/jdbc/jdbc.jar. Configure signserver_cli.properties.";
     

@@ -25,6 +25,7 @@ import java.util.Properties;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.naming.NamingException;
+import javax.persistence.EntityManager;
 import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
 
@@ -71,6 +72,7 @@ public class SignServerHealthCheck implements IHealthCheck {
     private String checkDBString;
     private String maintenanceFile;
     private String maintenancePropertyName;
+    private EntityManager em;
 
     private IGlobalConfigurationSession.IRemote getGlobalConfigurationSession() {
         if (globalConfigurationSession == null) {
@@ -96,12 +98,21 @@ public class SignServerHealthCheck implements IHealthCheck {
     }
 
     @Override
-    public void init(ServletConfig config) {
+    public void init(final ServletConfig config, final EntityManager em) {
         minfreememory = Integer.parseInt(config.getInitParameter("MinimumFreeMemory")) * 1024 * 1024;
         checkDBString = config.getInitParameter("checkDBString");
         maintenanceFile = config.getInitParameter("MaintenanceFile");
         maintenancePropertyName = config.getInitParameter("MaintenancePropertyName");
-        
+        this.em = em;
+        if (LOG.isDebugEnabled()) {
+            final StringBuilder buff = new StringBuilder();
+            buff.append("Health check configured with:\n")
+                    .append("minfreeememory: ").append(minfreememory).append("\n")
+                    .append("checkDBString: ").append(checkDBString).append("\n")
+                    .append("maintenancePropertyName: ").append(maintenancePropertyName).append("\n")
+                    .append("entityManager: ").append(em);
+            LOG.debug(buff.append(buff));
+        }
         initMaintenanceFile();
     }
 
@@ -122,7 +133,7 @@ public class SignServerHealthCheck implements IHealthCheck {
                 errors.addAll(FileBasedDatabaseManager.getInstance().getFatalErrors());
             } else {
                 LOG.debug("Checking real database");
-                errors.addAll(HealthCheckUtils.checkDB(checkDBString));
+                errors.addAll(HealthCheckUtils.checkDB(em, checkDBString));
             }
             
             if (errors.size() == 0) {

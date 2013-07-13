@@ -21,6 +21,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.jws.WebService;
 import javax.naming.NamingException;
+import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
@@ -63,6 +64,9 @@ public class SignServerWS implements ISignServerWS {
     @EJB
     private IWorkerSession.ILocal workersession;
     
+    /** EntityManager is conditionally injected from ejb-jar.xml. */
+    private EntityManager em;
+    
     private String checkDBString = "Select count(*) from signerconfigdata";
 
     private int minimumFreeMemory = 1;
@@ -77,7 +81,7 @@ public class SignServerWS implements ISignServerWS {
         if (FileBasedDatabaseManager.getInstance().isUsed()) {
             errors.addAll(FileBasedDatabaseManager.getInstance().getFatalErrors());
         } else {
-            errors.addAll(HealthCheckUtils.checkDB(getCheckDBString()));
+            errors.addAll(HealthCheckUtils.checkDB(em, getCheckDBString()));
         }
         if (errors.isEmpty()) {            
             errors.addAll(HealthCheckUtils.checkMemory(getMinimumFreeMemory()));

@@ -84,6 +84,23 @@
         <servlet-name>SignServerHealthCheckServlet</servlet-name>
         <url-pattern>/signserverhealth</url-pattern>
     </servlet-mapping>
+    
+    <!-- DO NOT REMOVE THE FOLLOWING LINE, IT IS USED FOR POSTPROCESSING DURING BUILD -->
+    <!--COMMENT-REPLACEMENT(ejbjarheader)-->
+    
+    <persistence-context-ref>
+        <persistence-context-ref-name>persistence/em</persistence-context-ref-name>  
+        <persistence-unit-name>SignServerJPA</persistence-unit-name>  
+        <persistence-context-type>Transaction</persistence-context-type>  
+        <injection-target>   
+                <injection-target-class>org.ejbca.ui.web.pub.HealthCheckServlet</injection-target-class>   
+                <injection-target-name>em</injection-target-name>  
+        </injection-target>  
+    </persistence-context-ref>
+    
+    <!--COMMENT-REPLACEMENT(ejbjarfooter)-->
+    <!-- DO NOT REMOVE THE LINE ABOVE, IT IS USE FOR POSTPROCESSING DURING BUILD -->
+    
     <env-entry>
         <env-entry-name>DataSource</env-entry-name>
         <env-entry-type>java.lang.String</env-entry-type>

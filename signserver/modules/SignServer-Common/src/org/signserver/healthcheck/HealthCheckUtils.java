@@ -12,13 +12,10 @@
  *************************************************************************/
 package org.signserver.healthcheck;
 
-import java.sql.Connection;
-import java.sql.Statement;
 import java.util.LinkedList;
 import java.util.List;
+import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
-import org.ejbca.core.ejb.JNDINames;
-import org.ejbca.util.JDBCUtil;
 
 /**
  * Utility methods related to the Healt check functionality.
@@ -38,19 +35,13 @@ public class HealthCheckUtils {
         return result;
     }
 
-    public static List<String> checkDB(String checkDBString) {
+    public static List<String> checkDB(final EntityManager em, final String checkDBString) {
         final LinkedList<String> result = new LinkedList<String>();
-        Connection con = null;
         try {
-            con = JDBCUtil.getDBConnection(JNDINames.DATASOURCE);
-            Statement statement = con.createStatement();
-            statement.execute(checkDBString);
-            statement.close();
+            em.createNativeQuery(checkDBString).getResultList();
         } catch (Exception e) {
             result.add("Error creating connection to SignServer Database.");
             LOG.error("Error creating connection to SignServer Database.", e);
-        } finally {
-            JDBCUtil.close(con);
         }
         return result;
     }

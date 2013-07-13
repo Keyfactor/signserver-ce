@@ -15,6 +15,7 @@ package org.ejbca.ui.web.pub;
 
 import java.io.IOException;
 import java.util.Arrays;
+import javax.persistence.EntityManager;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -25,7 +26,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.ejbca.ui.web.pub.cluster.IHealthCheck;
 import org.ejbca.ui.web.pub.cluster.IHealthResponse;
-import org.ejbca.ui.web.pub.SameRequestRateLimiter;
 import org.ejbca.util.CertTools;
 
 
@@ -57,6 +57,9 @@ public class HealthCheckServlet extends HttpServlet {
     
     private static final SameRequestRateLimiter<String> rateLimiter = new SameRequestRateLimiter<String>();
     
+    /** EntityManager is conditionally injected from web.xml. */
+    private EntityManager em;
+    
     /**
      * Servlet init
      *
@@ -82,7 +85,7 @@ public class HealthCheckServlet extends HttpServlet {
             }
             
             healthcheck = (IHealthCheck) HealthCheckServlet.class.getClassLoader().loadClass(config.getInitParameter("HealthCheckClassPath")).newInstance();
-            healthcheck.init(config);
+            healthcheck.init(config, em);
             
             healthresponse = (IHealthResponse) HealthCheckServlet.class.getClassLoader().loadClass(config.getInitParameter("HealthResponseClassPath")).newInstance();
             healthresponse.init(config);

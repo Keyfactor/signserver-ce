@@ -41,7 +41,7 @@ public class StatusRepositorySessionBeanTest extends TestCase {
     private static final String VALUE3 = "_TEST_VALUE_3";
 
     /** Waittime in ms for testing expiration. */
-    private static final long TIMEOUT = 100;
+    private static final long TIMEOUT = 500;
 
     /** The status repository session. */
     private IStatusRepositorySession.IRemote repository;
@@ -97,11 +97,14 @@ public class StatusRepositorySessionBeanTest extends TestCase {
      * @throws Exception in case of exception
      */
     public void testSetGetTimeout() throws Exception {
-        final long expiration = System.currentTimeMillis() + TIMEOUT;
+        final long now = System.currentTimeMillis();
+        final long expiration = now + TIMEOUT;
         repository.update(StatusName.TEST_PROPERTY3.name(), VALUE3, expiration);
 
         // Get the value right away
         final StatusEntry entry1 = repository.getValidEntry(StatusName.TEST_PROPERTY3.name());
+        final long after = System.currentTimeMillis();
+        LOG.info("Updating property took: " + (after - now) + "ms");
         assertEquals("getProperty right away", VALUE3, entry1.getValue());
 
         // Wait a time (twice the TIMEOUT to be sure)

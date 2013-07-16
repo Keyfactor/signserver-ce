@@ -50,6 +50,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
 
     @Test
     public void test00SetupDatabase() throws Exception {
+        LOG.info(">test00SetupDatabase");
         addDummySigner1();
 
         // Set auth type
@@ -68,6 +69,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      */
     @Test
     public void test01WhitelistedDirectAddressAllowed() throws Exception {
+        LOG.info(">test01WhitelistedDirectAddressAllowed");
         setPropertiesAndReload("127.0.0.1", null, null, "1.2.3.4");
         
         int responseCode = process(
@@ -84,6 +86,8 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      */
     @Test
     public void test02WhitelistedDirectAddressNotAllowed() throws Exception {
+       LOG.info(">test02WhitelistedDirectAddressNotAllowed");
+       setPropertiesAndReload(null, null, null, null);
        setPropertiesAndReload("1.2.3.4", null, null, "1.2.3.4");
        
        int responseCode = process(
@@ -102,6 +106,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      */
     @Test
     public void test03WhitelistedDirectAddressAllowedSeveral() throws Exception {
+        LOG.info(">test03WhitelistedDirectAddressAllowedSeveral");
         setPropertiesAndReload("127.0.0.1, 1.2.3.4", null, null, "1.2.3.4");
       
         int responseCode = process(
@@ -120,6 +125,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      */
     @Test
     public void test04WhitelistedDirectAddressAndWhitelistedForwarded() throws Exception {
+        LOG.info(">test04WhitelistedDirectAddressAndWhitelistedForwarded");
         setPropertiesAndReload("127.0.0.1", null, "42.42.42.42", null);
         
         int responseCode = process(
@@ -137,6 +143,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      */
     @Test
     public void test05WhitelistedDirectWithForwarding() throws Exception {
+        LOG.info(">test05WhitelistedDirectWithForwarding");
         setPropertiesAndReload("127.0.0.1", null, "1.2.3.4", null);
        
         int responseCode = process(
@@ -154,6 +161,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      */
     @Test
     public void test06WhitelistedDirectWithForwadingNotInWhitelist() throws Exception {
+        LOG.info(">test06WhitelistedDirectWithForwadingNotInWhitelist");
         setPropertiesAndReload("127.0.0.1", null, "42.42.42.42", null);
 
         int responseCode = process(
@@ -172,6 +180,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      */
     @Test
     public void test07WhitelistedDirectWithForwardingNotLastAddress() throws Exception {
+        LOG.info(">test07WhitelistedDirectWithForwardingNotLastAddress");
         setPropertiesAndReload("127.0.0.1", null, "1.2.3.4", null);
 
         int responseCode = process(
@@ -189,6 +198,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      */
     @Test
     public void test08WhitelistedDirectWithBlacklistedForwarded() throws Exception {
+        LOG.info(">test08WhitelistedDirectWithBlacklistedForwarded");
         setPropertiesAndReload("127.0.0.1", null, null, "1.2.3.4");
       
         int responseCode = process(
@@ -205,6 +215,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      */
     @Test
     public void test09BlacklistedDirect() throws Exception {
+        LOG.info(">test09BlacklistedDirect");
         setPropertiesAndReload(null, "127.0.0.1", null, "1.2.3.4");
 
         int responseCode = process(
@@ -223,6 +234,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      */
     @Test
     public void test10WhitelistedDirectWithMultipleWhitelistedForwarded() throws Exception {
+        LOG.info(">test10WhitelistedDirectWithMultipleWhitelistedForwarded");
         setPropertiesAndReload("127.0.0.1", null, "1.2.3.4, 127.0.0.1", null);
         
         int responseCode = process(
@@ -239,6 +251,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      */
     @Test
     public void test11NoPropertiesSet() throws Exception {
+       LOG.info(">test11NoPropertiesSet");
        setPropertiesAndReload(null, null, null, null);
     
        int responseCode = process(
@@ -256,6 +269,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      */
     @Test
     public void test12BothDirectAddressPropertiesSet() throws Exception {
+        LOG.info(">test12BothDirectAddressPropertiesSet");
         setPropertiesAndReload("127.0.0.1", "127.0.0.1", "127.0.0.1", null);
        
         final WorkerStatus status = workerSession.getStatus(getSignerIdDummy1());
@@ -279,6 +293,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      */
     @Test
     public void test13BothForwardedAddressPropertiesSet() throws Exception {
+        LOG.info(">test13BothForwardedAddressPropertiesSet");
         setPropertiesAndReload(null, "127.0.0.1", "127.0.0.1", "127.0.0.1");
         
         final WorkerStatus status = workerSession.getStatus(getSignerIdDummy1());
@@ -301,6 +316,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      */
     @Test
     public void test14MissingDirectAddresses() throws Exception {
+        LOG.info(">test14MissingDirectAddresses");
         setPropertiesAndReload(null, null, null, "127.0.0.1");
        
         final WorkerStatus status = workerSession.getStatus(getSignerIdDummy1());
@@ -323,6 +339,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      */
     @Test
     public void test15MissingForwardedAddresses() throws Exception {
+        LOG.info(">test15MissingForwardedAddresses");
         setPropertiesAndReload(null, "127.0.0.1", null, null);
        
         final WorkerStatus status = workerSession.getStatus(getSignerIdDummy1());
@@ -346,6 +363,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      */
     @Test
     public void test16ForwardedIPv6SameForm() throws Exception {
+       LOG.info(">test16ForwardedIPv6SameForm");
        setPropertiesAndReload("127.0.0.1", null, "3ffe:1900:4545:3:200:f8ff:fe21:67cf", null);
        
        int responseCode = process(
@@ -363,6 +381,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      */
     @Test
     public void test17ForwardedIPv6LocalhostLongForm() throws Exception {
+       LOG.info(">test17ForwardedIPv6LocalhostLongForm");
        setPropertiesAndReload("127.0.0.1", null, "::1", null);
        
        int responseCode = process(
@@ -379,6 +398,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      */
     @Test
     public void test18ForwardedNotAllowedIPv6() throws Exception {
+        LOG.info(">test18ForwardedNotAllowedIPv6");
         setPropertiesAndReload("127.0.0.1", null, "::1", null);
         
         int responseCode = process(
@@ -395,6 +415,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      */
     @Test
     public void test19ForwardedBlacklistedIPv6() throws Exception {
+        LOG.info(">test19ForwardedBlacklistedIPv6");
         setPropertiesAndReload("127.0.0.1", null, null, "3ffe:1900:4545:3:200:f8ff:fe21:67cf");
         
         int responseCode = process(
@@ -413,6 +434,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      */
     @Test
     public void test20ForwardedBlackListedIPv6LocalhostLongForm() throws Exception {
+        LOG.info(">test20ForwardedBlackListedIPv6LocalhostLongForm");
         setPropertiesAndReload("127.0.0.1", null, null, "::1");
         
         int responseCode = process(
@@ -430,6 +452,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      */
     @Test
     public void test21ForwardedBlacklistedIPv6LocalhostShortForm() throws Exception {
+        LOG.info(">test21ForwardedBlacklistedIPv6LocalhostShortForm");
         setPropertiesAndReload("127.0.0.1", null, null, "0000:0000:0000:0000:0000:0000:0000:0001");
         
         int responseCode = process(
@@ -446,8 +469,8 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      */
     @Test
     public void test22ForwardedWhitelistDefaultMax() throws Exception {
+        LOG.info(">test22ForwardedWhitelistDefaultMax");
         setPropertiesAndReload("127.0.0.1", null, "1.2.3.4", null);
-        
         
         int responseCode = process(
                 new URL("http://localhost:" + getPublicHTTPPort()
@@ -463,6 +486,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      */
     @Test
     public void test23ForwardedWhitelistTwoProxies() throws Exception {
+        LOG.info(">test23ForwardedWhitelistTwoProxies");
         setPropertiesAndReload("127.0.0.1", null, "1.2.3.4, 42.42.42.42", null);
         workerSession.setWorkerProperty(getSignerIdDummy1(), "MAX_FORWARDED_ADDRESSES", "2");
         workerSession.reloadConfiguration(getSignerIdDummy1());
@@ -482,6 +506,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      */
     @Test
     public void test24ForwardedWhitelistTwoProxiesAddionalHeader() throws Exception {
+        LOG.info(">test24ForwardedWhitelistTwoProxiesAddionalHeader");
         setPropertiesAndReload("127.0.0.1", null, "1.2.3.4", null);
         workerSession.setWorkerProperty(getSignerIdDummy1(), "MAX_FORWARDED_ADDRESSES", "2");
         workerSession.reloadConfiguration(getSignerIdDummy1());
@@ -501,6 +526,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      */
     @Test
     public void test25ForwardedBlacklistTwoProxiesOneCheck() throws Exception {
+        LOG.info(">test25ForwardedBlacklistTwoProxiesOneCheck");
         setPropertiesAndReload("127.0.0.1", null, null, "1.2.3.4");
         workerSession.setWorkerProperty(getSignerIdDummy1(), "MAX_FORWARDED_ADDRESSES", "1");
         workerSession.reloadConfiguration(getSignerIdDummy1());
@@ -522,6 +548,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      */
     @Test
     public void test26ForwardedWhitelistThreeProxiesTwoCheckedOneUnauthorized() throws Exception {
+        LOG.info(">test26ForwardedWhitelistThreeProxiesTwoCheckedOneUnauthorized");
         setPropertiesAndReload("127.0.0.1", null, "1.2.3.4, 42.42.42.42", null);
         workerSession.setWorkerProperty(getSignerIdDummy1(), "MAX_FORWARDED_ADDRESSES", "2");
         workerSession.reloadConfiguration(getSignerIdDummy1());
@@ -541,6 +568,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      */
     @Test
     public void test27Max0NotAllowed() throws Exception {
+        LOG.info(">test27Max0NotAllowed");
         setPropertiesAndReload("127.0.0.1", null, "1.2.3.4, 42.42.42.42", null);
         workerSession.setWorkerProperty(getSignerIdDummy1(), "MAX_FORWARDED_ADDRESSES", "0");
         workerSession.reloadConfiguration(getSignerIdDummy1());
@@ -565,6 +593,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      */
     @Test
     public void test28NegativeMaxNotAllowed() throws Exception {
+        LOG.info(">test28NegativeMaxNotAllowed");
         setPropertiesAndReload("127.0.0.1", null, "1.2.3.4, 42.42.42.42", null);
         workerSession.setWorkerProperty(getSignerIdDummy1(), "MAX_FORWARDED_ADDRESSES", "-2");
         workerSession.reloadConfiguration(getSignerIdDummy1());
@@ -588,21 +617,27 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
      */
     @Test
     public void test29BogusMax() throws Exception {
-        setPropertiesAndReload("127.0.0.1", null, "1.2.3.4, 42.42.42.42", null);
-        workerSession.setWorkerProperty(getSignerIdDummy1(), "MAX_FORWARDED_ADDRESSES", "foo123");
-        workerSession.reloadConfiguration(getSignerIdDummy1());
-        
-        final WorkerStatus status = workerSession.getStatus(getSignerIdDummy1());
-        final List<String> fatalErrors = status.getFatalErrors();
-        
-        assertTrue("Contains fatal error",
-                fatalErrors.contains("Illegal value for MAX_FORWARDED_ADDRESSES: foo123"));
-        
-        int responseCode = process(
-                new URL("http://localhost:" + getPublicHTTPPort()
-                + "/signserver/process?workerId="
-                + getSignerIdDummy1() + "&data=%3Croot/%3E"));
-        assertEquals("HTTP response code", 500, responseCode);
+        LOG.info(">test29BogusMax");
+        try {
+            setPropertiesAndReload("127.0.0.1", null, "1.2.3.4, 42.42.42.42", null);
+            workerSession.setWorkerProperty(getSignerIdDummy1(), "MAX_FORWARDED_ADDRESSES", "foo123");
+            workerSession.reloadConfiguration(getSignerIdDummy1());
+
+            final WorkerStatus status = workerSession.getStatus(getSignerIdDummy1());
+            final List<String> fatalErrors = status.getFatalErrors();
+
+            assertTrue("Contains fatal error",
+                    fatalErrors.contains("Illegal value for MAX_FORWARDED_ADDRESSES: foo123"));
+
+            int responseCode = process(
+                    new URL("http://localhost:" + getPublicHTTPPort()
+                    + "/signserver/process?workerId="
+                    + getSignerIdDummy1() + "&data=%3Croot/%3E"));
+            assertEquals("HTTP response code", 500, responseCode);
+        } finally {
+            workerSession.removeWorkerProperty(getSignerIdDummy1(), "MAX_FORWARDED_ADDRESSES");
+            workerSession.reloadConfiguration(getSignerIdDummy1());
+        }
     }
     
     /**
@@ -651,6 +686,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
 
     @Test
     public void test99TearDownDatabase() throws Exception {
+        LOG.info(">test99TearDownDatabase");
         removeWorker(getSignerIdDummy1());
         workerSession.reloadConfiguration(getSignerIdDummy1());
     }

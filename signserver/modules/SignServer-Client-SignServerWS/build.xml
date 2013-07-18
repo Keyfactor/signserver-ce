@@ -19,6 +19,12 @@
     
     <!-- Copy to client-dist etc. -->
     <target name="dist-module" depends="jar,-do-client-dist"/>
+    
+    <target name="-post-jar">
+        <copy todir="../../lib/">
+            <fileset dir="dist/" includes="SignServer-Client-SignServerWS.jar"/>
+        </copy>
+    </target>
 
     <target name="wsimport-init" depends="init">
         <mkdir dir="${build.generated.sources.dir}/jax-ws"/>

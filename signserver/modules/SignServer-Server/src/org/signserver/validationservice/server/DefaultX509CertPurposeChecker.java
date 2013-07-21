@@ -35,7 +35,7 @@ public class DefaultX509CertPurposeChecker implements ICertPurposeChecker {
      * </p>
      * <p>
      * If the certificate have certType : ELECTRONIC_SIGNATURE it checks for
-     * key usage non-repudiation
+     * key usage non-repudiation and/or digital signature
      * </p>
      * @see org.signserver.validationservice.server.ICertPurposeChecker#checkCertPurposes(org.signserver.validationservice.common.ICertificate, String[])
      */
@@ -52,7 +52,7 @@ public class DefaultX509CertPurposeChecker implements ICertPurposeChecker {
                         approvedCertPurposes.add(certPurpose);
                     }
                 } else if (certPurpose.equalsIgnoreCase(ValidationServiceConstants.CERTPURPOSE_ELECTRONIC_SIGNATURE)) {
-                    if (c.getKeyUsage() != null && c.getKeyUsage()[1] == true) {
+                    if (c.getKeyUsage() != null && (c.getKeyUsage()[0] == true || c.getKeyUsage()[1] == true)) {
                         approvedCertPurposes.add(certPurpose);
                     }
                 }

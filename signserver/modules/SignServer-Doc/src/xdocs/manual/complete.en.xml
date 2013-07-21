@@ -3917,7 +3917,7 @@ The default validation service have a set of Validators. A validator is responsi
 The Default Validation Service supports validations to be cached for some or all issuers for a specified amount of time.
                         </p>
                         <p>
-If not configured otherwise will the validation service use the DefaultX509CertTypeChecker that determines the certificate type from the key usage in the certificate.  Key Encipherment and Digital Signature indicates a IDENTIFICATION type and Non-reputation indicates ELECTRONIC SIGNATURE.
+If not configured otherwise will the validation service use the DefaultX509CertTypeChecker that determines the certificate type from the key usage in the certificate.  Key Encipherment and Digital Signature indicates a IDENTIFICATION type and Non-reputation and/or Digital Signature indicates ELECTRONIC_SIGNATURE.
                         </p>
                         <p>
 There exists a validation specific WebService that can be used for platform independent client calls.
@@ -3948,7 +3948,7 @@ The validation service have three types of properties, general properties (that 
 Validator properties is specified with the prefix of 'validator&lt;validatorId&gt;.' or 'val&lt;validatorId&gt;.' were validator Id should be an integer between 1 and 255. For instance, to specify the type of a validator with an id of 1 then specify 'val1.classpath=some.classpath.SomeClass'. This validator will be initialized with all its validator specific properties (with 'val&lt;id&gt;.' prefix removed) as well as the general ones.
                         </p>
                         <p>
-<b>CLASSPATH</b> = Class path to the validator that should be used. (Required for each configured validator)
+<b>CLASSPATH</b> = Fully qualified class name of the validator that should be used. (Required for each configured validator)
                         </p>
                         <p>
 <i>Issuer properties:</i>  Issuer properties are specified as 'val&lt;val id&gt;.issuer&lt;issuer id&gt;.&lt;property&gt;' were issuer id is a positive integer between 1 and 255. All generic and validator specific properties (with the given validator id) will also be propagated to the specific issuer configuration.
@@ -3984,6 +3984,43 @@ WORKER1.VAL2.ISSUER1.CERTCHAIN=EFWAASDFADFASDFKASDKFW1231.....
                     </subsubsection>
                 </subsection>
 
+                <subsection name="Certificate Validators">
+                    <subsubsection name="CRLValidator">
+                        <p>
+Class name: <b>org.signserver.validationservice.server.CRLValidator</b>
+                        </p>
+                        <!-- TODO: Document as part of DSS-251 -->
+                    </subsubsection>
+                    <subsubsection name="OCSPValidator">
+                        <p>
+Class name: <b>org.signserver.validationservice.server.OCSPValidator</b>
+                        </p>
+                        <!-- TODO: Document as part of DSS-251 -->
+                    </subsubsection>
+                    <subsubsection name="OCSPCRLValidator">
+                        <p>
+Class name: <b>org.signserver.validationservice.server.OCSPCRLValidator</b>
+                        </p>
+                        <!-- TODO: Document as part of DSS-251 -->
+                    </subsubsection>
+                    <subsubsection name="NoRevocationCheckingValidator">
+                        <p>
+Class name: <b>org.signserver.validationservice.server.NoRevocationCheckingValidator</b>
+                        </p>
+                        <p>
+Certificate Validator that validates the certificate chain but does not perform any revocation checking. This can be useful for demonstation purposes or when revocation checking should not be performed.
+                        </p>
+                    </subsubsection>
+                    <subsubsection name="DummyValidator">
+                        <p>
+Class name: <b>org.signserver.validationservice.server.DummyValidator</b>
+                        </p>
+                        <p>
+Certificate Validator that only works for specific issuers and certificates and is only available for testing and demonstration purposes as no real certificate validation is performed. The keystores under res/test/dss10/ with certificates issued by "DSS Root CA 10" can for instance be used together with this validator.
+                        </p>
+                    </subsubsection>
+                </subsection>
+                
                 <subsection name="The Validation CLI interface.">
                     <p>
 There exists a Java CLI tool that can be used to check the validity of a certificate from scripts. It supports a clustered SignServer installation by using the "Use first host that response OK" policy.
@@ -4027,7 +4064,7 @@ The following return values is used:
 
                 </subsection>
 
-                <subsection name="SignServer Group Key Service Framework">
+                <section name="SignServer Group Key Service Framework">
                     <subsubsection name="Overview">
                         <p>
 The group key service framework is used to manage and distribute group keys to clients in an organisation. The keys can be generated on demand or pre-generated at times when the system is not utilized a lot. The group keys can be both symmetric and asymmetric but one service can only distribute one type of key. If several kinds of keys are required should multiple services be set up within the same server.
@@ -4071,7 +4108,7 @@ The basic configuration of a group key service is very similar to that of a vali
 <b>KEYSWITCHTHRESHOLD</b> = Setting defining the number of group keys that should be  encrypted by the same encryption key before it's switched. (Optional, default is 100000)
                         </p>
                     </subsubsection>
-                </subsection>
+                </section>
             </section>
             
             <section name="Timed Services">

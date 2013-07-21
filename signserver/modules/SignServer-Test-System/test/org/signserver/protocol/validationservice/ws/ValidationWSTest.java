@@ -178,7 +178,7 @@ public class ValidationWSTest extends ModulesTestCase {
         res = validationWS.isValid("ValTest", identificationCert1, ValidationServiceConstants.CERTPURPOSE_ELECTRONIC_SIGNATURE);
         assertTrue(res != null);
         assertTrue(res.getStatusMessage() != null);
-        assertTrue(res.getStatus().toString().equals(Status.BADCERTPURPOSE.toString()));
+        assertTrue(res.getStatus().toString().equals(Status.VALID.toString())); // digitalSignature accepted
         assertTrue(res.getValidationDate() != null);
         assertTrue(res.getRevocationReason() == -1);
         assertTrue(res.getRevocationDate() == null);

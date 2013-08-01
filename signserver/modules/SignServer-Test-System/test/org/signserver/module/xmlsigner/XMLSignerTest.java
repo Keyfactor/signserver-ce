@@ -68,13 +68,25 @@ public class XMLSignerTest extends ModulesTestCase {
         workerSession.reloadConfiguration(WORKERID2);
     }
 
-    @Test
-    public void test01BasicXmlSignRSA() throws Exception {
+    /**
+     * Test the XML signer with an RSA key and optionally using a supplied signature algorithm to set to the worker.
+     * 
+     * @param sigAlg If set to non-null, set this for the SIGNATUREALGORITHM worker property while running the test.
+     * @param expectedAlgString Expected algorithm string in the output XML structure.
+     * @throws Exception
+     */
+    private void testBasicXmlSignRSA(final String sigAlg, final String expectedAlgString) throws Exception {
         final int reqid = 13;
 
         final GenericSignRequest signRequest =
                 new GenericSignRequest(reqid, TESTXML1.getBytes());
 
+        // set signature algorithm for worker if specified
+        if (sigAlg != null) {
+            workerSession.setWorkerProperty(WORKERID, "SIGNATUREALGORITHM", sigAlg);
+            workerSession.reloadConfiguration(WORKERID);
+        }
+        
         final GenericSignResponse res = 
                 (GenericSignResponse) workerSession.process(WORKERID,
                     signRequest, new RequestContext());
@@ -98,18 +110,56 @@ public class XMLSignerTest extends ModulesTestCase {
         checkXmlWellFormed(new ByteArrayInputStream(data));
 
         // Check algorithm
-        assertTrue("Algorithm", usesAlgorithm(new String(data),
-                "http://www.w3.org/2000/09/xmldsig#rsa-sha1"));
+        assertTrue("Algorithm", usesAlgorithm(new String(data), expectedAlgString));
+        
+        // reset signature algorithm property
+        workerSession.removeWorkerProperty(WORKERID, "SIGNATUREALGORITHM");
+        workerSession.reloadConfiguration(WORKERID);
+    }
+        
+    /**
+     * Test signing with an RSA key using the default signature algorithm.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test01BasicXmlSignRSADefaultSigAlg() throws Exception {
+        testBasicXmlSignRSA(null, "http://www.w3.org/2000/09/xmldsig#rsa-sha1");
+    }
+    
+    /**
+     * Test explicitly setting the signature algorithm to SHA1withRSA.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test02BasicXmlSignRSASHA1() throws Exception {
+        testBasicXmlSignRSA("SHA1withRSA", "http://www.w3.org/2000/09/xmldsig#rsa-sha1");
+    }
+    
+    @Test
+    public void test03BasicXmlSignRSASHA256() throws Exception {
+        testBasicXmlSignRSA("SHA256withRSA", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256");
+    }
+    
+    @Test
+    public void test04BasicXmlSignRSASHA384() throws Exception {
+        testBasicXmlSignRSA("SHA384withRSA", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha384");
+    }
+    
+    @Test
+    public void test05BasicXmlSignRSASHA512() throws Exception {
+        testBasicXmlSignRSA("SHA512withRSA", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha512");
     }
 
     @Test
-    public void test02GetStatus() throws Exception {
+    public void test06GetStatus() throws Exception {
         final SignerStatus stat = (SignerStatus) workerSession.getStatus(WORKERID);
         assertSame("Status", stat.getTokenStatus(), SignerStatus.STATUS_ACTIVE);
     }
 
     @Test
-    public void test03BasicXmlSignDSA() throws Exception {
+    public void test07BasicXmlSignDSA() throws Exception {
         final int reqid = 15;
 
         final GenericSignRequest signRequest =

@@ -19,8 +19,13 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.Provider;
+import java.security.PublicKey;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
+import java.security.interfaces.DSAPrivateKey;
+import java.security.interfaces.DSAPublicKey;
+import java.security.interfaces.ECPrivateKey;
+import java.security.interfaces.ECPublicKey;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -67,10 +72,18 @@ public class XMLSigner extends BaseSigner {
     private static final Logger LOG = Logger.getLogger(XMLSigner.class);
     private static final String CONTENT_TYPE = "text/xml";
 
+    // Property constants
+    public static final String SIGNATUREALGORITHM = "SIGNATUREALGORITHM";
+    
+    private String signatureAlgorithm;
+    
     @Override
     public void init(final int workerId, final WorkerConfig config,
             final WorkerContext workerContext, final EntityManager workerEM) {
         super.init(workerId, config, workerContext, workerEM);
+        
+        // Get the signature algorithm
+        signatureAlgorithm = config.getProperty(SIGNATUREALGORITHM);
     }
 
     public ProcessResponse processData(ProcessRequest signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
@@ -122,13 +135,14 @@ public class XMLSigner extends BaseSigner {
 
         SignedInfo si;
         try {
+            final String sigAlg = signatureAlgorithm == null ? getDefaultSignatureAlgorithm(privKey) : signatureAlgorithm;
             Reference ref = fac.newReference("",
                     fac.newDigestMethod(DigestMethod.SHA1, null),
                     Collections.singletonList(fac.newTransform(Transform.ENVELOPED, (XMLStructure) null)),
                     null, null);
 
             si = fac.newSignedInfo(fac.newCanonicalizationMethod(CanonicalizationMethod.INCLUSIVE_WITH_COMMENTS, (XMLStructure) null),
-                    fac.newSignatureMethod(getSignatureMethod(privKey), null),
+                    fac.newSignatureMethod(getSignatureMethod(sigAlg), null),
                     Collections.singletonList(ref));
 
         } catch (InvalidAlgorithmParameterException ex) {
@@ -137,7 +151,7 @@ public class XMLSigner extends BaseSigner {
             throw new SignServerException("XML signing algorithm error", ex);
         }
 
-
+        
 
         KeyInfoFactory kif = fac.getKeyInfoFactory();
         X509Data x509d = kif.newX509Data(x509CertChain);
@@ -194,16 +208,36 @@ public class XMLSigner extends BaseSigner {
         return signResponse;
     }
 
-    private static String getSignatureMethod(final PrivateKey key)
+    private static String getSignatureMethod(final String sigAlg)
             throws NoSuchAlgorithmException {
         String result;
 
-        if ("DSA".equals(key.getAlgorithm())) {
+        if ("SHA1withDSA".equals(sigAlg)) {
             result = SignatureMethod.DSA_SHA1;
-        } else if ("RSA".equals(key.getAlgorithm())) {
+        } else if ("SHA1withRSA".equals(sigAlg)) {
             result = SignatureMethod.RSA_SHA1;
+        } else if ("SHA256withRSA".equals(sigAlg)) {
+            result = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256";
+        } else if ("SHA384withRSA".equals(sigAlg)) {
+            result = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha384";
+        } else if ("SHA512withRSA".equals(sigAlg)) {
+            result = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha512";
         } else {
-            throw new NoSuchAlgorithmException("XMLSigner does not support algorithm: " + key.getAlgorithm());
+            throw new NoSuchAlgorithmException("XMLSigner does not support algorithm: " + sigAlg);
+        }
+
+        return result;
+    }
+    
+    private String getDefaultSignatureAlgorithm(final PrivateKey privKey) {
+        final String result;
+
+        if (privKey instanceof ECPrivateKey) {
+            result = "SHA1withECDSA";
+        }  else if (privKey instanceof DSAPrivateKey) {
+            result = "SHA1withDSA";
+        } else {
+            result = "SHA1withRSA";
         }
 
         return result;

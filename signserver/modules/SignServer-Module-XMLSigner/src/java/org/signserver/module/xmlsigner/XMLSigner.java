@@ -214,6 +214,12 @@ public class XMLSigner extends BaseSigner {
 
         if ("SHA1withDSA".equals(sigAlg)) {
             result = SignatureMethod.DSA_SHA1;
+        } else if ("SHA256withDSA".equals(sigAlg)) {
+            result = "http://www.w3.org/2001/04/xmldsig-more#dsa-sha256";
+        } else if ("SHA384withDSA".equals(sigAlg)) {
+            result = "http://www.w3.org/2001/04/xmldsig-more#dsa-sha384";
+        } else if ("SHA512withDSA".equals(sigAlg)) {
+            result = "http://www.w3.org/2001/04/xmldsig-more#dsa-sha512";
         } else if ("SHA1withRSA".equals(sigAlg)) {
             result = SignatureMethod.RSA_SHA1;
         } else if ("SHA256withRSA".equals(sigAlg)) {

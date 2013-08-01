@@ -69,13 +69,14 @@ public class XMLSignerTest extends ModulesTestCase {
     }
 
     /**
-     * Test the XML signer with an RSA key and optionally using a supplied signature algorithm to set to the worker.
+     * Test the XML signer with a given worker and optionally using a supplied signature algorithm to set to the worker.
      * 
+     * @param workerId Worker to use.
      * @param sigAlg If set to non-null, set this for the SIGNATUREALGORITHM worker property while running the test.
      * @param expectedAlgString Expected algorithm string in the output XML structure.
      * @throws Exception
      */
-    private void testBasicXmlSignRSA(final String sigAlg, final String expectedAlgString) throws Exception {
+    private void testBasicXmlSign(final int workerId, final String sigAlg, final String expectedAlgString) throws Exception {
         final int reqid = 13;
 
         final GenericSignRequest signRequest =
@@ -83,12 +84,12 @@ public class XMLSignerTest extends ModulesTestCase {
 
         // set signature algorithm for worker if specified
         if (sigAlg != null) {
-            workerSession.setWorkerProperty(WORKERID, "SIGNATUREALGORITHM", sigAlg);
-            workerSession.reloadConfiguration(WORKERID);
+            workerSession.setWorkerProperty(workerId, "SIGNATUREALGORITHM", sigAlg);
+            workerSession.reloadConfiguration(workerId);
         }
         
         final GenericSignResponse res = 
-                (GenericSignResponse) workerSession.process(WORKERID,
+                (GenericSignResponse) workerSession.process(workerId,
                     signRequest, new RequestContext());
         final byte[] data = res.getProcessedData();
 
@@ -113,8 +114,8 @@ public class XMLSignerTest extends ModulesTestCase {
         assertTrue("Algorithm", usesAlgorithm(new String(data), expectedAlgString));
         
         // reset signature algorithm property
-        workerSession.removeWorkerProperty(WORKERID, "SIGNATUREALGORITHM");
-        workerSession.reloadConfiguration(WORKERID);
+        workerSession.removeWorkerProperty(workerId, "SIGNATUREALGORITHM");
+        workerSession.reloadConfiguration(workerId);
     }
         
     /**
@@ -124,7 +125,7 @@ public class XMLSignerTest extends ModulesTestCase {
      */
     @Test
     public void test01BasicXmlSignRSADefaultSigAlg() throws Exception {
-        testBasicXmlSignRSA(null, "http://www.w3.org/2000/09/xmldsig#rsa-sha1");
+        testBasicXmlSign(WORKERID, null, "http://www.w3.org/2000/09/xmldsig#rsa-sha1");
     }
     
     /**
@@ -134,22 +135,22 @@ public class XMLSignerTest extends ModulesTestCase {
      */
     @Test
     public void test02BasicXmlSignRSASHA1() throws Exception {
-        testBasicXmlSignRSA("SHA1withRSA", "http://www.w3.org/2000/09/xmldsig#rsa-sha1");
+        testBasicXmlSign(WORKERID, "SHA1withRSA", "http://www.w3.org/2000/09/xmldsig#rsa-sha1");
     }
     
     @Test
     public void test03BasicXmlSignRSASHA256() throws Exception {
-        testBasicXmlSignRSA("SHA256withRSA", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256");
+        testBasicXmlSign(WORKERID, "SHA256withRSA", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256");
     }
     
     @Test
     public void test04BasicXmlSignRSASHA384() throws Exception {
-        testBasicXmlSignRSA("SHA384withRSA", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha384");
+        testBasicXmlSign(WORKERID, "SHA384withRSA", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha384");
     }
     
     @Test
     public void test05BasicXmlSignRSASHA512() throws Exception {
-        testBasicXmlSignRSA("SHA512withRSA", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha512");
+        testBasicXmlSign(WORKERID, "SHA512withRSA", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha512");
     }
 
     /**
@@ -160,7 +161,7 @@ public class XMLSignerTest extends ModulesTestCase {
     @Test
     public void test06BasicXmlSignRSAInvalidAlgorithm() throws Exception {
         try {
-            testBasicXmlSignRSA("SHA1withDSA", "http://www.w3.org/2000/09/xmldsig#dsa-sha1");
+            testBasicXmlSign(WORKERID, "SHA1withDSA", "http://www.w3.org/2000/09/xmldsig#dsa-sha1");
             fail("Should fail using incorrect signature algorithm for the key");
         } catch (SignServerException e) {
             // expected
@@ -176,42 +177,30 @@ public class XMLSignerTest extends ModulesTestCase {
     }
 
     @Test
-    public void test08BasicXmlSignDSA() throws Exception {
-        final int reqid = 15;
-
-        final GenericSignRequest signRequest =
-                new GenericSignRequest(reqid, TESTXML1.getBytes());
-
-        final GenericSignResponse res =
-                (GenericSignResponse) workerSession.process(WORKERID2,
-                    signRequest,
-                    new RequestContext());
-
-        final byte[] data = res.getProcessedData();
-
-        // Answer to right question
-        assertSame("Request ID", reqid, res.getRequestID());
-
-        // Output for manual inspection
-        final FileOutputStream fos = new FileOutputStream(
-                new File(getSignServerHome() +
-                File.separator + "tmp" +
-                File.separator + "signedxml_dsa.xml"));
-        fos.write((byte[]) data);
-        fos.close();
-
-        // Check certificate
-        final Certificate signercert = res.getSignerCertificate();
-        assertNotNull("Signer certificate", signercert);
-
-        // XML Document
-        checkXmlWellFormed(new ByteArrayInputStream(data));
-
-        // Check algorithm
-        assertTrue("Algorithm", usesAlgorithm(new String(data),
-                "http://www.w3.org/2000/09/xmldsig#dsa-sha1"));
+    public void test08BasicXmlSignDSADefaultSigAlg() throws Exception {
+        testBasicXmlSign(WORKERID2, null, "http://www.w3.org/2000/09/xmldsig#dsa-sha1");
+    }
+    
+    @Test
+    public void test09BasicXmlSignDSASHA1() throws Exception {
+        testBasicXmlSign(WORKERID2, "SHA1withDSA", "http://www.w3.org/2000/09/xmldsig#dsa-sha1");
     }
 
+    @Test
+    public void test10BasicXmlSignDSASHA256() throws Exception {
+        testBasicXmlSign(WORKERID2, "SHA256withDSA", "http://www.w3.org/2000/09/xmldsig-more#dsa-sha256");
+    }
+    
+    @Test
+    public void test11BasicXmlSignDSASHA384() throws Exception {
+        testBasicXmlSign(WORKERID2, "SHA384withDSA", "http://www.w3.org/2000/09/xmldsig-more#dsa-sha384");
+    }
+    
+    @Test
+    public void test12BasicXmlSignDSASHA512() throws Exception {
+        testBasicXmlSign(WORKERID2, "SHA512withDSA", "http://www.w3.org/2000/09/xmldsig-more#dsa-sha512");
+    }
+    
     @Test
     public void test99TearDownDatabase() throws Exception {
         for (int workerId : WORKERS) {

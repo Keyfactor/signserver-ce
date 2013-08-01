@@ -152,14 +152,31 @@ public class XMLSignerTest extends ModulesTestCase {
         testBasicXmlSignRSA("SHA512withRSA", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha512");
     }
 
+    /**
+     * Test setting a signature algorithm not corresponding to the key.
+     * 
+     * @throws Exception
+     */
     @Test
-    public void test06GetStatus() throws Exception {
+    public void test06BasicXmlSignRSAInvalidAlgorithm() throws Exception {
+        try {
+            testBasicXmlSignRSA("SHA1withDSA", "http://www.w3.org/2000/09/xmldsig#dsa-sha1");
+            fail("Should fail using incorrect signature algorithm for the key");
+        } catch (SignServerException e) {
+            // expected
+        } catch (Exception e) {
+            fail("Unexpected exception thrown when using illegal signature algorithm: " + e.getClass().getName());
+        }
+    }
+    
+    @Test
+    public void test07GetStatus() throws Exception {
         final SignerStatus stat = (SignerStatus) workerSession.getStatus(WORKERID);
         assertSame("Status", stat.getTokenStatus(), SignerStatus.STATUS_ACTIVE);
     }
 
     @Test
-    public void test07BasicXmlSignDSA() throws Exception {
+    public void test08BasicXmlSignDSA() throws Exception {
         final int reqid = 15;
 
         final GenericSignRequest signRequest =

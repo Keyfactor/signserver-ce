@@ -15,6 +15,7 @@ package org.signserver.module.xmlsigner;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.security.cert.Certificate;
@@ -48,7 +49,9 @@ public class XMLSignerTest extends ModulesTestCase {
     /** WORKERID used in this test case as defined in junittest-part-config.properties */
     private static final int WORKERID2 = 5679;
     
-    private static final int[] WORKERS = new int[] {5676, 5679, 5681, 5682, 5683, 5802, 5803};
+    private static final int WORKERID3 = 5680;
+    
+    private static final int[] WORKERS = new int[] {5676, 5679, 5680, 5681, 5682, 5683, 5802, 5803};
 
     private static final String TESTXML1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><root><my-tag>My Data</my-tag></root>";
 
@@ -66,6 +69,12 @@ public class XMLSignerTest extends ModulesTestCase {
         workerSession.setWorkerProperty(WORKERID2, "KEYSTOREPATH",
                 new File(getSignServerHome() + File.separator + "res" + File.separator + "test" + File.separator + "xmlsigner4.jks").getAbsolutePath());
         workerSession.reloadConfiguration(WORKERID2);
+        
+        final File keystore = new File(getSignServerHome(), "res/test/dss10/dss10_signer5ec.p12");
+        if (!keystore.exists()) {
+            throw new FileNotFoundException(keystore.getAbsolutePath());
+        }
+        addP12DummySigner("org.signserver.module.xmlsigner.XMLSigner", WORKERID3, "XMLSignerECDSA", keystore, "foo123");
     }
 
     /**
@@ -186,21 +195,6 @@ public class XMLSignerTest extends ModulesTestCase {
         testBasicXmlSign(WORKERID2, "SHA1withDSA", "http://www.w3.org/2000/09/xmldsig#dsa-sha1");
     }
 
-    @Test
-    public void test10BasicXmlSignDSASHA256() throws Exception {
-        testBasicXmlSign(WORKERID2, "SHA256withDSA", "http://www.w3.org/2000/09/xmldsig-more#dsa-sha256");
-    }
-    
-    @Test
-    public void test11BasicXmlSignDSASHA384() throws Exception {
-        testBasicXmlSign(WORKERID2, "SHA384withDSA", "http://www.w3.org/2000/09/xmldsig-more#dsa-sha384");
-    }
-    
-    @Test
-    public void test12BasicXmlSignDSASHA512() throws Exception {
-        testBasicXmlSign(WORKERID2, "SHA512withDSA", "http://www.w3.org/2000/09/xmldsig-more#dsa-sha512");
-    }
-    
     @Test
     public void test99TearDownDatabase() throws Exception {
         for (int workerId : WORKERS) {

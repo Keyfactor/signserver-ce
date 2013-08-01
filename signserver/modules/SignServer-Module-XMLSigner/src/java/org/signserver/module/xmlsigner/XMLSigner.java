@@ -212,6 +212,8 @@ public class XMLSigner extends BaseSigner {
             throws NoSuchAlgorithmException {
         String result;
 
+        // TODO: add support for ECDSA algorithms when upgrading xmlsec
+        
         if ("SHA1withDSA".equals(sigAlg)) {
             result = SignatureMethod.DSA_SHA1;
         } else if ("SHA1withRSA".equals(sigAlg)) {
@@ -222,14 +224,6 @@ public class XMLSigner extends BaseSigner {
             result = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha384";
         } else if ("SHA512withRSA".equals(sigAlg)) {
             result = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha512";
-        } else if ("SHA1withECDSA".equals(sigAlg)) {
-            result = "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha1";
-        } else if ("SHA256withECDSA".equals(sigAlg)) {
-            result = "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha256";
-        } else if ("SHA384withECDSA".equals(sigAlg)) {
-            result = "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha384";
-        } else if ("SHA512withECDSA".equals(sigAlg)) {
-            result = "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha512";
         } else {
             throw new NoSuchAlgorithmException("XMLSigner does not support algorithm: " + sigAlg);
         }

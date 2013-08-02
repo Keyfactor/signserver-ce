@@ -49,9 +49,7 @@ public class XMLSignerTest extends ModulesTestCase {
     /** WORKERID used in this test case as defined in junittest-part-config.properties */
     private static final int WORKERID2 = 5679;
     
-    private static final int WORKERID3 = 5680;
-    
-    private static final int[] WORKERS = new int[] {5676, 5679, 5680, 5681, 5682, 5683, 5802, 5803};
+    private static final int[] WORKERS = new int[] {5676, 5679, 5681, 5682, 5683, 5802, 5803};
 
     private static final String TESTXML1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><root><my-tag>My Data</my-tag></root>";
 
@@ -69,12 +67,6 @@ public class XMLSignerTest extends ModulesTestCase {
         workerSession.setWorkerProperty(WORKERID2, "KEYSTOREPATH",
                 new File(getSignServerHome() + File.separator + "res" + File.separator + "test" + File.separator + "xmlsigner4.jks").getAbsolutePath());
         workerSession.reloadConfiguration(WORKERID2);
-        
-        final File keystore = new File(getSignServerHome(), "res/test/dss10/dss10_signer5ec.p12");
-        if (!keystore.exists()) {
-            throw new FileNotFoundException(keystore.getAbsolutePath());
-        }
-        addP12DummySigner("org.signserver.module.xmlsigner.XMLSigner", WORKERID3, "XMLSignerECDSA", keystore, "foo123");
     }
 
     /**

@@ -204,6 +204,13 @@ public class XMLSigner extends BaseSigner {
         return signResponse;
     }
 
+    /**
+     * Get an XMLSec URI for a given signature algorithm in BC style.
+     * 
+     * @param sigAlg Signature algorithm name in BC style
+     * @return The URI for the algo in XMLSec.
+     * @throws NoSuchAlgorithmException
+     */
     private static String getSignatureMethod(final String sigAlg)
             throws NoSuchAlgorithmException {
         String result;
@@ -227,6 +234,12 @@ public class XMLSigner extends BaseSigner {
         return result;
     }
     
+    /**
+     * Return the default signature algo name given the private key.
+     * 
+     * @param privKey
+     * @return
+     */
     private String getDefaultSignatureAlgorithm(final PrivateKey privKey) {
         final String result;
 

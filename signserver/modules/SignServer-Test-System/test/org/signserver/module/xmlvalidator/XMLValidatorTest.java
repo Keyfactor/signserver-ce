@@ -89,20 +89,20 @@ public class XMLValidatorTest extends ModulesTestCase {
             fail(ex.getMessage());
         }
     }
-
-    @Test
-    public void test02SigOkCertOk() {
+    
+    private void testSigOkCertOk(final int workerId, final String xml,
+            final String expectedSubjectDN, final String expectedIssuerDN) throws Exception {
         // OK signature, OK cert
         int reqid = 13;
 
-        byte[] data = XMLValidatorTestData.TESTXML1.getBytes();
+        byte[] data = xml.getBytes();
 
         // XML Document
         checkXmlWellFormed(new ByteArrayInputStream(data));
 
         try {
             GenericValidationRequest signRequest = new GenericValidationRequest(reqid, data);
-            GenericValidationResponse res = (GenericValidationResponse) workerSession.process(WORKERID, signRequest, new RequestContext());
+            GenericValidationResponse res = (GenericValidationResponse) workerSession.process(workerId, signRequest, new RequestContext());
 
             assertTrue("answer to right question", reqid == res.getRequestID());
 
@@ -110,9 +110,9 @@ public class XMLValidatorTest extends ModulesTestCase {
 
             // Check certificate and path
             Certificate signercert = res.getCertificateValidation().getCertificate();
-            assertEquals("Signer certificate", SIGNER2_SUBJECTDN, CertTools.getSubjectDN(signercert));
+            assertEquals("Signer certificate", expectedSubjectDN, CertTools.getSubjectDN(signercert));
             List<Certificate> caChain = res.getCertificateValidation().getCAChain();
-            assertEquals("ca certificate 0", SIGNER2_ISSUERDN, CertTools.getSubjectDN(caChain.get(0)));
+            assertEquals("ca certificate 0", expectedIssuerDN, CertTools.getSubjectDN(caChain.get(0)));
             assertEquals("caChain length", 1, caChain.size());
             log.info("Status message: " + res.getCertificateValidation().getStatusMessage());
             assertEquals(Validation.Status.VALID, res.getCertificateValidation().getStatus());
@@ -127,6 +127,11 @@ public class XMLValidatorTest extends ModulesTestCase {
             log.error("SignServer error", e);
             fail(e.getMessage());
         }
+    }
+
+    @Test
+    public void test02SigOkCertOk() throws Exception {
+        testSigOkCertOk(WORKERID, XMLValidatorTestData.TESTXML1, SIGNER2_SUBJECTDN, SIGNER2_ISSUERDN);
     }
 
     @Test
@@ -381,42 +386,8 @@ public class XMLValidatorTest extends ModulesTestCase {
     }
 
     @Test
-    public void test12SigOkCertOkDSA() {
-        // OK signature, OK cert
-        final int reqid = 18;
-
-        final byte[] data = XMLValidatorTestData.TESTXML1_DSA.getBytes();
-
-        // XML Document
-        checkXmlWellFormed(new ByteArrayInputStream(data));
-
-        try {
-            GenericValidationRequest signRequest = new GenericValidationRequest(reqid, data);
-            GenericValidationResponse res = (GenericValidationResponse) workerSession.process(WORKERID, signRequest, new RequestContext());
-
-            assertTrue("answer to right question", reqid == res.getRequestID());
-
-            assertTrue("valid document", res.isValid());
-
-            // Check certificate and path
-            Certificate signercert = res.getCertificateValidation().getCertificate();
-            assertEquals("Signer certificate", "CN=xmlsigner4", CertTools.getSubjectDN(signercert));
-            List<Certificate> caChain = res.getCertificateValidation().getCAChain();
-            assertEquals("ca certificate 0", "CN=DemoRootCA2,OU=EJBCA,O=SignServer Sample,C=SE", CertTools.getSubjectDN(caChain.get(0)));
-            assertEquals("caChain length", 1, caChain.size());
-            log.info("Status message: " + res.getCertificateValidation().getStatusMessage());
-            assertEquals(Validation.Status.VALID, res.getCertificateValidation().getStatus());
-
-        } catch (IllegalRequestException e) {
-            log.error("Illegal request", e);
-            fail(e.getMessage());
-        } catch (CryptoTokenOfflineException e) {
-            log.error("Crypto token offline", e);
-            fail(e.getMessage());
-        } catch (SignServerException e) {
-            log.error("SignServer error", e);
-            fail(e.getMessage());
-        }
+    public void test12SigOkCertOkDSA() throws Exception {
+        testSigOkCertOk(WORKERID, XMLValidatorTestData.TESTXML1_DSA, "CN=xmlsigner4", "CN=DemoRootCA2,OU=EJBCA,O=SignServer Sample,C=SE");
     }
 
     @Test

@@ -90,10 +90,9 @@ public class XMLValidatorTest extends ModulesTestCase {
         }
     }
     
-    private void testSigOkCertOk(final int workerId, final String xml,
+    private void testSigOkCertOk(final int reqid, final int workerId, final String xml,
             final String expectedSubjectDN, final String expectedIssuerDN) throws Exception {
         // OK signature, OK cert
-        int reqid = 13;
 
         byte[] data = xml.getBytes();
 
@@ -131,7 +130,7 @@ public class XMLValidatorTest extends ModulesTestCase {
 
     @Test
     public void test02SigOkCertOk() throws Exception {
-        testSigOkCertOk(WORKERID, XMLValidatorTestData.TESTXML1, SIGNER2_SUBJECTDN, SIGNER2_ISSUERDN);
+        testSigOkCertOk(13, WORKERID, XMLValidatorTestData.TESTXML1, SIGNER2_SUBJECTDN, SIGNER2_ISSUERDN);
     }
 
     @Test
@@ -232,7 +231,7 @@ public class XMLValidatorTest extends ModulesTestCase {
     @Test
     public void test07SigOkCertWrong() throws Exception {
         // OK signature, wrong certificate
-        int reqid = 17;
+        int reqid = 18;
         {
             byte[] data = XMLValidatorTestData.TESTXML3.getBytes();
 
@@ -256,7 +255,7 @@ public class XMLValidatorTest extends ModulesTestCase {
     @Test
     public void test08SigOkCertInReverseOrder() throws Exception {
         // OK signature, first ca cert then signer cert
-        int reqid = 18;
+        int reqid = 19;
         {
             byte[] data = XMLValidatorTestData.TESTXML5.getBytes();
 
@@ -285,7 +284,7 @@ public class XMLValidatorTest extends ModulesTestCase {
     @Test
     public void test090DocumentNotReturned() throws Exception {
         // Just some validation
-        int reqid = 19;
+        int reqid = 20;
         {
             byte[] data = XMLValidatorTestData.TESTXML5.getBytes();
 
@@ -322,7 +321,7 @@ public class XMLValidatorTest extends ModulesTestCase {
         workerSession.reloadConfiguration(WORKERID);
 
         // Just some validation
-        int reqid = 19;
+        int reqid = 21;
         {
             byte[] data = XMLValidatorTestData.TESTXML5.getBytes();
 
@@ -361,7 +360,7 @@ public class XMLValidatorTest extends ModulesTestCase {
         workerSession.reloadConfiguration(17);
 
         // OK signature, revoced cert
-        int reqid = 17;
+        int reqid = 22;
         {
             byte[] data = XMLValidatorTestData.TESTXML1.getBytes();
 
@@ -383,13 +382,22 @@ public class XMLValidatorTest extends ModulesTestCase {
             Certificate cert = res.getSignerCertificate();
             assertNotNull(cert);
         }
+        
+        // reset revokation
+        workerSession.removeWorkerProperty(17, "VAL1.REVOKED");
+        workerSession.reloadConfiguration(17);
     }
 
     @Test
     public void test12SigOkCertOkDSA() throws Exception {
-        testSigOkCertOk(WORKERID, XMLValidatorTestData.TESTXML1_DSA, "CN=xmlsigner4", "CN=DemoRootCA2,OU=EJBCA,O=SignServer Sample,C=SE");
+        testSigOkCertOk(23, WORKERID, XMLValidatorTestData.TESTXML1_DSA, "CN=xmlsigner4", "CN=DemoRootCA2,OU=EJBCA,O=SignServer Sample,C=SE");
     }
 
+    @Test
+    public void test13SigOkCertOkSHA256withRSA() throws Exception {
+        testSigOkCertOk(24, WORKERID, XMLValidatorTestData.TESTXML_SHA256withRSA, SIGNER2_SUBJECTDN, SIGNER2_ISSUERDN);
+    }
+    
     @Test
     public void test99TearDownDatabase() throws Exception {
         removeWorker(WORKERID);

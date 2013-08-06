@@ -127,7 +127,10 @@ class CertificateAndKeySelector extends KeySelector {
 
     private boolean matchingAlgorithms(String keyAlg, String signAlg) {
         if ("RSA".equalsIgnoreCase(keyAlg)) {
-            return SignatureMethod.RSA_SHA1.equalsIgnoreCase(signAlg);
+            return SignatureMethod.RSA_SHA1.equalsIgnoreCase(signAlg) ||
+                    "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256".equals(signAlg) ||
+                    "http://www.w3.org/2001/04/xmldsig-more#rsa-sha384".equals(signAlg) ||
+                    "http://www.w3.org/2001/04/xmldsig-more#rsa-sha512".equals(signAlg);
         } else if ("DSA".equalsIgnoreCase(keyAlg)) {
             return SignatureMethod.DSA_SHA1.equalsIgnoreCase(signAlg);
         } else if ("ECDSA".equalsIgnoreCase(keyAlg)) {

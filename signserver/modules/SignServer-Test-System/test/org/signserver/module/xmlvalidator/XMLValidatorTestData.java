@@ -191,6 +191,13 @@ public class XMLValidatorTestData {
             +"subk1bfz/iCUsJEuzGq++OyTGQJiVyJ7D/+fxRefVdORAcGRXBmvRUh3/pKGnv36BzYOR3z4lDLE"
             +"obSmC8X62cTYA+uCW3UJAhuxGEmXdYzrNTA0RH5ybC8kSkPmMvbxeA45hiyT6k8BiEhVAumncRkd"
             +"lWowqRrdOL0XaGczUUsp+BN6xsIqzfk3RCVtSQ==";
+    
+    static final String SIGNATURE_RSA_SHA256 =
+            "bU6VTlrxeitxNmS5GPh5BmkDlK/jweHwbxEDg8q+Kjv+AZUNkmrZEMGyFyF+J6G7QhmvRLvm6mGf"
+            +"HTZagObEpBSuYWz0dUyfEje9fRP4LooaowJ1FLxtsgHzQlc1m+3iyXpiLmaU0Nqg2R6lZXwhOPpl"
+            +"thHvRxGcyFWIx193Ai5Lnfao9ODnjAiypjEmWXwDUeqyXyr2cu2SkzlHYb1klc7WKba8HRSwoXEE"
+            +"RpTISKxcbbBRhJ8zZJ3Dyky07mZo5QIFcyWlICC7IzP982S9DWRPldWKqjCh4429Wq4BBwUcWZOD"
+            +"z/dipBBFLzo/1vEr12d0jmoD6sXjBVYFvqtGZQ==";
 	
     /**
      * Ok sig, ok cert.
@@ -275,6 +282,22 @@ public class XMLValidatorTestData {
             +"        <X509Data>"
             +"            <X509Certificate>"+CERT_XMLSIGNER4+"</X509Certificate>"
             +"        <X509Certificate>"+CERT_ISSUER4+"</X509Certificate>"
+            +"        </X509Data>"
+            +"    </KeyInfo>"
+            +"</Signature ></root>";
+    
+    /**
+     * Ok sig, ok cert. Using SHA256 with RSA
+     */
+    public static final String TESTXML_SHA256withRSA =
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+            +"<root><my-tag>My Data</my-tag><Signature xmlns=\"http://www.w3.org/2000/09/xmldsig#\">"
+            +"    <SignedInfo><CanonicalizationMethod Algorithm=\"http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments\"/><SignatureMethod Algorithm=\"http://www.w3.org/2001/04/xmldsig-more#rsa-sha256\"/><Reference URI=\"\"><Transforms><Transform Algorithm=\"http://www.w3.org/2000/09/xmldsig#enveloped-signature\"/></Transforms><DigestMethod Algorithm=\"http://www.w3.org/2000/09/xmldsig#sha1\"/><DigestValue>uCUwcTJFETdIT9uYQPkG9GaXg+Y=</DigestValue></Reference></SignedInfo>"
+            +"    <SignatureValue>"+SIGNATURE_RSA_SHA256+"</SignatureValue>"
+            +"    <KeyInfo>"
+            +"        <X509Data>"
+            +"            <X509Certificate>"+CERT_XMLSIGNER+"</X509Certificate>"
+            +"        <X509Certificate>"+CERT_ISSUER+"</X509Certificate>"
             +"        </X509Data>"
             +"    </KeyInfo>"
             +"</Signature ></root>";

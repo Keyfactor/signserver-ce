@@ -100,7 +100,7 @@ public class XMLSignerTest extends ModulesTestCase {
         // Output for manual inspection
         final FileOutputStream fos = new FileOutputStream(new File(getSignServerHome()
                 + File.separator
-                + "tmp" + File.separator + "signedxml_rsa.xml"));
+                + "tmp" + File.separator + "signedxml_" + workerId + "_" + sigAlg + ".xml"));
         fos.write((byte[]) data);
         fos.close();
 

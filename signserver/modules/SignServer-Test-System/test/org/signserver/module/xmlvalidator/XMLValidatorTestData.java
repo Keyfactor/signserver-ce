@@ -198,6 +198,13 @@ public class XMLValidatorTestData {
             +"thHvRxGcyFWIx193Ai5Lnfao9ODnjAiypjEmWXwDUeqyXyr2cu2SkzlHYb1klc7WKba8HRSwoXEE"
             +"RpTISKxcbbBRhJ8zZJ3Dyky07mZo5QIFcyWlICC7IzP982S9DWRPldWKqjCh4429Wq4BBwUcWZOD"
             +"z/dipBBFLzo/1vEr12d0jmoD6sXjBVYFvqtGZQ==";
+    
+    static final String SIGNATURE_RSA_SHA384 =
+            "oElpxMLnogsjxK3gxlTS1rqXp3fD4blsOmjLWXY66yQIDQ7ZVo1FryLPg8z6jUxg6dYhkXuvxGd3"
+            +"cRA0a5D3ogBRIR4l2LD5CkzJ0IrxyQ6/27PwvXHU5p2t8xxI11jCMQWRy+oK46uFMH+W7CplSMQq"
+            +"EN2zxjmhOiRHnFByyVjMAySP73qPo6QxaLryrEfmwdmAf9I5ZE8V13fqe9/s5gAP9LT9ERafpJ4A"
+            +"xY8vTu76u7MGEd2Y345C8jnsDNCJmK6DdsbpXVKirgc87lIOdHEJR9B0d94Z5ZCHTlQKYamEExk5"
+            +"g4FCX0jwKS+eR+sjDgP0/qBNIJXNs/7iQUgfhw==";
 	
     /**
      * Ok sig, ok cert.
@@ -294,6 +301,22 @@ public class XMLValidatorTestData {
             +"<root><my-tag>My Data</my-tag><Signature xmlns=\"http://www.w3.org/2000/09/xmldsig#\">"
             +"    <SignedInfo><CanonicalizationMethod Algorithm=\"http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments\"/><SignatureMethod Algorithm=\"http://www.w3.org/2001/04/xmldsig-more#rsa-sha256\"/><Reference URI=\"\"><Transforms><Transform Algorithm=\"http://www.w3.org/2000/09/xmldsig#enveloped-signature\"/></Transforms><DigestMethod Algorithm=\"http://www.w3.org/2000/09/xmldsig#sha1\"/><DigestValue>uCUwcTJFETdIT9uYQPkG9GaXg+Y=</DigestValue></Reference></SignedInfo>"
             +"    <SignatureValue>"+SIGNATURE_RSA_SHA256+"</SignatureValue>"
+            +"    <KeyInfo>"
+            +"        <X509Data>"
+            +"            <X509Certificate>"+CERT_XMLSIGNER+"</X509Certificate>"
+            +"        <X509Certificate>"+CERT_ISSUER+"</X509Certificate>"
+            +"        </X509Data>"
+            +"    </KeyInfo>"
+            +"</Signature ></root>";
+    
+    /**
+     * Ok sig, ok cert. Using SHA384 with RSA
+     */
+    public static final String TESTXML_SHA384withRSA =
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+            +"<root><my-tag>My Data</my-tag><Signature xmlns=\"http://www.w3.org/2000/09/xmldsig#\">"
+            +"    <SignedInfo><CanonicalizationMethod Algorithm=\"http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments\"/><SignatureMethod Algorithm=\"http://www.w3.org/2001/04/xmldsig-more#rsa-sha384\"/><Reference URI=\"\"><Transforms><Transform Algorithm=\"http://www.w3.org/2000/09/xmldsig#enveloped-signature\"/></Transforms><DigestMethod Algorithm=\"http://www.w3.org/2000/09/xmldsig#sha1\"/><DigestValue>uCUwcTJFETdIT9uYQPkG9GaXg+Y=</DigestValue></Reference></SignedInfo>"
+            +"    <SignatureValue>"+SIGNATURE_RSA_SHA384+"</SignatureValue>"
             +"    <KeyInfo>"
             +"        <X509Data>"
             +"            <X509Certificate>"+CERT_XMLSIGNER+"</X509Certificate>"

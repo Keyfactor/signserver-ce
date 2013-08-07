@@ -90,6 +90,16 @@ public class XMLValidatorTest extends ModulesTestCase {
         }
     }
     
+    /**
+     * Test validating with a correct signature and certificate.
+     * 
+     * @param reqid Request ID to use
+     * @param workerId Worker ID
+     * @param xml Document to validate
+     * @param expectedSubjectDN Expected subject DN
+     * @param expectedIssuerDN Expected issuer DN
+     * @throws Exception
+     */
     private void testSigOkCertOk(final int reqid, final int workerId, final String xml,
             final String expectedSubjectDN, final String expectedIssuerDN) throws Exception {
         // OK signature, OK cert
@@ -387,6 +397,8 @@ public class XMLValidatorTest extends ModulesTestCase {
         workerSession.removeWorkerProperty(17, "VAL1.REVOKED");
         workerSession.reloadConfiguration(17);
     }
+    
+    // tests using SHA-2 RSA variants for the signature algorithm.
 
     @Test
     public void test12SigOkCertOkDSA() throws Exception {

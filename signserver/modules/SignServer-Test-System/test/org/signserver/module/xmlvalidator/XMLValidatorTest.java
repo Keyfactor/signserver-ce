@@ -404,6 +404,11 @@ public class XMLValidatorTest extends ModulesTestCase {
     }
     
     @Test
+    public void test14SigOkCertOkSHA512withRSA() throws Exception {
+        testSigOkCertOk(26, WORKERID, XMLValidatorTestData.TESTXML_SHA512withRSA, SIGNER2_SUBJECTDN, SIGNER2_ISSUERDN);
+    }
+    
+    @Test
     public void test99TearDownDatabase() throws Exception {
         removeWorker(WORKERID);
 

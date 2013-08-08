@@ -74,6 +74,14 @@ public class GenericProcessServlet extends HttpServlet {
             "WWW-Authenticate";
     private static final String PDFPASSWORD_PROPERTY_NAME = "pdfPassword";
 
+    private static final String PROCESS_TYPE_PROPERTY_NAME = "processType";
+    
+    private enum ProcessType {
+        signDocument,
+        validateDocument,
+        validateCertificate
+    };
+    
     private final Random random = new Random();
 
     @EJB
@@ -124,6 +132,8 @@ public class GenericProcessServlet extends HttpServlet {
         	workerRequest = true;
         }
 
+        ProcessType processType = ProcessType.signDocument;
+        
         if (ServletFileUpload.isMultipartContent(req)) {
             final FileItemFactory factory = new DiskFileItemFactory();
             final ServletFileUpload upload = new ServletFileUpload(factory);
@@ -165,6 +175,19 @@ public class GenericProcessServlet extends HttpServlet {
                                     LOG.debug("Found a pdfPassword in the request.");
                                 }
                                 pdfPassword = item.getString("ISO-8859-1");
+                            } else if (PROCESS_TYPE_PROPERTY_NAME.equals(item.getFieldName())) {
+                                final String processTypeAttribute = item.getString("ISO-8859-1");
+                                
+                                if (processTypeAttribute != null) {
+                                    try {
+                                        processType = ProcessType.valueOf(processTypeAttribute);
+                                    } catch (IllegalArgumentException e) {
+                                        sendBadRequest(res, "Illegal process type: " + processTypeAttribute);
+                                        return;
+                                    }
+                                } else {
+                                    processType = ProcessType.signDocument;
+                                }
                             }
                         } else {
                             // We only care for one upload at a time right now
@@ -207,6 +230,19 @@ public class GenericProcessServlet extends HttpServlet {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Found a pdfPassword in the request.");
                 }
+            }
+            
+            final String processTypeAttribute = (String) req.getParameter(PROCESS_TYPE_PROPERTY_NAME);
+            
+            if (processTypeAttribute != null) {
+                try {
+                    processType = ProcessType.valueOf(processTypeAttribute);
+                } catch (IllegalArgumentException e) {
+                    sendBadRequest(res, "Illegal process type: " + processTypeAttribute);
+                    return;
+                }
+            } else {
+                processType = ProcessType.signDocument;
             }
 
             if (METHOD_GET.equalsIgnoreCase(req.getMethod())
@@ -252,13 +288,17 @@ public class GenericProcessServlet extends HttpServlet {
             }
         }
 
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Request of type: " + processType.name());
+        }
+        
         // Limit the maximum size of input
         if (data.length > MAX_UPLOAD_SIZE) {
             LOG.error("Content length exceeds 100MB, not processed: " + req.getContentLength());
             res.sendError(HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE,
                     "Maximum content length is 100 MB");
         } else {
-            processRequest(req, res, workerId, data, fileName, pdfPassword);
+            processRequest(req, res, workerId, data, fileName, pdfPassword, processType);
         }
 
         LOG.debug("<doPost()");
@@ -280,7 +320,8 @@ public class GenericProcessServlet extends HttpServlet {
         LOG.debug("<doGet()");
     } // doGet
 
-    private void processRequest(HttpServletRequest req, HttpServletResponse res, int workerId, byte[] data, String fileName, String pdfPassword) throws java.io.IOException, ServletException {
+    private void processRequest(final HttpServletRequest req, final HttpServletResponse res, final int workerId, final byte[] data,
+            String fileName, final String pdfPassword, final ProcessType processType) throws java.io.IOException, ServletException {
         final String remoteAddr = req.getRemoteAddr();
         if (LOG.isDebugEnabled()) {
             LOG.debug("Recieved HTTP process request for worker " + workerId + ", from ip " + remoteAddr);
@@ -361,28 +402,48 @@ public class GenericProcessServlet extends HttpServlet {
 
         final int requestId = random.nextInt();
 
-        GenericServletResponse response;
         try {
-            response = (GenericServletResponse) getWorkerSession().process(new AdminInfo("Client user", null, null), workerId,
-                    new GenericServletRequest(requestId, data, req), context);
+            switch (processType) {
+            case signDocument:
+                final GenericServletResponse servletResponse =
+                    (GenericServletResponse) getWorkerSession().process(new AdminInfo("Client user", null, null), workerId,
+                        new GenericServletRequest(requestId, data, req), context);
+               
+                if (servletResponse.getRequestID() != requestId) { // TODO: Is this possible to get at all?
+                    LOG.error("Response ID " + servletResponse.getRequestID()
+                            + " not matching request ID " + requestId);
+                    res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                            "Request and response ID missmatch");
+                    return;
+                }
+                
+                byte[] processedBytes = (byte[]) servletResponse.getProcessedData();
 
-            if (response.getRequestID() != requestId) { // TODO: Is this possible to get at all?
-                LOG.error("Response ID " + response.getRequestID()
-                        + " not matching request ID " + requestId);
-                res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                        "Request and response ID missmatch");
-                return;
-            }
-            byte[] processedBytes = (byte[]) response.getProcessedData();
-
-            res.setContentType(response.getContentType());
-            Object responseFileName = context.get(RequestContext.RESPONSE_FILENAME);
-            if (responseFileName instanceof String) {
-                res.setHeader("Content-Disposition", "attachment; filename=\"" + responseFileName + "\"");
-            }
-            res.setContentLength(processedBytes.length);
-            res.getOutputStream().write(processedBytes);
+                res.setContentType(servletResponse.getContentType());
+                Object responseFileName = context.get(RequestContext.RESPONSE_FILENAME);
+                if (responseFileName instanceof String) {
+                    res.setHeader("Content-Disposition", "attachment; filename=\"" + responseFileName + "\"");
+                }
+                res.setContentLength(processedBytes.length);
+                res.getOutputStream().write(processedBytes);
+                break;
+            case validateDocument:
+                final GenericValidationResponse validationResponse =
+                    (GenericValidationResponse) getWorkerSession().process(new AdminInfo("Client user", null, null), workerId, 
+                            new GenericValidationRequest(requestId, data), context);
+                    
+                final String responseText = validationResponse.isValid() ? "VALID" : "INVALID";
+                
+                res.setContentType("text/plain");
+                res.setContentLength(responseText.getBytes().length);
+                res.getOutputStream().write(responseText.getBytes());
+                break;
+            case validateCertificate:
+                // ....
+            };
+            
             res.getOutputStream().close();
+            
         } catch (AuthorizationRequiredException e) {
             LOG.debug("Sending back HTTP 401: " + e.getLocalizedMessage());
 

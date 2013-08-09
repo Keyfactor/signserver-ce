@@ -178,6 +178,10 @@ public class GenericProcessServlet extends HttpServlet {
                             } else if (PROCESS_TYPE_PROPERTY_NAME.equals(item.getFieldName())) {
                                 final String processTypeAttribute = item.getString("ISO-8859-1");
                                 
+                                if (LOG.isDebugEnabled()) {
+                                    LOG.debug("Found process type in the request: " + processTypeAttribute);
+                                }
+                                
                                 if (processTypeAttribute != null) {
                                     try {
                                         processType = ProcessType.valueOf(processTypeAttribute);

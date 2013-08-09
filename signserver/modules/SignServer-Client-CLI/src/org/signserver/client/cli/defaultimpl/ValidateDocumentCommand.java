@@ -110,7 +110,7 @@ public class ValidateDocumentCommand extends AbstractCommand {
         OPTIONS.addOption(PORT, true,
                 TEXTS.getString("PORT_DESCRIPTION"));
         OPTIONS.addOption(PROTOCOL, true,
-                TEXTS.getString("PROTOCOL_DESCRIPTION"));
+                TEXTS.getString("PROTOCOL_DESCRIPTION_VALIDATE"));
         OPTIONS.addOption(USERNAME, true, "Username for authentication.");
         OPTIONS.addOption(PASSWORD, true, "Password for authentication.");
         OPTIONS.addOption(SERVLET, true, "URL to the webservice servlet. Default: " +

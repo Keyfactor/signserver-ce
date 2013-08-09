@@ -107,6 +107,16 @@ public class HTTPDocumentValidator extends AbstractDocumentValidator {
                 sb.append(workerName);
             }
             sb.append(CRLF);
+            sb.append("--" + BOUNDARY);
+            sb.append(CRLF);
+            
+            sb.append("Content-Disposition: form-data; name=\"processType\"");
+            sb.append(CRLF);
+            sb.append(CRLF);
+            sb.append("validateDocument");
+            sb.append(CRLF);
+            sb.append("--" + BOUNDARY);
+            sb.append(CRLF);
             
             sb.append("Content-Type: application/octet-stream");
             sb.append(CRLF);

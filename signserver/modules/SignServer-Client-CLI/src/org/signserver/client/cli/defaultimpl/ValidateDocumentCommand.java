@@ -14,6 +14,7 @@ package org.signserver.client.cli.defaultimpl;
 
 import java.io.*;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 import javax.xml.ws.soap.SOAPFaultException;
@@ -22,6 +23,7 @@ import org.apache.log4j.Logger;
 import org.signserver.cli.spi.AbstractCommand;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
+import org.signserver.client.cli.defaultimpl.SignDocumentCommand.Protocol;
 import org.signserver.common.AuthorizationRequiredException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
@@ -89,6 +91,8 @@ public class ValidateDocumentCommand extends AbstractCommand {
     public static enum Protocol {
         /** The Web Services interface. */
         WEBSERVICES,
+        /** HTTP servlet protocol. */
+        HTTP,
     }
 
     static {
@@ -105,6 +109,8 @@ public class ValidateDocumentCommand extends AbstractCommand {
                 TEXTS.getString("HOST_DESCRIPTION"));
         OPTIONS.addOption(PORT, true,
                 TEXTS.getString("PORT_DESCRIPTION"));
+        OPTIONS.addOption(PROTOCOL, true,
+                TEXTS.getString("PROTOCOL_DESCRIPTION"));
         OPTIONS.addOption(USERNAME, true, "Username for authentication.");
         OPTIONS.addOption(PASSWORD, true, "Password for authentication.");
         OPTIONS.addOption(SERVLET, true, "URL to the webservice servlet. Default: " +
@@ -137,6 +143,8 @@ public class ValidateDocumentCommand extends AbstractCommand {
 
     /** Servlet URL */
     private String servlet;
+    
+    private Protocol protocol = Protocol.WEBSERVICES;
     
     private KeyStoreOptions keyStoreOptions = new KeyStoreOptions();
 
@@ -201,6 +209,16 @@ public class ValidateDocumentCommand extends AbstractCommand {
         if (line.hasOption(SERVLET)) {
         	servlet = line.getOptionValue(SERVLET);
         }
+        if (line.hasOption(PROTOCOL)) {
+            protocol = Protocol.valueOf(line.getOptionValue(
+                    PROTOCOL, null));
+            // override default servlet URL (if not set manually) for HTTP
+            if (Protocol.HTTP.equals(protocol) &&
+                    !line.hasOption(SERVLET)) {
+                servlet = "/signserver/process";
+            }
+        }
+        
         keyStoreOptions.parseCommandLine(line);
     }
 
@@ -224,7 +242,7 @@ public class ValidateDocumentCommand extends AbstractCommand {
      * @throws MalformedURLException in case an URL can not be constructed
      * using the given host and port
      */
-    private DocumentValidator createValidator() throws MalformedURLException {
+    private DocumentValidator createValidator() throws MalformedURLException, IllegalArgumentException {
         final DocumentValidator validator;
         
         final String workerIdOrName;
@@ -247,14 +265,28 @@ public class ValidateDocumentCommand extends AbstractCommand {
         }
 
         LOG.debug("Using WebServices as procotol");
-        validator = new WebServicesDocumentValidator(
-            host,
-            port,
-            servlet,
-            keyStoreOptions.isUseHTTPS(),
-            workerIdOrName,
-            username,
-            password);
+        switch (protocol) {
+        case WEBSERVICES:
+            validator = new WebServicesDocumentValidator(
+                    host,
+                    port,
+                    servlet,
+                    keyStoreOptions.isUseHTTPS(),
+                    workerIdOrName,
+                    username,
+                    password);
+            break;
+        case HTTP:
+            final URL url = new URL(keyStoreOptions.isUseHTTPS() ? "https" : "http", host, port, servlet);
+            if (workerId == 0) {
+                validator = new HTTPDocumentValidator(url, workerName, username, password);
+            } else {
+                validator = new HTTPDocumentValidator(url, workerId, username, password);
+            }
+            break;
+        default:
+            throw new IllegalArgumentException("Unknown protocol: " + protocol.toString());
+        };
         return validator;
     }
 

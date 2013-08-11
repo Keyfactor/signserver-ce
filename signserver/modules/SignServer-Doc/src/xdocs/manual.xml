@@ -20,6 +20,7 @@
                <li>Installation Guide [<a href="manual/installguide.html">HTML</a><!-- | <a href="manual/installguide.pdf">PDF</a>-->]</li>
                <li>Usage Guide [<a href="manual/usageguide.html">HTML</a><!-- | <a href="manual/usageguide.pdf">PDF</a>-->]</li>
                <li>Integration [<a href="manual/integration.html">HTML</a><!-- | <a href="manual/integration.pdf">PDF</a>-->]</li>
+               <li>Common Configuration [<a href="manual/commonconf.html">HTML</a>]</li>
                <li>Plugins [<a href="manual/plugins.html">HTML</a><!-- | <a href="manual/plugins.pdf">PDF</a>-->]</li>
                <li>Development [<a href="manual/development.html">HTML</a><!-- | <a href="manual/development.pdf">PDF</a>-->]</li>
                <li>Miscellaneous [<a href="manual/misc.html">HTML</a><!-- | <a href="manual/misc.pdf">PDF</a>-->]</li>

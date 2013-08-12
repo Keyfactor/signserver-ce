@@ -14,6 +14,8 @@ package org.signserver.client.cli.defaultimpl;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Map;
+
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;
@@ -34,7 +36,7 @@ public interface DocumentValidator {
             throws IllegalRequestException, CryptoTokenOfflineException,
             SignServerException, IOException;
 
-    void validate(final byte[] data) throws IllegalRequestException,
+    void validate(final byte[] data, final Map<String, Object> requestContext) throws IllegalRequestException,
             CryptoTokenOfflineException, SignServerException, IOException;
 
     void validate(final byte[] data, final OutputStream out)

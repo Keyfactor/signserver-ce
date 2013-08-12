@@ -16,6 +16,8 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 import javax.xml.ws.soap.SOAPFaultException;
 import org.apache.commons.cli.*;
@@ -297,15 +299,17 @@ public class ValidateDocumentCommand extends AbstractCommand {
         FileInputStream fin = null;
         try {
             final byte[] bytes;
-
+            final Map<String, Object> requestContext = new HashMap<String, Object>();
+            
             if (inFile == null) {
                 bytes = data.getBytes();
             } else {
+                requestContext.put("FILENAME", inFile.getName());
                 fin = new FileInputStream(inFile);
                 bytes = new byte[(int) inFile.length()];
                 fin.read(bytes);
             }
-            createValidator().validate(bytes);
+            createValidator().validate(bytes, requestContext);
 
         } catch (FileNotFoundException ex) {
             LOG.error(MessageFormat.format(TEXTS.getString("FILE_NOT_FOUND:"),

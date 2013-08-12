@@ -14,6 +14,7 @@ package org.signserver.client.cli.defaultimpl;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import org.apache.log4j.Logger;
@@ -46,8 +47,9 @@ public class WebServicesDocumentValidator extends AbstractDocumentValidator {
         this.workerName = workerName;
     }
 
+    @Override
     protected void doValidate(final byte[] data, final String encoding,
-            final OutputStream out) throws IllegalRequestException,
+            final OutputStream out, final Map<String,Object> requestContext) throws IllegalRequestException,
                 CryptoTokenOfflineException, SignServerException,
                 IOException {
 

@@ -18,6 +18,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Base64;
@@ -68,7 +69,7 @@ public class HTTPDocumentValidator extends AbstractDocumentValidator {
     }
     
     @Override
-    protected void doValidate(byte[] data, String encoding, OutputStream out)
+    protected void doValidate(byte[] data, String encoding, final OutputStream out, final Map<String, Object> requestContext)
             throws IllegalRequestException, CryptoTokenOfflineException,
             SignServerException, IOException {
         if (LOG.isDebugEnabled()) {
@@ -117,6 +118,15 @@ public class HTTPDocumentValidator extends AbstractDocumentValidator {
             sb.append(CRLF);
             sb.append("--" + BOUNDARY);
             sb.append(CRLF);
+            sb.append("Content-Disposition: form-data; name=\"datafile\"");
+            sb.append("; filename=\"");
+            if (requestContext.get("FILENAME") == null) {
+                sb.append("noname.dat");
+            } else {
+                sb.append(requestContext.get("FILENAME"));
+            }
+            sb.append("\"");
+            sb.append(CRLF);
             
             sb.append("Content-Type: application/octet-stream");
             sb.append(CRLF);
@@ -129,13 +139,13 @@ public class HTTPDocumentValidator extends AbstractDocumentValidator {
             conn.addRequestProperty("Content-Length", String.valueOf(
                     sb.toString().length() + BOUNDARY.length() + 8-1));
             
-            out = conn.getOutputStream();
+            final OutputStream outStream = conn.getOutputStream();
             
-            out.write(sb.toString().getBytes());
-            out.write(data);
+            outStream.write(sb.toString().getBytes());
+            outStream.write(data);
             
-            out.write(("\r\n--" + BOUNDARY + "--\r\n").getBytes());
-            out.flush();
+            outStream.write(("\r\n--" + BOUNDARY + "--\r\n").getBytes());
+            outStream.flush();
             
             // Get the response
             in = conn.getInputStream();
@@ -155,6 +165,8 @@ public class HTTPDocumentValidator extends AbstractDocumentValidator {
             } else {
                 out.write(("Valid: " + Boolean.FALSE.booleanValue()).getBytes());
             }
+            out.write("\n".getBytes());            
+            
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         } finally {

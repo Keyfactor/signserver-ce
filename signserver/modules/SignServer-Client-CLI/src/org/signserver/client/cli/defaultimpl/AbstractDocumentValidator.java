@@ -14,6 +14,9 @@ package org.signserver.client.cli.defaultimpl;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;
@@ -32,9 +35,9 @@ public abstract class AbstractDocumentValidator implements DocumentValidator {
     }
 
     public void validate(final byte[] data, final String encoding, 
-            final OutputStream out) throws IllegalRequestException,
+            final OutputStream out, final Map<String,Object> requestContext) throws IllegalRequestException,
             CryptoTokenOfflineException, SignServerException, IOException {
-        doValidate(data, encoding, out);
+        doValidate(data, encoding, out, requestContext);
     }
 
     public void validate(final byte[] data, final String encoding) 
@@ -48,14 +51,30 @@ public abstract class AbstractDocumentValidator implements DocumentValidator {
         validate(data, ENCODING_NONE, System.out);
     }
 
-    public void validate(final byte[] data, final OutputStream out) 
+    public void validate(final byte[] data, final OutputStream out, final Map<String,Object> requestContext) 
             throws IllegalRequestException, CryptoTokenOfflineException,
             SignServerException, IOException {
-        doValidate(data, ENCODING_NONE, out);
+        doValidate(data, ENCODING_NONE, out, requestContext);
     }
 
     protected abstract void doValidate(final byte[] data, final String encoding,
-            final OutputStream out) throws IllegalRequestException,
+            final OutputStream out, final Map<String,Object> requestContext) throws IllegalRequestException,
                 CryptoTokenOfflineException, SignServerException,
                 IOException;
+
+    @Override
+    public void validate(byte[] data, String encoding, OutputStream out)
+            throws IllegalRequestException, CryptoTokenOfflineException,
+            SignServerException, IOException {
+        doValidate(data, ENCODING_NONE, System.out, new HashMap<String, Object>());
+    }
+
+    @Override
+    public void validate(byte[] data, OutputStream out)
+            throws IllegalRequestException, CryptoTokenOfflineException,
+            SignServerException, IOException {
+        doValidate(data, ENCODING_NONE, out, new HashMap<String, Object>());
+    }
+    
+    
 }

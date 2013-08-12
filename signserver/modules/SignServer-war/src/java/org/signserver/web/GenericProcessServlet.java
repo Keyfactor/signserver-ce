@@ -463,6 +463,8 @@ public class GenericProcessServlet extends HttpServlet {
                     final Validation validation = certValidationResponse.getValidation();
                     
                     responseText = validation.getStatus().name();
+                    responseText += "\n";
+                    responseText += certValidationResponse.getValidCertificatePurposes();
                     res.setContentType("text/plain");
                     res.setContentLength(responseText.getBytes().length);
                     res.getOutputStream().write(responseText.getBytes());

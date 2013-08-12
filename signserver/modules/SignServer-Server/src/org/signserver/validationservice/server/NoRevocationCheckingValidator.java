@@ -34,7 +34,7 @@ import org.signserver.validationservice.common.Validation;
 
 /**
  * Certificate Validator used for validating certificates without performing any
- * revokation checking.
+ * revocation checking.
  *
  * XXX: This class contains code mostly duplicated in CRLValidator and possibly
  * OCSPValidator. Consider refactoring.
@@ -62,8 +62,9 @@ public class NoRevocationCheckingValidator extends BaseValidator {
 
     @Override
     public void testConnection() throws ConnectException, SignServerException {
-        // TODO Test Internet connectivity, which is needed to fetch CRLs.
-        // throw exception if not online 
+        // This implementation does not perform any revocation checking and is 
+        // therefor always online. 
+        // This method does not perform any operations.
     }
 
     @Override

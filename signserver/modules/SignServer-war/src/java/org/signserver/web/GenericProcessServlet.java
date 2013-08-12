@@ -16,6 +16,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.*;
 import javax.ejb.EJB;
@@ -33,6 +35,7 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Base64;
+import org.ejbca.util.CertTools;
 import org.signserver.common.*;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.server.CertificateClientCredential;
@@ -41,6 +44,9 @@ import org.signserver.server.UsernamePasswordClientCredential;
 import org.signserver.server.log.AdminInfo;
 import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.log.LogMap;
+import org.signserver.validationservice.common.ValidateRequest;
+import org.signserver.validationservice.common.ValidateResponse;
+import org.signserver.validationservice.common.Validation;
 
 /**
  * GenericProcessServlet is a general Servlet passing on it's request info to the worker configured by either
@@ -75,6 +81,7 @@ public class GenericProcessServlet extends HttpServlet {
     private static final String PDFPASSWORD_PROPERTY_NAME = "pdfPassword";
 
     private static final String PROCESS_TYPE_PROPERTY_NAME = "processType";
+    private static final String CERT_PURPOSES_PROPERTY_NAME = "certPurposes";
     
     private enum ProcessType {
         signDocument,
@@ -407,6 +414,8 @@ public class GenericProcessServlet extends HttpServlet {
         final int requestId = random.nextInt();
 
         try {
+            String responseText;
+            
             switch (processType) {
             case signDocument:
                 final GenericServletResponse servletResponse =
@@ -436,14 +445,33 @@ public class GenericProcessServlet extends HttpServlet {
                     (GenericValidationResponse) getWorkerSession().process(new AdminInfo("Client user", null, null), workerId, 
                             new GenericValidationRequest(requestId, data), context);
                     
-                final String responseText = validationResponse.isValid() ? "VALID" : "INVALID";
+                responseText = validationResponse.isValid() ? "VALID" : "INVALID";
                 
                 res.setContentType("text/plain");
                 res.setContentLength(responseText.getBytes().length);
                 res.getOutputStream().write(responseText.getBytes());
                 break;
             case validateCertificate:
-                // ....
+                final Certificate cert;
+                try {
+                    cert = CertTools.getCertfromByteArray(data);
+                
+                    final String certPurposes = req.getParameter(CERT_PURPOSES_PROPERTY_NAME);
+                    final ValidateResponse certValidationResponse =
+                            (ValidateResponse) getWorkerSession().process(new AdminInfo("Client user", null, null), workerId,
+                                    new ValidateRequest(cert, certPurposes), context);
+                    final Validation validation = certValidationResponse.getValidation();
+                    
+                    responseText = validation.getStatus().name();
+                    res.setContentType("text/plain");
+                    res.setContentLength(responseText.getBytes().length);
+                    res.getOutputStream().write(responseText.getBytes());
+                } catch (CertificateException e) {
+                    LOG.error("Invalid certificate: " + e.getMessage());
+                    sendBadRequest(res, "Invalid certificate: " + e.getMessage());
+                    return;
+                }
+                break;
             };
             
             res.getOutputStream().close();

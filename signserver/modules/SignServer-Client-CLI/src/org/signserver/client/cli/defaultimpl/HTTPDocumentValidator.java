@@ -79,6 +79,7 @@ public class HTTPDocumentValidator extends AbstractDocumentValidator {
         }
 
         InputStream in = null;
+        OutputStream outStream = null;
         
         try {
             final URLConnection conn = processServlet.openConnection();
@@ -139,7 +140,7 @@ public class HTTPDocumentValidator extends AbstractDocumentValidator {
             conn.addRequestProperty("Content-Length", String.valueOf(
                     sb.toString().length() + BOUNDARY.length() + 8-1));
             
-            final OutputStream outStream = conn.getOutputStream();
+            outStream = conn.getOutputStream();
             
             outStream.write(sb.toString().getBytes());
             outStream.write(data);
@@ -172,7 +173,7 @@ public class HTTPDocumentValidator extends AbstractDocumentValidator {
         } finally {
             if (out != null) {
                 try {
-                    out.close();
+                    outStream.close();
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }

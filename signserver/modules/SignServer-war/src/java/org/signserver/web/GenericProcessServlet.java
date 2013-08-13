@@ -463,8 +463,25 @@ public class GenericProcessServlet extends HttpServlet {
                     final Validation validation = certValidationResponse.getValidation();
                     
                     responseText = validation.getStatus().name();
-                    responseText += "\n";
-                    responseText += certValidationResponse.getValidCertificatePurposes();
+                    responseText += ";";
+                    
+                    final String validPurposes = certValidationResponse.getValidCertificatePurposes();
+                    
+                    if (validPurposes != null) {
+                        responseText += certValidationResponse.getValidCertificatePurposes();
+                    }
+                    responseText += ";";
+                    responseText += certValidationResponse.getValidation().getStatusMessage();
+                    responseText += ";";
+                    responseText += certValidationResponse.getValidation().getRevokationReason();
+                    responseText += ";";
+                    
+                    final Date revocationDate = certValidationResponse.getValidation().getRevokedDate();
+                    
+                    if (revocationDate != null) {
+                        responseText += certValidationResponse.getValidation().getRevokedDate().getTime();
+                    }
+
                     res.setContentType("text/plain");
                     res.setContentLength(responseText.getBytes().length);
                     res.getOutputStream().write(responseText.getBytes());

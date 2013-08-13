@@ -248,6 +248,9 @@ public class GenericProcessServlet extends HttpServlet {
             if (processTypeAttribute != null) {
                 try {
                     processType = ProcessType.valueOf(processTypeAttribute);
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Found process type in the request: " + processType.name());
+                    }
                 } catch (IllegalArgumentException e) {
                     sendBadRequest(res, "Illegal process type: " + processTypeAttribute);
                     return;

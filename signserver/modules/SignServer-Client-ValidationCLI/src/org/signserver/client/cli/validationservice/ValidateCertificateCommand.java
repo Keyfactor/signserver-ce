@@ -541,8 +541,6 @@ public class ValidateCertificateCommand extends AbstractCommand {
             final String response = os.toString();
             final String[] responseParts = response.split(";");
             
-            println("Response: " + response);
-            
             // last part of the response string can by empty (revocation date)
             if (responseParts.length < 4 || responseParts.length > 5) {
                 throw new IOException("Malformed HTTP response");

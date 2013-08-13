@@ -338,6 +338,8 @@ public class ValidateCertificateCommand extends AbstractCommand {
                             !cmd.hasOption(OPTION_SERVLET)) {
                         servlet = "/signserver/process";
                     }
+                } else {
+                    protocol = Protocol.WEBSERVICES;
                 }
 
 

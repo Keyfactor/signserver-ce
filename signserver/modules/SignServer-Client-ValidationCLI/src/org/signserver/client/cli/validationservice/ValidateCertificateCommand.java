@@ -132,7 +132,7 @@ public class ValidateCertificateCommand extends AbstractCommand {
 
         OptionBuilder.withArgName("hosts");
         OptionBuilder.hasArg();
-        OptionBuilder.withDescription("A ',' separated string containing the hostnames of the validation service nodes. Ex 'host1.someorg.org,host2.someorg.org' (Required).");
+        OptionBuilder.withDescription("A ',' separated string containing the hostnames of the validation service nodes. Ex 'host1.someorg.org,host2.someorg.org'. When using the HTTP protocol, only one host name can be specified. (Required).");
         Option hostsOption = OptionBuilder.create(OPTION_HOSTS);
 
         OptionBuilder.withArgName("port");

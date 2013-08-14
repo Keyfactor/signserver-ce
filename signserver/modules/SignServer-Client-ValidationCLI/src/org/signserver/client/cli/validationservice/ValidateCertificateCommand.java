@@ -189,7 +189,17 @@ public class ValidateCertificateCommand extends AbstractCommand {
     @Override
     public String getUsages() {
         final StringBuilder footer = new StringBuilder();
-        footer.append(NL).append("The following values is returned by the program that can be used when scripting.").append(NL).append("  -2   : Error happened during execution").append(NL).append("  -1   : Bad arguments").append(NL).append("   0   : Certificate is valid").append(NL).append("   1   : Certificate is revoked").append(NL).append("   2   : Certificate is not yet valid").append(NL).append("   3   : Certificate have expired").append(NL).append("   4   : Certificate doesn't verify").append(NL).append("   5   : CA Certificate have been revoked").append(NL).append("   6   : CA Certificate is not yet valid").append(NL).append("   7   : CA Certificate have expired.").append(NL).append("   8   : Certificate have no valid certificate purpose.").append(NL).append(NL).append("Sample usages:").append(NL).append("a) ").append(COMMAND).append(" -service CertValidationWorker -hosts localhost -cert").append(NL).append("    certificate.pem").append(NL).append("b) ").append(COMMAND).append(" -service 5806 -hosts localhost -cert certificate.pem").append(NL).append("    -truststore p12/truststore.jks -truststorepwd changeit").append(NL);
+        footer.append(NL).append("The following values is returned by the program that can be used when scripting.").append(NL).
+        append("  -2   : Error happened during execution").append(NL).append("  -1   : Bad arguments").append(NL).
+        append("   0   : Certificate is valid").append(NL).append("   1   : Certificate is revoked").append(NL).
+        append("   2   : Certificate is not yet valid").append(NL).append("   3   : Certificate have expired").append(NL).
+        append("   4   : Certificate doesn't verify").append(NL).append("   5   : CA Certificate have been revoked").append(NL).
+        append("   6   : CA Certificate is not yet valid").append(NL).append("   7   : CA Certificate have expired.").append(NL).
+        append("   8   : Certificate have no valid certificate purpose.").append(NL).append(NL).
+        append("Sample usages:").append(NL).
+        append("a) ").append(COMMAND).append(" -service CertValidationWorker -hosts localhost -cert").append(NL).append("    certificate.pem").append(NL).
+        append("b) ").append(COMMAND).append(" -service 5806 -hosts localhost -cert certificate.pem").append(NL).append("    -truststore p12/truststore.jks -truststorepwd changeit").append(NL).
+        append("c) ").append(COMMAND).append(" -service CertValidationWorker -hosts localhost -cert certificate.pem -protocol HTTP").append(NL);
 
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         final HelpFormatter formatter = new HelpFormatter();

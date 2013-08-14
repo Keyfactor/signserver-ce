@@ -2440,6 +2440,8 @@ a) validatecertificate -service CertValidationWorker -hosts localhost -cert
     certificate.pem
 b) validatecertificate -service 5806 -hosts localhost -cert certificate.pem
     -truststore p12/truststore.jks -truststorepwd changeit
+c) validatecertificate -service CertValidationWorker -hosts localhost
+    -cert certificate.pem -protocol HTTP
                         </source>
                     </subsection>
 

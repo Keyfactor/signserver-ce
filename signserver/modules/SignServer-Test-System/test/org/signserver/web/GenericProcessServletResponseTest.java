@@ -227,6 +227,21 @@ public class GenericProcessServletResponseTest extends WebTestCase {
     }
 
     /**
+     * Test setting processType to validateDocument for a signer.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test08WrongProcessType() throws Exception {
+        Map<String, String> fields = new HashMap<String, String>();
+        fields.put("workerName", getSignerNameDummy1());
+        fields.put("processType", "validateDocument");
+        fields.put("data", "<root/>");
+
+        assertStatusReturned(fields, 500);
+    }
+    
+    /**
      * Remove the workers created etc.
      * @throws Exception in case of error
      */

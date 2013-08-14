@@ -2085,6 +2085,8 @@ try {
                                         <li><b>pdfPassword</b> - Password for changing PDF. Optionally and only used by PDFSigner.</li>
                                         <li><b>encoding</b> - Encoding of the data field. Optional. By specifying "base64" SignServer Base64-decodes
                                         the data property before passing it to the worker.</li>
+                                        <li><b>processType</b> - The type of request. Can be any of "signDocument", "validateDocument",
+                                        or "validateCertificate". Optional. If not specified, defaults to "signDocument".</li>
                                     </ul>
                                 </td>
                             </tr>
@@ -2103,7 +2105,14 @@ try {
                                 </td>
                             </tr>
                             <tr>
-                                <td>Response content-type:</td><td>Depending on the worker</td>
+                                <td>Response content-type:</td><td>Depending on the worker, text/plain for the validators</td>
+                            </tr>
+                            <tr>
+                                <td>Response content:</td>
+                                <td>The signed document for signers. The string "VALID" or "INVALID" for document validators. A ;-separated string containing
+                                validation status code, valid purposes, status message, revocation reason (-1 if not revoced), and revocation date (empty when not revoced)
+                                for certificate validators.
+                                </td>
                             </tr>
                         </table>
                         <p>

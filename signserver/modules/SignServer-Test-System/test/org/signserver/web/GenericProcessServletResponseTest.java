@@ -209,6 +209,22 @@ public class GenericProcessServletResponseTest extends WebTestCase {
 
         con.disconnect();
     }
+    
+    /**
+     * Test explicitly setting the processType request parameter
+     * to signDocument (the default value).
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test07ExplicitProcessTypeSignDocument() throws Exception {
+        Map<String, String> fields = new HashMap<String, String>();
+        fields.put("workerName", getSignerNameDummy1());
+        fields.put("processType", "signDocument");
+        fields.put("data", "<root/>");
+
+        assertStatusReturned(fields, 200);
+    }
 
     /**
      * Remove the workers created etc.

@@ -349,5 +349,29 @@ Deploying ${ear.dist.file} to ${jboss.deploy.dir}
         </sequential>
     </macrodef>
 
+    <target name="j2ee:copy-xmlsec" description="Copy XML Security JARs to JBoss endorsed folder">
+        <echo>Upgrading XML Security JAR files in JBoss endorsed folder with versions from SignServer</echo>
+            
+        <!-- $ cp lib/ext/xml-security/*.jar /opt/jboss-5.1.0.GA/lib/endorsed/ -->
+        <copy file="${base}/lib/ext/xml-security/serializer-2.7.1.jar" tofile="${appserver.home}/lib/endorsed/serializer-signserver.jar" overwrite="true" failonerror="true" verbose="true"/>
+        <copy file="${base}/lib/ext/xml-security/xalan-2.7.1.jar" tofile="${appserver.home}/lib/endorsed/xalan-signserver.jar" overwrite="true" failonerror="true" verbose="true"/>
+        <copy file="${base}/lib/ext/xml-security/xercesImpl-2.9.1.jar" tofile="${appserver.home}/lib/endorsed/xercesImpl-signserver.jar" overwrite="true" failonerror="true" verbose="true"/>
+        <copy file="${base}/lib/ext/xml-security/xmlsec-1.5.5.jar" tofile="${appserver.home}/lib/endorsed/xmlsec-signserver.jar" overwrite="true" failonerror="true" verbose="true"/>
+
+        <!-- $ cp lib/ext/commons-logging.jar lib/ext/log4j.jar /opt/jboss-5.1.0.GA/lib/endorsed/ -->
+        <copy file="${base}/lib/ext/commons-logging.jar" tofile="${appserver.home}/lib/endorsed/commons-logging-signserver.jar" overwrite="true" failonerror="true" verbose="true"/>
+        
+        <echo>Removing older versions if available (ignore warnings about missing files)</echo>        
+        <!-- $ rm /opt/jboss-5.1.0.GA/lib/endorsed/serializer.jar -->
+        <move file="${appserver.home}/lib/endorsed/serializer.jar" tofile="${appserver.home}/lib/endorsed/serializer.jar.signserver-disabled" overwrite="true" failonerror="false" verbose="false"/>
+        
+        <!-- $ rm /opt/jboss-5.1.0.GA/lib/endorsed/xercesImpl.jar -->
+        <move file="${appserver.home}/lib/endorsed/xercesImpl.jar" tofile="${appserver.home}/lib/endorsed/xercesImpl.jar.signserver-disabled" overwrite="true" failonerror="false" verbose="false"/>
+        
+        <!-- $ rm /opt/jboss-5.1.0.GA/lib/endorsed/xalan.jar -->
+        <move file="${appserver.home}/lib/endorsed/xalan.jar" tofile="${appserver.home}/lib/endorsed/xalan.jar.signserver-disabled" overwrite="true" failonerror="false" verbose="false"/>
+    
+    </target>
+
 </project>
 

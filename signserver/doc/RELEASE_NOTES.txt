@@ -1,3 +1,23 @@
+SignServer 3.5.0
+----------------
+
+New features and improvements:
+ - TODO
+
+Bug fixes:
+ - TODO
+
+Notice:
+ - The XML Security library has been updated to version 1.5.5. This version is 
+   not compatible with the version bundled with JBoss. For the XML support to 
+   work when running on JBoss the XML Security library and its dependencies 
+   should be put in JBOSS_HOME/lib/endorsed. To help with that an Ant target 
+   can be run:
+   $ bin/ant j2ee:copy-xmlsec
+
+Read the full changelog for details (https://jira.primekey.se/browse/DSS?report=com.atlassian.jira.plugin.system.project:changelog-panel#selectedTab=com.atlassian.jira.plugin.system.project%3Achangelog-panel).
+
+
 SignServer 3.4.1
 ----------------
 
@@ -18,6 +38,7 @@ Bug fixes:
  - Unauthorized health check queries incorrectly logged.
 
 Read the full changelog for details (https://jira.primekey.se/browse/DSS?report=com.atlassian.jira.plugin.system.project:changelog-panel#selectedTab=com.atlassian.jira.plugin.system.project%3Achangelog-panel).
+
 
 SignServer 3.4.0
 ----------------

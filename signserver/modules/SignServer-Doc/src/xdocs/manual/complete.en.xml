@@ -2321,6 +2321,8 @@ Request a document to be validated by SignServer
  -password         Password for authentication.
  -port             Server port. Default: 8080 (for HTTP), 8442 for HTTPS
                    and 8443 for HTTPS with client authentication.
+ -protocol &lt;arg&gt;   Method of interaction with SignServer.
+                   WEBSERVICES, or HTTP. Default: WEBSERVICES.
  -truststore       Keystore with trusted certificates to use with HTTPS.
  -truststorepwd    Password for the keystore with trusted certificates.
  -username         Username for authentication.
@@ -2334,6 +2336,8 @@ c) validatedocument -workerid 2 -infile /tmp/signed.xml -truststore
 truststore.jks -truststorepwd changeit
 d) validatedocument -workerid 2 -infile /tmp/signed.xml -keystore
 superadmin.jks -truststorepwd foo123
+e) validatedocument -workername XMLValidator -protocol HTTP -infile
+/tmp/signed.xml
                         </source>
                     </subsection>
 
@@ -2400,12 +2404,16 @@ usage: Usage: java -jar validate.jar &lt;options&gt;
                                 requested certificate purposes.
  -der                           Certificate is in DER format.
  -help                          Display this info
- -hosts &lt;hosts&gt;                 A ',' separated string containing the
-                                hostnames of the validation service nodes. Ex
-                                'host1.someorg.org,host2.someorg.org' (Required).
+ -hosts &lt;hosts&gt;           A ',' separated string containing the
+                                hostnames of the validation service nodes.
+                                Ex 'host1.someorg.org,host2.someorg.org'.
+                                When using the HTTP protocol, only one
+                                host name can be specified. (Required).
  -pem                           Certificate is in PEM format (Default).
  -port &lt;port&gt;                   Remote port of service (Default is 8080 or
                                 8442 for SSL).
+ -protocol &lt;protocol&gt;           Protocol to use, either WEBSERVICES or
+                                HTTP. Default: WEBSERVICES.
  -service &lt;service-name&gt;        The name or id of the validation service
                                 to process request. (Required)
  -silent                        Don't produce any output, only return

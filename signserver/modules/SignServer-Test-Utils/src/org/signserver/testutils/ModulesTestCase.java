@@ -65,6 +65,11 @@ public class ModulesTestCase extends TestCase {
     
     private static final int SODSIGNER1_SIGNER_ID = 5880;
     private static final String SODSIGNER1_SIGNER_NAME = "TestSODSigner";
+    
+    private static final int VALIDATION_SERVICE_WORKER_ID = 5881;
+    private static final String VALIDATION_SERVICE_WORKER_NAME = "TestValidationWorker";
+    
+    private static final int XML_VALIDATOR_WORKER_ID = 5882;
 
     //Value created by calling org.signserver.server.cryptotokens.CryptoTokenUtils.CreateKeyDataForSoftCryptoToken using the dss10_signer1.p12
     private static final String KEYDATA1 = "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";
@@ -75,6 +80,78 @@ public class ModulesTestCase extends TestCase {
     //Value created by calling org.signserver.server.cryptotokens.CryptoTokenUtils.CreateKeyDataForSoftCryptoToken using the dss10_tssigner1.p12
     private static final String KEYDATA2 = "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";
     
+    /**
+     * SerialNumber: 32:4d:41:38:af:02:c1:3c
+     * IssuerDN: CN=DSS Root CA 10, OU=Testing, O=SignServer, C=SE
+     * Not Before: May 27 08:14:27 2011 GMT
+     * Not After : May 27 08:14:27 2036 GMT
+     *  SubjectDN: CN=DSS Root CA 10, OU=Testing, O=SignServer, C=SE
+     */
+   private static final String VALIDATOR_CERT_ISSUER =
+        "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"
+       + "dMwk/ZXzsDjMZEtENaBXzAefYA==";
+
+   /**
+    * Certificate for DemoRootCA2.
+    *
+    * <pre>
+    * Serial Number: 26:02:00:71:07:af:7f:95
+    *   Signature Algorithm: dsaWithSHA1
+    *   Issuer: CN=DemoRootCA2, OU=EJBCA, O=SignServer Sample, C=SE
+    *   Validity
+    *       Not Before: Nov  9 16:09:48 2009 GMT
+    *       Not After : Nov 10 16:09:48 2034 GMT
+    *   Subject: CN=DemoRootCA2, OU=EJBCA, O=SignServer Sample, C=SE
+    * </pre>
+    */
+   private static final String VALIDATOR_CERT_ISSUER4 =
+       "MIIDPTCCAvygAwIBAgIIJgIAcQevf5UwCQYHKoZIzjgEAzBPMRQwEgYDVQQDDAtE"
+       +"ZW1vUm9vdENBMjEOMAwGA1UECwwFRUpCQ0ExGjAYBgNVBAoMEVNpZ25TZXJ2ZXIg"
+       +"U2FtcGxlMQswCQYDVQQGEwJTRTAeFw0wOTExMDkxNjA5NDhaFw0zNDExMTAxNjA5"
+       +"NDhaME8xFDASBgNVBAMMC0RlbW9Sb290Q0EyMQ4wDAYDVQQLDAVFSkJDQTEaMBgG"
+       +"A1UECgwRU2lnblNlcnZlciBTYW1wbGUxCzAJBgNVBAYTAlNFMIIBtzCCASsGByqG"
+       +"SM44BAEwggEeAoGBAI+d9uiMBBzqdvlV3wSMdwRv/Qx2POGqh+m0M0tMYEwIGBdZ"
+       +"Hm3+QSKIDTjcLRJgCGgTXSAJPCZtp43+kWCV5iGbbemBchOCh4Oe/4IPQERlfJhy"
+       +"MH0gXLglG9KSbuKkqMSzaZoZk06q750KBKusKhK+mvhp08++KyXZna3p6itdAhUA"
+       +"ntjYRJsYqqQtIt0htCGCEAHCkg8CgYA4E4VMplm16uizoUL+9erNtLI886f8pdO5"
+       +"vXhcQG9IpZ0J7N6M4WQy8CFzTKjRJLs27TO2gDP8BE50mMOnbRvYmGIJsQ9lZHTj"
+       +"UqltWh9PJ0VKF0fCwQbA3aY+v8PiHxELvami+YyBiYjE2C6b1ArKOw1QsEL0KakJ"
+       +"cr22yWFaKgOBhQACgYEAiTsSMcEKhYCWg2ULDwD/4ueYyDcRvyoSrT7uCdGU0Y/w"
+       +"2wPuI+kV5RfHxjs6YLDuJsQJg6rfi3RfgmwQJVzClDfgUN12qzRbSidepg/7ipkC"
+       +"Gk0/eyY1A99z3K+FUZm2MVgune4ywCorPUpxz6WHS7/dSWYMWtSrr92PzgnwZbKj"
+       +"YzBhMB0GA1UdDgQWBBRJ3xUuyl6ZroD3lFm3nw/AhCPeJTAPBgNVHRMBAf8EBTAD"
+       +"AQH/MB8GA1UdIwQYMBaAFEnfFS7KXpmugPeUWbefD8CEI94lMA4GA1UdDwEB/wQE"
+       +"AwIBhjAJBgcqhkjOOAQDAzAAMC0CFQCEGSmvJf6rxy6u7ZqY25qE7Hy21gIUPW4q"
+       +"++YIS2fHyu+H4Pjgnodx5zI=";
+   
     protected IWorkerSession workerSession;
     protected IGlobalConfigurationSession globalSession;
     protected IStatusRepositorySession statusSession;
@@ -401,6 +478,37 @@ public class ModulesTestCase extends TestCase {
     
     protected void addSoftSODSigner(final int signerId, final String signerName) throws CertificateException {
         addSoftSODSigner(signerId, signerName, KEYDATA1, CERTCHAIN1);
+    }
+    
+    
+    protected void addXMLValidator() throws Exception {
+        // VALIDATION SERVICE
+        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + VALIDATION_SERVICE_WORKER_ID + ".CLASSPATH", "org.signserver.validationservice.server.ValidationServiceWorker");
+        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + VALIDATION_SERVICE_WORKER_ID + ".SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.HardCodedCryptoToken");
+        workerSession.setWorkerProperty(VALIDATION_SERVICE_WORKER_ID, "AUTHTYPE", "NOAUTH");
+        workerSession.setWorkerProperty(VALIDATION_SERVICE_WORKER_ID, "NAME", VALIDATION_SERVICE_WORKER_NAME);
+        workerSession.setWorkerProperty(VALIDATION_SERVICE_WORKER_ID, "VAL1.CLASSPATH", "org.signserver.validationservice.server.DummyValidator");
+        workerSession.setWorkerProperty(VALIDATION_SERVICE_WORKER_ID, "VAL1.ISSUER1.CERTCHAIN", "\n-----BEGIN CERTIFICATE-----\n" + VALIDATOR_CERT_ISSUER + "\n-----END CERTIFICATE-----\n");
+        workerSession.setWorkerProperty(VALIDATION_SERVICE_WORKER_ID, "VAL1.ISSUER2.CERTCHAIN", "\n-----BEGIN CERTIFICATE-----\n" + VALIDATOR_CERT_ISSUER4 + "\n-----END CERTIFICATE-----\n");
+        workerSession.setWorkerProperty(VALIDATION_SERVICE_WORKER_ID, "VAL1.TESTPROP", "TEST");
+        workerSession.setWorkerProperty(VALIDATION_SERVICE_WORKER_ID, "VAL1.REVOKED", "");
+        workerSession.reloadConfiguration(VALIDATION_SERVICE_WORKER_ID);
+
+        // XMLVALIDATOR
+        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + XML_VALIDATOR_WORKER_ID + ".CLASSPATH", "org.signserver.module.xmlvalidator.XMLValidator");
+        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + XML_VALIDATOR_WORKER_ID + ".SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.SoftCryptoToken");
+        workerSession.setWorkerProperty(XML_VALIDATOR_WORKER_ID, "NAME", "TestXMLValidator");
+        workerSession.setWorkerProperty(XML_VALIDATOR_WORKER_ID, "AUTHTYPE", "NOAUTH");
+        workerSession.setWorkerProperty(XML_VALIDATOR_WORKER_ID, "VALIDATIONSERVICEWORKER", Integer.toString(VALIDATION_SERVICE_WORKER_ID));
+        workerSession.reloadConfiguration(XML_VALIDATOR_WORKER_ID);
+    }
+    
+    public int getWorkerIdXmlValidator() {
+        return XML_VALIDATOR_WORKER_ID;
+    }
+    
+    public int getWorkerIdValidationService() {
+        return VALIDATION_SERVICE_WORKER_ID;
     }
 
     private void removeGlobalProperties(int workerid) {

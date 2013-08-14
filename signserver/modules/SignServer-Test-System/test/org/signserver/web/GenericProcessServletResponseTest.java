@@ -20,6 +20,8 @@ import org.junit.runners.MethodSorters;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.InvalidWorkerIdException;
+import org.signserver.module.xmlvalidator.XMLValidatorTestData;
+
 import static org.junit.Assert.*;
 import org.junit.Test;
 
@@ -33,7 +35,7 @@ import org.junit.Test;
 public class GenericProcessServletResponseTest extends WebTestCase {
 
     private static final String KEYDATA = "KEYDATA";
-
+    
     @Override
     protected String getServletURL() {
         return "http://localhost:8080/signserver/process";
@@ -47,6 +49,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
     public void test00SetupDatabase() throws Exception {
         addDummySigner1();
         addCMSSigner1();
+        addXMLValidator();
     }
 
     /**
@@ -256,6 +259,16 @@ public class GenericProcessServletResponseTest extends WebTestCase {
         assertStatusReturned(fields, 400);
     }
     
+    @Test
+    public void test10ValidateDocument() throws Exception {
+        Map<String, String> fields = new HashMap<String, String>();
+        fields.put("workerId", Integer.toString(getWorkerIdXmlValidator()));
+        fields.put("processType", "validateDocument");
+        fields.put("data", XMLValidatorTestData.TESTXML1);
+
+        assertStatusReturned(fields, 200);
+    }
+    
     /**
      * Remove the workers created etc.
      * @throws Exception in case of error
@@ -264,5 +277,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
     public void test99TearDownDatabase() throws Exception {
         removeWorker(getSignerIdDummy1());
         removeWorker(getSignerIdCMSSigner1());
+        removeWorker(getWorkerIdXmlValidator());
+        removeWorker(getWorkerIdValidationService());
     }
 }

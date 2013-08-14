@@ -99,7 +99,7 @@ public class XMLSigner extends BaseSigner {
         String archiveId = createArchiveId(data, (String) requestContext.get(RequestContext.TRANSACTION_ID));
 
 
-        String providerName = System.getProperty("jsr105Provider", "org.jcp.xml.dsig.internal.dom.XMLDSigRI");
+        String providerName = System.getProperty("jsr105Provider", "org.apache.jcp.xml.dsig.internal.dom.XMLDSigRI");
         XMLSignatureFactory fac;
         try {
             fac = XMLSignatureFactory.getInstance("DOM", (Provider) Class.forName(providerName).newInstance());
@@ -110,7 +110,7 @@ public class XMLSigner extends BaseSigner {
         } catch (ClassNotFoundException e) {
             throw new SignServerException("Problem with JSR105 provider", e);
         }
-
+        
         // Get certificate chain and signer certificate
         Collection<Certificate> certs = this.getSigningCertificateChain();
         if (certs == null) {

@@ -141,7 +141,7 @@ public class XMLValidator extends BaseValidator {
             return new GenericValidationResponse(requestId, false);
         }
 
-        String providerName = System.getProperty("jsr105Provider", "org.jcp.xml.dsig.internal.dom.XMLDSigRI");
+        String providerName = System.getProperty("jsr105Provider", "org.apache.jcp.xml.dsig.internal.dom.XMLDSigRI");
         XMLSignatureFactory fac;
         try {
             fac = XMLSignatureFactory.getInstance("DOM", (Provider) Class.forName(providerName).newInstance());

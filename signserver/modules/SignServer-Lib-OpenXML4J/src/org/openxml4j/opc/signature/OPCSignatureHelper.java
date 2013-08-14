@@ -69,7 +69,7 @@ public class OPCSignatureHelper {
 	public static XMLSignatureFactory CreateXMLSignatureFactory()
 			throws OpenXML4JException {
 		final String providerName = System.getProperty("jsr105Provider",
-				"org.jcp.xml.dsig.internal.dom.XMLDSigRI");
+				"org.apache.jcp.xml.dsig.internal.dom.XMLDSigRI");
 		try {
 			return XMLSignatureFactory.getInstance("DOM", (Provider) Class
 					.forName(providerName).newInstance());

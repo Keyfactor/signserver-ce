@@ -67,7 +67,7 @@ import javax.xml.crypto.dsig.dom.DOMValidateContext;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.jcp.xml.dsig.internal.dom.DOMReference;
+import org.apache.jcp.xml.dsig.internal.dom.DOMReference;
 import org.openxml4j.exceptions.InvalidFormatException;
 import org.openxml4j.exceptions.OpenXML4JException;
 import org.openxml4j.opc.ContentTypes;

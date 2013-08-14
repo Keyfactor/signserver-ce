@@ -60,7 +60,7 @@ import javax.xml.crypto.dsig.TransformService;
 import javax.xml.crypto.dsig.spec.TransformParameterSpec;
 
 import org.dom4j.io.DOMWriter;
-import org.jcp.xml.dsig.internal.dom.DOMUtils;
+import org.apache.jcp.xml.dsig.internal.dom.DOMUtils;
 import org.openxml4j.exceptions.OpenXML4JException;
 import org.openxml4j.opc.PackageNamespaces;
 import org.w3c.dom.Document;

@@ -60,7 +60,7 @@ public abstract class WebTestCase extends ModulesTestCase {
             int response = con.getResponseCode();
             String message = con.getResponseMessage();
             LOG.info("Returned " + response + " " + message);
-            assertEquals("status response: " + message, expected, response);
+            assertEquals("GET: status response: " + message, expected, response);
 
             con.disconnect();
         } catch (IOException ex) {
@@ -76,7 +76,7 @@ public abstract class WebTestCase extends ModulesTestCase {
             int response = con.getResponseCode();
             String message = con.getResponseMessage();
             LOG.info("Returned " + response + " " + message);
-            assertEquals("status response: " + message, expected, response);
+            assertEquals("POST url-encoded: status response: " + message, expected, response);
 
             con.disconnect();
         } catch (IOException ex) {
@@ -93,7 +93,7 @@ public abstract class WebTestCase extends ModulesTestCase {
                 int response = con.getResponseCode();
                 String message = con.getResponseMessage();
                 LOG.info("Returned " + response + " " + message);
-                assertEquals("status response: " + message, expected, response);
+                assertEquals("POST multipart/form-data: status response: " + message, expected, response);
 
                 con.disconnect();
             } catch (IOException ex) {

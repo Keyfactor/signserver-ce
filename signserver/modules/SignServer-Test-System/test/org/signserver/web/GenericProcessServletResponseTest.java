@@ -318,7 +318,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
      * @throws Exception
      */
     @Test
-    public void test12ValidateCertificateRevoked() throws Exception {        
+    public void test12ValidateCertificateOther() throws Exception {        
         Map<String, String> fields = new HashMap<String, String>();
         fields.put("workerId", Integer.toString(getWorkerIdValidationService()));
         fields.put("processType", "validateCertificate");
@@ -327,7 +327,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
         
         // check the returned content
         final byte[] content = sendAndReadyBody(fields);
-        assertEquals("Response content", "ISSUERNOTSUPPORTED;;Issuer of given certificate isn't supporte]d;-1;", new String(content));
+        assertEquals("Response content", "ISSUERNOTSUPPORTED;;Issuer of given certificate isn't supported;-1;", new String(content));
     }
   
     /**

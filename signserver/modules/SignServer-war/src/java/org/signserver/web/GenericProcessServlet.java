@@ -152,6 +152,7 @@ public class GenericProcessServlet extends HttpServlet {
                 final List items = upload.parseRequest(req);
                 final Iterator iter = items.iterator();
                 FileItem fileItem = null;
+                String encoding = null;
                 while (iter.hasNext()) {
                     final Object o = iter.next();
                     if (o instanceof FileItem) {
@@ -199,6 +200,8 @@ public class GenericProcessServlet extends HttpServlet {
                                 } else {
                                     processType = ProcessType.signDocument;
                                 }
+                            } else if (ENCODING_PROPERTY_NAME.equals(item.getFieldName())) {
+                                encoding = item.getString("ISO-8859-1");
                             }
                         } else {
                             // We only care for one upload at a time right now
@@ -215,6 +218,18 @@ public class GenericProcessServlet extends HttpServlet {
                 } else {
                     fileName = fileItem.getName();
                     data = fileItem.get();
+
+                    if (encoding != null && !encoding.isEmpty()) {
+                        if (ENCODING_BASE64.equalsIgnoreCase(encoding)) {
+                            LOG.info("Decoding base64 data");
+                            data = Base64.decode(data);
+                        } else {
+                            sendBadRequest(res,
+                                    "Unknown encoding for the 'data' field: "
+                                    + encoding);
+                            return;
+                        }
+                    }
                 }
             } catch (FileUploadException ex) {
                 throw new ServletException("Upload failed", ex);

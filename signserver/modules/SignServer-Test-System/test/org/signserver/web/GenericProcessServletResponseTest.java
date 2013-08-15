@@ -12,6 +12,8 @@
  *************************************************************************/
 package org.signserver.web;
 
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.util.HashMap;
 import java.util.Map;
@@ -271,7 +273,8 @@ public class GenericProcessServletResponseTest extends WebTestCase {
         fields.put("processType", "validateDocument");
         fields.put("data", XMLValidatorTestData.TESTXML1);
 
-        assertStatusReturned(fields, 200);
+        final byte[] content = sendAndReadyBody(fields);
+        assertEquals("Response content", "VALID", new String(content));
     }
     
     @Test
@@ -284,7 +287,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
         
         assertStatusReturned(fields, 200);
     }
-    
+  
     /**
      * Remove the workers created etc.
      * @throws Exception in case of error

@@ -71,6 +71,19 @@ public class XMLSigner extends BaseSigner {
     // Property constants
     public static final String SIGNATUREALGORITHM = "SIGNATUREALGORITHM";
     
+    /**
+     * Addional signature methods not yet covered by
+     * javax.xml.dsig.SignatureMethod
+     * 
+     * Defined in RFC 4051 {@link http://www.ietf.org/rfc/rfc4051.txt}
+     */
+    private static final String SIGNATURE_METHOD_RSA_SHA256 =
+            "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256";
+    private static final String SIGNATURE_METHOD_RSA_SHA384 =
+            "http://www.w3.org/2001/04/xmldsig-more#rsa-sha384";
+    private static final String SIGNATURE_METHOD_RSA_SHA512 =
+            "http://www.w3.org/2001/04/xmldsig-more#rsa-sha512";
+
     private String signatureAlgorithm;
     
     @Override
@@ -222,11 +235,11 @@ public class XMLSigner extends BaseSigner {
         } else if ("SHA1withRSA".equals(sigAlg)) {
             result = SignatureMethod.RSA_SHA1;
         } else if ("SHA256withRSA".equals(sigAlg)) {
-            result = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256";
+            result = SIGNATURE_METHOD_RSA_SHA256;
         } else if ("SHA384withRSA".equals(sigAlg)) {
-            result = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha384";
+            result = SIGNATURE_METHOD_RSA_SHA384;
         } else if ("SHA512withRSA".equals(sigAlg)) {
-            result = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha512";
+            result = SIGNATURE_METHOD_RSA_SHA512;
         } else {
             throw new NoSuchAlgorithmException("XMLSigner does not support algorithm: " + sigAlg);
         }

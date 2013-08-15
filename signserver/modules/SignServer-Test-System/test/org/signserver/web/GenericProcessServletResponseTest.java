@@ -259,6 +259,11 @@ public class GenericProcessServletResponseTest extends WebTestCase {
         assertStatusReturned(fields, 400);
     }
     
+    /**
+     * Test issuing a validateDocument call.
+     * 
+     * @throws Exception
+     */
     @Test
     public void test10ValidateDocument() throws Exception {
         Map<String, String> fields = new HashMap<String, String>();
@@ -266,6 +271,17 @@ public class GenericProcessServletResponseTest extends WebTestCase {
         fields.put("processType", "validateDocument");
         fields.put("data", XMLValidatorTestData.TESTXML1);
 
+        assertStatusReturned(fields, 200);
+    }
+    
+    @Test
+    public void test11ValidateCertificate() throws Exception {
+        Map<String, String> fields = new HashMap<String, String>();
+        fields.put("workerId", Integer.toString(getWorkerIdValidationService()));
+        fields.put("processType", "validateCertificate");
+        fields.put("data", XMLValidatorTestData.CERT_ISSUER);
+        fields.put("encoding", "base64");
+        
         assertStatusReturned(fields, 200);
     }
     

@@ -293,6 +293,11 @@ public class GenericProcessServletResponseTest extends WebTestCase {
         assertEquals("Response content", "INVALID", new String(content));
     }
     
+    /**
+     * Test validating a valid certificate using the validation service through the HTTP servlet.
+     * 
+     * @throws Exception
+     */
     @Test
     public void test12ValidateCertificate() throws Exception {
         Map<String, String> fields = new HashMap<String, String>();
@@ -301,7 +306,30 @@ public class GenericProcessServletResponseTest extends WebTestCase {
         fields.put("data", XMLValidatorTestData.CERT_ISSUER);
         fields.put("encoding", "base64");
         
+        // test returned status (GET, POST and POST with multi-part content)
         assertStatusReturned(fields, 200);
+        
+        // check the returned content
+        final byte[] content = sendAndReadyBody(fields);
+        assertEquals("Response content", "VALID;;This certificate is valid;-1;", new String(content));
+    }
+    
+    /**
+     * Test validating an other, non-supported issuer using the validation service through the HTTP servlet.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test12ValidateCertificateRevoked() throws Exception {        
+        Map<String, String> fields = new HashMap<String, String>();
+        fields.put("workerId", Integer.toString(getWorkerIdValidationService()));
+        fields.put("processType", "validateCertificate");
+        fields.put("data", XMLValidatorTestData.CERT_OTHER);
+        fields.put("encoding", "base64");
+        
+        // check the returned content
+        final byte[] content = sendAndReadyBody(fields);
+        assertEquals("Response content", "ISSUERNOTSUPPORTED;;Issuer of given certificate isn't supporte]d;-1;", new String(content));
     }
   
     /**

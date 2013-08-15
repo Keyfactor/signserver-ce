@@ -499,7 +499,7 @@ public class ModulesTestCase extends TestCase {
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + XML_VALIDATOR_WORKER_ID + ".SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.SoftCryptoToken");
         workerSession.setWorkerProperty(XML_VALIDATOR_WORKER_ID, "NAME", "TestXMLValidator");
         workerSession.setWorkerProperty(XML_VALIDATOR_WORKER_ID, "AUTHTYPE", "NOAUTH");
-        workerSession.setWorkerProperty(XML_VALIDATOR_WORKER_ID, "VALIDATIONSERVICEWORKER", Integer.toString(VALIDATION_SERVICE_WORKER_ID));
+        workerSession.setWorkerProperty(XML_VALIDATOR_WORKER_ID, "VALIDATIONSERVICEWORKER", VALIDATION_SERVICE_WORKER_NAME);
         workerSession.reloadConfiguration(XML_VALIDATOR_WORKER_ID);
     }
     

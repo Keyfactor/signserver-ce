@@ -151,6 +151,15 @@ public class ValidationCLITest {
         assertEquals(CommandLineInterface.RETURN_SUCCESS, clientCLI.execute("validatecertificate", "-hosts", "localhost", "-service", "16", "-der", "-port", "8442", "-certpurposes", "IDENTIFICATION,ELECTROINIC_SIGNATURE", "-cert", validcert1derpath, "-truststore", jksFile, "-truststorepwd", "changeit"));
         result = clientCLI.execute("validatecertificate", "-hosts", "localhost", "-service", "16", "-der", "-port", "8442", "-certpurposes", "ELECTROINIC_SIGNATURE", "-cert", revokedcertpath, "-truststore", jksFile, "-truststorepwd", "changeit");
         assertEquals(ValidateCertificateCommand.RETURN_BADCERTPURPOSE, result);
+        
+        // test using the HTTP protocol
+        assertEquals(CommandLineInterface.RETURN_SUCCESS,
+                clientCLI.execute("validatecertificate", "-hosts", "localhost", "-service", "16", "-cert", validcert1path, "-truststore", jksFile,
+                        "-truststorepwd", "changeit", "-protocol", "HTTP"));
+        // test explicitly specifying the WEBSERVICES protocol (the default)
+        assertEquals(CommandLineInterface.RETURN_SUCCESS,
+                clientCLI.execute("validatecertificate", "-hosts", "localhost", "-service", "16", "-cert", validcert1path, "-truststore", jksFile,
+                        "-truststorepwd", "changeit", "-protocol", "WEBSERVICES"));
     }
 
     @Test

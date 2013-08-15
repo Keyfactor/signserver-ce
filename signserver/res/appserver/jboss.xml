@@ -376,6 +376,15 @@ Upgrading XML Security JAR files in JBoss endorsed folder with versions from Sig
         <!-- $ rm /opt/jboss-5.1.0.GA/lib/endorsed/xalan.jar -->
         <move file="${appserver.home}/lib/endorsed/xalan.jar" tofile="${appserver.home}/lib/endorsed/xalan.jar.signserver-disabled" overwrite="true" failonerror="false" verbose="false"/>
     
+        <!-- $ rm /opt/jboss-5.1.0.GA/lib/endorsed/commons-logging.jar -->
+        <move file="${appserver.home}/lib/endorsed/commons-logging.jar" tofile="${appserver.home}/lib/endorsed/commons-logging.jar.signserver-disabled" overwrite="true" failonerror="false" verbose="false"/>
+        
+        <!-- $ rm /opt/jboss-5.1.0.GA/lib/endorsed/log4j.jar -->
+        <move file="${appserver.home}/lib/endorsed/log4j.jar" tofile="${appserver.home}/lib/endorsed/log4j.jar.signserver-disabled" overwrite="true" failonerror="false" verbose="false"/>
+        
+        <!-- $ rm /opt/jboss-5.1.0.GA/lib/endorsed/xmlsec.jar -->
+        <move file="${appserver.home}/lib/endorsed/xmlsec.jar" tofile="${appserver.home}/lib/endorsed/xmlsec.jar.signserver-disabled" overwrite="true" failonerror="false" verbose="false"/>
+        
     </target>
 
 </project>

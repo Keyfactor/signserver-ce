@@ -277,8 +277,24 @@ public class GenericProcessServletResponseTest extends WebTestCase {
         assertEquals("Response content", "VALID", new String(content));
     }
     
+    /**
+     * Test validating a document with an invalid signature.
+     * 
+     * @throws Exception
+     */
     @Test
-    public void test11ValidateCertificate() throws Exception {
+    public void test10ValidateDocumentInvalid() throws Exception {
+        Map<String, String> fields = new HashMap<String, String>();
+        fields.put("workerId", Integer.toString(getWorkerIdXmlValidator()));
+        fields.put("processType", "validateDocument");
+        fields.put("data", XMLValidatorTestData.TESTXML2);
+
+        final byte[] content = sendAndReadyBody(fields);
+        assertEquals("Response content", "INVALID", new String(content));
+    }
+    
+    @Test
+    public void test12ValidateCertificate() throws Exception {
         Map<String, String> fields = new HashMap<String, String>();
         fields.put("workerId", Integer.toString(getWorkerIdValidationService()));
         fields.put("processType", "validateCertificate");

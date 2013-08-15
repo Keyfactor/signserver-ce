@@ -232,7 +232,7 @@ public class XMLValidatorTestData {
     /**
      * Ok sig, untrusted issuer.
      */
-    static final String TESTXML2 =
+    public static final String TESTXML2 =
             "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
             +"<root-tag>"
             +"    <tag2>Hello</tag2>"

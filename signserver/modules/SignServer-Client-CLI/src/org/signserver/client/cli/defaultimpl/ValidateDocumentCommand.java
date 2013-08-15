@@ -25,7 +25,6 @@ import org.apache.log4j.Logger;
 import org.signserver.cli.spi.AbstractCommand;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
-import org.signserver.client.cli.defaultimpl.SignDocumentCommand.Protocol;
 import org.signserver.common.AuthorizationRequiredException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;

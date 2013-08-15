@@ -465,6 +465,14 @@ public class GenericProcessServlet extends HttpServlet {
                     
                 responseText = validationResponse.isValid() ? "VALID" : "INVALID";
                 
+                if (LOG.isDebugEnabled()) {
+                    final Validation validation = validationResponse.getCertificateValidation();
+                    
+                    if (validation != null) {
+                        LOG.debug("Cert validation status: " + validationResponse.getCertificateValidation().getStatusMessage());
+                    }
+                }
+                
                 res.setContentType("text/plain");
                 res.setContentLength(responseText.getBytes().length);
                 res.getOutputStream().write(responseText.getBytes());

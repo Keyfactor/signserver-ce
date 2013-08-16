@@ -61,12 +61,7 @@ public class MRTDSigner extends BaseSigner {
             log.trace(">processData");
         }
         ProcessResponse ret = null;
-
-        if (!(signRequest instanceof GenericSignRequest)) {
-            throw new IllegalRequestException(
-                    "Recieved request wasn't a expected GenericSignRequest.");
-        }
-        
+      
         final ISignRequest sReq = (ISignRequest) signRequest;
 
         if (sReq.getRequestData() == null) {

@@ -491,26 +491,29 @@ public class GenericProcessServlet extends HttpServlet {
                                     new ValidateRequest(cert, certPurposes), context);
                     final Validation validation = certValidationResponse.getValidation();
                     
-                    responseText = validation.getStatus().name();
-                    responseText += ";";
+                    final StringBuilder sb = new StringBuilder(validation.getStatus().name());
+                    
+                    sb.append(";");
                     
                     final String validPurposes = certValidationResponse.getValidCertificatePurposes();
                     
                     if (validPurposes != null) {
-                        responseText += certValidationResponse.getValidCertificatePurposes();
+                        sb.append(certValidationResponse.getValidCertificatePurposes());
                     }
-                    responseText += ";";
-                    responseText += certValidationResponse.getValidation().getStatusMessage();
-                    responseText += ";";
-                    responseText += certValidationResponse.getValidation().getRevokationReason();
-                    responseText += ";";
+                    sb.append(";");
+                    sb.append(certValidationResponse.getValidation().getStatusMessage());
+                    sb.append(";");
+                    sb.append(certValidationResponse.getValidation().getRevokationReason());
+                    sb.append(";");
                     
                     final Date revocationDate = certValidationResponse.getValidation().getRevokedDate();
                     
                     if (revocationDate != null) {
-                        responseText += certValidationResponse.getValidation().getRevokedDate().getTime();
+                        sb.append(certValidationResponse.getValidation().getRevokedDate().getTime());
                     }
 
+                    responseText = sb.toString();
+                    
                     res.setContentType("text/plain");
                     res.setContentLength(responseText.getBytes().length);
                     res.getOutputStream().write(responseText.getBytes());

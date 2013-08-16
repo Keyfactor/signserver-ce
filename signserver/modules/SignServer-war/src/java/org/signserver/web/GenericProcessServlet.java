@@ -220,7 +220,9 @@ public class GenericProcessServlet extends HttpServlet {
 
                     if (encoding != null && !encoding.isEmpty()) {
                         if (ENCODING_BASE64.equalsIgnoreCase(encoding)) {
-                            LOG.info("Decoding base64 data");
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("Decoding base64 data");
+                            }
                             data = Base64.decode(data);
                         } else {
                             sendBadRequest(res,
@@ -286,7 +288,9 @@ public class GenericProcessServlet extends HttpServlet {
                 String encoding = req.getParameter(ENCODING_PROPERTY_NAME);
                 if (encoding != null && !encoding.isEmpty()) {
                     if (ENCODING_BASE64.equalsIgnoreCase(encoding)) {
-                        LOG.info("Decoding base64 data");
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Decoding base64 data");
+                        }
                         data = Base64.decode(data);
                     } else {
                         sendBadRequest(res,

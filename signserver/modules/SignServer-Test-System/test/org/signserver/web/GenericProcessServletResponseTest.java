@@ -286,7 +286,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
         fields.put("processType", "validateDocument");
         fields.put("data", XMLValidatorTestData.TESTXML1);
 
-        final byte[] content = sendAndReadyBody(fields);
+        final byte[] content = sendPostFormUrlencodedReadBody(getServletURL(), fields);
         assertEquals("Response content", "VALID", new String(content));
     }
     
@@ -302,7 +302,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
         fields.put("processType", "validateDocument");
         fields.put("data", XMLValidatorTestData.TESTXML2);
 
-        final byte[] content = sendAndReadyBody(fields);
+        final byte[] content = sendPostFormUrlencodedReadBody(getServletURL(), fields);
         assertEquals("Response content", "INVALID", new String(content));
     }
     

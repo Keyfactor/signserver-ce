@@ -241,7 +241,22 @@ public class GenericProcessServletResponseTest extends WebTestCase {
         fields.put("processType", "validateDocument");
         fields.put("data", "<root/>");
 
-        assertStatusReturned(fields, 500);
+        assertStatusReturned(fields, 400);
+    }
+    
+    /**
+     * Test setting processType to signDocument for a validator.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test08WrongProcessTypeValidator() throws Exception {
+        Map<String, String> fields = new HashMap<String, String>();
+        fields.put("workerName", getWorkerNameXmlValidator());
+        fields.put("processType", "signDocument");
+        fields.put("data", "<root/>");
+
+        assertStatusReturned(fields, 400);
     }
     
     /**
@@ -250,7 +265,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
      * @throws Exception
      */
     @Test
-    public void test09InvalidProcessType() throws Exception {
+    public void test10InvalidProcessType() throws Exception {
         Map<String, String> fields = new HashMap<String, String>();
         fields.put("workerName", getSignerNameDummy1());
         fields.put("processType", "foobar");
@@ -265,7 +280,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
      * @throws Exception
      */
     @Test
-    public void test10ValidateDocument() throws Exception {
+    public void test11ValidateDocument() throws Exception {
         Map<String, String> fields = new HashMap<String, String>();
         fields.put("workerId", Integer.toString(getWorkerIdXmlValidator()));
         fields.put("processType", "validateDocument");
@@ -281,7 +296,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
      * @throws Exception
      */
     @Test
-    public void test10ValidateDocumentInvalid() throws Exception {
+    public void test12ValidateDocumentInvalid() throws Exception {
         Map<String, String> fields = new HashMap<String, String>();
         fields.put("workerId", Integer.toString(getWorkerIdXmlValidator()));
         fields.put("processType", "validateDocument");
@@ -297,7 +312,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
      * @throws Exception
      */
     @Test
-    public void test12ValidateCertificate() throws Exception {
+    public void test13ValidateCertificate() throws Exception {
         Map<String, String> fields = new HashMap<String, String>();
         fields.put("workerId", Integer.toString(getWorkerIdValidationService()));
         fields.put("processType", "validateCertificate");
@@ -318,7 +333,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
      * @throws Exception
      */
     @Test
-    public void test12ValidateCertificateOther() throws Exception {        
+    public void test14ValidateCertificateOther() throws Exception {        
         Map<String, String> fields = new HashMap<String, String>();
         fields.put("workerId", Integer.toString(getWorkerIdValidationService()));
         fields.put("processType", "validateCertificate");

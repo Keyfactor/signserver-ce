@@ -70,6 +70,7 @@ public class ModulesTestCase extends TestCase {
     private static final String VALIDATION_SERVICE_WORKER_NAME = "TestValidationWorker";
     
     private static final int XML_VALIDATOR_WORKER_ID = 5882;
+    private static final String XML_VALIDATOR_WORKER_NAME = "TestXMLValidator";
 
     //Value created by calling org.signserver.server.cryptotokens.CryptoTokenUtils.CreateKeyDataForSoftCryptoToken using the dss10_signer1.p12
     private static final String KEYDATA1 = "AAABJjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAI8znsSWXdWhSLGjQLcRJvBuB8oebpU3fwJrOZf+YW6UXJBMzTFieLcQa6CXWh2v6rX8H8bgvFHqylNZ1x370SYXZc3nCfgFhyXx/J5oEHOcB+f4F9QH6m/ffHCih6L0MPyleq4kdAds207VlGvoRXwWpKv+NVwHH2esin/hv65YOjX2qOvs70zzuQBnq3FrSFTv6MkapBJ9cUKhSA/ET7cKpx8RUj9SW0VtONeIsPhVvX4DOQRn03bpyrypZt9U1boOovhzH54i0XyIP4NoTKfygs/u9p+vWOXy/AtDYB5iCBbVtD06b09IxuE2ttMLvlnDnaGYNZjYgnfu4aibqrcCAwEAAQAABMIwggS+AgEAMA0GCSqGSIb3DQEBAQUABIIEqDCCBKQCAQACggEBAI8znsSWXdWhSLGjQLcRJvBuB8oebpU3fwJrOZf+YW6UXJBMzTFieLcQa6CXWh2v6rX8H8bgvFHqylNZ1x370SYXZc3nCfgFhyXx/J5oEHOcB+f4F9QH6m/ffHCih6L0MPyleq4kdAds207VlGvoRXwWpKv+NVwHH2esin/hv65YOjX2qOvs70zzuQBnq3FrSFTv6MkapBJ9cUKhSA/ET7cKpx8RUj9SW0VtONeIsPhVvX4DOQRn03bpyrypZt9U1boOovhzH54i0XyIP4NoTKfygs/u9p+vWOXy/AtDYB5iCBbVtD06b09IxuE2ttMLvlnDnaGYNZjYgnfu4aibqrcCAwEAAQKCAQEAh+ffyIdEqtkU2rIrWxLGN+zVK7fSD3/J5IvK7zuXUJExgCnDnBjupB7LZm/+MKqiQPD1X5QuZjhEqPJcvLIe/t252r5osaDdcN/Gdrgg1PfCcR79zlds4ZviyCsYO0kxrLWIRvmFvP5M7Pa6k+au+2OqCSmLjrmbzpLsJw4jEtxvZCV2cAOUjwYyY/Qm0CLFvkzILv+aTQTmO7UvduCUK8V2yDGjESZxKe0ZBqPvJUvrcRqm5SejOPFtdfMhAa8om7KLejxg0OWe2YIh+IUOwmziZFtu3hoLVgm0CwNb6gXn10OK8LDaZ1rjN7rbd/lVawpOR+57QNFOQQqvzluLwQKBgQDVVFTyr8969poaC1B6FwPJ34OiCtQyUEIxZ62/U/PluGRq8NUUj8i+PymbhrkbAaz1WsVBI1MD7S+/rHKLE6XO+pBMbIF+cxZvjEctJLMHKj5nvaHGQiQsLU45JsLUQafVRFF5i31H96t9/mRc9EZUPPVzP4ZIvlrbjVkUYQS08QKBgQCr2FnYlpLvnSgeEElBWsKL0H9F9k9L4brBJjeB3jsie91Jc56F7sjIYTUsDCmCtmoFClUTKxlnCIBrS5zDl0NYZT5p2u2oUxX/koXsqm2PJq29PZfYmaHBu4dXMXz4TUwwi6jxMRoNkVSN+yNWrD/bP55f6dEtaw4S+TNv2D26JwKBgEjqCh7o+IGOyB0ewOL5+tGFE/jOurh3tigsx7Yde7+IxsnGhw4AFxzveckuwxX3/KXf4IvjBvzQlQFub7gZfxK/kZKNg7U0oPZ/e9RyNr68MZhDuIeLE9IFqjbeiLkDt9mtACwLAUcX4AWwbZ1X4LHqI/rAO6WhamygY1IT1wgBAoGBAJ/6OrJCgynkoVtTiA76glCM2l90TR/0VdrITDZvf5e7vidKJpLC2FKLBGgsLlzMmuh0VP0SS4S6ymqYqqj/YaeiITeEo2jnaHxTmK/ZfUMeG/Inq/vuEkN75CQNIy05MKuk6LMZJgrpd9DxslVW59+hWzwpPR3OIv0Q14zQv65TAoGAWXJn+2+KpzLnZfdQgLmFMKkaBlkUewCMaV7sqX4XQH5wI73xtaq5fx3ziTefKulpGK49bujH8FZy8tTh5J8M6Hbo99ytnsuvYLtaNptXXRsqqlPBX/BUhr46KEXegGsDrsIgalMbVkG+e1OhKbt9ZT4XuqvGT81Ru5GlgeFN3lw=";
@@ -497,7 +498,7 @@ public class ModulesTestCase extends TestCase {
         // XMLVALIDATOR
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + XML_VALIDATOR_WORKER_ID + ".CLASSPATH", "org.signserver.module.xmlvalidator.XMLValidator");
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + XML_VALIDATOR_WORKER_ID + ".SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.SoftCryptoToken");
-        workerSession.setWorkerProperty(XML_VALIDATOR_WORKER_ID, "NAME", "TestXMLValidator");
+        workerSession.setWorkerProperty(XML_VALIDATOR_WORKER_ID, "NAME", XML_VALIDATOR_WORKER_NAME);
         workerSession.setWorkerProperty(XML_VALIDATOR_WORKER_ID, "AUTHTYPE", "NOAUTH");
         workerSession.setWorkerProperty(XML_VALIDATOR_WORKER_ID, "VALIDATIONSERVICEWORKER", VALIDATION_SERVICE_WORKER_NAME);
         workerSession.reloadConfiguration(XML_VALIDATOR_WORKER_ID);
@@ -505,6 +506,10 @@ public class ModulesTestCase extends TestCase {
     
     public int getWorkerIdXmlValidator() {
         return XML_VALIDATOR_WORKER_ID;
+    }
+    
+    public String getWorkerNameXmlValidator() {
+        return XML_VALIDATOR_WORKER_NAME;
     }
     
     public int getWorkerIdValidationService() {

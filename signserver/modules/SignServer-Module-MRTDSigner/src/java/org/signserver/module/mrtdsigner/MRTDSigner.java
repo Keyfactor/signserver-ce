@@ -62,7 +62,12 @@ public class MRTDSigner extends BaseSigner {
         }
         ProcessResponse ret = null;
 
-        ISignRequest sReq = (ISignRequest) signRequest;
+        if (!(signRequest instanceof GenericSignRequest)) {
+            throw new IllegalRequestException(
+                    "Recieved request wasn't a expected GenericSignRequest.");
+        }
+        
+        final ISignRequest sReq = (ISignRequest) signRequest;
 
         if (sReq.getRequestData() == null) {
             throw new IllegalRequestException("Signature request data cannot be null.");

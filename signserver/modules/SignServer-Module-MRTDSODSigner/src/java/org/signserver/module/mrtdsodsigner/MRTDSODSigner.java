@@ -92,12 +92,14 @@ public class MRTDSODSigner extends BaseSigner {
             log.trace(">processData");
         }
         ProcessResponse ret = null;
-        final ISignRequest sReq = (ISignRequest) signRequest;
 
         // Check that the request contains a valid SODSignRequest object.
         if (!(signRequest instanceof SODSignRequest)) {
             throw new IllegalRequestException("Recieved request wasn't an expected SODSignRequest.");
         }
+        
+        final ISignRequest sReq = (ISignRequest) signRequest;
+        
         final SODSignRequest sodRequest = (SODSignRequest) signRequest;
 
         final ICryptoToken token = getCryptoToken();

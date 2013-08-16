@@ -177,15 +177,16 @@ public class PDFSigner extends BaseSigner {
      */
     public ProcessResponse processData(ProcessRequest signRequest,
             RequestContext requestContext) throws IllegalRequestException,
-            CryptoTokenOfflineException, SignServerException {
-
-        ISignRequest sReq = (ISignRequest) signRequest;
+            CryptoTokenOfflineException, SignServerException {        
         // Check that the request contains a valid GenericSignRequest object
         // with a byte[].
         if (!(signRequest instanceof GenericSignRequest)) {
             throw new IllegalRequestException(
                     "Recieved request wasn't a expected GenericSignRequest.");
         }
+        
+        final ISignRequest sReq = (ISignRequest) signRequest;
+        
         if (!(sReq.getRequestData() instanceof byte[])) {
             throw new IllegalRequestException(
                     "Recieved request data wasn't a expected byte[].");

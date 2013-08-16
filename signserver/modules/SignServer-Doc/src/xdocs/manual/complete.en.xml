@@ -2119,7 +2119,8 @@ try {
                             <tr>
                                 <td>Response content:</td>
                                 <td>The signed document for signers.<br/>
-                                The string "VALID" or "INVALID" for document validators.<br/>
+                                A string starting with "VALID" or "INVALID" for document validators.
+                                <sup>*</sup>Note to integrators: In future versions of SignServer there might be more information added after VALID/INVALID, such as a ;-separated list of addtional information or more lines with information.<br/>
                                 A ;-separated string containing
                                 validation status code (see list below), valid purposes, status message, revocation reason (-1 if not revoked), and revocation date (empty when not revoked)
                                 for certificate validators.
@@ -2129,7 +2130,7 @@ try {
                                 <td>Validation status codes:</td>
                                 <td>
                                     <ul>
-                                        <li><b>VALID</b> The certificate is valied</li>
+                                        <li><b>VALID</b> The certificate is valid</li>
                                         <li><b>REVOKED</b> The certificate has been revoked</li>
                                         <li><b>NOTYETVALID</b> The certificate is not yet valid</li>
                                         <li><b>EXPIRED</b> The certificate has expired</li>
@@ -2138,7 +2139,7 @@ try {
                                         <li><b>CANOTYETVALID</b> The CA certificate is not yet valid</li>
                                         <li><b>CAEXPIRED</b> The CA certificate has expired</li>
                                         <li><b>BADCERTPURPOSE</b> The certificate has no valid certificate purpose</li>
-                                        <li><b>ISSUERNOTSUPPORTED</b> The issuer of the certificate is not supported.</li>
+                                        <li><b>ISSUERNOTSUPPORTED</b> The issuer of the certificate is not supported</li>
                                     </ul>
                                 </td>
                             </tr>

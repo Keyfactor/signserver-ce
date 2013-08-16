@@ -2121,7 +2121,7 @@ try {
                                 <td>The signed document for signers.<br/>
                                 The string "VALID" or "INVALID" for document validators.<br/>
                                 A ;-separated string containing
-                                validation status code (see list below), valid purposes, status message, revocation reason (-1 if not revoced), and revocation date (empty when not revoced)
+                                validation status code (see list below), valid purposes, status message, revocation reason (-1 if not revoked), and revocation date (empty when not revoked)
                                 for certificate validators.
                                 </td>
                             </tr>

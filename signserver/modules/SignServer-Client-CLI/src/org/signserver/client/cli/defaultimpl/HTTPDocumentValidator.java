@@ -137,9 +137,7 @@ public class HTTPDocumentValidator extends AbstractDocumentValidator {
 
             conn.addRequestProperty("Content-Type",
                     "multipart/form-data; boundary=" + BOUNDARY);
-            conn.addRequestProperty("Content-Length", String.valueOf(
-                    sb.toString().length() + BOUNDARY.length() + 8-1));
-            
+           
             outStream = conn.getOutputStream();
             
             outStream.write(sb.toString().getBytes());

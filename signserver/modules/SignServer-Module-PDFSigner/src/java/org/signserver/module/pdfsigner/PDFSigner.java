@@ -393,7 +393,7 @@ public class PDFSigner extends BaseSigner {
     		PdfSignatureAppearance sap) throws IOException, DocumentException, SignServerException {
      
         final HashMap<PdfName, Integer> exc = new HashMap<PdfName, Integer>();
-        exc.put(PdfName.CONTENTS, new Integer(size * 2 + 2));
+        exc.put(PdfName.CONTENTS, Integer.valueOf(size * 2 + 2));
         sap.preClose(exc);
 
 
@@ -431,7 +431,7 @@ public class PDFSigner extends BaseSigner {
             throw new SignServerException(
                     "Null certificate chain. This signer needs a certificate.");
         }
-        Certificate[] certChain = (Certificate[]) certs.toArray(new Certificate[0]);
+        Certificate[] certChain = (Certificate[]) certs.toArray(new Certificate[certs.size()]);
         PrivateKey privKey = this.getCryptoToken().getPrivateKey(
                 ICryptoToken.PURPOSE_SIGN);
 
@@ -681,7 +681,7 @@ public class PDFSigner extends BaseSigner {
         if (retCrls.isEmpty()) {
             return null;
         } else {
-            return retCrls.toArray(new CRL[0]);
+            return retCrls.toArray(new CRL[retCrls.size()]);
         }
 
     }

@@ -298,7 +298,7 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
                         "Null certificate chain. This signer needs a certificate.");
             }
 
-            Certificate[] certs = (Certificate[]) certList.toArray(new Certificate[0]);
+            Certificate[] certs = (Certificate[]) certList.toArray(new Certificate[certList.size()]);
             PrivateKey pk = this.getCryptoToken().getPrivateKey(
                     ICryptoToken.PURPOSE_SIGN);
 

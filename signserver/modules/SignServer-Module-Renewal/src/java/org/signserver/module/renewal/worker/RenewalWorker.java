@@ -746,7 +746,8 @@ public class RenewalWorker extends BaseSigner {
         @Override
         public X509Certificate[] getCertificateChain(String string) {
             try {
-                return getSigningCertificateChain().toArray(new X509Certificate[0]);
+                final List<Certificate> chain = getSigningCertificateChain();
+                return chain.toArray(new X509Certificate[chain.size()]);
             } catch (CryptoTokenOfflineException ex) {
                 LOG.error("Offline getting chain", ex);
                 return new X509Certificate[0];

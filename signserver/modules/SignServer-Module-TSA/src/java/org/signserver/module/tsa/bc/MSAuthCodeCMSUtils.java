@@ -139,14 +139,14 @@ public class MSAuthCodeCMSUtils
 
         // Changes from the original BouncyCastle implementation:
         // the cert and CRL lists are supplied directly to this method (instead of being managed for the instance (in CMSSignedGenerator)
-        if (certs.size() != 0)
+        if (!certs.isEmpty())
         {
             certificates = createBerSetFromList(certs);
         }
 
         ASN1Set certrevlist = null;
 
-        if (crls.size() != 0)
+        if (!crls.isEmpty())
         {
             certrevlist = createBerSetFromList(crls);
         }

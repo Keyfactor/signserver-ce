@@ -286,7 +286,7 @@ public class TimeStampResponseGenerator
         }
     }
 
-    class FailInfo extends DERBitString
+    static class FailInfo extends DERBitString
     {
         FailInfo(int failInfoValue)
         {

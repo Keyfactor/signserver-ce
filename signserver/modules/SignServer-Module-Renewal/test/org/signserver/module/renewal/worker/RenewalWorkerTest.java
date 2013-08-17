@@ -819,7 +819,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
      * @author Marcus Lundblad
      *
      */
-    private class MockWorkerSession extends WorkerSessionMock {
+    private static class MockWorkerSession extends WorkerSessionMock {
 
         protected boolean explicitEccParametersSet = false;
         private WorkerConfig workerConfig;

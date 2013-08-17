@@ -164,8 +164,8 @@ public class MRTDSODSigner extends BaseSigner {
                 // If true here the "data group hashes" are not really hashes but values that we must hash.
                 // The input is already decoded (if needed) and nice, so we just need to hash it
                 dghashes = new HashMap<Integer, byte[]>(16);
-                for (Integer dgId : dgvalues.keySet()) {
-                    byte[] value = dgvalues.get(dgId);
+                for (Map.Entry<Integer, byte[]> dgId : dgvalues.entrySet()) {
+                    final byte[] value = dgId.getValue();
                     if (log.isDebugEnabled()) {
                         log.debug("Hashing data group " + dgId + ", value is of length: " + value.length);
                     }
@@ -175,7 +175,7 @@ public class MRTDSODSigner extends BaseSigner {
                         if (log.isDebugEnabled()) {
                             log.debug("Resulting hash is of length: " + result.length);
                         }
-                        dghashes.put(dgId, result);
+                        dghashes.put(dgId.getKey(), result);
                     }
                 }
             }

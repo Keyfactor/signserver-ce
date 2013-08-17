@@ -310,11 +310,6 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
 
             // Sign
             X509Certificate x509cert = (X509Certificate) certs[0]; 
-            List<X509Certificate> certL = new ArrayList<X509Certificate>();
-
-            for (final Certificate cert : certs) {
-                    certL.add((X509Certificate) cert);
-            }
             
             final Date date = getTimeSource().getGenTime();
             

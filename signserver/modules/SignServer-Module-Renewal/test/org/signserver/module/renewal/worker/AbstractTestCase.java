@@ -93,9 +93,15 @@ public abstract class AbstractTestCase extends TestCase {
             ks = KeyStore.getInstance(keystoreType, "BC");
         }
         ks.load(null, keystorePassword.toCharArray());
-        final OutputStream out = new FileOutputStream(keystorePath);
-        ks.store(out, keystorePassword.toCharArray());
-        out.close();
+        OutputStream out = null;
+        try {
+            out = new FileOutputStream(keystorePath);
+            ks.store(out, keystorePassword.toCharArray());
+        } finally {
+            if (out != null) {
+                out.close();
+            }
+        }
         return ks;
     }
 

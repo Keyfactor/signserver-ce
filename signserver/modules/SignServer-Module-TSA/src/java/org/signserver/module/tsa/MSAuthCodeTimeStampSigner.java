@@ -370,8 +370,7 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
 
   
             // Log values
-            logMap.put(ITimeStampLogger.LOG_TSA_TIME, date == null ? null
-                : String.valueOf(date.getTime()));
+            logMap.put(ITimeStampLogger.LOG_TSA_TIME, String.valueOf(date.getTime()));
             
             final String archiveId = createArchiveId(requestbytes, (String) requestContext.get(RequestContext.TRANSACTION_ID));
 

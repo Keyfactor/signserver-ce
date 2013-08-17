@@ -153,7 +153,7 @@ public class RenewalWorker extends BaseSigner {
 
         if (request instanceof GenericSignRequest) {
             final GenericSignRequest signRequest =
-                    (GenericServletRequest) request;
+                    (GenericSignRequest) request;
             try {
                 final ByteArrayOutputStream bout = new ByteArrayOutputStream();
                 responseData.store(bout, null);
@@ -594,30 +594,38 @@ public class RenewalWorker extends BaseSigner {
         kKeyManagerFactory.init(keystore, null);
         final KeyStore keystoreTrusted;
 
-        if (TRUSTSTORE_TYPE_PEM.equals(truststoreType)) {
-            keystoreTrusted = KeyStore.getInstance("JKS");
-            keystoreTrusted.load(null, null);
-            final Collection certs = CertTools.getCertsFromPEM(
-                    new FileInputStream(truststorePath));
-            int i = 0;
-            for (Object o : certs) {
-                if (o instanceof Certificate) {
-                    keystoreTrusted.setCertificateEntry("cert-" + i,
-                            (Certificate) o);
-                    i++;
+        FileInputStream in = null;
+        try {
+            in = new FileInputStream(truststorePath);
+            
+            if (TRUSTSTORE_TYPE_PEM.equals(truststoreType)) {
+                keystoreTrusted = KeyStore.getInstance("JKS");
+                keystoreTrusted.load(null, null);
+                final Collection certs = CertTools.getCertsFromPEM(in);
+                int i = 0;
+                for (Object o : certs) {
+                    if (o instanceof Certificate) {
+                        keystoreTrusted.setCertificateEntry("cert-" + i,
+                                (Certificate) o);
+                        i++;
+                    }
                 }
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Loaded " + i + " certs to truststore");
+                }
+            } else if (TRUSTSTORE_TYPE_JKS.equals(truststoreType)) {
+                keystoreTrusted = KeyStore.getInstance(truststoreType);
+                keystoreTrusted.load(in, truststorePass.toCharArray());
+            } else {
+                keystoreTrusted = KeyStore.getInstance(truststoreType, "BC");
+                keystoreTrusted.load(in, truststorePass.toCharArray());
             }
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Loaded " + i + " certs to truststore");
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException ignored) {} // NOPMD
             }
-        } else if (TRUSTSTORE_TYPE_JKS.equals(truststoreType)) {
-            keystoreTrusted = KeyStore.getInstance(truststoreType);
-            keystoreTrusted.load(new FileInputStream(truststorePath),
-                    truststorePass.toCharArray());
-        } else {
-            keystoreTrusted = KeyStore.getInstance(truststoreType, "BC");
-            keystoreTrusted.load(new FileInputStream(truststorePath),
-                    truststorePass.toCharArray());
         }
         final TrustManagerFactory tTrustManagerFactory
                 = TrustManagerFactory.getInstance("SunX509");

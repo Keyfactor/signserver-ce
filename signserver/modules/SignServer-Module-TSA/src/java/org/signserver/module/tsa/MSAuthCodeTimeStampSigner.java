@@ -170,16 +170,10 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
         // Check that the timestamp server is properly configured
         try {
             timeSource = getTimeSource();
-            if (timeSource == null) {
-                final String error = "Error: Timestamp signer :" + signerId +
-                    " has a malconfigured timesource.";
-                LOG.error(error);
-            } else {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("TimeStampSigner[" + signerId + "]: "
-                            + "Using TimeSource: "
-                            + timeSource.getClass().getName());
-                }
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("TimeStampSigner[" + signerId + "]: "
+                        + "Using TimeSource: "
+                        + timeSource.getClass().getName());
             }
             
             signatureAlgo = config.getProperty(SIGNATUREALGORITHM);
@@ -508,8 +502,8 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
     private boolean validateChain() {
         boolean result = true;
         try {
-            Collection<Certificate> signingCertificateChain = getSigningCertificateChain();
-            if (signingCertificateChain instanceof List) {
+            final List<Certificate> signingCertificateChain = getSigningCertificateChain();
+            if (signingCertificateChain != null) {
                 List<Certificate> chain = (List<Certificate>) signingCertificateChain;
                 for (int i = 0; i < chain.size(); i++) {
                     Certificate subject = chain.get(i);

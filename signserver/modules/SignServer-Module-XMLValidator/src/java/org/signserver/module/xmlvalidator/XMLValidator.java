@@ -108,13 +108,8 @@ public class XMLValidator extends BaseValidator {
         if (!(sReq.getRequestData() instanceof byte[])) {
             throw new IllegalRequestException("Recieved request data wasn't a expected byte[].");
         }
-        if (signRequest instanceof GenericServletRequest) {
-            throw new IllegalArgumentException("GenericServletRequest not yet supported");
-        }
 
         byte[] data = (byte[]) sReq.getRequestData();
-//        byte[] fpbytes = CertTools.generateSHA1Fingerprint(data);
-//		String fp = new String(Hex.encode(fpbytes));
 
         GenericValidationResponse response = validate(sReq.getRequestID(), data);
         return response;

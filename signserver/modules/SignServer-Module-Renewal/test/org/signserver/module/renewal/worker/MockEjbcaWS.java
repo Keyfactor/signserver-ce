@@ -302,7 +302,7 @@ public class MockEjbcaWS {
             if (RESPONSETYPE_PKCS7WITHCHAIN.equals(responseType)) {
                 retval = ca.createPKCS7(cert, true);
             } else {
-                retval = cert.getEncoded();
+                //retval = cert.getEncoded();
                 throw new UnsupportedOperationException("Not supported yet");
             }
 

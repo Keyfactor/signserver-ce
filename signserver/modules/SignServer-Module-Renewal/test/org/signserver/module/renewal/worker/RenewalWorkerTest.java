@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Properties;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Endpoint;
+import static junit.framework.TestCase.assertNotNull;
 import org.apache.log4j.Logger;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GenericPropertiesRequest;
@@ -554,6 +555,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
         GenericPropertiesResponse response
                 = (GenericPropertiesResponse) workerSession.process(
                     6110, request, new RequestContext());
+        assertNotNull(response);
         
         assertFalse("Explicit ECC parameters not set", workerSession.explicitEccParametersSet);
     }
@@ -586,6 +588,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
         GenericPropertiesResponse response
                 = (GenericPropertiesResponse) workerSession.process(
                     6110, request, new RequestContext());
+        assertNotNull(response);
         
         assertTrue("Explicit ECC parameters set", workerSession.explicitEccParametersSet);
     }
@@ -618,6 +621,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
         GenericPropertiesResponse response
                 = (GenericPropertiesResponse) workerSession.process(
                     6110, request, new RequestContext());
+        assertNotNull(response);
         
         assertFalse("Explicit ECC parameters not set", workerSession.explicitEccParametersSet);
     }

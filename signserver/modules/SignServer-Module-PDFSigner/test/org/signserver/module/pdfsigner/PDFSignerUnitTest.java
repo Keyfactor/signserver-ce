@@ -936,10 +936,8 @@ public class PDFSignerUnitTest extends TestCase {
      */
     public void test14EstimatedP7Size_increaseNumCRLs() throws Exception {
         final int somethingLargeEnough = 31000;
-        KeyPair issuerKeyPair = CryptoUtils.generateRSA(1024);
         KeyPair signerKeyPair = CryptoUtils.generateRSA(1024);
         PrivateKey signerPrivKey = signerKeyPair.getPrivate();
-        byte[] extensionBytes = new byte[0];
         int referenceCRLSize;
         int referenceSize;
         int actualP7Size;
@@ -1312,12 +1310,19 @@ public class PDFSignerUnitTest extends TestCase {
     }
 
     private byte[] readFile(File file) throws IOException {
-        BufferedInputStream in = new BufferedInputStream(new FileInputStream(
-                file));
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
-        int b;
-        while ((b = in.read()) != -1) {
-            bout.write(b);
+        BufferedInputStream in = null;
+        try {
+            in = new BufferedInputStream(new FileInputStream(
+                file));
+            int b;
+            while ((b = in.read()) != -1) {
+                bout.write(b);
+            }
+        } finally {
+            if (in != null) {
+                in.close();
+            }
         }
         return bout.toByteArray();
     }

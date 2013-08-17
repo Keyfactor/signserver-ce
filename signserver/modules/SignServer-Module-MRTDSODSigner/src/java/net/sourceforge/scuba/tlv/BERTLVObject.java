@@ -363,6 +363,7 @@ public class BERTLVObject
 	 * @return a textual representation of this object.
 	 * @see java.lang.Object#toString()
 	 */
+        @Override
 	public String toString() {
 		return toString(0);
 	}
@@ -371,7 +372,7 @@ public class BERTLVObject
 		byte[] prefixBytes = new byte[indent];
 		Arrays.fill(prefixBytes, (byte)' ');
 		String prefix = new String(prefixBytes);
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		result.append(prefix);
 		result.append(tagToString());
 		result.append(" ");

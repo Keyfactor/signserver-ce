@@ -271,11 +271,13 @@ public class MSAuthCodeCMSUtils
      */
     private static class NullOutputStream extends OutputStream
     {
+        @Override
         public void write(byte[] buf)
                 throws IOException {
             // do nothing
         }
 
+        @Override
         public void write(byte[] buf, int off, int len)
                 throws IOException {
             // do nothing

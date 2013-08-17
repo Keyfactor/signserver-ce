@@ -1425,6 +1425,9 @@ right shows details for the selected workers (if any).
 <b> Edit -&gt; Renew signer...</b>: Opens the Renew signer dialog for the selected worker(s).
                         </p>
                         <p>
+<b> Edit -&gt; Remove...</b>: Removes the selected workers from the SignServer configuration.
+                        </p>
+                        <p>
 <b> Edit -&gt; Global configuration...</b>: Opens the Global configuration window.
                         </p>
                         <p>

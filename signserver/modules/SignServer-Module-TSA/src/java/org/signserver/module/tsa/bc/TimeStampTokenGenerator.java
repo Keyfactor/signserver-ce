@@ -253,7 +253,7 @@ public class TimeStampTokenGenerator
         //
         // add the essCertid
         //
-        Hashtable signedAttrs = null;
+        final Hashtable signedAttrs;
         
         if (signedAttr != null)
         {

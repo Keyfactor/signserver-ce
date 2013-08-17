@@ -88,7 +88,7 @@ public class MockCA {
         LOG.debug("keystore signing algorithm " + sigAlg);
         cg.setSignatureAlgorithm(sigAlg);
         cg.setSubjectDN(new X500Principal(subject));
-        ;
+        
         if (pubKey == null) {
             throw new Exception("Public key is null");
         }
@@ -123,8 +123,7 @@ public class MockCA {
             gen.addSigner(keyPair.getPrivate(), caCertificate,
                     CMSSignedGenerator.DIGEST_SHA1);
             gen.addCertificatesAndCRLs(certStore);
-            CMSSignedData s = null;
-            s = gen.generate(msg, true, "BC");
+            CMSSignedData s = gen.generate(msg, true, "BC");
 
             return s.getEncoded();
         } catch (Exception e) {

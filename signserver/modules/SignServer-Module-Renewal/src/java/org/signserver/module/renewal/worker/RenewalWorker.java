@@ -576,7 +576,7 @@ public class RenewalWorker extends BaseSigner {
             UnrecoverableKeyException, IOException, CertificateException,
             NoSuchProviderException, KeyManagementException, SignServerException {
 
-        EjbcaWS result = null;
+        EjbcaWS result;
 
         final String urlstr = ejbcaUrl + WS_PATH;
 

@@ -20,7 +20,6 @@ import org.apache.log4j.Logger;
 import org.ejbca.core.model.ca.catoken.ICAToken;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.WorkerConfig;
-import org.signserver.server.cryptotokens.ICryptoToken;
 
 /**
  * Class used to connect to the PrimeCard HSM card.

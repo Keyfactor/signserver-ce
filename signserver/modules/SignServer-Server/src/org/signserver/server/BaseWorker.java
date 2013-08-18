@@ -18,7 +18,6 @@ import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.signserver.common.ServiceLocator;
-import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 

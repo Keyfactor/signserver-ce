@@ -118,8 +118,8 @@ public class SODProcessServlet extends HttpServlet {
         }
 
         int workerId = 1;
-        String ldsVersion = null;
-        String unicodeVersion = null;
+        String ldsVersion;
+        String unicodeVersion;
 
         String name = req.getParameter(WORKERNAME_PROPERTY_NAME);
         if (name != null) {
@@ -227,7 +227,7 @@ public class SODProcessServlet extends HttpServlet {
 
             final SODSignRequest signRequest = new SODSignRequest(requestId,
                     dataGroups, ldsVersion, unicodeVersion);
-            SODSignResponse response = null;
+            SODSignResponse response;
             try {
                 final RequestContext context = new RequestContext((X509Certificate) clientCertificate, remoteAddr);
                 final String xForwardedFor = req.getHeader(RequestContext.X_FORWARDED_FOR);

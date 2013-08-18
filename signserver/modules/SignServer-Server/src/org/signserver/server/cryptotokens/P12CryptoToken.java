@@ -13,7 +13,6 @@
 package org.signserver.server.cryptotokens;
 
 import java.util.Properties;
-import org.signserver.server.cryptotokens.ICryptoToken;
 
 /**
  * Class that uses a p12 file on the file system for signing. Only one key and purpose is supported

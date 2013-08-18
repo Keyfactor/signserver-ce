@@ -14,7 +14,6 @@ package org.signserver.server.log;
 
 import java.util.Map;
 import java.util.Properties;
-import org.signserver.server.log.WorkerLoggerException;
 
 /**
  * Logger for events (transactions) performed by a worker processing a request.

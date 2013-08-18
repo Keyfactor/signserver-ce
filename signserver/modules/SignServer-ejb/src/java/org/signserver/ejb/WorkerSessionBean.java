@@ -580,7 +580,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         
         // If the signer have a certificate, check that the usage of the key
         // has not reached the limit
-        Certificate cert = null;
+        Certificate cert;
 
         if (worker instanceof BaseProcessable) {
             cert = ((BaseProcessable) worker).getSigningCertificate();
@@ -1033,7 +1033,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     @Override
     public boolean removeAuthorizedClient(final AdminInfo adminInfo, int signerId,
             AuthorizedClient authClient) {
-        boolean result = false;
+        boolean result;
         WorkerConfig config = getWorkerConfig(signerId);
 
 

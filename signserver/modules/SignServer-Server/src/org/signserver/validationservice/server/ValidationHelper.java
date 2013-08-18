@@ -22,7 +22,6 @@ import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.validationservice.common.ValidationServiceConstants;
-import org.signserver.validationservice.server.IValidator;
 
 /**
  * Class containing helper methods for the validation service sub framework.

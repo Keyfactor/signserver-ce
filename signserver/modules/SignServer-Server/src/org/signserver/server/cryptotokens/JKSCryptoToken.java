@@ -13,7 +13,6 @@
 package org.signserver.server.cryptotokens;
 
 import java.util.Properties;
-import org.signserver.server.cryptotokens.ICryptoToken;
 
 
 /**

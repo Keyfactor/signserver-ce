@@ -33,8 +33,6 @@ import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.validationservice.common.Validation;
-import org.signserver.validationservice.server.BaseValidator;
-import org.signserver.validationservice.server.ValidationUtils;
 
 /**
  * CRL validator used for validating certificates using CRL only for revocation 
@@ -128,7 +126,7 @@ public class CRLValidator extends BaseValidator {
 
         // fetch crl's of requested certificate and all certificates in a chain
         URL certURL = null;
-        X509Certificate x509CurrentCert = null;
+        X509Certificate x509CurrentCert;
         boolean atLeastOneCDPNotFound = false;
         Iterator<Certificate> cACerts = certChain.iterator();
 
@@ -202,9 +200,9 @@ public class CRLValidator extends BaseValidator {
 
         // certStore & certPath construction
         CertPath certPath = null;
-        CertStore certStore = null;
+        CertStore certStore;
         List<Object> certsAndCRLS = new ArrayList<Object>(); // object ?, specified to suppress warnings but is it good way ? 
-        CertificateFactory certFactory = null;
+        CertificateFactory certFactory;
         CertPathValidator validator = null;
         PKIXParameters params = null;
         try {
@@ -273,7 +271,7 @@ public class CRLValidator extends BaseValidator {
 
 
         //do actual validation
-        PKIXCertPathValidatorResult cpv_result = null;
+        PKIXCertPathValidatorResult cpv_result;
         try {
             cpv_result = (PKIXCertPathValidatorResult) validator.validate(certPath, params);
             //if we are down here then validation is successful

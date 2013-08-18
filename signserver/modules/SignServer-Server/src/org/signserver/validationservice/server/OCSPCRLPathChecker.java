@@ -25,7 +25,6 @@ import org.bouncycastle.asn1.x509.CRLReason;
 import org.bouncycastle.cert.ocsp.OCSPReq;
 import org.ejbca.util.CertTools;
 import org.signserver.common.SignServerException;
-import org.signserver.validationservice.server.ValidationUtils;
 
 /**
  * Stateful OCSP fail over to CRL PKIX certificate path checker. It does not
@@ -244,8 +243,8 @@ public class OCSPCRLPathChecker extends OCSPPathChecker {
         // check if certificate is revoked
         X509CRLEntry crlEntry = certCRL.getRevokedCertificate(x509Cert);
         if (crlEntry != null) {
-            msg = "The certificate " + CertTools.getSubjectDN(x509Cert)
-                    + " has been revoked on " + crlEntry.getRevocationDate();
+//            msg = "The certificate " + CertTools.getSubjectDN(x509Cert)
+//                    + " has been revoked on " + crlEntry.getRevocationDate();
 
             // TODO : crlEntry extension is OPTIONAL ?? if it is then throw
             // exception if it has no extension
@@ -262,7 +261,6 @@ public class OCSPCRLPathChecker extends OCSPPathChecker {
                     // this is tricky, though the certificate is found in CRL it
                     // is not revoked, it is activated back from on-hold
                     // so it is actually not revoked !
-                    return;
                 } else {
                     // certificate is revoked , append reason code and throw
                     // exception so we stop checking
@@ -276,7 +274,7 @@ public class OCSPCRLPathChecker extends OCSPPathChecker {
     @Override
     public Object clone() {
         try {
-            OCSPCRLPathChecker clonedOCSPCRLPathChecker = null;
+            OCSPCRLPathChecker clonedOCSPCRLPathChecker;
             X509Certificate clonedPrevCert = null;
             if (cACert != null) {
                 CertificateFactory certFact = CertificateFactory.getInstance(

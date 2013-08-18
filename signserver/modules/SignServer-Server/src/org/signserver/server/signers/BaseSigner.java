@@ -53,7 +53,7 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
      */
     @Override
     public WorkerStatus getStatus(final List<String> additionalFatalErrors) {
-        SignerStatus retval = null;
+        SignerStatus retval;
         final List<String> fatalErrors = new LinkedList<String>(additionalFatalErrors);
         fatalErrors.addAll(getFatalErrors());
 
@@ -96,7 +96,8 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
                 retval = new SignerStatus(workerId, getCryptoToken().getCryptoTokenStatus(),
                         fatalErrors, new ProcessableConfig(config), null);
             } catch (SignServerException e2) {
-                fatalErrors.add("Failed to get crypto token: " + e.getMessage());
+                fatalErrors.add("Failed to get crypto token: " + e2.getMessage());
+                retval = new SignerStatus(workerId, SignerStatus.STATUS_OFFLINE, fatalErrors, new ProcessableConfig(config), null);
             }
         } catch (NumberFormatException ex) {
             try {
@@ -106,6 +107,7 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
                         fatalErrors, new ProcessableConfig(config), null);
             } catch (SignServerException e) {
                 fatalErrors.add("Failed to get crypto token: " + e.getMessage());
+                retval = new SignerStatus(workerId, SignerStatus.STATUS_OFFLINE, fatalErrors, new ProcessableConfig(config), null);
             }
         }
         retval.setKeyUsageCounterDisabled(keyUsageCounterDisabled);
@@ -238,6 +240,7 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
         final X509CertificateHolder cert = new X509CertificateHolder(subject.getEncoded());
         final Collection<?> matchedCerts = store.getMatches(new Selector() {
             
+            @Override
             public boolean match(Object obj) {
                 return cert.equals(obj);
             }

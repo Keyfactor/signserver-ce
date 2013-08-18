@@ -12,7 +12,6 @@
  *************************************************************************/
 package org.signserver.server.archive.test1archiver;
 
-import java.util.Collection;
 import java.util.Collections;
 import org.apache.log4j.Logger;
 import org.signserver.common.ArchiveData;

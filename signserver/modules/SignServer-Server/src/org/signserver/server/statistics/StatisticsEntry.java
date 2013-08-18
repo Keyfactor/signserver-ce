@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Delayed;
 import java.util.concurrent.TimeUnit;
-import org.signserver.server.statistics.Event;
 
 /**
  * A statistics entry is a summarization of one or more events

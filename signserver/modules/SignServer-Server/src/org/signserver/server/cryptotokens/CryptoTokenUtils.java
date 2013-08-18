@@ -136,9 +136,9 @@ public final class CryptoTokenUtils {
             UnrecoverableKeyException, KeyStoreException,
             NoSuchAlgorithmException, NoSuchProviderException {
         KeyStore ks = loadKeyStore(store, sPass);
-        Key key = null;
-        PublicKey publicKey = null;
-        PrivateKey privateKey = null;
+        Key key;
+        PublicKey publicKey;
+        PrivateKey privateKey;
         if (ks.containsAlias(alias)) {
             key = ks.getKey(alias, kPass.toCharArray());
             if (key instanceof PrivateKey) {

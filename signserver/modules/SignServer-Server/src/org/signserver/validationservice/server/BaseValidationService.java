@@ -24,9 +24,6 @@ import org.signserver.common.WorkerStatus;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.validationservice.common.ValidationServiceConstants;
 import org.signserver.validationservice.common.ValidationStatus;
-import org.signserver.validationservice.server.IValidationService;
-import org.signserver.validationservice.server.IValidator;
-import org.signserver.validationservice.server.ValidationHelper;
 import org.signserver.validationservice.server.validcache.ValidationCache;
 
 /**

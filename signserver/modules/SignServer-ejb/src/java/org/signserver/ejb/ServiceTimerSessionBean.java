@@ -90,24 +90,22 @@ public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, ISe
                 IWorker worker = workerManagerSession.getWorker(timerInfo.intValue(), globalConfigurationSession);
                 if (worker != null) {
                     serviceConfig = new ServiceConfig(worker.getConfig());
-                    if (serviceConfig != null) {
-                        timedService = (ITimedService) worker;
-                        sessionCtx.getTimerService().createTimer(timedService.getNextInterval(), timerInfo);
-                        isSingleton = timedService.isSingleton();
-                        if (!isSingleton) {
+                    timedService = (ITimedService) worker;
+                    sessionCtx.getTimerService().createTimer(timedService.getNextInterval(), timerInfo);
+                    isSingleton = timedService.isSingleton();
+                    if (!isSingleton) {
+                        run = true;
+                    } else {
+                        GlobalConfiguration gc = globalConfigurationSession.getGlobalConfiguration();
+                        Date nextRunDate = new Date(0);
+                        if (gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL, "SERVICENEXTRUNDATE" + timerInfo.intValue()) != null) {
+                            nextRunDate = new Date(Long.parseLong(gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL, "SERVICENEXTRUNDATE" + timerInfo.intValue())));
+                        }
+                        Date currentDate = new Date();
+                        if (currentDate.after(nextRunDate)) {
+                            nextRunDate = new Date(currentDate.getTime() + timedService.getNextInterval());
+                            globalConfigurationSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "SERVICENEXTRUNDATE" + timerInfo.intValue(), "" + nextRunDate.getTime());
                             run = true;
-                        } else {
-                            GlobalConfiguration gc = globalConfigurationSession.getGlobalConfiguration();
-                            Date nextRunDate = new Date(0);
-                            if (gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL, "SERVICENEXTRUNDATE" + timerInfo.intValue()) != null) {
-                                nextRunDate = new Date(Long.parseLong(gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL, "SERVICENEXTRUNDATE" + timerInfo.intValue())));
-                            }
-                            Date currentDate = new Date();
-                            if (currentDate.after(nextRunDate)) {
-                                nextRunDate = new Date(currentDate.getTime() + timedService.getNextInterval());
-                                globalConfigurationSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "SERVICENEXTRUNDATE" + timerInfo.intValue(), "" + nextRunDate.getTime());
-                                run = true;
-                            }
                         }
                     }
                 }
@@ -134,7 +132,7 @@ public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, ISe
             }
 
             if (run) {
-                if (serviceConfig != null) {
+                if (serviceConfig != null && timedService != null) {
                     try {
                         if (timedService.isActive() && timedService.getNextInterval() != ITimedService.DONT_EXECUTE) {
                             timedService.work();

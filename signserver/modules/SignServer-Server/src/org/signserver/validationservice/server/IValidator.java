@@ -24,7 +24,7 @@ import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.validationservice.common.Validation;
 
 /**
- * Interface all types of validators should implement, this could be 
+ * Interface all types of certificate validators should implement, this could be 
  * a OCSP Validator or CRL validator or simply a database were the certificate
  * status is lookup up. It's recommended that the BaseValidator is inherited.
  * 
@@ -34,9 +34,7 @@ import org.signserver.validationservice.common.Validation;
  * involved CA certificates and should only return Validation object with status REVOKED or VALID
  * 
  * @author Philip Vendil
- *  
  * @version $Id$
- *
  */
 public interface IValidator {
 

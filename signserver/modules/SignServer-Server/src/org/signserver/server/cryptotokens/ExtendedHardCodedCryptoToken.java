@@ -30,7 +30,6 @@ import org.ejbca.util.Base64;
 import org.ejbca.util.keystore.KeyTools;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
-import org.signserver.server.cryptotokens.IExtendedCryptoToken;
 
 /**
  * Dummy implementation of an Extended Crypto Token used

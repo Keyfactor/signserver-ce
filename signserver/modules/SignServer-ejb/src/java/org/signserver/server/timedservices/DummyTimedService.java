@@ -62,7 +62,7 @@ public class DummyTimedService extends BaseTimedService {
         try {
             FileInputStream fis = new FileInputStream(outPath);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            int next = 0;
+            int next;
             while ((next = fis.read()) != -1) {
                 baos.write(next);
             }

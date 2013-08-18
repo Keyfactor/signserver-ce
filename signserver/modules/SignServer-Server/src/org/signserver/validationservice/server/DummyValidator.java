@@ -27,7 +27,6 @@ import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.validationservice.common.Validation;
-import org.signserver.validationservice.server.BaseValidator;
 
 /**
  * Dummy validator used for testing and demonstration purposes.

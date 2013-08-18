@@ -14,7 +14,6 @@ package org.signserver.server;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -22,13 +21,11 @@ import java.util.Set;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.signserver.common.AccessDeniedException;
-import org.signserver.common.AuthorizationRequiredException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
-import org.signserver.common.util.XForwardedForUtils;
 import org.signserver.server.log.LogMap;
 
 /**

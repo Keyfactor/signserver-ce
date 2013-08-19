@@ -63,6 +63,12 @@ class CertificateAndKeySelector extends KeySelector {
             "http://www.w3.org/2001/04/xmldsig-more#rsa-sha512";
     private static final String SIGNATURE_METHOD_ECDSA_SHA1 =
             "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha1";
+    private static final String SIGNATURE_METHOD_ECDSA_SHA256 =
+            "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha256";
+    private static final String SIGNATURE_METHOD_ECDSA_SHA384 =
+            "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha384";
+    private static final String SIGNATURE_METHOD_ECDSA_SHA512 =
+            "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha512";
     
     public CertificateAndKeySelector() {
         this(-1);
@@ -149,7 +155,10 @@ class CertificateAndKeySelector extends KeySelector {
         } else if ("DSA".equalsIgnoreCase(keyAlg)) {
             return SignatureMethod.DSA_SHA1.equalsIgnoreCase(signAlg);
         } else if ("ECDSA".equalsIgnoreCase(keyAlg)) {
-            return SIGNATURE_METHOD_ECDSA_SHA1.equals(signAlg);
+            return SIGNATURE_METHOD_ECDSA_SHA1.equals(signAlg) ||
+                    SIGNATURE_METHOD_ECDSA_SHA256.equals(signAlg) ||
+                    SIGNATURE_METHOD_ECDSA_SHA384.equals(signAlg) ||
+                    SIGNATURE_METHOD_ECDSA_SHA512.equals(signAlg);
         }
         return false;
     }

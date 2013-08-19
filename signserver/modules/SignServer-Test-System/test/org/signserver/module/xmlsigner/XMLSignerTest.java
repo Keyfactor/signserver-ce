@@ -49,7 +49,9 @@ public class XMLSignerTest extends ModulesTestCase {
     /** WORKERID used in this test case as defined in junittest-part-config.properties */
     private static final int WORKERID2 = 5679;
     
-    private static final int[] WORKERS = new int[] {5676, 5679, 5681, 5682, 5683, 5802, 5803};
+    private static final int WORKERID3 = 5804;
+    
+    private static final int[] WORKERS = new int[] {5676, 5679, 5681, 5682, 5683, 5802, 5803, 5804};
 
     private static final String TESTXML1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><root><my-tag>My Data</my-tag></root>";
 
@@ -67,6 +69,10 @@ public class XMLSignerTest extends ModulesTestCase {
         workerSession.setWorkerProperty(WORKERID2, "KEYSTOREPATH",
                 new File(getSignServerHome() + File.separator + "res" + File.separator + "test" + File.separator + "xmlsigner4.jks").getAbsolutePath());
         workerSession.reloadConfiguration(WORKERID2);
+        
+        workerSession.setWorkerProperty(WORKERID3, "KEYSTOREPATH",
+                new File(getSignServerHome() + File.separator + "res" + File.separator + "test" + File.separator + "dss10" + File.separator + "dss10_signer5ec.p12").getAbsolutePath());
+        workerSession.reloadConfiguration(WORKERID3);
     }
 
     /**
@@ -185,6 +191,11 @@ public class XMLSignerTest extends ModulesTestCase {
     @Test
     public void test09BasicXmlSignDSASHA1() throws Exception {
         testBasicXmlSign(WORKERID2, "SHA1withDSA", "http://www.w3.org/2000/09/xmldsig#dsa-sha1");
+    }
+
+    @Test
+    public void test10BasicXmlSignECDSASHA1() throws Exception {
+        testBasicXmlSign(WORKERID3, "SHA1withECDSA", "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha1");
     }
 
     @Test

@@ -197,7 +197,22 @@ public class XMLSignerTest extends ModulesTestCase {
     public void test10BasicXmlSignECDSASHA1() throws Exception {
         testBasicXmlSign(WORKERID3, "SHA1withECDSA", "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha1");
     }
-
+ 
+    @Test
+    public void test11BasicXmlSignECDSASHA256() throws Exception {
+        testBasicXmlSign(WORKERID3, "SHA256withECDSA", "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha256");
+    }
+    
+    @Test
+    public void test12BasicXmlSignECDSASHA384() throws Exception {
+        testBasicXmlSign(WORKERID3, "SHA384withECDSA", "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha384");
+    }
+    
+    @Test
+    public void test13BasicXmlSignECDSASHA512() throws Exception {
+        testBasicXmlSign(WORKERID3, "SHA512withECDSA", "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha512");
+    }
+    
     @Test
     public void test99TearDownDatabase() throws Exception {
         for (int workerId : WORKERS) {

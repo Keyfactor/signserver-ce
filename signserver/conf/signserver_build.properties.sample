@@ -192,6 +192,10 @@ j2ee.web-nohttps=true
 # Default: true
 #module.xmlvalidator.enabled=true
 
+# Module XAdES
+# Default: true
+#module.xades.enabled=true
+
 # Module CMSSigner
 # Default: true
 #module.cmssigner.enabled=true

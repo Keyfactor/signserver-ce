@@ -21,6 +21,7 @@
 <li>Bruno Bonfils, French install howto for SignServer 3.2. See <a href="http://wiki.opencsi.com/public/bin/view/SignServer/Installation">wiki.opencsi.com</a>.</li>
 <li>Marcus Lundblad, marcus.lundblad(at)primekey.se, Core developer, Down-for-maintenance support, archiving of time-stamp requests, etc etc.</li>
 <li>Antoine Louiset, antoine.louiset(at)yousign.fr, installation package for SignServer 3.2 on Debian. See doc/howtos.</li>
+<li>Luis Maia, lmaia(at)dcc.fc.up.pt, XAdES Signer.</li>
 </ul>
 </section>
 </body>

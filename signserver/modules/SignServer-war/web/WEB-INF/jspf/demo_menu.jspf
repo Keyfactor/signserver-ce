@@ -10,5 +10,6 @@
                 <li><a href="cmssign.jsp">CMS</a></li>
                 <li><a href="mrtdsodsign.jsp">MRTD SOD</a></li>
                 <li><a href="xmlvalidation.jsp">XML validation</a></li>
+                <li><a href="xadessign.jsp">XAdES</a></li>
                 <!-- TODO: <li><a href="tsa.jsp">TSA</a></li> -->
             </ul>

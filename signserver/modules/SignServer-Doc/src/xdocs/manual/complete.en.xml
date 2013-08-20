@@ -270,6 +270,7 @@ PKCS11 Crypto Token to connect to different PKCS11 implementations.
                     </tr><tr><td>PDF Signer</td><td>A Signer that attaches an electronic signature signature to a PDF document.</td>
                     </tr><tr><td>XML Signer</td><td>A Signer that puts in an enveloped signature in XML documents (XMLDSig)</td>
                     </tr><tr><td>XML Validator</td><td>A Document Validator that validates signed XML documents (XMLDSig)</td>
+                    </tr><tr><td>XAdES Signer</td><td>A Signer signing XML documents using XAdES</td>
                     </tr><tr><td>ODF Signer</td><td>A Signer that attaches an electronic signature to an ODF document. ODF Signer is tested with documents produced by <a href="http://www.openoffice.org">OpenOffice.org v 3.1.0</a></td>
                     </tr><tr><td>ODF (Open Document Format) Document</td><td>XML-based file format for representing electronic documents such as spreadsheets, charts, presentations and word processing documents. <a href="http://en.wikipedia.org/wiki/OpenDocument">more...</a></td>
                     </tr><tr><td>OOXML (Office Open XML) Document</td><td>XML-based file format  for representing spreadsheets, charts, presentations and word processing documents. <a href="http://en.wikipedia.org/wiki/Office_Open_XML">more...</a></td>
@@ -3800,6 +3801,9 @@ Default: unset (if the permissions are changed, the existing owner password will
                 </subsection>
 
                 <subsection name="ODF Signer">
+                        <p>
+Fully qualified class name: org.signserver.module.odfsigner.ODFSigner
+                        </p>
                     <subsubsection name="Overview">
                         <p>
 ODF Signer, which stands for Open Document Format Signer is a plug-in to SignServer that applies server side signature to documents in ODF format. It has been tested with OpenOffice.org 3.1.
@@ -3816,6 +3820,9 @@ ODF Signer, which stands for Open Document Format Signer is a plug-in to SignSer
                 </subsection>
 
                 <subsection name="XML Signer">
+                    <p>
+Fully qualified class name: org.signserver.module.xmlsigner.XMLSigner
+                    </p>
                     <subsubsection name="Overview">
                         <p>
 The XML Signer creates enveloped XML signatures using XMLDSig.
@@ -3826,12 +3833,39 @@ The signed XML document can be validated using the XML Validator.
                     </subsubsection>
                     <subsubsection name="Available Properties">
                         <p>
-							<b>SIGNATUREALGORITHM</b> = property specifying the algorithm used to sign the data (default: depending on the signer's private key: SHA1withDSA for DSA keys and SHA1withRSA for RSA keys.)
+                            <b>SIGNATUREALGORITHM</b> = property specifying the algorithm used to sign the data (default: depending on the signer's private key: SHA1withDSA for DSA keys and SHA1withRSA for RSA keys.)
+                        </p>
+                    </subsubsection>
+                </subsection>
+                
+                <subsection name="XAdES Signer">
+                    <p>
+Fully qualified class name: org.signserver.module.xades.signer.XAdESSigner
+                    </p>
+                    <subsubsection name="Overview">
+                        <p>
+The XAdES Signer creates XML signatures according to the specified profile of XAdES.
+                        </p>
+<!--                        <p>
+The signed XML document can be validated using the XML Validator.
+                        </p>
+                        -->
+                    </subsubsection>
+                    <subsubsection name="Available Properties">
+                        <p>
+                            <b>XADESFORM</b> = Which profile of XAdES to use. Currently only BES is supported. Default: BES<br/>
+                            <b>TSA_URL</b> = URL of timestamp authority. Required if XADESFORM=T.<br/>
+                            <b>TSA_USERNAME</b> = Login username used if the TSA uses HTTP Basic Auth.<br/>
+                            <b>TSA_PASSWORD</b> = Login password used if the TSA uses HTTP Basic Auth.<br/>
+                            <!-- <b>SIGNATUREALGORITHM</b> = property specifying the algorithm used to sign the data (default: depending on the signer's private key: SHA1withDSA for DSA keys and SHA1withRSA for RSA keys.)<br/>-->
                         </p>
                     </subsubsection>
                 </subsection>
 
                 <subsection name="OOXML Signer">
+                    <p>
+Fully qualified class name: org.signserver.module.ooxmlsigner.OOXMLSigner
+                    </p>
                     <subsubsection name="Overview">
                         <p>
 OOXML Signer, which stands for Office Open XML Signer is a plug-in to SignServer that applies server side signature to documents in OOXML format. It has been tested with MS Office 2007.

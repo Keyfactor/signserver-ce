@@ -101,7 +101,7 @@ class CertificateAndKeySelector extends KeySelector {
                         if (log.isDebugEnabled()) {
                             log.debug("Trying to match " + keyAlgo + " key with " + sigMethod + " signature method");
                         }
-                        if (matchingAlgorithms(cert.getPublicKey().getAlgorithm(), signatureMethod.getAlgorithm())) {
+                        if (matchingAlgorithms(keyAlgo, sigMethod)) {
                             foundCerts.add(cert);
                         }
                     }

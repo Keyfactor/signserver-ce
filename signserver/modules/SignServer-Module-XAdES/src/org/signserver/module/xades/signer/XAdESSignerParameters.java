@@ -51,4 +51,9 @@ public class XAdESSignerParameters {
         return tsaParameters != null;
     }
 
+    @Override
+    public String toString() {
+        return "XAdESSignerParameters{" + "xadesForm=" + xadesForm + ", tsaParameters=" + tsaParameters + '}';
+    }
+    
 }

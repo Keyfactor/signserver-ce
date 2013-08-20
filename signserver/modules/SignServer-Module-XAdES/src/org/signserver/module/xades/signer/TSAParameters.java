@@ -46,5 +46,10 @@ public class TSAParameters {
     public String getPassword() {
         return password;
     }
+
+    @Override
+    public String toString() {
+        return "TSAParameters{" + "url=" + url + ", username=" + username + ", password=<" + (password == null ? "null" : "masked") + ">}";
+    }
     
 }

@@ -12,39 +12,37 @@
  *************************************************************************/
 package org.signserver.module.xades.signer;
 
+import java.security.cert.Certificate;
+import java.util.List;
+import org.signserver.common.CryptoTokenOfflineException;
+import org.signserver.server.cryptotokens.ICryptoToken;
+
 /**
- * Class containing TSA Properties.
- * 
- * Based on patch contributed by Luis Maia &lt;lmaia@dcc.fc.up.pt&gt;.
+ * Mocked version of the XAdESSigner using a MockedCryptoToken.
  *
- * @author Luis Maia <lmaia@dcc.fc.up.pt>
+ * @author Markus Kilås
  * @version $Id$
  */
-public class TSAParameters {
-    private final String url;
-    private final String username;
-    private final String password;
+public class MockedXAdESSigner extends XAdESSigner {
+    private final MockedCryptoToken mockedToken;
 
-    public TSAParameters(final String url, final String username, final String password) {
-        this.url = url;
-        this.username = username;
-        this.password = password;
+    public MockedXAdESSigner(final MockedCryptoToken mockedToken) {
+        this.mockedToken = mockedToken;
+    }
+    
+    @Override
+    public Certificate getSigningCertificate() throws CryptoTokenOfflineException {
+        return mockedToken.getCertificate(ICryptoToken.PURPOSE_SIGN);
     }
 
-    public TSAParameters(String url) {
-        this(url, null, null);
+    @Override
+    public List<Certificate> getSigningCertificateChain() throws CryptoTokenOfflineException {
+        return mockedToken.getCertificateChain(ICryptoToken.PURPOSE_SIGN);
     }
 
-    public String getUrl() {
-        return url;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getPassword() {
-        return password;
+    @Override
+    protected ICryptoToken getCryptoToken() {
+        return mockedToken;
     }
     
 }

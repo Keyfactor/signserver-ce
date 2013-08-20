@@ -127,6 +127,7 @@ public class XAdESSigner extends BaseSigner {
         }
         
         // TODO: Configuration of signature algorithm
+        // TODO: Configuration of commitment type
         // TODO: Other configuration options
         
         parameters = new XAdESSignerParameters(form, tsa);
@@ -232,6 +233,10 @@ public class XAdESSigner extends BaseSigner {
         final LinkedList<String> errors = new LinkedList<String>(super.getFatalErrors());
         errors.addAll(configErrors);
         return errors;
+    }
+
+    public XAdESSignerParameters getParameters() {
+        return parameters;
     }
 
 }

@@ -96,6 +96,11 @@ class CertificateAndKeySelector extends KeySelector {
                 for (Object o2 : data.getContent()) {
                     if (o2 instanceof X509Certificate) {
                         X509Certificate cert = (X509Certificate) o2;
+                        final String keyAlgo = cert.getPublicKey().getAlgorithm();
+                        final String sigMethod = signatureMethod.getAlgorithm();
+                        if (log.isDebugEnabled()) {
+                            log.debug("Trying to match " + keyAlgo + " key with " + sigMethod + " signature method");
+                        }
                         if (matchingAlgorithms(cert.getPublicKey().getAlgorithm(), signatureMethod.getAlgorithm())) {
                             foundCerts.add(cert);
                         }
@@ -154,7 +159,7 @@ class CertificateAndKeySelector extends KeySelector {
                     SIGNATURE_METHOD_RSA_SHA512.equals(signAlg);
         } else if ("DSA".equalsIgnoreCase(keyAlg)) {
             return SignatureMethod.DSA_SHA1.equalsIgnoreCase(signAlg);
-        } else if ("ECDSA".equalsIgnoreCase(keyAlg)) {
+        } else if ("EC".equalsIgnoreCase(keyAlg)) {
             return SIGNATURE_METHOD_ECDSA_SHA1.equals(signAlg) ||
                     SIGNATURE_METHOD_ECDSA_SHA256.equals(signAlg) ||
                     SIGNATURE_METHOD_ECDSA_SHA384.equals(signAlg) ||

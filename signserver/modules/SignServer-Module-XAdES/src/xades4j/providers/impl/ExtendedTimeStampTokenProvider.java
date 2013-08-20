@@ -25,6 +25,7 @@ import xades4j.utils.Base64;
  * TODO: Contribute this back to XAdES4j.
  *
  * @author Luis Maia <lmaia@dcc.fc.up.pt>
+ * @version $Id$
  */
 public final class ExtendedTimeStampTokenProvider extends DefaultTimeStampTokenProvider {
 

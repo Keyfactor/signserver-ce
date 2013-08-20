@@ -21,6 +21,7 @@ import org.signserver.module.xades.signer.XAdESSigner.Profiles;
  * Based on patch contributed by Luis Maia &lt;lmaia@dcc.fc.up.pt&gt;.
  * 
  * @author Luis Maia <lmaia@dcc.fc.up.pt>
+ * @version $Id$
  */
 public class XAdESSignerParameters {
     /** Logger for this class. */

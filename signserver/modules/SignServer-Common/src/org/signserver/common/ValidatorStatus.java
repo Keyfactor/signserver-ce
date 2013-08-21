@@ -37,8 +37,23 @@ public class ValidatorStatus extends WorkerStatus {
 
     @Override
     public void displayStatus(int workerId, PrintStream out, boolean complete) {
+        final List<String> errors = getFatalErrors();
         out.println("Status of Validator with Id " + workerId + " is :\n"
-                + "  SignToken Status : " + " \n\n");
+                + "  Worker status : " + signTokenStatuses[errors.isEmpty() ? 1 : 2] + "\n");
+        
+        if (!errors.isEmpty()) {
+            out.println("  Errors: ");
+            
+            for (String error : errors) {
+                out.print("    ");
+                out.println(error);
+            }
+        }
+        if (isDisabled()) {
+            out.println("   Signer is disabled.");
+        }       
+
+        out.println("\n\n");
 
         if (complete) {
             out.println("Active Properties are :");

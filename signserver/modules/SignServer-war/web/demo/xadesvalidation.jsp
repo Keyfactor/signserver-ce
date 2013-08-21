@@ -3,7 +3,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
         <link rel="stylesheet" href="../publicweb.css" type="text/css"/>
-        <title>XML Validation Demo - SignServer</title>
+        <title>XAdES Validation Demo - SignServer</title>
         <style type="text/css">
             img {
                 border: 0px;
@@ -43,14 +43,14 @@
 
 
             <h3 style="margin-top: 4em;">XML Validation Demo</h3>
-            <form id="recievefile" action="../worker/DemoXMLValidator"
+            <form id="recievefile" action="../worker/XAdESValidator"
                   method="post" enctype="multipart/form-data">
 
                 <fieldset>
                     <input type="hidden" name="processType" value="validateDocument"/>
                 </fieldset>
 
-                <p>Simply upload a XML document to the XML validator and you will get
+                <p>Simply upload a XML document signed with XAdES-BES to the XAdES validator and you will get
                     back the status of validity ("VALID" or "INVALID").</p>
 
                 <table width="100%" border="0" cellspacing="3" cellpadding="3">

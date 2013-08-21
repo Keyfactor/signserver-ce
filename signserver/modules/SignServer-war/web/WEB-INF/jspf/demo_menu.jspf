@@ -11,5 +11,6 @@
                 <li><a href="mrtdsodsign.jsp">MRTD SOD</a></li>
                 <li><a href="xmlvalidation.jsp">XML validation</a></li>
                 <li><a href="xadessign.jsp">XAdES</a></li>
+                <li><a href="xadesvalidation.jsp">XAdES validation</a></li>
                 <!-- TODO: <li><a href="tsa.jsp">TSA</a></li> -->
             </ul>

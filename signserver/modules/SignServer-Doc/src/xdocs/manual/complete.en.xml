@@ -3833,7 +3833,7 @@ The signed XML document can be validated using the XML Validator.
                     </subsubsection>
                     <subsubsection name="Available Properties">
                         <p>
-                            <b>SIGNATUREALGORITHM</b> = property specifying the algorithm used to sign the data (default: depending on the signer's private key: SHA1withDSA for DSA keys and SHA1withRSA for RSA keys.)
+				<b>SIGNATUREALGORITHM</b> = property specifying the algorithm used to sign the data (default: depending on the signer's private key: SHA1withDSA for DSA keys, SHA1withRSA for RSA keys, and SHA1withECDSA for ECDSA keys.)
                         </p>
                     </subsubsection>
                 </subsection>

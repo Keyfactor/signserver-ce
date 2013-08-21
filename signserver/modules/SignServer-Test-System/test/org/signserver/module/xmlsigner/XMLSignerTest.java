@@ -15,20 +15,17 @@ package org.signserver.module.xmlsigner;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.security.cert.Certificate;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.log4j.Logger;
-import org.junit.After;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 import org.signserver.common.*;
 import org.signserver.testutils.ModulesTestCase;
 import org.w3c.dom.Document;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -22,6 +22,7 @@ import java.security.Provider;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.DSAPrivateKey;
+import java.security.interfaces.ECPrivateKey;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -274,6 +275,8 @@ public class XMLSigner extends BaseSigner {
 
         if (privKey instanceof DSAPrivateKey) {
             result = "SHA1withDSA";
+        } else if (privKey instanceof ECPrivateKey) {
+            result = "SHA1withECDSA";
         } else {
             result = "SHA1withRSA";
         }

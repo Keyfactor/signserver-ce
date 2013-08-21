@@ -17,6 +17,7 @@ import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import javax.persistence.EntityManager;
@@ -102,8 +103,10 @@ public class DummyValidator extends BaseValidator {
             Thread.sleep(waitTime);
         } catch (InterruptedException ignored) {}
 
-        if (getCertificateChain(cert) != null ||
-                ((X509Certificate) cert).getBasicConstraints() != -1) {
+        final List<Certificate> certChain = getCertificateChain(cert);
+        final int basicContraints = ((X509Certificate) cert).getBasicConstraints();
+       
+        if (certChain != null || basicContraints != -1) {
             
             final X509Certificate xcert = (X509Certificate) cert;
 
@@ -196,6 +199,11 @@ public class DummyValidator extends BaseValidator {
             // All other certificates issued by DSSRootCA10 is OK
             else if (CertTools.getIssuerDN(cert).equals(
                     "CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE")) {
+                result = new Validation(cert, getCertificateChain(cert),
+                        Validation.Status.VALID, "This certificate is valid");
+            }
+            // Test certificate used for testing XMLSigner with ECDSA keys
+            else if (CertTools.getIssuerDN(cert).equals("CN=ECCA")) {
                 result = new Validation(cert, getCertificateChain(cert),
                         Validation.Status.VALID, "This certificate is valid");
             }

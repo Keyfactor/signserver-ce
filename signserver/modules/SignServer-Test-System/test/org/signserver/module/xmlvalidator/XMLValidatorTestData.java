@@ -236,6 +236,11 @@ public class XMLValidatorTestData {
     static final String SIGNATURE_ECDSA_SHA1 =
             "9v6sdc/CPn6YqNnko0YIkkNUeCLIz5HWINAmC8e02tkU8OZETFFY5MJtAi/i25SMuyf3IBVRBvKk"
             +"2RZvOZ1hpw==";
+    
+    static final String SIGNATURE_ECDSA_SHA256 =
+            "/bFy7PxJmNKAPwUEiQO59QOmsIWjNMHZ7hwPGPV/0bEagKb7x7FnFhr9kkYbdTTm5IlWNO8Cf5nW"
+            +"wdemL9zVPw==";
+    
     /**
      * Ok sig, ok cert.
      */
@@ -376,6 +381,19 @@ public class XMLValidatorTestData {
             +"<root><my-tag>My Data</my-tag><Signature xmlns=\"http://www.w3.org/2000/09/xmldsig#\">"
             +"    <SignedInfo><CanonicalizationMethod Algorithm=\"http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments\"/><SignatureMethod Algorithm=\"http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha1\"/><Reference URI=\"\"><Transforms><Transform Algorithm=\"http://www.w3.org/2000/09/xmldsig#enveloped-signature\"/></Transforms><DigestMethod Algorithm=\"http://www.w3.org/2000/09/xmldsig#sha1\"/><DigestValue>uCUwcTJFETdIT9uYQPkG9GaXg+Y=</DigestValue></Reference></SignedInfo>"
             +"    <SignatureValue>"+SIGNATURE_ECDSA_SHA1+"</SignatureValue>"
+            +"    <KeyInfo>"
+            +"        <X509Data>"
+            +"        <X509Certificate>"+CERT_XMLSIGNER_ECDSA+"</X509Certificate>"
+            +"        <X509Certificate>"+CERT_ISSUER_ECDSA+"</X509Certificate>"
+            +"        </X509Data>"
+            +"    </KeyInfo>"
+            +"</Signature ></root>";
+    
+    public static final String TESTXML_SHA256withECDSA =
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+            +"<root><my-tag>My Data</my-tag><Signature xmlns=\"http://www.w3.org/2000/09/xmldsig#\">"
+            +"    <SignedInfo><CanonicalizationMethod Algorithm=\"http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments\"/><SignatureMethod Algorithm=\"http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha256\"/><Reference URI=\"\"><Transforms><Transform Algorithm=\"http://www.w3.org/2000/09/xmldsig#enveloped-signature\"/></Transforms><DigestMethod Algorithm=\"http://www.w3.org/2000/09/xmldsig#sha1\"/><DigestValue>uCUwcTJFETdIT9uYQPkG9GaXg+Y=</DigestValue></Reference></SignedInfo>"
+            +"    <SignatureValue>"+SIGNATURE_ECDSA_SHA256+"</SignatureValue>"
             +"    <KeyInfo>"
             +"        <X509Data>"
             +"        <X509Certificate>"+CERT_XMLSIGNER_ECDSA+"</X509Certificate>"

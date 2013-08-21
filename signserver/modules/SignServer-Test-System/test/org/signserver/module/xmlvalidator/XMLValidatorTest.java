@@ -428,6 +428,11 @@ public class XMLValidatorTest extends ModulesTestCase {
     }
     
     @Test
+    public void test17SigOkCertOkSHA256withECDSA() throws Exception {
+        testSigOkCertOk(28, WORKERID, XMLValidatorTestData.TESTXML_SHA256withECDSA, SIGNEREC_SUBJECTDN, SIGNEREC_ISSUERDN);
+    }
+    
+    @Test
     public void test99TearDownDatabase() throws Exception {
         removeWorker(WORKERID);
 

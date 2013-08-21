@@ -71,7 +71,7 @@ public class XMLSignerTest extends ModulesTestCase {
         workerSession.reloadConfiguration(WORKERID2);
         
         workerSession.setWorkerProperty(WORKERID3, "KEYSTOREPATH",
-                new File(getSignServerHome() + File.separator + "res" + File.separator + "test" + File.separator + "demodsecc1.p12").getAbsolutePath());
+                new File(getSignServerHome() + File.separator + "res" + File.separator + "test" + File.separator + "xmlsignerec.p12").getAbsolutePath());
         workerSession.reloadConfiguration(WORKERID3);
     }
 

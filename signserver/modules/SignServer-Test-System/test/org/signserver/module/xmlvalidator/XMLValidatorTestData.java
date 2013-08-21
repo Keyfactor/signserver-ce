@@ -158,7 +158,19 @@ public class XMLValidatorTestData {
         +"AwIBhjAJBgcqhkjOOAQDAzAAMC0CFQCEGSmvJf6rxy6u7ZqY25qE7Hy21gIUPW4q"
         +"++YIS2fHyu+H4Pjgnodx5zI=";
 
-    
+    /**
+     * Test CA certificate for ECDSA signatures.
+     * 
+     * <pre>
+     *  Serial Number: 54:2F:83:82:6A:22:AE:CD
+     *   Signature Algorithm: ecdsaWithSHA256
+     *   Issuer: CN=ECCA
+     *   Validity
+     *       Not Before: Aug 21 08:03:16 2013 GMT
+     *       Not After : Aug 20 13:20:31 2023 GMT
+     *  Subject: CN=TestXMLSignerEC
+     * </pre>
+     */
     public static final String CERT_ISSUER_ECDSA =
             "MIIBdzCCAR2gAwIBAgIIVC+Dgmoirs0wCgYIKoZIzj0EAwIwDzENMAsGA1UEAwwERUNDQTAeFw0x"
             +"MzA4MjAxMzIwMzFaFw0yMzA4MjAxMzIwMzFaMA8xDTALBgNVBAMMBEVDQ0EwWTATBgcqhkjOPQIB"
@@ -168,6 +180,19 @@ public class XMLValidatorTestData {
             +"Af8EBAMCAYYwCgYIKoZIzj0EAwIDSAAwRQIgVkarQSrY+mlfGhsUagHnOmfj274Xx5LmlisUKdRC"
             +"nz0CIQChndlBeog3cimhCgYNli+zAuKN3+st8FZqPiqe3cZgvA==";
      
+    /**
+     * Test signer certificate for ECDSA signatures.
+     * 
+     * <pre>
+     * Serial Number: 67:B6:13:8E:2B:75:FA:D2
+     * Signature Algorithm: ecdsa-with-SHA256
+     *   Issuer: CN=ECCA
+     *   Validity
+     *       Not Before: Aug 21 08:03:16 2013 GMT
+     *       Not After : Aug 20 13:20:31 2023 GMT
+     *   Subject: CN=TestXMLSignerEC
+     * </pre>
+     */
     public static final String CERT_XMLSIGNER_ECDSA =
             "MIIBnDCCAUGgAwIBAgIIZ7YTjit1+tIwCgYIKoZIzj0EAwIwDzENMAsGA1UEAwwERUNDQTAeFw0x"
             +"MzA4MjEwODAzMTZaFw0yMzA4MjAxMzIwMzFaMBoxGDAWBgNVBAMMD1Rlc3RYTUxTaWduZXJFQzBW"

@@ -28,7 +28,6 @@ import org.signserver.testutils.ModulesTestCase;
 import org.signserver.validationservice.common.Validation;
 import org.signserver.validationservice.common.Validation.Status;
 import org.w3c.dom.Document;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -241,6 +241,14 @@ public class XMLValidatorTestData {
             "/bFy7PxJmNKAPwUEiQO59QOmsIWjNMHZ7hwPGPV/0bEagKb7x7FnFhr9kkYbdTTm5IlWNO8Cf5nW"
             +"wdemL9zVPw==";
     
+    static final String SIGNATURE_ECDSA_SHA384 =
+            "QwqQTquPvoJ5P5u9g3li66N9Br1QKYOrzWIOfvHtq+Y7uDH0l31V8O6pKySGIuYD8zu2nQvqh62l"
+            +"sFJ9jY0kQg==";
+    
+    static final String SIGNATURE_ECDSA_SHA512 =
+            "mNPMvn6M+GCQ4Hf+iXF8y8J2pKelDE/HuVExIFXBjLtHqNsSgTPuEIjCURsjyY8QQkIrDIn29Uqf"
+            +"CM6sphtEIw==";
+    
     /**
      * Ok sig, ok cert.
      */
@@ -394,6 +402,32 @@ public class XMLValidatorTestData {
             +"<root><my-tag>My Data</my-tag><Signature xmlns=\"http://www.w3.org/2000/09/xmldsig#\">"
             +"    <SignedInfo><CanonicalizationMethod Algorithm=\"http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments\"/><SignatureMethod Algorithm=\"http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha256\"/><Reference URI=\"\"><Transforms><Transform Algorithm=\"http://www.w3.org/2000/09/xmldsig#enveloped-signature\"/></Transforms><DigestMethod Algorithm=\"http://www.w3.org/2000/09/xmldsig#sha1\"/><DigestValue>uCUwcTJFETdIT9uYQPkG9GaXg+Y=</DigestValue></Reference></SignedInfo>"
             +"    <SignatureValue>"+SIGNATURE_ECDSA_SHA256+"</SignatureValue>"
+            +"    <KeyInfo>"
+            +"        <X509Data>"
+            +"        <X509Certificate>"+CERT_XMLSIGNER_ECDSA+"</X509Certificate>"
+            +"        <X509Certificate>"+CERT_ISSUER_ECDSA+"</X509Certificate>"
+            +"        </X509Data>"
+            +"    </KeyInfo>"
+            +"</Signature ></root>";
+    
+    public static final String TESTXML_SHA384withECDSA =
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+            +"<root><my-tag>My Data</my-tag><Signature xmlns=\"http://www.w3.org/2000/09/xmldsig#\">"
+            +"    <SignedInfo><CanonicalizationMethod Algorithm=\"http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments\"/><SignatureMethod Algorithm=\"http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha384\"/><Reference URI=\"\"><Transforms><Transform Algorithm=\"http://www.w3.org/2000/09/xmldsig#enveloped-signature\"/></Transforms><DigestMethod Algorithm=\"http://www.w3.org/2000/09/xmldsig#sha1\"/><DigestValue>uCUwcTJFETdIT9uYQPkG9GaXg+Y=</DigestValue></Reference></SignedInfo>"
+            +"    <SignatureValue>"+SIGNATURE_ECDSA_SHA384+"</SignatureValue>"
+            +"    <KeyInfo>"
+            +"        <X509Data>"
+            +"        <X509Certificate>"+CERT_XMLSIGNER_ECDSA+"</X509Certificate>"
+            +"        <X509Certificate>"+CERT_ISSUER_ECDSA+"</X509Certificate>"
+            +"        </X509Data>"
+            +"    </KeyInfo>"
+            +"</Signature ></root>";
+    
+    public static final String TESTXML_SHA512withECDSA =
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+            +"<root><my-tag>My Data</my-tag><Signature xmlns=\"http://www.w3.org/2000/09/xmldsig#\">"
+            +"    <SignedInfo><CanonicalizationMethod Algorithm=\"http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments\"/><SignatureMethod Algorithm=\"http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha512\"/><Reference URI=\"\"><Transforms><Transform Algorithm=\"http://www.w3.org/2000/09/xmldsig#enveloped-signature\"/></Transforms><DigestMethod Algorithm=\"http://www.w3.org/2000/09/xmldsig#sha1\"/><DigestValue>uCUwcTJFETdIT9uYQPkG9GaXg+Y=</DigestValue></Reference></SignedInfo>"
+            +"    <SignatureValue>"+SIGNATURE_ECDSA_SHA512+"</SignatureValue>"
             +"    <KeyInfo>"
             +"        <X509Data>"
             +"        <X509Certificate>"+CERT_XMLSIGNER_ECDSA+"</X509Certificate>"

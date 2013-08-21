@@ -10,7 +10,7 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.module.xades.signer;
+package org.signserver.module.xades.common;
 
 import java.security.KeyStore;
 import java.security.KeyStoreException;

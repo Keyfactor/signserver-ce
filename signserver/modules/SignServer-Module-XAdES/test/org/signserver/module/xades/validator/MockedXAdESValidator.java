@@ -10,7 +10,7 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.module.xades.signer;
+package org.signserver.module.xades.validator;
 
 import org.signserver.module.xades.common.MockedCryptoToken;
 import java.security.cert.Certificate;
@@ -19,15 +19,15 @@ import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.server.cryptotokens.ICryptoToken;
 
 /**
- * Mocked version of the XAdESSigner using a MockedCryptoToken.
+ * Mocked version of the XAdESValidator using a MockedCryptoToken.
  *
  * @author Markus Kilås
  * @version $Id$
  */
-public class MockedXAdESSigner extends XAdESSigner {
+public class MockedXAdESValidator extends XAdESValidator {
     private final MockedCryptoToken mockedToken;
 
-    public MockedXAdESSigner(final MockedCryptoToken mockedToken) {
+    public MockedXAdESValidator(final MockedCryptoToken mockedToken) {
         this.mockedToken = mockedToken;
     }
     

@@ -51,7 +51,8 @@ public class XMLValidatorTest extends ModulesTestCase {
     private static final String VALIDATION_WORKER = "TestValidationWorker";
     private static final String SIGNER2_ISSUERDN = "CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE";
     private static final String SIGNER2_SUBJECTDN = "CN=Signer 2,OU=Testing,O=SignServer,C=SE";
-	
+    private static final String SIGNEREC_ISSUERDN = "CN=ECCA";
+    private static final String SIGNEREC_SUBJECTDN = "CN=TestXMLSignerEC";
 
     @Before
     public void setUp() throws Exception {
@@ -68,6 +69,7 @@ public class XMLValidatorTest extends ModulesTestCase {
         workerSession.setWorkerProperty(17, "VAL1.CLASSPATH", "org.signserver.validationservice.server.DummyValidator");
         workerSession.setWorkerProperty(17, "VAL1.ISSUER1.CERTCHAIN", "\n-----BEGIN CERTIFICATE-----\n" + XMLValidatorTestData.CERT_ISSUER + "\n-----END CERTIFICATE-----\n");
         workerSession.setWorkerProperty(17, "VAL1.ISSUER2.CERTCHAIN", "\n-----BEGIN CERTIFICATE-----\n" + XMLValidatorTestData.CERT_ISSUER4 + "\n-----END CERTIFICATE-----\n");
+        workerSession.setWorkerProperty(17, "VAL1.ISSUER3.CERTCHAIN", "\n-----BEGIN CERTIFICATE-----\n" + XMLValidatorTestData.CERT_ISSUER_ECDSA + "\n-----END CERTIFICATE-----\n");
         workerSession.setWorkerProperty(17, "VAL1.TESTPROP", "TEST");
         workerSession.setWorkerProperty(17, "VAL1.REVOKED", "");
         workerSession.reloadConfiguration(17);
@@ -416,8 +418,13 @@ public class XMLValidatorTest extends ModulesTestCase {
     }
     
     @Test
-    public void test14SigOkCertOkSHA512withRSA() throws Exception {
+    public void test15SigOkCertOkSHA512withRSA() throws Exception {
         testSigOkCertOk(26, WORKERID, XMLValidatorTestData.TESTXML_SHA512withRSA, SIGNER2_SUBJECTDN, SIGNER2_ISSUERDN);
+    }
+    
+    @Test
+    public void test16SigOkCertOkSHA1withECDSA() throws Exception {
+        testSigOkCertOk(27, WORKERID, XMLValidatorTestData.TESTXML_SHA1withECDSA, SIGNEREC_SUBJECTDN, SIGNEREC_ISSUERDN);
     }
     
     @Test

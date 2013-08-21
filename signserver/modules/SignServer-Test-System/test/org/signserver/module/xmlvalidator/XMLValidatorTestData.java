@@ -157,7 +157,27 @@ public class XMLValidatorTestData {
         +"AQH/MB8GA1UdIwQYMBaAFEnfFS7KXpmugPeUWbefD8CEI94lMA4GA1UdDwEB/wQE"
         +"AwIBhjAJBgcqhkjOOAQDAzAAMC0CFQCEGSmvJf6rxy6u7ZqY25qE7Hy21gIUPW4q"
         +"++YIS2fHyu+H4Pjgnodx5zI=";
-	  
+
+    
+    public static final String CERT_ISSUER_ECDSA =
+            "MIIBdzCCAR2gAwIBAgIIVC+Dgmoirs0wCgYIKoZIzj0EAwIwDzENMAsGA1UEAwwERUNDQTAeFw0x"
+            +"MzA4MjAxMzIwMzFaFw0yMzA4MjAxMzIwMzFaMA8xDTALBgNVBAMMBEVDQ0EwWTATBgcqhkjOPQIB"
+            +"BggqhkjOPQMBBwNCAAQkIXc1SKnM/mNsGiK2ldpUmg6LFiJSF6pJk30sPLs9X6WUEwCtjE57CLch"
+            +"Pyk5TaDjosYtTyAK0JMilQO1jSzHo2MwYTAdBgNVHQ4EFgQUdFxJXhx6KUz16PlSiD94IE3KTx8w"
+            +"DwYDVR0TAQH/BAUwAwEB/zAfBgNVHSMEGDAWgBR0XEleHHopTPXo+VKIP3ggTcpPHzAOBgNVHQ8B"
+            +"Af8EBAMCAYYwCgYIKoZIzj0EAwIDSAAwRQIgVkarQSrY+mlfGhsUagHnOmfj274Xx5LmlisUKdRC"
+            +"nz0CIQChndlBeog3cimhCgYNli+zAuKN3+st8FZqPiqe3cZgvA==";
+     
+    public static final String CERT_XMLSIGNER_ECDSA =
+            "MIIBnDCCAUGgAwIBAgIIZ7YTjit1+tIwCgYIKoZIzj0EAwIwDzENMAsGA1UEAwwERUNDQTAeFw0x"
+            +"MzA4MjEwODAzMTZaFw0yMzA4MjAxMzIwMzFaMBoxGDAWBgNVBAMMD1Rlc3RYTUxTaWduZXJFQzBW"
+            +"MBAGByqGSM49AgEGBSuBBAAKA0IABPNbDHlOmo5S7xC9NaX8qLAVZj1cPOONlWkGU+vrM+1J1Wej"
+            +"c2jXVAkSaxG13omgEdcp6axx1QBPM0mY0Sm79pyjfzB9MB0GA1UdDgQWBBQCxloPGJdVjF7zTQhR"
+            +"FOFQ4SaDIjAMBgNVHRMBAf8EAjAAMB8GA1UdIwQYMBaAFHRcSV4ceilM9ej5Uog/eCBNyk8fMA4G"
+            +"A1UdDwEB/wQEAwIF4DAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwCgYIKoZIzj0EAwID"
+            +"SQAwRgIhAO4Y5vHYsHa6EJUgSy3nobtrMaDlfYizlziQjfER05CQAiEAjEuF6sEbQEgsAtZegUaO"
+            +"j6dyDoVID5JASDarQHELW3I=";      
+    
     public static final String CERT_OTHER =
              "MIIDTjCCAjagAwIBAgIIH51RSUxYOpYwDQYJKoZIhvcNAQEFBQAwPTEXMBUGA1UEAwwOQWRtaW5U"
             +"cnVuazJDQTExFTATBgNVBAoMDEVKQkNBIFRydW5rMjELMAkGA1UEBhMCU0UwHhcNMDkwNTA2MTEx"
@@ -212,7 +232,10 @@ public class XMLValidatorTestData {
             +"Os6bjpwtohKOmRNhXO/cHMeySb38p/oi6LRneT/LioCQbgJfa9gJHxk6ABB1a47a/xdPasbt2tZv"
             +"yCVn9EmoTZId1Xzr0vmiFBOQt55If6lwfhniKHbCcoFy/Yap5ISsc3ha3ZI+Sbop+DIohHxR9F+1"
             +"BrnSTMT6qjEXhDgs2AItRciLaz4h4QJxrKQo3Q==";
-	
+    
+    static final String SIGNATURE_ECDSA_SHA1 =
+            "9v6sdc/CPn6YqNnko0YIkkNUeCLIz5HWINAmC8e02tkU8OZETFFY5MJtAi/i25SMuyf3IBVRBvKk"
+            +"2RZvOZ1hpw==";
     /**
      * Ok sig, ok cert.
      */
@@ -344,6 +367,19 @@ public class XMLValidatorTestData {
             +"        <X509Data>"
             +"            <X509Certificate>"+CERT_XMLSIGNER+"</X509Certificate>"
             +"        <X509Certificate>"+CERT_ISSUER+"</X509Certificate>"
+            +"        </X509Data>"
+            +"    </KeyInfo>"
+            +"</Signature ></root>";
+    
+    public static final String TESTXML_SHA1withECDSA =
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+            +"<root><my-tag>My Data</my-tag><Signature xmlns=\"http://www.w3.org/2000/09/xmldsig#\">"
+            +"    <SignedInfo><CanonicalizationMethod Algorithm=\"http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments\"/><SignatureMethod Algorithm=\"http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha1\"/><Reference URI=\"\"><Transforms><Transform Algorithm=\"http://www.w3.org/2000/09/xmldsig#enveloped-signature\"/></Transforms><DigestMethod Algorithm=\"http://www.w3.org/2000/09/xmldsig#sha1\"/><DigestValue>uCUwcTJFETdIT9uYQPkG9GaXg+Y=</DigestValue></Reference></SignedInfo>"
+            +"    <SignatureValue>"+SIGNATURE_ECDSA_SHA1+"</SignatureValue>"
+            +"    <KeyInfo>"
+            +"        <X509Data>"
+            +"        <X509Certificate>"+CERT_XMLSIGNER_ECDSA+"</X509Certificate>"
+            +"        <X509Certificate>"+CERT_ISSUER_ECDSA+"</X509Certificate>"
             +"        </X509Data>"
             +"    </KeyInfo>"
             +"</Signature ></root>";

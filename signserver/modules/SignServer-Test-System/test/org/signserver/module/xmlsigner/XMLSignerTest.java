@@ -91,7 +91,7 @@ public class XMLSignerTest extends ModulesTestCase {
             workerSession.setWorkerProperty(workerId, "SIGNATUREALGORITHM", sigAlg);
             workerSession.reloadConfiguration(workerId);
         }
-        
+
         final GenericSignResponse res = 
                 (GenericSignResponse) workerSession.process(workerId,
                     signRequest, new RequestContext());
@@ -210,6 +210,15 @@ public class XMLSignerTest extends ModulesTestCase {
         testBasicXmlSign(WORKERID3, "SHA512withECDSA", "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha512");
     }
     
+    /**
+     * Test the default signature algorithm for RSA keys.
+     * @throws Exception
+     */
+    @Test
+    public void test14BasicXmlSignECDSADefaultSigAlg() throws Exception {
+        testBasicXmlSign(WORKERID3, null, "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha1");
+    }
+
     @Test
     public void test99TearDownDatabase() throws Exception {
         for (int workerId : WORKERS) {

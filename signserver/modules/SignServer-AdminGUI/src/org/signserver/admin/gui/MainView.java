@@ -142,8 +142,10 @@ public class MainView extends FrameView {
 
                     if (selectedWorkers.size() > 0) {
 
-                        LOG.debug("Previously selected: "
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Previously selected: "
                                 + selectedWorkerBeforeRefresh);
+                        }
 
                         int comboBoxSelection = 0;
 
@@ -1569,7 +1571,9 @@ public class MainView extends FrameView {
                 workers = Collections.singletonList(selectedWorker);
             }
 
-            LOG.debug("Selected workers: " + workers);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Selected workers: " + workers);
+            }
 
             for (Worker worker : workers) {
                 try {
@@ -1614,7 +1618,9 @@ public class MainView extends FrameView {
                     workers = Collections.singletonList(selectedWorker);
                 }
 
-                LOG.debug("Selected workers: " + workers);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Selected workers: " + workers);
+                }
 
                 final AuthorizedClient oldAuthorizedClient =
                     new AuthorizedClient();
@@ -1674,7 +1680,9 @@ public class MainView extends FrameView {
                     workers = Collections.singletonList(selectedWorker);
                 }
 
-                LOG.debug("Selected workers: " + workers);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Selected workers: " + workers);
+                }
 
                 final AuthorizedClient oldAuthorizedClient =
                     new AuthorizedClient();
@@ -1822,7 +1830,9 @@ private void displayLogEntryAction() {
 }
 
     private void displayWorker(final Worker worker) {
-        LOG.debug("Display worker: " + worker);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Display worker: " + worker);
+        }
         selectedWorker = worker;
         
         final boolean active = worker != null;
@@ -1978,7 +1988,9 @@ private void displayLogEntryAction() {
                     }
                     workerInfo.add(workerId);
                     workerInfo.add(name);
-                    LOG.debug("workerId: " + workerId + ", name: " + name);
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("workerId: " + workerId + ", name: " + name);
+                    }
                     // Configuration
                     Set<Entry<Object, Object>> entries = properties.entrySet();
                     Object[][] configProperties = new Object[entries.size()][];
@@ -2028,7 +2040,9 @@ private void displayLogEntryAction() {
                         statusProperties[5] = new Object[]{"Signer certificate", certificate};
                         statusProperties[6] = new Object[]{"Certificate chain:", certificateChain};
                     } catch (CryptoTokenOfflineException_Exception ex) {
-                        LOG.debug("offline: " + workerId);
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("offline: " + workerId);
+                        }
                     } catch (RuntimeException ex) {
                         LOG.warn("Methods not supported by server", ex);
                     } catch (CertificateException ex) {
@@ -2055,13 +2069,17 @@ private void displayLogEntryAction() {
 
             // Save selection
             ArrayList<Integer> indices = new ArrayList<Integer>();
-            LOG.debug("Selected signers: " + selectedWorkers);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Selected signers: " + selectedWorkers);
+            }
             for (Worker w : selectedWorkers) {
                 int index = newWorkers.indexOf(w);
                 if (index != -1) {
                     indices.add(index);
                 } else {
-                    LOG.debug(w + " is not in " + selectedWorkers);
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug(w + " is not in " + selectedWorkers);
+                    }
                 }
             }
             int[] ints = new int[indices.size()];
@@ -2086,7 +2104,9 @@ private void displayLogEntryAction() {
 
             // New selection
             workersList.setSelectedIndices(ints);
-            LOG.debug("Selecting: " + Arrays.toString(ints));
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Selecting: " + Arrays.toString(ints));
+            }
 
             allWorkers = newWorkers;
         }
@@ -2570,9 +2590,13 @@ private void displayLogEntryAction() {
                     if (key.toUpperCase().startsWith("GLOB.WORKER" + worker.getWorkerId())) {
                         key = key.substring("GLOB.".length());
                         if (SignServerAdminGUIApplication.getAdminWS().removeGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL, key)) {
-                            LOG.debug("  Global property '" + key + "' removed successfully.");
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("  Global property '" + key + "' removed successfully.");
+                            }
                         } else {
-                            LOG.debug("  Failed removing global property '" + key + "'.");
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("  Failed removing global property '" + key + "'.");
+                            }
                         }
                     }
                 }
@@ -2580,9 +2604,13 @@ private void displayLogEntryAction() {
             // Remove worker properties
             for (final String property : worker.getConfiguration().stringPropertyNames()) {
                 if (SignServerAdminGUIApplication.getAdminWS().removeWorkerProperty(worker.getWorkerId(), property)) {
-                    LOG.debug("  Property '" + property + "' removed.");
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("  Property '" + property + "' removed.");
+                    }
                 } else {
-                    LOG.debug("  Error, the property '" + property + "' couldn't be removed.");
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("  Error, the property '" + property + "' couldn't be removed.");
+                    }
                 }
             }
         }

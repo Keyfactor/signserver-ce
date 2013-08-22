@@ -30,23 +30,43 @@ public class XAdESSignerParameters {
     private final Profiles xadesForm;
     private final TSAParameters tsaParameters;
 
+    /**
+     * Constructs an new instance of XAdESSignerParameters.
+     *
+     * @param xadesForm The XAdES form
+     * @param tsaParameters The TSA parameters
+     */
     public XAdESSignerParameters(final Profiles xadesForm, final TSAParameters tsaParameters) {
         this.xadesForm = xadesForm;
         this.tsaParameters = tsaParameters;
     }
 
+    /**
+     * Constructs an new instance of XAdESSignerParameters without TSA 
+     * parameters.
+     * @param xadesForm  The XAdES form
+     */
     public XAdESSignerParameters(final Profiles xadesForm) {
         this(xadesForm, null);
     }
 
+    /**
+     * @return The XAdES form
+     */
     public Profiles getXadesForm() {
         return xadesForm;
     }
 
+    /**
+     * @return The TSA parameters or null if no configured
+     */
     public TSAParameters getTsaParameters() {
         return tsaParameters;
     }
     
+    /**
+     * @return True if any TSA paramaters has been configured
+     */
     public boolean isTSAAvailable() {
         return tsaParameters != null;
     }

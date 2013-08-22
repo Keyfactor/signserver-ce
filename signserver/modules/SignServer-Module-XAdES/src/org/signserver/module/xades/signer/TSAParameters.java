@@ -25,24 +25,43 @@ public class TSAParameters {
     private final String username;
     private final String password;
 
+    /**
+     * Constructs an new instance of TSA Parameters.
+     * @param url URL of time-stamp service
+     * @param username Username
+     * @param password Password
+     */
     public TSAParameters(final String url, final String username, final String password) {
         this.url = url;
         this.username = username;
         this.password = password;
     }
 
+    /**
+     * Constructs an new instance of XAdESSignerParameters without credentials.
+     * @param url URL of time-stamp service
+     */
     public TSAParameters(String url) {
         this(url, null, null);
     }
 
+    /**
+     * @return URL of time-stamp service
+     */
     public String getUrl() {
         return url;
     }
 
+    /**
+     * @return Username
+     */
     public String getUsername() {
         return username;
     }
 
+    /**
+     * @return Password
+     */
     public String getPassword() {
         return password;
     }

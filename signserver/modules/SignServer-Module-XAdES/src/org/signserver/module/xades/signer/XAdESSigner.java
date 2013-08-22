@@ -76,18 +76,30 @@ public class XAdESSigner extends BaseSigner {
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(XAdESSigner.class);
     
-    public static final String XADESFORM = "XADESFORM";
-    public static final String TSA_URL = "TSA_URL";
-    public static final String TSA_USERNAME = "TSA_USERNAME";
-    public static final String TSA_PASSWORD = "TSA_PASSWORD";
+    /** Worker property: XADESFORM. */
+    public static final String PROPERTY_XADESFORM = "XADESFORM";
     
+    /** Worker property: TSA_URL. */
+    public static final String PROPERTY_TSA_URL = "TSA_URL";
+    
+    /** Worker property: TSA_USERNAME. */
+    public static final String PROPERTY_TSA_USERNAME = "TSA_USERNAME";
+    
+    /** Worker property: TSA_PASSWORD. */
+    public static final String PROPERTY_TSA_PASSWORD = "TSA_PASSWORD";
+    
+    /** Default value use if the worker property XADESFORM has not been set. */
     private static final String DEFAULT_XADESFORM = "BES";
+
     private static final String CONTENT_TYPE = "text/xml";
     
     private LinkedList<String> configErrors;
     private XAdESSignerParameters parameters;
     
-    /* XAdES profiles. */
+    /** 
+     * Electronic signature forms defined in ETSI TS 101 903 V1.4.1 (2009-06)
+     * section 4.4.
+     */
     public enum Profiles {
         BES,
         C,
@@ -103,24 +115,24 @@ public class XAdESSigner extends BaseSigner {
         // Configuration errors
         configErrors = new LinkedList<String>();
         
-        // XADESFORM
+        // PROPERTY_XADESFORM
         Profiles form = null;
-        final String xadesForm = config.getProperties().getProperty(XAdESSigner.XADESFORM, XAdESSigner.DEFAULT_XADESFORM);
+        final String xadesForm = config.getProperties().getProperty(PROPERTY_XADESFORM, XAdESSigner.DEFAULT_XADESFORM);
         try {
             form = Profiles.valueOf(xadesForm);
         } catch (IllegalArgumentException ex) {
-            configErrors.add("Incorrect value for property " + XAdESSigner.XADESFORM + ": \"" + xadesForm + "\"");
+            configErrors.add("Incorrect value for property " + PROPERTY_XADESFORM + ": \"" + xadesForm + "\"");
         }
         
-        // TSA_URL, TSA_USERNAME, TSA_PASSWORD
+        // PROPERTY_TSA_URL, PROPERTY_TSA_USERNAME, PROPERTY_TSA_PASSWORD
         TSAParameters tsa = null;
         if (form == Profiles.T) {
-            final String tsaUrl = config.getProperties().getProperty(XAdESSigner.TSA_URL);
-            final String tsaUsername = config.getProperties().getProperty(XAdESSigner.TSA_USERNAME);
-            final String tsaPassword = config.getProperties().getProperty(XAdESSigner.TSA_PASSWORD);
+            final String tsaUrl = config.getProperties().getProperty(PROPERTY_TSA_URL);
+            final String tsaUsername = config.getProperties().getProperty(PROPERTY_TSA_USERNAME);
+            final String tsaPassword = config.getProperties().getProperty(PROPERTY_TSA_PASSWORD);
             
             if (tsaUrl == null) {
-                configErrors.add("Property " + TSA_URL + " is required when " + XADESFORM + " is " + Profiles.T);
+                configErrors.add("Property " + PROPERTY_TSA_URL + " is required when " + PROPERTY_XADESFORM + " is " + Profiles.T);
             } else {
                 tsa = new TSAParameters(tsaUrl, tsaUsername, tsaPassword);
             }
@@ -144,12 +156,13 @@ public class XAdESSigner extends BaseSigner {
 
     @Override
     public ProcessResponse processData(ProcessRequest signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
-        ISignRequest sReq = (ISignRequest) signRequest;
 
         // Check that the request contains a valid GenericSignRequest object with a byte[].
         if (!(signRequest instanceof GenericSignRequest)) {
             throw new IllegalRequestException("Recieved request wasn't a expected GenericSignRequest.");
         }
+        
+        final ISignRequest sReq = (ISignRequest) signRequest;
         if (!(sReq.getRequestData() instanceof byte[])) {
             throw new IllegalRequestException("Recieved request data wasn't a expected byte[].");
         }
@@ -157,6 +170,7 @@ public class XAdESSigner extends BaseSigner {
         if (!configErrors.isEmpty()) {
             throw new SignServerException("Worker is misconfigured");
         }
+        
         
         final byte[] data = (byte[]) sReq.getRequestData();
         final String archiveId = createArchiveId(data, (String) requestContext.get(RequestContext.TRANSACTION_ID));
@@ -208,6 +222,15 @@ public class XAdESSigner extends BaseSigner {
         return response;
     }
 
+    /**
+     * Creates the signer implementation given the parameters.
+     *
+     * @param params Parameters such as XAdES form and TSA properties.
+     * @return The signer implementation
+     * @throws SignServerException In case an unsupported XAdES form was specified
+     * @throws XadesProfileResolutionException if the dependencies of the signer cannot be resolved
+     * @throws CryptoTokenOfflineException If the private key is not available
+     */
     private XadesSigner createSigner(final XAdESSignerParameters params) throws SignServerException, XadesProfileResolutionException, CryptoTokenOfflineException {
         final KeyingDataProvider kdp = new DirectKeyingDataProvider((X509Certificate) this.getSigningCertificate(), this.getCryptoToken().getPrivateKey(ICryptoToken.PURPOSE_SIGN));
         final XadesSigningProfile xsp;

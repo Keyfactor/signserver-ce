@@ -3836,6 +3836,19 @@ The signed XML document can be validated using the XML Validator.
 				<b>SIGNATUREALGORITHM</b> = property specifying the algorithm used to sign the data (default: depending on the signer's private key: SHA1withDSA for DSA keys, SHA1withRSA for RSA keys, and SHA1withECDSA for ECDSA keys.)
                         </p>
                     </subsubsection>
+                    <subsubsection name="Supported Signature Algorithms">
+                        <ul>
+                            <li>SHA1withDSA</li>
+                            <li>SHA1withRSA</li>
+                            <li>SHA256withRSA</li>
+                            <li>SHA384withRSA</li>
+                            <li>SHA512withRSA</li>
+                            <li>SHA1withECDSA</li>
+                            <li>SHA256withECDSA</li>
+                            <li>SHA384withECDSA</li>
+                            <li>SHA512withECDSA</li>
+                        </ul>
+                    </subsubsection>
                 </subsection>
                 
                 <subsection name="XAdES Signer">

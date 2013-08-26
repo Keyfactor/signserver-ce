@@ -15,6 +15,7 @@ package org.signserver.module.xades.signer;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Collection;
@@ -59,7 +60,6 @@ import xades4j.production.XadesSigningProfile;
 import xades4j.production.XadesTSigningProfile;
 import xades4j.properties.AllDataObjsCommitmentTypeProperty;
 import xades4j.providers.KeyingDataProvider;
-import xades4j.providers.impl.DirectKeyingDataProvider;
 import xades4j.utils.XadesProfileResolutionException;
 import xades4j.providers.impl.ExtendedTimeStampTokenProvider;
 
@@ -232,7 +232,16 @@ public class XAdESSigner extends BaseSigner {
      * @throws CryptoTokenOfflineException If the private key is not available
      */
     private XadesSigner createSigner(final XAdESSignerParameters params) throws SignServerException, XadesProfileResolutionException, CryptoTokenOfflineException {
-        final KeyingDataProvider kdp = new DirectKeyingDataProvider((X509Certificate) this.getSigningCertificate(), this.getCryptoToken().getPrivateKey(ICryptoToken.PURPOSE_SIGN));
+        // Setup key and certificiates
+        final List<X509Certificate> xchain = new LinkedList<X509Certificate>();
+        for (Certificate cert : this.getSigningCertificateChain()) {
+            if (cert instanceof X509Certificate) {
+                xchain.add((X509Certificate) cert);
+            }
+        }
+        final KeyingDataProvider kdp = new CertificateAndChainKeyingDataProvider(xchain, this.getCryptoToken().getPrivateKey(ICryptoToken.PURPOSE_SIGN));
+        
+        // Signing profile
         final XadesSigningProfile xsp;
         switch (params.getXadesForm()) {
             case BES:

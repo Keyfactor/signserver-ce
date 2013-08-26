@@ -19,7 +19,13 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x509.CRLDistPoint;
+import org.bouncycastle.asn1.x509.DistributionPoint;
+import org.bouncycastle.asn1.x509.DistributionPointName;
+import org.bouncycastle.asn1.x509.Extension;
+import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.cert.CertIOException;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaX509v1CertificateBuilder;
@@ -189,7 +195,9 @@ public class CertBuilder implements Cloneable {
                 if (getSubjectUniqueId() != null) {
                     builder.setSubjectUniqueID(getSubjectUniqueId());
                 }
-                
+//                builder.setSubjectUniqueID(issuerUniqueId)
+               
+    
                 ContentSigner contentSigner = new JcaContentSignerBuilder(getSignatureAlgorithm()).setProvider("BC").build(getIssuerPrivateKey());
                 return builder.build(contentSigner);
             } else {
@@ -206,6 +214,19 @@ public class CertBuilder implements Cloneable {
         } catch (CertIOException ex) {
             throw new CertBuilderException(ex);
         }
+    }
+    
+    /**
+     * Shorthand for adding an CRL distribution point with an URI.
+     * @param uri The URI
+     * @return this object
+     */
+    public CertBuilder addCDPURI(final String uri) {
+        final GeneralName gn = new GeneralName(GeneralName.uniformResourceIdentifier, uri);
+        final DistributionPointName dpn = new DistributionPointName(DistributionPointName.FULL_NAME, gn);
+        final ASN1Encodable extension = new CRLDistPoint(new DistributionPoint[]{new DistributionPoint(dpn, null, null)}); //new GeneralNames(new GeneralName(getIssuer())))});
+        addExtension(new CertExt(Extension.cRLDistributionPoints, false, extension));
+        return this;
     }
     
     /**

@@ -12,7 +12,6 @@
  *************************************************************************/
 package org.signserver.module.xades.signer;
 
-import org.signserver.module.xades.common.MockedCryptoToken;
 import java.io.ByteArrayInputStream;
 import java.security.KeyPair;
 import java.security.KeyStore;

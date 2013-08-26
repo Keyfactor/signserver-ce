@@ -14,20 +14,33 @@ package org.signserver.module.xades.validator;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.net.URL;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.cert.CertPath;
+import java.security.cert.CertPathValidator;
+import java.security.cert.CertPathValidatorException;
 import java.security.cert.CertStore;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.CertificateParsingException;
 import java.security.cert.CollectionCertStoreParameters;
+import java.security.cert.PKIXCertPathValidatorResult;
+import java.security.cert.PKIXParameters;
+import java.security.cert.TrustAnchor;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -38,6 +51,8 @@ import org.signserver.server.WorkerContext;
 import org.signserver.server.validators.BaseValidator;
 import org.signserver.validationservice.common.ValidateResponse;
 import org.signserver.validationservice.common.Validation;
+import org.signserver.validationservice.common.Validation.Status;
+import org.signserver.validationservice.server.ValidationUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
@@ -200,7 +215,7 @@ public class XAdESValidator extends BaseValidator {
         
         final XAdESVerificationResult result;
         try {
-            CertificateValidationProvider certValidator = new PKIXCertificateValidationProvider(trustAnchors, revocationEnabled, certStore);
+            CertificateValidationProvider certValidator = new PKIXCertificateValidationProvider(trustAnchors, false, certStore);
 
             XadesVerificationProfile p = new XadesVerificationProfile(certValidator);
             XadesVerifier verifier = p.newVerifier();
@@ -218,20 +233,34 @@ public class XAdESValidator extends BaseValidator {
             LOG.info("Request " + requestId + " signature valid: false, " + ex.getMessage());
             return new GenericValidationResponse(requestId, false);
         }
-        LOG.info("Request " + requestId + " signature valid: true");
-
-        // Fill in the certificate validation information.
-        // XXX: This is a bit awkward...
-        // As the XAdES4j has checked the certificate we just fill in the values here
+        
         List<X509Certificate> xchain = result.getValidationData().getCerts();
         List<Certificate> chain = new LinkedList<Certificate>();
         for (X509Certificate cert : xchain) {
             chain.add(cert);
         }
-        Validation v = new Validation(result.getValidationCertificate(), chain, Validation.Status.VALID, "Certifiate passed validation");
+        
+        
+        Validation v;
+        if (revocationEnabled) {
+            try {
+                v = validate(result.getValidationCertificate(), result.getValidationData().getCerts(), result.getValidationData().getCerts().get(result.getValidationData().getCerts().size() - 1));
+            } catch (IllegalRequestException ex) {
+                LOG.info("Request " + requestId + " signature valid: false, " + ex.getMessage());
+                return new GenericValidationResponse(requestId, false);
+            } catch (CryptoTokenOfflineException ex) {
+                throw new SignServerException("Certificate validation error", ex);
+            }
+        } else {            
+            // Fill in the certificate validation information.
+            // As the XAdES4j has checked the certificate we just fill in the values here
+            v = new Validation(result.getValidationCertificate(), chain, Validation.Status.VALID, "Certifiate passed validation");
+        }
+        LOG.info("Request " + requestId + " signature valid: " + (v.getStatus() == Status.VALID));
+        
         ValidateResponse vresponse = new ValidateResponse(v, null);
 
-        return new GenericValidationResponse(requestId, true, vresponse, null);
+        return new GenericValidationResponse(requestId, v.getStatus().equals(Status.VALID), vresponse, null);
     }
 
     @Override
@@ -240,4 +269,130 @@ public class XAdESValidator extends BaseValidator {
         errors.addAll(configErrors);
         return errors;
     }
+    
+    // TODO: Copied from CRLValidator, refactor and clean up: 
+    // TODO: This code is work in progress and should be cleaned up before closing this ticket
+    protected Validation validate(Certificate cert, List<X509Certificate> certChain,  Certificate rootCert)
+            throws IllegalRequestException, CryptoTokenOfflineException,
+            SignServerException {
+
+        if (LOG.isDebugEnabled()) {
+            final StringBuilder sb = new StringBuilder();
+            sb.append("***********************\n");
+            sb.append("Printing certchain for ").append(CertTools.getSubjectDN(cert)).append("\n");
+            for (final X509Certificate certificate : certChain) {
+                sb.append(CertTools.getSubjectDN(certificate)).append("\n");
+            }
+            sb.append("***********************");
+            LOG.debug(sb.toString());
+        }
+        
+        // Collection CDPs from certificates
+        final Set<URL> cDPURLs = new HashSet<URL>();
+        final StringBuilder sb = new StringBuilder();
+        for (final X509Certificate certificate : certChain) {
+             sb.append(CertTools.getIssuerDN(certificate)).append(": ");
+            try {
+                final URL url = CertTools.getCrlDistributionPoint(certificate);
+                if (url == null) {
+                    sb.append("No CRL distribution point URL found.");
+                } else {
+                    sb.append("Found CDP: ").append(url).append("\n");
+                    cDPURLs.add(url);
+                }
+            } catch (CertificateParsingException ex) {
+                // CertTools.getCrlDistributionPoint throws an exception if it can't find an URL
+                sb.append("No CRL distribution point URL found: ").append(ex.getMessage()).append("\n");
+            }
+        }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(sb.toString());
+        }
+
+
+        // certStore & certPath construction
+        final List<Object> certsAndCRLs = new ArrayList<Object>();
+        CertificateFactory certFactory;
+        CertPathValidator validator = null;
+        PKIXParameters params = null;
+        CertPath certPath = null;
+        try {
+            certFactory = CertificateFactory.getInstance("X509"); // TODO: "BC");
+
+            // Initialize certStore with certificate chain and certificate in question
+            certsAndCRLs.addAll(certChain);
+            certsAndCRLs.add(cert);
+
+            //fetch CRLs obtained form the CDP extension of certificates
+            // TODO: We want to use a cache for this
+            for (URL url : cDPURLs) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Fetching CRL from " + url + "...");
+                }
+                certsAndCRLs.add(ValidationUtils.fetchCRLFromURL(url, certFactory));
+            }
+
+            final CertStore certStore = CertStore.getInstance("Collection", new CollectionCertStoreParameters(certsAndCRLs));
+
+            // CertPath Construction
+            certPath = certFactory.generateCertPath(certChain);
+
+            // init cerpathvalidator 
+            validator = CertPathValidator.getInstance("PKIX", "BC");
+
+            // init params
+            TrustAnchor trustAnc = new TrustAnchor((X509Certificate) rootCert, null);
+            params = new PKIXParameters(Collections.singleton(trustAnc));
+            params.addCertStore(certStore);
+            params.setDate(new Date());         // TODO: Using current date at the moment
+            params.setRevocationEnabled(true);
+        } catch (CertificateException e) {
+            LOG.error("Exception on preparing parameters for validation", e);
+            throw new SignServerException(e.toString(), e);
+        } catch (InvalidAlgorithmParameterException e) {
+            LOG.error("Exception on preparing parameters for validation", e);
+            throw new SignServerException(e.toString(), e);
+        } catch (SignServerException e) {
+            LOG.error("Exception on preparing parameters for validation", e);
+            throw new SignServerException(e.toString(), e);
+        } catch (NoSuchAlgorithmException e) {
+            LOG.error("Exception on preparing parameters for validation", e);
+            throw new SignServerException(e.toString(), e);
+        } catch (NoSuchProviderException e) {
+            LOG.error("Exception on preparing parameters for validation", e);
+            throw new SignServerException(e.toString(), e);
+        }
+
+        //do actual validation
+        PKIXCertPathValidatorResult cpv_result;
+        try {
+            cpv_result = (PKIXCertPathValidatorResult) validator.validate(certPath, params);
+            //if we are down here then validation is successful
+            return new Validation(cert, toChain(certChain), Validation.Status.VALID, "This certificate is valid. Trust anchor for certificate is :" + cpv_result.getTrustAnchor().getTrustedCert().getSubjectDN());
+
+        } catch (CertPathValidatorException e) {
+            LOG.debug("certificate is not valid.", e);
+            
+            final String subjectDN;
+            if (e.getCertPath() != null && e.getIndex() != -1) {
+                subjectDN = ((X509Certificate) e.getCertPath().getCertificates().get(e.getIndex())).getSubjectDN().getName();
+            } else {
+                subjectDN = "";
+            }
+            return new Validation(cert, toChain(certChain), Validation.Status.DONTVERIFY, "Exception on validation. certificate causing exception : " + subjectDN + e.toString());
+        } catch (InvalidAlgorithmParameterException e) {
+            LOG.error("Exception on validation", e);
+            throw new SignServerException("Exception on validation.", e);
+        }
+
+    }
+
+    private List<Certificate> toChain(final List<X509Certificate> xchain) {
+        final List<Certificate> chain = new LinkedList<Certificate>();
+        for (X509Certificate cert : xchain) {
+            chain.add(cert);
+        }
+        return chain;
+    }
+    
 }

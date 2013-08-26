@@ -12,37 +12,39 @@
  *************************************************************************/
 package org.signserver.module.xades.signer;
 
-import java.security.cert.Certificate;
+import java.security.PrivateKey;
+import java.security.cert.X509Certificate;
 import java.util.List;
-import org.signserver.common.CryptoTokenOfflineException;
-import org.signserver.server.cryptotokens.ICryptoToken;
+import xades4j.providers.KeyingDataProvider;
+import xades4j.providers.SigningCertChainException;
+import xades4j.providers.SigningKeyException;
+import xades4j.verification.UnexpectedJCAException;
 
 /**
- * Mocked version of the XAdESSigner using a MockedCryptoToken.
+ * An implementation of {@code KeyingDataProvider} that allows direct 
+ * specification of the signing key and certificate chain.
  *
  * @author Markus Kilås
  * @version $Id$
  */
-public class MockedXAdESSigner extends XAdESSigner {
-    private final MockedCryptoToken mockedToken;
+public class CertificateAndChainKeyingDataProvider implements KeyingDataProvider {
 
-    public MockedXAdESSigner(final MockedCryptoToken mockedToken) {
-        this.mockedToken = mockedToken;
+    private final List<X509Certificate> certificates;
+    private final PrivateKey key;
+
+    public CertificateAndChainKeyingDataProvider(final List<X509Certificate> certificates, final PrivateKey key) {
+        this.certificates = certificates;
+        this.key = key;
     }
     
     @Override
-    public Certificate getSigningCertificate() throws CryptoTokenOfflineException {
-        return mockedToken.getCertificate(ICryptoToken.PURPOSE_SIGN);
+    public List<X509Certificate> getSigningCertificateChain() throws SigningCertChainException, UnexpectedJCAException {
+        return certificates;
     }
 
     @Override
-    public List<Certificate> getSigningCertificateChain() throws CryptoTokenOfflineException {
-        return mockedToken.getCertificateChain(ICryptoToken.PURPOSE_SIGN);
-    }
-
-    @Override
-    protected ICryptoToken getCryptoToken() {
-        return mockedToken;
+    public PrivateKey getSigningKey(final X509Certificate signingCert) throws SigningKeyException, UnexpectedJCAException {
+        return key;
     }
     
 }

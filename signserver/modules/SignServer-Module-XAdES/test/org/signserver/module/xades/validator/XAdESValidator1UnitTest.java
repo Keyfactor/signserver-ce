@@ -12,36 +12,34 @@
  *************************************************************************/
 package org.signserver.module.xades.validator;
 
-import java.security.KeyPair;
 import java.security.Security;
-import java.security.cert.Certificate;
-import java.util.Arrays;
 import java.util.Collections;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
-import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.signserver.common.GenericValidationRequest;
 import org.signserver.common.GenericValidationResponse;
+import org.signserver.common.IllegalRequestException;
 import org.signserver.common.RequestContext;
+import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
-import org.signserver.module.xades.common.MockedCryptoToken;
+import org.signserver.module.xades.signer.MockedCryptoToken;
 import org.signserver.module.xades.signer.XAdESSignerUnitTest;
 import org.signserver.server.WorkerContext;
-import org.signserver.test.utils.builders.CertBuilder;
-import org.signserver.test.utils.builders.CryptoUtils;
 import org.signserver.validationservice.common.Validation;
 
 /**
- * Unit tests for the XAdESValidator class.
+ * Basic unit tests for the XAdESValidator class.
+ *
+ * Uses a hard coded XML document.
  *
  * @author Markus Kilås
  * @version $Id$
  */
-public class XAdESValidatorUnitTest {
+public class XAdESValidator1UnitTest {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(XAdESSignerUnitTest.class);
@@ -107,14 +105,10 @@ public class XAdESValidatorUnitTest {
     
     private static MockedCryptoToken token;
     
-    
+
     @BeforeClass
     public static void setUpClass() throws Exception {
         Security.addProvider(new BouncyCastleProvider());
-        final KeyPair signerKeyPair = CryptoUtils.generateRSA(1024);
-        final Certificate[] certChain = new Certificate[] {new JcaX509CertificateConverter().getCertificate(new CertBuilder().setSelfSignKeyPair(signerKeyPair).build())};
-        final Certificate signerCertificate = certChain[0];
-        token = new MockedCryptoToken(signerKeyPair.getPrivate(), signerKeyPair.getPublic(), signerCertificate, Arrays.asList(certChain), "BC");
     }
 
     /**
@@ -129,7 +123,7 @@ public class XAdESValidatorUnitTest {
         
         WorkerContext workerContext = null;
         EntityManager em = null;
-        XAdESValidator instance = new MockedXAdESValidator(token);
+        XAdESValidator instance = new XAdESValidator();
         instance.init(signerId, config, workerContext, em);
         
         assertEquals(Collections.EMPTY_LIST, instance.getFatalErrors());
@@ -139,7 +133,7 @@ public class XAdESValidatorUnitTest {
      * Test of init method with missing TRUSTANCHORS, of class XAdESValidator.
      */
     @Test
-    public void testInit_missingTRUSTANCHORS() {
+    public void testInit_missingTRUSTANCHORS() throws Exception {
         LOG.info("init");
         int signerId = 4711;
         WorkerConfig config = new WorkerConfig();
@@ -147,11 +141,23 @@ public class XAdESValidatorUnitTest {
         
         WorkerContext workerContext = null;
         EntityManager em = null;
-        XAdESValidator instance = new MockedXAdESValidator(token);
+        XAdESValidator instance = new XAdESValidator();
         instance.init(signerId, config, workerContext, em);
         
         String errors = instance.getFatalErrors().toString();
         assertTrue("error: " + errors, errors.contains("TRUSTANCHORS"));
+        
+        // Sending an request should give error
+        RequestContext requestContext = new RequestContext();
+        requestContext.put(RequestContext.TRANSACTION_ID, "0000-200-0");
+        GenericValidationRequest request = new GenericValidationRequest(200, SIGNED_DOCUMENT1.getBytes("UTF-8"));
+        try {
+            instance.processData(request, requestContext);
+            fail("Should have thrown SignServer exception");
+        } catch (IllegalRequestException ex) {
+            fail("Should have thrown SignServerException but was: " + ex);
+        }
+        catch (SignServerException expected) {} // NOPMD
     }
 
     /**
@@ -161,21 +167,21 @@ public class XAdESValidatorUnitTest {
     public void testProcessData_basicValidation() throws Exception {
         LOG.info("processData");
 
-        MockedXAdESValidator instance = new MockedXAdESValidator(token);
+        XAdESValidator instance = new XAdESValidator();
         WorkerConfig config = new WorkerConfig();
         config.setProperty("TRUSTANCHORS", ROOTCA_CERTIFICATE);
-        config.setProperty("REVOCATION_CHECKING", "false"); // We can not do revocation checking in the unit test. A system test should be added for this
+        config.setProperty("REVOCATION_CHECKING", "false");
         
         instance.init(4711, config, null, null);
         
         RequestContext requestContext = new RequestContext();
-        requestContext.put(RequestContext.TRANSACTION_ID, "0000-200-1");
-        GenericValidationRequest request = new GenericValidationRequest(200, SIGNED_DOCUMENT1.getBytes("UTF-8"));
+        requestContext.put(RequestContext.TRANSACTION_ID, "0000-201-0");
+        GenericValidationRequest request = new GenericValidationRequest(201, SIGNED_DOCUMENT1.getBytes("UTF-8"));
         GenericValidationResponse response = (GenericValidationResponse) instance.processData(request, requestContext);
         
         assertTrue("valid document", response.isValid());
         assertNotNull("returned signer cert", response.getSignerCertificate());
         assertEquals("cert validation status", Validation.Status.VALID, response.getCertificateValidation().getStatus());
     }
-
+    
 }

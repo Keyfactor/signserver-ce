@@ -66,6 +66,8 @@ public class PKCS11CryptoToken implements ICryptoToken, IKeyGenerator {
     
     private static final Logger LOG = Logger.getLogger(PKCS11CryptoToken.class);
 
+    private static final String PROPERTY_CACHE_PRIVATEKEY = "CACHE_PRIVATEKEY";
+    
     private final KeyStorePKCS11CryptoToken delegate;
 
     public PKCS11CryptoToken() throws InstantiationException {
@@ -74,6 +76,9 @@ public class PKCS11CryptoToken implements ICryptoToken, IKeyGenerator {
     
     private String keyAlias;
     private String nextKeyAlias;
+
+    private boolean cachePrivateKey;
+    private PrivateKey cachedPrivateKey;
     
     @Override
     public void init(int workerId, Properties props) throws CryptoTokenInitializationFailureException {
@@ -85,6 +90,15 @@ public class PKCS11CryptoToken implements ICryptoToken, IKeyGenerator {
             keyAlias = props.getProperty("defaultKey");
             nextKeyAlias = props.getProperty("nextCertSignKey");
             
+            cachePrivateKey = Boolean.parseBoolean(props.getProperty(PROPERTY_CACHE_PRIVATEKEY, Boolean.FALSE.toString()));
+            
+            if (LOG.isDebugEnabled()) { 
+                final StringBuilder sb = new StringBuilder();
+                sb.append("keyAlias: ").append(keyAlias).append("\n");
+                sb.append("nextKeyAlias: ").append(nextKeyAlias).append("\n");
+                sb.append("cachePrivateKey: ").append(cachePrivateKey);
+                LOG.debug(sb.toString());
+            }
         } catch (org.cesecore.keys.token.CryptoTokenOfflineException ex) {
             LOG.error("Init failed", ex);
             throw new CryptoTokenInitializationFailureException(ex.getMessage());
@@ -117,9 +131,21 @@ public class PKCS11CryptoToken implements ICryptoToken, IKeyGenerator {
 
     @Override
     public PrivateKey getPrivateKey(int purpose) throws CryptoTokenOfflineException {
-        final String alias = purpose == ICryptoToken.PURPOSE_NEXTKEY ? nextKeyAlias : keyAlias;
         try {
-            return delegate.getPrivateKey(alias);
+            final PrivateKey result;
+            if (purpose == ICryptoToken.PURPOSE_NEXTKEY) {
+                result = delegate.getPrivateKey(nextKeyAlias);
+            } else {
+                if (cachePrivateKey && cachedPrivateKey != null) {
+                    result = cachedPrivateKey;
+                } else {
+                    result = delegate.getPrivateKey(keyAlias);
+                    if (cachePrivateKey) {
+                        cachedPrivateKey = result;
+                    }
+                }
+            }
+            return result;
         } catch (org.cesecore.keys.token.CryptoTokenOfflineException ex) {
             throw new CryptoTokenOfflineException(ex);
         }

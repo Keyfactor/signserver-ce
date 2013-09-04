@@ -27,6 +27,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertNotNull;
+import static junit.framework.TestCase.fail;
 import org.bouncycastle.asn1.cmp.PKIStatus;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
@@ -118,7 +121,7 @@ public class P11SignTest extends ModulesTestCase {
         super.tearDown();
     }
     
-    private void setPDFSignerProperties(final int workerId) throws Exception {
+    private void setPDFSignerProperties(final int workerId, final boolean cache) throws Exception {
         // Setup worker
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + workerId + ".CLASSPATH", "org.signserver.module.pdfsigner.PDFSigner");
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", PKCS11CryptoToken.class.getName());
@@ -128,12 +131,13 @@ public class P11SignTest extends ModulesTestCase {
         workerSession.setWorkerProperty(workerId, "SLOT", slot);
         workerSession.setWorkerProperty(workerId, "PIN", pin);
         workerSession.setWorkerProperty(workerId, "DEFAULTKEY", existingKey1);
+        workerSession.setWorkerProperty(workerId, "CACHE_PRIVATEKEY", String.valueOf(cache));
     }
     
     /** Tests that the getCertificateRequest method generates a request. */
     public void testGenerateCSR() throws Exception {
         try {
-            setPDFSignerProperties(WORKER_PDF);
+            setPDFSignerProperties(WORKER_PDF, false);
             workerSession.reloadConfiguration(WORKER_PDF);
             
             // Tests generating a CSR
@@ -144,7 +148,7 @@ public class P11SignTest extends ModulesTestCase {
             assertTrue(csr.getBase64CertReq().length > 0);
             
             // Test for an non-existing key label
-            setPDFSignerProperties(WORKER_PDF);
+            setPDFSignerProperties(WORKER_PDF, false);
             workerSession.setWorkerProperty(WORKER_PDF, "DEFAULTKEY", "NON-EXISTING-KEY-LABEL");
             workerSession.reloadConfiguration(WORKER_PDF);
             try {
@@ -162,34 +166,52 @@ public class P11SignTest extends ModulesTestCase {
     /**
      * Tests setting up a PDF Signer, giving it a certificate and sign a document.
      */
-    public void testPDFSigner() throws Exception {
+    public void testPDFSigner_uncached() throws Exception {
         try {
-            setPDFSignerProperties(WORKER_PDF);
+            setPDFSignerProperties(WORKER_PDF, false);
             workerSession.reloadConfiguration(WORKER_PDF);
             
-            // Generate CSR
-            PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + WORKER_PDF, null);
-            Base64SignerCertReqData reqData = (Base64SignerCertReqData) getWorkerSession().getCertificateRequest(WORKER_PDF, certReqInfo, false);
-            
-            // Issue certificate
-            PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
-            KeyPair issuerKeyPair = CryptoUtils.generateRSA(512);
-            X509CertificateHolder cert = new X509v3CertificateBuilder(new X500Name("CN=TestP11 Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
-            
-            // Install certificate and chain
-            workerSession.uploadSignerCertificate(WORKER_PDF, cert.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
-            workerSession.uploadSignerCertificateChain(WORKER_PDF, Arrays.asList(cert.getEncoded()), GlobalConfiguration.SCOPE_GLOBAL);
-            workerSession.reloadConfiguration(WORKER_PDF);
-            
-            // Test active
-            List<String> errors = workerSession.getStatus(WORKER_PDF).getFatalErrors();
-            assertEquals("errors: " + errors, 0, errors.size());
-            
-            // Test signing
-            signGenericDocument(WORKER_PDF, readFile(pdfSampleFile));
+            pdfSignerTest();
         } finally {
             removeWorker(WORKER_PDF);
         }
+    }
+    
+    /**
+     * Tests setting up a PDF Signer, giving it a certificate and sign a document.
+     */
+    public void testPDFSigner_cached() throws Exception {
+        try {
+            setPDFSignerProperties(WORKER_PDF, true);
+            workerSession.reloadConfiguration(WORKER_PDF);
+            
+            pdfSignerTest();
+        } finally {
+            removeWorker(WORKER_PDF);
+        }
+    }
+    
+    private void pdfSignerTest() throws Exception {
+        // Generate CSR
+        PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + WORKER_PDF, null);
+        Base64SignerCertReqData reqData = (Base64SignerCertReqData) getWorkerSession().getCertificateRequest(WORKER_PDF, certReqInfo, false);
+
+        // Issue certificate
+        PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
+        KeyPair issuerKeyPair = CryptoUtils.generateRSA(512);
+        X509CertificateHolder cert = new X509v3CertificateBuilder(new X500Name("CN=TestP11 Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
+
+        // Install certificate and chain
+        workerSession.uploadSignerCertificate(WORKER_PDF, cert.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
+        workerSession.uploadSignerCertificateChain(WORKER_PDF, Arrays.asList(cert.getEncoded()), GlobalConfiguration.SCOPE_GLOBAL);
+        workerSession.reloadConfiguration(WORKER_PDF);
+
+        // Test active
+        List<String> errors = workerSession.getStatus(WORKER_PDF).getFatalErrors();
+        assertEquals("errors: " + errors, 0, errors.size());
+
+        // Test signing
+        signGenericDocument(WORKER_PDF, readFile(pdfSampleFile));
     }
     
     private byte[] readFile(File file) throws IOException {
@@ -203,7 +225,7 @@ public class P11SignTest extends ModulesTestCase {
         return bout.toByteArray();
     }
     
-    private void setTimeStampSignerProperties(final int workerId) throws IOException {
+    private void setTimeStampSignerProperties(final int workerId, final boolean cache) throws IOException {
         // Setup worker
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + workerId + ".CLASSPATH", "org.signserver.module.tsa.TimeStampSigner");
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", PKCS11CryptoToken.class.getName());
@@ -214,53 +236,67 @@ public class P11SignTest extends ModulesTestCase {
         workerSession.setWorkerProperty(workerId, "PIN", pin);
         workerSession.setWorkerProperty(workerId, "DEFAULTKEY", existingKey1);
         workerSession.setWorkerProperty(workerId, "DEFAULTTSAPOLICYOID", "1.2.3");
+        workerSession.setWorkerProperty(workerId, "CACHE_PRIVATEKEY", String.valueOf(cache));
     }
     
     /**
      * Tests setting up a TimeStamp Signer, giving it a certificate and request a time-stamp token.
      */
-    public void testTSSigner() throws Exception {
+    public void testTSSigner_uncached() throws Exception {
         try {
-            setTimeStampSignerProperties(WORKER_TSA);
+            setTimeStampSignerProperties(WORKER_TSA, false);
             workerSession.reloadConfiguration(WORKER_TSA);
-            
-            // Generate CSR
-            PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + WORKER_TSA, null);
-            Base64SignerCertReqData reqData = (Base64SignerCertReqData) getWorkerSession().getCertificateRequest(WORKER_TSA, certReqInfo, false);
-            
-            // Issue certificate
-            PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
-            KeyPair issuerKeyPair = CryptoUtils.generateRSA(512);
-            X509CertificateHolder cert = new X509v3CertificateBuilder(new X500Name("CN=TestP11 Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).addExtension(org.bouncycastle.asn1.x509.X509Extension.extendedKeyUsage, true, new ExtendedKeyUsage(KeyPurposeId.id_kp_timeStamping)).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
-            
-            // Install certificate and chain
-            workerSession.uploadSignerCertificate(WORKER_TSA, cert.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
-            workerSession.uploadSignerCertificateChain(WORKER_TSA, Arrays.asList(cert.getEncoded()), GlobalConfiguration.SCOPE_GLOBAL);
-            workerSession.reloadConfiguration(WORKER_TSA);
-            
-            // Test active
-            List<String> errors = workerSession.getStatus(WORKER_TSA).getFatalErrors();
-            assertEquals("errors: " + errors, 0, errors.size());
-            
-            // Test signing
-            TimeStampRequestGenerator timeStampRequestGenerator = new TimeStampRequestGenerator();
-            TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
-            byte[] requestBytes = timeStampRequest.getEncoded();
-            GenericSignRequest signRequest = new GenericSignRequest(567, requestBytes);
-            final GenericSignResponse res = (GenericSignResponse) workerSession.process(WORKER_TSA, signRequest, new RequestContext());
-            Certificate signercert = res.getSignerCertificate();
-            assertNotNull(signercert);
-            final TimeStampResponse timeStampResponse = new TimeStampResponse((byte[]) res.getProcessedData());
-            timeStampResponse.validate(timeStampRequest);
-
-            assertEquals("Token granted", PKIStatus.GRANTED, timeStampResponse.getStatus());
-            assertNotNull("Got timestamp token", timeStampResponse.getTimeStampToken());
+            tsSigner();
         } finally {
             removeWorker(WORKER_TSA);
         }
     }
     
-    private void setMRTDSODSignerProperties(final int workerId) throws IOException {
+    public void testTSSigner_cached() throws Exception {
+        try {
+            setTimeStampSignerProperties(WORKER_TSA, true);
+            workerSession.reloadConfiguration(WORKER_TSA);
+            tsSigner();
+        } finally {
+            removeWorker(WORKER_TSA);
+        }
+    }
+    
+    private void tsSigner() throws Exception {
+        // Generate CSR
+        PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + WORKER_TSA, null);
+        Base64SignerCertReqData reqData = (Base64SignerCertReqData) getWorkerSession().getCertificateRequest(WORKER_TSA, certReqInfo, false);
+
+        // Issue certificate
+        PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
+        KeyPair issuerKeyPair = CryptoUtils.generateRSA(512);
+        X509CertificateHolder cert = new X509v3CertificateBuilder(new X500Name("CN=TestP11 Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).addExtension(org.bouncycastle.asn1.x509.X509Extension.extendedKeyUsage, true, new ExtendedKeyUsage(KeyPurposeId.id_kp_timeStamping)).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
+
+        // Install certificate and chain
+        workerSession.uploadSignerCertificate(WORKER_TSA, cert.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
+        workerSession.uploadSignerCertificateChain(WORKER_TSA, Arrays.asList(cert.getEncoded()), GlobalConfiguration.SCOPE_GLOBAL);
+        workerSession.reloadConfiguration(WORKER_TSA);
+
+        // Test active
+        List<String> errors = workerSession.getStatus(WORKER_TSA).getFatalErrors();
+        assertEquals("errors: " + errors, 0, errors.size());
+
+        // Test signing
+        TimeStampRequestGenerator timeStampRequestGenerator = new TimeStampRequestGenerator();
+        TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
+        byte[] requestBytes = timeStampRequest.getEncoded();
+        GenericSignRequest signRequest = new GenericSignRequest(567, requestBytes);
+        final GenericSignResponse res = (GenericSignResponse) workerSession.process(WORKER_TSA, signRequest, new RequestContext());
+        Certificate signercert = res.getSignerCertificate();
+        assertNotNull(signercert);
+        final TimeStampResponse timeStampResponse = new TimeStampResponse((byte[]) res.getProcessedData());
+        timeStampResponse.validate(timeStampRequest);
+
+        assertEquals("Token granted", PKIStatus.GRANTED, timeStampResponse.getStatus());
+        assertNotNull("Got timestamp token", timeStampResponse.getTimeStampToken());
+    }
+    
+    private void setMRTDSODSignerProperties(final int workerId, final boolean cache) throws IOException {
         // Setup worker
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + workerId + ".CLASSPATH", "org.signserver.module.mrtdsodsigner.MRTDSODSigner");
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", PKCS11CryptoToken.class.getName());
@@ -270,51 +306,68 @@ public class P11SignTest extends ModulesTestCase {
         workerSession.setWorkerProperty(workerId, "SLOT", slot);
         workerSession.setWorkerProperty(workerId, "PIN", pin);
         workerSession.setWorkerProperty(workerId, "DEFAULTKEY", existingKey1);
+        workerSession.setWorkerProperty(workerId, "CACHE_PRIVATEKEY", String.valueOf(cache));
     }
     
     /**
      * Tests setting up a MRTD SOD Signer, giving it a certificate and requests an SOd.
      */
-    public void testMRTDSODSigner() throws Exception {
+    public void testMRTDSODSigner_uncached() throws Exception {
         final int workerId = WORKER_SOD;
         try {
-            setMRTDSODSignerProperties(workerId);
+            setMRTDSODSignerProperties(workerId, false);
             workerSession.reloadConfiguration(workerId);
             
-            // Generate CSR
-            PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + workerId, null);
-            Base64SignerCertReqData reqData = (Base64SignerCertReqData) getWorkerSession().getCertificateRequest(workerId, certReqInfo, false);
-            
-            // Issue certificate
-            PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
-            KeyPair issuerKeyPair = CryptoUtils.generateRSA(512);
-            X509CertificateHolder issuerCert = new JcaX509v3CertificateBuilder(new X500Name("CN=TestP11 Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), new X500Name("CN=TestP11 Issuer"), issuerKeyPair.getPublic()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
-            X509CertificateHolder cert = new X509v3CertificateBuilder(new X500Name("CN=TestP11 Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
-            
-            // Install certificate and chain
-            workerSession.uploadSignerCertificate(workerId, cert.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
-            workerSession.uploadSignerCertificateChain(workerId, Arrays.asList(cert.getEncoded(), issuerCert.getEncoded()), GlobalConfiguration.SCOPE_GLOBAL);
-            workerSession.reloadConfiguration(workerId);
-            
-            // Test active
-            List<String> errors = workerSession.getStatus(workerId).getFatalErrors();
-            assertEquals("errors: " + errors, 0, errors.size());
-            
-            // Test signing
-            HashMap<Integer, byte[]> dgs = new HashMap<Integer, byte[]>();
-            dgs.put(1, "Yy==".getBytes());
-            dgs.put(2, "Yy==".getBytes());
-            dgs.put(3, "Yy==".getBytes());
-            final SODSignRequest signRequest = new SODSignRequest(233, dgs);
-            final SODSignResponse res = (SODSignResponse) workerSession.process(workerId, signRequest, new RequestContext());
-            Certificate signercert = res.getSignerCertificate();
-            assertNotNull(signercert);
+            mrtdsodSigner(workerId);
         } finally {
             removeWorker(workerId);
         }
     }
     
-    private void setCMSSignerProperties(final int workerId) throws IOException {
+    public void testMRTDSODSigner_cached() throws Exception {
+        final int workerId = WORKER_SOD;
+        try {
+            setMRTDSODSignerProperties(workerId, true);
+            workerSession.reloadConfiguration(workerId);
+            
+            mrtdsodSigner(workerId);
+        } finally {
+            removeWorker(workerId);
+        }
+    }
+    
+    private void mrtdsodSigner(final int workerId) throws Exception {
+        // Generate CSR
+        PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + workerId, null);
+        Base64SignerCertReqData reqData = (Base64SignerCertReqData) getWorkerSession().getCertificateRequest(workerId, certReqInfo, false);
+
+        // Issue certificate
+        PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
+        KeyPair issuerKeyPair = CryptoUtils.generateRSA(512);
+        X509CertificateHolder issuerCert = new JcaX509v3CertificateBuilder(new X500Name("CN=TestP11 Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), new X500Name("CN=TestP11 Issuer"), issuerKeyPair.getPublic()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
+        X509CertificateHolder cert = new X509v3CertificateBuilder(new X500Name("CN=TestP11 Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
+
+        // Install certificate and chain
+        workerSession.uploadSignerCertificate(workerId, cert.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
+        workerSession.uploadSignerCertificateChain(workerId, Arrays.asList(cert.getEncoded(), issuerCert.getEncoded()), GlobalConfiguration.SCOPE_GLOBAL);
+        workerSession.reloadConfiguration(workerId);
+
+        // Test active
+        List<String> errors = workerSession.getStatus(workerId).getFatalErrors();
+        assertEquals("errors: " + errors, 0, errors.size());
+
+        // Test signing
+        HashMap<Integer, byte[]> dgs = new HashMap<Integer, byte[]>();
+        dgs.put(1, "Yy==".getBytes());
+        dgs.put(2, "Yy==".getBytes());
+        dgs.put(3, "Yy==".getBytes());
+        final SODSignRequest signRequest = new SODSignRequest(233, dgs);
+        final SODSignResponse res = (SODSignResponse) workerSession.process(workerId, signRequest, new RequestContext());
+        Certificate signercert = res.getSignerCertificate();
+        assertNotNull(signercert);
+    }
+    
+    private void setCMSSignerProperties(final int workerId, final boolean cached) throws IOException {
         // Setup worker
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + workerId + ".CLASSPATH", "org.signserver.module.cmssigner.CMSSigner");
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", PKCS11CryptoToken.class.getName());
@@ -324,43 +377,60 @@ public class P11SignTest extends ModulesTestCase {
         workerSession.setWorkerProperty(workerId, "SLOT", slot);
         workerSession.setWorkerProperty(workerId, "PIN", pin);
         workerSession.setWorkerProperty(workerId, "DEFAULTKEY", existingKey1);
+        workerSession.setWorkerProperty(workerId, "CACHE_PRIVATEKEY", String.valueOf(cached));
     }
     
     /**
      * Tests setting up a CMS Signer, giving it a certificate and sign a file.
      */
-    public void testCMSSigner() throws Exception {
+    public void testCMSSigner_uncached() throws Exception {
         final int workerId = WORKER_CMS;
         try {
-            setCMSSignerProperties(workerId);
+            setCMSSignerProperties(workerId, false);
             workerSession.reloadConfiguration(workerId);
             
-            // Generate CSR
-            PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + workerId, null);
-            Base64SignerCertReqData reqData = (Base64SignerCertReqData) getWorkerSession().getCertificateRequest(workerId, certReqInfo, false);
-            
-            // Issue certificate
-            PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
-            KeyPair issuerKeyPair = CryptoUtils.generateRSA(512);
-            X509CertificateHolder cert = new X509v3CertificateBuilder(new X500Name("CN=TestP11 Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
-            
-            // Install certificate and chain
-            workerSession.uploadSignerCertificate(workerId, cert.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
-            workerSession.uploadSignerCertificateChain(workerId, Arrays.asList(cert.getEncoded()), GlobalConfiguration.SCOPE_GLOBAL);
-            workerSession.reloadConfiguration(workerId);
-            
-            // Test active
-            List<String> errors = workerSession.getStatus(workerId).getFatalErrors();
-            assertEquals("errors: " + errors, 0, errors.size());
-            
-            // Test signing
-            signGenericDocument(workerId, "Sample data".getBytes());
+            cmsSigner(workerId);
         } finally {
             removeWorker(workerId);
         }
     }
     
-    private void setXMLSignerProperties(final int workerId) throws IOException {
+    public void testCMSSigner_cached() throws Exception {
+        final int workerId = WORKER_CMS;
+        try {
+            setCMSSignerProperties(workerId, true);
+            workerSession.reloadConfiguration(workerId);
+            
+            cmsSigner(workerId);
+        } finally {
+            removeWorker(workerId);
+        }
+    }
+    
+    private void cmsSigner(final int workerId) throws Exception {
+        // Generate CSR
+        PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + workerId, null);
+        Base64SignerCertReqData reqData = (Base64SignerCertReqData) getWorkerSession().getCertificateRequest(workerId, certReqInfo, false);
+
+        // Issue certificate
+        PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
+        KeyPair issuerKeyPair = CryptoUtils.generateRSA(512);
+        X509CertificateHolder cert = new X509v3CertificateBuilder(new X500Name("CN=TestP11 Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
+
+        // Install certificate and chain
+        workerSession.uploadSignerCertificate(workerId, cert.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
+        workerSession.uploadSignerCertificateChain(workerId, Arrays.asList(cert.getEncoded()), GlobalConfiguration.SCOPE_GLOBAL);
+        workerSession.reloadConfiguration(workerId);
+
+        // Test active
+        List<String> errors = workerSession.getStatus(workerId).getFatalErrors();
+        assertEquals("errors: " + errors, 0, errors.size());
+
+        // Test signing
+        signGenericDocument(workerId, "Sample data".getBytes());
+    }
+    
+    private void setXMLSignerProperties(final int workerId, final boolean cache) throws IOException {
         // Setup worker
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + workerId + ".CLASSPATH", "org.signserver.module.xmlsigner.XMLSigner");
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", PKCS11CryptoToken.class.getName());
@@ -370,56 +440,71 @@ public class P11SignTest extends ModulesTestCase {
         workerSession.setWorkerProperty(workerId, "SLOT", slot);
         workerSession.setWorkerProperty(workerId, "PIN", pin);
         workerSession.setWorkerProperty(workerId, "DEFAULTKEY", existingKey1);
+        workerSession.setWorkerProperty(workerId, "CACHE_PRIVATEKEY", String.valueOf(cache));
     }
     
     /**
      * Tests setting up a XML Signer, giving it a certificate and sign a document.
      */
-    public void testXMLSigner() throws Exception {
+    public void testXMLSigner_uncached() throws Exception {
         final int workerId = WORKER_XML;
         try {
-            setXMLSignerProperties(workerId);
+            setXMLSignerProperties(workerId, false);
             workerSession.reloadConfiguration(workerId);
             
-            // Generate CSR
-            PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + workerId, null);
-            Base64SignerCertReqData reqData = (Base64SignerCertReqData) getWorkerSession().getCertificateRequest(workerId, certReqInfo, false);
-            
-            // Issue certificate
-            PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
-            KeyPair issuerKeyPair = CryptoUtils.generateRSA(512);
-            X509CertificateHolder cert = new X509v3CertificateBuilder(new X500Name("CN=TestP11 Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
-            
-            // Install certificate and chain
-            workerSession.uploadSignerCertificate(workerId, cert.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
-            workerSession.uploadSignerCertificateChain(workerId, Arrays.asList(cert.getEncoded()), GlobalConfiguration.SCOPE_GLOBAL);
-            workerSession.reloadConfiguration(workerId);
-            
-            // Test active
-            List<String> errors = workerSession.getStatus(workerId).getFatalErrors();
-            assertEquals("errors: " + errors, 0, errors.size());
-            
-            // Test signing
-            signGenericDocument(workerId, "<sampledata/>".getBytes());
-            
-            // Test removing the DEFAULTKEY property, should result in a CryptoTokenOfflineException
-            workerSession.removeWorkerProperty(workerId, "DEFAULTKEY");
-            workerSession.reloadConfiguration(workerId);
-            
-            try {
-                signGenericDocument(workerId, "<sampledata/>".getBytes());
-                fail("Should throw a CryptoTokenOfflineException");
-            } catch (CryptoTokenOfflineException e) {
-                // expected
-            }
-            
+            xmlSigner(workerId);
         } finally {
             removeWorker(workerId);
         }
     }
     
-    // TODO: ODFSigner
-    private void setODFSignerProperties(final int workerId) throws IOException {
+    public void testXMLSigner_cached() throws Exception {
+        final int workerId = WORKER_XML;
+        try {
+            setXMLSignerProperties(workerId, true);
+            workerSession.reloadConfiguration(workerId);
+            
+            xmlSigner(workerId);
+        } finally {
+            removeWorker(workerId);
+        }
+    }
+    
+    private void xmlSigner(final int workerId) throws Exception {
+        // Generate CSR
+        PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + workerId, null);
+        Base64SignerCertReqData reqData = (Base64SignerCertReqData) getWorkerSession().getCertificateRequest(workerId, certReqInfo, false);
+
+        // Issue certificate
+        PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
+        KeyPair issuerKeyPair = CryptoUtils.generateRSA(512);
+        X509CertificateHolder cert = new X509v3CertificateBuilder(new X500Name("CN=TestP11 Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
+
+        // Install certificate and chain
+        workerSession.uploadSignerCertificate(workerId, cert.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
+        workerSession.uploadSignerCertificateChain(workerId, Arrays.asList(cert.getEncoded()), GlobalConfiguration.SCOPE_GLOBAL);
+        workerSession.reloadConfiguration(workerId);
+
+        // Test active
+        List<String> errors = workerSession.getStatus(workerId).getFatalErrors();
+        assertEquals("errors: " + errors, 0, errors.size());
+
+        // Test signing
+        signGenericDocument(workerId, "<sampledata/>".getBytes());
+
+        // Test removing the DEFAULTKEY property, should result in a CryptoTokenOfflineException
+        workerSession.removeWorkerProperty(workerId, "DEFAULTKEY");
+        workerSession.reloadConfiguration(workerId);
+
+        try {
+            signGenericDocument(workerId, "<sampledata/>".getBytes());
+            fail("Should throw a CryptoTokenOfflineException");
+        } catch (CryptoTokenOfflineException e) {
+            // expected
+        }
+    }
+    
+    private void setODFSignerProperties(final int workerId, final boolean cache) throws IOException {
         // Setup worker
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + workerId + ".CLASSPATH", "org.signserver.module.odfsigner.ODFSigner");
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", PKCS11CryptoToken.class.getName());
@@ -429,43 +514,60 @@ public class P11SignTest extends ModulesTestCase {
         workerSession.setWorkerProperty(workerId, "SLOT", slot);
         workerSession.setWorkerProperty(workerId, "PIN", pin);
         workerSession.setWorkerProperty(workerId, "DEFAULTKEY", existingKey1);
+        workerSession.setWorkerProperty(workerId, "CACHE_PRIVATEKEY", String.valueOf(cache));
     }
     
     /**
      * Tests setting up a ODF Signer, giving it a certificate and sign a document.
      */
-    public void testODFSigner() throws Exception {
+    public void testODFSigner_uncached() throws Exception {
         final int workerId = WORKER_ODF;
         try {
-            setODFSignerProperties(workerId);
+            setODFSignerProperties(workerId, false);
             workerSession.reloadConfiguration(workerId);
             
-            // Generate CSR
-            PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + workerId, null);
-            Base64SignerCertReqData reqData = (Base64SignerCertReqData) getWorkerSession().getCertificateRequest(workerId, certReqInfo, false);
-            
-            // Issue certificate
-            PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
-            KeyPair issuerKeyPair = CryptoUtils.generateRSA(512);
-            X509CertificateHolder cert = new X509v3CertificateBuilder(new X500Name("CN=TestP11 Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
-            
-            // Install certificate and chain
-            workerSession.uploadSignerCertificate(workerId, cert.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
-            workerSession.uploadSignerCertificateChain(workerId, Arrays.asList(cert.getEncoded()), GlobalConfiguration.SCOPE_GLOBAL);
-            workerSession.reloadConfiguration(workerId);
-            
-            // Test active
-            List<String> errors = workerSession.getStatus(workerId).getFatalErrors();
-            assertEquals("errors: " + errors, 0, errors.size());
-            
-            // Test signing
-            signGenericDocument(workerId, readFile(odfSampleFile));
+            odfSigner(workerId);
         } finally {
             removeWorker(workerId);
         }
     }
     
-    private void setOOXMLSignerProperties(final int workerId) throws IOException {
+    public void testODFSigner_cached() throws Exception {
+        final int workerId = WORKER_ODF;
+        try {
+            setODFSignerProperties(workerId, true);
+            workerSession.reloadConfiguration(workerId);
+            
+            odfSigner(workerId);
+        } finally {
+            removeWorker(workerId);
+        }
+    }
+    
+    private void odfSigner(final int workerId) throws Exception {
+        // Generate CSR
+        PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + workerId, null);
+        Base64SignerCertReqData reqData = (Base64SignerCertReqData) getWorkerSession().getCertificateRequest(workerId, certReqInfo, false);
+
+        // Issue certificate
+        PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
+        KeyPair issuerKeyPair = CryptoUtils.generateRSA(512);
+        X509CertificateHolder cert = new X509v3CertificateBuilder(new X500Name("CN=TestP11 Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
+
+        // Install certificate and chain
+        workerSession.uploadSignerCertificate(workerId, cert.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
+        workerSession.uploadSignerCertificateChain(workerId, Arrays.asList(cert.getEncoded()), GlobalConfiguration.SCOPE_GLOBAL);
+        workerSession.reloadConfiguration(workerId);
+
+        // Test active
+        List<String> errors = workerSession.getStatus(workerId).getFatalErrors();
+        assertEquals("errors: " + errors, 0, errors.size());
+
+        // Test signing
+        signGenericDocument(workerId, readFile(odfSampleFile));
+    }
+    
+    private void setOOXMLSignerProperties(final int workerId, final boolean cache) throws IOException {
         // Setup worker
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + workerId + ".CLASSPATH", "org.signserver.module.ooxmlsigner.OOXMLSigner");
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", PKCS11CryptoToken.class.getName());
@@ -475,43 +577,58 @@ public class P11SignTest extends ModulesTestCase {
         workerSession.setWorkerProperty(workerId, "SLOT", slot);
         workerSession.setWorkerProperty(workerId, "PIN", pin);
         workerSession.setWorkerProperty(workerId, "DEFAULTKEY", existingKey1);
+        workerSession.setWorkerProperty(workerId, "CACHE_PRIVATEKEY", String.valueOf(cache));
     }
     
     /**
      * Tests setting up a OOXML Signer, giving it a certificate and sign a document.
      */
-    public void testOOXMLSigner() throws Exception {
+    public void testOOXMLSigner_uncached() throws Exception {
         final int workerId = WORKER_OOXML;
         try {
-            setOOXMLSignerProperties(workerId);
+            setOOXMLSignerProperties(workerId, false);
             workerSession.reloadConfiguration(workerId);
-            
-            // Generate CSR
-            PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + workerId, null);
-            Base64SignerCertReqData reqData = (Base64SignerCertReqData) getWorkerSession().getCertificateRequest(workerId, certReqInfo, false);
-            
-            // Issue certificate
-            PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
-            KeyPair issuerKeyPair = CryptoUtils.generateRSA(512);
-            X509CertificateHolder cert = new X509v3CertificateBuilder(new X500Name("CN=TestP11 Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
-            
-            // Install certificate and chain
-            workerSession.uploadSignerCertificate(workerId, cert.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
-            workerSession.uploadSignerCertificateChain(workerId, Arrays.asList(cert.getEncoded()), GlobalConfiguration.SCOPE_GLOBAL);
-            workerSession.reloadConfiguration(workerId);
-            
-            // Test active
-            List<String> errors = workerSession.getStatus(workerId).getFatalErrors();
-            assertEquals("errors: " + errors, 0, errors.size());
-            
-            // Test signing
-            signGenericDocument(workerId, readFile(ooxmlSampleFile));
+            ooxmlSigner(workerId);
         } finally {
             removeWorker(workerId);
         }
     }
+    
+    public void testOOXMLSigner_cached() throws Exception {
+        final int workerId = WORKER_OOXML;
+        try {
+            setOOXMLSignerProperties(workerId, true);
+            workerSession.reloadConfiguration(workerId);
+            ooxmlSigner(workerId);
+        } finally {
+            removeWorker(workerId);
+        }
+    }
+    
+    private void ooxmlSigner(final int workerId) throws Exception {
+        // Generate CSR
+        PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + workerId, null);
+        Base64SignerCertReqData reqData = (Base64SignerCertReqData) getWorkerSession().getCertificateRequest(workerId, certReqInfo, false);
 
-    private void setMSAuthTimeStampSignerProperties(final int workerId) throws IOException {
+        // Issue certificate
+        PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
+        KeyPair issuerKeyPair = CryptoUtils.generateRSA(512);
+        X509CertificateHolder cert = new X509v3CertificateBuilder(new X500Name("CN=TestP11 Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
+
+        // Install certificate and chain
+        workerSession.uploadSignerCertificate(workerId, cert.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
+        workerSession.uploadSignerCertificateChain(workerId, Arrays.asList(cert.getEncoded()), GlobalConfiguration.SCOPE_GLOBAL);
+        workerSession.reloadConfiguration(workerId);
+
+        // Test active
+        List<String> errors = workerSession.getStatus(workerId).getFatalErrors();
+        assertEquals("errors: " + errors, 0, errors.size());
+
+        // Test signing
+        signGenericDocument(workerId, readFile(ooxmlSampleFile));
+    }
+
+    private void setMSAuthTimeStampSignerProperties(final int workerId, final boolean cache) throws IOException {
         // Setup worker
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + workerId + ".CLASSPATH", "org.signserver.module.tsa.MSAuthCodeTimeStampSigner");
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", PKCS11CryptoToken.class.getName());
@@ -522,66 +639,80 @@ public class P11SignTest extends ModulesTestCase {
         workerSession.setWorkerProperty(workerId, "PIN", pin);
         workerSession.setWorkerProperty(workerId, "DEFAULTKEY", existingKey1);
         workerSession.setWorkerProperty(workerId, "DEFAULTTSAPOLICYOID", "1.2.3");
+        workerSession.setWorkerProperty(workerId, "CACHE_PRIVATEKEY", String.valueOf(cache));
     }
     
     /**
      * Tests setting up a MSAuthCodeTimeStamp Signer, giving it a certificate and request a time-stamp token.
      */
-    public void testMSAuthTSSigner() throws Exception {
+    public void testMSAuthTSSigner_uncached() throws Exception {
         final int workerId = WORKER_MSA;
         try {
-            setMSAuthTimeStampSignerProperties(workerId);
+            setMSAuthTimeStampSignerProperties(workerId, false);
             workerSession.reloadConfiguration(workerId);
-            
-            // Generate CSR
-            PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + workerId, null);
-            Base64SignerCertReqData reqData = (Base64SignerCertReqData) getWorkerSession().getCertificateRequest(workerId, certReqInfo, false);
-            
-            // Issue certificate
-            PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
-            KeyPair issuerKeyPair = CryptoUtils.generateRSA(512);
-            X509CertificateHolder cert = new X509v3CertificateBuilder(new X500Name("CN=TestP11 Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).addExtension(org.bouncycastle.asn1.x509.X509Extension.extendedKeyUsage, true, new ExtendedKeyUsage(KeyPurposeId.id_kp_timeStamping)).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
-            
-            // Install certificate and chain
-            workerSession.uploadSignerCertificate(workerId, cert.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
-            workerSession.uploadSignerCertificateChain(workerId, Arrays.asList(cert.getEncoded()), GlobalConfiguration.SCOPE_GLOBAL);
-            workerSession.reloadConfiguration(workerId);
-            
-            // Test active
-            List<String> errors = workerSession.getStatus(workerId).getFatalErrors();
-            assertEquals("errors: " + errors, 0, errors.size());
-            
-            // Test signing
-            GenericSignRequest signRequest = new GenericSignRequest(678, MSAUTHCODE_REQUEST_DATA.getBytes());
-            final GenericSignResponse res = (GenericSignResponse) workerSession.process(workerId, signRequest, new RequestContext());
-            Certificate signercert = res.getSignerCertificate();
-            assertNotNull(signercert);
-            
-            byte[] buf = res.getProcessedData();
-            CMSSignedData s = new CMSSignedData(Base64.decode(buf));
-
-            int verified = 0;
-            Store certStore = s.getCertificates();
-            SignerInformationStore signers = s.getSignerInfos();
-            Collection c = signers.getSigners();
-            Iterator it = c.iterator();
-
-            while (it.hasNext()) {
-                SignerInformation signer = (SignerInformation)it.next();
-                Collection certCollection = certStore.getMatches(signer.getSID());
-                    
-                Iterator certIt = certCollection.iterator();
-                X509CertificateHolder signerCert = (X509CertificateHolder) certIt.next();
-
-                if (signer.verify(new JcaSimpleSignerInfoVerifierBuilder().setProvider("BC").build(signerCert))) {
-                    verified++;
-                }
-            }
-            
-            assertEquals("signer verified", 1, verified);
-            
+            msauthTSSigner(workerId);
         } finally {
             removeWorker(workerId);
         }
+    }
+    
+    public void testMSAuthTSSigner_cached() throws Exception {
+        final int workerId = WORKER_MSA;
+        try {
+            setMSAuthTimeStampSignerProperties(workerId, true);
+            workerSession.reloadConfiguration(workerId);
+            msauthTSSigner(workerId);
+        } finally {
+            removeWorker(workerId);
+        }
+    }
+    
+    private void msauthTSSigner(final int workerId) throws Exception {        
+        // Generate CSR
+        PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + workerId, null);
+        Base64SignerCertReqData reqData = (Base64SignerCertReqData) getWorkerSession().getCertificateRequest(workerId, certReqInfo, false);
+
+        // Issue certificate
+        PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
+        KeyPair issuerKeyPair = CryptoUtils.generateRSA(512);
+        X509CertificateHolder cert = new X509v3CertificateBuilder(new X500Name("CN=TestP11 Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).addExtension(org.bouncycastle.asn1.x509.X509Extension.extendedKeyUsage, true, new ExtendedKeyUsage(KeyPurposeId.id_kp_timeStamping)).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
+
+        // Install certificate and chain
+        workerSession.uploadSignerCertificate(workerId, cert.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
+        workerSession.uploadSignerCertificateChain(workerId, Arrays.asList(cert.getEncoded()), GlobalConfiguration.SCOPE_GLOBAL);
+        workerSession.reloadConfiguration(workerId);
+
+        // Test active
+        List<String> errors = workerSession.getStatus(workerId).getFatalErrors();
+        assertEquals("errors: " + errors, 0, errors.size());
+
+        // Test signing
+        GenericSignRequest signRequest = new GenericSignRequest(678, MSAUTHCODE_REQUEST_DATA.getBytes());
+        final GenericSignResponse res = (GenericSignResponse) workerSession.process(workerId, signRequest, new RequestContext());
+        Certificate signercert = res.getSignerCertificate();
+        assertNotNull(signercert);
+
+        byte[] buf = res.getProcessedData();
+        CMSSignedData s = new CMSSignedData(Base64.decode(buf));
+
+        int verified = 0;
+        Store certStore = s.getCertificates();
+        SignerInformationStore signers = s.getSignerInfos();
+        Collection c = signers.getSigners();
+        Iterator it = c.iterator();
+
+        while (it.hasNext()) {
+            SignerInformation signer = (SignerInformation)it.next();
+            Collection certCollection = certStore.getMatches(signer.getSID());
+
+            Iterator certIt = certCollection.iterator();
+            X509CertificateHolder signerCert = (X509CertificateHolder) certIt.next();
+
+            if (signer.verify(new JcaSimpleSignerInfoVerifierBuilder().setProvider("BC").build(signerCert))) {
+                verified++;
+            }
+        }
+
+        assertEquals("signer verified", 1, verified);
     }
 }

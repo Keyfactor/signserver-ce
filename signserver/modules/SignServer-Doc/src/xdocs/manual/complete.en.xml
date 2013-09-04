@@ -4727,6 +4727,9 @@ attributes(generate, CKO_PRIVATE_KEY,*) = {
   CKA_UNWRAP = true
 }
                         </pre>
+                        <p>
+<b>CACHE_PRIVATEKEY</b> = If set to true the private key reference is cached in the worker so that it is not queried for each signature. This could potentially improve performance in some environments. (Default: false)
+                        </p>
                     </subsubsection>
                     <subsubsection name="Example usage">
                         <p>

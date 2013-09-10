@@ -124,7 +124,7 @@ public class XAdESValidator extends BaseValidator {
             } else {
                 final Collection<Certificate> trustedCertificates = CertTools.getCertsFromPEM(new ByteArrayInputStream(value.getBytes("UTF-8")));
                 trustAnchors = KeyStore.getInstance("JKS");
-                trustAnchors.load(null, /*"foo123".toCharArray()*/null);
+                trustAnchors.load(null, null);
                 int i = 0;
                 final StringBuilder sb = new StringBuilder();
                 sb.append("Trusted certificates are:\n");
@@ -149,6 +149,7 @@ public class XAdESValidator extends BaseValidator {
         }        
     }
     
+    /** Log a property error and add the error message the list of fatal errors. */
     private void logPropertyError(final int workerId, final String property, final Exception ex) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Worker " + workerId + ": Property " + property + " caused an error", ex);
@@ -156,6 +157,7 @@ public class XAdESValidator extends BaseValidator {
         configErrors.add("Property " + property + " caused error: " + ex.getMessage());
     }
     
+    /** Log a missing property and add the error message to the list of fatal errors. */
     private void logMissingProperty(final int workerId, final String property) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Worker " + workerId + ": Missing required property " + property);

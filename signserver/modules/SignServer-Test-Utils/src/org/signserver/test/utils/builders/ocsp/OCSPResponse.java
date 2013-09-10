@@ -23,6 +23,8 @@ import org.bouncycastle.cert.ocsp.OCSPResp;
  * Holder for information returned from the OCSP responder as well as information
  * about return codes etc.
  *
+ * 
+ * XXX: This code is duplicated in EJBCA and SignServer. Consider breaking out as a separate JAR.
  *
  * @version $Id$
  */

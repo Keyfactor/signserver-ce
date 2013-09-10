@@ -17,6 +17,8 @@ import org.bouncycastle.asn1.ASN1OctetString;
 
 /**
  * Holder for the data to use when creating an OCSP extension.
+ * 
+ * XXX: This code is duplicated in EJBCA and SignServer. Consider breaking out as a separate JAR.
  *
  * @version $Id$
  */

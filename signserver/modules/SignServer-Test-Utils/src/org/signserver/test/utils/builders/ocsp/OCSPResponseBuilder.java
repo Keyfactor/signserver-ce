@@ -39,6 +39,7 @@ import org.signserver.test.utils.builders.ocsp.OCSPResponse.Error;
 /**
  * Builds an OCSP response.
  *
+ * XXX: This code is duplicated in EJBCA and SignServer. Consider breaking out as a separate JAR.
  *
  * @version $Id$
  */

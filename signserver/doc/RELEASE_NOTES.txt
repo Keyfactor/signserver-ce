@@ -18,6 +18,26 @@ Notice:
 Read the full changelog for details (https://jira.primekey.se/browse/DSS?report=com.atlassian.jira.plugin.system.project:changelog-panel#selectedTab=com.atlassian.jira.plugin.system.project%3Achangelog-panel).
 
 
+SignServer 3.4.2
+----------------
+
+New features and improvements:
+ - Uses PKCS11CryptoToken from CESeCore
+ - Support for starting audit log verification from a specified sequence number
+ - Option to archive all X-Forwarded-For addresses
+ - Option to include the ordering field in time-stamp tokens even if it has value false
+ - Option to not include the signingTime CMS attribute in time-stamp signer
+ - Option to cache PKCS#11 key reference to increase performance
+ - Includes IssuerSerial in the SigningCertificate attribute in time-stamp signer
+
+Bug fixes:
+ - HSM auto activation was not working when signed audit log was used
+ - Key generation was not working with slotListIndex 
+ - ClientCLI over web services was not working unless includemodulesinbuild specified
+ 
+Read the full changelog for details (https://jira.primekey.se/browse/DSS?report=com.atlassian.jira.plugin.system.project:changelog-panel#selectedTab=com.atlassian.jira.plugin.system.project%3Achangelog-panel).
+
+
 SignServer 3.4.1
 ----------------
 

@@ -1,3 +1,27 @@
+SignServer 3.4.2, 2013-06-dd
+----------------------------
+
+** Bug
+    * [DSS-644] - Regression: java.trustpassword missing in sample build file
+    * [DSS-645] - HSM auto activation not working when signed audit log is used
+    * [DSS-654] - ClientCLI over seb services not working unless includemodulesinbuild specified
+    * [DSS-655] - Demo XML signature certificate can not be verified using demo validator
+    * [DSS-687] - Generatekey CLI command not working with slotListIndex
+
+** Improvement
+    * [DSS-357] - Just print error message instead of stacktraces when worker classes can not be found
+    * [DSS-370] - Update with PKCS11CryptoToken from CESeCore
+    * [DSS-639] - Include IssuerSerial in the SigningCertificate attribute for TimeStampSigner
+    * [DSS-688] - Option to cache PKCS#11 key reference to increase performance
+
+
+** New Feature
+    * [DSS-646] - Archive all X-Forwarded-For addresses
+    * [DSS-647] - Option to start audit log verification from a specified sequence number
+    * [DSS-648] - Make signingTime CMS attribute optional for TSA
+    * [DSS-670] - Option to include the ordering field in time-stamp tokens even if it has value false
+
+
 SignServer 3.4.1, 2013-06-11
 ----------------------------
 

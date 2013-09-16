@@ -752,6 +752,7 @@ public class TimeStampSigner extends BaseSigner {
             }
 
             timeStampTokenGen.setOrdering(ordering);
+            timeStampTokenGen.setIncludeOrdering(includeOrdering);
 
             if (tsaName != null) {
                 final X500Name x500Name = new X500Name(tsaName);

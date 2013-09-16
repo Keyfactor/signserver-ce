@@ -3232,6 +3232,9 @@ Supported Algorithms are: GOST3411, MD5, SHA1, SHA224, SHA256, SHA384, SHA512, R
 <b>ORDERING</b> = The ordering (OPTIONAL), default false. Only false is supported.
                         </p>
                         <p>
+<b>INCLUDEORDERING</b> = If set to true, always include the ordering attribute, even when ORDERING is set to false. It is not allowed to set this to false when ORDERING is set to true. (OPTIONAL), default false.                       
+                        </p>
+                        <p>
 <b>TSA</b> = General name of the Time Stamp Authority. (OPTIONAL)
                         </p>
                         <p>

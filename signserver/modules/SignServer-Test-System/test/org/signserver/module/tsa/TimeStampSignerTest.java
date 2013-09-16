@@ -24,15 +24,20 @@ import java.security.cert.X509Certificate;
 import java.util.*;
 
 import org.apache.log4j.Logger;
+import org.bouncycastle.asn1.ASN1Boolean;
+import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1EncodableVector;
+import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.cmp.PKIFailureInfo;
 import org.bouncycastle.asn1.cmp.PKIStatus;
 import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.cms.AttributeTable;
 import org.bouncycastle.asn1.cms.CMSAttributes;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
+import org.bouncycastle.asn1.tsp.TSTInfo;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
@@ -1170,6 +1175,101 @@ public class TimeStampSignerTest extends ModulesTestCase {
         workerSession.reloadConfiguration(WORKER1);
         
         assertSuccessfulTimestamp(WORKER1, true);
+    }
+    
+    /**
+     * Test that ordering is not included by default.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test38orderingDefault() throws Exception {
+        // reset ORDERING property
+        workerSession.removeWorkerProperty(WORKER1, TimeStampSigner.ORDERING);
+        workerSession.reloadConfiguration(WORKER1);
+        
+        final TimeStampResponse resp = assertSuccessfulTimestamp(WORKER1, true);
+        final TimeStampToken token = resp.getTimeStampToken();
+        final TSTInfo tstInfo = token.getTimeStampInfo().toASN1Structure();
+        final ASN1Sequence seq = ASN1Sequence.getInstance(tstInfo.toASN1Primitive());
+        
+        final ASN1Encodable o = seq.getObjectAt(5);
+        
+        try {
+            // when ordering isn't included, the 6:th element in the tstInfo sequence should be the nonce
+            final ASN1Boolean b = ASN1Boolean.getInstance(o);
+            fail("Ordering shouldn't be set by default");
+        } catch (IllegalArgumentException e) {
+            // expected
+        } catch (Exception e) {
+            fail("Unexpected exception");
+        }
+        
+    }
+    
+    /**
+     * Test that setting ordering to "true" results in a correct tstInfo sequence.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test39orderingTrue() throws Exception {
+        // reset ORDERING property
+        workerSession.setWorkerProperty(WORKER1, TimeStampSigner.ORDERING, "true");
+        workerSession.reloadConfiguration(WORKER1);
+        
+        final TimeStampResponse resp = assertSuccessfulTimestamp(WORKER1, true);
+        final TimeStampToken token = resp.getTimeStampToken();
+        final TSTInfo tstInfo = token.getTimeStampInfo().toASN1Structure();
+        final ASN1Sequence seq = ASN1Sequence.getInstance(tstInfo.toASN1Primitive());
+        
+        final ASN1Encodable o = seq.getObjectAt(5);
+        
+        try {
+            // when ordering isn't included, the 6:th element in the tstInfo sequence should be the nonce
+            final ASN1Boolean b = ASN1Boolean.getInstance(o);
+            assertEquals("Ordering should be set to true", ASN1Boolean.TRUE, b);
+        } catch (IllegalArgumentException e) {
+            fail("Ordering should be included");
+        } catch (Exception e) {
+            fail("Unexpected exception");
+        } finally {
+            workerSession.removeWorkerProperty(WORKER1, TimeStampSigner.ORDERING);
+            workerSession.reloadConfiguration(WORKER1);
+        }
+    }
+    
+    /**
+     * Test that by default (when not setting INCLUDEORDERING to "true") ordering is not
+     * included ordering is set to "false".
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test40orderingFalse() throws Exception {
+        // reset ORDERING property
+        workerSession.setWorkerProperty(WORKER1, TimeStampSigner.ORDERING, "false");
+        workerSession.reloadConfiguration(WORKER1);
+        
+        final TimeStampResponse resp = assertSuccessfulTimestamp(WORKER1, true);
+        final TimeStampToken token = resp.getTimeStampToken();
+        final TSTInfo tstInfo = token.getTimeStampInfo().toASN1Structure();
+        final ASN1Sequence seq = ASN1Sequence.getInstance(tstInfo.toASN1Primitive());
+        
+        final ASN1Encodable o = seq.getObjectAt(5);
+        
+        try {
+            // when ordering isn't included, the 6:th element in the tstInfo sequence should be the nonce
+            final ASN1Boolean b = ASN1Boolean.getInstance(o);
+            fail("Ordering shouldn't included when ORDERING = false");
+        } catch (IllegalArgumentException e) {
+            // expected
+        } catch (Exception e) {
+            fail("Unexpected exception");
+        } finally {
+            workerSession.removeWorkerProperty(WORKER1, TimeStampSigner.ORDERING);
+            workerSession.reloadConfiguration(WORKER1);
+        }
     }
     
     private void assertTokenGranted(int workerId) throws Exception {

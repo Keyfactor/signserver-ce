@@ -190,6 +190,7 @@ public class TimeStampSigner extends BaseSigner {
     public static final String ACCURACYMILLIS = "ACCURACYMILLIS";
     public static final String ACCURACYSECONDS = "ACCURACYSECONDS";
     public static final String ORDERING = "ORDERING";
+    public static final String INCLUDEORDERING = "INCLUDEORDERING";
     public static final String TSA = "TSA";
     public static final String TSA_FROM_CERT = "TSA_FROM_CERT";
     public static final String REQUIREVALIDCHAIN = "REQUIREVALIDCHAIN";
@@ -274,6 +275,9 @@ public class TimeStampSigner extends BaseSigner {
     private String tsaName;
     private boolean tsaNameFromCert;
     private boolean includeSigningTimeAttribute;
+    
+    private boolean ordering;
+    private boolean includeOrdering;
     
     @Override
     public void init(final int signerId, final WorkerConfig config,
@@ -363,6 +367,9 @@ public class TimeStampSigner extends BaseSigner {
         }
         
         includeSigningTimeAttribute = Boolean.valueOf(config.getProperty(INCLUDESIGNINGTIMEATTRIBUTE, "true"));
+        
+        ordering = Boolean.parseBoolean(config.getProperty(ORDERING, "false"));
+        includeOrdering = Boolean.parseBoolean(config.getProperty(INCLUDEORDERING, "false"));
     }
 
     /**
@@ -744,11 +751,7 @@ public class TimeStampSigner extends BaseSigner {
                         config.getProperties().getProperty(ACCURACYSECONDS)));
             }
 
-            if (config.getProperties().getProperty(ORDERING) != null) {
-                timeStampTokenGen.setOrdering(
-                        config.getProperties().getProperty(ORDERING,
-                            DEFAULT_ORDERING).equalsIgnoreCase("TRUE"));
-            }
+            timeStampTokenGen.setOrdering(ordering);
 
             if (tsaName != null) {
                 final X500Name x500Name = new X500Name(tsaName);
@@ -989,6 +992,10 @@ public class TimeStampSigner extends BaseSigner {
             result.add("Can not set " + TSA_FROM_CERT + " to true and set " + TSA + " worker property at the same time");
         }
 
+        if (ordering && !includeOrdering) {
+            result.add("INCLUDEORDERING can not be set to \"false\" when ORDERING is set to \"true\"");
+        }
+        
         return result;
     }
     

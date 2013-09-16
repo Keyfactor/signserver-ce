@@ -24,15 +24,23 @@ import java.security.cert.X509Certificate;
 import java.util.*;
 
 import org.apache.log4j.Logger;
+import org.bouncycastle.asn1.ASN1Boolean;
+import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1EncodableVector;
+import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.ASN1OctetString;
+import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.ASN1TaggedObject;
 import org.bouncycastle.asn1.cmp.PKIFailureInfo;
 import org.bouncycastle.asn1.cmp.PKIStatus;
 import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.cms.AttributeTable;
 import org.bouncycastle.asn1.cms.CMSAttributes;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
+import org.bouncycastle.asn1.tsp.TSTInfo;
+import org.bouncycastle.asn1.util.ASN1Dump;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
@@ -50,7 +58,6 @@ import org.junit.After;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 import org.signserver.common.*;
-import org.bouncycastle.tsp.TimeStampRequest;
 import org.signserver.statusrepo.IStatusRepositorySession;
 import org.signserver.statusrepo.common.StatusName;
 import org.signserver.test.utils.builders.CertBuilder;
@@ -58,6 +65,7 @@ import org.signserver.test.utils.builders.CertExt;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestUtils;
 import org.signserver.testutils.TestingSecurityManager;
+
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -228,6 +236,32 @@ public class TimeStampSignerTest extends ModulesTestCase {
         }
             
         return timeStampResponse;
+    }
+    
+    /**
+     * Return raw data of a TSA request's response.
+     * 
+     * @param worker
+     * @return
+     * @throws Exception
+     */
+    private byte[] getResponseData(int worker) throws Exception {
+        int reqid = random.nextInt();
+
+        TimeStampRequestGenerator timeStampRequestGenerator =
+                new TimeStampRequestGenerator();
+        TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
+                TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
+        byte[] requestBytes = timeStampRequest.getEncoded();
+
+        GenericSignRequest signRequest =
+                new GenericSignRequest(reqid, requestBytes);
+
+
+        final GenericSignResponse res = (GenericSignResponse) workerSession.process(
+                worker, signRequest, new RequestContext());
+        
+        return res.getProcessedData();
     }
 
     /**
@@ -1170,6 +1204,212 @@ public class TimeStampSignerTest extends ModulesTestCase {
         workerSession.reloadConfiguration(WORKER1);
         
         assertSuccessfulTimestamp(WORKER1, true);
+    }
+    
+    /**
+     * Return the ASN1Sequence encapsulated in the tSTInfo structure.
+     * 
+     * @param res TSA response data.
+     * @return The encoded sequence in TSTInfo (see the TSTInfo class).
+     */
+    private ASN1Sequence extractTstInfoSeq(final byte[] res) {
+        final ASN1Sequence seq1 = ASN1Sequence.getInstance(res);
+        final ASN1Sequence signedData = ASN1Sequence.getInstance(seq1.getObjectAt(1));
+        final ASN1TaggedObject tag = ASN1TaggedObject.getInstance(signedData.getObjectAt(1));
+        final ASN1Sequence seq2 = ASN1Sequence.getInstance(tag.getObject());
+        final ASN1Sequence seq3 = ASN1Sequence.getInstance(seq2.getObjectAt(2));
+        final ASN1TaggedObject tag2 = ASN1TaggedObject.getInstance(seq3.getObjectAt(1));
+        final ASN1OctetString data = ASN1OctetString.getInstance(tag2.getObject());
+        final ASN1Sequence result = ASN1Sequence.getInstance(data.getOctets());
+        
+        return result;
+    }
+    
+    /**
+     * Test that ordering is not included by default.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test38orderingDefault() throws Exception {
+        // reset ORDERING property
+        workerSession.removeWorkerProperty(WORKER1, TimeStampSigner.ORDERING);
+        workerSession.reloadConfiguration(WORKER1);
+        
+        final byte[] res = getResponseData(WORKER1);
+        final ASN1Sequence seq = extractTstInfoSeq(res);
+        
+        try {
+            ASN1Boolean.getInstance(seq.getObjectAt(5));
+        } catch (IllegalArgumentException e) {
+            // expected
+        } catch (Exception e) {
+            fail("Unexpected exception: " + e.getClass().getName() + ": " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Test that setting ordering to "true" results in a correct tstInfo sequence.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test39orderingTrue() throws Exception {
+        // reset ORDERING property
+        workerSession.setWorkerProperty(WORKER1, TimeStampSigner.ORDERING, "true");
+        workerSession.reloadConfiguration(WORKER1);
+        
+        final byte[] res = getResponseData(WORKER1);
+        final ASN1Sequence seq = extractTstInfoSeq(res);
+        final ASN1Encodable o = seq.getObjectAt(5);
+        
+        try {
+            // when ordering isn't included, the 6:th element in the tstInfo sequence should be the nonce
+            final ASN1Boolean b = ASN1Boolean.getInstance(o);
+            assertEquals("Ordering should be set to true", ASN1Boolean.TRUE, b);
+        } catch (IllegalArgumentException e) {
+            fail("Ordering should be included");
+        } catch (Exception e) {
+            fail("Unexpected exception");
+        } finally {
+            workerSession.removeWorkerProperty(WORKER1, TimeStampSigner.ORDERING);
+            workerSession.reloadConfiguration(WORKER1);
+        }
+    }
+    
+    /**
+     * Test that by default (when not setting INCLUDEORDERING to "true") ordering is not
+     * included ordering is set to "false".
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test40orderingFalse() throws Exception {
+        // reset ORDERING property
+        workerSession.setWorkerProperty(WORKER1, TimeStampSigner.ORDERING, "false");
+        workerSession.reloadConfiguration(WORKER1);
+        
+        final byte[] res = getResponseData(WORKER1);
+        final ASN1Sequence seq = extractTstInfoSeq(res);
+        final ASN1Encodable o = seq.getObjectAt(5);
+        
+        try {
+            // when ordering isn't included, the 6:th element in the tstInfo sequence should be the nonce
+            final ASN1Boolean b = ASN1Boolean.getInstance(o);
+            fail("Ordering shouldn't included when ORDERING = false");
+        } catch (IllegalArgumentException e) {
+            // expected
+        } catch (Exception e) {
+            fail("Unexpected exception");
+        } finally {
+            workerSession.removeWorkerProperty(WORKER1, TimeStampSigner.ORDERING);
+            workerSession.reloadConfiguration(WORKER1);
+        }
+    }
+    
+    /**
+     * Test that the ordering field is included when ORDERING == false and INCLUDEORDERING == true.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test41IncludeOrderingOrderingFalse() throws Exception {
+        // reset ORDERING property
+        workerSession.setWorkerProperty(WORKER1, TimeStampSigner.ORDERING, "false");
+        workerSession.setWorkerProperty(WORKER1, TimeStampSigner.INCLUDEORDERING, "true");
+        workerSession.reloadConfiguration(WORKER1);
+        
+        final byte[] res = getResponseData(WORKER1);
+        final ASN1Sequence seq = extractTstInfoSeq(res);
+        final ASN1Encodable o = seq.getObjectAt(5);
+
+        try {
+            final ASN1Boolean b = ASN1Boolean.getInstance(o);
+            assertEquals("Ordering should be set to false", ASN1Boolean.FALSE, b);
+        } catch (IllegalArgumentException e) {
+            fail("Ordering should be included");
+        } catch (Exception e) {
+            fail("Unexpected exception");
+        } finally {
+            workerSession.removeWorkerProperty(WORKER1, TimeStampSigner.ORDERING);
+            workerSession.removeWorkerProperty(WORKER1, TimeStampSigner.INCLUDEORDERING);
+            workerSession.reloadConfiguration(WORKER1);
+        }
+    }
+    
+    /**
+     * Test that the ordering field is included when ORDERING == true and INCLUDEORDERING == true.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test42IncludeOrderingOrderingTrue() throws Exception {
+        // reset ORDERING property
+        workerSession.setWorkerProperty(WORKER1, TimeStampSigner.ORDERING, "true");
+        workerSession.setWorkerProperty(WORKER1, TimeStampSigner.INCLUDEORDERING, "true");
+        workerSession.reloadConfiguration(WORKER1);
+        
+        final byte[] res = getResponseData(WORKER1);
+        final ASN1Sequence seq = extractTstInfoSeq(res);
+        final ASN1Encodable o = seq.getObjectAt(5);
+
+        try {
+            final ASN1Boolean b = ASN1Boolean.getInstance(o);
+            assertEquals("Ordering should be set to true", ASN1Boolean.TRUE, b);
+        } catch (IllegalArgumentException e) {
+            fail("Ordering should be included");
+        } catch (Exception e) {
+            fail("Unexpected exception");
+        } finally {
+            workerSession.removeWorkerProperty(WORKER1, TimeStampSigner.ORDERING);
+            workerSession.removeWorkerProperty(WORKER1, TimeStampSigner.INCLUDEORDERING);
+            workerSession.reloadConfiguration(WORKER1);
+        }
+    }
+    
+    /**
+     * Test that the ordering field is not included when ORDERING == false and INCLUDEORDERING == false.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test43NotIncludeOrderingOrderingFalse() throws Exception {
+        // reset ORDERING property
+        workerSession.setWorkerProperty(WORKER1, TimeStampSigner.ORDERING, "false");
+        workerSession.setWorkerProperty(WORKER1, TimeStampSigner.INCLUDEORDERING, "false");
+        workerSession.reloadConfiguration(WORKER1);
+
+        final byte[] res = getResponseData(WORKER1);
+        final ASN1Sequence seq = extractTstInfoSeq(res);
+        final ASN1Encodable o = seq.getObjectAt(5);
+
+        try {
+            final ASN1Boolean b = ASN1Boolean.getInstance(o);
+            fail("Ordering should not be included");
+        } catch (IllegalArgumentException e) {
+            // expected
+        } catch (Exception e) {
+            fail("Unexpected exception");
+        } finally {
+            workerSession.removeWorkerProperty(WORKER1, TimeStampSigner.ORDERING);
+            workerSession.removeWorkerProperty(WORKER1, TimeStampSigner.INCLUDEORDERING);
+            workerSession.reloadConfiguration(WORKER1);
+        }
+    }
+    
+    /**
+     * Test that setting INCLUDEORDERING false and ORDERING true results in a configuration errror.
+     * @throws Exception
+     */
+    @Test
+    public void test44NotIncludeOrderingOrderingTrue() throws Exception {
+        workerSession.setWorkerProperty(WORKER1, TimeStampSigner.ORDERING, "true");
+        workerSession.setWorkerProperty(WORKER1, TimeStampSigner.INCLUDEORDERING, "false");
+        workerSession.reloadConfiguration(WORKER1);
+        
+        final List<String> errors = workerSession.getStatus(WORKER1).getFatalErrors();
+        assertTrue("Should mention incompatible configuration values.",
+                errors.contains("INCLUDEORDERING can not be set to \"false\" when ORDERING is set to \"true\""));
     }
     
     private void assertTokenGranted(int workerId) throws Exception {

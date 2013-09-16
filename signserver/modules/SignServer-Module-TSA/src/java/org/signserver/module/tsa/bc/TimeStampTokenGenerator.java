@@ -1,5 +1,6 @@
 // copied from BouncyCastle 1.47, modified to include the IssuerSerial structure
 // in the signingCertificate CMS signed attribute in the response.
+// Also modified to allow always including the ordering field in TSTInfo.
 package org.signserver.module.tsa.bc;
 
 import java.io.ByteArrayOutputStream;
@@ -46,7 +47,6 @@ import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.teletrust.TeleTrusTObjectIdentifiers;
 import org.bouncycastle.asn1.tsp.Accuracy;
 import org.bouncycastle.asn1.tsp.MessageImprint;
-import org.bouncycastle.asn1.tsp.TSTInfo;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.GeneralName;
@@ -85,6 +85,7 @@ public class TimeStampTokenGenerator
     int accuracyMicros = -1;
 
     boolean ordering = false;
+    boolean includeOrdering = false;
 
     GeneralName tsa = null;
     
@@ -375,6 +376,10 @@ public class TimeStampTokenGenerator
     {
         this.ordering = ordering;
     }
+    
+    public void setIncludeOrdering(boolean includeOrdering) {
+        this.includeOrdering = includeOrdering;
+    }
 
     public void setTSA(GeneralName tsa)
     {
@@ -459,7 +464,7 @@ public class TimeStampTokenGenerator
         }
 
         ASN1Boolean derOrdering = null;
-        if (ordering)
+        if (ordering || includeOrdering)
         {
             derOrdering = new ASN1Boolean(ordering);
         }

@@ -1,10 +1,10 @@
-SignServer 3.4.2, 2013-06-dd
+SignServer 3.4.2, 2013-09-19
 ----------------------------
 
 ** Bug
     * [DSS-644] - Regression: java.trustpassword missing in sample build file
     * [DSS-645] - HSM auto activation not working when signed audit log is used
-    * [DSS-654] - ClientCLI over seb services not working unless includemodulesinbuild specified
+    * [DSS-654] - ClientCLI over web services not working unless includemodulesinbuild specified
     * [DSS-655] - Demo XML signature certificate can not be verified using demo validator
     * [DSS-687] - Generatekey CLI command not working with slotListIndex
 
@@ -90,7 +90,7 @@ Release Notes - SignServer - Version SignServer 3.4
     * [DSS-603] - Configurable which StatusRepository updates to log
 
 
-SignServer 3.3.0, 2013-02-xx
+SignServer 3.3.0, 2013-02-18
 ----------------------------
 
 ** Bug

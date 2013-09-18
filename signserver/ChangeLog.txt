@@ -1,4 +1,4 @@
-SignServer 3.4.2, 2013-06-dd
+SignServer 3.4.2, 2013-09-19
 ----------------------------
 
 ** Bug
@@ -90,7 +90,7 @@ Release Notes - SignServer - Version SignServer 3.4
     * [DSS-603] - Configurable which StatusRepository updates to log
 
 
-SignServer 3.3.0, 2013-02-xx
+SignServer 3.3.0, 2013-02-18
 ----------------------------
 
 ** Bug

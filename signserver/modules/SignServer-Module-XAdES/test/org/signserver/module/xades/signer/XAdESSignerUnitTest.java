@@ -268,10 +268,10 @@ public class XAdESSignerUnitTest {
         assertEquals("http://www.w3.org/2001/04/xmldsig-more#rsa-sha256", r.getSignatureAlgorithmUri());
         
         // check that a time stamp token was requested
-        assertEquals("Should request a time stamp token", 1, MockedTimeStampTokenProvider.getNumberOfTimestamps());
+        assertTrue("Should request a time stamp token", MockedTimeStampTokenProvider.hasRequestedTimeStampToken());
         
         // check that the time stamp token was verified
-        assertEquals("Should try to verify timestamp", 1, MockedTimeStampTokenProvider.getNumberOfVerifications());
+        assertTrue("Should try to verify timestamp", MockedTimeStampTokenProvider.hasPerformedTimeStampVerification());
     }
 
 }

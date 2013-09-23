@@ -61,33 +61,33 @@ public class MockedTimeStampTokenProvider implements TimeStampTokenProvider {
     /**
      * Counters of performed timestamps and verifications.
      */
-    private static int numTimestamps = 0;
-    private static int numVerifications = 0;
+    private static boolean requestedTimeStampToken;
+    private static boolean performedTimeStampVerification;
     
     /**
      * Resets the mock timestamp and verification counters.
      */
     public static void reset() {
-        numTimestamps = 0;
-        numVerifications = 0;
+        requestedTimeStampToken = false;
+        performedTimeStampVerification = false;
     }
     
     /**
-     * Get number of performed timestamps (since resetting).
+     * Check if a time stamp token has been requested (since resetting).
      * 
-     * @return The number of requested timestamps
+     * @return True if a token has been requested.
      */
-    public static int getNumberOfTimestamps() {
-        return numTimestamps;
+    public static boolean hasRequestedTimeStampToken() {
+        return requestedTimeStampToken;
     }
     
     /**
-     * Get number of performed timestamp verifications (since resetting).
+     * Check if time stamp verification has been performed (since resetting).
      * 
-     * @return The number of performed verifications.
+     * @return True if a token has been requested to be verified.
      */
-    public static int getNumberOfVerifications() {
-        return numVerifications;
+    public static boolean hasPerformedTimeStampVerification() {
+        return performedTimeStampVerification;
     }
     
     
@@ -100,7 +100,7 @@ public class MockedTimeStampTokenProvider implements TimeStampTokenProvider {
         
         try {
             final TimeStampTokenRes res = new TimeStampTokenRes(token.toASN1Primitive().getEncoded(), new Date(TIMESTAMP));
-            numTimestamps++;
+            requestedTimeStampToken = true;
             return res;
         } catch (IOException e) {
             throw new TimeStampTokenGenerationException(e.getMessage(), e);
@@ -121,7 +121,7 @@ public class MockedTimeStampTokenProvider implements TimeStampTokenProvider {
             
             try {
                 if (Arrays.equals(token, expToken.toASN1Primitive().getEncoded())) {
-                    numVerifications++;
+                    performedTimeStampVerification = true;
                     return new Date(TIMESTAMP);
                 } else {
                     throw new TimeStampTokenVerificationException("Unexpected time stamp token");

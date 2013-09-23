@@ -3879,7 +3879,7 @@ The signed XML document can be validated using the XML Validator.
                     </subsubsection>
                     <subsubsection name="Available Properties">
                         <p>
-                            <b>XADESFORM</b> = Which profile of XAdES to use. Currently only BES is supported. Default: BES<br/>
+                            <b>XADESFORM</b> = Which profile of XAdES to use. Currently BES and T is supported. Default: BES<br/>
                             <b>TSA_URL</b> = URL of timestamp authority. Required if XADESFORM=T.<br/>
                             <b>TSA_USERNAME</b> = Login username used if the TSA uses HTTP Basic Auth.<br/>
                             <b>TSA_PASSWORD</b> = Login password used if the TSA uses HTTP Basic Auth.<br/>

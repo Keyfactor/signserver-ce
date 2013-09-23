@@ -19,6 +19,7 @@ import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -89,6 +90,9 @@ public class XAdESSigner extends BaseSigner {
     /** Worker property: TSA_PASSWORD. */
     public static final String PROPERTY_TSA_PASSWORD = "TSA_PASSWORD";
     
+    /** Worker property: COMMITMENT_TYPES. */
+    public static final String PROPERTY_COMMITMENT_TYPES = "COMMITMENT_TYPES";
+    
     /** Default value use if the worker property XADESFORM has not been set. */
     private static final String DEFAULT_XADESFORM = "BES";
 
@@ -96,6 +100,8 @@ public class XAdESSigner extends BaseSigner {
     
     private LinkedList<String> configErrors;
     private XAdESSignerParameters parameters;
+    
+    private Collection<AllDataObjsCommitmentTypeProperty> commitmentTypes;
     
     private Class<? extends TimeStampTokenProvider> timeStampTokenProviderImplementation =
             ExtendedTimeStampTokenProvider.class;
@@ -109,6 +115,30 @@ public class XAdESSigner extends BaseSigner {
         C,
         EPES,
         T
+    }
+    
+    
+    /**
+     * Commitment types defined in ETSI TS 101 903 V1.4.1 (2009-06).
+     * section 7.2.6.
+     */
+    public enum CommitmentTypes {
+        PROOF_OF_APPROVAL(AllDataObjsCommitmentTypeProperty.proofOfApproval()),
+        PROOF_OF_CREATION(AllDataObjsCommitmentTypeProperty.proofOfCreation()),
+        PROOF_OF_DELIVERY(AllDataObjsCommitmentTypeProperty.proofOfDelivery()),
+        PROOF_OF_ORIGIN(AllDataObjsCommitmentTypeProperty.proofOfOrigin()),
+        PROOF_OF_RECEIPT(AllDataObjsCommitmentTypeProperty.proofOfReceipt()),
+        PROOF_OF_SENDER(AllDataObjsCommitmentTypeProperty.proofOfSender());
+        
+        CommitmentTypes(AllDataObjsCommitmentTypeProperty commitmentType) {
+            prop = commitmentType;
+        }
+        
+        AllDataObjsCommitmentTypeProperty getProp() {
+            return prop;
+        }
+        
+        AllDataObjsCommitmentTypeProperty prop;
     }
 
     @Override
@@ -143,9 +173,26 @@ public class XAdESSigner extends BaseSigner {
         }
         
         // TODO: Configuration of signature algorithm
-        // TODO: Configuration of commitment type
         // TODO: Other configuration options
         
+        final String commitmentTypesProperty = config.getProperties().getProperty(PROPERTY_COMMITMENT_TYPES);
+        
+        if (commitmentTypesProperty == null) {
+            commitmentTypes = Collections.singletonList(AllDataObjsCommitmentTypeProperty.proofOfApproval());
+        } else {
+            commitmentTypes = new LinkedList<AllDataObjsCommitmentTypeProperty>();
+            
+            for (final String part : commitmentTypesProperty.split(",")) {
+                final String type = part.trim();
+                
+                try {
+                    commitmentTypes.add(CommitmentTypes.valueOf(type).getProp());
+                } catch (IllegalArgumentException e) {
+                    configErrors.add("Unkown commitment type: " + type);
+                }
+            }
+        }
+
         parameters = new XAdESSignerParameters(form, tsa);
         
         if (LOG.isDebugEnabled()) {
@@ -190,8 +237,11 @@ public class XAdESSigner extends BaseSigner {
 
             // Sign
             final Node node = doc.getDocumentElement();
-            final SignedDataObjects dataObjs = new SignedDataObjects(new EnvelopedXmlObject(node))
-                    .withCommitmentType(AllDataObjsCommitmentTypeProperty.proofOfApproval());
+            SignedDataObjects dataObjs = new SignedDataObjects(new EnvelopedXmlObject(node));
+            
+            for (final AllDataObjsCommitmentTypeProperty commitmentType : commitmentTypes) {
+                    dataObjs = dataObjs.withCommitmentType(commitmentType);
+            }
             signer.sign(dataObjs, doc);
             
             // Render result

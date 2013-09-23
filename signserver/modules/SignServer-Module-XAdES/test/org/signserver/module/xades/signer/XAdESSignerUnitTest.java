@@ -19,14 +19,19 @@ import java.security.Security;
 import java.security.cert.CertStore;
 import java.security.cert.Certificate;
 import java.security.cert.CollectionCertStoreParameters;
+import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
+
 import javax.persistence.EntityManager;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.log4j.Logger;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.util.encoders.Base64;
+import org.ejbca.util.CertTools;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -34,6 +39,7 @@ import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.WorkerConfig;
+import org.signserver.module.xades.signer.MockedTimeStampTokenProvider.MockedTimeStampVerificationProvider;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.test.utils.builders.CertBuilder;
@@ -64,7 +70,10 @@ public class XAdESSignerUnitTest {
     public static void setUpClass() throws Exception {
         Security.addProvider(new BouncyCastleProvider());
         final KeyPair signerKeyPair = CryptoUtils.generateRSA(1024);
-        final Certificate[] certChain = new Certificate[] {new JcaX509CertificateConverter().getCertificate(new CertBuilder().setSelfSignKeyPair(signerKeyPair).build())};
+        final Certificate[] certChain =
+                new Certificate[] {new JcaX509CertificateConverter().getCertificate(new CertBuilder().
+                        setSelfSignKeyPair(signerKeyPair).
+                        setNotBefore(new Date(MockedTimeStampTokenProvider.TIMESTAMP)).build())};
         final Certificate signerCertificate = certChain[0];
         token = new MockedCryptoToken(signerKeyPair.getPrivate(), signerKeyPair.getPublic(), signerCertificate, Arrays.asList(certChain), "BC");
     }
@@ -206,6 +215,63 @@ public class XAdESSignerUnitTest {
 
         assertEquals("BES", r.getSignatureForm().name());
         assertEquals("http://www.w3.org/2001/04/xmldsig-more#rsa-sha256", r.getSignatureAlgorithmUri());
+    }
+    
+    @Test
+    public void testProcessData_basicSigningXAdESFormT() throws Exception {
+        LOG.info("testProcessData_basicSigningXAdESFormT");
+
+        XAdESSigner instance = new MockedXAdESSigner(token);
+        WorkerConfig config = new WorkerConfig();
+        
+        config.setProperty("XADESFORM", "T");
+        config.setProperty("TSA_URL", "http://example.com/?test=5");
+        
+        instance.init(4711, config, null, null);
+        instance.setTimeStampTokenProviderImplementation(MockedTimeStampTokenProvider.class);
+        
+        // reset mock counters
+        MockedTimeStampTokenProvider.reset();
+        
+        RequestContext requestContext = new RequestContext();
+        requestContext.put(RequestContext.TRANSACTION_ID, "0000-100-1");
+        GenericSignRequest request = new GenericSignRequest(100, "<test100/>".getBytes("UTF-8"));
+        GenericSignResponse response = (GenericSignResponse) instance.processData(request, requestContext);
+        
+        byte[] data = response.getProcessedData();
+        final String signedXml = new String(data);
+        LOG.debug("signedXml: " + signedXml);
+        
+        // Validation: setup
+        CertStore certStore = CertStore.getInstance("Collection", new CollectionCertStoreParameters(token.getCertificateChain(ICryptoToken.PURPOSE_SIGN)));
+        KeyStore trustAnchors = KeyStore.getInstance("JKS");
+        trustAnchors.load(null, "foo123".toCharArray());
+        trustAnchors.setCertificateEntry("cert", token.getCertificate(ICryptoToken.PURPOSE_SIGN));
+        
+        CertificateValidationProvider certValidator = new PKIXCertificateValidationProvider(trustAnchors, false, certStore);
+        
+        XadesVerificationProfile p =
+                new XadesVerificationProfile(certValidator).withTimeStampTokenVerifier(new MockedTimeStampVerificationProvider());
+        XadesVerifier verifier = p.newVerifier();
+        
+        // Validation: parse
+        final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
+        final DocumentBuilder builder = factory.newDocumentBuilder();
+        final Document doc = builder.parse(new ByteArrayInputStream(data));
+        Element node = doc.getDocumentElement();
+        
+        XAdESVerificationResult r = verifier.verify(node, new SignatureSpecificVerificationOptions());
+        
+        LOG.debug("signature form: " + r.getSignatureForm().name());
+        assertEquals("T", r.getSignatureForm().name());
+        assertEquals("http://www.w3.org/2001/04/xmldsig-more#rsa-sha256", r.getSignatureAlgorithmUri());
+        
+        // check that a time stamp token was requested
+        assertEquals("Should request a time stamp token", 1, MockedTimeStampTokenProvider.getNumberOfTimestamps());
+        
+        // check that the time stamp token was verified
+        assertEquals("Should try to verify timestamp", 1, MockedTimeStampTokenProvider.getNumberOfVerifications());
     }
 
 }

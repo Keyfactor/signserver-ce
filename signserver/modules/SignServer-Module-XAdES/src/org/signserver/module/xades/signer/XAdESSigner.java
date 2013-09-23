@@ -60,6 +60,7 @@ import xades4j.production.XadesSigningProfile;
 import xades4j.production.XadesTSigningProfile;
 import xades4j.properties.AllDataObjsCommitmentTypeProperty;
 import xades4j.providers.KeyingDataProvider;
+import xades4j.providers.TimeStampTokenProvider;
 import xades4j.utils.XadesProfileResolutionException;
 import xades4j.providers.impl.ExtendedTimeStampTokenProvider;
 
@@ -95,6 +96,9 @@ public class XAdESSigner extends BaseSigner {
     
     private LinkedList<String> configErrors;
     private XAdESSignerParameters parameters;
+    
+    private Class<? extends TimeStampTokenProvider> timeStampTokenProviderImplementation =
+            ExtendedTimeStampTokenProvider.class;
     
     /** 
      * Electronic signature forms defined in ETSI TS 101 903 V1.4.1 (2009-06)
@@ -249,7 +253,7 @@ public class XAdESSigner extends BaseSigner {
                 break;
             case T:
                 xsp = new XadesTSigningProfile(kdp)
-                        .withTimeStampTokenProvider(ExtendedTimeStampTokenProvider.class)
+                        .withTimeStampTokenProvider(timeStampTokenProviderImplementation)
                         .withBinding(TSAParameters.class, params.getTsaParameters());
                 break;
             case C:
@@ -269,6 +273,15 @@ public class XAdESSigner extends BaseSigner {
 
     public XAdESSignerParameters getParameters() {
         return parameters;
+    }
+    
+    /**
+     * Internal method used for the unit test to override the time stamp token provider.
+     * 
+     * @param implementation
+     */
+    void setTimeStampTokenProviderImplementation(final Class<? extends TimeStampTokenProvider> implementation) {
+        timeStampTokenProviderImplementation = implementation;
     }
 
 }

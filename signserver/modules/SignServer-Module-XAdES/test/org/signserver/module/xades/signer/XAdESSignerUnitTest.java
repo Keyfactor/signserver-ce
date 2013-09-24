@@ -259,6 +259,28 @@ public class XAdESSignerUnitTest {
         testProcessData_basicSigningInternal(null, Collections.singletonList(AllDataObjsCommitmentTypeProperty.proofOfApproval().getUri()));
     }
     
+    /**
+     * Test with explicitly setting a single commitment type.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testProcessData_basicSigningSingleCommitmentType() throws Exception {
+        testProcessData_basicSigningInternal("PROOF_OF_ORIGIN", Collections.singletonList(AllDataObjsCommitmentTypeProperty.proofOfOrigin().getUri()));
+    }
+    
+    /**
+     * Test with explicitly setting multiple commitment types.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testProcessData_basicSigningMultipleCommitmentTypes() throws Exception {
+        testProcessData_basicSigningInternal("PROOF_OF_APPROVAL, PROOF_OF_ORIGIN",
+                Arrays.asList(AllDataObjsCommitmentTypeProperty.proofOfApproval().getUri(),
+                              AllDataObjsCommitmentTypeProperty.proofOfOrigin().getUri()));
+    }
+    
     @Test
     public void testProcessData_basicSigningXAdESFormT() throws Exception {
         LOG.info("testProcessData_basicSigningXAdESFormT");

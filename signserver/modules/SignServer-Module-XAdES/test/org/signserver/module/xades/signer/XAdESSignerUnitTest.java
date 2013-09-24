@@ -20,6 +20,7 @@ import java.security.cert.CertStore;
 import java.security.cert.Certificate;
 import java.security.cert.CollectionCertStoreParameters;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 
@@ -43,8 +44,14 @@ import org.signserver.test.utils.builders.CertBuilder;
 import org.signserver.test.utils.builders.CryptoUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import xades4j.properties.AllDataObjsCommitmentTypeProperty;
+import xades4j.properties.QualifyingProperties;
+import xades4j.properties.SignedDataObjectProperty;
+import xades4j.properties.SignedProperties;
 import xades4j.providers.CertificateValidationProvider;
 import xades4j.providers.impl.PKIXCertificateValidationProvider;
+import xades4j.verification.RawDataObjectDesc;
 import xades4j.verification.SignatureSpecificVerificationOptions;
 import xades4j.verification.XAdESVerificationResult;
 import xades4j.verification.XadesVerificationProfile;
@@ -212,6 +219,30 @@ public class XAdESSignerUnitTest {
 
         assertEquals("BES", r.getSignatureForm().name());
         assertEquals("http://www.w3.org/2001/04/xmldsig-more#rsa-sha256", r.getSignatureAlgorithmUri());
+        
+        final Collection<RawDataObjectDesc> signedDataObjects = r.getSignedDataObjects();
+        final QualifyingProperties qp = r.getQualifyingProperties();
+        
+        boolean foundProofOfApproval = false;
+        
+        final SignedProperties sp = qp.getSignedProperties();
+        
+        for (final SignedDataObjectProperty signedObjProp : sp.getDataObjProps()) {
+            LOG.debug("object property: " + signedObjProp.getClass().getName() + ": " + signedObjProp.toString());
+            
+            if (signedObjProp instanceof AllDataObjsCommitmentTypeProperty) {
+                final AllDataObjsCommitmentTypeProperty commitmentType =
+                        (AllDataObjsCommitmentTypeProperty) signedObjProp;
+                LOG.debug("Found commitment type: " + commitmentType.getUri());
+                if (AllDataObjsCommitmentTypeProperty.proofOfApproval().getUri().equals(commitmentType.getUri())) {
+                    foundProofOfApproval = true;
+                } else {
+                    fail("Default commitment types should not include " + commitmentType.getUri());
+                }
+            }
+        }
+        
+        assertTrue("Default commitment type should be " + AllDataObjsCommitmentTypeProperty.PROOF_OF_APPROVAL_URI, foundProofOfApproval);
     }
     
     @Test

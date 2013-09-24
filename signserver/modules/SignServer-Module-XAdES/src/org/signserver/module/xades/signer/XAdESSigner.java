@@ -182,6 +182,7 @@ public class XAdESSigner extends BaseSigner {
         } else {
             commitmentTypes = new LinkedList<AllDataObjsCommitmentTypeProperty>();
 
+            // an empty value for COMMITMENT_TYPE means not including any commitment type properties
             if (!"".equals(commitmentTypesProperty)) {
                 for (final String part : commitmentTypesProperty.split(",")) {
                     final String type = part.trim();

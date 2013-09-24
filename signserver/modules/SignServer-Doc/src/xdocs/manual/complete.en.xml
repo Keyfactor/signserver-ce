@@ -3883,8 +3883,19 @@ The signed XML document can be validated using the XML Validator.
                             <b>TSA_URL</b> = URL of timestamp authority. Required if XADESFORM=T.<br/>
                             <b>TSA_USERNAME</b> = Login username used if the TSA uses HTTP Basic Auth.<br/>
                             <b>TSA_PASSWORD</b> = Login password used if the TSA uses HTTP Basic Auth.<br/>
+                            <b>COMMITMENT_TYPES</b> = List of commitment types to be indicated in the signature. Multiple values can be given separated by ",". See list below for valid values. An empty value means no commitment type will be included. Optional. Default: PROOF_OF_APPROVAL.<br/> 
                             <!-- <b>SIGNATUREALGORITHM</b> = property specifying the algorithm used to sign the data (default: depending on the signer's private key: SHA1withDSA for DSA keys and SHA1withRSA for RSA keys.)<br/>-->
                         </p>
+                    </subsubsection>
+                    <subsubsection name="Commitment Types">
+                        <ul>
+                            <li>PROOF_OF_APPROVAL</li>
+                            <li>PROOF_OF_CREATION</li>
+                            <li>PROOF_OF_DELIVERY</li>
+                            <li>PROOF_OF_ORIGIN</li>
+                            <li>PROOF_OF_RECEIPT</li>
+                            <li>PROOF_OF_SENDER</li>
+                        </ul>
                     </subsubsection>
                 </subsection>
 

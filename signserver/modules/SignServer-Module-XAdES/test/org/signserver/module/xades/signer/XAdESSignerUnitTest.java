@@ -302,4 +302,46 @@ public class XAdESSignerUnitTest {
         assertTrue("Should try to verify timestamp", MockedTimeStampTokenProvider.hasPerformedTimeStampVerification());
     }
 
+    /**
+     * Test that setting an unknown commitment type results in a configuration error.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testUnknownCommitmentType() throws Exception {
+        LOG.info("testUnknownCommitmentType");
+        int signerId = 4711;
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("COMMITMENT_TYPES", "foobar");
+        
+        WorkerContext workerContext = null;
+        EntityManager em = null;
+        XAdESSigner instance = new MockedXAdESSigner(token);
+        instance.init(signerId, config, workerContext, em);
+        
+        String errors = instance.getFatalErrors().toString();
+        assertTrue("error: " + errors, errors.contains("commitment type"));
+    }
+    
+    /**
+     * Test that setting an unknown commitment type in combination with
+     * a valid one results in a configuration error.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testUnknownAndKnownCommitmentType() throws Exception {
+        LOG.info("testUnknownCommitmentType");
+        int signerId = 4711;
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("COMMITMENT_TYPES", "PROOF_OF_ORIGIN, foobar");
+        
+        WorkerContext workerContext = null;
+        EntityManager em = null;
+        XAdESSigner instance = new MockedXAdESSigner(token);
+        instance.init(signerId, config, workerContext, em);
+        
+        String errors = instance.getFatalErrors().toString();
+        assertTrue("error: " + errors, errors.contains("commitment type"));
+    }
 }

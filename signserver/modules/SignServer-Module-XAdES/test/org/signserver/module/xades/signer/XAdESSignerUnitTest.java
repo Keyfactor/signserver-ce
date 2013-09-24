@@ -23,6 +23,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.xml.parsers.DocumentBuilder;
@@ -51,7 +53,6 @@ import xades4j.properties.SignedDataObjectProperty;
 import xades4j.properties.SignedProperties;
 import xades4j.providers.CertificateValidationProvider;
 import xades4j.providers.impl.PKIXCertificateValidationProvider;
-import xades4j.verification.RawDataObjectDesc;
 import xades4j.verification.SignatureSpecificVerificationOptions;
 import xades4j.verification.XAdESVerificationResult;
 import xades4j.verification.XadesVerificationProfile;
@@ -176,15 +177,17 @@ public class XAdESSignerUnitTest {
         assertEquals(Collections.EMPTY_LIST, instance.getFatalErrors());
     }
 
-    /**
-     * Test of processData method for basic signing, of class XAdESSigner.
-     */
-    @Test
-    public void testProcessData_basicSigning() throws Exception {
+    
+    private void testProcessData_basicSigningInternal(final String commitmentTypesProperty,
+            final Collection<String> expectedCommitmentTypeUris) throws Exception {
         LOG.info("processData");
 
         XAdESSigner instance = new MockedXAdESSigner(token);
         WorkerConfig config = new WorkerConfig();
+        
+        if (commitmentTypesProperty != null) {
+            config.setProperty("COMMITMENT_TYPES", commitmentTypesProperty);
+        }
         
         instance.init(4711, config, null, null);
         
@@ -219,11 +222,10 @@ public class XAdESSignerUnitTest {
 
         assertEquals("BES", r.getSignatureForm().name());
         assertEquals("http://www.w3.org/2001/04/xmldsig-more#rsa-sha256", r.getSignatureAlgorithmUri());
-        
-        final Collection<RawDataObjectDesc> signedDataObjects = r.getSignedDataObjects();
+
         final QualifyingProperties qp = r.getQualifyingProperties();
         
-        boolean foundProofOfApproval = false;
+        final Set<String> foundUris = new HashSet<String>();
         
         final SignedProperties sp = qp.getSignedProperties();
         
@@ -233,16 +235,28 @@ public class XAdESSignerUnitTest {
             if (signedObjProp instanceof AllDataObjsCommitmentTypeProperty) {
                 final AllDataObjsCommitmentTypeProperty commitmentType =
                         (AllDataObjsCommitmentTypeProperty) signedObjProp;
-                LOG.debug("Found commitment type: " + commitmentType.getUri());
-                if (AllDataObjsCommitmentTypeProperty.proofOfApproval().getUri().equals(commitmentType.getUri())) {
-                    foundProofOfApproval = true;
+                
+                final String uri = commitmentType.getUri();
+                LOG.debug("Found commitment type: " + uri);
+                if (expectedCommitmentTypeUris.contains(uri)) {
+                    foundUris.add(uri);
                 } else {
-                    fail("Default commitment types should not include " + commitmentType.getUri());
+                    fail("Unexpected commitment type: " + uri);
                 }
             }
         }
         
-        assertTrue("Default commitment type should be " + AllDataObjsCommitmentTypeProperty.PROOF_OF_APPROVAL_URI, foundProofOfApproval);
+        assertTrue("Should contain expected commitment types: " + expectedCommitmentTypeUris.toString(),
+                foundUris.size() == expectedCommitmentTypeUris.size());
+    }
+    
+    /**
+     * Test of processData method for basic signing, of class XAdESSigner.
+     * Test that by default, the commitment type is PROOF_OF_APPROVAL.
+     */
+    @Test
+    public void testProcessData_basicSigning() throws Exception {
+        testProcessData_basicSigningInternal(null, Collections.singletonList(AllDataObjsCommitmentTypeProperty.proofOfApproval().getUri()));
     }
     
     @Test

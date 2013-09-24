@@ -177,7 +177,14 @@ public class XAdESSignerUnitTest {
         assertEquals(Collections.EMPTY_LIST, instance.getFatalErrors());
     }
 
-    
+    /**
+     * Run a signing test with default form and varying commitment types.
+     * 
+     * @param commitmentTypesProperty COMMITMENT_TYPES property to test with
+     *                                if null, doesn't set the property
+     * @param expectedCommitmentTypeUris List of expected commitment type URIs
+     * @throws Exception
+     */
     private void testProcessData_basicSigningInternal(final String commitmentTypesProperty,
             final Collection<String> expectedCommitmentTypeUris) throws Exception {
         LOG.info("processData");

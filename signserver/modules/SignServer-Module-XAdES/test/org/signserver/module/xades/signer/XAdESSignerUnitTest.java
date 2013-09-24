@@ -281,6 +281,16 @@ public class XAdESSignerUnitTest {
                               AllDataObjsCommitmentTypeProperty.proofOfOrigin().getUri()));
     }
     
+    /**
+     * Test with an empty COMMITMENT_TYPES list.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testProcessData_basicSigningNoCommitmentType() throws Exception {
+        testProcessData_basicSigningInternal("", Collections.<String>emptyList());
+    }
+    
     @Test
     public void testProcessData_basicSigningXAdESFormT() throws Exception {
         LOG.info("testProcessData_basicSigningXAdESFormT");

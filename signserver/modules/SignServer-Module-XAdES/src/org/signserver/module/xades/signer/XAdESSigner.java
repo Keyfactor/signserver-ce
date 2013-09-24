@@ -181,14 +181,16 @@ public class XAdESSigner extends BaseSigner {
             commitmentTypes = Collections.singletonList(AllDataObjsCommitmentTypeProperty.proofOfApproval());
         } else {
             commitmentTypes = new LinkedList<AllDataObjsCommitmentTypeProperty>();
-            
-            for (final String part : commitmentTypesProperty.split(",")) {
-                final String type = part.trim();
-                
-                try {
-                    commitmentTypes.add(CommitmentTypes.valueOf(type).getProp());
-                } catch (IllegalArgumentException e) {
-                    configErrors.add("Unkown commitment type: " + type);
+
+            if (!"".equals(commitmentTypesProperty)) {
+                for (final String part : commitmentTypesProperty.split(",")) {
+                    final String type = part.trim();
+
+                    try {
+                        commitmentTypes.add(CommitmentTypes.valueOf(type).getProp());
+                    } catch (IllegalArgumentException e) {
+                        configErrors.add("Unkown commitment type: " + type);
+                    }
                 }
             }
         }

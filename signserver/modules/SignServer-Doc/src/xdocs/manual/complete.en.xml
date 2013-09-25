@@ -3888,14 +3888,36 @@ The signed XML document can be validated using the XML Validator.
                         </p>
                     </subsubsection>
                     <subsubsection name="Commitment Types">
-                        <ul>
-                            <li>PROOF_OF_APPROVAL</li>
-                            <li>PROOF_OF_CREATION</li>
-                            <li>PROOF_OF_DELIVERY</li>
-                            <li>PROOF_OF_ORIGIN</li>
-                            <li>PROOF_OF_RECEIPT</li>
-                            <li>PROOF_OF_SENDER</li>
-                        </ul>
+                        <table>
+                            <tr>
+                                <th>Value</th>
+                                <th>Description</th>
+                            </tr>
+                            <tr>
+                                <td>PROOF_OF_APPROVAL</td>
+                                <td>Indicates that the signer has approved the content of the signed data object</td>
+                            </tr>
+                            <tr>
+                                <td>PROOF_OF_CREATION</td>
+                                <td>Indicates that the signer has created the signed data object (but not necessarily approved, nor sent it)</td>
+                            </tr>
+                            <tr>
+                                <td>PROOF_OF_DELIVERY</td>
+                                <td>Indicates that the TSP providing that indication has delivered a signed data object in a local store accessible to the recipient of the signed data object</td>
+                            </tr>
+                            <tr>
+                                <td>PROOF_OF_ORIGIN</td>
+                                <td>Indicates that the signer recognizes to have created, approved and sent the signed data object</td>
+                            </tr>
+                            <tr>
+                                <td>PROOF_OF_RECEIPT</td>
+                                <td>Indicates that signer recognizes to have received the content of the signed data object</td>
+                            </tr>
+                            <tr>
+                                <td>PROOF_OF_SENDER</td>
+                                <td>Indicates that the entity providing that indication has sent the signed data object (but not necessarily created it)</td>
+                            </tr>
+                        </table>
                     </subsubsection>
                 </subsection>
 

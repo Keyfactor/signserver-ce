@@ -259,11 +259,11 @@ public class XAdESSignerUnitTest {
     
     /**
      * Test of processData method for basic signing, of class XAdESSigner.
-     * Test that by default, the commitment type is PROOF_OF_APPROVAL.
+     * Test that by default, no commitment types are included.
      */
     @Test
     public void testProcessData_basicSigning() throws Exception {
-        testProcessData_basicSigningInternal(null, Collections.singletonList(AllDataObjsCommitmentTypeProperty.proofOfApproval().getUri()));
+        testProcessData_basicSigningInternal(null, Collections.<String>emptyList());
     }
     
     /**
@@ -289,13 +289,34 @@ public class XAdESSignerUnitTest {
     }
     
     /**
+     * Test with explictly setting the value NONE.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testProcessData_basicSigningCommitmentTypesNone() throws Exception {
+        testProcessData_basicSigningInternal("NONE", Collections.<String>emptyList());
+    }
+    
+    /**
      * Test with an empty COMMITMENT_TYPES list.
      * 
      * @throws Exception
      */
     @Test
     public void testProcessData_basicSigningNoCommitmentType() throws Exception {
-        testProcessData_basicSigningInternal("", Collections.<String>emptyList());
+        LOG.info("testProcessData_basicSigningNoCommitmentType");
+        int signerId = 4711;
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("COMMITMENT_TYPES", "");
+        
+        WorkerContext workerContext = null;
+        EntityManager em = null;
+        XAdESSigner instance = new MockedXAdESSigner(token);
+        instance.init(signerId, config, workerContext, em);
+        
+        String errors = instance.getFatalErrors().toString();
+        assertTrue("error: " + errors, errors.contains("can not be empty"));
     }
     
     @Test

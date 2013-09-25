@@ -93,6 +93,8 @@ public class XAdESSigner extends BaseSigner {
     /** Worker property: COMMITMENT_TYPES. */
     public static final String PROPERTY_COMMITMENT_TYPES = "COMMITMENT_TYPES";
     
+    public static final String COMMITMENT_TYPES_NONE = "NONE";
+    
     /** Default value use if the worker property XADESFORM has not been set. */
     private static final String DEFAULT_XADESFORM = "BES";
 
@@ -181,13 +183,12 @@ public class XAdESSigner extends BaseSigner {
         
         final String commitmentTypesProperty = config.getProperties().getProperty(PROPERTY_COMMITMENT_TYPES);
         
-        if (commitmentTypesProperty == null) {
-            commitmentTypes = Collections.singletonList(AllDataObjsCommitmentTypeProperty.proofOfApproval());
-        } else {
-            commitmentTypes = new LinkedList<AllDataObjsCommitmentTypeProperty>();
-
-            // an empty value for COMMITMENT_TYPE means not including any commitment type properties
-            if (!"".equals(commitmentTypesProperty)) {
+        commitmentTypes = new LinkedList<AllDataObjsCommitmentTypeProperty>();
+        
+        if (commitmentTypesProperty != null) {
+            if ("".equals(commitmentTypesProperty)) {
+                configErrors.add("Commitment types can not be empty");
+            } else if (!COMMITMENT_TYPES_NONE.equals(commitmentTypesProperty)) {
                 for (final String part : commitmentTypesProperty.split(",")) {
                     final String type = part.trim();
 

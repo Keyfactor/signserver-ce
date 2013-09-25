@@ -103,6 +103,9 @@ public class XAdESSigner extends BaseSigner {
     
     private Collection<AllDataObjsCommitmentTypeProperty> commitmentTypes;
     
+    /**
+     * The default time stamp token implementation, can be overridden by the unit tests.
+     */
     private Class<? extends TimeStampTokenProvider> timeStampTokenProviderImplementation =
             ExtendedTimeStampTokenProvider.class;
     
@@ -121,6 +124,7 @@ public class XAdESSigner extends BaseSigner {
     /**
      * Commitment types defined in ETSI TS 101 903 V1.4.1 (2009-06).
      * section 7.2.6.
+     * @see xades4j.properties.AllDataObjsCommitmentTypeProperty
      */
     public enum CommitmentTypes {
         PROOF_OF_APPROVAL(AllDataObjsCommitmentTypeProperty.proofOfApproval()),

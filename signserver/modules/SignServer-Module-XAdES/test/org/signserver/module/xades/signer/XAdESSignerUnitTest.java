@@ -28,6 +28,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
+import javax.xml.crypto.dsig.SignatureMethod;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.log4j.Logger;
@@ -365,6 +366,18 @@ public class XAdESSignerUnitTest {
     public void testProcessData_basicSigningCommitmentTypesNone() throws Exception {
         testProcessData_basicSigningInternal(KeyType.RSA,
                 null, XAdESSigner.SIGNATURE_METHOD_RSA_SHA256,
+                "NONE", Collections.<String>emptyList());
+    }
+    
+    /**
+     * Test signing with signature algorithm SHA1withRSA.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testProcessData_basicSigningRSASHA1() throws Exception {
+        testProcessData_basicSigningInternal(KeyType.RSA,
+                "SHA1withRSA", SignatureMethod.RSA_SHA1,
                 "NONE", Collections.<String>emptyList());
     }
     

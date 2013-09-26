@@ -15,6 +15,7 @@ package org.signserver.module.xades.signer;
 import java.io.ByteArrayInputStream;
 import java.security.KeyPair;
 import java.security.KeyStore;
+import java.security.NoSuchAlgorithmException;
 import java.security.Security;
 import java.security.cert.CertStore;
 import java.security.cert.Certificate;
@@ -69,20 +70,56 @@ public class XAdESSignerUnitTest {
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(XAdESSignerUnitTest.class);
     
-    private static MockedCryptoToken token;
+    private static MockedCryptoToken tokenRSA;
+    private static MockedCryptoToken tokenDSA;
+    private static MockedCryptoToken tokenECDSA;
     
     @BeforeClass
     public static void setUpClass() throws Exception {
         Security.addProvider(new BouncyCastleProvider());
-        final KeyPair signerKeyPair = CryptoUtils.generateRSA(1024);
+        tokenRSA = generateToken(KeyType.RSA);
+        tokenDSA = generateToken(KeyType.DSA);
+        tokenECDSA = generateToken(KeyType.ECDSA);
+    }
+
+    private enum KeyType {
+        RSA,
+        DSA,
+        ECDSA
+    };
+    
+    private static MockedCryptoToken generateToken(final KeyType keyType) throws Exception {
+        final KeyPair signerKeyPair;
+        final String signatureAlgorithm;
+        
+        switch (keyType) {
+        case RSA:
+            signerKeyPair = CryptoUtils.generateRSA(1024);
+            signatureAlgorithm = "SHA1withRSA";
+            break;
+        case DSA:
+            signerKeyPair = CryptoUtils.generateDSA(1024);
+            signatureAlgorithm = "SHA1withDSA";
+            break;
+        case ECDSA:
+            signerKeyPair = CryptoUtils.generateEcCurve("prime256v1");
+            signatureAlgorithm = "SHA1withECDSA";
+            break;
+        default:
+            throw new NoSuchAlgorithmException("Invalid key algorithm");
+        }
+        
         final Certificate[] certChain =
                 new Certificate[] {new JcaX509CertificateConverter().getCertificate(new CertBuilder().
                         setSelfSignKeyPair(signerKeyPair).
-                        setNotBefore(new Date(MockedTimeStampTokenProvider.TIMESTAMP)).build())};
+                        setNotBefore(new Date(MockedTimeStampTokenProvider.TIMESTAMP)).
+                        setSignatureAlgorithm(signatureAlgorithm)
+                        .build())};
         final Certificate signerCertificate = certChain[0];
-        token = new MockedCryptoToken(signerKeyPair.getPrivate(), signerKeyPair.getPublic(), signerCertificate, Arrays.asList(certChain), "BC");
+        return new MockedCryptoToken(signerKeyPair.getPrivate(), signerKeyPair.getPublic(), signerCertificate, Arrays.asList(certChain), "BC");
+            
     }
-
+    
     /**
      * Test of init method, of class XAdESSigner.
      */
@@ -98,7 +135,7 @@ public class XAdESSignerUnitTest {
         
         WorkerContext workerContext = null;
         EntityManager em = null;
-        XAdESSigner instance = new MockedXAdESSigner(token);
+        XAdESSigner instance = new MockedXAdESSigner(tokenRSA);
         instance.init(signerId, config, workerContext, em);
         
         XAdESSignerParameters param = instance.getParameters();
@@ -126,7 +163,7 @@ public class XAdESSignerUnitTest {
         
         WorkerContext workerContext = null;
         EntityManager em = null;
-        XAdESSigner instance = new MockedXAdESSigner(token);
+        XAdESSigner instance = new MockedXAdESSigner(tokenRSA);
         instance.init(signerId, config, workerContext, em);
         
         String errors = instance.getFatalErrors().toString();
@@ -148,7 +185,7 @@ public class XAdESSignerUnitTest {
         
         WorkerContext workerContext = null;
         EntityManager em = null;
-        XAdESSigner instance = new MockedXAdESSigner(token);
+        XAdESSigner instance = new MockedXAdESSigner(tokenRSA);
         instance.init(signerId, config, workerContext, em);
         
         String errors = instance.getFatalErrors().toString();
@@ -167,7 +204,7 @@ public class XAdESSignerUnitTest {
         
         WorkerContext workerContext = null;
         EntityManager em = null;
-        XAdESSigner instance = new MockedXAdESSigner(token);
+        XAdESSigner instance = new MockedXAdESSigner(tokenRSA);
         instance.init(signerId, config, workerContext, em);
         
         XAdESSignerParameters param = instance.getParameters();
@@ -185,10 +222,26 @@ public class XAdESSignerUnitTest {
      * @param expectedCommitmentTypeUris List of expected commitment type URIs
      * @throws Exception
      */
-    private void testProcessData_basicSigningInternal(final String commitmentTypesProperty,
+    private void testProcessData_basicSigningInternal(final KeyType keyType, final String commitmentTypesProperty,
             final Collection<String> expectedCommitmentTypeUris) throws Exception {
         LOG.info("processData");
 
+        final MockedCryptoToken token;
+        
+        switch (keyType) {
+        case RSA:
+            token = tokenRSA;
+            break;
+        case DSA:
+            token = tokenDSA;
+            break;
+        case ECDSA:
+            token = tokenECDSA;
+            break;
+        default:
+            throw new NoSuchAlgorithmException("Unknown key algorithm");
+        }
+        
         XAdESSigner instance = new MockedXAdESSigner(token);
         WorkerConfig config = new WorkerConfig();
         
@@ -263,7 +316,7 @@ public class XAdESSignerUnitTest {
      */
     @Test
     public void testProcessData_basicSigning() throws Exception {
-        testProcessData_basicSigningInternal(null, Collections.<String>emptyList());
+        testProcessData_basicSigningInternal(KeyType.RSA, null, Collections.<String>emptyList());
     }
     
     /**
@@ -273,7 +326,7 @@ public class XAdESSignerUnitTest {
      */
     @Test
     public void testProcessData_basicSigningSingleCommitmentType() throws Exception {
-        testProcessData_basicSigningInternal("PROOF_OF_ORIGIN", Collections.singletonList(AllDataObjsCommitmentTypeProperty.proofOfOrigin().getUri()));
+        testProcessData_basicSigningInternal(KeyType.RSA, "PROOF_OF_ORIGIN", Collections.singletonList(AllDataObjsCommitmentTypeProperty.proofOfOrigin().getUri()));
     }
     
     /**
@@ -283,7 +336,7 @@ public class XAdESSignerUnitTest {
      */
     @Test
     public void testProcessData_basicSigningMultipleCommitmentTypes() throws Exception {
-        testProcessData_basicSigningInternal("PROOF_OF_APPROVAL, PROOF_OF_ORIGIN",
+        testProcessData_basicSigningInternal(KeyType.RSA, "PROOF_OF_APPROVAL, PROOF_OF_ORIGIN",
                 Arrays.asList(AllDataObjsCommitmentTypeProperty.proofOfApproval().getUri(),
                               AllDataObjsCommitmentTypeProperty.proofOfOrigin().getUri()));
     }
@@ -295,7 +348,7 @@ public class XAdESSignerUnitTest {
      */
     @Test
     public void testProcessData_basicSigningCommitmentTypesNone() throws Exception {
-        testProcessData_basicSigningInternal("NONE", Collections.<String>emptyList());
+        testProcessData_basicSigningInternal(KeyType.RSA, "NONE", Collections.<String>emptyList());
     }
     
     /**
@@ -312,7 +365,7 @@ public class XAdESSignerUnitTest {
         
         WorkerContext workerContext = null;
         EntityManager em = null;
-        XAdESSigner instance = new MockedXAdESSigner(token);
+        XAdESSigner instance = new MockedXAdESSigner(tokenRSA);
         instance.init(signerId, config, workerContext, em);
         
         String errors = instance.getFatalErrors().toString();
@@ -323,7 +376,7 @@ public class XAdESSignerUnitTest {
     public void testProcessData_basicSigningXAdESFormT() throws Exception {
         LOG.info("testProcessData_basicSigningXAdESFormT");
 
-        XAdESSigner instance = new MockedXAdESSigner(token);
+        XAdESSigner instance = new MockedXAdESSigner(tokenRSA);
         WorkerConfig config = new WorkerConfig();
         
         config.setProperty("XADESFORM", "T");
@@ -345,10 +398,10 @@ public class XAdESSignerUnitTest {
         LOG.debug("signedXml: " + signedXml);
         
         // Validation: setup
-        CertStore certStore = CertStore.getInstance("Collection", new CollectionCertStoreParameters(token.getCertificateChain(ICryptoToken.PURPOSE_SIGN)));
+        CertStore certStore = CertStore.getInstance("Collection", new CollectionCertStoreParameters(tokenRSA.getCertificateChain(ICryptoToken.PURPOSE_SIGN)));
         KeyStore trustAnchors = KeyStore.getInstance("JKS");
         trustAnchors.load(null, "foo123".toCharArray());
-        trustAnchors.setCertificateEntry("cert", token.getCertificate(ICryptoToken.PURPOSE_SIGN));
+        trustAnchors.setCertificateEntry("cert", tokenRSA.getCertificate(ICryptoToken.PURPOSE_SIGN));
         
         CertificateValidationProvider certValidator = new PKIXCertificateValidationProvider(trustAnchors, false, certStore);
         
@@ -390,7 +443,7 @@ public class XAdESSignerUnitTest {
         
         WorkerContext workerContext = null;
         EntityManager em = null;
-        XAdESSigner instance = new MockedXAdESSigner(token);
+        XAdESSigner instance = new MockedXAdESSigner(tokenRSA);
         instance.init(signerId, config, workerContext, em);
         
         String errors = instance.getFatalErrors().toString();
@@ -412,7 +465,7 @@ public class XAdESSignerUnitTest {
         
         WorkerContext workerContext = null;
         EntityManager em = null;
-        XAdESSigner instance = new MockedXAdESSigner(token);
+        XAdESSigner instance = new MockedXAdESSigner(tokenRSA);
         instance.init(signerId, config, workerContext, em);
         
         String errors = instance.getFatalErrors().toString();

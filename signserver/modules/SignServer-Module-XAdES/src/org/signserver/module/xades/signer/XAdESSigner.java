@@ -19,10 +19,10 @@ import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.xml.crypto.dsig.SignatureMethod;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -52,7 +52,11 @@ import org.signserver.server.cryptotokens.ICryptoToken;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
+
+import xades4j.UnsupportedAlgorithmException;
 import xades4j.XAdES4jException;
+import xades4j.algorithms.Algorithm;
+import xades4j.algorithms.GenericAlgorithm;
 import xades4j.production.EnvelopedXmlObject;
 import xades4j.production.SignedDataObjects;
 import xades4j.production.XadesBesSigningProfile;
@@ -63,6 +67,7 @@ import xades4j.properties.AllDataObjsCommitmentTypeProperty;
 import xades4j.providers.KeyingDataProvider;
 import xades4j.providers.TimeStampTokenProvider;
 import xades4j.utils.XadesProfileResolutionException;
+import xades4j.providers.impl.DefaultAlgorithmsProviderEx;
 import xades4j.providers.impl.ExtendedTimeStampTokenProvider;
 
 /**
@@ -93,17 +98,43 @@ public class XAdESSigner extends BaseSigner {
     /** Worker property: COMMITMENT_TYPES. */
     public static final String PROPERTY_COMMITMENT_TYPES = "COMMITMENT_TYPES";
     
+    /** Worker property: SIGNATUREALGORITHM */
+    public static final String SIGNATUREALGORITHM = "SIGNATUREALGORITHM";
+
     public static final String COMMITMENT_TYPES_NONE = "NONE";
     
     /** Default value use if the worker property XADESFORM has not been set. */
     private static final String DEFAULT_XADESFORM = "BES";
-
+    
     private static final String CONTENT_TYPE = "text/xml";
     
     private LinkedList<String> configErrors;
     private XAdESSignerParameters parameters;
     
     private Collection<AllDataObjsCommitmentTypeProperty> commitmentTypes;
+    
+    private String signatureAlgorithm;
+    
+    /**
+     * Addional signature methods not yet covered by
+     * javax.xml.dsig.SignatureMethod
+     * 
+     * Defined in RFC 4051 {@link http://www.ietf.org/rfc/rfc4051.txt}
+     */
+    private static final String SIGNATURE_METHOD_RSA_SHA256 =
+            "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256";
+    private static final String SIGNATURE_METHOD_RSA_SHA384 =
+            "http://www.w3.org/2001/04/xmldsig-more#rsa-sha384";
+    private static final String SIGNATURE_METHOD_RSA_SHA512 =
+            "http://www.w3.org/2001/04/xmldsig-more#rsa-sha512";
+    private static final String SIGNATURE_METHOD_ECDSA_SHA1 =
+            "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha1";
+    private static final String SIGNATURE_METHOD_ECDSA_SHA256 =
+            "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha256";
+    private static final String SIGNATURE_METHOD_ECDSA_SHA384 =
+            "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha384";
+    private static final String SIGNATURE_METHOD_ECDSA_SHA512 =
+            "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha512";
     
     /**
      * The default time stamp token implementation, can be overridden by the unit tests.
@@ -202,6 +233,9 @@ public class XAdESSigner extends BaseSigner {
         }
 
         parameters = new XAdESSignerParameters(form, tsa);
+        
+        // Get the signature algorithm
+        signatureAlgorithm = config.getProperty(SIGNATUREALGORITHM);
         
         if (LOG.isDebugEnabled()) {
             LOG.debug("Worker " + workerId + " configured: " + parameters);
@@ -307,18 +341,21 @@ public class XAdESSigner extends BaseSigner {
         final XadesSigningProfile xsp;
         switch (params.getXadesForm()) {
             case BES:
-                xsp = new XadesBesSigningProfile(kdp);
+                xsp = new XadesBesSigningProfile(kdp)
+                        .withAlgorithmsProviderEx(new AlgorithmsProvider());
                 break;
             case T:
                 xsp = new XadesTSigningProfile(kdp)
                         .withTimeStampTokenProvider(timeStampTokenProviderImplementation)
-                        .withBinding(TSAParameters.class, params.getTsaParameters());
+                        .withBinding(TSAParameters.class, params.getTsaParameters())
+                        .withAlgorithmsProviderEx(new AlgorithmsProvider());
                 break;
             case C:
             case EPES:
             default:
                 throw new SignServerException("Unsupported XAdES profile configured");
         }
+        
         return (XadesSigner) xsp.newSigner();
     }
 
@@ -340,6 +377,42 @@ public class XAdESSigner extends BaseSigner {
      */
     void setTimeStampTokenProviderImplementation(final Class<? extends TimeStampTokenProvider> implementation) {
         timeStampTokenProviderImplementation = implementation;
+    }
+    
+    /**
+     * Implemenation of {@link xades4j.providers.AlgorithmsProviderEx} using the
+     * signature algorithm configured for the worker (or the default values).
+     */
+    private class AlgorithmsProvider extends DefaultAlgorithmsProviderEx {
+
+        @Override
+        public Algorithm getSignatureAlgorithm(String keyAlgorithmName)
+                throws UnsupportedAlgorithmException {
+            if (signatureAlgorithm == null) {
+                // use default xades4j behavior when not configured for the worker
+                return super.getSignatureAlgorithm(keyAlgorithmName);
+            }
+            
+            if ("SHA1withRSA".equals(signatureAlgorithm)) {
+                return new GenericAlgorithm(SignatureMethod.RSA_SHA1);
+            } else if ("SHA256withRSA".equals(signatureAlgorithm)) {
+                return new GenericAlgorithm(SIGNATURE_METHOD_RSA_SHA256);
+            } else if ("SHA384withRSA".equals(signatureAlgorithm)) {
+                return new GenericAlgorithm(SIGNATURE_METHOD_RSA_SHA384); 
+            } else if ("SHA512withRSA".equals(signatureAlgorithm)) {
+                return new GenericAlgorithm(SIGNATURE_METHOD_RSA_SHA512);
+            } else if ("SHA1withDSA".equals(signatureAlgorithm)) {
+                return new GenericAlgorithm(SignatureMethod.DSA_SHA1);
+            } else if ("SHA1withECDSA".equals(signatureAlgorithm)) {
+                return new GenericAlgorithm(SIGNATURE_METHOD_ECDSA_SHA1);
+            } else if ("SHA256withECDSA".equals(signatureAlgorithm)) {
+                return new GenericAlgorithm(SIGNATURE_METHOD_ECDSA_SHA256);
+            } else if ("SHA384withECDSA".equals(signatureAlgorithm)) {
+                return new GenericAlgorithm(SIGNATURE_METHOD_ECDSA_SHA384);
+            } else {
+                throw new UnsupportedAlgorithmException("Unsupported signature algorithm", signatureAlgorithm);
+            }
+        }
     }
 
 }

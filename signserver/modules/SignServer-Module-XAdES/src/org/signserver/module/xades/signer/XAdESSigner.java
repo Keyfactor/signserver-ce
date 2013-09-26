@@ -121,19 +121,19 @@ public class XAdESSigner extends BaseSigner {
      * 
      * Defined in RFC 4051 {@link http://www.ietf.org/rfc/rfc4051.txt}
      */
-    private static final String SIGNATURE_METHOD_RSA_SHA256 =
+    static final String SIGNATURE_METHOD_RSA_SHA256 =
             "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256";
-    private static final String SIGNATURE_METHOD_RSA_SHA384 =
+    static final String SIGNATURE_METHOD_RSA_SHA384 =
             "http://www.w3.org/2001/04/xmldsig-more#rsa-sha384";
-    private static final String SIGNATURE_METHOD_RSA_SHA512 =
+    static final String SIGNATURE_METHOD_RSA_SHA512 =
             "http://www.w3.org/2001/04/xmldsig-more#rsa-sha512";
-    private static final String SIGNATURE_METHOD_ECDSA_SHA1 =
+    static final String SIGNATURE_METHOD_ECDSA_SHA1 =
             "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha1";
-    private static final String SIGNATURE_METHOD_ECDSA_SHA256 =
+    static final String SIGNATURE_METHOD_ECDSA_SHA256 =
             "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha256";
-    private static final String SIGNATURE_METHOD_ECDSA_SHA384 =
+    static final String SIGNATURE_METHOD_ECDSA_SHA384 =
             "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha384";
-    private static final String SIGNATURE_METHOD_ECDSA_SHA512 =
+    static final String SIGNATURE_METHOD_ECDSA_SHA512 =
             "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha512";
     
     /**

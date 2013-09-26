@@ -217,12 +217,16 @@ public class XAdESSignerUnitTest {
     /**
      * Run a signing test with default form and varying commitment types.
      * 
+     * @param keyType Token key type to use
+     * @param signatureAlgorithm Signature algorithm property value to test, if null use default
+     * @param expectedSignatureAlgorithmUri Expected XML signature algorithm URI
      * @param commitmentTypesProperty COMMITMENT_TYPES property to test with
      *                                if null, doesn't set the property
      * @param expectedCommitmentTypeUris List of expected commitment type URIs
      * @throws Exception
      */
-    private void testProcessData_basicSigningInternal(final KeyType keyType, final String commitmentTypesProperty,
+    private void testProcessData_basicSigningInternal(final KeyType keyType, final String signatureAlgorithm,
+            final String expectedSignatureAlgorithmUri, final String commitmentTypesProperty,
             final Collection<String> expectedCommitmentTypeUris) throws Exception {
         LOG.info("processData");
 
@@ -247,6 +251,10 @@ public class XAdESSignerUnitTest {
         
         if (commitmentTypesProperty != null) {
             config.setProperty("COMMITMENT_TYPES", commitmentTypesProperty);
+        }
+        
+        if (signatureAlgorithm != null) {
+            config.setProperty("SIGNATUREALGORITHM", signatureAlgorithm);
         }
         
         instance.init(4711, config, null, null);
@@ -281,7 +289,7 @@ public class XAdESSignerUnitTest {
         XAdESVerificationResult r = verifier.verify(node, new SignatureSpecificVerificationOptions());
 
         assertEquals("BES", r.getSignatureForm().name());
-        assertEquals("http://www.w3.org/2001/04/xmldsig-more#rsa-sha256", r.getSignatureAlgorithmUri());
+        assertEquals("Unexpected signature algorithm in signature", expectedSignatureAlgorithmUri, r.getSignatureAlgorithmUri());
 
         final QualifyingProperties qp = r.getQualifyingProperties();
         
@@ -313,10 +321,13 @@ public class XAdESSignerUnitTest {
     /**
      * Test of processData method for basic signing, of class XAdESSigner.
      * Test that by default, no commitment types are included.
+     * Also test that the default signature algorithm is SHA256withRSA for an RSA key.
      */
     @Test
     public void testProcessData_basicSigning() throws Exception {
-        testProcessData_basicSigningInternal(KeyType.RSA, null, Collections.<String>emptyList());
+        testProcessData_basicSigningInternal(KeyType.RSA,
+                null, XAdESSigner.SIGNATURE_METHOD_RSA_SHA256,
+                null, Collections.<String>emptyList());
     }
     
     /**
@@ -326,7 +337,9 @@ public class XAdESSignerUnitTest {
      */
     @Test
     public void testProcessData_basicSigningSingleCommitmentType() throws Exception {
-        testProcessData_basicSigningInternal(KeyType.RSA, "PROOF_OF_ORIGIN", Collections.singletonList(AllDataObjsCommitmentTypeProperty.proofOfOrigin().getUri()));
+        testProcessData_basicSigningInternal(KeyType.RSA, 
+                null, XAdESSigner.SIGNATURE_METHOD_RSA_SHA256,
+                "PROOF_OF_ORIGIN", Collections.singletonList(AllDataObjsCommitmentTypeProperty.proofOfOrigin().getUri()));
     }
     
     /**
@@ -336,7 +349,9 @@ public class XAdESSignerUnitTest {
      */
     @Test
     public void testProcessData_basicSigningMultipleCommitmentTypes() throws Exception {
-        testProcessData_basicSigningInternal(KeyType.RSA, "PROOF_OF_APPROVAL, PROOF_OF_ORIGIN",
+        testProcessData_basicSigningInternal(KeyType.RSA, 
+                null, XAdESSigner.SIGNATURE_METHOD_RSA_SHA256,
+                "PROOF_OF_APPROVAL, PROOF_OF_ORIGIN",
                 Arrays.asList(AllDataObjsCommitmentTypeProperty.proofOfApproval().getUri(),
                               AllDataObjsCommitmentTypeProperty.proofOfOrigin().getUri()));
     }
@@ -348,7 +363,9 @@ public class XAdESSignerUnitTest {
      */
     @Test
     public void testProcessData_basicSigningCommitmentTypesNone() throws Exception {
-        testProcessData_basicSigningInternal(KeyType.RSA, "NONE", Collections.<String>emptyList());
+        testProcessData_basicSigningInternal(KeyType.RSA,
+                null, XAdESSigner.SIGNATURE_METHOD_RSA_SHA256,
+                "NONE", Collections.<String>emptyList());
     }
     
     /**

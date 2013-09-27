@@ -514,7 +514,26 @@ public class XAdESSignerUnitTest {
             testProcessData_basicSigningInternal(KeyType.RSA,
                 "bogus", XAdESSigner.SIGNATURE_METHOD_ECDSA_SHA1,
                 "NONE", Collections.<String>emptyList());
-            fail("Should throw a xades4j.UnsuportedExceptionException");
+            fail("Should throw a SignServerException");
+        } catch (SignServerException e) { //NOPMD
+            // expected
+        } catch (Exception e) {
+            fail("Unexpected exception thrown: " + e.getClass().getName());
+        }
+    }
+    
+    /**
+     * Test using a signature algorithm not matching the key.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testProcessData_basicSigningMismatchedSigAlg() throws Exception {
+        try {
+            testProcessData_basicSigningInternal(KeyType.RSA,
+                "SHA1withDSA", XAdESSigner.SIGNATURE_METHOD_ECDSA_SHA1,
+                "NONE", Collections.<String>emptyList());
+            fail("Should throw a SignServerException");
         } catch (SignServerException e) { //NOPMD
             // expected
         } catch (Exception e) {

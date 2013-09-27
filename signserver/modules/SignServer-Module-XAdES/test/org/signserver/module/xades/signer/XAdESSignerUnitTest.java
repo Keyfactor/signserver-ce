@@ -430,6 +430,54 @@ public class XAdESSignerUnitTest {
     }
     
     /**
+     * Test signing with signature algorithm SHA1withECDSA.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testProcessData_basicSigningECDSASHA1() throws Exception {
+        testProcessData_basicSigningInternal(KeyType.ECDSA,
+                "SHA1withECDSA", XAdESSigner.SIGNATURE_METHOD_ECDSA_SHA1,
+                "NONE", Collections.<String>emptyList());
+    }
+    
+    /**
+     * Test signing with signature algorithm SHA256withECDSA.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testProcessData_basicSigningECDSASHA256() throws Exception {
+        testProcessData_basicSigningInternal(KeyType.ECDSA,
+                "SHA256withECDSA", XAdESSigner.SIGNATURE_METHOD_ECDSA_SHA256,
+                "NONE", Collections.<String>emptyList());
+    }
+    
+    /**
+     * Test signing with signature algorithm SHA384withECDSA.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testProcessData_basicSigningECDSASHA384() throws Exception {
+        testProcessData_basicSigningInternal(KeyType.ECDSA,
+                "SHA384withECDSA", XAdESSigner.SIGNATURE_METHOD_ECDSA_SHA384,
+                "NONE", Collections.<String>emptyList());
+    }
+    
+    /**
+     * Test signing with signature algorithm SHA512withECDSA.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testProcessData_basicSigningECDSASHA512() throws Exception {
+        testProcessData_basicSigningInternal(KeyType.ECDSA,
+                "SHA512withECDSA", XAdESSigner.SIGNATURE_METHOD_ECDSA_SHA512,
+                "NONE", Collections.<String>emptyList());
+    }
+    
+    /**
      * Test with an empty COMMITMENT_TYPES list.
      * 
      * @throws Exception

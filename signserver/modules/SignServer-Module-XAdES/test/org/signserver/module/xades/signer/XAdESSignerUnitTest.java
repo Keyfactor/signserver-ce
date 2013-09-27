@@ -478,7 +478,7 @@ public class XAdESSignerUnitTest {
     }
     
     /**
-     * Test that the default works when using DSA keys.
+     * Test that the default signature algorithm works when using DSA keys.
      * 
      * @throws Exception
      */
@@ -486,6 +486,18 @@ public class XAdESSignerUnitTest {
     public void testProcessData_basicSigningDefaultDSA() throws Exception {
         testProcessData_basicSigningInternal(KeyType.DSA,
                 null, SignatureMethod.DSA_SHA1,
+                "NONE", Collections.<String>emptyList());
+    }
+    
+    /**
+     * Test that the default signature algorithm works when using ECDSA keys.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testProcessData_basicSigningDefaultECDSA() throws Exception {
+        testProcessData_basicSigningInternal(KeyType.ECDSA,
+                null, XAdESSigner.SIGNATURE_METHOD_ECDSA_SHA1,
                 "NONE", Collections.<String>emptyList());
     }
     

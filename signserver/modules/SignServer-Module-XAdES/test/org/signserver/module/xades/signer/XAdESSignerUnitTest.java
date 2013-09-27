@@ -40,6 +40,7 @@ import static org.junit.Assert.*;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
 import org.signserver.common.RequestContext;
+import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.module.xades.signer.MockedTimeStampTokenProvider.MockedTimeStampVerificationProvider;
 import org.signserver.server.WorkerContext;
@@ -49,6 +50,7 @@ import org.signserver.test.utils.builders.CryptoUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import xades4j.UnsupportedAlgorithmException;
 import xades4j.properties.AllDataObjsCommitmentTypeProperty;
 import xades4j.properties.QualifyingProperties;
 import xades4j.properties.SignedDataObjectProperty;
@@ -499,6 +501,25 @@ public class XAdESSignerUnitTest {
         testProcessData_basicSigningInternal(KeyType.ECDSA,
                 null, XAdESSigner.SIGNATURE_METHOD_ECDSA_SHA1,
                 "NONE", Collections.<String>emptyList());
+    }
+    
+    /**
+     * Test using an illegal signature algorithm.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testProcessData_basicSigningWrongSigAlg() throws Exception {
+        try {
+            testProcessData_basicSigningInternal(KeyType.RSA,
+                "bogus", XAdESSigner.SIGNATURE_METHOD_ECDSA_SHA1,
+                "NONE", Collections.<String>emptyList());
+            fail("Should throw a xades4j.UnsuportedExceptionException");
+        } catch (SignServerException e) { //NOPMD
+            // expected
+        } catch (Exception e) {
+            fail("Unexpected exception thrown: " + e.getClass().getName());
+        }
     }
     
     /**

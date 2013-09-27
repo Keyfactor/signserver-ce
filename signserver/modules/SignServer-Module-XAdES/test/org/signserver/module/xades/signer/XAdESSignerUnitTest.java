@@ -478,6 +478,18 @@ public class XAdESSignerUnitTest {
     }
     
     /**
+     * Test that the default works when using DSA keys.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testProcessData_basicSigningDefaultDSA() throws Exception {
+        testProcessData_basicSigningInternal(KeyType.DSA,
+                null, SignatureMethod.DSA_SHA1,
+                "NONE", Collections.<String>emptyList());
+    }
+    
+    /**
      * Test with an empty COMMITMENT_TYPES list.
      * 
      * @throws Exception

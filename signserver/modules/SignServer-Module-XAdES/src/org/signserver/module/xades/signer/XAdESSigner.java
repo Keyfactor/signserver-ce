@@ -409,6 +409,8 @@ public class XAdESSigner extends BaseSigner {
                 return new GenericAlgorithm(SIGNATURE_METHOD_ECDSA_SHA256);
             } else if ("SHA384withECDSA".equals(signatureAlgorithm)) {
                 return new GenericAlgorithm(SIGNATURE_METHOD_ECDSA_SHA384);
+            } else if ("SHA512withECDSA".equals(signatureAlgorithm)) {
+                return new GenericAlgorithm(SIGNATURE_METHOD_ECDSA_SHA512);
             } else {
                 throw new UnsupportedAlgorithmException("Unsupported signature algorithm", signatureAlgorithm);
             }

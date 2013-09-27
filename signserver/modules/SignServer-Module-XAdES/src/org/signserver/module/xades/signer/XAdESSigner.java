@@ -389,6 +389,10 @@ public class XAdESSigner extends BaseSigner {
         public Algorithm getSignatureAlgorithm(String keyAlgorithmName)
                 throws UnsupportedAlgorithmException {
             if (signatureAlgorithm == null) {
+                if ("EC".equals(keyAlgorithmName)) {
+                    // DefaultAlgorithmsProviderEx only handles RSA and DSA
+                    return new GenericAlgorithm(SIGNATURE_METHOD_ECDSA_SHA1);
+                }
                 // use default xades4j behavior when not configured for the worker
                 return super.getSignatureAlgorithm(keyAlgorithmName);
             }

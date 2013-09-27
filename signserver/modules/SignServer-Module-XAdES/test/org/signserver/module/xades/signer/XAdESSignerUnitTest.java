@@ -418,6 +418,18 @@ public class XAdESSignerUnitTest {
     }
     
     /**
+     * Test signing with signature algorithm SHA1withDSA.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testProcessData_basicSigningDSASHA1() throws Exception {
+        testProcessData_basicSigningInternal(KeyType.DSA,
+                "SHA1withDSA", SignatureMethod.DSA_SHA1,
+                "NONE", Collections.<String>emptyList());
+    }
+    
+    /**
      * Test with an empty COMMITMENT_TYPES list.
      * 
      * @throws Exception

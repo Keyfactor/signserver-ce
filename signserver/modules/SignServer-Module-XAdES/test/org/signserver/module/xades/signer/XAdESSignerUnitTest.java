@@ -382,6 +382,42 @@ public class XAdESSignerUnitTest {
     }
     
     /**
+     * Test signing with signature algorithm SHA256withRSA.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testProcessData_basicSigningRSASHA256() throws Exception {
+        testProcessData_basicSigningInternal(KeyType.RSA,
+                "SHA256withRSA", XAdESSigner.SIGNATURE_METHOD_RSA_SHA256,
+                "NONE", Collections.<String>emptyList());
+    }
+    
+    /**
+     * Test signing with signature algorithm SHA384withRSA.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testProcessData_basicSigningRSASHA384() throws Exception {
+        testProcessData_basicSigningInternal(KeyType.RSA,
+                "SHA384withRSA", XAdESSigner.SIGNATURE_METHOD_RSA_SHA384,
+                "NONE", Collections.<String>emptyList());
+    }
+    
+    /**
+     * Test signing with signature algorithm SHA512withRSA.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testProcessData_basicSigningRSASHA512() throws Exception {
+        testProcessData_basicSigningInternal(KeyType.RSA,
+                "SHA512withRSA", XAdESSigner.SIGNATURE_METHOD_RSA_SHA512,
+                "NONE", Collections.<String>emptyList());
+    }
+    
+    /**
      * Test with an empty COMMITMENT_TYPES list.
      * 
      * @throws Exception

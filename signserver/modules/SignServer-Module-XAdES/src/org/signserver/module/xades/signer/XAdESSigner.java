@@ -209,9 +209,7 @@ public class XAdESSigner extends BaseSigner {
             }
         }
         
-        // TODO: Configuration of signature algorithm
         // TODO: Other configuration options
-        
         final String commitmentTypesProperty = config.getProperties().getProperty(PROPERTY_COMMITMENT_TYPES);
         
         commitmentTypes = new LinkedList<AllDataObjsCommitmentTypeProperty>();

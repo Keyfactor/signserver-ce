@@ -22,9 +22,12 @@ import java.util.Date;
 import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import org.bouncycastle.asn1.x509.AccessDescription;
+import org.bouncycastle.asn1.x509.AuthorityInformationAccess;
 import org.bouncycastle.asn1.x509.BasicConstraints;
 import org.bouncycastle.asn1.x509.CRLReason;
 import org.bouncycastle.asn1.x509.Extension;
+import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.cert.X509CRLHolder;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
@@ -81,6 +84,10 @@ public class XAdESValidator2UnitTest {
     // Signer 2: Root CA, Sub CA, Signer
     private static MockedCryptoToken token2;
     private static String signedXml2;
+
+    // Signer 3: Root CA, Signer including OCSP URI
+    private static MockedCryptoToken token3;
+    private static String signedXml3;
     
     
     /**
@@ -208,6 +215,42 @@ public class XAdESValidator2UnitTest {
         otherCRL = new CRLBuilder()
                 .setIssuer(subcaCert.getSubject()) // Setting Sub CA DN all though an other key will be used
                 .build();
+        
+        // signer 3, issued by the root CA with an OCSP authority information access in the cert
+        final KeyPair signer3KeyPair = CryptoUtils.generateRSA(1024);
+        final GeneralName gn = new GeneralName(GeneralName.uniformResourceIdentifier, "http://dummyocsp");
+        final X509CertificateHolder signer3Cert = new CertBuilder()
+                .setIssuerPrivateKey(rootcaKeyPair.getPrivate())
+                .setIssuer(rootcaCert.getSubject())
+                .setSubjectPublicKey(signer3KeyPair.getPublic())
+                .setSubject("CN=Signer 1, O=XAdES Test, C=SE")
+                .addExtension(new CertExt(Extension.authorityInfoAccess, false,
+                        new AuthorityInformationAccess(AccessDescription.id_ad_ocsp, gn)))
+                .addExtension(new CertExt(Extension.basicConstraints, false, new BasicConstraints(false)))
+                .build();
+        final List<Certificate> chain3 = Arrays.<Certificate>asList(
+                    conv.getCertificate(signer3Cert),
+                    conv.getCertificate(rootcaCert)
+                );
+        token3 = new MockedCryptoToken(
+                signer1KeyPair.getPrivate(),
+                signer1KeyPair.getPublic(), 
+                conv.getCertificate(signer1Cert), 
+                chain3, 
+                "BC");
+        LOG.debug("Chain 3: \n" + new String(CertTools.getPEMFromCerts(chain3)) + "\n");
+        
+        // Sign a document by signer 2
+        instance = new MockedXAdESSigner(token3);
+        config = new WorkerConfig();
+        instance.init(4714, config, null, null);
+        requestContext = new RequestContext();
+        requestContext.put(RequestContext.TRANSACTION_ID, "0000-203-1");
+        request = new GenericSignRequest(202, "<test203/>".getBytes("UTF-8"));
+        response = (GenericSignResponse) instance.processData(request, requestContext);
+        data = response.getProcessedData();
+        signedXml3 = new String(data);
+        LOG.debug("Signed document by signer 3:\n\n" + signedXml3 + "\n");
     }
     
     /**

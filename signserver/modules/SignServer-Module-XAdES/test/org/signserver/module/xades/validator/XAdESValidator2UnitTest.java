@@ -233,9 +233,9 @@ public class XAdESValidator2UnitTest {
                     conv.getCertificate(rootcaCert)
                 );
         token3 = new MockedCryptoToken(
-                signer1KeyPair.getPrivate(),
-                signer1KeyPair.getPublic(), 
-                conv.getCertificate(signer1Cert), 
+                signer3KeyPair.getPrivate(),
+                signer3KeyPair.getPublic(), 
+                conv.getCertificate(signer3Cert), 
                 chain3, 
                 "BC");
         LOG.debug("Chain 3: \n" + new String(CertTools.getPEMFromCerts(chain3)) + "\n");
@@ -477,6 +477,27 @@ public class XAdESValidator2UnitTest {
         
         assertFalse("valid document", response.isValid());
         assertNotEquals("cert validation status", Validation.Status.VALID, response.getCertificateValidation().getStatus());
+    }
+    
+    @Test
+    public void testSigner3_withOCSP() throws Exception {
+        LOG.info("testSigner2_badCRL");
+
+        XAdESValidator instance = new XAdESValidator();
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("TRUSTANCHORS", new String(CertTools.getPEMFromCerts(Arrays.<Certificate>asList(new JcaX509CertificateConverter().getCertificate(rootcaCert)))));
+        config.setProperty("REVOCATION_CHECKING", "true");
+       
+        instance.init(4715, config, null, null);
+        
+        RequestContext requestContext = new RequestContext();
+        requestContext.put(RequestContext.TRANSACTION_ID, "0000-307-1");
+        GenericValidationRequest request = new GenericValidationRequest(307, signedXml3.getBytes("UTF-8"));
+        GenericValidationResponse response = (GenericValidationResponse) instance.processData(request, requestContext);
+        
+        // TODO: verify OCSP etc..
+        //assertFalse("valid document", response.isValid());
+        //assertNotEquals("cert validation status", Validation.Status.VALID, response.getCertificateValidation().getStatus());
     }
     
     /**

@@ -246,12 +246,18 @@ public class XAdESValidator extends BaseValidator {
         Validation v;
         if (revocationEnabled) {
             try {
-                v = validate(result.getValidationCertificate(), result.getValidationData().getCerts(), result.getValidationData().getCerts().get(result.getValidationData().getCerts().size() - 1));
+                final Certificate cert = result.getValidationCertificate();
+                final List<X509Certificate> certChain = result.getValidationData().getCerts();
+                final Certificate rootCert = result.getValidationData().getCerts().get(result.getValidationData().getCerts().size() - 1);
+                checkOCSP(cert, certChain, rootCert);
+                v = validate(cert, certChain, rootCert);
             } catch (IllegalRequestException ex) {
                 LOG.info("Request " + requestId + " signature valid: false, " + ex.getMessage());
                 return new GenericValidationResponse(requestId, false);
             } catch (CryptoTokenOfflineException ex) {
                 throw new SignServerException("Certificate validation error", ex);
+            } catch (CertificateParsingException e) {
+                throw new SignServerException("Certificate parsing error", e);
             }
         } else {            
             // Fill in the certificate validation information.
@@ -270,6 +276,15 @@ public class XAdESValidator extends BaseValidator {
         final LinkedList<String> errors = new LinkedList<String>(super.getFatalErrors());
         errors.addAll(configErrors);
         return errors;
+    }
+    
+    private boolean checkOCSP(final Certificate cert, final List<X509Certificate> certChain, final Certificate rootCert)
+        throws CertificateParsingException {
+        final String url = CertTools.getAuthorityInformationAccessOcspUrl(cert);
+        
+        LOG.info("Authority information access OCSP URL: " + url);
+        
+        return true;
     }
     
     // TODO: Copied from CRLValidator, refactor and clean up: 

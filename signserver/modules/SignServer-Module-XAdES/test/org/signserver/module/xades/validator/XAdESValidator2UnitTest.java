@@ -44,6 +44,7 @@ import org.signserver.common.GenericValidationResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.WorkerConfig;
 import org.signserver.module.xades.signer.MockedCryptoToken;
+import org.signserver.module.xades.signer.MockedTimeStampTokenProvider;
 import org.signserver.module.xades.signer.MockedXAdESSigner;
 import org.signserver.module.xades.signer.XAdESSigner;
 import org.signserver.module.xades.signer.XAdESSignerUnitTest;
@@ -88,6 +89,8 @@ public class XAdESValidator2UnitTest {
     // Signer 3: Root CA, Signer including OCSP URI
     private static MockedCryptoToken token3;
     private static String signedXml3;
+
+    private static String signedXmlFormT;
     
     
     /**
@@ -251,6 +254,22 @@ public class XAdESValidator2UnitTest {
         data = response.getProcessedData();
         signedXml3 = new String(data);
         LOG.debug("Signed document by signer 3:\n\n" + signedXml3 + "\n");
+        
+        // Sign a document by signer 1, using form T
+        instance = new MockedXAdESSigner(token1);
+        config = new WorkerConfig();
+        config.setProperty("XADESFORM", "T");
+        config.setProperty("TSA_URL", "http://example.com/?test=5");
+        instance.init(4715, config, null, null);
+        instance.setTimeStampTokenProviderImplementation(MockedTimeStampTokenProvider.class);
+        requestContext = new RequestContext();
+        requestContext.put(RequestContext.TRANSACTION_ID, "0000-204-1");
+        request = new GenericSignRequest(204, "<test204/>".getBytes("UTF-8"));
+        response = (GenericSignResponse) instance.processData(request, requestContext);
+        data = response.getProcessedData();
+        signedXmlFormT = new String(data);
+        LOG.debug("Signed document by signer 1, form T:\n\n" + signedXmlFormT + "\n");
+        
     }
     
     /**

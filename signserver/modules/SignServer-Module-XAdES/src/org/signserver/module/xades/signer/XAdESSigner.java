@@ -369,11 +369,11 @@ public class XAdESSigner extends BaseSigner {
     }
     
     /**
-     * Internal method used for the unit test to override the time stamp token provider.
+     * Used by the unit test to override the time stamp token provider.
      * 
      * @param implementation
      */
-    void setTimeStampTokenProviderImplementation(final Class<? extends TimeStampTokenProvider> implementation) {
+    public void setTimeStampTokenProviderImplementation(final Class<? extends TimeStampTokenProvider> implementation) {
         timeStampTokenProviderImplementation = implementation;
     }
     

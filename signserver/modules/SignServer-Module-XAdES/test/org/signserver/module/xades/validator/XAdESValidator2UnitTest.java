@@ -185,6 +185,9 @@ public class XAdESValidator2UnitTest {
             +"dMwk/ZXzsDjMZEtENaBXzAefYA==\n"
             +"-----END CERTIFICATE-----";
 
+    // hardcoded trust anchor missing certs for the embedded time stamp
+    private static String TRUSTANCHORS_MISSING_TS = "\n-----BEGIN CERTIFICATE-----\nMIICfjCCAeegAwIBAgIIGo+E2d/oU9EwDQYJKoZIhvcNAQEFBQAwTzEUMBIGA1UEAwwLRGVtb1Jvb3RDQTExDjAMBgNVBAsMBUVKQkNBMRowGAYDVQQKDBFTaWduU2VydmVyIFNhbXBsZTELMAkGA1UEBhMCU0UwHhcNMDkxMTA5MTQ0MTIzWhcNMzQxMTEwMTQ0MTIzWjBPMRQwEgYDVQQDDAtEZW1vUm9vdENBMTEOMAwGA1UECwwFRUpCQ0ExGjAYBgNVBAoMEVNpZ25TZXJ2ZXIgU2FtcGxlMQswCQYDVQQGEwJTRTCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAm9kfNe5zQ6d/J4FShC0ud2KAX7Wso+ulcI/2zyYFUnj2QcUVZ3KEwXyDjWlFOkXX5LVbmiDMglr/iPgKeh+L1Pd4nQ3ydW+jG1a0Yxe6eyaQqaflrsIai3JXmllUMp7kTc7ylcuuNmkxiTX2vhYltqgdVdfJ29eDwBVnkmPAsNsCAwEAAaNjMGEwHQYDVR0OBBYEFIC1Yu2E2Ia344+IumPUHchd5ylLMA8GA1UdEwEB/wQFMAMBAf8wHwYDVR0jBBgwFoAUgLVi7YTYhrfjj4i6Y9QdyF3nKUswDgYDVR0PAQH/BAQDAgGGMA0GCSqGSIb3DQEBBQUAA4GBAI+eyurSlvV/W23UskU85CsPid/Hiy0cvMWtc5i+ZWQTDEyW53n1nc2yHpSBY30wUbd8p0Qbdl03Y+S/n+arItiAPqC/RZttgTfcztwSU/nWugIrgwoPltA4H582IBzO7cmJ26jGwQQsD6uCCTQSJK9xlqXQw8Uyj+N6SvE3p+wq\n-----END CERTIFICATE-----\n";
+    
     /**
      * Setting up key-pairs, mocked crypto tokens, certificates and CRLs used
      * by the tests.
@@ -605,9 +608,6 @@ public class XAdESValidator2UnitTest {
         config.setProperty("TRUSTANCHORS", TRUSTANCHORS_FORM_T);
         config.setProperty("REVOCATION_CHECKING", "false");
 
-        LOG.info("TRUSTANCHORS: " + config.getProperty("TRUSTANCHORS"));
-        LOG.info("XML: " + SIGNED_XML_FORM_T);
-        
         updateCRLs(rootcaCRLEmpty, subcaCRLEmpty);
         
         instance.init(4716, config, null, null);
@@ -623,6 +623,32 @@ public class XAdESValidator2UnitTest {
         assertTrue("valid document", response.isValid());
         assertNotNull("returned signer cert", response.getSignerCertificate());
         assertEquals("cert validation status", Validation.Status.VALID, response.getCertificateValidation().getStatus());
+        assertTrue("time stamp verification performed", ProxyTimeStampTokenVerificationProvider.performedVerification);
+    }
+    
+    @Test
+    public void testSigner1formTMissingTrustAnchor() throws Exception {
+        LOG.info("signer1, form T");
+
+        XAdESValidator instance = new XAdESValidator();
+        WorkerConfig config = new WorkerConfig();
+               
+        config.setProperty("TRUSTANCHORS", TRUSTANCHORS_MISSING_TS);
+        config.setProperty("REVOCATION_CHECKING", "false");
+        
+        updateCRLs(rootcaCRLEmpty, subcaCRLEmpty);
+        
+        instance.init(4716, config, null, null);
+
+        // override the time stamp token verifier to use recording verification provider
+        instance.setTimeStampVerificationProviderImplementation(ProxyTimeStampTokenVerificationProvider.class);
+        
+        RequestContext requestContext = new RequestContext();
+        requestContext.put(RequestContext.TRANSACTION_ID, "0000-308-0");
+        GenericValidationRequest request = new GenericValidationRequest(308, SIGNED_XML_FORM_T.getBytes("UTF-8"));
+        GenericValidationResponse response = (GenericValidationResponse) instance.processData(request, requestContext);
+        
+        assertFalse("invalid document", response.isValid());
         assertTrue("time stamp verification performed", ProxyTimeStampTokenVerificationProvider.performedVerification);
     }
     

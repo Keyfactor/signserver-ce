@@ -63,7 +63,6 @@ import xades4j.providers.impl.DefaultTimeStampVerificationProvider;
 import xades4j.providers.impl.PKIXCertificateValidationProvider;
 import xades4j.utils.XadesProfileResolutionException;
 import xades4j.verification.SignatureSpecificVerificationOptions;
-import xades4j.verification.XAdESForm;
 import xades4j.verification.XAdESVerificationResult;
 import xades4j.verification.XadesVerificationProfile;
 import xades4j.verification.XadesVerifier;

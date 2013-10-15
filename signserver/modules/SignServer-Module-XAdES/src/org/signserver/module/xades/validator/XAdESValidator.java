@@ -240,7 +240,6 @@ public class XAdESValidator extends BaseValidator {
             throw new SignServerException("XML signature validation error", ex);
         } catch (XAdES4jException ex) {
             LOG.info("Request " + requestId + " signature valid: false, " + ex.getMessage());
-            ex.printStackTrace();
             return new GenericValidationResponse(requestId, false);
         }
         

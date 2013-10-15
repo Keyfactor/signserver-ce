@@ -56,6 +56,14 @@ import org.signserver.test.utils.builders.CryptoUtils;
 import org.signserver.test.utils.builders.crl.CRLBuilder;
 import org.signserver.validationservice.common.Validation;
 
+import com.google.inject.Inject;
+
+import xades4j.providers.CertificateValidationProvider;
+import xades4j.providers.MessageDigestEngineProvider;
+import xades4j.providers.TimeStampTokenVerificationException;
+import xades4j.providers.impl.DefaultTimeStampTokenProvider;
+import xades4j.providers.impl.DefaultTimeStampVerificationProvider;
+
 /**
  * Additional unit tests for the XAdESValidator class.
  * 
@@ -92,6 +100,7 @@ public class XAdESValidator2UnitTest {
     private static MockedCryptoToken token3;
     private static String signedXml3;
 
+    // hardcoded signed XML document with timestamp response
     private static String SIGNED_XML_FORM_T = 
             "<?xml version=\"1.0\" encoding=\"UTF-8\"?><ds:Signature xmlns:ds=\"http://www.w3.org/2000/09/xmldsig#\" Id=\"xmldsig-42e9e098-2eb8-40ba-88ca-fd4b69af038a\">\n"
                 +"<ds:SignedInfo>\n"
@@ -607,9 +616,8 @@ public class XAdESValidator2UnitTest {
         
         instance.init(4716, config, null, null);
 
-        // override the time stamp token verifier to use the mocked token verifier
-        //MockedTimeStampTokenProvider.reset();
-        //instance.setTimeStampVerificationProviderImplementation(MockedTimeStampTokenProvider.MockedTimeStampVerificationProvider.class);
+        // override the time stamp token verifier to use recording verification provider
+        instance.setTimeStampVerificationProviderImplementation(ProxyTimeStampTokenVerificationProvider.class);
         
         RequestContext requestContext = new RequestContext();
         requestContext.put(RequestContext.TRANSACTION_ID, "0000-308-0");
@@ -619,7 +627,7 @@ public class XAdESValidator2UnitTest {
         assertTrue("valid document", response.isValid());
         assertNotNull("returned signer cert", response.getSignerCertificate());
         assertEquals("cert validation status", Validation.Status.VALID, response.getCertificateValidation().getStatus());
-        //assertTrue("time stamp verification performed", MockedTimeStampTokenProvider.hasPerformedTimeStampVerification());
+        assertTrue("time stamp verification performed", ProxyTimeStampTokenVerificationProvider.performedVerification);
     }
     
     /**
@@ -631,6 +639,28 @@ public class XAdESValidator2UnitTest {
     private void updateCRLs(final X509CRLHolder rootcaCRL, final X509CRLHolder subcaCRL) throws IOException {
         FileUtils.writeByteArrayToFile(rootcaCRLFile, rootcaCRL.getEncoded());
         FileUtils.writeByteArrayToFile(subcaCRLFile, subcaCRL.getEncoded());
+    }
+    
+    /**
+     * Implementation of {@link xades4j.providers.TimeStampVerificationProvider} enabling tracking performed verification.
+     */
+    private static class ProxyTimeStampTokenVerificationProvider extends DefaultTimeStampVerificationProvider {
+
+        static boolean performedVerification = false;
+        
+        @Inject
+        public ProxyTimeStampTokenVerificationProvider(
+                CertificateValidationProvider certificateValidationProvider,
+                MessageDigestEngineProvider messageDigestProvider) {
+            super(certificateValidationProvider, messageDigestProvider);
+        }
+
+        @Override
+        public Date verifyToken(byte[] arg0, byte[] arg1)
+                throws TimeStampTokenVerificationException {
+            performedVerification = true;
+            return super.verifyToken(arg0, arg1);
+        }
     }
 
 }

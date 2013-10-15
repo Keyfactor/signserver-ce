@@ -12,17 +12,10 @@
  *************************************************************************/
 package org.signserver.module.xades.signer;
 
-import java.io.IOException;
-import java.security.cert.Certificate;
 import java.util.Arrays;
 import java.util.Date;
 
 import org.apache.log4j.Logger;
-import org.bouncycastle.asn1.ASN1Encodable;
-import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.cms.ContentInfo;
-import org.bouncycastle.tsp.TSPException;
-import org.bouncycastle.tsp.TimeStampToken;
 import org.bouncycastle.util.encoders.Base64;
 
 
@@ -54,8 +47,6 @@ public class MockedTimeStampTokenProvider implements TimeStampTokenProvider {
      */
     public static final long TIMESTAMP = 1379686957;
     
-    private static Date overrideTimestamp = null;
-    
     /**
      * Counters of performed timestamps and verifications.
      */
@@ -68,11 +59,6 @@ public class MockedTimeStampTokenProvider implements TimeStampTokenProvider {
     public static void reset() {
         requestedTimeStampToken = false;
         performedTimeStampVerification = false;
-        overrideTimestamp = null;
-    }
-    
-    public static void overrideTimestamp(final Date timestamp) {
-        overrideTimestamp = timestamp;
     }
     
     /**
@@ -95,25 +81,7 @@ public class MockedTimeStampTokenProvider implements TimeStampTokenProvider {
     
     @Override
     public TimeStampTokenRes getTimeStampToken(byte[] dummy, String arg1)
-            throws TimeStampTokenGenerationException {
-        
-        /*
-        final ASN1Sequence data = ASN1Sequence.getInstance(Base64.decode(RESPONSE_DATA));
-        final ASN1Encodable token = data.getObjectAt(1);
-        */
-        
-        /*
-        try {
-            TODO: implement overridable tampering...
-            final TimeStampToken tst = new TimeStampToken(ContentInfo.getInstance(token));
-            
-            if (overrideTimestamp != null) {
-                tst.getTimeStampInfo().getGenTime().setTime(overrideTimestamp.getTime());
-            }
-            
-            final TimeStampTokenRes res = new TimeStampTokenRes(tst.getEncoded(),
-                    new Date(overrideTimestamp != null ? overrideTimestamp.getTime() : TIMESTAMP));
-            */
+            throws TimeStampTokenGenerationException {        
         final TimeStampTokenRes res = new TimeStampTokenRes(Base64.decode(RESPONSE_DATA), new Date(TIMESTAMP));
 
         requestedTimeStampToken = true;

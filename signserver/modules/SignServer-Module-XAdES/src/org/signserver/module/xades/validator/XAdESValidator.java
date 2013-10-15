@@ -58,9 +58,12 @@ import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 import xades4j.XAdES4jException;
 import xades4j.providers.CertificateValidationProvider;
+import xades4j.providers.TimeStampVerificationProvider;
+import xades4j.providers.impl.DefaultTimeStampVerificationProvider;
 import xades4j.providers.impl.PKIXCertificateValidationProvider;
 import xades4j.utils.XadesProfileResolutionException;
 import xades4j.verification.SignatureSpecificVerificationOptions;
+import xades4j.verification.XAdESForm;
 import xades4j.verification.XAdESVerificationResult;
 import xades4j.verification.XadesVerificationProfile;
 import xades4j.verification.XadesVerifier;
@@ -93,6 +96,8 @@ public class XAdESValidator extends BaseValidator {
     
     private LinkedList<String> configErrors;
     
+    private Class<? extends TimeStampVerificationProvider> timeStampVerificationImplementation;
+
     @Override
     public void init(final int workerId, final WorkerConfig config,
             final WorkerContext workerContext, final EntityManager workerEM) {
@@ -102,6 +107,8 @@ public class XAdESValidator extends BaseValidator {
         
         revocationEnabled = Boolean.parseBoolean(config.getProperty(REVOCATION_CHECKING, REVOCATION_CHECKING_DEFAULT));
 
+        timeStampVerificationImplementation = DefaultTimeStampVerificationProvider.class;
+        
         // CERTIFICATES
         try {
             final Collection<Certificate> certificates = loadCertificatesFromProperty(CERTIFICATES);
@@ -131,7 +138,7 @@ public class XAdESValidator extends BaseValidator {
                 for (Certificate cert : trustedCertificates) {
                     if (cert instanceof X509Certificate) {
                         trustAnchors.setCertificateEntry("trusted-" + i++, cert);
-                        sb.append(((X509Certificate) cert).getSubjectDN()).append("\n");
+                        sb.append(((X509Certificate) cert).getSubjectDN()).append(" SN: " + ((X509Certificate) cert).getSerialNumber().toString(16)).append("\n");
                     }
                 }
                 if (LOG.isDebugEnabled()) {
@@ -219,7 +226,8 @@ public class XAdESValidator extends BaseValidator {
         try {
             CertificateValidationProvider certValidator = new PKIXCertificateValidationProvider(trustAnchors, false, certStore);
 
-            XadesVerificationProfile p = new XadesVerificationProfile(certValidator);
+            XadesVerificationProfile p = new XadesVerificationProfile(certValidator)
+                .withTimeStampTokenVerifier(timeStampVerificationImplementation);
             XadesVerifier verifier = p.newVerifier();
             
             Element node = doc.getDocumentElement();
@@ -233,6 +241,7 @@ public class XAdESValidator extends BaseValidator {
             throw new SignServerException("XML signature validation error", ex);
         } catch (XAdES4jException ex) {
             LOG.info("Request " + requestId + " signature valid: false, " + ex.getMessage());
+            ex.printStackTrace();
             return new GenericValidationResponse(requestId, false);
         }
         
@@ -410,6 +419,10 @@ public class XAdESValidator extends BaseValidator {
             chain.add(cert);
         }
         return chain;
+    }
+    
+    void setTimeStampVerificationProviderImplementation(final Class<? extends TimeStampVerificationProvider> timeStampVerificationImplementation) {
+        this.timeStampVerificationImplementation = timeStampVerificationImplementation;
     }
     
 }

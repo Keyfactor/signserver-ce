@@ -3992,11 +3992,11 @@ The XML validator validates the signature of XML documents. The certificate is c
 
                     <subsubsection name="Overview">
                         <p>
-The XAdES validator validates the signature of XAdES documents and validatates the certificate chain.
+The XAdES validator validates the signature of XAdES documents and validatates the certificate chain. The validator will also validate embedded timestamp tokens in a XAdES form T-signed document.
                         </p>
                     </subsubsection>
                     <subsubsection name="Available Properties">
-                        <p><b>TRUSTANCHORS</b> = Trusted certificates. In PEM format. Required.</p>
+                        <p><b>TRUSTANCHORS</b> = Trusted certificates. In PEM format. When validating a XAdES form T-signed document, must include the trusted certificate for the time stamp authory as well. Required.</p>
                         <p><b>CERTIFICATES</b> = Intermediate CA certificates that might be needed to build a trust path from the signer certificates to any of the trusted certifivcates. In PEM format.</p>
                         <p><b>REVOCATION_CHECKING</b> = True if revocation checking should be performed (currently only CRLs are supported and each certificate needs to have an accessible CDP). Default: true</p>
                     </subsubsection>

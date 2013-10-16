@@ -598,6 +598,11 @@ public class XAdESValidator2UnitTest {
         //assertNotEquals("cert validation status", Validation.Status.VALID, response.getCertificateValidation().getStatus());
     }
     
+    /**
+     * Test validating a form T-signed document with adequate trust anchor.
+     * 
+     * @throws Exception
+     */
     @Test
     public void testSigner1formT() throws Exception {
         LOG.info("signer1, form T");
@@ -626,6 +631,11 @@ public class XAdESValidator2UnitTest {
         assertTrue("time stamp verification performed", ProxyTimeStampTokenVerificationProvider.performedVerification);
     }
     
+    /**
+     * Test validating a form T-signed document with lacking TSA trust anchor. Should be invalid.
+     * 
+     * @throws Exception
+     */
     @Test
     public void testSigner1formTMissingTrustAnchor() throws Exception {
         LOG.info("signer1, form T");

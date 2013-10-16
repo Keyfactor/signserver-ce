@@ -3992,7 +3992,7 @@ The XML validator validates the signature of XML documents. The certificate is c
 
                     <subsubsection name="Overview">
                         <p>
-The XAdES validator validates the signature of XAdES documents and validatates the certificate chain. The validator will also validate embedded timestamp tokens in a XAdES form T-signed document.
+The XAdES validator validates the signature of XAdES documents and validatates the certificate chain. The validator will also validate embedded timestamp tokens in XAdES form T-signed documents.
                         </p>
                     </subsubsection>
                     <subsubsection name="Available Properties">

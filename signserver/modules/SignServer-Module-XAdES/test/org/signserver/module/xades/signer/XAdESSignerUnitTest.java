@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
@@ -32,7 +33,11 @@ import javax.xml.crypto.dsig.SignatureMethod;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.log4j.Logger;
+import org.bouncycastle.asn1.x509.BasicConstraints;
+import org.bouncycastle.asn1.x509.Extension;
+import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
+import org.bouncycastle.jce.X509KeyUsage;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -46,6 +51,7 @@ import org.signserver.module.xades.signer.MockedTimeStampTokenProvider.MockedTim
 import org.signserver.server.WorkerContext;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.test.utils.builders.CertBuilder;
+import org.signserver.test.utils.builders.CertExt;
 import org.signserver.test.utils.builders.CryptoUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -76,6 +82,7 @@ public class XAdESSignerUnitTest {
     private static MockedCryptoToken tokenRSA;
     private static MockedCryptoToken tokenDSA;
     private static MockedCryptoToken tokenECDSA;
+    private static MockedCryptoToken tokenWithIntermediateCert;
     
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -83,6 +90,7 @@ public class XAdESSignerUnitTest {
         tokenRSA = generateToken(KeyType.RSA);
         tokenDSA = generateToken(KeyType.DSA);
         tokenECDSA = generateToken(KeyType.ECDSA);
+        tokenWithIntermediateCert = generateTokenWithIntermediateCert();
     }
 
     private enum KeyType {
@@ -121,6 +129,46 @@ public class XAdESSignerUnitTest {
         final Certificate signerCertificate = certChain[0];
         return new MockedCryptoToken(signerKeyPair.getPrivate(), signerKeyPair.getPublic(), signerCertificate, Arrays.asList(certChain), "BC");
             
+    }
+    
+    private static MockedCryptoToken generateTokenWithIntermediateCert() throws Exception {
+        final JcaX509CertificateConverter conv = new JcaX509CertificateConverter();
+        final KeyPair rootcaKeyPair = CryptoUtils.generateRSA(1024);
+        final X509CertificateHolder rootcaCert = new CertBuilder()
+                .setSelfSignKeyPair(rootcaKeyPair)
+                .setSubject("CN=Root, O=XAdES Test, C=SE")
+                .addExtension(new CertExt(Extension.keyUsage, false, new X509KeyUsage(X509KeyUsage.keyCertSign | X509KeyUsage.cRLSign)))
+                .addExtension(new CertExt(Extension.basicConstraints, false, new BasicConstraints(true)))
+                .build();
+        final KeyPair subcaKeyPair = CryptoUtils.generateRSA(1024);
+        final X509CertificateHolder subcaCert = new CertBuilder()
+                .setIssuerPrivateKey(rootcaKeyPair.getPrivate())
+                .setIssuer(rootcaCert.getSubject())
+                .setSubjectPublicKey(subcaKeyPair.getPublic())
+                .setSubject("CN=Sub, O=XAdES Test, C=SE")
+                .addExtension(new CertExt(Extension.keyUsage, false, new X509KeyUsage(X509KeyUsage.keyCertSign | X509KeyUsage.cRLSign)))
+                .addExtension(new CertExt(Extension.basicConstraints, false, new BasicConstraints(true)))
+                .build();
+        
+        final KeyPair signerKeyPair = CryptoUtils.generateRSA(1024);
+        final X509CertificateHolder signerCert = new CertBuilder()
+            .setIssuerPrivateKey(rootcaKeyPair.getPrivate())
+            .setIssuer(rootcaCert.getSubject())
+            .setSubjectPublicKey(signerKeyPair.getPublic())
+            .setSubject("CN=Signer 1, O=XAdES Test, C=SE")
+            .addExtension(new CertExt(Extension.basicConstraints, false, new BasicConstraints(false)))
+            .build();
+        
+        final List<Certificate> chain = Arrays.<Certificate>asList(conv.getCertificate(signerCert),
+                                                                   conv.getCertificate(subcaCert),
+                                                                   conv.getCertificate(rootcaCert));
+        
+        return new MockedCryptoToken(
+                signerKeyPair.getPrivate(),
+                signerKeyPair.getPublic(), 
+                conv.getCertificate(signerCert), 
+                chain, 
+                "BC");
     }
     
     /**
@@ -217,6 +265,43 @@ public class XAdESSignerUnitTest {
         assertEquals(Collections.EMPTY_LIST, instance.getFatalErrors());
     }
 
+    private XAdESVerificationResult getVerificationResult(final MockedCryptoToken token, final WorkerConfig config) throws Exception {
+        XAdESSigner instance = new MockedXAdESSigner(token);
+        
+        instance.init(4711, config, null, null);
+        
+        RequestContext requestContext = new RequestContext();
+        requestContext.put(RequestContext.TRANSACTION_ID, "0000-100-1");
+        GenericSignRequest request = new GenericSignRequest(100, "<test100/>".getBytes("UTF-8"));
+        GenericSignResponse response = (GenericSignResponse) instance.processData(request, requestContext);
+        
+        byte[] data = response.getProcessedData();
+        final String signedXml = new String(data);
+        LOG.debug("signedXml: " + signedXml);
+        
+        // Validation: setup
+        CertStore certStore = CertStore.getInstance("Collection", new CollectionCertStoreParameters(token.getCertificateChain(ICryptoToken.PURPOSE_SIGN)));
+        KeyStore trustAnchors = KeyStore.getInstance("JKS");
+        trustAnchors.load(null, "foo123".toCharArray());
+        trustAnchors.setCertificateEntry("cert", token.getCertificate(ICryptoToken.PURPOSE_SIGN));
+
+        CertificateValidationProvider certValidator = new PKIXCertificateValidationProvider(trustAnchors, false, certStore);
+
+        XadesVerificationProfile p = new XadesVerificationProfile(certValidator);
+        XadesVerifier verifier = p.newVerifier();
+        
+        // Validation: parse
+        final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
+        final DocumentBuilder builder = factory.newDocumentBuilder();
+        final Document doc = builder.parse(new ByteArrayInputStream(data));
+        Element node = doc.getDocumentElement();
+        
+        XAdESVerificationResult r = verifier.verify(node, new SignatureSpecificVerificationOptions());
+        
+        return r;
+    }
+    
     /**
      * Run a signing test with default form and varying commitment types.
      * 
@@ -249,7 +334,7 @@ public class XAdESSignerUnitTest {
             throw new NoSuchAlgorithmException("Unknown key algorithm");
         }
         
-        XAdESSigner instance = new MockedXAdESSigner(token);
+        
         WorkerConfig config = new WorkerConfig();
         
         if (commitmentTypesProperty != null) {
@@ -260,36 +345,7 @@ public class XAdESSignerUnitTest {
             config.setProperty("SIGNATUREALGORITHM", signatureAlgorithm);
         }
         
-        instance.init(4711, config, null, null);
-        
-        RequestContext requestContext = new RequestContext();
-        requestContext.put(RequestContext.TRANSACTION_ID, "0000-100-1");
-        GenericSignRequest request = new GenericSignRequest(100, "<test100/>".getBytes("UTF-8"));
-        GenericSignResponse response = (GenericSignResponse) instance.processData(request, requestContext);
-        
-        byte[] data = response.getProcessedData();
-        final String signedXml = new String(data);
-        LOG.debug("signedXml: " + signedXml);
-        
-        // Validation: setup
-        CertStore certStore = CertStore.getInstance("Collection", new CollectionCertStoreParameters(token.getCertificateChain(ICryptoToken.PURPOSE_SIGN)));
-        KeyStore trustAnchors = KeyStore.getInstance("JKS");
-        trustAnchors.load(null, "foo123".toCharArray());
-        trustAnchors.setCertificateEntry("cert", token.getCertificate(ICryptoToken.PURPOSE_SIGN));
-
-        CertificateValidationProvider certValidator = new PKIXCertificateValidationProvider(trustAnchors, false, certStore);
-
-        XadesVerificationProfile p = new XadesVerificationProfile(certValidator);
-        XadesVerifier verifier = p.newVerifier();
-        
-        // Validation: parse
-        final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(true);
-        final DocumentBuilder builder = factory.newDocumentBuilder();
-        final Document doc = builder.parse(new ByteArrayInputStream(data));
-        Element node = doc.getDocumentElement();
-        
-        XAdESVerificationResult r = verifier.verify(node, new SignatureSpecificVerificationOptions());
+        final XAdESVerificationResult r = getVerificationResult(token, config);
 
         assertEquals("BES", r.getSignatureForm().name());
         assertEquals("Unexpected signature algorithm in signature", expectedSignatureAlgorithmUri, r.getSignatureAlgorithmUri());
@@ -660,5 +716,13 @@ public class XAdESSignerUnitTest {
         
         String errors = instance.getFatalErrors().toString();
         assertTrue("error: " + errors, errors.contains("commitment type"));
+    }
+    
+    @Test
+    public void testSigningWithIntermediateCert() throws Exception {
+        
+        final XAdESVerificationResult r = getVerificationResult(tokenWithIntermediateCert, new WorkerConfig());
+
+        // TODO: check that the intermediate cert is included in the chain
     }
 }

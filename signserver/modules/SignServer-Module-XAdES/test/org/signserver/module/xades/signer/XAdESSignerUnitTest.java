@@ -720,6 +720,7 @@ public class XAdESSignerUnitTest {
     
     @Test
     public void testSigningWithIntermediateCert() throws Exception {
+        LOG.info("testSigningWithIntermediateCert");
         final XAdESVerificationResult r = getVerificationResult(tokenWithIntermediateCert, new WorkerConfig());
 
         // TODO: check that the intermediate cert is included in the chain

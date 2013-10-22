@@ -152,8 +152,8 @@ public class XAdESSignerUnitTest {
         
         final KeyPair signerKeyPair = CryptoUtils.generateRSA(1024);
         final X509CertificateHolder signerCert = new CertBuilder()
-            .setIssuerPrivateKey(rootcaKeyPair.getPrivate())
-            .setIssuer(rootcaCert.getSubject())
+            .setIssuerPrivateKey(subcaKeyPair.getPrivate())
+            .setIssuer(subcaCert.getSubject())
             .setSubjectPublicKey(signerKeyPair.getPublic())
             .setSubject("CN=Signer 1, O=XAdES Test, C=SE")
             .addExtension(new CertExt(Extension.basicConstraints, false, new BasicConstraints(false)))
@@ -720,7 +720,6 @@ public class XAdESSignerUnitTest {
     
     @Test
     public void testSigningWithIntermediateCert() throws Exception {
-        
         final XAdESVerificationResult r = getVerificationResult(tokenWithIntermediateCert, new WorkerConfig());
 
         // TODO: check that the intermediate cert is included in the chain

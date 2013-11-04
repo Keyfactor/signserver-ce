@@ -284,7 +284,7 @@ public class XAdESSignerUnitTest {
         KeyStore trustAnchors = KeyStore.getInstance("JKS");
         trustAnchors.load(null, "foo123".toCharArray());
         trustAnchors.setCertificateEntry("cert", token.getCertificate(ICryptoToken.PURPOSE_SIGN));
-
+        
         CertificateValidationProvider certValidator = new PKIXCertificateValidationProvider(trustAnchors, false, certStore);
 
         XadesVerificationProfile p = new XadesVerificationProfile(certValidator);
@@ -718,11 +718,11 @@ public class XAdESSignerUnitTest {
         assertTrue("error: " + errors, errors.contains("commitment type"));
     }
     
-    @Test
-    public void testSigningWithIntermediateCert() throws Exception {
-        LOG.info("testSigningWithIntermediateCert");
-        final XAdESVerificationResult r = getVerificationResult(tokenWithIntermediateCert, new WorkerConfig());
-
-        // TODO: check that the intermediate cert is included in the chain
-    }
+//    @Test
+//    public void testSigningWithIntermediateCert() throws Exception {
+//        LOG.info("testSigningWithIntermediateCert");
+//        final XAdESVerificationResult r = getVerificationResult(tokenWithIntermediateCert, new WorkerConfig());
+//
+//        // TODO: check that the intermediate cert is included in the chain
+//    }
 }

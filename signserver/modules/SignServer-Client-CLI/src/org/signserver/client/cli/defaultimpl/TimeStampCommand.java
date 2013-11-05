@@ -35,6 +35,7 @@ import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.cmp.PKIFailureInfo;
 import org.bouncycastle.cert.AttributeCertificateHolder;
 import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.SignerInformationVerifier;
 import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -119,7 +120,7 @@ public class TimeStampCommand extends AbstractCommand {
                 + "be done, work together with inrep and cafile. If given, no "
                 + "request to the TSA will happen.");
         final Option printopt = new Option("print", false,
-                "Prints content of a response");
+                "Prints content of a response and/or token");
 
         OptionBuilder.hasArg();
         OptionBuilder.withDescription("Url of TSA, e.g. "
@@ -345,16 +346,29 @@ public class TimeStampCommand extends AbstractCommand {
 
             final byte[] bytes = readFiletoBuffer(inrepstring);
             
-            final TimeStampResponse response = new TimeStampResponse(bytes);
+            TimeStampResponse response = null;
             out.println("Time-stamp response {");
-            out.println("  Status: " + response.getStatus());
-            out.println("  Status message: " + response.getStatusString());
-            PKIFailureInfo failureInfo = response.getFailInfo();
-            if (failureInfo != null) {
-                out.print("  Failure info: ");
-                out.println(failureInfo.intValue());
+            try {
+                response = new TimeStampResponse(bytes);
+                out.println("  Status: " + response.getStatus());
+                out.println("  Status message: " + response.getStatusString());
+            } catch (TSPException ex) {
+                out.println("  Not an response");
             }
-            final TimeStampToken token = response.getTimeStampToken();
+            if (response != null) {
+                PKIFailureInfo failureInfo = response.getFailInfo();
+                if (failureInfo != null) {
+                    out.print("  Failure info: ");
+                    out.println(failureInfo.intValue());
+                }
+            }
+
+            final TimeStampToken token;
+            if (response == null) {
+                token = new TimeStampToken(new CMSSignedData(bytes));
+            } else {
+                token = response.getTimeStampToken();
+            }          
             if (token != null) {
                 out.println("  Time-stamp token:");
                 TimeStampTokenInfo info = token.getTimeStampInfo();

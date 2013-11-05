@@ -137,7 +137,10 @@ public class XAdESValidator extends BaseValidator {
                 for (Certificate cert : trustedCertificates) {
                     if (cert instanceof X509Certificate) {
                         trustAnchors.setCertificateEntry("trusted-" + i++, cert);
-                        sb.append(((X509Certificate) cert).getSubjectDN()).append(" SN: " + ((X509Certificate) cert).getSerialNumber().toString(16)).append("\n");
+                        sb.append(((X509Certificate) cert).getSubjectDN())
+                        .append(" SN: ")
+                        .append(((X509Certificate) cert).getSerialNumber().toString(16))
+                        .append("\n");
                     }
                 }
                 if (LOG.isDebugEnabled()) {

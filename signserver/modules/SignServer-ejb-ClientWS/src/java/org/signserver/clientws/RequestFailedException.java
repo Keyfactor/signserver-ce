@@ -12,6 +12,8 @@
  *************************************************************************/
 package org.signserver.clientws;
 
+import javax.xml.ws.WebFault;
+
 /**
  * Representation of a failure likely caused by the client not providing a 
  * correct request or a request for an non-existing worker.
@@ -22,6 +24,7 @@ package org.signserver.clientws;
  * @author Markus Kilås
  * @version $Id$
  */
+@WebFault
 public class RequestFailedException extends Exception {
 
     /**

@@ -12,6 +12,8 @@
  *************************************************************************/
 package org.signserver.clientws;
 
+import javax.xml.ws.WebFault;
+
 /**
  * Representation of a failure at the server side.
  * 
@@ -21,6 +23,7 @@ package org.signserver.clientws;
  * @author Markus Kilås
  * @version $Id$
  */
+@WebFault
 public class InternalServerException extends Exception {
 
     /**

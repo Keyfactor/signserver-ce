@@ -12,6 +12,8 @@
  *************************************************************************/
 package org.signserver.common;
 
+import javax.xml.ws.WebFault;
+
 /**
  * Exception thrown to indicate that the request sent by the client was not 
  * performed successfully.
@@ -29,6 +31,7 @@ package org.signserver.common;
  * @see SignServerException
  * @version $Id$
  */
+@WebFault
 public class IllegalRequestException extends Exception {
 
     private static final long serialVersionUID = 1L;

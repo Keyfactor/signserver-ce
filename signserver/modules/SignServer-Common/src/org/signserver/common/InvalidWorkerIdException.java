@@ -12,12 +12,15 @@
  *************************************************************************/
 package org.signserver.common;
 
+import javax.xml.ws.WebFault;
+
 /**
  * Exception thrown requesting a signer that doesn't exists
  * 
  * @author Philip Vendil
  * @version $Id$
  */
+@WebFault
 public class InvalidWorkerIdException extends Exception {
 
     private static final long serialVersionUID = 1L;

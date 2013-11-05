@@ -12,12 +12,15 @@
  *************************************************************************/
 package org.signserver.common;
 
+import javax.xml.ws.WebFault;
+
 /**
  * Class thrown if a resync to data base failed. 
  * 
  * @author Philip Vendil
  * @version $Id$
  */
+@WebFault
 public class ResyncException extends Exception {
 
     private static final long serialVersionUID = 1L;

@@ -12,6 +12,8 @@
  *************************************************************************/
 package org.signserver.common;
 
+import javax.xml.ws.WebFault;
+
 /**
  * Exception thrown giving the wrong authentication code when trying
  * to activate a signing token. 
@@ -19,6 +21,7 @@ package org.signserver.common;
  * @author Philip Vendil
  * @version $Id$
  */
+@WebFault
 public class CryptoTokenAuthenticationFailureException extends Exception {
 
     private static final long serialVersionUID = 1L;

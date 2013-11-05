@@ -12,6 +12,8 @@
  *************************************************************************/
 package org.signserver.common;
 
+import javax.xml.ws.WebFault;
+
 /**
  * Exception thrown to indicate that a request or operation failed. This 
  * exception (or sub classes of it) is typically thrown when something failed 
@@ -25,6 +27,7 @@ package org.signserver.common;
  * @see IllegalRequestException
  * @version $Id$
  */
+@WebFault
 public class SignServerException extends Exception {
 
     private static final long serialVersionUID = 1L;

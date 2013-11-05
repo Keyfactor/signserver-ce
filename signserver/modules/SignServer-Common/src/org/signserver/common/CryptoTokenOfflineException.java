@@ -12,6 +12,8 @@
  *************************************************************************/
 package org.signserver.common;
 
+import javax.xml.ws.WebFault;
+
 /**
  * Exception thrown if a singing operation is performed but
  * the signing token isn't active. 
@@ -19,6 +21,7 @@ package org.signserver.common;
  * @author Philip Vendil
  * @version $Id$
  */
+@WebFault
 public class CryptoTokenOfflineException extends Exception {
 
     private static final long serialVersionUID = 1L;

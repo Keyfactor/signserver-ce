@@ -12,6 +12,8 @@
  *************************************************************************/
 package org.signserver.adminws;
 
+import javax.xml.ws.WebFault;
+
 /**
  * Exception indicating that the user is not authorized to perform the
  * operation.
@@ -19,6 +21,7 @@ package org.signserver.adminws;
  * @author Markus Kilås
  * @version $Id$
  */
+@WebFault
 public class AdminNotAuthorizedException extends Exception {
 
     /** serialVersionUID for this class. */

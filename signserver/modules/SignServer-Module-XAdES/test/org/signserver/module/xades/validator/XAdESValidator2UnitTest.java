@@ -149,7 +149,32 @@ public class XAdESValidator2UnitTest {
                 +"<ds:Object><xades:QualifyingProperties xmlns:xades=\"http://uri.etsi.org/01903/v1.3.2#\" xmlns:xades141=\"http://uri.etsi.org/01903/v1.4.1#\" Target=\"#xmldsig-42e9e098-2eb8-40ba-88ca-fd4b69af038a\"><xades:SignedProperties Id=\"xmldsig-42e9e098-2eb8-40ba-88ca-fd4b69af038a-signedprops\"><xades:SignedSignatureProperties><xades:SigningTime>2013-10-14T10:59:42.969+02:00</xades:SigningTime><xades:SigningCertificate><xades:Cert><xades:CertDigest><ds:DigestMethod Algorithm=\"http://www.w3.org/2001/04/xmlenc#sha256\"/><ds:DigestValue>pC+Isrkdz372kFBisO5sm2jPkPer8nU2DD2+jaTbtU8=</ds:DigestValue></xades:CertDigest><xades:IssuerSerial><ds:X509IssuerName>C=SE,O=SignServer,OU=Testing,CN=DSS Root CA 10</ds:X509IssuerName><ds:X509SerialNumber>378136973006677130</ds:X509SerialNumber></xades:IssuerSerial></xades:Cert><xades:Cert><xades:CertDigest><ds:DigestMethod Algorithm=\"http://www.w3.org/2001/04/xmlenc#sha256\"/><ds:DigestValue>hNFFfieDCXZTbEkKVTa0CZBICgwu9yrJZflgpwpVosQ=</ds:DigestValue></xades:CertDigest><xades:IssuerSerial><ds:X509IssuerName>C=SE,O=SignServer,OU=Testing,CN=DSS Root CA 10</ds:X509IssuerName><ds:X509SerialNumber>3624624986813284668</ds:X509SerialNumber></xades:IssuerSerial></xades:Cert></xades:SigningCertificate></xades:SignedSignatureProperties></xades:SignedProperties><xades:UnsignedProperties><xades:UnsignedSignatureProperties><xades:SignatureTimeStamp><ds:CanonicalizationMethod Algorithm=\"http://www.w3.org/TR/2001/REC-xml-c14n-20010315\"/><xades:EncapsulatedTimeStamp>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</xades:EncapsulatedTimeStamp></xades:SignatureTimeStamp></xades:UnsignedSignatureProperties></xades:UnsignedProperties></xades:QualifyingProperties></ds:Object>\n"
                 +"</ds:Signature>";
     
-    // hardcoded trust anchor for the form T signed XML
+    /**
+     *  Hardcoded trust anchor for the form T signed XML
+     *  
+     *  Contains the following certificates:
+     *  
+     *  Serial Number: 1913894437955064785 (0x1a8f84d9dfe853d1)
+     *  Issuer: CN=DemoRootCA1, OU=EJBCA, O=SignServer Sample, C=SE
+     *  Validity
+     *      Not Before: Nov  9 14:41:23 2009 GMT
+     *      Not After : Nov 10 14:41:23 2034 GMT
+     *  Subject: CN=DemoRootCA1, OU=EJBCA, O=SignServer Sample, C=SE
+     *
+     *  Serial Number: 2738752008854929301 (0x2602007107af7f95)
+     *  Issuer: CN=DemoRootCA2, OU=EJBCA, O=SignServer Sample, C=SE
+     *  Validity
+     *      Not Before: Nov  9 16:09:48 2009 GMT
+     *      Not After : Nov 10 16:09:48 2034 GMT
+     *  Subject: CN=DemoRootCA2, OU=EJBCA, O=SignServer Sample, C=SE
+     *  
+     *  Serial Number: 3624624986813284668 (0x324d4138af02c13c)
+     *  Issuer: CN=DSS Root CA 10, OU=Testing, O=SignServer, C=SE
+     *  Validity
+     *      Not Before: May 27 08:14:27 2011 GMT
+     *      Not After : May 27 08:14:27 2036 GMT
+     *  Subject: CN=DSS Root CA 10, OU=Testing, O=SignServer, C=SE
+     */
     private static String TRUSTANCHORS_FORM_T = "\n-----BEGIN CERTIFICATE-----\nMIICfjCCAeegAwIBAgIIGo+E2d/oU9EwDQYJKoZIhvcNAQEFBQAwTzEUMBIGA1UEAwwLRGVtb1Jvb3RDQTExDjAMBgNVBAsMBUVKQkNBMRowGAYDVQQKDBFTaWduU2VydmVyIFNhbXBsZTELMAkGA1UEBhMCU0UwHhcNMDkxMTA5MTQ0MTIzWhcNMzQxMTEwMTQ0MTIzWjBPMRQwEgYDVQQDDAtEZW1vUm9vdENBMTEOMAwGA1UECwwFRUpCQ0ExGjAYBgNVBAoMEVNpZ25TZXJ2ZXIgU2FtcGxlMQswCQYDVQQGEwJTRTCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAm9kfNe5zQ6d/J4FShC0ud2KAX7Wso+ulcI/2zyYFUnj2QcUVZ3KEwXyDjWlFOkXX5LVbmiDMglr/iPgKeh+L1Pd4nQ3ydW+jG1a0Yxe6eyaQqaflrsIai3JXmllUMp7kTc7ylcuuNmkxiTX2vhYltqgdVdfJ29eDwBVnkmPAsNsCAwEAAaNjMGEwHQYDVR0OBBYEFIC1Yu2E2Ia344+IumPUHchd5ylLMA8GA1UdEwEB/wQFMAMBAf8wHwYDVR0jBBgwFoAUgLVi7YTYhrfjj4i6Y9QdyF3nKUswDgYDVR0PAQH/BAQDAgGGMA0GCSqGSIb3DQEBBQUAA4GBAI+eyurSlvV/W23UskU85CsPid/Hiy0cvMWtc5i+ZWQTDEyW53n1nc2yHpSBY30wUbd8p0Qbdl03Y+S/n+arItiAPqC/RZttgTfcztwSU/nWugIrgwoPltA4H582IBzO7cmJ26jGwQQsD6uCCTQSJK9xlqXQw8Uyj+N6SvE3p+wq\n-----END CERTIFICATE-----\n"
             +"\n-----BEGIN CERTIFICATE-----\nMIIDPTCCAvygAwIBAgIIJgIAcQevf5UwCQYHKoZIzjgEAzBPMRQwEgYDVQQDDAtEZW1vUm9vdENBMjEOMAwGA1UECwwFRUpCQ0ExGjAYBgNVBAoMEVNpZ25TZXJ2ZXIgU2FtcGxlMQswCQYDVQQGEwJTRTAeFw0wOTExMDkxNjA5NDhaFw0zNDExMTAxNjA5NDhaME8xFDASBgNVBAMMC0RlbW9Sb290Q0EyMQ4wDAYDVQQLDAVFSkJDQTEaMBgGA1UECgwRU2lnblNlcnZlciBTYW1wbGUxCzAJBgNVBAYTAlNFMIIBtzCCASsGByqGSM44BAEwggEeAoGBAI+d9uiMBBzqdvlV3wSMdwRv/Qx2POGqh+m0M0tMYEwIGBdZHm3+QSKIDTjcLRJgCGgTXSAJPCZtp43+kWCV5iGbbemBchOCh4Oe/4IPQERlfJhyMH0gXLglG9KSbuKkqMSzaZoZk06q750KBKusKhK+mvhp08++KyXZna3p6itdAhUAntjYRJsYqqQtIt0htCGCEAHCkg8CgYA4E4VMplm16uizoUL+9erNtLI886f8pdO5vXhcQG9IpZ0J7N6M4WQy8CFzTKjRJLs27TO2gDP8BE50mMOnbRvYmGIJsQ9lZHTjUqltWh9PJ0VKF0fCwQbA3aY+v8PiHxELvami+YyBiYjE2C6b1ArKOw1QsEL0KakJcr22yWFaKgOBhQACgYEAiTsSMcEKhYCWg2ULDwD/4ueYyDcRvyoSrT7uCdGU0Y/w2wPuI+kV5RfHxjs6YLDuJsQJg6rfi3RfgmwQJVzClDfgUN12qzRbSidepg/7ipkCGk0/eyY1A99z3K+FUZm2MVgune4ywCorPUpxz6WHS7/dSWYMWtSrr92PzgnwZbKjYzBhMB0GA1UdDgQWBBRJ3xUuyl6ZroD3lFm3nw/AhCPeJTAPBgNVHRMBAf8EBTADAQH/MB8GA1UdIwQYMBaAFEnfFS7KXpmugPeUWbefD8CEI94lMA4GA1UdDwEB/wQEAwIBhjAJBgcqhkjOOAQDAzAAMC0CFQCEGSmvJf6rxy6u7ZqY25qE7Hy21gIUPW4q++YIS2fHyu+H4Pjgnodx5zI=\n-----END CERTIFICATE-----\n"
             +"\n-----BEGIN CERTIFICATE-----\n"
@@ -185,7 +210,26 @@ public class XAdESValidator2UnitTest {
             +"dMwk/ZXzsDjMZEtENaBXzAefYA==\n"
             +"-----END CERTIFICATE-----";
 
-    // hardcoded trust anchor missing certs for the embedded time stamp
+    /**
+     *  Hardcoded trust anchor missing certs for the embedded time stamp
+     * 
+     *  Contains the following certificates:
+     * 
+     *  Serial Number: 1913894437955064785 (0x1a8f84d9dfe853d1)
+     *  Issuer: CN=DemoRootCA1, OU=EJBCA, O=SignServer Sample, C=SE
+     *  Validity
+     *      Not Before: Nov  9 14:41:23 2009 GMT
+     *      Not After : Nov 10 14:41:23 2034 GMT
+     *  Subject: CN=DemoRootCA1, OU=EJBCA, O=SignServer Sample, C=SE
+     *
+     *  Serial Number: 2738752008854929301 (0x2602007107af7f95)
+     *  Issuer: CN=DemoRootCA2, OU=EJBCA, O=SignServer Sample, C=SE
+     *  Validity
+     *      Not Before: Nov  9 16:09:48 2009 GMT
+     *      Not After : Nov 10 16:09:48 2034 GMT
+     *  Subject: CN=DemoRootCA2, OU=EJBCA, O=SignServer Sample, C=SE
+     * 
+     */
     private static String TRUSTANCHORS_MISSING_TS = "\n-----BEGIN CERTIFICATE-----\nMIICfjCCAeegAwIBAgIIGo+E2d/oU9EwDQYJKoZIhvcNAQEFBQAwTzEUMBIGA1UEAwwLRGVtb1Jvb3RDQTExDjAMBgNVBAsMBUVKQkNBMRowGAYDVQQKDBFTaWduU2VydmVyIFNhbXBsZTELMAkGA1UEBhMCU0UwHhcNMDkxMTA5MTQ0MTIzWhcNMzQxMTEwMTQ0MTIzWjBPMRQwEgYDVQQDDAtEZW1vUm9vdENBMTEOMAwGA1UECwwFRUpCQ0ExGjAYBgNVBAoMEVNpZ25TZXJ2ZXIgU2FtcGxlMQswCQYDVQQGEwJTRTCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAm9kfNe5zQ6d/J4FShC0ud2KAX7Wso+ulcI/2zyYFUnj2QcUVZ3KEwXyDjWlFOkXX5LVbmiDMglr/iPgKeh+L1Pd4nQ3ydW+jG1a0Yxe6eyaQqaflrsIai3JXmllUMp7kTc7ylcuuNmkxiTX2vhYltqgdVdfJ29eDwBVnkmPAsNsCAwEAAaNjMGEwHQYDVR0OBBYEFIC1Yu2E2Ia344+IumPUHchd5ylLMA8GA1UdEwEB/wQFMAMBAf8wHwYDVR0jBBgwFoAUgLVi7YTYhrfjj4i6Y9QdyF3nKUswDgYDVR0PAQH/BAQDAgGGMA0GCSqGSIb3DQEBBQUAA4GBAI+eyurSlvV/W23UskU85CsPid/Hiy0cvMWtc5i+ZWQTDEyW53n1nc2yHpSBY30wUbd8p0Qbdl03Y+S/n+arItiAPqC/RZttgTfcztwSU/nWugIrgwoPltA4H582IBzO7cmJ26jGwQQsD6uCCTQSJK9xlqXQw8Uyj+N6SvE3p+wq\n-----END CERTIFICATE-----\n";
     
     /**

@@ -179,7 +179,12 @@ public final class ServiceLocator {
         }
         beanName += "Bean";
 
-        final String jndiNameJEE6 = "ejb:signserver" + "/" + module + "//"  + beanName + "!" + viewClassName;
+        final String jndiNameJEE6;
+        if (remote) {
+            jndiNameJEE6 = "ejb:signserver" + "/" + module + "//"  + beanName + "!" + viewClassName;
+        } else {
+            jndiNameJEE6 = "java:app/" + module + "/"+ beanName + "!" + viewClassName;
+        }
         if (LOG.isDebugEnabled()) {
             LOG.debug("JBoss 7 JNDI name: " + jndiNameJEE6);
         }

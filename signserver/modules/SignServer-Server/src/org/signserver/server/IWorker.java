@@ -38,6 +38,9 @@ public interface IWorker {
      */
     public void init(int workerId, WorkerConfig config, WorkerContext workerContext, EntityManager workerEntityManager);
     
+    /**
+     * @return The worker configuration
+     */
     WorkerConfig getConfig();
     
     /**

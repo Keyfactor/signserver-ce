@@ -224,7 +224,7 @@ public class XAdESSigner extends BaseSigner {
                     try {
                         commitmentTypes.add(CommitmentTypes.valueOf(type).getProp());
                     } catch (IllegalArgumentException e) {
-                        configErrors.add("Unkown commitment type: " + type);
+                        configErrors.add("Unknown commitment type: " + type);
                     }
                 }
             }
@@ -280,7 +280,7 @@ public class XAdESSigner extends BaseSigner {
             SignedDataObjects dataObjs = new SignedDataObjects(new EnvelopedXmlObject(node));
             
             for (final AllDataObjsCommitmentTypeProperty commitmentType : commitmentTypes) {
-                    dataObjs = dataObjs.withCommitmentType(commitmentType);
+                dataObjs = dataObjs.withCommitmentType(commitmentType);
             }
             signer.sign(dataObjs, doc);
             

@@ -76,7 +76,7 @@ public class XMLValidator extends BaseValidator {
     static final String PROP_STRIPSIGNATURE = "STRIPSIGNATURE";
     
     /** Worker session. */
-    private transient IWorkerSession.IRemote workersession;
+    private IWorkerSession.ILocal workersession;
     
     /** ID of validation service worker used for validating certificates. */
     private transient int validationServiceWorkerId;
@@ -88,8 +88,8 @@ public class XMLValidator extends BaseValidator {
 
         if (workersession == null) {
             try {
-                workersession = ServiceLocator.getInstance().lookupRemote(
-                        IWorkerSession.IRemote.class);
+                workersession = ServiceLocator.getInstance().lookupLocal(
+                        IWorkerSession.ILocal.class);
             } catch (NamingException ne) {
                 throw new RuntimeException(ne);
             }

@@ -32,17 +32,17 @@ public abstract class BaseWorker implements IWorker {
     private static final Logger LOG = Logger.getLogger(BaseWorker.class);
     
     /** The global configuration session. */
-    private transient IGlobalConfigurationSession.IRemote globalConfig;
+    private transient IGlobalConfigurationSession.ILocal globalConfig;
 
     /**
      * @return The global configuration session.
      */
-    protected IGlobalConfigurationSession.IRemote
+    protected IGlobalConfigurationSession.ILocal
             getGlobalConfigurationSession() { // FIXME: Better to somehow inject this
         if (globalConfig == null) {
             try {
-                globalConfig = ServiceLocator.getInstance().lookupRemote(
-                        IGlobalConfigurationSession.IRemote.class);
+                globalConfig = ServiceLocator.getInstance().lookupLocal(
+                        IGlobalConfigurationSession.ILocal.class);
             } catch (NamingException e) {
                 LOG.error(e);
             }

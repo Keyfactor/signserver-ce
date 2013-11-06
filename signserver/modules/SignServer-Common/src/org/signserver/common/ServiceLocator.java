@@ -110,8 +110,14 @@ public final class ServiceLocator {
                 beanInterface = (T) initialContext.lookup(
                         getGlassfishJNDIName(localInterface));
             } catch (NamingException ex) {
-                LOG.error("Error looking up signserver interface", ex);
-                throw ex;
+                try {
+                    // Then try using JBoss 7 JNDI
+                    beanInterface = (T) initialContext.lookup(
+                            getJBoss7JNDIName(localInterface, false));
+                } catch (NamingException exx) {
+                    LOG.error("Error looking up signserver interface", exx);
+                    throw ex;
+                }
             }
         }
         return beanInterface;

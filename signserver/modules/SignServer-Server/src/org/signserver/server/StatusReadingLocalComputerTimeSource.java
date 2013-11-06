@@ -94,8 +94,8 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
     public void init(final Properties props) {
         final String leapHandling = props.getProperty(LEAPSECOND_HANDLING, LEAPSECOND_HANDLING_DEFAULT);
         try {
-            statusSession = ServiceLocator.getInstance().lookupRemote(
-                        IStatusRepositorySession.IRemote.class);
+            statusSession = ServiceLocator.getInstance().lookupLocal(
+                        IStatusRepositorySession.ILocal.class);
             leapSecondHandlingStrategy = LeapSecondHandlingStrategy.valueOf(leapHandling);
 
             if (LOG.isDebugEnabled()) {

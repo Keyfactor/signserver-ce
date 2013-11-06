@@ -100,7 +100,7 @@ public class RenewalWorker extends BaseSigner {
 
     /** Workersession. */
     @EJB
-    private IWorkerSession.IRemote workerSession;
+    private IWorkerSession.ILocal workerSession;
 
     @Override
     public void init(final int workerId, final WorkerConfig config,
@@ -534,11 +534,11 @@ public class RenewalWorker extends BaseSigner {
         }
     }
 
-    protected IWorkerSession.IRemote getWorkerSession() {
+    protected IWorkerSession.ILocal getWorkerSession() {
         if (workerSession == null) {
             try {
-                workerSession = ServiceLocator.getInstance().lookupRemote(
-                    IWorkerSession.IRemote.class);
+                workerSession = ServiceLocator.getInstance().lookupLocal(
+                    IWorkerSession.ILocal.class);
             } catch (NamingException ex) {
                 throw new RuntimeException("Unable to lookup worker session",
                         ex);

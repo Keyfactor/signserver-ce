@@ -92,7 +92,7 @@ public class GlobalConfigMappedTimeStampSignerLookup implements ITimeStampSigner
 
     private IGlobalConfigurationSession.ILocal getGlobalConfigurationSession() throws Exception {
         if (gCSession == null) {
-            gCSession = ServiceLocator.getInstance().lookupRemote(
+            gCSession = ServiceLocator.getInstance().lookupLocal(
                         IGlobalConfigurationSession.ILocal.class);
         }
         return gCSession;

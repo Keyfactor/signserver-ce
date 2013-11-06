@@ -48,7 +48,7 @@ public class FirstActiveDispatcher extends BaseDispatcher {
     private static final String PROPERTY_WORKERS = "WORKERS";
 
     /** Workersession. */
-    private IWorkerSession.IRemote workerSession;
+    private IWorkerSession.ILocal workerSession;
 
     /** List of workers. */
     private List<String> workers = new LinkedList<String>();
@@ -67,8 +67,8 @@ public class FirstActiveDispatcher extends BaseDispatcher {
             } else {
                 workers.addAll(Arrays.asList(workersValue.split(",")));
             }
-            workerSession = ServiceLocator.getInstance().lookupRemote(
-                        IWorkerSession.IRemote.class);
+            workerSession = ServiceLocator.getInstance().lookupLocal(
+                        IWorkerSession.ILocal.class);
         } catch (NamingException ex) {
             LOG.error("Unable to lookup worker session", ex);
         }

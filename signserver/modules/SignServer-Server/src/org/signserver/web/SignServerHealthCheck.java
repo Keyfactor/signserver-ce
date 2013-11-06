@@ -1,5 +1,3 @@
-package org.signserver.web;
-
 /*************************************************************************
  *                                                                       *
  *  SignServer: The OpenSource Automated Signing Server                  *
@@ -12,7 +10,7 @@ package org.signserver.web;
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
+package org.signserver.web;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,7 +22,6 @@ import java.util.Properties;
 
 import java.util.List;
 import javax.ejb.EJB;
-import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
@@ -34,9 +31,7 @@ import org.apache.log4j.Logger;
 import org.ejbca.ui.web.pub.cluster.IHealthCheck;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.InvalidWorkerIdException;
-import org.signserver.common.ServiceLocator;
 import org.signserver.common.WorkerStatus;
-import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.healthcheck.HealthCheckUtils;
 import org.signserver.server.nodb.FileBasedDatabaseManager;
@@ -63,10 +58,7 @@ public class SignServerHealthCheck implements IHealthCheck {
             SignServerHealthCheck.class);
     
     @EJB
-    private IGlobalConfigurationSession.IRemote globalConfigurationSession;
-    
-    @EJB
-    private IWorkerSession.IRemote signserversession;
+    private IWorkerSession.ILocal signserversession;
     
     private int minfreememory;
     private String checkDBString;
@@ -74,26 +66,7 @@ public class SignServerHealthCheck implements IHealthCheck {
     private String maintenancePropertyName;
     private EntityManager em;
 
-    private IGlobalConfigurationSession.IRemote getGlobalConfigurationSession() {
-        if (globalConfigurationSession == null) {
-            try {
-                globalConfigurationSession = ServiceLocator.getInstance().lookupRemote(
-                        IGlobalConfigurationSession.IRemote.class);
-            } catch (NamingException e) {
-                LOG.error(e);
-            }
-        }
-        return globalConfigurationSession;
-    }
-
-    private IWorkerSession.IRemote getWorkerSession() {
-        if (signserversession == null) {
-            try {
-                signserversession = ServiceLocator.getInstance().lookupRemote(IWorkerSession.IRemote.class);
-            } catch (NamingException e) {
-                LOG.error(e);
-            }
-        }
+    private IWorkerSession.ILocal getWorkerSession() {
         return signserversession;
     }
 

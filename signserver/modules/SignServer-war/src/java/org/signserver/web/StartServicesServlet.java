@@ -61,36 +61,19 @@ public class StartServicesServlet extends HttpServlet {
             = Logger.getLogger(StartServicesServlet.class);
     
     @EJB
-    private IServiceTimerSession.IRemote timedServiceSession;
+    private IServiceTimerSession.ILocal timedServiceSession;
 
     @EJB
-    private IStatusRepositorySession.IRemote statusRepositorySession;
+    private IStatusRepositorySession.ILocal statusRepositorySession;
 
     @EJB
     private SecurityEventsLoggerSessionLocal logSession;
     
-    private IServiceTimerSession.IRemote getTimedServiceSession(){
-    	if(timedServiceSession == null) {
-            try {
-                timedServiceSession = ServiceLocator.getInstance().lookupRemote(
-                        IServiceTimerSession.IRemote.class);
-            } catch (NamingException e) {
-                LOG.error(e);
-            }
-    	}
-
+    private IServiceTimerSession.ILocal getTimedServiceSession(){
     	return timedServiceSession;
     }
 
-    private IStatusRepositorySession.IRemote getStatusRepositorySession() {
-        if (statusRepositorySession == null) {
-            try {
-                statusRepositorySession = ServiceLocator.getInstance()
-                        .lookupRemote(IStatusRepositorySession.IRemote.class);
-            } catch (NamingException e) {
-                LOG.error(e);
-            }
-        }
+    private IStatusRepositorySession.ILocal getStatusRepositorySession() {
         return statusRepositorySession;
     }
 

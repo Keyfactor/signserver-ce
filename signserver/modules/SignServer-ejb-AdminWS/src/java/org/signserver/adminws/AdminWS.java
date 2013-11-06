@@ -90,25 +90,6 @@ public class AdminWS {
     @EJB
     private SecurityEventsAuditorSessionLocal auditor;
     
-    @PostConstruct
-    private void postConstruct() { // NOPMD
-        if (worker == null) {
-            try {
-                worker = ServiceLocator.getInstance().lookupRemote(
-                        IWorkerSession.ILocal.class);
-            } catch (NamingException ex) {
-                LOG.error("Error looking up WorkerSession", ex);
-            }
-        }
-        if (global == null) {
-            try {
-                global = ServiceLocator.getInstance().lookupRemote(
-                        IGlobalConfigurationSession.ILocal.class);
-            } catch (NamingException ex) {
-                LOG.error("Error looking up GlobalConfigurationSession", ex);
-            }
-        }
-    }
 
     /**
      * Returns the Id of a worker given a name

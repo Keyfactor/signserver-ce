@@ -37,7 +37,7 @@ public abstract class BaseWorker implements IWorker {
     /**
      * @return The global configuration session.
      */
-    protected IGlobalConfigurationSession.ILocal
+    protected IGlobalConfigurationSession
             getGlobalConfigurationSession() { // FIXME: Better to somehow inject this
         if (globalConfig == null) {
             try {

@@ -534,7 +534,7 @@ public class RenewalWorker extends BaseSigner {
         }
     }
 
-    protected IWorkerSession.ILocal getWorkerSession() {
+    protected IWorkerSession getWorkerSession() {
         if (workerSession == null) {
             try {
                 workerSession = ServiceLocator.getInstance().lookupLocal(

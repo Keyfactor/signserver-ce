@@ -22,6 +22,7 @@
             not shipped with GlassFish we need to bundle it.
          -->
         <include name="*.jar"/>
+        <exclude name="dom4j-1.6.1.jar"/>
     </zipfileset>
 
 	<!--

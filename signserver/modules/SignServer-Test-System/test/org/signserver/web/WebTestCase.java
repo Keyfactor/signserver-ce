@@ -60,6 +60,12 @@ public abstract class WebTestCase extends ModulesTestCase {
             int response = con.getResponseCode();
             String message = con.getResponseMessage();
             LOG.info("Returned " + response + " " + message);
+            
+            byte[] body = readBody(con);
+            if (expected != response) {
+                LOG.info("Returned body: " + new String(body));
+            }
+            
             assertEquals("GET: status response: " + message, expected, response);
 
             con.disconnect();
@@ -214,33 +220,47 @@ public abstract class WebTestCase extends ModulesTestCase {
     
     protected static byte[] sendAndReadyBody(String baseURL,
     		final Map<String, String> fields, String method) throws IOException {
-    	ByteArrayOutputStream bout = new ByteArrayOutputStream();
         HttpURLConnection conn = null;
-        InputStream in = null;
         try {
             conn = getConnectionWithMethod(baseURL, fields, method);
             
             LOG.info("Response (" + conn.getResponseCode() + "): " + conn.getResponseMessage());
+            return readBody(conn);
+        } finally {
+            if (conn != null) {
+                conn.disconnect();
+            }
+        } 
+    }
+    
+    /**
+     * Read the body of a response from the connection.
+     * @param conn Connection where a response is ready to be read
+     * @return returned bytes
+     * @throws IOException in case of error reading etc
+     */
+    private static byte[] readBody(HttpURLConnection conn) throws IOException {
+        ByteArrayOutputStream bout = new ByteArrayOutputStream();
+        InputStream in = null;
+        try {
             if (conn.getResponseCode() >= 400) {
                 in = conn.getErrorStream();
             } else {
                 in = conn.getInputStream();
             }
-            
+
             int b;
             while ((b = in.read()) != -1) {
                 bout.write(b);
             }
-            
-            return bout.toByteArray();
         } finally {
             if (in != null) {
                 try {
                     in.close();
                 } catch (IOException ignored) {} // NOPMD
             }
-            conn.disconnect();
-        } 
+        }
+        return bout.toByteArray();
     }
 
     protected static HttpURLConnection sendPostFormUrlencoded(final String baseURL,

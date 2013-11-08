@@ -22,6 +22,7 @@ import java.util.Properties;
 
 import java.util.List;
 import javax.ejb.EJB;
+import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
@@ -31,7 +32,9 @@ import org.apache.log4j.Logger;
 import org.ejbca.ui.web.pub.cluster.IHealthCheck;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.InvalidWorkerIdException;
+import org.signserver.common.ServiceLocator;
 import org.signserver.common.WorkerStatus;
+import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.healthcheck.HealthCheckUtils;
 import org.signserver.server.nodb.FileBasedDatabaseManager;
@@ -67,6 +70,13 @@ public class SignServerHealthCheck implements IHealthCheck {
     private EntityManager em;
 
     private IWorkerSession.ILocal getWorkerSession() {
+        if (signserversession == null) {
+            try {
+                signserversession = ServiceLocator.getInstance().lookupLocal(IWorkerSession.ILocal.class);
+            } catch (NamingException e) {
+                LOG.error(e);
+            }
+        }
         return signserversession;
     }
 

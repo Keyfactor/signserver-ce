@@ -36,7 +36,7 @@ public class GlobalConfigMappedTimeStampSignerLookup implements ITimeStampSigner
     private static final Logger LOG = 
             Logger.getLogger(GlobalConfigMappedTimeStampSignerLookup.class);
 
-    private IGlobalConfigurationSession.ILocal gCSession;
+    private IGlobalConfigurationSession gCSession;
 
     @Override
     public String lookupClientAuthorizedWorker(IClientCredential credential, RequestContext context) {
@@ -90,10 +90,10 @@ public class GlobalConfigMappedTimeStampSignerLookup implements ITimeStampSigner
         }
     }
 
-    private IGlobalConfigurationSession.ILocal getGlobalConfigurationSession() throws Exception {
+    private IGlobalConfigurationSession getGlobalConfigurationSession() throws Exception {
         if (gCSession == null) {
             gCSession = ServiceLocator.getInstance().lookupLocal(
-                        IGlobalConfigurationSession.ILocal.class);
+                        IGlobalConfigurationSession.class);
         }
         return gCSession;
     }

@@ -56,7 +56,7 @@ public class RequestedPolicyDispatcher extends BaseDispatcher {
             RequestedPolicyDispatcher.class);
 
     /** Workersession. */
-    private IWorkerSession.ILocal workerSession;
+    private IWorkerSession workerSession;
     
     private static final String MAPPINGS = "MAPPINGS";
     private static final String DEFAULTWORKER = "DEFAULTWORKER";
@@ -102,7 +102,7 @@ public class RequestedPolicyDispatcher extends BaseDispatcher {
             }
             
             workerSession = ServiceLocator.getInstance().lookupLocal(
-                        IWorkerSession.ILocal.class);
+                        IWorkerSession.class);
         } catch (NamingException ex) {
             LOG.error("Unable to lookup worker session", ex);
         }
@@ -192,7 +192,7 @@ public class RequestedPolicyDispatcher extends BaseDispatcher {
         return result;
     }
 
-    public ILocal getWorkerSession() {
+    public IWorkerSession getWorkerSession() {
         return workerSession;
     }
     

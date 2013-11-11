@@ -233,26 +233,10 @@ public class ValidationWS implements IValidationWS {
     }
 
     private IWorkerSession.ILocal getWorkerSession() {
-        if (signserversession == null) {
-            try {
-                signserversession = ServiceLocator.getInstance().lookupLocal(IWorkerSession.ILocal.class);
-            } catch (NamingException e) {
-                log.error(e);
-            }
-        }
-
         return signserversession;
     }
 
     private IGlobalConfigurationSession.ILocal getGlobalConfigurationSession() {
-        if (globalconfigsession == null) {
-            try {
-                globalconfigsession = ServiceLocator.getInstance().lookupLocal(IGlobalConfigurationSession.ILocal.class);
-            } catch (NamingException e) {
-                log.error(e);
-            }
-        }
-
         return globalconfigsession;
     }
 }

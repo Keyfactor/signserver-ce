@@ -340,27 +340,10 @@ public class SignServerWS implements ISignServerWS {
     }
 
     private IWorkerSession.ILocal getWorkerSession() {
-        if (workersession == null) {
-            try {
-                workersession = ServiceLocator.getInstance().lookupLocal(
-                        IWorkerSession.ILocal.class);
-            } catch (NamingException e) {
-                LOG.error(e);
-            }
-        }
-
         return workersession;
     }
 
     private IGlobalConfigurationSession.ILocal getGlobalConfigurationSession() {
-        if (globalconfigsession == null) {
-            try {
-                globalconfigsession = ServiceLocator.getInstance().lookupLocal(
-                        IGlobalConfigurationSession.ILocal.class);
-            } catch (NamingException e) {
-                LOG.error(e);
-            }
-        }
         return globalconfigsession;
     }
 }

@@ -60,8 +60,7 @@ public class SignServerHealthCheck implements IHealthCheck {
     private static final Logger LOG = Logger.getLogger(
             SignServerHealthCheck.class);
     
-    @EJB
-    private IWorkerSession.ILocal signserversession;
+    private IWorkerSession signserversession;
     
     private int minfreememory;
     private String checkDBString;
@@ -69,10 +68,10 @@ public class SignServerHealthCheck implements IHealthCheck {
     private String maintenancePropertyName;
     private EntityManager em;
 
-    private IWorkerSession.ILocal getWorkerSession() {
+    private IWorkerSession getWorkerSession() {
         if (signserversession == null) {
             try {
-                signserversession = ServiceLocator.getInstance().lookupLocal(IWorkerSession.ILocal.class);
+                signserversession = ServiceLocator.getInstance().lookupLocal(IWorkerSession.class);
             } catch (NamingException e) {
                 LOG.error(e);
             }

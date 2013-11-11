@@ -87,14 +87,6 @@ public class SODProcessServlet extends HttpServlet {
     private IWorkerSession.ILocal workersession;
 
     private IWorkerSession.ILocal getWorkerSession() {
-        if (workersession == null) {
-            try {
-                workersession = ServiceLocator.getInstance().lookupLocal(IWorkerSession.ILocal.class);
-            } catch (NamingException e) {
-                LOG.error(e);
-            }
-        }
-
         return workersession;
     }
 

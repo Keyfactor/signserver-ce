@@ -74,8 +74,8 @@ public class SoftCryptoToken implements ICryptoToken {
     private String keyAlg = null;
     private boolean active = true;
     
-    @EJB // FIXME: Won't work, always uses lookup. Consider doing manual injection using the init method or similar. If it really needs to use the worker session?
-    private IWorkerSession.ILocal workerSession;
+    // FIXME:  Consider doing manual injection using the init method or similar. If it really needs to use the worker session?
+    private IWorkerSession workerSession;
 
     /**
      * @see org.signserver.server.cryptotokens.ICryptoToken#init(int, java.util.Properties)
@@ -274,10 +274,10 @@ public class SoftCryptoToken implements ICryptoToken {
         return false;
     }
 
-    protected IWorkerSession.ILocal getWorkerSession() throws NamingException {
+    protected IWorkerSession getWorkerSession() throws NamingException {
         if (workerSession == null) {
             workerSession = ServiceLocator.getInstance().lookupLocal(
-                    IWorkerSession.ILocal.class);
+                    IWorkerSession.class);
         }
         return workerSession;
     }

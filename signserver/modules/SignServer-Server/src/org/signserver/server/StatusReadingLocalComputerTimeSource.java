@@ -44,7 +44,6 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
             StatusReadingLocalComputerTimeSource.class);
 
     /** Status repository session. */
-    @EJB
     private IStatusRepositorySession statusSession;
 
     private StatusName insyncPropertyName = StatusName.TIMESOURCE0_INSYNC;
@@ -95,7 +94,7 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
         final String leapHandling = props.getProperty(LEAPSECOND_HANDLING, LEAPSECOND_HANDLING_DEFAULT);
         try {
             statusSession = ServiceLocator.getInstance().lookupLocal(
-                        IStatusRepositorySession.ILocal.class);
+                        IStatusRepositorySession.class);
             leapSecondHandlingStrategy = LeapSecondHandlingStrategy.valueOf(leapHandling);
 
             if (LOG.isDebugEnabled()) {

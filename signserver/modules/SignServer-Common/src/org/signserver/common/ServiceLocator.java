@@ -61,7 +61,7 @@ public final class ServiceLocator {
      * @param <T> Type of class
      * @param remoteInterface Remote interface to lookup
      * @return an instance of the remote interface
-     * @throws RemoteException in case of failure to lookup
+     * @throws NamingException in case of failure to lookup
      */
     @SuppressWarnings("unchecked") // Don't think we can make this without unchecked cast
     public <T> T lookupRemote(final Class<T> remoteInterface)
@@ -73,17 +73,23 @@ public final class ServiceLocator {
                     getJBossJNDIName(remoteInterface, true));
         } catch (NamingException e) {
             try {
-                // Then try using Glassfish JNDI
+                // Then try using GlassFish JNDI
                 beanInterface = (T) initialContext.lookup(
-                        getGlassfishJNDIName(remoteInterface));
+                        getGlassfishJNDIName(remoteInterface, true));
             } catch (NamingException ex) {
                 try {
-                    // Then try using JBoss 7 JNDI
+                    // Then try using portable JNDI (GlassFish 3+, JBoss 7+)
                     beanInterface = (T) initialContext.lookup(
-                            getJBoss7JNDIName(remoteInterface, true));
+                            getPortableJNDIName(remoteInterface, true));
                 } catch (NamingException exx) {
-                    LOG.error("Error looking up signserver interface", exx);
-                    throw ex;
+                    try {
+                        // Then try using JBoss 7 JNDI
+                        beanInterface = (T) initialContext.lookup(
+                                getJBoss7JNDIName(remoteInterface, true));
+                    } catch (NamingException exxx) {
+                        LOG.error("Error looking up SignServer interface", exxx);
+                        throw exx;
+                    }
                 }
             }
         }
@@ -106,19 +112,31 @@ public final class ServiceLocator {
                     getJBossJNDIName(localInterface, false));
         } catch (NamingException e) {
             try {
-                // Then try using Glassfish JNDI
-                beanInterface = (T) initialContext.lookup(
-                        getGlassfishJNDIName(localInterface));
-            } catch (NamingException ex) {
-                try {
-                    // Then try using JBoss 7 JNDI
-                    beanInterface = (T) initialContext.lookup(
-                            getJBoss7JNDIName(localInterface, false));
-                } catch (NamingException exx) {
-                    LOG.error("Error looking up signserver interface", exx);
-                    throw ex;
-                }
-            }
+                 // Then try using portable JNDI (GlassFish 3+, JBoss 7+)
+                 beanInterface = (T) initialContext.lookup(
+                         getPortableJNDIName(localInterface, false));
+             } catch (NamingException exx) {
+                 try {
+                     // Then try using JBoss 7 JNDI
+                     beanInterface = (T) initialContext.lookup(
+                             getJBoss7JNDIName(localInterface, false));
+                 } catch (NamingException exxx) {
+                     try {
+                        // Then try using GlassFish _Remote_ JNDI
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Trying GlassFish remote JNDI instead");
+                        }
+                        beanInterface = (T) initialContext.lookup(
+                            getGlassfishJNDIName(localInterface, true));
+                     } catch (NamingException ex) {
+                         if (LOG.isDebugEnabled()) {
+                             LOG.debug("Last exception: " + ex.getExplanation());
+                         }
+                         LOG.error("Error looking up SignServer local interface", exxx);
+                        throw exx;
+                     }
+                 }
+             }
         }
         return beanInterface;
     }
@@ -154,30 +172,52 @@ public final class ServiceLocator {
     }
 
     /**
-     * @param remoteInterface Remote interface of bean
+     * @param clazz Interface of bean
      * @return JNDI name for the bean the Glassfish way
      */
-    private String getGlassfishJNDIName(final Class remoteInterface) {
-        final String result = remoteInterface.getName();
+    private String getGlassfishJNDIName(final Class clazz, final boolean remote) {
+        final String result = withViewName(clazz.getName(), remote);
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Glassfish JNDI name: " + result);
+            LOG.debug("GlassFish JNDI name: " + result);
+        }
+        return result;
+    }
+    
+    /**
+     * @return Name ending with Remote or Local
+     */
+    private String withViewName(final String name, final boolean remote) {
+        final String result;
+        if (remote) {
+            if (name.endsWith("Remote")) {
+                result = name;
+            } else {
+                result = name + "$IRemote";
+            }
+        } else {
+            if (name.endsWith("Local")) {
+                result = name;
+            } else {
+                result = name + "$ILocal";
+            }
+        }
+        return result;
+    }
+    
+    private String getPortableJNDIName(final Class clazz, final boolean remote) {
+        final String result = "java:global/signserver/SignServer-ejb/"
+                + getBeanName(clazz, remote) + "!" + withViewName(clazz.getName(), remote);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Portable JNDI name: " + result);
         }
         return result;
     }
     
     private String getJBoss7JNDIName(final Class clazz, final boolean remote) {
         final String module = "SignServer-ejb";
-        final String viewClassName = clazz.getName();
-        String beanName = clazz.getSimpleName();
-        if (clazz.getEnclosingClass() != null
-                && ((remote && "IRemote".equals(beanName))
-                    || (!remote && "ILocal".equals(beanName)))) {
-            beanName = clazz.getEnclosingClass().getSimpleName();
-        }
-        if (beanName.charAt(0) == 'I') {
-            beanName = beanName.substring(1);
-        }
-        beanName += "Bean";
+        final String viewClassName = withViewName(clazz.getName(), remote);
+        
+        String beanName = getBeanName(clazz, remote);
 
         final String jndiNameJEE6;
         if (remote) {
@@ -189,5 +229,19 @@ public final class ServiceLocator {
             LOG.debug("JBoss 7 JNDI name: " + jndiNameJEE6);
         }
         return jndiNameJEE6;
+    }
+
+    private String getBeanName(final Class clazz, final boolean remote) {
+        String beanName = clazz.getSimpleName();
+        if (clazz.getEnclosingClass() != null
+                && ((remote && "IRemote".equals(beanName))
+                    || (!remote && "ILocal".equals(beanName)))) {
+            beanName = clazz.getEnclosingClass().getSimpleName();
+        }
+        if (beanName.charAt(0) == 'I') {
+            beanName = beanName.substring(1);
+        }
+        beanName += "Bean";
+        return beanName;
     }
 }

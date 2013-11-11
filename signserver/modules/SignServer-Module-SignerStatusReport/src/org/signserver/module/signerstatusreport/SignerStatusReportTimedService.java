@@ -71,7 +71,7 @@ public class SignerStatusReportTimedService extends BaseTimedService {
             final WorkerContext workerContext,
             final EntityManager workerEntityManager) {
         super.init(workerId, config, workerContext, workerEntityManager);
-
+        
         final String outputfileValue = config.getProperties()
                 .getProperty(PROPERTY_OUTPUTFILE);
         if (outputfileValue != null) {
@@ -129,7 +129,7 @@ public class SignerStatusReportTimedService extends BaseTimedService {
         if (workerSession == null) {
             try {
                 workerSession = ServiceLocator.getInstance().lookupLocal(
-                        IWorkerSession.ILocal.class);
+                        IWorkerSession.class);
             } catch (NamingException ex) {
                 throw new RuntimeException("Unable to lookup worker session",
                         ex);

@@ -76,12 +76,12 @@ public class StatusPropertiesWorker extends BaseSigner {
     
     /** StatusRepositorySession. */
     @EJB
-    private IStatusRepositorySession.ILocal statusRepository;
+    private IStatusRepositorySession statusRepository;
     
-    private IStatusRepositorySession.ILocal getStatusRepository() {
+    private IStatusRepositorySession getStatusRepository() {
         if (statusRepository == null) {
             try {
-                statusRepository = ServiceLocator.getInstance().lookupLocal(IStatusRepositorySession.ILocal.class);
+                statusRepository = ServiceLocator.getInstance().lookupLocal(IStatusRepositorySession.class);
             } catch (NamingException ex) {
                 throw new RuntimeException("Unable to lookup worker session", ex);
             }

@@ -106,7 +106,7 @@ public class SignerStatusReportWorker extends BaseSigner {
         if (workerSession == null) {
             try {
                 workerSession = ServiceLocator.getInstance().lookupLocal(
-                        IWorkerSession.ILocal.class);
+                        IWorkerSession.class);
             } catch (NamingException ex) {
                 throw new RuntimeException("Unable to lookup worker session",
                         ex);

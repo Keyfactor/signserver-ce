@@ -32,7 +32,7 @@ public abstract class BaseWorker implements IWorker {
     private static final Logger LOG = Logger.getLogger(BaseWorker.class);
     
     /** The global configuration session. */
-    private transient IGlobalConfigurationSession.ILocal globalConfig;
+    private transient IGlobalConfigurationSession globalConfig;
 
     /**
      * @return The global configuration session.
@@ -42,7 +42,7 @@ public abstract class BaseWorker implements IWorker {
         if (globalConfig == null) {
             try {
                 globalConfig = ServiceLocator.getInstance().lookupLocal(
-                        IGlobalConfigurationSession.ILocal.class);
+                        IGlobalConfigurationSession.class);
             } catch (NamingException e) {
                 LOG.error(e);
             }

@@ -96,11 +96,11 @@ public class RenewalWorker extends BaseSigner {
      * Indicates that the requester want a BASE64 encoded pkcs7 with the
      * complete chain in the CertificateResponse object.
      */
-    private static String RESPONSETYPE_PKCS7WITHCHAIN = "PKCS7WITHCHAIN";
+    private static final String RESPONSETYPE_PKCS7WITHCHAIN = "PKCS7WITHCHAIN";
 
     /** Workersession. */
     @EJB
-    private IWorkerSession.ILocal workerSession;
+    private IWorkerSession workerSession;
 
     @Override
     public void init(final int workerId, final WorkerConfig config,
@@ -538,7 +538,7 @@ public class RenewalWorker extends BaseSigner {
         if (workerSession == null) {
             try {
                 workerSession = ServiceLocator.getInstance().lookupLocal(
-                    IWorkerSession.ILocal.class);
+                    IWorkerSession.class);
             } catch (NamingException ex) {
                 throw new RuntimeException("Unable to lookup worker session",
                         ex);

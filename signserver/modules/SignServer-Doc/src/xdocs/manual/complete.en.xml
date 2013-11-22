@@ -4057,6 +4057,25 @@ Setting this to true triggers a bug in some versions of OpenJDK's jarsigner util
                         </p>
                     </subsubsection>
                 </subsection>
+                
+                <subsection name="UserMappedDispatcher">
+
+                    <p>
+Fully qualified class name: org.signserver.server.dispatchers.UserMappedDispatcher
+                    </p>
+                        
+                    <subsubsection name="Overview">
+                        <p>
+Dispatches the request to a worker based on a mapping from username and workername.
+                        </p>
+                    </subsubsection>
+                    <subsubsection name="Available Properties">
+                        <p><b>USERNAME_MAPPING</b> = Comma separated list of mappings from user name to worker name.
+                        <br/>The property is of the form:
+                        <br/>username1:workername1, username2:workername2
+                        </p>
+                    </subsubsection>
+                </subsection>
             </section>
 
             <section name="SignServer Validation Service Framework">

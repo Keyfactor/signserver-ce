@@ -13,6 +13,8 @@
 package org.signserver.server.dispatchers;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import javax.naming.NamingException;
 import javax.persistence.EntityManager;
@@ -55,24 +57,33 @@ public class UserMappedDispatcher extends BaseDispatcher {
     /** Mapping. */
     private Map<String, String> mappings;
 
+    /** Configuration errors. */
+    private LinkedList<String> configErrors;
 
     @Override
     public void init(final int workerId, final WorkerConfig config,
             final WorkerContext workerContext, final EntityManager workerEM) {
-        try {
-            super.init(workerId, config, workerContext, workerEM);
+        super.init(workerId, config, workerContext, workerEM);
+        configErrors = new LinkedList<String>();
 
-            mappings = new HashMap<String, String>();
-            final String workersValue = config.getProperty(PROPERTY_USERNAME_MAPPING);
-            if (workersValue == null) {
-                LOG.error("Property " + PROPERTY_USERNAME_MAPPING + " missing!");
-            } else {
+        mappings = new HashMap<String, String>();
+        final String workersValue = config.getProperty(PROPERTY_USERNAME_MAPPING);
+        if (workersValue == null) {
+            configErrors.add("Property " + PROPERTY_USERNAME_MAPPING + " missing!");
+        } else {
+            if (!workersValue.trim().isEmpty()) {
                 for (String mapping : workersValue.split(",")) {
                     final String[] item = mapping.split(":");
-                    mappings.put(item[0].trim(), item[1].trim());
-                    // TODO: Handle failures
+                    if (item.length == 2) {
+                        mappings.put(item[0].trim(), item[1].trim());
+                    } else {
+                        configErrors.add("Syntax error in property " + PROPERTY_USERNAME_MAPPING);
+                    }
                 }
             }
+        }
+            
+        try {
             workerSession = ServiceLocator.getInstance().lookupLocal(
                         IWorkerSession.class);
         } catch (NamingException ex) {
@@ -84,15 +95,17 @@ public class UserMappedDispatcher extends BaseDispatcher {
     public ProcessResponse processData(final ProcessRequest signRequest,
             final RequestContext requestContext) throws IllegalRequestException,
             CryptoTokenOfflineException, SignServerException {
-
-        ProcessResponse response = null;
+        final ProcessResponse response;
+        
+        if (!configErrors.isEmpty()) {
+            throw new SignServerException("Worker is misconfigured");
+        }
 
         // TODO: Look for loops
 
         // TODO: Perhaps clone or something because there are already values
         // put in or add some indication of dispatching
         final RequestContext nextContext = requestContext;
-        int id = 0;
 
         final String username = ((UsernamePasswordClientCredential) requestContext.get(RequestContext.CLIENT_CREDENTIAL)).getUsername();
         final String workerName = mappings.get(username);
@@ -102,34 +115,29 @@ public class UserMappedDispatcher extends BaseDispatcher {
             throw new IllegalRequestException("No worker for the specified username");
         }
         
-        try {
-            id = workerSession.getWorkerId(workerName);
-            if (id == 0) {
-                LOG.warn("Non existing worker: \"" + workerName + "\"");
-            } else if (id == workerId) {
-                LOG.warn("Ignoring dispatching to it self (worker "
-                        + id + ")");
-            } else {
-                response = workerSession.process(id, signRequest,
-                        nextContext);
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Dispatched to worker: "
-                            + workerName + " (" + id + ")");
-                }
-                return response;
-            }
-        } catch (CryptoTokenOfflineException ex) {
+        final int id = workerSession.getWorkerId(workerName);
+        if (id == 0) {
+            LOG.warn("Non existing worker: \"" + workerName + "\"");
+            throw new SignServerException("Non-existing worker configured in mapping");
+        } else if (id == workerId) {
+            LOG.warn("Ignoring dispatching to it self (worker "
+                    + id + ")");
+            throw new SignServerException("Dispatcher configured to dispatch to itself");
+        } else {
+            response = workerSession.process(id, signRequest,
+                    nextContext);
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Skipping offline worker: " + id + " ("
-                        + ex.getMessage() + ")");
+                LOG.debug("Dispatched to worker: "
+                        + workerName + " (" + id + ")");
             }
         }
-
-        if (response == null) {
-            throw new CryptoTokenOfflineException("No active worker found");
-        }
-
         return response;
     }
 
+    @Override
+    protected List<String> getFatalErrors() {
+        final LinkedList<String> errors = new LinkedList<String>(super.getFatalErrors());
+        errors.addAll(configErrors);
+        return errors;
+    }
 }

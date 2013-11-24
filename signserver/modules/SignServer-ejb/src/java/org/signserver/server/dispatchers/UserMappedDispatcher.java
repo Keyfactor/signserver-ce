@@ -82,13 +82,19 @@ public class UserMappedDispatcher extends BaseDispatcher {
                 }
             }
         }
-            
-        try {
-            workerSession = ServiceLocator.getInstance().lookupLocal(
+        this.workerSession = getWorkerSession();
+    }
+    
+    protected IWorkerSession getWorkerSession() {
+        if (workerSession == null) {
+            try {
+                workerSession = ServiceLocator.getInstance().lookupLocal(
                         IWorkerSession.class);
-        } catch (NamingException ex) {
-            LOG.error("Unable to lookup worker session", ex);
+            } catch (NamingException ex) {
+                LOG.error("Unable to lookup worker session", ex);
+            }
         }
+        return workerSession;
     }
 
     @Override

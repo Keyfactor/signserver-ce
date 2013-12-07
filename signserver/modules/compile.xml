@@ -87,16 +87,15 @@ includemodulesinbuild               = ${includemodulesinbuild}
             inheritall="false"/>
     </target>
 
-    <target name="javadoc" depends="build"
-        description="Build JavaDoc for SignServer">
+    <target name="javadoc" description="Build JavaDoc for SignServer">
         <!-- Load the classpath variable -->
         <property file="lib/nblibraries.properties"/>
         <mkdir dir="${apidoc}" />
         <javadoc failonerror="true" useexternalfile="true" packagenames="org.signserver.*" maxmemory="256m" destdir="${apidoc}"
-        	extdirs="${lib}:${lib}/ext:${ant.home}/lib:${lib}/ext/ejb:${lib}/${server.java.target}/:${lib}/${client.java.target}/:${lib}/reports:${lib}/quartz:${lib}/module/odfsigner/odfdom.jar" author="true" version="true" use="true" windowtitle="${app.name.cap} API" bottom="Copyright &#169; 2005-2012 PrimeKey Solutions AB." encoding="utf-8" charset="utf-8">
+        	extdirs="${lib}:${lib}/ext:${ant.home}/lib:${lib}/ext/ejb:${lib}/${server.java.target}/:${lib}/${client.java.target}/:${lib}/reports:${lib}/quartz:${lib}/module/odfsigner/odfdom.jar" author="true" version="true" use="true" windowtitle="${app.name.cap} API" bottom="Copyright &#169; 2005-2014 PrimeKey Solutions AB." encoding="utf-8" charset="utf-8">
 
                 <!-- Include all java files in the modules folder but excluding the tests -->
-                <fileset dir="modules" includes="**/*.java" excludes="*/test/**/*.java,SignServer-Lib-*/**/*"/>
+                <fileset dir="modules" includes="*/src/main/java/**/*.java,*/target/generated/jax-wsCache/**/*.java" excludes="*/test/**/*.java,SignServer-Lib-*/**/*"/>
                 
                 <!-- When possible: this should be moved out to a properties file instead -->
                 <classpath>
@@ -110,6 +109,7 @@ includemodulesinbuild               = ${includemodulesinbuild}
                     <fileset dir="lib/ext/module/ooxmlsigner" includes="*.jar"/>
                     <fileset dir="lib/ext/hibernate" includes="*.jar"/>
                     <fileset dir="${ant.home}/lib" includes="ant.jar" />
+                    <fileset dir="lib/ext/xades4j" includes="*.jar"/>
                     <path path="${libs.JBoss-Java-EE-Library.classpath}" />                    
                 </classpath>
                 <classpath path="lib/ext/swing-app-framework/appframework-1.0.3.jar:lib/ext/swing-app-framework/swing-worker-1.1.jar:lib/ext/beans-binding/beansbinding-1.2.1.jar"/>

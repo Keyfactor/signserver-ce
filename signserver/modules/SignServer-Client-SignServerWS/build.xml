@@ -22,7 +22,7 @@
     
     <target name="-post-jar">
         <copy todir="../../lib/">
-            <fileset dir="dist/" includes="SignServer-Client-SignServerWS.jar"/>
+            <fileset dir="target/" includes="SignServer-Client-SignServerWS.jar"/>
         </copy>
     </target>
 

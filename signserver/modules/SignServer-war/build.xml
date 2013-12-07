@@ -22,7 +22,7 @@
     
     <target name="dist-module" depends="init,-init-macrodef-convertclasspath,dist">
         <copy todir="../../lib/">
-            <fileset dir="dist">
+            <fileset dir="${dist.dir}">
                 <include name="*.war"/>
             </fileset>
         </copy>

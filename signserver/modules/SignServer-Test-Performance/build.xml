@@ -15,7 +15,7 @@
     
     <target name="-post-jar" depends="-do-client-dist">
         <copy todir="../../lib/">
-            <fileset dir="../SignServer-CLI-Common/dist/" includes="SignServer-CLI-Common.jar"/>
+            <fileset dir="../SignServer-CLI-Common/target/" includes="SignServer-CLI-Common.jar"/>
         </copy>
     </target>
     

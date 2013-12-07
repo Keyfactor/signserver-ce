@@ -16,11 +16,11 @@
     <property name="clean.available" value="true"/>
     <property name="modulename" value="signservercommon"/>
     <target name="-pre-compile" depends="with.clover"/>
-
+    
     <target name="dist-module" depends="jar,descriptor">
         <!-- Copy to dist but replace signservercompile.properties -->
         <zip destfile="../../lib/SignServer-Common.jar" duplicate="fail">
-            <zipfileset src="dist/SignServer-Common.jar">
+            <zipfileset src="${dist.dir}/SignServer-Common.jar">
                 <exclude name="org/signserver/common/signservercompile.properties"/>
             </zipfileset>
             <zipfileset dir="." prefix="org/signserver/common">

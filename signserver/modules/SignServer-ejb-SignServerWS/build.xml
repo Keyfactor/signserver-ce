@@ -36,7 +36,7 @@ Remember to update the soap:address location in the WSDL to start with
 
     <target name="dist-module" depends="init,-init-macrodef-convertclasspath,dist">
         <copy todir="../../lib/">
-            <fileset dir="dist">
+            <fileset dir="${dist.dir}">
                 <include name="*.jar"/>
             </fileset>
         </copy>

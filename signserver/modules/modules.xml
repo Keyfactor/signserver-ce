@@ -147,7 +147,7 @@
         <property file="../../res/modules-project.properties"/>
         <taskdef name="setmoduleprops"
             classname="org.signserver.anttasks.SetModuleEnablePropertiesTask"
-            classpath="../SignServer-BuildTools/build/classes/"/>
+            classpath="../SignServer-BuildTools/target/classes/"/>
         <setmoduleprops/>
         <property name="dist-module.available" value="false"/>
         <property name="moduleEnable" value="false"/>
@@ -250,7 +250,7 @@
     <!-- Copy all jars to lib without updating manifest file or anything. -->
     <target name="-do-module-dist">
         <copy todir="../../lib/">
-            <fileset dir="./dist" includes="*.jar"/>
+            <fileset dir="./target" includes="*.jar"/>
         </copy>
     </target>
 

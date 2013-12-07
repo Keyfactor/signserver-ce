@@ -116,25 +116,25 @@
 	<classpathentry kind="lib" path="bin/"/>
 	<classpathentry kind="lib" path="lib/ext/swing-app-framework/appframework-1.0.3.jar"/>
 	<classpathentry kind="lib" path="lib/ext/swing-app-framework/swing-worker-1.1.jar"/>
-	<classpathentry kind="lib" path="modules/SignServer-AdminGUI/build/generated/jax-wsCache/AdminWebServiceService/"/>
-	<classpathentry kind="lib" path="modules/SignServer-Module-Renewal/build/generated/jax-wsCache/EjbcaWSService/"/>
-	<classpathentry kind="lib" path="modules/SignServer-Client-SignServerWS/build/generated/jax-wsCache/SignServerWSService/"/>
-	<classpathentry kind="lib" path="modules/SignServer-Test-SignServerWS/build/generated/jax-wsCache/SignServerWSService/">
+	<classpathentry kind="lib" path="modules/SignServer-AdminGUI/target/generated/jax-wsCache/AdminWebServiceService/"/>
+	<classpathentry kind="lib" path="modules/SignServer-Module-Renewal/target/generated/jax-wsCache/EjbcaWSService/"/>
+	<classpathentry kind="lib" path="modules/SignServer-Client-SignServerWS/target/generated/jax-wsCache/SignServerWSService/"/>
+	<classpathentry kind="lib" path="modules/SignServer-Test-SignServerWS/target/generated/jax-wsCache/SignServerWSService/">
 		<attributes>
 			<attribute name="optional" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="modules/SignServer-Test-ValidationWS/build/generated/jax-wsCache/ValidationWSService/">
+	<classpathentry kind="lib" path="modules/SignServer-Test-ValidationWS/target/generated/jax-wsCache/ValidationWSService/">
 		<attributes>
 			<attribute name="optional" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="src" path="modules/SignServer-Test-AdminWS/build/generated/jax-wsCache/AdminWS">
+	<classpathentry kind="src" path="modules/SignServer-Test-AdminWS/target/generated/jax-wsCache/AdminWS">
 		<attributes>
 			<attribute name="optional" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="modules/SignServer-Test-System/build/generated/jax-wsCache/ValidationWSService/">
+	<classpathentry kind="lib" path="modules/SignServer-Test-System/target/generated/jax-wsCache/ValidationWSService/">
 		<attributes>
 			<attribute name="optional" value="true"/>
 		</attributes>

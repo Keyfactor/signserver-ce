@@ -6,9 +6,11 @@
             <name>SignServer-Client-ValidationCLI</name>
             <source-roots>
                 <root id="src.dir"/>
+                <root id="src.resources.dir" name="Source Resources"/>
             </source-roots>
             <test-roots>
                 <root id="test.src.dir"/>
+                <root id="test.resources.dir" name="Test Resources"/>
             </test-roots>
         </data>
         <libraries xmlns="http://www.netbeans.org/ns/ant-project-libraries/1">

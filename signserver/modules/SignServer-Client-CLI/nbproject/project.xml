@@ -6,6 +6,7 @@
             <name>SignServer-Client-CLI</name>
             <source-roots>
                 <root id="src.dir"/>
+                <root id="src.resources.dir" name="Source Resources"/>
             </source-roots>
             <test-roots>
                 <root id="test.src.dir"/>

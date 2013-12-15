@@ -87,7 +87,7 @@
 	<classpathentry kind="lib" path="lib/ext/jaxws/saaj-impl.jar"/>
 	<classpathentry kind="lib" path="lib/ext/ext/jdom-b9.jar"/>
 	<classpathentry kind="lib" path="lib/ext/ext/xml-apis.jar"/>
-	<classpathentry kind="lib" path="lib/ext/cert-cvc.jar"/>
+	<classpathentry kind="lib" path="lib/ext/cert-cvc-1.2.11.jar"/>
 	<classpathentry kind="lib" path="lib/ext/commons-collections-3.2.jar"/>
 	<classpathentry kind="lib" path="lib/ext/commons-logging.jar"/>
 	<classpathentry kind="lib" path="lib/ext/commons-fileupload-1.2.1.jar"/>

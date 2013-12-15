@@ -23,7 +23,7 @@
     
     <!-- Target for regenerating the WSDL. -->
     <target name="regenerate-wsdl" depends="wsgen-AdminWS" description="Regenerates the WSDL from the source.">
-        <copy todir="${src.dir}/META-INF/wsdl/" failonerror="true">
+        <copy todir="${src.resources.dir}/META-INF/wsdl/" failonerror="true">
             <fileset dir="${build.dir}/generated-sources/jax-ws/resources/">
                 <include name="*.wsdl"/>
                 <include name="*.xsd"/>

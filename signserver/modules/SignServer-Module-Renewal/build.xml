@@ -65,7 +65,7 @@
     </target>
     <target name="wsimport-client-EjbcaWSService" depends="wsimport-init">
         <mkdir dir="${build.generated.dir}/jax-wsCache/EjbcaWSService"/>
-        <property name="wsdl-EjbcaWSService" location="${src.dir}/META-INF/wsdl/EjbcaWSService.wsdl"/>
+        <property name="wsdl-EjbcaWSService" location="${src.resources.dir}/META-INF/wsdl/EjbcaWSService.wsdl"/>
         <wsimport
         	sourcedestdir="${build.generated.dir}/jax-wsCache/EjbcaWSService"
         	destdir="${build.generated.dir}/jax-wsCache/EjbcaWSService"

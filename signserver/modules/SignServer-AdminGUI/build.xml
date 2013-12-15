@@ -64,7 +64,7 @@
     </target>
     <target name="wsimport-client-AdminWebServiceService" depends="wsimport-init">
         <mkdir dir="${build.generated.dir}/jax-wsCache/AdminWebServiceService"/>
-        <property name="wsdl-AdminWebServiceService" location="${src.dir}/META-INF/wsdl/AdminWebServiceService.wsdl"/>
+        <property name="wsdl-AdminWebServiceService" location="${src.resources.dir}/META-INF/wsdl/AdminWebServiceService.wsdl"/>
         <wsimport 
         	sourcedestdir="${build.generated.dir}/jax-wsCache/AdminWebServiceService" 
         	destdir="${build.generated.dir}/jax-wsCache/AdminWebServiceService" 

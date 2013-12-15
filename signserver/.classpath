@@ -139,8 +139,8 @@
 			<attribute name="optional" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/ext/1.6/bcpkix-jdk15on-147.jar"/>
-	<classpathentry kind="lib" path="lib/ext/1.6/bcprov-jdk15on-147.jar"/>
+	<classpathentry kind="lib" path="lib/ext/bcpkix-jdk15on-1.47.jar"/>
+	<classpathentry kind="lib" path="lib/ext/bcprov-jdk15on-1.47.jar"/>
 	<classpathentry kind="lib" path="lib/ext/ext/commons-cli-1.2.jar"/>
 	<classpathentry kind="lib" path="lib/ext/cesecore/cesecore-client_1.1.2.jar"/>
 	<classpathentry kind="lib" path="lib/ext/cesecore/cesecore-ejb_1.1.2.jar"/>

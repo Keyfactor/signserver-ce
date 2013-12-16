@@ -93,3 +93,17 @@ The SignServer AdminGUI is implemented using the Swing Application Framework
 JSR 296 didn't make it into the JDK, support for it was dropped in later 
 versions of the IDE.
 
+
+Code Conventions
+----------------
+
+We are loosely trying to follow the old Sun/Oracle Code Conventions for the 
+Java TM Programming Language:
+http://www.oracle.com/technetwork/java/javase/documentation/codeconvtoc-136057.html
+
+Some of the rules:
+- The code should be properly indented
+- We use spaces (not tabs) for indention, the IDE:s can be configured to use this
+- Opening curly braces ("{") should not be on there own line. Example "if (true) {"
+- First sentence in JavaDoc ends with a period ".". Example /** The signature algorithm. */
+- TODO: Add more here

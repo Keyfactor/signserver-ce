@@ -11,6 +11,7 @@
 	<property name="keystore.file" value="conf/keystore/keystore.jks"/>
 	<property name="truststore.file" value="conf/keystore/truststore.jks"/>
 	<property name="remote.keystore.path" value="conf"/>
+    <property name="datasource.jndi-name-prefix" value="java:/"/>
 
     <!--
         Define all extra jar files that needs to be included in the lib

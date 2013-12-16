@@ -9,16 +9,16 @@
 
 # ------------ Application server configuration --------------------------------
 
-# Application server type
-# Possible values: jboss, glassfish
-# Default jboss
-#appserver.type=jboss
-
 # Application server home folder
 # Default: $APPSRV_HOME or $JBOSS_HOME
 #appserver.home=${basedir}/../../jboss-5.1.0
 #appserver.home=/usr/local/SUNWappserver/
 #appserver.home=${env.APPSRV_HOME}
+
+# Application server type
+# Possible values: jboss, glassfish
+# Default <auto-detect>
+#appserver.type=jboss
 
 # JBoss configuration to deploy to
 # Available options are: all, default, minimal
@@ -88,7 +88,7 @@ j2ee.web-nohttps=true
 # Prefix for the jndi name of the datasource to use in deployment descriptors of ejbs. 
 # JBoss requires 'java:/' as prefix, while weblogic does not want anything ('') and
 # GlassFish uses jdbc/
-# default: java:/
+# Default: "java:/" for JBoss and "jndi/" for GlassFish
 #datasource.jndi-name-prefix=java:/
 #datasource.jndi-name-prefix=
 #datasource.jndi-name-prefix=jdbc/

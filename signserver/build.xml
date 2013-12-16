@@ -56,6 +56,21 @@
         <istrue value="${j2ee.web-nohttps}"/>
     </condition>
     
+    <!-- Auto-detect supported application server type -->
+    <available file="${appserver.home}/client/jboss-appclient.jar" property="appserver.type" value="jboss"/>
+    <available file="${appserver.home}/modules/org/jboss/as/standalone/main/module.xml" property="appserver.type" value="jboss"/>
+    <available file="${appserver.home}/modules/system/layers/base/org/jboss/as/standalone/main/module.xml" property="appserver.type" value="jboss"/>
+    <available file="${appserver.home}/client/cxf-api.jar" property="appserver.subtype" value="jboss6"/>
+    <available file="${appserver.home}/common/lib/jboss-javaee.jar" property="appserver.subtype" value="jboss5"/>
+    <available file="${appserver.home}/modules/org/jboss/as/standalone/main/module.xml" property="appserver.subtype" value="jboss7"/>
+    <available file="${appserver.home}/modules/system/layers/base/org/jboss/as/standalone/main/module.xml" property="appserver.subtype" value="jbosseap6"/>
+    <available file="${appserver.home}/lib/javaee.jar" property="appserver.type" value="glassfish"/>
+    <available file="${appserver.home}/lib/appserv-ext.jar" property="appserver.subtype" value="glassfish2"/>
+    <available file="${appserver.home}/modules/bean-validator.jar" property="appserver.subtype" value="glassfish3"/>
+    <available file="${appserver.home}/wlserver_10.3/server/lib/wlclient.jar" property="appserver.type" value="weblogic"/>
+    <available file="${appserver.home}/lib/commandlineutils.jar" property="appserver.type" value="websphere"/>
+
+    
     <!-- Import for the right appserver -->
     <import file="${res}/appserver/${appserver.type}.xml" />  
 	
@@ -124,6 +139,7 @@ OS version                          = ${os.version}
          <echo>
 ------------- CONFIG PROPERTIES --------------
 appserver.type                      = ${appserver.type}
+appserver.subtype                   = ${appserver.subtype}
 appserver.home                      = ${appserver.home}
 web.contentencoding                 = ${web.contentencoding}
 j2ee.web-nohttps                    = ${j2ee.web-nohttps}

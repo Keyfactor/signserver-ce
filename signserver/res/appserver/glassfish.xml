@@ -1,4 +1,4 @@
-<project name="jboss" basedir=".." default="j2ee:deploy">
+<project name="glassfish" basedir=".." default="j2ee:deploy">
 	<property environment="env"/>
 
     <property name="appserver.home" value="${env.APPSRV_HOME}"/>
@@ -9,6 +9,7 @@
 	<property name="keystore.file" value="config/keystore/keystore.jks"/>
 	<property name="truststore.file" value="config/keystore/truststore.jks"/>
 	<property name="remote.keystore.path" value="config"/>
+    <property name="datasource.jndi-name-prefix" value="jdbc/"/>
 
     <!--
         Define all extra jar files that needs to be included in the lib

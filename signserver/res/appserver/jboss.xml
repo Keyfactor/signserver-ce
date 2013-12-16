@@ -5,7 +5,6 @@
     <property name="jboss.config" value="default"/>
     <property name="jboss.deploy" value="deploy"/>    
     
-	<property name="jboss.deploy.dir" location="${appserver.home}/server/${jboss.config}/${jboss.deploy}"/>
 	<property name="jboss.lib.dir" location="${appserver.home}/server/${jboss.config}/lib"/>
 	<property name="jboss.server.home.dir" location="${jboss.deploy.dir}/.."/>
 	<property name="keystore.file" value="conf/keystore/keystore.jks"/>
@@ -31,27 +30,52 @@
 	<!--property name="j2ee.web-noconfigure" value="true"/-->
 	
 	
-	<target name="j2ee:check" description="Check a few configuration settings" unless="buildMailSigner">
-        <!--
-            we could have a dedicated jboss for ejbca, so give users a chance to override
-            otherwise, try to pick the one from environment if it exists
-            -->
-        <fail message="Please set the property 'appserver.home' for this project" unless="appserver.home"/>
-		<!-- jboss-javaee.jar is JBoss 5.0.x. Available does not touch the property
-		     if the file does not exist, which is why this works. -->
-        <!-- <available file="${appserver.home}/client/jboss-j2ee.jar" property="appserver.home.valid"/>-->
-        <available file="${appserver.home}/client/jboss-javaee.jar" property="appserver.home.valid"/>
-        <fail message="'appserver.home' (${appserver.home}) does not seem to be a valid JBoss home directory, or JBoss version is unsupported (5.1.x is required)"
-        	unless="appserver.home.valid"/>
-	</target>
+    <target name="j2ee:check" description="Check application server path and type etc">
+        <fail message="Please set the property 'appserver.home' or environment variable APPSRV_HOME" unless="appserver.home"/>    
+        <condition property="supported.appserver">
+            <or>
+                <equals arg1="${appserver.subtype}" arg2="jboss5" />
+        	<equals arg1="${appserver.subtype}" arg2="jboss7" />
+        	<equals arg1="${appserver.subtype}" arg2="jbosseap6" />
+            </or>
+        </condition>
+        <fail message="Unsupported JBoss version detected. Only 5.1.x and 7.1.1.Final are supported." unless="supported.appserver"/>
+        <condition property="jboss7">
+            <or>
+        	<equals arg1="${appserver.subtype}" arg2="jboss7" />
+        	<equals arg1="${appserver.subtype}" arg2="jbosseap6" />
+            </or>
+        </condition>
+        <condition property="configure.web">
+            <and>
+                <equals arg1="${appserver.subtype}" arg2="jboss5" />
+                <not>
+                    <istrue value="${j2ee.web-nohttps}"/> <!-- XXX: Duplicated from build.xml, better use existing condition property j2ee.web-nohttps.condition but already spent to much time on Ant not getting it to work... -->
+                </not>
+            </and>
+        </condition>
+        <condition property="configure.ds">
+            <and>
+                <equals arg1="${appserver.subtype}" arg2="jboss5" />
+                <not>
+                    <equals arg1="${database.name}" arg2="nodb"/> <!-- XXX: Duplicated from build.xml, better use existing condition property noDB but already spent to much time on Ant not getting it to work.. -->
+                </not>
+            </and>
+        </condition>
+    </target>
 
 
-	<target name="j2ee:configure"  unless="deploy.hostname.node1" description="Configure the J2EE server with appropriate settings">
-    	<antcall target="j2ee:check" inheritall="true"/>
-    	<antcall target="j2ee:web-configure" inheritall="true"/>
-	</target>
+    <target name="j2ee:configure"  unless="deploy.hostname.node1" description="Configure the J2EE server with appropriate settings"
+            depends="j2ee:check, -set-deploy-dir-jboss5, -set-deploy-dir-jboss7, j2ee:web-configure"/>
 
-
+    <target name="-set-deploy-dir-jboss5" depends="j2ee:check" unless="jboss7">
+        <property name="jboss.deploy.dir" location="${appserver.home}/server/${jboss.config}/${jboss.deploy}"/>
+    </target>
+    
+    <target name="-set-deploy-dir-jboss7" depends="j2ee:check" if="jboss7">
+        <property name="jboss.deploy.dir" location="${appserver.home}/standalone/deployments"/>
+    </target>
+    
     <target name="j2ee:compile-ds" depends="j2ee:compile-nocluster-ds, j2ee:compile-cluster-ds"/>	
 
     <target name="j2ee:compile-nocluster-ds" unless="database.use.mysqlcluster">
@@ -77,7 +101,7 @@
     	<move file="${tmp}/signserver-mysql-cluster-ds.xml" tofile="${tmp}/signserver-ds.xml"/>
 	</target>
 
-	<target name="j2ee:deploytruststore">
+	<target name="j2ee:deploytruststore" unless="jboss7">
 		<!-- copy the truststore file to the server -->
 		<available file="${truststore.keystore}" property="truststore.file.present"/>
 		<fail message="Missing JKS truststorestore file in 'truststore.keystore'" unless="truststore.file.present"/>
@@ -90,7 +114,7 @@
 		<chmod file="${jboss.server.home.dir}/${truststore.file}" perm="600"/>		
 	</target>
 			
-	<target name="j2ee:web-configure"  unless="j2ee.web-nohttps.condition"  description="Configure the servlet container">
+	<target name="j2ee:web-configure"  if="configure.web"  description="Configure the servlet container">
         <echo message="Using JBoss deploy directory ${jboss.deploy.dir}"/>
 
 		<!-- copy the keystore file to the server -->
@@ -176,7 +200,7 @@
        	<antcall target="j2ee:deploy:node6" inheritall="true"/>		
 	</target>
 	
-	<target name="j2ee:copyDS" description="Deploy signserver-ds.xml" unless="noDB">
+	<target name="j2ee:copyDS" description="Deploy signserver-ds.xml" if="configure.ds">
 		<echo>
 Copying ${tmp}/signserver-ds.xml to ${jboss.deploy.dir}
 		</echo>
@@ -187,7 +211,7 @@ Copying ${tmp}/signserver-ds.xml to ${jboss.deploy.dir}
 		</copy>
 	</target>
 	
-	<target name="j2ee:deploy:locally" description="Deploy the application" unless="deploy.hostname.node1" 
+    <target name="j2ee:deploy:locally" description="Deploy the application" unless="deploy.hostname.node1" 
 		depends="j2ee:configure, j2ee:copyPrimeCardJars, j2ee:copyDS">
     	<echo>
 Deploying ${ear.dist.file} to ${jboss.deploy.dir}

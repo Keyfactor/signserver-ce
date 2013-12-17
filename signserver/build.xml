@@ -71,9 +71,12 @@
     <available file="${appserver.home}/wlserver_10.3/server/lib/wlclient.jar" property="appserver.type" value="weblogic"/>
     <available file="${appserver.home}/lib/commandlineutils.jar" property="appserver.type" value="websphere"/>
 
+    <fail unless="appserver.type" message="Unable to identify application server type"/>
+    <available file="${res}/appserver/${appserver.type}.xml" property="appserver.supported"/>
+    <fail unless="appserver.supported" message="Application server type '${appserver.type}' not supported"/>
     
     <!-- Import for the right appserver -->
-    <import file="${res}/appserver/${appserver.type}.xml" />  
+    <import file="${res}/appserver/${appserver.type}.xml" />
 	
     <import file="${custom.build.xml}" optional="true"/>
 

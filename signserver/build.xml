@@ -62,6 +62,7 @@
     <available file="${appserver.home}/modules/system/layers/base/org/jboss/as/standalone/main/module.xml" property="appserver.type" value="jboss"/>
     <available file="${appserver.home}/client/cxf-api.jar" property="appserver.subtype" value="jboss6"/>
     <available file="${appserver.home}/common/lib/jboss-javaee.jar" property="appserver.subtype" value="jboss5"/>
+    <available file="${appserver.home}/common/lib/jboss-ejb3-common.jar" property="appserver.subtype" value="jboss5"/>
     <available file="${appserver.home}/modules/org/jboss/as/standalone/main/module.xml" property="appserver.subtype" value="jboss7"/>
     <available file="${appserver.home}/modules/system/layers/base/org/jboss/as/standalone/main/module.xml" property="appserver.subtype" value="jbosseap6"/>
     <available file="${appserver.home}/lib/javaee.jar" property="appserver.type" value="glassfish"/>

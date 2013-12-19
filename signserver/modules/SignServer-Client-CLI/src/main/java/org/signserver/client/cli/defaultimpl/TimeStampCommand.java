@@ -353,7 +353,7 @@ public class TimeStampCommand extends AbstractCommand {
                 out.println("  Status: " + response.getStatus());
                 out.println("  Status message: " + response.getStatusString());
             } catch (TSPException ex) {
-                out.println("  Not an response");
+                out.println("  Not a response");
             }
             if (response != null) {
                 PKIFailureInfo failureInfo = response.getFailInfo();

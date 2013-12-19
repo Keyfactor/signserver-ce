@@ -154,7 +154,7 @@ public class XAdESValidator2UnitTest {
      * Hard-coded signed XML document with a timestamp with a time stamp including a
      * certificate chain with an intermediate sub CA certificate.
      */
-    final private String SIGNED_XML_WITH_INTEREDIATE_TS_CERT =
+    final private String SIGNED_XML_WITH_INTERMEDIATE_TS_CERT =
             "<?xml version=\"1.0\" encoding=\"UTF-8\"?><ds:Signature xmlns:ds=\"http://www.w3.org/2000/09/xmldsig#\" Id=\"xmldsig-820bd1d9-9110-436f-920c-8f2d02190bbb\">\n"+
             "<ds:SignedInfo>\n"+
             "<ds:CanonicalizationMethod Algorithm=\"http://www.w3.org/TR/2001/REC-xml-c14n-20010315\"/>\n"+
@@ -823,7 +823,7 @@ public class XAdESValidator2UnitTest {
         
         RequestContext requestContext = new RequestContext();
         requestContext.put(RequestContext.TRANSACTION_ID, "0000-309-0");
-        GenericValidationRequest request = new GenericValidationRequest(309, SIGNED_XML_WITH_INTEREDIATE_TS_CERT.getBytes("UTF-8"));
+        GenericValidationRequest request = new GenericValidationRequest(309, SIGNED_XML_WITH_INTERMEDIATE_TS_CERT.getBytes("UTF-8"));
         GenericValidationResponse response = (GenericValidationResponse) instance.processData(request, requestContext);
         
         assertTrue("valid document", response.isValid());

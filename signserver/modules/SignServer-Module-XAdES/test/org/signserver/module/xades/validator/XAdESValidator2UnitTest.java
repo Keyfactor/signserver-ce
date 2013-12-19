@@ -149,6 +149,65 @@ public class XAdESValidator2UnitTest {
                 +"<ds:Object><xades:QualifyingProperties xmlns:xades=\"http://uri.etsi.org/01903/v1.3.2#\" xmlns:xades141=\"http://uri.etsi.org/01903/v1.4.1#\" Target=\"#xmldsig-42e9e098-2eb8-40ba-88ca-fd4b69af038a\"><xades:SignedProperties Id=\"xmldsig-42e9e098-2eb8-40ba-88ca-fd4b69af038a-signedprops\"><xades:SignedSignatureProperties><xades:SigningTime>2013-10-14T10:59:42.969+02:00</xades:SigningTime><xades:SigningCertificate><xades:Cert><xades:CertDigest><ds:DigestMethod Algorithm=\"http://www.w3.org/2001/04/xmlenc#sha256\"/><ds:DigestValue>pC+Isrkdz372kFBisO5sm2jPkPer8nU2DD2+jaTbtU8=</ds:DigestValue></xades:CertDigest><xades:IssuerSerial><ds:X509IssuerName>C=SE,O=SignServer,OU=Testing,CN=DSS Root CA 10</ds:X509IssuerName><ds:X509SerialNumber>378136973006677130</ds:X509SerialNumber></xades:IssuerSerial></xades:Cert><xades:Cert><xades:CertDigest><ds:DigestMethod Algorithm=\"http://www.w3.org/2001/04/xmlenc#sha256\"/><ds:DigestValue>hNFFfieDCXZTbEkKVTa0CZBICgwu9yrJZflgpwpVosQ=</ds:DigestValue></xades:CertDigest><xades:IssuerSerial><ds:X509IssuerName>C=SE,O=SignServer,OU=Testing,CN=DSS Root CA 10</ds:X509IssuerName><ds:X509SerialNumber>3624624986813284668</ds:X509SerialNumber></xades:IssuerSerial></xades:Cert></xades:SigningCertificate></xades:SignedSignatureProperties></xades:SignedProperties><xades:UnsignedProperties><xades:UnsignedSignatureProperties><xades:SignatureTimeStamp><ds:CanonicalizationMethod Algorithm=\"http://www.w3.org/TR/2001/REC-xml-c14n-20010315\"/><xades:EncapsulatedTimeStamp>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</xades:EncapsulatedTimeStamp></xades:SignatureTimeStamp></xades:UnsignedSignatureProperties></xades:UnsignedProperties></xades:QualifyingProperties></ds:Object>\n"
                 +"</ds:Signature>";
     
+    
+    /**
+     * Hard-coded signed XML document with a timestamp with a time stamp including a
+     * certificate chain with an intermediate sub CA certificate.
+     */
+    final private String SIGNED_XML_WITH_INTEREDIATE_TS_CERT =
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?><ds:Signature xmlns:ds=\"http://www.w3.org/2000/09/xmldsig#\" Id=\"xmldsig-820bd1d9-9110-436f-920c-8f2d02190bbb\">\n"+
+            "<ds:SignedInfo>\n"+
+            "<ds:CanonicalizationMethod Algorithm=\"http://www.w3.org/TR/2001/REC-xml-c14n-20010315\"/>\n"+
+            "<ds:SignatureMethod Algorithm=\"http://www.w3.org/2000/09/xmldsig#rsa-sha1\"/>\n"+
+            "<ds:Reference Id=\"xmldsig-820bd1d9-9110-436f-920c-8f2d02190bbb-ref0\" Type=\"http://www.w3.org/2000/09/xmldsig#Object\" URI=\"#xmldsig-820bd1d9-9110-436f-920c-8f2d02190bbb-object0\">\n"+
+            "<ds:DigestMethod Algorithm=\"http://www.w3.org/2001/04/xmlenc#sha256\"/>\n"+
+            "<ds:DigestValue>z9UB+R4tVWXpuQ6dLRZpBjFvah7FsbTiM2bFY30HctE=</ds:DigestValue>\n"+
+            "</ds:Reference>\n"+
+            "<ds:Reference Type=\"http://uri.etsi.org/01903#SignedProperties\" URI=\"#xmldsig-820bd1d9-9110-436f-920c-8f2d02190bbb-signedprops\">\n"+
+            "<ds:DigestMethod Algorithm=\"http://www.w3.org/2001/04/xmlenc#sha256\"/>\n"+
+            "<ds:DigestValue>FfuscicUrhXHaO88IBSnii1mGVQTniNOEiB6lrH5IdE=</ds:DigestValue>\n"+
+            "</ds:Reference>\n"+
+            "</ds:SignedInfo>\n"+
+            "<ds:SignatureValue Id=\"xmldsig-820bd1d9-9110-436f-920c-8f2d02190bbb-sigvalue\">\n"+
+            "TF3lv+lVmQq6s7bLJ4nrcuX1APDp5qjir+1MOmD0D74TK6TDEQQ7LyrlMZ/EiwLehd3guMcPUHEC\n"+
+            "Z8NtHl+m7ZMDVl/qWtBbfvGXo6tns0BoLhQzjT5rkI7hKdSN2GfpMbSsDGJFIDzHNkiSR4s1+Y14\n"+
+            "oA+BFCcPs5RIcM5zDJtJza8SJ23ePoz2ZonmvW5V9ydEyKkCX+2mgwZKjUevOcO51ZADwjxtI6pS\n"+
+            "4HiMksqCSi8EYXWhIC8yODcesAPSO3DLNm0RfI8he76MUCreDCmYybT2CTyUmYW7jeujirxxB9p7\n"+
+            "yU4sGBychOfuqDmHZosjB2SnRN4t1eFm9YR+yA==\n"+
+            "</ds:SignatureValue>\n"+
+            "<ds:KeyInfo>\n"+
+            "<ds:X509Data>\n"+
+            "<ds:X509Certificate>\n"+
+            "MIIElTCCAn2gAwIBAgIIBT9pktCBJIowDQYJKoZIhvcNAQELBQAwTTEXMBUGA1UEAwwORFNTIFJv\n"+
+            "b3QgQ0EgMTAxEDAOBgNVBAsMB1Rlc3RpbmcxEzARBgNVBAoMClNpZ25TZXJ2ZXIxCzAJBgNVBAYT\n"+
+            "AlNFMB4XDTExMDUyNzA5NTAzN1oXDTIxMDUyNzA5NTAzN1owRzERMA8GA1UEAwwIU2lnbmVyIDIx\n"+
+            "EDAOBgNVBAsMB1Rlc3RpbmcxEzARBgNVBAoMClNpZ25TZXJ2ZXIxCzAJBgNVBAYTAlNFMIIBIjAN\n"+
+            "BgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAokJJPVkPrn3a55rO6A3Bnbe0nfJR9IDSI8AmFhYE\n"+
+            "BLoKfiavx0oMdbdDe+Dkwv78xBkgbj//2lhMCVmss90RzY+d0d0rg2SP8y/DsyxwriqCfuM7lnlg\n"+
+            "vSHCYwoX8+uDM7zI53ykKVhqI3ttyFPa8RsjfFOIWqf39++sJUheW4j9x9rutf6qgtjxOYPQwDyg\n"+
+            "T9cIVpM7ZehhqVYlcQZRsprMg55s2SN/a78krAW51msoIDgd9+zbsIvzuGqCspO3AN8b2m8tlHTl\n"+
+            "A/E4+3OZkSqgpx8FSKIfbKUa866pRzptvcbL/wpFxYkyxqcB6o7CFnWbr3gUPpz8KjuY7ypMmwID\n"+
+            "AQABo38wfTAdBgNVHQ4EFgQUSkR/B71idJmR8deZziBAqSzWzhMwDAYDVR0TAQH/BAIwADAfBgNV\n"+
+            "HSMEGDAWgBQgeiHe6K27Aqj7cVikCWK52FgFojAOBgNVHQ8BAf8EBAMCBeAwHQYDVR0lBBYwFAYI\n"+
+            "KwYBBQUHAwIGCCsGAQUFBwMEMA0GCSqGSIb3DQEBCwUAA4ICAQA+pQuI1QmZLdheCVmc+k1h53uI\n"+
+            "v9pBnBKSbKn0/CVznmlPOpJIwwuzcLfCesa6gkG6BabHJwMrU/SpZuWurHxdEKe6fS/ngYnIjFI5\n"+
+            "R0Kgl1czqq/tXDjGEpv2x0tZECqLFrkC7a+gjXJPE8TDj8nvi40pcKFvv2tbRiyYrIPIxefrXmkT\n"+
+            "91F3zUKbQL0iW7Aot/0Klj+i4uivqFu359OymJ2C5wJOyZqPPsxUvTdA2EZNX4BseFvJREmvx1CA\n"+
+            "gZkANZD4Qzn1b/0WrXfYsbWA4cBeTRR7vjGajBc/oGo2wki0dJksImU8b2dLEf3n3M9dfxiFEAnl\n"+
+            "3YKDmT21wamO/hRdWklT+7Ivz6SFnW6HneT42IMNkC4k3d0i0Y2/q7XN5rvMFbH1n6O4NUqHIkzb\n"+
+            "CtVljV6+XESmMseyJGKlY6RD7jnhEJq6dGPGSr5h6SAohYljs5Y1e/Dyg243sP75ZO7HfOYPd2Sp\n"+
+            "+p5R5szWOuZp5UtLFBhuwlI41LnpuL+4t25LjNHoGhzZCl1rxqcSBGVKLG2sN0XVXfqrt/EykOAV\n"+
+            "0WW+S72tRPI73eq0AeRJRRfzcZiequi694eP10Ehh/iiOpQ28yfhsWDvMIxu8o8oK+hpgQvCwecP\n"+
+            "7rupdqM9OQYnePb53dd8Tt4hw4WhvSWC/9aNfFXc3jwbHVy5Rw==\n"+
+            "</ds:X509Certificate>\n"+
+            "</ds:X509Data>\n"+
+            "</ds:KeyInfo>\n"+
+            "<ds:Object Id=\"xmldsig-820bd1d9-9110-436f-920c-8f2d02190bbb-object0\"><root/></ds:Object>\n"+
+            "<ds:Object><xades:QualifyingProperties xmlns:xades=\"http://uri.etsi.org/01903/v1.3.2#\" xmlns:xades141=\"http://uri.etsi.org/01903/v1.4.1#\" Target=\"#xmldsig-820bd1d9-9110-436f-920c-8f2d02190bbb\"><xades:SignedProperties Id=\"xmldsig-820bd1d9-9110-436f-920c-8f2d02190bbb-signedprops\"><xades:SignedSignatureProperties><xades:SigningTime>2013-12-18T14:54:52.176+01:00</xades:SigningTime><xades:SigningCertificate><xades:Cert><xades:CertDigest><ds:DigestMethod Algorithm=\"http://www.w3.org/2001/04/xmlenc#sha256\"/><ds:DigestValue>pC+Isrkdz372kFBisO5sm2jPkPer8nU2DD2+jaTbtU8=</ds:DigestValue></xades:CertDigest><xades:IssuerSerial><ds:X509IssuerName>C=SE,O=SignServer,OU=Testing,CN=DSS Root CA 10</ds:X509IssuerName><ds:X509SerialNumber>378136973006677130</ds:X509SerialNumber></xades:IssuerSerial></xades:Cert><xades:Cert><xades:CertDigest><ds:DigestMethod Algorithm=\"http://www.w3.org/2001/04/xmlenc#sha256\"/><ds:DigestValue>hNFFfieDCXZTbEkKVTa0CZBICgwu9yrJZflgpwpVosQ=</ds:DigestValue></xades:CertDigest><xades:IssuerSerial><ds:X509IssuerName>C=SE,O=SignServer,OU=Testing,CN=DSS Root CA 10</ds:X509IssuerName><ds:X509SerialNumber>3624624986813284668</ds:X509SerialNumber></xades:IssuerSerial></xades:Cert></xades:SigningCertificate></xades:SignedSignatureProperties></xades:SignedProperties><xades:UnsignedProperties><xades:UnsignedSignatureProperties><xades:SignatureTimeStamp><ds:CanonicalizationMethod Algorithm=\"http://www.w3.org/TR/2001/REC-xml-c14n-20010315\"/><xades:EncapsulatedTimeStamp>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</xades:EncapsulatedTimeStamp></xades:SignatureTimeStamp></xades:UnsignedSignatureProperties></xades:UnsignedProperties></xades:QualifyingProperties></ds:Object>\n"+
+            "</ds:Signature>";
+            
+            
+           
     /**
      *  Hardcoded trust anchor for the form T signed XML
      *  
@@ -231,6 +290,38 @@ public class XAdESValidator2UnitTest {
      * 
      */
     private static String TRUSTANCHORS_MISSING_TS = "\n-----BEGIN CERTIFICATE-----\nMIICfjCCAeegAwIBAgIIGo+E2d/oU9EwDQYJKoZIhvcNAQEFBQAwTzEUMBIGA1UEAwwLRGVtb1Jvb3RDQTExDjAMBgNVBAsMBUVKQkNBMRowGAYDVQQKDBFTaWduU2VydmVyIFNhbXBsZTELMAkGA1UEBhMCU0UwHhcNMDkxMTA5MTQ0MTIzWhcNMzQxMTEwMTQ0MTIzWjBPMRQwEgYDVQQDDAtEZW1vUm9vdENBMTEOMAwGA1UECwwFRUpCQ0ExGjAYBgNVBAoMEVNpZ25TZXJ2ZXIgU2FtcGxlMQswCQYDVQQGEwJTRTCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAm9kfNe5zQ6d/J4FShC0ud2KAX7Wso+ulcI/2zyYFUnj2QcUVZ3KEwXyDjWlFOkXX5LVbmiDMglr/iPgKeh+L1Pd4nQ3ydW+jG1a0Yxe6eyaQqaflrsIai3JXmllUMp7kTc7ylcuuNmkxiTX2vhYltqgdVdfJ29eDwBVnkmPAsNsCAwEAAaNjMGEwHQYDVR0OBBYEFIC1Yu2E2Ia344+IumPUHchd5ylLMA8GA1UdEwEB/wQFMAMBAf8wHwYDVR0jBBgwFoAUgLVi7YTYhrfjj4i6Y9QdyF3nKUswDgYDVR0PAQH/BAQDAgGGMA0GCSqGSIb3DQEBBQUAA4GBAI+eyurSlvV/W23UskU85CsPid/Hiy0cvMWtc5i+ZWQTDEyW53n1nc2yHpSBY30wUbd8p0Qbdl03Y+S/n+arItiAPqC/RZttgTfcztwSU/nWugIrgwoPltA4H582IBzO7cmJ26jGwQQsD6uCCTQSJK9xlqXQw8Uyj+N6SvE3p+wq\n-----END CERTIFICATE-----\n";
+    
+    /**
+     * Sub CA certificate for TSA using intermediate certificate.
+     * 
+     * subject=/CN=DSS Sub CA 11/OU=Testing/O=SignServer/C=SE
+     * issuer=/CN=DSS Root CA 10/OU=Testing/O=SignServer/C=SE
+     * 
+     */
+    private final static String SUB_CA_CERT =
+            "-----BEGIN CERTIFICATE-----\n"+
+            "MIIEfjCCAmagAwIBAgIINRnImL/vDX4wDQYJKoZIhvcNAQELBQAwTTEXMBUGA1UEAwwORFNTIFJv\n"+
+            "b3QgQ0EgMTAxEDAOBgNVBAsMB1Rlc3RpbmcxEzARBgNVBAoMClNpZ25TZXJ2ZXIxCzAJBgNVBAYT\n"+
+            "AlNFMB4XDTExMTEwMzIxMzUwOVoXDTM2MDUyNzA4MTQyN1owTDEWMBQGA1UEAwwNRFNTIFN1YiBD\n"+
+            "QSAxMTEQMA4GA1UECwwHVGVzdGluZzETMBEGA1UECgwKU2lnblNlcnZlcjELMAkGA1UEBhMCU0Uw\n"+
+            "ggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCg4ovlcxaRM8g3RJrOUrSCH7bJhWnNN54E\n"+
+            "Z3a4aIAGBYjN7B8+CtnFDNaaC57mCLI5U64vRzYRTbphA5X5XiHsz+eEaHFkwKS+EovvjOWUPzYu\n"+
+            "ReRpyRaDyxEUYfmVqSa3fFa6Vn7vsE8N9mfwyNMT/q56SLuNO7Un2EAgvoTdaMen6UbISg4ONNI7\n"+
+            "XmhtaDQvBe5+px0NIBCFw5qnvAMUz4nRJcKRZ6QKvRFJPux9R048WSrBfAxkKBPzIiKtkAfeOs3E\n"+
+            "2anPIDwiaPdWD4AjraFjSfTOVxzNrp0D/+1s3zVvQDBGQoAw8QAUnb3bZS8siY0Oo943j4McSBFI\n"+
+            "3VHNAgMBAAGjYzBhMB0GA1UdDgQWBBQcYEFK3pit5dYDiuhmgql+sPIChzAPBgNVHRMBAf8EBTAD\n"+
+            "AQH/MB8GA1UdIwQYMBaAFCB6Id7orbsCqPtxWKQJYrnYWAWiMA4GA1UdDwEB/wQEAwIBhjANBgkq\n"+
+            "hkiG9w0BAQsFAAOCAgEAMW0jL9WGrV6Hn5ZaNmAu2XPOF25vuiVFCgfmKInFPROkvxIOPBOgAumX\n"+
+            "43jcL1ATWV6zoRscPxflp5E1C55W5xaxVd4YMuxjZhxZj3qOHbkCjJd5V47nFEiqazgdnFdFE0AP\n"+
+            "pe5/gWhjY5fYc2erS+RnojM//qzeeivd7QD2SC9FJ79cBsclzUgtZ2hdtwaKFFKzxYDkMelJa+SZ\n"+
+            "MBEw1FgF8abynbkga8hFHVvnIsUxrIEGIPxHXC/gvpMpOLu/hAg+p+negdQKnM6HNpl+TmJdaz37\n"+
+            "fe49mzylS9GwSj+iVPvHy2H9eEL9MuXRGpTRJbzBKLlq3q3Rx5udtZfalN6EcKCr7yTKumF5SjcM\n"+
+            "PoF1LLYKO70FZ4dSSi3lyMlTThqb0pr4XF0zq/4j8KHiYboomxrG+LVhbqT0x51D1UebOPd8S5VK\n"+
+            "2l0NEC6xQDqDvuWjveI/wwYXDIWXj/6UzQGvVZ+vKb6DXFUJ9oPw4LD+vFppv90XeIzwzm7EMV3G\n"+
+            "rzEvfW5rLmCVGgTggPHowPWdNgtFE/n29uxO58V73Com1cFnfryfwGp1efkMxj9yBjZwAgYUDCte\n"+
+            "LbKLgL6GH//J5r9nAQ8r3z76mtdtE0aU1swza03wVsJySOdCNFI9iZAJLe7SZ4k7YCqevF5p2S8E\n"+
+            "u/5niX2igtu5iNzcReA=\n"+
+            "-----END CERTIFICATE-----\n";
     
     /**
      * Setting up key-pairs, mocked crypto tokens, certificates and CRLs used
@@ -707,6 +798,39 @@ public class XAdESValidator2UnitTest {
     }
     
     /**
+     * Test validating document with intermediate certificates in the signing certificate chain.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testSigner2formTwithIntermediateCert() throws Exception {
+        LOG.info("signer2, form T with intermediate TSA cert");
+        
+        final XAdESValidator instance = new XAdESValidator();
+        final WorkerConfig config = new WorkerConfig();
+        
+        config.setProperty("TRUSTANCHORS", TRUSTANCHORS_FORM_T);
+        config.setProperty("CERTIFICATES", SUB_CA_CERT);
+        config.setProperty("REVOCATION_CHECKING", "false");
+        
+        updateCRLs(rootcaCRLEmpty, subcaCRLEmpty);
+        
+        instance.init(4717, config, null, null);
+
+        // override the time stamp token verifier to use recording verification provider
+        ProxyTimeStampTokenVerificationProvider.performedVerification = false;
+        instance.setTimeStampVerificationProviderImplementation(ProxyTimeStampTokenVerificationProvider.class);
+        
+        RequestContext requestContext = new RequestContext();
+        requestContext.put(RequestContext.TRANSACTION_ID, "0000-309-0");
+        GenericValidationRequest request = new GenericValidationRequest(309, SIGNED_XML_WITH_INTEREDIATE_TS_CERT.getBytes("UTF-8"));
+        GenericValidationResponse response = (GenericValidationResponse) instance.processData(request, requestContext);
+        
+        assertTrue("valid document", response.isValid());
+        assertTrue("time stamp verification performed", ProxyTimeStampTokenVerificationProvider.performedVerification);
+    }
+
+    /**
      * Updating the CRL files with the values specified.
      * @param rootcaCRL value for the the Root CA CRL
      * @param subcaCRL value for the Sub CA CRL
@@ -735,7 +859,15 @@ public class XAdESValidator2UnitTest {
         public Date verifyToken(byte[] arg0, byte[] arg1)
                 throws TimeStampTokenVerificationException {
             performedVerification = true;
-            return super.verifyToken(arg0, arg1);
+            final Date ret;
+            try {
+                ret = super.verifyToken(arg0, arg1);
+            } catch (TimeStampTokenVerificationException e) {
+                LOG.info("Timestamp verification failed: " + e.getMessage());
+                throw e;
+            }
+            
+            return ret;
         }
     }
 

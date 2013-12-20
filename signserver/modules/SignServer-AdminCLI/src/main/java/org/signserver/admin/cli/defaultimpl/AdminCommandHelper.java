@@ -16,9 +16,9 @@ import java.rmi.RemoteException;
 import java.util.Collection;
 import javax.naming.NamingException;
 import org.apache.log4j.Logger;
-import org.cesecore.audit.audit.SecurityEventsAuditorSession;
 import org.cesecore.audit.audit.SecurityEventsAuditorSessionRemote;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
+import org.signserver.common.CESeCoreModules;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.ServiceLocator;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
@@ -108,7 +108,7 @@ public class AdminCommandHelper {
         if (auditorSession == null) {
             try {
                 auditorSession = ServiceLocator.getInstance().lookupRemote(
-                        SecurityEventsAuditorSessionRemote.class);
+                        SecurityEventsAuditorSessionRemote.class, CESeCoreModules.CORE);
             } catch (NamingException e) {
                 LOG.error("Error instantiating the SecurityEventsAuditorSession.", e);
                 throw new RemoteException("Error instantiating the SecurityEventsAuditorSession", e);

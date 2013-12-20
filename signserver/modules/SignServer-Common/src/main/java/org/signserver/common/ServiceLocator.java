@@ -66,6 +66,17 @@ public final class ServiceLocator {
     @SuppressWarnings("unchecked") // Don't think we can make this without unchecked cast
     public <T> T lookupRemote(final Class<T> remoteInterface)
             throws NamingException {
+        return lookupRemote(remoteInterface, null);
+    }
+    /**
+     * @param <T> Type of class
+     * @param remoteInterface Remote interface to lookup
+     * @return an instance of the remote interface
+     * @throws NamingException in case of failure to lookup
+     */
+    @SuppressWarnings("unchecked") // Don't think we can make this without unchecked cast
+    public <T> T lookupRemote(final Class<T> remoteInterface, final String module)
+            throws NamingException {
         T beanInterface;
         try {
             // First try using JBoss JNDI
@@ -80,12 +91,12 @@ public final class ServiceLocator {
                 try {
                     // Then try using portable JNDI (GlassFish 3+, JBoss 7+)
                     beanInterface = (T) initialContext.lookup(
-                            getPortableJNDIName(remoteInterface, true));
+                            getPortableJNDIName(remoteInterface, module, true));
                 } catch (NamingException exx) {
                     try {
                         // Then try using JBoss 7 JNDI
                         beanInterface = (T) initialContext.lookup(
-                                getJBoss7JNDIName(remoteInterface, true));
+                                getJBoss7JNDIName(remoteInterface, module, true));
                     } catch (NamingException exxx) {
                         LOG.error("Error looking up SignServer interface", exxx);
                         throw exx;
@@ -114,12 +125,12 @@ public final class ServiceLocator {
             try {
                  // Then try using portable JNDI (GlassFish 3+, JBoss 7+)
                  beanInterface = (T) initialContext.lookup(
-                         getPortableJNDIName(localInterface, false));
+                         getPortableJNDIName(localInterface, null, false));
              } catch (NamingException exx) {
                  try {
                      // Then try using JBoss 7 JNDI
                      beanInterface = (T) initialContext.lookup(
-                             getJBoss7JNDIName(localInterface, false));
+                             getJBoss7JNDIName(localInterface, null, false));
                  } catch (NamingException exxx) {
                      try {
                         // Then try using GlassFish _Remote_ JNDI
@@ -204,8 +215,11 @@ public final class ServiceLocator {
         return result;
     }
     
-    private String getPortableJNDIName(final Class clazz, final boolean remote) {
-        final String result = "java:global/signserver/SignServer-ejb/"
+    private String getPortableJNDIName(final Class clazz, String module,final boolean remote) {
+        if (module == null) {
+            module = "SignServer-ejb";
+        }
+        final String result = "java:global/signserver/" + module + "/"
                 + getBeanName(clazz, remote) + "!" + withViewName(clazz.getName(), remote);
         if (LOG.isDebugEnabled()) {
             LOG.debug("Portable JNDI name: " + result);
@@ -213,8 +227,10 @@ public final class ServiceLocator {
         return result;
     }
     
-    private String getJBoss7JNDIName(final Class clazz, final boolean remote) {
-        final String module = "SignServer-ejb";
+    private String getJBoss7JNDIName(final Class clazz, String module, final boolean remote) {
+        if (module == null) {
+            module = "SignServer-ejb";
+        }
         final String viewClassName = withViewName(clazz.getName(), remote);
         
         String beanName = getBeanName(clazz, remote);
@@ -237,6 +253,9 @@ public final class ServiceLocator {
                 && ((remote && "IRemote".equals(beanName))
                     || (!remote && "ILocal".equals(beanName)))) {
             beanName = clazz.getEnclosingClass().getSimpleName();
+        }
+        if (beanName.endsWith("Remote")) {
+            beanName = beanName.substring(0, beanName.length() - "Remote".length());
         }
         if (beanName.charAt(0) == 'I') {
             beanName = beanName.substring(1);

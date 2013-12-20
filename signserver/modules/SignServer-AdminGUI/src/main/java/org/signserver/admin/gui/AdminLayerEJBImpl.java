@@ -65,6 +65,7 @@ import org.signserver.admin.gui.adminws.gen.SignServerException_Exception;
 import org.signserver.admin.gui.adminws.gen.WsGlobalConfiguration;
 import org.signserver.admin.gui.adminws.gen.WsWorkerConfig;
 import org.signserver.admin.gui.adminws.gen.WsWorkerStatus;
+import org.signserver.common.CESeCoreModules;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GlobalConfiguration;
@@ -113,7 +114,7 @@ public class AdminLayerEJBImpl implements AdminWS {
         }
         if (auditor == null) {
             auditor = ServiceLocator.getInstance().lookupRemote(
-                    SecurityEventsAuditorSessionRemote.class);
+                    SecurityEventsAuditorSessionRemote.class, CESeCoreModules.CORE);
         }
     }
 

@@ -103,7 +103,6 @@ includemodulesinbuild               = ${includemodulesinbuild}
                     <fileset dir="lib" includes="*.jar"/>
                     <fileset dir="lib/ext/ext" includes="*.jar" />
                     <fileset dir="lib/ext/ext/ejb" includes="*.jar" />
-                    <fileset dir="lib/ext/quartz" includes="*.jar" />
                     <fileset dir="lib/ext/module/odfsigner" includes="*.jar"/>
                     <fileset dir="lib/ext/module/ooxmlsigner" includes="*.jar"/>
                     <fileset dir="lib/ext/hibernate" includes="*.jar"/>
@@ -555,10 +554,10 @@ SHA1 checksum: ${zip.bin.sha1}</echo>
                 <include name="ext/commons-collections-3.2.jar"/>
                 <include name="ext/commons-io-1.4.jar"/>
                 <include name="ext/commons-lang-2.5.jar"/>
-                <include name="ext/commons-logging.jar"/>
+                <include name="ext/commons-logging-1.1.1.jar"/>
                 <include name="ext/commons-configuration.jar"/>
                 <include name="ext/ejbca-util.jar"/>
-                <include name="ext/log4j.jar"/>
+                <include name="ext/log4j-1.2.14.jar"/>
             </fileset>
         </copy>
         <copy todir="${debian.pkgdist.destdir}/libsignserver-common/${prefix}/${pkg.basename}/conf">

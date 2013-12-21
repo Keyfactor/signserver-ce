@@ -5129,7 +5129,7 @@ The module descriptor can contain:
 module.name=module.pdfsigner
 module.type=lib
 to.root=
-to.lib=lib/ext/1.6/bcprov-jdk.jar,lib/ext/1.6/bctsp-jdk.jar,lib/ext/cert-cvc.jar,lib/ext/commons-collections-3.2.jar,lib/ext/commons-io-1.4.jar,lib/ext/commons-lang-2.5.jar,lib/ext/commons-logging.jar,lib/ext/ejbca-util.jar,lib/ext/log4j.jar,lib/ext/module/pdfsigner/itext/itext.jar,lib/SignServer-Common.jar,lib/SignServer-ejb-interfaces.jar,lib/SignServer-Module-PDFSigner.jar
+to.lib=lib/ext/1.6/bcprov-jdk.jar,lib/ext/1.6/bctsp-jdk.jar,lib/ext/cert-cvc.jar,lib/ext/commons-collections-3.2.jar,lib/ext/commons-io-1.4.jar,lib/ext/commons-lang-2.5.jar,lib/ext/commons-logging-1.1.1.jar,lib/ext/ejbca-util.jar,lib/ext/log4j-1.2.14.jar,lib/ext/module/pdfsigner/itext/itext.jar,lib/SignServer-Common.jar,lib/SignServer-ejb-interfaces.jar,lib/SignServer-Module-PDFSigner.jar
                 </pre>
                 <p>
                 Example (mods-available/20_signserverws.properties):    
@@ -5139,7 +5139,7 @@ module.name=signserverws
 module.type=ejb
 module.ejb=SignServer-ejb-SignServerWS.jar
 to.root=lib/SignServer-ejb-SignServerWS.jar
-to.lib=lib/ext/1.6/bcprov-jdk.jar,lib/ext/1.6/bctsp-jdk.jar,lib/ext/cert-cvc.jar,lib/ext/commons-collections-3.2.jar,lib/ext/commons-io-1.4.jar,lib/ext/commons-lang-2.5.jar,lib/ext/commons-logging.jar,lib/ext/ejbca-util.jar,lib/ext/log4j.jar,lib/SignServer-Common.jar,lib/SignServer-ejb-interfaces.jar
+to.lib=lib/ext/1.6/bcprov-jdk.jar,lib/ext/1.6/bctsp-jdk.jar,lib/ext/cert-cvc.jar,lib/ext/commons-collections-3.2.jar,lib/ext/commons-io-1.4.jar,lib/ext/commons-lang-2.5.jar,lib/ext/commons-logging-1.1.1.jar,lib/ext/ejbca-util.jar,lib/ext/log4j-1.2.14.jar,lib/SignServer-Common.jar,lib/SignServer-ejb-interfaces.jar
 postprocess.files=postprocess.file1
 postprocess.file1.src=SignServer-ejb-SignServerWS.jar
 postprocess.file1.includes=META-INF/ejb-jar.xml

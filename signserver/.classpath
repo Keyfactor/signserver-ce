@@ -89,7 +89,7 @@
 	<classpathentry kind="lib" path="lib/ext/ext/xml-apis.jar"/>
 	<classpathentry kind="lib" path="lib/ext/cert-cvc-1.2.11.jar"/>
 	<classpathentry kind="lib" path="lib/ext/commons-collections-3.2.jar"/>
-	<classpathentry kind="lib" path="lib/ext/commons-logging.jar"/>
+	<classpathentry kind="lib" path="lib/ext/commons-logging-1.1.1.jar"/>
 	<classpathentry kind="lib" path="lib/ext/commons-fileupload-1.2.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="var" path="JBOSS_HOME/client/jbossall-client.jar"/>
@@ -104,7 +104,7 @@
 	<classpathentry kind="var" path="JBOSS_HOME/common/lib/hsqldb.jar"/>
 	<classpathentry kind="var" path="JBOSS_HOME/lib/dom4j.jar"/>
 	<classpathentry kind="lib" path="lib/ext/commons-lang-2.5.jar"/>
-	<classpathentry kind="lib" path="lib/ext/log4j.jar"/>
+	<classpathentry kind="lib" path="lib/ext/log4j-1.2.14.jar"/>
 	<classpathentry kind="lib" path="lib/ext/quartz/quartz-1.6.0.jar"/>
 	<classpathentry kind="lib" path="lib/ext/ext/servlet-2.3.jar"/>
 	<classpathentry kind="lib" path="lib/ext/ext/junit-4.11.jar"/>

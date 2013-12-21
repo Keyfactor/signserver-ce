@@ -108,8 +108,8 @@
 	<classpathentry kind="lib" path="lib/ext/quartz/quartz-1.6.0.jar"/>
 	<classpathentry kind="lib" path="lib/ext/ext/servlet-2.3.jar"/>
 	<classpathentry kind="lib" path="lib/ext/ext/junit-4.11.jar"/>
-	<classpathentry kind="lib" path="lib/ext/reports/jcommon-1.0.12.jar"/>
-	<classpathentry kind="lib" path="lib/ext/reports/jfreechart-1.0.9.jar"/>
+	<classpathentry kind="lib" path="lib/ext/ext/jcommon-1.0.12.jar"/>
+	<classpathentry kind="lib" path="lib/ext/ext/jfreechart-1.0.9.jar"/>
 	<classpathentry kind="var" path="ANT_HOME/lib/ant.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
 	<classpathentry kind="lib" path="lib/ext/module/ooxmlsigner/xercesImpl.jar"/>

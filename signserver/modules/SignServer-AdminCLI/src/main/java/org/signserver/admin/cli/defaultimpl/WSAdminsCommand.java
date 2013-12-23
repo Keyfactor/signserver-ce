@@ -136,15 +136,26 @@ public class WSAdminsCommand extends AbstractAdminCommand {
             final String admins = getGlobalConfigurationSession().getGlobalConfiguration().getProperty(
                     GlobalConfiguration.SCOPE_GLOBAL, "WSADMINS");
             final List<Entry> entries = parseAdmins(admins);
-
+            final String allowAnyWSAdminProp =
+                    getGlobalConfigurationSession().getGlobalConfiguration()
+                        .getProperty(GlobalConfiguration.SCOPE_GLOBAL, "ALLOWANYWSADMIN");
+            final boolean allowAnyWSAdmin =
+                    allowAnyWSAdminProp != null ? Boolean.parseBoolean(allowAnyWSAdminProp) : false;
+            
             if (LIST.equals(operation)) {
                 final StringBuilder buff = new StringBuilder();
                 buff.append("Authorized administrators:");
                 buff.append("\n");
-                for (Entry entry : entries) {
-                    buff.append(String.format("%-20s %s",
-                            entry.getCertSerialNo(), entry.getIssuerDN()));
+                
+                if (allowAnyWSAdmin) {
+                    buff.append("ANY CERTIFICATE ACCEPTED FOR WS ADMINISTRATORS");
                     buff.append("\n");
+                } else {
+                    for (Entry entry : entries) {
+                        buff.append(String.format("%-20s %s",
+                                entry.getCertSerialNo(), entry.getIssuerDN()));
+                        buff.append("\n");
+                    }
                 }
                 getOutputStream().println(buff.toString());
             } else if (ADD.equals(operation)) {

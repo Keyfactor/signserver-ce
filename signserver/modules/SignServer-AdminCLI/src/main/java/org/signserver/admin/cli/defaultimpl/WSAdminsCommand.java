@@ -164,6 +164,8 @@ public class WSAdminsCommand extends AbstractAdminCommand {
                 if (allowAnyWSAdmin) {
                     buff.append("ANY CERTIFICATE ACCEPTED FOR WS ADMINISTRATORS");
                     buff.append("\n");
+                    buff.append("Use the command \"signserver wsadmins -allowany false\" to enable the administrator list");
+                    buff.append("\n");
                 } else {
                     for (Entry entry : entries) {
                         buff.append(String.format("%-20s %s",

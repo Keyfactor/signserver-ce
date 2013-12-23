@@ -1205,7 +1205,15 @@ certificate serialnumber and issuer DN.
                         <p>
 Removes an administrator from the list of authorized administrators.
                         </p>
-                        
+                        <p>
+<b>wsadmins -allowany:</b>
+                        </p>
+                        <p>
+Sets whether any administrator with a certificate accepted by the web server/proxy is authorized
+or not. When set (true) it overrides the WSADMINS global property. Takes an optional boolean parameter, if left out sets to true (allow all).
+This can be used for initial setup.
+                        </p>
+
                         <p><b>Auditors Related</b></p>
                         <p>
 <b>wsauditors -list:</b>

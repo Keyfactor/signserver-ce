@@ -972,12 +972,19 @@ public class AdminWS {
                 GlobalConfiguration.SCOPE_GLOBAL, "WSADMINS");
         final String admin = cert.getSerialNumber().toString(16) + "," +
                 cert.getIssuerDN();
-
+        final String allowAnyWSAdminProp = global.getGlobalConfiguration().getProperty(
+                GlobalConfiguration.SCOPE_GLOBAL, "ALLOWANYWSADMIN");
+        final boolean allowAnyWSAdmin = allowAnyWSAdminProp != null ?
+                Boolean.parseBoolean(allowAnyWSAdminProp) : false;
+        
         if (LOG.isDebugEnabled()) {
             LOG.debug("admin: " + admin + ", admins: " + admins);
+            LOG.debug("allow any admin: " + allowAnyWSAdmin);
         }
 
-        if (admins == null) {
+        if (allowAnyWSAdmin) {
+            authorized = true;
+        } else if (admins == null) {
             LOG.warn("No WSADMINS global property set");
         } else {
             for (String entry : admins.split(";")) {

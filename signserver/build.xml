@@ -291,14 +291,14 @@ Configurations to include:
     <target name="-filter-jars" depends="-init-filter-jars-db,-init-filter-jars-nodb">
         
         <!-- cesecore-ejb.jar -->
-        <property name="cesecore-ejb.jar" value="cesecore-ejb_1.1.2.jar"/>
+        <property name="cesecore-ejb.jar" value="cesecore-ejb-1.1.2.jar"/>
         <move todir="${tmp}" file="${signserver.ear.dir}/${cesecore-ejb.jar}"/>
         <jar destfile="${signserver.ear.dir}/${cesecore-ejb.jar}">
             <zipfileset src="${tmp}/${cesecore-ejb.jar}" excludes="${cesecore-ejb-excludes}"/>
         </jar>
         
         <!-- cesecore-entities.jar -->
-        <property name="cesecore-entities.jar" value="cesecore-entity_1.1.2.jar"/>
+        <property name="cesecore-entities.jar" value="cesecore-entity-1.1.2.jar"/>
         <move todir="${tmp}" file="${signserver.ear.dir}/lib/${cesecore-entities.jar}"/>
         <jar destfile="${signserver.ear.dir}/lib/${cesecore-entities.jar}">
             <zipfileset src="${tmp}/${cesecore-entities.jar}" excludes="${cesecore.entities.excludes}"/>

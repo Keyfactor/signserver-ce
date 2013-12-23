@@ -540,14 +540,14 @@ SHA1 checksum: ${zip.bin.sha1}</echo>
                 <include name="readme.txt"/>
                 
                 <!-- Bouncycastle (all) -->
-                <include name="ext/1.6/**"/>
+                <include name="ext/bc*.jar"/>
                 
                 <!-- EJB/Servlet (cli, gui) -->
                 <include name="ext/ext/ejb/**"/>
                 <include name="ext/ext/servlet-2.3.jar"/>
                 
                 <!-- CLI (both client and admin) -->
-                <include name="ext/ext/commons-cli-1.2.jar"/>
+                <include name="ext/commons-cli-1.2.jar"/>
                 
                 <!-- Common (all) -->
                 <include name="ext/cert-cvc.jar"/>

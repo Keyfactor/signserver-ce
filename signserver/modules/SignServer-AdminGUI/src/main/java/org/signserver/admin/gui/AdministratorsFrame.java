@@ -151,6 +151,7 @@ public class AdministratorsFrame extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
         jToolBar1 = new javax.swing.JToolBar();
         refreshButton = new javax.swing.JButton();
+        allowAnyCheckbox = new javax.swing.JCheckBox();
 
         editPanel.setName("editPanel"); // NOI18N
 
@@ -311,6 +312,9 @@ public class AdministratorsFrame extends javax.swing.JFrame {
         refreshButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jToolBar1.add(refreshButton);
 
+        allowAnyCheckbox.setText(resourceMap.getString("allowAnyCheckbox.text")); // NOI18N
+        allowAnyCheckbox.setName("allowAnyCheckbox"); // NOI18N
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -319,14 +323,15 @@ public class AdministratorsFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jToolBar1, javax.swing.GroupLayout.DEFAULT_SIZE, 770, Short.MAX_VALUE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 660, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(addButton)
                             .addComponent(editButton)
-                            .addComponent(removeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(removeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(allowAnyCheckbox))
                 .addContainerGap())
         );
 
@@ -344,8 +349,10 @@ public class AdministratorsFrame extends javax.swing.JFrame {
                         .addComponent(editButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(removeButton))
-                    .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 254, Short.MAX_VALUE))
-                .addGap(18, 18, 18)
+                    .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 240, Short.MAX_VALUE))
+                .addGap(1, 1, 1)
+                .addComponent(allowAnyCheckbox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton1)
                 .addContainerGap())
         );
@@ -554,6 +561,7 @@ public class AdministratorsFrame extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addButton;
     private javax.swing.JTable adminsTable;
+    private javax.swing.JCheckBox allowAnyCheckbox;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton editButton;
     private javax.swing.JTextField editCertSerialNoTextField;

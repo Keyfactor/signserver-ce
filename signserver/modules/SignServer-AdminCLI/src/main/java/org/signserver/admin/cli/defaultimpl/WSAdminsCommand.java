@@ -18,6 +18,7 @@ import java.util.List;
 import javax.ejb.EJBException;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.GnuParser;
+import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.ejbca.util.CertTools;
@@ -40,6 +41,7 @@ public class WSAdminsCommand extends AbstractAdminCommand {
     public static final String CERTSERIALNO = "certserialno";
     public static final String ISSUERDN = "issuerdn";
     public static final String CERT = "cert";
+    public static final String ALLOWANY = "allowany";
     
     /** The command line options. */
     private static final Options OPTIONS;
@@ -49,10 +51,13 @@ public class WSAdminsCommand extends AbstractAdminCommand {
     		+ "Usage: signserver wsadmins -add -cert <PEM or DER file>\n"
             + "Usage: signserver wsadmins -remove -certserialno <certificate serial number> -issuerdn <issuer DN>\n"
             + "Usage: signserver wsadmins -list\n"
+            + "Usage: signserver wsadmins -allowany [true|false]\n"
             + "Example 1: signserver wsadmins -add -certserialno 0123ABCDEF -issuerdn \"CN=Neo Morpheus, C=SE\"\n"
             + "Example 2: signserver wsadmins -add -cert wsadmin.pem\n"
             + "Example 3: signserver wsadmins -remove -certserialno 0123ABCDEF -issuerdn \"CN=Neo Morpheus, C=SE\"\n"
-            + "Example 4: signserver wsadmins -list";
+            + "Example 4: signserver wsadmins -list\n"
+            + "Example 5: signserver wsadmins -allowany\n"
+            + "Example 6: signserver wsadmins -allowany false";
 
     static {
         OPTIONS = new Options();
@@ -65,7 +70,12 @@ public class WSAdminsCommand extends AbstractAdminCommand {
         OPTIONS.addOption(ISSUERDN, true,
                 "Issuer distinguished name");
         OPTIONS.addOption(CERT, true, "Certificate file");
+        
+        final Option allowAnyOpt = new Option(ALLOWANY, true, "Sets whether any WS admin with a valid web server/proxy certificate should be allowed (true or false), if no argument given any WS admin is allowed");
+        allowAnyOpt.setOptionalArg(true);
+        OPTIONS.addOption(allowAnyOpt);
     }
+    
     
     private String operation;
     private String certSerialNo;
@@ -97,6 +107,8 @@ public class WSAdminsCommand extends AbstractAdminCommand {
             operation = REMOVE;
         } else if (line.hasOption(LIST)) {
             operation = LIST;
+        } else if (line.hasOption(ALLOWANY)) {
+            operation = ALLOWANY;
         }
     }
 
@@ -105,8 +117,8 @@ public class WSAdminsCommand extends AbstractAdminCommand {
      */
     private void validateOptions() throws IllegalCommandArgumentsException {
         if (operation == null) {
-            throw new IllegalCommandArgumentsException("Missing operation: -add, -remove or -list");
-        } else if (!operation.equals(LIST)) {
+            throw new IllegalCommandArgumentsException("Missing operation: -add, -remove, -list, or -allowany");
+        } else if (!LIST.equals(operation) && !ALLOWANY.equals(operation)) {
         	if (cert != null) {
         		// don't allow -cert option in combination with -certserialno and -issuerdn
         		if (certSerialNo != null || issuerDN != null) {
@@ -124,9 +136,11 @@ public class WSAdminsCommand extends AbstractAdminCommand {
 
     @Override
     public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException, UnexpectedCommandFailureException {
+        final CommandLine line;
         try {
             // Parse the command line
-            parseCommandLine(new GnuParser().parse(OPTIONS, args));
+            line = new GnuParser().parse(OPTIONS, args);
+            parseCommandLine(line);
         } catch (ParseException ex) {
             throw new IllegalCommandArgumentsException(ex.getMessage());
         }
@@ -136,13 +150,13 @@ public class WSAdminsCommand extends AbstractAdminCommand {
             final String admins = getGlobalConfigurationSession().getGlobalConfiguration().getProperty(
                     GlobalConfiguration.SCOPE_GLOBAL, "WSADMINS");
             final List<Entry> entries = parseAdmins(admins);
-            final String allowAnyWSAdminProp =
-                    getGlobalConfigurationSession().getGlobalConfiguration()
-                        .getProperty(GlobalConfiguration.SCOPE_GLOBAL, "ALLOWANYWSADMIN");
-            final boolean allowAnyWSAdmin =
-                    allowAnyWSAdminProp != null ? Boolean.parseBoolean(allowAnyWSAdminProp) : false;
             
             if (LIST.equals(operation)) {
+                final String allowAnyWSAdminProp =
+                        getGlobalConfigurationSession().getGlobalConfiguration()
+                            .getProperty(GlobalConfiguration.SCOPE_GLOBAL, "ALLOWANYWSADMIN");
+                final boolean allowAnyWSAdmin =
+                        allowAnyWSAdminProp != null ? Boolean.parseBoolean(allowAnyWSAdminProp) : false;
                 final StringBuilder buff = new StringBuilder();
                 buff.append("Authorized administrators:");
                 buff.append("\n");
@@ -193,6 +207,23 @@ public class WSAdminsCommand extends AbstractAdminCommand {
                     getOutputStream().println("Administrator removed");
                 } else {
                     getErrorStream().println("No such administrator");
+                }
+            } else if (ALLOWANY.equals(operation)) {
+                boolean allowAny = true;
+                final String value = line.getOptionValue(ALLOWANY);
+                
+                if (value != null) {
+                    allowAny = Boolean.parseBoolean(value);
+                }
+                
+                if (allowAny) {
+                    getGlobalConfigurationSession().setProperty(
+                            GlobalConfiguration.SCOPE_GLOBAL, "ALLOWANYWSADMIN", "true");
+                    getOutputStream().println("Set to allow any WS admin");
+                } else {
+                    getGlobalConfigurationSession().removeProperty(
+                            GlobalConfiguration.SCOPE_GLOBAL, "ALLOWANYWSADMIN");
+                    getOutputStream().println("Set to not allow any WS admin");
                 }
             }
             return 0;

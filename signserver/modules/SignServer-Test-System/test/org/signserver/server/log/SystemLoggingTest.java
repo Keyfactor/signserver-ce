@@ -81,6 +81,7 @@ public class SystemLoggingTest extends ModulesTestCase {
     
     @Test
     public void test00SetupDatabase() throws Exception {
+        LOG.info(">test00SetupDatabase");
         addSoftDummySigner(signerId, "TestSigner6000");
         workerSession.setWorkerProperty(signerId, "WORKERLOGGER", "org.signserver.server.log.SecurityEventsWorkerLogger");
         workerSession.reloadConfiguration(signerId);
@@ -88,6 +89,7 @@ public class SystemLoggingTest extends ModulesTestCase {
 
     @Test
     public void test01ReadEntries() throws Exception {
+        LOG.info(">test01ReadEntries");
         final File testFile = File.createTempFile("testreadentries", "tmp");
         testFile.deleteOnExit();
         final String line0 = "2012-10-19 10:51:43,240 INFO  [ISystemLogger] EVENT: GLOBAL_CONFIG_RELOAD; MODULE: GLOBAL_CONFIG; CUSTOM_ID: ; REPLY_TIME:1350636703240\n";
@@ -152,6 +154,7 @@ public class SystemLoggingTest extends ModulesTestCase {
 
     @Test
     public void test01LogStartup() throws Exception {
+        LOG.info(">test01LogStartup");
         // Read second line of file (CESeCore outputs a time sync log line before the SignServer startup log line).
         LOG.info("Note: This test assumes the signserver_audit.log was cleared before the appserver started");
         List<String> lines = readEntries(auditLogFile, 0, 1);
@@ -168,6 +171,7 @@ public class SystemLoggingTest extends ModulesTestCase {
     // }
     @Test
     public void test01LogSetAndRemoveGlobalProperty() throws Exception {
+        LOG.info(">test01LogSetAndRemoveGlobalProperty");
         final int linesBefore = readEntriesCount(auditLogFile);
         
         // Test setProperty
@@ -214,6 +218,7 @@ public class SystemLoggingTest extends ModulesTestCase {
 
     @Test
     public void test01LogSetAndRemoveWorkerProperty() throws Exception {
+        LOG.info(">test01LogSetAndRemoveWorkerProperty");
         final int linesBefore = readEntriesCount(auditLogFile);
         
         // Test setProperty
@@ -252,6 +257,7 @@ public class SystemLoggingTest extends ModulesTestCase {
     
     @Test
     public void test01LogAddAuthorizedClient() throws Exception {
+        LOG.info(">test01LogAddAuthorizedClient");
         final int linesBefore = readEntriesCount(auditLogFile);
         
         workerSession.addAuthorizedClient(signerId, new AuthorizedClient("1234567890", "CN=Test"));
@@ -267,6 +273,7 @@ public class SystemLoggingTest extends ModulesTestCase {
 
     @Test
     public void test01LogRemoveAuthorizedClient() throws Exception {
+        LOG.info(">test01LogRemoveAuthorizedClient");
         final int linesBefore = readEntriesCount(auditLogFile);
         
         workerSession.removeAuthorizedClient(signerId, new AuthorizedClient("1234567890", "CN=Test"));
@@ -282,6 +289,7 @@ public class SystemLoggingTest extends ModulesTestCase {
 
     @Test
     public void test01LogCertInstalled() throws Exception {
+        LOG.info(">test01LogCertInstalled");
         int linesBefore = readEntriesCount(auditLogFile);
         
         // Test with uploadSignerCertificate method (global scope)
@@ -391,6 +399,7 @@ public class SystemLoggingTest extends ModulesTestCase {
 
     @Test
     public void test01LogCertChainInstalled() throws Exception {
+        LOG.info(">test01LogCertChainInstalled");
         int linesBefore = readEntriesCount(auditLogFile);
         
         // Test with uploadSignerCertificateChain method (global scope)
@@ -505,6 +514,7 @@ public class SystemLoggingTest extends ModulesTestCase {
 
     @Test
     public void test01LogKeySelected() throws Exception {
+        LOG.info(">test01LogKeySelected");
         // Test when setting the property manually (global scope)
         int linesBefore = readEntriesCount(auditLogFile);
         workerSession.setWorkerProperty(signerId, "DEFAULTKEY", "ts_key00002");
@@ -567,6 +577,7 @@ public class SystemLoggingTest extends ModulesTestCase {
 
     @Test
     public void test01LogKeyGenAndTestAndCSR() throws Exception {
+        LOG.info(">test01LogKeyGenAndTestAndCSR");
         final String signerName = "TestKeyGenAndCSR1";
         final int p12SignerId = 5980;
         try {
@@ -643,6 +654,7 @@ public class SystemLoggingTest extends ModulesTestCase {
 
     @Test
     public void test01LogSetStatusProperty() throws Exception {
+        LOG.info(">test01LogSetStatusProperty");
         int linesBefore = readEntriesCount(auditLogFile);
         final long expiration = System.currentTimeMillis() + 1000;
         statusSession.update("TEST_PROPERTY1", "TESTVALUE47", expiration);
@@ -659,6 +671,7 @@ public class SystemLoggingTest extends ModulesTestCase {
 
     @Test
     public void test01LogProcessWorkerNotFound() throws Exception {
+        LOG.info(">test01LogProcessWorkerNotFound");
         int linesBefore = readEntriesCount(auditLogFile);
         
         final int nonExistingWorkerId = 1234567;
@@ -682,6 +695,7 @@ public class SystemLoggingTest extends ModulesTestCase {
 
     @Test
     public void test01LogWorkerConfigReload() throws Exception {
+        LOG.info(">test01LogWorkerConfigReload");
         int linesBefore = readEntriesCount(auditLogFile);
         
         workerSession.reloadConfiguration(signerId);
@@ -701,6 +715,7 @@ public class SystemLoggingTest extends ModulesTestCase {
      */
     @Test
     public void test01WorkerProcess() throws Exception {
+        LOG.info(">test01WorkerProcess");
         int linesBefore = readEntriesCount(auditLogFile);
         
         GenericSignRequest request = new GenericSignRequest(123, "<test/>".getBytes("UTF-8"));
@@ -723,6 +738,7 @@ public class SystemLoggingTest extends ModulesTestCase {
      */
     @Test
     public void test02WorkerProcessExcludeFields() throws Exception {
+        LOG.info(">test02WorkerProcessExcludeFields");
         setLoggingFields(null, "CLIENT_IP, LOG_ID");
         
         int linesBefore = readEntriesCount(auditLogFile);
@@ -746,6 +762,7 @@ public class SystemLoggingTest extends ModulesTestCase {
      */
     @Test
     public void test03WorkerProcessIncludeFields() throws Exception {
+        LOG.info(">test03WorkerProcessIncludeFields");
         setLoggingFields("CLIENT_IP, LOG_ID", null);
         
         int linesBefore = readEntriesCount(auditLogFile);
@@ -767,6 +784,7 @@ public class SystemLoggingTest extends ModulesTestCase {
      */
     @Test
     public void test04WorkerProcessIncludeExcludeFields() throws Exception {
+        LOG.info(">test04WorkerProcessIncludeExcludeFields");
         setLoggingFields("CLIENT_IP", "LOG_ID");
         
         try {
@@ -786,6 +804,7 @@ public class SystemLoggingTest extends ModulesTestCase {
      */
     @Test
     public void test05WorkerProcessNonSucess() throws Exception {
+        LOG.info(">test05WorkerProcessNonSucess");
         // reset logging fields (all fields being logged)
         setLoggingFields(null, null);
         int linesBefore = readEntriesCount(auditLogFile);
@@ -810,6 +829,7 @@ public class SystemLoggingTest extends ModulesTestCase {
 
     @Test
     public void test99TearDownDatabase() throws Exception {
+        LOG.info(">test99TearDownDatabase");
         removeWorker(signerId);
     }
 

@@ -119,6 +119,22 @@ public class AdministratorsFrame extends javax.swing.JFrame {
             }
         });
         refreshButton.doClick();
+        
+        // set initial state for the allow all checkbox
+        boolean allowAnyWSAdmin = false;
+        try {
+            for (final WsGlobalConfiguration.Config.Entry entry :
+                    SignServerAdminGUIApplication.getAdminWS().getGlobalConfiguration()
+                    .getConfig().getEntry()) {
+                if (entry.getKey().equals(GlobalConfiguration.SCOPE_GLOBAL + "ALLOWANYWSADMIN")) {
+                    allowAnyWSAdmin = Boolean.valueOf((String) entry.getValue());
+                }
+            }
+        } catch (AdminNotAuthorizedException_Exception e) {
+            allowAnyWSAdmin = false;
+        }
+        
+        allowAnyCheckbox.setSelected(allowAnyWSAdmin);
     }
 
     /** This method is called from within the constructor to

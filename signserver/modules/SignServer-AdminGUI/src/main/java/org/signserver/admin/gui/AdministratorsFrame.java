@@ -130,7 +130,9 @@ public class AdministratorsFrame extends javax.swing.JFrame {
                     allowAnyWSAdmin = Boolean.valueOf((String) entry.getValue());
                 }
             }
-        } catch (AdminNotAuthorizedException_Exception e) {
+        } catch (AdminNotAuthorizedException_Exception ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(),
+                    "Authorization denied", JOptionPane.ERROR_MESSAGE);
             allowAnyWSAdmin = false;
         }
         

@@ -1530,6 +1530,10 @@ to add, remove or edit properties.
 Lists all the authorized client certificates for the selected worker. Notice 
 that this only applies if the worker has the AUTHTYPE set to CLIENTCERT 
 otherwise information about authorized clients might be taken from other sources.
+If the checkbox "Allow any administrator with a valid certificate..." is selected, any user
+with a valid certificate will be authorized. Having this enabled will override the administrators
+added in the list above.
+This is meant primarily for allowing a temporary certificate for setting up initial configuration. 
                         </p>
                         <p>
 <b>Add...</b>: Adds a new authorized client. If the option 

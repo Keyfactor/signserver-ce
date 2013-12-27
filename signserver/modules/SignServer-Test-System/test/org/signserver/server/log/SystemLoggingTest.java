@@ -849,6 +849,7 @@ public class SystemLoggingTest extends ModulesTestCase {
     }
     
     private List<String> readEntries(final File file, final int skipLines, final int maxLines) throws Exception {
+        LOG.info(">readEntries(" + skipLines + ", " + maxLines + ")");
         final ArrayList results = new ArrayList(maxLines);
         BufferedReader reader = null;
         try {

@@ -303,6 +303,9 @@
         <Property name="text" type="java.lang.String" resourceKey="allowAnyCheckbox.text"/>
         <Property name="name" type="java.lang.String" value="allowAnyCheckbox" noResource="true"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="allowAnyCheckboxActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>

@@ -330,6 +330,11 @@ public class AdministratorsFrame extends javax.swing.JFrame {
 
         allowAnyCheckbox.setText(resourceMap.getString("allowAnyCheckbox.text")); // NOI18N
         allowAnyCheckbox.setName("allowAnyCheckbox"); // NOI18N
+        allowAnyCheckbox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                allowAnyCheckboxActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -527,6 +532,25 @@ public class AdministratorsFrame extends javax.swing.JFrame {
     private void loadFromCertificateButtonPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadFromCertificateButtonPerformed
         Utils.selectAndLoadFromCert(editPanel, editCertSerialNoTextField, editIssuerDNTextField);
     }//GEN-LAST:event_loadFromCertificateButtonPerformed
+
+    private void allowAnyCheckboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_allowAnyCheckboxActionPerformed
+        final boolean checked = allowAnyCheckbox.isSelected();
+        
+        try {
+            if (checked) {
+                SignServerAdminGUIApplication.getAdminWS()
+                    .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
+                                   "ALLOWANYWSADMIN", Boolean.TRUE.toString());
+            } else {
+                SignServerAdminGUIApplication.getAdminWS()
+                    .removeGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
+                                    "ALLOWANYWSADMIN");
+            }
+        } catch (AdminNotAuthorizedException_Exception ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(),
+                    "Authorization denied", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_allowAnyCheckboxActionPerformed
 
     @Action(block = Task.BlockingScope.WINDOW)
     public Task reloadGlobalConfiguration() {

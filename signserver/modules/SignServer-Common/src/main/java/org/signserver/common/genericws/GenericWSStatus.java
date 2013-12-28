@@ -37,7 +37,8 @@ public class GenericWSStatus extends CryptoTokenStatus {
 
     @Override
     public void displayStatus(int workerId, PrintStream out, boolean complete) {
-        out.println("Status of Generic WS with Id " + workerId + " is :\n"
+        out.println("Status of Generic WS with Id " + workerId
+                + " (" + getActiveSignerConfig().getProperty("NAME") + ") is :\n"
                 + "  SignToken Status : " + signTokenStatuses[getTokenStatus()] + " \n\n");
 
         if (complete) {

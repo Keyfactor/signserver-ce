@@ -78,6 +78,7 @@ public abstract class WorkerStatus implements Serializable {
             hostname = "unknown";
         }
         activeconfig = config;
+        
     }
 
     /**

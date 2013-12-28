@@ -32,7 +32,8 @@ public class DispatcherStatus extends WorkerStatus {
     @Override
     public void displayStatus(int workerId, PrintStream out, boolean complete) {
         final List<String> errors = getFatalErrors();
-		out.println("Status of Dispatcher with Id " + workerId + " is :\n"  
+		out.println("Status of Dispatcher with Id " + workerId
+		+ " (" + getActiveSignerConfig().getProperty("NAME") + ") is :\n"
                 + "  Worker status : " + signTokenStatuses[errors.isEmpty() ? 1 : 2] + "\n");
         
         if (complete) {

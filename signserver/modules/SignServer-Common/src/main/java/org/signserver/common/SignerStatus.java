@@ -96,7 +96,8 @@ public class SignerStatus extends CryptoTokenStatus {
 	@Override
 	public void displayStatus(int workerId, PrintStream out, boolean complete) {
         final List<String> errors = getFatalErrors();
-		out.println("Status of Signer with Id " + workerId + " is :\n"  
+		out.println("Status of Signer with Id " + workerId
+		+ " (" + getActiveSignerConfig().getProperty("NAME") + ") is :\n"  
                 + "  Worker status : " + signTokenStatuses[getTokenStatus() == CryptoTokenStatus.STATUS_ACTIVE && (errors.isEmpty()) ? 1 : 2] + "\n"
                 + "  Token status  : " + signTokenStatuses[getTokenStatus()]);
         

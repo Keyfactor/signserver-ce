@@ -53,7 +53,8 @@ public class ServiceStatus extends WorkerStatus {
 
     @Override
     public void displayStatus(int workerId, PrintStream out, boolean complete) {
-        out.println("Status of Service with Id " + workerId + " is :\n");
+        out.println("Status of Service with Id " + workerId
+                + " (" + getActiveSignerConfig().getProperty("NAME") + ") is :\n");
         out.println("  Service was last run at : " + getLastRunDate() + "\n");
 
         if (complete) {

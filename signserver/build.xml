@@ -424,5 +424,151 @@ Configuring EAR...
         <antcall target="showtime" />
     </target>
 
+
+    <!-- Target for creating a binary distribution for arbitrary jars and their dependencies. -->
+    <target name="dist">
+        <fail unless="dist.jars" message="Usage: bin/ant dist -Ddist.jars=JARNAME -Ddist.includes=OTHERFILES"/>
+        
+        <loadresource property="classpath">
+            <zipentry zipfile="lib/${dist.jars}" name="META-INF/MANIFEST.MF"/>
+            <filterchain>
+                <tokenfilter>
+                    <filetokenizer/>
+                    <replaceregex pattern="\r?\n (.+)$" replace="\1" flags="m"/>
+                </tokenfilter>
+                <tokenfilter>
+                    <filetokenizer/>
+                    <replaceregex pattern="\r?\n (.+)$" replace="\1" flags="m"/>
+                </tokenfilter>
+                <tokenfilter>
+                    <filetokenizer/>
+                    <replaceregex pattern="\r?\n (.+)$" replace="\1" flags="m"/>
+                </tokenfilter>
+                <tokenfilter>
+                    <filetokenizer/>
+                    <replaceregex pattern="\r?\n (.+)$" replace="\1" flags="m"/>
+                </tokenfilter>
+                <tokenfilter>
+                    <filetokenizer/>
+                    <replaceregex pattern="\r?\n (.+)$" replace="\1" flags="m"/>
+                </tokenfilter>
+                <tokenfilter>
+                    <filetokenizer/>
+                    <replaceregex pattern="\r?\n (.+)$" replace="\1" flags="m"/>
+                </tokenfilter>
+                <tokenfilter>
+                    <filetokenizer/>
+                    <replaceregex pattern="\r?\n (.+)$" replace="\1" flags="m"/>
+                </tokenfilter>
+                <tokenfilter>
+                    <filetokenizer/>
+                    <replaceregex pattern="\r?\n (.+)$" replace="\1" flags="m"/>
+                </tokenfilter>
+                <tokenfilter>
+                    <filetokenizer/>
+                    <replaceregex pattern="\r?\n (.+)$" replace="\1" flags="m"/>
+                </tokenfilter>
+                <tokenfilter>
+                    <filetokenizer/>
+                    <replaceregex pattern="\r?\n (.+)$" replace="\1" flags="m"/>
+                </tokenfilter>
+                <tokenfilter>
+                    <filetokenizer/>
+                    <replaceregex pattern="\r?\n (.+)$" replace="\1" flags="m"/>
+                </tokenfilter>
+                <tokenfilter>
+                    <filetokenizer/>
+                    <replaceregex pattern="\r?\n (.+)$" replace="\1" flags="m"/>
+                </tokenfilter>
+                <tokenfilter>
+                    <filetokenizer/>
+                    <replaceregex pattern="\r?\n (.+)$" replace="\1" flags="m"/>
+                </tokenfilter>
+                <tokenfilter>
+                    <filetokenizer/>
+                    <replaceregex pattern="\r?\n (.+)$" replace="\1" flags="m"/>
+                </tokenfilter>
+                <tokenfilter>
+                    <filetokenizer/>
+                    <replaceregex pattern="\r?\n (.+)$" replace="\1" flags="m"/>
+                </tokenfilter>
+                <tokenfilter>
+                    <filetokenizer/>
+                    <replaceregex pattern="\r?\n (.+)$" replace="\1" flags="m"/>
+                </tokenfilter>
+                <tokenfilter>
+                    <filetokenizer/>
+                    <replaceregex pattern="\r?\n (.+)$" replace="\1" flags="m"/>
+                </tokenfilter>
+                <tokenfilter>
+                    <containsregex pattern="^Class-Path: (.+)$" flags="i"/>
+                    <replaceregex pattern="^Class-Path: (.+)$" replace="\1" flags="i"/>
+                </tokenfilter>
+                <tokenfilter>
+                    <filetokenizer/>
+                    <replaceregex pattern="(\r?\n)+" replace="" flags="m"/>
+                </tokenfilter>
+                <tokenfilter>
+                    <filetokenizer/>
+                    <replaceregex pattern="( )+" replace="," flags="g"/>
+                </tokenfilter>
+            </filterchain>
+        </loadresource>
+        <echo level="verbose">Class-path from MANIFEST-MF: ${classpath}</echo>
+        
+        <property name="dist.dir" location="${tmp}/dist"/>
+        <echo>Copying distribution to ${dist.dir}</echo>
+        <mkdir dir="${dist.dir}"/>
+        
+        <mkdir dir="${dist.dir}/lib"/>
+        <copy todir="${dist.dir}">
+            <fileset dir="." includes="_NON_EXISTING,${dist.includes}"/>
+        </copy>
+        <chmod perm="a+x">
+            <fileset dir="${dist.dir}/bin/" includes="*"/>
+        </chmod>
+        <copy todir="${dist.dir}/lib">
+            <fileset dir="lib" includes="_NON_EXISTING,${dist.jars}"/>
+            <fileset dir="lib" includes="_NON_EXISTING,${classpath}"/>
+        </copy>
+        
+    </target>
+    
+    <target name="dist:zip" description="Create a zip file from the dist output">
+        <fail unless="dist.zipdest" message="Usage: bin/ant dist:zip -Ddist.zipdest=tmp/admingui-bin.zip -Ddist.zipprefix=admingui"/>
+        <fail unless="dist.zipprefix" message="Usage: bin/ant dist:zip -Ddist.zipdest=tmp/admingui-bin.zip -Ddist.zipprefix=admingui"/>
+        <property name="dist.zipsrc" location="${tmp}/dist"/>
+        
+        <zip destfile="${dist.zipdest}">
+            <zipfileset dir="${dist.zipsrc}" prefix="${dist.zipprefix}" filemode="600" dirmode="700" excludes="bin/*"/>
+            <zipfileset dir="${dist.zipsrc}" prefix="${dist.zipprefix}" filemode="700" dirmode="700" includes="bin/*"/>
+        </zip>
+        <echo>Wrote ${dist.zipdest}</echo>
+    </target>
+
+    <target name="dist:admingui">
+        <antcall target="dist">
+            <param name="dist.jars" value="SignServer-AdminGUI.jar"/>
+            <param name="dist.includes" value="
+                bin/signserver-gui,
+                conf/admingui.properties,
+                conf/admingui_default.properties,
+                conf/log4j.properties,
+                conf/jboss/*,
+                conf/jboss7/*,
+                conf/glassfish/*,
+                res/admingui-splash.png,
+                "/>
+        </antcall>
+    </target>
+    <target name="dist:admingui-zip" description="Create a binary ZIP distribution of the Admin GUI">
+        <delete dir="${tmp}/dist"/> <!-- Only include the admingui in the zip file -->
+        <antcall target="dist:admingui"/>
+        <antcall target="dist:zip">
+            <param name="dist.zipdest" value="${lib}/signserver-admingui-bin.zip"/>
+            <param name="dist.zipprefix" value="signserver"/>
+        </antcall>
+    </target>
+
    
 </project>

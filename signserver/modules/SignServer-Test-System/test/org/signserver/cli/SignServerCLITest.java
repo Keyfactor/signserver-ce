@@ -252,7 +252,26 @@ public class SignServerCLITest extends ModulesTestCase {
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,
         		cli.execute("wsadmins", "-list"));
         assertNotPrinted("", cli.getOut(), "EF34242D2324");
-        assertNotPrinted("", cli.getOut(), "CN=Test Root CA");   
+        assertNotPrinted("", cli.getOut(), "CN=Test Root CA");
+        
+        // Test setting any WS admin allowed
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS,
+                cli.execute("wsadmins", "-allowany"));
+        assertPrinted("", cli.getOut(), "Set to allow any WS admin");
+        
+        // check that the list command shows a warning when allow any is on
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS,
+                cli.execute("wsadmins", "-list"));
+        assertPrinted("", cli.getOut(), "ANY CERTIFICATE ACCEPTED FOR WS ADMINISTRATORS");
+    
+        // Test turning off allowing any WS admin
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS,
+                cli.execute("wsadmins", "-allowany", "false"));
+        assertPrinted("", cli.getOut(), "Set to not allow any WS admin");
+        
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS,
+                cli.execute("wsadmins", "-list"));
+        assertNotPrinted("", cli.getOut(), "ANY CERTIFICATE ACCEPTED FOR WS ADMINISTRATORS");
     }
     
     /**

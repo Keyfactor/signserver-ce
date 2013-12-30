@@ -540,13 +540,35 @@ public class AdministratorsFrame extends javax.swing.JFrame {
         
         try {
             if (checked) {
-                SignServerAdminGUIApplication.getAdminWS()
-                    .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
+                // show confirmation
+                final int res =
+                        JOptionPane.showConfirmDialog(this,
+                                "About to change to allow any administrator with a valid certificate even if they are not listed.",
+                                "Allow any administrator", JOptionPane.OK_CANCEL_OPTION,
+                                JOptionPane.QUESTION_MESSAGE);
+
+                if (res == JOptionPane.OK_OPTION) {
+                    SignServerAdminGUIApplication.getAdminWS()
+                        .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
                                    "ALLOWANYWSADMIN", Boolean.TRUE.toString());
+                } else {
+                    allowAnyCheckbox.setSelected(false);
+                }
             } else {
-                SignServerAdminGUIApplication.getAdminWS()
-                    .removeGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
-                                    "ALLOWANYWSADMIN");
+                final int res =
+                        JOptionPane.showConfirmDialog(this,
+                        "About to change to only allow listed administrators.\n"
+                        +"First make sure you are listed as an Administrator otherwise you will be logged out without the ability to login except from command line interface.",
+                        "Allow only listed administrators", JOptionPane.OK_CANCEL_OPTION,
+                        JOptionPane.QUESTION_MESSAGE);
+                
+                if (res == JOptionPane.OK_OPTION) {
+                    SignServerAdminGUIApplication.getAdminWS()
+                        .removeGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
+                                        "ALLOWANYWSADMIN");
+                } else {
+                    allowAnyCheckbox.setSelected(true);
+                }
             }
         } catch (AdminNotAuthorizedException_Exception ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage(),

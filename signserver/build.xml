@@ -586,6 +586,7 @@ Configuring EAR...
             <classpath>
                 <pathelement path="${basedir}/lib/${systemtest.jar}"/>
                 <pathelement path="${basedir}/lib/ext/ext/junit-4.11.jar"/>
+                <path path="${systemtest.path}"/>
             </classpath>
         </junit>
     </target>
@@ -605,6 +606,25 @@ Configuring EAR...
     <target name="systemtest:validationws" description="Run system tests for ValidationWS">
         <antcall target="systemtest:jar">
             <param name="systemtest.jar" value="SignServer-Test-ValidationWS-tests.jar"/>
+        </antcall>
+    </target>
+    
+    <target name="-set-systemtest-classpath">
+        <property name="systemtest.path" value="${basedir}/tmp/conf:${basedir}/conf:${env.APPSRV_HOME}/client/jbossall-client.jar:conf:${env.APPSRV_HOME}/lib/appserv-rt.jar"/>
+    </target>
+    
+    <target name="systemtest:p11" description="Run system tests for P11" depends="-set-systemtest-classpath">
+        <antcall target="systemtest:jar">
+            <param name="systemtest.jar" value="SignServer-Test-P11-tests.jar"/>
+            <param name="systemtest.path" value="${systemtest.path}"/>
+        </antcall>
+    </target>
+    
+    <target name="systemtest:system" description="Run system tests for system" depends="-set-systemtest-classpath">
+        <echo>${systemtest.path}</echo>
+        <antcall target="systemtest:jar">
+            <param name="systemtest.jar" value="SignServer-Test-System-tests.jar"/>
+            <param name="systemtest.path" value="${systemtest.path}"/>
         </antcall>
     </target>
    

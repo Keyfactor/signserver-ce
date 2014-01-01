@@ -22,6 +22,27 @@
         <mkdir dir="../../bin/junit/reports" />
     </target>
     
+    <target name="dist-module" depends="jar, compile-test">
+        <copy todir="../../lib/">
+            <fileset dir="../SignServer-Test-Utils/target/" includes="SignServer-Test-Utils.jar"/>
+        </copy>
+        <property name="dist.tests.jar" value="${dist.dir}/${application.title}-tests.jar"/>
+        <echo level="verbose">
+            application.title:      ${application.title}
+            dist.dir:               ${dist.dir}
+            dist.jar:               ${dist.jar}
+            build.test.classes.dir: ${build.test.classes.dir}
+            dist.tests.jar:         ${dist.tests.jar}
+        </echo>
+        <jar destfile="${dist.tests.jar}">
+            <zipfileset src="${dist.jar}"/>
+            <zipfileset dir="${build.test.classes.dir}" includes="**/*"/>
+        </jar>
+        <antcall target="-do-client-dist">
+            <param name="dist.jar" value="${dist.tests.jar}"/>
+        </antcall>
+    </target>
+    
     <!--
 
     There exist several targets which are by default empty and which can be 

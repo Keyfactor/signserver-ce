@@ -595,6 +595,12 @@ Configuring EAR...
             <param name="systemtest.jar" value="SignServer-Test-AdminWS-tests.jar"/>
         </antcall>
     </target>
+    
+    <target name="systemtest:signserverws" description="Run system tests for SignServerWS">
+        <antcall target="systemtest:jar">
+            <param name="systemtest.jar" value="SignServer-Test-SignServerWS-tests.jar"/>
+        </antcall>
+    </target>
 
    
 </project>

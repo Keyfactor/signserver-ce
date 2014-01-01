@@ -12,11 +12,6 @@
  *************************************************************************/
 package org.signserver.test.validationws.v32;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Properties;
 import org.apache.log4j.Logger;
 
 /**
@@ -40,29 +35,6 @@ public class ValidationWSServiceTest extends org.signserver.test.validationws.v3
     public ValidationWSServiceTest(String testName) {
         super(testName);
         setupKeystores();
-    }
-
-    /** Setup keystores for SSL. **/
-    private void setupKeystores() {
-        Properties config = new Properties();
-        File confFile1 = new File("../../signserver_build.properties");
-        File confFile2 = new File("../../conf/signserver_build.properties");
-        try {
-            if (confFile1.exists()) {
-                config.load(new FileInputStream(confFile1));
-            } else {
-                config.load(new FileInputStream(confFile2));
-            }
-        } catch (FileNotFoundException ignored) {
-            LOG.debug("No signserver_build.properties");
-        } catch (IOException ex) {
-            LOG.error("Not using signserver_build.properties: " + ex.getMessage());
-        }
-        System.setProperty("javax.net.ssl.trustStore", "../../p12/truststore.jks");
-        System.setProperty("javax.net.ssl.trustStorePassword",
-                config.getProperty("java.trustpassword", "changeit"));
-        //System.setProperty("javax.net.ssl.keyStore", "../../p12/testadmin.jks");
-        //System.setProperty("javax.net.ssl.keyStorePassword", "foo123");
     }
 
     @Override

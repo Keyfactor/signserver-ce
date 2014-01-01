@@ -602,5 +602,10 @@ Configuring EAR...
         </antcall>
     </target>
 
+    <target name="systemtest:validationws" description="Run system tests for ValidationWS">
+        <antcall target="systemtest:jar">
+            <param name="systemtest.jar" value="SignServer-Test-ValidationWS-tests.jar"/>
+        </antcall>
+    </target>
    
 </project>

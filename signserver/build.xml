@@ -570,5 +570,31 @@ Configuring EAR...
         </antcall>
     </target>
 
+    
+    <target name="systemtest:jar" description="Run system tests from arbitrary test-jar">
+        <fail unless="systemtest.jar" message="Usage: bin/ant systemtest:jar -Dsystemtest.jar=SignServer-Test-AdminWS-tests.jar"/>
+        <echo>Running systemtests for JAR ${systemtest.jar}</echo>
+        <property name="junit.output.dir" location="${tmp}/tests"/>
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="on" haltonfailure="off">
+            <formatter type="xml"/>
+            <batchtest fork="yes" todir="${junit.output.dir}">
+                <resources> 
+                   <zipfileset src="${basedir}/lib/${systemtest.jar}" includes="**/*Test.class"/>
+                </resources> 
+            </batchtest>
+            <classpath>
+                <pathelement path="${basedir}/lib/${systemtest.jar}"/>
+                <pathelement path="${basedir}/lib/ext/ext/junit-4.11.jar"/>
+            </classpath>
+        </junit>
+    </target>
+
+    <target name="systemtest:adminws" description="Run system tests for AdminWS">
+        <antcall target="systemtest:jar">
+            <param name="systemtest.jar" value="SignServer-Test-AdminWS-tests.jar"/>
+        </antcall>
+    </target>
+
    
 </project>

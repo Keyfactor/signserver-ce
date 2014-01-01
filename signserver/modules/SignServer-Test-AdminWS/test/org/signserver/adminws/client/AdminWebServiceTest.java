@@ -45,6 +45,11 @@ public class AdminWebServiceTest extends TestCase {
     private static final AuthorizedClient ANY_AUTHORIZED_CLIENT
             = new AuthorizedClient();
 
+    private static final String[] CONF_FILES = {
+        "signserver_build.properties",
+        "conf/signserver_build.properties",
+    };
+    
     static {
         ANY_AUTHORIZED_CLIENT.setIssuerDN(
                 "CN=AdminCA4711, O=SignServer Testing, C=SE");
@@ -63,24 +68,45 @@ public class AdminWebServiceTest extends TestCase {
     /** Setup keystores for SSL. **/
     private void setupKeystores() {
         Properties config = new Properties();
-        File confFile1 = new File("../../signserver_build.properties");
-        File confFile2 = new File("../../conf/signserver_build.properties");
-        try {
-            if (confFile1.exists()) {
-                config.load(new FileInputStream(confFile1));
+        
+        final File home;
+        final File path1 = new File("../..");
+        final File path2 = new File(".");
+        if (new File(path1, "res/compile.properties").exists()) {
+            home = path1;
+        } else if (new File(path2, "res/compile.properties").exists()) {
+            home = path2;
             } else {
-                config.load(new FileInputStream(confFile2));
+            throw new RuntimeException("Unable to detect SignServer path");
             }
-        } catch (FileNotFoundException ignored) {
-            LOG.debug("No signserver_build.properties");
-        } catch (IOException ex) {
-            LOG.error("Not using signserver_build.properties: " + ex.getMessage());
+        
+        File confFile = null;
+        for (String file : CONF_FILES) {
+            final File f = new File(home, file);
+            if (f.exists()) {
+                confFile = f;
+                break;
+            }
         }
-        System.setProperty("javax.net.ssl.trustStore", "../../p12/truststore.jks");
-        System.setProperty("javax.net.ssl.trustStorePassword",
+        if (confFile == null) {
+            throw new RuntimeException("No signserver_build.properties found");
+        } else {
+        
+            try {
+                config.load(new FileInputStream(confFile));
+            } catch (FileNotFoundException ignored) {
+                LOG.debug("No signserver_build.properties");
+            } catch (IOException ex) {
+                LOG.error("Not using signserver_build.properties: " + ex.getMessage());
+            }
+            final String truststore = new File(home, "p12/truststore.jks").getAbsolutePath();
+            System.out.println("Truststore: " + truststore);
+            System.setProperty("javax.net.ssl.trustStore", truststore);
+            System.setProperty("javax.net.ssl.trustStorePassword",
                 config.getProperty("java.trustpassword", "changeit"));
-        //System.setProperty("javax.net.ssl.keyStore", "../../p12/testadmin.jks");
-        //System.setProperty("javax.net.ssl.keyStorePassword", "foo123");
+            //System.setProperty("javax.net.ssl.keyStore", "../../p12/testadmin.jks");
+            //System.setProperty("javax.net.ssl.keyStorePassword", "foo123");
+        }
     }
 
     @Override

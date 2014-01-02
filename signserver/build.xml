@@ -551,6 +551,7 @@ Configuring EAR...
             <param name="dist.jars" value="SignServer-AdminGUI.jar"/>
             <param name="dist.includes" value="
                 bin/signserver-gui,
+                bin/admingui.cmd,
                 conf/admingui.properties,
                 conf/admingui_default.properties,
                 conf/log4j.properties,

@@ -11,8 +11,6 @@
     <class>org.signserver.server.config.entities.WorkerConfigDataBean</class>
     <class>org.signserver.server.entities.KeyUsageCounter</class>
     <class>org.signserver.server.archive.olddbarchiver.entities.ArchiveDataBean</class>
-    <class>org.signserver.groupkeyservice.entities.EncKeyDataBean</class>
-    <class>org.signserver.groupkeyservice.entities.GroupKeyDataBean</class>
     <properties>
       <property name="hibernate.dialect" value="${hibernate.dialect}"/>
       <property name="hibernate.hbm2ddl.auto" value="update"/>

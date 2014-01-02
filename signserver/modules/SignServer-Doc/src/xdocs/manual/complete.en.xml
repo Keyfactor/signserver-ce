@@ -39,6 +39,11 @@ lookup the validation of a given certificate.
             </section>
 
             <section name="Changes from previous versions">
+                <subsection name="Changes between version 3.4 and 3.5">
+                    <ul>
+                        <li>Support for the group key framework has been discontinued</li>
+                    </ul>
+                </subsection>
                 <subsection name="Changes between version 3.3 and 3.4">
                     <ul>
 <!-- New major features -->
@@ -260,7 +265,6 @@ PKCS11 Crypto Token to connect to different PKCS11 implementations.
                     </tr><tr><td>Worker Id</td><td>Unique identifier of a worker, an integer larger than 0</td>
                     </tr><tr><td>Worker Name</td><td>A name used as a human readable synonym for a Worker Id</td>
                     </tr><tr><td>Validation Service </td><td>A Processable that checks if a certificate is valid or not. Have a Default Validation Service implementation that should work in most cases.<br/>A Validation Service should have one or more Validators configured.</td>
-                    </tr><tr><td>Group Key Service</td><td>A Processable that can be used to manage, generate and distribute group keys to a set of clients. The service support four types of calls, fetch group key (used by clients), pre-generate group keys, switch encryption key (key used to safely store the group keys in database) and remove group keys.  There exists a Default Group Key Service that should satisfy most use cases.</td>
                     </tr><tr><td>Certificate Validator (former Validator)</td><td>A Certificate Validator is responsible for checking the status of one or more issuer's certificates. This could be as an OCSP client or a CRL checker or just looking up the status in a database.</td>
                     </tr><tr><td>Document Validator</td><td>A Document Validator is validating a signed document by checking its signature and corresponding certificate(s) and returns the validation result.</td>
                     </tr><tr><td>Authorizer</td><td>An interface that enables developers to integrate the authorization parts with existing authorization systems of who is authorized to perform requests to a Processable.</td>
@@ -290,7 +294,7 @@ Implementation handling archiving of a worker's response and/or request by stori
 The SignServer is a framework designed to perform different kind of cryptographic operations for different applications.
                     </p>
                     <p>
-Since the 3.0 version there are three kind of processable services. Signers (used to sign or in other way  process requested data). Validation Services used to verify the validity of a certificate against a set of backed issuers. The validation service can be used to simply the integration of PKIs into existing applications. The the third processable service is a group key service framework used to manage and to distribute group keys for different applications, these keys can be both symmetric and asymmetric. In addition to processable services there also exists another concept called Timed Service (called just 'service' in 2.0 edition) which are plug-ins run at defined intervals performing maintenance or reporting routines.
+Since the 3.0 version there are three kind of processable services. Signers (used to sign or in other way  process requested data). Validation Services used to verify the validity of a certificate against a set of backed issuers. The validation service can be used to simply the integration of PKIs into existing applications. In addition to processable services there also exists another concept called Timed Service (called just 'service' in 2.0 edition) which are plug-ins run at defined intervals performing maintenance or reporting routines.
                     </p>
                     <p>
 The main way of communicating with the SignServer is through HTTP (web server) interface. There is also a web services (SOAP WS) interface available but that uses a special binary format for encoding the requests and responses.
@@ -323,8 +327,8 @@ Make sure all required softwares are installed:
                     <ul>
                         <li>Java 6: Oracle JDK 6 Update 10 or later*, OpenJDK 6 or<br/>
                             Java 7: OpenJDK 7**</li>
-                        <li>Application server: JBoss 5.1.0.GA***, JBoss EAP 5.1 or GlassFish Server Open Source Edition 2.1.1 or 3.1.2</li>
-                        <li>Database: HypersonicSQL (bundled with JBoss), MySQL 5.1, Oracle Database 10/11g or without****</li>
+                        <li>Application server: JBoss 5.1.0.GA***, JBoss EAP 5.1, JBoss AS 7.1.1, JBoss EAP 6.1 or GlassFish Server Open Source Edition 2.1.1 or 3.1.2</li>
+                        <li>Database: MySQL 5.1, HypersonicSQL (bundled with JBoss 5), Oracle Database 10/11g or without****</li>
                         <li>Build tool: Apache Ant 1.8.0 or later</li>
                     </ul>
                     <p>
@@ -392,9 +396,115 @@ create tables during startup of SignServer but if the database user does not
 have table create permissions or if you run on GlassFish the tables must be
 created manually. See doc/sql-scripts/create-tables-signserver34-*.sql.
                     </p>
-                    <p>
+                    <subsubsection name="Configure database driver for JBoss 5 or GlassFish">
+                        <p>
 Copy the driver for your database to the application server lib folder.
-                    </p>
+                        </p>    
+                    </subsubsection>
+                    <subsubsection name="Configure database driver for JBoss AS 7 or JBoss EAP 6">
+<p>
+In JBoss 7/EAP6 it is not enough to just drop the JAR archive with a database JDBC driver into the deployments directory. Instead you will have to perform the following steps (for MySQL):
+<ol>
+<li>Create the necessary directories (relative to JBoss 7 base directory):
+<br/>
+On JBoss 7.1.1 or EAP 6.0:
+<pre>
+mkdir -p modules/com/mysql/main/
+</pre>
+On JBoss 7.2 or EAP 6.1:
+<pre>
+mkdir -p modules/system/layers/base/com/mysql/main/
+</pre>
+Or for MariaDB, mariadb-java-client-1.1.2.jar:
+<pre>
+mkdir -p modules/org/mariadb/main/
+</pre>
+On JBoss 7.2 or EAP 6.1:
+<pre>
+mkdir -p modules/system/layers/base/org/mariadb/main/
+</pre>
+</li>
+<li>Place the mysql.jar or mariadb.jar file in the directory you just created.</li>
+<li>Create, in the created directory, the JDBC module configuration file module.xml with the following contents (replace mysql.jar with the full name of your jar file for example mysql-connector-java-5.1.18-bin.jar):
+<pre>
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;module xmlns=&quot;urn:jboss:module:1.0&quot; name=&quot;com.mysql&quot;&gt;
+  &lt;resources&gt;
+    &lt;resource-root path=&quot;mysql.jar&quot;/&gt;
+  &lt;/resources&gt;
+  &lt;dependencies&gt;
+    &lt;module name=&quot;javax.api&quot;/&gt;
+    &lt;module name=&quot;javax.transaction.api&quot;/&gt;
+  &lt;/dependencies&gt;
+&lt;/module&gt;
+<!-- This is the original of above XML text.
+<?xml version="1.0" encoding="UTF-8"?>
+<module xmlns="urn:jboss:module:1.0" name="com.mysql">
+  <resources>
+    <resource-root path="mysql.jar"/>
+  </resources>
+  <dependencies>
+    <module name="javax.api"/>
+    <module name="javax.transaction.api"/>
+  </dependencies>
+</module>
+-->
+</pre>
+Or for MariaDB, mariadb-java-client-1.1.2.jar:
+<pre>
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;module xmlns=&quot;urn:jboss:module:1.0&quot; name=&quot;org.mariadb&quot;&gt;
+  &lt;resources&gt;
+    &lt;resource-root path=&quot;mariadb-java-client-1.1.2.jar&quot;/&gt;
+  &lt;/resources&gt;
+  &lt;dependencies&gt;
+    &lt;module name=&quot;javax.api&quot;/&gt;
+    &lt;module name=&quot;javax.transaction.api&quot;/&gt;
+  &lt;/dependencies&gt;
+&lt;/module&gt;
+</pre>
+
+</li>
+<li>Register the driver by running the following two commands in the JBoss 7 CLI administration tool:
+<pre>
+/subsystem=datasources/jdbc-driver=com.mysql.jdbc.Driver:add(driver-name=com.mysql.jdbc.Driver,driver-module-name=com.mysql,driver-xa-datasource-class-name=com.mysql.jdbc.jdbc.jdbc2.optional.MysqlXADataSource)
+:reload
+</pre>
+Or for MariaDB, mariadb-java-client-1.1.2.jar:
+<pre>
+/subsystem=datasources/jdbc-driver=org.mariadb.jdbc.Driver:add(driver-name=org.mariadb.jdbc.Driver,driver-module-name=org.mariadb,driver-xa-datasource-class-name=org.mariadb.jdbc.MySQLDataSource)
+:reload
+</pre>
+</li>
+</ol>
+</p>
+<p>For PostgreSQL you would use the following values instead:
+<pre>
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;module xmlns=&quot;urn:jboss:module:1.0&quot; name=&quot;org.postgresql&quot;&gt;
+  &lt;resources&gt;
+    &lt;resource-root path=&quot;postgresql-9.1-903.jdbc4.jar&quot;/&gt;
+  &lt;/resources&gt;
+  &lt;dependencies&gt;
+    &lt;module name=&quot;javax.api&quot;/&gt;
+    &lt;module name=&quot;javax.transaction.api&quot;/&gt;
+  &lt;/dependencies&gt;
+&lt;/module&gt;
+</pre>
+<pre>
+/subsystem=datasources/jdbc-driver=org.postgresql.Driver:add(driver-name=org.postgresql.Driver,driver-module-name=org.postgresql,driver-xa-datasource-class-name=org.postgresql.xa.PGXADataSource)
+:reload
+</pre>
+</p>
+                    </subsubsection>
+             
+                    <subsubsection name="Configure data source for JBoss 5">
+                        <p>
+This is done automagically by the SignServer build script later during "ant deploy".
+                        </p>
+                    </subsubsection>
+                    
+                    <subsubsection name="Configure data source for GlassFish">
                     <p>
 For GlassFish also configure a connection pool and JNDI resource:
                     </p>
@@ -419,6 +529,18 @@ For GlassFish also configure a connection pool and JNDI resource:
                          </li>
                         <ul></ul>
                     </ol>
+                    </subsubsection>
+                    
+                    <subsubsection name="Configure data source for JBoss AS 7 and JBoss EAP 6">
+                        <p>
+The examples are for installing a MariaDB datasource using the jboss-cli with the driver installed as described above. </p>
+<p>A normal datasource:</p>
+<!-- TODO: Add example for MySQL -->
+<source>
+data-source add --name=signserverds --driver-name="org.mariadb.jdbc.Driver" --connection-url="jdbc:mysql://127.0.0.1:3306/signserver" --jndi-name="java:/SignServerDS" --use-ccm=true --driver-class="org.mariadb.jdbc.Driver" --user-name="signserver" --password="signserver" --validate-on-match=true --background-validation=false --prepared-statements-cache-size=50 --share-prepared-statements=true --min-pool-size=5 --max-pool-size=150 --pool-prefill=true --transaction-isolation=TRANSACTION_READ_COMMITTED --check-valid-connection-sql="select 1;"
+</source>
+                    </subsubsection>
+                    
                 </subsection>
 
                 <subsection name="5. Configure web server keystores">
@@ -1164,23 +1286,6 @@ Used to extract all archived data requested from a client by specified it's cert
                         <p>
 All data is stored as separate files with the archive id as file title and the file
 extension depending on the type of item.
-                        </p>
-
-                        <p><b>Group Key Service Related</b></p>
-                        <p>
-These commands only applies for group key services.
-                        </p>
-                        <p>
-<b>groupkeyservice pregeneratekeys:</b>
-Command used to pregenerate a given number of group keys for a given group key service and stores them unassigned encrypted in the database. This commands can be used to let the cluster work on CPU insensitive key generation during low business hours.
-                        </p>
-                        <p>
-<b>groupkeyservice removegroupkeys:</b>
-Command used to remove group keys not used any more. A time range of when created, first used and last fetched can be used as criteria.
-                        </p>
-                        <p>
-<b>groupkeyservice switchenckey:</b>
-Command used manually switch the encryption key used to secure the group keys in database. Usually is the encryption key switched automatically but this command can be used to override this default behaviour.
                         </p>
 
                         <p><b>Administrators Related</b></p>
@@ -4256,51 +4361,6 @@ The following return values is used:
 
                 </subsection>
 
-                <section name="SignServer Group Key Service Framework">
-                    <subsubsection name="Overview">
-                        <p>
-The group key service framework is used to manage and distribute group keys to clients in an organisation. The keys can be generated on demand or pre-generated at times when the system is not utilized a lot. The group keys can be both symmetric and asymmetric but one service can only distribute one type of key. If several kinds of keys are required should multiple services be set up within the same server.
-                        </p>
-                        <p>
-The group keys are stored encrypted in database. The encryption key can be configured to be switched automatically after a defined number of encryptions to avoid overexposure of the cryptographic data. It is also possible to switch the encryption key manually.
-                        </p>
-                        <p>
-The Framework requires an ExtendedCryptoToken, the difference are that the extended token have additional support for key export and symmetric key operations.
-                        </p>
-                        <p>
-The Group Key Service have CLI commands for administration of the service such as pre-generate keys, manual switch of encryption key and removal of group keys.
-                        </p>
-                        <p>
-The communication to the group key service is mainly done through the main Web Service interface. But other ways of communicating with the server might come in the future.
-                        </p>
-                        <p>
-Authorization to group keys is very important and therefore should a special plug-in be developed  that looks up which clients that should have access to a specific group key which fit into the organisation needs. See the authorization chapter of how to develop a customized authorization plug-in.
-                        </p>
-                        <p>
-The basic configuration of a group key service is very similar to that of a validation service. Two entries is required in the global configuration. The first is the class path for the Worker to GroupKeyService wrapper, then a class path reference to the extended crypto token used with the service. If not the default group key service should be used it is possible to define a custom one by specifying its class path in the TYPE worker property.
-                        </p>
-                    </subsubsection>
-                    <subsubsection name="Available Properties">
-                        <p>
-<b>USEPREGENERATION</b> = Setting defining of keys should be pre-generated or generated on the fly when needed. If the pool of pre-generated keys gets empty will new keys always be generated automatically. (Optional, default is true)
-                        </p>
-                        <p>
-<b>ENCKEYALG</b> =  Encryption algorithm used to encrypt the group keys stored in database. (Optional, default is "AES")
-                        </p>
-                        <p>
-<b>ENCKEYSPEC</b> = Specification of the encryption key. (Optional, default is "256")
-                        </p>
-                        <p>
-<b>GROUPKEYALG</b> =  Defines the type of group keys that this service should generate (Optional, default is "AES")
-                        </p>
-                        <p>
-<b>GROUPKEYSPEC</b> = Specification of the generated group keys. (Optional, default is "256")
-                        </p>
-                        <p>
-<b>KEYSWITCHTHRESHOLD</b> = Setting defining the number of group keys that should be  encrypted by the same encryption key before it's switched. (Optional, default is 100000)
-                        </p>
-                    </subsubsection>
-                </section>
             </section>
             
             <section name="Timed Services">
@@ -5257,90 +5317,6 @@ Just as the other worker plug-ins have the validator service a base class taking
 ValidateResponse validate(ValidateRequest validationRequest) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException;
                         </pre>
                     </subsubsection>
-
-                    <subsubsection name="IGroupKeyService Interface">
-                        <p>
-To customize a group key service is slightly more work. Then need five methods be implemented: 'fetchGroupKey', 'pregenerateGroupKeys', 'swithEncryptionKey', 'removeGroupKeys' and 'getStatus'. The default implementation stores the group keys in database with a reference to the encryption key used, the encryption key is stored in the extended key store. See the JavaDoc and the code for the default group key service for more details of implementing a customized one.
-                        </p>
-                        <pre>
-/**
- * Main method of a Group Key Service responsible for fetching keys from
- * the database.
- *
- * @param fetchKeyRequest
- * @return a FetchKeyReponse
- * @throws IllegalRequestException if data in the request didn't conform with the specification.
- * @throws CryptoTokenOfflineException if the crypto token isn't online.
- * @throws SignServerException for general failure exception during key generation.
- * @see org.signserver.groupkeyservice.common.FetchKeyRequest
- * @see org.signserver.groupkeyservice.common.FetchKeyResponse
- */
-FetchKeyResponse fetchGroupKey(FetchKeyRequest fetchKeyRequest) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException;
-
-/**
- * Method that instructs the group key service to pregenerate keys.
- * This method is called at periods when the server is having
- * a low load. This option is optional to implement, if the
- * service doesn't support this method it should return null.
- *
- *
- * @param pregenerateKeysRequest request data
- * @return a response containing number of keys generated, etc
- * @throws IllegalRequestException if requests contain unsupported data.
- * @throws CryptoTokenOfflineException if the crypto token isn't online.
- * @throws SignServerException for general failure exception during key generation.
- * @see org.signserver.groupkeyservice.common.PregenerateKeysRequest
- * @see org.signserver.groupkeyservice.common.PregenerateKeysResponse
- */
-PregenerateKeysResponse pregenerateGroupKeys(PregenerateKeysRequest pregenerateKeysRequest) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException;
-
-
-/**
- * Method instructing the key service to switch the encryption key for
- * storing the group keys in the database. This to ensure that one encryption
- * key isn't exposed through to much data.
- *
- * This method is optional for the implementing service to implement, if
- * it's not implemented it should return null.
- *
- * @param switchEncKeyRequest request data.
- * @return a response containing the result of the operation such as new key index.
- * @throws IllegalRequestException if requests contain unsupported data.
- * @throws CryptoTokenOfflineException if the crypto token isn't online.
- * @throws SignServerException  for general failure exception during key generation.
- * @see org.signserver.groupkeyservice.common.SwitchEncKeyRequest
- * @see org.signserver.groupkeyservice.common.SwitchEncKeyResponse
- */
-SwitchEncKeyResponse switchEncryptionKey(SwitchEncKeyRequest switchEncKeyRequest) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException;
-
-/**
- * Method instructing the key service to remove old group keys not used anymore
- * it up to the caller to check that the implementing service supports the type
- * of IRemoveGroupKeyRequest used. The request should contain data specifying which
- * keys that should be removed.
- *
- * This method is optional for the implementing service to implement, if
- * it's not implemented it should return null.
- *
- * @param removeGroupKeyRequests request data.
- * @return a response containing the result of the operation such as number of keys actually removed.
- * @throws IllegalRequestException if requests contain unsupported data.
- * @throws CryptoTokenOfflineException if the crypto token isn't online.
- * @throws SignServerException  for general failure exception during key generation.
- * @see org.signserver.groupkeyservice.common.RemoveGroupKeyResponse
- * @see org.signserver.groupkeyservice.common.IRemoveGroupKeyRequest
- */
-RemoveGroupKeyResponse removeGroupKeys(IRemoveGroupKeyRequest removeGroupKeyRequests) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException;
-
-
-/**
- * Should return the actual status of the worker, status could be if
- * the signer is activated or not, or equivalent for a service.
- * @return a WorkerStatus object.
- */
-public WorkerStatus getStatus();
-                        </pre>
-                    </subsubsection>
                 </subsection>
 
                 <subsection name="Implementing Crypto Tokens">
@@ -5717,7 +5693,7 @@ has tests by executing the command from their project directory.
 If SignServer is configured to run without database some tests needs to be excluded by running like this:    
                     </p>
                     <source>
-bin/ant test:run -Dexcludes="**/ArchivingCLITest*,**/GroupKeyServiceCLITest*,**/Base64DatabaseArchiverTest*,**/OldDatabaseArchiverTest*,,**/GroupKeyServiceTest*,**/ArchiveTest*,**/AuditLogCLITest*,**/DatabaseCLITest*,**/VerifyLogCommandTest*"
+bin/ant test:run -Dexcludes="**/ArchivingCLITest*,**/Base64DatabaseArchiverTest*,**/OldDatabaseArchiverTest*,**/ArchiveTest*,**/AuditLogCLITest*,**/DatabaseCLITest*,**/VerifyLogCommandTest*"
                     </source>
                     
                     <subsubsection name="System tests with HSM">
@@ -6342,43 +6318,8 @@ REQUEST_FULLURL: http://localhost:8080/signserver/process?null; LOG_TIME: 135062
  
                 <subsection name="CESeCore Security Events Logger">
                     <p>
-An example configuration for CESeCore is provided in <code>conf/cesecore.properties.sample</code>.
 The default logging implementation, <code>org.signserver.server.log.SignServerLog4jDevice</code> uses Log4J and a similar logging format as the old SystemLogger.
                     </p>
-                    <subsubsection name="Signed log">
-                        <p>
-To enable signed audit logs configure conf/databaseprotection.properties (see conf/databaseprotection.properties.sample). And set the following which enables signing of the AuditRecordData table as well as verification of the log entries queried using for instance the CLI or GUI:
-                        </p>
-                        <source>
-databaseprotection.enablesign.AuditRecordData = true
-databaseprotection.enableverify.AuditRecordData = true
-                        </source>
-                        <p>
-Configure a key-pair to use for signing and verification of the log with something similar to this:
-                        </p>
-                        <source>
-databaseprotection.keyid = 400
-databaseprotection.keyid.0 = 400
-databaseprotection.keylabel.0 = dbProtKey
-databaseprotection.classname.0 = org.cesecore.keys.token.PKCS11CryptoToken
-databaseprotection.properties.0 = sharedLibrary=/opt/utimaco/Software/PKCS11/lib/Linux-x86-64/libcs2_pkcs11.so, slot=1
-databaseprotection.data.0 =
-databaseprotection.tokenpin.0 = userpin1
-databaseprotection.version.0 = 2
-                        </source>
-                        
-                        <p>
-Note: each SignServer node writing to the audit log needs to use different node IDs. By default the hostname is used. If multiple instances 
-are running from the same host set the node id manually in conf/cesecore.properties as cluster.nodeid.
-                        </p>
-                        <p>
-If enableverify is set to true, all individual log entries that are displayed 
-using CLI, GUI or over web services are verified at the server side and in case 
-of inconsistent signatures an error message is displayed. This verification will 
-not discover missing log entries. To verify the complete log for all nodes as 
-well as detect gaps in the sequence numbering, run the <a href="complete.en.html#Database%20CLI">Database CLI</a>.
-                        </p>
-                    </subsubsection>
                     
                     <subsubsection name="AuditRecordData table">
                         <p>
@@ -6689,7 +6630,7 @@ $ OPTIONAL_CLASSPATH=/usr/share/java/mysql-connector-java.jar bin/signserver-db 
 Since SignServer 3.2.3 it is sometimes possible to operate SignServer without a database management system and instead rely on SignServer to manage persistence using local files.
                 </p>
                 <p>
-Notice that all features of SignServer is not supported without having a database and that the performance and scalability characteristics might be different. Currently archiving to database and the group key service are not supported.
+Notice that all features of SignServer is not supported without having a database and that the performance and scalability characteristics might be different. Currently archiving to database is not supported.
                 </p>
                 <p>
 To increase throughput it is recommended to disable the key usage counter as every request would otherwise have to lock and update that file. See the property DISABLEKEYUSAGECOUNTER in the section <a href="complete.en.html#Limiting%20the%20number%20of%20signatures">Limiting the number of signatures</a>.

@@ -21,15 +21,6 @@ import java.util.HashMap;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.signserver.groupkeyservice.common.DocumentIDRemoveGroupKeyRequest;
-import org.signserver.groupkeyservice.common.FetchKeyRequest;
-import org.signserver.groupkeyservice.common.FetchKeyResponse;
-import org.signserver.groupkeyservice.common.PregenerateKeysRequest;
-import org.signserver.groupkeyservice.common.PregenerateKeysResponse;
-import org.signserver.groupkeyservice.common.RemoveGroupKeyResponse;
-import org.signserver.groupkeyservice.common.SwitchEncKeyRequest;
-import org.signserver.groupkeyservice.common.SwitchEncKeyResponse;
-import org.signserver.groupkeyservice.common.TimeRemoveGroupKeyRequest;
 import org.signserver.validationservice.common.ValidateRequest;
 import org.signserver.validationservice.common.ValidateResponse;
 
@@ -94,21 +85,12 @@ public class RequestAndResponseManager {
         AVAILABLE_REQUEST_TYPES.put(REQUESTTYPE_GENERICSIGNREQUEST, GenericSignRequest.class.getName());
         AVAILABLE_REQUEST_TYPES.put(REQUESTTYPE_MRTDSIGNREQUEST, MRTDSignRequest.class.getName());
         AVAILABLE_REQUEST_TYPES.put(REQUESTTYPE_SODSIGNREQUEST, SODSignRequest.class.getName());
-        AVAILABLE_REQUEST_TYPES.put(REQUESTTYPE_GKS_FETCHKEY, FetchKeyRequest.class.getName());
-        AVAILABLE_REQUEST_TYPES.put(REQUESTTYPE_GKS_IDREMKEYS, DocumentIDRemoveGroupKeyRequest.class.getName());
-        AVAILABLE_REQUEST_TYPES.put(REQUESTTYPE_GKS_PREGENKEYS, PregenerateKeysRequest.class.getName());
-        AVAILABLE_REQUEST_TYPES.put(REQUESTTYPE_GKS_SWITCHENCKEY, SwitchEncKeyRequest.class.getName());
-        AVAILABLE_REQUEST_TYPES.put(REQUESTTYPE_GKS_TIMEREMKEYS, TimeRemoveGroupKeyRequest.class.getName());
         AVAILABLE_REQUEST_TYPES.put(REQUESTTYPE_VALIDATE, ValidateRequest.class.getName());
         AVAILABLE_REQUEST_TYPES.put(REQUESTTYPE_GENERICVALIDATION, GenericValidationRequest.class.getName());
 
         AVAILABLE_RESPONSE_TYPES.put(RESPONSETYPE_GENERICSIGNRESPONSE, GenericSignResponse.class.getName());
         AVAILABLE_RESPONSE_TYPES.put(RESPONSETYPE_MRTDSIGNRESPONSE, MRTDSignResponse.class.getName());
         AVAILABLE_RESPONSE_TYPES.put(RESPONSETYPE_SODSIGNRESPONSE, SODSignResponse.class.getName());
-        AVAILABLE_RESPONSE_TYPES.put(RESPONSETYPE_GKS_FETCHKEY, FetchKeyResponse.class.getName());
-        AVAILABLE_RESPONSE_TYPES.put(RESPONSETYPE_GKS_PREGENKEYS, PregenerateKeysResponse.class.getName());
-        AVAILABLE_RESPONSE_TYPES.put(RESPONSETYPE_GKS_REMOVEKEY, RemoveGroupKeyResponse.class.getName());
-        AVAILABLE_RESPONSE_TYPES.put(RESPONSETYPE_GKS_SWITCHENCKEY, SwitchEncKeyResponse.class.getName());
         AVAILABLE_RESPONSE_TYPES.put(RESPONSETYPE_VALIDATE, ValidateResponse.class.getName());
         AVAILABLE_RESPONSE_TYPES.put(RESPONSETYPE_GENERICVALIDATION, GenericValidationResponse.class.getName());
 

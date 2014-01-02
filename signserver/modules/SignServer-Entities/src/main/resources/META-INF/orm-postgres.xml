@@ -3,13 +3,5 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm orm_1_0.xsd"
   version="1.0">
-  
-    <entity class="org.signserver.groupkeyservice.entities.GroupKeyDataBean">
-     <attributes>
-        <basic name="encryptedData">
-          <column column-definition="BYTEA"/>
-        </basic>
-      </attributes>
-    </entity>
-  
+
 </entity-mappings>

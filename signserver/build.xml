@@ -83,6 +83,10 @@
     <!-- Properties with paths to all module projects -->
     <property file="${res}/modules-project.properties"/>
     
+    <condition property="web.admingui.dist.conditionenabled">
+        <istrue value="${web.admingui.dist.enabled}"/>
+    </condition>
+    
     <import file="${modules}/modules.xml" optional="true"/> 
     <import file="${modules}/compile.xml" optional="true"/>
     
@@ -191,7 +195,7 @@ healthcheck.maintenancefile         = ${healthcheck.maintenancefile}
         <fail message="SignServer needs to be built first. Run 'ant build'." unless="signserver-ejb.jar.available"/>
     </target>
     
-    <target name="compose-ear" description="Compose the configured EAR file" depends="-check-built, display-properties, -init-configure, -process-modules">
+    <target name="compose-ear" description="Compose the configured EAR file" depends="-check-built, display-properties, -init-configure, -process-modules, -create-admingui-dist">
         <!-- Build the ear file from the signserver.ear folder -->
         <ear destfile="${ear.dist.file}" appxml="${signserver.ear.dir}/META-INF/application.xml" duplicate="fail">
             <fileset dir="${signserver.ear.dir}">
@@ -567,6 +571,15 @@ Configuring EAR...
         <antcall target="dist:admingui"/>
         <antcall target="dist:zip">
             <param name="dist.zipdest" value="${lib}/signserver-admingui-bin.zip"/>
+            <param name="dist.zipprefix" value="signserver"/>
+        </antcall>
+    </target>
+
+    <target name="-create-admingui-dist" if="web.admingui.dist.conditionenabled">
+        <delete dir="${tmp}/dist"/> <!-- Only include the admingui in the zip file -->
+        <antcall target="dist:admingui"/>
+        <antcall target="dist:zip">
+            <param name="dist.zipdest" value="${web.admingui.dist.file}"/>
             <param name="dist.zipprefix" value="signserver"/>
         </antcall>
     </target>

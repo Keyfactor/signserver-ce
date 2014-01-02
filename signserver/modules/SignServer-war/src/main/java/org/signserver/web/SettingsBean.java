@@ -12,6 +12,8 @@
  *************************************************************************/
 package org.signserver.web;
 
+import java.io.File;
+import org.apache.log4j.Logger;
 import org.signserver.common.CompileTimeSettings;
 
 /**
@@ -22,10 +24,15 @@ import org.signserver.common.CompileTimeSettings;
  */
 public class SettingsBean {
     
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(SettingsBean.class);
+    
     /** Key in signservercompile.properties. */
     private static final String WEBDOC_ENABLED = "webdoc.enabled";
+    private static final String WEB_ADMINGUI_DIST_ENABLED = "web.admingui.dist.enabled";
+    private static final String WEB_ADMINGUI_DIST_FILE = "web.admingui.dist.file";
     
-    private CompileTimeSettings settings = CompileTimeSettings.getInstance();
+    private final CompileTimeSettings settings = CompileTimeSettings.getInstance();
     
     /**
      * @return If the web documentation is enabled. 
@@ -33,5 +40,37 @@ public class SettingsBean {
     public boolean isWebDocEnabled() {
         final String enabled = settings.getProperty(WEBDOC_ENABLED);
         return enabled != null && Boolean.parseBoolean(enabled);
+    }
+    
+    public boolean isWebAdminGUIDistEnabled() {
+        final String enabled = settings.getProperty(WEB_ADMINGUI_DIST_ENABLED);
+        return enabled != null && Boolean.parseBoolean(enabled);
+    }
+    
+    public File getAdminGUIDistFile() {
+        final String fileName = settings.getProperty(WEB_ADMINGUI_DIST_FILE);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("AdminGUI dist file: " + fileName);
+        }
+        return fileName == null ? null : new File(fileName);
+    }
+    
+    public boolean isWebAdminGUIDistAvailable() {
+        final boolean result;
+        if (!isWebAdminGUIDistEnabled()) {
+            result = false;
+        } else {
+            final File file = getAdminGUIDistFile();
+            if (file == null) {
+                result = false;
+            } else {
+                result = file.exists() && file.isFile();
+            }
+        }
+        return result;
+    }
+    
+    public String getWebAdminGUIDistSize() {
+        return String.format("%.2f MB", getAdminGUIDistFile().length() / 1000000f);
     }
 }

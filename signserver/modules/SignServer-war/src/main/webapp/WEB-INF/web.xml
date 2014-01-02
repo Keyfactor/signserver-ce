@@ -6,8 +6,8 @@
         <servlet-class>org.signserver.web.GenericProcessServlet</servlet-class>
     </servlet>
     <servlet>
-    	<servlet-name>WorkerServlet</servlet-name>
-    	<servlet-class>org.signserver.web.WorkerServlet</servlet-class>
+        <servlet-name>WorkerServlet</servlet-name>
+        <servlet-class>org.signserver.web.WorkerServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>StartServiceServlet</servlet-name>
@@ -31,6 +31,10 @@
         <servlet-name>Validation31Dispatcher</servlet-name>
         <servlet-class>org.signserver.web.Validation31Dispatcher</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>AdminGUIDistServlet</servlet-name>
+        <servlet-class>org.signserver.web.AdminGUIDistServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>WS31Dispatcher</servlet-name>
         <url-pattern>/signserverws/signserverws</url-pattern>
@@ -52,8 +56,8 @@
         <url-pattern>/process</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-    	<servlet-name>WorkerServlet</servlet-name>
-    	<url-pattern>/worker/*</url-pattern>
+        <servlet-name>WorkerServlet</servlet-name>
+        <url-pattern>/worker/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>StartServiceServlet</servlet-name>
@@ -67,7 +71,6 @@
         <servlet-name>SODProcessServlet</servlet-name>
         <url-pattern>/sod</url-pattern>
     </servlet-mapping>
-    
     <!-- block HTTP methods other than GET and POST -->
     <security-constraint>
         <web-resource-collection>
@@ -78,9 +81,12 @@
             <http-method>OPTIONS</http-method>
             <http-method>TRACE</http-method>
         </web-resource-collection>
-        <auth-constraint />
+        <auth-constraint/>
     </security-constraint>
-
+    <servlet-mapping>
+        <servlet-name>AdminGUIDistServlet</servlet-name>
+        <url-pattern>/admingui-dist/signserver-admingui.zip</url-pattern>
+    </servlet-mapping>
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
@@ -104,5 +110,4 @@
         <error-code>503</error-code>
         <location>/errorpages/error503.jsp</location>
     </error-page>
-    
 </web-app>

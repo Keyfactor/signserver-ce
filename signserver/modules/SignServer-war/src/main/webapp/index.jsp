@@ -18,6 +18,9 @@
                 <c:if test="${settings.webDocEnabled}">
                     <li><a href="doc/">Documentation</a></li>
                 </c:if>
+                <c:if test="${settings.webAdminGUIDistEnabled}">
+                    <li><a href="admingui-dist/">AdminGUI Download</a></li>
+                </c:if>
             </ul>
 
             <h4>Online Resources</h4>

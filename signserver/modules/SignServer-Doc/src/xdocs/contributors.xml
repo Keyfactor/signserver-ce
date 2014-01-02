@@ -17,6 +17,9 @@ The normal process for contribution patches is:
 </ul>
 Contributors are asked if they want to have their name and optional contact information listed on the contributors page (this page).
 </p>
+    <p>
+See also doc/DEVELOP.txt for an introduction to setting up your IDE, running tests, writing documentation and information about our coding guidelines.
+    </p>
 </section>
 
 <section name="Contributors">

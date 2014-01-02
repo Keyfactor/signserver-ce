@@ -1,9 +1,8 @@
 #
 # $Id$
 #
-# Build configuration of SignServer. Modify at will before building.
-# Note: You might have to run "bin/ant clean" before building for some changes 
-# to take effect.
+# Build configuration of SignServer. Modify at will before building and 
+# deploying.
 # 
 
 
@@ -11,8 +10,9 @@
 
 # Application server home folder
 # Default: $APPSRV_HOME or $JBOSS_HOME
-#appserver.home=${basedir}/../../jboss-5.1.0
-#appserver.home=/usr/local/SUNWappserver/
+#appserver.home=/opt/jboss-as-7.1.1.Final
+#appserver.home=/opt/jboss-eap-6.1
+#appserver.home=/opt/glassfish3/glassfish/
 #appserver.home=${env.APPSRV_HOME}
 
 # Application server type
@@ -143,9 +143,7 @@ j2ee.web-nohttps=true
 #database.password=signserver
 
 
-# -------------- JAX-WS Web Service Configuration ------------------------------
-#
-# JAX-WS Web Service requires JAX-WS 2.1 to build.
+# -------------- Web Services Configuration ------------------------------------
 #
 # Set to false to disable Main WebService deployment. 
 # If set to false you must also disable the validationclient and signingandvalidationapi modules below.

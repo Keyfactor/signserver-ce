@@ -20,6 +20,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.apache.log4j.Logger;
@@ -37,6 +38,8 @@ public abstract class WebTestCase extends ModulesTestCase {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(WebTestCase.class);
+    
+    protected static final Map<String, String> NO_FIELDS = Collections.emptyMap();
     
     private static final String CRLF = "\r\n";
 

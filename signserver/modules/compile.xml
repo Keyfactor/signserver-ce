@@ -58,6 +58,7 @@ includemodulesinbuild               = ${includemodulesinbuild}
         <echo>Cleaning built files</echo>
         <delete dir="../lib/" failonerror="true">
             <include name="*.*ar"/>
+            <include name="*.zip"/>
         </delete>
         <delete dir="${apidoc}" />
         <delete dir="${tmp}"/>	

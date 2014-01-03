@@ -14,8 +14,6 @@ package org.signserver.web;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.util.Collections;
-import java.util.Map;
 import java.util.Properties;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
@@ -35,8 +33,6 @@ import org.junit.Test;
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class HealthCheckTest extends WebTestCase {
-
-    private static final Map<String, String> NO_FIELDS = Collections.emptyMap();
     
     /** Worker ID for test TSA worker. */
     private static final int TSA_WORKER = 8904;

@@ -50,6 +50,8 @@ public class AdministratorsFrame extends javax.swing.JFrame {
         "Auditor"
     };
 
+    private static final String ALLOWANYWSADMIN = "ALLOWANYWSADMIN";
+    
     private List<Entry> entries = Collections.emptyList();
 
     /** Creates new form GlobalConfigurationFrame */
@@ -126,7 +128,7 @@ public class AdministratorsFrame extends javax.swing.JFrame {
             for (final WsGlobalConfiguration.Config.Entry entry :
                     SignServerAdminGUIApplication.getAdminWS().getGlobalConfiguration()
                     .getConfig().getEntry()) {
-                if (entry.getKey().equals(GlobalConfiguration.SCOPE_GLOBAL + "ALLOWANYWSADMIN")) {
+                if (entry.getKey().equals(GlobalConfiguration.SCOPE_GLOBAL + ALLOWANYWSADMIN)) {
                     allowAnyWSAdmin = Boolean.valueOf((String) entry.getValue());
                 }
             }
@@ -550,7 +552,7 @@ public class AdministratorsFrame extends javax.swing.JFrame {
                 if (res == JOptionPane.OK_OPTION) {
                     SignServerAdminGUIApplication.getAdminWS()
                         .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
-                                   "ALLOWANYWSADMIN", Boolean.TRUE.toString());
+                                   ALLOWANYWSADMIN, Boolean.TRUE.toString());
                 } else {
                     // revert back on cancel
                     allowAnyCheckbox.setSelected(false);
@@ -566,8 +568,7 @@ public class AdministratorsFrame extends javax.swing.JFrame {
                 
                 if (res == JOptionPane.OK_OPTION) {
                     SignServerAdminGUIApplication.getAdminWS()
-                        .removeGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
-                                        "ALLOWANYWSADMIN");
+                        .removeGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL, ALLOWANYWSADMIN);
                 } else {
                     // revert back on cancel
                     allowAnyCheckbox.setSelected(true);

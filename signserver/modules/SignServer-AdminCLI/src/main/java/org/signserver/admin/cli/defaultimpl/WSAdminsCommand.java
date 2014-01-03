@@ -43,6 +43,9 @@ public class WSAdminsCommand extends AbstractAdminCommand {
     public static final String CERT = "cert";
     public static final String ALLOWANY = "allowany";
     
+    /** Global property for allowing any WS admin */
+    private static final String ALLOWANYWSADMIN = "ALLOWANYWSADMIN";
+    
     /** The command line options. */
     private static final Options OPTIONS;
     
@@ -154,7 +157,7 @@ public class WSAdminsCommand extends AbstractAdminCommand {
             if (LIST.equals(operation)) {
                 final String allowAnyWSAdminProp =
                         getGlobalConfigurationSession().getGlobalConfiguration()
-                            .getProperty(GlobalConfiguration.SCOPE_GLOBAL, "ALLOWANYWSADMIN");
+                            .getProperty(GlobalConfiguration.SCOPE_GLOBAL, ALLOWANYWSADMIN);
                 final boolean allowAnyWSAdmin =
                         allowAnyWSAdminProp != null ? Boolean.parseBoolean(allowAnyWSAdminProp) : false;
                 final StringBuilder buff = new StringBuilder();
@@ -220,11 +223,11 @@ public class WSAdminsCommand extends AbstractAdminCommand {
                 
                 if (allowAny) {
                     getGlobalConfigurationSession().setProperty(
-                            GlobalConfiguration.SCOPE_GLOBAL, "ALLOWANYWSADMIN", "true");
+                            GlobalConfiguration.SCOPE_GLOBAL, ALLOWANYWSADMIN, "true");
                     getOutputStream().println("Set to allow any WS admin");
                 } else {
                     getGlobalConfigurationSession().removeProperty(
-                            GlobalConfiguration.SCOPE_GLOBAL, "ALLOWANYWSADMIN");
+                            GlobalConfiguration.SCOPE_GLOBAL, ALLOWANYWSADMIN);
                     getOutputStream().println("Set to not allow any WS admin");
                 }
             }

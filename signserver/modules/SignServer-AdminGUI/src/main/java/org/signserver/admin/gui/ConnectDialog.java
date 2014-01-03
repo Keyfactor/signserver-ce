@@ -35,12 +35,14 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Properties;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManagerFactory;
@@ -57,6 +59,7 @@ import org.apache.log4j.Logger;
 import org.ejbca.util.CertTools;
 import org.signserver.admin.gui.adminws.gen.AdminWS;
 import org.signserver.admin.gui.adminws.gen.AdminWSService;
+
 
 /**
  * Dialog for connection and authentication settings.
@@ -559,12 +562,51 @@ public class ConnectDialog extends javax.swing.JDialog {
                 final ConnectDialog parent = this;
                 HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
 
+                    private String verifiedHostname = null;
+                    
                     @Override
                     public boolean verify(String hostname, SSLSession session) {
+                        
                         if (!defaultHostnameVerifier.verify(hostname, session)) {
-                            // TODO: show warning dialog with CN and subject alt name from cert
-                            JOptionPane.showMessageDialog(parent, "Hostname mismatch: " + hostname,
-                                    "Hostname mismatch", JOptionPane.WARNING_MESSAGE);
+                            // don't show warning dialog more than once in a row for the same
+                            // host name
+                            if (verifiedHostname != null && verifiedHostname.equals(hostname)) {
+                                return true;
+                            } else {
+                                try {
+                                    final X509Certificate cert = (X509Certificate) session.getPeerCertificates()[0];
+                                    final StringBuffer sb = new StringBuffer();
+                                    //final X500Name dn = (X500Name) cert.getSubjectDN();
+                                
+                                    sb.append("Hostname of remote host: " + hostname + "\n");
+                                    sb.append("doesn't match certificate subject DN: ");
+                                    sb.append(cert.getSubjectDN().toString());
+                                
+                                    
+                                    /*
+                                    sb.append("\n");
+                                    sb.append("Certificate subject alternative names:\n");
+                                
+                                    for (final List<?> altName : cert.getSubjectAlternativeNames()) {
+                                    
+                                    }
+                                     */
+                                
+                                    // TODO: show warning dialog with CN and subject alt name from cert
+                                    JOptionPane.showMessageDialog(parent, sb.toString(),
+                                            "Hostname mismatch", JOptionPane.WARNING_MESSAGE);
+                                    verifiedHostname = hostname;
+                                } catch (SSLPeerUnverifiedException e) {
+                                    JOptionPane.showMessageDialog(parent, "Unable to verify peer",
+                                            "Error", JOptionPane.ERROR_MESSAGE);
+                                    return false;
+                                } catch (IOException e) {
+                                    JOptionPane.showMessageDialog(parent,
+                                        "Unable to get common name from certificate", "Error",
+                                        JOptionPane.ERROR_MESSAGE);
+                                    return false;
+                                }
+                            }
                         }
                         
                         return true;

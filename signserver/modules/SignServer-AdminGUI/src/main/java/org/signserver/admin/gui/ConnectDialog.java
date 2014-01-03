@@ -36,10 +36,12 @@ import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Properties;
+import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509KeyManager;
@@ -93,6 +95,12 @@ public class ConnectDialog extends javax.swing.JDialog {
 
     private File connectFile;
     private File defaultConnectFile;
+    
+    private static HostnameVerifier defaultHostnameVerifier;
+    
+    static {
+        defaultHostnameVerifier = HttpsURLConnection.getDefaultHostnameVerifier();
+    }
 
     /** Creates new form ConnectDialog. */
     public ConnectDialog(final Frame parent, final boolean modal,
@@ -547,6 +555,21 @@ public class ConnectDialog extends javax.swing.JDialog {
                 SSLSocketFactory factory = context.getSocketFactory();
 
                 HttpsURLConnection.setDefaultSSLSocketFactory(factory);
+                
+                final ConnectDialog parent = this;
+                HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
+
+                    @Override
+                    public boolean verify(String hostname, SSLSession session) {
+                        if (!defaultHostnameVerifier.verify(hostname, session)) {
+                            // TODO: show warning dialog with CN and subject alt name from cert
+                            JOptionPane.showMessageDialog(parent, "Hostname mismatch: " + hostname,
+                                    "Hostname mismatch", JOptionPane.WARNING_MESSAGE);
+                        }
+                        
+                        return true;
+                    }
+                });
 
                 AdminWSService service = new AdminWSService(
                         new URL(urlstr), new QName("http://adminws.signserver.org/", "AdminWSService"));

@@ -531,13 +531,23 @@ For GlassFish also configure a connection pool and JNDI resource:
                     </ol>
                     </subsubsection>
                     
-                    <subsubsection name="Configure data source for JBoss AS 7 and JBoss EAP 6">
+                    <subsubsection name="Configure data source for JBoss AS 7.1">
                         <p>
 The examples are for installing a MariaDB datasource using the jboss-cli with the driver installed as described above. </p>
-<p>A normal datasource:</p>
+<p>A normal datasource (Note: no --enabled=true for JBoss AS 7.1):</p>
 <!-- TODO: Add example for MySQL -->
 <source>
 data-source add --name=signserverds --driver-name="org.mariadb.jdbc.Driver" --connection-url="jdbc:mysql://127.0.0.1:3306/signserver" --jndi-name="java:/SignServerDS" --use-ccm=true --driver-class="org.mariadb.jdbc.Driver" --user-name="signserver" --password="signserver" --validate-on-match=true --background-validation=false --prepared-statements-cache-size=50 --share-prepared-statements=true --min-pool-size=5 --max-pool-size=150 --pool-prefill=true --transaction-isolation=TRANSACTION_READ_COMMITTED --check-valid-connection-sql="select 1;"
+</source>
+                    </subsubsection>
+                    
+                    <subsubsection name="Configure data source for JBoss EAP 6">
+                        <p>
+The examples are for installing a MariaDB datasource using the jboss-cli with the driver installed as described above. </p>
+<p>A normal datasource (Note: --enabled=true for JBoss EAP 6.x):</p>
+<!-- TODO: Add example for MySQL -->
+<source>
+data-source add --name=signserverds --driver-name="org.mariadb.jdbc.Driver" --connection-url="jdbc:mysql://127.0.0.1:3306/signserver" --jndi-name="java:/SignServerDS" --use-ccm=true --driver-class="org.mariadb.jdbc.Driver" --user-name="signserver" --password="signserver" --validate-on-match=true --background-validation=false --prepared-statements-cache-size=50 --share-prepared-statements=true --min-pool-size=5 --max-pool-size=150 --pool-prefill=true --transaction-isolation=TRANSACTION_READ_COMMITTED --check-valid-connection-sql="select 1;" --enabled=true
 </source>
                     </subsubsection>
                     

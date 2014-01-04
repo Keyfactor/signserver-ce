@@ -40,6 +40,7 @@ public class WsImport extends Task {
     private Produces produces;
     private boolean xnocompile;
     private String target;
+    private String encoding;
 
     @Override
     public void execute() throws BuildException {
@@ -170,5 +171,13 @@ public class WsImport extends Task {
     public void setTarget(String target) {
         this.target = target;
     }
-    
+
+    public String getEncoding() {
+        return encoding;
+    }
+
+    public void setEncoding(String encoding) {
+        this.encoding = encoding;
+    }
+
 }

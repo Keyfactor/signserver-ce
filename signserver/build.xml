@@ -625,7 +625,7 @@ Configuring EAR...
     </target>
     
     <target name="-set-systemtest-classpath">
-        <property name="systemtest.path" value="${basedir}/tmp/conf:${basedir}/conf:${env.APPSRV_HOME}/client/jbossall-client.jar:conf:${env.APPSRV_HOME}/lib/appserv-rt.jar:${env.APPSRV_HOME}/lib/gf-client.jar"/>
+        <property name="systemtest.path" value="${basedir}/tmp/conf:${basedir}/conf:${basedir}/res/cesecore/:${env.APPSRV_HOME}/client/jbossall-client.jar:conf:${env.APPSRV_HOME}/lib/appserv-rt.jar:${env.APPSRV_HOME}/lib/gf-client.jar"/>
     </target>
     
     <target name="systemtest:p11" description="Run system tests for P11" depends="-set-systemtest-classpath">

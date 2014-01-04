@@ -594,7 +594,7 @@ Configuring EAR...
             <formatter type="xml"/>
             <batchtest fork="yes" todir="${junit.output.dir}">
                 <resources> 
-                   <zipfileset src="${basedir}/lib/${systemtest.jar}" includes="**/*Test.class"/>
+                   <zipfileset src="${basedir}/lib/${systemtest.jar}" includes="**/*Test.class" excludes="${systemtest.excludes}"/>
                 </resources> 
             </batchtest>
             <classpath>

@@ -131,7 +131,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
         super.setUp();
 
         // Normal keystore
-        keystore1 = new File("test/demods1.p12");
+        keystore1 = new File("src/test/java/demods1.p12");
         if (!keystore1.exists()) {
             throw new FileNotFoundException("No such keystore: "
                     + keystore1.getAbsolutePath());
@@ -139,7 +139,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
         keystore1Password = "foo123";
 
         // Keystore with certificate not using LDAP DN ordering
-        keystore2 = new File("test/reversedendentity2.p12");
+        keystore2 = new File("src/test/java/reversedendentity2.p12");
         if (!keystore2.exists()) {
             throw new FileNotFoundException("No such keystore: "
                     + keystore2.getAbsolutePath());
@@ -147,7 +147,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
         keystore2Password = "foo123";
 
         // Normal keystore
-        keystore3 = new File("test/demods41.p12");
+        keystore3 = new File("src/test/java/demods41.p12");
         if (!keystore3.exists()) {
             throw new FileNotFoundException("No such keystore: "
                     + keystore3.getAbsolutePath());
@@ -155,7 +155,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
         keystore3Password = "foo123";
 
         // Keystore with ECC using named parameters
-        keystore4 = new File("test/demodsecc1.p12");
+        keystore4 = new File("src/test/java/demodsecc1.p12");
         if (!keystore4.exists()) {
             throw new FileNotFoundException("No such keystore: "
                     + keystore4.getAbsolutePath());

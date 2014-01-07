@@ -32,6 +32,7 @@ import java.security.SecureRandom;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.Enumeration;
@@ -576,34 +577,42 @@ public class ConnectDialog extends javax.swing.JDialog {
                                 try {
                                     final X509Certificate cert = (X509Certificate) session.getPeerCertificates()[0];
                                     final StringBuffer sb = new StringBuffer();
-                                    //final X500Name dn = (X500Name) cert.getSubjectDN();
-                                
+                                    final String dn = cert.getSubjectX500Principal().getName();
+                                    final String cn = CertTools.getPartFromDN(dn, "CN");
+                                    
                                     sb.append("Hostname of remote host: " + hostname + "\n");
-                                    sb.append("doesn't match certificate subject DN: ");
-                                    sb.append(cert.getSubjectDN().toString());
-                                
+                                    sb.append("doesn't match certificate subject CN: " + cn + "\n");
+
+                                    try {
+                                        final Collection<List<?>> altNames = cert.getSubjectAlternativeNames();
                                     
-                                    /*
-                                    sb.append("\n");
-                                    sb.append("Certificate subject alternative names:\n");
-                                
-                                    for (final List<?> altName : cert.getSubjectAlternativeNames()) {
-                                    
+                                        if (altNames != null) {
+                                            sb.append("Certificate subject alternative names:\n");
+                                            for (final List<?> altName : altNames) {
+                                                final Integer type = (Integer) altName.get(0);
+                                                final Object value = altName.get(1);
+                                                
+                                                if (type == 2) {
+                                                    sb.append("DNS name: " + value.toString() + "\n");
+                                                } else if (type == 7) {
+                                                    sb.append("IP address: " + value.toString() + "\n");
+                                                }
+                                            }
+                                        } else {
+                                            sb.append("No subject alternative names found in certificate\n");
+                                        }
+                                    } catch (CertificateParsingException e) {
+                                        sb.append("Failed to parse subject alternative names from certificate\n");
                                     }
-                                     */
-                                
-                                    // TODO: show warning dialog with CN and subject alt name from cert
-                                    JOptionPane.showMessageDialog(parent, sb.toString(),
-                                            "Hostname mismatch", JOptionPane.WARNING_MESSAGE);
+                                    
+                                    sb.append("Connect anyway?");
+                                    final int result = JOptionPane.showConfirmDialog(parent, sb.toString(),
+                                            "Hostname mismatch", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
                                     verifiedHostname = hostname;
+                                    return result == JOptionPane.OK_OPTION;
                                 } catch (SSLPeerUnverifiedException e) {
                                     JOptionPane.showMessageDialog(parent, "Unable to verify peer",
                                             "Error", JOptionPane.ERROR_MESSAGE);
-                                    return false;
-                                } catch (IOException e) {
-                                    JOptionPane.showMessageDialog(parent,
-                                        "Unable to get common name from certificate", "Error",
-                                        JOptionPane.ERROR_MESSAGE);
                                     return false;
                                 }
                             }

@@ -62,6 +62,14 @@
                 </not>
             </and>
         </condition>
+        
+        <!-- Exclude dom4j on JBoss AS 7 as it does not work (and on EAP 6 only conistency) -->
+        <condition property="appserver.lib.excludes" value="lib/ext/hibernate/dom4j-*.jar">
+            <or>
+        	<equals arg1="${appserver.subtype}" arg2="jboss7" />
+        	<equals arg1="${appserver.subtype}" arg2="jbosseap6" />
+            </or>
+        </condition>
     </target>
 
 

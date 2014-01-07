@@ -208,7 +208,7 @@ Configured ear file available at: ${ear.dist.file}
         </echo>
     </target>
     
-    <target name="-process-modules" depends="-init-configure, -preprocess-persistence, -set-ejbjarheader-nodb">
+    <target name="-process-modules" depends="-init-configure, -preprocess-persistence, -set-ejbjarheader-nodb, j2ee:check">
         <echo/>
 <!--        <taskdef name="postprocess-jar" classname="org.signserver.anttasks.JarPostProcessTask" classpath="lib/SignServer-BuildTools.jar:lib/ext/commons-io-1.4.jar:lib/ext/commons-lang-2.5.jar"/>-->
         
@@ -241,8 +241,8 @@ Libraries to include:
     ${toLibs}
         </echo>
         <mkdir dir="${signserver.ear.dir}/lib"/>
-        <copy todir="${signserver.ear.dir}/lib" flatten="true">
-            <fileset dir="." includes="${toLibs}"/>
+        <copy todir="${signserver.ear.dir}/lib" flatten="true" verbose="true">
+            <fileset dir="." includes="${toLibs}" excludes="${appserver.lib.excludes}"/>
         </copy>
         
         <!-- For each module call postprocess -->

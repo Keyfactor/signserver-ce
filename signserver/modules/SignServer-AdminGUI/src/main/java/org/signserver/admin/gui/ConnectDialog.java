@@ -563,19 +563,20 @@ public class ConnectDialog extends javax.swing.JDialog {
                 final ConnectDialog parent = this;
                 HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
 
-                    private String verifiedHostname = null;
+                    private X509Certificate verifiedCert = null;
                     
                     @Override
                     public boolean verify(String hostname, SSLSession session) {
                         
                         if (!defaultHostnameVerifier.verify(hostname, session)) {
                             // don't show warning dialog more than once in a row for the same
-                            // host name
-                            if (verifiedHostname != null && verifiedHostname.equals(hostname)) {
-                                return true;
-                            } else {
-                                try {
-                                    final X509Certificate cert = (X509Certificate) session.getPeerCertificates()[0];
+                            // host cert
+                            try {
+                                final X509Certificate cert = (X509Certificate) session.getPeerCertificates()[0];
+                            
+                                if (verifiedCert != null && verifiedCert.equals(cert)) {
+                                    return true;
+                                } else {
                                     final StringBuffer sb = new StringBuffer();
                                     final String dn = cert.getSubjectX500Principal().getName();
                                     final String cn = CertTools.getPartFromDN(dn, "CN");
@@ -608,13 +609,13 @@ public class ConnectDialog extends javax.swing.JDialog {
                                     sb.append("Connect anyway?");
                                     final int result = JOptionPane.showConfirmDialog(parent, sb.toString(),
                                             "Hostname mismatch", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
-                                    verifiedHostname = hostname;
+                                    verifiedCert = cert;
                                     return result == JOptionPane.OK_OPTION;
-                                } catch (SSLPeerUnverifiedException e) {
-                                    JOptionPane.showMessageDialog(parent, "Unable to verify peer",
-                                            "Error", JOptionPane.ERROR_MESSAGE);
-                                    return false;
                                 }
+                            } catch (SSLPeerUnverifiedException e) {
+                                JOptionPane.showMessageDialog(parent, "Unable to verify peer",
+                                        "Error", JOptionPane.ERROR_MESSAGE);
+                                return false;
                             }
                         }
                         

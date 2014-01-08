@@ -42,6 +42,105 @@
         </Component>
       </SubComponents>
     </Container>
+    <Container class="javax.swing.JPanel" name="hostnameMismatchConfirmPanel">
+
+      <Layout>
+        <DimensionLayout dim="0">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="mismatchLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="hostnameLabel" alignment="1" pref="558" max="32767" attributes="0"/>
+                      <Component id="hostnameField" alignment="0" pref="558" max="32767" attributes="0"/>
+                      <Component id="commonNameLabel" alignment="0" pref="558" max="32767" attributes="0"/>
+                      <Component id="commonNameField" alignment="1" pref="558" max="32767" attributes="0"/>
+                      <Component id="subjectAltNamesPanel" alignment="0" pref="558" max="32767" attributes="2"/>
+                      <Component id="subjectAltNameLabel" alignment="0" pref="558" max="32767" attributes="1"/>
+                      <Component id="confirmationLabel" alignment="0" pref="558" max="32767" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+        <DimensionLayout dim="1">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
+                  <Component id="mismatchLabel" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                  <Component id="hostnameLabel" min="-2" pref="21" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                  <Component id="hostnameField" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                  <Component id="commonNameLabel" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                  <Component id="commonNameField" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                  <Component id="subjectAltNameLabel" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
+                  <Component id="subjectAltNamesPanel" pref="162" max="32767" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="confirmationLabel" min="-2" max="-2" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+      </Layout>
+      <SubComponents>
+        <Component class="javax.swing.JLabel" name="hostnameLabel">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Remote hostname used:"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JTextField" name="hostnameField">
+          <Properties>
+            <Property name="editable" type="boolean" value="false"/>
+            <Property name="text" type="java.lang.String" value="jTextField1"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="commonNameLabel">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Subject common name in remote certificate:"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="mismatchLabel">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Remote hostname doesn&apos;t match certificate"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JTextField" name="commonNameField">
+          <Properties>
+            <Property name="editable" type="boolean" value="false"/>
+            <Property name="text" type="java.lang.String" value="jTextField1"/>
+          </Properties>
+        </Component>
+        <Container class="javax.swing.JScrollPane" name="subjectAltNamesPanel">
+
+          <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+          <SubComponents>
+            <Component class="javax.swing.JList" name="subjectAltNamesList">
+              <Properties>
+                <Property name="model" type="javax.swing.ListModel" editor="org.netbeans.modules.form.editors2.ListModelEditor">
+                  <StringArray count="2">
+                    <StringItem index="0" value="Name"/>
+                    <StringItem index="1" value="Value"/>
+                  </StringArray>
+                </Property>
+              </Properties>
+            </Component>
+          </SubComponents>
+        </Container>
+        <Component class="javax.swing.JLabel" name="subjectAltNameLabel">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Subject alternative names:"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="confirmationLabel">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Do you want to connect anyway?"/>
+          </Properties>
+        </Component>
+      </SubComponents>
+    </Container>
   </NonVisualComponents>
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="2"/>

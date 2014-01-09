@@ -268,12 +268,22 @@ j2ee.web-nohttps=true
 # Default: true
 #databasecli.enabled=true
 
-# -------------- Documentation Configuration -----------------------------------
+# -------------- Additional Web Deployments -----------------------------------
 
 # Deploy the documentation.
 #
 # Default: true
 #webdoc.enabled=true
+
+# Offer the AdminGUI binary dist for download from the public web
+# 
+# Default: true
+#web.admingui.dist.enabled=true
+
+# Path to the AdminGUI binary dist file
+# Default: ${basedir}/lib/signserver-admingui.zip
+#web.admingui.dist.file=${basedir}/lib/signserver-admingui.zip
+#web.admingui.dist.file=/tmp/signserver-admingui.zip
 
 
 # -------------- Status And Health Check Configuration -------------------------

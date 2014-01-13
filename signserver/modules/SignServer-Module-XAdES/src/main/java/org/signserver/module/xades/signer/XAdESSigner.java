@@ -97,12 +97,11 @@ public class XAdESSigner extends BaseSigner {
     
     /** Worker property: COMMITMENT_TYPES. */
     public static final String PROPERTY_COMMITMENT_TYPES = "COMMITMENT_TYPES";
-    
+    public static final String COMMITMENT_TYPES_NONE = "NONE";
+
     /** Worker property: SIGNATUREALGORITHM */
     public static final String SIGNATUREALGORITHM = "SIGNATUREALGORITHM";
-
-    public static final String COMMITMENT_TYPES_NONE = "NONE";
-    
+   
     /** Default value use if the worker property XADESFORM has not been set. */
     private static final String DEFAULT_XADESFORM = "BES";
     

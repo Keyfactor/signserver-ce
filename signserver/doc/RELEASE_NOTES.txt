@@ -9,8 +9,8 @@ Bug fixes:
 
 Notice:
  - The XML Security library has been updated to version 1.5.5. This version is 
-   not compatible with the version bundled with JBoss. For the XML support to 
-   work when running on JBoss the XML Security library and its dependencies 
+   not compatible with the version bundled with JBoss 5. For the XML support to 
+   work when running on JBoss 5 the XML Security library and its dependencies 
    should be put in JBOSS_HOME/lib/endorsed. To help with that an Ant target 
    can be run:
    $ bin/ant j2ee:copy-xmlsec

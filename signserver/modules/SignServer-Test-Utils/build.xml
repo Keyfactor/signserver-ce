@@ -18,6 +18,12 @@
     <property file="../../res/default_build.properties"/>
     <import file="../modules.xml"/>
     
+    <target name="-post-jar">
+        <copy todir="../../lib/">
+            <fileset dir="target/" includes="SignServer-Test-Utils.jar"/>
+        </copy>
+    </target>
+    
     <target name="-post-compile-single" depends="-move-jndi-properties"/>
     <target name="-post-compile" depends="-move-jndi-properties"/>
     <target name="-move-jndi-properties" depends="-modules-set-appserver-home">

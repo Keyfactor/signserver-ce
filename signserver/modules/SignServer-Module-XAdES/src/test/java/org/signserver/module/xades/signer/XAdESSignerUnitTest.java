@@ -314,6 +314,8 @@ public class XAdESSignerUnitTest {
      * @param commitmentTypesProperty COMMITMENT_TYPES property to test with
      *                                if null, doesn't set the property
      * @param expectedCommitmentTypeUris List of expected commitment type URIs
+     * @param claimedRoleProperty Claimed role property to test, will check that the resulting document contains this and only this
+     *                          role. If null, don't set property and check that none is included
      * @throws Exception
      */
     private void testProcessData_basicSigningInternal(final KeyType keyType, final String signatureAlgorithm,
@@ -384,8 +386,8 @@ public class XAdESSignerUnitTest {
             }
         }
         
-        if (claimedRoleProperty != null && !foundExpectedRole) {
-            fail("Did not find expected claimed role");
+        if (claimedRoleProperty != null) {
+            assertTrue("Expected to find claimed role: " + claimedRoleProperty, foundExpectedRole);
         }
         
         for (final SignedDataObjectProperty signedObjProp : sp.getDataObjProps()) {

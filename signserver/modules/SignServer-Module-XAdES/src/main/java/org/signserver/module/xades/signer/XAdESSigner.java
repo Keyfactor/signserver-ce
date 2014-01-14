@@ -357,7 +357,8 @@ public class XAdESSigner extends BaseSigner {
                 break;
             case T:
                 // add timestamp token provider
-                xsp = xsp.withTimeStampTokenProvider(timeStampTokenProviderImplementation);
+                xsp = xsp.withTimeStampTokenProvider(timeStampTokenProviderImplementation)
+                         .withBinding(TSAParameters.class, params.getTsaParameters());
                 break;
             case C:
             case EPES:

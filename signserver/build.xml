@@ -584,19 +584,25 @@ Configuring EAR...
         </antcall>
     </target>
     
-    <!-- Not working as we loose the Class-Path when unzipping the jars...
-    TODO: Use the actual JARs as the classpath and only the unzipped classes for the batchtest task
-    <target name="systemtest:jars" description="Run system tests from arbitrary test-jar:s" depends="-set-systemtest-classpath">
-        <fail unless="systemtest.jars.include" message="Usage: bin/ant systemtest:jars -Dsystemtest.jars.include=lib/*-tests.jar"/>
+    <target name="systemtest:jars" description="Run system tests from all systest jars (or specify which to include/exclude)" depends="-set-systemtest-classpath">
         <property name="systemtest.dir" value="${tmp}/systemtest"/>
         <delete dir="${systemtest.dir}"/>
         <mkdir dir="${systemtest.dir}"/>
-        <echo>Running systemtests for JARs: ${systemtest.jars.include}</echo>
+        <property name="systemtest.jars.include" value="lib/*-tests.jar"/>
+        <property name="systemtest.includes" value="**/*Test.class"/>
+        <property name="systemtest.excludes" value="-NO-"/>
+        <echo>Running systemtests for JARs with: 
+-Dsystemtest.jars.include=${systemtest.jars.include}
+-Dsystemtest.includes=${systemtest.includes}
+-Dsystemtest.excludes=${systemtest.excludes}
+        </echo>
         <unzip dest="${systemtest.dir}">
             <fileset dir="${basedir}">
                 <include name="${systemtest.jars.include}" />
             </fileset>    
         </unzip>
+        
+        <echo level="verbose">systemtest.path: ${systemtest.path}</echo>
         
         <property name="junit.output.dir" location="${tmp}/tests"/>
         <mkdir dir="${junit.output.dir}"/>
@@ -604,18 +610,17 @@ Configuring EAR...
             <formatter type="xml"/>
             <batchtest fork="yes" todir="${junit.output.dir}">
                 <resources> 
-                    <fileset dir="${systemtest.dir}" includes="**/*Test.class" excludes="${systemtest.excludes}"/>
+                    <fileset dir="${systemtest.dir}" includes="${systemtest.includes}" excludes="${systemtest.excludes}"/>
                 </resources> 
             </batchtest>
             <classpath>
                 <path path="${systemtest.path}"/>
-                <path path="${systemtest.dir}"/>
+                <fileset dir="${basedir}" includes="${systemtest.jars.include}"/>
                 <pathelement path="${basedir}/lib/ext/ext/junit-4.11.jar"/>
                 <pathelement path="${basedir}/lib/ext/ext/hamcrest-core-1.3.jar"/>
             </classpath>
         </junit>
     </target>
-    -->
     
     <target name="systemtest:jar" description="Run system tests from arbitrary test-jar">
         <echo>${systemtest.path}</echo>
@@ -658,7 +663,7 @@ Configuring EAR...
     </target>
     
     <target name="-set-systemtest-classpath">
-        <property name="systemtest.path" value="${basedir}/tmp/conf:${basedir}/conf:${basedir}/res/cesecore/:${env.APPSRV_HOME}/client/jbossall-client.jar:conf:${env.APPSRV_HOME}/bin/client/jboss-client.jar:${env.APPSRV_HOME}/lib/appserv-rt.jar:${env.APPSRV_HOME}/lib/gf-client.jar"/>
+        <property name="systemtest.path" value="${basedir}/tmp/conf:${basedir}/conf:${basedir}/res/cesecore/:${env.APPSRV_HOME}/client/jbossall-client.jar:conf:${env.APPSRV_HOME}/bin/client/jboss-client.jar:${env.APPSRV_HOME}/lib/appserv-rt.jar:${env.APPSRV_HOME}/lib/gf-client.jar:${basedir}/lib/ext/jdbc/jdbc.jar"/>
     </target>
     
     <target name="systemtest:p11" description="Run system tests for P11" depends="-set-systemtest-classpath">

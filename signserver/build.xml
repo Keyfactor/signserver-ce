@@ -677,9 +677,9 @@ Configuring EAR...
     </target>
     
     <target name="systemtest:databasecli" description="Run system tests for DatabaseCLI" depends="-set-systemtest-classpath">
-        <antcall target="systemtest:jar">
+            <antcall target="systemtest:jar">
             <param name="systemtest.jar" value="SignServer-Test-DatabaseCLI-tests.jar"/>
-            <param name="systemtest.path" value="${systemtest.path}:${basedir}/lib/ext/jdbc/jdbc.jar"/>
+            <param name="systemtest.path" value="${basedir}/conf:${basedir}/res/cesecore:${systemtest.path}:${basedir}/lib/ext/jdbc/jdbc.jar"/>
         </antcall>
     </target>
     

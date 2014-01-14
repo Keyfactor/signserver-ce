@@ -29,6 +29,8 @@ import org.cesecore.audit.enums.ModuleType;
 import org.cesecore.audit.enums.ServiceType;
 import org.cesecore.audit.impl.integrityprotected.AuditRecordData;
 import org.cesecore.audit.log.AuditRecordStorageException;
+import org.cesecore.config.ConfigurationHolder;
+import org.cesecore.dbprotection.ProtectedDataConfiguration;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.db.cli.Main;
 import org.signserver.db.cli.defaultimpl.DatabaseHelper;
@@ -60,6 +62,7 @@ public class VerifyLogCommandTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
+        ConfigurationHolder.addConfigurationResource("/databaseprotection.properties");
     }
     
     @Override
@@ -305,6 +308,14 @@ public class VerifyLogCommandTest extends TestCase {
     
     // TODO add test methods here. The name must begin with 'test'. For example:
     // public void testHello() {}
+    
+    public void testProtectionConfigured() throws Exception {
+        LOG.info("testProtectionConfigured");
+        LOG.info("Config file: " + Main.class.getResource("/databaseprotection.properties"));
+        if (!ProtectedDataConfiguration.useDatabaseIntegrityProtection("AuditRecordData")) {
+            throw new Exception("Test environment not configured to sign audit log");
+        }
+    }
     
     public void testEmptyDatabase() throws Exception {
         LOG.info("testEmptyDatabase");

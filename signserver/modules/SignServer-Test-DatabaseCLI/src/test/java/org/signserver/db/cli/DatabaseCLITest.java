@@ -15,6 +15,7 @@ package org.signserver.db.cli;
 import javax.persistence.PersistenceException;
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
+import org.cesecore.config.ConfigurationHolder;
 import org.junit.Test;
 import org.signserver.testutils.CLITestHelper;
 
@@ -42,6 +43,7 @@ public class DatabaseCLITest extends TestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
+        ConfigurationHolder.addConfigurationResource("/databaseprotection.properties");
     }
     
     @Override

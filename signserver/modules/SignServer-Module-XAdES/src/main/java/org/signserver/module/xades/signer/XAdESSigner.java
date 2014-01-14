@@ -346,19 +346,18 @@ public class XAdESSigner extends BaseSigner {
         final KeyingDataProvider kdp = new CertificateAndChainKeyingDataProvider(xchain, this.getCryptoToken().getPrivateKey(ICryptoToken.PURPOSE_SIGN));
         
         // Signing profile
-        final XadesSigningProfile xsp;
+        XadesSigningProfile xsp =
+                new XadesBesSigningProfile(kdp)
+                    .withAlgorithmsProviderEx(new AlgorithmsProvider())
+                    .withSignaturePropertiesProvider(new SignaturePropertiesProvider());
+        
         switch (params.getXadesForm()) {
             case BES:
-                xsp = new XadesBesSigningProfile(kdp)
-                        .withAlgorithmsProviderEx(new AlgorithmsProvider())
-                        .withSignaturePropertiesProvider(new SignaturePropertiesProvider());
+                // base setup above
                 break;
             case T:
-                xsp = new XadesTSigningProfile(kdp)
-                        .withTimeStampTokenProvider(timeStampTokenProviderImplementation)
-                        .withBinding(TSAParameters.class, params.getTsaParameters())
-                        .withAlgorithmsProviderEx(new AlgorithmsProvider())
-                        .withSignaturePropertiesProvider(new SignaturePropertiesProvider());
+                // add timestamp token provider
+                xsp = xsp.withTimeStampTokenProvider(timeStampTokenProviderImplementation);
                 break;
             case C:
             case EPES:

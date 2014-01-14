@@ -41,6 +41,7 @@ lookup the validation of a given certificate.
             <section name="Changes from previous versions">
                 <subsection name="Changes between version 3.4 and 3.5">
                     <ul>
+                        <li>Support for JBoss AS 7.1 and JBoss EAP 6</li>
                         <li>Support for the group key framework has been discontinued</li>
                     </ul>
                 </subsection>

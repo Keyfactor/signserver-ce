@@ -66,7 +66,6 @@ import xades4j.production.XadesSigningProfile;
 import xades4j.production.XadesTSigningProfile;
 import xades4j.properties.AllDataObjsCommitmentTypeProperty;
 import xades4j.properties.SignerRoleProperty;
-import xades4j.properties.data.SignerRoleData;
 import xades4j.providers.KeyingDataProvider;
 import xades4j.providers.SignaturePropertiesCollector;
 import xades4j.providers.TimeStampTokenProvider;

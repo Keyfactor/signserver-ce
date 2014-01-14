@@ -554,20 +554,69 @@ data-source add --name=signserverds --driver-name="org.mariadb.jdbc.Driver" --co
                 </subsection>
 
                 <subsection name="5. Configure web server keystores">
-                    <p>
+                    <subsubsection name="JBoss 5 SSL configuration">
+                        <p>
 For JBoss if you are going to protect the HTTP communication with SSL, you need
 a JKS SSL server keystore. Rename the web server keystore to tomcat.jks and put
 it in a 'p12' subdirectory. Place a keystore called truststore.jks in the 'p12' directory
 containing the trusted root certificate(s).
-					</p>
-                    <p>
+                        </p>
+                    </subsubsection>
+                    <subsubsection name="GlassFish SSL configuration">
+                        <p>
 For GlassFish enable client authentication for http-listener-2 and manually
 update the keystores with the right certificates.
-                    </p>
+                        </p>
+                    </subsubsection>
+                    <subsubsection name="JBoss 7/EAP 6 SSL configuration">
+                        <p>
+Copy the keystore file as JBOSS7_HOME/standalone/configuration/keystore/keystore.jks and the trust store as
+                          JBOSS7_HOME/standalone/configuration/keystore/truststore.jks.
+                        </p>
+                        <p>
+Configure interfaces using the approproate bind address (ie. 0.0.0.0 or 127.0.0.1).
+                        </p>
+                        <source>
+/interfaces=/interface=http:add(inet-address="0.0.0.0")
+/interfaces=/interface=httpspub:add(inet-address="0.0.0.0")
+/interfaces=/interface=httpspriv:add(inet-address="0.0.0.0")
+                        </source>
+                        <p>
+Set-up the private port which requires client certificate. 
+Use appropriate values for JBOSS_HOME, key-alias (hostname), password (keystore password) and ca-certificate-password (truststore password).
+                        </p>
+                        <source>
+/socket-binding-group=standard-sockets/socket-binding=httpspriv:add(port="8443",interface="httpspriv")
+/subsystem=web/connector=httpspriv:add(protocol=HTTP/1.1, scheme=https, socket-binding=httpspriv, secure=true)
+/subsystem=web/connector=httpspriv/ssl=configuration:add(key-alias="localhost")
+/subsystem=web/connector=httpspriv/ssl=configuration:write-attribute(name=password, value="serverpwd")
+/subsystem=web/connector=httpspriv/ssl=configuration:write-attribute(name=certificate-key-file, value="JBOSS_HOME/standalone/configuration/keystore/keystore.jks")
+/subsystem=web/connector=httpspriv/ssl=configuration:write-attribute(name=verify-client, value=true)
+/subsystem=web/connector=httpspriv/ssl=configuration:write-attribute(name=ca-certificate-password, value="changeit")
+/subsystem=web/connector=httpspriv/ssl=configuration:write-attribute(name=ca-certificate-file, value="JBOSS_HOME/standalone/configuration/keystore/truststore.jks")
+                        </source>
+                        <p>
+Set-up the public SSL port which doesn't require the client certificate.
+Use appropriate values for JBOSS_HOME, key-alias (hostname), password (keystore password).
+                        </p>
+                        <source>
+/socket-binding-group=standard-sockets/socket-binding=httpspub:add(port="8442",interface="httpspub")
+/subsystem=web/connector=httpspub:add(protocol=HTTP/1.1, scheme=https, socket-binding=httpspub, secure=true)
+/subsystem=web/connector=httpspub/ssl=configuration:add(key-alias="localhost")
+/subsystem=web/connector=httpspub/ssl=configuration:write-attribute(name=password, value="serverpwd")
+/subsystem=web/connector=httpspub/ssl=configuration:write-attribute(name=certificate-key-file, value="JBOSS_HOME/standalone/configuration/keystore/keystore.jks")
+                        </source>
+                        <p>
+If the server is not so fast, we have to wait a little before we can reload, otherwise it will be bad
+                        </p>
+                        <source>
+:reload
+                        </source>
+                    </subsubsection>
                 </subsection>
 
                 <subsection name="6. Configure application server">
-                    <subsubsection name="Fix web service problem in JBoss">
+                    <subsubsection name="Fix web service problem in JBoss 5">
                         <p>
 Edit jboss-beans.xml to force the endpoint URL to be generated based on the WSDL
 request by commenting out the line:
@@ -579,6 +628,21 @@ request by commenting out the line:
 For JBoss 5.1.0.GA the file is available under: server/default/deployers/jbossws.deployer/META-INF/
                         </p>
                     </subsubsection>
+                    <subsubsection name="Fix web service problem in JBoss AS 7/EAP 6">
+                        <p>
+Configure WSDL web-host rewriting to use the request host. Needed for webservices to work correctly when requiring client certificate.
+                        </p>
+                        <source>
+/subsystem=webservices:write-attribute(name=wsdl-host, value=jbossws.undefined.host)
+/subsystem=webservices:write-attribute(name=modify-wsdl-address, value=true)
+                        </source>
+                        <p>
+If the server is not so fast, we have to wait a little before we can reload, otherwise it will be bad
+                        </p>
+                        <source>
+:reload
+                        </source>
+                    </subsubsection>
                     <subsubsection name="Fix JBoss 5 bug with Oracle JDK">
                         <p>
 If you are using Oracle's JDK and JBoss 5.1.x you need to copy
@@ -586,7 +650,15 @@ SIGNSERVER_HOME/lib/ext/1.6/bc*.jar to JBOSS_HOME/server/default/lib/. Remember 
 when it's time for upgrades! This is a bug tracked by JBoss as JBAS-7882.
                         </p>
                     </subsubsection>
-                    <subsubsection name="Fix XML Security library issue in JBoss">
+                    <subsubsection name="JBoss 7 and Oracle JDK BouncyCastle issues">
+                        <p>
+When using Oracle JDK and JBoss 7 you need to install BC jars as a module in JBoss 7. See <a href="https://issues.jboss.org/browse/JBAS-7882">JBAS-7882</a>.
+                        </p>
+                        <p>
+How to install modules are described in <a href="https://docs.jboss.org/author/display/MODULES/Defining+a+module">docs.jboss.org/author/display/MODULES/Defining+a+module</a>.
+                        </p>
+                    </subsubsection>
+                    <subsubsection name="Fix XML Security library issue in JBoss 5">
                         <p>
 JBoss 5 bundles an older version of the XML Security library which conflicts with the one included in SignServer.
 Run the below Ant target to copy the SignServer version and its dependencies to the JBoss endorsed folder:
@@ -603,14 +675,6 @@ Run pkg install in the GlassFish folder:
                         <source>
 ./bin/pkg install hibernate
                         </source>
-                    </subsubsection>
-                    <subsubsection name="JBoss 7 and Oracle JDK BouncyCastle issues">
-                        <p>
-When using Oracle JDK and JBoss 7 you need to install BC jars as a module in JBoss 7. See <a href="https://issues.jboss.org/browse/JBAS-7882">JBAS-7882</a>.
-                        </p>
-                        <p>
-How to install modules are described in <a href="https://docs.jboss.org/author/display/MODULES/Defining+a+module">docs.jboss.org/author/display/MODULES/Defining+a+module</a>.
-                        </p>
                     </subsubsection>
                     <subsubsection name="JBoss 7/EAP 6 and PKCS11">
                         <p>
@@ -759,7 +823,8 @@ Current version of server is : SignServer 3.5.0alpha0
 					</subsubsection>
 					<subsubsection name="Graphical User Interface">
 						<source>
-bin/signserver-gui	
+bin/signserver-gui
+bin/signserver-gui -ws
 						</source>
 					</subsubsection>
 					<subsubsection name="Web Interface">

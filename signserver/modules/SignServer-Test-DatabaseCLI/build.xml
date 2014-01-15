@@ -13,6 +13,9 @@
     <import file="../modules.xml"/>
     <import file="../tests.xml"/>
     
+    <property name="dist-module.available" value="true"/>
+    <property name="clean.available" value="true"/>
+    
     <target name="wsimport-init" depends="init">
         <mkdir dir="${build.generated.sources.dir}/jax-ws"/>
         <property name="j2ee.server.home" value="${var.APPSRV_HOME}"/>

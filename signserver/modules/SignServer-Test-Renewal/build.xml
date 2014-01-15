@@ -13,6 +13,9 @@
     <import file="../modules.xml"/>
     <import file="../tests.xml"/>
     
+    <property name="dist-module.available" value="true"/>
+    <property name="clean.available" value="true"/>
+    
     <target name="dist-module" depends="jar, compile-test">
         <property name="dist.tests.jar" value="${dist.dir}/${application.title}-tests.jar"/>
         <echo level="verbose">

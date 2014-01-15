@@ -115,12 +115,14 @@ bin/ant compose-ear         Puts together the final configured EAR file.
 bin/ant deploy              Configures the EAR file and then deploys it and 
                             data sources etc (if supported) to the configured 
                             application server.
-
+bin/ant systemtest:jars     Run all available systemtest JARs.
+            
 Some targets available only in the source distribution:
 bin/ant build               Builds everything enabled.
+bin/ant build-systemtests   Builds the systemtest JARs.
 bin/ant test:run            Run the default JUnit tests.
 bin/ant test:compile        Compiles the tests so they can be run by an IDE.
-
+            
 To clean &amp; build and deploy run:
 bin/ant clean build deploy
         </echo>

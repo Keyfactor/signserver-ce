@@ -13,6 +13,9 @@
     <import file="../modules.xml"/>
     <import file="../tests.xml"/>
     
+    <property name="dist-module.available" value="true"/>
+    <property name="clean.available" value="true"/>
+    
     <!-- Setup APPSRV_HOME etc -->
     <target name="-pre-init" depends="-modules-set-appserver-home"/>
     <target name="-pre-compile-test" depends="-modules-check-appserver-home"/>

@@ -139,6 +139,21 @@
         <echo message="Module: ${ant.project.name} enabled"/>
         <antcall target="dist-module"/>
     </target>
+    
+    <target name="-do-build-test-module" if="moduleEnable.condition">
+        <echo message="Building systemtest module: ${ant.project.name}"/>
+        <antcall target="dist-module"/>
+    </target>
+    
+    <target name="-do-test-module">
+        <property name="dist-module.available" value="false"/>
+        <condition property="moduleEnable.condition">
+            <and>
+                <istrue value="${dist-module.available}"/>
+            </and>
+        </condition>
+        <antcall target="-do-build-test-module"/>
+    </target>
 
     <target name="-do-module">
         <property file="${user.home}/signserver_build.properties"/>

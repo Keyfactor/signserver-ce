@@ -132,6 +132,12 @@ includemodulesinbuild               = ${includemodulesinbuild}
     <target name="test:runperf" description="Test performace of signing modules">
         <antcall target="test:signserver:performance"/>
     </target>
+    
+    <target name="build-systemtests" description="Build all systemtest JARs">
+        <subant target="-do-test-module" verbose="false">
+            <fileset dir="modules" includes="${build.systemtest.includes}" excludes="${build.systemtest.excludes}"/>
+        </subant>
+    </target>
         
 
     <!-- =================================================================== -->

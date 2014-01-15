@@ -606,7 +606,7 @@ Configuring EAR...
         
         <echo level="verbose">systemtest.path: ${systemtest.path}</echo>
         
-        <property name="junit.output.dir" location="${tmp}/tests"/>
+        <property name="junit.output.dir" location="${tmp}/test/results"/>
         <mkdir dir="${junit.output.dir}"/>
         <junit fork="yes" printsummary="on" haltonfailure="off">
             <formatter type="xml"/>
@@ -628,7 +628,7 @@ Configuring EAR...
         <echo>${systemtest.path}</echo>
         <fail unless="systemtest.jar" message="Usage: bin/ant systemtest:jar -Dsystemtest.jar=SignServer-Test-AdminWS-tests.jar"/>
         <echo>Running systemtests for JAR ${systemtest.jar}</echo>
-        <property name="junit.output.dir" location="${tmp}/tests"/>
+        <property name="junit.output.dir" location="${tmp}/test/results"/>
         <mkdir dir="${junit.output.dir}"/>
         <junit fork="yes" printsummary="on" haltonfailure="off">
             <formatter type="xml"/>
@@ -644,6 +644,17 @@ Configuring EAR...
                 <pathelement path="${basedir}/lib/ext/ext/hamcrest-core-1.3.jar"/>
             </classpath>
         </junit>
+    </target>
+    
+    <target name="systemtest:report" unless="no.report"
+        description="Create HTML test report from previously run systemtests">
+        <mkdir dir="${tmp}/test/reports"/>
+        <junitreport todir="${tmp}/test/reports">
+            <fileset dir="." includes="**/TEST-*.xml"/>
+            <report format="frames" todir="${tmp}/test/reports/html" />
+        </junitreport>
+        <property name="reportfile" location="${tmp}/test/reports/html/index.html"/>
+        <echo message="Test report available at: file://${reportfile}"/>
     </target>
 
     <target name="systemtest:adminws" description="Run system tests for AdminWS">

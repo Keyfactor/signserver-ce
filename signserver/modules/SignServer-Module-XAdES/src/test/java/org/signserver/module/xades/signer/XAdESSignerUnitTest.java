@@ -403,7 +403,7 @@ public class XAdESSignerUnitTest {
                 for (final String claimedRole : role.getClaimedRoles()) {
                     if (expectedClaimedRole == null) {
                         fail("Should not contain a claimed role");
-                    } else if (claimedRoleProperty.equals(expectedClaimedRole)){
+                    } else if (expectedClaimedRole.equals(claimedRole)){
                         foundExpectedRole = true;
                     } else {
                         fail("Unexpected claimed role: " + claimedRole);
@@ -412,7 +412,7 @@ public class XAdESSignerUnitTest {
             }
         }
         
-        if (claimedRoleProperty != null) {
+        if (expectedClaimedRole != null) {
             assertTrue("Expected to find claimed role: " + claimedRoleProperty, foundExpectedRole);
         }
         
@@ -798,5 +798,16 @@ public class XAdESSignerUnitTest {
        testProcessData_basicSigningInternal(KeyType.RSA,
                 null, XAdESSigner.SIGNATURE_METHOD_RSA_SHA256,
                 null, Collections.<String>emptyList(), "foobar", false, null, "foobar");
+    }
+    
+    /**
+     * Test setting claimed role from the username provided via the request.
+     * 
+     */
+    @Test
+    public void testClaimedRoleFromUsername() throws Exception {
+        testProcessData_basicSigningInternal(KeyType.RSA,
+                null, XAdESSigner.SIGNATURE_METHOD_RSA_SHA256,
+                null, Collections.<String>emptyList(), null, true, "username", "username");
     }
 }

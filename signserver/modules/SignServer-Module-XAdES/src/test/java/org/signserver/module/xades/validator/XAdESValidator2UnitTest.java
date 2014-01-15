@@ -804,7 +804,7 @@ public class XAdESValidator2UnitTest {
      */
     @Test
     public void testSigner2formTwithIntermediateCert() throws Exception {
-        LOG.info("signer2, form T with intermediate TSA cert");
+        LOG.info("signer2, form T with intermediate TSA CA cert included in config");
         
         final XAdESValidator instance = new XAdESValidator();
         final WorkerConfig config = new WorkerConfig();
@@ -825,6 +825,39 @@ public class XAdESValidator2UnitTest {
         requestContext.put(RequestContext.TRANSACTION_ID, "0000-309-0");
         GenericValidationRequest request = new GenericValidationRequest(309, SIGNED_XML_WITH_INTERMEDIATE_TS_CERT.getBytes("UTF-8"));
         GenericValidationResponse response = (GenericValidationResponse) instance.processData(request, requestContext);
+        
+        assertTrue("valid document", response.isValid());
+        assertTrue("time stamp verification performed", ProxyTimeStampTokenVerificationProvider.performedVerification);
+    }
+    
+    /**
+     * Test validating document with intermediate certificates in the signing certificate chain.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testSigner2formTwithIntermediateCertNotConfigured() throws Exception {
+        LOG.info("signer2, form T with intermediate TSA CA cert, not included in config");
+        
+        final XAdESValidator instance = new XAdESValidator();
+        final WorkerConfig config = new WorkerConfig();
+        
+        config.setProperty("TRUSTANCHORS", TRUSTANCHORS_FORM_T);
+        // "CERTIFICATES", SUB_CA_CERT not configured
+        config.setProperty("REVOCATION_CHECKING", "false");
+        
+        updateCRLs(rootcaCRLEmpty, subcaCRLEmpty);
+        
+        instance.init(4717, config, null, null);
+
+        // override the time stamp token verifier to use recording verification provider
+        ProxyTimeStampTokenVerificationProvider.performedVerification = false;
+        instance.setTimeStampVerificationProviderImplementation(ProxyTimeStampTokenVerificationProvider.class);
+        
+        RequestContext requestContext = new RequestContext();
+        requestContext.put(RequestContext.TRANSACTION_ID, "0000-309-0");
+        GenericValidationRequest request = new GenericValidationRequest(309, SIGNED_XML_WITH_INTERMEDIATE_TS_CERT.getBytes("UTF-8"));
+         GenericValidationResponse response = (GenericValidationResponse) instance.processData(request, requestContext);
         
         assertTrue("valid document", response.isValid());
         assertTrue("time stamp verification performed", ProxyTimeStampTokenVerificationProvider.performedVerification);

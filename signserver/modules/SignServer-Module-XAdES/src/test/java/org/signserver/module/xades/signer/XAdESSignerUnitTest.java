@@ -269,6 +269,15 @@ public class XAdESSignerUnitTest {
         assertEquals(Collections.EMPTY_LIST, instance.getFatalErrors());
     }
 
+    /**
+     * Internal method to perform a signing operation.
+     * 
+     * @param token Crypto token to use
+     * @param config Signer configuration to use for the test
+     * @param username Username to generate a username/password credential in the request context, if null, no credential is passed
+     * @return Verification result
+     * @throws Exception
+     */
     private XAdESVerificationResult getVerificationResult(final MockedCryptoToken token, final WorkerConfig config,
             final String username) throws Exception {
         XAdESSigner instance = new MockedXAdESSigner(token);
@@ -324,8 +333,10 @@ public class XAdESSignerUnitTest {
      * @param commitmentTypesProperty COMMITMENT_TYPES property to test with
      *                                if null, doesn't set the property
      * @param expectedCommitmentTypeUris List of expected commitment type URIs
-     * @param claimedRoleProperty Claimed role property to test, will check that the resulting document contains this and only this
-     *                          role. If null, don't set property and check that none is included
+     * @param claimedRoleProperty Claimed role property to test, ff null, don't set property
+     * @param claimedRoleFromUsername If set to true, include the CLAIMED_ROLE_FROM_USERNAME property
+     * @param username Username to pass in via the request context, if null no username is passed in
+     * @param expectedClaimedRole Expected claimed role in signed document, if null check that no claimed role is included
      * @throws Exception
      */
     private void testProcessData_basicSigningInternal(final KeyType keyType, final String signatureAlgorithm,

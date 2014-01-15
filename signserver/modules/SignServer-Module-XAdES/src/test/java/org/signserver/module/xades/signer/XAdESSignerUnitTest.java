@@ -803,11 +803,24 @@ public class XAdESSignerUnitTest {
     /**
      * Test setting claimed role from the username provided via the request.
      * 
+     * @throws Exception
      */
     @Test
     public void testClaimedRoleFromUsername() throws Exception {
         testProcessData_basicSigningInternal(KeyType.RSA,
                 null, XAdESSigner.SIGNATURE_METHOD_RSA_SHA256,
                 null, Collections.<String>emptyList(), null, true, "username", "username");
+    }
+    
+    /**
+     * Test that claimed role gets its value from the username before the hard-coded setting.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testClaimedRoleFromUsernameOverride() throws Exception {
+        testProcessData_basicSigningInternal(KeyType.RSA,
+                null, XAdESSigner.SIGNATURE_METHOD_RSA_SHA256,
+                null, Collections.<String>emptyList(), "defaultrole", true, "username", "username");
     }
 }

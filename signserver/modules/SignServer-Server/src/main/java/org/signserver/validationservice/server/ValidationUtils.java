@@ -16,14 +16,31 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.security.GeneralSecurityException;
 import java.security.NoSuchProviderException;
+import java.security.PublicKey;
 import java.security.cert.*;
+import java.util.logging.Level;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.DEREnumerated;
+import org.bouncycastle.asn1.DERTaggedObject;
+import org.bouncycastle.asn1.ocsp.OCSPResponseStatus;
 import org.bouncycastle.asn1.x509.CRLReason;
 import org.bouncycastle.asn1.x509.X509Extension;
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
+import org.bouncycastle.cert.ocsp.BasicOCSPResp;
+import org.bouncycastle.cert.ocsp.OCSPException;
+import org.bouncycastle.cert.ocsp.OCSPReq;
+import org.bouncycastle.cert.ocsp.OCSPResp;
+import org.bouncycastle.cert.ocsp.RespID;
+import org.bouncycastle.cert.ocsp.jcajce.JcaRespID;
+import org.bouncycastle.operator.OperatorCreationException;
+import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.bouncycastle.x509.extension.X509ExtensionUtil;
 import org.signserver.common.SignServerException;
 
@@ -201,5 +218,115 @@ public class ValidationUtils {
         DEREnumerated reasonCode = (DEREnumerated) X509ExtensionUtil.fromExtensionValue(reasonBytes);
 
         return reasonCode.getValue().intValue();
+    }
+    
+    public static OCSPResponse queryOCSPResponder(URL url, OCSPReq request) throws IOException, OCSPException {
+        final OCSPResponse result = new OCSPResponse();
+        
+        final HttpURLConnection con;
+        final URLConnection urlCon = url.openConnection();
+        if (!(urlCon instanceof HttpURLConnection)) {
+            throw new IOException("Unsupported protocol in URL: " + url);
+        }
+        con = (HttpURLConnection) urlCon;
+
+        // POST the OCSP request
+        con.setDoOutput(true);
+        con.setRequestMethod("POST");
+
+        // POST it
+        con.setRequestProperty("Content-Type", "application/ocsp-request");
+        OutputStream os = null;
+        try {
+            os = con.getOutputStream();
+            os.write(request.getEncoded());
+        } finally {
+            if (os != null) {
+                os.close();
+            }
+        }
+
+        result.setHttpReturnCode(con.getResponseCode());
+        if (result.getHttpReturnCode() != 200) {
+            if (result.getHttpReturnCode() == 401) {
+                result.setError(OCSPResponse.Error.httpUnauthorized);
+            } else {
+                result.setError(OCSPResponse.Error.unknown);
+            }
+            return result;
+        }
+
+        OCSPResp response = null;
+        InputStream in = null;
+        try {
+            in = con.getInputStream();
+            if (in != null) {
+                ByteArrayOutputStream bout = new ByteArrayOutputStream();
+                int b;
+                while ( (b = in.read()) != -1) {
+                    bout.write(b);
+                }
+                response = new OCSPResp(bout.toByteArray());
+            }
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException ignored) {} // NOPMD
+            }
+        }
+
+        if (response == null) {
+            result.setError(OCSPResponse.Error.noResponse);
+            return result;
+        }
+        result.setResp(response);
+
+        if (response.getStatus() != OCSPResponseStatus.SUCCESSFUL) {
+            result.setError(OCSPResponse.Error.fromBCOCSPResponseStatus(response.getStatus()));
+            return result;
+        }
+
+        final BasicOCSPResp brep = (BasicOCSPResp) response.getResponseObject();
+        result.setResponseObject(brep);
+        if ( brep==null ) {
+            result.setError(OCSPResponse.Error.noResponse);
+            return result;
+        }
+
+        final RespID id = brep.getResponderId();
+        final DERTaggedObject to = (DERTaggedObject)id.toASN1Object().toASN1Object();
+        final RespID respId;
+
+        final X509CertificateHolder[] chain = brep.getCerts();
+        JcaX509CertificateConverter converter = new JcaX509CertificateConverter();
+        X509Certificate signerCertificate;
+        try {
+            signerCertificate = converter.getCertificate(chain[0]);
+        } catch (CertificateException ex) {
+            throw new IOException("Could not convert certificate: " + ex.getMessage());
+        }
+        result.setSignerCertificate(signerCertificate);
+
+        if (to.getTagNo() == 1) {
+            // This is Name
+            respId = new JcaRespID(signerCertificate.getSubjectX500Principal());
+        } else {
+            // This is KeyHash
+            final PublicKey signerPub = signerCertificate.getPublicKey();
+            try {
+                respId = new JcaRespID(signerPub, new JcaDigestCalculatorProviderBuilder().build().get(RespID.HASH_SHA1));
+            } catch (OperatorCreationException ex) {
+                throw new IOException("Could not create respId: " + ex.getMessage());
+            }
+        }
+        if (!id.equals(respId)) {
+            // Response responderId does not match signer certificate responderId!
+            result.setError(OCSPResponse.Error.invalidSignerId);
+        }
+
+        result.setIssuerDN(signerCertificate.getIssuerX500Principal());
+
+        return result;
     }
 }

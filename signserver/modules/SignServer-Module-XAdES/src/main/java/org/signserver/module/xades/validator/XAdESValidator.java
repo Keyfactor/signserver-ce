@@ -32,19 +32,20 @@ import java.security.cert.CollectionCertStoreParameters;
 import java.security.cert.PKIXCertPathValidatorResult;
 import java.security.cert.PKIXParameters;
 import java.security.cert.TrustAnchor;
+import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.log4j.Logger;
+import org.bouncycastle.cert.ocsp.OCSPException;
+import org.bouncycastle.cert.ocsp.OCSPReq;
 import org.ejbca.util.CertTools;
 import org.signserver.common.*;
 import org.signserver.server.WorkerContext;
@@ -52,6 +53,7 @@ import org.signserver.server.validators.BaseValidator;
 import org.signserver.validationservice.common.ValidateResponse;
 import org.signserver.validationservice.common.Validation;
 import org.signserver.validationservice.common.Validation.Status;
+import org.signserver.validationservice.server.OCSPResponse;
 import org.signserver.validationservice.server.ValidationUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -259,15 +261,12 @@ public class XAdESValidator extends BaseValidator {
                 final Certificate cert = result.getValidationCertificate();
                 final List<X509Certificate> certChain = result.getValidationData().getCerts();
                 final Certificate rootCert = result.getValidationData().getCerts().get(result.getValidationData().getCerts().size() - 1);
-                checkOCSP(cert, certChain, rootCert);
                 v = validate(cert, certChain, rootCert);
             } catch (IllegalRequestException ex) {
                 LOG.info("Request " + requestId + " signature valid: false, " + ex.getMessage());
                 return new GenericValidationResponse(requestId, false);
             } catch (CryptoTokenOfflineException ex) {
                 throw new SignServerException("Certificate validation error", ex);
-            } catch (CertificateParsingException e) {
-                throw new SignServerException("Certificate parsing error", e);
             }
         } else {            
             // Fill in the certificate validation information.
@@ -287,18 +286,7 @@ public class XAdESValidator extends BaseValidator {
         errors.addAll(configErrors);
         return errors;
     }
-    
-    private boolean checkOCSP(final Certificate cert, final List<X509Certificate> certChain, final Certificate rootCert)
-        throws CertificateParsingException {
-        final String url = CertTools.getAuthorityInformationAccessOcspUrl(cert);
-        
-        LOG.info("Authority information access OCSP URL: " + url);
-        
-        return true;
-    }
-    
-    // TODO: Copied from CRLValidator, refactor and clean up: 
-    // TODO: This code is work in progress and should be cleaned up before closing this ticket
+
     protected Validation validate(Certificate cert, List<X509Certificate> certChain,  Certificate rootCert)
             throws IllegalRequestException, CryptoTokenOfflineException,
             SignServerException {
@@ -313,53 +301,14 @@ public class XAdESValidator extends BaseValidator {
             sb.append("***********************");
             LOG.debug(sb.toString());
         }
-        
-        // Collection CDPs from certificates
-        final Set<URL> cDPURLs = new HashSet<URL>();
-        final StringBuilder sb = new StringBuilder();
-        for (final X509Certificate certificate : certChain) {
-             sb.append(CertTools.getIssuerDN(certificate)).append(": ");
-            try {
-                final URL url = CertTools.getCrlDistributionPoint(certificate);
-                if (url == null) {
-                    sb.append("No CRL distribution point URL found.");
-                } else {
-                    sb.append("Found CDP: ").append(url).append("\n");
-                    cDPURLs.add(url);
-                }
-            } catch (CertificateParsingException ex) {
-                // CertTools.getCrlDistributionPoint throws an exception if it can't find an URL
-                sb.append("No CRL distribution point URL found: ").append(ex.getMessage()).append("\n");
-            }
-        }
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(sb.toString());
-        }
-
 
         // certStore & certPath construction
-        final List<Object> certsAndCRLs = new ArrayList<Object>();
         CertificateFactory certFactory;
         CertPathValidator validator = null;
         PKIXParameters params = null;
         CertPath certPath = null;
         try {
             certFactory = CertificateFactory.getInstance("X509"); // TODO: "BC");
-
-            // Initialize certStore with certificate chain and certificate in question
-            certsAndCRLs.addAll(certChain);
-            certsAndCRLs.add(cert);
-
-            //fetch CRLs obtained form the CDP extension of certificates
-            // TODO: We want to use a cache for this
-            for (URL url : cDPURLs) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Fetching CRL from " + url + "...");
-                }
-                certsAndCRLs.add(ValidationUtils.fetchCRLFromURL(url, certFactory));
-            }
-
-            final CertStore certStore = CertStore.getInstance("Collection", new CollectionCertStoreParameters(certsAndCRLs));
 
             // CertPath Construction
             certPath = certFactory.generateCertPath(certChain);
@@ -372,14 +321,28 @@ public class XAdESValidator extends BaseValidator {
             params = new PKIXParameters(Collections.singleton(trustAnc));
             params.addCertStore(certStore);
             params.setDate(new Date());         // TODO: Using current date at the moment
-            params.setRevocationEnabled(true);
+            params.setRevocationEnabled(false);
+            params.addCertPathChecker(new AbstractCustomCertPathChecker(certChain, (X509Certificate) rootCert) {
+
+                @Override
+                protected X509CRL fetchCRL(URL crlURL) throws IOException, CertificateException, SignServerException {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Fetching CRL from " + crlURL + "...");
+                    }
+                    return ValidationUtils.fetchCRLFromURL(crlURL, CertificateFactory.getInstance("X509"));
+                }
+
+                @Override
+                protected OCSPResponse queryOCSPResponder(URL url, OCSPReq request) throws IOException, OCSPException {
+                    return doQueryOCSPResponder(url, request);
+                }
+                
+            });
+            
         } catch (CertificateException e) {
             LOG.error("Exception on preparing parameters for validation", e);
             throw new SignServerException(e.toString(), e);
         } catch (InvalidAlgorithmParameterException e) {
-            LOG.error("Exception on preparing parameters for validation", e);
-            throw new SignServerException(e.toString(), e);
-        } catch (SignServerException e) {
             LOG.error("Exception on preparing parameters for validation", e);
             throw new SignServerException(e.toString(), e);
         } catch (NoSuchAlgorithmException e) {
@@ -422,8 +385,14 @@ public class XAdESValidator extends BaseValidator {
         return chain;
     }
     
-    void setTimeStampVerificationProviderImplementation(final Class<? extends TimeStampVerificationProvider> timeStampVerificationImplementation) {
+    /** Set the time-stamp verification provider to use. This method can be overridden by unit tests. **/
+    protected void setTimeStampVerificationProviderImplementation(final Class<? extends TimeStampVerificationProvider> timeStampVerificationImplementation) {
         this.timeStampVerificationImplementation = timeStampVerificationImplementation;
+    }
+    
+    /** Query the OCSP responder. This method can be overridden by unit tests. **/
+    protected OCSPResponse doQueryOCSPResponder(URL url, OCSPReq request) throws IOException, OCSPException {
+        return ValidationUtils.queryOCSPResponder(url, request);
     }
     
 }

@@ -4099,7 +4099,8 @@ The signed XML document can be validated using the XML Validator.
                             <b>TSA_PASSWORD</b> = Login password used if the TSA uses HTTP Basic Auth.<br/>
                             <b>COMMITMENT_TYPES</b> = List of commitment types to be indicated in the signature. Multiple values can be given separated by ",". See list below for valid values. Optionally the constant NONE can be used to explicitly state that no commitment types should be included (this constant can only be used alone). Optional. Default: no commitment types are included.<br/> 
                             <b>SIGNATUREALGORITHM</b> = The algorithm used to sign the data. The same set of algorithms as for the same property in XMLSigner is supported. Optional. Default: depending on the signer's private key: SHA1withDSA for DSA keys, SHA256withRSA for RSA keys, and SHA1withECDSA for EC keys.<br/>
-                            <b>CLAIMED_ROLE</b> = Claimed role to include in the signature. Can be any string value (f.ex. a user name). Optional. Default: no claimed role is included.<br/>
+                            <b>CLAIMED_ROLE</b> = Claimed role to include in the signature. If the CLAIMED_ROLE_FROM_USERNAME property is also set, this value is used as a fallback when there is no user name provided in the request. Optional. Default: no default claimed role defined.<br/>
+                            <b>CLAIMED_ROLE_FROM_USERNAME</b> = If this is set to true, use the user name from the request (provided by an authorizer) as the value for claimed role. If there is no user name provided fall back to the value set by CLAIMED_USER. If this is set to true and CLAIMED_ROLE is not set and the request doesn't contain a user name, the request will result in an error. Optional. Default: false.<br/>
                         </p>
                     </subsubsection>
                     <subsubsection name="Commitment Types">

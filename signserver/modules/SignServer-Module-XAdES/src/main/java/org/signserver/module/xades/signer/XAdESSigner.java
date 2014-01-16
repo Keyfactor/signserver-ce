@@ -281,10 +281,13 @@ public class XAdESSigner extends BaseSigner {
         final String archiveId = createArchiveId(data, (String) requestContext.get(RequestContext.TRANSACTION_ID));
         final byte[] signedbytes;
         
+        // take role from request user name in first hand when CLAIMED_ROLE_FROM_USERNAME
+        // is true, otherwise take it from the CLAIMED_ROLE property
         final UsernamePasswordClientCredential cred =
                 (UsernamePasswordClientCredential) requestContext.get(RequestContext.CLIENT_CREDENTIAL);
         final String username = cred != null ? cred.getUsername() : null;
-        final String claimedRole = username != null ? username : claimedRoleDefault;
+        final String claimedRole =
+                username != null && claimedRoleFromUsername ? username : claimedRoleDefault;
        
         try {
             // Parse

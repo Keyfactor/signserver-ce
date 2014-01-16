@@ -823,4 +823,17 @@ public class XAdESSignerUnitTest {
                 null, XAdESSigner.SIGNATURE_METHOD_RSA_SHA256,
                 null, Collections.<String>emptyList(), "defaultrole", true, "username", "username");
     }
+    
+    /**
+     * Test that the using a value for CLAIMED_ROLE and not setting CLAIMED_ROLE_FROM_USERNAME
+     * the value is taken from property even when there is a user name in the request.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testClaimedRoleUsingDefaultWithSuppliedUsername() throws Exception {
+        testProcessData_basicSigningInternal(KeyType.RSA,
+                null, XAdESSigner.SIGNATURE_METHOD_RSA_SHA256,
+                null, Collections.<String>emptyList(), "defaultrole", false, "username", "defaultrole");
+    }   
 }

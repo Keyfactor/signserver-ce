@@ -835,5 +835,25 @@ public class XAdESSignerUnitTest {
         testProcessData_basicSigningInternal(KeyType.RSA,
                 null, XAdESSigner.SIGNATURE_METHOD_RSA_SHA256,
                 null, Collections.<String>emptyList(), "defaultrole", false, "username", "defaultrole");
-    }   
+    }
+    
+    /**
+     * Test that setting CLAIMED_ROLE_FROM_USERNAME and not having set CLAIMED_ROLE
+     * results in an error if there is no user name in the request.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testClaimedRoleNoUsername() throws Exception {
+       try {
+           testProcessData_basicSigningInternal(KeyType.RSA,
+                   null, XAdESSigner.SIGNATURE_METHOD_RSA_SHA256,
+                   null, Collections.<String>emptyList(), null, true, null, null);
+           fail("Should throw a SignServerException");
+       } catch (SignServerException e) { //NOPMD
+           // expected
+       } catch (Exception e) {
+           fail("Unexpected exception thrown: " + e.getClass().getName());
+       }
+    }
 }

@@ -289,6 +289,12 @@ public class XAdESSigner extends BaseSigner {
         final String claimedRole =
                 username != null && claimedRoleFromUsername ? username : claimedRoleDefault;
        
+        // if CLAIMED_ROLE_FROM_USERNAME is true and there was no supplied user name
+        // and no value from CLAIMED_ROLE consider this a fatal error
+        if (claimedRoleFromUsername && claimedRoleDefault == null && username == null) {
+            throw new SignServerException("Received a request with no user name set, while configured to get claimed role from user name and no default value for claimed role is set.");
+        }
+        
         try {
             // Parse
             final XadesSigner signer = createSigner(parameters, claimedRole);

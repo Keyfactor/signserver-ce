@@ -97,6 +97,7 @@ public class XAdESValidator2UnitTest {
     private static X509CertificateHolder rootcaCert;
     private static X509CRLHolder rootcaCRLEmpty;
     private static X509CRLHolder rootcaCRLSubCAAndSigner1Revoked;
+    private static X509CRLHolder rootcaCRLSigner5Revoked;
     private static File rootcaCRLFile;
     
     // Sub CA 1
@@ -130,6 +131,11 @@ public class XAdESValidator2UnitTest {
     private static MockedCryptoToken token4;
     private static String signedXml4;
     private static X509CertificateHolder signer4Cert;
+    
+    // Signer 5: Root CA, Signer including OCSP URI and CDP
+    private static MockedCryptoToken token5;
+    private static String signedXml5;
+    private static X509CertificateHolder signer5Cert;
     
     // OCSP Signer 1: Root CA, ocsp signer
     private static KeyPair ocspSigner1KeyPair;
@@ -610,6 +616,50 @@ public class XAdESValidator2UnitTest {
         data = response.getProcessedData();
         signedXml4 = new String(data);
         LOG.debug("Signed document by signer 4:\n\n" + signedXml4 + "\n"); 
+        
+        // Signer 5 is issued directly by the root CA
+        final KeyPair signer5KeyPair = CryptoUtils.generateRSA(1024);
+        signer5Cert = new CertBuilder()
+                .setIssuerPrivateKey(rootcaKeyPair.getPrivate())
+                .setIssuer(rootcaCert.getSubject())
+                .setSubjectPublicKey(signer5KeyPair.getPublic())
+                .setSubject("CN=Signer 5, O=XAdES Test, C=SE")
+                .addCDPURI(rootcaCRLFile.toURI().toURL().toExternalForm())
+                .addExtension(new CertExt(Extension.authorityInfoAccess, false,
+                        new AuthorityInformationAccess(AccessDescription.id_ad_ocsp, 
+                                new GeneralName(GeneralName.uniformResourceIdentifier, "http://ocsp.example.com"))))
+                .addExtension(new CertExt(Extension.basicConstraints, false, new BasicConstraints(false)))
+                .build();
+        final List<Certificate> chain5 = Arrays.<Certificate>asList(
+                    conv.getCertificate(signer5Cert),
+                    conv.getCertificate(rootcaCert)
+                );
+        token5 = new MockedCryptoToken(
+                signer5KeyPair.getPrivate(),
+                signer5KeyPair.getPublic(), 
+                conv.getCertificate(signer1Cert), 
+                chain5, 
+                "BC");
+        LOG.debug("Chain 5: \n" + new String(CertTools.getPEMFromCerts(chain5)) + "\n");
+        
+        // Sign a document by signer 5
+        instance = new MockedXAdESSigner(token5);
+        config = new WorkerConfig();
+        instance.init(4712, config, null, null);
+        requestContext = new RequestContext();
+        requestContext.put(RequestContext.TRANSACTION_ID, "0000-205-1");
+        request = new GenericSignRequest(205, "<test205/>".getBytes("UTF-8"));
+        response = (GenericSignResponse) instance.processData(request, requestContext);
+        data = response.getProcessedData();
+        signedXml5 = new String(data);
+        LOG.debug("Signed document by signer 5:\n\n" + signedXml5 + "\n");
+        
+        // CRL with signer 5 revoked
+        rootcaCRLSigner5Revoked = new CRLBuilder()
+                .setIssuerPrivateKey(rootcaKeyPair.getPrivate())
+                .setIssuer(rootcaCert.getSubject())
+                .addCRLEntry(signer5Cert.getSerialNumber(), new Date(), CRLReason.keyCompromise)
+                .build();
     }
     
     @Before
@@ -1266,6 +1316,74 @@ public class XAdESValidator2UnitTest {
         GenericValidationResponse response = (GenericValidationResponse) instance.processData(request, requestContext);
         
         assertTrue("OCSP calls: " + requests.size(), requests.size() == 1 || requests.size() == 2);
+        
+        assertFalse("valid document", response.isValid());
+        assertNotEquals("cert validation status", Validation.Status.VALID, response.getCertificateValidation().getStatus());
+    }
+    
+    /**
+     * Positive test for signer 5 were OCSP is unable and falls back to CDP
+     * were CRL is ok.
+     */
+    @Test
+    public void testSigner5_withOCSPandCDP_ok() throws Exception {
+        LOG.info("testSigner5_withOCSPandCDP_ok");
+
+        final ArrayList<OCSPReq> requests = new ArrayList<OCSPReq>();
+        XAdESValidator instance = new XAdESValidator() {
+            @Override
+            protected OCSPResponse doQueryOCSPResponder(URL url, OCSPReq request) throws IOException, OCSPException {
+                requests.add(request);
+                throw new IOException("Simulating OCSP unavailable");
+            }
+        };
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("TRUSTANCHORS", new String(CertTools.getPEMFromCerts(Arrays.<Certificate>asList(new JcaX509CertificateConverter().getCertificate(rootcaCert)))));
+        config.setProperty("REVOCATION_CHECKING", "true");
+       
+        instance.init(4715, config, null, null);
+        
+        RequestContext requestContext = new RequestContext();
+        requestContext.put(RequestContext.TRANSACTION_ID, "0000-307-1");
+        GenericValidationRequest request = new GenericValidationRequest(307, signedXml5.getBytes("UTF-8"));
+        GenericValidationResponse response = (GenericValidationResponse) instance.processData(request, requestContext);
+        
+        assertEquals("OCSP calls", 1, requests.size());
+        
+        assertTrue("valid document", response.isValid());
+        assertEquals("cert validation status", Validation.Status.VALID, response.getCertificateValidation().getStatus());
+    }
+    
+    /**
+     * Negative test for signer 5 were OCSP is unable and falls back to CDP
+     * were signer is revoked in CRL.
+     */
+    @Test
+    public void testSigner5_withOCSPandCDP_revoked() throws Exception {
+        LOG.info("testSigner5_withOCSPandCDP_revoked");
+
+        updateCRLs(rootcaCRLSigner5Revoked, subca1CRLEmpty);
+        
+        final ArrayList<OCSPReq> requests = new ArrayList<OCSPReq>();
+        XAdESValidator instance = new XAdESValidator() {
+            @Override
+            protected OCSPResponse doQueryOCSPResponder(URL url, OCSPReq request) throws IOException, OCSPException {
+                requests.add(request);
+                throw new IOException("Simulating OCSP unavailable");
+            }
+        };
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("TRUSTANCHORS", new String(CertTools.getPEMFromCerts(Arrays.<Certificate>asList(new JcaX509CertificateConverter().getCertificate(rootcaCert)))));
+        config.setProperty("REVOCATION_CHECKING", "true");
+       
+        instance.init(4715, config, null, null);
+        
+        RequestContext requestContext = new RequestContext();
+        requestContext.put(RequestContext.TRANSACTION_ID, "0000-307-1");
+        GenericValidationRequest request = new GenericValidationRequest(307, signedXml5.getBytes("UTF-8"));
+        GenericValidationResponse response = (GenericValidationResponse) instance.processData(request, requestContext);
+        
+        assertEquals("OCSP calls", 1, requests.size());
         
         assertFalse("valid document", response.isValid());
         assertNotEquals("cert validation status", Validation.Status.VALID, response.getCertificateValidation().getStatus());

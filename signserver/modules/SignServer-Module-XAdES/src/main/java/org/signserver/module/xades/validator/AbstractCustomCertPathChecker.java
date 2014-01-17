@@ -284,8 +284,8 @@ public abstract class AbstractCustomCertPathChecker extends PKIXCertPathChecker 
             } catch (CertificateNotYetValidException e) {
                 throw new SignServerException("Certificate signing the ocsp response is not yet valid. OCSP Responder Certificate Subject DN : " + CertTools.getSubjectDN(ocspRespSignerCertificate));
             }
-        } else if (ocspRespSignerCertificate.equals(rootCert)) {
-            LOG.debug("Not performing revocation check on OCSP/root CA certificate");
+        } else if (ocspRespSignerCertificate.equals(cACert)) {
+            LOG.debug("Not performing revocation check on issuer certificate");
         } else {
             // TODO: Could try to use CRL if available
             throw new SignServerException("Revokation check of OCSP certificate not yet supported");

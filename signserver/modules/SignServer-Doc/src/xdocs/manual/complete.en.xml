@@ -540,6 +540,9 @@ The examples are for installing a MariaDB datasource using the jboss-cli with th
 <source>
 data-source add --name=signserverds --driver-name="org.mariadb.jdbc.Driver" --connection-url="jdbc:mysql://127.0.0.1:3306/signserver" --jndi-name="java:/SignServerDS" --use-ccm=true --driver-class="org.mariadb.jdbc.Driver" --user-name="signserver" --password="signserver" --validate-on-match=true --background-validation=false --prepared-statements-cache-size=50 --share-prepared-statements=true --min-pool-size=5 --max-pool-size=150 --pool-prefill=true --transaction-isolation=TRANSACTION_READ_COMMITTED --check-valid-connection-sql="select 1;"
 </source>
+                        <p>
+Then restart the application server.
+                        </p>
                     </subsubsection>
                     
                     <subsubsection name="Configure data source for JBoss EAP 6">
@@ -550,6 +553,9 @@ The examples are for installing a MariaDB datasource using the jboss-cli with th
 <source>
 data-source add --name=signserverds --driver-name="org.mariadb.jdbc.Driver" --connection-url="jdbc:mysql://127.0.0.1:3306/signserver" --jndi-name="java:/SignServerDS" --use-ccm=true --driver-class="org.mariadb.jdbc.Driver" --user-name="signserver" --password="signserver" --validate-on-match=true --background-validation=false --prepared-statements-cache-size=50 --share-prepared-statements=true --min-pool-size=5 --max-pool-size=150 --pool-prefill=true --transaction-isolation=TRANSACTION_READ_COMMITTED --check-valid-connection-sql="select 1;" --enabled=true
 </source>
+                        <p>
+Then restart the application server.
+                        </p>
                     </subsubsection>
                     
                 </subsection>

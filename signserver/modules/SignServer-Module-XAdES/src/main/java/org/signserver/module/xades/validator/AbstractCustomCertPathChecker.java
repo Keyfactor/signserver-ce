@@ -33,7 +33,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import org.apache.log4j.Logger;
@@ -41,8 +40,10 @@ import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
 import org.bouncycastle.asn1.oiw.OIWObjectIdentifiers;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.CRLReason;
+import org.bouncycastle.asn1.x509.KeyPurposeId;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.ocsp.BasicOCSPResp;
 import org.bouncycastle.cert.ocsp.CertificateID;
 import org.bouncycastle.cert.ocsp.OCSPException;
@@ -267,10 +268,6 @@ public abstract class AbstractCustomCertPathChecker extends PKIXCertPathChecker 
             if (ocspRespSignerCertificate == null) {
                 throw new SignServerException("Certificate signing the ocsp response is not found in ocsp response's certificate chain received and is not signed by CA issuing certificate");
             }
-            
-            if (!basicOCSPResponse.isSignatureValid(new JcaContentVerifierProviderBuilder().setProvider("BC").build(cACert.getPublicKey()))) {
-                throw new SignServerException("Inconsistent signature on OCSP response");
-            }
         }
 
         LOG.debug("OCSP response signed by :  " + CertTools.getSubjectDN(ocspRespSignerCertificate));
@@ -408,32 +405,24 @@ public abstract class AbstractCustomCertPathChecker extends PKIXCertPathChecker 
      * @throws CertStoreException 
      */
     private X509Certificate getAuthorizedOCSPRespondersCertificateFromOCSPResponse(BasicOCSPResp basicOCSPResponse) throws NoSuchAlgorithmException, NoSuchProviderException, OCSPException, CertStoreException, CertificateEncodingException, OperatorCreationException {
-        X509Certificate retCert = null;
-        X509Certificate tempCert;
+        X509Certificate result = null;
         X509CertificateHolder[] certs = basicOCSPResponse.getCerts();
         Store ocspRespCertStore = new JcaCertStore(Arrays.asList(certs));
         
-
         //search for certificate having OCSPSigner extension		
-        X509ExtendedKeyUsageExistsCertSelector certSel = new X509ExtendedKeyUsageExistsCertSelector("1.3.6.1.5.5.7.3.9");
-        Iterator<?> certsIter = ocspRespCertStore.getMatches(certSel).iterator();
+        X509ExtendedKeyUsageExistsCertSelector certSel = new X509ExtendedKeyUsageExistsCertSelector(KeyPurposeId.id_kp_OCSPSigning);
 
-        while (certsIter.hasNext()) {
+        for (X509CertificateHolder cert : (Collection<X509CertificateHolder>) ocspRespCertStore.getMatches(certSel)) {
             try {
-                // direct cast to org.signserver.validationservice.common.X509Certificate fails
-                tempCert = (java.security.cert.X509Certificate) certsIter.next();
-            } catch (Exception e) {
-                //eat up exception 
-                continue;
-            }
-            //it might be the case that certchain contains more than one certificate with OCSPSigner extension
-            //check if certificate verifies the signature on the response 
-            if (tempCert != null && basicOCSPResponse.isSignatureValid(new JcaContentVerifierProviderBuilder().setProvider("BC").build(tempCert.getPublicKey()))) {
-                retCert = tempCert;
-                break;
-            }
+                //it might be the case that certchain contains more than one certificate with OCSPSigner extension
+                //check if certificate verifies the signature on the response
+                if (cert != null && basicOCSPResponse.isSignatureValid(new JcaContentVerifierProviderBuilder().setProvider("BC").build(cert))) {
+                    result = new JcaX509CertificateConverter().getCertificate(cert);
+                    break;
+                }
+            } catch (CertificateException ignored) {}
         }
 
-        return retCert;
+        return result;
     }
 }

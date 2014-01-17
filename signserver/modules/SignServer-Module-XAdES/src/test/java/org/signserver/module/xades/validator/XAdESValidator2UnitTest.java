@@ -56,8 +56,12 @@ import org.signserver.validationservice.common.Validation;
 import com.google.inject.Inject;
 import java.net.URL;
 import java.util.ArrayList;
+import org.bouncycastle.asn1.DERNull;
+import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
 import org.bouncycastle.asn1.oiw.OIWObjectIdentifiers;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
+import org.bouncycastle.asn1.x509.KeyPurposeId;
 import org.bouncycastle.cert.ocsp.CertificateID;
 import org.bouncycastle.cert.ocsp.CertificateStatus;
 import org.bouncycastle.cert.ocsp.OCSPException;
@@ -90,12 +94,15 @@ public class XAdESValidator2UnitTest {
     private static X509CertificateHolder rootcaCert;
     private static X509CertificateHolder subcaCert;
     private static X509CertificateHolder signer3Cert;
+    private static X509CertificateHolder ocspSigner1Cert;
     private static X509CRLHolder rootcaCRLEmpty;
     private static X509CRLHolder subcaCRLEmpty;
     private static X509CRLHolder rootcaCRLSubCAAndSigner1Revoked;
     private static X509CRLHolder subcaCRLSigner2Revoked;
     private static X509CRLHolder otherCRL;
     private static KeyPair rootcaKeyPair;
+    private static KeyPair ocspSigner1KeyPair;
+    private static KeyPair anotherKeyPair;
     private static File rootcaCRLFile;
     private static File subcaCRLFile;
     
@@ -353,6 +360,7 @@ public class XAdESValidator2UnitTest {
         subcaCRLFile = File.createTempFile("xadestest-", "-subca.crl");
         LOG.debug("subcaCRLFile: " + subcaCRLFile);
         rootcaKeyPair = CryptoUtils.generateRSA(1024);
+        anotherKeyPair = CryptoUtils.generateRSA(1024);
         rootcaCert = new CertBuilder()
                 .setSelfSignKeyPair(rootcaKeyPair)
                 .setSubject("CN=Root, O=XAdES Test, C=SE")
@@ -488,7 +496,21 @@ public class XAdESValidator2UnitTest {
                 "BC");
         LOG.debug("Chain 3: \n" + new String(CertTools.getPEMFromCerts(chain3)) + "\n");
         
-        // TODO: Add OCSP responder
+        // ocspSigner 1, OCSP responder issued by the root CA with an ocsp-nocheck in the signer cert
+        ocspSigner1KeyPair = CryptoUtils.generateRSA(1024);
+        ocspSigner1Cert = new CertBuilder()
+                .setIssuerPrivateKey(rootcaKeyPair.getPrivate())
+                .setIssuer(rootcaCert.getSubject())
+                .setSubjectPublicKey(ocspSigner1KeyPair.getPublic())
+                .setSubject("CN=OCSP Responder 1, O=XAdES Test, C=SE")
+                .addExtension(new CertExt(Extension.basicConstraints, false, new BasicConstraints(false)))
+                .addExtension(new CertExt(Extension.extendedKeyUsage, false, new ExtendedKeyUsage(KeyPurposeId.id_kp_OCSPSigning)))
+                .addExtension(new CertExt(OCSPObjectIdentifiers.id_pkix_ocsp_nocheck, false, new DERNull()))
+                .build();
+        final List<Certificate> ocspSigner1Chain = Arrays.<Certificate>asList(
+                    conv.getCertificate(ocspSigner1Cert),
+                    conv.getCertificate(rootcaCert)
+                );
         
         // Sign a document by signer 2
         instance = new MockedXAdESSigner(token3);
@@ -743,9 +765,13 @@ public class XAdESValidator2UnitTest {
         return result;
     }
     
+    /**
+     * Positive test for signer 3 were an OCSP response is signed by the CA
+     * and returns the status GOOD for the signer 3 certificate.
+     */
     @Test
-    public void testSigner3_withOnlyOCSP_ok() throws Exception {
-        LOG.info("testSigner3_withOnlyOCSP_ok");
+    public void testSigner3_withOnlyOCSP_ca_ok() throws Exception {
+        LOG.info("testSigner3_withOnlyOCSP_ca_ok");
 
         final ArrayList<OCSPReq> requests = new ArrayList<OCSPReq>();
         XAdESValidator instance = new XAdESValidator() {
@@ -782,6 +808,95 @@ public class XAdESValidator2UnitTest {
         assertEquals("cert validation status", Validation.Status.VALID, response.getCertificateValidation().getStatus());
     }
     
+    /**
+     * Positive test for signer 3 were an OCSP response is signed by external
+     * responder and returns the status GOOD for the signer 3 certificate.
+     */
+    @Test
+    public void testSigner3_withOnlyOCSP_responder_ok() throws Exception {
+        LOG.info("testSigner3_withOnlyOCSP_responder_ok");
+
+        final ArrayList<OCSPReq> requests = new ArrayList<OCSPReq>();
+        XAdESValidator instance = new XAdESValidator() {
+            @Override
+            protected OCSPResponse doQueryOCSPResponder(URL url, OCSPReq request) throws IOException, OCSPException {
+                try {
+                    requests.add(request);
+                    
+                    // Create response signed by the CA
+                    return convert(new OCSPResponseBuilder()
+                            .addResponse(new OcspRespObject(new CertificateID(new BcDigestCalculatorProvider().get(new AlgorithmIdentifier(OIWObjectIdentifiers.idSHA1)), rootcaCert, signer3Cert.getSerialNumber()), CertificateStatus.GOOD))
+                            .setResponseSignerCertificate(new JcaX509CertificateConverter().getCertificate(rootcaCert))
+                            .setIssuerPrivateKey(ocspSigner1KeyPair.getPrivate())
+                            .setChain(new X509CertificateHolder[] {ocspSigner1Cert}).build());
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        };
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("TRUSTANCHORS", new String(CertTools.getPEMFromCerts(Arrays.<Certificate>asList(new JcaX509CertificateConverter().getCertificate(rootcaCert)))));
+        config.setProperty("REVOCATION_CHECKING", "true");
+       
+        instance.init(4715, config, null, null);
+        
+        RequestContext requestContext = new RequestContext();
+        requestContext.put(RequestContext.TRANSACTION_ID, "0000-307-1");
+        GenericValidationRequest request = new GenericValidationRequest(307, signedXml3.getBytes("UTF-8"));
+        GenericValidationResponse response = (GenericValidationResponse) instance.processData(request, requestContext);
+        
+        assertEquals("OCSP calls", 1, requests.size());
+        
+        assertTrue("valid document", response.isValid());
+        assertEquals("cert validation status", Validation.Status.VALID, response.getCertificateValidation().getStatus());
+    }
+    
+    /**
+     * Negative test for signer 3 were an OCSP response is signed by an un matching private key
+     * and returns the status GOOD for the signer 3 certificate.
+     */
+    @Test
+    public void testSigner3_withOnlyOCSP_anotherKey() throws Exception {
+        LOG.info("testSigner3_withOnlyOCSP_anotherKey");
+
+        final ArrayList<OCSPReq> requests = new ArrayList<OCSPReq>();
+        XAdESValidator instance = new XAdESValidator() {
+            @Override
+            protected OCSPResponse doQueryOCSPResponder(URL url, OCSPReq request) throws IOException, OCSPException {
+                try {
+                    requests.add(request);
+                    
+                    // Create response signed by anotherKeyPair but including the rootcaCert
+                    return convert(new OCSPResponseBuilder()
+                            .addResponse(new OcspRespObject(new CertificateID(new BcDigestCalculatorProvider().get(new AlgorithmIdentifier(OIWObjectIdentifiers.idSHA1)), rootcaCert, signer3Cert.getSerialNumber()), CertificateStatus.GOOD))
+                            .setResponseSignerCertificate(new JcaX509CertificateConverter().getCertificate(rootcaCert))
+                            .setIssuerPrivateKey(anotherKeyPair.getPrivate()) 
+                            .setChain(new X509CertificateHolder[] {rootcaCert}).build());
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        };
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("TRUSTANCHORS", new String(CertTools.getPEMFromCerts(Arrays.<Certificate>asList(new JcaX509CertificateConverter().getCertificate(rootcaCert)))));
+        config.setProperty("REVOCATION_CHECKING", "true");
+       
+        instance.init(4715, config, null, null);
+        
+        RequestContext requestContext = new RequestContext();
+        requestContext.put(RequestContext.TRANSACTION_ID, "0000-307-1");
+        GenericValidationRequest request = new GenericValidationRequest(307, signedXml3.getBytes("UTF-8"));
+        GenericValidationResponse response = (GenericValidationResponse) instance.processData(request, requestContext);
+        
+        assertEquals("OCSP calls", 1, requests.size());
+        
+        assertNotEquals("cert validation status", Validation.Status.VALID, response.getCertificateValidation().getStatus());
+        assertFalse("valid document", response.isValid());
+    }
+    
+    /**
+     * Negative test for signer 3 were querying the OCSP responder fails.
+     */
     @Test
     public void testSigner3_withOnlyOCSP_unavailable() throws Exception {
         LOG.info("testSigner3_withOnlyOCSP_unavailable");
@@ -811,7 +926,11 @@ public class XAdESValidator2UnitTest {
         assertFalse("valid document", response.isValid());
         assertNotEquals("cert validation status", Validation.Status.VALID, response.getCertificateValidation().getStatus());
     }
-    
+
+    /**
+     * Negative test for signer 3 were an OCSP response is signed by the CA
+     * and returns the status REVOKED for the signer 3 certificate.
+     */
     @Test
     public void testSigner3_withOnlyOCSP_revoked() throws Exception {
         LOG.info("testSigner3_withOnlyOCSP_revoked");

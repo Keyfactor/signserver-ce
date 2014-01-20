@@ -48,7 +48,9 @@ import org.signserver.common.GenericSignResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
+import org.signserver.module.xades.signer.MockedCryptoToken;
 import org.signserver.module.xades.signer.MockedTimeStampTokenProvider.MockedTimeStampVerificationProvider;
+import org.signserver.server.CertificateClientCredential;
 import org.signserver.server.UsernamePasswordClientCredential;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.cryptotokens.ICryptoToken;
@@ -274,12 +276,13 @@ public class XAdESSignerUnitTest {
      * 
      * @param token Crypto token to use
      * @param config Signer configuration to use for the test
+     * @param useCertCredential Generate credential for the request from the mocked signer certificate
      * @param username Username to generate a username/password credential in the request context, if null, no credential is passed
      * @return Verification result
      * @throws Exception
      */
     private XAdESVerificationResult getVerificationResult(final MockedCryptoToken token, final WorkerConfig config,
-            final String username) throws Exception {
+            final boolean useCertCredential, final String username) throws Exception {
         XAdESSigner instance = new MockedXAdESSigner(token);
         
         instance.init(4711, config, null, null);
@@ -288,7 +291,11 @@ public class XAdESSignerUnitTest {
         
         requestContext.put(RequestContext.TRANSACTION_ID, "0000-100-1");
         
-        if (username != null) {
+        if (useCertCredential) {
+            final CertificateClientCredential cred = new CertificateClientCredential("CN=foo", "123456789abc");
+            
+            requestContext.put(RequestContext.CLIENT_CREDENTIAL, cred);
+        } else if (username != null) {
             final UsernamePasswordClientCredential cred = new UsernamePasswordClientCredential(username, "foobar");
             
             requestContext.put(RequestContext.CLIENT_CREDENTIAL, cred);
@@ -335,6 +342,8 @@ public class XAdESSignerUnitTest {
      * @param expectedCommitmentTypeUris List of expected commitment type URIs
      * @param claimedRoleProperty Claimed role property to test, ff null, don't set property
      * @param claimedRoleFromUsername If set to true, include the CLAIMED_ROLE_FROM_USERNAME property
+     * @param useCertCredential Pass in a (faked dummy) certificate credential in the request context to simulate the situation when the
+     *                          client credential is not a user name
      * @param username Username to pass in via the request context, if null no username is passed in
      * @param expectedClaimedRole Expected claimed role in signed document, if null check that no claimed role is included
      * @throws Exception
@@ -343,6 +352,7 @@ public class XAdESSignerUnitTest {
             final String expectedSignatureAlgorithmUri, final String commitmentTypesProperty,
             final Collection<String> expectedCommitmentTypeUris,
             final String claimedRoleProperty, final boolean claimedRoleFromUsername,
+            final boolean useCertCredential,
             final String username, final String expectedClaimedRole) throws Exception {
         LOG.info("processData");
 
@@ -381,7 +391,7 @@ public class XAdESSignerUnitTest {
             config.setProperty("CLAIMED_ROLE_FROM_USERNAME", "true");
         }
         
-        final XAdESVerificationResult r = getVerificationResult(token, config, username);
+        final XAdESVerificationResult r = getVerificationResult(token, config, useCertCredential, username);
 
         assertEquals("BES", r.getSignatureForm().name());
         assertEquals("Unexpected signature algorithm in signature", expectedSignatureAlgorithmUri, r.getSignatureAlgorithmUri());
@@ -446,7 +456,7 @@ public class XAdESSignerUnitTest {
     public void testProcessData_basicSigning() throws Exception {
         testProcessData_basicSigningInternal(KeyType.RSA,
                 null, XAdESSigner.SIGNATURE_METHOD_RSA_SHA256,
-                null, Collections.<String>emptyList(), null, false, null, null);
+                null, Collections.<String>emptyList(), null, false, false, null, null);
     }
     
     /**
@@ -459,7 +469,7 @@ public class XAdESSignerUnitTest {
         testProcessData_basicSigningInternal(KeyType.RSA, 
                 null, XAdESSigner.SIGNATURE_METHOD_RSA_SHA256,
                 "PROOF_OF_ORIGIN", Collections.singletonList(AllDataObjsCommitmentTypeProperty.proofOfOrigin().getUri()),
-                null, false, null, null);
+                null, false, false, null, null);
     }
     
     /**
@@ -474,7 +484,7 @@ public class XAdESSignerUnitTest {
                 "PROOF_OF_APPROVAL, PROOF_OF_ORIGIN",
                 Arrays.asList(AllDataObjsCommitmentTypeProperty.proofOfApproval().getUri(),
                               AllDataObjsCommitmentTypeProperty.proofOfOrigin().getUri()),
-                null, false, null, null);
+                null, false, false, null, null);
     }
     
     /**
@@ -486,7 +496,7 @@ public class XAdESSignerUnitTest {
     public void testProcessData_basicSigningCommitmentTypesNone() throws Exception {
         testProcessData_basicSigningInternal(KeyType.RSA,
                 null, XAdESSigner.SIGNATURE_METHOD_RSA_SHA256,
-                "NONE", Collections.<String>emptyList(), null, false, null, null);
+                "NONE", Collections.<String>emptyList(), null, false, false, null, null);
     }
     
     /**
@@ -498,7 +508,7 @@ public class XAdESSignerUnitTest {
     public void testProcessData_basicSigningRSASHA1() throws Exception {
         testProcessData_basicSigningInternal(KeyType.RSA,
                 "SHA1withRSA", SignatureMethod.RSA_SHA1,
-                "NONE", Collections.<String>emptyList(), null, false, null, null);
+                "NONE", Collections.<String>emptyList(), null, false, false, null, null);
     }
     
     /**
@@ -510,7 +520,7 @@ public class XAdESSignerUnitTest {
     public void testProcessData_basicSigningRSASHA256() throws Exception {
         testProcessData_basicSigningInternal(KeyType.RSA,
                 "SHA256withRSA", XAdESSigner.SIGNATURE_METHOD_RSA_SHA256,
-                "NONE", Collections.<String>emptyList(), null, false, null, null);
+                "NONE", Collections.<String>emptyList(), null, false, false, null, null);
     }
     
     /**
@@ -522,7 +532,7 @@ public class XAdESSignerUnitTest {
     public void testProcessData_basicSigningRSASHA384() throws Exception {
         testProcessData_basicSigningInternal(KeyType.RSA,
                 "SHA384withRSA", XAdESSigner.SIGNATURE_METHOD_RSA_SHA384,
-                "NONE", Collections.<String>emptyList(), null, false, null, null);
+                "NONE", Collections.<String>emptyList(), null, false, false, null, null);
     }
     
     /**
@@ -534,7 +544,7 @@ public class XAdESSignerUnitTest {
     public void testProcessData_basicSigningRSASHA512() throws Exception {
         testProcessData_basicSigningInternal(KeyType.RSA,
                 "SHA512withRSA", XAdESSigner.SIGNATURE_METHOD_RSA_SHA512,
-                "NONE", Collections.<String>emptyList(), null, false, null, null);
+                "NONE", Collections.<String>emptyList(), null, false, false, null, null);
     }
     
     /**
@@ -546,7 +556,7 @@ public class XAdESSignerUnitTest {
     public void testProcessData_basicSigningDSASHA1() throws Exception {
         testProcessData_basicSigningInternal(KeyType.DSA,
                 "SHA1withDSA", SignatureMethod.DSA_SHA1,
-                "NONE", Collections.<String>emptyList(), null, false, null, null);
+                "NONE", Collections.<String>emptyList(), null, false, false, null, null);
     }
     
     /**
@@ -558,7 +568,7 @@ public class XAdESSignerUnitTest {
     public void testProcessData_basicSigningECDSASHA1() throws Exception {
         testProcessData_basicSigningInternal(KeyType.ECDSA,
                 "SHA1withECDSA", XAdESSigner.SIGNATURE_METHOD_ECDSA_SHA1,
-                "NONE", Collections.<String>emptyList(), null, false, null, null);
+                "NONE", Collections.<String>emptyList(), null, false, false, null, null);
     }
     
     /**
@@ -570,7 +580,7 @@ public class XAdESSignerUnitTest {
     public void testProcessData_basicSigningECDSASHA256() throws Exception {
         testProcessData_basicSigningInternal(KeyType.ECDSA,
                 "SHA256withECDSA", XAdESSigner.SIGNATURE_METHOD_ECDSA_SHA256,
-                "NONE", Collections.<String>emptyList(), null, false, null, null);
+                "NONE", Collections.<String>emptyList(), null, false, false, null, null);
     }
     
     /**
@@ -582,7 +592,7 @@ public class XAdESSignerUnitTest {
     public void testProcessData_basicSigningECDSASHA384() throws Exception {
         testProcessData_basicSigningInternal(KeyType.ECDSA,
                 "SHA384withECDSA", XAdESSigner.SIGNATURE_METHOD_ECDSA_SHA384,
-                "NONE", Collections.<String>emptyList(), null, false, null, null);
+                "NONE", Collections.<String>emptyList(), null, false, false, null, null);
     }
     
     /**
@@ -594,7 +604,7 @@ public class XAdESSignerUnitTest {
     public void testProcessData_basicSigningECDSASHA512() throws Exception {
         testProcessData_basicSigningInternal(KeyType.ECDSA,
                 "SHA512withECDSA", XAdESSigner.SIGNATURE_METHOD_ECDSA_SHA512,
-                "NONE", Collections.<String>emptyList(), null, false, null, null);
+                "NONE", Collections.<String>emptyList(), null, false, false, null, null);
     }
     
     /**
@@ -606,7 +616,7 @@ public class XAdESSignerUnitTest {
     public void testProcessData_basicSigningDefaultDSA() throws Exception {
         testProcessData_basicSigningInternal(KeyType.DSA,
                 null, SignatureMethod.DSA_SHA1,
-                "NONE", Collections.<String>emptyList(), null, false, null, null);
+                "NONE", Collections.<String>emptyList(), null, false, false, null, null);
     }
     
     /**
@@ -618,7 +628,7 @@ public class XAdESSignerUnitTest {
     public void testProcessData_basicSigningDefaultECDSA() throws Exception {
         testProcessData_basicSigningInternal(KeyType.ECDSA,
                 null, XAdESSigner.SIGNATURE_METHOD_ECDSA_SHA1,
-                "NONE", Collections.<String>emptyList(), null, false, null, null);
+                "NONE", Collections.<String>emptyList(), null, false, false, null, null);
     }
     
     /**
@@ -631,7 +641,7 @@ public class XAdESSignerUnitTest {
         try {
             testProcessData_basicSigningInternal(KeyType.RSA,
                 "bogus", XAdESSigner.SIGNATURE_METHOD_ECDSA_SHA1,
-                "NONE", Collections.<String>emptyList(), null, false, null, null);
+                "NONE", Collections.<String>emptyList(), null, false, false, null, null);
             fail("Should throw a SignServerException");
         } catch (SignServerException e) { //NOPMD
             // expected
@@ -650,7 +660,7 @@ public class XAdESSignerUnitTest {
         try {
             testProcessData_basicSigningInternal(KeyType.RSA,
                 "SHA1withDSA", XAdESSigner.SIGNATURE_METHOD_ECDSA_SHA1,
-                "NONE", Collections.<String>emptyList(), null, false, null, null);
+                "NONE", Collections.<String>emptyList(), null, false, false, null, null);
             fail("Should throw a SignServerException");
         } catch (SignServerException e) { //NOPMD
             // expected
@@ -797,7 +807,7 @@ public class XAdESSignerUnitTest {
     public void testClaimedRole() throws Exception {
        testProcessData_basicSigningInternal(KeyType.RSA,
                 null, XAdESSigner.SIGNATURE_METHOD_RSA_SHA256,
-                null, Collections.<String>emptyList(), "foobar", false, null, "foobar");
+                null, Collections.<String>emptyList(), "foobar", false, false, null, "foobar");
     }
     
     /**
@@ -809,7 +819,7 @@ public class XAdESSignerUnitTest {
     public void testClaimedRoleFromUsername() throws Exception {
         testProcessData_basicSigningInternal(KeyType.RSA,
                 null, XAdESSigner.SIGNATURE_METHOD_RSA_SHA256,
-                null, Collections.<String>emptyList(), null, true, "username", "username");
+                null, Collections.<String>emptyList(), null, true, false, "username", "username");
     }
     
     /**
@@ -821,7 +831,7 @@ public class XAdESSignerUnitTest {
     public void testClaimedRoleFromUsernameOverride() throws Exception {
         testProcessData_basicSigningInternal(KeyType.RSA,
                 null, XAdESSigner.SIGNATURE_METHOD_RSA_SHA256,
-                null, Collections.<String>emptyList(), "defaultrole", true, "username", "username");
+                null, Collections.<String>emptyList(), "defaultrole", true, false, "username", "username");
     }
     
     /**
@@ -834,7 +844,7 @@ public class XAdESSignerUnitTest {
     public void testClaimedRoleUsingDefaultWithSuppliedUsername() throws Exception {
         testProcessData_basicSigningInternal(KeyType.RSA,
                 null, XAdESSigner.SIGNATURE_METHOD_RSA_SHA256,
-                null, Collections.<String>emptyList(), "defaultrole", false, "username", "defaultrole");
+                null, Collections.<String>emptyList(), "defaultrole", false, false, "username", "defaultrole");
     }
     
     /**
@@ -848,12 +858,32 @@ public class XAdESSignerUnitTest {
        try {
            testProcessData_basicSigningInternal(KeyType.RSA,
                    null, XAdESSigner.SIGNATURE_METHOD_RSA_SHA256,
-                   null, Collections.<String>emptyList(), null, true, null, null);
+                   null, Collections.<String>emptyList(), null, true, false, null, null);
            fail("Should throw a SignServerException");
        } catch (SignServerException e) { //NOPMD
            // expected
        } catch (Exception e) {
            fail("Unexpected exception thrown: " + e.getClass().getName());
        }
+    }
+    
+    /**
+     * Test passing in a CertificateClientCredential in the CLIENT_CREDENTIAL request context parameter
+     * is handled equivalently to a missing user name.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testClaimedRoleWithClientCertCredential() throws Exception {
+        try {
+            testProcessData_basicSigningInternal(KeyType.RSA,
+                    null, XAdESSigner.SIGNATURE_METHOD_RSA_SHA256,
+                    null, Collections.<String>emptyList(), null, true, true, null, null);
+            fail("Should throw a SignServerException");
+        } catch (SignServerException e) { //NOPMD
+            // expected
+        } catch (Exception e) {
+            fail("Unexpected exception thrown: " + e.getClass().getName());
+        }
     }
 }

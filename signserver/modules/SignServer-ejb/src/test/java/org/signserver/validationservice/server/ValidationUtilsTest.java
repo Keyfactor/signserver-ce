@@ -41,7 +41,12 @@ public class ValidationUtilsTest extends TestCase {
     * @throws Exception in case of error
     */
     public void test01fetchCRLFromURL() throws Exception {  	
-        File homeFolder = new File(System.getenv("SIGNSERVER_HOME"));
+        String signserverHome = System.getenv("SIGNSERVER_HOME");
+        if (signserverHome == null) {
+            signserverHome = new File("../..").getAbsolutePath();
+        }
+        
+        File homeFolder = new File(signserverHome);
         assertTrue("No such folder: " + homeFolder.getAbsolutePath(), homeFolder.exists());
         File crlFile = new File(homeFolder, "res/test/dss10/DSSRootCA10-1.crl");
         assertTrue("No such file: " + crlFile.getAbsolutePath(), crlFile.exists());

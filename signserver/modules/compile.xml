@@ -108,7 +108,6 @@ includemodulesinbuild               = ${includemodulesinbuild}
                     <fileset dir="lib/ext/module/ooxmlsigner" includes="*.jar"/>
                     <fileset dir="lib/ext/hibernate" includes="*.jar"/>
                     <fileset dir="${ant.home}/lib" includes="ant.jar" />
-                    <fileset dir="lib/ext/xades4j" includes="*.jar"/>
                     <path path="${libs.JBoss-Java-EE-Library.classpath}" />                    
                 </classpath>
                 <classpath path="lib/ext/swing-app-framework/appframework-1.0.3.jar:lib/ext/swing-app-framework/swing-worker-1.1.jar:lib/ext/beans-binding/beansbinding-1.2.1.jar"/>

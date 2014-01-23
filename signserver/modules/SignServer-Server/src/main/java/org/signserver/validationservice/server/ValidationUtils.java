@@ -20,11 +20,9 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
-import java.security.GeneralSecurityException;
 import java.security.NoSuchProviderException;
 import java.security.PublicKey;
 import java.security.cert.*;
-import java.util.logging.Level;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.DEREnumerated;
 import org.bouncycastle.asn1.DERTaggedObject;
@@ -60,10 +58,6 @@ public class ValidationUtils {
      * 
      * @param url
      * @return the downloaded CRL
-     * @throws CertificateException
-     * @throws NoSuchProviderException
-     * @throws CRLException
-     * @throws IOException
      * @throws SignServerException
      */
     public static X509CRL fetchCRLFromURL(URL url) throws SignServerException {
@@ -220,6 +214,17 @@ public class ValidationUtils {
         return reasonCode.getValue().intValue();
     }
     
+    /**
+     * Sends a request to the OCSP responder and returns the results.
+     *
+     * Note: Based on code from the EJBCA ValidationTool.
+     *
+     * @param url of the OCSP responder
+     * @param request to send
+     * @return An OCSPResponse object filled with information about the response
+     * @throws IOException in case of networking related errors
+     * @throws OCSPException in case of error parsing the response
+     */
     public static OCSPResponse queryOCSPResponder(URL url, OCSPReq request) throws IOException, OCSPException {
         final OCSPResponse result = new OCSPResponse();
         

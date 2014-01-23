@@ -332,6 +332,10 @@ public class ValidationUtils {
 
         result.setIssuerDN(signerCertificate.getIssuerX500Principal());
 
+        if (result.getError() == null) {
+            result.setError(OCSPResponse.Error.responseSuccess);
+        }
+        
         return result;
     }
 }

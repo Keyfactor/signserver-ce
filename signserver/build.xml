@@ -193,6 +193,12 @@ healthcheck.maintenancefile         = ${healthcheck.maintenancefile}
     <!-- =================================================================== -->
     
     <target name="-check-built">
+        <fileset dir="lib" includes="SignServer*.jar" id="signserverjar"/>
+        <condition property="signserver-ejb.jar.available">
+          <not>
+            <equals arg1="${toString:signserverjar}" arg2="" />
+          </not>
+        </condition>
         <available file="lib/SignServer-ejb.jar" property="signserver-ejb.jar.available"/>
         <fail message="SignServer needs to be built first. Run 'ant build'." unless="signserver-ejb.jar.available"/>
     </target>
@@ -553,8 +559,11 @@ Configuring EAR...
     </target>
 
     <target name="dist:admingui">
+        <available file="${basedir}/lib/SignServer-AdminGUI.jar" property="admingui.jar" value="SignServer-AdminGUI.jar"/>
+        <available file="${basedir}/lib/SignServer-AdminGUI-${app.version.number}.jar" property="admingui.jar" value="SignServer-AdminGUI-${app.version.number}.jar"/>
+        <fail unless="admingui.jar" message="Must build SignServer-AdmingGUI first"/>
         <antcall target="dist">
-            <param name="dist.jars" value="SignServer-AdminGUI.jar"/>
+            <param name="dist.jars" value="${admingui.jar}"/>
             <param name="dist.includes" value="
                 bin/signserver-gui,
                 bin/admingui.cmd,

@@ -4991,6 +4991,21 @@ attributes(generate, CKO_PRIVATE_KEY,*) = {
 <b>CACHE_PRIVATEKEY</b> = If set to true the private key reference is cached in the worker so that it is not queried for each signature. This could potentially improve performance in some environments. (Default: false)
                         </p>
                     </subsubsection>
+                    <subsubsection name="Default global properties">
+                        <p>
+Some worker properties can instead by specified as default values in the global configuration so they does not have to be repeated in every worker. Individual workers can override the default global values (if any) by specifying the property as usual.
+                        </p>
+                        <p>
+Global default values are specified as global values in the global configuration with the name prefixed with "DEFAULT.".
+The following properties can currently be specified in the global configuration:
+                        </p>
+                        <ul>
+                            <li>SHAREDLIBRARY</li>
+                            <li>SlOT</li>
+                            <li>SlOTLISTINDEX</li>
+                            <li>ATTRIBUTESFILE</li>
+                        </ul>
+                    </subsubsection>
                     <subsubsection name="Example usage">
                         <p>
 Edit qs_pdfsigner_configuration.properties and choose the sign token setting for the PKCS11 sign token. Run the following command to set up a PDF signer using the PKCS11 properties configured:

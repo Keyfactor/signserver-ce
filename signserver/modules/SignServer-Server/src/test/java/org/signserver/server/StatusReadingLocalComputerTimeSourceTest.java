@@ -35,7 +35,7 @@ import org.signserver.statusrepo.common.StatusName;
 public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
 
     /** Logger for this class */
-    private static Logger LOG = Logger.getLogger(StatusReadingLocalComputerTimeSource.class);
+    private static final Logger LOG = Logger.getLogger(StatusReadingLocalComputerTimeSourceTest.class);
     
     private void assertPotentialLeapsecond(int year, int month, int day, int hour, int min, int sec, int milli) {
         Date date;

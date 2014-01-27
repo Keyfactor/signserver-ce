@@ -21,9 +21,11 @@ import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Hex;
 import org.signserver.common.*;
+import org.signserver.server.cryptotokens.CryptoTokenHelper;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.cryptotokens.IKeyGenerator;
 
@@ -127,6 +129,24 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         }
         if (cryptoToken == null) {
             GlobalConfiguration gc = getGlobalConfigurationSession().getGlobalConfiguration();
+            final Properties defaultProperties = new Properties();
+            // TODO: The following could potentially be made generic
+            String value = gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL + "DEFAULT." + CryptoTokenHelper.PROPERTY_SHAREDLIBRARY);
+            if (value != null) {
+                defaultProperties.setProperty(CryptoTokenHelper.PROPERTY_SHAREDLIBRARY, value);
+            }
+            value = gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL + "DEFAULT." + CryptoTokenHelper.PROPERTY_SLOT);
+            if (value != null) {
+                defaultProperties.setProperty(CryptoTokenHelper.PROPERTY_SLOT, value);
+            }
+            value = gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL + "DEFAULT." + CryptoTokenHelper.PROPERTY_SLOTLISTINDEX);
+            if (value != null) {
+                defaultProperties.setProperty(CryptoTokenHelper.PROPERTY_SLOTLISTINDEX, value);
+            }
+            value = gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL + "DEFAULT." + CryptoTokenHelper.PROPERTY_ATTRIBUTESFILE);
+            if (value != null) {
+                defaultProperties.setProperty(CryptoTokenHelper.PROPERTY_ATTRIBUTESFILE, value);
+            }
             try {
                 String classpath = gc.getCryptoTokenProperty(workerId, GlobalConfiguration.CRYPTOTOKENPROPERTY_CLASSPATH);
                 if (log.isDebugEnabled()) {
@@ -136,10 +156,13 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
                     Class<?> implClass = Class.forName(classpath);
                     Object obj = implClass.newInstance();
                     cryptoToken = (ICryptoToken) obj;
-                    cryptoToken.init(workerId, config.getProperties());
+                    Properties properties = new Properties();
+                    properties.putAll(defaultProperties);
+                    properties.putAll(config.getProperties());
+                    cryptoToken.init(workerId, properties);
                 }
             } catch (CryptoTokenInitializationFailureException e) {
-                throw new SignServerException("Failed to initialize crypto token", e);
+                throw new SignServerException("Failed to initialize crypto token: " + e.getMessage(), e);
             } catch (ClassNotFoundException e) {
                 throw new SignServerException("Class not found", e);
             } catch (IllegalAccessException iae) {

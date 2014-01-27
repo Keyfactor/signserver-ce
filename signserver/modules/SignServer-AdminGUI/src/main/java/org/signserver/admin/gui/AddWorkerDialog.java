@@ -32,7 +32,7 @@ public class AddWorkerDialog extends javax.swing.JDialog {
     private void initComponents() {
 
         nextButton = new javax.swing.JButton();
-        cancelButton = new javax.swing.JButton();
+        cancelBackButton = new javax.swing.JButton();
         addWorkerTabbedPanel = new javax.swing.JTabbedPane();
         initialSetupPanel = new javax.swing.JPanel();
         removePropertyButton = new javax.swing.JButton();
@@ -57,6 +57,7 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         configurationLabel = new javax.swing.JLabel();
         configurationScrollPane = new javax.swing.JScrollPane();
         configurationTextArea = new javax.swing.JTextArea();
+        reloadButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setName("Form"); // NOI18N
@@ -65,8 +66,8 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         nextButton.setText(resourceMap.getString("nextButton.text")); // NOI18N
         nextButton.setName("nextButton"); // NOI18N
 
-        cancelButton.setText(resourceMap.getString("cancelButton.text")); // NOI18N
-        cancelButton.setName("cancelButton"); // NOI18N
+        cancelBackButton.setText(resourceMap.getString("cancelBackButton.text")); // NOI18N
+        cancelBackButton.setName("cancelBackButton"); // NOI18N
 
         addWorkerTabbedPanel.setName("addWorkerTabbedPanel"); // NOI18N
 
@@ -269,15 +270,20 @@ public class AddWorkerDialog extends javax.swing.JDialog {
 
         addWorkerTabbedPanel.addTab(resourceMap.getString("configurationPanel.TabConstraints.tabTitle"), configurationPanel); // NOI18N
 
+        reloadButton.setText(resourceMap.getString("reloadButton.text")); // NOI18N
+        reloadButton.setName("reloadButton"); // NOI18N
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(659, 659, 659)
-                .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap()
+                .addComponent(reloadButton)
+                .addGap(576, 576, 576)
+                .addComponent(cancelBackButton, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(nextButton, javax.swing.GroupLayout.DEFAULT_SIZE, 82, Short.MAX_VALUE)
+                .addComponent(nextButton, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE)
                 .addContainerGap())
             .addGroup(layout.createSequentialGroup()
                 .addComponent(addWorkerTabbedPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 809, Short.MAX_VALUE)
@@ -289,8 +295,9 @@ public class AddWorkerDialog extends javax.swing.JDialog {
                 .addComponent(addWorkerTabbedPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 531, Short.MAX_VALUE)
                 .addGap(23, 23, 23)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cancelButton)
-                    .addComponent(nextButton))
+                    .addComponent(cancelBackButton)
+                    .addComponent(nextButton)
+                    .addComponent(reloadButton))
                 .addContainerGap())
         );
 
@@ -318,7 +325,7 @@ public class AddWorkerDialog extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addPropertyButton;
     private javax.swing.JTabbedPane addWorkerTabbedPanel;
-    private javax.swing.JButton cancelButton;
+    private javax.swing.JButton cancelBackButton;
     private javax.swing.JLabel configurationLabel;
     private javax.swing.JPanel configurationPanel;
     private javax.swing.JScrollPane configurationScrollPane;
@@ -333,6 +340,7 @@ public class AddWorkerDialog extends javax.swing.JDialog {
     private javax.swing.JLabel propertiesLabel;
     private javax.swing.JScrollPane propertiesScrollPanel;
     private javax.swing.JTable propertiesTable;
+    private javax.swing.JButton reloadButton;
     private javax.swing.JButton removePropertyButton;
     private javax.swing.JTextField tokenImplementationField;
     private javax.swing.JLabel tokenImplementationLabel;

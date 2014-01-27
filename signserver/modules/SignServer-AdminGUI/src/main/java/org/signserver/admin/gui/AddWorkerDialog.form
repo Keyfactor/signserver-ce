@@ -24,10 +24,12 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" attributes="0">
-              <EmptySpace min="-2" pref="659" max="-2" attributes="0"/>
-              <Component id="cancelButton" min="-2" pref="74" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="nextButton" pref="82" max="32767" attributes="0"/>
+              <Component id="reloadButton" min="-2" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="576" max="-2" attributes="0"/>
+              <Component id="cancelBackButton" min="-2" pref="74" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="nextButton" pref="96" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
           <Group type="102" alignment="0" attributes="0">
@@ -42,8 +44,9 @@
               <Component id="addWorkerTabbedPanel" pref="531" max="32767" attributes="0"/>
               <EmptySpace min="-2" pref="23" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="cancelButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="cancelBackButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="nextButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="reloadButton" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -57,10 +60,10 @@
         <Property name="name" type="java.lang.String" value="nextButton" noResource="true"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JButton" name="cancelButton">
+    <Component class="javax.swing.JButton" name="cancelBackButton">
       <Properties>
-        <Property name="text" type="java.lang.String" resourceKey="cancelButton.text"/>
-        <Property name="name" type="java.lang.String" value="cancelButton" noResource="true"/>
+        <Property name="text" type="java.lang.String" resourceKey="cancelBackButton.text"/>
+        <Property name="name" type="java.lang.String" value="cancelBackButton" noResource="true"/>
       </Properties>
     </Component>
     <Container class="javax.swing.JTabbedPane" name="addWorkerTabbedPanel">
@@ -414,5 +417,11 @@
         </Container>
       </SubComponents>
     </Container>
+    <Component class="javax.swing.JButton" name="reloadButton">
+      <Properties>
+        <Property name="text" type="java.lang.String" resourceKey="reloadButton.text"/>
+        <Property name="name" type="java.lang.String" value="reloadButton" noResource="true"/>
+      </Properties>
+    </Component>
   </SubComponents>
 </Form>

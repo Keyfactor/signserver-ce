@@ -43,7 +43,23 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         EDIT_PROPERTIES
     }
     
+    /**
+     * Enum holding the add worker mode.
+     */
+    private enum Mode {
+        /**
+         * Load worker properties from a property file.
+         */
+        LOAD_FROM_FILE,
+        
+        /**
+         * Edit worker properties in the UI.
+         */
+        EDIT_MANUALLY
+    }
+    
     private Stage stage;
+    private Mode mode;
     
     /** Creates new form AddWorkerDialog */
     public AddWorkerDialog(java.awt.Frame parent, boolean modal) {
@@ -51,7 +67,8 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         initComponents();
         
         stage = Stage.INITIAL_CONFIG;
-        updateUIForStage();
+        mode = Mode.LOAD_FROM_FILE;
+        updateControls();
         
         // initially set the Next button to be greyed-out, so that it can be
         // enabled given
@@ -61,7 +78,7 @@ public class AddWorkerDialog extends javax.swing.JDialog {
     /**
      * Update the UI according to the stage, changing button visibility 
      */
-    private void updateUIForStage() {
+    private void updateControls() {
         // the reload button is only visible in the edit properties stage
         reloadButton.setVisible(stage == Stage.EDIT_PROPERTIES);
         
@@ -72,6 +89,28 @@ public class AddWorkerDialog extends javax.swing.JDialog {
                                         "Cancel" : "Back");
         // similarily, set the appropriate text for the "Next"/"Apply" button
         nextApplyButton.setText(stage == Stage.INITIAL_CONFIG ? "Next" : "Apply");
+    
+        // update controls depending on mode (load from file or edit manually)
+        
+        // file controls
+        filePathTextField.setEnabled(mode == Mode.LOAD_FROM_FILE);
+        filePathBrowseButton.setEnabled(mode == Mode.LOAD_FROM_FILE);
+    
+        // edit controls
+        workerIdLabel.setEnabled(mode == Mode.EDIT_MANUALLY);
+        workerIDField.setEnabled(mode == Mode.EDIT_MANUALLY);
+        workerNameLabel.setEnabled(mode == Mode.EDIT_MANUALLY);
+        workerNameField.setEnabled(mode == Mode.EDIT_MANUALLY);
+        workerImplementationLabel.setEnabled(mode == Mode.EDIT_MANUALLY);
+        workerImplementationField.setEnabled(mode == Mode.EDIT_MANUALLY);
+        tokenImplementationLabel.setEnabled(mode == Mode.EDIT_MANUALLY);
+        tokenImplementationField.setEnabled(mode == Mode.EDIT_MANUALLY);
+        propertiesLabel.setEnabled(mode == Mode.EDIT_MANUALLY);
+        propertiesScrollPanel.setEnabled(mode == Mode.EDIT_MANUALLY);
+        propertiesTable.setEnabled(mode == Mode.EDIT_MANUALLY);
+        addPropertyButton.setEnabled(mode == Mode.EDIT_MANUALLY);
+        removePropertyButton.setEnabled(mode == Mode.EDIT_MANUALLY);
+        editPropertyButton.setEnabled(mode == Mode.EDIT_MANUALLY);
     }
     
     /** This method is called from within the constructor to

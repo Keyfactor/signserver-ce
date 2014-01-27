@@ -85,6 +85,10 @@ public class PKCS11CryptoToken implements ICryptoToken, IKeyGenerator {
         try {
             props = CryptoTokenHelper.fixP11Properties(props);
             
+            if (props.getProperty("sharedLibrary") == null) {
+                throw new CryptoTokenInitializationFailureException("Missing SHAREDLIBRARY property");
+            }
+            
             delegate.init(props, null, workerId);
             
             keyAlias = props.getProperty("defaultKey");

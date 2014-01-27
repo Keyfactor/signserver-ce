@@ -438,6 +438,11 @@ public class MainView extends FrameView {
 
         addWorkerItem.setText(resourceMap.getString("addWorkerItem.text")); // NOI18N
         addWorkerItem.setName("addWorkerItem"); // NOI18N
+        addWorkerItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addWorkerItemActionPerformed(evt);
+            }
+        });
         fileMenu.add(addWorkerItem);
 
         javax.swing.ActionMap actionMap = org.jdesktop.application.Application.getInstance(org.signserver.admin.gui.SignServerAdminGUIApplication.class).getContext().getActionMap(MainView.class, this);
@@ -1825,6 +1830,12 @@ private void loadFromCertificateButtonPerformed(java.awt.event.ActionEvent evt) 
     
     Utils.selectAndLoadFromCert(authEditPanel, editSerialNumberTextfield, editIssuerDNTextfield);
 }//GEN-LAST:event_loadFromCertificateButtonPerformed
+
+private void addWorkerItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addWorkerItemActionPerformed
+    final AddWorkerDialog addWorkerDialog = new AddWorkerDialog(getFrame(), true);
+    
+    addWorkerDialog.setVisible(true);
+}//GEN-LAST:event_addWorkerItemActionPerformed
 
 private void displayLogEntryAction() {
     final int sel = auditLogTable.getSelectedRow();

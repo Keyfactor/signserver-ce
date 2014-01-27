@@ -27,12 +27,53 @@ package org.signserver.admin.gui;
  */
 public class AddWorkerDialog extends javax.swing.JDialog {
 
+    /**
+     * Enum holding state in the config dialog.
+     * 
+     */
+    private enum Stage {
+        /**
+         * The initial state, choosing a file or entering preset configuration.
+         */
+        INITIAL_CONFIG,
+        
+        /**
+         * The final state, with the possibility to hand-edit properties.
+         */
+        EDIT_PROPERTIES
+    }
+    
+    private Stage stage;
+    
     /** Creates new form AddWorkerDialog */
     public AddWorkerDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        
+        stage = Stage.INITIAL_CONFIG;
+        updateUIForStage();
+        
+        // initially set the Next button to be greyed-out, so that it can be
+        // enabled given
+        nextApplyButton.setEnabled(false);
     }
 
+    /**
+     * Update the UI according to the stage, changing button visibility 
+     */
+    private void updateUIForStage() {
+        // the reload button is only visible in the edit properties stage
+        reloadButton.setVisible(stage == Stage.EDIT_PROPERTIES);
+        
+        // set the text of the Cancel/Back button depending on the stage
+        // Cancel is shown in the initial config stage, Back is shown in the
+        // edit properties stage
+        cancelBackButton.setText(stage == Stage.INITIAL_CONFIG ?
+                                        "Cancel" : "Back");
+        // similarily, set the appropriate text for the "Next"/"Apply" button
+        nextApplyButton.setText(stage == Stage.INITIAL_CONFIG ? "Next" : "Apply");
+    }
+    
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -42,7 +83,7 @@ public class AddWorkerDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        nextButton = new javax.swing.JButton();
+        nextApplyButton = new javax.swing.JButton();
         cancelBackButton = new javax.swing.JButton();
         addWorkerTabbedPanel = new javax.swing.JTabbedPane();
         initialSetupPanel = new javax.swing.JPanel();
@@ -74,8 +115,8 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         setName("Form"); // NOI18N
 
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(org.signserver.admin.gui.SignServerAdminGUIApplication.class).getContext().getResourceMap(AddWorkerDialog.class);
-        nextButton.setText(resourceMap.getString("nextButton.text")); // NOI18N
-        nextButton.setName("nextButton"); // NOI18N
+        nextApplyButton.setText(resourceMap.getString("nextApplyButton.text")); // NOI18N
+        nextApplyButton.setName("nextApplyButton"); // NOI18N
 
         cancelBackButton.setText(resourceMap.getString("cancelBackButton.text")); // NOI18N
         cancelBackButton.setName("cancelBackButton"); // NOI18N
@@ -103,8 +144,6 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         ));
         propertiesTable.setName("propertiesTable"); // NOI18N
         propertiesScrollPanel.setViewportView(propertiesTable);
-        propertiesTable.getColumnModel().getColumn(0).setHeaderValue(resourceMap.getString("propertiesTable.columnModel.title0")); // NOI18N
-        propertiesTable.getColumnModel().getColumn(1).setHeaderValue(resourceMap.getString("propertiesTable.columnModel.title1")); // NOI18N
 
         addPropertyButton.setText(resourceMap.getString("addPropertyButton.text")); // NOI18N
         addPropertyButton.setName("addPropertyButton"); // NOI18N
@@ -294,7 +333,7 @@ public class AddWorkerDialog extends javax.swing.JDialog {
                 .addGap(576, 576, 576)
                 .addComponent(cancelBackButton, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(nextButton, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE)
+                .addComponent(nextApplyButton, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE)
                 .addContainerGap())
             .addGroup(layout.createSequentialGroup()
                 .addComponent(addWorkerTabbedPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 809, Short.MAX_VALUE)
@@ -307,7 +346,7 @@ public class AddWorkerDialog extends javax.swing.JDialog {
                 .addGap(23, 23, 23)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cancelBackButton)
-                    .addComponent(nextButton)
+                    .addComponent(nextApplyButton)
                     .addComponent(reloadButton))
                 .addContainerGap())
         );
@@ -347,7 +386,7 @@ public class AddWorkerDialog extends javax.swing.JDialog {
     private javax.swing.JTextField filePathTextField;
     private javax.swing.JPanel initialSetupPanel;
     private javax.swing.JRadioButton loadFromFileRadioButton;
-    private javax.swing.JButton nextButton;
+    private javax.swing.JButton nextApplyButton;
     private javax.swing.JLabel propertiesLabel;
     private javax.swing.JScrollPane propertiesScrollPanel;
     private javax.swing.JTable propertiesTable;

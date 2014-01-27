@@ -38,7 +38,6 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
-import java.util.Vector;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -57,7 +56,6 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.xml.namespace.QName;
 import org.apache.log4j.Logger;
@@ -101,8 +99,9 @@ public class ConnectDialog extends javax.swing.JDialog {
         TRUSTSTORE_TYPE_PEM
     };
 
-    private File connectFile;
-    private File defaultConnectFile;
+    private final File connectFile;
+    private final File defaultConnectFile;
+    private final File baseDir;
     
     private static HostnameVerifier defaultHostnameVerifier;
     
@@ -112,7 +111,7 @@ public class ConnectDialog extends javax.swing.JDialog {
 
     /** Creates new form ConnectDialog. */
     public ConnectDialog(final Frame parent, final boolean modal,
-            File connectFile, File defaultConnectFile) {
+            File connectFile, File defaultConnectFile, File baseDir) {
         super(parent, modal);
         initComponents();
         truststoreTypeComboBox.setModel(
@@ -124,8 +123,12 @@ public class ConnectDialog extends javax.swing.JDialog {
         if (connectFile == null) {
             connectFile = CONNECT_FILE;
         }
+        if (baseDir == null) {
+            baseDir = connectFile.getParentFile().getParentFile();
+        }
         this.connectFile = connectFile;
         this.defaultConnectFile = defaultConnectFile;
+        this.baseDir = baseDir;
 
         if (connectFile.exists()) {
             loadSettingsFromFile(connectFile);
@@ -533,7 +536,7 @@ public class ConnectDialog extends javax.swing.JDialog {
                 } else if (settings.getKeystoreType().equals("PKCS11")) {
                     // PKCS11
                     keystore = getLoadedKeystorePKCS11("PKCS11",
-                            settings.getKeystoreFile(),
+                            getResolvedPath(settings.getKeystoreFile()),
                             settings.getKeystorePassword(), pp);
                     kKeyManagerFactory.init(keystore, null);
                 } else {
@@ -559,7 +562,7 @@ public class ConnectDialog extends javax.swing.JDialog {
                     }
     
                     // Other keystores for instance JKS
-                    keystore = getLoadedKeystore(settings.getKeystoreFile(),
+                    keystore = getLoadedKeystore(getResolvedPath(settings.getKeystoreFile()),
                             authcode,
                             settings.getKeystoreType(),
                             provider);
@@ -577,7 +580,7 @@ public class ConnectDialog extends javax.swing.JDialog {
                     keystoreTrusted = KeyStore.getInstance("JKS");
                     keystoreTrusted.load(null, null);
                     final Collection certs = CertTools.getCertsFromPEM(
-                            new FileInputStream(settings.getTruststoreFile()));
+                            new FileInputStream(getResolvedPath(settings.getTruststoreFile())));
                     int i = 0;
                     for (Object o : certs) {
                         if (o instanceof Certificate) {
@@ -608,7 +611,7 @@ public class ConnectDialog extends javax.swing.JDialog {
                     }
                 } else {
                     keystoreTrusted = KeyStore.getInstance(settings.getTruststoreType());
-                    keystoreTrusted.load(new FileInputStream(settings.getTruststoreFile()), settings.getTruststorePassword());
+                    keystoreTrusted.load(new FileInputStream(getResolvedPath(settings.getTruststoreFile())), settings.getTruststorePassword());
                 }
 
                 final TrustManagerFactory tTrustManagerFactory = TrustManagerFactory.getInstance("SunX509");
@@ -714,7 +717,9 @@ public class ConnectDialog extends javax.swing.JDialog {
 
     private void truststoreBrowseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_truststoreBrowseButtonActionPerformed
         final JFileChooser chooser = new JFileChooser();
-        chooser.setSelectedFile(new File(truststoreFilePathTextField.getText()));
+        final File file = getResolvedPath(truststoreFilePathTextField.getText());
+        chooser.setCurrentDirectory(file.getParentFile());
+        chooser.setSelectedFile(file);
         final int result  = chooser.showOpenDialog(this);
         if (result == JFileChooser.APPROVE_OPTION) {
             truststoreFilePathTextField.setText(
@@ -724,7 +729,9 @@ public class ConnectDialog extends javax.swing.JDialog {
 
     private void keystoreBrowseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_keystoreBrowseButtonActionPerformed
         final JFileChooser chooser = new JFileChooser();
-        chooser.setSelectedFile(new File(keystoreFilePathTextField.getText()));
+        final File file = getResolvedPath(keystoreFilePathTextField.getText());
+        chooser.setCurrentDirectory(file.getParentFile());
+        chooser.setSelectedFile(file);
         final int result  = chooser.showOpenDialog(this);
         if (result == JFileChooser.APPROVE_OPTION) {
             keystoreFilePathTextField.setText(
@@ -794,12 +801,12 @@ public class ConnectDialog extends javax.swing.JDialog {
         return settings;
     }
 
-    private static KeyStore getLoadedKeystorePKCS11(final String name, final String library, final char[] authCode, KeyStore.CallbackHandlerProtection callbackHandlerProtection) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException {
+    private static KeyStore getLoadedKeystorePKCS11(final String name, final File library, final char[] authCode, KeyStore.CallbackHandlerProtection callbackHandlerProtection) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException {
         final KeyStore keystore;
 
         final InputStream config = new ByteArrayInputStream(
             new StringBuilder().append("name=").append(name).append("\n")
-                    .append("library=").append(library)
+                    .append("library=").append(library.getAbsolutePath())
                     .toString().getBytes());
         
         try {
@@ -867,7 +874,7 @@ public class ConnectDialog extends javax.swing.JDialog {
         return keystore;
     }
 
-    private KeyStore getLoadedKeystore(final String fileName, final char[] authcode, final String storeType,
+    private KeyStore getLoadedKeystore(final File fileName, final char[] authcode, final String storeType,
             final String provider) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException, NoSuchProviderException {
 
         final KeyStore keystore;
@@ -879,7 +886,7 @@ public class ConnectDialog extends javax.swing.JDialog {
 
         InputStream in = null;
         try {
-            if (fileName != null && !fileName.isEmpty()) {
+            if (fileName != null) {
                 in = new FileInputStream(fileName);
             }
             keystore.load(in, authcode);
@@ -962,6 +969,19 @@ public class ConnectDialog extends javax.swing.JDialog {
      */
     public String getServerHost() {
         return serverHost;
+    }
+
+    /**
+     * Resolves a possibly relative path against the base dir.
+     * @param maybeRelativeFile Path that is either absolute or relative to the basedir
+     * @return an absolute path
+     */
+    private File getResolvedPath(String maybeRelativeFile) {
+        File file = new File(maybeRelativeFile);
+        if (!file.isAbsolute()) {
+            file = new File(baseDir, maybeRelativeFile);
+        }
+        return file;
     }
 
 }

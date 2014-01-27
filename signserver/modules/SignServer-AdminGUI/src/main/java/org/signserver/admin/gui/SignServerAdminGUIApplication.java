@@ -47,6 +47,7 @@ public class SignServerAdminGUIApplication extends SingleFrameApplication {
     private static final String OPTION_HELP = "help";
     private static final String OPTION_CONNECTFILE = "connectfile";
     private static final String OPTION_DEFAULTCONNECTFILE = "defaultconnectfile";
+    private static final String OPTION_BASEDIR = "basedir";
 
     private static AdminWS adminWS;
     private static ISigningAndValidation clientWS;
@@ -54,6 +55,7 @@ public class SignServerAdminGUIApplication extends SingleFrameApplication {
 
     private static File connectFile;
     private static File defaultConnectFile;
+    private static File baseDir;
 
     /** The command line options. */
     private static final Options OPTIONS;
@@ -66,6 +68,8 @@ public class SignServerAdminGUIApplication extends SingleFrameApplication {
                 "Configuration file to read WS connection properties from");
         OPTIONS.addOption(OPTION_DEFAULTCONNECTFILE, true,
                 "Default WS connection configuration file");
+        OPTIONS.addOption(OPTION_BASEDIR, true, 
+                "Base directory used when resolving relative paths in the configuration files");
     }
 
     private static void printUsage() {
@@ -143,6 +147,9 @@ public class SignServerAdminGUIApplication extends SingleFrameApplication {
                     defaultConnectFile = new File(
                             line.getOptionValue(OPTION_DEFAULTCONNECTFILE));
                 }
+                if (line.hasOption(OPTION_BASEDIR)) {
+                    baseDir = new File(line.getOptionValue(OPTION_BASEDIR));
+                }
 
                 try {
                     launch(SignServerAdminGUIApplication.class, args);
@@ -176,7 +183,7 @@ public class SignServerAdminGUIApplication extends SingleFrameApplication {
                 CertTools.installBCProvider();
 
                 final ConnectDialog dlg = new ConnectDialog(null, true,
-                        connectFile, defaultConnectFile);
+                        connectFile, defaultConnectFile, baseDir);
                 dlg.setVisible(true);
                 adminWS = dlg.getWS();
                 serverHost = dlg.getServerHost();

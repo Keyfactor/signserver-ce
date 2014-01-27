@@ -715,4 +715,28 @@ public class P11SignTest extends ModulesTestCase {
 
         assertEquals("signer verified", 1, verified);
     }
+    
+    /**
+     * Test having default PKCS11CryptoToken properties.
+     * Tests setting up a CMS Signer, giving it a certificate and sign a file.
+     */
+    public void testDefaultGlobalProperties() throws Exception {
+        final int workerId = WORKER_CMS;
+        try {
+             // Setup worker
+            globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + workerId + ".CLASSPATH", "org.signserver.module.cmssigner.CMSSigner");
+            globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", PKCS11CryptoToken.class.getName());
+            globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "DEFAULT.SHAREDLIBRARY", sharedLibrary);
+            globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "DEFAULT.SLOT", slot);
+            workerSession.setWorkerProperty(workerId, "NAME", "CMSSignerP11");
+            workerSession.setWorkerProperty(workerId, "AUTHTYPE", "NOAUTH");
+            workerSession.setWorkerProperty(workerId, "PIN", pin);
+            workerSession.setWorkerProperty(workerId, "DEFAULTKEY", existingKey1);
+            workerSession.reloadConfiguration(workerId);
+            
+            cmsSigner(workerId);
+        } finally {
+            removeWorker(workerId);
+        }
+    }
 }

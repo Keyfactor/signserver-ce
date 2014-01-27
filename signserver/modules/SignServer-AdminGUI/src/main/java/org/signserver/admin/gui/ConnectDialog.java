@@ -469,6 +469,7 @@ public class ConnectDialog extends javax.swing.JDialog {
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         dispose();
+        SignServerAdminGUIApplication.getApplication().exit(evt);
     }//GEN-LAST:event_cancelButtonActionPerformed
 
     private void connectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectButtonActionPerformed

@@ -19,8 +19,11 @@
 package org.signserver.admin.gui;
 
 import java.io.File;
+import java.io.IOException;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
+import org.apache.commons.io.FileUtils;
 
 /**
  * Dialog for adding worker(s) from a properties file, or by editing
@@ -64,6 +67,9 @@ public class AddWorkerDialog extends javax.swing.JDialog {
     
     private Stage stage;
     private Mode mode;
+    
+    // raw data of the config
+    private String config;
     
     /** Creates new form AddWorkerDialog */
     public AddWorkerDialog(java.awt.Frame parent, boolean modal) {
@@ -479,8 +485,31 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         // TODO: should later on handle merging manual properties to the
         // properties editor and so on...
         
-        updateControls();
-        // TODO: load configuration, etc.
+        loadConfigurationEditor();
+    }
+    
+    private void loadConfigurationEditor() {
+        switch (mode) {
+            case LOAD_FROM_FILE:
+                final File file = new File(filePathTextField.getText());
+        
+                try {
+                    config = FileUtils.readFileToString(file);
+                    configurationTextArea.setText(config);
+                } catch (IOException e) {
+                    JOptionPane.showMessageDialog(this, e.getMessage(),
+                        "Failed to read file", JOptionPane.ERROR_MESSAGE);
+                } finally {
+                    updateControls();
+                }
+                break;
+            case EDIT_MANUALLY:
+                // TODO: load from editor...
+                break;
+            default:
+                // should not happen
+                break;
+        }
     }
     
     /**

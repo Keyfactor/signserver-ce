@@ -194,6 +194,11 @@ public class AddWorkerDialog extends javax.swing.JDialog {
 
         cancelBackButton.setText(resourceMap.getString("cancelBackButton.text")); // NOI18N
         cancelBackButton.setName("cancelBackButton"); // NOI18N
+        cancelBackButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelBackButtonActionPerformed(evt);
+            }
+        });
 
         addWorkerTabbedPanel.setName("addWorkerTabbedPanel"); // NOI18N
 
@@ -503,6 +508,28 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         loadConfigurationEditor();
     }//GEN-LAST:event_reloadButtonActionPerformed
 
+    private void cancelBackButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelBackButtonActionPerformed
+        switch (stage) {
+            case INITIAL_CONFIG:
+                // cloase dialog
+                this.dispose();
+                break;
+            case EDIT_PROPERTIES:
+                goBackToInitialConfig();
+                break;
+            default:
+                // should not happen
+                break;
+        }
+    }//GEN-LAST:event_cancelBackButtonActionPerformed
+
+    private void goBackToInitialConfig() {
+        addWorkerTabbedPanel.setSelectedIndex(0);
+        stage = Stage.INITIAL_CONFIG;
+        
+        updateControls();
+    }
+    
     private void gotoPropertiesEditing() {
         addWorkerTabbedPanel.setSelectedIndex(1);
         stage = Stage.EDIT_PROPERTIES;

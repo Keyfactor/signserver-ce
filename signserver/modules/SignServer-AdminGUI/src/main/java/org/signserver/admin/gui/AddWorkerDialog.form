@@ -435,6 +435,9 @@
         <Property name="text" type="java.lang.String" resourceKey="reloadButton.text"/>
         <Property name="name" type="java.lang.String" value="reloadButton" noResource="true"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="reloadButtonActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>

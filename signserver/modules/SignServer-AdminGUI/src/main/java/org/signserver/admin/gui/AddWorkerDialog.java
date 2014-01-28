@@ -416,6 +416,11 @@ public class AddWorkerDialog extends javax.swing.JDialog {
 
         reloadButton.setText(resourceMap.getString("reloadButton.text")); // NOI18N
         reloadButton.setName("reloadButton"); // NOI18N
+        reloadButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                reloadButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -494,6 +499,10 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         updateControls();
     }//GEN-LAST:event_configurationTextAreaKeyTyped
 
+    private void reloadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reloadButtonActionPerformed
+        loadConfigurationEditor();
+    }//GEN-LAST:event_reloadButtonActionPerformed
+
     private void gotoPropertiesEditing() {
         addWorkerTabbedPanel.setSelectedIndex(1);
         stage = Stage.EDIT_PROPERTIES;
@@ -512,6 +521,7 @@ public class AddWorkerDialog extends javax.swing.JDialog {
                 try {
                     config = FileUtils.readFileToString(file);
                     configurationTextArea.setText(config);
+                    configurationEdited = false;
                 } catch (IOException e) {
                     JOptionPane.showMessageDialog(this, e.getMessage(),
                         "Failed to read file", JOptionPane.ERROR_MESSAGE);

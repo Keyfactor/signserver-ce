@@ -55,6 +55,7 @@ public class DefaultAdminCommandFactory extends AbstractCommandFactory implement
         put("setpropertyfromfile", SetPropertyFromFileCommand.class);
         put("setstatusproperty", SetStatusPropertyCommand.class);
         put("testkey", TestKeyCommand.class);
+        put("removekey", RemoveKeyCommand.class);
         put("uploadsignercertificatechain", UploadSignerCertificateChainCommand.class);
         put("uploadsignercertificate", UploadSignerCertificateCommand.class);
         put("wsadmins", WSAdminsCommand.class);

@@ -59,6 +59,8 @@
    <xs:element name='removeAuthorizedClientResponse' type='tns:removeAuthorizedClientResponse'/>
    <xs:element name='removeGlobalProperty' type='tns:removeGlobalProperty'/>
    <xs:element name='removeGlobalPropertyResponse' type='tns:removeGlobalPropertyResponse'/>
+   <xs:element name='removeKey' type='tns:removeKey'/>
+   <xs:element name='removeKeyResponse' type='tns:removeKeyResponse'/>
    <xs:element name='removeWorkerProperty' type='tns:removeWorkerProperty'/>
    <xs:element name='removeWorkerPropertyResponse' type='tns:removeWorkerPropertyResponse'/>
    <xs:element name='setGlobalProperty' type='tns:setGlobalProperty'/>
@@ -180,6 +182,17 @@
    <xs:complexType name='deactivateSignerResponse'>
     <xs:sequence>
      <xs:element name='return' type='xs:boolean'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='removeKey'>
+    <xs:sequence>
+     <xs:element name='signerId' type='xs:int'/>
+     <xs:element minOccurs='0' name='alias' type='xs:string'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='removeKeyResponse'>
+    <xs:sequence>
+     <xs:element name="return" type="xs:boolean"/>
     </xs:sequence>
    </xs:complexType>
    <xs:complexType name='getCurrentWorkerConfig'>
@@ -790,6 +803,12 @@
  <message name='AdminWS_getAuthorizedClientsResponse'>
   <part element='tns:getAuthorizedClientsResponse' name='getAuthorizedClientsResponse'></part>
  </message>
+ <message name='AdminWS_removeKey'>
+    <part element='tns:removeKey' name='removeKey'></part>
+ </message>
+ <message name='AdminWS_removeKeyResponse'>
+  <part element='tns:removeKeyResponse' name='removeKeyResponse'></part>
+ </message>
  <message name='AdminWS_deactivateSignerResponse'>
   <part element='tns:deactivateSignerResponse' name='deactivateSignerResponse'></part>
  </message>
@@ -833,6 +852,15 @@
    <output message='tns:AdminWS_deactivateSignerResponse'></output>
    <fault message='tns:AdminNotAuthorizedException' name='AdminNotAuthorizedException'></fault>
    <fault message='tns:CryptoTokenOfflineException' name='CryptoTokenOfflineException'></fault>
+   <fault message='tns:InvalidWorkerIdException' name='InvalidWorkerIdException'></fault>
+  </operation>
+  <operation name='removeKey'>
+   <input message='tns:AdminWS_removeKey'></input>
+   <output message='tns:AdminWS_removeKeyResponse'></output>
+   <fault message='tns:AdminNotAuthorizedException' name='AdminNotAuthorizedException'></fault>
+   <fault message='tns:CryptoTokenOfflineException' name='CryptoTokenOfflineException'></fault>
+   <fault message='tns:KeyStoreException' name='KeyStoreException'></fault>
+   <fault message='tns:SignServerException' name='SignServerException'></fault>
    <fault message='tns:InvalidWorkerIdException' name='InvalidWorkerIdException'></fault>
   </operation>
   <operation name='destroyKey' parameterOrder='destroyKey'>
@@ -1048,6 +1076,30 @@
    </fault>
    <fault name='CryptoTokenOfflineException'>
     <soap:fault name='CryptoTokenOfflineException' use='literal'/>
+   </fault>
+   <fault name='InvalidWorkerIdException'>
+    <soap:fault name='InvalidWorkerIdException' use='literal'/>
+   </fault>
+  </operation>
+  <operation name='removeKey'>
+   <soap:operation soapAction='' style='document'/>
+   <input name='removeKey'>
+    <soap:body use='literal'/>
+   </input>
+   <output name='removeKeyResponse'>
+    <soap:body use='literal'/>
+   </output>
+   <fault name='AdminNotAuthorizedException'>
+    <soap:fault name='AdminNotAuthorizedException' use='literal'/>
+   </fault>
+   <fault name='CryptoTokenOfflineException'>
+    <soap:fault name='CryptoTokenOfflineException' use='literal'/>
+   </fault>
+   <fault name='KeyStoreException'>
+    <soap:fault name='KeyStoreException' use='literal'/>
+   </fault>
+   <fault name='SignServerException'>
+    <soap:fault name='SignServerException' use='literal'/>
    </fault>
    <fault name='InvalidWorkerIdException'>
     <soap:fault name='InvalidWorkerIdException' use='literal'/>

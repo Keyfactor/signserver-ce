@@ -28,8 +28,9 @@ import org.signserver.common.*;
 import org.signserver.server.cryptotokens.CryptoTokenHelper;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.cryptotokens.IKeyGenerator;
+import org.signserver.server.cryptotokens.IKeyRemover;
 
-public abstract class BaseProcessable extends BaseWorker implements IProcessable {
+public abstract class BaseProcessable extends BaseWorker implements IProcessable, IKeyRemover {
 
     /** Log4j instance for actual implementation class */
     private final transient Logger log = Logger.getLogger(this.getClass());
@@ -284,6 +285,19 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         } catch (SignServerException e) {
             log.error("Failed to get crypto token: " + e.getMessage());
             return false;
+        }
+    }
+    
+    @Override
+    public boolean removeKey(String alias) throws CryptoTokenOfflineException, InvalidWorkerIdException, KeyStoreException, SignServerException {
+        ICryptoToken token = getCryptoToken();
+        if (token == null) {
+            throw new CryptoTokenOfflineException("Crypto token offline");
+        } else if (token instanceof IKeyRemover) {
+            return ((IKeyRemover) token).removeKey(alias);
+        } else {
+            throw new IllegalArgumentException(
+                    "Key removal not supported by crypto token");
         }
     }
 

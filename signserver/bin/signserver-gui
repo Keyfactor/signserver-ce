@@ -106,4 +106,5 @@ fi
 # Execute the command
 #echo Class-Path: $CP
 #exec "$JAVACMD" -Djavax.net.debug=all -cp $CP -splash:$SIGNSRV_HOME/res/admingui-splash.png $class_name "$@" -connectfile $SIGNSRV_HOME/conf/admingui.properties -defaultconnectfile $SIGNSRV_HOME/conf/admingui_default.properties
+#exec "$JAVACMD" -Xrunjdwp:transport=dt_socket,address=8788,server=y,suspend=n -cp $CP -splash:$SIGNSRV_HOME/res/admingui-splash.png $class_name "$@" -connectfile $SIGNSRV_HOME/conf/admingui.properties -defaultconnectfile $SIGNSRV_HOME/conf/admingui_default.properties -basedir $SIGNSRV_HOME
 exec "$JAVACMD" -cp $CP -splash:$SIGNSRV_HOME/res/admingui-splash.png $class_name "$@" -connectfile $SIGNSRV_HOME/conf/admingui.properties -defaultconnectfile $SIGNSRV_HOME/conf/admingui_default.properties -basedir $SIGNSRV_HOME

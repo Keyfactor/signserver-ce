@@ -60,6 +60,7 @@ import org.signserver.admin.gui.adminws.gen.AuthorizedClient;
 import org.signserver.admin.gui.adminws.gen.CryptoTokenAuthenticationFailureException_Exception;
 import org.signserver.admin.gui.adminws.gen.CryptoTokenOfflineException_Exception;
 import org.signserver.admin.gui.adminws.gen.InvalidWorkerIdException_Exception;
+import org.signserver.admin.gui.adminws.gen.KeyStoreException_Exception;
 import org.signserver.admin.gui.adminws.gen.LogEntry;
 import org.signserver.admin.gui.adminws.gen.Order;
 import org.signserver.admin.gui.adminws.gen.QueryCondition;
@@ -139,7 +140,10 @@ public class MainView extends FrameView {
                     }
 
                     workerComboBox.setModel(new MyComboBoxModel(selectedWorkers));
-
+                    
+                    // removeKey should only be enabled iff one selected
+                    removeKeyMenu.setEnabled(selectedWorkers.size() == 1);
+                    
                     if (selectedWorkers.size() > 0) {
 
                         if (LOG.isDebugEnabled()) {
@@ -330,6 +334,7 @@ public class MainView extends FrameView {
         installCertificatesMenu = new javax.swing.JMenuItem();
         jSeparator5 = new javax.swing.JPopupMenu.Separator();
         renewSignerMenu = new javax.swing.JMenuItem();
+        removeKeyMenu = new javax.swing.JMenuItem();
         jSeparator8 = new javax.swing.JPopupMenu.Separator();
         removeWorkerMenu = new javax.swing.JMenuItem();
         jSeparator9 = new javax.swing.JPopupMenu.Separator();
@@ -428,6 +433,9 @@ public class MainView extends FrameView {
         auditlogErrorPanel = new javax.swing.JPanel();
         jScrollPane5 = new javax.swing.JScrollPane();
         auditlogErrorEditor = new javax.swing.JEditorPane();
+        removeKeyPanel = new javax.swing.JPanel();
+        jLabel7 = new javax.swing.JLabel();
+        aliasTextField = new javax.swing.JTextField();
 
         menuBar.setName("menuBar"); // NOI18N
 
@@ -496,6 +504,11 @@ public class MainView extends FrameView {
         renewSignerMenu.setText(resourceMap.getString("renewSignerMenu.text")); // NOI18N
         renewSignerMenu.setName("renewSignerMenu"); // NOI18N
         editMenu.add(renewSignerMenu);
+
+        removeKeyMenu.setAction(actionMap.get("removeKey")); // NOI18N
+        removeKeyMenu.setText(resourceMap.getString("removeKeyMenu.text")); // NOI18N
+        removeKeyMenu.setName("removeKeyMenu"); // NOI18N
+        editMenu.add(removeKeyMenu);
 
         jSeparator8.setName("jSeparator8"); // NOI18N
         editMenu.add(jSeparator8);
@@ -914,13 +927,13 @@ public class MainView extends FrameView {
         statusPropertiesTabLayout.setHorizontalGroup(
             statusPropertiesTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, statusPropertiesTabLayout.createSequentialGroup()
-                .addContainerGap(778, Short.MAX_VALUE)
+                .addContainerGap(801, Short.MAX_VALUE)
                 .addComponent(statusPropertiesDetailsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
             .addGroup(statusPropertiesTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(statusPropertiesTabLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(statusPropertiesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 750, Short.MAX_VALUE)
+                    .addComponent(statusPropertiesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 773, Short.MAX_VALUE)
                     .addGap(112, 112, 112)))
         );
         statusPropertiesTabLayout.setVerticalGroup(
@@ -928,11 +941,11 @@ public class MainView extends FrameView {
             .addGroup(statusPropertiesTabLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(statusPropertiesDetailsButton)
-                .addContainerGap(481, Short.MAX_VALUE))
+                .addContainerGap(492, Short.MAX_VALUE))
             .addGroup(statusPropertiesTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(statusPropertiesTabLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(statusPropertiesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 502, Short.MAX_VALUE)
+                    .addComponent(statusPropertiesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 510, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -1001,7 +1014,7 @@ public class MainView extends FrameView {
             configurationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, configurationTabLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 740, Short.MAX_VALUE)
+                .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 763, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(configurationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(addButton)
@@ -1017,7 +1030,7 @@ public class MainView extends FrameView {
             .addGroup(configurationTabLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(configurationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 502, Short.MAX_VALUE)
+                    .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 510, Short.MAX_VALUE)
                     .addGroup(configurationTabLayout.createSequentialGroup()
                         .addComponent(addButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -1099,7 +1112,7 @@ public class MainView extends FrameView {
         authorizationTabLayout.setHorizontalGroup(
             authorizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(authorizationTabLayout.createSequentialGroup()
-                .addContainerGap(763, Short.MAX_VALUE)
+                .addContainerGap(786, Short.MAX_VALUE)
                 .addGroup(authorizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(authAddButton, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(authEditButton, javax.swing.GroupLayout.Alignment.TRAILING)
@@ -1108,7 +1121,7 @@ public class MainView extends FrameView {
             .addGroup(authorizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(authorizationTabLayout.createSequentialGroup()
                     .addGap(6, 6, 6)
-                    .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 744, Short.MAX_VALUE)
+                    .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 767, Short.MAX_VALUE)
                     .addGap(124, 124, 124)))
         );
 
@@ -1123,11 +1136,11 @@ public class MainView extends FrameView {
                 .addComponent(authEditButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(authRemoveButton)
-                .addContainerGap(397, Short.MAX_VALUE))
+                .addContainerGap(414, Short.MAX_VALUE))
             .addGroup(authorizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(authorizationTabLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 502, Short.MAX_VALUE)
+                    .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 510, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -1140,8 +1153,8 @@ public class MainView extends FrameView {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(workerTabbedPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 894, Short.MAX_VALUE)
-                    .addComponent(workerComboBox, javax.swing.GroupLayout.Alignment.LEADING, 0, 894, Short.MAX_VALUE))
+                    .addComponent(workerTabbedPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 905, Short.MAX_VALUE)
+                    .addComponent(workerComboBox, javax.swing.GroupLayout.Alignment.LEADING, 0, 905, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -1150,7 +1163,7 @@ public class MainView extends FrameView {
                 .addContainerGap()
                 .addComponent(workerComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(workerTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 567, Short.MAX_VALUE))
+                .addComponent(workerTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 572, Short.MAX_VALUE))
         );
 
         jSplitPane1.setRightComponent(jPanel1);
@@ -1161,7 +1174,7 @@ public class MainView extends FrameView {
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(mainPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1173, Short.MAX_VALUE)
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1185, Short.MAX_VALUE)
                 .addContainerGap())
         );
         mainPanelLayout.setVerticalGroup(
@@ -1232,8 +1245,8 @@ public class MainView extends FrameView {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 775, Short.MAX_VALUE)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 775, Short.MAX_VALUE))
+                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 787, Short.MAX_VALUE)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 787, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jButtonAuditConditionRemove, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -1350,15 +1363,15 @@ public class MainView extends FrameView {
         auditlogTablePanel.setLayout(auditlogTablePanelLayout);
         auditlogTablePanelLayout.setHorizontalGroup(
             auditlogTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1149, Short.MAX_VALUE)
+            .addGap(0, 1161, Short.MAX_VALUE)
             .addGroup(auditlogTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(auditlogTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1149, Short.MAX_VALUE))
+                .addComponent(auditlogTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1161, Short.MAX_VALUE))
         );
         auditlogTablePanelLayout.setVerticalGroup(
             auditlogTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 431, Short.MAX_VALUE)
+            .addGap(0, 430, Short.MAX_VALUE)
             .addGroup(auditlogTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(auditlogTableScrollPane))
+                .addComponent(auditlogTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 430, Short.MAX_VALUE))
         );
 
         auditlogPanel.add(auditlogTablePanel, "auditlogTableCard");
@@ -1379,7 +1392,7 @@ public class MainView extends FrameView {
         );
         auditlogErrorPanelLayout.setVerticalGroup(
             auditlogErrorPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 431, Short.MAX_VALUE)
+            .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 430, Short.MAX_VALUE)
         );
 
         auditlogPanel.add(auditlogErrorPanel, "auditlogErrorCard");
@@ -1407,11 +1420,11 @@ public class MainView extends FrameView {
                 .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(auditlogMaxEntriesTextfield, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(263, Short.MAX_VALUE))
+                .addContainerGap(275, Short.MAX_VALUE))
             .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel3Layout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(auditlogPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 1149, Short.MAX_VALUE)
+                    .addComponent(auditlogPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -1432,11 +1445,11 @@ public class MainView extends FrameView {
                         .addComponent(auditlogDisplayingToIndex)
                         .addComponent(jLabel8)
                         .addComponent(auditlogMaxEntriesTextfield, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(457, Short.MAX_VALUE))
+                .addContainerGap(459, Short.MAX_VALUE))
             .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                     .addGap(59, 59, 59)
-                    .addComponent(auditlogPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 431, Short.MAX_VALUE)
+                    .addComponent(auditlogPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 430, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -1450,7 +1463,7 @@ public class MainView extends FrameView {
             auditPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(auditPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jSplitPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 1173, Short.MAX_VALUE)
+                .addComponent(jSplitPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 1185, Short.MAX_VALUE)
                 .addContainerGap())
         );
         auditPanelLayout.setVerticalGroup(
@@ -1462,6 +1475,28 @@ public class MainView extends FrameView {
         );
 
         jTabbedPane1.addTab(resourceMap.getString("auditPanel.TabConstraints.tabTitle"), auditPanel); // NOI18N
+
+        removeKeyPanel.setName("removeKeyPanel"); // NOI18N
+
+        jLabel7.setText(resourceMap.getString("jLabel7.text")); // NOI18N
+        jLabel7.setName("jLabel7"); // NOI18N
+
+        aliasTextField.setName("aliasTextField"); // NOI18N
+
+        javax.swing.GroupLayout removeKeyPanelLayout = new javax.swing.GroupLayout(removeKeyPanel);
+        removeKeyPanel.setLayout(removeKeyPanelLayout);
+        removeKeyPanelLayout.setHorizontalGroup(
+            removeKeyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, 394, Short.MAX_VALUE)
+            .addComponent(aliasTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 394, Short.MAX_VALUE)
+        );
+        removeKeyPanelLayout.setVerticalGroup(
+            removeKeyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(removeKeyPanelLayout.createSequentialGroup()
+                .addComponent(jLabel7)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(aliasTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
 
         setComponent(jTabbedPane1);
         setMenuBar(menuBar);
@@ -2632,6 +2667,84 @@ private void displayLogEntryAction() {
         }
     }
 
+    @Action(block = Task.BlockingScope.WINDOW)
+    public Task removeKey() {
+        return new RemoveKeyTask(getApplication());
+    }
+    
+    private class RemoveKeyTask extends Task<Boolean, Void> {
+        private final String alias;
+        private final boolean proceed;
+        private final int workerId;
+        private String errorMessage;
+        
+        public RemoveKeyTask(Application application) {
+            super(application);
+            Object selected = workersList.getSelectedValue();
+            if (selected instanceof Worker) {
+                workerId = ((Worker) selected).getWorkerId();
+
+                aliasTextField.setText("");
+                int res = JOptionPane.showConfirmDialog(getFrame(), removeKeyPanel,
+                        "Remove key", JOptionPane.OK_CANCEL_OPTION);
+                alias = aliasTextField.getText();
+                if (res == JOptionPane.OK_OPTION && !alias.isEmpty()) {
+                    res = JOptionPane.showConfirmDialog(getFrame(), 
+                            "WARNING: Will attempt to permantently remove the following key:\n" +
+                            alias + "\n" +
+                            "\n" +
+                            "Note: the key might be used by multiple workers.\n" +
+                            "Are you sure you want to try to destroy the key?",
+                        "Confirm key destruction", JOptionPane.YES_NO_CANCEL_OPTION);
+
+                    proceed = res == JOptionPane.YES_OPTION;
+                } else {
+                    proceed = false;
+                }
+            } else {
+                alias = null;
+                proceed = false;
+                workerId = 0;
+            }
+        }
+        
+        @Override
+        protected Boolean doInBackground() throws Exception {
+            if (!proceed) {
+                return null;
+            }
+            setMessage("Requesting key to be deleted");
+            boolean success = false;
+            try {
+                success = SignServerAdminGUIApplication.getAdminWS().removeKey(workerId, alias);
+            } catch (AdminNotAuthorizedException_Exception ex) {
+                errorMessage = "Authorization denied:\n" + ex.getLocalizedMessage();
+            } catch (CryptoTokenOfflineException_Exception ex) {
+                errorMessage = "Unable to remove key because token was not active:\n" + ex.getLocalizedMessage();
+            } catch (InvalidWorkerIdException_Exception ex) {
+                errorMessage = "Unable to remove key:\n" + ex.getLocalizedMessage();
+            } catch (KeyStoreException_Exception ex) {
+                errorMessage = "Unable to remove key:\n" + ex.getLocalizedMessage();
+            } catch (SignServerException_Exception ex) {
+                errorMessage = "Unable to remove key:\n" + ex.getLocalizedMessage();
+            }
+            return success;
+        }
+
+        @Override
+        protected void succeeded(Boolean success) {
+            if (success != null) {
+                if (errorMessage == null) {
+                    JOptionPane.showMessageDialog(MainView.this.getFrame(), 
+                            success ? "Removal succeeded" : "Removal failed", "Removal result", success ? JOptionPane.INFORMATION_MESSAGE : JOptionPane.ERROR_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(MainView.this.getFrame(), 
+                            errorMessage, "Removal failed", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        }
+    }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     javax.swing.JButton activateButton;
@@ -2639,6 +2752,7 @@ private void displayLogEntryAction() {
     javax.swing.JButton addButton;
     javax.swing.JMenuItem addWorkerItem;
     javax.swing.JMenuItem administratorsMenu;
+    javax.swing.JTextField aliasTextField;
     javax.swing.JTable auditLogTable;
     javax.swing.JPanel auditPanel;
     javax.swing.JLabel auditlogDisplayingToIndex;
@@ -2687,6 +2801,7 @@ private void displayLogEntryAction() {
     javax.swing.JLabel jLabel4;
     javax.swing.JLabel jLabel5;
     javax.swing.JLabel jLabel6;
+    javax.swing.JLabel jLabel7;
     javax.swing.JLabel jLabel8;
     javax.swing.JPanel jPanel1;
     javax.swing.JPanel jPanel2;
@@ -2721,6 +2836,8 @@ private void displayLogEntryAction() {
     javax.swing.JButton refreshButton;
     javax.swing.JMenuItem refreshMenu;
     javax.swing.JButton removeButton;
+    javax.swing.JMenuItem removeKeyMenu;
+    javax.swing.JPanel removeKeyPanel;
     javax.swing.JMenuItem removeWorkerMenu;
     javax.swing.JButton renewKeyButton;
     javax.swing.JMenuItem renewKeyMenu;

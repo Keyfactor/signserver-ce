@@ -286,9 +286,13 @@ public interface IWorkerSession {
      * @param purpose on of ICryptoToken.PURPOSE_ constants
      * @return true if removal was successful.
      */
-    boolean destroyKey(int signerId, int purpose)
-            throws InvalidWorkerIdException;
+//    boolean destroyKey(int signerId, int purpose)
+//            throws InvalidWorkerIdException;
 
+    boolean removeKey(int signerId, String alias) 
+            throws CryptoTokenOfflineException, InvalidWorkerIdException, 
+            KeyStoreException, SignServerException;
+    
     /**
      * Generate a new keypair.
      * @param signerId Id of signer
@@ -316,7 +320,7 @@ public interface IWorkerSession {
     Collection<KeyTestResult> testKey(final int signerId, final String alias,
             char[] authCode) throws CryptoTokenOfflineException,
             InvalidWorkerIdException, KeyStoreException;
-
+    
     /**
      * Method used to upload a certificate to a signers active configuration.
      *
@@ -422,9 +426,13 @@ public interface IWorkerSession {
          * @param purpose on of ICryptoToken.PURPOSE_ constants
          * @return true if removal was successful.
          */
-        boolean destroyKey(final AdminInfo adminInfo, int signerId, int purpose)
-                throws InvalidWorkerIdException;
+//        boolean destroyKey(final AdminInfo adminInfo, int signerId, int purpose)
+//                throws InvalidWorkerIdException;
     
+        boolean removeKey(AdminInfo adminInfo, int signerId, String alias) 
+            throws CryptoTokenOfflineException, InvalidWorkerIdException, 
+            KeyStoreException, SignServerException;
+        
         /**
          * Generate a new keypair.
          * 

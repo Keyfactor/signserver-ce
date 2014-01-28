@@ -20,6 +20,8 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.*;
 import javax.security.auth.x500.X500Principal;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
@@ -54,7 +56,7 @@ import org.signserver.common.*;
  * @version $Id$
  */
 public class KeystoreCryptoToken implements ICryptoToken,
-    IKeyGenerator {
+    IKeyGenerator, IKeyRemover {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(KeystoreCryptoToken.class);
@@ -606,6 +608,31 @@ public class KeystoreCryptoToken implements ICryptoToken,
                 } catch (IOException ex) {
                     LOG.error("Error closing file", ex);
                 }
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public boolean removeKey(String alias) throws CryptoTokenOfflineException, KeyStoreException, SignServerException {
+        final KeyStore keyStore = getKeyStore();
+        boolean result = CryptoTokenHelper.removeKey(keyStore, alias);
+        if (result) {
+            OutputStream out = null;
+            try {
+                out = new FileOutputStream(new File(keystorepath));
+                keyStore.store(out, authenticationCode);
+            } catch (IOException ex) {
+                LOG.error("Unable to persist new keystore after key removal: " + ex.getMessage(), ex);
+                throw new SignServerException("Unable to persist key removal");
+            } catch (NoSuchAlgorithmException ex) {
+                LOG.error("Unable to persist new keystore after key removal: " + ex.getMessage(), ex);
+                throw new SignServerException("Unable to persist key removal");
+            } catch (CertificateException ex) {
+                LOG.error("Unable to persist new keystore after key removal: " + ex.getMessage(), ex);
+                throw new SignServerException("Unable to persist key removal");
+            } finally {
+                IOUtils.closeQuietly(out);
             }
         }
         return result;

@@ -623,14 +623,27 @@ public class AdminLayerEJBImpl implements AdminWS {
      * @param signerId id of the signer
      * @param purpose on of ICryptoToken.PURPOSE_ constants
      * @return true if removal was successful.
+     * @deprecated No longer used. Use removeKey instead.
      */
     @Override
+    @Deprecated
     public boolean destroyKey(final int signerId,
             final int purpose)
             throws InvalidWorkerIdException_Exception {
+        return false;
+    }
+    
+    @Override
+    public boolean removeKey(int signerId, String alias) throws AdminNotAuthorizedException_Exception, CryptoTokenOfflineException_Exception, InvalidWorkerIdException_Exception, KeyStoreException_Exception, SignServerException_Exception {
         try {
-            return worker.destroyKey(signerId, purpose);
+            return worker.removeKey(signerId, alias);
+        } catch (CryptoTokenOfflineException ex) {
+            throw wrap(ex);
         } catch (InvalidWorkerIdException ex) {
+            throw wrap(ex);
+        } catch (KeyStoreException ex) {
+            throw wrap(ex);
+        } catch (SignServerException ex) {
             throw wrap(ex);
         }
     }

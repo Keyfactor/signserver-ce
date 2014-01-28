@@ -44,8 +44,10 @@ import org.signserver.common.CryptoTokenInitializationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
+import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.KeyTestResult;
 import org.signserver.common.PKCS10CertReqInfo;
+import org.signserver.common.SignServerException;
 import org.signserver.server.KeyUsageCounterHash;
 import static org.signserver.server.cryptotokens.CryptoTokenBase.createKeyHash;
 import static org.signserver.server.cryptotokens.CryptoTokenBase.suggestSigAlg;
@@ -62,7 +64,7 @@ import static org.signserver.server.cryptotokens.CryptoTokenBase.suggestSigAlg;
  * @author Markus Kilås
  * @version $Id$
  */
-public class PKCS11CryptoToken implements ICryptoToken, IKeyGenerator {
+public class PKCS11CryptoToken implements ICryptoToken, IKeyGenerator, IKeyRemover {
     
     private static final Logger LOG = Logger.getLogger(PKCS11CryptoToken.class);
 
@@ -257,6 +259,11 @@ public class PKCS11CryptoToken implements ICryptoToken, IKeyGenerator {
     @Override
     public boolean destroyKey(int purpose) {
         return false;
+    }
+    
+    @Override
+    public boolean removeKey(String alias) throws CryptoTokenOfflineException, InvalidWorkerIdException, KeyStoreException, SignServerException {
+        return CryptoTokenHelper.removeKey(getKeyStore(), alias);
     }
 
     @Override

@@ -12,7 +12,11 @@
  *************************************************************************/
 package org.signserver.server.cryptotokens;
 
+import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.util.Properties;
+import org.signserver.common.CryptoTokenOfflineException;
+import org.signserver.common.SignServerException;
 
 /**
  * Helper methods used by the CryptoTokens.
@@ -67,5 +71,16 @@ public class CryptoTokenHelper {
             props.setProperty("nextCertSignKey", prop);
         }
         return props;
+    }
+    
+    public static boolean removeKey(final KeyStore keyStore, final String alias) throws CryptoTokenOfflineException, KeyStoreException, SignServerException {
+        if (keyStore == null) {
+            throw new CryptoTokenOfflineException("Token offline");
+        }
+        if (!keyStore.containsAlias(alias)) {
+            throw new SignServerException("No such alias in token: " + alias);
+        }
+        keyStore.deleteEntry(alias);
+        return !keyStore.containsAlias(alias);
     }
 }

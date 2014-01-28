@@ -50,7 +50,7 @@ import org.signserver.server.KeyUsageCounterHash;
  * @version $Id$
  */
 public class OldPKCS11CryptoToken extends CryptoTokenBase implements ICryptoToken,
-        IKeyGenerator {
+        IKeyGenerator, IKeyRemover {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(OldPKCS11CryptoToken.class);
@@ -348,5 +348,10 @@ public class OldPKCS11CryptoToken extends CryptoTokenBase implements ICryptoToke
     public KeyStore getKeyStore() throws UnsupportedOperationException,
             CryptoTokenOfflineException, KeyStoreException {
         return getKeyStore(authenticationCode); // TODO: check loaded etc
+    }
+    
+    @Override
+    public boolean removeKey(String alias) throws CryptoTokenOfflineException, KeyStoreException, SignServerException {
+        return CryptoTokenHelper.removeKey(getKeyStore(), alias);
     }
 }

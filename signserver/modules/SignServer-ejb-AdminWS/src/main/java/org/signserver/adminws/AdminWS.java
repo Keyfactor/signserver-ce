@@ -471,9 +471,11 @@ public class AdminWS {
     public boolean destroyKey(@WebParam(name = "signerId") final int signerId,
             @WebParam(name = "purpose") final int purpose)
             throws InvalidWorkerIdException, AdminNotAuthorizedException {
-        final AdminInfo adminInfo = requireAdminAuthorization("destroyKey", String.valueOf(signerId));
+        requireAdminAuthorization("destroyKey", String.valueOf(signerId));
         
-        return worker.destroyKey(adminInfo, signerId, purpose);
+        // destroyKey has been replaced with removeKey operation
+        LOG.warn("Operation destroyKey no longer supported. Use removeKey instead.");
+        return false;
     }
 
     /**
@@ -550,6 +552,19 @@ public class AdminWS {
         }
 
         return results;
+    }
+    
+    /** TODO. */
+    @WebMethod(operationName = "removeKey")
+    public boolean removeKey(
+            @WebParam(name = "signerId") final int signerId,
+            @WebParam(name = "alias") final String alias)
+            throws CryptoTokenOfflineException,
+            InvalidWorkerIdException, KeyStoreException,
+            SignServerException, AdminNotAuthorizedException {
+        final AdminInfo adminInfo = requireAdminAuthorization("removeKey", String.valueOf(signerId), alias);
+
+        return worker.removeKey(adminInfo, signerId, alias);
     }
 
     /**

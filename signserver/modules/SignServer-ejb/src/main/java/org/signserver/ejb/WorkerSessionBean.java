@@ -1229,6 +1229,11 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         } else {
             result = false;
         }
+        final HashMap<String, Object> auditMap = new HashMap<String, Object>();
+        auditMap.put("KEYALIAS", alias);
+        auditMap.put("SUCCESS", String.valueOf(result));
+        auditLog(adminInfo, SignServerEventTypes.KEYREMOVE, SignServerModuleTypes.KEY_MANAGEMENT, String.valueOf(signerId), auditMap);
+        
         return result;
     }
     

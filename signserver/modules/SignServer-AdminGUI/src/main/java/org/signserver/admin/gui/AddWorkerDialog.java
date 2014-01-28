@@ -126,6 +126,7 @@ public class AddWorkerDialog extends javax.swing.JDialog {
                 // TODO: implement later when implementing manual edition
                 break;
             default:
+                // should not happen
                 break;
         }
     }
@@ -173,6 +174,11 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(org.signserver.admin.gui.SignServerAdminGUIApplication.class).getContext().getResourceMap(AddWorkerDialog.class);
         nextApplyButton.setText(resourceMap.getString("nextApplyButton.text")); // NOI18N
         nextApplyButton.setName("nextApplyButton"); // NOI18N
+        nextApplyButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nextApplyButtonActionPerformed(evt);
+            }
+        });
 
         cancelBackButton.setText(resourceMap.getString("cancelBackButton.text")); // NOI18N
         cancelBackButton.setName("cancelBackButton"); // NOI18N
@@ -450,6 +456,33 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         updateControls();
     }//GEN-LAST:event_filePathTextFieldKeyTyped
 
+    private void nextApplyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextApplyButtonActionPerformed
+        switch (stage) {
+            case INITIAL_CONFIG:
+                // in the initial config pane, go to the next step
+                gotoPropertiesEditing();
+
+                break;
+            case EDIT_PROPERTIES:
+                // TODO: apply current configuration
+                break;
+            default:
+                // should not happen...
+                break;
+        }
+    }//GEN-LAST:event_nextApplyButtonActionPerformed
+
+    private void gotoPropertiesEditing() {
+        addWorkerTabbedPanel.setSelectedIndex(1);
+        stage = Stage.EDIT_PROPERTIES;
+        
+        // TODO: should later on handle merging manual properties to the
+        // properties editor and so on...
+        
+        updateControls();
+        // TODO: load configuration, etc.
+    }
+    
     /**
      * @param args the command line arguments
      */

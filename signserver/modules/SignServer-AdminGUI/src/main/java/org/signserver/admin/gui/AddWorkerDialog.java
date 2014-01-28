@@ -18,6 +18,10 @@
  */
 package org.signserver.admin.gui;
 
+import java.io.File;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileFilter;
+
 /**
  * Dialog for adding worker(s) from a properties file, or by editing
  * properties manually.
@@ -111,6 +115,19 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         addPropertyButton.setEnabled(mode == Mode.EDIT_MANUALLY);
         removePropertyButton.setEnabled(mode == Mode.EDIT_MANUALLY);
         editPropertyButton.setEnabled(mode == Mode.EDIT_MANUALLY);
+        
+        // update state of Next/Apply button
+        switch (mode) {
+            case LOAD_FROM_FILE:
+                final String filePath = filePathTextField.getText();
+                nextApplyButton.setEnabled(filePath != null && !filePath.isEmpty());
+                break;
+            case EDIT_MANUALLY:
+                // TODO: implement later when implementing manual edition
+                break;
+            default:
+                break;
+        }
     }
     
     /** This method is called from within the constructor to
@@ -217,6 +234,11 @@ public class AddWorkerDialog extends javax.swing.JDialog {
 
         filePathBrowseButton.setText(resourceMap.getString("filePathBrowseButton.text")); // NOI18N
         filePathBrowseButton.setName("filePathBrowseButton"); // NOI18N
+        filePathBrowseButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                filePathBrowseButtonActionPerformed(evt);
+            }
+        });
 
         loadFromFileRadioButton.setFont(resourceMap.getFont("loadFromFileRadioButton.font")); // NOI18N
         loadFromFileRadioButton.setText(resourceMap.getString("loadFromFileRadioButton.text")); // NOI18N
@@ -392,6 +414,21 @@ public class AddWorkerDialog extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void filePathBrowseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_filePathBrowseButtonActionPerformed
+        final JFileChooser chooser = new JFileChooser();
+        
+        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        
+        final int res = chooser.showOpenDialog(this);
+        
+        if (res == JFileChooser.APPROVE_OPTION) {
+            final File file = chooser.getSelectedFile();
+            filePathTextField.setText(file.getAbsolutePath());
+        }
+     
+        updateControls();
+    }//GEN-LAST:event_filePathBrowseButtonActionPerformed
 
     /**
      * @param args the command line arguments

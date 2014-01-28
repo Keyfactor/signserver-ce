@@ -420,6 +420,9 @@
                     <Property name="rows" type="int" value="5"/>
                     <Property name="name" type="java.lang.String" value="configurationTextArea" noResource="true"/>
                   </Properties>
+                  <Events>
+                    <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="configurationTextAreaKeyTyped"/>
+                  </Events>
                 </Component>
               </SubComponents>
             </Container>

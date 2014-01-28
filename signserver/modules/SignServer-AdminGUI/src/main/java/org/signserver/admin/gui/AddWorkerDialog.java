@@ -71,6 +71,9 @@ public class AddWorkerDialog extends javax.swing.JDialog {
     // raw data of the config
     private String config;
     
+    // keep track of raw configuration editing
+    private boolean configurationEdited = false;
+    
     /** Creates new form AddWorkerDialog */
     public AddWorkerDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -91,6 +94,9 @@ public class AddWorkerDialog extends javax.swing.JDialog {
     private void updateControls() {
         // the reload button is only visible in the edit properties stage
         reloadButton.setVisible(stage == Stage.EDIT_PROPERTIES);
+        // enable the reload button when there is changes done in the
+        // free text configuration editor
+        reloadButton.setEnabled(configurationEdited);
         
         // set the text of the Cancel/Back button depending on the stage
         // Cancel is shown in the initial config stage, Back is shown in the
@@ -374,6 +380,11 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         configurationTextArea.setColumns(20);
         configurationTextArea.setRows(5);
         configurationTextArea.setName("configurationTextArea"); // NOI18N
+        configurationTextArea.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                configurationTextAreaKeyTyped(evt);
+            }
+        });
         configurationScrollPane.setViewportView(configurationTextArea);
 
         javax.swing.GroupLayout configurationPanelLayout = new javax.swing.GroupLayout(configurationPanel);
@@ -477,6 +488,11 @@ public class AddWorkerDialog extends javax.swing.JDialog {
                 break;
         }
     }//GEN-LAST:event_nextApplyButtonActionPerformed
+
+    private void configurationTextAreaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_configurationTextAreaKeyTyped
+        configurationEdited = true;
+        updateControls();
+    }//GEN-LAST:event_configurationTextAreaKeyTyped
 
     private void gotoPropertiesEditing() {
         addWorkerTabbedPanel.setSelectedIndex(1);

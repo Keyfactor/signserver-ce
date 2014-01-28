@@ -221,6 +221,16 @@ public class AddWorkerDialog extends javax.swing.JDialog {
 
         filePathTextField.setText(resourceMap.getString("filePathTextField.text")); // NOI18N
         filePathTextField.setName("filePathTextField"); // NOI18N
+        filePathTextField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                filePathTextFieldActionPerformed(evt);
+            }
+        });
+        filePathTextField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                filePathTextFieldKeyTyped(evt);
+            }
+        });
 
         propertiesLabel.setFont(resourceMap.getFont("propertiesLabel.font")); // NOI18N
         propertiesLabel.setText(resourceMap.getString("propertiesLabel.text")); // NOI18N
@@ -429,6 +439,16 @@ public class AddWorkerDialog extends javax.swing.JDialog {
      
         updateControls();
     }//GEN-LAST:event_filePathBrowseButtonActionPerformed
+
+    private void filePathTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_filePathTextFieldActionPerformed
+        // update UI controls
+        updateControls();
+    }//GEN-LAST:event_filePathTextFieldActionPerformed
+
+    private void filePathTextFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_filePathTextFieldKeyTyped
+        // update UI controls
+        updateControls();
+    }//GEN-LAST:event_filePathTextFieldKeyTyped
 
     /**
      * @param args the command line arguments

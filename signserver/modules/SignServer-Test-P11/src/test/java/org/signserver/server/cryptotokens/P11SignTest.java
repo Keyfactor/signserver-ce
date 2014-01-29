@@ -24,12 +24,15 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.fail;
+import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.cmp.PKIStatus;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
@@ -54,10 +57,12 @@ import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
 import org.signserver.common.GlobalConfiguration;
+import org.signserver.common.KeyTestResult;
 import org.signserver.common.PKCS10CertReqInfo;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SODSignRequest;
 import org.signserver.common.SODSignResponse;
+import org.signserver.common.SignServerException;
 import org.signserver.common.SignServerUtil;
 import org.signserver.test.utils.builders.CryptoUtils;
 import org.signserver.testutils.ModulesTestCase;
@@ -69,6 +74,9 @@ import org.signserver.testutils.ModulesTestCase;
  * @version $Id$
  */
 public class P11SignTest extends ModulesTestCase {
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(P11SignTest.class);
     
     private static final int WORKER_PDF = 20000;
     private static final int WORKER_TSA = 20001;
@@ -87,6 +95,8 @@ public class P11SignTest extends ModulesTestCase {
     		"lVMb082JFlABT1/o2mL5O6qFG119JeuS1+ZiL1AEy//gRs556OE1TB9UEQU2bFUm" +
     		"zBD4VHvkOOB/7X944v9lmK5y9sFv+vnf/34catL1A+ZNLwtd1Qq2VirqJxRK/T61" +
     		"QoSWj4rGpw==";
+    
+    private static final String TEST_KEY_ALIAS = "p11testkey1234";
     
     private final String sharedLibrary;
     private final String slot;
@@ -735,6 +745,93 @@ public class P11SignTest extends ModulesTestCase {
             workerSession.reloadConfiguration(workerId);
             
             cmsSigner(workerId);
+        } finally {
+            removeWorker(workerId);
+        }
+    }
+    
+    private Set<String> getKeyAliases(final int workerId) throws Exception {
+        Collection<KeyTestResult> testResults = workerSession.testKey(workerId, "all", pin.toCharArray());
+        final HashSet<String> results = new HashSet<String>();
+        for (KeyTestResult testResult : testResults) {
+            results.add(testResult.getAlias());
+        }
+        return results;
+    }
+    
+    public void testGenerateKey() throws Exception {
+        LOG.info("testGenerateKey");
+        
+        final int workerId = WORKER_CMS;
+        try {
+            setCMSSignerProperties(workerId, false);
+            workerSession.reloadConfiguration(workerId);
+            
+            // Check available aliases
+            Set<String> aliases1 = getKeyAliases(workerId);
+            
+            if (aliases1.isEmpty()) {
+                throw new Exception("getKeyAliases is not working or the slot is empty");
+            }
+            
+            // If the key already exists, try to remove it first
+            if (aliases1.contains(TEST_KEY_ALIAS)) {
+                workerSession.removeKey(workerId, TEST_KEY_ALIAS);
+                aliases1 = getKeyAliases(workerId);
+            }
+            if (aliases1.contains(TEST_KEY_ALIAS)) {
+                throw new Exception("Pre-condition failed: Key with alias " + TEST_KEY_ALIAS + " already exists and removing it failed");
+            }
+
+            // Generate a testkey
+            workerSession.generateSignerKey(workerId, "RSA", "1024", TEST_KEY_ALIAS, pin.toCharArray());
+            
+            // Now expect the new TEST_KEY_ALIAS
+            Set<String> expected = new HashSet<String>(aliases1);
+            expected.add(TEST_KEY_ALIAS);
+            Set<String> aliases2 = getKeyAliases(workerId);
+            assertEquals("new key added", expected, aliases2);
+            
+        } finally {
+            try {
+                workerSession.removeKey(workerId, TEST_KEY_ALIAS);
+            } catch (SignServerException ignored) {}
+            removeWorker(workerId);
+        }
+    }
+    
+    public void testRemoveKey() throws Exception {
+        LOG.info("testRemoveKey");
+        
+        final int workerId = WORKER_CMS;
+        try {
+            setCMSSignerProperties(workerId, false);
+            workerSession.reloadConfiguration(workerId);
+            
+            // Check available aliases
+            Set<String> aliases1 = getKeyAliases(workerId);
+
+            if (aliases1.isEmpty()) {
+                throw new Exception("getKeyAliases is not working or the slot is empty");
+            }
+            
+            if (!aliases1.contains(TEST_KEY_ALIAS)) {
+                // Generate a testkey
+                workerSession.generateSignerKey(workerId, "RSA", "1024", TEST_KEY_ALIAS, pin.toCharArray());
+                aliases1 = getKeyAliases(workerId);
+            }
+            if (!aliases1.contains(TEST_KEY_ALIAS)) {
+                throw new Exception("Pre-condition failed: Key with alias " + TEST_KEY_ALIAS + " did not exist and it could not be created");
+            }
+            
+            // Remove the key
+            workerSession.removeKey(workerId, TEST_KEY_ALIAS);
+            
+            // Now expect the TEST_KEY_ALIAS to have been removed
+            Set<String> aliases2 = getKeyAliases(workerId);
+            Set<String> expected = new HashSet<String>(aliases1);
+            expected.remove(TEST_KEY_ALIAS);
+            assertEquals("new key removed", expected, aliases2);
         } finally {
             removeWorker(workerId);
         }

@@ -51,6 +51,9 @@ public enum SignServerEventTypes implements EventType {
     /** Logged when a certificate signing request (CSR) was generated. */
     GENCSR,
     
+    /** Logged when a key was removed or an removal attempt was performed. */
+    KEYREMOVE,
+    
     /** Logged when a status property was updated. */
     SET_STATUS_PROPERTY,
     

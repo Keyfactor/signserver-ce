@@ -1581,7 +1581,7 @@ interface for managing some of the most basic administrative tasks.
                     </p>
                     <p>
 The SignServer AdminGUI is built by default (unless the property admingui.enabled is set to the value "false" in signserver_build.properties),
-and can be started using the script bin/admingui.sh. By default it tries to connect to a locally
+and can be started using the script bin/signserver-gui. By default it tries to connect to a locally
 running SignServer instance using EJB calls. If that fails or if the command
 line option "-ws" is specified a connection dialog for connecting using web
 services is displayed instead.
@@ -1651,8 +1651,11 @@ right shows details for the selected workers (if any).
                         <p>
 <b> Edit -&gt; Renew signer...</b>: Opens the Renew signer dialog for the selected worker(s).
                         </p>
+                                                <p>
+<b> Edit -&gt; Destroy key...</b>: Opens the Remove key dialog for the selected worker and asks for a key to remove from the crypto token.
+                        </p>
                         <p>
-<b> Edit -&gt; Remove...</b>: Removes the selected workers from the SignServer configuration.
+<b> Edit -&gt; Remove worker...</b>: Removes the selected workers from the SignServer configuration.
                         </p>
                         <p>
 <b> Edit -&gt; Global configuration...</b>: Opens the Global configuration window.
@@ -1853,6 +1856,14 @@ After recieving the new certificate it is installed and the next key becomes
 the current default key. Notice how the "Not valid after" date and possibly also
 the Signings column changes and the Renewal checkbox gets unchecked after a
 successfull renewal.
+                        </p>
+                    </subsubsection>
+                    
+                    <subsubsection name="Remove key dialog">
+                        <p>
+Enter the key alias of the key to remove from the crypto token. Note that 
+multiple workers might be using the key. If the crypto token supports key 
+removal the key will be deleted and it might not be possible to restore it.
                         </p>
                     </subsubsection>
 
@@ -6395,6 +6406,24 @@ mgSmEIqgOIwBL3oBAgMBAAEwDQYJKoZIhvcNAQEFBQADgYEAer5hr/cUYx4jy0XO
 N4U8sP/2gSFppytx9dn5BamVBLjDkcML8B3c9u9omDPebd+LEsCU+HCmYN9xHkSS
 Ei8lcAqyVv+SDLEmvE8gnrPFR/J7uADCRayLVQumW6/YpVO/sFEGuM6rgnn8ZJmW
 X2lhvJ4V1UhlkEAeyIQ861U3IgE=; REPLY_TIME:1350891907981</pre>
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><b>KEYREMOVE</b></td>
+                                <td>
+                                    <p>
+Logged when a key was removed or an removal attempt was performed.
+                                    </p>
+                                    <p>
+<b>WORKER_ID:</b> The ID of the worker.<br/>
+<b>KEYALIAS:</b> The key alias of the key removed.<br/>
+<b>SUCCESS:</b> True if the key was removed or false if the removal failed or if removal was not supported by the token.<br/>
+                                    </p>
+                                    <p>
+Example:<br/>
+<pre class="code">EVENT: KEYREMOVE; MODULE: KEY_MANAGEMENT; ADMINISTRATOR: CLI user; ISSUER: null; SERIAL_
+NUMBER: null; WORKER_ID: 20003; KEYALIAS: signKey000002 SUCCESS: true; REPLY_TIME:1391008847962</pre>
                                     </p>
                                 </td>
                             </tr>

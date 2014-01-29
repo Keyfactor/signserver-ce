@@ -22,6 +22,8 @@ import org.signserver.common.SignServerUtil;
 /**
  * TODO: Document me!
  * 
+ * TODO: This is a unit test consider moving from SignServer Test-System to SignServer-Server project.
+ * 
  * @version $Id$
  */
 public class HardCodedTestCryptoTokenTest extends TestCase {

@@ -20,12 +20,13 @@ import junit.framework.TestCase;
 import javax.crypto.SecretKey;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.ejbca.util.Base64;
 import org.ejbca.util.keystore.KeyTools;
 import org.signserver.common.IllegalRequestException;
 
 /**
  * Tests for the ExtendedHardCodedCryptoToken.
+ * 
+ * TODO: This is a unit test consider moving from SignServer Test-System to SignServer-Server project.
  * 
  * @version $Id$
  */

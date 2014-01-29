@@ -24,6 +24,8 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 /**
  * TODO: Document me!
  * 
+ * TODO: This is a unit test consider moving from SignServer Test-System to SignServer-Server project.
+ * 
  * @version $Id$
  */
 public class P12CryptoTokenTest extends TestCase {

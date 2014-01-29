@@ -21,6 +21,8 @@ import junit.framework.TestCase;
 
 /**
  * Tests for a crypto token that uses a Java Keystore (JKS) file.
+ * 
+ * TODO: This is a unit test consider moving from SignServer Test-System to SignServer-Server project.
  *
  * @version $Id$
  */

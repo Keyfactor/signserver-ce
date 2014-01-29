@@ -14,18 +14,26 @@ package org.signserver.server.cryptotokens;
 
 import java.security.KeyStoreException;
 import org.signserver.common.CryptoTokenOfflineException;
-import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.SignServerException;
 
 /**
- * Interface that should be implmented by CryptoTokenS supporting key
- * generation.
+ * Interface that should be implemented by CryptoTokenS supporting key
+ * removal.
  *
  * @author Markus Kilås
  * @version $Id$
  */
 public interface IKeyRemover {
 
+    /**
+     * Remove a key from the token (if supported).
+     *
+     * @param alias of key to remove
+     * @return True if the key was successfully removed or false it failed or the token does not support key removal
+     * @throws CryptoTokenOfflineException if the token was not activated
+     * @throws KeyStoreException for keystore related errors
+     * @throws SignServerException if the keystore did not contain a key with the specified alias
+     */
     boolean removeKey(String alias) throws CryptoTokenOfflineException, 
-            InvalidWorkerIdException, KeyStoreException, SignServerException;
+            KeyStoreException, SignServerException;
 }

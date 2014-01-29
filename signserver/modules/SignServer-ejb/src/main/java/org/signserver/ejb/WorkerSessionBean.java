@@ -1189,32 +1189,6 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         }
         return res;
     }
-
-    /* (non-Javadoc)
-     * @see org.signserver.ejb.interfaces.IWorkerSession#destroyKey(int, int)
-     */
-//    @Override
-//    public boolean destroyKey(int signerId, int purpose) throws InvalidWorkerIdException {
-//        return destroyKey(new AdminInfo("CLI user", null, null), signerId, purpose);
-//    }
-
-//    @Override
-//    public boolean destroyKey(AdminInfo adminInfo, int signerId, int purpose)
-//            throws InvalidWorkerIdException {
-//        IWorker worker = workerManagerSession.getWorker(signerId, globalConfigurationSession);
-//        if (worker == null) {
-//            throw new InvalidWorkerIdException("Given SignerId " + signerId
-//                    + " doesn't exist");
-//        }
-//
-//        if (!(worker instanceof IProcessable)) {
-//            throw new InvalidWorkerIdException(
-//                    "Worker exists but isn't a signer.");
-//        }
-//        IProcessable signer = (IProcessable) worker;
-//
-//        return signer.destroyKey(purpose);
-//    }
     
     @Override
     public boolean removeKey(final AdminInfo adminInfo, final int signerId, final String alias) throws CryptoTokenOfflineException, InvalidWorkerIdException, KeyStoreException, SignServerException {

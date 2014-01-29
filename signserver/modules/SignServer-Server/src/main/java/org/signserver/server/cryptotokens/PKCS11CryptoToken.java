@@ -262,7 +262,7 @@ public class PKCS11CryptoToken implements ICryptoToken, IKeyGenerator, IKeyRemov
     }
     
     @Override
-    public boolean removeKey(String alias) throws CryptoTokenOfflineException, InvalidWorkerIdException, KeyStoreException, SignServerException {
+    public boolean removeKey(String alias) throws CryptoTokenOfflineException, KeyStoreException, SignServerException {
         return CryptoTokenHelper.removeKey(getKeyStore(), alias);
     }
 

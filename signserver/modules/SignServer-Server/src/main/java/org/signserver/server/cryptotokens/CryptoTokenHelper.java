@@ -73,6 +73,15 @@ public class CryptoTokenHelper {
         return props;
     }
     
+    /**
+     * Remove a key with the specified alias from the keystore.
+     * @param keyStore to remove from
+     * @param alias of key to remove
+     * @return true if the key alias was removed
+     * @throws CryptoTokenOfflineException if the keystore was null
+     * @throws KeyStoreException for keystore related errors
+     * @throws SignServerException if the keystore did not contain a key with the specified alias
+     */
     public static boolean removeKey(final KeyStore keyStore, final String alias) throws CryptoTokenOfflineException, KeyStoreException, SignServerException {
         if (keyStore == null) {
             throw new CryptoTokenOfflineException("Token offline");

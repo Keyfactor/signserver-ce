@@ -289,15 +289,15 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
     }
     
     @Override
-    public boolean removeKey(String alias) throws CryptoTokenOfflineException, InvalidWorkerIdException, KeyStoreException, SignServerException {
+    public boolean removeKey(String alias) throws CryptoTokenOfflineException, KeyStoreException, SignServerException {
         ICryptoToken token = getCryptoToken();
         if (token == null) {
             throw new CryptoTokenOfflineException("Crypto token offline");
         } else if (token instanceof IKeyRemover) {
             return ((IKeyRemover) token).removeKey(alias);
         } else {
-            throw new IllegalArgumentException(
-                    "Key removal not supported by crypto token");
+            // Key removal not supported by crypto token
+            return false;
         }
     }
 

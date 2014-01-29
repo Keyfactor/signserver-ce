@@ -284,17 +284,15 @@ public class WorkerSessionMock implements IWorkerSession.ILocal,
     }
 
     @Override
-    public boolean destroyKey(int signerId, int purpose) throws
-            InvalidWorkerIdException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-    
-    @Override
-    public boolean destroyKey(final AdminInfo adminInfo, int signerId, int purpose) throws
-        InvalidWorkerIdException {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public boolean removeKey(AdminInfo adminInfo, int signerId, String alias) throws CryptoTokenOfflineException, InvalidWorkerIdException, KeyStoreException, SignServerException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    @Override
+    public boolean removeKey(int signerId, String alias) throws CryptoTokenOfflineException, InvalidWorkerIdException, KeyStoreException, SignServerException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
     @Override
     public String generateSignerKey(int signerId, String keyAlgorithm, 
             String keySpec, String alias, char[] authCode) throws

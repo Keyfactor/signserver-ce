@@ -6,6 +6,9 @@
 
   <body>
 <section name="Required software">
+    <p>
+For details and specific versions supported see the <a href="manual/complete.en.html#1.%20Check%20prerequisites">Installation Guide</a>.        
+    </p>
 
     <subsection name="Java Development Kit">
         <p>

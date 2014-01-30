@@ -84,7 +84,7 @@ limit is exceeded or key usage period expires.</li>
             <ul>
                 <li>Supports multiple application servers: JBoss and GlassFish.</li>
                 <li>Using standard, high performance RDBMS for storage.</li>
-                <li>Supports multiple databases: HypersonicSQL, MySQL, Oracle, etc.</li>
+                <li>Supports multiple databases: HypersonicSQL, MySQL, MariaDB, Oracle, etc.</li>
                 <li>Support for running without database.</li>
                 <li>Possible to integrate into large java applications for optimal integration into business process.</li>
                 <li>Health check monitoring service to support efficient clustering and monitoring.<br/>

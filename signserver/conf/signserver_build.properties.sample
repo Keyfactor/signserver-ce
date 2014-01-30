@@ -96,6 +96,7 @@ j2ee.web-nohttps=true
 # The database name selected for deployment
 # Default: hsqldb
 # (use the nodb option to use a local file-based database instead of regular database, this needs further configuring of the database location).
+# For MariaDB use "mysql".
 #database.name=mysql
 #database.name=postgres
 #database.name=mssql2000
@@ -111,7 +112,7 @@ j2ee.web-nohttps=true
 # Database connection URL.
 # This is the URL used to connect to the database, used to configure a new datasource in JBoss.
 # Default: jdbc:hsqldb:${jboss.server.data.dir}${/}hypersonic${/}SignServerLocalDB
-# Mysql standard:
+# MySQL/MariaDB standard:
 #database.url=jdbc:mysql://127.0.0.1:3306/signserver?characterEncoding=UTF-8
 # Mysql Clusters should use something like:
 #database.url=jdbc:mysql://host1,host2/signserver
@@ -128,6 +129,7 @@ j2ee.web-nohttps=true
 # The JEE server needs to be configured with the appropriate JDBC driver for
 # the selected database
 # Default: org.hsqldb.jdbcDriver
+#database.driver=org.mariadb.jdbc.Driver
 #database.driver=com.mysql.jdbc.Driver
 #database.driver=org.postgresql.Driver
 #database.driver=com.microsoft.jdbc.sqlserver.SQLServerDriver

@@ -412,7 +412,7 @@ Configuring EAR...
             <equals arg1="${database.name}" arg2="mssql"/>
         </condition>
         <condition property="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect">
-            <equals arg1="${database.name}" arg2="mysql"/>
+                <equals arg1="${database.name}" arg2="mysql"/>
         </condition>
         <condition property="hibernate.dialect" value="org.hibernate.dialect.Oracle10gDialect">
             <equals arg1="${database.name}" arg2="oracle"/>

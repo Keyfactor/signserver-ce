@@ -1,3 +1,6 @@
+-- Dropping tables for SignServer 3.5.x on Postgres
+
+
 --
 -- Drop table `AuditRecordData`
 --
@@ -23,18 +26,6 @@ DROP TABLE IF EXISTS keyusagecounter;
 -- Drop table `ArchiveData`
 --
 DROP TABLE IF EXISTS archivedata;
-
-
---
--- Drop table `enckeydata`
---
-DROP TABLE IF EXISTS enckeydata;
-
-
---
--- Drop table `groupkeydata`
---
-DROP TABLE IF EXISTS groupkeydata;
 
 
 --

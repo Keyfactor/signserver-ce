@@ -1,4 +1,4 @@
--- DDL for SignServer 3.4.x on MySQL
+-- DDL for SignServer 3.5.x on MySQL/MariaDB
 -- ------------------------------------------------------
 -- Version: $Id$
 -- Comment: 
@@ -70,37 +70,6 @@ CREATE TABLE `ArchiveData` (
   `dataEncoding` int(11) DEFAULT NULL,
   PRIMARY KEY (`uniqueId`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
-
-
---
--- Table structure for table `enckeydata`
---
-CREATE TABLE `enckeydata` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `workerId` int(11) NOT NULL,
-  `encKeyRef` varchar(255) DEFAULT NULL,
-  `inUse` bit(1) NOT NULL,
-  `usageStarted` datetime DEFAULT NULL,
-  `usageEnded` datetime DEFAULT NULL,
-  `numberOfEncryptions` bigint(20) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=INNODB AUTO_INCREMENT=122 DEFAULT CHARSET=utf8;
-
-
---
--- Table structure for table `groupkeydata`
---
-CREATE TABLE `groupkeydata` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `documentID` varchar(255) DEFAULT NULL,
-  `workerId` int(11) NOT NULL,
-  `encryptedData` blob,
-  `creationDate` datetime DEFAULT NULL,
-  `firstUsedDate` datetime DEFAULT NULL,
-  `lastFetchedDate` datetime DEFAULT NULL,
-  `encKeyRef` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=INNODB AUTO_INCREMENT=128 DEFAULT CHARSET=utf8;
 
 
 --

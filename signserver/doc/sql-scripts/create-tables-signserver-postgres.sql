@@ -1,3 +1,6 @@
+-- DDL for SignServer 3.5.x on Postgres
+
+
 --
 -- Name: auditrecorddata; Type: TABLE; Schema: public; Owner: signserver; Tablespace: 
 --
@@ -67,37 +70,6 @@ CREATE TABLE archivedata (
 );
 
 
-
---
--- Name: enckeydata; Type: TABLE; Schema: public; Owner: signserver; Tablespace: 
---
-
-CREATE TABLE enckeydata (
-    id bigint NOT NULL,
-    enckeyref character varying(255),
-    inuse boolean NOT NULL,
-    numberofencryptions bigint NOT NULL,
-    usageended timestamp without time zone,
-    usagestarted timestamp without time zone,
-    workerid integer NOT NULL
-);
-
-
-
---
--- Name: groupkeydata; Type: TABLE; Schema: public; Owner: signserver; Tablespace: 
---
-
-CREATE TABLE groupkeydata (
-    id bigint NOT NULL,
-    creationdate timestamp without time zone,
-    documentid character varying(255),
-    enckeyref character varying(255),
-    encrypteddata bytea,
-    firstuseddate timestamp without time zone,
-    lastfetcheddate timestamp without time zone,
-    workerid integer NOT NULL
-);
 
 --
 -- Name: hibernate_sequence; Type: SEQUENCE; Schema: public; Owner: signserver

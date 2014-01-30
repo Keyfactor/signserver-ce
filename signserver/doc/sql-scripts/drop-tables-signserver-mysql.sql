@@ -1,4 +1,4 @@
--- Dropping tables for SignServer 3.4.x on MySQL
+-- Dropping tables for SignServer 3.5.x on MySQL/MariaDB
 -- ------------------------------------------------------
 -- Version: $Id$
 -- Comment: 
@@ -31,18 +31,6 @@ DROP TABLE IF EXISTS `KeyUsageCounter`;
 -- Drop table `ArchiveData`
 --
 DROP TABLE IF EXISTS `ArchiveData`;
-
-
---
--- Drop table `enckeydata`
---
-DROP TABLE IF EXISTS `enckeydata`;
-
-
---
--- Drop table `groupkeydata`
---
-DROP TABLE IF EXISTS `groupkeydata`;
 
 
 --

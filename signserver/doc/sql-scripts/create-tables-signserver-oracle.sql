@@ -1,8 +1,7 @@
--- DDL for SignServer 3.4.x on Oracle
+-- DDL for SignServer 3.5.x on Oracle
 -- ------------------------------------------------------
 -- Version: $Id$
--- Comment: These definitions should work for SignServer 3.3.x, Oracle 10.x and the JDBC driver version 10.2.0.1.0.
--- TODO: Update the versions above with what we tested with
+-- Comment:
 
 
 --
@@ -73,37 +72,6 @@ CREATE TABLE "ARCHIVEDATA" (
 	"TYPE" NUMBER(10,0) NOT NULL, 
     "DATAENCODING" NUMBER(10,0), 
 	PRIMARY KEY ("UNIQUEID")
-);
-
-
---
--- Table structure for table `enckeydata`
---
-CREATE TABLE "ENCKEYDATA" (
-	"ID" NUMBER(19,0) NOT NULL, 
-	"ENCKEYREF" VARCHAR2(255 CHAR), 
-	"INUSE" NUMBER(1,0) NOT NULL, 
-	"NUMBEROFENCRYPTIONS" NUMBER(19,0) NOT NULL, 
-	"USAGEENDED" TIMESTAMP (6), 
-	"USAGESTARTED" TIMESTAMP (6), 
-	"WORKERID" NUMBER(10,0) NOT NULL, 
-	PRIMARY KEY ("ID")
-);
-
-
---
--- Table structure for table `groupkeydata`
---
-CREATE TABLE "GROUPKEYDATA" (
-	"ID" NUMBER(19,0) NOT NULL, 
-	"CREATIONDATE" TIMESTAMP (6), 
-	"DOCUMENTID" VARCHAR2(255 CHAR), 
-	"ENCKEYREF" VARCHAR2(255 CHAR), 
-	"ENCRYPTEDDATA" BLOB, 
-	"FIRSTUSEDDATE" TIMESTAMP (6), 
-	"LASTFETCHEDDATE" TIMESTAMP (6), 
-	"WORKERID" NUMBER(10,0) NOT NULL, 
-	PRIMARY KEY ("ID")
 );
 
 

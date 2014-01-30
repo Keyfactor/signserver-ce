@@ -1,4 +1,4 @@
--- Dropping tables for SignServer 3.4.x on Oracle
+-- Dropping tables for SignServer 3.5.x on Oracle
 -- ------------------------------------------------------
 -- Version: $Id$
 -- Comment: 
@@ -26,18 +26,6 @@ DROP TABLE "SIGNERCONFIGDATA";
 -- Drop table `KeyUsageCounter`
 --
 DROP TABLE "KEYUSAGECOUNTER";
-
-
---
--- Drop table `ArchiveData`
---
-DROP TABLE "ARCHIVEDATA";
-
-
---
--- Drop table `enckeydata`
---
-DROP TABLE "ENCKEYDATA";
 
 
 --

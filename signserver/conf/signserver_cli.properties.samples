@@ -26,6 +26,10 @@ hostname.allnodes=localhost
 #dbcli.database.name=postgres
 #dbcli.database.name=oracle
 
+# Database driver
+# Note: Only needed if not using the default driver for the types above
+#dbcli.database.driver=org.mariadb.jdbc.Driver
+
 # Database connection URL
 #dbcli.database.url=jdbc:hsqldb:/opt/jboss-5.1.0.GA/server/default/data/hypersonic/SignServerLocalDB
 #dbcli.database.url=jdbc:mysql://127.0.0.1:3306/signserver?characterEncoding=UTF-8

@@ -58,11 +58,13 @@ public class DatabaseHelper {
         DRIVERS.put(POSTGRES, "org.postgresql.Driver");
     }    
     
-    public EntityManager getEntityManager(final String dbType, final String dbUrl, final String dbUsername, final String dbPassword) throws IllegalCommandArgumentsException {
+    public EntityManager getEntityManager(final String dbType, String driverClass, final String dbUrl, final String dbUsername, final String dbPassword) throws IllegalCommandArgumentsException {
         final EntityManager result;
 
         final String dialect = DIALECTS.get(dbType);
-        final String driverClass = DRIVERS.get(dbType);
+        if (driverClass == null) {
+            driverClass = DRIVERS.get(dbType);
+        }
         final String mappingFile = "META-INF/cesecore-orm-" + dbType + ".xml";
 
         // Properties to override

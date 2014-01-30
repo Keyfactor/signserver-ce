@@ -35,7 +35,7 @@ public abstract class AbstractDatabaseCommand extends AbstractCommand {
                 throw new IllegalCommandArgumentsException("Unknown value for dbcli.database.name. Possible values are" + helper.getTypes());
             }
             
-            entityManager = helper.getEntityManager(type, getRequiredProperty("dbcli.database.url"), getRequiredProperty("dbcli.database.username"), getConfiguration().getProperty("dbcli.database.password", ""));
+            entityManager = helper.getEntityManager(type, getConfiguration().getProperty("dbcli.database.driver"), getRequiredProperty("dbcli.database.url"), getRequiredProperty("dbcli.database.username"), getConfiguration().getProperty("dbcli.database.password", ""));
         }
         return entityManager;
     }

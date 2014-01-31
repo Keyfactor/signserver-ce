@@ -1,0 +1,101 @@
+<?xml version="1.0"?>
+<document>
+
+  <properties>
+    <title>Features</title>
+  </properties>
+
+<body>
+  <section name="Features">
+            <subsection name="PKI features">
+            <ul>
+                <li>Supports RSA key algorithm up to 8192 bits.</li>
+                <li>Supports ECDSA key algorithm with named curves.</li>
+                <li>Support multiple hash algorithms for signatures, MD5, SHA-1, SHA-2.</li>
+                <li>Compliant with NSA SUITE B algorithms and certificates.</li>
+
+                <li>Support for Hardware Security Modules (HSMs). Built in support for Thales/nCipher, SafeNet Luna, SafeNet ProtectServer, Utimaco CryptoServer, AEP Keyper, ARX CoSign, PrimeCardHSM and other HSMs with a good PKCS#11 library.</li>
+                <li>Support for software based keys for lower security requirements or development.</li>
+
+                <li>Multiple Signers and Validators, serve all your digital signature needs within one instance of SignServer.</li>
+                <li>Get your document signer certificate, such as PDF signing certificates, signed by public recognized CAs.</li>
+
+                <li>Built in modules for signing PDF, XML, ODF, OOXML, CMS and MRTD.</li>
+                <li>Generic CMS (PKCS#7) signer signs any document or file.</li>
+                <li>Simple plug-in API for creating new document signers.</li>
+                
+                <li>Built in RFC3161 compliant Time Stamp Authority (TSA) module:
+                    <ul>
+                        <li>Configurable time sources.</li>
+                    </ul>
+                </li>
+                <li>Built in Authenticode timestamp signer module</li>
+                <li>Electronic ePassport document signing (MRTD) compliant with ICAO requirements:
+                    <ul>
+                        <li>LDS version 1.8 support.</li>
+                        <li>Support for limiting the number of signings.</li>
+                        <li>Support for key usage period.</li>
+                        <li>Multiple active logical signers with fail-over when the sign
+limit is exceeded or key usage period expires.</li>
+                    </ul>
+                </li>
+                <li>PDF document processing, including support for:<br/>
+                    <ul>
+                        <li>Visible signatures.</li>
+                        <li>Different certification levels.</li>
+                        <li>Requesting and embedding timestamp responses.</li>
+                        <li>Requesting and embedding CRLs.</li>
+                        <li>Requesting and embedding OCSP responses.</li>
+                        <li>PDF permissions.</li>
+                    </ul>
+                </li>
+
+                <li>Validators for signed documents, built in support for XML validation, or make your own validator plug-in.</li> 
+              
+                <li>Configurable access control using http basic authentication, https client certificates, IP address restrictions etc.</li>
+
+                <li>Optional archival of signed documents.</li>
+            </ul>
+        </subsection>
+      
+        <subsection name="Integration features">
+            <ul>
+                <li>Built on the JEE 5 (EJB 3.0) specification.</li>
+                <li>Flexible, component based architecture.</li>
+                <li>Java API, Web server (HTTP), Web Services (WS) and command line (CLI) interfaces for integration.</li>
+                <li>Web service (WS) interface for remote administration and integration.</li>
+                <li>Automatic signer certificate renewal when used together with <a href="http://ejbca.org/">EJBCA</a>.</li>
+                <li>Plug-in functionality allowing you to enhance with your own functionality and work flows.</li>
+            </ul>
+        </subsection>
+
+        <subsection name="Administration features">
+            <ul>
+                <li>Simple installation and configuration.</li>
+                <li>Command line administration for scripts etc.</li>
+                <li>Administration GUI desktop application for management with support for remote management with strong authentication.</li>
+                <li>Transaction logging suitable for statistics and billing.</li>
+                <li>Audit logging for events related to keys, certificates and time-sources</li>
+                <li>Easy upgrade paths when new versions are released.</li>
+            </ul>
+        </subsection>
+
+        <subsection name="System features">
+            <ul>
+                <li>Supports multiple application servers: JBoss and GlassFish.</li>
+                <li>Using standard, high performance RDBMS for storage.</li>
+                <li>Supports multiple databases: HypersonicSQL, MySQL, MariaDB, Oracle, etc.</li>
+                <li>Support for running without database.</li>
+                <li>Possible to integrate into large java applications for optimal integration into business process.</li>
+                <li>Health check monitoring service to support efficient clustering and monitoring.<br/>
+                    <ul>
+                        <li>Status of workers</li>
+                        <li>Down for maintenance support</li>
+                    </ul>
+                </li>
+            </ul>
+        </subsection>
+  </section>
+</body>
+</document>
+

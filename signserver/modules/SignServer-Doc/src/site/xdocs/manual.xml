@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+  <properties>
+    <title>Manual</title>
+  </properties>
+
+  <body>
+    <section name="SignServer Manual">
+        <subsection name="Complete Manual">
+            <p>
+               Display all chapters in one document: <a href="manual/complete.en.html">HTML</a><!-- | <a href="manual/complete.en.pdf">PDF</a>-->
+            </p>
+        </subsection>
+        <subsection name="Chapter by Chapter">
+            <p>
+                Browse the manual by chapter:<br/>
+            </p>
+            <ul>
+               <li>Introduction [<a href="manual/introduction.html">HTML</a><!-- | <a href="manual/introduction.pdf">PDF</a>-->]</li>
+               <li>Installation Guide [<a href="manual/installguide.html">HTML</a><!-- | <a href="manual/installguide.pdf">PDF</a>-->]</li>
+               <li>Usage Guide [<a href="manual/usageguide.html">HTML</a><!-- | <a href="manual/usageguide.pdf">PDF</a>-->]</li>
+               <li>Integration [<a href="manual/integration.html">HTML</a><!-- | <a href="manual/integration.pdf">PDF</a>-->]</li>
+               <li>Common Configuration [<a href="manual/commonconf.html">HTML</a>]</li>
+               <li>Plugins [<a href="manual/plugins.html">HTML</a><!-- | <a href="manual/plugins.pdf">PDF</a>-->]</li>
+               <li>Development [<a href="manual/development.html">HTML</a><!-- | <a href="manual/development.pdf">PDF</a>-->]</li>
+               <li>Miscellaneous [<a href="manual/misc.html">HTML</a><!-- | <a href="manual/misc.pdf">PDF</a>-->]</li>
+            </ul>
+        </subsection>
+    </section>
+    <section name="Previous SignServer Manuals">
+<subsection name="Version 3.1 Documentation">
+<p>
+The SignServer manual describing how to configure, use and develop plug-ins can can
+be downloaded here either as <a href="docs/SignServer_Manual_3_1.pdf">PDF</a> or viewed as
+<a href="docs/SignServer_Manual_3_1.html">HTML</a>.
+</p>
+</subsection>
+<subsection name="Version 3.0 Documentation">
+<p>
+The documentation for version 3.0 can be found here:  <a href="docs/SignServer_Manual_3_0.pdf">PDF</a>
+<a href="docs/SignServer_Manual_3_0.html">HTML</a>.
+</p>
+</subsection>
+<subsection name="Version 2.0 Documentation">
+<p>
+The documentation for version 2.0 can be found here: <a href="docs/SignServer_Manual_2_0.pdf">PDF</a>
+<a href="docs/SignServer_Manual_2_0.html">HTML</a>.
+</p> 
+</subsection>
+
+</section>
+
+  </body>
+</document>

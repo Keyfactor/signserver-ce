@@ -28,10 +28,4 @@ DROP TABLE "SIGNERCONFIGDATA";
 DROP TABLE "KEYUSAGECOUNTER";
 
 
---
--- Drop table `groupkeydata`
---
-DROP TABLE "GROUPKEYDATA";
-
-
 -- End

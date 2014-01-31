@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+  <properties>
+    <title>Required software</title>
+  </properties>
+
+  <body>
+<section name="Required software">
+    <p>
+For details and specific versions supported see the <a href="manual/complete.en.html#1.%20Check%20prerequisites">Installation Guide</a>.        
+    </p>
+
+    <subsection name="Java Development Kit">
+        <p>
+        <a href="http://java.oracle.com/">Java web site</a>
+         | <a href="http://openjdk.java.net/">OpenJDK web site</a>
+        </p>
+        <p>
+            The Java Development Kit (JDK) is required to compile and run. JDK 6
+            or above is required.
+        </p>
+    </subsection>
+
+    <subsection name="Apache Ant">
+        <p>
+        <a href="http://ant.apache.org/">Ant web site</a>
+        </p>
+        <p>
+        Build tool used to build SignServer. Version 1.8.0 and up should work.
+        </p>
+    </subsection>
+    <subsection name="Application server">
+        <subsubsection name="JBoss Application Server">
+            <p>
+            <a href="http://www.jboss.org/">JBoss web site</a>
+            </p>
+            <p>
+            For JBoss application server the recommended version is 5.1.0.GA.
+            </p>
+        </subsubsection>
+        <subsubsection name="GlassFish Server">
+            <p>
+            <a href="https://glassfish.dev.java.net/">GlassFish web site</a>
+            </p>
+            <p>
+            For GlassFish the recommended version is Open Source Edition 2.1.1.
+            </p>
+        </subsubsection>
+    </subsection>
+
+    <subsection name="Database">
+        <subsubsection name="MySQL">
+            <p>
+            <a href="http://www.mysql.com/">MySQL web site</a>
+            </p>
+            <p>
+            MySQL is recommended as SignServer database. MySQL 5.1 is the most tested
+            version.
+            </p>
+        </subsubsection>
+        <subsubsection name="Oracle">
+            <p>
+            SignServer has also been tested with Oracle Database.
+            </p>
+        </subsubsection>
+    </subsection>
+</section>
+
+  </body>
+</document>

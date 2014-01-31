@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<document>
+
+  <properties>
+    <title>Jenkins</title>
+  </properties>
+
+<body>
+  <section name="Jenkins">
+    <p>
+    We have a <a href="http://hudson.primekey.se/">Jenkins</a> server [1] for continuous integration of SignServer (or <a href="https://hudson.primekey.se/">https</a> for admins).
+    </p>
+    <p>
+    [1]: <a href="http://jenkins-ci.org/">jenkins-ci.org</a>.
+    </p>
+  </section>
+
+</body>
+</document>

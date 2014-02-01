@@ -12,6 +12,10 @@
  *************************************************************************/
 package org.signserver.admin.gui;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.SplashScreen;
 import java.io.File;
 import javax.naming.InitialContext;
@@ -25,6 +29,7 @@ import org.apache.commons.cli.ParseException;
 import org.apache.log4j.Logger;
 import org.ejbca.util.CertTools;
 import org.jdesktop.application.Application;
+import org.jdesktop.application.ResourceMap;
 import org.jdesktop.application.SingleFrameApplication;
 import org.signserver.admin.gui.adminws.gen.AdminWS;
 import org.signserver.client.api.ISigningAndValidation;
@@ -115,6 +120,17 @@ public class SignServerAdminGUIApplication extends SingleFrameApplication {
         final SplashScreen splash = SplashScreen.getSplashScreen();
         if (splash == null) {
             LOG.debug("No splash screen available.");
+        } else {
+            // Fill in version and copyright information
+            final Graphics2D image = splash.createGraphics();
+            image.setPaint(Color.BLACK);
+            image.setFont(new Font("Arial", Font.BOLD, 14));
+            image.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
+            final ResourceMap resourceMap = getApplication().getContext().getResourceMap(SignServerAdminGUIApplicationAboutBox.class);
+            image.drawString("Version " + resourceMap.getString("appVendorLabel1.text"), 390, 215);
+            image.setPaint(Color.DARK_GRAY);
+            image.drawString(resourceMap.getString("appCopyright.text"), 12, 392);
+            splash.update();
         }
 
         try {

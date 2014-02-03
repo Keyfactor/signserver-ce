@@ -689,7 +689,21 @@ Configuring EAR...
     </target>
     
     <target name="-set-systemtest-classpath" depends="check-appserver">
-        <property name="systemtest.path" value="${basedir}/tmp/conf:${basedir}/conf:${basedir}/res/cesecore/:${env.APPSRV_HOME}/client/jbossall-client.jar:conf:${env.APPSRV_HOME}/bin/client/jboss-client.jar:${env.APPSRV_HOME}/lib/appserv-rt.jar:${env.APPSRV_HOME}/lib/gf-client.jar:${basedir}/lib/ext/jdbc/jdbc.jar"/>
+        <!-- JNDI configuration for appserver -->
+        <condition property="appserver.jndi.conf" value="${basedir}/conf/jboss/">
+            <equals arg1="${appserver.subtype}" arg2="jboss5" />
+        </condition>
+        <condition property="appserver.jndi.conf" value="${basedir}/conf/jboss7/">
+            <or>
+                <equals arg1="${appserver.subtype}" arg2="jboss7" />
+                <equals arg1="${appserver.subtype}" arg2="jbosseap6" />
+            </or>
+        </condition>
+        <condition property="appserver.jndi.conf" value="${basedir}/conf/glassfish/">
+            <equals arg1="${appserver.type}" arg2="glassfish" />
+        </condition>
+        
+        <property name="systemtest.path" value="${appserver.jndi.conf}:${basedir}/res/cesecore/:${env.APPSRV_HOME}/client/jbossall-client.jar:conf:${env.APPSRV_HOME}/bin/client/jboss-client.jar:${env.APPSRV_HOME}/lib/appserv-rt.jar:${env.APPSRV_HOME}/lib/gf-client.jar:${basedir}/lib/ext/jdbc/jdbc.jar"/>
     </target>
     
     <target name="systemtest:p11" description="Run system tests for P11" depends="-set-systemtest-classpath">

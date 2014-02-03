@@ -70,14 +70,17 @@
     <available file="${appserver.home}/modules/bean-validator.jar" property="appserver.subtype" value="glassfish3"/>
     <available file="${appserver.home}/wlserver_10.3/server/lib/wlclient.jar" property="appserver.type" value="weblogic"/>
     <available file="${appserver.home}/lib/commandlineutils.jar" property="appserver.type" value="websphere"/>
-
-    <fail unless="appserver.type" message="Unable to identify application server type"/>
-    <available file="${res}/appserver/${appserver.type}.xml" property="appserver.supported"/>
-    <fail unless="appserver.supported" message="Application server type '${appserver.type}' not supported"/>
     
     <!-- Import for the right appserver -->
-    <import file="${res}/appserver/${appserver.type}.xml" />
-	
+    <import file="${res}/appserver/${appserver.type}.xml" optional="true"/>
+    
+    <target name="check-appserver">
+         <fail unless="appserver.type" message="Unable to identify application server type"/>
+         <available file="${res}/appserver/${appserver.type}.xml" property="appserver.supported"/>
+         <fail unless="appserver.supported" message="Application server type '${appserver.type}' not supported"/>
+         <antcall target="j2ee:check"/>
+    </target>
+    
     <import file="${custom.build.xml}" optional="true"/>
 
     <!-- Properties with paths to all module projects -->
@@ -216,7 +219,7 @@ Configured ear file available at: ${ear.dist.file}
         </echo>
     </target>
     
-    <target name="-process-modules" depends="-init-configure, -preprocess-persistence, -set-ejbjarheader-nodb, j2ee:check">
+    <target name="-process-modules" depends="check-appserver, -init-configure, -preprocess-persistence, -set-ejbjarheader-nodb">
         <echo/>
 <!--        <taskdef name="postprocess-jar" classname="org.signserver.anttasks.JarPostProcessTask" classpath="lib/SignServer-BuildTools.jar:lib/ext/commons-io-1.4.jar:lib/ext/commons-lang-2.5.jar"/>-->
         
@@ -432,7 +435,8 @@ Configuring EAR...
     <!-- =================================================================== -->
     <!-- Deploy target                                                       -->
     <!-- =================================================================== -->
-    <target name="deploy" depends="j2ee:check,compose-ear, j2ee:deploy" description="Deploys SignServer">
+    <target name="deploy" depends="check-appserver,compose-ear" description="Deploys SignServer">
+        <antcall target="j2ee:deploy"/>
         <antcall target="showtime" />
     </target>
 
@@ -684,7 +688,7 @@ Configuring EAR...
         </antcall>
     </target>
     
-    <target name="-set-systemtest-classpath">
+    <target name="-set-systemtest-classpath" depends="check-appserver">
         <property name="systemtest.path" value="${basedir}/tmp/conf:${basedir}/conf:${basedir}/res/cesecore/:${env.APPSRV_HOME}/client/jbossall-client.jar:conf:${env.APPSRV_HOME}/bin/client/jboss-client.jar:${env.APPSRV_HOME}/lib/appserv-rt.jar:${env.APPSRV_HOME}/lib/gf-client.jar:${basedir}/lib/ext/jdbc/jdbc.jar"/>
     </target>
     

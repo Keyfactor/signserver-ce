@@ -13,6 +13,7 @@
 package org.signserver.server.cryptotokens;
 
 import java.io.IOException;
+import java.security.InvalidKeyException;
 import java.security.KeyPair;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -35,16 +36,18 @@ import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequestBuilder;
+import org.bouncycastle.util.encoders.Hex;
 import org.cesecore.keys.token.CryptoTokenAuthenticationFailedException;
+import org.ejbca.core.model.util.AlgorithmTools;
 import org.ejbca.util.Base64;
 import org.ejbca.util.CertTools;
 import org.signserver.common.Base64SignerCertReqData;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenInitializationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
+import org.signserver.common.CryptoTokenStatus;
 import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
-import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.KeyTestResult;
 import org.signserver.common.PKCS10CertReqInfo;
 import org.signserver.common.SignServerException;
@@ -113,7 +116,71 @@ public class PKCS11CryptoToken implements ICryptoToken, IKeyGenerator, IKeyRemov
 
     @Override
     public int getCryptoTokenStatus() {
-        return delegate.getTokenStatus();
+        int result = delegate.getTokenStatus();
+        
+        if (result == CryptoTokenStatus.STATUS_ACTIVE) {
+            result = CryptoTokenStatus.STATUS_OFFLINE;
+            try {
+                if (LOG.isDebugEnabled()) { 
+                    final StringBuilder sb = new StringBuilder();
+                    sb.append("keyAlias: ").append(keyAlias).append("\n");
+                    sb.append("nextKeyAlias: ").append(nextKeyAlias).append("\n");
+                    LOG.debug(sb.toString());
+                }
+                for (String testKey : new String[]{keyAlias, nextKeyAlias}) {
+                    if (testKey != null && !testKey.isEmpty()) {
+                        PrivateKey privateKey = delegate.getPrivateKey(testKey);
+                        if (privateKey != null) {
+                            PublicKey publicKey = delegate.getPublicKey(testKey);
+                            testKey(privateKey, publicKey);
+                            result = CryptoTokenStatus.STATUS_ACTIVE;
+                        }
+                    }
+                }
+            } catch (Throwable th) {
+                LOG.error("Error testing activation", th);
+            }
+        }
+
+        return result;
+    }
+    
+    private void testKey(PrivateKey privateKey, PublicKey publicKey) throws Exception {
+        final byte input[] = "Lillan gick pa vagen ut, motte dar en katt...".getBytes();
+        final byte signBV[];
+        String testSigAlg = (String) AlgorithmTools.getSignatureAlgorithms(publicKey).iterator().next();
+        if (testSigAlg == null) {
+            testSigAlg = "SHA1WithRSA";
+        }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Testing keys with algorithm: " + publicKey.getAlgorithm());
+            LOG.debug("testSigAlg: " + testSigAlg);
+            LOG.debug("provider: " + delegate.getSignProviderName());
+            LOG.trace("privateKey: " + privateKey);
+            LOG.trace("privateKey class: " + privateKey.getClass().getName());
+            LOG.trace("publicKey: " + publicKey);
+            LOG.trace("publicKey class: " + publicKey.getClass().getName());
+        }
+
+        final Signature signSignature = Signature.getInstance(testSigAlg, delegate.getSignProviderName());
+        signSignature.initSign(privateKey);
+        signSignature.update(input);
+        signBV = signSignature.sign();
+        if (LOG.isDebugEnabled()) {
+            if (signBV != null) {
+                LOG.trace("Created signature of size: " + signBV.length);
+                LOG.trace("Created signature: " + new String(Hex.encode(signBV)));
+            } else {
+                LOG.warn("Test signature is null?");
+            }
+        }
+
+        final Signature verifySignatre = Signature.getInstance(testSigAlg, "BC");
+        verifySignatre.initVerify(publicKey);
+        verifySignatre.update(input);
+        if (!verifySignatre.verify(signBV)) {
+            throw new InvalidKeyException("Not possible to sign and then verify with key pair.");
+        }
     }
 
     @Override

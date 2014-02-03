@@ -14,6 +14,8 @@
 package org.signserver.admin.gui;
 
 import java.security.cert.X509Certificate;
+import java.util.Map;
+import java.util.Properties;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -58,5 +60,6 @@ public class Utils {
             }
         }
     }
+    
 
 }

@@ -18,12 +18,19 @@
  */
 package org.signserver.admin.gui;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.rmi.RemoteException;
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 import org.apache.commons.io.FileUtils;
+import org.signserver.common.util.PropertiesApplier;
+import org.signserver.common.util.PropertiesParser;
 
 /**
  * Dialog for adding worker(s) from a properties file, or by editing
@@ -491,7 +498,12 @@ public class AddWorkerDialog extends javax.swing.JDialog {
 
                 break;
             case EDIT_PROPERTIES:
-                // TODO: apply current configuration
+                try {
+                    applyConfiguration();
+                } catch (IOException e) {
+                    // TODO: handle this exception (misformed properties input)
+                    // TODO: show parsing and applying errors
+                }
                 break;
             default:
                 // should not happen...
@@ -499,6 +511,28 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_nextApplyButtonActionPerformed
 
+    private void applyConfiguration() throws IOException {
+        config = configurationTextArea.getText();
+        
+        final Properties props = new Properties();
+        
+        props.load(new ByteArrayInputStream(config.getBytes()));
+        
+        final PropertiesParser parser = new PropertiesParser();
+        
+        parser.process(props);
+        
+        if (parser.hasErrors()) {
+            // TODO: handle parser errors
+        } else {
+            final PropertiesApplier applier = new AdminGUIPropertiesApplier();
+            
+            applier.apply(parser);
+            // TODO: check for applier errors (unknown worker name lookups etc.
+        }
+        
+    }
+    
     private void configurationTextAreaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_configurationTextAreaKeyTyped
         configurationEdited = true;
         updateControls();

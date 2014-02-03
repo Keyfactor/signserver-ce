@@ -104,8 +104,6 @@ includemodulesinbuild               = ${includemodulesinbuild}
                     <fileset dir="lib" includes="*.jar"/>
                     <fileset dir="lib/ext/ext" includes="*.jar" />
                     <fileset dir="lib/ext/ext/ejb" includes="*.jar" />
-                    <fileset dir="lib/ext/module/odfsigner" includes="*.jar"/>
-                    <fileset dir="lib/ext/module/ooxmlsigner" includes="*.jar"/>
                     <fileset dir="lib/ext/hibernate" includes="*.jar"/>
                     <fileset dir="${ant.home}/lib" includes="ant.jar" />
                     <path path="${libs.JBoss-Java-EE-Library.classpath}" />                    

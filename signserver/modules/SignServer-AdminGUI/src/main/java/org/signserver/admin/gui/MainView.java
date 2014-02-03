@@ -1870,6 +1870,7 @@ private void addWorkerItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN
     final AddWorkerDialog addWorkerDialog = new AddWorkerDialog(getFrame(), true);
     
     addWorkerDialog.setVisible(true);
+    getContext().getTaskService().execute(refreshWorkers());
 }//GEN-LAST:event_addWorkerItemActionPerformed
 
 private void displayLogEntryAction() {

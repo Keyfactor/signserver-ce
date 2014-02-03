@@ -500,10 +500,12 @@ public class AddWorkerDialog extends javax.swing.JDialog {
             case EDIT_PROPERTIES:
                 try {
                     applyConfiguration();
+                    // TODO: show information about added workers etc.
                 } catch (IOException e) {
                     // TODO: handle this exception (misformed properties input)
                     // TODO: show parsing and applying errors
                 }
+                dispose();
                 break;
             default:
                 // should not happen...

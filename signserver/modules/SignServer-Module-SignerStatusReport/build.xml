@@ -26,7 +26,7 @@
     <target name="descriptor" depends="init,-init-macrodef-convertclasspath">
         <!-- Create the module descriptor file for this module -->
         <property name="distJar" value="lib/SignServer-Module-SignerStatusReport.jar"/>
-        <property name="defaultExcludes" value="modules/SignServer-BuildTools/,modules/SignServer-ejb/,lib/ext/ext/ejb/jboss*,lib/ext/hibernate/,lib/ext/javaee-*/*"/>
+        <property name="defaultExcludes" value="modules/SignServer-BuildTools/,modules/SignServer-ejb/,lib/ext/ext/,lib/ext/hibernate/,lib/ext/javaee-*/*"/>
         <convertclasspath classpath="${javac.classpath}" id="libsToLib" excludes="${defaultExcludes},lib/ext/ext/servlet-*,modules/"/>
         <convertclasspath classpath="${javac.classpath}" id="modsToLib" excludes="${defaultExcludes},lib/" mapperType="flatten" mapperTo="lib/*"/>
         <propertyfile file="../../mods-available/40_${modulename}.properties">

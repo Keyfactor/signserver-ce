@@ -93,7 +93,7 @@ includemodulesinbuild               = ${includemodulesinbuild}
         <property file="lib/nblibraries.properties"/>
         <mkdir dir="${apidoc}" />
         <javadoc failonerror="true" useexternalfile="true" packagenames="org.signserver.*" maxmemory="256m" destdir="${apidoc}"
-        	extdirs="${lib}:${lib}/ext:${ant.home}/lib:${lib}/ext/ejb:${lib}/${server.java.target}/:${lib}/${client.java.target}/:${lib}/reports:${lib}/quartz:${lib}/module/odfsigner/odfdom.jar" author="true" version="true" use="true" windowtitle="${app.name.cap} API" bottom="Copyright &#169; 2005-2014 PrimeKey Solutions AB." encoding="utf-8" charset="utf-8">
+        	extdirs="${lib}:${lib}/ext:${ant.home}/lib:${lib}/ext:${lib}/${server.java.target}/:${lib}/${client.java.target}/:${lib}/reports:${lib}/quartz:${lib}/module/odfsigner/odfdom.jar" author="true" version="true" use="true" windowtitle="${app.name.cap} API" bottom="Copyright &#169; 2005-2014 PrimeKey Solutions AB." encoding="utf-8" charset="utf-8">
 
                 <!-- Include all java files in the modules folder but excluding the tests -->
                 <fileset dir="modules" includes="*/src/main/java/**/*.java,*/target/generated/jax-wsCache/**/*.java" excludes="*/test/**/*.java,SignServer-Lib-*/**/*"/>
@@ -103,7 +103,6 @@ includemodulesinbuild               = ${includemodulesinbuild}
                     <fileset dir="lib/ext" includes="*.jar" />
                     <fileset dir="lib" includes="*.jar"/>
                     <fileset dir="lib/ext/ext" includes="*.jar" />
-                    <fileset dir="lib/ext/ext/ejb" includes="*.jar" />
                     <fileset dir="lib/ext/hibernate" includes="*.jar"/>
                     <fileset dir="${ant.home}/lib" includes="ant.jar" />
                     <path path="${libs.JBoss-Java-EE-Library.classpath}" />                    
@@ -547,7 +546,7 @@ SHA1 checksum: ${zip.bin.sha1}</echo>
                 <include name="ext/bc*.jar"/>
                 
                 <!-- EJB/Servlet (cli, gui) -->
-                <include name="ext/ext/ejb/**"/>
+                <include name="ext/ext/jboss*.jar"/>
                 <include name="ext/ext/servlet-2.3.jar"/>
                 
                 <!-- CLI (both client and admin) -->

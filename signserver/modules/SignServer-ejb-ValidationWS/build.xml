@@ -43,7 +43,7 @@ Remember to update the soap:address location in the WSDL to start with
         
         <!-- Create the module descriptor file for this module -->
         <property name="distJar" value="SignServer-ejb-ValidationWS.jar"/>
-        <property name="defaultExcludes" value="modules/SignServer-BuildTools/,modules/SignServer-ejb/,lib/ext/ext/ejb/,lib/ext/hibernate/,lib/ext/javaee-*/*,lib/ext/ext/servlet-*"/>
+        <property name="defaultExcludes" value="modules/SignServer-BuildTools/,modules/SignServer-ejb/,lib/ext/ext/,lib/ext/hibernate/,lib/ext/javaee-*/*"/>
         <convertclasspath classpath="${javac.classpath}" id="libsToLib" excludes="${defaultExcludes},modules/"/>
         <convertclasspath classpath="${javac.classpath}" id="modsToLib" excludes="${defaultExcludes},lib/" mapperType="flatten" mapperTo="lib/*"/>
         <propertyfile file="../../mods-available/20_${modulename}.properties">

@@ -35,15 +35,11 @@ import org.signserver.ejb.interfaces.IWorkerSession;
  */
 public class SigningAndValidationEJB implements ISigningAndValidation {
 
-    private IWorkerSession.IRemote signserver;
+    private final IWorkerSession.IRemote signserver;
 
     /**
-     * Creates an instance of SigningAndValidationEJB with default initial context:
-     * <pre>
-     * INITIAL_CONTEXT_FACTORY = "org.jnp.interfaces.NamingContextFactory"
-     * URL_PKG_PREFIXES = "org.jboss.naming:org.jnp.interfaces"
-     * PROVIDER_URL = "jnp://localhost:1099"
-     * </pre>
+     * Creates an instance of SigningAndValidationEJB which lookups the 
+     * SignServer interface over remote EJB.
      * 
      * @throws NamingException If an naming exception is encountered.
      */

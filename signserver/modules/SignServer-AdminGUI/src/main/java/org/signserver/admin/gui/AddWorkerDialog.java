@@ -79,6 +79,8 @@ public class AddWorkerDialog extends javax.swing.JDialog {
     private String config;
     // keep track of raw configuration editing
     private boolean configurationEdited = false;
+    // keep track of newly selected file
+    private boolean fileSelected = false;
 
     /** Creates new form AddWorkerDialog */
     public AddWorkerDialog(java.awt.Frame parent, boolean modal) {
@@ -490,6 +492,7 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         if (res == JFileChooser.APPROVE_OPTION) {
             final File file = chooser.getSelectedFile();
             filePathTextField.setText(file.getAbsolutePath());
+            fileSelected = true;
         }
 
         updateControls();
@@ -503,6 +506,7 @@ public class AddWorkerDialog extends javax.swing.JDialog {
     private void filePathTextFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_filePathTextFieldKeyTyped
         // update UI controls
         updateControls();
+        fileSelected = true;
     }//GEN-LAST:event_filePathTextFieldKeyTyped
 
     private void nextApplyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextApplyButtonActionPerformed
@@ -591,9 +595,14 @@ public class AddWorkerDialog extends javax.swing.JDialog {
                 final File file = new File(filePathTextField.getText());
 
                 try {
-                    config = FileUtils.readFileToString(file);
-                    configurationTextArea.setText(config);
-                    configurationEdited = false;
+                    // reset configuration editor if a new file was selected
+                    if (fileSelected) {
+                        config = FileUtils.readFileToString(file);
+                        configurationTextArea.setText(config);
+                        configurationEdited = false;
+                        // reset file selected status
+                        fileSelected = false;
+                    }
                 } catch (IOException e) {
                     JOptionPane.showMessageDialog(this, e.getMessage(),
                             "Failed to read file", JOptionPane.ERROR_MESSAGE);

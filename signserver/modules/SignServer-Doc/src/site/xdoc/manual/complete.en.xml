@@ -1666,6 +1666,9 @@ right shows details for the selected workers (if any).
 <b> Edit -&gt; Remove worker...</b>: Removes the selected workers from the SignServer configuration.
                         </p>
                         <p>
+<b> Edit -&gt; Reload from database...</b>: Reloads the global configuration or the selected workers from the database. This is only needed if the configuration was changed from an other node and the nodes uses a shared database.
+                        </p>
+                        <p>
 <b> Edit -&gt; Global configuration...</b>: Opens the Global configuration window.
                         </p>
                         <p>

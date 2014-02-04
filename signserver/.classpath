@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="modules/SignServer-Client-SigningAndValidationAPI/src"/>
-	<classpathentry kind="src" path="modules/SignServer-Common/src/test/java"/>
-	<classpathentry kind="src" path="modules/SignServer-Module-XAdES/src/test/java"/>
-	<classpathentry kind="src" path="modules/SignServer-Module-XAdES/src/main/java"/>
-	<classpathentry kind="src" path="modules/SignServer-Module-SignerStatusReport/src"/>
+	<classpathentry kind="src" path="modules/SignServer-Client-SigningAndValidationAPI/src/main/java"/>
+	<classpathentry kind="src" path="modules/SignServer-Module-SignerStatusReport/src/main/java"/>
 	<classpathentry kind="src" path="modules/SignServer-DatabaseCLI/test"/>
 	<classpathentry kind="src" path="modules/SignServer-DatabaseCLI/src/main/java"/>
 	<classpathentry kind="src" path="modules/SignServer-Test-Performance/test"/>
@@ -61,6 +58,7 @@
 	<classpathentry kind="src" path="modules/SignServer-ejb/src/main/java"/>
 	<classpathentry kind="src" path="modules/SignServer-ejb/test"/>
 	<classpathentry kind="src" path="modules/SignServer-ejb-interfaces/src/main/java"/>
+	<classpathentry kind="src" path="modules/SignServer-Common/test"/>
 	<classpathentry kind="src" path="modules/SignServer-Common/src/main/java"/>
 	<classpathentry kind="src" path="modules/SignServer-ejb-AdminWS/test"/>
 	<classpathentry kind="src" path="modules/SignServer-ejb-AdminWS/src/main/java"/>
@@ -141,8 +139,8 @@
 			<attribute name="optional" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/ext/1.6/bcpkix-jdk15on-147.jar" sourcepath="/home/marcus/bc/bcpkix-147"/>
-	<classpathentry kind="lib" path="lib/ext/1.6/bcprov-jdk15on-147.jar" sourcepath="/home/marcus/bc/bcprov-147"/>
+	<classpathentry kind="lib" path="lib/ext/bcpkix-jdk15on-1.47.jar"/>
+	<classpathentry kind="lib" path="lib/ext/bcprov-jdk15on-1.47.jar"/>
 	<classpathentry kind="lib" path="lib/ext/ext/commons-cli-1.2.jar"/>
 	<classpathentry kind="lib" path="lib/ext/cesecore/cesecore-client_1.1.2.jar"/>
 	<classpathentry kind="lib" path="lib/ext/cesecore/cesecore-ejb_1.1.2.jar"/>
@@ -156,9 +154,5 @@
 	<classpathentry kind="lib" path="lib/ext/cesecore/jackson-all-1.7.0.jar"/>
 	<classpathentry kind="lib" path="lib/ext/cesecore/ldap.jar"/>
 	<classpathentry kind="lib" path="lib/ext/commons-io-1.4.jar"/>
-	<classpathentry kind="lib" path="lib/ext/xades4j/aopalliance.jar"/>
-	<classpathentry kind="lib" path="lib/ext/xades4j/guice-2.0.jar"/>
-	<classpathentry kind="lib" path="lib/ext/xades4j/guice-multibindings-2.0.jar"/>
-	<classpathentry kind="lib" path="lib/ext/xades4j/xades4j-1.3.0.jar" sourcepath="/home/marcus/workspace/xades4j-read-only/src/main/java"/>
 	<classpathentry kind="output" path=".eclipse/out"/>
 </classpath>

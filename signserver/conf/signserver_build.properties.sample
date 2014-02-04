@@ -35,15 +35,6 @@
 #glassfish.server.home.dir=/home/markus/.netbeans/6.7/GlassFishV2Domain
 
 
-# ------------ Java ------------------------------------------------------------
-
-# Java version
-# Currently only 1.6 can be specified.
-# Default: 1.6
-#server.java.target=1.6
-#client.java.target=1.6
-
-
 # ------------ Web GUI configuration -------------------------------------------
 
 # Configure the web server in JBoss to use HTTPS and the specified bind address 
@@ -59,6 +50,9 @@ j2ee.web-nohttps=true
 
 # When upgrading, the important options are:
 # - httpsserver.password
+
+# Password for java trust keystore (p12/truststore.jks), default is changeit.
+#java.trustpassword=changeit
 
 # The password used to protect the web servers SSL keystore.
 #httpsserver.password=serverpwd
@@ -84,11 +78,6 @@ j2ee.web-nohttps=true
 #httpsserver.bindaddress.pubhttp=0.0.0.0
 #httpsserver.bindaddress.pubhttps=0.0.0.0
 #httpsserver.bindaddress.privhttps=0.0.0.0
-
-# Default content encoding used to display JSP pages, for example ISO-8859-1, UTF-8 or GBK.
-# Default: ISO-8859-1
-#web.contentencoding=ISO-8859-1
-
 
 # ------------- Database configuration -----------------------------------------
 
@@ -203,6 +192,10 @@ j2ee.web-nohttps=true
 # Default: true
 #module.xmlvalidator.enabled=true
 
+# Module XAdES
+# Default: true
+#module.xades.enabled=true
+
 # Module CMSSigner
 # Default: true
 #module.cmssigner.enabled=true
@@ -277,15 +270,7 @@ j2ee.web-nohttps=true
 # Default: true
 #databasecli.enabled=true
 
-# ------------ PrimeCardHSM ----------------------------------------------------
-
-#PrimeCardHSM Specific Properties
-#Uncomment to when using PrimeCardHSM, default false.
-#primeCard.use=true
-#primeCard.home=${env.PRIMECARD_HOME}
-
-
-# -------------- Documentation Configuration -----------------------------------
+# -------------- Additional Web Deployments -----------------------------------
 
 # Deploy the documentation.
 #
@@ -309,7 +294,8 @@ j2ee.web-nohttps=true
 # configured.
 # Sample url: http://localhost:8080/signserver/healthcheck/signserverhealth
 #
-# Setting specifying which remote IPs that may call this healthcheck servlet. Use ';' for between multiple IPs. 
+# Setting specifying which remote IPs that may call this healthcheck servlet. Use ';' for between multiple IPs.
+# If the setting contains the keyword ANY, access is granted from any IP address.
 # Default : 127.0.0.1
 #healthcheck.authorizedips=127.0.0.1;::1;0:0:0:0:0:0:0:1
 
@@ -347,46 +333,3 @@ j2ee.web-nohttps=true
 #   CHANGES:        Only updates where the value is changed are logged.
 #   NONE:           No updates are logged.
 #statusrepository.log=ALL
-
-
-# ------------- Cluster Deployment Configuration -------------------------------
-# Configuration used to centrally deploy the application server in a
-# clustered environment. Currently are up to 6 nodes supported to
-# were the application is deployed.
-#
-# Each node should run SSH with a trusting the key defined in deploy.ssh.keyfilepath
-# Each node should have a mirrored JBoss installation at the same place as
-# the current node.
-#
-# To add a node, uncomment the deploy.hostname.nodeX property and set it's property
-# If no node is defined will JBOSS_HOME at localhost be used as deploy dir.
-
-#deploy.hostname.node1=
-#deploy.hostname.node2=
-#deploy.hostname.node3=
-#deploy.hostname.node4=
-#deploy.hostname.node5=
-#deploy.hostname.node6=
-
-# User to use for the SSH session
-# Default: jboss
-#deploy.ssh.user=jboss
-
-# Path to the id_rsa (or equivalent) file for SSH authentication
-# Default: /home/jboss/.ssh/id_rsa
-#deploy.ssh.keyfilepath=
-
-# Path to the known hosts file
-# Default: /home/jboss/.ssh/known_hosts
-#deploy.ssh.knownhostsfile=
-
-# Path to the location where the JBoss instance is located at the JBoss services.
-# Default: /home/jboss/jboss
-#deploy.ssh.appsrvhome=
-
-# Tomcat version. If SignServer should use a HTTPS interface it will
-# deploy a keystore to all nodes in the cluster. Depending on the version
-# of tomcat is the files placed a little different.
-# Available options are: tomcat41, tomcat50, tomcat55
-# Default: tomcat55
-#deploy.tomcat.version=

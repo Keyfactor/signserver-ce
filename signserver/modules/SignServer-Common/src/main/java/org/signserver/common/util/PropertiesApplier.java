@@ -12,10 +12,13 @@
  *************************************************************************/
 package org.signserver.common.util;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.ejbca.util.Base64;
 import org.signserver.common.AuthorizedClient;
@@ -48,6 +51,11 @@ public abstract class PropertiesApplier {
      * Holds the map of generated worker IDs.
      */
     private HashMap<String, Integer> genIds = new HashMap<String, Integer>();
+    
+    /**
+     * Hold the worker IDs updated-
+     */
+    private Set<Integer> workerIds = new HashSet<Integer>();
     
     public void apply(final PropertiesParser parser) {       
         try {
@@ -232,6 +240,8 @@ public abstract class PropertiesApplier {
             }
         }
         
+        workerIds.add(workerid);
+        
         return workerid;
     }
     
@@ -249,7 +259,10 @@ public abstract class PropertiesApplier {
             String splittedKey = strippedKey.substring(0, strippedKey.indexOf('.'));
             String propertykey = strippedKey.substring(strippedKey.indexOf('.') + 1);
 
-            key = WORKER_PREFIX + getGenId(splittedKey) + "." + propertykey;
+            final int workerId = getGenId(splittedKey);
+            
+            workerIds.add(workerId);
+            key = WORKER_PREFIX + workerId + "." + propertykey;
 
         } else {
             if (strippedKey.startsWith(WORKER_PREFIX) || strippedKey.startsWith(OLDWORKER_PREFIX)) {
@@ -268,11 +281,22 @@ public abstract class PropertiesApplier {
                 } else {
                     workerid = getWorkerId(splittedKey);
                 }
+                
+                workerIds.add(workerid);
 
                 key = WORKER_PREFIX + workerid + "." + propertykey;
             }
         }
         
         return key;
+    }
+    
+    /**
+     * Return a list of worker IDs modified during application of the configuration.
+     * 
+     * @return List of worker IDs
+     */
+    public List<Integer> getWorkerIds() {
+        return new ArrayList<Integer>(workerIds);
     }
 }

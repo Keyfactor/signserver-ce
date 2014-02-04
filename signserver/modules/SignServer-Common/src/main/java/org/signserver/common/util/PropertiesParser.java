@@ -162,54 +162,6 @@ public class PropertiesParser {
 
 
     private void processGlobalProperty(String scope, String strippedKey, String value, boolean add) {
-        
-        // TODO: refactor out this to an "applier class"
-        /*
-        String key = strippedKey;
-        if (strippedKey.startsWith(WORKER_PREFIX + GENID)
-                || strippedKey.startsWith(OLDWORKER_PREFIX + GENID)) {
-            if (strippedKey.startsWith(WORKER_PREFIX)) {
-                strippedKey = strippedKey.substring(WORKER_PREFIX.length());
-            }
-            if (strippedKey.startsWith(OLDWORKER_PREFIX)) {
-                strippedKey = strippedKey.substring(OLDWORKER_PREFIX.length());
-            }
-            String splittedKey = strippedKey.substring(0, strippedKey.indexOf('.'));
-            String propertykey = strippedKey.substring(strippedKey.indexOf('.') + 1);
-
-            if (propertykey.equalsIgnoreCase(GlobalConfiguration.WORKERPROPERTY_CLASSPATH.substring(1))) {
-                workerDeclarations.add(getGenId(splittedKey));
-            }
-
-            key = WORKER_PREFIX + getGenId(splittedKey) + "." + propertykey;
-
-        } else {
-            if (strippedKey.startsWith(WORKER_PREFIX) || strippedKey.startsWith(OLDWORKER_PREFIX)) {
-                final String strippedKey2;
-                if (strippedKey.startsWith(WORKER_PREFIX)) {
-                    strippedKey2 = strippedKey.substring(WORKER_PREFIX.length());
-                } else {
-                    strippedKey2 = strippedKey.substring(OLDWORKER_PREFIX.length());
-                }
-
-                String splittedKey = strippedKey2.substring(0, strippedKey2.indexOf('.'));
-                String propertykey = strippedKey2.substring(strippedKey2.indexOf('.') + 1);
-                final int workerid;
-                if (splittedKey.substring(0, 1).matches("\\d")) {
-                    workerid = Integer.parseInt(splittedKey);
-                } else {
-                    workerid = helper.getWorkerId(splittedKey);
-                }
-
-                if (propertykey.equalsIgnoreCase(GlobalConfiguration.WORKERPROPERTY_CLASSPATH.substring(1))) {
-                    workerDeclarations.add(workerid);
-                }
-
-                key = WORKER_PREFIX + workerid + "." + propertykey;
-            }
-        }
-        */
-
         if (add) {
             setGlobalProperty(scope, strippedKey, value);
         } else {

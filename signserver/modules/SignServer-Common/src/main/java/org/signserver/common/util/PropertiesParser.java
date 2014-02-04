@@ -12,8 +12,6 @@
  *************************************************************************/
 package org.signserver.common.util;
 
-import java.io.PrintStream;
-import java.rmi.RemoteException;
 import java.util.*;
 import org.ejbca.util.Base64;
 import org.signserver.common.AuthorizedClient;

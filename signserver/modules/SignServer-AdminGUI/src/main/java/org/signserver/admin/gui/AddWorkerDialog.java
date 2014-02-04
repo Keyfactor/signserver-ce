@@ -528,6 +528,7 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_nextApplyButtonActionPerformed
 
+    // TODO: run this as a background task
     private void applyConfiguration() throws IOException {
         config = configurationTextArea.getText();
 

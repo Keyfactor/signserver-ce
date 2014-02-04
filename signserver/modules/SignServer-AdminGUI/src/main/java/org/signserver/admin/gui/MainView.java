@@ -2177,7 +2177,17 @@ private void displayLogEntryAction() {
             // Runs on the EDT.  Update the GUI based on
             // the result computed by doInBackground().
             
-            SignServerAdminGUIApplication.getApplication().getMainFrame().setTitle(SignServerAdminGUIApplication.getServerHost() + " - " + texts.getString("Application.title"));
+            // Set title
+            final StringBuilder title = new StringBuilder();
+            X509Certificate adminCertificate = SignServerAdminGUIApplication.getAdminCertificate();
+            if (adminCertificate != null) {
+                String cn = CertTools.getPartFromDN(adminCertificate.getSubjectDN().getName(), "CN");
+                title.append(cn).append(" @ ");
+            }
+            title.append(SignServerAdminGUIApplication.getServerHost());
+            title.append(" - ");
+            title.append(texts.getString("Application.title"));
+            SignServerAdminGUIApplication.getApplication().getMainFrame().setTitle(title.toString());
             
             final List<Worker> newWorkers = result;
 

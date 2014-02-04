@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
@@ -32,7 +31,6 @@ import org.signserver.admin.gui.adminws.gen
         .AdminNotAuthorizedException_Exception;
 import org.signserver.admin.gui.adminws.gen.WsGlobalConfiguration;
 import  org.signserver.common.GlobalConfiguration;
-import org.signserver.common.SignServerUtil;
 
 /**
  * Frame for viewing and editing global configuration properties.
@@ -139,6 +137,8 @@ public class AdministratorsFrame extends javax.swing.JFrame {
         }
         
         allowAnyCheckbox.setSelected(allowAnyWSAdmin);
+        
+        loadCurrentAdminCertButton.setEnabled(SignServerAdminGUIApplication.getAdminCertificate() != null);
     }
 
     /** This method is called from within the constructor to
@@ -160,6 +160,7 @@ public class AdministratorsFrame extends javax.swing.JFrame {
         editRoleBothRadio = new javax.swing.JRadioButton();
         jLabel3 = new javax.swing.JLabel();
         loadFromCertificateButton = new javax.swing.JButton();
+        loadCurrentAdminCertButton = new javax.swing.JButton();
         buttonGroup1 = new javax.swing.ButtonGroup();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
@@ -213,6 +214,14 @@ public class AdministratorsFrame extends javax.swing.JFrame {
             }
         });
 
+        loadCurrentAdminCertButton.setText(resourceMap.getString("loadCurrentAdminCertButton.text")); // NOI18N
+        loadCurrentAdminCertButton.setName("loadCurrentAdminCertButton"); // NOI18N
+        loadCurrentAdminCertButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                loadCurrentAdminCertButtonPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout editPanelLayout = new javax.swing.GroupLayout(editPanel);
         editPanel.setLayout(editPanelLayout);
         editPanelLayout.setHorizontalGroup(
@@ -220,23 +229,28 @@ public class AdministratorsFrame extends javax.swing.JFrame {
             .addGroup(editPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(editPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(editCertSerialNoTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 368, Short.MAX_VALUE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 368, Short.MAX_VALUE)
-                    .addComponent(editIssuerDNTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 368, Short.MAX_VALUE)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 368, Short.MAX_VALUE)
                     .addGroup(editPanelLayout.createSequentialGroup()
-                        .addComponent(editRoleAdminRadio, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(editPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(editCertSerialNoTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 377, Short.MAX_VALUE)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 377, Short.MAX_VALUE)
+                            .addComponent(editIssuerDNTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 377, Short.MAX_VALUE)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 377, Short.MAX_VALUE)
+                            .addGroup(editPanelLayout.createSequentialGroup()
+                                .addComponent(editRoleAdminRadio, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(editRoleAuditorRadio)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(editRoleBothRadio))
+                            .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 377, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(editRoleAuditorRadio)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(editRoleBothRadio))
-                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 368, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(loadFromCertificateButton, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(12, 12, 12))
+                        .addComponent(loadFromCertificateButton, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(loadCurrentAdminCertButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
 
         editPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {editRoleAdminRadio, editRoleAuditorRadio, editRoleBothRadio});
+
+        editPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {loadCurrentAdminCertButton, loadFromCertificateButton});
 
         editPanelLayout.setVerticalGroup(
             editPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -247,7 +261,9 @@ public class AdministratorsFrame extends javax.swing.JFrame {
                 .addGroup(editPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(editCertSerialNoTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(loadFromCertificateButton))
-                .addGap(45, 45, 45)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(loadCurrentAdminCertButton)
+                .addGap(9, 9, 9)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(editIssuerDNTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -580,6 +596,14 @@ public class AdministratorsFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_allowAnyCheckboxActionPerformed
 
+    private void loadCurrentAdminCertButtonPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadCurrentAdminCertButtonPerformed
+        X509Certificate cert = SignServerAdminGUIApplication.getAdminCertificate();
+        if (cert != null) {
+            editCertSerialNoTextField.setText(cert.getSerialNumber().toString(16));
+            editIssuerDNTextField.setText(cert.getIssuerDN().getName());
+        }
+    }//GEN-LAST:event_loadCurrentAdminCertButtonPerformed
+
     @Action(block = Task.BlockingScope.WINDOW)
     public Task reloadGlobalConfiguration() {
         return new ReloadGlobalConfigurationTask(org.jdesktop.application.Application.getInstance(org.signserver.admin.gui.SignServerAdminGUIApplication.class));
@@ -646,6 +670,7 @@ public class AdministratorsFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JToolBar jToolBar1;
+    private javax.swing.JButton loadCurrentAdminCertButton;
     private javax.swing.JButton loadFromCertificateButton;
     private javax.swing.JButton refreshButton;
     private javax.swing.JButton removeButton;

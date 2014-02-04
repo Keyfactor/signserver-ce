@@ -18,6 +18,7 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.SplashScreen;
 import java.io.File;
+import java.security.cert.X509Certificate;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.swing.JOptionPane;
@@ -45,7 +46,7 @@ import org.signserver.client.api.SigningAndValidationWS;
 public class SignServerAdminGUIApplication extends SingleFrameApplication {
 
     /** Logger for this class. */
-    private static Logger LOG
+    private static final Logger LOG
             = Logger.getLogger(SignServerAdminGUIApplication.class);
 
     private static final String OPTION_WS = "ws";
@@ -57,6 +58,7 @@ public class SignServerAdminGUIApplication extends SingleFrameApplication {
     private static AdminWS adminWS;
     private static ISigningAndValidation clientWS;
     private static String serverHost;
+    private static X509Certificate adminCertificate;
 
     private static File connectFile;
     private static File defaultConnectFile;
@@ -203,6 +205,7 @@ public class SignServerAdminGUIApplication extends SingleFrameApplication {
                 dlg.setVisible(true);
                 adminWS = dlg.getWS();
                 serverHost = dlg.getServerHost();
+                adminCertificate = dlg.getAdminCertificate();
             } else {
                 try {
                     adminWS = new AdminLayerEJBImpl();
@@ -255,4 +258,11 @@ public class SignServerAdminGUIApplication extends SingleFrameApplication {
         return serverHost;
     }
 
+    /**
+     * @return The selected admin certificate, if AdminWS used and available otherwise null
+     */
+    static X509Certificate getAdminCertificate() {
+        return adminCertificate;
+    }
+    
 }

@@ -36,6 +36,7 @@ import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
@@ -108,6 +109,8 @@ public class ConnectDialog extends javax.swing.JDialog {
     static {
         defaultHostnameVerifier = HttpsURLConnection.getDefaultHostnameVerifier();
     }
+    private String selectedKeyAlias;
+    private X509Certificate adminCertificate;
 
     /** Creates new form ConnectDialog. */
     public ConnectDialog(final Frame parent, final boolean modal,
@@ -621,9 +624,12 @@ public class ConnectDialog extends javax.swing.JDialog {
                 KeyManager[] keyManagers = kKeyManagerFactory.getKeyManagers();
 
         //        final SSLSocketFactory factory = sslc.getSocketFactory();
+                List<GUIKeyManager> guiKeyManagers = new LinkedList<GUIKeyManager>();
                 for (int i = 0; i < keyManagers.length; i++) {
                     if (keyManagers[i] instanceof X509KeyManager) {
-                        keyManagers[i] = new GUIKeyManager((X509KeyManager) keyManagers[i]);
+                        final GUIKeyManager manager = new GUIKeyManager((X509KeyManager) keyManagers[i]);
+                        keyManagers[i] = manager;
+                        guiKeyManagers.add(manager);
                     }
                 }
 
@@ -635,7 +641,7 @@ public class ConnectDialog extends javax.swing.JDialog {
 
                 // Finally, we get a SocketFactory, and pass it to SimpleSSLClient.
                 SSLSocketFactory factory = context.getSocketFactory();
-
+                
                 HttpsURLConnection.setDefaultSSLSocketFactory(factory);
                 
                 final ConnectDialog parent = this;
@@ -709,6 +715,16 @@ public class ConnectDialog extends javax.swing.JDialog {
                 AdminWSService service = new AdminWSService(
                         new URL(urlstr), new QName("http://adminws.signserver.org/", "AdminWSService"));
                 ws = service.getAdminWSPort();
+                
+                // Search the key managers for the selected certificate
+                for (GUIKeyManager manager : guiKeyManagers) {
+                    adminCertificate = manager.getSelectedCertificate();
+                    if (adminCertificate != null) {
+                        break;
+                    }
+                }
+                
+                
             dispose();
         } catch (Exception ex) {
             LOG.error("Error connecting", ex);
@@ -983,6 +999,13 @@ public class ConnectDialog extends javax.swing.JDialog {
             file = new File(baseDir, maybeRelativeFile);
         }
         return file;
+    }
+
+    /**
+     * @return The selected certificate, if available otherwise null
+     */
+    public X509Certificate getAdminCertificate() {
+        return adminCertificate;
     }
 
 }

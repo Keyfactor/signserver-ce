@@ -30,7 +30,8 @@ public class GUIKeyManager implements X509KeyManager {
     private final X509KeyManager base;
 
     private String lastSelectedAlias;
-
+    private volatile X509Certificate selectedCertificate; // Note: Can be read/written by multiple threads
+    
     public GUIKeyManager(final X509KeyManager base) {
         this.base = base;
     }
@@ -58,6 +59,10 @@ public class GUIKeyManager implements X509KeyManager {
                 }
             }
             lastSelectedAlias = selectedAlias;
+            X509Certificate[] chain = base.getCertificateChain(selectedAlias);
+            if (chain.length > 0) {
+                selectedCertificate = chain[0];
+            }
         }
         return lastSelectedAlias;
     }
@@ -80,5 +85,9 @@ public class GUIKeyManager implements X509KeyManager {
     @Override
     public PrivateKey getPrivateKey(String string) {
         return base.getPrivateKey(string);
+    }
+
+    public X509Certificate getSelectedCertificate() {
+        return selectedCertificate;
     }
 }

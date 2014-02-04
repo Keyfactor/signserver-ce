@@ -18,6 +18,7 @@
  */
 package org.signserver.admin.gui;
 
+import java.awt.CardLayout;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -28,6 +29,7 @@ import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.plaf.basic.BasicTabbedPaneUI;
 import org.apache.commons.io.FileUtils;
 import org.signserver.common.util.PropertiesApplier;
 import org.signserver.common.util.PropertiesParser;
@@ -46,50 +48,47 @@ public class AddWorkerDialog extends javax.swing.JDialog {
      * 
      */
     private enum Stage {
+
         /**
          * The initial state, choosing a file or entering preset configuration.
          */
         INITIAL_CONFIG,
-        
         /**
          * The final state, with the possibility to hand-edit properties.
          */
         EDIT_PROPERTIES
     }
-    
+
     /**
      * Enum holding the add worker mode.
      */
     private enum Mode {
+
         /**
          * Load worker properties from a property file.
          */
         LOAD_FROM_FILE,
-        
         /**
          * Edit worker properties in the UI.
          */
         EDIT_MANUALLY
     }
-    
     private Stage stage;
     private Mode mode;
-    
     // raw data of the config
     private String config;
-    
     // keep track of raw configuration editing
     private boolean configurationEdited = false;
-    
+
     /** Creates new form AddWorkerDialog */
     public AddWorkerDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-        
+
         stage = Stage.INITIAL_CONFIG;
         mode = Mode.LOAD_FROM_FILE;
         updateControls();
-        
+
         // initially set the Next button to be greyed-out, so that it can be
         // enabled based on the state
         nextApplyButton.setEnabled(false);
@@ -104,18 +103,18 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         // enable the reload button when there is changes done in the
         // free text configuration editor
         reloadButton.setEnabled(configurationEdited);
-        
+
         // only enable the back button in the last step...
         backButton.setEnabled(stage == Stage.EDIT_PROPERTIES);
         // similarily, set the appropriate text for the "Next"/"Apply" button
         nextApplyButton.setText(stage == Stage.INITIAL_CONFIG ? "Next" : "Apply");
-    
+
         // update controls depending on mode (load from file or edit manually)
-        
+
         // file controls
         filePathTextField.setEnabled(mode == Mode.LOAD_FROM_FILE);
         filePathBrowseButton.setEnabled(mode == Mode.LOAD_FROM_FILE);
-    
+
         // edit controls
         workerIdLabel.setEnabled(mode == Mode.EDIT_MANUALLY);
         workerIDField.setEnabled(mode == Mode.EDIT_MANUALLY);
@@ -131,7 +130,7 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         addPropertyButton.setEnabled(mode == Mode.EDIT_MANUALLY);
         removePropertyButton.setEnabled(mode == Mode.EDIT_MANUALLY);
         editPropertyButton.setEnabled(mode == Mode.EDIT_MANUALLY);
-        
+
         // update state of Next/Apply button
         switch (mode) {
             case LOAD_FROM_FILE:
@@ -146,7 +145,7 @@ public class AddWorkerDialog extends javax.swing.JDialog {
                 break;
         }
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -158,7 +157,9 @@ public class AddWorkerDialog extends javax.swing.JDialog {
 
         nextApplyButton = new javax.swing.JButton();
         backButton = new javax.swing.JButton();
-        addWorkerTabbedPanel = new javax.swing.JTabbedPane();
+        reloadButton = new javax.swing.JButton();
+        cancelButton = new javax.swing.JButton();
+        wizardPanel = new javax.swing.JPanel();
         initialSetupPanel = new javax.swing.JPanel();
         removePropertyButton = new javax.swing.JButton();
         propertiesScrollPanel = new javax.swing.JScrollPane();
@@ -182,8 +183,6 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         configurationLabel = new javax.swing.JLabel();
         configurationScrollPane = new javax.swing.JScrollPane();
         configurationTextArea = new javax.swing.JTextArea();
-        reloadButton = new javax.swing.JButton();
-        cancelButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setName("Form"); // NOI18N
@@ -205,7 +204,24 @@ public class AddWorkerDialog extends javax.swing.JDialog {
             }
         });
 
-        addWorkerTabbedPanel.setName("addWorkerTabbedPanel"); // NOI18N
+        reloadButton.setText(resourceMap.getString("reloadButton.text")); // NOI18N
+        reloadButton.setName("reloadButton"); // NOI18N
+        reloadButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                reloadButtonActionPerformed(evt);
+            }
+        });
+
+        cancelButton.setText(resourceMap.getString("cancelButton.text")); // NOI18N
+        cancelButton.setName("cancelButton"); // NOI18N
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelButtonActionPerformed(evt);
+            }
+        });
+
+        wizardPanel.setName("wizardPanel"); // NOI18N
+        wizardPanel.setLayout(new java.awt.CardLayout());
 
         initialSetupPanel.setName("initialSetupPanel"); // NOI18N
 
@@ -377,7 +393,7 @@ public class AddWorkerDialog extends javax.swing.JDialog {
                     .addContainerGap()))
         );
 
-        addWorkerTabbedPanel.addTab(resourceMap.getString("initialSetupPanel.TabConstraints.tabTitle"), initialSetupPanel); // NOI18N
+        wizardPanel.add(initialSetupPanel, "initial");
 
         configurationPanel.setName("configurationPanel"); // NOI18N
 
@@ -422,53 +438,43 @@ public class AddWorkerDialog extends javax.swing.JDialog {
                     .addContainerGap(29, Short.MAX_VALUE)))
         );
 
-        addWorkerTabbedPanel.addTab(resourceMap.getString("configurationPanel.TabConstraints.tabTitle"), configurationPanel); // NOI18N
-
-        reloadButton.setText(resourceMap.getString("reloadButton.text")); // NOI18N
-        reloadButton.setName("reloadButton"); // NOI18N
-        reloadButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                reloadButtonActionPerformed(evt);
-            }
-        });
-
-        cancelButton.setText(resourceMap.getString("cancelButton.text")); // NOI18N
-        cancelButton.setName("cancelButton"); // NOI18N
-        cancelButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelButtonActionPerformed(evt);
-            }
-        });
+        wizardPanel.add(configurationPanel, "editing");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(reloadButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 470, Short.MAX_VALUE)
-                        .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(backButton, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(nextApplyButton, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(addWorkerTabbedPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 821, Short.MAX_VALUE))
+                .addContainerGap()
+                .addComponent(reloadButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 470, Short.MAX_VALUE)
+                .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(backButton, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(nextApplyButton, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(24, 24, 24))
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addGap(0, 22, Short.MAX_VALUE)
+                    .addComponent(wizardPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 22, Short.MAX_VALUE)))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(addWorkerTabbedPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 531, Short.MAX_VALUE)
-                .addGap(23, 23, 23)
+                .addContainerGap(554, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(reloadButton)
                     .addComponent(nextApplyButton)
                     .addComponent(backButton)
                     .addComponent(cancelButton))
                 .addContainerGap())
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addGap(0, 54, Short.MAX_VALUE)
+                    .addComponent(wizardPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 55, Short.MAX_VALUE)))
         );
 
         pack();
@@ -476,16 +482,16 @@ public class AddWorkerDialog extends javax.swing.JDialog {
 
     private void filePathBrowseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_filePathBrowseButtonActionPerformed
         final JFileChooser chooser = new JFileChooser();
-        
+
         chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        
+
         final int res = chooser.showOpenDialog(this);
-        
+
         if (res == JFileChooser.APPROVE_OPTION) {
             final File file = chooser.getSelectedFile();
             filePathTextField.setText(file.getAbsolutePath());
         }
-     
+
         updateControls();
     }//GEN-LAST:event_filePathBrowseButtonActionPerformed
 
@@ -524,26 +530,26 @@ public class AddWorkerDialog extends javax.swing.JDialog {
 
     private void applyConfiguration() throws IOException {
         config = configurationTextArea.getText();
-        
+
         final Properties props = new Properties();
-        
+
         props.load(new ByteArrayInputStream(config.getBytes()));
-        
+
         final PropertiesParser parser = new PropertiesParser();
-        
+
         parser.process(props);
-        
+
         if (parser.hasErrors()) {
             // TODO: handle parser errors
         } else {
             final PropertiesApplier applier = new AdminGUIPropertiesApplier();
-            
+
             applier.apply(parser);
             // TODO: check for applier errors (unknown worker name lookups etc.
         }
-        
+
     }
-    
+
     private void configurationTextAreaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_configurationTextAreaKeyTyped
         configurationEdited = true;
         updateControls();
@@ -561,35 +567,35 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         dispose();
     }//GEN-LAST:event_cancelButtonActionPerformed
 
-    private void goBackToInitialConfig() {
-        addWorkerTabbedPanel.setSelectedIndex(0);
+    private void goBackToInitialConfig() {       
+        ((CardLayout) wizardPanel.getLayout()).show(wizardPanel, "initial");
         stage = Stage.INITIAL_CONFIG;
-        
+
         updateControls();
     }
-    
+
     private void gotoPropertiesEditing() {
-        addWorkerTabbedPanel.setSelectedIndex(1);
+        ((CardLayout) wizardPanel.getLayout()).show(wizardPanel, "editing");
         stage = Stage.EDIT_PROPERTIES;
-        
+
         // TODO: should later on handle merging manual properties to the
         // properties editor and so on...
-        
+
         loadConfigurationEditor();
     }
-    
+
     private void loadConfigurationEditor() {
         switch (mode) {
             case LOAD_FROM_FILE:
                 final File file = new File(filePathTextField.getText());
-        
+
                 try {
                     config = FileUtils.readFileToString(file);
                     configurationTextArea.setText(config);
                     configurationEdited = false;
                 } catch (IOException e) {
                     JOptionPane.showMessageDialog(this, e.getMessage(),
-                        "Failed to read file", JOptionPane.ERROR_MESSAGE);
+                            "Failed to read file", JOptionPane.ERROR_MESSAGE);
                 } finally {
                     updateControls();
                 }
@@ -602,7 +608,7 @@ public class AddWorkerDialog extends javax.swing.JDialog {
                 break;
         }
     }
-    
+
     /**
      * @param args the command line arguments
      */
@@ -623,7 +629,6 @@ public class AddWorkerDialog extends javax.swing.JDialog {
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addPropertyButton;
-    private javax.swing.JTabbedPane addWorkerTabbedPanel;
     private javax.swing.JButton backButton;
     private javax.swing.JButton cancelButton;
     private javax.swing.JLabel configurationLabel;
@@ -644,6 +649,7 @@ public class AddWorkerDialog extends javax.swing.JDialog {
     private javax.swing.JButton removePropertyButton;
     private javax.swing.JTextField tokenImplementationField;
     private javax.swing.JLabel tokenImplementationLabel;
+    private javax.swing.JPanel wizardPanel;
     private javax.swing.JTextField workerIDField;
     private javax.swing.JLabel workerIdLabel;
     private javax.swing.JTextField workerImplementationField;

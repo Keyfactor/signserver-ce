@@ -91,7 +91,7 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         updateControls();
         
         // initially set the Next button to be greyed-out, so that it can be
-        // enabled given
+        // enabled based on the state
         nextApplyButton.setEnabled(false);
     }
 

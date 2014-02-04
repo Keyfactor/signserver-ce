@@ -23,7 +23,6 @@ hostname.allnodes=localhost
 # Available types are:
 #dbcli.database.name=hsqldb
 #dbcli.database.name=mysql
-#dbcli.database.name=postgres
 #dbcli.database.name=oracle
 
 # Database driver

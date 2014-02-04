@@ -18,7 +18,20 @@
 
     <!-- Copy to client-dist etc. -->
     <target name="dist-module" depends="jar,-do-client-dist"/>
-
+    
+    <!-- Update version number in resource bundles -->
+    <target name="-pre-jar">
+        <property file="../../res/compile.properties"/>
+        <filter token="APPVERSION" value="${app.version.number}"/>
+        <copy todir="target/classes/org/signserver/admin/gui/resources/" filtering="true" overwrite="true">
+            <fileset dir="${src.resources.dir}/org/signserver/admin/gui/resources/">
+                <include name="SignServerAdminGUIApplication.properties"/>
+                <include name="SignServerAdminGUIApplicationAboutBox.properties"/>
+            </fileset>
+        </copy>
+        
+    </target>
+    
     <!--
         ===================
         JAX-WS WSIMPORT SECTION

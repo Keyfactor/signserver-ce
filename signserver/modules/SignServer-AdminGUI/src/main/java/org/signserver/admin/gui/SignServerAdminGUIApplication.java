@@ -129,7 +129,8 @@ public class SignServerAdminGUIApplication extends SingleFrameApplication {
             image.setFont(new Font("Arial", Font.BOLD, 14));
             image.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
             final ResourceMap resourceMap = getApplication().getContext().getResourceMap(SignServerAdminGUIApplicationAboutBox.class);
-            image.drawString("Version " + resourceMap.getString("appVendorLabel1.text"), 390, 215);
+            final String version = "Version " + resourceMap.getString("appVendorLabel1.text");;
+            image.drawString(version, 512 - image.getFontMetrics().stringWidth(version), 215);
             image.setPaint(Color.DARK_GRAY);
             image.drawString(resourceMap.getString("appCopyright.text"), 12, 392);
             splash.update();

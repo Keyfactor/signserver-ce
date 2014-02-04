@@ -38,6 +38,10 @@ public class PropertiesParser {
     
     private List<Integer> workerDeclarations = new ArrayList<Integer>();
     
+    /**
+     * Representation of a global property.
+     * This only represents the identity of a property, not the actual property value (instance).
+     */
     public static class GlobalProperty {
         private String scope;
         private String key;
@@ -56,6 +60,11 @@ public class PropertiesParser {
         }
     }
     
+    /**
+     * Representation of a worker property.
+     * This only represents the identity of the property, not the actual property value (instance).
+     *
+     */
     public static class WorkerProperty {
         private String workerIdOrName;
         private String key;
@@ -87,6 +96,11 @@ public class PropertiesParser {
     private Map<String, byte[]> signerCertificates = new HashMap<String, byte[]>();
     private Map<String, List<byte[]>> signerCertificateChains = new HashMap<String, List<byte[]>>();
 
+    /**
+     * Parse a set of properties.
+     * 
+     * @param properties
+     */
     public void process(Properties properties) {
         Enumeration<?> iter = properties.keys();
         while (iter.hasMoreElements()) {

@@ -338,6 +338,7 @@ public class MainView extends FrameView {
         jSeparator8 = new javax.swing.JPopupMenu.Separator();
         removeWorkerMenu = new javax.swing.JMenuItem();
         jSeparator9 = new javax.swing.JPopupMenu.Separator();
+        reloadMenu = new javax.swing.JMenuItem();
         globalConfigurationMenu = new javax.swing.JMenuItem();
         administratorsMenu = new javax.swing.JMenuItem();
         viewMenu = new javax.swing.JMenu();
@@ -436,6 +437,12 @@ public class MainView extends FrameView {
         removeKeyPanel = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
         aliasTextField = new javax.swing.JTextField();
+        reloadPanel = new javax.swing.JPanel();
+        jEditorPane1 = new javax.swing.JEditorPane();
+        reloadAllWorkersRadioButton = new javax.swing.JRadioButton();
+        reloadSelectedWorkersRadioButton = new javax.swing.JRadioButton();
+        jLabel9 = new javax.swing.JLabel();
+        buttonGroup1 = new javax.swing.ButtonGroup();
 
         menuBar.setName("menuBar"); // NOI18N
 
@@ -520,6 +527,11 @@ public class MainView extends FrameView {
 
         jSeparator9.setName("jSeparator9"); // NOI18N
         editMenu.add(jSeparator9);
+
+        reloadMenu.setAction(actionMap.get("reloadFromDatabase")); // NOI18N
+        reloadMenu.setText(resourceMap.getString("reloadMenu.text")); // NOI18N
+        reloadMenu.setName("reloadMenu"); // NOI18N
+        editMenu.add(reloadMenu);
 
         globalConfigurationMenu.setMnemonic('G');
         globalConfigurationMenu.setText(resourceMap.getString("globalConfigurationMenu.text")); // NOI18N
@@ -1496,6 +1508,56 @@ public class MainView extends FrameView {
                 .addComponent(jLabel7)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(aliasTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+
+        reloadPanel.setName("reloadPanel"); // NOI18N
+
+        jEditorPane1.setBackground(resourceMap.getColor("jEditorPane1.background")); // NOI18N
+        jEditorPane1.setContentType(resourceMap.getString("jEditorPane1.contentType")); // NOI18N
+        jEditorPane1.setEditable(false);
+        jEditorPane1.setText(resourceMap.getString("jEditorPane1.text")); // NOI18N
+        jEditorPane1.setName("jEditorPane1"); // NOI18N
+
+        buttonGroup1.add(reloadAllWorkersRadioButton);
+        reloadAllWorkersRadioButton.setText(resourceMap.getString("reloadAllWorkersRadioButton.text")); // NOI18N
+        reloadAllWorkersRadioButton.setName("reloadAllWorkersRadioButton"); // NOI18N
+
+        buttonGroup1.add(reloadSelectedWorkersRadioButton);
+        reloadSelectedWorkersRadioButton.setText(resourceMap.getString("reloadSelectedWorkersRadioButton.text")); // NOI18N
+        reloadSelectedWorkersRadioButton.setName("reloadSelectedWorkersRadioButton"); // NOI18N
+
+        jLabel9.setText(resourceMap.getString("jLabel9.text")); // NOI18N
+        jLabel9.setName("jLabel9"); // NOI18N
+
+        javax.swing.GroupLayout reloadPanelLayout = new javax.swing.GroupLayout(reloadPanel);
+        reloadPanel.setLayout(reloadPanelLayout);
+        reloadPanelLayout.setHorizontalGroup(
+            reloadPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jEditorPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 396, Short.MAX_VALUE)
+            .addGroup(reloadPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE)
+                .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, reloadPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(reloadAllWorkersRadioButton, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE)
+                .addContainerGap())
+            .addGroup(reloadPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(reloadSelectedWorkersRadioButton, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        reloadPanelLayout.setVerticalGroup(
+            reloadPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(reloadPanelLayout.createSequentialGroup()
+                .addComponent(jEditorPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel9)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(reloadAllWorkersRadioButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(reloadSelectedWorkersRadioButton)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         setComponent(jTabbedPane1);
@@ -2746,6 +2808,70 @@ private void displayLogEntryAction() {
         }
     }
 
+    @Action(block = Task.BlockingScope.APPLICATION)
+    public Task reloadFromDatabase() {
+        return new ReloadFromDatabaseTask(getApplication());
+    }
+
+    private class ReloadFromDatabaseTask extends org.jdesktop.application.Task<String, Void> {
+        
+        private final int[] selected;
+        private final boolean confirmed;
+        private final boolean reloadAll;
+        
+        ReloadFromDatabaseTask(org.jdesktop.application.Application app) {
+            // Runs on the EDT.  Copy GUI state that
+            // doInBackground() depends on from parameters
+            // to ReloadFromDatabaseTask fields, here.
+            super(app);
+            selected = workersList.getSelectedIndices();
+            
+            reloadSelectedWorkersRadioButton.setEnabled(selected.length > 0);
+            reloadSelectedWorkersRadioButton.setSelected(selected.length > 0);
+            reloadAllWorkersRadioButton.setSelected(selected.length == 0);
+            confirmed = JOptionPane.showConfirmDialog(MainView.this.getFrame(), reloadPanel, "Reload from database", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION;
+            reloadAll = reloadAllWorkersRadioButton.isSelected();
+        }
+        @Override protected String doInBackground() {
+            // Your Task's code here.  This method runs
+            // on a background thread, so don't reference
+            // the Swing GUI from here.
+            try {
+                if (confirmed) {
+                    if (reloadAll) {
+                        setMessage("Reloading global configuration...");
+                        SignServerAdminGUIApplication.getAdminWS().reloadConfiguration(0);
+                    } else {
+                        int current = 0;
+                        for (int row : selected) {
+                            setMessage("Reloading worker " + (current + 1) + " of " + selected.length + "...");
+                            setProgress(current, 0, selected.length);
+                            final int workerId = allWorkers.get(row).getWorkerId();
+                            SignServerAdminGUIApplication.getAdminWS().reloadConfiguration(workerId);
+                            current++;
+                        }
+                    }
+                    return "Configuration reloaded";
+                }
+            } catch (AdminNotAuthorizedException_Exception ex) {
+                postAdminNotAuthorized(ex);
+            }
+            
+            return null;  // return your result
+        }
+        @Override protected void succeeded(String result) {
+            // Runs on the EDT.  Update the GUI based on
+            // the result computed by doInBackground().
+            if (result != null) {
+                JOptionPane.showMessageDialog(MainView.this.getFrame(), result, "Reload from database", JOptionPane.INFORMATION_MESSAGE);
+            }
+            if (confirmed) {
+                refreshButton.doClick();
+            }
+        }
+    }
+
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     javax.swing.JButton activateButton;
@@ -2775,6 +2901,7 @@ private void displayLogEntryAction() {
     javax.swing.JTable authTable;
     javax.swing.JPanel authorizationTab;
     javax.swing.JMenuItem authorizationsMenu;
+    javax.swing.ButtonGroup buttonGroup1;
     javax.swing.JTable conditionsTable;
     javax.swing.JMenuItem configurationMenu;
     javax.swing.JPanel configurationTab;
@@ -2796,6 +2923,7 @@ private void displayLogEntryAction() {
     javax.swing.JMenuItem installCertificatesMenu;
     javax.swing.JButton jButtonAuditConditionAdd;
     javax.swing.JButton jButtonAuditConditionRemove;
+    javax.swing.JEditorPane jEditorPane1;
     javax.swing.JLabel jLabel1;
     javax.swing.JLabel jLabel2;
     javax.swing.JLabel jLabel3;
@@ -2804,6 +2932,7 @@ private void displayLogEntryAction() {
     javax.swing.JLabel jLabel6;
     javax.swing.JLabel jLabel7;
     javax.swing.JLabel jLabel8;
+    javax.swing.JLabel jLabel9;
     javax.swing.JPanel jPanel1;
     javax.swing.JPanel jPanel2;
     javax.swing.JPanel jPanel3;
@@ -2836,6 +2965,10 @@ private void displayLogEntryAction() {
     javax.swing.JTable propertiesTable;
     javax.swing.JButton refreshButton;
     javax.swing.JMenuItem refreshMenu;
+    javax.swing.JRadioButton reloadAllWorkersRadioButton;
+    javax.swing.JMenuItem reloadMenu;
+    javax.swing.JPanel reloadPanel;
+    javax.swing.JRadioButton reloadSelectedWorkersRadioButton;
     javax.swing.JButton removeButton;
     javax.swing.JMenuItem removeKeyMenu;
     javax.swing.JPanel removeKeyPanel;

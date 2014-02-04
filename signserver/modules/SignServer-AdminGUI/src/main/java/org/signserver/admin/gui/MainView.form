@@ -155,6 +155,15 @@
                 <Property name="name" type="java.lang.String" value="jSeparator9" noResource="true"/>
               </Properties>
             </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="reloadMenu">
+              <Properties>
+                <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
+                  <action class="org.signserver.admin.gui.MainView" id="reloadFromDatabase" methodName="reloadFromDatabase"/>
+                </Property>
+                <Property name="text" type="java.lang.String" resourceKey="reloadMenu.text"/>
+                <Property name="name" type="java.lang.String" value="reloadMenu" noResource="true"/>
+              </Properties>
+            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="globalConfigurationMenu">
               <Properties>
                 <Property name="mnemonic" type="int" value="71"/>
@@ -685,7 +694,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jSplitPane1" pref="1173" max="32767" attributes="0"/>
+                      <Component id="jSplitPane1" pref="1185" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -749,8 +758,8 @@
                           <Group type="102" alignment="1" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="1" attributes="0">
-                                  <Component id="workerTabbedPane" alignment="0" pref="894" max="32767" attributes="0"/>
-                                  <Component id="workerComboBox" alignment="0" pref="894" max="32767" attributes="0"/>
+                                  <Component id="workerTabbedPane" alignment="0" pref="905" max="32767" attributes="0"/>
+                                  <Component id="workerComboBox" alignment="0" pref="905" max="32767" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
@@ -762,7 +771,7 @@
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="workerComboBox" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Component id="workerTabbedPane" pref="567" max="32767" attributes="0"/>
+                              <Component id="workerTabbedPane" pref="572" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -831,14 +840,14 @@
                             <DimensionLayout dim="0">
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="1" attributes="0">
-                                      <EmptySpace pref="778" max="32767" attributes="0"/>
+                                      <EmptySpace pref="801" max="32767" attributes="0"/>
                                       <Component id="statusPropertiesDetailsButton" min="-2" pref="84" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                   </Group>
                                   <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                                       <Group type="102" alignment="0" attributes="0">
                                           <EmptySpace min="-2" max="-2" attributes="0"/>
-                                          <Component id="statusPropertiesScrollPane" pref="750" max="32767" attributes="0"/>
+                                          <Component id="statusPropertiesScrollPane" pref="773" max="32767" attributes="0"/>
                                           <EmptySpace min="-2" pref="112" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
@@ -849,12 +858,12 @@
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="statusPropertiesDetailsButton" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace pref="481" max="32767" attributes="0"/>
+                                      <EmptySpace pref="492" max="32767" attributes="0"/>
                                   </Group>
                                   <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                                       <Group type="102" alignment="0" attributes="0">
                                           <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="statusPropertiesScrollPane" pref="502" max="32767" attributes="0"/>
+                                          <Component id="statusPropertiesScrollPane" pref="510" max="32767" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
@@ -943,7 +952,7 @@
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="1" attributes="0">
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="jScrollPane6" pref="740" max="32767" attributes="0"/>
+                                      <Component id="jScrollPane6" pref="763" max="32767" attributes="0"/>
                                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="1" attributes="0">
                                           <Component id="addButton" linkSize="1" alignment="1" min="-2" max="-2" attributes="0"/>
@@ -959,7 +968,7 @@
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="jScrollPane6" alignment="0" pref="502" max="32767" attributes="0"/>
+                                          <Component id="jScrollPane6" alignment="0" pref="510" max="32767" attributes="0"/>
                                           <Group type="102" alignment="0" attributes="0">
                                               <Component id="addButton" min="-2" max="-2" attributes="0"/>
                                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
@@ -1073,7 +1082,7 @@
                             <DimensionLayout dim="0">
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" attributes="0">
-                                      <EmptySpace pref="763" max="32767" attributes="0"/>
+                                      <EmptySpace pref="786" max="32767" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
                                           <Component id="authAddButton" linkSize="2" alignment="1" min="-2" max="-2" attributes="0"/>
                                           <Component id="authEditButton" linkSize="2" alignment="1" min="-2" max="-2" attributes="0"/>
@@ -1084,7 +1093,7 @@
                                   <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                                       <Group type="102" alignment="0" attributes="0">
                                           <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
-                                          <Component id="jScrollPane7" pref="744" max="32767" attributes="0"/>
+                                          <Component id="jScrollPane7" pref="767" max="32767" attributes="0"/>
                                           <EmptySpace min="-2" pref="124" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
@@ -1099,12 +1108,12 @@
                                       <Component id="authEditButton" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="authRemoveButton" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace pref="397" max="32767" attributes="0"/>
+                                      <EmptySpace pref="414" max="32767" attributes="0"/>
                                   </Group>
                                   <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                                       <Group type="102" alignment="0" attributes="0">
                                           <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="jScrollPane7" pref="502" max="32767" attributes="0"/>
+                                          <Component id="jScrollPane7" pref="510" max="32767" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
@@ -1195,7 +1204,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jSplitPane2" pref="1173" max="32767" attributes="0"/>
+                      <Component id="jSplitPane2" pref="1185" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -1240,8 +1249,8 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <Group type="103" groupAlignment="1" attributes="0">
-                                  <Component id="jLabel3" alignment="0" pref="775" max="32767" attributes="1"/>
-                                  <Component id="jScrollPane3" alignment="0" pref="775" max="32767" attributes="2"/>
+                                  <Component id="jLabel3" alignment="0" pref="787" max="32767" attributes="1"/>
+                                  <Component id="jScrollPane3" alignment="0" pref="787" max="32767" attributes="2"/>
                               </Group>
                               <EmptySpace min="-2" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" max="-2" attributes="0">
@@ -1361,12 +1370,12 @@
                               <Component id="jLabel8" min="-2" pref="156" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="auditlogMaxEntriesTextfield" min="-2" pref="56" max="-2" attributes="0"/>
-                              <EmptySpace pref="263" max="32767" attributes="0"/>
+                              <EmptySpace pref="275" max="32767" attributes="0"/>
                           </Group>
                           <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace min="-2" max="-2" attributes="0"/>
-                                  <Component id="auditlogPanel" pref="1149" max="32767" attributes="0"/>
+                                  <Component id="auditlogPanel" max="32767" attributes="0"/>
                                   <EmptySpace min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -1389,12 +1398,12 @@
                                       <Component id="auditlogMaxEntriesTextfield" alignment="3" min="-2" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
-                              <EmptySpace pref="457" max="32767" attributes="0"/>
+                              <EmptySpace pref="459" max="32767" attributes="0"/>
                           </Group>
                           <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="1" attributes="0">
                                   <EmptySpace min="-2" pref="59" max="-2" attributes="0"/>
-                                  <Component id="auditlogPanel" pref="431" max="32767" attributes="0"/>
+                                  <Component id="auditlogPanel" pref="430" max="32767" attributes="0"/>
                                   <EmptySpace min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -1502,17 +1511,17 @@
                           <Layout>
                             <DimensionLayout dim="0">
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <EmptySpace min="0" pref="1149" max="32767" attributes="0"/>
+                                  <EmptySpace min="0" pref="1161" max="32767" attributes="0"/>
                                   <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
-                                      <Component id="auditlogTableScrollPane" alignment="0" pref="1149" max="32767" attributes="0"/>
+                                      <Component id="auditlogTableScrollPane" alignment="0" pref="1161" max="32767" attributes="0"/>
                                   </Group>
                               </Group>
                             </DimensionLayout>
                             <DimensionLayout dim="1">
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <EmptySpace min="0" pref="431" max="32767" attributes="0"/>
+                                  <EmptySpace min="0" pref="430" max="32767" attributes="0"/>
                                   <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
-                                      <Component id="auditlogTableScrollPane" alignment="0" max="32767" attributes="0"/>
+                                      <Component id="auditlogTableScrollPane" alignment="0" pref="430" max="32767" attributes="0"/>
                                   </Group>
                               </Group>
                             </DimensionLayout>
@@ -1589,7 +1598,7 @@
                             </DimensionLayout>
                             <DimensionLayout dim="1">
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jScrollPane5" alignment="0" pref="431" max="32767" attributes="0"/>
+                                  <Component id="jScrollPane5" alignment="0" pref="430" max="32767" attributes="0"/>
                               </Group>
                             </DimensionLayout>
                           </Layout>
@@ -1657,6 +1666,85 @@
         </Component>
       </SubComponents>
     </Container>
+    <Container class="javax.swing.JPanel" name="reloadPanel">
+      <Properties>
+        <Property name="name" type="java.lang.String" value="reloadPanel" noResource="true"/>
+      </Properties>
+
+      <Layout>
+        <DimensionLayout dim="0">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Component id="jEditorPane1" alignment="0" pref="396" max="32767" attributes="0"/>
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="jLabel9" pref="372" max="32767" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+              </Group>
+              <Group type="102" alignment="1" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="reloadAllWorkersRadioButton" pref="372" max="32767" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+              </Group>
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="reloadSelectedWorkersRadioButton" pref="372" max="32767" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+        <DimensionLayout dim="1">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
+                  <Component id="jEditorPane1" min="-2" pref="96" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="jLabel9" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <Component id="reloadAllWorkersRadioButton" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="reloadSelectedWorkersRadioButton" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+      </Layout>
+      <SubComponents>
+        <Component class="javax.swing.JEditorPane" name="jEditorPane1">
+          <Properties>
+            <Property name="background" type="java.awt.Color" resourceKey="jEditorPane1.background"/>
+            <Property name="contentType" type="java.lang.String" resourceKey="jEditorPane1.contentType"/>
+            <Property name="editable" type="boolean" value="false"/>
+            <Property name="text" type="java.lang.String" resourceKey="jEditorPane1.text"/>
+            <Property name="name" type="java.lang.String" value="jEditorPane1" noResource="true"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JRadioButton" name="reloadAllWorkersRadioButton">
+          <Properties>
+            <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+              <ComponentRef name="buttonGroup1"/>
+            </Property>
+            <Property name="text" type="java.lang.String" resourceKey="reloadAllWorkersRadioButton.text"/>
+            <Property name="name" type="java.lang.String" value="reloadAllWorkersRadioButton" noResource="true"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JRadioButton" name="reloadSelectedWorkersRadioButton">
+          <Properties>
+            <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+              <ComponentRef name="buttonGroup1"/>
+            </Property>
+            <Property name="text" type="java.lang.String" resourceKey="reloadSelectedWorkersRadioButton.text"/>
+            <Property name="name" type="java.lang.String" value="reloadSelectedWorkersRadioButton" noResource="true"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="jLabel9">
+          <Properties>
+            <Property name="text" type="java.lang.String" resourceKey="jLabel9.text"/>
+            <Property name="name" type="java.lang.String" value="jLabel9" noResource="true"/>
+          </Properties>
+        </Component>
+      </SubComponents>
+    </Container>
+    <Component class="javax.swing.ButtonGroup" name="buttonGroup1">
+    </Component>
   </NonVisualComponents>
   <Properties>
     <Property name="component" type="javax.swing.JComponent" editor="org.netbeans.modules.form.ComponentChooserEditor">

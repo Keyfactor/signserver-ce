@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.ejbca.util.Base64;
 import org.signserver.common.AuthorizedClient;
 
 /**
@@ -57,6 +56,12 @@ public abstract class PropertiesApplier {
      */
     private Set<Integer> workerIds = new HashSet<Integer>();
     
+    /**
+     * Apply configuration prepared by the configuration parser.
+     * Should call the parse method on a parser instance to use with this method.
+     * 
+     * @param parser
+     */
     public void apply(final PropertiesParser parser) {       
         try {
             final Map<PropertiesParser.GlobalProperty, String> setGlobalProperties =
@@ -118,6 +123,14 @@ public abstract class PropertiesApplier {
         
     }
     
+    /**
+     * Translate global property map.
+     * Will take care of translating generated worker IDs and convert worker names to worker IDs for global property keys.
+     * 
+     * @param properties Map containing a mapping from global property identifiers to property values
+     * @return Resulting mapping
+     * @throws PropertiesApplierException
+     */
     private Map<PropertiesParser.GlobalProperty, String> translateGlobalProperties(
             final Map<PropertiesParser.GlobalProperty, String> properties)
             throws PropertiesApplierException {
@@ -133,6 +146,16 @@ public abstract class PropertiesApplier {
         return result;
     }
     
+    /**
+     * Translate a list of global properties.
+     * This method takes a list of global property identifiers (not including a mapping to propety values) and
+     * translates generated worker IDs and worker names.
+     * This is used for the list of removed properties.
+     * 
+     * @param properties
+     * @return Resulting list
+     * @throws PropertiesApplierException
+     */
     private List<PropertiesParser.GlobalProperty> translateGlobalProperties(final List<PropertiesParser.GlobalProperty> properties)
         throws PropertiesApplierException {
         final List<PropertiesParser.GlobalProperty> result = new LinkedList<PropertiesParser.GlobalProperty>();
@@ -144,6 +167,14 @@ public abstract class PropertiesApplier {
         return result;
     }
     
+    /**
+     * Translate a mapping from worker property identifiers to values.
+     * Translates genrated worker IDs and worker names to worker IDs.
+     * 
+     * @param workerProperties
+     * @return Restulting mapping
+     * @throws PropertiesApplierException
+     */
     private Map<PropertiesParser.WorkerProperty, String> translateWorkerProperties(
             final Map<PropertiesParser.WorkerProperty, String> workerProperties)
             throws PropertiesApplierException {
@@ -159,6 +190,14 @@ public abstract class PropertiesApplier {
         return result;
     }
     
+    /**
+     * Translate a list of worker property identifiers.
+     * Translates generated worker IDs and worker names to worker IDs.
+     * 
+     * @param workerProperties
+     * @return Resulting list
+     * @throws PropertiesApplierException
+     */
     private List<PropertiesParser.WorkerProperty> translateWorkerProperties(final List<PropertiesParser.WorkerProperty> workerProperties)
         throws PropertiesApplierException {
         final List<PropertiesParser.WorkerProperty> result = new LinkedList<PropertiesParser.WorkerProperty>();
@@ -171,6 +210,14 @@ public abstract class PropertiesApplier {
         return result;
     }
 
+    /**
+     * Translate a mapping of worker names or IDs to assosiated data (used for the signer certificates and chains).
+     * Translates generated worker IDs and worker names.
+     * 
+     * @param signerDataLists
+     * @return Resulting mapping
+     * @throws PropertiesApplierException
+     */
     private <T> Map<Integer, T> translateWorkerDatas(final Map<String, T> signerDataLists)
         throws PropertiesApplierException {
         final Map<Integer, T> result = new HashMap<Integer, T>();
@@ -182,13 +229,70 @@ public abstract class PropertiesApplier {
         return result;
     }
 
+    /**
+     * Set a global property.
+     * 
+     * @param scope
+     * @param key
+     * @param value
+     */
     protected abstract void setGlobalProperty(final String scope, final String key, final String value);
+    
+    /**
+     * Remove a global property.
+     * 
+     * @param scope
+     * @param key
+     */
     protected abstract void removeGlobalProperty(final String scope, final String key);
+    
+    /**
+     * Set a worker property.
+     * 
+     * @param workerId
+     * @param key
+     * @param value
+     */
     protected abstract void setWorkerProperty(final int workerId, final String key, final String value);
+    
+    /**
+     * Remove a worker property.
+     * 
+     * @param workerId
+     * @param key
+     */
     protected abstract void removeWorkerProperty(final int workerId, final String key);
+    
+    /**
+     * Upload a signer certificate.
+     * 
+     * @param workerId
+     * @param signerCert
+     */
     protected abstract void uploadSignerCertificate(final int workerId, final byte[] signerCert);
+    
+    /**
+     * Upload a signer certificate chain.
+     * 
+     * @param workerId
+     * @param signerCertChain
+     */
     protected abstract void uploadSignerCertificateChain(final int workerId, final List<byte[]> signerCertChain);
+    
+    /**
+     * Add an authorized client for a worker.
+     * 
+     * @param workerId
+     * @param ac Authorized client to add
+     */
     protected abstract void addAuthorizedClient(final int workerId, final AuthorizedClient ac);
+    
+    /**
+     * Remove an authorized client for a worker.
+     * 
+     * @param workerId
+     * @param ac Authorized client to remove
+     */
     protected abstract void removeAuthorizedClient(final int workerId, final AuthorizedClient ac);
     
     /**
@@ -197,7 +301,7 @@ public abstract class PropertiesApplier {
      * @param splittedKey The referenced worker key in the form GENIDx
      * @return The worker ID
      */
-    private int getGenId(String splittedKey) throws PropertiesApplierException {
+    private int getGenId(String splittedKey) {
         if (genIds.get(splittedKey) == null) {
             int genid = genFreeWorkerId();
             genIds.put(splittedKey, new Integer(genid));
@@ -208,9 +312,9 @@ public abstract class PropertiesApplier {
     /**
      * Lookup next available auto-generated worker ID.
      * 
-     * @return
+     * @return Next available worker ID
      */
-    protected abstract int genFreeWorkerId() throws PropertiesApplierException;
+    protected abstract int genFreeWorkerId();
     
     /**
      * Lookup worker ID given name, implemenation-specific.
@@ -219,7 +323,7 @@ public abstract class PropertiesApplier {
      * @return worker ID
      * @throws IllegalArgumentException if given a non-existing worker name
      */
-    protected abstract int getWorkerId(final String workerName) throws PropertiesApplierException;
+    protected abstract int getWorkerId(final String workerName);
     
     /**
      * Get the worker ID from the splitted property key, either a number (ID), worker name or in the form GENIDx
@@ -227,7 +331,7 @@ public abstract class PropertiesApplier {
      * @param splittedKey
      * @return worker ID
      */
-    private int translateWorkerPropertyKey(final String splittedKey) throws PropertiesApplierException {
+    private int translateWorkerPropertyKey(final String splittedKey) {
         final int workerid;
         if (splittedKey.substring(0, 1).matches("\\d")) {
             workerid = Integer.parseInt(splittedKey);
@@ -245,7 +349,14 @@ public abstract class PropertiesApplier {
         return workerid;
     }
     
-    private String translateGlobalPropertyKey(final String propertyKey) throws PropertiesApplierException {
+    /**
+     * Translate a global property.
+     * Will map generated worker IDs and worker names to worker IDs.
+     * 
+     * @param propertyKey Property key
+     * @return Translated property key
+     */
+    private String translateGlobalPropertyKey(final String propertyKey) {
         String strippedKey = propertyKey;
         String key = strippedKey;
         if (strippedKey.startsWith(WORKER_PREFIX + GENID)

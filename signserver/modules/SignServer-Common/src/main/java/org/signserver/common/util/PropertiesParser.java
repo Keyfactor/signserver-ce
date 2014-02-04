@@ -35,9 +35,7 @@ public class PropertiesParser {
     public static final String OLDWORKER_PREFIX = "SIGNER";
     public static final String REMOVE_PREFIX = "-";
     public static final String GENID = "GENID";
-    
-    private List<Integer> workerDeclarations = new ArrayList<Integer>();
-    
+   
     /**
      * Representation of a global property.
      * This only represents the identity of a property, not the actual property value (instance).
@@ -245,16 +243,6 @@ public class PropertiesParser {
         }
     }
 
-    /**
-     * Method that returns a list of all worker declarations that
-     * have been sent through this set property helper until now.
-     * 
-     * @return workerId a list of worker id's.
-     */
-    public List<Integer> getKeyWorkerDeclarations() {
-        return workerDeclarations;
-    }
-    
     /**
      * Get list of error messages from parsing.
      * 

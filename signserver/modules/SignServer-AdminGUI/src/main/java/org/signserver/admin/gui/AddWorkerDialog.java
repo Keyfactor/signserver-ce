@@ -105,11 +105,8 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         // free text configuration editor
         reloadButton.setEnabled(configurationEdited);
         
-        // set the text of the Cancel/Back button depending on the stage
-        // Cancel is shown in the initial config stage, Back is shown in the
-        // edit properties stage
-        cancelBackButton.setText(stage == Stage.INITIAL_CONFIG ?
-                                        "Cancel" : "Back");
+        // only enable the back button in the last step...
+        backButton.setEnabled(stage == Stage.EDIT_PROPERTIES);
         // similarily, set the appropriate text for the "Next"/"Apply" button
         nextApplyButton.setText(stage == Stage.INITIAL_CONFIG ? "Next" : "Apply");
     
@@ -160,7 +157,7 @@ public class AddWorkerDialog extends javax.swing.JDialog {
     private void initComponents() {
 
         nextApplyButton = new javax.swing.JButton();
-        cancelBackButton = new javax.swing.JButton();
+        backButton = new javax.swing.JButton();
         addWorkerTabbedPanel = new javax.swing.JTabbedPane();
         initialSetupPanel = new javax.swing.JPanel();
         removePropertyButton = new javax.swing.JButton();
@@ -186,6 +183,7 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         configurationScrollPane = new javax.swing.JScrollPane();
         configurationTextArea = new javax.swing.JTextArea();
         reloadButton = new javax.swing.JButton();
+        cancelButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setName("Form"); // NOI18N
@@ -199,11 +197,11 @@ public class AddWorkerDialog extends javax.swing.JDialog {
             }
         });
 
-        cancelBackButton.setText(resourceMap.getString("cancelBackButton.text")); // NOI18N
-        cancelBackButton.setName("cancelBackButton"); // NOI18N
-        cancelBackButton.addActionListener(new java.awt.event.ActionListener() {
+        backButton.setText(resourceMap.getString("backButton.text")); // NOI18N
+        backButton.setName("backButton"); // NOI18N
+        backButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelBackButtonActionPerformed(evt);
+                backButtonActionPerformed(evt);
             }
         });
 
@@ -298,7 +296,7 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         initialSetupPanel.setLayout(initialSetupPanelLayout);
         initialSetupPanelLayout.setHorizontalGroup(
             initialSetupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 789, Short.MAX_VALUE)
+            .addGap(0, 801, Short.MAX_VALUE)
             .addGroup(initialSetupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(initialSetupPanelLayout.createSequentialGroup()
                     .addGap(11, 11, 11)
@@ -307,7 +305,7 @@ public class AddWorkerDialog extends javax.swing.JDialog {
                             .addComponent(editWorkerPropertiesRadioButton)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, initialSetupPanelLayout.createSequentialGroup()
                                 .addComponent(filePathTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 717, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 23, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 35, Short.MAX_VALUE)
                                 .addComponent(filePathBrowseButton))
                             .addComponent(loadFromFileRadioButton, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, initialSetupPanelLayout.createSequentialGroup()
@@ -315,24 +313,24 @@ public class AddWorkerDialog extends javax.swing.JDialog {
                                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, initialSetupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                         .addComponent(workerNameLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(workerImplementationLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 486, Short.MAX_VALUE))
-                                    .addComponent(workerIdLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 486, Short.MAX_VALUE)
-                                    .addComponent(tokenImplementationLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 486, Short.MAX_VALUE))
+                                    .addComponent(workerIdLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 492, Short.MAX_VALUE)
+                                    .addComponent(tokenImplementationLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 492, Short.MAX_VALUE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(initialSetupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(workerIDField, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(workerNameField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 268, Short.MAX_VALUE)
-                                    .addComponent(workerImplementationField, javax.swing.GroupLayout.DEFAULT_SIZE, 268, Short.MAX_VALUE)
-                                    .addComponent(tokenImplementationField, javax.swing.GroupLayout.DEFAULT_SIZE, 268, Short.MAX_VALUE)))
+                                    .addComponent(workerNameField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 274, Short.MAX_VALUE)
+                                    .addComponent(workerImplementationField, javax.swing.GroupLayout.DEFAULT_SIZE, 274, Short.MAX_VALUE)
+                                    .addComponent(tokenImplementationField, javax.swing.GroupLayout.DEFAULT_SIZE, 274, Short.MAX_VALUE)))
                             .addGroup(initialSetupPanelLayout.createSequentialGroup()
                                 .addComponent(propertiesScrollPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 684, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(initialSetupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(addPropertyButton, javax.swing.GroupLayout.DEFAULT_SIZE, 76, Short.MAX_VALUE)
-                                    .addComponent(editPropertyButton, javax.swing.GroupLayout.DEFAULT_SIZE, 76, Short.MAX_VALUE)
-                                    .addComponent(removePropertyButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                                    .addComponent(addPropertyButton, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE)
+                                    .addComponent(editPropertyButton, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE)
+                                    .addComponent(removePropertyButton, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE))))
                         .addGroup(initialSetupPanelLayout.createSequentialGroup()
                             .addComponent(propertiesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 745, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 33, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGap(12, 12, 12)))
         );
         initialSetupPanelLayout.setVerticalGroup(
@@ -403,12 +401,12 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         configurationPanel.setLayout(configurationPanelLayout);
         configurationPanelLayout.setHorizontalGroup(
             configurationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 789, Short.MAX_VALUE)
+            .addGap(0, 801, Short.MAX_VALUE)
             .addGroup(configurationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(configurationPanelLayout.createSequentialGroup()
                     .addGap(32, 32, 32)
                     .addGroup(configurationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(configurationScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 725, Short.MAX_VALUE)
+                        .addComponent(configurationScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 737, Short.MAX_VALUE)
                         .addComponent(configurationLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 720, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGap(32, 32, 32)))
         );
@@ -434,20 +432,30 @@ public class AddWorkerDialog extends javax.swing.JDialog {
             }
         });
 
+        cancelButton.setText(resourceMap.getString("cancelButton.text")); // NOI18N
+        cancelButton.setName("cancelButton"); // NOI18N
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(reloadButton)
-                .addGap(576, 576, 576)
-                .addComponent(cancelBackButton, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(nextApplyButton, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE)
-                .addContainerGap())
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(addWorkerTabbedPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 809, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(reloadButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 470, Short.MAX_VALUE)
+                        .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(backButton, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(nextApplyButton, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(addWorkerTabbedPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 821, Short.MAX_VALUE))
                 .addGap(24, 24, 24))
         );
         layout.setVerticalGroup(
@@ -456,9 +464,10 @@ public class AddWorkerDialog extends javax.swing.JDialog {
                 .addComponent(addWorkerTabbedPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 531, Short.MAX_VALUE)
                 .addGap(23, 23, 23)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cancelBackButton)
+                    .addComponent(reloadButton)
                     .addComponent(nextApplyButton)
-                    .addComponent(reloadButton))
+                    .addComponent(backButton)
+                    .addComponent(cancelButton))
                 .addContainerGap())
         );
 
@@ -544,20 +553,13 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         loadConfigurationEditor();
     }//GEN-LAST:event_reloadButtonActionPerformed
 
-    private void cancelBackButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelBackButtonActionPerformed
-        switch (stage) {
-            case INITIAL_CONFIG:
-                // cloase dialog
-                this.dispose();
-                break;
-            case EDIT_PROPERTIES:
-                goBackToInitialConfig();
-                break;
-            default:
-                // should not happen
-                break;
-        }
-    }//GEN-LAST:event_cancelBackButtonActionPerformed
+    private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backButtonActionPerformed
+        goBackToInitialConfig();
+    }//GEN-LAST:event_backButtonActionPerformed
+
+    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+        dispose();
+    }//GEN-LAST:event_cancelButtonActionPerformed
 
     private void goBackToInitialConfig() {
         addWorkerTabbedPanel.setSelectedIndex(0);
@@ -622,7 +624,8 @@ public class AddWorkerDialog extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addPropertyButton;
     private javax.swing.JTabbedPane addWorkerTabbedPanel;
-    private javax.swing.JButton cancelBackButton;
+    private javax.swing.JButton backButton;
+    private javax.swing.JButton cancelButton;
     private javax.swing.JLabel configurationLabel;
     private javax.swing.JPanel configurationPanel;
     private javax.swing.JScrollPane configurationScrollPane;

@@ -23,17 +23,20 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" attributes="0">
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="reloadButton" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="576" max="-2" attributes="0"/>
-              <Component id="cancelBackButton" min="-2" pref="74" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="nextApplyButton" pref="96" max="32767" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
-          </Group>
-          <Group type="102" alignment="0" attributes="0">
-              <Component id="addWorkerTabbedPanel" pref="809" max="32767" attributes="0"/>
+          <Group type="102" alignment="1" attributes="0">
+              <Group type="103" groupAlignment="1" attributes="0">
+                  <Group type="102" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="reloadButton" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace pref="470" max="32767" attributes="0"/>
+                      <Component id="cancelButton" min="-2" pref="86" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="backButton" min="-2" pref="74" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="nextApplyButton" min="-2" pref="110" max="-2" attributes="0"/>
+                  </Group>
+                  <Component id="addWorkerTabbedPanel" alignment="1" pref="821" max="32767" attributes="0"/>
+              </Group>
               <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
           </Group>
       </Group>
@@ -44,9 +47,10 @@
               <Component id="addWorkerTabbedPanel" pref="531" max="32767" attributes="0"/>
               <EmptySpace min="-2" pref="23" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="cancelBackButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="nextApplyButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="reloadButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="nextApplyButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="backButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="cancelButton" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -63,13 +67,13 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="nextApplyButtonActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JButton" name="cancelBackButton">
+    <Component class="javax.swing.JButton" name="backButton">
       <Properties>
-        <Property name="text" type="java.lang.String" resourceKey="cancelBackButton.text"/>
-        <Property name="name" type="java.lang.String" value="cancelBackButton" noResource="true"/>
+        <Property name="text" type="java.lang.String" resourceKey="backButton.text"/>
+        <Property name="name" type="java.lang.String" value="backButton" noResource="true"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cancelBackButtonActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="backButtonActionPerformed"/>
       </Events>
     </Component>
     <Container class="javax.swing.JTabbedPane" name="addWorkerTabbedPanel">
@@ -94,7 +98,7 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <EmptySpace min="0" pref="789" max="32767" attributes="0"/>
+                  <EmptySpace min="0" pref="801" max="32767" attributes="0"/>
                   <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
@@ -103,7 +107,7 @@
                                   <Component id="editWorkerPropertiesRadioButton" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Group type="102" alignment="1" attributes="0">
                                       <Component id="filePathTextField" min="-2" pref="717" max="-2" attributes="0"/>
-                                      <EmptySpace pref="23" max="32767" attributes="0"/>
+                                      <EmptySpace pref="35" max="32767" attributes="0"/>
                                       <Component id="filePathBrowseButton" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <Component id="loadFromFileRadioButton" alignment="0" min="-2" pref="133" max="-2" attributes="0"/>
@@ -113,30 +117,30 @@
                                               <Component id="workerNameLabel" alignment="1" max="32767" attributes="1"/>
                                               <Component id="workerImplementationLabel" alignment="0" pref="486" max="32767" attributes="1"/>
                                           </Group>
-                                          <Component id="workerIdLabel" alignment="1" pref="486" max="32767" attributes="1"/>
-                                          <Component id="tokenImplementationLabel" alignment="1" pref="486" max="32767" attributes="1"/>
+                                          <Component id="workerIdLabel" alignment="1" pref="492" max="32767" attributes="1"/>
+                                          <Component id="tokenImplementationLabel" alignment="1" pref="492" max="32767" attributes="1"/>
                                       </Group>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
                                           <Component id="workerIDField" alignment="0" min="-2" pref="80" max="-2" attributes="0"/>
-                                          <Component id="workerNameField" alignment="1" pref="268" max="32767" attributes="1"/>
-                                          <Component id="workerImplementationField" alignment="0" pref="268" max="32767" attributes="1"/>
-                                          <Component id="tokenImplementationField" alignment="0" pref="268" max="32767" attributes="1"/>
+                                          <Component id="workerNameField" alignment="1" pref="274" max="32767" attributes="1"/>
+                                          <Component id="workerImplementationField" alignment="0" pref="274" max="32767" attributes="1"/>
+                                          <Component id="tokenImplementationField" alignment="0" pref="274" max="32767" attributes="1"/>
                                       </Group>
                                   </Group>
                                   <Group type="102" alignment="0" attributes="0">
                                       <Component id="propertiesScrollPanel" min="-2" pref="684" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="addPropertyButton" alignment="0" pref="76" max="32767" attributes="0"/>
-                                          <Component id="editPropertyButton" alignment="0" pref="76" max="32767" attributes="0"/>
-                                          <Component id="removePropertyButton" alignment="0" max="32767" attributes="0"/>
+                                          <Component id="addPropertyButton" alignment="0" pref="88" max="32767" attributes="0"/>
+                                          <Component id="editPropertyButton" alignment="0" pref="88" max="32767" attributes="0"/>
+                                          <Component id="removePropertyButton" alignment="0" pref="88" max="32767" attributes="0"/>
                                       </Group>
                                   </Group>
                               </Group>
                               <Group type="102" alignment="0" attributes="0">
                                   <Component id="propertiesLabel" min="-2" pref="745" max="-2" attributes="0"/>
-                                  <EmptySpace pref="21" max="-2" attributes="0"/>
+                                  <EmptySpace pref="33" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                           <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
@@ -371,12 +375,12 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <EmptySpace min="0" pref="789" max="32767" attributes="0"/>
+                  <EmptySpace min="0" pref="801" max="32767" attributes="0"/>
                   <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="configurationScrollPane" alignment="0" pref="725" max="32767" attributes="1"/>
+                              <Component id="configurationScrollPane" alignment="0" pref="737" max="32767" attributes="1"/>
                               <Component id="configurationLabel" alignment="0" min="-2" pref="720" max="-2" attributes="1"/>
                           </Group>
                           <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
@@ -440,6 +444,15 @@
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="reloadButtonActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="cancelButton">
+      <Properties>
+        <Property name="text" type="java.lang.String" resourceKey="cancelButton.text"/>
+        <Property name="name" type="java.lang.String" value="cancelButton" noResource="true"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cancelButtonActionPerformed"/>
       </Events>
     </Component>
   </SubComponents>

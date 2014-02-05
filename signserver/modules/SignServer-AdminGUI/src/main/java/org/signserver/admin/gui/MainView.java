@@ -92,6 +92,10 @@ public class MainView extends FrameView {
     private Worker selectedWorker;
     private Worker selectedWorkerBeforeRefresh;
     
+    // holds a list of modified workers after running the add worker wizard
+    // is used by the refresh background task to select these workers
+    private List<Integer> modifiedWorkers = null;
+    
     private AuditlogTableModel auditlogModel = new AuditlogTableModel();
     private ConditionsTableModel conditionsModel = new ConditionsTableModel();
     
@@ -2024,17 +2028,38 @@ private void addWorkerItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN
     
     addWorkerDialog.setVisible(true);
     
-    final List<Integer> modifiedWorkers = addWorkerDialog.getModifiedWorkers();
+    modifiedWorkers = addWorkerDialog.getModifiedWorkers();
     
     if (modifiedWorkers != null) {
         JOptionPane.showMessageDialog(getFrame(),
                 "Added/modified workers with the following IDs: \n" +
                 StringUtils.join(modifiedWorkers.toArray(), ","), "Loaded",
                 JOptionPane.INFORMATION_MESSAGE);
+    
+        
+        getContext().getTaskService().execute(refreshWorkers());
     }
     
-    getContext().getTaskService().execute(refreshWorkers());
+    
 }//GEN-LAST:event_addWorkerItemActionPerformed
+
+    private void selectWorkers(final List<Integer> workerIds) {
+        final int numSelected = workerIds.size();
+        final int[] indices = new int[numSelected];
+        
+        for (int i = 0; i < numSelected; i++) {
+            for (int j = 0; j < allWorkers.size(); j++) {
+                final Worker worker = allWorkers.get(j);
+                
+                if (worker.getWorkerId() == workerIds.get(i)) {
+                    indices[i] = j;
+                    break;
+                }
+            }
+        }
+        
+        workersList.setSelectedIndices(indices);
+    }
 
     private void exportRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportRadioButtonActionPerformed
 
@@ -2304,24 +2329,47 @@ private void displayLogEntryAction() {
             
             final List<Worker> newWorkers = result;
 
-            // Save selection
-            ArrayList<Integer> indices = new ArrayList<Integer>();
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Selected signers: " + selectedWorkers);
-            }
-            for (Worker w : selectedWorkers) {
-                int index = newWorkers.indexOf(w);
-                if (index != -1) {
-                    indices.add(index);
-                } else {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug(w + " is not in " + selectedWorkers);
+            
+            int[] ints;
+            
+            if (modifiedWorkers != null) {
+                // select added/modified workers from the add worker wizard
+                final int numModified = modifiedWorkers.size();
+                ints = new int[numModified];
+                
+                for (int i = 0; i < numModified; i++) {
+                    for (int j = 0; j < newWorkers.size(); j++) {
+                        final Worker worker = newWorkers.get(j);
+                        
+                        if (worker.getWorkerId() == modifiedWorkers.get(i)) {
+                            ints[i] = j;
+                            break;
+                        }
                     }
                 }
-            }
-            int[] ints = new int[indices.size()];
-            for (int i = 0; i < indices.size(); i++) {
-                ints[i] = indices.get(i);
+                modifiedWorkers = null;
+                
+            } else {
+                // Save selection
+                ArrayList<Integer> indices = new ArrayList<Integer>();
+                
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Selected signers: " + selectedWorkers);
+                }
+                for (Worker w : selectedWorkers) {
+                    int index = newWorkers.indexOf(w);
+                    if (index != -1) {
+                        indices.add(index);
+                    } else {
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug(w + " is not in " + selectedWorkers);
+                        }
+                    }
+                }
+                ints = new int[indices.size()];
+                for (int i = 0; i < indices.size(); i++) {
+                    ints[i] = indices.get(i);
+                }
             }
 
             workersList.revalidate();

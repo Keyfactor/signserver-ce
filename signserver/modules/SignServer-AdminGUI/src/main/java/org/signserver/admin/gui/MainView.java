@@ -94,6 +94,12 @@ public class MainView extends FrameView {
     private AuditlogTableModel auditlogModel = new AuditlogTableModel();
     private ConditionsTableModel conditionsModel = new ConditionsTableModel();
     
+    /**
+     * The value of exportAllUnrelatedCheckbox before user selects "No workers"
+     * and it is automagically selected. Stored so we can go back to the 
+     * previous value.
+     */
+    private boolean exportAllUnrelatedPreviousValue;
     
     private static String[] statusColumns = {
         "Property", "Value"
@@ -323,6 +329,7 @@ public class MainView extends FrameView {
         menuBar = new javax.swing.JMenuBar();
         javax.swing.JMenu fileMenu = new javax.swing.JMenu();
         addWorkerItem = new javax.swing.JMenuItem();
+        exportMenuItem = new javax.swing.JMenuItem();
         javax.swing.JMenuItem exitMenuItem = new javax.swing.JMenuItem();
         editMenu = new javax.swing.JMenu();
         activateMenu = new javax.swing.JMenuItem();
@@ -442,7 +449,14 @@ public class MainView extends FrameView {
         reloadAllWorkersRadioButton = new javax.swing.JRadioButton();
         reloadSelectedWorkersRadioButton = new javax.swing.JRadioButton();
         jLabel9 = new javax.swing.JLabel();
-        buttonGroup1 = new javax.swing.ButtonGroup();
+        reloadPanelButtonGroup = new javax.swing.ButtonGroup();
+        exportPanel = new javax.swing.JPanel();
+        jLabel10 = new javax.swing.JLabel();
+        exportAllRadioButton = new javax.swing.JRadioButton();
+        exportSelectedRadioButton = new javax.swing.JRadioButton();
+        exportNoRadioButton = new javax.swing.JRadioButton();
+        exportAllUnrelatedGlobalCheckbox = new javax.swing.JCheckBox();
+        exportPanelButtonGroup = new javax.swing.ButtonGroup();
 
         menuBar.setName("menuBar"); // NOI18N
 
@@ -461,6 +475,11 @@ public class MainView extends FrameView {
         fileMenu.add(addWorkerItem);
 
         javax.swing.ActionMap actionMap = org.jdesktop.application.Application.getInstance(org.signserver.admin.gui.SignServerAdminGUIApplication.class).getContext().getActionMap(MainView.class, this);
+        exportMenuItem.setAction(actionMap.get("exportConfig")); // NOI18N
+        exportMenuItem.setText(resourceMap.getString("exportMenuItem.text")); // NOI18N
+        exportMenuItem.setName("exportMenuItem"); // NOI18N
+        fileMenu.add(exportMenuItem);
+
         exitMenuItem.setAction(actionMap.get("quit")); // NOI18N
         exitMenuItem.setName("exitMenuItem"); // NOI18N
         fileMenu.add(exitMenuItem);
@@ -939,13 +958,13 @@ public class MainView extends FrameView {
         statusPropertiesTabLayout.setHorizontalGroup(
             statusPropertiesTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, statusPropertiesTabLayout.createSequentialGroup()
-                .addContainerGap(801, Short.MAX_VALUE)
+                .addContainerGap(501, Short.MAX_VALUE)
                 .addComponent(statusPropertiesDetailsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
             .addGroup(statusPropertiesTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(statusPropertiesTabLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(statusPropertiesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 773, Short.MAX_VALUE)
+                    .addComponent(statusPropertiesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 473, Short.MAX_VALUE)
                     .addGap(112, 112, 112)))
         );
         statusPropertiesTabLayout.setVerticalGroup(
@@ -1026,7 +1045,7 @@ public class MainView extends FrameView {
             configurationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, configurationTabLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 763, Short.MAX_VALUE)
+                .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 463, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(configurationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(addButton)
@@ -1124,7 +1143,7 @@ public class MainView extends FrameView {
         authorizationTabLayout.setHorizontalGroup(
             authorizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(authorizationTabLayout.createSequentialGroup()
-                .addContainerGap(786, Short.MAX_VALUE)
+                .addContainerGap(486, Short.MAX_VALUE)
                 .addGroup(authorizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(authAddButton, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(authEditButton, javax.swing.GroupLayout.Alignment.TRAILING)
@@ -1133,7 +1152,7 @@ public class MainView extends FrameView {
             .addGroup(authorizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(authorizationTabLayout.createSequentialGroup()
                     .addGap(6, 6, 6)
-                    .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 767, Short.MAX_VALUE)
+                    .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 467, Short.MAX_VALUE)
                     .addGap(124, 124, 124)))
         );
 
@@ -1165,8 +1184,8 @@ public class MainView extends FrameView {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(workerTabbedPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 905, Short.MAX_VALUE)
-                    .addComponent(workerComboBox, javax.swing.GroupLayout.Alignment.LEADING, 0, 905, Short.MAX_VALUE))
+                    .addComponent(workerTabbedPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 605, Short.MAX_VALUE)
+                    .addComponent(workerComboBox, javax.swing.GroupLayout.Alignment.LEADING, 0, 605, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -1275,7 +1294,7 @@ public class MainView extends FrameView {
                         .addComponent(jButtonAuditConditionAdd)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButtonAuditConditionRemove))
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 87, Short.MAX_VALUE))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 387, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -1381,9 +1400,9 @@ public class MainView extends FrameView {
         );
         auditlogTablePanelLayout.setVerticalGroup(
             auditlogTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 430, Short.MAX_VALUE)
+            .addGap(0, 130, Short.MAX_VALUE)
             .addGroup(auditlogTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(auditlogTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 430, Short.MAX_VALUE))
+                .addComponent(auditlogTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE))
         );
 
         auditlogPanel.add(auditlogTablePanel, "auditlogTableCard");
@@ -1404,7 +1423,7 @@ public class MainView extends FrameView {
         );
         auditlogErrorPanelLayout.setVerticalGroup(
             auditlogErrorPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 430, Short.MAX_VALUE)
+            .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE)
         );
 
         auditlogPanel.add(auditlogErrorPanel, "auditlogErrorCard");
@@ -1436,7 +1455,7 @@ public class MainView extends FrameView {
             .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel3Layout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(auditlogPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(auditlogPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 1161, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -1457,11 +1476,11 @@ public class MainView extends FrameView {
                         .addComponent(auditlogDisplayingToIndex)
                         .addComponent(jLabel8)
                         .addComponent(auditlogMaxEntriesTextfield, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(459, Short.MAX_VALUE))
+                .addContainerGap(159, Short.MAX_VALUE))
             .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                     .addGap(59, 59, 59)
-                    .addComponent(auditlogPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 430, Short.MAX_VALUE)
+                    .addComponent(auditlogPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -1518,11 +1537,11 @@ public class MainView extends FrameView {
         jEditorPane1.setText(resourceMap.getString("jEditorPane1.text")); // NOI18N
         jEditorPane1.setName("jEditorPane1"); // NOI18N
 
-        buttonGroup1.add(reloadAllWorkersRadioButton);
+        reloadPanelButtonGroup.add(reloadAllWorkersRadioButton);
         reloadAllWorkersRadioButton.setText(resourceMap.getString("reloadAllWorkersRadioButton.text")); // NOI18N
         reloadAllWorkersRadioButton.setName("reloadAllWorkersRadioButton"); // NOI18N
 
-        buttonGroup1.add(reloadSelectedWorkersRadioButton);
+        reloadPanelButtonGroup.add(reloadSelectedWorkersRadioButton);
         reloadSelectedWorkersRadioButton.setText(resourceMap.getString("reloadSelectedWorkersRadioButton.text")); // NOI18N
         reloadSelectedWorkersRadioButton.setName("reloadSelectedWorkersRadioButton"); // NOI18N
 
@@ -1558,6 +1577,77 @@ public class MainView extends FrameView {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(reloadSelectedWorkersRadioButton)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        exportPanel.setName("exportPanel"); // NOI18N
+
+        jLabel10.setText(resourceMap.getString("jLabel10.text")); // NOI18N
+        jLabel10.setName("jLabel10"); // NOI18N
+
+        exportPanelButtonGroup.add(exportAllRadioButton);
+        exportAllRadioButton.setText(resourceMap.getString("exportAllRadioButton.text")); // NOI18N
+        exportAllRadioButton.setName("exportAllRadioButton"); // NOI18N
+        exportAllRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportRadioButtonActionPerformed(evt);
+            }
+        });
+
+        exportPanelButtonGroup.add(exportSelectedRadioButton);
+        exportSelectedRadioButton.setText(resourceMap.getString("exportSelectedRadioButton.text")); // NOI18N
+        exportSelectedRadioButton.setName("exportSelectedRadioButton"); // NOI18N
+        exportSelectedRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportRadioButtonActionPerformed(evt);
+            }
+        });
+
+        exportPanelButtonGroup.add(exportNoRadioButton);
+        exportNoRadioButton.setText(resourceMap.getString("exportNoRadioButton.text")); // NOI18N
+        exportNoRadioButton.setName("exportNoRadioButton"); // NOI18N
+        exportNoRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportRadioButtonActionPerformed(evt);
+            }
+        });
+
+        exportAllUnrelatedGlobalCheckbox.setText(resourceMap.getString("exportAllUnrelatedGlobalCheckbox.text")); // NOI18N
+        exportAllUnrelatedGlobalCheckbox.setName("exportAllUnrelatedGlobalCheckbox"); // NOI18N
+
+        javax.swing.GroupLayout exportPanelLayout = new javax.swing.GroupLayout(exportPanel);
+        exportPanel.setLayout(exportPanelLayout);
+        exportPanelLayout.setHorizontalGroup(
+            exportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, 475, Short.MAX_VALUE)
+            .addGroup(exportPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(exportSelectedRadioButton, javax.swing.GroupLayout.DEFAULT_SIZE, 451, Short.MAX_VALUE)
+                .addContainerGap())
+            .addGroup(exportPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(exportNoRadioButton, javax.swing.GroupLayout.DEFAULT_SIZE, 451, Short.MAX_VALUE)
+                .addContainerGap())
+            .addGroup(exportPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(exportAllUnrelatedGlobalCheckbox, javax.swing.GroupLayout.DEFAULT_SIZE, 451, Short.MAX_VALUE)
+                .addContainerGap())
+            .addGroup(exportPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(exportAllRadioButton, javax.swing.GroupLayout.DEFAULT_SIZE, 451, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        exportPanelLayout.setVerticalGroup(
+            exportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(exportPanelLayout.createSequentialGroup()
+                .addComponent(jLabel10)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(exportAllRadioButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(exportSelectedRadioButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(exportNoRadioButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(exportAllUnrelatedGlobalCheckbox))
         );
 
         setComponent(jTabbedPane1);
@@ -1934,6 +2024,18 @@ private void addWorkerItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN
     addWorkerDialog.setVisible(true);
     getContext().getTaskService().execute(refreshWorkers());
 }//GEN-LAST:event_addWorkerItemActionPerformed
+
+    private void exportRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportRadioButtonActionPerformed
+
+        if (evt.getSource() == exportNoRadioButton) {
+            exportAllUnrelatedGlobalCheckbox.setEnabled(false);
+            exportAllUnrelatedPreviousValue = exportAllUnrelatedGlobalCheckbox.isSelected();
+            exportAllUnrelatedGlobalCheckbox.setSelected(true);
+        } else {
+            exportAllUnrelatedGlobalCheckbox.setEnabled(true);
+            exportAllUnrelatedGlobalCheckbox.setSelected(exportAllUnrelatedPreviousValue);
+        }
+    }//GEN-LAST:event_exportRadioButtonActionPerformed
 
 private void displayLogEntryAction() {
     final int sel = auditLogTable.getSelectedRow();
@@ -2881,6 +2983,45 @@ private void displayLogEntryAction() {
         }
     }
 
+    @Action(block = Task.BlockingScope.WINDOW)
+    public Task exportConfig() {
+        return new ExportConfigTask(getApplication());
+    }
+
+    private class ExportConfigTask extends org.jdesktop.application.Task<Object, Void> {
+        
+        private final int[] selected;
+        private final boolean confirmed;
+        private final boolean exportAllUnrelatedGlobal;
+        
+        ExportConfigTask(org.jdesktop.application.Application app) {
+            // Runs on the EDT.  Copy GUI state that
+            // doInBackground() depends on from parameters
+            // to ExportConfigTask fields, here.
+            super(app);
+            selected = workersList.getSelectedIndices();
+            
+            exportSelectedRadioButton.setEnabled(selected.length > 0);
+            exportSelectedRadioButton.setSelected(selected.length > 0);
+            exportAllRadioButton.setSelected(selected.length == 0);
+            exportAllUnrelatedGlobalCheckbox.setSelected(false);
+            exportAllUnrelatedPreviousValue = false;
+            confirmed = JOptionPane.showConfirmDialog(MainView.this.getFrame(), exportPanel, "Export configuration", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION;
+            exportAllUnrelatedGlobal = exportAllUnrelatedGlobalCheckbox.isSelected();
+        }
+        @Override protected Object doInBackground() {
+            // Your Task's code here.  This method runs
+            // on a background thread, so don't reference
+            // the Swing GUI from here.
+            return null;  // return your result
+        }
+        @Override protected void succeeded(Object result) {
+            // Runs on the EDT.  Update the GUI based on
+            // the result computed by doInBackground().
+        }
+    }
+
+
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -2911,7 +3052,6 @@ private void displayLogEntryAction() {
     javax.swing.JTable authTable;
     javax.swing.JPanel authorizationTab;
     javax.swing.JMenuItem authorizationsMenu;
-    javax.swing.ButtonGroup buttonGroup1;
     javax.swing.JTable conditionsTable;
     javax.swing.JMenuItem configurationMenu;
     javax.swing.JPanel configurationTab;
@@ -2926,6 +3066,13 @@ private void displayLogEntryAction() {
     javax.swing.JTextArea editPropertyValueTextArea;
     javax.swing.JTextField editSerialNumberTextfield;
     javax.swing.JCheckBox editUpdateAllCheckbox;
+    javax.swing.JRadioButton exportAllRadioButton;
+    javax.swing.JCheckBox exportAllUnrelatedGlobalCheckbox;
+    javax.swing.JMenuItem exportMenuItem;
+    javax.swing.JRadioButton exportNoRadioButton;
+    javax.swing.JPanel exportPanel;
+    javax.swing.ButtonGroup exportPanelButtonGroup;
+    javax.swing.JRadioButton exportSelectedRadioButton;
     javax.swing.JMenuItem generateRequestMenu;
     javax.swing.JButton generateRequestsButton;
     javax.swing.JMenuItem globalConfigurationMenu;
@@ -2935,6 +3082,7 @@ private void displayLogEntryAction() {
     javax.swing.JButton jButtonAuditConditionRemove;
     javax.swing.JEditorPane jEditorPane1;
     javax.swing.JLabel jLabel1;
+    javax.swing.JLabel jLabel10;
     javax.swing.JLabel jLabel2;
     javax.swing.JLabel jLabel3;
     javax.swing.JLabel jLabel4;
@@ -2978,6 +3126,7 @@ private void displayLogEntryAction() {
     javax.swing.JRadioButton reloadAllWorkersRadioButton;
     javax.swing.JMenuItem reloadMenu;
     javax.swing.JPanel reloadPanel;
+    javax.swing.ButtonGroup reloadPanelButtonGroup;
     javax.swing.JRadioButton reloadSelectedWorkersRadioButton;
     javax.swing.JButton removeButton;
     javax.swing.JMenuItem removeKeyMenu;

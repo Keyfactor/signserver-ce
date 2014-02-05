@@ -31,6 +31,15 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addWorkerItemActionPerformed"/>
               </Events>
             </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="exportMenuItem">
+              <Properties>
+                <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
+                  <action class="org.signserver.admin.gui.MainView" id="exportConfig" methodName="exportConfig"/>
+                </Property>
+                <Property name="text" type="java.lang.String" resourceKey="exportMenuItem.text"/>
+                <Property name="name" type="java.lang.String" value="exportMenuItem" noResource="true"/>
+              </Properties>
+            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="exitMenuItem">
               <Properties>
                 <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
@@ -758,8 +767,8 @@
                           <Group type="102" alignment="1" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="1" attributes="0">
-                                  <Component id="workerTabbedPane" alignment="0" pref="905" max="32767" attributes="0"/>
-                                  <Component id="workerComboBox" alignment="0" pref="905" max="32767" attributes="0"/>
+                                  <Component id="workerTabbedPane" alignment="0" pref="605" max="32767" attributes="0"/>
+                                  <Component id="workerComboBox" alignment="0" pref="605" max="32767" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
@@ -840,14 +849,14 @@
                             <DimensionLayout dim="0">
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="1" attributes="0">
-                                      <EmptySpace pref="801" max="32767" attributes="0"/>
+                                      <EmptySpace pref="501" max="32767" attributes="0"/>
                                       <Component id="statusPropertiesDetailsButton" min="-2" pref="84" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                   </Group>
                                   <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                                       <Group type="102" alignment="0" attributes="0">
                                           <EmptySpace min="-2" max="-2" attributes="0"/>
-                                          <Component id="statusPropertiesScrollPane" pref="773" max="32767" attributes="0"/>
+                                          <Component id="statusPropertiesScrollPane" pref="473" max="32767" attributes="0"/>
                                           <EmptySpace min="-2" pref="112" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
@@ -952,7 +961,7 @@
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="1" attributes="0">
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="jScrollPane6" pref="763" max="32767" attributes="0"/>
+                                      <Component id="jScrollPane6" pref="463" max="32767" attributes="0"/>
                                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="1" attributes="0">
                                           <Component id="addButton" linkSize="1" alignment="1" min="-2" max="-2" attributes="0"/>
@@ -1082,7 +1091,7 @@
                             <DimensionLayout dim="0">
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" attributes="0">
-                                      <EmptySpace pref="786" max="32767" attributes="0"/>
+                                      <EmptySpace pref="486" max="32767" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
                                           <Component id="authAddButton" linkSize="2" alignment="1" min="-2" max="-2" attributes="0"/>
                                           <Component id="authEditButton" linkSize="2" alignment="1" min="-2" max="-2" attributes="0"/>
@@ -1093,7 +1102,7 @@
                                   <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                                       <Group type="102" alignment="0" attributes="0">
                                           <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
-                                          <Component id="jScrollPane7" pref="767" max="32767" attributes="0"/>
+                                          <Component id="jScrollPane7" pref="467" max="32767" attributes="0"/>
                                           <EmptySpace min="-2" pref="124" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
@@ -1272,7 +1281,7 @@
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="jButtonAuditConditionRemove" min="-2" max="-2" attributes="0"/>
                                   </Group>
-                                  <Component id="jScrollPane3" alignment="0" pref="87" max="32767" attributes="0"/>
+                                  <Component id="jScrollPane3" alignment="0" pref="387" max="32767" attributes="0"/>
                               </Group>
                               <EmptySpace min="-2" max="-2" attributes="0"/>
                           </Group>
@@ -1375,7 +1384,7 @@
                           <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace min="-2" max="-2" attributes="0"/>
-                                  <Component id="auditlogPanel" max="32767" attributes="0"/>
+                                  <Component id="auditlogPanel" pref="1161" max="32767" attributes="0"/>
                                   <EmptySpace min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -1398,12 +1407,12 @@
                                       <Component id="auditlogMaxEntriesTextfield" alignment="3" min="-2" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
-                              <EmptySpace pref="459" max="32767" attributes="0"/>
+                              <EmptySpace pref="159" max="32767" attributes="0"/>
                           </Group>
                           <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="1" attributes="0">
                                   <EmptySpace min="-2" pref="59" max="-2" attributes="0"/>
-                                  <Component id="auditlogPanel" pref="430" max="32767" attributes="0"/>
+                                  <Component id="auditlogPanel" pref="130" max="32767" attributes="0"/>
                                   <EmptySpace min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -1519,9 +1528,9 @@
                             </DimensionLayout>
                             <DimensionLayout dim="1">
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <EmptySpace min="0" pref="430" max="32767" attributes="0"/>
+                                  <EmptySpace min="0" pref="130" max="32767" attributes="0"/>
                                   <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
-                                      <Component id="auditlogTableScrollPane" alignment="0" pref="430" max="32767" attributes="0"/>
+                                      <Component id="auditlogTableScrollPane" alignment="0" pref="130" max="32767" attributes="0"/>
                                   </Group>
                               </Group>
                             </DimensionLayout>
@@ -1598,7 +1607,7 @@
                             </DimensionLayout>
                             <DimensionLayout dim="1">
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jScrollPane5" alignment="0" pref="430" max="32767" attributes="0"/>
+                                  <Component id="jScrollPane5" alignment="0" pref="130" max="32767" attributes="0"/>
                               </Group>
                             </DimensionLayout>
                           </Layout>
@@ -1720,7 +1729,7 @@
         <Component class="javax.swing.JRadioButton" name="reloadAllWorkersRadioButton">
           <Properties>
             <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
-              <ComponentRef name="buttonGroup1"/>
+              <ComponentRef name="reloadPanelButtonGroup"/>
             </Property>
             <Property name="text" type="java.lang.String" resourceKey="reloadAllWorkersRadioButton.text"/>
             <Property name="name" type="java.lang.String" value="reloadAllWorkersRadioButton" noResource="true"/>
@@ -1729,7 +1738,7 @@
         <Component class="javax.swing.JRadioButton" name="reloadSelectedWorkersRadioButton">
           <Properties>
             <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
-              <ComponentRef name="buttonGroup1"/>
+              <ComponentRef name="reloadPanelButtonGroup"/>
             </Property>
             <Property name="text" type="java.lang.String" resourceKey="reloadSelectedWorkersRadioButton.text"/>
             <Property name="name" type="java.lang.String" value="reloadSelectedWorkersRadioButton" noResource="true"/>
@@ -1743,7 +1752,107 @@
         </Component>
       </SubComponents>
     </Container>
-    <Component class="javax.swing.ButtonGroup" name="buttonGroup1">
+    <Component class="javax.swing.ButtonGroup" name="reloadPanelButtonGroup">
+    </Component>
+    <Container class="javax.swing.JPanel" name="exportPanel">
+      <Properties>
+        <Property name="name" type="java.lang.String" value="exportPanel" noResource="true"/>
+      </Properties>
+
+      <Layout>
+        <DimensionLayout dim="0">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Component id="jLabel10" alignment="0" pref="475" max="32767" attributes="0"/>
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="exportSelectedRadioButton" pref="451" max="32767" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+              </Group>
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="exportNoRadioButton" pref="451" max="32767" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+              </Group>
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="exportAllUnrelatedGlobalCheckbox" pref="451" max="32767" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+              </Group>
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="exportAllRadioButton" pref="451" max="32767" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+        <DimensionLayout dim="1">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
+                  <Component id="jLabel10" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="exportAllRadioButton" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="exportSelectedRadioButton" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="exportNoRadioButton" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <Component id="exportAllUnrelatedGlobalCheckbox" min="-2" max="-2" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+      </Layout>
+      <SubComponents>
+        <Component class="javax.swing.JLabel" name="jLabel10">
+          <Properties>
+            <Property name="text" type="java.lang.String" resourceKey="jLabel10.text"/>
+            <Property name="name" type="java.lang.String" value="jLabel10" noResource="true"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JRadioButton" name="exportAllRadioButton">
+          <Properties>
+            <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+              <ComponentRef name="exportPanelButtonGroup"/>
+            </Property>
+            <Property name="text" type="java.lang.String" resourceKey="exportAllRadioButton.text"/>
+            <Property name="name" type="java.lang.String" value="exportAllRadioButton" noResource="true"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportRadioButtonActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JRadioButton" name="exportSelectedRadioButton">
+          <Properties>
+            <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+              <ComponentRef name="exportPanelButtonGroup"/>
+            </Property>
+            <Property name="text" type="java.lang.String" resourceKey="exportSelectedRadioButton.text"/>
+            <Property name="name" type="java.lang.String" value="exportSelectedRadioButton" noResource="true"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportRadioButtonActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JRadioButton" name="exportNoRadioButton">
+          <Properties>
+            <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+              <ComponentRef name="exportPanelButtonGroup"/>
+            </Property>
+            <Property name="text" type="java.lang.String" resourceKey="exportNoRadioButton.text"/>
+            <Property name="name" type="java.lang.String" value="exportNoRadioButton" noResource="true"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportRadioButtonActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JCheckBox" name="exportAllUnrelatedGlobalCheckbox">
+          <Properties>
+            <Property name="text" type="java.lang.String" resourceKey="exportAllUnrelatedGlobalCheckbox.text"/>
+            <Property name="name" type="java.lang.String" value="exportAllUnrelatedGlobalCheckbox" noResource="true"/>
+          </Properties>
+        </Component>
+      </SubComponents>
+    </Container>
+    <Component class="javax.swing.ButtonGroup" name="exportPanelButtonGroup">
     </Component>
   </NonVisualComponents>
   <Properties>

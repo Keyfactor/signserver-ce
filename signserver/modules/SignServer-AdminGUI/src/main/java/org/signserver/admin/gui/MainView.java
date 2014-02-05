@@ -45,6 +45,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.xml.datatype.XMLGregorianCalendar;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.cesecore.audit.impl.integrityprotected.AuditRecordData;
 import org.ejbca.util.CertTools;
@@ -2022,6 +2023,16 @@ private void addWorkerItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN
     final AddWorkerDialog addWorkerDialog = new AddWorkerDialog(getFrame(), true);
     
     addWorkerDialog.setVisible(true);
+    
+    final List<Integer> modifiedWorkers = addWorkerDialog.getModifiedWorkers();
+    
+    if (modifiedWorkers != null) {
+        JOptionPane.showMessageDialog(getFrame(),
+                "Added/modified workers with the following IDs: \n" +
+                StringUtils.join(modifiedWorkers.toArray(), ","), "Loaded",
+                JOptionPane.INFORMATION_MESSAGE);
+    }
+    
     getContext().getTaskService().execute(refreshWorkers());
 }//GEN-LAST:event_addWorkerItemActionPerformed
 

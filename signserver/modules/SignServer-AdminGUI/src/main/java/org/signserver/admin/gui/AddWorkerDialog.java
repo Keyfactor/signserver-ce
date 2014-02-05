@@ -83,6 +83,8 @@ public class AddWorkerDialog extends javax.swing.JDialog {
     private boolean configurationEdited = false;
     // keep track of newly selected file
     private boolean fileSelected = false;
+    
+    private List<Integer> modifiedWorkers;
 
     /** Creates new form AddWorkerDialog */
     public AddWorkerDialog(java.awt.Frame parent, boolean modal) {
@@ -573,6 +575,8 @@ public class AddWorkerDialog extends javax.swing.JDialog {
                         "Error", JOptionPane.ERROR_MESSAGE);
                 return false;
             }
+            
+            modifiedWorkers = applier.getWorkerIds();
         }
 
         return true;
@@ -642,6 +646,16 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         }
     }
 
+    /**
+     * Get a list of worker IDs added and modified by the apply operation.
+     * 
+     * @return List of worker IDs
+     */
+    public List<Integer> getModifiedWorkers() {
+        return modifiedWorkers;
+    }
+    
+    
     /**
      * @param args the command line arguments
      */

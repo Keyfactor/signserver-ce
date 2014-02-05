@@ -258,6 +258,13 @@ public class SignServerAdminGUIApplication extends SingleFrameApplication {
     public static String getServerHost() {
         return serverHost;
     }
+    
+    /**
+     * @return The AdminGUI base directory.
+     */
+    static File getBaseDir() {
+        return baseDir;
+    }
 
     /**
      * @return The selected admin certificate, if AdminWS used and available otherwise null

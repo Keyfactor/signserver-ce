@@ -486,9 +486,15 @@ public class AddWorkerDialog extends javax.swing.JDialog {
 
     private void filePathBrowseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_filePathBrowseButtonActionPerformed
         final JFileChooser chooser = new JFileChooser();
+        final File baseDir = SignServerAdminGUIApplication.getBaseDir();
+        final String basedirPath = baseDir.getAbsolutePath();
+        final File sampleDir =
+                new File(basedirPath + File.separator + "doc" + File.separator +
+                         "sample-configs");
 
         chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-
+        chooser.setCurrentDirectory(sampleDir.isDirectory() ? sampleDir : baseDir);
+        
         final int res = chooser.showOpenDialog(this);
 
         if (res == JFileChooser.APPROVE_OPTION) {

@@ -561,6 +561,8 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         if (parser.hasErrors()) {
             final List<String> errors = parser.getErrors();
             
+            // show the first error message from the parser, to avoid overflowing
+            // TODO: maybe add a "more errors..." view later...
             JOptionPane.showMessageDialog(this,
                     "Error parsing properties: " + errors.get(0),
                     "Error", JOptionPane.ERROR_MESSAGE);

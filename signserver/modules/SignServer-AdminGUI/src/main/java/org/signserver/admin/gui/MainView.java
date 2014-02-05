@@ -18,7 +18,13 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -32,11 +38,13 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.Vector;
+import java.util.logging.Level;
 import javax.ejb.EJBException;
 import javax.swing.AbstractListModel;
 import javax.swing.ComboBoxModel;
 import javax.swing.Icon;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -45,6 +53,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.xml.datatype.XMLGregorianCalendar;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.cesecore.audit.impl.integrityprotected.AuditRecordData;
@@ -72,6 +81,7 @@ import org.signserver.admin.gui.adminws.gen.WsGlobalConfiguration;
 import org.signserver.admin.gui.adminws.gen.WsWorkerConfig;
 import org.signserver.admin.gui.adminws.gen.WsWorkerStatus;
 import org.signserver.common.GlobalConfiguration;
+import org.signserver.common.util.PropertiesDumper;
 
 /**
  * The application's main frame.
@@ -3052,6 +3062,11 @@ private void displayLogEntryAction() {
         private final int[] selected;
         private final boolean confirmed;
         private final boolean exportAllUnrelatedGlobal;
+        private final boolean exportAll;
+        private final boolean exportSelected;
+        private final boolean exportNone;
+        
+        private final File file;
         
         ExportConfigTask(org.jdesktop.application.Application app) {
             // Runs on the EDT.  Copy GUI state that
@@ -3064,19 +3079,97 @@ private void displayLogEntryAction() {
             exportSelectedRadioButton.setSelected(selected.length > 0);
             exportAllRadioButton.setSelected(selected.length == 0);
             exportAllUnrelatedGlobalCheckbox.setSelected(false);
+            exportAllUnrelatedGlobalCheckbox.setEnabled(true);
             exportAllUnrelatedPreviousValue = false;
-            confirmed = JOptionPane.showConfirmDialog(MainView.this.getFrame(), exportPanel, "Export configuration", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION;
+            final boolean firstConfirm = JOptionPane.showConfirmDialog(MainView.this.getFrame(), exportPanel, "Export configuration", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION;
+            exportAll = exportAllRadioButton.isSelected();
+            exportSelected = exportSelectedRadioButton.isSelected();
+            exportNone = exportNoRadioButton.isSelected();
             exportAllUnrelatedGlobal = exportAllUnrelatedGlobalCheckbox.isSelected();
+            
+            if (firstConfirm) {
+                final JFileChooser chooser = new JFileChooser();
+                final File baseDir = SignServerAdminGUIApplication.getBaseDir();
+                final String basedirPath = baseDir.getAbsolutePath();
+                final File sampleDir =
+                        new File(basedirPath + File.separator + "doc" + File.separator +
+                                 "sample-configs");
+
+                chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                chooser.setCurrentDirectory(sampleDir.isDirectory() ? sampleDir : baseDir);
+
+                confirmed = chooser.showOpenDialog(MainView.this.getFrame()) == JFileChooser.APPROVE_OPTION;
+                file = chooser.getSelectedFile();
+            } else {
+                confirmed = false;
+                file = null;
+            }
         }
         @Override protected Object doInBackground() {
             // Your Task's code here.  This method runs
             // on a background thread, so don't reference
             // the Swing GUI from here.
+            if (!confirmed) {
+                return null;
+            }
+            
+            OutputStream out = null;
+            try {
+                // TODO: Maybe we should use the locally cached verison of global configuration as is done for the worker configuration instead of fetching it again
+                Properties globalConfig = toProperties(SignServerAdminGUIApplication.getAdminWS().getGlobalConfiguration());
+                Properties outProperties = new Properties();
+                
+                if (exportAllUnrelatedGlobal) {
+                    PropertiesDumper.dumpNonWorkerSpecificGlobalConfiguration(globalConfig, outProperties);
+                }
+                
+                final List<Worker> workers;
+                if (exportAll) {
+                    workers = allWorkers;
+                } else if (exportSelected) {
+                    workers = new ArrayList<Worker>();
+                    for (int row : selected) {
+                        workers.add(allWorkers.get(row));
+                    }
+                } else {
+                    workers = Collections.emptyList();
+                }
+                
+                for (Worker worker : workers) {
+                    PropertiesDumper.dumpWorkerProperties(worker.getWorkerId(), globalConfig, worker.getConfiguration(), outProperties);
+                }
+                
+                // Write the properties
+                out = new FileOutputStream(file);
+                outProperties.store(out, null);
+                
+            } catch (AdminNotAuthorizedException_Exception ex) {
+                postAdminNotAuthorized(ex);
+            } catch (CertificateEncodingException ex) {
+                ex.printStackTrace(); // TODO
+            } catch (FileNotFoundException ex) {
+                java.util.logging.Logger.getLogger(MainView.class.getName()).log(Level.SEVERE, null, ex);
+                // TODO
+            } catch (IOException ex) {
+                java.util.logging.Logger.getLogger(MainView.class.getName()).log(Level.SEVERE, null, ex);
+                // TODO
+            } finally {
+                IOUtils.closeQuietly(out);
+            }
+            
             return null;  // return your result
         }
         @Override protected void succeeded(Object result) {
             // Runs on the EDT.  Update the GUI based on
             // the result computed by doInBackground().
+        }
+
+        private Properties toProperties(WsGlobalConfiguration wsgc) {
+            final Properties result = new Properties();
+            for (WsGlobalConfiguration.Config.Entry entry : wsgc.getConfig().getEntry()) {
+                result.put(entry.getKey(), entry.getValue());
+            }
+            return result;
         }
     }
 

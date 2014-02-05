@@ -12,8 +12,8 @@
  *************************************************************************/
 package org.signserver.common.util;
 
-import java.rmi.RemoteException;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.Enumeration;
@@ -34,8 +34,20 @@ import static org.signserver.common.util.PropertiesConstants.*;
  */
 public class PropertiesDumper {
     
-    public static void dumpWorkerProperties(int workerId, GlobalConfiguration gc, WorkerConfig workerConfig, Properties outProps) throws RemoteException, Exception {
-        Enumeration<String> en = gc.getKeyEnumeration();
+    public static void dumpNonWorkerSpecificGlobalConfiguration(Properties gc, Properties outProps) {
+        for (String key : gc.stringPropertyNames()) {
+            if (!key.startsWith(GLOBAL_PREFIX) || !key.startsWith(WORKER_PREFIX, GLOBAL_PREFIX.length())) {
+                outProps.setProperty(key, gc.getProperty(key));
+            }
+        }
+    }
+    
+    public static void dumpWorkerProperties(int workerId, GlobalConfiguration gc, WorkerConfig workerConfig, Properties outProps) throws CertificateEncodingException {
+        dumpWorkerProperties(workerId, gc.getConfig(), workerConfig.getProperties(), outProps);
+    }
+    
+    public static void dumpWorkerProperties(int workerId, Properties gc, Properties workerConfig, Properties outProps) throws CertificateEncodingException {
+        Enumeration<String> en = (Enumeration<String>) gc.propertyNames();
         while (en.hasMoreElements()) {
             String next = en.nextElement();
             if (next.substring(5).startsWith("WORKER" + workerId)) {
@@ -43,15 +55,14 @@ public class PropertiesDumper {
             }
         }
 
-        Enumeration<?> e = workerConfig.getProperties().keys();
-        Properties workerProps = workerConfig.getProperties();
-        while (e.hasMoreElements()) {
-            String key = (String) e.nextElement();
-            outProps.setProperty("WORKER" + workerId + "." + key, workerProps.getProperty(key));
+        for (String key : workerConfig.stringPropertyNames()) {
+            outProps.setProperty("WORKER" + workerId + "." + key, workerConfig.getProperty(key));
         }
 
         // Also dump Authorized Clients and/or signer certificates
-        ProcessableConfig pConfig = new ProcessableConfig(workerConfig);
+        WorkerConfig wc = new WorkerConfig();
+        wc.getProperties().putAll(workerConfig); // XXX: More ugly then usual...
+        ProcessableConfig pConfig = new ProcessableConfig(wc);
         if (pConfig.getSignerCertificate() != null) {
             X509Certificate cert = pConfig.getSignerCertificate();
             outProps.setProperty("WORKER" + workerId + SIGNERCERTIFICATE, new String(Base64.encode(cert.getEncoded(), false)));

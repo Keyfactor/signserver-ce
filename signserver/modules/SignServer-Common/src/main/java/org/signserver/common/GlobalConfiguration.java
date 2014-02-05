@@ -13,6 +13,7 @@
 package org.signserver.common;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Properties;
 
@@ -48,9 +49,9 @@ public class GlobalConfiguration implements Serializable {
     public static final String OLD_CRYPTOTOKENPROPERTY_BASE = ".SIGNERTOKEN";
     public static final String CRYPTOTOKENPROPERTY_CLASSPATH = ".CLASSPATH";
 
-    private Properties config;
-    private String state;
-    private String appVersion;
+    private final Properties config;
+    private final String state;
+    private final String appVersion;
 
     /**
      * Constructor that should only be called within
@@ -139,4 +140,10 @@ public class GlobalConfiguration implements Serializable {
         return appVersion;
     }
 
+    public Properties getConfig() {
+        Properties properties = new Properties();
+        properties.putAll(config);
+        return properties;
+    }
+    
 }

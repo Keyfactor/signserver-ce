@@ -592,6 +592,7 @@ public class AddWorkerDialog extends javax.swing.JDialog {
 
     private void reloadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reloadButtonActionPerformed
         loadConfigurationEditor();
+        updateControls();
     }//GEN-LAST:event_reloadButtonActionPerformed
 
     private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backButtonActionPerformed
@@ -616,7 +617,11 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         // TODO: should later on handle merging manual properties to the
         // properties editor and so on...
 
-        loadConfigurationEditor();
+        // reload configuration if a new file has been selected
+        if (fileSelected) {
+            loadConfigurationEditor();
+        }
+        updateControls();
     }
 
     private void loadConfigurationEditor() {
@@ -625,19 +630,14 @@ public class AddWorkerDialog extends javax.swing.JDialog {
                 final File file = new File(filePathTextField.getText());
 
                 try {
-                    // reset configuration editor if a new file was selected
-                    if (fileSelected) {
-                        config = FileUtils.readFileToString(file);
-                        configurationTextArea.setText(config);
-                        configurationEdited = false;
-                        // reset file selected status
-                        fileSelected = false;
-                    }
+                    config = FileUtils.readFileToString(file);
+                    configurationTextArea.setText(config);
+                    configurationEdited = false;
+                    // reset file selected status
+                    fileSelected = false;
                 } catch (IOException e) {
                     JOptionPane.showMessageDialog(this, e.getMessage(),
                             "Failed to read file", JOptionPane.ERROR_MESSAGE);
-                } finally {
-                    updateControls();
                 }
                 break;
             case EDIT_MANUALLY:

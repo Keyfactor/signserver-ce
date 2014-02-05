@@ -18,6 +18,7 @@ import java.util.*;
 import org.ejbca.util.Base64;
 import org.signserver.common.AuthorizedClient;
 import org.signserver.common.GlobalConfiguration;
+import static org.signserver.common.util.PropertiesConstants.*;
 
 /**
  * Helper class containing methods to parse a set properties file 
@@ -31,15 +32,6 @@ import org.signserver.common.GlobalConfiguration;
  */
 public class SetPropertiesHelper {
 
-    public static final String SIGNERCERTIFICATE = ".SIGNERCERTIFICATE";
-    public static final String SIGNERCERTCHAIN = ".SIGNERCERTCHAIN";
-    public static final String AUTHCLIENT = ".AUTHCLIENT";
-    public static final String GLOBAL_PREFIX = "GLOB.";
-    public static final String NODE_PREFIX = "NODE.";
-    public static final String WORKER_PREFIX = "WORKER";
-    public static final String OLDWORKER_PREFIX = "SIGNER";
-    public static final String REMOVE_PREFIX = "-";
-    public static final String GENID = "GENID";
     private HashMap<String, Integer> genIds = new HashMap<String, Integer>();
     private PrintStream out;
     private AdminCommandHelper helper = new AdminCommandHelper();

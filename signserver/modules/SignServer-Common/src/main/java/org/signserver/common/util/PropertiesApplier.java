@@ -56,6 +56,8 @@ public abstract class PropertiesApplier {
      */
     private Set<Integer> workerIds = new HashSet<Integer>();
     
+    private String error;
+    
     /**
      * Apply configuration prepared by the configuration parser.
      * Should call the parse method on a parser instance to use with this method.
@@ -118,7 +120,7 @@ public abstract class PropertiesApplier {
             }
             
         } catch (PropertiesApplierException e) {
-            // TODO: report errro
+            error = e.getMessage();
         }
         
     }
@@ -409,5 +411,23 @@ public abstract class PropertiesApplier {
      */
     public List<Integer> getWorkerIds() {
         return new ArrayList<Integer>(workerIds);
+    }
+    
+    /**
+     * Determine if there was any error applying the properties.
+     * 
+     * @return True if there was an error
+     */
+    public boolean hasError() {
+        return error != null;
+    }
+    
+    /**
+     * Get the error message.
+     * 
+     * @return The error message, or null if there was no error
+     */
+    public String getError() {
+        return error;
     }
 }

@@ -23,6 +23,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.rmi.RemoteException;
+import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -31,6 +32,7 @@ import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
 import org.apache.commons.io.FileUtils;
+import org.bouncycastle.util.Arrays;
 import org.signserver.common.util.PropertiesApplier;
 import org.signserver.common.util.PropertiesParser;
 
@@ -517,14 +519,11 @@ public class AddWorkerDialog extends javax.swing.JDialog {
 
                 break;
             case EDIT_PROPERTIES:
-                try {
-                    applyConfiguration();
-                    // TODO: show information about added workers etc.
-                } catch (IOException e) {
-                    // TODO: handle this exception (misformed properties input)
-                    // TODO: show parsing and applying errors
+                final boolean sucess = applyConfiguration();
+                
+                if (sucess) {
+                    dispose();
                 }
-                dispose();
                 break;
             default:
                 // should not happen...
@@ -533,26 +532,44 @@ public class AddWorkerDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_nextApplyButtonActionPerformed
 
     // TODO: run this as a background task
-    private void applyConfiguration() throws IOException {
+    private boolean applyConfiguration() {
         config = configurationTextArea.getText();
 
         final Properties props = new Properties();
 
-        props.load(new ByteArrayInputStream(config.getBytes()));
-
+        try {
+            props.load(new ByteArrayInputStream(config.getBytes()));
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this,
+                    "Error loading properties: " + e.getMessage(), "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+            
         final PropertiesParser parser = new PropertiesParser();
 
         parser.process(props);
 
         if (parser.hasErrors()) {
-            // TODO: handle parser errors
+            final List<String> errors = parser.getErrors();
+            
+            JOptionPane.showMessageDialog(this, "Error parsing properties",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
         } else {
             final PropertiesApplier applier = new AdminGUIPropertiesApplier();
 
             applier.apply(parser);
-            // TODO: check for applier errors (unknown worker name lookups etc.
+            
+            if (applier.hasError()) {
+                JOptionPane.showMessageDialog(this,
+                        "Error applying properties: " + applier.getError(),
+                        "Error", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
         }
 
+        return true;
     }
 
     private void configurationTextAreaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_configurationTextAreaKeyTyped

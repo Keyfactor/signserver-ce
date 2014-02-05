@@ -561,7 +561,8 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         if (parser.hasErrors()) {
             final List<String> errors = parser.getErrors();
             
-            JOptionPane.showMessageDialog(this, "Error parsing properties",
+            JOptionPane.showMessageDialog(this,
+                    "Error parsing properties: " + errors.get(0),
                     "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         } else {

@@ -114,8 +114,7 @@ public class AdminGUIPropertiesApplier extends PropertiesApplier {
     }
 
     @Override
-    protected int getWorkerId(String workerName)
-            throws PropertiesApplierException {
+    protected int getWorkerId(final String workerName) throws PropertiesApplierException {
         try {
             int workerId = SignServerAdminGUIApplication.getAdminWS().getWorkerId(workerName);
             

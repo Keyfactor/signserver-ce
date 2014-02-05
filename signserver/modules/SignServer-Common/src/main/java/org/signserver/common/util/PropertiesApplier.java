@@ -303,7 +303,7 @@ public abstract class PropertiesApplier {
      * @param splittedKey The referenced worker key in the form GENIDx
      * @return The worker ID
      */
-    private int getGenId(String splittedKey) {
+    private int getGenId(String splittedKey) throws PropertiesApplierException {
         if (genIds.get(splittedKey) == null) {
             int genid = genFreeWorkerId();
             genIds.put(splittedKey, new Integer(genid));
@@ -316,7 +316,7 @@ public abstract class PropertiesApplier {
      * 
      * @return Next available worker ID
      */
-    protected abstract int genFreeWorkerId();
+    protected abstract int genFreeWorkerId() throws PropertiesApplierException;
     
     /**
      * Lookup worker ID given name, implemenation-specific.
@@ -325,7 +325,7 @@ public abstract class PropertiesApplier {
      * @return worker ID
      * @throws IllegalArgumentException if given a non-existing worker name
      */
-    protected abstract int getWorkerId(final String workerName);
+    protected abstract int getWorkerId(final String workerName) throws PropertiesApplierException;
     
     /**
      * Get the worker ID from the splitted property key, either a number (ID), worker name or in the form GENIDx
@@ -333,7 +333,7 @@ public abstract class PropertiesApplier {
      * @param splittedKey
      * @return worker ID
      */
-    private int translateWorkerPropertyKey(final String splittedKey) {
+    private int translateWorkerPropertyKey(final String splittedKey) throws PropertiesApplierException {
         final int workerid;
         if (splittedKey.substring(0, 1).matches("\\d")) {
             workerid = Integer.parseInt(splittedKey);
@@ -358,7 +358,7 @@ public abstract class PropertiesApplier {
      * @param propertyKey Property key
      * @return Translated property key
      */
-    private String translateGlobalPropertyKey(final String propertyKey) {
+    private String translateGlobalPropertyKey(final String propertyKey) throws PropertiesApplierException {
         String strippedKey = propertyKey;
         String key = strippedKey;
         if (strippedKey.startsWith(WORKER_PREFIX + GENID)

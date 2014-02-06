@@ -93,6 +93,7 @@ public class AddWorkerDialog extends javax.swing.JDialog {
 
         stage = Stage.INITIAL_CONFIG;
         mode = Mode.LOAD_FROM_FILE;
+        loadFromFileRadioButton.setSelected(true);
         updateControls();
 
         // initially set the Next button to be greyed-out, so that it can be

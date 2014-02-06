@@ -36,6 +36,7 @@ import org.cesecore.util.query.QueryCriteria;
 import org.ejbca.util.CertTools;
 import org.signserver.common.*;
 import org.signserver.common.KeyTestResult;
+import org.signserver.common.util.PropertiesConstants;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IServiceTimerSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
@@ -987,13 +988,13 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             auditMap.put("SCOPE", "NODE");
             auditMap.put("NODE", key.substring(0, key.lastIndexOf(".")));
             auditLog(adminInfo, SignServerEventTypes.KEYSELECTED, SignServerModuleTypes.WORKER_CONFIG, String.valueOf(workerId), auditMap);
-        } else if (ProcessableConfig.SIGNERCERT.equalsIgnoreCase(key)) {
+        } else if (PropertiesConstants.SIGNERCERT.equalsIgnoreCase(key)) {
             auditLogCertInstalled(adminInfo, workerId, value, "GLOBAL", null);
-        } else if (key != null && key.lastIndexOf(".") != -1 && key.substring(key.lastIndexOf(".")).equalsIgnoreCase("." + ProcessableConfig.SIGNERCERT)) {
+        } else if (key != null && key.lastIndexOf(".") != -1 && key.substring(key.lastIndexOf(".")).equalsIgnoreCase("." + PropertiesConstants.SIGNERCERT)) {
             auditLogCertInstalled(adminInfo, workerId, value, "NODE", key.substring(0, key.lastIndexOf(".")));
-        } else if (ProcessableConfig.SIGNERCERTCHAIN.equalsIgnoreCase(key)) {
+        } else if (PropertiesConstants.SIGNERCERTCHAIN.equalsIgnoreCase(key)) {
             auditLogCertChainInstalled(adminInfo, workerId, value, "GLOBAL", null);
-        } else if (key != null && key.lastIndexOf(".") != -1 && key.substring(key.lastIndexOf(".")).equalsIgnoreCase("." + ProcessableConfig.SIGNERCERTCHAIN)) {
+        } else if (key != null && key.lastIndexOf(".") != -1 && key.substring(key.lastIndexOf(".")).equalsIgnoreCase("." + PropertiesConstants.SIGNERCERTCHAIN)) {
             auditLogCertChainInstalled(adminInfo, workerId, value, "NODE", key.substring(0, key.lastIndexOf(".")));
         }
     }

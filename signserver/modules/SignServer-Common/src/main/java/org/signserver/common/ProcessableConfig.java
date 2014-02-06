@@ -26,6 +26,9 @@ import java.util.Iterator;
 import java.util.List;
 import org.apache.log4j.Logger;
 import org.ejbca.util.CertTools;
+import static org.signserver.common.util.PropertiesConstants.AUTHORIZED_CLIENTS;
+import static org.signserver.common.util.PropertiesConstants.SIGNERCERT;
+import static org.signserver.common.util.PropertiesConstants.SIGNERCERTCHAIN;
 
 /**
  * 
@@ -39,10 +42,7 @@ public class ProcessableConfig {
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(ProcessableConfig.class);
     
-    private static final String AUTHORIZED_CLIENTS = "AUTHORIZED_CLIENTS";
-    public static final String SIGNERCERT = "SIGNERCERT";
-    public static final String SIGNERCERTCHAIN = "SIGNERCERTCHAIN";
-    public static final String NAME = "NAME";
+    
     private WorkerConfig workerConfig;
 
     public ProcessableConfig(WorkerConfig workerConfig) {

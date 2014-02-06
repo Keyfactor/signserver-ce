@@ -113,12 +113,12 @@ public class PropertiesParser {
     }
 
     private void processKey(String originalKey, String key, String value, boolean add) {
-        if (key.startsWith(GLOBAL_PREFIX)) {
-            String strippedKey = key.substring(GLOBAL_PREFIX.length());
+        if (key.startsWith(GLOBAL_PREFIX_DOT)) {
+            String strippedKey = key.substring(GLOBAL_PREFIX_DOT.length());
             processGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL, strippedKey, value, add);
         } else {
-            if (key.startsWith(NODE_PREFIX)) {
-                String strippedKey = key.substring(NODE_PREFIX.length());
+            if (key.startsWith(NODE_PREFIX_DOT)) {
+                String strippedKey = key.substring(NODE_PREFIX_DOT.length());
                 processGlobalProperty(GlobalConfiguration.SCOPE_NODE, strippedKey, value, add);
             } else {
                 if (key.startsWith(WORKER_PREFIX)) {
@@ -189,16 +189,16 @@ public class PropertiesParser {
     }
 
     private void setWorkerProperty(final String workerIdOrName, String propertykey, String propertyvalue) {
-        if (propertykey.startsWith(AUTHCLIENT.substring(1))) {
+        if (propertykey.startsWith(DOT_AUTHCLIENT.substring(1))) {
             String values[] = propertyvalue.split(";");
             AuthorizedClient ac = new AuthorizedClient(values[0], values[1]);
             messages.add("Adding Authorized Client with certificate serial " + ac.getCertSN() + " and issuer DN " + ac.getIssuerDN() + " to " + propertyvalue + " for worker " + workerIdOrName);
             addAuthorizedClient(workerIdOrName, ac);
         } else {
-            if (propertykey.startsWith(SIGNERCERTIFICATE.substring(1))) {
+            if (propertykey.startsWith(DOT_SIGNERCERTIFICATE.substring(1))) {
                 signerCertificates.put(workerIdOrName, Base64.decode(propertyvalue.getBytes()));
             } else {
-                if (propertykey.startsWith(SIGNERCERTCHAIN.substring(1))) {
+                if (propertykey.startsWith(DOT_SIGNERCERTCHAIN.substring(1))) {
                     String certs[] = propertyvalue.split(";");
                     ArrayList<byte[]> chain = new ArrayList<byte[]>();
                     for (String base64cert : certs) {
@@ -215,16 +215,16 @@ public class PropertiesParser {
     }
 
     private void removeWorkerProperty(final String workerIdOrName, String propertykey, String propertyvalue) {
-        if (propertykey.startsWith(AUTHCLIENT.substring(1))) {
+        if (propertykey.startsWith(DOT_AUTHCLIENT.substring(1))) {
             String values[] = propertyvalue.split(";");
             AuthorizedClient ac = new AuthorizedClient(values[0], values[1]);
             messages.add("Removing authorized client with certificate serial " + ac.getCertSN() + " and issuer DN " + ac.getIssuerDN() + " from " + propertyvalue + " for worker " + workerIdOrName);
             removeAuthorizedClient(workerIdOrName, ac);
         } else {
-            if (propertykey.startsWith(SIGNERCERTIFICATE.substring(1))) {
+            if (propertykey.startsWith(DOT_SIGNERCERTIFICATE.substring(1))) {
                 messages.add("Removal of signing certificates isn't supported, skipped.");
             } else {
-                if (propertykey.startsWith(SIGNERCERTCHAIN.substring(1))) {
+                if (propertykey.startsWith(DOT_SIGNERCERTCHAIN.substring(1))) {
                     messages.add("Removal of signing certificate chains isn't supported, skipped.");
                 } else {
                     messages.add("Removing the property " + propertykey + "  for worker " + workerIdOrName);

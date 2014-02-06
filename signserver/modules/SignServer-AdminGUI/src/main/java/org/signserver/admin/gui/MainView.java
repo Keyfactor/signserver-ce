@@ -3143,7 +3143,7 @@ private void displayLogEntryAction() {
                 for (Worker worker : workers) {
                     setMessage("Worker " + (current + 1) + " of " + workers.size() + "...");
                     setProgress(current, 0, workers.size());
-                    PropertiesDumper.dumpWorkerProperties(worker.getWorkerId(), globalConfig, worker.getConfiguration(), outProperties);
+                    PropertiesDumper.dumpWorkerProperties(worker.getWorkerId(), globalConfig, worker.getConfiguration(), convert(worker.getAuthClients()), outProperties);
                     current++;
                 }
                 
@@ -3178,6 +3178,14 @@ private void displayLogEntryAction() {
             final Properties result = new Properties();
             for (WsGlobalConfiguration.Config.Entry entry : wsgc.getConfig().getEntry()) {
                 result.put(entry.getKey(), entry.getValue());
+            }
+            return result;
+        }
+        
+        private Collection<org.signserver.common.AuthorizedClient> convert(Collection<AuthorizedClient> wsList) {
+            Collection<org.signserver.common.AuthorizedClient> result = new LinkedList<org.signserver.common.AuthorizedClient>();
+            for (AuthorizedClient client : wsList) {
+                result.add(new org.signserver.common.AuthorizedClient(client.getCertSN(), client.getIssuerDN()));
             }
             return result;
         }

@@ -12,14 +12,20 @@
  *************************************************************************/
 package org.signserver.common.util;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
+import org.apache.log4j.Logger;
 import org.ejbca.util.Base64;
+import org.ejbca.util.CertTools;
 import org.signserver.common.AuthorizedClient;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.ProcessableConfig;
@@ -34,6 +40,9 @@ import static org.signserver.common.util.PropertiesConstants.*;
  */
 public class PropertiesDumper {
     
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(PropertiesDumper.class);
+    
     /**
      * Only dumps properties not related to a worker.
      * @param gc the global configuration properties
@@ -41,7 +50,7 @@ public class PropertiesDumper {
      */
     public static void dumpNonWorkerSpecificGlobalConfiguration(Properties gc, Properties outProps) {
         for (String key : gc.stringPropertyNames()) {
-            if (!key.startsWith(GLOBAL_PREFIX) || !key.startsWith(WORKER_PREFIX, GLOBAL_PREFIX.length())) {
+            if (!key.startsWith(GLOBAL_PREFIX_DOT) || !key.startsWith(WORKER_PREFIX, GLOBAL_PREFIX_DOT.length())) {
                 outProps.setProperty(key, gc.getProperty(key));
             }
         }
@@ -56,7 +65,8 @@ public class PropertiesDumper {
      * @throws CertificateEncodingException in case of certificate encoding errors
      */
     public static void dumpWorkerProperties(int workerId, GlobalConfiguration gc, WorkerConfig workerConfig, Properties outProps) throws CertificateEncodingException {
-        dumpWorkerProperties(workerId, gc.getConfig(), workerConfig.getProperties(), outProps);
+        ProcessableConfig pConfig = new ProcessableConfig(workerConfig);
+        dumpWorkerProperties(workerId, gc.getConfig(), workerConfig.getProperties(), pConfig.getAuthorizedClients(), outProps);
     }
     
     /**
@@ -64,10 +74,11 @@ public class PropertiesDumper {
      * @param workerId Id of worker to get the properties from
      * @param gc the global configuration properties
      * @param workerConfig the worker configuration properties
+     * @param authorizedClients
      * @param outProps to write the properties to
      * @throws CertificateEncodingException in case of certificate encoding errors
      */
-    public static void dumpWorkerProperties(int workerId, Properties gc, Properties workerConfig, Properties outProps) throws CertificateEncodingException {
+    public static void dumpWorkerProperties(final int workerId, final Properties gc, final Properties workerConfig, final Collection<AuthorizedClient> authorizedClients, final Properties outProps) throws CertificateEncodingException {
         Enumeration<String> en = (Enumeration<String>) gc.propertyNames();
         while (en.hasMoreElements()) {
             String next = en.nextElement();
@@ -81,16 +92,13 @@ public class PropertiesDumper {
         }
 
         // Also dump Authorized Clients and/or signer certificates
-        WorkerConfig wc = new WorkerConfig();
-        wc.getProperties().putAll(workerConfig); // XXX: More ugly then usual...
-        ProcessableConfig pConfig = new ProcessableConfig(wc);
-        if (pConfig.getSignerCertificate() != null) {
-            X509Certificate cert = pConfig.getSignerCertificate();
-            outProps.setProperty("WORKER" + workerId + SIGNERCERTIFICATE, new String(Base64.encode(cert.getEncoded(), false)));
+        X509Certificate signerCertificate = getSignerCertificate(workerConfig);
+        if (signerCertificate != null) {
+            outProps.setProperty("WORKER" + workerId + DOT_SIGNERCERTIFICATE, new String(Base64.encode(signerCertificate.getEncoded(), false)));
         }
-        if (pConfig.getSignerCertificateChain() != null) {
-            Collection<Certificate> certs = pConfig.getSignerCertificateChain();
-            Iterator<Certificate> iter2 = certs.iterator();
+        List<Certificate> signerCertificateChain = getSignerCertificateChain(workerConfig);
+        if (signerCertificateChain != null) {
+            Iterator<Certificate> iter2 = signerCertificateChain.iterator();
             String chainValue = "";
             while (iter2.hasNext()) {
                 Certificate cert = iter2.next();
@@ -102,17 +110,51 @@ public class PropertiesDumper {
                 }
             }
 
-            outProps.setProperty("WORKER" + workerId + SIGNERCERTCHAIN, chainValue);
+            outProps.setProperty("WORKER" + workerId + DOT_SIGNERCERTCHAIN, chainValue);
         }
 
-        if (pConfig.getAuthorizedClients().size() > 0) {
-            Collection<AuthorizedClient> aClients = pConfig.getAuthorizedClients();
+        if (authorizedClients.size() > 0) {
             int i = 1;
-            for (AuthorizedClient client : aClients) {
-                outProps.setProperty("WORKER" + workerId + AUTHCLIENT + i, client.getCertSN() + ";" + client.getIssuerDN());
+            for (AuthorizedClient client : authorizedClients) {
+                outProps.setProperty("WORKER" + workerId + DOT_AUTHCLIENT + i, client.getCertSN() + ";" + client.getIssuerDN());
                 i++;
             }
         }
     }
     
+    private static X509Certificate getSignerCertificate(final Properties conf) {
+        X509Certificate result = null;
+        String stringcert = conf.getProperty(SIGNERCERT);
+
+        if (stringcert != null && !stringcert.equals("")) {
+            Collection<?> certs;
+            try {
+                certs = CertTools.getCertsFromPEM(new ByteArrayInputStream(stringcert.getBytes()));
+                if (certs.size() > 0) {
+                    result = (X509Certificate) certs.iterator().next();
+                }
+            } catch (CertificateException e) {
+                LOG.error(e);
+            } catch (IOException e) {
+                LOG.error(e);
+            }
+        }
+        return result;
+    }
+    
+    private static List<Certificate> getSignerCertificateChain(final Properties conf) {
+        List<Certificate> result = null;
+        String stringcert = conf.getProperty(SIGNERCERTCHAIN);
+
+        if (stringcert != null && !stringcert.equals("")) {
+            try {
+                result = CertTools.getCertsFromPEM(new ByteArrayInputStream(stringcert.getBytes()));
+            } catch (CertificateException e) {
+                LOG.error(e);
+            } catch (IOException e) {
+                LOG.error(e);
+            }
+        }
+        return result;
+    }
 }

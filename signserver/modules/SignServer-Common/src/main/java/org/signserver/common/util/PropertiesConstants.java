@@ -19,13 +19,19 @@ package org.signserver.common.util;
  * @version $Id$
  */
 public interface PropertiesConstants {
-    String SIGNERCERTIFICATE = ".SIGNERCERTIFICATE";
-    String SIGNERCERTCHAIN = ".SIGNERCERTCHAIN";
-    String AUTHCLIENT = ".AUTHCLIENT";
-    String GLOBAL_PREFIX = "GLOB.";
-    String NODE_PREFIX = "NODE.";
+    String DOT_SIGNERCERTIFICATE = ".SIGNERCERTIFICATE";
+    
+    String DOT_SIGNERCERTCHAIN = ".SIGNERCERTCHAIN";
+    String DOT_AUTHCLIENT = ".AUTHCLIENT";
+    String GLOBAL_PREFIX_DOT = "GLOB.";
+    String NODE_PREFIX_DOT = "NODE.";
     String WORKER_PREFIX = "WORKER";
     String OLDWORKER_PREFIX = "SIGNER";
     String REMOVE_PREFIX = "-";
     String GENID = "GENID";
+    
+    String AUTHORIZED_CLIENTS = "AUTHORIZED_CLIENTS";
+    String SIGNERCERT = "SIGNERCERT";
+    String SIGNERCERTCHAIN = "SIGNERCERTCHAIN";
+    String NAME = "NAME";
 }

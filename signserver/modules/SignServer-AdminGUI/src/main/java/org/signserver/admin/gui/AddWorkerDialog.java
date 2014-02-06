@@ -733,8 +733,9 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         // TODO: should later on handle merging manual properties to the
         // properties editor and so on...
 
-        // reload configuration if a new file has been selected
-        if (fileSelected) {
+        // reload configuration if a new file has been selected or if
+        // a worker was add using the form
+        if (mode == Mode.EDIT_MANUALLY || fileSelected) {
             loadConfigurationEditor();
         }
         updateControls();

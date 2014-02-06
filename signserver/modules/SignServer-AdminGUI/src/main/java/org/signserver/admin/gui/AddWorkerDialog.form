@@ -126,7 +126,19 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <EmptySpace min="0" pref="801" max="32767" attributes="0"/>
+                  <Group type="102" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" attributes="0">
+                              <Component id="workerNameLabel" max="32767" attributes="1"/>
+                              <EmptySpace min="-2" pref="748" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="workerImplementationLabel" min="-2" pref="486" max="-2" attributes="1"/>
+                              <EmptySpace pref="303" max="32767" attributes="0"/>
+                          </Group>
+                      </Group>
+                  </Group>
                   <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
@@ -141,10 +153,6 @@
                                   <Component id="loadFromFileRadioButton" alignment="0" min="-2" pref="133" max="-2" attributes="0"/>
                                   <Group type="102" alignment="1" attributes="0">
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Group type="103" alignment="1" groupAlignment="0" max="-2" attributes="0">
-                                              <Component id="workerNameLabel" alignment="1" max="32767" attributes="1"/>
-                                              <Component id="workerImplementationLabel" alignment="0" pref="486" max="32767" attributes="1"/>
-                                          </Group>
                                           <Component id="workerIdLabel" alignment="1" pref="492" max="32767" attributes="1"/>
                                           <Component id="tokenImplementationLabel" alignment="1" pref="492" max="32767" attributes="1"/>
                                       </Group>
@@ -178,7 +186,13 @@
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <EmptySpace min="0" pref="490" max="32767" attributes="0"/>
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace min="-2" pref="190" max="-2" attributes="0"/>
+                      <Component id="workerNameLabel" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
+                      <Component id="workerImplementationLabel" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace pref="231" max="32767" attributes="0"/>
+                  </Group>
                   <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="1" attributes="0">
                           <EmptySpace pref="26" max="32767" attributes="0"/>
@@ -196,15 +210,9 @@
                               <Component id="workerIdLabel" alignment="3" min="-2" pref="31" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="workerNameField" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="workerNameLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                          </Group>
+                          <Component id="workerNameField" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="workerImplementationField" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="workerImplementationLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                          </Group>
+                          <Component id="workerImplementationField" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="tokenImplementationField" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -248,7 +256,7 @@
                   <Properties>
                     <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
                       <Table columnCount="2" rowCount="0">
-                        <Column editable="true" title="Key" type="java.lang.Object"/>
+                        <Column editable="true" title="Property" type="java.lang.Object"/>
                         <Column editable="true" title="Value" type="java.lang.Object"/>
                       </Table>
                     </Property>

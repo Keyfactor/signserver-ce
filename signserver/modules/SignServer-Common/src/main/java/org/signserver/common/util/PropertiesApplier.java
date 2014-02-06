@@ -21,6 +21,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.signserver.common.AuthorizedClient;
+import static org.signserver.common.util.PropertiesConstants.GENID;
+import static org.signserver.common.util.PropertiesConstants.OLDWORKER_PREFIX;
+import static org.signserver.common.util.PropertiesConstants.WORKER_PREFIX;
 
 /**
  * Base class implementing applying a previous parsed configuration property batch.
@@ -30,10 +33,6 @@ import org.signserver.common.AuthorizedClient;
  *
  */
 public abstract class PropertiesApplier {
-
-    public static final String WORKER_PREFIX = "WORKER";
-    public static final String OLDWORKER_PREFIX = "SIGNER";
-    public static final String GENID = "GENID";
     
     protected static class PropertiesApplierException extends Exception {
         /**

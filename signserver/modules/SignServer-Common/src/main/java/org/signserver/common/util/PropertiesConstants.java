@@ -13,7 +13,7 @@
 package org.signserver.common.util;
 
 /**
- * TODO.
+ * Constants used when parsing/dumping global and worker properties.
  *
  * @author Markus Kilås
  * @version $Id$

@@ -27,13 +27,18 @@ import org.signserver.common.WorkerConfig;
 import static org.signserver.common.util.PropertiesConstants.*;
 
 /**
- * TODO.
- * 
+ * Utility methods for dumping (exporting) global and worker configuration.
+ *
  * @author Markus Kilås
  * @version $Id$
  */
 public class PropertiesDumper {
     
+    /**
+     * Only dumps properties not related to a worker.
+     * @param gc the global configuration properties
+     * @param outProps to write the properties to
+     */
     public static void dumpNonWorkerSpecificGlobalConfiguration(Properties gc, Properties outProps) {
         for (String key : gc.stringPropertyNames()) {
             if (!key.startsWith(GLOBAL_PREFIX) || !key.startsWith(WORKER_PREFIX, GLOBAL_PREFIX.length())) {
@@ -42,10 +47,26 @@ public class PropertiesDumper {
         }
     }
     
+    /**
+     * Extracts a worker's global and worker properties.
+     * @param workerId Id of worker to get the properties from
+     * @param gc the global configuration
+     * @param workerConfig the worker configuration
+     * @param outProps to write the properties to
+     * @throws CertificateEncodingException in case of certificate encoding errors
+     */
     public static void dumpWorkerProperties(int workerId, GlobalConfiguration gc, WorkerConfig workerConfig, Properties outProps) throws CertificateEncodingException {
         dumpWorkerProperties(workerId, gc.getConfig(), workerConfig.getProperties(), outProps);
     }
     
+    /**
+     * Extracts a worker's global and worker properties.
+     * @param workerId Id of worker to get the properties from
+     * @param gc the global configuration properties
+     * @param workerConfig the worker configuration properties
+     * @param outProps to write the properties to
+     * @throws CertificateEncodingException in case of certificate encoding errors
+     */
     public static void dumpWorkerProperties(int workerId, Properties gc, Properties workerConfig, Properties outProps) throws CertificateEncodingException {
         Enumeration<String> en = (Enumeration<String>) gc.propertyNames();
         while (en.hasMoreElements()) {

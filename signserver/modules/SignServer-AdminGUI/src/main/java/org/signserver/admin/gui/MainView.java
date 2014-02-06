@@ -38,7 +38,6 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.Vector;
-import java.util.logging.Level;
 import javax.ejb.EJBException;
 import javax.swing.AbstractListModel;
 import javax.swing.ComboBoxModel;
@@ -51,6 +50,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.commons.io.IOUtils;
@@ -3057,7 +3057,7 @@ private void displayLogEntryAction() {
         return new ExportConfigTask(getApplication());
     }
 
-    private class ExportConfigTask extends org.jdesktop.application.Task<Object, Void> {
+    private class ExportConfigTask extends org.jdesktop.application.Task<String, Void> {
         
         private final int[] selected;
         private final boolean confirmed;
@@ -3067,6 +3067,8 @@ private void displayLogEntryAction() {
         private final boolean exportNone;
         
         private final File file;
+        
+        private boolean success;
         
         ExportConfigTask(org.jdesktop.application.Application app) {
             // Runs on the EDT.  Copy GUI state that
@@ -3097,15 +3099,17 @@ private void displayLogEntryAction() {
 
                 chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
                 chooser.setCurrentDirectory(sampleDir.isDirectory() ? sampleDir : baseDir);
-
-                confirmed = chooser.showOpenDialog(MainView.this.getFrame()) == JFileChooser.APPROVE_OPTION;
+                chooser.setMultiSelectionEnabled(false);
+                chooser.setFileFilter(new FileNameExtensionFilter("Properties files", "properties"));
+                
+                confirmed = chooser.showSaveDialog(MainView.this.getFrame()) == JFileChooser.APPROVE_OPTION;
                 file = chooser.getSelectedFile();
             } else {
                 confirmed = false;
                 file = null;
             }
         }
-        @Override protected Object doInBackground() {
+        @Override protected String doInBackground() {
             // Your Task's code here.  This method runs
             // on a background thread, so don't reference
             // the Swing GUI from here.
@@ -3115,11 +3119,11 @@ private void displayLogEntryAction() {
             
             OutputStream out = null;
             try {
-                // TODO: Maybe we should use the locally cached verison of global configuration as is done for the worker configuration instead of fetching it again
                 Properties globalConfig = toProperties(SignServerAdminGUIApplication.getAdminWS().getGlobalConfiguration());
                 Properties outProperties = new Properties();
                 
                 if (exportAllUnrelatedGlobal) {
+                    setMessage("Global configuration...");
                     PropertiesDumper.dumpNonWorkerSpecificGlobalConfiguration(globalConfig, outProperties);
                 }
                 
@@ -3135,33 +3139,39 @@ private void displayLogEntryAction() {
                     workers = Collections.emptyList();
                 }
                 
+                int current = 0;
                 for (Worker worker : workers) {
+                    setMessage("Worker " + (current + 1) + " of " + workers.size() + "...");
+                    setProgress(current, 0, workers.size());
                     PropertiesDumper.dumpWorkerProperties(worker.getWorkerId(), globalConfig, worker.getConfiguration(), outProperties);
+                    current++;
                 }
                 
                 // Write the properties
                 out = new FileOutputStream(file);
                 outProperties.store(out, null);
-                
+                success = true;
+                final StringBuilder result = new StringBuilder();
+                result.append("Exported ").append(outProperties.size()).append(" properties from ").append(workers.size()).append( " workers.");
+                return result.toString();
             } catch (AdminNotAuthorizedException_Exception ex) {
-                postAdminNotAuthorized(ex);
+                return "Authorization denied:\n" + ex.getLocalizedMessage();
             } catch (CertificateEncodingException ex) {
-                ex.printStackTrace(); // TODO
+                return "Failed to encode certificate:\n" + ex.getLocalizedMessage();
             } catch (FileNotFoundException ex) {
-                java.util.logging.Logger.getLogger(MainView.class.getName()).log(Level.SEVERE, null, ex);
-                // TODO
+                return "The selected file could not be written:\n" + ex.getLocalizedMessage();
             } catch (IOException ex) {
-                java.util.logging.Logger.getLogger(MainView.class.getName()).log(Level.SEVERE, null, ex);
-                // TODO
+                return "Failed to write the properties to file:\n" + ex.getLocalizedMessage();
             } finally {
                 IOUtils.closeQuietly(out);
             }
-            
-            return null;  // return your result
         }
-        @Override protected void succeeded(Object result) {
+        @Override protected void succeeded(String result) {
             // Runs on the EDT.  Update the GUI based on
             // the result computed by doInBackground().
+            if (confirmed) {
+                JOptionPane.showMessageDialog(MainView.this.getFrame(), result, "Export configuration", success ? JOptionPane.INFORMATION_MESSAGE : JOptionPane.ERROR_MESSAGE);
+            }
         }
 
         private Properties toProperties(WsGlobalConfiguration wsgc) {

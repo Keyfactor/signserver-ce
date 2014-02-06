@@ -161,6 +161,7 @@ public class AddWorkerDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        modeSelectButtonGroup = new javax.swing.ButtonGroup();
         nextApplyButton = new javax.swing.JButton();
         backButton = new javax.swing.JButton();
         reloadButton = new javax.swing.JButton();
@@ -300,10 +301,12 @@ public class AddWorkerDialog extends javax.swing.JDialog {
             }
         });
 
+        modeSelectButtonGroup.add(loadFromFileRadioButton);
         loadFromFileRadioButton.setFont(resourceMap.getFont("loadFromFileRadioButton.font")); // NOI18N
         loadFromFileRadioButton.setText(resourceMap.getString("loadFromFileRadioButton.text")); // NOI18N
         loadFromFileRadioButton.setName("loadFromFileRadioButton"); // NOI18N
 
+        modeSelectButtonGroup.add(editWorkerPropertiesRadioButton);
         editWorkerPropertiesRadioButton.setFont(resourceMap.getFont("editWorkerPropertiesRadioButton.font")); // NOI18N
         editWorkerPropertiesRadioButton.setText(resourceMap.getString("editWorkerPropertiesRadioButton.text")); // NOI18N
         editWorkerPropertiesRadioButton.setName("editWorkerPropertiesRadioButton"); // NOI18N
@@ -691,6 +694,7 @@ public class AddWorkerDialog extends javax.swing.JDialog {
     private javax.swing.JTextField filePathTextField;
     private javax.swing.JPanel initialSetupPanel;
     private javax.swing.JRadioButton loadFromFileRadioButton;
+    private javax.swing.ButtonGroup modeSelectButtonGroup;
     private javax.swing.JButton nextApplyButton;
     private javax.swing.JLabel propertiesLabel;
     private javax.swing.JScrollPane propertiesScrollPanel;

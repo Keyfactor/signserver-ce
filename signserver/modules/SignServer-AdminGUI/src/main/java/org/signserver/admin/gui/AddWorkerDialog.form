@@ -1,6 +1,10 @@
 <?xml version="1.1" encoding="UTF-8" ?>
 
 <Form version="1.5" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JDialogFormInfo">
+  <NonVisualComponents>
+    <Component class="javax.swing.ButtonGroup" name="modeSelectButtonGroup">
+    </Component>
+  </NonVisualComponents>
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="2"/>
     <Property name="name" type="java.lang.String" value="Form" noResource="true"/>
@@ -358,6 +362,9 @@
             </Component>
             <Component class="javax.swing.JRadioButton" name="loadFromFileRadioButton">
               <Properties>
+                <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+                  <ComponentRef name="modeSelectButtonGroup"/>
+                </Property>
                 <Property name="font" type="java.awt.Font" resourceKey="loadFromFileRadioButton.font"/>
                 <Property name="text" type="java.lang.String" resourceKey="loadFromFileRadioButton.text"/>
                 <Property name="name" type="java.lang.String" value="loadFromFileRadioButton" noResource="true"/>
@@ -365,6 +372,9 @@
             </Component>
             <Component class="javax.swing.JRadioButton" name="editWorkerPropertiesRadioButton">
               <Properties>
+                <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+                  <ComponentRef name="modeSelectButtonGroup"/>
+                </Property>
                 <Property name="font" type="java.awt.Font" resourceKey="editWorkerPropertiesRadioButton.font"/>
                 <Property name="text" type="java.lang.String" resourceKey="editWorkerPropertiesRadioButton.text"/>
                 <Property name="name" type="java.lang.String" value="editWorkerPropertiesRadioButton" noResource="true"/>

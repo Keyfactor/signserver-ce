@@ -32,6 +32,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
 import javax.swing.table.DefaultTableCellRenderer;
 import org.apache.commons.io.FileUtils;
@@ -535,6 +536,7 @@ public class AddWorkerDialog extends javax.swing.JDialog {
 
         chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         chooser.setCurrentDirectory(sampleDir.isDirectory() ? sampleDir : baseDir);
+        chooser.setFileFilter(new FileNameExtensionFilter("Properties files", "properties"));
         
         final int res = chooser.showOpenDialog(this);
 

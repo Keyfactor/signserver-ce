@@ -247,21 +247,9 @@
                 <Component class="javax.swing.JTable" name="propertiesTable">
                   <Properties>
                     <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                      <Table columnCount="2" rowCount="5">
-                        <Column editable="true" title="Property" type="java.lang.Object">
-                          <Data value="Signatures:"/>
-                          <Data value="Signature limit:"/>
-                          <Data value="Validity not before:"/>
-                          <Data value="Validity not after:"/>
-                          <Data value="Certificate chain:"/>
-                        </Column>
-                        <Column editable="true" title="Value" type="java.lang.Object">
-                          <Data value="0"/>
-                          <Data value="100000"/>
-                          <Data value="2010-05-20"/>
-                          <Data value="2020-05-20"/>
-                          <Data value="CN=Sod1, O=Document Signer Pecuela 11, C=PE issued by CN=CSCA Pecuela,O=Pecuela MOI,C=PE"/>
-                        </Column>
+                      <Table columnCount="2" rowCount="0">
+                        <Column editable="true" title="Key" type="java.lang.Object"/>
+                        <Column editable="true" title="Value" type="java.lang.Object"/>
                       </Table>
                     </Property>
                     <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
@@ -369,6 +357,9 @@
                 <Property name="text" type="java.lang.String" resourceKey="loadFromFileRadioButton.text"/>
                 <Property name="name" type="java.lang.String" value="loadFromFileRadioButton" noResource="true"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="loadFromFileRadioButtonActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JRadioButton" name="editWorkerPropertiesRadioButton">
               <Properties>
@@ -379,6 +370,9 @@
                 <Property name="text" type="java.lang.String" resourceKey="editWorkerPropertiesRadioButton.text"/>
                 <Property name="name" type="java.lang.String" value="editWorkerPropertiesRadioButton" noResource="true"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editWorkerPropertiesRadioButtonActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="workerNameLabel">
               <Properties>

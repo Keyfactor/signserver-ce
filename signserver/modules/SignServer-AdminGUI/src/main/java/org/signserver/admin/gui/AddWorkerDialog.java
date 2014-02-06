@@ -240,14 +240,10 @@ public class AddWorkerDialog extends javax.swing.JDialog {
 
         propertiesTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {"Signatures:", "0"},
-                {"Signature limit:", "100000"},
-                {"Validity not before:", "2010-05-20"},
-                {"Validity not after:", "2020-05-20"},
-                {"Certificate chain:", "CN=Sod1, O=Document Signer Pecuela 11, C=PE issued by CN=CSCA Pecuela,O=Pecuela MOI,C=PE"}
+
             },
             new String [] {
-                "Property", "Value"
+                "Key", "Value"
             }
         ));
         propertiesTable.setName("propertiesTable"); // NOI18N
@@ -306,11 +302,21 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         loadFromFileRadioButton.setFont(resourceMap.getFont("loadFromFileRadioButton.font")); // NOI18N
         loadFromFileRadioButton.setText(resourceMap.getString("loadFromFileRadioButton.text")); // NOI18N
         loadFromFileRadioButton.setName("loadFromFileRadioButton"); // NOI18N
+        loadFromFileRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                loadFromFileRadioButtonActionPerformed(evt);
+            }
+        });
 
         modeSelectButtonGroup.add(editWorkerPropertiesRadioButton);
         editWorkerPropertiesRadioButton.setFont(resourceMap.getFont("editWorkerPropertiesRadioButton.font")); // NOI18N
         editWorkerPropertiesRadioButton.setText(resourceMap.getString("editWorkerPropertiesRadioButton.text")); // NOI18N
         editWorkerPropertiesRadioButton.setName("editWorkerPropertiesRadioButton"); // NOI18N
+        editWorkerPropertiesRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editWorkerPropertiesRadioButtonActionPerformed(evt);
+            }
+        });
 
         workerNameLabel.setText(resourceMap.getString("workerNameLabel.text")); // NOI18N
         workerNameLabel.setName("workerNameLabel"); // NOI18N
@@ -607,6 +613,19 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         dispose();
     }//GEN-LAST:event_cancelButtonActionPerformed
 
+    private void loadFromFileRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadFromFileRadioButtonActionPerformed
+        setMode(Mode.LOAD_FROM_FILE);
+    }//GEN-LAST:event_loadFromFileRadioButtonActionPerformed
+
+    private void editWorkerPropertiesRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editWorkerPropertiesRadioButtonActionPerformed
+        setMode(Mode.EDIT_MANUALLY);
+    }//GEN-LAST:event_editWorkerPropertiesRadioButtonActionPerformed
+
+    private void setMode(final Mode mode) {
+        this.mode = mode;
+        updateControls();
+    }
+    
     private void goBackToInitialConfig() {       
         ((CardLayout) wizardPanel.getLayout()).show(wizardPanel, "initial");
         stage = Stage.INITIAL_CONFIG;

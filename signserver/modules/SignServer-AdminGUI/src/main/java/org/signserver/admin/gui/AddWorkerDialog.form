@@ -321,6 +321,9 @@
                 <Property name="text" type="java.lang.String" resourceKey="workerImplementationField.text"/>
                 <Property name="name" type="java.lang.String" value="workerImplementationField" noResource="true"/>
               </Properties>
+              <Events>
+                <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="workerImplementationFieldKeyTyped"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JTextField" name="filePathTextField">
               <Properties>
@@ -344,6 +347,9 @@
                 <Property name="text" type="java.lang.String" resourceKey="workerNameField.text"/>
                 <Property name="name" type="java.lang.String" value="workerNameField" noResource="true"/>
               </Properties>
+              <Events>
+                <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="workerNameFieldKeyTyped"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="workerIdLabel">
               <Properties>
@@ -402,6 +408,10 @@
                 </Property>
                 <Property name="name" type="java.lang.String" value="workerIdComboBox" noResource="true"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="workerIdComboBoxActionPerformed"/>
+                <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="workerIdComboBoxKeyTyped"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>

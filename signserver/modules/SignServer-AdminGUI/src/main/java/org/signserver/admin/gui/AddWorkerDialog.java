@@ -31,6 +31,7 @@ import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
@@ -39,6 +40,7 @@ import org.apache.commons.io.FileUtils;
 import org.bouncycastle.util.Arrays;
 import org.signserver.admin.gui.adminws.gen.AdminNotAuthorizedException_Exception;
 import org.signserver.common.util.PropertiesApplier;
+import org.signserver.common.util.PropertiesConstants;
 import org.signserver.common.util.PropertiesParser;
 
 /**
@@ -165,7 +167,16 @@ public class AddWorkerDialog extends javax.swing.JDialog {
                 nextApplyButton.setEnabled(filePath != null && !filePath.isEmpty());
                 break;
             case EDIT_MANUALLY:
-                // TODO: implement later when implementing manual edition
+                final String workerId =
+                        ((JTextField) workerIdComboBox.getEditor().getEditorComponent())
+                        .getText();
+                final String workerName = workerNameField.getText();
+                final String classPath = workerImplementationField.getText();
+                
+                // enable next button if all required fields have been set
+                nextApplyButton.setEnabled(!workerId.isEmpty()
+                                           && !workerName.isEmpty()
+                                           && !classPath.isEmpty());
                 break;
             default:
                 // should not happen
@@ -286,6 +297,11 @@ public class AddWorkerDialog extends javax.swing.JDialog {
 
         workerImplementationField.setText(resourceMap.getString("workerImplementationField.text")); // NOI18N
         workerImplementationField.setName("workerImplementationField"); // NOI18N
+        workerImplementationField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                workerImplementationFieldKeyTyped(evt);
+            }
+        });
 
         filePathTextField.setText(resourceMap.getString("filePathTextField.text")); // NOI18N
         filePathTextField.setName("filePathTextField"); // NOI18N
@@ -306,6 +322,11 @@ public class AddWorkerDialog extends javax.swing.JDialog {
 
         workerNameField.setText(resourceMap.getString("workerNameField.text")); // NOI18N
         workerNameField.setName("workerNameField"); // NOI18N
+        workerNameField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                workerNameFieldKeyTyped(evt);
+            }
+        });
 
         workerIdLabel.setText(resourceMap.getString("workerIdLabel.text")); // NOI18N
         workerIdLabel.setName("workerIdLabel"); // NOI18N
@@ -344,6 +365,16 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         workerIdComboBox.setEditable(true);
         workerIdComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "GENID1" }));
         workerIdComboBox.setName("workerIdComboBox"); // NOI18N
+        workerIdComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                workerIdComboBoxActionPerformed(evt);
+            }
+        });
+        workerIdComboBox.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                workerIdComboBoxKeyTyped(evt);
+            }
+        });
 
         javax.swing.GroupLayout initialSetupPanelLayout = new javax.swing.GroupLayout(initialSetupPanel);
         initialSetupPanel.setLayout(initialSetupPanelLayout);
@@ -662,9 +693,30 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         setMode(Mode.EDIT_MANUALLY);
     }//GEN-LAST:event_editWorkerPropertiesRadioButtonActionPerformed
 
+    private void workerIdComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_workerIdComboBoxActionPerformed
+        updateControls();
+    }//GEN-LAST:event_workerIdComboBoxActionPerformed
+
+    private void workerIdComboBoxKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_workerIdComboBoxKeyTyped
+        updateControls();
+    }//GEN-LAST:event_workerIdComboBoxKeyTyped
+
+    private void workerNameFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_workerNameFieldKeyTyped
+        updateControls();
+    }//GEN-LAST:event_workerNameFieldKeyTyped
+
+    private void workerImplementationFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_workerImplementationFieldKeyTyped
+        updateControls();
+    }//GEN-LAST:event_workerImplementationFieldKeyTyped
+
     private void setMode(final Mode mode) {
         this.mode = mode;
         updateControls();
+        
+        // forget about selected file when going to edit properties mode
+        if (mode == Mode.EDIT_MANUALLY) {
+            fileSelected = false;
+        }
     }
     
     private void goBackToInitialConfig() {       
@@ -706,12 +758,63 @@ public class AddWorkerDialog extends javax.swing.JDialog {
                 }
                 break;
             case EDIT_MANUALLY:
-                // TODO: load from editor...
+                configurationTextArea.setText(generateProperties());
+                configurationTextArea.setCaretPosition(0);
                 break;
             default:
                 // should not happen
                 break;
         }
+    }
+    
+    /**
+     * Generate properties based on filled-in values the add form.
+     * 
+     * @return Properties file content to fill the editor
+     */
+    private String generateProperties() {
+        // TODO: merge in previous content from the text editor in the case
+        // when the user goes back and changes some values in the form and then
+        // back to the editor
+        
+        final StringBuffer sb = new StringBuffer();
+        final String workerId =
+                ((JTextField) workerIdComboBox.getEditor().getEditorComponent())
+                .getText();
+        final String classPath = workerImplementationField.getText();
+        final String tokenClassPath = tokenImplementationField.getText();
+        final String workerName = workerNameField.getText();
+        
+        // insert CLASSPATH global property
+        sb.append(PropertiesConstants.GLOBAL_PREFIX);
+        sb.append(PropertiesConstants.WORKER_PREFIX);
+        sb.append(workerId);
+        sb.append(".CLASSPATH");
+        sb.append(" = ");
+        sb.append(classPath);
+        sb.append("\n");
+        
+        if (tokenClassPath != null && !tokenClassPath.isEmpty()) {
+            // insert SIGNERTOKEN.CLASSPATH global property
+            sb.append(PropertiesConstants.GLOBAL_PREFIX);
+            sb.append(workerId);
+            sb.append(".SIGNERTOKEN.CLASSPATH");
+            sb.append(" = ");
+            sb.append(tokenClassPath);
+            sb.append("\n");
+        }
+        
+        // insert NAME worker property
+        sb.append(PropertiesConstants.WORKER_PREFIX);
+        sb.append(workerId);
+        sb.append(".NAME");
+        sb.append(" = ");
+        sb.append(workerName);
+        sb.append("\n");
+        
+        // TODO: handle additional properties
+        
+        return sb.toString();
     }
 
     /**

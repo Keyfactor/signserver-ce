@@ -129,13 +129,19 @@
                   <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" attributes="0">
-                              <Component id="workerNameLabel" max="32767" attributes="1"/>
-                              <EmptySpace min="-2" pref="748" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" attributes="0">
+                                  <Component id="workerNameLabel" max="32767" attributes="1"/>
+                                  <EmptySpace min="-2" pref="748" max="-2" attributes="0"/>
+                              </Group>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <Component id="workerImplementationLabel" min="-2" pref="486" max="-2" attributes="1"/>
+                                  <EmptySpace pref="303" max="32767" attributes="0"/>
+                              </Group>
                           </Group>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="workerImplementationLabel" min="-2" pref="486" max="-2" attributes="1"/>
-                              <EmptySpace pref="303" max="32767" attributes="0"/>
+                          <Group type="102" alignment="1" attributes="0">
+                              <Component id="workerIdComboBox" min="-2" pref="163" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="123" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
@@ -158,7 +164,6 @@
                                       </Group>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="workerIDField" alignment="0" min="-2" pref="80" max="-2" attributes="0"/>
                                           <Component id="workerNameField" alignment="1" pref="274" max="32767" attributes="1"/>
                                           <Component id="workerImplementationField" alignment="0" pref="274" max="32767" attributes="1"/>
                                           <Component id="tokenImplementationField" alignment="0" pref="274" max="32767" attributes="1"/>
@@ -187,7 +192,9 @@
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace min="-2" pref="190" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="139" max="-2" attributes="0"/>
+                      <Component id="workerIdComboBox" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="workerNameLabel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
                       <Component id="workerImplementationLabel" min="-2" max="-2" attributes="0"/>
@@ -195,7 +202,7 @@
                   </Group>
                   <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="1" attributes="0">
-                          <EmptySpace pref="26" max="32767" attributes="0"/>
+                          <EmptySpace pref="28" max="32767" attributes="0"/>
                           <Component id="loadFromFileRadioButton" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
@@ -205,10 +212,7 @@
                           <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
                           <Component id="editWorkerPropertiesRadioButton" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="workerIDField" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="workerIdLabel" alignment="3" min="-2" pref="31" max="-2" attributes="0"/>
-                          </Group>
+                          <Component id="workerIdLabel" min="-2" pref="31" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
                           <Component id="workerNameField" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
@@ -388,10 +392,15 @@
                 <Property name="name" type="java.lang.String" value="workerNameLabel" noResource="true"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JTextField" name="workerIDField">
+            <Component class="javax.swing.JComboBox" name="workerIdComboBox">
               <Properties>
-                <Property name="text" type="java.lang.String" resourceKey="workerIDField.text"/>
-                <Property name="name" type="java.lang.String" value="workerIDField" noResource="true"/>
+                <Property name="editable" type="boolean" value="true"/>
+                <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+                  <StringArray count="1">
+                    <StringItem index="0" value="GENID1"/>
+                  </StringArray>
+                </Property>
+                <Property name="name" type="java.lang.String" value="workerIdComboBox" noResource="true"/>
               </Properties>
             </Component>
           </SubComponents>

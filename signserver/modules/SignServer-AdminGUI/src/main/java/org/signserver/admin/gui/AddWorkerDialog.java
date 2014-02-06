@@ -36,6 +36,7 @@ import javax.swing.plaf.basic.BasicTabbedPaneUI;
 import javax.swing.table.DefaultTableCellRenderer;
 import org.apache.commons.io.FileUtils;
 import org.bouncycastle.util.Arrays;
+import org.signserver.admin.gui.adminws.gen.AdminNotAuthorizedException_Exception;
 import org.signserver.common.util.PropertiesApplier;
 import org.signserver.common.util.PropertiesParser;
 
@@ -618,6 +619,16 @@ public class AddWorkerDialog extends javax.swing.JDialog {
             }
             
             modifiedWorkers = applier.getWorkerIds();
+            
+            try {
+                for (final int workerId : modifiedWorkers) {
+                    SignServerAdminGUIApplication.getAdminWS().reloadConfiguration(workerId);
+                }
+            } catch (AdminNotAuthorizedException_Exception e) {
+                JOptionPane.showMessageDialog(this,
+                        "Error reloading workers: " + e.getMessage(),
+                        "Error reloading", JOptionPane.ERROR_MESSAGE);
+            }
         }
 
         return true;

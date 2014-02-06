@@ -40,6 +40,7 @@ import org.signserver.common.SODSignRequest;
 import org.signserver.common.SODSignResponse;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerException;
+import org.signserver.common.util.PropertiesConstants;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.log.LogMap;
@@ -230,7 +231,7 @@ public class SODProcessServlet extends HttpServlet {
                 }
                 
                 logMap.put(IWorkerLogger.LOG_WORKER_NAME,
-                        getWorkerSession().getCurrentWorkerConfig(workerId).getProperty(ProcessableConfig.NAME));
+                        getWorkerSession().getCurrentWorkerConfig(workerId).getProperty(PropertiesConstants.NAME));
                 
                 response = (SODSignResponse) getWorkerSession().process(workerId, signRequest, context);
 

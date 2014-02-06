@@ -36,6 +36,7 @@ import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Base64;
 import org.ejbca.util.CertTools;
 import org.signserver.common.*;
+import org.signserver.common.util.PropertiesConstants;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.server.CertificateClientCredential;
 import org.signserver.server.IClientCredential;
@@ -410,7 +411,7 @@ public class GenericProcessServlet extends HttpServlet {
         logMap.put(IWorkerLogger.LOG_FILENAME, fileName);
         logMap.put(IWorkerLogger.LOG_XFORWARDEDFOR, xForwardedFor);
         logMap.put(IWorkerLogger.LOG_WORKER_NAME,
-                getWorkerSession().getCurrentWorkerConfig(workerId).getProperty(ProcessableConfig.NAME));
+                getWorkerSession().getCurrentWorkerConfig(workerId).getProperty(PropertiesConstants.NAME));
 
         if (xForwardedFor != null) {
             context.put(RequestContext.X_FORWARDED_FOR, xForwardedFor);

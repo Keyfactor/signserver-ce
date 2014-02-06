@@ -16,6 +16,7 @@ import java.util.*;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.signserver.common.*;
+import org.signserver.common.util.PropertiesConstants;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.server.*;
 import org.signserver.server.archive.Archiver;
@@ -148,8 +149,8 @@ public class WorkerFactory {
 
                         if (obj instanceof IProcessable || obj.getClass().getSimpleName().equals("IMailProcessor")) {
                             config = workerConfigHome.getWorkerProperties(nextId.intValue());
-                            if (config.getProperties().getProperty(ProcessableConfig.NAME) != null) {
-                                getNameToIdMap().put(config.getProperties().getProperty(ProcessableConfig.NAME).toUpperCase(), nextId);
+                            if (config.getProperties().getProperty(PropertiesConstants.NAME) != null) {
+                                getNameToIdMap().put(config.getProperties().getProperty(PropertiesConstants.NAME).toUpperCase(), nextId);
                             }
                         }
 
@@ -233,8 +234,8 @@ public class WorkerFactory {
 
                 Object obj = implClass.newInstance();
                 if (obj instanceof IProcessable) {
-                    if (config.getProperties().getProperty(ProcessableConfig.NAME) != null) {
-                        getNameToIdMap().put(config.getProperties().getProperty(ProcessableConfig.NAME).toUpperCase(), new Integer(id));
+                    if (config.getProperties().getProperty(PropertiesConstants.NAME) != null) {
+                        getNameToIdMap().put(config.getProperties().getProperty(PropertiesConstants.NAME).toUpperCase(), new Integer(id));
                     }
                 }
                 ((IWorker) obj).init(id, config, workerContext, null);

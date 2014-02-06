@@ -694,6 +694,7 @@ public class AddWorkerDialog extends javax.swing.JDialog {
                 try {
                     config = FileUtils.readFileToString(file);
                     configurationTextArea.setText(config);
+                    configurationTextArea.setCaretPosition(0);
                     configurationEdited = false;
                     // reset file selected status
                     fileSelected = false;

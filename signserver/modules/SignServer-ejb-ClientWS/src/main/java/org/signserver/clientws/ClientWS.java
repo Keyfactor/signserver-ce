@@ -21,13 +21,13 @@ import javax.ejb.Stateless;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
-import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Base64;
 import org.signserver.common.*;
+import org.signserver.common.util.PropertiesConstants;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.server.CertificateClientCredential;
 import org.signserver.server.IClientCredential;
@@ -315,7 +315,7 @@ public class ClientWS {
                 servletRequest.getHeader("X-Forwarded-For"));
 
         logMap.put(IWorkerLogger.LOG_WORKER_NAME,
-                getWorkerSession().getCurrentWorkerConfig(workerId).getProperty(ProcessableConfig.NAME));
+                getWorkerSession().getCurrentWorkerConfig(workerId).getProperty(PropertiesConstants.NAME));
         
         if (requestMetadata == null) {
             requestContext.remove(RequestContext.REQUEST_METADATA);

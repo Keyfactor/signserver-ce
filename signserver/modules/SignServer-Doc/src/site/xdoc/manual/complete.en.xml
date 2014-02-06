@@ -1636,6 +1636,9 @@ right shows details for the selected workers (if any).
 
                     <subsubsection name="Main window: Menu bar">
                         <p>
+<b> File -&gt; Export...</b>: Opens the Export configuration dialog. This is the equivalent of the "dumpproperties" <a href="complete.en.html#Administration%20CLI">Admin CLI</a> command. The dialog gives the option to export all workers, the selected workers or none. In addition it also gives the option to include all global configurations not related to any worker (required if no workers choosen for export). 
+                        </p>
+                        <p>
 <b> File -&gt; Exit</b>: Exits the SignServer Administration GUI
                         </p>
                         <p>

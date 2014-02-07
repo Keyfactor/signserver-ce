@@ -202,8 +202,10 @@ public class PropertiesParser {
                     String certs[] = propertyvalue.split(";");
                     ArrayList<byte[]> chain = new ArrayList<byte[]>();
                     for (String base64cert : certs) {
-                        byte[] cert = Base64.decode(base64cert.getBytes());
-                        chain.add(cert);
+                        if (!base64cert.trim().isEmpty()) {
+                            byte[] cert = Base64.decode(base64cert.getBytes());
+                            chain.add(cert);
+                        }
                     }
                     signerCertificateChains.put(workerIdOrName, chain);
                 } else {

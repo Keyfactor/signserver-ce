@@ -203,8 +203,10 @@ public class SetPropertiesHelper {
                     String certs[] = propertyvalue.split(";");
                     ArrayList<byte[]> chain = new ArrayList<byte[]>();
                     for (String base64cert : certs) {
-                        byte[] cert = Base64.decode(base64cert.getBytes());
-                        chain.add(cert);
+                        if (!base64cert.trim().isEmpty()) {
+                            byte[] cert = Base64.decode(base64cert.getBytes());
+                            chain.add(cert);
+                        }
                     }
                     helper.getWorkerSession().uploadSignerCertificateChain(workerId, chain, GlobalConfiguration.SCOPE_GLOBAL);
                 } else {

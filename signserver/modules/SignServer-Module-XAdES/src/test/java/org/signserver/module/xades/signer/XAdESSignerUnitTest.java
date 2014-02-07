@@ -20,20 +20,23 @@ import java.security.Security;
 import java.security.cert.CertStore;
 import java.security.cert.Certificate;
 import java.security.cert.CollectionCertStoreParameters;
+import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.xml.crypto.dsig.SignatureMethod;
-import javax.xml.crypto.dsig.XMLSignature;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.log4j.Logger;
+import org.apache.xml.security.keys.KeyInfo;
+import org.apache.xml.security.keys.content.X509Data;
 import org.bouncycastle.asn1.x509.BasicConstraints;
 import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.cert.X509CertificateHolder;
@@ -48,7 +51,6 @@ import org.signserver.common.GenericSignResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
-import org.signserver.module.xades.signer.MockedCryptoToken;
 import org.signserver.module.xades.signer.MockedTimeStampTokenProvider.MockedTimeStampVerificationProvider;
 import org.signserver.server.CertificateClientCredential;
 import org.signserver.server.UsernamePasswordClientCredential;
@@ -60,7 +62,6 @@ import org.signserver.test.utils.builders.CryptoUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import xades4j.UnsupportedAlgorithmException;
 import xades4j.properties.AllDataObjsCommitmentTypeProperty;
 import xades4j.properties.QualifyingProperties;
 import xades4j.properties.SignedDataObjectProperty;
@@ -309,10 +310,12 @@ public class XAdESSignerUnitTest {
         LOG.debug("signedXml: " + signedXml);
         
         // Validation: setup
-        CertStore certStore = CertStore.getInstance("Collection", new CollectionCertStoreParameters(token.getCertificateChain(ICryptoToken.PURPOSE_SIGN)));
+        CertStore certStore = CertStore.getInstance("Collection", new CollectionCertStoreParameters());
         KeyStore trustAnchors = KeyStore.getInstance("JKS");
         trustAnchors.load(null, "foo123".toCharArray());
-        trustAnchors.setCertificateEntry("cert", token.getCertificate(ICryptoToken.PURPOSE_SIGN));
+        List<Certificate> chain = token.getCertificateChain(ICryptoToken.PURPOSE_SIGN);
+        System.out.println("trust anchor: " + chain.get(chain.size() - 1));
+        trustAnchors.setCertificateEntry("rootcert", chain.get(chain.size() - 1)); // Simply assume last cert in chain is the trust anchor
         
         CertificateValidationProvider certValidator = new PKIXCertificateValidationProvider(trustAnchors, false, certStore);
 
@@ -790,13 +793,160 @@ public class XAdESSignerUnitTest {
         assertTrue("error: " + errors, errors.contains("commitment type"));
     }
     
-//    @Test
-//    public void testSigningWithIntermediateCert() throws Exception {
-//        LOG.info("testSigningWithIntermediateCert");
-//        final XAdESVerificationResult r = getVerificationResult(tokenWithIntermediateCert, new WorkerConfig());
-//
-//        // TODO: check that the intermediate cert is included in the chain
-//    }
+    /** Tests including 3 certificate levels in the document. */
+    @Test
+    public void testSigningWithIntermediateCert_3levels() throws Exception {
+        LOG.info("testSigningWithIntermediateCert");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("INCLUDE_CERTIFICATE_LEVELS", "3");
+        
+        final XAdESVerificationResult r = getVerificationResult(tokenWithIntermediateCert, config, false, null);
+        assertEquals("BES", r.getSignatureForm().name());
+        KeyInfo keyInfo = r.getXmlSignature().getKeyInfo();
+        
+        // Gather all certificates
+        List<X509Certificate> certs = new LinkedList<X509Certificate>();
+        for (int i = 0; i < keyInfo.lengthX509Data(); i++) {
+            X509Data x509Data = keyInfo.itemX509Data(i);
+            if (x509Data.containsCertificate()) {
+                for (int j = 0; j < x509Data.lengthCertificate(); j++) {
+                    certs.add(x509Data.itemCertificate(j).getX509Certificate());
+                }
+            }
+        }
+        
+        // Check that the intermediate cert is included in the chain
+        assertEquals(tokenWithIntermediateCert.getCertificateChain(ICryptoToken.PURPOSE_SIGN), certs);   
+    }
+    
+    /** Tests specifying many more certificates than available to including all 3 certificate levels in the document. */
+    @Test
+    public void testSigningWithIntermediateCert_99levels() throws Exception {
+        LOG.info("testSigningWithIntermediateCert");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("INCLUDE_CERTIFICATE_LEVELS", "99");
+        
+        final XAdESVerificationResult r = getVerificationResult(tokenWithIntermediateCert, config, false, null);
+        assertEquals("BES", r.getSignatureForm().name());
+        KeyInfo keyInfo = r.getXmlSignature().getKeyInfo();
+        
+        // Gather all certificates
+        List<X509Certificate> certs = new LinkedList<X509Certificate>();
+        for (int i = 0; i < keyInfo.lengthX509Data(); i++) {
+            X509Data x509Data = keyInfo.itemX509Data(i);
+            if (x509Data.containsCertificate()) {
+                for (int j = 0; j < x509Data.lengthCertificate(); j++) {
+                    certs.add(x509Data.itemCertificate(j).getX509Certificate());
+                }
+            }
+        }
+        // Check that the intermediate cert is included in the chain
+        assertEquals(tokenWithIntermediateCert.getCertificateChain(ICryptoToken.PURPOSE_SIGN), certs);   
+    }
+    
+    /** Tests including 1 certificate level in the document. */
+    @Test
+    public void testSigningWithoutIntermediateCert_1levels() throws Exception {
+        LOG.info("testSigningWithIntermediateCert");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("INCLUDE_CERTIFICATE_LEVELS", "1");
+        
+        final XAdESVerificationResult r = getVerificationResult(tokenRSA, config, false, null);
+        assertEquals("BES", r.getSignatureForm().name());
+        KeyInfo keyInfo = r.getXmlSignature().getKeyInfo();
+        
+        // Gather all certificates
+        List<X509Certificate> certs = new LinkedList<X509Certificate>();
+        for (int i = 0; i < keyInfo.lengthX509Data(); i++) {
+            X509Data x509Data = keyInfo.itemX509Data(i);
+            if (x509Data.containsCertificate()) {
+                for (int j = 0; j < x509Data.lengthCertificate(); j++) {
+                    certs.add(x509Data.itemCertificate(j).getX509Certificate());
+                }
+            }
+        }
+        // Check that the signer certificate is the only certificate included
+        assertEquals(Arrays.asList(tokenRSA.getCertificate(ICryptoToken.PURPOSE_SIGN)), certs);   
+    }
+    
+    /** Tests not specifying any level and using the default value of 1 certificate level. */
+    @Test
+    public void testSigningWithoutIntermediateCert_defaultLevels() throws Exception {
+        LOG.info("testSigningWithIntermediateCert");
+        WorkerConfig config = new WorkerConfig();
+        // Note: No INCLUDE_CERTIFICATE_LEVELS set
+        
+        final XAdESVerificationResult r = getVerificationResult(tokenRSA, config, false, null);
+        assertEquals("BES", r.getSignatureForm().name());
+        KeyInfo keyInfo = r.getXmlSignature().getKeyInfo();
+        
+        // Gather all certificates
+        List<X509Certificate> certs = new LinkedList<X509Certificate>();
+        for (int i = 0; i < keyInfo.lengthX509Data(); i++) {
+            X509Data x509Data = keyInfo.itemX509Data(i);
+            if (x509Data.containsCertificate()) {
+                for (int j = 0; j < x509Data.lengthCertificate(); j++) {
+                    certs.add(x509Data.itemCertificate(j).getX509Certificate());
+                }
+            }
+        }
+        // Check that the signer certificate is the only certificate included
+        assertEquals(Arrays.asList(tokenRSA.getCertificate(ICryptoToken.PURPOSE_SIGN)), certs);   
+    }
+    
+    /** Tests including 2 certificate levels in the document. */
+    @Test
+    public void testSigningWithIntermediateCert_2levels() throws Exception {
+        LOG.info("testSigningWithIntermediateCert");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("INCLUDE_CERTIFICATE_LEVELS", "2");
+        
+        final XAdESVerificationResult r = getVerificationResult(tokenWithIntermediateCert, config, false, null);
+        assertEquals("BES", r.getSignatureForm().name());
+        KeyInfo keyInfo = r.getXmlSignature().getKeyInfo();
+        
+        // Gather all certificates
+        List<X509Certificate> actual = new LinkedList<X509Certificate>();
+        for (int i = 0; i < keyInfo.lengthX509Data(); i++) {
+            X509Data x509Data = keyInfo.itemX509Data(i);
+            if (x509Data.containsCertificate()) {
+                for (int j = 0; j < x509Data.lengthCertificate(); j++) {
+                    actual.add(x509Data.itemCertificate(j).getX509Certificate());
+                }
+            }
+        }
+        
+        // Check that the intermediate cert is included in the chain
+        List<Certificate> expected = Arrays.asList(
+                tokenWithIntermediateCert.getCertificateChain(ICryptoToken.PURPOSE_SIGN).get(0),
+                tokenWithIntermediateCert.getCertificateChain(ICryptoToken.PURPOSE_SIGN).get(1)
+        );
+        assertEquals(expected, actual);
+    }
+    
+    /** Tests incorrect values for the INCLUDE_CERTIFICATE_LEVELS worker property. */
+    @Test
+    public void testInit_includeCertificateLevelsProperty() throws Exception {
+        LOG.info("testSigningWithIntermediateCert");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("INCLUDE_CERTIFICATE_LEVELS", "0");
+        XAdESSigner instance = new MockedXAdESSigner(tokenRSA);
+        instance.init(4711, config, null, null);
+        List<String> actualErrors = instance.getFatalErrors();
+        assertTrue("message: " + actualErrors, actualErrors.toString().contains("INCLUDE_CERTIFICATE_LEVELS"));
+        
+        config.setProperty("INCLUDE_CERTIFICATE_LEVELS", "-1");
+        instance = new MockedXAdESSigner(tokenRSA);
+        instance.init(4711, config, null, null);
+        actualErrors = instance.getFatalErrors();
+        assertTrue("message: " + actualErrors, actualErrors.toString().contains("INCLUDE_CERTIFICATE_LEVELS"));
+        
+        config.setProperty("INCLUDE_CERTIFICATE_LEVELS", "qwerty");
+        instance = new MockedXAdESSigner(tokenRSA);
+        instance.init(4711, config, null, null);
+        actualErrors = instance.getFatalErrors();
+        assertTrue("message: " + actualErrors, actualErrors.toString().contains("INCLUDE_CERTIFICATE_LEVELS"));
+    }
     
     /**
      * Test setting the CLAIMED_ROLE property.

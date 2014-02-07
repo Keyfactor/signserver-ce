@@ -66,13 +66,16 @@ import xades4j.production.XadesSigningProfile;
 import xades4j.production.XadesTSigningProfile;
 import xades4j.properties.AllDataObjsCommitmentTypeProperty;
 import xades4j.properties.SignerRoleProperty;
+import xades4j.providers.KeyInfoCertificatesProvider;
 import xades4j.providers.KeyingDataProvider;
 import xades4j.providers.SignaturePropertiesCollector;
+import xades4j.providers.SigningCertChainException;
 import xades4j.providers.TimeStampTokenProvider;
 import xades4j.utils.XadesProfileResolutionException;
 import xades4j.providers.impl.DefaultAlgorithmsProviderEx;
 import xades4j.providers.impl.DefaultSignaturePropertiesProvider;
 import xades4j.providers.impl.ExtendedTimeStampTokenProvider;
+import xades4j.verification.UnexpectedJCAException;
 
 /**
  * A Signer using XAdES to createSigner XML documents.
@@ -106,11 +109,17 @@ public class XAdESSigner extends BaseSigner {
     /** Worker property: SIGNATUREALGORITHM */
     public static final String SIGNATUREALGORITHM = "SIGNATUREALGORITHM";
    
-    /** Worker property: CLAIMED_ROLE */
+    /** Worker property: CLAIMED_ROLE. */
     public static final String CLAIMED_ROLE = "CLAIMED_ROLE";
     public static final String CLAIMED_ROLE_FROM_USERNAME = "CLAIMED_ROLE_FROM_USERNAME";
 
-    /** Default value use if the worker property XADESFORM has not been set. */
+    /** Worker property: INCLUDE_CERTIFICATE_LEVELS. */
+    public static final String PROPERTY_INCLUDE_CERTIFICATE_LEVELS = "INCLUDE_CERTIFICATE_LEVELS";
+    
+    /** Default value to use if the worker property INCLUDE_CERTIFICATE_LEVELS has no been set. */
+    private static final int DEFAULT_INCLUDE_CERTIFICATE_LEVELS = 1;
+    
+    /** Default value to use if the worker property XADESFORM has not been set. */
     private static final String DEFAULT_XADESFORM = "BES";
     
     private static final String CONTENT_TYPE = "text/xml";
@@ -124,6 +133,8 @@ public class XAdESSigner extends BaseSigner {
     
     private String claimedRoleDefault;
     private boolean claimedRoleFromUsername;
+    
+    private int includeCertificateLevels;
     
     /**
      * Addional signature methods not yet covered by
@@ -248,6 +259,20 @@ public class XAdESSigner extends BaseSigner {
         claimedRoleDefault = config.getProperty(CLAIMED_ROLE);
         claimedRoleFromUsername =
                 Boolean.parseBoolean(config.getProperty(CLAIMED_ROLE_FROM_USERNAME, Boolean.FALSE.toString()));
+        
+        final String includeCertificateLevelsProperty = config.getProperties().getProperty(PROPERTY_INCLUDE_CERTIFICATE_LEVELS);
+        if (includeCertificateLevelsProperty == null) {
+            includeCertificateLevels = DEFAULT_INCLUDE_CERTIFICATE_LEVELS;
+        } else {
+            try {
+                includeCertificateLevels = Integer.parseInt(includeCertificateLevelsProperty);
+                if (includeCertificateLevels < 1) {
+                    configErrors.add("Illegal value for property " + PROPERTY_INCLUDE_CERTIFICATE_LEVELS + ". Only numbers >= 1 supported.");
+                }
+            } catch (NumberFormatException ex) {
+                configErrors.add("Unable to parse property " + PROPERTY_INCLUDE_CERTIFICATE_LEVELS + ". Only numbers >= 1 suported: " + ex.getLocalizedMessage());
+            }
+        }
         
         if (LOG.isDebugEnabled()) {
             LOG.debug("Worker " + workerId + " configured: " + parameters);
@@ -394,6 +419,14 @@ public class XAdESSigner extends BaseSigner {
         if (claimedRole != null) {
             xsp = xsp.withSignaturePropertiesProvider(new SignaturePropertiesProvider(claimedRole));
         }
+        
+        // Include the configured number of certificates in the KeyInfo
+        xsp.withKeyInfoCertificatesProvider(new KeyInfoCertificatesProvider() {
+            @Override
+            public List<X509Certificate> getCertificates(List<X509Certificate> list) throws SigningCertChainException, UnexpectedJCAException {
+                return list.subList(0, Math.min(includeCertificateLevels, list.size()));
+            }
+        });
    
         return (XadesSigner) xsp.newSigner();
     }

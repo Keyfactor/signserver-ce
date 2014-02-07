@@ -14,6 +14,9 @@ package org.signserver.admin.gui;
 
 import java.awt.event.ActionEvent;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Vector;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -412,8 +415,15 @@ public class GlobalConfigurationFrame extends javax.swing.JFrame {
             properties = new Vector<Vector<String>>();
 
             if (result != null) {
-                for (WsGlobalConfiguration.Config.Entry oldEntry
-                        : result.getConfig().getEntry()) {
+                final List<WsGlobalConfiguration.Config.Entry> list = result.getConfig().getEntry();
+                Collections.sort(list, new Comparator<WsGlobalConfiguration.Config.Entry>() {
+                    @Override
+                    public int compare(WsGlobalConfiguration.Config.Entry o1, WsGlobalConfiguration.Config.Entry o2) {
+                        return o1.getKey().toString().compareTo(o2.getKey().toString());
+                    }
+                });
+                
+                for (WsGlobalConfiguration.Config.Entry oldEntry : list) {
                     final Vector<String> entry = new Vector<String>();
                     entry.add((String) oldEntry.getKey());
                     entry.add((String) oldEntry.getValue());

@@ -31,12 +31,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.ResourceBundle;
-import java.util.Set;
 import java.util.Vector;
 import javax.ejb.EJBException;
 import javax.swing.AbstractListModel;
@@ -2254,13 +2253,14 @@ private void displayLogEntryAction() {
                         LOG.debug("workerId: " + workerId + ", name: " + name);
                     }
                     // Configuration
-                    Set<Entry<Object, Object>> entries = properties.entrySet();
-                    Object[][] configProperties = new Object[entries.size()][];
+                    ArrayList<String> propertyNames = new ArrayList<String>(properties.stringPropertyNames());
+                    Collections.sort(propertyNames);
+                    Object[][] configProperties = new Object[properties.size()][];
                     int j = 0;
-                    for (Entry<Object, Object> entry : entries) {
+                    for (String key : propertyNames) {
                         configProperties[j] = new String[2];
-                        configProperties[j][0] = (String) entry.getKey();
-                        configProperties[j][1] = (String) entry.getValue();
+                        configProperties[j][0] = key;
+                        configProperties[j][1] = properties.getProperty(key);
                         j++;
                     }
                     // Status
@@ -2318,6 +2318,16 @@ private void displayLogEntryAction() {
             } catch (AdminNotAuthorizedException_Exception ex) {
                 postAdminNotAuthorized(ex);
             }
+            
+            // Sort the workers by name
+            Collections.sort(newSigners,  new Comparator<Worker>() {
+                @Override
+                public int compare(Worker o1, Worker o2) {
+                    final String name1 = o1.getName() == null ? String.valueOf(o1.getWorkerId()) : o1.getName();
+                    final String name2 = o2.getName() == null ? String.valueOf(o2.getWorkerId()) : o2.getName();
+                    return name1.compareTo(name2);
+                }
+            });
 
             return newSigners;  // return your result
         }

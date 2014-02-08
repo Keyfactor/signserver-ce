@@ -570,7 +570,7 @@ Configuring EAR...
             <param name="dist.jars" value="${admingui.jar}"/>
             <param name="dist.includes" value="
                 bin/signserver-gui,
-                bin/admingui.cmd,
+                bin/signserver-gui.cmd,
                 conf/admingui.properties,
                 conf/admingui_default.properties,
                 conf/log4j.properties,

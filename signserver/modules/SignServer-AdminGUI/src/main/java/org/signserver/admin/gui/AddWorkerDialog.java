@@ -918,7 +918,8 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         // insert CLASSPATH global property
         sb.append(PropertiesConstants.GLOBAL_PREFIX_DOT);
         sb.append(workerPrefix);
-        sb.append(".CLASSPATH");
+        sb.append(".");
+        sb.append(PropertiesConstants.CLASSPATH);
         sb.append(" = ");
         sb.append(classPath);
         sb.append("\n");
@@ -927,7 +928,10 @@ public class AddWorkerDialog extends javax.swing.JDialog {
             // insert SIGNERTOKEN.CLASSPATH global property
             sb.append(PropertiesConstants.GLOBAL_PREFIX_DOT);
             sb.append(workerPrefix);
-            sb.append(".SIGNERTOKEN.CLASSPATH");
+            sb.append(".");
+            sb.append(PropertiesConstants.SIGNERTOKEN);
+            sb.append(".");
+            sb.append(PropertiesConstants.CLASSPATH);
             sb.append(" = ");
             sb.append(tokenClassPath);
             sb.append("\n");

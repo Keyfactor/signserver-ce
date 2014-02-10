@@ -288,6 +288,11 @@ public class AddWorkerDialog extends javax.swing.JDialog {
 
         removePropertyButton.setText(resourceMap.getString("removePropertyButton.text")); // NOI18N
         removePropertyButton.setName("removePropertyButton"); // NOI18N
+        removePropertyButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removePropertyButtonActionPerformed(evt);
+            }
+        });
 
         propertiesScrollPanel.setName("propertiesScrollPanel"); // NOI18N
 
@@ -819,6 +824,17 @@ public class AddWorkerDialog extends javax.swing.JDialog {
             }
         }
     }//GEN-LAST:event_editPropertyButtonActionPerformed
+
+    private void removePropertyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removePropertyButtonActionPerformed
+        final int row = propertiesTable.getSelectedRow();
+        
+        if (row != -1) {
+            final DefaultTableModel model =
+                    (DefaultTableModel) propertiesTable.getModel();
+            
+            model.removeRow(row);
+        }
+    }//GEN-LAST:event_removePropertyButtonActionPerformed
 
     private void setMode(final Mode mode) {
         this.mode = mode;

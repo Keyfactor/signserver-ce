@@ -32,10 +32,13 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import org.apache.commons.io.FileUtils;
 import org.bouncycastle.util.Arrays;
 import org.signserver.admin.gui.adminws.gen.AdminNotAuthorizedException_Exception;
@@ -93,6 +96,8 @@ public class AddWorkerDialog extends javax.swing.JDialog {
     
     private List<Integer> modifiedWorkers;
 
+    private WorkerPropertyEditor workerPropertyEditor = new WorkerPropertyEditor();
+
     /** Creates new form AddWorkerDialog */
     public AddWorkerDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -121,6 +126,20 @@ public class AddWorkerDialog extends javax.swing.JDialog {
                     return this;
                 }
             });
+        
+        propertiesTable.getSelectionModel().addListSelectionListener(
+                new ListSelectionListener() {
+
+            @Override
+            public void valueChanged(final ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    final boolean enable
+                            = propertiesTable.getSelectedRowCount() == 1;
+                    editPropertyButton.setEnabled(enable);
+                    removePropertyButton.setEnabled(enable);
+                }
+            }
+        });
     }
 
     /**
@@ -156,9 +175,12 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         propertiesLabel.setEnabled(mode == Mode.EDIT_MANUALLY);
         propertiesScrollPanel.setEnabled(mode == Mode.EDIT_MANUALLY);
         propertiesTable.setEnabled(mode == Mode.EDIT_MANUALLY);
+        
+        final int selectedRows = propertiesTable.getSelectedRowCount();
+        
         addPropertyButton.setEnabled(mode == Mode.EDIT_MANUALLY);
-        removePropertyButton.setEnabled(mode == Mode.EDIT_MANUALLY);
-        editPropertyButton.setEnabled(mode == Mode.EDIT_MANUALLY);
+        removePropertyButton.setEnabled(mode == Mode.EDIT_MANUALLY && selectedRows == 1);
+        editPropertyButton.setEnabled(mode == Mode.EDIT_MANUALLY && selectedRows == 1);
 
         // update state of Next/Apply button
         switch (mode) {
@@ -282,6 +304,11 @@ public class AddWorkerDialog extends javax.swing.JDialog {
 
         addPropertyButton.setText(resourceMap.getString("addPropertyButton.text")); // NOI18N
         addPropertyButton.setName("addPropertyButton"); // NOI18N
+        addPropertyButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addPropertyButtonActionPerformed(evt);
+            }
+        });
 
         editPropertyButton.setText(resourceMap.getString("editPropertyButton.text")); // NOI18N
         editPropertyButton.setName("editPropertyButton"); // NOI18N
@@ -708,6 +735,44 @@ public class AddWorkerDialog extends javax.swing.JDialog {
     private void workerImplementationFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_workerImplementationFieldKeyTyped
         updateControls();
     }//GEN-LAST:event_workerImplementationFieldKeyTyped
+
+    private void addPropertyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addPropertyButtonActionPerformed
+        workerPropertyEditor.setKey("");
+        workerPropertyEditor.setValue("");
+        
+        final int res = workerPropertyEditor.showDialog(this);
+        
+        if (res == JOptionPane.OK_OPTION) {
+            final String key = workerPropertyEditor.getKey();
+            final String value = workerPropertyEditor.getValue();
+            
+            if (PropertiesConstants.NAME.equals(key)) {
+                JOptionPane.showMessageDialog(this, 
+                            "Use the Name text field to edit the worker name",
+                            "Set worker name", JOptionPane.ERROR_MESSAGE);
+            } else {
+                final DefaultTableModel model =
+                        (DefaultTableModel) propertiesTable.getModel();
+                boolean existing = false;
+                
+                for (int i = 0; i < model.getRowCount(); i++) {
+                    final String foundKey = (String) model.getValueAt(i, 0);
+                    
+                    if (key.equals(foundKey)) {
+                        // update existing row
+                        model.setValueAt(key, i, 0);
+                        model.setValueAt(value, i, 1);
+                        existing = true;
+                        break;
+                    }
+                }
+                
+                if (!existing) {
+                    model.addRow(new Object[] {key, value});
+                }
+            }
+        }
+    }//GEN-LAST:event_addPropertyButtonActionPerformed
 
     private void setMode(final Mode mode) {
         this.mode = mode;

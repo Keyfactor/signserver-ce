@@ -10,6 +10,7 @@
  */
 package org.signserver.admin.gui;
 
+import java.awt.Component;
 import java.awt.Container;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -126,8 +127,8 @@ public class WorkerPropertyEditor extends Container {
         editPropertyValueTextArea.setText(value);
     }
     
-    public int showDialog(final JFrame frame) {
-        return JOptionPane.showConfirmDialog(frame, editPanel,
+    public int showDialog(final Component component) {
+        return JOptionPane.showConfirmDialog(component, editPanel,
                     "Edit property", JOptionPane.OK_CANCEL_OPTION,
                     JOptionPane.PLAIN_MESSAGE);
     }

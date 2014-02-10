@@ -935,7 +935,8 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         
         // insert NAME worker property
         sb.append(workerPrefix);
-        sb.append(".NAME");
+        sb.append(".");
+        sb.append(PropertiesConstants.NAME);
         sb.append(" = ");
         sb.append(workerName);
         sb.append("\n");

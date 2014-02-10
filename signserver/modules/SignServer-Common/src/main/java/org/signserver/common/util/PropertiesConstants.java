@@ -34,4 +34,6 @@ public interface PropertiesConstants {
     String SIGNERCERT = "SIGNERCERT";
     String SIGNERCERTCHAIN = "SIGNERCERTCHAIN";
     String NAME = "NAME";
+    String CLASSPATH = "CLASSPATH";
+    String SIGNERTOKEN = "SIGNERTOKEN";
 }

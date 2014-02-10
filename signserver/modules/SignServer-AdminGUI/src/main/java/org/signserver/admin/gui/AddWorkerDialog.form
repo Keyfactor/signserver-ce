@@ -29,8 +29,8 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="reloadButton" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="470" max="32767" attributes="0"/>
+              <Component id="resetButton" min="-2" max="-2" attributes="0"/>
+              <EmptySpace pref="477" max="32767" attributes="0"/>
               <Component id="cancelButton" min="-2" pref="86" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="backButton" min="-2" pref="74" max="-2" attributes="0"/>
@@ -52,7 +52,7 @@
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace pref="554" max="32767" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="reloadButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="resetButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="nextApplyButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="backButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="cancelButton" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -88,13 +88,13 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="backButtonActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JButton" name="reloadButton">
+    <Component class="javax.swing.JButton" name="resetButton">
       <Properties>
-        <Property name="text" type="java.lang.String" resourceKey="reloadButton.text"/>
-        <Property name="name" type="java.lang.String" value="reloadButton" noResource="true"/>
+        <Property name="text" type="java.lang.String" resourceKey="resetButton.text"/>
+        <Property name="name" type="java.lang.String" value="resetButton" noResource="true"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="reloadButtonActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="resetButtonActionPerformed"/>
       </Events>
     </Component>
     <Component class="javax.swing.JButton" name="cancelButton">

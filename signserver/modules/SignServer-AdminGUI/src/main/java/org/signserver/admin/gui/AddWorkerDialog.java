@@ -171,10 +171,10 @@ public class AddWorkerDialog extends javax.swing.JDialog {
      */
     private void updateControls() {
         // the reload button is only visible in the edit properties stage
-        reloadButton.setVisible(stage == Stage.EDIT_PROPERTIES);
+        resetButton.setVisible(stage == Stage.EDIT_PROPERTIES);
         // enable the reload button when there is changes done in the
         // free text configuration editor
-        reloadButton.setEnabled(configurationEdited);
+        resetButton.setEnabled(configurationEdited);
 
         // only enable the back button in the last step...
         backButton.setEnabled(stage == Stage.EDIT_PROPERTIES);
@@ -242,7 +242,7 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         modeSelectButtonGroup = new javax.swing.ButtonGroup();
         nextApplyButton = new javax.swing.JButton();
         backButton = new javax.swing.JButton();
-        reloadButton = new javax.swing.JButton();
+        resetButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
         wizardPanel = new javax.swing.JPanel();
         initialSetupPanel = new javax.swing.JPanel();
@@ -289,11 +289,11 @@ public class AddWorkerDialog extends javax.swing.JDialog {
             }
         });
 
-        reloadButton.setText(resourceMap.getString("reloadButton.text")); // NOI18N
-        reloadButton.setName("reloadButton"); // NOI18N
-        reloadButton.addActionListener(new java.awt.event.ActionListener() {
+        resetButton.setText(resourceMap.getString("resetButton.text")); // NOI18N
+        resetButton.setName("resetButton"); // NOI18N
+        resetButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                reloadButtonActionPerformed(evt);
+                resetButtonActionPerformed(evt);
             }
         });
 
@@ -574,8 +574,8 @@ public class AddWorkerDialog extends javax.swing.JDialog {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(reloadButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 470, Short.MAX_VALUE)
+                .addComponent(resetButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 477, Short.MAX_VALUE)
                 .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(backButton, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -593,7 +593,7 @@ public class AddWorkerDialog extends javax.swing.JDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(554, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(reloadButton)
+                    .addComponent(resetButton)
                     .addComponent(nextApplyButton)
                     .addComponent(backButton)
                     .addComponent(cancelButton))
@@ -723,12 +723,21 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         updateControls();
     }//GEN-LAST:event_configurationTextAreaKeyTyped
 
-    private void reloadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reloadButtonActionPerformed
+    private void resetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
         loadConfigurationEditor();
         updateControls();
-    }//GEN-LAST:event_reloadButtonActionPerformed
+    }//GEN-LAST:event_resetButtonActionPerformed
 
     private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backButtonActionPerformed
+        if (configurationEdited) {
+            final int confirm = JOptionPane.showConfirmDialog(this,
+                    "Configuration has been edited, going back to the initial setup will discard changes.\n Proceed?",
+                    "Changed made", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+        
+            if (confirm == JOptionPane.NO_OPTION) {
+                return;
+            }
+        }
         goBackToInitialConfig();
     }//GEN-LAST:event_backButtonActionPerformed
 
@@ -1017,8 +1026,8 @@ public class AddWorkerDialog extends javax.swing.JDialog {
     private javax.swing.JLabel propertiesLabel;
     private javax.swing.JScrollPane propertiesScrollPanel;
     private javax.swing.JTable propertiesTable;
-    private javax.swing.JButton reloadButton;
     private javax.swing.JButton removePropertyButton;
+    private javax.swing.JButton resetButton;
     private javax.swing.JTextField tokenImplementationField;
     private javax.swing.JLabel tokenImplementationLabel;
     private javax.swing.JPanel wizardPanel;

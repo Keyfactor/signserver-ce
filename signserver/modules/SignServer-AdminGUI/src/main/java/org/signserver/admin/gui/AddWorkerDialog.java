@@ -912,11 +912,12 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         final String classPath = workerImplementationField.getText();
         final String tokenClassPath = tokenImplementationField.getText();
         final String workerName = workerNameField.getText();
+        final String workerPrefix =
+                PropertiesConstants.WORKER_PREFIX + workerId;
         
         // insert CLASSPATH global property
         sb.append(PropertiesConstants.GLOBAL_PREFIX_DOT);
-        sb.append(PropertiesConstants.WORKER_PREFIX);
-        sb.append(workerId);
+        sb.append(workerPrefix);
         sb.append(".CLASSPATH");
         sb.append(" = ");
         sb.append(classPath);
@@ -925,7 +926,7 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         if (tokenClassPath != null && !tokenClassPath.isEmpty()) {
             // insert SIGNERTOKEN.CLASSPATH global property
             sb.append(PropertiesConstants.GLOBAL_PREFIX_DOT);
-            sb.append(workerId);
+            sb.append(workerPrefix);
             sb.append(".SIGNERTOKEN.CLASSPATH");
             sb.append(" = ");
             sb.append(tokenClassPath);
@@ -933,14 +934,27 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         }
         
         // insert NAME worker property
-        sb.append(PropertiesConstants.WORKER_PREFIX);
-        sb.append(workerId);
+        sb.append(workerPrefix);
         sb.append(".NAME");
         sb.append(" = ");
         sb.append(workerName);
         sb.append("\n");
         
-        // TODO: handle additional properties
+        // generate additional properties
+        final DefaultTableModel model =
+                (DefaultTableModel) propertiesTable.getModel();
+        
+        for (int i = 0; i < model.getRowCount(); i++) {
+            final String key = (String) model.getValueAt(i, 0);
+            final String value = (String) model.getValueAt(i, 1);
+            
+            sb.append(workerPrefix);
+            sb.append(".");
+            sb.append(key);
+            sb.append(" = ");
+            sb.append(value);
+            sb.append("\n");
+        }
         
         return sb.toString();
     }

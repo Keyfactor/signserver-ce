@@ -32,6 +32,8 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
@@ -39,6 +41,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.text.JTextComponent;
 import org.apache.commons.io.FileUtils;
 import org.bouncycastle.util.Arrays;
 import org.signserver.admin.gui.adminws.gen.AdminNotAuthorizedException_Exception;
@@ -139,6 +142,27 @@ public class AddWorkerDialog extends javax.swing.JDialog {
                     removePropertyButton.setEnabled(enable);
                 }
             }
+        });
+        
+        final JTextComponent component =
+                (JTextComponent) workerIdComboBox.getEditor().getEditorComponent();
+        component.getDocument().addDocumentListener(new DocumentListener() {
+
+            @Override
+            public void insertUpdate(DocumentEvent arg0) {
+                updateControls();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent arg0) {
+                updateControls();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent arg0) {
+                updateControls();
+            }
+            
         });
     }
 
@@ -402,16 +426,6 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         workerIdComboBox.setEditable(true);
         workerIdComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "GENID1" }));
         workerIdComboBox.setName("workerIdComboBox"); // NOI18N
-        workerIdComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                workerIdComboBoxActionPerformed(evt);
-            }
-        });
-        workerIdComboBox.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                workerIdComboBoxKeyTyped(evt);
-            }
-        });
 
         javax.swing.GroupLayout initialSetupPanelLayout = new javax.swing.GroupLayout(initialSetupPanel);
         initialSetupPanel.setLayout(initialSetupPanelLayout);
@@ -729,14 +743,6 @@ public class AddWorkerDialog extends javax.swing.JDialog {
     private void editWorkerPropertiesRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editWorkerPropertiesRadioButtonActionPerformed
         setMode(Mode.EDIT_MANUALLY);
     }//GEN-LAST:event_editWorkerPropertiesRadioButtonActionPerformed
-
-    private void workerIdComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_workerIdComboBoxActionPerformed
-        updateControls();
-    }//GEN-LAST:event_workerIdComboBoxActionPerformed
-
-    private void workerIdComboBoxKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_workerIdComboBoxKeyTyped
-        updateControls();
-    }//GEN-LAST:event_workerIdComboBoxKeyTyped
 
     private void workerNameFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_workerNameFieldKeyTyped
         updateControls();

@@ -312,6 +312,11 @@ public class AddWorkerDialog extends javax.swing.JDialog {
 
         editPropertyButton.setText(resourceMap.getString("editPropertyButton.text")); // NOI18N
         editPropertyButton.setName("editPropertyButton"); // NOI18N
+        editPropertyButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editPropertyButtonActionPerformed(evt);
+            }
+        });
 
         tokenImplementationLabel.setText(resourceMap.getString("tokenImplementationLabel.text")); // NOI18N
         tokenImplementationLabel.setName("tokenImplementationLabel"); // NOI18N
@@ -736,6 +741,46 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         updateControls();
     }//GEN-LAST:event_workerImplementationFieldKeyTyped
 
+    private void addOrEditProperty(final String key, final String value) {
+        if (PropertiesConstants.NAME.equals(key)) {
+            JOptionPane.showMessageDialog(this, 
+                        "Use the Name text field to edit the worker name",
+                        "Set worker name", JOptionPane.ERROR_MESSAGE);
+        } else {
+            final DefaultTableModel model =
+                    (DefaultTableModel) propertiesTable.getModel();
+            boolean existing = false;
+
+            for (int i = 0; i < model.getRowCount(); i++) {
+                final String foundKey = (String) model.getValueAt(i, 0);
+
+                if (key.equals(foundKey)) {
+                    // update existing row
+                    model.setValueAt(key, i, 0);
+                    model.setValueAt(value, i, 1);
+                    existing = true;
+                    break;
+                }
+            }
+
+            if (!existing) {
+                model.addRow(new Object[] {key, value});
+            }
+        }
+    }
+    
+    private void removeProperty(final String key) {
+        final DefaultTableModel model =
+                    (DefaultTableModel) propertiesTable.getModel();
+        
+        for (int i = 0; i < model.getRowCount(); i++) {
+            if (key.equals(model.getValueAt(i, 0))) {
+                model.removeRow(i);
+                break;
+            }
+        }
+    }
+    
     private void addPropertyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addPropertyButtonActionPerformed
         workerPropertyEditor.setKey("");
         workerPropertyEditor.setValue("");
@@ -746,33 +791,34 @@ public class AddWorkerDialog extends javax.swing.JDialog {
             final String key = workerPropertyEditor.getKey();
             final String value = workerPropertyEditor.getValue();
             
-            if (PropertiesConstants.NAME.equals(key)) {
-                JOptionPane.showMessageDialog(this, 
-                            "Use the Name text field to edit the worker name",
-                            "Set worker name", JOptionPane.ERROR_MESSAGE);
-            } else {
-                final DefaultTableModel model =
-                        (DefaultTableModel) propertiesTable.getModel();
-                boolean existing = false;
-                
-                for (int i = 0; i < model.getRowCount(); i++) {
-                    final String foundKey = (String) model.getValueAt(i, 0);
-                    
-                    if (key.equals(foundKey)) {
-                        // update existing row
-                        model.setValueAt(key, i, 0);
-                        model.setValueAt(value, i, 1);
-                        existing = true;
-                        break;
-                    }
-                }
-                
-                if (!existing) {
-                    model.addRow(new Object[] {key, value});
-                }
-            }
+            addOrEditProperty(key, value);
         }
     }//GEN-LAST:event_addPropertyButtonActionPerformed
+    
+    private void editPropertyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editPropertyButtonActionPerformed
+        final int row = propertiesTable.getSelectedRow();
+        
+        if (row != -1) {
+            final String oldKey = (String) propertiesTable.getValueAt(row, 0);
+            final String oldValue = (String) propertiesTable.getValueAt(row, 1);
+            
+            workerPropertyEditor.setKey(oldKey);
+            workerPropertyEditor.setValue(oldValue);
+            
+            final int res = workerPropertyEditor.showDialog(this);
+            
+            if (res == JOptionPane.OK_OPTION) {
+                final String key = workerPropertyEditor.getKey();
+                final String value = workerPropertyEditor.getValue();
+                
+                if (!oldKey.equals(key)) {
+                    removeProperty(oldKey);
+                }
+                
+                addOrEditProperty(key, value);
+            }
+        }
+    }//GEN-LAST:event_editPropertyButtonActionPerformed
 
     private void setMode(final Mode mode) {
         this.mode = mode;

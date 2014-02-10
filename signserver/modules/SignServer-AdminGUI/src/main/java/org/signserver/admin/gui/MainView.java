@@ -108,6 +108,9 @@ public class MainView extends FrameView {
     private AuditlogTableModel auditlogModel = new AuditlogTableModel();
     private ConditionsTableModel conditionsModel = new ConditionsTableModel();
     
+    private WorkerPropertyEditor workerPropertyEditor =
+            new WorkerPropertyEditor();
+    
     /**
      * The value of exportAllUnrelatedCheckbox before user selects "No workers"
      * and it is automagically selected. Stored so we can go back to the 
@@ -388,12 +391,6 @@ public class MainView extends FrameView {
         statusMessageLabel = new javax.swing.JLabel();
         statusAnimationLabel = new javax.swing.JLabel();
         progressBar = new javax.swing.JProgressBar();
-        editPanel = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        editPropertyTextField = new javax.swing.JTextField();
-        jLabel2 = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        editPropertyValueTextArea = new javax.swing.JTextArea();
         authEditPanel = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         editSerialNumberTextfield = new javax.swing.JTextField();
@@ -763,52 +760,6 @@ public class MainView extends FrameView {
                     .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
 
-        editPanel.setName("editPanel"); // NOI18N
-
-        jLabel1.setText(resourceMap.getString("jLabel1.text")); // NOI18N
-        jLabel1.setName("jLabel1"); // NOI18N
-
-        editPropertyTextField.setEditable(false);
-        editPropertyTextField.setText(resourceMap.getString("editPropertyTextField.text")); // NOI18N
-        editPropertyTextField.setName("editPropertyTextField"); // NOI18N
-
-        jLabel2.setText(resourceMap.getString("jLabel2.text")); // NOI18N
-        jLabel2.setName("jLabel2"); // NOI18N
-
-        jScrollPane1.setName("jScrollPane1"); // NOI18N
-
-        editPropertyValueTextArea.setColumns(20);
-        editPropertyValueTextArea.setRows(5);
-        editPropertyValueTextArea.setName("editPropertyValueTextArea"); // NOI18N
-        jScrollPane1.setViewportView(editPropertyValueTextArea);
-
-        javax.swing.GroupLayout editPanelLayout = new javax.swing.GroupLayout(editPanel);
-        editPanel.setLayout(editPanelLayout);
-        editPanelLayout.setHorizontalGroup(
-            editPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, editPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(editPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE)
-                    .addComponent(editPropertyTextField, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        editPanelLayout.setVerticalGroup(
-            editPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(editPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(editPropertyTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-
         authEditPanel.setName("authEditPanel"); // NOI18N
 
         jLabel4.setText(resourceMap.getString("jLabel4.text")); // NOI18N
@@ -972,13 +923,13 @@ public class MainView extends FrameView {
         statusPropertiesTabLayout.setHorizontalGroup(
             statusPropertiesTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, statusPropertiesTabLayout.createSequentialGroup()
-                .addContainerGap(501, Short.MAX_VALUE)
+                .addContainerGap(778, Short.MAX_VALUE)
                 .addComponent(statusPropertiesDetailsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
             .addGroup(statusPropertiesTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(statusPropertiesTabLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(statusPropertiesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 473, Short.MAX_VALUE)
+                    .addComponent(statusPropertiesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 750, Short.MAX_VALUE)
                     .addGap(112, 112, 112)))
         );
         statusPropertiesTabLayout.setVerticalGroup(
@@ -986,11 +937,11 @@ public class MainView extends FrameView {
             .addGroup(statusPropertiesTabLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(statusPropertiesDetailsButton)
-                .addContainerGap(492, Short.MAX_VALUE))
+                .addContainerGap(481, Short.MAX_VALUE))
             .addGroup(statusPropertiesTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(statusPropertiesTabLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(statusPropertiesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 510, Short.MAX_VALUE)
+                    .addComponent(statusPropertiesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 502, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -1059,7 +1010,7 @@ public class MainView extends FrameView {
             configurationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, configurationTabLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 463, Short.MAX_VALUE)
+                .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 740, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(configurationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(addButton)
@@ -1075,7 +1026,7 @@ public class MainView extends FrameView {
             .addGroup(configurationTabLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(configurationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 510, Short.MAX_VALUE)
+                    .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 502, Short.MAX_VALUE)
                     .addGroup(configurationTabLayout.createSequentialGroup()
                         .addComponent(addButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -1157,7 +1108,7 @@ public class MainView extends FrameView {
         authorizationTabLayout.setHorizontalGroup(
             authorizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(authorizationTabLayout.createSequentialGroup()
-                .addContainerGap(486, Short.MAX_VALUE)
+                .addContainerGap(763, Short.MAX_VALUE)
                 .addGroup(authorizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(authAddButton, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(authEditButton, javax.swing.GroupLayout.Alignment.TRAILING)
@@ -1166,7 +1117,7 @@ public class MainView extends FrameView {
             .addGroup(authorizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(authorizationTabLayout.createSequentialGroup()
                     .addGap(6, 6, 6)
-                    .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 467, Short.MAX_VALUE)
+                    .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 744, Short.MAX_VALUE)
                     .addGap(124, 124, 124)))
         );
 
@@ -1181,11 +1132,11 @@ public class MainView extends FrameView {
                 .addComponent(authEditButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(authRemoveButton)
-                .addContainerGap(414, Short.MAX_VALUE))
+                .addContainerGap(397, Short.MAX_VALUE))
             .addGroup(authorizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(authorizationTabLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 510, Short.MAX_VALUE)
+                    .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 502, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -1198,8 +1149,8 @@ public class MainView extends FrameView {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(workerTabbedPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 605, Short.MAX_VALUE)
-                    .addComponent(workerComboBox, javax.swing.GroupLayout.Alignment.LEADING, 0, 605, Short.MAX_VALUE))
+                    .addComponent(workerTabbedPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 894, Short.MAX_VALUE)
+                    .addComponent(workerComboBox, javax.swing.GroupLayout.Alignment.LEADING, 0, 894, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -1208,7 +1159,7 @@ public class MainView extends FrameView {
                 .addContainerGap()
                 .addComponent(workerComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(workerTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 572, Short.MAX_VALUE))
+                .addComponent(workerTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 567, Short.MAX_VALUE))
         );
 
         jSplitPane1.setRightComponent(jPanel1);
@@ -1219,7 +1170,7 @@ public class MainView extends FrameView {
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(mainPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1185, Short.MAX_VALUE)
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1173, Short.MAX_VALUE)
                 .addContainerGap())
         );
         mainPanelLayout.setVerticalGroup(
@@ -1290,8 +1241,8 @@ public class MainView extends FrameView {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 787, Short.MAX_VALUE)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 787, Short.MAX_VALUE))
+                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 775, Short.MAX_VALUE)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 775, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jButtonAuditConditionRemove, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -1308,7 +1259,7 @@ public class MainView extends FrameView {
                         .addComponent(jButtonAuditConditionAdd)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButtonAuditConditionRemove))
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 387, Short.MAX_VALUE))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 87, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -1408,15 +1359,15 @@ public class MainView extends FrameView {
         auditlogTablePanel.setLayout(auditlogTablePanelLayout);
         auditlogTablePanelLayout.setHorizontalGroup(
             auditlogTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1161, Short.MAX_VALUE)
+            .addGap(0, 1149, Short.MAX_VALUE)
             .addGroup(auditlogTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(auditlogTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1161, Short.MAX_VALUE))
+                .addComponent(auditlogTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1149, Short.MAX_VALUE))
         );
         auditlogTablePanelLayout.setVerticalGroup(
             auditlogTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 130, Short.MAX_VALUE)
+            .addGap(0, 431, Short.MAX_VALUE)
             .addGroup(auditlogTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(auditlogTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE))
+                .addComponent(auditlogTableScrollPane))
         );
 
         auditlogPanel.add(auditlogTablePanel, "auditlogTableCard");
@@ -1437,7 +1388,7 @@ public class MainView extends FrameView {
         );
         auditlogErrorPanelLayout.setVerticalGroup(
             auditlogErrorPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE)
+            .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 431, Short.MAX_VALUE)
         );
 
         auditlogPanel.add(auditlogErrorPanel, "auditlogErrorCard");
@@ -1465,11 +1416,11 @@ public class MainView extends FrameView {
                 .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(auditlogMaxEntriesTextfield, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(275, Short.MAX_VALUE))
+                .addContainerGap(263, Short.MAX_VALUE))
             .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel3Layout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(auditlogPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 1161, Short.MAX_VALUE)
+                    .addComponent(auditlogPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 1149, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -1490,11 +1441,11 @@ public class MainView extends FrameView {
                         .addComponent(auditlogDisplayingToIndex)
                         .addComponent(jLabel8)
                         .addComponent(auditlogMaxEntriesTextfield, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(159, Short.MAX_VALUE))
+                .addContainerGap(457, Short.MAX_VALUE))
             .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                     .addGap(59, 59, 59)
-                    .addComponent(auditlogPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE)
+                    .addComponent(auditlogPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 431, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -1508,7 +1459,7 @@ public class MainView extends FrameView {
             auditPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(auditPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jSplitPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 1185, Short.MAX_VALUE)
+                .addComponent(jSplitPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 1173, Short.MAX_VALUE)
                 .addContainerGap())
         );
         auditPanelLayout.setVerticalGroup(
@@ -1671,22 +1622,20 @@ public class MainView extends FrameView {
     }// </editor-fold>//GEN-END:initComponents
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
+        // initialize edit dialog with emptry values
+        workerPropertyEditor.setKey("");
+        workerPropertyEditor.setValue("");
+        
+        final int res = workerPropertyEditor.showDialog(getFrame());
 
-        editPropertyTextField.setText("");
-        editPropertyTextField.setEditable(true);
-        editPropertyValueTextArea.setText("");
-
-        final int res = JOptionPane.showConfirmDialog(getFrame(), editPanel,
-                "Add property", JOptionPane.OK_CANCEL_OPTION,
-                JOptionPane.PLAIN_MESSAGE);
         if (res == JOptionPane.OK_OPTION) {
             int workerId = selectedWorker.getWorkerId();
 
             try {
                 SignServerAdminGUIApplication.getAdminWS()
                         .setWorkerProperty(workerId,
-                        editPropertyTextField.getText(),
-                        editPropertyValueTextArea.getText());
+                                           workerPropertyEditor.getKey(),
+                                           workerPropertyEditor.getValue());
                 SignServerAdminGUIApplication.getAdminWS()
                         .reloadConfiguration(workerId);
 
@@ -1706,19 +1655,16 @@ public class MainView extends FrameView {
             final String oldPropertyName =
                     (String) configurationTable.getValueAt(row, 0);
 
-            editPropertyTextField.setText(oldPropertyName);
-            editPropertyTextField.setEditable(true);
-            editPropertyValueTextArea.setText(
-                    (String) configurationTable.getValueAt(row, 1));
-
-            final int res = JOptionPane.showConfirmDialog(getFrame(), editPanel,
-                    "Edit property", JOptionPane.OK_CANCEL_OPTION,
-                    JOptionPane.PLAIN_MESSAGE);
+            workerPropertyEditor.setKey(oldPropertyName);
+            workerPropertyEditor.setValue((String) configurationTable.getValueAt(row, 1));
+            
+            final int res = workerPropertyEditor.showDialog(getFrame()); 
+            
             if (res == JOptionPane.OK_OPTION) {
                 try {
                     final int workerId = selectedWorker.getWorkerId();
-                    final String newPropertyName = editPropertyTextField.getText();
-
+                    final String newPropertyName = workerPropertyEditor.getKey();
+                    
                     if (!oldPropertyName.equals(newPropertyName)) {
                         SignServerAdminGUIApplication.getAdminWS()
                                 .removeWorkerProperty(workerId, oldPropertyName);
@@ -1727,7 +1673,7 @@ public class MainView extends FrameView {
                     SignServerAdminGUIApplication.getAdminWS()
                             .setWorkerProperty(workerId,
                             newPropertyName,
-                            editPropertyValueTextArea.getText());
+                            workerPropertyEditor.getValue());
                     SignServerAdminGUIApplication.getAdminWS()
                             .reloadConfiguration(workerId);
 
@@ -3241,9 +3187,6 @@ private void displayLogEntryAction() {
     javax.swing.JButton editButton;
     javax.swing.JTextField editIssuerDNTextfield;
     javax.swing.JMenu editMenu;
-    javax.swing.JPanel editPanel;
-    javax.swing.JTextField editPropertyTextField;
-    javax.swing.JTextArea editPropertyValueTextArea;
     javax.swing.JTextField editSerialNumberTextfield;
     javax.swing.JCheckBox editUpdateAllCheckbox;
     javax.swing.JRadioButton exportAllRadioButton;
@@ -3261,9 +3204,7 @@ private void displayLogEntryAction() {
     javax.swing.JButton jButtonAuditConditionAdd;
     javax.swing.JButton jButtonAuditConditionRemove;
     javax.swing.JEditorPane jEditorPane1;
-    javax.swing.JLabel jLabel1;
     javax.swing.JLabel jLabel10;
-    javax.swing.JLabel jLabel2;
     javax.swing.JLabel jLabel3;
     javax.swing.JLabel jLabel4;
     javax.swing.JLabel jLabel5;
@@ -3274,7 +3215,6 @@ private void displayLogEntryAction() {
     javax.swing.JPanel jPanel1;
     javax.swing.JPanel jPanel2;
     javax.swing.JPanel jPanel3;
-    javax.swing.JScrollPane jScrollPane1;
     javax.swing.JScrollPane jScrollPane2;
     javax.swing.JScrollPane jScrollPane3;
     javax.swing.JScrollPane jScrollPane5;

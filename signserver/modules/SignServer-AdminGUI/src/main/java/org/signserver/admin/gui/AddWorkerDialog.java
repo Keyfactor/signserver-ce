@@ -816,7 +816,7 @@ public class AddWorkerDialog extends javax.swing.JDialog {
                 final String key = workerPropertyEditor.getKey();
                 final String value = workerPropertyEditor.getValue();
                 
-                if (!oldKey.equals(key)) {
+                if (!oldKey.equals(key) && !key.equals(PropertiesConstants.NAME)) {
                     removeProperty(oldKey);
                 }
                 

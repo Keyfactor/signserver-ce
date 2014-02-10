@@ -793,7 +793,7 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         final int res = workerPropertyEditor.showDialog(this);
         
         if (res == JOptionPane.OK_OPTION) {
-            final String key = workerPropertyEditor.getKey();
+            final String key = workerPropertyEditor.getKey().toUpperCase();
             final String value = workerPropertyEditor.getValue();
             
             addOrEditProperty(key, value);
@@ -813,7 +813,7 @@ public class AddWorkerDialog extends javax.swing.JDialog {
             final int res = workerPropertyEditor.showDialog(this);
             
             if (res == JOptionPane.OK_OPTION) {
-                final String key = workerPropertyEditor.getKey();
+                final String key = workerPropertyEditor.getKey().toUpperCase();
                 final String value = workerPropertyEditor.getValue();
                 
                 if (!oldKey.equals(key) && !key.equals(PropertiesConstants.NAME)) {

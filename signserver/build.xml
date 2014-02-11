@@ -538,7 +538,7 @@ Configuring EAR...
         
         <mkdir dir="${dist.dir}/lib"/>
         <copy todir="${dist.dir}">
-            <fileset dir="." includes="_NON_EXISTING,${dist.includes}"/>
+            <fileset dir="." includes="_NON_EXISTING,${dist.includes}" excludes="_NON_EXISTING,${dist.excludes.extra}"/>
         </copy>
         <chmod perm="a+x">
             <fileset dir="${dist.dir}/bin/" includes="*"/>

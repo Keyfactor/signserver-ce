@@ -578,6 +578,7 @@ Configuring EAR...
                 conf/jboss7/*,
                 conf/glassfish/*,
                 res/admingui-splash.png,
+                ${dist.includes.extra}
                 "/>
         </antcall>
     </target>

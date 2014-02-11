@@ -25,6 +25,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
+import org.ejbca.util.CertTools;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Task;
 import org.signserver.admin.gui.adminws.gen
@@ -600,10 +601,26 @@ public class AdministratorsFrame extends javax.swing.JFrame {
         X509Certificate cert = SignServerAdminGUIApplication.getAdminCertificate();
         if (cert != null) {
             editCertSerialNoTextField.setText(cert.getSerialNumber().toString(16));
-            editIssuerDNTextField.setText(cert.getIssuerDN().getName());
+            editIssuerDNTextField.setText(getIssuerDN(cert));
         }
     }//GEN-LAST:event_loadCurrentAdminCertButtonPerformed
 
+    /** @return The issuer DN formatted as expected by the AdminWS */
+    private String getIssuerDN(X509Certificate certificate) {
+        String dn = certificate.getIssuerX500Principal().getName();
+        CertTools.BasicX509NameTokenizer tok = new CertTools.BasicX509NameTokenizer(dn);
+        StringBuilder buf = new StringBuilder();
+        while (tok.hasMoreTokens()) {
+            final String token = tok.nextToken();
+            buf.append(token);
+            if (tok.hasMoreTokens()) {
+                buf.append(", ");
+            }
+        }
+        return buf.toString();
+    }
+    
+    
     @Action(block = Task.BlockingScope.WINDOW)
     public Task reloadGlobalConfiguration() {
         return new ReloadGlobalConfigurationTask(org.jdesktop.application.Application.getInstance(org.signserver.admin.gui.SignServerAdminGUIApplication.class));

@@ -585,7 +585,7 @@ Configuring EAR...
         <delete dir="${tmp}/dist"/> <!-- Only include the admingui in the zip file -->
         <antcall target="dist:admingui"/>
         <antcall target="dist:zip">
-            <param name="dist.zipdest" value="${lib}/signserver-admingui-bin.zip"/>
+            <param name="dist.zipdest" value="${web.admingui.dist.file}"/>
             <param name="dist.zipprefix" value="signserver"/>
         </antcall>
     </target>

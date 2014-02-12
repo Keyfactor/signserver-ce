@@ -894,6 +894,7 @@ public class AddWorkerDialog extends javax.swing.JDialog {
             case EDIT_MANUALLY:
                 configurationTextArea.setText(generateProperties());
                 configurationTextArea.setCaretPosition(0);
+                configurationEdited = false;
                 break;
             default:
                 // should not happen

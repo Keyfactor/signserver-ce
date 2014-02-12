@@ -1988,7 +1988,7 @@ private void addWorkerItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN
     if (modifiedWorkers != null) {
         JOptionPane.showMessageDialog(getFrame(),
                 "Added/modified workers with the following IDs: \n" +
-                StringUtils.join(modifiedWorkers.toArray(), ","), "Loaded",
+                StringUtils.join(modifiedWorkers.toArray(), ", "), "Loaded",
                 JOptionPane.INFORMATION_MESSAGE);
     
         

@@ -139,10 +139,11 @@ public class AddWorkerDialog extends javax.swing.JDialog {
             }
         });
         
+        // add a document listner to update the UI when the content of the ID
+        // combobox changes
         final JTextComponent component =
                 (JTextComponent) workerIdComboBox.getEditor().getEditorComponent();
         component.getDocument().addDocumentListener(new DocumentListener() {
-
             @Override
             public void insertUpdate(DocumentEvent arg0) {
                 updateControls();
@@ -157,10 +158,30 @@ public class AddWorkerDialog extends javax.swing.JDialog {
             public void changedUpdate(DocumentEvent arg0) {
                 updateControls();
             }
-            
+        });
+
+        // add a document listner to update the UI on updates of the configuration text
+        configurationTextArea.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent arg0) {
+                configurationEdited = true;
+                updateControls();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent arg0) {
+                configurationEdited = true;
+                updateControls();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent arg0) {
+                configurationEdited = true;
+                updateControls();
+            }
         });
     }
-
+    
     /**
      * Update the UI according to the stage, changing button visibility 
      */
@@ -515,11 +536,6 @@ public class AddWorkerDialog extends javax.swing.JDialog {
 
         configurationTextArea.setColumns(20);
         configurationTextArea.setName("configurationTextArea"); // NOI18N
-        configurationTextArea.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                configurationTextAreaKeyTyped(evt);
-            }
-        });
         configurationScrollPane.setViewportView(configurationTextArea);
 
         javax.swing.GroupLayout configurationPanelLayout = new javax.swing.GroupLayout(configurationPanel);
@@ -697,11 +713,6 @@ public class AddWorkerDialog extends javax.swing.JDialog {
 
         return true;
     }
-
-    private void configurationTextAreaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_configurationTextAreaKeyTyped
-        configurationEdited = true;
-        updateControls();
-    }//GEN-LAST:event_configurationTextAreaKeyTyped
 
     private void resetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
         loadConfigurationEditor();

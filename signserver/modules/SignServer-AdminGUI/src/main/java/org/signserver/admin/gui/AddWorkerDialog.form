@@ -30,7 +30,7 @@
           <Group type="102" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Component id="resetButton" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="513" max="32767" attributes="0"/>
+              <EmptySpace pref="537" max="32767" attributes="0"/>
               <Component id="cancelButton" linkSize="1" min="-2" pref="86" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="backButton" linkSize="1" min="-2" pref="74" max="-2" attributes="0"/>
@@ -41,7 +41,7 @@
           <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="wizardPanel" max="32767" attributes="0"/>
+                  <Component id="wizardPanel" pref="929" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -130,55 +130,10 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="1" attributes="0">
-                              <Component id="filePathTextField" pref="849" max="32767" attributes="0"/>
+                              <Component id="filePathTextField" pref="873" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="filePathBrowseButton" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                          </Group>
-                          <Component id="editWorkerPropertiesRadioButton" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Group type="102" alignment="1" attributes="0">
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Group type="102" attributes="0">
-                                      <Component id="workerIdLabel" pref="543" max="32767" attributes="1"/>
-                                      <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
-                                  </Group>
-                                  <Group type="102" attributes="0">
-                                      <Component id="workerNameLabel" pref="139" max="32767" attributes="1"/>
-                                      <EmptySpace min="-2" pref="405" max="-2" attributes="0"/>
-                                  </Group>
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <Component id="workerImplementationLabel" min="-2" pref="486" max="-2" attributes="1"/>
-                                      <EmptySpace min="-2" pref="52" max="-2" attributes="0"/>
-                                  </Group>
-                                  <Group type="102" attributes="0">
-                                      <Component id="tokenImplementationLabel" pref="543" max="32767" attributes="1"/>
-                                      <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
-                                  </Group>
-                              </Group>
-                              <Group type="103" groupAlignment="1" attributes="0">
-                                  <Group type="102" alignment="1" attributes="0">
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="workerImplementationField" pref="337" max="32767" attributes="1"/>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                  </Group>
-                                  <Group type="102" alignment="1" attributes="0">
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="tokenImplementationField" pref="337" max="32767" attributes="1"/>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                  </Group>
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="workerIdComboBox" alignment="0" min="-2" pref="163" max="-2" attributes="0"/>
-                                          <Component id="workerNameField" alignment="0" pref="337" max="32767" attributes="1"/>
-                                      </Group>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                  </Group>
-                              </Group>
-                          </Group>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="propertiesLabel" min="-2" pref="745" max="-2" attributes="0"/>
-                              <EmptySpace pref="148" max="32767" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="1" max="-2" attributes="0">
                               <Component id="propertiesScrollPanel" pref="799" max="32767" attributes="0"/>
@@ -192,7 +147,28 @@
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="loadFromFileRadioButton" min="-2" pref="133" max="-2" attributes="0"/>
-                              <EmptySpace pref="760" max="32767" attributes="0"/>
+                              <EmptySpace pref="784" max="32767" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="editWorkerPropertiesRadioButton" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="195" max="-2" attributes="0"/>
+                          </Group>
+                          <Component id="propertiesLabel" alignment="0" min="-2" pref="745" max="-2" attributes="0"/>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                                  <Component id="tokenImplementationLabel" alignment="0" max="32767" attributes="1"/>
+                                  <Component id="workerImplementationLabel" alignment="0" max="32767" attributes="1"/>
+                                  <Component id="workerNameLabel" alignment="0" max="32767" attributes="1"/>
+                                  <Component id="workerIdLabel" alignment="0" pref="253" max="32767" attributes="1"/>
+                              </Group>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="workerIdComboBox" min="-2" pref="131" max="-2" attributes="0"/>
+                                  <Component id="workerNameField" alignment="0" pref="634" max="32767" attributes="1"/>
+                                  <Component id="workerImplementationField" alignment="0" pref="634" max="32767" attributes="1"/>
+                                  <Component id="tokenImplementationField" alignment="0" pref="634" max="32767" attributes="1"/>
+                              </Group>
+                              <EmptySpace min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
@@ -208,7 +184,7 @@
                           <Component id="filePathTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="filePathBrowseButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
                       <Component id="editWorkerPropertiesRadioButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
@@ -230,7 +206,7 @@
                           <Component id="tokenImplementationLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="tokenImplementationField" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
                       <Component id="propertiesLabel" min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" attributes="0">
@@ -244,7 +220,7 @@
                           </Group>
                           <Group type="102" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="propertiesScrollPanel" pref="234" max="32767" attributes="1"/>
+                              <Component id="propertiesScrollPanel" pref="228" max="32767" attributes="1"/>
                           </Group>
                       </Group>
                   </Group>
@@ -316,33 +292,6 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editPropertyButtonActionPerformed"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JLabel" name="tokenImplementationLabel">
-              <Properties>
-                <Property name="text" type="java.lang.String" resourceKey="tokenImplementationLabel.text"/>
-                <Property name="name" type="java.lang.String" value="tokenImplementationLabel" noResource="true"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JTextField" name="tokenImplementationField">
-              <Properties>
-                <Property name="text" type="java.lang.String" resourceKey="tokenImplementationField.text"/>
-                <Property name="name" type="java.lang.String" value="tokenImplementationField" noResource="true"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JLabel" name="workerImplementationLabel">
-              <Properties>
-                <Property name="text" type="java.lang.String" resourceKey="workerImplementationLabel.text"/>
-                <Property name="name" type="java.lang.String" value="workerImplementationLabel" noResource="true"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JTextField" name="workerImplementationField">
-              <Properties>
-                <Property name="text" type="java.lang.String" resourceKey="workerImplementationField.text"/>
-                <Property name="name" type="java.lang.String" value="workerImplementationField" noResource="true"/>
-              </Properties>
-              <Events>
-                <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="workerImplementationFieldKeyTyped"/>
-              </Events>
-            </Component>
             <Component class="javax.swing.JTextField" name="filePathTextField">
               <Properties>
                 <Property name="text" type="java.lang.String" resourceKey="filePathTextField.text"/>
@@ -358,21 +307,6 @@
                 <Property name="font" type="java.awt.Font" resourceKey="propertiesLabel.font"/>
                 <Property name="text" type="java.lang.String" resourceKey="propertiesLabel.text"/>
                 <Property name="name" type="java.lang.String" value="propertiesLabel" noResource="true"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JTextField" name="workerNameField">
-              <Properties>
-                <Property name="text" type="java.lang.String" resourceKey="workerNameField.text"/>
-                <Property name="name" type="java.lang.String" value="workerNameField" noResource="true"/>
-              </Properties>
-              <Events>
-                <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="workerNameFieldKeyTyped"/>
-              </Events>
-            </Component>
-            <Component class="javax.swing.JLabel" name="workerIdLabel">
-              <Properties>
-                <Property name="text" type="java.lang.String" resourceKey="workerIdLabel.text"/>
-                <Property name="name" type="java.lang.String" value="workerIdLabel" noResource="true"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JButton" name="filePathBrowseButton">
@@ -410,10 +344,10 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editWorkerPropertiesRadioButtonActionPerformed"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JLabel" name="workerNameLabel">
+            <Component class="javax.swing.JLabel" name="workerIdLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" resourceKey="workerNameLabel.text"/>
-                <Property name="name" type="java.lang.String" value="workerNameLabel" noResource="true"/>
+                <Property name="text" type="java.lang.String" resourceKey="workerIdLabel.text"/>
+                <Property name="name" type="java.lang.String" value="workerIdLabel" noResource="true"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JComboBox" name="workerIdComboBox">
@@ -425,6 +359,45 @@
                   </StringArray>
                 </Property>
                 <Property name="name" type="java.lang.String" value="workerIdComboBox" noResource="true"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="workerNameLabel">
+              <Properties>
+                <Property name="text" type="java.lang.String" resourceKey="workerNameLabel.text"/>
+                <Property name="name" type="java.lang.String" value="workerNameLabel" noResource="true"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JTextField" name="workerNameField">
+              <Properties>
+                <Property name="name" type="java.lang.String" value="workerNameField" noResource="true"/>
+              </Properties>
+              <Events>
+                <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="workerNameFieldKeyTyped"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JLabel" name="workerImplementationLabel">
+              <Properties>
+                <Property name="text" type="java.lang.String" resourceKey="workerImplementationLabel.text"/>
+                <Property name="name" type="java.lang.String" value="workerImplementationLabel" noResource="true"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JTextField" name="workerImplementationField">
+              <Properties>
+                <Property name="name" type="java.lang.String" value="workerImplementationField" noResource="true"/>
+              </Properties>
+              <Events>
+                <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="workerImplementationFieldKeyTyped"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JLabel" name="tokenImplementationLabel">
+              <Properties>
+                <Property name="text" type="java.lang.String" resourceKey="tokenImplementationLabel.text"/>
+                <Property name="name" type="java.lang.String" value="tokenImplementationLabel" noResource="true"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JTextField" name="tokenImplementationField">
+              <Properties>
+                <Property name="name" type="java.lang.String" value="tokenImplementationField" noResource="true"/>
               </Properties>
             </Component>
           </SubComponents>
@@ -447,7 +420,7 @@
                           <Component id="configurationLabel" min="-2" max="-2" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace min="12" pref="12" max="12" attributes="0"/>
-                              <Component id="configurationScrollPane" pref="881" max="32767" attributes="2"/>
+                              <Component id="configurationScrollPane" pref="905" max="32767" attributes="2"/>
                           </Group>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>

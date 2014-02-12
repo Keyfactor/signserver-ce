@@ -251,19 +251,19 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         propertiesTable = new javax.swing.JTable();
         addPropertyButton = new javax.swing.JButton();
         editPropertyButton = new javax.swing.JButton();
-        tokenImplementationLabel = new javax.swing.JLabel();
-        tokenImplementationField = new javax.swing.JTextField();
-        workerImplementationLabel = new javax.swing.JLabel();
-        workerImplementationField = new javax.swing.JTextField();
         filePathTextField = new javax.swing.JTextField();
         propertiesLabel = new javax.swing.JLabel();
-        workerNameField = new javax.swing.JTextField();
-        workerIdLabel = new javax.swing.JLabel();
         filePathBrowseButton = new javax.swing.JButton();
         loadFromFileRadioButton = new javax.swing.JRadioButton();
         editWorkerPropertiesRadioButton = new javax.swing.JRadioButton();
-        workerNameLabel = new javax.swing.JLabel();
+        workerIdLabel = new javax.swing.JLabel();
         workerIdComboBox = new javax.swing.JComboBox();
+        workerNameLabel = new javax.swing.JLabel();
+        workerNameField = new javax.swing.JTextField();
+        workerImplementationLabel = new javax.swing.JLabel();
+        workerImplementationField = new javax.swing.JTextField();
+        tokenImplementationLabel = new javax.swing.JLabel();
+        tokenImplementationField = new javax.swing.JTextField();
         configurationPanel = new javax.swing.JPanel();
         configurationLabel = new javax.swing.JLabel();
         configurationScrollPane = new javax.swing.JScrollPane();
@@ -347,23 +347,6 @@ public class AddWorkerDialog extends javax.swing.JDialog {
             }
         });
 
-        tokenImplementationLabel.setText(resourceMap.getString("tokenImplementationLabel.text")); // NOI18N
-        tokenImplementationLabel.setName("tokenImplementationLabel"); // NOI18N
-
-        tokenImplementationField.setText(resourceMap.getString("tokenImplementationField.text")); // NOI18N
-        tokenImplementationField.setName("tokenImplementationField"); // NOI18N
-
-        workerImplementationLabel.setText(resourceMap.getString("workerImplementationLabel.text")); // NOI18N
-        workerImplementationLabel.setName("workerImplementationLabel"); // NOI18N
-
-        workerImplementationField.setText(resourceMap.getString("workerImplementationField.text")); // NOI18N
-        workerImplementationField.setName("workerImplementationField"); // NOI18N
-        workerImplementationField.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                workerImplementationFieldKeyTyped(evt);
-            }
-        });
-
         filePathTextField.setText(resourceMap.getString("filePathTextField.text")); // NOI18N
         filePathTextField.setName("filePathTextField"); // NOI18N
         filePathTextField.addActionListener(new java.awt.event.ActionListener() {
@@ -380,17 +363,6 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         propertiesLabel.setFont(resourceMap.getFont("propertiesLabel.font")); // NOI18N
         propertiesLabel.setText(resourceMap.getString("propertiesLabel.text")); // NOI18N
         propertiesLabel.setName("propertiesLabel"); // NOI18N
-
-        workerNameField.setText(resourceMap.getString("workerNameField.text")); // NOI18N
-        workerNameField.setName("workerNameField"); // NOI18N
-        workerNameField.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                workerNameFieldKeyTyped(evt);
-            }
-        });
-
-        workerIdLabel.setText(resourceMap.getString("workerIdLabel.text")); // NOI18N
-        workerIdLabel.setName("workerIdLabel"); // NOI18N
 
         filePathBrowseButton.setText(resourceMap.getString("filePathBrowseButton.text")); // NOI18N
         filePathBrowseButton.setName("filePathBrowseButton"); // NOI18N
@@ -420,12 +392,37 @@ public class AddWorkerDialog extends javax.swing.JDialog {
             }
         });
 
-        workerNameLabel.setText(resourceMap.getString("workerNameLabel.text")); // NOI18N
-        workerNameLabel.setName("workerNameLabel"); // NOI18N
+        workerIdLabel.setText(resourceMap.getString("workerIdLabel.text")); // NOI18N
+        workerIdLabel.setName("workerIdLabel"); // NOI18N
 
         workerIdComboBox.setEditable(true);
         workerIdComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "GENID1" }));
         workerIdComboBox.setName("workerIdComboBox"); // NOI18N
+
+        workerNameLabel.setText(resourceMap.getString("workerNameLabel.text")); // NOI18N
+        workerNameLabel.setName("workerNameLabel"); // NOI18N
+
+        workerNameField.setName("workerNameField"); // NOI18N
+        workerNameField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                workerNameFieldKeyTyped(evt);
+            }
+        });
+
+        workerImplementationLabel.setText(resourceMap.getString("workerImplementationLabel.text")); // NOI18N
+        workerImplementationLabel.setName("workerImplementationLabel"); // NOI18N
+
+        workerImplementationField.setName("workerImplementationField"); // NOI18N
+        workerImplementationField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                workerImplementationFieldKeyTyped(evt);
+            }
+        });
+
+        tokenImplementationLabel.setText(resourceMap.getString("tokenImplementationLabel.text")); // NOI18N
+        tokenImplementationLabel.setName("tokenImplementationLabel"); // NOI18N
+
+        tokenImplementationField.setName("tokenImplementationField"); // NOI18N
 
         javax.swing.GroupLayout initialSetupPanelLayout = new javax.swing.GroupLayout(initialSetupPanel);
         initialSetupPanel.setLayout(initialSetupPanelLayout);
@@ -435,43 +432,10 @@ public class AddWorkerDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(initialSetupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, initialSetupPanelLayout.createSequentialGroup()
-                        .addComponent(filePathTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 849, Short.MAX_VALUE)
+                        .addComponent(filePathTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 873, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(filePathBrowseButton)
                         .addContainerGap())
-                    .addComponent(editWorkerPropertiesRadioButton)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, initialSetupPanelLayout.createSequentialGroup()
-                        .addGroup(initialSetupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(initialSetupPanelLayout.createSequentialGroup()
-                                .addComponent(workerIdLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 543, Short.MAX_VALUE)
-                                .addGap(1, 1, 1))
-                            .addGroup(initialSetupPanelLayout.createSequentialGroup()
-                                .addComponent(workerNameLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 139, Short.MAX_VALUE)
-                                .addGap(405, 405, 405))
-                            .addGroup(initialSetupPanelLayout.createSequentialGroup()
-                                .addComponent(workerImplementationLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 486, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(52, 52, 52))
-                            .addGroup(initialSetupPanelLayout.createSequentialGroup()
-                                .addComponent(tokenImplementationLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 543, Short.MAX_VALUE)
-                                .addGap(1, 1, 1)))
-                        .addGroup(initialSetupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(initialSetupPanelLayout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(workerImplementationField, javax.swing.GroupLayout.DEFAULT_SIZE, 337, Short.MAX_VALUE)
-                                .addContainerGap())
-                            .addGroup(initialSetupPanelLayout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(tokenImplementationField, javax.swing.GroupLayout.DEFAULT_SIZE, 337, Short.MAX_VALUE)
-                                .addContainerGap())
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, initialSetupPanelLayout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(initialSetupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(workerIdComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(workerNameField, javax.swing.GroupLayout.DEFAULT_SIZE, 337, Short.MAX_VALUE))
-                                .addContainerGap())))
-                    .addGroup(initialSetupPanelLayout.createSequentialGroup()
-                        .addComponent(propertiesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 745, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(148, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, initialSetupPanelLayout.createSequentialGroup()
                         .addComponent(propertiesScrollPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 799, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -482,7 +446,24 @@ public class AddWorkerDialog extends javax.swing.JDialog {
                         .addContainerGap())
                     .addGroup(initialSetupPanelLayout.createSequentialGroup()
                         .addComponent(loadFromFileRadioButton, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(760, Short.MAX_VALUE))))
+                        .addContainerGap(784, Short.MAX_VALUE))
+                    .addGroup(initialSetupPanelLayout.createSequentialGroup()
+                        .addComponent(editWorkerPropertiesRadioButton)
+                        .addGap(195, 195, 195))
+                    .addComponent(propertiesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 745, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(initialSetupPanelLayout.createSequentialGroup()
+                        .addGroup(initialSetupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(tokenImplementationLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(workerImplementationLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(workerNameLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(workerIdLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 253, Short.MAX_VALUE))
+                        .addGap(18, 18, 18)
+                        .addGroup(initialSetupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(workerIdComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(workerNameField, javax.swing.GroupLayout.DEFAULT_SIZE, 634, Short.MAX_VALUE)
+                            .addComponent(workerImplementationField, javax.swing.GroupLayout.DEFAULT_SIZE, 634, Short.MAX_VALUE)
+                            .addComponent(tokenImplementationField, javax.swing.GroupLayout.DEFAULT_SIZE, 634, Short.MAX_VALUE))
+                        .addContainerGap())))
         );
         initialSetupPanelLayout.setVerticalGroup(
             initialSetupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -511,7 +492,7 @@ public class AddWorkerDialog extends javax.swing.JDialog {
                 .addGroup(initialSetupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(tokenImplementationLabel)
                     .addComponent(tokenImplementationField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addComponent(propertiesLabel)
                 .addGroup(initialSetupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(initialSetupPanelLayout.createSequentialGroup()
@@ -524,7 +505,7 @@ public class AddWorkerDialog extends javax.swing.JDialog {
                         .addContainerGap())
                     .addGroup(initialSetupPanelLayout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(propertiesScrollPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 234, Short.MAX_VALUE))))
+                        .addComponent(propertiesScrollPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 228, Short.MAX_VALUE))))
         );
 
         wizardPanel.add(initialSetupPanel, "initial");
@@ -555,7 +536,7 @@ public class AddWorkerDialog extends javax.swing.JDialog {
                     .addComponent(configurationLabel)
                     .addGroup(configurationPanelLayout.createSequentialGroup()
                         .addGap(12, 12, 12)
-                        .addComponent(configurationScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 881, Short.MAX_VALUE)))
+                        .addComponent(configurationScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 905, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         configurationPanelLayout.setVerticalGroup(
@@ -576,7 +557,7 @@ public class AddWorkerDialog extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(resetButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 513, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 537, Short.MAX_VALUE)
                 .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(backButton, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -586,7 +567,7 @@ public class AddWorkerDialog extends javax.swing.JDialog {
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(wizardPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(wizardPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 929, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -757,14 +738,6 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         setMode(Mode.EDIT_MANUALLY);
     }//GEN-LAST:event_editWorkerPropertiesRadioButtonActionPerformed
 
-    private void workerNameFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_workerNameFieldKeyTyped
-        updateControls();
-    }//GEN-LAST:event_workerNameFieldKeyTyped
-
-    private void workerImplementationFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_workerImplementationFieldKeyTyped
-        updateControls();
-    }//GEN-LAST:event_workerImplementationFieldKeyTyped
-
     private void addOrEditProperty(final String key, final String value) {
         if (PropertiesConstants.NAME.equals(key)) {
             JOptionPane.showMessageDialog(this, 
@@ -854,6 +827,14 @@ public class AddWorkerDialog extends javax.swing.JDialog {
             model.removeRow(row);
         }
     }//GEN-LAST:event_removePropertyButtonActionPerformed
+
+    private void workerNameFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_workerNameFieldKeyTyped
+        updateControls();
+    }//GEN-LAST:event_workerNameFieldKeyTyped
+
+    private void workerImplementationFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_workerImplementationFieldKeyTyped
+        updateControls();
+    }//GEN-LAST:event_workerImplementationFieldKeyTyped
 
     private void setMode(final Mode mode) {
         this.mode = mode;

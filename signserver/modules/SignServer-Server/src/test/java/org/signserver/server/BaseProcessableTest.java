@@ -157,6 +157,7 @@ public class BaseProcessableTest extends TestCase {
         globalConfig.setProperty("GLOB.DEFAULT.SHAREDLIBRARY", "/opt/hsm/default-pkcs11.so");
         globalConfig.setProperty("GLOB.DEFAULT.SLOT", "44");
         globalConfig.setProperty("GLOB.DEFAULT.ATTRIBUTESFILE", "/opt/hsm/default-sunpkcs11.cfg");
+        globalConfig.setProperty("GLOB.DEFAULT.PIN", "FooBar789");
         workerConfig.setProperty("NAME", "TestSigner100");
         
         TestSigner instance = new TestSigner(globalConfig);
@@ -169,6 +170,7 @@ public class BaseProcessableTest extends TestCase {
         expectedProperties.setProperty("SHAREDLIBRARY", "/opt/hsm/default-pkcs11.so");
         expectedProperties.setProperty("SLOT", "44");
         expectedProperties.setProperty("ATTRIBUTESFILE", "/opt/hsm/default-sunpkcs11.cfg");
+        expectedProperties.setProperty("PIN", "FooBar789");
         assertEquals("default SHAREDLIBRARY etc used", 
                 expectedProperties.toString(), actualProperties.toString());
         
@@ -178,9 +180,11 @@ public class BaseProcessableTest extends TestCase {
         globalConfig.setProperty("GLOB.DEFAULT.SHAREDLIBRARY", "/opt/hsm/default-pkcs11.so");
         globalConfig.setProperty("GLOB.DEFAULT.SLOT", "44");
         globalConfig.setProperty("GLOB.DEFAULT.ATTRIBUTESFILE", "/opt/hsm/default-sunpkcs11.cfg");
+        globalConfig.setProperty("GLOB.DEFAULT.PIN", "FooBar789");
         workerConfig.setProperty("NAME", "TestSigner100");
         workerConfig.setProperty("SHAREDLIBRARY", "/opt/hsm/pkcs11.so");
         workerConfig.setProperty("SLOT", "3");
+        workerConfig.setProperty("PIN", "AnotherPin");
         workerConfig.setProperty("ATTRIBUTESFILE", "/opt/hsm/sunpkcs11.cfg");
         
         instance = new TestSigner(globalConfig);

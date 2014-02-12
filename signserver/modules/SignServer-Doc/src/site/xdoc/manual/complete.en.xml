@@ -5045,6 +5045,7 @@ The following properties can currently be specified in the global configuration:
                             <li>SlOT</li>
                             <li>SlOTLISTINDEX</li>
                             <li>ATTRIBUTESFILE</li>
+                            <li>PIN</li>
                         </ul>
                     </subsubsection>
                     <subsubsection name="Example usage">

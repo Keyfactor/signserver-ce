@@ -23,6 +23,8 @@ import java.awt.Component;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Properties;
@@ -905,7 +907,8 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         // when the user goes back and changes some values in the form and then
         // back to the editor
         
-        final StringBuffer sb = new StringBuffer();
+        final Properties properties = new Properties();
+
         final String workerId =
                 ((JTextField) workerIdComboBox.getEditor().getEditorComponent())
                 .getText();
@@ -914,36 +917,23 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         final String workerName = workerNameField.getText();
         final String workerPrefix =
                 PropertiesConstants.WORKER_PREFIX + workerId;
-        
+       
         // insert CLASSPATH global property
-        sb.append(PropertiesConstants.GLOBAL_PREFIX_DOT);
-        sb.append(workerPrefix);
-        sb.append(".");
-        sb.append(PropertiesConstants.CLASSPATH);
-        sb.append(" = ");
-        sb.append(classPath);
-        sb.append("\n");
+        properties.setProperty(PropertiesConstants.GLOBAL_PREFIX_DOT +
+                workerPrefix + "." + PropertiesConstants.CLASSPATH,
+                classPath);
         
         if (tokenClassPath != null && !tokenClassPath.isEmpty()) {
             // insert SIGNERTOKEN.CLASSPATH global property
-            sb.append(PropertiesConstants.GLOBAL_PREFIX_DOT);
-            sb.append(workerPrefix);
-            sb.append(".");
-            sb.append(PropertiesConstants.SIGNERTOKEN);
-            sb.append(".");
-            sb.append(PropertiesConstants.CLASSPATH);
-            sb.append(" = ");
-            sb.append(tokenClassPath);
-            sb.append("\n");
+            properties.setProperty(PropertiesConstants.GLOBAL_PREFIX_DOT +
+                    workerPrefix + "." + PropertiesConstants.SIGNERTOKEN +
+                    "." + PropertiesConstants.CLASSPATH,
+                    tokenClassPath);
         }
         
-        // insert NAME worker property
-        sb.append(workerPrefix);
-        sb.append(".");
-        sb.append(PropertiesConstants.NAME);
-        sb.append(" = ");
-        sb.append(workerName);
-        sb.append("\n");
+        // insert NAME worker property   
+        properties.setProperty(workerPrefix + "." + PropertiesConstants.NAME,
+                workerName); 
         
         // generate additional properties
         final DefaultTableModel model =
@@ -953,15 +943,18 @@ public class AddWorkerDialog extends javax.swing.JDialog {
             final String key = (String) model.getValueAt(i, 0);
             final String value = (String) model.getValueAt(i, 1);
             
-            sb.append(workerPrefix);
-            sb.append(".");
-            sb.append(key);
-            sb.append(" = ");
-            sb.append(value);
-            sb.append("\n");
+            properties.setProperty(workerPrefix + "." + key, value);
         }
         
-        return sb.toString();
+        final StringWriter writer = new StringWriter();
+        
+        try {
+            properties.store(writer, null);
+        } catch (IOException e) {
+            // ignore
+        }
+            
+        return writer.getBuffer().toString();
     }
 
     /**

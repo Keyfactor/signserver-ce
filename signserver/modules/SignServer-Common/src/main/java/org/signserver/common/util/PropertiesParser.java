@@ -154,11 +154,22 @@ public class PropertiesParser {
         }
 
     }
-    
+
+    /**
+     * Determine if a worker property identifier is referring to an auto-generated ID.
+     * 
+     * @param workerIdOrName
+     * @return True if auto-generated
+     */
     private boolean isGeneratedWorkerId(final String workerIdOrName) {
         return workerIdOrName.startsWith(GENID);
     }
     
+    /**
+     * Update max generated ID index based on worker identifier.
+     * 
+     * @param workerIdOrName
+     */
     private void updateMaxGeneratedId(final String workerIdOrName) {
         try {
             final int index = Integer.parseInt(workerIdOrName.substring(GENID.length()));
@@ -184,11 +195,22 @@ public class PropertiesParser {
 
     }
     
+    /**
+     * Determine if a global property suffix part referes to an auto-generated worker ID.
+     * 
+     * @param propertyKey
+     * @return True if auto-generated
+     */
     private boolean isGlobalPropertyKeyGeneratedWorkerId(final String propertyKey) {
         return propertyKey.startsWith(WORKER_PREFIX + GENID) ||
                 propertyKey.startsWith(OLDWORKER_PREFIX + GENID);
     }
     
+    /**
+     * Update maximum auto-generated index based on a global property key suffix.
+     * 
+     * @param propertyKey
+     */
     private void updateMaxGeneratedIdFromGlobalProperty(final String propertyKey) {
         final String splittedKey = propertyKey.substring(0, propertyKey.indexOf('.'));
         final int index;

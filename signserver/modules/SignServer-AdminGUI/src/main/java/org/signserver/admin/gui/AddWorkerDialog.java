@@ -110,6 +110,8 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         // enabled based on the state
         nextApplyButton.setEnabled(false);
         
+        invalidWorkerIdStatusLabel.setVisible(false);
+        
         propertiesTable.setDefaultRenderer(String.class,
             new DefaultTableCellRenderer() {
                 @Override
@@ -145,17 +147,17 @@ public class AddWorkerDialog extends javax.swing.JDialog {
                 (JTextComponent) workerIdComboBox.getEditor().getEditorComponent();
         component.getDocument().addDocumentListener(new DocumentListener() {
             @Override
-            public void insertUpdate(DocumentEvent arg0) {
+            public void insertUpdate(DocumentEvent ev) {
                 updateControls();
             }
 
             @Override
-            public void removeUpdate(DocumentEvent arg0) {
+            public void removeUpdate(DocumentEvent ev) {
                 updateControls();
             }
 
             @Override
-            public void changedUpdate(DocumentEvent arg0) {
+            public void changedUpdate(DocumentEvent ev) {
                 updateControls();
             }
         });
@@ -163,19 +165,19 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         // add a document listner to update the UI on updates of the configuration text
         configurationTextArea.getDocument().addDocumentListener(new DocumentListener() {
             @Override
-            public void insertUpdate(DocumentEvent arg0) {
+            public void insertUpdate(DocumentEvent ev) {
                 configurationEdited = true;
                 updateControls();
             }
 
             @Override
-            public void removeUpdate(DocumentEvent arg0) {
+            public void removeUpdate(DocumentEvent ev) {
                 configurationEdited = true;
                 updateControls();
             }
 
             @Override
-            public void changedUpdate(DocumentEvent arg0) {
+            public void changedUpdate(DocumentEvent ev) {
                 configurationEdited = true;
                 updateControls();
             }
@@ -222,11 +224,13 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         removePropertyButton.setEnabled(mode == Mode.EDIT_MANUALLY && selectedRows == 1);
         editPropertyButton.setEnabled(mode == Mode.EDIT_MANUALLY && selectedRows == 1);
 
+        
         // update state of Next/Apply button
         switch (mode) {
             case LOAD_FROM_FILE:
                 final String filePath = filePathTextField.getText();
                 nextApplyButton.setEnabled(filePath != null && !filePath.isEmpty());
+                invalidWorkerIdStatusLabel.setVisible(false);
                 break;
             case EDIT_MANUALLY:
                 final String workerId =
@@ -234,15 +238,47 @@ public class AddWorkerDialog extends javax.swing.JDialog {
                         .getText();
                 final String workerName = workerNameField.getText();
                 final String classPath = workerImplementationField.getText();
+                final boolean workerIdValid = isWorkerIdValid(workerId);
                 
                 // enable next button if all required fields have been set
                 nextApplyButton.setEnabled(!workerId.isEmpty()
+                                           && workerIdValid
                                            && !workerName.isEmpty()
                                            && !classPath.isEmpty());
+                invalidWorkerIdStatusLabel.setVisible(!workerIdValid);
+                
                 break;
             default:
                 // should not happen
                 break;
+        }
+    }
+    
+    /**
+     * Determine if a string qualifies as a worker ID prefix, either a positive
+     * integer or a 
+     * @param workerId
+     * @return 
+     */
+    private boolean isWorkerIdValid(final String workerId) {
+        try {
+            final int id = Integer.parseInt(workerId);
+            
+            return id > 0;
+        } catch (NumberFormatException e) {
+            if (workerId.length() > PropertiesConstants.GENID.length() &&
+                PropertiesConstants.GENID.equals(workerId.substring(0, PropertiesConstants.GENID.length()))) {
+                try {
+                    final int index =
+                            Integer.parseInt(workerId.substring(PropertiesConstants.GENID.length()));
+                    
+                    return index >= 1;
+                } catch (NumberFormatException ex) {
+                    return false;
+                }
+            } else {
+                return false;
+            }
         }
     }
 
@@ -280,6 +316,7 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         workerImplementationField = new javax.swing.JTextField();
         tokenImplementationLabel = new javax.swing.JLabel();
         tokenImplementationField = new javax.swing.JTextField();
+        invalidWorkerIdStatusLabel = new javax.swing.JLabel();
         configurationPanel = new javax.swing.JPanel();
         configurationLabel = new javax.swing.JLabel();
         configurationScrollPane = new javax.swing.JScrollPane();
@@ -440,6 +477,10 @@ public class AddWorkerDialog extends javax.swing.JDialog {
 
         tokenImplementationField.setName("tokenImplementationField"); // NOI18N
 
+        invalidWorkerIdStatusLabel.setForeground(resourceMap.getColor("invalidWorkerIdStatusLabel.foreground")); // NOI18N
+        invalidWorkerIdStatusLabel.setText(resourceMap.getString("invalidWorkerIdStatusLabel.text")); // NOI18N
+        invalidWorkerIdStatusLabel.setName("invalidWorkerIdStatusLabel"); // NOI18N
+
         javax.swing.GroupLayout initialSetupPanelLayout = new javax.swing.GroupLayout(initialSetupPanel);
         initialSetupPanel.setLayout(initialSetupPanelLayout);
         initialSetupPanelLayout.setHorizontalGroup(
@@ -447,6 +488,9 @@ public class AddWorkerDialog extends javax.swing.JDialog {
             .addGroup(initialSetupPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(initialSetupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(initialSetupPanelLayout.createSequentialGroup()
+                        .addComponent(invalidWorkerIdStatusLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 905, Short.MAX_VALUE)
+                        .addContainerGap())
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, initialSetupPanelLayout.createSequentialGroup()
                         .addComponent(filePathTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 873, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -517,11 +561,13 @@ public class AddWorkerDialog extends javax.swing.JDialog {
                         .addGap(10, 10, 10)
                         .addComponent(editPropertyButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(removePropertyButton)
-                        .addContainerGap())
+                        .addComponent(removePropertyButton))
                     .addGroup(initialSetupPanelLayout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(propertiesScrollPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 228, Short.MAX_VALUE))))
+                        .addComponent(propertiesScrollPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(invalidWorkerIdStatusLabel)
+                .addContainerGap())
         );
 
         wizardPanel.add(initialSetupPanel, "initial");
@@ -1003,6 +1049,7 @@ public class AddWorkerDialog extends javax.swing.JDialog {
     private javax.swing.JButton filePathBrowseButton;
     private javax.swing.JTextField filePathTextField;
     private javax.swing.JPanel initialSetupPanel;
+    private javax.swing.JLabel invalidWorkerIdStatusLabel;
     private javax.swing.JRadioButton loadFromFileRadioButton;
     private javax.swing.ButtonGroup modeSelectButtonGroup;
     private javax.swing.JButton nextApplyButton;

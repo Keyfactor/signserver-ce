@@ -65,6 +65,14 @@ public abstract class PropertiesApplier {
      */
     public void apply(final PropertiesParser parser) {       
         try {
+            // generate automatic worker IDs (GENID*)
+            final int maxGenId = parser.getMaxGenId();
+            
+            if (maxGenId > 0) {
+                prepareGeneratedIds(maxGenId);
+            }
+            
+            // transform properties (translate GENID and worker name references)
             final Map<PropertiesParser.GlobalProperty, String> setGlobalProperties =
                     translateGlobalProperties(parser.getSetGlobalProperties());
             final List<PropertiesParser.GlobalProperty> removeGlobalProperties =
@@ -81,7 +89,8 @@ public abstract class PropertiesApplier {
                     translateWorkerDatas(parser.getAddAuthorizedClients());
             final Map<Integer, List<AuthorizedClient>> removeAuthorizedClients =
                     translateWorkerDatas(parser.getRemoveAuthorizedClients());
-         
+            
+            // apply the configuration
             for (final PropertiesParser.GlobalProperty prop : setGlobalProperties.keySet()) {
                 setGlobalProperty(prop.getScope(), prop.getKey(), setGlobalProperties.get(prop));
             }
@@ -122,6 +131,15 @@ public abstract class PropertiesApplier {
             error = e.getMessage();
         }
         
+    }
+    
+    private void prepareGeneratedIds(final int maxId) throws PropertiesApplierException {
+        final int firstGeneratedWorkerId = genFreeWorkerId();
+        for (int i = 0; i < maxId; i++) {
+            final int genid = firstGeneratedWorkerId + i;
+            final int index = i + 1;
+            genIds.put(GENID + index, new Integer(genid));
+        }
     }
     
     /**
@@ -304,8 +322,7 @@ public abstract class PropertiesApplier {
      */
     private int getGenId(String splittedKey) throws PropertiesApplierException {
         if (genIds.get(splittedKey) == null) {
-            int genid = genFreeWorkerId();
-            genIds.put(splittedKey, new Integer(genid));
+            throw new PropertiesApplierException("Unexpected generated worker ID: " + splittedKey);
         }
         return ((Integer) genIds.get(splittedKey)).intValue();
     }

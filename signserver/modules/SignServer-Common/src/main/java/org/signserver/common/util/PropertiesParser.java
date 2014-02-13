@@ -84,7 +84,9 @@ public class PropertiesParser {
     
     private Map<String, byte[]> signerCertificates = new HashMap<String, byte[]>();
     private Map<String, List<byte[]>> signerCertificateChains = new HashMap<String, List<byte[]>>();
-
+    
+    private int maxGenId = 0;
+    
     /**
      * Parse a set of properties.
      * 
@@ -141,6 +143,10 @@ public class PropertiesParser {
         String splittedKey = strippedKey.substring(0, strippedKey.indexOf('.'));
         String propertykey = strippedKey.substring(strippedKey.indexOf('.') + 1);
 
+        if (isGeneratedWorkerId(splittedKey)) {
+            updateMaxGeneratedId(splittedKey);
+        }
+        
         if (add) {
             setWorkerProperty(splittedKey, propertykey, value);
         } else {
@@ -148,15 +154,58 @@ public class PropertiesParser {
         }
 
     }
+    
+    private boolean isGeneratedWorkerId(final String workerIdOrName) {
+        return workerIdOrName.startsWith(GENID);
+    }
+    
+    private void updateMaxGeneratedId(final String workerIdOrName) {
+        try {
+            final int index = Integer.parseInt(workerIdOrName.substring(GENID.length()));
+        
+            maxGenId = Math.max(maxGenId, index);
+        } catch (NumberFormatException e) {
+            errors.add("Illegal format for generated worker ID: " + workerIdOrName);
+        }
+    }
 
 
     private void processGlobalProperty(String scope, String strippedKey, String value, boolean add) {
+        if (isGlobalPropertyKeyGeneratedWorkerId(strippedKey)) {
+            System.out.println("found global property with gen: " + strippedKey);
+            updateMaxGeneratedIdFromGlobalProperty(strippedKey);
+        }
+        
         if (add) {
             setGlobalProperty(scope, strippedKey, value);
         } else {
             removeGlobalProperty(scope, strippedKey);
         }
 
+    }
+    
+    private boolean isGlobalPropertyKeyGeneratedWorkerId(final String propertyKey) {
+        return propertyKey.startsWith(WORKER_PREFIX + GENID) ||
+                propertyKey.startsWith(OLDWORKER_PREFIX + GENID);
+    }
+    
+    private void updateMaxGeneratedIdFromGlobalProperty(final String propertyKey) {
+        final String splittedKey = propertyKey.substring(0, propertyKey.indexOf('.'));
+        final int index;
+        
+        try {
+            if (splittedKey.startsWith(WORKER_PREFIX)) {
+                index = Integer.parseInt(splittedKey.substring(WORKER_PREFIX.length() + GENID.length()));
+            } else {
+                index = Integer.parseInt(splittedKey.substring(OLDWORKER_PREFIX.length() + GENID.length()));
+            }
+            
+            maxGenId = Math.max(maxGenId, index);
+        } catch (NumberFormatException e) {
+            errors.add("Illegal format for generated worker ID: " + splittedKey);
+        }
+        
+        
     }
 
     private void setGlobalProperty(String scope, String key, String value) {
@@ -293,5 +342,9 @@ public class PropertiesParser {
     
     public Map<String, List<AuthorizedClient>> getRemoveAuthorizedClients() {
         return removeAuthorizedClients;
+    }
+    
+    public int getMaxGenId() {
+        return maxGenId;
     }
 }

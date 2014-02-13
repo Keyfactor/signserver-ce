@@ -14,11 +14,11 @@ package org.signserver.common.util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.signserver.common.AuthorizedClient;
 import static org.signserver.common.util.PropertiesConstants.GENID;
@@ -53,7 +53,7 @@ public abstract class PropertiesApplier {
     /**
      * Hold the worker IDs updated-
      */
-    private Set<Integer> workerIds = new HashSet<Integer>();
+    private SortedSet<Integer> workerIds = new TreeSet<Integer>();
     
     private String error;
     

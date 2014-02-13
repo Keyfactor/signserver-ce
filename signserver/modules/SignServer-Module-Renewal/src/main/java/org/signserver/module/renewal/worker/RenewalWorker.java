@@ -420,9 +420,14 @@ public class RenewalWorker extends BaseSigner {
                     "Missing TRUSTSTORETYPE property");
         }
         final String truststorePath = config.getProperty("TRUSTSTOREPATH");
-        if (truststorePath == null) {
+        final String truststoreValue = config.getProperty(TRUSTSTOREVALUE);
+        if (truststorePath == null && truststoreValue == null) {
             throw new IllegalArgumentException(
-                    "Missing TRUSTSTOREPATH property");
+                    "Missing TRUSTSTOREPATH or TRUSTSTOREVALUE property");
+        }
+        if (truststorePath != null && truststoreValue != null) {
+            throw new IllegalArgumentException(
+                    "Can not specify both TRUSTSTOREPATH and TRUSTSTOREVALUE property");
         }
 
         final String truststorePass = config.getProperty("TRUSTSTOREPASSWORD");
@@ -436,7 +441,7 @@ public class RenewalWorker extends BaseSigner {
             throw new IllegalArgumentException("Missing EJBCAWSURL property");
         }
         final EjbcaWS ejbcaws = getEjbcaWS(ejbcaWsUrl,
-                alias, truststoreType, truststorePath, truststorePass);
+                alias, truststoreType, truststorePath, truststoreValue, truststorePass);
 
         if (ejbcaws == null) {
             LOG.debug("Could not get EjbcaWS");
@@ -533,6 +538,7 @@ public class RenewalWorker extends BaseSigner {
             }
         }
     }
+    public static final String TRUSTSTOREVALUE = "TRUSTSTOREVALUE";
 
     protected IWorkerSession getWorkerSession() {
         if (workerSession == null) {
@@ -571,7 +577,7 @@ public class RenewalWorker extends BaseSigner {
 
     private EjbcaWS getEjbcaWS(final String ejbcaUrl, final String alias,
             final String truststoreType, final String truststorePath,
-            final String truststorePass) throws CryptoTokenOfflineException,
+            final String truststoreValue, final String truststorePass) throws CryptoTokenOfflineException,
             NoSuchAlgorithmException, KeyStoreException,
             UnrecoverableKeyException, IOException, CertificateException,
             NoSuchProviderException, KeyManagementException, SignServerException {
@@ -594,14 +600,11 @@ public class RenewalWorker extends BaseSigner {
         kKeyManagerFactory.init(keystore, null);
         final KeyStore keystoreTrusted;
 
-        FileInputStream in = null;
-        try {
-            in = new FileInputStream(truststorePath);
-            
+        if (truststoreValue != null) {
             if (TRUSTSTORE_TYPE_PEM.equals(truststoreType)) {
                 keystoreTrusted = KeyStore.getInstance("JKS");
                 keystoreTrusted.load(null, null);
-                final Collection certs = CertTools.getCertsFromPEM(in);
+                final Collection certs = CertTools.getCertsFromPEM(new ByteArrayInputStream(truststoreValue.getBytes("UTF-8")));
                 int i = 0;
                 for (Object o : certs) {
                     if (o instanceof Certificate) {
@@ -613,18 +616,48 @@ public class RenewalWorker extends BaseSigner {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Loaded " + i + " certs to truststore");
                 }
-            } else if (TRUSTSTORE_TYPE_JKS.equals(truststoreType)) {
-                keystoreTrusted = KeyStore.getInstance(truststoreType);
-                keystoreTrusted.load(in, truststorePass.toCharArray());
-            } else {
-                keystoreTrusted = KeyStore.getInstance(truststoreType, "BC");
-                keystoreTrusted.load(in, truststorePass.toCharArray());
+            } else { 
+                if (TRUSTSTORE_TYPE_JKS.equals(truststoreType)) {
+                    keystoreTrusted = KeyStore.getInstance(truststoreType);
+                    keystoreTrusted.load(new ByteArrayInputStream(Base64.decode(truststoreValue)), truststorePass.toCharArray());
+                } else {
+                    keystoreTrusted = KeyStore.getInstance(truststoreType, "BC");
+                    keystoreTrusted.load(new ByteArrayInputStream(Base64.decode(truststoreValue)), truststorePass.toCharArray());
+                }
             }
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException ignored) {} // NOPMD
+        } else {
+            FileInputStream in = null;
+            try {
+                in = new FileInputStream(truststorePath);
+
+                if (TRUSTSTORE_TYPE_PEM.equals(truststoreType)) {
+                    keystoreTrusted = KeyStore.getInstance("JKS");
+                    keystoreTrusted.load(null, null);
+                    final Collection certs = CertTools.getCertsFromPEM(in);
+                    int i = 0;
+                    for (Object o : certs) {
+                        if (o instanceof Certificate) {
+                            keystoreTrusted.setCertificateEntry("cert-" + i,
+                                    (Certificate) o);
+                            i++;
+                        }
+                    }
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Loaded " + i + " certs to truststore");
+                    }
+                } else if (TRUSTSTORE_TYPE_JKS.equals(truststoreType)) {
+                    keystoreTrusted = KeyStore.getInstance(truststoreType);
+                    keystoreTrusted.load(in, truststorePass.toCharArray());
+                } else {
+                    keystoreTrusted = KeyStore.getInstance(truststoreType, "BC");
+                    keystoreTrusted.load(in, truststorePass.toCharArray());
+                }
+            } finally {
+                if (in != null) {
+                    try {
+                        in.close();
+                    } catch (IOException ignored) {} // NOPMD
+                }
             }
         }
         final TrustManagerFactory tTrustManagerFactory

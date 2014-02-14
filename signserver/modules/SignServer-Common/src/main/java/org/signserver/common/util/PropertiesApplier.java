@@ -44,11 +44,8 @@ public abstract class PropertiesApplier {
             super(message);
         }
     }
-    
-    /**
-     * Holds the map of generated worker IDs.
-     */
-    private HashMap<String, Integer> genIds = new HashMap<String, Integer>();
+   
+    private int firstGeneratedWorkerId;
     
     /**
      * Hold the worker IDs updated-
@@ -56,7 +53,7 @@ public abstract class PropertiesApplier {
     private SortedSet<Integer> workerIds = new TreeSet<Integer>();
     
     private String error;
-    
+ 
     /**
      * Apply configuration prepared by the configuration parser.
      * Should call the parse method on a parser instance to use with this method.
@@ -65,13 +62,9 @@ public abstract class PropertiesApplier {
      */
     public void apply(final PropertiesParser parser) {       
         try {
-            // generate automatic worker IDs (GENID*)
-            final int maxGenId = parser.getMaxGenId();
-            
-            if (maxGenId > 0) {
-                prepareGeneratedIds(maxGenId);
-            }
-            
+            // prepare ID for the first generated worker ID, if needed later on
+            firstGeneratedWorkerId = genFreeWorkerId();
+           
             // transform properties (translate GENID and worker name references)
             final Map<PropertiesParser.GlobalProperty, String> setGlobalProperties =
                     translateGlobalProperties(parser.getSetGlobalProperties());
@@ -131,15 +124,6 @@ public abstract class PropertiesApplier {
             error = e.getMessage();
         }
         
-    }
-    
-    private void prepareGeneratedIds(final int maxId) throws PropertiesApplierException {
-        final int firstGeneratedWorkerId = genFreeWorkerId();
-        for (int i = 0; i < maxId; i++) {
-            final int genid = firstGeneratedWorkerId + i;
-            final int index = i + 1;
-            genIds.put(GENID + index, new Integer(genid));
-        }
     }
     
     /**
@@ -321,10 +305,14 @@ public abstract class PropertiesApplier {
      * @return The worker ID
      */
     private int getGenId(String splittedKey) throws PropertiesApplierException {
-        if (genIds.get(splittedKey) == null) {
-            throw new PropertiesApplierException("Unexpected generated worker ID: " + splittedKey);
+        try {
+            final int index = Integer.parseInt(splittedKey.substring(GENID.length()));
+            
+            // generate worker ID relative GEN index
+            return firstGeneratedWorkerId + index - 1;
+        } catch (NumberFormatException e) {
+            throw new PropertiesApplierException("Illegal generated ID: " + splittedKey);
         }
-        return ((Integer) genIds.get(splittedKey)).intValue();
     }
 
     /**

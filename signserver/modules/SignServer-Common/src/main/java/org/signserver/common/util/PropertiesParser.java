@@ -47,6 +47,15 @@ public class PropertiesParser {
         public String getKey() {
             return key;
         }
+        
+        @Override
+        public boolean equals(final Object o) {
+            if (o instanceof GlobalProperty) {
+                final GlobalProperty other = (GlobalProperty) o;
+                return other.scope.equals(scope) && other.key.equals(key);
+            }
+            return false;
+        }
     }
     
     /**
@@ -69,6 +78,16 @@ public class PropertiesParser {
         
         public String getKey() {
             return key;
+        }
+        
+        @Override
+        public boolean equals(final Object o) {
+            if (o instanceof WorkerProperty) {
+                final WorkerProperty other = (WorkerProperty) o;
+                return other.workerIdOrName.equals(workerIdOrName)
+                        && other.key.equals(key);
+            }
+            return false;
         }
     }
     

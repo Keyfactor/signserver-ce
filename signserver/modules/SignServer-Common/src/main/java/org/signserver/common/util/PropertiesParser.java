@@ -52,9 +52,15 @@ public class PropertiesParser {
         public boolean equals(final Object o) {
             if (o instanceof GlobalProperty) {
                 final GlobalProperty other = (GlobalProperty) o;
+
                 return other.scope.equals(scope) && other.key.equals(key);
             }
             return false;
+        }
+        
+        @Override
+        public int hashCode() {
+            return (scope + "." + key).hashCode();
         }
     }
     
@@ -88,6 +94,11 @@ public class PropertiesParser {
                         && other.key.equals(key);
             }
             return false;
+        }
+        
+        @Override
+        public int hashCode() {
+            return (workerIdOrName + "." + key).hashCode();
         }
     }
     

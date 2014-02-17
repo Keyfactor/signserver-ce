@@ -43,7 +43,8 @@ public class PropertiesParserTest extends TestCase {
             "WORKERFOO.BAR = VALUE\n" +
             "-WORKER42.REMOVED = REMOVEDVALUE\n" +
             "SIGNER4711.OLDKEY = OLDVALUE\n" +
-            "WORKER42.AUTHCLIENT = 12345678;CN=Authorized";
+            "WORKER42.AUTHCLIENT = 12345678;CN=Authorized\n" +
+            "-WORKER42.AUTHCLIENT = 987654321;CN=Denied";
             
     
     private static String incorrectConfig =
@@ -94,6 +95,7 @@ public class PropertiesParserTest extends TestCase {
             final Map<WorkerProperty, String> setWorkerProps = parser.getSetWorkerProperties();
             final List<WorkerProperty> removeWorkerProps = parser.getRemoveWorkerProperties();
             final Map<String, List<AuthorizedClient>> addAuthClients = parser.getAddAuthorizedClients();
+            final Map<String, List<AuthorizedClient>> removeAuthClients = parser.getRemoveAuthorizedClients();
             
             assertEquals("Number of global properties", 2, globalProps.size());
             assertEquals("Number of worker properties", 3, setWorkerProps.size());
@@ -117,6 +119,9 @@ public class PropertiesParserTest extends TestCase {
             assertEquals("Workers with added auth clients", 1, addAuthClients.size());
             assertTrue("Should contain auth client",
                     containsAuthClientForWorker("42", new AuthorizedClient("12345678", "CN=Authorized"), addAuthClients));
+            assertEquals("Workers with removed auth clients", 1, removeAuthClients.size());
+            assertTrue("Should contain auth client",
+                    containsAuthClientForWorker("42", new AuthorizedClient("987654321", "CN=Denied"), removeAuthClients));
         } catch (IOException e) {
             fail("Failed to parse properties");
         }

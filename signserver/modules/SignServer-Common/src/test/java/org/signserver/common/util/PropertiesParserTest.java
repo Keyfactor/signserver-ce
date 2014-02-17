@@ -14,6 +14,7 @@ package org.signserver.common.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -37,7 +38,9 @@ public class PropertiesParserTest extends TestCase {
             "\n" + // an empty line
             "GLOB.WORKER42.CLASSPATH = foo.bar.Worker\n" +
             "GLOB.WORKER42.SIGNERTOKEN.CLASSPATH = foo.bar.Token\n" +
-            "WORKER42.FOOBAR = Some value\n";
+            "WORKER42.FOOBAR = Some value\n" +
+            "WORKERFOO.BAR = VALUE\n" +
+            "-WORKER42.REMOVED = REMOVEDVALUE";
 
     private boolean containsGlobalProperty(final String scope, final String key,
                                             final String value,
@@ -55,6 +58,11 @@ public class PropertiesParserTest extends TestCase {
         return foundValue != null && foundValue.equals(value);
     }
     
+    private boolean containsWorkerProperty(final String workerIdOrName, final String key,
+                                            final List<WorkerProperty> props) {
+        return props.contains(new WorkerProperty(workerIdOrName, key));
+    }
+    
     public void testParsingCorrect() throws Exception {
         final Properties prop = new Properties();
         final PropertiesParser parser = new PropertiesParser();
@@ -64,10 +72,12 @@ public class PropertiesParserTest extends TestCase {
             parser.process(prop);
             
             final Map<GlobalProperty, String> globalProps = parser.getSetGlobalProperties();
-            final Map<WorkerProperty, String> workerProps = parser.getSetWorkerProperties();
+            final Map<WorkerProperty, String> setWorkerProps = parser.getSetWorkerProperties();
+            final List<WorkerProperty> removeWorkerProps = parser.getRemoveWorkerProperties();
             
             assertEquals("Number of global properties", 2, globalProps.size());
-            assertEquals("Number of worker properties", 1, workerProps.size());
+            assertEquals("Number of worker properties", 2, setWorkerProps.size());
+            assertEquals("Number of removed worker properties", 1, removeWorkerProps.size());
             
             assertTrue("Should contain global property",
                     containsGlobalProperty("GLOB.", "WORKER42.CLASSPATH",
@@ -77,7 +87,11 @@ public class PropertiesParserTest extends TestCase {
                             "foo.bar.Token", globalProps));
             assertTrue("Should contain worker property",
                     containsWorkerProperty("42", "FOOBAR", "Some value",
-                            workerProps));
+                            setWorkerProps));
+            assertTrue("Should contain worker property",
+                    containsWorkerProperty("FOO", "BAR", "VALUE", setWorkerProps));
+            assertTrue("Should contain worker property",
+                    containsWorkerProperty("42", "REMOVED", removeWorkerProps));
             
         } catch (IOException e) {
             fail("Failed to parse properties");

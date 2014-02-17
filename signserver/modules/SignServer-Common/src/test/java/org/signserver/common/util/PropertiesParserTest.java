@@ -42,6 +42,10 @@ public class PropertiesParserTest extends TestCase {
             "WORKERFOO.BAR = VALUE\n" +
             "-WORKER42.REMOVED = REMOVEDVALUE\n" +
             "SIGNER4711.OLDKEY = OLDVALUE";
+    
+    private static String incorrectConfig =
+            "FOO.BAR = FOOBAR\n" +
+            "VALUE\n";
 
     private boolean containsGlobalProperty(final String scope, final String key,
                                             final String value,
@@ -95,6 +99,24 @@ public class PropertiesParserTest extends TestCase {
                     containsWorkerProperty("42", "REMOVED", removeWorkerProps));
             assertTrue("Should contain worker property",
                     containsWorkerProperty("4711", "OLDKEY", "OLDVALUE", setWorkerProps));
+            
+        } catch (IOException e) {
+            fail("Failed to parse properties");
+        }
+    }
+    
+    public void testParsingIncorrect() {
+        final Properties prop = new Properties();
+        final PropertiesParser parser = new PropertiesParser();
+        
+        try {
+            prop.load(new ByteArrayInputStream(incorrectConfig.getBytes()));
+            parser.process(prop);
+            
+            final List<String> errorMessages = parser.getErrors();
+            assertEquals("Number of parser errors", 2, errorMessages.size());
+            assertTrue("Error message", errorMessages.contains("Error in propertyfile syntax, check : FOO.BAR"));
+            assertTrue("Error message", errorMessages.contains("Error in propertyfile syntax, check : VALUE"));
             
         } catch (IOException e) {
             fail("Failed to parse properties");

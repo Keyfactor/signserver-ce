@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.signserver.common.AuthorizedClient;
 import org.signserver.common.util.PropertiesParser;
 import org.signserver.common.util.PropertiesParser.GlobalProperty;
 import org.signserver.common.util.PropertiesParser.WorkerProperty;
@@ -41,7 +42,9 @@ public class PropertiesParserTest extends TestCase {
             "WORKER42.FOOBAR = Some value\n" +
             "WORKERFOO.BAR = VALUE\n" +
             "-WORKER42.REMOVED = REMOVEDVALUE\n" +
-            "SIGNER4711.OLDKEY = OLDVALUE";
+            "SIGNER4711.OLDKEY = OLDVALUE\n" +
+            "WORKER42.AUTHCLIENT = 12345678;CN=Authorized";
+            
     
     private static String incorrectConfig =
             "FOO.BAR = FOOBAR\n" +
@@ -56,17 +59,28 @@ public class PropertiesParserTest extends TestCase {
     }
     
     private boolean containsWorkerProperty(final String workerIdOrName,
-                                            final String key, final String value,
-                                            final Map<WorkerProperty, String> props) {
+            final String key, final String value, final Map<WorkerProperty, String> props) {
         final String foundValue = props.get(new WorkerProperty(workerIdOrName, key));
         
         return foundValue != null && foundValue.equals(value);
     }
     
     private boolean containsWorkerProperty(final String workerIdOrName, final String key,
-                                            final List<WorkerProperty> props) {
+            final List<WorkerProperty> props) {
         return props.contains(new WorkerProperty(workerIdOrName, key));
     }
+    
+    private boolean containsAuthClientForWorker(final String workerIdOrName,
+            final AuthorizedClient authClient,
+            final Map<String, List<AuthorizedClient>> authClients) {
+        final List<AuthorizedClient> acs = authClients.get(workerIdOrName);
+        
+        if (acs != null) {
+            return acs.contains(authClient);
+        }
+        return false;
+    }
+            
     
     public void testParsingCorrect() throws Exception {
         final Properties prop = new Properties();
@@ -79,6 +93,7 @@ public class PropertiesParserTest extends TestCase {
             final Map<GlobalProperty, String> globalProps = parser.getSetGlobalProperties();
             final Map<WorkerProperty, String> setWorkerProps = parser.getSetWorkerProperties();
             final List<WorkerProperty> removeWorkerProps = parser.getRemoveWorkerProperties();
+            final Map<String, List<AuthorizedClient>> addAuthClients = parser.getAddAuthorizedClients();
             
             assertEquals("Number of global properties", 2, globalProps.size());
             assertEquals("Number of worker properties", 3, setWorkerProps.size());
@@ -99,7 +114,9 @@ public class PropertiesParserTest extends TestCase {
                     containsWorkerProperty("42", "REMOVED", removeWorkerProps));
             assertTrue("Should contain worker property",
                     containsWorkerProperty("4711", "OLDKEY", "OLDVALUE", setWorkerProps));
-            
+            assertEquals("Workers with added auth clients", 1, addAuthClients.size());
+            assertTrue("Should contain auth client",
+                    containsAuthClientForWorker("42", new AuthorizedClient("12345678", "CN=Authorized"), addAuthClients));
         } catch (IOException e) {
             fail("Failed to parse properties");
         }

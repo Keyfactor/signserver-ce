@@ -33,6 +33,7 @@ import junit.framework.TestCase;
 public class PropertiesParserTest extends TestCase {
     
     private static String correctConfig =
+            "# some comments...\n" +
             "GLOB.WORKER42.CLASSPATH = foo.bar.Worker\n" +
             "GLOB.WORKER42.SIGNERTOKEN.CLASSPATH = foo.bar.Token\n" +
             "WORKER42.FOOBAR = Some value\n";

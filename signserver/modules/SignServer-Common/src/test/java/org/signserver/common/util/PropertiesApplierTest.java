@@ -10,7 +10,7 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package java.org.signserver.common.util;
+package org.signserver.common.util;
 
 import java.util.HashMap;
 import java.util.List;

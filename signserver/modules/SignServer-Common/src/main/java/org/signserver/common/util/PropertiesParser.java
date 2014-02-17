@@ -47,20 +47,36 @@ public class PropertiesParser {
         public String getKey() {
             return key;
         }
-        
-        @Override
-        public boolean equals(final Object o) {
-            if (o instanceof GlobalProperty) {
-                final GlobalProperty other = (GlobalProperty) o;
 
-                return other.scope.equals(scope) && other.key.equals(key);
-            }
-            return false;
-        }
-        
         @Override
         public int hashCode() {
-            return (scope + "." + key).hashCode();
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((key == null) ? 0 : key.hashCode());
+            result = prime * result + ((scope == null) ? 0 : scope.hashCode());
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            GlobalProperty other = (GlobalProperty) obj;
+            if (key == null) {
+                if (other.key != null)
+                    return false;
+            } else if (!key.equals(other.key))
+                return false;
+            if (scope == null) {
+                if (other.scope != null)
+                    return false;
+            } else if (!scope.equals(other.scope))
+                return false;
+            return true;
         }
     }
     
@@ -85,21 +101,41 @@ public class PropertiesParser {
         public String getKey() {
             return key;
         }
-        
-        @Override
-        public boolean equals(final Object o) {
-            if (o instanceof WorkerProperty) {
-                final WorkerProperty other = (WorkerProperty) o;
-                return other.workerIdOrName.equals(workerIdOrName)
-                        && other.key.equals(key);
-            }
-            return false;
-        }
-        
+
         @Override
         public int hashCode() {
-            return (workerIdOrName + "." + key).hashCode();
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((key == null) ? 0 : key.hashCode());
+            result = prime
+                    * result
+                    + ((workerIdOrName == null) ? 0 : workerIdOrName.hashCode());
+            return result;
         }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            WorkerProperty other = (WorkerProperty) obj;
+            if (key == null) {
+                if (other.key != null)
+                    return false;
+            } else if (!key.equals(other.key))
+                return false;
+            if (workerIdOrName == null) {
+                if (other.workerIdOrName != null)
+                    return false;
+            } else if (!workerIdOrName.equals(other.workerIdOrName))
+                return false;
+            return true;
+        }
+        
+
     }
     
     private List<String> errors = new LinkedList<String>();

@@ -38,6 +38,8 @@ public class PropertiesApplierTest extends TestCase {
         private Map<GlobalProperty, String> globalProperties = new HashMap<GlobalProperty, String>();
         private Map<WorkerProperty, String> workerProperties = new HashMap<WorkerProperty, String>();
         
+        public static int FIRST_GENERATED_ID = 1000;
+        
         public String getWorkerProperty(final int workerId, final String key) {
             return workerProperties.get(new WorkerProperty(Integer.toString(workerId), key));
         }
@@ -93,7 +95,7 @@ public class PropertiesApplierTest extends TestCase {
 
         @Override
         protected int genFreeWorkerId() throws PropertiesApplierException {
-            
+            return FIRST_GENERATED_ID;
         }
 
         @Override

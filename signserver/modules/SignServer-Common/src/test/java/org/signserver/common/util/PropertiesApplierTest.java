@@ -12,9 +12,12 @@
  *************************************************************************/
 package org.signserver.common.util;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.signserver.common.AuthorizedClient;
 import org.signserver.common.util.PropertiesApplier;
@@ -32,6 +35,40 @@ import junit.framework.TestCase;
  *
  */
 public class PropertiesApplierTest extends TestCase {
+    
+    private static String config1 =
+            "GLOB.WORKER42.CLASSPATH = foo.bar.Worker\n" +
+            "GLOB.WORKER42.SIGNERTOKEN.CLASSPATH = foo.bar.Token\n" +
+            "WORKER42.NAME = TestSigner\n" +
+            "WORKER42.FOOBAR = Some value\n";
+    
+    public void testBasic() throws Exception {
+        final PropertiesParser parser = new PropertiesParser();
+        final MockPropertiesApplier applier =
+                new MockPropertiesApplier();
+        final Properties prop = new Properties();
+        
+        try {
+            prop.load(new ByteArrayInputStream(config1.getBytes()));
+            parser.process(prop);
+            applier.apply(parser);
+            
+            assertEquals("Has set global property", "foo.bar.Worker",
+                    applier.getGlobalProperty(PropertiesConstants.GLOBAL_PREFIX_DOT,
+                            "WORKER42.CLASSPATH"));
+            assertEquals("Has set global property", "foo.bar.Token",
+                    applier.getGlobalProperty(PropertiesConstants.GLOBAL_PREFIX_DOT,
+                            "WORKER42.SIGNERTOKEN.CLASSPATH"));
+            assertEquals("Has set worker property", "TestSigner",
+                    applier.getWorkerProperty(42, "NAME"));
+            assertEquals("Has set worker property", "Some value",
+                    applier.getWorkerProperty(42, "FOOBAR"));
+            
+        } catch (IOException e) {
+            fail("Failed to parse properties: " + e.getMessage());
+        }
+        
+    }
 
     private static class MockPropertiesApplier extends PropertiesApplier {
 

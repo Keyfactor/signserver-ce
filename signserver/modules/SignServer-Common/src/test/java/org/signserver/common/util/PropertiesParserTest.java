@@ -34,6 +34,9 @@ import junit.framework.TestCase;
  */
 public class PropertiesParserTest extends TestCase {
     
+    /**
+     * A correct properties file that should pass the properties parser.
+     */
     private static String correctConfig =
             "# some comments...\n" +
             "\n" + // an empty line
@@ -47,10 +50,22 @@ public class PropertiesParserTest extends TestCase {
             "-WORKER42.AUTHCLIENT = 987654321;CN=Denied";
             
     
+    /**
+     * A properties file that should generate parser errors.
+     */
     private static String incorrectConfig =
             "FOO.BAR = FOOBAR\n" +
             "VALUE\n";
 
+    /**
+     * Check if a given global property is included in the result map, as returned by the parser.
+     * 
+     * @param scope
+     * @param key
+     * @param value
+     * @param props Property map returned by a PropertiesParser
+     * @return True if the property was found
+     */
     private boolean containsGlobalProperty(final String scope, final String key,
                                             final String value,
                                             final Map<GlobalProperty, String> props) {
@@ -59,6 +74,15 @@ public class PropertiesParserTest extends TestCase {
         return foundValue != null && foundValue.equals(value);
     }
     
+    /**
+     * Check if a given worker property is included in the result map, as returned by the parser.
+     * 
+     * @param workerIdOrName
+     * @param key
+     * @param value
+     * @param props Property map returned by a PropertiesParser
+     * @return True if the property was found in the map
+     */
     private boolean containsWorkerProperty(final String workerIdOrName,
             final String key, final String value, final Map<WorkerProperty, String> props) {
         final String foundValue = props.get(new WorkerProperty(workerIdOrName, key));
@@ -66,11 +90,26 @@ public class PropertiesParserTest extends TestCase {
         return foundValue != null && foundValue.equals(value);
     }
     
+    /**
+     * Check if a given worker property is included in a list of removed properties, as returned by the parser.
+     * @param workerIdOrName
+     * @param key
+     * @param props Property list as returned by a PropertiesParser
+     * @return True if the property is found in the list
+     */
     private boolean containsWorkerProperty(final String workerIdOrName, final String key,
             final List<WorkerProperty> props) {
         return props.contains(new WorkerProperty(workerIdOrName, key));
     }
     
+    /**
+     * Check if a given auth client is included in the mapping given a worker ID or name, as given by the parser.
+     * 
+     * @param workerIdOrName
+     * @param authClient Auth client to match
+     * @param authClients Map of worker ID or name to list of authclients
+     * @return True if the authclient is found for the given worker
+     */
     private boolean containsAuthClientForWorker(final String workerIdOrName,
             final AuthorizedClient authClient,
             final Map<String, List<AuthorizedClient>> authClients) {

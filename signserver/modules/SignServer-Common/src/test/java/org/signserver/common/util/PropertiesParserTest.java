@@ -48,7 +48,8 @@ public class PropertiesParserTest extends TestCase {
             "SIGNER4711.OLDKEY = OLDVALUE\n" +
             "WORKER42.AUTHCLIENT = 12345678;CN=Authorized\n" +
             "-WORKER42.AUTHCLIENT = 987654321;CN=Denied\n" +
-            "NODE.NODE1.KEY = VALUE";
+            "NODE.NODE1.KEY = VALUE\n" +
+            "-GLOB.REMOVED_GLOB = REMOVEDVALUE";
             
     
     /**
@@ -68,11 +69,23 @@ public class PropertiesParserTest extends TestCase {
      * @return True if the property was found
      */
     private boolean containsGlobalProperty(final String scope, final String key,
-                                            final String value,
-                                            final Map<GlobalProperty, String> props) {
+            final String value, final Map<GlobalProperty, String> props) {
         final String foundValue = props.get(new GlobalProperty(scope, key));
         
         return foundValue != null && foundValue.equals(value);
+    }
+    
+    /**
+     * Check if a given global property is included in the result list, as returned by the parser.
+     * 
+     * @param scope
+     * @param key
+     * @param props
+     * @return True if the given property was found
+     */
+    private boolean containsGlobalProperty(final String scope, final String key,
+            final List<GlobalProperty> props) {
+        return props.contains(new GlobalProperty(scope, key));
     }
     
     /**
@@ -131,22 +144,24 @@ public class PropertiesParserTest extends TestCase {
             prop.load(new ByteArrayInputStream(correctConfig.getBytes()));
             parser.process(prop);
             
-            final Map<GlobalProperty, String> globalProps = parser.getSetGlobalProperties();
+            final Map<GlobalProperty, String> setGlobalProps = parser.getSetGlobalProperties();
+            final List<GlobalProperty> removeGlobalProps = parser.getRemoveGlobalProperties();
             final Map<WorkerProperty, String> setWorkerProps = parser.getSetWorkerProperties();
             final List<WorkerProperty> removeWorkerProps = parser.getRemoveWorkerProperties();
             final Map<String, List<AuthorizedClient>> addAuthClients = parser.getAddAuthorizedClients();
             final Map<String, List<AuthorizedClient>> removeAuthClients = parser.getRemoveAuthorizedClients();
             
-            assertEquals("Number of global properties", 3, globalProps.size());
+            assertEquals("Number of global properties", 3, setGlobalProps.size());
+            assertEquals("Number of removed global properties", 1, removeGlobalProps.size());
             assertEquals("Number of worker properties", 3, setWorkerProps.size());
             assertEquals("Number of removed worker properties", 1, removeWorkerProps.size());
             
             assertTrue("Should contain global property",
                     containsGlobalProperty("GLOB.", "WORKER42.CLASSPATH",
-                            "foo.bar.Worker", globalProps));
+                            "foo.bar.Worker", setGlobalProps));
             assertTrue("Should contain global property",
                     containsGlobalProperty("GLOB.", "WORKER42.SIGNERTOKEN.CLASSPATH",
-                            "foo.bar.Token", globalProps));
+                            "foo.bar.Token", setGlobalProps));
             assertTrue("Should contain worker property",
                     containsWorkerProperty("42", "FOOBAR", "Some value",
                             setWorkerProps));
@@ -163,7 +178,9 @@ public class PropertiesParserTest extends TestCase {
             assertTrue("Should contain auth client",
                     containsAuthClientForWorker("42", new AuthorizedClient("987654321", "CN=Denied"), removeAuthClients));
             assertTrue("Should contain global property with NODE prefix",
-                    containsGlobalProperty("NODE.", "NODE1.KEY", "VALUE", globalProps));
+                    containsGlobalProperty("NODE.", "NODE1.KEY", "VALUE", setGlobalProps));
+            assertTrue("Should contain removed global property",
+                    containsGlobalProperty("GLOB.", "REMOVED_GLOB", removeGlobalProps));
         } catch (IOException e) {
             fail("Failed to parse properties");
         }

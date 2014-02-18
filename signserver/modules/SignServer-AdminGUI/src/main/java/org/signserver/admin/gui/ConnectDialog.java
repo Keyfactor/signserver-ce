@@ -637,6 +637,16 @@ public class ConnectDialog extends javax.swing.JDialog {
                 // KeyManagers, and the TrustManagers. We still use a null
                 // SecureRandom, indicating that the defaults should be used.
                 SSLContext context = SSLContext.getInstance("TLS");
+                
+                if (LOG.isDebugEnabled()) {
+                    StringBuilder buff = new StringBuilder();
+                    buff.append("Available providers: \n");
+                    for (Provider p : Security.getProviders()) {
+                       buff.append(p).append("\n");
+                    }
+                    LOG.info(buff.toString());
+                }
+                
                 context.init(keyManagers, tTrustManagerFactory.getTrustManagers(), new SecureRandom());
 
                 // Finally, we get a SocketFactory, and pass it to SimpleSSLClient.

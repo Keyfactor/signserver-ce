@@ -47,7 +47,8 @@ public class PropertiesParserTest extends TestCase {
             "-WORKER42.REMOVED = REMOVEDVALUE\n" +
             "SIGNER4711.OLDKEY = OLDVALUE\n" +
             "WORKER42.AUTHCLIENT = 12345678;CN=Authorized\n" +
-            "-WORKER42.AUTHCLIENT = 987654321;CN=Denied";
+            "-WORKER42.AUTHCLIENT = 987654321;CN=Denied\n" +
+            "NODE.NODE1.KEY = VALUE";
             
     
     /**
@@ -136,7 +137,7 @@ public class PropertiesParserTest extends TestCase {
             final Map<String, List<AuthorizedClient>> addAuthClients = parser.getAddAuthorizedClients();
             final Map<String, List<AuthorizedClient>> removeAuthClients = parser.getRemoveAuthorizedClients();
             
-            assertEquals("Number of global properties", 2, globalProps.size());
+            assertEquals("Number of global properties", 3, globalProps.size());
             assertEquals("Number of worker properties", 3, setWorkerProps.size());
             assertEquals("Number of removed worker properties", 1, removeWorkerProps.size());
             
@@ -161,6 +162,8 @@ public class PropertiesParserTest extends TestCase {
             assertEquals("Workers with removed auth clients", 1, removeAuthClients.size());
             assertTrue("Should contain auth client",
                     containsAuthClientForWorker("42", new AuthorizedClient("987654321", "CN=Denied"), removeAuthClients));
+            assertTrue("Should contain global property with NODE prefix",
+                    containsGlobalProperty("NODE.", "NODE1.KEY", "VALUE", globalProps));
         } catch (IOException e) {
             fail("Failed to parse properties");
         }

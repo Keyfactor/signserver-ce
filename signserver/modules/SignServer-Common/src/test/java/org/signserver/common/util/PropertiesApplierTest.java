@@ -54,6 +54,18 @@ public class PropertiesApplierTest extends TestCase {
     private static String config2 =
             "-WORKER42.FOOBAR = Some value";
     
+    /**
+     * Test config with generated IDs.
+     */
+    private static String config3 =
+            "GLOB.WORKERGENID1.CLASSPATH = foo.bar.Worker\n" +
+            "GLOB.WORKERGENID1.SIGNERTOKEN.CLASSPATH = foo.bar.Token\n" +
+            "WORKERGENID1.NAME = Worker1\n" +
+            "GLOB.WORKERGENID2.CLASSPATH = foo.bar.Worker\n" +
+            "GLOB.WORKERGENID2.SIGNERTOKEN.CLASSPATH = foo.bar.Token\n" +
+            "WORKERGENID2.NAME = Worker2\n";
+    
+    
     public void test01Basic() throws Exception {
         final PropertiesParser parser = new PropertiesParser();
         
@@ -93,6 +105,24 @@ public class PropertiesApplierTest extends TestCase {
             
             assertNull("Should have remove worker property",
                     applier.getWorkerProperty(42, "FOOBAR"));
+        } catch (IOException e) {
+            fail("Failed to parse properties: " + e.getMessage());
+        }
+    }
+    
+    public void test03SetPropertiesGenIDs() throws Exception {
+        final PropertiesParser parser = new PropertiesParser();
+        
+        final Properties prop = new Properties();
+        
+        try {
+            prop.load(new ByteArrayInputStream(config3.getBytes()));
+            parser.process(prop);
+            applier.apply(parser);
+            
+            assertEquals("Set worker name for generated ID", "Worker1", applier.getWorkerProperty(1000, "NAME"));
+            assertEquals("Set worker name for generated ID", "Worker2", applier.getWorkerProperty(1001, "NAME"));
+            
         } catch (IOException e) {
             fail("Failed to parse properties: " + e.getMessage());
         }

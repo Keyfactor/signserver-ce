@@ -65,6 +65,12 @@ public class PropertiesApplierTest extends TestCase {
             "GLOB.WORKERGENID2.SIGNERTOKEN.CLASSPATH = foo.bar.Token\n" +
             "WORKERGENID2.NAME = Worker2\n";
     
+    /**
+     * Test config removing a global property.
+     */
+    private static String config4 =
+            "-GLOB.WORKER42.CLASSPATH = foo.bar.Worker";
+    
     
     public void test01Basic() throws Exception {
         final PropertiesParser parser = new PropertiesParser();
@@ -128,6 +134,23 @@ public class PropertiesApplierTest extends TestCase {
         }
     }
 
+    public void test04RemoveGlobalProperty() throws Exception {
+        final PropertiesParser parser = new PropertiesParser();
+        
+        final Properties prop = new Properties();
+        
+        try {
+            prop.load(new ByteArrayInputStream(config4.getBytes()));
+            parser.process(prop);
+            applier.apply(parser);
+            
+            assertNull("Removed global property",
+                    applier.getGlobalProperty(PropertiesConstants.GLOBAL_PREFIX_DOT, "WORKER42.CLASSPATH"));
+        } catch (IOException e) {
+            fail("Failed to parse properties: " + e.getMessage());
+        }
+    }
+    
     private static class MockPropertiesApplier extends PropertiesApplier {
 
         private Map<GlobalProperty, String> globalProperties = new HashMap<GlobalProperty, String>();

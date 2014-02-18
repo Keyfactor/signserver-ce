@@ -36,16 +36,27 @@ import junit.framework.TestCase;
  */
 public class PropertiesApplierTest extends TestCase {
     
+    final MockPropertiesApplier applier =
+            new MockPropertiesApplier();
+    
+    /**
+     * Test config setting up a worker.
+     */
     private static String config1 =
             "GLOB.WORKER42.CLASSPATH = foo.bar.Worker\n" +
             "GLOB.WORKER42.SIGNERTOKEN.CLASSPATH = foo.bar.Token\n" +
             "WORKER42.NAME = TestSigner\n" +
             "WORKER42.FOOBAR = Some value\n";
     
-    public void testBasic() throws Exception {
+    /**
+     * Test config removing a worker property from an existing worker.
+     */
+    private static String config2 =
+            "-WORKER42.FOOBAR = Some value";
+    
+    public void test01Basic() throws Exception {
         final PropertiesParser parser = new PropertiesParser();
-        final MockPropertiesApplier applier =
-                new MockPropertiesApplier();
+        
         final Properties prop = new Properties();
         
         try {
@@ -68,6 +79,23 @@ public class PropertiesApplierTest extends TestCase {
             fail("Failed to parse properties: " + e.getMessage());
         }
         
+    }
+    
+    public void test02RemoveWorkerProperty() throws Exception {
+        final PropertiesParser parser = new PropertiesParser();
+        
+        final Properties prop = new Properties();
+        
+        try {
+            prop.load(new ByteArrayInputStream(config2.getBytes()));
+            parser.process(prop);
+            applier.apply(parser);
+            
+            assertNull("Should have remove worker property",
+                    applier.getWorkerProperty(42, "FOOBAR"));
+        } catch (IOException e) {
+            fail("Failed to parse properties: " + e.getMessage());
+        }
     }
 
     private static class MockPropertiesApplier extends PropertiesApplier {

@@ -60,7 +60,7 @@ public class GUIKeyManager implements X509KeyManager {
             }
             lastSelectedAlias = selectedAlias;
             X509Certificate[] chain = base.getCertificateChain(selectedAlias);
-            if (chain.length > 0) {
+            if (chain != null && chain.length > 0) {
                 selectedCertificate = chain[0];
             }
         }

@@ -46,7 +46,8 @@ public class PropertiesParserTest extends TestCase {
             "WORKERFOO.BAR = VALUE\n" +
             "-WORKER42.REMOVED = REMOVEDVALUE\n" +
             "SIGNER4711.OLDKEY = OLDVALUE\n" +
-            "WORKER42.AUTHCLIENT = 12345678;CN=Authorized\n" +
+            "WORKER42.AUTHCLIENT1 = 12345678;CN=Authorized\n" +
+            "WORKER42.AUTHCLIENT2 = 23456789;CN=Authorized2\n" +
             "-WORKER42.AUTHCLIENT = 987654321;CN=Denied\n" +
             "NODE.NODE1.KEY = VALUE\n" +
             "-GLOB.REMOVED_GLOB = REMOVEDVALUE";
@@ -174,6 +175,8 @@ public class PropertiesParserTest extends TestCase {
             assertEquals("Workers with added auth clients", 1, addAuthClients.size());
             assertTrue("Should contain auth client",
                     containsAuthClientForWorker("42", new AuthorizedClient("12345678", "CN=Authorized"), addAuthClients));
+            assertTrue("Should contain auth client",
+                    containsAuthClientForWorker("42", new AuthorizedClient("23456789", "CN=Authorized2"), addAuthClients));
             assertEquals("Workers with removed auth clients", 1, removeAuthClients.size());
             assertTrue("Should contain auth client",
                     containsAuthClientForWorker("42", new AuthorizedClient("987654321", "CN=Denied"), removeAuthClients));

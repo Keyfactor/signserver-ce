@@ -69,6 +69,14 @@ public class PropertiesParserTest extends TestCase {
     private static String incorrectConfig =
             "FOO.BAR = FOOBAR\n" +
             "VALUE\n";
+    
+    /**
+     * A property file trying to remove a certificate and certificate chain.
+     * Is currently not implemented, and the commands are ignored and reports parser messages.
+     */
+    private static String unsupportedConfig =
+            "-WORKER42.SIGNERCERTIFICATE = " + SIGNER_CERT + "\n" +
+            "-WORKER42.SIGNERCERTCHAIN = " + SIGNER_CERT_CHAIN;        
 
     /**
      * Check if a given global property is included in the result map, as returned by the parser.
@@ -146,8 +154,13 @@ public class PropertiesParserTest extends TestCase {
         return false;
     }
             
-    
-    public void testParsingCorrect() throws Exception {
+    /**
+     * Test parsing a valid configuration setting and removing global properties
+     * and worker properties.
+     * 
+     * @throws Exception
+     */
+    public void test01ParsingCorrect() throws Exception {
         final Properties prop = new Properties();
         final PropertiesParser parser = new PropertiesParser();
         
@@ -207,11 +220,16 @@ public class PropertiesParserTest extends TestCase {
             assertEquals("Number of certificates in chain", 2, certChain.size());
             
         } catch (IOException e) {
-            fail("Failed to parse properties");
+            fail("Failed to parse properties: " + e.getMessage());
         }
     }
     
-    public void testParsingIncorrect() {
+    /**
+     * Test parsing an incorrect config.
+     * 
+     * @throws Exception
+     */
+    public void test02ParsingIncorrect() throws Exception {
         final Properties prop = new Properties();
         final PropertiesParser parser = new PropertiesParser();
         
@@ -226,7 +244,32 @@ public class PropertiesParserTest extends TestCase {
             assertTrue("Error message", errorMessages.contains("Error in propertyfile syntax, check : VALUE"));
             
         } catch (IOException e) {
-            fail("Failed to parse properties");
+            fail("Failed to parse properties: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Test parsing unsupported operations (currently removing signer certificates and cert chains).
+     * Checking the info messages.
+     * 
+     * @throws Exception
+     */
+    public void test03ParsingUnsupported() throws Exception {
+        final Properties prop = new Properties();
+        final PropertiesParser parser = new PropertiesParser();
+        
+        try {
+            prop.load(new ByteArrayInputStream(unsupportedConfig.getBytes()));
+            parser.process(prop);
+            
+            final List<String> messages = parser.getMessages();
+            
+            assertEquals("Number of messages", 2, messages.size());
+            assertTrue("Contains message", messages.contains("Removal of signing certificates isn't supported, skipped."));
+            assertTrue("Contains message", messages.contains("Removal of signing certificate chains isn't supported, skipped."));
+            
+        } catch (IOException e) {
+            fail("Failed to parse properties: " + e.getMessage());
         }
     }
 

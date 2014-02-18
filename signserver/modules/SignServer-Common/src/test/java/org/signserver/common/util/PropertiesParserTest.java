@@ -152,6 +152,8 @@ public class PropertiesParserTest extends TestCase {
             final Map<String, List<AuthorizedClient>> addAuthClients = parser.getAddAuthorizedClients();
             final Map<String, List<AuthorizedClient>> removeAuthClients = parser.getRemoveAuthorizedClients();
             
+            assertFalse("Has no errors", parser.hasErrors());
+            
             assertEquals("Number of global properties", 3, setGlobalProps.size());
             assertEquals("Number of removed global properties", 1, removeGlobalProps.size());
             assertEquals("Number of worker properties", 3, setWorkerProps.size());
@@ -198,6 +200,7 @@ public class PropertiesParserTest extends TestCase {
             parser.process(prop);
             
             final List<String> errorMessages = parser.getErrors();
+            assertTrue("Has errors", parser.hasErrors());
             assertEquals("Number of parser errors", 2, errorMessages.size());
             assertTrue("Error message", errorMessages.contains("Error in propertyfile syntax, check : FOO.BAR"));
             assertTrue("Error message", errorMessages.contains("Error in propertyfile syntax, check : VALUE"));

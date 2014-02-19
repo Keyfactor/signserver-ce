@@ -128,6 +128,9 @@ public class PropertiesApplierTest extends TestCase {
                     applier.getWorkerProperty(42, "FOOBAR"));
             assertTrue("Has uploaded signer certificate", Arrays.equals(Base64.decode(SIGNER_CERT.getBytes()), applier.getSignerCert(42)));
             
+            final List<byte[]> certChain = applier.getSignerCertChain(42);
+            assertEquals("Number of certs in uploaded cert chain", 2, certChain.size());
+            
         } catch (IOException e) {
             fail("Failed to parse properties: " + e.getMessage());
         }
@@ -236,6 +239,7 @@ public class PropertiesApplierTest extends TestCase {
         private Map<WorkerProperty, String> workerProperties = new HashMap<WorkerProperty, String>();
         private Map<Integer, Set<AuthorizedClient>> authClients = new HashMap<Integer, Set<AuthorizedClient>>();
         private Map<Integer, byte[]> signerCerts = new HashMap<Integer, byte[]>();
+        private Map<Integer, List<byte[]>> signerCertChains = new HashMap<Integer, List<byte[]>>();
         
         public static int FIRST_GENERATED_ID = 1000;
         
@@ -259,6 +263,10 @@ public class PropertiesApplierTest extends TestCase {
         
         public byte[] getSignerCert(final int workerId) {
             return signerCerts.get(workerId);
+        }
+        
+        public List<byte[]> getSignerCertChain(final int workerId) {
+            return signerCertChains.get(workerId);
         }
         
         @Override
@@ -289,8 +297,7 @@ public class PropertiesApplierTest extends TestCase {
         @Override
         protected void uploadSignerCertificateChain(int workerId,
                 List<byte[]> signerCertChain) {
-            // TODO Auto-generated method stub
-            
+            signerCertChains.put(workerId, signerCertChain);
         }
 
         @Override

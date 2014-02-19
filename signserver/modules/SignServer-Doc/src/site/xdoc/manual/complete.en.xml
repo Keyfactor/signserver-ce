@@ -41,7 +41,13 @@ lookup the validation of a given certificate.
             <section name="Changes from previous versions">
                 <subsection name="Changes between version 3.4 and 3.5">
                     <ul>
-                        <li>Support for JBoss AS 7.1 and JBoss EAP 6</li>
+                        <li>Support for JBoss AS 7.1, JBoss EAP 6.1 and GlassFish 3.1</li>
+                        <li>Support for MariaDB</li>
+                        <li>Support for JDK 7</li>
+                        <li>All worker configuration can now be done from the Admin GUI</li>
+                        <li>Document signer and validator for XAdES-BES and XAdES-T</li>
+                        <li>Support for different signature algorithms in XML signers</li>
+                        <li>Various AdminGUI/remote administration improvements</li>
                         <li>Support for the group key framework has been discontinued</li>
                     </ul>
                 </subsection>

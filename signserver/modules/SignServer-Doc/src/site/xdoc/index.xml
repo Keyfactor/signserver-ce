@@ -24,11 +24,11 @@
 <div class="label" style="font-size:120%; padding:1em; font-family: Georgia, new york;"><!--a style=" padding:1em 0.2em; color:white;" href="http://www.primekey.se/PKI+shop/">PKI SHOP</a> | --><a style="color:white; padding:1.0em 0.2em; " href="http://www.primekey.se/services/training" target="primekey">World-wide PKI Training</a>  |  <a style=" padding:1.0em 0.2em; color:white;" href="http://www.primekey.se/Services/Consulting/" target="primekey">Hire an expert to do the job for you!</a>
 </div>
 <div class="content first">
-<p style="font-size:1.4em; font-weight:bold; margin:0; color:#015a9c;">SignServer 3.4.1 is now out!</p>
+<p style="font-size:1.4em; font-weight:bold; margin:0; color:#015a9c;">SignServer 3.5.0 is now out!</p>
     <p style="margin-top:0.2em;">
         <!-- Read <a href="http://www.primekey.se/digitalAssets/2/2334_Product_Release_SignServer3.1.1.pdf">release notes</a>. | --> 
-        <a href="download.html">Visit the download section to get SignServer.</a> There is also a LiveCD!<br/>
-  <span class="date"> Date: 2013-06-11</span> 
+        <a href="download.html">Visit the download section to get SignServer.</a> <!-- There is also a LiveCD! --><br/>
+  <span class="date"> Date: 2014-03-dd</span> 
  </p>
  <p style="font-size:1.4em; font-weight:bold; margin:0; color:#015a9c;">Would you recommend SignServer?</p>
   <p style="margin-top:0.2em;">
@@ -69,17 +69,16 @@ SignServer has ready to use modules for:
 </p>
 <ul>
 <li>TimeStamp Authority (RFC 3161 compliant and MS authenticode)</li>
-<li>Signers for different documents: PDF, XML, ODF, OOXML, MRTD (ePassport
+<li>Signers for different documents: PDF, XML, XAdES (BES and T), ODF, OOXML, MRTD (ePassport
     document signer)</li>
 <li>General purpose signers: CMS</li>
-<li>Validators for documents: XML</li>
+<li>Validators for documents: XML, XAdES-BES, XAdES-T</li>
 </ul>
 <p>The modules can be used using HTTP or web services interfaces. SignServer
 also contains functions for:</p>
 <ul>
 <li>Certificate Validation Service Framework for validating certificates using
     CRLs or OCSP</li>
-<li>Group Key Service Framework</li>
 </ul> 
 <p>
 SignServer has been designed for high-availability and can be clustered for
@@ -92,17 +91,19 @@ Different kinds of tokens can be used to perform sign and crypto operations:
 <li>Soft token using JKS or PKCS12 files.</li>
 <li>PKCS#11 HSM tokens, such as the Utimaco CryptoServer, SafeNet ProtectServer
     and Luna, nCipher nShield or AEP KeyPer.</li>
-<li>PrimeCardHSM using smart cards.</li>
 </ul>
 </section>
 
-<section name="What's new in SignServer 3.4?">
+<section name="What's new in SignServer 3.5?">
 <p>
-Some of the major new features in version 3.4 are:
+Some of the major new features in version 3.5 are:
 </p>
 <ul>
-<li>Secure logging to database from CESeCore</li>
-<li>Query audit log from CLI, GUI or over web services</li>
+<li>Support for JBoss AS 7.1, JBoss EAP 6.1 and GlassFish 3.1</li>
+<li>Support for MariaDB</li>
+<li>Support for JDK 7</li>
+<li>Complete worker configuration from the Admin GUI</li>
+<li>Document signer and validator for XML Advanced Electronic Signatures</li>
 </ul>
 <p>
 More information can be found in the <a href="manual.html">manual</a> or in the

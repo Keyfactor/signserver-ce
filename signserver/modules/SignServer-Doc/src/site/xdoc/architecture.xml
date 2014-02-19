@@ -19,7 +19,6 @@ There are three kind of processable services.
 <ul>
 <li>Signers (used to sign or in other way  process requested data). </li>
 <li>Validation Services used to verify the validity of a certificate against a set of backed issuers. The validation service can be used to simply the integration of PKIs into existing applications. </li>
-<li>Group key service framework used to manage and to distribute group keys for different applications, these keys can be both symmetric and asymmetric.</li>
 </ul>
 <p> 
 In addition to processable services there also exists another concept called Timed Service which are plug-ins run at defined intervals performing maintenance or reporting routines.

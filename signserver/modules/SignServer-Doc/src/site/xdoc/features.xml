@@ -20,7 +20,7 @@
                 <li>Multiple Signers and Validators, serve all your digital signature needs within one instance of SignServer.</li>
                 <li>Get your document signer certificate, such as PDF signing certificates, signed by public recognized CAs.</li>
 
-                <li>Built in modules for signing PDF, XML, ODF, OOXML, CMS and MRTD.</li>
+                <li>Built in modules for signing PDF, XML, XAdES-BES, XAdES-T, ODF, OOXML, CMS and MRTD.</li>
                 <li>Generic CMS (PKCS#7) signer signs any document or file.</li>
                 <li>Simple plug-in API for creating new document signers.</li>
                 
@@ -50,9 +50,9 @@ limit is exceeded or key usage period expires.</li>
                     </ul>
                 </li>
 
-                <li>Validators for signed documents, built in support for XML validation, or make your own validator plug-in.</li> 
+                <li>Validators for signed documents, built in support for XML validation, XAdES-BES, XAdES-T, or make your own validator plug-in.</li> 
               
-                <li>Configurable access control using http basic authentication, https client certificates, IP address restrictions etc.</li>
+                <li>Configurable access control using HTTP basic authentication, https client certificates, IP address restrictions etc.</li>
 
                 <li>Optional archival of signed documents.</li>
             </ul>

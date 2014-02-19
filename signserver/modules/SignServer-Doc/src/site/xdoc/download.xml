@@ -8,13 +8,14 @@
 <body>
   <section name="Latest Release">
     <note>
-    If you have problems with any of the download links below, try to download 
-    through the SourceForge
-    <a href="http://sourceforge.net/projects/signserver/files/">download page</a>.
+    SignServer 3.5.0 is now available for <a href="https://sourceforge.net/projects/signserver/files/signserver/3.5/">download from SourceForge</a>.
     <br/><br/>
-    SignServer 3.4.1 is now available for <a href="https://sourceforge.net/projects/signserver/files/signserver/3.4/signserver-3.4.1.zip/download">download</a>.
-    <br/>
-    SHA1 checksum: -REPLACE-WITH-CHECKSUM-
+    SHA1 checksums:
+    <pre>
+-REPLACE-WITH-CHECKSUM-  signserver-3.5.0.zip
+-REPLACE-WITH-CHECKSUM-  signserver-3.5.0-bin.zip
+-REPLACE-WITH-CHECKSUM-  signserver-3.5.0-src.tar.gz
+    </pre>
     </note>
   </section>
   <section name="Main source packages">
@@ -27,7 +28,7 @@
     <p>
         Get up and running quicker by downloading and running our 
         <a href="http://download.primekey.se/public/livecd.iso">LiveCD</a>. It
-        contains a sample installation of SignServer and also EJBCA.
+        contains a (old) sample installation of SignServer and also EJBCA.
     </p>
     <p>
         Requires atleast 1512 MB of memory to run. Please see

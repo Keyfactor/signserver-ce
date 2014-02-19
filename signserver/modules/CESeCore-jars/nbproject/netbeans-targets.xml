@@ -34,7 +34,7 @@
         <depend srcdir="${src.dir}" destdir="${classes.dir}" cache="build/depcache">
             <classpath path="${cp}"/>
         </depend>
-        <javac srcdir="${src.dir}" destdir="${classes.dir}" source="1.5" debug="true" deprecation="${deprecation}" includeantruntime="false">
+        <javac srcdir="${src.dir}" destdir="${classes.dir}" source="1.6" debug="true" deprecation="${deprecation}" includeantruntime="false">
             <classpath path="${cp}"/>
             <compilerarg value="-Xlint:unchecked"/>
             <include name="${class}.java"/>

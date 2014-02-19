@@ -184,7 +184,7 @@
                 <built-to>${classes.dir}</built-to>
                 <built-to>${jar}</built-to>
                 <javadoc-built-to>build/javadoc</javadoc-built-to>
-                <source-level>1.5</source-level>
+                <source-level>1.6</source-level>
             </compilation-unit>
             <compilation-unit>
                 <package-root>${test.dir}</package-root>
@@ -192,7 +192,7 @@
                 <classpath mode="compile">${test.cp}</classpath>
                 <classpath mode="execute">${test.run.cp}</classpath>
                 <built-to>${test.classes.dir}</built-to>
-                <source-level>1.5</source-level>
+                <source-level>1.6</source-level>
             </compilation-unit>
         </java-data>
     </configuration>

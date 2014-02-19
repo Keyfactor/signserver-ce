@@ -9,7 +9,7 @@
         <depend srcdir="${src.dir}" destdir="${classes.dir}" cache="build/depcache">
             <classpath path="${cp}"/>
         </depend>
-        <javac srcdir="${src.dir}" destdir="${classes.dir}" source="1.5" debug="${debug}" deprecation="${deprecation}" includes="${includes}" includeantruntime="false">
+        <javac srcdir="${src.dir}" destdir="${classes.dir}" source="1.6" debug="${debug}" deprecation="${deprecation}" includes="${includes}" includeantruntime="false">
             <classpath path="${cp}"/>
             <compilerarg value="-Xlint:unchecked"/>
         </javac>
@@ -21,7 +21,7 @@
         <depend srcdir="${test.dir}" destdir="${test.classes.dir}" cache="build/test-depcache">
             <classpath path="${test.cp}"/>
         </depend>
-        <javac srcdir="${test.dir}" destdir="${test.classes.dir}" source="1.5" debug="true" deprecation="${deprecation}" includes="${includes}" includeantruntime="false">
+        <javac srcdir="${test.dir}" destdir="${test.classes.dir}" source="1.6" debug="true" deprecation="${deprecation}" includes="${includes}" includeantruntime="false">
             <classpath path="${test.cp}"/>
             <compilerarg value="-Xlint:unchecked"/>
         </javac>

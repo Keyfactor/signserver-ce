@@ -18,13 +18,14 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 /**
- *
+ * Panel component for editing worker properties.
+ * 
  * @author Marcus Lundblad
  * @version $Id$
  */
 public class WorkerPropertyEditor extends Container {
 
-    /** Creates new form EditPropertyPanele */
+    /** Creates new form EditPropertyPanel */
     public WorkerPropertyEditor() {
         initComponents();
     }
@@ -113,22 +114,48 @@ public class WorkerPropertyEditor extends Container {
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 
+    /**
+     * Get the property key entered in the dialog.
+     * 
+     * @return The property key
+     */
     public String getKey() {
         return editPropertyTextField.getText();
     }
     
+    /**
+     * Set the pre-filled text for the property key.
+     * 
+     * @param key The value to set
+     */
     public void setKey(final String key) {
         editPropertyTextField.setText(key);
     }
     
+    /**
+     * Get the property value entered in the dialog.
+     * 
+     * @return The property value entered
+     */
     public String getValue() {
         return editPropertyValueTextArea.getText();
     }
     
+    /**
+     * Set the pre-filled text for the property value.
+     * 
+     * @param value The value to set
+     */
     public void setValue(final String value) {
         editPropertyValueTextArea.setText(value);
     }
     
+    /**
+     * Show the editor dialog.
+     * 
+     * @param component The parent component
+     * @return The return status of the dialog {@link javax.swing.JOptionPane#showConfirmDialog}
+     */
     public int showDialog(final Component component) {
         return JOptionPane.showConfirmDialog(component, editPanel,
                     "Edit property", JOptionPane.OK_CANCEL_OPTION,

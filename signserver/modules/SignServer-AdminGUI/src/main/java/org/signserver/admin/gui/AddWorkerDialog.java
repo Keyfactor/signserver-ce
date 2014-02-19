@@ -336,11 +336,6 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(org.signserver.admin.gui.SignServerAdminGUIApplication.class).getContext().getResourceMap(AddWorkerDialog.class);
         nextApplyButton.setText(resourceMap.getString("nextApplyButton.text")); // NOI18N
         nextApplyButton.setName("nextApplyButton"); // NOI18N
-        nextApplyButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                nextApplyButtonActionPerformed(evt);
-            }
-        });
 
         backButton.setText(resourceMap.getString("backButton.text")); // NOI18N
         backButton.setName("backButton"); // NOI18N
@@ -353,11 +348,6 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         resetButton.setAction(actionMap.get("reloadAction")); // NOI18N
         resetButton.setText(resourceMap.getString("resetButton.text")); // NOI18N
         resetButton.setName("resetButton"); // NOI18N
-        resetButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                resetButtonActionPerformed(evt);
-            }
-        });
 
         cancelButton.setText(resourceMap.getString("cancelButton.text")); // NOI18N
         cancelButton.setName("cancelButton"); // NOI18N
@@ -693,14 +683,6 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         fileSelected = true;
     }//GEN-LAST:event_filePathTextFieldKeyTyped
 
-    private void nextApplyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextApplyButtonActionPerformed
-        
-    }//GEN-LAST:event_nextApplyButtonActionPerformed
-
-    private void resetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
-
-    }//GEN-LAST:event_resetButtonActionPerformed
-
     private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backButtonActionPerformed
         if (configurationEdited) {
             final int confirm = JOptionPane.showConfirmDialog(this,
@@ -908,26 +890,6 @@ public class AddWorkerDialog extends javax.swing.JDialog {
      */
     public List<Integer> getModifiedWorkers() {
         return modifiedWorkers;
-    }
-    
-    
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
-
-            public void run() {
-                AddWorkerDialog dialog = new AddWorkerDialog(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        });
     }
 
     @Action(block = Task.BlockingScope.APPLICATION)

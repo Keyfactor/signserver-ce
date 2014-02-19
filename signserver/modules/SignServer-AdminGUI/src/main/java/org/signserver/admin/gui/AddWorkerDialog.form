@@ -78,9 +78,6 @@
         <Property name="text" type="java.lang.String" resourceKey="nextApplyButton.text"/>
         <Property name="name" type="java.lang.String" value="nextApplyButton" noResource="true"/>
       </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="nextApplyButtonActionPerformed"/>
-      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="backButton">
       <Properties>
@@ -99,9 +96,6 @@
         <Property name="text" type="java.lang.String" resourceKey="resetButton.text"/>
         <Property name="name" type="java.lang.String" value="resetButton" noResource="true"/>
       </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="resetButtonActionPerformed"/>
-      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="cancelButton">
       <Properties>

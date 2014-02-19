@@ -19,6 +19,22 @@ RELEASE_NOTES.txt for more information about such upgrades.
 5. Build and deploy as described in the installation guide.
 
 
+From SignServer 3.4.x to SignServer 3.5.x
+-----------------------------------------
+
+1) Database schema change: tables removed:
+   The following tables are no longer used by SignServer and can optionally be
+   removed:
+   - "enckeydata"
+   - "groupkeydata"
+
+2) Dependency upgraded:
+
+The XML Security library has been updated to version 1.5.5. This requires 
+special handling if JBoss 5 is used. See the Notice section of 
+RELEASE_NOTES.txt for details.
+
+
 From SignServer 3.3.x to SignServer 3.4.x
 -----------------------------------------
 

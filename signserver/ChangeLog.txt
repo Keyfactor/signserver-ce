@@ -1,3 +1,71 @@
+SignServer 3.5.0, 2014-03-xx
+----------------------------
+
+** Bug
+    * [DSS-715] - Regression: Test signing not performed as part of getstatus command
+    * [DSS-726] - Empty certificate chain in setproperties gives error
+
+** Improvement
+    * [DSS-306] - Initial GlassFish 3.1 support
+    * [DSS-393] - Autodetect application server type
+    * [DSS-606] - Initial JBoss 7.1/EAP6.1 support
+    * [DSS-636] - Display worker name in addition to worked ID when showing status from CLI
+    * [DSS-649] - Use EntityManager instead of DataSource in HealthCheck
+    * [DSS-664] - Validator should allow key usage digitalSignature and not just non-repudiation/content-commitment
+    * [DSS-671] - Upgrade xmlsec library
+    * [DSS-674] - Support for allowing any admin with valid certificate to administrate SignServer
+    * [DSS-680] - Prompt to ignore certificate/hostname mismatch when connecting with AdminGUI
+    * [DSS-681] - Improve source code quality
+    * [DSS-697] - Basic XAdES T validator
+    * [DSS-700] - Use the available certs from token when verifying XAdES-T
+    * [DSS-708] - Option to add currently used certificate to the list of administrators in the GUI
+    * [DSS-719] - Use AdminGUI installation dir as base directory for admingui.properties
+    * [DSS-722] - Update AdminGUI splash screen
+    * [DSS-727] - Support for verifying XAdES containing multiple X509Data
+    * [DSS-728] - Sort workers and worker properties in the AdminGUI
+
+** Master Ticket
+    * [DSS-713] - Full worker configuration in AdminGUI
+
+** New Feature
+    * [DSS-12] - Basic XAdES-BES signer
+    * [DSS-147] - Servlet for document/certificate validation
+    * [DSS-246] - XAdES-T signer
+    * [DSS-256] - Dispatcher based on requesting user
+    * [DSS-656] - Support for other signature algorithms in XMLSigner
+    * [DSS-657] - Support for validating XML documents with different signature algorithms
+    * [DSS-658] - Add a Certificate Validator not doing revocation checking
+    * [DSS-672] - Support for ECDSA algorithms in XML Signer and Validator
+    * [DSS-676] - Ant target for creating binary dist of AdminGUI
+    * [DSS-677] - Offer the AdminGUI binary dist for download from the public web
+    * [DSS-682] - Basic XAdES-BES validator
+    * [DSS-683] - Support for specifying signature algorithm in XAdESSigner
+    * [DSS-684] - Support for specifying commitment type in XAdESSigner
+    * [DSS-685] - Revocation checking support for both OCSP and CRL in XAdES Validator
+    * [DSS-686] - Support for including intermediate certificates in signed documents in XAdESSigner
+    * [DSS-690] - Support for MariaDB
+    * [DSS-699] - Support for printing tokens not wrapped in a response
+    * [DSS-701] - Support for adding username as ClaimedRole in XAdES documents
+    * [DSS-706] - Package systemtests in jars to be run from binary dist
+    * [DSS-711] - Support for deleting keys
+    * [DSS-717] - Support for having a default PKCS#11 global configuration
+    * [DSS-729] - Option to specify RenewalWorker truststore inline
+    * [DSS-731] - Add sample DDL with database indices
+
+** Task
+    * [DSS-592] - Compile and run on JDK7
+    * [DSS-616] - Run performance tests
+    * [DSS-703] - Use Maven standard directory layout
+    * [DSS-707] - Remove group key service support
+
+** Sub-task
+    * [DSS-283] - Support for adding workers in the Admin GUI
+    * [DSS-300] - Loading configuration from file in the Admin GUI
+    * [DSS-301] - Removing workers in Admin GUI
+    * [DSS-678] - Dumping configuration to file from the Admin GUI
+    * [DSS-714] - Support for reloading configuration from Admin GUI
+
+
 SignServer 3.4.2, 2013-09-19
 ----------------------------
 

@@ -10,12 +10,6 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
-/*
- * EditPropertyPanele.java
- *
- * Created on 2014-feb-07, 15:02:55
- */
 package org.signserver.admin.gui;
 
 import java.awt.Component;

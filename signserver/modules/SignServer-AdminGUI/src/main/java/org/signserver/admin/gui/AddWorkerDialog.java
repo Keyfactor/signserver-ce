@@ -10,12 +10,6 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-
-/*
- * AddWorkerDialog.java
- *
- * Created on 2014-jan-15, 09:48:28
- */
 package org.signserver.admin.gui;
 
 import java.awt.CardLayout;

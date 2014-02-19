@@ -56,9 +56,10 @@ public class PropertiesApplierTest extends TestCase {
      */
     private static String config1 =
             "GLOB.WORKER42.CLASSPATH = foo.bar.Worker\n" +
-            "GLOB.WORKER42.SIGNERTOKEN.CLASSPATH = foo.bar.Token\n" +
+            "GLOB.SIGNER42.SIGNERTOKEN.CLASSPATH = foo.bar.Token\n" +
             "WORKER42.NAME = TestSigner\n" +
             "WORKER42.FOOBAR = Some value\n" +
+            "SIGNER42.OLDPROPERTY = Some other value\n" +
             "WORKER42.SIGNERCERTIFICATE = " + SIGNER_CERT + "\n" +
             "WORKER42.SIGNERCERTCHAIN = " + SIGNER_CERT_CHAIN;
     
@@ -77,7 +78,10 @@ public class PropertiesApplierTest extends TestCase {
             "WORKERGENID1.NAME = Worker1\n" +
             "GLOB.WORKERGENID2.CLASSPATH = foo.bar.Worker\n" +
             "GLOB.WORKERGENID2.SIGNERTOKEN.CLASSPATH = foo.bar.Token\n" +
-            "WORKERGENID2.NAME = Worker2\n";
+            "WORKERGENID2.NAME = Worker2\n" +
+            "GLOB.SIGNERGENID3.CLASSPATH = foo.bar.Worker\n" +
+            "GLOB.SIGNERGENID3.SIGNERTOKEN.CLASSPATH = foo.bar.Token\n" +
+            "SIGNERGENID3.NAME = Worker3\n";
     
     /**
      * Test config removing a global property.
@@ -106,12 +110,20 @@ public class PropertiesApplierTest extends TestCase {
             "GLOB.WORKERGENIDXXX.SIGNERTOKEN.CLASSPATH = foo.bar.Token\n" +
             "WORKERGENIDXXX.NAME = Worker3";
     
+    /**
+     * Test setting up global and worker properties.
+     * Using both new WORKER and old SIGNER prefixes.
+     * 
+     * @throws Exception
+     */
     public void testBasic() throws Exception {
-        final PropertiesParser parser = new PropertiesParser();
+        PropertiesParser parser;
         
         final Properties prop = new Properties();
         
         try {
+            // test loading a basic config setting up a worker
+            parser = new PropertiesParser();
             prop.load(new ByteArrayInputStream(config1.getBytes()));
             parser.process(prop);
             applier.apply(parser);
@@ -126,34 +138,69 @@ public class PropertiesApplierTest extends TestCase {
                     applier.getWorkerProperty(42, "NAME"));
             assertEquals("Has set worker property", "Some value",
                     applier.getWorkerProperty(42, "FOOBAR"));
+            assertEquals("Has set worker property using old worker prefix", "Some other value",
+                    applier.getWorkerProperty(42, "OLDPROPERTY"));
             assertTrue("Has uploaded signer certificate", Arrays.equals(Base64.decode(SIGNER_CERT.getBytes()), applier.getSignerCert(42)));
+            assertFalse("No errors", applier.hasError());
             
             final List<byte[]> certChain = applier.getSignerCertChain(42);
             assertEquals("Number of certs in uploaded cert chain", 2, certChain.size());
             
-        } catch (IOException e) {
-            fail("Failed to parse properties: " + e.getMessage());
-        }
-        
-    }
-    
-    public void testRemoveWorkerProperty() throws Exception {
-        final PropertiesParser parser = new PropertiesParser();
-        
-        final Properties prop = new Properties();
-        
-        try {
+            // test removing a worker property
+            parser = new PropertiesParser();
+            prop.clear();
             prop.load(new ByteArrayInputStream(config2.getBytes()));
             parser.process(prop);
             applier.apply(parser);
             
             assertNull("Should have remove worker property",
                     applier.getWorkerProperty(42, "FOOBAR"));
+            assertFalse("No errors", applier.hasError());
+            
+            // test removing a global property
+            parser = new PropertiesParser();
+            prop.clear();
+            prop.load(new ByteArrayInputStream(config4.getBytes()));
+            parser.process(prop);
+            applier.apply(parser);
+            
+            assertNull("Removed global property",
+                    applier.getGlobalProperty(PropertiesConstants.GLOBAL_PREFIX_DOT, "WORKER42.CLASSPATH"));
+            assertFalse("No errros", applier.hasError());
+            
+            // test adding auth clients
+            parser = new PropertiesParser();
+            prop.clear();
+            prop.load(new ByteArrayInputStream(config5.getBytes()));
+            parser.process(prop);
+            applier.apply(parser);
+            
+            assertTrue("Authorized client", applier.isAuthorized(42, new AuthorizedClient("123456789", "CN=Authorized")));
+            assertTrue("Authorized client", applier.isAuthorized(42, new AuthorizedClient("987654321", "CN=AlsoAuthorized")));
+            assertFalse("No errors", applier.hasError());
+            
+            // test removing an auth client
+            parser = new PropertiesParser();
+            prop.clear();
+            prop.load(new ByteArrayInputStream(config6.getBytes()));
+            parser.process(prop);
+            applier.apply(parser);
+            
+            assertFalse("Not authorized", applier.isAuthorized(42, new AuthorizedClient("123456789", "CN=Authorized")));
+            assertTrue("Authorized client", applier.isAuthorized(42, new AuthorizedClient("987654321", "CN=AlsoAuthorized")));
+            assertFalse("No errors", applier.hasError());
+            
         } catch (IOException e) {
             fail("Failed to parse properties: " + e.getMessage());
         }
+        
     }
-    
+
+    /**
+     * Test setting up workers using generated IDs (GENIDx).
+     * 
+     * @throws Exception
+     */
     public void testSetPropertiesGenIDs() throws Exception {
         final PropertiesParser parser = new PropertiesParser();
         
@@ -166,56 +213,23 @@ public class PropertiesApplierTest extends TestCase {
             
             assertEquals("Set worker name for generated ID", "Worker1", applier.getWorkerProperty(1000, "NAME"));
             assertEquals("Set worker name for generated ID", "Worker2", applier.getWorkerProperty(1001, "NAME"));
+            assertEquals("Set worker name for generated ID", "Worker3", applier.getWorkerProperty(1002, "NAME"));
+            assertFalse("No errors", applier.hasError());
             
-        } catch (IOException e) {
-            fail("Failed to parse properties: " + e.getMessage());
-        }
-    }
-
-    public void testRemoveGlobalProperty() throws Exception {
-        final PropertiesParser parser = new PropertiesParser();
-        
-        final Properties prop = new Properties();
-        
-        try {
-            prop.load(new ByteArrayInputStream(config4.getBytes()));
-            parser.process(prop);
-            applier.apply(parser);
-            
-            assertNull("Removed global property",
-                    applier.getGlobalProperty(PropertiesConstants.GLOBAL_PREFIX_DOT, "WORKER42.CLASSPATH"));
+            final List<Integer> workerIds = applier.getWorkerIds();
+            assertTrue("Contains worker ID", workerIds.contains(1000));
+            assertTrue("Contains worker ID", workerIds.contains(1001));
+            assertTrue("Contains worker ID", workerIds.contains(1002));
         } catch (IOException e) {
             fail("Failed to parse properties: " + e.getMessage());
         }
     }
     
-    public void testAddRemoveAuthClients() throws Exception {
-        PropertiesParser parser;
-        
-        final Properties prop = new Properties();
-        
-        try {
-            parser = new PropertiesParser();
-            prop.load(new ByteArrayInputStream(config5.getBytes()));
-            parser.process(prop);
-            applier.apply(parser);
-            
-            assertTrue("Authorized client", applier.isAuthorized(42, new AuthorizedClient("123456789", "CN=Authorized")));
-            assertTrue("Authorized client", applier.isAuthorized(42, new AuthorizedClient("987654321", "CN=AlsoAuthorized")));
-            
-            parser = new PropertiesParser();
-            prop.clear();
-            prop.load(new ByteArrayInputStream(config6.getBytes()));
-            parser.process(prop);
-            applier.apply(parser);
-            
-            assertFalse("Not authorized", applier.isAuthorized(42, new AuthorizedClient("123456789", "CN=Authorized")));
-            assertTrue("Authorized client", applier.isAuthorized(42, new AuthorizedClient("987654321", "CN=AlsoAuthorized")));
-        } catch (IOException e) {
-            fail("Failed to parse properties: " + e.getMessage());
-        }
-    }
-    
+    /**
+     * Test using incorrect generated IDs (non-integer).
+     * 
+     * @throws Exception
+     */
     public void testMalformedGenID() throws Exception {
         final PropertiesParser parser = new PropertiesParser();
         
@@ -228,11 +242,16 @@ public class PropertiesApplierTest extends TestCase {
             
             assertEquals("Error message", "Illegal generated ID: GENIDXXX",
                     applier.getError());
+            assertTrue("Has errors", applier.hasError());
         } catch (IOException e) {
             fail("Failed to parse properties: " + e.getMessage());
         } 
     }
     
+    /**
+     * Mock implementation of the PropertiesApplier.
+     * 
+     */
     private static class MockPropertiesApplier extends PropertiesApplier {
 
         private Map<GlobalProperty, String> globalProperties = new HashMap<GlobalProperty, String>();

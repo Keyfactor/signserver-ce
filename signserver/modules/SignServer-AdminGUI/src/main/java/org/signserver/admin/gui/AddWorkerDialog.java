@@ -39,6 +39,9 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.JTextComponent;
 import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Logger;
+import org.jdesktop.application.Action;
+import org.jdesktop.application.Task;
 import org.signserver.admin.gui.adminws.gen.AdminNotAuthorizedException_Exception;
 import org.signserver.common.util.PropertiesApplier;
 import org.signserver.common.util.PropertiesConstants;
@@ -52,6 +55,9 @@ import org.signserver.common.util.PropertiesParser;
  * @version $Id$
  */
 public class AddWorkerDialog extends javax.swing.JDialog {
+    
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(AddWorkerDialog.class);
 
     /**
      * Enum holding state in the config dialog.
@@ -325,6 +331,8 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setName("Form"); // NOI18N
 
+        javax.swing.ActionMap actionMap = org.jdesktop.application.Application.getInstance(org.signserver.admin.gui.SignServerAdminGUIApplication.class).getContext().getActionMap(AddWorkerDialog.class, this);
+        nextApplyButton.setAction(actionMap.get("nextAction")); // NOI18N
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(org.signserver.admin.gui.SignServerAdminGUIApplication.class).getContext().getResourceMap(AddWorkerDialog.class);
         nextApplyButton.setText(resourceMap.getString("nextApplyButton.text")); // NOI18N
         nextApplyButton.setName("nextApplyButton"); // NOI18N
@@ -342,6 +350,7 @@ public class AddWorkerDialog extends javax.swing.JDialog {
             }
         });
 
+        resetButton.setAction(actionMap.get("reloadAction")); // NOI18N
         resetButton.setText(resourceMap.getString("resetButton.text")); // NOI18N
         resetButton.setName("resetButton"); // NOI18N
         resetButton.addActionListener(new java.awt.event.ActionListener() {
@@ -489,7 +498,7 @@ public class AddWorkerDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(initialSetupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(initialSetupPanelLayout.createSequentialGroup()
-                        .addComponent(invalidWorkerIdStatusLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 905, Short.MAX_VALUE)
+                        .addComponent(invalidWorkerIdStatusLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 906, Short.MAX_VALUE)
                         .addContainerGap())
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, initialSetupPanelLayout.createSequentialGroup()
                         .addComponent(filePathTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 873, Short.MAX_VALUE)
@@ -506,7 +515,7 @@ public class AddWorkerDialog extends javax.swing.JDialog {
                         .addContainerGap())
                     .addGroup(initialSetupPanelLayout.createSequentialGroup()
                         .addComponent(loadFromFileRadioButton, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(784, Short.MAX_VALUE))
+                        .addContainerGap(785, Short.MAX_VALUE))
                     .addGroup(initialSetupPanelLayout.createSequentialGroup()
                         .addComponent(editWorkerPropertiesRadioButton)
                         .addGap(195, 195, 195))
@@ -520,9 +529,9 @@ public class AddWorkerDialog extends javax.swing.JDialog {
                         .addGap(18, 18, 18)
                         .addGroup(initialSetupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(workerIdComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(workerNameField, javax.swing.GroupLayout.DEFAULT_SIZE, 634, Short.MAX_VALUE)
-                            .addComponent(workerImplementationField, javax.swing.GroupLayout.DEFAULT_SIZE, 634, Short.MAX_VALUE)
-                            .addComponent(tokenImplementationField, javax.swing.GroupLayout.DEFAULT_SIZE, 634, Short.MAX_VALUE))
+                            .addComponent(workerNameField, javax.swing.GroupLayout.DEFAULT_SIZE, 635, Short.MAX_VALUE)
+                            .addComponent(workerImplementationField, javax.swing.GroupLayout.DEFAULT_SIZE, 635, Short.MAX_VALUE)
+                            .addComponent(tokenImplementationField, javax.swing.GroupLayout.DEFAULT_SIZE, 635, Short.MAX_VALUE))
                         .addContainerGap())))
         );
         initialSetupPanelLayout.setVerticalGroup(
@@ -593,7 +602,7 @@ public class AddWorkerDialog extends javax.swing.JDialog {
                     .addComponent(configurationLabel)
                     .addGroup(configurationPanelLayout.createSequentialGroup()
                         .addGap(12, 12, 12)
-                        .addComponent(configurationScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 905, Short.MAX_VALUE)))
+                        .addComponent(configurationScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 906, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         configurationPanelLayout.setVerticalGroup(
@@ -601,7 +610,7 @@ public class AddWorkerDialog extends javax.swing.JDialog {
             .addGroup(configurationPanelLayout.createSequentialGroup()
                 .addComponent(configurationLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(configurationScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 499, Short.MAX_VALUE)
+                .addComponent(configurationScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 502, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -624,7 +633,7 @@ public class AddWorkerDialog extends javax.swing.JDialog {
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(wizardPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 929, Short.MAX_VALUE)
+                    .addComponent(wizardPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -633,7 +642,7 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(589, Short.MAX_VALUE)
+                .addContainerGap(592, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(resetButton)
                     .addComponent(nextApplyButton)
@@ -685,84 +694,11 @@ public class AddWorkerDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_filePathTextFieldKeyTyped
 
     private void nextApplyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextApplyButtonActionPerformed
-        switch (stage) {
-            case INITIAL_CONFIG:
-                // in the initial config pane, go to the next step
-                gotoPropertiesEditing();
-
-                break;
-            case EDIT_PROPERTIES:
-                final boolean sucess = applyConfiguration();
-                
-                if (sucess) {
-                    dispose();
-                }
-                break;
-            default:
-                // should not happen...
-                break;
-        }
+        
     }//GEN-LAST:event_nextApplyButtonActionPerformed
 
-    // TODO: run this as a background task
-    private boolean applyConfiguration() {
-        config = configurationTextArea.getText();
-
-        final Properties props = new Properties();
-
-        try {
-            props.load(new ByteArrayInputStream(config.getBytes()));
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(this,
-                    "Error loading properties: " + e.getMessage(), "Error",
-                    JOptionPane.ERROR_MESSAGE);
-            return false;
-        }
-            
-        final PropertiesParser parser = new PropertiesParser();
-
-        parser.process(props);
-
-        if (parser.hasErrors()) {
-            final List<String> errors = parser.getErrors();
-            
-            // show the first error message from the parser, to avoid overflowing
-            // TODO: maybe add a "more errors..." view later...
-            JOptionPane.showMessageDialog(this,
-                    "Error parsing properties: " + errors.get(0),
-                    "Error", JOptionPane.ERROR_MESSAGE);
-            return false;
-        } else {
-            final PropertiesApplier applier = new AdminGUIPropertiesApplier();
-
-            applier.apply(parser);
-            
-            if (applier.hasError()) {
-                JOptionPane.showMessageDialog(this,
-                        "Error applying properties: " + applier.getError(),
-                        "Error", JOptionPane.ERROR_MESSAGE);
-                return false;
-            }
-            
-            modifiedWorkers = applier.getWorkerIds();
-            
-            try {
-                for (final int workerId : modifiedWorkers) {
-                    SignServerAdminGUIApplication.getAdminWS().reloadConfiguration(workerId);
-                }
-            } catch (AdminNotAuthorizedException_Exception e) {
-                JOptionPane.showMessageDialog(this,
-                        "Error reloading workers: " + e.getMessage(),
-                        "Error reloading", JOptionPane.ERROR_MESSAGE);
-            }
-        }
-
-        return true;
-    }
-
     private void resetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
-        loadConfigurationEditor();
-        updateControls();
+
     }//GEN-LAST:event_resetButtonActionPerformed
 
     private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backButtonActionPerformed
@@ -904,49 +840,6 @@ public class AddWorkerDialog extends javax.swing.JDialog {
 
         updateControls();
     }
-
-    private void gotoPropertiesEditing() {
-        ((CardLayout) wizardPanel.getLayout()).show(wizardPanel, "editing");
-        stage = Stage.EDIT_PROPERTIES;
-
-        // TODO: should later on handle merging manual properties to the
-        // properties editor and so on...
-
-        // reload configuration if a new file has been selected or if
-        // a worker was add using the form
-        if (mode == Mode.EDIT_MANUALLY || fileSelected) {
-            loadConfigurationEditor();
-        }
-        updateControls();
-    }
-
-    private void loadConfigurationEditor() {
-        switch (mode) {
-            case LOAD_FROM_FILE:
-                final File file = new File(filePathTextField.getText());
-
-                try {
-                    config = FileUtils.readFileToString(file);
-                    configurationTextArea.setText(config);
-                    configurationTextArea.setCaretPosition(0);
-                    configurationEdited = false;
-                    // reset file selected status
-                    fileSelected = false;
-                } catch (IOException e) {
-                    JOptionPane.showMessageDialog(this, e.getMessage(),
-                            "Failed to read file", JOptionPane.ERROR_MESSAGE);
-                }
-                break;
-            case EDIT_MANUALLY:
-                configurationTextArea.setText(generateProperties());
-                configurationTextArea.setCaretPosition(0);
-                configurationEdited = false;
-                break;
-            default:
-                // should not happen
-                break;
-        }
-    }
     
     /**
      * Generate properties based on filled-in values the add form.
@@ -1036,6 +929,175 @@ public class AddWorkerDialog extends javax.swing.JDialog {
             }
         });
     }
+
+    @Action(block = Task.BlockingScope.APPLICATION)
+    public Task nextAction() {
+        final Task result;
+        switch (stage) {
+            case INITIAL_CONFIG:
+                result = createLoadTask(false);
+                break;
+            case EDIT_PROPERTIES:
+                result = createApplyTask();
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown state: " + stage);
+        }
+        return result;
+    }
+    
+    private Task createApplyTask() {
+        return new ApplyTask(org.jdesktop.application.Application.getInstance(org.signserver.admin.gui.SignServerAdminGUIApplication.class));
+    }
+    
+    private Task createLoadTask(final boolean forceReload) {
+        return new LoadTask(org.jdesktop.application.Application.getInstance(org.signserver.admin.gui.SignServerAdminGUIApplication.class), forceReload);
+    }
+    
+    @Action(block = Task.BlockingScope.APPLICATION)
+    public Task reloadAction() {
+        return createLoadTask(true);
+    }
+
+    /** 
+     * Task for loading configuration from file or putting together a new 
+     * configuration and if successful switching to the next stage.
+     */
+    private class LoadTask extends org.jdesktop.application.Task<String, Void> {
+        private final String filePath;
+        private final boolean reload;
+        private String conf;
+        LoadTask(org.jdesktop.application.Application app, boolean forceReload) {
+            // Runs on the EDT.  Copy GUI state that
+            // doInBackground() depends on from parameters
+            // to NextActionTask fields, here.
+            super(app);
+            filePath = filePathTextField.getText();
+            this.reload = forceReload || mode == Mode.EDIT_MANUALLY || fileSelected;
+        }
+        @Override protected String doInBackground() {
+            // Your Task's code here.  This method runs
+            // on a background thread, so don't reference
+            // the Swing GUI from here.
+
+            // TODO: should later on handle merging manual properties to the
+            // properties editor and so on...
+
+            // reload configuration if a new file has been selected or if
+            // a worker was add using the form
+            if (reload) {
+                switch (mode) {
+                    case LOAD_FROM_FILE:
+                        final File file = new File(filePath);
+
+                        try {
+                            conf = FileUtils.readFileToString(file);
+                        } catch (IOException e) {
+                            return "Failed to read file: " + e.getLocalizedMessage();
+                        }
+                        break;
+                    case EDIT_MANUALLY:
+                        conf = generateProperties();
+                        break;
+                    default:
+                        throw new IllegalArgumentException("Unknown mode: " + mode);
+                }
+            }
+            
+            return null;
+        }
+        @Override protected void succeeded(String error) {
+            // Runs on the EDT.  Update the GUI based on
+            // the result computed by doInBackground().
+            
+            if (error == null) {
+                stage = Stage.EDIT_PROPERTIES;
+                // in the initial config pane, go to the next step
+                ((CardLayout) wizardPanel.getLayout()).show(wizardPanel, "editing");
+
+                if (reload) {
+                    configurationTextArea.setText(conf);
+                    configurationTextArea.setCaretPosition(0);
+                    configurationEdited = false;
+                    // reset file selected status
+                    fileSelected = false;
+                }
+                updateControls();
+            } else {
+                JOptionPane.showMessageDialog(AddWorkerDialog.this, error,
+                        "Failed to load properties", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+    
+    private class ApplyTask extends org.jdesktop.application.Task<String, Void> {
+        private final String conf;
+        ApplyTask(org.jdesktop.application.Application app) {
+            // Runs on the EDT.  Copy GUI state that
+            // doInBackground() depends on from parameters
+            // to NextActionTask fields, here.
+            super(app);
+            conf = configurationTextArea.getText();
+            
+        }
+        @Override protected String doInBackground() {
+            // Your Task's code here.  This method runs
+            // on a background thread, so don't reference
+            // the Swing GUI from here.
+            final Properties props = new Properties();
+            try {
+                props.load(new ByteArrayInputStream(conf.getBytes()));
+            } catch (IOException e) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Error loading properties", e);
+                }
+                return "Error loading properties: " + e.getMessage();
+            }
+
+            final PropertiesParser parser = new PropertiesParser();
+
+            parser.process(props);
+
+            if (parser.hasErrors()) {
+                final List<String> errors = parser.getErrors();
+
+                // show the first error message from the parser, to avoid overflowing
+                // TODO: maybe add a "more errors..." view later...
+                return "Error parsing properties: " + errors.get(0);
+            } else {
+                final PropertiesApplier applier = new AdminGUIPropertiesApplier();
+
+                applier.apply(parser);
+
+                if (applier.hasError()) {
+                    return "Error applying properties: " + applier.getError();
+                }
+
+                modifiedWorkers = applier.getWorkerIds();
+
+                try {
+                    for (final int workerId : modifiedWorkers) {
+                        SignServerAdminGUIApplication.getAdminWS().reloadConfiguration(workerId);
+                    }
+                } catch (AdminNotAuthorizedException_Exception e) {
+                    return "Error reloading workers: " + e.getMessage();
+                }
+            }
+
+            return null;
+        }
+        @Override protected void succeeded(String error) {
+            // Runs on the EDT.  Update the GUI based on
+            // the result computed by doInBackground().
+            if (error == null) {
+                dispose();
+            } else {
+                JOptionPane.showMessageDialog(AddWorkerDialog.this, error,
+                        "Failed apply properties", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addPropertyButton;
     private javax.swing.JButton backButton;

@@ -41,7 +41,7 @@
           <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="wizardPanel" pref="929" max="32767" attributes="0"/>
+                  <Component id="wizardPanel" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -50,7 +50,7 @@
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
-              <EmptySpace pref="589" max="32767" attributes="0"/>
+              <EmptySpace pref="592" max="32767" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="resetButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="nextApplyButton" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -72,6 +72,9 @@
   <SubComponents>
     <Component class="javax.swing.JButton" name="nextApplyButton">
       <Properties>
+        <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
+          <action class="org.signserver.admin.gui.AddWorkerDialog" id="nextAction" methodName="nextAction"/>
+        </Property>
         <Property name="text" type="java.lang.String" resourceKey="nextApplyButton.text"/>
         <Property name="name" type="java.lang.String" value="nextApplyButton" noResource="true"/>
       </Properties>
@@ -90,6 +93,9 @@
     </Component>
     <Component class="javax.swing.JButton" name="resetButton">
       <Properties>
+        <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
+          <action class="org.signserver.admin.gui.AddWorkerDialog" id="reloadAction" methodName="reloadAction"/>
+        </Property>
         <Property name="text" type="java.lang.String" resourceKey="resetButton.text"/>
         <Property name="name" type="java.lang.String" value="resetButton" noResource="true"/>
       </Properties>
@@ -130,7 +136,7 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
-                              <Component id="invalidWorkerIdStatusLabel" pref="905" max="32767" attributes="0"/>
+                              <Component id="invalidWorkerIdStatusLabel" pref="906" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="1" attributes="0">
@@ -151,7 +157,7 @@
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="loadFromFileRadioButton" min="-2" pref="133" max="-2" attributes="0"/>
-                              <EmptySpace pref="784" max="32767" attributes="0"/>
+                              <EmptySpace pref="785" max="32767" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="editWorkerPropertiesRadioButton" min="-2" max="-2" attributes="0"/>
@@ -168,9 +174,9 @@
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="workerIdComboBox" min="-2" pref="131" max="-2" attributes="0"/>
-                                  <Component id="workerNameField" alignment="0" pref="634" max="32767" attributes="1"/>
-                                  <Component id="workerImplementationField" alignment="0" pref="634" max="32767" attributes="1"/>
-                                  <Component id="tokenImplementationField" alignment="0" pref="634" max="32767" attributes="1"/>
+                                  <Component id="workerNameField" alignment="0" pref="635" max="32767" attributes="1"/>
+                                  <Component id="workerImplementationField" alignment="0" pref="635" max="32767" attributes="1"/>
+                                  <Component id="tokenImplementationField" alignment="0" pref="635" max="32767" attributes="1"/>
                               </Group>
                               <EmptySpace min="-2" max="-2" attributes="0"/>
                           </Group>
@@ -433,7 +439,7 @@
                           <Component id="configurationLabel" min="-2" max="-2" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace min="12" pref="12" max="12" attributes="0"/>
-                              <Component id="configurationScrollPane" pref="905" max="32767" attributes="2"/>
+                              <Component id="configurationScrollPane" pref="906" max="32767" attributes="2"/>
                           </Group>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
@@ -445,7 +451,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="configurationLabel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="configurationScrollPane" pref="499" max="32767" attributes="0"/>
+                      <Component id="configurationScrollPane" pref="502" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>

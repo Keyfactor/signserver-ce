@@ -24,6 +24,7 @@ Notice:
    should be put in JBOSS_HOME/lib/endorsed. To help with that an Ant target 
    can be run:
    $ bin/ant j2ee:copy-xmlsec
+ - Support for the group key framework has been discontinued.
 
 Read the full changelog for details (https://jira.primekey.se/browse/DSS?report=com.atlassian.jira.plugin.system.project:changelog-panel#selectedTab=com.atlassian.jira.plugin.system.project%3Achangelog-panel).
 
@@ -72,6 +73,7 @@ Read the full changelog for details (https://jira.primekey.se/browse/DSS?report=
 
 SignServer 3.4.0
 ----------------
+
 This is a major release - in total 27 features, options, bugs and stabilizations have been fixed or added. The most noteworthy changes can be seen below.
 
 Major changes:
@@ -95,6 +97,7 @@ Notice:
 
 SignServer 3.3.0
 ----------------
+
 This is a major release - in total 57 features, options, bugs and stabilizations have been fixed or added. The most noteworthy changes can be seen below.
 
 Major changes:
@@ -264,6 +267,7 @@ Read the full changelog for details (https://jira.primekey.se/browse/DSS?report=
 
 SignServer 3.2.0
 ----------------
+
 This is a major release - in total 49 features, options, bugs and stabilizations have been fixed or added. The most noteworthy changes can be seen below.
 
 Major new features and improvements:
@@ -286,6 +290,7 @@ Read the full changelog for details (https://jira.primekey.se/browse/DSS?report=
 
 SignServer 3.1.5
 ----------------
+
 This is just a minor maintenance release preparing for the upcoming 3.2 release - in total 7 features, options, bugs and stabilizations have been fixed or added. The most noteworthy changes can be seen below.
 
 New features and improvements:

@@ -15,12 +15,16 @@ package org.signserver.common.util;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import org.signserver.common.AuthorizedClient;
 import org.signserver.common.util.PropertiesApplier;
+import org.signserver.common.util.PropertiesApplier.PropertiesApplierException;
 import org.signserver.common.util.PropertiesConstants;
 import org.signserver.common.util.PropertiesParser.GlobalProperty;
 import org.signserver.common.util.PropertiesParser.WorkerProperty;
@@ -71,8 +75,28 @@ public class PropertiesApplierTest extends TestCase {
     private static String config4 =
             "-GLOB.WORKER42.CLASSPATH = foo.bar.Worker";
     
+    /**
+     * Test config adding auth clients.
+     */
+    private static String config5 =
+            "WORKER42.AUTHCLIENT1 = 123456789;CN=Authorized\n" +
+            "WORKER42.AUTHCLIENT2 = 987654321;CN=AlsoAuthorized";
     
-    public void test01Basic() throws Exception {
+    /**
+     * Test config removing an authorized client.
+     */
+    private static String config6 =
+            "-WORKER42.AUTHCLIENT1 = 123456789;CN=Authorized";
+    
+    /**
+     * Test config with a malformed GENID.
+     */
+    private static String config7 =
+            "GLOB.WORKERGENIDXXX.CLASSPATH = foo.bar.Worker\n" +
+            "GLOB.WORKERGENIDXXX.SIGNERTOKEN.CLASSPATH = foo.bar.Token\n" +
+            "WORKERGENIDXXX.NAME = Worker3";
+    
+    public void testBasic() throws Exception {
         final PropertiesParser parser = new PropertiesParser();
         
         final Properties prop = new Properties();
@@ -99,7 +123,7 @@ public class PropertiesApplierTest extends TestCase {
         
     }
     
-    public void test02RemoveWorkerProperty() throws Exception {
+    public void testRemoveWorkerProperty() throws Exception {
         final PropertiesParser parser = new PropertiesParser();
         
         final Properties prop = new Properties();
@@ -116,7 +140,7 @@ public class PropertiesApplierTest extends TestCase {
         }
     }
     
-    public void test03SetPropertiesGenIDs() throws Exception {
+    public void testSetPropertiesGenIDs() throws Exception {
         final PropertiesParser parser = new PropertiesParser();
         
         final Properties prop = new Properties();
@@ -134,7 +158,7 @@ public class PropertiesApplierTest extends TestCase {
         }
     }
 
-    public void test04RemoveGlobalProperty() throws Exception {
+    public void testRemoveGlobalProperty() throws Exception {
         final PropertiesParser parser = new PropertiesParser();
         
         final Properties prop = new Properties();
@@ -151,10 +175,55 @@ public class PropertiesApplierTest extends TestCase {
         }
     }
     
+    public void testAddRemoveAuthClients() throws Exception {
+        PropertiesParser parser;
+        
+        final Properties prop = new Properties();
+        
+        try {
+            parser = new PropertiesParser();
+            prop.load(new ByteArrayInputStream(config5.getBytes()));
+            parser.process(prop);
+            applier.apply(parser);
+            
+            assertTrue("Authorized client", applier.isAuthorized(42, new AuthorizedClient("123456789", "CN=Authorized")));
+            assertTrue("Authorized client", applier.isAuthorized(42, new AuthorizedClient("987654321", "CN=AlsoAuthorized")));
+            
+            parser = new PropertiesParser();
+            prop.clear();
+            prop.load(new ByteArrayInputStream(config6.getBytes()));
+            parser.process(prop);
+            applier.apply(parser);
+            
+            assertFalse("Not authorized", applier.isAuthorized(42, new AuthorizedClient("123456789", "CN=Authorized")));
+            assertTrue("Authorized client", applier.isAuthorized(42, new AuthorizedClient("987654321", "CN=AlsoAuthorized")));
+        } catch (IOException e) {
+            fail("Failed to parse properties: " + e.getMessage());
+        }
+    }
+    
+    public void testMalformedGenID() throws Exception {
+        final PropertiesParser parser = new PropertiesParser();
+        
+        final Properties prop = new Properties();
+        
+        try {
+            prop.load(new ByteArrayInputStream(config7.getBytes()));
+            parser.process(prop);
+            applier.apply(parser);
+            
+            assertEquals("Error message", "Illegal generated ID: GENIDXXX",
+                    applier.getError());
+        } catch (IOException e) {
+            fail("Failed to parse properties: " + e.getMessage());
+        } 
+    }
+    
     private static class MockPropertiesApplier extends PropertiesApplier {
 
         private Map<GlobalProperty, String> globalProperties = new HashMap<GlobalProperty, String>();
         private Map<WorkerProperty, String> workerProperties = new HashMap<WorkerProperty, String>();
+        private Map<Integer, Set<AuthorizedClient>> authClients = new HashMap<Integer, Set<AuthorizedClient>>();
         
         public static int FIRST_GENERATED_ID = 1000;
         
@@ -164,6 +233,16 @@ public class PropertiesApplierTest extends TestCase {
         
         public String getGlobalProperty(final String scope, final String key) {
             return globalProperties.get(new GlobalProperty(scope, key));
+        }
+        
+        public boolean isAuthorized(final int workerId, final AuthorizedClient ac) {
+            final Set<AuthorizedClient> acs = authClients.get(workerId);
+            
+            if (acs != null) {
+                return acs.contains(ac);
+            }
+            
+            return false;
         }
         
         @Override
@@ -201,14 +280,23 @@ public class PropertiesApplierTest extends TestCase {
 
         @Override
         protected void addAuthorizedClient(int workerId, AuthorizedClient ac) {
-            // TODO Auto-generated method stub
+            Set<AuthorizedClient> acs = authClients.get(workerId);
             
+            if (acs == null) {
+                acs = new HashSet<AuthorizedClient>();
+                authClients.put(workerId, acs);
+            }
+            
+            acs.add(ac);
         }
 
         @Override
         protected void removeAuthorizedClient(int workerId, AuthorizedClient ac) {
-            // TODO Auto-generated method stub
+            final Set<AuthorizedClient> acs = authClients.get(workerId);
             
+            if (acs != null) {
+                acs.remove(ac);
+            }
         }
 
         @Override

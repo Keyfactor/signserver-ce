@@ -29,6 +29,17 @@ Notice:
 Read the full changelog for details (https://jira.primekey.se/browse/DSS?report=com.atlassian.jira.plugin.system.project:changelog-panel#selectedTab=com.atlassian.jira.plugin.system.project%3Achangelog-panel).
 
 
+SignServer 3.4.3
+----------------
+
+Bug fixes:
+ - Regression introduced in 3.4.2: test signatures were not performed as part
+   of the getstatus command or from health check
+ - Security issue in bundled library
+
+Read the full changelog for details (https://jira.primekey.se/browse/DSS?report=com.atlassian.jira.plugin.system.project:changelog-panel#selectedTab=com.atlassian.jira.plugin.system.project%3Achangelog-panel).
+
+
 SignServer 3.4.2
 ----------------
 

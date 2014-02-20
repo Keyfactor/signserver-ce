@@ -66,6 +66,14 @@ SignServer 3.5.0, 2014-03-xx
     * [DSS-714] - Support for reloading configuration from Admin GUI
 
 
+SignServer 3.4.3, 2014-02-20
+----------------------------
+
+** Bug
+    * [DSS-715] - Regression: Test signing not performed as part of getstatus command
+    * [DSS-738] - Security issue in bundled library
+
+
 SignServer 3.4.2, 2013-09-19
 ----------------------------
 

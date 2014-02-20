@@ -1,3 +1,12 @@
+SignServer 3.4.3
+----------------
+
+Bug fixes:
+ - Regression introduced in 3.4.2: test signings was not performed as part of 
+   the getstatus command or from health check
+ - Security issue in bundled library
+
+
 SignServer 3.4.2
 ----------------
 

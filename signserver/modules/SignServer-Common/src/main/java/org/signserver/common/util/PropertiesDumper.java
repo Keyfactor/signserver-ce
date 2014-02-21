@@ -126,11 +126,11 @@ public class PropertiesDumper {
         X509Certificate result = null;
         String stringcert = conf.getProperty(SIGNERCERT);
 
-        if (stringcert != null && !stringcert.equals("")) {
+        if (stringcert != null && !stringcert.isEmpty()) {
             Collection<?> certs;
             try {
                 certs = CertTools.getCertsFromPEM(new ByteArrayInputStream(stringcert.getBytes()));
-                if (certs.size() > 0) {
+                if (!certs.isEmpty()) {
                     result = (X509Certificate) certs.iterator().next();
                 }
             } catch (CertificateException e) {
@@ -146,7 +146,7 @@ public class PropertiesDumper {
         List<Certificate> result = null;
         String stringcert = conf.getProperty(SIGNERCERTCHAIN);
 
-        if (stringcert != null && !stringcert.equals("")) {
+        if (stringcert != null && !stringcert.isEmpty()) {
             try {
                 result = CertTools.getCertsFromPEM(new ByteArrayInputStream(stringcert.getBytes()));
             } catch (CertificateException e) {

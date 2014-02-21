@@ -5049,8 +5049,8 @@ The following properties can currently be specified in the global configuration:
                         </p>
                         <ul>
                             <li>SHAREDLIBRARY</li>
-                            <li>SlOT</li>
-                            <li>SlOTLISTINDEX</li>
+                            <li>SLOT</li>
+                            <li>SLOTLISTINDEX</li>
                             <li>ATTRIBUTESFILE</li>
                             <li>PIN</li>
                         </ul>

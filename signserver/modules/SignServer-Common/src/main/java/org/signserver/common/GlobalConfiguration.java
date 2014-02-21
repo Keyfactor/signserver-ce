@@ -140,6 +140,9 @@ public class GlobalConfiguration implements Serializable {
         return appVersion;
     }
 
+    /**
+     * @return A new Properties object with the current configuration
+     */
     public Properties getConfig() {
         Properties properties = new Properties();
         properties.putAll(config);

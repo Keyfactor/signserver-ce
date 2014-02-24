@@ -296,7 +296,7 @@ j2ee.web-nohttps=true
 #
 # Setting specifying which remote IPs that may call this healthcheck servlet. Use ';' for between multiple IPs.
 # If the setting contains the keyword ANY, access is granted from any IP address.
-# Default : 127.0.0.1
+# Default : 127.0.0.1;::1;0:0:0:0:0:0:0:1
 #healthcheck.authorizedips=127.0.0.1;::1;0:0:0:0:0:0:0:1
 
 # Parameter to set the number of Mega Bytes of memory that must be free before removing     

@@ -28,4 +28,10 @@ DROP TABLE "SIGNERCONFIGDATA";
 DROP TABLE "KEYUSAGECOUNTER";
 
 
+--
+-- Drop table `ArchiveData`
+--
+DROP TABLE "ARCHIVEDATA";
+
+
 -- End

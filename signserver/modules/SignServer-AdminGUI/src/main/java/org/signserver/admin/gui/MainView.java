@@ -2897,7 +2897,7 @@ private void displayLogEntryAction() {
                             "Are you sure you want to try to destroy the key?",
                         "Confirm key destruction", JOptionPane.YES_NO_CANCEL_OPTION);
 
-                    proceed = res == JOptionPane.YES_OPTION;
+                    proceed = (res == JOptionPane.YES_OPTION);
                 } else {
                     proceed = false;
                 }
@@ -3039,7 +3039,7 @@ private void displayLogEntryAction() {
             exportAllUnrelatedGlobalCheckbox.setSelected(false);
             exportAllUnrelatedGlobalCheckbox.setEnabled(true);
             exportAllUnrelatedPreviousValue = false;
-            final boolean firstConfirm = JOptionPane.showConfirmDialog(MainView.this.getFrame(), exportPanel, "Export configuration", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION;
+            final boolean firstConfirm = (JOptionPane.showConfirmDialog(MainView.this.getFrame(), exportPanel, "Export configuration", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION);
             exportAll = exportAllRadioButton.isSelected();
             exportSelected = exportSelectedRadioButton.isSelected();
             exportNone = exportNoRadioButton.isSelected();

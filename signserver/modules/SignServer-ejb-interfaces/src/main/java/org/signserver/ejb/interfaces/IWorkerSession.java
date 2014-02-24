@@ -421,16 +421,17 @@ public interface IWorkerSession {
         List<? extends AuditLogEntry> selectAuditLogs(AdminInfo adminInfo, int startIndex, int max, QueryCriteria criteria, String logDeviceId) throws AuthorizationDeniedException;
     
         /**
-         * Method used to remove a key from a signer.
+         * Method used to remove a key from a crypto token used by a worker.
          *
          * @param adminInfo administrator info
-         * @param signerId id of the signer
-         * @param purpose on of ICryptoToken.PURPOSE_ constants
+         * @param signerId id of the worker
+         * @param alias key alias of key to remove
          * @return true if removal was successful.
+         * @throws CryptoTokenOfflineException if crypto token was not activated or could not be
+         * @throws InvalidWorkerIdException if the specified worker id does not exist
+         * @throws KeyStoreException for keystore related errors
+         * @throws SignServerException for other errors
          */
-//        boolean destroyKey(final AdminInfo adminInfo, int signerId, int purpose)
-//                throws InvalidWorkerIdException;
-    
         boolean removeKey(AdminInfo adminInfo, int signerId, String alias) 
             throws CryptoTokenOfflineException, InvalidWorkerIdException, 
             KeyStoreException, SignServerException;

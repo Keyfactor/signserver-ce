@@ -26,14 +26,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
-import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
@@ -554,7 +552,21 @@ public class AdminWS {
         return results;
     }
     
-    /** TODO. */
+    /** 
+     * Method used to remove a key from the crypto token used by the worker. 
+     *
+     * @param signerId id of worker
+     * @param alias key alias of key to remove
+     * @return true if removal was successful.
+     * @throws CryptoTokenOfflineException if crypto token was not activated or 
+     * could not be
+     * @throws InvalidWorkerIdException if the specified worker id does not 
+     * exist
+     * @throws KeyStoreException for keystore related errors
+     * @throws SignServerException for other errors
+     * @throws AdminNotAuthorizedException if the administrator was not 
+     * authorized to perform the operation
+     */
     @WebMethod(operationName = "removeKey")
     public boolean removeKey(
             @WebParam(name = "signerId") final int signerId,

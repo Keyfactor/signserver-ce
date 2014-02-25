@@ -256,9 +256,11 @@ public class AddWorkerDialog extends javax.swing.JDialog {
     
     /**
      * Determine if a string qualifies as a worker ID prefix, either a positive
-     * integer or a 
+     * integer or a string of the form GENIDx, where x is a positive integer
+     * for generated worker IDs.
+     * 
      * @param workerId
-     * @return 
+     * @return True if the given string represents a valid worker ID or generated ID
      */
     private boolean isWorkerIdValid(final String workerId) {
         try {

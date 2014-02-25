@@ -1,8 +1,7 @@
-SignServer 3.5.0, 2014-03-xx
+SignServer 3.5.0, 2014-02-28
 ----------------------------
 
 ** Bug
-    * [DSS-715] - Regression: Test signing not performed as part of getstatus command
     * [DSS-726] - Empty certificate chain in setproperties gives error
 
 ** Improvement

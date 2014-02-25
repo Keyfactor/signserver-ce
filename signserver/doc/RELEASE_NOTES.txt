@@ -12,9 +12,6 @@ New features and improvements:
  - Various AdminGUI/remote administration improvements.
 
 Bug fixes:
- - An security issue in a bundled library has been resolved by upgrading it to a 
-   later version.
- - Regression: Test signing was not performed as part of getstatus command.
  - Empty certificate chain in setproperties call gave error.
 
 Notice:

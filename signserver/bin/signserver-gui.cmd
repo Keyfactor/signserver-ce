@@ -4,15 +4,11 @@ rem library classpath
 if "%SIGNSERVER_HOME%" == "" (
   set SIGNSRV_HOME=..
   rem It must work to call both as bin\signserver.cmd or from within bin
-  if not exist signserver.cmd set SIGNSRV_HOME=.
+  if not exist signserver-gui.cmd set SIGNSRV_HOME=.
  ) else (
     set SIGNSRV_HOME=%SIGNSERVER_HOME%
 ) 
-  
-if "%APPSRV_HOME%" == "" (
-    echo You must set APPSRV_HOME before running the SignServer AdminGUI.
-    goto end
-)
+
 
 rem check that we have built the classes
 if not exist %SIGNSRV_HOME%\lib\SignServer-AdminGUI.jar  (

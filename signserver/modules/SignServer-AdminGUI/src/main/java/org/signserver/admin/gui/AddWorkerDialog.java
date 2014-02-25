@@ -684,13 +684,15 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         if (configurationEdited) {
             final int confirm = JOptionPane.showConfirmDialog(this,
                     "Configuration has been edited, going back to the initial setup will discard changes.\n Proceed?",
-                    "Changed made", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                    "Changes have been made", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
         
-            if (confirm == JOptionPane.NO_OPTION) {
-                return;
+            if (confirm == JOptionPane.YES_OPTION) {
+                goBackToInitialConfig();
             }
+        } else {
+            // no changes made
+            goBackToInitialConfig();
         }
-        goBackToInitialConfig();
     }//GEN-LAST:event_backButtonActionPerformed
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed

@@ -12,20 +12,17 @@
  *************************************************************************/
 package org.signserver.admin.cli.defaultimpl;
 
-import java.util.Collection;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.log4j.Logger;
-import org.ejbca.ui.cli.util.ConsolePasswordReader;
 import org.signserver.cli.CommandLineInterface;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.cli.spi.UnexpectedCommandFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.InvalidWorkerIdException;
-import org.signserver.common.KeyTestResult;
 import org.signserver.common.SignServerException;
 
 /**
@@ -43,7 +40,7 @@ public class RemoveKeyCommand extends AbstractAdminCommand {
     private static final Options OPTIONS;
 
     private static final String USAGE = "Usage: signserver removekey <worker id | worker name> -alias <key alias> [-noask]\n"
-            + "Example: signserver removekey 71 signerKey001";
+            + "Example: signserver removekey 71 -alias signerKey001";
     
     private static final String ALIAS = "alias";
     private static final String NOASK = "noask";

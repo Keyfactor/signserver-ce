@@ -278,9 +278,16 @@ j2ee.web-nohttps=true
 #webdoc.enabled=true
 
 # Offer the AdminGUI binary dist for download from the public web
-# 
-# Default: true
-#web.admingui.dist.enabled=true
+# Note: If enabled the following configuration files will also be part of the 
+# download:
+# - conf/admingui_default.properties
+# - conf/log4.properties
+# - doc/sample-configs/*.properties
+#
+# The ZIP file is created as part of the compose-ear (deploy) Ant target.
+#
+# Default: false
+#web.admingui.dist.enabled=false
 
 # Path to the AdminGUI binary dist file
 # Default: ${basedir}/lib/signserver-admingui.zip

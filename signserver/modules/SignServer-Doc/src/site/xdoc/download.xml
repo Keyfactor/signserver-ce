@@ -12,9 +12,9 @@
     <br/><br/>
     SHA1 checksums:
     <pre>
--REPLACE-WITH-CHECKSUM-  signserver-3.5.0.zip
--REPLACE-WITH-CHECKSUM-  signserver-3.5.0-bin.zip
--REPLACE-WITH-CHECKSUM-  signserver-3.5.0-src.tar.gz
+4d61349fb5f8f1433baa5941c132660ee4e6614b  signserver-3.5.0.zip
+e113e0c3a4d4a6efa1f3c10a7f5b6bca04418e1d  signserver-3.5.0-bin.zip
+06e3d3594f20ae9aded49c716715ffdc2a28a369  signserver-3.5.0-src.tar.gz
     </pre>
     </note>
   </section>

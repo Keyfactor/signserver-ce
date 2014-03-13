@@ -14,4 +14,4 @@ Licenses
   
 SignServer is released under the LGPL license that you can find more
 information about at http://www.opensource.org/licenses/lgpl-license.php.
-
+Third party licensies are available at http://signserver.org/license.html.

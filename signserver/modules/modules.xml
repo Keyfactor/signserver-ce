@@ -299,6 +299,7 @@
 			<fileset dir="${platform.project.dir}/modules">
 				<exclude name="**/org/apache/**/*.java"/>
 				<exclude name="**/com/novosec/**/*.java"/>
+                                <exclude name="SignServer-Lib-*/**"/>
 			</fileset>
 		</clover-setup>			
 	</target>

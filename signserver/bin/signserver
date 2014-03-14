@@ -75,12 +75,13 @@ then
 fi
 
 # Optional JARs
-OPTIONAL_CLASSPATH=
+OPTIONAL_CLASSPATH=${EXTRA_CLASSPATH}
 
 # Construct the classpath
 CP="$SIGNSRV_HOME/lib/${ADMINCLI_JAR}"
 CP="${SIGNSRV_HOME}/conf":"$CP"
 CP="$CP:$SIGNSRV_HOME/res/cesecore"
+CP="$CP:$SIGNSRV_HOME/lib/ext/clover-dir/lib/clover.jar"
 CP="$CP":${OPTIONAL_CLASSPATH}
 
 # Application server dependencies

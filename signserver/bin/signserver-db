@@ -74,6 +74,8 @@ then
         exit 1
 fi
 
+# Optional JARs
+OPTIONAL_CLASSPATH=${EXTRA_CLASSPATH}
 
 # Construct the classpath
 CP="$SIGNSRV_HOME/lib/${ADMINCLI_JAR}"

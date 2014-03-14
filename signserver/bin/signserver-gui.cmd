@@ -35,7 +35,7 @@ if exist %APPSRV_HOME%\client\jbossall-client.jar  (
     set JEE_CLASSPATH=%CLASSPATH%;%SIGNSRV_HOME%\conf\jboss;%APPSRV_HOME%\client\jbossall-client.jar
 )
 
-set CLASSPATH=%MAIN_CLASSPATH%;%JEE_CLASSPATH%
+set CLASSPATH=%MAIN_CLASSPATH%;%JEE_CLASSPATH%;%EXTRA_CLASSPATH%
 rem echo %CLASSPATH%
 
 

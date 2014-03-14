@@ -76,7 +76,7 @@ then
 fi
 
 # Optional JARs
-OPTIONAL_CLASSPATH=
+OPTIONAL_CLASSPATH=${EXTRA_CLASSPATH}
 
 # Construct the classpath
 CP="${SIGNSRV_HOME}/lib/${MAIN_JAR}"

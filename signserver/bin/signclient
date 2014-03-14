@@ -64,7 +64,7 @@ then
 fi
 
 # Optional JARs
-OPTIONAL_CLASSPATH=${SIGNSRV_HOME}/lib/SignServer-Client-ValidationCLI.jar
+OPTIONAL_CLASSPATH=${SIGNSRV_HOME}/lib/SignServer-Client-ValidationCLI.jar:${EXTRA_CLASSPATH}
 
 # Construct the classpath
 CP="${SIGNSRV_HOME}/lib/${MAIN_JAR}"

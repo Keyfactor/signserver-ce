@@ -46,7 +46,8 @@ When the projects are first opened there might be a missing dependency
 Writing Documentation
 ---------------------
 The SignServer documentation is built using Apache Anakia/Velocity from XML 
-source files under modules/SignServer-Doc/src/xdocs/ when running "ant doc".
+source files under modules/SignServer-Doc/src/xdocs/ when running 
+"bin/ant doc".
 
 The file manual/complete.en.xml contains the source for all chapters in the 
 manual.

@@ -75,8 +75,8 @@ Test coverage with Clover
 
 To run Clover, copy the Clover installation folder (or make a symlink to it) 
 and store it as lib/ext/clover-dir. If the project has been built already an 
-dummy Clover folder will already exist with that name so you will have to remove 
-it first.
+dummy Clover folder will already exist with that name so you will have to 
+remove it first.
 
 $ bin/ant clean clover.clean build deploy
 $ bin/ant ant test:run

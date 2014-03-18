@@ -108,75 +108,77 @@ public class UserMappedDispatcherTest extends ModulesTestCase {
      */
     @Test
     public void test01Dispatched() throws Exception {
-        LOG.info("test01Dispatched");
-        final RequestContext context = new RequestContext();
-        final GenericSignRequest request =
-                new GenericSignRequest(1, "<root/>".getBytes());
-
-        GenericSignResponse res;
-
-        setDispatchedAuthorizerForAllWorkers();
-        
-        // Send request to dispatcher as user1
-        context.put(RequestContext.CLIENT_CREDENTIAL, 
-                new UsernamePasswordClientCredential("user1", "password"));
-        res = (GenericSignResponse) workerSession.process(WORKERID_DISPATCHER,
-                request, context);
-        
-        X509Certificate cert = (X509Certificate) res.getSignerCertificate();
-        assertEquals("Response from signer 81", 
-                "CN=testdocumentsigner81,OU=Testing,O=SignServer,C=SE", cert.getSubjectDN().getName());
-
-        // Send request to dispatcher as user2
-        context.put(RequestContext.CLIENT_CREDENTIAL, 
-                new UsernamePasswordClientCredential("user2", "password"));
-        res = (GenericSignResponse) workerSession.process(WORKERID_DISPATCHER,
-                request, context);
-        cert = (X509Certificate) res.getSignerCertificate();
-        assertEquals("Response from signer 82", 
-                "CN=testdocumentsigner82,OU=Testing,O=SignServer,C=SE", cert.getSubjectDN().getName());
-
-        // Send request to dispatcher as user3
-        context.put(RequestContext.CLIENT_CREDENTIAL, 
-                new UsernamePasswordClientCredential("user3", "password"));
-        res = (GenericSignResponse) workerSession.process(WORKERID_DISPATCHER,
-                request, context);
-        cert = (X509Certificate) res.getSignerCertificate();
-        assertEquals("Response from signer 83", 
-                "CN=testdocumentsigner83,OU=Testing,O=SignServer,C=SE", cert.getSubjectDN().getName());
-
-        // Send request to dispatcher as user4 for which the worker does not exist
         try {
+            LOG.info("test01Dispatched");
+            final RequestContext context = new RequestContext();
+            final GenericSignRequest request =
+                    new GenericSignRequest(1, "<root/>".getBytes());
+    
+            GenericSignResponse res;
+    
+            setDispatchedAuthorizerForAllWorkers();
+            
+            // Send request to dispatcher as user1
             context.put(RequestContext.CLIENT_CREDENTIAL, 
-                    new UsernamePasswordClientCredential("user4", "password"));
-            workerSession.process(WORKERID_DISPATCHER, request, context);
-            fail("Should have got SignServerException as the worker configured does not exist");
-        } catch(SignServerException expected) { // NOPMD
-            // OK
-        }
-        
-        // Send request to dispatcher as user5 which mapps to the dispatcher
-        // itself
-        try {
+                    new UsernamePasswordClientCredential("user1", "password"));
+            res = (GenericSignResponse) workerSession.process(WORKERID_DISPATCHER,
+                    request, context);
+            
+            X509Certificate cert = (X509Certificate) res.getSignerCertificate();
+            assertEquals("Response from signer 81", 
+                    "CN=testdocumentsigner81,OU=Testing,O=SignServer,C=SE", cert.getSubjectDN().getName());
+    
+            // Send request to dispatcher as user2
             context.put(RequestContext.CLIENT_CREDENTIAL, 
-                    new UsernamePasswordClientCredential("user5", "password"));
-            workerSession.process(WORKERID_DISPATCHER, request, context);
-            fail("Should have got SignServerException as it is configured to dispatch to itself");
-        } catch(SignServerException expected) { // NOPMD
-            // OK
-        }
-        
-        // Send request to dispatcher as user6 for which there is no mapping
-        try {
+                    new UsernamePasswordClientCredential("user2", "password"));
+            res = (GenericSignResponse) workerSession.process(WORKERID_DISPATCHER,
+                    request, context);
+            cert = (X509Certificate) res.getSignerCertificate();
+            assertEquals("Response from signer 82", 
+                    "CN=testdocumentsigner82,OU=Testing,O=SignServer,C=SE", cert.getSubjectDN().getName());
+    
+            // Send request to dispatcher as user3
             context.put(RequestContext.CLIENT_CREDENTIAL, 
-                    new UsernamePasswordClientCredential("user6", "password"));
-            workerSession.process(WORKERID_DISPATCHER, request, context);
-            fail("Should have got IllegalRequestException as there is no mapping");
-        } catch(IllegalRequestException expected) { // NOPMD
-            // OK
+                    new UsernamePasswordClientCredential("user3", "password"));
+            res = (GenericSignResponse) workerSession.process(WORKERID_DISPATCHER,
+                    request, context);
+            cert = (X509Certificate) res.getSignerCertificate();
+            assertEquals("Response from signer 83", 
+                    "CN=testdocumentsigner83,OU=Testing,O=SignServer,C=SE", cert.getSubjectDN().getName());
+    
+            // Send request to dispatcher as user4 for which the worker does not exist
+            try {
+                context.put(RequestContext.CLIENT_CREDENTIAL, 
+                        new UsernamePasswordClientCredential("user4", "password"));
+                workerSession.process(WORKERID_DISPATCHER, request, context);
+                fail("Should have got SignServerException as the worker configured does not exist");
+            } catch(SignServerException expected) { // NOPMD
+                // OK
+            }
+            
+            // Send request to dispatcher as user5 which mapps to the dispatcher
+            // itself
+            try {
+                context.put(RequestContext.CLIENT_CREDENTIAL, 
+                        new UsernamePasswordClientCredential("user5", "password"));
+                workerSession.process(WORKERID_DISPATCHER, request, context);
+                fail("Should have got SignServerException as it is configured to dispatch to itself");
+            } catch(SignServerException expected) { // NOPMD
+                // OK
+            }
+            
+            // Send request to dispatcher as user6 for which there is no mapping
+            try {
+                context.put(RequestContext.CLIENT_CREDENTIAL, 
+                        new UsernamePasswordClientCredential("user6", "password"));
+                workerSession.process(WORKERID_DISPATCHER, request, context);
+                fail("Should have got IllegalRequestException as there is no mapping");
+            } catch(IllegalRequestException expected) { // NOPMD
+                // OK
+            }
+        } finally {
+            resetDispatchedAuthorizerForAllWorkers();
         }
-        
-        resetDispatchedAuthorizerForAllWorkers();
     }
     
     /**

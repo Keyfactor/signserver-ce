@@ -107,75 +107,77 @@ public class FirstActiveDispatcherTest extends ModulesTestCase {
      */
     @Test
     public void test01Dispatched() throws Exception {
-        final RequestContext context = new RequestContext();
-
-        final GenericSignRequest request =
-                new GenericSignRequest(1, "<root/>".getBytes());
-
-        GenericSignResponse res;
-
-        setDispatchedAuthorizerForAllWorkers();
-        
-        // Send request to dispatcher
-        res = (GenericSignResponse) workerSession.process(WORKERID_DISPATCHER,
-                request, context);
-        
-        X509Certificate cert = (X509Certificate) res.getSignerCertificate();
-        assertTrue("Response from signer 81, 82 or 83",
-            cert.getSubjectDN().getName().contains("testdocumentsigner81")
-            || cert.getSubjectDN().getName().contains("testdocumentsigner82")
-            || cert.getSubjectDN().getName().contains("testdocumentsigner83"));
-
-        // Disable signer 81
-        workerSession.setWorkerProperty(WORKERID_1, "DISABLED", "TRUE");
-        workerSession.reloadConfiguration(WORKERID_1);
-
-        // Send request to dispatcher
-        res = (GenericSignResponse) workerSession.process(WORKERID_DISPATCHER,
-                request, context);
-
-        cert = (X509Certificate) res.getSignerCertificate();
-        assertTrue("Response from signer 82 or 83",
-            cert.getSubjectDN().getName().contains("testdocumentsigner82")
-            || cert.getSubjectDN().getName().contains("testdocumentsigner83"));
-
-        // Disable signer 83
-        workerSession.setWorkerProperty(WORKERID_3, "DISABLED", "TRUE");
-        workerSession.reloadConfiguration(WORKERID_3);
-
-        // Send request to dispatcher
-        res = (GenericSignResponse) workerSession.process(WORKERID_DISPATCHER,
-                request, context);
-
-        cert = (X509Certificate) res.getSignerCertificate();
-        assertTrue("Response from signer 82",
-            cert.getSubjectDN().getName().contains("testdocumentsigner82"));
-
-        // Disable signer 82
-        workerSession.setWorkerProperty(WORKERID_2, "DISABLED", "TRUE");
-        workerSession.reloadConfiguration(WORKERID_2);
-
-        // Send request to dispatcher
         try {
-            workerSession.process(WORKERID_DISPATCHER, request, context);
-            fail("Should have got CryptoTokenOfflineException");
-        } catch(CryptoTokenOfflineException ex) {
-            // OK
+            final RequestContext context = new RequestContext();
+    
+            final GenericSignRequest request =
+                    new GenericSignRequest(1, "<root/>".getBytes());
+    
+            GenericSignResponse res;
+    
+            setDispatchedAuthorizerForAllWorkers();
+            
+            // Send request to dispatcher
+            res = (GenericSignResponse) workerSession.process(WORKERID_DISPATCHER,
+                    request, context);
+            
+            X509Certificate cert = (X509Certificate) res.getSignerCertificate();
+            assertTrue("Response from signer 81, 82 or 83",
+                cert.getSubjectDN().getName().contains("testdocumentsigner81")
+                || cert.getSubjectDN().getName().contains("testdocumentsigner82")
+                || cert.getSubjectDN().getName().contains("testdocumentsigner83"));
+    
+            // Disable signer 81
+            workerSession.setWorkerProperty(WORKERID_1, "DISABLED", "TRUE");
+            workerSession.reloadConfiguration(WORKERID_1);
+    
+            // Send request to dispatcher
+            res = (GenericSignResponse) workerSession.process(WORKERID_DISPATCHER,
+                    request, context);
+    
+            cert = (X509Certificate) res.getSignerCertificate();
+            assertTrue("Response from signer 82 or 83",
+                cert.getSubjectDN().getName().contains("testdocumentsigner82")
+                || cert.getSubjectDN().getName().contains("testdocumentsigner83"));
+    
+            // Disable signer 83
+            workerSession.setWorkerProperty(WORKERID_3, "DISABLED", "TRUE");
+            workerSession.reloadConfiguration(WORKERID_3);
+    
+            // Send request to dispatcher
+            res = (GenericSignResponse) workerSession.process(WORKERID_DISPATCHER,
+                    request, context);
+    
+            cert = (X509Certificate) res.getSignerCertificate();
+            assertTrue("Response from signer 82",
+                cert.getSubjectDN().getName().contains("testdocumentsigner82"));
+    
+            // Disable signer 82
+            workerSession.setWorkerProperty(WORKERID_2, "DISABLED", "TRUE");
+            workerSession.reloadConfiguration(WORKERID_2);
+    
+            // Send request to dispatcher
+            try {
+                workerSession.process(WORKERID_DISPATCHER, request, context);
+                fail("Should have got CryptoTokenOfflineException");
+            } catch(CryptoTokenOfflineException ex) {
+                // OK
+            }
+    
+            // Enable signer 81
+            workerSession.setWorkerProperty(WORKERID_1, "DISABLED", "FALSE");
+            workerSession.reloadConfiguration(WORKERID_1);
+    
+            // Send request to dispatcher
+            res = (GenericSignResponse) workerSession.process(WORKERID_DISPATCHER,
+                    request, context);
+    
+            cert = (X509Certificate) res.getSignerCertificate();
+            assertTrue("Response from signer 81",
+                cert.getSubjectDN().getName().contains("testdocumentsigner81"));
+        } finally {
+            resetDispatchedAuthorizerForAllWorkers();
         }
-
-        // Enable signer 81
-        workerSession.setWorkerProperty(WORKERID_1, "DISABLED", "FALSE");
-        workerSession.reloadConfiguration(WORKERID_1);
-
-        // Send request to dispatcher
-        res = (GenericSignResponse) workerSession.process(WORKERID_DISPATCHER,
-                request, context);
-
-        cert = (X509Certificate) res.getSignerCertificate();
-        assertTrue("Response from signer 81",
-            cert.getSubjectDN().getName().contains("testdocumentsigner81"));
-        
-        resetDispatchedAuthorizerForAllWorkers();
     }
     
     /**

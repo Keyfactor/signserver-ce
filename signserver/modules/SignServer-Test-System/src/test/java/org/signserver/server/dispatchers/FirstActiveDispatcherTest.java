@@ -68,6 +68,37 @@ public class FirstActiveDispatcherTest extends ModulesTestCase {
         workerSession.reloadConfiguration(WORKERID_2);
         workerSession.reloadConfiguration(WORKERID_3);
     }
+    
+    /**
+     * Sets the DispatchedAuthorizer for the dispatchees.
+     */
+    private void setDispatchedAuthorizerForAllWorkers() {
+        workerSession.setWorkerProperty(WORKERID_1, "AUTHTYPE", "org.signserver.server.DispatchedAuthorizer");
+        workerSession.setWorkerProperty(WORKERID_1, "AUTHORIZEALLDISPATCHERS", "true");
+        workerSession.setWorkerProperty(WORKERID_2, "AUTHTYPE", "org.signserver.server.DispatchedAuthorizer");
+        workerSession.setWorkerProperty(WORKERID_2, "AUTHORIZEALLDISPATCHERS", "true");
+        workerSession.setWorkerProperty(WORKERID_3, "AUTHTYPE", "org.signserver.server.DispatchedAuthorizer");
+        workerSession.setWorkerProperty(WORKERID_3, "AUTHORIZEALLDISPATCHERS", "true");
+        workerSession.reloadConfiguration(WORKERID_1);
+        workerSession.reloadConfiguration(WORKERID_2);
+        workerSession.reloadConfiguration(WORKERID_3);
+    }
+    
+    /**
+     * Resets authorization for the dispatchees to be able to call them directly.
+     */
+    private void resetDispatchedAuthorizerForAllWorkers() {
+        workerSession.setWorkerProperty(WORKERID_1, "AUTHTYPE", "NOAUTH");
+        workerSession.removeWorkerProperty(WORKERID_1, "AUTHORIZEALLDISPATCHERS");
+        workerSession.setWorkerProperty(WORKERID_2, "AUTHTYPE", "NOAUTH");
+        workerSession.removeWorkerProperty(WORKERID_2, "AUTHORIZEALLDISPATCHERS");
+        workerSession.setWorkerProperty(WORKERID_3, "AUTHTYPE", "NOAUTH");
+        workerSession.removeWorkerProperty(WORKERID_3, "AUTHORIZEALLDISPATCHERS");
+        workerSession.reloadConfiguration(WORKERID_1);
+        workerSession.reloadConfiguration(WORKERID_2);
+        workerSession.reloadConfiguration(WORKERID_3);
+    }
+    
 
     /**
      * Tests that requests sent to the dispatching worker are forwarded to
@@ -83,6 +114,8 @@ public class FirstActiveDispatcherTest extends ModulesTestCase {
 
         GenericSignResponse res;
 
+        setDispatchedAuthorizerForAllWorkers();
+        
         // Send request to dispatcher
         res = (GenericSignResponse) workerSession.process(WORKERID_DISPATCHER,
                 request, context);
@@ -141,6 +174,8 @@ public class FirstActiveDispatcherTest extends ModulesTestCase {
         cert = (X509Certificate) res.getSignerCertificate();
         assertTrue("Response from signer 81",
             cert.getSubjectDN().getName().contains("testdocumentsigner81"));
+        
+        resetDispatchedAuthorizerForAllWorkers();
     }
     
     /**

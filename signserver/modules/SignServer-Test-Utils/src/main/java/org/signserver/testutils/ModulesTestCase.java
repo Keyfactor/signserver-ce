@@ -421,7 +421,7 @@ public class ModulesTestCase extends TestCase {
         workerSession.setWorkerProperty(signerId, "AUTHTYPE", "NOAUTH");
         workerSession.setWorkerProperty(signerId, "KEYDATA", keyData);
 
-        workerSession.uploadSignerCertificate(signerId, Base64.decode(certChain.getBytes()),GlobalConfiguration.SCOPE_GLOBAL);
+        workerSession.uploadSignerCertificate(signerId, Base64.decode(getFirstCert(certChain).getBytes()),GlobalConfiguration.SCOPE_GLOBAL);
         String certs[] = certChain.split(";");
         ArrayList<byte[]> chain = new ArrayList<byte[]>();
         for(String base64cert : certs){
@@ -589,5 +589,18 @@ public class ModulesTestCase extends TestCase {
         Certificate signercert = response.getSignerCertificate();
         assertNotNull(signercert);
         return response;
+    }
+
+    /**
+     * @return First certificate in semicolon separated list of base64 encoded certificate
+     */
+    private String getFirstCert(String certChain) {
+        final String result; 
+        if (certChain.contains(";")) {
+            result = certChain.split(";")[0];
+        } else {
+            result = certChain;
+        }
+        return result;
     }
 }

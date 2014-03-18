@@ -94,6 +94,36 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
     }
     
     /**
+     * Sets the DispatchedAuthorizer for the dispatchees.
+     */
+    private void setDispatchedAuthorizerForAllWorkers() {
+        workerSession.setWorkerProperty(WORKER1, "AUTHTYPE", "org.signserver.server.DispatchedAuthorizer");
+        workerSession.setWorkerProperty(WORKER1, "AUTHORIZEALLDISPATCHERS", "true");
+        workerSession.setWorkerProperty(WORKER2, "AUTHTYPE", "org.signserver.server.DispatchedAuthorizer");
+        workerSession.setWorkerProperty(WORKER2, "AUTHORIZEALLDISPATCHERS", "true");
+        workerSession.setWorkerProperty(WORKER3, "AUTHTYPE", "org.signserver.server.DispatchedAuthorizer");
+        workerSession.setWorkerProperty(WORKER3, "AUTHORIZEALLDISPATCHERS", "true");
+        workerSession.reloadConfiguration(WORKER1);
+        workerSession.reloadConfiguration(WORKER2);
+        workerSession.reloadConfiguration(WORKER3);
+    }
+    
+    /**
+     * Resets authorization for the dispatchees to be able to call them directly.
+     */
+    private void resetDispatchedAuthorizerForAllWorkers() {
+        workerSession.setWorkerProperty(WORKER1, "AUTHTYPE", "NOAUTH");
+        workerSession.removeWorkerProperty(WORKER1, "AUTHORIZEALLDISPATCHERS");
+        workerSession.setWorkerProperty(WORKER2, "AUTHTYPE", "NOAUTH");
+        workerSession.removeWorkerProperty(WORKER2, "AUTHORIZEALLDISPATCHERS");
+        workerSession.setWorkerProperty(WORKER3, "AUTHTYPE", "NOAUTH");
+        workerSession.removeWorkerProperty(WORKER3, "AUTHORIZEALLDISPATCHERS");
+        workerSession.reloadConfiguration(WORKER1);
+        workerSession.reloadConfiguration(WORKER2);
+        workerSession.reloadConfiguration(WORKER3);
+    }
+    
+    /**
      * Tests that the signers only accepts requests with their profile.
      */
     @Test
@@ -101,6 +131,8 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
         TimeStampRequestGenerator gen = new TimeStampRequestGenerator();
         TimeStampRequest req;
         TimeStampResponse res;
+        
+        resetDispatchedAuthorizerForAllWorkers();
         
         // Test that worker1 accepts its profile but not the other
         gen.setReqPolicy(WORKER1_PROFILE);
@@ -174,6 +206,8 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
         TimeStampRequest req;
         TimeStampResponse res;
         
+        setDispatchedAuthorizerForAllWorkers();
+        
         // Test that a request with WORKER1_PROFILE is accepted
         gen.setReqPolicy(WORKER1_PROFILE);
         req = gen.generate(TSPAlgorithms.SHA256, new byte[32], createNounce());
@@ -211,6 +245,8 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
         res = requestTimeStamp(DISPATCHER9, req);
         assertEquals("token rejection", PKIStatus.REJECTION, res.getStatus());
         assertEquals(new PKIFailureInfo(PKIFailureInfo.unacceptedPolicy), res.getFailInfo());
+        
+        resetDispatchedAuthorizerForAllWorkers();
      }
      
     /**
@@ -223,12 +259,16 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
         TimeStampRequest req;
         TimeStampResponse res;
         
+        setDispatchedAuthorizerForAllWorkers();
+        
         // Test that a request with no reqPolicy goes to WORKER1_PROFILE
         req = gen.generate(TSPAlgorithms.SHA256, new byte[32], createNounce());
         res = requestTimeStamp(DISPATCHER0, req);
         assertEquals("token granted", PKIStatus.GRANTED, res.getStatus());
         assertEquals("right profile", WORKER1_PROFILE, res.getTimeStampToken().getTimeStampInfo().getPolicy().getId());
         assertValid(req, res);
+        
+        resetDispatchedAuthorizerForAllWorkers();
     }
     
     /**
@@ -240,6 +280,8 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
         TimeStampRequestGenerator gen = new TimeStampRequestGenerator();
         TimeStampRequest req;
         TimeStampResponse res;
+        
+        setDispatchedAuthorizerForAllWorkers();
         
         // Test that an profile not known by DISPATCHER0 but by a TSUnit1 is not accepted (USEDEFAULTIFMISMATCH=false)
         gen.setReqPolicy(WORKER1_ALTERNATIVE_PROFILE);
@@ -261,6 +303,8 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
         res = requestTimeStamp(DISPATCHER9, req);
         assertEquals("token rejection", PKIStatus.REJECTION, res.getStatus());
         assertEquals(new PKIFailureInfo(PKIFailureInfo.unacceptedPolicy), res.getFailInfo());
+        
+        resetDispatchedAuthorizerForAllWorkers();
     }
     
     /**
@@ -274,6 +318,8 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
         TimeStampRequest req;
         TimeStampResponse res;
         
+        setDispatchedAuthorizerForAllWorkers();
+        
         workerSession.setWorkerProperty(DISPATCHER0, TimeStampSigner.INCLUDESTATUSSTRING, "TRUE");
         
         // Test that an profile not known by DISPATCHER0 but by a TSUnit1 is not accepted (USEDEFAULTIFMISMATCH=false)
@@ -281,6 +327,8 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
         req = gen.generate(TSPAlgorithms.SHA256, new byte[32], createNounce());
         res = requestTimeStamp(DISPATCHER0, req);
         assertEquals("request contains unknown policy.", res.getStatusString());
+        
+        resetDispatchedAuthorizerForAllWorkers();
     }
     
     /**
@@ -294,6 +342,8 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
         TimeStampRequest req;
         TimeStampResponse res;
         
+        setDispatchedAuthorizerForAllWorkers();
+        
         workerSession.setWorkerProperty(DISPATCHER0, TimeStampSigner.INCLUDESTATUSSTRING, "FALSE");
         workerSession.reloadConfiguration(DISPATCHER0);
         
@@ -302,6 +352,8 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
         req = gen.generate(TSPAlgorithms.SHA256, new byte[32], createNounce());
         res = requestTimeStamp(DISPATCHER0, req);
         assertNull(res.getStatusString());
+        
+        resetDispatchedAuthorizerForAllWorkers();
     }
     
     /**

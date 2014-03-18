@@ -252,7 +252,7 @@ public class XAdESSigner extends BaseSigner {
         claimedRoleFromUsername =
                 Boolean.parseBoolean(config.getProperty(CLAIMED_ROLE_FROM_USERNAME, Boolean.FALSE.toString()));
         
-        initIncludeCertificateLevels(configErrors);
+        initIncludeCertificateLevels();
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Worker " + workerId + " configured: " + parameters);

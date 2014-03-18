@@ -52,6 +52,8 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
     protected static final int DEFAULT_INCLUDE_CERTIFICATE_LEVELS = 1;
     
     protected int includeCertificateLevels;
+    
+    private List<String> configErrors;
 
     /**
      * @see org.signserver.server.IProcessable#getStatus()
@@ -123,6 +125,7 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
     protected List<String> getFatalErrors() {
         final LinkedList<String> errors = new LinkedList<String>(super.getFatalErrors());
         errors.addAll(getSignerCertificateFatalErrors());
+        errors.addAll(configErrors);
         return errors;
     }
 
@@ -258,8 +261,11 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
         return matchedCerts.size() > 0;
     }
     
-    protected void initIncludeCertificateLevels(final List<String> configErrors) {
+    protected void initIncludeCertificateLevels() {
         final String includeCertificateLevelsProperty = config.getProperties().getProperty(WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS);
+        
+        configErrors = new LinkedList<String>();
+        
         if (includeCertificateLevelsProperty == null) {
             includeCertificateLevels = DEFAULT_INCLUDE_CERTIFICATE_LEVELS;
         } else {

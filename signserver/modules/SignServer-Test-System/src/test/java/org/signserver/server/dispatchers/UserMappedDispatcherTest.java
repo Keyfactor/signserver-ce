@@ -72,6 +72,36 @@ public class UserMappedDispatcherTest extends ModulesTestCase {
     }
 
     /**
+     * Sets the DispatchedAuthorizer for the dispatchees.
+     */
+    private void setDispatchedAuthorizerForAllWorkers() {
+        workerSession.setWorkerProperty(WORKERID_1, "AUTHTYPE", "org.signserver.server.DispatchedAuthorizer");
+        workerSession.setWorkerProperty(WORKERID_1, "AUTHORIZEALLDISPATCHERS", "true");
+        workerSession.setWorkerProperty(WORKERID_2, "AUTHTYPE", "org.signserver.server.DispatchedAuthorizer");
+        workerSession.setWorkerProperty(WORKERID_2, "AUTHORIZEALLDISPATCHERS", "true");
+        workerSession.setWorkerProperty(WORKERID_3, "AUTHTYPE", "org.signserver.server.DispatchedAuthorizer");
+        workerSession.setWorkerProperty(WORKERID_3, "AUTHORIZEALLDISPATCHERS", "true");
+        workerSession.reloadConfiguration(WORKERID_1);
+        workerSession.reloadConfiguration(WORKERID_2);
+        workerSession.reloadConfiguration(WORKERID_3);
+    }
+    
+    /**
+     * Resets authorization for the dispatchees to be able to call them directly.
+     */
+    private void resetDispatchedAuthorizerForAllWorkers() {
+        workerSession.setWorkerProperty(WORKERID_1, "AUTHTYPE", "NOAUTH");
+        workerSession.removeWorkerProperty(WORKERID_1, "AUTHORIZEALLDISPATCHERS");
+        workerSession.setWorkerProperty(WORKERID_2, "AUTHTYPE", "NOAUTH");
+        workerSession.removeWorkerProperty(WORKERID_2, "AUTHORIZEALLDISPATCHERS");
+        workerSession.setWorkerProperty(WORKERID_3, "AUTHTYPE", "NOAUTH");
+        workerSession.removeWorkerProperty(WORKERID_3, "AUTHORIZEALLDISPATCHERS");
+        workerSession.reloadConfiguration(WORKERID_1);
+        workerSession.reloadConfiguration(WORKERID_2);
+        workerSession.reloadConfiguration(WORKERID_3);
+    }
+    
+    /**
      * Tests that requests sent to the dispatching worker are forwarded to
      * the right worker
      * @throws Exception in case of exception
@@ -85,6 +115,8 @@ public class UserMappedDispatcherTest extends ModulesTestCase {
 
         GenericSignResponse res;
 
+        setDispatchedAuthorizerForAllWorkers();
+        
         // Send request to dispatcher as user1
         context.put(RequestContext.CLIENT_CREDENTIAL, 
                 new UsernamePasswordClientCredential("user1", "password"));
@@ -143,6 +175,8 @@ public class UserMappedDispatcherTest extends ModulesTestCase {
         } catch(IllegalRequestException expected) { // NOPMD
             // OK
         }
+        
+        resetDispatchedAuthorizerForAllWorkers();
     }
     
     /**

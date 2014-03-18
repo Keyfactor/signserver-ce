@@ -87,6 +87,9 @@ public class FirstActiveDispatcher extends BaseDispatcher {
         // put in or add some indication of dispatching
         final RequestContext nextContext = requestContext;
         int id = 0;
+        
+        // Mark request comming from a dispatcher so the DispatchedAuthorizer can be used
+        nextContext.put(RequestContext.DISPATCHER_AUTHORIZED_CLIENT, true);
 
         for (String workerName : workers) {
             try {

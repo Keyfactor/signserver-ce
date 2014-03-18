@@ -63,6 +63,9 @@ public class WorkerConfig extends UpgradeableDataHashMap {
     public static final String CLASS = "CLASSPATH";
     
     public static final String PROPERTY_EXPLICITECC = "EXPLICITECC";
+    
+    /** Worker property: INCLUDE_CERTIFICATE_LEVELS. */
+    public static final String PROPERTY_INCLUDE_CERTIFICATE_LEVELS = "INCLUDE_CERTIFICATE_LEVELS";  
 
     private static String nodeId = null;
     

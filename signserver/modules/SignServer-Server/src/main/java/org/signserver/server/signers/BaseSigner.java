@@ -48,6 +48,9 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(BaseSigner.class);
 
+    /** Default value to use if the worker property INCLUDE_CERTIFICATE_LEVELS has no been set. */
+    protected static final int DEFAULT_INCLUDE_CERTIFICATE_LEVELS = 1;
+    
     /**
      * @see org.signserver.server.IProcessable#getStatus()
      */

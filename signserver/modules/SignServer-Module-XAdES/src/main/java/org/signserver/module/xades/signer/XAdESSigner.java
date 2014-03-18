@@ -128,8 +128,6 @@ public class XAdESSigner extends BaseSigner {
     private String claimedRoleDefault;
     private boolean claimedRoleFromUsername;
     
-    private int includeCertificateLevels;
-    
     /**
      * Addional signature methods not yet covered by
      * javax.xml.dsig.SignatureMethod
@@ -254,20 +252,8 @@ public class XAdESSigner extends BaseSigner {
         claimedRoleFromUsername =
                 Boolean.parseBoolean(config.getProperty(CLAIMED_ROLE_FROM_USERNAME, Boolean.FALSE.toString()));
         
-        final String includeCertificateLevelsProperty = config.getProperties().getProperty(WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS);
-        if (includeCertificateLevelsProperty == null) {
-            includeCertificateLevels = DEFAULT_INCLUDE_CERTIFICATE_LEVELS;
-        } else {
-            try {
-                includeCertificateLevels = Integer.parseInt(includeCertificateLevelsProperty);
-                if (includeCertificateLevels < 1) {
-                    configErrors.add("Illegal value for property " + WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS + ". Only numbers >= 1 supported.");
-                }
-            } catch (NumberFormatException ex) {
-                configErrors.add("Unable to parse property " + WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS + ". Only numbers >= 1 suported: " + ex.getLocalizedMessage());
-            }
-        }
-        
+        initIncludeCertificateLevels(configErrors);
+
         if (LOG.isDebugEnabled()) {
             LOG.debug("Worker " + workerId + " configured: " + parameters);
             if (!configErrors.isEmpty()) {

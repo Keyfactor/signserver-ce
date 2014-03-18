@@ -51,6 +51,8 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
     /** Default value to use if the worker property INCLUDE_CERTIFICATE_LEVELS has no been set. */
     protected static final int DEFAULT_INCLUDE_CERTIFICATE_LEVELS = 1;
     
+    protected int includeCertificateLevels;
+
     /**
      * @see org.signserver.server.IProcessable#getStatus()
      */
@@ -254,5 +256,21 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
             }
         });
         return matchedCerts.size() > 0;
+    }
+    
+    protected void initIncludeCertificateLevels(final List<String> configErrors) {
+        final String includeCertificateLevelsProperty = config.getProperties().getProperty(WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS);
+        if (includeCertificateLevelsProperty == null) {
+            includeCertificateLevels = DEFAULT_INCLUDE_CERTIFICATE_LEVELS;
+        } else {
+            try {
+                includeCertificateLevels = Integer.parseInt(includeCertificateLevelsProperty);
+                if (includeCertificateLevels < 1) {
+                    configErrors.add("Illegal value for property " + WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS + ". Only numbers >= 1 supported.");
+                }
+            } catch (NumberFormatException ex) {
+                configErrors.add("Unable to parse property " + WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS + ". Only numbers >= 1 suported: " + ex.getLocalizedMessage());
+            }
+        }
     }
 }

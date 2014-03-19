@@ -261,6 +261,10 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
         return matchedCerts.size() > 0;
     }
     
+    /**
+     * Initialize the INCLUDE_CERTIFICATE_LEVELS property.
+     * Validates the value and updates fatal errors if not set correctly.
+     */
     protected void initIncludeCertificateLevels() {
         final String includeCertificateLevelsProperty = config.getProperties().getProperty(WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS);
         
@@ -277,4 +281,5 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
             }
         }
     }
+
 }

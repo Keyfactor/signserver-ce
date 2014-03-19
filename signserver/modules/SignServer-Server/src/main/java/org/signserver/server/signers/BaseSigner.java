@@ -273,11 +273,11 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
         } else {
             try {
                 includeCertificateLevels = Integer.parseInt(includeCertificateLevelsProperty);
-                if (includeCertificateLevels < 1) {
-                    configErrors.add("Illegal value for property " + WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS + ". Only numbers >= 1 supported.");
+                if (includeCertificateLevels < 0) {
+                    configErrors.add("Illegal value for property " + WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS + ". Only numbers >= 0 supported.");
                 }
             } catch (NumberFormatException ex) {
-                configErrors.add("Unable to parse property " + WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS + ". Only numbers >= 1 suported: " + ex.getLocalizedMessage());
+                configErrors.add("Unable to parse property " + WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS + ". Only numbers >= 0 suported: " + ex.getLocalizedMessage());
             }
         }
     }
@@ -289,7 +289,7 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
      * @param certs List of certificates
      * @return List of at most the desired certificate levels to include.
      */
-    List<Certificate> includedCertificates(final List<Certificate> certs) {
+    protected List<Certificate> includedCertificates(final List<Certificate> certs) {
         return certs.subList(0, Math.min(includeCertificateLevels, certs.size()));
     }
 }

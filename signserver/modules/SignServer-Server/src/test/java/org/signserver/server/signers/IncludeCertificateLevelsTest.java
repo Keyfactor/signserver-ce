@@ -177,4 +177,22 @@ public class IncludeCertificateLevelsTest extends TestCase {
         assertEquals("Certificate index", 0, ((DummyCert) includedCerts.get(0)).getIndex());
     }
     
+    /**
+     * Test that including 0 certificates is working
+     * (XAdESSigner is more strict, requiring at least 1 cert).
+     * 
+     * @throws Exception
+     */
+    public void test04ZeroIncluded() throws Exception {
+        final WorkerConfig config = new WorkerConfig();
+        
+        config.setProperty(WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS, "0");
+        dummySigner.init(DUMMY_ID, config, null, null);
+                
+        // a dummy list (content is not important)
+        final List<Certificate> certs = Arrays.asList((Certificate) new DummyCert(0), new DummyCert(1), new DummyCert(2));
+        final List<Certificate> includedCerts = dummySigner.includedCertificates(certs);
+        assertTrue("No certificates included", includedCerts.isEmpty());
+    }
+    
 }

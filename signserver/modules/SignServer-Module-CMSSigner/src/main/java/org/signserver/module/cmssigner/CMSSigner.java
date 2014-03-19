@@ -67,6 +67,8 @@ public class CMSSigner extends BaseSigner {
         
         // Get the signature algorithm
         signatureAlgorithm = config.getProperty(SIGNATUREALGORITHM);
+        
+        initIncludeCertificateLevels();
     }
 
     public ProcessResponse processData(final ProcessRequest signRequest,
@@ -93,7 +95,7 @@ public class CMSSigner extends BaseSigner {
         final String archiveId = createArchiveId(data, (String) requestContext.get(RequestContext.TRANSACTION_ID));
 
         // Get certificate chain and signer certificate
-        Collection<Certificate> certs = this.getSigningCertificateChain();
+        List<Certificate> certs = this.getSigningCertificateChain();
         if (certs == null) {
             throw new IllegalArgumentException(
                     "Null certificate chain. This signer needs a certificate.");
@@ -122,7 +124,7 @@ public class CMSSigner extends BaseSigner {
                      new JcaDigestCalculatorProviderBuilder().setProvider("BC").build())
                      .build(contentSigner, (X509Certificate) cert));
                       
-            generator.addCertificates(new JcaCertStore(certs));
+            generator.addCertificates(new JcaCertStore(includedCertificates(certs)));
             final CMSTypedData content = new CMSProcessableByteArray(data);
             final CMSSignedData signedData = generator.generate(content, true);
 

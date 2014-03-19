@@ -34,6 +34,7 @@ import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerUtil;
+import org.signserver.common.WorkerConfig;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestingSecurityManager;
 
@@ -78,7 +79,7 @@ public class CMSSignerTest extends ModulesTestCase {
     public void test01BasicCMSSignRSA() throws Exception {
         LOG.debug(">test01BasicCMSSignRSA");
 
-        helperBasicCMSSign(getSignerIdDummy1(), null, "1.3.14.3.2.26", "1.2.840.113549.1.1.1");
+        helperBasicCMSSign(getSignerIdDummy1(), null, "1.3.14.3.2.26", "1.2.840.113549.1.1.1", null, 1);
         
         LOG.debug("<test01BasicCMSSignRSA");
     }
@@ -89,7 +90,8 @@ public class CMSSignerTest extends ModulesTestCase {
      */
     @Test
     public void test02BasicCMSSignSHA256withRSA() throws Exception {
-        helperBasicCMSSign(getSignerIdDummy1(), "SHA256withRSA", "2.16.840.1.101.3.4.2.1", "1.2.840.113549.1.1.1");
+        helperBasicCMSSign(getSignerIdDummy1(), "SHA256withRSA", "2.16.840.1.101.3.4.2.1", "1.2.840.113549.1.1.1",
+                null, 1);
     }
     
     /**
@@ -107,7 +109,7 @@ public class CMSSignerTest extends ModulesTestCase {
         addP12DummySigner("org.signserver.module.cmssigner.CMSSigner", WORKERID_ECDSA, "TestCMSSignerP12ECDSA", keystore, "foo123");
         workerSession.reloadConfiguration(WORKERID_ECDSA);
         
-        helperBasicCMSSign(WORKERID_ECDSA, "SHA1withECDSA", "1.3.14.3.2.26", "1.2.840.10045.4.1");
+        helperBasicCMSSign(WORKERID_ECDSA, "SHA1withECDSA", "1.3.14.3.2.26", "1.2.840.10045.4.1", null, 1);
         
         removeWorker(WORKERID_ECDSA);
     }
@@ -127,13 +129,44 @@ public class CMSSignerTest extends ModulesTestCase {
         addJKSDummySigner("org.signserver.module.cmssigner.CMSSigner", WORKERID_DSA, "TestCMSSignerJKSDSA", keystore, "foo123");
         workerSession.reloadConfiguration(WORKERID_DSA);
         
-        helperBasicCMSSign(WORKERID_DSA, "SHA1withDSA", "1.3.14.3.2.26", "1.2.840.10040.4.3");
+        helperBasicCMSSign(WORKERID_DSA, "SHA1withDSA", "1.3.14.3.2.26", "1.2.840.10040.4.3", null, 1);
         
         removeWorker(WORKERID_DSA);
     }
+    
+    /**
+     * Test with no included certificates.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test05IncludeNoCerts() throws Exception {
+        helperBasicCMSSign(getSignerIdDummy1(), null, "1.3.14.3.2.26", "1.2.840.113549.1.1.1", "0", 0);
+    }
+    
+    /**
+     * Test explicitly specifying 1 certificate to be included.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test06ExplicitIncludedCerts() throws Exception {
+        helperBasicCMSSign(getSignerIdDummy1(), null, "1.3.14.3.2.26", "1.2.840.113549.1.1.1", "1", 1);
+    }
+    
+    /**
+     * Test specifying more certificates than are available.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test07TruncatedIncludedCerts() throws Exception {
+        helperBasicCMSSign(getSignerIdDummy1(), null, "1.3.14.3.2.26", "1.2.840.113549.1.1.1", "2", 1);
+    }
 
     private void helperBasicCMSSign(final int workerId, final String sigAlg, final String expectedDigAlgOID,
-            final String expectedEncAlgOID) throws Exception {
+            final String expectedEncAlgOID, final String includedCertificateLevelsProperty,
+            final int expectedIncludedCertificateLevels) throws Exception {
         final int reqid = 37;
 
         final String testDocument = "Something to sign...123";
@@ -144,11 +177,19 @@ public class CMSSignerTest extends ModulesTestCase {
         // override signature algorithm if set
         if (sigAlg != null) {
             workerSession.setWorkerProperty(workerId, CMSSigner.SIGNATUREALGORITHM, sigAlg);
-            workerSession.reloadConfiguration(workerId);
         } else {
             workerSession.removeWorkerProperty(workerId, CMSSigner.SIGNATUREALGORITHM);
-            workerSession.reloadConfiguration(workerId);
         }
+        
+        if (includedCertificateLevelsProperty != null) {
+            workerSession.setWorkerProperty(workerId,
+                    WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS,
+                    includedCertificateLevelsProperty);
+        } else {
+            workerSession.removeWorkerProperty(workerId, WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS);
+        }
+        
+        workerSession.reloadConfiguration(workerId);
         
         final GenericSignResponse res =
                 (GenericSignResponse) workerSession.process(workerId, signRequest, new RequestContext());
@@ -189,8 +230,10 @@ public class CMSSignerTest extends ModulesTestCase {
         CertSelector cs = new AttributeCertificateHolder(issuer, signer.getSID().getSerialNumber());
         Collection<? extends Certificate> signerCerts
                 = certs.getCertificates(cs);
-        assertEquals("One certificate included", 1, signerCerts.size());
-        assertEquals(signercert, signerCerts.iterator().next());
+        assertEquals("Certificate included", expectedIncludedCertificateLevels, signerCerts.size());
+        if (!signerCerts.isEmpty()) {
+            assertEquals(signercert, signerCerts.iterator().next());
+        }
 
         // check the signature algorithm
         assertEquals("Digest algorithm", expectedDigAlgOID, signer.getDigestAlgorithmID().getAlgorithm().getId());

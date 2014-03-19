@@ -282,4 +282,14 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
         }
     }
 
+    /**
+     * Given a list of certificates, return a list of at most the number given by INCLUDE_CERTIFICATE_LEVELS
+     * from the beginning. If the list is shorter than the property specifies, return the entire list.
+     * 
+     * @param certs List of certificates
+     * @return List of at most the desired certificate levels to include.
+     */
+    List<Certificate> includedCertificates(final List<Certificate> certs) {
+        return certs.subList(0, Math.min(includeCertificateLevels, certs.size()));
+    }
 }

@@ -28,7 +28,6 @@ import javax.persistence.EntityManager;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.signserver.common.*;
-import org.signserver.common.RequestMetadata;
 import org.signserver.server.UsernamePasswordClientCredential;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.archive.Archivable;
@@ -142,11 +141,15 @@ public class PDFSigner extends BaseSigner {
     /** Random used for instance when setting a random owner/permissions password*/
     private SecureRandom random = new SecureRandom();
     
+    private List<String> configErrors;
+    
     @Override
     public void init(int signerId, WorkerConfig config,
             WorkerContext workerContext, EntityManager workerEntityManager) {
         super.init(signerId, config, workerContext, workerEntityManager);
 
+        configErrors = new LinkedList<String>();
+        
         // Check properties for archive to disk
         if (StringUtils.equalsIgnoreCase("TRUE",
                 config.getProperty(PROPERTY_ARCHIVETODISK))) {
@@ -165,6 +168,14 @@ public class PDFSigner extends BaseSigner {
             }
         }
         archivetodiskPattern = Pattern.compile(ARCHIVETODISK_PATTERN_REGEX);
+        
+        initIncludeCertificateLevels();
+        
+        // additionally check that at least one certificate is included, assumed by iText
+        // (initIncludeCertificateLevels already checks non-negative values)
+        if (includeCertificateLevels == 0) {
+            configErrors.add("Illegal value for property " + WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS + ". Only numbers >= 1 supported.");
+        }
     }
 
     /**
@@ -426,12 +437,13 @@ public class PDFSigner extends BaseSigner {
     	boolean secondTry = contentEstimated != 0;
     	
         // get signing cert certificate chain and private key
-        Collection<Certificate> certs = this.getSigningCertificateChain();
+        List<Certificate> certs = this.getSigningCertificateChain();
         if (certs == null) {
             throw new SignServerException(
                     "Null certificate chain. This signer needs a certificate.");
         }
-        Certificate[] certChain = (Certificate[]) certs.toArray(new Certificate[certs.size()]);
+        final List<Certificate> includedCerts = includedCertificates(certs);
+        Certificate[] certChain = (Certificate[]) includedCerts.toArray(new Certificate[includedCerts.size()]);
         PrivateKey privKey = this.getCryptoToken().getPrivateKey(
                 ICryptoToken.PURPOSE_SIGN);
 
@@ -905,5 +917,15 @@ public class PDFSigner extends BaseSigner {
     protected TSAClient getTimeStampClient(String url, String username, String password) {
         return new TSAClientBouncyCastle(url, username, password);
     }
+
+    @Override
+    protected List<String> getFatalErrors() {
+        final List<String> fatalErrors = super.getFatalErrors();
+        
+        fatalErrors.addAll(configErrors);
+        return fatalErrors;
+    }
+    
+    
 
 }

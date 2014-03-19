@@ -367,6 +367,30 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
     }
     
     /**
+     * Test that trying to send a request directly to a signer using the DispatchedAuthorizer fails.
+     * @throws Exception
+     */
+    @Test
+    public void test08DispatchedAuthorizerNonDispatched() throws Exception {
+        try {
+            setDispatchedAuthorizerForAllWorkers();
+            
+            TimeStampRequestGenerator gen = new TimeStampRequestGenerator();
+            TimeStampRequest req;
+           
+            req = gen.generate(TSPAlgorithms.SHA1, new byte[20], createNounce());
+            requestTimeStamp(WORKER1, req);
+            fail("Should not allow direct requests to a signer using a DispatchedAuthorizer");
+        } catch (IllegalRequestException e) {
+            // expected
+        } catch (Exception e) {
+            fail("Unexepected exception: " + e.getClass() + ": " + e.getMessage());
+        } finally {
+            resetDispatchedAuthorizerForAllWorkers();
+        }
+    }
+    
+    /**
      * Clean up.
      */
     @Test

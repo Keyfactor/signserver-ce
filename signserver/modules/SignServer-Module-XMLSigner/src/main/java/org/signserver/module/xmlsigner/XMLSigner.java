@@ -102,6 +102,8 @@ public class XMLSigner extends BaseSigner {
         
         // Get the signature algorithm
         signatureAlgorithm = config.getProperty(SIGNATUREALGORITHM);
+        
+        initIncludeCertificateLevels();
     }
 
     public ProcessResponse processData(ProcessRequest signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
@@ -136,12 +138,12 @@ public class XMLSigner extends BaseSigner {
         }
         
         // Get certificate chain and signer certificate
-        Collection<Certificate> certs = this.getSigningCertificateChain();
+        List<Certificate> certs = this.getSigningCertificateChain();
         if (certs == null) {
             throw new IllegalArgumentException("Null certificate chain. This signer needs a certificate.");
         }
         List<X509Certificate> x509CertChain = new LinkedList<X509Certificate>();
-        for (Certificate cert : certs) {
+        for (Certificate cert : includedCertificates(certs)) {
             if (cert instanceof X509Certificate) {
                 x509CertChain.add((X509Certificate) cert);
                 LOG.debug("Adding to chain: " + ((X509Certificate) cert).getSubjectDN());
@@ -171,15 +173,17 @@ public class XMLSigner extends BaseSigner {
             throw new SignServerException("XML signing algorithm error", ex);
         }
 
-        
+        KeyInfo ki = null;
 
-        KeyInfoFactory kif = fac.getKeyInfoFactory();
-        X509Data x509d = kif.newX509Data(x509CertChain);
+        if (!x509CertChain.isEmpty()) {
+            KeyInfoFactory kif = fac.getKeyInfoFactory();
+            X509Data x509d = kif.newX509Data(x509CertChain);
 
-        List<XMLStructure> kviItems = new LinkedList<XMLStructure>();
-        kviItems.add(x509d);
-        KeyInfo ki = kif.newKeyInfo(kviItems);
-
+            List<XMLStructure> kviItems = new LinkedList<XMLStructure>();
+            kviItems.add(x509d);
+            ki = kif.newKeyInfo(kviItems);
+        }
+   
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setNamespaceAware(true);
         Document doc;

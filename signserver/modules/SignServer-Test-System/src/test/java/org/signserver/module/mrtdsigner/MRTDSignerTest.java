@@ -16,6 +16,7 @@ import java.io.File;
 import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.crypto.Cipher;
 import org.junit.FixMethodOrder;
@@ -28,6 +29,7 @@ import org.signserver.common.MRTDSignResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.SignerStatus;
+import org.signserver.common.WorkerConfig;
 import org.signserver.testutils.ModulesTestCase;
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -131,6 +133,26 @@ public class MRTDSignerTest extends ModulesTestCase {
         assertTrue(Arrays.equals(signreq1, signres1));
     }
 
+    /**
+     * Test that setting INCLUDE_CERTIFICATE_LEVELS gives a config error.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test04IncludeCertificateLevelsNotSupported() throws Exception {
+       try {
+           workerSession.setWorkerProperty(7890, WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS, "2");
+           workerSession.reloadConfiguration(7890);
+           
+           final List<String> errors = workerSession.getStatus(7890).getFatalErrors();
+           
+           assertTrue("Should contain error", errors.contains(WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS + " is not supported."));
+       } finally {
+           workerSession.removeWorkerProperty(7890, WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS);
+           workerSession.reloadConfiguration(7890);
+       }
+    }
+    
     @Test
     public void test99TearDownDatabase() throws Exception {
         removeWorker(7890);

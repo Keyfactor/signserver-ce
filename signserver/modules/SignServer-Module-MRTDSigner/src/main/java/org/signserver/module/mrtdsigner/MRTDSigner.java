@@ -19,13 +19,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.ejb.EJBException;
+import javax.persistence.EntityManager;
+
 import org.apache.log4j.Logger;
 import org.signserver.common.*;
+import org.signserver.server.WorkerContext;
 import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.DefaultArchivable;
 import org.signserver.server.cryptotokens.ICryptoToken;
@@ -42,7 +48,23 @@ public class MRTDSigner extends BaseSigner {
     private static final Logger log = Logger.getLogger(MRTDSigner.class);
     private static final String CONTENT_TYPE = "application/octet-stream";
 
+    private List<String> configErrors;
+    
     public MRTDSigner() {
+    }
+    
+    
+
+    @Override
+    public void init(int workerId, WorkerConfig config,
+            WorkerContext workerContext, EntityManager workerEM) {
+        super.init(workerId, config, workerContext, workerEM);
+        
+        configErrors = new LinkedList<String>();
+        
+        if (hasSetIncludeCertificateLevels) {
+            configErrors.add(WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS + " is not supported.");
+        }
     }
 
     /**
@@ -144,4 +166,16 @@ public class MRTDSigner extends BaseSigner {
         }
         return result;
     }
+
+
+
+    @Override
+    protected List<String> getFatalErrors() {
+        final List<String> errors = super.getFatalErrors();
+        
+        errors.addAll(configErrors);
+        return errors;
+    }
+    
+    
 }

@@ -1223,6 +1223,8 @@ public class PDFSignerUnitTest extends TestCase {
         config.setProperty("TSA_URL", "http://any-tsa.example.com");
         final PDFSignerParameters params = new PDFSignerParameters(1234, config);
         
+        instance.setIncludeCertificateLevels(1);
+        
         try {
             byte[] signedPdfbytes = instance.addSignatureToPDFDocument(params, pdfbytes, null, 0);
             assertNotNull(signedPdfbytes);

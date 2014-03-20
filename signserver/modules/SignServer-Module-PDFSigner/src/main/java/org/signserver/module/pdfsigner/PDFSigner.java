@@ -924,6 +924,14 @@ public class PDFSigner extends BaseSigner {
         return fatalErrors;
     }
     
-    
+    /**
+     * Internal method for the unit test to set the included certificate levels (to a non-zero value)
+     * without having to initializing the signer.
+     * 
+     * @param includeCertificateLevels
+     */
+    void setIncludeCertificateLevels(final int includeCertificateLevels) {
+        this.includeCertificateLevels = includeCertificateLevels;
+    }
 
 }

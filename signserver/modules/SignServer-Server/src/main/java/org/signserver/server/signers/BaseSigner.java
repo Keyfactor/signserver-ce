@@ -67,12 +67,12 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
         super.init(workerId, config, workerContext, workerEM);
         
         final String includeCertificateLevelsProperty = config.getProperties().getProperty(WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS);
-        
-        hasSetIncludeCertificateLevels = true;
-        
+
         if (includeCertificateLevelsProperty == null) {
             includeCertificateLevels = DEFAULT_INCLUDE_CERTIFICATE_LEVELS;
         } else {
+            hasSetIncludeCertificateLevels = true;
+            
             try {
                 includeCertificateLevels = Integer.parseInt(includeCertificateLevelsProperty);
                 if (includeCertificateLevels < 0) {

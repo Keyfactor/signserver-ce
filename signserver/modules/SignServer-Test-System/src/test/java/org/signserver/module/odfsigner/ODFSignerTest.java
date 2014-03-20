@@ -15,6 +15,8 @@ package org.signserver.module.odfsigner;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.security.cert.Certificate;
+import java.util.List;
+
 import org.ejbca.util.Base64;
 import org.junit.After;
 import org.junit.FixMethodOrder;
@@ -93,6 +95,26 @@ public class ODFSignerTest extends ModulesTestCase {
         assertTrue(stat.getTokenStatus() == SignerStatus.STATUS_ACTIVE);
     }
 
+    /**
+     * Test that INCLUDE_CERTIFICATE_LEVELS is not gives a config error.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test03IncludeCertificateLevelsNotSupported() throws Exception {
+        try {
+            workerSession.setWorkerProperty(WORKERID, WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS, "2");
+            workerSession.reloadConfiguration(WORKERID);
+            
+            final List<String> errors = workerSession.getStatus(WORKERID).getFatalErrors();
+            
+            assertTrue("Should contain error", errors.contains(WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS + " is not supported."));
+        } finally {
+            workerSession.removeWorkerProperty(WORKERID, WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS);
+            workerSession.reloadConfiguration(WORKERID);
+        }
+    }
+    
     @Test
     public void test99TearDownDatabase() throws Exception {
         removeWorker(WORKERID);

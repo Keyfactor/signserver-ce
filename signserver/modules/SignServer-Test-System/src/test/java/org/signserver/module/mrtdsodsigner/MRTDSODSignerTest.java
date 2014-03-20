@@ -459,6 +459,25 @@ public class MRTDSODSignerTest extends ModulesTestCase {
         assertTrue(stat.getTokenStatus() == SignerStatus.STATUS_ACTIVE);
     }
 
+    /**
+     * Test that setting INCLUDE_CERTIFICATE_LEVELS is not supported.
+     * @throws Exception
+     */
+    @Test
+    public void test06IncludeCertificateLevelsNotSupported() throws Exception {
+        try {
+            workerSession.setWorkerProperty(WORKER1, WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS, "2");
+            workerSession.reloadConfiguration(WORKER1);
+            
+            final List<String> errors = workerSession.getStatus(WORKER1).getFatalErrors();
+            
+            assertTrue("Should contain error", errors.contains(WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS + " is not supported."));
+        } finally {
+            workerSession.removeWorkerProperty(WORKER1, WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS);
+            workerSession.reloadConfiguration(WORKER1);
+        }
+    }
+    
     @Test
     public void test99TearDownDatabase() throws Exception {
         removeWorker(WORKER1);

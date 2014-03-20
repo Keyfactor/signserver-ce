@@ -25,7 +25,12 @@ import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+
+import javax.persistence.EntityManager;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.x500.X500Name;
@@ -33,6 +38,7 @@ import org.bouncycastle.cert.jcajce.JcaX500NameUtil;
 import org.ejbca.util.CertTools;
 import org.signserver.common.*;
 import org.signserver.module.mrtdsodsigner.jmrtd.SODFile;
+import org.signserver.server.WorkerContext;
 import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.DefaultArchivable;
 import org.signserver.server.cryptotokens.ICryptoToken;
@@ -86,6 +92,22 @@ public class MRTDSODSigner extends BaseSigner {
     private static final String PROPERTY_UNICODEVERSION = "UNICODEVERSION";
     
     private static final Object syncObj = new Object();
+    
+    private List<String> configErrors;
+    
+    
+
+    @Override
+    public void init(int workerId, WorkerConfig config,
+            WorkerContext workerContext, EntityManager workerEM) {
+        super.init(workerId, config, workerContext, workerEM);
+        
+        configErrors = new LinkedList<String>();
+        
+        if (hasSetIncludeCertificateLevels) {
+            configErrors.add(WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS + " is not supported.");
+        }
+    }
 
     public ProcessResponse processData(ProcessRequest signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
         if (log.isTraceEnabled()) {
@@ -337,5 +359,13 @@ public class MRTDSODSigner extends BaseSigner {
             throw new GeneralSecurityException(
                     "Getting signer certificate from SOD failed", e);
         }
+    }
+    
+    @Override
+    protected List<String> getFatalErrors() {
+        final List<String> errors = super.getFatalErrors();
+        
+        errors.addAll(configErrors);
+        return errors;
     }
 }

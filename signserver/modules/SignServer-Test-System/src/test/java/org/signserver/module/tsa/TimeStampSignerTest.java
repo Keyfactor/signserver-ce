@@ -1408,6 +1408,29 @@ public class TimeStampSignerTest extends ModulesTestCase {
                 errors.contains("INCLUDEORDERING can not be set to \"false\" when ORDERING is set to \"true\""));
     }
     
+    /**
+     * Test that setting INCLUDE_CERTIFICATE_LEVELS to 0 is not supported.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test45IncludeCertificateLevels0NotAllowed() throws Exception {
+       try {
+           workerSession.setWorkerProperty(WORKER1, WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS, "0");
+           workerSession.reloadConfiguration(WORKER1);
+           
+           final List<String> errors = workerSession.getStatus(WORKER1).getFatalErrors();
+           
+           assertTrue("Should contain configuration error",
+                   errors.contains("Illegal value for property " +
+                                   WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS +
+                                   ". Only numbers >= 1 supported."));
+       } finally {
+           workerSession.removeWorkerProperty(WORKER1, WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS);
+           workerSession.reloadConfiguration(WORKER1);
+       }
+    }
+
     private void assertTokenGranted(int workerId) throws Exception {
         TimeStampRequestGenerator timeStampRequestGenerator =
                     new TimeStampRequestGenerator();

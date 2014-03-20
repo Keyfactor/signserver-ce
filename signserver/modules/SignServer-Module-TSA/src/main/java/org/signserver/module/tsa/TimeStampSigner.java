@@ -279,6 +279,8 @@ public class TimeStampSigner extends BaseSigner {
     private boolean ordering;
     private boolean includeOrdering;
     
+    private List<String> configErrors;
+    
     @Override
     public void init(final int signerId, final WorkerConfig config,
             final WorkerContext workerContext,
@@ -370,6 +372,12 @@ public class TimeStampSigner extends BaseSigner {
         
         ordering = Boolean.parseBoolean(config.getProperty(ORDERING, "false"));
         includeOrdering = Boolean.parseBoolean(config.getProperty(INCLUDEORDERING, "false"));
+        
+        configErrors = new LinkedList<String>();
+        
+        if (includeCertificateLevels == 0) {
+            configErrors.add("Illegal value for property " + WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS + ". Only numbers >= 1 supported.");
+        }
     }
 
     /**
@@ -930,6 +938,7 @@ public class TimeStampSigner extends BaseSigner {
     protected List<String> getFatalErrors() {
         final List<String> result = new LinkedList<String>();
         result.addAll(super.getFatalErrors());
+        result.addAll(configErrors);
         
         try {
             // Check signer certificate chain if required
@@ -1008,4 +1017,6 @@ public class TimeStampSigner extends BaseSigner {
     protected String getSerialNumberError() {
         return serialNumberError;
     }
+    
+    
 }

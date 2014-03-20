@@ -169,8 +169,6 @@ public class PDFSigner extends BaseSigner {
         }
         archivetodiskPattern = Pattern.compile(ARCHIVETODISK_PATTERN_REGEX);
         
-        initIncludeCertificateLevels();
-        
         // additionally check that at least one certificate is included, assumed by iText
         // (initIncludeCertificateLevels already checks non-negative values)
         if (includeCertificateLevels == 0) {

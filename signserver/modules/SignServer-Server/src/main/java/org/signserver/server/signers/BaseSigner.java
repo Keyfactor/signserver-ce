@@ -24,6 +24,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+
+import javax.persistence.EntityManager;
+
 import org.apache.log4j.Logger;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
@@ -33,6 +36,7 @@ import org.signserver.common.*;
 import org.signserver.server.BaseProcessable;
 import org.signserver.server.KeyUsageCounterHash;
 import org.signserver.server.ValidityTimeUtils;
+import org.signserver.server.WorkerContext;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.entities.KeyUsageCounter;
 
@@ -52,8 +56,33 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
     protected static final int DEFAULT_INCLUDE_CERTIFICATE_LEVELS = 1;
     
     protected int includeCertificateLevels;
+    protected boolean hasSetIncludeCertificateLevels;
     
     private List<String> configErrors = new LinkedList<String>();
+
+    
+    @Override
+    public void init(int workerId, WorkerConfig config,
+            WorkerContext workerContext, EntityManager workerEM) {
+        super.init(workerId, config, workerContext, workerEM);
+        
+        final String includeCertificateLevelsProperty = config.getProperties().getProperty(WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS);
+        
+        hasSetIncludeCertificateLevels = true;
+        
+        if (includeCertificateLevelsProperty == null) {
+            includeCertificateLevels = DEFAULT_INCLUDE_CERTIFICATE_LEVELS;
+        } else {
+            try {
+                includeCertificateLevels = Integer.parseInt(includeCertificateLevelsProperty);
+                if (includeCertificateLevels < 0) {
+                    configErrors.add("Illegal value for property " + WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS + ". Only numbers >= 0 supported.");
+                }
+            } catch (NumberFormatException ex) {
+                configErrors.add("Unable to parse property " + WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS + ". Only numbers >= 0 suported: " + ex.getLocalizedMessage());
+            }
+        }
+    }
 
     /**
      * @see org.signserver.server.IProcessable#getStatus()
@@ -227,14 +256,15 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
     }
     
     protected Store getCertStoreWithChain(Certificate signingCert) throws InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchProviderException, CryptoTokenOfflineException, CertStoreException, CertificateEncodingException, IOException {
-        Collection<Certificate> signingCertificateChain = getSigningCertificateChain();
+        List<Certificate> signingCertificateChain = getSigningCertificateChain();
         
         if (signingCertificateChain == null) {
             throw new CryptoTokenOfflineException("Certificate chain not available");
         } else {
-            JcaCertStore certStore = new JcaCertStore(signingCertificateChain);
+            JcaCertStore certStore =
+                    new JcaCertStore(includedCertificates(signingCertificateChain));
 
-            if (!containsCertificate(certStore, signingCert)) {
+            if (!containsCertificate(certStore, signingCert) && includeCertificateLevels > 0) {
                 throw new CryptoTokenOfflineException("Signer certificate not included in certificate chain");
             }
             return certStore;
@@ -259,27 +289,6 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
             }
         });
         return matchedCerts.size() > 0;
-    }
-    
-    /**
-     * Initialize the INCLUDE_CERTIFICATE_LEVELS property.
-     * Validates the value and updates fatal errors if not set correctly.
-     */
-    protected void initIncludeCertificateLevels() {
-        final String includeCertificateLevelsProperty = config.getProperties().getProperty(WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS);
-        
-        if (includeCertificateLevelsProperty == null) {
-            includeCertificateLevels = DEFAULT_INCLUDE_CERTIFICATE_LEVELS;
-        } else {
-            try {
-                includeCertificateLevels = Integer.parseInt(includeCertificateLevelsProperty);
-                if (includeCertificateLevels < 0) {
-                    configErrors.add("Illegal value for property " + WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS + ". Only numbers >= 0 supported.");
-                }
-            } catch (NumberFormatException ex) {
-                configErrors.add("Unable to parse property " + WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS + ". Only numbers >= 0 suported: " + ex.getLocalizedMessage());
-            }
-        }
     }
 
     /**

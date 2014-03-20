@@ -67,8 +67,6 @@ public class CMSSigner extends BaseSigner {
         
         // Get the signature algorithm
         signatureAlgorithm = config.getProperty(SIGNATUREALGORITHM);
-        
-        initIncludeCertificateLevels();
     }
 
     public ProcessResponse processData(final ProcessRequest signRequest,

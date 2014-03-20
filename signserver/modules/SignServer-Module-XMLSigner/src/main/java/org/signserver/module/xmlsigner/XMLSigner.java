@@ -102,8 +102,6 @@ public class XMLSigner extends BaseSigner {
         
         // Get the signature algorithm
         signatureAlgorithm = config.getProperty(SIGNATUREALGORITHM);
-        
-        initIncludeCertificateLevels();
     }
 
     public ProcessResponse processData(ProcessRequest signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {

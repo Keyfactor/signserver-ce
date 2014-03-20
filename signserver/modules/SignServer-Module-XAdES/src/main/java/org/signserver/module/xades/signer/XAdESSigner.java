@@ -251,8 +251,6 @@ public class XAdESSigner extends BaseSigner {
         claimedRoleDefault = config.getProperty(CLAIMED_ROLE);
         claimedRoleFromUsername =
                 Boolean.parseBoolean(config.getProperty(CLAIMED_ROLE_FROM_USERNAME, Boolean.FALSE.toString()));
-        
-        initIncludeCertificateLevels();
 
         // additionally check that at least one certificate is included.
         // (initIncludeCertificateLevels already checks non-negative values)

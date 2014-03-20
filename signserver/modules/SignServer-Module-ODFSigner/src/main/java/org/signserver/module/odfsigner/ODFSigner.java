@@ -18,10 +18,14 @@ import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Collection;
+
+//import javax.persistence.EntityManager;
+
 import org.odftoolkit.odfdom.doc.OdfDocument;
 import org.odftoolkit.odfdom.pkg.signature.DocumentSignatureManager;
 import org.odftoolkit.odfdom.pkg.signature.SignatureCreationMode;
 import org.signserver.common.*;
+import org.signserver.server.WorkerContext;
 import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.DefaultArchivable;
 import org.signserver.server.cryptotokens.ICryptoToken;
@@ -46,6 +50,18 @@ import org.signserver.server.signers.BaseSigner;
  */
 public class ODFSigner extends BaseSigner {
     private static final String CONTENT_TYPE = "application/octet-stream";
+
+    
+    
+//    @Override
+//    public void init(int workerId, WorkerConfig config,
+//            WorkerContext workerContext, EntityManager workerEM) {
+//        super.init(workerId, config, workerContext, workerEM);
+//        
+//        initIncludeCertificateLevels();
+//    }
+//
+
 
     @Override
     public ProcessResponse processData(ProcessRequest signRequest,

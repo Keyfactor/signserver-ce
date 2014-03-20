@@ -20,6 +20,9 @@ import java.security.Security;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import org.openxml4j.exceptions.InvalidFormatException;
 import org.openxml4j.exceptions.OpenXML4JException;
@@ -59,6 +62,8 @@ public class OOXMLSigner extends BaseSigner {
 
     private static final String CONTENT_TYPE = "application/octet-stream";
 
+    private List<String> configErrors;
+    
     @Override
     public void init(int workerId, WorkerConfig config,
             WorkerContext workerContext, EntityManager workerEM) {
@@ -67,6 +72,12 @@ public class OOXMLSigner extends BaseSigner {
         Security.addProvider(new RelationshipTransformProvider());
 
         super.init(workerId, config, workerContext, workerEM);
+        
+        configErrors = new LinkedList<String>();
+        
+        if (hasSetIncludeCertificateLevels) {
+            configErrors.add(WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS + " is not supported.");
+        }
     }
 
     @Override
@@ -114,7 +125,7 @@ public class OOXMLSigner extends BaseSigner {
 
         // get signing certificate
         X509Certificate cert = (X509Certificate) getSigningCertificate();
-
+        
         // sign document
         try {
             dsm.SignDocument(privateKey, cert);
@@ -144,4 +155,14 @@ public class OOXMLSigner extends BaseSigner {
         return signResponse;
 
     }
+
+    @Override
+    protected List<String> getFatalErrors() {
+        final List<String> errors = super.getFatalErrors();
+    
+        errors.addAll(configErrors);
+        return errors;
+    }
+    
+    
 }

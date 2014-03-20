@@ -15,6 +15,8 @@ package org.signserver.module.ooxmlsigner;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.security.cert.Certificate;
+import java.util.List;
+
 import org.ejbca.util.Base64;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
@@ -100,6 +102,26 @@ public class OOXMLSignerTest extends ModulesTestCase {
     public void test02GetStatus() throws Exception {
         SignerStatus stat = (SignerStatus) workerSession.getStatus(WORKERID);
         assertTrue(stat.getTokenStatus() == SignerStatus.STATUS_ACTIVE);
+    }
+    
+    /**
+     * Test that INCLUDE_CERTIFICATE_LEVELS gives a config error.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test03IncludeCertificateLevelsNotSupported() throws Exception {
+        try {
+            workerSession.setWorkerProperty(WORKERID, WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS, "2");
+            workerSession.reloadConfiguration(WORKERID);
+            
+            final List<String> errors = workerSession.getStatus(WORKERID).getFatalErrors();
+            
+            assertTrue("Should contain error", errors.contains(WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS + " is not supported."));
+        } finally {
+            workerSession.removeWorkerProperty(WORKERID, WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS);
+            workerSession.reloadConfiguration(WORKERID);
+        }
     }
 
     @Test

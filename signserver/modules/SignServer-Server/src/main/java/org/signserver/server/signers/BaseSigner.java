@@ -224,34 +224,36 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
             }
         }
 
-        // Check that certificiate chain contains the signer certificate
-        try {
-            getCertStoreWithChain(certificate);
-        } catch (NoSuchAlgorithmException ex) {
-            result.add("Unable to get certificate chain");
-            LOG.error("Signer " + workerId + ": Unable to get certificate chain: " + ex.getMessage());
-        } catch (NoSuchProviderException ex) {
-            result.add("Unable to get certificate chain");
-            LOG.error("Signer " + workerId + ": Unable to get certificate chain: " + ex.getMessage());
-        } catch (CertStoreException ex) {
-            result.add("Unable to get certificate chain");
-            LOG.error("Signer " + workerId + ": Unable to get certificate chain: " + ex.getMessage());
-        } catch (IOException ex) {
-            result.add("Unable to get certificate chain");
-            LOG.error("Signer " + workerId + ": Unable to get certificate chain: " + ex.getMessage());
-        } catch (CertificateEncodingException ex) {
-            result.add("Unable to get certificate chain");
-            LOG.error("Signer " + workerId + ": Unable to get certificate chain: " + ex.getMessage());
-        } catch (InvalidAlgorithmParameterException ex) {
-            result.add("Unable to get certificate chain");
-            LOG.error("Signer " + workerId + ": Unable to get certificate chain: " + ex.getMessage());
-        } catch (CryptoTokenOfflineException ex) {
-            result.add(ex.getMessage());
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Signer " + workerId + ": Could not get signer certificate in chain: " + ex.getMessage());
+        if (includeCertificateLevels > 0) {
+            // Check that certificiate chain contains the signer certificate
+            try {
+                getCertStoreWithChain(certificate);
+            } catch (NoSuchAlgorithmException ex) {
+                result.add("Unable to get certificate chain");
+                LOG.error("Signer " + workerId + ": Unable to get certificate chain: " + ex.getMessage());
+            } catch (NoSuchProviderException ex) {
+                result.add("Unable to get certificate chain");
+                LOG.error("Signer " + workerId + ": Unable to get certificate chain: " + ex.getMessage());
+            } catch (CertStoreException ex) {
+                result.add("Unable to get certificate chain");
+                LOG.error("Signer " + workerId + ": Unable to get certificate chain: " + ex.getMessage());
+            } catch (IOException ex) {
+                result.add("Unable to get certificate chain");
+                LOG.error("Signer " + workerId + ": Unable to get certificate chain: " + ex.getMessage());
+            } catch (CertificateEncodingException ex) {
+                result.add("Unable to get certificate chain");
+                LOG.error("Signer " + workerId + ": Unable to get certificate chain: " + ex.getMessage());
+            } catch (InvalidAlgorithmParameterException ex) {
+                result.add("Unable to get certificate chain");
+                LOG.error("Signer " + workerId + ": Unable to get certificate chain: " + ex.getMessage());
+            } catch (CryptoTokenOfflineException ex) {
+                result.add(ex.getMessage());
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Signer " + workerId + ": Could not get signer certificate in chain: " + ex.getMessage());
+                }
             }
         }
-        
+
         return result;
     }
     

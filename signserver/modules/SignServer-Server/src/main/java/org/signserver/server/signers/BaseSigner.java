@@ -219,7 +219,7 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
             }
         }
 
-        if (includeCertificateLevels > 0) {
+        if (!hasSetIncludeCertificateLevels || includeCertificateLevels > 0) {
             // Check that certificiate chain contains the signer certificate
             try {
                 getCertStoreWithChain(certificate);
@@ -261,7 +261,8 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
             JcaCertStore certStore =
                     new JcaCertStore(includedCertificates(signingCertificateChain));
 
-            if (!containsCertificate(certStore, signingCert) && includeCertificateLevels > 0) {
+            if (!containsCertificate(certStore, signingCert) &&
+                (!hasSetIncludeCertificateLevels || includeCertificateLevels > 0)) {
                 throw new CryptoTokenOfflineException("Signer certificate not included in certificate chain");
             }
             return certStore;

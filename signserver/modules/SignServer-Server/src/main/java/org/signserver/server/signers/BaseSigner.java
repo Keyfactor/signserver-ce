@@ -51,10 +51,7 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
     
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(BaseSigner.class);
-
-    /** Default value to use if the worker property INCLUDE_CERTIFICATE_LEVELS has no been set. */
-    protected static final int DEFAULT_INCLUDE_CERTIFICATE_LEVELS = 1;
-    
+   
     protected int includeCertificateLevels;
     protected boolean hasSetIncludeCertificateLevels;
     
@@ -68,9 +65,7 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
         
         final String includeCertificateLevelsProperty = config.getProperties().getProperty(WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS);
 
-        if (includeCertificateLevelsProperty == null) {
-            includeCertificateLevels = DEFAULT_INCLUDE_CERTIFICATE_LEVELS;
-        } else {
+        if (includeCertificateLevelsProperty != null) {
             hasSetIncludeCertificateLevels = true;
             
             try {
@@ -301,6 +296,10 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
      * @return List of at most the desired certificate levels to include.
      */
     protected List<Certificate> includedCertificates(final List<Certificate> certs) {
-        return certs.subList(0, Math.min(includeCertificateLevels, certs.size()));
+        if (hasSetIncludeCertificateLevels) {
+            return certs.subList(0, Math.min(includeCertificateLevels, certs.size()));
+        } else {
+            return certs;
+        }
     }
 }

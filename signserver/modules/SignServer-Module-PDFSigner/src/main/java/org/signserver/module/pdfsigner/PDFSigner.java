@@ -171,7 +171,7 @@ public class PDFSigner extends BaseSigner {
         
         // additionally check that at least one certificate is included, assumed by iText
         // (initIncludeCertificateLevels already checks non-negative values)
-        if (includeCertificateLevels == 0) {
+        if (hasSetIncludeCertificateLevels && includeCertificateLevels == 0) {
             configErrors.add("Illegal value for property " + WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS + ". Only numbers >= 1 supported.");
         }
     }

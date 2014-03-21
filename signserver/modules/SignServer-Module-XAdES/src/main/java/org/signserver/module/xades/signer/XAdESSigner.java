@@ -254,7 +254,7 @@ public class XAdESSigner extends BaseSigner {
 
         // additionally check that at least one certificate is included.
         // (initIncludeCertificateLevels already checks non-negative values)
-        if (includeCertificateLevels == 0) {
+        if (hasSetIncludeCertificateLevels && includeCertificateLevels == 0) {
             configErrors.add("Illegal value for property " + WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS + ". Only numbers >= 1 supported.");
         }
         
@@ -408,7 +408,7 @@ public class XAdESSigner extends BaseSigner {
         xsp.withKeyInfoCertificatesProvider(new KeyInfoCertificatesProvider() {
             @Override
             public List<X509Certificate> getCertificates(List<X509Certificate> list) throws SigningCertChainException, UnexpectedJCAException {
-                return list.subList(0, Math.min(includeCertificateLevels, list.size()));
+                return includedX509Certificates(list);
             }
         });
    
@@ -498,4 +498,17 @@ public class XAdESSigner extends BaseSigner {
 
     }
 
+    /**
+     * Utility method to extract certificate chain from list of X509Certificate.
+     * This will use the default of 1 certificate if the INCLUDE_CERTIFICATE_LEVELS
+     * propery has not been set.
+     */
+    protected List<X509Certificate> includedX509Certificates(List<X509Certificate> certs) {
+        if (hasSetIncludeCertificateLevels) {
+            return certs.subList(0, Math.min(includeCertificateLevels, certs.size()));
+        } else {
+            // there should always be at least one cert in the chain
+            return certs.subList(0, 1);
+        }
+    }
 }

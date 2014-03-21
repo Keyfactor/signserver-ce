@@ -65,7 +65,6 @@ public class IncludeCertificateLevelsTest extends TestCase {
         public void init(int workerId, WorkerConfig config,
                 WorkerContext workerContext, EntityManager workerEM) {
             super.init(workerId, config, workerContext, workerEM);
-            initIncludeCertificateLevels();
         }
     };
     
@@ -161,7 +160,7 @@ public class IncludeCertificateLevelsTest extends TestCase {
     }
     
     /**
-     * Test that the default is one included certificate.
+     * Test that the default is to return all supplied certificates.
      * 
      * @throws Exception
      */
@@ -173,10 +172,9 @@ public class IncludeCertificateLevelsTest extends TestCase {
         // a dummy list (content is not important)
         final List<Certificate> certs = Arrays.asList((Certificate) new DummyCert(0), new DummyCert(1), new DummyCert(2));
         final List<Certificate> includedCerts = dummySigner.includedCertificates(certs);
-        assertEquals("Number of included certificates", 1, includedCerts.size());
-        assertEquals("Certificate index", 0, ((DummyCert) includedCerts.get(0)).getIndex());
+        assertEquals("Number of included certificates", 3, includedCerts.size());
+        assertTrue("Should return the same list", includedCerts == certs);
     }
-    
     /**
      * Test that including 0 certificates is working
      * (XAdESSigner is more strict, requiring at least 1 cert).

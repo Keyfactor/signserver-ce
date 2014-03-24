@@ -175,20 +175,21 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
                     includeCertificateLevels);
         }
         
-        workerMock.setupWorker(SIGNER_ID, CRYPTOTOKEN_CLASSNAME, config,
-                    new MSAuthCodeTimeStampSigner() {
-                @Override
-                protected IGlobalConfigurationSession.IRemote
-                        getGlobalConfigurationSession() {
-                    return globalConfig;
-                }
-            });
+        final MSAuthCodeTimeStampSigner worker = new MSAuthCodeTimeStampSigner() {
+            @Override
+            protected IGlobalConfigurationSession.IRemote
+                    getGlobalConfigurationSession() {
+                return globalConfig;
+            }
+        };
+            
+        workerMock.setupWorker(SIGNER_ID, CRYPTOTOKEN_CLASSNAME, config, worker);
         workerMock.reloadConfiguration(SIGNER_ID);
         
         // if the INCLUDE_CERTIFICATE_LEVELS property has been set,
         // check that it gives a not supported error
         if (includeCertificateLevels != null) {
-            final List<String> errors = workerMock.getStatus(SIGNER_ID).getFatalErrors();
+            final List<String> errors = worker.getFatalErrors();
             
             assertTrue("Should contain config error",
                     errors.contains(WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS + " is not supported."));

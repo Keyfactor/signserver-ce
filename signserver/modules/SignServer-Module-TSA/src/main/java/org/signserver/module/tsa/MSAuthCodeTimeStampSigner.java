@@ -155,6 +155,8 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
     
     private boolean includeSigningCertificateAttribute;
     
+    private List<String> configErrors;
+    
     @Override
     public void init(final int signerId, final WorkerConfig config,
             final WorkerContext workerContext,
@@ -200,6 +202,12 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
         
         includeSigningCertificateAttribute =
                 Boolean.parseBoolean(config.getProperty(INCLUDE_SIGNING_CERTIFICATE_ATTRIBUTE, "false"));
+        
+        configErrors = new LinkedList<String>();
+        
+        if (hasSetIncludeCertificateLevels) {
+            configErrors.add(WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS + " is not supported.");
+        }
     }
 
     /**
@@ -559,6 +567,7 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
     protected List<String> getFatalErrors() {
         final List<String> result = new LinkedList<String>();
         result.addAll(super.getFatalErrors());
+        result.addAll(configErrors);
         
         try {
             // Check signer certificate chain if required

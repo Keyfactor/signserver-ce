@@ -17,6 +17,7 @@ import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
@@ -146,7 +147,8 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
      * @throws Exception
      */
     private void testProcessDataWithAlgo(final String signingAlgo, final String expectedDigestOID,
-            final byte[] requestData, final boolean includeSigningCertAttr) throws Exception {
+            final byte[] requestData, final boolean includeSigningCertAttr,
+            final String includeCertificateLevels) throws Exception {
         SignServerUtil.installBCProvider();
         
         final String CRYPTOTOKEN_CLASSNAME =
@@ -168,6 +170,11 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
             config.setProperty("INCLUDE_SIGNING_CERTIFICATE_ATTRIBUTE", "true");
         }
         
+        if (includeCertificateLevels != null) {
+            config.setProperty(WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS,
+                    includeCertificateLevels);
+        }
+        
         workerMock.setupWorker(SIGNER_ID, CRYPTOTOKEN_CLASSNAME, config,
                     new MSAuthCodeTimeStampSigner() {
                 @Override
@@ -177,6 +184,16 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
                 }
             });
         workerMock.reloadConfiguration(SIGNER_ID);
+        
+        // if the INCLUDE_CERTIFICATE_LEVELS property has been set,
+        // check that it gives a not supported error
+        if (includeCertificateLevels != null) {
+            final List<String> errors = workerMock.getStatus(SIGNER_ID).getFatalErrors();
+            
+            assertTrue("Should contain config error",
+                    errors.contains(WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS + " is not supported."));
+            return;
+        }
         
         // create sample hard-coded request
         signRequest = new GenericSignRequest(REQUEST_ID, requestData);
@@ -281,11 +298,11 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
      * Test of processData method, of class MSAuthCodeTimeStampSigner.
      */
     public void testProcessDataSHA1withRSA() throws Exception {
-    	testProcessDataWithAlgo("SHA1withRSA", SHA1_OID, REQUEST_DATA.getBytes(), false);
+    	testProcessDataWithAlgo("SHA1withRSA", SHA1_OID, REQUEST_DATA.getBytes(), false, null);
     }
     
     public void testProcessDataSHA256withRSA() throws Exception {
-    	testProcessDataWithAlgo("SHA256withRSA", SHA256_OID, REQUEST_DATA.getBytes(), false);
+    	testProcessDataWithAlgo("SHA256withRSA", SHA256_OID, REQUEST_DATA.getBytes(), false, null);
     }
     
     /**
@@ -294,7 +311,7 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
      */
     public void testEmptyRequest() throws Exception {
         try {
-            testProcessDataWithAlgo("SHA1withRSA", SHA1_OID, new byte[0], false);
+            testProcessDataWithAlgo("SHA1withRSA", SHA1_OID, new byte[0], false, null);
         } catch (IllegalRequestException e) {
             // expected
         } catch (Exception e) {
@@ -308,7 +325,7 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
      */
     public void testBogusRequest() throws Exception {
         try {
-            testProcessDataWithAlgo("SHA1withRSA", SHA1_OID, "bogus request".getBytes(), false);
+            testProcessDataWithAlgo("SHA1withRSA", SHA1_OID, "bogus request".getBytes(), false, null);
         } catch (IllegalRequestException e) {
             // expected
         } catch (Exception e) {
@@ -322,7 +339,7 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
      */
     public void testNullRequest() throws Exception {
         try {
-            testProcessDataWithAlgo("SHA1withRSA", SHA1_OID, null, false);
+            testProcessDataWithAlgo("SHA1withRSA", SHA1_OID, null, false, null);
         } catch (IllegalRequestException e) {
             // expected
         } catch (Exception e) {
@@ -336,6 +353,17 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
      * @throws Exception
      */
     public void testIncludeSigningCertificateAttribute() throws Exception {
-        testProcessDataWithAlgo("SHA1withRSA", SHA1_OID, REQUEST_DATA.getBytes(), true);
+        testProcessDataWithAlgo("SHA1withRSA", SHA1_OID, REQUEST_DATA.getBytes(), true, null);
+    }
+    
+    /**
+     * Test that setting INCLUDE_CERTIFICATE_LEVELS gives
+     * a config error, as this is not supported by this
+     * signer.
+     * 
+     * @throws Exception
+     */
+    public void test0IncludeCertificateLevelsNotPermitted() throws Exception {
+        testProcessDataWithAlgo("SHA1withRSA", SHA1_OID, null, false, "2");
     }
 }

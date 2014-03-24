@@ -3366,6 +3366,15 @@ such as PDF, XML, ODF and OOXML and there is a general purpose signer that
 can sign any document-type and produces the output in Cryptographic Message Syntax (CMS).
                 </p>
 
+                <subsection name="Common Properties">
+                    <p>
+Properties that have common use among most signers:
+                    </p>
+                    <p>
+<b>INCLUDE_CERTIFICATE_LEVELS</b> = Number of certificate levels to include. This property is supported for all signer except MRTDSODSigner, MRTDSigner, and MSAuthCodeTimeStampSigner. The property is optional and defaults to include all certificates in the chain, except for XAdESSigner, where the default is to only include one certificate (the signing certificate). Setting this to 0 (include no certificates) is not supported for TimeStampSigner. To include all certificates specify at least the same value as number of certificates in the certificate chain.
+                    </p>
+                </subsection>
+
                 <subsection name="Time-stamp Signer">
                     <p>
 The time-stamp signer has the class name: org.signserver.server.signers.TimeStampSigner
@@ -4153,7 +4162,7 @@ The signed XML document can be validated using the XML Validator.
                             <b>SIGNATUREALGORITHM</b> = The algorithm used to sign the data. The same set of algorithms as for the same property in XMLSigner is supported. Optional. Default: depending on the signer's private key: SHA1withDSA for DSA keys, SHA256withRSA for RSA keys, and SHA1withECDSA for EC keys.<br/>
                             <b>CLAIMED_ROLE</b> = Claimed role to include in the signature. If the CLAIMED_ROLE_FROM_USERNAME property is also set, this value is used as a fallback when there is no user name provided in the request. Optional. Default: no default claimed role defined.<br/>
                             <b>CLAIMED_ROLE_FROM_USERNAME</b> = If this is set to true, use the user name from the request (provided by an authorizer) as the value for claimed role. If there is no user name provided fall back to the value set by CLAIMED_USER. If this is set to true and CLAIMED_ROLE is not set and the request doesn't contain a user name, the request will result in an error. Optional. Default: false.<br/>
-                            <b>INCLUDE_CERTIFICATE_LEVELS</b> = Number of certificate levels to include in the document's KeyInfo. Minimum and default value is 1 which includes only the signer certificate. The value 2 includes the signer certificate and its issuer. To include all certificates specify at least the same value as number of certificates in the certificate chain.
+                            <b>INCLUDE_CERTIFICATE_LEVELS</b> = Number of certificate levels to include in the document's KeyInfo (also see the common properties above). Minimum and default value is 1 which includes only the signer certificate. The value 2 includes the signer certificate and its issuer. To include all certificates specify at least the same value as number of certificates in the certificate chain.
                         </p>
                     </subsubsection>
                     <subsubsection name="Commitment Types">

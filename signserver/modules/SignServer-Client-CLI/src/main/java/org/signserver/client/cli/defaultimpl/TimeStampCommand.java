@@ -599,15 +599,11 @@ public class TimeStampCommand extends AbstractCommand {
             // Get response data.
             input = new DataInputStream(urlConn.getInputStream());
 
-            byte[] ba = null;
             final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            do {
-                if (ba != null) {
-                    baos.write(ba);
-                }
-                ba = new byte[input.available()];
-
-            } while (input.read(ba) != -1);
+            int b;
+            while ((b = input.read()) != -1) {
+                baos.write(b);
+            }
 
             // Take stop time
             final long estimatedTime = System.nanoTime() - startTime;

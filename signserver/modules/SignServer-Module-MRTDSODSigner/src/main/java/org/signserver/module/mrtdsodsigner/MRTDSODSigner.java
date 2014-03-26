@@ -94,8 +94,6 @@ public class MRTDSODSigner extends BaseSigner {
     private static final Object syncObj = new Object();
     
     private List<String> configErrors;
-    
-    
 
     @Override
     public void init(int workerId, WorkerConfig config,

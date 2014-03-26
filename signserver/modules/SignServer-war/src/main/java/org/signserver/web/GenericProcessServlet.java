@@ -15,6 +15,7 @@ package org.signserver.web;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -83,6 +84,8 @@ public class GenericProcessServlet extends HttpServlet {
     private static final String PROCESS_TYPE_PROPERTY_NAME = "processType";
     private static final String CERT_PURPOSES_PROPERTY_NAME = "certPurposes";
     
+    private static final String REQUEST_METADATA_PROPERTY_NAME = "REQUEST_METADATA";
+    
     private enum ProcessType {
         signDocument,
         validateDocument,
@@ -90,6 +93,11 @@ public class GenericProcessServlet extends HttpServlet {
     };
     
     private final Random random = new Random();
+    
+    // metadata properties set via the REQUEST_METADATA= syntax
+    private Properties requestMetadata;
+    // metadata set with REQUEST_METADATA.name=value overriding the above
+    private Properties overrideRequestMetadata;
 
     @EJB
     private IWorkerSession.ILocal workersession;
@@ -141,6 +149,9 @@ public class GenericProcessServlet extends HttpServlet {
 
         ProcessType processType = ProcessType.signDocument;
         
+        requestMetadata = new Properties();
+        overrideRequestMetadata = new Properties();
+        
         if (ServletFileUpload.isMultipartContent(req)) {
             final FileItemFactory factory = new DiskFileItemFactory();
             final ServletFileUpload upload = new ServletFileUpload(factory);
@@ -177,13 +188,15 @@ public class GenericProcessServlet extends HttpServlet {
                                     }
                                 }
                             }
+                            
+                            final String itemFieldName = item.getFieldName();
 
-                            if (PDFPASSWORD_PROPERTY_NAME.equals(item.getFieldName())) {
+                            if (PDFPASSWORD_PROPERTY_NAME.equals(itemFieldName)) {
                                 if (LOG.isDebugEnabled()) {
                                     LOG.debug("Found a pdfPassword in the request.");
                                 }
                                 pdfPassword = item.getString("ISO-8859-1");
-                            } else if (PROCESS_TYPE_PROPERTY_NAME.equals(item.getFieldName())) {
+                            } else if (PROCESS_TYPE_PROPERTY_NAME.equals(itemFieldName)) {
                                 final String processTypeAttribute = item.getString("ISO-8859-1");
                                 
                                 if (LOG.isDebugEnabled()) {
@@ -200,8 +213,17 @@ public class GenericProcessServlet extends HttpServlet {
                                 } else {
                                     processType = ProcessType.signDocument;
                                 }
-                            } else if (ENCODING_PROPERTY_NAME.equals(item.getFieldName())) {
+                            } else if (ENCODING_PROPERTY_NAME.equals(itemFieldName)) {
                                 encoding = item.getString("ISO-8859-1");
+                            } else if (REQUEST_METADATA_PROPERTY_NAME.equals(itemFieldName) ||
+                                    (itemFieldName != null &&
+                                     itemFieldName.length() > REQUEST_METADATA_PROPERTY_NAME.length() + 1 &&
+                                     itemFieldName.startsWith(REQUEST_METADATA_PROPERTY_NAME + "."))) {
+                                try {
+                                    handleMetaDataProperty(itemFieldName, item.getString("ISO-8859-1"));
+                                } catch (IOException e) {
+                                    sendBadRequest(res, "Malformed properties given using REQUEST_METADATA.");
+                                }
                             }
                         } else {
                             // We only care for one upload at a time right now
@@ -237,28 +259,44 @@ public class GenericProcessServlet extends HttpServlet {
                 throw new ServletException("Upload failed", ex);
             }
         } else {
-        	if (!workerRequest) {
-	            String name = req.getParameter(WORKERNAME_PROPERTY_NAME);
-	            if (name != null) {
-	                if (LOG.isDebugEnabled()) {
-	                    LOG.debug("Found a signerName in the request: " + name);
-	                }
-	                workerId = getWorkerSession().getWorkerId(name);
-	            }
-	            String id = req.getParameter(WORKERID_PROPERTY_NAME);
-	            if (id != null) {
-	                if (LOG.isDebugEnabled()) {
-	                    LOG.debug("Found a signerId in the request: " + id);
-	                }
-	                workerId = Integer.parseInt(id);
-	            }
-        	}
-            if (req.getParameter(PDFPASSWORD_PROPERTY_NAME) != null) {
-                pdfPassword = req.getParameter(PDFPASSWORD_PROPERTY_NAME);
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Found a pdfPassword in the request.");
+            if (!workerRequest) {
+                String name = req.getParameter(WORKERNAME_PROPERTY_NAME);
+                if (name != null) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Found a signerName in the request: " + name);
+                    }
+                    workerId = getWorkerSession().getWorkerId(name);
+                }
+                String id = req.getParameter(WORKERID_PROPERTY_NAME);
+                if (id != null) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Found a signerId in the request: " + id);
+                    }
+                    workerId = Integer.parseInt(id);
                 }
             }
+        	
+            final Enumeration<String> params = req.getParameterNames();
+            
+            while (params.hasMoreElements()) {
+                final String property = params.nextElement();
+                if (PDFPASSWORD_PROPERTY_NAME.equals(property)) {
+                    pdfPassword = (String) req.getParameter(PDFPASSWORD_PROPERTY_NAME);
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Found a pdfPassword in the request.");
+                    }
+                } else if (REQUEST_METADATA_PROPERTY_NAME.equals(property) ||
+                        (property.length() > REQUEST_METADATA_PROPERTY_NAME.length() + 1 &&
+                         property.startsWith(REQUEST_METADATA_PROPERTY_NAME + "."))) {
+                   try {
+                       handleMetaDataProperty(property, req.getParameter(property));
+                   } catch (IOException e) {
+                       sendBadRequest(res, "Malformed properties given using REQUEST_METADATA.");
+                   }
+               }
+            }
+            
+            
             
             final String processTypeAttribute = (String) req.getParameter(PROCESS_TYPE_PROPERTY_NAME);
             
@@ -337,6 +375,21 @@ public class GenericProcessServlet extends HttpServlet {
         LOG.debug("<doPost()");
     } //doPost
 
+    private void handleMetaDataProperty(final String propertyFieldName, final String propertyValue) throws IOException {
+        if (propertyFieldName.length() == REQUEST_METADATA_PROPERTY_NAME.length()) {
+            requestMetadata.load(new StringReader(propertyValue));
+        } else {
+            final String propertyName = propertyFieldName.substring(REQUEST_METADATA_PROPERTY_NAME.length() + 1);
+            
+            overrideRequestMetadata.setProperty(propertyName, propertyValue);
+        }
+    }
+    
+    private Properties mergeMetadataProperties() {
+        requestMetadata.putAll(overrideRequestMetadata);
+        return requestMetadata;
+    }
+    
     /**
      * Handles http get.
      *
@@ -427,6 +480,19 @@ public class GenericProcessServlet extends HttpServlet {
         // PDF Password
         if (pdfPassword != null) {
             metadata.put(RequestContext.METADATA_PDFPASSWORD, pdfPassword);
+        }
+        
+        final Properties mergedMetadata = mergeMetadataProperties();
+       
+        for (final Object key : mergedMetadata.keySet()) {
+            final String propertyKey = (String) key;
+            final String propertyValue = (String) mergedMetadata.get(key);
+            
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Adding additional metadata: " + propertyKey + ": " + propertyValue);
+            }
+            
+            metadata.put(propertyKey, propertyValue);
         }
 
         if (LOG.isDebugEnabled()) {

@@ -70,6 +70,8 @@
                     <p>
                         Data:<br/>
                         <textarea name="data" cols="80" rows="20"></textarea><br/>
+                        Meta data:<br/>
+                        <textarea name="REQUEST_METADATA" cols="80" rows="20"></textarea><br/>
                         Encoding:
                         <select name="encoding">
                             <option value="" selected="selected">None</option>

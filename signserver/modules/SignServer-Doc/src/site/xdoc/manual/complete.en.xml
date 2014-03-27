@@ -2371,7 +2371,7 @@ try {
                                         <li><b>workerId</b> - Id of the worker that should handle the request. Required unless workerName specified.</li>
                                         <li><b>data</b> - The bytes that should be signed or validated. Required for x-www-form-urlencoded.</li>
                                         <li><b>filerecievefile</b> - File upload used with multipart/form-data.</li>
-                                        <li><b>pdfPassword</b> - Password for changing PDF. Optionally and only used by PDFSigner.</li>
+                                        <li><b>pdfPassword</b> - Password for changing PDF. This can also be specified using the generic meta data parameters described below, using the key "pdfPassword". Optional and only used by PDFSigner.</li>
                                         <li><b>REQUEST_METADATA</b> - Meta data to pass on. Specified in Java properties file syntax. Optional.</li>
                                         <li><b>REQUEST_METADATA.x</b> - Sets a meta data parameter with the key specified by x. Overrides a value using the same key specified in the REQUEST_METADATA map. Optional.</li>
                                         <li><b>encoding</b> - Encoding of the data field. Optional. By specifying "base64" SignServer Base64-decodes

@@ -375,6 +375,14 @@ public class GenericProcessServlet extends HttpServlet {
         LOG.debug("<doPost()");
     } //doPost
 
+    /**
+     * Internal method handling a metadata property, updating appropriate
+     * mappings for individually set properties and those set as a complete properties mapping.
+     * 
+     * @param propertyFieldName Request parameter name
+     * @param propertyValue Request parameter value
+     * @throws IOException
+     */
     private void handleMetaDataProperty(final String propertyFieldName, final String propertyValue) throws IOException {
         if (propertyFieldName.length() == REQUEST_METADATA_PROPERTY_NAME.length()) {
             requestMetadata.load(new StringReader(propertyValue));
@@ -385,6 +393,12 @@ public class GenericProcessServlet extends HttpServlet {
         }
     }
     
+    /**
+     * Internal method gathering metadata from internal mapping giving precedence
+     * to parameters set via individually set parameters.
+     * 
+     * @return Final property object with merged properties
+     */
     private Properties mergeMetadataProperties() {
         requestMetadata.putAll(overrideRequestMetadata);
         return requestMetadata;

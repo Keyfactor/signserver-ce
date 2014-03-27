@@ -70,7 +70,7 @@
                     <p>
                         Data:<br/>
                         <textarea name="data" cols="80" rows="20"></textarea><br/>
-                        Meta data:<br/>
+                        Additional meta data (set in the REQUEST_METADATA request parameter):<br/>
                         <textarea name="REQUEST_METADATA" cols="80" rows="20"></textarea><br/>
                         Encoding:
                         <select name="encoding">

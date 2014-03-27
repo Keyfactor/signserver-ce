@@ -51,7 +51,7 @@
                     organization signature.</p>
 
                 <table width="100%" border="0" cellspacing="3" cellpadding="3">
-                    <tr id="Row2">
+                    <tr id="Row1">
                         <td style="width: 50%" valign="top" align="right">
                             Select XML file to upload and sign
                         </td>
@@ -60,6 +60,12 @@
                             <input type="submit" name="buttonrecievefile"
                                    onclick="return check()" value="Submit" /><br />
                             <br />
+                        </td>
+                    </tr>
+                    <tr id="Row2">
+                        <td style="width: 50%" valign="top" align="right">Additional meta data (set in the REQUEST_METADATA request parameter):</td>
+                        <td style="width: 50%" valign="top">
+                            <textarea name="REQUEST_METADATA" cols="80" rows="20"></textarea>
                         </td>
                     </tr>
                 </table>

@@ -50,11 +50,22 @@
                 <b>NOTE:</b> You might need to save the output to a file and change file extension accordingly.
             </p>
             <form id="recievefile" action="../worker/OOXMLSigner" method="post" enctype="multipart/form-data">
-                <table width="100%" border="0" cellspacing="3" cellpadding="3">
-                    <tr id="Row2">
-                        <td style="width: 50%" valign="top" align="right">Select document to upload and sign</td>
-                        <td style="width: 50%" valign="top">
+                <table border="0" cellspacing="3" cellpadding="3">
+                    <tr id="Row1">
+                        <td>Select document to upload and sign</td>
+                        <td>
                             <input type="file" name="filerecievefile"/>
+                        </td>
+                    </tr>
+                    <tr id="Row2">
+                        <td>
+                            Additional meta data (set in the REQUEST_METADATA request parameter):<br/>
+                            <textarea name="REQUEST_METADATA" cols="80" rows="20"></textarea><br/>
+                        </td>
+                        
+                    </tr>
+                    <tr>
+                        <td style="width: 50%" valign="top">
                             <input type="submit" name="buttonrecievefile" onclick="return check()" value="Submit"/><br/><br/>
                         </td>
                     </tr>

@@ -50,7 +50,7 @@
                    	back the result signed in CMS format.</p>
 
                 <table width="100%" border="0" cellspacing="3" cellpadding="3">
-                    <tr id="Row2">
+                    <tr id="Row1">
                         <td style="width: 50%" valign="top" align="right">
                             Select file to upload and sign
                         </td>
@@ -61,6 +61,13 @@
                             <br />
                         </td>
                     </tr>
+                    <tr id="Row2">
+                        <td style="width: 50%" valign="top" align="right">Additional meta data (set in the REQUEST_METADATA request parameter):</td>
+                        <td style="width: 50%" valign="top">
+                            <textarea name="REQUEST_METADATA" cols="80" rows="20"></textarea>
+                        </td>
+                    </tr>
+                    
                 </table>
             </form>
 

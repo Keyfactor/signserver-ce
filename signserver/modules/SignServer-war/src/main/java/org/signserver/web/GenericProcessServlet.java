@@ -149,6 +149,7 @@ public class GenericProcessServlet extends HttpServlet {
 
         ProcessType processType = ProcessType.signDocument;
         
+        // holds parameters set via REQUEST_METADATA= and REQUEST_METADATA.x=
         requestMetadata = new Properties();
         overrideRequestMetadata = new Properties();
         

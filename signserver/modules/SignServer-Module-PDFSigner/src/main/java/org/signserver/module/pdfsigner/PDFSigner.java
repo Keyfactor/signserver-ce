@@ -82,6 +82,7 @@ public class PDFSigner extends BaseSigner {
     public static final String REASONDEFAULT = "Signed by SignServer";
     public static final String LOCATION = "LOCATION";
     public static final String LOCATIONDEFAULT = "SignServer";
+    public static final String CONTACTINFO = "CONTACTINFO";
     
     // properties that control signature visibility
     public static final String ADD_VISIBLE_SIGNATURE = "ADD_VISIBLE_SIGNATURE";

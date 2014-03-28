@@ -1255,6 +1255,16 @@ For worker configuration observe that this configuration might not have been act
 Sets a custom property used by the worker or crypto token, see reference for the given Worker and CryptoToken for available properties.
                         </p>
                         <p>
+<b>getproperty:</b>
+List the value of a worker or global property.
+                        </p>
+                        <p>
+Usage:
+                        </p>
+                        <source>
+signserver getproperty &lt;signerid | signerName | global | node&gt; &lt;propertykey&gt;
+                        </source>
+                        <p>
 <b>setproperties:</b>
 Command used to batch a set of properties, both for the global and worker configuration.
 It can be used to configure a Signer in a test environment, dump all the properties and upload it into production.

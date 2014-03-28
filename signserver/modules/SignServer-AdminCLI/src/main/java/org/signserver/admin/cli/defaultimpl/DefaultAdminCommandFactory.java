@@ -40,6 +40,7 @@ public class DefaultAdminCommandFactory extends AbstractCommandFactory implement
         put("generatecertreq", GenerateCertReqCommand.class);
         put("generatekey", GenerateKeyCommand.class);
         put("getconfig", GetConfigCommand.class);
+        put("getproperty", GetPropertyCommand.class);
         put("getstatus", GetStatusCommand.class);
         put("getstatusproperties", GetStatusPropertiesCommand.class);
         put("getstatusproperty", GetStatusPropertyCommand.class);

@@ -25,6 +25,7 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.*;
+
 import javax.ejb.EJB;
 import javax.naming.NamingException;
 import javax.net.ssl.*;
@@ -98,6 +99,8 @@ public class RenewalWorker extends BaseSigner {
      */
     private static final String RESPONSETYPE_PKCS7WITHCHAIN = "PKCS7WITHCHAIN";
 
+    private List<String> fatalErrors;
+    
     /** Workersession. */
     @EJB
     private IWorkerSession workerSession;
@@ -107,6 +110,8 @@ public class RenewalWorker extends BaseSigner {
             final WorkerContext workerContext, final EntityManager workerEM) {
         super.init(workerId, config, workerContext, workerEM);
         getWorkerSession();
+        
+        fatalErrors = new LinkedList<String>();
     }
 
     @Override
@@ -808,4 +813,14 @@ public class RenewalWorker extends BaseSigner {
             return new RenewalWorker.AllSelector();
         }
     }
+
+    @Override
+    protected List<String> getFatalErrors() {
+        final List<String> errors = super.getFatalErrors();
+        
+        errors.addAll(fatalErrors);
+        return errors;
+    }
+    
+    
 }

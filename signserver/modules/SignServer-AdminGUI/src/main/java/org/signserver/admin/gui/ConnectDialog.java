@@ -105,12 +105,8 @@ public class ConnectDialog extends javax.swing.JDialog {
     private final File defaultConnectFile;
     private final File baseDir;
     
-    private static HostnameVerifier defaultHostnameVerifier;
+    private static final HostnameVerifier DEFAULT_HOSTNAME_VERIFIER = HttpsURLConnection.getDefaultHostnameVerifier();
     
-    static {
-        defaultHostnameVerifier = HttpsURLConnection.getDefaultHostnameVerifier();
-    }
-    private String selectedKeyAlias;
     private X509Certificate adminCertificate;
     
     /** Cache of loaded (PKCS#11 currently only) keystores, to not create a new one when already logged in. */
@@ -511,15 +507,13 @@ public class ConnectDialog extends javax.swing.JDialog {
 
                 KeyStore.CallbackHandlerProtection pp = new KeyStore.CallbackHandlerProtection(new CallbackHandler() {
 
-                @Override
+                    @Override
                     public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
-                        for (int i = 0; i < callbacks.length; i++) {
-                            if (callbacks[i] instanceof PasswordCallback) {
-                                final PasswordCallback pc = (PasswordCallback) callbacks[i];
-
+                        for (Callback callback : callbacks) {
+                            if (callback instanceof PasswordCallback) {
+                                final PasswordCallback pc = (PasswordCallback) callback;
                                 passwordLabel.setText(pc.getPrompt());
                                 passwordField.setText("");
-
                                 JOptionPane.showMessageDialog(
                                         ConnectDialog.this, passwordPanel,
                                         "Connect", JOptionPane.PLAIN_MESSAGE);
@@ -527,8 +521,7 @@ public class ConnectDialog extends javax.swing.JDialog {
                                     pc.setPassword(passwordField.getPassword());
                                 }
                             } else {
-                                throw new UnsupportedCallbackException(callbacks[i],
-                                        "Unrecognized Callback");
+                                throw new UnsupportedCallbackException(callback, "Unrecognized Callback");
                             }
                         }
                     }
@@ -666,7 +659,7 @@ public class ConnectDialog extends javax.swing.JDialog {
                     @Override
                     public boolean verify(String hostname, SSLSession session) {
                         
-                        if (!defaultHostnameVerifier.verify(hostname, session)) {
+                        if (!DEFAULT_HOSTNAME_VERIFIER.verify(hostname, session)) {
                             // don't show warning dialog more than once in a row for the same
                             // host cert
                             try {

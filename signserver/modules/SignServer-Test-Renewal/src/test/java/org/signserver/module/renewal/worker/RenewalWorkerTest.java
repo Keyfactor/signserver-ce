@@ -665,10 +665,6 @@ public class RenewalWorkerTest extends AbstractTestCase {
         assertFalse("Explicit ECC parameters not set", workerSession.explicitEccParametersSet);
     }
     
-    public void test13MissingTrustStoreType() throws Exception {
-        
-    }
-    
     private void addWorkers() throws Exception {
         addRenewalWorker(6101, "RenewalWorker_6101");
         addSigner(SIGNERID_6102, SIGNER_6102, SIGNER_6102_ENDENTITY);
@@ -702,9 +698,9 @@ public class RenewalWorkerTest extends AbstractTestCase {
         getWorkerSession().setWorkerProperty(signerId, "KEYSTOREPATH", keystorePath);
         getWorkerSession().setWorkerProperty(signerId, "KEYSTOREPASSWORD", keystorePassword);
     }
-    
 
-    protected void addRenewalWorker(final int signerId, final String signerName, final String truststoreType) throws Exception {
+    protected void addRenewalWorker(final int signerId, final String signerName, 
+            final String truststoreType) throws Exception {
 
         setupRenewalWorker(signerId, signerName);
 
@@ -712,38 +708,15 @@ public class RenewalWorkerTest extends AbstractTestCase {
         final String truststorePassword = "foo123";
         createEmptyKeystore(truststoreType, truststorePath, truststorePassword);
 
-        addRenewalWorker(signerId, signerName, truststoreType,
-                truststorePath, truststorePassword, null, EJBCAWSURL_PREFIX);
-    }
-    
-    private void addRenewalWorker(final int signerId, final String signerName, final String truststoreType,
-            final String truststorePath, final String truststorePassword, final String truststoreValue,
-            final String ejbcawsUrl) throws Exception {
-        if (truststorePath != null) {
-            getWorkerSession().setWorkerProperty(signerId, "TRUSTSTOREPATH",
+        getWorkerSession().setWorkerProperty(signerId, "TRUSTSTOREPATH",
                 truststorePath);
-        }
-        
-        if (truststorePassword != null) {
-            getWorkerSession().setWorkerProperty(signerId, "TRUSTSTOREPASSWORD",
+        getWorkerSession().setWorkerProperty(signerId, "TRUSTSTOREPASSWORD",
                 truststorePassword);
-        }
-        
-        if (truststoreValue != null) {
-            getWorkerSession().setWorkerProperty(signerId, "TRUSTSTOREVALUE",
-                    truststoreValue);
-        }
-        
-        if (truststoreType != null) {
-            getWorkerSession().setWorkerProperty(signerId, "TRUSTSTORETYPE",
+        getWorkerSession().setWorkerProperty(signerId, "TRUSTSTORETYPE",
                 truststoreType);
-        }
-        
-        if (ejbcawsUrl != null) {
-            getWorkerSession().setWorkerProperty(signerId, "EJBCAWSURL",
-                ejbcawsUrl);
-        }
-   
+        getWorkerSession().setWorkerProperty(signerId, "EJBCAWSURL",
+                EJBCAWSURL_PREFIX);
+
         getWorkerSession().reloadConfiguration(signerId);
     }
     

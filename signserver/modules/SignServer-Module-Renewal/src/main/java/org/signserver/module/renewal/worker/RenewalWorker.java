@@ -105,6 +105,13 @@ public class RenewalWorker extends BaseSigner {
     @EJB
     private IWorkerSession workerSession;
 
+    private String truststoreValue;
+    private String truststoreType;
+    private String truststorePath;
+    private String truststorePass;
+    private String ejbcaWsUrl;
+
+
     @Override
     public void init(final int workerId, final WorkerConfig config,
             final WorkerContext workerContext, final EntityManager workerEM) {
@@ -112,6 +119,36 @@ public class RenewalWorker extends BaseSigner {
         getWorkerSession();
         
         fatalErrors = new LinkedList<String>();
+        setupConfig();
+    }
+    
+    /**
+     * Setup configuration and update fatal errors.
+     */
+    private void setupConfig() {
+        truststoreType = config.getProperty("TRUSTSTORETYPE");
+        if (truststoreType == null) {
+            fatalErrors.add("Missing TRUSTSTORETYPE property");
+        }
+        
+        truststorePath = config.getProperty("TRUSTSTOREPATH");
+        truststoreValue = config.getProperty(TRUSTSTOREVALUE);
+        if (truststorePath == null && truststoreValue == null) {
+            fatalErrors.add("Missing TRUSTSTOREPATH or TRUSTSTOREVALUE property");
+        }
+        if (truststorePath != null && truststoreValue != null) {
+            fatalErrors.add("Can not specify both TRUSTSTOREPATH and TRUSTSTOREVALUE property");
+        }
+
+        truststorePass = config.getProperty("TRUSTSTOREPASSWORD");
+        if (truststorePass == null && !TRUSTSTORE_TYPE_PEM.equals(truststoreType)) {
+            fatalErrors.add("Missing TRUSTSTOREPASSWORD property");
+        }
+        
+        ejbcaWsUrl = config.getProperty("EJBCAWSURL");
+        if (ejbcaWsUrl == null) {
+            fatalErrors.add("Missing EJBCAWSURL property");
+        }
     }
 
     @Override
@@ -419,32 +456,6 @@ public class RenewalWorker extends BaseSigner {
 //                    "Missing DEFAULTKEY property");
 //        }
 
-        final String truststoreType = config.getProperty("TRUSTSTORETYPE");
-        if (truststoreType == null) {
-            throw new IllegalArgumentException(
-                    "Missing TRUSTSTORETYPE property");
-        }
-        final String truststorePath = config.getProperty("TRUSTSTOREPATH");
-        final String truststoreValue = config.getProperty(TRUSTSTOREVALUE);
-        if (truststorePath == null && truststoreValue == null) {
-            throw new IllegalArgumentException(
-                    "Missing TRUSTSTOREPATH or TRUSTSTOREVALUE property");
-        }
-        if (truststorePath != null && truststoreValue != null) {
-            throw new IllegalArgumentException(
-                    "Can not specify both TRUSTSTOREPATH and TRUSTSTOREVALUE property");
-        }
-
-        final String truststorePass = config.getProperty("TRUSTSTOREPASSWORD");
-        if (truststorePass == null && !TRUSTSTORE_TYPE_PEM.equals(truststoreType)) {
-            throw new IllegalArgumentException(
-                    "Missing TRUSTSTOREPASSWORD property");
-        }
-
-        final String ejbcaWsUrl = config.getProperty("EJBCAWSURL");
-        if (ejbcaWsUrl == null) {
-            throw new IllegalArgumentException("Missing EJBCAWSURL property");
-        }
         final EjbcaWS ejbcaws = getEjbcaWS(ejbcaWsUrl,
                 alias, truststoreType, truststorePath, truststoreValue, truststorePass);
 
@@ -821,6 +832,4 @@ public class RenewalWorker extends BaseSigner {
         errors.addAll(fatalErrors);
         return errors;
     }
-    
-    
 }

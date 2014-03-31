@@ -3383,7 +3383,7 @@ can sign any document-type and produces the output in Cryptographic Message Synt
 Properties that have common use among most signers:
                     </p>
                     <p>
-<b>INCLUDE_CERTIFICATE_LEVELS</b> = Number of certificate levels to include. This property is supported for all signer except MRTDSODSigner, MRTDSigner, and MSAuthCodeTimeStampSigner. The property is optional and defaults to include all certificates in the chain, except for XAdESSigner, where the default is to only include one certificate (the signing certificate). Setting this to 0 (include no certificates) is not supported for TimeStampSigner. To include all certificates specify at least the same value as number of certificates in the certificate chain.
+<b>INCLUDE_CERTIFICATE_LEVELS</b> = Number of certificate levels to include. This property is supported for all signers except MRTDSODSigner, MRTDSigner, and MSAuthCodeTimeStampSigner. The property is optional and defaults to include all certificates in the chain, except for XAdESSigner, where the default is to only include one certificate (the signing certificate). Setting this to 0 (include no certificates) is not supported for TimeStampSigner. To include all certificates specify at least the same value as number of certificates in the certificate chain.
                     </p>
                 </subsection>
 

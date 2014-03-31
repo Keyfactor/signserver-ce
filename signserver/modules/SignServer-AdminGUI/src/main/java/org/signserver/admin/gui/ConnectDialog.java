@@ -36,10 +36,11 @@ import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
-
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.KeyManager;
@@ -111,6 +112,9 @@ public class ConnectDialog extends javax.swing.JDialog {
     }
     private String selectedKeyAlias;
     private X509Certificate adminCertificate;
+    
+    /** Cache of loaded (PKCS#11 currently only) keystores, to not create a new one when already logged in. */
+    private static final Map<String, KeyStore> LOADED_KESTORES = new HashMap<String, KeyStore>();
 
     /** Creates new form ConnectDialog. */
     public ConnectDialog(final Frame parent, final boolean modal,
@@ -829,54 +833,58 @@ public class ConnectDialog extends javax.swing.JDialog {
     }
 
     private static KeyStore getLoadedKeystorePKCS11(final String name, final File library, final char[] authCode, KeyStore.CallbackHandlerProtection callbackHandlerProtection) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException {
-        final KeyStore keystore;
-
-        final InputStream config = new ByteArrayInputStream(
-            new StringBuilder().append("name=").append(name).append("\n")
-                    .append("library=").append(library.getAbsolutePath())
-                    .toString().getBytes());
+        final String keystoreName = library.getCanonicalPath();
+        KeyStore keystore = LOADED_KESTORES.get(keystoreName);
         
-        try {
-	        Class<?> klass = Class.forName("sun.security.pkcs11.SunPKCS11");
-	        // find constructor taking one argument of type InputStream
-	        Class<?>[] parTypes = new Class[1];
-	        parTypes[0] = InputStream.class;
-	        
-        	Constructor<?> ctor = klass.getConstructor(parTypes);	        
-	        Object[] argList = new Object[1];
-	        argList[0] = config;
-	        Provider provider = (Provider) ctor.newInstance(argList);
-	
-	        Security.addProvider(provider);
-	
-	        final KeyStore.Builder builder = KeyStore.Builder.newInstance("PKCS11",
-	                provider, callbackHandlerProtection);
-	
-	        keystore = builder.getKeyStore();
-	        keystore.load(null, authCode);
-	
-	        final Enumeration<String> e = keystore.aliases();
-	        while( e.hasMoreElements() ) {
-	            final String keyAlias = e.nextElement();
-	            if (LOG.isDebugEnabled()) {
-	                LOG.debug("******* keyAlias: " + keyAlias
-	                        + ", certificate: "
-	                        + ((X509Certificate) keystore.getCertificate(keyAlias))
-	                            .getSubjectDN().getName());
-	            }
-	        }
-	        return keystore;
-        } catch (NoSuchMethodException nsme) {
-	        throw new KeyStoreException("Could not find constructor for keystore provider.");
-        } catch (InstantiationException ie) {
-        	throw new KeyStoreException("Failed to instantiate keystore provider.");
-        } catch (ClassNotFoundException ncdfe) {
-        	throw new KeyStoreException("Unsupported keystore provider.");
-        } catch (InvocationTargetException ite) {
-        	throw new KeyStoreException("Could not initialize provider.");
-        } catch (Exception e) {
-        	throw new KeyStoreException("Error: " + e.getMessage());
+        if (keystore == null) {
+            final InputStream config = new ByteArrayInputStream(
+                new StringBuilder().append("name=").append(name).append("\n")
+                        .append("library=").append(library.getAbsolutePath())
+                        .toString().getBytes());
+
+            try {
+                    Class<?> klass = Class.forName("sun.security.pkcs11.SunPKCS11");
+                    // find constructor taking one argument of type InputStream
+                    Class<?>[] parTypes = new Class[1];
+                    parTypes[0] = InputStream.class;
+
+                    Constructor<?> ctor = klass.getConstructor(parTypes);	        
+                    Object[] argList = new Object[1];
+                    argList[0] = config;
+                    Provider provider = (Provider) ctor.newInstance(argList);
+
+                    Security.addProvider(provider);
+
+                    final KeyStore.Builder builder = KeyStore.Builder.newInstance("PKCS11",
+                            provider, callbackHandlerProtection);
+
+                    keystore = builder.getKeyStore();
+                    keystore.load(null, authCode);
+
+                    final Enumeration<String> e = keystore.aliases();
+                    while( e.hasMoreElements() ) {
+                        final String keyAlias = e.nextElement();
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("******* keyAlias: " + keyAlias
+                                    + ", certificate: "
+                                    + ((X509Certificate) keystore.getCertificate(keyAlias))
+                                        .getSubjectDN().getName());
+                        }
+                    }
+                    LOADED_KESTORES.put(keystoreName, keystore);
+            } catch (NoSuchMethodException nsme) {
+                    throw new KeyStoreException("Could not find constructor for keystore provider.");
+            } catch (InstantiationException ie) {
+                    throw new KeyStoreException("Failed to instantiate keystore provider.");
+            } catch (ClassNotFoundException ncdfe) {
+                    throw new KeyStoreException("Unsupported keystore provider.");
+            } catch (InvocationTargetException ite) {
+                    throw new KeyStoreException("Could not initialize provider.");
+            } catch (Exception e) {
+                    throw new KeyStoreException("Error: " + e.getMessage());
+            }
         }
+        return keystore;
     }
 
     private static KeyStore getLoadedKeystoreCSP(final String storeType, KeyStore.CallbackHandlerProtection callbackHandlerProtection) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException {

@@ -115,8 +115,17 @@ public class RenewalWorker extends BaseSigner {
     @Override
     public void init(final int workerId, final WorkerConfig config,
             final WorkerContext workerContext, final EntityManager workerEM) {
-        super.init(workerId, config, workerContext, workerEM);
+        initInternal(workerId, config, workerContext, workerEM);
         getWorkerSession();
+    }
+    
+    /**
+     * Internal init method used by the unit test to initialize configuration
+     * without looking up the worker session.
+     */
+    void initInternal(final int workerId, final WorkerConfig config,
+            final WorkerContext workerContext, final EntityManager workerEM) {
+        super.init(workerId, config, workerContext, workerEM);
         
         fatalErrors = new LinkedList<String>();
         setupConfig();
@@ -829,7 +838,17 @@ public class RenewalWorker extends BaseSigner {
     protected List<String> getFatalErrors() {
         final List<String> errors = super.getFatalErrors();
         
-        errors.addAll(fatalErrors);
+        errors.addAll(getLocalFatalErrors());
         return errors;
+    }
+    
+    /**
+     * Internal method used by the unit test to get locally
+     * added fatal errors, bypassing the token setup in BaseProcessable.
+     * 
+     * @return List of fatal errors added in this class.
+     */
+    List<String> getLocalFatalErrors() {
+        return fatalErrors;
     }
 }

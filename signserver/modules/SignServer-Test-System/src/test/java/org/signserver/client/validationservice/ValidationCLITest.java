@@ -35,9 +35,9 @@ import org.signserver.testutils.CLITestHelper;
 import static org.signserver.testutils.CLITestHelper.assertPrinted;
 import org.signserver.testutils.TestingSecurityManager;
 import org.signserver.validationservice.server.ValidationTestUtils;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
+import org.signserver.testutils.ModulesTestCase;
 
 /**
  * Tests for the ValidateCertificateCommand.
@@ -45,7 +45,7 @@ import org.junit.Test;
  * @version $Id$
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class ValidationCLITest {
+public class ValidationCLITest extends ModulesTestCase {
 
     private static String signserverhome;
     
@@ -136,30 +136,30 @@ public class ValidationCLITest {
     public void test02ValidationCLI() throws Exception {
         final String jksFile = new File(new File(signserverhome), "p12/truststore.jks").getAbsolutePath();
 
-        assertEquals(CommandLineInterface.RETURN_SUCCESS, clientCLI.execute("validatecertificate", "-hosts", "localhost", "-service", "16", "-cert", validcert1path, "-truststore", jksFile, "-truststorepwd", "changeit"));
-        int result = clientCLI.execute("validatecertificate", "-hosts", "localhost", "-cert", validcert1path, "-truststore", jksFile, "-truststorepwd", "changeit");
+        assertEquals(CommandLineInterface.RETURN_SUCCESS, clientCLI.execute("validatecertificate", "-hosts", getHTTPHost(), "-service", "16", "-cert", validcert1path, "-truststore", jksFile, "-truststorepwd", "changeit", "-port", String.valueOf(getPublicHTTPSPort())));
+        int result = clientCLI.execute("validatecertificate", "-hosts", getHTTPHost(), "-cert", validcert1path, "-truststore", jksFile, "-truststorepwd", "changeit", "-port", String.valueOf(getPublicHTTPSPort()));
         assertEquals(ValidateCertificateCommand.RETURN_BADARGUMENT, result);
-        result = clientCLI.execute("validatecertificate", "-service", "16", "-cert", validcert1path, "-truststore", jksFile, "-truststorepwd", "changeit");
+        result = clientCLI.execute("validatecertificate", "-service", "16", "-cert", validcert1path, "-truststore", jksFile, "-truststorepwd", "changeit", "-port", String.valueOf(getPublicHTTPSPort()));
         assertEquals(ValidateCertificateCommand.RETURN_BADARGUMENT, result);
-        result = clientCLI.execute("validatecertificate", "-hosts", "localhost", "-service", "16", "-der", "-pem", "-cert", validcert1path, "-truststore", jksFile, "-truststorepwd", "changeit");
+        result = clientCLI.execute("validatecertificate", "-hosts", getHTTPHost(), "-service", "16", "-der", "-pem", "-cert", validcert1path, "-truststore", jksFile, "-truststorepwd", "changeit", "-port", String.valueOf(getPublicHTTPSPort()));
         assertEquals(ValidateCertificateCommand.RETURN_BADARGUMENT, result);
-        assertEquals(CommandLineInterface.RETURN_SUCCESS, clientCLI.execute("validatecertificate", "-hosts", "localhost", "-service", "16", "-pem", "-cert", validcert1path, "-truststore", jksFile, "-truststorepwd", "changeit"));
-        assertEquals(CommandLineInterface.RETURN_SUCCESS, clientCLI.execute("validatecertificate", "-hosts", "localhost", "-service", "16", "-der", "-port", "8442", "-cert", validcert1derpath, "-truststore", jksFile, "-truststorepwd", "changeit"));
-        result = clientCLI.execute("validatecertificate", "-hosts", "localhost", "-service", "16", "-der", "-port", "8442", "-cert", revokedcertpath, "-truststore", jksFile, "-truststorepwd", "changeit");
+        assertEquals(CommandLineInterface.RETURN_SUCCESS, clientCLI.execute("validatecertificate", "-hosts", getHTTPHost(), "-service", "16", "-pem", "-cert", validcert1path, "-truststore", jksFile, "-truststorepwd", "changeit", "-port", String.valueOf(getPublicHTTPSPort())));
+        assertEquals(CommandLineInterface.RETURN_SUCCESS, clientCLI.execute("validatecertificate", "-hosts", getHTTPHost(), "-service", "16", "-der", "-port", String.valueOf(getPublicHTTPSPort()), "-cert", validcert1derpath, "-truststore", jksFile, "-truststorepwd", "changeit"));
+        result = clientCLI.execute("validatecertificate", "-hosts", getHTTPHost(), "-service", "16", "-der", "-port", String.valueOf(getPublicHTTPSPort()), "-cert", revokedcertpath, "-truststore", jksFile, "-truststorepwd", "changeit");
         assertEquals(ValidateCertificateCommand.RETURN_REVOKED, result);
-        assertEquals(CommandLineInterface.RETURN_SUCCESS, clientCLI.execute("validatecertificate", "-hosts", "localhost", "-service", "16", "-der", "-port", "8442", "-certpurposes", "IDENTIFICATION", "-cert", validcert1derpath, "-truststore", jksFile, "-truststorepwd", "changeit"));
-        assertEquals(CommandLineInterface.RETURN_SUCCESS, clientCLI.execute("validatecertificate", "-hosts", "localhost", "-service", "16", "-der", "-port", "8442", "-certpurposes", "IDENTIFICATION,ELECTROINIC_SIGNATURE", "-cert", validcert1derpath, "-truststore", jksFile, "-truststorepwd", "changeit"));
-        result = clientCLI.execute("validatecertificate", "-hosts", "localhost", "-service", "16", "-der", "-port", "8442", "-certpurposes", "ELECTROINIC_SIGNATURE", "-cert", revokedcertpath, "-truststore", jksFile, "-truststorepwd", "changeit");
+        assertEquals(CommandLineInterface.RETURN_SUCCESS, clientCLI.execute("validatecertificate", "-hosts", getHTTPHost(), "-service", "16", "-der", "-port", String.valueOf(getPublicHTTPSPort()), "-certpurposes", "IDENTIFICATION", "-cert", validcert1derpath, "-truststore", jksFile, "-truststorepwd", "changeit"));
+        assertEquals(CommandLineInterface.RETURN_SUCCESS, clientCLI.execute("validatecertificate", "-hosts", getHTTPHost(), "-service", "16", "-der", "-port", String.valueOf(getPublicHTTPSPort()), "-certpurposes", "IDENTIFICATION,ELECTROINIC_SIGNATURE", "-cert", validcert1derpath, "-truststore", jksFile, "-truststorepwd", "changeit"));
+        result = clientCLI.execute("validatecertificate", "-hosts", getHTTPHost(), "-service", "16", "-der", "-port", String.valueOf(getPublicHTTPSPort()), "-certpurposes", "ELECTROINIC_SIGNATURE", "-cert", revokedcertpath, "-truststore", jksFile, "-truststorepwd", "changeit");
         assertEquals(ValidateCertificateCommand.RETURN_BADCERTPURPOSE, result);
         
         // test using the HTTP protocol
         assertEquals(CommandLineInterface.RETURN_SUCCESS,
-                clientCLI.execute("validatecertificate", "-hosts", "localhost", "-service", "16", "-cert", validcert1path, "-truststore", jksFile,
-                        "-truststorepwd", "changeit", "-protocol", "HTTP"));
+                clientCLI.execute("validatecertificate", "-hosts", getHTTPHost(), "-service", "16", "-cert", validcert1path, "-truststore", jksFile,
+                        "-truststorepwd", "changeit", "-protocol", "HTTP", "-port", String.valueOf(getPublicHTTPSPort())));
         // test explicitly specifying the WEBSERVICES protocol (the default)
         assertEquals(CommandLineInterface.RETURN_SUCCESS,
-                clientCLI.execute("validatecertificate", "-hosts", "localhost", "-service", "16", "-cert", validcert1path, "-truststore", jksFile,
-                        "-truststorepwd", "changeit", "-protocol", "WEBSERVICES"));
+                clientCLI.execute("validatecertificate", "-hosts", getHTTPHost(), "-service", "16", "-cert", validcert1path, "-truststore", jksFile,
+                        "-truststorepwd", "changeit", "-protocol", "WEBSERVICES", "-port", String.valueOf(getPublicHTTPSPort())));
     }
 
     @Test

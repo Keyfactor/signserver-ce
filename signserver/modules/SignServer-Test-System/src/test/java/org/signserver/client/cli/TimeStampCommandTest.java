@@ -93,7 +93,9 @@ public class TimeStampCommandTest extends ModulesTestCase {
     public void test02requestATimestampOverHTTPS() throws Exception {
         File responseFile = File.createTempFile("signserver-" + this.getClass().getName() + "-response2-", null);
         responseFile.deleteOnExit();
-        assertEquals(CommandLineInterface.RETURN_SUCCESS, cli.execute("timestamp", "-instr", "Any text we want to have a timestamp for...123", "-outrep", responseFile.getAbsolutePath(), "-url", "https://localhost:8442/signserver/tsa?workerId=" + WORKER1, "-truststore", getTestUtils().getTruststoreFile().getAbsolutePath(), "-truststorepwd", getTestUtils().getTrustStorePassword()));
+        assertEquals(CommandLineInterface.RETURN_SUCCESS, cli.execute("timestamp", "-instr", "Any text we want to have a timestamp for...123", "-outrep", responseFile.getAbsolutePath(), 
+                "-url", "https://" + getHTTPHost() + ":" + getPublicHTTPSPort() + "/signserver/tsa?workerId=" + WORKER1, 
+                "-truststore", getTestUtils().getTruststoreFile().getAbsolutePath(), "-truststorepwd", getTestUtils().getTrustStorePassword()));
         InputStream in = null;
         try {
             in = new FileInputStream(responseFile);

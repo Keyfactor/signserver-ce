@@ -24,7 +24,6 @@ import org.signserver.common.GenericSignRequest;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerUtil;
 import org.signserver.testutils.*;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -41,9 +40,12 @@ public class RemoteAddressAuthorizerTest extends ModulesTestCase {
     private static final Logger LOG = Logger.getLogger(
             RemoteAddressAuthorizerTest.class);
 
+    private String localIP;
+    
     @Before
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
+        localIP = getClientIP();
     }
 
     @Test
@@ -68,7 +70,7 @@ public class RemoteAddressAuthorizerTest extends ModulesTestCase {
     @Test
     public void test01noAllowFrom() throws Exception {
         int responseCode = process(
-                new URL("http://localhost:" + getPublicHTTPPort()
+                new URL(getPreferredHTTPProtocol() + getHTTPHost() + ":" + getPreferredHTTPPort()
                 + "/signserver/process?workerId="
                 + getSignerIdDummy1() + "&data=%3Croot/%3E"));
 
@@ -84,11 +86,11 @@ public class RemoteAddressAuthorizerTest extends ModulesTestCase {
     public void test02RequestFromLocalhost() throws Exception {
 
         workerSession.setWorkerProperty(getSignerIdDummy1(),
-                "ALLOW_FROM", "127.0.0.1");
+                "ALLOW_FROM", localIP);
         workerSession.reloadConfiguration(getSignerIdDummy1());
 
         int responseCode = process(
-                new URL("http://localhost:" + getPublicHTTPPort()
+                new URL(getPreferredHTTPProtocol() + getHTTPHost() + ":" + getPreferredHTTPPort()
                 + "/signserver/process?workerId="
                 + getSignerIdDummy1() + "&data=%3Croot/%3E"));
 
@@ -108,7 +110,7 @@ public class RemoteAddressAuthorizerTest extends ModulesTestCase {
         workerSession.reloadConfiguration(getSignerIdDummy1());
 
         int responseCode = process(
-                new URL("http://localhost:" + getPublicHTTPPort()
+                new URL(getPreferredHTTPProtocol() + getHTTPHost() + ":" + getPreferredHTTPPort()
                 + "/signserver/process?workerId="
                 + getSignerIdDummy1() + "&data=%3Croot/%3E"));
 
@@ -123,18 +125,18 @@ public class RemoteAddressAuthorizerTest extends ModulesTestCase {
     @Test
     public void test04RequestFromOtherAllowed() throws Exception {
         workerSession.setWorkerProperty(getSignerIdDummy1(), "ALLOW_FROM",
-                "113.113.113.113, 127.0.0.1");
+                "113.113.113.113, " + localIP);
         workerSession.reloadConfiguration(getSignerIdDummy1());
 
         int responseCode = process(new URL(
-                "http://localhost:" + getPublicHTTPPort()
+                getPreferredHTTPProtocol() + getHTTPHost() + ":" + getPreferredHTTPPort()
                 + "/signserver/process?workerId="
                 + getSignerIdDummy1() + "&data=%3Croot/%3E"));
         assertEquals("HTTP response code", 200, responseCode);
 
         // First interface should still work
         responseCode = process(new URL(
-                "http://localhost:" + getPublicHTTPPort()
+                getPreferredHTTPProtocol() + getHTTPHost() + ":" + getPreferredHTTPPort()
                 + "/signserver/process?workerId="
                 + getSignerIdDummy1() + "&data=%3Croot/%3E"));
         assertEquals("HTTP response code", 200, responseCode);
@@ -145,7 +147,7 @@ public class RemoteAddressAuthorizerTest extends ModulesTestCase {
         // No address is provided with EJB unless the requestor fills it in
         // manually so add null to be an accepted address
         workerSession.setWorkerProperty(getSignerIdDummy1(), "ALLOW_FROM",
-                "127.0.0.1, null, 127.0.1.1");
+                localIP + ", null, 127.0.1.1");
         workerSession.reloadConfiguration(getSignerIdDummy1());
 
         final GenericSignRequest request =
@@ -171,11 +173,11 @@ public class RemoteAddressAuthorizerTest extends ModulesTestCase {
     @Test
     public void test06RequestWithAdditionalIPv6Address() throws Exception {
         workerSession.setWorkerProperty(getSignerIdDummy1(), "ALLOW_FROM",
-                "127.0.0.1, 3ffe:1900:4545:3:200:f8ff:fe21:67cf");
+                localIP + ", 3ffe:1900:4545:3:200:f8ff:fe21:67cf");
         workerSession.reloadConfiguration(getSignerIdDummy1());
         
         int responseCode = process(
-                new URL("http://localhost:" + getPublicHTTPPort()
+                new URL(getPreferredHTTPProtocol() + getHTTPHost() + ":" + getPreferredHTTPPort()
                 + "/signserver/process?workerId="
                 + getSignerIdDummy1() + "&data=%3Croot/%3E"));
 

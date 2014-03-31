@@ -21,7 +21,6 @@ import org.junit.runners.MethodSorters;
 import org.signserver.common.ServiceLocator;
 import org.signserver.statusrepo.IStatusRepositorySession;
 import org.signserver.statusrepo.common.StatusName;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -42,12 +41,13 @@ public class HealthCheckTest extends WebTestCase {
   
     @Override
     protected String getServletURL() {
-        return "http://localhost:8080/signserver/healthcheck/signserverhealth";
+        return getPreferredHTTPProtocol() + getHTTPHost() + ":" + getPreferredHTTPPort() + "/signserver/healthcheck/signserverhealth";
     }
     
     
 
     @Before
+    @Override
     public void setUp() throws Exception {
         repository = ServiceLocator.getInstance().lookupRemote(
                 IStatusRepositorySession.IRemote.class);
@@ -67,6 +67,7 @@ public class HealthCheckTest extends WebTestCase {
 
     /**
      * Test that Health check returns ALLOK.
+     * @throws java.lang.Exception
      */
     @Test
     public void test01AllOk() throws Exception {
@@ -77,6 +78,7 @@ public class HealthCheckTest extends WebTestCase {
     
     /**
      * Tests that an error message is returned when the crypto token is offline.
+     * @throws java.lang.Exception
      */
     @Test
     public void test02CryptoTokenOffline() throws Exception {
@@ -97,6 +99,7 @@ public class HealthCheckTest extends WebTestCase {
     
     /**
      * Tests that a time stamp signer with a timesource not insync results in a healthcheck error
+     * @throws java.lang.Exception
      */
     @Test
     public void test03TimeSourceNotInsync() throws Exception {
@@ -122,6 +125,7 @@ public class HealthCheckTest extends WebTestCase {
     
     /**
      * Test the down-for-maintenance functionality
+     * @throws java.lang.Exception
      */
     @Test
     public void test04DownForMaintenance() throws Exception {

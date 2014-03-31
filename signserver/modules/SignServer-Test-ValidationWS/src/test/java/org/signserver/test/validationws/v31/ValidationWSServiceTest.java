@@ -21,6 +21,7 @@ import java.util.Properties;
 import javax.xml.namespace.QName;
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
+import org.signserver.testutils.ModulesTestCase;
 import org.signserver.validationservice.common.ValidationServiceConstants;
 
 /**
@@ -32,15 +33,15 @@ import org.signserver.validationservice.common.ValidationServiceConstants;
  * @author Markus Kilås
  * @version $Id$
  */
-public class ValidationWSServiceTest extends TestCase {
+public class ValidationWSServiceTest extends ModulesTestCase {
 
     /** Logger for this class. */
     private static final Logger LOG
             = Logger.getLogger(ValidationWSServiceTest.class);
 
     /** Endpoint URL. */
-    private static final String ENDPOINT =
-            "https://localhost:8442/signserver/validationws/validationws?wsdl";
+    private final String ENDPOINT =
+            "https://" + getHTTPHost() + ":" + getPublicHTTPSPort() + "/signserver/validationws/validationws?wsdl";
 
     private static final String[] CONF_FILES = {
         "signserver_build.properties",
@@ -85,8 +86,8 @@ public class ValidationWSServiceTest extends TestCase {
 
     private ValidationWS ws;
 
-    public ValidationWSServiceTest(String testName) {
-        super(testName);
+    public ValidationWSServiceTest() {
+        super();
         setupKeystores();
     }
 

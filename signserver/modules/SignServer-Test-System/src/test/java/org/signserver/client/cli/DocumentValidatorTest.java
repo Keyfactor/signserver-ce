@@ -115,11 +115,13 @@ public class DocumentValidatorTest extends ModulesTestCase {
                             execute("validatedocument",
                                     "-workername", "TestXMLValidator",
                                     "-data", XMLValidatorTestData.TESTXML1,
+                                    "-host", getHTTPHost(), "-port", String.valueOf(getPublicHTTPSPort()),
                                     "-truststore", new File(new File(signserverhome), "p12/truststore.jks").getAbsolutePath(),
                                     "-truststorepwd", getTruststorePassword()) :
                             execute("validatedocument",
                                     "-workername", "TestXMLValidator",
                                     "-data", XMLValidatorTestData.TESTXML1,
+                                    "-host", getHTTPHost(), "-port", String.valueOf(getPublicHTTPSPort()),
                                     "-truststore", new File(new File(signserverhome), "p12/truststore.jks").getAbsolutePath(),
                                     "-truststorepwd", getTruststorePassword(),
                                     "-protocol", protocol));
@@ -152,10 +154,12 @@ public class DocumentValidatorTest extends ModulesTestCase {
                     new String(protocol == null ?
                             execute("validatedocument", "-workername",
                                     "TestXMLValidator", "-infile", doc.getAbsolutePath(),
+                                    "-host", getHTTPHost(), "-port", String.valueOf(getPublicHTTPSPort()),
                                     "-truststore", new File(new File(signserverhome), "p12/truststore.jks").getAbsolutePath(),
                                     "-truststorepwd", getTruststorePassword()) :
                             execute("validatedocument", "-workername",
                                     "TestXMLValidator", "-infile", doc.getAbsolutePath(),
+                                    "-host", getHTTPHost(), "-port", String.valueOf(getPublicHTTPSPort()),
                                     "-truststore", new File(new File(signserverhome), "p12/truststore.jks").getAbsolutePath(),
                                     "-truststorepwd", getTruststorePassword(),
                                     "-protocol", protocol));

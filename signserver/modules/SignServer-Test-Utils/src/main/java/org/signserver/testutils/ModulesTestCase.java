@@ -568,6 +568,23 @@ public class ModulesTestCase extends TestCase {
     protected int getPrivateHTTPSPort() {
         return Integer.parseInt(config.getProperty("httpserver.privhttps"));
     }
+    
+    protected String getHTTPHost() {
+        return config.getProperty("httpserver.hostname", "localhost");
+    }
+    
+    protected String getPreferredHTTPProtocol() {
+        return config.getProperty("httpserver.prefproto", "http://");
+    }
+    
+    protected int getPreferredHTTPPort() {
+        return Integer.parseInt(config.getProperty("httpserver.prefport", config.getProperty("httpserver.pubhttp")));
+    }
+    
+    /** @return IP used by JUnit tests to access SignServer through the HTTPHost. */
+    protected String getClientIP() {
+        return config.getProperty("httpclient.ipaddress", "127.0.0.1");
+    }
 
     /** Setup keystores for SSL. **/
     protected void setupSSLKeystores() {

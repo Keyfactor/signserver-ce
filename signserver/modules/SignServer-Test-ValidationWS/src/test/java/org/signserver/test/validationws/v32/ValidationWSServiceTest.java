@@ -30,10 +30,10 @@ public class ValidationWSServiceTest extends org.signserver.test.validationws.v3
             = Logger.getLogger(ValidationWSServiceTest.class);
 
     /** Endpoint URL. */
-    private static final String ENDPOINT = "https://localhost:8442/signserver/ValidationWSService/ValidationWS?wsdl";
+    private final String ENDPOINT = "https://" + getHTTPHost() + ":" + getPublicHTTPSPort() + "/signserver/ValidationWSService/ValidationWS?wsdl";
 
-    public ValidationWSServiceTest(String testName) {
-        super(testName);
+    public ValidationWSServiceTest() {
+        super();
         setupKeystores();
     }
 

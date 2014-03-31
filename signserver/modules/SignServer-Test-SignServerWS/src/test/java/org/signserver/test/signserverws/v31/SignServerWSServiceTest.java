@@ -41,6 +41,7 @@ import org.signserver.test.signserverws.signserverws.v31
 import org.signserver.test.signserverws.signserverws.v31.SignServerWS;
 import org.signserver.test.signserverws.signserverws.v31.SignServerWSService;
 import org.signserver.test.signserverws.signserverws.v31.WorkerStatusWS;
+import org.signserver.testutils.ModulesTestCase;
 
 /**
  * Test calling SignServerWSService using SignServer 3.1 WSDL.
@@ -51,15 +52,15 @@ import org.signserver.test.signserverws.signserverws.v31.WorkerStatusWS;
  * @author Markus Kilås
  * @version $Id$
  */
-public class SignServerWSServiceTest extends TestCase {
+public class SignServerWSServiceTest extends ModulesTestCase {
 
     /** Logger for this class. */
     private static final Logger LOG
             = Logger.getLogger(SignServerWSServiceTest.class);
 
     /** Endpoint URL. */
-    private static final String ENDPOINT =
-            "https://localhost:8442/signserver/signserverws/signserverws?wsdl";
+    private final String ENDPOINT =
+            "https://" + getHTTPHost() + ":" + getPublicHTTPSPort() + "/signserver/signserverws/signserverws?wsdl";
 
     private static final String[] CONF_FILES = {
         "signserver_build.properties",
@@ -76,8 +77,8 @@ public class SignServerWSServiceTest extends TestCase {
     
     private SignServerWS ws;
 
-    public SignServerWSServiceTest(String testName) {
-        super(testName);
+    public SignServerWSServiceTest() {
+        super();
         setupKeystores();
     }
 

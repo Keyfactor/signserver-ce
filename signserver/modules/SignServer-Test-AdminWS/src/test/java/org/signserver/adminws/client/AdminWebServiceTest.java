@@ -25,6 +25,7 @@ import java.util.Properties;
 import javax.xml.namespace.QName;
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
+import org.signserver.testutils.ModulesTestCase;
 
 /**
  * Tests for the Admin WS interface. Currently only tests that each operation
@@ -33,7 +34,7 @@ import org.apache.log4j.Logger;
  * @author Markus Kilås
  * @version $Id$
  */
-public class AdminWebServiceTest extends TestCase {
+public class AdminWebServiceTest extends ModulesTestCase {
     
     /** Logger for this class. **/
     private static final Logger LOG = Logger.getLogger(AdminWebServiceTest.class);
@@ -60,8 +61,7 @@ public class AdminWebServiceTest extends TestCase {
     private AdminWS adminWS;
 
 
-    public AdminWebServiceTest(String testName) {
-        super(testName);
+    public AdminWebServiceTest() {
         setupKeystores();
     }
 
@@ -113,7 +113,7 @@ public class AdminWebServiceTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
         final AdminWSService service = new AdminWSService(
-                new URL("https://localhost:8442/signserver/AdminWSService/AdminWS?wsdl"),
+                new URL("https://" + getHTTPHost() + ":" + getPublicHTTPSPort() + "/signserver/AdminWSService/AdminWS?wsdl"),
                 new QName("http://adminws.signserver.org/",
                     "AdminWSService"));
         adminWS = service.getAdminWSPort();

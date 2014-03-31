@@ -174,7 +174,8 @@ public class DocumentSignerTest extends ModulesTestCase {
             byte[] res = execute("signdocument", "-workername", 
                     "TestPDFSigner", "-infile", signserverhome + "/res/test/pdf/sample-open123.pdf",
                     "-pdfpassword", "open123", "-protocol", "WEBSERVICES",
-                    "-truststore", signserverhome + "/p12/truststore.jks", "-truststorepwd", "changeit");
+                    "-truststore", signserverhome + "/p12/truststore.jks", "-truststorepwd", "changeit",
+                    "-host", getHTTPHost(), "-port", String.valueOf(getPublicHTTPSPort()));
             assertNotNull("No result", res);
             assertNotSame("Empty result", 0, res.length);
         } catch (IllegalCommandArgumentsException ex) {
@@ -195,7 +196,8 @@ public class DocumentSignerTest extends ModulesTestCase {
             byte[] res = execute("signdocument", "-workername", 
                     "TestPDFSigner", "-infile", signserverhome + "/res/test/pdf/sample-open123.pdf",
                     "-pdfpassword", "open123", "-protocol", "CLIENTWS",
-                    "-truststore", signserverhome + "/p12/truststore.jks", "-truststorepwd", "changeit");
+                    "-truststore", signserverhome + "/p12/truststore.jks", "-truststorepwd", "changeit",
+                    "-host", getHTTPHost(), "-port", String.valueOf(getPublicHTTPSPort()));
             assertNotNull("No result", res);
             assertNotSame("Empty result", 0, res.length);
         } catch (IllegalCommandArgumentsException ex) {
@@ -214,7 +216,8 @@ public class DocumentSignerTest extends ModulesTestCase {
             final String res = new String(execute("signdocument", "-workername", "TestXMLSigner",
             		"-data", "<root/>", "-protocol", "WEBSERVICES",
             		"-servlet", "/signserver/SignServerWSService/SignServerWS?wsdl",
-            		"-truststore", signserverhome + "/p12/truststore.jks", "-truststorepwd", "changeit"));
+            		"-truststore", signserverhome + "/p12/truststore.jks", "-truststorepwd", "changeit",
+                        "-host", getHTTPHost(), "-port", String.valueOf(getPublicHTTPSPort())));
             assertTrue("contains signature tag: "
                     + res, res.contains("<root><Signature"));
         } catch (IllegalCommandArgumentsException ex) {
@@ -233,7 +236,8 @@ public class DocumentSignerTest extends ModulesTestCase {
             final String res = new String(execute("signdocument", "-workername", "TestXMLSigner",
             		"-data", "<root/>", "-protocol", "CLIENTWS",
             		"-servlet", "/signserver/ClientWSService/ClientWS?wsdl",
-            		"-truststore", signserverhome + "/p12/truststore.jks", "-truststorepwd", "changeit"));
+            		"-truststore", signserverhome + "/p12/truststore.jks", "-truststorepwd", "changeit",
+                        "-host", getHTTPHost(), "-port", String.valueOf(getPublicHTTPSPort())));
             assertTrue("contains signature tag: "
                     + res, res.contains("<root><Signature"));
         } catch (IllegalCommandArgumentsException ex) {
@@ -252,7 +256,8 @@ public class DocumentSignerTest extends ModulesTestCase {
             final String res = new String(execute("signdocument", "-workername", "TestXMLSigner",
                         "-data", "<root/>", "-protocol", "WEBSERVICES",
                         "-servlet", "/signserver/signserverws/signserverws?wsdl",
-                        "-truststore", signserverhome + "/p12/truststore.jks", "-truststorepwd", "changeit"));
+                        "-truststore", signserverhome + "/p12/truststore.jks", "-truststorepwd", "changeit",
+                        "-host", getHTTPHost(), "-port", String.valueOf(getPublicHTTPSPort())));
             assertTrue("contains signature tag: "
                     + res, res.contains("<root><Signature"));
         } catch (IllegalCommandArgumentsException ex) {
@@ -271,7 +276,8 @@ public class DocumentSignerTest extends ModulesTestCase {
             final String res = new String(execute("signdocument", "-workername", "TestXMLSigner",
                         "-data", "<root/>", "-protocol", "WEBSERVICES",
                         "-servlet", "/signserver/nonexistant/wsurl",
-                        "-truststore", signserverhome + "/p12/truststore.jks", "-truststorepwd", "changeit"));
+                        "-truststore", signserverhome + "/p12/truststore.jks", "-truststorepwd", "changeit",
+                        "-host", getHTTPHost(), "-port", String.valueOf(getPublicHTTPSPort())));
             fail("Should not accept invalid WS -servlet argument");
         } catch (IllegalCommandArgumentsException ex) {
             LOG.error("Execution failed", ex);
@@ -291,7 +297,8 @@ public class DocumentSignerTest extends ModulesTestCase {
             final String res = new String(execute("signdocument", "-workername", "TestXMLSigner",
                         "-data", "<root/>", "-protocol", "CLIENTWS",
                         "-servlet", "/signserver/nonexistant/wsurl",
-                        "-truststore", signserverhome + "/p12/truststore.jks", "-truststorepwd", "changeit"));
+                        "-truststore", signserverhome + "/p12/truststore.jks", "-truststorepwd", "changeit",
+                        "-host", getHTTPHost(), "-port", String.valueOf(getPublicHTTPSPort())));
             fail("Should not accept invalid WS -servlet argument");
         } catch (IllegalCommandArgumentsException ex) {
             LOG.error("Execution failed", ex);

@@ -41,7 +41,7 @@ public class AdminGUIDistTest extends WebTestCase {
     /** Tests that there is an link to the download page on the front page. */
     @Test
     public void testFirstPageAdminGUILinkAvailable() throws Exception {
-        this.pageURL = "http://localhost:8080/signserver/";
+        this.pageURL = getPreferredHTTPProtocol() + getHTTPHost() + ":" + getPreferredHTTPPort() + "/signserver/";
         final String body = new String(sendAndReadyBody(NO_FIELDS));
         assertTrue("Contains <a href=\"admingui-dist/\">: " + body, body.contains("<a href=\"admingui-dist/\">"));
     }
@@ -50,7 +50,7 @@ public class AdminGUIDistTest extends WebTestCase {
     @Test
     public void testAdminGUIPageDownloadLinkAvailable() throws Exception {
         LOG.info("This test assumes web.admingui.dist.enabled=true in signserver_build.properties");
-        this.pageURL = "http://localhost:8080/signserver/admingui-dist/";
+        this.pageURL = getPreferredHTTPProtocol() + getHTTPHost() + ":" + getPreferredHTTPPort() + "/signserver/admingui-dist/";
         final String body = new String(sendAndReadyBody(NO_FIELDS));
         assertTrue("Contains <a href=\"signserver-admingui.zip\">: " + body, body.contains("<a href=\"signserver-admingui.zip\">"));
     }
@@ -59,7 +59,7 @@ public class AdminGUIDistTest extends WebTestCase {
     @Test
     public void testAdminGUIPageDownload() throws Exception {
         LOG.info("This test assumes web.admingui.dist.enabled=true in signserver_build.properties");
-        this.pageURL = "http://localhost:8080/signserver/admingui-dist/signserver-admingui.zip";
+        this.pageURL = getPreferredHTTPProtocol() + getHTTPHost() + ":" + getPreferredHTTPPort() + "/signserver/admingui-dist/signserver-admingui.zip";
         assertStatusReturned(NO_FIELDS, 200);
     }
 }

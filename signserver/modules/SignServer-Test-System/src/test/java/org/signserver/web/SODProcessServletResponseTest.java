@@ -39,7 +39,7 @@ public class SODProcessServletResponseTest extends WebTestCase {
 
     @Override
     protected String getServletURL() {
-        return "http://localhost:8080/signserver/sod";
+        return getPreferredHTTPProtocol() + getHTTPHost() + ":" + getPreferredHTTPPort() + "/signserver/sod";
     }
 
     /**

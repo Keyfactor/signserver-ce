@@ -43,9 +43,13 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
     private static final Logger LOG = Logger.getLogger(
             ListBasedAddressAuthorizerTest.class);
 
+    private String localIP;
+    
     @Before
+    @Override
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
+        localIP = getClientIP();
     }
 
     @Test
@@ -70,10 +74,10 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
     @Test
     public void test01WhitelistedDirectAddressAllowed() throws Exception {
         LOG.info(">test01WhitelistedDirectAddressAllowed");
-        setPropertiesAndReload("127.0.0.1", null, null, "1.2.3.4");
+        setPropertiesAndReload(localIP, null, null, "1.2.3.4");
         
         int responseCode = process(
-                new URL("http://localhost:" + getPublicHTTPPort()
+                new URL(getPreferredHTTPProtocol() + getHTTPHost() + ":" + getPreferredHTTPPort()
                 + "/signserver/process?workerId="
                 + getSignerIdDummy1() + "&data=%3Croot/%3E"));
         assertEquals("HTTP response code", 200, responseCode);
@@ -91,7 +95,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
        setPropertiesAndReload("1.2.3.4", null, null, "1.2.3.4");
        
        int responseCode = process(
-               new URL("http://localhost:" + getPublicHTTPPort()
+               new URL(getPreferredHTTPProtocol() + getHTTPHost() + ":" + getPreferredHTTPPort()
                + "/signserver/process?workerId="
                + getSignerIdDummy1() + "&data=%3Croot/%3E"));
        
@@ -107,10 +111,10 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
     @Test
     public void test03WhitelistedDirectAddressAllowedSeveral() throws Exception {
         LOG.info(">test03WhitelistedDirectAddressAllowedSeveral");
-        setPropertiesAndReload("127.0.0.1, 1.2.3.4", null, null, "1.2.3.4");
+        setPropertiesAndReload(localIP + ", 1.2.3.4", null, null, "1.2.3.4");
       
         int responseCode = process(
-                new URL("http://localhost:" + getPublicHTTPPort()
+                new URL(getPreferredHTTPProtocol() + getHTTPHost() + ":" + getPreferredHTTPPort()
                 + "/signserver/process?workerId="
                 + getSignerIdDummy1() + "&data=%3Croot/%3E"));
         assertEquals("HTTP response code", 200, responseCode);        
@@ -126,10 +130,10 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
     @Test
     public void test04WhitelistedDirectAddressAndWhitelistedForwarded() throws Exception {
         LOG.info(">test04WhitelistedDirectAddressAndWhitelistedForwarded");
-        setPropertiesAndReload("127.0.0.1", null, "42.42.42.42", null);
+        setPropertiesAndReload(localIP, null, "42.42.42.42", null);
         
         int responseCode = process(
-                new URL("http://localhost:" + getPublicHTTPPort()
+                new URL(getPreferredHTTPProtocol() + getHTTPHost() + ":" + getPreferredHTTPPort()
                 + "/signserver/process?workerId="
                 + getSignerIdDummy1() + "&data=%3Croot/%3E"));
         assertEquals("HTTP response code", 403, responseCode);        
@@ -144,10 +148,10 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
     @Test
     public void test05WhitelistedDirectWithForwarding() throws Exception {
         LOG.info(">test05WhitelistedDirectWithForwarding");
-        setPropertiesAndReload("127.0.0.1", null, "1.2.3.4", null);
+        setPropertiesAndReload(localIP, null, "1.2.3.4", null);
        
         int responseCode = process(
-                new URL("http://localhost:" + getPublicHTTPPort()
+                new URL(getPreferredHTTPProtocol() + getHTTPHost() + ":" + getPreferredHTTPPort()
                 + "/signserver/process?workerId="
                 + getSignerIdDummy1() + "&data=%3Croot/%3E"), "1.2.3.4");
         assertEquals("HTTP response code", 200, responseCode);
@@ -162,10 +166,10 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
     @Test
     public void test06WhitelistedDirectWithForwadingNotInWhitelist() throws Exception {
         LOG.info(">test06WhitelistedDirectWithForwadingNotInWhitelist");
-        setPropertiesAndReload("127.0.0.1", null, "42.42.42.42", null);
+        setPropertiesAndReload(localIP, null, "42.42.42.42", null);
 
         int responseCode = process(
-                new URL("http://localhost:" + getPublicHTTPPort()
+                new URL(getPreferredHTTPProtocol() + getHTTPHost() + ":" + getPreferredHTTPPort()
                 + "/signserver/process?workerId="
                 + getSignerIdDummy1() + "&data=%3Croot/%3E"), "1.2.3.4");
         assertEquals("HTTP response code", 403, responseCode);
@@ -181,10 +185,10 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
     @Test
     public void test07WhitelistedDirectWithForwardingNotLastAddress() throws Exception {
         LOG.info(">test07WhitelistedDirectWithForwardingNotLastAddress");
-        setPropertiesAndReload("127.0.0.1", null, "1.2.3.4", null);
+        setPropertiesAndReload(localIP, null, "1.2.3.4", null);
 
         int responseCode = process(
-                new URL("http://localhost:" + getPublicHTTPPort()
+                new URL(getPreferredHTTPProtocol() + getHTTPHost() + ":" + getPreferredHTTPPort()
                 + "/signserver/process?workerId="
                 + getSignerIdDummy1() + "&data=%3Croot/%3E"), "1.2.3.4, 42.42.42.42");
         assertEquals("HTTP response code", 403, responseCode); 
@@ -199,10 +203,10 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
     @Test
     public void test08WhitelistedDirectWithBlacklistedForwarded() throws Exception {
         LOG.info(">test08WhitelistedDirectWithBlacklistedForwarded");
-        setPropertiesAndReload("127.0.0.1", null, null, "1.2.3.4");
+        setPropertiesAndReload(localIP, null, null, "1.2.3.4");
       
         int responseCode = process(
-                new URL("http://localhost:" + getPublicHTTPPort()
+                new URL(getPreferredHTTPProtocol() + getHTTPHost() + ":" + getPreferredHTTPPort()
                 + "/signserver/process?workerId="
                 + getSignerIdDummy1() + "&data=%3Croot/%3E"), "1.2.3.4");
         assertEquals("HTTP response code", 403, responseCode); 
@@ -216,10 +220,10 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
     @Test
     public void test09BlacklistedDirect() throws Exception {
         LOG.info(">test09BlacklistedDirect");
-        setPropertiesAndReload(null, "127.0.0.1", null, "1.2.3.4");
+        setPropertiesAndReload(null, localIP, null, "1.2.3.4");
 
         int responseCode = process(
-                new URL("http://localhost:" + getPublicHTTPPort()
+                new URL(getPreferredHTTPProtocol() + getHTTPHost() + ":" + getPreferredHTTPPort()
                 + "/signserver/process?workerId="
                 + getSignerIdDummy1() + "&data=%3Croot/%3E"));
         assertEquals("HTTP response code", 403, responseCode);
@@ -235,10 +239,10 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
     @Test
     public void test10WhitelistedDirectWithMultipleWhitelistedForwarded() throws Exception {
         LOG.info(">test10WhitelistedDirectWithMultipleWhitelistedForwarded");
-        setPropertiesAndReload("127.0.0.1", null, "1.2.3.4, 127.0.0.1", null);
+        setPropertiesAndReload(localIP, null, "1.2.3.4, 127.0.0.1", null);
         
         int responseCode = process(
-                new URL("http://localhost:" + getPublicHTTPPort()
+                new URL(getPreferredHTTPProtocol() + getHTTPHost() + ":" + getPreferredHTTPPort()
                 + "/signserver/process?workerId="
                 + getSignerIdDummy1() + "&data=%3Croot/%3E"), "1.2.3.4");
         assertEquals("HTTP response code", 200, responseCode); 
@@ -255,7 +259,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
        setPropertiesAndReload(null, null, null, null);
     
        int responseCode = process(
-               new URL("http://localhost:" + getPublicHTTPPort()
+               new URL(getPreferredHTTPProtocol() + getHTTPHost() + ":" + getPreferredHTTPPort()
                + "/signserver/process?workerId="
                + getSignerIdDummy1() + "&data=%3Croot/%3E"));
        assertEquals("HTTP response code", 500, responseCode);
@@ -270,7 +274,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
     @Test
     public void test12BothDirectAddressPropertiesSet() throws Exception {
         LOG.info(">test12BothDirectAddressPropertiesSet");
-        setPropertiesAndReload("127.0.0.1", "127.0.0.1", "127.0.0.1", null);
+        setPropertiesAndReload(localIP, localIP, localIP, null);
        
         final WorkerStatus status = workerSession.getStatus(getSignerIdDummy1());
         final List<String> fatalErrors = status.getFatalErrors();
@@ -279,7 +283,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
                 fatalErrors.contains("Only one of WHITELISTED_DIRECT_ADDRESSES and BLACKLISTED_DIRECT_ADDRESSES can be specified."));
         
         int responseCode = process(
-                new URL("http://localhost:" + getPublicHTTPPort()
+                new URL(getPreferredHTTPProtocol() + getHTTPHost() + ":" + getPreferredHTTPPort()
                 + "/signserver/process?workerId="
                 + getSignerIdDummy1() + "&data=%3Croot/%3E"));
         assertEquals("HTTP response code", 500, responseCode);
@@ -294,7 +298,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
     @Test
     public void test13BothForwardedAddressPropertiesSet() throws Exception {
         LOG.info(">test13BothForwardedAddressPropertiesSet");
-        setPropertiesAndReload(null, "127.0.0.1", "127.0.0.1", "127.0.0.1");
+        setPropertiesAndReload(null, localIP, localIP, localIP);
         
         final WorkerStatus status = workerSession.getStatus(getSignerIdDummy1());
         final List<String> fatalErrors = status.getFatalErrors();
@@ -303,7 +307,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
                 fatalErrors.contains("Only one of WHITELISTED_FORWARDED_ADDRESSES and BLACKLISTED_FORWARDED_ADDRESSES can be specified."));
         
         int responseCode = process(
-                new URL("http://localhost:" + getPublicHTTPPort()
+                new URL(getPreferredHTTPProtocol() + getHTTPHost() + ":" + getPreferredHTTPPort()
                 + "/signserver/process?workerId="
                 + getSignerIdDummy1() + "&data=%3Croot/%3E"));
         assertEquals("HTTP response code", 500, responseCode);
@@ -317,7 +321,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
     @Test
     public void test14MissingDirectAddresses() throws Exception {
         LOG.info(">test14MissingDirectAddresses");
-        setPropertiesAndReload(null, null, null, "127.0.0.1");
+        setPropertiesAndReload(null, null, null, localIP);
        
         final WorkerStatus status = workerSession.getStatus(getSignerIdDummy1());
         final List<String> fatalErrors = status.getFatalErrors();
@@ -326,7 +330,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
                 fatalErrors.contains("One of WHITELISTED_DIRECT_ADDRESSES or BLACKLISTED_DIRECT_ADDRESSES must be specified."));
         
         int responseCode = process(
-                new URL("http://localhost:" + getPublicHTTPPort()
+                new URL(getPreferredHTTPProtocol() + getHTTPHost() + ":" + getPreferredHTTPPort()
                 + "/signserver/process?workerId="
                 + getSignerIdDummy1() + "&data=%3Croot/%3E"));
         assertEquals("HTTP response code", 500, responseCode);
@@ -340,7 +344,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
     @Test
     public void test15MissingForwardedAddresses() throws Exception {
         LOG.info(">test15MissingForwardedAddresses");
-        setPropertiesAndReload(null, "127.0.0.1", null, null);
+        setPropertiesAndReload(null, localIP, null, null);
        
         final WorkerStatus status = workerSession.getStatus(getSignerIdDummy1());
         final List<String> fatalErrors = status.getFatalErrors();
@@ -349,7 +353,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
                 fatalErrors.contains("One of WHITELISTED_FORWARDED_ADDRESSES or BLACKLISTED_FORWARDED_ADDRESSES must be specified."));
         
         int responseCode = process(
-                new URL("http://localhost:" + getPublicHTTPPort()
+                new URL(getPreferredHTTPProtocol() + getHTTPHost() + ":" + getPreferredHTTPPort()
                 + "/signserver/process?workerId="
                 + getSignerIdDummy1() + "&data=%3Croot/%3E"));
         assertEquals("HTTP response code", 500, responseCode);
@@ -364,10 +368,10 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
     @Test
     public void test16ForwardedIPv6SameForm() throws Exception {
        LOG.info(">test16ForwardedIPv6SameForm");
-       setPropertiesAndReload("127.0.0.1", null, "3ffe:1900:4545:3:200:f8ff:fe21:67cf", null);
+       setPropertiesAndReload(localIP, null, "3ffe:1900:4545:3:200:f8ff:fe21:67cf", null);
        
        int responseCode = process(
-               new URL("http://localhost:" + getPublicHTTPPort()
+               new URL(getPreferredHTTPProtocol() + getHTTPHost() + ":" + getPreferredHTTPPort()
                + "/signserver/process?workerId="
                + getSignerIdDummy1() + "&data=%3Croot/%3E"), "3ffe:1900:4545:3:200:f8ff:fe21:67cf");
        assertEquals("HTTP response code", 200, responseCode);
@@ -382,10 +386,10 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
     @Test
     public void test17ForwardedIPv6LocalhostLongForm() throws Exception {
        LOG.info(">test17ForwardedIPv6LocalhostLongForm");
-       setPropertiesAndReload("127.0.0.1", null, "::1", null);
+       setPropertiesAndReload(localIP, null, "::1", null);
        
        int responseCode = process(
-               new URL("http://localhost:" + getPublicHTTPPort()
+               new URL(getPreferredHTTPProtocol() + getHTTPHost() + ":" + getPreferredHTTPPort()
                + "/signserver/process?workerId="
                + getSignerIdDummy1() + "&data=%3Croot/%3E"), "0000:0000:0000:0000:0000:0000:0000:0001");
        assertEquals("HTTP response code", 200, responseCode);
@@ -399,10 +403,10 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
     @Test
     public void test18ForwardedNotAllowedIPv6() throws Exception {
         LOG.info(">test18ForwardedNotAllowedIPv6");
-        setPropertiesAndReload("127.0.0.1", null, "::1", null);
+        setPropertiesAndReload(localIP, null, "::1", null);
         
         int responseCode = process(
-                new URL("http://localhost:" + getPublicHTTPPort()
+                new URL(getPreferredHTTPProtocol() + getHTTPHost() + ":" + getPreferredHTTPPort()
                 + "/signserver/process?workerId="
                 + getSignerIdDummy1() + "&data=%3Croot/%3E"), "3ffe:1900:4545:3:200:f8ff:fe21:67cf");
         assertEquals("HTTP response code", 403, responseCode);
@@ -416,10 +420,10 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
     @Test
     public void test19ForwardedBlacklistedIPv6() throws Exception {
         LOG.info(">test19ForwardedBlacklistedIPv6");
-        setPropertiesAndReload("127.0.0.1", null, null, "3ffe:1900:4545:3:200:f8ff:fe21:67cf");
+        setPropertiesAndReload(localIP, null, null, "3ffe:1900:4545:3:200:f8ff:fe21:67cf");
         
         int responseCode = process(
-                new URL("http://localhost:" + getPublicHTTPPort()
+                new URL(getPreferredHTTPProtocol() + getHTTPHost() + ":" + getPreferredHTTPPort()
                 + "/signserver/process?workerId="
                 + getSignerIdDummy1() + "&data=%3Croot/%3E"), "3ffe:1900:4545:3:200:f8ff:fe21:67cf");
         assertEquals("HTTP response code", 403, responseCode);
@@ -435,10 +439,10 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
     @Test
     public void test20ForwardedBlackListedIPv6LocalhostLongForm() throws Exception {
         LOG.info(">test20ForwardedBlackListedIPv6LocalhostLongForm");
-        setPropertiesAndReload("127.0.0.1", null, null, "::1");
+        setPropertiesAndReload(localIP, null, null, "::1");
         
         int responseCode = process(
-                new URL("http://localhost:" + getPublicHTTPPort()
+                new URL(getPreferredHTTPProtocol() + getHTTPHost() + ":" + getPreferredHTTPPort()
                 + "/signserver/process?workerId="
                 + getSignerIdDummy1() + "&data=%3Croot/%3E"), "0000:0000:0000:0000:0000:0000:0000:0001");
         assertEquals("HTTP response code", 403, responseCode);
@@ -453,10 +457,10 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
     @Test
     public void test21ForwardedBlacklistedIPv6LocalhostShortForm() throws Exception {
         LOG.info(">test21ForwardedBlacklistedIPv6LocalhostShortForm");
-        setPropertiesAndReload("127.0.0.1", null, null, "0000:0000:0000:0000:0000:0000:0000:0001");
+        setPropertiesAndReload(localIP, null, null, "0000:0000:0000:0000:0000:0000:0000:0001");
         
         int responseCode = process(
-                new URL("http://localhost:" + getPublicHTTPPort()
+                new URL(getPreferredHTTPProtocol() + getHTTPHost() + ":" + getPreferredHTTPPort()
                 + "/signserver/process?workerId="
                 + getSignerIdDummy1() + "&data=%3Croot/%3E"), "::1");
         assertEquals("HTTP response code", 403, responseCode);
@@ -470,10 +474,10 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
     @Test
     public void test22ForwardedWhitelistDefaultMax() throws Exception {
         LOG.info(">test22ForwardedWhitelistDefaultMax");
-        setPropertiesAndReload("127.0.0.1", null, "1.2.3.4", null);
+        setPropertiesAndReload(localIP, null, "1.2.3.4", null);
         
         int responseCode = process(
-                new URL("http://localhost:" + getPublicHTTPPort()
+                new URL(getPreferredHTTPProtocol() + getHTTPHost() + ":" + getPreferredHTTPPort()
                 + "/signserver/process?workerId="
                 + getSignerIdDummy1() + "&data=%3Croot/%3E"), "1.2.3.4, 42.42.42.42");
         assertEquals("HTTP response code", 403, responseCode);
@@ -487,12 +491,12 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
     @Test
     public void test23ForwardedWhitelistTwoProxies() throws Exception {
         LOG.info(">test23ForwardedWhitelistTwoProxies");
-        setPropertiesAndReload("127.0.0.1", null, "1.2.3.4, 42.42.42.42", null);
+        setPropertiesAndReload(localIP, null, "1.2.3.4, 42.42.42.42", null);
         workerSession.setWorkerProperty(getSignerIdDummy1(), "MAX_FORWARDED_ADDRESSES", "2");
         workerSession.reloadConfiguration(getSignerIdDummy1());
         
         int responseCode = process(
-                new URL("http://localhost:" + getPublicHTTPPort()
+                new URL(getPreferredHTTPProtocol() + getHTTPHost() + ":" + getPreferredHTTPPort()
                 + "/signserver/process?workerId="
                 + getSignerIdDummy1() + "&data=%3Croot/%3E"), "1.2.3.4, 42.42.42.42");
         assertEquals("HTTP response code", 200, responseCode);
@@ -507,12 +511,12 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
     @Test
     public void test24ForwardedWhitelistTwoProxiesAddionalHeader() throws Exception {
         LOG.info(">test24ForwardedWhitelistTwoProxiesAddionalHeader");
-        setPropertiesAndReload("127.0.0.1", null, "1.2.3.4", null);
+        setPropertiesAndReload(localIP, null, "1.2.3.4", null);
         workerSession.setWorkerProperty(getSignerIdDummy1(), "MAX_FORWARDED_ADDRESSES", "2");
         workerSession.reloadConfiguration(getSignerIdDummy1());
         
         int responseCode = process(
-                new URL("http://localhost:" + getPublicHTTPPort()
+                new URL(getPreferredHTTPProtocol() + getHTTPHost() + ":" + getPreferredHTTPPort()
                 + "/signserver/process?workerId="
                 + getSignerIdDummy1() + "&data=%3Croot/%3E"), "1.2.3.4, 42.42.42.42, 5.6.7.8");
         assertEquals("HTTP response code", 403, responseCode);
@@ -527,12 +531,12 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
     @Test
     public void test25ForwardedBlacklistTwoProxiesOneCheck() throws Exception {
         LOG.info(">test25ForwardedBlacklistTwoProxiesOneCheck");
-        setPropertiesAndReload("127.0.0.1", null, null, "1.2.3.4");
+        setPropertiesAndReload(localIP, null, null, "1.2.3.4");
         workerSession.setWorkerProperty(getSignerIdDummy1(), "MAX_FORWARDED_ADDRESSES", "1");
         workerSession.reloadConfiguration(getSignerIdDummy1());
         
         int responseCode = process(
-                new URL("http://localhost:" + getPublicHTTPPort()
+                new URL(getPreferredHTTPProtocol() + getHTTPHost() + ":" + getPreferredHTTPPort()
                 + "/signserver/process?workerId="
                 + getSignerIdDummy1() + "&data=%3Croot/%3E"),
                 "1.2.3.4, 42.42.42.42, 5.6.7.8");
@@ -549,12 +553,12 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
     @Test
     public void test26ForwardedWhitelistThreeProxiesTwoCheckedOneUnauthorized() throws Exception {
         LOG.info(">test26ForwardedWhitelistThreeProxiesTwoCheckedOneUnauthorized");
-        setPropertiesAndReload("127.0.0.1", null, "1.2.3.4, 42.42.42.42", null);
+        setPropertiesAndReload(localIP, null, "1.2.3.4, 42.42.42.42", null);
         workerSession.setWorkerProperty(getSignerIdDummy1(), "MAX_FORWARDED_ADDRESSES", "2");
         workerSession.reloadConfiguration(getSignerIdDummy1());
         
         int responseCode = process(
-                new URL("http://localhost:" + getPublicHTTPPort()
+                new URL(getPreferredHTTPProtocol() + getHTTPHost() + ":" + getPreferredHTTPPort()
                 + "/signserver/process?workerId="
                 + getSignerIdDummy1() + "&data=%3Croot/%3E"),
                 "47.47.47.47, 5.6.7.8, 1.2.3.4");
@@ -569,7 +573,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
     @Test
     public void test27Max0NotAllowed() throws Exception {
         LOG.info(">test27Max0NotAllowed");
-        setPropertiesAndReload("127.0.0.1", null, "1.2.3.4, 42.42.42.42", null);
+        setPropertiesAndReload(localIP, null, "1.2.3.4, 42.42.42.42", null);
         workerSession.setWorkerProperty(getSignerIdDummy1(), "MAX_FORWARDED_ADDRESSES", "0");
         workerSession.reloadConfiguration(getSignerIdDummy1());
         
@@ -580,7 +584,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
                 fatalErrors.contains("Illegal value for MAX_FORWARDED_ADDRESSES: 0"));
         
         int responseCode = process(
-                new URL("http://localhost:" + getPublicHTTPPort()
+                new URL(getPreferredHTTPProtocol() + getHTTPHost() + ":" + getPreferredHTTPPort()
                 + "/signserver/process?workerId="
                 + getSignerIdDummy1() + "&data=%3Croot/%3E"));
         assertEquals("HTTP response code", 500, responseCode);
@@ -594,7 +598,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
     @Test
     public void test28NegativeMaxNotAllowed() throws Exception {
         LOG.info(">test28NegativeMaxNotAllowed");
-        setPropertiesAndReload("127.0.0.1", null, "1.2.3.4, 42.42.42.42", null);
+        setPropertiesAndReload(localIP, null, "1.2.3.4, 42.42.42.42", null);
         workerSession.setWorkerProperty(getSignerIdDummy1(), "MAX_FORWARDED_ADDRESSES", "-2");
         workerSession.reloadConfiguration(getSignerIdDummy1());
         
@@ -605,7 +609,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
                 fatalErrors.contains("Illegal value for MAX_FORWARDED_ADDRESSES: -2"));
         
         int responseCode = process(
-                new URL("http://localhost:" + getPublicHTTPPort()
+                new URL(getPreferredHTTPProtocol() + getHTTPHost() + ":" + getPreferredHTTPPort()
                 + "/signserver/process?workerId="
                 + getSignerIdDummy1() + "&data=%3Croot/%3E"));
         assertEquals("HTTP response code", 500, responseCode);
@@ -619,7 +623,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
     public void test29BogusMax() throws Exception {
         LOG.info(">test29BogusMax");
         try {
-            setPropertiesAndReload("127.0.0.1", null, "1.2.3.4, 42.42.42.42", null);
+            setPropertiesAndReload(localIP, null, "1.2.3.4, 42.42.42.42", null);
             workerSession.setWorkerProperty(getSignerIdDummy1(), "MAX_FORWARDED_ADDRESSES", "foo123");
             workerSession.reloadConfiguration(getSignerIdDummy1());
 
@@ -630,7 +634,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
                     fatalErrors.contains("Illegal value for MAX_FORWARDED_ADDRESSES: foo123"));
 
             int responseCode = process(
-                    new URL("http://localhost:" + getPublicHTTPPort()
+                    new URL(getPreferredHTTPProtocol() + getHTTPHost() + ":" + getPreferredHTTPPort()
                     + "/signserver/process?workerId="
                     + getSignerIdDummy1() + "&data=%3Croot/%3E"));
             assertEquals("HTTP response code", 500, responseCode);

@@ -396,7 +396,8 @@ public class SignServerCLITest extends ModulesTestCase {
     	clientCLI.execute("signdocument", "-protocol", "WEBSERVICES", "-workername", getSignerNamePDFSigner1(), "-infile",
     			getSignServerHome() + File.separator + "res" + File.separator + "test" + File.separator + "pdf" + File.separator + "sample.pdf",
     			"-outfile", outFile.getAbsolutePath(),
-                        "-truststore", getSignServerHome() + "/p12/truststore.jks", "-truststorepwd", "changeit");
+                        "-truststore", getSignServerHome() + "/p12/truststore.jks", "-truststorepwd", "changeit",
+                        "-host", getHTTPHost(), "-port", String.valueOf(getPublicHTTPSPort()));
    	
     	// check the log file to see that the FILENAME property was logged
     	BufferedReader reader = new BufferedReader(new FileReader(logFile));

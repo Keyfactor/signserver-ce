@@ -35,7 +35,7 @@ public class HTTPMethodsTest extends WebTestCase {
 	
 	@Override
 	protected String getServletURL() {
-		return "http://localhost:8080/signserver" + (useProcess ? "/process" : "");
+		return getPreferredHTTPProtocol() + getHTTPHost() + ":" + getPreferredHTTPPort() + "/signserver" + (useProcess ? "/process" : "");
 	}
 
 	@Before

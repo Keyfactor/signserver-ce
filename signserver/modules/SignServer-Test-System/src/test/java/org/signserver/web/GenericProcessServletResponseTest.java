@@ -38,7 +38,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
     
     @Override
     protected String getServletURL() {
-        return "http://localhost:8080/signserver/process";
+        return getPreferredHTTPProtocol() + getHTTPHost() + ":" + getPreferredHTTPPort() + "/signserver/process";
     }
 
     /**

@@ -207,7 +207,8 @@ public class UsernamePasswordAuthorizerTest extends ModulesTestCase {
             byte[] res = execute(new SignDocumentCommand(), "signdocument", "-workerid", 
                     String.valueOf(getSignerIdDummy1()), "-data", "<root/>",
                     "-username", "user3", "-password", "foo123", "-protocol", "CLIENTWS",
-                    "-truststore", new File(getSignServerHome(), "p12/truststore.jks").getAbsolutePath(), "-truststorepwd", "changeit");
+                    "-truststore", new File(getSignServerHome(), "p12/truststore.jks").getAbsolutePath(), "-truststorepwd", "changeit",
+                    "-host", getHTTPHost(), "-port", String.valueOf(getPublicHTTPSPort()));
             assertNotNull("No result", res);
             assertNotSame("Empty result", 0, res.length);
         } catch (IllegalCommandArgumentsException ex) {
@@ -222,7 +223,8 @@ public class UsernamePasswordAuthorizerTest extends ModulesTestCase {
             byte[] res = execute(new SignDataGroupsCommand(), "signdatagroups", "-workerid", 
                     String.valueOf(getSignerIdSODSigner1()), "-data", "1=value1&2=value2&3=value3",
                     "-username", "user3", "-password", "foo123", "-protocol", "CLIENTWS",
-                    "-truststore", new File(getSignServerHome(), "p12/truststore.jks").getAbsolutePath(), "-truststorepwd", "changeit");
+                    "-truststore", new File(getSignServerHome(), "p12/truststore.jks").getAbsolutePath(), "-truststorepwd", "changeit",
+                    "-host", getHTTPHost(), "-port", String.valueOf(getPublicHTTPSPort()));
             assertNotNull("No result", res);
             assertNotSame("Empty result", 0, res.length);
         } catch (IllegalCommandArgumentsException ex) {

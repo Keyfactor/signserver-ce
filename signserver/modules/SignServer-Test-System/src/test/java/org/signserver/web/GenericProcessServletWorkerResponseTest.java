@@ -44,7 +44,7 @@ public class GenericProcessServletWorkerResponseTest extends WebTestCase {
 	
 	@Override
 	protected String getServletURL() {
-		return "http://localhost:8080/signserver/" +
+		return getPreferredHTTPProtocol() + getHTTPHost() + ":" + getPreferredHTTPPort() + "/signserver/" +
 				(extraSlashBeforeServletName ? "/" : "") +
 				"worker" + (trailingSlash ? "/" : "") +
 				(extraSlashBeforeWorkerName ? "/" : "" ) +

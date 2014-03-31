@@ -73,7 +73,7 @@ public class ValidationWSTest extends ModulesTestCase {
     public void test00SetupDatabase() throws Exception {
         QName qname = new QName("gen.ws.validationservice.protocol.signserver.org", "ValidationWSService");
         ValidationWSService validationWSService =
-                new ValidationWSService(new URL("https://localhost:"
+                new ValidationWSService(new URL("https://" + getHTTPHost() + ":"
                 + getPublicHTTPSPort()
                 + "/signserver/validationws/validationws?wsdl"),
                 qname);

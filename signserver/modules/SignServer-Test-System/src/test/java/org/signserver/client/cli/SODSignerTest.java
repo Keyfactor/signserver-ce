@@ -15,9 +15,12 @@ package org.signserver.client.cli;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.Map;
-import junit.framework.TestCase;
 import org.apache.log4j.Logger;
 import org.junit.After;
+import org.junit.Before;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+import org.junit.runners.MethodSorters;
 import org.signserver.admin.cli.AdminCLI;
 import org.signserver.cli.CommandLineInterface;
 import org.signserver.common.ServiceLocator;
@@ -25,12 +28,8 @@ import org.signserver.common.SignServerUtil;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.module.mrtdsodsigner.jmrtd.SODFile;
 import org.signserver.testutils.CLITestHelper;
+import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestingSecurityManager;
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.FixMethodOrder;
-import org.junit.Test;
-import org.junit.runners.MethodSorters;
 
 /**
  * Tests for the signdatagroups command of Client CLI.
@@ -39,21 +38,19 @@ import org.junit.runners.MethodSorters;
  * @version $Id$
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class SODSignerTest {
+public class SODSignerTest extends ModulesTestCase {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(SODSignerTest.class);
 
     /** Worker7897: Default algorithms, default hashing setting */
     private static final int WORKERID = 7897;
-
-    private static IWorkerSession.IRemote workerSession;
-    private static File signServerHome;
     
-    private CLITestHelper adminCLI = new CLITestHelper(AdminCLI.class);
-    private CLITestHelper clientCLI = new CLITestHelper(ClientCLI.class);
+    private final CLITestHelper adminCLI = new CLITestHelper(AdminCLI.class);
+    private final CLITestHelper clientCLI = new CLITestHelper(ClientCLI.class);
 	
     @Before
+    @Override
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
         workerSession = ServiceLocator.getInstance().lookupRemote(
@@ -61,18 +58,9 @@ public class SODSignerTest {
     }
 
     @After
+    @Override
     public void tearDown() throws Exception {
         TestingSecurityManager.remove();
-    }
-
-    protected File getSignServerHome() throws Exception {
-        if (signServerHome == null) {
-            final String home = System.getenv("SIGNSERVER_HOME");
-            assertNotNull("SIGNSERVER_HOME", home);
-            signServerHome = new File(home);
-            assertTrue("SIGNSERVER_HOME exists", signServerHome.exists());
-        }
-        return signServerHome;
     }
 	
     @Test
@@ -124,7 +112,7 @@ public class SODSignerTest {
     public void test02signDataFromParameterOverClientWS() throws Exception {
         assertEquals(CommandLineInterface.RETURN_SUCCESS, 
                 clientCLI.execute("signdatagroups", "-workername", "TestMRTDSODSigner1", "-data", "1=value1&2=value2&3=value3", "-protocol", "CLIENTWS", 
-                "-truststore", getSignServerHome() + "/p12/truststore.jks", "-truststorepwd", "changeit"));
+                "-truststore", getSignServerHome() + "/p12/truststore.jks", "-truststorepwd", "changeit", "-host", getHTTPHost(), "-port", String.valueOf(getPublicHTTPSPort())));
         String res = clientCLI.getOut().toString();
         assertNotNull("non null result", res);
         assertTrue("non empty result: " + res.length(), res.length() > 50);

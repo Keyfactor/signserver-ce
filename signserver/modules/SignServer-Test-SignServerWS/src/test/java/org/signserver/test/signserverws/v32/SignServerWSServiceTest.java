@@ -24,11 +24,8 @@ package org.signserver.test.signserverws.v32;
 public class SignServerWSServiceTest extends org.signserver.test.signserverws.v31.SignServerWSServiceTest {
 
     /** Endpoint URL. */
-	private static final String ENDPOINT = "https://localhost:8442/signserver/SignServerWSService/SignServerWS?wsdl";
+    private final String ENDPOINT = "https://" + getHTTPHost() + ":" + getPublicHTTPSPort() + "/signserver/SignServerWSService/SignServerWS?wsdl";
 
-    public SignServerWSServiceTest(String testName) {
-        super(testName);
-    }
 
     @Override
     protected String getWsEndPointUrl() {

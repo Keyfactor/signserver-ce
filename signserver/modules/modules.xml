@@ -157,12 +157,12 @@
 
     <target name="-do-module">
         <property file="${user.home}/signserver_build.properties"/>
-        <property file="../../signserver_build.properties"/>
-        <property file="../../conf/signserver_build.properties"/>
-        <property file="../../res/modules-project.properties"/>
+        <property file="${platform.project.dir}/signserver_build.properties"/>
+        <property file="${platform.project.dir}/conf/signserver_build.properties"/>
+        <property file="${platform.project.dir}/res/modules-project.properties"/>
         <taskdef name="setmoduleprops"
             classname="org.signserver.anttasks.SetModuleEnablePropertiesTask"
-            classpath="../SignServer-BuildTools/target/classes/"/>
+            classpath="${platform.project.dir}/modules/SignServer-BuildTools/target/classes/"/>
         <setmoduleprops/>
         <property name="dist-module.available" value="false"/>
         <property name="moduleEnable" value="false"/>
@@ -236,7 +236,7 @@
         <fail unless="dist.jar.available" message="Error: dist.jar should have been configured by the module: ${ant.project.name}"/>
         
         <!-- Convert classpath to be relative to the lib folders -->
-        <convertclasspath classpath="${javac.classpath}" id="libs" excludes="modules/" dir="${basedir}/../../lib" pathsep=" "/>
+        <convertclasspath classpath="${javac.classpath}" id="libs" excludes="modules/" dir="${platform.project.dir}/lib" pathsep=" "/>
         <convertclasspath classpath="${javac.classpath}" id="mods" excludes="lib/" mapperType="flatten" mapperTo="*" pathsep=" "/>
         <jar file="${dist.jar}" update="true">
             <manifest>
@@ -245,7 +245,7 @@
         </jar>
         
         <!-- Move to lib -->
-        <copy todir="../../lib" failonerror="true" file="${dist.jar}"/>
+        <copy todir="${platform.project.dir}/lib" failonerror="true" file="${dist.jar}"/>
         
         <!-- Convert classpath to be relative to this modules dist folder -->
         <property name="base.dir" location="${distdir}/../../"/>

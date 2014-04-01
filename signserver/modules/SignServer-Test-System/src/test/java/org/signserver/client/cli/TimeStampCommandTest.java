@@ -26,7 +26,6 @@ import org.signserver.cli.CommandLineInterface;
 import org.signserver.common.SignServerUtil;
 import org.signserver.testutils.CLITestHelper;
 import org.signserver.testutils.ModulesTestCase;
-import static org.junit.Assert.*;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 
@@ -44,10 +43,15 @@ public class TimeStampCommandTest extends ModulesTestCase {
 
     private static final int WORKER1 = 8911;
 
-    private CLITestHelper cli = getClientCLI();
+    private final CLITestHelper cli = getClientCLI();
     
+    private static final String SAMPLE_QUERY_FILE = "res/test/sample.tsq";
+    private static final String SAMPLE_QUERY_CERTREQ_FILE = "res/test/sample-certreq.tsq";
+    private static final String SAMPLE_RESPONSE_FILE = "res/test/sample.tsr";
+    private static final String SAMPLE_RESPONSE_CERTREQ_FILE = "res/test/sample-certreq.tsr";
 	
     @Before
+    @Override
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
     }
@@ -66,6 +70,7 @@ public class TimeStampCommandTest extends ModulesTestCase {
 
     /**
      * Tests getting a timestamp.
+     * @throws Exception
      */
     @Test
     public void test02requestATimestamp() throws Exception {
@@ -88,6 +93,7 @@ public class TimeStampCommandTest extends ModulesTestCase {
 
     /**
      * Tests getting a timestamp over HTTPS (port 8442).
+     * @throws Exception
      */
     @Test
     public void test02requestATimestampOverHTTPS() throws Exception {
@@ -119,6 +125,44 @@ public class TimeStampCommandTest extends ModulesTestCase {
     public void test03withoutBCalreadyInstalled() throws Exception {
         Security.removeProvider("BC");
         test02requestATimestamp();
+    }
+    
+    /**
+     * Tests printing requests.
+     * @throws Exception
+     */
+    @Test
+    public void test04printRequest() throws Exception {
+        LOG.info("test04printRequest");
+        final File requestFile = new File(getSignServerHome(), SAMPLE_QUERY_FILE);
+        final File requestCertFile = new File(getSignServerHome(), SAMPLE_QUERY_CERTREQ_FILE);
+        
+        assertEquals(CommandLineInterface.RETURN_SUCCESS, cli.execute("timestamp", "-print", "-inreq", requestFile.getAbsolutePath()));   
+        String out = new String(cli.getOut().toByteArray());
+        assertTrue("No request in: " + out, out.contains("Time-stamp request") && out.contains("}"));
+        
+        assertEquals(CommandLineInterface.RETURN_SUCCESS, cli.execute("timestamp", "-print", "-inreq", requestCertFile.getAbsolutePath()));   
+        out = new String(cli.getOut().toByteArray());
+        assertTrue("No request in: " + out, out.contains("Time-stamp request") && out.contains("}"));
+    }
+    
+    /**
+     * Tests printing responses.
+     * @throws Exception
+     */
+    @Test
+    public void test05printResponses() throws Exception {
+        LOG.info("test05printResponses");
+        final File requestFile = new File(getSignServerHome(), SAMPLE_RESPONSE_FILE);
+        final File requestCertFile = new File(getSignServerHome(), SAMPLE_RESPONSE_CERTREQ_FILE);
+        
+        assertEquals(CommandLineInterface.RETURN_SUCCESS, cli.execute("timestamp", "-print", "-inrep", requestFile.getAbsolutePath()));   
+        String out = new String(cli.getOut().toByteArray());
+        assertTrue("No response in: " + out, out.contains("Time-stamp response") && out.contains("}"));
+        
+        assertEquals(CommandLineInterface.RETURN_SUCCESS, cli.execute("timestamp", "-print", "-inrep", requestCertFile.getAbsolutePath()));   
+        out = new String(cli.getOut().toByteArray());
+        assertTrue("No response in: " + out, out.contains("Time-stamp response") && out.contains("}"));
     }
 
     @Test

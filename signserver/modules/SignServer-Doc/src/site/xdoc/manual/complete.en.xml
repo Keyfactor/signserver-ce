@@ -2672,8 +2672,8 @@ e) validatedocument -workername XMLValidator -protocol HTTP -infile
 
                     <subsection name="timestamp">
                         <source>
-$ bin/client.sh timestamp
-usage: signclient timestamp &lt;options&gt; &lt;url&gt;
+$ bin/signclient timestamp
+usage: timestamp &lt;options&gt; [url]
  -base64                Give this option if the stored request/reply
                         should be base64 encoded, default is not.
  -certreq               Request signer certificate
@@ -2697,6 +2697,7 @@ usage: signclient timestamp &lt;options&gt; &lt;url&gt;
                         not given the reply is not stored.
  -outreq &lt;file&gt;         Output file to store the sent TSA request, if not
                         given the request is not stored.
+ -print                 Prints content of a request, response and/or token
  -reqpolicy &lt;oid&gt;       Request timestamp issued under a policy OID
  -signerfile &lt;file&gt;     Input file containing the PEM encoded certificate
                         of the TSA signer.Used to verify a stored
@@ -2717,6 +2718,8 @@ usage: signclient timestamp &lt;options&gt; &lt;url&gt;
 
 Sample usages:
 a) timestamp -url http://localhost:8080/signserver/tsa?workerName=TimeStampSigner
+b) timestamp -print -inreq query.tsq
+c) timestamp -print -inrep reply.tsr
                         </source>
                     </subsection>
 

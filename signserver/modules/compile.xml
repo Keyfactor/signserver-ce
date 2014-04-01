@@ -70,7 +70,10 @@ includemodulesinbuild               = ${includemodulesinbuild}
         <!-- Clean all modules -->
         <echo>Cleaning sub projects</echo>
         <subant target="-do-clean-module" failonerror="true">
-            <fileset dir="${modules}" includes="SignServer-*/build.xml"/>
+            <fileset dir="${modules}">
+                <include name="SignServer-*/build.xml"/>
+                <include name="mod-*/build.xml"/>
+            </fileset>
          </subant>
     </target>
 

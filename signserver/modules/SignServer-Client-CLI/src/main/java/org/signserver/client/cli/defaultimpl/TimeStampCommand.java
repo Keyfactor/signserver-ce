@@ -120,7 +120,7 @@ public class TimeStampCommand extends AbstractCommand {
                 + "be done, work together with inrep and cafile. If given, no "
                 + "request to the TSA will happen.");
         final Option printopt = new Option("print", false,
-                "Prints content of a response and/or token");
+                "Prints content of a request, response and/or token");
 
         OptionBuilder.hasArg();
         OptionBuilder.withDescription("Url of TSA, e.g. "
@@ -223,7 +223,7 @@ public class TimeStampCommand extends AbstractCommand {
     private String usage(final Options options) {
         // automatically generate the help statement
         final HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp("timestamp <options> <url>",
+        formatter.printHelp("timestamp <options> [url]",
                 options);
         final StringBuilder footer = new StringBuilder();
         footer.append(NL)

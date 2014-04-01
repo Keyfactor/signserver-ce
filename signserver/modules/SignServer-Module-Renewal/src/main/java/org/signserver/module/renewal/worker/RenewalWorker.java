@@ -138,6 +138,9 @@ public class RenewalWorker extends BaseSigner {
      */
     private void setupConfig() {
         alias = config.getProperty("DEFAULTKEY");
+        if (alias == null) {
+            fatalErrors.add("Missing DEFAULTKEY property");
+        }
 
         truststoreType = config.getProperty("TRUSTSTORETYPE");
         if (truststoreType == null) {

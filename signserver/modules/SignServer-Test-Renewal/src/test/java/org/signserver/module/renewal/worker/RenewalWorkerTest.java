@@ -697,6 +697,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
         getWorkerSession().setWorkerProperty(signerId, "AUTHTYPE", "NOAUTH");
         getWorkerSession().setWorkerProperty(signerId, "KEYSTOREPATH", keystorePath);
         getWorkerSession().setWorkerProperty(signerId, "KEYSTOREPASSWORD", keystorePassword);
+        getWorkerSession().setWorkerProperty(signerId, "DEFAULTKEY", "defaultKey");
     }
 
     protected void addRenewalWorker(final int signerId, final String signerName, 
@@ -716,6 +717,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
                 truststoreType);
         getWorkerSession().setWorkerProperty(signerId, "EJBCAWSURL",
                 EJBCAWSURL_PREFIX);
+        getWorkerSession().setWorkerProperty(signerId, "DEFAULTKEY", "defaultKey");
 
         getWorkerSession().reloadConfiguration(signerId);
     }
@@ -743,6 +745,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
         config.setProperty("TRUSTSTOREPASSWORD", truststorePassword);
         config.setProperty("TRUSTSTORETYPE", "PKCS12");
         config.setProperty("EJBCAWSURL", EJBCAWSURL_PREFIX);
+        config.setProperty("DEFAULTKEY", "defaultKey");
         
         final String CRYPTOTOKEN_CLASSNAME =
                 "org.signserver.server.cryptotokens.HardCodedCryptoToken";

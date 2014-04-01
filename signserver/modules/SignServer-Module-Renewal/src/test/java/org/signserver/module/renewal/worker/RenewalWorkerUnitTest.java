@@ -35,7 +35,7 @@ public class RenewalWorkerUnitTest extends TestCase {
      */
     @Test
     public void test01NoTruststoreType() throws Exception {
-        final List<String> fatalErrors = getFatalErrors(null, "dummypath", "foo123", null, "http://ejbca/ws");
+        final List<String> fatalErrors = getFatalErrors(null, "dummypath", "foo123", null, "defaultKey", "http://ejbca/ws");
         
         assertTrue("Should contain error", fatalErrors.contains("Missing TRUSTSTORETYPE property"));
     }
@@ -46,7 +46,7 @@ public class RenewalWorkerUnitTest extends TestCase {
      */
     @Test
     public void test02NoTruststorePathOrTruststoreValue() throws Exception {
-        final List<String> fatalErrors = getFatalErrors("JKS", null, "foo123", null, "http://ejbca/ws");
+        final List<String> fatalErrors = getFatalErrors("JKS", null, "foo123", null, "defaultKey", "http://ejbca/ws");
     
         assertTrue("Should contain error",
                 fatalErrors.contains("Missing TRUSTSTOREPATH or TRUSTSTOREVALUE property"));
@@ -58,7 +58,7 @@ public class RenewalWorkerUnitTest extends TestCase {
      */
     @Test
     public void test03BothTruststorePathAndTruststoreValue() throws Exception {
-        final List<String> fatalErrors = getFatalErrors("JKS", "dummypath", "foo123", "DUMMYVALUE", "http://ejbca/ws");
+        final List<String> fatalErrors = getFatalErrors("JKS", "dummypath", "foo123", "DUMMYVALUE", "defaultKey", "http://ejbca/ws");
         
         assertTrue("Should contain error",
                 fatalErrors.contains("Can not specify both TRUSTSTOREPATH and TRUSTSTOREVALUE property"));
@@ -70,7 +70,7 @@ public class RenewalWorkerUnitTest extends TestCase {
      */
     @Test
     public void test04NoTruststorePassword() throws Exception {
-        final List<String> fatalErrors = getFatalErrors("JKS", "dummypath", null, null, "http://ejbca/ws");
+        final List<String> fatalErrors = getFatalErrors("JKS", "dummypath", null, null, "defaultKey", "http://ejbca/ws");
         
         assertTrue("Should contain error",
                 fatalErrors.contains("Missing TRUSTSTOREPASSWORD property"));
@@ -83,7 +83,7 @@ public class RenewalWorkerUnitTest extends TestCase {
      */
     @Test
     public void test05NoTruststorePasswordPEM() throws Exception {
-        final List<String> fatalErrors = getFatalErrors("PEM", "dummypath", null, null, "http://ejbca/ws");
+        final List<String> fatalErrors = getFatalErrors("PEM", "dummypath", null, null, "defaultKey", "http://ejbca/ws");
         
         assertTrue("Should contain no errors", fatalErrors.isEmpty());
     }
@@ -95,15 +95,28 @@ public class RenewalWorkerUnitTest extends TestCase {
      */
     @Test
     public void test06NoEJBCAWSUrl() throws Exception {
-        final List<String> fatalErrors = getFatalErrors("JKS", "dummypath", "foo123", null, null);
+        final List<String> fatalErrors = getFatalErrors("JKS", "dummypath", "foo123", null, "defaultKey", null);
         
         assertTrue("Should contain error",
                 fatalErrors.contains("Missing EJBCAWSURL property"));
     }
     
+    /**
+     * Test that not specifying DEFAULTKEY results in an error.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test07NoDefaultKey() throws Exception {
+        final List<String> fatalErrors = getFatalErrors("JKS", "dummypath", "foo123", null, null, "http://ejbca/ws");
+        
+        assertTrue("Should contain error",
+                fatalErrors.contains("Missing DEFAULTKEY property"));
+    }
+    
     private List<String> getFatalErrors(final String truststoreType,
             final String truststorePath, final String truststorePassword,
-            final String truststoreValue, final String ejbcawsUrl) {
+            final String truststoreValue, final String defaultKey, final String ejbcawsUrl) {
         final WorkerConfig config = new WorkerConfig();
         
         if (truststoreType != null) {
@@ -120,6 +133,10 @@ public class RenewalWorkerUnitTest extends TestCase {
         
         if (truststoreValue != null) {
             config.setProperty("TRUSTSTOREVALUE", truststoreValue);
+        }
+        
+        if (defaultKey != null) {
+            config.setProperty("DEFAULTKEY", defaultKey);
         }
         
         if (ejbcawsUrl != null) {

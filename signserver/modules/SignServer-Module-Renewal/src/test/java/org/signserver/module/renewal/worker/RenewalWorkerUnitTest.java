@@ -16,6 +16,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.junit.Test;
 import org.signserver.common.WorkerConfig;
 
 /**
@@ -27,12 +28,79 @@ import org.signserver.common.WorkerConfig;
  */
 public class RenewalWorkerUnitTest extends TestCase {
 
+    /**
+     * Test that not setting a trustore type results in an error.
+     * 
+     * @throws Exception
+     */
+    @Test
     public void test01NoTruststoreType() throws Exception {
         final List<String> fatalErrors = getFatalErrors(null, "dummypath", "foo123", null, "http://ejbca/ws");
         
         assertTrue("Should contain error", fatalErrors.contains("Missing TRUSTSTORETYPE property"));
     }
+    
+    /**
+     * Test that not setting either trustore path or value results in an error.
+     * @throws Exception
+     */
+    @Test
+    public void test02NoTruststorePathOrTruststoreValue() throws Exception {
+        final List<String> fatalErrors = getFatalErrors("JKS", null, "foo123", null, "http://ejbca/ws");
+    
+        assertTrue("Should contain error",
+                fatalErrors.contains("Missing TRUSTSTOREPATH or TRUSTSTOREVALUE property"));
+    }
+    
+    /**
+     * Test that setting both truststore path and value results in an error.
+     * @throws Exception
+     */
+    @Test
+    public void test03BothTruststorePathAndTruststoreValue() throws Exception {
+        final List<String> fatalErrors = getFatalErrors("JKS", "dummypath", "foo123", "DUMMYVALUE", "http://ejbca/ws");
+        
+        assertTrue("Should contain error",
+                fatalErrors.contains("Can not specify both TRUSTSTOREPATH and TRUSTSTOREVALUE property"));
+    }
 
+    /**
+     * Test that not setting a truststore password results in an error.
+     * @throws Exception
+     */
+    @Test
+    public void test04NoTruststorePassword() throws Exception {
+        final List<String> fatalErrors = getFatalErrors("JKS", "dummypath", null, null, "http://ejbca/ws");
+        
+        assertTrue("Should contain error",
+                fatalErrors.contains("Missing TRUSTSTOREPASSWORD property"));
+    }
+    
+    /**
+     * Test that truststore password is not required for PEM.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test05NoTruststorePasswordPEM() throws Exception {
+        final List<String> fatalErrors = getFatalErrors("PEM", "dummypath", null, null, "http://ejbca/ws");
+        
+        assertTrue("Should contain no errors", fatalErrors.isEmpty());
+    }
+    
+    /**
+     * Test that not setting EJBCA WS URL results in an error.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test06NoEJBCAWSUrl() throws Exception {
+        final List<String> fatalErrors = getFatalErrors("JKS", "dummypath", "foo123", null, null);
+        
+        assertTrue("Should contain error",
+                fatalErrors.contains("Missing EJBCAWSURL property"));
+    }
+    
     private List<String> getFatalErrors(final String truststoreType,
             final String truststorePath, final String truststorePassword,
             final String truststoreValue, final String ejbcawsUrl) {

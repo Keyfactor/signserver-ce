@@ -105,6 +105,8 @@ public class RenewalWorker extends BaseSigner {
     @EJB
     private IWorkerSession workerSession;
 
+    /** Configuration parameters. */
+    private String alias;
     private String truststoreValue;
     private String truststoreType;
     private String truststorePath;
@@ -135,6 +137,8 @@ public class RenewalWorker extends BaseSigner {
      * Setup configuration and update fatal errors.
      */
     private void setupConfig() {
+        alias = config.getProperty("DEFAULTKEY");
+
         truststoreType = config.getProperty("TRUSTSTORETYPE");
         if (truststoreType == null) {
             fatalErrors.add("Missing TRUSTSTORETYPE property");
@@ -459,12 +463,6 @@ public class RenewalWorker extends BaseSigner {
         }
 
         // Connect to EjbcaWS
-        final String alias = config.getProperty("DEFAULTKEY");
-//        if (alias == null) {
-//            throw new IllegalArgumentException(
-//                    "Missing DEFAULTKEY property");
-//        }
-
         final EjbcaWS ejbcaws = getEjbcaWS(ejbcaWsUrl,
                 alias, truststoreType, truststorePath, truststoreValue, truststorePass);
 

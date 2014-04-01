@@ -4736,11 +4736,11 @@ The RenewalWorker starts by generating a new key-pair (unless an NEXTCERTSIGNKEY
                     </subsubsection>
                     
                     <subsubsection name="Worker Properties">
-                        <p><b>EJBCAWSURL</b> = URL to the EJBCA. Example: https://ca-server:8443/ejbca</p>
-                        <p><b>TRUSTSTOREPATH</b> = Path to the keystore containing the CA's SSL server certificate as a trusted entry. Used instead of TRUSTSTOREVALUE.</p>
-                        <p><b>TRUSTSTOREVALUE</b> = Keystore containing the CA's SSL server certificate as a trusted entry. Used instead of TRUSTSTOREPATH. If TRUSTSTORETYPE is not PEM the keystore is stored in the property in base64 encoding.</p>
-                        <p><b>TRUSTSTORETYPE</b> = Type of keystore. JKS and PEM is supported.</p>
-                        <p><b>TRUSTSTOREPASSWORD</b> = Password protecting the truststore keystore.</p>
+                        <p><b>EJBCAWSURL</b> = URL to the EJBCA. Must be specified. Example: https://ca-server:8443/ejbca</p>
+                        <p><b>TRUSTSTOREPATH</b> = Path to the keystore containing the CA's SSL server certificate as a trusted entry. Used instead of TRUSTSTOREVALUE. If this property is not specified, TRUSTSTOREVALUE must be set.</p>
+                        <p><b>TRUSTSTOREVALUE</b> = Keystore containing the CA's SSL server certificate as a trusted entry. Used instead of TRUSTSTOREPATH. If this property is not specified, TRUSTSTOREPATH must be set. If TRUSTSTORETYPE is not PEM the keystore is stored in the property in base64 encoding.</p>
+                        <p><b>TRUSTSTORETYPE</b> = Type of keystore. JKS and PEM is supported. This property must be set.</p>
+                        <p><b>TRUSTSTOREPASSWORD</b> = Password protecting the truststore keystore. This property must be set if TRUSTSTORETYPE is not PEM.</p>
                     </subsubsection>
                     <subsubsection name="Properties of renewee">
                         <p><b>RENEWENDENTITY</b> = Name of the existing end entity in EJBCA</p>

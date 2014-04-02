@@ -125,6 +125,9 @@ public class ArchiveAPITest extends ModulesTestCase {
         // Test right class
         assertEquals("class for 0", Test1Archiver.class.getName(), 
                 archive0.getProperty(CLASSNAME));
+        
+        // Test that EntityManager is available
+        assertTrue("em available", Boolean.parseBoolean(archive0.getProperty(ENTITYMANAGER_AVAILABLE)));
 
         LOG.debug("<test01OneArchiverCalled");
     }

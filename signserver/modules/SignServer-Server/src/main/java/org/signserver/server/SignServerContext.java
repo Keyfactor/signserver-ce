@@ -24,8 +24,8 @@ import org.signserver.server.entities.IKeyUsageCounterDataService;
  */
 public class SignServerContext extends WorkerContext {
 
-    private EntityManager em;
-    private IKeyUsageCounterDataService keyUsageCounterDataService;
+    private final EntityManager em;
+    private final IKeyUsageCounterDataService keyUsageCounterDataService;
 
     public SignServerContext(EntityManager em, IKeyUsageCounterDataService keyUsageCounterDataService) {
         this.em = em;
@@ -34,14 +34,25 @@ public class SignServerContext extends WorkerContext {
 
     /**
      * 
-     * @return the current Entity Manager.
+     * @return Entity Manager.
+     * @deprecated This EntityManager was created when the SignServerContext was 
+     * created and is not safe to use from an other transaction. Instead 
+     * use the entity manager available in the RequestContext.
      */
+    @Deprecated
     public EntityManager getEntityManager() {
         return em;
     }
 
     public IKeyUsageCounterDataService getKeyUsageCounterDataService() {
         return keyUsageCounterDataService;
+    }
+    
+    /**
+     * @return True if a database was configured for SignServer
+     */
+    public boolean isDatabaseConfigured() {
+        return em != null;
     }
     
 }

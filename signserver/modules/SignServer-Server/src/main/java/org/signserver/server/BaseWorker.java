@@ -54,7 +54,19 @@ public abstract class BaseWorker implements IWorker {
     protected int workerId = 0;
     protected WorkerConfig config = null;
     protected WorkerContext workerContext;
+    /** 
+     * @deprecated This EntityManager was created when the worker was 
+     * initialized and is not safe to use from an other transaction. Instead 
+     * use the entity manager available in the RequestContext.
+     */
+    @Deprecated
     protected EntityManager em;
+    /** 
+     * @deprecated This EntityManager was created when the worker was 
+     * initialized and is not safe to use from an other transaction. Instead 
+     * use the entity manager available in the RequestContext.
+     */
+    @Deprecated
     protected EntityManager workerEM;
 
     protected BaseWorker() {
@@ -64,6 +76,7 @@ public abstract class BaseWorker implements IWorker {
      * Initialization method that should be called directly after creation
      */
     @Override
+    @SuppressWarnings("deprecation") // Need to still use it for backwards compatibility
     public void init(int workerId, WorkerConfig config, WorkerContext workerContext, EntityManager workerEM) {
         this.workerId = workerId;
         this.config = config;

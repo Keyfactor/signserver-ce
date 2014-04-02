@@ -67,6 +67,7 @@ public class ValidationServiceWorker extends BaseProcessable {
      * @param config configuration containing the validation service to create
      * @return a non initialized group key service.
      */
+    @SuppressWarnings("deprecation") // Need to still use 'em' for backwards compatibility
     private IValidationService createValidationService(WorkerConfig config) throws SignServerException {
         String classPath = config.getProperties().getProperty(ValidationServiceConstants.VALIDATIONSERVICE_TYPE, ValidationServiceConstants.DEFAULT_TYPE);
         IValidationService retval = null;

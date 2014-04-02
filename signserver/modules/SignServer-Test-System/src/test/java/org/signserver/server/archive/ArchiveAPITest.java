@@ -31,7 +31,6 @@ import org.signserver.server.archive.test1archiver.Test1Signer;
 import org.signserver.server.archive.test1archiver.Test2Archiver;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestingSecurityManager;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -56,6 +55,7 @@ public class ArchiveAPITest extends ModulesTestCase {
     private File archiver2File;
     
     @Before
+    @Override
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
         TestingSecurityManager.install();
@@ -78,6 +78,7 @@ public class ArchiveAPITest extends ModulesTestCase {
     }
 
     @After
+    @Override
     public void tearDown() throws Exception {
         TestingSecurityManager.remove();
     }	

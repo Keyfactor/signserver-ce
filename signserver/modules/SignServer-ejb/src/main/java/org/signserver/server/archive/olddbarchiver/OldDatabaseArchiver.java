@@ -53,8 +53,6 @@ public class OldDatabaseArchiver implements Archiver {
     private static final String PROPERTY_INCLUDE_DIRECT_ADDRESS = "INCLUDE_DIRECT_ADDRESS";
     private static final int DEFAULT_MAX_FORWARDED_ADDRESSES = 1;
     
-    private ArchiveDataService dataService;
-    
     private ArchiveOfTypes archiveOfTypes;
 
     private boolean useXForwardedFor = false;
@@ -63,11 +61,9 @@ public class OldDatabaseArchiver implements Archiver {
     
     @Override
     public void init(int listIndex, WorkerConfig config, SignServerContext context) throws ArchiverInitException {
-        final EntityManager em = context.getEntityManager();
-        if (em == null) {
+        if (context.isDatabaseConfigured()) {
             throw new ArchiverInitException("OldDatabaseArchiver requires a database connection");
         }
-        dataService = new ArchiveDataService(em);
         
         // Configuration of what to archive
         final String propertyArchiveOfType = "ARCHIVER" + listIndex + "." + PROPERTY_ARCHIVE_OF_TYPE;
@@ -115,10 +111,12 @@ public class OldDatabaseArchiver implements Archiver {
             } else {
                 archiveData = new ArchiveData(archivable.getContentEncoded());
             }
-            
-            if (dataService == null) {
+         
+            final EntityManager em = requestContext.getEntityManager();
+            if (em == null) {
                 throw new ArchiveException("Could not archive as archiver was not successfully initialized");
             }
+            final ArchiveDataService dataService = new ArchiveDataService(em);
             final Integer workerId = (Integer) requestContext.get(RequestContext.WORKER_ID);
             final X509Certificate certificate = (X509Certificate) requestContext.get(RequestContext.CLIENT_CERTIFICATE);
             String remoteIp = (String) requestContext.get(RequestContext.REMOTE_IP);

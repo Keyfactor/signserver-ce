@@ -17,6 +17,7 @@ import java.security.cert.Certificate;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import javax.persistence.EntityManager;
 
 /**
  * Object containing extra information about a request not sent by the client
@@ -184,5 +185,17 @@ public class RequestContext implements Serializable {
 
     public Map<String, Object> asUnmodifiableMap() {
         return Collections.unmodifiableMap(context);
+    }
+    
+    /**
+     * @return The current EntityManager if available
+     */
+    public EntityManager getEntityManager() {
+        final Object o = context.get(EM);
+        if (o instanceof EntityManager) {
+            return (EntityManager) o;
+        } else {
+            return null;
+        }
     }
 }

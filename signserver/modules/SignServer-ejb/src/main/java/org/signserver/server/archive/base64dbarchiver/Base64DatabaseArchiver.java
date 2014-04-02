@@ -17,7 +17,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-
+import javax.persistence.EntityManager;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Base64;
@@ -55,8 +55,6 @@ public class Base64DatabaseArchiver implements Archiver {
     private static final String PROPERTY_INCLUDE_DIRECT_ADDRESS = "INCLUDE_DIRECT_ADDRESS";
     private static final int DEFAULT_MAX_FORWARDED_ADDRESSES = 1;
     
-    private ArchiveDataService dataService;
-    
     private ArchiveOfTypes archiveOfTypes;
     
     private boolean useXForwardedFor = false;
@@ -65,7 +63,9 @@ public class Base64DatabaseArchiver implements Archiver {
 
     @Override
     public void init(int listIndex, WorkerConfig config, SignServerContext context) throws ArchiverInitException {
-        dataService = new ArchiveDataService(context.getEntityManager());
+        if (context.isDatabaseConfigured()) {
+            throw new ArchiverInitException("Base64DatabaseArchiver requires a database connection");
+        }
         
         // Configuration of what to archive
         final String propertyArchiveOfType = "ARCHIVER" + listIndex + "." + PROPERTY_ARCHIVE_OF_TYPE;
@@ -107,9 +107,11 @@ public class Base64DatabaseArchiver implements Archiver {
         if ((archiveOfTypes == ArchiveOfTypes.REQUEST && archiveType == ArchiveDataVO.TYPE_REQUEST)
                 || (archiveOfTypes == ArchiveOfTypes.RESPONSE && archiveType == ArchiveDataVO.TYPE_RESPONSE)
                 || (archiveOfTypes == ArchiveOfTypes.REQUEST_AND_RESPONSE && (archiveType == ArchiveDataVO.TYPE_RESPONSE || archiveType == ArchiveDataVO.TYPE_REQUEST))) {
-            if (dataService == null) {
+            final EntityManager em = requestContext.getEntityManager();
+            if (em == null) {
                 throw new ArchiveException("Could not archive as archiver was not successfully initialized");
             }
+            final ArchiveDataService dataService = new ArchiveDataService(requestContext.getEntityManager());
             final Integer workerId = (Integer) requestContext.get(RequestContext.WORKER_ID);
             final X509Certificate certificate = (X509Certificate) requestContext.get(RequestContext.CLIENT_CERTIFICATE);
             String remoteIp = (String) requestContext.get(RequestContext.REMOTE_IP);

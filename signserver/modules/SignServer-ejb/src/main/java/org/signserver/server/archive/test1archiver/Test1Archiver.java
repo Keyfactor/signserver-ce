@@ -17,7 +17,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Properties;
-import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.signserver.common.RequestContext;
 import org.signserver.common.WorkerConfig;
@@ -50,7 +49,6 @@ public class Test1Archiver implements Archiver {
     public static final String ENTITYMANAGER_AVAILABLE = "ENTITYMANAGER_AVAILABLE";
     
     private int listIndex;
-    private EntityManager em;
     private File outFile;
     private boolean disabled;
     private boolean doFail;
@@ -58,7 +56,6 @@ public class Test1Archiver implements Archiver {
     @Override
     public void init(int listIndex, WorkerConfig config, SignServerContext context) throws ArchiverInitException {
         this.listIndex = listIndex;
-        this.em = context.getEntityManager();
         String file = config.getProperty("ARCHIVER" + listIndex + ".FILE");
         if (file == null) {
             throw new ArchiverInitException(
@@ -88,7 +85,7 @@ public class Test1Archiver implements Archiver {
             properties.setProperty(LISTINDEX, String.valueOf(listIndex));
             properties.setProperty(PROCESSED, String.valueOf(true));
             properties.setProperty(WORKERID, String.valueOf(workerId));
-            properties.setProperty(ENTITYMANAGER_AVAILABLE, String.valueOf(em != null));
+            properties.setProperty(ENTITYMANAGER_AVAILABLE, String.valueOf(requestContext.getEntityManager() != null));
             OutputStream out = null;
             try {
                 out = new FileOutputStream(outFile);

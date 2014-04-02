@@ -37,7 +37,8 @@ public interface IAccounter {
      * @param credential Credentials identifying the client
      * @param request The request the client made
      * @param response The response the worker put together
-     * @param context Various information such as transaction id etc.
+     * @param context Various information such as transaction id as well as 
+     * runtime dependencies such as an EntityManager.
      * @return True if the purchase was granted and performed
      * @throws AccounterException in case of error other than that the purchase
      * was not granted

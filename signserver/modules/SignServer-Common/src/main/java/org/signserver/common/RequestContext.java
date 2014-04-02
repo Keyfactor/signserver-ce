@@ -117,6 +117,17 @@ public class RequestContext implements Serializable {
             "DISPATCHER_AUTHORIZED_CLIENT";
 
     /**
+     * SignServerJPA EntityManager injected by WorkerSessionBean.
+     *
+     * The purpose is to always inject an EntityManager instance in the right
+     * transaction context to serve for decoupled classes such as Archiver and
+     * Accounter. EntityManager references passed through the init() method and
+     * stored in such decoupled classes are not reliable from the transactional
+     * point of view.
+     */
+    public static final String EM = "EM";
+    
+    /**
      * Default constructor creating an empty context.
      */
     public RequestContext() {

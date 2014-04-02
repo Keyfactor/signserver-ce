@@ -156,6 +156,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         // Store values for request context and logging
         requestContext.put(RequestContext.WORKER_ID, Integer.valueOf(workerId));
         requestContext.put(RequestContext.TRANSACTION_ID, transactionID);
+        requestContext.put(RequestContext.EM, em);
         logMap.put(IWorkerLogger.LOG_TIME, String.valueOf(startTime));
         logMap.put(IWorkerLogger.LOG_ID, transactionID);
         logMap.put(IWorkerLogger.LOG_WORKER_ID, String.valueOf(workerId));

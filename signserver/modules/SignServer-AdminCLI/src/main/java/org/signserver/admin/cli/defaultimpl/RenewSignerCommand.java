@@ -103,7 +103,7 @@ public class RenewSignerCommand extends AbstractAdminCommand {
         }
         try {
 
-            String workerName = args[1];
+            String workerName = args[0];
             checkThatWorkerIsProcessable(getWorkerId(workerName));
 
             final Properties requestProperties = new Properties();

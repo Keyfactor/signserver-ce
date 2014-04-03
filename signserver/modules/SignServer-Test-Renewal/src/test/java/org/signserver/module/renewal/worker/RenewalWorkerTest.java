@@ -36,6 +36,8 @@ import static junit.framework.TestCase.assertNotNull;
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Base64;
 import org.ejbca.util.CertTools;
+import org.signserver.admin.cli.AdminCLI;
+import org.signserver.cli.CommandLineInterface;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GenericPropertiesRequest;
 import org.signserver.common.GenericPropertiesResponse;
@@ -59,6 +61,7 @@ import org.signserver.server.IProcessable;
 import org.signserver.server.signers.BaseSigner;
 import org.signserver.test.utils.mock.GlobalConfigurationSessionMock;
 import org.signserver.test.utils.mock.WorkerSessionMock;
+import org.signserver.testutils.CLITestHelper;
 
 /**
  * Test case for the RenewalWorker.
@@ -88,6 +91,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
     private static final Logger LOG = Logger.getLogger(RenewalWorkerTest.class);
 
     private static final int WORKERID = 6101;
+    private static final String WORKERNAME = "RenewalWorker_6101";
 
     private Endpoint ejbcaEndpoint;
     private MockEjbcaWS mockEjbcaWs;
@@ -191,6 +195,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
      * Config: NEXTCERTSIGNKEY
      * Request: -
      * Result: Only DEFAULTKEY (containing value from NEXTCERTSIGNKEY)
+     * @throws java.lang.Exception
      */
     public void test03renewalExistingNextCertSignKey() throws Exception {
         // Setup workers
@@ -264,6 +269,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
      * Config: NEXTCERTSIGNKEY, DEFAULTKEY
      * Request: FORDEFAULTKEY
      * Result: NEXTCERTSIGNKEY, DEFAULTKEY
+     * @throws java.lang.Exception
      */
     public void test04renewalExistingNextCertSignKeyForDefaultKey() throws Exception {
         // Setup workers
@@ -341,6 +347,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
      * Config: DEFAULTKEY
      * Request: FORDEFAULTKEY
      * Result: DEFAULTKEY
+     * @throws java.lang.Exception
      */
     public void test05renewalExistingKeyForDefaultKey() throws Exception {
         // Setup workers
@@ -402,6 +409,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
 
     /**
      * Test failure: No EJBCA end entity.
+     * @throws java.lang.Exception
      */
     public void test06failureNoEJBCAEndEntity() throws Exception {
         // Setup workers
@@ -455,6 +463,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
 
     /**
      * Test failure: Authentication denied
+     * @throws java.lang.Exception
      */
     public void test07failureEJBCAAuthDenied() throws Exception {
         // Setup workers
@@ -512,7 +521,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
         final String truststoreType = "JKS";
 
         // Setup workers
-        addRenewalWorker(6101, "RenewalWorker_6101", truststoreType);
+        addRenewalWorker(WORKERID, WORKERNAME, truststoreType);
         addSigner(SIGNERID_6102, SIGNER_6102, SIGNER_6102_ENDENTITY);
 
         // Setup EJBCA end entity
@@ -528,7 +537,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
     public void test09truststoreTypePEM() throws Exception {
     	
     	// Setup workers
-    	addRenewalWorkerWithPEM(6101, "RenewalWorker_6101");
+    	addRenewalWorkerWithPEM(WORKERID, WORKERNAME);
     	addSigner(SIGNERID_6102, SIGNER_6102, SIGNER_6102_ENDENTITY);
     	
     	// Setup EJBCA end entitity
@@ -544,7 +553,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
     public void test10truststoreTypeInlinePEM() throws Exception {
     	
     	// Setup workers
-    	addRenewalWorkerWithInlinePEM(6101, "RenewalWorker_6101");
+    	addRenewalWorkerWithInlinePEM(WORKERID, WORKERNAME);
     	addSigner(SIGNERID_6102, SIGNER_6102, SIGNER_6102_ENDENTITY);
     	
     	// Setup EJBCA end entitity
@@ -560,7 +569,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
     public void test10truststoreTypeInlineJKS() throws Exception {
     	
     	// Setup workers
-    	addRenewalWorkerWithInlineJKS(6101, "RenewalWorker_6101");
+    	addRenewalWorkerWithInlineJKS(WORKERID, WORKERNAME);
     	addSigner(SIGNERID_6102, SIGNER_6102, SIGNER_6102_ENDENTITY);
     	
     	// Setup EJBCA end entitity
@@ -665,13 +674,75 @@ public class RenewalWorkerTest extends AbstractTestCase {
         assertFalse("Explicit ECC parameters not set", workerSession.explicitEccParametersSet);
     }
     
+    /**
+     * Tests renewal of key and certificate for a worker using CLI.
+     * @throws Exception
+     */
+    public void test20renewalUsingCLI() throws Exception {        
+        // Setup workers
+        addWorkers();
+
+        // Setup EJBCA end entity
+        mockSetupEjbcaSearchResult();
+     
+        // Test starts here
+        doRenewalFirstTimeUsingCLI();
+    }
+
+    private void doRenewalFirstTimeUsingCLI() throws Exception {
+        LOG.info(">doRenewalFirstTimeUsingCLI");
+        
+        CLITestHelper cli = new CLITestHelper(AdminCLI.class);
+        
+        int returnCode = cli.execute("renewsigner", SIGNER_6102, "-renewalworker", WORKERNAME);
+        byte[] outBytes = cli.getOut().toByteArray();
+        byte[] errBytes = cli.getErr().toByteArray();
+        LOG.info("outBytes: " + new String(outBytes));
+        LOG.info("errBytes: " + new String(errBytes));
+        assertEquals("renewsigner command", CommandLineInterface.RETURN_SUCCESS, returnCode);
+        
+        Properties response = new Properties();
+        response.load(new ByteArrayInputStream(outBytes));
+        
+        // OK result
+        LOG.info("Response message: " + response.getProperty(
+                RenewalWorkerProperties.RESPONSE_MESSAGE));
+        assertEquals(RenewalWorkerProperties.RESPONSE_RESULT_OK,
+                response.getProperty(
+                RenewalWorkerProperties.RESPONSE_RESULT));
+
+        // Requested certificate
+        assertTrue("should have requested certificate",
+                mockEjbcaWs.isPkcs10RequestCalled());
+        
+        // Check that the right DN is included
+        assertEquals("Requested DN", "CN=" + SIGNER_6102_ENDENTITY + ",C=SE", mockEjbcaWs.getLastPKCS10().getRequestDN());
+        
+        // Should have certificate and chain
+        final X509Certificate cert = (X509Certificate) getWorkerSession()
+                .getSignerCertificate(SIGNERID_6102);
+        assertNotNull(cert);
+        final List<java.security.cert.Certificate> chain
+                = getWorkerSession().getSignerCertificateChain(SIGNERID_6102);
+        assertNotNull(chain);
+        assertTrue(chain.contains(cert));
+
+        // Should not be any NEXTCERTSIGNKEY
+        assertNull(getWorkerSession().getCurrentWorkerConfig(SIGNERID_6102)
+                .getProperty("NEXTCERTSIGNKEY"));
+
+        // Should be an DEFAULTKEY
+        assertNotNull(getWorkerSession().getCurrentWorkerConfig(SIGNERID_6102)
+                .getProperty("DEFAULTKEY"));
+    }
+    
     private void addWorkers() throws Exception {
-        addRenewalWorker(6101, "RenewalWorker_6101");
+        addRenewalWorker(WORKERID, WORKERNAME);
         addSigner(SIGNERID_6102, SIGNER_6102, SIGNER_6102_ENDENTITY);
     }
 
     private void removeSigners() throws Exception {
-        removeWorker(6101);
+        removeWorker(WORKERID);
         removeWorker(6102);
     }
 

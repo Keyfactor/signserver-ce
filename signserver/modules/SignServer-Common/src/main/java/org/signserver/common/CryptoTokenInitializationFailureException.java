@@ -22,6 +22,10 @@ public class CryptoTokenInitializationFailureException extends Exception {
 
     private static final long serialVersionUID = 1L;
 
+    public CryptoTokenInitializationFailureException(Exception e) {
+        super(e);
+    }
+    
     public CryptoTokenInitializationFailureException(String message) {
         super(message);
     }

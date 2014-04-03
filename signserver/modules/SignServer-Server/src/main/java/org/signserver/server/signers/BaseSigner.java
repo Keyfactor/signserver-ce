@@ -246,7 +246,7 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
                 result.add("Unable to get certificate chain");
                 LOG.error("Signer " + workerId + ": Unable to get certificate chain: " + ex.getMessage());
             } catch (CryptoTokenOfflineException ex) {
-                result.add(ex.getMessage());
+                // error messages will be handle by BaseProcessable::getCryptoToken
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Signer " + workerId + ": Could not get signer certificate in chain: " + ex.getMessage());
                 }

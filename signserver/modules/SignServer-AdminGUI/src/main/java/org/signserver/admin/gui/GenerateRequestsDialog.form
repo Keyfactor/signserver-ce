@@ -76,6 +76,7 @@
           <action class="org.signserver.admin.gui.GenerateRequestsDialog" id="generateRequests" methodName="generateRequests"/>
         </Property>
         <Property name="text" type="java.lang.String" resourceKey="jButtonGenerate.text"/>
+        <Property name="enabled" type="boolean" value="false"/>
         <Property name="name" type="java.lang.String" value="jButtonGenerate" noResource="true"/>
       </Properties>
       <Events>

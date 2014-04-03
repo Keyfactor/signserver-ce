@@ -137,17 +137,30 @@ public class GenerateRequestsDialog extends JDialog {
             public void tableChanged(final TableModelEvent e) {
                 boolean enable = true;
                 for (int row = 0; row < jTable1.getRowCount(); row++) {
-                    if ("".equals(jTable1.getValueAt(row, 2))
-                            || "".equals(jTable1.getValueAt(row, 3))
-                            || "".equals(jTable1.getValueAt(row, 4))) {
+                    if (anyNullOrEmptyString(
+                            jTable1.getValueAt(row, 2),  
+                            jTable1.getValueAt(row, 3), 
+                            jTable1.getValueAt(row, 4))) {
                         enable = false;
                         break;
                     }
                 }
                 jButtonGenerate.setEnabled(enable);
             }
+            
+            /** @return True if any value is null or equals empty String */
+            private boolean anyNullOrEmptyString(Object... os) {
+                boolean result = false;
+                for (Object o : os) {
+                    if (o == null || "".equals(o)) {
+                        result = true;
+                        break;
+                    }
+                }
+                return result;
+            }
         });
-
+        
         final BrowseCellEditor editor = new BrowseCellEditor(new JTextField(),
                 JFileChooser.SAVE_DIALOG);
         editor.setClickCountToStart(1);
@@ -228,6 +241,7 @@ public class GenerateRequestsDialog extends JDialog {
         javax.swing.ActionMap actionMap = org.jdesktop.application.Application.getInstance(org.signserver.admin.gui.SignServerAdminGUIApplication.class).getContext().getActionMap(GenerateRequestsDialog.class, this);
         jButtonGenerate.setAction(actionMap.get("generateRequests")); // NOI18N
         jButtonGenerate.setText(resourceMap.getString("jButtonGenerate.text")); // NOI18N
+        jButtonGenerate.setEnabled(false);
         jButtonGenerate.setName("jButtonGenerate"); // NOI18N
         jButtonGenerate.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

@@ -19,6 +19,7 @@ import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.log4j.Logger;
+import org.ejbca.ui.cli.util.ConsolePasswordReader;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.cli.spi.UnexpectedCommandFailureException;
@@ -40,20 +41,25 @@ public class RenewSignerCommand extends AbstractAdminCommand {
     private static final Logger LOG = Logger.getLogger(RenewSignerCommand.class);
     
     public static final String RENEWALWORKER = "renewalworker";
+    public static final String AUTHCODE = "authcode";
     
     /** The command line options. */
     private static final Options OPTIONS;
     
     private static final String USAGE =
-            "Usage: signserver renewsigner <worker name> -renewalworker <worker name>\n"
-            + "Example 1: signserver renewsigner signer71 -renewalworker RenewalWorker1\n";
+            "Usage: signserver renewsigner <worker name> -renewalworker <worker name> [-authcode <authentication code>]\n"
+            + "Example 1: signserver renewsigner signer71 -renewalworker RenewalWorker1\n"
+            + "Example 2: signserver renewsigner signer71 -renewalworker RenewalWorker1 -authcode foo123\n";
 
     private String renewalWorker;
+    private String authCode;
     
     static {
         OPTIONS = new Options();
         OPTIONS.addOption(RENEWALWORKER, true,
                 "The worker which performs the renewal");
+        OPTIONS.addOption(AUTHCODE, true,
+                "The authentication code to activate the signer to renew");
     }
 
     @Override
@@ -74,6 +80,9 @@ public class RenewSignerCommand extends AbstractAdminCommand {
     private void parseCommandLine(final CommandLine line) {
         if (line.hasOption(RENEWALWORKER)) {
             renewalWorker = line.getOptionValue(RENEWALWORKER, null);
+        }
+        if (line.hasOption(AUTHCODE)) {
+            authCode = line.getOptionValue(AUTHCODE, null);
         }
     }
 
@@ -102,6 +111,13 @@ public class RenewSignerCommand extends AbstractAdminCommand {
             throw new IllegalCommandArgumentsException(USAGE);
         }
         try {
+            
+            if (authCode == null) {
+                getOutputStream().print("Enter authorization code: ");
+                // Read the password, but mask it so we don't display it on the console
+                ConsolePasswordReader r = new ConsolePasswordReader();
+                authCode = String.valueOf(r.readPassword());
+            }
 
             String workerName = args[0];
             checkThatWorkerIsProcessable(getWorkerId(workerName));
@@ -109,6 +125,9 @@ public class RenewSignerCommand extends AbstractAdminCommand {
             final Properties requestProperties = new Properties();
             requestProperties.setProperty(
                     RenewalWorkerProperties.REQUEST_WORKER, workerName);
+            requestProperties.setProperty(
+                            RenewalWorkerProperties.REQUEST_AUTHCODE,
+                            String.valueOf(authCode));
 //                    requestProperties.setProperty(
 //                            RenewalWorkerProperties.REQUEST_RENEWKEY,
 //                            RenewalWorkerProperties.REQUEST_RENEWKEY_TRUE);

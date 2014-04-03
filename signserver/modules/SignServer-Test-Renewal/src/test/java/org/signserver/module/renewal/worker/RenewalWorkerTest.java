@@ -694,7 +694,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
         
         CLITestHelper cli = new CLITestHelper(AdminCLI.class);
         
-        int returnCode = cli.execute("renewsigner", SIGNER_6102, "-renewalworker", WORKERNAME);
+        int returnCode = cli.execute("renewsigner", SIGNER_6102, "-renewalworker", WORKERNAME, "-authcode", "foo123");
         byte[] outBytes = cli.getOut().toByteArray();
         byte[] errBytes = cli.getErr().toByteArray();
         LOG.info("outBytes: " + new String(outBytes));
@@ -705,11 +705,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
         response.load(new ByteArrayInputStream(outBytes));
         
         // OK result
-        LOG.info("Response message: " + response.getProperty(
-                RenewalWorkerProperties.RESPONSE_MESSAGE));
-        assertEquals(RenewalWorkerProperties.RESPONSE_RESULT_OK,
-                response.getProperty(
-                RenewalWorkerProperties.RESPONSE_RESULT));
+        assertEquals("Renewed successfully", new String(outBytes).trim());
 
         // Requested certificate
         assertTrue("should have requested certificate",

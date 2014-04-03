@@ -110,7 +110,7 @@ public class PKCS11CryptoToken implements ICryptoToken, IKeyGenerator, IKeyRemov
             }
         } catch (org.cesecore.keys.token.CryptoTokenOfflineException ex) {
             LOG.error("Init failed", ex);
-            throw new CryptoTokenInitializationFailureException(ex.getMessage());
+            throw new CryptoTokenInitializationFailureException(ex.getMessage(), ex);
         }
     }
 

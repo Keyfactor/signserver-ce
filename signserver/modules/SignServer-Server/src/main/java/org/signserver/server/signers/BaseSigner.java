@@ -94,7 +94,8 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
         try {
             token = getCryptoToken();
         } catch (SignServerException ex) {
-            fatalErrors.add("Failed to get crypto token: " + ex.getMessage());
+            // getFatalErrors will pick up crypto token errors gathered
+            // during creation of the crypto token
         }
         
         try {
@@ -127,7 +128,7 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
                 retval = new SignerStatus(workerId, getCryptoToken().getCryptoTokenStatus(),
                         fatalErrors, new ProcessableConfig(config), null);
             } catch (SignServerException e2) {
-                fatalErrors.add("Failed to get crypto token: " + e2.getMessage());
+                // the error will have been picked up by getCryptoTokenFatalErrors already
                 retval = new SignerStatus(workerId, SignerStatus.STATUS_OFFLINE, fatalErrors, new ProcessableConfig(config), null);
             }
         } catch (NumberFormatException ex) {
@@ -207,6 +208,9 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
             }
         }
         
+        // add any eventual crypto token fatal errors gathered in BaseProcessable        
+        result.addAll(getCryptoTokenFatalErrors());
+
         // Check signer validity
         if (certificate instanceof X509Certificate) {
             try {

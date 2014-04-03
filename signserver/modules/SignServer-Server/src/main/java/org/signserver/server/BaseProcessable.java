@@ -20,8 +20,12 @@ import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
+
+import javax.persistence.EntityManager;
+
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Hex;
 import org.signserver.common.*;
@@ -40,8 +44,29 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
     private X509Certificate cert;
     private List<Certificate> certChain;
 
+    private List<String> cryptoTokenFatalErrors;
+    
     protected BaseProcessable() {
     }
+
+    @Override
+    public ProcessResponse processData(ProcessRequest signRequest,
+            RequestContext requestContext) throws IllegalRequestException,
+            CryptoTokenOfflineException, SignServerException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+
+
+    @Override
+    public void init(int workerId, WorkerConfig config,
+            WorkerContext workerContext, EntityManager workerEM) {
+        super.init(workerId, config, workerContext, workerEM);
+        
+        cryptoTokenFatalErrors = new LinkedList<String>();
+    }
+
 
     @Override
     public void activateSigner(String authenticationCode)
@@ -152,13 +177,15 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
             if (value != null) {
                 defaultProperties.setProperty(CryptoTokenHelper.PROPERTY_PIN, value);
             }
+            String className = null;
             try {
-                String classpath = gc.getCryptoTokenProperty(workerId, GlobalConfiguration.CRYPTOTOKENPROPERTY_CLASSPATH);
+                className = gc.getCryptoTokenProperty(workerId, GlobalConfiguration.CRYPTOTOKENPROPERTY_CLASSPATH);
+                
                 if (log.isDebugEnabled()) {
-                    log.debug("Found cryptotoken classpath: " + classpath);
+                    log.debug("Found cryptotoken classpath: " + className);
                 }
-                if (classpath != null) {
-                    Class<?> implClass = Class.forName(classpath);
+                if (className != null) {
+                    Class<?> implClass = Class.forName(className);
                     Object obj = implClass.newInstance();
                     cryptoToken = (ICryptoToken) obj;
                     Properties properties = new Properties();
@@ -167,12 +194,73 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
                     cryptoToken.init(workerId, properties);
                 }
             } catch (CryptoTokenInitializationFailureException e) {
+                final StringBuilder sb = new StringBuilder();
+                
+                if (log.isDebugEnabled()) {
+                    log.debug("Failed to initialize crypto token: " + e.getMessage());
+                }
+                
+                sb.append("Failed to initialize crypto token: ");
+                
+                // collect cause messages
+                final List<String> causes = new LinkedList<String>();
+                
+                causes.add(e.getMessage());
+                
+                Throwable cause = e.getCause();
+
+                if (cause == null) {
+                    sb.append(" Could not find cause.");
+                }
+                
+                // iterate throug cause until we reach the bottom
+                while (cause != null) {
+                    final String causeMessage = cause.getMessage();
+                    
+                    if (log.isDebugEnabled()) {
+                        log.debug("Cause: " + causeMessage);
+                    }
+                    
+                    // if cause message wasn't already seen, add it to the list
+                    if (!causes.contains(causeMessage)) {
+                        causes.add(causeMessage);
+                    }
+                    
+                    cause = cause.getCause();
+                }
+                
+                // prepend cause messages with some separators at the tail of our message
+                for (final String causeMessage : causes) {
+                    sb.append(": ");
+                    sb.append(causeMessage);
+                }
+                
+                final String error = sb.toString();
+                
+                if (!cryptoTokenFatalErrors.contains(error)) {
+                    cryptoTokenFatalErrors.add(error);
+                }
                 throw new SignServerException("Failed to initialize crypto token: " + e.getMessage(), e);
             } catch (ClassNotFoundException e) {
+                final String error = "Crypto token class not found: " + className;
+                
+                if (!cryptoTokenFatalErrors.contains(error)) {
+                    cryptoTokenFatalErrors.add(error);
+                }
                 throw new SignServerException("Class not found", e);
             } catch (IllegalAccessException iae) {
+                final String error = "Crypto token illegal access";
+                
+                if (!cryptoTokenFatalErrors.contains(error)) {
+                    cryptoTokenFatalErrors.add(error);
+                }
                 throw new SignServerException("Illegal access", iae);
             } catch (InstantiationException ie) {
+                final String error = "Crypto token instantiation error";
+                
+                if (!cryptoTokenFatalErrors.contains(error)) {
+                    cryptoTokenFatalErrors.add(error);
+                }
                 throw new SignServerException("Instantiation error", ie);
             }
         }
@@ -367,5 +455,9 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         } catch (NoSuchAlgorithmException ex) {
             throw new SignServerException("Unable to compute archive id", ex);
         }
+    }
+    
+    protected List<String> getCryptoTokenFatalErrors() {
+        return cryptoTokenFatalErrors;
     }
 }

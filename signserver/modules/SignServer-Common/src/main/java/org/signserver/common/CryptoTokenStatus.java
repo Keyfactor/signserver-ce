@@ -46,7 +46,7 @@ public abstract class CryptoTokenStatus extends WorkerStatus {
     private static List<String> addCryptoTokenError(int tokenStatus, int workerId, List<String> errors) {
         if (tokenStatus == SignerStatus.STATUS_OFFLINE) {
             List<String> moreErrors = new LinkedList<String>(errors);
-            moreErrors.add("Error Crypto Token is disconnected, worker Id : " + workerId);
+            moreErrors.add("Error Crypto Token is disconnected");
             return moreErrors;
         }
         return errors;

@@ -25,4 +25,8 @@ public class CryptoTokenInitializationFailureException extends Exception {
     public CryptoTokenInitializationFailureException(String message) {
         super(message);
     }
+    
+    public CryptoTokenInitializationFailureException(final String message, final Throwable cause) {
+        super(message, cause);
+    }
 }

@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.server;
 
+import java.util.List;
 import java.util.Properties;
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
@@ -199,6 +200,24 @@ public class BaseProcessableTest extends TestCase {
                 expectedProperties.toString(), actualProperties.toString());
     }
     
+    @Test
+    public void testCryptoToken_unknownClass() throws Exception {
+        Properties globalConfig = new Properties();
+        WorkerConfig workerConfig = new WorkerConfig();
+        
+        // All PKCS#11 properties that can have default values in GlobalConfiguration (except SLOTLISTINDEX)
+        globalConfig.setProperty("GLOB.WORKER" + workerId + ".CLASSPATH", TestSigner.class.getName());
+        globalConfig.setProperty("GLOB.WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", "org.foo.Bar");
+        workerConfig.setProperty("NAME", "TestSigner100");
+        
+        TestSigner instance = new TestSigner(globalConfig);
+        instance.init(workerId, workerConfig, anyContext, null);
+        
+        final List<String> fatalErrors = instance.getSignerFatalErrors();
+        
+        assertTrue("Should contain error", fatalErrors.contains("Crypto token class not found: org.foo.Bar"));
+    }
+    
     /** CryptoToken only holding its properties and offering a way to access them. */
     private static class MockedCryptoToken extends NullCryptoToken {
 
@@ -263,6 +282,11 @@ public class BaseProcessableTest extends TestCase {
         public ProcessResponse processData(ProcessRequest signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
             throw new UnsupportedOperationException("Not supported yet.");
         }
+
+        List<String> getSignerFatalErrors() {
+            return super.getFatalErrors();
+        }
+        
         
     }
 }

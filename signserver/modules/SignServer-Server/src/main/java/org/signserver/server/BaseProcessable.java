@@ -208,10 +208,6 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
                 causes.add(e.getMessage());
                 
                 Throwable cause = e.getCause();
-
-                if (cause == null) {
-                    sb.append(" Could not find cause.");
-                }
                 
                 // iterate throug cause until we reach the bottom
                 while (cause != null) {

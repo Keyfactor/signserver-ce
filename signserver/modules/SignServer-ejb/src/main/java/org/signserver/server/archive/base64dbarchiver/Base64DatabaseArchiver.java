@@ -63,7 +63,7 @@ public class Base64DatabaseArchiver implements Archiver {
 
     @Override
     public void init(int listIndex, WorkerConfig config, SignServerContext context) throws ArchiverInitException {
-        if (context.isDatabaseConfigured()) {
+        if (!context.isDatabaseConfigured()) {
             throw new ArchiverInitException("Base64DatabaseArchiver requires a database connection");
         }
         

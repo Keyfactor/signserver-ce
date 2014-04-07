@@ -200,7 +200,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
                     log.debug("Failed to initialize crypto token: " + e.getMessage());
                 }
                 
-                sb.append("Failed to initialize crypto token: ");
+                sb.append("Failed to initialize crypto token");
                 
                 // collect cause messages
                 final List<String> causes = new LinkedList<String>();
@@ -208,7 +208,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
                 causes.add(e.getMessage());
                 
                 Throwable cause = e.getCause();
-                
+             
                 // iterate throug cause until we reach the bottom
                 while (cause != null) {
                     final String causeMessage = cause.getMessage();

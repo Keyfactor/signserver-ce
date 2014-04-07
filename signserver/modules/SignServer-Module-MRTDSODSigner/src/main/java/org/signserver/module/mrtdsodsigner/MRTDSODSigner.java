@@ -45,7 +45,7 @@ import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.signers.BaseSigner;
 
 /**
- * A Signer signing creating a signed Security Object Data (SOD) file to be stored in ePassports.
+ * A Signer creating a signed Security Object Data (SOD) file to be stored in ePassports.
  *
  * Properties:
  * <ul>
@@ -54,6 +54,8 @@ import org.signserver.server.signers.BaseSigner;
  *  the digest algorithm. (Optional)</li>
  *  <li>DODATAGROUPHASHING = True if this signer first should hash to values. Otherwise
  * the values are assumed to be hashes</li>
+ *  <li>LDSVERSION = Version of Logical Data Structure (LDS). For LDS version 1.7 enter "0107" and for version 1.8 "0108". (Optional, default is 0107)</li>
+ *  <li>UNICODEVERSION = Version of Unicode used in the datagroups. Required if LDS 1.8 is used. Example: "040000" for Unicode version 4.0.0.</li>
  * </ul>
  *
  * @author Tomas Gustavsson
@@ -107,6 +109,7 @@ public class MRTDSODSigner extends BaseSigner {
         }
     }
 
+    @Override
     public ProcessResponse processData(ProcessRequest signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
         if (log.isTraceEnabled()) {
             log.trace(">processData");

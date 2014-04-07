@@ -12,6 +12,10 @@
     <import file="nbproject/build-impl.xml"/>
     <import file="../modules.xml"/>
     <import file="../tests.xml"/>
+
+    <property name="dist-module.available" value="true"/>
+    <property name="clean.available" value="true"/>
+    <property name="modulename" value="performancetest"/>    
     
     <target name="-post-jar" depends="-do-client-dist">
         <copy todir="../../lib/">

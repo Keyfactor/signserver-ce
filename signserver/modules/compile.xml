@@ -441,7 +441,7 @@ SHA1 checksum: ${zip.bin.sha1}</echo>
             antfile="modules/SignServer-Test-P11/build.xml"/>
     </target>
 	
-    <target name="test:signserver:run" depends="test:signserver:pre-run, build"
+    <target name="test:signserver:run" depends="test:signserver:pre-run"
         description="Run the default JUnit testcases">
 
         <!-- Run all tests defined in modules-project.properties. -->

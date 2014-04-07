@@ -29,9 +29,7 @@ import org.signserver.module.tsa.TimeStampSigner;
 import org.signserver.server.cryptotokens.HardCodedCryptoToken;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.testutils.ModulesTestCase;
-import org.signserver.testutils.TestUtils;
 import org.signserver.testutils.TestingSecurityManager;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -40,14 +38,13 @@ public class CustomAuthTest extends ModulesTestCase {
 
     private String signserverhome;
     private int moduleVersion;
+    
+    private final IWorkerSession workerSession = getWorkerSession();
+    private final IGlobalConfigurationSession globalSession = getGlobalSession();
 
     @Before
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
-        globalSession = ServiceLocator.getInstance().lookupRemote(
-                IGlobalConfigurationSession.IRemote.class);
-        workerSession = ServiceLocator.getInstance().lookupRemote(
-                IWorkerSession.IRemote.class);
         signserverhome = System.getenv("SIGNSERVER_HOME");
         assertNotNull(signserverhome);
     }

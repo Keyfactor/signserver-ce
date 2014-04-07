@@ -27,9 +27,8 @@ import org.junit.After;
 import org.signserver.common.*;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestingSecurityManager;
-import static org.junit.Assert.*;
 import org.junit.Before;
-import org.junit.Test;
+import org.signserver.ejb.interfaces.IWorkerSession;
 
 /**
  * Re-usable test case for archiving.
@@ -40,6 +39,8 @@ import org.junit.Test;
 public class ArchiveTestCase extends ModulesTestCase {
     
     private Random random = new Random();
+    
+    private final IWorkerSession workerSession = getWorkerSession();
     
     @Before
     public void setUp() throws Exception {

@@ -43,9 +43,11 @@ import org.signserver.common.WorkerConfig;
 import org.signserver.test.utils.builders.CertBuilder;
 import org.signserver.test.utils.builders.CryptoUtils;
 import org.signserver.testutils.ModulesTestCase;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
+import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
+import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.statusrepo.IStatusRepositorySession;
 
 /**
  * Tests for audit logging using the System Logger.
@@ -67,6 +69,10 @@ public class SystemLoggingTest extends ModulesTestCase {
     private final int signerId = 6000;
     
     private File auditLogFile;
+    
+    private final IWorkerSession workerSession = getWorkerSession();
+    private final IGlobalConfigurationSession globalSession = getGlobalSession();
+    private final IStatusRepositorySession statusSession = getStatusSession();
     
     @Before
     public void setUp() throws Exception {

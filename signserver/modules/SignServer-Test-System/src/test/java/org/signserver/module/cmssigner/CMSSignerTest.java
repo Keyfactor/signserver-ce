@@ -35,6 +35,7 @@ import org.signserver.common.GenericSignResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerConfig;
+import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestingSecurityManager;
 
@@ -52,6 +53,8 @@ public class CMSSignerTest extends ModulesTestCase {
     
     private static final int WORKERID_ECDSA = 8000;
     private static final int WORKERID_DSA = 8001;
+    
+    private final IWorkerSession workerSession = getWorkerSession();
     
     @Before
     protected void setUp() throws Exception {

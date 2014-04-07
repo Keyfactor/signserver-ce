@@ -28,6 +28,8 @@ import org.signserver.testutils.ModulesTestCase;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
+import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
+import org.signserver.ejb.interfaces.IWorkerSession;
 
 /**
  * TODO: Document me!
@@ -37,6 +39,9 @@ import org.junit.Test;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class SoftCryptoTokenTest extends ModulesTestCase {
 
+    private final IWorkerSession workerSession = getWorkerSession();
+    private final IGlobalConfigurationSession globalSession = getGlobalSession();
+    
     @Before
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();

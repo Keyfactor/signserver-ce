@@ -39,6 +39,8 @@ import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.KeyTestResult;
 import org.signserver.common.PKCS10CertReqInfo;
 import org.signserver.common.SignServerUtil;
+import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
+import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.test.utils.builders.CryptoUtils;
 import org.signserver.testutils.ModulesTestCase;
 
@@ -60,6 +62,9 @@ public class KeystoreCryptoTokenTest extends ModulesTestCase {
     private static final String pin = "foo123";
     
     private File keystoreFile;
+    
+    private final IWorkerSession workerSession = getWorkerSession();
+    private final IGlobalConfigurationSession globalSession = getGlobalSession();
     
     @Override
     protected void setUp() throws Exception {

@@ -29,9 +29,9 @@ import org.signserver.module.mrtdsodsigner.jmrtd.SODFile;
 import org.signserver.server.cryptotokens.HardCodedCryptoToken;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestingSecurityManager;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
+import org.signserver.ejb.interfaces.IWorkerSession;
 
 /**
  * Tests the MRTDSODSigner.
@@ -63,6 +63,8 @@ public class MRTDSODSignerTest extends ModulesTestCase {
     /** Worker7904: SHA256WithECDSA, DODATAGROUPHASHING=true */
     private static final int WORKER5 = 7904;
 
+    private final IWorkerSession workerSession = getWorkerSession();
+    
     @Before
     protected void setUp() throws Exception {
         SignServerUtil.installBCProvider();

@@ -22,9 +22,10 @@ import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerStatus;
 import org.signserver.testutils.ModulesTestCase;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
+import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
+import org.signserver.ejb.interfaces.IWorkerSession;
 
 /**
  * Tests for SignerStatusReportTimedService.
@@ -72,7 +73,10 @@ public class SignerStatusReportTimedServiceTest extends ModulesTestCase {
     private static File outputFile;
     
     private SignerStatusReportParser parser = new SignerStatusReportParser();
-	
+
+    private final IWorkerSession workerSession = getWorkerSession();
+    private final IGlobalConfigurationSession globalSession = getGlobalSession();
+    
     @Before
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();

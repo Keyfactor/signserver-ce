@@ -31,9 +31,9 @@ import org.signserver.common.SignServerUtil;
 import org.signserver.common.SignerStatus;
 import org.signserver.common.WorkerConfig;
 import org.signserver.testutils.ModulesTestCase;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
+import org.signserver.ejb.interfaces.IWorkerSession;
 
 /**
  * TODO: Document me!
@@ -43,6 +43,8 @@ import org.junit.Test;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MRTDSignerTest extends ModulesTestCase {
 
+    private final IWorkerSession workerSession = getWorkerSession();
+    
     @Before
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();

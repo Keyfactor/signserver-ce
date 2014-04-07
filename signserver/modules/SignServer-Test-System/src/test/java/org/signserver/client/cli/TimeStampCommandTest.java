@@ -28,6 +28,7 @@ import org.signserver.testutils.CLITestHelper;
 import org.signserver.testutils.ModulesTestCase;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
+import org.signserver.ejb.interfaces.IWorkerSession;
 
 /**
  * Tests for the timestamp command of Client CLI.
@@ -49,7 +50,9 @@ public class TimeStampCommandTest extends ModulesTestCase {
     private static final String SAMPLE_QUERY_CERTREQ_FILE = "res/test/sample-certreq.tsq";
     private static final String SAMPLE_RESPONSE_FILE = "res/test/sample.tsr";
     private static final String SAMPLE_RESPONSE_CERTREQ_FILE = "res/test/sample-certreq.tsr";
-	
+
+    private final IWorkerSession workerSession = getWorkerSession();
+    
     @Before
     @Override
     public void setUp() throws Exception {

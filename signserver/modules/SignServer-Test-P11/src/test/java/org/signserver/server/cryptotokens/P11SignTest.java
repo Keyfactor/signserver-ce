@@ -64,6 +64,8 @@ import org.signserver.common.SODSignRequest;
 import org.signserver.common.SODSignResponse;
 import org.signserver.common.SignServerException;
 import org.signserver.common.SignServerUtil;
+import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
+import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.test.utils.builders.CryptoUtils;
 import org.signserver.testutils.ModulesTestCase;
 
@@ -107,6 +109,9 @@ public class P11SignTest extends ModulesTestCase {
     private final File odfSampleFile;
     private final File ooxmlSampleFile;
 
+    private final IWorkerSession workerSession = getWorkerSession();
+    private final IGlobalConfigurationSession globalSession = getGlobalSession();
+    
     public P11SignTest() {
         File home = new File(System.getenv("SIGNSERVER_HOME"));
         assertTrue("Environment variable SIGNSERVER_HOME", home.exists());

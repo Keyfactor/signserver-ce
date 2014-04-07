@@ -30,8 +30,9 @@ import org.signserver.server.cryptotokens.P12CryptoToken;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.validationservice.common.Validation;
 import org.w3c.dom.Document;
-import static org.junit.Assert.*;
 import org.junit.Test;
+import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
+import org.signserver.ejb.interfaces.IWorkerSession;
 
 /**
  * Tests for client API with a CRLValidator.
@@ -60,6 +61,9 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
     private static File crlWithCertRevoked;
     private static File crlToUse;
 
+    private final IWorkerSession workerSession = getWorkerSession();
+    private final IGlobalConfigurationSession globalSession = getGlobalSession();
+    
     public SigningAndValidationWithCRLTest() {
         setupSSLKeystores();
     }

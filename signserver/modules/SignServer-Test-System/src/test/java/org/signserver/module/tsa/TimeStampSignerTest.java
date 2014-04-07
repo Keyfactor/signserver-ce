@@ -62,9 +62,9 @@ import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestUtils;
 import org.signserver.testutils.TestingSecurityManager;
 
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
+import org.signserver.ejb.interfaces.IWorkerSession;
 
 /**
  * Tests for the TimeStampSigner.
@@ -135,6 +135,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
 
     private Random random = new Random(4711);
 
+    private final IWorkerSession workerSession = getWorkerSession();
 
     @Before
     public void setUp() throws Exception {

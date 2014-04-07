@@ -23,6 +23,7 @@ import org.signserver.statusrepo.IStatusRepositorySession;
 import org.signserver.statusrepo.common.StatusName;
 import org.junit.Before;
 import org.junit.Test;
+import org.signserver.ejb.interfaces.IWorkerSession;
 
 /**
  * Tests the Health check.
@@ -38,6 +39,8 @@ public class HealthCheckTest extends WebTestCase {
     
     /** The status repository session. */
     private static IStatusRepositorySession.IRemote repository;
+    
+    private final IWorkerSession workerSession = getWorkerSession();
   
     @Override
     protected String getServletURL() {

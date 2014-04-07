@@ -29,9 +29,9 @@ import org.signserver.common.RequestContext;
 import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.ArchiveTest;
 import org.signserver.server.archive.ArchiveTestCase;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
+import org.signserver.ejb.interfaces.IWorkerSession;
 
 /**
  * Tests for the OldDatabaseArchiver.
@@ -47,6 +47,7 @@ public class OldDatabaseArchiverTest extends ArchiveTestCase {
 
     private static Random random = new Random();
     
+    private final IWorkerSession workerSession = getWorkerSession();
     
     @Before
     @Override

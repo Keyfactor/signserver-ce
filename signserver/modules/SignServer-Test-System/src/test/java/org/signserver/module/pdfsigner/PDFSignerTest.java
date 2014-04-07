@@ -29,9 +29,9 @@ import org.junit.runners.MethodSorters;
 import org.signserver.common.*;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestingSecurityManager;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
+import org.signserver.ejb.interfaces.IWorkerSession;
 
 /**
  * Unit tests for the PDFSigner.
@@ -47,6 +47,8 @@ public class PDFSignerTest extends ModulesTestCase {
 
     private static final String TESTPDF_OK = "ok.pdf";
     private static final String TESTPDF_2CATALOGS = "2catalogs.pdf";
+    
+    private final IWorkerSession workerSession = getWorkerSession();
 
     @Before
     public void setUp() throws Exception {

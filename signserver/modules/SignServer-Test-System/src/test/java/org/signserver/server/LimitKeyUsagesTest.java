@@ -18,9 +18,9 @@ import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 import org.signserver.common.*;
 import org.signserver.testutils.ModulesTestCase;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
+import org.signserver.ejb.interfaces.IWorkerSession;
 
 /**
  * Tests limits for the key usages.
@@ -42,6 +42,8 @@ public class LimitKeyUsagesTest extends ModulesTestCase {
      * Test with this number of signings.
      */
     private static final int LIMIT = 10;
+    
+    private final IWorkerSession workerSession = getWorkerSession();
 
     @Before
     public void setUp() throws Exception {

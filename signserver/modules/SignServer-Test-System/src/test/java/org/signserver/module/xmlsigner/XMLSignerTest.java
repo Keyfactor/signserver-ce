@@ -28,6 +28,7 @@ import org.signserver.testutils.ModulesTestCase;
 import org.w3c.dom.Document;
 import org.junit.Before;
 import org.junit.Test;
+import org.signserver.ejb.interfaces.IWorkerSession;
 
 /**
  * Tests for XMLSigner.
@@ -52,6 +53,8 @@ public class XMLSignerTest extends ModulesTestCase {
 
     private static final String TESTXML1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><root><my-tag>My Data</my-tag></root>";
 
+    private final IWorkerSession workerSession = getWorkerSession();
+    
     @Before
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();

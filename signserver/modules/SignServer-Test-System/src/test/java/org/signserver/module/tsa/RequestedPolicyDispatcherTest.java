@@ -25,9 +25,9 @@ import org.junit.runners.MethodSorters;
 import org.signserver.common.*;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestingSecurityManager;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
+import org.signserver.ejb.interfaces.IWorkerSession;
 
 /**
  * Tests for RequestedProfileDistpatcher.
@@ -58,6 +58,7 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
     
     private Random random = new Random(4711);
 
+    private final IWorkerSession workerSession = getWorkerSession();
 
     @Before
     public void setUp() throws Exception {

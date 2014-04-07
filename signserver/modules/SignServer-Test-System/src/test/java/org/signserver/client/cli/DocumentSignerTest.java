@@ -21,12 +21,10 @@ import org.junit.runners.MethodSorters;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.client.cli.defaultimpl.SignDocumentCommand;
-import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerUtil;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestingSecurityManager;
-import static org.junit.Assert.*;
 import org.junit.Test;
 
 /**
@@ -53,11 +51,11 @@ public class DocumentSignerTest extends ModulesTestCase {
 
     private static String signserverhome;
     
+    private final IWorkerSession workerSession = getWorkerSession();
+    
     @Before
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
-        workerSession = ServiceLocator.getInstance().lookupRemote(
-                IWorkerSession.IRemote.class);
         TestingSecurityManager.install();
         signserverhome = System.getenv("SIGNSERVER_HOME");
         LOG.info("HOME:"+signserverhome);

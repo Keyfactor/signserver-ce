@@ -20,7 +20,6 @@ import org.junit.runners.MethodSorters;
 import org.signserver.common.*;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.testutils.ModulesTestCase;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.signserver.server.UsernamePasswordClientCredential;
@@ -53,12 +52,12 @@ public class UserMappedDispatcherTest extends ModulesTestCase {
     /** Logger for this class */
     private static final Logger LOG = Logger.getLogger(UserMappedDispatcherTest.class);
     
+    private final IWorkerSession workerSession = getWorkerSession();
+    
     @Before
     @Override
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
-        workerSession = ServiceLocator.getInstance().lookupRemote(
-                        IWorkerSession.IRemote.class);
     }
 
     @Test

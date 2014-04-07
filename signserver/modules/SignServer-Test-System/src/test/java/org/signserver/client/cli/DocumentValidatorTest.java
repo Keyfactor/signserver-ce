@@ -24,10 +24,11 @@ import org.signserver.common.SignServerUtil;
 import org.signserver.module.xmlvalidator.XMLValidatorTestData;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestingSecurityManager;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
+import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
+import org.signserver.ejb.interfaces.IWorkerSession;
 
 /**
  * Tests for the validatedocument command of Client CLI.
@@ -48,7 +49,10 @@ public class DocumentValidatorTest extends ModulesTestCase {
     private static final String VALIDATION_WORKER = "TestValidationWorker";
 
     private static String signserverhome;
-	
+
+    private final IWorkerSession workerSession = getWorkerSession();
+    private final IGlobalConfigurationSession globalSession = getGlobalSession();
+    
     @Before
     protected void setUp() throws Exception {
         SignServerUtil.installBCProvider();

@@ -30,9 +30,9 @@ import org.signserver.common.GenericSignRequest;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerUtil;
 import org.signserver.testutils.ModulesTestCase;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
+import org.signserver.ejb.interfaces.IWorkerSession;
 
 /**
  * Tests for the UsernamePasswordAuthorizer.
@@ -46,6 +46,8 @@ public class UsernamePasswordAuthorizerTest extends ModulesTestCase {
     private static final Logger LOG = Logger.getLogger(
             UsernamePasswordAuthorizerTest.class);
 
+    private final IWorkerSession workerSession = getWorkerSession();
+    
     @Before
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();

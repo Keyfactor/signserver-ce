@@ -20,9 +20,9 @@ import org.signserver.common.GenericSignRequest;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerUtil;
 import org.signserver.testutils.ModulesTestCase;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
+import org.signserver.ejb.interfaces.IWorkerSession;
 
 /**
  * Tests for the UsernameAuthorizer.
@@ -36,6 +36,8 @@ public class UsernameAuthorizerTest extends ModulesTestCase {
 
     private static final Logger LOG = Logger.getLogger(
             UsernameAuthorizerTest.class);
+    
+    private final IWorkerSession workerSession = getWorkerSession();
 
     @Before
     public void setUp() throws Exception {

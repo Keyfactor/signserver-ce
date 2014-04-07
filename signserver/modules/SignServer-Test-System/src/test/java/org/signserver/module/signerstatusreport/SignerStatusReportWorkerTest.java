@@ -27,6 +27,8 @@ import org.signserver.web.WebTestCase;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
+import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
+import org.signserver.ejb.interfaces.IWorkerSession;
 
 /**
  * Tests for SignerStatusReportTimedService.
@@ -70,6 +72,9 @@ public class SignerStatusReportWorkerTest extends WebTestCase {
     private static final int[] WORKERS = new int[] {5676, 5679, 5681, 5682, 5683, 5802, 5803};
 
     private SignerStatusReportParser parser = new SignerStatusReportParser();
+    
+    private final IWorkerSession workerSession = getWorkerSession();
+    private final IGlobalConfigurationSession globalSession = getGlobalSession();
 
     @Override
     protected String getServletURL() {

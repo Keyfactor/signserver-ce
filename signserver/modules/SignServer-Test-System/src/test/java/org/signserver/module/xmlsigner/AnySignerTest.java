@@ -30,9 +30,9 @@ import org.signserver.common.PKCS10CertReqInfo;
 import org.signserver.common.SignServerUtil;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestingSecurityManager;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
+import org.signserver.ejb.interfaces.IWorkerSession;
 
 /**
  * Tests for any Signer.
@@ -54,7 +54,9 @@ public class AnySignerTest extends ModulesTestCase {
     private static String signserverhome;
 
     private static File keystoreFile;
-	
+
+    private final IWorkerSession workerSession = getWorkerSession();
+    
     @Before
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();

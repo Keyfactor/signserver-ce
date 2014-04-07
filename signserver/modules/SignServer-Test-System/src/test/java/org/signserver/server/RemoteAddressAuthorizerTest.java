@@ -26,6 +26,7 @@ import org.signserver.common.SignServerUtil;
 import org.signserver.testutils.*;
 import org.junit.Before;
 import org.junit.Test;
+import org.signserver.ejb.interfaces.IWorkerSession;
 
 /**
  * Tests for the RemoteAddressAuthorizer.
@@ -41,6 +42,8 @@ public class RemoteAddressAuthorizerTest extends ModulesTestCase {
             RemoteAddressAuthorizerTest.class);
 
     private String localIP;
+    
+    private final IWorkerSession workerSession = getWorkerSession();
     
     @Before
     public void setUp() throws Exception {

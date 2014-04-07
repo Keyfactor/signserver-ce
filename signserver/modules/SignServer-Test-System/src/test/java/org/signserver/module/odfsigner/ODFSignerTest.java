@@ -23,8 +23,8 @@ import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 import org.signserver.common.*;
 import org.signserver.testutils.ModulesTestCase;
-import static org.junit.Assert.*;
 import org.junit.Test;
+import org.signserver.ejb.interfaces.IWorkerSession;
 
 /**
  * Test for odfsigner. Worker ID of 5678 is hard coded here and used from
@@ -39,6 +39,8 @@ import org.junit.Test;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ODFSignerTest extends ModulesTestCase {
 
+    private final IWorkerSession workerSession = getWorkerSession();
+    
     /**
      * WORKERID used in this test case as defined in
      * junittest-part-config.properties

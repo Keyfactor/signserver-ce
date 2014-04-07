@@ -38,7 +38,6 @@ import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.statusrepo.IStatusRepositorySession;
-import static org.junit.Assert.*;
 
 /**
  * Base class for test cases.
@@ -153,9 +152,9 @@ public class ModulesTestCase extends TestCase {
        +"AwIBhjAJBgcqhkjOOAQDAzAAMC0CFQCEGSmvJf6rxy6u7ZqY25qE7Hy21gIUPW4q"
        +"++YIS2fHyu+H4Pjgnodx5zI=";
    
-    protected IWorkerSession workerSession;
-    protected IGlobalConfigurationSession globalSession;
-    protected IStatusRepositorySession statusSession;
+    private IWorkerSession workerSession;
+    private IGlobalConfigurationSession globalSession;
+    private IStatusRepositorySession statusSession;
 
     private static File signServerHome;
 
@@ -167,26 +166,6 @@ public class ModulesTestCase extends TestCase {
     private static Random random = new Random(1234);
 
     public ModulesTestCase() {
-        try {
-            workerSession = ServiceLocator.getInstance().lookupRemote(
-                IWorkerSession.IRemote.class);
-        } catch (NamingException ex) {
-            fail("Could not lookup IWorkerSession: " + ex.getMessage());
-        }
-        try {
-            globalSession = ServiceLocator.getInstance().lookupRemote(
-                IGlobalConfigurationSession.IRemote.class);
-        } catch (NamingException ex) {
-            fail("Could not lookup IGlobalConfigurationSession: "
-                    + ex.getMessage());
-        }
-        try {
-            statusSession = ServiceLocator.getInstance().lookupRemote(
-                IStatusRepositorySession.IRemote.class);
-        } catch (NamingException ex) {
-            fail("Could not lookup IStatusRepositorySession: "
-                    + ex.getMessage());
-        }
         final Properties defaultConfig = new Properties();
         InputStream in = null;
         try {
@@ -228,20 +207,38 @@ public class ModulesTestCase extends TestCase {
     
 
     protected IWorkerSession getWorkerSession() {
+        if (workerSession == null) {
+            try {
+                workerSession = ServiceLocator.getInstance().lookupRemote(
+                    IWorkerSession.IRemote.class);
+            } catch (NamingException ex) {
+                fail("Could not lookup IWorkerSession: " + ex.getMessage());
+            }
+        }
         return workerSession;
     }
 
     protected IGlobalConfigurationSession getGlobalSession() {
+        if (globalSession == null) {
+            try {
+                globalSession = ServiceLocator.getInstance().lookupRemote(
+                    IGlobalConfigurationSession.IRemote.class);
+            } catch (NamingException ex) {
+                fail("Could not lookup IGlobalConfigurationSession: "
+                        + ex.getMessage());
+            }
+        }
         return globalSession;
     }
 
     protected IStatusRepositorySession getStatusSession() {
         if (statusSession == null) {
             try {
-               statusSession = ServiceLocator.getInstance().lookupRemote(
-                    IStatusRepositorySession.IRemote.class);
+                statusSession = ServiceLocator.getInstance().lookupRemote(
+                IStatusRepositorySession.IRemote.class);
             } catch (NamingException ex) {
-                throw new RuntimeException("Could not lookup IStatusSession: " + ex.getMessage());
+                fail("Could not lookup IStatusRepositorySession: "
+                        + ex.getMessage());
             }
         }
         return statusSession;

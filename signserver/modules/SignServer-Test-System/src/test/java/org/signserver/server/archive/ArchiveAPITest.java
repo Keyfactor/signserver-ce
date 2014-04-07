@@ -33,7 +33,7 @@ import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestingSecurityManager;
 import org.junit.Before;
 import org.junit.Test;
-import org.signserver.common.CompileTimeSettings;
+import org.signserver.ejb.interfaces.IWorkerSession;
 
 /**
  * Tests for the Archiving API.
@@ -54,6 +54,8 @@ public class ArchiveAPITest extends ModulesTestCase {
     private File archiver0File;
     private File archiver1File;
     private File archiver2File;
+    
+    private final IWorkerSession workerSession = getWorkerSession();
     
     @Before
     @Override

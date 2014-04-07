@@ -20,7 +20,6 @@ import org.junit.runners.MethodSorters;
 import org.signserver.common.*;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.testutils.ModulesTestCase;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -52,11 +51,11 @@ public class FirstActiveDispatcherTest extends ModulesTestCase {
     /** Logger for this class */
     private static Logger LOG = Logger.getLogger(FirstActiveDispatcherTest.class);
     
+    private final IWorkerSession workerSession = getWorkerSession();
+    
     @Before
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
-        workerSession = ServiceLocator.getInstance().lookupRemote(
-                        IWorkerSession.IRemote.class);
     }
 
     @Test

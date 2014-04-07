@@ -101,9 +101,19 @@ public class KeystoreCryptoToken implements ICryptoToken,
         
         if (!TYPE_PKCS12.equals(keystoretype) &&
             !TYPE_JKS.equals(keystoretype)) {
-            throw new CryptoTokenInitializationFailureException("KEYSTORETYPE should be either P12 or JKS");
+            throw new CryptoTokenInitializationFailureException("KEYSTORETYPE should be either PKCS12 or JKS");
         }
         
+        // check keystore file
+        if (keystorepath == null) {
+            throw new CryptoTokenInitializationFailureException("Missing KEYSTOREPATH property");
+        } else {
+            final File keystoreFile = new File(keystorepath);
+            
+            if (!keystoreFile.isFile()) {
+                throw new CryptoTokenInitializationFailureException("File not found: " + keystorepath);
+            }
+        }
     }
 
     /**

@@ -275,7 +275,7 @@ public class KeystoreCryptoTokenTest extends ModulesTestCase {
            
            final List<String> errors = workerSession.getStatus(workerId).getFatalErrors();
            assertTrue("Should contain error",
-                   errors.contains("Failed to initialize crypto token: KEYSTORETYPE should be either P12 or JKS"));
+                   errors.contains("Failed to initialize crypto token: KEYSTORETYPE should be either PKCS12 or JKS"));
        } finally {
            removeWorker(workerId);
        }

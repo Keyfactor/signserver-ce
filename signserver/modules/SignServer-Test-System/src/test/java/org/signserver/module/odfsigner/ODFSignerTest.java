@@ -59,7 +59,7 @@ public class ODFSignerTest extends ModulesTestCase {
 
     @Test
     public void test00SetupDatabase() throws Exception {
-        setProperties(new File(getSignServerHome(), "modules/SignServer-Module-ODFSigner/src/conf/junittest-part-config.properties"));
+        setProperties(new File(getSignServerHome(), "res/test/test-odfsigner-configuration.properties"));
         workerSession.reloadConfiguration(WORKERID);
     }
 

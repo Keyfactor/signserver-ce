@@ -93,7 +93,7 @@ public class SignerStatusReportWorkerTest extends WebTestCase {
     @Test
     public void test00SetupDatabase() throws Exception {
 
-        setProperties(new File(getSignServerHome(), "modules/SignServer-Module-XMLSigner/src/conf/junittest-part-config.properties"));
+        setProperties(new File(getSignServerHome(), "res/test/test-xmlsigner-configuration.properties"));
         workerSession.reloadConfiguration(WORKERID_SIGNER1);
         workerSession.reloadConfiguration(WORKERID_SIGNER2);
         workerSession.reloadConfiguration(WORKERID_SIGNER3);

@@ -121,7 +121,7 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
     public void test00SetupDatabase() throws Exception {
 
         // XMLSIGNER: module
-        setProperties(new File(getSignServerHome(), "modules/SignServer-Module-XMLSigner/src/conf/junittest-part-config.properties"));
+        setProperties(new File(getSignServerHome(), "res/test/test-xmlsigner-configuration.properties"));
 
         // XMLSIGNER: endentity1
         setupSigner(SIGNER1_WORKERID, SIGNER1_WORKER, keystoreFileEndentity8, KEYSTORE8_PASSWORD);
@@ -132,7 +132,7 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
         setupValidation();
 
         // XMLVALIDATOR: module
-        setProperties(new File(getSignServerHome(), "modules/SignServer-Module-XMLValidator/src/conf/junittest-part-config.properties"));
+        setProperties(new File(getSignServerHome(), "res/test/test-xmlvalidator-configuration.properties"));
 
         // XMLVALIDATOR: worker
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + CERTVALIDATION_WORKERID + ".CLASSPATH", "org.signserver.module.xmlvalidator.XMLValidator");

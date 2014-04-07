@@ -71,11 +71,11 @@ public class DocumentSignerTest extends ModulesTestCase {
     @Test
     public void test00SetupDatabase() throws Exception {
         // Worker 1
-        setProperties(new File(signserverhome, "modules/SignServer-Module-XMLSigner/src/conf/junittest-part-config.properties"));
+        setProperties(new File(signserverhome, "res/test/test-xmlsigner-configuration.properties"));
         workerSession.reloadConfiguration(WORKERID);
         
         // Worker 2
-        setProperties(new File(signserverhome, "modules/SignServer-Module-PDFSigner/src/conf/junittest-part-config.properties"));
+        setProperties(new File(signserverhome, "res/test/test-pdfsigner-configuration.properties"));
         workerSession.reloadConfiguration(WORKERID2);
     }
 

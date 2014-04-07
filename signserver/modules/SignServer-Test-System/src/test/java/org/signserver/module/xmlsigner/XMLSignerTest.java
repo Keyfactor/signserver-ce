@@ -62,7 +62,7 @@ public class XMLSignerTest extends ModulesTestCase {
 
     @Test
     public void test00SetupDatabase() throws Exception {
-        setProperties(new File(getSignServerHome(), "modules/SignServer-Module-XMLSigner/src/conf/junittest-part-config.properties"));
+        setProperties(new File(getSignServerHome(), "res/test/test-xmlsigner-configuration.properties"));
         workerSession.reloadConfiguration(WORKERID);
 
         // Update path to JKS file

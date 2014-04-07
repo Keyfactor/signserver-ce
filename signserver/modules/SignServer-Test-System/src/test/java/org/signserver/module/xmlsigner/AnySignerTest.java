@@ -71,7 +71,7 @@ public class AnySignerTest extends ModulesTestCase {
 
     @Test
     public void test00SetupDatabase() throws Exception {
-        setProperties(new File(signserverhome, "modules/SignServer-Module-XMLSigner/src/conf/junittest-part-config.properties"));
+        setProperties(new File(signserverhome, "res/test/test-xmlsigner-configuration.properties"));
         workerSession.reloadConfiguration(WORKERID);
 
         final File newKeystore = new File(signserverhome + File.separator + "tmp"

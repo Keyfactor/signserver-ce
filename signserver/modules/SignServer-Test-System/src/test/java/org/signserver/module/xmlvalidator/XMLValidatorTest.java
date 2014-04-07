@@ -79,7 +79,7 @@ public class XMLValidatorTest extends ModulesTestCase {
         workerSession.reloadConfiguration(17);
 
         // XMLVALIDATOR
-        setProperties(new File(getSignServerHome(), "modules/SignServer-Module-XMLValidator/src/conf/junittest-part-config.properties"));
+        setProperties(new File(getSignServerHome(), "res/test/test-xmlvalidator-configuration.properties"));
         workerSession.setWorkerProperty(WORKERID, "VALIDATIONSERVICEWORKER", VALIDATION_WORKER);
         workerSession.reloadConfiguration(WORKERID);
     }

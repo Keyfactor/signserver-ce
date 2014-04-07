@@ -65,7 +65,7 @@ public class PDFSignerTest extends ModulesTestCase {
 
     @Test
     public void test00SetupDatabase() throws Exception {
-        setProperties(new File(getSignServerHome(), "modules/SignServer-Module-PDFSigner/src/conf/junittest-part-config.properties"));
+        setProperties(new File(getSignServerHome(), "res/test/test-pdfsigner-configuration.properties"));
         workerSession.reloadConfiguration(WORKERID);
     }
 

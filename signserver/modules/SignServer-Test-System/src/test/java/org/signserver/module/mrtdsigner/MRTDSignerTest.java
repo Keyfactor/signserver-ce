@@ -52,7 +52,7 @@ public class MRTDSignerTest extends ModulesTestCase {
 
     @Test
     public void test00SetupDatabase() throws Exception {
-        setProperties(new File(getSignServerHome(), "modules/SignServer-Module-MRTDSigner/src/conf/junittest-part-config.properties"));
+        setProperties(new File(getSignServerHome(), "res/test/test-mrtdsigner-configuration.properties"));
         workerSession.reloadConfiguration(7890);
     }
 

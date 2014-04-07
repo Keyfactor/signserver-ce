@@ -81,7 +81,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
     @Test
     public void test00SetupDatabase() throws Exception {
         assertEquals(CommandLineInterface.RETURN_SUCCESS, 
-                getAdminCLI().execute("setproperties", getSignServerHome().getAbsolutePath() + "/modules/SignServer-Module-MRTDSODSigner/src/conf/junittest-part-config.properties"));
+                getAdminCLI().execute("setproperties", getSignServerHome().getAbsolutePath() + "/res/test/test-mrtdsodsigner-configuration.properties"));
 
         // WORKER1 uses a P12 keystore
         workerSession.setWorkerProperty(WORKER1, "KEYSTOREPATH",

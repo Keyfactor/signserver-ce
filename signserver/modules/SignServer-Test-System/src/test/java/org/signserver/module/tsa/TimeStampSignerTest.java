@@ -155,7 +155,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
 
     @Test
     public void test00SetupDatabase() throws Exception {
-        setProperties(new File(getSignServerHome(), "modules/SignServer-Module-TSA/src/conf/junittest-part-config.properties"));
+        setProperties(new File(getSignServerHome(), "res/test/test-timestampsigner-configuration.properties"));
         workerSession.reloadConfiguration(WORKER1);
         workerSession.reloadConfiguration(WORKER2);
         workerSession.reloadConfiguration(WORKER3);

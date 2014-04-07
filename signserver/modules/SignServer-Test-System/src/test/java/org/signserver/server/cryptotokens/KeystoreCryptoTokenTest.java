@@ -234,4 +234,50 @@ public class KeystoreCryptoTokenTest extends ModulesTestCase {
             removeWorker(workerId);
         }
     }
+    
+    /**
+     * Test that omitting KEYSTORETYPE gives a correct error message.
+     * 
+     * @throws Exception
+     */
+    public void testNoKeystoreType() throws Exception {
+       LOG.info("testNoKeystoreType");
+       
+       final int workerId = WORKER_CMS;
+       
+       try {
+           setCMSSignerProperties(workerId, false);
+           workerSession.removeWorkerProperty(workerId, "KEYSTORETYPE");
+           workerSession.reloadConfiguration(workerId);
+           
+           final List<String> errors = workerSession.getStatus(workerId).getFatalErrors();
+           assertTrue("Should contain error",
+                   errors.contains("Failed to initialize crypto token: Missing KEYSTORETYPE property"));
+       } finally {
+           removeWorker(workerId);
+       }
+    }
+    
+    /**
+     * Test that setting an unknown KEYSTORETYPE gives a correct error message.
+     * 
+     * @throws Exception
+     */
+    public void testUnknownKeystoreType() throws Exception {
+       LOG.info("testNoKeystoreType");
+       
+       final int workerId = WORKER_CMS;
+       
+       try {
+           setCMSSignerProperties(workerId, false);
+           workerSession.setWorkerProperty(workerId, "KEYSTORETYPE", "FOOBAR");
+           workerSession.reloadConfiguration(workerId);
+           
+           final List<String> errors = workerSession.getStatus(workerId).getFatalErrors();
+           assertTrue("Should contain error",
+                   errors.contains("Failed to initialize crypto token: KEYSTORETYPE should be either P12 or JKS"));
+       } finally {
+           removeWorker(workerId);
+       }
+    }
 }

@@ -280,4 +280,27 @@ public class KeystoreCryptoTokenTest extends ModulesTestCase {
            removeWorker(workerId);
        }
     }
+    
+    /**
+     * Test that omitting KEYSTOREPATH results in a config error.
+     * 
+     * @throws Exception
+     */
+    public void testMissingKeystorePath() throws Exception {
+        LOG.info("testMissingKeystorePath");
+        
+        final int workerId = WORKER_CMS;
+        
+        try {
+            setCMSSignerProperties(workerId, false);
+            workerSession.removeWorkerProperty(workerId, "KEYSTOREPATH");
+            workerSession.reloadConfiguration(workerId);
+            
+            final List<String> errors = workerSession.getStatus(workerId).getFatalErrors();
+            assertTrue("Should contain error",
+                    errors.contains("Failed to initialize crypto token: Missing KEYSTOREPATH property"));
+        } finally {
+            removeWorker(workerId);
+        }
+    }
 }

@@ -747,6 +747,8 @@ public class P11SignTest extends ModulesTestCase {
             cmsSigner(workerId);
         } finally {
             removeWorker(workerId);
+            globalSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "DEFAULT.SHAREDLIBRARY");
+            globalSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "DEFAULT.SLOT");
         }
     }
     
@@ -832,6 +834,31 @@ public class P11SignTest extends ModulesTestCase {
             Set<String> expected = new HashSet<String>(aliases1);
             expected.remove(TEST_KEY_ALIAS);
             assertEquals("new key removed", expected, aliases2);
+        } finally {
+            removeWorker(workerId);
+        }
+    }
+    
+    /**
+     * Test that missing the SHAREDLIBRARY property results
+     * in a descriptive error reported by getFatalErrors().
+     * 
+     * @throws Exception
+     */
+    public void testNoSharedLibrary() throws Exception {
+        LOG.info("testNoSharedLibrary");
+        
+        final int workerId = WORKER_XML;
+        
+        try {
+            setXMLSignerProperties(workerId, false);
+            workerSession.removeWorkerProperty(workerId, "SHAREDLIBRARY");
+            workerSession.reloadConfiguration(workerId);
+            
+            final List<String> errors = workerSession.getStatus(workerId).getFatalErrors();
+            assertTrue("Should contain error",
+                    errors.contains("Failed to initialize crypto token: Missing SHAREDLIBRARY property"));
+            
         } finally {
             removeWorker(workerId);
         }

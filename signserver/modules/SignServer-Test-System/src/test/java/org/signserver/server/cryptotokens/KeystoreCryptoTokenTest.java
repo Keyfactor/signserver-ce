@@ -303,4 +303,27 @@ public class KeystoreCryptoTokenTest extends ModulesTestCase {
             removeWorker(workerId);
         }
     }
+    
+    /**
+     * Test that setting KEYSTOREPATH not pointing an existing file results in a config error.
+     * 
+     * @throws Exception
+     */
+    public void testUnknownKeystorePath() throws Exception {
+        LOG.info("testMissingKeystorePath");
+        
+        final int workerId = WORKER_CMS;
+        
+        try {
+            setCMSSignerProperties(workerId, false);
+            workerSession.setWorkerProperty(workerId, "KEYSTOREPATH", "non-existing.p12");
+            workerSession.reloadConfiguration(workerId);
+            
+            final List<String> errors = workerSession.getStatus(workerId).getFatalErrors();
+            assertTrue("Should contain error",
+                    errors.contains("Failed to initialize crypto token: File not found: non-existing.p12"));
+        } finally {
+            removeWorker(workerId);
+        }
+    }
 }

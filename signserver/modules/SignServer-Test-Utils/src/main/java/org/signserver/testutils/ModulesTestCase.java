@@ -363,7 +363,7 @@ public class ModulesTestCase extends TestCase {
                 String value = properties.getProperty(key);
                 if (key.startsWith("GLOB.")) {
                     key = key.substring("GLOB.".length());
-                    globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, key, value);
+                    getGlobalSession().setProperty(GlobalConfiguration.SCOPE_GLOBAL, key, value);
                 } else if (key.startsWith("WORKER") && key.contains(".") && key.indexOf(".") + 1 < key.length()) {
                     int id = Integer.parseInt(key.substring("WORKER".length(), key.indexOf(".")));
                     key = key.substring(key.indexOf(".") + 1);
@@ -375,9 +375,9 @@ public class ModulesTestCase extends TestCase {
                             byte[] cert = Base64.decode(base64cert.getBytes());
                             chain.add(cert);
                         }
-                        workerSession.uploadSignerCertificateChain(id, chain, GlobalConfiguration.SCOPE_GLOBAL);
+                        getWorkerSession().uploadSignerCertificateChain(id, chain, GlobalConfiguration.SCOPE_GLOBAL);
                     } else {
-                        workerSession.setWorkerProperty(id, key, value);
+                        getWorkerSession().setWorkerProperty(id, key, value);
                     }
 
                 } else {
@@ -409,27 +409,27 @@ public class ModulesTestCase extends TestCase {
 
     protected void addSoftDummySigner(final String className, final int signerId, final String signerName, final String keyData, final String certChain) throws CertificateException {
         // Worker using SoftCryptoToken and RSA
-        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
+        getGlobalSession().setProperty(GlobalConfiguration.SCOPE_GLOBAL,
             "WORKER" + signerId + ".CLASSPATH", className);
-        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
+        getGlobalSession().setProperty(GlobalConfiguration.SCOPE_GLOBAL,
             "WORKER" + signerId + ".SIGNERTOKEN.CLASSPATH",
             "org.signserver.server.cryptotokens.SoftCryptoToken");
-        workerSession.setWorkerProperty(signerId, "NAME", signerName);
-        workerSession.setWorkerProperty(signerId, "AUTHTYPE", "NOAUTH");
-        workerSession.setWorkerProperty(signerId, "KEYDATA", keyData);
+        getWorkerSession().setWorkerProperty(signerId, "NAME", signerName);
+        getWorkerSession().setWorkerProperty(signerId, "AUTHTYPE", "NOAUTH");
+        getWorkerSession().setWorkerProperty(signerId, "KEYDATA", keyData);
 
-        workerSession.uploadSignerCertificate(signerId, Base64.decode(getFirstCert(certChain).getBytes()),GlobalConfiguration.SCOPE_GLOBAL);
+        getWorkerSession().uploadSignerCertificate(signerId, Base64.decode(getFirstCert(certChain).getBytes()),GlobalConfiguration.SCOPE_GLOBAL);
         String certs[] = certChain.split(";");
         ArrayList<byte[]> chain = new ArrayList<byte[]>();
         for(String base64cert : certs){
             chain.add(Base64.decode(base64cert.getBytes()));
         }
-        workerSession.uploadSignerCertificateChain(signerId, chain, GlobalConfiguration.SCOPE_GLOBAL);
+        getWorkerSession().uploadSignerCertificateChain(signerId, chain, GlobalConfiguration.SCOPE_GLOBAL);
 
-        workerSession.reloadConfiguration(signerId);
+        getWorkerSession().reloadConfiguration(signerId);
         try {
             assertNotNull("Check signer available",
-                    workerSession.getStatus(signerId));
+                    getWorkerSession().getStatus(signerId));
         } catch (InvalidWorkerIdException ex) {
             fail("Worker was not added succefully: " + ex.getMessage());
         }
@@ -445,22 +445,22 @@ public class ModulesTestCase extends TestCase {
     
     protected void addDummySigner(final String className, final String cryptoTokenClassName, final int signerId, final String signerName, final File keystore, final String password) {
         // Worker using SoftCryptoToken and RSA
-        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
+        getGlobalSession().setProperty(GlobalConfiguration.SCOPE_GLOBAL,
             "WORKER" + signerId + ".CLASSPATH", className);
-        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
+        getGlobalSession().setProperty(GlobalConfiguration.SCOPE_GLOBAL,
             "WORKER" + signerId + ".SIGNERTOKEN.CLASSPATH",
             cryptoTokenClassName);
-        workerSession.setWorkerProperty(signerId, "NAME", signerName);
-        workerSession.setWorkerProperty(signerId, "AUTHTYPE", "NOAUTH");
-        workerSession.setWorkerProperty(signerId, "KEYSTOREPATH", keystore.getAbsolutePath());
+        getWorkerSession().setWorkerProperty(signerId, "NAME", signerName);
+        getWorkerSession().setWorkerProperty(signerId, "AUTHTYPE", "NOAUTH");
+        getWorkerSession().setWorkerProperty(signerId, "KEYSTOREPATH", keystore.getAbsolutePath());
         if (password != null) {
-            workerSession.setWorkerProperty(signerId, "KEYSTOREPASSWORD", password);
+            getWorkerSession().setWorkerProperty(signerId, "KEYSTOREPASSWORD", password);
         }
 
-        workerSession.reloadConfiguration(signerId);
+        getWorkerSession().reloadConfiguration(signerId);
         try {
             assertNotNull("Check signer available",
-                    workerSession.getStatus(signerId));
+                    getWorkerSession().getStatus(signerId));
         } catch (InvalidWorkerIdException ex) {
             fail("Worker was not added succefully: " + ex.getMessage());
         }
@@ -481,24 +481,24 @@ public class ModulesTestCase extends TestCase {
     
     protected void addXMLValidator() throws Exception {
         // VALIDATION SERVICE
-        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + VALIDATION_SERVICE_WORKER_ID + ".CLASSPATH", "org.signserver.validationservice.server.ValidationServiceWorker");
-        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + VALIDATION_SERVICE_WORKER_ID + ".SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.HardCodedCryptoToken");
-        workerSession.setWorkerProperty(VALIDATION_SERVICE_WORKER_ID, "AUTHTYPE", "NOAUTH");
-        workerSession.setWorkerProperty(VALIDATION_SERVICE_WORKER_ID, "NAME", VALIDATION_SERVICE_WORKER_NAME);
-        workerSession.setWorkerProperty(VALIDATION_SERVICE_WORKER_ID, "VAL1.CLASSPATH", "org.signserver.validationservice.server.DummyValidator");
-        workerSession.setWorkerProperty(VALIDATION_SERVICE_WORKER_ID, "VAL1.ISSUER1.CERTCHAIN", "\n-----BEGIN CERTIFICATE-----\n" + VALIDATOR_CERT_ISSUER + "\n-----END CERTIFICATE-----\n");
-        workerSession.setWorkerProperty(VALIDATION_SERVICE_WORKER_ID, "VAL1.ISSUER2.CERTCHAIN", "\n-----BEGIN CERTIFICATE-----\n" + VALIDATOR_CERT_ISSUER4 + "\n-----END CERTIFICATE-----\n");
-        workerSession.setWorkerProperty(VALIDATION_SERVICE_WORKER_ID, "VAL1.TESTPROP", "TEST");
-        workerSession.setWorkerProperty(VALIDATION_SERVICE_WORKER_ID, "VAL1.REVOKED", "");
-        workerSession.reloadConfiguration(VALIDATION_SERVICE_WORKER_ID);
+        getGlobalSession().setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + VALIDATION_SERVICE_WORKER_ID + ".CLASSPATH", "org.signserver.validationservice.server.ValidationServiceWorker");
+        getGlobalSession().setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + VALIDATION_SERVICE_WORKER_ID + ".SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.HardCodedCryptoToken");
+        getWorkerSession().setWorkerProperty(VALIDATION_SERVICE_WORKER_ID, "AUTHTYPE", "NOAUTH");
+        getWorkerSession().setWorkerProperty(VALIDATION_SERVICE_WORKER_ID, "NAME", VALIDATION_SERVICE_WORKER_NAME);
+        getWorkerSession().setWorkerProperty(VALIDATION_SERVICE_WORKER_ID, "VAL1.CLASSPATH", "org.signserver.validationservice.server.DummyValidator");
+        getWorkerSession().setWorkerProperty(VALIDATION_SERVICE_WORKER_ID, "VAL1.ISSUER1.CERTCHAIN", "\n-----BEGIN CERTIFICATE-----\n" + VALIDATOR_CERT_ISSUER + "\n-----END CERTIFICATE-----\n");
+        getWorkerSession().setWorkerProperty(VALIDATION_SERVICE_WORKER_ID, "VAL1.ISSUER2.CERTCHAIN", "\n-----BEGIN CERTIFICATE-----\n" + VALIDATOR_CERT_ISSUER4 + "\n-----END CERTIFICATE-----\n");
+        getWorkerSession().setWorkerProperty(VALIDATION_SERVICE_WORKER_ID, "VAL1.TESTPROP", "TEST");
+        getWorkerSession().setWorkerProperty(VALIDATION_SERVICE_WORKER_ID, "VAL1.REVOKED", "");
+        getWorkerSession().reloadConfiguration(VALIDATION_SERVICE_WORKER_ID);
 
         // XMLVALIDATOR
-        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + XML_VALIDATOR_WORKER_ID + ".CLASSPATH", "org.signserver.module.xmlvalidator.XMLValidator");
-        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + XML_VALIDATOR_WORKER_ID + ".SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.SoftCryptoToken");
-        workerSession.setWorkerProperty(XML_VALIDATOR_WORKER_ID, "NAME", XML_VALIDATOR_WORKER_NAME);
-        workerSession.setWorkerProperty(XML_VALIDATOR_WORKER_ID, "AUTHTYPE", "NOAUTH");
-        workerSession.setWorkerProperty(XML_VALIDATOR_WORKER_ID, "VALIDATIONSERVICEWORKER", VALIDATION_SERVICE_WORKER_NAME);
-        workerSession.reloadConfiguration(XML_VALIDATOR_WORKER_ID);
+        getGlobalSession().setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + XML_VALIDATOR_WORKER_ID + ".CLASSPATH", "org.signserver.module.xmlvalidator.XMLValidator");
+        getGlobalSession().setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + XML_VALIDATOR_WORKER_ID + ".SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.SoftCryptoToken");
+        getWorkerSession().setWorkerProperty(XML_VALIDATOR_WORKER_ID, "NAME", XML_VALIDATOR_WORKER_NAME);
+        getWorkerSession().setWorkerProperty(XML_VALIDATOR_WORKER_ID, "AUTHTYPE", "NOAUTH");
+        getWorkerSession().setWorkerProperty(XML_VALIDATOR_WORKER_ID, "VALIDATIONSERVICEWORKER", VALIDATION_SERVICE_WORKER_NAME);
+        getWorkerSession().reloadConfiguration(XML_VALIDATOR_WORKER_ID);
     }
     
     public int getWorkerIdXmlValidator() {
@@ -514,29 +514,29 @@ public class ModulesTestCase extends TestCase {
     }
 
     private void removeGlobalProperties(int workerid) {
-        final GlobalConfiguration gc = globalSession.getGlobalConfiguration();
+        final GlobalConfiguration gc = getGlobalSession().getGlobalConfiguration();
         final Enumeration<String> en = gc.getKeyEnumeration();
         while (en.hasMoreElements()) {
             String key = en.nextElement();
             if (key.toUpperCase(Locale.ENGLISH)
                     .startsWith("GLOB.WORKER" + workerid)) {
                 key = key.substring("GLOB.".length());
-                globalSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, key);
+                getGlobalSession().removeProperty(GlobalConfiguration.SCOPE_GLOBAL, key);
             }
         }
     }
 
     protected void removeWorker(final int workerId) throws Exception {
         removeGlobalProperties(workerId);
-        WorkerConfig wc = workerSession.getCurrentWorkerConfig(workerId);
+        WorkerConfig wc = getWorkerSession().getCurrentWorkerConfig(workerId);
         LOG.info("Got current config: " + wc.getProperties());
         final Iterator<Object> iter = wc.getProperties().keySet().iterator();
         while (iter.hasNext()) {
             final String key = (String) iter.next();
-            workerSession.removeWorkerProperty(workerId, key);
+            getWorkerSession().removeWorkerProperty(workerId, key);
         }
-        workerSession.reloadConfiguration(workerId);  
-        wc = workerSession.getCurrentWorkerConfig(workerId);
+        getWorkerSession().reloadConfiguration(workerId);  
+        wc = getWorkerSession().getCurrentWorkerConfig(workerId);
         LOG.info("Got current config after: " + wc.getProperties());
     }
 
@@ -598,7 +598,7 @@ public class ModulesTestCase extends TestCase {
     protected GenericSignResponse signGenericDocument(final int workerId, final byte[] data) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
         final int requestId = random.nextInt();
         final GenericSignRequest request = new GenericSignRequest(requestId, data);
-        final GenericSignResponse response = (GenericSignResponse) workerSession.process(workerId, request, new RequestContext());
+        final GenericSignResponse response = (GenericSignResponse) getWorkerSession().process(workerId, request, new RequestContext());
         assertEquals("requestId", requestId, response.getRequestID());
         Certificate signercert = response.getSignerCertificate();
         assertNotNull(signercert);

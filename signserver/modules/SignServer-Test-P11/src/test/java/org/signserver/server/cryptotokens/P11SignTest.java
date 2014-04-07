@@ -858,7 +858,30 @@ public class P11SignTest extends ModulesTestCase {
             final List<String> errors = workerSession.getStatus(workerId).getFatalErrors();
             assertTrue("Should contain error",
                     errors.contains("Failed to initialize crypto token: Missing SHAREDLIBRARY property"));
+        } finally {
+            removeWorker(workerId);
+        }
+    }
+    
+    /**
+     * Test that setting a non-existing P11 shared library results
+     * in a descriptive error reported by getFatalErrors().
+     * 
+     * @throws Exception
+     */
+    public void testNonExistingSharedLibrary() throws Exception {
+        LOG.info("testNonExistingSharedLibrary");
+        
+        final int workerId = WORKER_XML;
+        
+        try {
+            setXMLSignerProperties(workerId, false);
+            workerSession.setWorkerProperty(workerId, "SHAREDLIBRARY", "/foo/bar/libdummy.so");
+            workerSession.reloadConfiguration(workerId);
             
+            final List<String> errors = workerSession.getStatus(workerId).getFatalErrors();
+            assertTrue("Should contain error",
+                    errors.contains("Failed to initialize crypto token: Not possible to create provider. See cause.: The file /foo/bar/libdummy.so can't be read."));
         } finally {
             removeWorker(workerId);
         }

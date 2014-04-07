@@ -215,7 +215,6 @@ includemodulesinbuild               = ${includemodulesinbuild}
             <exclude name="**/.svn/**" />
 
             <exclude name="res/install/**" />
-            <exclude name="res/test/**" />
 
             <!-- TODO: The following should be moved anyway -->
             <exclude name="bin/junit/**"/>
@@ -404,11 +403,11 @@ SHA1 checksum: ${zip.bin.sha1}</echo>
         <fail message="Please set the environment variable 'SIGNSERVER_HOME' before running the junit tests." unless="env.SIGNSERVER_HOME"/>
         <echo> Important, in order for all tests to complete must the web service and validation web service interfaces be enabled, and HTTPS be turned on.</echo>
         <echo> For Test-SignServerWS to complete the following must be run first:
-            bin/signserver.sh setproperties modules/SignServer-Test-SignServerWS/test-configuration.properties
+            bin/signserver.sh setproperties res/test/test-signserverws-configuration.properties
             bin/signserver.sh reload 7001
         </echo>
         <echo> For Test-ValidationWS to complete the following must be run first:
-            bin/signserver.sh setproperties modules/SignServer-Test-ValidationWS/test-configuration.properties
+            bin/signserver.sh setproperties res/test/test-validationws-configuration.properties
             bin/signserver.sh reload 7101
         </echo>
 

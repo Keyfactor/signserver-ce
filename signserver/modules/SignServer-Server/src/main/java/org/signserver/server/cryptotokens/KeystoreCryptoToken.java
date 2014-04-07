@@ -88,11 +88,22 @@ public class KeystoreCryptoToken implements ICryptoToken,
      * @see org.signserver.server.cryptotokens.ICryptoToken#init(int, java.util.Properties)
      */
     @Override
-    public void init(int workerId, Properties properties) {
+    public void init(int workerId, Properties properties) throws CryptoTokenInitializationFailureException {
         this.properties = properties;
         keystorepath = properties.getProperty(KEYSTOREPATH);
         keystorepassword = properties.getProperty(KEYSTOREPASSWORD);
         keystoretype = properties.getProperty(KEYSTORETYPE);
+        
+        // check keystore type
+        if (keystoretype == null) {
+            throw new CryptoTokenInitializationFailureException("Missing KEYSTORETYPE property");
+        }
+        
+        if (!TYPE_PKCS12.equals(keystoretype) &&
+            !TYPE_JKS.equals(keystoretype)) {
+            throw new CryptoTokenInitializationFailureException("KEYSTORETYPE should be either P12 or JKS");
+        }
+        
     }
 
     /**

@@ -60,7 +60,7 @@ import org.signserver.validationservice.common.Validation;
  * @author Markus Kilås
  * @version $Id$
  */
-public class GenericProcessServlet extends HttpServlet {
+public class GenericProcessServlet extends AbstractProcessServlet {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(
@@ -84,8 +84,6 @@ public class GenericProcessServlet extends HttpServlet {
     private static final String PROCESS_TYPE_PROPERTY_NAME = "processType";
     private static final String CERT_PURPOSES_PROPERTY_NAME = "certPurposes";
     
-    private static final String REQUEST_METADATA_PROPERTY_NAME = "REQUEST_METADATA";
-    
     private enum ProcessType {
         signDocument,
         validateDocument,
@@ -93,11 +91,6 @@ public class GenericProcessServlet extends HttpServlet {
     };
     
     private final Random random = new Random();
-    
-    // metadata properties set via the REQUEST_METADATA= syntax
-    private Properties requestMetadata;
-    // metadata set with REQUEST_METADATA.name=value overriding the above
-    private Properties overrideRequestMetadata;
 
     @EJB
     private IWorkerSession.ILocal workersession;
@@ -149,10 +142,8 @@ public class GenericProcessServlet extends HttpServlet {
 
         ProcessType processType = ProcessType.signDocument;
         
-        // holds parameters set via REQUEST_METADATA= and REQUEST_METADATA.x=
-        requestMetadata = new Properties();
-        overrideRequestMetadata = new Properties();
-        
+        initMetaData();
+
         if (ServletFileUpload.isMultipartContent(req)) {
             final FileItemFactory factory = new DiskFileItemFactory();
             final ServletFileUpload upload = new ServletFileUpload(factory);
@@ -216,10 +207,7 @@ public class GenericProcessServlet extends HttpServlet {
                                 }
                             } else if (ENCODING_PROPERTY_NAME.equals(itemFieldName)) {
                                 encoding = item.getString("ISO-8859-1");
-                            } else if (REQUEST_METADATA_PROPERTY_NAME.equals(itemFieldName) ||
-                                    (itemFieldName != null &&
-                                     itemFieldName.length() > REQUEST_METADATA_PROPERTY_NAME.length() + 1 &&
-                                     itemFieldName.startsWith(REQUEST_METADATA_PROPERTY_NAME + "."))) {
+                            } else if (isFieldMatchingMetaData(itemFieldName)) {
                                 try {
                                     handleMetaDataProperty(itemFieldName, item.getString("ISO-8859-1"));
                                 } catch (IOException e) {
@@ -286,9 +274,7 @@ public class GenericProcessServlet extends HttpServlet {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Found a pdfPassword in the request.");
                     }
-                } else if (REQUEST_METADATA_PROPERTY_NAME.equals(property) ||
-                        (property.length() > REQUEST_METADATA_PROPERTY_NAME.length() + 1 &&
-                         property.startsWith(REQUEST_METADATA_PROPERTY_NAME + "."))) {
+                } else if (isFieldMatchingMetaData(property)) {
                    try {
                        handleMetaDataProperty(property, req.getParameter(property));
                    } catch (IOException e) {
@@ -375,35 +361,6 @@ public class GenericProcessServlet extends HttpServlet {
 
         LOG.debug("<doPost()");
     } //doPost
-
-    /**
-     * Internal method handling a metadata property, updating appropriate
-     * mappings for individually set properties and those set as a complete properties mapping.
-     * 
-     * @param propertyFieldName Request parameter name
-     * @param propertyValue Request parameter value
-     * @throws IOException
-     */
-    private void handleMetaDataProperty(final String propertyFieldName, final String propertyValue) throws IOException {
-        if (propertyFieldName.length() == REQUEST_METADATA_PROPERTY_NAME.length()) {
-            requestMetadata.load(new StringReader(propertyValue));
-        } else {
-            final String propertyName = propertyFieldName.substring(REQUEST_METADATA_PROPERTY_NAME.length() + 1);
-            
-            overrideRequestMetadata.setProperty(propertyName, propertyValue);
-        }
-    }
-    
-    /**
-     * Internal method gathering metadata from internal mapping giving precedence
-     * to parameters set via individually set parameters.
-     * 
-     * @return Final property object with merged properties
-     */
-    private Properties mergeMetadataProperties() {
-        requestMetadata.putAll(overrideRequestMetadata);
-        return requestMetadata;
-    }
     
     /**
      * Handles http get.

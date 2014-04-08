@@ -56,7 +56,7 @@
             <p>
                 The name of all workers/signers available if all demo signers and validators
                 are configured are: PDFSigner, ODFSigner, OOXMLSigner,
-                XMLSigner, CMSSigner, and DemoXMLValidator.
+                XMLSigner, CMSSigner, DemoXMLValidator and XAdESValidator.
             </p>
 
             <a name="submit-by-input"/>

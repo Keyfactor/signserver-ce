@@ -105,7 +105,7 @@ public abstract class AbstractProcessServlet extends HttpServlet {
      * 
      * @return Final property object with merged properties
      */
-    private Properties mergeMetadataProperties() {
+    Properties mergeMetadataProperties() {
         requestMetadata.putAll(overrideRequestMetadata);
         return requestMetadata;
     }

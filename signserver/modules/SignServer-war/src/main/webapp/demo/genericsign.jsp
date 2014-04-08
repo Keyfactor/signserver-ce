@@ -71,7 +71,7 @@
                         Data:<br/>
                         <textarea name="data" cols="80" rows="20"></textarea><br/>
                         Additional meta data (set in the REQUEST_METADATA request parameter):<br/>
-                        <textarea name="REQUEST_METADATA" cols="80" rows="20"></textarea><br/>
+                        <textarea name="REQUEST_METADATA" cols="40" rows="5"></textarea><br/>
                         Encoding:
                         <select name="encoding">
                             <option value="" selected="selected">None</option>
@@ -109,6 +109,10 @@
                         	<option value="validateDocument">Validate document</option>
                         	<option value="validateCertificate">Validate certificate</option>
                        	</select>
+                    </p>
+                    <p>
+                        Additional meta data (set in the REQUEST_METADATA request parameter):<br/>
+                        <textarea name="REQUEST_METADATA" cols="40" rows="5"></textarea><br/>
                     </p>
                     <p>
                         <input type="submit" name="buttonrecievefile" onclick="return check()" value="Submit"/>

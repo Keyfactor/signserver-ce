@@ -59,7 +59,7 @@
                     <tr id="Row1">
                         <td style="width: 50%" valign="top" align="right">Password (if required):</td>
                         <td style="width: 50%" valign="top">
-                            <input type="password" name="pdfPassword"/>
+                            <input type="password" name="REQUEST_METADATA.pdfPassword"/>
                         </td>
                     </tr>
                     <tr id="Row2">

@@ -4769,7 +4769,7 @@ The RenewalWorker starts by generating a new key-pair (unless an NEXTCERTSIGNKEY
                         <p><b>TRUSTSTOREVALUE</b> = Keystore containing the CA's SSL server certificate as a trusted entry. Used instead of TRUSTSTOREPATH. If this property is not specified, TRUSTSTOREPATH must be set. If TRUSTSTORETYPE is not PEM the keystore is stored in the property in base64 encoding.</p>
                         <p><b>TRUSTSTORETYPE</b> = Type of keystore. JKS and PEM is supported. This property must be set.</p>
                         <p><b>TRUSTSTOREPASSWORD</b> = Password protecting the truststore keystore. This property must be set if TRUSTSTORETYPE is not PEM.</p>
-                        <p><b>DEFAULTKEY</b> = Key alias to use from the trust store. This property must be set.</p>
+                        <p><b>DEFAULTKEY</b> = Key alias to use from the crypto token. This property must be set.</p>
                     </subsubsection>
                     <subsubsection name="Properties of renewee">
                         <p><b>RENEWENDENTITY</b> = Name of the existing end entity in EJBCA</p>

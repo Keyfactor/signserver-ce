@@ -3310,6 +3310,28 @@ See also the section about all <a href="complete.en.html#Archivers">available Ar
                 </p>
             </section>
 
+            <section name="Accounter">
+                <p>
+An Accounter is responsible for somehow charging a client for a successful 
+request or to deny the requst if the client has insufficient funds.
+                </p>
+                <p>
+When a request has been processed, and if the worker marked the request as 
+successfully fulfilled, the configured Accounter (if any) is called. The 
+Accounter implementation could potentially query an external database and make a 
+purchase for the service.
+                </p>
+                <p>
+The Accounter to use is configured using the ACCOUNTER worker property. By default no Accounter is used. Example:
+                </p>
+<source>
+ACCOUNTER=org.signserver.server.GlobalConfigSampleAccounter
+</source>
+                <p>
+See also the section about all <a href="complete.en.html#Accounters">available Accounters</a>.
+                </p>
+            </section>
+
             <section name="Checking validity of signer certificates">
                 <p>
 By default the SignServer checks if the signer certificate of a signer is valid before letting the signer process a request. If the signers certificate is not valid an error message is returned.
@@ -5362,6 +5384,44 @@ The fully qualified class name is: <b>org.signserver.server.archive.base64dbarch
                     
                 </subsection>
                 
+            </section>
+            
+            <section name="Accounters">
+                <p>
+See also the section about the <a href="complete.en.html#Accounter">ACCOUNTER</a> worker property that can be set to one of the available Accounter implementations described below.
+                </p>
+                <subsection name="NoAccounter">
+                    <p>
+The fully qualified class name is: <b>org.signserver.server.NoAccounter</b>
+                    </p>
+                    <p>
+Accounter not doing anything. Sets purchased to true.
+                    </p>
+                </subsection>
+                
+                <subsection name="GlobalConfigSampleAccounter">
+                    <p>
+The fully qualified class name is: <b>org.signserver.server.GlobalConfigSampleAccounter</b>
+                    </p>
+                    <p>
+Accounter holding the clients balances internally in the global configuration.<br/>
+Note: This Accounter is only for demonstration purposes and will not work under load. A production Accounter should use an implementation using a proper database.
+                    </p>
+                    
+                    <subsubsection name="Global Configuration Properties">
+                        <p>
+<b>GLOBALCONFIGSAMPLEACCOUNTER_USERS</b> = Mapping from credential to account name<br/>
+<b>GLOBALCONFIGSAMPLEACCOUNTER_ACCOUNTS</b> = Mapping from account name to a balance
+                        </p>
+                        <p>
+Example:
+                        </p>
+                        <source>
+GLOBALCONFIGSAMPLEACCOUNTER_USERS = user1,password:account1; user2,password2:account2
+GLOBALCONFIGSAMPLEACCOUNTER_ACCOUNTS = account1:14375; account2:12
+                        </source>
+                    </subsubsection>
+                </subsection>
             </section>
         </chapter>
 

@@ -28,9 +28,7 @@ import org.bouncycastle.tsp.TimeStampRequest;
 import org.bouncycastle.tsp.TimeStampResponse;
 import org.signserver.common.*;
 import org.signserver.ejb.interfaces.IWorkerSession;
-import org.signserver.ejb.interfaces.IWorkerSession.ILocal;
 import org.signserver.module.tsa.bc.TimeStampResponseGenerator;
-import org.signserver.server.ITimeStampSignerLookup;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.dispatchers.BaseDispatcher;
 import org.signserver.server.log.IWorkerLogger;
@@ -55,6 +53,8 @@ public class RequestedPolicyDispatcher extends BaseDispatcher {
     private static final Logger LOG = Logger.getLogger(
             RequestedPolicyDispatcher.class);
 
+    public static final String TSA_REQUESTEDPOLICYOID = "TSA_REQUESTEDPOLICYOID";
+    
     /** Workersession. */
     private IWorkerSession workerSession;
     
@@ -148,7 +148,7 @@ public class RequestedPolicyDispatcher extends BaseDispatcher {
         try {
             // Add to context
             if (timeStampRequest.getReqPolicy() != null) {
-                nextContext.put(ITimeStampSignerLookup.TSA_REQUESTEDPOLICYOID, timeStampRequest.getReqPolicy().getId());
+                nextContext.put(TSA_REQUESTEDPOLICYOID, timeStampRequest.getReqPolicy().getId());
             }
             
             // Find to which worker the request should be dispatched

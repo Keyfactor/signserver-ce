@@ -48,7 +48,7 @@ import org.signserver.common.*;
  * Available properties are:
  * KEYSTOREPATH : The full path to the key store to load. (required)
  * KEYSTOREPASSWORD : The password that locks the key store.
- * STORETYPE : PKCS12 or JKS. (required)
+ * KEYSTORETYPE : PKCS12 or JKS. (required)
  * DEFAULTKEY : Alias of keystore entry to use. (optional)
  * NEXTCERTSIGNKEY : Can be used to hold the alias of the next key. (optional)
  *

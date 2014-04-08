@@ -36,6 +36,7 @@ import org.signserver.common.IllegalRequestException;
 import org.signserver.common.NoSuchWorkerException;
 import org.signserver.common.ProcessableConfig;
 import org.signserver.common.RequestContext;
+import org.signserver.common.RequestMetadata;
 import org.signserver.common.SODSignRequest;
 import org.signserver.common.SODSignResponse;
 import org.signserver.common.ServiceLocator;
@@ -55,7 +56,7 @@ import org.signserver.server.log.LogMap;
  * @author Markus Kilås
  * @version $Id$
  */
-public class SODProcessServlet extends HttpServlet {
+public class SODProcessServlet extends AbstractProcessServlet {
 
     private static final long serialVersionUID = 1L;
     
@@ -181,6 +182,12 @@ public class SODProcessServlet extends HttpServlet {
                         } catch (NumberFormatException ex) {
                             LOG.warn("Field does not start with \"" + DATAGROUP_PROPERTY_NAME + "\" and ends with a number: \"" + key + "\"");
                         }
+                    } else if (isFieldMatchingMetaData(key)) {
+                        try {
+                            handleMetaDataProperty(key, req.getParameter(key));
+                        } catch (IOException e) {
+                            sendBadRequest(res, "Malformed properties given using REQUEST_METADATA.");
+                        }
                     }
                 }
             }
@@ -225,11 +232,14 @@ public class SODProcessServlet extends HttpServlet {
                 final RequestContext context = new RequestContext((X509Certificate) clientCertificate, remoteAddr);
                 final String xForwardedFor = req.getHeader(RequestContext.X_FORWARDED_FOR);
                 final LogMap logMap = LogMap.getInstance(context);
+                final RequestMetadata metadata = RequestMetadata.getInstance(context);
                 
                 if (xForwardedFor != null) {
                     context.put(RequestContext.X_FORWARDED_FOR, xForwardedFor);
                 }
                 
+                addRequestMetaData(metadata);
+
                 logMap.put(IWorkerLogger.LOG_WORKER_NAME,
                         getWorkerSession().getCurrentWorkerConfig(workerId).getProperty(PropertiesConstants.NAME));
                 

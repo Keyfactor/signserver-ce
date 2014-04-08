@@ -21,7 +21,8 @@ import org.signserver.common.RequestContext;
 /**
  * Default account that grants all requests without charging anybody.
  * 
- * @author markus
+ * @author Markus Kilås
+ * @version $Id$
  */
 public class NoAccounter implements IAccounter {
 

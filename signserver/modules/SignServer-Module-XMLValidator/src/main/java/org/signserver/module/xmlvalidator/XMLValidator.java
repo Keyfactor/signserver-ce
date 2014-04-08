@@ -97,6 +97,7 @@ public class XMLValidator extends BaseValidator {
         getValidationServiceWorkerId();
     }
 
+    @Override
     public ProcessResponse processData(ProcessRequest signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
 
         // Check that the request contains a valid GenericSignRequest object with a byte[].
@@ -112,6 +113,10 @@ public class XMLValidator extends BaseValidator {
         byte[] data = (byte[]) sReq.getRequestData();
 
         GenericValidationResponse response = validate(sReq.getRequestID(), data);
+        
+        // The client can be charged for the request
+        requestContext.setRequestFulfilledByWorker(true);
+            
         return response;
     }
 

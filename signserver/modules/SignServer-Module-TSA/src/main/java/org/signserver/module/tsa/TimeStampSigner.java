@@ -390,6 +390,7 @@ public class TimeStampSigner extends BaseSigner {
      * @return the sign response
      * @see org.signserver.server.IProcessable#processData(org.signserver.common.ProcessRequest, org.signserver.common.RequestContext)
      */
+    @Override
     public ProcessResponse processData(final ProcessRequest signRequest,
             final RequestContext requestContext) throws
                 IllegalRequestException,
@@ -534,8 +535,8 @@ public class TimeStampSigner extends BaseSigner {
             // We were able to fulfill the request so the worker session bean
             // can go on and charge the client
             if (timeStampResponse.getStatus() == PKIStatus.GRANTED) {
-                requestContext.put(RequestContext.WORKER_FULFILLED_REQUEST,
-                        true);
+                // The client can be charged for the request
+                requestContext.setRequestFulfilledByWorker(true);
             } else {
             	logMap.put(IWorkerLogger.LOG_PROCESS_SUCCESS, String.valueOf(false));
             }

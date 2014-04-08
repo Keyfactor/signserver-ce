@@ -69,6 +69,7 @@ public class CMSSigner extends BaseSigner {
         signatureAlgorithm = config.getProperty(SIGNATUREALGORITHM);
     }
 
+    @Override
     public ProcessResponse processData(final ProcessRequest signRequest,
             final RequestContext requestContext) throws IllegalRequestException,
             CryptoTokenOfflineException, SignServerException {
@@ -145,6 +146,9 @@ public class CMSSigner extends BaseSigner {
             if (fileNameOriginal instanceof String) {
                 requestContext.put(RequestContext.RESPONSE_FILENAME, fileNameOriginal + ".p7s");
             }
+            
+            // The client can be charged for the request
+            requestContext.setRequestFulfilledByWorker(true);
             
             return signResponse;
         } catch (OperatorCreationException ex) {

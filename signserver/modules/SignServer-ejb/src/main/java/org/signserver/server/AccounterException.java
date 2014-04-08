@@ -13,8 +13,14 @@
 package org.signserver.server;
 
 /**
+ * Exception indicating a problem for the Accounter implementation to properly
+ * perform the purchase.
+ * 
+ * Example usage are to indicate a problem connecting to the accounting 
+ * database/system.
  *
- * @author markus
+ * @author Markus Kilås
+ * @version $Id$
  */
 public class AccounterException extends Exception {
 

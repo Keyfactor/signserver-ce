@@ -267,6 +267,9 @@ public class MRTDSODSigner extends BaseSigner {
             final Collection<? extends Archivable> archivables = Arrays.asList(new DefaultArchivable(Archivable.TYPE_RESPONSE, signedbytes, archiveId));
             ret = new SODSignResponse(sReq.getRequestID(), signedbytes, cert,
                     archiveId, archivables);
+            
+            // The client can be charged for the request
+            requestContext.setRequestFulfilledByWorker(true);
         } catch (GeneralSecurityException e) {
             log.error("Error verifying the SOD we signed ourselves. ", e);
             throw new SignServerException("SOD verification failure", e);

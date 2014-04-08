@@ -397,8 +397,11 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
                         archiveId,
                         archivables);
             }
+            
+            // The client can be charged for the request
+            requestContext.setRequestFulfilledByWorker(true);
         
-        	return signResponse;
+            return signResponse;
 
         } catch (IOException e) {
             final IllegalRequestException exception =

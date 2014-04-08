@@ -356,6 +356,10 @@ public class XAdESSigner extends BaseSigner {
         } else {
             response = new GenericSignResponse(sReq.getRequestID(), signedbytes, getSigningCertificate(), archiveId, archivables);
         }
+        
+        // The client can be charged for the request
+        requestContext.setRequestFulfilledByWorker(true);
+        
         return response;
     }
 

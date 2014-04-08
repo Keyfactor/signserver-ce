@@ -104,6 +104,7 @@ public class XMLSigner extends BaseSigner {
         signatureAlgorithm = config.getProperty(SIGNATUREALGORITHM);
     }
 
+    @Override
     public ProcessResponse processData(ProcessRequest signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
 
         ProcessResponse signResponse;
@@ -227,6 +228,10 @@ public class XMLSigner extends BaseSigner {
         } else {
             signResponse = new GenericSignResponse(sReq.getRequestID(), signedbytes, getSigningCertificate(), archiveId, archivables);
         }
+        
+        // The client can be charged for the request
+        requestContext.setRequestFulfilledByWorker(true);
+        
         return signResponse;
     }
 

@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.ejb;
 
+import org.signserver.common.NotGrantedException;
 import java.math.BigInteger;
 import java.security.KeyStoreException;
 import java.security.cert.Certificate;
@@ -340,7 +341,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                                     awc).purchase(credential, request, res,
                                             requestContext);
 
-                    logMap.put(IWorkerLogger.LOG_PURCHASED, "true");
+                    logMap.put(IWorkerLogger.LOG_PURCHASED, String.valueOf(purchased));
                 } catch (AccounterException ex) {
                     logMap.put(IWorkerLogger.LOG_PURCHASED, "false");
                     final SignServerException exception =

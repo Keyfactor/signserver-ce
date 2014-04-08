@@ -198,4 +198,8 @@ public class RequestContext implements Serializable {
             return null;
         }
     }
+
+    public void setRequestFulfilledByWorker(boolean b) {
+        context.put(RequestContext.WORKER_FULFILLED_REQUEST, b);
+    }
 }

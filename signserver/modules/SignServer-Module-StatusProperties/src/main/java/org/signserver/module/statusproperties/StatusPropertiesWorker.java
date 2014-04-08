@@ -136,6 +136,9 @@ public class StatusPropertiesWorker extends BaseSigner {
         } else {
             ret = new GenericPropertiesResponse(responseData);
         }
+        
+        // The client can be charged for the request
+        requestContext.setRequestFulfilledByWorker(true);
 
         return ret;
     }

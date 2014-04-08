@@ -16,13 +16,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import javax.naming.Context;
-import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import org.apache.log4j.Logger;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
+import org.signserver.common.ServiceLocator;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 
 /**
@@ -34,11 +34,12 @@ import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
  * GLOBALCONFIGSAMPLEACCOUNTER_USERS = Mapping from credential to accountno
  * Ex: user1,password:account1; user2,password2:account2
  *
- * GLOBALCONFIGSAMPLEACCOUNTER_ACCOUNTS = Map from accountno to saldo
+ * GLOBALCONFIGSAMPLEACCOUNTER_ACCOUNTS = Map from accountno to balance
  * Ex: account1:14375; account2:12
  *
  *
- * @author markus
+ * @author Markus Kilås
+ * @version $Id$
  */
 public class GlobalConfigSampleAccounter implements IAccounter {
 
@@ -113,19 +114,19 @@ public class GlobalConfigSampleAccounter implements IAccounter {
                 return false;
             }
 
-            Integer saldo = accountsTable.get(accountNo);
+            Integer balance = accountsTable.get(accountNo);
 
             // No account
-            if (saldo == null) {
+            if (balance == null) {
                 return false;
             }
 
             // Purchase
-            saldo -= 1;
-            accountsTable.put(accountNo, saldo);
+            balance -= 1;
+            accountsTable.put(accountNo, balance);
 
             // No funds
-            if (saldo  < 0) {
+            if (balance  < 0) {
                 return false;
             }
 
@@ -136,16 +137,14 @@ public class GlobalConfigSampleAccounter implements IAccounter {
 
             return true;
 
-        } catch (Exception ex) {
-            throw new AccounterException("Accounting error", ex);
+        } catch (NamingException ex) {
+            throw new AccounterException("Unable to connect to accounter internal database", ex);
         }
     }
 
-     private IGlobalConfigurationSession.ILocal getGlobalConfigurationSession() throws Exception {
+     private IGlobalConfigurationSession.ILocal getGlobalConfigurationSession() throws NamingException {
         if (gCSession == null) {
-            final Context context = new InitialContext();
-            gCSession = (IGlobalConfigurationSession.ILocal)
-                    context.lookup(IGlobalConfigurationSession.ILocal.JNDI_NAME);
+            gCSession = ServiceLocator.getInstance().lookupLocal(IGlobalConfigurationSession.ILocal.class);
         }
         return gCSession;
     }

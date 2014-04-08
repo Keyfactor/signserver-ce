@@ -253,6 +253,9 @@ public class PDFSigner extends BaseSigner {
                     config.getProperty(PROPERTY_ARCHIVETODISK))) {
                 archiveToDisk(sReq, signedbytes, requestContext);
             }
+            
+            // The client can be charged for the request
+            requestContext.setRequestFulfilledByWorker(true);
         } catch (DocumentException e) {
             throw new IllegalRequestException("Could not sign document: "
                     + e.getMessage(), e);

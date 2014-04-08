@@ -124,6 +124,9 @@ public class MRTDSigner extends BaseSigner {
             } else {
                 ret = new GenericSignResponse(sReq.getRequestID(), signedbytes, getSigningCertificate(), archiveId, archivables);
             }
+            
+            // The client can be charged for the request
+            requestContext.setRequestFulfilledByWorker(true);
         } else {
             throw new IllegalRequestException("Sign request with id: " + sReq.getRequestID() + " is of the wrong type: "
                     + sReq.getClass().getName() + " should be MRTDSignRequest or GenericSignRequest");

@@ -152,6 +152,10 @@ public class OOXMLSigner extends BaseSigner {
             signResponse = new GenericSignResponse(sReq.getRequestID(),
                     signedbytes, getSigningCertificate(), archiveId, archivables);
         }
+
+        // The client can be charged for the request
+        requestContext.setRequestFulfilledByWorker(true);
+
         return signResponse;
 
     }

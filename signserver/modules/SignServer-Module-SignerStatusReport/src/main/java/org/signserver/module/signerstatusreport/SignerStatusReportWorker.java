@@ -98,6 +98,9 @@ public class SignerStatusReportWorker extends BaseSigner {
         
         // Process the request
         String responseData = reportBuilder.buildReport().toString();
+        
+        // The client can be charged for the request
+        requestContext.setRequestFulfilledByWorker(true);
 
         return new GenericServletResponse(signRequest.getRequestID(), responseData.getBytes(), null, null, null, "text/plain");
     }

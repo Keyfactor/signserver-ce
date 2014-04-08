@@ -18,7 +18,11 @@ import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 
 /**
- *
+ * Interface for Accounters.
+ * 
+ * Accounters are responsible for charging a client for a successfully carried 
+ * out worker request.
+ * 
  * @author Markus Kilås
  * @version $Id$
  */

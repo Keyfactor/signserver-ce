@@ -199,7 +199,7 @@ public class RenewalWorker extends BaseSigner {
         // Log values
         final LogMap logMap = LogMap.getInstance(requestContext);
 
-        responseData = process(requestData, logMap);
+        responseData = process(requestData, logMap, requestContext);
 
         // Log result
         logMap.put(RenewalWorkerProperties.LOG_RESPONSE_RESULT,
@@ -245,7 +245,7 @@ public class RenewalWorker extends BaseSigner {
      * @throws SignServerException
      */
     private Properties process(final Properties requestData,
-                final LogMap logMap)
+                final LogMap logMap, final RequestContext requestContext)
             throws IllegalRequestException, CryptoTokenOfflineException,
             SignServerException {
         final String workerName = requestData.getProperty(
@@ -389,6 +389,9 @@ public class RenewalWorker extends BaseSigner {
                 responseData.setProperty(
                         RenewalWorkerProperties.RESPONSE_RESULT,
                         RenewalWorkerProperties.RESPONSE_RESULT_OK);
+                
+                // The client can be charged for the request
+                requestContext.setRequestFulfilledByWorker(true);
             }
 
         } catch (Exception ex) {

@@ -10,15 +10,14 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.server;
-
-import org.signserver.common.SignServerException;
+package org.signserver.common;
 
 /**
  * Exception thrown when a purchase of a request/response was not granted
  * by the accounter.
  * 
- * @author markus
+ * @author Markus Kilås
+ * @version $Id$
  */
 public class NotGrantedException extends SignServerException {
 

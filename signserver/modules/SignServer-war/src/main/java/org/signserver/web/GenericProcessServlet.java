@@ -575,6 +575,8 @@ public class GenericProcessServlet extends AbstractProcessServlet {
             res.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, e.getMessage());
         } catch (ServiceUnavailableException e) {
             res.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, e.getMessage());
+        } catch (NotGrantedException e) {
+            res.sendError(HttpServletResponse.SC_FORBIDDEN, e.getMessage());
         } catch (SignServerException e) {
             res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
         }

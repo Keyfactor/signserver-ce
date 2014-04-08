@@ -48,6 +48,7 @@ public interface IWorkerLogger {
     String LOG_FILENAME = "FILENAME";
     String LOG_XFORWARDEDFOR = "XFORWARDEDFOR";
 
+    /** Indicating if the purchase was granted by any configured Accounter implementations. */
     String LOG_PURCHASED = "PURCHASED";
 
     String LOG_PDF_PASSWORD_SUPPLIED = "PDF_PASSWORD_SUPPLIED";

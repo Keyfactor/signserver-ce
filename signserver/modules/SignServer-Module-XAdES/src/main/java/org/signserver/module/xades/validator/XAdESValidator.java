@@ -207,6 +207,10 @@ public class XAdESValidator extends BaseValidator {
         byte[] data = (byte[]) sReq.getRequestData();
 
         GenericValidationResponse response = validate(sReq.getRequestID(), data);
+        
+        // The client can be charged for the request
+        requestContext.setRequestFulfilledByWorker(true);
+        
         return response;
     }
 

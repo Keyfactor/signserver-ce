@@ -499,9 +499,9 @@ public class GenericProcessServlet extends HttpServlet {
         
         final Properties mergedMetadata = mergeMetadataProperties();
        
-        for (final Object key : mergedMetadata.keySet()) {
-            final String propertyKey = (String) key;
-            final String propertyValue = (String) mergedMetadata.get(key);
+        for (final String key : mergedMetadata.stringPropertyNames()) {
+            final String propertyKey = key;
+            final String propertyValue = mergedMetadata.getProperty(key);
             
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Adding additional metadata: " + propertyKey + ": " + propertyValue);

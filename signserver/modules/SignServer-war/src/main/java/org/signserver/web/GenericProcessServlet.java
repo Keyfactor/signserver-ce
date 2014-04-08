@@ -454,18 +454,7 @@ public class GenericProcessServlet extends AbstractProcessServlet {
             metadata.put(RequestContext.METADATA_PDFPASSWORD, pdfPassword);
         }
         
-        final Properties mergedMetadata = mergeMetadataProperties();
-       
-        for (final String key : mergedMetadata.stringPropertyNames()) {
-            final String propertyKey = key;
-            final String propertyValue = mergedMetadata.getProperty(key);
-            
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Adding additional metadata: " + propertyKey + ": " + propertyValue);
-            }
-            
-            metadata.put(propertyKey, propertyValue);
-        }
+        addRequestMetaData(metadata);
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Received bytes of length: " + data.length);

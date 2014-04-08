@@ -18,6 +18,9 @@ import java.util.Properties;
 
 import javax.servlet.http.HttpServlet;
 
+import org.apache.log4j.Logger;
+import org.signserver.common.RequestMetadata;
+
 /**
  * Abstract base class for process servlets.
  * Handles common request properties (currently REQUEST_METADATA).
@@ -28,6 +31,9 @@ import javax.servlet.http.HttpServlet;
  */
 public abstract class AbstractProcessServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
+
+    /** Logger for this class */
+    private static Logger LOG = Logger.getLogger(AbstractProcessServlet.class);
 
     private static final String REQUEST_METADATA_PROPERTY_NAME = "REQUEST_METADATA";
     
@@ -70,6 +76,26 @@ public abstract class AbstractProcessServlet extends HttpServlet {
             final String propertyName = propertyFieldName.substring(REQUEST_METADATA_PROPERTY_NAME.length() + 1);
             
             overrideRequestMetadata.setProperty(propertyName, propertyValue);
+        }
+    }
+    
+    /**
+     * Add collected meta data to a RequestMetadata instance.
+     * 
+     * @param metadata
+     */
+    protected void addRequestMetaData(final RequestMetadata metadata) {
+        final Properties mergedMetadata = mergeMetadataProperties();
+        
+        for (final String key : mergedMetadata.stringPropertyNames()) {
+            final String propertyKey = key;
+            final String propertyValue = mergedMetadata.getProperty(key);
+            
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Adding additional metadata: " + propertyKey + ": " + propertyValue);
+            }
+            
+            metadata.put(propertyKey, propertyValue);
         }
     }
     

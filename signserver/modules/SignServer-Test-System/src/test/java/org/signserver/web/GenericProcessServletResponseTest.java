@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.web;
 
+import java.io.IOException;
 import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.util.HashMap;
@@ -349,6 +350,21 @@ public class GenericProcessServletResponseTest extends WebTestCase {
         assertEquals("Response content", "ISSUERNOTSUPPORTED;;Issuer of given certificate isn't supported;-1;", new String(content));
     }
     
+    private Properties parseMetadataResponse(final byte[] resp) 
+        throws IOException {
+        final String propsString = new String(resp);
+        final Properties props = new Properties();
+        
+        props.load(new StringReader(propsString));
+        
+        return props;
+    }
+    
+    /**
+     * Test setting a single REQUEST_METADATA.x param.
+     * 
+     * @throws Exception
+     */
     @Test
     public void test15RequestMetadataSingleParam() throws Exception {
         final Map<String, String> fields = new HashMap<String, String>();
@@ -359,16 +375,32 @@ public class GenericProcessServletResponseTest extends WebTestCase {
         assertStatusReturned(fields, 200);
         
         final byte[] resp = sendAndReadyBody(fields);
-        final String propsString = new String(resp);
-        final Properties props = new Properties();
-        
-        props.load(new StringReader(propsString));
-        
-        System.out.println("Props: " + props.toString());
+        final Properties props = parseMetadataResponse(resp);
         
         assertEquals("Contains property", "BAR", props.getProperty("FOO"));
     }
   
+    /**
+     * Test passing in metdata parameters using the properties file syntax.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test16RequestMetadataPropertiesFile() throws Exception {
+        final Map<String, String> fields = new HashMap<String, String>();
+        fields.put("workerId", "123");
+        fields.put("data", "foo");
+        fields.put("REQUEST_METADATA", "FOO=BAR\nFOO2=BAR2");
+        
+        assertStatusReturned(fields, 200);
+        
+        final byte[] resp = sendAndReadyBody(fields);
+        final Properties props = parseMetadataResponse(resp);
+        
+        assertEquals("Contains property", "BAR", props.getProperty("FOO"));
+        assertEquals("Contains property", "BAR2", props.getProperty("FOO2"));
+    }
+    
     /**
      * Remove the workers created etc.
      * @throws Exception in case of error

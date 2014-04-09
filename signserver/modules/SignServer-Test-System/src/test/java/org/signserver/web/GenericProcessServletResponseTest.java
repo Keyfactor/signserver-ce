@@ -402,6 +402,29 @@ public class GenericProcessServletResponseTest extends WebTestCase {
     }
     
     /**
+     * Test passing in metdata parameters using the properties file syntax
+     * and also override a single parameter.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test17RequestMetadataOverride() throws Exception {
+        final Map<String, String> fields = new HashMap<String, String>();
+        fields.put("workerId", "123");
+        fields.put("data", "foo");
+        fields.put("REQUEST_METADATA", "FOO=BAR\nFOO2=BAR2");
+        fields.put("REQUEST_METADATA.FOO", "OVERRIDE");
+        
+        assertStatusReturned(fields, 200);
+        
+        final byte[] resp = sendAndReadyBody(fields);
+        final Properties props = parseMetadataResponse(resp);
+        
+        assertEquals("Contains property", "OVERRIDE", props.getProperty("FOO"));
+        assertEquals("Contains property", "BAR2", props.getProperty("FOO2"));
+    }
+    
+    /**
      * Remove the workers created etc.
      * @throws Exception in case of error
      */

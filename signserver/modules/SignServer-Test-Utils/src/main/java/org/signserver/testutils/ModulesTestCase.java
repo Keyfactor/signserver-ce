@@ -300,7 +300,13 @@ public class ModulesTestCase extends TestCase {
 
     protected void addSigner(final String className) 
             throws CertificateException {
-        addSoftDummySigner(className, DUMMY1_SIGNER_ID, DUMMY1_SIGNER_NAME,
+        addSigner(className, DUMMY1_SIGNER_ID, DUMMY1_SIGNER_NAME);
+    }
+    
+    protected void addSigner(final String className,
+            final int signerId, final String signerName)
+        throws CertificateException {
+        addSoftDummySigner(className, signerId, signerName,
                 KEYDATA1, CERTCHAIN1);
     }
 

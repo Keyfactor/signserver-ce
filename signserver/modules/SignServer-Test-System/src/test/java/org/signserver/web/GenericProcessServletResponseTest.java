@@ -12,9 +12,12 @@
  *************************************************************************/
 package org.signserver.web;
 
+import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
+
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
@@ -50,6 +53,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
         addDummySigner1();
         addCMSSigner1();
         addXMLValidator();
+        addSigner("org.signserver.server.signers.EchoRequestMetadataSigner", 123, "DummySigner123");
     }
 
     /**
@@ -344,6 +348,26 @@ public class GenericProcessServletResponseTest extends WebTestCase {
         final byte[] content = sendAndReadyBody(fields);
         assertEquals("Response content", "ISSUERNOTSUPPORTED;;Issuer of given certificate isn't supported;-1;", new String(content));
     }
+    
+    @Test
+    public void test15RequestMetadataSingleParam() throws Exception {
+        final Map<String, String> fields = new HashMap<String, String>();
+        fields.put("workerId", "123");
+        fields.put("data", "foo");
+        fields.put("REQUEST_METADATA.FOO", "BAR");
+        
+        assertStatusReturned(fields, 200);
+        
+        final byte[] resp = sendAndReadyBody(fields);
+        final String propsString = new String(resp);
+        final Properties props = new Properties();
+        
+        props.load(new StringReader(propsString));
+        
+        System.out.println("Props: " + props.toString());
+        
+        assertEquals("Contains property", "BAR", props.getProperty("FOO"));
+    }
   
     /**
      * Remove the workers created etc.
@@ -355,5 +379,6 @@ public class GenericProcessServletResponseTest extends WebTestCase {
         removeWorker(getSignerIdCMSSigner1());
         removeWorker(getWorkerIdXmlValidator());
         removeWorker(getWorkerIdValidationService());
+        removeWorker(123);
     }
 }

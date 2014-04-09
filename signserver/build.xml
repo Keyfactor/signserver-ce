@@ -640,8 +640,8 @@ Configuring EAR...
                 </resources> 
             </batchtest>
             <classpath>
-                <fileset dir="${basedir}" includes="${systemtest.jars.include}"/>
                 <path path="${systemtest.path}"/>
+                <fileset dir="${basedir}" includes="${systemtest.jars.include}"/>
                 <pathelement path="${basedir}/lib/ext/ext/junit-4.11.jar"/>
                 <pathelement path="${basedir}/lib/ext/ext/hamcrest-core-1.3.jar"/>
             </classpath>

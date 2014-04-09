@@ -25,6 +25,7 @@ import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.module.xmlvalidator.XMLValidatorTestData;
+import org.signserver.server.signers.EchoRequestMetadataSigner;
 
 import static org.junit.Assert.*;
 import org.junit.Test;
@@ -54,7 +55,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
         addDummySigner1();
         addCMSSigner1();
         addXMLValidator();
-        addSigner("org.signserver.server.signers.EchoRequestMetadataSigner", 123, "DummySigner123");
+        addSigner(EchoRequestMetadataSigner.class.getName(), 123, "DummySigner123");
     }
 
     /**

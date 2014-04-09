@@ -52,7 +52,7 @@ public class GlobalConfigSampleAccounter implements IAccounter {
             "GLOBALCONFIGSAMPLEACCOUNTER_USERS";
     
 
-    private IGlobalConfigurationSession.ILocal gCSession;
+    private IGlobalConfigurationSession gCSession;
 
     @Override
     public void init(final Properties props) {
@@ -142,9 +142,9 @@ public class GlobalConfigSampleAccounter implements IAccounter {
         }
     }
 
-     private IGlobalConfigurationSession.ILocal getGlobalConfigurationSession() throws NamingException {
+     private IGlobalConfigurationSession getGlobalConfigurationSession() throws NamingException {
         if (gCSession == null) {
-            gCSession = ServiceLocator.getInstance().lookupLocal(IGlobalConfigurationSession.ILocal.class);
+            gCSession = ServiceLocator.getInstance().lookupLocal(IGlobalConfigurationSession.class);
         }
         return gCSession;
     }

@@ -126,9 +126,6 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         return process(new AdminInfo("Client user", null, null), workerId, request, requestContext);
     }
     
-    /**
-     * @see org.signserver.ejb.interfaces.IWorkerSession.ILocal#process(adminInfo, int, org.signserver.common.ProcessRequest, org.signserver.common.RequestContext)
-     */
     @Override
     public ProcessResponse process(final AdminInfo adminInfo, final int workerId,
             final ProcessRequest request, final RequestContext requestContext)
@@ -155,7 +152,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         }
 
         // Store values for request context and logging
-        requestContext.put(RequestContext.WORKER_ID, Integer.valueOf(workerId));
+        requestContext.put(RequestContext.WORKER_ID, workerId);
         requestContext.put(RequestContext.TRANSACTION_ID, transactionID);
         requestContext.put(RequestContext.EM, em);
         logMap.put(IWorkerLogger.LOG_TIME, String.valueOf(startTime));
@@ -725,8 +722,8 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         }
 
         if (workerId == 0 || getWorkers(
-                GlobalConfiguration.WORKERTYPE_SERVICES).contains(new Integer(
-                workerId))) {
+                GlobalConfiguration.WORKERTYPE_SERVICES).contains(
+                workerId)) {
             serviceTimerSession.unload(workerId);
             serviceTimerSession.load(workerId);
         }
@@ -785,11 +782,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     	return generateSignerKey(new AdminInfo("CLI user", null, null), signerId, keyAlgorithm,
     			keySpec, alias, authCode);
     }
-    	
-    /**
-     * @see IWorkerSession#generateSignerKey(int, java.lang.String,
-     *  java.lang.String, java.lang.String, char[])
-     */
+
     @Override
     public String generateSignerKey(final AdminInfo adminInfo, final int signerId, String keyAlgorithm,
             String keySpec, String alias, final char[] authCode)
@@ -872,9 +865,6 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     	return testKey(new AdminInfo("CLI user", null, null), signerId, alias, authCode);
     }
     
-    /**
-     * @see IWorkerSession#testKey(int, java.lang.String, char[])
-     */
     @Override
     public Collection<KeyTestResult> testKey(final AdminInfo adminInfo, final int signerId, String alias,
             char[] authCode)
@@ -1128,9 +1118,6 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         return ret;
     }
 
-    /**
-     * @see org.signserver.ejb.interfaces.IWorkerSession#getSignerCertificate(int)
-     */
     @Override
     public Certificate getSignerCertificate(final int signerId) throws CryptoTokenOfflineException {
         Certificate ret = null;
@@ -1141,9 +1128,6 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         return ret;
     }
 
-    /**
-     * @see org.signserver.ejb.interfaces.IWorkerSession#getSigningCertificateChain(int)
-     */
     @Override
     public List<Certificate> getSignerCertificateChain(final int signerId)
             throws CryptoTokenOfflineException {
@@ -1155,9 +1139,6 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         return ret;
     }
     
-    /**
-     * @see org.signserver.ejb.interfaces.IWorkerSession#getSignerCertificateBytes(int) 
-     */
     @Override
     public byte[] getSignerCertificateBytes(final int signerId) 
             throws CryptoTokenOfflineException {
@@ -1169,9 +1150,6 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         }
     }
 
-    /**
-     * @see org.signserver.ejb.interfaces.IWorkerSession#getSignerCertificateChain(int)
-     */
     @Override
     public List<byte[]> getSignerCertificateChainBytes(final int signerId)
             throws CryptoTokenOfflineException {
@@ -1280,8 +1258,8 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         Iterator<Integer> iter = ids.iterator();
         while (iter.hasNext()) {
             Integer id = iter.next();
-            if (id.intValue() > max) {
-                max = id.intValue();
+            if (id > max) {
+                max = id;
             }
         }
 

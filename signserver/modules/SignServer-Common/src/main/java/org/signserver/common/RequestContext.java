@@ -199,7 +199,21 @@ public class RequestContext implements Serializable {
         }
     }
 
+    /**
+     * A worker implementation should call this method to indicate if it was 
+     * able to successfully fulfill the request.
+     * Setting True means that the configured Accounter can go on and charge 
+     * the client for the request.
+     * @param b True if the request was fulfilled
+     */
     public void setRequestFulfilledByWorker(boolean b) {
         context.put(RequestContext.WORKER_FULFILLED_REQUEST, b);
+    }
+
+    /**
+     * @return True if the request was marked as fulfilled by the worker
+     */
+    public boolean isRequestFulfilledByWorker() {
+        return Boolean.TRUE.equals(context.get(RequestContext.WORKER_FULFILLED_REQUEST));
     }
 }

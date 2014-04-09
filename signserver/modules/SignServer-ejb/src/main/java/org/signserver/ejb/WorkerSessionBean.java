@@ -327,8 +327,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             }
 
             // Charge the client if the request was successfull
-            if (Boolean.TRUE.equals(requestContext.get(
-                    RequestContext.WORKER_FULFILLED_REQUEST))) {
+            if (requestContext.isRequestFulfilledByWorker()) {
 
                 // Billing time
                 boolean purchased = false;

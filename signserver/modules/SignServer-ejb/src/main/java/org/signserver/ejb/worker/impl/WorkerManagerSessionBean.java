@@ -120,9 +120,13 @@ public class WorkerManagerSessionBean implements IWorkerManagerSessionLocal {
 
     @Override
     public IAccounter getAccounter(int workerId, WorkerConfig awc) throws IllegalRequestException {
-        return workerFactory.getAccounter(workerId,
+        final IAccounter result = workerFactory.getAccounter(workerId,
                                     awc,
                                     em);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Returning Accounter: " + result);
+        }
+        return result;
     }
 
     @Override

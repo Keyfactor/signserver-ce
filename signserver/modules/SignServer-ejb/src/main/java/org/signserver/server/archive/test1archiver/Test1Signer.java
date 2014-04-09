@@ -22,13 +22,14 @@ import org.signserver.common.IllegalRequestException;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
+import org.signserver.common.RequestMetadata;
 import org.signserver.common.SignServerException;
 import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.olddbarchiver.ArchiveDataArchivable;
 import org.signserver.server.signers.BaseSigner;
 
 /**
- * A signer used by system tests to test the Archiving API. Not usable 
+ * A signer used by system tests to test the Archiving API and others. Not usable 
  * in production.
  * 
  * @author Markus Kilås
@@ -38,6 +39,8 @@ public class Test1Signer extends BaseSigner {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(Test1Signer.class);
+    
+    public static final String METADATA_FAILREQUEST = "DO_FAIL_REQUEST";
 
     @Override
     public ProcessResponse processData(final ProcessRequest processRequest,
@@ -62,6 +65,10 @@ public class Test1Signer extends BaseSigner {
                 signedbytes, getSigningCertificate(), 
                 archiveId,
                 Collections.singletonList(new ArchiveDataArchivable(archiveId, new ArchiveData(signedbytes), Archivable.TYPE_RESPONSE)));
+        
+        // Setting REQUEST_METADATA.DO_FAIL_REQUEST causes this signer to not treat the request as fulfilled
+        boolean success = RequestMetadata.getInstance(requestContext).get(METADATA_FAILREQUEST) == null;
+        requestContext.setRequestFulfilledByWorker(success);
         
         LOG.debug("<processData");
         return result;

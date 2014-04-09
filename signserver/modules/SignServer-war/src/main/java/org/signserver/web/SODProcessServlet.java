@@ -126,6 +126,8 @@ public class SODProcessServlet extends AbstractProcessServlet {
             workerId = Integer.parseInt(id);
         }
 
+        initMetaData();
+
         String remoteAddr = req.getRemoteAddr();
 
         // If the command is to display the signer certificate, print it.

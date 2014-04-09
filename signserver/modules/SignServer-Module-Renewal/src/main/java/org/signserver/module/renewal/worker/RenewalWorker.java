@@ -342,23 +342,23 @@ public class RenewalWorker extends BaseSigner {
 
             if (endEntity == null || endEntity.isEmpty()) {
                 renewalFailure(responseData,
-                        "Property ENDENTITY not specified for worker: "
+                        "Property " + PROPERTY_RENEWENDENTITY + " not specified for worker: "
                         + workerName);
             } else if (subjectDN == null || subjectDN.isEmpty()) {
                 renewalFailure(responseData,
-                        "Property REQUESTDN not specified for worker: "
+                        "Property " + PROPERTY_REQUESTDN + " not specified for worker: "
                         + workerName);
             } else if (sigAlg == null || sigAlg.isEmpty()) {
                 renewalFailure(responseData,
-                        "Property SIGNATUREALGORITHM not specified for worker: "
+                        "Property " + PROPERTY_SIGNATUREALGORITHM + " not specified for worker: "
                         + workerName);
             } else if (renewKey && (keyAlg == null || keyAlg.isEmpty())) {
                 renewalFailure(responseData,
-                        "Property KEYALG not specified for worker: "
+                        "Property " + PROPERTY_KEYALG + " not specified for worker: "
                         + workerName);
             } else if (renewKey && (keySpec == null || keySpec.isEmpty())) {
                 renewalFailure(responseData,
-                        "Property KEYSPEC not specified for worker: "
+                        "Property " + PROPERTY_KEYSPEC + " not specified for worker: "
                         + workerName);
             } else {
                 final boolean defaultKey;

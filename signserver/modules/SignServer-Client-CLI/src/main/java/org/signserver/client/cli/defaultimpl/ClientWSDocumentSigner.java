@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import org.apache.log4j.Logger;
+import org.ejbca.util.Base64;
 import org.signserver.client.clientws.ClientWS;
 import org.signserver.client.clientws.ClientWSService;
 import org.signserver.client.clientws.DataResponse;
@@ -117,12 +118,12 @@ public class ClientWSDocumentSigner extends AbstractDocumentSigner {
 
             if (LOG.isDebugEnabled()) {
                 LOG.debug(String.format("Got sign response with id %d, "
-                        + "archive id %d, signed data of length %d bytes "
+                        + "archive id %s, signed data of length %d bytes "
                         + "signed by signer with certificate:\n%s.",
                         response.getRequestId(),
                         response.getArchiveId(),
                         response.getData().length,
-                        response.getSignerCertificate()));
+                        new String(Base64.encode(response.getSignerCertificate()))));
             }
 
             // Write the signed data

@@ -100,7 +100,7 @@
                 </p>
                 <p>
                     Additional meta data (set in the REQUEST_METADATA request parameter):<br/>
-                    <textarea name="REQUEST_METADATA" cols="80" rows="20"></textarea><br/>
+                    <textarea name="REQUEST_METADATA" cols="40" rows="5"></textarea><br/>
                 </p>
                 <p>
                     <input type="submit" name="submit" value="Submit" /><br />

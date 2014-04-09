@@ -60,7 +60,7 @@
                     <tr id="Row2">
                         <td>
                             Additional meta data (set in the REQUEST_METADATA request parameter):<br/>
-                            <textarea name="REQUEST_METADATA" cols="80" rows="20"></textarea><br/>
+                            <textarea name="REQUEST_METADATA" cols="40" rows="5"></textarea><br/>
                         </td>
                         
                     </tr>

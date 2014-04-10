@@ -12,14 +12,20 @@
  *************************************************************************/
 package org.signserver.web;
 
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
+
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.module.mrtdsodsigner.MRTDSODSigner;
+import org.signserver.server.signers.EchoRequestMetadataSigner;
+
 import static org.junit.Assert.*;
 import org.junit.Test;
 
@@ -49,6 +55,7 @@ public class SODProcessServletResponseTest extends WebTestCase {
     @Test
     public void test00SetupDatabase() throws Exception {
         addSigner(MRTDSODSigner.class.getName());
+        addSigner(EchoRequestMetadataSigner.class.getName(), 123, "DummySigner123");
     }
 
     /**
@@ -196,6 +203,89 @@ public class SODProcessServletResponseTest extends WebTestCase {
             getWorkerSession().reloadConfiguration(getSignerIdDummy1());
         }
     }
+    
+    private Properties parseMetadataResponse(final byte[] resp)
+            throws IOException {
+        final String propsString = new String(resp);
+        final Properties props = new Properties();
+        
+        props.load(new StringReader(propsString));
+        
+        return props;
+    }
+    
+    /**
+     * Test setting a single metadata param using REQUEST_METADATA.x.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test06RequestMetadataSingleParam() throws Exception {
+        Map<String, String> fields = new HashMap<String, String>();
+        fields.put("workerId", "123");
+        fields.put("dataGroup1", "Yy==");
+        fields.put("dataGroup2", "Yy==");
+        fields.put("dataGroup3", "Yy==");
+        fields.put("encoding", "base64");
+        fields.put("REQUEST_METADATA.FOO", "BAR");
+        
+        assertStatusReturned(fields, 200, SKIP_MULTIPART);
+ 
+        final byte[] resp = sendAndReadyBody(fields);
+        final Properties props = parseMetadataResponse(resp);
+        
+        assertEquals("Contains property", "BAR", props.getProperty("FOO"));
+    }
+    
+    /**
+     * Test setting metadata using properties file syntax.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test07RequestMetadataPropertiesFile() throws Exception {
+        Map<String, String> fields = new HashMap<String, String>();
+        fields.put("workerId", "123");
+        fields.put("dataGroup1", "Yy==");
+        fields.put("dataGroup2", "Yy==");
+        fields.put("dataGroup3", "Yy==");
+        fields.put("encoding", "base64");
+        fields.put("REQUEST_METADATA", "FOO=BAR\nFOO2=BAR2");
+        
+        assertStatusReturned(fields, 200, SKIP_MULTIPART);
+        
+        final byte[] resp = sendAndReadyBody(fields);
+        final Properties props = parseMetadataResponse(resp);
+        
+        assertEquals("Contains property", "BAR", props.getProperty("FOO"));
+        assertEquals("Contains property", "BAR2", props.getProperty("FOO2"));
+    }
+    
+    /**
+     * Test setting request metadata using properties file syntax
+     * with a single parameter overriding.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test08RequestMetadataOverride() throws Exception {
+        Map<String, String> fields = new HashMap<String, String>();
+        fields.put("workerId", "123");
+        fields.put("dataGroup1", "Yy==");
+        fields.put("dataGroup2", "Yy==");
+        fields.put("dataGroup3", "Yy==");
+        fields.put("encoding", "base64");
+        fields.put("REQUEST_METADATA", "FOO=BAR\nFOO2=BAR2");
+        fields.put("REQUEST_METADATA.FOO", "OVERRIDE");
+        
+        assertStatusReturned(fields, 200, SKIP_MULTIPART);
+        
+        final byte[] resp = sendAndReadyBody(fields);
+        final Properties props = parseMetadataResponse(resp);
+
+        assertEquals("Contains property", "OVERRIDE", props.getProperty("FOO"));
+        assertEquals("Contains property", "BAR2", props.getProperty("FOO2"));
+    }
 
     /**
      * Remove the workers created etc.
@@ -204,5 +294,6 @@ public class SODProcessServletResponseTest extends WebTestCase {
     @Test
     public void test99TearDownDatabase() throws Exception {
         removeWorker(getSignerIdDummy1());
+        removeWorker(123);
     }
 }

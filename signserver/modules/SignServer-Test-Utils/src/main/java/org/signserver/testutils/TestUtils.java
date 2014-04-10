@@ -72,7 +72,7 @@ public class TestUtils {
     private static final String O = "SignServer";
     private static final String C = "SE";
     
-    public void setupSSLTruststore() {
+    public void setupSSLTruststore() throws KeyStoreException, IOException, FileNotFoundException, NoSuchAlgorithmException, CertificateException, KeyManagementException, UnrecoverableKeyException {
         // This does not work on JDK 7 / GlassFish 3
 //        System.setProperty("javax.net.ssl.trustStore", trustStore);
 //        System.setProperty("javax.net.ssl.trustStorePassword",
@@ -81,16 +81,13 @@ public class TestUtils {
         //System.setProperty("javax.net.ssl.keyStorePassword", "foo123");
         
         // Instead set the socket factory
-        try {
-            KeyStore truststore = loadKeyStore(getTruststoreFile(), getTrustStorePassword());
-            setDefaultSocketFactory(truststore, null, null, null);
-        } catch (Exception ex) {
-            throw new RuntimeException("Setup SSL truststore failed", ex);
-        }
+        KeyStore truststore = loadKeyStore(getTruststoreFile(), getTrustStorePassword());
+        setDefaultSocketFactory(truststore, null, null, null);
     }
     
     private static KeyStore loadKeyStore(final File truststoreFile,
             final String truststorePassword) throws KeyStoreException, FileNotFoundException, IOException, NoSuchAlgorithmException, CertificateException {
+        LOG.debug("Loading truststore: " + truststoreFile.getCanonicalPath());
         KeyStore keystore = KeyStore.getInstance("JKS");
         keystore.load(new FileInputStream(truststoreFile), truststorePassword.toCharArray());
         return keystore;

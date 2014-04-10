@@ -39,7 +39,6 @@ import org.signserver.testutils.ModulesTestCase;
 import org.signserver.validationservice.common.ValidationServiceConstants;
 import org.signserver.validationservice.common.Validation.Status;
 import org.signserver.validationservice.server.ValidationTestUtils;
-import static org.junit.Assert.*;
 
 /**
  * TODO: Document me!
@@ -56,11 +55,8 @@ public class ValidationWSTest extends ModulesTestCase {
     private static String revokedCert1;
     private static String identificationCert1;
 
-    public ValidationWSTest() {
-        setupSSLKeystores();
-    }
-
     @Before
+    @Override
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
         gCSession = ServiceLocator.getInstance().lookupRemote(
@@ -71,14 +67,6 @@ public class ValidationWSTest extends ModulesTestCase {
 
     @Test
     public void test00SetupDatabase() throws Exception {
-        QName qname = new QName("gen.ws.validationservice.protocol.signserver.org", "ValidationWSService");
-        ValidationWSService validationWSService =
-                new ValidationWSService(new URL("https://" + getHTTPHost() + ":"
-                + getPublicHTTPSPort()
-                + "/signserver/validationws/validationws?wsdl"),
-                qname);
-        validationWS = validationWSService.getValidationWSPort();
-
         KeyPair validRootCA1Keys = KeyTools.genKeys("1024", "RSA");
         X509Certificate validRootCA1 = ValidationTestUtils.genCert("CN=ValidRootCA1", "CN=ValidRootCA1", validRootCA1Keys.getPrivate(), validRootCA1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), true);
 
@@ -111,22 +99,22 @@ public class ValidationWSTest extends ModulesTestCase {
 
     @Test
     public void test01TestWSStatus() throws Exception {
-        String status = validationWS.getStatus("ValTest");
+        String status = getValidationWS().getStatus("ValTest");
         assertTrue(status != null);
         assertTrue(status, status.equals("ALLOK"));
 
-        status = validationWS.getStatus("16");
+        status = getValidationWS().getStatus("16");
         assertTrue(status != null);
         assertTrue(status, status.equals("ALLOK"));
 
         try {
-            status = validationWS.getStatus("asdf");
+            getValidationWS().getStatus("asdf");
             assertTrue(false);
         } catch (IllegalRequestException_Exception e) {
         }
 
         try {
-            status = validationWS.getStatus("17");
+            getValidationWS().getStatus("17");
             assertTrue(false);
         } catch (IllegalRequestException_Exception e) {
         }
@@ -134,7 +122,7 @@ public class ValidationWSTest extends ModulesTestCase {
 
     @Test
     public void test02TestWSisValid() throws Exception {
-        ValidationResponse res = validationWS.isValid("ValTest", validCert1, ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
+        ValidationResponse res = getValidationWS().isValid("ValTest", validCert1, ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
         assertTrue(res != null);
         assertTrue(res.getStatusMessage() != null);
         assertTrue(res.getStatus().toString().equals(Status.VALID.toString()));
@@ -142,7 +130,7 @@ public class ValidationWSTest extends ModulesTestCase {
         assertTrue(res.getRevocationReason() == -1);
         assertTrue(res.getRevocationDate() == null);
 
-        res = validationWS.isValid("16", validCert1, ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
+        res = getValidationWS().isValid("16", validCert1, ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
         assertTrue(res != null);
         assertTrue(res.getStatusMessage() != null);
         assertTrue(res.getStatus().toString().equals(Status.VALID.toString()));
@@ -151,23 +139,23 @@ public class ValidationWSTest extends ModulesTestCase {
         assertTrue(res.getRevocationDate() == null);
 
         try {
-            validationWS.isValid("17", validCert1, ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
+            getValidationWS().isValid("17", validCert1, ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
             assertTrue(false);
         } catch (IllegalRequestException_Exception e) {
         }
         try {
-            validationWS.isValid("asfd", validCert1, ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
+            getValidationWS().isValid("asfd", validCert1, ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
             assertTrue(false);
         } catch (IllegalRequestException_Exception e) {
         }
 
         try {
-            validationWS.isValid("asfd", "1234", ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
+            getValidationWS().isValid("asfd", "1234", ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
             assertTrue(false);
         } catch (IllegalRequestException_Exception e) {
         }
 
-        res = validationWS.isValid("ValTest", revokedCert1, ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
+        res = getValidationWS().isValid("ValTest", revokedCert1, ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
         assertTrue(res != null);
         assertTrue(res.getStatusMessage() != null);
         assertTrue(res.getStatus().toString().equals(Status.REVOKED.toString()));
@@ -175,7 +163,7 @@ public class ValidationWSTest extends ModulesTestCase {
         assertTrue(res.getRevocationReason() == 3);
         assertTrue(res.getRevocationDate() != null);
 
-        res = validationWS.isValid("ValTest", identificationCert1, ValidationServiceConstants.CERTPURPOSE_ELECTRONIC_SIGNATURE);
+        res = getValidationWS().isValid("ValTest", identificationCert1, ValidationServiceConstants.CERTPURPOSE_ELECTRONIC_SIGNATURE);
         assertTrue(res != null);
         assertTrue(res.getStatusMessage() != null);
         assertTrue(res.getStatus().toString().equals(Status.VALID.toString())); // digitalSignature accepted
@@ -195,5 +183,19 @@ public class ValidationWSTest extends ModulesTestCase {
         sSSession.removeWorkerProperty(16, "VAL1.ISSUER1.CERTCHAIN");
 
         sSSession.reloadConfiguration(16);
+    }
+    
+    private org.signserver.protocol.validationservice.ws.gen.ValidationWS getValidationWS() throws Exception {
+        if (validationWS == null) {
+            setupSSLKeystores();
+            QName qname = new QName("gen.ws.validationservice.protocol.signserver.org", "ValidationWSService");
+            ValidationWSService validationWSService =
+                    new ValidationWSService(new URL("https://" + getHTTPHost() + ":"
+                    + getPublicHTTPSPort()
+                    + "/signserver/validationws/validationws?wsdl"),
+                    qname);
+            validationWS = validationWSService.getValidationWSPort();
+        }
+        return validationWS;
     }
 }

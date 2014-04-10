@@ -64,7 +64,7 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
     private final IWorkerSession workerSession = getWorkerSession();
     private final IGlobalConfigurationSession globalSession = getGlobalSession();
     
-    public SigningAndValidationWithCRLTest() {
+    public SigningAndValidationWithCRLTest() throws Exception {
         setupSSLKeystores();
     }
 

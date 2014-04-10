@@ -21,6 +21,11 @@ package org.signserver.client.api;
  */
 public class SigningAndValidationWithCRLUsingWSBalancedTest extends SigningAndValidationWithCRLTest {
 
+    public SigningAndValidationWithCRLUsingWSBalancedTest() throws Exception {
+    }
+
+    
+    
     @Override
     protected ISigningAndValidation getSigningAndValidationImpl() {
         return new SigningAndValidationWSBalanced(getHTTPHost(),

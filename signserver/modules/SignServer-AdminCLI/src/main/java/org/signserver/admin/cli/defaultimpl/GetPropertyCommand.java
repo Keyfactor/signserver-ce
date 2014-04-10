@@ -74,31 +74,32 @@ public class GetPropertyCommand extends AbstractAdminCommand {
 
             this.getOutputStream().println("\n\n");
             return 0;
-
+        } catch (CommandFailureException e) {
+            throw e;
         } catch (Exception e) {
             throw new UnexpectedCommandFailureException(e);
         }
     }
     
-    private void getGlobalProperty(String scope, String key) throws RemoteException {
+    private void getGlobalProperty(String scope, String key) throws RemoteException, CommandFailureException {
         final String propertyValue = getGlobalConfigurationSession().getGlobalConfiguration().getProperty(scope, key);
     
         if (propertyValue != null) {
             this.getOutputStream().println("Value of global property " + key +
                     " with scope " + scope + ": " + propertyValue + "\n");
         } else {
-            this.getOutputStream().println("No such global property\n");
+            throw new CommandFailureException("No such global property");
         }
     }
 
-    private void getWorkerProperty(int workerId, String propertykey) throws RemoteException {
+    private void getWorkerProperty(int workerId, String propertykey) throws RemoteException, CommandFailureException {
         final String propertyValue = getWorkerSession().getCurrentWorkerConfig(workerId).getProperty(propertykey);
     
         if (propertyValue != null) {
             this.getOutputStream().println("Value of property " + propertykey +
                     " for worker " + workerId + ": " + propertyValue + "\n");
         } else {
-            this.getOutputStream().println("No such property " + propertykey +
+            throw new CommandFailureException("No such property " + propertykey +
                     " for worker " + workerId + "\n");
         }
     }

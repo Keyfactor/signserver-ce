@@ -94,7 +94,7 @@ public class SignServerCLITest extends ModulesTestCase {
         assertPrinted("Contains property value", cli.getOut(), "bar");
         
         // test the getproperty CLI command for a non-existing worker property
-        assertEquals("Getproperty 2", CommandLineInterface.RETURN_SUCCESS,
+        assertEquals("Getproperty 2", CommandLineInterface.RETURN_ERROR,
                 cli.execute("getproperty", "" + TESTID, "bogus"));
         assertPrinted("Contains error message", cli.getOut(), "No such property");
     
@@ -106,7 +106,7 @@ public class SignServerCLITest extends ModulesTestCase {
         assertPrinted("Contains property", cli.getOut(), "bar");
         
         // test the getproperty CLI command for an unknown global property
-        assertEquals("Getproperty 4", CommandLineInterface.RETURN_SUCCESS,
+        assertEquals("Getproperty 4", CommandLineInterface.RETURN_ERROR,
                 cli.execute("getproperty", "global", "_UNKNOWN_"));
         assertPrinted("Contains property", cli.getOut(), "No such global property");
     }

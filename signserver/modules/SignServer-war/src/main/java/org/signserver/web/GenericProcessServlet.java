@@ -210,6 +210,7 @@ public class GenericProcessServlet extends AbstractProcessServlet {
                                     handleMetaDataProperty(itemFieldName, item.getString("ISO-8859-1"));
                                 } catch (IOException e) {
                                     sendBadRequest(res, "Malformed properties given using REQUEST_METADATA.");
+                                    return;
                                 }
                             }
                         } else {
@@ -277,6 +278,7 @@ public class GenericProcessServlet extends AbstractProcessServlet {
                        handleMetaDataProperty(property, req.getParameter(property));
                    } catch (IOException e) {
                        sendBadRequest(res, "Malformed properties given using REQUEST_METADATA.");
+                       return;
                    }
                }
             }

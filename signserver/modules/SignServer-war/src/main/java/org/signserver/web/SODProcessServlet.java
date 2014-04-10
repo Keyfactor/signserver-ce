@@ -189,6 +189,7 @@ public class SODProcessServlet extends AbstractProcessServlet {
                             handleMetaDataProperty(key, req.getParameter(key));
                         } catch (IOException e) {
                             sendBadRequest(res, "Malformed properties given using REQUEST_METADATA.");
+                            return;
                         }
                     }
                 }

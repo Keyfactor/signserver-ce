@@ -33,7 +33,7 @@ import org.signserver.common.SignServerException;
  * This is only indented for internal testing purposes, and is not a real signer.
  * 
  * @author Marcus Lundblad
- * @version ${Id}
+ * @version $Id$
  */
 public class EchoRequestMetadataSigner extends BaseSigner {
 

@@ -14,8 +14,13 @@ package org.signserver.testutils;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.util.*;
@@ -590,7 +595,7 @@ public class ModulesTestCase extends TestCase {
     }
 
     /** Setup keystores for SSL. **/
-    protected void setupSSLKeystores() {
+    protected void setupSSLKeystores() throws KeyStoreException, IOException, FileNotFoundException, NoSuchAlgorithmException, CertificateException, KeyManagementException, UnrecoverableKeyException {
         testUtils.setupSSLTruststore();
     }
     

@@ -33,7 +33,7 @@ public abstract class AbstractProcessServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     /** Logger for this class */
-    private static Logger LOG = Logger.getLogger(AbstractProcessServlet.class);
+    private static final Logger LOG = Logger.getLogger(AbstractProcessServlet.class);
 
     private static final String REQUEST_METADATA_PROPERTY_NAME = "REQUEST_METADATA";
     

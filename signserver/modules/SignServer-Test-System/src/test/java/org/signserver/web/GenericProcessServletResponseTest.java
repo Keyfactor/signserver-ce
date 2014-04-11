@@ -426,6 +426,89 @@ public class GenericProcessServletResponseTest extends WebTestCase {
     }
     
     /**
+     * Test including properties with an escaped "=" sign as part of a property value.
+     * @throws Exception
+     */
+    @Test
+    public void test18RequestMetadataEscaped() throws Exception {
+        final Map<String, String> fields = new HashMap<String, String>();
+        fields.put("workerId", "123");
+        fields.put("data", "foo");
+        fields.put("REQUEST_METADATA", "FOO=FOO\\=BAR\nFOO2=BAR2");
+        
+        assertStatusReturned(fields, 200);
+        
+        final byte[] resp = sendAndReadyBody(fields);
+        final Properties props = parseMetadataResponse(resp);
+        
+        assertEquals("Contains property", "FOO=BAR", props.getProperty("FOO"));
+        assertEquals("Contains property", "BAR2", props.getProperty("FOO2"));
+    }
+    
+    /**
+     * Test including a property value broken up on two lines with a line-ending \.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test19RequestMetadataLineEndingBackslash() throws Exception {
+        final Map<String, String> fields = new HashMap<String, String>();
+        fields.put("workerId", "123");
+        fields.put("data", "foo");
+        fields.put("REQUEST_METADATA", "FOO=BAR\\\nNEXT_LINE\nFOO2=BAR2");
+        
+        assertStatusReturned(fields, 200);
+        
+        final byte[] resp = sendAndReadyBody(fields);
+        final Properties props = parseMetadataResponse(resp);
+        
+        assertEquals("Contains property", "BARNEXT_LINE", props.getProperty("FOO"));
+        assertEquals("Contains property", "BAR2", props.getProperty("FOO2"));
+    }
+    
+    /**
+     * Test with a comment line in the property file.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test20RequestMetadataWithCommentLine() throws Exception {
+        final Map<String, String> fields = new HashMap<String, String>();
+        fields.put("workerId", "123");
+        fields.put("data", "foo");
+        fields.put("REQUEST_METADATA", "FOO=BAR\n# Comment = a comment\nFOO2=BAR2");
+        
+        assertStatusReturned(fields, 200);
+        
+        final byte[] resp = sendAndReadyBody(fields);
+        final Properties props = parseMetadataResponse(resp);
+        
+        // Properties.load() seems to include some sort of marker as the first entry...
+        assertEquals("Number of properties", 3, props.size());
+    }
+    
+    /**
+     * Test with extra whitespace surrounding the "=".
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test21RequestMetadataExtraWhitespace() throws Exception {
+        final Map<String, String> fields = new HashMap<String, String>();
+        fields.put("workerId", "123");
+        fields.put("data", "foo");
+        fields.put("REQUEST_METADATA", "FOO = BAR\nFOO2 = BAR2");
+        
+        assertStatusReturned(fields, 200);
+        
+        final byte[] resp = sendAndReadyBody(fields);
+        final Properties props = parseMetadataResponse(resp);
+        
+        assertEquals("Contains property", "BAR", props.getProperty("FOO"));
+        assertEquals("Contains property", "BAR2", props.getProperty("FOO2"));
+    }
+    
+    /**
      * Remove the workers created etc.
      * @throws Exception in case of error
      */

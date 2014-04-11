@@ -36,17 +36,6 @@ public abstract class AbstractProcessServlet extends HttpServlet {
     private static final Logger LOG = Logger.getLogger(AbstractProcessServlet.class);
 
     private static final String REQUEST_METADATA_PROPERTY_NAME = "REQUEST_METADATA";
-    
-    // metadata properties set via the REQUEST_METADATA= syntax
-    private Properties requestMetadata;
-    // metadata set with REQUEST_METADATA.name=value overriding the above
-    private Properties overrideRequestMetadata;
-
-    protected void initMetaData() {
-        // holds parameters set via REQUEST_METADATA= and REQUEST_METADATA.x=
-        requestMetadata = new Properties();
-        overrideRequestMetadata = new Properties();
-    }
 
     /**
      * Returns true if given request field refers to a meta data property.
@@ -61,21 +50,45 @@ public abstract class AbstractProcessServlet extends HttpServlet {
                  itemFieldName.startsWith(REQUEST_METADATA_PROPERTY_NAME + "."));
     }
 
-    /**
-     * Internal method handling a metadata property, updating appropriate
-     * mappings for individually set properties and those set as a complete properties mapping.
-     * 
-     * @param propertyFieldName Request parameter name
-     * @param propertyValue Request parameter value
-     * @throws IOException
-     */
-    protected void handleMetaDataProperty(final String propertyFieldName, final String propertyValue) throws IOException {
-        if (propertyFieldName.length() == REQUEST_METADATA_PROPERTY_NAME.length()) {
-            requestMetadata.load(new StringReader(propertyValue));
-        } else {
-            final String propertyName = propertyFieldName.substring(REQUEST_METADATA_PROPERTY_NAME.length() + 1);
-            
-            overrideRequestMetadata.setProperty(propertyName, propertyValue);
+    protected static class MetaDataHolder {
+        private Properties requestMetadata;
+        private Properties overrideRequestMetadata;
+        
+        public MetaDataHolder() {
+            requestMetadata = new Properties();
+            overrideRequestMetadata = new Properties();
+        }
+        
+        
+        /**
+         * Update this holder instance according to the given property.
+         * 
+         * @param propertyFieldName Request parameter name
+         * @param propertyValue Request parameter value
+         * @throws IOException
+         */
+        protected void handleMetaDataProperty(final String propertyFieldName,
+                final String propertyValue) 
+                        throws IOException {
+            if (propertyFieldName.length() == REQUEST_METADATA_PROPERTY_NAME.length()) {
+                requestMetadata.load(new StringReader(propertyValue));
+            } else {
+                final String propertyName = propertyFieldName.substring(REQUEST_METADATA_PROPERTY_NAME.length() + 1);
+                
+                overrideRequestMetadata.setProperty(propertyName, propertyValue);
+            }
+        }
+    
+
+        /**
+         * Internal method gathering metadata from internal mapping giving precedence
+         * to parameters set via individually set parameters.
+         * 
+         * @return Final property object with merged properties
+         */
+        Properties mergeMetadataProperties() {
+            requestMetadata.putAll(overrideRequestMetadata);
+            return requestMetadata;
         }
     }
     
@@ -84,8 +97,9 @@ public abstract class AbstractProcessServlet extends HttpServlet {
      * 
      * @param metadata
      */
-    protected void addRequestMetaData(final RequestMetadata metadata) {
-        final Properties mergedMetadata = mergeMetadataProperties();
+    protected void addRequestMetaData(final MetaDataHolder holder,
+            final RequestMetadata metadata) {
+        final Properties mergedMetadata = holder.mergeMetadataProperties();
         
         for (final String key : mergedMetadata.stringPropertyNames()) {
             final String propertyKey = key;
@@ -98,15 +112,5 @@ public abstract class AbstractProcessServlet extends HttpServlet {
             metadata.put(propertyKey, propertyValue);
         }
     }
-    
-    /**
-     * Internal method gathering metadata from internal mapping giving precedence
-     * to parameters set via individually set parameters.
-     * 
-     * @return Final property object with merged properties
-     */
-    Properties mergeMetadataProperties() {
-        requestMetadata.putAll(overrideRequestMetadata);
-        return requestMetadata;
-    }
+
 }

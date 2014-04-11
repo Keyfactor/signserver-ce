@@ -139,8 +139,7 @@ public class GenericProcessServlet extends AbstractProcessServlet {
         }
 
         ProcessType processType = ProcessType.signDocument;
-        
-        initMetaData();
+        final MetaDataHolder metadataHolder = new MetaDataHolder();
 
         if (ServletFileUpload.isMultipartContent(req)) {
             final FileItemFactory factory = new DiskFileItemFactory();
@@ -207,7 +206,8 @@ public class GenericProcessServlet extends AbstractProcessServlet {
                                 encoding = item.getString("ISO-8859-1");
                             } else if (isFieldMatchingMetaData(itemFieldName)) {
                                 try {
-                                    handleMetaDataProperty(itemFieldName, item.getString("ISO-8859-1"));
+                                    metadataHolder.handleMetaDataProperty(itemFieldName,
+                                            item.getString("ISO-8859-1"));
                                 } catch (IOException e) {
                                     sendBadRequest(res, "Malformed properties given using REQUEST_METADATA.");
                                     return;
@@ -275,7 +275,8 @@ public class GenericProcessServlet extends AbstractProcessServlet {
                     }
                 } else if (isFieldMatchingMetaData(property)) {
                    try {
-                       handleMetaDataProperty(property, req.getParameter(property));
+                       metadataHolder.handleMetaDataProperty(property,
+                               req.getParameter(property));
                    } catch (IOException e) {
                        sendBadRequest(res, "Malformed properties given using REQUEST_METADATA.");
                        return;
@@ -356,7 +357,8 @@ public class GenericProcessServlet extends AbstractProcessServlet {
             res.sendError(HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE,
                     "Maximum content length is 100 MB");
         } else {
-            processRequest(req, res, workerId, data, fileName, pdfPassword, processType);
+            processRequest(req, res, workerId, data, fileName, pdfPassword, processType,
+                    metadataHolder);
         }
 
         LOG.debug("<doPost()");
@@ -379,7 +381,8 @@ public class GenericProcessServlet extends AbstractProcessServlet {
     } // doGet
 
     private void processRequest(final HttpServletRequest req, final HttpServletResponse res, final int workerId, final byte[] data,
-            String fileName, final String pdfPassword, final ProcessType processType) throws java.io.IOException, ServletException {
+            String fileName, final String pdfPassword, final ProcessType processType,
+            final MetaDataHolder metadataHolder) throws java.io.IOException, ServletException {
         final String remoteAddr = req.getRemoteAddr();
         if (LOG.isDebugEnabled()) {
             LOG.debug("Recieved HTTP process request for worker " + workerId + ", from ip " + remoteAddr);
@@ -454,7 +457,7 @@ public class GenericProcessServlet extends AbstractProcessServlet {
             metadata.put(RequestContext.METADATA_PDFPASSWORD, pdfPassword);
         }
         
-        addRequestMetaData(metadata);
+        addRequestMetaData(metadataHolder, metadata);
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Received bytes of length: " + data.length);

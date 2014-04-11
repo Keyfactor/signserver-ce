@@ -126,7 +126,7 @@ public class SODProcessServlet extends AbstractProcessServlet {
             workerId = Integer.parseInt(id);
         }
 
-        initMetaData();
+        final MetaDataHolder metadataHolder = new MetaDataHolder();
 
         String remoteAddr = req.getRemoteAddr();
 
@@ -186,7 +186,8 @@ public class SODProcessServlet extends AbstractProcessServlet {
                         }
                     } else if (isFieldMatchingMetaData(key)) {
                         try {
-                            handleMetaDataProperty(key, req.getParameter(key));
+                            metadataHolder.handleMetaDataProperty(key,
+                                    req.getParameter(key));
                         } catch (IOException e) {
                             sendBadRequest(res, "Malformed properties given using REQUEST_METADATA.");
                             return;
@@ -241,7 +242,7 @@ public class SODProcessServlet extends AbstractProcessServlet {
                     context.put(RequestContext.X_FORWARDED_FOR, xForwardedFor);
                 }
                 
-                addRequestMetaData(metadata);
+                addRequestMetaData(metadataHolder, metadata);
 
                 logMap.put(IWorkerLogger.LOG_WORKER_NAME,
                         getWorkerSession().getCurrentWorkerConfig(workerId).getProperty(PropertiesConstants.NAME));

@@ -50,9 +50,16 @@ public abstract class AbstractProcessServlet extends HttpServlet {
                  itemFieldName.startsWith(REQUEST_METADATA_PROPERTY_NAME + "."));
     }
 
+    /**
+     * Helper class holding request meta data.
+     * 
+     * This class will manage globally set (via a properties file-syntax property)
+     * and overriding meta data (via REQUEST_METADATA.x properties).
+     *
+     */
     protected static class MetaDataHolder {
-        private Properties requestMetadata;
-        private Properties overrideRequestMetadata;
+        private final Properties requestMetadata;
+        private final Properties overrideRequestMetadata;
         
         public MetaDataHolder() {
             requestMetadata = new Properties();
@@ -67,7 +74,7 @@ public abstract class AbstractProcessServlet extends HttpServlet {
          * @param propertyValue Request parameter value
          * @throws IOException
          */
-        protected void handleMetaDataProperty(final String propertyFieldName,
+        public void handleMetaDataProperty(final String propertyFieldName,
                 final String propertyValue) 
                         throws IOException {
             if (propertyFieldName.length() == REQUEST_METADATA_PROPERTY_NAME.length()) {
@@ -81,12 +88,12 @@ public abstract class AbstractProcessServlet extends HttpServlet {
     
 
         /**
-         * Internal method gathering metadata from internal mapping giving precedence
+         * Method gathering metadata from internal mapping giving precedence
          * to parameters set via individually set parameters.
          * 
          * @return Final property object with merged properties
          */
-        Properties mergeMetadataProperties() {
+        public Properties mergeMetadataProperties() {
             requestMetadata.putAll(overrideRequestMetadata);
             return requestMetadata;
         }

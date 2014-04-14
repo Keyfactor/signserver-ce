@@ -5507,6 +5507,62 @@ postprocess.file1.includes=META-INF/ejb-jar.xml
                 </pre>
             
             </section>
+            
+            <section name="Custom sub modules">
+                <p>
+In the same way as described in the previous chapter about custom modules, it is also possible to have custom sub modules.
+This is done by creating a folder under 'modules' with a name starting with 'mod-' and include a build.xml as in the example below.
+It would then be possible to include any number of additional modules in this folder.
+                </p>
+                <p>
+Sample modules/mod-mysigners/build.xml:
+                </p>
+                <source><![CDATA[
+<project name="MySigner Modules" default="dist-module" basedir=".">
+    <description>Builds sub modules in mysigner</description>
+    <property name="platform.project.dir" location="../../"/>
+    <property name="signserver.home" location="../../"/>
+    <property file="build.properties"/>
+    <property file="${platform.project.dir}/conf/signserver_build.properties"/>
+    <property file="${platform.project.dir}/signserver_build.properties"/>
+    
+    <!-- Clean selected modules in this sub module -->
+    <target name="-do-clean-module">
+        <echo>Cleaning ${ant.project.name}</echo>
+        <subant target="-do-clean-module" failonerror="true">
+            <fileset dir="." includes="${modules.clean.includes}"/>
+         </subant>
+    </target>
+    <target name="clean" depends="-do-clean-module"/>
+    
+    <!-- Build selected modules in this sub module -->
+    <target name="-do-module">
+        <echo>Building ${ant.project.name}</echo>
+        <subant target="-do-module" verbose="false">
+            <fileset dir="." includes="${modules.build.includes}"/>
+        </subant>
+    </target>
+    <target name="dist-module" depends="-do-module"/>
+    
+    <!-- Build selected systemtests in this sub module -->
+    <target name="-do-test-module">    
+        <echo>Building systemtests for ${ant.project.name}</echo>
+        <subant target="-do-test-module" verbose="false">
+            <fileset dir="." includes="${build.systemtest.includes}" excludes="${build.systemtest.excludes}"/>
+        </subant>
+    </target>
+    <target name="build-systemtests" depends="-do-test-module"/>
+    
+    <!-- Run tests in this sub module -->
+    <target name="test">
+        <echo>Running tests for ${ant.project.name}</echo>
+        <subant target="test">
+            <fileset dir="." includes="${tests.modules.includes}"/>
+        </subant>
+    </target>
+</project>]]></source>
+                
+            </section>
                     
            <section name="Custom CLI">
                <p>

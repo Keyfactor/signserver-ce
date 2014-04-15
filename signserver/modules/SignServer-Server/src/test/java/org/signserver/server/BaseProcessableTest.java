@@ -200,12 +200,17 @@ public class BaseProcessableTest extends TestCase {
                 expectedProperties.toString(), actualProperties.toString());
     }
     
+    /**
+     * Test with an unknown class name as the crypto token.
+     * Should give an appropriate crypto token-related error.
+     * 
+     * @throws Exception
+     */
     @Test
     public void testCryptoToken_unknownClass() throws Exception {
         Properties globalConfig = new Properties();
         WorkerConfig workerConfig = new WorkerConfig();
         
-        // All PKCS#11 properties that can have default values in GlobalConfiguration (except SLOTLISTINDEX)
         globalConfig.setProperty("GLOB.WORKER" + workerId + ".CLASSPATH", TestSigner.class.getName());
         globalConfig.setProperty("GLOB.WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", "org.foo.Bar");
         workerConfig.setProperty("NAME", "TestSigner100");

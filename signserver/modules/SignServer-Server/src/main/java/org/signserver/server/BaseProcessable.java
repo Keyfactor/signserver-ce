@@ -44,6 +44,9 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
     private X509Certificate cert;
     private List<Certificate> certChain;
 
+    /**
+     * Holds fatal errors gathered when initing the crypto token.
+     */
     private List<String> cryptoTokenFatalErrors;
     
     protected BaseProcessable() {
@@ -138,6 +141,13 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         return config.getProperties().getProperty(WorkerConfig.PROPERTY_AUTHTYPE, IProcessable.AUTHTYPE_CLIENTCERT);
     }
 
+    /**
+     * Return the crypto token used by this instance.
+     * If the crypto token has not yet been initialized, it will be instanciated before being returned.
+     * 
+     * @return The used crypto token
+     * @throws SignServerException
+     */
     protected ICryptoToken getCryptoToken() throws SignServerException {
         if (log.isTraceEnabled()) {
             log.trace(">getCryptoToken");
@@ -442,6 +452,11 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         }
     }
     
+    /**
+     * Returns fatal errors found while initializing the crypto token.
+     * 
+     * @return List of crypto token error message strings
+     */
     protected List<String> getCryptoTokenFatalErrors() {
         return cryptoTokenFatalErrors;
     }

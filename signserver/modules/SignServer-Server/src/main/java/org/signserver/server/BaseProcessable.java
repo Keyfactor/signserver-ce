@@ -50,23 +50,12 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
     }
 
     @Override
-    public ProcessResponse processData(ProcessRequest signRequest,
-            RequestContext requestContext) throws IllegalRequestException,
-            CryptoTokenOfflineException, SignServerException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-
-
-    @Override
     public void init(int workerId, WorkerConfig config,
             WorkerContext workerContext, EntityManager workerEM) {
         super.init(workerId, config, workerContext, workerEM);
         
         cryptoTokenFatalErrors = new LinkedList<String>();
     }
-
 
     @Override
     public void activateSigner(String authenticationCode)

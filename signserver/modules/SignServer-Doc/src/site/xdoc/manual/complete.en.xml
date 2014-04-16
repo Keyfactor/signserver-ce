@@ -1379,6 +1379,11 @@ Removes added client certificate entries.
 <b>listauthorizedclients:</b>
 Displays the current list of acceptable clients.
                         </p>
+                        <p>
+<b>renewsigner:</b>
+Sends a request for renewal of the specified worker to the specified renewal worker. If the authcode parameter is omitted the command prompts for the password.
+See also the section about the <a href="complete.en.html#RenewalWorker">RenewalWorker</a>.
+                        </p>
 
                         <p><b>Database Related</b></p>
                         <p>
@@ -4771,12 +4776,18 @@ AUTHCODE=foo123</source>
                     <p>
  Using the Client CLI:
                     </p><source>
-bin/client.sh signdocument -workername MyRenewalWorker -data "WORKER=MySigner
+bin/signclient signdocument -workername MyRenewalWorker -data "WORKER=MySigner
 AUTHCODE=foo123"</source>
                     <p>
 
 (Notice that the command is on two lines)
                     </p>
+                    <p>
+The renewal can also be initiated from the <a href="complete.en.html#Administration%20CLI">Admin CLI</a>:
+                    </p>
+                    <source>
+bin/signserver renewsigner MySigner -renewalworker MyRenewalWorker -authcode foo123
+                    </source>
                     </subsubsection>
                     
                     <subsubsection name="RenewalWorker operations">

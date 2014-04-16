@@ -111,7 +111,7 @@ public class Base64DatabaseArchiver implements Archiver {
             if (em == null) {
                 throw new ArchiveException("Could not archive as archiver was not successfully initialized");
             }
-            final ArchiveDataService dataService = new ArchiveDataService(requestContext.getEntityManager());
+            final ArchiveDataService dataService = new ArchiveDataService(em);
             final Integer workerId = (Integer) requestContext.get(RequestContext.WORKER_ID);
             final X509Certificate certificate = (X509Certificate) requestContext.get(RequestContext.CLIENT_CERTIFICATE);
             String remoteIp = (String) requestContext.get(RequestContext.REMOTE_IP);

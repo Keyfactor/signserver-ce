@@ -269,14 +269,14 @@ public class WorkerFactory {
                     Class<?> c = this.getClass().getClassLoader().loadClass(authType);
                     auth = (IAuthorizer) c.newInstance();
                 } catch (ClassNotFoundException e) {
-                    LOG.error("Error worker with id " + workerId + " missconfiguration, AUTHTYPE setting : " + authType + " is not a correct class path.", e);
-                    throw new IllegalRequestException("Error worker with id " + workerId + " missconfiguration, AUTHTYPE setting : " + authType + " is not a correct class path.");
+                    LOG.error("Error worker with id " + workerId + " misconfiguration, AUTHTYPE setting : " + authType + " is not a correct class path.", e);
+                    throw new IllegalRequestException("Error worker with id " + workerId + " misconfiguration, AUTHTYPE setting : " + authType + " is not a correct class path.");
                 } catch (InstantiationException e) {
-                    LOG.error("Error worker with id " + workerId + " missconfiguration, AUTHTYPE setting : " + authType + " is not a correct class path.", e);
-                    throw new IllegalRequestException("Error worker with id " + workerId + " missconfiguration, AUTHTYPE setting : " + authType + " is not a correct class path.");
+                    LOG.error("Error worker with id " + workerId + " misconfiguration, AUTHTYPE setting : " + authType + " is not a correct class path.", e);
+                    throw new IllegalRequestException("Error worker with id " + workerId + " misconfiguration, AUTHTYPE setting : " + authType + " is not a correct class path.");
                 } catch (IllegalAccessException e) {
-                    LOG.error("Error worker with id " + workerId + " missconfiguration, AUTHTYPE setting : " + authType + " is not a correct class path.", e);
-                    throw new IllegalRequestException("Error worker with id " + workerId + " missconfiguration, AUTHTYPE setting : " + authType + " is not a correct class path.");
+                    LOG.error("Error worker with id " + workerId + " misconfiguration, AUTHTYPE setting : " + authType + " is not a correct class path.", e);
+                    throw new IllegalRequestException("Error worker with id " + workerId + " misconfiguration, AUTHTYPE setting : " + authType + " is not a correct class path.");
                 }
             }
             
@@ -306,7 +306,7 @@ public class WorkerFactory {
                 } catch (ClassNotFoundException e) {
                     final String error =
                             "Error worker with id " + workerId
-                            + " missconfiguration, "
+                            + " misconfiguration, "
                             + WORKERLOGGER + " setting : "
                             + fullClassName
                             + " is not a correct "
@@ -317,7 +317,7 @@ public class WorkerFactory {
                 } catch (InstantiationException e) {
                     final String error =
                             "Error worker with id " + workerId
-                            + " missconfiguration, "
+                            + " misconfiguration, "
                             + WORKERLOGGER + " setting : "
                             + fullClassName
                             + " is not a correct "
@@ -329,7 +329,7 @@ public class WorkerFactory {
                 } catch (IllegalAccessException e) {
                     final String error =
                             "Error worker with id " + workerId
-                            + " missconfiguration, "
+                            + " misconfiguration, "
                             + WORKERLOGGER + " setting : "
                             + fullClassName
                             + " is not a correct "
@@ -362,7 +362,7 @@ public class WorkerFactory {
                 } catch (ClassNotFoundException e) {
                     final String error =
                             "Error worker with id " + workerId
-                            + " missconfiguration, "
+                            + " misconfiguration, "
                             + ACCOUNTER + " setting : "
                             + fullClassName
                             + " is not a correct "
@@ -373,7 +373,7 @@ public class WorkerFactory {
                 } catch (InstantiationException e) {
                     final String error =
                             "Error worker with id " + workerId
-                            + " missconfiguration, "
+                            + " misconfiguration, "
                             + ACCOUNTER + " setting : "
                             + fullClassName
                             + " is not a correct "
@@ -385,7 +385,7 @@ public class WorkerFactory {
                 } catch (IllegalAccessException e) {
                     final String error =
                             "Error worker with id " + workerId
-                            + " missconfiguration, "
+                            + " misconfiguration, "
                             + ACCOUNTER + " setting : "
                             + fullClassName
                             + " is not a correct "
@@ -432,7 +432,7 @@ public class WorkerFactory {
                             } catch (ArchiverInitException e) {
                                 final String error =
                                         "Error worker with id " + workerId
-                                        + " missconfiguration, "
+                                        + " misconfiguration, "
                                         + "failed to initialize archiver "
                                         + index + ".";
                                 LOG.error(error, e);
@@ -442,7 +442,7 @@ public class WorkerFactory {
                         } catch (ClassNotFoundException e) {
                             final String error =
                                     "Error worker with id " + workerId
-                                    + " missconfiguration, "
+                                    + " misconfiguration, "
                                     + SignServerConstants.ARCHIVERS
                                     + " setting : "
                                     + className
@@ -454,7 +454,7 @@ public class WorkerFactory {
                         } catch (InstantiationException e) {
                             final String error =
                                     "Error worker with id " + workerId
-                                    + " missconfiguration, "
+                                    + " misconfiguration, "
                                     + SignServerConstants.ARCHIVERS
                                     + " setting : "
                                     + className
@@ -467,7 +467,7 @@ public class WorkerFactory {
                         } catch (IllegalAccessException e) {
                             final String error =
                                     "Error worker with id " + workerId
-                                    + " missconfiguration, "
+                                    + " misconfiguration, "
                                     + SignServerConstants.ARCHIVERS
                                     + " setting : "
                                     + className

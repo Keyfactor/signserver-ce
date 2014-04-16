@@ -3651,7 +3651,7 @@ Note 3: See also the integration guide for <a href="complete.en.html#SODProcessS
                     </subsubsection>
                     <subsubsection name="Available Properties">
                         <p>
-<b>DODATAGROUPHASHING</b> = True if this signer first should hash the DG values. Otherwise the values are assumed to be hashes already. (Default is false)<br/>
+<b>DODATAGROUPHASHING</b> = True if this signer first should hash the DG values. Otherwise the values are assumed to be hashes already. (Optional, default is false)<br/>
 <b>DIGESTALGORITHM</b> = Message digest algorithm that is applied or should be applied to the values. (Optional, default is SHA256)<br/>
 <b>SIGNATUREALGORITHM</b> = Signature algorithm for signing the SO(d). (Optional, default is SHA256withRSA all though SHA256withRSAandMGF1 is recommended by Doc9303)<br/>
 <b>LDSVERSION</b> = Version of Logical Data Structure (LDS). For LDS version 1.7 enter "0107" and for version 1.8 "0108". (Optional, default is 0107)<br/>

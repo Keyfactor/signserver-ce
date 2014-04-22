@@ -745,26 +745,5 @@ Configuring EAR...
             <param name="systemtest.path" value="${systemtest.path}"/>
         </antcall>
     </target>
-   
-   <target name="abc">
-       
-       <property name="base0" value="c:\test\fil.txt"/>
-       
-       <echo>base0: "${base0}"</echo>
-       
-       
-       <loadresource property="base1">
-        <propertyresource name="base0"/>
-        <filterchain>
-          <tokenfilter>
-            <filetokenizer/>
-            <replacestring from="\" to="/"/>
-          </tokenfilter>
-        </filterchain>
-      </loadresource>
-       
-       <echo>base1: "${base1}"</echo>
-       
-   </target>
-   
+
 </project>

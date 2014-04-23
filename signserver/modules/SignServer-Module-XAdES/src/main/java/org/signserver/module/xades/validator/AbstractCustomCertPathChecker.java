@@ -410,7 +410,7 @@ public abstract class AbstractCustomCertPathChecker extends PKIXCertPathChecker 
         Store ocspRespCertStore = new JcaCertStore(Arrays.asList(certs));
         
         //search for certificate having OCSPSigner extension		
-        X509ExtendedKeyUsageExistsCertSelector certSel = new X509ExtendedKeyUsageExistsCertSelector(KeyPurposeId.id_kp_OCSPSigning);
+        X509ExtendedKeyUsageExistsCertSelector certSel = new X509ExtendedKeyUsageExistsCertSelector(KeyPurposeId.id_kp_OCSPSigning.getId());
 
         for (X509CertificateHolder cert : (Collection<X509CertificateHolder>) ocspRespCertStore.getMatches(certSel)) {
             try {

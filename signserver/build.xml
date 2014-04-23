@@ -219,7 +219,7 @@ healthcheck.maintenancefile         = ${healthcheck.maintenancefile}
         <fail message="SignServer needs to be built first. Run 'ant build'." unless="signserver-ejb.jar.available"/>
     </target>
     
-    <target name="compose-ear" description="Compose the configured EAR file" depends="-check-built, display-properties, -init-configure, -process-modules, -create-admingui-dist">
+    <target name="compose-ear" description="Compose the configured EAR file" depends="-check-built, -init-edition, display-properties, -init-configure, -process-modules, -create-admingui-dist">
         <!-- Build the ear file from the signserver.ear folder -->
         <ear destfile="${ear.dist.file}" appxml="${signserver.ear.dir}/META-INF/application.xml" duplicate="fail">
             <fileset dir="${signserver.ear.dir}">
@@ -319,14 +319,14 @@ Configurations to include:
     <target name="-filter-jars" depends="-init-filter-jars-db,-init-filter-jars-nodb">
         
         <!-- cesecore-ejb.jar -->
-        <property name="cesecore-ejb.jar" value="cesecore-ejb-1.1.2.jar"/>
+        <property name="cesecore-ejb.jar" value="cesecore-ejb-6.0.5-SNAPSHOT.jar"/>
         <move todir="${tmp}" file="${signserver.ear.dir}/${cesecore-ejb.jar}"/>
         <jar destfile="${signserver.ear.dir}/${cesecore-ejb.jar}">
             <zipfileset src="${tmp}/${cesecore-ejb.jar}" excludes="${cesecore-ejb-excludes}"/>
         </jar>
         
         <!-- cesecore-entities.jar -->
-        <property name="cesecore-entities.jar" value="cesecore-entity-1.1.2.jar"/>
+        <property name="cesecore-entities.jar" value="cesecore-entity-6.0.5-SNAPSHOT.jar"/>
         <move todir="${tmp}" file="${signserver.ear.dir}/lib/${cesecore-entities.jar}"/>
         <jar destfile="${signserver.ear.dir}/lib/${cesecore-entities.jar}">
             <zipfileset src="${tmp}/${cesecore-entities.jar}" excludes="${cesecore.entities.excludes}"/>
@@ -746,4 +746,75 @@ Configuring EAR...
         </antcall>
     </target>
 
+   <!-- Initializes edition specific config and creates the edition.properties unless already done. -->
+   <target name="-init-edition" depends="-load-edition, -prepare-edition">
+        <echo>Edition: ${app.edition}</echo>
+    </target>
+    <target name="-load-edition">
+        <available file="${basedir}/res/edition.properties" property="edition.available"/>
+        <property file="${basedir}/res/edition.properties"/>
+    </target>
+    <target name="-prepare-edition" depends="-detect-edition, -prepare-ce, -prepare-be, -prepare-ee" unless="edition.available">
+        <echo level="verbose">Preparing edition</echo>
+        
+        <propertyfile file="${basedir}/res/edition.properties">
+            <entry key="app.edition" value="${app.edition}"/>
+            <entry key="app.edition.lc" value="${app.edition.lc}"/>
+        </propertyfile>
+        <property file="${basedir}/res/edition.properties"/>
+    </target>
+    <target name="-detect-edition">
+        <available file="${basedir}/modules/mod-enterprise" property="mod-enterprise.available"/>
+        <condition property="load-ee.condition">
+            <and>
+                <not><isset property="edition.available"/></not>
+                <isset property="mod-enterprise.available"/>
+            </and>
+        </condition>
+        <condition property="load-be.condition">
+            <and>
+                <not><isset property="edition.available"/></not>
+                <not><isset property="mod-enterprise.available"/></not>
+                <equals arg1="be" arg2="${edition}"/>
+            </and>
+        </condition>
+        <condition property="load-ce.condition">
+            <and>
+                <not><isset property="edition.available"/></not>
+                <not><isset property="mod-enterprise.available"/></not>
+                <not><equals arg1="be" arg2="${edition}"/></not>
+            </and>
+        </condition>
+    </target>
+    <target name="-prepare-ce" depends="-detect-edition" if="load-ce.condition">
+        <echo level="verbose">Prepare CE</echo>
+        <property name="app.edition" value="CE"/>
+        <property name="app.edition.lc" value="ce"/>
+        <!-- Perform any CE specific things here -->
+        <!-- Move all CESeCore CE jars into lib/ext -->
+        <copy todir="${basedir}/lib/ext" failonerror="true" overwrite="true">
+            <fileset dir="${basedir}/lib/ext/cesecore-ce/" includes="*.jar,*.txt"/>
+        </copy>
+    </target>
+    <target name="-prepare-be" depends="-detect-edition" if="load-be.condition">
+        <echo level="verbose">Prepare BE</echo>
+        <property name="app.edition" value="BE"/>
+        <property name="app.edition.lc" value="be"/>
+        <!-- Perform any BE specific things here -->
+        <!-- Move all CESeCore CE jars into lib/ext -->
+        <copy todir="${basedir}/lib/ext" failonerror="true" overwrite="true">
+            <fileset dir="${basedir}/lib/ext/cesecore-ce/" includes="*.jar,*.txt"/>
+        </copy>
+    </target>
+    <target name="-prepare-ee" depends="-detect-edition" if="load-ee.condition">
+        <echo level="verbose">Prepare EE</echo>
+        <property name="app.edition" value="EE"/>
+        <property name="app.edition.lc" value="ee"/>
+        <!-- Perform any EE specific things here -->
+        <!-- Move all CESeCore EE jars into lib/ext -->
+        <copy todir="${basedir}/" failonerror="true" overwrite="true">
+            <fileset dir="${basedir}/modules/mod-enterprise/files/" includes="**/*"/>
+        </copy>
+    </target>
+   
 </project>

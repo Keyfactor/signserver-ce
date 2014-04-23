@@ -22,7 +22,7 @@
     <!-- Main targets                                                        -->
     <!-- =================================================================== -->
     
-    <target name="init" depends="display-build-properties">
+    <target name="init" depends="display-build-properties, -init-edition">
         <!-- Create the time stamp -->
         <tstamp/>
         <mkdir dir="${mods-available}"/>
@@ -174,6 +174,10 @@ includemodulesinbuild               = ${includemodulesinbuild}
             <exclude name="lib/**/*.jar" />
             <exclude name="lib/**/*.zip" />
             <exclude name="**/velocity.log" />
+            
+            <!-- Exclude libraries moved to lib/ext during build -->
+            <exclude name="lib/ext/cesecore-ce/**"/>
+            <exclude name="modules/mod-enterprise/lib/**"/>
         </patternset>
         
         <!-- All scripts for source release -->
@@ -219,6 +223,10 @@ includemodulesinbuild               = ${includemodulesinbuild}
             <!-- TODO: The following should be moved anyway -->
             <exclude name="bin/junit/**"/>
             <exclude name="bin/classes/**"/>
+            
+            <!-- Exclude libraries moved to lib/ext during build -->
+            <exclude name="lib/ext/cesecore-ce/**"/>
+            <exclude name="modules/mod-enterprise/lib/**"/>
         </patternset>
         
         <!-- All scripts for binary release -->
@@ -265,6 +273,10 @@ includemodulesinbuild               = ${includemodulesinbuild}
             <exclude name="**/.cvsignore" />
             <exclude name="**/*.sh" />
             <exclude name="**/nbproject/private/**" />
+            
+            <!-- Exclude libraries moved to lib/ext during build -->
+            <exclude name="lib/ext/cesecore-ce/**"/>
+            <exclude name="modules/mod-enterprise/lib/**"/>
         </patternset>
         
         <!-- All scripts for source release -->
@@ -293,14 +305,14 @@ includemodulesinbuild               = ${includemodulesinbuild}
         <antcall target="-release:source-tarball-lgpl21"/>
     </target>
 
-    <target name="-release:zip-lgpl21" depends="clean,-init-release-patternsets">
+    <target name="-release:zip-lgpl21" depends="init,clean,-init-release-patternsets">
         <copy file="doc/lgpl-2.1.txt" tofile="LICENSE" />
-        <property name="zip.dest.file" location="../signserver-${signserver.zipversion}.zip"/>
+        <property name="zip.dest.file" location="../signserver-${app.edition.lc}-${signserver.zipversion}.zip"/>
         <zip destfile="${zip.dest.file}">
-            <zipfileset dir="." prefix="signserver-${signserver.zipversion}" filemode="600" dirmode="700">
+            <zipfileset dir="." prefix="signserver-${app.edition.lc}-${signserver.zipversion}" filemode="600" dirmode="700">
                 <patternset refid="mixed.normalfiles"/>
             </zipfileset>
-            <zipfileset dir="." prefix="signserver-${signserver.zipversion}" filemode="700" dirmode="700">
+            <zipfileset dir="." prefix="signserver-${app.edition.lc}-${signserver.zipversion}" filemode="700" dirmode="700">
                 <patternset refid="mixed.executablefiles"/>
             </zipfileset>
         </zip>
@@ -311,14 +323,14 @@ includemodulesinbuild               = ${includemodulesinbuild}
 SHA1 checksum: ${zip.dest.file.sha1}</echo>
     </target>
 
-    <target name="-release:source-zip-lgpl21" depends="clean,-init-release-patternsets">
+    <target name="-release:source-zip-lgpl21" depends="init,clean,-init-release-patternsets">
         <copy file="doc/lgpl-2.1.txt" tofile="LICENSE" />
-        <property name="zip.src.dest.file" location="../signserver-${signserver.zipversion}-src.zip"/>
+        <property name="zip.src.dest.file" location="../signserver-${app.edition.lc}-${signserver.zipversion}-src.zip"/>
         <zip destfile="${zip.src.dest.file}">
-            <zipfileset dir="." prefix="signserver-${signserver.zipversion}-src" filemode="600" dirmode="700">
+            <zipfileset dir="." prefix="signserver-${app.edition.lc}-${signserver.zipversion}-src" filemode="600" dirmode="700">
                 <patternset refid="source.normalfiles"/>
             </zipfileset>
-            <zipfileset dir="." prefix="signserver-${signserver.zipversion}-src" filemode="700" dirmode="700">
+            <zipfileset dir="." prefix="signserver-${app.edition.lc}-${signserver.zipversion}-src" filemode="700" dirmode="700">
                 <patternset refid="source.executablefiles"/>
             </zipfileset>
         </zip>
@@ -329,16 +341,16 @@ SHA1 checksum: ${zip.dest.file.sha1}</echo>
 SHA1 checksum: ${zip.src.dest.file.sha1}</echo>
     </target>
 
-    <target name="-release:source-tarball-lgpl21" depends="clean,-init-release-patternsets">
+    <target name="-release:source-tarball-lgpl21" depends="init,clean,-init-release-patternsets">
         <copy file="doc/lgpl-2.1.txt" tofile="LICENSE" />
-        <property name="tgz.src.tar.file" value="../signserver-${signserver.zipversion}-src.tar" />
+        <property name="tgz.src.tar.file" value="../signserver-${app.edition.lc}-${signserver.zipversion}-src.tar" />
         <property name="tgz.src.tar.gz" location="${tgz.src.tar.file}.gz" />
         <tar tarfile="${tgz.src.tar.file}" basedir="." longfile="gnu">
             <exclude name="**/**"/>
-            <tarfileset dir="." prefix="signserver-${signserver.zipversion}" filemode="600" dirmode="700">
+            <tarfileset dir="." prefix="signserver-${app.edition.lc}-${signserver.zipversion}" filemode="600" dirmode="700">
                 <patternset refid="source.normalfiles"/>
             </tarfileset>
-            <tarfileset dir="." prefix="signserver-${signserver.zipversion}" filemode="700" dirmode="700">
+            <tarfileset dir="." prefix="signserver-${app.edition.lc}-${signserver.zipversion}" filemode="700" dirmode="700">
                 <patternset refid="source.executablefiles"/>
             </tarfileset>
         </tar>
@@ -351,17 +363,17 @@ SHA1 checksum: ${zip.src.dest.file.sha1}</echo>
 SHA1 checksum: ${tgz.src.tar.gz.sha1}</echo>
     </target>
 
-    <target name="release:binary-tarball" depends="build,-init-release-patternsets" description="Make a binary tarball for SignServer release">
+    <target name="release:binary-tarball" depends="init,build,-init-release-patternsets" description="Make a binary tarball for SignServer release">
         <property name="signserver.zipversion" value="${app.version.number}"/>
         <copy file="doc/lgpl-2.1.txt" tofile="LICENSE" />
-        <property name="tgz.bin.tar" value="../signserver-${signserver.zipversion}-bin.tar" />
+        <property name="tgz.bin.tar" value="../signserver-${app.edition.lc}-${signserver.zipversion}-bin.tar" />
         <property name="tgz.bin.tar.gz" location="${tgz.bin.tar}.gz" />
         <tar tarfile="${tgz.bin.tar}" basedir="." longfile="gnu">
             <exclude name="**/**"/>
-            <tarfileset dir="." prefix="signserver-${signserver.zipversion}" filemode="600" dirmode="700">
+            <tarfileset dir="." prefix="signserver-${app.edition.lc}-${signserver.zipversion}" filemode="600" dirmode="700">
                 <patternset refid="binary.normalfiles"/>
             </tarfileset>
-            <tarfileset dir="." prefix="signserver-${signserver.zipversion}" filemode="700" dirmode="700">
+            <tarfileset dir="." prefix="signserver-${app.edition.lc}-${signserver.zipversion}" filemode="700" dirmode="700">
                 <patternset refid="binary.executablefiles"/>
             </tarfileset>
         </tar>
@@ -374,16 +386,16 @@ SHA1 checksum: ${tgz.src.tar.gz.sha1}</echo>
 SHA1 checksum: ${tgz.bin.tar.gz.sha1}</echo>
     </target>
     
-    <target name="release:binary-zip" depends="build,-init-release-patternsets" description="Make a binary zip for SignServer release">
+    <target name="release:binary-zip" depends="init,build,-init-release-patternsets" description="Make a binary zip for SignServer release">
         <property name="signserver.zipversion" value="${app.version.number}"/>
         <copy file="doc/lgpl-2.1.txt" tofile="LICENSE" />
-        <property name="zip.bin" location="../signserver-${signserver.zipversion}-bin.zip"/>
+        <property name="zip.bin" location="../signserver-${app.edition.lc}-${signserver.zipversion}-bin.zip"/>
         <zip destfile="${zip.bin}">
             <exclude name="**/**"/>
-            <zipfileset dir="." prefix="signserver-${signserver.zipversion}" filemode="600" dirmode="700">
+            <zipfileset dir="." prefix="signserver-${app.edition.lc}-${signserver.zipversion}" filemode="600" dirmode="700">
                 <patternset refid="binary.normalfiles"/>
             </zipfileset>
-            <zipfileset dir="." prefix="signserver-${signserver.zipversion}" filemode="700" dirmode="700">
+            <zipfileset dir="." prefix="signserver-${app.edition.lc}-${signserver.zipversion}" filemode="700" dirmode="700">
                 <patternset refid="binary.executablefiles"/>
             </zipfileset>
         </zip>

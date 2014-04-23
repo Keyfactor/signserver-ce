@@ -26,7 +26,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.cesecore.audit.AuditLogEntry;
 import org.cesecore.audit.impl.integrityprotected.AuditRecordData;
-import org.cesecore.dbprotection.DatabaseProtectionError;
+import org.cesecore.dbprotection.DatabaseProtectionException;
 import org.cesecore.util.ValidityDate;
 import org.cesecore.util.query.Criteria;
 import org.cesecore.util.query.Elem;
@@ -177,8 +177,8 @@ public class QueryAuditLogCommand extends AbstractCommand {
 
         } catch (Exception e) {            
             // Is it a verification failure?
-            if (e.getCause() instanceof DatabaseProtectionError) {
-                DatabaseProtectionError error = (DatabaseProtectionError) e.getCause();
+            if (e.getCause() instanceof DatabaseProtectionException) {
+                DatabaseProtectionException error = (DatabaseProtectionException) e.getCause();
                 err.println(error.getMessage());
                 // TODO: (or not): Doesn't seems like we can do more than printing this error message
                 if (error.getEntity() != null) {

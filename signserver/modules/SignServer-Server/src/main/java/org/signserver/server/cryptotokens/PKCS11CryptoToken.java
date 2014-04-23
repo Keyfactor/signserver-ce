@@ -38,6 +38,7 @@ import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequestBuilder;
 import org.bouncycastle.util.encoders.Hex;
 import org.cesecore.keys.token.CryptoTokenAuthenticationFailedException;
+import org.cesecore.keys.token.p11.exception.NoSuchSlotException;
 import org.ejbca.core.model.util.AlgorithmTools;
 import org.ejbca.util.Base64;
 import org.ejbca.util.CertTools;
@@ -110,7 +111,10 @@ public class PKCS11CryptoToken implements ICryptoToken, IKeyGenerator, IKeyRemov
             }
         } catch (org.cesecore.keys.token.CryptoTokenOfflineException ex) {
             LOG.error("Init failed", ex);
-            throw new CryptoTokenInitializationFailureException(ex.getMessage(), ex);
+            throw new CryptoTokenInitializationFailureException(ex.getMessage());
+        } catch (NoSuchSlotException ex) {
+            LOG.error("Slot not found", ex);
+            throw new CryptoTokenInitializationFailureException(ex.getMessage());
         }
     }
 

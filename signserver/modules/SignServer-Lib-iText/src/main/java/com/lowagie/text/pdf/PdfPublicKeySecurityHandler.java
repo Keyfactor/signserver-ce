@@ -295,7 +295,7 @@ public class PdfPublicKeySecurityHandler {
         AlgorithmIdentifier algorithmidentifier = new AlgorithmIdentifier(new ASN1ObjectIdentifier(s), derobject);
         EncryptedContentInfo encryptedcontentinfo = 
             new EncryptedContentInfo(PKCSObjectIdentifiers.data, algorithmidentifier, deroctetstring);
-        EnvelopedData env = new EnvelopedData(null, derset, encryptedcontentinfo, null);
+        EnvelopedData env = new EnvelopedData(null, derset, encryptedcontentinfo, (ASN1Set) null);
         ContentInfo contentinfo = 
             new ContentInfo(PKCSObjectIdentifiers.envelopedData, env);
         return contentinfo.toASN1Primitive();

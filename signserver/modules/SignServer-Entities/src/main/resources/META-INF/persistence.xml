@@ -17,7 +17,7 @@
     </properties>
   </persistence-unit>
   
-  <persistence-unit name="cesecore" transaction-type="JTA">
+  <persistence-unit name="ejbca" transaction-type="JTA">
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
         <jta-data-source>${datasource.jndi-name-prefix}${datasource.jndi-name}</jta-data-source>        
         <mapping-file>META-INF/cesecore-orm-${database.name}.xml</mapping-file>

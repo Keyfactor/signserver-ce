@@ -553,6 +553,7 @@ public class KeystoreCryptoToken implements ICryptoToken,
             final KeyStore keystore = getKeystore(keystoretype, keystorepath, 
                     authenticationCode);
 
+            final KeyPairGenerator kpg;
             if (TYPE_PKCS12.equals(keystoretype)) {
                 final Provider prov = keystore.getProvider();
                 if (LOG.isDebugEnabled()) {
@@ -560,50 +561,31 @@ public class KeystoreCryptoToken implements ICryptoToken,
                 }
                 
                 // Generate the key pair
-                final KeyPairGenerator kpg = KeyPairGenerator.getInstance(
+                kpg = KeyPairGenerator.getInstance(
                         keyAlgorithm, prov);
-            
-                if ("ECDSA".equals(keyAlgorithm)) {
-                    kpg.initialize(ECNamedCurveTable.getParameterSpec(keySpec));
-                } else {
-                    kpg.initialize(Integer.valueOf(keySpec));
-                }
-            
-                final String sigAlgName = "SHA1With" + keyAlgorithm;
-
-                LOG.debug("generating...");
-                final KeyPair keyPair = kpg.generateKeyPair();
-                X509Certificate[] chain = new X509Certificate[1];
-                chain[0] = getSelfCertificate("CN=" + alias + ", " + SUBJECT_DUMMY
-                    + ", C=SE",
-                                      (long)30*24*60*60*365, sigAlgName, keyPair);
-                LOG.debug("Creating certificate with entry "+alias+'.');
-
-                keystore.setKeyEntry(alias, keyPair.getPrivate(), authCode, chain);
-        } else {
-                final KeyPairGenerator kpg = KeyPairGenerator.getInstance(keyAlgorithm, "BC");
-                
-                if ("ECDSA".equals(keyAlgorithm)) {
-                    kpg.initialize(ECNamedCurveTable.getParameterSpec(keySpec));
-                } else {
-                    kpg.initialize(Integer.valueOf(keySpec));
-                }
-            
-                final String sigAlgName = "SHA1With" + keyAlgorithm;
-
-                LOG.debug("generating...");
-                final KeyPair keyPair = kpg.generateKeyPair();
-                X509Certificate[] chain = new X509Certificate[1];
-                chain[0] = getSelfCertificate("CN=" + alias + ", " + SUBJECT_DUMMY
-                    + ", C=SE",
-                                      (long)30*24*60*60*365, sigAlgName, keyPair);
-                LOG.debug("Creating certificate with entry "+alias+'.');
-
-                keystore.setKeyEntry(alias, keyPair.getPrivate(), authCode, chain);
+            } else {
+                kpg = KeyPairGenerator.getInstance(keyAlgorithm, "BC");
             }
            
             LOG.debug("authenticationCode: " + authenticationCode);
 
+            if ("ECDSA".equals(keyAlgorithm)) {
+                kpg.initialize(ECNamedCurveTable.getParameterSpec(keySpec));
+            } else {
+                kpg.initialize(Integer.valueOf(keySpec));
+            }
+        
+            final String sigAlgName = "SHA1With" + keyAlgorithm;
+
+            LOG.debug("generating...");
+            final KeyPair keyPair = kpg.generateKeyPair();
+            X509Certificate[] chain = new X509Certificate[1];
+            chain[0] = getSelfCertificate("CN=" + alias + ", " + SUBJECT_DUMMY
+                + ", C=SE",
+                                  (long)30*24*60*60*365, sigAlgName, keyPair);
+            LOG.debug("Creating certificate with entry "+alias+'.');
+
+            keystore.setKeyEntry(alias, keyPair.getPrivate(), authCode, chain);
             keystore.store(new FileOutputStream(new File(keystorepath)), 
                     authenticationCode);
 

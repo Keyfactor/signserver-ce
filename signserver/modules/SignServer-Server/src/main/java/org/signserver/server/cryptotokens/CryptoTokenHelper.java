@@ -59,10 +59,12 @@ public class CryptoTokenHelper {
         prop = props.getProperty(PROPERTY_SLOT);
         if (prop != null) {
             props.setProperty("slot", prop);
+            props.setProperty(org.cesecore.keys.token.PKCS11CryptoToken.SLOT_LABEL_VALUE, prop);
         }
         prop = props.getProperty(PROPERTY_SLOTLISTINDEX);
         if (prop != null) {
             props.setProperty("slotListIndex", prop);
+            props.setProperty(org.cesecore.keys.token.PKCS11CryptoToken.SLOT_LABEL_VALUE, prop);
         }
         prop = props.getProperty(PROPERTY_ATTRIBUTESFILE);
         if (prop != null) {

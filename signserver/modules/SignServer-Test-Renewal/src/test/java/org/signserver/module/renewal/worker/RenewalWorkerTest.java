@@ -529,7 +529,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
 
         doRenewalFirstTime();
     }
-    
+
     /**
      * Tests renewal using a PEM file (no trustore password should be used)
      * @throws Exception
@@ -687,6 +687,23 @@ public class RenewalWorkerTest extends AbstractTestCase {
      
         // Test starts here
         doRenewalFirstTimeUsingCLI();
+    }
+    
+    /**
+     * Tests renewal of key and certificate for a worker with a JKS crypto token.
+     * @throws Exception
+     */
+    public void test21truststoreTypeJKSWithJKSRenewee() throws Exception {
+        final String truststoreType = "JKS";
+
+        // Setup workers
+        addRenewalWorker(WORKERID, WORKERNAME, truststoreType);
+        addSigner(SIGNERID_6102, SIGNER_6102, SIGNER_6102_ENDENTITY, true);
+
+        // Setup EJBCA end entity
+        mockSetupEjbcaSearchResult();
+
+        doRenewalFirstTime();
     }
 
     private void doRenewalFirstTimeUsingCLI() throws Exception {

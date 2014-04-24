@@ -624,9 +624,11 @@ public class RenewalWorker extends BaseSigner {
             LOG.info("alias: " + e.nextElement());
         }
 
-        final KeyManagerFactory kKeyManagerFactory
-                = KeyManagerFactory.getInstance("SunX509");
-        kKeyManagerFactory.init(keystore, null);
+        final String keystorePassword = getConfig().getProperty("KEYSTOREPASSWORD");
+        final KeyManagerFactory kKeyManagerFactory = KeyManagerFactory.getInstance("SunX509");
+        kKeyManagerFactory.init(keystore,
+                keystorePassword != null ? keystorePassword.toCharArray() : null);
+                
         final KeyStore keystoreTrusted;
 
         if (truststoreValue != null) {

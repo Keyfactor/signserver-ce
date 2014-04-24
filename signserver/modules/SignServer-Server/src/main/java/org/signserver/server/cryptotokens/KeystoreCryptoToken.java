@@ -566,8 +566,6 @@ public class KeystoreCryptoToken implements ICryptoToken,
             } else {
                 kpg = KeyPairGenerator.getInstance(keyAlgorithm, "BC");
             }
-           
-            LOG.debug("authenticationCode: " + authenticationCode);
 
             if ("ECDSA".equals(keyAlgorithm)) {
                 kpg.initialize(ECNamedCurveTable.getParameterSpec(keySpec));

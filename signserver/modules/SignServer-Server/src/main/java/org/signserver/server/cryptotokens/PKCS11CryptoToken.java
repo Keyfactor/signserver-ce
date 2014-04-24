@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.server.cryptotokens;
 
+import java.io.File;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
@@ -90,11 +91,16 @@ public class PKCS11CryptoToken implements ICryptoToken, IKeyGenerator, IKeyRemov
     public void init(int workerId, Properties props) throws CryptoTokenInitializationFailureException {
         try {
             props = CryptoTokenHelper.fixP11Properties(props);
-            
-            if (props.getProperty("sharedLibrary") == null) {
+
+            final String sharedLibraryProperty = props.getProperty("sharedLibrary");
+            if (sharedLibraryProperty == null) {
                 throw new CryptoTokenInitializationFailureException("Missing SHAREDLIBRARY property");
             }
-            
+            final File sharedLibrary = new File(sharedLibraryProperty);
+            if (!sharedLibrary.isFile() || !sharedLibrary.canRead()) {
+                throw new CryptoTokenInitializationFailureException("The shared library file can't be read: " + sharedLibrary.getAbsolutePath());
+            }
+
             delegate.init(props, null, workerId);
             
             keyAlias = props.getProperty("defaultKey");

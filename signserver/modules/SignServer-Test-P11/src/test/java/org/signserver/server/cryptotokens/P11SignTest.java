@@ -883,10 +883,10 @@ public class P11SignTest extends ModulesTestCase {
             setXMLSignerProperties(workerId, false);
             workerSession.setWorkerProperty(workerId, "SHAREDLIBRARY", "/foo/bar/libdummy.so");
             workerSession.reloadConfiguration(workerId);
-            
+
             final List<String> errors = workerSession.getStatus(workerId).getFatalErrors();
-            assertTrue("Should contain error",
-                    errors.contains("Failed to initialize crypto token: Not possible to create provider. See cause.: The file /foo/bar/libdummy.so can't be read."));
+            assertTrue("Should contain error about lib but was: " + errors,
+                    errors.contains("Failed to initialize crypto token: The shared library file can't be read: /foo/bar/libdummy.so"));
         } finally {
             removeWorker(workerId);
         }

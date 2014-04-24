@@ -33,6 +33,7 @@ import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequestBuilder;
+import org.bouncycastle.util.encoders.DecoderException;
 import org.ejbca.util.Base64;
 import org.ejbca.util.CertTools;
 import org.ejbca.util.keystore.KeyTools;
@@ -57,7 +58,7 @@ import org.signserver.ejb.interfaces.IWorkerSession;
  * KEYDATA : The base64 encoded key data.
  * 
  * @author Philip Vendil
- * $Id$
+ * @version $Id$
  */
 public class SoftCryptoToken implements ICryptoToken {
 
@@ -115,6 +116,8 @@ public class SoftCryptoToken implements ICryptoToken {
             } catch (IOException e) {
                 LOG.error("Error loading soft keys : KEYDATA=\"" + keyDataValue + "\"", e);
             } catch (InvalidKeySpecException e) {
+                LOG.error("Error loading soft keys : KEYDATA=\"" + keyDataValue + "\"", e);
+            } catch (DecoderException e) {
                 LOG.error("Error loading soft keys : KEYDATA=\"" + keyDataValue + "\"", e);
             }
         } else {

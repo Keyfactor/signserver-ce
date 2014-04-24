@@ -58,6 +58,9 @@ public final class ServiceLocator {
      */
     private static final NameProvider[] NAMES_LOCAL = new NameProvider[] { PROVIDER_PORTABLE, PROVIDER_GLASSFISH, PROVIDER_JBOSS7, PROVIDER_JBOSS5, PROVIDER_GLASSFISH_REMOTEONLY };
 
+    /** Prefix for CESeCore modules. */
+    private static final String CESECORE_APP = "ejbca";
+
     static {
         try {
             instance = new ServiceLocator();
@@ -187,9 +190,9 @@ public final class ServiceLocator {
         @Override
         public String getName(Class clazz, String module, boolean remote) {
             final String result;
-        
+
             if (clazz.getName().startsWith("org.cesecore")) {
-                result = "cesecore/" + clazz.getSimpleName();
+                result = CESECORE_APP + "/" + clazz.getSimpleName();
             } else {
 
                 String interfaceName = clazz.getSimpleName();

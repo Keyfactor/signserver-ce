@@ -112,21 +112,25 @@ public abstract class AbstractTestCase extends TestCase {
     }
 
     protected void addSigner(final int signerId, final String signerName,
-            final String endEntity)
+            final String endEntity, final boolean useJKSToken)
             throws IOException, KeyStoreException, NoSuchAlgorithmException,
                 CertificateException, NoSuchProviderException {
 
         // Create keystore
         final String keystorePath = newTempFile().getAbsolutePath();
         final String keystorePassword = "foo123";
-        createEmptyKeystore("PKCS12", keystorePath, keystorePassword);
+        createEmptyKeystore(useJKSToken ? "JKS" : "PKCS12", keystorePath, keystorePassword);
+
+        final String signerTokenClass =
+                useJKSToken ?
+                    "org.signserver.server.cryptotokens.JKSCryptoToken" :
+                    "org.signserver.server.cryptotokens.P12CryptoToken";
 
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
             "WORKER" + signerId + ".CLASSPATH",
             "org.signserver.module.xmlsigner.XMLSigner");
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
-            "WORKER" + signerId + ".SIGNERTOKEN.CLASSPATH",
-            "org.signserver.server.cryptotokens.P12CryptoToken");
+            "WORKER" + signerId + ".SIGNERTOKEN.CLASSPATH", signerTokenClass);
 
         workerSession.setWorkerProperty(signerId, "NAME", signerName);
         workerSession.setWorkerProperty(signerId, "AUTHTYPE", "NOAUTH");
@@ -146,6 +150,13 @@ public abstract class AbstractTestCase extends TestCase {
         workerSession.setWorkerProperty(signerId, "KEYALG", "RSA");
 
         workerSession.reloadConfiguration(signerId);
+    }
+    
+    protected void addSigner(final int signerId, final String signerName,
+            final String endEntity)
+                    throws IOException, KeyStoreException, NoSuchAlgorithmException,
+                    CertificateException, NoSuchProviderException {
+        addSigner(signerId, signerName, endEntity, false);
     }
 
     private void removeGlobalProperties(int workerid) {

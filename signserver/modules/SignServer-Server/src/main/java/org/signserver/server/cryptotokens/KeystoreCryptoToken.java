@@ -20,7 +20,6 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.*;
 import javax.security.auth.x500.X500Principal;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.x500.X500Name;
@@ -151,7 +150,14 @@ public class KeystoreCryptoToken implements ICryptoToken,
         try {
             this.ks = getKeystore(keystoretype, keystorepath,
                     authenticationcode.toCharArray());
-            this.provider = ks.getProvider().getName();
+            if (TYPE_PKCS12.equals(this.keystoretype)) {
+                this.provider = ks.getProvider().getName();
+            } else {
+                this.provider = "BC";
+            }
+            
+            LOG.debug("setting provider to: " + this.provider);
+            
             this.authenticationCode = authenticationcode.toCharArray();
 
             entries = new HashMap<Integer, KeyEntry>();
@@ -439,7 +445,9 @@ public class KeystoreCryptoToken implements ICryptoToken,
     public Collection<KeyTestResult> testKey(final String alias,
             final char[] authCode) throws CryptoTokenOfflineException,
             KeyStoreException {
-        LOG.debug(">testKey");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("testKey for alias: " + alias);
+        }
 
         final Collection<KeyTestResult> result
                 = new LinkedList<KeyTestResult>();
@@ -456,6 +464,10 @@ public class KeystoreCryptoToken implements ICryptoToken,
                 final String keyAlias = e.nextElement();
                 if (alias.equalsIgnoreCase(ICryptoToken.ALL_KEYS)
                         || alias.equals(keyAlias)) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("checking keyAlias: " + keyAlias);
+                    }
+
                     if (keystore.isKeyEntry(keyAlias)) {
                         LOG.debug("--keyEntry: " + keyAlias);
                         String status;
@@ -477,8 +489,9 @@ public class KeystoreCryptoToken implements ICryptoToken,
                                     status = "Unknown key algorithm: "
                                         + keyPair.getPublic().getAlgorithm();
                                 } else {
-                                    Signature signature = Signature.getInstance(
-                                            sigAlg, keystore.getProvider());
+                                    //Signature signature = Signature.getInstance(
+                                    //        sigAlg, keystore.getProvider());
+                                    Signature signature = Signature.getInstance(sigAlg, provider);
                                     signature.initSign(keyPair.getPrivate());
                                     signature.update(signInput);
                                     byte[] signBA = signature.sign();
@@ -539,33 +552,38 @@ public class KeystoreCryptoToken implements ICryptoToken,
 
             final KeyStore keystore = getKeystore(keystoretype, keystorepath, 
                     authenticationCode);
-            final Provider prov = keystore.getProvider();
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("provider: " + prov);
+
+            final KeyPairGenerator kpg;
+            if (TYPE_PKCS12.equals(keystoretype)) {
+                final Provider prov = keystore.getProvider();
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("provider: " + prov);
+                }
+                
+                // Generate the key pair
+                kpg = KeyPairGenerator.getInstance(
+                        keyAlgorithm, prov);
+            } else {
+                kpg = KeyPairGenerator.getInstance(keyAlgorithm, "BC");
             }
 
-            // Generate the key pair
-            final KeyPairGenerator kpg = KeyPairGenerator.getInstance(
-                        keyAlgorithm, prov);
-            
             if ("ECDSA".equals(keyAlgorithm)) {
                 kpg.initialize(ECNamedCurveTable.getParameterSpec(keySpec));
             } else {
                 kpg.initialize(Integer.valueOf(keySpec));
             }
-            
+        
             final String sigAlgName = "SHA1With" + keyAlgorithm;
 
             LOG.debug("generating...");
             final KeyPair keyPair = kpg.generateKeyPair();
             X509Certificate[] chain = new X509Certificate[1];
             chain[0] = getSelfCertificate("CN=" + alias + ", " + SUBJECT_DUMMY
-                    + ", C=SE",
-                                      (long)30*24*60*60*365, sigAlgName, keyPair);
+                + ", C=SE",
+                                  (long)30*24*60*60*365, sigAlgName, keyPair);
             LOG.debug("Creating certificate with entry "+alias+'.');
 
             keystore.setKeyEntry(alias, keyPair.getPrivate(), authCode, chain);
-
             keystore.store(new FileOutputStream(new File(keystorepath)), 
                     authenticationCode);
 
@@ -598,7 +616,10 @@ public class KeystoreCryptoToken implements ICryptoToken,
         }
         
         X509v3CertificateBuilder cg = new JcaX509v3CertificateBuilder(new X500Principal(myname), BigInteger.valueOf(firstDate.getTime()), firstDate, lastDate, new X500Principal(myname), publicKey);
-        ContentSigner contentSigner = new JcaContentSignerBuilder(sigAlg).setProvider(getProvider(PROVIDERUSAGE_SIGN)).build(keyPair.getPrivate());
+        final JcaContentSignerBuilder contentSignerBuilder = new JcaContentSignerBuilder(sigAlg);
+        contentSignerBuilder.setProvider(getProvider(PROVIDERUSAGE_SIGN));
+
+        final ContentSigner contentSigner = contentSignerBuilder.build(keyPair.getPrivate());
         
         return new JcaX509CertificateConverter().getCertificate(cg.build(contentSigner));
     }

@@ -48,6 +48,7 @@ import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.module.renewal.common.RenewalWorkerProperties;
 import org.signserver.module.renewal.ejbcaws.gen.*;
 import org.signserver.server.WorkerContext;
+import org.signserver.server.cryptotokens.KeystoreCryptoToken;
 import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.log.LogMap;
 import org.signserver.server.signers.BaseSigner;
@@ -624,9 +625,11 @@ public class RenewalWorker extends BaseSigner {
             LOG.info("alias: " + e.nextElement());
         }
 
-        final KeyManagerFactory kKeyManagerFactory
-                = KeyManagerFactory.getInstance("SunX509");
-        kKeyManagerFactory.init(keystore, null);
+        final String keystorePassword = getConfig().getProperty(KeystoreCryptoToken.KEYSTOREPASSWORD);
+        final KeyManagerFactory kKeyManagerFactory = KeyManagerFactory.getInstance("SunX509");
+        kKeyManagerFactory.init(keystore,
+                keystorePassword != null ? keystorePassword.toCharArray() : null);
+                
         final KeyStore keystoreTrusted;
 
         if (truststoreValue != null) {

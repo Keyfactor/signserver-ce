@@ -21,5 +21,5 @@ package org.signserver.common;
 public interface CESeCoreModules {
 
     /** The main CESeCore ejb-jar. */
-    String CORE = "cesecore-ejb-6.0.5-SNAPSHOT";
+    String CORE = "cesecore-ejb-6.1.1";
 }

@@ -83,6 +83,9 @@ public class ValidateDocumentCommand extends AbstractCommand {
     /** Option SERVLET. */
     public static final String SERVLET = "servlet";
     
+    /** Option METADATA. */
+    public static final String METADATA = "metadata";
+    
     /** The command line options. */
     private static final Options OPTIONS;
 
@@ -116,6 +119,8 @@ public class ValidateDocumentCommand extends AbstractCommand {
         OPTIONS.addOption(PASSWORD, true, "Password for authentication.");
         OPTIONS.addOption(SERVLET, true, "URL to the webservice servlet. Default: " +
         		SignServerWSClientFactory.DEFAULT_WSDL_URL);
+        OPTIONS.addOption(METADATA, true,
+                TEXTS.getString("METADATA_DESCRIPTION"));
         for (Option option : KeyStoreOptions.getKeyStoreOptions()) {
             OPTIONS.addOption(option);
         }
@@ -144,6 +149,8 @@ public class ValidateDocumentCommand extends AbstractCommand {
 
     /** Servlet URL */
     private String servlet;
+    
+    private Map<String, String> metadata;
     
     private Protocol protocol = Protocol.WEBSERVICES;
     
@@ -221,6 +228,10 @@ public class ValidateDocumentCommand extends AbstractCommand {
             }
         }
         
+        if (line.hasOption(METADATA)) {
+            metadata = MetadataParser.parseMetadata(line.getOptionValues(METADATA));
+        }
+        
         keyStoreOptions.parseCommandLine(line);
     }
 
@@ -276,14 +287,15 @@ public class ValidateDocumentCommand extends AbstractCommand {
                     keyStoreOptions.isUseHTTPS(),
                     workerIdOrName,
                     username,
-                    password);
+                    password,
+                    metadata);
             break;
         case HTTP:
             final URL url = new URL(keyStoreOptions.isUseHTTPS() ? "https" : "http", host, port, servlet);
             if (workerId == 0) {
-                validator = new HTTPDocumentValidator(url, workerName, username, password);
+                validator = new HTTPDocumentValidator(url, workerName, username, password, metadata);
             } else {
-                validator = new HTTPDocumentValidator(url, workerId, username, password);
+                validator = new HTTPDocumentValidator(url, workerId, username, password, metadata);
             }
             break;
         default:

@@ -38,13 +38,17 @@ public class WebServicesDocumentValidator extends AbstractDocumentValidator {
     private ISignServerWorker signServer;
 
     private Random random = new Random();
+    
+    private Map<String, String> metadata;
 
     public WebServicesDocumentValidator(final String host, final int port,
             final String servlet, final boolean useHTTPS, final String workerName,
-            final String username, final String password) {
+            final String username, final String password,
+            final Map<String, String> metadata) {
         this.signServer = new SigningAndValidationWS(host, port, servlet, useHTTPS,
                 username, password);
         this.workerName = workerName;
+        this.metadata = metadata;
     }
 
     @Override
@@ -63,9 +67,17 @@ public class WebServicesDocumentValidator extends AbstractDocumentValidator {
 
         // Take start time
         final long startTime = System.nanoTime();
+        
+        final RequestContext context = new RequestContext();
+        
+        if (metadata != null) {
+            final RequestMetadata requestMetadata = RequestMetadata.getInstance(context);
+        
+            requestMetadata.putAll(metadata);
+        }
 
         final ProcessResponse response = signServer.process(workerName,
-                new GenericValidationRequest(requestId, data), new RequestContext());
+                new GenericValidationRequest(requestId, data), context);
 
         // Take stop time
         final long estimatedTime = System.nanoTime() - startTime;

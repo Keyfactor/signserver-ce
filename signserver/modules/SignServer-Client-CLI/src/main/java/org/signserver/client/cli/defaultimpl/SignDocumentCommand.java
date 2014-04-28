@@ -177,7 +177,7 @@ public class SignDocumentCommand extends AbstractCommand {
     private KeyStoreOptions keyStoreOptions = new KeyStoreOptions();
 
     /** Meta data parameters passed in */
-    private Map<String, String> metadata = new HashMap<String, String>();
+    private Map<String, String> metadata;
     
     @Override
     public String getDescription() {
@@ -258,18 +258,7 @@ public class SignDocumentCommand extends AbstractCommand {
         }
         
         if (line.hasOption(METADATA)) {
-            final String[] values = line.getOptionValues(METADATA);
-            
-            for (final String value : values) {
-                final String[] valueSplit = value.split("=");
-                
-                if (valueSplit.length != 2) {
-                    throw new IllegalArgumentException("Meta data parameters must be specified as KEY=VALUE");
-                }
-                
-                metadata.put(valueSplit[0].trim(),
-                        valueSplit[1].trim());
-            }
+            metadata = MetadataParser.parseMetadata(line.getOptionValues(METADATA));
         }
         
         keyStoreOptions.parseCommandLine(line);

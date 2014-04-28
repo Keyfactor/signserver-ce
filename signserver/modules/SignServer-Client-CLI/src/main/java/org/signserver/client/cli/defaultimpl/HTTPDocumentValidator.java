@@ -47,25 +47,30 @@ public class HTTPDocumentValidator extends AbstractDocumentValidator {
     private int workerId;
     private String username;
     private String password;
+    private Map<String, String> metadata;
 
     public HTTPDocumentValidator(final URL processServlet,
             final String workerName, final String username,
-            final String password) {
+            final String password,
+            final Map<String, String> metadata) {
         this.processServlet = processServlet;
         this.workerName = workerName;
         this.workerId = 0;
         this.username = username;
         this.password = password;
+        this.metadata = metadata;
     }
     
     public HTTPDocumentValidator(final URL processServlet,
             final int workerId, final String username,
-            final String password) {
+            final String password,
+            final Map<String, String> metadata) {
         this.processServlet = processServlet;
         this.workerName = null;
         this.workerId = workerId;
         this.username = username;
         this.password = password;
+        this.metadata = metadata;
     }
     
     @Override
@@ -111,6 +116,20 @@ public class HTTPDocumentValidator extends AbstractDocumentValidator {
             sb.append(CRLF);
             sb.append("--" + BOUNDARY);
             sb.append(CRLF);
+            
+            if (metadata != null) {
+                for (final String key : metadata.keySet()) {
+                    final String value = metadata.get(key);
+                    
+                    
+                    sb.append("Content-Disposition: form-data; name=\"REQUEST_METADATA." + key + "\"").append(CRLF);
+                    sb.append(CRLF);
+                    sb.append(value);
+                    sb.append(CRLF);
+                    sb.append("--" + BOUNDARY);
+                    sb.append(CRLF);
+                }
+            }
             
             sb.append("Content-Disposition: form-data; name=\"processType\"");
             sb.append(CRLF);

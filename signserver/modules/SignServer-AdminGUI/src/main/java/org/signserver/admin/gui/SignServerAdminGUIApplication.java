@@ -84,7 +84,7 @@ public class SignServerAdminGUIApplication extends SingleFrameApplication {
         formatter.printHelp("admingui <options>", OPTIONS);
     }
 
-    private enum Protocol {
+    public enum Protocol {
         EJB,
         WS
     }
@@ -197,13 +197,14 @@ public class SignServerAdminGUIApplication extends SingleFrameApplication {
      */
     public static AdminWS getAdminWS() {
         if (adminWS == null) {
-            if (Protocol.WS == protocol) {
-                
-                CertTools.installBCProvider();
+            CertTools.installBCProvider();
 
-                final ConnectDialog dlg = new ConnectDialog(null, true,
-                        connectFile, defaultConnectFile, baseDir);
-                dlg.setVisible(true);
+            final ConnectDialog dlg = new ConnectDialog(null, true,
+                    connectFile, defaultConnectFile, baseDir, Protocol.WS == protocol);
+            dlg.setVisible(true);
+            protocol = dlg.getProtocol();
+
+            if (Protocol.WS == protocol) {
                 adminWS = dlg.getWS();
                 serverHost = dlg.getServerHost();
                 adminCertificate = dlg.getAdminCertificate();

@@ -12,6 +12,8 @@
  *************************************************************************/
 package org.signserver.admin.gui;
 
+import org.signserver.admin.gui.SignServerAdminGUIApplication.Protocol;
+
 /**
  * Holds the connection settings.
  *
@@ -27,6 +29,7 @@ public class ConnectSettings {
     private String keystoreType;
     private String keystoreFile;
     private char[] keystorePassword;
+    private Protocol protocol;
 
     public ConnectSettings() {
     }
@@ -34,7 +37,7 @@ public class ConnectSettings {
     public ConnectSettings(final String url, final String truststoreType,
             final String truststoreFile, final char[] truststorePassword,
             final String keystoreType, final String keystoreFile,
-            final char[] keystorePassword) {
+            final char[] keystorePassword, final Protocol protocol) {
         this.url = url;
         this.truststoreType = truststoreType;
         this.truststoreFile = truststoreFile;
@@ -42,6 +45,7 @@ public class ConnectSettings {
         this.keystoreType = keystoreType;
         this.keystoreFile = keystoreFile;
         this.keystorePassword = keystorePassword;
+        this.protocol = protocol;
     }
 
     public String getKeystoreFile() {
@@ -72,6 +76,10 @@ public class ConnectSettings {
         return url;
     }
 
+    public Protocol getProtocol() {
+        return protocol;
+    }
+
     public void setKeystoreFile(String keystoreFile) {
         this.keystoreFile = keystoreFile;
     }
@@ -99,4 +107,9 @@ public class ConnectSettings {
     public void setUrl(String url) {
         this.url = url;
     }
+
+    public void setProtocol(Protocol protocol) {
+        this.protocol = protocol;
+    }
+
 }

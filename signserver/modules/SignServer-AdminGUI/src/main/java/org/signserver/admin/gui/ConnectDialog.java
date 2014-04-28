@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.admin.gui;
 
+import java.awt.Component;
 import java.awt.Frame;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -19,6 +20,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
@@ -41,6 +43,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Level;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.KeyManager;
@@ -62,6 +65,7 @@ import javax.swing.JOptionPane;
 import javax.xml.namespace.QName;
 import org.apache.log4j.Logger;
 import org.ejbca.util.CertTools;
+import org.signserver.admin.gui.SignServerAdminGUIApplication.Protocol;
 import org.signserver.admin.gui.adminws.gen.AdminWS;
 import org.signserver.admin.gui.adminws.gen.AdminWSService;
 
@@ -81,7 +85,7 @@ public class ConnectDialog extends javax.swing.JDialog {
     private static final String DEFAULT_URL = "https://localhost:8443/signserver";
     private static final String WS_PATH = "/AdminWSService/AdminWS?wsdl";
 
-    private ConnectSettings settings;
+    private final ConnectSettings settings;
     private AdminWS ws;
     private String serverHost;
     
@@ -114,7 +118,7 @@ public class ConnectDialog extends javax.swing.JDialog {
 
     /** Creates new form ConnectDialog. */
     public ConnectDialog(final Frame parent, final boolean modal,
-            File connectFile, File defaultConnectFile, File baseDir) {
+            File connectFile, File defaultConnectFile, File baseDir, boolean wsFlag) {
         super(parent, modal);
         initComponents();
         truststoreTypeComboBox.setModel(
@@ -134,12 +138,17 @@ public class ConnectDialog extends javax.swing.JDialog {
         this.baseDir = baseDir;
 
         if (connectFile.exists()) {
-            loadSettingsFromFile(connectFile);
+            this.settings = loadSettingsFromFile(connectFile);
         } else if (LEGACY_DEFAULT_CONNECT_FILE.exists()) {
-            loadSettingsFromFile(LEGACY_DEFAULT_CONNECT_FILE);
+            this.settings = loadSettingsFromFile(LEGACY_DEFAULT_CONNECT_FILE);
         } else {
-            loadSettingsFromFile(defaultConnectFile);
+            this.settings = loadSettingsFromFile(defaultConnectFile);
         }
+        if (wsFlag) {
+            jRadioButtonRemote.setSelected(true);
+            jRadioButtonLocalRemoteActionPerformed(null);
+        }
+        getRootPane().setDefaultButton(connectButton);
     }
 
     /** This method is called from within the constructor to
@@ -164,10 +173,11 @@ public class ConnectDialog extends javax.swing.JDialog {
         subjectAltNamesList = new javax.swing.JList();
         subjectAltNameLabel = new javax.swing.JLabel();
         confirmationLabel = new javax.swing.JLabel();
-        jPanel1 = new javax.swing.JPanel();
+        buttonGroup1 = new javax.swing.ButtonGroup();
+        jPanelRemote1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         urlTextField = new javax.swing.JTextField();
-        jPanel2 = new javax.swing.JPanel();
+        jPanelRemote2 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         truststoreFilePathTextField = new javax.swing.JTextField();
         truststoreTypeComboBox = new javax.swing.JComboBox();
@@ -175,7 +185,7 @@ public class ConnectDialog extends javax.swing.JDialog {
         truststoreBrowseButton = new javax.swing.JButton();
         truststorePasswordLabel = new javax.swing.JLabel();
         truststorePasswordField = new javax.swing.JPasswordField();
-        jPanel4 = new javax.swing.JPanel();
+        jPanelRemote3 = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
         keystoreFilePathTextField = new javax.swing.JTextField();
         keystoreTypeComboBox = new javax.swing.JComboBox();
@@ -184,6 +194,10 @@ public class ConnectDialog extends javax.swing.JDialog {
         connectButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
         defaultsButton = new javax.swing.JButton();
+        jLabel3 = new javax.swing.JLabel();
+        jPanelButtons = new javax.swing.JPanel();
+        jRadioButtonLocal = new javax.swing.JRadioButton();
+        jRadioButtonRemote = new javax.swing.JRadioButton();
 
         passwordLabel.setText("Enter password:");
 
@@ -274,31 +288,31 @@ public class ConnectDialog extends javax.swing.JDialog {
         setTitle("Connect to SignServer");
         setLocationByPlatform(true);
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Web Service"));
+        jPanelRemote1.setBorder(javax.swing.BorderFactory.createTitledBorder("Web Service"));
 
         jLabel1.setText("URL:");
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        javax.swing.GroupLayout jPanelRemote1Layout = new javax.swing.GroupLayout(jPanelRemote1);
+        jPanelRemote1.setLayout(jPanelRemote1Layout);
+        jPanelRemote1Layout.setHorizontalGroup(
+            jPanelRemote1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelRemote1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(urlTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 474, Short.MAX_VALUE)
+                .addGroup(jPanelRemote1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(urlTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 478, Short.MAX_VALUE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        jPanelRemote1Layout.setVerticalGroup(
+            jPanelRemote1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelRemote1Layout.createSequentialGroup()
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(urlTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Truststore"));
+        jPanelRemote2.setBorder(javax.swing.BorderFactory.createTitledBorder("Truststore"));
 
         jLabel2.setText("Type:");
 
@@ -320,36 +334,36 @@ public class ConnectDialog extends javax.swing.JDialog {
 
         truststorePasswordLabel.setText("Password:");
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        javax.swing.GroupLayout jPanelRemote2Layout = new javax.swing.GroupLayout(jPanelRemote2);
+        jPanelRemote2.setLayout(jPanelRemote2Layout);
+        jPanelRemote2Layout.setHorizontalGroup(
+            jPanelRemote2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelRemote2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(truststorePasswordField, javax.swing.GroupLayout.DEFAULT_SIZE, 474, Short.MAX_VALUE)
-                    .addComponent(truststoreFilePathLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 474, Short.MAX_VALUE)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGroup(jPanelRemote2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(truststorePasswordField, javax.swing.GroupLayout.DEFAULT_SIZE, 478, Short.MAX_VALUE)
+                    .addComponent(truststoreFilePathLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 478, Short.MAX_VALUE)
+                    .addGroup(jPanelRemote2Layout.createSequentialGroup()
                         .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(truststoreTypeComboBox, 0, 254, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addComponent(truststoreFilePathTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 432, Short.MAX_VALUE)
+                        .addComponent(truststoreTypeComboBox, 0, 258, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelRemote2Layout.createSequentialGroup()
+                        .addComponent(truststoreFilePathTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 436, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(truststoreBrowseButton, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(truststorePasswordLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+        jPanelRemote2Layout.setVerticalGroup(
+            jPanelRemote2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelRemote2Layout.createSequentialGroup()
+                .addGroup(jPanelRemote2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(truststoreTypeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(truststoreFilePathLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jPanelRemote2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(truststoreFilePathTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(truststoreBrowseButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -359,7 +373,7 @@ public class ConnectDialog extends javax.swing.JDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Keystore"));
+        jPanelRemote3.setBorder(javax.swing.BorderFactory.createTitledBorder("Keystore"));
 
         jLabel8.setText("Type:");
 
@@ -375,34 +389,34 @@ public class ConnectDialog extends javax.swing.JDialog {
             }
         });
 
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
+        javax.swing.GroupLayout jPanelRemote3Layout = new javax.swing.GroupLayout(jPanelRemote3);
+        jPanelRemote3.setLayout(jPanelRemote3Layout);
+        jPanelRemote3Layout.setHorizontalGroup(
+            jPanelRemote3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelRemote3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, 474, Short.MAX_VALUE)
-                    .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGroup(jPanelRemote3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, 478, Short.MAX_VALUE)
+                    .addGroup(jPanelRemote3Layout.createSequentialGroup()
                         .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(keystoreTypeComboBox, 0, 254, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
-                        .addComponent(keystoreFilePathTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 432, Short.MAX_VALUE)
+                        .addComponent(keystoreTypeComboBox, 0, 258, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelRemote3Layout.createSequentialGroup()
+                        .addComponent(keystoreFilePathTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 436, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(keystoreBrowseButton, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+        jPanelRemote3Layout.setVerticalGroup(
+            jPanelRemote3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelRemote3Layout.createSequentialGroup()
+                .addGroup(jPanelRemote3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8)
                     .addComponent(keystoreTypeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel9)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jPanelRemote3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(keystoreFilePathTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(keystoreBrowseButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -429,17 +443,41 @@ public class ConnectDialog extends javax.swing.JDialog {
             }
         });
 
+        jLabel3.setText("Connect to:");
+
+        jPanelButtons.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+
+        buttonGroup1.add(jRadioButtonLocal);
+        jRadioButtonLocal.setText("Local SignServer");
+        jRadioButtonLocal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButtonLocalRemoteActionPerformed(evt);
+            }
+        });
+        jPanelButtons.add(jRadioButtonLocal);
+
+        buttonGroup1.add(jRadioButtonRemote);
+        jRadioButtonRemote.setText("Remote SignServer");
+        jRadioButtonRemote.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButtonLocalRemoteActionPerformed(evt);
+            }
+        });
+        jPanelButtons.add(jRadioButtonRemote);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanelButtons, javax.swing.GroupLayout.DEFAULT_SIZE, 514, Short.MAX_VALUE)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 514, Short.MAX_VALUE)
+                    .addComponent(jPanelRemote3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanelRemote2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanelRemote1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(defaultsButton)
                         .addGap(18, 18, 18)
                         .addComponent(cancelButton)
@@ -454,11 +492,15 @@ public class ConnectDialog extends javax.swing.JDialog {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanelButtons, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanelRemote1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanelRemote2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jPanelRemote3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(connectButton)
@@ -475,33 +517,64 @@ public class ConnectDialog extends javax.swing.JDialog {
         SignServerAdminGUIApplication.getApplication().exit(evt);
     }//GEN-LAST:event_cancelButtonActionPerformed
 
-    private void connectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectButtonActionPerformed
-        settings = new ConnectSettings();
-        settings.setUrl(urlTextField.getText());
-        settings.setTruststoreType((String) truststoreTypeComboBox.getSelectedItem());
-        settings.setTruststoreFile(truststoreFilePathTextField.getText());
-        settings.setTruststorePassword(truststorePasswordField.getPassword());
-        settings.setKeystoreType((String) keystoreTypeComboBox.getSelectedItem());
-        settings.setKeystoreFile(keystoreFilePathTextField.getText());
-//        settings.setKeystorePassword(keystorePasswordField.getPassword());
-
+    private void saveSettings() {
+        if (getProtocol() == Protocol.WS) {
+            settings.setUrl(urlTextField.getText());
+            settings.setTruststoreType((String) truststoreTypeComboBox.getSelectedItem());
+            settings.setTruststoreFile(truststoreFilePathTextField.getText());
+            settings.setTruststorePassword(truststorePasswordField.getPassword());
+            settings.setKeystoreType((String) keystoreTypeComboBox.getSelectedItem());
+            settings.setKeystoreFile(keystoreFilePathTextField.getText());
+        }
+        
+        OutputStream out = null;
         try {
+            out = new FileOutputStream(connectFile);
             Properties properties = new Properties();
-            properties.put("url", settings.getUrl());
-            properties.put("truststoreType", settings.getTruststoreType());
-            properties.put("truststoreFile", settings.getTruststoreFile());
-            properties.put("truststorePassword", new String(settings.getTruststorePassword()));
-            properties.put("keystoreType", settings.getKeystoreType());
-            properties.put("keystoreFile", settings.getKeystoreFile());
-            properties.store(new FileOutputStream(connectFile),
+            properties.put("protocol", getProtocol().name());
+            if (settings.getUrl() != null) {
+                properties.put("url", settings.getUrl());
+            }
+            if (settings.getTruststoreType() != null) {
+                properties.put("truststoreType", settings.getTruststoreType());
+            }
+            if (settings.getTruststoreFile() != null) {
+                properties.put("truststoreFile", settings.getTruststoreFile());
+            }
+            if (settings.getTruststorePassword() != null) {
+                properties.put("truststorePassword", new String(settings.getTruststorePassword()));
+            }
+            if (settings.getKeystoreType() != null) {
+                properties.put("keystoreType", settings.getKeystoreType());
+            }
+            if (settings.getKeystoreFile() != null) {
+                properties.put("keystoreFile", settings.getKeystoreFile());
+            }
+            properties.store(out,
                     "Connect settings");
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(this, "Could not save configuration:\n"
                     + ex.getMessage(), "Connect", JOptionPane.WARNING_MESSAGE);
+        } finally {
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (IOException ignored) {} // NOPMD
+            }
         }
-
+    }
+    
+    private void connectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectButtonActionPerformed
+        saveSettings();
+        if (jRadioButtonRemote.isSelected()) {
+            connectOverWS();
+        } else {
+            dispose();
+        }
+    }
+    
+    private void connectOverWS() {
         try {
-
             final String urlstr = settings.getUrl() + WS_PATH;
             serverHost = getSimplifiedHostAddress(settings.getUrl());
 
@@ -781,15 +854,37 @@ public class ConnectDialog extends javax.swing.JDialog {
                 !TRUSTSTORE_TYPE_KEYSTORE.equals(type));
     }//GEN-LAST:event_truststoreTypeComboBoxActionPerformed
 
-    private void loadSettingsFromFile(final File file) {
+    private void jRadioButtonLocalRemoteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonLocalRemoteActionPerformed
+        enableRemote(jRadioButtonRemote.isSelected());
+    }//GEN-LAST:event_jRadioButtonLocalRemoteActionPerformed
+
+    private void enableRemote(final boolean enable) {
+        for (Component c : jPanelRemote1.getComponents()) {
+            c.setEnabled(enable);
+        }
+        for (Component c : jPanelRemote2.getComponents()) {
+            c.setEnabled(enable);
+        }
+        for (Component c : jPanelRemote3.getComponents()) {
+            c.setEnabled(enable);
+        }
+        if (enable) {
+            truststoreTypeComboBoxActionPerformed(null);
+            urlTextField.requestFocusInWindow();
+        }
+    }
+    
+    private ConnectSettings loadSettingsFromFile(final File file) {
+        ConnectSettings sett = new ConnectSettings();
+        InputStream in = null;
         try {
+            in = new FileInputStream(file);
             final Properties defaults = new Properties();
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Trying to load from file " + file.getAbsolutePath());
             }
-            defaults.load(new FileInputStream(file));
+            defaults.load(in);
 
-            ConnectSettings sett = new ConnectSettings();
             sett.setUrl(defaults.getProperty("url", DEFAULT_URL));
             sett.setTruststoreType(defaults.getProperty("truststoreType"));
             sett.setTruststoreFile(defaults.getProperty("truststoreFile"));
@@ -798,13 +893,21 @@ public class ConnectDialog extends javax.swing.JDialog {
             }
             sett.setKeystoreType(defaults.getProperty("keystoreType"));
             sett.setKeystoreFile(defaults.getProperty("keystoreFile"));
+            sett.setProtocol(Protocol.valueOf(defaults.getProperty("protocol", Protocol.EJB.name())));
 
             loadSettings(sett);
         } catch (IOException ex) {
             LOG.error("Load settings failed", ex);
             JOptionPane.showMessageDialog(this, ex.getMessage(),
                     "Reset defaults", JOptionPane.ERROR_MESSAGE);
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException ignored) {} // NOPMD
+            }
         }
+        return sett;
     }
 
     private void loadSettings(ConnectSettings settings) {
@@ -812,13 +915,16 @@ public class ConnectDialog extends javax.swing.JDialog {
         truststoreTypeComboBox.setSelectedItem(settings.getTruststoreType());
         truststoreFilePathTextField.setText(settings.getTruststoreFile());
         if (settings.getTruststorePassword() != null) {
-            truststorePasswordField.setText(new String(settings.getTruststorePassword())); // TODO
+            truststorePasswordField.setText(new String(settings.getTruststorePassword()));
         }
         keystoreTypeComboBox.setSelectedItem(settings.getKeystoreType());
         keystoreFilePathTextField.setText(settings.getKeystoreFile());
-//        if (settings.getKeystorePassword() != null) {
-//            keystorePasswordField.setText(new String(settings.getKeystorePassword())); // TODO
-//        }
+        if (Protocol.WS == settings.getProtocol()) {
+            jRadioButtonRemote.setSelected(true);
+        } else {
+            jRadioButtonLocal.setSelected(true);
+        }
+        jRadioButtonLocalRemoteActionPerformed(null);
     }
 
     public ConnectSettings getSettings() {
@@ -931,6 +1037,7 @@ public class ConnectDialog extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton cancelButton;
     private javax.swing.JTextField commonNameField;
     private javax.swing.JLabel commonNameLabel;
@@ -942,11 +1049,15 @@ public class ConnectDialog extends javax.swing.JDialog {
     private javax.swing.JPanel hostnameMismatchConfirmPanel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanelButtons;
+    private javax.swing.JPanel jPanelRemote1;
+    private javax.swing.JPanel jPanelRemote2;
+    private javax.swing.JPanel jPanelRemote3;
+    private javax.swing.JRadioButton jRadioButtonLocal;
+    private javax.swing.JRadioButton jRadioButtonRemote;
     private javax.swing.JButton keystoreBrowseButton;
     private javax.swing.JTextField keystoreFilePathTextField;
     private javax.swing.JComboBox keystoreTypeComboBox;
@@ -1018,6 +1129,19 @@ public class ConnectDialog extends javax.swing.JDialog {
      */
     public X509Certificate getAdminCertificate() {
         return adminCertificate;
+    }
+
+    /**
+     * @return The selected protocol
+     */
+    public Protocol getProtocol() {
+        final Protocol result;
+        if (jRadioButtonLocal.isSelected()) {
+            result = Protocol.EJB;
+        } else {
+            result = Protocol.WS;
+        }
+        return result;
     }
 
 }

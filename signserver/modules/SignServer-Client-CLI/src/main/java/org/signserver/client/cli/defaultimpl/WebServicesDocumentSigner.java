@@ -37,6 +37,7 @@ public class WebServicesDocumentSigner extends AbstractDocumentSigner {
 
     private String workerName;
     private String pdfPassword;
+    private Map<String, String> metadata;
 
     private ISignServerWorker signServer;
 
@@ -44,7 +45,8 @@ public class WebServicesDocumentSigner extends AbstractDocumentSigner {
 
     public WebServicesDocumentSigner(final String host, final int port,
             final String servlet, final String workerName, final boolean useHTTPS, 
-            final String username, final String password, final String pdfPassword) {
+            final String username, final String password, final String pdfPassword,
+            final Map<String, String> metadata) {
         this.signServer = null;
         
         if (servlet != null) {
@@ -57,6 +59,7 @@ public class WebServicesDocumentSigner extends AbstractDocumentSigner {
 
         this.workerName = workerName;
         this.pdfPassword = pdfPassword;
+        this.metadata = metadata;
     }
 
     protected void doSign(final byte[] data, final String encoding,
@@ -78,8 +81,16 @@ public class WebServicesDocumentSigner extends AbstractDocumentSigner {
 
         // RequestContext is used by this API to transfer the metadata
         RequestContext context = new RequestContext();
-        RequestMetadata metadata = RequestMetadata.getInstance(context);
-        metadata.put(RequestContext.METADATA_PDFPASSWORD, pdfPassword);
+        RequestMetadata requestMetadata = RequestMetadata.getInstance(context);
+        
+        for (final String key : metadata.keySet()) {
+            requestMetadata.put(key, metadata.get(key));
+        }
+        
+        if (pdfPassword != null) {
+            requestMetadata.put(RequestContext.METADATA_PDFPASSWORD, pdfPassword);
+        }
+            
         String fileName = (String) requestContext.get(RequestContext.FILENAME);
         // if a file name was specified, pass it in as meta data
         if (fileName != null) {

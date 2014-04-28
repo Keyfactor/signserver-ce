@@ -55,29 +55,35 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
 
     /** Password used for changing the PDF if required (user or owner password). */
     private String pdfPassword;
+    
+    private Map<String, String> metadata;
 
     public HTTPDocumentSigner(final URL processServlet,
             final String workerName, 
             final String username, final String password,
-            final String pdfPassword) {
+            final String pdfPassword,
+            final Map<String, String> metadata) {
         this.processServlet = processServlet;
         this.workerName = workerName;
         this.workerId = 0;
         this.username = username;
         this.password = password;
         this.pdfPassword = pdfPassword;
+        this.metadata = metadata;
     }
     
     public HTTPDocumentSigner(final URL processServlet,
             final int workerId, 
             final String username, final String password,
-            final String pdfPassword) {
+            final String pdfPassword,
+            final Map<String, String> metadata) {
         this.processServlet = processServlet;
         this.workerName = null;
         this.workerId = workerId;
         this.username = username;
         this.password = password;
         this.pdfPassword = pdfPassword;
+        this.metadata = metadata;
     }
 
     protected void doSign(final byte[] data, final String encoding,
@@ -161,6 +167,17 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
                     .append(pdfPassword).append(CRLF);
             }
             
+            if (metadata != null) {
+                for (final String key : metadata.keySet()) {
+                    final String value = metadata.get(key);
+                    
+                    sb.append("--" + BOUNDARY).append(CRLF)
+                        .append("Content-Disposition: form-data; name=\"REQUEST_METADATA." + key + "\"").append(CRLF)
+                        .append(CRLF)
+                        .append(value).append(CRLF);
+                }
+            }
+
             sb.append("--" + BOUNDARY);
             sb.append(CRLF);
             sb.append("Content-Disposition: form-data; name=\"datafile\"");

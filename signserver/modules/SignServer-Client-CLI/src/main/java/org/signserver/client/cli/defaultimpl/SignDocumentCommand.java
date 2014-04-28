@@ -328,7 +328,7 @@ public class SignDocumentCommand extends AbstractCommand {
                     workerIdOrName,
                     keyStoreOptions.isUseHTTPS(),
                     username, password,
-                    pdfPassword);
+                    pdfPassword, metadata);
                 break;
             }
             case CLIENTWS: {
@@ -348,7 +348,7 @@ public class SignDocumentCommand extends AbstractCommand {
                     workerIdOrName,
                     keyStoreOptions.isUseHTTPS(),
                     username, password,
-                    pdfPassword);
+                    pdfPassword, metadata);
                 break;
             }
             case HTTP:
@@ -356,9 +356,9 @@ public class SignDocumentCommand extends AbstractCommand {
                 LOG.debug("Using HTTP as procotol");
                 final URL url = new URL(keyStoreOptions.isUseHTTPS() ? "https" : "http", host, port, servlet);
                 if (workerId == 0) {
-                    signer = new HTTPDocumentSigner(url, workerName, username, password, pdfPassword);
+                    signer = new HTTPDocumentSigner(url, workerName, username, password, pdfPassword, metadata);
                 } else {
-                    signer = new HTTPDocumentSigner(url, workerId, username, password, pdfPassword);
+                    signer = new HTTPDocumentSigner(url, workerId, username, password, pdfPassword, metadata);
                 }
             }
         }

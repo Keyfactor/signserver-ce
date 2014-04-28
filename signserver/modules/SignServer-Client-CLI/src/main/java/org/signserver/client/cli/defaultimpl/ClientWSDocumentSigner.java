@@ -46,6 +46,7 @@ public class ClientWSDocumentSigner extends AbstractDocumentSigner {
 
     private String workerName;
     private String pdfPassword;
+    private Map<String, String> metadata;
 
     private final ClientWS signServer;
 
@@ -53,7 +54,8 @@ public class ClientWSDocumentSigner extends AbstractDocumentSigner {
 
     public ClientWSDocumentSigner(final String host, final int port,
             final String servlet, final String workerName, final boolean useHTTPS, 
-            final String username, final String password, final String pdfPassword) {
+            final String username, final String password, final String pdfPassword,
+            final Map<String, String> metadata) {
         final String url = (useHTTPS ? "https://" : "http://")
                 + host + ":" + port
                 + servlet;
@@ -69,6 +71,7 @@ public class ClientWSDocumentSigner extends AbstractDocumentSigner {
         this.signServer = service.getClientWSPort();
         this.workerName = workerName;
         this.pdfPassword = pdfPassword;
+        this.metadata = metadata;
         
         // Authentication
         if (username != null && password != null) {
@@ -95,23 +98,35 @@ public class ClientWSDocumentSigner extends AbstractDocumentSigner {
             final long startTime = System.nanoTime();
 
             // Metadata        
-            final LinkedList<Metadata> metadata = new LinkedList<Metadata>();
-            final Metadata pdfPasswordMetadata = new Metadata();
-            pdfPasswordMetadata.setName(RequestContext.METADATA_PDFPASSWORD);
-            pdfPasswordMetadata.setValue(pdfPassword);
-            metadata.add(pdfPasswordMetadata);
+            final LinkedList<Metadata> requestMetadata = new LinkedList<Metadata>();
             
+            for (final String key : metadata.keySet()) {
+                final Metadata metadataItem = new Metadata();
+                
+                metadataItem.setName(key);
+                metadataItem.setValue(metadata.get(key));
+                requestMetadata.add(metadataItem);
+            }
+
+            if (pdfPassword != null) {
+                final Metadata pdfPasswordMetadata = new Metadata();
+                
+                pdfPasswordMetadata.setName(RequestContext.METADATA_PDFPASSWORD);
+                pdfPasswordMetadata.setValue(pdfPassword);
+                requestMetadata.add(pdfPasswordMetadata);
+            }
+                
             String fileName = (String) requestContext.get(RequestContext.FILENAME);
             // if a file name was specified, pass it in as meta data
             if (fileName != null) {
                 final Metadata fileNameMetadata = new Metadata();
                 fileNameMetadata.setName(RequestContext.FILENAME);
                 fileNameMetadata.setValue(fileName);
-                metadata.add(fileNameMetadata);
+                requestMetadata.add(fileNameMetadata);
             }
             
             final DataResponse response = signServer.processData(workerName,
-                    metadata, data);
+                    requestMetadata, data);
 
             // Take stop time
             final long estimatedTime = System.nanoTime() - startTime;

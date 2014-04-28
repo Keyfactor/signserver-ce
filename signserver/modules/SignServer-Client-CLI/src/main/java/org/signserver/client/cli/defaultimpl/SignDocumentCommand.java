@@ -90,6 +90,9 @@ public class SignDocumentCommand extends AbstractCommand {
     /** Option PDFPASSWORD. */
     public static final String PDFPASSWORD = "pdfpassword";
 
+    /** Option METADATA. */
+    public static final String METADATA = "metadata";
+
     /** The command line options. */
     private static final Options OPTIONS;
 
@@ -133,6 +136,8 @@ public class SignDocumentCommand extends AbstractCommand {
                 TEXTS.getString("PASSWORD_DESCRIPTION"));
         OPTIONS.addOption(PDFPASSWORD, true,
                 TEXTS.getString("PDFPASSWORD_DESCRIPTION"));
+        OPTIONS.addOption(METADATA, true,
+                TEXTS.getString("METADATA_DESCRIPTION"));
         for (Option option : KeyStoreOptions.getKeyStoreOptions()) {
             OPTIONS.addOption(option);
         }
@@ -171,6 +176,8 @@ public class SignDocumentCommand extends AbstractCommand {
 
     private KeyStoreOptions keyStoreOptions = new KeyStoreOptions();
 
+    /** Meta data parameters passed in */
+    private Map<String, String> metadata = new HashMap<String, String>();
     
     @Override
     public String getDescription() {
@@ -250,6 +257,21 @@ public class SignDocumentCommand extends AbstractCommand {
             pdfPassword = line.getOptionValue(PDFPASSWORD, null);
         }
         
+        if (line.hasOption(METADATA)) {
+            final String[] values = line.getOptionValues(METADATA);
+            
+            for (final String value : values) {
+                final String[] valueSplit = value.split("=");
+                
+                if (valueSplit.length != 2) {
+                    throw new IllegalArgumentException("Meta data parameters must be specified as KEY=VALUE");
+                }
+                
+                metadata.put(valueSplit[0].trim(),
+                        valueSplit[1].trim());
+            }
+        }
+        
         keyStoreOptions.parseCommandLine(line);
     }
 
@@ -306,7 +328,7 @@ public class SignDocumentCommand extends AbstractCommand {
                     workerIdOrName,
                     keyStoreOptions.isUseHTTPS(),
                     username, password,
-                    pdfPassword);
+                    pdfPassword, metadata);
                 break;
             }
             case CLIENTWS: {
@@ -326,7 +348,7 @@ public class SignDocumentCommand extends AbstractCommand {
                     workerIdOrName,
                     keyStoreOptions.isUseHTTPS(),
                     username, password,
-                    pdfPassword);
+                    pdfPassword, metadata);
                 break;
             }
             case HTTP:
@@ -334,9 +356,9 @@ public class SignDocumentCommand extends AbstractCommand {
                 LOG.debug("Using HTTP as procotol");
                 final URL url = new URL(keyStoreOptions.isUseHTTPS() ? "https" : "http", host, port, servlet);
                 if (workerId == 0) {
-                    signer = new HTTPDocumentSigner(url, workerName, username, password, pdfPassword);
+                    signer = new HTTPDocumentSigner(url, workerName, username, password, pdfPassword, metadata);
                 } else {
-                    signer = new HTTPDocumentSigner(url, workerId, username, password, pdfPassword);
+                    signer = new HTTPDocumentSigner(url, workerId, username, password, pdfPassword, metadata);
                 }
             }
         }

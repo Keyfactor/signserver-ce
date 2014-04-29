@@ -81,6 +81,9 @@ public class SignDataGroupsCommand extends AbstractCommand {
 
     /** Option REPEAT. */
     public static final String REPEAT = "repeat";
+    
+    /** Option METADATA. */
+    public static final String METADATA = "metadata";
 
     /** The command line options. */
     private static final Options OPTIONS;
@@ -119,6 +122,8 @@ public class SignDataGroupsCommand extends AbstractCommand {
         OPTIONS.addOption(USERNAME, true, TEXTS.getString("USERNAME_DESCRIPTION"));
         OPTIONS.addOption(PASSWORD, true, TEXTS.getString("PASSWORD_DESCRIPTION"));
         OPTIONS.addOption(REPEAT, true, TEXTS.getString("REPEAT_DESCRIPTION"));
+        OPTIONS.addOption(METADATA, true,
+                TEXTS.getString("METADATA_DESCRIPTION"));
         for (Option option : KeyStoreOptions.getKeyStoreOptions()) {
             OPTIONS.addOption(option);
         }
@@ -162,6 +167,7 @@ public class SignDataGroupsCommand extends AbstractCommand {
 
     private KeyStoreOptions keyStoreOptions = new KeyStoreOptions();
 
+    private Map<String, String> metadata;
 
     @Override
     public String getDescription() {
@@ -237,6 +243,9 @@ public class SignDataGroupsCommand extends AbstractCommand {
         if (line.hasOption(REPEAT)) {
             repeat = Integer.parseInt(line.getOptionValue(REPEAT));
         }
+        if (line.hasOption(METADATA)) {
+            metadata = MetadataParser.parseMetadata(line.getOptionValues(METADATA));
+        }
         keyStoreOptions.parseCommandLine(line);
     }
 
@@ -292,7 +301,7 @@ public class SignDataGroupsCommand extends AbstractCommand {
                     servlet,
                     workerIdOrName,
                     keyStoreOptions.isUseHTTPS(),
-                    username, password);
+                    username, password, metadata);
                 break;
             }
             case HTTP:
@@ -301,9 +310,9 @@ public class SignDataGroupsCommand extends AbstractCommand {
                 final URL url = new URL(keyStoreOptions.isUseHTTPS() ? "https" : "http", host, port, servlet == null ? DEFAULT_SERVLET : servlet);
                 
                 if (workerId == 0) {
-                    signer = new HTTPSODSigner(url, workerName, username, password);
+                    signer = new HTTPSODSigner(url, workerName, username, password, metadata);
                 } else {
-                    signer = new HTTPSODSigner(url, workerId, username, password);
+                    signer = new HTTPSODSigner(url, workerId, username, password, metadata);
                 }
             }
         }

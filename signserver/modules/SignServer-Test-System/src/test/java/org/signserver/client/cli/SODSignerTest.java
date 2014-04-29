@@ -45,6 +45,9 @@ public class SODSignerTest extends ModulesTestCase {
     /** Worker7897: Default algorithms, default hashing setting */
     private static final int WORKERID = 7897;
     
+    /** Worker 6676: Dummy signer echoing request metadata. */
+    private static final int WORKERID2 = 6676;
+    
     private final CLITestHelper adminCLI = new CLITestHelper(AdminCLI.class);
     private final CLITestHelper clientCLI = new CLITestHelper(ClientCLI.class);
 
@@ -74,8 +77,12 @@ public class SODSignerTest extends ModulesTestCase {
                 + File.separator + "res" + File.separator + "test"
                 + File.separator + "demods1.p12");
         workerSession.setWorkerProperty(WORKERID, "KEYSTOREPASSWORD", "foo123");
-
         workerSession.reloadConfiguration(WORKERID);
+        
+        // Dummy worker echoing request metadata
+        assertEquals(CommandLineInterface.RETURN_SUCCESS, 
+                adminCLI.execute("setproperties", getSignServerHome().getAbsolutePath() + "/res/test/test-echometadata-configuration.properties"));
+        workerSession.reloadConfiguration(WORKERID2);
     }
 
     @Test
@@ -123,6 +130,54 @@ public class SODSignerTest extends ModulesTestCase {
         assertEquals("DG3", "value3", new String(dataGroupHashes.get(3)));
     }
 
+    /**
+     * Test signing with an additional metadata parameter.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test03signDataMetadata() throws Exception {
+        assertEquals(CommandLineInterface.RETURN_SUCCESS, 
+                clientCLI.execute("signdatagroups", "-workername", "EchoRequestMetadataSigner", "-data", "1=value1&2=value2&3=value3",
+                        "-metadata", "foo=bar"));
+        final String res = clientCLI.getOut().toString();
+    
+        assertTrue("Should contain metadata", res.contains("foo=bar"));
+    }
+    
+    /**
+     * Test signing with several additional metadata parameters.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test04signDataMetadataMultipleParams() throws Exception {
+        assertEquals(CommandLineInterface.RETURN_SUCCESS, 
+                clientCLI.execute("signdatagroups", "-workername", "EchoRequestMetadataSigner", "-data", "1=value1&2=value2&3=value3",
+                        "-metadata", "foo=bar", "-metadata", "foo2=bar2"));
+        final String res = clientCLI.getOut().toString();
+    
+        assertTrue("Should contain metadata", res.contains("foo=bar"));
+        assertTrue("Should contain metadata", res.contains("foo2=bar2"));
+    }
+    
+    /**
+     * Test signing with additional metadata over client WS.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test05signDataMetadataOverClientWS() throws Exception {
+        assertEquals(CommandLineInterface.RETURN_SUCCESS, 
+                clientCLI.execute("signdatagroups", "-workername", "EchoRequestMetadataSigner", "-data", "1=value1&2=value2&3=value3", "-protocol", "CLIENTWS", 
+                "-truststore", getSignServerHome() + "/p12/truststore.jks", "-truststorepwd", "changeit", "-host", getHTTPHost(), "-port", String.valueOf(getPublicHTTPSPort()),
+                "-metadata", "foo=bar", "-metadata", "foo2=bar2"));
+        final String res = clientCLI.getOut().toString();
+        
+        assertTrue("Should contain metadata", res.contains("foo=bar"));
+        assertTrue("Should contain metadata", res.contains("foo2=bar2"));
+    }
+    
     @Test
     public void test99TearDownDatabase() throws Exception {
         assertEquals(CommandLineInterface.RETURN_SUCCESS, adminCLI.execute(
@@ -130,5 +185,11 @@ public class SODSignerTest extends ModulesTestCase {
             String.valueOf(WORKERID)
         ));
         workerSession.reloadConfiguration(WORKERID);
+        
+        assertEquals(CommandLineInterface.RETURN_SUCCESS, adminCLI.execute(
+                "removeworker",
+                String.valueOf(WORKERID2)
+        ));
+        workerSession.reloadConfiguration(WORKERID2);
     }
 }

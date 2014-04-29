@@ -2611,6 +2611,9 @@ Request a document to be signed by SignServer
  -keystore         Keystore with private key and certificate for client
                    certificate authentication.
  -keystorepwd      Password for reading the keystore.
+ -metadata         Additional meta data to send to the signer. The
+                   parameters should be given in the form KEY=VALUE.
+                   This option can be given multiple times.
  -outfile          File to write the result to. If not specified the
                    result is written to stdout.
  -password         Password for authentication.
@@ -2633,6 +2636,8 @@ c) signdocument -workerid 2 -data "&lt;root/&gt;" -truststore truststore.jks
 -truststorepwd changeit
 d) signdocument -workerid 2 -data "&lt;root/&gt;" -keystore superadmin.jks
 -truststorepwd foo123
+e) signdocument -workerid 2 -data "&lt;root/&gt;" -metadata param1=value1
+-metadata param2=value2
                         </source>
                     </subsection>
 
@@ -2652,6 +2657,9 @@ Request a document to be validated by SignServer
  -keystore         Keystore with private key and certificate for client
                    certificate authentication.
  -keystorepwd      Password for reading the keystore.
+ -metadata &lt;arg&gt; Additional meta data to send to the signer. The
+                   parameters should be given in the form KEY=VALUE.
+                   This option can be given multiple times.
  -password         Password for authentication.
  -port             Server port. Default: 8080 (for HTTP), 8442 for HTTPS
                    and 8443 for HTTPS with client authentication.
@@ -2672,6 +2680,7 @@ d) validatedocument -workerid 2 -infile /tmp/signed.xml -keystore
 superadmin.jks -truststorepwd foo123
 e) validatedocument -workername XMLValidator -protocol HTTP -infile
 /tmp/signed.xml
+f) validatedocument -workername XMLValidator -infile /tmp/signed.xml -metadata param1=value1 -metadata param2=value2
                         </source>
                     </subsection>
 
@@ -2799,6 +2808,9 @@ Request MRTD data groups to be signed
  -keystore &lt;arg&gt;        Keystore with private key and certificate for
                         client certificate authentication.
  -keystorepwd &lt;arg&gt;     Password for reading the keystore.
+ -metadata &lt;arg&gt;        Additional meta data to send to the signer. The
+                              parameters should be given in the form KEY=VALUE.
+                              This option can be given multiple times.
  -password &lt;arg&gt;        Password for authentication.
  -port &lt;arg&gt;            Server port. Default: 8080 (for HTTP), 8442 for
                         HTTPS and 8443 for HTTPS with client
@@ -2817,6 +2829,7 @@ Request MRTD data groups to be signed
 
 Sample usages:
 a) signdatagroups -workername MRTDSODSigner -data "1=value1&amp;2=value2&amp;3=value3"
+b) signdatagroups -workername MRTDSODSigner -data "1=value1&amp;2=value2&amp;3=value3" -metadata param1=value1 -metadata param2=value2
                         </source>
                     </subsection>
 

@@ -12,7 +12,10 @@
  *************************************************************************/
 package org.signserver.server.cryptotokens;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
 import java.security.KeyStore;
@@ -28,6 +31,7 @@ import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.jce.ECKeyUtil;
@@ -88,6 +92,31 @@ public class PKCS11CryptoToken implements ICryptoToken, IKeyGenerator, IKeyRemov
     @Override
     public void init(int workerId, Properties props) throws CryptoTokenInitializationFailureException {
         try {
+            final String attributesValue = props.getProperty(CryptoTokenHelper.PROPERTY_ATTRIBUTES);
+            if (attributesValue != null && props.getProperty(CryptoTokenHelper.PROPERTY_ATTRIBUTESFILE) != null) {
+                throw new CryptoTokenInitializationFailureException(
+                        "Only specify one of " + CryptoTokenHelper.PROPERTY_ATTRIBUTES
+                                + " and " + CryptoTokenHelper.PROPERTY_ATTRIBUTESFILE);
+            }
+
+            if (attributesValue != null) {
+                OutputStream out = null;
+                try {
+                    File attributesFile = File.createTempFile("attributes-" + workerId + "-", ".tmp");
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Created attributes file: " + attributesFile.getAbsolutePath());
+                    }
+                    attributesFile.deleteOnExit();
+                    out = new FileOutputStream(attributesFile);
+                    IOUtils.write(attributesValue, out);
+                    props.setProperty(CryptoTokenHelper.PROPERTY_ATTRIBUTESFILE, attributesFile.getAbsolutePath());
+                } catch (IOException ex) {
+                    throw new CryptoTokenInitializationFailureException("Unable to create attributes file", ex);
+                } finally {
+                    IOUtils.closeQuietly(out);
+                }
+            }
+
             props = CryptoTokenHelper.fixP11Properties(props);
             
             if (props.getProperty("sharedLibrary") == null) {

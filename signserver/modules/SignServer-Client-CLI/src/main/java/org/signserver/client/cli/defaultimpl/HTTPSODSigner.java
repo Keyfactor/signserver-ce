@@ -52,25 +52,31 @@ public class HTTPSODSigner extends AbstractSODSigner {
 
     private String username;
     private String password;
+    
+    private Map<String, String> metadata;
 
     public HTTPSODSigner(final URL processServlet,
             final String workerName, final String username,
-            final String password) {
+            final String password,
+            final Map<String, String> metadata) {
         this.processServlet = processServlet;
         this.workerName = workerName;
         this.workerId = 0;
         this.username = username;
         this.password = password;
+        this.metadata = metadata;
     }
     
     public HTTPSODSigner(final URL processServlet,
             final int workerId, final String username,
-            final String password) {
+            final String password,
+            final Map<String, String> metadata) {
         this.processServlet = processServlet;
         this.workerName = null;
         this.workerId = workerId;
         this.username = username;
         this.password = password;
+        this.metadata = metadata;
     }
 
     protected void doSign(final Map<Integer,byte[]> dataGroups, final String encoding,
@@ -140,6 +146,16 @@ public class HTTPSODSigner extends AbstractSODSigner {
                     .append("&");
             }
 
+            if (metadata != null) {
+                for (final String key : metadata.keySet()) {
+                    final String value = metadata.get(key);
+                    
+                    sb.append("REQUEST_METADATA.").append(key)
+                        .append("=").append(URLEncoder.encode(value, "UTF-8"))
+                        .append("&");
+                }
+            }
+            
             conn.setRequestProperty("Content-Type",
                     "application/x-www-form-urlencoded");
             conn.addRequestProperty("Content-Length", String.valueOf(

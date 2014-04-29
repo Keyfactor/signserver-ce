@@ -18,6 +18,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import javax.xml.namespace.QName;
@@ -48,12 +49,14 @@ public class ClientWSSODSigner extends AbstractSODSigner {
     private static final Logger LOG = Logger.getLogger(ClientWSSODSigner.class);
 
     private String workerName;
+    private Map<String, String> metadata;
     
     private final ClientWS signServer;
-
+    
     public ClientWSSODSigner(final String host, final int port,
             final String servlet, final String workerName, final boolean useHTTPS, 
-            final String username, final String password) {
+            final String username, final String password,
+            final Map<String, String> metadata) {
         final String url = (useHTTPS ? "https://" : "http://")
                 + host + ":" + port
                 + servlet;
@@ -74,6 +77,8 @@ public class ClientWSSODSigner extends AbstractSODSigner {
             ((BindingProvider) signServer).getRequestContext().put(BindingProvider.USERNAME_PROPERTY, username);
             ((BindingProvider) signServer).getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, password);
         }
+        
+        this.metadata = metadata;
     }
 
     protected void doSign(final Map<Integer,byte[]> dataGroups, final String encoding,
@@ -98,10 +103,20 @@ public class ClientWSSODSigner extends AbstractSODSigner {
                 sodRequest.getDataGroup().add(dg);
             }
             
-            List<Metadata> metadata = Collections.emptyList();
+            List<Metadata> requestMetadata = new LinkedList<Metadata>();
             
+            if (metadata != null) {
+                for (final String key : metadata.keySet()) {
+                    final Metadata md = new Metadata();
+                    
+                    md.setName(key);
+                    md.setValue(metadata.get(key));
+                    requestMetadata.add(md);
+                }
+            }
+
             final DataResponse response = signServer.processSOD(workerName,
-                        metadata, sodRequest);
+                        requestMetadata, sodRequest);
 
             // Take stop time
             final long estimatedTime = System.nanoTime() - startTime;

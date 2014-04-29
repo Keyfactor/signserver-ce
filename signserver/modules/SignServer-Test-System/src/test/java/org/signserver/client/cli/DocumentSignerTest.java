@@ -363,7 +363,9 @@ public class DocumentSignerTest extends ModulesTestCase {
         try {
             String res =
                     new String(execute("signdocument", "-workername", "EchoRequestMetadataSigner", "-data", "<root/>",
-                            "-protocol", "WEBSERVICES", "-metadata", "foo=bar", "-metadata", "foo2=bar2"));
+                            "-protocol", "WEBSERVICES", "-metadata", "foo=bar", "-metadata", "foo2=bar2",
+                            "-truststore", signserverhome + "/p12/truststore.jks", "-truststorepwd", "changeit",
+                            "-host", getHTTPHost(), "-port", String.valueOf(getPublicHTTPSPort())));
             assertTrue("contains metadata parameter: "
                     + res, res.contains("foo=bar"));
             assertTrue("contains metadata parameter: "
@@ -384,7 +386,9 @@ public class DocumentSignerTest extends ModulesTestCase {
         try {
             String res =
                     new String(execute("signdocument", "-workername", "EchoRequestMetadataSigner", "-data", "<root/>",
-                            "-protocol", "CLIENTWS", "-metadata", "foo=bar", "-metadata", "foo2=bar2"));
+                            "-protocol", "CLIENTWS", "-metadata", "foo=bar", "-metadata", "foo2=bar2",
+                            "-truststore", signserverhome + "/p12/truststore.jks", "-truststorepwd", "changeit",
+                            "-host", getHTTPHost(), "-port", String.valueOf(getPublicHTTPSPort())));
             assertTrue("contains metadata parameter: "
                     + res, res.contains("foo=bar"));
             assertTrue("contains metadata parameter: "

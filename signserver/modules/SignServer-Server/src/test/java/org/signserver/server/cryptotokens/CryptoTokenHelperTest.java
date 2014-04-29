@@ -24,14 +24,34 @@ import junit.framework.TestCase;
  */
 public class CryptoTokenHelperTest extends TestCase {
 
-    public final void testSlotProperties() throws Exception {
+    /**
+     * Tests some slot properties, including ATTRIBUTES.
+     * @throws Exception
+     */
+    public final void testSlotProperties1() throws Exception {
         Properties prop = new Properties();
         prop.put("SHAREDLIBRARY", "/opt/nfast/toolkits/pkcs11/libcknfast.so");
         prop.put("SLOT", "1");
         prop.put("DEFAULTKEY", "default");
         prop.put("PIN", "1234");
+        prop.put("ATTRIBUTES", "my attributes");
         SortedMap p = new TreeMap(CryptoTokenHelper.fixP11Properties(prop));
-        assertEquals("{DEFAULTKEY=default, PIN=1234, SHAREDLIBRARY=/opt/nfast/toolkits/pkcs11/libcknfast.so, SLOT=1, defaultKey=default, pin=1234, sharedLibrary=/opt/nfast/toolkits/pkcs11/libcknfast.so, slot=1, slotLabelType=SLOT_NUMBER, slotLabelValue=1}", p.toString());
+        assertEquals("{ATTRIBUTES=my attributes, DEFAULTKEY=default, PIN=1234, SHAREDLIBRARY=/opt/nfast/toolkits/pkcs11/libcknfast.so, SLOT=1, defaultKey=default, pin=1234, sharedLibrary=/opt/nfast/toolkits/pkcs11/libcknfast.so, slot=1, slotLabelType=SLOT_NUMBER, slotLabelValue=1}", p.toString());
+    }
+
+    /**
+     * Tests some slot properties, including ATTRIBUTESFILE.
+     * @throws Exception
+     */
+    public final void testSlotProperties2() throws Exception {
+        Properties prop = new Properties();
+        prop.put("SHAREDLIBRARY", "/opt/nfast/toolkits/pkcs11/libcknfast.so");
+        prop.put("SLOT", "1");
+        prop.put("DEFAULTKEY", "default");
+        prop.put("PIN", "1234");
+        prop.put("ATTRIBUTESFILE", "/opt/attributes.cfg");
+        SortedMap p = new TreeMap(CryptoTokenHelper.fixP11Properties(prop));
+        assertEquals("{ATTRIBUTESFILE=/opt/attributes.cfg, DEFAULTKEY=default, PIN=1234, SHAREDLIBRARY=/opt/nfast/toolkits/pkcs11/libcknfast.so, SLOT=1, attributesFile=/opt/attributes.cfg, defaultKey=default, pin=1234, sharedLibrary=/opt/nfast/toolkits/pkcs11/libcknfast.so, slot=1, slotLabelType=SLOT_NUMBER, slotLabelValue=1}", p.toString());
     }
 
     public final void testSlotIndexProperties() throws Exception {

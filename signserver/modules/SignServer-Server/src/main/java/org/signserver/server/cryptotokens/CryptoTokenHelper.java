@@ -28,6 +28,7 @@ public class CryptoTokenHelper {
    
     public static final String PROPERTY_NEXTCERTSIGNKEY = "NEXTCERTSIGNKEY";
     public static final String PROPERTY_ATTRIBUTESFILE = "ATTRIBUTESFILE";
+    public static final String PROPERTY_ATTRIBUTES = "ATTRIBUTES";
     public static final String PROPERTY_SLOTLISTINDEX = "SLOTLISTINDEX";
     public static final String PROPERTY_SLOT = "SLOT";
     public static final String PROPERTY_SHAREDLIBRARY = "SHAREDLIBRARY";

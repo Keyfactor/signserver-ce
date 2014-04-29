@@ -45,7 +45,24 @@ public class BaseProcessableTest extends TestCase {
     
     private final int workerId = 100;
     private final WorkerContext anyContext = new SignServerContext(null, null);
-    
+
+    private static final String SAMPLE_ATTRIBUTES = 
+            "attributes(generate,CKO_PUBLIC_KEY,*) = {\n" +
+            "        CKA_TOKEN = false\n" +
+            "        CKA_ENCRYPT = true\n" +
+            "        CKA_VERIFY = true\n" +
+            "        CKA_WRAP = true\n" +
+            "}\n" +
+            "attributes(generate, CKO_PRIVATE_KEY,*) = {\n" +
+            "        CKA_TOKEN = true\n" +
+            "        CKA_PRIVATE = true\n" +
+            "        CKA_SENSITIVE = true\n" +
+            "        CKA_EXTRACTABLE = false\n" +
+            "        CKA_DECRYPT = true\n" +
+            "        CKA_SIGN = true\n" +
+            "        CKA_UNWRAP = true\n" +
+            "}";
+
     /** Tests the base case were no default properties are used to configure the PKCS11CryptoToken. */
     @Test
     public void testGetCryptoToken_noDefaults() throws Exception {
@@ -86,7 +103,7 @@ public class BaseProcessableTest extends TestCase {
     }
     
     /** 
-     * Test default value for SLOTLISTINDEX. 
+     * Test default value for SLOTLISTINDEX and ATTRIBUTES. 
      * First the value is specified only as a default value and then the value 
      * is overriden by the worker.
      */
@@ -102,7 +119,7 @@ public class BaseProcessableTest extends TestCase {
         globalConfig.setProperty("GLOB.WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", MockedCryptoToken.class.getName());
         globalConfig.setProperty("GLOB.DEFAULT.SLOTLISTINDEX", "33");
         workerConfig.setProperty("NAME", "TestSigner100");
-        workerConfig.setProperty("ATTRIBUTESFILE", "/opt/hsm/sunpkcs11.cfg");
+        workerConfig.setProperty("ATTRIBUTES", SAMPLE_ATTRIBUTES);
         
         TestSigner instance = new TestSigner(globalConfig);
         instance.init(workerId, workerConfig, anyContext, null);
@@ -122,7 +139,7 @@ public class BaseProcessableTest extends TestCase {
         workerConfig.setProperty("NAME", "TestSigner100");
         workerConfig.setProperty("SHAREDLIBRARY", "/opt/hsm/pkcs11.so");
         workerConfig.setProperty("SLOTLISTINDEX", "44");
-        workerConfig.setProperty("ATTRIBUTESFILE", "/opt/hsm/sunpkcs11.cfg");
+        workerConfig.setProperty("ATTRIBUTES", SAMPLE_ATTRIBUTES);
         
         instance = new TestSigner(globalConfig);
         instance.init(workerId, workerConfig, anyContext, null);
@@ -152,7 +169,7 @@ public class BaseProcessableTest extends TestCase {
         Properties globalConfig = new Properties();
         WorkerConfig workerConfig = new WorkerConfig();
         
-        // All PKCS#11 properties that can have default values in GlobalConfiguration (except SLOTLISTINDEX)
+        // All PKCS#11 properties that can have default values in GlobalConfiguration (except SLOTLISTINDEX, ATTRIBUTES)
         globalConfig.setProperty("GLOB.WORKER" + workerId + ".CLASSPATH", TestSigner.class.getName());
         globalConfig.setProperty("GLOB.WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", MockedCryptoToken.class.getName());
         globalConfig.setProperty("GLOB.DEFAULT.SHAREDLIBRARY", "/opt/hsm/default-pkcs11.so");
@@ -175,7 +192,7 @@ public class BaseProcessableTest extends TestCase {
         assertEquals("default SHAREDLIBRARY etc used", 
                 expectedProperties.toString(), actualProperties.toString());
         
-        // All PKCS#11 properties that can have default values GlobalConfiguration and overriden in Worker Config (except SLOTLISTINDEX)
+        // All PKCS#11 properties that can have default values GlobalConfiguration and overriden in Worker Config (except SLOTLISTINDEX, ATTRIBUTES)
         globalConfig.setProperty("GLOB.WORKER" + workerId + ".CLASSPATH", TestSigner.class.getName());
         globalConfig.setProperty("GLOB.WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", MockedCryptoToken.class.getName());
         globalConfig.setProperty("GLOB.DEFAULT.SHAREDLIBRARY", "/opt/hsm/default-pkcs11.so");

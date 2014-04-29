@@ -100,12 +100,14 @@ public class ClientWSDocumentSigner extends AbstractDocumentSigner {
             // Metadata        
             final LinkedList<Metadata> requestMetadata = new LinkedList<Metadata>();
             
-            for (final String key : metadata.keySet()) {
-                final Metadata metadataItem = new Metadata();
+            if (metadata != null) {
+                for (final String key : metadata.keySet()) {
+                    final Metadata metadataItem = new Metadata();
                 
-                metadataItem.setName(key);
-                metadataItem.setValue(metadata.get(key));
-                requestMetadata.add(metadataItem);
+                    metadataItem.setName(key);
+                    metadataItem.setValue(metadata.get(key));
+                    requestMetadata.add(metadataItem);
+                }
             }
 
             if (pdfPassword != null) {

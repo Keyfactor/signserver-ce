@@ -94,7 +94,7 @@ public class WebServicesDocumentSigner extends AbstractDocumentSigner {
         String fileName = (String) requestContext.get(RequestContext.FILENAME);
         // if a file name was specified, pass it in as meta data
         if (fileName != null) {
-        	metadata.put(RequestContext.FILENAME, fileName);
+            requestMetadata.put(RequestContext.FILENAME, fileName);
         }
         
         final ProcessResponse response = signServer.process(workerName,

@@ -46,8 +46,11 @@ public class DocumentSignerTest extends ModulesTestCase {
     /** WORKERID used in this test case as defined in 
      * junittest-part-config.properties for PDFSigner. */
     private static final int WORKERID2 = 5675;
-    
-    private static final int[] WORKERS = new int[] {5676, 5679, 5681, 5682, 5683, 5802, 5803};
+
+    /** Worker ID for the dummy metadata echo signer. */
+    private static final int WORKERID3 = 6676;
+
+    private static final int[] WORKERS = new int[] {5676, 5679, 5681, 5682, 5683, 5802, 5803, 6676};
 
     private static String signserverhome;
     
@@ -77,6 +80,10 @@ public class DocumentSignerTest extends ModulesTestCase {
         // Worker 2
         setProperties(new File(signserverhome, "res/test/test-pdfsigner-configuration.properties"));
         workerSession.reloadConfiguration(WORKERID2);
+        
+        // Worker 3 (dummy signer echoing request metadata)
+        setProperties(new File(signserverhome, "res/test/test-echometadata-configuration.properties"));
+        workerSession.reloadConfiguration(WORKERID3);
     }
 
     @Test
@@ -306,6 +313,88 @@ public class DocumentSignerTest extends ModulesTestCase {
         }
     }
 
+    /**
+     * Test signing a document supplying an additional metadata parameter.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test08signDocumentWithMetadata() throws Exception {
+        try {
+            String res =
+                    new String(execute("signdocument", "-workername", "EchoRequestMetadataSigner", "-data", "<root/>",
+                            "-metadata", "foo=bar"));
+            assertTrue("contains metadata parameter: "
+                    + res, res.contains("foo=bar"));
+        } catch (IllegalCommandArgumentsException ex) {
+            LOG.error("Execution failed", ex);
+            fail(ex.getMessage());
+        }
+    }
+    
+    /**
+     * Test signing a document supplying additional metadata parameters (more than one occurance).
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test09signDocumentWithMetadataMultipleParams() throws Exception {
+        try {
+            String res =
+                    new String(execute("signdocument", "-workername", "EchoRequestMetadataSigner", "-data", "<root/>",
+                            "-metadata", "foo=bar", "-metadata", "foo2=bar2"));
+            assertTrue("contains metadata parameter: "
+                    + res, res.contains("foo=bar"));
+            assertTrue("contains metadata parameter: "
+                    + res, res.contains("foo2=bar2"));
+        } catch (IllegalCommandArgumentsException ex) {
+            LOG.error("Execution failed", ex);
+            fail(ex.getMessage());
+        }
+    }
+    
+    /**
+     * Test signing a document using webservices supplying additional metadata.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test10signDocumentWithMetadataWebservices() throws Exception {
+        try {
+            String res =
+                    new String(execute("signdocument", "-workername", "EchoRequestMetadataSigner", "-data", "<root/>",
+                            "-protocol", "WEBSERVICES", "-metadata", "foo=bar", "-metadata", "foo2=bar2"));
+            assertTrue("contains metadata parameter: "
+                    + res, res.contains("foo=bar"));
+            assertTrue("contains metadata parameter: "
+                    + res, res.contains("foo2=bar2"));
+        } catch (IllegalCommandArgumentsException ex) {
+            LOG.error("Execution failed", ex);
+            fail(ex.getMessage());
+        }
+    }
+    
+    /**
+     * Test signing a document using client-authenticated webservices supplying additional metadata.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test11signDocumentWithMetadataClientWS() throws Exception {
+        try {
+            String res =
+                    new String(execute("signdocument", "-workername", "EchoRequestMetadataSigner", "-data", "<root/>",
+                            "-protocol", "CLIENTWS", "-metadata", "foo=bar", "-metadata", "foo2=bar2"));
+            assertTrue("contains metadata parameter: "
+                    + res, res.contains("foo=bar"));
+            assertTrue("contains metadata parameter: "
+                    + res, res.contains("foo2=bar2"));
+        } catch (IllegalCommandArgumentsException ex) {
+            LOG.error("Execution failed", ex);
+            fail(ex.getMessage());
+        }
+    }
+    
     @Test
     public void test99TearDownDatabase() throws Exception {
         removeWorker(WORKERID2);

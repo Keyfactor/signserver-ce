@@ -83,10 +83,10 @@ public class WebServicesDocumentSigner extends AbstractDocumentSigner {
         RequestContext context = new RequestContext();
         RequestMetadata requestMetadata = RequestMetadata.getInstance(context);
         
-        for (final String key : metadata.keySet()) {
-            requestMetadata.put(key, metadata.get(key));
+        if (metadata != null) {
+            requestMetadata.putAll(metadata);
         }
-        
+       
         if (pdfPassword != null) {
             requestMetadata.put(RequestContext.METADATA_PDFPASSWORD, pdfPassword);
         }

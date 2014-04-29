@@ -5111,7 +5111,10 @@ DEFAULTKEY. (optional)
 <b>SLOT</b> or <b>SLOTLISTINDEX</b> =   Slot number or the index of the slot to use. (Required and only one of them can be used.)
                         </p>
                         <p>
-<b>ATTRIBUTESFILE</b> = Path to file with PKCS#11 attributes used for key generation.
+<b>ATTRIBUTESFILE</b> = Path to file with PKCS#11 attributes used for key generation. (Optional, not allowed if ATTRIBUTES specified)
+                        </p>
+                        <p>
+<b>ATTRIBUTES</b> = PKCS#11 attributes used for key generation specified directly in the property value. (Optional, not allowed if ATTRIBUTESFILE specified)
                         </p>
                         <p>
 Sample p11attributes.cfg:
@@ -5134,6 +5137,9 @@ attributes(generate, CKO_PRIVATE_KEY,*) = {
 }
                         </pre>
                         <p>
+<b>Notice:</b> The PKCS#11 attributes configuration is global per shared library. If specified in multiple workers only the configuration from the first worker loaded will be used. Changing the property might not take effect without restarting the application server.
+                        </p>
+                        <p>
 <b>CACHE_PRIVATEKEY</b> = If set to true the private key reference is cached in the worker so that it is not queried for each signature. This could potentially improve performance in some environments. (Default: false)
                         </p>
                     </subsubsection>
@@ -5149,6 +5155,7 @@ The following properties can currently be specified in the global configuration:
                             <li>SHAREDLIBRARY</li>
                             <li>SLOT</li>
                             <li>SLOTLISTINDEX</li>
+                            <li>ATTRIBUTES</li>
                             <li>ATTRIBUTESFILE</li>
                             <li>PIN</li>
                         </ul>

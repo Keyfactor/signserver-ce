@@ -399,6 +399,24 @@ public class DocumentSignerTest extends ModulesTestCase {
         }
     }
     
+    /**
+     * Test that passing a malformed metadata argument is rejected.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test12signDocumentInvalidMetadata() throws Exception {
+        try {
+            execute("signdocument", "-workername", "EchoRequestMetadataSigner", "-data", "<root/>",
+                    "-protocol", "HTTP", "-metadata", "bogus");
+            fail("Should throw an IllegalCommandArgumentsException");
+        } catch (IllegalCommandArgumentsException ex) {
+            // expected
+        } catch (Exception e) {
+            fail("Unexpected exception: " + e.getClass().getName() + ": " + e.getMessage());
+        }
+    }
+    
     @Test
     public void test99TearDownDatabase() throws Exception {
         removeWorker(WORKERID2);

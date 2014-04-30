@@ -194,7 +194,8 @@ public class SignDataGroupsCommand extends AbstractCommand {
      *
      * @param line The command line to read from
      */
-    private void parseCommandLine(final CommandLine line) {
+    private void parseCommandLine(final CommandLine line)
+            throws IllegalCommandArgumentsException {
         if (line.hasOption(WORKERID)) {
                 workerId = Integer.parseInt(line.getOptionValue(
                     WORKERID, null));

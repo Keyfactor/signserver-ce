@@ -38,7 +38,7 @@ public class CryptoTokenHelperTest extends TestCase {
         prop.put("PIN", "1234");
         prop.put("ATTRIBUTES", "my attributes");
         SortedMap p = new TreeMap(CryptoTokenHelper.fixP11Properties(prop));
-        assertEquals("{ATTRIBUTES=my attributes, DEFAULTKEY=default, PIN=1234, SHAREDLIBRARY=/opt/nfast/toolkits/pkcs11/libcknfast.so, SLOT=1, defaultKey=default, pin=1234, sharedLibrary=/opt/nfast/toolkits/pkcs11/libcknfast.so, slot=1, slotLabelType=SLOT_NUMBER, slotLabelValue=1}", p.toString());
+        assertEquals("{ATTRIBUTES=my attributes, DEFAULTKEY=default, PIN=1234, SHAREDLIBRARY=/opt/nfast/toolkits/pkcs11/libcknfast.so, SLOT=1, defaultKey=default, pin=1234, sharedLibrary=/opt/nfast/toolkits/pkcs11/libcknfast.so, slot=1}", p.toString());
     }
 
     /**
@@ -53,7 +53,7 @@ public class CryptoTokenHelperTest extends TestCase {
         prop.put("PIN", "1234");
         prop.put("ATTRIBUTESFILE", "/opt/attributes.cfg");
         SortedMap p = new TreeMap(CryptoTokenHelper.fixP11Properties(prop));
-        assertEquals("{ATTRIBUTESFILE=/opt/attributes.cfg, DEFAULTKEY=default, PIN=1234, SHAREDLIBRARY=/opt/nfast/toolkits/pkcs11/libcknfast.so, SLOT=1, attributesFile=/opt/attributes.cfg, defaultKey=default, pin=1234, sharedLibrary=/opt/nfast/toolkits/pkcs11/libcknfast.so, slot=1, slotLabelType=SLOT_NUMBER, slotLabelValue=1}", p.toString());
+        assertEquals("{ATTRIBUTESFILE=/opt/attributes.cfg, DEFAULTKEY=default, PIN=1234, SHAREDLIBRARY=/opt/nfast/toolkits/pkcs11/libcknfast.so, SLOT=1, attributesFile=/opt/attributes.cfg, defaultKey=default, pin=1234, sharedLibrary=/opt/nfast/toolkits/pkcs11/libcknfast.so, slot=1}", p.toString());
     }
 
     public final void testSlotIndexProperties() throws Exception {
@@ -64,6 +64,6 @@ public class CryptoTokenHelperTest extends TestCase {
         prop.put("DEFAULTKEY", "default");
         prop.put("PIN", "1234");
         SortedMap p = new TreeMap(CryptoTokenHelper.fixP11Properties(prop));
-        assertEquals("{DEFAULTKEY=default, PIN=1234, SHAREDLIBRARY=/opt/nfast/toolkits/pkcs11/libcknfast.so, SLOTLISTINDEX=1, defaultKey=default, pin=1234, sharedLibrary=/opt/nfast/toolkits/pkcs11/libcknfast.so, slotLabelType=SLOT_INDEX, slotLabelValue=1, slotListIndex=1}", p.toString());
+        assertEquals("{DEFAULTKEY=default, PIN=1234, SHAREDLIBRARY=/opt/nfast/toolkits/pkcs11/libcknfast.so, SLOTLISTINDEX=1, defaultKey=default, pin=1234, sharedLibrary=/opt/nfast/toolkits/pkcs11/libcknfast.so, slotListIndex=1}", p.toString());
     }
 }

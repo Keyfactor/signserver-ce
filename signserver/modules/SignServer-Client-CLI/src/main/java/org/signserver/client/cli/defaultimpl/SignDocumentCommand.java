@@ -210,7 +210,8 @@ public class SignDocumentCommand extends AbstractCommand {
      *
      * @param line The command line to read from
      */
-    private void parseCommandLine(final CommandLine line) {
+    private void parseCommandLine(final CommandLine line)
+        throws IllegalCommandArgumentsException {
         if (line.hasOption(WORKERNAME)) {
             workerName = line.getOptionValue(WORKERNAME, null);
         }

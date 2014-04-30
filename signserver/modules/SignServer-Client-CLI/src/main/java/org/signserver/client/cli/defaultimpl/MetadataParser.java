@@ -15,6 +15,8 @@ package org.signserver.client.cli.defaultimpl;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.signserver.cli.spi.IllegalCommandArgumentsException;
+
 /**
  * Utility class to handle the -metadata CLI option.
  * 
@@ -25,14 +27,14 @@ import java.util.Map;
 public class MetadataParser {
 
     public static Map<String, String> parseMetadata(final String[] optionValues) 
-        throws IllegalArgumentException {
+        throws IllegalCommandArgumentsException {
         final Map<String, String> metadata = new HashMap<String, String>();
         
         for (final String value : optionValues) {
             final String[] valueSplit = value.split("=");
             
             if (valueSplit.length != 2) {
-                throw new IllegalArgumentException("Meta data parameters must be specified as KEY=VALUE");
+                throw new IllegalCommandArgumentsException("Meta data parameters must be specified as KEY=VALUE");
             }
             
             metadata.put(valueSplit[0].trim(),

@@ -812,6 +812,10 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         // forget about selected file when going to edit properties mode
         if (mode == Mode.EDIT_MANUALLY) {
             fileSelected = false;
+        } else if (filePathTextField.getText().length() > 0) {
+            // if going from edit manually back to select file, and a file was already
+            // selected, consider that to be selected
+            fileSelected = true;
         }
     }
     

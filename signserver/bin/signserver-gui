@@ -25,7 +25,6 @@ fi
 
 
 class_name=org.signserver.admin.gui.SignServerAdminGUIApplication
-MAIN_JAR=SignServer-AdminGUI.jar
 
 # discard $1 from the command line args
 #shift
@@ -63,19 +62,21 @@ if [ ! -n "${SIGNSERVER_HOME}" ]; then
      SIGNSRV_HOME=/usr/local/signserver
   fi
   if [ -f ./signserver-gui ]; then
-     SIGNSRV_HOME=..
+     SIGNSRV_HOME=`pwd`/..
   fi
   if [ -f bin/signserver-gui ]; then
-     SIGNSRV_HOME=.
+     SIGNSRV_HOME=`pwd`
   fi
 else
   SIGNSRV_HOME=$SIGNSERVER_HOME
 fi 
 
+ADMINGUI_JAR=`find ${SIGNSRV_HOME}/lib -name "SignServer-AdminGUI*.jar"`
+
 # Check that classes exist
-if [ ! -f ${SIGNSRV_HOME}/lib/${MAIN_JAR} ]
+if [ ! -f ${ADMINGUI_JAR} ]
 then
-	echo "SignServer AdminGUI not available. Build it by running 'ant'."
+	echo "SignServer AdminGUI not available. Build it first."
         exit 1
 fi
 
@@ -83,7 +84,7 @@ fi
 OPTIONAL_CLASSPATH=${EXTRA_CLASSPATH}
 
 # Construct the classpath
-CP="$SIGNSRV_HOME/lib/${MAIN_JAR}"
+CP="${ADMINGUI_JAR}"
 CP="${SIGNSRV_HOME}/conf":"$CP"
 CP="$CP:${OPTIONAL_CLASSPATH}"
 

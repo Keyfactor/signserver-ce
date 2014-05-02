@@ -25,7 +25,6 @@ fi
 
 
 class_name=org.signserver.test.performance.cli.Main
-MAIN_JAR=SignServer-Test-Performance.jar
 
 # discard $1 from the command line args
 #shift
@@ -59,17 +58,19 @@ if [ ! -n "${SIGNSERVER_HOME}" ]; then
      SIGNSRV_HOME=/usr/local/signserver
   fi
   if [ -f ./signclient ]; then
-     SIGNSRV_HOME=..
+     SIGNSRV_HOME=`pwd`/..
   fi
   if [ -f bin/signclient ]; then
-     SIGNSRV_HOME=.
+     SIGNSRV_HOME=`pwd`
   fi
 else
   SIGNSRV_HOME=$SIGNSERVER_HOME
 fi 
 
+MAIN_JAR=`find ${SIGNSRV_HOME}/lib -name "SignServer-Test-Performance*.jar"`
+
 # Check that classes exist
-if [ ! -f ${SIGNSRV_HOME}/lib/${MAIN_JAR} ]
+if [ ! -f ${MAIN_JAR} ]
 then
 	echo "You must build SignServer Performance Test CLI first."
         exit 1
@@ -79,7 +80,7 @@ fi
 OPTIONAL_CLASSPATH=${EXTRA_CLASSPATH}
 
 # Construct the classpath
-CP="${SIGNSRV_HOME}/lib/${MAIN_JAR}"
+CP="${MAIN_JAR}"
 CP="${SIGNSRV_HOME}/conf":"$CP"
 CP="$CP":${OPTIONAL_CLASSPATH}
 

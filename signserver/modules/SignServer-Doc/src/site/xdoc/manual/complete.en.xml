@@ -1610,19 +1610,27 @@ interface for managing some of the most basic administrative tasks.
                     </p>
                     <p>
 The SignServer AdminGUI is built by default (unless the property admingui.enabled is set to the value "false" in signserver_build.properties),
-and can be started using the script bin/signserver-gui. By default it tries to connect to a locally
-running SignServer instance using EJB calls. If that fails or if the command
-line option "-ws" is specified a connection dialog for connecting using web
-services is displayed instead.
+and can be started using the script bin/signserver-gui.
+                    </p>
+                    <p>
+On startup, the connect to SignServer dialog offers the possibility to either
+connect to a locally running SignServer instance or a remote one over web
+services. If the "-ws" command line option is specified the later option is
+already selected when the dialog opens.
                     </p>
                     <subsubsection name="Connect to SignServer dialog">
                         <p>
-Specify URL to SignServer server as well as keystore and truststore for setting
-up the HTTPS connection and then click the button <b>Connect</b>. By clicking
-the button <b>Load defaults</b> the settings from the file
-default_connect.properties is loaded. If the connection is successful the
-current settings are stored to connect.properties and displayed the next time
-the dialog is openned.
+First select either to connect to a local or remote instance. If a remote one
+is selected then also specify URL to SignServer server as well as keystore and
+truststore for setting up the HTTPS connection.
+Then click the button <b>Connect</b>.
+By clicking the button <b>Load defaults</b> the settings from
+the file default_connect.properties is loaded. The current settings are stored 
+to connect.properties and displayed the next time the dialog is openned.
+                        </p>
+                        <p>
+<b>Connect to</b>: Select to either connect to a "Local SignServer" using the
+EJB interface or a "Remote SignServer" using web services on the specified URL.
                         </p>
                         <p>
 <b>Web Service URL</b>: Base URL to the SignServer server. Default: https://localhost:8443/signserver

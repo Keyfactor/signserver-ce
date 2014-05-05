@@ -75,7 +75,6 @@ public class KeystoreCryptoToken implements ICryptoToken,
     private String keystorepassword = null;
 
     private KeyStore ks;
-    private String provider;
     private String keystoretype;
     private Properties properties;
 
@@ -150,13 +149,6 @@ public class KeystoreCryptoToken implements ICryptoToken,
         try {
             this.ks = getKeystore(keystoretype, keystorepath,
                     authenticationcode.toCharArray());
-            if (TYPE_PKCS12.equals(this.keystoretype)) {
-                this.provider = ks.getProvider().getName();
-            } else {
-                this.provider = "BC";
-            }
-            
-            LOG.debug("setting provider to: " + this.provider);
             
             this.authenticationCode = authenticationcode.toCharArray();
 
@@ -314,7 +306,7 @@ public class KeystoreCryptoToken implements ICryptoToken,
      */
     @Override
     public String getProvider(int providerUsage) {
-        return provider;
+        return "BC";
     }
 
     private KeyEntry getKeyEntry(final int purpose) throws CryptoTokenOfflineException {
@@ -489,9 +481,7 @@ public class KeystoreCryptoToken implements ICryptoToken,
                                     status = "Unknown key algorithm: "
                                         + keyPair.getPublic().getAlgorithm();
                                 } else {
-                                    //Signature signature = Signature.getInstance(
-                                    //        sigAlg, keystore.getProvider());
-                                    Signature signature = Signature.getInstance(sigAlg, provider);
+                                    Signature signature = Signature.getInstance(sigAlg, "BC");
                                     signature.initSign(keyPair.getPrivate());
                                     signature.update(signInput);
                                     byte[] signBA = signature.sign();
@@ -553,19 +543,7 @@ public class KeystoreCryptoToken implements ICryptoToken,
             final KeyStore keystore = getKeystore(keystoretype, keystorepath, 
                     authenticationCode);
 
-            final KeyPairGenerator kpg;
-            if (TYPE_PKCS12.equals(keystoretype)) {
-                final Provider prov = keystore.getProvider();
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("provider: " + prov);
-                }
-                
-                // Generate the key pair
-                kpg = KeyPairGenerator.getInstance(
-                        keyAlgorithm, prov);
-            } else {
-                kpg = KeyPairGenerator.getInstance(keyAlgorithm, "BC");
-            }
+            final KeyPairGenerator kpg = KeyPairGenerator.getInstance(keyAlgorithm, "BC");
 
             if ("ECDSA".equals(keyAlgorithm)) {
                 kpg.initialize(ECNamedCurveTable.getParameterSpec(keySpec));

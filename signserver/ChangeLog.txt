@@ -1,4 +1,4 @@
-SignServer 3.5.1, 2014-05-07
+SignServer 3.5.1, 2014-05-05
 ----------------------------
 
 ** Bug
@@ -31,7 +31,6 @@ SignServer 3.5.1, 2014-05-07
 
 ** New Feature
     * [DSS-214] - Billing/Accounting API
-    * [DSS-413] - Accept a request ID in HTTP interface
     * [DSS-450] - Support for adding any request metadata in the web interface
     * [DSS-472] - Command to print timestamp requests and responses
     * [DSS-650] - Add getproperty command to CLI

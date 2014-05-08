@@ -1518,6 +1518,9 @@ information about the first row that failed.
                 </subsection>
                 
                 <subsection name="Database CLI">
+                    <note>
+This is an SignServer Enterprise Edition (EE) feature.
+                    </note>
                     <p>
 The SignServer Database CLI uses Java Persistence API (JPA) to connect to the 
 SignServer database. The CLI is configured by the dbcli.* properties in 
@@ -6723,7 +6726,48 @@ REQUEST_FULLURL: http://localhost:8080/signserver/process?null; LOG_TIME: 135062
                     <p>
 The default logging implementation, <code>org.signserver.server.log.SignServerLog4jDevice</code> uses Log4J and a similar logging format as the old SystemLogger.
                     </p>
-                    
+
+                    <subsubsection name="Signed log">
+                        <note>
+This is an SignServer Enterprise Edition (EE) feature.
+                        </note>
+                        <p>
+An example configuration for CESeCore is provided in <code>conf/cesecore.properties.sample</code>.
+                        </p>
+                        <p>
+To enable signed audit logs configure conf/databaseprotection.properties (see conf/databaseprotection.properties.sample). And set the following which enables signing of the AuditRecordData table as well as verification of the log entries queried using for instance the CLI or GUI:
+                        </p>
+                        <source>
+databaseprotection.enablesign.AuditRecordData = true
+databaseprotection.enableverify.AuditRecordData = true
+                        </source>
+                        <p>
+Configure a key-pair to use for signing and verification of the log with something similar to this:
+                        </p>
+                        <source>
+databaseprotection.keyid = 400
+databaseprotection.keyid.0 = 400
+databaseprotection.keylabel.0 = dbProtKey
+databaseprotection.classname.0 = org.cesecore.keys.token.PKCS11CryptoToken
+databaseprotection.properties.0 = sharedLibrary=/opt/utimaco/Software/PKCS11/lib/Linux-x86-64/libcs2_pkcs11.so, slot=1
+databaseprotection.data.0 =
+databaseprotection.tokenpin.0 = userpin1
+databaseprotection.version.0 = 2
+                        </source>
+
+                        <p>
+Note: each SignServer node writing to the audit log needs to use different node IDs. By default the hostname is used. If multiple instances 
+are running from the same host set the node id manually in conf/cesecore.properties as cluster.nodeid.
+                        </p>
+                        <p>
+If enableverify is set to true, all individual log entries that are displayed 
+using CLI, GUI or over web services are verified at the server side and in case 
+of inconsistent signatures an error message is displayed. This verification will 
+not discover missing log entries. To verify the complete log for all nodes as 
+well as detect gaps in the sequence numbering, run the <a href="complete.en.html#Database%20CLI">Database CLI</a>.
+                        </p>
+                    </subsubsection>
+
                     <subsubsection name="AuditRecordData table">
                         <p>
 The exact database table structure is described in the SQL scripts available under doc/sql-scripts/.                            

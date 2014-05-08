@@ -181,6 +181,7 @@ public class ModulesTestCase extends TestCase {
             if (configFile.exists()) {
                 in = new FileInputStream(configFile);
                 config.load(in);
+                setupSSLKeystores();
             }
         } catch (Exception ex) {
             fail("Could not load test configuration: " + ex.getMessage());

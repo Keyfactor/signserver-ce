@@ -5125,7 +5125,18 @@ DEFAULTKEY. (optional)
 <b>SHAREDLIBRARY</b> =   Full path to the library containing the PKCS11 interface. (Required)
                         </p>
                         <p>
-<b>SLOT</b> or <b>SLOTLISTINDEX</b> =   Slot number or the index of the slot to use. (Required and only one of them can be used.)
+<b>SLOTLABELTYPE</b> = Indicates how the slot should be identified. Supported values are SLOT_NUMBER, SLOT_INDEX or SLOT_LABEL. (Required)
+                        </p>
+                        <p>
+<b>SLOTLABELVALUE</b> = The slot to use, identified with the type specified in SLOTLABELTYPE: (Required)
+                        </p>
+                        <ul>
+                            <li>SLOT_NUMBER is the number (ID) of the slot</li>
+                            <li>SLOT_INDEX is the zero-base index of the slot in the list of available slots as returned by the PKCS#11 provider</li>
+                            <li>SLOT_LABEL this is the label of the slot</li>
+                        </ul>
+                        <p>
+<b>SLOT</b> or <b>SLOTLISTINDEX</b> = Legacy properties for indicating which slot to use. Only available for backwards compatibility. Instead use the SLOTLABELTYPE and SLOTLABELVALUE properties.
                         </p>
                         <p>
 <b>ATTRIBUTESFILE</b> = Path to file with PKCS#11 attributes used for key generation. (Optional, not allowed if ATTRIBUTES specified)
@@ -5170,6 +5181,8 @@ The following properties can currently be specified in the global configuration:
                         </p>
                         <ul>
                             <li>SHAREDLIBRARY</li>
+                            <li>SLOTLABELTYPE</li>
+                            <li>SLOTLABELVALUE</li>
                             <li>SLOT</li>
                             <li>SLOTLISTINDEX</li>
                             <li>ATTRIBUTES</li>

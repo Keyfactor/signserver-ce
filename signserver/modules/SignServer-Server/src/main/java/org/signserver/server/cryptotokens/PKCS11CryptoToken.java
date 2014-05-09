@@ -130,6 +130,15 @@ public class PKCS11CryptoToken implements ICryptoToken, IKeyGenerator, IKeyRemov
                 throw new CryptoTokenInitializationFailureException("The shared library file can't be read: " + sharedLibrary.getAbsolutePath());
             }
 
+            final String slotLabelType = props.getProperty(CryptoTokenHelper.PROPERTY_SLOTLABELTYPE);
+            if (slotLabelType == null) {
+                throw new CryptoTokenInitializationFailureException("Missing " + CryptoTokenHelper.PROPERTY_SLOTLABELTYPE + " property");
+            }
+            final String slotLabelValue = props.getProperty(CryptoTokenHelper.PROPERTY_SLOTLABELVALUE);
+            if (slotLabelValue == null) {
+                throw new CryptoTokenInitializationFailureException("Missing " + CryptoTokenHelper.PROPERTY_SLOTLABELVALUE + " property");
+            }
+
             delegate.init(props, null, workerId);
             
             keyAlias = props.getProperty("defaultKey");
@@ -149,6 +158,9 @@ public class PKCS11CryptoToken implements ICryptoToken, IKeyGenerator, IKeyRemov
             throw new CryptoTokenInitializationFailureException(ex.getMessage());
         } catch (NoSuchSlotException ex) {
             LOG.error("Slot not found", ex);
+            throw new CryptoTokenInitializationFailureException(ex.getMessage());
+        } catch (NumberFormatException ex) {
+            LOG.error("Init failed", ex);
             throw new CryptoTokenInitializationFailureException(ex.getMessage());
         }
     }

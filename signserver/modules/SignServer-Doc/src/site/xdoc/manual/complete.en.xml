@@ -38,7 +38,13 @@ lookup the validation of a given certificate.
                 </p>
             </section>
 
-            <section name="Changes from previous versions">
+            <section name="Major changes from previous versions">
+                <subsection name="Changes between version 3.5 and 3.6">
+                    <ul>
+                        <li>Underlaying CESeCore library upgraded to version 6.x</li>
+                        <li>Separation between community and enterprise editions</li>
+                    </ul>
+                </subsection>
                 <subsection name="Changes between version 3.4 and 3.5">
                     <ul>
                         <li>Support for JBoss AS 7.1, JBoss EAP 6.1 and GlassFish 3.1</li>

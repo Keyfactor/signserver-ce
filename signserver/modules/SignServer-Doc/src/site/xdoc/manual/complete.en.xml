@@ -6768,7 +6768,7 @@ databaseprotection.keyid = 400
 databaseprotection.keyid.0 = 400
 databaseprotection.keylabel.0 = dbProtKey
 databaseprotection.classname.0 = org.cesecore.keys.token.PKCS11CryptoToken
-databaseprotection.properties.0 = sharedLibrary=/opt/utimaco/Software/PKCS11/lib/Linux-x86-64/libcs2_pkcs11.so, slot=1
+databaseprotection.properties.0 = sharedLibrary=/opt/utimaco/Software/PKCS11/lib/Linux-x86-64/libcs2_pkcs11.so, slotLabelType=SLOT_NUMBER, slotLabelValue=1
 databaseprotection.data.0 =
 databaseprotection.tokenpin.0 = userpin1
 databaseprotection.version.0 = 2

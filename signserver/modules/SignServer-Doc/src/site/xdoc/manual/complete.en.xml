@@ -1525,7 +1525,7 @@ information about the first row that failed.
                 
                 <subsection name="Database CLI">
                     <note>
-This is an SignServer Enterprise Edition (EE) feature.
+This is a SignServer Enterprise Edition (EE) feature.
                     </note>
                     <p>
 The SignServer Database CLI uses Java Persistence API (JPA) to connect to the 
@@ -6748,7 +6748,7 @@ The default logging implementation, <code>org.signserver.server.log.SignServerLo
 
                     <subsubsection name="Signed log">
                         <note>
-This is an SignServer Enterprise Edition (EE) feature.
+This is a SignServer Enterprise Edition (EE) feature.
                         </note>
                         <p>
 An example configuration for CESeCore is provided in <code>conf/cesecore.properties.sample</code>.

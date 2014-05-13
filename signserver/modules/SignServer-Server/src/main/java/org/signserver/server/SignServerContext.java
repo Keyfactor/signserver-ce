@@ -30,6 +30,10 @@ public class SignServerContext extends WorkerContext {
     private final IKeyUsageCounterDataService keyUsageCounterDataService;
     private CryptoTokenSupplier cryptoTokenSupplier;
 
+    public SignServerContext() {
+        this(null, null);
+    }
+
     public SignServerContext(EntityManager em, IKeyUsageCounterDataService keyUsageCounterDataService) {
         this.em = em;
         this.keyUsageCounterDataService = keyUsageCounterDataService;

@@ -192,7 +192,7 @@ public class WorkerSessionMock implements IWorkerSession.ILocal,
             LOG.error("No such worker: " + workerId);
         } else {
             worker.getProcessable().init(workerId, worker.getConfig(),
-                    new WorkerContext() {}, null);
+                    new SignServerContext(), null);
         }
     }
 

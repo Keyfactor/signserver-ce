@@ -89,7 +89,7 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
         fatalErrors.addAll(getFatalErrors());
 
         final boolean keyUsageCounterDisabled = config.getProperty(SignServerConstants.DISABLEKEYUSAGECOUNTER, "FALSE").equalsIgnoreCase("TRUE");
-        
+
         ICryptoToken token = null;
         try {
             token = getCryptoToken();
@@ -97,7 +97,7 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
             // getFatalErrors will pick up crypto token errors gathered
             // during creation of the crypto token
         }
-        
+
         try {
             final Certificate cert = getSigningCertificate();
             final long keyUsageLimit = Long.valueOf(config.getProperty(SignServerConstants.KEYUSAGELIMIT, "-1"));
@@ -149,7 +149,9 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
     @Override
     protected List<String> getFatalErrors() {
         final LinkedList<String> errors = new LinkedList<String>(super.getFatalErrors());
-        errors.addAll(getSignerCertificateFatalErrors());
+        if (!Boolean.parseBoolean(config.getProperty("NOCERTIFICATES", Boolean.FALSE.toString()))) {
+            errors.addAll(getSignerCertificateFatalErrors());
+        }
         errors.addAll(configErrors);
         return errors;
     }

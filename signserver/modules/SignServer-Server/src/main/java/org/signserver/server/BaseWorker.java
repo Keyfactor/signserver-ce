@@ -33,7 +33,7 @@ public abstract class BaseWorker implements IWorker {
     
     /** The global configuration session. */
     private transient IGlobalConfigurationSession globalConfig;
-
+    
     /**
      * @return The global configuration session.
      */
@@ -49,7 +49,7 @@ public abstract class BaseWorker implements IWorker {
         }
         return globalConfig;
     }
-
+            
     //Private Property constants
     protected int workerId = 0;
     protected WorkerConfig config = null;

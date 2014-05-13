@@ -148,127 +148,132 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
      * @return The used crypto token
      * @throws SignServerException
      */
-    protected ICryptoToken getCryptoToken() throws SignServerException {
+    public ICryptoToken getCryptoToken() throws SignServerException {
         if (log.isTraceEnabled()) {
             log.trace(">getCryptoToken");
         }
         if (cryptoToken == null) {
-            GlobalConfiguration gc = getGlobalConfigurationSession().getGlobalConfiguration();
-            final Properties defaultProperties = new Properties();
-            // TODO: The following could potentially be made generic
-            String value = gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL + "DEFAULT." + CryptoTokenHelper.PROPERTY_SHAREDLIBRARY);
-            if (value != null) {
-                defaultProperties.setProperty(CryptoTokenHelper.PROPERTY_SHAREDLIBRARY, value);
-            }
-            value = gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL + "DEFAULT." + CryptoTokenHelper.PROPERTY_SLOT);
-            if (value != null) {
-                defaultProperties.setProperty(CryptoTokenHelper.PROPERTY_SLOT, value);
-            }
-            value = gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL + "DEFAULT." + CryptoTokenHelper.PROPERTY_SLOTLISTINDEX);
-            if (value != null) {
-                defaultProperties.setProperty(CryptoTokenHelper.PROPERTY_SLOTLISTINDEX, value);
-            }
-            value = gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL + "DEFAULT." + CryptoTokenHelper.PROPERTY_ATTRIBUTESFILE);
-            if (value != null) {
-                defaultProperties.setProperty(CryptoTokenHelper.PROPERTY_ATTRIBUTESFILE, value);
-            }
-            value = gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL + "DEFAULT." + CryptoTokenHelper.PROPERTY_ATTRIBUTES);
-            if (value != null) {
-                defaultProperties.setProperty(CryptoTokenHelper.PROPERTY_ATTRIBUTES, value);
-            }
-            value = gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL + "DEFAULT." + CryptoTokenHelper.PROPERTY_PIN);
-            if (value != null) {
-                defaultProperties.setProperty(CryptoTokenHelper.PROPERTY_PIN, value);
-            }
-            value = gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL + "DEFAULT." + CryptoTokenHelper.PROPERTY_SLOTLABELTYPE);
-            if (value != null) {
-                defaultProperties.setProperty(CryptoTokenHelper.PROPERTY_SLOTLABELTYPE, value);
-            }
-            value = gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL + "DEFAULT." + CryptoTokenHelper.PROPERTY_SLOTLABELVALUE);
-            if (value != null) {
-                defaultProperties.setProperty(CryptoTokenHelper.PROPERTY_SLOTLABELVALUE, value);
-            }
-            String className = null;
-            try {
-                className = gc.getCryptoTokenProperty(workerId, GlobalConfiguration.CRYPTOTOKENPROPERTY_CLASSPATH);
-                
-                if (log.isDebugEnabled()) {
-                    log.debug("Found cryptotoken classpath: " + className);
+            ICryptoToken tokenFromOtherWorker = getSignServerContext().getCryptoToken();
+            if (tokenFromOtherWorker != null) {
+                return tokenFromOtherWorker;
+            } else {
+                GlobalConfiguration gc = getGlobalConfigurationSession().getGlobalConfiguration();
+                final Properties defaultProperties = new Properties();
+                // TODO: The following could potentially be made generic
+                String value = gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL + "DEFAULT." + CryptoTokenHelper.PROPERTY_SHAREDLIBRARY);
+                if (value != null) {
+                    defaultProperties.setProperty(CryptoTokenHelper.PROPERTY_SHAREDLIBRARY, value);
                 }
-                if (className != null) {
-                    Class<?> implClass = Class.forName(className);
-                    Object obj = implClass.newInstance();
-                    cryptoToken = (ICryptoToken) obj;
-                    Properties properties = new Properties();
-                    properties.putAll(defaultProperties);
-                    properties.putAll(config.getProperties());
-                    cryptoToken.init(workerId, properties);
+                value = gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL + "DEFAULT." + CryptoTokenHelper.PROPERTY_SLOT);
+                if (value != null) {
+                    defaultProperties.setProperty(CryptoTokenHelper.PROPERTY_SLOT, value);
                 }
-            } catch (CryptoTokenInitializationFailureException e) {
-                final StringBuilder sb = new StringBuilder();
-                
-                if (log.isDebugEnabled()) {
-                    log.debug("Failed to initialize crypto token: " + e.getMessage());
+                value = gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL + "DEFAULT." + CryptoTokenHelper.PROPERTY_SLOTLISTINDEX);
+                if (value != null) {
+                    defaultProperties.setProperty(CryptoTokenHelper.PROPERTY_SLOTLISTINDEX, value);
                 }
-                
-                sb.append("Failed to initialize crypto token");
-                
-                // collect cause messages
-                final List<String> causes = new LinkedList<String>();
-                
-                causes.add(e.getMessage());
-                
-                Throwable cause = e.getCause();
-             
-                // iterate throug cause until we reach the bottom
-                while (cause != null) {
-                    final String causeMessage = cause.getMessage();
-                    
+                value = gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL + "DEFAULT." + CryptoTokenHelper.PROPERTY_ATTRIBUTESFILE);
+                if (value != null) {
+                    defaultProperties.setProperty(CryptoTokenHelper.PROPERTY_ATTRIBUTESFILE, value);
+                }
+                value = gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL + "DEFAULT." + CryptoTokenHelper.PROPERTY_ATTRIBUTES);
+                if (value != null) {
+                    defaultProperties.setProperty(CryptoTokenHelper.PROPERTY_ATTRIBUTES, value);
+                }
+                value = gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL + "DEFAULT." + CryptoTokenHelper.PROPERTY_PIN);
+                if (value != null) {
+                    defaultProperties.setProperty(CryptoTokenHelper.PROPERTY_PIN, value);
+                }
+                value = gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL + "DEFAULT." + CryptoTokenHelper.PROPERTY_SLOTLABELTYPE);
+                if (value != null) {
+                    defaultProperties.setProperty(CryptoTokenHelper.PROPERTY_SLOTLABELTYPE, value);
+                }
+                value = gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL + "DEFAULT." + CryptoTokenHelper.PROPERTY_SLOTLABELVALUE);
+                if (value != null) {
+                    defaultProperties.setProperty(CryptoTokenHelper.PROPERTY_SLOTLABELVALUE, value);
+                }
+                String className = null;
+                try {
+                    className = gc.getCryptoTokenProperty(workerId, GlobalConfiguration.CRYPTOTOKENPROPERTY_CLASSPATH);
+
                     if (log.isDebugEnabled()) {
-                        log.debug("Cause: " + causeMessage);
+                        log.debug("Found cryptotoken classpath: " + className);
                     }
-                    
-                    // if cause message wasn't already seen, add it to the list
-                    if (!causes.contains(causeMessage)) {
-                        causes.add(causeMessage);
+                    if (className != null) {
+                        Class<?> implClass = Class.forName(className);
+                        Object obj = implClass.newInstance();
+                        cryptoToken = (ICryptoToken) obj;
+                        Properties properties = new Properties();
+                        properties.putAll(defaultProperties);
+                        properties.putAll(config.getProperties());
+                        cryptoToken.init(workerId, properties);
                     }
-                    
-                    cause = cause.getCause();
+                } catch (CryptoTokenInitializationFailureException e) {
+                    final StringBuilder sb = new StringBuilder();
+
+                    if (log.isDebugEnabled()) {
+                        log.debug("Failed to initialize crypto token: " + e.getMessage());
+                    }
+
+                    sb.append("Failed to initialize crypto token");
+
+                    // collect cause messages
+                    final List<String> causes = new LinkedList<String>();
+
+                    causes.add(e.getMessage());
+
+                    Throwable cause = e.getCause();
+
+                    // iterate throug cause until we reach the bottom
+                    while (cause != null) {
+                        final String causeMessage = cause.getMessage();
+
+                        if (log.isDebugEnabled()) {
+                            log.debug("Cause: " + causeMessage);
+                        }
+
+                        // if cause message wasn't already seen, add it to the list
+                        if (!causes.contains(causeMessage)) {
+                            causes.add(causeMessage);
+                        }
+
+                        cause = cause.getCause();
+                    }
+
+                    // prepend cause messages with some separators at the tail of our message
+                    for (final String causeMessage : causes) {
+                        sb.append(": ");
+                        sb.append(causeMessage);
+                    }
+
+                    final String error = sb.toString();
+
+                    if (!cryptoTokenFatalErrors.contains(error)) {
+                        cryptoTokenFatalErrors.add(error);
+                    }
+                    throw new SignServerException("Failed to initialize crypto token: " + e.getMessage(), e);
+                } catch (ClassNotFoundException e) {
+                    final String error = "Crypto token class not found: " + className;
+
+                    if (!cryptoTokenFatalErrors.contains(error)) {
+                        cryptoTokenFatalErrors.add(error);
+                    }
+                    throw new SignServerException("Class not found", e);
+                } catch (IllegalAccessException iae) {
+                    final String error = "Crypto token illegal access";
+
+                    if (!cryptoTokenFatalErrors.contains(error)) {
+                        cryptoTokenFatalErrors.add(error);
+                    }
+                    throw new SignServerException("Illegal access", iae);
+                } catch (InstantiationException ie) {
+                    final String error = "Crypto token instantiation error";
+
+                    if (!cryptoTokenFatalErrors.contains(error)) {
+                        cryptoTokenFatalErrors.add(error);
+                    }
+                    throw new SignServerException("Instantiation error", ie);
                 }
-                
-                // prepend cause messages with some separators at the tail of our message
-                for (final String causeMessage : causes) {
-                    sb.append(": ");
-                    sb.append(causeMessage);
-                }
-                
-                final String error = sb.toString();
-                
-                if (!cryptoTokenFatalErrors.contains(error)) {
-                    cryptoTokenFatalErrors.add(error);
-                }
-                throw new SignServerException("Failed to initialize crypto token: " + e.getMessage(), e);
-            } catch (ClassNotFoundException e) {
-                final String error = "Crypto token class not found: " + className;
-                
-                if (!cryptoTokenFatalErrors.contains(error)) {
-                    cryptoTokenFatalErrors.add(error);
-                }
-                throw new SignServerException("Class not found", e);
-            } catch (IllegalAccessException iae) {
-                final String error = "Crypto token illegal access";
-                
-                if (!cryptoTokenFatalErrors.contains(error)) {
-                    cryptoTokenFatalErrors.add(error);
-                }
-                throw new SignServerException("Illegal access", iae);
-            } catch (InstantiationException ie) {
-                final String error = "Crypto token instantiation error";
-                
-                if (!cryptoTokenFatalErrors.contains(error)) {
-                    cryptoTokenFatalErrors.add(error);
-                }
-                throw new SignServerException("Instantiation error", ie);
             }
         }
         if (log.isTraceEnabled()) {

@@ -89,7 +89,7 @@ public class WorkerManagerSessionBean implements IWorkerManagerSessionLocal {
         return workerFactory.getWorker(workerId,
                 workerConfigService, globalSession, this, workerContext);
     }
-
+    
     @Override
     public int getIdFromName(final String workerName, final IGlobalConfigurationSession globalSession) {
         return workerFactory.getWorkerIdFromName(workerName.
@@ -99,7 +99,7 @@ public class WorkerManagerSessionBean implements IWorkerManagerSessionLocal {
     @Override
     public void reloadWorker(int workerId, ILocal globalConfigurationSession) {
         workerFactory.reloadWorker(workerId,
-                    workerConfigService, globalConfigurationSession, workerContext);
+                    workerConfigService, globalConfigurationSession, this, workerContext);
     }
 
     @Override

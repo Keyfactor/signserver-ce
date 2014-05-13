@@ -126,7 +126,7 @@ public class SignerStatusReportWorker extends BaseSigner {
     }
     
     @Override
-    protected ICryptoToken getCryptoToken() throws SignServerException {
+    public ICryptoToken getCryptoToken() throws SignServerException {
         ICryptoToken result = super.getCryptoToken();
 
         // Not configuring a crypto token for this worker is not a problem as

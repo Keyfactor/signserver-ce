@@ -13,6 +13,8 @@
 package org.signserver.server;
 
 import javax.persistence.EntityManager;
+import org.signserver.common.SignServerException;
+import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.entities.IKeyUsageCounterDataService;
 
 /**
@@ -26,10 +28,15 @@ public class SignServerContext extends WorkerContext {
 
     private final EntityManager em;
     private final IKeyUsageCounterDataService keyUsageCounterDataService;
+    private CryptoTokenSupplier cryptoTokenSupplier;
 
     public SignServerContext(EntityManager em, IKeyUsageCounterDataService keyUsageCounterDataService) {
         this.em = em;
         this.keyUsageCounterDataService = keyUsageCounterDataService;
+    }
+
+    public SignServerContext newInstance() {
+        return new SignServerContext(em, keyUsageCounterDataService);
     }
 
     /**
@@ -54,5 +61,17 @@ public class SignServerContext extends WorkerContext {
     public boolean isDatabaseConfigured() {
         return em != null;
     }
-    
+
+    public void setCryptoTokenSupplier(CryptoTokenSupplier cryptoTokenSupplier) {
+        this.cryptoTokenSupplier = cryptoTokenSupplier;
+    }
+
+    public ICryptoToken getCryptoToken() throws SignServerException {
+        ICryptoToken result = null;
+        if (cryptoTokenSupplier != null) {
+            result = cryptoTokenSupplier.getCurrentCryptoToken();
+        }
+        return result;
+    }
+
 }

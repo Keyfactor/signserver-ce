@@ -18,6 +18,7 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.util.*;
 
+import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.cesecore.audit.AuditLogEntry;
 import org.cesecore.authorization.AuthorizationDeniedException;
@@ -40,6 +41,8 @@ import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.server.IProcessable;
+import org.signserver.server.SignServerContext;
+import org.signserver.server.WorkerContext;
 import org.signserver.server.log.AdminInfo;
 import org.signserver.server.log.LogMap;
 
@@ -189,7 +192,7 @@ public class WorkerSessionMock implements IWorkerSession.ILocal,
             LOG.error("No such worker: " + workerId);
         } else {
             worker.getProcessable().init(workerId, worker.getConfig(),
-                    null, null);
+                    new WorkerContext() {}, null);
         }
     }
 

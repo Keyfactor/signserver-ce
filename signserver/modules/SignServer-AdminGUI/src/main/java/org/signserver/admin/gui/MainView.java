@@ -192,8 +192,7 @@ public class MainView extends FrameView {
             }
         });
 
-        workerComboBox.setRenderer(new SmallWorkerListCellRenderer(
-                getResourceMap().getIcon("worker.smallIcon")));
+        workerComboBox.setRenderer(new SmallWorkerListCellRenderer());
 
         workerComboBox.addActionListener(new ActionListener() {
 
@@ -2174,6 +2173,7 @@ private void displayLogEntryAction() {
             List<Worker> newSigners = new ArrayList<Worker>();
 
             try {
+                Properties globalConfig = toProperties(SignServerAdminGUIApplication.getAdminWS().getGlobalConfiguration());
                 List<Integer> workerIds = SignServerAdminGUIApplication
                         .getAdminWS()
                         .getWorkers(GlobalConfiguration.WORKERTYPE_ALL);
@@ -2257,7 +2257,9 @@ private void displayLogEntryAction() {
                         LOG.error("Error in certificate", ex);
                     }
                     final Collection<AuthorizedClient> authClients = SignServerAdminGUIApplication.getAdminWS().getAuthorizedClients(workerId);
-                    newSigners.add(new Worker(workerId, name, statusSummary, statusProperties, configProperties, properties, active, authClients));
+                    final boolean isCryptoWorker = "org.signserver.server.signers.CryptoWorker".equals(globalConfig.getProperty("GLOB.WORKER" + workerId + ".CLASSPATH"));
+                    final boolean hasCrypto = globalConfig.containsKey("GLOB.WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH");
+                    newSigners.add(new Worker(workerId, name, statusSummary, statusProperties, configProperties, properties, active, authClients, isCryptoWorker, hasCrypto));
                     workers++;
                 }
 
@@ -3130,14 +3132,6 @@ private void displayLogEntryAction() {
             }
         }
 
-        private Properties toProperties(WsGlobalConfiguration wsgc) {
-            final Properties result = new Properties();
-            for (WsGlobalConfiguration.Config.Entry entry : wsgc.getConfig().getEntry()) {
-                result.put(entry.getKey(), entry.getValue());
-            }
-            return result;
-        }
-        
         private Collection<org.signserver.common.AuthorizedClient> convert(Collection<AuthorizedClient> wsList) {
             Collection<org.signserver.common.AuthorizedClient> result = new LinkedList<org.signserver.common.AuthorizedClient>();
             for (AuthorizedClient client : wsList) {
@@ -3147,7 +3141,13 @@ private void displayLogEntryAction() {
         }
     }
 
-
+private Properties toProperties(WsGlobalConfiguration wsgc) {
+    final Properties result = new Properties();
+    for (WsGlobalConfiguration.Config.Entry entry : wsgc.getConfig().getEntry()) {
+        result.put(entry.getKey(), entry.getValue());
+    }
+    return result;
+}
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

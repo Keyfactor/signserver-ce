@@ -19,6 +19,8 @@ import javax.swing.ListCellRenderer;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.plaf.basic.BasicHTML;
+import org.jdesktop.application.Application;
+import org.jdesktop.application.ResourceMap;
 
 /**
  * Renderer for the main list of workers.
@@ -40,6 +42,8 @@ public class MyListCellRenderer extends javax.swing.JPanel
     private static final Border DEFAULT_NO_FOCUS_BORDER
             = new EmptyBorder(1, 1, 1, 1);
     private static Border noFocusBorder = DEFAULT_NO_FOCUS_BORDER; //NOPMD //TODO Fix focus border
+
+    private final ResourceMap resources = Application.getInstance(SignServerAdminGUIApplication.class).getContext().getResourceMap(MyListCellRenderer.class);
 
     /** Creates new form MyListCellRenderer */
     public MyListCellRenderer() {
@@ -155,6 +159,15 @@ public class MyListCellRenderer extends javax.swing.JPanel
             listItemLabel1.setText((String) value);
             listItemLabel2.setText(worker.isActive()
                     ? "ACTIVE" : "OFFLINE");
+
+            // Different icons for crypto workers, workers with crypto and plain workers
+            if (worker.isCryptoWorker()) {
+                jLabel3.setIcon(resources.getIcon("cryptoworker.icon"));
+            } else if (worker.isCryptoConfigured()) {
+                jLabel3.setIcon(resources.getIcon("workerkey.icon"));
+            } else {
+                jLabel3.setIcon(resources.getIcon("worker.icon"));
+            }
         } else {
             listItemLabel1.setText((String) value);
             listItemLabel2.setText("");

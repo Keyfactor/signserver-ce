@@ -24,21 +24,25 @@ import org.signserver.admin.gui.adminws.gen.AuthorizedClient;
  */
 public class Worker {
 
-    private int workerId;
-    private String name;
-    private String statusSummary;
-    private Object[][] statusProperties;
-    private Object[][] configurationProperties;
-    private Properties configuration;
-    private boolean active;
-    private Collection<AuthorizedClient> authClients;
+    private final int workerId;
+    private final String name;
+    private final String statusSummary;
+    private final Object[][] statusProperties;
+    private final Object[][] configurationProperties;
+    private final Properties configuration;
+    private final boolean active;
+    private final Collection<AuthorizedClient> authClients;
+    private final boolean cryptoWorker;
+    private final boolean cryptoConfigured;
 
     public Worker(int workerId, String name, String statusSummary,
             final Object[][] statusProperties,
             final Object[][] configurationProperties,
             final Properties configuration,
             final boolean active,
-            final Collection<AuthorizedClient> authClients) {
+            final Collection<AuthorizedClient> authClients,
+            final boolean cryptoWorker,
+            final boolean cryptoConfigured) {
         this.workerId = workerId;
         this.name = name;
         this.statusSummary = statusSummary;
@@ -47,6 +51,8 @@ public class Worker {
         this.configurationProperties = configurationProperties;
         this.active = active;
         this.authClients = authClients;
+        this.cryptoWorker = cryptoWorker;
+        this.cryptoConfigured = cryptoConfigured;
     }
 
     public String getName() {
@@ -79,6 +85,14 @@ public class Worker {
 
     public Collection<AuthorizedClient> getAuthClients() {
         return authClients;
+    }
+
+    public boolean isCryptoWorker() {
+        return cryptoWorker;
+    }
+
+    public boolean isCryptoConfigured() {
+        return cryptoConfigured;
     }
 
     @Override

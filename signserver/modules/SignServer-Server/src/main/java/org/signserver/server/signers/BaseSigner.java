@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.PublicKey;
 import java.security.cert.CertStoreException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
@@ -24,9 +25,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-
 import javax.persistence.EntityManager;
-
 import org.apache.log4j.Logger;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
@@ -185,9 +184,15 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
                 }
                 result.add("No signer certificate available");
             } else {
-                if (Arrays.equals(certificate.getPublicKey().getEncoded(),
-                        getCryptoToken().getPublicKey(
-                        ICryptoToken.PURPOSE_SIGN).getEncoded())) {
+                final PublicKey publicKeyInToken = token.getPublicKey(
+                        ICryptoToken.PURPOSE_SIGN);
+                if (publicKeyInToken == null) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Signer " + workerId + ": Key not configured or not available");
+                    }
+                    result.add("Key not configured or not available");
+                } else if (Arrays.equals(certificate.getPublicKey().getEncoded(),
+                        publicKeyInToken.getEncoded())) {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Signer " + workerId + ": Certificate matches key");
                     }

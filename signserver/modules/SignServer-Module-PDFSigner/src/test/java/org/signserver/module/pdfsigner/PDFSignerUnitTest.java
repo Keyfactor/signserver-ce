@@ -1213,7 +1213,7 @@ public class PDFSignerUnitTest extends TestCase {
             }
 
             @Override
-            protected ICryptoToken getCryptoToken() {
+            public ICryptoToken getCryptoToken() {
                 return token;
             }
             

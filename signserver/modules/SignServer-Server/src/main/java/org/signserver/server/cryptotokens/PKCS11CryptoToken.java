@@ -72,7 +72,7 @@ import static org.signserver.server.cryptotokens.CryptoTokenBase.suggestSigAlg;
  * @author Markus Kilås
  * @version $Id$
  */
-public class PKCS11CryptoToken implements ICryptoToken, IKeyGenerator, IKeyRemover {
+public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2 {
     
     private static final Logger LOG = Logger.getLogger(PKCS11CryptoToken.class);
 
@@ -255,29 +255,39 @@ public class PKCS11CryptoToken implements ICryptoToken, IKeyGenerator, IKeyRemov
 
     @Override
     public PrivateKey getPrivateKey(int purpose) throws CryptoTokenOfflineException {
-        try {
-            final PrivateKey result;
-            if (purpose == ICryptoToken.PURPOSE_NEXTKEY) {
-                result = delegate.getPrivateKey(nextKeyAlias);
+        final PrivateKey result;
+        if (purpose == ICryptoToken.PURPOSE_NEXTKEY) {
+            result = getPrivateKey(nextKeyAlias);
+        } else {
+            if (cachePrivateKey && cachedPrivateKey != null) {
+                result = cachedPrivateKey;
             } else {
-                if (cachePrivateKey && cachedPrivateKey != null) {
-                    result = cachedPrivateKey;
-                } else {
-                    result = delegate.getPrivateKey(keyAlias);
-                    if (cachePrivateKey) {
-                        cachedPrivateKey = result;
-                    }
+                result = getPrivateKey(keyAlias);
+                if (cachePrivateKey) {
+                    cachedPrivateKey = result;
                 }
             }
-            return result;
+        }
+        return result;
+    }
+
+    @Override
+    public PublicKey getPublicKey(int purpose) throws CryptoTokenOfflineException {
+        final String alias = purpose == ICryptoToken.PURPOSE_NEXTKEY ? nextKeyAlias : keyAlias;
+        return getPublicKey(alias);
+    }
+
+    @Override
+    public PrivateKey getPrivateKey(String alias) throws CryptoTokenOfflineException {
+        try {
+            return delegate.getPrivateKey(alias);
         } catch (org.cesecore.keys.token.CryptoTokenOfflineException ex) {
             throw new CryptoTokenOfflineException(ex);
         }
     }
 
     @Override
-    public PublicKey getPublicKey(int purpose) throws CryptoTokenOfflineException {
-        final String alias = purpose == ICryptoToken.PURPOSE_NEXTKEY ? nextKeyAlias : keyAlias;
+    public PublicKey getPublicKey(String alias) throws CryptoTokenOfflineException {
         try {
             return delegate.getPublicKey(alias);
         } catch (org.cesecore.keys.token.CryptoTokenOfflineException ex) {
@@ -300,10 +310,36 @@ public class PKCS11CryptoToken implements ICryptoToken, IKeyGenerator, IKeyRemov
         return null;
     }
 
+    @Override
+    public Certificate getCertificate(String alias) throws CryptoTokenOfflineException {
+        return null;
+    }
+
+    @Override
+    public List<Certificate> getCertificateChain(String alias) throws CryptoTokenOfflineException {
+        return null;
+    }
+
     // TODO: The genCertificateRequest method is mostly a duplicate of the one in CryptoTokenBase, PKCS11CryptoTooken, KeyStoreCryptoToken and SoftCryptoToken.
     @Override
     public ICertReqData genCertificateRequest(ISignerCertReqInfo info,
             final boolean explicitEccParameters, boolean defaultKey)
+            throws CryptoTokenOfflineException {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("defaultKey: " + defaultKey);
+        }
+        final String alias;
+        if (defaultKey) {
+            alias = keyAlias;
+        } else {
+            alias = nextKeyAlias;
+        }
+        return genCertificateRequest(info, explicitEccParameters, alias);
+    }
+
+    @Override
+    public ICertReqData genCertificateRequest(ISignerCertReqInfo info,
+            final boolean explicitEccParameters, String alias)
             throws CryptoTokenOfflineException {
         if (LOG.isDebugEnabled()) {
             LOG.debug(">genCertificateRequest CESeCorePKCS11CryptoToken");
@@ -313,14 +349,7 @@ public class PKCS11CryptoToken implements ICryptoToken, IKeyGenerator, IKeyRemov
             PKCS10CertReqInfo reqInfo = (PKCS10CertReqInfo) info;
             PKCS10CertificationRequest pkcs10;
 
-            final String alias;
-            if (defaultKey) {
-                alias = keyAlias;
-            } else {
-                alias = nextKeyAlias;
-            }
             if (LOG.isDebugEnabled()) {
-                LOG.debug("defaultKey: " + defaultKey);
                 LOG.debug("alias: " + alias);
                 LOG.debug("signatureAlgorithm: "
                         + reqInfo.getSignatureAlgorithm());
@@ -483,7 +512,7 @@ public class PKCS11CryptoToken implements ICryptoToken, IKeyGenerator, IKeyRemov
             throw new CryptoTokenOfflineException(ex);
         }
     }
-    
+
     private static class KeyStorePKCS11CryptoToken extends org.cesecore.keys.token.PKCS11CryptoToken {
 
         public KeyStorePKCS11CryptoToken() throws InstantiationException {

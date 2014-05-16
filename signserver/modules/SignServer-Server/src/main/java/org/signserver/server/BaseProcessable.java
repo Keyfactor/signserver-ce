@@ -13,9 +13,12 @@
 package org.signserver.server;
 
 import java.io.UnsupportedEncodingException;
+import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
@@ -33,6 +36,7 @@ import org.signserver.server.cryptotokens.CryptoTokenHelper;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.cryptotokens.IKeyGenerator;
 import org.signserver.server.cryptotokens.IKeyRemover;
+import org.signserver.server.cryptotokens.ICryptoTokenV2;
 
 public abstract class BaseProcessable extends BaseWorker implements IProcessable, IKeyRemover {
 
@@ -153,7 +157,19 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
             log.trace(">getCryptoToken");
         }
         if (cryptoToken == null) {
-            ICryptoToken tokenFromOtherWorker = getSignServerContext().getCryptoToken();
+            // Check if a crypto token from an other worker is available
+            final ICryptoToken tokenFromOtherWorker1 = getSignServerContext().getCryptoToken();
+            final ICryptoToken tokenFromOtherWorker;
+
+            // If it is a V2 crypto token we can wrap it and let this worker
+            // decide which key to use. Otherwise the key is decided by the old
+            // crypto token
+            if (tokenFromOtherWorker1 instanceof ICryptoTokenV2) {
+                tokenFromOtherWorker = new WrappedCryptoToken((ICryptoTokenV2) tokenFromOtherWorker1, config);
+            } else {
+                tokenFromOtherWorker = tokenFromOtherWorker1;
+            }
+
             if (tokenFromOtherWorker != null) {
                 return tokenFromOtherWorker;
             } else {
@@ -282,7 +298,146 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
 
         return cryptoToken;
     }
-    
+
+    /**
+     * Wrapper for crypto tokens so that workers can still use the old crypto
+     * token V1 API. The wrapper delegates the operations on keys to the V2
+     * API and using the keys defined in _this_ worker.
+     */
+    private static class WrappedCryptoToken implements ICryptoToken, ICryptoTokenV2 {
+
+        /** Logger for this class. */
+        private static final Logger LOG = Logger.getLogger(WrappedCryptoToken.class);
+
+        private final ICryptoTokenV2 delegate;
+        private final WorkerConfig config;
+
+        /**
+         * Constructs a new instance of the wrapped crypto token.
+         * @param delegate The V2 implementation.
+         * @param config This worker's configuration
+         */
+        public WrappedCryptoToken(ICryptoTokenV2 delegate, WorkerConfig config) {
+            this.delegate = delegate;
+            this.config = config;
+        }
+
+        @Override
+        public void init(int workerId, Properties props) throws CryptoTokenInitializationFailureException {
+            delegate.init(workerId, props);
+        }
+
+        @Override
+        public int getCryptoTokenStatus() {
+            return delegate.getCryptoTokenStatus();
+        }
+
+        @Override
+        public void activate(String authenticationcode) throws CryptoTokenAuthenticationFailureException, CryptoTokenOfflineException {
+            delegate.activate(authenticationcode);
+        }
+
+        @Override
+        public boolean deactivate() throws CryptoTokenOfflineException {
+            return delegate.deactivate();
+        }
+
+        @Override
+        public PrivateKey getPrivateKey(int purpose) throws CryptoTokenOfflineException {
+            final String alias = purpose == ICryptoToken.PURPOSE_NEXTKEY ? config.getProperty("NEXTCERTSIGNKEY") : config.getProperty("DEFAULTKEY");
+            return delegate.getPrivateKey(alias);
+        }
+
+        @Override
+        public PublicKey getPublicKey(int purpose) throws CryptoTokenOfflineException {
+            final String alias = purpose == ICryptoToken.PURPOSE_NEXTKEY ? config.getProperty("NEXTCERTSIGNKEY") : config.getProperty("DEFAULTKEY");
+            return delegate.getPublicKey(alias);
+        }
+
+        @Override
+        public String getProvider(int providerUsage) {
+            return delegate.getProvider(providerUsage);
+        }
+
+        @Override
+        public Certificate getCertificate(int purpose) throws CryptoTokenOfflineException {
+            final String alias = purpose == ICryptoToken.PURPOSE_NEXTKEY ? config.getProperty("NEXTCERTSIGNKEY") : config.getProperty("DEFAULTKEY");
+            return delegate.getCertificate(alias);
+        }
+
+        @Override
+        public List<Certificate> getCertificateChain(int purpose) throws CryptoTokenOfflineException {
+            final String alias = purpose == ICryptoToken.PURPOSE_NEXTKEY ? config.getProperty("NEXTCERTSIGNKEY") : config.getProperty("DEFAULTKEY");
+            return delegate.getCertificateChain(alias);
+        }
+
+        @Override
+        public ICertReqData genCertificateRequest(ISignerCertReqInfo info, boolean explicitEccParameters, boolean defaultKey) throws CryptoTokenOfflineException {
+            return delegate.genCertificateRequest(info, explicitEccParameters, defaultKey ? config.getProperty("DEFAULTKEY") : config.getProperty("NEXTCERTSIGNKEY"));
+        }
+
+        @Override
+        public boolean destroyKey(int purpose) {
+            final String alias = purpose == ICryptoToken.PURPOSE_NEXTKEY ? config.getProperty("NEXTCERTSIGNKEY") : config.getProperty("DEFAULTKEY");
+            try {
+                return delegate.removeKey(alias);
+            } catch (CryptoTokenOfflineException ex) {
+                LOG.error("Could not destroy key: " +ex.getMessage());
+            } catch (KeyStoreException ex) {
+                LOG.error("Could not destroy key: " +ex.getMessage());
+            } catch (SignServerException ex) {
+                LOG.error("Could not destroy key: " +ex.getMessage());
+            }
+            return false;
+        }
+
+        @Override
+        public Collection<org.signserver.common.KeyTestResult> testKey(String alias, char[] authCode) throws CryptoTokenOfflineException, KeyStoreException {
+            return delegate.testKey(alias, authCode);
+        }
+
+        @Override
+        public KeyStore getKeyStore() throws UnsupportedOperationException, CryptoTokenOfflineException, KeyStoreException {
+            return delegate.getKeyStore();
+        }
+
+        @Override
+        public PrivateKey getPrivateKey(String alias) throws CryptoTokenOfflineException {
+            return delegate.getPrivateKey(alias);
+        }
+
+        @Override
+        public PublicKey getPublicKey(String alias) throws CryptoTokenOfflineException {
+            return delegate.getPublicKey(alias);
+        }
+
+        @Override
+        public ICertReqData genCertificateRequest(ISignerCertReqInfo info, boolean explicitEccParameters, String keyAlias) throws CryptoTokenOfflineException {
+            return delegate.genCertificateRequest(info, explicitEccParameters, keyAlias);
+        }
+
+        @Override
+        public void generateKey(String keyAlgorithm, String keySpec, String alias, char[] authCode) throws CryptoTokenOfflineException, IllegalArgumentException {
+            delegate.generateKey(keyAlgorithm, keySpec, alias, authCode);
+        }
+
+        @Override
+        public boolean removeKey(String alias) throws CryptoTokenOfflineException, KeyStoreException, SignServerException {
+            return delegate.removeKey(alias);
+        }
+
+        @Override
+        public Certificate getCertificate(String alias) throws CryptoTokenOfflineException {
+            return delegate.getCertificate(alias);
+        }
+
+        @Override
+        public List<Certificate> getCertificateChain(String alias) throws CryptoTokenOfflineException {
+            return delegate.getCertificateChain(alias);
+        }
+
+    };
+
     @Override
     public int getCryptoTokenStatus() {
         try {
@@ -308,8 +463,9 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
     public Certificate getSigningCertificate() throws CryptoTokenOfflineException {
         if (cert == null) {
             try {
-                if (getCryptoToken() != null) {
-                    cert = (X509Certificate) getCryptoToken().getCertificate(ICryptoToken.PURPOSE_SIGN);
+                final ICryptoToken token = getCryptoToken();
+                if (token != null) {
+                    cert = (X509Certificate) token.getCertificate(ICryptoToken.PURPOSE_SIGN);
                 }
             } catch (SignServerException e) {
                 log.error("Failed to get crypto token: " + e.getMessage());

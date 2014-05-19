@@ -180,6 +180,11 @@ public class PDFSigner extends BaseSigner {
         if (hasSetIncludeCertificateLevels && includeCertificateLevels == 0) {
             configErrors.add("Illegal value for property " + WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS + ". Only numbers >= 1 supported.");
         }
+        
+        // check that TSA_URL and TSA_WORKER is not set at the same time
+        if (config.getProperty(TSA_URL) != null && config.getProperty(TSA_WORKER) != null) {
+            configErrors.add("Can not specify " + TSA_URL + " and " + TSA_WORKER + " at the same time.");
+        }
     }
 
     /**

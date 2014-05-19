@@ -10,6 +10,7 @@ import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.ejb.interfaces.IInternalWorkerSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.server.UsernamePasswordClientCredential;
 
 import com.lowagie.text.pdf.PdfPKCS7;
 import com.lowagie.text.pdf.TSAClient;
@@ -22,15 +23,21 @@ public class InternalTSAClient implements TSAClient {
     
     private IInternalWorkerSession session;
     private String workerNameOrId;
+    private String username;
+    private String password;
+    private int tokenSizeEstimated = 7168;
     
-    public InternalTSAClient(final IInternalWorkerSession session, final String workerNameOrId) {
+    public InternalTSAClient(final IInternalWorkerSession session, final String workerNameOrId,
+            final String username, final String password) {
         this.session = session;
         this.workerNameOrId = workerNameOrId;
+        this.username = username;
+        this.password = password;
     }
     
     @Override
     public int getTokenSizeEstimate() {
-        return 7168;
+        return tokenSizeEstimated;
     }
 
     @Override
@@ -49,12 +56,19 @@ public class InternalTSAClient implements TSAClient {
         // Setup the time stamp request
         TimeStampRequestGenerator tsqGenerator = new TimeStampRequestGenerator();
         tsqGenerator.setCertReq(true);
-        // tsqGenerator.setReqPolicy("1.3.6.1.4.1.601.10.3.1");
+
         BigInteger nonce = BigInteger.valueOf(System.currentTimeMillis());
         TimeStampRequest request = tsqGenerator.generate(X509ObjectIdentifiers.id_SHA1, imprint, nonce);
         byte[] requestBytes = request.getEncoded();
+
+        final RequestContext context = new RequestContext();
         
-        final ProcessResponse resp = session.process(workerId, new GenericSignRequest(4711, requestBytes), new RequestContext());
+        if (username != null && password != null) {
+            context.put(RequestContext.CLIENT_CREDENTIAL,
+                    new UsernamePasswordClientCredential(username, password));
+        }
+        
+        final ProcessResponse resp = session.process(workerId, new GenericSignRequest(4711, requestBytes), context);
     
         if (resp instanceof GenericSignResponse) {
             final byte[] respBytes = ((GenericSignResponse) resp).getProcessedData();
@@ -67,7 +81,8 @@ public class InternalTSAClient implements TSAClient {
             }
 
             byte[] encoded = tsToken.getEncoded();
-            
+            tokenSizeEstimated = encoded.length;
+
             return encoded;
         } else {
             throw new SignServerException("Unknown response");

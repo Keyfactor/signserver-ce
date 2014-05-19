@@ -180,9 +180,13 @@ public class WorkerFactory {
                 public ICryptoToken getCurrentCryptoToken() throws SignServerException {
                     synchronized (WorkerFactory.this) {
                         Integer cryptoWorkerId = nameToIdMap.get(cryptoTokenName.toUpperCase());
-                        IWorker cryptoWorker = getWorker(cryptoWorkerId, workerConfigHome, gCSession, workerManagerSession, workerContext.newInstance());
-                        if (cryptoWorker instanceof BaseProcessable) {
-                            return ((BaseProcessable) cryptoWorker).getCryptoToken();
+                        if (cryptoWorkerId != null) {
+                            IWorker cryptoWorker = getWorker(cryptoWorkerId, workerConfigHome, gCSession, workerManagerSession, workerContext.newInstance());
+                            if (cryptoWorker instanceof BaseProcessable) {
+                                return ((BaseProcessable) cryptoWorker).getCryptoToken();
+                            } else {
+                                return null;
+                            }
                         } else {
                             return null;
                         }

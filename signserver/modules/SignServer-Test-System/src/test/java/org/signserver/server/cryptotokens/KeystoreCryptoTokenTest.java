@@ -55,6 +55,7 @@ public class KeystoreCryptoTokenTest extends ModulesTestCase {
     private static final Logger LOG = Logger.getLogger(KeystoreCryptoTokenTest.class);
     
     private static final int WORKER_CMS = 30003;
+    private static final int CRYPTO_TOKEN = 30103;
     
     private static final String SIGN_KEY_ALIAS = "p12signkey1234";
     private static final String TEST_KEY_ALIAS = "p12testkey1234";
@@ -77,7 +78,7 @@ public class KeystoreCryptoTokenTest extends ModulesTestCase {
         super.tearDown();
     }
     
-    private void setCMSSignerProperties(final int workerId, final boolean cached) throws Exception {
+    private void setCMSSignerPropertiesCombined(final int workerId, final boolean cached) throws Exception {
         // Create keystore
         keystoreFile = File.createTempFile(KEYSTORE_NAME, ".p12");
         FileOutputStream out = null;
@@ -99,26 +100,78 @@ public class KeystoreCryptoTokenTest extends ModulesTestCase {
         workerSession.setWorkerProperty(workerId, "KEYSTOREPATH", keystoreFile.getAbsolutePath());
         workerSession.setWorkerProperty(workerId, "KEYSTOREPASSWORD", pin);
     }
-    
+
+    private void setCMSSignerPropertiesSeparateToken(final int workerId, final int tokenId, final boolean cached) throws Exception {
+        // Create keystore
+        keystoreFile = File.createTempFile(KEYSTORE_NAME, ".p12");
+        FileOutputStream out = null;
+        try {
+            KeyStore ks = KeyStore.getInstance("PKCS12", "BC");
+            ks.load(null, null);
+            out = new FileOutputStream(keystoreFile);
+            ks.store(out, pin.toCharArray());
+        } finally {
+            IOUtils.closeQuietly(out);
+        }
+
+        // Setup crypto token
+        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + tokenId + ".CLASSPATH", "org.signserver.server.signers.CryptoWorker");
+        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + tokenId + ".SIGNERTOKEN.CLASSPATH", KeystoreCryptoToken.class.getName());
+        workerSession.setWorkerProperty(tokenId, "NAME", "TestCryptoTokenP12");
+        workerSession.setWorkerProperty(tokenId, "KEYSTORETYPE", "PKCS12");
+        workerSession.setWorkerProperty(tokenId, "KEYSTOREPATH", keystoreFile.getAbsolutePath());
+        workerSession.setWorkerProperty(tokenId, "KEYSTOREPASSWORD", pin);
+
+        // Setup worker
+        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + workerId + ".CLASSPATH", "org.signserver.module.cmssigner.CMSSigner");
+        workerSession.setWorkerProperty(workerId, "NAME", "CMSSignerP12");
+        workerSession.setWorkerProperty(workerId, "AUTHTYPE", "NOAUTH");
+        workerSession.setWorkerProperty(workerId, "CRYPTOTOKEN", "TestCryptoTokenP12");
+    }
+
     /**
      * Tests setting up a CMS Signer, giving it a certificate and sign a file.
+     * Using a worker with its own token.
      */
     public void testSigning() throws Exception {
         LOG.info("testSigning");
         final int workerId = WORKER_CMS;
         try {
-            setCMSSignerProperties(workerId, false);
+            setCMSSignerPropertiesCombined(workerId, false);
             workerSession.reloadConfiguration(workerId);
             workerSession.generateSignerKey(workerId, "RSA", "1024", SIGN_KEY_ALIAS, pin.toCharArray());
             workerSession.reloadConfiguration(workerId);
-            
+
             cmsSigner(workerId);
         } finally {
             FileUtils.deleteQuietly(keystoreFile);
             removeWorker(workerId);
         }
     }
-    
+
+    /**
+     * Tests setting up a CMS Signer, giving it a certificate and sign a file.
+     * Using a worker referencing a crypto token.
+     */
+    public void testSigning_separateToken() throws Exception {
+        LOG.info("testSigning_separateToken");
+        final int workerId = WORKER_CMS;
+        final int tokenId = CRYPTO_TOKEN;
+        try {
+            setCMSSignerPropertiesSeparateToken(workerId, tokenId, false);
+            workerSession.reloadConfiguration(tokenId);
+            workerSession.reloadConfiguration(workerId);
+            workerSession.generateSignerKey(tokenId, "RSA", "1024", SIGN_KEY_ALIAS, pin.toCharArray());
+            workerSession.reloadConfiguration(tokenId);
+
+            cmsSigner(workerId);
+        } finally {
+            FileUtils.deleteQuietly(keystoreFile);
+            removeWorker(workerId);
+            removeWorker(tokenId);
+        }
+    }
+
     private void cmsSigner(final int workerId) throws Exception {
         // Generate CSR
         PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + workerId, null);
@@ -156,7 +209,7 @@ public class KeystoreCryptoTokenTest extends ModulesTestCase {
         
         final int workerId = WORKER_CMS;
         try {
-            setCMSSignerProperties(workerId, false);
+            setCMSSignerPropertiesCombined(workerId, false);
             workerSession.reloadConfiguration(workerId);
             
             // Add a reference key
@@ -192,13 +245,58 @@ public class KeystoreCryptoTokenTest extends ModulesTestCase {
             removeWorker(workerId);
         }
     }
-    
+
+    public void testGenerateKey_separateToken() throws Exception {
+        LOG.info("testGenerateKey_separateToken");
+
+        final int workerId = WORKER_CMS;
+        final int tokenId = CRYPTO_TOKEN;
+        try {
+            setCMSSignerPropertiesSeparateToken(workerId, tokenId, false);
+            workerSession.reloadConfiguration(tokenId);
+            workerSession.reloadConfiguration(workerId);
+
+            // Add a reference key
+            workerSession.generateSignerKey(tokenId, "RSA", "1024", "somekey123", pin.toCharArray());
+
+            // Check available aliases
+            Set<String> aliases1 = getKeyAliases(tokenId);
+
+            if (aliases1.isEmpty()) {
+                throw new Exception("getKeyAliases is not working or the slot is empty");
+            }
+
+            // If the key already exists, try to remove it first
+            if (aliases1.contains(TEST_KEY_ALIAS)) {
+                workerSession.removeKey(tokenId, TEST_KEY_ALIAS);
+                aliases1 = getKeyAliases(tokenId);
+            }
+            if (aliases1.contains(TEST_KEY_ALIAS)) {
+                throw new Exception("Pre-condition failed: Key with alias " + TEST_KEY_ALIAS + " already exists and removing it failed");
+            }
+
+            // Generate a testkey
+            workerSession.generateSignerKey(tokenId, "RSA", "1024", TEST_KEY_ALIAS, pin.toCharArray());
+
+            // Now expect the new TEST_KEY_ALIAS
+            Set<String> expected = new HashSet<String>(aliases1);
+            expected.add(TEST_KEY_ALIAS);
+            Set<String> aliases2 = getKeyAliases(tokenId);
+            assertEquals("new key added", expected, aliases2);
+
+        } finally {
+            FileUtils.deleteQuietly(keystoreFile);
+            removeWorker(workerId);
+            removeWorker(tokenId);
+        }
+    }
+
     public void testRemoveKey() throws Exception {
         LOG.info("testRemoveKey");
         
         final int workerId = WORKER_CMS;
         try {
-            setCMSSignerProperties(workerId, false);
+            setCMSSignerPropertiesCombined(workerId, false);
             workerSession.reloadConfiguration(workerId);
             
             // Add a reference key
@@ -234,7 +332,52 @@ public class KeystoreCryptoTokenTest extends ModulesTestCase {
             removeWorker(workerId);
         }
     }
-    
+
+    public void testRemoveKey_separateToken() throws Exception {
+        LOG.info("testRemoveKey_separateToken");
+
+        final int workerId = WORKER_CMS;
+        final int tokenId = CRYPTO_TOKEN;
+        try {
+            setCMSSignerPropertiesSeparateToken(workerId, tokenId, false);
+            workerSession.reloadConfiguration(tokenId);
+            workerSession.reloadConfiguration(workerId);
+
+            // Add a reference key
+            workerSession.generateSignerKey(tokenId, "RSA", "1024", "somekey123", pin.toCharArray());
+
+            // Check available aliases
+            Set<String> aliases1 = getKeyAliases(tokenId);
+
+            if (aliases1.isEmpty()) {
+                throw new Exception("getKeyAliases is not working or the slot is empty");
+            }
+
+            if (!aliases1.contains(TEST_KEY_ALIAS)) {
+                // Generate a testkey
+                workerSession.generateSignerKey(tokenId, "RSA", "1024", TEST_KEY_ALIAS, pin.toCharArray());
+                aliases1 = getKeyAliases(tokenId);
+            }
+            if (!aliases1.contains(TEST_KEY_ALIAS)) {
+                throw new Exception("Pre-condition failed: Key with alias " + TEST_KEY_ALIAS + " did not exist and it could not be created");
+            }
+            workerSession.reloadConfiguration(tokenId);
+
+            // Remove the key
+            workerSession.removeKey(tokenId, TEST_KEY_ALIAS);
+
+            // Now expect the TEST_KEY_ALIAS to have been removed
+            Set<String> aliases2 = getKeyAliases(tokenId);
+            Set<String> expected = new HashSet<String>(aliases1);
+            expected.remove(TEST_KEY_ALIAS);
+            assertEquals("new key removed", expected, aliases2);
+        } finally {
+            FileUtils.deleteQuietly(keystoreFile);
+            removeWorker(workerId);
+            removeWorker(tokenId);
+        }
+    }
+
     /**
      * Test that omitting KEYSTORETYPE gives a correct error message.
      * 
@@ -246,7 +389,7 @@ public class KeystoreCryptoTokenTest extends ModulesTestCase {
        final int workerId = WORKER_CMS;
        
        try {
-           setCMSSignerProperties(workerId, false);
+           setCMSSignerPropertiesCombined(workerId, false);
            workerSession.removeWorkerProperty(workerId, "KEYSTORETYPE");
            workerSession.reloadConfiguration(workerId);
            
@@ -269,7 +412,7 @@ public class KeystoreCryptoTokenTest extends ModulesTestCase {
        final int workerId = WORKER_CMS;
        
        try {
-           setCMSSignerProperties(workerId, false);
+           setCMSSignerPropertiesCombined(workerId, false);
            workerSession.setWorkerProperty(workerId, "KEYSTORETYPE", "FOOBAR");
            workerSession.reloadConfiguration(workerId);
            
@@ -292,7 +435,7 @@ public class KeystoreCryptoTokenTest extends ModulesTestCase {
         final int workerId = WORKER_CMS;
         
         try {
-            setCMSSignerProperties(workerId, false);
+            setCMSSignerPropertiesCombined(workerId, false);
             workerSession.removeWorkerProperty(workerId, "KEYSTOREPATH");
             workerSession.reloadConfiguration(workerId);
             
@@ -315,7 +458,7 @@ public class KeystoreCryptoTokenTest extends ModulesTestCase {
         final int workerId = WORKER_CMS;
         
         try {
-            setCMSSignerProperties(workerId, false);
+            setCMSSignerPropertiesCombined(workerId, false);
             workerSession.setWorkerProperty(workerId, "KEYSTOREPATH", "non-existing.p12");
             workerSession.reloadConfiguration(workerId);
             

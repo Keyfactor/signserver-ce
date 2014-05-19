@@ -24,10 +24,13 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.signserver.common.*;
+import org.signserver.ejb.interfaces.IInternalWorkerSession;
 import org.signserver.server.UsernamePasswordClientCredential;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.archive.Archivable;
@@ -101,6 +104,7 @@ public class PDFSigner extends BaseSigner {
     public static final String TSA_URL = "TSA_URL";
     public static final String TSA_USERNAME = "TSA_USERNAME";
     public static final String TSA_PASSWORD = "TSA_PASSWORD";
+    public static final String TSA_WORKER = "TSA_WORKER";
     
     // extra properties
     public static final String EMBED_CRL = "EMBED_CRL";
@@ -142,6 +146,8 @@ public class PDFSigner extends BaseSigner {
     private SecureRandom random = new SecureRandom();
     
     private List<String> configErrors;
+
+    private IInternalWorkerSession.ILocal workerSession;
     
     @Override
     public void init(int signerId, WorkerConfig config,
@@ -577,7 +583,13 @@ public class PDFSigner extends BaseSigner {
         // add timestamp to signature if requested
         TSAClient tsc = null;
         if (params.isUse_timestamp()) {
-            tsc = getTimeStampClient(params.getTsa_url(), params.getTsa_username(), params.getTsa_password());
+            final String tsaUrl = params.getTsa_url();
+            
+            if (tsaUrl != null) {
+                tsc = getTimeStampClient(params.getTsa_url(), params.getTsa_username(), params.getTsa_password());
+            } else {
+                tsc = new InternalTSAClient(getWorkerSession(), params.getTsa_worker());
+            }
         }
 
         
@@ -661,6 +673,19 @@ public class PDFSigner extends BaseSigner {
 
         fout.close();
         return fout.toByteArray();
+    }
+    
+    protected IInternalWorkerSession.ILocal getWorkerSession() {
+        if (workerSession == null) {
+            try {
+                workerSession = ServiceLocator.getInstance().lookupLocal(
+                    IInternalWorkerSession.ILocal.class);
+            } catch (NamingException ex) {
+                throw new RuntimeException("Unable to lookup worker session",
+                        ex);
+            }
+        }
+        return workerSession;
     }
 
     /**

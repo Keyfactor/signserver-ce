@@ -87,6 +87,8 @@ public class PDFSignerParameters {
     private boolean use_timestamp_authorization = false;
     private Image custom_image = null;
 
+    private String tsa_worker;
+
     public PDFSignerParameters(int workerId, WorkerConfig config)
             throws IllegalRequestException, SignServerException {
         this.workerId = workerId;
@@ -121,6 +123,9 @@ public class PDFSignerParameters {
             tsa_url = config.getProperties().getProperty(PDFSigner.TSA_URL);
             use_timestamp = true;
             LOG.debug("Using tsa url : " + tsa_url);
+        } else if (config.getProperties().getProperty(PDFSigner.TSA_WORKER) != null) {
+            tsa_worker = config.getProperties().getProperty(PDFSigner.TSA_WORKER);
+            use_timestamp = true;
         }
 
         if (use_timestamp
@@ -413,6 +418,10 @@ public class PDFSignerParameters {
 
     public String getTsa_url() {
         return tsa_url;
+    }
+    
+    public String getTsa_worker() {
+        return tsa_worker;
     }
 
     public String getTsa_username() {

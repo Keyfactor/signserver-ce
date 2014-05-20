@@ -3906,10 +3906,40 @@ Default: "NOT_CERTIFIED".
 If we want to timestamp document signature, specify timestamp authority URL.
                                     </p>
                                     <p>
+This will cause time stamp requests to be issued via HTTP requests.
+Under high load this can lead to thread deadlocks in the application server if using a localhost URL
+(using a time stamp signer running in the same server).
+In this case, use the internal mechanism described below).
+                                    </p>
+                                    <p>
 If we do not want to timestamp document signature, do not set property.
                                     </p>
                                     <p>
 Note: if path contains characters "\" or "=" , these characters should be escaped (thus "\" = "\\", "=" =>"\=")
+                                    </p>
+                                    <p>
+Note: this property can not be set at the same time as TSA_WORKER (see below).
+                                    </p>
+                                    <p>
+Default: not set (no timestamping).
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><b>TSA_WORKER</b></td>
+                                <td>
+                                    <p>
+Specify a worker ID or worker name for a time stamp signer
+                                    </p>
+                                    <p>
+This will use internal calls and can only be used for a time stamp authority running in the same SignServer instance.
+                                    </p>
+                                    <p>
+Note: use this option instead of TSA_URL when using a time stamp signer running in the same SignServer instance
+to avoid thread deadlocks under high load.
+                                    </p>
+                                    <p>
+Note: this property can not be set at the same time as TSA_URL (see above).
                                     </p>
                                     <p>
 Default: not set (no timestamping).

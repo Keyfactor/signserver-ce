@@ -27,7 +27,7 @@ import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.ServiceLocator;
-import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.ejb.interfaces.IInternalWorkerSession;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.UsernamePasswordClientCredential;
 
@@ -52,7 +52,7 @@ public class UserMappedDispatcher extends BaseDispatcher {
     private static final String PROPERTY_USERNAME_MAPPING = "USERNAME_MAPPING";
 
     /** Workersession. */
-    private IWorkerSession workerSession;
+    private IInternalWorkerSession workerSession;
 
     /** Mapping. */
     private Map<String, String> mappings;
@@ -85,11 +85,11 @@ public class UserMappedDispatcher extends BaseDispatcher {
         this.workerSession = getWorkerSession();
     }
     
-    protected IWorkerSession getWorkerSession() {
+    protected IInternalWorkerSession getWorkerSession() {
         if (workerSession == null) {
             try {
                 workerSession = ServiceLocator.getInstance().lookupLocal(
-                        IWorkerSession.class);
+                        IInternalWorkerSession.class);
             } catch (NamingException ex) {
                 LOG.error("Unable to lookup worker session", ex);
             }

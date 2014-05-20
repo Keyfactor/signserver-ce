@@ -44,6 +44,7 @@ public class Main {
     private static final String THREADS = "threads";
     private static final String TSA_URL = "tsaurl";
     private static final String PROCESS_URL = "processurl";
+    private static final String WORKER_URL = "workerurl";
     private static final String WORKER_NAME_OR_ID = "worker";
     private static final String MAX_WAIT_TIME = "maxwaittime";
     private static final String WARMUP_TIME = "warmuptime";
@@ -77,6 +78,7 @@ public class Main {
         OPTIONS.addOption(THREADS, true, "Number of threads requesting time stamps.");
         OPTIONS.addOption(TSA_URL, true, "URL to timestamp worker to use.");
         OPTIONS.addOption(PROCESS_URL, true, "URL to process servlet (for the DocumentSigner1 test suite).");
+        OPTIONS.addOption(WORKER_URL, true, "URL to worker servlet (for the DocumentSigner1 test suite).");
         OPTIONS.addOption(WORKER_NAME_OR_ID, true, "Worker name or ID to use (with the DocumentSigner1 test suite).");
         OPTIONS.addOption(MAX_WAIT_TIME, true, "Maximum number of milliseconds for a thread to wait until issuing the next time stamp. Default=100");
         OPTIONS.addOption(WARMUP_TIME, true,
@@ -153,6 +155,7 @@ public class Main {
             }
             
             final String url;
+            boolean useWorkerServlet = false;
             if (commandLine.hasOption(TSA_URL)) {
                 if (!ts.equals(TestSuites.TimeStamp1)) {
                     throw new ParseException("Option " + TSA_URL + " can only be used with the " +
@@ -165,6 +168,14 @@ public class Main {
                             TestSuites.TimeStamp1.toString() + " test suite.");
                 }
                 url = commandLine.getOptionValue(PROCESS_URL);
+                useWorkerServlet = false;
+            } else if (commandLine.hasOption(WORKER_URL)) {
+                if (!ts.equals(TestSuites.DocumentSigner1)) {
+                    throw new ParseException("Option " + TSA_URL + " can only be used with the " +
+                            TestSuites.TimeStamp1.toString() + " test suite.");
+                }
+                url = commandLine.getOptionValue(WORKER_URL);
+                useWorkerServlet = true;
             } else {
                 if (ts.equals(TestSuites.TimeStamp1)) {
                     throw new ParseException("Missing option: -" + TSA_URL);
@@ -266,7 +277,7 @@ public class Main {
                     timeStamp1(threads, numThreads, callback, url, maxWaitTime, warmupTime, limitedTime, statFolder);
                     break;
                 case DocumentSigner1:
-                    documentSigner1(threads, numThreads, callback, url, workerNameOrId, maxWaitTime, warmupTime, limitedTime, statFolder);
+                    documentSigner1(threads, numThreads, callback, url, useWorkerServlet, workerNameOrId, maxWaitTime, warmupTime, limitedTime, statFolder);
                     break;
                 default:
                     throw new Exception("Unsupported test suite");
@@ -425,8 +436,8 @@ public class Main {
      * @throws Exception
      */
     private static void documentSigner1(final List<WorkerThread> threads, final int numThreads,
-            final FailureCallback failureCallback, final String url, final String workerNameOrId, 
-            int maxWaitTime, long warmupTime,
+            final FailureCallback failureCallback, final String url, final boolean useWorkerServlet, 
+            final String workerNameOrId, int maxWaitTime, long warmupTime,
             final long limitedTime, final File statFolder) throws Exception {
         final Random random = new Random();
         for (int i = 0; i < numThreads; i++) {
@@ -437,7 +448,7 @@ public class Main {
             } else {
                 statFile = new File(statFolder, name + ".csv");
             }
-            threads.add(new DocumentSignerThread(name, failureCallback, url, data, workerNameOrId, maxWaitTime,
+            threads.add(new DocumentSignerThread(name, failureCallback, url, useWorkerServlet, data, workerNameOrId, maxWaitTime,
                     random.nextInt(), warmupTime, limitedTime, statFile));
         }
     }

@@ -40,12 +40,15 @@ public class DocumentSigner implements Task {
     private static final String BOUNDARY = "------------------signserver";
     
     private String url;
-
+    private boolean useWorkerServlet;
+    
     private String workerNameOrId;
     private byte[] data;
 
-    public DocumentSigner(final String url, final byte[] data, final String workerNameOrId, final Random random) {
+    public DocumentSigner(final String url, final boolean useWorkerServlet, 
+            final byte[] data, final String workerNameOrId, final Random random) {
         this.url = url;
+        this.useWorkerServlet = useWorkerServlet;
         this.workerNameOrId = workerNameOrId;
         this.data = data;
     }
@@ -72,7 +75,15 @@ public class DocumentSigner implements Task {
         URL url;
         URLConnection urlConn;
 
-        url = new URL(this.url);
+        final String requestUrl;
+        
+        if (useWorkerServlet) {
+            requestUrl = this.url + "/" + workerNameOrId;
+        } else {
+            requestUrl = this.url;
+        }
+
+        url = new URL(requestUrl);
 
         // Take start time
         final long startMillis = System.currentTimeMillis();
@@ -90,32 +101,36 @@ public class DocumentSigner implements Task {
         sb.append("--" + BOUNDARY);
         sb.append(CRLF);
         
-        String workerName = null;
-        int workerId = 0;
         
         OutputStream out = null;
         
-        try {
-            workerId = Integer.parseInt(workerNameOrId);
-        } catch (NumberFormatException e) {
-            workerName = workerNameOrId;
+        if (!useWorkerServlet) {
+            String workerName = null;
+            int workerId = 0;
+            
+            try {
+                workerId = Integer.parseInt(workerNameOrId);
+            } catch (NumberFormatException e) {
+                workerName = workerNameOrId;
+            }
+            
+            if (workerName == null) {
+                sb.append("Content-Disposition: form-data; name=\"workerId\"");
+                sb.append(CRLF);
+                sb.append(CRLF);
+                sb.append(workerId);
+            } else {
+                sb.append("Content-Disposition: form-data; name=\"workerName\"");
+                sb.append(CRLF);
+                sb.append(CRLF);
+                sb.append(workerName);
+            }
+            sb.append(CRLF);
+            
+            sb.append("--" + BOUNDARY);
+            sb.append(CRLF);
         }
-        
-        if (workerName == null) {
-            sb.append("Content-Disposition: form-data; name=\"workerId\"");
-            sb.append(CRLF);
-            sb.append(CRLF);
-            sb.append(workerId);
-        } else {
-            sb.append("Content-Disposition: form-data; name=\"workerName\"");
-            sb.append(CRLF);
-            sb.append(CRLF);
-            sb.append(workerName);
-        }
-        sb.append(CRLF);
-        
-        sb.append("--" + BOUNDARY);
-        sb.append(CRLF);
+
         sb.append("Content-Disposition: form-data; name=\"datafile\"");
         sb.append("; filename=\"");
         // don't care about the actual file name for now...

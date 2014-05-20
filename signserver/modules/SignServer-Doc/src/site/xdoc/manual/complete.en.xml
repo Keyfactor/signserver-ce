@@ -43,6 +43,7 @@ lookup the validation of a given certificate.
                     <ul>
                         <li>Underlaying CESeCore library upgraded to version 6.x</li>
                         <li>Separation between community and enterprise editions</li>
+                        <li>Separate worker and crypto tokens</li>
                     </ul>
                 </subsection>
                 <subsection name="Changes between version 3.4 and 3.5">
@@ -265,7 +266,8 @@ PKCS11 Crypto Token to connect to different PKCS11 implementations.
                 <table>
                     <tr><th>Term</th><th>Explanation</th>
                     </tr><tr><td>Signer</td><td>A Processable service performing signatures upon requests. This could be a ready made signer or a custom developed one.</td>
-                    </tr><tr><td>Crypto Token (former Sign Token)</td><td>A Crypto Token is a name for the entity containing the private key and is responsible for its cryptographic operations. Every Processable have a Crypto Token that can be a PKCS12, Smart Card or HSM connection.</td>
+                    </tr><tr><td>Crypto Token (former Sign Token)</td><td>A Crypto Token is a name for the entity containing the private key and is responsible for its cryptographic operations. Each worker can contain a crypto token or reference a crypto token from an other worker.</td>
+                    </tr><tr><td>Crypto Worker</td><td>Is a worker not performing any operations on its own and instead only hosts a Crypto Token that can be referenced by other workers.</td>
                     </tr><tr><td>Extended Crypto Token</td><td>An enhanced Crypto Token with support for symmetric key operations.</td>
                     </tr><tr><td>PKCS11CryptoToken</td><td>A Crypto Token able to communicate with Hardware Security Modules through the standard PKCS11 interface.</td>
                     </tr><tr><td>TimedService (former Service)</td><td>A TimedService is a task that is run on a timely basis, performing maintenance tasks like changing active key or generate a report.</td>
@@ -893,6 +895,33 @@ bin/signserver reload 4711
                     </source>
                 </subsection>
 
+                <subsection name="Quick start demo setup">
+                    <p>
+This is a quick start guide to quickly get you setup with a crypto token and a set of workers/signers for testing and demonstration purposes.
+                    </p>
+                    <subsubsection name="Setup a sample crypto token">
+<p>Set up a crypto token called CryptoTokenSoft which uses a hard coded software keystore:</p>
+<code>$ bin/signserver setproperties doc/sample-configs/soft-crypto-configuration.properties</code>
+                        <p>
+Activate the configuration using the assigned worker ID that was printed (for instance 1):
+                        </p>
+<code>$ bin/signserver reload 1</code>
+                    </subsubsection>
+                    <subsubsection name="Add sample workers">
+                        <p>
+Workers can then be set up using the setproperties followed by the reload command. Sample configurations
+are available in doc/sample-configs which by default uses the sample crypto token:
+                        </p>
+<code>$ bin/signserver setproperties doc/sample-configs/CONFIGURATION.properties</code>
+                        <p>
+Activate the configuration using the assigned worker ID that was printed (for instance 2):
+                        </p>
+<code>$ bin/signserver reload 2</code>
+<p>See the following section for some example for specific workers.</p>
+                    </subsubsection>
+
+                </subsection>
+
                 <subsection name="Quick start demo Timestamp signer">
                     <p>
 This is a quick start guide to quickly get you setup with a demo Time Stamp service (TSA according to RFC3161). It will let you quickly get a feeling how the structure of the SignServer works, so you can move on to more advanced features described in the manual.
@@ -906,13 +935,18 @@ deploying SignServer. Alternativly, set includemodulesinbuild=true to have all
 modules built in.
                         </li>
                         <li>
+Setup the soft crypto token (if not already done) and activate it with its ID:<br/>
+<code>$ bin/signserver setproperties doc/sample-configs/soft-crypto-configuration.properties<br/>
+$ bin/signserver reload 1</code>
+                        </li>
+                        <li>
 Load the Timestamp demo configuration and notice the generated worker ID (in this
-example 1):<br/>
+example 2):<br/>
 <code>$ bin/signserver setproperties doc/sample-configs/qs_timestamp_configuration.properties</code>
                         </li>
                         <li>
 Activate the configuration with:<br/>
-<code>$ bin/signserver reload 1</code>
+<code>$ bin/signserver reload 2</code>
                         </li>
                         <li>
 You can check the status and configuration with:<br/>
@@ -940,39 +974,14 @@ deploying SignServer. Alternativly, set includemodulesinbuild=true to have all
 modules built in.
                         </li>
                         <li>
+Setup the soft crypto token (if not already done) and activate it with its ID:<br/>
+<code>$ bin/signserver setproperties doc/sample-configs/soft-crypto-configuration.properties<br/>
+$ bin/signserver reload 1</code>
+                        </li>
+                        <li>
 Load the PDF signer demo configuration and notice the generated worker ID (in this
-example 2):<br/>
-<code>$ bin/signserver setproperties doc/sample-configs/qs_pdfsigner_configuration.properties</code>
-                        </li>
-                        <li>
-Activate the configuration with:<br/>
-<code>$ bin/signserver reload 2</code>
-                        </li>
-                        <li>
-You can check the status and configuration with:<br/>
-<code>$ bin/signserver getstatus complete all</code>
-                        </li>
-</ol>
-<p>
-You can now, with your web browser, access the URL <a href="http://localhost:8080/signserver/demo/pdfsign.jsp">http://localhost:8080/signserver/demo/pdfsign.jsp</a> to get PDF documents signed.
-</p>
-</subsection>
-
-                <subsection name="Quick start demo OOXML signer">
-                    <p>
-To install the OOXML signer you can issue the following commands.
-                    </p>
-                    <ol>
-                        <li>
-Make sure the ooxmlsigner module is built in by setting module.ooxmlsigner.enabled=true and
-module.ooxmlsigner.include=true in signserver_build.properties before building and
-deploying SignServer. Alternativly, set includemodulesinbuild=true to have all
-modules built in.
-                        </li>
-                        <li>
-Load the OOXML signer demo configuration and notice the generated worker ID (in this
 example 3):<br/>
-<code>$ bin/signserver setproperties doc/sample-configs/qs_ooxmlsigner_configuration.properties</code>
+<code>$ bin/signserver setproperties doc/sample-configs/qs_pdfsigner_configuration.properties</code>
                         </li>
                         <li>
 Activate the configuration with:<br/>
@@ -982,72 +991,10 @@ Activate the configuration with:<br/>
 You can check the status and configuration with:<br/>
 <code>$ bin/signserver getstatus complete all</code>
                         </li>
-                    </ol>
+</ol>
 <p>
-You can now, with your web browser, access the URL <a href="http://localhost:8080/signserver/demo/ooxmlsign.jsp">http://localhost:8080/signserver/demo/ooxmlsign.jsp</a> to get any Office Open XML documents signed (ex: MS Office 2007 Word document, Excel document, Power Point presentation...).
+You can now, with your web browser, access the URL <a href="http://localhost:8080/signserver/demo/pdfsign.jsp">http://localhost:8080/signserver/demo/pdfsign.jsp</a> to get PDF documents signed.
 </p>
-</subsection>
-
-                <subsection name="Quick start demo ODF signer">
-                    <p>
-To install the ODF signer you can issue the following commands.
-                    </p>
-                    <ol>
-                        <li>
-Make sure the odfsigner module is built in by setting module.odfsigner.enabled=true and
-module.odfsigner.include=true in signserver_build.properties before building and
-deploying SignServer. Alternativly, set includemodulesinbuild=true to have all
-modules built in.
-                        </li>
-                        <li>
-Load the ODF signer demo configuration and notice the generated worker ID (in this
-example 4):<br/>
-<code>$ bin/signserver setproperties doc/sample-configs/qs_odfsigner_configuration.properties</code>
-                        </li>
-                        <li>
-Activate the configuration with:<br/>
-<code>$ bin/signserver reload 4</code>
-                        </li>
-                        <li>
-You can check the status and configuration with:<br/>
-<code>$ bin/signserver getstatus complete all</code>
-                        </li>
-                    </ol>
-                    <p>
-You can now, with your web browser, access the URL <a href="http://localhost:8080/signserver/demo/odfsign.jsp">http://localhost:8080/signserver/demo/odfsigner.jsp</a> to get any Open Document Format documents signed (ex: documents produced by OpenOffice.org or LibreOffice).
-                    </p>
-                </subsection>
-
-
-                <subsection name="Quick start demo XML signer">
-                    <p>
-To install the demo XML signer you can issue the following commands.
-                    </p>
-                    <ol>
-                        <li>
-Make sure the xmlsigner module is built in by setting module.xmlsigner.enabled=true and
-module.xmlsigner.include=true in signserver_build.properties before building and
-deploying SignServer. Alternativly, set includemodulesinbuild=true to have all
-modules built in.
-                        </li>
-                        <li>
-Load the XML signer demo configuration and notice the generated worker ID (in this
-example 5):<br/>
-<code>$ bin/signserver setproperties doc/sample-configs/qs_xmlsigner_configuration.properties</code>
-                        </li>
-                        <li>
-Activate the configuration with:<br/>
-<code># bin/signserver reload 5</code>
-<br/>
-                        </li>
-                        <li>
-You can check the status and configuration with:<br/>
-<code>$ bin/signserver getstatus complete all</code>
-                        </li>
-                    </ol>
-                    <p>
-You can now, with your web browser, access the URL <a href="http://localhost:8080/signserver/demo/xmlsign.jsp">http://localhost:8080/signserver/demo/xmlsign.jsp</a> to get XML documents signed.
-                    </p>
                 </subsection>
 
                 <subsection name="Quick start demo XML validator">
@@ -1126,6 +1073,11 @@ deploying SignServer. Alternativly, set includemodulesinbuild=true to have all
 modules built in.
                         </li>
                         <li>
+Setup the soft crypto token (if not already done) and activate it with its ID:<br/>
+<code>$ bin/signserver setproperties doc/sample-configs/soft-crypto-configuration.properties<br/>
+$ bin/signserver reload 1</code>
+                        </li>
+                        <li>
 Load the MRTD SOD signer demo configuration and notice the generated worker ID (in this
 example 8):<br/>
 <code>$ bin/signserver setproperties doc/sample-configs/qs_mrtdsodsigner_configuration.properties</code>
@@ -1147,36 +1099,40 @@ This HTML form also functions as a sample to show how you can make HTTP requests
                     </p>
                     <subsubsection name="Production configuration with HSM">
                         <p>
-To install a production signer using an HSM instead of the demo signer you can
-edit doc/sample-configs/qs_mrtdsodsigner_configuration.properties and change from
-SoftCryptoToken to PKCS11CryptoToken and comment all properties under
-SoftCryptoToken properties and instead fill in all properties under
-PKCS11CryptoToken properties and then run:
-<br/>(note after changing properties in the file it needs to be loaded again
+To install a production signer using an HSM instead of the CryptoTokenSoft, make 
+a copy of doc/sample-configs/pkcs11-crypto-configuration.properties and configure
+the necessary properties for the HSM and apply that file using setproperties and
+reload with its worker ID.<br/>
+(note after changing properties in the file it needs to be loaded again
 with setproperties)
                         </p>
                         <p>
+Now when configuring a worker make sure to have the worker property CRYPTOTOKEN=CryptoTokenP11.
+                        </p>
+                        <p>
 Before starting with an HSM installation you should read the about the
-<a href="plugins.html#PKCS11CryptoToken">PKCS11CryptoToken</a> in the plugins
+    <a href="plugins.html#PKCS11CryptoToken">PKCS11CryptoToken</a> in the plugins
 section of the manual.
                         </p>
 <source>
-bin/signserver setproperties doc/sample-configs/qs_mrtdsodsigner_configuration.properties
-bin/signserver getconfig 9
+bin/signserver setproperties doc/sample-configs/pkcs11-crypto-configuration.properties
 bin/signserver reload 9
+bin/signserver setproperties doc/sample-configs/qs_mrtdsodsigner_configuration.properties
+bin/signserver setproperty 10 CRYPTOTOKEN CryptoTokenP11
+bin/signserver reload 10
 bin/signserver activatecryptotoken 9 tokenpin
 bin/signserver generatecertreq 9 "C=SE,CN=MRTD SOD Signer" SHA256WithRSA mrtdsodsigner.req
 </source>
                         <p>
-Where 9 is the signerId that you got when running the 'setproperties' command.<br/>
+Where 9 is the workerId that you got when running the 'setproperties' command for the pkcs11 crypto token.<br/>
 Tokenpin is the password for the HSM slot configured in the properties file.<br/>
 This will create a certificate request that you can get signed by your CA. When you have received the response you can import it and the CA certficate.
 If you have the returned signer certificate as cert.pem and the CA certificate as cacert.pem, then:
                         </p>
 <source>
 cat cert.pem cacert.pem &gt; certchain.pem
-bin/signserver uploadsignercertificate 9 glob cert.pem
-bin/signserver uploadsignercertificatechain 9 glob certchain.pem
+bin/signserver uploadsignercertificate 10 glob cert.pem
+bin/signserver uploadsignercertificatechain 10 glob certchain.pem
 bin/signserver reload 9
 </source>
                         <p>
@@ -4807,6 +4763,23 @@ Current configuration is now activated.
             </section>
 
             <section name="Other workers">
+                <subsection name="CryptoWorker">
+                    <p>
+The Crypto Worker is a worker not performing any operations on its own and instead only hosts a Crypto Token that can be referenced by other workers.
+                    </p>
+                    <p>
+Fully qualified class name: <b>org.signserver.server.signers.CryptoWorker</b>
+                    </p>
+                    <subsubsection name="Worker properties">
+                        <p>
+<b>NOCERTIFICATES</b>=true: Tells SignServer to not warn if no signer certificate is configured for this worker. This is normally the case for a crypto worker as the certificte should instead be configured in the worker using the crypto token.
+                        </p>
+                        <p>
+See also the the <a href="complete.en.html#Available%20CryptoTokens">Available CryptoTokens</a> for the required properties of the configured crypto token.
+                        </p>
+                    </subsubsection>
+                </subsection>
+
                 <subsection name="RenewalWorker">
                     
                     <subsubsection name="Overview">
@@ -5222,13 +5195,38 @@ The following properties can currently be specified in the global configuration:
                     </subsubsection>
                     <subsubsection name="Example usage">
                         <p>
-Edit qs_pdfsigner_configuration.properties and choose the sign token setting for the PKCS11 sign token. Run the following command to set up a PDF signer using the PKCS11 properties configured:
-bin/signserver setproperties qs_pdfsigner_configuration.properties
+Edit (preferably a copy of) pkcs11-crypto-configuration.properties to match your PKCS#11 token. Run the following command to set up the token:
+                        </p>
+<code>bin/signserver setproperties pkcs11-crypto-configuragtion.properties</code>
+                        <p>
+Reload the configuration using the ID that was printed (in this example 8):
+                        </p>
+                        <code>
+bin/signserver reload 8
+                        </code>
+                        <p>
+Activate the crypto token by specifying the PIN code:
+                        </p>
+                        <code>
+bin/signserver activatecryptotoken 8
+                        </code>
+                        <p>
+Unless your DEFAULTKEY worker property points to an existing key in the HSM the activation will look like it failed. Don't worry and instead continue creating a key that can be used for testing slot activation:
                         </p>
                         <p>
-Generate a keypair for the signer:
-bin/signserver generatekey 8 -alias defaultKey -keyalg RSA -keyspec 2048
+Generate a keypair in the token to be used as test key:
                         </p>
+                        <code>
+bin/signserver generatekey 8 -alias testkey1 -keyalg RSA -keyspec 2048
+                        </code>
+                        <p>
+Set the key as test key:
+                        </p>
+                        <code>
+bin/signserver setproperty 8 DEFAULTKEY testkey1<br/>
+bin/signserver reload 8<br/>
+bin/signserver activatecryptotoken 8
+                        </code>
                         <p>
 Test the keypair:
 bin/signserver testkey 8
@@ -5238,7 +5236,7 @@ You also need a certificate for the signer. Generate a certificate request with 
 bin/signserver generatecertreq 8 "CN=PKCS11 Signer token" SHA1WithRSA /tmp/certreq.pem
                         </p>
                         <p>
-Add a user in EJBCA with a certificate profile suitable for signing, and enrol for a "Server Certificate" using the public web pages.
+Add a user in EJBCA with a certificate profile suitable for signing, and enroll for a "Server Certificate" using the public web pages.
                         </p>
                         <p>
 Create the certificate chain file with the command:
@@ -5248,11 +5246,10 @@ cat /tmp/cert.pem /tmp/AdminCA1.pem > /tmp/certchain.pem
 The signer certificate must be first, and the root CA certificate last.
                         </p>
                         <p>
+The signer certificate should then be uploaded to the worker wich should use it.
 Upload the signing certificate chain to the signer using the command:
-bin/signserver uploadsignercertificatechain 8 GLOB /tmp/certchain.pem
-                        </p>
-                        <p>
-After the certificate chain has been uploaded to the server, the configuration must be reloaded and the server must be restarted. It is not sufficient to only reload the configuration.
+bin/signserver uploadsignercertificatechain 9 GLOB /tmp/certchain.pem
+bin/signserver reload 9
                         </p>
                     </subsubsection>
                 </subsection>

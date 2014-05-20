@@ -80,6 +80,7 @@ public class P11SignTest extends ModulesTestCase {
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(P11SignTest.class);
     
+    private static final int CRYPTO_TOKEN = 20100;
     private static final int WORKER_PDF = 20000;
     private static final int WORKER_TSA = 20001;
     private static final int WORKER_SOD = 20002;
@@ -135,8 +136,29 @@ public class P11SignTest extends ModulesTestCase {
     protected void tearDown() throws Exception {
         super.tearDown();
     }
-    
-    private void setPDFSignerProperties(final int workerId, final boolean cache) throws Exception {
+
+    private void setupCryptoTokenProperties(final int tokenId, final boolean cache) throws Exception {
+        // Setup token
+        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + tokenId + ".CLASSPATH", "org.signserver.server.signers.CryptoWorker");
+        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + tokenId + ".SIGNERTOKEN.CLASSPATH", PKCS11CryptoToken.class.getName());
+        workerSession.setWorkerProperty(tokenId, "NAME", "TestCryptoTokenP11");
+        workerSession.setWorkerProperty(tokenId, "SHAREDLIBRARY", sharedLibrary);
+        workerSession.setWorkerProperty(tokenId, "SLOT", slot);
+        workerSession.setWorkerProperty(tokenId, "PIN", pin);
+        workerSession.setWorkerProperty(tokenId, "DEFAULTKEY", existingKey1); // Test key
+        workerSession.setWorkerProperty(tokenId, "CACHE_PRIVATEKEY", String.valueOf(cache));
+    }
+
+    private void setPDFSignerOnlyProperties(final int workerId, final boolean cache) throws Exception {
+        // Setup worker
+        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + workerId + ".CLASSPATH", "org.signserver.module.pdfsigner.PDFSigner");
+        workerSession.setWorkerProperty(workerId, "NAME", "PDFSignerP11");
+        workerSession.setWorkerProperty(workerId, "AUTHTYPE", "NOAUTH");
+        workerSession.setWorkerProperty(workerId, "CRYPTOTOKEN", "TestCryptoTokenP11");
+        workerSession.setWorkerProperty(workerId, "DEFAULTKEY", existingKey1);
+    }
+
+    private void setPDFSignerWithCryptoProperties(final int workerId, final boolean cache) throws Exception {
         // Setup worker
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + workerId + ".CLASSPATH", "org.signserver.module.pdfsigner.PDFSigner");
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", PKCS11CryptoToken.class.getName());
@@ -148,11 +170,11 @@ public class P11SignTest extends ModulesTestCase {
         workerSession.setWorkerProperty(workerId, "DEFAULTKEY", existingKey1);
         workerSession.setWorkerProperty(workerId, "CACHE_PRIVATEKEY", String.valueOf(cache));
     }
-    
+
     /** Tests that the getCertificateRequest method generates a request. */
     public void testGenerateCSR() throws Exception {
         try {
-            setPDFSignerProperties(WORKER_PDF, false);
+            setPDFSignerWithCryptoProperties(WORKER_PDF, false);
             workerSession.reloadConfiguration(WORKER_PDF);
             
             // Tests generating a CSR
@@ -163,7 +185,7 @@ public class P11SignTest extends ModulesTestCase {
             assertTrue(csr.getBase64CertReq().length > 0);
             
             // Test for an non-existing key label
-            setPDFSignerProperties(WORKER_PDF, false);
+            setPDFSignerWithCryptoProperties(WORKER_PDF, false);
             workerSession.setWorkerProperty(WORKER_PDF, "DEFAULTKEY", "NON-EXISTING-KEY-LABEL");
             workerSession.reloadConfiguration(WORKER_PDF);
             try {
@@ -177,13 +199,44 @@ public class P11SignTest extends ModulesTestCase {
             removeWorker(WORKER_PDF);
         }
     }
+    
+    /** Tests that the getCertificateRequest method generates a request. */
+    public void testGenerateCSR_separateToken() throws Exception {
+        try {
+            setupCryptoTokenProperties(CRYPTO_TOKEN, false);
+            setPDFSignerOnlyProperties(WORKER_PDF, false);
+            workerSession.reloadConfiguration(CRYPTO_TOKEN);
+            workerSession.reloadConfiguration(WORKER_PDF);
+
+            // Tests generating a CSR
+            PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + WORKER_PDF, null);
+            Base64SignerCertReqData csr = (Base64SignerCertReqData) getWorkerSession().getCertificateRequest(WORKER_PDF, certReqInfo, false);
+            assertNotNull(csr);
+            assertNotNull(csr.getBase64CertReq());
+            assertTrue(csr.getBase64CertReq().length > 0);
+
+            // Test for an non-existing key label
+            workerSession.setWorkerProperty(WORKER_PDF, "DEFAULTKEY", "NON-EXISTING-KEY-LABEL");
+            workerSession.reloadConfiguration(WORKER_PDF);
+            try {
+                certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + WORKER_PDF, null);
+                getWorkerSession().getCertificateRequest(WORKER_PDF, certReqInfo, false);
+                fail("Should have thrown exception as the DEFAULTKEY does not exist");
+            } catch (CryptoTokenOfflineException ok) { // NOPMD
+                // OK
+            }
+        } finally {
+            removeWorker(CRYPTO_TOKEN);
+            removeWorker(WORKER_PDF);
+        }
+    }
 
     /**
      * Tests setting up a PDF Signer, giving it a certificate and sign a document.
      */
     public void testPDFSigner_uncached() throws Exception {
         try {
-            setPDFSignerProperties(WORKER_PDF, false);
+            setPDFSignerWithCryptoProperties(WORKER_PDF, false);
             workerSession.reloadConfiguration(WORKER_PDF);
             
             pdfSignerTest();
@@ -191,17 +244,51 @@ public class P11SignTest extends ModulesTestCase {
             removeWorker(WORKER_PDF);
         }
     }
-    
+
+    /**
+     * Tests setting up a PDF Signer, giving it a certificate and sign a document.
+     */
+    public void testPDFSigner_uncached_separateToken() throws Exception {
+        try {
+            setupCryptoTokenProperties(CRYPTO_TOKEN, false);
+            setPDFSignerOnlyProperties(WORKER_PDF, false);
+            workerSession.reloadConfiguration(CRYPTO_TOKEN);
+            workerSession.reloadConfiguration(WORKER_PDF);
+
+            pdfSignerTest();
+        } finally {
+            removeWorker(CRYPTO_TOKEN);
+            removeWorker(WORKER_PDF);
+        }
+    }
+
     /**
      * Tests setting up a PDF Signer, giving it a certificate and sign a document.
      */
     public void testPDFSigner_cached() throws Exception {
         try {
-            setPDFSignerProperties(WORKER_PDF, true);
+            setPDFSignerWithCryptoProperties(WORKER_PDF, true);
             workerSession.reloadConfiguration(WORKER_PDF);
             
             pdfSignerTest();
         } finally {
+            removeWorker(WORKER_PDF);
+        }
+    }
+
+    /**
+     * Tests setting up a PDF Signer, giving it a certificate and sign a document.
+     */
+    public void testPDFSigner_cached_separateToken() throws Exception {
+        try {
+            setupCryptoTokenProperties(CRYPTO_TOKEN, true);
+            setPDFSignerOnlyProperties(WORKER_PDF, true);
+            workerSession.reloadConfiguration(CRYPTO_TOKEN);
+            workerSession.reloadConfiguration(WORKER_PDF);
+
+            pdfSignerTest();
+        } finally {
+            removeWorker(CRYPTO_TOKEN);
             removeWorker(WORKER_PDF);
         }
     }
@@ -806,6 +893,47 @@ public class P11SignTest extends ModulesTestCase {
             removeWorker(workerId);
         }
     }
+
+    public void testGenerateKey_separateToken() throws Exception {
+        LOG.info("testGenerateKey_separateToken");
+
+        final int tokenId = CRYPTO_TOKEN;
+        try {
+            setupCryptoTokenProperties(tokenId, false);
+            workerSession.reloadConfiguration(tokenId);
+
+            // Check available aliases
+            Set<String> aliases1 = getKeyAliases(tokenId);
+
+            if (aliases1.isEmpty()) {
+                throw new Exception("getKeyAliases is not working or the slot is empty");
+            }
+
+            // If the key already exists, try to remove it first
+            if (aliases1.contains(TEST_KEY_ALIAS)) {
+                workerSession.removeKey(tokenId, TEST_KEY_ALIAS);
+                aliases1 = getKeyAliases(tokenId);
+            }
+            if (aliases1.contains(TEST_KEY_ALIAS)) {
+                throw new Exception("Pre-condition failed: Key with alias " + TEST_KEY_ALIAS + " already exists and removing it failed");
+            }
+
+            // Generate a testkey
+            workerSession.generateSignerKey(tokenId, "RSA", "1024", TEST_KEY_ALIAS, pin.toCharArray());
+
+            // Now expect the new TEST_KEY_ALIAS
+            Set<String> expected = new HashSet<String>(aliases1);
+            expected.add(TEST_KEY_ALIAS);
+            Set<String> aliases2 = getKeyAliases(tokenId);
+            assertEquals("new key added", expected, aliases2);
+
+        } finally {
+            try {
+                workerSession.removeKey(tokenId, TEST_KEY_ALIAS);
+            } catch (SignServerException ignored) {}
+            removeWorker(tokenId);
+        }
+    }
     
     public void testRemoveKey() throws Exception {
         LOG.info("testRemoveKey");
@@ -843,7 +971,44 @@ public class P11SignTest extends ModulesTestCase {
             removeWorker(workerId);
         }
     }
-    
+
+    public void testRemoveKey_separateToken() throws Exception {
+        LOG.info("testRemoveKey_separateToken");
+
+        final int tokenId = CRYPTO_TOKEN;
+        try {
+            setCMSSignerProperties(tokenId, false);
+            workerSession.reloadConfiguration(tokenId);
+
+            // Check available aliases
+            Set<String> aliases1 = getKeyAliases(tokenId);
+
+            if (aliases1.isEmpty()) {
+                throw new Exception("getKeyAliases is not working or the slot is empty");
+            }
+
+            if (!aliases1.contains(TEST_KEY_ALIAS)) {
+                // Generate a testkey
+                workerSession.generateSignerKey(tokenId, "RSA", "1024", TEST_KEY_ALIAS, pin.toCharArray());
+                aliases1 = getKeyAliases(tokenId);
+            }
+            if (!aliases1.contains(TEST_KEY_ALIAS)) {
+                throw new Exception("Pre-condition failed: Key with alias " + TEST_KEY_ALIAS + " did not exist and it could not be created");
+            }
+
+            // Remove the key
+            workerSession.removeKey(tokenId, TEST_KEY_ALIAS);
+
+            // Now expect the TEST_KEY_ALIAS to have been removed
+            Set<String> aliases2 = getKeyAliases(tokenId);
+            Set<String> expected = new HashSet<String>(aliases1);
+            expected.remove(TEST_KEY_ALIAS);
+            assertEquals("new key removed", expected, aliases2);
+        } finally {
+            removeWorker(tokenId);
+        }
+    }
+
     /**
      * Test that missing the SHAREDLIBRARY property results
      * in a descriptive error reported by getFatalErrors().

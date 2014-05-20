@@ -22,6 +22,7 @@ import java.security.MessageDigest;
 import java.security.PrivateKey;
 import java.security.cert.*;
 import java.util.*;
+
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -36,6 +37,7 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.signserver.common.*;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.server.SignServerContext;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.test.utils.builders.CertBuilder;
 import org.signserver.test.utils.builders.CertExt;
@@ -1181,6 +1183,29 @@ public class PDFSignerUnitTest extends TestCase {
         // a large value
         assertCanSign(pdfbytes, signerKeyPair, certChain, signerCertificate, 15000 * 2 + 456);
     }
+
+    /**
+     * Test that setting both TSA_URL and TSA_WORKER results in a config error.
+     * 
+     * @throws Exception
+     */
+    public void test15TSA_URLandTSA_WORKERbothNotAllowed() throws Exception {
+        WorkerConfig workerConfig = new WorkerConfig();
+        
+        workerConfig.setProperty("NAME", "TestSigner100");
+        workerConfig.setProperty("TSA_URL", "http://localhost:8080/signserver/tsa?workerName=TimeStampSigner");
+        workerConfig.setProperty("TSA_WORKER", "TimeStampSigner2");
+        workerConfig.setProperty("NOCERTIFICATES", "true");
+        
+        final PDFSigner instance = new PDFSigner();
+        instance.init(WORKER1, workerConfig, null, null);
+
+        final List<String> fatalErrors = instance.getFatalErrors();
+        
+        assertTrue("Should contain error",
+                fatalErrors.contains("Can not specify " + PDFSigner.TSA_URL + " and " + PDFSigner.TSA_WORKER + " at the same time."));
+    }
+    
     
     /**
      * Tests that we don't get an exception trying to sign a document with the 

@@ -1659,7 +1659,7 @@ keystore and no truststore is used.
                         <p>
 <b>Keystore Type</b>: Type of the keystore. Should match the choosen keystore file
 path. Options are: JKS, PKCS12 or PKCS11. If PKCS11 is choosen the keystore file
-path should be the patch to the PKCS#11 shared library file.
+path should be the path to the PKCS#11 shared library file.
                         </p>
                     </subsubsection>
 

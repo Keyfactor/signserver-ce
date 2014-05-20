@@ -149,7 +149,7 @@ public class P11SignTest extends ModulesTestCase {
         workerSession.setWorkerProperty(tokenId, "CACHE_PRIVATEKEY", String.valueOf(cache));
     }
 
-    private void setPDFSignerOnlyProperties(final int workerId, final boolean cache) throws Exception {
+    private void setPDFSignerOnlyProperties(final int workerId) throws Exception {
         // Setup worker
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + workerId + ".CLASSPATH", "org.signserver.module.pdfsigner.PDFSigner");
         workerSession.setWorkerProperty(workerId, "NAME", "PDFSignerP11");
@@ -204,7 +204,7 @@ public class P11SignTest extends ModulesTestCase {
     public void testGenerateCSR_separateToken() throws Exception {
         try {
             setupCryptoTokenProperties(CRYPTO_TOKEN, false);
-            setPDFSignerOnlyProperties(WORKER_PDF, false);
+            setPDFSignerOnlyProperties(WORKER_PDF);
             workerSession.reloadConfiguration(CRYPTO_TOKEN);
             workerSession.reloadConfiguration(WORKER_PDF);
 
@@ -251,7 +251,7 @@ public class P11SignTest extends ModulesTestCase {
     public void testPDFSigner_uncached_separateToken() throws Exception {
         try {
             setupCryptoTokenProperties(CRYPTO_TOKEN, false);
-            setPDFSignerOnlyProperties(WORKER_PDF, false);
+            setPDFSignerOnlyProperties(WORKER_PDF);
             workerSession.reloadConfiguration(CRYPTO_TOKEN);
             workerSession.reloadConfiguration(WORKER_PDF);
 
@@ -282,7 +282,7 @@ public class P11SignTest extends ModulesTestCase {
     public void testPDFSigner_cached_separateToken() throws Exception {
         try {
             setupCryptoTokenProperties(CRYPTO_TOKEN, true);
-            setPDFSignerOnlyProperties(WORKER_PDF, true);
+            setPDFSignerOnlyProperties(WORKER_PDF);
             workerSession.reloadConfiguration(CRYPTO_TOKEN);
             workerSession.reloadConfiguration(WORKER_PDF);
 

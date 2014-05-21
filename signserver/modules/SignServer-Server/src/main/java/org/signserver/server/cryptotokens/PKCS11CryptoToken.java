@@ -415,72 +415,8 @@ public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2 {
 
     @Override
     public Collection<KeyTestResult> testKey(String alias, char[] authCode) throws CryptoTokenOfflineException, KeyStoreException {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(">testKey");
-        }
-        final Collection<KeyTestResult> result = new LinkedList<KeyTestResult>();
-
-        final byte signInput[] = "Lillan gick on the roaden ut.".getBytes();
-
-        //final KeyStore keyStore = getKeyStore(authCode);
         final KeyStore keyStore = delegate.getActivatedKeyStore();
-
-        try {
-            final Enumeration<String> e = keyStore.aliases();
-            while (e.hasMoreElements()) {
-                final String a = e.nextElement();
-                if (alias.equalsIgnoreCase(ICryptoToken.ALL_KEYS)
-                        || alias.equals(a)) {
-                    if (keyStore.isKeyEntry(a)) {
-                        String status;
-                        String publicKeyHash = null;
-                        boolean success = false;
-                        try {
-                            final PrivateKey privateKey = (PrivateKey) keyStore.getKey(a, authCode);
-                            final Certificate cert = keyStore.getCertificate(a);
-                            if (cert != null) {
-                                final KeyPair keyPair = new KeyPair(cert.getPublicKey(), privateKey);
-                                publicKeyHash = createKeyHash(keyPair.getPublic());
-                                final String sigAlg = suggestSigAlg(keyPair.getPublic());
-                                if (sigAlg == null) {
-                                    status = "Unknown key algorithm: "
-                                            + keyPair.getPublic().getAlgorithm();
-                                } else {
-                                    Signature signature = Signature.getInstance(sigAlg, keyStore.getProvider());
-                                    signature.initSign(keyPair.getPrivate());
-                                    signature.update(signInput);
-                                    byte[] signBA = signature.sign();
-
-                                    Signature verifySignature = Signature.getInstance(sigAlg);
-                                    verifySignature.initVerify(keyPair.getPublic());
-                                    verifySignature.update(signInput);
-                                    success = verifySignature.verify(signBA);
-                                    status = success ? "" : "Test signature inconsistent";
-                                }
-                            } else {
-                                status = "Not testing keys with alias "
-                                        + a + ". No certificate exists.";
-                            }
-                        } catch (ClassCastException ce) {
-                            status = "Not testing keys with alias "
-                                    + a + ". Not a private key.";
-                        } catch (Exception ex) {
-                            LOG.error("Error testing key: " + a, ex);
-                            status = ex.getMessage();
-                        }
-                        result.add(new KeyTestResult(a, success, status,
-                                publicKeyHash));
-                    }
-                }
-            }
-        } catch (KeyStoreException ex) {
-            throw new CryptoTokenOfflineException(ex);
-        }
-
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("<testKey");
-        }
-        return result;
+        return CryptoTokenHelper.testKey(keyStore, alias, authCode, keyStore.getProvider().getName());
     }
 
     @Override

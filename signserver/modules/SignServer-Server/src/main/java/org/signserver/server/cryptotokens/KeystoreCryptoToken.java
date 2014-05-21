@@ -460,78 +460,10 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2 {
     public Collection<KeyTestResult> testKey(final String alias,
             final char[] authCode) throws CryptoTokenOfflineException,
             KeyStoreException {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("testKey for alias: " + alias);
-        }
-
-        final Collection<KeyTestResult> result
-                = new LinkedList<KeyTestResult>();
-
-        final byte signInput[] = "Lillan gick on the roaden ut.".getBytes();
-
+        final KeyStore keyStore;
         try {
-
-            final KeyStore keystore = getKeystore(keystoretype, keystorepath,
+            keyStore = getKeystore(keystoretype, keystorepath,
                     authCode == null ? authenticationCode : authCode);
-
-            final Enumeration<String> e = keystore.aliases();
-            while( e.hasMoreElements() ) {
-                final String keyAlias = e.nextElement();
-                if (alias.equalsIgnoreCase(ICryptoToken.ALL_KEYS)
-                        || alias.equals(keyAlias)) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("checking keyAlias: " + keyAlias);
-                    }
-
-                    if (keystore.isKeyEntry(keyAlias)) {
-                        LOG.debug("--keyEntry: " + keyAlias);
-                        String status;
-                        String publicKeyHash = null;
-                        boolean success = false;
-                        try {
-                            final PrivateKey privateKey = (PrivateKey)
-                                    keystore.getKey(keyAlias, authCode);
-                            final Certificate entryCert =
-                                    keystore.getCertificate(keyAlias);
-                            if (entryCert != null) {
-                                final KeyPair keyPair = new KeyPair(
-                                        entryCert.getPublicKey(), privateKey);
-                                publicKeyHash = CryptoTokenBase
-                                        .createKeyHash(keyPair.getPublic());
-                                final String sigAlg = CryptoTokenBase
-                                        .suggestSigAlg(keyPair.getPublic());
-                                if (sigAlg == null) {
-                                    status = "Unknown key algorithm: "
-                                        + keyPair.getPublic().getAlgorithm();
-                                } else {
-                                    Signature signature = Signature.getInstance(sigAlg, "BC");
-                                    signature.initSign(keyPair.getPrivate());
-                                    signature.update(signInput);
-                                    byte[] signBA = signature.sign();
-
-                                    Signature verifySignature = Signature.getInstance(sigAlg);
-                                    verifySignature.initVerify(keyPair.getPublic());
-                                    verifySignature.update(signInput);
-                                    success = verifySignature.verify(signBA);
-                                    status = success
-                                            ? "" : "Test signature inconsistent";
-                                }
-                            } else {
-                                status = "Not testing keys with alias "
-                                        + keyAlias + ". No certificate exists.";
-                            }
-                        } catch (ClassCastException ce) {
-                            status = "Not testing keys with alias "
-                                    + keyAlias + ". Not a private key.";
-                        } catch (Exception ex) {
-                            LOG.error("Error testing key: " + keyAlias, ex);
-                            status = ex.getMessage();
-                        }
-                        result.add(new KeyTestResult(keyAlias, success, status,
-                                publicKeyHash));
-                    }
-                }
-            }
         } catch (CertificateException ex) {
             throw new CryptoTokenOfflineException(ex);
         } catch (NoSuchProviderException ex) {
@@ -542,11 +474,8 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2 {
             throw new CryptoTokenOfflineException(ex);
         } catch (IOException ex) {
             throw new CryptoTokenOfflineException(ex);
-        } catch (KeyStoreException ex) {
-            throw new CryptoTokenOfflineException(ex);
         }
-
-        return result;
+        return CryptoTokenHelper.testKey(keyStore, alias, authCode, "BC");
     }
 
     @Override

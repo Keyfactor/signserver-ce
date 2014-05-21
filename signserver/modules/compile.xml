@@ -317,10 +317,15 @@ includemodulesinbuild               = ${includemodulesinbuild}
             </zipfileset>
         </zip>
         <delete file="LICENSE"/>
-        <checksum file="${zip.dest.file}" algorithm="SHA1" forceOverwrite="yes"/>
+        <checksum file="${zip.dest.file}" algorithm="SHA1" forceOverwrite="yes" format="MD5SUM"/>
         <checksum file="${zip.dest.file}" algorithm="SHA1" property="zip.dest.file.sha1"/>
-        <echo>Released file: ${zip.dest.file}
-SHA1 checksum: ${zip.dest.file.sha1}</echo>
+        <checksum file="${zip.dest.file}" algorithm="SHA-256" forceOverwrite="yes" format="MD5SUM"/>
+        <checksum file="${zip.dest.file}" algorithm="SHA-256" property="zip.dest.file.sha256"/>
+        <echo>
+File:             ${zip.dest.file}
+SHA1 checksum:    ${zip.dest.file.sha1}
+SHA-256 checksum: ${zip.dest.file.sha256}
+        </echo>
     </target>
 
     <target name="-release:source-zip-lgpl21" depends="init,clean,-init-release-patternsets">
@@ -335,10 +340,15 @@ SHA1 checksum: ${zip.dest.file.sha1}</echo>
             </zipfileset>
         </zip>
         <delete file="LICENSE"/>
-        <checksum file="${zip.src.dest.file}" algorithm="SHA1" forceOverwrite="yes"/>
+        <checksum file="${zip.src.dest.file}" algorithm="SHA1" forceOverwrite="yes" format="MD5SUM"/>
         <checksum file="${zip.src.dest.file}" algorithm="SHA1" property="zip.src.dest.file.sha1"/>
-        <echo>Released file: ${zip.src.dest.file}
-SHA1 checksum: ${zip.src.dest.file.sha1}</echo>
+        <checksum file="${zip.src.dest.file}" algorithm="SHA-256" forceOverwrite="yes" format="MD5SUM"/>
+        <checksum file="${zip.src.dest.file}" algorithm="SHA-256" property="zip.src.dest.file.sha256"/>
+        <echo>
+File:             ${zip.src.dest.file}
+SHA1 checksum:    ${zip.src.dest.file.sha1}
+SHA-256 checksum: ${zip.src.dest.file.sha256}
+        </echo>
     </target>
 
     <target name="-release:source-tarball-lgpl21" depends="init,clean,-init-release-patternsets">
@@ -357,10 +367,15 @@ SHA1 checksum: ${zip.src.dest.file.sha1}</echo>
         <gzip destfile="${tgz.src.tar.gz}" src="${tgz.src.tar.file}"/>
         <delete file="${tgz.src.tar.file}"/>
         <delete file="LICENSE"/>
-        <checksum file="${tgz.src.tar.gz}" algorithm="SHA1" forceOverwrite="yes"/>
+        <checksum file="${tgz.src.tar.gz}" algorithm="SHA1" forceOverwrite="yes" format="MD5SUM"/>
         <checksum file="${tgz.src.tar.gz}" algorithm="SHA1" property="tgz.src.tar.gz.sha1"/>
-        <echo>Released file: ${tgz.src.tar.gz}
-SHA1 checksum: ${tgz.src.tar.gz.sha1}</echo>
+        <checksum file="${tgz.src.tar.gz}" algorithm="SHA-256" forceOverwrite="yes" format="MD5SUM"/>
+        <checksum file="${tgz.src.tar.gz}" algorithm="SHA-256" property="tgz.src.tar.gz.sha256"/>
+        <echo>
+File:             ${tgz.src.tar.gz}
+SHA1 checksum:    ${tgz.src.tar.gz.sha1}
+SHA-256 checksum: ${tgz.src.tar.gz.sha256}
+        </echo>
     </target>
 
     <target name="release:binary-tarball" depends="init,build,-init-release-patternsets" description="Make a binary tarball for SignServer release">
@@ -380,10 +395,15 @@ SHA1 checksum: ${tgz.src.tar.gz.sha1}</echo>
         <gzip destfile="${tgz.bin.tar.gz}" src="${tgz.bin.tar}"/>
         <delete file="${tgz.bin.tar}"/>
         <delete file="LICENSE"/>
-        <checksum file="${tgz.bin.tar.gz}" algorithm="SHA1" forceOverwrite="yes"/>
+        <checksum file="${tgz.bin.tar.gz}" algorithm="SHA1" forceOverwrite="yes" format="MD5SUM"/>
         <checksum file="${tgz.bin.tar.gz}" algorithm="SHA1" property="tgz.bin.tar.gz.sha1"/>
-        <echo>Released file: ${tgz.bin.tar.gz}
-SHA1 checksum: ${tgz.bin.tar.gz.sha1}</echo>
+        <checksum file="${tgz.bin.tar.gz}" algorithm="SHA-256" forceOverwrite="yes" format="MD5SUM"/>
+        <checksum file="${tgz.bin.tar.gz}" algorithm="SHA-256" property="tgz.bin.tar.gz.sha256"/>
+        <echo>
+File:             ${tgz.bin.tar.gz}
+SHA1 checksum:    ${tgz.bin.tar.gz.sha1}
+SHA-256 checksum: ${tgz.bin.tar.gz.sha1}
+        </echo>
     </target>
     
     <target name="release:binary-zip" depends="init,build,-init-release-patternsets" description="Make a binary zip for SignServer release">
@@ -400,10 +420,15 @@ SHA1 checksum: ${tgz.bin.tar.gz.sha1}</echo>
             </zipfileset>
         </zip>
         <delete file="LICENSE"/>
-        <checksum file="${zip.bin}" algorithm="SHA1" forceOverwrite="yes"/>
+        <checksum file="${zip.bin}" algorithm="SHA1" forceOverwrite="yes" format="MD5SUM"/>
         <checksum file="${zip.bin}" algorithm="SHA1" property="zip.bin.sha1"/>
-        <echo>Released file: ${zip.bin}
-SHA1 checksum: ${zip.bin.sha1}</echo>
+        <checksum file="${zip.bin}" algorithm="SHA-256" forceOverwrite="yes" format="MD5SUM"/>
+        <checksum file="${zip.bin}" algorithm="SHA-256" property="zip.bin.sha256"/>
+        <echo>
+File:             ${zip.bin}
+SHA1 checksum:    ${zip.bin.sha1}
+SHA-256 checksum: ${zip.bin.sha256}
+        </echo>
     </target>
 
 

@@ -149,9 +149,7 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
     @Override
     protected List<String> getFatalErrors() {
         final LinkedList<String> errors = new LinkedList<String>(super.getFatalErrors());
-        if (!Boolean.parseBoolean(config.getProperty("NOCERTIFICATES", Boolean.FALSE.toString()))) {
-            errors.addAll(getSignerCertificateFatalErrors());
-        }
+        errors.addAll(getSignerCertificateFatalErrors());
         errors.addAll(configErrors);
         return errors;
     }

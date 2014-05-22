@@ -1194,7 +1194,6 @@ public class PDFSignerUnitTest extends TestCase {
         workerConfig.setProperty("NAME", "TestSigner100");
         workerConfig.setProperty("TSA_URL", "http://localhost:8080/signserver/tsa?workerName=TimeStampSigner");
         workerConfig.setProperty("TSA_WORKER", "TimeStampSigner2");
-        workerConfig.setProperty("NOCERTIFICATES", "true");
         
         final PDFSigner instance = new PDFSigner() {
             @Override

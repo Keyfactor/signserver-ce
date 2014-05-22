@@ -68,7 +68,7 @@ public class InternalTSAClient implements TSAClient {
                     new UsernamePasswordClientCredential(username, password));
         }
         
-        final ProcessResponse resp = session.process(workerId, new GenericSignRequest(4711, requestBytes), context);
+        final ProcessResponse resp = session.process(workerId, new GenericSignRequest(hashCode(), requestBytes), context);
     
         if (resp instanceof GenericSignResponse) {
             final byte[] respBytes = ((GenericSignResponse) resp).getProcessedData();

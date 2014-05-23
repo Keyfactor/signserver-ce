@@ -161,7 +161,6 @@ public class CryptoTokenHelper {
         }
 
         final Collection<KeyTestResult> result = new LinkedList<KeyTestResult>();
-        final byte signInput[] = "Lillan gick on the roaden ut.".getBytes();
 
         try {
             final Enumeration<String> e = keyStore.aliases();
@@ -286,9 +285,9 @@ public class CryptoTokenHelper {
      */
     public static ICertReqData genCertificateRequest(ISignerCertReqInfo info,
             final PrivateKey privateKey, final String signatureProvider, PublicKey publicKey,
-            final boolean explicitEccParameters) {
+            final boolean explicitEccParameters) throws IllegalArgumentException {
         LOG.debug(">genCertificateRequest");
-        Base64SignerCertReqData retval = null;
+        final Base64SignerCertReqData retval;
         if (info instanceof PKCS10CertReqInfo) {
             PKCS10CertReqInfo reqInfo = (PKCS10CertReqInfo) info;
             org.bouncycastle.pkcs.PKCS10CertificationRequest pkcs10;
@@ -321,13 +320,13 @@ public class CryptoTokenHelper {
                 pkcs10 = builder.build(contentSigner);
                 retval = new Base64SignerCertReqData(Base64.encode(pkcs10.getEncoded()));
             } catch (IOException e) {
-                LOG.error("Certificate request error: " + e.getMessage(), e);
+                throw new IllegalArgumentException("Certificate request error: " + e.getMessage(), e);
             } catch (OperatorCreationException e) {
-                LOG.error("Certificate request error: signer could not be initialized", e);
+                throw new IllegalArgumentException("Certificate request error: " + e.getMessage(), e);
             } catch (NoSuchAlgorithmException e) {
-                LOG.error("Certificate request error: " + e.getMessage(), e);
+                throw new IllegalArgumentException("Certificate request error: " + e.getMessage(), e);
             } catch (NoSuchProviderException e) {
-                LOG.error("Certificate request error: " + e.getMessage(), e);
+                throw new IllegalArgumentException("Certificate request error: " + e.getMessage(), e);
             }
             LOG.debug("<genCertificateRequest");
             return retval;

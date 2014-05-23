@@ -362,7 +362,11 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2 {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Purpose: " + purpose);
         }
-        return CryptoTokenHelper.genCertificateRequest(info, getPrivateKey(purpose), getProvider(ICryptoToken.PROVIDERUSAGE_SIGN), getPublicKey(purpose), explicitEccParameters);
+        try {
+            return CryptoTokenHelper.genCertificateRequest(info, getPrivateKey(purpose), getProvider(ICryptoToken.PROVIDERUSAGE_SIGN), getPublicKey(purpose), explicitEccParameters);
+        } catch (IllegalArgumentException ex) {
+            throw new CryptoTokenOfflineException(ex.getMessage(), ex);
+        }
     }
 
     /**
@@ -377,22 +381,7 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2 {
     public Collection<KeyTestResult> testKey(final String alias,
             final char[] authCode) throws CryptoTokenOfflineException,
             KeyStoreException {
-        final KeyStore keyStore;
-        try {
-            keyStore = getKeystore(keystoretype, keystorepath,
-                    authCode == null ? authenticationCode : authCode);
-        } catch (CertificateException ex) {
-            throw new CryptoTokenOfflineException(ex);
-        } catch (NoSuchProviderException ex) {
-            throw new CryptoTokenOfflineException(ex);
-        } catch (NoSuchAlgorithmException ex) {
-            throw new CryptoTokenOfflineException(ex);
-        } catch (FileNotFoundException ex) {
-            throw new CryptoTokenOfflineException(ex);
-        } catch (IOException ex) {
-            throw new CryptoTokenOfflineException(ex);
-        }
-        return CryptoTokenHelper.testKey(keyStore, alias, authCode, "BC");
+        return CryptoTokenHelper.testKey(getKeyStore(), alias, authCode, "BC");
     }
 
     @Override
@@ -443,7 +432,10 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2 {
     @Override
     public KeyStore getKeyStore() throws UnsupportedOperationException,
             CryptoTokenOfflineException, KeyStoreException {
-        return ks; // TODO: Should we load it first
+        if (ks == null) {
+            throw new CryptoTokenOfflineException("Not activated");
+        }
+        return ks;
     }
 
     private X509Certificate getSelfCertificate (String myname,
@@ -542,7 +534,14 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2 {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Alias: " + keyAlias);
         }
-        return CryptoTokenHelper.genCertificateRequest(info, getPrivateKey(keyAlias), getProvider(ICryptoToken.PROVIDERUSAGE_SIGN), getPublicKey(keyAlias), explicitEccParameters);
+        try {
+            return CryptoTokenHelper.genCertificateRequest(info, getPrivateKey(keyAlias), getProvider(ICryptoToken.PROVIDERUSAGE_SIGN), getPublicKey(keyAlias), explicitEccParameters);
+        } catch (IllegalArgumentException ex) {
+            if (LOG.isDebugEnabled()) {
+                LOG.error("Certificate request error", ex);
+            }
+            throw new CryptoTokenOfflineException(ex.getMessage(), ex);
+        }
     }
 
     private static class KeyEntry {

@@ -300,6 +300,11 @@ public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2 {
         } catch (org.cesecore.keys.token.CryptoTokenOfflineException e) {
             LOG.error("Certificate request error: " + e.getMessage(), e);
             throw new CryptoTokenOfflineException(e);
+        } catch (IllegalArgumentException ex) {
+            if (LOG.isDebugEnabled()) {
+                LOG.error("Certificate request error", ex);
+            }
+            throw new CryptoTokenOfflineException(ex.getMessage(), ex);
         }
     }
 

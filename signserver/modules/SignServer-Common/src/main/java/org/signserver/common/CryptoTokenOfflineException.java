@@ -33,4 +33,8 @@ public class CryptoTokenOfflineException extends Exception {
     public CryptoTokenOfflineException(Exception cause) {
         super(cause);
     }
+
+    public CryptoTokenOfflineException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

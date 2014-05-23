@@ -13,12 +13,12 @@
 package org.signserver.server.cryptotokens;
 
 import java.security.InvalidKeyException;
-import java.security.KeyPair;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.Signature;
 import java.security.SignatureException;
 import java.security.UnrecoverableKeyException;
@@ -28,6 +28,7 @@ import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.Properties;
 import org.apache.log4j.Logger;
+import org.bouncycastle.util.encoders.Hex;
 import org.cesecore.keys.token.p11.Pkcs11SlotLabelType;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.KeyTestResult;
@@ -162,24 +163,46 @@ public class CryptoTokenHelper {
                             final PrivateKey privateKey = (PrivateKey) keyStore.getKey(keyAlias, authCode);
                             final Certificate entryCert = keyStore.getCertificate(keyAlias);
                             if (entryCert != null) {
-                                final KeyPair keyPair = new KeyPair(entryCert.getPublicKey(), privateKey);
-                                publicKeyHash = CryptoTokenBase.createKeyHash(keyPair.getPublic());
-                                final String sigAlg = CryptoTokenBase.suggestSigAlg(keyPair.getPublic());
+                                final PublicKey publicKey = entryCert.getPublicKey();
+                                publicKeyHash = CryptoTokenBase.createKeyHash(publicKey);
+                                
+                                final byte input[] = "Lillan gick pa vagen ut, motte dar en katt...".getBytes();
+                                final String sigAlg = CryptoTokenBase.suggestSigAlg(publicKey);
                                 if (sigAlg == null) {
-                                    status = "Unknown key algorithm: "
-                                            + keyPair.getPublic().getAlgorithm();
-                                } else {
-                                    Signature signature = Signature.getInstance(sigAlg, signatureProvider);
-                                    signature.initSign(keyPair.getPrivate());
-                                    signature.update(signInput);
-                                    byte[] signBA = signature.sign();
-
-                                    Signature verifySignature = Signature.getInstance(sigAlg);
-                                    verifySignature.initVerify(keyPair.getPublic());
-                                    verifySignature.update(signInput);
-                                    success = verifySignature.verify(signBA);
-                                    status = success ? "" : "Test signature inconsistent";
+                                    throw new NoSuchAlgorithmException("Unknown key algorithm: "
+                                            + publicKey.getAlgorithm());
                                 }
+                                if (LOG.isDebugEnabled()) {
+                                    LOG.debug("Testing keys with algorithm: " + publicKey.getAlgorithm());
+                                    LOG.debug("testSigAlg: " + sigAlg);
+                                    LOG.debug("provider: " + signatureProvider);
+                                    LOG.trace("privateKey: " + privateKey);
+                                    LOG.trace("privateKey class: " + privateKey.getClass().getName());
+                                    LOG.trace("publicKey: " + publicKey);
+                                    LOG.trace("publicKey class: " + publicKey.getClass().getName());
+                                }
+                                final Signature signSignature = Signature.getInstance(sigAlg, signatureProvider);
+                                signSignature.initSign(privateKey);
+                                signSignature.update(input);
+                                byte[] signBA = signSignature.sign();
+                                if (LOG.isDebugEnabled()) {
+                                    if (signBA != null) {
+                                        LOG.trace("Created signature of size: " + signBA.length);
+                                        LOG.trace("Created signature: " + new String(Hex.encode(signBA)));
+                                    } else {
+                                        LOG.warn("Test signature is null?");
+                                    }
+                                }
+
+                                final Signature verifySignature = Signature.getInstance(sigAlg, "BC");
+                                verifySignature.initVerify(publicKey);
+                                verifySignature.update(input);
+                                if (!verifySignature.verify(signBA)) {
+                                    throw new InvalidKeyException("Test signature inconsistent");
+                                }
+                                success = true;
+                                status = "";
+                                
                             } else {
                                 status = "Not testing keys with alias "
                                         + keyAlias + ". No certificate exists.";

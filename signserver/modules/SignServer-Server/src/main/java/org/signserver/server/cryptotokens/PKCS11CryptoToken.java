@@ -16,15 +16,12 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.security.InvalidKeyException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.Signature;
-import java.security.SignatureException;
 import java.security.cert.Certificate;
 import java.util.Collection;
 import java.util.List;
@@ -38,7 +35,6 @@ import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequestBuilder;
-import org.bouncycastle.util.encoders.Hex;
 import org.cesecore.keys.token.CryptoTokenAuthenticationFailedException;
 import org.cesecore.keys.token.p11.exception.NoSuchSlotException;
 import org.ejbca.util.Base64;
@@ -178,7 +174,7 @@ public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2 {
                         PrivateKey privateKey = delegate.getPrivateKey(testKey);
                         if (privateKey != null) {
                             PublicKey publicKey = delegate.getPublicKey(testKey);
-                            testKey(privateKey, publicKey, delegate.getSignProviderName());
+                            CryptoTokenHelper.testSignAndVerify(privateKey, publicKey, delegate.getSignProviderName());
                             result = CryptoTokenStatus.STATUS_ACTIVE;
                         }
                     }
@@ -189,43 +185,6 @@ public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2 {
         }
 
         return result;
-    }
-    
-    private void testKey(PrivateKey privateKey, PublicKey publicKey, String signatureProvider) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException, SignatureException {
-        final byte input[] = "Lillan gick pa vagen ut, motte dar en katt...".getBytes();
-        final String sigAlg = CryptoTokenBase.suggestSigAlg(publicKey);
-        if (sigAlg == null) {
-            throw new NoSuchAlgorithmException("Unknown key algorithm: "
-                    + publicKey.getAlgorithm());
-        }
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Testing keys with algorithm: " + publicKey.getAlgorithm());
-            LOG.debug("testSigAlg: " + sigAlg);
-            LOG.debug("provider: " + signatureProvider);
-            LOG.trace("privateKey: " + privateKey);
-            LOG.trace("privateKey class: " + privateKey.getClass().getName());
-            LOG.trace("publicKey: " + publicKey);
-            LOG.trace("publicKey class: " + publicKey.getClass().getName());
-        }
-        final Signature signSignature = Signature.getInstance(sigAlg, signatureProvider);
-        signSignature.initSign(privateKey);
-        signSignature.update(input);
-        byte[] signBA = signSignature.sign();
-        if (LOG.isDebugEnabled()) {
-            if (signBA != null) {
-                LOG.trace("Created signature of size: " + signBA.length);
-                LOG.trace("Created signature: " + new String(Hex.encode(signBA)));
-            } else {
-                LOG.warn("Test signature is null?");
-            }
-        }
-
-        final Signature verifySignature = Signature.getInstance(sigAlg, "BC");
-        verifySignature.initVerify(publicKey);
-        verifySignature.update(input);
-        if (!verifySignature.verify(signBA)) {
-            throw new InvalidKeyException("Test signature inconsistent");
-        }
     }
 
     @Override

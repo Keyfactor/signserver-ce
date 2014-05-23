@@ -36,6 +36,7 @@ import org.ejbca.util.Base64;
 import org.ejbca.util.CertTools;
 import org.ejbca.util.keystore.KeyTools;
 import org.signserver.common.*;
+import org.signserver.server.KeyUsageCounterHash;
 
 /**
  * Class that uses a PKCS12 or JKS file on the file system for signing.
@@ -369,12 +370,12 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2 {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Purpose: " + purpose);
         }
-
-        return genCertificateRequest(info, explicitEccParameters, getPublicKey(purpose), getPrivateKey(purpose));
+        return genCertificateRequest(info, getPrivateKey(purpose), getProvider(ICryptoToken.PROVIDERUSAGE_SIGN), getPublicKey(purpose), explicitEccParameters);
     }
 
-    private ICertReqData genCertificateRequest(ISignerCertReqInfo info,
-            final boolean explicitEccParameters, PublicKey publicKey, final PrivateKey privateKey) throws CryptoTokenOfflineException {
+    private static ICertReqData genCertificateRequest(ISignerCertReqInfo info,
+            final PrivateKey privateKey, final String signatureProvider, PublicKey publicKey,
+            final boolean explicitEccParameters) throws CryptoTokenOfflineException {
         LOG.debug(">genCertificateRequest");
         Base64SignerCertReqData retval = null;
         if (info instanceof PKCS10CertReqInfo) {
@@ -395,9 +396,17 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2 {
                     publicKey = ECKeyUtil.publicToExplicitParameters(publicKey,
                             "BC");
                 }
+
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Public key SHA1: " + CryptoTokenBase.createKeyHash(
+                            publicKey));
+                    LOG.debug("Public key SHA256: "
+                            + KeyUsageCounterHash.create(publicKey));
+                }
+
                 // Generate request
                 final JcaPKCS10CertificationRequestBuilder builder = new JcaPKCS10CertificationRequestBuilder(new X500Name(CertTools.stringToBCDNString(reqInfo.getSubjectDN())), publicKey);
-                final ContentSigner contentSigner = new JcaContentSignerBuilder(reqInfo.getSignatureAlgorithm()).setProvider(getProvider(ICryptoToken.PROVIDERUSAGE_SIGN)).build(privateKey);
+                final ContentSigner contentSigner = new JcaContentSignerBuilder(reqInfo.getSignatureAlgorithm()).setProvider(signatureProvider).build(privateKey);
                 pkcs10 = builder.build(contentSigner);
                 retval = new Base64SignerCertReqData(Base64.encode(pkcs10.getEncoded()));
             } catch (IOException e) {
@@ -409,7 +418,6 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2 {
             } catch (NoSuchProviderException e) {
                 LOG.error("Certificate request error: " + e.getMessage(), e);
             }
-
         }
         LOG.debug("<genCertificateRequest");
         return retval;
@@ -592,7 +600,7 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2 {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Alias: " + keyAlias);
         }
-        return genCertificateRequest(info, explicitEccParameters, getPublicKey(keyAlias), getPrivateKey(keyAlias));
+        return genCertificateRequest(info, getPrivateKey(keyAlias), getProvider(ICryptoToken.PROVIDERUSAGE_SIGN), getPublicKey(keyAlias), explicitEccParameters);
     }
 
     private static class KeyEntry {

@@ -306,14 +306,26 @@ public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2 {
             throws CryptoTokenOfflineException {
         if (LOG.isDebugEnabled()) {
             LOG.debug(">genCertificateRequest CESeCorePKCS11CryptoToken");
+            LOG.debug("alias: " + alias);
         }
+        try {
+            return genCertificateRequest(info, delegate.getPrivateKey(alias), getProvider(ICryptoToken.PROVIDERUSAGE_SIGN), delegate.getPublicKey(alias), explicitEccParameters);
+        } catch (org.cesecore.keys.token.CryptoTokenOfflineException e) {
+            LOG.error("Certificate request error: " + e.getMessage(), e);
+            throw new CryptoTokenOfflineException(e);
+        }
+    }
+
+    private static ICertReqData genCertificateRequest(ISignerCertReqInfo info,
+            final PrivateKey privateKey, final String signatureProvider, PublicKey publicKey,
+            final boolean explicitEccParameters) throws CryptoTokenOfflineException {
+        LOG.debug(">genCertificateRequest");
         Base64SignerCertReqData retval = null;
         if (info instanceof PKCS10CertReqInfo) {
             PKCS10CertReqInfo reqInfo = (PKCS10CertReqInfo) info;
-            PKCS10CertificationRequest pkcs10;
+            org.bouncycastle.pkcs.PKCS10CertificationRequest pkcs10;
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("alias: " + alias);
                 LOG.debug("signatureAlgorithm: "
                         + reqInfo.getSignatureAlgorithm());
                 LOG.debug("subjectDN: " + reqInfo.getSubjectDN());
@@ -321,9 +333,6 @@ public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2 {
             }
 
             try {
-                final PrivateKey privateKey = delegate.getPrivateKey(alias);
-                PublicKey publicKey = delegate.getPublicKey(alias);
-
                 // Handle ECDSA key with explicit parameters
                 if (explicitEccParameters
                         && publicKey.getAlgorithm().contains("EC")) {
@@ -340,7 +349,7 @@ public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2 {
 
                 // Generate request
                 final JcaPKCS10CertificationRequestBuilder builder = new JcaPKCS10CertificationRequestBuilder(new X500Name(CertTools.stringToBCDNString(reqInfo.getSubjectDN())), publicKey);
-                final ContentSigner contentSigner = new JcaContentSignerBuilder(reqInfo.getSignatureAlgorithm()).setProvider(getProvider(ICryptoToken.PROVIDERUSAGE_SIGN)).build(privateKey);
+                final ContentSigner contentSigner = new JcaContentSignerBuilder(reqInfo.getSignatureAlgorithm()).setProvider(signatureProvider).build(privateKey);
                 pkcs10 = builder.build(contentSigner);
                 retval = new Base64SignerCertReqData(Base64.encode(pkcs10.getEncoded()));
             } catch (IOException e) {
@@ -351,15 +360,9 @@ public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2 {
                 LOG.error("Certificate request error: " + e.getMessage(), e);
             } catch (NoSuchProviderException e) {
                 LOG.error("Certificate request error: " + e.getMessage(), e);
-            } catch (org.cesecore.keys.token.CryptoTokenOfflineException e) {
-                LOG.error("Certificate request error: " + e.getMessage(), e);
-                throw new CryptoTokenOfflineException(e);
             }
-
         }
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("<genCertificateRequest CESeCorePKCS11CryptoToken");
-        }
+        LOG.debug("<genCertificateRequest");
         return retval;
     }
 

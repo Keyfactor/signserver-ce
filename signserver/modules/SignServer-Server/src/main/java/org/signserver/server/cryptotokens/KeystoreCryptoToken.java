@@ -82,44 +82,36 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2 {
 
     private char[] authenticationCode;
 
-    /**
-     * @see org.signserver.server.cryptotokens.ICryptoToken#init(int, java.util.Properties)
-     */
+
     @Override
     public void init(int workerId, Properties properties) throws CryptoTokenInitializationFailureException {
         this.properties = properties;
         keystorepath = properties.getProperty(KEYSTOREPATH);
         keystorepassword = properties.getProperty(KEYSTOREPASSWORD);
         keystoretype = properties.getProperty(KEYSTORETYPE);
-        
+
         // check keystore type
         if (keystoretype == null) {
             throw new CryptoTokenInitializationFailureException("Missing KEYSTORETYPE property");
         }
-        
+
         if (!TYPE_PKCS12.equals(keystoretype) &&
             !TYPE_JKS.equals(keystoretype)) {
             throw new CryptoTokenInitializationFailureException("KEYSTORETYPE should be either PKCS12 or JKS");
         }
-        
+
         // check keystore file
         if (keystorepath == null) {
             throw new CryptoTokenInitializationFailureException("Missing KEYSTOREPATH property");
         } else {
             final File keystoreFile = new File(keystorepath);
-            
+
             if (!keystoreFile.isFile()) {
                 throw new CryptoTokenInitializationFailureException("File not found: " + keystorepath);
             }
         }
     }
 
-    /**
-     * Returns true if the key store was properly loaded.
-     *
-     * @see org.signserver.server.cryptotokens.ICryptoToken#getCryptoTokenStatus()
-     *
-     */
     @Override
     public int getCryptoTokenStatus() {
         if (entries != null && entries.get(PURPOSE_SIGN) != null
@@ -131,11 +123,6 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2 {
         return SignerStatus.STATUS_OFFLINE;
     }
 
-    /**
-     * Loads the key store into memory
-     *
-     * @see org.signserver.server.cryptotokens.ICryptoToken#activate(java.lang.String)
-     */
     @Override
     public void activate(String authenticationcode)
             throws CryptoTokenAuthenticationFailureException,
@@ -215,7 +202,7 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2 {
                     LOG.error("Not a private key for alias " + defaultKey);
                 }
             }
-            
+
         } catch (KeyStoreException e1) {
             LOG.error("Error :", e1);
             throw new CryptoTokenAuthenticationFailureException("KeyStoreException " + e1.getMessage());
@@ -240,11 +227,6 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2 {
         }
     }
 
-    /**
-     * Method that clear the key data from memory.
-     *
-     * @see org.signserver.server.cryptotokens.ICryptoToken#deactivate()
-     */
     @Override
     public boolean deactivate() {
         entries = null;
@@ -256,10 +238,6 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2 {
         return true;
     }
 
-    /**
-     * 
-     * @see org.signserver.server.cryptotokens.ICryptoToken#getPrivateKey(int)
-     */
     @Override
     public PrivateKey getPrivateKey(int purpose)
             throws CryptoTokenOfflineException {
@@ -289,10 +267,6 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2 {
         return entry.getPrivateKey();
     }
 
-    /**
-     * 
-     * @see org.signserver.server.cryptotokens.ICryptoToken#getPublicKey(int)
-     */
     @Override
     public PublicKey getPublicKey(int purpose) throws
             CryptoTokenOfflineException {
@@ -300,10 +274,6 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2 {
         return cert.getPublicKey();
     }
 
-    /**
-     * Always returns BC.
-     * @see org.signserver.server.cryptotokens.ICryptoToken#getProvider(int)
-     */
     @Override
     public String getProvider(int providerUsage) {
         return "BC";
@@ -391,11 +361,8 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2 {
     }
 
     // TODO: The genCertificateRequest method is mostly a duplicate of the one in CryptoTokenBase, PKCS11CryptoTooken, KeyStoreCryptoToken and SoftCryptoToken.
-    /**
-     * @see ICryptoToken#genCertificateRequest(org.signserver.common.ISignerCertReqInfo, boolean, boolean)
-     */
     @Override
-    public ICertReqData genCertificateRequest(ISignerCertReqInfo info, 
+    public ICertReqData genCertificateRequest(ISignerCertReqInfo info,
             final boolean explicitEccParameters, final boolean defaultKey)
             throws CryptoTokenOfflineException {
         final int purpose = defaultKey ? PURPOSE_SIGN : PURPOSE_NEXTKEY;
@@ -502,7 +469,7 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2 {
             } else {
                 kpg.initialize(Integer.valueOf(keySpec));
             }
-        
+
             final String sigAlgName = "SHA1With" + keyAlgorithm;
 
             LOG.debug("generating...");
@@ -536,21 +503,21 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2 {
         final long currentTime = new Date().getTime();
         final Date firstDate = new Date(currentTime-24*60*60*1000);
         final Date lastDate = new Date(currentTime + validity * 1000);
-        
+
         // Add all mandatory attributes
         LOG.debug("keystore signing algorithm " + sigAlg);
-        
+
         final PublicKey publicKey = keyPair.getPublic();
         if (publicKey == null) {
             throw new Exception("Public key is null");
         }
-        
+
         X509v3CertificateBuilder cg = new JcaX509v3CertificateBuilder(new X500Principal(myname), BigInteger.valueOf(firstDate.getTime()), firstDate, lastDate, new X500Principal(myname), publicKey);
         final JcaContentSignerBuilder contentSignerBuilder = new JcaContentSignerBuilder(sigAlg);
         contentSignerBuilder.setProvider(getProvider(PROVIDERUSAGE_SIGN));
 
         final ContentSigner contentSigner = contentSignerBuilder.build(keyPair.getPrivate());
-        
+
         return new JcaX509CertificateConverter().getCertificate(cg.build(contentSigner));
     }
 
@@ -651,6 +618,6 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2 {
 
         public PrivateKey getPrivateKey() {
             return privateKey;
-        }        
+        }
     }
 }

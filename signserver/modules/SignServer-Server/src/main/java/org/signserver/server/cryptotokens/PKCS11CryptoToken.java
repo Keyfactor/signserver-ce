@@ -16,12 +16,15 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.SignatureException;
 import java.security.cert.Certificate;
 import java.util.Collection;
 import java.util.List;
@@ -64,24 +67,23 @@ import org.signserver.server.KeyUsageCounterHash;
  * @version $Id$
  */
 public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2 {
-    
+
     private static final Logger LOG = Logger.getLogger(PKCS11CryptoToken.class);
 
     private static final String PROPERTY_CACHE_PRIVATEKEY = "CACHE_PRIVATEKEY";
-    
-    
+
     private final KeyStorePKCS11CryptoToken delegate;
 
     public PKCS11CryptoToken() throws InstantiationException {
         delegate = new KeyStorePKCS11CryptoToken();
     }
-    
+
     private String keyAlias;
     private String nextKeyAlias;
 
     private boolean cachePrivateKey;
     private PrivateKey cachedPrivateKey;
-    
+
     @Override
     public void init(int workerId, Properties props) throws CryptoTokenInitializationFailureException {
         try {
@@ -131,12 +133,12 @@ public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2 {
             }
 
             delegate.init(props, null, workerId);
-            
+
             keyAlias = props.getProperty("defaultKey");
             nextKeyAlias = props.getProperty("nextCertSignKey");
-            
+
             cachePrivateKey = Boolean.parseBoolean(props.getProperty(PROPERTY_CACHE_PRIVATEKEY, Boolean.FALSE.toString()));
-            
+
             if (LOG.isDebugEnabled()) { 
                 final StringBuilder sb = new StringBuilder();
                 sb.append("keyAlias: ").append(keyAlias).append("\n");
@@ -159,7 +161,7 @@ public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2 {
     @Override
     public int getCryptoTokenStatus() {
         int result = delegate.getTokenStatus();
-        
+
         if (result == CryptoTokenStatus.STATUS_ACTIVE) {
             result = CryptoTokenStatus.STATUS_OFFLINE;
             try {
@@ -179,8 +181,16 @@ public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2 {
                         }
                     }
                 }
-            } catch (Throwable th) {
-                LOG.error("Error testing activation", th);
+            } catch (org.cesecore.keys.token.CryptoTokenOfflineException ex) {
+                LOG.error("Error testing activation", ex);
+            } catch (NoSuchAlgorithmException ex) {
+                LOG.error("Error testing activation", ex);
+            } catch (NoSuchProviderException ex) {
+                LOG.error("Error testing activation", ex);
+            } catch (InvalidKeyException ex) {
+                LOG.error("Error testing activation", ex);
+            } catch (SignatureException ex) {
+                LOG.error("Error testing activation", ex);
             }
         }
 
@@ -360,7 +370,7 @@ public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2 {
     public boolean destroyKey(int purpose) {
         return false;
     }
-    
+
     @Override
     public boolean removeKey(String alias) throws CryptoTokenOfflineException, KeyStoreException, SignServerException {
         return CryptoTokenHelper.removeKey(getKeyStore(), alias);
@@ -396,7 +406,10 @@ public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2 {
         }
         try {
             delegate.generateKeyPair(keySpec, alias);
-        } catch (Exception ex) {
+        } catch (InvalidAlgorithmParameterException ex) {
+            LOG.error(ex, ex);
+            throw new CryptoTokenOfflineException(ex);
+        } catch (org.cesecore.keys.token.CryptoTokenOfflineException ex) {
             LOG.error(ex, ex);
             throw new CryptoTokenOfflineException(ex);
         }
@@ -407,7 +420,7 @@ public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2 {
         public KeyStorePKCS11CryptoToken() throws InstantiationException {
             super();
         }
-        
+
         public KeyStore getActivatedKeyStore() throws CryptoTokenOfflineException {
             try {
                 return getKeyStore();
@@ -416,5 +429,5 @@ public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2 {
             }
         }
     }
-    
+
 }

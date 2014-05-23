@@ -1209,6 +1209,32 @@ public class PDFSignerUnitTest extends TestCase {
                 fatalErrors.contains("Can not specify " + PDFSigner.TSA_URL + " and " + PDFSigner.TSA_WORKER + " at the same time."));
     }
     
+    /**
+     * Test that specifying an unknown hash algorithm gives
+     * a configuration error.
+     * 
+     * @throws Exception
+     */
+    public void test16IllegalHashAlgorithm() throws Exception {
+        WorkerConfig workerConfig = new WorkerConfig();
+        
+        workerConfig.setProperty("NAME", "TestSigner100");
+        workerConfig.setProperty("HASHALGORITHM", "IllegalHash");
+        
+        final PDFSigner instance = new PDFSigner() {
+            @Override
+            public ICryptoToken getCryptoToken() throws SignServerException {
+                return null;
+            }
+        };
+        instance.init(WORKER1, workerConfig, null, null);
+
+        final List<String> fatalErrors = instance.getFatalErrors();
+        
+        assertTrue("Should contain error",
+                fatalErrors.contains("Illegal hash algorithm: IllegalHash"));
+    }
+    
     
     /**
      * Tests that we don't get an exception trying to sign a document with the 

@@ -49,7 +49,7 @@ import org.signserver.server.KeyUsageCounterHash;
  * @author Tomas Gustavsson, Philip Vendil
  * @version $Id$
  */
-public class OldPKCS11CryptoToken extends CryptoTokenBase implements ICryptoToken,
+public class OldPKCS11CryptoToken extends OldCryptoTokenBase implements ICryptoToken,
         IKeyGenerator, IKeyRemover {
 
     /** Logger for this class. */
@@ -227,8 +227,8 @@ public class OldPKCS11CryptoToken extends CryptoTokenBase implements ICryptoToke
                             final Certificate cert = keyStore.getCertificate(keyAlias);
                             if (cert != null) {
                                 final KeyPair keyPair = new KeyPair(cert.getPublicKey(), privateKey);
-                                publicKeyHash = createKeyHash(keyPair.getPublic());
-                                final String sigAlg = suggestSigAlg(keyPair.getPublic());
+                                publicKeyHash = CryptoTokenHelper.createKeyHash(keyPair.getPublic());
+                                final String sigAlg = CryptoTokenHelper.suggestSigAlg(keyPair.getPublic());
                                 if (sigAlg == null) {
                                     status = "Unknown key algorithm: "
                                             + keyPair.getPublic().getAlgorithm();
@@ -314,7 +314,7 @@ public class OldPKCS11CryptoToken extends CryptoTokenBase implements ICryptoToke
                 }
 
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Public key SHA1: " + CryptoTokenBase.createKeyHash(
+                    LOG.debug("Public key SHA1: " + CryptoTokenHelper.createKeyHash(
                             cert.getPublicKey()));
                     LOG.debug("Public key SHA256: "
                             + KeyUsageCounterHash.create(cert.getPublicKey()));

@@ -15,9 +15,6 @@ package org.signserver.server.cryptotokens;
 import java.io.IOException;
 import java.security.*;
 import java.security.cert.Certificate;
-import java.security.interfaces.DSAKey;
-import java.security.interfaces.ECKey;
-import java.security.interfaces.RSAKey;
 import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
@@ -29,7 +26,6 @@ import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequestBuilder;
-import org.bouncycastle.util.encoders.Hex;
 import org.ejbca.core.model.ca.catoken.CATokenAuthenticationFailedException;
 import org.ejbca.core.model.ca.catoken.CATokenOfflineException;
 import org.ejbca.core.model.ca.catoken.ICAToken;
@@ -45,9 +41,9 @@ import org.signserver.common.*;
  * @author Philip Vendil, Tomas Gustavsson
  * @version $Id$
  */
-public abstract class CryptoTokenBase implements ICryptoToken {
+public abstract class OldCryptoTokenBase implements ICryptoToken {
 
-    private static final Logger log = Logger.getLogger(CryptoTokenBase.class);
+    private static final Logger log = Logger.getLogger(OldCryptoTokenBase.class);
     protected ICAToken catoken = null;
 
     /** A workaround for the feature in SignServer 2.0 that property keys are 
@@ -213,35 +209,4 @@ public abstract class CryptoTokenBase implements ICryptoToken {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public static String createKeyHash(PublicKey key) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA1", "BC");
-            final String res = new String(
-                    Hex.encode(md.digest(key.getEncoded())));
-            md.reset();
-            return res;
-        } catch (NoSuchProviderException ex) {
-            final String message = "Nu such provider trying to hash public key";
-            log.error(message, ex);
-            throw new RuntimeException(message, ex);
-        } catch (NoSuchAlgorithmException ex) {
-            final String message = "Nu such algorithm trying to hash public key";
-            log.error(message, ex);
-            throw new RuntimeException(message, ex);
-        }
-    }
-
-    public static String suggestSigAlg(PublicKey key) {
-        final String alg;
-        if (key instanceof ECKey) {
-            alg = "SHA1withECDSA";
-        } else if (key instanceof RSAKey) {
-            alg = "SHA1withRSA";
-        } else if (key instanceof DSAKey) {
-            alg = "SHA1withDSA";
-        } else {
-            alg = null;
-        }
-        return alg;
-    }
 }

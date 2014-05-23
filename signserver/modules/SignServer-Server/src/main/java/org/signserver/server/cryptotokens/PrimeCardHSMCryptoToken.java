@@ -28,7 +28,7 @@ import org.signserver.common.WorkerConfig;
  * @author Philip Vendil
  * @version $Id$
  */
-public class PrimeCardHSMCryptoToken extends CryptoTokenBase implements ICryptoToken {
+public class PrimeCardHSMCryptoToken extends OldCryptoTokenBase implements ICryptoToken {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(PrimeCardHSMCryptoToken.class);

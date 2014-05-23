@@ -31,18 +31,8 @@ import java.util.List;
 import java.util.Properties;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
-import org.bouncycastle.asn1.x500.X500Name;
-import org.bouncycastle.jce.ECKeyUtil;
-import org.bouncycastle.operator.ContentSigner;
-import org.bouncycastle.operator.OperatorCreationException;
-import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
-import org.bouncycastle.pkcs.PKCS10CertificationRequest;
-import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequestBuilder;
 import org.cesecore.keys.token.CryptoTokenAuthenticationFailedException;
 import org.cesecore.keys.token.p11.exception.NoSuchSlotException;
-import org.ejbca.util.Base64;
-import org.ejbca.util.CertTools;
-import org.signserver.common.Base64SignerCertReqData;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenInitializationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
@@ -50,9 +40,7 @@ import org.signserver.common.CryptoTokenStatus;
 import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.KeyTestResult;
-import org.signserver.common.PKCS10CertReqInfo;
 import org.signserver.common.SignServerException;
-import org.signserver.server.KeyUsageCounterHash;
 
 /**
  * CryptoToken implementation wrapping the new PKCS11CryptoToken from CESeCore.
@@ -283,7 +271,6 @@ public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2 {
         return null;
     }
 
-    // TODO: The genCertificateRequest method is mostly a duplicate of the one in CryptoTokenBase, PKCS11CryptoTooken, KeyStoreCryptoToken and SoftCryptoToken.
     @Override
     public ICertReqData genCertificateRequest(ISignerCertReqInfo info,
             final boolean explicitEccParameters, boolean defaultKey)
@@ -309,61 +296,11 @@ public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2 {
             LOG.debug("alias: " + alias);
         }
         try {
-            return genCertificateRequest(info, delegate.getPrivateKey(alias), getProvider(ICryptoToken.PROVIDERUSAGE_SIGN), delegate.getPublicKey(alias), explicitEccParameters);
+            return CryptoTokenHelper.genCertificateRequest(info, delegate.getPrivateKey(alias), getProvider(ICryptoToken.PROVIDERUSAGE_SIGN), delegate.getPublicKey(alias), explicitEccParameters);
         } catch (org.cesecore.keys.token.CryptoTokenOfflineException e) {
             LOG.error("Certificate request error: " + e.getMessage(), e);
             throw new CryptoTokenOfflineException(e);
         }
-    }
-
-    private static ICertReqData genCertificateRequest(ISignerCertReqInfo info,
-            final PrivateKey privateKey, final String signatureProvider, PublicKey publicKey,
-            final boolean explicitEccParameters) throws CryptoTokenOfflineException {
-        LOG.debug(">genCertificateRequest");
-        Base64SignerCertReqData retval = null;
-        if (info instanceof PKCS10CertReqInfo) {
-            PKCS10CertReqInfo reqInfo = (PKCS10CertReqInfo) info;
-            org.bouncycastle.pkcs.PKCS10CertificationRequest pkcs10;
-
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("signatureAlgorithm: "
-                        + reqInfo.getSignatureAlgorithm());
-                LOG.debug("subjectDN: " + reqInfo.getSubjectDN());
-                LOG.debug("explicitEccParameters: " + explicitEccParameters);
-            }
-
-            try {
-                // Handle ECDSA key with explicit parameters
-                if (explicitEccParameters
-                        && publicKey.getAlgorithm().contains("EC")) {
-                    publicKey = ECKeyUtil.publicToExplicitParameters(publicKey,
-                            "BC");
-                }
-
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Public key SHA1: " + CryptoTokenBase.createKeyHash(
-                            publicKey));
-                    LOG.debug("Public key SHA256: "
-                            + KeyUsageCounterHash.create(publicKey));
-                }
-
-                // Generate request
-                final JcaPKCS10CertificationRequestBuilder builder = new JcaPKCS10CertificationRequestBuilder(new X500Name(CertTools.stringToBCDNString(reqInfo.getSubjectDN())), publicKey);
-                final ContentSigner contentSigner = new JcaContentSignerBuilder(reqInfo.getSignatureAlgorithm()).setProvider(signatureProvider).build(privateKey);
-                pkcs10 = builder.build(contentSigner);
-                retval = new Base64SignerCertReqData(Base64.encode(pkcs10.getEncoded()));
-            } catch (IOException e) {
-                LOG.error("Certificate request error: " + e.getMessage(), e);
-            } catch (OperatorCreationException e) {
-                LOG.error("Certificate request error: signer could not be initialized", e);
-            } catch (NoSuchAlgorithmException e) {
-                LOG.error("Certificate request error: " + e.getMessage(), e);
-            } catch (NoSuchProviderException e) {
-                LOG.error("Certificate request error: " + e.getMessage(), e);
-            }
-        }
-        LOG.debug("<genCertificateRequest");
-        return retval;
     }
 
     /**

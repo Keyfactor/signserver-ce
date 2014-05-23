@@ -12,7 +12,6 @@
  *************************************************************************/
 package org.signserver.module.pdfsigner;
 
-import com.lowagie.text.pdf.AcroFields;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfSignatureAppearance;
 import java.io.*;

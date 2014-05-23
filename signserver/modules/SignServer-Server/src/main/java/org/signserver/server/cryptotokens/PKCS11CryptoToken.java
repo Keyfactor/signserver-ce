@@ -17,7 +17,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.security.InvalidKeyException;
-import java.security.KeyPair;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -27,8 +26,6 @@ import java.security.PublicKey;
 import java.security.Signature;
 import java.security.cert.Certificate;
 import java.util.Collection;
-import java.util.Enumeration;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import org.apache.commons.io.IOUtils;
@@ -57,8 +54,6 @@ import org.signserver.common.KeyTestResult;
 import org.signserver.common.PKCS10CertReqInfo;
 import org.signserver.common.SignServerException;
 import org.signserver.server.KeyUsageCounterHash;
-import static org.signserver.server.cryptotokens.CryptoTokenBase.createKeyHash;
-import static org.signserver.server.cryptotokens.CryptoTokenBase.suggestSigAlg;
 
 /**
  * CryptoToken implementation wrapping the new PKCS11CryptoToken from CESeCore.

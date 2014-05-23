@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.module.pdfsigner;
 
+import com.lowagie.text.pdf.AcroFields;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfSignatureAppearance;
 import java.io.*;
@@ -42,6 +43,8 @@ import org.signserver.ejb.interfaces.IWorkerSession;
 public class PDFSignerTest extends ModulesTestCase {
 
     private static final int WORKERID = 5675;
+    // worker ID from TSA test properties used to test internal TSA invocation
+    private static final int TSAWORKERID = 8901;
 
     private static final String CERTIFICATION_LEVEL = "CERTIFICATION_LEVEL";
 
@@ -66,7 +69,9 @@ public class PDFSignerTest extends ModulesTestCase {
     @Test
     public void test00SetupDatabase() throws Exception {
         setProperties(new File(getSignServerHome(), "res/test/test-pdfsigner-configuration.properties"));
+        setProperties(new File(getSignServerHome(), "res/test/test-timestampsigner-configuration.properties"));
         workerSession.reloadConfiguration(WORKERID);
+        workerSession.reloadConfiguration(TSAWORKERID);
     }
 
     @Test
@@ -304,8 +309,32 @@ public class PDFSignerTest extends ModulesTestCase {
         signGenericDocument(WORKERID, pdfOk);
     }
 
+    /**
+     * Test signing PDF with timestamping using
+     * internal invocation of TSA.
+     * 
+     * @throws Exception
+     */
     @Test
-    public void test12VeryLongCertChain() throws Exception {
+    public void test12UsingInternalTSA() throws Exception {
+        try {
+            final byte[] pdfOk = getTestFile(TESTPDF_OK);
+        
+            workerSession.setWorkerProperty(WORKERID, PDFSigner.TSA_WORKER, 
+                    String.valueOf(TSAWORKERID));
+            workerSession.reloadConfiguration(WORKERID);
+            
+            // TODO: check the timestamp
+            // this should probably be added as a test when implementing the PDF validator
+            signGenericDocument(WORKERID, pdfOk);            
+        } finally {
+            workerSession.removeWorkerProperty(WORKERID, PDFSigner.TSA_WORKER);
+            workerSession.reloadConfiguration(WORKERID);
+        }
+    }
+    
+    @Test
+    public void test13VeryLongCertChain() throws Exception {
         final byte[] pdfOk = getTestFile(TESTPDF_OK);
         byte[] certFile = getTestFile("dss10" + File.separator + "long_chain.pem");
         

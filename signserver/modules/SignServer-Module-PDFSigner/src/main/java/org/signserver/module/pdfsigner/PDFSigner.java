@@ -147,8 +147,8 @@ public class PDFSigner extends BaseSigner {
     
     private List<String> configErrors;
 
-    private IInternalWorkerSession.ILocal workerSession;
-    
+    private IInternalWorkerSession workerSession;
+
     @Override
     public void init(int signerId, WorkerConfig config,
             WorkerContext workerContext, EntityManager workerEntityManager) {
@@ -681,11 +681,11 @@ public class PDFSigner extends BaseSigner {
         return fout.toByteArray();
     }
     
-    protected IInternalWorkerSession.ILocal getWorkerSession() {
+    protected IInternalWorkerSession getWorkerSession() {
         if (workerSession == null) {
             try {
                 workerSession = ServiceLocator.getInstance().lookupLocal(
-                    IInternalWorkerSession.ILocal.class);
+                    IInternalWorkerSession.class);
             } catch (NamingException ex) {
                 throw new RuntimeException("Unable to lookup worker session",
                         ex);

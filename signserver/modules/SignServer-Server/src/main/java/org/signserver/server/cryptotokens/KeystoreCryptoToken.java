@@ -398,8 +398,7 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2 {
         }
         try {
 
-            final KeyStore keystore = getKeystore(keystoretype, keystorepath, 
-                    authenticationCode);
+            final KeyStore keystore = getKeyStore();
 
             final KeyPairGenerator kpg = KeyPairGenerator.getInstance(keyAlgorithm, "BC");
 

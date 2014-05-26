@@ -1583,6 +1583,10 @@ connect to a locally running SignServer instance or a remote one over web
 services. If the "-ws" command line option is specified the later option is
 already selected when the dialog opens.
                     </p>
+                    <p>
+See also the <a href="#Admin%20GUI%20troubleshooting">Admin GUI troubleshooting</a> section.
+                    </p>
+
                     <subsubsection name="Connect to SignServer dialog">
                         <p>
 First select either to connect to a local or remote instance. If a remote one
@@ -1904,6 +1908,25 @@ administrators the checkbox can be unchecked. It is recommended to add your self
 using the "Load current" button to be sure the correct information is filled in 
 before disabling access for admins not in the list.
                         </p>
+                    </subsubsection>
+
+                    <subsubsection name="Admin GUI troubleshooting">
+                        <ul>
+                            <li>
+                                <p>
+<b>AdminGUI login using smartcard fails on 64-bit (x86_64) version of Windows</b>:<br/>
+The 64-bit version of Oracle Java does not support PKCS#11. A 32-bit version of Java and the PKCS#11 shared library should be used instead on that platform.
+                                </p>
+                            </li>
+                            <li>
+                                <p>
+<b>AdminGUI login using smartcard fails if path to DLL contains parenthesis</b>:<br/>
+For instance the following path would cause problem: c:\program files (x86)\middleware\pkcs11.dll<br/>
+The problem is Java <a href="http://bugs.java.com/bugdatabase/view_bug.do?bug_id=7196009">bug 7196009</a>.<br/>
+Until this has been fixed you will need to install the middleware (PKCS#11/smartcard library) to a path without parenthesis.
+                                </p>
+                            </li>
+                        </ul>
                     </subsubsection>
 
                 </subsection>

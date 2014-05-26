@@ -1926,6 +1926,14 @@ The problem is Java <a href="http://bugs.java.com/bugdatabase/view_bug.do?bug_id
 Until this has been fixed you will need to install the middleware (PKCS#11/smartcard library) to a path without parenthesis.
                                 </p>
                             </li>
+                            <li>
+                                <p>
+<b>IPv6 dualstack can give permission denied when trying to connect from AdminGUI</b>:<br/>
+Trying to connect to SignServer over web services using the AdminGUI on Windows where both IPv4 and IPv6 is available can give "permission denied".<br/>
+One workaround is to edit signserver-gui.cmd and adding the following to the command:<br/>
+-Djava.net.preferIPv4Stack=true
+                                </p>
+                            </li>
                         </ul>
                     </subsubsection>
 

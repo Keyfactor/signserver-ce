@@ -6262,6 +6262,8 @@ Performance testing tool
                         until after this time (in milliseconds). Default=0
                         (no warmup time).
  -worker &lt;arg&gt;    Worker name or ID to use (with the DocumentSigner1 test suite).
+ -workerurl &lt;arg&gt; URL to worker servlet (for the DocumentSigner1
+                        test suite).
 
 Sample usages:
 a) stresstest -testsuite TimeStamp1 -threads 4 -tsaurl

@@ -43,7 +43,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.logging.Level;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.KeyManager;
@@ -808,7 +807,30 @@ public class ConnectDialog extends javax.swing.JDialog {
             dispose();
         } catch (Exception ex) {
             LOG.error("Error connecting", ex);
-            JOptionPane.showMessageDialog(this, ex.getMessage(), "Connect", JOptionPane.ERROR_MESSAGE);
+
+            // collect cause messages
+            final List<String> causes = new LinkedList<String>();
+            Throwable cause = ex;
+
+            // iterate throug cause until we reach the bottom
+            while (cause != null) {
+                final String causeMessage = cause.getMessage();
+
+                // if cause message wasn't already seen, add it to the list
+                if (causeMessage != null && !"null".equals(causeMessage) && !causes.contains(causeMessage)) {
+                    causes.add(causeMessage);
+                }
+
+                cause = cause.getCause();
+            }
+
+            // prepend cause messages with some separators at the tail of our message
+            final StringBuilder sb = new StringBuilder();
+            for (final String causeMessage : causes) {
+                sb.append("\n");
+                sb.append(causeMessage);
+            }
+            JOptionPane.showMessageDialog(this, sb.toString(), "Connect", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_connectButtonActionPerformed
 
@@ -973,15 +995,15 @@ public class ConnectDialog extends javax.swing.JDialog {
                     }
                     LOADED_KESTORES.put(keystoreName, keystore);
             } catch (NoSuchMethodException nsme) {
-                    throw new KeyStoreException("Could not find constructor for keystore provider.");
+                throw new KeyStoreException("Could not find constructor for keystore provider", nsme);
             } catch (InstantiationException ie) {
-                    throw new KeyStoreException("Failed to instantiate keystore provider.");
+                throw new KeyStoreException("Failed to instantiate keystore provider", ie);
             } catch (ClassNotFoundException ncdfe) {
-                    throw new KeyStoreException("Unsupported keystore provider.");
+                throw new KeyStoreException("Unsupported keystore provider", ncdfe);
             } catch (InvocationTargetException ite) {
-                    throw new KeyStoreException("Could not initialize provider.");
+                throw new KeyStoreException("Could not initialize provider", ite);
             } catch (Exception e) {
-                    throw new KeyStoreException("Error: " + e.getMessage());
+                throw new KeyStoreException("Error", e);
             }
         }
         return keystore;

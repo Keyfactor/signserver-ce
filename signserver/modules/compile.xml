@@ -378,7 +378,7 @@ SHA-256 checksum: ${tgz.src.tar.gz.sha256}
         </echo>
     </target>
 
-    <target name="release:binary-tarball" depends="init,build,-init-release-patternsets" description="Make a binary tarball for SignServer release">
+    <target name="release:binary-tarball" depends="init,build,build-systemtests,-init-release-patternsets" description="Make a binary tarball for SignServer release">
         <property name="signserver.zipversion" value="${app.version.number}"/>
         <copy file="doc/lgpl-2.1.txt" tofile="LICENSE" />
         <property name="tgz.bin.tar" value="../signserver-${app.edition.lc}-${signserver.zipversion}-bin.tar" />
@@ -406,7 +406,7 @@ SHA-256 checksum: ${tgz.bin.tar.gz.sha1}
         </echo>
     </target>
     
-    <target name="release:binary-zip" depends="init,build,-init-release-patternsets" description="Make a binary zip for SignServer release">
+    <target name="release:binary-zip" depends="init,build,build-systemtests,-init-release-patternsets" description="Make a binary zip for SignServer release">
         <property name="signserver.zipversion" value="${app.version.number}"/>
         <copy file="doc/lgpl-2.1.txt" tofile="LICENSE" />
         <property name="zip.bin" location="../signserver-${app.edition.lc}-${signserver.zipversion}-bin.zip"/>

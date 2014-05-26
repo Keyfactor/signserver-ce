@@ -6275,7 +6275,9 @@ c) stresstest -testsuite DocumentSigner1 -threads 4 -processurl
 http://localhost:8080/signserver/process -worker PDFSigner -infile
 test.pdf
 d) stresstest -testsuite DocumentSigner1 -threads 4 -processurl
-http://localhost:8080/signserver/process -worker XMLSigner -data "<root/>"
+http://localhost:8080/signserver/process -worker XMLSigner -data "&lt;root/&gt;"
+e) stresstest -testsuite DocumentSigner1 -threads 4 -workerurl
+http://localhost:8080/signserver/worker -worker 1 -data "&lt;root/&gt;"
               			</source>
               			
               			<p>

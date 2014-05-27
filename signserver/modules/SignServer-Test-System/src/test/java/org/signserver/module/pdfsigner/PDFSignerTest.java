@@ -73,6 +73,61 @@ public class PDFSignerTest extends ModulesTestCase {
         workerSession.reloadConfiguration(TSAWORKERID);
     }
 
+    /**
+     * Test signing a PDF, optionally with given hash algorithm.
+     * 
+     */
+    protected GenericSignResponse signGenericPDFWithHash(final int workerId, 
+            final byte[] data, final String hashAlgorithm)
+                    throws IllegalRequestException, CryptoTokenOfflineException,
+                        SignServerException, IOException {
+        try {
+            if (hashAlgorithm != null) {
+                workerSession.setWorkerProperty(workerId, PDFSigner.HASHALGORITHM, 
+                        hashAlgorithm);
+                workerSession.reloadConfiguration(workerId);
+            }
+            
+            final GenericSignResponse response = signGenericDocument(workerId, data);
+         
+            if (hashAlgorithm != null) {
+                // check PDF version
+                final PdfReader reader = new PdfReader(response.getProcessedData());
+                final char version = reader.getPdfVersion();
+                
+                checkPdfVersion(version, hashAlgorithm);
+            }
+            
+            return response;
+            
+        } finally {
+            workerSession.removeWorkerProperty(workerId, PDFSigner.HASHALGORITHM);
+            workerSession.reloadConfiguration(workerId);
+        }
+    }
+    
+    private void checkPdfVersion(final char pdfVersion, final String hashAlgorithm) {
+        final int version = Character.digit(pdfVersion, 10);
+        
+        if (version == -1) {
+            fail("Unknown PDF version: " + pdfVersion);
+        }
+        
+        if ("SHA1".equals(hashAlgorithm)) {
+            assertTrue("Insufficent PDF version: " + version, version >= 3);
+        } else if ("SHA256".equals(hashAlgorithm)) {
+            assertTrue("Insufficent PDF version: " + version, version >= 6);
+        } else if ("SHA384".equals(hashAlgorithm)) {
+            assertTrue("Insufficent PDF version: " + version, version >= 7);
+        } else if ("SHA512".equals(hashAlgorithm)) {
+            assertTrue("Insufficent PDF version: " + version, version >= 7);
+        } else if ("RIPEMD160".equals(hashAlgorithm)) {
+            assertTrue("Insufficent PDF version: " + version, version >= 7);
+        } else {
+            fail("Unknown hash algorithm: " + hashAlgorithm);
+        }
+    }
+    
     @Test
     public void test01BasicPdfSign() throws Exception {
 
@@ -342,7 +397,51 @@ public class PDFSignerTest extends ModulesTestCase {
     	
     	signGenericDocument(WORKERID, pdfOk);
     }
+    
+    /**
+     * Test signing PDF with SHA256 hash.
+     * @throws Exception
+     */
+    @Test
+    public void test14WithSHA256Hash() throws Exception {
+        final byte[] pdfOk = getTestFile(TESTPDF_OK);
+        
+        signGenericPDFWithHash(WORKERID, pdfOk, "SHA512");
+    }
+    
+    /**
+     * Test signing PDF with SHA384 hash.
+     * @throws Exception
+     */
+    @Test
+    public void test15WithSHA384Hash() throws Exception {
+        final byte[] pdfOk = getTestFile(TESTPDF_OK);
+        
+        signGenericPDFWithHash(WORKERID, pdfOk, "SHA384");
+    }
 
+    /**
+     * Test signing PDF with SHA512 hash.
+     * @throws Exception
+     */
+    @Test
+    public void test16WithSHA512Hash() throws Exception {
+        final byte[] pdfOk = getTestFile(TESTPDF_OK);
+        
+        signGenericPDFWithHash(WORKERID, pdfOk, "SHA512");
+    }
+    
+    /**
+     * Test signing PDF with RIPEMD160 hash.
+     * @throws Exception
+     */
+    @Test
+    public void test17WithRIPEMD160Hash() throws Exception {
+        final byte[] pdfOk = getTestFile(TESTPDF_OK);
+        
+        signGenericPDFWithHash(WORKERID, pdfOk, "RIPEMD160");
+    }
+    
     @Test
     public void test99TearDownDatabase() throws Exception {
         removeWorker(5675);

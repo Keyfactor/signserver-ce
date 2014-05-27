@@ -168,7 +168,7 @@ public class ModulesTestCase extends TestCase {
     private CLITestHelper adminCLI;
     private CLITestHelper clientCLI;
     private TestUtils testUtils = new TestUtils();
-    private static Random random = new Random(1234);
+    protected static Random random = new Random(1234);
 
     public ModulesTestCase() {
         final Properties defaultConfig = new Properties();

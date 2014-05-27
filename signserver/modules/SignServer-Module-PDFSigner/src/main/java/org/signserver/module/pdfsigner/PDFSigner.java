@@ -140,6 +140,9 @@ public class PDFSigner extends BaseSigner {
             "\\$\\{(.+?)\\}";
     private static final String CONTENT_TYPE = "application/pdf";
 
+    public static final String HASHALGORITHM = "HASHALGORITHM";
+    private static final String DEFAULTHASHALGORITHM = "SHA1";
+    
     private Pattern archivetodiskPattern;
 
     /** Random used for instance when setting a random owner/permissions password*/
@@ -440,6 +443,29 @@ public class PDFSigner extends BaseSigner {
         byte[] encodedSig = sgn.getEncodedPKCS7(hash, cal, tsc, ocsp);
         
         return encodedSig;
+    }
+    
+
+    /**
+     * Get the minimum PDF version (x in 1.x)
+     * given the configured hash algorithm.
+     *  
+     * @return PDF version ("suffix" version)
+     */
+    private int getMinimumPdfVersion() {
+        if ("SHA1".equals(hashAlgorithm)) {
+            return 0;
+        } else if ("SHA256".equals(hashAlgorithm)) {
+            return 6;
+        } else if ("SHA384".equals(hashAlgorithm)) {
+            return 7;
+        } else if ("SHA512".equals(hashAlgorithm)) {
+            return 7;
+        } else if ("RIPEMD160".equals(hashAlgorithm)) {
+            return 7;
+        } else {
+            throw new IllegalArgumentException("Unknown hash algorithm: " + hashAlgorithm);
+        }
     }
     
     protected byte[] addSignatureToPDFDocument(PDFSignerParameters params,

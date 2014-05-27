@@ -140,7 +140,7 @@ public class PDFSigner extends BaseSigner {
             "\\$\\{(.+?)\\}";
     private static final String CONTENT_TYPE = "application/pdf";
 
-    private static final String HASHALGORITHM = "HASHALGORITHM";
+    public static final String HASHALGORITHM = "HASHALGORITHM";
     private static final String DEFAULTHASHALGORITHM = "SHA1";
     
     private Pattern archivetodiskPattern;
@@ -467,7 +467,7 @@ public class PDFSigner extends BaseSigner {
             return 0;
         } else if ("SHA256".equals(hashAlgorithm)) {
             return 6;
-        } else if ("SHA348".equals(hashAlgorithm)) {
+        } else if ("SHA384".equals(hashAlgorithm)) {
             return 7;
         } else if ("SHA512".equals(hashAlgorithm)) {
             return 7;

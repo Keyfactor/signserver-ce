@@ -152,6 +152,9 @@ public class PDFSigner extends BaseSigner {
 
     private IInternalWorkerSession workerSession;
 
+    private String hashAlgorithm = DEFAULTHASHALGORITHM;
+    private int minimumPdfVersion;
+
     @Override
     public void init(int signerId, WorkerConfig config,
             WorkerContext workerContext, EntityManager workerEntityManager) {
@@ -177,7 +180,15 @@ public class PDFSigner extends BaseSigner {
             }
         }
         archivetodiskPattern = Pattern.compile(ARCHIVETODISK_PATTERN_REGEX);
-        
+
+        hashAlgorithm = config.getProperty(HASHALGORITHM, DEFAULTHASHALGORITHM);
+
+        try {
+            minimumPdfVersion = getMinimumPdfVersion();
+        } catch (IllegalArgumentException e) {
+            configErrors.add("Illegal hash algorithm: " + hashAlgorithm);
+        }
+
         // additionally check that at least one certificate is included, assumed by iText
         // (initIncludeCertificateLevels already checks non-negative values)
         if (hasSetIncludeCertificateLevels && includeCertificateLevels == 0) {
@@ -488,6 +499,18 @@ public class PDFSigner extends BaseSigner {
         PdfReader reader = new PdfReader(pdfbytes, password);
         boolean appendMode = true; // TODO: This could be good to have as a property in the future
 
+        int pdfVersion;
+        
+        try {
+            pdfVersion = Integer.parseInt(Character.toString(reader.getPdfVersion()));
+        } catch (NumberFormatException e) {
+            pdfVersion = 0;
+        }
+            
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("PDF version: " + pdfVersion);
+        }
+        
         // Don't certify already certified documents
         if (reader.getCertificationLevel() != PdfSignatureAppearance.NOT_CERTIFIED 
                 && params.getCertification_level() != PdfSignatureAppearance.NOT_CERTIFIED) {
@@ -541,7 +564,20 @@ public class PDFSigner extends BaseSigner {
         }
         
         ByteArrayOutputStream fout = new ByteArrayOutputStream();
-        PdfStamper stp = PdfStamper.createSignature(reader, fout, '\0', null,
+        
+        // increase PDF version if needed by hash algorithm
+        final char updatedPdfVersion;
+        if (minimumPdfVersion > pdfVersion) {
+            updatedPdfVersion = Character.forDigit(minimumPdfVersion, 10);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Updating PDF to version 1." + updatedPdfVersion);
+            }
+            appendMode = false;
+        } else {
+            updatedPdfVersion = '\0';
+        }
+
+        PdfStamper stp = PdfStamper.createSignature(reader, fout, updatedPdfVersion, null,
                 appendMode);
         PdfSignatureAppearance sap = stp.getSignatureAppearance();
         
@@ -647,7 +683,7 @@ public class PDFSigner extends BaseSigner {
         
         PdfPKCS7 sgn;
         try {
-            sgn = new PdfPKCS7(privKey, certChain, crlList, "SHA1", null, false);
+            sgn = new PdfPKCS7(privKey, certChain, crlList, hashAlgorithm, null, false);
         } catch (InvalidKeyException e) {
             throw new SignServerException("Error constructing PKCS7 package", e);
         } catch (NoSuchProviderException e) {
@@ -658,9 +694,9 @@ public class PDFSigner extends BaseSigner {
 
         MessageDigest messageDigest;
         try {
-            messageDigest = MessageDigest.getInstance("SHA1");
+            messageDigest = MessageDigest.getInstance(hashAlgorithm);
         } catch (NoSuchAlgorithmException e) {
-            throw new SignServerException("Error creating SHA1 digest", e);
+            throw new SignServerException("Error creating " + hashAlgorithm + " digest", e);
         }
         
         Calendar cal = Calendar.getInstance();

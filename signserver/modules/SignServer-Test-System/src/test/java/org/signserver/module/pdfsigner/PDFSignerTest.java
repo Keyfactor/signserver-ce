@@ -12,6 +12,8 @@
  *************************************************************************/
 package org.signserver.module.pdfsigner;
 
+import com.lowagie.text.pdf.AcroFields;
+import com.lowagie.text.pdf.PdfPKCS7;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfSignatureAppearance;
 import java.io.*;
@@ -96,6 +98,16 @@ public class PDFSignerTest extends ModulesTestCase {
                 final char version = reader.getPdfVersion();
                 
                 checkPdfVersion(version, hashAlgorithm);
+                
+                final AcroFields af = reader.getAcroFields();
+                final List<String> sigNames = af.getSignatureNames();
+                
+                for (final String sigName : sigNames) {
+                    final PdfPKCS7 pk = af.verifySignature(sigName);
+                    
+                    // PdfPKCS7.getDigestAlgorithm() seems to give <algo>withRSA
+                    assertEquals("Digest algorithm", hashAlgorithm + "withRSA", pk.getDigestAlgorithm());
+                }
             }
             
             return response;

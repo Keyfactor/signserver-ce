@@ -19,6 +19,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
+import javax.ejb.EJBException;
 import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
@@ -31,11 +32,11 @@ import javax.xml.ws.soap.SOAPFaultException;
 import org.apache.log4j.Logger;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
-import org.jdesktop.application.Task;
+import org.jdesktop.application
+        .Task;
 import org.signserver.admin.gui.adminws.gen
         .AdminNotAuthorizedException_Exception;
-import org.signserver.admin.gui.adminws.gen
-        .CryptoTokenOfflineException_Exception;
+import org.signserver.admin.gui.adminws.gen.CryptoTokenOfflineException_Exception;
 import org.signserver.admin.gui.adminws.gen.IllegalRequestException_Exception;
 import org.signserver.admin.gui.adminws.gen.InvalidWorkerIdException_Exception;
 import org.signserver.admin.gui.adminws.gen.SignServerException_Exception;
@@ -540,6 +541,14 @@ public class RenewSignerDialog extends javax.swing.JDialog {
                     errors.append("\n");
                     failure++;
                 } catch (SOAPFaultException ex) {
+                    final String error =
+                            "Problem renewing signer "
+                            + item.getSigner().getName();
+                    LOG.error(error, ex);
+                    errors.append(error).append(":\n").append(ex.getMessage());
+                    errors.append("\n");
+                    failure++;
+                } catch (EJBException ex) {
                     final String error =
                             "Problem renewing signer "
                             + item.getSigner().getName();

@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
+import javax.ejb.EJBException;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
@@ -32,6 +33,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
+import javax.xml.ws.soap.SOAPFaultException;
 import org.apache.log4j.Logger;
 import org.ejbca.util.CertTools;
 import org.jdesktop.application.Action;
@@ -377,6 +379,20 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
                         } catch (CertificateException ex) {
                             final String error =
                                 "Problem with certificate chain file for signer "
+                                + workerid;
+                            LOG.error(error, ex);
+                            errors.append(error).append(":\n").append(ex.getMessage());
+                            errors.append("\n");
+                        } catch (SOAPFaultException ex) {
+                            final String error =
+                                "Operation failed on server side for signer "
+                                + workerid;
+                            LOG.error(error, ex);
+                            errors.append(error).append(":\n").append(ex.getMessage());
+                            errors.append("\n");
+                        } catch (EJBException ex) {
+                            final String error =
+                                "Operation failed on server side for signer "
                                 + workerid;
                             LOG.error(error, ex);
                             errors.append(error).append(":\n").append(ex.getMessage());

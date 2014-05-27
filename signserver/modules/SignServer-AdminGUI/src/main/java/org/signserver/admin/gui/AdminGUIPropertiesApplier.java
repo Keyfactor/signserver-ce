@@ -13,6 +13,8 @@
 package org.signserver.admin.gui;
 
 import java.util.List;
+import javax.ejb.EJBException;
+import javax.xml.ws.soap.SOAPFaultException;
 
 import org.signserver.admin.gui.adminws.gen.AdminNotAuthorizedException_Exception;
 import org.signserver.admin.gui.adminws.gen.IllegalRequestException_Exception;
@@ -30,67 +32,86 @@ import org.signserver.common.util.PropertiesApplier;
 public class AdminGUIPropertiesApplier extends PropertiesApplier {
 
     @Override
-    protected void setGlobalProperty(String scope, String key, String value) {
+    protected void setGlobalProperty(String scope, String key, String value) throws PropertiesApplierException {
         try {
             SignServerAdminGUIApplication.getAdminWS().setGlobalProperty(scope, key, value);
         } catch (AdminNotAuthorizedException_Exception e) {
-            // TODO: handle error
+            throw new PropertiesApplierException(e);
+        } catch (EJBException ex) {
+            throw new PropertiesApplierException("Operation failed on server side", ex);
+        } catch (SOAPFaultException ex) {
+            throw new PropertiesApplierException("Operation failed on server side", ex);
         }
     }
 
     @Override
-    protected void removeGlobalProperty(String scope, String key) {
+    protected void removeGlobalProperty(String scope, String key) throws PropertiesApplierException {
         try {
             SignServerAdminGUIApplication.getAdminWS().removeGlobalProperty(scope, key);
         } catch (AdminNotAuthorizedException_Exception e) {
-            // TODO: handle error
+            throw new PropertiesApplierException(e);
+        } catch (EJBException ex) {
+            throw new PropertiesApplierException("Operation failed on server side", ex);
+        } catch (SOAPFaultException ex) {
+            throw new PropertiesApplierException("Operation failed on server side", ex);
         }
-
     }
 
     @Override
-    protected void setWorkerProperty(int workerId, String key, String value) {
+    protected void setWorkerProperty(int workerId, String key, String value) throws PropertiesApplierException {
         try {
             SignServerAdminGUIApplication.getAdminWS().setWorkerProperty(workerId, key, value);
         } catch (AdminNotAuthorizedException_Exception e) {
-            // TODO: handle error
+            throw new PropertiesApplierException(e);
+        } catch (EJBException ex) {
+            throw new PropertiesApplierException("Operation failed on server side", ex);
+        } catch (SOAPFaultException ex) {
+            throw new PropertiesApplierException("Operation failed on server side", ex);
         }
-
     }
 
     @Override
-    protected void removeWorkerProperty(int workerId, String key) {
+    protected void removeWorkerProperty(int workerId, String key) throws PropertiesApplierException {
         try {
             SignServerAdminGUIApplication.getAdminWS().removeWorkerProperty(workerId, key);
         } catch (AdminNotAuthorizedException_Exception e) {
-            // TODO: handle error
+            throw new PropertiesApplierException(e);
+        } catch (EJBException ex) {
+            throw new PropertiesApplierException("Operation failed on server side", ex);
+        } catch (SOAPFaultException ex) {
+            throw new PropertiesApplierException("Operation failed on server side", ex);
         }
-
     }
 
     @Override
-    protected void uploadSignerCertificate(int workerId, byte[] signerCert) {
+    protected void uploadSignerCertificate(int workerId, byte[] signerCert) throws PropertiesApplierException {
         try {
             SignServerAdminGUIApplication.getAdminWS().uploadSignerCertificate(workerId, signerCert, GlobalConfiguration.SCOPE_GLOBAL);
         } catch (AdminNotAuthorizedException_Exception e) {
-            // TODO: handle error
-        } catch (IllegalRequestException_Exception e) {
-            // TODO: handle error
+            throw new PropertiesApplierException(e);
+        } catch (IllegalRequestException_Exception ex) {
+            throw new PropertiesApplierException("Illegal request", ex);
+        } catch (EJBException ex) {
+            throw new PropertiesApplierException("Operation failed on server side", ex);
+        } catch (SOAPFaultException ex) {
+            throw new PropertiesApplierException("Operation failed on server side", ex);
         }
-
     }
 
     @Override
     protected void uploadSignerCertificateChain(int workerId,
-            List<byte[]> signerCertChain) {
+            List<byte[]> signerCertChain) throws PropertiesApplierException {
         try {
             SignServerAdminGUIApplication.getAdminWS().uploadSignerCertificateChain(workerId, signerCertChain, GlobalConfiguration.SCOPE_GLOBAL);
         } catch (AdminNotAuthorizedException_Exception e) {
-            // TODO: handle error
-        } catch (IllegalRequestException_Exception e) {
-            // TODO: handle error
+            throw new PropertiesApplierException(e);
+        } catch (IllegalRequestException_Exception ex) {
+            throw new PropertiesApplierException("Illegal request", ex);
+        } catch (EJBException ex) {
+            throw new PropertiesApplierException("Operation failed on server side", ex);
+        } catch (SOAPFaultException ex) {
+            throw new PropertiesApplierException("Operation failed on server side", ex);
         }
-
     }
 
     @Override
@@ -108,7 +129,7 @@ public class AdminGUIPropertiesApplier extends PropertiesApplier {
             return max + 1;
             
         } catch (AdminNotAuthorizedException_Exception e) {
-            throw new PropertiesApplierException("Administrator not authorized");
+            throw new PropertiesApplierException(e);
         }
             
     }
@@ -124,12 +145,12 @@ public class AdminGUIPropertiesApplier extends PropertiesApplier {
             
             return workerId;
         } catch (AdminNotAuthorizedException_Exception e) {
-            throw new PropertiesApplierException("Admininstrator not authorized");
+            throw new PropertiesApplierException(e);
         }
     }
 
     @Override
-    protected void addAuthorizedClient(int workerId, AuthorizedClient ac) {
+    protected void addAuthorizedClient(int workerId, AuthorizedClient ac) throws PropertiesApplierException {
         try {
             final org.signserver.admin.gui.adminws.gen.AuthorizedClient authClient =
                     new org.signserver.admin.gui.adminws.gen.AuthorizedClient();
@@ -138,13 +159,16 @@ public class AdminGUIPropertiesApplier extends PropertiesApplier {
             authClient.setIssuerDN(ac.getIssuerDN());
             SignServerAdminGUIApplication.getAdminWS().addAuthorizedClient(workerId, authClient);
         } catch (AdminNotAuthorizedException_Exception e) {
-            // TODO: handle error
+            throw new PropertiesApplierException(e);
+        } catch (EJBException ex) {
+            throw new PropertiesApplierException("Operation failed on server side", ex);
+        } catch (SOAPFaultException ex) {
+            throw new PropertiesApplierException("Operation failed on server side", ex);
         }
-        
     }
 
     @Override
-    protected void removeAuthorizedClient(int workerId, AuthorizedClient ac) {
+    protected void removeAuthorizedClient(int workerId, AuthorizedClient ac) throws PropertiesApplierException {
         try {
             final org.signserver.admin.gui.adminws.gen.AuthorizedClient authClient =
                     new org.signserver.admin.gui.adminws.gen.AuthorizedClient();
@@ -153,9 +177,12 @@ public class AdminGUIPropertiesApplier extends PropertiesApplier {
             authClient.setIssuerDN(ac.getIssuerDN());
             SignServerAdminGUIApplication.getAdminWS().removeAuthorizedClient(workerId, authClient);
         } catch (AdminNotAuthorizedException_Exception e) {
-            // TODO: handle error
+            throw new PropertiesApplierException(e);
+        } catch (EJBException ex) {
+            throw new PropertiesApplierException("Operation failed on server side", ex);
+        } catch (SOAPFaultException ex) {
+            throw new PropertiesApplierException("Operation failed on server side", ex);
         }
-        
     }
 
 }

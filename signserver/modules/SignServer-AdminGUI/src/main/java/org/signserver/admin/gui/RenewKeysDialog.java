@@ -27,6 +27,7 @@ import javax.swing.JTextField;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
+import javax.xml.ws.soap.SOAPFaultException;
 import org.apache.log4j.Logger;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
@@ -447,6 +448,20 @@ public class RenewKeysDialog extends JDialog {
                                         .getMessage();
                                 LOG.error(error, e);
                                 sb.append(error);
+                                sb.append("\n");
+                            } catch (SOAPFaultException ex) {
+                                final String error =
+                                    "Operation failed on server side for signer "
+                                    + signerId;
+                                LOG.error(error, ex);
+                                sb.append(error).append(":\n").append(ex.getMessage());
+                                sb.append("\n");
+                            } catch (EJBException ex) {
+                                final String error =
+                                    "Operation failed on server side for signer "
+                                    + signerId;
+                                LOG.error(error, ex);
+                                sb.append(error).append(":\n").append(ex.getMessage());
                                 sb.append("\n");
                             }
                         }

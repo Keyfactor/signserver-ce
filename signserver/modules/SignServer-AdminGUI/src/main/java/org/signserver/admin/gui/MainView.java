@@ -52,6 +52,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.xml.datatype.XMLGregorianCalendar;
+import javax.xml.ws.soap.SOAPFaultException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -1640,7 +1641,11 @@ public class MainView extends FrameView {
 
                 refreshButton.doClick();
             } catch (AdminNotAuthorizedException_Exception ex) {
-                postAdminNotAuthorized(ex);
+                showAdminNotAuthorized(ex);
+            } catch (SOAPFaultException ex) {
+                showServerSideException(ex);
+            } catch (EJBException ex) {
+                showServerSideException(ex);
             }
         }
 }//GEN-LAST:event_addButtonActionPerformed
@@ -1678,7 +1683,11 @@ public class MainView extends FrameView {
 
                     refreshButton.doClick();
                 } catch (final AdminNotAuthorizedException_Exception ex) {
-                    postAdminNotAuthorized(ex);
+                    showAdminNotAuthorized(ex);
+                } catch (SOAPFaultException ex) {
+                    showServerSideException(ex);
+                } catch (EJBException ex) {
+                    showServerSideException(ex);
                 }
             }
         }
@@ -1705,7 +1714,11 @@ public class MainView extends FrameView {
                 }
             }
         } catch (AdminNotAuthorizedException_Exception ex) {
-            postAdminNotAuthorized(ex);
+            showAdminNotAuthorized(ex);
+        } catch (SOAPFaultException ex) {
+            showServerSideException(ex);
+        } catch (EJBException ex) {
+            showServerSideException(ex);
         }
 }//GEN-LAST:event_removeButtonActionPerformed
 
@@ -1741,7 +1754,11 @@ public class MainView extends FrameView {
                     SignServerAdminGUIApplication.getAdminWS()
                             .reloadConfiguration(worker.getWorkerId());
                 } catch (AdminNotAuthorizedException_Exception ex) {
-                    postAdminNotAuthorized(ex);
+                    showAdminNotAuthorized(ex);
+                } catch (SOAPFaultException ex) {
+                    showServerSideException(ex);
+                } catch (EJBException ex) {
+                    showServerSideException(ex);
                 }
             }
             refreshButton.doClick();
@@ -1801,7 +1818,11 @@ public class MainView extends FrameView {
                                 .reloadConfiguration(worker.getWorkerId());
                         }
                     } catch (AdminNotAuthorizedException_Exception ex) {
-                        postAdminNotAuthorized(ex);
+                        showAdminNotAuthorized(ex);
+                    } catch (SOAPFaultException ex) {
+                        showServerSideException(ex);
+                    } catch (EJBException ex) {
+                        showServerSideException(ex);
                     }
                 }
                 refreshButton.doClick();
@@ -1857,7 +1878,11 @@ public class MainView extends FrameView {
                         SignServerAdminGUIApplication.getAdminWS()
                             .reloadConfiguration(worker.getWorkerId());
                     } catch (AdminNotAuthorizedException_Exception ex) {
-                        postAdminNotAuthorized(ex);
+                        showAdminNotAuthorized(ex);
+                    } catch (SOAPFaultException ex) {
+                        showServerSideException(ex);
+                    } catch (EJBException ex) {
+                        showServerSideException(ex);
                     }
                 }
                 refreshButton.doClick();
@@ -2675,9 +2700,43 @@ private void displayLogEntryAction() {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                JOptionPane.showMessageDialog(
+                showAdminNotAuthorized(ex);
+            }
+        });
+    }
+
+    private void showAdminNotAuthorized(
+            final AdminNotAuthorizedException_Exception ex) {
+        JOptionPane.showMessageDialog(
+                MainView.this.getFrame(), ex.getMessage(),
+        "Authorization denied", JOptionPane.ERROR_MESSAGE);
+    }
+
+    private void showServerSideException(final EJBException ex) {
+        JOptionPane.showMessageDialog(
                         MainView.this.getFrame(), ex.getMessage(),
-                "Authorization denied", JOptionPane.ERROR_MESSAGE);
+                "Operation failed on server side", JOptionPane.ERROR_MESSAGE);
+    }
+    private void showServerSideException(final SOAPFaultException ex) {
+        JOptionPane.showMessageDialog(
+                        MainView.this.getFrame(), ex.getMessage(),
+                "Operation failed on server side", JOptionPane.ERROR_MESSAGE);
+    }
+
+    private void postServerSideException(final EJBException ex) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                showServerSideException(ex);
+            }
+        });
+    }
+
+    private void postServerSideException(final SOAPFaultException ex) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                showServerSideException(ex);
             }
         });
     }
@@ -2822,6 +2881,10 @@ private void displayLogEntryAction() {
                                 "Authorization denied", JOptionPane.ERROR_MESSAGE);
                     }
                 });
+            } catch (SOAPFaultException ex) {
+                postServerSideException(ex);
+            } catch (EJBException ex) {
+                postServerSideException(ex);
             }
             return result;  // return your result
         }
@@ -2928,6 +2991,10 @@ private void displayLogEntryAction() {
             } catch (KeyStoreException_Exception ex) {
                 errorMessage = "Unable to remove key:\n" + ex.getLocalizedMessage();
             } catch (SignServerException_Exception ex) {
+                errorMessage = "Unable to remove key:\n" + ex.getLocalizedMessage();
+            } catch (SOAPFaultException ex) {
+                errorMessage = "Unable to remove key:\n" + ex.getLocalizedMessage();
+            } catch (EJBException ex) {
                 errorMessage = "Unable to remove key:\n" + ex.getLocalizedMessage();
             }
             return success;

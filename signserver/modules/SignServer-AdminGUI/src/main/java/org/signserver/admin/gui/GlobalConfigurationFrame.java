@@ -18,11 +18,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Vector;
+import javax.ejb.EJBException;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
+import javax.xml.ws.soap.SOAPFaultException;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Task;
 import org.signserver.admin.gui.adminws.gen
@@ -267,6 +269,12 @@ public class GlobalConfigurationFrame extends javax.swing.JFrame {
         } catch (AdminNotAuthorizedException_Exception ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage(),
                     "Authorization denied", JOptionPane.ERROR_MESSAGE);
+        } catch (SOAPFaultException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(),
+                "Operation failed on server side", JOptionPane.ERROR_MESSAGE);
+        } catch (EJBException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(),
+                "Operation failed on server side", JOptionPane.ERROR_MESSAGE);
         }
 }//GEN-LAST:event_addButtonActionPerformed
 
@@ -322,6 +330,12 @@ public class GlobalConfigurationFrame extends javax.swing.JFrame {
         } catch (AdminNotAuthorizedException_Exception ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage(),
                     "Authorization denied", JOptionPane.ERROR_MESSAGE);
+        } catch (SOAPFaultException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(),
+                "Operation failed on server side", JOptionPane.ERROR_MESSAGE);
+        } catch (EJBException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(),
+                "Operation failed on server side", JOptionPane.ERROR_MESSAGE);
         }
 }//GEN-LAST:event_editButtonActionPerformed
 
@@ -356,6 +370,12 @@ public class GlobalConfigurationFrame extends javax.swing.JFrame {
         } catch (AdminNotAuthorizedException_Exception ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage(),
                     "Authorization denied", JOptionPane.ERROR_MESSAGE);
+        } catch (SOAPFaultException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(),
+                "Operation failed on server side", JOptionPane.ERROR_MESSAGE);
+        } catch (EJBException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(),
+                "Operation failed on server side", JOptionPane.ERROR_MESSAGE);
         }
 }//GEN-LAST:event_removeButtonActionPerformed
 

@@ -67,6 +67,7 @@ import org.ejbca.util.CertTools;
 import org.signserver.admin.gui.SignServerAdminGUIApplication.Protocol;
 import org.signserver.admin.gui.adminws.gen.AdminWS;
 import org.signserver.admin.gui.adminws.gen.AdminWSService;
+import org.signserver.common.util.ExceptionUtils;
 
 
 /**
@@ -808,32 +809,11 @@ public class ConnectDialog extends javax.swing.JDialog {
         } catch (Exception ex) {
             LOG.error("Error connecting", ex);
 
-            // collect cause messages
-            final List<String> causes = new LinkedList<String>();
-            Throwable cause = ex;
-
-            // iterate throug cause until we reach the bottom
-            while (cause != null) {
-                final String causeMessage = cause.getMessage();
-
-                // if cause message wasn't already seen, add it to the list
-                if (causeMessage != null && !"null".equals(causeMessage) && !causes.contains(causeMessage)) {
-                    causes.add(causeMessage);
-                }
-
-                cause = cause.getCause();
-            }
-
-            // prepend cause messages with some separators at the tail of our message
-            final StringBuilder sb = new StringBuilder();
-            for (final String causeMessage : causes) {
-                sb.append("\n");
-                sb.append(causeMessage);
-            }
-            JOptionPane.showMessageDialog(this, sb.toString(), "Connect", JOptionPane.ERROR_MESSAGE);
+            
+            JOptionPane.showMessageDialog(this, ExceptionUtils.catCauses(ex, "\n"), "Connect", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_connectButtonActionPerformed
-
+    
     private void truststoreBrowseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_truststoreBrowseButtonActionPerformed
         final JFileChooser chooser = new JFileChooser();
         final File file = getResolvedPath(truststoreFilePathTextField.getText());

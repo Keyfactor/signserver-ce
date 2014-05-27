@@ -31,6 +31,7 @@ import javax.swing.JTextField;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
+import javax.xml.ws.soap.SOAPFaultException;
 import org.apache.log4j.Logger;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Task;
@@ -401,6 +402,10 @@ public class TestKeysDialog extends JDialog {
                             sb.append(ex.getMessage());
                             sb.append("\n");
                         } catch (EJBException ex) {
+                            LOG.error(ex.getMessage(), ex);
+                            sb.append(ex.getMessage());
+                            sb.append("\n");
+                        } catch (SOAPFaultException ex) {
                             LOG.error(ex.getMessage(), ex);
                             sb.append(ex.getMessage());
                             sb.append("\n");

@@ -43,6 +43,14 @@ public abstract class PropertiesApplier {
         public PropertiesApplierException(final String message) {
             super(message);
         }
+
+        public PropertiesApplierException(Throwable cause) {
+            super(cause);
+        }
+
+        public PropertiesApplierException(String message, Throwable cause) {
+            super(message, cause);
+        }
     }
    
     private int firstGeneratedWorkerId;
@@ -121,7 +129,7 @@ public abstract class PropertiesApplier {
             }
             
         } catch (PropertiesApplierException e) {
-            error = e.getMessage();
+            error = ExceptionUtils.catCauses(e, ": ");
         }
         
     }
@@ -239,7 +247,7 @@ public abstract class PropertiesApplier {
      * @param key
      * @param value
      */
-    protected abstract void setGlobalProperty(final String scope, final String key, final String value);
+    protected abstract void setGlobalProperty(final String scope, final String key, final String value) throws PropertiesApplierException;
     
     /**
      * Remove a global property.
@@ -247,7 +255,7 @@ public abstract class PropertiesApplier {
      * @param scope
      * @param key
      */
-    protected abstract void removeGlobalProperty(final String scope, final String key);
+    protected abstract void removeGlobalProperty(final String scope, final String key) throws PropertiesApplierException;
     
     /**
      * Set a worker property.
@@ -256,7 +264,7 @@ public abstract class PropertiesApplier {
      * @param key
      * @param value
      */
-    protected abstract void setWorkerProperty(final int workerId, final String key, final String value);
+    protected abstract void setWorkerProperty(final int workerId, final String key, final String value) throws PropertiesApplierException;
     
     /**
      * Remove a worker property.
@@ -264,7 +272,7 @@ public abstract class PropertiesApplier {
      * @param workerId
      * @param key
      */
-    protected abstract void removeWorkerProperty(final int workerId, final String key);
+    protected abstract void removeWorkerProperty(final int workerId, final String key) throws PropertiesApplierException;
     
     /**
      * Upload a signer certificate.
@@ -272,7 +280,7 @@ public abstract class PropertiesApplier {
      * @param workerId
      * @param signerCert
      */
-    protected abstract void uploadSignerCertificate(final int workerId, final byte[] signerCert);
+    protected abstract void uploadSignerCertificate(final int workerId, final byte[] signerCert) throws PropertiesApplierException;
     
     /**
      * Upload a signer certificate chain.
@@ -280,7 +288,7 @@ public abstract class PropertiesApplier {
      * @param workerId
      * @param signerCertChain
      */
-    protected abstract void uploadSignerCertificateChain(final int workerId, final List<byte[]> signerCertChain);
+    protected abstract void uploadSignerCertificateChain(final int workerId, final List<byte[]> signerCertChain) throws PropertiesApplierException;
     
     /**
      * Add an authorized client for a worker.
@@ -288,7 +296,7 @@ public abstract class PropertiesApplier {
      * @param workerId
      * @param ac Authorized client to add
      */
-    protected abstract void addAuthorizedClient(final int workerId, final AuthorizedClient ac);
+    protected abstract void addAuthorizedClient(final int workerId, final AuthorizedClient ac) throws PropertiesApplierException;
     
     /**
      * Remove an authorized client for a worker.
@@ -296,7 +304,7 @@ public abstract class PropertiesApplier {
      * @param workerId
      * @param ac Authorized client to remove
      */
-    protected abstract void removeAuthorizedClient(final int workerId, final AuthorizedClient ac);
+    protected abstract void removeAuthorizedClient(final int workerId, final AuthorizedClient ac) throws PropertiesApplierException;
     
     /**
      * Get the worker ID for an indexed generated worker ID.

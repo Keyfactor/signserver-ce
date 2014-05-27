@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.List;
 import java.util.Properties;
+import javax.ejb.EJBException;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
@@ -32,6 +33,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.JTextComponent;
+import javax.xml.ws.soap.SOAPFaultException;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.jdesktop.application.Action;
@@ -1046,6 +1048,10 @@ public class AddWorkerDialog extends javax.swing.JDialog {
                     }
                 } catch (AdminNotAuthorizedException_Exception e) {
                     return "Error reloading workers: " + e.getMessage();
+                }  catch (SOAPFaultException ex) {
+                    return "Error reloading workers: " + ex.getMessage();
+                } catch (EJBException ex) {
+                    return "Error reloading workers: " + ex.getMessage();
                 }
             }
 

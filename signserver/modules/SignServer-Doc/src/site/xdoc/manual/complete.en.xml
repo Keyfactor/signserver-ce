@@ -4198,6 +4198,22 @@ Default: unset (if the permissions are changed, the existing owner password will
                                         </p>
                                     </td>
                             </tr>
+                            <tr>
+                                <td><b>HASHALGORITHM</b></td>
+                                <td>
+                                    <p>
+Sets the hash algorithm used for the message digest and signature hash.
+                                    </p>
+                                    <p>
+Setting this property will also imply a minimum PDF version depending on the hash used.
+The resulting PDF will be upgraded to this version if it's higher than the version used
+in the original PDF.
+                                    </p>
+                                    <p>
+Default SHA1.
+                                    </p>
+                                </td>
+                            </tr>
                         </table>
                     </subsubsection>
                 </subsection>

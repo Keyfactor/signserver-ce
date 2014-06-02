@@ -92,23 +92,31 @@ public class PDFSignerTest extends ModulesTestCase {
             
             final GenericSignResponse response = signGenericDocument(workerId, data);
          
-            if (hashAlgorithm != null) {
-                // check PDF version
-                final PdfReader reader = new PdfReader(response.getProcessedData());
-                final char version = reader.getPdfVersion();
+            final String expectedHashAlgorithm;
+            if (hashAlgorithm == null) {
+                // if no hash algorithm was specified, the default should be "SHA1"
+                expectedHashAlgorithm = "SHA1";
+            } else {
+                expectedHashAlgorithm = hashAlgorithm;
+            }
                 
-                checkPdfVersion(version, hashAlgorithm);
+            // check PDF version
+            final PdfReader reader = new PdfReader(response.getProcessedData());
+            final char version = reader.getPdfVersion();
+            
+            checkPdfVersion(version, hashAlgorithm);
+            
+            final AcroFields af = reader.getAcroFields();
+            final List<String> sigNames = af.getSignatureNames();
+            
+            for (final String sigName : sigNames) {
+                final PdfPKCS7 pk = af.verifySignature(sigName);
                 
-                final AcroFields af = reader.getAcroFields();
-                final List<String> sigNames = af.getSignatureNames();
-                
-                for (final String sigName : sigNames) {
-                    final PdfPKCS7 pk = af.verifySignature(sigName);
-                    
-                    // PdfPKCS7.getDigestAlgorithm() seems to give <algo>withRSA
-                    assertEquals("Digest algorithm", hashAlgorithm + "withRSA", pk.getDigestAlgorithm());
-                    assertEquals("Hash algorithm", hashAlgorithm, pk.getHashAlgorithm());
-                }
+                // PdfPKCS7.getDigestAlgorithm() seems to give <algo>withRSA
+                assertEquals("Digest algorithm", expectedHashAlgorithm + "withRSA",
+                        pk.getDigestAlgorithm());
+                assertEquals("Hash algorithm", expectedHashAlgorithm,
+                        pk.getHashAlgorithm());
             }
             
             return response;

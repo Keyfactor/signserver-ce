@@ -15,12 +15,14 @@ package org.signserver.module.xades.signer;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.security.NoSuchProviderException;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.xml.crypto.dsig.SignatureMethod;
 import javax.xml.parsers.DocumentBuilder;
@@ -44,7 +46,9 @@ import org.signserver.common.GenericServletResponse;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
 import org.signserver.common.ISignRequest;
+import org.signserver.common.ServiceLocator;
 import org.signserver.common.WorkerConfig;
+import org.signserver.ejb.interfaces.IInternalWorkerSession;
 import org.signserver.server.UsernamePasswordClientCredential;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.archive.Archivable;
@@ -73,6 +77,7 @@ import xades4j.providers.SigningCertChainException;
 import xades4j.providers.TimeStampTokenProvider;
 import xades4j.utils.XadesProfileResolutionException;
 import xades4j.providers.impl.DefaultAlgorithmsProviderEx;
+import xades4j.providers.impl.DefaultMessageDigestProvider;
 import xades4j.providers.impl.DefaultSignaturePropertiesProvider;
 import xades4j.providers.impl.ExtendedTimeStampTokenProvider;
 import xades4j.verification.UnexpectedJCAException;
@@ -101,7 +106,10 @@ public class XAdESSigner extends BaseSigner {
     
     /** Worker property: TSA_PASSWORD. */
     public static final String PROPERTY_TSA_PASSWORD = "TSA_PASSWORD";
-    
+
+    /** Worker property: TSA_WORKER. */
+    public static final String PROPERTY_TSA_WORKER = "TSA_WORKER";
+
     /** Worker property: COMMITMENT_TYPES. */
     public static final String PROPERTY_COMMITMENT_TYPES = "COMMITMENT_TYPES";
     public static final String COMMITMENT_TYPES_NONE = "NONE";
@@ -154,6 +162,9 @@ public class XAdESSigner extends BaseSigner {
      */
     private Class<? extends TimeStampTokenProvider> timeStampTokenProviderImplementation =
             ExtendedTimeStampTokenProvider.class;
+    
+    private TimeStampTokenProvider internalTimeStampTokenProvider;
+    private IInternalWorkerSession workerSession;
     
     /** 
      * Electronic signature forms defined in ETSI TS 101 903 V1.4.1 (2009-06)
@@ -208,20 +219,36 @@ public class XAdESSigner extends BaseSigner {
             configErrors.add("Incorrect value for property " + PROPERTY_XADESFORM + ": \"" + xadesForm + "\"");
         }
         
-        // PROPERTY_TSA_URL, PROPERTY_TSA_USERNAME, PROPERTY_TSA_PASSWORD
+        // PROPERTY_TSA_URL, PROPERTY_TSA_USERNAME, PROPERTY_TSA_PASSWORD, PROPERTY_TSA_WORKER
         TSAParameters tsa = null;
         if (form == Profiles.T) {
             final String tsaUrl = config.getProperties().getProperty(PROPERTY_TSA_URL);
             final String tsaUsername = config.getProperties().getProperty(PROPERTY_TSA_USERNAME);
             final String tsaPassword = config.getProperties().getProperty(PROPERTY_TSA_PASSWORD);
+            final String tsaWorker = config.getProperties().getProperty(PROPERTY_TSA_WORKER);
             
-            if (tsaUrl == null) {
-                configErrors.add("Property " + PROPERTY_TSA_URL + " is required when " + PROPERTY_XADESFORM + " is " + Profiles.T);
+            if (tsaUrl == null && tsaWorker == null) {
+                configErrors.add("Property " + PROPERTY_TSA_URL + " or " + PROPERTY_TSA_WORKER + " are required when " + PROPERTY_XADESFORM + " is " + Profiles.T);
             } else {
-                tsa = new TSAParameters(tsaUrl, tsaUsername, tsaPassword);
+                if (tsaUrl != null) {
+                    // Use URL to external TSA
+                    tsa = new TSAParameters(tsaUrl, tsaUsername, tsaPassword);
+                } else {
+                    // Use worker name/ID of internal TSA
+                    try {
+                        internalTimeStampTokenProvider = new InternalTimeStampTokenProvider(new DefaultMessageDigestProvider("BC"), getWorkerSession(), tsaWorker, tsaUsername, tsaPassword);
+                    } catch (NoSuchProviderException ex) {
+                        configErrors.add("No such message digest provider: " + ex.getMessage());
+            }
+        }
             }
         }
         
+        // check that TSA_URL and TSA_WORKER is not set at the same time
+        if (config.getProperty(PROPERTY_TSA_URL) != null && config.getProperty(PROPERTY_TSA_WORKER) != null) {
+            configErrors.add("Can not specify " + PROPERTY_TSA_URL + " and " + PROPERTY_TSA_WORKER + " at the same time.");
+        }
+
         // TODO: Other configuration options
         final String commitmentTypesProperty = config.getProperties().getProperty(PROPERTY_COMMITMENT_TYPES);
         
@@ -392,9 +419,16 @@ public class XAdESSigner extends BaseSigner {
                 break;
             case T:
                 // add timestamp token provider
-                xsp = new XadesTSigningProfile(kdp)
-                            .withTimeStampTokenProvider(timeStampTokenProviderImplementation)
+                xsp = new XadesTSigningProfile(kdp);
+                if (internalTimeStampTokenProvider == null) {
+                    // Use URL to external TSA
+                    xsp = xsp.withTimeStampTokenProvider(timeStampTokenProviderImplementation)
                             .withBinding(TSAParameters.class, params.getTsaParameters());
+                } else {
+                    // Use internal TSA
+                    xsp = xsp.withTimeStampTokenProvider(internalTimeStampTokenProvider);
+                }
+
                 break;
             case C:
             case EPES:
@@ -439,6 +473,15 @@ public class XAdESSigner extends BaseSigner {
         timeStampTokenProviderImplementation = implementation;
     }
     
+    /**
+     * Used by the unit test to override the time stamp token provider.
+     * 
+     * @param provider
+     */
+    public void setInternalTimeStampTokenProviderImplementation(final TimeStampTokenProvider provider) {
+        internalTimeStampTokenProvider = provider;
+    }
+
     /**
      * Implemenation of {@link xades4j.providers.AlgorithmsProviderEx} using the
      * signature algorithm configured for the worker (or the default values).
@@ -514,5 +557,18 @@ public class XAdESSigner extends BaseSigner {
             // there should always be at least one cert in the chain
             return certs.subList(0, 1);
         }
+    }
+
+    protected IInternalWorkerSession getWorkerSession() {
+        if (workerSession == null) {
+            try {
+                workerSession = ServiceLocator.getInstance().lookupLocal(
+                    IInternalWorkerSession.class);
+            } catch (NamingException ex) {
+                throw new RuntimeException("Unable to lookup worker session",
+                        ex);
+            }
+        }
+        return workerSession;
     }
 }

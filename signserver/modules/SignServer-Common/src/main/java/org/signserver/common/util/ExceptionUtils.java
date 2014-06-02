@@ -20,6 +20,7 @@ import java.util.List;
  *
  * @author Markus Kilås
  * @author Marcus Lundblad
+ * @version $Id$
  */
 public class ExceptionUtils {
 

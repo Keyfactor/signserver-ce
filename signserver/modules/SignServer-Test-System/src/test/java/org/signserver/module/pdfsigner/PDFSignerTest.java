@@ -107,6 +107,7 @@ public class PDFSignerTest extends ModulesTestCase {
                     
                     // PdfPKCS7.getDigestAlgorithm() seems to give <algo>withRSA
                     assertEquals("Digest algorithm", hashAlgorithm + "withRSA", pk.getDigestAlgorithm());
+                    assertEquals("Hash algorithm", hashAlgorithm, pk.getHashAlgorithm());
                 }
             }
             

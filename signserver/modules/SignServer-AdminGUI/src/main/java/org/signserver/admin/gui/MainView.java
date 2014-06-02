@@ -89,7 +89,10 @@ import org.signserver.common.util.PropertiesDumper;
  * @author Markus Kilås
  * @version $Id$
  */
-@SuppressWarnings("PMD.UnusedFormalParameter")
+@SuppressWarnings({
+    "PMD.UnusedFormalParameter",
+    "PMD.DoNotUseThreads"
+})
 public class MainView extends FrameView {
 
     /** Logger for this class. */
@@ -2021,24 +2024,6 @@ private void addWorkerItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN
     
     
 }//GEN-LAST:event_addWorkerItemActionPerformed
-
-    private void selectWorkers(final List<Integer> workerIds) {
-        final int numSelected = workerIds.size();
-        final int[] indices = new int[numSelected];
-        
-        for (int i = 0; i < numSelected; i++) {
-            for (int j = 0; j < allWorkers.size(); j++) {
-                final Worker worker = allWorkers.get(j);
-                
-                if (worker.getWorkerId() == workerIds.get(i)) {
-                    indices[i] = j;
-                    break;
-                }
-            }
-        }
-        
-        workersList.setSelectedIndices(indices);
-    }
 
     private void exportRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportRadioButtonActionPerformed
 

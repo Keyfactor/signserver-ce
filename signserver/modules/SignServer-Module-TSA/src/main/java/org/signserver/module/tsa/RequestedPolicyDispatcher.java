@@ -27,7 +27,7 @@ import org.bouncycastle.tsp.TSPException;
 import org.bouncycastle.tsp.TimeStampRequest;
 import org.bouncycastle.tsp.TimeStampResponse;
 import org.signserver.common.*;
-import org.signserver.ejb.interfaces.IInternalWorkerSession;
+import org.signserver.ejb.interfaces.IDispatcherWorkerSession;
 import org.signserver.module.tsa.bc.TimeStampResponseGenerator;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.dispatchers.BaseDispatcher;
@@ -56,7 +56,7 @@ public class RequestedPolicyDispatcher extends BaseDispatcher {
     public static final String TSA_REQUESTEDPOLICYOID = "TSA_REQUESTEDPOLICYOID";
     
     /** Workersession. */
-    private IInternalWorkerSession workerSession;
+    private IDispatcherWorkerSession workerSession;
     
     private static final String MAPPINGS = "MAPPINGS";
     private static final String DEFAULTWORKER = "DEFAULTWORKER";
@@ -102,7 +102,7 @@ public class RequestedPolicyDispatcher extends BaseDispatcher {
             }
             
             workerSession = ServiceLocator.getInstance().lookupLocal(
-                        IInternalWorkerSession.class);
+                        IDispatcherWorkerSession.class);
         } catch (NamingException ex) {
             LOG.error("Unable to lookup worker session", ex);
         }
@@ -192,7 +192,7 @@ public class RequestedPolicyDispatcher extends BaseDispatcher {
         return result;
     }
 
-    private IInternalWorkerSession getWorkerSession() {
+    private IDispatcherWorkerSession getWorkerSession() {
         return workerSession;
     }
     

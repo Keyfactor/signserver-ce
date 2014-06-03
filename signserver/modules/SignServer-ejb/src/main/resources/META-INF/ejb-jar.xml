@@ -36,6 +36,19 @@
                     </persistence-context-ref>
 		</session>
 
+                <session>
+                    <ejb-name>DispatcherWorkerSessionBean</ejb-name>
+                    <persistence-context-ref>
+                            <persistence-context-ref-name>persistence/em</persistence-context-ref-name>
+                            <persistence-unit-name>SignServerJPA</persistence-unit-name>
+                            <persistence-context-type>Transaction</persistence-context-type>
+                            <injection-target>
+                                <injection-target-class>org.signserver.ejb.DispatcherWorkerSessionBean</injection-target-class>
+                                <injection-target-name>em</injection-target-name>
+                            </injection-target>
+                    </persistence-context-ref>
+		</session>
+
 		<session>
 			<ejb-name>WorkerManagerSessionBean</ejb-name>  
 			<persistence-context-ref>  

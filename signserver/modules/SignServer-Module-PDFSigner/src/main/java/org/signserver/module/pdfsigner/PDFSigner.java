@@ -20,6 +20,8 @@ import java.net.URL;
 import java.security.*;
 import java.security.cert.*;
 import java.security.cert.Certificate;
+import java.security.interfaces.DSAPrivateKey;
+import java.security.interfaces.DSAPublicKey;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -200,6 +202,41 @@ public class PDFSigner extends BaseSigner {
             configErrors.add("Can not specify " + TSA_URL + " and " + TSA_WORKER + " at the same time.");
         }
     }
+
+    
+    
+    @Override
+    protected List<String> getCryptoTokenFatalErrors() {
+        final List<String> errors = super.getCryptoTokenFatalErrors();
+        
+        // according to the PDF specification, only SHA1 is permitted as digest algorithm
+        // for DSA public/private keys
+        try {
+            final ICryptoToken token = getCryptoToken();
+
+            if (token != null) {
+                final PublicKey pub = token.getPublicKey(ICryptoToken.PURPOSE_SIGN);
+                final PrivateKey priv = token.getPrivateKey(ICryptoToken.PURPOSE_SIGN);
+
+                LOG.debug("pub: " + pub.getClass().getName());
+                LOG.debug("priv: " + priv.getClass().getName());
+                
+                if (pub instanceof DSAPublicKey || priv instanceof DSAPrivateKey) {
+                    if (!"SHA1".equals(hashAlgorithm)) {
+                        errors.add("Only SHA1 is permitted as hash algorithm for DSA public/private keys");
+                    }
+                }
+            }
+        } catch (CryptoTokenOfflineException e) {
+            // ignore
+        } catch (SignServerException e) {
+            // ignore
+        }
+
+        return errors;
+    }
+
+
 
     /**
      * The main method performing the actual signing operation. Expects the

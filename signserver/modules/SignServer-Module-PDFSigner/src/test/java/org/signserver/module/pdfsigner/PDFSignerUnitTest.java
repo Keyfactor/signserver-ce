@@ -19,6 +19,7 @@ import java.io.*;
 import java.math.BigInteger;
 import java.security.KeyPair;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.cert.*;
 import java.util.*;
@@ -60,6 +61,7 @@ public class PDFSignerUnitTest extends TestCase {
     
     /** Worker7897: Default algorithms, default hashing setting. */
     private static final int WORKER1 = 7897;
+    private static final int WORKER2 = 7898;
 
     private static final String NAME = "NAME";
     private static final String AUTHTYPE = "AUTHTYPE";
@@ -1235,6 +1237,52 @@ public class PDFSignerUnitTest extends TestCase {
                 fatalErrors.contains("Illegal hash algorithm: IllegalHash"));
     }
     
+    public void test17OnlySHA1AcceptedForDSA() throws Exception {
+        final KeyPair signerKeyPair = CryptoUtils.generateDSA(1024);
+        final Certificate[] certChain = new Certificate[] {converter.getCertificate(new CertBuilder().build())};
+        final Certificate signerCertificate = certChain[0];
+        final String provider = "BC";
+        
+        final MockedCryptoToken token = new MockedCryptoToken(signerKeyPair.getPrivate(), signerKeyPair.getPublic(), signerCertificate, Arrays.asList(certChain), provider);
+        final MockedPDFSigner instance = new MockedPDFSigner(token);
+        
+        final WorkerConfig workerConfig = new WorkerConfig();
+        
+        workerConfig.setProperty("NAME", "TestSignerDSA");
+        workerConfig.setProperty("HASHALGORITHM", "SHA256");
+        
+        instance.init(WORKER2, workerConfig, null, null);
+        
+        final List<String> fatalErrors = instance.getFatalErrors();
+        
+        assertTrue("Should contain error",
+                fatalErrors.contains("Only SHA1 is permitted as hash algorithm for DSA public/private keys"));
+    }
+
+    
+    private class MockedPDFSigner extends PDFSigner {
+        private final MockedCryptoToken mockedToken;
+
+        public MockedPDFSigner(final MockedCryptoToken mockedToken) {
+            this.mockedToken = mockedToken;
+        }
+        
+        @Override
+        public Certificate getSigningCertificate() throws CryptoTokenOfflineException {
+            return mockedToken.getCertificate(ICryptoToken.PURPOSE_SIGN);
+        }
+
+        @Override
+        public List<Certificate> getSigningCertificateChain() throws CryptoTokenOfflineException {
+            return mockedToken.getCertificateChain(ICryptoToken.PURPOSE_SIGN);
+        }
+
+        @Override
+        public ICryptoToken getCryptoToken() {
+            return mockedToken;
+        }
+    }
+    
     
     /**
      * Tests that we don't get an exception trying to sign a document with the 
@@ -1362,7 +1410,6 @@ public class PDFSignerUnitTest extends TestCase {
             });
             workerSession.reloadConfiguration(workerId);
         }
-        
     }
 
     private byte[] readFile(File file) throws IOException {

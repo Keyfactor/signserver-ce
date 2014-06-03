@@ -23,10 +23,10 @@ import org.signserver.common.IllegalRequestException;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
+import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
-import org.signserver.common.ServiceLocator;
-import org.signserver.ejb.interfaces.IInternalWorkerSession;
+import org.signserver.ejb.interfaces.IDispatcherWorkerSession;
 import org.signserver.server.WorkerContext;
 
 /**
@@ -48,7 +48,7 @@ public class FirstActiveDispatcher extends BaseDispatcher {
     private static final String PROPERTY_WORKERS = "WORKERS";
 
     /** Workersession. */
-    private IInternalWorkerSession workerSession;
+    private IDispatcherWorkerSession workerSession;
 
     /** List of workers. */
     private List<String> workers = new LinkedList<String>();
@@ -68,7 +68,7 @@ public class FirstActiveDispatcher extends BaseDispatcher {
                 workers.addAll(Arrays.asList(workersValue.split(",")));
             }
             workerSession = ServiceLocator.getInstance().lookupLocal(
-                        IInternalWorkerSession.class);
+                        IDispatcherWorkerSession.class);
         } catch (NamingException ex) {
             LOG.error("Unable to lookup worker session", ex);
         }

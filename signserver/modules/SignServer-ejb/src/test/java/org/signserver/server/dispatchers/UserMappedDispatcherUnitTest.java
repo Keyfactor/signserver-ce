@@ -13,10 +13,10 @@
 package org.signserver.server.dispatchers;
 
 import org.apache.log4j.Logger;
-import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Test;
 import org.signserver.common.WorkerConfig;
-import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.ejb.interfaces.IDispatcherWorkerSession;
 import org.signserver.server.SignServerContext;
 import org.signserver.server.WorkerContext;
 
@@ -83,7 +83,7 @@ public class UserMappedDispatcherUnitTest {
     /** Mocked UserMappedDispatcher not doing any JNDI lookups. */
     private static class MockedUserMapppedDispatcher extends UserMappedDispatcher {
         @Override
-        protected IWorkerSession getWorkerSession() {
+        protected IDispatcherWorkerSession getWorkerSession() {
             return null;
         }
     }

@@ -4210,6 +4210,38 @@ The resulting PDF will be upgraded to this version if it's higher than the versi
 in the original PDF.
                                     </p>
                                     <p>
+Supported hash algorithms.
+                                    </p>
+                                    <p>
+                                        <table>
+                                            <tr>
+                                                <th>Algorithm</th>
+                                                <th>PDF version</th>
+                                            </tr>
+                                            <tr>
+                                                <td>SHA1</td>
+                                                <td>1.3</td>
+                                            </tr>
+                                            <tr>
+                                                <td>SHA256</td>
+                                                <td>1.6</td>
+                                            </tr>
+                                            <tr>
+                                                <td>SHA384</td>
+                                                <td>1.7</td>
+                                            </tr>
+                                            <tr>
+                                                <td>SHA512</td>
+                                                <td>1.7</td>
+                                            </tr>
+                                            <tr>
+                                                <td>RIPEMD160</td>
+                                                <td>1.7</td>
+                                            </tr>
+                                        </table>
+                                    </p>
+ 
+                                    <p>
 Default SHA1.
                                     </p>
                                 </td>

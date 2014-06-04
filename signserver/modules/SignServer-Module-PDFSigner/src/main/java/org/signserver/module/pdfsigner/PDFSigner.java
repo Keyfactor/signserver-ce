@@ -186,6 +186,7 @@ public class PDFSigner extends BaseSigner {
         hashAlgorithm = config.getProperty(HASHALGORITHM, DEFAULTHASHALGORITHM);
         
         try {
+            // calculate minimum PDF version based on hash algorithm
             minimumPdfVersion = getMinimumPdfVersion();
         } catch (IllegalArgumentException e) {
             configErrors.add("Illegal hash algorithm: " + hashAlgorithm);

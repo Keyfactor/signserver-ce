@@ -4208,6 +4208,9 @@ Sets the hash algorithm used for the message digest and signature hash.
 Setting this property will also imply a minimum PDF version depending on the hash used.
 The resulting PDF will be upgraded to this version if it's higher than the version used
 in the original PDF.
+Since upgrading the version requires re-creating the file (i.e. not appending the new signature)
+this is not supported on already signed document (i.e. using a hash algorithm requiring a higher version than the original document).
+Attempting to sign such a document will result in a failure.
                                     </p>
                                     <p>
 Supported hash algorithms.

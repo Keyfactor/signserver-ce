@@ -1264,6 +1264,7 @@ public class PDFSignerUnitTest extends TestCase {
     
     /**
      * Test that explicitly setting SHA1 for DSA keys works.
+     * 
      * @throws Exception
      */
     public void test18SHA1acceptedForDSA() throws Exception {
@@ -1282,7 +1283,30 @@ public class PDFSignerUnitTest extends TestCase {
         assertFalse("Should not contain error",
                 fatalErrors.contains("Only SHA1 is permitted as hash algorithm for DSA public/private keys"));
     }
-    
+
+    /**
+     * Test that setting the hash algorithm to SHA256
+     * is accepted for RSA keys.
+     * 
+     * @throws Exception
+     */
+    public void test19SHA256AcceptedForRSA() throws Exception {
+        final MockedCryptoToken token = generateToken(false);
+        final MockedPDFSigner instance = new MockedPDFSigner(token);
+        
+        final WorkerConfig workerConfig = new WorkerConfig();
+        
+        workerConfig.setProperty("NAME", "TestSignerDSA");
+        workerConfig.setProperty("HASHALGORITHM", "SHA256");
+        
+        instance.init(WORKER2, workerConfig, null, null);
+        
+        final List<String> fatalErrors = instance.getFatalErrors();
+        
+        assertFalse("Should not contain error",
+                fatalErrors.contains("Only SHA1 is permitted as hash algorithm for DSA public/private keys"));
+    }
+
     private MockedCryptoToken generateToken(final boolean useDSA) throws NoSuchAlgorithmException, NoSuchProviderException,
         CertBuilderException, CertificateException {
         final KeyPair signerKeyPair = useDSA ? CryptoUtils.generateDSA(1024) : CryptoUtils.generateRSA(1024);

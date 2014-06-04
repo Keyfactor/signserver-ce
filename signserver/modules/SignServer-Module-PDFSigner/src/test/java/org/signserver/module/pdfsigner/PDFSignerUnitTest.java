@@ -20,6 +20,7 @@ import java.math.BigInteger;
 import java.security.KeyPair;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.cert.*;
 import java.util.*;
@@ -40,6 +41,7 @@ import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.test.utils.builders.CertBuilder;
+import org.signserver.test.utils.builders.CertBuilderException;
 import org.signserver.test.utils.builders.CertExt;
 import org.signserver.test.utils.builders.CryptoUtils;
 import org.signserver.test.utils.mock.GlobalConfigurationSessionMock;
@@ -1237,13 +1239,14 @@ public class PDFSignerUnitTest extends TestCase {
                 fatalErrors.contains("Illegal hash algorithm: IllegalHash"));
     }
     
-    public void test17OnlySHA1AcceptedForDSA() throws Exception {
-        final KeyPair signerKeyPair = CryptoUtils.generateDSA(1024);
-        final Certificate[] certChain = new Certificate[] {converter.getCertificate(new CertBuilder().build())};
-        final Certificate signerCertificate = certChain[0];
-        final String provider = "BC";
-        
-        final MockedCryptoToken token = new MockedCryptoToken(signerKeyPair.getPrivate(), signerKeyPair.getPublic(), signerCertificate, Arrays.asList(certChain), provider);
+    /**
+     * Test that setting a hash algorithm other than SHA1
+     * gives an error when using DSA keys.
+     * 
+     * @throws Exception
+     */
+    public void test17OnlySHA1AcceptedForDSA() throws Exception {       
+        final MockedCryptoToken token = generateToken(true);
         final MockedPDFSigner instance = new MockedPDFSigner(token);
         
         final WorkerConfig workerConfig = new WorkerConfig();
@@ -1257,6 +1260,38 @@ public class PDFSignerUnitTest extends TestCase {
         
         assertTrue("Should contain error",
                 fatalErrors.contains("Only SHA1 is permitted as hash algorithm for DSA public/private keys"));
+    }
+    
+    /**
+     * Test that explicitly setting SHA1 for DSA keys works.
+     * @throws Exception
+     */
+    public void test18SHA1acceptedForDSA() throws Exception {
+        final MockedCryptoToken token = generateToken(true);
+        final MockedPDFSigner instance = new MockedPDFSigner(token);
+        
+        final WorkerConfig workerConfig = new WorkerConfig();
+        
+        workerConfig.setProperty("NAME", "TestSignerDSA");
+        workerConfig.setProperty("HASHALGORITHM", "SHA1");
+        
+        instance.init(WORKER2, workerConfig, null, null);
+        
+        final List<String> fatalErrors = instance.getFatalErrors();
+        
+        assertFalse("Should not contain error",
+                fatalErrors.contains("Only SHA1 is permitted as hash algorithm for DSA public/private keys"));
+    }
+    
+    private MockedCryptoToken generateToken(final boolean useDSA) throws NoSuchAlgorithmException, NoSuchProviderException,
+        CertBuilderException, CertificateException {
+        final KeyPair signerKeyPair = useDSA ? CryptoUtils.generateDSA(1024) : CryptoUtils.generateRSA(1024);
+        final Certificate[] certChain = new Certificate[] {converter.getCertificate(new CertBuilder().build())};
+        final Certificate signerCertificate = certChain[0];
+        final String provider = "BC";
+        
+        final MockedCryptoToken token = new MockedCryptoToken(signerKeyPair.getPrivate(), signerKeyPair.getPublic(), signerCertificate, Arrays.asList(certChain), provider);
+        return token;
     }
 
     

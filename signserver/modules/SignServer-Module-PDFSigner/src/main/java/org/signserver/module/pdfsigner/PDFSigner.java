@@ -218,9 +218,6 @@ public class PDFSigner extends BaseSigner {
             if (token != null) {
                 final PublicKey pub = token.getPublicKey(ICryptoToken.PURPOSE_SIGN);
                 final PrivateKey priv = token.getPrivateKey(ICryptoToken.PURPOSE_SIGN);
-
-                LOG.debug("pub: " + pub.getClass().getName());
-                LOG.debug("priv: " + priv.getClass().getName());
                 
                 if (pub instanceof DSAPublicKey || priv instanceof DSAPrivateKey) {
                     if (!"SHA1".equals(hashAlgorithm)) {
@@ -497,10 +494,11 @@ public class PDFSigner extends BaseSigner {
     /**
      * Get the minimum PDF version (x in 1.x)
      * given the configured hash algorithm.
-     *  
+     * 
      * @return PDF version ("suffix" version)
+     * @throws IllegalArgumentException in case of an unknown hash algorithm
      */
-    private int getMinimumPdfVersion() {
+    private int getMinimumPdfVersion() throws IllegalArgumentException {
         if ("SHA1".equals(hashAlgorithm)) {
             return 0;
         } else if ("SHA256".equals(hashAlgorithm)) {

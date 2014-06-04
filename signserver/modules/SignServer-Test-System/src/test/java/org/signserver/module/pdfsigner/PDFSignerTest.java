@@ -364,31 +364,36 @@ public class PDFSignerTest extends ModulesTestCase {
         final byte[] pdfOk = getTestFile(TESTPDF_OK);
         final byte[] pdf2Catalogs = getTestFile(TESTPDF_2CATALOGS);
 
-        workerSession.setWorkerProperty(WORKERID,
-                "REFUSE_DOUBLE_INDIRECT_OBJECTS", "FALSE");
-        workerSession.reloadConfiguration(WORKERID);
-
-        // Just test that we can sign a normal PDF
-        signNoCheck(WORKERID, pdfOk);
-
-        // Test that we can sign a strange PDF when the check is disabled
-        signGenericDocument(WORKERID, pdf2Catalogs);
-
-        // Enable the check
-        workerSession.setWorkerProperty(WORKERID,
-                "REFUSE_DOUBLE_INDIRECT_OBJECTS", "TRUE");
-        workerSession.reloadConfiguration(WORKERID);
-
-        // Test that we can't sign the strange PDF when the check is on
         try {
-            signGenericDocument(WORKERID, pdf2Catalogs);
-            fail("Accepted the faulty PDF!");
-        } catch (SignServerException ok) {
-            // OK
-        }
+            workerSession.setWorkerProperty(WORKERID,
+                "REFUSE_DOUBLE_INDIRECT_OBJECTS", "FALSE");
+            workerSession.reloadConfiguration(WORKERID);
 
-        // Test that we can still sign a normal PDF when the check is enables
-        signGenericDocument(WORKERID, pdfOk);
+            // Just test that we can sign a normal PDF
+            signNoCheck(WORKERID, pdfOk);
+
+            // Test that we can sign a strange PDF when the check is disabled
+            signGenericDocument(WORKERID, pdf2Catalogs);
+
+            // Enable the check
+            workerSession.setWorkerProperty(WORKERID,
+                "REFUSE_DOUBLE_INDIRECT_OBJECTS", "TRUE");
+            workerSession.reloadConfiguration(WORKERID);
+
+            // Test that we can't sign the strange PDF when the check is on
+            try {
+                signGenericDocument(WORKERID, pdf2Catalogs);
+                fail("Accepted the faulty PDF!");
+            } catch (SignServerException ok) {
+                // OK
+            }
+
+            // Test that we can still sign a normal PDF when the check is enables
+            signGenericDocument(WORKERID, pdfOk);
+        } finally {
+            workerSession.removeWorkerProperty(WORKERID, "REFUSE_DOUBLE_INDIRECT_OBJECTS");
+            workerSession.reloadConfiguration(WORKERID);
+        }
     }
 
     /**
@@ -483,13 +488,26 @@ public class PDFSignerTest extends ModulesTestCase {
         try {
             signGenericPDFWithHash(WORKERID, pdfSigned, "SHA512");
             fail("Should fail to upgrade an already signed document");
-        } catch (SignServerException ok) {
+        } catch (IllegalRequestException ok) {
             // expected
         } catch (Exception e) {
             fail("Unexpected exception: " + e.getClass().getName());
         }
     }
     
+    /**
+     * Test signing an already signed PDF using a hash algorithm
+     * not requiring a version upgrade. Should work.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test19NonUpgradeSignedAllowed() throws Exception {
+        final byte[] pdfSigned = getTestFile(TESTPDF_SIGNED);
+        
+        signGenericPDFWithHash(WORKERID, pdfSigned, "SHA1");
+    }
+
     @Test
     public void test99TearDownDatabase() throws Exception {
         removeWorker(5675);

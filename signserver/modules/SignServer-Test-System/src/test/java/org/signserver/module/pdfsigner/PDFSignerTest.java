@@ -51,7 +51,8 @@ public class PDFSignerTest extends ModulesTestCase {
 
     private static final String TESTPDF_OK = "ok.pdf";
     private static final String TESTPDF_2CATALOGS = "2catalogs.pdf";
-    
+    private static final String TESTPDF_SIGNED = "pdf/sample-signed.pdf";
+
     private final IWorkerSession workerSession = getWorkerSession();
 
     @Before
@@ -467,6 +468,26 @@ public class PDFSignerTest extends ModulesTestCase {
         final byte[] pdfOk = getTestFile(TESTPDF_OK);
         
         signGenericPDFWithHash(WORKERID, pdfOk, "RIPEMD160");
+    }
+    
+    /**
+     * Test signing an already signed PDF using a hash
+     * algorithm resulting in a higher PDF version. Should fail.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test18UpgradeSignedNotAllowed() throws Exception {
+        final byte[] pdfSigned = getTestFile(TESTPDF_SIGNED);
+        
+        try {
+            signGenericPDFWithHash(WORKERID, pdfSigned, "SHA512");
+            fail("Should fail to upgrade an already signed document");
+        } catch (SignServerException ok) {
+            // expected
+        } catch (Exception e) {
+            fail("Unexpected exception: " + e.getClass().getName());
+        }
     }
     
     @Test

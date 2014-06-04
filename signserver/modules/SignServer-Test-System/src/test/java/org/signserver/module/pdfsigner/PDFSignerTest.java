@@ -127,6 +127,12 @@ public class PDFSignerTest extends ModulesTestCase {
         }
     }
     
+    /**
+     * Check PDF version against minimum expected value given by hash algorithm.
+     * 
+     * @param pdfVersion Actual PDF version of signed document (x in 1.x)
+     * @param hashAlgorithm Hash algorithm used when signing
+     */
     private void checkPdfVersion(final char pdfVersion, final String hashAlgorithm) {
         final int version = Character.digit(pdfVersion, 10);
         

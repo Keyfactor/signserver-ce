@@ -427,7 +427,7 @@ public class PDFSignerTest extends ModulesTestCase {
     public void test14WithSHA256Hash() throws Exception {
         final byte[] pdfOk = getTestFile(TESTPDF_OK);
         
-        signGenericPDFWithHash(WORKERID, pdfOk, "SHA512");
+        signGenericPDFWithHash(WORKERID, pdfOk, "SHA256");
     }
     
     /**

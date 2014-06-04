@@ -15,6 +15,7 @@ package org.signserver.module.pdfsigner;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.exceptions.BadPasswordException;
 import com.lowagie.text.pdf.*;
+
 import java.io.*;
 import java.net.URL;
 import java.security.*;
@@ -605,8 +606,20 @@ public class PDFSigner extends BaseSigner {
         if (minimumPdfVersion > pdfVersion) {
             updatedPdfVersion = Character.forDigit(minimumPdfVersion, 10);
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Updating PDF to version 1." + updatedPdfVersion);
+                LOG.debug("Upgrading PDF to version 1." + updatedPdfVersion);
             }
+            
+            // check that the document isn't already signed 
+            // when trying to upgrade version
+            final AcroFields af = reader.getAcroFields();
+            final List<String> sigNames = af.getSignatureNames();
+            
+            if (!sigNames.isEmpty()) {
+                // TODO: in the future we might want to support
+                // a fallback option in this case to allow re-signing using the same version (using append)
+                throw new IllegalRequestException("Can not upgrade an already signed PDF");
+            }
+            
             appendMode = false;
         } else {
             updatedPdfVersion = '\0';

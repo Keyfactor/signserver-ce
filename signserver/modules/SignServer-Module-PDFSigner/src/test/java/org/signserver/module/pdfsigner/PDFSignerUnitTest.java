@@ -1307,6 +1307,16 @@ public class PDFSignerUnitTest extends TestCase {
                 fatalErrors.contains("Only SHA1 is permitted as hash algorithm for DSA public/private keys"));
     }
 
+    /**
+     * Helper method creating a mocked token, using DSA or RSA keys.
+     * 
+     * @param useDSA True if DSA is to be used, otherwise RSA
+     * @return Mocked crypto token
+     * @throws NoSuchAlgorithmException
+     * @throws NoSuchProviderException
+     * @throws CertBuilderException
+     * @throws CertificateException
+     */
     private MockedCryptoToken generateToken(final boolean useDSA) throws NoSuchAlgorithmException, NoSuchProviderException,
         CertBuilderException, CertificateException {
         final KeyPair signerKeyPair = useDSA ? CryptoUtils.generateDSA(1024) : CryptoUtils.generateRSA(1024);
@@ -1318,7 +1328,9 @@ public class PDFSignerUnitTest extends TestCase {
         return token;
     }
 
-    
+    /**
+     * Mocked PDF signer using a mocked crypto token.
+     */
     private class MockedPDFSigner extends PDFSigner {
         private final MockedCryptoToken mockedToken;
 

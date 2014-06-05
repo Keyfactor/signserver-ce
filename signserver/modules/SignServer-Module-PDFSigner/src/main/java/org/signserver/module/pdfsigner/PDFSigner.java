@@ -528,7 +528,7 @@ public class PDFSigner extends BaseSigner {
                     "Null certificate chain. This signer needs a certificate.");
         }
         final List<Certificate> includedCerts = includedCertificates(certs);
-        Certificate[] certChain = (Certificate[]) includedCerts.toArray(new Certificate[includedCerts.size()]);
+        Certificate[] certChain = includedCerts.toArray(new Certificate[includedCerts.size()]);
         PrivateKey privKey = this.getCryptoToken().getPrivateKey(
                 ICryptoToken.PURPOSE_SIGN);
 
@@ -606,7 +606,7 @@ public class PDFSigner extends BaseSigner {
         if (minimumPdfVersion > pdfVersion) {
             updatedPdfVersion = Character.forDigit(minimumPdfVersion, 10);
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Upgrading PDF to version 1." + updatedPdfVersion);
+                LOG.debug("Need to upgrade PDF to version 1." + updatedPdfVersion);
             }
             
             // check that the document isn't already signed 

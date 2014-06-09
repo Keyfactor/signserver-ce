@@ -474,15 +474,6 @@ public class XAdESSigner extends BaseSigner {
     }
 
     /**
-     * Used by the unit test to override the time stamp token provider.
-     * 
-     * @param provider
-     */
-    public void setInternalTimeStampTokenProviderImplementation(final TimeStampTokenProvider provider) {
-        internalTimeStampTokenProvider = provider;
-    }
-
-    /**
      * Implemenation of {@link xades4j.providers.AlgorithmsProviderEx} using the
      * signature algorithm configured for the worker (or the default values).
      */

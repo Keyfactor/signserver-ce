@@ -81,31 +81,31 @@ public class PDFSignerTest extends ModulesTestCase {
      * 
      */
     protected GenericSignResponse signGenericPDFWithHash(final int workerId, 
-            final byte[] data, final String hashAlgorithm)
+            final byte[] data, final String digestAlgorithm)
                     throws IllegalRequestException, CryptoTokenOfflineException,
                         SignServerException, IOException {
         try {
-            if (hashAlgorithm != null) {
-                workerSession.setWorkerProperty(workerId, PDFSigner.HASHALGORITHM, 
-                        hashAlgorithm);
+            if (digestAlgorithm != null) {
+                workerSession.setWorkerProperty(workerId, PDFSigner.DIGESTALGORITHM, 
+                        digestAlgorithm);
                 workerSession.reloadConfiguration(workerId);
             }
             
             final GenericSignResponse response = signGenericDocument(workerId, data);
          
-            final String expectedHashAlgorithm;
-            if (hashAlgorithm == null) {
+            final String expectedDigestAlgorithm;
+            if (digestAlgorithm == null) {
                 // if no hash algorithm was specified, the default should be "SHA1"
-                expectedHashAlgorithm = "SHA1";
+                expectedDigestAlgorithm = "SHA1";
             } else {
-                expectedHashAlgorithm = hashAlgorithm;
+                expectedDigestAlgorithm = digestAlgorithm;
             }
                 
             // check PDF version
             final PdfReader reader = new PdfReader(response.getProcessedData());
             final char version = reader.getPdfVersion();
             
-            checkPdfVersion(version, hashAlgorithm);
+            checkPdfVersion(version, digestAlgorithm);
             
             final AcroFields af = reader.getAcroFields();
             final List<String> sigNames = af.getSignatureNames();
@@ -114,16 +114,16 @@ public class PDFSignerTest extends ModulesTestCase {
                 final PdfPKCS7 pk = af.verifySignature(sigName);
                 
                 // PdfPKCS7.getDigestAlgorithm() seems to give <algo>withRSA
-                assertEquals("Digest algorithm", expectedHashAlgorithm + "withRSA",
+                assertEquals("Digest algorithm", expectedDigestAlgorithm + "withRSA",
                         pk.getDigestAlgorithm());
-                assertEquals("Hash algorithm", expectedHashAlgorithm,
+                assertEquals("Hash algorithm", expectedDigestAlgorithm,
                         pk.getHashAlgorithm());
             }
             
             return response;
             
         } finally {
-            workerSession.removeWorkerProperty(workerId, PDFSigner.HASHALGORITHM);
+            workerSession.removeWorkerProperty(workerId, PDFSigner.DIGESTALGORITHM);
             workerSession.reloadConfiguration(workerId);
         }
     }
@@ -132,27 +132,27 @@ public class PDFSignerTest extends ModulesTestCase {
      * Check PDF version against minimum expected value given by hash algorithm.
      * 
      * @param pdfVersion Actual PDF version of signed document (x in 1.x)
-     * @param hashAlgorithm Hash algorithm used when signing
+     * @param digestAlgorithm Digest algorithm used when signing
      */
-    private void checkPdfVersion(final char pdfVersion, final String hashAlgorithm) {
+    private void checkPdfVersion(final char pdfVersion, final String digestAlgorithm) {
         final int version = Character.digit(pdfVersion, 10);
         
         if (version == -1) {
             fail("Unknown PDF version: " + pdfVersion);
         }
         
-        if ("SHA1".equals(hashAlgorithm)) {
+        if ("SHA1".equals(digestAlgorithm)) {
             assertTrue("Insufficent PDF version: " + version, version >= 3);
-        } else if ("SHA256".equals(hashAlgorithm)) {
+        } else if ("SHA256".equals(digestAlgorithm)) {
             assertTrue("Insufficent PDF version: " + version, version >= 6);
-        } else if ("SHA384".equals(hashAlgorithm)) {
+        } else if ("SHA384".equals(digestAlgorithm)) {
             assertTrue("Insufficent PDF version: " + version, version >= 7);
-        } else if ("SHA512".equals(hashAlgorithm)) {
+        } else if ("SHA512".equals(digestAlgorithm)) {
             assertTrue("Insufficent PDF version: " + version, version >= 7);
-        } else if ("RIPEMD160".equals(hashAlgorithm)) {
+        } else if ("RIPEMD160".equals(digestAlgorithm)) {
             assertTrue("Insufficent PDF version: " + version, version >= 7);
         } else {
-            fail("Unknown hash algorithm: " + hashAlgorithm);
+            fail("Unknown digest algorithm: " + digestAlgorithm);
         }
     }
     

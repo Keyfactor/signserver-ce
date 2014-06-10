@@ -74,6 +74,8 @@ public class PDFSignerUnitTest extends TestCase {
     private final String SAMPLE_USER_AAA_PASSWORD = "user\u00e5\u00e4\u00f6";
     private final String SAMPLE_OPEN123_PASSWORD = "open123";
     
+    private final String ILLEGAL_DIGEST_FOR_DSA_MESSAGE = "Only SHA1 is permitted as digest algorithm for DSA public/private keys";
+    
     private IGlobalConfigurationSession.IRemote globalConfig;
     private IWorkerSession.IRemote workerSession;
 
@@ -1219,11 +1221,11 @@ public class PDFSignerUnitTest extends TestCase {
      * 
      * @throws Exception
      */
-    public void test16IllegalHashAlgorithm() throws Exception {
+    public void test16IllegalDigestAlgorithm() throws Exception {
         WorkerConfig workerConfig = new WorkerConfig();
         
         workerConfig.setProperty("NAME", "TestSigner100");
-        workerConfig.setProperty("HASHALGORITHM", "IllegalHash");
+        workerConfig.setProperty("DIGESTALGORITHM", "IllegalHash");
         
         final PDFSigner instance = new PDFSigner() {
             @Override
@@ -1236,7 +1238,7 @@ public class PDFSignerUnitTest extends TestCase {
         final List<String> fatalErrors = instance.getFatalErrors();
         
         assertTrue("Should contain error",
-                fatalErrors.contains("Illegal hash algorithm: IllegalHash"));
+                fatalErrors.contains("Illegal digest algorithm: IllegalHash"));
     }
     
     /**
@@ -1252,14 +1254,13 @@ public class PDFSignerUnitTest extends TestCase {
         final WorkerConfig workerConfig = new WorkerConfig();
         
         workerConfig.setProperty("NAME", "TestSignerDSA");
-        workerConfig.setProperty("HASHALGORITHM", "SHA256");
+        workerConfig.setProperty("DIGESTALGORITHM", "SHA256");
         
         instance.init(WORKER2, workerConfig, null, null);
         
         final List<String> fatalErrors = instance.getFatalErrors();
         
-        assertTrue("Should contain error",
-                fatalErrors.contains("Only SHA1 is permitted as hash algorithm for DSA public/private keys"));
+        assertTrue("Should contain error", fatalErrors.contains(ILLEGAL_DIGEST_FOR_DSA_MESSAGE));
     }
     
     /**
@@ -1274,14 +1275,13 @@ public class PDFSignerUnitTest extends TestCase {
         final WorkerConfig workerConfig = new WorkerConfig();
         
         workerConfig.setProperty("NAME", "TestSignerDSA");
-        workerConfig.setProperty("HASHALGORITHM", "SHA1");
+        workerConfig.setProperty("DIGESTALGORITHM", "SHA1");
         
         instance.init(WORKER2, workerConfig, null, null);
         
         final List<String> fatalErrors = instance.getFatalErrors();
         
-        assertFalse("Should not contain error",
-                fatalErrors.contains("Only SHA1 is permitted as hash algorithm for DSA public/private keys"));
+        assertFalse("Should not contain error", fatalErrors.contains(ILLEGAL_DIGEST_FOR_DSA_MESSAGE));
     }
 
     /**
@@ -1297,14 +1297,13 @@ public class PDFSignerUnitTest extends TestCase {
         final WorkerConfig workerConfig = new WorkerConfig();
         
         workerConfig.setProperty("NAME", "TestSignerDSA");
-        workerConfig.setProperty("HASHALGORITHM", "SHA256");
+        workerConfig.setProperty("DIGESTALGORITHM", "SHA256");
         
         instance.init(WORKER2, workerConfig, null, null);
         
         final List<String> fatalErrors = instance.getFatalErrors();
         
-        assertFalse("Should not contain error",
-                fatalErrors.contains("Only SHA1 is permitted as hash algorithm for DSA public/private keys"));
+        assertFalse("Should not contain error", fatalErrors.contains(ILLEGAL_DIGEST_FOR_DSA_MESSAGE));
     }
 
     /**

@@ -4199,7 +4199,7 @@ Default: unset (if the permissions are changed, the existing owner password will
                                     </td>
                             </tr>
                             <tr>
-                                <td><b>HASHALGORITHM</b></td>
+                                <td><b>DIGESTALGORITHM</b></td>
                                 <td>
                                     <p>
 Sets the hash algorithm used for the message digest and signature hash.

@@ -100,6 +100,14 @@ public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2 {
                 }
             }
 
+            // Check that both the new or the legacy properties are specified at the same time
+            if (props.getProperty(CryptoTokenHelper.PROPERTY_SLOT) != null && props.getProperty(CryptoTokenHelper.PROPERTY_SLOTLABELVALUE) != null) {
+                throw new CryptoTokenInitializationFailureException("Can not specify both " + CryptoTokenHelper.PROPERTY_SLOT + " and  " + CryptoTokenHelper.PROPERTY_SLOTLABELVALUE);
+            }
+            if (props.getProperty(CryptoTokenHelper.PROPERTY_SLOTLISTINDEX) != null && props.getProperty(CryptoTokenHelper.PROPERTY_SLOTLABELVALUE) != null) {
+                throw new CryptoTokenInitializationFailureException("Can not specify both " + CryptoTokenHelper.PROPERTY_SLOTLISTINDEX + " and  " + CryptoTokenHelper.PROPERTY_SLOTLABELVALUE);
+            }
+
             props = CryptoTokenHelper.fixP11Properties(props);
 
             final String sharedLibraryProperty = props.getProperty("sharedLibrary");
@@ -119,7 +127,7 @@ public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2 {
             if (slotLabelValue == null) {
                 throw new CryptoTokenInitializationFailureException("Missing " + CryptoTokenHelper.PROPERTY_SLOTLABELVALUE + " property");
             }
-
+            
             delegate.init(props, null, workerId);
 
             keyAlias = props.getProperty("defaultKey");

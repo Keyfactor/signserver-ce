@@ -226,10 +226,12 @@ public class PDFSigner extends BaseSigner {
                     }
                 }
             }
-        } catch (CryptoTokenOfflineException e) {
-            // ignore
-        } catch (SignServerException e) {
-            // ignore
+        } catch (CryptoTokenOfflineException e) { // NOPMD
+            // In this case, we can't tell if the keys are DSA
+            // appropriate crypto token errors should be handled by the base class
+        } catch (SignServerException e) { // NOPMD
+            // In this case, we can't tell if the keys are DSA
+            // appropriate crypto token errors should be handled by the base class
         }
 
         return errors;

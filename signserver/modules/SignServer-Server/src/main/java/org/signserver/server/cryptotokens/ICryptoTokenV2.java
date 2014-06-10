@@ -1,9 +1,15 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
+/*************************************************************************
+ *                                                                       *
+ *  SignServer: The OpenSource Automated Signing Server                  *
+ *                                                                       *
+ *  This software is free software; you can redistribute it and/or       *
+ *  modify it under the terms of the GNU Lesser General Public           *
+ *  License as published by the Free Software Foundation; either         *
+ *  version 2.1 of the License, or any later version.                    *
+ *                                                                       *
+ *  See terms of license at gnu.org.                                     *
+ *                                                                       *
+ *************************************************************************/
 package org.signserver.server.cryptotokens;
 
 import java.security.KeyStore;
@@ -22,8 +28,11 @@ import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.KeyTestResult;
 
 /**
+ * Second version of the CryptoToken interface, adding support for getting
+ * key-pairs and certificates by key alias.
  *
- * @author markus
+ * @author Markus Kilås
+ * @version $Id$
  */
 public interface ICryptoTokenV2 extends IKeyGenerator, IKeyRemover {
 
@@ -121,8 +130,20 @@ public interface ICryptoTokenV2 extends IKeyGenerator, IKeyRemover {
     KeyStore getKeyStore() throws UnsupportedOperationException,
             CryptoTokenOfflineException, KeyStoreException;
 
+    /**
+     * Get the certificate from the token (if available).
+     * @param alias of key/certificate entry
+     * @return the certificate or null
+     * @throws CryptoTokenOfflineException if the token is offline
+     */
     Certificate getCertificate(String alias) throws CryptoTokenOfflineException;
 
+    /**
+     * Get the certificate chain from the token (if available).
+     * @param alias of key/certificate entry
+     * @return the certificate chain or null
+     * @throws CryptoTokenOfflineException if the token is offline
+     */
     List<Certificate> getCertificateChain(String alias) throws CryptoTokenOfflineException;
 
 }

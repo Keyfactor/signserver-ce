@@ -139,8 +139,10 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2 {
             while (e.hasMoreElements()) {
                 final String alias = e.nextElement();
                 if (ks.isKeyEntry(alias)) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Alias " + alias + " is KeyEntry.");
+                    }
                     final Key key = ks.getKey(alias, authenticationcode.toCharArray());
-                    LOG.debug("Aliases " + alias + " is KeyEntry.");
                     if (key instanceof PrivateKey) {
                         final Certificate[] chain = KeyTools.getCertChain(ks,
                                 alias);

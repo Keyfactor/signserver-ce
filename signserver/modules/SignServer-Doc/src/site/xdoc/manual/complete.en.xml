@@ -5229,6 +5229,9 @@ DEFAULTKEY. (optional)
                             <li>SLOT_LABEL this is the label of the slot</li>
                         </ul>
                         <p>
+This properites are not allowed if the legacy properties below are specified.
+                        </p>
+                        <p>
 <b>SLOT</b> or <b>SLOTLISTINDEX</b> = Legacy properties for indicating which slot to use. Only available for backwards compatibility. Instead use the SLOTLABELTYPE and SLOTLABELVALUE properties.
                         </p>
                         <p>

@@ -73,9 +73,9 @@ public class InternalTimeStampTokenProvider implements TimeStampTokenProvider {
         } catch (IllegalRequestException ex) {
             throw new TimeStampTokenGenerationException("The time-stamp request failed", ex);
         } catch (CryptoTokenOfflineException ex) {
-            throw new TimeStampTokenGenerationException("The time-stamp request could not be process because of offline TSA", ex);
+            throw new TimeStampTokenGenerationException("The time-stamp request could not be processed because of offline TSA", ex);
         } catch (SignServerException ex) {
-            throw new TimeStampTokenGenerationException("The time-stamp request could not be process because of internal error in the TSA", ex);
+            throw new TimeStampTokenGenerationException("The time-stamp request could not be processed because of internal error in the TSA", ex);
         } catch (TSPException ex) {
             throw new TimeStampTokenGenerationException("Invalid time stamp response", ex);
         } catch (IOException ex) {

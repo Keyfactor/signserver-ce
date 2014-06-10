@@ -617,7 +617,7 @@ public class PDFSigner extends BaseSigner {
             if (!sigNames.isEmpty()) {
                 // TODO: in the future we might want to support
                 // a fallback option in this case to allow re-signing using the same version (using append)
-                throw new IllegalRequestException("Can not upgrade an already signed PDF");
+                throw new IllegalRequestException("Can not upgrade an already signed PDF and a higher version is required to support the configured digest algorithm");
             }
             
             appendMode = false;

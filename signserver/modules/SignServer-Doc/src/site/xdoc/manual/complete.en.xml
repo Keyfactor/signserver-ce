@@ -5259,6 +5259,18 @@ attributes(generate, CKO_PRIVATE_KEY,*) = {
 	CKA_SIGN = true
 	CKA_UNWRAP = true
 }
+
+# Work-around for performance issue in the Apache XMLSec library
+disabledMechanisms = {
+    CKM_SHA1_RSA_PKCS
+    CKM_SHA256_RSA_PKCS
+    CKM_SHA384_RSA_PKCS
+    CKM_SHA512_RSA_PKCS
+    CKM_MD2_RSA_PKCS
+    CKM_MD5_RSA_PKCS
+    CKM_DSA_SHA1
+    CKM_ECDSA_SHA1
+}
                         </pre>
                         <p>
 <b>Notice:</b> The PKCS#11 attributes configuration is global per shared library. If specified in multiple workers only the configuration from the first worker loaded will be used. Changing the property might not take effect without restarting the application server.

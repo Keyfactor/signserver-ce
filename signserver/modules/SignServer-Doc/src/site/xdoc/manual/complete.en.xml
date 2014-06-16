@@ -7276,6 +7276,19 @@ Notice: The dumpproperties command will not include the list of authorized clien
                 
             </section>
 
+            <section name="SignServer TimeMonitor">
+                <note>
+The SignServer TimeMonitor is an Enterprise Edition feature.
+                </note>
+                <p>
+This is an external application that can be used together with the StatusReadingLocalComputerTimeSource for monitoring of the local time and
+informing SignServer about its state.
+                </p>
+                <p>
+For details see the <a href="../docs/TimeMonitor-Manual.pdf">TimeMonitor manual</a> (only available in Enterprise Edition).
+                </p>
+            </section>
+
             <section name="Installation Packages">
                 <p>
 See res/install/debian/README.building for instructions for creating Debian packages for SignServer.

@@ -90,7 +90,7 @@
         </xmltask>
     </target>
 
-    <target name="doc" if="AnakiaTask.present" depends="prepare-error, doc:splitmanual" description="Build SignServer web site and docs">
+    <target name="doc" if="AnakiaTask.present" depends="prepare-error, -copy-timemonitor, doc:splitmanual" description="Build SignServer web site and docs">
         <taskdef name="anakia" classname="org.apache.velocity.anakia.AnakiaTask">
             <classpath refid="anakia.classpath"/>
         </taskdef>
@@ -145,7 +145,16 @@
         <property name="docs.dest.path" location="${docs.dest}"/>
     	<echo message="Local documentation is now available in file://${docs.dest.path}/index.html"/>
     </target>
-    
+
+    <!-- Copies the TimeMonitor manual (PDF). Temporarly solution until it is incorporated in the xdoc manual. -->
+    <target name="-copy-timemonitor">
+        <copy todir="${docs.src}/docs/">
+            <fileset dir="../../doc/">
+                <include name="TimeMonitor-Manual.pdf"/>
+            </fileset>
+        </copy>
+    </target>
+
     <target name="site:test:publish" depends="doc" description="Publish the website to the sandbox subdirectory.">
     	<property name="publish.dir" value="/home/project-web/signserver/htdocs/sandbox"/>
         <property name="publish.host" value="shell.sourceforge.net"/>

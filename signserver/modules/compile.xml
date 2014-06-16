@@ -156,6 +156,7 @@ includemodulesinbuild               = ${includemodulesinbuild}
             <exclude name="bin/signserver"/>
             <exclude name="bin/signserver.sh"/>
             <exclude name="bin/signserver-gui"/>
+            <exclude name="bin/timemonitor-in-background.sh"/>
             
             <exclude name="**/CVS/**" />
             <exclude name="signserver_build.properties" />
@@ -190,6 +191,7 @@ includemodulesinbuild               = ${includemodulesinbuild}
             <include name="bin/signserver"/>
             <include name="bin/signserver.sh"/>
             <include name="bin/signserver-gui"/>
+            <include name="bin/timemonitor-in-background.sh"/>
         </patternset>
         
         <!-- All files for binary release except scripts -->
@@ -204,6 +206,7 @@ includemodulesinbuild               = ${includemodulesinbuild}
             <exclude name="bin/signserver"/>
             <exclude name="bin/signserver.sh"/>
             <exclude name="bin/signserver-gui"/>
+            <exclude name="bin/timemonitor-in-background.sh"/>
 
             <exclude name="signserver_build.properties" />
             <exclude name="conf/signserver_build.properties" />
@@ -239,6 +242,7 @@ includemodulesinbuild               = ${includemodulesinbuild}
             <include name="bin/signserver"/>
             <!-- <include name="bin/signserver.sh"/>-->
             <include name="bin/signserver-gui"/>
+            <include name="bin/timemonitor-in-background.sh"/>
         </patternset>
         
         <!-- All files for mixed release except scripts -->
@@ -254,7 +258,8 @@ includemodulesinbuild               = ${includemodulesinbuild}
             <exclude name="bin/signserver"/>
             <exclude name="bin/signserver.sh"/>
             <exclude name="bin/signserver-gui"/>
-            
+            <exclude name="bin/timemonitor-in-background.sh"/>
+
             <exclude name="doc/lgpl-**" />
             <exclude name="**/CVS/**" />
             <exclude name="signserver_build.properties" />

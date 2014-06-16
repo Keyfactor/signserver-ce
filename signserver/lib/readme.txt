@@ -104,9 +104,9 @@ $ find . -name "*-Lib-*.jar"
 # Java API for Servlets, Apache, license is Apache
 ./ext/servlet-2.3.jar
 
-# Apache Santuario - XML Security for Java, version 1.5.5, license is Apache 2.0
+# Apache Santuario - XML Security for Java, version 1.5.6, license is Apache 2.0
 # http://www.apache.org/dist/santuario/KEYS
-./xml-security/xmlsec-1.5.5.jar
+./xml-security/xmlsec-1.5.6.jar
 ./xml-security/xalan-2.7.1.jar
 ./xml-security/serializer-2.7.1.jar
 ./ext/xml-apis.jar

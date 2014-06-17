@@ -264,7 +264,7 @@
     
     <!-- Copy all jars to lib without updating manifest file or anything. -->
     <target name="-do-module-dist">
-        <copy todir="../../lib/">
+        <copy todir="${platform.project.dir}/lib/">
             <fileset dir="./target" includes="*.jar"/>
         </copy>
     </target>

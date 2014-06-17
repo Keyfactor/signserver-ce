@@ -266,7 +266,7 @@ public class XMLSignerTest extends ModulesTestCase {
         final String value = props.getProperty(property);
         
         assertNotNull("Property not found", value);
-        assertEquals("Property value", value, expected);
+        assertEquals("Property value", expected, value);
     }
 
     @Test

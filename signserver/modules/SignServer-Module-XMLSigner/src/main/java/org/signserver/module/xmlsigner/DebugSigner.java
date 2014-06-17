@@ -12,6 +12,8 @@
  *************************************************************************/
 package org.signserver.module.xmlsigner;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Properties;
@@ -45,10 +47,26 @@ public class DebugSigner extends BaseSigner {
             CryptoTokenOfflineException, SignServerException {
         final Properties props = new Properties();
         final ISignRequest sReq = (ISignRequest) signRequest;
-        
-        
-        props.put(XMLSEC_VERSION, Init.class.getPackage().getImplementationVersion());
+
+        // Due to a bug in Glassfish, using getImplementationVersion isn't working...
+        //props.put(XMLSEC_VERSION, Init.class.getPackage().getImplementationVersion());
     
+        // get library version from Maven pom properties (workaroud for Glassfish)
+        final InputStream pomPropertiesStream = Init.class
+                .getResourceAsStream("/META-INF/maven/org.apache.santuario/xmlsec/pom.properties");
+        try {
+            final Properties pomProperties = new Properties();
+            pomProperties.load(pomPropertiesStream);
+            props.put(XMLSEC_VERSION, pomProperties.getProperty("version"));
+        } catch (final IOException e) {
+            throw new SignServerException("Failed to get xmlsec version", e);
+        } finally {
+            try {
+                pomPropertiesStream.close();
+            } catch (final IOException ignored) { //NOPMD
+            }
+        }
+
         final StringWriter writer = new StringWriter();
         props.list(new PrintWriter(writer));
         

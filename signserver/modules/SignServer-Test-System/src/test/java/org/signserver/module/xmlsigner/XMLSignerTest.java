@@ -16,8 +16,11 @@ package org.signserver.module.xmlsigner;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.security.cert.Certificate;
+import java.util.Properties;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.log4j.Logger;
@@ -49,7 +52,9 @@ public class XMLSignerTest extends ModulesTestCase {
     
     private static final int WORKERID3 = 5804;
     
-    private static final int[] WORKERS = new int[] {5676, 5679, 5681, 5682, 5683, 5802, 5803, 5804};
+    private static final int DEBUGWORKER = 5805;
+    
+    private static final int[] WORKERS = new int[] {5676, 5679, 5681, 5682, 5683, 5802, 5803, 5804, 5805};
 
     private static final String TESTXML1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><root><my-tag>My Data</my-tag></root>";
 
@@ -73,6 +78,8 @@ public class XMLSignerTest extends ModulesTestCase {
         workerSession.setWorkerProperty(WORKERID3, "KEYSTOREPATH",
                 new File(getSignServerHome() + File.separator + "res" + File.separator + "test" + File.separator + "xmlsignerec.p12").getAbsolutePath());
         workerSession.reloadConfiguration(WORKERID3);
+        
+        workerSession.reloadConfiguration(DEBUGWORKER);
     }
 
     /**
@@ -220,6 +227,46 @@ public class XMLSignerTest extends ModulesTestCase {
     @Test
     public void test14BasicXmlSignECDSADefaultSigAlg() throws Exception {
         testBasicXmlSign(WORKERID3, null, "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha1");
+    }
+    
+    /**
+     * Test that that expected version of the XML Security library is used.
+     * @throws Exception
+     */
+    @Test
+    public void test15XMLSecVersion() throws Exception {
+        checkDebugProperty("xml-sec.version", "1.5.6");
+    }
+
+    /**
+     * Check the return data from the debug signer for a given property.
+     * 
+     * @param property
+     * @param expected
+     * @throws IllegalRequestException
+     * @throws CryptoTokenOfflineException
+     * @throws SignServerException
+     * @throws IOException
+     */
+    private void checkDebugProperty(final String property, final String expected)
+            throws IllegalRequestException, CryptoTokenOfflineException, SignServerException, IOException {
+        final int reqid = 42;
+
+        final GenericSignRequest signRequest =
+                new GenericSignRequest(reqid, "foo".getBytes());
+
+        final GenericSignResponse res = 
+                (GenericSignResponse) workerSession.process(DEBUGWORKER,
+                    signRequest, new RequestContext());
+        final byte[] data = res.getProcessedData();
+
+        final Properties props = new Properties();
+        props.load(new ByteArrayInputStream(data));
+        
+        final String value = props.getProperty(property);
+        
+        assertNotNull("Property not found", value);
+        assertEquals("Property value", value, expected);
     }
 
     @Test

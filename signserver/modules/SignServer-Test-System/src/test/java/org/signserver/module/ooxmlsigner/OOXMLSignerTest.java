@@ -102,8 +102,8 @@ public class OOXMLSignerTest extends ModulesTestCase {
 
     @Test
     public void test02GetStatus() throws Exception {
-        SignerStatus stat = (SignerStatus) workerSession.getStatus(WORKERID);
-        assertTrue(stat.getTokenStatus() == SignerStatus.STATUS_ACTIVE);
+        StaticWorkerStatus stat = (StaticWorkerStatus) workerSession.getStatus(WORKERID);
+        assertTrue(stat.getTokenStatus() == WorkerStatus.STATUS_ACTIVE);
     }
     
     /**

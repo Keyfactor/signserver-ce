@@ -47,7 +47,7 @@ public interface ICryptoTokenV2 extends IKeyGenerator, IKeyRemover {
     /**
      *  Method that returns the current status of the crypto token.
      * 
-     *  Should return one of the SignerStatus.STATUS_.. values 
+     *  Should return one of the WorkerStatus.STATUS_.. values 
      */
     int getCryptoTokenStatus();
 

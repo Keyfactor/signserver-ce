@@ -24,7 +24,6 @@ import javax.ejb.Stateless;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
-import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.ws.WebServiceContext;
@@ -41,7 +40,6 @@ import org.signserver.protocol.validationservice.ws.ValidationResponse;
 import org.signserver.server.nodb.FileBasedDatabaseManager;
 import org.signserver.validationservice.common.ValidateRequest;
 import org.signserver.validationservice.common.ValidateResponse;
-import org.signserver.validationservice.common.ValidationStatus;
 import org.signserver.validationservice.server.ValidationServiceWorker;
 
 /**
@@ -182,7 +180,7 @@ public class ValidationWS implements IValidationWS {
     private List<String> checkValidationService(int workerId) {
         final LinkedList<String> result = new LinkedList<String>();
         try {
-            ValidationStatus status = (ValidationStatus) getWorkerSession().getStatus(workerId);
+            WorkerStatus status = getWorkerSession().getStatus(workerId);
             for (String error : status.getFatalErrors()) {
                 result.add("Worker " + status.getWorkerId() + ": " + error + "\n");
             }

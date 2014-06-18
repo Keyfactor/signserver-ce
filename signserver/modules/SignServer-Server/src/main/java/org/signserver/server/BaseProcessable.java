@@ -445,14 +445,14 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
             ICryptoToken token = getCryptoToken();
             
             if (token == null) {
-                result = CryptoTokenStatus.STATUS_OFFLINE;
+                result = WorkerStatus.STATUS_OFFLINE;
             } else {
                 result = token.getCryptoTokenStatus();
             }
             
             return result;
         } catch (SignServerException e) {
-            return CryptoTokenStatus.STATUS_OFFLINE;
+            return WorkerStatus.STATUS_OFFLINE;
         }
     }
 

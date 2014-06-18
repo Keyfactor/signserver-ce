@@ -87,9 +87,9 @@ public class XMLValidatorTest extends ModulesTestCase {
     @Test
     public void test01GetStatus() {
         try {
-            ValidatorStatus stat = (ValidatorStatus) workerSession.getStatus(WORKERID);
+            WorkerStatus stat = workerSession.getStatus(WORKERID);
             assertNotNull(stat);
-//			assertEquals(SignerStatus.STATUS_ACTIVE, stat.getTokenStatus());
+//			assertEquals(WorkerStatus.STATUS_ACTIVE, stat.getTokenStatus());
         } catch (InvalidWorkerIdException ex) {
             log.error("Worker not found", ex);
             fail(ex.getMessage());

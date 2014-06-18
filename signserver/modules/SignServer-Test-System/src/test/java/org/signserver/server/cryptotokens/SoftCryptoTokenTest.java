@@ -63,8 +63,8 @@ public class SoftCryptoTokenTest extends ModulesTestCase {
 
     @Test
     public void test01BasicTests() throws Exception {
-        SignerStatus stat = (SignerStatus) workerSession.getStatus(88);
-        assertTrue(stat.getTokenStatus() == SignerStatus.STATUS_OFFLINE);
+        StaticWorkerStatus stat = (StaticWorkerStatus) workerSession.getStatus(88);
+        assertTrue(stat.getTokenStatus() == WorkerStatus.STATUS_OFFLINE);
 
         PKCS10CertReqInfo crInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=TEST1", null);
         ICertReqData reqData = workerSession.getCertificateRequest(88, crInfo, false);
@@ -78,9 +78,9 @@ public class SoftCryptoTokenTest extends ModulesTestCase {
         workerSession.uploadSignerCertificate(88, cert.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
         workerSession.reloadConfiguration(88);
 
-        stat = (SignerStatus) workerSession.getStatus(88);
+        stat = (StaticWorkerStatus) workerSession.getStatus(88);
         assertTrue(stat.getActiveSignerConfig().getProperty("KEYDATA") != null);
-        assertTrue(stat.getTokenStatus() == SignerStatus.STATUS_ACTIVE);
+        assertTrue(stat.getTokenStatus() == WorkerStatus.STATUS_ACTIVE);
 
         int reqid = 12;
         ArrayList<byte[]> signrequests = new ArrayList<byte[]>();
@@ -121,8 +121,8 @@ public class SoftCryptoTokenTest extends ModulesTestCase {
         assertFalse(pkcs10_2.getPublicKey().equals(pkcs10.getPublicKey()));
 
         workerSession.deactivateSigner(88);
-        stat = (SignerStatus) workerSession.getStatus(88);
-        assertTrue(stat.getTokenStatus() == SignerStatus.STATUS_OFFLINE);
+        stat = (StaticWorkerStatus) workerSession.getStatus(88);
+        assertTrue(stat.getTokenStatus() == WorkerStatus.STATUS_OFFLINE);
         try {
             res = (MRTDSignResponse) workerSession.process(88, new MRTDSignRequest(reqid, signrequests), new RequestContext());
             assertTrue(false);
@@ -130,8 +130,8 @@ public class SoftCryptoTokenTest extends ModulesTestCase {
         }
 
         workerSession.activateSigner(88, "anypwd");
-        stat = (SignerStatus) workerSession.getStatus(88);
-        assertTrue(stat.getTokenStatus() == SignerStatus.STATUS_ACTIVE);
+        stat = (StaticWorkerStatus) workerSession.getStatus(88);
+        assertTrue(stat.getTokenStatus() == WorkerStatus.STATUS_ACTIVE);
         res = (MRTDSignResponse) workerSession.process(88, new MRTDSignRequest(reqid, signrequests), new RequestContext());
     }
 

@@ -12,15 +12,18 @@
  *************************************************************************/
 package org.signserver.server.timedservices;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.quartz.CronExpression;
 import org.signserver.common.ServiceConfig;
-import org.signserver.common.ServiceStatus;
+import org.signserver.common.StaticWorkerStatus;
 import org.signserver.common.WorkerStatus;
+import org.signserver.common.WorkerStatusInfo;
 import org.signserver.server.BaseWorker;
 
 /**
@@ -111,8 +114,36 @@ public abstract class BaseTimedService extends BaseWorker implements ITimedServi
     public WorkerStatus getStatus(final List<String> additionalFatalErrors) {
         final List<String> fatalErrors = new LinkedList<String>(additionalFatalErrors);
         fatalErrors.addAll(getFatalErrors());
-        ServiceStatus retval = new ServiceStatus(workerId, fatalErrors, new ServiceConfig(config));
 
-        return retval;
+        List<WorkerStatusInfo.Entry> briefEntries = new LinkedList<WorkerStatusInfo.Entry>();
+        List<WorkerStatusInfo.Entry> completeEntries = new LinkedList<WorkerStatusInfo.Entry>();
+
+        // Worker status
+        briefEntries.add(new WorkerStatusInfo.Entry("Worker status", fatalErrors.isEmpty() ? "Active" : "Offline"));
+        briefEntries.add(new WorkerStatusInfo.Entry("Service was last run at", getLastRunDate()));
+
+        // Properties
+        final StringBuilder configValue = new StringBuilder();
+        Properties properties = config.getProperties();
+        for (String key : properties.stringPropertyNames()) {
+            configValue.append("  ").append(key).append("=").append(properties.getProperty(key)).append("\n\n");
+        }
+        completeEntries.add(new WorkerStatusInfo.Entry("Active Properties are", configValue.toString()));
+
+        return new StaticWorkerStatus(new WorkerStatusInfo(workerId, config.getProperty("NAME"), "Service", WorkerStatus.STATUS_ACTIVE, briefEntries, fatalErrors, completeEntries, config));
+    }
+
+    /**
+     * @return the date this service was last run or an error message
+     * if it has not run since the server started.
+     */
+    protected String getLastRunDate() {
+        Date lastRun = new ServiceConfig(config).getLastRunTimestamp();
+
+        if (lastRun == null) {
+            return "Service does not seem to have run since start or reload of the server.";
+        }
+
+        return DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(lastRun);
     }
 }

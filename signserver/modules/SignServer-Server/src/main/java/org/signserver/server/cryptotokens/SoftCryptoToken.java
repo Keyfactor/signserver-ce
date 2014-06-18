@@ -135,9 +135,9 @@ public class SoftCryptoToken implements ICryptoToken {
     @Override
     public int getCryptoTokenStatus() {
         if (active) {
-            return SignerStatus.STATUS_ACTIVE;
+            return WorkerStatus.STATUS_ACTIVE;
         }
-        return SignerStatus.STATUS_OFFLINE;
+        return WorkerStatus.STATUS_OFFLINE;
     }
 
     /**

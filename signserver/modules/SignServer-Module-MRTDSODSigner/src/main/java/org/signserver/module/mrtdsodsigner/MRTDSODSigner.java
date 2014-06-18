@@ -133,7 +133,7 @@ public class MRTDSODSigner extends BaseSigner {
             if (log.isDebugEnabled()) {
                 log.debug("Crypto token status: " + status);
             }
-            if (status != SignerStatus.STATUS_ACTIVE) {
+            if (status != WorkerStatus.STATUS_ACTIVE) {
                 log.info("Crypto token status is not active, will see if we can autoactivate.");
                 String pin = config.getProperty("PIN");
                 if (pin == null) {

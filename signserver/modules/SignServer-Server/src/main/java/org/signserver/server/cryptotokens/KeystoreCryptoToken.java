@@ -111,10 +111,10 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2 {
         if (entries != null && entries.get(PURPOSE_SIGN) != null
                 && (!properties.containsKey(NEXTKEY)
                     || entries.get(PURPOSE_NEXTKEY) != null)) {
-            return SignerStatus.STATUS_ACTIVE;
+            return WorkerStatus.STATUS_ACTIVE;
         }
 
-        return SignerStatus.STATUS_OFFLINE;
+        return WorkerStatus.STATUS_OFFLINE;
     }
 
     @Override

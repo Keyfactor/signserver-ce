@@ -29,8 +29,8 @@ import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerException;
-import org.signserver.common.SignerStatus;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerStatus;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.server.SignServerContext;
 import org.signserver.server.WorkerContext;
@@ -64,7 +64,7 @@ public class SignerStatusReportWorker extends BaseSigner {
     /** Property WORKERS. **/
     private static final String PROPERTY_WORKERS = SignerStatusReportTimedService.PROPERTY_WORKERS;
     
-    private static final ICryptoToken CRYPTO_TOKEN = new NullCryptoToken(SignerStatus.STATUS_ACTIVE);
+    private static final ICryptoToken CRYPTO_TOKEN = new NullCryptoToken(WorkerStatus.STATUS_ACTIVE);
     
     private SignerStatusReportBuilder reportBuilder;
     private List<String> workers;

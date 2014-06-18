@@ -457,8 +457,8 @@ public class MRTDSODSignerTest extends ModulesTestCase {
      */
     @Test
     public void test05GetStatus() throws Exception {
-        SignerStatus stat = (SignerStatus) workerSession.getStatus(7897);
-        assertTrue(stat.getTokenStatus() == SignerStatus.STATUS_ACTIVE);
+        StaticWorkerStatus stat = (StaticWorkerStatus) workerSession.getStatus(7897);
+        assertTrue(stat.getTokenStatus() == WorkerStatus.STATUS_ACTIVE);
     }
 
     /**

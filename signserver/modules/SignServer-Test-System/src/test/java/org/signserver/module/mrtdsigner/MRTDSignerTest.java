@@ -17,23 +17,22 @@ import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import javax.crypto.Cipher;
+import org.junit.Before;
 import org.junit.FixMethodOrder;
+import org.junit.Test;
 import org.junit.runners.MethodSorters;
-
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
 import org.signserver.common.MRTDSignRequest;
 import org.signserver.common.MRTDSignResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerUtil;
-import org.signserver.common.SignerStatus;
+import org.signserver.common.StaticWorkerStatus;
 import org.signserver.common.WorkerConfig;
-import org.signserver.testutils.ModulesTestCase;
-import org.junit.Before;
-import org.junit.Test;
+import org.signserver.common.WorkerStatus;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.testutils.ModulesTestCase;
 
 /**
  * TODO: Document me!
@@ -111,8 +110,8 @@ public class MRTDSignerTest extends ModulesTestCase {
      */
     @Test
     public void test02GetStatus() throws Exception {
-        SignerStatus stat = (SignerStatus) workerSession.getStatus(7890);
-        assertTrue(stat.getTokenStatus() == SignerStatus.STATUS_ACTIVE);
+        StaticWorkerStatus stat = (StaticWorkerStatus) workerSession.getStatus(7890);
+        assertTrue(stat.getTokenStatus() == WorkerStatus.STATUS_ACTIVE);
 
     }
 

@@ -81,9 +81,9 @@ public class SignerStatusReportBuilder implements ReportBuilder {
                     if (status == null || !status.getFatalErrors().isEmpty()) {
                         statusString = STATUS_OFFLINE;
                     }
-                    if (status instanceof CryptoTokenStatus &&
-                            ((CryptoTokenStatus) status).getTokenStatus()
-                                == CryptoTokenStatus.STATUS_OFFLINE) {
+                    if (status instanceof StaticWorkerStatus &&
+                            ((StaticWorkerStatus) status).getTokenStatus()
+                                == WorkerStatus.STATUS_OFFLINE) {
                         statusString = STATUS_OFFLINE;
                     }
 

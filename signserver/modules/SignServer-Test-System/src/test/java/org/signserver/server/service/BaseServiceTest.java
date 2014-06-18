@@ -17,20 +17,19 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Date;
-
 import org.apache.log4j.Logger;
+import static org.junit.Assert.*;
+import org.junit.Before;
 import org.junit.FixMethodOrder;
+import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.ServiceConfig;
-import org.signserver.common.ServiceStatus;
-import org.signserver.common.SignServerUtil;
 import org.signserver.common.ServiceLocator;
+import org.signserver.common.SignServerUtil;
+import org.signserver.common.StaticWorkerStatus;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.Test;
 
 /**
  * TODO: Document me! See issue DSS-610
@@ -93,7 +92,7 @@ public class BaseServiceTest {
      */
     @Test
     public void test02GetStatus() throws Exception {
-        ServiceStatus status = (ServiceStatus) sSSession.getStatus(WORKER_ID);
+        StaticWorkerStatus status = (StaticWorkerStatus) sSSession.getStatus(WORKER_ID);
         Date lastRun = new ServiceConfig(status.getActiveSignerConfig()).getLastRunTimestamp();
         assertTrue(lastRun.before(new Date()));
         assertTrue(lastRun.after(new Date(System.currentTimeMillis() - INTERVALMS * 2)));

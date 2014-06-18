@@ -32,7 +32,8 @@ import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerException;
-import org.signserver.common.SignerStatus;
+import org.signserver.common.WorkerStatus;
+import org.signserver.common.WorkerStatus;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.cryptotokens.NullCryptoToken;
 import org.signserver.server.signers.BaseSigner;
@@ -72,7 +73,7 @@ public class StatusPropertiesWorker extends BaseSigner {
     private static final String VALUE = "VALUE";
     private static final String EXPIRATION = "EXPIRATION";
     
-    private static final ICryptoToken CRYPTO_TOKEN = new NullCryptoToken(SignerStatus.STATUS_ACTIVE);
+    private static final ICryptoToken CRYPTO_TOKEN = new NullCryptoToken(WorkerStatus.STATUS_ACTIVE);
     
     /** StatusRepositorySession. */
     @EJB

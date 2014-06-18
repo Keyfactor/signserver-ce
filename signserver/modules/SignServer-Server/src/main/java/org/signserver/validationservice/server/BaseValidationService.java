@@ -14,16 +14,17 @@ package org.signserver.validationservice.server;
 
 import java.util.*;
 
+import java.util.Map.Entry;
 import javax.persistence.EntityManager;
-
 import org.apache.log4j.Logger;
 import org.ejbca.util.CertTools;
 import org.signserver.common.SignServerException;
+import org.signserver.common.StaticWorkerStatus;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
+import org.signserver.common.WorkerStatusInfo;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.validationservice.common.ValidationServiceConstants;
-import org.signserver.validationservice.common.ValidationStatus;
 import org.signserver.validationservice.server.validcache.ValidationCache;
 
 /**
@@ -37,7 +38,7 @@ public abstract class BaseValidationService implements IValidationService {
 
     /** Logger for implementing class. */
     private final transient Logger log = Logger.getLogger(this.getClass());
-    
+
     protected int workerId;
     protected WorkerConfig config;
     protected EntityManager em;
@@ -46,7 +47,7 @@ public abstract class BaseValidationService implements IValidationService {
     protected ValidationCache validationCache;
 
     private ICertPurposeChecker certTypeChecker;
-    
+
     /**
      * @see org.signserver.server.IWorker#init(int, org.signserver.common.WorkerConfig, org.signserver.server.WorkerContext, javax.persistence.EntityManager)
      */
@@ -92,19 +93,38 @@ public abstract class BaseValidationService implements IValidationService {
      */
     @Override
     public WorkerStatus getStatus() {
+        final List<WorkerStatusInfo.Entry> briefEntries = new LinkedList<WorkerStatusInfo.Entry>();
+        final List<WorkerStatusInfo.Entry> completeEntries = new LinkedList<WorkerStatusInfo.Entry>();
 
-        HashMap<Integer, String> validatorStatuses = new HashMap<Integer, String>();
-        for (Integer validationId : validators.keySet()) {
-            try {
-                validators.get(validationId).testConnection();
-                validatorStatuses.put(validationId, ValidationStatus.CONNECTION_OK);
-            } catch (Exception e) {
-                validatorStatuses.put(validationId, ValidationStatus.CONNECTION_FAILED);
-            }
+        // Token status
+        briefEntries.add(new WorkerStatusInfo.Entry("Token status", ct.getCryptoTokenStatus() == WorkerStatus.STATUS_ACTIVE ? "Active" : "Offline"));
 
+        // Number of validators
+        briefEntries.add(new WorkerStatusInfo.Entry("Number of validators", String.valueOf(validators.size())));
+
+        // Properties
+        final StringBuilder configValue = new StringBuilder();
+        Properties properties = config.getProperties();
+        for (String key : properties.stringPropertyNames()) {
+            configValue.append("  ").append(key).append("=").append(properties.getProperty(key)).append("\n\n");
         }
+        completeEntries.add(new WorkerStatusInfo.Entry("Active Properties are", configValue.toString()));
 
-        return new ValidationStatus(workerId, ct.getCryptoTokenStatus(), Collections.<String>emptyList(), config, validatorStatuses);
+        // Validators
+        final StringBuilder validatorsValue = new StringBuilder();
+        for (Entry<Integer, IValidator> entry : validators.entrySet()) {
+            validatorsValue.append("  Status validator ").append(entry.getKey()).append(": ");
+            try {
+                entry.getValue().testConnection();
+                validatorsValue.append("OK");
+            } catch (Exception e) {
+                validatorsValue.append("FAILED");
+            }
+            validatorsValue.append("\n");
+        }
+        completeEntries.add(new WorkerStatusInfo.Entry("Validators", validatorsValue.toString()));
+
+        return new StaticWorkerStatus(new WorkerStatusInfo(workerId, config.getProperty("NAME"), "Validation Service", ct.getCryptoTokenStatus(), briefEntries, Collections.<String>emptyList(), completeEntries, config));
     }
 
     /**

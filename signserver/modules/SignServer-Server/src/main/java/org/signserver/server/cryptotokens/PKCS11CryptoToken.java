@@ -36,11 +36,11 @@ import org.cesecore.keys.token.p11.exception.NoSuchSlotException;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenInitializationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
-import org.signserver.common.CryptoTokenStatus;
 import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.KeyTestResult;
 import org.signserver.common.SignServerException;
+import org.signserver.common.WorkerStatus;
 
 /**
  * CryptoToken implementation wrapping the new PKCS11CryptoToken from CESeCore.
@@ -158,8 +158,8 @@ public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2 {
     public int getCryptoTokenStatus() {
         int result = delegate.getTokenStatus();
 
-        if (result == CryptoTokenStatus.STATUS_ACTIVE) {
-            result = CryptoTokenStatus.STATUS_OFFLINE;
+        if (result == WorkerStatus.STATUS_ACTIVE) {
+            result = WorkerStatus.STATUS_OFFLINE;
             try {
                 if (LOG.isDebugEnabled()) { 
                     final StringBuilder sb = new StringBuilder();
@@ -173,7 +173,7 @@ public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2 {
                         if (privateKey != null) {
                             PublicKey publicKey = delegate.getPublicKey(testKey);
                             CryptoTokenHelper.testSignAndVerify(privateKey, publicKey, delegate.getSignProviderName());
-                            result = CryptoTokenStatus.STATUS_ACTIVE;
+                            result = WorkerStatus.STATUS_ACTIVE;
                         }
                     }
                 }

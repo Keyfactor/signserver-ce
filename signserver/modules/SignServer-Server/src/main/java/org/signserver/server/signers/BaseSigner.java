@@ -21,10 +21,12 @@ import java.security.cert.CertStoreException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.bouncycastle.cert.X509CertificateHolder;
@@ -32,6 +34,8 @@ import org.bouncycastle.cert.jcajce.JcaCertStore;
 import org.bouncycastle.util.Selector;
 import org.bouncycastle.util.Store;
 import org.signserver.common.*;
+import static org.signserver.common.WorkerStatus.INDENT1;
+import static org.signserver.common.WorkerStatus.INDENT2;
 import org.signserver.server.BaseProcessable;
 import org.signserver.server.KeyUsageCounterHash;
 import org.signserver.server.ValidityTimeUtils;
@@ -56,6 +60,7 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
     
     private List<String> configErrors = new LinkedList<String>();
 
+    private static final SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
     
     @Override
     public void init(int workerId, WorkerConfig config,
@@ -83,7 +88,7 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
      */
     @Override
     public WorkerStatus getStatus(final List<String> additionalFatalErrors) {
-        SignerStatus retval;
+        WorkerStatusInfo info;
         final List<String> fatalErrors = new LinkedList<String>(additionalFatalErrors);
         fatalErrors.addAll(getFatalErrors());
 
@@ -97,52 +102,99 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
             // during creation of the crypto token
         }
 
+        List<WorkerStatusInfo.Entry> briefEntries = new LinkedList<WorkerStatusInfo.Entry>();
+        List<WorkerStatusInfo.Entry> completeEntries = new LinkedList<WorkerStatusInfo.Entry>();
+
+        long keyUsageCounterValue = 0;
+        int status = WorkerStatus.STATUS_OFFLINE;
+        X509Certificate signerCertificate = null;
+
         try {
-            final Certificate cert = getSigningCertificate();
+            signerCertificate = (X509Certificate) getSigningCertificate();
             final long keyUsageLimit = Long.valueOf(config.getProperty(SignServerConstants.KEYUSAGELIMIT, "-1"));
-            final int status;
-            if (token == null) {
-                status = SignerStatus.STATUS_OFFLINE;
-            } else {
+
+            if (token != null) {
                 status = token.getCryptoTokenStatus();
             }
 
-            if (cert != null) { 
-                KeyUsageCounter counter = getSignServerContext().getKeyUsageCounterDataService().getCounter(KeyUsageCounterHash.create(cert.getPublicKey()));
+            if (signerCertificate != null) {
+                KeyUsageCounter counter = getSignServerContext().getKeyUsageCounterDataService().getCounter(KeyUsageCounterHash.create(signerCertificate.getPublicKey()));
                 if ((counter == null && !keyUsageCounterDisabled) 
-                        || (keyUsageLimit != -1 && status == CryptoTokenStatus.STATUS_ACTIVE && (counter == null || counter.getCounter() >= keyUsageLimit))) {
+                        || (keyUsageLimit != -1 && status == WorkerStatus.STATUS_ACTIVE && (counter == null || counter.getCounter() >= keyUsageLimit))) {
                     fatalErrors.add("Key usage limit exceeded or not initialized");
                 }
 
                 if (counter != null) {
-                    retval = new SignerStatus(workerId, status, fatalErrors, new ProcessableConfig(config), cert, counter.getCounter());
-                } else {
-                    retval = new SignerStatus(workerId, status, fatalErrors, new ProcessableConfig(config), cert);
+                    keyUsageCounterValue = counter.getCounter();
                 }
-            } else {
-                retval = new SignerStatus(workerId, status, fatalErrors, new ProcessableConfig(config), cert);
             }
-        } catch (CryptoTokenOfflineException e) {
-            try {
-                retval = new SignerStatus(workerId, getCryptoToken().getCryptoTokenStatus(),
-                        fatalErrors, new ProcessableConfig(config), null);
-            } catch (SignServerException e2) {
-                // the error will have been picked up by getCryptoTokenFatalErrors already
-                retval = new SignerStatus(workerId, SignerStatus.STATUS_OFFLINE, fatalErrors, new ProcessableConfig(config), null);
-            }
-        } catch (NumberFormatException ex) {
-            try {
-                fatalErrors.add("Incorrect value in worker property " +
-                        SignServerConstants.KEYUSAGELIMIT + ": " + ex.getMessage());
-                retval = new SignerStatus(workerId, getCryptoToken().getCryptoTokenStatus(),
-                        fatalErrors, new ProcessableConfig(config), null);
-            } catch (SignServerException e) {
-                fatalErrors.add("Failed to get crypto token: " + e.getMessage());
-                retval = new SignerStatus(workerId, SignerStatus.STATUS_OFFLINE, fatalErrors, new ProcessableConfig(config), null);
-            }
+
+        } catch (CryptoTokenOfflineException e) {} // the error will have been picked up by getCryptoTokenFatalErrors already
+
+        catch (NumberFormatException ex) {
+            fatalErrors.add("Incorrect value in worker property " + SignServerConstants.KEYUSAGELIMIT + ": " + ex.getMessage());
         }
-        retval.setKeyUsageCounterDisabled(keyUsageCounterDisabled);
-        return retval;
+
+        if (status == WorkerStatus.STATUS_OFFLINE) {
+            fatalErrors.add("Error Crypto Token is disconnected");
+        }
+
+        // Worker status
+        briefEntries.add(new WorkerStatusInfo.Entry("Worker status", status == WorkerStatus.STATUS_ACTIVE && (fatalErrors.isEmpty()) ? "Active" : "Offline"));
+        briefEntries.add(new WorkerStatusInfo.Entry("Token status", status == WorkerStatus.STATUS_ACTIVE ? "Active" : "Offline"));
+
+        // Signings
+        String signingsValue = String.valueOf(keyUsageCounterValue);
+        long keyUsageLimit = -1;
+        try {
+            keyUsageLimit = Long.valueOf(config.getProperty(SignServerConstants.KEYUSAGELIMIT));
+        } catch(NumberFormatException ignored) {}
+        if (keyUsageLimit >= 0) {
+            signingsValue += " of " + keyUsageLimit;
+        }
+        if (keyUsageCounterDisabled) {
+            signingsValue += " (counter disabled)";
+        }
+        briefEntries.add(new WorkerStatusInfo.Entry("Signings", signingsValue));
+
+        // Disabled
+        if ("TRUE".equalsIgnoreCase(config.getProperty(SignServerConstants.DISABLED))) {
+            briefEntries.add(new WorkerStatusInfo.Entry("", "Signer is disabled"));
+        }
+
+        // Properties
+        final StringBuilder configValue = new StringBuilder();
+        Properties properties = config.getProperties();
+        for (String key : properties.stringPropertyNames()) {
+            configValue.append("  ").append(key).append("=").append(properties.getProperty(key)).append("\n\n");
+        }
+        completeEntries.add(new WorkerStatusInfo.Entry("Active Properties are", configValue.toString()));
+
+        // Clients
+        final StringBuilder clientsValue = new StringBuilder();
+        for (AuthorizedClient client : new ProcessableConfig(config).getAuthorizedClients()) {
+            clientsValue.append("  ").append(client.getCertSN()).append(", ").append(properties.getProperty(client.getIssuerDN())).append("\n");
+        }
+        completeEntries.add(new WorkerStatusInfo.Entry("Active Authorized Clients are (Cert DN, IssuerDN)", clientsValue.toString()));
+
+        // Certificate
+        final String certificateValue;
+        if (signerCertificate == null) {
+            certificateValue = "Error: No Signer Certificate have been uploaded to this signer.\n";
+        } else {
+            final StringBuilder buff = new StringBuilder();
+            buff.append("The current configuration use the following signer certificate : \n");
+            buff.append(INDENT1).append(INDENT2).append("Subject DN:     ").append(signerCertificate.getSubjectDN().toString()).append("\n");
+            buff.append(INDENT1).append(INDENT2).append("Serial number:  ").append(signerCertificate.getSerialNumber().toString(16)).append("\n");
+            buff.append(INDENT1).append(INDENT2).append("Issuer DN:      ").append(signerCertificate.getIssuerDN().toString()).append("\n");
+            buff.append(INDENT1).append(INDENT2).append("Valid from:     ").append(SDF.format(signerCertificate.getNotBefore())).append("\n");
+            buff.append(INDENT1).append(INDENT2).append("Valid until:    ").append(SDF.format(signerCertificate.getNotAfter())).append("\n");
+            certificateValue = buff.toString();
+        }
+        completeEntries.add(new WorkerStatusInfo.Entry("Certificate", certificateValue));
+
+        info = new WorkerStatusInfo(workerId, config.getProperty("NAME"), "Signer", status, briefEntries, fatalErrors, completeEntries, config);
+        return new StaticWorkerStatus(info);
     }
 
     @Override

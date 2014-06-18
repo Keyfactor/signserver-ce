@@ -22,7 +22,7 @@ import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
-import org.signserver.common.SignerStatus;
+import org.signserver.common.WorkerStatus;
 
 /**
  * Dummy Signer used for test and demonstration purposes.
@@ -112,6 +112,6 @@ public class DummySigner extends BaseSigner {
 
     @Override
     public int getCryptoTokenStatus() {
-        return active ? SignerStatus.STATUS_ACTIVE : SignerStatus.STATUS_OFFLINE;
+        return active ? WorkerStatus.STATUS_ACTIVE : WorkerStatus.STATUS_OFFLINE;
     }    
 }

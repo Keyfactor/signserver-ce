@@ -54,16 +54,16 @@ public abstract class OldCryptoTokenBase implements ICryptoToken {
     }
     
     /**
-     * Method returning SignerStatus.STATUS_ACTIVE if every thing is OK, otherwise STATUS_OFFLINE.
+     * Method returning WorkerStatus.STATUS_ACTIVE if every thing is OK, otherwise STATUS_OFFLINE.
      * 
      */
     @Override
     public int getCryptoTokenStatus() {
         int status = catoken.getCATokenStatus();
         if (status == ICAToken.STATUS_ACTIVE) {
-            return SignerStatus.STATUS_ACTIVE;
+            return WorkerStatus.STATUS_ACTIVE;
         }
-        return SignerStatus.STATUS_OFFLINE;
+        return WorkerStatus.STATUS_OFFLINE;
     }
 
     /**

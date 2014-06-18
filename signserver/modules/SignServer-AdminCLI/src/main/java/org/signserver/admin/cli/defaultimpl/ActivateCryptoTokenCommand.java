@@ -22,7 +22,8 @@ import org.signserver.cli.spi.UnexpectedCommandFailureException;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.InvalidWorkerIdException;
-import org.signserver.common.SignerStatus;
+import org.signserver.common.StaticWorkerStatus;
+import org.signserver.common.WorkerStatus;
 
 /**
  * Command used to activate a Crypto Token
@@ -85,8 +86,8 @@ public class ActivateCryptoTokenCommand extends AbstractAdminCommand {
 
             boolean active = false;
             
-            if (getWorkerSession().getStatus(workerid) instanceof SignerStatus) {
-            	active = ((SignerStatus) getWorkerSession().getStatus(workerid)).getTokenStatus() == SignerStatus.STATUS_ACTIVE;
+            if (getWorkerSession().getStatus(workerid) instanceof StaticWorkerStatus) {
+            	active = ((StaticWorkerStatus) getWorkerSession().getStatus(workerid)).getTokenStatus() == WorkerStatus.STATUS_ACTIVE;
             } else {
             	this.getOutputStream().println("No token available");
             }

@@ -2194,12 +2194,23 @@ private void displayLogEntryAction() {
                     final WsWorkerConfig config = SignServerAdminGUIApplication.getAdminWS().getCurrentWorkerConfig(workerId);
                     final Properties properties = asProperties(config);
                     final String name = properties.getProperty("NAME");
+                    // Status
+                    String statusSummary;
+                    String tokenStatus;
+                    boolean active = false;
                     try {
                         final WsWorkerStatus status = SignServerAdminGUIApplication.getAdminWS().getStatus(workerId);
+                        statusSummary = status.getCompleteStatusText();
+                        tokenStatus = status.getOk() == null ? "ACTIVE" : "OFFLINE";
+                        active = status.getOk() == null;
                         workerInfo.add(status.getOk() == null ? "OK" : status.getOk());
                     } catch (InvalidWorkerIdException_Exception ex) {
                         workerInfo.add("Invalid");
+                        statusSummary = "No such worker";
+                        tokenStatus = "Unknown";
                     } catch (Exception ex) {
+                        statusSummary = "Error getting status";
+                        tokenStatus = "Unknown";
                         workerInfo.add("Error");
                         LOG.error("Error getting status for worker " + workerId, ex);
                     }
@@ -2218,24 +2229,6 @@ private void displayLogEntryAction() {
                         configProperties[j][0] = key;
                         configProperties[j][1] = properties.getProperty(key);
                         j++;
-                    }
-                    // Status
-                    String statusSummary;
-                    String tokenStatus;
-                    WsWorkerStatus status = null;
-                    boolean active = false;
-                    try {
-                        status = SignServerAdminGUIApplication.getAdminWS().getStatus(workerId);
-                        statusSummary = status.getCompleteStatusText();
-                        tokenStatus = status.getOk() == null ? "ACTIVE" : "OFFLINE";
-                        active = status.getOk() == null;
-                    } catch (InvalidWorkerIdException_Exception ex) {
-                        statusSummary = "No such worker";
-                        tokenStatus = "Unknown";
-                    } catch (Exception ex) {
-                        statusSummary = "Error getting status";
-                        tokenStatus = "Unknown";
-                        LOG.error("Error getting status for worker " + workerId, ex);
                     }
                     XMLGregorianCalendar notBefore = null;
                     XMLGregorianCalendar notAfter = null;

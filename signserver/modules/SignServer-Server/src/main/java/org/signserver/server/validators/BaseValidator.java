@@ -55,16 +55,16 @@ public abstract class BaseValidator extends BaseProcessable implements IValidato
         final StringBuilder configValue = new StringBuilder();
         Properties properties = config.getProperties();
         for (String key : properties.stringPropertyNames()) {
-            configValue.append("  ").append(key).append("=").append(properties.getProperty(key)).append("\n\n");
+            configValue.append(key).append("=").append(properties.getProperty(key)).append("\n\n");
         }
-        completeEntries.add(new WorkerStatusInfo.Entry("Active Properties are", configValue.toString()));
+        completeEntries.add(new WorkerStatusInfo.Entry("Worker properties", configValue.toString()));
 
         // Clients
         final StringBuilder clientsValue = new StringBuilder();
         for (AuthorizedClient client : new ProcessableConfig(config).getAuthorizedClients()) {
             clientsValue.append("  ").append(client.getCertSN()).append(", ").append(properties.getProperty(client.getIssuerDN())).append("\n");
         }
-        completeEntries.add(new WorkerStatusInfo.Entry("Active Authorized Clients are (Cert DN, IssuerDN)", clientsValue.toString()));
+        completeEntries.add(new WorkerStatusInfo.Entry("Authorized clients (serial number, issuer DN)", clientsValue.toString()));
 
         return new StaticWorkerStatus(new WorkerStatusInfo(workerId, config.getProperty("NAME"), "Validator", WorkerStatus.STATUS_ACTIVE, briefEntries, fatalErrors, completeEntries, config));
     }

@@ -100,6 +100,7 @@ public class GetStatusCommand extends AbstractCommand {
     
     private void displayWorkerStatus(int workerid, WorkerStatus status, boolean complete) {
         status.displayStatus(workerid, out, complete);
+        out.println();
     }
 
     private void displayGlobalConfiguration() throws RemoteException, Exception {

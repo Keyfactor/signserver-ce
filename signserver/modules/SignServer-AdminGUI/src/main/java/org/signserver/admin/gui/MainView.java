@@ -135,7 +135,9 @@ public class MainView extends FrameView {
         super(app);
 
         initComponents();
-        
+
+        statusSummaryTextPane.setContentType("text/html");
+
         conditionsModel.addCondition(AuditRecordData.FIELD_EVENTTYPE, RelationalOperator.NEQ, "ACCESS_CONTROL");
         auditLogTable.setModel(auditlogModel);
         conditionsTable.setModel(conditionsModel);
@@ -2113,7 +2115,7 @@ private void displayLogEntryAction() {
 
             });
         } else {
-            statusSummaryTextPane.setText(worker.getStatusSummary());
+            statusSummaryTextPane.setText("<html><body><pre>\n" + worker.getStatusSummary() + "\n</pre></body></html>");
             statusSummaryTextPane.setCaretPosition(0);
 
             propertiesTable.setModel(new DefaultTableModel(

@@ -34,8 +34,6 @@ import org.bouncycastle.cert.jcajce.JcaCertStore;
 import org.bouncycastle.util.Selector;
 import org.bouncycastle.util.Store;
 import org.signserver.common.*;
-import static org.signserver.common.WorkerStatus.INDENT1;
-import static org.signserver.common.WorkerStatus.INDENT2;
 import org.signserver.server.BaseProcessable;
 import org.signserver.server.KeyUsageCounterHash;
 import org.signserver.server.ValidityTimeUtils;
@@ -166,16 +164,16 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
         final StringBuilder configValue = new StringBuilder();
         Properties properties = config.getProperties();
         for (String key : properties.stringPropertyNames()) {
-            configValue.append("  ").append(key).append("=").append(properties.getProperty(key)).append("\n\n");
+            configValue.append(key).append("=").append(properties.getProperty(key)).append("\n\n");
         }
-        completeEntries.add(new WorkerStatusInfo.Entry("Active Properties are", configValue.toString()));
+        completeEntries.add(new WorkerStatusInfo.Entry("Worker properties", configValue.toString()));
 
         // Clients
         final StringBuilder clientsValue = new StringBuilder();
         for (AuthorizedClient client : new ProcessableConfig(config).getAuthorizedClients()) {
-            clientsValue.append("  ").append(client.getCertSN()).append(", ").append(properties.getProperty(client.getIssuerDN())).append("\n");
+            clientsValue.append(client.getCertSN()).append(", ").append(properties.getProperty(client.getIssuerDN())).append("\n");
         }
-        completeEntries.add(new WorkerStatusInfo.Entry("Active Authorized Clients are (Cert DN, IssuerDN)", clientsValue.toString()));
+        completeEntries.add(new WorkerStatusInfo.Entry("Authorized clients (serial number, issuer DN)", clientsValue.toString()));
 
         // Certificate
         final String certificateValue;
@@ -183,15 +181,14 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
             certificateValue = "Error: No Signer Certificate have been uploaded to this signer.\n";
         } else {
             final StringBuilder buff = new StringBuilder();
-            buff.append("The current configuration use the following signer certificate : \n");
-            buff.append(INDENT1).append(INDENT2).append("Subject DN:     ").append(signerCertificate.getSubjectDN().toString()).append("\n");
-            buff.append(INDENT1).append(INDENT2).append("Serial number:  ").append(signerCertificate.getSerialNumber().toString(16)).append("\n");
-            buff.append(INDENT1).append(INDENT2).append("Issuer DN:      ").append(signerCertificate.getIssuerDN().toString()).append("\n");
-            buff.append(INDENT1).append(INDENT2).append("Valid from:     ").append(SDF.format(signerCertificate.getNotBefore())).append("\n");
-            buff.append(INDENT1).append(INDENT2).append("Valid until:    ").append(SDF.format(signerCertificate.getNotAfter())).append("\n");
+            buff.append("Subject DN:     ").append(signerCertificate.getSubjectDN().toString()).append("\n");
+            buff.append("Serial number:  ").append(signerCertificate.getSerialNumber().toString(16)).append("\n");
+            buff.append("Issuer DN:      ").append(signerCertificate.getIssuerDN().toString()).append("\n");
+            buff.append("Valid from:     ").append(SDF.format(signerCertificate.getNotBefore())).append("\n");
+            buff.append("Valid until:    ").append(SDF.format(signerCertificate.getNotAfter())).append("\n");
             certificateValue = buff.toString();
         }
-        completeEntries.add(new WorkerStatusInfo.Entry("Certificate", certificateValue));
+        completeEntries.add(new WorkerStatusInfo.Entry("Signer certificate", certificateValue));
 
         info = new WorkerStatusInfo(workerId, config.getProperty("NAME"), "Signer", status, briefEntries, fatalErrors, completeEntries, config);
         return new StaticWorkerStatus(info);

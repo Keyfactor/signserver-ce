@@ -12,7 +12,10 @@
  *************************************************************************/
 package org.signserver.common;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.PrintStream;
+import java.io.StringReader;
 import java.util.List;
 import org.signserver.common.WorkerStatusInfo.Entry;
 
@@ -33,6 +36,10 @@ import org.signserver.common.WorkerStatusInfo.Entry;
  */
 public class StaticWorkerStatus extends WorkerStatus {
 
+    private static final String TAB = "   ";
+    private static final String TAB2 = TAB + TAB;
+    private static final String TAB3 = TAB2 + TAB;
+
     private final WorkerStatusInfo info;
 
     public StaticWorkerStatus(WorkerStatusInfo info) {
@@ -45,38 +52,40 @@ public class StaticWorkerStatus extends WorkerStatus {
         final List<String> errors = getFatalErrors();
 
         // Title
-        out.println("Status of " + info.getWorkerType() + " with Id " + workerId + " (" + info.getWorkerName() + ") is :");
+        out.println("Status of " + info.getWorkerType() + " with id " + workerId + " (" + info.getWorkerName() + ") is:");
 
         // Brief statuses
         int keyWidth = maxWidth(14, info.getBriefEntries());
-        final String format = "  %-" + keyWidth + "s: %s\n";
+        final String format = TAB + "%-" + keyWidth + "s: %s\n";
         for (Entry entry : info.getBriefEntries()) {
             if (entry.getTitle().isEmpty()) {
-                out.print("  ");
+                out.print(TAB);
                 out.println(entry.getValue());
             } else {
                 out.printf(format, entry.getTitle(), entry.getValue());
             }
         }
-        out.println();
 
         // Errors
         if (errors != null && !errors.isEmpty()) {
-            out.println("  Errors: ");
+            out.println();
+            out.print(TAB);
+            out.println("Errors: ");
             for (String error : errors) {
-                out.print("    ");
+                out.print(TAB2);
+                out.print("- ");
                 out.println(error);
             }
         }
-        out.println("\n\n");
 
         if (complete) {
-
             // Complete statuses
+            out.println();
             for (Entry entry : info.getCompleteEntries()) {
+                out.print(TAB);
                 out.print(entry.getTitle());
                 out.println(":");
-                out.println(entry.getValue()); // TODO Indent
+                writeIndented(out, entry.getValue(), TAB2);
                 out.println();
             }
         }
@@ -105,6 +114,19 @@ public class StaticWorkerStatus extends WorkerStatus {
      */
     public int getTokenStatus() {
         return info.getTokenStatus();
+    }
+
+    private void writeIndented(PrintStream out, String value, String tab) {
+        try {
+            BufferedReader in = new BufferedReader(new StringReader(value));
+            String s;
+            while ( (s = in.readLine()) != null) {
+                out.print(tab);
+                out.println(s);
+            }
+        } catch (IOException ex) { // Should not be able to happen
+            throw new RuntimeException(ex);
+        }
     }
 
 }

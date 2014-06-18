@@ -106,14 +106,14 @@ public abstract class BaseValidationService implements IValidationService {
         final StringBuilder configValue = new StringBuilder();
         Properties properties = config.getProperties();
         for (String key : properties.stringPropertyNames()) {
-            configValue.append("  ").append(key).append("=").append(properties.getProperty(key)).append("\n\n");
+            configValue.append(key).append("=").append(properties.getProperty(key)).append("\n\n");
         }
-        completeEntries.add(new WorkerStatusInfo.Entry("Active Properties are", configValue.toString()));
+        completeEntries.add(new WorkerStatusInfo.Entry("Worker properties", configValue.toString()));
 
         // Validators
         final StringBuilder validatorsValue = new StringBuilder();
         for (Entry<Integer, IValidator> entry : validators.entrySet()) {
-            validatorsValue.append("  Status validator ").append(entry.getKey()).append(": ");
+            validatorsValue.append("Status validator ").append(entry.getKey()).append(": ");
             try {
                 entry.getValue().testConnection();
                 validatorsValue.append("OK");

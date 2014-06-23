@@ -156,6 +156,9 @@ public class XMLValidator extends BaseValidator {
         CertificateAndKeySelector certAndKeySelector = new CertificateAndKeySelector(requestId);
         DOMValidateContext valContext = new DOMValidateContext(certAndKeySelector, nl.item(0));
 
+        // enable secure validation
+        valContext.setProperty("org.apache.jcp.xml.dsig.secureValidation", Boolean.TRUE);
+
         boolean validSignature = false;
         try {
             XMLSignature signature = fac.unmarshalXMLSignature(valContext);

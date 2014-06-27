@@ -381,6 +381,17 @@ public interface IWorkerSession {
     List<ArchiveDataVO> findArchiveDatasFromRequestCertificate(int signerId,
             BigInteger serialNumber, String issuerDN);
     
+    /**
+     * Query contents of archive.
+     * Returns meta data entries of archive entries matching query criteria.
+     * The actual archive data are not returned, but needs to be fetched by
+     * further calls when needed.
+     * 
+     * @param startIndex Start index of first result (0-based)
+     * @param max Maximum number of results returned, 0 means all matching results
+     * @param criteria Search criteria for matching results
+     * @return List of metadata objects describing matching entries
+     */
     List<ArchiveMetadata> searchArchive(int startIndex, int max, QueryCriteria criteria); 
     
     /**
@@ -600,7 +611,18 @@ public interface IWorkerSession {
          */
         void reloadConfiguration(final AdminInfo adminInfo, int workerId);
 
-        
+        /**
+         * Query contents of archive.
+         * Returns meta data entries of archive entries matching query criteria.
+         * The actual archive data are not returned, but needs to be fetched by
+         * further calls when needed.
+         * 
+         * @param adminInfo Administrator information
+         * @param startIndex Start index of first result (0-based)
+         * @param max Maximum number of results returned, 0 means all matching results
+         * @param criteria Search criteria for matching results
+         * @return List of metadata objects describing matching entries
+         */
         List<ArchiveMetadata> searchArchive(AdminInfo adminInfo, int startIndex, int max, QueryCriteria criteria);
     }
 }

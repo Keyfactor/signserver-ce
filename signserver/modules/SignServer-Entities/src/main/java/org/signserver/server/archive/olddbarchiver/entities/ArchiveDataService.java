@@ -20,7 +20,12 @@ import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.persistence.Query;
+
 import org.apache.log4j.Logger;
+import org.cesecore.audit.impl.integrityprotected.AuditRecordData;
+import org.cesecore.util.query.QueryCriteria;
+import org.cesecore.util.query.QueryGenerator;
 import org.ejbca.util.CertTools;
 import org.signserver.common.ArchiveData;
 
@@ -170,4 +175,38 @@ public class ArchiveDataService {
         } catch (NoResultException ignored) {} // NOPMD
         return new ArrayList<ArchiveDataBean>();
     }
+
+    @SuppressWarnings("unchecked")
+    public Collection<ArchiveDataBean> findMatchingCriteria(int startIndex, int max,
+            QueryCriteria criteria) {
+        
+        try {
+            final QueryGenerator generator = QueryGenerator.generator(ArchiveDataBean.class, criteria, "a");
+            final String conditions = generator.generate();
+            
+            final Query query =
+                    em.createQuery("SELECT a.uniqueId, a.time, a.type, a.signerid, a.archiveid, a.requestIssuerDN, a.requestCertSerialNumber, a.requestIP" +
+                                conditions);
+            
+            for (final String key : generator.getParameterKeys()) {
+                final Object param = generator.getParameterValue(key);
+                query.setParameter(key, param);
+            }
+            
+            if (startIndex > 0) {
+                query.setFirstResult(startIndex);
+            }
+            
+            if (max > 0) {
+                query.setMaxResults(max);
+            }
+            
+            return query.getResultList();
+        } catch (NoResultException ignored) { // NOPMD
+            // ignored
+        }
+        
+        return Collections.emptyList(); 
+    }
+
 }

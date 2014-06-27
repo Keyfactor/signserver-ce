@@ -25,6 +25,7 @@ import org.cesecore.audit.AuditLogEntry;
 import org.cesecore.authorization.AuthorizationDeniedException;
 import org.cesecore.util.query.QueryCriteria;
 import org.signserver.common.ArchiveDataVO;
+import org.signserver.common.ArchiveMetadata;
 import org.signserver.common.AuthorizedClient;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
@@ -380,6 +381,8 @@ public interface IWorkerSession {
     List<ArchiveDataVO> findArchiveDatasFromRequestCertificate(int signerId,
             BigInteger serialNumber, String issuerDN);
     
+    List<ArchiveMetadata> searchArchive(int startIndex, int max, QueryCriteria criteria); 
+    
     /**
      * Help method that returns all worker, either signers or services defined
      * in the global configuration.
@@ -597,5 +600,7 @@ public interface IWorkerSession {
          */
         void reloadConfiguration(final AdminInfo adminInfo, int workerId);
 
+        
+        List<ArchiveMetadata> searchArchive(AdminInfo adminInfo, int startIndex, int max, QueryCriteria criteria);
     }
 }

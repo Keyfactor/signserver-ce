@@ -19,6 +19,7 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.*;
+
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.EJBException;
@@ -991,5 +992,32 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     public List<? extends AuditLogEntry> selectAuditLogs(int startIndex, int max, QueryCriteria criteria, String logDeviceId) throws AuthorizationDeniedException {
         return selectAuditLogs(new AdminInfo("CLI user", null, null), startIndex, max, criteria, logDeviceId);
     }
+
+    @Override
+    public List<ArchiveMetadata> searchArchive(final int startIndex, final int max,
+            final QueryCriteria criteria) {
+        return searchArchive(new AdminInfo("CLI user", null, null), startIndex, max, criteria);
+    }
+
+    @Override
+    public List<ArchiveMetadata> searchArchive(final AdminInfo adminInfo,
+            final int startIndex, final int max, final QueryCriteria criteria) {
+        final List<ArchiveMetadata> result = new LinkedList<ArchiveMetadata>();
+        
+        if (archiveDataService == null) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Archiving to database is not supported when running without database");
+            }
+        } else {
+            final Collection<ArchiveDataBean> list = archiveDataService.findMatchingCriteria(startIndex, max, criteria);
+            for (final ArchiveDataBean adb : list) {
+                result.add(adb.getArchiveMetadata());
+            }
+        }
+
+        return result;
+    }
+    
+    
     
 }

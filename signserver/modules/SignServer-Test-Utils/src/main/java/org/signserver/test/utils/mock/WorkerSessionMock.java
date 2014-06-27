@@ -24,6 +24,7 @@ import org.cesecore.audit.AuditLogEntry;
 import org.cesecore.authorization.AuthorizationDeniedException;
 import org.cesecore.util.query.QueryCriteria;
 import org.signserver.common.ArchiveDataVO;
+import org.signserver.common.ArchiveMetadata;
 import org.signserver.common.AuthorizedClient;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
@@ -380,6 +381,22 @@ public class WorkerSessionMock implements IWorkerSession.ILocal,
     public List<? extends AuditLogEntry> selectAuditLogs(int startIndex, int max, QueryCriteria criteria, String logDeviceId) throws AuthorizationDeniedException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    @Override
+    public List<ArchiveMetadata> searchArchive(int startIndex, int max,
+            QueryCriteria criteria) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public List<ArchiveMetadata> searchArchive(AdminInfo adminInfo,
+            int startIndex, int max, QueryCriteria criteria) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+
 
     private static class Worker {
         private IProcessable processable;

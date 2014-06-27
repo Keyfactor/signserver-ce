@@ -34,4 +34,31 @@ public class ArchiveMetadata {
         this.requestIP = requestIP;
     }
     
+    public int getType() {
+        return type;
+    }
+    
+    public int getSignerId() {
+        return signerId;
+    }
+    
+    public String getArchiveId() {
+        return archiveId;
+    }
+    
+    public Date getTime() {
+        return time;
+    }
+    
+    public String getRequestIssuerDN() {
+        return requestIssuerDN;
+    }
+    
+    public String getRequestCertSerialNumber() {
+        return requestCertSerialNumber;
+    }
+    
+    public String getRequestIP() {
+        return requestIP;
+    }
 }

@@ -1,3 +1,30 @@
+SignServer 3.5.2, 2014-07-15
+----------------------------
+
+** Bug
+    * [DSS-698] - XML signer performance regression
+    * [DSS-779] - Audit log errors are not displayed in admin GUI
+    * [DSS-802] - Regression: OPTIONAL_CLASSPATH ignored in signserver-db script
+    * [DSS-805] - PDF signer causes deadlocks under high load when setup to include timestamp using a local TSA
+    * [DSS-814] - AdminGUI login using smartcard fails if path to DLL contains parenthesis
+    * [DSS-816] - XAdES signer causes deadlocks under high load when setup to include timestamp using a local TSA
+    * [DSS-829] - Ant target for copying modules not working for custom sub modules
+
+** Improvement
+    * [DSS-737] - Use SHA256 for the releases
+    * [DSS-800] - Systemtests should setup truststore in case run with HTTPS
+    * [DSS-801] - Include systemtests in binary dist
+    * [DSS-807] - Use a different worker session bean for internal invocations
+    * [DSS-812] - Improve smartcard error reporting in AdminGUI
+    * [DSS-817] - Use a different worker session bean for internal invocations from dispatcher
+    * [DSS-824] - Upgrade Apache Santuario (XML Security) to 1.5.6
+    * [DSS-834] - Upgrade Apache Santuario (XML Security) to 1.5.7
+
+** New Feature
+    * [DSS-488] - Support for SHA-2 in PDFSigner
+    * [DSS-811] - Support for using the worker servlet when running the stresstest tool
+
+
 SignServer 3.5.1, 2014-05-05
 ----------------------------
 

@@ -1,6 +1,22 @@
 SignServer 3.5.2
 ----------------
 
+New features and improvements:
+ - Support for SHA-2 hash algorithms in PDFSigner
+ - Support for using the worker servlet when running the stress test tool
+ - Checksums using SHA256 are now available for the releases
+ - System tests now set up trust stores in case HTTPS is used
+ - System tests are now included in the binary distribution
+ - Apache Santuario (XML Security) library has been updated to version 1.5.7
+
+Bug fixes:
+    - An XML signer performance regression has been fixed by a dependency update
+    - PDF and XAdES signers caused deadlocks under high load when using a local TSA
+    - Audit log errors are now displayed in the Admin GUI
+    - An environment variable is now honored in the signserver-db script again
+    - Ant target for copying modules was not working for custom sub modules
+    - AdminGUI login using smartcard fails if path to DLL contains parenthesis
+
 Notice:
  - The XML Security library has been updated to version 1.5.7.
    This fixes security vulnerability in earlier versions as well as a
@@ -44,6 +60,7 @@ Bug fixes:
  - Fixed an issue with a button in AdminGUI not being initially disabled
  - Fixed arguments parsing in the renewsigner command and added missing
    authcode argument
+
 
 SignServer 3.5.0
 ----------------

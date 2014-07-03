@@ -391,7 +391,7 @@ Upgrading XML Security JAR files in JBoss endorsed folder with versions from Sig
         <copy file="${base}/lib/ext/serializer-2.7.1.jar" tofile="${appserver.home}/lib/endorsed/serializer-signserver.jar" overwrite="true" failonerror="true" verbose="true"/>
         <copy file="${base}/lib/ext/xalan-2.7.1.jar" tofile="${appserver.home}/lib/endorsed/xalan-signserver.jar" overwrite="true" failonerror="true" verbose="true"/>
         <copy file="${base}/lib/ext/xercesImpl-2.9.1.jar" tofile="${appserver.home}/lib/endorsed/xercesImpl-signserver.jar" overwrite="true" failonerror="true" verbose="true"/>
-        <copy file="${base}/lib/ext/xmlsec-1.5.6.jar" tofile="${appserver.home}/lib/endorsed/xmlsec-signserver.jar" overwrite="true" failonerror="true" verbose="true"/>
+        <copy file="${base}/lib/ext/xmlsec-1.5.7.jar" tofile="${appserver.home}/lib/endorsed/xmlsec-signserver.jar" overwrite="true" failonerror="true" verbose="true"/>
 
         <!-- $ cp lib/ext/commons-logging-1.1.1.jar lib/ext/log4j-1.2.14.jar /opt/jboss-5.1.0.GA/lib/endorsed/ -->
         <copy file="${base}/lib/ext/commons-logging-1.1.1.jar" tofile="${appserver.home}/lib/endorsed/commons-logging-signserver.jar" overwrite="true" failonerror="true" verbose="true"/>

@@ -235,7 +235,7 @@ public class XMLSignerTest extends ModulesTestCase {
      */
     @Test
     public void test15XMLSecVersion() throws Exception {
-        checkDebugProperty("xml-sec.version", "1.5.6");
+        checkDebugProperty("xml-sec.version", "1.5.7");
     }
 
     /**

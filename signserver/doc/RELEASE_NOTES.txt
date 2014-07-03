@@ -2,8 +2,9 @@ SignServer 3.5.2
 ----------------
 
 Notice:
- - The XML Security library has been updated to version 1.5.6.
-   This fixes security vulnerability in earlier versions.
+ - The XML Security library has been updated to version 1.5.7.
+   This fixes security vulnerability in earlier versions as well as a
+   performance issue.
    See: http://santuario.apache.org/secadv.data/cve-2013-4517.txt.asc
    See also the "Fix XML Security library issue" sections in the Install Guide
    for the extra steps needed when using JBoss 5 and 7 respectively.

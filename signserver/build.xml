@@ -723,7 +723,7 @@ Configuring EAR...
         <condition property="appserver.jndi.conf" value="${basedir}/conf/glassfish/">
             <equals arg1="${appserver.type}" arg2="glassfish" />
         </condition>
-        <property name="cp.prefix" value="${basedir}/lib/ext/xmlsec-1.5.6.jar"/> <!-- needed as JBoss 5 bundles older version -->
+        <property name="cp.prefix" value="${basedir}/lib/ext/xmlsec-1.5.7.jar"/> <!-- needed as JBoss 5 bundles older version -->
         <property name="systemtest.path" value="${cp.prefix}:${appserver.jndi.conf}:${basedir}/res/cesecore/:${env.APPSRV_HOME}/client/jbossall-client.jar:conf:${env.APPSRV_HOME}/bin/client/jboss-client.jar:${env.APPSRV_HOME}/lib/appserv-rt.jar:${env.APPSRV_HOME}/lib/gf-client.jar:${basedir}/lib/ext/jdbc/jdbc.jar"/>
     </target>
     

@@ -706,13 +706,13 @@ To work around this issue copy the JAR file from SignServer into JBoss' modules 
 On Linux/Unix systems the following command can be used:
 						</p>
 						<source>
-cp lib/ext/xmlsec-1.5.6.jar $APPSRV_HOME/modules/org/apache/santuario/xmlsec/main/xmlsec-1.5.1.jar
+cp lib/ext/xmlsec-1.5.7.jar $APPSRV_HOME/modules/org/apache/santuario/xmlsec/main/xmlsec-1.5.1.jar
 						</source>
 						<p>
 On Windows systems the following command can be used:
 						</p>
 						<source>
-copy lib&#92;ext&#92;xmlsec-1.5.6.jar %APPSRV_HOME%&#92;modules&#92;org&#92;apache&#92;santuario&#92;xmlsec&#92;main&#92;xmlsec-1.5.1.jar
+copy lib&#92;ext&#92;xmlsec-1.5.7.jar %APPSRV_HOME%&#92;modules&#92;org&#92;apache&#92;santuario&#92;xmlsec&#92;main&#92;xmlsec-1.5.1.jar
 						</source>
 					</subsubsection>
                     <subsubsection name="Install Hibernate in GlassFish 3">

@@ -1,6 +1,22 @@
 SignServer 3.5.2
 ----------------
 
+New features and improvements:
+ - Support for SHA-2 hash algorithms in PDFSigner
+ - Support for using the worker servlet when running the stress test tool
+ - Checksums using SHA256 are now available for the releases
+ - System tests now set up trust stores in case HTTPS is used
+ - System tests are now included in the binary distribution
+ - Apache Santuario (XML Security) library has been updated to version 1.5.7
+
+Bug fixes:
+    - An XML signer performance regression has been fixed by a dependency update
+    - PDF and XAdES signers caused deadlocks under high load when using a local TSA
+    - Audit log errors are now displayed in the Admin GUI
+    - An environment variable is now honored in the signserver-db script again
+    - Ant target for copying modules was not working for custom sub modules
+    - AdminGUI login using smartcard fails if path to DLL contains parenthesis
+
 Notice:
  - The XML Security library has been updated to version 1.5.7.
    This fixes security vulnerability in earlier versions as well as a
@@ -8,6 +24,42 @@ Notice:
    See: http://santuario.apache.org/secadv.data/cve-2013-4517.txt.asc
    See also the "Fix XML Security library issue" sections in the Install Guide
    for the extra steps needed when using JBoss 5 and 7 respectively.
+
+
+SignServer 3.5.1
+----------------
+
+New features and improvements:
+ - Support for passing request meta data
+ - Support for configuring number of certificates to include in signature
+ - API for billing/accounting
+ - Command to print time-stamp requests and responses
+ - Improved error reporting for crypto tokens and RenewalWorker
+ - Improved ability to have custom modules
+ - Updated sample PKCS#11 attributes to not store the public key
+ - Documentation for MRTDSODSigner
+ - Made all Dispatchers work together with DispatchedAuthorizer
+ - Added test configuration files and performance CLI to binary distribution
+ - Improved system test configuration options
+ - Always display connect dialog when starting the AdminGUI
+ - Added getproperty command to AdminCLI
+ - Support for setting PKCS#11 attributes without referencing a file
+ - Support for generating keys for JKS soft crypto tokens
+
+Bug fixes:
+ - Fixed AdminGUI smart card login failure on second attempt
+ - Implemented workaround for smart card login error when multiple readers are
+   available for which some does not have tokens present
+ - Fixed a deployment issue with Clover
+ - Fixed proper exist codes from Ant wrapper script
+ - Fixed issue in AdminGUI when adding workers in a specific way
+ - Fixed a possible networking issue with the time-stamp client
+ - Corrected an error message in RenewalWorker
+ - Fixed an issue when running client CLI over ClientWS with debug enabled
+ - Fixed main class attribute in SignServer-Test-Performance.jar
+ - Fixed an issue with a button in AdminGUI not being initially disabled
+ - Fixed arguments parsing in the renewsigner command and added missing
+   authcode argument
 
 
 SignServer 3.5.0

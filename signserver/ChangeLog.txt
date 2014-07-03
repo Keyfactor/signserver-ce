@@ -1,3 +1,72 @@
+SignServer 3.5.2, 2014-07-15
+----------------------------
+
+** Bug
+    * [DSS-698] - XML signer performance regression
+    * [DSS-779] - Audit log errors are not displayed in admin GUI
+    * [DSS-802] - Regression: OPTIONAL_CLASSPATH ignored in signserver-db script
+    * [DSS-805] - PDF signer causes deadlocks under high load when setup to include timestamp using a local TSA
+    * [DSS-814] - AdminGUI login using smartcard fails if path to DLL contains parenthesis
+    * [DSS-816] - XAdES signer causes deadlocks under high load when setup to include timestamp using a local TSA
+    * [DSS-829] - Ant target for copying modules not working for custom sub modules
+
+** Improvement
+    * [DSS-737] - Use SHA256 for the releases
+    * [DSS-800] - Systemtests should setup truststore in case run with HTTPS
+    * [DSS-801] - Include systemtests in binary dist
+    * [DSS-807] - Use a different worker session bean for internal invocations
+    * [DSS-812] - Improve smartcard error reporting in AdminGUI
+    * [DSS-817] - Use a different worker session bean for internal invocations from dispatcher
+    * [DSS-824] - Upgrade Apache Santuario (XML Security) to 1.5.6
+    * [DSS-834] - Upgrade Apache Santuario (XML Security) to 1.5.7
+
+** New Feature
+    * [DSS-488] - Support for SHA-2 in PDFSigner
+    * [DSS-811] - Support for using the worker servlet when running the stresstest tool
+
+
+SignServer 3.5.1, 2014-05-05
+----------------------------
+
+** Bug
+    * [DSS-735] - AdminGUI login using smartcard fails second attempt
+    * [DSS-742] - PKCS#11 Keystore instantiation failed when multiple slots are available
+    * [DSS-746] - Default AdminGUI binary dist location not working on Windows
+    * [DSS-749] - Can not deploy when Clover is enabled
+    * [DSS-752] - Ant wrapper script does not exit with the Ant exit code
+    * [DSS-757] - Configuration not loaded if toggling add worker in AdminGUI
+    * [DSS-761] - The timestamp client command hangs in some situation
+    * [DSS-762] - RenewalWorker error message for missing ENDENTITY property incorrect
+    * [DSS-766] - Exception running client CLI over ClientWS with debug logging enabled
+    * [DSS-773] - Wrong main class name in SignServer-Test-Performance.jar
+    * [DSS-784] - Generate CSR button not initially disabled
+    * [DSS-785] - Renew signer CLI command arguments off by one
+    * [DSS-786] - The renewsigner command lacks authcode argument
+
+** Improvement
+    * [DSS-364] - Document the worker properties for MRTDSODSigner in manual
+    * [DSS-721] - Improve crypto token error reporting
+    * [DSS-730] - Better configuration error reporting for RenewalWorker
+    * [DSS-743] - Make all Dispatchers work together with DispatchedAuthorizer
+    * [DSS-756] - Improve ability to have custom modules
+    * [DSS-767] - Move test configuration files out of modules folder to be available in binary dist
+    * [DSS-768] - Make host configurable for systemtests running web protocols
+    * [DSS-770] - Include performance test CLI in binary distribution
+    * [DSS-775] - Update sample P11 attributes to not store public key
+    * [DSS-782] - Always display connect dialog in AdminGUI
+    * [DSS-783] - Support for passing request metadata in Client CLI
+
+** New Feature
+    * [DSS-214] - Billing/Accounting API
+    * [DSS-450] - Support for adding any request metadata in the web interface
+    * [DSS-472] - Command to print timestamp requests and responses
+    * [DSS-650] - Add getproperty command to CLI
+    * [DSS-720] - Support for setting PKCS#11 attributes without referencing a file
+    * [DSS-745] - Support for specifying number of certificates to include
+    * [DSS-751] - Support generating keys for JKS soft crypto tokens
+    * [DSS-755] - Add EntityManager to RequestContext
+
+
 SignServer 3.5.0, 2014-02-28
 ----------------------------
 

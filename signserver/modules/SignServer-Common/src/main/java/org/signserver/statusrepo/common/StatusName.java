@@ -49,6 +49,16 @@ public enum StatusName {
      * Read by the StatusReadingLocalComputerTimeSource and set by the time monitor application
      * or a script.
      */
-    LEAPSECOND
+    LEAPSECOND,
+
+    /**
+     * The state of the TimeMonitor application.
+     */
+    TIMEMONITOR_STATE,
+
+    /**
+     * The most recent log entries set by the TimeMonitor application.
+     */
+    TIMEMONITOR_LOG,
 
 }

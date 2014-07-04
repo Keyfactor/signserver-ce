@@ -37,6 +37,21 @@ public class WorkerStatusInfo implements Serializable {
     private final List<Entry> completeEntries;
     private final WorkerConfig workerConfig;
 
+    /**
+     * Constructs a new instance of WorkerStatusInfo with information about a
+     * worker.
+     * @param workerId id of the worker
+     * @param workerName name of the worker
+     * @param workerType type of worker, such as "Signer", "Dispatcher" or just
+     * "Worker" etc
+     * @param tokenStatus status of the worker
+     * @param briefEntries list of shorter, typically one line entries
+     * @param fatalErrors list of fatal errors
+     * @param completeEntries list of longer, possibly multi line entries
+     * @param workerConfig the worker configuration
+     * @see WorkerStatus#STATUS_ACTIVE
+     * @see WorkerStatus#STATUS_OFFLINE
+     */
     public WorkerStatusInfo(int workerId, String workerName, String workerType, int tokenStatus, List<Entry> briefEntries, List<String> fatalErrors, List<Entry> completeEntries, WorkerConfig workerConfig) {
         this.workerId = workerId;
         this.workerName = workerName;
@@ -48,42 +63,68 @@ public class WorkerStatusInfo implements Serializable {
         this.workerConfig = workerConfig;
     }
 
-    public static long getSerialVersionUID() {
-        return serialVersionUID;
-    }
-
+    /**
+     * @return id of the worker
+     */
     public int getWorkerId() {
         return workerId;
     }
 
+    /**
+     * @return name of the worker
+     */
     public String getWorkerName() {
         return workerName;
     }
 
+    /**
+     * @return type of worker, such as "Signer", "Dispatcher" or just
+     * "Worker" etc
+     */
     public String getWorkerType() {
         return workerType;
     }
 
+    /**
+     * @return list of shorter, typically one line entries
+     */
     public List<Entry> getBriefEntries() {
         return briefEntries;
     }
 
+    /**
+     * @return list of fatal errors
+     */
     public List<String> getFatalErrors() {
         return fatalErrors;
     }
 
+    /**
+     * @return list of longer, possibly multi line entries
+     */
     public List<Entry> getCompleteEntries() {
         return completeEntries;
     }
 
+    /**
+     * @return the worker configuration
+     */
     public WorkerConfig getWorkerConfig() {
         return workerConfig;
     }
 
+    /**
+     * @return status of the worker
+     * @see WorkerStatus#STATUS_ACTIVE
+     * @see WorkerStatus#STATUS_OFFLINE
+     */
     public int getTokenStatus() {
         return tokenStatus;
     }
 
+    /**
+     * Holder for a status entry with a title and a value.
+     */
     public static class Entry implements Serializable {
 
         private static final long serialVersionUID = 1L;
@@ -91,15 +132,26 @@ public class WorkerStatusInfo implements Serializable {
         private final String title;
         private final String value;
 
+        /**
+         * Constructs a new status entry.
+         * @param title for this entry
+         * @param value for this entry
+         */
         public Entry(String title, String value) {
             this.title = title;
             this.value = value;
         }
 
+        /**
+         * @return the title
+         */
         public String getTitle() {
             return title;
         }
 
+        /**
+         * @return the value
+         */
         public String getValue() {
             return value;
         }

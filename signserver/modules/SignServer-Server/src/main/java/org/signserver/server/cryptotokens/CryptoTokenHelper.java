@@ -38,6 +38,7 @@ import org.bouncycastle.jce.ECKeyUtil;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequestBuilder;
 import org.bouncycastle.util.encoders.Hex;
 import org.cesecore.keys.token.p11.Pkcs11SlotLabelType;
@@ -257,13 +258,9 @@ public class CryptoTokenHelper {
         signSignature.initSign(privateKey);
         signSignature.update(input);
         byte[] signBA = signSignature.sign();
-        if (LOG.isDebugEnabled()) {
-            if (signBA != null) {
-                LOG.trace("Created signature of size: " + signBA.length);
-                LOG.trace("Created signature: " + new String(Hex.encode(signBA)));
-            } else {
-                LOG.warn("Test signature is null?");
-            }
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Created signature of size: " + signBA.length);
+            LOG.trace("Created signature: " + new String(Hex.encode(signBA)));
         }
 
         final Signature verifySignature = Signature.getInstance(sigAlg, "BC");
@@ -290,7 +287,7 @@ public class CryptoTokenHelper {
         final Base64SignerCertReqData retval;
         if (info instanceof PKCS10CertReqInfo) {
             PKCS10CertReqInfo reqInfo = (PKCS10CertReqInfo) info;
-            org.bouncycastle.pkcs.PKCS10CertificationRequest pkcs10;
+            PKCS10CertificationRequest pkcs10;
 
             if (LOG.isDebugEnabled()) {
                 LOG.debug("signatureAlgorithm: "
@@ -347,11 +344,11 @@ public class CryptoTokenHelper {
             md.reset();
             return res;
         } catch (NoSuchProviderException ex) {
-            final String message = "Nu such provider trying to hash public key";
+            final String message = "No such provider trying to hash public key";
             LOG.error(message, ex);
             throw new RuntimeException(message, ex);
         } catch (NoSuchAlgorithmException ex) {
-            final String message = "Nu such algorithm trying to hash public key";
+            final String message = "No such algorithm trying to hash public key";
             LOG.error(message, ex);
             throw new RuntimeException(message, ex);
         }

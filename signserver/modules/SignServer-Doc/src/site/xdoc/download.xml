@@ -8,19 +8,19 @@
 <body>
   <section name="Latest Release">
     <note>
-    SignServer 3.5.1 is now available for <a href="https://sourceforge.net/projects/signserver/files/signserver/3.5/">download from SourceForge</a>.
+    SignServer 3.5.2 is now available for <a href="https://sourceforge.net/projects/signserver/files/signserver/3.5/">download from SourceForge</a>.
     <br/><br/>
     SHA1 checksums:
     <pre>
-c13ab9fa71220e4242b7abe6df5a33e39308165c  signserver-3.5.1.zip
-13076929366c617083e43743248d499faf9e935b  signserver-3.5.1-bin.zip
-f0474bf0bfce0827f6e985ec4d71d5cce9249889  signserver-3.5.1-src.tar.gz
+0000000000000000000000000000000000000000  signserver-3.5.2.zip
+0000000000000000000000000000000000000000  signserver-3.5.2-bin.zip
+0000000000000000000000000000000000000000  signserver-3.5.2-src.tar.gz
     </pre>
     SHA-256 checksums:
     <pre>
-0000000000000000000000000000000000000000000000000000000000000000  signserver-3.5.1.zip
-0000000000000000000000000000000000000000000000000000000000000000  signserver-3.5.1-bin.zip
-0000000000000000000000000000000000000000000000000000000000000000  signserver-3.5.1-src.tar.gz
+0000000000000000000000000000000000000000000000000000000000000000  signserver-3.5.2.zip
+0000000000000000000000000000000000000000000000000000000000000000  signserver-3.5.2-bin.zip
+0000000000000000000000000000000000000000000000000000000000000000  signserver-3.5.2-src.tar.gz
     </pre>
     </note>
   </section>

@@ -15,7 +15,8 @@ Bug fixes:
     - Audit log errors are now displayed in the Admin GUI
     - An environment variable is now honored in the signserver-db script again
     - Ant target for copying modules was not working for custom sub modules
-    - AdminGUI login using smartcard fails if path to DLL contains parenthesis
+    - Added note about AdminGUI login issues with smartcard if the path to DLL
+      contains parenthesis
 
 Notice:
  - The XML Security library has been updated to version 1.5.7.

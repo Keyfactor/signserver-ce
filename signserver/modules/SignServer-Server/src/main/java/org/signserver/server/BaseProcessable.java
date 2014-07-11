@@ -42,7 +42,10 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
 
     /** Log4j instance for actual implementation class */
     private final transient Logger log = Logger.getLogger(this.getClass());
-    
+
+    private static final String FAILED_TO_GET_CRYPTO_TOKEN_ = "Failed to get crypto token: ";
+    private static final String DEFAULT_ = "DEFAULT.";
+
     protected ICryptoToken cryptoToken;
     
     private X509Certificate cert;
@@ -102,7 +105,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
                 log.trace("<activateSigner");
             }
         } catch (SignServerException e) {
-            log.error("Failed to get crypto token: " + e.getMessage());
+            log.error(FAILED_TO_GET_CRYPTO_TOKEN_ + e.getMessage());
             throw new CryptoTokenOfflineException(e);
         }
     }
@@ -114,21 +117,22 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         }
         
         try {
-            ICryptoToken token = getCryptoToken();
+            final boolean result;
+            final ICryptoToken token = getCryptoToken();
             if (token == null) {
         	if (log.isDebugEnabled()) {
-        		log.debug("Crypto token not found");
+                    log.debug("Crypto token not found");
         	}
-        	return false;
+        	result = false;
+            } else {
+                result = getCryptoToken().deactivate();
+                if (log.isTraceEnabled()) {
+                    log.trace("<deactivateSigner");
+                }
             }
-
-            boolean ret = getCryptoToken().deactivate();
-            if (log.isTraceEnabled()) {
-                log.trace("<deactivateSigner");
-            }
-            return ret;
+            return result;
         } catch (SignServerException e) {
-            log.error("Failed to get crypto token: " + e.getMessage());
+            log.error(FAILED_TO_GET_CRYPTO_TOKEN_ + e.getMessage());
             throw new CryptoTokenOfflineException(e);
         }
     }
@@ -156,6 +160,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         if (log.isTraceEnabled()) {
             log.trace(">getCryptoToken");
         }
+        final ICryptoToken result;
         if (cryptoToken == null) {
             // Check if a crypto token from an other worker is available
             final ICryptoToken tokenFromOtherWorker1 = getSignServerContext().getCryptoToken();
@@ -171,40 +176,40 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
             }
 
             if (tokenFromOtherWorker != null) {
-                return tokenFromOtherWorker;
+                result = tokenFromOtherWorker;
             } else {
                 GlobalConfiguration gc = getGlobalConfigurationSession().getGlobalConfiguration();
                 final Properties defaultProperties = new Properties();
                 // TODO: The following could potentially be made generic
-                String value = gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL + "DEFAULT." + CryptoTokenHelper.PROPERTY_SHAREDLIBRARY);
+                String value = gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL + DEFAULT_ + CryptoTokenHelper.PROPERTY_SHAREDLIBRARY);
                 if (value != null) {
                     defaultProperties.setProperty(CryptoTokenHelper.PROPERTY_SHAREDLIBRARY, value);
                 }
-                value = gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL + "DEFAULT." + CryptoTokenHelper.PROPERTY_SLOT);
+                value = gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL + DEFAULT_ + CryptoTokenHelper.PROPERTY_SLOT);
                 if (value != null) {
                     defaultProperties.setProperty(CryptoTokenHelper.PROPERTY_SLOT, value);
                 }
-                value = gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL + "DEFAULT." + CryptoTokenHelper.PROPERTY_SLOTLISTINDEX);
+                value = gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL + DEFAULT_ + CryptoTokenHelper.PROPERTY_SLOTLISTINDEX);
                 if (value != null) {
                     defaultProperties.setProperty(CryptoTokenHelper.PROPERTY_SLOTLISTINDEX, value);
                 }
-                value = gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL + "DEFAULT." + CryptoTokenHelper.PROPERTY_ATTRIBUTESFILE);
+                value = gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL + DEFAULT_ + CryptoTokenHelper.PROPERTY_ATTRIBUTESFILE);
                 if (value != null) {
                     defaultProperties.setProperty(CryptoTokenHelper.PROPERTY_ATTRIBUTESFILE, value);
                 }
-                value = gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL + "DEFAULT." + CryptoTokenHelper.PROPERTY_ATTRIBUTES);
+                value = gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL + DEFAULT_ + CryptoTokenHelper.PROPERTY_ATTRIBUTES);
                 if (value != null) {
                     defaultProperties.setProperty(CryptoTokenHelper.PROPERTY_ATTRIBUTES, value);
                 }
-                value = gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL + "DEFAULT." + CryptoTokenHelper.PROPERTY_PIN);
+                value = gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL + DEFAULT_ + CryptoTokenHelper.PROPERTY_PIN);
                 if (value != null) {
                     defaultProperties.setProperty(CryptoTokenHelper.PROPERTY_PIN, value);
                 }
-                value = gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL + "DEFAULT." + CryptoTokenHelper.PROPERTY_SLOTLABELTYPE);
+                value = gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL + DEFAULT_ + CryptoTokenHelper.PROPERTY_SLOTLABELTYPE);
                 if (value != null) {
                     defaultProperties.setProperty(CryptoTokenHelper.PROPERTY_SLOTLABELTYPE, value);
                 }
-                value = gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL + "DEFAULT." + CryptoTokenHelper.PROPERTY_SLOTLABELVALUE);
+                value = gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL + DEFAULT_ + CryptoTokenHelper.PROPERTY_SLOTLABELVALUE);
                 if (value != null) {
                     defaultProperties.setProperty(CryptoTokenHelper.PROPERTY_SLOTLABELVALUE, value);
                 }
@@ -215,7 +220,9 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
                     if (log.isDebugEnabled()) {
                         log.debug("Found cryptotoken classpath: " + className);
                     }
-                    if (className != null) {
+                    if (className == null) {
+                        throw new SignServerException("Missing crypto token class name");
+                    } else {
                         Class<?> implClass = Class.forName(className);
                         Object obj = implClass.newInstance();
                         cryptoToken = (ICryptoToken) obj;
@@ -223,6 +230,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
                         properties.putAll(defaultProperties);
                         properties.putAll(config.getProperties());
                         cryptoToken.init(workerId, properties);
+                        result = cryptoToken;
                     }
                 } catch (CryptoTokenInitializationFailureException e) {
                     final StringBuilder sb = new StringBuilder();
@@ -291,12 +299,14 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
                     throw new SignServerException("Instantiation error", ie);
                 }
             }
+        } else {
+            result = cryptoToken;
         }
         if (log.isTraceEnabled()) {
             log.trace("<getCryptoToken: " + cryptoToken);
         }
 
-        return cryptoToken;
+        return result;
     }
 
     /**
@@ -344,13 +354,13 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
 
         @Override
         public PrivateKey getPrivateKey(int purpose) throws CryptoTokenOfflineException {
-            final String alias = purpose == ICryptoToken.PURPOSE_NEXTKEY ? config.getProperty("NEXTCERTSIGNKEY") : config.getProperty("DEFAULTKEY");
+            final String alias = purpose == ICryptoToken.PURPOSE_NEXTKEY ? config.getProperty(CryptoTokenHelper.PROPERTY_NEXTCERTSIGNKEY) : config.getProperty(CryptoTokenHelper.PROPERTY_DEFAULTKEY);
             return delegate.getPrivateKey(alias);
         }
 
         @Override
         public PublicKey getPublicKey(int purpose) throws CryptoTokenOfflineException {
-            final String alias = purpose == ICryptoToken.PURPOSE_NEXTKEY ? config.getProperty("NEXTCERTSIGNKEY") : config.getProperty("DEFAULTKEY");
+            final String alias = purpose == ICryptoToken.PURPOSE_NEXTKEY ? config.getProperty(CryptoTokenHelper.PROPERTY_NEXTCERTSIGNKEY) : config.getProperty(CryptoTokenHelper.PROPERTY_DEFAULTKEY);
             return delegate.getPublicKey(alias);
         }
 
@@ -361,26 +371,27 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
 
         @Override
         public Certificate getCertificate(int purpose) throws CryptoTokenOfflineException {
-            final String alias = purpose == ICryptoToken.PURPOSE_NEXTKEY ? config.getProperty("NEXTCERTSIGNKEY") : config.getProperty("DEFAULTKEY");
+            final String alias = purpose == ICryptoToken.PURPOSE_NEXTKEY ? config.getProperty(CryptoTokenHelper.PROPERTY_NEXTCERTSIGNKEY) : config.getProperty(CryptoTokenHelper.PROPERTY_DEFAULTKEY);
             return delegate.getCertificate(alias);
         }
 
         @Override
         public List<Certificate> getCertificateChain(int purpose) throws CryptoTokenOfflineException {
-            final String alias = purpose == ICryptoToken.PURPOSE_NEXTKEY ? config.getProperty("NEXTCERTSIGNKEY") : config.getProperty("DEFAULTKEY");
+            final String alias = purpose == ICryptoToken.PURPOSE_NEXTKEY ? config.getProperty(CryptoTokenHelper.PROPERTY_NEXTCERTSIGNKEY) : config.getProperty(CryptoTokenHelper.PROPERTY_DEFAULTKEY);
             return delegate.getCertificateChain(alias);
         }
 
         @Override
         public ICertReqData genCertificateRequest(ISignerCertReqInfo info, boolean explicitEccParameters, boolean defaultKey) throws CryptoTokenOfflineException {
-            return delegate.genCertificateRequest(info, explicitEccParameters, defaultKey ? config.getProperty("DEFAULTKEY") : config.getProperty("NEXTCERTSIGNKEY"));
+            return delegate.genCertificateRequest(info, explicitEccParameters, defaultKey ? config.getProperty(CryptoTokenHelper.PROPERTY_DEFAULTKEY) : config.getProperty(CryptoTokenHelper.PROPERTY_NEXTCERTSIGNKEY));
         }
 
         @Override
         public boolean destroyKey(int purpose) {
-            final String alias = purpose == ICryptoToken.PURPOSE_NEXTKEY ? config.getProperty("NEXTCERTSIGNKEY") : config.getProperty("DEFAULTKEY");
+            boolean result = false;
+            final String alias = purpose == ICryptoToken.PURPOSE_NEXTKEY ? config.getProperty(CryptoTokenHelper.PROPERTY_NEXTCERTSIGNKEY) : config.getProperty(CryptoTokenHelper.PROPERTY_DEFAULTKEY);
             try {
-                return delegate.removeKey(alias);
+                result = delegate.removeKey(alias);
             } catch (CryptoTokenOfflineException ex) {
                 LOG.error("Could not destroy key: " +ex.getMessage());
             } catch (KeyStoreException ex) {
@@ -388,7 +399,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
             } catch (SignServerException ex) {
                 LOG.error("Could not destroy key: " +ex.getMessage());
             }
-            return false;
+            return result;
         }
 
         @Override
@@ -440,20 +451,18 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
 
     @Override
     public int getCryptoTokenStatus() {
+        int result = WorkerStatus.STATUS_OFFLINE;
         try {
-            final int result;
             ICryptoToken token = getCryptoToken();
-            
-            if (token == null) {
-                result = WorkerStatus.STATUS_OFFLINE;
-            } else {
+            if (token != null) {
                 result = token.getCryptoTokenStatus();
             }
-            
-            return result;
         } catch (SignServerException e) {
-            return WorkerStatus.STATUS_OFFLINE;
+            if (log.isTraceEnabled()) {
+                log.trace("Could not get crypto token: " + e.getMessage(), e);
+            }
         }
+        return result;
     }
 
     /**
@@ -468,7 +477,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
                     cert = (X509Certificate) token.getCertificate(ICryptoToken.PURPOSE_SIGN);
                 }
             } catch (SignServerException e) {
-                log.error("Failed to get crypto token: " + e.getMessage());
+                log.error(FAILED_TO_GET_CRYPTO_TOKEN_ + e.getMessage());
                 throw new CryptoTokenOfflineException(e);
             }
             if (cert == null) {
@@ -497,7 +506,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
                     }
                 }
             } catch (SignServerException e) {
-                log.error("Failed to get crypto token: " + e.getMessage());
+                log.error(FAILED_TO_GET_CRYPTO_TOKEN_ + e.getMessage());
                 throw new CryptoTokenOfflineException(e);
             }
         }
@@ -530,7 +539,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
             
             return data;
         } catch (SignServerException e) {
-            log.error("Failed to get crypto token: " + e.getMessage());
+            log.error(FAILED_TO_GET_CRYPTO_TOKEN_ + e.getMessage());
             throw new CryptoTokenOfflineException(e);
         }
     }
@@ -540,25 +549,25 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
      */
     @Override
     public boolean destroyKey(int purpose) {
+        boolean result = false;
         try {
-            return getCryptoToken().destroyKey(purpose);
+            result = getCryptoToken().destroyKey(purpose);
         } catch (SignServerException e) {
-            log.error("Failed to get crypto token: " + e.getMessage());
-            return false;
+            log.error(FAILED_TO_GET_CRYPTO_TOKEN_ + e.getMessage());
         }
+        return result;
     }
     
     @Override
     public boolean removeKey(String alias) throws CryptoTokenOfflineException, KeyStoreException, SignServerException {
+        boolean result = false;
         ICryptoToken token = getCryptoToken();
         if (token == null) {
             throw new CryptoTokenOfflineException("Crypto token offline");
         } else if (token instanceof IKeyRemover) {
-            return ((IKeyRemover) token).removeKey(alias);
-        } else {
-            // Key removal not supported by crypto token
-            return false;
-        }
+            result = ((IKeyRemover) token).removeKey(alias);
+        } // Else key removal not supported by crypto token
+        return result;
     }
 
     /**
@@ -581,7 +590,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
                         "Key generation not supported by crypto token");
             }
         } catch (SignServerException e) {
-            log.error("Failed to get crypto token: " + e.getMessage());
+            log.error(FAILED_TO_GET_CRYPTO_TOKEN_ + e.getMessage());
             throw new CryptoTokenOfflineException(e);
         }
     }
@@ -601,7 +610,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         
             return token.testKey(alias, authCode);
         } catch (SignServerException e) {
-            log.error("Failed to get crypto token: " + e.getMessage());
+            log.error(FAILED_TO_GET_CRYPTO_TOKEN_ + e.getMessage());
             throw new CryptoTokenOfflineException(e);
         }
     }

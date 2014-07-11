@@ -74,6 +74,7 @@ public abstract class BaseWorker implements IWorker {
 
     /**
      * Initialization method that should be called directly after creation
+     * @param workerEM
      */
     @Override
     @SuppressWarnings("deprecation") // Need to still use it for backwards compatibility
@@ -89,10 +90,13 @@ public abstract class BaseWorker implements IWorker {
     }
 
     protected SignServerContext getSignServerContext() {
+        final SignServerContext result;
         if (workerContext != null && workerContext instanceof SignServerContext) {
-            return (SignServerContext) workerContext;
+            result = (SignServerContext) workerContext;
+        } else {
+            result = null;
         }
-        return null;
+        return result;
     }
 
     public void destroy() {

@@ -221,7 +221,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
                         log.debug("Found cryptotoken classpath: " + className);
                     }
                     if (className == null) {
-                        throw new SignServerException("Missing crypto token class name");
+                        result = null;
                     } else {
                         Class<?> implClass = Class.forName(className);
                         Object obj = implClass.newInstance();

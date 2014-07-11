@@ -64,11 +64,11 @@ public class ValidityTimeUtils {
         Date minreimainingDate = null;
 
         boolean checkcertvalidity = awc.getProperties().getProperty(
-                SignServerConstants.CHECKCERTVALIDITY, "TRUE").equalsIgnoreCase(
-                "TRUE");
+                SignServerConstants.CHECKCERTVALIDITY, Boolean.TRUE.toString()).equalsIgnoreCase(
+                Boolean.TRUE.toString());
         boolean checkprivatekeyvalidity = awc.getProperties().getProperty(
-                SignServerConstants.CHECKCERTPRIVATEKEYVALIDITY, "TRUE").
-                equalsIgnoreCase("TRUE");
+                SignServerConstants.CHECKCERTPRIVATEKEYVALIDITY, Boolean.TRUE.toString()).
+                equalsIgnoreCase(Boolean.TRUE.toString());
         int minremainingcertvalidity = Integer.valueOf(awc.getProperties().
                 getProperty(SignServerConstants.MINREMAININGCERTVALIDITY, "0"));
         
@@ -163,12 +163,15 @@ public class ValidityTimeUtils {
      */
     private static Date max(final boolean inv, final Date date1,
             final Date date2) {
+        final Date result;
         if (date1 == null) {
-            return date2;
+            result = date2;
         } else if (date2 == null) {
-            return date1;
+            result = date1;
+        } else {
+            result = inv && date1.before(date2) ? date1 : date2;
         }
-        return inv && date1.before(date2) ? date1 : date2;
+        return result;
     }
 
     /**

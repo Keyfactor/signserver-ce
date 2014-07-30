@@ -19,6 +19,7 @@ import java.security.cert.CertificateException;
 import java.util.*;
 
 import javax.persistence.EntityManager;
+
 import org.apache.log4j.Logger;
 import org.cesecore.audit.AuditLogEntry;
 import org.cesecore.authorization.AuthorizationDeniedException;
@@ -383,14 +384,14 @@ public class WorkerSessionMock implements IWorkerSession.ILocal,
     }
 
     @Override
-    public List<ArchiveMetadata> searchArchive(int startIndex, int max,
+    public Collection<ArchiveMetadata> searchArchive(int startIndex, int max,
             QueryCriteria criteria) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public List<ArchiveMetadata> searchArchive(AdminInfo adminInfo,
+    public Collection<ArchiveMetadata> searchArchive(AdminInfo adminInfo,
             int startIndex, int max, QueryCriteria criteria) {
         // TODO Auto-generated method stub
         return null;

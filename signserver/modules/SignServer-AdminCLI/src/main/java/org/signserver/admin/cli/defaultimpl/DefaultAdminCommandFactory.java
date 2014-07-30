@@ -15,6 +15,7 @@ package org.signserver.admin.cli.defaultimpl;
 import org.signserver.admin.cli.defaultimpl.archive.FindFromArchiveIdCommand;
 import org.signserver.admin.cli.defaultimpl.archive.FindFromRequestCertCommand;
 import org.signserver.admin.cli.defaultimpl.archive.FindFromRequestIPCommand;
+import org.signserver.admin.cli.defaultimpl.archive.QueryArchiveCommand;
 import org.signserver.admin.cli.defaultimpl.auditlog.QueryAuditLogCommand;
 import org.signserver.admin.cli.spi.AdminCommandFactory;
 import org.signserver.cli.spi.AbstractCommandFactory;
@@ -66,6 +67,7 @@ public class DefaultAdminCommandFactory extends AbstractCommandFactory implement
         put("archive", "findfromarchiveid", FindFromArchiveIdCommand.class);
         put("archive", "findfromrequestcert", FindFromRequestCertCommand.class);
         put("archive", "findfromrequestip", FindFromRequestIPCommand.class);
+        put("archive", "query", QueryArchiveCommand.class);
         
         put("auditlog", QueryAuditLogCommand.class);
     }

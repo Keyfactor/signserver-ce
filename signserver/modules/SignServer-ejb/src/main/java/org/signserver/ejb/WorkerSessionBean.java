@@ -25,6 +25,7 @@ import javax.ejb.EJB;
 import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+
 import org.apache.log4j.Logger;
 import org.cesecore.audit.AuditLogEntry;
 import org.cesecore.audit.audit.SecurityEventsAuditorSessionLocal;
@@ -994,28 +995,22 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     }
 
     @Override
-    public List<ArchiveMetadata> searchArchive(final int startIndex, final int max,
+    public Collection<ArchiveMetadata> searchArchive(final int startIndex, final int max,
             final QueryCriteria criteria) {
         return searchArchive(new AdminInfo("CLI user", null, null), startIndex, max, criteria);
     }
 
     @Override
-    public List<ArchiveMetadata> searchArchive(final AdminInfo adminInfo,
+    public Collection<ArchiveMetadata> searchArchive(final AdminInfo adminInfo,
             final int startIndex, final int max, final QueryCriteria criteria) {
-        final List<ArchiveMetadata> result = new LinkedList<ArchiveMetadata>();
-        
         if (archiveDataService == null) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Archiving to database is not supported when running without database");
             }
+            return Collections.emptyList();
         } else {
-            final Collection<ArchiveDataBean> list = archiveDataService.findMatchingCriteria(startIndex, max, criteria);
-            for (final ArchiveDataBean adb : list) {
-                result.add(adb.getArchiveMetadata());
-            }
+            return archiveDataService.findMatchingCriteria(startIndex, max, criteria);
         }
-
-        return result;
     }
     
     

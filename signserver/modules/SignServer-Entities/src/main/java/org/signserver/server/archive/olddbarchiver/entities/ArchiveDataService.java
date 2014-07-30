@@ -17,7 +17,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
@@ -28,6 +30,7 @@ import org.cesecore.util.query.QueryCriteria;
 import org.cesecore.util.query.QueryGenerator;
 import org.ejbca.util.CertTools;
 import org.signserver.common.ArchiveData;
+import org.signserver.common.ArchiveMetadata;
 
 /**
  * Entity Service class that acts as migration layer for
@@ -177,7 +180,7 @@ public class ArchiveDataService {
     }
 
     @SuppressWarnings("unchecked")
-    public Collection<ArchiveDataBean> findMatchingCriteria(int startIndex, int max,
+    public Collection<ArchiveMetadata> findMatchingCriteria(int startIndex, int max,
             QueryCriteria criteria) {
         
         try {
@@ -185,7 +188,7 @@ public class ArchiveDataService {
             final String conditions = generator.generate();
             
             final Query query =
-                    em.createQuery("SELECT a.uniqueId, a.time, a.type, a.signerid, a.archiveid, a.requestIssuerDN, a.requestCertSerialNumber, a.requestIP" +
+                    em.createQuery("SELECT a.archiveid, a.time, a.type, a.signerid, a.requestIssuerDN, a.requestCertSerialnumber, a.requestIP FROM ArchiveDataBean a " +
                                 conditions);
             
             for (final String key : generator.getParameterKeys()) {
@@ -201,12 +204,25 @@ public class ArchiveDataService {
                 query.setMaxResults(max);
             }
             
-            return query.getResultList();
+            final List queryResults = query.getResultList();
+            final Collection<ArchiveMetadata> result = new LinkedList<ArchiveMetadata>();
+            
+            for (final Object entry : queryResults) {
+                final Object[] parts = (Object[]) entry;
+                
+                result.add(new ArchiveMetadata(((Integer) parts[2]).intValue(),
+                                               ((Integer) parts[3]).intValue(),
+                                               (String) parts[0], new Date((Long) parts[1]),
+                                               (String) parts[4], (String) parts[5], (String) parts[6]));
+            }
+            
+            return result;
+            
         } catch (NoResultException ignored) { // NOPMD
             // ignored
         }
         
-        return Collections.emptyList(); 
+        return Collections.emptyList();
     }
 
 }

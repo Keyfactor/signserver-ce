@@ -13,7 +13,9 @@ import org.signserver.cli.spi.AbstractCommand;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.cli.spi.UnexpectedCommandFailureException;
+import org.signserver.common.ArchiveDataVO;
 import org.signserver.common.ArchiveMetadata;
+import org.signserver.server.archive.Archivable;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.Options;
@@ -62,7 +64,6 @@ public class QueryArchiveCommand extends AbstractCommand {
         OPTIONS.addOption(HEADER, false, "Print a column header");
     
         intFields = new HashSet<String>();
-        intFields.add(ArchiveMetadata.ARCHIVE_ID);
         intFields.add(ArchiveMetadata.SIGNER_ID);
         
         dateFields = new HashSet<String>();
@@ -117,10 +118,13 @@ public class QueryArchiveCommand extends AbstractCommand {
             for (final ArchiveMetadata entry : entries) {
                 // render the result
                 final StringBuilder buff = new StringBuilder();
+                final String type =
+                        entry.getType() == ArchiveDataVO.TYPE_REQUEST ?
+                                Archivable.TYPE_REQUEST : Archivable.TYPE_RESPONSE;
                 
                 buff.append(entry.getArchiveId()).append(", ")
                     .append(sdf.format(entry.getTime())).append(", ")
-                    .append(entry.getType()).append(", ")
+                    .append(type).append(", ")
                     .append(entry.getSignerId()).append(", ")
                     .append(entry.getRequestIssuerDN()).append(", ")
                     .append(entry.getRequestCertSerialNumber()).append(", ")

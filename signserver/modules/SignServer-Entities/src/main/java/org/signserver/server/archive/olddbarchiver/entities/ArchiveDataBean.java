@@ -297,9 +297,4 @@ public class ArchiveDataBean implements Serializable {
                 getArchiveDataObject());
         }
     }
-    
-    public ArchiveMetadata getArchiveMetadata() {
-        return new ArchiveMetadata(getType(), getSignerid(), getArchiveid(), new Date(getTime()),
-                getRequestIssuerDN(), getRequestCertSerialnumber(), getRequestIP());
-    }
 }

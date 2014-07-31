@@ -36,7 +36,7 @@ public class ArchiveMetadata implements Serializable {
     private Date time;
     private int type;
     
-    // field names
+    // field names used for querying the archive
     public static String ARCHIVE_ID = "archiveid";
     public static String REQUEST_CERT_SERIAL_NUMBER = "requestCertSerialNumber";
     public static String REQUEST_ISSUER_DN = "requestIssuerDN";
@@ -45,13 +45,25 @@ public class ArchiveMetadata implements Serializable {
     public static String TIME = "time";
     public static String TYPE = "type";
 
+    /**
+     * Construct an archive metadata entry.
+     * The values are analogous to the corresponding database columns.
+     * 
+     * @param type Archive type
+     * @param signerid Signer ID
+     * @param archiveid Archive ID
+     * @param time Time of operation
+     * @param requestIssuerDN Issuer DN of client performing operation
+     * @param requestCertSerialnumber Serial number of client cert performing operation
+     * @param requestIP IP address of client performing operation
+     */
     public ArchiveMetadata(int type, int signerid, String archiveid,
-            Date date, String requestIssuerDN,
+            Date time, String requestIssuerDN,
             String requestCertSerialnumber, String requestIP) {
         this.type = type;
         this.signerId = signerid;
         this.archiveId = archiveid;
-        this.time = date;
+        this.time = time;
         this.requestIssuerDN = requestIssuerDN;
         this.requestCertSerialNumber = requestCertSerialnumber;
         this.requestIP = requestIP;

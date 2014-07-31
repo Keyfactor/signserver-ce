@@ -120,15 +120,22 @@ public class QueryArchiveCommand extends AbstractCommand {
                 final StringBuilder buff = new StringBuilder();
                 final String type =
                         entry.getType() == ArchiveDataVO.TYPE_REQUEST ?
-                                Archivable.TYPE_REQUEST : Archivable.TYPE_RESPONSE;
+                              Archivable.TYPE_REQUEST : Archivable.TYPE_RESPONSE;
+                final String issuer =
+                        entry.getRequestIssuerDN() != null ? entry.getRequestIssuerDN() : "";
+                final String serial =
+                        entry.getRequestCertSerialNumber() != null ?
+                                entry.getRequestCertSerialNumber() : "";
+                final String ip =
+                        entry.getRequestIP() != null ? entry.getRequestIP() : "Local EJB";
                 
                 buff.append(entry.getArchiveId()).append(", ")
                     .append(sdf.format(entry.getTime())).append(", ")
                     .append(type).append(", ")
                     .append(entry.getSignerId()).append(", ")
-                    .append(entry.getRequestIssuerDN()).append(", ")
-                    .append(entry.getRequestCertSerialNumber()).append(", ")
-                    .append(entry.getRequestIP());
+                    .append(issuer).append(", ")
+                    .append(serial).append(", ")
+                    .append(ip);
             
                 out.println(buff.toString());
             }

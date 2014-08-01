@@ -19,6 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.signserver.admin.cli.AdminCLIUtils;
 import org.signserver.admin.cli.defaultimpl.AdminCommandHelper;
 import org.signserver.cli.spi.AbstractCommand;
 import org.signserver.cli.spi.CommandFailureException;
@@ -197,7 +198,9 @@ public class QueryArchiveCommand extends AbstractCommand {
         if (criterias != null && criterias.length > 0) {
             for (final String criteria : criterias) {
                 try {
-                    final Term term = parseCriteria(criteria);
+                    final Term term =
+                            AdminCLIUtils.parseCriteria(criteria, allowedFields, 
+                                    noArgOps, intFields, dateFields);
                     terms.add(term);
                 } catch (NumberFormatException e) {
                     throw new ParseException("Invalid critera, expected a numeric value: " + criteria);
@@ -209,55 +212,8 @@ public class QueryArchiveCommand extends AbstractCommand {
                 }
             }
         
-            Elem all = andAll(terms, 0);
+            Elem all = AdminCLIUtils.andAll(terms, 0);
             qc.add(all);
         } 
-    }
-
-    static protected Term parseCriteria(final String criteria) throws IllegalArgumentException, NumberFormatException, java.text.ParseException {
-        // find an operator
-        final String[] parts = criteria.split(" ", 3);
-        
-        final String field = parts[0];
-        final RelationalOperator op = RelationalOperator.valueOf(parts[1]);
-        Object value = null;
-        
-        // we will not handle the BETWEEN operator
-        // to avoid complicating the parser, the same
-        // result can be achieved with two criterias
-        if (op == RelationalOperator.BETWEEN) {
-            throw new IllegalArgumentException("Operator BETWEEN is not supported");
-        }
-        
-        if (!allowedFields.contains(field)) {
-            throw new IllegalArgumentException("Unrecognized field: " + field);
-        }
-        
-        if (!noArgOps.contains(op)) {
-            if (intFields.contains(parts[0])) {
-                value = Integer.parseInt(parts[2]);
-            } else if (dateFields.contains(parts[0])) {
-                try {
-                    value = Long.parseLong(parts[2]);
-                } catch (NumberFormatException e) {
-                    value = ValidityDate.parseAsIso8601(parts[2]).getTime();
-                }
-            } else {
-                if (parts.length < 3) {
-                    throw new IllegalArgumentException("Missing value");
-                }
-                value = parts[2];
-            }
-        }
-        
-        return new Term(op, field, value);
-    }
-    
-    protected Elem andAll(final List<Elem> elements, final int index) {
-        if (index >= elements.size() - 1) {
-            return elements.get(index);
-        } else {
-            return Criteria.and(elements.get(index), andAll(elements, index + 1));
-        }
     }
 }

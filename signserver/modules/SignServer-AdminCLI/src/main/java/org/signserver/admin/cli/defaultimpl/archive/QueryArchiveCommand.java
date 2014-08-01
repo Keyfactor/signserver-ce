@@ -1,3 +1,15 @@
+/*************************************************************************
+ *                                                                       *
+ *  SignServer: The OpenSource Automated Signing Server                  *
+ *                                                                       *
+ *  This software is free software; you can redistribute it and/or       *
+ *  modify it under the terms of the GNU Lesser General Public           *
+ *  License as published by the Free Software Foundation; either         *
+ *  version 2.1 of the License, or any later version.                    *
+ *                                                                       *
+ *  See terms of license at gnu.org.                                     *
+ *                                                                       *
+ *************************************************************************/
 package org.signserver.admin.cli.defaultimpl.archive;
 
 import java.text.SimpleDateFormat;
@@ -26,6 +38,12 @@ import org.cesecore.util.query.QueryCriteria;
 import org.cesecore.util.query.elems.RelationalOperator;
 import org.cesecore.util.query.elems.Term;
 
+/**
+ * Query contents of the archive.
+ *
+ * @author Marcus Lundblad
+ * @version $Id$
+ */
 public class QueryArchiveCommand extends AbstractCommand {
 
     private AdminCommandHelper helper = new AdminCommandHelper();

@@ -1,6 +1,5 @@
 package org.signserver.admin.cli.defaultimpl.archive;
 
-import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.HashSet;
@@ -20,8 +19,6 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.cesecore.audit.AuditLogEntry;
-import org.cesecore.audit.impl.integrityprotected.AuditRecordData;
 import org.cesecore.util.ValidityDate;
 import org.cesecore.util.query.Criteria;
 import org.cesecore.util.query.Elem;

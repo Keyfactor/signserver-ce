@@ -55,6 +55,8 @@ public class QueryArchiveCommand extends AbstractCommand {
     public static final String LIMIT = "limit";
     public static final String CRITERIA = "criteria";
     public static final String HEADER = "header";
+    public static final String REQUEST = "request";
+    public static final String RESPONSE = "response";
     
     /** The command line options */
     private static final Options OPTIONS;
@@ -79,6 +81,8 @@ public class QueryArchiveCommand extends AbstractCommand {
         OPTIONS.addOption(FROM, true, "Lower index in search result (0-based)");
         OPTIONS.addOption(LIMIT, true, "Maximum number of search results");
         OPTIONS.addOption(HEADER, false, "Print a column header");
+        OPTIONS.addOption(REQUEST, false, "Search for requests");
+        OPTIONS.addOption(RESPONSE, false, "Search for responses");
     
         intFields = new HashSet<String>();
         intFields.add(ArchiveMetadata.SIGNER_ID);
@@ -192,6 +196,14 @@ public class QueryArchiveCommand extends AbstractCommand {
             }
         } else {
             throw new ParseException("Must specify a limit.");
+        }
+        
+        if (line.hasOption(REQUEST) && line.hasOption(RESPONSE)) {
+            throw new ParseException("Can not specify both -request and -response at the same time");
+        } else if (line.hasOption(REQUEST)) {
+            qc.add(new Term(RelationalOperator.EQ, ArchiveMetadata.TYPE, ArchiveDataVO.TYPE_REQUEST));
+        } else if (line.hasOption(RESPONSE)) {
+            qc.add(new Term(RelationalOperator.EQ, ArchiveMetadata.TYPE, ArchiveDataVO.TYPE_RESPONSE));
         }
         
         final String[] criterias = line.getOptionValues(CRITERIA);

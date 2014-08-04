@@ -14,6 +14,7 @@ package org.signserver.admin.cli.defaultimpl.archive;
 
 import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -200,7 +201,7 @@ public class QueryArchiveCommand extends AbstractCommand {
                 try {
                     final Term term =
                             AdminCLIUtils.parseCriteria(criteria, allowedFields, 
-                                    noArgOps, intFields, dateFields);
+                                    noArgOps, intFields, Collections.<String>emptySet(), dateFields);
                     terms.add(term);
                 } catch (NumberFormatException e) {
                     throw new ParseException("Invalid critera, expected a numeric value: " + criteria);

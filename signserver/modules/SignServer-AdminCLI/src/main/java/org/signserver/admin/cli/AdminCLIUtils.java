@@ -34,7 +34,7 @@ public class AdminCLIUtils {
 
     public static Term parseCriteria(final String criteria, 
             final Set<String> allowedFields, final Set<RelationalOperator> noArgOps,
-            final Set<String> intFields, final Set<String> dateFields)
+            final Set<String> intFields, final Set<String> longFields, final Set<String> dateFields)
                     throws IllegalArgumentException, NumberFormatException, java.text.ParseException {
         // find an operator
         final String[] parts = criteria.split(" ", 3);
@@ -57,6 +57,8 @@ public class AdminCLIUtils {
         if (!noArgOps.contains(op)) {
             if (intFields.contains(parts[0])) {
                 value = Integer.parseInt(parts[2]);
+            } else if (longFields.contains(parts[0])) {
+                value = Long.parseLong(parts[2]);
             } else if (dateFields.contains(parts[0])) {
                 try {
                     value = Long.parseLong(parts[2]);

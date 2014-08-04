@@ -61,10 +61,10 @@ public class QueryAuditLogCommand extends AbstractCommand {
  
     /** The command line options */
     private static final Options OPTIONS;
-    private static final Set<String> longFields;
-    private static final Set<String> dateFields;
-    private static final Set<RelationalOperator> noArgOps;
-    private static final Set<String> allowedFields;
+    static final Set<String> longFields;
+    static final Set<String> dateFields;
+    static final Set<RelationalOperator> noArgOps;
+    static final Set<String> allowedFields;
 
     private int from = 0;
     private int limit = 0;

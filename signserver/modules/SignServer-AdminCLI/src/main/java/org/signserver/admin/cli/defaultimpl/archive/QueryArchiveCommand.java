@@ -102,8 +102,7 @@ public class QueryArchiveCommand extends AbstractCommand {
         
     @Override
     public String getDescription() {
-        // TODO Auto-generated method stub
-        return null;
+        return "Query the content of the archive";
     }
 
     @Override

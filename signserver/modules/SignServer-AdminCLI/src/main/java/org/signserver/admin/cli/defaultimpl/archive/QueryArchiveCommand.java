@@ -114,6 +114,8 @@ public class QueryArchiveCommand extends AbstractCommand {
         return "Usage: signserver archive query -limit <number> [-criteria  \"<field> <op> <value>\" [-criteria...]] [-from <index>] [-header] [-request|-response]\n"
         + "<field> is a field name from the archive: archiveId, requestCertSerialNumber, requestIP, requestIssuerDN, signerid, time, type\n"
         + "<op> is a relational operator: GT, GE, LT, LE, EQ, NEQ, LIKE, NULL, NOTNULL\n"
+	+ "-request shows only entries for requests\n"
+	+ "-response shows only entries for responses\n"
         + "Example: signserver archive query -limit 10 -criteria \"signerid EQ 1\"\n"
 	+ "Example: signserver archive query -limit 10 -criteria \"signerid EQ 1\" -request\n"
         + "Example: signserver archive query -limit 10 -criteria \"time GT 1359623137000\" -criteria \"requestIP EQ 127.0.0.1\"\n\n";

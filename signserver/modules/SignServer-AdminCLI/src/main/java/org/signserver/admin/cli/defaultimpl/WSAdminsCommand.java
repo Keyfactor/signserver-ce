@@ -152,7 +152,7 @@ public class WSAdminsCommand extends AbstractAdminCommand {
         try {
             final String admins = getGlobalConfigurationSession().getGlobalConfiguration().getProperty(
                     GlobalConfiguration.SCOPE_GLOBAL, "WSADMINS");
-            final List<Entry> entries = parseAdmins(admins);
+            final List<ClientEntry> entries = parseAdmins(admins);
             
             if (LIST.equals(operation)) {
                 final String allowAnyWSAdminProp =
@@ -170,7 +170,7 @@ public class WSAdminsCommand extends AbstractAdminCommand {
                     buff.append("Use the command \"signserver wsadmins -allowany false\" to enable the administrator list");
                     buff.append("\n");
                 } else {
-                    for (Entry entry : entries) {
+                    for (ClientEntry entry : entries) {
                         buff.append(String.format("%-20s %s",
                                 entry.getCertSerialNo(), entry.getIssuerDN()));
                         buff.append("\n");
@@ -180,7 +180,7 @@ public class WSAdminsCommand extends AbstractAdminCommand {
             } else if (ADD.equals(operation)) {
             	if (cert == null) {
             		// serial number and issuer DN was entered manually
-            		entries.add(new Entry(certSerialNo, issuerDN));
+            		entries.add(new ClientEntry(certSerialNo, issuerDN));
             	} else {
             		// read serial number and issuer DN from cert file
             		X509Certificate certificate = SignServerUtil.getCertFromFile(cert);
@@ -198,14 +198,14 @@ public class WSAdminsCommand extends AbstractAdminCommand {
             			}
             		}
             		
-            		entries.add(new Entry(sn, buf.toString()));
+            		entries.add(new ClientEntry(sn, buf.toString()));
             	}
                 getGlobalConfigurationSession().setProperty(
                         GlobalConfiguration.SCOPE_GLOBAL, "WSADMINS",
                         serializeAdmins(entries));
                 getOutputStream().println("Administrator added");
             } else if (REMOVE.equals(operation)) {
-                if (entries.remove(new Entry(certSerialNo, issuerDN))) {
+                if (entries.remove(new ClientEntry(certSerialNo, issuerDN))) {
                     getGlobalConfigurationSession().setProperty(
                             GlobalConfiguration.SCOPE_GLOBAL, "WSADMINS",
                             serializeAdmins(entries));
@@ -244,70 +244,25 @@ public class WSAdminsCommand extends AbstractAdminCommand {
         }
     }
 
-    private static List<Entry> parseAdmins(final String admins) {
-        final List<Entry> entries = new LinkedList<Entry>();
+    private static List<ClientEntry> parseAdmins(final String admins) {
+        final List<ClientEntry> entries = new LinkedList<ClientEntry>();
         if (admins != null && admins.contains(";")) {
             for (String entry : admins.split(";")) {
                 final String[] parts = entry.split(",", 2);
-                entries.add(new Entry(parts[0], parts[1]));
+                entries.add(new ClientEntry(parts[0], parts[1]));
             }
         }
         return entries;
     }
 
-    private static String serializeAdmins(final List<Entry> entries) {
+    private static String serializeAdmins(final List<ClientEntry> entries) {
         final StringBuilder buff = new StringBuilder();
-        for (Entry entry : entries) {
+        for (ClientEntry entry : entries) {
             buff.append(entry.getCertSerialNo());
             buff.append(",");
             buff.append(entry.getIssuerDN());
             buff.append(";");
         }
         return buff.toString();
-    }
-
-    private static class Entry {
-
-        private String certSerialNo;
-        private String issuerDN;
-
-        public Entry(String certSerialNo, String issuerDN) {
-            this.certSerialNo = certSerialNo;
-            this.issuerDN = issuerDN;
-        }
-
-        public String getCertSerialNo() {
-            return certSerialNo;
-        }
-
-        public String getIssuerDN() {
-            return issuerDN;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj == null) {
-                return false;
-            }
-            if (getClass() != obj.getClass()) {
-                return false;
-            }
-            final Entry other = (Entry) obj;
-            if ((this.certSerialNo == null) ? (other.certSerialNo != null) : !this.certSerialNo.equals(other.certSerialNo)) {
-                return false;
-            }
-            if ((this.issuerDN == null) ? (other.issuerDN != null) : !this.issuerDN.equals(other.issuerDN)) {
-                return false;
-            }
-            return true;
-        }
-
-        @Override
-        public int hashCode() {
-            int hash = 7;
-            hash = 89 * hash + (this.certSerialNo != null ? this.certSerialNo.hashCode() : 0);
-            hash = 89 * hash + (this.issuerDN != null ? this.issuerDN.hashCode() : 0);
-            return hash;
-        }
     }
 }

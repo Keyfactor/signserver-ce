@@ -18,7 +18,6 @@ import java.rmi.RemoteException;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.Iterator;
-
 import java.security.cert.CertificateException;
 
 import org.apache.log4j.Logger;
@@ -101,4 +100,52 @@ public abstract class AbstractAdminCommand extends AbstractCommand {
         return logger;
     }
 
+    /**
+     * Internal class representing client authentications used for WS adminstration commands.
+     */
+    protected static class ClientEntry {
+
+        private String certSerialNo;
+        private String issuerDN;
+
+        public ClientEntry(String certSerialNo, String issuerDN) {
+            this.certSerialNo = certSerialNo;
+            this.issuerDN = issuerDN;
+        }
+
+        public String getCertSerialNo() {
+            return certSerialNo;
+        }
+
+        public String getIssuerDN() {
+            return issuerDN;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            final ClientEntry other = (ClientEntry) obj;
+            if ((this.certSerialNo == null) ? (other.certSerialNo != null) : !this.certSerialNo.equals(other.certSerialNo)) {
+                return false;
+            }
+            if ((this.issuerDN == null) ? (other.issuerDN != null) : !this.issuerDN.equals(other.issuerDN)) {
+                return false;
+            }
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 7;
+            hash = 89 * hash + (this.certSerialNo != null ? this.certSerialNo.hashCode() : 0);
+            hash = 89 * hash + (this.issuerDN != null ? this.issuerDN.hashCode() : 0);
+            return hash;
+        }
+    }
+    
 }

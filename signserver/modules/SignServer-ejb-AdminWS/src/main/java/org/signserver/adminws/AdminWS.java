@@ -1015,7 +1015,7 @@ public class AdminWS {
     }
     
     private boolean isArchivistAuthorized(final X509Certificate cert) {
-        return hasAuthorization(cert, "WSARCHIVISTS");
+        return hasAuthorization(cert, "WSARCHIVEAUDITORS");
     }
     
     private boolean hasAuthorization(final X509Certificate cert, final String authProperty) {

@@ -216,9 +216,7 @@ public class QueryArchiveCommand extends AbstractCommand {
         if (criterias != null && criterias.length > 0) {
             for (final String criteria : criterias) {
                 try {
-                    final Term term =
-                            AdminCLIUtils.parseCriteria(criteria, allowedFields, 
-                                    noArgOps, intFields, Collections.<String>emptySet(), dateFields);
+                    final Term term = parseCriteria(criteria);
                     terms.add(term);
                 } catch (NumberFormatException e) {
                     throw new ParseException("Invalid critera, expected a numeric value: " + criteria);
@@ -233,5 +231,11 @@ public class QueryArchiveCommand extends AbstractCommand {
             Elem all = AdminCLIUtils.andAll(terms, 0);
             qc.add(all);
         } 
+    }
+    
+    static Term parseCriteria(final String criteria)
+        throws IllegalArgumentException, NumberFormatException, java.text.ParseException {
+        return AdminCLIUtils.parseCriteria(criteria, allowedFields, 
+                noArgOps, intFields, Collections.<String>emptySet(), dateFields);
     }
 }

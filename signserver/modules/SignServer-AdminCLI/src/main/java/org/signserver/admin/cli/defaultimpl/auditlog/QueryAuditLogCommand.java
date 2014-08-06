@@ -61,10 +61,10 @@ public class QueryAuditLogCommand extends AbstractCommand {
  
     /** The command line options */
     private static final Options OPTIONS;
-    static final Set<String> longFields;
-    static final Set<String> dateFields;
-    static final Set<RelationalOperator> noArgOps;
-    static final Set<String> allowedFields;
+    private static final Set<String> longFields;
+    private static final Set<String> dateFields;
+    private static final Set<RelationalOperator> noArgOps;
+    private static final Set<String> allowedFields;
 
     private int from = 0;
     private int limit = 0;
@@ -234,9 +234,7 @@ public class QueryAuditLogCommand extends AbstractCommand {
         if (criterias != null && criterias.length > 0) {
             for (final String criteria : criterias) {
                 try {
-                    final Term term =
-                            AdminCLIUtils.parseCriteria(criteria, allowedFields, noArgOps,
-                                    Collections.<String>emptySet(), longFields, dateFields);
+                    final Term term = parseCriteria(criteria);
                     terms.add(term);
                 } catch (NumberFormatException e) {
                     throw new ParseException("Invalid critera, expected a numeric value: " + criteria);
@@ -251,5 +249,11 @@ public class QueryAuditLogCommand extends AbstractCommand {
             Elem all = AdminCLIUtils.andAll(terms, 0);
             qc.add(all);
         }
+    }
+    
+    static Term parseCriteria(final String criteria)
+            throws IllegalArgumentException, NumberFormatException, java.text.ParseException {
+        return AdminCLIUtils.parseCriteria(criteria, allowedFields, noArgOps,
+                Collections.<String>emptySet(), longFields, dateFields);
     }
 }

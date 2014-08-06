@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.admin.cli;
 
+import java.text.ParseException;
 import java.util.List;
 import java.util.Set;
 
@@ -35,7 +36,7 @@ public class AdminCLIUtils {
     public static Term parseCriteria(final String criteria, 
             final Set<String> allowedFields, final Set<RelationalOperator> noArgOps,
             final Set<String> intFields, final Set<String> longFields, final Set<String> dateFields)
-                    throws IllegalArgumentException, NumberFormatException, java.text.ParseException {
+                    throws IllegalArgumentException, NumberFormatException, ParseException {
         // find an operator
         final String[] parts = criteria.split(" ", 3);
         

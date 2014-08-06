@@ -152,7 +152,7 @@ public class WSAdminsCommand extends AbstractAdminCommand {
         try {
             final String admins = getGlobalConfigurationSession().getGlobalConfiguration().getProperty(
                     GlobalConfiguration.SCOPE_GLOBAL, "WSADMINS");
-            final List<ClientEntry> entries = parseAdmins(admins);
+            final List<ClientEntry> entries = parseClientEntries(admins);
             
             if (LIST.equals(operation)) {
                 final String allowAnyWSAdminProp =
@@ -202,13 +202,13 @@ public class WSAdminsCommand extends AbstractAdminCommand {
             	}
                 getGlobalConfigurationSession().setProperty(
                         GlobalConfiguration.SCOPE_GLOBAL, "WSADMINS",
-                        serializeAdmins(entries));
+                        serializeClientEntries(entries));
                 getOutputStream().println("Administrator added");
             } else if (REMOVE.equals(operation)) {
                 if (entries.remove(new ClientEntry(certSerialNo, issuerDN))) {
                     getGlobalConfigurationSession().setProperty(
                             GlobalConfiguration.SCOPE_GLOBAL, "WSADMINS",
-                            serializeAdmins(entries));
+                            serializeClientEntries(entries));
                     getOutputStream().println("Administrator removed");
                 } else {
                     getErrorStream().println("No such administrator");
@@ -242,27 +242,5 @@ public class WSAdminsCommand extends AbstractAdminCommand {
         } catch (Exception e) {
             throw new UnexpectedCommandFailureException(e);
         }
-    }
-
-    private static List<ClientEntry> parseAdmins(final String admins) {
-        final List<ClientEntry> entries = new LinkedList<ClientEntry>();
-        if (admins != null && admins.contains(";")) {
-            for (String entry : admins.split(";")) {
-                final String[] parts = entry.split(",", 2);
-                entries.add(new ClientEntry(parts[0], parts[1]));
-            }
-        }
-        return entries;
-    }
-
-    private static String serializeAdmins(final List<ClientEntry> entries) {
-        final StringBuilder buff = new StringBuilder();
-        for (ClientEntry entry : entries) {
-            buff.append(entry.getCertSerialNo());
-            buff.append(",");
-            buff.append(entry.getIssuerDN());
-            buff.append(";");
-        }
-        return buff.toString();
     }
 }

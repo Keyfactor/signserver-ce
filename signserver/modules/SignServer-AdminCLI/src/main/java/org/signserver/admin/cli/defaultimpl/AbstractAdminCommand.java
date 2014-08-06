@@ -18,6 +18,8 @@ import java.rmi.RemoteException;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.security.cert.CertificateException;
 
 import org.apache.log4j.Logger;
@@ -146,6 +148,28 @@ public abstract class AbstractAdminCommand extends AbstractCommand {
             hash = 89 * hash + (this.issuerDN != null ? this.issuerDN.hashCode() : 0);
             return hash;
         }
+    }
+    
+    protected static List<ClientEntry> parseClientEntries(final String clientEntries) {
+        final List<ClientEntry> entries = new LinkedList<ClientEntry>();
+        if (clientEntries != null && clientEntries.contains(";")) {
+            for (String entry : clientEntries.split(";")) {
+                final String[] parts = entry.split(",", 2);
+                entries.add(new ClientEntry(parts[0], parts[1]));
+            }
+        }
+        return entries;
+    }
+
+    protected static String serializeClientEntries(final List<ClientEntry> entries) {
+        final StringBuilder buff = new StringBuilder();
+        for (final ClientEntry entry : entries) {
+            buff.append(entry.getCertSerialNo());
+            buff.append(",");
+            buff.append(entry.getIssuerDN());
+            buff.append(";");
+        }
+        return buff.toString();
     }
     
 }

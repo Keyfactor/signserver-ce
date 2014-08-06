@@ -994,40 +994,34 @@ public class AdminWS {
     }
 
     private boolean isAdminAuthorized(final X509Certificate cert) { 
-        boolean authorized = false;
-        final String admins = global.getGlobalConfiguration().getProperty(
-                GlobalConfiguration.SCOPE_GLOBAL, "WSADMINS");
-        final String admin = cert.getSerialNumber().toString(16) + "," +
-                cert.getIssuerDN();
         final String allowAnyWSAdminProp = global.getGlobalConfiguration().getProperty(
                 GlobalConfiguration.SCOPE_GLOBAL, "ALLOWANYWSADMIN");
         final boolean allowAnyWSAdmin = allowAnyWSAdminProp != null ?
                 Boolean.parseBoolean(allowAnyWSAdminProp) : false;
         
         if (LOG.isDebugEnabled()) {
-            LOG.debug("admin: " + admin + ", admins: " + admins);
             LOG.debug("allow any admin: " + allowAnyWSAdmin);
         }
 
         if (allowAnyWSAdmin) {
-            authorized = true;
-        } else if (admins == null) {
-            LOG.warn("No WSADMINS global property set");
+            return true;
         } else {
-            for (String entry : admins.split(";")) {
-                if (entry.trim().equalsIgnoreCase(admin)) {
-                    authorized = true;
-                    break;
-                }
-            }
+            return hasAuthorization(cert, "WSADMINS");
         }
-        return authorized;
     }
     
     private boolean isAuditorAuthorized(final X509Certificate cert) { 
+        return hasAuthorization(cert, "WSAUDITORS");
+    }
+    
+    private boolean isArchivistAuthorized(final X509Certificate cert) {
+        return hasAuthorization(cert, "WSARCHIVISTS");
+    }
+    
+    private boolean hasAuthorization(final X509Certificate cert, final String authProperty) {
         boolean authorized = false;
         final String admins = global.getGlobalConfiguration().getProperty(
-                GlobalConfiguration.SCOPE_GLOBAL, "WSAUDITORS");
+                GlobalConfiguration.SCOPE_GLOBAL, authProperty);
         final String admin = cert.getSerialNumber().toString(16) + "," +
                 cert.getIssuerDN();
 
@@ -1036,7 +1030,7 @@ public class AdminWS {
         }
 
         if (admins == null) {
-            LOG.warn("No WSAUDITORS global property set");
+            LOG.warn("No " + authProperty + " global property set");
         } else {
             for (String entry : admins.split(";")) {
                 if (entry.trim().equalsIgnoreCase(admin)) {

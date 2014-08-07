@@ -41,9 +41,14 @@ public class AdminCLIUtils {
         final String[] parts = criteria.split(" ", 3);
         
         final String field = parts[0];
+        
+        if (parts.length < 2) {
+            throw new IllegalArgumentException("Missing operator");
+        }
+        
         final RelationalOperator op = RelationalOperator.valueOf(parts[1]);
         Object value = null;
-        
+               
         // we will not handle the BETWEEN operator
         // to avoid complicating the parser, the same
         // result can be achieved with two criterias
@@ -56,6 +61,10 @@ public class AdminCLIUtils {
         }
         
         if (!noArgOps.contains(op)) {
+            if (parts.length < 3) {
+                throw new IllegalArgumentException("Missing value");
+            }
+            
             if (intFields.contains(parts[0])) {
                 value = Integer.parseInt(parts[2]);
             } else if (longFields.contains(parts[0])) {
@@ -67,9 +76,6 @@ public class AdminCLIUtils {
                     value = ValidityDate.parseAsIso8601(parts[2]).getTime();
                 }
             } else {
-                if (parts.length < 3) {
-                    throw new IllegalArgumentException("Missing value");
-                }
                 value = parts[2];
             }
         }

@@ -38,7 +38,7 @@ public class ArchiveMetadata implements Serializable {
     
     // field names used for querying the archive
     public static String ARCHIVE_ID = "archiveid";
-    public static String REQUEST_CERT_SERIAL_NUMBER = "requestCertSerialNumber";
+    public static String REQUEST_CERT_SERIAL_NUMBER = "requestCertSerialnumber";
     public static String REQUEST_ISSUER_DN = "requestIssuerDN";
     public static String REQUEST_IP = "requestIP";
     public static String SIGNER_ID = "signerid";

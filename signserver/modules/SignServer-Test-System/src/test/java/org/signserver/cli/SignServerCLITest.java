@@ -349,6 +349,31 @@ public class SignServerCLITest extends ModulesTestCase {
     }
     
     /**
+     * Test adding and removing WS archive auditors using serial number and issuer DN directly.
+     * @throws Exception
+     */
+    @Test
+    public void testWSArchiveAuditors() throws Exception {
+        // Test adding wsadmin using explicit parameters
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+            cli.execute("wsarchiveauditors", "-add", "-certserialno", "EF34343D2428",
+                        "-issuerdn", "CN=Test Root CA 2"));
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS,
+                cli.execute("wsarchiveauditors", "-list"));
+        assertPrinted("", cli.getOut(), "EF34343D2428");
+        assertPrinted("", cli.getOut(), "CN=Test Root CA 2");
+        
+        // Test removing previously added admin
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS,
+                        cli.execute("wsarchiveauditors", "-remove", "-certserialno", "EF34343D2428",
+                        "-issuerdn", "CN=Test Root CA 2"));
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS,
+                        cli.execute("wsarchiveauditors", "-list"));
+        assertNotPrinted("", cli.getOut(), "EF34343D2428");
+        assertNotPrinted("", cli.getOut(), "CN=Test Root CA 2");
+    }
+    
+    /**
      * Test adding WS auditors using PEM and DER files.
      * @throws Exception
      */
@@ -369,6 +394,31 @@ public class SignServerCLITest extends ModulesTestCase {
         				"-cert", getSignServerHome() + "/res/test/dss10/dss10_signer2.der"));
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,
         		cli.execute("wsauditors", "-list"));
+        assertPrinted("", cli.getOut(), "53f6992d081248a");
+        assertPrinted("", cli.getOut(), "C=SE, O=SignServer, OU=Testing, CN=DSS Root CA 10");
+    }
+    
+    /**
+     * Test adding WS auditors using PEM and DER files.
+     * @throws Exception
+     */
+    @Test
+    public void testWSArchiveAuditorsFromFile() throws Exception {
+        // Test adding wsadmin using a PEM file
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS,
+                        cli.execute("wsarchiveauditors", "-add",
+                                        "-cert", getSignServerHome() + "/res/test/dss10/dss10_signer1.pem"));
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS,
+                        cli.execute("wsarchiveauditors", "-list"));
+        assertPrinted("", cli.getOut(), "4af1f6235699d0ad");
+        assertPrinted("", cli.getOut(), "C=SE, O=SignServer, OU=Testing, CN=DSS Root CA 10");
+     
+        // Test adding wsadmin using a DER file
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS,
+                        cli.execute("wsarchiveauditors", "-add",
+                                        "-cert", getSignServerHome() + "/res/test/dss10/dss10_signer2.der"));
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS,
+                        cli.execute("wsarchiveauditors", "-list"));
         assertPrinted("", cli.getOut(), "53f6992d081248a");
         assertPrinted("", cli.getOut(), "C=SE, O=SignServer, OU=Testing, CN=DSS Root CA 10");
     }

@@ -12,16 +12,6 @@
  *************************************************************************/
 package org.signserver.admin.cli.defaultimpl;
 
-import java.security.cert.X509Certificate;
-import java.util.LinkedList;
-import java.util.List;
-
-import org.signserver.cli.spi.CommandFailureException;
-import org.signserver.cli.spi.IllegalCommandArgumentsException;
-import org.signserver.cli.spi.UnexpectedCommandFailureException;
-import org.signserver.common.GlobalConfiguration;
-import org.signserver.common.SignServerUtil;
-
 /**
  * Command for managing the list of authorized WS auditors.
  *

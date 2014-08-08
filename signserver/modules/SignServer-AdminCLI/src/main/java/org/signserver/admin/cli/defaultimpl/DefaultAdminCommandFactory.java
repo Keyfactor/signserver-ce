@@ -62,6 +62,7 @@ public class DefaultAdminCommandFactory extends AbstractCommandFactory implement
         put("uploadsignercertificate", UploadSignerCertificateCommand.class);
         put("wsadmins", WSAdminsCommand.class);
         put("wsauditors", WSAuditorsCommand.class);
+        put("wsarchiveauditors", WSArchiveAuditorsCommand.class);
         
         // Archive commands
         put("archive", "findfromarchiveid", FindFromArchiveIdCommand.class);

@@ -19,6 +19,7 @@ import java.security.KeyStoreException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -26,6 +27,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+
 import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -35,6 +37,7 @@ import javax.jws.WebService;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
+
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Base64;
 import org.cesecore.audit.AuditLogEntry;
@@ -70,10 +73,14 @@ public class AdminWS {
     private static final String HTTP_AUTH_BASIC_AUTHORIZATION = "Authorization";
     
     private static final HashSet<String> LONG_COLUMNS = new HashSet<String>();
+    private static final HashSet<String> INT_COLUMNS = new HashSet<String>();
     
     static {
         LONG_COLUMNS.add(AuditLogEntry.FIELD_TIMESTAMP);
         LONG_COLUMNS.add(AuditLogEntry.FIELD_SEQUENCENUMBER);
+        LONG_COLUMNS.add(ArchiveMetadata.TIME);
+        INT_COLUMNS.add(ArchiveMetadata.SIGNER_ID);
+        INT_COLUMNS.add(ArchiveMetadata.TYPE);
     }
 
     @Resource
@@ -874,6 +881,58 @@ public class AdminWS {
         }
         return results;
     }
+
+    /**
+     * Query the archive.
+     * 
+     * @param startIndex Index where select will start. Set to 0 to start from the beginning.
+     * @param max maximum number of results to be returned.
+     * @param conditions List of conditions defining the subset of the archive to be presented.
+     * @param orderings List of ordering conditions for ordering the result.
+     * @return List of archive entries (the archive data is not included).
+     * @throws SignServerException
+     * @throws AdminNotAuthorizedException
+     */
+    @WebMethod(operationName="queryArchive")
+    public List<ArchiveEntry> queryArchive(@WebParam(name="startIndex") int startIndex,
+            @WebParam(name="max") int max, @WebParam(name="condition") final List<QueryCondition> conditions,
+            @WebParam(name="ordering") final List<QueryOrdering> orderings)
+                    throws SignServerException, AdminNotAuthorizedException {
+        final AdminInfo adminInfo = requireArchiveAuditorAuthorization("queryArchive", String.valueOf(startIndex), String.valueOf(max));
+
+        final List<Elem> elements = toElements(conditions);
+        final QueryCriteria qc = QueryCriteria.create();
+        
+        for (QueryOrdering order : orderings) {
+            qc.add(new Order(order.getColumn(), Order.Value.valueOf(order.getOrder().name())));
+        }
+        
+        if (!elements.isEmpty()) {
+            qc.add(andAll(elements, 0));
+        }
+        
+        try {
+            return toArchiveEntries(worker.searchArchive(adminInfo, startIndex, max, qc));
+        } catch (AuthorizationDeniedException ex) {
+            throw new AdminNotAuthorizedException(ex.getMessage());
+        }
+    }
+   
+    /**
+     * Convert to WS model ArchiveEntry:s
+     * 
+     * @param entries
+     * @return
+     */
+    private List<ArchiveEntry> toArchiveEntries(final Collection<? extends ArchiveMetadata> entries) {
+        final List<ArchiveEntry> results = new LinkedList<ArchiveEntry>();
+        
+        for (final ArchiveMetadata entry : entries) {
+            results.add(ArchiveEntry.fromArchiveMetadata(entry));
+        }
+        
+        return results;
+    }
     
     /**
      * Convert to the CESeCore model Elem:s.
@@ -884,6 +943,8 @@ public class AdminWS {
             final Object value;
             if (LONG_COLUMNS.contains(cond.getColumn())) {
                 value = Long.parseLong(cond.getValue());
+            } else if (INT_COLUMNS.contains(cond.getColumn())) {
+                value = Integer.parseInt(cond.getValue());
             } else {
                 value = cond.getValue();
             }

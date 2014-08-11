@@ -433,7 +433,7 @@ public interface IWorkerSession {
          * @throws AuthorizationDeniedException 
          */
         List<? extends AuditLogEntry> selectAuditLogs(AdminInfo adminInfo, int startIndex, int max, QueryCriteria criteria, String logDeviceId) throws AuthorizationDeniedException;
-    
+        
         /**
          * Method used to remove a key from a crypto token used by a worker.
          *
@@ -623,6 +623,7 @@ public interface IWorkerSession {
          * @param criteria Search criteria for matching results
          * @return List of metadata objects describing matching entries
          */
-        Collection<ArchiveMetadata> searchArchive(AdminInfo adminInfo, int startIndex, int max, QueryCriteria criteria);
+        Collection<ArchiveMetadata> searchArchive(AdminInfo adminInfo, int startIndex, int max, QueryCriteria criteria)
+            throws AuthorizationDeniedException;
     }
 }

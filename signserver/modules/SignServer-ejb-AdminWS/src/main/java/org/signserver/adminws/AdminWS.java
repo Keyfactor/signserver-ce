@@ -905,7 +905,6 @@ public class AdminWS {
             return Criteria.and(elements.get(index), andAll(elements, index + 1));
         }
     }
-    
 
     private AdminInfo requireAdminAuthorization(final String operation,
             final String... args) throws AdminNotAuthorizedException {
@@ -950,6 +949,31 @@ public class AdminWS {
            if (!authorized) {
                throw new AdminNotAuthorizedException(
                        "Auditor not authorized to resource.");
+           }
+           
+           return new AdminInfo(cert.getSubjectDN().getName(),
+                   cert.getIssuerDN().getName(), cert.getSerialNumber());
+        }
+    }
+    
+    private AdminInfo requireArchiveAuditorAuthorization(final String operation,
+            final String... args) throws AdminNotAuthorizedException {
+        LOG.debug(">requireArchiveAuditorAuthorization");
+
+        final X509Certificate[] certificates = getClientCertificates();
+        if (certificates == null || certificates.length == 0) {
+            throw new AdminNotAuthorizedException(
+                    "Archive auditor not authorized to resource. "
+                    + "Client certificate authentication required.");
+        } else {
+           final boolean authorized = isArchiveAuditorAuthorized(certificates[0]);
+           final X509Certificate cert = certificates[0];
+
+           log(cert, authorized, operation, args);
+
+           if (!authorized) {
+               throw new AdminNotAuthorizedException(
+                       "Archive auditor not authorized to resource.");
            }
            
            return new AdminInfo(cert.getSubjectDN().getName(),
@@ -1014,7 +1038,7 @@ public class AdminWS {
         return hasAuthorization(cert, "WSAUDITORS");
     }
     
-    private boolean isArchivistAuthorized(final X509Certificate cert) {
+    private boolean isArchiveAuditorAuthorized(final X509Certificate cert) {
         return hasAuthorization(cert, "WSARCHIVEAUDITORS");
     }
     

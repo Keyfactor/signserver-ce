@@ -457,6 +457,7 @@ public class MainView extends FrameView {
         auditlogErrorPanel = new javax.swing.JPanel();
         jScrollPane5 = new javax.swing.JScrollPane();
         auditlogErrorEditor = new javax.swing.JEditorPane();
+        archivePanel = new javax.swing.JPanel();
         removeKeyPanel = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
         aliasTextField = new javax.swing.JTextField();
@@ -1476,6 +1477,21 @@ public class MainView extends FrameView {
         );
 
         jTabbedPane1.addTab(resourceMap.getString("auditPanel.TabConstraints.tabTitle"), auditPanel); // NOI18N
+
+        archivePanel.setName("archivePanel"); // NOI18N
+
+        javax.swing.GroupLayout archivePanelLayout = new javax.swing.GroupLayout(archivePanel);
+        archivePanel.setLayout(archivePanelLayout);
+        archivePanelLayout.setHorizontalGroup(
+            archivePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 1197, Short.MAX_VALUE)
+        );
+        archivePanelLayout.setVerticalGroup(
+            archivePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 654, Short.MAX_VALUE)
+        );
+
+        jTabbedPane1.addTab(resourceMap.getString("archivePanel.TabConstraints.tabTitle"), archivePanel); // NOI18N
 
         removeKeyPanel.setName("removeKeyPanel"); // NOI18N
 
@@ -3204,6 +3220,7 @@ private Properties toProperties(WsGlobalConfiguration wsgc) {
     javax.swing.JMenuItem addWorkerItem;
     javax.swing.JMenuItem administratorsMenu;
     javax.swing.JTextField aliasTextField;
+    javax.swing.JPanel archivePanel;
     javax.swing.JTable auditLogTable;
     javax.swing.JPanel auditPanel;
     javax.swing.JLabel auditlogDisplayingToIndex;

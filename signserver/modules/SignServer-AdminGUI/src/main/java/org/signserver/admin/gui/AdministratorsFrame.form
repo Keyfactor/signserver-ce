@@ -19,19 +19,19 @@
                               <Component id="jLabel1" alignment="0" pref="377" max="32767" attributes="0"/>
                               <Component id="editIssuerDNTextField" alignment="0" pref="377" max="32767" attributes="0"/>
                               <Component id="jLabel2" alignment="0" pref="377" max="32767" attributes="0"/>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Component id="editRoleAdminRadio" linkSize="2" min="-2" pref="110" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="editRoleAuditorRadio" linkSize="2" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="editRoleBothRadio" linkSize="2" min="-2" max="-2" attributes="0"/>
-                              </Group>
                               <Component id="jLabel3" alignment="1" pref="377" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="loadFromCertificateButton" linkSize="3" min="-2" pref="111" max="-2" attributes="0"/>
                       </Group>
                       <Component id="loadCurrentAdminCertButton" linkSize="3" alignment="1" min="-2" pref="97" max="-2" attributes="0"/>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="editRoleAdministratorCheckBox" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <Component id="editRoleAuditorCheckBox" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="editRoleArchiveAuditorCheckBox" min="-2" max="-2" attributes="0"/>
+                      </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -57,11 +57,11 @@
                   <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="editRoleAdminRadio" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="editRoleAuditorRadio" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="editRoleBothRadio" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="editRoleAdministratorCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="editRoleAuditorCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="editRoleArchiveAuditorCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -92,34 +92,6 @@
             <Property name="name" type="java.lang.String" value="editIssuerDNTextField" noResource="true"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JRadioButton" name="editRoleAdminRadio">
-          <Properties>
-            <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
-              <ComponentRef name="buttonGroup1"/>
-            </Property>
-            <Property name="selected" type="boolean" value="true"/>
-            <Property name="text" type="java.lang.String" resourceKey="editRoleAdminRadio.text"/>
-            <Property name="name" type="java.lang.String" value="editRoleAdminRadio" noResource="true"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JRadioButton" name="editRoleAuditorRadio">
-          <Properties>
-            <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
-              <ComponentRef name="buttonGroup1"/>
-            </Property>
-            <Property name="text" type="java.lang.String" resourceKey="editRoleAuditorRadio.text"/>
-            <Property name="name" type="java.lang.String" value="editRoleAuditorRadio" noResource="true"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JRadioButton" name="editRoleBothRadio">
-          <Properties>
-            <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
-              <ComponentRef name="buttonGroup1"/>
-            </Property>
-            <Property name="text" type="java.lang.String" resourceKey="editRoleBothRadio.text"/>
-            <Property name="name" type="java.lang.String" value="editRoleBothRadio" noResource="true"/>
-          </Properties>
-        </Component>
         <Component class="javax.swing.JLabel" name="jLabel3">
           <Properties>
             <Property name="text" type="java.lang.String" resourceKey="jLabel3.text"/>
@@ -143,6 +115,25 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="loadCurrentAdminCertButtonPerformed"/>
           </Events>
+        </Component>
+        <Component class="javax.swing.JCheckBox" name="editRoleAdministratorCheckBox">
+          <Properties>
+            <Property name="selected" type="boolean" value="true"/>
+            <Property name="text" type="java.lang.String" resourceKey="editRoleAdministratorCheckBox.text"/>
+            <Property name="name" type="java.lang.String" value="editRoleAdministratorCheckBox" noResource="true"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JCheckBox" name="editRoleAuditorCheckBox">
+          <Properties>
+            <Property name="text" type="java.lang.String" resourceKey="editRoleAuditorCheckBox.text"/>
+            <Property name="name" type="java.lang.String" value="editRoleAuditorCheckBox" noResource="true"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JCheckBox" name="editRoleArchiveAuditorCheckBox">
+          <Properties>
+            <Property name="text" type="java.lang.String" resourceKey="editRoleArchiveAuditorCheckBox.text"/>
+            <Property name="name" type="java.lang.String" value="editRoleArchiveAuditorCheckBox" noResource="true"/>
+          </Properties>
         </Component>
       </SubComponents>
     </Container>

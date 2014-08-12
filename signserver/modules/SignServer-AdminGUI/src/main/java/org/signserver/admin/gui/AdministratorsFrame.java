@@ -48,7 +48,8 @@ public class AdministratorsFrame extends javax.swing.JFrame {
         "Certificate serial number",
         "Issuer DN",
         "Admin",
-        "Auditor"
+        "Auditor",
+        "Archive Auditor"
     };
 
     private static final String ALLOWANYWSADMIN = "ALLOWANYWSADMIN";
@@ -73,7 +74,7 @@ public class AdministratorsFrame extends javax.swing.JFrame {
 
             @Override
             public Class<?> getColumnClass(int columnIndex) {
-                if (columnIndex == 2 || columnIndex == 3) {
+                if (columnIndex == 2 || columnIndex == 3 || columnIndex == 4) {
                     return Boolean.class;
                 }
                 return super.getColumnClass(columnIndex);
@@ -90,6 +91,8 @@ public class AdministratorsFrame extends javax.swing.JFrame {
                     result = entries.get(rowIndex).isAdmin();
                 } else if (columnIndex == 3) {
                     result = entries.get(rowIndex).isAuditor();
+                } else if (columnIndex == 4) {
+                    result = entries.get(rowIndex).isArchiveAuditor();
                 } else {
                     result = null;
                 }
@@ -158,12 +161,12 @@ public class AdministratorsFrame extends javax.swing.JFrame {
         editCertSerialNoTextField = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         editIssuerDNTextField = new javax.swing.JTextField();
-        editRoleAdminRadio = new javax.swing.JRadioButton();
-        editRoleAuditorRadio = new javax.swing.JRadioButton();
-        editRoleBothRadio = new javax.swing.JRadioButton();
         jLabel3 = new javax.swing.JLabel();
         loadFromCertificateButton = new javax.swing.JButton();
         loadCurrentAdminCertButton = new javax.swing.JButton();
+        editRoleAdministratorCheckBox = new javax.swing.JCheckBox();
+        editRoleAuditorCheckBox = new javax.swing.JCheckBox();
+        editRoleArchiveAuditorCheckBox = new javax.swing.JCheckBox();
         buttonGroup1 = new javax.swing.ButtonGroup();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
@@ -193,19 +196,6 @@ public class AdministratorsFrame extends javax.swing.JFrame {
         editIssuerDNTextField.setText(resourceMap.getString("editIssuerDNTextField.text")); // NOI18N
         editIssuerDNTextField.setName("editIssuerDNTextField"); // NOI18N
 
-        buttonGroup1.add(editRoleAdminRadio);
-        editRoleAdminRadio.setSelected(true);
-        editRoleAdminRadio.setText(resourceMap.getString("editRoleAdminRadio.text")); // NOI18N
-        editRoleAdminRadio.setName("editRoleAdminRadio"); // NOI18N
-
-        buttonGroup1.add(editRoleAuditorRadio);
-        editRoleAuditorRadio.setText(resourceMap.getString("editRoleAuditorRadio.text")); // NOI18N
-        editRoleAuditorRadio.setName("editRoleAuditorRadio"); // NOI18N
-
-        buttonGroup1.add(editRoleBothRadio);
-        editRoleBothRadio.setText(resourceMap.getString("editRoleBothRadio.text")); // NOI18N
-        editRoleBothRadio.setName("editRoleBothRadio"); // NOI18N
-
         jLabel3.setText(resourceMap.getString("jLabel3.text")); // NOI18N
         jLabel3.setName("jLabel3"); // NOI18N
 
@@ -225,6 +215,16 @@ public class AdministratorsFrame extends javax.swing.JFrame {
             }
         });
 
+        editRoleAdministratorCheckBox.setSelected(true);
+        editRoleAdministratorCheckBox.setText(resourceMap.getString("editRoleAdministratorCheckBox.text")); // NOI18N
+        editRoleAdministratorCheckBox.setName("editRoleAdministratorCheckBox"); // NOI18N
+
+        editRoleAuditorCheckBox.setText(resourceMap.getString("editRoleAuditorCheckBox.text")); // NOI18N
+        editRoleAuditorCheckBox.setName("editRoleAuditorCheckBox"); // NOI18N
+
+        editRoleArchiveAuditorCheckBox.setText(resourceMap.getString("editRoleArchiveAuditorCheckBox.text")); // NOI18N
+        editRoleArchiveAuditorCheckBox.setName("editRoleArchiveAuditorCheckBox"); // NOI18N
+
         javax.swing.GroupLayout editPanelLayout = new javax.swing.GroupLayout(editPanel);
         editPanel.setLayout(editPanelLayout);
         editPanelLayout.setHorizontalGroup(
@@ -238,20 +238,18 @@ public class AdministratorsFrame extends javax.swing.JFrame {
                             .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 377, Short.MAX_VALUE)
                             .addComponent(editIssuerDNTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 377, Short.MAX_VALUE)
                             .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 377, Short.MAX_VALUE)
-                            .addGroup(editPanelLayout.createSequentialGroup()
-                                .addComponent(editRoleAdminRadio, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(editRoleAuditorRadio)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(editRoleBothRadio))
                             .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 377, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(loadFromCertificateButton, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(loadCurrentAdminCertButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(loadCurrentAdminCertButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(editPanelLayout.createSequentialGroup()
+                        .addComponent(editRoleAdministratorCheckBox)
+                        .addGap(18, 18, 18)
+                        .addComponent(editRoleAuditorCheckBox)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(editRoleArchiveAuditorCheckBox)))
                 .addContainerGap())
         );
-
-        editPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {editRoleAdminRadio, editRoleAuditorRadio, editRoleBothRadio});
 
         editPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {loadCurrentAdminCertButton, loadFromCertificateButton});
 
@@ -274,10 +272,10 @@ public class AdministratorsFrame extends javax.swing.JFrame {
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(editPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(editRoleAdminRadio)
-                    .addComponent(editRoleAuditorRadio)
-                    .addComponent(editRoleBothRadio))
-                .addContainerGap())
+                    .addComponent(editRoleAdministratorCheckBox)
+                    .addComponent(editRoleAuditorCheckBox)
+                    .addComponent(editRoleArchiveAuditorCheckBox))
+                .addGap(12, 12, 12))
         );
 
         jButton2.setText(resourceMap.getString("jButton2.text")); // NOI18N
@@ -414,8 +412,9 @@ public class AdministratorsFrame extends javax.swing.JFrame {
                     "Add property", JOptionPane.OK_CANCEL_OPTION,
                     JOptionPane.PLAIN_MESSAGE);
             if (res == JOptionPane.OK_OPTION) {
-                final boolean admin = editRoleBothRadio.isSelected() || editRoleAdminRadio.isSelected();
-                final boolean auditor = editRoleBothRadio.isSelected() || editRoleAuditorRadio.isSelected();
+                final boolean admin = editRoleAdministratorCheckBox.isSelected();
+                final boolean auditor = editRoleAuditorCheckBox.isSelected();
+                final boolean archiveAuditor = editRoleArchiveAuditorCheckBox.isSelected();
                 
                 final String certSerialNo = editCertSerialNoTextField.getText();
                 final String issuerDN = editIssuerDNTextField.getText();
@@ -427,7 +426,8 @@ public class AdministratorsFrame extends javax.swing.JFrame {
                     JOptionPane.showMessageDialog(this,
                             "The administrator already existed");
                 } else {
-                    final Entry newEntry = new Entry(cred, admin, auditor);
+                    final Entry newEntry =
+                            new Entry(cred, admin, auditor, archiveAuditor);
                     admins.put(cred, newEntry);
 
                     if (admin) {
@@ -441,6 +441,12 @@ public class AdministratorsFrame extends javax.swing.JFrame {
                             .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
                             "WSAUDITORS",
                             serializeAuditors(admins));
+                    }
+                    if (archiveAuditor) {
+                        SignServerAdminGUIApplication.getAdminWS()
+                            .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
+                            "WSARCHIVEAUDITORS",
+                            serializeArchiveAuditors(admins));
                     }
                 }
                 refreshButton.doClick();
@@ -467,9 +473,9 @@ public class AdministratorsFrame extends javax.swing.JFrame {
                 editCertSerialNoTextField.setText(oldEntry.getCredential().getCertSerialNo());
                 editCertSerialNoTextField.setEditable(true);
                 editIssuerDNTextField.setText(oldEntry.getCredential().getIssuerDN());
-                editRoleAdminRadio.setSelected(oldEntry.isAdmin());
-                editRoleAuditorRadio.setSelected(oldEntry.isAuditor());
-                editRoleBothRadio.setSelected(oldEntry.isAdmin() && oldEntry.isAuditor());
+                editRoleAdministratorCheckBox.setSelected(oldEntry.isAdmin());
+                editRoleAuditorCheckBox.setSelected(oldEntry.isAuditor());
+                editRoleArchiveAuditorCheckBox.setSelected(oldEntry.isArchiveAuditor());
 
                 final int res = JOptionPane.showConfirmDialog(this, editPanel,
                         "Edit administrator", JOptionPane.OK_CANCEL_OPTION,
@@ -487,7 +493,11 @@ public class AdministratorsFrame extends javax.swing.JFrame {
                     } else {
                         admins.remove(oldEntry.getCredential());
                         
-                        final Entry newEntry = new Entry(newCred, editRoleAdminRadio.isSelected() || editRoleBothRadio.isSelected(), editRoleAuditorRadio.isSelected() || editRoleBothRadio.isSelected());
+                        final Entry newEntry =
+                                new Entry(newCred,
+                                    editRoleAdministratorCheckBox.isSelected(),
+                                    editRoleAuditorCheckBox.isSelected(),
+                                    editRoleArchiveAuditorCheckBox.isSelected());
                         
                         if (admins.containsKey(newCred)) {
                             JOptionPane.showMessageDialog(this,
@@ -503,6 +513,10 @@ public class AdministratorsFrame extends javax.swing.JFrame {
                             .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
                             "WSAUDITORS",
                             serializeAuditors(admins));
+                        SignServerAdminGUIApplication.getAdminWS()
+                            .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
+                            "WSARCHIVEAUDITORS",
+                            serializeArchiveAuditors(admins));
                     }
                     refreshButton.doClick();
                 }
@@ -549,6 +563,12 @@ public class AdministratorsFrame extends javax.swing.JFrame {
                                 .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
                                 "WSAUDITORS",
                                 serializeAuditors(admins));
+                        }
+                        if (oldEntry.isArchiveAuditor()) {
+                            SignServerAdminGUIApplication.getAdminWS()
+                                .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
+                                "WSARCHIVEAUDITORS",
+                                serializeArchiveAuditors(admins));
                         }
                     }
                     refreshButton.doClick();
@@ -702,9 +722,9 @@ public class AdministratorsFrame extends javax.swing.JFrame {
     private javax.swing.JTextField editCertSerialNoTextField;
     private javax.swing.JTextField editIssuerDNTextField;
     private javax.swing.JPanel editPanel;
-    private javax.swing.JRadioButton editRoleAdminRadio;
-    private javax.swing.JRadioButton editRoleAuditorRadio;
-    private javax.swing.JRadioButton editRoleBothRadio;
+    private javax.swing.JCheckBox editRoleAdministratorCheckBox;
+    private javax.swing.JCheckBox editRoleArchiveAuditorCheckBox;
+    private javax.swing.JCheckBox editRoleAuditorCheckBox;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
@@ -723,6 +743,7 @@ public class AdministratorsFrame extends javax.swing.JFrame {
             throws AdminNotAuthorizedException_Exception {
         String admins = null;
         String auditors = null;
+        String archiveAuditors = null;
 
         for (WsGlobalConfiguration.Config.Entry entry
                     : SignServerAdminGUIApplication.getAdminWS()
@@ -733,6 +754,9 @@ public class AdministratorsFrame extends javax.swing.JFrame {
             } else if (entry.getKey().equals(GlobalConfiguration.SCOPE_GLOBAL
                     + "WSAUDITORS")) {
                 auditors = (String) entry.getValue();
+            } else if (entry.getKey().equals(GlobalConfiguration.SCOPE_GLOBAL
+                    + "WSARCHIVEAUDITORS")) {
+                archiveAuditors = (String) entry.getValue();
             }
         }
 
@@ -765,6 +789,20 @@ public class AdministratorsFrame extends javax.swing.JFrame {
                 entry.setAuditor(true);
             }
         }
+        
+        // Archive auditors
+        if (archiveAuditors != null && auditors.contains(";")) {
+            for (final String entryString : archiveAuditors.split(";")) {
+                final String[] parts = entryString.split(",", 2);
+                final Credential cred = new Credential(parts[0], parts[1]);
+                Entry entry = entryMap.get(cred);
+                if (entry == null) {
+                    entry = new Entry(cred);
+                    entryMap.put(cred, entry);
+                }
+                entry.setArchiveAuditor(true);
+            }
+        }
 
         return entryMap;
     }
@@ -781,11 +819,24 @@ public class AdministratorsFrame extends javax.swing.JFrame {
         }
         return buff.toString();
     }
-    
+
     private static String serializeAuditors(final Map<Credential, Entry> entries) {
         final StringBuilder buff = new StringBuilder();
         for (Entry entry : entries.values()) {
             if (entry.isAuditor()) {
+                buff.append(entry.getCredential().getCertSerialNo());
+                buff.append(",");
+                buff.append(entry.getCredential().getIssuerDN());
+                buff.append(";");
+            }
+        }
+        return buff.toString();
+    }
+    
+        private static String serializeArchiveAuditors(final Map<Credential, Entry> entries) {
+        final StringBuilder buff = new StringBuilder();
+        for (Entry entry : entries.values()) {
+            if (entry.isArchiveAuditor()) {
                 buff.append(entry.getCredential().getCertSerialNo());
                 buff.append(",");
                 buff.append(entry.getCredential().getIssuerDN());
@@ -845,11 +896,14 @@ public class AdministratorsFrame extends javax.swing.JFrame {
         private final Credential credential;
         private boolean admin;
         private boolean auditor;
+        private boolean archiveAuditor;
 
-        public Entry(final Credential credential, final boolean admin, final boolean auditor) {
+        public Entry(final Credential credential, final boolean admin, 
+                final boolean auditor, final boolean archiveAuditor) {
             this.credential = credential;
             this.admin = admin;
             this.auditor = auditor;
+            this.archiveAuditor = archiveAuditor;
         }
 
         private Entry(final Credential cred) {
@@ -867,6 +921,10 @@ public class AdministratorsFrame extends javax.swing.JFrame {
         public boolean isAuditor() {
             return auditor;
         }
+        
+        public boolean isArchiveAuditor() {
+            return archiveAuditor;
+        }
 
         public void setAdmin(boolean admin) {
             this.admin = admin;
@@ -875,6 +933,10 @@ public class AdministratorsFrame extends javax.swing.JFrame {
         public void setAuditor(boolean auditor) {
             this.auditor = auditor;
         }
+        
+        public void setArchiveAuditor(boolean archiveAuditor) {
+            this.archiveAuditor = archiveAuditor;
+        }
 
         @Override
         public int hashCode() {
@@ -882,6 +944,7 @@ public class AdministratorsFrame extends javax.swing.JFrame {
             hash = 53 * hash + (this.credential != null ? this.credential.hashCode() : 0);
             hash = 53 * hash + (this.admin ? 1 : 0);
             hash = 53 * hash + (this.auditor ? 1 : 0);
+            hash = 53 * hash + (this.archiveAuditor ? 1 : 0);
             return hash;
         }
 
@@ -901,6 +964,9 @@ public class AdministratorsFrame extends javax.swing.JFrame {
                 return false;
             }
             if (this.auditor != other.auditor) {
+                return false;
+            }
+            if (this.archiveAuditor != other.archiveAuditor) {
                 return false;
             }
             return true;

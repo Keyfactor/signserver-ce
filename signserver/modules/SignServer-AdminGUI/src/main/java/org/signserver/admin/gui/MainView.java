@@ -458,6 +458,30 @@ public class MainView extends FrameView {
         jScrollPane5 = new javax.swing.JScrollPane();
         auditlogErrorEditor = new javax.swing.JEditorPane();
         archivePanel = new javax.swing.JPanel();
+        jSplitPane3 = new javax.swing.JSplitPane();
+        jPanel4 = new javax.swing.JPanel();
+        jLabel11 = new javax.swing.JLabel();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        archiveConditionsTable = new javax.swing.JTable();
+        jButtonArchiveAuditConditionAdd = new javax.swing.JButton();
+        jButtonArchiveAuditConditionRemove = new javax.swing.JButton();
+        jPanel5 = new javax.swing.JPanel();
+        archiveFirstButton = new javax.swing.JButton();
+        archivePreviousButton = new javax.swing.JButton();
+        archiveReloadButton = new javax.swing.JButton();
+        archiveNextButton = new javax.swing.JButton();
+        jLabel12 = new javax.swing.JLabel();
+        archiveStartIndexTextfield = new javax.swing.JTextField();
+        archiveDisplayingToIndex = new javax.swing.JLabel();
+        jLabel13 = new javax.swing.JLabel();
+        archiveMaxEntriesTextfield = new javax.swing.JTextField();
+        archiveContentPanel = new javax.swing.JPanel();
+        archiveTablePanel = new javax.swing.JPanel();
+        archiveTableScrollPane = new javax.swing.JScrollPane();
+        archiveLogTable = new javax.swing.JTable();
+        archiveErrorPanel = new javax.swing.JPanel();
+        jScrollPane8 = new javax.swing.JScrollPane();
+        archiveErrorEditor = new javax.swing.JEditorPane();
         removeKeyPanel = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
         aliasTextField = new javax.swing.JTextField();
@@ -744,7 +768,7 @@ public class MainView extends FrameView {
         statusPanelLayout.setHorizontalGroup(
             statusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, statusPanelLayout.createSequentialGroup()
-                .addContainerGap(1018, Short.MAX_VALUE)
+                .addContainerGap(1067, Short.MAX_VALUE)
                 .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(statusAnimationLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -752,7 +776,7 @@ public class MainView extends FrameView {
                 .addGroup(statusPanelLayout.createSequentialGroup()
                     .addGap(135, 135, 135)
                     .addComponent(statusMessageLabel)
-                    .addContainerGap(1082, Short.MAX_VALUE)))
+                    .addContainerGap(1131, Short.MAX_VALUE)))
         );
         statusPanelLayout.setVerticalGroup(
             statusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -929,13 +953,13 @@ public class MainView extends FrameView {
         statusPropertiesTabLayout.setHorizontalGroup(
             statusPropertiesTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, statusPropertiesTabLayout.createSequentialGroup()
-                .addContainerGap(778, Short.MAX_VALUE)
+                .addContainerGap(827, Short.MAX_VALUE)
                 .addComponent(statusPropertiesDetailsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
             .addGroup(statusPropertiesTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(statusPropertiesTabLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(statusPropertiesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 750, Short.MAX_VALUE)
+                    .addComponent(statusPropertiesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 799, Short.MAX_VALUE)
                     .addGap(112, 112, 112)))
         );
         statusPropertiesTabLayout.setVerticalGroup(
@@ -1016,7 +1040,7 @@ public class MainView extends FrameView {
             configurationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, configurationTabLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 740, Short.MAX_VALUE)
+                .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 789, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(configurationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(addButton)
@@ -1114,7 +1138,7 @@ public class MainView extends FrameView {
         authorizationTabLayout.setHorizontalGroup(
             authorizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(authorizationTabLayout.createSequentialGroup()
-                .addContainerGap(763, Short.MAX_VALUE)
+                .addContainerGap(812, Short.MAX_VALUE)
                 .addGroup(authorizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(authAddButton, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(authEditButton, javax.swing.GroupLayout.Alignment.TRAILING)
@@ -1123,7 +1147,7 @@ public class MainView extends FrameView {
             .addGroup(authorizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(authorizationTabLayout.createSequentialGroup()
                     .addGap(6, 6, 6)
-                    .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 744, Short.MAX_VALUE)
+                    .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 793, Short.MAX_VALUE)
                     .addGap(124, 124, 124)))
         );
 
@@ -1155,8 +1179,8 @@ public class MainView extends FrameView {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(workerTabbedPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 894, Short.MAX_VALUE)
-                    .addComponent(workerComboBox, javax.swing.GroupLayout.Alignment.LEADING, 0, 894, Short.MAX_VALUE))
+                    .addComponent(workerTabbedPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 943, Short.MAX_VALUE)
+                    .addComponent(workerComboBox, javax.swing.GroupLayout.Alignment.LEADING, 0, 943, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -1176,7 +1200,7 @@ public class MainView extends FrameView {
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(mainPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1173, Short.MAX_VALUE)
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1222, Short.MAX_VALUE)
                 .addContainerGap())
         );
         mainPanelLayout.setVerticalGroup(
@@ -1223,6 +1247,9 @@ public class MainView extends FrameView {
         conditionsTable.setName("conditionsTable"); // NOI18N
         conditionsTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane3.setViewportView(conditionsTable);
+        conditionsTable.getColumnModel().getColumn(0).setHeaderValue(resourceMap.getString("conditionsTable.columnModel.title0")); // NOI18N
+        conditionsTable.getColumnModel().getColumn(1).setHeaderValue(resourceMap.getString("conditionsTable.columnModel.title1")); // NOI18N
+        conditionsTable.getColumnModel().getColumn(2).setHeaderValue(resourceMap.getString("conditionsTable.columnModel.title2")); // NOI18N
 
         jButtonAuditConditionAdd.setText(resourceMap.getString("jButtonAuditConditionAdd.text")); // NOI18N
         jButtonAuditConditionAdd.setName("jButtonAuditConditionAdd"); // NOI18N
@@ -1253,7 +1280,7 @@ public class MainView extends FrameView {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jButtonAuditConditionRemove, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jButtonAuditConditionAdd, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE))
-                .addGap(272, 272, 272))
+                .addGap(321, 321, 321))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1365,9 +1392,9 @@ public class MainView extends FrameView {
         auditlogTablePanel.setLayout(auditlogTablePanelLayout);
         auditlogTablePanelLayout.setHorizontalGroup(
             auditlogTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1149, Short.MAX_VALUE)
+            .addGap(0, 1198, Short.MAX_VALUE)
             .addGroup(auditlogTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(auditlogTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1149, Short.MAX_VALUE))
+                .addComponent(auditlogTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1198, Short.MAX_VALUE))
         );
         auditlogTablePanelLayout.setVerticalGroup(
             auditlogTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1390,7 +1417,7 @@ public class MainView extends FrameView {
         auditlogErrorPanel.setLayout(auditlogErrorPanelLayout);
         auditlogErrorPanelLayout.setHorizontalGroup(
             auditlogErrorPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane5, javax.swing.GroupLayout.Alignment.TRAILING)
+            .addComponent(jScrollPane5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1198, Short.MAX_VALUE)
         );
         auditlogErrorPanelLayout.setVerticalGroup(
             auditlogErrorPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1422,11 +1449,11 @@ public class MainView extends FrameView {
                 .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(auditlogMaxEntriesTextfield, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(263, Short.MAX_VALUE))
+                .addContainerGap(312, Short.MAX_VALUE))
             .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel3Layout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(auditlogPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 1149, Short.MAX_VALUE)
+                    .addComponent(auditlogPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 1198, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -1465,7 +1492,7 @@ public class MainView extends FrameView {
             auditPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(auditPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jSplitPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 1173, Short.MAX_VALUE)
+                .addComponent(jSplitPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 1222, Short.MAX_VALUE)
                 .addContainerGap())
         );
         auditPanelLayout.setVerticalGroup(
@@ -1480,15 +1507,284 @@ public class MainView extends FrameView {
 
         archivePanel.setName("archivePanel"); // NOI18N
 
+        jSplitPane3.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+        jSplitPane3.setName("jSplitPane3"); // NOI18N
+
+        jPanel4.setMinimumSize(new java.awt.Dimension(0, 123));
+        jPanel4.setName("jPanel4"); // NOI18N
+        jPanel4.setPreferredSize(new java.awt.Dimension(1086, 423));
+
+        jLabel11.setFont(resourceMap.getFont("jLabel11.font")); // NOI18N
+        jLabel11.setText(resourceMap.getString("jLabel11.text")); // NOI18N
+        jLabel11.setName("jLabel11"); // NOI18N
+
+        jScrollPane4.setName("jScrollPane4"); // NOI18N
+
+        archiveConditionsTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Column", "Condition", "Value"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, true, true
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        archiveConditionsTable.setName("archiveConditionsTable"); // NOI18N
+        archiveConditionsTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane4.setViewportView(archiveConditionsTable);
+        archiveConditionsTable.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        archiveConditionsTable.getColumnModel().getColumn(0).setHeaderValue(resourceMap.getString("archiveConditionsTable.columnModel.title0")); // NOI18N
+        archiveConditionsTable.getColumnModel().getColumn(1).setHeaderValue(resourceMap.getString("archiveConditionsTable.columnModel.title1")); // NOI18N
+        archiveConditionsTable.getColumnModel().getColumn(2).setHeaderValue(resourceMap.getString("archiveConditionsTable.columnModel.title2")); // NOI18N
+
+        jButtonArchiveAuditConditionAdd.setText(resourceMap.getString("jButtonArchiveAuditConditionAdd.text")); // NOI18N
+        jButtonArchiveAuditConditionAdd.setName("jButtonArchiveAuditConditionAdd"); // NOI18N
+
+        jButtonArchiveAuditConditionRemove.setText(resourceMap.getString("jButtonArchiveAuditConditionRemove.text")); // NOI18N
+        jButtonArchiveAuditConditionRemove.setEnabled(false);
+        jButtonArchiveAuditConditionRemove.setName("jButtonArchiveAuditConditionRemove"); // NOI18N
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel11, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 775, Short.MAX_VALUE)
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 775, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jButtonArchiveAuditConditionRemove, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButtonArchiveAuditConditionAdd, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE))
+                .addGap(321, 321, 321))
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addComponent(jLabel11)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addComponent(jButtonArchiveAuditConditionAdd)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButtonArchiveAuditConditionRemove))
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 87, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+
+        jSplitPane3.setLeftComponent(jPanel4);
+
+        jPanel5.setName("jPanel5"); // NOI18N
+
+        archiveFirstButton.setText(resourceMap.getString("archiveFirstButton.text")); // NOI18N
+        archiveFirstButton.setEnabled(false);
+        archiveFirstButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        archiveFirstButton.setName("archiveFirstButton"); // NOI18N
+        archiveFirstButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        archiveFirstButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                archiveFirstButtonActionPerformed(evt);
+            }
+        });
+
+        archivePreviousButton.setText(resourceMap.getString("archivePreviousButton.text")); // NOI18N
+        archivePreviousButton.setEnabled(false);
+        archivePreviousButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        archivePreviousButton.setName("archivePreviousButton"); // NOI18N
+        archivePreviousButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        archivePreviousButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                archivePreviousButtonActionPerformed(evt);
+            }
+        });
+
+        archiveReloadButton.setAction(actionMap.get("auditlogReload")); // NOI18N
+        archiveReloadButton.setText(resourceMap.getString("archiveReloadButton.text")); // NOI18N
+        archiveReloadButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        archiveReloadButton.setName("archiveReloadButton"); // NOI18N
+        archiveReloadButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+
+        archiveNextButton.setText(resourceMap.getString("archiveNextButton.text")); // NOI18N
+        archiveNextButton.setEnabled(false);
+        archiveNextButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        archiveNextButton.setName("archiveNextButton"); // NOI18N
+        archiveNextButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        archiveNextButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                archiveNextButtonActionPerformed(evt);
+            }
+        });
+
+        jLabel12.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel12.setText(resourceMap.getString("jLabel12.text")); // NOI18N
+        jLabel12.setName("jLabel12"); // NOI18N
+
+        archiveStartIndexTextfield.setText(resourceMap.getString("archiveStartIndexTextfield.text")); // NOI18N
+        archiveStartIndexTextfield.setName("archiveStartIndexTextfield"); // NOI18N
+
+        archiveDisplayingToIndex.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        archiveDisplayingToIndex.setText(resourceMap.getString("archiveDisplayingToIndex.text")); // NOI18N
+        archiveDisplayingToIndex.setName("archiveDisplayingToIndex"); // NOI18N
+
+        jLabel13.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel13.setText(resourceMap.getString("jLabel13.text")); // NOI18N
+        jLabel13.setName("jLabel13"); // NOI18N
+
+        archiveMaxEntriesTextfield.setText(resourceMap.getString("archiveMaxEntriesTextfield.text")); // NOI18N
+        archiveMaxEntriesTextfield.setName("archiveMaxEntriesTextfield"); // NOI18N
+
+        archiveContentPanel.setName("archiveContentPanel"); // NOI18N
+        archiveContentPanel.setLayout(new java.awt.CardLayout());
+
+        archiveTablePanel.setName("archiveTablePanel"); // NOI18N
+
+        archiveTableScrollPane.setEnabled(false);
+        archiveTableScrollPane.setName("archiveTableScrollPane"); // NOI18N
+
+        archiveLogTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {"2013-01-19 11:47:52+0100", "EJBCA Node Start", "Success", "StartServicesServlet.init", "Service", null, null, null, "atitudem", "Init, EJBCA 5.0.5 (r14787) startup."}
+            },
+            new String [] {
+                "Time", "Event", "Outcome", "Administrator", "Module", "Certificate Authority", "Certificate", "Username", "Node", "Details"
+            }
+        ));
+        archiveLogTable.setEnabled(false);
+        archiveLogTable.setName("archiveLogTable"); // NOI18N
+        archiveLogTable.setSelectionMode(javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        archiveLogTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                archiveLogTableMouseClicked(evt);
+            }
+        });
+        archiveLogTable.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                archiveLogTableKeyReleased(evt);
+            }
+        });
+        archiveTableScrollPane.setViewportView(archiveLogTable);
+
+        javax.swing.GroupLayout archiveTablePanelLayout = new javax.swing.GroupLayout(archiveTablePanel);
+        archiveTablePanel.setLayout(archiveTablePanelLayout);
+        archiveTablePanelLayout.setHorizontalGroup(
+            archiveTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 1198, Short.MAX_VALUE)
+            .addGroup(archiveTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addComponent(archiveTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1198, Short.MAX_VALUE))
+        );
+        archiveTablePanelLayout.setVerticalGroup(
+            archiveTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 431, Short.MAX_VALUE)
+            .addGroup(archiveTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addComponent(archiveTableScrollPane))
+        );
+
+        archiveContentPanel.add(archiveTablePanel, "auditlogTableCard");
+
+        archiveErrorPanel.setName("archiveErrorPanel"); // NOI18N
+
+        jScrollPane8.setName("jScrollPane8"); // NOI18N
+
+        archiveErrorEditor.setEditable(false);
+        archiveErrorEditor.setName("archiveErrorEditor"); // NOI18N
+        jScrollPane8.setViewportView(archiveErrorEditor);
+
+        javax.swing.GroupLayout archiveErrorPanelLayout = new javax.swing.GroupLayout(archiveErrorPanel);
+        archiveErrorPanel.setLayout(archiveErrorPanelLayout);
+        archiveErrorPanelLayout.setHorizontalGroup(
+            archiveErrorPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane8, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1198, Short.MAX_VALUE)
+        );
+        archiveErrorPanelLayout.setVerticalGroup(
+            archiveErrorPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane8, javax.swing.GroupLayout.DEFAULT_SIZE, 431, Short.MAX_VALUE)
+        );
+
+        archiveContentPanel.add(archiveErrorPanel, "auditlogErrorCard");
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(archiveFirstButton, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(archivePreviousButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(archiveReloadButton, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(archiveNextButton, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(archiveStartIndexTextfield, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(archiveDisplayingToIndex, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(archiveMaxEntriesTextfield, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(312, Short.MAX_VALUE))
+            .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel5Layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(archiveContentPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 1198, Short.MAX_VALUE)
+                    .addContainerGap()))
+        );
+
+        jPanel5Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {archiveFirstButton, archiveNextButton, archivePreviousButton, archiveReloadButton});
+
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(archiveNextButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(archiveReloadButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(archiveFirstButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel12)
+                            .addComponent(archiveStartIndexTextfield)
+                            .addComponent(archiveDisplayingToIndex)
+                            .addComponent(jLabel13)
+                            .addComponent(archiveMaxEntriesTextfield))
+                        .addComponent(archivePreviousButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addContainerGap(457, Short.MAX_VALUE))
+            .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                    .addGap(59, 59, 59)
+                    .addComponent(archiveContentPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 431, Short.MAX_VALUE)
+                    .addContainerGap()))
+        );
+
+        jSplitPane3.setRightComponent(jPanel5);
+
         javax.swing.GroupLayout archivePanelLayout = new javax.swing.GroupLayout(archivePanel);
         archivePanel.setLayout(archivePanelLayout);
         archivePanelLayout.setHorizontalGroup(
             archivePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1197, Short.MAX_VALUE)
+            .addGap(0, 1246, Short.MAX_VALUE)
+            .addGroup(archivePanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jSplitPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 1222, Short.MAX_VALUE)
+                .addContainerGap())
         );
         archivePanelLayout.setVerticalGroup(
             archivePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 654, Short.MAX_VALUE)
+            .addGroup(archivePanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jSplitPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 630, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         jTabbedPane1.addTab(resourceMap.getString("archivePanel.TabConstraints.tabTitle"), archivePanel); // NOI18N
@@ -2054,6 +2350,26 @@ private void addWorkerItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN
             exportAllUnrelatedGlobalCheckbox.setSelected(exportAllUnrelatedPreviousValue);
         }
     }//GEN-LAST:event_exportRadioButtonActionPerformed
+
+    private void archiveFirstButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_archiveFirstButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_archiveFirstButtonActionPerformed
+
+    private void archivePreviousButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_archivePreviousButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_archivePreviousButtonActionPerformed
+
+    private void archiveNextButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_archiveNextButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_archiveNextButtonActionPerformed
+
+    private void archiveLogTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_archiveLogTableMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_archiveLogTableMouseClicked
+
+    private void archiveLogTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_archiveLogTableKeyReleased
+        // TODO add your handling code here:
+    }//GEN-LAST:event_archiveLogTableKeyReleased
 
 private void displayLogEntryAction() {
     final int sel = auditLogTable.getSelectedRow();
@@ -3220,7 +3536,21 @@ private Properties toProperties(WsGlobalConfiguration wsgc) {
     javax.swing.JMenuItem addWorkerItem;
     javax.swing.JMenuItem administratorsMenu;
     javax.swing.JTextField aliasTextField;
+    javax.swing.JTable archiveConditionsTable;
+    javax.swing.JPanel archiveContentPanel;
+    javax.swing.JLabel archiveDisplayingToIndex;
+    javax.swing.JEditorPane archiveErrorEditor;
+    javax.swing.JPanel archiveErrorPanel;
+    javax.swing.JButton archiveFirstButton;
+    javax.swing.JTable archiveLogTable;
+    javax.swing.JTextField archiveMaxEntriesTextfield;
+    javax.swing.JButton archiveNextButton;
     javax.swing.JPanel archivePanel;
+    javax.swing.JButton archivePreviousButton;
+    javax.swing.JButton archiveReloadButton;
+    javax.swing.JTextField archiveStartIndexTextfield;
+    javax.swing.JPanel archiveTablePanel;
+    javax.swing.JScrollPane archiveTableScrollPane;
     javax.swing.JTable auditLogTable;
     javax.swing.JPanel auditPanel;
     javax.swing.JLabel auditlogDisplayingToIndex;
@@ -3265,10 +3595,15 @@ private Properties toProperties(WsGlobalConfiguration wsgc) {
     javax.swing.JMenuItem globalConfigurationMenu;
     javax.swing.JButton installCertificatesButton;
     javax.swing.JMenuItem installCertificatesMenu;
+    javax.swing.JButton jButtonArchiveAuditConditionAdd;
+    javax.swing.JButton jButtonArchiveAuditConditionRemove;
     javax.swing.JButton jButtonAuditConditionAdd;
     javax.swing.JButton jButtonAuditConditionRemove;
     javax.swing.JEditorPane jEditorPane1;
     javax.swing.JLabel jLabel10;
+    javax.swing.JLabel jLabel11;
+    javax.swing.JLabel jLabel12;
+    javax.swing.JLabel jLabel13;
     javax.swing.JLabel jLabel3;
     javax.swing.JLabel jLabel4;
     javax.swing.JLabel jLabel5;
@@ -3279,11 +3614,15 @@ private Properties toProperties(WsGlobalConfiguration wsgc) {
     javax.swing.JPanel jPanel1;
     javax.swing.JPanel jPanel2;
     javax.swing.JPanel jPanel3;
+    javax.swing.JPanel jPanel4;
+    javax.swing.JPanel jPanel5;
     javax.swing.JScrollPane jScrollPane2;
     javax.swing.JScrollPane jScrollPane3;
+    javax.swing.JScrollPane jScrollPane4;
     javax.swing.JScrollPane jScrollPane5;
     javax.swing.JScrollPane jScrollPane6;
     javax.swing.JScrollPane jScrollPane7;
+    javax.swing.JScrollPane jScrollPane8;
     javax.swing.JToolBar.Separator jSeparator1;
     javax.swing.JToolBar.Separator jSeparator2;
     javax.swing.JPopupMenu.Separator jSeparator3;
@@ -3295,6 +3634,7 @@ private Properties toProperties(WsGlobalConfiguration wsgc) {
     javax.swing.JPopupMenu.Separator jSeparator9;
     javax.swing.JSplitPane jSplitPane1;
     javax.swing.JSplitPane jSplitPane2;
+    javax.swing.JSplitPane jSplitPane3;
     javax.swing.JTabbedPane jTabbedPane1;
     javax.swing.JToolBar jToolBar1;
     javax.swing.JButton loadCertButton;

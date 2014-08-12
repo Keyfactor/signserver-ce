@@ -416,7 +416,7 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
-                  <EmptySpace pref="1018" max="32767" attributes="0"/>
+                  <EmptySpace pref="1067" max="32767" attributes="0"/>
                   <Component id="progressBar" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="statusAnimationLabel" min="-2" pref="37" max="-2" attributes="0"/>
@@ -425,7 +425,7 @@
                   <Group type="102" attributes="0">
                       <EmptySpace min="-2" pref="135" max="-2" attributes="0"/>
                       <Component id="statusMessageLabel" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="1082" max="32767" attributes="0"/>
+                      <EmptySpace pref="1131" max="32767" attributes="0"/>
                   </Group>
               </Group>
           </Group>
@@ -629,7 +629,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jSplitPane1" pref="1173" max="32767" attributes="0"/>
+                      <Component id="jSplitPane1" pref="1222" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -693,8 +693,8 @@
                           <Group type="102" alignment="1" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="1" attributes="0">
-                                  <Component id="workerTabbedPane" alignment="0" pref="894" max="32767" attributes="0"/>
-                                  <Component id="workerComboBox" alignment="0" pref="894" max="32767" attributes="0"/>
+                                  <Component id="workerTabbedPane" alignment="0" pref="943" max="32767" attributes="0"/>
+                                  <Component id="workerComboBox" alignment="0" pref="943" max="32767" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
@@ -775,14 +775,14 @@
                             <DimensionLayout dim="0">
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="1" attributes="0">
-                                      <EmptySpace pref="778" max="32767" attributes="0"/>
+                                      <EmptySpace pref="827" max="32767" attributes="0"/>
                                       <Component id="statusPropertiesDetailsButton" min="-2" pref="84" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                   </Group>
                                   <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                                       <Group type="102" alignment="0" attributes="0">
                                           <EmptySpace min="-2" max="-2" attributes="0"/>
-                                          <Component id="statusPropertiesScrollPane" pref="750" max="32767" attributes="0"/>
+                                          <Component id="statusPropertiesScrollPane" pref="799" max="32767" attributes="0"/>
                                           <EmptySpace min="-2" pref="112" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
@@ -887,7 +887,7 @@
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="1" attributes="0">
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="jScrollPane6" pref="740" max="32767" attributes="0"/>
+                                      <Component id="jScrollPane6" pref="789" max="32767" attributes="0"/>
                                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="1" attributes="0">
                                           <Component id="addButton" linkSize="1" alignment="1" min="-2" max="-2" attributes="0"/>
@@ -1017,7 +1017,7 @@
                             <DimensionLayout dim="0">
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" attributes="0">
-                                      <EmptySpace pref="763" max="32767" attributes="0"/>
+                                      <EmptySpace pref="812" max="32767" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
                                           <Component id="authAddButton" linkSize="2" alignment="1" min="-2" max="-2" attributes="0"/>
                                           <Component id="authEditButton" linkSize="2" alignment="1" min="-2" max="-2" attributes="0"/>
@@ -1028,7 +1028,7 @@
                                   <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                                       <Group type="102" alignment="0" attributes="0">
                                           <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
-                                          <Component id="jScrollPane7" pref="744" max="32767" attributes="0"/>
+                                          <Component id="jScrollPane7" pref="793" max="32767" attributes="0"/>
                                           <EmptySpace min="-2" pref="124" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
@@ -1139,7 +1139,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jSplitPane2" pref="1173" max="32767" attributes="0"/>
+                      <Component id="jSplitPane2" pref="1222" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -1192,7 +1192,7 @@
                                   <Component id="jButtonAuditConditionRemove" max="32767" attributes="1"/>
                                   <Component id="jButtonAuditConditionAdd" alignment="0" pref="114" max="32767" attributes="1"/>
                               </Group>
-                              <EmptySpace min="-2" pref="272" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="321" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -1244,9 +1244,31 @@
                                 </Column>
                               </Table>
                             </Property>
+                            <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
+                              <TableColumnModel selectionModel="0">
+                                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                                  <Title resourceKey="conditionsTable.columnModel.title0"/>
+                                  <Editor/>
+                                  <Renderer/>
+                                </Column>
+                                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                                  <Title resourceKey="conditionsTable.columnModel.title1"/>
+                                  <Editor/>
+                                  <Renderer/>
+                                </Column>
+                                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                                  <Title resourceKey="conditionsTable.columnModel.title2"/>
+                                  <Editor/>
+                                  <Renderer/>
+                                </Column>
+                              </TableColumnModel>
+                            </Property>
                             <Property name="name" type="java.lang.String" value="conditionsTable" noResource="true"/>
                             <Property name="selectionModel" type="javax.swing.ListSelectionModel" editor="org.netbeans.modules.form.editors2.JTableSelectionModelEditor">
                               <JTableSelectionModel selectionMode="0"/>
+                            </Property>
+                            <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
+                              <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
                             </Property>
                           </Properties>
                         </Component>
@@ -1305,12 +1327,12 @@
                               <Component id="jLabel8" min="-2" pref="156" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="auditlogMaxEntriesTextfield" min="-2" pref="56" max="-2" attributes="0"/>
-                              <EmptySpace pref="263" max="32767" attributes="0"/>
+                              <EmptySpace pref="312" max="32767" attributes="0"/>
                           </Group>
                           <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace min="-2" max="-2" attributes="0"/>
-                                  <Component id="auditlogPanel" pref="1149" max="32767" attributes="0"/>
+                                  <Component id="auditlogPanel" pref="1198" max="32767" attributes="0"/>
                                   <EmptySpace min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -1446,9 +1468,9 @@
                           <Layout>
                             <DimensionLayout dim="0">
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <EmptySpace min="0" pref="1149" max="32767" attributes="0"/>
+                                  <EmptySpace min="0" pref="1198" max="32767" attributes="0"/>
                                   <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
-                                      <Component id="auditlogTableScrollPane" alignment="0" pref="1149" max="32767" attributes="0"/>
+                                      <Component id="auditlogTableScrollPane" alignment="0" pref="1198" max="32767" attributes="0"/>
                                   </Group>
                               </Group>
                             </DimensionLayout>
@@ -1528,7 +1550,7 @@
                           <Layout>
                             <DimensionLayout dim="0">
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jScrollPane5" alignment="1" max="32767" attributes="0"/>
+                                  <Component id="jScrollPane5" alignment="1" pref="1198" max="32767" attributes="0"/>
                               </Group>
                             </DimensionLayout>
                             <DimensionLayout dim="1">
@@ -1578,15 +1600,445 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <EmptySpace min="0" pref="1197" max="32767" attributes="0"/>
+                  <EmptySpace min="0" pref="1246" max="32767" attributes="0"/>
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="jSplitPane3" pref="1222" max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                  </Group>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
                   <EmptySpace min="0" pref="654" max="32767" attributes="0"/>
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="jSplitPane3" pref="630" max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                  </Group>
               </Group>
             </DimensionLayout>
           </Layout>
+          <SubComponents>
+            <Container class="javax.swing.JSplitPane" name="jSplitPane3">
+              <Properties>
+                <Property name="orientation" type="int" value="0"/>
+                <Property name="name" type="java.lang.String" value="jSplitPane3" noResource="true"/>
+              </Properties>
+
+              <Layout class="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout"/>
+              <SubComponents>
+                <Container class="javax.swing.JPanel" name="jPanel4">
+                  <Properties>
+                    <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                      <Dimension value="[0, 123]"/>
+                    </Property>
+                    <Property name="name" type="java.lang.String" value="jPanel4" noResource="true"/>
+                    <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                      <Dimension value="[1086, 423]"/>
+                    </Property>
+                  </Properties>
+                  <Constraints>
+                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
+                      <JSplitPaneConstraints position="left"/>
+                    </Constraint>
+                  </Constraints>
+
+                  <Layout>
+                    <DimensionLayout dim="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
+                              <Group type="103" groupAlignment="1" attributes="0">
+                                  <Component id="jLabel11" alignment="0" pref="775" max="32767" attributes="1"/>
+                                  <Component id="jScrollPane4" alignment="0" pref="775" max="32767" attributes="2"/>
+                              </Group>
+                              <EmptySpace min="-2" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                  <Component id="jButtonArchiveAuditConditionRemove" alignment="0" max="32767" attributes="1"/>
+                                  <Component id="jButtonArchiveAuditConditionAdd" alignment="0" pref="114" max="32767" attributes="1"/>
+                              </Group>
+                              <EmptySpace min="-2" pref="321" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                    </DimensionLayout>
+                    <DimensionLayout dim="1">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="jLabel11" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Component id="jButtonArchiveAuditConditionAdd" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="jButtonArchiveAuditConditionRemove" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Component id="jScrollPane4" alignment="0" pref="87" max="32767" attributes="0"/>
+                              </Group>
+                              <EmptySpace min="-2" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                    </DimensionLayout>
+                  </Layout>
+                  <SubComponents>
+                    <Component class="javax.swing.JLabel" name="jLabel11">
+                      <Properties>
+                        <Property name="font" type="java.awt.Font" resourceKey="jLabel11.font"/>
+                        <Property name="text" type="java.lang.String" resourceKey="jLabel11.text"/>
+                        <Property name="name" type="java.lang.String" value="jLabel11" noResource="true"/>
+                      </Properties>
+                    </Component>
+                    <Container class="javax.swing.JScrollPane" name="jScrollPane4">
+                      <Properties>
+                        <Property name="name" type="java.lang.String" value="jScrollPane4" noResource="true"/>
+                      </Properties>
+
+                      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+                      <SubComponents>
+                        <Component class="javax.swing.JTable" name="archiveConditionsTable">
+                          <Properties>
+                            <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
+                              <Table columnCount="3" rowCount="0">
+                                <Column editable="false" title="Column" type="java.lang.Object"/>
+                                <Column editable="true" title="Condition" type="java.lang.Object"/>
+                                <Column editable="true" title="Value" type="java.lang.Object"/>
+                              </Table>
+                            </Property>
+                            <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
+                              <TableColumnModel selectionModel="1">
+                                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                                  <Title resourceKey="archiveConditionsTable.columnModel.title0"/>
+                                  <Editor/>
+                                  <Renderer/>
+                                </Column>
+                                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                                  <Title resourceKey="archiveConditionsTable.columnModel.title1"/>
+                                  <Editor/>
+                                  <Renderer/>
+                                </Column>
+                                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                                  <Title resourceKey="archiveConditionsTable.columnModel.title2"/>
+                                  <Editor/>
+                                  <Renderer/>
+                                </Column>
+                              </TableColumnModel>
+                            </Property>
+                            <Property name="name" type="java.lang.String" value="archiveConditionsTable" noResource="true"/>
+                            <Property name="selectionModel" type="javax.swing.ListSelectionModel" editor="org.netbeans.modules.form.editors2.JTableSelectionModelEditor">
+                              <JTableSelectionModel selectionMode="0"/>
+                            </Property>
+                            <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
+                              <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
+                            </Property>
+                          </Properties>
+                        </Component>
+                      </SubComponents>
+                    </Container>
+                    <Component class="javax.swing.JButton" name="jButtonArchiveAuditConditionAdd">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" resourceKey="jButtonArchiveAuditConditionAdd.text"/>
+                        <Property name="name" type="java.lang.String" value="jButtonArchiveAuditConditionAdd" noResource="true"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JButton" name="jButtonArchiveAuditConditionRemove">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" resourceKey="jButtonArchiveAuditConditionRemove.text"/>
+                        <Property name="enabled" type="boolean" value="false"/>
+                        <Property name="name" type="java.lang.String" value="jButtonArchiveAuditConditionRemove" noResource="true"/>
+                      </Properties>
+                    </Component>
+                  </SubComponents>
+                </Container>
+                <Container class="javax.swing.JPanel" name="jPanel5">
+                  <Properties>
+                    <Property name="name" type="java.lang.String" value="jPanel5" noResource="true"/>
+                  </Properties>
+                  <Constraints>
+                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
+                      <JSplitPaneConstraints position="right"/>
+                    </Constraint>
+                  </Constraints>
+
+                  <Layout>
+                    <DimensionLayout dim="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="archiveFirstButton" linkSize="5" min="-2" pref="83" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="archivePreviousButton" linkSize="5" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="archiveReloadButton" linkSize="5" min="-2" pref="71" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="archiveNextButton" linkSize="5" min="-2" pref="83" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="jLabel12" min="-2" pref="156" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="archiveStartIndexTextfield" min="-2" pref="63" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="archiveDisplayingToIndex" min="-2" pref="63" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="jLabel13" min="-2" pref="156" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="archiveMaxEntriesTextfield" min="-2" pref="56" max="-2" attributes="0"/>
+                              <EmptySpace pref="312" max="32767" attributes="0"/>
+                          </Group>
+                          <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
+                              <Group type="102" alignment="0" attributes="0">
+                                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                                  <Component id="archiveContentPanel" pref="1198" max="32767" attributes="0"/>
+                                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
+                      </Group>
+                    </DimensionLayout>
+                    <DimensionLayout dim="1">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
+                              <EmptySpace min="-2" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="1" attributes="0">
+                                  <Component id="archiveNextButton" alignment="0" max="32767" attributes="1"/>
+                                  <Component id="archiveReloadButton" alignment="0" max="32767" attributes="1"/>
+                                  <Group type="103" alignment="0" groupAlignment="0" max="-2" attributes="0">
+                                      <Component id="archiveFirstButton" alignment="0" max="32767" attributes="1"/>
+                                      <Group type="103" alignment="0" groupAlignment="3" attributes="0">
+                                          <Component id="jLabel12" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          <Component id="archiveStartIndexTextfield" alignment="0" max="32767" attributes="1"/>
+                                          <Component id="archiveDisplayingToIndex" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          <Component id="jLabel13" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          <Component id="archiveMaxEntriesTextfield" alignment="0" max="32767" attributes="1"/>
+                                      </Group>
+                                      <Component id="archivePreviousButton" alignment="0" max="32767" attributes="1"/>
+                                  </Group>
+                              </Group>
+                              <EmptySpace pref="457" max="32767" attributes="0"/>
+                          </Group>
+                          <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
+                              <Group type="102" alignment="1" attributes="0">
+                                  <EmptySpace min="-2" pref="59" max="-2" attributes="0"/>
+                                  <Component id="archiveContentPanel" pref="431" max="32767" attributes="0"/>
+                                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
+                      </Group>
+                    </DimensionLayout>
+                  </Layout>
+                  <SubComponents>
+                    <Component class="javax.swing.JButton" name="archiveFirstButton">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" resourceKey="archiveFirstButton.text"/>
+                        <Property name="enabled" type="boolean" value="false"/>
+                        <Property name="horizontalTextPosition" type="int" value="0"/>
+                        <Property name="name" type="java.lang.String" value="archiveFirstButton" noResource="true"/>
+                        <Property name="verticalTextPosition" type="int" value="3"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="archiveFirstButtonActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JButton" name="archivePreviousButton">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" resourceKey="archivePreviousButton.text"/>
+                        <Property name="enabled" type="boolean" value="false"/>
+                        <Property name="horizontalTextPosition" type="int" value="0"/>
+                        <Property name="name" type="java.lang.String" value="archivePreviousButton" noResource="true"/>
+                        <Property name="verticalTextPosition" type="int" value="3"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="archivePreviousButtonActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JButton" name="archiveReloadButton">
+                      <Properties>
+                        <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
+                          <action class="org.signserver.admin.gui.MainView" id="auditlogReload" methodName="auditlogReload"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" resourceKey="archiveReloadButton.text"/>
+                        <Property name="horizontalTextPosition" type="int" value="0"/>
+                        <Property name="name" type="java.lang.String" value="archiveReloadButton" noResource="true"/>
+                        <Property name="verticalTextPosition" type="int" value="3"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JButton" name="archiveNextButton">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" resourceKey="archiveNextButton.text"/>
+                        <Property name="enabled" type="boolean" value="false"/>
+                        <Property name="horizontalTextPosition" type="int" value="0"/>
+                        <Property name="name" type="java.lang.String" value="archiveNextButton" noResource="true"/>
+                        <Property name="verticalTextPosition" type="int" value="3"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="archiveNextButtonActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="jLabel12">
+                      <Properties>
+                        <Property name="horizontalAlignment" type="int" value="4"/>
+                        <Property name="text" type="java.lang.String" resourceKey="jLabel12.text"/>
+                        <Property name="name" type="java.lang.String" value="jLabel12" noResource="true"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="archiveStartIndexTextfield">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" resourceKey="archiveStartIndexTextfield.text"/>
+                        <Property name="name" type="java.lang.String" value="archiveStartIndexTextfield" noResource="true"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="archiveDisplayingToIndex">
+                      <Properties>
+                        <Property name="horizontalAlignment" type="int" value="2"/>
+                        <Property name="text" type="java.lang.String" resourceKey="archiveDisplayingToIndex.text"/>
+                        <Property name="name" type="java.lang.String" value="archiveDisplayingToIndex" noResource="true"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="jLabel13">
+                      <Properties>
+                        <Property name="horizontalAlignment" type="int" value="4"/>
+                        <Property name="text" type="java.lang.String" resourceKey="jLabel13.text"/>
+                        <Property name="name" type="java.lang.String" value="jLabel13" noResource="true"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="archiveMaxEntriesTextfield">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" resourceKey="archiveMaxEntriesTextfield.text"/>
+                        <Property name="name" type="java.lang.String" value="archiveMaxEntriesTextfield" noResource="true"/>
+                      </Properties>
+                    </Component>
+                    <Container class="javax.swing.JPanel" name="archiveContentPanel">
+                      <Properties>
+                        <Property name="name" type="java.lang.String" value="archiveContentPanel" noResource="true"/>
+                      </Properties>
+
+                      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignCardLayout"/>
+                      <SubComponents>
+                        <Container class="javax.swing.JPanel" name="archiveTablePanel">
+                          <Properties>
+                            <Property name="name" type="java.lang.String" value="archiveTablePanel" noResource="true"/>
+                          </Properties>
+                          <Constraints>
+                            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignCardLayout" value="org.netbeans.modules.form.compat2.layouts.DesignCardLayout$CardConstraintsDescription">
+                              <CardConstraints cardName="auditlogTableCard"/>
+                            </Constraint>
+                          </Constraints>
+
+                          <Layout>
+                            <DimensionLayout dim="0">
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <EmptySpace min="0" pref="1198" max="32767" attributes="0"/>
+                                  <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
+                                      <Component id="archiveTableScrollPane" alignment="0" pref="1198" max="32767" attributes="0"/>
+                                  </Group>
+                              </Group>
+                            </DimensionLayout>
+                            <DimensionLayout dim="1">
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <EmptySpace min="0" pref="431" max="32767" attributes="0"/>
+                                  <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
+                                      <Component id="archiveTableScrollPane" alignment="0" max="32767" attributes="0"/>
+                                  </Group>
+                              </Group>
+                            </DimensionLayout>
+                          </Layout>
+                          <SubComponents>
+                            <Container class="javax.swing.JScrollPane" name="archiveTableScrollPane">
+                              <Properties>
+                                <Property name="enabled" type="boolean" value="false"/>
+                                <Property name="name" type="java.lang.String" value="archiveTableScrollPane" noResource="true"/>
+                              </Properties>
+
+                              <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+                              <SubComponents>
+                                <Component class="javax.swing.JTable" name="archiveLogTable">
+                                  <Properties>
+                                    <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
+                                      <Table columnCount="10" rowCount="1">
+                                        <Column editable="true" title="Time" type="java.lang.Object">
+                                          <Data value="2013-01-19 11:47:52+0100"/>
+                                        </Column>
+                                        <Column editable="true" title="Event" type="java.lang.Object">
+                                          <Data value="EJBCA Node Start"/>
+                                        </Column>
+                                        <Column editable="true" title="Outcome" type="java.lang.Object">
+                                          <Data value="Success"/>
+                                        </Column>
+                                        <Column editable="true" title="Administrator" type="java.lang.Object">
+                                          <Data value="StartServicesServlet.init"/>
+                                        </Column>
+                                        <Column editable="true" title="Module" type="java.lang.Object">
+                                          <Data value="Service"/>
+                                        </Column>
+                                        <Column editable="true" title="Certificate Authority" type="java.lang.Object"/>
+                                        <Column editable="true" title="Certificate" type="java.lang.Object"/>
+                                        <Column editable="true" title="Username" type="java.lang.Object"/>
+                                        <Column editable="true" title="Node" type="java.lang.Object">
+                                          <Data value="atitudem"/>
+                                        </Column>
+                                        <Column editable="true" title="Details" type="java.lang.Object">
+                                          <Data value="Init, EJBCA 5.0.5 (r14787) startup."/>
+                                        </Column>
+                                      </Table>
+                                    </Property>
+                                    <Property name="enabled" type="boolean" value="false"/>
+                                    <Property name="name" type="java.lang.String" value="archiveLogTable" noResource="true"/>
+                                    <Property name="selectionModel" type="javax.swing.ListSelectionModel" editor="org.netbeans.modules.form.editors2.JTableSelectionModelEditor">
+                                      <JTableSelectionModel selectionMode="2"/>
+                                    </Property>
+                                  </Properties>
+                                  <Events>
+                                    <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="archiveLogTableMouseClicked"/>
+                                    <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="archiveLogTableKeyReleased"/>
+                                  </Events>
+                                </Component>
+                              </SubComponents>
+                            </Container>
+                          </SubComponents>
+                        </Container>
+                        <Container class="javax.swing.JPanel" name="archiveErrorPanel">
+                          <Properties>
+                            <Property name="name" type="java.lang.String" value="archiveErrorPanel" noResource="true"/>
+                          </Properties>
+                          <Constraints>
+                            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignCardLayout" value="org.netbeans.modules.form.compat2.layouts.DesignCardLayout$CardConstraintsDescription">
+                              <CardConstraints cardName="auditlogErrorCard"/>
+                            </Constraint>
+                          </Constraints>
+
+                          <Layout>
+                            <DimensionLayout dim="0">
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="jScrollPane8" alignment="1" pref="1198" max="32767" attributes="0"/>
+                              </Group>
+                            </DimensionLayout>
+                            <DimensionLayout dim="1">
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="jScrollPane8" alignment="0" pref="431" max="32767" attributes="0"/>
+                              </Group>
+                            </DimensionLayout>
+                          </Layout>
+                          <SubComponents>
+                            <Container class="javax.swing.JScrollPane" name="jScrollPane8">
+                              <Properties>
+                                <Property name="name" type="java.lang.String" value="jScrollPane8" noResource="true"/>
+                              </Properties>
+
+                              <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+                              <SubComponents>
+                                <Component class="javax.swing.JEditorPane" name="archiveErrorEditor">
+                                  <Properties>
+                                    <Property name="editable" type="boolean" value="false"/>
+                                    <Property name="name" type="java.lang.String" value="archiveErrorEditor" noResource="true"/>
+                                  </Properties>
+                                </Component>
+                              </SubComponents>
+                            </Container>
+                          </SubComponents>
+                        </Container>
+                      </SubComponents>
+                    </Container>
+                  </SubComponents>
+                </Container>
+              </SubComponents>
+            </Container>
+          </SubComponents>
         </Container>
       </SubComponents>
     </Container>
@@ -1830,6 +2282,6 @@
     <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
     <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="0"/>
-    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,3,7,0,0,4,-63"/>
+    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,3,7,0,0,4,-14"/>
   </AuxValues>
 </Form>

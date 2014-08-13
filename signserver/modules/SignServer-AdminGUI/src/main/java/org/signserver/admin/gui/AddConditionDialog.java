@@ -50,36 +50,36 @@ public class AddConditionDialog extends javax.swing.JDialog {
     };
     
     /** Relational operator used by each column. */
-    private static final HashMap<String, AuditlogOperator[]> OPERATORS = new HashMap<String, AuditlogOperator[]>();
+    private static final HashMap<String, QueryOperator[]> OPERATORS = new HashMap<String, QueryOperator[]>();
     
     /** Available values by each column. */
     private static final HashMap<String, List<String>> VALUES = new HashMap<String, List<String>>();
     
     /** Relational operators useful for text values. */
-    private static final AuditlogOperator[] TEXT_OPERATORS = {
-        AuditlogOperator.fromEnum(RelationalOperator.EQ),
-        AuditlogOperator.fromEnum(RelationalOperator.LIKE),
-        AuditlogOperator.fromEnum(RelationalOperator.NEQ),
-        AuditlogOperator.fromEnum(RelationalOperator.NOTNULL),
-        AuditlogOperator.fromEnum(RelationalOperator.NULL)
+    private static final QueryOperator[] TEXT_OPERATORS = {
+        QueryOperator.fromEnum(RelationalOperator.EQ),
+        QueryOperator.fromEnum(RelationalOperator.LIKE),
+        QueryOperator.fromEnum(RelationalOperator.NEQ),
+        QueryOperator.fromEnum(RelationalOperator.NOTNULL),
+        QueryOperator.fromEnum(RelationalOperator.NULL)
     };
     
     /** Relational operators useful for fixed-type values. */
-    private static final AuditlogOperator[] TYPE_OPERATORS = {
-        AuditlogOperator.fromEnum(RelationalOperator.EQ),
-        AuditlogOperator.fromEnum(RelationalOperator.NEQ)
+    private static final QueryOperator[] TYPE_OPERATORS = {
+        QueryOperator.fromEnum(RelationalOperator.EQ),
+        QueryOperator.fromEnum(RelationalOperator.NEQ)
     };
     
     /** Relational operators useful for number values. */
-    private static final AuditlogOperator[] NUMBER_OPERATORS = {
-        AuditlogOperator.fromEnum(RelationalOperator.EQ),
-        AuditlogOperator.fromEnum(RelationalOperator.NEQ),
-        AuditlogOperator.fromEnum(RelationalOperator.GE),
-        AuditlogOperator.fromEnum(RelationalOperator.GT),
-        AuditlogOperator.fromEnum(RelationalOperator.LE),
-        AuditlogOperator.fromEnum(RelationalOperator.LT),
-        AuditlogOperator.fromEnum(RelationalOperator.NOTNULL),
-        AuditlogOperator.fromEnum(RelationalOperator.NULL)
+    private static final QueryOperator[] NUMBER_OPERATORS = {
+        QueryOperator.fromEnum(RelationalOperator.EQ),
+        QueryOperator.fromEnum(RelationalOperator.NEQ),
+        QueryOperator.fromEnum(RelationalOperator.GE),
+        QueryOperator.fromEnum(RelationalOperator.GT),
+        QueryOperator.fromEnum(RelationalOperator.LE),
+        QueryOperator.fromEnum(RelationalOperator.LT),
+        QueryOperator.fromEnum(RelationalOperator.NOTNULL),
+        QueryOperator.fromEnum(RelationalOperator.NULL)
     };
     
     /** Available values for event status. */
@@ -119,7 +119,7 @@ public class AddConditionDialog extends javax.swing.JDialog {
     
     private boolean okPressed;
     private AuditlogColumn column;
-    private AuditlogOperator condition;
+    private QueryOperator condition;
     private String value;
     
     /** Creates new form EditConditionDialog */
@@ -246,7 +246,7 @@ public class AddConditionDialog extends javax.swing.JDialog {
 
 private void jButtonOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonOkActionPerformed
     column = (AuditlogColumn) columnCombobox.getSelectedItem();
-    condition = (AuditlogOperator) conditionCombobox.getSelectedItem();
+    condition = (QueryOperator) conditionCombobox.getSelectedItem();
     
     if (RelationalOperator.NOTNULL.equals(condition.getOperator())
                 || RelationalOperator.NULL.equals(condition.getOperator())) {
@@ -294,7 +294,7 @@ private void columnComboboxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN
         return column;
     }
 
-    public AuditlogOperator getCondition() {
+    public QueryOperator getCondition() {
         return condition;
     }
 

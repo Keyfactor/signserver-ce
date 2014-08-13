@@ -24,31 +24,31 @@ import org.signserver.admin.gui.adminws.gen.RelationalOperator;
  * @author Markus Kilås
  * @version $Id$
  */
-public class AuditlogOperator {
+public class QueryOperator {
     
-    private static final HashMap<RelationalOperator, AuditlogOperator> ENTRIES = new HashMap<RelationalOperator, AuditlogOperator>();
+    private static final HashMap<RelationalOperator, QueryOperator> ENTRIES = new HashMap<RelationalOperator, QueryOperator>();
     
     static {
-        ENTRIES.put(RelationalOperator.BETWEEN, new AuditlogOperator(RelationalOperator.BETWEEN, "Between"));
-        ENTRIES.put(RelationalOperator.EQ, new AuditlogOperator(RelationalOperator.EQ, "Equals"));
-        ENTRIES.put(RelationalOperator.GE, new AuditlogOperator(RelationalOperator.GE, "Greater or equals"));
-        ENTRIES.put(RelationalOperator.GT, new AuditlogOperator(RelationalOperator.GT, "Greater than"));
-        ENTRIES.put(RelationalOperator.LE, new AuditlogOperator(RelationalOperator.LE, "Lesser or equals"));
-        ENTRIES.put(RelationalOperator.LIKE, new AuditlogOperator(RelationalOperator.LIKE, "Like"));
-        ENTRIES.put(RelationalOperator.LT, new AuditlogOperator(RelationalOperator.LT, "Lesser than"));
-        ENTRIES.put(RelationalOperator.NEQ, new AuditlogOperator(RelationalOperator.NEQ, "Not equals"));
-        ENTRIES.put(RelationalOperator.NOTNULL, new AuditlogOperator(RelationalOperator.NOTNULL, "Is not null"));
-        ENTRIES.put(RelationalOperator.NULL, new AuditlogOperator(RelationalOperator.NULL, "Is null"));
+        ENTRIES.put(RelationalOperator.BETWEEN, new QueryOperator(RelationalOperator.BETWEEN, "Between"));
+        ENTRIES.put(RelationalOperator.EQ, new QueryOperator(RelationalOperator.EQ, "Equals"));
+        ENTRIES.put(RelationalOperator.GE, new QueryOperator(RelationalOperator.GE, "Greater or equals"));
+        ENTRIES.put(RelationalOperator.GT, new QueryOperator(RelationalOperator.GT, "Greater than"));
+        ENTRIES.put(RelationalOperator.LE, new QueryOperator(RelationalOperator.LE, "Lesser or equals"));
+        ENTRIES.put(RelationalOperator.LIKE, new QueryOperator(RelationalOperator.LIKE, "Like"));
+        ENTRIES.put(RelationalOperator.LT, new QueryOperator(RelationalOperator.LT, "Lesser than"));
+        ENTRIES.put(RelationalOperator.NEQ, new QueryOperator(RelationalOperator.NEQ, "Not equals"));
+        ENTRIES.put(RelationalOperator.NOTNULL, new QueryOperator(RelationalOperator.NOTNULL, "Is not null"));
+        ENTRIES.put(RelationalOperator.NULL, new QueryOperator(RelationalOperator.NULL, "Is null"));
     }
     
     private RelationalOperator operator;
     private String description;
     
-    public static AuditlogOperator fromEnum(RelationalOperator op) {
+    public static QueryOperator fromEnum(RelationalOperator op) {
         return ENTRIES.get(op);
     }
     
-    public AuditlogOperator(RelationalOperator operator, String description) {
+    public QueryOperator(RelationalOperator operator, String description) {
         this.operator = operator;
         this.description = description;
     }
@@ -66,8 +66,8 @@ public class AuditlogOperator {
         return description + " (" + operator + ")";
     }
 
-    public static AuditlogOperator[] getColumns() {
-        return ENTRIES.values().toArray(new AuditlogOperator[0]);
+    public static QueryOperator[] getColumns() {
+        return ENTRIES.values().toArray(new QueryOperator[0]);
     }
     
 }

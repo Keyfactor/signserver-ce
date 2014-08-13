@@ -54,7 +54,7 @@ public class ConditionsTableModel extends AbstractTableModel {
         final QueryCondition row = entries.get(rowIndex);
         switch (columnIndex) {
             case 0: result = AuditlogColumn.getDescription(row.getColumn()) + " (" + entries.get(rowIndex).getColumn() + ")"; break;
-            case 1: result = AuditlogOperator.fromEnum(row.getOperator()); break;
+            case 1: result = QueryOperator.fromEnum(row.getOperator()); break;
             case 2: {
                 result = row.getValue();
                 if (AuditRecordData.FIELD_TIMESTAMP.equals(row.getColumn()) && result instanceof String) {

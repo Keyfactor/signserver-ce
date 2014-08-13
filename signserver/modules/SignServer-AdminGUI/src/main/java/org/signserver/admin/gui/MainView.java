@@ -1546,6 +1546,11 @@ public class MainView extends FrameView {
 
         jButtonArchiveAuditConditionAdd.setText(resourceMap.getString("jButtonArchiveAuditConditionAdd.text")); // NOI18N
         jButtonArchiveAuditConditionAdd.setName("jButtonArchiveAuditConditionAdd"); // NOI18N
+        jButtonArchiveAuditConditionAdd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonArchiveConditionAddActionPerformed(evt);
+            }
+        });
 
         jButtonArchiveAuditConditionRemove.setText(resourceMap.getString("jButtonArchiveAuditConditionRemove.text")); // NOI18N
         jButtonArchiveAuditConditionRemove.setEnabled(false);
@@ -1751,12 +1756,12 @@ public class MainView extends FrameView {
                     .addComponent(archiveReloadButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                         .addComponent(archiveFirstButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(archiveStartIndexTextfield)
+                        .addComponent(archiveMaxEntriesTextfield)
                         .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel12)
-                            .addComponent(archiveStartIndexTextfield)
                             .addComponent(archiveDisplayingToIndex)
-                            .addComponent(jLabel13)
-                            .addComponent(archiveMaxEntriesTextfield))
+                            .addComponent(jLabel13))
                         .addComponent(archivePreviousButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap(457, Short.MAX_VALUE))
             .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1772,7 +1777,6 @@ public class MainView extends FrameView {
         archivePanel.setLayout(archivePanelLayout);
         archivePanelLayout.setHorizontalGroup(
             archivePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1246, Short.MAX_VALUE)
             .addGroup(archivePanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jSplitPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 1222, Short.MAX_VALUE)
@@ -1780,7 +1784,6 @@ public class MainView extends FrameView {
         );
         archivePanelLayout.setVerticalGroup(
             archivePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 654, Short.MAX_VALUE)
             .addGroup(archivePanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jSplitPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 630, Short.MAX_VALUE)
@@ -2370,6 +2373,10 @@ private void addWorkerItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN
     private void archiveLogTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_archiveLogTableKeyReleased
         // TODO add your handling code here:
     }//GEN-LAST:event_archiveLogTableKeyReleased
+
+    private void jButtonArchiveConditionAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonArchiveConditionAddActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButtonArchiveConditionAddActionPerformed
 
 private void displayLogEntryAction() {
     final int sel = auditLogTable.getSelectedRow();

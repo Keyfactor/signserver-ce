@@ -1600,7 +1600,6 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <EmptySpace min="0" pref="1246" max="32767" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jSplitPane3" pref="1222" max="32767" attributes="0"/>
@@ -1610,7 +1609,6 @@
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <EmptySpace min="0" pref="654" max="32767" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jSplitPane3" pref="630" max="32767" attributes="0"/>
@@ -1738,6 +1736,9 @@
                         <Property name="text" type="java.lang.String" resourceKey="jButtonArchiveAuditConditionAdd.text"/>
                         <Property name="name" type="java.lang.String" value="jButtonArchiveAuditConditionAdd" noResource="true"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonArchiveConditionAddActionPerformed"/>
+                      </Events>
                     </Component>
                     <Component class="javax.swing.JButton" name="jButtonArchiveAuditConditionRemove">
                       <Properties>
@@ -1800,12 +1801,12 @@
                                   <Component id="archiveReloadButton" alignment="0" max="32767" attributes="1"/>
                                   <Group type="103" alignment="0" groupAlignment="0" max="-2" attributes="0">
                                       <Component id="archiveFirstButton" alignment="0" max="32767" attributes="1"/>
-                                      <Group type="103" alignment="0" groupAlignment="3" attributes="0">
+                                      <Component id="archiveStartIndexTextfield" alignment="0" max="32767" attributes="1"/>
+                                      <Component id="archiveMaxEntriesTextfield" alignment="0" max="32767" attributes="1"/>
+                                      <Group type="103" groupAlignment="3" attributes="0">
                                           <Component id="jLabel12" alignment="3" min="-2" max="-2" attributes="0"/>
-                                          <Component id="archiveStartIndexTextfield" alignment="0" max="32767" attributes="1"/>
                                           <Component id="archiveDisplayingToIndex" alignment="3" min="-2" max="-2" attributes="0"/>
                                           <Component id="jLabel13" alignment="3" min="-2" max="-2" attributes="0"/>
-                                          <Component id="archiveMaxEntriesTextfield" alignment="0" max="32767" attributes="1"/>
                                       </Group>
                                       <Component id="archivePreviousButton" alignment="0" max="32767" attributes="1"/>
                                   </Group>

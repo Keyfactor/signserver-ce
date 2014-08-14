@@ -110,7 +110,7 @@ public class MainView extends FrameView {
     private List<Integer> modifiedWorkers = null;
     
     private AuditlogTableModel auditlogModel = new AuditlogTableModel();
-    private ConditionsTableModel conditionsModel = new ConditionsTableModel();
+    private ConditionsTableModel conditionsModel = new AuditlogConditionsTableModel();
     
     private WorkerPropertyEditor workerPropertyEditor =
             new WorkerPropertyEditor();

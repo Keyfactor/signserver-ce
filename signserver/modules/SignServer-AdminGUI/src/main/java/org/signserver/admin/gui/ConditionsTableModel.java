@@ -23,13 +23,15 @@ import org.signserver.admin.gui.adminws.gen.QueryCondition;
 import org.signserver.admin.gui.adminws.gen.RelationalOperator;
 
 /**
- * Table Model for the query conditions.
+ * Abstract Table Model for the query conditions.
+ * Concrete implementations will implement the getColumnFromName method to
+ * lookup enum values from text representation.
  *
  * @author Markus Kilås
  * @version $Id$
  */
-public class ConditionsTableModel extends AbstractTableModel {
-    
+public abstract class ConditionsTableModel extends AbstractTableModel {
+
     private static final String[] COLUMNS = new String [] {
                 "Column", "Condition", "Value"
             };
@@ -37,7 +39,7 @@ public class ConditionsTableModel extends AbstractTableModel {
     private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ");
     
     private List<QueryCondition> entries = new ArrayList<QueryCondition>();
-
+   
     @Override
     public int getRowCount() {
         return entries.size();
@@ -52,12 +54,17 @@ public class ConditionsTableModel extends AbstractTableModel {
     public Object getValueAt(int rowIndex, int columnIndex) {
         Object result;
         final QueryCondition row = entries.get(rowIndex);
+        final QueryColumn col = getColumnFromName(row.getColumn());
         switch (columnIndex) {
-            case 0: result = AuditlogColumn.getDescription(row.getColumn()) + " (" + entries.get(rowIndex).getColumn() + ")"; break;
-            case 1: result = QueryOperator.fromEnum(row.getOperator()); break;
+            case 0:
+                result = col.getDescription() + " (" + entries.get(rowIndex).getColumn() + ")";
+                break;
+            case 1:
+                result = QueryOperator.fromEnum(row.getOperator());
+                break;
             case 2: {
                 result = row.getValue();
-                if (AuditRecordData.FIELD_TIMESTAMP.equals(row.getColumn()) && result instanceof String) {
+                if (col.getType() == QueryColumn.Type.TIME && result instanceof String) {
                     try {
                         final long time = Long.parseLong((String) result);
                         result = sdf.format(new Date(time)) + " (" + time + ")";
@@ -69,6 +76,15 @@ public class ConditionsTableModel extends AbstractTableModel {
         return result;
     }
 
+    /**
+     * Find the QueryColumn instance corresponding to the given text
+     * as shown in the criteria combobox, this will be the DB column name.
+     * 
+     * @param name Column name
+     * @return Query column corresponding to name
+     */
+    protected abstract QueryColumn getColumnFromName(final String name);
+    
     @Override
     public String getColumnName(int column) {
         return COLUMNS[column];

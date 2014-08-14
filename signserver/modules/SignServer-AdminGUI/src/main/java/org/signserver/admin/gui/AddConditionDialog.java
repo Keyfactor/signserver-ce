@@ -34,6 +34,7 @@ import org.signserver.admin.gui.adminws.gen.RelationalOperator;
 public class AddConditionDialog extends javax.swing.JDialog {
 
     // TODO: Sort of Duplicated in AuditlogTableModel and other places?
+    /*
     private static final AuditlogColumn[] COLUMNS =  {
         new AuditlogColumn(AuditRecordData.FIELD_ADDITIONAL_DETAILS, "Details"),
         new AuditlogColumn(AuditRecordData.FIELD_AUTHENTICATION_TOKEN, "Admin Subject"),
@@ -48,12 +49,18 @@ public class AddConditionDialog extends javax.swing.JDialog {
         new AuditlogColumn(AuditRecordData.FIELD_SEQUENCENUMBER, "Sequence Number"),
         new AuditlogColumn(AuditRecordData.FIELD_TIMESTAMP, "Time")
     };
+     */
+    
+    // TODO: this should be overridable to enable dynamically changing the dialog
+    private static final Object[] COLUMNS = AuditlogColumn.values();
     
     /** Relational operator used by each column. */
+    /*
     private static final HashMap<String, QueryOperator[]> OPERATORS = new HashMap<String, QueryOperator[]>();
-    
+     */
+
     /** Available values by each column. */
-    private static final HashMap<String, List<String>> VALUES = new HashMap<String, List<String>>();
+    //private static final HashMap<String, List<String>> VALUES = new HashMap<String, List<String>>();
     
     /** Relational operators useful for text values. */
     private static final QueryOperator[] TEXT_OPERATORS = {
@@ -83,14 +90,15 @@ public class AddConditionDialog extends javax.swing.JDialog {
     };
     
     /** Available values for event status. */
-    private static final List<String> STATUS_VALUES; 
+    //private static final List<String> STATUS_VALUES; 
     
     /** Available values for time. */
-    private static final List<String> TIME_VALUES;
+    //private static final List<String> TIME_VALUES;
     
     private static final SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ");
     
     static {
+        /*
         OPERATORS.put(AuditRecordData.FIELD_ADDITIONAL_DETAILS, TEXT_OPERATORS);
         OPERATORS.put(AuditRecordData.FIELD_AUTHENTICATION_TOKEN, TEXT_OPERATORS);
         OPERATORS.put(AuditRecordData.FIELD_CUSTOM_ID, TEXT_OPERATORS);
@@ -103,7 +111,9 @@ public class AddConditionDialog extends javax.swing.JDialog {
         OPERATORS.put(AuditRecordData.FIELD_SERVICE, TEXT_OPERATORS);
         OPERATORS.put(AuditRecordData.FIELD_SEQUENCENUMBER, NUMBER_OPERATORS);
         OPERATORS.put(AuditRecordData.FIELD_TIMESTAMP, NUMBER_OPERATORS);
-                
+         */
+
+        /*
         STATUS_VALUES = new ArrayList<String>();
         for (EventStatus st : EventStatus.values()) {
             STATUS_VALUES.add(st.name());
@@ -115,10 +125,11 @@ public class AddConditionDialog extends javax.swing.JDialog {
         TIME_VALUES.add(SDF.format(new Date(time)));
         TIME_VALUES.add(String.valueOf(time));
         VALUES.put(AuditRecordData.FIELD_TIMESTAMP, TIME_VALUES);
+        */
     }
     
     private boolean okPressed;
-    private AuditlogColumn column;
+    private QueryColumn column;
     private QueryOperator condition;
     private String value;
     
@@ -245,7 +256,7 @@ public class AddConditionDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
 private void jButtonOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonOkActionPerformed
-    column = (AuditlogColumn) columnCombobox.getSelectedItem();
+    column = (QueryColumn) columnCombobox.getSelectedItem();
     condition = (QueryOperator) conditionCombobox.getSelectedItem();
     
     if (RelationalOperator.NOTNULL.equals(condition.getOperator())
@@ -253,7 +264,7 @@ private void jButtonOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
         value = null;
     } else {
         value = (String) valueCombobox.getSelectedItem();
-        if (AuditRecordData.FIELD_TIMESTAMP.equals(column.getName())) {    
+        if (column.getType() == QueryColumn.Type.TIME) {    
             final Long time = getTimeValue(value);
             if (time == null) {
                 JOptionPane.showMessageDialog(this, "Incorrect value", "Add condition", JOptionPane.ERROR_MESSAGE);
@@ -273,24 +284,37 @@ private void jButtonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN
 }//GEN-LAST:event_jButtonCancelActionPerformed
 
 private void columnComboboxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_columnComboboxItemStateChanged
-    final AuditlogColumn col = (AuditlogColumn) columnCombobox.getSelectedItem();
+    final QueryColumn col = (QueryColumn) columnCombobox.getSelectedItem();
     if (col != null) {
-        conditionCombobox.setModel(new DefaultComboBoxModel(OPERATORS.get(col.getName())));
-        final List<String> values = VALUES.get(col.getName());
-        if (values == null) {
-            valueCombobox.setModel(new DefaultComboBoxModel());
+        conditionCombobox.setModel(new DefaultComboBoxModel(getOperatorsForColumn(col)));
+        
+        if (col.getType() == QueryColumn.Type.TYPE) {
+            valueCombobox.setModel(new DefaultComboBoxModel(col.getTypeValues().toArray()));
         } else {
-            valueCombobox.setModel(new DefaultComboBoxModel(values.toArray()));
+            valueCombobox.setModel(new DefaultComboBoxModel());
         }
     }
 }//GEN-LAST:event_columnComboboxItemStateChanged
 
+    private QueryOperator[] getOperatorsForColumn(final QueryColumn column) {
+        switch (column.getType()) {
+            case TEXT:
+                return TEXT_OPERATORS;
+            case NUMBER:
+            case TIME:
+                return NUMBER_OPERATORS;
+            case TYPE:
+                return TYPE_OPERATORS;
+            default:
+                throw new IllegalArgumentException("Unknown column type");
+        }
+    }
 
     public boolean isOkPressed() {
         return okPressed;
     }
 
-    public AuditlogColumn getColumn() {
+    public QueryColumn getColumn() {
         return column;
     }
 

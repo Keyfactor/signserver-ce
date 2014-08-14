@@ -14,7 +14,6 @@ package org.signserver.admin.gui;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import org.cesecore.audit.enums.EventStatus;
 import org.cesecore.audit.impl.integrityprotected.AuditRecordData;

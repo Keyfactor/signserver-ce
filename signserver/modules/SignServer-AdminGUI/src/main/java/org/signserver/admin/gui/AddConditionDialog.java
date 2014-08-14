@@ -14,15 +14,10 @@ package org.signserver.admin.gui;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
-import org.cesecore.audit.impl.integrityprotected.AuditRecordData;
 import org.cesecore.util.ValidityDate;
-import org.signserver.admin.gui.adminws.gen.EventStatus;
 import org.signserver.admin.gui.adminws.gen.RelationalOperator;
 
 /**

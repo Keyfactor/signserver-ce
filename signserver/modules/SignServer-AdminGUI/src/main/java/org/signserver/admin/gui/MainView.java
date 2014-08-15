@@ -2375,7 +2375,11 @@ private void addWorkerItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN
     }//GEN-LAST:event_archiveLogTableKeyReleased
 
     private void jButtonArchiveConditionAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonArchiveConditionAddActionPerformed
-        // TODO add your handling code here:
+        AddConditionDialog dlg = new ArchiveAddConditionDialog(getFrame(), true);
+        dlg.setVisible(true);
+        if (dlg.isOkPressed()) {
+            conditionsModel.addCondition(dlg.getColumn().getName(), dlg.getCondition().getOperator(), dlg.getValue());
+        }
     }//GEN-LAST:event_jButtonArchiveConditionAddActionPerformed
 
 private void displayLogEntryAction() {

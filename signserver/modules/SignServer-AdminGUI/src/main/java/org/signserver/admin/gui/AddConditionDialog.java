@@ -26,13 +26,8 @@ import org.signserver.admin.gui.adminws.gen.RelationalOperator;
  * @author Markus Kilås
  * @version $Id$
  */
-public class AddConditionDialog extends javax.swing.JDialog {
-
-    
-    
-    // TODO: this should be overridable to enable dynamically changing the dialog
-    private static final Object[] COLUMNS = AuditlogColumn.values();
-    
+public abstract class AddConditionDialog extends javax.swing.JDialog {
+ 
     /** Relational operators useful for text values. */
     private static final QueryOperator[] TEXT_OPERATORS = {
         QueryOperator.fromEnum(RelationalOperator.EQ),
@@ -68,10 +63,11 @@ public class AddConditionDialog extends javax.swing.JDialog {
     private String value;
     
     /** Creates new form EditConditionDialog */
-    public AddConditionDialog(java.awt.Frame parent, boolean modal) {
+    public AddConditionDialog(final QueryColumn[] queryColumns, 
+            java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-        columnCombobox.setModel(new DefaultComboBoxModel(COLUMNS));
+        columnCombobox.setModel(new DefaultComboBoxModel(queryColumns));
         columnComboboxItemStateChanged(null);
         getRootPane().setDefaultButton(jButtonOk);
     }

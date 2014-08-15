@@ -2290,7 +2290,7 @@ private void auditlogFirstButtonActionPerformed(java.awt.event.ActionEvent evt) 
 }//GEN-LAST:event_auditlogFirstButtonActionPerformed
 
 private void jButtonAuditConditionAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAuditConditionAddActionPerformed
-    AddConditionDialog dlg = new AddConditionDialog(getFrame(), true);
+    AddConditionDialog dlg = new AuditlogAddConditionDialog(getFrame(), true);
     dlg.setVisible(true);
     if (dlg.isOkPressed()) {
         conditionsModel.addCondition(dlg.getColumn().getName(), dlg.getCondition().getOperator(), dlg.getValue());

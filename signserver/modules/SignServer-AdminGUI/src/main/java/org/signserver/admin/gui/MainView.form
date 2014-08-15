@@ -1652,7 +1652,7 @@
                               </Group>
                               <EmptySpace min="-2" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                  <Component id="jButtonArchiveAuditConditionRemove" alignment="0" max="32767" attributes="1"/>
+                                  <Component id="jButtonArchiveConditionRemove" alignment="0" max="32767" attributes="1"/>
                                   <Component id="jButtonArchiveAuditConditionAdd" alignment="0" pref="114" max="32767" attributes="1"/>
                               </Group>
                               <EmptySpace min="-2" pref="321" max="-2" attributes="0"/>
@@ -1668,7 +1668,7 @@
                                   <Group type="102" alignment="0" attributes="0">
                                       <Component id="jButtonArchiveAuditConditionAdd" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="jButtonArchiveAuditConditionRemove" min="-2" max="-2" attributes="0"/>
+                                      <Component id="jButtonArchiveConditionRemove" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <Component id="jScrollPane4" alignment="0" pref="87" max="32767" attributes="0"/>
                               </Group>
@@ -1740,11 +1740,11 @@
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonArchiveConditionAddActionPerformed"/>
                       </Events>
                     </Component>
-                    <Component class="javax.swing.JButton" name="jButtonArchiveAuditConditionRemove">
+                    <Component class="javax.swing.JButton" name="jButtonArchiveConditionRemove">
                       <Properties>
-                        <Property name="text" type="java.lang.String" resourceKey="jButtonArchiveAuditConditionRemove.text"/>
+                        <Property name="text" type="java.lang.String" resourceKey="jButtonArchiveConditionRemove.text"/>
                         <Property name="enabled" type="boolean" value="false"/>
-                        <Property name="name" type="java.lang.String" value="jButtonArchiveAuditConditionRemove" noResource="true"/>
+                        <Property name="name" type="java.lang.String" value="jButtonArchiveConditionRemove" noResource="true"/>
                       </Properties>
                     </Component>
                   </SubComponents>

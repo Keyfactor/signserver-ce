@@ -110,7 +110,8 @@ public class MainView extends FrameView {
     private List<Integer> modifiedWorkers = null;
     
     private AuditlogTableModel auditlogModel = new AuditlogTableModel();
-    private ConditionsTableModel conditionsModel = new AuditlogConditionsTableModel();
+    private ConditionsTableModel auditlogConditionsModel = new AuditlogConditionsTableModel();
+    private ConditionsTableModel archiveConditionsModel = new ArchiveConditionsTableModel();
     
     private WorkerPropertyEditor workerPropertyEditor =
             new WorkerPropertyEditor();
@@ -138,9 +139,9 @@ public class MainView extends FrameView {
 
         statusSummaryTextPane.setContentType("text/html");
 
-        conditionsModel.addCondition(AuditRecordData.FIELD_EVENTTYPE, RelationalOperator.NEQ, "ACCESS_CONTROL");
+        auditlogConditionsModel.addCondition(AuditRecordData.FIELD_EVENTTYPE, RelationalOperator.NEQ, "ACCESS_CONTROL");
         auditLogTable.setModel(auditlogModel);
-        conditionsTable.setModel(conditionsModel);
+        conditionsTable.setModel(auditlogConditionsModel);
         conditionsTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 
             @Override
@@ -152,6 +153,17 @@ public class MainView extends FrameView {
         });
         jTabbedPane1.setSelectedComponent(mainPanel);
 
+        archiveConditionsTable.setModel(archiveConditionsModel);
+        archiveConditionsTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    jButtonArchiveConditionRemove.setEnabled(archiveConditionsTable.getSelectedRowCount() > 0);
+                }
+            }
+        });
+        
         workersList.setCellRenderer(new MyListCellRenderer());
 
         workersList.getSelectionModel().addListSelectionListener(
@@ -464,7 +476,7 @@ public class MainView extends FrameView {
         jScrollPane4 = new javax.swing.JScrollPane();
         archiveConditionsTable = new javax.swing.JTable();
         jButtonArchiveAuditConditionAdd = new javax.swing.JButton();
-        jButtonArchiveAuditConditionRemove = new javax.swing.JButton();
+        jButtonArchiveConditionRemove = new javax.swing.JButton();
         jPanel5 = new javax.swing.JPanel();
         archiveFirstButton = new javax.swing.JButton();
         archivePreviousButton = new javax.swing.JButton();
@@ -1552,9 +1564,9 @@ public class MainView extends FrameView {
             }
         });
 
-        jButtonArchiveAuditConditionRemove.setText(resourceMap.getString("jButtonArchiveAuditConditionRemove.text")); // NOI18N
-        jButtonArchiveAuditConditionRemove.setEnabled(false);
-        jButtonArchiveAuditConditionRemove.setName("jButtonArchiveAuditConditionRemove"); // NOI18N
+        jButtonArchiveConditionRemove.setText(resourceMap.getString("jButtonArchiveConditionRemove.text")); // NOI18N
+        jButtonArchiveConditionRemove.setEnabled(false);
+        jButtonArchiveConditionRemove.setName("jButtonArchiveConditionRemove"); // NOI18N
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -1566,7 +1578,7 @@ public class MainView extends FrameView {
                     .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 775, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButtonArchiveAuditConditionRemove, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButtonArchiveConditionRemove, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jButtonArchiveAuditConditionAdd, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE))
                 .addGap(321, 321, 321))
         );
@@ -1579,7 +1591,7 @@ public class MainView extends FrameView {
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addComponent(jButtonArchiveAuditConditionAdd)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButtonArchiveAuditConditionRemove))
+                        .addComponent(jButtonArchiveConditionRemove))
                     .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 87, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -2293,14 +2305,14 @@ private void jButtonAuditConditionAddActionPerformed(java.awt.event.ActionEvent 
     AddConditionDialog dlg = new AuditlogAddConditionDialog(getFrame(), true);
     dlg.setVisible(true);
     if (dlg.isOkPressed()) {
-        conditionsModel.addCondition(dlg.getColumn().getName(), dlg.getCondition().getOperator(), dlg.getValue());
+        auditlogConditionsModel.addCondition(dlg.getColumn().getName(), dlg.getCondition().getOperator(), dlg.getValue());
     }
 }//GEN-LAST:event_jButtonAuditConditionAddActionPerformed
 
 private void jButtonAuditConditionRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAuditConditionRemoveActionPerformed
     int selected = conditionsTable.getSelectedRow();
     if (selected > -1) {
-        conditionsModel.removeCondition(selected);
+        auditlogConditionsModel.removeCondition(selected);
     }
 }//GEN-LAST:event_jButtonAuditConditionRemoveActionPerformed
 
@@ -2378,7 +2390,7 @@ private void addWorkerItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN
         AddConditionDialog dlg = new ArchiveAddConditionDialog(getFrame(), true);
         dlg.setVisible(true);
         if (dlg.isOkPressed()) {
-            conditionsModel.addCondition(dlg.getColumn().getName(), dlg.getCondition().getOperator(), dlg.getValue());
+            archiveConditionsModel.addCondition(dlg.getColumn().getName(), dlg.getCondition().getOperator(), dlg.getValue());
         }
     }//GEN-LAST:event_jButtonArchiveConditionAddActionPerformed
 
@@ -3101,7 +3113,8 @@ private void displayLogEntryAction() {
                 // Your Task's code here.  This method runs
                 // on a background thread, so don't reference
                 // the Swing GUI from here.
-                final ArrayList<QueryCondition> conditions = new ArrayList<QueryCondition>(conditionsModel.getEntries());
+                final ArrayList<QueryCondition> conditions =
+                        new ArrayList<QueryCondition>(auditlogConditionsModel.getEntries());
                 final QueryOrdering order = new QueryOrdering();
                 order.setColumn(AuditRecordData.FIELD_TIMESTAMP);
                 order.setOrder(Order.DESC);
@@ -3607,7 +3620,7 @@ private Properties toProperties(WsGlobalConfiguration wsgc) {
     javax.swing.JButton installCertificatesButton;
     javax.swing.JMenuItem installCertificatesMenu;
     javax.swing.JButton jButtonArchiveAuditConditionAdd;
-    javax.swing.JButton jButtonArchiveAuditConditionRemove;
+    javax.swing.JButton jButtonArchiveConditionRemove;
     javax.swing.JButton jButtonAuditConditionAdd;
     javax.swing.JButton jButtonAuditConditionRemove;
     javax.swing.JEditorPane jEditorPane1;

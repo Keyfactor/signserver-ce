@@ -100,6 +100,7 @@ public abstract class ConditionsTableModel extends AbstractTableModel {
         QueryCondition qc = new QueryCondition();
         qc.setColumn(column);
         qc.setOperator(operator);
+        //TODO: make sure enumerated columns (i.e. auditlog EventStatus) actually works...
         qc.setValue(value);
         entries.add(qc);
         fireTableRowsInserted(entries.size() - 1, entries.size() - 1);

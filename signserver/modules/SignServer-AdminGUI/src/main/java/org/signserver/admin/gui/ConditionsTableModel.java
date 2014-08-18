@@ -18,7 +18,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
-import org.cesecore.audit.impl.integrityprotected.AuditRecordData;
 import org.signserver.admin.gui.adminws.gen.QueryCondition;
 import org.signserver.admin.gui.adminws.gen.RelationalOperator;
 

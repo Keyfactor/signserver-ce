@@ -22,7 +22,6 @@ import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.ejbca.util.CertTools;
-import org.ejbca.util.CertTools;
 import org.signserver.admin.cli.defaultimpl.AbstractAdminCommand.ClientEntry;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;

@@ -1854,7 +1854,7 @@
                     <Component class="javax.swing.JButton" name="archiveReloadButton">
                       <Properties>
                         <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
-                          <action class="org.signserver.admin.gui.MainView" id="auditlogReload" methodName="auditlogReload"/>
+                          <action class="org.signserver.admin.gui.MainView" id="archiveReload" methodName="archiveReload"/>
                         </Property>
                         <Property name="text" type="java.lang.String" resourceKey="archiveReloadButton.text"/>
                         <Property name="horizontalTextPosition" type="int" value="0"/>

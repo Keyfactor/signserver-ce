@@ -66,6 +66,7 @@ import org.jdesktop.application.SingleFrameApplication;
 import org.jdesktop.application.Task;
 import org.jdesktop.application.TaskMonitor;
 import org.signserver.admin.gui.adminws.gen.AdminNotAuthorizedException_Exception;
+import org.signserver.admin.gui.adminws.gen.ArchiveEntry;
 import org.signserver.admin.gui.adminws.gen.AuthorizedClient;
 import org.signserver.admin.gui.adminws.gen.CryptoTokenAuthenticationFailureException_Exception;
 import org.signserver.admin.gui.adminws.gen.CryptoTokenOfflineException_Exception;
@@ -1627,7 +1628,7 @@ public class MainView extends FrameView {
             }
         });
 
-        archiveReloadButton.setAction(actionMap.get("auditlogReload")); // NOI18N
+        archiveReloadButton.setAction(actionMap.get("archiveReload")); // NOI18N
         archiveReloadButton.setText(resourceMap.getString("archiveReloadButton.text")); // NOI18N
         archiveReloadButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         archiveReloadButton.setName("archiveReloadButton"); // NOI18N
@@ -3168,6 +3169,33 @@ private void displayLogEntryAction() {
                 auditlogErrorEditor.setText(new StringBuilder().append("Reload failed within the selected interval:\n\n").append(exception.getMessage()).toString());
             }
         }
+    }
+    
+    @Action(block = Task.BlockingScope.COMPONENT)
+    public Task archiveReload() {
+        return new ArchiveReloadTask(getApplication());
+    }
+    
+    private class ArchiveReloadTask extends org.jdesktop.application.Task<List<ArchiveEntry>, Void> {
+
+        private int startIndex;
+        private int maxEntries;
+        
+        ArchiveReloadTask(org.jdesktop.application.Application app) {
+            // Runs on the EDT.  Copy GUI state that
+            // doInBackground() depends on from parameters
+            // to AuditlogReloadTask fields, here.
+            super(app);
+            
+            startIndex = Integer.parseInt(auditlogStartIndexTextfield.getText()) - 1;
+            maxEntries = Integer.parseInt(auditlogMaxEntriesTextfield.getText());
+        }
+        
+        @Override
+        protected List<ArchiveEntry> doInBackground() throws Exception {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
     }
 
     @Action(block = Task.BlockingScope.WINDOW)

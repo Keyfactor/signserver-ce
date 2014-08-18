@@ -51,6 +51,8 @@
    <xs:element name='globalResyncResponse' type='tns:globalResyncResponse'/>
    <xs:element name='process' type='tns:process'/>
    <xs:element name='processResponse' type='tns:processResponse'/>
+   <xs:element name="queryArchive" type="tns:queryArchive"/>
+   <xs:element name="queryArchiveResponse" type="tns:queryArchiveResponse"/>
    <xs:element name='queryAuditLog' type='tns:queryAuditLog'/>
    <xs:element name='queryAuditLogResponse' type='tns:queryAuditLogResponse'/>
    <xs:element name='reloadConfiguration' type='tns:reloadConfiguration'/>
@@ -475,6 +477,30 @@
      <xs:element name='return' type='xs:boolean'/>
     </xs:sequence>
    </xs:complexType>
+   <xs:complexType name="queryArchive">
+    <xs:sequence>
+        <xs:element name="startIndex" type="xs:int"/>
+        <xs:element name="max" type="xs:int"/>
+        <xs:element maxOccurs="unbounded" minOccurs="0" name="condition" type="tns:queryCondition"/>
+        <xs:element maxOccurs="unbounded" minOccurs="0" name="ordering" type="tns:queryOrdering"/>
+    </xs:sequence>
+   </xs:complexType>
+    <xs:complexType name="queryArchiveResponse">
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="return" type="tns:archiveEntry"/>
+        </xs:sequence>
+    </xs:complexType>
+   <xs:complexType name="archiveEntry">
+    <xs:sequence>
+        <xs:element minOccurs="0" name="archiveId" type="xs:string"/>
+        <xs:element minOccurs="0" name="requestCertSerialNumber" type="xs:string"/>
+        <xs:element minOccurs="0" name="requestIP" type="xs:string"/>
+        <xs:element minOccurs="0" name="requestIssuerDN" type="xs:string"/>
+        <xs:element minOccurs="0" name="signerId" type="xs:int"/>
+        <xs:element minOccurs="0" name="time" type="xs:long"/>
+        <xs:element minOccurs="0" name="type" type="xs:int"/>
+    </xs:sequence>
+   </xs:complexType>
    <xs:complexType name='getGlobalConfiguration'>
     <xs:sequence/>
    </xs:complexType>
@@ -833,6 +859,13 @@
  <message name='CryptoTokenAuthenticationFailureException'>
   <part element='tns:CryptoTokenAuthenticationFailureException' name='CryptoTokenAuthenticationFailureException'></part>
  </message>
+ <message name="AdminWS_queryArchiveResponse">
+    <part element="tns:queryArchiveResponse" name="parameters"/>
+  </message>
+  <message name="AdminWS_queryArchive">
+    <part element="tns:queryArchive" name="parameters"/>
+  </message>
+ 
  <portType name='AdminWS'>
   <operation name='activateSigner' parameterOrder='activateSigner'>
    <input message='tns:AdminWS_activateSigner'></input>
@@ -1027,6 +1060,13 @@
    <fault message='tns:IllegalRequestException' name='IllegalRequestException'></fault>
    <fault message='tns:AdminNotAuthorizedException' name='AdminNotAuthorizedException'></fault>
   </operation>
+  <operation name="queryArchive">
+      <input message="tns:AdminWS_queryArchive" name="queryArchive"/>
+      <output message="tns:AdminWS_queryArchiveResponse" name="queryArchiveResponse"/>
+      <fault message="tns:AdminNotAuthorizedException" name="AdminNotAuthorizedException"/>
+      <fault message="tns:SignServerException" name="SignServerException"/>
+  </operation>
+  
  </portType>
  <binding name='AdminWSBinding' type='tns:AdminWS'>
   <soap:binding style='document' transport='http://schemas.xmlsoap.org/soap/http'/>
@@ -1376,6 +1416,21 @@
    </fault>
   </operation>
   <operation name='queryAuditLog'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+   <fault name='AdminNotAuthorizedException'>
+    <soap:fault name='AdminNotAuthorizedException' use='literal'/>
+   </fault>
+   <fault name='SignServerException'>
+    <soap:fault name='SignServerException' use='literal'/>
+   </fault>
+  </operation>
+  <operation name='queryArchive'>
    <soap:operation soapAction=''/>
    <input>
     <soap:body use='literal'/>

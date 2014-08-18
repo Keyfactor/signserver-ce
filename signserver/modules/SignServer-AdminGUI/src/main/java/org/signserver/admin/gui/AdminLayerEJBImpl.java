@@ -46,6 +46,7 @@ import org.cesecore.util.query.elems.Term;
 import org.signserver.admin.gui.adminws.gen.AdminNotAuthorizedException;
 import org.signserver.admin.gui.adminws.gen.AdminNotAuthorizedException_Exception;
 import org.signserver.admin.gui.adminws.gen.AdminWS;
+import org.signserver.admin.gui.adminws.gen.ArchiveEntry;
 import org.signserver.admin.gui.adminws.gen.AuthorizedClient;
 import org.signserver.admin.gui.adminws.gen.Base64SignerCertReqData;
 import org.signserver.admin.gui.adminws.gen.CryptoTokenAuthenticationFailureException_Exception;
@@ -65,6 +66,7 @@ import org.signserver.admin.gui.adminws.gen.SignServerException_Exception;
 import org.signserver.admin.gui.adminws.gen.WsGlobalConfiguration;
 import org.signserver.admin.gui.adminws.gen.WsWorkerConfig;
 import org.signserver.admin.gui.adminws.gen.WsWorkerStatus;
+import org.signserver.common.ArchiveMetadata;
 import org.signserver.common.CESeCoreModules;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
@@ -1019,4 +1021,47 @@ public class AdminLayerEJBImpl implements AdminWS {
         return result;
     }
 
+    @Override
+    public List<ArchiveEntry> queryArchive(int startIndex, int max, List<QueryCondition> conditions, List<QueryOrdering> ordering) throws AdminNotAuthorizedException_Exception, SignServerException_Exception {
+        final List<Elem> elements = toElements(conditions);
+        final QueryCriteria qc = QueryCriteria.create();
+        
+        for (QueryOrdering order : ordering) {
+            qc.add(new Order(order.getColumn(), Order.Value.valueOf(order.getOrder().name())));
+        }
+        
+        if (!elements.isEmpty()) {
+            qc.add(andAll(elements, 0));
+        }
+        
+        try {
+            return toArchiveEntries(worker.searchArchive(startIndex, max, qc));
+        } catch (AuthorizationDeniedException ex) {
+            throw new AdminNotAuthorizedException_Exception(ex.getMessage(), new AdminNotAuthorizedException());
+        }
+    }
+    
+    private List<ArchiveEntry> toArchiveEntries(final Collection<? extends ArchiveMetadata> entries) {
+        final List<ArchiveEntry> results = new LinkedList<ArchiveEntry>();
+        
+        for (final ArchiveMetadata entry : entries) {
+            results.add(fromArchiveMetadata(entry));
+        }
+        
+        return results;
+    }
+
+    private ArchiveEntry fromArchiveMetadata(final ArchiveMetadata entry) {
+        final ArchiveEntry result = new ArchiveEntry();
+        
+        result.setArchiveId(entry.getArchiveId());
+        result.setRequestCertSerialNumber(entry.getRequestCertSerialNumber());
+        result.setRequestIssuerDN(entry.getRequestIssuerDN());
+        result.setRequestIP(entry.getRequestIP());
+        result.setSignerId(entry.getSignerId());
+        result.setTime(entry.getTime().getTime());
+        result.setType(entry.getType());
+        
+        return result;
+    }
 }

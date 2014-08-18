@@ -13,7 +13,6 @@
 package org.signserver.admin.cli.defaultimpl;
 
 import java.security.cert.X509Certificate;
-import java.util.LinkedList;
 import java.util.List;
 import javax.ejb.EJBException;
 import org.apache.commons.cli.CommandLine;

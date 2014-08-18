@@ -392,7 +392,7 @@ public interface IWorkerSession {
      * @param criteria Search criteria for matching results
      * @return List of metadata objects describing matching entries
      */
-    Collection<ArchiveMetadata> searchArchive(int startIndex, int max, QueryCriteria criteria); 
+    Collection<ArchiveMetadata> searchArchive(int startIndex, int max, QueryCriteria criteria) throws AuthorizationDeniedException; 
     
     /**
      * Help method that returns all worker, either signers or services defined

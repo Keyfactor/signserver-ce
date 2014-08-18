@@ -167,7 +167,6 @@ public class AdministratorsFrame extends javax.swing.JFrame {
         editRoleAdministratorCheckBox = new javax.swing.JCheckBox();
         editRoleAuditorCheckBox = new javax.swing.JCheckBox();
         editRoleArchiveAuditorCheckBox = new javax.swing.JCheckBox();
-        buttonGroup1 = new javax.swing.ButtonGroup();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jScrollPane6 = new javax.swing.JScrollPane();
@@ -717,7 +716,6 @@ public class AdministratorsFrame extends javax.swing.JFrame {
     private javax.swing.JButton addButton;
     private javax.swing.JTable adminsTable;
     private javax.swing.JCheckBox allowAnyCheckbox;
-    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton editButton;
     private javax.swing.JTextField editCertSerialNoTextField;
     private javax.swing.JTextField editIssuerDNTextField;

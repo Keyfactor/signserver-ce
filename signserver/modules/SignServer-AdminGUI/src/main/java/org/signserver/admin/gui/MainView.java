@@ -1567,6 +1567,11 @@ public class MainView extends FrameView {
         jButtonArchiveConditionRemove.setText(resourceMap.getString("jButtonArchiveConditionRemove.text")); // NOI18N
         jButtonArchiveConditionRemove.setEnabled(false);
         jButtonArchiveConditionRemove.setName("jButtonArchiveConditionRemove"); // NOI18N
+        jButtonArchiveConditionRemove.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonArchiveConditionRemoveActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -2393,6 +2398,13 @@ private void addWorkerItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN
             archiveConditionsModel.addCondition(dlg.getColumn().getName(), dlg.getCondition().getOperator(), dlg.getValue());
         }
     }//GEN-LAST:event_jButtonArchiveConditionAddActionPerformed
+
+    private void jButtonArchiveConditionRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonArchiveConditionRemoveActionPerformed
+        int selected = archiveConditionsTable.getSelectedRow();
+        if (selected > -1) {
+            archiveConditionsModel.removeCondition(selected);
+        }
+    }//GEN-LAST:event_jButtonArchiveConditionRemoveActionPerformed
 
 private void displayLogEntryAction() {
     final int sel = auditLogTable.getSelectedRow();

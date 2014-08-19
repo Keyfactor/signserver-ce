@@ -49,7 +49,7 @@ public class QueryArchiveTest extends TestCase {
         final String criteria = "signerid FOO 1";
         
         try {
-            final Term term = QueryArchiveCommand.parseCriteria(criteria);
+            QueryArchiveCommand.parseCriteria(criteria);
             fail("Should throw an IllegalArgumentException");
         } catch (IllegalArgumentException e) {
             // expected
@@ -66,7 +66,7 @@ public class QueryArchiveTest extends TestCase {
         final String criteria = "signerid BETWEEN 1";
         
         try {
-            final Term term = QueryArchiveCommand.parseCriteria(criteria);
+            QueryArchiveCommand.parseCriteria(criteria);
             fail("Should throw an IllegalArgumentException");
         } catch (IllegalArgumentException e) {
             // expected
@@ -108,7 +108,7 @@ public class QueryArchiveTest extends TestCase {
         final String criteria = "signerid EQ foo";
         
         try {
-            final Term term = QueryArchiveCommand.parseCriteria(criteria);
+            QueryArchiveCommand.parseCriteria(criteria);
             fail("Should throw a NumberFormatException");
         } catch (NumberFormatException e) {
             // expected
@@ -121,7 +121,7 @@ public class QueryArchiveTest extends TestCase {
         final String criteria = "signerid EQ";
         
         try {
-            final Term term = QueryArchiveCommand.parseCriteria(criteria);
+            QueryArchiveCommand.parseCriteria(criteria);
             fail("Should throw an IllegalArgumentException");
         } catch (IllegalArgumentException e) {
             // expected
@@ -138,7 +138,7 @@ public class QueryArchiveTest extends TestCase {
         final String criteria = "dummyField EQ 0";
         
         try {
-            final Term term = QueryArchiveCommand.parseCriteria(criteria);
+            QueryArchiveCommand.parseCriteria(criteria);
             fail("Should throw an IllegalArgumentException");
         } catch (IllegalArgumentException e) {
             // expected
@@ -177,7 +177,7 @@ public class QueryArchiveTest extends TestCase {
         final String criteria = "time EQ foobar";
         
         try {
-            final Term term = QueryArchiveCommand.parseCriteria(criteria);
+            QueryArchiveCommand.parseCriteria(criteria);
         } catch (ParseException e) {
             // expected
         } catch (Exception e) {

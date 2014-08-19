@@ -939,17 +939,21 @@ public class AdminWS {
      */
     private List<Elem> toElements(final List<QueryCondition> conditions) {
         final LinkedList<Elem> results = new LinkedList<Elem>();
-        for (QueryCondition cond : conditions) {
-            final Object value;
-            if (LONG_COLUMNS.contains(cond.getColumn())) {
-                value = Long.parseLong(cond.getValue());
-            } else if (INT_COLUMNS.contains(cond.getColumn())) {
-                value = Integer.parseInt(cond.getValue());
-            } else {
-                value = cond.getValue();
+        
+        if (conditions != null) {
+            for (QueryCondition cond : conditions) {
+                final Object value;
+                if (LONG_COLUMNS.contains(cond.getColumn())) {
+                    value = Long.parseLong(cond.getValue());
+                } else if (INT_COLUMNS.contains(cond.getColumn())) {
+                    value = Integer.parseInt(cond.getValue());
+                } else {
+                    value = cond.getValue();
+                }
+                results.add(new Term(cond.getOperator(), cond.getColumn(), value));
             }
-            results.add(new Term(cond.getOperator(), cond.getColumn(), value));
         }
+
         return results;
     }
     

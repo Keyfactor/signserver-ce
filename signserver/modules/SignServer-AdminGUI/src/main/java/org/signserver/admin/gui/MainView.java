@@ -81,6 +81,7 @@ import org.signserver.admin.gui.adminws.gen.SignServerException_Exception;
 import org.signserver.admin.gui.adminws.gen.WsGlobalConfiguration;
 import org.signserver.admin.gui.adminws.gen.WsWorkerConfig;
 import org.signserver.admin.gui.adminws.gen.WsWorkerStatus;
+import org.signserver.common.ArchiveMetadata;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.util.PropertiesDumper;
 
@@ -1771,19 +1772,18 @@ public class MainView extends FrameView {
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(archiveNextButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(archiveReloadButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(archiveFirstButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(archiveStartIndexTextfield)
-                        .addComponent(archiveMaxEntriesTextfield)
-                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel12)
-                            .addComponent(archiveDisplayingToIndex)
-                            .addComponent(jLabel13))
-                        .addComponent(archivePreviousButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addContainerGap(457, Short.MAX_VALUE))
+                    .addComponent(archiveFirstButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(archiveStartIndexTextfield, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(archiveMaxEntriesTextfield, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel12)
+                        .addComponent(archiveDisplayingToIndex)
+                        .addComponent(jLabel13))
+                    .addComponent(archivePreviousButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(457, 457, 457))
             .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
                     .addGap(59, 59, 59)
@@ -2375,15 +2375,33 @@ private void addWorkerItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN
     }//GEN-LAST:event_exportRadioButtonActionPerformed
 
     private void archiveFirstButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_archiveFirstButtonActionPerformed
-        // TODO add your handling code here:
+        archiveStartIndexTextfield.setText(String.valueOf(1));
+    
+        // Reload
+        getContext().getTaskService().execute(archiveReload());
     }//GEN-LAST:event_archiveFirstButtonActionPerformed
 
     private void archivePreviousButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_archivePreviousButtonActionPerformed
-        // TODO add your handling code here:
+        // Step backwards
+        final int maxEntries = Integer.valueOf(archiveMaxEntriesTextfield.getText());
+        int index = Integer.valueOf(archiveStartIndexTextfield.getText()) - maxEntries;
+        if (index < 1) {
+            index = 1;
+        }
+        archiveStartIndexTextfield.setText(String.valueOf(index));
+    
+        // Reload
+        getContext().getTaskService().execute(archiveReload());
     }//GEN-LAST:event_archivePreviousButtonActionPerformed
 
     private void archiveNextButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_archiveNextButtonActionPerformed
-        // TODO add your handling code here:
+        // Step forward
+        final int maxEntries = Integer.valueOf(archiveMaxEntriesTextfield.getText());
+        final int index = Integer.valueOf(archiveStartIndexTextfield.getText()) + maxEntries;
+        archiveStartIndexTextfield.setText(String.valueOf(index));
+    
+        // Reload
+        getContext().getTaskService().execute(archiveReload());
     }//GEN-LAST:event_archiveNextButtonActionPerformed
 
     private void archiveTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_archiveTableMouseClicked
@@ -3182,6 +3200,7 @@ private void displayLogEntryAction() {
 
         private int startIndex;
         private int maxEntries;
+        private Exception exception;
         
         ArchiveReloadTask(org.jdesktop.application.Application app) {
             // Runs on the EDT.  Copy GUI state that
@@ -3189,13 +3208,59 @@ private void displayLogEntryAction() {
             // to AuditlogReloadTask fields, here.
             super(app);
             
-            startIndex = Integer.parseInt(auditlogStartIndexTextfield.getText()) - 1;
-            maxEntries = Integer.parseInt(auditlogMaxEntriesTextfield.getText());
+            startIndex = Integer.parseInt(archiveStartIndexTextfield.getText()) - 1;
+            maxEntries = Integer.parseInt(archiveMaxEntriesTextfield.getText());
         }
         
         @Override
         protected List<ArchiveEntry> doInBackground() throws Exception {
-            throw new UnsupportedOperationException("Not supported yet.");
+            try {
+                // Your Task's code here.  This method runs
+                // on a background thread, so don't reference
+                // the Swing GUI from here.
+                final ArrayList<QueryCondition> conditions =
+                        new ArrayList<QueryCondition>(archiveConditionsModel.getEntries());
+                final QueryOrdering order = new QueryOrdering();
+                order.setColumn(ArchiveMetadata.TIME);
+                order.setOrder(Order.DESC);
+                return SignServerAdminGUIApplication.getAdminWS().queryArchive(startIndex, maxEntries, conditions, Collections.singletonList(order));
+            } catch (AdminNotAuthorizedException_Exception ex) {
+                exception = ex;
+            } catch (SignServerException_Exception ex) {
+                exception = ex;
+            } catch (Exception ex) {
+                LOG.error("Reload failed", ex);
+                exception = ex;
+            }
+            return null;
+        }
+        
+        @Override protected void succeeded(List<ArchiveEntry> result) {
+            // Runs on the EDT.  Update the GUI based on
+            // the result computed by doInBackground().
+            final CardLayout layout = (CardLayout) archiveContentPanel.getLayout();
+            if (result == null) {
+                result = Collections.emptyList();
+                archiveDisplayingToIndex.setText("to " + (startIndex + maxEntries)); // We pretend we got all entries
+                archiveNextButton.setEnabled(true);
+                layout.show(archiveContentPanel, "archiveErrorCard");
+                archiveTable.setEnabled(false);
+                archiveTableScrollPane.setEnabled(false);
+            } else {
+                archiveDisplayingToIndex.setText("to " + (startIndex + result.size()));
+                archiveNextButton.setEnabled(result.size() >= maxEntries);
+                layout.show(archiveContentPanel, "archiveTableCard");
+                archiveTable.setEnabled(true);
+                archiveTableScrollPane.setEnabled(false);
+            }
+            archiveModel.setEntries(result);
+            
+            archiveFirstButton.setEnabled(startIndex > 0);
+            archivePreviousButton.setEnabled(startIndex > 0);
+            
+            if (exception != null) {
+                archiveErrorEditor.setText(new StringBuilder().append("Reload failed within the selected interval:\n\n").append(exception.getMessage()).toString());
+            }
         }
 
     }

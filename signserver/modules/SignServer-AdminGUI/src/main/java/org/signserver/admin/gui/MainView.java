@@ -1673,10 +1673,10 @@ public class MainView extends FrameView {
 
         archiveLogTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {"2013-01-19 11:47:52+0100", "EJBCA Node Start", "Success", "StartServicesServlet.init", "Service", null, null, null, "atitudem", "Init, EJBCA 5.0.5 (r14787) startup."}
+
             },
             new String [] {
-                "Time", "Event", "Outcome", "Administrator", "Module", "Certificate Authority", "Certificate", "Username", "Node", "Details"
+                "Archive ID", "Time", "Type", "Signer ID", "Admin Serial Number", "Admin Issuer", "IP Address"
             }
         ));
         archiveLogTable.setEnabled(false);
@@ -1706,7 +1706,7 @@ public class MainView extends FrameView {
             archiveTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 431, Short.MAX_VALUE)
             .addGroup(archiveTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(archiveTableScrollPane))
+                .addComponent(archiveTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 431, Short.MAX_VALUE))
         );
 
         archiveContentPanel.add(archiveTablePanel, "auditlogTableCard");

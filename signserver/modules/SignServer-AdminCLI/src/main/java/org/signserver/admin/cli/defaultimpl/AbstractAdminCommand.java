@@ -12,18 +12,12 @@
  *************************************************************************/
 package org.signserver.admin.cli.defaultimpl;
 
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.rmi.RemoteException;
-import java.security.cert.X509Certificate;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.security.cert.CertificateException;
 
 import org.apache.log4j.Logger;
-import org.ejbca.util.CertTools;
 import org.signserver.cli.spi.AbstractCommand;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.common.AuthorizedClient;

@@ -111,6 +111,7 @@ public class MainView extends FrameView {
     private List<Integer> modifiedWorkers = null;
     
     private AuditlogTableModel auditlogModel = new AuditlogTableModel();
+    private ArchiveTableModel archiveModel = new ArchiveTableModel();
     private ConditionsTableModel auditlogConditionsModel = new AuditlogConditionsTableModel();
     private ConditionsTableModel archiveConditionsModel = new ArchiveConditionsTableModel();
     
@@ -142,6 +143,7 @@ public class MainView extends FrameView {
 
         auditlogConditionsModel.addCondition(AuditRecordData.FIELD_EVENTTYPE, RelationalOperator.NEQ, "ACCESS_CONTROL");
         auditLogTable.setModel(auditlogModel);
+        archiveTable.setModel(archiveModel);
         conditionsTable.setModel(auditlogConditionsModel);
         conditionsTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 
@@ -491,7 +493,7 @@ public class MainView extends FrameView {
         archiveContentPanel = new javax.swing.JPanel();
         archiveTablePanel = new javax.swing.JPanel();
         archiveTableScrollPane = new javax.swing.JScrollPane();
-        archiveLogTable = new javax.swing.JTable();
+        archiveTable = new javax.swing.JTable();
         archiveErrorPanel = new javax.swing.JPanel();
         jScrollPane8 = new javax.swing.JScrollPane();
         archiveErrorEditor = new javax.swing.JEditorPane();
@@ -1671,7 +1673,7 @@ public class MainView extends FrameView {
         archiveTableScrollPane.setEnabled(false);
         archiveTableScrollPane.setName("archiveTableScrollPane"); // NOI18N
 
-        archiveLogTable.setModel(new javax.swing.table.DefaultTableModel(
+        archiveTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -1679,20 +1681,20 @@ public class MainView extends FrameView {
                 "Archive ID", "Time", "Type", "Signer ID", "Admin Serial Number", "Admin Issuer", "IP Address"
             }
         ));
-        archiveLogTable.setEnabled(false);
-        archiveLogTable.setName("archiveLogTable"); // NOI18N
-        archiveLogTable.setSelectionMode(javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        archiveLogTable.addMouseListener(new java.awt.event.MouseAdapter() {
+        archiveTable.setEnabled(false);
+        archiveTable.setName("archiveTable"); // NOI18N
+        archiveTable.setSelectionMode(javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        archiveTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                archiveLogTableMouseClicked(evt);
+                archiveTableMouseClicked(evt);
             }
         });
-        archiveLogTable.addKeyListener(new java.awt.event.KeyAdapter() {
+        archiveTable.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                archiveLogTableKeyReleased(evt);
+                archiveTableKeyReleased(evt);
             }
         });
-        archiveTableScrollPane.setViewportView(archiveLogTable);
+        archiveTableScrollPane.setViewportView(archiveTable);
 
         javax.swing.GroupLayout archiveTablePanelLayout = new javax.swing.GroupLayout(archiveTablePanel);
         archiveTablePanel.setLayout(archiveTablePanelLayout);
@@ -2384,13 +2386,13 @@ private void addWorkerItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN
         // TODO add your handling code here:
     }//GEN-LAST:event_archiveNextButtonActionPerformed
 
-    private void archiveLogTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_archiveLogTableMouseClicked
+    private void archiveTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_archiveTableMouseClicked
         // TODO add your handling code here:
-    }//GEN-LAST:event_archiveLogTableMouseClicked
+    }//GEN-LAST:event_archiveTableMouseClicked
 
-    private void archiveLogTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_archiveLogTableKeyReleased
+    private void archiveTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_archiveTableKeyReleased
         // TODO add your handling code here:
-    }//GEN-LAST:event_archiveLogTableKeyReleased
+    }//GEN-LAST:event_archiveTableKeyReleased
 
     private void jButtonArchiveConditionAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonArchiveConditionAddActionPerformed
         AddConditionDialog dlg = new ArchiveAddConditionDialog(getFrame(), true);
@@ -3606,13 +3608,13 @@ private Properties toProperties(WsGlobalConfiguration wsgc) {
     javax.swing.JEditorPane archiveErrorEditor;
     javax.swing.JPanel archiveErrorPanel;
     javax.swing.JButton archiveFirstButton;
-    javax.swing.JTable archiveLogTable;
     javax.swing.JTextField archiveMaxEntriesTextfield;
     javax.swing.JButton archiveNextButton;
     javax.swing.JPanel archivePanel;
     javax.swing.JButton archivePreviousButton;
     javax.swing.JButton archiveReloadButton;
     javax.swing.JTextField archiveStartIndexTextfield;
+    javax.swing.JTable archiveTable;
     javax.swing.JPanel archiveTablePanel;
     javax.swing.JScrollPane archiveTableScrollPane;
     javax.swing.JTable auditLogTable;

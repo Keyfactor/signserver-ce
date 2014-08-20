@@ -28,6 +28,7 @@ import java.util.Date;
 public class ArchiveMetadata implements Serializable {
     private static final long serialVersionUID = 1L;
 
+    private String uniqueId;
     private String archiveId;
     private String requestCertSerialNumber;
     private String requestIssuerDN;
@@ -37,6 +38,7 @@ public class ArchiveMetadata implements Serializable {
     private int type;
     
     // field names used for querying the archive
+    public static String UNIQUE_ID = "uniqueId";
     public static String ARCHIVE_ID = "archiveid";
     public static String REQUEST_CERT_SERIAL_NUMBER = "requestCertSerialnumber";
     public static String REQUEST_ISSUER_DN = "requestIssuerDN";
@@ -57,11 +59,13 @@ public class ArchiveMetadata implements Serializable {
      * @param requestCertSerialnumber Serial number of client cert performing operation
      * @param requestIP IP address of client performing operation
      */
-    public ArchiveMetadata(int type, int signerid, String archiveid,
-            Date time, String requestIssuerDN,
-            String requestCertSerialnumber, String requestIP) {
+    public ArchiveMetadata(final int type, final int signerid,
+            final String uniqueId, final String archiveid,
+            final Date time, final String requestIssuerDN,
+            final String requestCertSerialnumber, final String requestIP) {
         this.type = type;
         this.signerId = signerid;
+        this.uniqueId = uniqueId;
         this.archiveId = archiveid;
         this.time = time;
         this.requestIssuerDN = requestIssuerDN;
@@ -75,6 +79,10 @@ public class ArchiveMetadata implements Serializable {
     
     public int getSignerId() {
         return signerId;
+    }
+    
+    public String getUniqueId() {
+        return uniqueId;
     }
     
     public String getArchiveId() {

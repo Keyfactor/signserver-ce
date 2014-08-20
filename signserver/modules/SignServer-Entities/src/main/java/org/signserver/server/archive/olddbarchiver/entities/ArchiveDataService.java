@@ -188,7 +188,7 @@ public class ArchiveDataService {
             final String conditions = generator.generate();
             
             final Query query =
-                    em.createQuery("SELECT a.archiveid, a.time, a.type, a.signerid, a.requestIssuerDN, a.requestCertSerialnumber, a.requestIP FROM ArchiveDataBean a " +
+                    em.createQuery("SELECT a.uniqueId, a.archiveid, a.time, a.type, a.signerid, a.requestIssuerDN, a.requestCertSerialnumber, a.requestIP FROM ArchiveDataBean a " +
                                 conditions);
             
             for (final String key : generator.getParameterKeys()) {
@@ -210,10 +210,10 @@ public class ArchiveDataService {
             for (final Object entry : queryResults) {
                 final Object[] parts = (Object[]) entry;
                 
-                result.add(new ArchiveMetadata(((Integer) parts[2]).intValue(),
-                                               ((Integer) parts[3]).intValue(),
-                                               (String) parts[0], new Date((Long) parts[1]),
-                                               (String) parts[4], (String) parts[5], (String) parts[6]));
+                result.add(new ArchiveMetadata(((Integer) parts[3]).intValue(),
+                                               ((Integer) parts[4]).intValue(),
+                                               (String) parts[0], (String) parts[1], new Date((Long) parts[2]),
+                                               (String) parts[5], (String) parts[6], (String) parts[7]));
             }
             
             return result;

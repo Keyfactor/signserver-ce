@@ -22,6 +22,7 @@ import org.signserver.common.ArchiveMetadata;
  *
  */
 public class ArchiveEntry {
+    private String uniqueId;
     private String archiveId;
     private String requestCertSerialNumber;
     private String requestIssuerDN;
@@ -33,10 +34,12 @@ public class ArchiveEntry {
     public ArchiveEntry() {
     }
     
-    public ArchiveEntry(String archiveId, String requestCertSerialNumber,
-            String requestIssuerDN, String requestIP, Integer signerId,
-            Long time, Integer type) {
-        super();
+    public ArchiveEntry(final String uniqueId, final String archiveId,
+            final String requestCertSerialNumber,
+            final String requestIssuerDN, final String requestIP, 
+            final Integer signerId,
+            final Long time, final Integer type) {
+        this.uniqueId = uniqueId;
         this.archiveId = archiveId;
         this.requestCertSerialNumber = requestCertSerialNumber;
         this.requestIssuerDN = requestIssuerDN;
@@ -47,9 +50,14 @@ public class ArchiveEntry {
     }
 
     public static ArchiveEntry fromArchiveMetadata(final ArchiveMetadata src) {
-        return new ArchiveEntry(src.getArchiveId(), src.getRequestCertSerialNumber(),
-                src.getRequestIssuerDN(), src.getRequestIP(), src.getSignerId(),
+        return new ArchiveEntry(src.getUniqueId(), src.getArchiveId(),
+                src.getRequestCertSerialNumber(), src.getRequestIssuerDN(),
+                src.getRequestIP(), src.getSignerId(),
                 src.getTime().getTime(), src.getType());
+    }
+    
+    public String getUniqueId() {
+        return uniqueId;
     }
     
     public String getArchiveId() {
@@ -74,31 +82,35 @@ public class ArchiveEntry {
         return type;
     }
 
-    public void setArchiveId(String archiveId) {
+    public void setUniqueId(final String uniqueId) {
+        this.uniqueId = uniqueId;
+    }
+    
+    public void setArchiveId(final String archiveId) {
         this.archiveId = archiveId;
     }
 
-    public void setRequestCertSerialNumber(String requestCertSerialNumber) {
+    public void setRequestCertSerialNumber(final String requestCertSerialNumber) {
         this.requestCertSerialNumber = requestCertSerialNumber;
     }
 
-    public void setRequestIssuerDN(String requestIssuerDN) {
+    public void setRequestIssuerDN(final String requestIssuerDN) {
         this.requestIssuerDN = requestIssuerDN;
     }
 
-    public void setRequestIP(String requestIP) {
+    public void setRequestIP(final String requestIP) {
         this.requestIP = requestIP;
     }
 
-    public void setSignerId(Integer signerId) {
+    public void setSignerId(final Integer signerId) {
         this.signerId = signerId;
     }
 
-    public void setTime(Long time) {
+    public void setTime(final Long time) {
         this.time = time;
     }
 
-    public void setType(Integer type) {
+    public void setType(final Integer type) {
         this.type = type;
     }
 

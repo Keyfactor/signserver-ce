@@ -86,4 +86,9 @@ public enum AuditlogColumn implements QueryColumn {
     public String toString() {
         return description + " (" + name + ")";
     }
+    
+    @Override
+    public String translateConditionValue(final String value) {
+        return value;
+    }
 }

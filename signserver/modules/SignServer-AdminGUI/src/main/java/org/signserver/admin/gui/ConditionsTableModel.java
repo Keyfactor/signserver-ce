@@ -95,12 +95,12 @@ public abstract class ConditionsTableModel extends AbstractTableModel {
      * @param operator The relational operator
      * @param value The value
      */
-    public void addCondition(String column, RelationalOperator operator, String value) {
+    public void addCondition(final QueryColumn column, RelationalOperator operator, String value) {
         QueryCondition qc = new QueryCondition();
-        qc.setColumn(column);
+        qc.setColumn(column.getName());
         qc.setOperator(operator);
         //TODO: make sure enumerated columns (i.e. archive type) actually works...
-        qc.setValue(value);
+        qc.setValue(column.translateConditionValue(value));
         entries.add(qc);
         fireTableRowsInserted(entries.size() - 1, entries.size() - 1);
     }

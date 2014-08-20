@@ -14,6 +14,7 @@ package org.signserver.admin.gui;
 
 import java.util.Arrays;
 import java.util.Collection;
+import org.signserver.common.ArchiveDataVO;
 import org.signserver.common.ArchiveMetadata;
 import org.signserver.server.archive.Archivable;
 
@@ -37,6 +38,17 @@ public enum ArchiveColumn implements QueryColumn {
         @Override
         public Collection<String> getTypeValues() {
             return Arrays.asList(Archivable.TYPE_REQUEST, Archivable.TYPE_RESPONSE);
+        }
+        
+        @Override
+        public String translateConditionValue(final String value) {
+            if (Archivable.TYPE_REQUEST.equals(value)) {
+                return Integer.toString(ArchiveDataVO.TYPE_REQUEST);
+            } else if (Archivable.TYPE_RESPONSE.equals(value)) {
+                return Integer.toString(ArchiveDataVO.TYPE_RESPONSE);
+            } else {
+                throw new IllegalArgumentException("Unknown TYPE value: " + value);
+            }
         }
     };
     
@@ -72,4 +84,8 @@ public enum ArchiveColumn implements QueryColumn {
                 + getName());
     }
     
+    @Override
+    public String translateConditionValue(final String value) {
+        return value;
+    }
 }

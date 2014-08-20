@@ -47,6 +47,15 @@ public interface QueryColumn {
      */
     public Collection<String> getTypeValues() throws IllegalArgumentException;
 
+    /**
+     * Translate a presentation condition value (f.ex. RESPONSE, REQUEST)
+     * into a form suitable for the hibernate query conditions (i.e. DB format)
+     * 
+     * @param value String representation in selection dialog
+     * @return Object representation in DB
+     */
+    public String translateConditionValue(final String value);
+    
     public enum Type {
         TEXT,
         NUMBER,

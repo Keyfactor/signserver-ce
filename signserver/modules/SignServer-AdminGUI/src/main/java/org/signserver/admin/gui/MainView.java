@@ -142,7 +142,7 @@ public class MainView extends FrameView {
 
         statusSummaryTextPane.setContentType("text/html");
 
-        auditlogConditionsModel.addCondition(AuditRecordData.FIELD_EVENTTYPE, RelationalOperator.NEQ, "ACCESS_CONTROL");
+        auditlogConditionsModel.addCondition(AuditlogColumn.EVENTTYPE, RelationalOperator.NEQ, "ACCESS_CONTROL");
         auditLogTable.setModel(auditlogModel);
         archiveTable.setModel(archiveModel);
         conditionsTable.setModel(auditlogConditionsModel);
@@ -2313,7 +2313,7 @@ private void jButtonAuditConditionAddActionPerformed(java.awt.event.ActionEvent 
     AddConditionDialog dlg = new AuditlogAddConditionDialog(getFrame(), true);
     dlg.setVisible(true);
     if (dlg.isOkPressed()) {
-        auditlogConditionsModel.addCondition(dlg.getColumn().getName(), dlg.getCondition().getOperator(), dlg.getValue());
+        auditlogConditionsModel.addCondition(dlg.getColumn(), dlg.getCondition().getOperator(), dlg.getValue());
     }
 }//GEN-LAST:event_jButtonAuditConditionAddActionPerformed
 
@@ -2416,7 +2416,7 @@ private void addWorkerItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN
         AddConditionDialog dlg = new ArchiveAddConditionDialog(getFrame(), true);
         dlg.setVisible(true);
         if (dlg.isOkPressed()) {
-            archiveConditionsModel.addCondition(dlg.getColumn().getName(), dlg.getCondition().getOperator(), dlg.getValue());
+            archiveConditionsModel.addCondition(dlg.getColumn(), dlg.getCondition().getOperator(), dlg.getValue());
         }
     }//GEN-LAST:event_jButtonArchiveConditionAddActionPerformed
 

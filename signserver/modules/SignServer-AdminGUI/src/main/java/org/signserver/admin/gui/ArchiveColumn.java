@@ -88,4 +88,9 @@ public enum ArchiveColumn implements QueryColumn {
     public String translateConditionValue(final String value) {
         return value;
     }
+    
+    @Override
+    public String toString() {
+        return description + " (" + name + ")";
+    }
 }

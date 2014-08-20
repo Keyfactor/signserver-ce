@@ -275,6 +275,16 @@ public class MainView extends FrameView {
                 }
             }
         });
+        
+        archiveTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    fetchArchiveEntriesButton.setEnabled(archiveTable.getSelectedRowCount() > 0);
+                }
+            }
+        });
 
         displayWorker(null);
 
@@ -492,12 +502,12 @@ public class MainView extends FrameView {
         jLabel13 = new javax.swing.JLabel();
         archiveMaxEntriesTextfield = new javax.swing.JTextField();
         archiveContentPanel = new javax.swing.JPanel();
-        archiveErrorPanel = new javax.swing.JPanel();
-        jScrollPane8 = new javax.swing.JScrollPane();
-        archiveErrorEditor = new javax.swing.JEditorPane();
         archiveTablePanel = new javax.swing.JPanel();
         archiveTableScrollPane = new javax.swing.JScrollPane();
         archiveTable = new javax.swing.JTable();
+        archiveErrorPanel = new javax.swing.JPanel();
+        jScrollPane8 = new javax.swing.JScrollPane();
+        archiveErrorEditor = new javax.swing.JEditorPane();
         fetchArchiveEntriesButton = new javax.swing.JButton();
         removeKeyPanel = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
@@ -1670,27 +1680,6 @@ public class MainView extends FrameView {
         archiveContentPanel.setName("archiveContentPanel"); // NOI18N
         archiveContentPanel.setLayout(new java.awt.CardLayout());
 
-        archiveErrorPanel.setName("archiveErrorPanel"); // NOI18N
-
-        jScrollPane8.setName("jScrollPane8"); // NOI18N
-
-        archiveErrorEditor.setEditable(false);
-        archiveErrorEditor.setName("archiveErrorEditor"); // NOI18N
-        jScrollPane8.setViewportView(archiveErrorEditor);
-
-        javax.swing.GroupLayout archiveErrorPanelLayout = new javax.swing.GroupLayout(archiveErrorPanel);
-        archiveErrorPanel.setLayout(archiveErrorPanelLayout);
-        archiveErrorPanelLayout.setHorizontalGroup(
-            archiveErrorPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane8, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1198, Short.MAX_VALUE)
-        );
-        archiveErrorPanelLayout.setVerticalGroup(
-            archiveErrorPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane8, javax.swing.GroupLayout.DEFAULT_SIZE, 401, Short.MAX_VALUE)
-        );
-
-        archiveContentPanel.add(archiveErrorPanel, "auditlogErrorCard");
-
         archiveTablePanel.setName("archiveTablePanel"); // NOI18N
 
         archiveTableScrollPane.setEnabled(false);
@@ -1732,7 +1721,28 @@ public class MainView extends FrameView {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        archiveContentPanel.add(archiveTablePanel, "auditlogTableCard");
+        archiveContentPanel.add(archiveTablePanel, "archiveTableCard");
+
+        archiveErrorPanel.setName("archiveErrorPanel"); // NOI18N
+
+        jScrollPane8.setName("jScrollPane8"); // NOI18N
+
+        archiveErrorEditor.setEditable(false);
+        archiveErrorEditor.setName("archiveErrorEditor"); // NOI18N
+        jScrollPane8.setViewportView(archiveErrorEditor);
+
+        javax.swing.GroupLayout archiveErrorPanelLayout = new javax.swing.GroupLayout(archiveErrorPanel);
+        archiveErrorPanel.setLayout(archiveErrorPanelLayout);
+        archiveErrorPanelLayout.setHorizontalGroup(
+            archiveErrorPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane8, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1198, Short.MAX_VALUE)
+        );
+        archiveErrorPanelLayout.setVerticalGroup(
+            archiveErrorPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane8, javax.swing.GroupLayout.DEFAULT_SIZE, 401, Short.MAX_VALUE)
+        );
+
+        archiveContentPanel.add(archiveErrorPanel, "archiveErrorCard");
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);

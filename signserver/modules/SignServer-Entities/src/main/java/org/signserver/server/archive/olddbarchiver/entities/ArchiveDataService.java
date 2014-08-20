@@ -178,6 +178,14 @@ public class ArchiveDataService {
         } catch (NoResultException ignored) {} // NOPMD
         return new ArrayList<ArchiveDataBean>();
     }
+    
+    @SuppressWarnings("unchecked")
+    public Collection<ArchiveDataBean> findAllWithUniqueIdInList(Collection<String> uniqueIds) {
+        try {
+            return em.createNamedQuery("ArchiveDataBean.findAllWithUniqueIds").setParameter("ids", uniqueIds).getResultList();
+        } catch (NoResultException ignored) {} // NOPMD
+        return new ArrayList<ArchiveDataBean>();
+    }
 
     @SuppressWarnings("unchecked")
     public Collection<ArchiveMetadata> findMatchingCriteria(int startIndex, int max,

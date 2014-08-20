@@ -395,6 +395,17 @@ public interface IWorkerSession {
     Collection<ArchiveMetadata> searchArchive(int startIndex, int max, QueryCriteria criteria) throws AuthorizationDeniedException; 
     
     /**
+     * Fetch archive data contents given a list of archive unique IDs
+     * (primary key in DB).
+     * 
+     * @param uniqueIds List of IDs to fetch
+     * @return List of archive data objects
+     * @throws AuthorizationDeniedException
+     */
+    List<ArchiveDataVO> fetchArchiveDataEntries(Collection<String> uniqueIds)
+            throws AuthorizationDeniedException;
+    
+    /**
      * Help method that returns all worker, either signers or services defined
      * in the global configuration.
      * @param workerType can either be GlobalConfiguration.WORKERTYPE_ALL,
@@ -625,5 +636,18 @@ public interface IWorkerSession {
          */
         Collection<ArchiveMetadata> searchArchive(AdminInfo adminInfo, int startIndex, int max, QueryCriteria criteria)
             throws AuthorizationDeniedException;
+        
+        /**
+         * Fetch archive data contents given a list of archive unique IDs
+         * (primary key in DB).
+         * 
+         * @param adminInfo Administrator information
+         * @param uniqueIds List of unique IDs to fetch data from
+         * @return List of archive data objects
+         * @throws AuthorizationDeniedException 
+         */
+        List<ArchiveDataVO> fetchArchiveDataEntries(final AdminInfo adminInfo, 
+                final Collection<String> uniqueIds)
+                throws AuthorizationDeniedException;
     }
 }

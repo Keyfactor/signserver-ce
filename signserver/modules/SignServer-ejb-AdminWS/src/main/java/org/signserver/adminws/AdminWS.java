@@ -18,6 +18,7 @@ import java.io.PrintStream;
 import java.security.KeyStoreException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -913,6 +914,27 @@ public class AdminWS {
         
         try {
             return toArchiveEntries(worker.searchArchive(adminInfo, startIndex, max, qc));
+        } catch (AuthorizationDeniedException ex) {
+            throw new AdminNotAuthorizedException(ex.getMessage());
+        }
+    }
+    
+    @WebMethod(operationName="fetchArchiveDataEntries")
+    public List<byte[]> fetchArchiveDataEntries(@WebParam(name="uniqueIds") List<String> uniqueIds)
+            throws SignServerException, AdminNotAuthorizedException {
+        final AdminInfo adminInfo =
+                requireArchiveAuditorAuthorization("fetchArchiveDataEntries");
+        final List<byte[]> result = new ArrayList<byte[]>();
+        
+        try {
+            final List<ArchiveDataVO> archiveDatas =
+                worker.fetchArchiveDataEntries(uniqueIds);
+        
+            for (final ArchiveDataVO data : archiveDatas) {
+                result.add(data.getArchivedBytes());
+            }
+            
+            return result;
         } catch (AuthorizationDeniedException ex) {
             throw new AdminNotAuthorizedException(ex.getMessage());
         }

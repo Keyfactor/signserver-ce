@@ -58,7 +58,8 @@ import org.signserver.common.ArchiveMetadata;
     @NamedQuery(name = "ArchiveDataBean.findByRequestCertificateAndTime", query = "SELECT a from ArchiveDataBean a WHERE a.type=?1  AND a.signerid=?2 AND a.requestIssuerDN=?3 AND a.requestCertSerialnumber=?4 AND a.time>=?5 AND a.time<=?6"),
     @NamedQuery(name = "ArchiveDataBean.findByRequestIP", query = "SELECT  a from ArchiveDataBean a WHERE a.type=?1 AND a.signerid=?2 AND a.requestIP=?3"),
     @NamedQuery(name = "ArchiveDataBean.findAllByRequestIP", query = "SELECT  a from ArchiveDataBean a WHERE a.signerid=?1 AND a.requestIP=?2"),
-    @NamedQuery(name = "ArchiveDataBean.findByRequestIPAndTime", query = "SELECT a from ArchiveDataBean a WHERE a.type=?1 AND a.signerid=?2 AND a.requestIP=?3 AND a.time>=?4 AND a.time<=?5")
+    @NamedQuery(name = "ArchiveDataBean.findByRequestIPAndTime", query = "SELECT a from ArchiveDataBean a WHERE a.type=?1 AND a.signerid=?2 AND a.requestIP=?3 AND a.time>=?4 AND a.time<=?5"),
+    @NamedQuery(name = "ArchiveDataBean.findAllWithUniqueIds", query = "SELECT a from ArchiveDataBean a WHERE a.uniqueId in (:ids)")
 })
 public class ArchiveDataBean implements Serializable {
     

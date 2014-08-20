@@ -386,15 +386,23 @@ public class WorkerSessionMock implements IWorkerSession.ILocal,
     @Override
     public Collection<ArchiveMetadata> searchArchive(int startIndex, int max,
             QueryCriteria criteria) {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public Collection<ArchiveMetadata> searchArchive(AdminInfo adminInfo,
             int startIndex, int max, QueryCriteria criteria) {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public List<ArchiveDataVO> fetchArchiveDataEntries(AdminInfo adminInfo, Collection<String> uniqueIds) throws AuthorizationDeniedException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public List<ArchiveDataVO> fetchArchiveDataEntries(Collection<String> uniqueIds) throws AuthorizationDeniedException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 

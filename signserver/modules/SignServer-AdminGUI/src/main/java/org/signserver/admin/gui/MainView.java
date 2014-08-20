@@ -492,12 +492,13 @@ public class MainView extends FrameView {
         jLabel13 = new javax.swing.JLabel();
         archiveMaxEntriesTextfield = new javax.swing.JTextField();
         archiveContentPanel = new javax.swing.JPanel();
-        archiveTablePanel = new javax.swing.JPanel();
-        archiveTableScrollPane = new javax.swing.JScrollPane();
-        archiveTable = new javax.swing.JTable();
         archiveErrorPanel = new javax.swing.JPanel();
         jScrollPane8 = new javax.swing.JScrollPane();
         archiveErrorEditor = new javax.swing.JEditorPane();
+        archiveTablePanel = new javax.swing.JPanel();
+        archiveTableScrollPane = new javax.swing.JScrollPane();
+        archiveTable = new javax.swing.JTable();
+        fetchArchiveEntriesButton = new javax.swing.JButton();
         removeKeyPanel = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
         aliasTextField = new javax.swing.JTextField();
@@ -1669,6 +1670,27 @@ public class MainView extends FrameView {
         archiveContentPanel.setName("archiveContentPanel"); // NOI18N
         archiveContentPanel.setLayout(new java.awt.CardLayout());
 
+        archiveErrorPanel.setName("archiveErrorPanel"); // NOI18N
+
+        jScrollPane8.setName("jScrollPane8"); // NOI18N
+
+        archiveErrorEditor.setEditable(false);
+        archiveErrorEditor.setName("archiveErrorEditor"); // NOI18N
+        jScrollPane8.setViewportView(archiveErrorEditor);
+
+        javax.swing.GroupLayout archiveErrorPanelLayout = new javax.swing.GroupLayout(archiveErrorPanel);
+        archiveErrorPanel.setLayout(archiveErrorPanelLayout);
+        archiveErrorPanelLayout.setHorizontalGroup(
+            archiveErrorPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane8, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1198, Short.MAX_VALUE)
+        );
+        archiveErrorPanelLayout.setVerticalGroup(
+            archiveErrorPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane8, javax.swing.GroupLayout.DEFAULT_SIZE, 401, Short.MAX_VALUE)
+        );
+
+        archiveContentPanel.add(archiveErrorPanel, "auditlogErrorCard");
+
         archiveTablePanel.setName("archiveTablePanel"); // NOI18N
 
         archiveTableScrollPane.setEnabled(false);
@@ -1701,39 +1723,16 @@ public class MainView extends FrameView {
         archiveTablePanel.setLayout(archiveTablePanelLayout);
         archiveTablePanelLayout.setHorizontalGroup(
             archiveTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1198, Short.MAX_VALUE)
-            .addGroup(archiveTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(archiveTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1198, Short.MAX_VALUE))
+            .addComponent(archiveTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1198, Short.MAX_VALUE)
         );
         archiveTablePanelLayout.setVerticalGroup(
             archiveTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 431, Short.MAX_VALUE)
-            .addGroup(archiveTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(archiveTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 431, Short.MAX_VALUE))
+            .addGroup(archiveTablePanelLayout.createSequentialGroup()
+                .addComponent(archiveTableScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 389, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         archiveContentPanel.add(archiveTablePanel, "auditlogTableCard");
-
-        archiveErrorPanel.setName("archiveErrorPanel"); // NOI18N
-
-        jScrollPane8.setName("jScrollPane8"); // NOI18N
-
-        archiveErrorEditor.setEditable(false);
-        archiveErrorEditor.setName("archiveErrorEditor"); // NOI18N
-        jScrollPane8.setViewportView(archiveErrorEditor);
-
-        javax.swing.GroupLayout archiveErrorPanelLayout = new javax.swing.GroupLayout(archiveErrorPanel);
-        archiveErrorPanel.setLayout(archiveErrorPanelLayout);
-        archiveErrorPanelLayout.setHorizontalGroup(
-            archiveErrorPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane8, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1198, Short.MAX_VALUE)
-        );
-        archiveErrorPanelLayout.setVerticalGroup(
-            archiveErrorPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane8, javax.swing.GroupLayout.DEFAULT_SIZE, 431, Short.MAX_VALUE)
-        );
-
-        archiveContentPanel.add(archiveErrorPanel, "auditlogErrorCard");
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -1783,30 +1782,41 @@ public class MainView extends FrameView {
                         .addComponent(archiveDisplayingToIndex)
                         .addComponent(jLabel13))
                     .addComponent(archivePreviousButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(457, 457, 457))
+                .addContainerGap(427, Short.MAX_VALUE))
             .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
                     .addGap(59, 59, 59)
-                    .addComponent(archiveContentPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 431, Short.MAX_VALUE)
+                    .addComponent(archiveContentPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 401, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
         jSplitPane3.setRightComponent(jPanel5);
+
+        fetchArchiveEntriesButton.setText(resourceMap.getString("fetchArchiveEntriesButton.text")); // NOI18N
+        fetchArchiveEntriesButton.setEnabled(false);
+        fetchArchiveEntriesButton.setName("fetchArchiveEntriesButton"); // NOI18N
 
         javax.swing.GroupLayout archivePanelLayout = new javax.swing.GroupLayout(archivePanel);
         archivePanel.setLayout(archivePanelLayout);
         archivePanelLayout.setHorizontalGroup(
             archivePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(archivePanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jSplitPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 1222, Short.MAX_VALUE)
+                .addGroup(archivePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(archivePanelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jSplitPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 1222, Short.MAX_VALUE))
+                    .addGroup(archivePanelLayout.createSequentialGroup()
+                        .addGap(23, 23, 23)
+                        .addComponent(fetchArchiveEntriesButton, javax.swing.GroupLayout.PREFERRED_SIZE, 238, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         archivePanelLayout.setVerticalGroup(
             archivePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(archivePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jSplitPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 630, Short.MAX_VALUE)
+                .addComponent(jSplitPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 600, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(fetchArchiveEntriesButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -3721,6 +3731,7 @@ private Properties toProperties(WsGlobalConfiguration wsgc) {
     javax.swing.JPanel exportPanel;
     javax.swing.ButtonGroup exportPanelButtonGroup;
     javax.swing.JRadioButton exportSelectedRadioButton;
+    javax.swing.JButton fetchArchiveEntriesButton;
     javax.swing.JMenuItem generateRequestMenu;
     javax.swing.JButton generateRequestsButton;
     javax.swing.JMenuItem globalConfigurationMenu;

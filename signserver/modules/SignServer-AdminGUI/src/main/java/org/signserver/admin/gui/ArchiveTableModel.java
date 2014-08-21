@@ -89,9 +89,23 @@ public class ArchiveTableModel extends AbstractTableModel {
         return COLUMNS[columnIndex];
     }
 
+    /**
+     * Set archive meta data entries in the table model.
+     * 
+     * @param entries 
+     */
     void setEntries(final List<ArchiveEntry> entries) {
         this.entries = entries;
         fireTableDataChanged();
+    }
+    
+    /**
+     * Get archive meta data entries from the table model.
+     * 
+     * @return List of meta data
+     */
+    List<ArchiveEntry> getEntries() {
+        return entries;
     }
     
 }

@@ -1022,7 +1022,9 @@ public class AdminLayerEJBImpl implements AdminWS {
     }
 
     @Override
-    public List<ArchiveEntry> queryArchive(int startIndex, int max, List<QueryCondition> conditions, List<QueryOrdering> ordering) throws AdminNotAuthorizedException_Exception, SignServerException_Exception {
+    public List<ArchiveEntry> queryArchive(int startIndex, int max,
+        List<QueryCondition> conditions, List<QueryOrdering> ordering,
+        boolean includeData) throws AdminNotAuthorizedException_Exception, SignServerException_Exception {
         final List<Elem> elements = toElements(conditions);
         final QueryCriteria qc = QueryCriteria.create();
         
@@ -1035,7 +1037,8 @@ public class AdminLayerEJBImpl implements AdminWS {
         }
         
         try {
-            return toArchiveEntries(worker.searchArchive(startIndex, max, qc));
+            return toArchiveEntries(worker.searchArchive(startIndex, max, qc,
+                    includeData));
         } catch (AuthorizationDeniedException ex) {
             throw new AdminNotAuthorizedException_Exception(ex.getMessage(), new AdminNotAuthorizedException());
         }

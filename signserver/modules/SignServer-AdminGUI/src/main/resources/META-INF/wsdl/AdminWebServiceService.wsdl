@@ -483,6 +483,7 @@
         <xs:element name="max" type="xs:int"/>
         <xs:element maxOccurs="unbounded" minOccurs="0" name="condition" type="tns:queryCondition"/>
         <xs:element maxOccurs="unbounded" minOccurs="0" name="ordering" type="tns:queryOrdering"/>
+        <xs:element name="includeData" type="xs:boolean"/>
     </xs:sequence>
    </xs:complexType>
     <xs:complexType name="queryArchiveResponse">
@@ -492,6 +493,7 @@
     </xs:complexType>
    <xs:complexType name="archiveEntry">
     <xs:sequence>
+        <xs:element minOccurs="0" name="uniqueId" type="xs:string"/>
         <xs:element minOccurs="0" name="archiveId" type="xs:string"/>
         <xs:element minOccurs="0" name="requestCertSerialNumber" type="xs:string"/>
         <xs:element minOccurs="0" name="requestIP" type="xs:string"/>
@@ -499,6 +501,7 @@
         <xs:element minOccurs="0" name="signerId" type="xs:int"/>
         <xs:element minOccurs="0" name="time" type="xs:long"/>
         <xs:element minOccurs="0" name="type" type="xs:int"/>
+        <xs:element minOccurs="0" name="archiveData" type="xs:boolean"/>
     </xs:sequence>
    </xs:complexType>
    <xs:complexType name='getGlobalConfiguration'>

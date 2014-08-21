@@ -1805,6 +1805,11 @@ public class MainView extends FrameView {
         fetchArchiveEntriesButton.setText(resourceMap.getString("fetchArchiveEntriesButton.text")); // NOI18N
         fetchArchiveEntriesButton.setEnabled(false);
         fetchArchiveEntriesButton.setName("fetchArchiveEntriesButton"); // NOI18N
+        fetchArchiveEntriesButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fetchArchiveEntriesButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout archivePanelLayout = new javax.swing.GroupLayout(archivePanel);
         archivePanel.setLayout(archivePanelLayout);
@@ -2446,6 +2451,10 @@ private void addWorkerItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN
             archiveConditionsModel.removeCondition(selected);
         }
     }//GEN-LAST:event_jButtonArchiveConditionRemoveActionPerformed
+
+    private void fetchArchiveEntriesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fetchArchiveEntriesButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_fetchArchiveEntriesButtonActionPerformed
 
 private void displayLogEntryAction() {
     final int sel = auditLogTable.getSelectedRow();
@@ -3243,7 +3252,9 @@ private void displayLogEntryAction() {
                 final QueryOrdering order = new QueryOrdering();
                 order.setColumn(ArchiveMetadata.TIME);
                 order.setOrder(Order.DESC);
-                return SignServerAdminGUIApplication.getAdminWS().queryArchive(startIndex, maxEntries, conditions, Collections.singletonList(order));
+                return SignServerAdminGUIApplication.getAdminWS()
+                        .queryArchive(startIndex, maxEntries, conditions,
+                        Collections.singletonList(order), false);
             } catch (AdminNotAuthorizedException_Exception ex) {
                 exception = ex;
             } catch (SignServerException_Exception ex) {
@@ -3281,6 +3292,30 @@ private void displayLogEntryAction() {
             if (exception != null) {
                 archiveErrorEditor.setText(new StringBuilder().append("Reload failed within the selected interval:\n\n").append(exception.getMessage()).toString());
             }
+        }
+
+    }
+    
+    @Action(block = Task.BlockingScope.COMPONENT)
+    public Task archiveFetch() {
+        return new ArchiveFetchTask(getApplication());
+    }
+    
+    private class ArchiveFetchTask extends org.jdesktop.application.Task<List<String>, Void> {
+
+        private List<String> uniqueIds = new ArrayList<String>();
+        
+        private ArchiveFetchTask(org.jdesktop.application.Application application) {
+            super(application);
+            
+            for (final ArchiveEntry data : archiveModel.getEntries()) {
+                uniqueIds.add(data.getUniqueId());
+            }
+        }
+
+        @Override
+        protected List<String> doInBackground() throws Exception {
+            throw new UnsupportedOperationException("Not supported yet.");
         }
 
     }

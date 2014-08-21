@@ -189,13 +189,16 @@ public class ArchiveDataService {
 
     @SuppressWarnings("unchecked")
     public Collection<ArchiveMetadata> findMatchingCriteria(int startIndex, int max,
-            QueryCriteria criteria) {
+            QueryCriteria criteria, boolean includeData) {
         
         try {
             final QueryGenerator generator = QueryGenerator.generator(ArchiveDataBean.class, criteria, "a");
             final String conditions = generator.generate();
             
             final Query query =
+                    includeData ?
+                    em.createQuery("SELECT a.uniqueId, a.archiveid, a.time, a.type, a.signerid, a.requestIssuerDN, a.requestCertSerialnumber, a.requestIP, a.archiveData FROM ArchiveDataBean a " +
+                                conditions) :
                     em.createQuery("SELECT a.uniqueId, a.archiveid, a.time, a.type, a.signerid, a.requestIssuerDN, a.requestCertSerialnumber, a.requestIP FROM ArchiveDataBean a " +
                                 conditions);
             
@@ -218,10 +221,18 @@ public class ArchiveDataService {
             for (final Object entry : queryResults) {
                 final Object[] parts = (Object[]) entry;
                 
-                result.add(new ArchiveMetadata(((Integer) parts[3]).intValue(),
+                if (includeData) {
+                    result.add(new ArchiveMetadata(((Integer) parts[3]).intValue(),
+                                               ((Integer) parts[4]).intValue(),
+                                               (String) parts[0], (String) parts[1], new Date((Long) parts[2]),
+                                               (String) parts[5], (String) parts[6], (String) parts[7],
+                                               (byte[]) parts[8]));
+                } else {
+                    result.add(new ArchiveMetadata(((Integer) parts[3]).intValue(),
                                                ((Integer) parts[4]).intValue(),
                                                (String) parts[0], (String) parts[1], new Date((Long) parts[2]),
                                                (String) parts[5], (String) parts[6], (String) parts[7]));
+                }
             }
             
             return result;

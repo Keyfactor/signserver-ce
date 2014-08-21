@@ -890,6 +890,7 @@ public class AdminWS {
      * @param max maximum number of results to be returned.
      * @param conditions List of conditions defining the subset of the archive to be presented.
      * @param orderings List of ordering conditions for ordering the result.
+     * @param includeData Set to true if archive data should be included in the result set 
      * @return List of archive entries (the archive data is not included).
      * @throws SignServerException
      * @throws AdminNotAuthorizedException
@@ -897,7 +898,8 @@ public class AdminWS {
     @WebMethod(operationName="queryArchive")
     public List<ArchiveEntry> queryArchive(@WebParam(name="startIndex") int startIndex,
             @WebParam(name="max") int max, @WebParam(name="condition") final List<QueryCondition> conditions,
-            @WebParam(name="ordering") final List<QueryOrdering> orderings)
+            @WebParam(name="ordering") final List<QueryOrdering> orderings,
+            @WebParam(name="includeData") final boolean includeData)
                     throws SignServerException, AdminNotAuthorizedException {
         final AdminInfo adminInfo = requireArchiveAuditorAuthorization("queryArchive", String.valueOf(startIndex), String.valueOf(max));
 
@@ -913,7 +915,8 @@ public class AdminWS {
         }
         
         try {
-            return toArchiveEntries(worker.searchArchive(adminInfo, startIndex, max, qc));
+            return toArchiveEntries(worker.searchArchive(adminInfo, startIndex,
+                    max, qc, includeData));
         } catch (AuthorizationDeniedException ex) {
             throw new AdminNotAuthorizedException(ex.getMessage());
         }

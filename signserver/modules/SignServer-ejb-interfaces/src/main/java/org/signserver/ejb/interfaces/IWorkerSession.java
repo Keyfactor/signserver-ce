@@ -392,7 +392,9 @@ public interface IWorkerSession {
      * @param criteria Search criteria for matching results
      * @return List of metadata objects describing matching entries
      */
-    Collection<ArchiveMetadata> searchArchive(int startIndex, int max, QueryCriteria criteria) throws AuthorizationDeniedException; 
+    Collection<ArchiveMetadata> searchArchive(int startIndex,
+            int max, QueryCriteria criteria, boolean includeData)
+            throws AuthorizationDeniedException; 
     
     /**
      * Fetch archive data contents given a list of archive unique IDs
@@ -634,7 +636,9 @@ public interface IWorkerSession {
          * @param criteria Search criteria for matching results
          * @return List of metadata objects describing matching entries
          */
-        Collection<ArchiveMetadata> searchArchive(AdminInfo adminInfo, int startIndex, int max, QueryCriteria criteria)
+        Collection<ArchiveMetadata> searchArchive(AdminInfo adminInfo, 
+                int startIndex, int max, QueryCriteria criteria,
+                boolean includeData)
             throws AuthorizationDeniedException;
         
         /**

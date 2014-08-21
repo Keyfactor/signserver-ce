@@ -385,13 +385,14 @@ public class WorkerSessionMock implements IWorkerSession.ILocal,
 
     @Override
     public Collection<ArchiveMetadata> searchArchive(int startIndex, int max,
-            QueryCriteria criteria) {
+            QueryCriteria criteria, final boolean includeData) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public Collection<ArchiveMetadata> searchArchive(AdminInfo adminInfo,
-            int startIndex, int max, QueryCriteria criteria) {
+            int startIndex, int max, QueryCriteria criteria,
+            final boolean includeData) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

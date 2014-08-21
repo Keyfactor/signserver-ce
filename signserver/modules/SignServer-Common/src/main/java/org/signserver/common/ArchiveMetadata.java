@@ -36,6 +36,7 @@ public class ArchiveMetadata implements Serializable {
     private int signerId;
     private Date time;
     private int type;
+    private byte[] archiveData;
     
     // field names used for querying the archive
     public static String UNIQUE_ID = "uniqueId";
@@ -46,6 +47,7 @@ public class ArchiveMetadata implements Serializable {
     public static String SIGNER_ID = "signerid";
     public static String TIME = "time";
     public static String TYPE = "type";
+    public static String ARCHIVE_DATA = "archiveData";
 
     /**
      * Construct an archive metadata entry.
@@ -71,6 +73,22 @@ public class ArchiveMetadata implements Serializable {
         this.requestIssuerDN = requestIssuerDN;
         this.requestCertSerialNumber = requestCertSerialnumber;
         this.requestIP = requestIP;
+    }
+    
+    public ArchiveMetadata(final int type, final int signerid,
+            final String uniqueId, final String archiveid,
+            final Date time, final String requestIssuerDN,
+            final String requestCertSerialnumber, final String requestIP,
+            final byte[] archiveData) {
+        this.type = type;
+        this.signerId = signerid;
+        this.uniqueId = uniqueId;
+        this.archiveId = archiveid;
+        this.time = time;
+        this.requestIssuerDN = requestIssuerDN;
+        this.requestCertSerialNumber = requestCertSerialnumber;
+        this.requestIP = requestIP;
+        this.archiveData = archiveData;
     }
     
     public int getType() {
@@ -103,5 +121,9 @@ public class ArchiveMetadata implements Serializable {
     
     public String getRequestIP() {
         return requestIP;
+    }
+    
+    public byte[] getArchiveData() {
+        return archiveData;
     }
 }

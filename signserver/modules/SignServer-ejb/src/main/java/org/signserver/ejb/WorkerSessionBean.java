@@ -996,20 +996,22 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
 
     @Override
     public Collection<ArchiveMetadata> searchArchive(final int startIndex, final int max,
-            final QueryCriteria criteria) {
-        return searchArchive(new AdminInfo("CLI user", null, null), startIndex, max, criteria);
+            final QueryCriteria criteria, final boolean includeData) {
+        return searchArchive(new AdminInfo("CLI user", null, null), startIndex,
+                max, criteria, includeData);
     }
 
     @Override
     public Collection<ArchiveMetadata> searchArchive(final AdminInfo adminInfo,
-            final int startIndex, final int max, final QueryCriteria criteria) {
+            final int startIndex, final int max, final QueryCriteria criteria,
+            final boolean includeData) {
         if (archiveDataService == null) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Archiving to database is not supported when running without database");
             }
             return Collections.emptyList();
         } else {
-            return archiveDataService.findMatchingCriteria(startIndex, max, criteria);
+            return archiveDataService.findMatchingCriteria(startIndex, max, criteria, includeData);
         }
     }
 

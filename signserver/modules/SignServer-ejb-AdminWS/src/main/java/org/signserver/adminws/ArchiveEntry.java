@@ -30,6 +30,7 @@ public class ArchiveEntry {
     private Integer signerId;
     private Long time;
     private Integer type;
+    private byte[] archiveData;
 
     public ArchiveEntry() {
     }
@@ -38,7 +39,8 @@ public class ArchiveEntry {
             final String requestCertSerialNumber,
             final String requestIssuerDN, final String requestIP, 
             final Integer signerId,
-            final Long time, final Integer type) {
+            final Long time, final Integer type,
+            final byte[] archiveData) {
         this.uniqueId = uniqueId;
         this.archiveId = archiveId;
         this.requestCertSerialNumber = requestCertSerialNumber;
@@ -47,13 +49,15 @@ public class ArchiveEntry {
         this.signerId = signerId;
         this.time = time;
         this.type = type;
+        this.archiveData = archiveData;
     }
 
     public static ArchiveEntry fromArchiveMetadata(final ArchiveMetadata src) {
         return new ArchiveEntry(src.getUniqueId(), src.getArchiveId(),
                 src.getRequestCertSerialNumber(), src.getRequestIssuerDN(),
                 src.getRequestIP(), src.getSignerId(),
-                src.getTime().getTime(), src.getType());
+                src.getTime().getTime(), src.getType(),
+                src.getArchiveData());
     }
     
     public String getUniqueId() {
@@ -80,6 +84,10 @@ public class ArchiveEntry {
     }
     public Integer getType() {
         return type;
+    }
+    
+    public byte[] getArchiveData() {
+        return archiveData;
     }
 
     public void setUniqueId(final String uniqueId) {

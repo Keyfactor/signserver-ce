@@ -53,6 +53,8 @@
    <xs:element name='processResponse' type='tns:processResponse'/>
    <xs:element name="queryArchive" type="tns:queryArchive"/>
    <xs:element name="queryArchiveResponse" type="tns:queryArchiveResponse"/>
+   <xs:element name="queryArchiveWithIds" type="tns:queryArchiveWithIds"/>
+   <xs:element name="queryArchiveWithIdsResponse" type="tns:queryArchiveWithIdsResponse"/>
    <xs:element name='queryAuditLog' type='tns:queryAuditLog'/>
    <xs:element name='queryAuditLogResponse' type='tns:queryAuditLogResponse'/>
    <xs:element name='reloadConfiguration' type='tns:reloadConfiguration'/>
@@ -491,6 +493,17 @@
             <xs:element maxOccurs="unbounded" minOccurs="0" name="return" type="tns:archiveEntry"/>
         </xs:sequence>
     </xs:complexType>
+    <xs:complexType name="queryArchiveWithIds">
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="uniqueIds" type="xs:string"/>
+            <xs:element name="includeData" type="xs:boolean"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="queryArchiveWithIdsResponse">
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="return" type="tns:archiveEntry"/>
+        </xs:sequence>
+    </xs:complexType>
    <xs:complexType name="archiveEntry">
     <xs:sequence>
         <xs:element minOccurs="0" name="uniqueId" type="xs:string"/>
@@ -501,7 +514,7 @@
         <xs:element minOccurs="0" name="signerId" type="xs:int"/>
         <xs:element minOccurs="0" name="time" type="xs:long"/>
         <xs:element minOccurs="0" name="type" type="xs:int"/>
-        <xs:element minOccurs="0" name="archiveData" type="xs:boolean"/>
+        <xs:element minOccurs="0" name="archiveData" type="xs:base64Binary"/>
     </xs:sequence>
    </xs:complexType>
    <xs:complexType name='getGlobalConfiguration'>
@@ -868,6 +881,12 @@
   <message name="AdminWS_queryArchive">
     <part element="tns:queryArchive" name="parameters"/>
   </message>
+  <message name="AdminWS_queryArchiveWithIds">
+      <part element="tns:queryArchiveWithIds" name="parameters"/>
+  </message>
+  <message name="AdminWS_queryArchiveWithIdsResponse">
+      <part element="tns:queryArchiveWithIdsResponse" name="parameters"/>
+  </message>
  
  <portType name='AdminWS'>
   <operation name='activateSigner' parameterOrder='activateSigner'>
@@ -1069,6 +1088,12 @@
       <fault message="tns:AdminNotAuthorizedException" name="AdminNotAuthorizedException"/>
       <fault message="tns:SignServerException" name="SignServerException"/>
   </operation>
+  <operation name="queryArchiveWithIds">
+      <input message="tns:AdminWS_queryArchiveWithIds" name="queryArchiveWithIds"/>
+      <output message="tns:AdminWS_queryArchiveWithIdsResponse" name="queryArchiveWithIdsResponse"/>
+      <fault message="tns:AdminNotAuthorizedException" name="AdminNotAuthorizedException"/>
+      <fault message="tns:SignServerException" name="SignServerException"/>
+ </operation>
   
  </portType>
  <binding name='AdminWSBinding' type='tns:AdminWS'>
@@ -1434,6 +1459,21 @@
    </fault>
   </operation>
   <operation name='queryArchive'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+   <fault name='AdminNotAuthorizedException'>
+    <soap:fault name='AdminNotAuthorizedException' use='literal'/>
+   </fault>
+   <fault name='SignServerException'>
+    <soap:fault name='SignServerException' use='literal'/>
+   </fault>
+  </operation>
+  <operation name='queryArchiveWithIds'>
    <soap:operation soapAction=''/>
    <input>
     <soap:body use='literal'/>

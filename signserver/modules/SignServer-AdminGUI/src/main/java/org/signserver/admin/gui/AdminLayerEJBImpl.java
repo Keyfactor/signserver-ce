@@ -1044,6 +1044,16 @@ public class AdminLayerEJBImpl implements AdminWS {
         }
     }
     
+    @Override
+    public List<ArchiveEntry> queryArchiveWithIds(final List<String> uniqueIds,
+        final boolean includeData) throws AdminNotAuthorizedException_Exception, SignServerException_Exception {
+        try {
+            return toArchiveEntries(worker.searchArchiveWithIds(uniqueIds, includeData));
+        } catch (AuthorizationDeniedException ex) {
+            throw new AdminNotAuthorizedException_Exception(ex.getMessage(), new AdminNotAuthorizedException());
+        }
+    }
+    
     private List<ArchiveEntry> toArchiveEntries(final Collection<? extends ArchiveMetadata> entries) {
         final List<ArchiveEntry> results = new LinkedList<ArchiveEntry>();
         

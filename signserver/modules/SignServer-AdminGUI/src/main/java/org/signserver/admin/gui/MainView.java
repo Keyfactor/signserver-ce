@@ -3301,23 +3301,41 @@ private void displayLogEntryAction() {
         return new ArchiveFetchTask(getApplication());
     }
     
-    private class ArchiveFetchTask extends org.jdesktop.application.Task<List<String>, Void> {
+    private class ArchiveFetchTask extends org.jdesktop.application.Task<Boolean, Void> {
 
-        private List<String> uniqueIds = new ArrayList<String>();
+        private List<ArchiveEntry> selectedEntries;
         
         private ArchiveFetchTask(org.jdesktop.application.Application application) {
             super(application);
+            selectedEntries = getSelectedEntries();
+        }
+
+        private List<ArchiveEntry> getSelectedEntries() {
+            final List<ArchiveEntry> entries = archiveModel.getEntries();
+            final List<ArchiveEntry> result = new ArrayList<ArchiveEntry>();
             
-            for (final ArchiveEntry data : archiveModel.getEntries()) {
-                uniqueIds.add(data.getUniqueId());
+            for (final int row : archiveTable.getSelectedRows()) {
+                result.add(entries.get(row));
             }
+            
+            return result;
         }
-
+        
         @Override
-        protected List<String> doInBackground() throws Exception {
-            throw new UnsupportedOperationException("Not supported yet.");
+        protected Boolean doInBackground() throws Exception {
+            final List<String> uniqueIds = new ArrayList<String>();
+            
+            for (final ArchiveEntry entry : selectedEntries) {
+                uniqueIds.add(entry.getUniqueId());
+            }
+            
+            /*
+            final Collection<ArchiveMetadata> metaDatas =
+                    SignServerAdminGUIApplication.getAdminWS()
+                        .queryArchiveWithIds(uniqueIds, true);
+             */
+            return true;
         }
-
     }
 
     @Action(block = Task.BlockingScope.WINDOW)

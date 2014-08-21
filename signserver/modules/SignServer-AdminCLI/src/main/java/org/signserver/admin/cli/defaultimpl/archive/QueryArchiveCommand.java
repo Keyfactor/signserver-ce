@@ -138,7 +138,8 @@ public class QueryArchiveCommand extends AbstractCommand {
             }
     
             // Perform the query
-            Collection<? extends ArchiveMetadata> entries = helper.getWorkerSession().searchArchive(from, limit, qc);
+            Collection<? extends ArchiveMetadata> entries =
+                    helper.getWorkerSession().searchArchive(from, limit, qc, false);
     
             for (final ArchiveMetadata entry : entries) {
                 // render the result

@@ -180,11 +180,31 @@ public class ArchiveDataService {
     }
     
     @SuppressWarnings("unchecked")
-    public Collection<ArchiveDataBean> findAllWithUniqueIdInList(Collection<String> uniqueIds) {
+    public Collection<ArchiveMetadata> findAllWithUniqueIdInList(Collection<String> uniqueIds,
+        boolean includeData) {
         try {
-            return em.createNamedQuery("ArchiveDataBean.findAllWithUniqueIds").setParameter("ids", uniqueIds).getResultList();
+            final List<ArchiveMetadata> result = new ArrayList<ArchiveMetadata>();
+            final List<ArchiveDataBean> archiveDatas =
+                    em.createNamedQuery("ArchiveDataBean.findAllWithUniqueIds").
+                    setParameter("ids", uniqueIds).getResultList();
+            
+            for (final ArchiveDataBean archiveData : archiveDatas) {
+                result.add(new ArchiveMetadata(archiveData.getType(),
+                                               archiveData.getSignerid(),
+                                               archiveData.getUniqueId(),
+                                               archiveData.getArchiveid(),
+                                               new Date(archiveData.getTime()),
+                                               archiveData.getRequestIssuerDN(),
+                                               archiveData.getRequestCertSerialnumber(),
+                                               archiveData.getRequestIP(),
+                                               includeData ?
+                                                archiveData.getArchiveDataVO().getArchivedBytes() :
+                                                null));
+            }
+            
+            return result;
         } catch (NoResultException ignored) {} // NOPMD
-        return new ArrayList<ArchiveDataBean>();
+        return new ArrayList<ArchiveMetadata>();
     }
 
     @SuppressWarnings("unchecked")

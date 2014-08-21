@@ -397,12 +397,14 @@ public class WorkerSessionMock implements IWorkerSession.ILocal,
     }
 
     @Override
-    public List<ArchiveDataVO> fetchArchiveDataEntries(AdminInfo adminInfo, Collection<String> uniqueIds) throws AuthorizationDeniedException {
+    public Collection<ArchiveMetadata> searchArchiveWithIds(AdminInfo adminInfo,
+        Collection<String> uniqueIds, boolean includeData) throws AuthorizationDeniedException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public List<ArchiveDataVO> fetchArchiveDataEntries(Collection<String> uniqueIds) throws AuthorizationDeniedException {
+    public Collection<ArchiveMetadata> searchArchiveWithIds(Collection<String> uniqueIds,
+        boolean includeData) throws AuthorizationDeniedException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

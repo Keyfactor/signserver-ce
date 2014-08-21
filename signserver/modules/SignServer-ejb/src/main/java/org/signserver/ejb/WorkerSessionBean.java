@@ -1016,27 +1016,23 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     }
 
     @Override
-    public List<ArchiveDataVO> fetchArchiveDataEntries(AdminInfo adminInfo, Collection<String> uniqueIds) {
-        final ArrayList<ArchiveDataVO> retval = new ArrayList<ArchiveDataVO>();
-
+    public Collection<ArchiveMetadata> searchArchiveWithIds(AdminInfo adminInfo,
+        Collection<String> uniqueIds, boolean includeData) {
         if (archiveDataService == null) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Archiving to database is not supported when running without database");
             }
+            return Collections.emptyList();
         } else {
-            final Collection<ArchiveDataBean> archives = archiveDataService.
-                    findAllWithUniqueIdInList(uniqueIds);
-            for (final ArchiveDataBean archive : archives) {
-                retval.add(archive.getArchiveDataVO());
-            }
+            return archiveDataService.findAllWithUniqueIdInList(uniqueIds, includeData);
         }
-
-        return retval;
     }
 
     @Override
-    public List<ArchiveDataVO> fetchArchiveDataEntries(Collection<String> uniqueIds) throws AuthorizationDeniedException {
-        return fetchArchiveDataEntries(new AdminInfo("CLI user", null, null), uniqueIds);
+    public Collection<ArchiveMetadata> searchArchiveWithIds(Collection<String> uniqueIds,
+        boolean includeData) throws AuthorizationDeniedException {
+        return searchArchiveWithIds(new AdminInfo("CLI user", null, null),
+                uniqueIds, includeData);
     }
     
 

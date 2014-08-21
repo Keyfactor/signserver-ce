@@ -384,8 +384,6 @@ public interface IWorkerSession {
     /**
      * Query contents of archive.
      * Returns meta data entries of archive entries matching query criteria.
-     * The actual archive data are not returned, but needs to be fetched by
-     * further calls when needed.
      * 
      * @param startIndex Start index of first result (0-based)
      * @param max Maximum number of results returned, 0 means all matching results
@@ -397,14 +395,15 @@ public interface IWorkerSession {
             throws AuthorizationDeniedException; 
     
     /**
-     * Fetch archive data contents given a list of archive unique IDs
-     * (primary key in DB).
+     * Query contents of archive based on list of uniqueIds (primary key in DB).
      * 
-     * @param uniqueIds List of IDs to fetch
+     * @param uniqueIds List of IDs to fetch meta data for
+     * @param includeData If true, include actual archive data in 
      * @return List of archive data objects
      * @throws AuthorizationDeniedException
      */
-    List<ArchiveDataVO> fetchArchiveDataEntries(Collection<String> uniqueIds)
+    Collection<ArchiveMetadata> searchArchiveWithIds(Collection<String> uniqueIds,
+            boolean includeData)
             throws AuthorizationDeniedException;
     
     /**
@@ -627,13 +626,12 @@ public interface IWorkerSession {
         /**
          * Query contents of archive.
          * Returns meta data entries of archive entries matching query criteria.
-         * The actual archive data are not returned, but needs to be fetched by
-         * further calls when needed.
          * 
          * @param adminInfo Administrator information
          * @param startIndex Start index of first result (0-based)
          * @param max Maximum number of results returned, 0 means all matching results
          * @param criteria Search criteria for matching results
+         * @param includeData If true, archive data is included in the meta data entries
          * @return List of metadata objects describing matching entries
          */
         Collection<ArchiveMetadata> searchArchive(AdminInfo adminInfo, 
@@ -642,16 +640,18 @@ public interface IWorkerSession {
             throws AuthorizationDeniedException;
         
         /**
-         * Fetch archive data contents given a list of archive unique IDs
+         * Query contents of archive based on list of unique IDs
          * (primary key in DB).
          * 
          * @param adminInfo Administrator information
-         * @param uniqueIds List of unique IDs to fetch data from
+         * @param uniqueIds List of unique IDs to fetch entries for
+         * @param includeData If true, archive data is included in the meta data entries
          * @return List of archive data objects
          * @throws AuthorizationDeniedException 
          */
-        List<ArchiveDataVO> fetchArchiveDataEntries(final AdminInfo adminInfo, 
-                final Collection<String> uniqueIds)
+        Collection<ArchiveMetadata> searchArchiveWithIds(final AdminInfo adminInfo, 
+                final Collection<String> uniqueIds, 
+                final boolean includeData)
                 throws AuthorizationDeniedException;
     }
 }

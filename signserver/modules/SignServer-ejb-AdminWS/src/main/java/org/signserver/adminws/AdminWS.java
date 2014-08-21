@@ -922,22 +922,15 @@ public class AdminWS {
         }
     }
     
-    @WebMethod(operationName="fetchArchiveDataEntries")
-    public List<byte[]> fetchArchiveDataEntries(@WebParam(name="uniqueIds") List<String> uniqueIds)
+    @WebMethod(operationName="queryArchiveWithIds")
+    public List<ArchiveEntry> queryArchiveWithIds(@WebParam(name="uniqueIds") List<String> uniqueIds,
+            @WebParam(name="includeData") boolean includeData)
             throws SignServerException, AdminNotAuthorizedException {
         final AdminInfo adminInfo =
-                requireArchiveAuditorAuthorization("fetchArchiveDataEntries");
-        final List<byte[]> result = new ArrayList<byte[]>();
-        
+                requireArchiveAuditorAuthorization("queryArchiveWithIds");
+
         try {
-            final List<ArchiveDataVO> archiveDatas =
-                worker.fetchArchiveDataEntries(uniqueIds);
-        
-            for (final ArchiveDataVO data : archiveDatas) {
-                result.add(data.getArchivedBytes());
-            }
-            
-            return result;
+            return toArchiveEntries(worker.searchArchiveWithIds(adminInfo, uniqueIds, includeData));
         } catch (AuthorizationDeniedException ex) {
             throw new AdminNotAuthorizedException(ex.getMessage());
         }

@@ -122,5 +122,8 @@ public class ArchiveEntry {
         this.type = type;
     }
 
+    public void setArchiveData(final byte[] archiveData) {
+        this.archiveData = archiveData;
+    }
     
 }

@@ -501,7 +501,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
                         log.debug("Signtoken did not contain a certificate chain, looking in config.");
                         certChain = (new ProcessableConfig(config)).getSignerCertificateChain();
                         if (certChain == null) {
-                            log.error("Neither Signtoken or ProcessableConfig contains a certificate chain!");
+                            log.debug("Neither Signtoken or ProcessableConfig contains a certificate chain!");
                         }
                     }
                 }

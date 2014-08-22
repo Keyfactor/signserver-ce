@@ -3297,10 +3297,21 @@ private void displayLogEntryAction() {
     private class ArchiveFetchTask extends org.jdesktop.application.Task<Boolean, Void> {
 
         private List<ArchiveEntry> selectedEntries;
+        private File outputDirectory;
+        private Exception exception;
         
         private ArchiveFetchTask(org.jdesktop.application.Application application) {
             super(application);
             selectedEntries = getSelectedEntries();
+            
+            // ask for a directory to save output files to
+            final JFileChooser chooser = new JFileChooser();
+            
+            chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            if (chooser.showSaveDialog(MainView.this.getFrame()) ==
+                    JFileChooser.APPROVE_OPTION) {
+                outputDirectory = chooser.getSelectedFile();
+            }
         }
 
         private List<ArchiveEntry> getSelectedEntries() {
@@ -3319,28 +3330,53 @@ private void displayLogEntryAction() {
         protected Boolean doInBackground() throws Exception {
             final List<String> uniqueIds = new ArrayList<String>();
             
+            // if no directory was selected, silently return
+            if (outputDirectory == null) {
+                return true;
+            }
+            
             for (final ArchiveEntry entry : selectedEntries) {
                 uniqueIds.add(entry.getUniqueId());
             }
             
-            final List<ArchiveEntry> entries =
-                    SignServerAdminGUIApplication.getAdminWS()
-                        .queryArchiveWithIds(uniqueIds, true);
-            // TODO: actually ask for a download directory here, currently
-            // only dumps the files in /tmp...
-            for (final ArchiveEntry entry : entries) {
-                final File out =
-                        new File("/tmp/" + entry.getArchiveId() + "." +
-                                (String) (entry.getType() == ArchiveDataVO.TYPE_REQUEST ?
-                                "request" : "response"));
-                final FileOutputStream os = new FileOutputStream(out);
-                
-                os.write(entry.getArchiveData());
+            try {
+                final List<ArchiveEntry> entries =
+                        SignServerAdminGUIApplication.getAdminWS()
+                            .queryArchiveWithIds(uniqueIds, true);
+                for (final ArchiveEntry entry : entries) {
+                    final File out =
+                            new File(outputDirectory, 
+                                    constructDumpFilename(entry));
+                    final FileOutputStream os = new FileOutputStream(out);
+
+                    os.write(entry.getArchiveData());
+                }
+            } catch (Exception e) {
+                exception = e;
+                return false;
             }
-            
+                
             return true;
         }
+        
+        @Override
+        public void succeeded(final Boolean success) {
+            if (!success) {
+                // show error
+                JOptionPane.showMessageDialog(MainView.this.getFrame(),
+                        "Could not dump archive data: " + exception.getMessage(), 
+                        "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        
+        private String constructDumpFilename(final ArchiveEntry entry) {
+            return entry.getArchiveId() + "." +
+                (String) (entry.getType() == ArchiveDataVO.TYPE_REQUEST ?
+                                            "request" : "response");
+        }
     }
+    
+    
 
     @Action(block = Task.BlockingScope.WINDOW)
     public Task removeWorkers() {

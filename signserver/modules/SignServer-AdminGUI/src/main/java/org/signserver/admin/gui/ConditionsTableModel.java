@@ -99,7 +99,6 @@ public abstract class ConditionsTableModel extends AbstractTableModel {
         QueryCondition qc = new QueryCondition();
         qc.setColumn(column.getName());
         qc.setOperator(operator);
-        //TODO: make sure enumerated columns (i.e. archive type) actually works...
         qc.setValue(column.translateConditionValue(value));
         entries.add(qc);
         fireTableRowsInserted(entries.size() - 1, entries.size() - 1);

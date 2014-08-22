@@ -26,7 +26,6 @@ import org.ejbca.util.Base64GetHashMap;
 import org.ejbca.util.Base64PutHashMap;
 import org.signserver.common.ArchiveData;
 import org.signserver.common.ArchiveDataVO;
-import org.signserver.common.ArchiveMetadata;
 
 /**
  * Entity Bean storing requests and responses of signer beans

@@ -25,7 +25,6 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.apache.log4j.Logger;
-import org.cesecore.audit.impl.integrityprotected.AuditRecordData;
 import org.cesecore.util.query.QueryCriteria;
 import org.cesecore.util.query.QueryGenerator;
 import org.ejbca.util.CertTools;

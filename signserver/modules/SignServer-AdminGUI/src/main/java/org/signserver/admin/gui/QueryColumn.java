@@ -37,13 +37,19 @@ public interface QueryColumn {
      */
     public String getDescription();
     
+    /**
+     * Get column type.
+     * 
+     * @return The column type
+     * @see Type
+     */
     public Type getType();
  
     /**
      * Give a list of possible discrete type values for a type column.
      * 
      * @return List of possible values
-     * @throws IllegalArgumentException if called on a non-discrete column 
+     * @throws IllegalArgumentException if called on a column that is not of the enumerated type
      */
     public Collection<String> getTypeValues() throws IllegalArgumentException;
 
@@ -56,10 +62,28 @@ public interface QueryColumn {
      */
     public String translateConditionValue(final String value);
     
+    /**
+     * Represents a column type.
+     */
     public enum Type {
+        /**
+         * Free text value.
+         */
         TEXT,
+        
+        /**
+         * Integer value.
+         */
         NUMBER,
+        
+        /**
+         * Timestamp value.
+         */
         TIME,
+        
+        /**
+         * Enumerated (with a fixed set) value.
+         */
         TYPE
     }
 }

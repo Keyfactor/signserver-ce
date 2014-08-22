@@ -18,6 +18,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -81,6 +83,7 @@ import org.signserver.admin.gui.adminws.gen.SignServerException_Exception;
 import org.signserver.admin.gui.adminws.gen.WsGlobalConfiguration;
 import org.signserver.admin.gui.adminws.gen.WsWorkerConfig;
 import org.signserver.admin.gui.adminws.gen.WsWorkerStatus;
+import org.signserver.common.ArchiveDataVO;
 import org.signserver.common.ArchiveMetadata;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.util.PropertiesDumper;
@@ -1802,14 +1805,10 @@ public class MainView extends FrameView {
 
         jSplitPane3.setRightComponent(jPanel5);
 
+        fetchArchiveEntriesButton.setAction(actionMap.get("archiveFetch")); // NOI18N
         fetchArchiveEntriesButton.setText(resourceMap.getString("fetchArchiveEntriesButton.text")); // NOI18N
         fetchArchiveEntriesButton.setEnabled(false);
         fetchArchiveEntriesButton.setName("fetchArchiveEntriesButton"); // NOI18N
-        fetchArchiveEntriesButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fetchArchiveEntriesButtonActionPerformed(evt);
-            }
-        });
 
         javax.swing.GroupLayout archivePanelLayout = new javax.swing.GroupLayout(archivePanel);
         archivePanel.setLayout(archivePanelLayout);
@@ -2451,10 +2450,6 @@ private void addWorkerItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN
             archiveConditionsModel.removeCondition(selected);
         }
     }//GEN-LAST:event_jButtonArchiveConditionRemoveActionPerformed
-
-    private void fetchArchiveEntriesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fetchArchiveEntriesButtonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_fetchArchiveEntriesButtonActionPerformed
 
 private void displayLogEntryAction() {
     final int sel = auditLogTable.getSelectedRow();
@@ -3315,7 +3310,8 @@ private void displayLogEntryAction() {
             final List<ArchiveEntry> result = new ArrayList<ArchiveEntry>();
             
             for (final int row : archiveTable.getSelectedRows()) {
-                result.add(entries.get(row));
+                final ArchiveEntry entry = entries.get(row);
+                result.add(entry);
             }
             
             return result;
@@ -3329,11 +3325,21 @@ private void displayLogEntryAction() {
                 uniqueIds.add(entry.getUniqueId());
             }
             
-            /*
-            final Collection<ArchiveMetadata> metaDatas =
+            final List<ArchiveEntry> entries =
                     SignServerAdminGUIApplication.getAdminWS()
                         .queryArchiveWithIds(uniqueIds, true);
-             */
+            // TODO: actually ask for a download directory here, currently
+            // only dumps the files in /tmp...
+            for (final ArchiveEntry entry : entries) {
+                final File out =
+                        new File("/tmp/" + entry.getArchiveId() + "." +
+                                (String) (entry.getType() == ArchiveDataVO.TYPE_REQUEST ?
+                                "request" : "response"));
+                final FileOutputStream os = new FileOutputStream(out);
+                
+                os.write(entry.getArchiveData());
+            }
+            
             return true;
         }
     }

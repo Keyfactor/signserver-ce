@@ -12,12 +12,20 @@
  *************************************************************************/
 package org.signserver.server.archive;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 import java.util.Random;
 import org.apache.log4j.Logger;
+import org.cesecore.util.query.QueryCriteria;
+import org.cesecore.util.query.elems.RelationalOperator;
+import org.cesecore.util.query.elems.Term;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 import static org.junit.Assert.*;
 import org.junit.Test;
+import org.signserver.common.ArchiveMetadata;
 
 /**
  * Tests for archiving.
@@ -102,6 +110,49 @@ public class ArchiveTest extends ArchiveTestCase {
         testArchive("<document/>");
         
         LOG.debug("<test04archiveSameDocumentTwice");
+    }
+    
+    @Test
+    public void test05archiveTestQuery() throws Exception {
+        LOG.debug(">test05archiveTestQuery");
+        
+        final String document = "<document/>";
+        
+        // enable archiving
+        getWorkerSession().setWorkerProperty(getSignerIdDummy1(), "ARCHIVE", "TRUE");
+        getWorkerSession().reloadConfiguration(getSignerIdDummy1());
+        
+        // make sure timestamps don't "collide" with earlier tests
+        Thread.sleep(10);
+        // record timestamp before doing requests
+        final long timestamp = System.currentTimeMillis();
+        
+        testArchive(document);
+        
+        // test querying archive
+        final QueryCriteria qc = QueryCriteria.create();
+        
+        qc.add(new Term(RelationalOperator.GE, ArchiveMetadata.TIME, Long.valueOf(timestamp)));
+        
+        final Collection<ArchiveMetadata> metadatas =
+                getWorkerSession().searchArchive(0, 10, qc, false);
+        
+        assertEquals("Number of archive entries", 1, metadatas.size());
+        assertNull("Should not include archive data",
+                metadatas.iterator().next().getArchiveData());
+    
+        
+        final ArchiveMetadata metadata = metadatas.iterator().next();
+        final String uniqueId = metadata.getUniqueId();
+        final List<String> uniqueIds = Arrays.asList(uniqueId);
+        final Collection<ArchiveMetadata> fetchedMetadatas =
+                getWorkerSession().searchArchiveWithIds(uniqueIds, true);
+        
+        assertEquals("Number of fetched items", 1, fetchedMetadatas.size());
+        assertNotNull("Response data returned",
+                fetchedMetadatas.iterator().next().getArchiveData());
+        assertEquals("UniqueId matching", uniqueId,
+                fetchedMetadatas.iterator().next().getUniqueId());
     }
     
     /**

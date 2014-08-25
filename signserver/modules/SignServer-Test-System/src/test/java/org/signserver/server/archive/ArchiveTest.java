@@ -14,7 +14,6 @@ package org.signserver.server.archive;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import org.apache.log4j.Logger;

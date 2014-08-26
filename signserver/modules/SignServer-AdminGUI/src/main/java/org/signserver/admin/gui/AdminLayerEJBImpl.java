@@ -1075,6 +1075,7 @@ public class AdminLayerEJBImpl implements AdminWS {
         result.setSignerId(entry.getSignerId());
         result.setTime(entry.getTime().getTime());
         result.setType(entry.getType());
+        result.setArchiveData(entry.getArchiveData());
         
         return result;
     }

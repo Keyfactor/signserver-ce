@@ -1816,6 +1816,7 @@ public class MainView extends FrameView {
 
         fetchArchiveEntriesButton.setAction(actionMap.get("archiveFetch")); // NOI18N
         fetchArchiveEntriesButton.setText(resourceMap.getString("fetchArchiveEntriesButton.text")); // NOI18N
+        fetchArchiveEntriesButton.setEnabled(false);
         fetchArchiveEntriesButton.setName("fetchArchiveEntriesButton"); // NOI18N
 
         javax.swing.GroupLayout archivePanelLayout = new javax.swing.GroupLayout(archivePanel);
@@ -3312,6 +3313,8 @@ private void displayLogEntryAction() {
         private ArchiveFetchTask(org.jdesktop.application.Application application) {
             super(application);
             fetchArchiveDataInProgress = true;
+            // disable fetch button
+            fetchArchiveEntriesButton.setEnabled(false);
             selectedEntries = getSelectedEntries();
             
             // ask for a directory to save output files to
@@ -3346,6 +3349,7 @@ private void displayLogEntryAction() {
             }
             
             for (final ArchiveEntry entry : selectedEntries) {
+                System.out.println("uniqueId: " + entry.getUniqueId());
                 uniqueIds.add(entry.getUniqueId());
             }
             

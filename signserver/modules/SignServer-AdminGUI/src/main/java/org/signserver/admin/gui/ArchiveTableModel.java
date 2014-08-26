@@ -30,7 +30,7 @@ import org.signserver.server.archive.Archivable;
 public class ArchiveTableModel extends AbstractTableModel {
 
     private static final String[] COLUMNS = new String [] {
-                "Archive ID", "Time", "Type", "Signer ID", "Admin Serial Number", "Admin Issuer", "IP Address"
+                "Archive ID", "Time", "Type", "Signer ID", "Client Cert Serial Number", "Issuer DN", "IP Address"
             };
     
     private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ");

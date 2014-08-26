@@ -1691,7 +1691,7 @@ public class MainView extends FrameView {
 
             },
             new String [] {
-                "Archive ID", "Time", "Type", "Signer ID", "Admin Serial Number", "Admin Issuer", "IP Address"
+                "Archive ID", "Time", "Type", "Signer ID", "Client Cert Serial Number", "Issuer DN", "IP Address"
             }
         ));
         archiveTable.setEnabled(false);
@@ -1708,6 +1708,13 @@ public class MainView extends FrameView {
             }
         });
         archiveTableScrollPane.setViewportView(archiveTable);
+        archiveTable.getColumnModel().getColumn(0).setHeaderValue(resourceMap.getString("archiveTable.columnModel.title0")); // NOI18N
+        archiveTable.getColumnModel().getColumn(1).setHeaderValue(resourceMap.getString("archiveTable.columnModel.title1")); // NOI18N
+        archiveTable.getColumnModel().getColumn(2).setHeaderValue(resourceMap.getString("archiveTable.columnModel.title2")); // NOI18N
+        archiveTable.getColumnModel().getColumn(3).setHeaderValue(resourceMap.getString("archiveTable.columnModel.title3")); // NOI18N
+        archiveTable.getColumnModel().getColumn(4).setHeaderValue(resourceMap.getString("archiveTable.columnModel.title4")); // NOI18N
+        archiveTable.getColumnModel().getColumn(5).setHeaderValue(resourceMap.getString("archiveTable.columnModel.title5")); // NOI18N
+        archiveTable.getColumnModel().getColumn(6).setHeaderValue(resourceMap.getString("archiveTable.columnModel.title6")); // NOI18N
 
         javax.swing.GroupLayout archiveTablePanelLayout = new javax.swing.GroupLayout(archiveTablePanel);
         archiveTablePanel.setLayout(archiveTablePanelLayout);

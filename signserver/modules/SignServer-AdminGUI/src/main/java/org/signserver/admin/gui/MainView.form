@@ -1959,15 +1959,57 @@
                                         <Column editable="true" title="Time" type="java.lang.Object"/>
                                         <Column editable="true" title="Type" type="java.lang.Object"/>
                                         <Column editable="true" title="Signer ID" type="java.lang.Object"/>
-                                        <Column editable="true" title="Admin Serial Number" type="java.lang.Object"/>
-                                        <Column editable="true" title="Admin Issuer" type="java.lang.Object"/>
+                                        <Column editable="true" title="Client Cert Serial Number" type="java.lang.Object"/>
+                                        <Column editable="true" title="Issuer DN" type="java.lang.Object"/>
                                         <Column editable="true" title="IP Address" type="java.lang.Object"/>
                                       </Table>
+                                    </Property>
+                                    <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
+                                      <TableColumnModel selectionModel="0">
+                                        <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                                          <Title resourceKey="archiveTable.columnModel.title0"/>
+                                          <Editor/>
+                                          <Renderer/>
+                                        </Column>
+                                        <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                                          <Title resourceKey="archiveTable.columnModel.title1"/>
+                                          <Editor/>
+                                          <Renderer/>
+                                        </Column>
+                                        <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                                          <Title resourceKey="archiveTable.columnModel.title2"/>
+                                          <Editor/>
+                                          <Renderer/>
+                                        </Column>
+                                        <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                                          <Title resourceKey="archiveTable.columnModel.title3"/>
+                                          <Editor/>
+                                          <Renderer/>
+                                        </Column>
+                                        <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                                          <Title resourceKey="archiveTable.columnModel.title4"/>
+                                          <Editor/>
+                                          <Renderer/>
+                                        </Column>
+                                        <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                                          <Title resourceKey="archiveTable.columnModel.title5"/>
+                                          <Editor/>
+                                          <Renderer/>
+                                        </Column>
+                                        <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                                          <Title resourceKey="archiveTable.columnModel.title6"/>
+                                          <Editor/>
+                                          <Renderer/>
+                                        </Column>
+                                      </TableColumnModel>
                                     </Property>
                                     <Property name="enabled" type="boolean" value="false"/>
                                     <Property name="name" type="java.lang.String" value="archiveTable" noResource="true"/>
                                     <Property name="selectionModel" type="javax.swing.ListSelectionModel" editor="org.netbeans.modules.form.editors2.JTableSelectionModelEditor">
                                       <JTableSelectionModel selectionMode="2"/>
+                                    </Property>
+                                    <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
+                                      <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
                                     </Property>
                                   </Properties>
                                   <Events>

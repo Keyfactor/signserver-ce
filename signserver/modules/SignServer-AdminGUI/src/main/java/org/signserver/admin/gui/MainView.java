@@ -3307,6 +3307,7 @@ private void displayLogEntryAction() {
     private class ArchiveFetchTask extends org.jdesktop.application.Task<Boolean, Void> {
 
         private List<ArchiveEntry> selectedEntries;
+        private List<ArchiveEntry> fetchedEntries;
         private File outputDirectory;
         private Exception exception;
         
@@ -3353,10 +3354,10 @@ private void displayLogEntryAction() {
             }
             
             try {
-                final List<ArchiveEntry> entries =
+                fetchedEntries =
                         SignServerAdminGUIApplication.getAdminWS()
                             .queryArchiveWithIds(uniqueIds, true);
-                for (final ArchiveEntry entry : entries) {
+                for (final ArchiveEntry entry : fetchedEntries) {
                     final File out =
                             new File(outputDirectory, 
                                     constructDumpFilename(entry));
@@ -3378,7 +3379,21 @@ private void displayLogEntryAction() {
         
         @Override
         public void succeeded(final Boolean success) {
-            if (!success) {
+            if (success) {
+                final int numFetchedEntries = fetchedEntries.size();
+                final int numSelectedEntries = selectedEntries.size();
+                
+                if (numFetchedEntries == numSelectedEntries) {
+                    JOptionPane.showMessageDialog(MainView.this.getFrame(),
+                            String.format("Downloaded %d items", numFetchedEntries),
+                            "Sucess", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(MainView.this.getFrame(),
+                            String.format("Missing items, downloaded %1$d of %2$d",
+                                          numFetchedEntries, numSelectedEntries),
+                            "Missing entries", JOptionPane.WARNING_MESSAGE);
+                }
+            } else {
                 // show error
                 JOptionPane.showMessageDialog(MainView.this.getFrame(),
                         "Could not dump archive data: " + exception.getMessage(), 

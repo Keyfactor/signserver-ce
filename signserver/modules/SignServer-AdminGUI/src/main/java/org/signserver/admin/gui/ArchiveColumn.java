@@ -50,7 +50,8 @@ public enum ArchiveColumn implements QueryColumn {
                 throw new IllegalArgumentException("Unknown TYPE value: " + value);
             }
         }
-    };
+    },
+    UNIQUE_ID(ArchiveMetadata.UNIQUE_ID, "Unique ID", Type.TEXT);
     
     private String name;
     private String description;

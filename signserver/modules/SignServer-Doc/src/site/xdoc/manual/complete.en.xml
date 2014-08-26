@@ -5079,8 +5079,140 @@ The StatusPropertiesWorker can be used to query and setting status properties in
                         <p><b>x.EXPIRATION</b> = See Request Properties</p>
                     </subsubsection>
                 </subsection>
+
+                <subsection name="TimeMonitorManager">
+                    <note>
+The TimeMonitorManager is an Enterprise Edition feature.
+                    </note>
+                    <p>
+Fully qualified class name: org.signserver.module.timemonitormanager.TimeMonitorManager
+                    </p>
+
+                    <subsubsection name="Overview">
+                        <p>
+Similar to the StatusPropertiesWorker, the TimeMonitorManager also supports setting status properties in the status repository. In addition the TimeMonitorManager also supports dynamic configuration of the TimeMonitor as well as gives a complete view of the state of the TimeMonitor.
+                        </p>
+                    </subsubsection>
+                    <subsubsection name="Worker Properties">
+                        <p>All worker propertie starting with either "TIMEMONITOR." or "TIMESERVER." are sent to the TimeMonitor if it asks for it.</p>
+                        <p>See the <a href="complete.en.html#SignServer%20TimeMonitor">SignServer TimeMonitor</a> manual for the list of available properties.</p>
+                    </subsubsection>
+                    <subsubsection name="Request Properties">
+                        <p><b>x.VALUE</b> - Where x is a status property: Sets the value of the property</p>
+                        <p><b>x.EXPIRATION</b> - Where x is a status property: Sets the expiration time 
+                            for x (x.VALUE must also be specified)</p>
+                    </subsubsection>
+                    <subsubsection name="Response Properties">
+                        <p><b>x.UPDATE</b> = The time when the property was written</p>
+                    </subsubsection>
+                    <subsubsection name="Status output">
+                        <p>
+Much information about the state of the TimeMonitor is available in the getstatus output of the TimeMonitorManager:
+                        </p>
+                        <ul>
+                            <li>
+                                <b>Time monitor</b>: Indicates if the application is detected to be 'Running', 'Disabled', 'Not running?' or 'Unavailabe'. The state is determined by if the manager has seen an update from the TimeMonitor before the status properties are starting to expire.
+                            </li>
+                            <li>
+                                <b>Last update</b>: The last time the TimeMonitor contacted the manager.
+                            </li>
+                            <li>
+                                <b>Current time</b>: Current time of the server.
+                            </li>
+                            <li>
+                                <b>Time state</b>: The last time state from the TimeMonitor.
+                            </li>
+                            <li>
+                                <b>Report state</b>: The last report state from the TimeMonitor.
+                            </li>
+                            <li>
+                                <b>Leap state</b>: The last leap state from the TimeMonitor.
+                            </li>
+                            <li>
+                                <b>Configuration</b>: Either 'out of sync' or 'up to date' depending on if the current configuration has been read by the TimeMonitor or not. After changing a property in the TimeMonitorManager it is normal that the cofiguration is marked as 'out of sync' until the TimeMonitor fetches it.
+                            </li>
+                            <li>
+                                <b>Status properties values</b>: Prints the current value and possibly the expiration time for the TIMESOURCE0_INSYNC and LEAPSECOND status properties.
+                            </li>
+                            <li>
+                                <b>Timings</b>: Prints the current time values from the TimeMonitor.
+                            </li>
+                            <li>
+                                <b>Configuration</b>: Prints the configuration values in the manager (not necesarly read by the TimeMonitor yet).
+                            </li>
+                            <li>
+                                <b>Last TimeMonitor log entries</b>: Prints the last log entries obtained from the last update from the TimeMonitor.
+                            </li>
+                        </ul>
+                        <p>
+                            Sample output:
+                        </p>
+                        <source><![CDATA[
+Status of Worker with id 300 (TimeMonitorManager) is:
+   Worker status : Active
+   Time monitor  : Running
+   Last update   : 2014-08-26 11:43:39,176
+   Current time  : 2014-08-26 11:43:39,580
+   Time state    : INSYNC
+   Report state  : REPORTED
+   Leap state    : NONE
+   Configuration : Up to date
+
+   Status Repository values:
+      TIMESOURCE0_INSYNC:        true
+      LEAPSECOND:                NONE
+
+   Timings:
+      NTP server time offset:           0 ms
+      NTP server query time:          507 ms
+      NTP leap status query time:       8 ms
+      Report time:                      7 ms
+      Total required run time:        522 ms
+
+   Configuration:
+      NTP server hosts:            192.168.30.25
+      NTP query samples:                2
+      NTP query timeout:              200 ms
+      Max accepted offset:            997 ms
+      Warn offset:                    500 ms
+      Status expire time:             900 ms
+      Leap status expire time:      60000 ms
+      Warn run time:                  800 ms
+      Minimum run time:               550 ms
+
+   Last TimeMonitor log entries:
+      2014-08-26 11:36:29,253 INFO  Started
+      2014-08-26 11:36:29,287 INFO  State changed to: UNKNOWN,REPORTED,UNKNOWN
+      2014-08-26 11:36:44,255 INFO  Config changed to: 1ccdf46b
+      2014-08-26 11:36:44,782 INFO  Time back in calibration: offset abs(0)  max accepted offset 997
+      2014-08-26 11:36:44,793 INFO  State changed to: INSYNC,REPORTED,NONE
+                        ]]></source>
+                    </subsubsection>
+                </subsection>
                 
-                                
+                <subsection name="TimeMonitorStatusReportWorker">
+                    <note>
+The TimeMonitorStatusReportWorker is an Enterprise Edition feature.
+                    </note>
+                    <p>
+Fully qualified class name: org.signserver.module.timemonitormanager.TimeMonitorStatusReportWorker
+                    </p>
+
+                    <subsubsection name="Overview">
+                        <p>
+Worker that outputs the TimeMonitor state line as described in the <a href="complete.en.html#SignServer%20TimeMonitor">SignServer TimeMonitor</a> manual.
+                        </p>
+                    </subsubsection>
+                    <subsubsection name="Response">
+                        <p>
+                            Sample output:
+                        </p>
+                        <source><![CDATA[
+1409055102120,INSYNC,REPORTED,NONE,1ccdf46b,0,507,7,6
+                        ]]></source>
+                    </subsubsection>
+                </subsection>
+
                 <subsection name="SignerStatusReportWorker">
                     <p>
 Fully qualified class name: org.signserver.module.signerstatusreport.SignerStatusReportWorker
@@ -7326,6 +7458,9 @@ The SignServer TimeMonitor is an Enterprise Edition feature.
                 <p>
 This is an external application that can be used together with the StatusReadingLocalComputerTimeSource for monitoring of the local time and
 informing SignServer about its state.
+                </p>
+                <p>
+In SignServer, either an <a href="complete.en.html#StatusPropertiesWorker">StatusPropertiesWorker</a> or a <a href="complete.en.html#TimeMonitorManager">TimeMonitorManager</a> is configured for accepting the status updates. The later also supports dynamic configuration of the TimeMonitor.
                 </p>
                 <p>
 For details see the <a href="../docs/TimeMonitor-Manual.pdf">TimeMonitor manual</a> (only available in Enterprise Edition).

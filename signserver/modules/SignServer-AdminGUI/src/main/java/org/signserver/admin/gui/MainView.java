@@ -127,6 +127,11 @@ public class MainView extends FrameView {
      */
     private boolean exportAllUnrelatedPreviousValue;
     
+    /**
+     * Set by the fetch archive data backround task when an operation is ongoing.
+     */
+    private boolean fetchArchiveDataInProgress;
+    
     private static String[] statusColumns = {
         "Property", "Value"
     };
@@ -282,7 +287,8 @@ public class MainView extends FrameView {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) {
-                    fetchArchiveEntriesButton.setEnabled(archiveTable.getSelectedRowCount() > 0);
+                    fetchArchiveEntriesButton.setEnabled(!fetchArchiveDataInProgress 
+                            && archiveTable.getSelectedRowCount() > 0);
                 }
             }
         });
@@ -3305,6 +3311,7 @@ private void displayLogEntryAction() {
         
         private ArchiveFetchTask(org.jdesktop.application.Application application) {
             super(application);
+            fetchArchiveDataInProgress = true;
             selectedEntries = getSelectedEntries();
             
             // ask for a directory to save output files to
@@ -3373,6 +3380,7 @@ private void displayLogEntryAction() {
                         "Could not dump archive data: " + exception.getMessage(), 
                         "Error", JOptionPane.ERROR_MESSAGE);
             }
+            fetchArchiveDataInProgress = false;
         }
         
         private String constructDumpFilename(final ArchiveEntry entry) {

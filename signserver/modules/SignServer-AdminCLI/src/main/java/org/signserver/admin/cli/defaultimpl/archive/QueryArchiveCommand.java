@@ -12,6 +12,9 @@
  *************************************************************************/
 package org.signserver.admin.cli.defaultimpl.archive;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Collections;
@@ -56,6 +59,7 @@ public class QueryArchiveCommand extends AbstractCommand {
     public static final String HEADER = "header";
     public static final String REQUEST = "request";
     public static final String RESPONSE = "response";
+    public static final String OUTPATH = "outpath";
     
     /** The command line options */
     private static final Options OPTIONS;
@@ -68,12 +72,13 @@ public class QueryArchiveCommand extends AbstractCommand {
     private int limit;
     private boolean printHeader;
     private QueryCriteria qc;
- 
+    private File outPath;
+    
     private static final String HEADER_FIELDS = "archiveid, time, type, signerid, requestIssuerDN, requestCertSerialNumber, requestIP";
     private static final String HEADER_NAMES =  "Archive ID, Time, Type, Signer ID, Issuer DN, Certificate Serial Number, IP Address";
 
     private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ");
-
+    
     static {
         OPTIONS = new Options();
         OPTIONS.addOption(CRITERIA, true, "Search criteria (can specify multiple criterias)");
@@ -82,6 +87,7 @@ public class QueryArchiveCommand extends AbstractCommand {
         OPTIONS.addOption(HEADER, false, "Print a column header");
         OPTIONS.addOption(REQUEST, false, "Search for requests");
         OPTIONS.addOption(RESPONSE, false, "Search for responses");
+        OPTIONS.addOption(OUTPATH, true, "Directory to write output to");
     
         intFields = new HashSet<String>();
         intFields.add(ArchiveMetadata.SIGNER_ID);
@@ -133,6 +139,9 @@ public class QueryArchiveCommand extends AbstractCommand {
         }
         
         try {
+            // if an output path was specified, download data for result entries
+            final boolean downloadData = (outPath != null);
+            
             if (printHeader) {
                 out.println(HEADER_NAMES);
                 out.println(HEADER_FIELDS);
@@ -140,7 +149,7 @@ public class QueryArchiveCommand extends AbstractCommand {
     
             // Perform the query
             Collection<? extends ArchiveMetadata> entries =
-                    helper.getWorkerSession().searchArchive(from, limit, qc, false);
+                    helper.getWorkerSession().searchArchive(from, limit, qc, downloadData);
     
             for (final ArchiveMetadata entry : entries) {
                 // render the result
@@ -165,6 +174,10 @@ public class QueryArchiveCommand extends AbstractCommand {
                     .append(ip);
             
                 out.println(buff.toString());
+                
+                if (downloadData) {
+                    saveEntry(entry);
+                }
             }
             
             out.println("\n\n");
@@ -172,6 +185,16 @@ public class QueryArchiveCommand extends AbstractCommand {
         } catch (Exception e) {
             throw new UnexpectedCommandFailureException(e);
         }
+    }
+    
+    private void saveEntry(final ArchiveMetadata entry) throws IOException {
+        final String fileName =
+                entry.getArchiveId() +
+                (entry.getType() == ArchiveDataVO.TYPE_REQUEST ? ".request" : "response");
+        final File outfile = new File(outPath, fileName);
+        final FileOutputStream fis = new FileOutputStream(outfile);
+        
+        fis.write(entry.getArchiveData());
     }
     
     private void parseCommandLine(final CommandLine line) throws ParseException {
@@ -208,6 +231,14 @@ public class QueryArchiveCommand extends AbstractCommand {
             qc.add(new Term(RelationalOperator.EQ, ArchiveMetadata.TYPE, ArchiveDataVO.TYPE_REQUEST));
         } else if (line.hasOption(RESPONSE)) {
             qc.add(new Term(RelationalOperator.EQ, ArchiveMetadata.TYPE, ArchiveDataVO.TYPE_RESPONSE));
+        }
+        
+        if (line.hasOption(OUTPATH)) {
+            outPath = new File(line.getOptionValue(OUTPATH));
+            
+            if (!outPath.isDirectory()) {
+                throw new ParseException("Output path must be a directory");
+            }
         }
         
         final String[] criterias = line.getOptionValues(CRITERIA);

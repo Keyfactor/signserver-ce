@@ -1067,6 +1067,7 @@ public class AdminLayerEJBImpl implements AdminWS {
     private ArchiveEntry fromArchiveMetadata(final ArchiveMetadata entry) {
         final ArchiveEntry result = new ArchiveEntry();
         
+        result.setUniqueId(entry.getUniqueId());
         result.setArchiveId(entry.getArchiveId());
         result.setRequestCertSerialNumber(entry.getRequestCertSerialNumber());
         result.setRequestIssuerDN(entry.getRequestIssuerDN());

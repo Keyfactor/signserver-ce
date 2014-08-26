@@ -1600,16 +1600,14 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" attributes="0">
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jSplitPane3" pref="1222" max="32767" attributes="0"/>
-                          </Group>
                           <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace min="-2" pref="23" max="-2" attributes="0"/>
+                              <EmptySpace min="12" pref="12" max="12" attributes="0"/>
                               <Component id="fetchArchiveEntriesButton" min="-2" pref="238" max="-2" attributes="0"/>
                           </Group>
+                          <Component id="jSplitPane3" alignment="0" pref="1222" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -1619,9 +1617,9 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jSplitPane3" pref="600" max="32767" attributes="0"/>
+                      <Component id="jSplitPane3" pref="591" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="fetchArchiveEntriesButton" max="32767" attributes="0"/>
+                      <Component id="fetchArchiveEntriesButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -1822,12 +1820,12 @@
                                   </Group>
                                   <Component id="archivePreviousButton" alignment="0" max="32767" attributes="1"/>
                               </Group>
-                              <EmptySpace pref="427" max="32767" attributes="0"/>
+                              <EmptySpace pref="418" max="32767" attributes="0"/>
                           </Group>
                           <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="1" attributes="0">
                                   <EmptySpace min="-2" pref="59" max="-2" attributes="0"/>
-                                  <Component id="archiveContentPanel" pref="401" max="32767" attributes="0"/>
+                                  <Component id="archiveContentPanel" pref="392" max="32767" attributes="0"/>
                                   <EmptySpace min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -1935,15 +1933,12 @@
                           <Layout>
                             <DimensionLayout dim="0">
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="archiveTableScrollPane" alignment="0" pref="1198" max="32767" attributes="0"/>
+                                  <Component id="archiveTableScrollPane" alignment="1" pref="1198" max="32767" attributes="0"/>
                               </Group>
                             </DimensionLayout>
                             <DimensionLayout dim="1">
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <Component id="archiveTableScrollPane" min="-2" pref="389" max="-2" attributes="0"/>
-                                      <EmptySpace max="32767" attributes="0"/>
-                                  </Group>
+                                  <Component id="archiveTableScrollPane" alignment="0" pref="392" max="32767" attributes="0"/>
                               </Group>
                             </DimensionLayout>
                           </Layout>
@@ -2002,7 +1997,7 @@
                             </DimensionLayout>
                             <DimensionLayout dim="1">
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jScrollPane8" alignment="0" pref="401" max="32767" attributes="0"/>
+                                  <Component id="jScrollPane8" alignment="0" pref="392" max="32767" attributes="0"/>
                               </Group>
                             </DimensionLayout>
                           </Layout>
@@ -2036,7 +2031,6 @@
                   <action class="org.signserver.admin.gui.MainView" id="archiveFetch" methodName="archiveFetch"/>
                 </Property>
                 <Property name="text" type="java.lang.String" resourceKey="fetchArchiveEntriesButton.text"/>
-                <Property name="enabled" type="boolean" value="false"/>
                 <Property name="name" type="java.lang.String" value="fetchArchiveEntriesButton" noResource="true"/>
               </Properties>
             </Component>

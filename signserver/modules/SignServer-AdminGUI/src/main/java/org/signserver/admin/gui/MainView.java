@@ -3349,7 +3349,6 @@ private void displayLogEntryAction() {
             }
             
             for (final ArchiveEntry entry : selectedEntries) {
-                System.out.println("uniqueId: " + entry.getUniqueId());
                 uniqueIds.add(entry.getUniqueId());
             }
             
@@ -3370,6 +3369,7 @@ private void displayLogEntryAction() {
                 // (archive entries could have dissappeared)
             } catch (Exception e) {
                 exception = e;
+                e.printStackTrace();
                 return false;
             }
                 

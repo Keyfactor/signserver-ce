@@ -1703,16 +1703,6 @@ public class MainView extends FrameView {
         archiveTable.setEnabled(false);
         archiveTable.setName("archiveTable"); // NOI18N
         archiveTable.setSelectionMode(javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        archiveTable.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                archiveTableMouseClicked(evt);
-            }
-        });
-        archiveTable.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                archiveTableKeyReleased(evt);
-            }
-        });
         archiveTableScrollPane.setViewportView(archiveTable);
         archiveTable.getColumnModel().getColumn(0).setHeaderValue(resourceMap.getString("archiveTable.columnModel.title0")); // NOI18N
         archiveTable.getColumnModel().getColumn(1).setHeaderValue(resourceMap.getString("archiveTable.columnModel.title1")); // NOI18N
@@ -2435,14 +2425,6 @@ private void addWorkerItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN
         // Reload
         getContext().getTaskService().execute(archiveReload());
     }//GEN-LAST:event_archiveNextButtonActionPerformed
-
-    private void archiveTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_archiveTableMouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_archiveTableMouseClicked
-
-    private void archiveTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_archiveTableKeyReleased
-        // TODO add your handling code here:
-    }//GEN-LAST:event_archiveTableKeyReleased
 
     private void jButtonArchiveConditionAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonArchiveConditionAddActionPerformed
         AddConditionDialog dlg = new ArchiveAddConditionDialog(getFrame(), true);

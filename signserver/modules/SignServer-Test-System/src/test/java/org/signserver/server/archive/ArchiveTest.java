@@ -133,7 +133,7 @@ public class ArchiveTest extends ArchiveTestCase {
         
         qc.add(new Term(RelationalOperator.GE, ArchiveMetadata.TIME, Long.valueOf(timestamp)));
         
-        final Collection<ArchiveMetadata> metadatas =
+        Collection<ArchiveMetadata> metadatas =
                 getWorkerSession().searchArchive(0, 10, qc, false);
         
         assertEquals("Number of archive entries", 1, metadatas.size());
@@ -144,7 +144,7 @@ public class ArchiveTest extends ArchiveTestCase {
         final ArchiveMetadata metadata = metadatas.iterator().next();
         final String uniqueId = metadata.getUniqueId();
         final List<String> uniqueIds = Arrays.asList(uniqueId);
-        final Collection<ArchiveMetadata> fetchedMetadatas =
+        Collection<ArchiveMetadata> fetchedMetadatas =
                 getWorkerSession().searchArchiveWithIds(uniqueIds, true);
         
         assertEquals("Number of fetched items", 1, fetchedMetadatas.size());
@@ -152,7 +152,18 @@ public class ArchiveTest extends ArchiveTestCase {
                 fetchedMetadatas.iterator().next().getArchiveData());
         assertEquals("UniqueId matching", uniqueId,
                 fetchedMetadatas.iterator().next().getUniqueId());
-    }
+        
+        // test that trying to fetch an unexisting ID doesn't return any hits
+        fetchedMetadatas =
+                getWorkerSession().searchArchiveWithIds(Arrays.asList("dummyUniqueId"),
+                                                        true);
+        assertEquals("Should get empty result", 0, fetchedMetadatas.size());
+
+        // do query including archive data
+        metadatas = getWorkerSession().searchArchive(0, 10, qc, true);
+        assertNotNull("Should include archive data",
+                metadatas.iterator().next().getArchiveData());
+    }   
     
     /**
      * Remove the workers created etc.

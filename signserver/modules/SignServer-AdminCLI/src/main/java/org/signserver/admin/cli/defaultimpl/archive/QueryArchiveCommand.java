@@ -143,12 +143,15 @@ public class QueryArchiveCommand extends AbstractCommand {
         try {
             // if an output path was specified, download data for result entries
             final boolean downloadData = (outPath != null);
+            int downloadedItems = 0;
             
             if (printHeader) {
                 out.println(HEADER_NAMES);
                 out.println(HEADER_FIELDS);
             }
     
+            System.out.println("Download data: " + downloadData);
+            
             // Perform the query
             Collection<? extends ArchiveMetadata> entries =
                     helper.getWorkerSession().searchArchive(from, limit, qc, downloadData);
@@ -179,7 +182,13 @@ public class QueryArchiveCommand extends AbstractCommand {
                 
                 if (downloadData) {
                     saveEntry(entry);
+                    downloadedItems++;
                 }
+            }
+            
+            if (downloadData) {
+                out.print(String.format("\nDownloaded %d archive entries",
+                        downloadedItems));
             }
             
             out.println("\n\n");

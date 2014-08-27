@@ -144,11 +144,21 @@ public class ArchiveTest extends ArchiveTestCase {
         final ArchiveMetadata metadata = metadatas.iterator().next();
         final String uniqueId = metadata.getUniqueId();
         final List<String> uniqueIds = Arrays.asList(uniqueId);
+        
+        // test querying on a uniqueId from an earlier archiving
         Collection<ArchiveMetadata> fetchedMetadatas =
                 getWorkerSession().searchArchiveWithIds(uniqueIds, true);
-        
         assertEquals("Number of fetched items", 1, fetchedMetadatas.size());
         assertNotNull("Response data returned",
+                fetchedMetadatas.iterator().next().getArchiveData());
+        assertEquals("UniqueId matching", uniqueId,
+                fetchedMetadatas.iterator().next().getUniqueId());
+        
+        // test querying on uniqueId not including archiveData
+        fetchedMetadatas =
+                getWorkerSession().searchArchiveWithIds(uniqueIds, false);
+        assertEquals("Number of fetched items", 1, fetchedMetadatas.size());
+        assertNull("Archive data not included",
                 fetchedMetadatas.iterator().next().getArchiveData());
         assertEquals("UniqueId matching", uniqueId,
                 fetchedMetadatas.iterator().next().getUniqueId());
@@ -159,7 +169,7 @@ public class ArchiveTest extends ArchiveTestCase {
                                                         true);
         assertEquals("Should get empty result", 0, fetchedMetadatas.size());
 
-        // do query including archive data
+        // do criteria-based query, including archive data
         metadatas = getWorkerSession().searchArchive(0, 10, qc, true);
         assertNotNull("Should include archive data",
                 metadatas.iterator().next().getArchiveData());

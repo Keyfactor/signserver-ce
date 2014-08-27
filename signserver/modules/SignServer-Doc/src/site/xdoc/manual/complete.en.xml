@@ -1485,8 +1485,7 @@ archive of SignServer.
 <b>wsarchiveauditors -add:</b>
                         </p>
                         <p>
-Authorizes an auditor to use the Admin Web Service interface for querying the archive by
-certificate serialnumber and issuer DN.
+Authorizes an auditor, by specifying a certificate serial number and issuer DN, to use the Admin Web Service interface for querying the archive.
                         </p>
                         <p>
 <b>wsarchiveauditors -remove:</b>

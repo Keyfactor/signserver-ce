@@ -1409,6 +1409,14 @@ Used to extract all archived data requested from a client by specified it's cert
 All data is stored as separate files with the archive id as file title and the file
 extension depending on the type of item.
                         </p>
+                        <p>
+<b>archive query:</b>
+Used to query (and optionally download) archive data.
+                        </p>
+                        <p>
+Archive data can be queried using a similar query syntax as for the audit log query command.
+When data is written out to file, the file names follows the same syntax as the commands above.
+                        </p>
 
                         <p><b>Administrators Related</b></p>
                         <p>

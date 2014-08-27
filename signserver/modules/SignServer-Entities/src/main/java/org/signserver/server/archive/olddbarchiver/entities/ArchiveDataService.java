@@ -178,6 +178,13 @@ public class ArchiveDataService {
         return new ArrayList<ArchiveDataBean>();
     }
     
+    /**
+     * Find archive entries with matching uniqueId.
+     * 
+     * @param uniqueIds Collection of uniqueIds to search for
+     * @param includeData If true, include archive data in the meta data entries
+     * @return Collection of meta data entries
+     */
     @SuppressWarnings("unchecked")
     public Collection<ArchiveMetadata> findAllWithUniqueIdInList(Collection<String> uniqueIds,
         boolean includeData) {
@@ -206,6 +213,15 @@ public class ArchiveDataService {
         return new ArrayList<ArchiveMetadata>();
     }
 
+    /**
+     * Find archive entries based on search query criterias.
+     * 
+     * @param startIndex Start index in result set to start at (0-based index)
+     * @param max Maximum number of entries returned (0 means no limit)
+     * @param criteria Query criteria
+     * @param includeData If true, include archive data (could result in large result sets)
+     * @return Collection of archive meta data entries
+     */
     @SuppressWarnings("unchecked")
     public Collection<ArchiveMetadata> findMatchingCriteria(int startIndex, int max,
             QueryCriteria criteria, boolean includeData) {

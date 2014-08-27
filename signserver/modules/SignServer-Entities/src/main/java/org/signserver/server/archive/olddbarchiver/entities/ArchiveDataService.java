@@ -214,8 +214,12 @@ public class ArchiveDataService {
             final QueryGenerator generator = QueryGenerator.generator(ArchiveDataBean.class, criteria, "a");
             final String conditions = generator.generate();
             
-            final Query query =
-                    em.createQuery("SELECT a FROM ArchiveDataBean a" + conditions);
+            // TODO: couldn't get lazy fetching working for archiveData
+            // so for now using a hand-written query and assemble ArchiveMetadataS
+            // picking out the columns "by hand" in the includeData == false case
+            final Query query = includeData ?
+                    em.createQuery("SELECT a FROM ArchiveDataBean a " + conditions) :
+                    em.createQuery("SELECT a.type, a.signerid, a.uniqueId, a.archiveid, a.time, a.requestIssuerDN, a.requestCertSerialnumber, a.requestIP FROM ArchiveDataBean a " + conditions);
             
             for (final String key : generator.getParameterKeys()) {
                 final Object param = generator.getParameterValue(key);
@@ -230,20 +234,33 @@ public class ArchiveDataService {
                 query.setMaxResults(max);
             }
             
-            final List<ArchiveDataBean> queryResults = query.getResultList();
             final Collection<ArchiveMetadata> result = new LinkedList<ArchiveMetadata>();
             
-            for (final ArchiveDataBean bean : queryResults) {
-                final ArchiveMetadata metadata =
-                    new ArchiveMetadata(bean.getType(), bean.getSignerid(),
-                                        bean.getUniqueId(), bean.getArchiveid(),
-                                        new Date(bean.getTime()), bean.getRequestIssuerDN(),
-                                        bean.getRequestCertSerialnumber(),
-                                        bean.getRequestIP(),
-                                        includeData ?
-                                            bean.getArchiveDataVO().getArchivedBytes() :
-                                            null);
-                result.add(metadata);
+            if (includeData) {
+                final List<ArchiveDataBean> queryResults = query.getResultList();
+
+                for (final ArchiveDataBean bean : queryResults) {
+                    final ArchiveMetadata metadata =
+                        new ArchiveMetadata(bean.getType(), bean.getSignerid(),
+                                            bean.getUniqueId(), bean.getArchiveid(),
+                                            new Date(bean.getTime()), bean.getRequestIssuerDN(),
+                                            bean.getRequestCertSerialnumber(),
+                                            bean.getRequestIP(),
+                                            bean.getArchiveDataVO().getArchivedBytes());
+                    result.add(metadata);
+                }
+            } else {
+                final List<Object[]> queryResults = query.getResultList();
+                
+                for (final Object[] o : queryResults) {
+                    final ArchiveMetadata metadata =
+                            new ArchiveMetadata((Integer) o[0], (Integer) o[1],
+                                                (String) o[2], (String) o[3],
+                                                new Date((Long) o[4]),
+                                                (String) o[5], (String) o[6],
+                                                (String) o[7]);
+                    result.add(metadata);
+                }
             }
             
             return result;

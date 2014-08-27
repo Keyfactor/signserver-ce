@@ -17,9 +17,7 @@ import java.util.Date;
 
 /**
  * Class holding metadata of matched archive entries.
- * The rationale is to present collections of these objects as
- * a "preliminary" search result with the possibility of fetching
- * actual archive data on a per-row basis.
+ * Can optionally hold the actual archived data assoiated with an entry.
  * 
  * @author Marcus Lundblad
  * @version $Id$
@@ -55,6 +53,7 @@ public class ArchiveMetadata implements Serializable {
      * 
      * @param type Archive type
      * @param signerid Signer ID
+     * @param uniqueId Unique ID in DB
      * @param archiveid Archive ID
      * @param time Time of operation
      * @param requestIssuerDN Issuer DN of client performing operation
@@ -75,6 +74,19 @@ public class ArchiveMetadata implements Serializable {
         this.requestIP = requestIP;
     }
     
+    /**
+     * Construct an archive metadata entry including archive data.
+     * 
+     * @param type Archive type
+     * @param signerid Signer ID
+     * @param uniqueId Unique ID in DB
+     * @param archiveid Archive ID
+     * @param time Time of operation
+     * @param requestIssuerDN Issuer DN of client performing operation
+     * @param requestCertSerialnumber Cert serial number of client performing operation
+     * @param requestIP IP address of client performing operation
+     * @param archiveData Archive data
+     */
     public ArchiveMetadata(final int type, final int signerid,
             final String uniqueId, final String archiveid,
             final Date time, final String requestIssuerDN,

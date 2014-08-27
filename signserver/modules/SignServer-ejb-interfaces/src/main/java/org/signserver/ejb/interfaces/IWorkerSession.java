@@ -388,6 +388,7 @@ public interface IWorkerSession {
      * @param startIndex Start index of first result (0-based)
      * @param max Maximum number of results returned, 0 means all matching results
      * @param criteria Search criteria for matching results
+     * @param includeData If true, include actual archive data in entries
      * @return List of metadata objects describing matching entries
      */
     Collection<ArchiveMetadata> searchArchive(int startIndex,
@@ -398,7 +399,7 @@ public interface IWorkerSession {
      * Query contents of archive based on list of uniqueIds (primary key in DB).
      * 
      * @param uniqueIds List of IDs to fetch meta data for
-     * @param includeData If true, include actual archive data in 
+     * @param includeData If true, include actual archive data in entries
      * @return List of archive data objects
      * @throws AuthorizationDeniedException
      */

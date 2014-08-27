@@ -215,11 +215,7 @@ public class ArchiveDataService {
             final String conditions = generator.generate();
             
             final Query query =
-                    includeData ?
-                    em.createQuery("SELECT a.uniqueId, a.archiveid, a.time, a.type, a.signerid, a.requestIssuerDN, a.requestCertSerialnumber, a.requestIP, a.archiveData FROM ArchiveDataBean a " +
-                                conditions) :
-                    em.createQuery("SELECT a.uniqueId, a.archiveid, a.time, a.type, a.signerid, a.requestIssuerDN, a.requestCertSerialnumber, a.requestIP FROM ArchiveDataBean a " +
-                                conditions);
+                    em.createQuery("SELECT a FROM ArchiveDataBean a" + conditions);
             
             for (final String key : generator.getParameterKeys()) {
                 final Object param = generator.getParameterValue(key);
@@ -234,24 +230,20 @@ public class ArchiveDataService {
                 query.setMaxResults(max);
             }
             
-            final List queryResults = query.getResultList();
+            final List<ArchiveDataBean> queryResults = query.getResultList();
             final Collection<ArchiveMetadata> result = new LinkedList<ArchiveMetadata>();
             
-            for (final Object entry : queryResults) {
-                final Object[] parts = (Object[]) entry;
-                
-                if (includeData) {
-                    result.add(new ArchiveMetadata(((Integer) parts[3]).intValue(),
-                                               ((Integer) parts[4]).intValue(),
-                                               (String) parts[0], (String) parts[1], new Date((Long) parts[2]),
-                                               (String) parts[5], (String) parts[6], (String) parts[7],
-                                               (byte[]) parts[8]));
-                } else {
-                    result.add(new ArchiveMetadata(((Integer) parts[3]).intValue(),
-                                               ((Integer) parts[4]).intValue(),
-                                               (String) parts[0], (String) parts[1], new Date((Long) parts[2]),
-                                               (String) parts[5], (String) parts[6], (String) parts[7]));
-                }
+            for (final ArchiveDataBean bean : queryResults) {
+                final ArchiveMetadata metadata =
+                    new ArchiveMetadata(bean.getType(), bean.getSignerid(),
+                                        bean.getUniqueId(), bean.getArchiveid(),
+                                        new Date(bean.getTime()), bean.getRequestIssuerDN(),
+                                        bean.getRequestCertSerialnumber(),
+                                        bean.getRequestIP(),
+                                        includeData ?
+                                            bean.getArchiveDataVO().getArchivedBytes() :
+                                            null);
+                result.add(metadata);
             }
             
             return result;

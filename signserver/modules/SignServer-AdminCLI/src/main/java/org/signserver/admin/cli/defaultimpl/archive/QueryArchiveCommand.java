@@ -149,9 +149,7 @@ public class QueryArchiveCommand extends AbstractCommand {
                 out.println(HEADER_NAMES);
                 out.println(HEADER_FIELDS);
             }
-    
-            System.out.println("Download data: " + downloadData);
-            
+ 
             // Perform the query
             Collection<? extends ArchiveMetadata> entries =
                     helper.getWorkerSession().searchArchive(from, limit, qc, downloadData);
@@ -201,7 +199,7 @@ public class QueryArchiveCommand extends AbstractCommand {
     private void saveEntry(final ArchiveMetadata entry) throws IOException {
         final String fileName =
                 entry.getArchiveId() +
-                (entry.getType() == ArchiveDataVO.TYPE_REQUEST ? ".request" : "response");
+                (entry.getType() == ArchiveDataVO.TYPE_REQUEST ? ".request" : ".response");
         final File outfile = new File(outPath, fileName);
         final FileOutputStream fis = new FileOutputStream(outfile);
         

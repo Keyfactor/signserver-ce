@@ -94,6 +94,19 @@ public class ArchivingCLITest extends ModulesTestCase {
                     getSignServerHome() + "/tmp"));
         datafile = new File(getSignServerHome() + "/tmp/" + archiveId + ".response");
         assertTrue(datafile.exists());
+    
+        // test query command
+        assertEquals("Command status", CommandLineInterface.RETURN_SUCCESS,
+                cli.execute("archive", "query", "-limit", "10",
+                            "-criteria", "signerid EQ " + TESTTSID,
+                            "-criteria", "archiveid EQ " + archiveId));
+        assertPrinted("", cli.getOut(), archiveId + ", ");
+        
+        assertEquals("Command status", CommandLineInterface.RETURN_SUCCESS,
+                cli.execute("archive", "query", "-limit", "10",
+                            "-criteria", "signerid EQ " + TESTTSID,
+                            "-criteria", "requestIP EQ 127.0.0.1"));
+        assertPrinted("", cli.getOut(), "REQUEST, " + TESTTSID + ", , , 127.0.0.1");
     }
     
     /**
@@ -151,6 +164,20 @@ public class ArchivingCLITest extends ModulesTestCase {
         datafileRequest = new File(getSignServerHome() + "/tmp/" + archiveId + ".request");
         assertTrue(datafileResponse.exists());
         assertTrue(datafileRequest.exists());
+        
+        // test query command
+        assertEquals("Command status", CommandLineInterface.RETURN_SUCCESS,
+                cli.execute("archive", "query", "-limit", "10",
+                            "-criteria", "signerid EQ " + TESTTSID,
+                            "-criteria", "archiveid EQ " + archiveId));
+        assertPrinted("", cli.getOut(), archiveId + ", ");
+        
+        assertEquals("Command status", CommandLineInterface.RETURN_SUCCESS,
+                cli.execute("archive", "query", "-limit", "10",
+                            "-criteria", "signerid EQ " + TESTTSID,
+                            "-criteria", "requestIP EQ 127.0.0.1"));
+        assertPrinted("", cli.getOut(), "REQUEST, " + TESTTSID + ", , , 127.0.0.1");
+        assertPrinted("", cli.getOut(), "RESPONSE, " + TESTTSID + ", , , 127.0.0.1");
     }
     
     @Test

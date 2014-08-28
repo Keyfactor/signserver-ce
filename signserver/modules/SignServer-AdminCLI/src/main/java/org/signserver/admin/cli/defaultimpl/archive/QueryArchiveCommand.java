@@ -118,7 +118,7 @@ public class QueryArchiveCommand extends AbstractCommand {
     @Override
     public String getUsages() {
         return "Usage: signserver archive query -limit <number> [-criteria  \"<field> <op> <value>\" [-criteria...]] [-from <index>] [-header] [-request|-response] [-outpath <path>]\n"
-        + "<field> is a field name from the archive: archiveId, requestCertSerialnumber, requestIP, requestIssuerDN, signerid, time, type, uniqueId\n"
+        + "<field> is a field name from the archive: archiveid, requestCertSerialnumber, requestIP, requestIssuerDN, signerid, time, type, uniqueId\n"
         + "<op> is a relational operator: GT, GE, LT, LE, EQ, NEQ, LIKE, NULL, NOTNULL\n"
 	+ "-request shows only entries for requests\n"
 	+ "-response shows only entries for responses\n"

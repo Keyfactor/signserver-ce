@@ -95,18 +95,37 @@ public class ArchivingCLITest extends ModulesTestCase {
         datafile = new File(getSignServerHome() + "/tmp/" + archiveId + ".response");
         assertTrue(datafile.exists());
     
+        // clean up for before running the query command
+        datafile.delete();
+        
         // test query command
         assertEquals("Command status", CommandLineInterface.RETURN_SUCCESS,
                 cli.execute("archive", "query", "-limit", "10",
                             "-criteria", "signerid EQ " + TESTTSID,
                             "-criteria", "archiveid EQ " + archiveId));
         assertPrinted("", cli.getOut(), archiveId + ", ");
+        // running without -outpath should NOT result in dumping the data
+        assertTrue("Should not write archive data", !datafile.exists());
         
         assertEquals("Command status", CommandLineInterface.RETURN_SUCCESS,
                 cli.execute("archive", "query", "-limit", "10",
                             "-criteria", "signerid EQ " + TESTTSID,
                             "-criteria", "requestIP EQ 127.0.0.1"));
         assertPrinted("", cli.getOut(), "REQUEST, " + TESTTSID + ", , , 127.0.0.1");
+    
+        // test running the query command with outputting data
+         assertEquals("Command status", CommandLineInterface.RETURN_SUCCESS,
+                cli.execute("archive", "query", "-limit", "10",
+                            "-criteria", "signerid EQ " + TESTTSID,
+                            "-criteria", "archiveid EQ " + archiveId,
+                            "-outpath", getSignServerHome() + "/tmp"));
+        assertPrinted("", cli.getOut(), archiveId + ", ");
+        assertPrinted("", cli.getOut(), "Downloaded 1 archive entries");
+        // running without -outpath should NOT result in dumping the data
+        assertTrue("Should write archive data", datafile.exists());
+    
+        // clean up temp file
+        datafile.delete();
     }
     
     /**
@@ -165,6 +184,10 @@ public class ArchivingCLITest extends ModulesTestCase {
         assertTrue(datafileResponse.exists());
         assertTrue(datafileRequest.exists());
         
+        // clean up before running the query command
+        datafileResponse.delete();
+        datafileRequest.delete();
+
         // test query command
         assertEquals("Command status", CommandLineInterface.RETURN_SUCCESS,
                 cli.execute("archive", "query", "-limit", "10",
@@ -178,6 +201,21 @@ public class ArchivingCLITest extends ModulesTestCase {
                             "-criteria", "requestIP EQ 127.0.0.1"));
         assertPrinted("", cli.getOut(), "REQUEST, " + TESTTSID + ", , , 127.0.0.1");
         assertPrinted("", cli.getOut(), "RESPONSE, " + TESTTSID + ", , , 127.0.0.1");
+        
+        assertEquals("Command status", CommandLineInterface.RETURN_SUCCESS,
+                cli.execute("archive", "query", "-limit", "10",
+                            "-criteria", "signerid EQ " + TESTTSID,
+                            "-criteria", "archiveid EQ " + archiveId,
+                            "-outpath", getSignServerHome() + "/tmp"));
+        assertPrinted("", cli.getOut(), "REQUEST, " + TESTTSID + ", , , 127.0.0.1");
+        assertPrinted("", cli.getOut(), "RESPONSE, " + TESTTSID + ", , , 127.0.0.1");
+        assertPrinted("", cli.getOut(), "Downloaded 2 archive entries");
+        assertTrue("Should write request", datafileRequest.exists());
+        assertTrue("Should write response", datafileResponse.exists());
+        
+        // clean up temp files
+        datafileRequest.delete();
+        datafileResponse.delete();
     }
     
     @Test

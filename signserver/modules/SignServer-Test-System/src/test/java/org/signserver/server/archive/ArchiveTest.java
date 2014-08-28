@@ -14,6 +14,7 @@ package org.signserver.server.archive;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import org.apache.log4j.Logger;
@@ -111,6 +112,12 @@ public class ArchiveTest extends ArchiveTestCase {
         LOG.debug("<test04archiveSameDocumentTwice");
     }
     
+    /**
+     * Test querying archive with search criterias and fetching
+     * archive entries by uniqueIds.
+     * 
+     * @throws Exception 
+     */
     @Test
     public void test05archiveTestQuery() throws Exception {
         LOG.debug(">test05archiveTestQuery");
@@ -154,6 +161,15 @@ public class ArchiveTest extends ArchiveTestCase {
         assertEquals("UniqueId matching", uniqueId,
                 fetchedMetadatas.iterator().next().getUniqueId());
         
+        // test that including an extra non-existing uniqueId to the list
+        // still works as expected, returning the single existing entry
+        fetchedMetadatas =
+                getWorkerSession().searchArchiveWithIds(Arrays.asList(uniqueId, "dummy"),
+                                                        true);
+        assertEquals("Number of fetched items", 1, fetchedMetadatas.size());
+        assertEquals("UniqueId matching", uniqueId,
+                fetchedMetadatas.iterator().next().getUniqueId());
+
         // test querying on uniqueId not including archiveData
         fetchedMetadatas =
                 getWorkerSession().searchArchiveWithIds(uniqueIds, false);
@@ -169,6 +185,12 @@ public class ArchiveTest extends ArchiveTestCase {
                                                         true);
         assertEquals("Should get empty result", 0, fetchedMetadatas.size());
 
+        // test trying to fetch with an empty list of uniqueIds
+        fetchedMetadatas =
+                getWorkerSession().searchArchiveWithIds(Collections.<String>emptyList(),
+                                                        false);
+        assertTrue("Should return empty list", fetchedMetadatas.isEmpty());
+        
         // do criteria-based query, including archive data
         metadatas = getWorkerSession().searchArchive(0, 10, qc, true);
         assertNotNull("Should include archive data",

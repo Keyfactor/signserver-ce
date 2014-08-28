@@ -188,29 +188,32 @@ public class ArchiveDataService {
     @SuppressWarnings("unchecked")
     public Collection<ArchiveMetadata> findAllWithUniqueIdInList(Collection<String> uniqueIds,
         boolean includeData) {
-        try {
-            final List<ArchiveMetadata> result = new ArrayList<ArchiveMetadata>();
-            final List<ArchiveDataBean> archiveDatas =
-                    em.createNamedQuery("ArchiveDataBean.findAllWithUniqueIds").
-                    setParameter("ids", uniqueIds).getResultList();
-            
-            for (final ArchiveDataBean archiveData : archiveDatas) {
-                result.add(new ArchiveMetadata(archiveData.getType(),
-                                               archiveData.getSignerid(),
-                                               archiveData.getUniqueId(),
-                                               archiveData.getArchiveid(),
-                                               new Date(archiveData.getTime()),
-                                               archiveData.getRequestIssuerDN(),
-                                               archiveData.getRequestCertSerialnumber(),
-                                               archiveData.getRequestIP(),
-                                               includeData ?
-                                                archiveData.getArchiveDataVO().getArchivedBytes() :
-                                                null));
-            }
-            
-            return result;
-        } catch (NoResultException ignored) {} // NOPMD
-        return new ArrayList<ArchiveMetadata>();
+        
+        if (!uniqueIds.isEmpty()) {
+            try {
+                final List<ArchiveMetadata> result = new ArrayList<ArchiveMetadata>();
+                final List<ArchiveDataBean> archiveDatas =
+                        em.createNamedQuery("ArchiveDataBean.findAllWithUniqueIds").
+                        setParameter("ids", uniqueIds).getResultList();
+
+                for (final ArchiveDataBean archiveData : archiveDatas) {
+                    result.add(new ArchiveMetadata(archiveData.getType(),
+                                                   archiveData.getSignerid(),
+                                                   archiveData.getUniqueId(),
+                                                   archiveData.getArchiveid(),
+                                                   new Date(archiveData.getTime()),
+                                                   archiveData.getRequestIssuerDN(),
+                                                   archiveData.getRequestCertSerialnumber(),
+                                                   archiveData.getRequestIP(),
+                                                   includeData ?
+                                                    archiveData.getArchiveDataVO().getArchivedBytes() :
+                                                    null));
+                }
+
+                return result;
+            } catch (NoResultException ignored) {} // NOPMD
+        }
+        return Collections.emptyList();
     }
 
     /**

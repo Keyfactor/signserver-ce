@@ -16,7 +16,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -151,7 +150,7 @@ public class QueryArchiveCommand extends AbstractCommand {
             }
  
             // Perform the query
-            Collection<? extends ArchiveMetadata> entries =
+            List<? extends ArchiveMetadata> entries =
                     helper.getWorkerSession().searchArchive(from, limit, qc, downloadData);
     
             for (final ArchiveMetadata entry : entries) {

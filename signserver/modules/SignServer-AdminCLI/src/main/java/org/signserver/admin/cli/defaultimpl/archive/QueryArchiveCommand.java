@@ -30,7 +30,6 @@ import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.cli.spi.UnexpectedCommandFailureException;
 import org.signserver.common.ArchiveDataVO;
 import org.signserver.common.ArchiveMetadata;
-import org.signserver.server.archive.Archivable;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.Options;

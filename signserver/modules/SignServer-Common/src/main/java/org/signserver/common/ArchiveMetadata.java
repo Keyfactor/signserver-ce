@@ -165,8 +165,8 @@ public class ArchiveMetadata implements Serializable {
      * for representation (i.e. list output).
      * 
      * @param type
-     * @return String representation, falls back to the string representation of
-     *                the numeric value for unknown type values
+     * @return String representation, falls back to the pattern TYPE<num> for
+     *         unknown values
      */
     public static String getTypeName(final int type) {
         if (type == ArchiveDataVO.TYPE_REQUEST) {
@@ -175,12 +175,12 @@ public class ArchiveMetadata implements Serializable {
             return Archivable.TYPE_RESPONSE;
         } else {
             // if additional values would be possible in the future, add cases here
-            return Integer.toString(type);
+            return "TYPE" + type;
         }
     }
 
     /**
-     * Type names.
+     * Possible type names, used i.e. to determine what to show in the query UI.
      */
     public static String[] TYPE_NAMES = {Archivable.TYPE_REQUEST, Archivable.TYPE_RESPONSE};
 

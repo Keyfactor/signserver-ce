@@ -384,26 +384,26 @@ public class WorkerSessionMock implements IWorkerSession.ILocal,
     }
 
     @Override
-    public Collection<ArchiveMetadata> searchArchive(int startIndex, int max,
+    public List<ArchiveMetadata> searchArchive(int startIndex, int max,
             QueryCriteria criteria, final boolean includeData) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Collection<ArchiveMetadata> searchArchive(AdminInfo adminInfo,
+    public List<ArchiveMetadata> searchArchive(AdminInfo adminInfo,
             int startIndex, int max, QueryCriteria criteria,
             final boolean includeData) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Collection<ArchiveMetadata> searchArchiveWithIds(AdminInfo adminInfo,
-        Collection<String> uniqueIds, boolean includeData) throws AuthorizationDeniedException {
+    public List<ArchiveMetadata> searchArchiveWithIds(AdminInfo adminInfo,
+        List<String> uniqueIds, boolean includeData) throws AuthorizationDeniedException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Collection<ArchiveMetadata> searchArchiveWithIds(Collection<String> uniqueIds,
+    public List<ArchiveMetadata> searchArchiveWithIds(List<String> uniqueIds,
         boolean includeData) throws AuthorizationDeniedException {
         throw new UnsupportedOperationException("Not supported yet.");
     }

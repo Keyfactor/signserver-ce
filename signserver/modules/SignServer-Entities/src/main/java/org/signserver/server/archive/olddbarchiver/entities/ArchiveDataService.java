@@ -186,7 +186,7 @@ public class ArchiveDataService {
      * @return Collection of meta data entries
      */
     @SuppressWarnings("unchecked")
-    public Collection<ArchiveMetadata> findAllWithUniqueIdInList(Collection<String> uniqueIds,
+    public List<ArchiveMetadata> findAllWithUniqueIdInList(Collection<String> uniqueIds,
         boolean includeData) {
         
         if (!uniqueIds.isEmpty()) {
@@ -226,7 +226,7 @@ public class ArchiveDataService {
      * @return Collection of archive meta data entries
      */
     @SuppressWarnings("unchecked")
-    public Collection<ArchiveMetadata> findMatchingCriteria(int startIndex, int max,
+    public List<ArchiveMetadata> findMatchingCriteria(int startIndex, int max,
             QueryCriteria criteria, boolean includeData) {
         
         try {
@@ -253,7 +253,7 @@ public class ArchiveDataService {
                 query.setMaxResults(max);
             }
             
-            final Collection<ArchiveMetadata> result = new LinkedList<ArchiveMetadata>();
+            final List<ArchiveMetadata> result = new LinkedList<ArchiveMetadata>();
             
             if (includeData) {
                 final List<ArchiveDataBean> queryResults = query.getResultList();

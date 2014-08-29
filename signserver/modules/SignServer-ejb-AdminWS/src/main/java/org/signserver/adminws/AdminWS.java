@@ -61,8 +61,7 @@ import org.signserver.server.log.AdminInfo;
  * This class contains web service implementations for almost all EJB methods.
  * @author Markus Kilås
  * @version $Id$
- */
-@WebService(serviceName = "AdminWSService")
+ */@WebService(serviceName = "AdminWSService")
 @Stateless
 public class AdminWS {
 
@@ -940,7 +939,7 @@ public class AdminWS {
      * @param entries
      * @return
      */
-    private List<ArchiveEntry> toArchiveEntries(final Collection<? extends ArchiveMetadata> entries) {
+    private List<ArchiveEntry> toArchiveEntries(final List<? extends ArchiveMetadata> entries) {
         final List<ArchiveEntry> results = new LinkedList<ArchiveEntry>();
         
         for (final ArchiveMetadata entry : entries) {

@@ -391,7 +391,7 @@ public interface IWorkerSession {
      * @param includeData If true, include actual archive data in entries
      * @return List of metadata objects describing matching entries
      */
-    Collection<ArchiveMetadata> searchArchive(int startIndex,
+    List<ArchiveMetadata> searchArchive(int startIndex,
             int max, QueryCriteria criteria, boolean includeData)
             throws AuthorizationDeniedException; 
     
@@ -403,7 +403,7 @@ public interface IWorkerSession {
      * @return List of archive data objects
      * @throws AuthorizationDeniedException
      */
-    Collection<ArchiveMetadata> searchArchiveWithIds(Collection<String> uniqueIds,
+    List<ArchiveMetadata> searchArchiveWithIds(List<String> uniqueIds,
             boolean includeData)
             throws AuthorizationDeniedException;
     
@@ -635,7 +635,7 @@ public interface IWorkerSession {
          * @param includeData If true, archive data is included in the meta data entries
          * @return List of metadata objects describing matching entries
          */
-        Collection<ArchiveMetadata> searchArchive(AdminInfo adminInfo, 
+        List<ArchiveMetadata> searchArchive(AdminInfo adminInfo, 
                 int startIndex, int max, QueryCriteria criteria,
                 boolean includeData)
             throws AuthorizationDeniedException;
@@ -650,8 +650,8 @@ public interface IWorkerSession {
          * @return List of archive data objects
          * @throws AuthorizationDeniedException 
          */
-        Collection<ArchiveMetadata> searchArchiveWithIds(final AdminInfo adminInfo, 
-                final Collection<String> uniqueIds, 
+        List<ArchiveMetadata> searchArchiveWithIds(final AdminInfo adminInfo, 
+                final List<String> uniqueIds, 
                 final boolean includeData)
                 throws AuthorizationDeniedException;
     }

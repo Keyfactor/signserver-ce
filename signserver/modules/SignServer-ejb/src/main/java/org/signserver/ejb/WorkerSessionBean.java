@@ -995,14 +995,14 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     }
 
     @Override
-    public Collection<ArchiveMetadata> searchArchive(final int startIndex, final int max,
+    public List<ArchiveMetadata> searchArchive(final int startIndex, final int max,
             final QueryCriteria criteria, final boolean includeData) {
         return searchArchive(new AdminInfo("CLI user", null, null), startIndex,
                 max, criteria, includeData);
     }
 
     @Override
-    public Collection<ArchiveMetadata> searchArchive(final AdminInfo adminInfo,
+    public List<ArchiveMetadata> searchArchive(final AdminInfo adminInfo,
             final int startIndex, final int max, final QueryCriteria criteria,
             final boolean includeData) {
         if (archiveDataService == null) {
@@ -1016,8 +1016,8 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     }
 
     @Override
-    public Collection<ArchiveMetadata> searchArchiveWithIds(AdminInfo adminInfo,
-        Collection<String> uniqueIds, boolean includeData) {
+    public List<ArchiveMetadata> searchArchiveWithIds(AdminInfo adminInfo,
+        List<String> uniqueIds, boolean includeData) {
         if (archiveDataService == null) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Archiving to database is not supported when running without database");
@@ -1029,7 +1029,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     }
 
     @Override
-    public Collection<ArchiveMetadata> searchArchiveWithIds(Collection<String> uniqueIds,
+    public List<ArchiveMetadata> searchArchiveWithIds(List<String> uniqueIds,
         boolean includeData) throws AuthorizationDeniedException {
         return searchArchiveWithIds(new AdminInfo("CLI user", null, null),
                 uniqueIds, includeData);

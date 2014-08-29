@@ -1055,13 +1055,13 @@ public class AdminLayerEJBImpl implements AdminWS {
     }
     
     /**
-     * Convert a collection of archive metadata objects into a collection
+     * Convert a list of archive metadata objects into a list
      * of WS representation objects.
      * 
-     * @param entries Collection of ArchiveMetadata objects
+     * @param entries List of ArchiveMetadata objects
      * @return List of WS archive entries
      */
-    private List<ArchiveEntry> toArchiveEntries(final Collection<? extends ArchiveMetadata> entries) {
+    private List<ArchiveEntry> toArchiveEntries(final List<? extends ArchiveMetadata> entries) {
         final List<ArchiveEntry> results = new LinkedList<ArchiveEntry>();
         
         for (final ArchiveMetadata entry : entries) {

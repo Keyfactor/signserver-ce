@@ -156,9 +156,7 @@ public class QueryArchiveCommand extends AbstractCommand {
             for (final ArchiveMetadata entry : entries) {
                 // render the result
                 final StringBuilder buff = new StringBuilder();
-                final String type =
-                        entry.getType() == ArchiveDataVO.TYPE_REQUEST ?
-                              Archivable.TYPE_REQUEST : Archivable.TYPE_RESPONSE;
+                final String type = ArchiveMetadata.getTypeName(entry.getType());
                 final String issuer =
                         entry.getRequestIssuerDN() != null ? entry.getRequestIssuerDN() : "";
                 final String serial =
@@ -196,9 +194,7 @@ public class QueryArchiveCommand extends AbstractCommand {
     }
     
     private void saveEntry(final ArchiveMetadata entry) throws IOException {
-        final String fileName =
-                entry.getArchiveId() +
-                (entry.getType() == ArchiveDataVO.TYPE_REQUEST ? ".request" : ".response");
+        final String fileName = entry.suggestedFilename();
         final File outfile = new File(outPath, fileName);
         final FileOutputStream fis = new FileOutputStream(outfile);
         

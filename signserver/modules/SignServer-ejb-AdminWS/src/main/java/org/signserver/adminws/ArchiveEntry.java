@@ -67,25 +67,31 @@ public class ArchiveEntry {
     public String getArchiveId() {
         return archiveId;
     }
+    
     public String getRequestCertSerialNumber() {
         return requestCertSerialNumber;
     }
+    
     public String getRequestIssuerDN() {
         return requestIssuerDN;
     }
+    
     public String getRequestIP() {
         return requestIP;
     }
+    
     public Integer getSignerId() {
         return signerId;
     }
+    
     public Long getTime() {
         return time;
     }
+    
     public Integer getType() {
         return type;
     }
-    
+
     public byte[] getArchiveData() {
         return archiveData;
     }
@@ -125,5 +131,4 @@ public class ArchiveEntry {
     public void setArchiveData(final byte[] archiveData) {
         this.archiveData = archiveData;
     }
-    
 }

@@ -14,6 +14,7 @@ package org.signserver.common;
 
 import java.io.Serializable;
 import java.util.Date;
+import org.signserver.server.archive.Archivable;
 
 /**
  * Class holding metadata of matched archive entries.
@@ -137,5 +138,68 @@ public class ArchiveMetadata implements Serializable {
     
     public byte[] getArchiveData() {
         return archiveData;
+    }
+    
+    /**
+     * Get a suggested output file name for storing archive data.
+     * The file name is based on the archiveId when extensions ".request" and ".response"
+     * for the known archive types. For any unknown archive type, the resulting
+     * file name is based on the archiveId and type separated by "." with an extension
+     * of ".data".
+     * 
+     * @return The suggested file name
+     */
+    public String suggestedFilename() {
+        if (type == ArchiveDataVO.TYPE_REQUEST) {
+            return archiveId + ".request";
+        } else if (type == ArchiveDataVO.TYPE_RESPONSE) {
+            return archiveId + ".response";
+        } else {
+            // fall back to a generic pattern if the archive type is unknown
+            return archiveId + "." + type + ".data";
+        }
+    }
+    
+    /**
+     * Given a type value (DB column value), return string value
+     * for representation (i.e. list output).
+     * 
+     * @param type
+     * @return String representation, falls back to the string representation of
+     *                the numeric value for unknown type values
+     */
+    public static String getTypeName(final int type) {
+        if (type == ArchiveDataVO.TYPE_REQUEST) {
+            return Archivable.TYPE_REQUEST;
+        } else if (type == ArchiveDataVO.TYPE_RESPONSE) {
+            return Archivable.TYPE_RESPONSE;
+        } else {
+            // if additional values would be possible in the future, add cases here
+            return Integer.toString(type);
+        }
+    }
+
+    /**
+     * Type names.
+     */
+    public static String[] TYPE_NAMES = {Archivable.TYPE_REQUEST, Archivable.TYPE_RESPONSE};
+
+    /**
+     * Translate a type representation name to the corresponding DB value.
+     * 
+     * @param name Name as presented in i.e. the GUI list
+     * @return The value store in the DB
+     * @throws IllegalArgumentException If the name is unknown
+     */
+    public static int translateTypeName(final String name)
+            throws IllegalArgumentException {
+        if (Archivable.TYPE_REQUEST.equals(name)) {
+            return ArchiveDataVO.TYPE_REQUEST;
+        } else if (Archivable.TYPE_RESPONSE.equals(name)) {
+            return ArchiveDataVO.TYPE_RESPONSE;
+        } else {
+            // if additional values would be possible in the future, add cases here
+            throw new IllegalArgumentException("Unknown type name: " + name);
+        }
     }
 }

@@ -129,4 +129,8 @@ public class StaticWorkerStatus extends WorkerStatus {
         }
     }
 
+    public WorkerStatusInfo getInfo() {
+        return info;
+    }
+
 }

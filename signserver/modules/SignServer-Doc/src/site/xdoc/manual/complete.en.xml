@@ -3481,7 +3481,10 @@ The key usage counter can not be disabled for a worker if KEYUSAGELIMIT is also 
                 <p>
 <b>EXPLICITECC</b> = Setting this to true uses explicit domain parameters instead of NamedCurves when generating
 a certificate request using the RenewalWorker or through to admin GUI. (default: false)
-				</p> 
+                </p>
+                <p>
+<b>NOCERTIFICATES</b> = Setting this to true tells SignServer to not warn if no signer certificate is configured for this worker. This could be useful for special types of workers not performing any signing operations.
+                </p>
             </section>
 		</chapter>
 		
@@ -4945,10 +4948,7 @@ Fully qualified class name: <b>org.signserver.server.signers.CryptoWorker</b>
                     </p>
                     <subsubsection name="Worker properties">
                         <p>
-<b>NOCERTIFICATES</b>=true: Tells SignServer to not warn if no signer certificate is configured for this worker. This is normally the case for a crypto worker as the certificte should instead be configured in the worker using the crypto token.
-                        </p>
-                        <p>
-See also the the <a href="complete.en.html#Available%20CryptoTokens">Available CryptoTokens</a> for the required properties of the configured crypto token.
+See the <a href="complete.en.html#Available%20CryptoTokens">Available CryptoTokens</a> for the required properties of the configured crypto token.
                         </p>
                     </subsubsection>
                 </subsection>

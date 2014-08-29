@@ -28,10 +28,10 @@ public class WorkerStatusInfo implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private final int workerId;
-    private final String workerName;
-    private final String workerType;
-    private final int tokenStatus;
+    private int workerId;
+    private String workerName;
+    private String workerType;
+    private int tokenStatus;
     private final List<Entry> briefEntries;
     private final List<String> fatalErrors;
     private final List<Entry> completeEntries;
@@ -120,6 +120,35 @@ public class WorkerStatusInfo implements Serializable {
      */
     public int getTokenStatus() {
         return tokenStatus;
+    }
+
+    /**
+     * @param workerId id of the worker
+     */
+    public void setWorkerId(int workerId) {
+        this.workerId = workerId;
+    }
+
+    /**
+     * @param workerName name of the worker
+     */
+    public void setWorkerName(String workerName) {
+        this.workerName = workerName;
+    }
+
+    /**
+     * @param workerType type of worker, such as "Signer", "Dispatcher" or just
+     * "Worker" etc
+     */
+    public void setWorkerType(String workerType) {
+        this.workerType = workerType;
+    }
+
+    /**
+     * @param tokenStatus status of the worker
+     */
+    public void setTokenStatus(int tokenStatus) {
+        this.tokenStatus = tokenStatus;
     }
 
     /**

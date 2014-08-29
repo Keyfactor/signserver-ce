@@ -142,18 +142,20 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
         briefEntries.add(new WorkerStatusInfo.Entry("Token status", status == WorkerStatus.STATUS_ACTIVE ? "Active" : "Offline"));
 
         // Signings
-        String signingsValue = String.valueOf(keyUsageCounterValue);
-        long keyUsageLimit = -1;
-        try {
-            keyUsageLimit = Long.valueOf(config.getProperty(SignServerConstants.KEYUSAGELIMIT));
-        } catch(NumberFormatException ignored) {}
-        if (keyUsageLimit >= 0) {
-            signingsValue += " of " + keyUsageLimit;
+        if (!isNoCertificates()) {
+            String signingsValue = String.valueOf(keyUsageCounterValue);
+            long keyUsageLimit = -1;
+            try {
+                keyUsageLimit = Long.valueOf(config.getProperty(SignServerConstants.KEYUSAGELIMIT));
+            } catch(NumberFormatException ignored) {}
+            if (keyUsageLimit >= 0) {
+                signingsValue += " of " + keyUsageLimit;
+            }
+            if (keyUsageCounterDisabled) {
+                signingsValue += " (counter disabled)";
+            }
+            briefEntries.add(new WorkerStatusInfo.Entry("Signings", signingsValue));
         }
-        if (keyUsageCounterDisabled) {
-            signingsValue += " (counter disabled)";
-        }
-        briefEntries.add(new WorkerStatusInfo.Entry("Signings", signingsValue));
 
         // Disabled
         if ("TRUE".equalsIgnoreCase(config.getProperty(SignServerConstants.DISABLED))) {
@@ -176,19 +178,21 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
         completeEntries.add(new WorkerStatusInfo.Entry("Authorized clients (serial number, issuer DN)", clientsValue.toString()));
 
         // Certificate
-        final String certificateValue;
-        if (signerCertificate == null) {
-            certificateValue = "Error: No Signer Certificate have been uploaded to this signer.\n";
-        } else {
-            final StringBuilder buff = new StringBuilder();
-            buff.append("Subject DN:     ").append(signerCertificate.getSubjectDN().toString()).append("\n");
-            buff.append("Serial number:  ").append(signerCertificate.getSerialNumber().toString(16)).append("\n");
-            buff.append("Issuer DN:      ").append(signerCertificate.getIssuerDN().toString()).append("\n");
-            buff.append("Valid from:     ").append(SDF.format(signerCertificate.getNotBefore())).append("\n");
-            buff.append("Valid until:    ").append(SDF.format(signerCertificate.getNotAfter())).append("\n");
-            certificateValue = buff.toString();
+        if (!isNoCertificates()) {
+            final String certificateValue;
+            if (signerCertificate == null) {
+                certificateValue = "Error: No Signer Certificate have been uploaded to this signer.\n";
+            } else {
+                final StringBuilder buff = new StringBuilder();
+                buff.append("Subject DN:     ").append(signerCertificate.getSubjectDN().toString()).append("\n");
+                buff.append("Serial number:  ").append(signerCertificate.getSerialNumber().toString(16)).append("\n");
+                buff.append("Issuer DN:      ").append(signerCertificate.getIssuerDN().toString()).append("\n");
+                buff.append("Valid from:     ").append(SDF.format(signerCertificate.getNotBefore())).append("\n");
+                buff.append("Valid until:    ").append(SDF.format(signerCertificate.getNotAfter())).append("\n");
+                certificateValue = buff.toString();
+            }
+            completeEntries.add(new WorkerStatusInfo.Entry("Signer certificate", certificateValue));
         }
-        completeEntries.add(new WorkerStatusInfo.Entry("Signer certificate", certificateValue));
 
         info = new WorkerStatusInfo(workerId, config.getProperty("NAME"), "Signer", status, briefEntries, fatalErrors, completeEntries, config);
         return new StaticWorkerStatus(info);
@@ -197,9 +201,12 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
     @Override
     protected List<String> getFatalErrors() {
         final LinkedList<String> errors = new LinkedList<String>(super.getFatalErrors());
-        // add any eventual crypto token fatal errors gathered in BaseProcessable
+        // Load crypto token so its errors are checked
+        try {
+            getCryptoToken();
+        } catch (SignServerException ignored) {} // NOPMD errors are added to cryptoTokenFatalErrors
         errors.addAll(getCryptoTokenFatalErrors());
-        if (!Boolean.parseBoolean(config.getProperty("NOCERTIFICATES", Boolean.FALSE.toString()))) {
+        if (!isNoCertificates()) {
             errors.addAll(getSignerCertificateFatalErrors());
         }
         errors.addAll(configErrors);
@@ -361,5 +368,16 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
         } else {
             return certs;
         }
+    }
+
+    /**
+     * Indicates if this worker is configured to not be configured with any
+     * certificates.
+     * This can be overridden by worker implementations to not require the
+     * user to explicitly configure this.
+     * @return True if this worker is configured to not use any certificates
+     */
+    protected boolean isNoCertificates() {
+        return Boolean.parseBoolean(config.getProperty("NOCERTIFICATES", Boolean.FALSE.toString()));
     }
 }

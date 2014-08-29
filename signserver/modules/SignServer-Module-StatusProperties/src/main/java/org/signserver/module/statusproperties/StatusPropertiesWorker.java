@@ -204,10 +204,10 @@ public class StatusPropertiesWorker extends BaseSigner {
     }
 
     @Override
-    protected List<String> getSignerCertificateFatalErrors() {
+    protected boolean isNoCertificates() {
         // This worker does not require any signer certificate so don't
-        // report any error about it.
-        return Collections.emptyList();
+        // report any error or information about it.
+        return true;
     }
 
     @Override
@@ -223,5 +223,5 @@ public class StatusPropertiesWorker extends BaseSigner {
 
         return result;
     }
-    
+
 }

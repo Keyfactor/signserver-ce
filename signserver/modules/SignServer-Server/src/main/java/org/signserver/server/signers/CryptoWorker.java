@@ -12,6 +12,10 @@
  *************************************************************************/
 package org.signserver.server.signers;
 
+import java.util.List;
+import org.signserver.common.StaticWorkerStatus;
+import org.signserver.common.WorkerStatus;
+
 /**
  * Worker not performing any operations on its own.
  * Meant as a placeholder for a crypto token to be referenced from an other 
@@ -19,4 +23,23 @@ package org.signserver.server.signers;
  * @author Markus Kilås
  * @version $Id$
  */
-public class CryptoWorker extends NullSigner {}
+public class CryptoWorker extends NullSigner {
+
+    private static final String WORKER_TYPE = "CryptoWorker";
+
+    @Override
+    protected boolean isNoCertificates() {
+        return true;
+    }
+
+    @Override
+    public WorkerStatus getStatus(List<String> additionalFatalErrors) {
+        WorkerStatus status = super.getStatus(additionalFatalErrors);
+        if (status instanceof StaticWorkerStatus) {
+            // Adjust worker type
+            ((StaticWorkerStatus) status).getInfo().setWorkerType(WORKER_TYPE);
+        }
+        return status;
+    }
+
+}

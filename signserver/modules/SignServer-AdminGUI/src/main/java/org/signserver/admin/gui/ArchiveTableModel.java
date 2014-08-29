@@ -18,9 +18,7 @@ import java.util.List;
 import javax.swing.table.AbstractTableModel;
 
 import org.signserver.admin.gui.adminws.gen.ArchiveEntry;
-import org.signserver.common.ArchiveDataVO;
 import org.signserver.common.ArchiveMetadata;
-import org.signserver.server.archive.Archivable;
 
 /**
  * Table model for archive search result.

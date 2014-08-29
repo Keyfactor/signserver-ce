@@ -14,9 +14,7 @@ package org.signserver.admin.gui;
 
 import java.util.Arrays;
 import java.util.Collection;
-import org.signserver.common.ArchiveDataVO;
 import org.signserver.common.ArchiveMetadata;
-import org.signserver.server.archive.Archivable;
 
 /**
  * Representation of an archive search result column column with name and description.

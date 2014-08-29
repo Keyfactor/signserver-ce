@@ -19,6 +19,7 @@ import javax.swing.table.AbstractTableModel;
 
 import org.signserver.admin.gui.adminws.gen.ArchiveEntry;
 import org.signserver.common.ArchiveDataVO;
+import org.signserver.common.ArchiveMetadata;
 import org.signserver.server.archive.Archivable;
 
 /**
@@ -61,9 +62,7 @@ public class ArchiveTableModel extends AbstractTableModel {
                 result = sdf.format(entry.getTime());
                 break;
             case 2:
-                final int type = entry.getType();
-                result = type == ArchiveDataVO.TYPE_REQUEST ? 
-                        Archivable.TYPE_REQUEST : Archivable.TYPE_RESPONSE;
+                result = ArchiveMetadata.getTypeName(entry.getType());
                 break;
             case 3:
                 result = entry.getSignerId();

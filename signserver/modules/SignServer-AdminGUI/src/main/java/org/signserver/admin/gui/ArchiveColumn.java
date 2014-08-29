@@ -37,18 +37,12 @@ public enum ArchiveColumn implements QueryColumn {
     TYPE(ArchiveMetadata.TYPE, "Type", Type.TYPE) {
         @Override
         public Collection<String> getTypeValues() {
-            return Arrays.asList(Archivable.TYPE_REQUEST, Archivable.TYPE_RESPONSE);
+            return Arrays.asList(ArchiveMetadata.TYPE_NAMES);
         }
         
         @Override
         public String translateConditionValue(final String value) {
-            if (Archivable.TYPE_REQUEST.equals(value)) {
-                return Integer.toString(ArchiveDataVO.TYPE_REQUEST);
-            } else if (Archivable.TYPE_RESPONSE.equals(value)) {
-                return Integer.toString(ArchiveDataVO.TYPE_RESPONSE);
-            } else {
-                throw new IllegalArgumentException("Unknown TYPE value: " + value);
-            }
+            return Integer.toString(ArchiveMetadata.translateTypeName(value));
         }
     },
     UNIQUE_ID(ArchiveMetadata.UNIQUE_ID, "Unique ID", Type.TEXT);

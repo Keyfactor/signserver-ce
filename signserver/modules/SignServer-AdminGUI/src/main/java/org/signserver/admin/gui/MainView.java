@@ -3385,9 +3385,8 @@ private void displayLogEntryAction() {
         }
         
         private String constructDumpFilename(final ArchiveEntry entry) {
-            return entry.getArchiveId() + "." +
-                (String) (entry.getType() == ArchiveDataVO.TYPE_REQUEST ?
-                                            "request" : "response");
+            return ArchiveMetadata.suggestedFilename(entry.getArchiveId(),
+                        entry.getType());
         }
     }
     

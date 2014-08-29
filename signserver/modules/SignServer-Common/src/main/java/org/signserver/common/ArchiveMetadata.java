@@ -150,6 +150,20 @@ public class ArchiveMetadata implements Serializable {
      * @return The suggested file name
      */
     public String suggestedFilename() {
+        return suggestedFilename(archiveId, type);
+    }
+    
+    /**
+     * Get a suggested output file name given an archiveId and type.
+     * This is used by the admin GUI that gets entries through the generated
+     * WS objects, and don't have access to actual ArchiveMetadata instances.
+     * 
+     * @param archiveId
+     * @param type
+     * @return The suggested file name
+     */
+    public static String suggestedFilename(final String archiveId,
+            final int type) {
         if (type == ArchiveDataVO.TYPE_REQUEST) {
             return archiveId + ".request";
         } else if (type == ArchiveDataVO.TYPE_RESPONSE) {

@@ -61,7 +61,8 @@ import org.signserver.server.log.AdminInfo;
  * This class contains web service implementations for almost all EJB methods.
  * @author Markus Kilås
  * @version $Id$
- */@WebService(serviceName = "AdminWSService")
+ */
+@WebService(serviceName = "AdminWSService")
 @Stateless
 public class AdminWS {
 

@@ -24,7 +24,7 @@ import junit.framework.TestCase;
  * Test the archive query parser.
  * 
  * @author Marcus Lundblad
- * @version $Id$
+ * @version $Id: QueryArchiveTest.java 4986 2014-08-19 06:32:54Z malu9369 $
  *
  */
 public class QueryArchiveTest extends TestCase {

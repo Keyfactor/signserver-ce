@@ -197,6 +197,8 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
     @Override
     protected List<String> getFatalErrors() {
         final LinkedList<String> errors = new LinkedList<String>(super.getFatalErrors());
+        // add any eventual crypto token fatal errors gathered in BaseProcessable
+        errors.addAll(getCryptoTokenFatalErrors());
         if (!Boolean.parseBoolean(config.getProperty("NOCERTIFICATES", Boolean.FALSE.toString()))) {
             errors.addAll(getSignerCertificateFatalErrors());
         }
@@ -263,9 +265,6 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
                 LOG.debug("Signer " + workerId + ": Could not get crypto token: " + e.getMessage());
             }
         }
-        
-        // add any eventual crypto token fatal errors gathered in BaseProcessable        
-        result.addAll(getCryptoTokenFatalErrors());
 
         // Check signer validity
         if (certificate instanceof X509Certificate) {

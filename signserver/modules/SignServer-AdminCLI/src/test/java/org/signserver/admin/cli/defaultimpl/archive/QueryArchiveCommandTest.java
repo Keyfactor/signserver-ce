@@ -27,7 +27,7 @@ import junit.framework.TestCase;
  * @version $Id: QueryArchiveTest.java 4986 2014-08-19 06:32:54Z malu9369 $
  *
  */
-public class QueryArchiveTest extends TestCase {
+public class QueryArchiveCommandTest extends TestCase {
     /**
      * Test with a valid criteria.
      * @throws Exception

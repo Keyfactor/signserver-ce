@@ -5134,7 +5134,7 @@ Similar to the StatusPropertiesWorker, the TimeMonitorManager also supports sett
                         </p>
                     </subsubsection>
                     <subsubsection name="Worker Properties">
-                        <p>All worker propertie starting with either "TIMEMONITOR." or "TIMESERVER." are sent to the TimeMonitor if it asks for it.</p>
+                        <p>All worker properties starting with either "TIMEMONITOR." or "TIMESERVER." are sent to the TimeMonitor if it asks for it.</p>
                         <p>See the <a href="complete.en.html#SignServer%20TimeMonitor">SignServer TimeMonitor</a> manual for the list of available properties.</p>
                     </subsubsection>
                     <subsubsection name="Request Properties">

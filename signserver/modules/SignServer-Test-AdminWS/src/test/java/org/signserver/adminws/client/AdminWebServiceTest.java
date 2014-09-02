@@ -240,6 +240,23 @@ public class AdminWebServiceTest extends ModulesTestCase {
         }
     }
 
+    public void testQueryArchive() throws Exception {
+        try {
+            adminWS.queryArchive(0, 10, Collections.<QueryCondition>emptyList(),
+                    Collections.<QueryOrdering>emptyList(), false);
+        } catch (AdminNotAuthorizedException_Exception ignored) {
+            // OK
+        }
+    }
+    
+    public void testQueryArchiveWithIds() throws Exception {
+        try {
+            adminWS.queryArchiveWithIds(Collections.<String>emptyList(), true);
+        } catch (AdminNotAuthorizedException_Exception ignored) {
+            // OK
+        }
+    }
+
     // TODO add test methods here. The name must begin with 'test'. For example:
     // public void testHello() {}
 

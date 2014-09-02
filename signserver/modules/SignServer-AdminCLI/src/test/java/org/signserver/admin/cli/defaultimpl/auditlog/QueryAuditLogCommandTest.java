@@ -28,7 +28,7 @@ import junit.framework.TestCase;
  *
  */
 
-public class QueryAuditLogTest extends TestCase {
+public class QueryAuditLogCommandTest extends TestCase {
     /**
      * Test with a valid criteria.
      * @throws Exception

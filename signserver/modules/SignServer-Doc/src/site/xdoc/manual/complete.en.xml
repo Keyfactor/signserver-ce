@@ -1424,7 +1424,8 @@ signserver archive query -limit &lt;number&gt; [-criteria  \"&lt;field&gt; &lt;o
 	+ "-response shows only entries for responses\n"
         + "Example: signserver archive query -limit 10 -criteria \"signerid EQ 1\"\n"
 	+ "Example: signserver archive query -limit 10 -criteria \"signerid EQ 1\" -request\n"
-        + "Example: signserver archive query -limit 10 -criteria \"time GT 1359623137000\" -criteria \"requestIP EQ 127.0.0.1\"\n\n"
+        + "Example: signserver archive query -limit 10 -criteria \"time GT 1359623137000\" -criteria \"requestIP EQ 127.0.0.1\n"
+        + "Example: signserver archive query -limit 10 -criteria \"signerid EQ 1\" -outpath /tmp/out\n\n"
 			</source>
 
                         <p><b>Administrators Related</b></p>

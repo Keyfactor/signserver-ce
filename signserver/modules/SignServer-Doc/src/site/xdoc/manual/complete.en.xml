@@ -7500,7 +7500,7 @@ This is an external application that can be used together with the StatusReading
 informing SignServer about its state.
                 </p>
                 <p>
-In SignServer, either an <a href="complete.en.html#StatusPropertiesWorker">StatusPropertiesWorker</a> or a <a href="complete.en.html#TimeMonitorManager">TimeMonitorManager</a> is configured for accepting the status updates. The later also supports dynamic configuration of the TimeMonitor.
+In SignServer, either a <a href="complete.en.html#StatusPropertiesWorker">StatusPropertiesWorker</a> or a <a href="complete.en.html#TimeMonitorManager">TimeMonitorManager</a> is configured for accepting the status updates. The later also supports dynamic configuration of the TimeMonitor.
                 </p>
                 <p>
 For details see the <a href="../docs/TimeMonitor-Manual.pdf">TimeMonitor manual</a> (only available in Enterprise Edition).

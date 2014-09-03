@@ -1805,6 +1805,7 @@ public class MainView extends FrameView {
 
         downloadArchiveEntriesButton.setAction(actionMap.get("archiveFetch")); // NOI18N
         downloadArchiveEntriesButton.setText(resourceMap.getString("downloadArchiveEntriesButton.text")); // NOI18N
+        downloadArchiveEntriesButton.setEnabled(false);
         downloadArchiveEntriesButton.setName("downloadArchiveEntriesButton"); // NOI18N
 
         javax.swing.GroupLayout archivePanelLayout = new javax.swing.GroupLayout(archivePanel);

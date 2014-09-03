@@ -2069,6 +2069,7 @@
                   <action class="org.signserver.admin.gui.MainView" id="archiveFetch" methodName="archiveFetch"/>
                 </Property>
                 <Property name="text" type="java.lang.String" resourceKey="downloadArchiveEntriesButton.text"/>
+                <Property name="enabled" type="boolean" value="false"/>
                 <Property name="name" type="java.lang.String" value="downloadArchiveEntriesButton" noResource="true"/>
               </Properties>
             </Component>

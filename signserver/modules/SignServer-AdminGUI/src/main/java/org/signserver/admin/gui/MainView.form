@@ -1605,7 +1605,7 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace min="12" pref="12" max="12" attributes="0"/>
-                              <Component id="fetchArchiveEntriesButton" min="-2" pref="238" max="-2" attributes="0"/>
+                              <Component id="downloadArchiveEntriesButton" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <Component id="jSplitPane3" alignment="0" pref="1222" max="32767" attributes="0"/>
                       </Group>
@@ -1619,7 +1619,7 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jSplitPane3" pref="591" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="fetchArchiveEntriesButton" min="-2" max="-2" attributes="0"/>
+                      <Component id="downloadArchiveEntriesButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -2063,14 +2063,13 @@
                 </Container>
               </SubComponents>
             </Container>
-            <Component class="javax.swing.JButton" name="fetchArchiveEntriesButton">
+            <Component class="javax.swing.JButton" name="downloadArchiveEntriesButton">
               <Properties>
                 <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
                   <action class="org.signserver.admin.gui.MainView" id="archiveFetch" methodName="archiveFetch"/>
                 </Property>
-                <Property name="text" type="java.lang.String" resourceKey="fetchArchiveEntriesButton.text"/>
-                <Property name="enabled" type="boolean" value="false"/>
-                <Property name="name" type="java.lang.String" value="fetchArchiveEntriesButton" noResource="true"/>
+                <Property name="text" type="java.lang.String" resourceKey="downloadArchiveEntriesButton.text"/>
+                <Property name="name" type="java.lang.String" value="downloadArchiveEntriesButton" noResource="true"/>
               </Properties>
             </Component>
           </SubComponents>

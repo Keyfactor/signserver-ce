@@ -286,7 +286,7 @@ public class MainView extends FrameView {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) {
-                    fetchArchiveEntriesButton.setEnabled(!fetchArchiveDataInProgress 
+                    downloadArchiveEntriesButton.setEnabled(!fetchArchiveDataInProgress 
                             && archiveTable.getSelectedRowCount() > 0);
                 }
             }
@@ -514,7 +514,7 @@ public class MainView extends FrameView {
         archiveErrorPanel = new javax.swing.JPanel();
         jScrollPane8 = new javax.swing.JScrollPane();
         archiveErrorEditor = new javax.swing.JEditorPane();
-        fetchArchiveEntriesButton = new javax.swing.JButton();
+        downloadArchiveEntriesButton = new javax.swing.JButton();
         removeKeyPanel = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
         aliasTextField = new javax.swing.JTextField();
@@ -1803,10 +1803,9 @@ public class MainView extends FrameView {
 
         jSplitPane3.setRightComponent(jPanel5);
 
-        fetchArchiveEntriesButton.setAction(actionMap.get("archiveFetch")); // NOI18N
-        fetchArchiveEntriesButton.setText(resourceMap.getString("fetchArchiveEntriesButton.text")); // NOI18N
-        fetchArchiveEntriesButton.setEnabled(false);
-        fetchArchiveEntriesButton.setName("fetchArchiveEntriesButton"); // NOI18N
+        downloadArchiveEntriesButton.setAction(actionMap.get("archiveFetch")); // NOI18N
+        downloadArchiveEntriesButton.setText(resourceMap.getString("downloadArchiveEntriesButton.text")); // NOI18N
+        downloadArchiveEntriesButton.setName("downloadArchiveEntriesButton"); // NOI18N
 
         javax.swing.GroupLayout archivePanelLayout = new javax.swing.GroupLayout(archivePanel);
         archivePanel.setLayout(archivePanelLayout);
@@ -1817,7 +1816,7 @@ public class MainView extends FrameView {
                 .addGroup(archivePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(archivePanelLayout.createSequentialGroup()
                         .addGap(12, 12, 12)
-                        .addComponent(fetchArchiveEntriesButton, javax.swing.GroupLayout.PREFERRED_SIZE, 238, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(downloadArchiveEntriesButton))
                     .addComponent(jSplitPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 1222, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -1827,7 +1826,7 @@ public class MainView extends FrameView {
                 .addContainerGap()
                 .addComponent(jSplitPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 591, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(fetchArchiveEntriesButton)
+                .addComponent(downloadArchiveEntriesButton)
                 .addContainerGap())
         );
 
@@ -3296,7 +3295,7 @@ private void displayLogEntryAction() {
             super(application);
             fetchArchiveDataInProgress = true;
             // disable fetch button
-            fetchArchiveEntriesButton.setEnabled(false);
+            downloadArchiveEntriesButton.setEnabled(false);
             selectedEntries = getSelectedEntries();
             
             // ask for a directory to save output files to
@@ -3835,6 +3834,7 @@ private Properties toProperties(WsGlobalConfiguration wsgc) {
     javax.swing.JTable configurationTable;
     javax.swing.JButton deactivateButton;
     javax.swing.JMenuItem deactivateMenu;
+    javax.swing.JButton downloadArchiveEntriesButton;
     javax.swing.JButton editButton;
     javax.swing.JTextField editIssuerDNTextfield;
     javax.swing.JMenu editMenu;
@@ -3847,7 +3847,6 @@ private Properties toProperties(WsGlobalConfiguration wsgc) {
     javax.swing.JPanel exportPanel;
     javax.swing.ButtonGroup exportPanelButtonGroup;
     javax.swing.JRadioButton exportSelectedRadioButton;
-    javax.swing.JButton fetchArchiveEntriesButton;
     javax.swing.JMenuItem generateRequestMenu;
     javax.swing.JButton generateRequestsButton;
     javax.swing.JMenuItem globalConfigurationMenu;

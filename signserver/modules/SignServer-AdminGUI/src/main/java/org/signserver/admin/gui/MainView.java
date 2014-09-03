@@ -3360,18 +3360,22 @@ private void displayLogEntryAction() {
         @Override
         public void succeeded(final Boolean success) {
             if (success) {
-                final int numFetchedEntries = fetchedEntries.size();
-                final int numSelectedEntries = selectedEntries.size();
-                
-                if (numFetchedEntries == numSelectedEntries) {
-                    JOptionPane.showMessageDialog(MainView.this.getFrame(),
-                            String.format("Downloaded %d items", numFetchedEntries),
-                            "Sucess", JOptionPane.INFORMATION_MESSAGE);
-                } else {
-                    JOptionPane.showMessageDialog(MainView.this.getFrame(),
-                            String.format("Missing items, downloaded %1$d of %2$d",
-                                          numFetchedEntries, numSelectedEntries),
-                            "Missing entries", JOptionPane.WARNING_MESSAGE);
+                // if an output directory wasn't select ("Cancel" was selected)
+                // silently do nothing
+                if (outputDirectory != null) {
+                    final int numFetchedEntries = fetchedEntries.size();
+                    final int numSelectedEntries = selectedEntries.size();
+
+                    if (numFetchedEntries == numSelectedEntries) {
+                        JOptionPane.showMessageDialog(MainView.this.getFrame(),
+                                String.format("Downloaded %d items", numFetchedEntries),
+                                "Sucess", JOptionPane.INFORMATION_MESSAGE);
+                    } else {
+                        JOptionPane.showMessageDialog(MainView.this.getFrame(),
+                                String.format("Missing items, downloaded %1$d of %2$d",
+                                              numFetchedEntries, numSelectedEntries),
+                                "Missing entries", JOptionPane.WARNING_MESSAGE);
+                    }
                 }
             } else {
                 // show error

@@ -33,6 +33,9 @@ public class HSMKeepAliveTimedService extends BaseTimedService {
     
     public static String CRYPTOWORKERS = "CRYPTOWORKERS";
     
+    private static String TESTKEY = "TESTKEY";
+    private static String DEFAULTKEY = "DEFAULTKEY";
+
     private List<String> cryptoWorkers = new LinkedList<String>();
     private List<String> fatalErrors = new LinkedList<String>();
     
@@ -76,19 +79,43 @@ public class HSMKeepAliveTimedService extends BaseTimedService {
                 LOG.error("No such worker: " + workerIdOrName);
             }
             
-            final String keyAlias =
-                    workerSession.getCurrentWorkerConfig(workerId).getProperty("DEFAULTKEY");
+            final String keyAlias = getKeyAliasForWorker(workerId);
+            
+            if (keyAlias == null) {
+                LOG.error("TESTKEY or DEFAULTKEY is not set for worker: " +
+                        workerIdOrName);
+                return;
+            }
             
             try {
                 workerSession.testKey(workerId, keyAlias, null);
             } catch (CryptoTokenOfflineException e) {
-                LOG.warn("Crypto token offline", e);
+                LOG.warn("Crypto token offline for worker " + workerIdOrName +
+                        ": " + e.getMessage());
             } catch (InvalidWorkerIdException e) {
-                LOG.error("Invalid worker ID", e);
+                LOG.error("Invalid worker ID: " + e.getMessage());
             } catch (KeyStoreException e) {
-                LOG.error("Keystore exception", e);
+                LOG.error("Keystore exception for worker " + workerIdOrName +
+                        ": " + e.getMessage());
             }
         }
+    }
+    
+    /**
+     * Get key alias to use for testing a given worker's crypto token.
+     * Use TESTKEY if available, otherwise DEFAULTKEY.
+     * 
+     * @param workerId Worker ID to get key for
+     * @return Key alias, or null if no key alias was found
+     */
+    private String getKeyAliasForWorker(final int workerId) {
+        final WorkerConfig workerConfig =
+                workerSession.getCurrentWorkerConfig(workerId);
+        
+        final String testKey = workerConfig.getProperty(TESTKEY);
+        final String defaultKey = workerConfig.getProperty(DEFAULTKEY);
+        
+        return testKey != null ? testKey : defaultKey;
     }
     
 }

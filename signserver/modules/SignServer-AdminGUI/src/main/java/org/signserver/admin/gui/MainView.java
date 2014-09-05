@@ -3342,10 +3342,17 @@ private void displayLogEntryAction() {
                     final File out =
                             new File(outputDirectory, 
                                     constructDumpFilename(entry));
-                    final FileOutputStream os = new FileOutputStream(out);
+                    FileOutputStream os = null;
 
                     // TODO: check if output files already exists
-                    os.write(entry.getArchiveData());
+                    try {
+                        os = new FileOutputStream(out);
+                        os.write(entry.getArchiveData());
+                    } finally {
+                        if (os != null) {
+                            os.close();
+                        }
+                    }
                 }
                 // TODO: maybe we should check if all items where received
                 // (archive entries could have dissappeared)

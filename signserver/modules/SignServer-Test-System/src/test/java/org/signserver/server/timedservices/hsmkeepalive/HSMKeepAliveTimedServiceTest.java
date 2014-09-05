@@ -116,7 +116,7 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
     public void test01runServiceWithTwoWorkers() throws Exception {
         try {
             // make sure the service had time to run
-            Thread.sleep(1000);
+            Thread.sleep(2000);
             // check that the service has run and tested keys for both configured workers
             assertTrue("testKey run on worker 1",
                         debugFileExists(WORKERID_CRYPTOWORKER1));
@@ -147,7 +147,7 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
             workerSession.reloadConfiguration(WORKERID_CRYPTOWORKER2);
             
             // make sure the service had time to run
-            Thread.sleep(1000);
+            Thread.sleep(2000);
             // check that the service has run and tested keys for both configured workers
             assertTrue("testKey run on worker 1",
                         debugFileExists(WORKERID_CRYPTOWORKER1));
@@ -160,6 +160,50 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
         } finally {
             workerSession.removeWorkerProperty(WORKERID_CRYPTOWORKER1, "DEFAULTKEY");
             workerSession.removeWorkerProperty(WORKERID_CRYPTOWORKER2, "DEFAULTKEY");
+            workerSession.reloadConfiguration(WORKERID_CRYPTOWORKER1);
+            workerSession.reloadConfiguration(WORKERID_CRYPTOWORKER2);
+
+            deleteDebugFile(WORKERID_CRYPTOWORKER1);
+            deleteDebugFile(WORKERID_CRYPTOWORKER2);
+        }
+    }
+    
+    /**
+     * Test that DEFAULTKEY is used if TESTKEY is missing.
+     * 
+     * @throws Exception 
+     */
+    public void test03runServiceWithOnlyDefaultKey() throws Exception {
+        try {
+            workerSession.setWorkerProperty(WORKERID_CRYPTOWORKER1,
+                    "DEFAULTKEY", "DefaultKey1");
+            workerSession.setWorkerProperty(WORKERID_CRYPTOWORKER2,
+                    "DEFAULTKEY", "DefaultKey2");
+            workerSession.removeWorkerProperty(WORKERID_CRYPTOWORKER1,
+                    "TESTKEY");
+            workerSession.removeWorkerProperty(WORKERID_CRYPTOWORKER2,
+                    "TESTKEY");
+            workerSession.reloadConfiguration(WORKERID_CRYPTOWORKER1);
+            workerSession.reloadConfiguration(WORKERID_CRYPTOWORKER2);
+            
+            // make sure the service had time to run
+            Thread.sleep(2000);
+            // check that the service has run and tested keys for both configured workers
+            assertTrue("testKey run on worker 1",
+                        debugFileExists(WORKERID_CRYPTOWORKER1));
+            assertTrue("testKey run on worker 2",
+                        debugFileExists(WORKERID_CRYPTOWORKER2));
+            assertEquals("DEFAULTKEY alias used for worker 1",
+                         "DefaultKey1", getDebugKeyAlias(WORKERID_CRYPTOWORKER1));
+            assertEquals("DEFAULTKEY alias used for worker 2",
+                         "DefaultKey2", getDebugKeyAlias(WORKERID_CRYPTOWORKER2));
+        } finally {
+            workerSession.removeWorkerProperty(WORKERID_CRYPTOWORKER1, "DEFAULTKEY");
+            workerSession.removeWorkerProperty(WORKERID_CRYPTOWORKER2, "DEFAULTKEY");
+            workerSession.setWorkerProperty(WORKERID_CRYPTOWORKER1, "TESTKEY",
+                    "TestKey1");
+            workerSession.setWorkerProperty(WORKERID_CRYPTOWORKER2, "TESTKEY",
+                    "TestKey2");
             workerSession.reloadConfiguration(WORKERID_CRYPTOWORKER1);
             workerSession.reloadConfiguration(WORKERID_CRYPTOWORKER2);
 

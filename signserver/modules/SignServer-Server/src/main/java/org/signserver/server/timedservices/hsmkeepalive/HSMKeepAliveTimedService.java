@@ -41,8 +41,8 @@ public class HSMKeepAliveTimedService extends BaseTimedService {
     
     public static String CRYPTOWORKERS = "CRYPTOWORKERS";
     
-    private static String TESTKEY = "TESTKEY";
-    private static String DEFAULTKEY = "DEFAULTKEY";
+    static String TESTKEY = "TESTKEY";
+    static String DEFAULTKEY = "DEFAULTKEY";
 
     private List<String> cryptoWorkers = new LinkedList<String>();
     private List<String> fatalErrors = new LinkedList<String>();

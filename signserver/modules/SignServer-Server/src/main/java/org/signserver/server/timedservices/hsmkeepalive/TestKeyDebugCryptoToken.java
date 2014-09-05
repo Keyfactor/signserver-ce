@@ -19,6 +19,7 @@ import java.security.KeyStoreException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.cert.Certificate;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -43,12 +44,26 @@ public class TestKeyDebugCryptoToken implements ICryptoToken {
     private static Logger LOG = Logger.getLogger(TestKeyDebugCryptoToken.class);
 
     private String outPath;
+    private String testKey;
+    private boolean disableTestKey;
     
+    /**
+     * Output path for debug files.
+     */
     static String TESTKEY_DEBUG_OUTPATH = "TESTKEY_DEBUG_OUTPATH";
+    
+    /**
+     * Property to set to simulate missing TESTKEY.
+     */
+    static String DISABLE_TESTKEY = "DISABLE_TESTKEY";
     
     @Override
     public void init(int workerId, Properties props) throws CryptoTokenInitializationFailureException {
         this.outPath = props.getProperty(TESTKEY_DEBUG_OUTPATH);
+        this.testKey = props.getProperty(HSMKeepAliveTimedService.TESTKEY);
+        this.disableTestKey =
+                Boolean.parseBoolean(props.getProperty(DISABLE_TESTKEY,
+                                                       Boolean.FALSE.toString()));
     }
 
     @Override
@@ -107,6 +122,11 @@ public class TestKeyDebugCryptoToken implements ICryptoToken {
         final File debugFile =
                 new File(outPath);
         
+        // if using the TESTKEY alias and set simulate missing the test key
+        if (testKey.equals(alias) && disableTestKey) {
+            return Arrays.asList(new KeyTestResult(alias, false, "no such key", null));
+        }
+        
         try {
             final FileOutputStream fos =
                     new FileOutputStream(debugFile);
@@ -116,7 +136,7 @@ public class TestKeyDebugCryptoToken implements ICryptoToken {
             LOG.error("Failed to create debug file");
         }
         
-        return Collections.emptyList();
+        return Arrays.asList(new KeyTestResult(alias, true, "", null));
     }
 
     @Override

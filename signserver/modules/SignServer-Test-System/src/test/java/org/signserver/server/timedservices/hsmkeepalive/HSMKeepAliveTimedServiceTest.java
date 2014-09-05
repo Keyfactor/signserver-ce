@@ -278,6 +278,47 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
         }
     }
     
+    /**
+     * Test that having set both TESTKEY and DEFAULTKEY and failing testing
+     * TESTKEY doesn't use DEFAULTKEY.
+     * 
+     * @throws Exception 
+     */
+    public void test06runServiceWithDisabledTestKey() throws Exception {
+        try {
+            workerSession.setWorkerProperty(WORKERID_CRYPTOWORKER1,
+                    "DEFAULTKEY", "DefaultKey1");
+            workerSession.setWorkerProperty(WORKERID_CRYPTOWORKER1,
+                    TestKeyDebugCryptoToken.DISABLE_TESTKEY, "true");
+            workerSession.setWorkerProperty(WORKERID_CRYPTOWORKER2,
+                    "DEFAULTKEY", "DefaultKey2");
+            workerSession.setWorkerProperty(WORKERID_CRYPTOWORKER2,
+                    TestKeyDebugCryptoToken.DISABLE_TESTKEY, "true");
+            workerSession.reloadConfiguration(WORKERID_CRYPTOWORKER1);
+            workerSession.reloadConfiguration(WORKERID_CRYPTOWORKER2);
+            // make sure the service had time to run
+            Thread.sleep(2000);
+            // check that the service has run and tested keys for both configured workers
+            assertFalse("testKey not run",
+                        debugFileExists(WORKERID_CRYPTOWORKER1));
+            assertFalse("testKey not run",
+                        debugFileExists(WORKERID_CRYPTOWORKER2));
+        } finally {
+            workerSession.removeWorkerProperty(WORKERID_CRYPTOWORKER1,
+                    "DEFAULTKEY");
+            workerSession.removeWorkerProperty(WORKERID_CRYPTOWORKER1,
+                    TestKeyDebugCryptoToken.DISABLE_TESTKEY);
+            workerSession.removeWorkerProperty(WORKERID_CRYPTOWORKER2,
+                    "DEFAULTKEY");
+            workerSession.removeWorkerProperty(WORKERID_CRYPTOWORKER2,
+                    TestKeyDebugCryptoToken.DISABLE_TESTKEY);
+            workerSession.reloadConfiguration(WORKERID_CRYPTOWORKER1);
+            workerSession.reloadConfiguration(WORKERID_CRYPTOWORKER2);
+            deleteDebugFile(WORKERID_CRYPTOWORKER1);
+            deleteDebugFile(WORKERID_CRYPTOWORKER2);
+        }
+    }
+    
     public void test99tearDownDatabase() throws Exception {
         removeWorker(WORKERID_SERVICE);
         removeWorker(WORKERID_CRYPTOWORKER1);

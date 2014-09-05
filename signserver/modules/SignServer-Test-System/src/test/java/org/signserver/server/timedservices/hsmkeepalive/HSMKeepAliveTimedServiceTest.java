@@ -107,6 +107,12 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
         workerSession.reloadConfiguration(WORKERID_CRYPTOWORKER2);
     }
     
+    /**
+     * Test a basic configuration with two crypto workers set up with the
+     * TESTKEY key alias property.
+     * 
+     * @throws Exception 
+     */
     public void test01runServiceWithTwoWorkers() throws Exception {
         try {
             // make sure the service had time to run
@@ -121,6 +127,42 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
             assertEquals("TESTKEY alias used for worker 2",
                          "TestKey2", getDebugKeyAlias(WORKERID_CRYPTOWORKER2));
         } finally {
+            deleteDebugFile(WORKERID_CRYPTOWORKER1);
+            deleteDebugFile(WORKERID_CRYPTOWORKER2);
+        }
+    }
+    
+    /**
+     * Test that when setting DEFAULTKEY, TESTKEY is still used.
+     * 
+     * @throws Exception 
+     */
+    public void test02runServiceWithTestAndDefaultKey() throws Exception {
+        try {
+            workerSession.setWorkerProperty(WORKERID_CRYPTOWORKER1,
+                    "DEFAULTKEY", "DefaultKey1");
+            workerSession.setWorkerProperty(WORKERID_CRYPTOWORKER2,
+                    "DEFAULTKEY", "DefaultKey2");
+            workerSession.reloadConfiguration(WORKERID_CRYPTOWORKER1);
+            workerSession.reloadConfiguration(WORKERID_CRYPTOWORKER2);
+            
+            // make sure the service had time to run
+            Thread.sleep(1000);
+            // check that the service has run and tested keys for both configured workers
+            assertTrue("testKey run on worker 1",
+                        debugFileExists(WORKERID_CRYPTOWORKER1));
+            assertTrue("testKey run on worker 2",
+                        debugFileExists(WORKERID_CRYPTOWORKER2));
+            assertEquals("TESTKEY alias used for worker 1",
+                         "TestKey1", getDebugKeyAlias(WORKERID_CRYPTOWORKER1));
+            assertEquals("TESTKEY alias used for worker 2",
+                         "TestKey2", getDebugKeyAlias(WORKERID_CRYPTOWORKER2));
+        } finally {
+            workerSession.removeWorkerProperty(WORKERID_CRYPTOWORKER1, "DEFAULTKEY");
+            workerSession.removeWorkerProperty(WORKERID_CRYPTOWORKER2, "DEFAULTKEY");
+            workerSession.reloadConfiguration(WORKERID_CRYPTOWORKER1);
+            workerSession.reloadConfiguration(WORKERID_CRYPTOWORKER2);
+
             deleteDebugFile(WORKERID_CRYPTOWORKER1);
             deleteDebugFile(WORKERID_CRYPTOWORKER2);
         }

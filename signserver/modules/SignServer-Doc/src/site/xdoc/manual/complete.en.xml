@@ -41,9 +41,12 @@ lookup the validation of a given certificate.
             <section name="Major changes from previous versions">
                 <subsection name="Changes between version 3.5 and 3.6">
                     <ul>
-                        <li>Underlaying CESeCore library upgraded to version 6.x</li>
+                        <li>Underlaying CESeCore library upgraded to version 6.1</li>
                         <li>Separation between community and enterprise editions</li>
                         <li>Separate worker and crypto tokens</li>
+                        <li>New application: SignServer TimeMonitor (enterprise edition)</li>
+                        <li>Querying of database archive from WS and GUI</li>
+                        <li>HSM keep alive service</li>
                     </ul>
                 </subsection>
                 <subsection name="Changes between version 3.4 and 3.5">

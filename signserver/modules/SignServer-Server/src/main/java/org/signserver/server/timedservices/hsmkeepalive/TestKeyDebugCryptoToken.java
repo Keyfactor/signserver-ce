@@ -121,16 +121,21 @@ public class TestKeyDebugCryptoToken implements ICryptoToken {
         // record the invocation
         final File debugFile =
                 new File(outPath);
+        boolean success = true;
+        String message = "";
+        String content = alias;
         
-        // if using the TESTKEY alias and set simulate missing the test key
-        if (testKey.equals(alias) && disableTestKey) {
-            return Arrays.asList(new KeyTestResult(alias, false, "no such key", null));
+        // if using the TESTKEY alias and set to simulate missing the test key
+        if (testKey != null && testKey.equals(alias) && disableTestKey) {
+            success = false;
+            message = "no such key";
+            content = "_NoKey";
         }
         
         FileOutputStream fos = null;
         try {
             fos = new FileOutputStream(debugFile);
-            fos.write(alias.getBytes());
+            fos.write(content.getBytes());
         } catch (IOException e) {
             LOG.error("Failed to create debug file");
         } finally {
@@ -143,7 +148,7 @@ public class TestKeyDebugCryptoToken implements ICryptoToken {
             }
         }
         
-        return Arrays.asList(new KeyTestResult(alias, true, "", null));
+        return Arrays.asList(new KeyTestResult(alias, success, message, null));
     }
 
     @Override

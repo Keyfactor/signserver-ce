@@ -127,13 +127,20 @@ public class TestKeyDebugCryptoToken implements ICryptoToken {
             return Arrays.asList(new KeyTestResult(alias, false, "no such key", null));
         }
         
+        FileOutputStream fos = null;
         try {
-            final FileOutputStream fos =
-                    new FileOutputStream(debugFile);
-            
+            fos = new FileOutputStream(debugFile);
             fos.write(alias.getBytes());
         } catch (IOException e) {
             LOG.error("Failed to create debug file");
+        } finally {
+            if (fos != null) {
+                try {
+                    fos.close();
+                } catch (IOException e) {
+                    // NOPMD ignored
+                }
+            }
         }
         
         return Arrays.asList(new KeyTestResult(alias, true, "", null));

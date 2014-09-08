@@ -4922,6 +4922,10 @@ Fully qualified class name: org.signserver.server.timedservices.hsmkeepalive.HSM
 The HSMKeepAliveTimedService is a timed service that can be used to periodically
 run the test key operation on selected crypto workers. This is intended as a
 measure to prevent i.e. a network-based HSM timing out.
+The service will use the key alias TESTKEY for the workers when set, otherwise
+it will fall back on DEFAULTKEY.
+Notice that the service will not fallback on DEFAULTKEY if TESTKEY is set, but
+didn't succeed when testing the key.
                         </p>
                     </subsubsection>
                     <subsubsection name="Available Properties">

@@ -86,7 +86,7 @@ public class HSMKeepAliveTimedService extends BaseTimedService {
             try {
                 workerId = Integer.valueOf(workerIdOrName);
             } catch (NumberFormatException e) {
-                workerId = workerSession.getWorkerId(workerIdOrName);
+                workerId = session.getWorkerId(workerIdOrName);
             }
             
             if (workerId == 0) {

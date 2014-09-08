@@ -52,28 +52,34 @@ public class HSMKeepAliveTimedService extends BaseTimedService {
     
     @Override
     public void init(int workerId, WorkerConfig config, WorkerContext workerContext, EntityManager workerEM) {
-        try {
-            super.init(workerId, config, workerContext, workerEM);
+        super.init(workerId, config, workerContext, workerEM);
 
-            final String cryptoWorkersValue = config.getProperty(CRYPTOWORKERS);
+        final String cryptoWorkersValue = config.getProperty(CRYPTOWORKERS);
 
-            if (cryptoWorkersValue == null) {
-                fatalErrors.add("Must specify " + CRYPTOWORKERS);
-            }
-
+        if (cryptoWorkersValue != null) {
             cryptoWorkers.addAll(Arrays.asList(cryptoWorkersValue.split(",")));
-
-            workerSession = ServiceLocator.getInstance().lookupLocal(
-                            IWorkerSession.class);
-        } catch (NamingException e) {
-            LOG.error("Unable to lookup worker session", e);
         }
+    }
+    
+    private IWorkerSession getWorkerSession() {
+        if (workerSession == null) {
+            try {
+                workerSession = ServiceLocator.getInstance().lookupLocal(
+                        IWorkerSession.class);
+            } catch (NamingException ex) {
+                throw new RuntimeException("Unable to lookup worker session",
+                        ex);
+            }
+        }
+        return workerSession;
     }
 
     
     
     @Override
     public void work() throws ServiceExecutionFailedException {
+        final IWorkerSession session = getWorkerSession();
+
         for (final String workerIdOrName : cryptoWorkers) {
             int workerId;
             
@@ -87,7 +93,7 @@ public class HSMKeepAliveTimedService extends BaseTimedService {
                 LOG.error("No such worker: " + workerIdOrName);
             }
             
-            final String keyAlias = getKeyAliasForWorker(workerId);
+            final String keyAlias = getKeyAliasForWorker(session, workerId);
             
             if (keyAlias == null) {
                 LOG.error("TESTKEY or DEFAULTKEY is not set for worker: " +
@@ -96,7 +102,7 @@ public class HSMKeepAliveTimedService extends BaseTimedService {
             }
             
             try {
-                workerSession.testKey(workerId, keyAlias, null);
+                session.testKey(workerId, keyAlias, null);
             } catch (CryptoTokenOfflineException e) {
                 LOG.warn("Crypto token offline for worker " + workerIdOrName +
                         ": " + e.getMessage());
@@ -116,14 +122,24 @@ public class HSMKeepAliveTimedService extends BaseTimedService {
      * @param workerId Worker ID to get key for
      * @return Key alias, or null if no key alias was found
      */
-    private String getKeyAliasForWorker(final int workerId) {
+    private String getKeyAliasForWorker(final IWorkerSession session, final int workerId) {
         final WorkerConfig workerConfig =
-                workerSession.getCurrentWorkerConfig(workerId);
+                session.getCurrentWorkerConfig(workerId);
         
         final String testKey = workerConfig.getProperty(TESTKEY);
         final String defaultKey = workerConfig.getProperty(DEFAULTKEY);
         
         return testKey != null ? testKey : defaultKey;
     }
-    
+
+    @Override
+    protected List<String> getFatalErrors() {
+        final List<String> errors = new LinkedList<String>(super.getFatalErrors());
+        
+        if (cryptoWorkers.isEmpty()) {
+            errors.add("Must specify " + CRYPTOWORKERS);
+        }
+        
+        return errors;
+    }
 }

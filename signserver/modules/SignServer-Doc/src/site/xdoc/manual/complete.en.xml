@@ -4910,6 +4910,24 @@ access to this file when the service is executed.
                     </subsubsection>
                     
                 </subsection>
+                <subsection name="HSMKeepAliveTimedService">
+                    <p>
+Fully qualified class name: org.signserver.server.timedservices.hsmkeepalive.HSMKeepAliveTimedService
+                    </p>
+                    <subsubsection name="Overview">
+                        <p>
+The HSMKeepAliveTimedService is a timed service that can be used to periodically
+run the test key operation on selected crypto workers. This is intended as a
+measure to prevent i.e. a network-based HSM timing out.
+                        </p>
+                    </subsubsection>
+                    <subsubsection name="Available Properties">
+<p><b>CRYPTOWORKERS</b> = Comma-separated list of worker names or worker IDs of
+workers whos keys should be tested. This would typically be crypto workers i.e.
+corresponding to different slots in an HSM, but could also be regular workers
+with crypto tokens configured directly). This property is required.</p>
+                    </subsubsection>
+                </subsection>
                 <subsection name="Installing a service">
                     <p>To install a service you use the same commands as for installing a worker:</p>
                     <source>

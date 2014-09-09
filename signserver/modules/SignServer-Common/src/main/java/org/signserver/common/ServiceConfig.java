@@ -55,6 +55,18 @@ public class ServiceConfig {
     public static final String INTERVALMS = "INTERVALMS";
     
     /**
+     * Property specifying a list of log operation types to perform on
+     * successful service runs (currently supported is Log4J info logging
+     * and CESeCore secure audit logging).
+     */
+    public static final String WORK_LOG_TYPES = "WORK_LOG_TYPES";
+
+    /**
+     * Default work operation log type.
+     */
+    public static final String DEFAULT_WORK_LOG_TYPES = "INFO_LOGGING";
+
+    /**
      * Internal setting determining the  last time the service was runned
      *
      */

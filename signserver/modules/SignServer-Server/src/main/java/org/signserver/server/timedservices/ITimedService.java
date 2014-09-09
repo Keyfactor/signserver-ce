@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.server.timedservices;
 
+import java.util.List;
 import org.signserver.server.IWorker;
 import org.signserver.server.ServiceExecutionFailedException;
 
@@ -59,4 +60,23 @@ public interface ITimedService extends IWorker {
      * the time, of false if it should be run on all nodes simultaneously.
      */
     boolean isSingleton();
+    
+    /**
+     * Get log types for logging work invocations.
+     * 
+     * @return A list of log types to use
+     */
+    List<LogType> getLogTypes();
+    
+    public enum LogType {
+        /**
+         * Using CESeCore secure audit logging.
+         */
+        SECURE_AUDITLOGGING,
+        
+        /**
+         * Using Log4J info logging.
+         */
+        INFO_LOGGING
+    }
 }

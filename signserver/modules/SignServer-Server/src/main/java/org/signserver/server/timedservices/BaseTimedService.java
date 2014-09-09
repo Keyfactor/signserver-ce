@@ -18,13 +18,16 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
+import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.quartz.CronExpression;
 import org.signserver.common.ServiceConfig;
 import org.signserver.common.StaticWorkerStatus;
+import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 import org.signserver.common.WorkerStatusInfo;
 import org.signserver.server.BaseWorker;
+import org.signserver.server.WorkerContext;
 
 /**
  * TODO: Document me!
@@ -36,8 +39,30 @@ public abstract class BaseTimedService extends BaseWorker implements ITimedServi
     /** Log4j instance for actual implementation class */
     private final transient Logger log = Logger.getLogger(this.getClass());
 
+    private List<ITimedService.LogType> logTypes =
+            new LinkedList<ITimedService.LogType>();
+    private List<String> fatalErrors = new LinkedList<String>();
+    
     protected BaseTimedService() {
     }
+
+    @Override
+    public void init(int workerId, WorkerConfig config, WorkerContext workerContext, EntityManager workerEM) {
+        super.init(workerId, config, workerContext, workerEM);
+        
+        final String[] logTypeStrings =
+                config.getProperty(ServiceConfig.WORK_LOG_TYPES,
+                                   ServiceConfig.DEFAULT_WORK_LOG_TYPES).split(",");
+        for (final String logType : logTypeStrings) {
+            try {
+                logTypes.add(LogType.valueOf(logType));
+            } catch (IllegalArgumentException e) {
+                fatalErrors.add("Unkown log type: " + logType);
+            }
+        }
+    }
+    
+    
 
     /**
      * @see org.signserver.server.timedservices.ITimedService#getNextInterval()
@@ -112,14 +137,14 @@ public abstract class BaseTimedService extends BaseWorker implements ITimedServi
 
     @Override
     public WorkerStatus getStatus(final List<String> additionalFatalErrors) {
-        final List<String> fatalErrors = new LinkedList<String>(additionalFatalErrors);
-        fatalErrors.addAll(getFatalErrors());
+        final List<String> fatalErrorsIncludingAdditionalErrors = new LinkedList<String>(additionalFatalErrors);
+        fatalErrorsIncludingAdditionalErrors.addAll(getFatalErrors());
 
         List<WorkerStatusInfo.Entry> briefEntries = new LinkedList<WorkerStatusInfo.Entry>();
         List<WorkerStatusInfo.Entry> completeEntries = new LinkedList<WorkerStatusInfo.Entry>();
 
         // Worker status
-        briefEntries.add(new WorkerStatusInfo.Entry("Worker status", fatalErrors.isEmpty() ? "Active" : "Offline"));
+        briefEntries.add(new WorkerStatusInfo.Entry("Worker status", fatalErrorsIncludingAdditionalErrors.isEmpty() ? "Active" : "Offline"));
         briefEntries.add(new WorkerStatusInfo.Entry("Service was last run at", getLastRunDate()));
 
         // Properties
@@ -130,7 +155,7 @@ public abstract class BaseTimedService extends BaseWorker implements ITimedServi
         }
         completeEntries.add(new WorkerStatusInfo.Entry("Active Properties are", configValue.toString()));
 
-        return new StaticWorkerStatus(new WorkerStatusInfo(workerId, config.getProperty("NAME"), "Service", WorkerStatus.STATUS_ACTIVE, briefEntries, fatalErrors, completeEntries, config));
+        return new StaticWorkerStatus(new WorkerStatusInfo(workerId, config.getProperty("NAME"), "Service", WorkerStatus.STATUS_ACTIVE, briefEntries, fatalErrorsIncludingAdditionalErrors, completeEntries, config));
     }
 
     /**
@@ -145,5 +170,18 @@ public abstract class BaseTimedService extends BaseWorker implements ITimedServi
         }
 
         return DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(lastRun);
+    }
+
+    @Override
+    protected List<String> getFatalErrors() {
+        final List<String> errors = super.getFatalErrors();
+        
+        errors.addAll(fatalErrors);
+        return errors;
+    }
+
+    @Override
+    public List<LogType> getLogTypes() {
+        return logTypes;
     }
 }

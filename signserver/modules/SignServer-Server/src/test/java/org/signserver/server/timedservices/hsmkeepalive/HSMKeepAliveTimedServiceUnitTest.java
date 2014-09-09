@@ -45,4 +45,24 @@ public class HSMKeepAliveTimedServiceUnitTest extends TestCase {
        assertTrue("Should contain error", fatalErrors.contains("Must specify CRYPTOWORKERS"));
     }
     
+    /**
+     * Test that setting an empty value for CRYPTOWORKERS is not producing
+     * a config error.
+     * 
+     * @throws Exception 
+     */
+    public void test02emptyCryptoWorkers() throws Exception {
+        final HSMKeepAliveTimedService instance =
+               new HSMKeepAliveTimedService();
+        final WorkerConfig config = new WorkerConfig();
+        
+        config.setProperty(HSMKeepAliveTimedService.CRYPTOWORKERS, "");
+        instance.init(DUMMY_WORKERID, config, null, null);
+        
+        final List<String> fatalErrors =
+            instance.getStatus(Collections.<String>emptyList()).getFatalErrors();
+
+        assertTrue("Should not contain errors", fatalErrors.isEmpty());
+    }
+    
 }

@@ -44,7 +44,7 @@ public class HSMKeepAliveTimedService extends BaseTimedService {
     static String TESTKEY = "TESTKEY";
     static String DEFAULTKEY = "DEFAULTKEY";
 
-    private List<String> cryptoWorkers = new LinkedList<String>();
+    private List<String> cryptoWorkers;
     private List<String> fatalErrors = new LinkedList<String>();
     
     @EJB
@@ -57,6 +57,7 @@ public class HSMKeepAliveTimedService extends BaseTimedService {
         final String cryptoWorkersValue = config.getProperty(CRYPTOWORKERS);
 
         if (cryptoWorkersValue != null) {
+            cryptoWorkers = new LinkedList<String>();
             cryptoWorkers.addAll(Arrays.asList(cryptoWorkersValue.split(",")));
         }
     }
@@ -136,7 +137,7 @@ public class HSMKeepAliveTimedService extends BaseTimedService {
     protected List<String> getFatalErrors() {
         final List<String> errors = new LinkedList<String>(super.getFatalErrors());
         
-        if (cryptoWorkers.isEmpty()) {
+        if (cryptoWorkers == null) {
             errors.add("Must specify " + CRYPTOWORKERS);
         }
         

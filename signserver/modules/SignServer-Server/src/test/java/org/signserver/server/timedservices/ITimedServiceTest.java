@@ -10,59 +10,49 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.server.timedservices.hsmkeepalive;
+package org.signserver.server.timedservices;
 
 import java.util.Collections;
 import java.util.List;
 import junit.framework.TestCase;
 import org.signserver.common.WorkerConfig;
-import org.signserver.server.timedservices.ITimedService;
+import org.signserver.server.ServiceExecutionFailedException;
 
 /**
- * Unit test for the HSM keep alive timed service.
+ * Unit test for ITimedService.
+ * Contains tests for the log types facility.
  * 
  * @author Marcus Lundblad
  * @version $Id$
  */
-public class HSMKeepAliveTimedServiceUnitTest extends TestCase {
+public class ITimedServiceTest extends TestCase {
     
     private static int DUMMY_WORKERID = 42;
     
     /**
-     * Test that omitting the CRYPTOWORKERS property results in a configuration
-     * error.
+     * Test that the default log type is INFO_LOGGING.
      * 
      * @throws Exception 
      */
-    public void test01missingCryptoWorkers() throws Exception {
-       final HSMKeepAliveTimedService instance =
-               new HSMKeepAliveTimedService();
-       
-       instance.init(DUMMY_WORKERID, new WorkerConfig(), null, null);
-       
-       final List<String> fatalErrors =
-            instance.getStatus(Collections.<String>emptyList()).getFatalErrors();
-
-       assertTrue("Should contain error", fatalErrors.contains("Must specify CRYPTOWORKERS"));
-    }
-    
-    /**
-     * Test that setting an empty value for CRYPTOWORKERS is not producing
-     * a config error.
-     * 
-     * @throws Exception 
-     */
-    public void test02emptyCryptoWorkers() throws Exception {
-        final HSMKeepAliveTimedService instance =
-               new HSMKeepAliveTimedService();
-        final WorkerConfig config = new WorkerConfig();
+    public void test01defaultLogType() throws Exception {
+        final ITimedService instance =
+               new BaseTimedService() {
+                    @Override
+                    public void work() throws ServiceExecutionFailedException {
+                        throw new UnsupportedOperationException("Not supported yet.");
+                    }
+               };
         
-        config.setProperty(HSMKeepAliveTimedService.CRYPTOWORKERS, "");
-        instance.init(DUMMY_WORKERID, config, null, null);
+        instance.init(DUMMY_WORKERID, new WorkerConfig(), null, null);
         
+        final List<ITimedService.LogType> logTypes = instance.getLogTypes();
         final List<String> fatalErrors =
             instance.getStatus(Collections.<String>emptyList()).getFatalErrors();
-
+        
+        assertEquals("Number of log types", 1, logTypes.size());
+        assertEquals("Log type",
+                ITimedService.LogType.INFO_LOGGING, logTypes.get(0));
         assertTrue("Should not contain errors", fatalErrors.isEmpty());
     }
+    
 }

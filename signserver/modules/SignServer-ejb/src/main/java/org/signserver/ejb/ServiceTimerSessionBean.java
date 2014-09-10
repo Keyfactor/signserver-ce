@@ -20,6 +20,8 @@ import javax.ejb.*;
 import javax.ejb.Timer;
 import javax.transaction.*;
 import org.apache.log4j.Logger;
+import org.cesecore.audit.enums.EventStatus;
+import org.cesecore.audit.log.SecurityEventsLoggerSessionLocal;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.ServiceConfig;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
@@ -27,6 +29,9 @@ import org.signserver.ejb.interfaces.IServiceTimerSession;
 import org.signserver.ejb.worker.impl.IWorkerManagerSessionLocal;
 import org.signserver.server.IWorker;
 import org.signserver.server.ServiceExecutionFailedException;
+import org.signserver.server.log.SignServerEventTypes;
+import org.signserver.server.log.SignServerModuleTypes;
+import org.signserver.server.log.SignServerServiceTypes;
 import org.signserver.server.timedservices.ITimedService;
 
 /**
@@ -48,6 +53,9 @@ public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, ISe
     @EJB
     private IWorkerManagerSessionLocal workerManagerSession;
     
+    @EJB
+    private SecurityEventsLoggerSessionLocal logSession;
+
     /**
      * Constant indicating the Id of the "service loader" service.
      * Used in a clustered environment to periodically load available
@@ -137,10 +145,45 @@ public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, ISe
                         if (timedService.isActive() && timedService.getNextInterval() != ITimedService.DONT_EXECUTE) {
                             timedService.work();
                             serviceConfig.setLastRunTimestamp(new Date());
-                            LOG.info("Service " + timerInfo.intValue() + " executed successfully.");
+                            for (final ITimedService.LogType logType :
+                                    timedService.getLogTypes()) {
+                                switch (logType) {
+                                    case INFO_LOGGING:
+                                        LOG.info("Service " +
+                                                timerInfo.intValue() +
+                                                " executed successfully.");
+                                        break;
+                                    case SECURE_AUDITLOGGING:
+                                        logSession.log(
+                                                SignServerEventTypes.TIMED_SERVICE_RUN,
+                                                EventStatus.SUCCESS,
+                                                SignServerModuleTypes.SERVICE,
+                                                SignServerServiceTypes.SIGNSERVER,
+                                                "Service invocation", null, null,
+                                                timerInfo.toString(),
+                                                Collections.<String, Object>emptyMap());
+                                        break;
+                                    default:
+                                        LOG.warn("Unknown log type: " + logType);
+                                }
+                            }
+                            
                         }
                     } catch (ServiceExecutionFailedException e) {
+                        // always log to error log, regardless of log types
+                        // setup for service run logging
                         LOG.error("Service" + timerInfo.intValue() + " execution failed. ", e);
+                        
+                        if (timedService.getLogTypes().contains(ITimedService.LogType.SECURE_AUDITLOGGING)) {
+                            logSession.log(
+                                    SignServerEventTypes.TIMED_SERVICE_RUN,
+                                    EventStatus.FAILURE,
+                                    SignServerModuleTypes.SERVICE,
+                                    SignServerServiceTypes.SIGNSERVER,
+                                    "Service invocation", null, null,
+                                    timerInfo.toString(),
+                                    Collections.<String, Object>singletonMap("Message", e.getMessage()));
+                        }
                     } catch (RuntimeException e) {
                         /*
                          * DSS-377:

@@ -4821,6 +4821,27 @@ but can be changed by editing minimum-delivery-interval-in-millis in domain.xml.
                 <p>
 <b>CRON</b> = Property that should define a CRON expression of how often the service should run.  It should conform to Unix CRON standard. (One and only one of INTERVAL, INTERVALMS or CRON is required)
                 </p>
+                <p>
+<b>WORK_LOG_TYPES</b> = Property specifying a comma-separated list log types that should be used for logging invocations of the service.<br/>
+The following values can be used:
+
+<table>
+    <tr>
+        <td>INFO_LOGGING</td>
+        <td>Use Log4J info logging</td>
+    </tr>
+    <tr>
+        <td>SECURE_AUDITLOGGING</td>
+        <td>Use CESeCore secure audit logging</td>
+    </tr>
+</table>
+
+By default, if this property is not set, INFO_LOGGING is used.
+It is possible to turn off logging by setting this property to an empty value.
+Errors during service invocations will always be logged at error level using Log4J.
+If the property contains SECURE_AUDITLOGGING, the error will additionally be logged
+to the audit log.
+                </p>
 
                 <subsection name="SignerStatusReportTimedService">
                     <p>

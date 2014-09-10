@@ -61,7 +61,7 @@ public abstract class BaseTimedService extends BaseWorker implements ITimedServi
                 try {
                     logTypes.add(LogType.valueOf(logTypeTrimmed));
                 } catch (IllegalArgumentException e) {
-                    fatalErrors.add("Unkown log type: " + logType);
+                    fatalErrors.add("Unknown log type: " + logType);
                 }
             }
         }

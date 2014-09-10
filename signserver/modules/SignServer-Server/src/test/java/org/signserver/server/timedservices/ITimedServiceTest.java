@@ -107,4 +107,24 @@ public class ITimedServiceTest extends TestCase {
         testLoggingTypes("INFO_LOGGING",
                 Arrays.asList(ITimedService.LogType.INFO_LOGGING));
     }
+    
+    /**
+     * Test setting both logging types.
+     * 
+     * @throws Exception 
+     */
+    public void test04bothLoggingTypes() throws Exception {
+        testLoggingTypes("INFO_LOGGING,SECURE_AUDITLOGGING",
+                Arrays.asList(ITimedService.LogType.INFO_LOGGING,
+                              ITimedService.LogType.SECURE_AUDITLOGGING));
+    }
+    
+    /**
+     * Test setting an empty list of logging types.
+     * 
+     * @throws Exception 
+     */
+    public void test05emptyLoggingTypes() throws Exception {
+        testLoggingTypes("", Collections.<ITimedService.LogType>emptyList());
+    }
 }

@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import junit.framework.TestCase;
+import org.signserver.common.ServiceConfig;
 import org.signserver.common.WorkerConfig;
 import org.signserver.server.ServiceExecutionFailedException;
 
@@ -30,19 +31,22 @@ public class ITimedServiceTest extends TestCase {
     
     private static int DUMMY_WORKERID = 42;
     
+    private ITimedService createInstance() {
+        return new BaseTimedService() {
+                    @Override
+                    public void work() throws ServiceExecutionFailedException {
+                        throw new UnsupportedOperationException("Not supported yet.");
+                    }
+               };
+    }
+    
     /**
      * Test that the default log type is INFO_LOGGING.
      * 
      * @throws Exception 
      */
     public void test01defaultLogType() throws Exception {
-        final ITimedService instance =
-               new BaseTimedService() {
-                    @Override
-                    public void work() throws ServiceExecutionFailedException {
-                        throw new UnsupportedOperationException("Not supported yet.");
-                    }
-               };
+        final ITimedService instance = createInstance();
         
         instance.init(DUMMY_WORKERID, new WorkerConfig(), null, null);
         
@@ -53,6 +57,24 @@ public class ITimedServiceTest extends TestCase {
         assertEquals("Number of log types", 1, logTypes.size());
         assertEquals("Log type",
                 ITimedService.LogType.INFO_LOGGING, logTypes.iterator().next());
+        assertTrue("Should not contain errors", fatalErrors.isEmpty());
+    }
+    
+    public void test02secureLoggingType() throws Exception {
+        final ITimedService instance = createInstance();
+        
+        final WorkerConfig config = new WorkerConfig();
+        
+        config.setProperty(ServiceConfig.WORK_LOG_TYPES, "SECURE_AUDITLOGGING");
+        instance.init(DUMMY_WORKERID, config, null, null);
+        
+        final Set<ITimedService.LogType> logTypes = instance.getLogTypes();
+        final List<String> fatalErrors =
+            instance.getStatus(Collections.<String>emptyList()).getFatalErrors();
+        
+        assertEquals("Number of log types", 1, logTypes.size());
+        assertEquals("Log type",
+                ITimedService.LogType.SECURE_AUDITLOGGING, logTypes.iterator().next());
         assertTrue("Should not contain errors", fatalErrors.isEmpty());
     }
     

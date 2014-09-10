@@ -79,18 +79,18 @@ public class ITimedServiceTest extends TestCase {
         
         config.setProperty(ServiceConfig.WORK_LOG_TYPES, propertyValue);
         instance.init(DUMMY_WORKERID, config, null, null);
-        
-        final Set<ITimedService.LogType> logTypes = instance.getLogTypes();
-        final List<String> fatalErrors =
-            instance.getStatus(Collections.<String>emptyList()).getFatalErrors();
-        
-        assertEquals("Number of log types", expectedValues.size(), logTypes.size());
-        
+
         if (expectedValues != null) {
+            final Set<ITimedService.LogType> logTypes = instance.getLogTypes();
+            
+            assertEquals("Number of log types", expectedValues.size(), logTypes.size());
             assertTrue("Contains expected values",
                     logTypes.containsAll(expectedValues));
         }
-   
+
+        final List<String> fatalErrors =
+                instance.getStatus(Collections.<String>emptyList()).getFatalErrors();
+        
         if (expectedErrors.isEmpty()) {
             assertTrue("Should not contain errors", fatalErrors.isEmpty());
         } else {
@@ -155,5 +155,15 @@ public class ITimedServiceTest extends TestCase {
                 Arrays.asList(ITimedService.LogType.INFO_LOGGING,
                               ITimedService.LogType.SECURE_AUDITLOGGING),
                 Collections.<String>emptyList());
+    }
+    
+    /**
+     * Test that an unknown log type results in an error.
+     * 
+     * @throws Exception 
+     */
+    public void test07unknownLogType() throws Exception {
+        testLoggingTypes("INVALID_TYPE", null,
+                Arrays.asList("Unknown log type: INVALID_TYPE"));
     }
 }

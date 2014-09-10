@@ -12,7 +12,6 @@
  *************************************************************************/
 package org.signserver.ejb.interfaces;
 
-import java.util.List;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import org.signserver.common.GlobalConfiguration;

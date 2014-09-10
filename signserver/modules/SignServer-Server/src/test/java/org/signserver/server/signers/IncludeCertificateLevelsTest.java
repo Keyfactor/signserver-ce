@@ -35,7 +35,6 @@ import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.server.WorkerContext;
-import org.signserver.server.signers.BaseSigner;
 
 /**
  * Test cases for handling of the INCLUDE_CERTIFICATE_LEVELS

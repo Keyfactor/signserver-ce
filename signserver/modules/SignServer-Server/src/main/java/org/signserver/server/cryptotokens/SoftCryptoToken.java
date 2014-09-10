@@ -23,7 +23,6 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
-import javax.ejb.EJB;
 import javax.naming.NamingException;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.x500.X500Name;

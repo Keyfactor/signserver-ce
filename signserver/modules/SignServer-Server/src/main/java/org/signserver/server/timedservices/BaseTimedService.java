@@ -176,7 +176,7 @@ public abstract class BaseTimedService extends BaseWorker implements ITimedServi
 
     @Override
     protected List<String> getFatalErrors() {
-        final List<String> errors = super.getFatalErrors();
+        final List<String> errors = new LinkedList<String>(super.getFatalErrors());
         
         errors.addAll(fatalErrors);
         return errors;

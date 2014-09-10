@@ -68,6 +68,9 @@ public interface ITimedService extends IWorker {
      */
     Set<LogType> getLogTypes();
     
+    /**
+     * Representation of logging options for logging of service invocations.
+     */
     public enum LogType {
         /**
          * Using CESeCore secure audit logging.

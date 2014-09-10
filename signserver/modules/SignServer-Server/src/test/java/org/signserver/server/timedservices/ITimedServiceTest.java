@@ -66,11 +66,13 @@ public class ITimedServiceTest extends TestCase {
      * Internal helper method testing the log type property.
      * 
      * @param propertyValue Property value
-     * @param expectedValues Expected values returned
+     * @param expectedValues Expected values returned, if null don't check values
+     * @param expectedErrors Expected errors
      * @throws Exception 
      */
     private void testLoggingTypes(final String propertyValue,
-            final Collection<ITimedService.LogType> expectedValues) throws Exception {
+            final Collection<ITimedService.LogType> expectedValues,
+            final Collection<String> expectedErrors) throws Exception {
         final ITimedService instance = createInstance();
         
         final WorkerConfig config = new WorkerConfig();
@@ -83,9 +85,20 @@ public class ITimedServiceTest extends TestCase {
             instance.getStatus(Collections.<String>emptyList()).getFatalErrors();
         
         assertEquals("Number of log types", expectedValues.size(), logTypes.size());
-        assertTrue("Contains expected values",
-                logTypes.containsAll(expectedValues));
-        assertTrue("Should not contain errors", fatalErrors.isEmpty());
+        
+        if (expectedValues != null) {
+            assertTrue("Contains expected values",
+                    logTypes.containsAll(expectedValues));
+        }
+   
+        if (expectedErrors.isEmpty()) {
+            assertTrue("Should not contain errors", fatalErrors.isEmpty());
+        } else {
+            assertTrue("Should contain expected errors",
+                    fatalErrors.containsAll(expectedErrors));
+            assertEquals("Should only contain expected errors",
+                    expectedErrors.size(), fatalErrors.size());
+        }
     }
     
     /**
@@ -95,7 +108,8 @@ public class ITimedServiceTest extends TestCase {
      */
     public void test02secureLoggingType() throws Exception {
         testLoggingTypes("SECURE_AUDITLOGGING",
-                Arrays.asList(ITimedService.LogType.SECURE_AUDITLOGGING));
+                Arrays.asList(ITimedService.LogType.SECURE_AUDITLOGGING),
+                Collections.<String>emptyList());
     }
     
     /**
@@ -105,7 +119,8 @@ public class ITimedServiceTest extends TestCase {
      */
     public void test03infoLoggingType() throws Exception {
         testLoggingTypes("INFO_LOGGING",
-                Arrays.asList(ITimedService.LogType.INFO_LOGGING));
+                Arrays.asList(ITimedService.LogType.INFO_LOGGING),
+                Collections.<String>emptyList());
     }
     
     /**
@@ -116,7 +131,8 @@ public class ITimedServiceTest extends TestCase {
     public void test04bothLoggingTypes() throws Exception {
         testLoggingTypes("INFO_LOGGING,SECURE_AUDITLOGGING",
                 Arrays.asList(ITimedService.LogType.INFO_LOGGING,
-                              ITimedService.LogType.SECURE_AUDITLOGGING));
+                              ITimedService.LogType.SECURE_AUDITLOGGING),
+                Collections.<String>emptyList());
     }
     
     /**
@@ -125,7 +141,8 @@ public class ITimedServiceTest extends TestCase {
      * @throws Exception 
      */
     public void test05emptyLoggingTypes() throws Exception {
-        testLoggingTypes("", Collections.<ITimedService.LogType>emptyList());
+        testLoggingTypes("", Collections.<ITimedService.LogType>emptyList(),
+                Collections.<String>emptyList());
     }
     
     /**
@@ -136,6 +153,7 @@ public class ITimedServiceTest extends TestCase {
     public void test06logTypesWithPadding() throws Exception {
         testLoggingTypes("SECURE_AUDITLOGGING, INFO_LOGGING",
                 Arrays.asList(ITimedService.LogType.INFO_LOGGING,
-                              ITimedService.LogType.SECURE_AUDITLOGGING));
+                              ITimedService.LogType.SECURE_AUDITLOGGING),
+                Collections.<String>emptyList());
     }
 }

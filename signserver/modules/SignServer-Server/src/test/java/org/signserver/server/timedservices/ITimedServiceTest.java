@@ -166,4 +166,15 @@ public class ITimedServiceTest extends TestCase {
         testLoggingTypes("INVALID_TYPE", null,
                 Arrays.asList("Unknown log type: INVALID_TYPE"));
     }
+    
+    /**
+     * Test that setting both a known and an unknown log type results in
+     * an error.
+     * 
+     * @throws Exception 
+     */
+    public void test08unknownAndKnownLogTypes() throws Exception {
+       testLoggingTypes("INFO_LOGGING,INVALID_TYPE", null,
+               Arrays.asList("Unknown log type: INVALID_TYPE")); 
+    }
 }

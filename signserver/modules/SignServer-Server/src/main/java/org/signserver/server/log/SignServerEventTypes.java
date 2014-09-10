@@ -61,7 +61,10 @@ public enum SignServerEventTypes implements EventType {
     PROCESS,
     
     /** Logged when a worker's configuration was reloaded. */
-    RELOAD_WORKER_CONFIG;
+    RELOAD_WORKER_CONFIG,
+    
+    /** Logged when a timed service has run. */
+    TIMED_SERVICE_RUN;
     
    @Override
    public boolean equals(EventType value) {

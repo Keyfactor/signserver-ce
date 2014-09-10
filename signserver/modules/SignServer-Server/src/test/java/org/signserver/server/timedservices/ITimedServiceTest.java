@@ -41,31 +41,11 @@ public class ITimedServiceTest extends TestCase {
                     }
                };
     }
-    
-    /**
-     * Test that the default log type is INFO_LOGGING.
-     * 
-     * @throws Exception 
-     */
-    public void test01defaultLogType() throws Exception {
-        final ITimedService instance = createInstance();
-        
-        instance.init(DUMMY_WORKERID, new WorkerConfig(), null, null);
-        
-        final Set<ITimedService.LogType> logTypes = instance.getLogTypes();
-        final List<String> fatalErrors =
-            instance.getStatus(Collections.<String>emptyList()).getFatalErrors();
-        
-        assertEquals("Number of log types", 1, logTypes.size());
-        assertEquals("Log type",
-                ITimedService.LogType.INFO_LOGGING, logTypes.iterator().next());
-        assertTrue("Should not contain errors", fatalErrors.isEmpty());
-    }
-    
+
     /**
      * Internal helper method testing the log type property.
      * 
-     * @param propertyValue Property value
+     * @param propertyValue Property value, if null, don't set property (use default)
      * @param expectedValues Expected values returned, if null don't check values
      * @param expectedErrors Expected errors
      * @throws Exception 
@@ -76,8 +56,11 @@ public class ITimedServiceTest extends TestCase {
         final ITimedService instance = createInstance();
         
         final WorkerConfig config = new WorkerConfig();
+
+        if (propertyValue != null) {
+            config.setProperty(ServiceConfig.WORK_LOG_TYPES, propertyValue);
+        }
         
-        config.setProperty(ServiceConfig.WORK_LOG_TYPES, propertyValue);
         instance.init(DUMMY_WORKERID, config, null, null);
 
         if (expectedValues != null) {
@@ -99,6 +82,17 @@ public class ITimedServiceTest extends TestCase {
             assertEquals("Should only contain expected errors",
                     expectedErrors.size(), fatalErrors.size());
         }
+    }
+    
+    
+    /**
+     * Test that the default log type is INFO_LOGGING.
+     * 
+     * @throws Exception 
+     */
+    public void test01defaultLogType() throws Exception {
+        testLoggingTypes(null, Arrays.asList(ITimedService.LogType.INFO_LOGGING),
+                Collections.<String>emptyList());
     }
     
     /**

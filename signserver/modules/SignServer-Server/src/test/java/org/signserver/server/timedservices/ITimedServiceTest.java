@@ -98,4 +98,13 @@ public class ITimedServiceTest extends TestCase {
                 Arrays.asList(ITimedService.LogType.SECURE_AUDITLOGGING));
     }
     
+    /**
+     * Test the INFO_LOGGING property value.
+     * 
+     * @throws Exception 
+     */
+    public void test03infoLoggingType() throws Exception {
+        testLoggingTypes("INFO_LOGGING",
+                Arrays.asList(ITimedService.LogType.INFO_LOGGING));
+    }
 }

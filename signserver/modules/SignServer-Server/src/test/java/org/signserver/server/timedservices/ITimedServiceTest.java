@@ -127,4 +127,15 @@ public class ITimedServiceTest extends TestCase {
     public void test05emptyLoggingTypes() throws Exception {
         testLoggingTypes("", Collections.<ITimedService.LogType>emptyList());
     }
+    
+    /**
+     * Test with some white-space padding and re-ordered the arguments.
+     * 
+     * @throws Exception 
+     */
+    public void test06logTypesWithPadding() throws Exception {
+        testLoggingTypes("SECURE_AUDITLOGGING, INFO_LOGGING",
+                Arrays.asList(ITimedService.LogType.INFO_LOGGING,
+                              ITimedService.LogType.SECURE_AUDITLOGGING));
+    }
 }

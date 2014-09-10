@@ -45,8 +45,7 @@ public class HSMKeepAliveTimedService extends BaseTimedService {
     static String DEFAULTKEY = "DEFAULTKEY";
 
     private List<String> cryptoWorkers;
-    private List<String> fatalErrors = new LinkedList<String>();
-    
+ 
     @EJB
     private IWorkerSession workerSession;
     

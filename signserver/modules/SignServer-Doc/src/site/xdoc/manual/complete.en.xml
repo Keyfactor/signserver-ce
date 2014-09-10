@@ -4954,6 +4954,12 @@ didn't succeed when testing the key.
 workers whos keys should be tested. This would typically be crypto workers i.e.
 corresponding to different slots in an HSM, but could also be regular workers
 with crypto tokens configured directly). This property is required.</p>
+<p><b>NOTE:</b> if secure audit logging is used and a separate crypto token
+is used for logging, the service logging described above using the WORK_LOG_TYPES
+property and the SECURE_AUDITLOGGING value can be used to write to the audit log
+at the same time as testing crypto worker keys, to keep the auditlog crypto token
+from timing-out.
+</p>
                     </subsubsection>
                 </subsection>
                 <subsection name="Installing a service">

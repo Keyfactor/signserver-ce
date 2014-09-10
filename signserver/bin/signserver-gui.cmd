@@ -49,10 +49,12 @@ rem Enable Java debugging
 rem set JAVA_OPTS="%JAVA_OPTS% -Xrunjdwp:transport=dt_socket,address=8788,server=y,suspend=n"
 rem set JAVA_OPTS="%JAVA_OPTS% -Xrunjdwp:transport=dt_socket,address=8788,server=y,suspend=y"
 
+rem Disable TLS Server Name Indication (SNI)
+rem set JAVA_OPTS="%JAVA_OPTS% -Djsse.enableSNIExtension=false"
+
 if "%JAVA_HOME%" == "" (
   java %JAVA_OPTS% -cp %CLASSPATH% -splash:%SIGNSRV_HOME%\res\admingui-splash.png %class_name% %* -connectfile %SIGNSRV_HOME%/conf/admingui.properties -defaultconnectfile %SIGNSRV_HOME%/conf/admingui_default.properties -basedir %SIGNSRV_HOME%
 ) else (
   "%JAVA_HOME%\bin\java" %JAVA_OPTS% -cp %CLASSPATH% -splash:%SIGNSRV_HOME%\res\admingui-splash.png %class_name% %* -connectfile %SIGNSRV_HOME%/conf/admingui.properties -defaultconnectfile %SIGNSRV_HOME%/conf/admingui_default.properties -basedir %SIGNSRV_HOME%
-
 )
 :end

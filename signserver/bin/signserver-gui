@@ -119,6 +119,9 @@ fi
 #JAVA_OPTS="$JAVA_OPTS -Xrunjdwp:transport=dt_socket,address=8788,server=y,suspend=n"
 #JAVA_OPTS="$JAVA_OPTS -Xrunjdwp:transport=dt_socket,address=8788,server=y,suspend=y"
 
+# Disable TLS Server Name Indication (SNI)
+#JAVA_OPTS="$JAVA_OPTS -Djsse.enableSNIExtension=false"
+
 # Execute the command
 #echo Class-Path: $CP
 $JAVACMD -version

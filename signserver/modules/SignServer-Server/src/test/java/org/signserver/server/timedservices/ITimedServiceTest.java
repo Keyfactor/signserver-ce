@@ -12,6 +12,8 @@
  *************************************************************************/
 package org.signserver.server.timedservices;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -60,22 +62,40 @@ public class ITimedServiceTest extends TestCase {
         assertTrue("Should not contain errors", fatalErrors.isEmpty());
     }
     
-    public void test02secureLoggingType() throws Exception {
+    /**
+     * Internal helper method testing the log type property.
+     * 
+     * @param propertyValue Property value
+     * @param expectedValues Expected values returned
+     * @throws Exception 
+     */
+    private void testLoggingTypes(final String propertyValue,
+            final Collection<ITimedService.LogType> expectedValues) throws Exception {
         final ITimedService instance = createInstance();
         
         final WorkerConfig config = new WorkerConfig();
         
-        config.setProperty(ServiceConfig.WORK_LOG_TYPES, "SECURE_AUDITLOGGING");
+        config.setProperty(ServiceConfig.WORK_LOG_TYPES, propertyValue);
         instance.init(DUMMY_WORKERID, config, null, null);
         
         final Set<ITimedService.LogType> logTypes = instance.getLogTypes();
         final List<String> fatalErrors =
             instance.getStatus(Collections.<String>emptyList()).getFatalErrors();
         
-        assertEquals("Number of log types", 1, logTypes.size());
-        assertEquals("Log type",
-                ITimedService.LogType.SECURE_AUDITLOGGING, logTypes.iterator().next());
+        assertEquals("Number of log types", expectedValues.size(), logTypes.size());
+        assertTrue("Contains expected values",
+                logTypes.containsAll(expectedValues));
         assertTrue("Should not contain errors", fatalErrors.isEmpty());
+    }
+    
+    /**
+     * Test the SECURE_AUDITLOGGING property value.
+     * 
+     * @throws Exception 
+     */
+    public void test02secureLoggingType() throws Exception {
+        testLoggingTypes("SECURE_AUDITLOGGING",
+                Arrays.asList(ITimedService.LogType.SECURE_AUDITLOGGING));
     }
     
 }

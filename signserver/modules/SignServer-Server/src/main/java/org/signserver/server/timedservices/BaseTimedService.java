@@ -56,10 +56,13 @@ public abstract class BaseTimedService extends BaseWorker implements ITimedServi
                 config.getProperty(ServiceConfig.WORK_LOG_TYPES,
                                    ServiceConfig.DEFAULT_WORK_LOG_TYPES).split(",");
         for (final String logType : logTypeStrings) {
-            try {
-                logTypes.add(LogType.valueOf(logType));
-            } catch (IllegalArgumentException e) {
-                fatalErrors.add("Unkown log type: " + logType);
+            final String logTypeTrimmed = logType.trim();
+            if (!logTypeTrimmed.isEmpty()) {
+                try {
+                    logTypes.add(LogType.valueOf(logTypeTrimmed));
+                } catch (IllegalArgumentException e) {
+                    fatalErrors.add("Unkown log type: " + logType);
+                }
             }
         }
     }

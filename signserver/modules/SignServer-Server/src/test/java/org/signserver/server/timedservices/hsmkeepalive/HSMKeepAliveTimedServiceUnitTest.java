@@ -16,7 +16,6 @@ import java.util.Collections;
 import java.util.List;
 import junit.framework.TestCase;
 import org.signserver.common.WorkerConfig;
-import org.signserver.server.timedservices.ITimedService;
 
 /**
  * Unit test for the HSM keep alive timed service.

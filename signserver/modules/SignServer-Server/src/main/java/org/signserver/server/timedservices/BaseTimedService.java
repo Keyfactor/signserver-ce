@@ -15,9 +15,11 @@ package org.signserver.server.timedservices;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.quartz.CronExpression;
@@ -39,8 +41,8 @@ public abstract class BaseTimedService extends BaseWorker implements ITimedServi
     /** Log4j instance for actual implementation class */
     private final transient Logger log = Logger.getLogger(this.getClass());
 
-    private List<ITimedService.LogType> logTypes =
-            new LinkedList<ITimedService.LogType>();
+    private Set<ITimedService.LogType> logTypes =
+            EnumSet.noneOf(ITimedService.LogType.class);
     private List<String> fatalErrors = new LinkedList<String>();
     
     protected BaseTimedService() {
@@ -181,7 +183,7 @@ public abstract class BaseTimedService extends BaseWorker implements ITimedServi
     }
 
     @Override
-    public List<LogType> getLogTypes() {
+    public Set<LogType> getLogTypes() {
         return logTypes;
     }
 }

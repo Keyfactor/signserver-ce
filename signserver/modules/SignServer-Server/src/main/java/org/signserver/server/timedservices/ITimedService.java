@@ -12,7 +12,7 @@
  *************************************************************************/
 package org.signserver.server.timedservices;
 
-import java.util.List;
+import java.util.Set;
 import org.signserver.server.IWorker;
 import org.signserver.server.ServiceExecutionFailedException;
 
@@ -66,7 +66,7 @@ public interface ITimedService extends IWorker {
      * 
      * @return A list of log types to use
      */
-    List<LogType> getLogTypes();
+    Set<LogType> getLogTypes();
     
     public enum LogType {
         /**

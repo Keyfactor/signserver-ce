@@ -14,6 +14,7 @@ package org.signserver.server.timedservices;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import junit.framework.TestCase;
 import org.signserver.common.WorkerConfig;
 import org.signserver.server.ServiceExecutionFailedException;
@@ -45,13 +46,13 @@ public class ITimedServiceTest extends TestCase {
         
         instance.init(DUMMY_WORKERID, new WorkerConfig(), null, null);
         
-        final List<ITimedService.LogType> logTypes = instance.getLogTypes();
+        final Set<ITimedService.LogType> logTypes = instance.getLogTypes();
         final List<String> fatalErrors =
             instance.getStatus(Collections.<String>emptyList()).getFatalErrors();
         
         assertEquals("Number of log types", 1, logTypes.size());
         assertEquals("Log type",
-                ITimedService.LogType.INFO_LOGGING, logTypes.get(0));
+                ITimedService.LogType.INFO_LOGGING, logTypes.iterator().next());
         assertTrue("Should not contain errors", fatalErrors.isEmpty());
     }
     

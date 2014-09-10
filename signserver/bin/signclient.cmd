@@ -26,9 +26,20 @@ set OPTIONAL_CLASSPATH=%SIGNSRV_HOME%\lib\SignServer-Client-ValidationCLI.jar;%E
 set CLASSPATH=%SIGNSRV_HOME%\bin;%SIGNSRV_HOME%\lib\SignServer-Client-CLI.jar;%J2EE_CP%;%OPTIONAL_CLASSPATH%
 rem echo %CLASSPATH%
 
+rem Enable Java network debug logs
+rem set JAVA_OPTS="%JAVA_OPTS% -Djavax.net.debug=all"
+rem set JAVA_OPTS="%JAVA_OPTS% -Djavax.net.debug=ssl"
+
+rem Enable Java PKCS#11 debug logs
+rem set JAVA_OPTS="%JAVA_OPTS% -Djava.security.debug=sunpkcs11"
+
+rem Enable Java debugging
+rem set JAVA_OPTS="%JAVA_OPTS% -Xrunjdwp:transport=dt_socket,address=8788,server=y,suspend=n"
+rem set JAVA_OPTS="%JAVA_OPTS% -Xrunjdwp:transport=dt_socket,address=8788,server=y,suspend=y"
+
 if "%JAVA_HOME%" == "" (
-  java -cp %CLASSPATH%  org.signserver.client.cli.ClientCLI %*
+  java %JAVA_OPTS% -cp %CLASSPATH%  org.signserver.client.cli.ClientCLI %*
 ) else (
-  "%JAVA_HOME%\bin\java" -cp %CLASSPATH% org.signserver.client.cli.ClientCLI %*
+  "%JAVA_HOME%\bin\java" %JAVA_OPTS% -cp %CLASSPATH% org.signserver.client.cli.ClientCLI %*
 )
 :end

@@ -106,6 +106,17 @@ if $cygwin; then
   CP=`cygpath --path --windows "$CP"`
 fi
 
+# Enable Java network debug logs
+#JAVA_OPTS="$JAVA_OPTS -Djavax.net.debug=all"
+#JAVA_OPTS="$JAVA_OPTS -Djavax.net.debug=ssl"
+
+# Enable Java PKCS#11 debug logs
+#JAVA_OPTS="$JAVA_OPTS -Djava.security.debug=sunpkcs11"
+
+# Enable Java debugging
+#JAVA_OPTS="$JAVA_OPTS -Xrunjdwp:transport=dt_socket,address=8788,server=y,suspend=n"
+#JAVA_OPTS="$JAVA_OPTS -Xrunjdwp:transport=dt_socket,address=8788,server=y,suspend=y"
+
 # Execute the command
 #echo Class-Path: $CP
-exec "$JAVACMD" -cp $CP $class_name "$@"
+exec "$JAVACMD" $JAVA_OPTS -cp $CP $class_name "$@"

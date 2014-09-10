@@ -38,11 +38,21 @@ if exist %APPSRV_HOME%\client\jbossall-client.jar  (
 set CLASSPATH=%MAIN_CLASSPATH%;%JEE_CLASSPATH%;%EXTRA_CLASSPATH%
 rem echo %CLASSPATH%
 
+rem Enable Java network debug logs
+rem set JAVA_OPTS="%JAVA_OPTS% -Djavax.net.debug=all"
+rem set JAVA_OPTS="%JAVA_OPTS% -Djavax.net.debug=ssl"
+
+rem Enable Java PKCS#11 debug logs
+rem set JAVA_OPTS="%JAVA_OPTS% -Djava.security.debug=sunpkcs11"
+
+rem Enable Java debugging
+rem set JAVA_OPTS="%JAVA_OPTS% -Xrunjdwp:transport=dt_socket,address=8788,server=y,suspend=n"
+rem set JAVA_OPTS="%JAVA_OPTS% -Xrunjdwp:transport=dt_socket,address=8788,server=y,suspend=y"
 
 if "%JAVA_HOME%" == "" (
-  java -cp %CLASSPATH% -splash:%SIGNSRV_HOME%\res\admingui-splash.png %class_name% %* -connectfile %SIGNSRV_HOME%/conf/admingui.properties -defaultconnectfile %SIGNSRV_HOME%/conf/admingui_default.properties -basedir %SIGNSRV_HOME%
+  java %JAVA_OPTS% -cp %CLASSPATH% -splash:%SIGNSRV_HOME%\res\admingui-splash.png %class_name% %* -connectfile %SIGNSRV_HOME%/conf/admingui.properties -defaultconnectfile %SIGNSRV_HOME%/conf/admingui_default.properties -basedir %SIGNSRV_HOME%
 ) else (
-  "%JAVA_HOME%\bin\java" -cp %CLASSPATH% -splash:%SIGNSRV_HOME%\res\admingui-splash.png %class_name% %* -connectfile %SIGNSRV_HOME%/conf/admingui.properties -defaultconnectfile %SIGNSRV_HOME%/conf/admingui_default.properties -basedir %SIGNSRV_HOME%
+  "%JAVA_HOME%\bin\java" %JAVA_OPTS% -cp %CLASSPATH% -splash:%SIGNSRV_HOME%\res\admingui-splash.png %class_name% %* -connectfile %SIGNSRV_HOME%/conf/admingui.properties -defaultconnectfile %SIGNSRV_HOME%/conf/admingui_default.properties -basedir %SIGNSRV_HOME%
 
 )
 :end

@@ -26,7 +26,6 @@ import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 import org.signserver.common.SignServerUtil;
 import org.signserver.ejb.interfaces.IWorkerSession;
-import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.testutils.ModulesTestCase;
 
 /**
@@ -47,11 +46,11 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
     private static String WORKERNAME_CRYPTOWORKER2 = "CryptoWorker2";
     
     private final IWorkerSession workerSession = getWorkerSession();
-    private final IGlobalConfigurationSession globalSession = getGlobalSession();
 
     private File signServerHome;
     
     @Before
+    @Override
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
         signServerHome = getSignServerHome();
@@ -66,10 +65,8 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
     
     private void deleteDebugFile(final int workerId) {
         final File debugFile = getDebugFile(workerId);
- 
-        if (!debugFile.delete()) {
-            LOG.error("Could not delete debug file: " + debugFile.getAbsolutePath());
-        }
+
+        debugFile.delete();
     }
     
     private boolean debugFileExists(final int workerId) {

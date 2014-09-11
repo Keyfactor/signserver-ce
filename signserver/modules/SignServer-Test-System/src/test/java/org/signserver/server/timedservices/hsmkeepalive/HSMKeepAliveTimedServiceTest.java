@@ -41,10 +41,8 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
     
     private static int WORKERID_SERVICE = 5800;
     private static int WORKERID_CRYPTOWORKER1 = 5801;
-    private static String WORKERNAME_CRYPTOWORKER1 = "CryptoWorker1";
     private static int WORKERID_CRYPTOWORKER2 = 5802;
-    private static String WORKERNAME_CRYPTOWORKER2 = "CryptoWorker2";
-    
+
     private final IWorkerSession workerSession = getWorkerSession();
 
     private File signServerHome;

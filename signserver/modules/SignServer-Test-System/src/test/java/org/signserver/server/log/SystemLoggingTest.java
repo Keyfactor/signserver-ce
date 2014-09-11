@@ -45,8 +45,10 @@ import org.signserver.test.utils.builders.CryptoUtils;
 import org.signserver.testutils.ModulesTestCase;
 import org.junit.Before;
 import org.junit.Test;
+import org.signserver.common.ServiceConfig;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.server.timedservices.hsmkeepalive.TestKeyDebugCryptoToken;
 import org.signserver.statusrepo.IStatusRepositorySession;
 
 /**
@@ -67,6 +69,12 @@ public class SystemLoggingTest extends ModulesTestCase {
     private static final String ENTRY_START_MARKER = "EVENT: ";
     
     private final int signerId = 6000;
+    
+    /** workers testing timed services audit logging */
+    private static int WORKERID_SERVICE = 5800;
+    private static int WORKERID_CRYPTOWORKER1 = 5801;
+    private static int WORKERID_CRYPTOWORKER2 = 5802;
+
     
     private File auditLogFile;
     
@@ -833,6 +841,57 @@ public class SystemLoggingTest extends ModulesTestCase {
         assertTrue("Contains client ip", line.contains("CLIENT_IP:"));
     }
 
+    @Test
+    public void test06TimedServiceWithAuditLogging() throws Exception {
+        try {
+            int linesBefore = readEntriesCount(auditLogFile);
+            
+            setProperties(new File(getSignServerHome(), "res/test/test-hsmkeepalive-configuration.properties"));
+            workerSession.setWorkerProperty(WORKERID_CRYPTOWORKER1,
+                    TestKeyDebugCryptoToken.TESTKEY_DEBUG_OUTPATH,
+                    getSignServerHome() + File.separator + "~testkey-" + WORKERID_CRYPTOWORKER1);
+            workerSession.setWorkerProperty(WORKERID_CRYPTOWORKER2,
+                    TestKeyDebugCryptoToken.TESTKEY_DEBUG_OUTPATH,
+                    getSignServerHome() + File.separator + "~testkey-" + WORKERID_CRYPTOWORKER2);
+            workerSession.setWorkerProperty(WORKERID_SERVICE,
+                    ServiceConfig.WORK_LOG_TYPES, "SECURE_AUDITLOGGING");
+            workerSession.reloadConfiguration(WORKERID_CRYPTOWORKER1);
+            workerSession.reloadConfiguration(WORKERID_CRYPTOWORKER2);
+            workerSession.reloadConfiguration(WORKERID_SERVICE);
+             
+            waitForServiceToRun(30);
+             
+            final List<String> lines = readEntries(auditLogFile, linesBefore, 1);
+            final String line = lines.get(0);
+            
+            LOG.info(line);
+            assertTrue("Contains event", line.contains("EVENT: TIMED_SERVICE_RUN"));
+            assertTrue("Contains module", line.contains("MODULE: SERVICE"));
+            assertTrue("Contains success", line.contains("PROCESS_SUCCESS: true"));
+        } finally {
+            removeWorker(WORKERID_SERVICE);
+            removeWorker(WORKERID_CRYPTOWORKER1);
+            removeWorker(WORKERID_CRYPTOWORKER2);
+        }
+    }
+    
+    private void waitForServiceToRun(final int maxTries) throws Exception {
+        try {
+            for (int i = 0; i < maxTries; i++) {
+                final File debugFile =
+                        new File(getSignServerHome() + File.separator +
+                            "~testkey-" + WORKERID_CRYPTOWORKER1);
+                
+                if (debugFile.exists()) {
+                    return;
+                }
+                Thread.sleep(1000);
+            }
+        } catch (InterruptedException ex) {
+            LOG.error("Interrupted", ex);
+        }
+    }
+    
     @Test
     public void test99TearDownDatabase() throws Exception {
         LOG.info(">test99TearDownDatabase");

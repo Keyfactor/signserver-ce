@@ -49,12 +49,12 @@ public class TestKeyDebugCryptoToken implements ICryptoToken {
     /**
      * Output path for debug files.
      */
-    static String TESTKEY_DEBUG_OUTPATH = "TESTKEY_DEBUG_OUTPATH";
+    public static String TESTKEY_DEBUG_OUTPATH = "TESTKEY_DEBUG_OUTPATH";
     
     /**
      * Property to set to simulate missing TESTKEY.
      */
-    static String DISABLE_TESTKEY = "DISABLE_TESTKEY";
+    public static String DISABLE_TESTKEY = "DISABLE_TESTKEY";
     
     @Override
     public void init(int workerId, Properties props) throws CryptoTokenInitializationFailureException {

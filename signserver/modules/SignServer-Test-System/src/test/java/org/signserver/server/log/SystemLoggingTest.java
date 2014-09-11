@@ -844,6 +844,7 @@ public class SystemLoggingTest extends ModulesTestCase {
 
     @Test
     public void test06TimedServiceWithAuditLogging() throws Exception {
+        LOG.info(">test06TimedServiceWithAuditLogging");
         try {
             setProperties(new File(getSignServerHome(), "res/test/test-hsmkeepalive-configuration.properties"));
             workerSession.setWorkerProperty(WORKERID_CRYPTOWORKER1,

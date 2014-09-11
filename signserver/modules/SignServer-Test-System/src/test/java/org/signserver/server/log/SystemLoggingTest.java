@@ -844,8 +844,6 @@ public class SystemLoggingTest extends ModulesTestCase {
     @Test
     public void test06TimedServiceWithAuditLogging() throws Exception {
         try {
-            int linesBefore = readEntriesCount(auditLogFile);
-            
             setProperties(new File(getSignServerHome(), "res/test/test-hsmkeepalive-configuration.properties"));
             workerSession.setWorkerProperty(WORKERID_CRYPTOWORKER1,
                     TestKeyDebugCryptoToken.TESTKEY_DEBUG_OUTPATH,
@@ -859,8 +857,9 @@ public class SystemLoggingTest extends ModulesTestCase {
             workerSession.reloadConfiguration(WORKERID_CRYPTOWORKER2);
             workerSession.reloadConfiguration(WORKERID_SERVICE);
              
+            int linesBefore = readEntriesCount(auditLogFile);
             waitForServiceToRun(30);
-             
+
             final List<String> lines = readEntries(auditLogFile, linesBefore, 1);
             final String line = lines.get(0);
             

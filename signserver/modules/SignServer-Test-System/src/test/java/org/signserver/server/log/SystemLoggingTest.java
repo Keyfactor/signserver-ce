@@ -861,7 +861,7 @@ public class SystemLoggingTest extends ModulesTestCase {
             int linesBefore = readEntriesCount(auditLogFile);
             waitForServiceToRun(30);
 
-            final List<String> lines = readEntries(auditLogFile, linesBefore, 1);
+            final List<String> lines = readEntries(auditLogFile, linesBefore, 3);
             String line = lines.get(0);
             
             LOG.info(line);

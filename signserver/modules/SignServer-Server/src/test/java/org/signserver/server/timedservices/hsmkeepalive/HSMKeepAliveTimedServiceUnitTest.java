@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.List;
 import junit.framework.TestCase;
 import org.signserver.common.WorkerConfig;
+import org.signserver.ejb.interfaces.IWorkerSession;
 
 /**
  * Unit test for the HSM keep alive timed service.
@@ -35,7 +36,12 @@ public class HSMKeepAliveTimedServiceUnitTest extends TestCase {
      */
     public void test01missingCryptoWorkers() throws Exception {
        final HSMKeepAliveTimedService instance =
-               new HSMKeepAliveTimedService();
+               new HSMKeepAliveTimedService() {
+                    @Override
+                    IWorkerSession getWorkerSession() {
+                        return null;
+                    }
+               };
        
        instance.init(DUMMY_WORKERID, new WorkerConfig(), null, null);
        
@@ -53,7 +59,12 @@ public class HSMKeepAliveTimedServiceUnitTest extends TestCase {
      */
     public void test02emptyCryptoWorkers() throws Exception {
         final HSMKeepAliveTimedService instance =
-               new HSMKeepAliveTimedService();
+               new HSMKeepAliveTimedService() {
+                   @Override
+                   IWorkerSession getWorkerSession() {
+                       return null;
+                   }
+               };
         final WorkerConfig config = new WorkerConfig();
         
         config.setProperty(HSMKeepAliveTimedService.CRYPTOWORKERS, "");

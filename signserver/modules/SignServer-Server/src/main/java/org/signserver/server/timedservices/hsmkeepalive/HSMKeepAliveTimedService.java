@@ -61,7 +61,7 @@ public class HSMKeepAliveTimedService extends BaseTimedService {
         }
     }
     
-    private IWorkerSession getWorkerSession() {
+    IWorkerSession getWorkerSession() {
         if (workerSession == null) {
             try {
                 workerSession = ServiceLocator.getInstance().lookupLocal(
@@ -148,7 +148,7 @@ public class HSMKeepAliveTimedService extends BaseTimedService {
         final List<String> errors = new LinkedList<String>();
         final IWorkerSession session = getWorkerSession();
         
-        if (cryptoWorkers != null) {
+        if (session != null && cryptoWorkers != null) {
             int cryptoWorkerId;
             for (final String workerIdOrName : cryptoWorkers) {
                 try {

@@ -869,7 +869,6 @@ public class SystemLoggingTest extends ModulesTestCase {
             // first audit line should be keytest for worker 1
             assertTrue("Contains event", line.contains("EVENT: KEYTEST"));
             assertTrue("Contains module", line.contains("MODULE: KEY_MANAGEMENT"));
-            assertTrue("Contains success", line.contains("PROCESS_SUCCESS: true"));
             assertTrue("Contains worker",
                     line.contains("WORKER_ID: " + WORKERID_CRYPTOWORKER1));
             
@@ -878,7 +877,6 @@ public class SystemLoggingTest extends ModulesTestCase {
             LOG.info(line);
             assertTrue("Contains event", line.contains("EVENT: KEYTEST"));
             assertTrue("Contains module", line.contains("MODULE: KEY_MANAGEMENT"));
-            assertTrue("Contains success", line.contains("PROCESS_SUCCESS: true"));
             assertTrue("Contains worker",
                     line.contains("WORKER_ID: " + WORKERID_CRYPTOWORKER2));
             
@@ -887,7 +885,6 @@ public class SystemLoggingTest extends ModulesTestCase {
             LOG.info(line);
             assertTrue("Contains event", line.contains("EVENT: TIMED_SERVICE_RUN"));
             assertTrue("Contains module", line.contains("MODULE: SERVICE"));
-            assertTrue("Contains success", line.contains("PROCESS_SUCCESS: true"));
             assertTrue("Contains worker",
                     line.contains("WORKER_ID: " + WORKERID_SERVICE));
         } finally {

@@ -83,6 +83,7 @@ public class SystemLoggingTest extends ModulesTestCase {
     private final IStatusRepositorySession statusSession = getStatusSession();
     
     @Before
+    @Override
     public void setUp() throws Exception {
         auditLogFile = new File(getSignServerHome(), "signserver_audit.log");
         if (!auditLogFile.exists()) {
@@ -861,12 +862,33 @@ public class SystemLoggingTest extends ModulesTestCase {
             waitForServiceToRun(30);
 
             final List<String> lines = readEntries(auditLogFile, linesBefore, 1);
-            final String line = lines.get(0);
+            String line = lines.get(0);
             
+            LOG.info(line);
+            // first audit line should be keytest for worker 1
+            assertTrue("Contains event", line.contains("EVENT: KEYTEST"));
+            assertTrue("Contains module", line.contains("MODULE: KEY_MANAGEMENT"));
+            assertTrue("Contains success", line.contains("PROCESS_SUCCESS: true"));
+            assertTrue("Contains worker",
+                    line.contains("WORKER_ID: " + WORKERID_CRYPTOWORKER1));
+            
+            // first audit line should be keytest for worker 1
+            line = lines.get(1);
+            LOG.info(line);
+            assertTrue("Contains event", line.contains("EVENT: KEYTEST"));
+            assertTrue("Contains module", line.contains("MODULE: KEY_MANAGEMENT"));
+            assertTrue("Contains success", line.contains("PROCESS_SUCCESS: true"));
+            assertTrue("Contains worker",
+                    line.contains("WORKER_ID: " + WORKERID_CRYPTOWORKER2));
+            
+            // auditlog of the service invocation
+            line = lines.get(2);
             LOG.info(line);
             assertTrue("Contains event", line.contains("EVENT: TIMED_SERVICE_RUN"));
             assertTrue("Contains module", line.contains("MODULE: SERVICE"));
             assertTrue("Contains success", line.contains("PROCESS_SUCCESS: true"));
+            assertTrue("Contains worker",
+                    line.contains("WORKER_ID: " + WORKERID_SERVICE));
         } finally {
             removeWorker(WORKERID_SERVICE);
             removeWorker(WORKERID_CRYPTOWORKER1);

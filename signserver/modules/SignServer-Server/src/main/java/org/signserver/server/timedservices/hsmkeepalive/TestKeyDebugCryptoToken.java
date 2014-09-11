@@ -64,6 +64,10 @@ public class TestKeyDebugCryptoToken implements ICryptoToken {
         this.disableTestKey =
                 Boolean.parseBoolean(props.getProperty(DISABLE_TESTKEY,
                                                        Boolean.FALSE.toString()));
+        
+        // to prevent a possible race condition, delete the output file
+        // when re-initing the token
+        new File(outPath).delete();
     }
 
     @Override

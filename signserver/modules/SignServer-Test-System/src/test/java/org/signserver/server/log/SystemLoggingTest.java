@@ -842,6 +842,13 @@ public class SystemLoggingTest extends ModulesTestCase {
         assertTrue("Contains client ip", line.contains("CLIENT_IP:"));
     }
 
+    /**
+     * Test the SECURE_AUDITLOGGING WORKLOG_TYPES option for the HSM keep-alive
+     * timed service. This is done in this test since audit logging is set up
+     * here.
+     * 
+     * @throws Exception 
+     */
     @Test
     public void test06TimedServiceWithAuditLogging() throws Exception {
         LOG.info(">test06TimedServiceWithAuditLogging");
@@ -897,11 +904,14 @@ public class SystemLoggingTest extends ModulesTestCase {
     private void waitForServiceToRun(final int maxTries) throws Exception {
         try {
             for (int i = 0; i < maxTries; i++) {
-                final File debugFile =
+                final File debugFile1 =
                         new File(getSignServerHome() + File.separator +
                             "~testkey-" + WORKERID_CRYPTOWORKER1);
+                final File debugFile2 =
+                        new File(getSignServerHome() + File.separator +
+                            "~testkey-" + WORKERID_CRYPTOWORKER2);
                 
-                if (debugFile.exists()) {
+                if (debugFile1.exists() && debugFile2.exists()) {
                     return;
                 }
                 Thread.sleep(1000);

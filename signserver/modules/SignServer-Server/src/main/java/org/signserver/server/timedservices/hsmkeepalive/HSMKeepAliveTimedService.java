@@ -140,6 +140,35 @@ public class HSMKeepAliveTimedService extends BaseTimedService {
             errors.add("Must specify " + CRYPTOWORKERS);
         }
         
+        errors.addAll(getCryptoworkerErrors());
+        return errors;
+    }
+    
+    private List<String> getCryptoworkerErrors() {
+        final List<String> errors = new LinkedList<String>();
+        final IWorkerSession session = getWorkerSession();
+        
+        if (cryptoWorkers != null) {
+            int cryptoWorkerId;
+            for (final String workerIdOrName : cryptoWorkers) {
+                try {
+                    cryptoWorkerId = Integer.valueOf(workerIdOrName);
+                    
+                    try {
+                        session.getStatus(cryptoWorkerId);
+                    } catch (InvalidWorkerIdException e) {
+                        errors.add("Invalid worker ID: " + cryptoWorkerId);
+                    }
+                } catch (NumberFormatException e) {
+                    cryptoWorkerId = session.getWorkerId(workerIdOrName);
+                    
+                    if (cryptoWorkerId == 0) {
+                        errors.add("No such worker: " + workerIdOrName);
+                    }
+                }
+            }
+        }
+        
         return errors;
     }
 }

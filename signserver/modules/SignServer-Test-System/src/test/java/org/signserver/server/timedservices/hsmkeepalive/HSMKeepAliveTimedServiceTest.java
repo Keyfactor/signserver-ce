@@ -18,6 +18,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.junit.Before;
@@ -241,17 +242,27 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
     }
     
     /**
-     * Test that when adding a non-existing worker to the list,
+     * Test that when adding non-existing workers to the list,
      * the existing worker's keys are still being tested.
+     * Also test that getFatalErrors() still gives errors about the missing
+     * workers.
      * 
      * @throws Exception 
      */
-    public void test04runServiceWithNonExistingWorker() throws Exception {
+    public void test04runServiceWithNonExistingWorkers() throws Exception {
         try {
             workerSession.setWorkerProperty(WORKERID_SERVICE,
                     HSMKeepAliveTimedService.CRYPTOWORKERS,
-                    "CryptoWorker1,CryptoWorker2,NonExistingWorker");
+                    "CryptoWorker1,CryptoWorker2,NonExistingWorker,9994711");
             workerSession.reloadConfiguration(WORKERID_SERVICE);
+            
+            final List<String> fatalErrors =
+                    workerSession.getStatus(WORKERID_SERVICE).getFatalErrors();
+            
+            assertTrue("Should contain error",
+                    fatalErrors.contains("No such worker: NonExistingWorker"));
+            assertTrue("Should contain error",
+                    fatalErrors.contains("Invalid worker ID: 9994711"));
             
             // make sure the service had time to run
             waitForServiceToRun(Arrays.asList(WORKERID_CRYPTOWORKER1, WORKERID_CRYPTOWORKER2),

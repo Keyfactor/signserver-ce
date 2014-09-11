@@ -49,6 +49,7 @@ public class DefaultTimeStampLogger implements IWorkerLogger {
                 + "RequestTime: ${LOG_TIME}; "
                 + "ResponseTime: ${REPLY_TIME}; "
                 + "TimeStamp: ${TSA_TIME}; "
+                + "TimeSource: ${TSA_TIMESOURCE}; "
                 + "PKIStatus: ${TSA_PKISTATUS}; "
                 + "PKIFailureInfo: ${TSA_PKIFAILUREINFO}; "
                 + "SerialNumber: ${TSA_SERIALNUMBER}; "

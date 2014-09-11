@@ -423,7 +423,11 @@ public class TimeStampSigner extends BaseSigner {
             throw new CryptoTokenOfflineException("Certificate chain not correctly configured");
         }
 
-        final Date date = getTimeSource().getGenTime();
+        final ITimeSource timeSrc = getTimeSource();
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("TimeSource: " + timeSrc.getClass().getName());
+        }
+        final Date date = timeSrc.getGenTime();
         final BigInteger serialNumber = getSerialNumber();
 
         // Log values
@@ -431,6 +435,7 @@ public class TimeStampSigner extends BaseSigner {
                 : String.valueOf(date.getTime()));
         logMap.put(ITimeStampLogger.LOG_TSA_SERIALNUMBER,
                 serialNumber.toString(16));
+        logMap.put(ITimeStampLogger.LOG_TSA_TIMESOURCE, timeSrc.getClass().getSimpleName());
 
 
         GenericSignResponse signResponse = null;

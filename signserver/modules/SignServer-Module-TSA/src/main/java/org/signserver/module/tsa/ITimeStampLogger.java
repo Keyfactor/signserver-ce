@@ -53,4 +53,7 @@ public interface ITimeStampLogger extends IWorkerLogger {
             "TSA_TIMESTAMPREQUEST_MESSAGEIMPRINTDIGEST";
 
     String LOG_TSA_TIMESTAMPRESPONSE_ENCODED = "TSA_TIMESTAMPRESPONSE_ENCODED";
+
+    /** Simple name of the time source implementation class used. */
+    String LOG_TSA_TIMESOURCE = "TSA_TIMESOURCE";
 }

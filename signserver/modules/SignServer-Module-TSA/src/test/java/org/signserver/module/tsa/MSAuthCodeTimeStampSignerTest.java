@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.List;
 
 import junit.framework.TestCase;
+import static junit.framework.TestCase.assertEquals;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -41,6 +42,8 @@ import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
+import org.signserver.server.ZeroTimeSource;
+import org.signserver.server.log.LogMap;
 
 import org.signserver.test.utils.mock.GlobalConfigurationSessionMock;
 import org.signserver.test.utils.mock.WorkerSessionMock;
@@ -198,8 +201,9 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
         
         // create sample hard-coded request
         signRequest = new GenericSignRequest(REQUEST_ID, requestData);
-        
-        GenericSignResponse resp = (GenericSignResponse) workerMock.process(SIGNER_ID, signRequest, new RequestContext());
+
+        final RequestContext requestContext = new RequestContext();
+        GenericSignResponse resp = (GenericSignResponse) workerMock.process(SIGNER_ID, signRequest, requestContext);
         
         // check that the response contains the needed attributes
         byte[] buf = resp.getProcessedData();
@@ -293,6 +297,10 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
         // Verify using the signer's certificate
         assertTrue("Verification using signer certificate",
                 signer.verify(signercert.getPublicKey(), "BC"));
+
+        // Check that the time source is being logged
+        LogMap logMap = LogMap.getInstance(requestContext);
+        assertEquals("timesource", ZeroTimeSource.class.getSimpleName(), logMap.get("TSA_TIMESOURCE"));
     }
     
     /**

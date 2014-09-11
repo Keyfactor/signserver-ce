@@ -312,8 +312,12 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
 
             // Sign
             X509Certificate x509cert = (X509Certificate) certs[0]; 
-            
-            final Date date = getTimeSource().getGenTime();
+
+            final ITimeSource timeSrc = getTimeSource();
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("TimeSource: " + timeSrc.getClass().getName());
+            }
+            final Date date = timeSrc.getGenTime();
             
             if (date == null) {
                 throw new ServiceUnavailableException("Time source is not available");
@@ -368,7 +372,8 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
   
             // Log values
             logMap.put(ITimeStampLogger.LOG_TSA_TIME, String.valueOf(date.getTime()));
-            
+            logMap.put(ITimeStampLogger.LOG_TSA_TIMESOURCE, timeSrc.getClass().getSimpleName());
+
             final String archiveId = createArchiveId(requestbytes, (String) requestContext.get(RequestContext.TRANSACTION_ID));
 
             final GenericSignResponse signResponse;

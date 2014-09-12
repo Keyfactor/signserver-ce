@@ -98,7 +98,6 @@ public class HSMKeepAliveTimedService extends BaseTimedService {
             if (keyAlias == null) {
                 LOG.error("TESTKEY or DEFAULTKEY is not set for worker: " +
                         workerIdOrName);
-                return;
             }
             
             try {

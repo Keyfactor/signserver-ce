@@ -381,6 +381,39 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
         }
     }
     
+    /**
+     * Test with one crypto token with no key alias set.
+     * Should still test the other token.
+     * 
+     * @throws Exception 
+     */
+    public void test07runServiceOneCryptoTokenWithNoAlias() throws Exception {
+        try {
+            workerSession.removeWorkerProperty(WORKERID_CRYPTOWORKER1,
+                    HSMKeepAliveTimedService.TESTKEY);
+            workerSession.removeWorkerProperty(WORKERID_CRYPTOWORKER1,
+                    HSMKeepAliveTimedService.DEFAULTKEY);
+            workerSession.reloadConfiguration(WORKERID_CRYPTOWORKER1);
+            
+            setServiceActive(true);
+            // make sure the service had time to run
+            waitForServiceToRun(Arrays.asList(WORKERID_CRYPTOWORKER2),
+                30);
+            // check that the service has run and tested keys for both configured workers
+            assertTrue("testKey run on worker 2",
+                        debugFileExists(WORKERID_CRYPTOWORKER2));
+            assertEquals("TESTKEY alias used for worker 2",
+                         "TestKey2", getDebugKeyAlias(WORKERID_CRYPTOWORKER2));
+        } finally {
+            workerSession.setWorkerProperty(WORKERID_CRYPTOWORKER1,
+                    HSMKeepAliveTimedService.TESTKEY, "TestKey1");
+            workerSession.reloadConfiguration(WORKERID_CRYPTOWORKER1);
+            setServiceActive(false);
+            deleteDebugFile(WORKERID_CRYPTOWORKER1);
+            deleteDebugFile(WORKERID_CRYPTOWORKER2);
+        }
+    }
+    
     public void test99tearDownDatabase() throws Exception {
         removeWorker(WORKERID_SERVICE);
         removeWorker(WORKERID_CRYPTOWORKER1);

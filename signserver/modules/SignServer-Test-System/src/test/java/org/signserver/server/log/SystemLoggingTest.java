@@ -855,7 +855,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         try {
             setProperties(new File(getSignServerHome(), "res/test/test-hsmkeepalive-configuration.properties"));
             workerSession.setWorkerProperty(WORKERID_SERVICE,
-                    HSMKeepAliveTimedService.CRYPTOWORKERS, "");
+                    HSMKeepAliveTimedService.CRYPTOTOKENS, "");
             workerSession.setWorkerProperty(WORKERID_SERVICE,
                     ServiceConfig.WORK_LOG_TYPES, "SECURE_AUDITLOGGING");
             workerSession.reloadConfiguration(WORKERID_SERVICE);

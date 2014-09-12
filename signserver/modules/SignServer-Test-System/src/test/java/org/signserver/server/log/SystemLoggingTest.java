@@ -48,6 +48,7 @@ import org.junit.Test;
 import org.signserver.common.ServiceConfig;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.server.timedservices.hsmkeepalive.HSMKeepAliveTimedService;
 import org.signserver.server.timedservices.hsmkeepalive.TestKeyDebugCryptoToken;
 import org.signserver.statusrepo.IStatusRepositorySession;
 
@@ -854,46 +855,24 @@ public class SystemLoggingTest extends ModulesTestCase {
         LOG.info(">test06TimedServiceWithAuditLogging");
         try {
             setProperties(new File(getSignServerHome(), "res/test/test-hsmkeepalive-configuration.properties"));
-            workerSession.setWorkerProperty(WORKERID_CRYPTOWORKER1,
-                    TestKeyDebugCryptoToken.TESTKEY_DEBUG_OUTPATH,
-                    getSignServerHome() + File.separator + "~testkey-" + WORKERID_CRYPTOWORKER1);
-            workerSession.setWorkerProperty(WORKERID_CRYPTOWORKER2,
-                    TestKeyDebugCryptoToken.TESTKEY_DEBUG_OUTPATH,
-                    getSignServerHome() + File.separator + "~testkey-" + WORKERID_CRYPTOWORKER2);
+            workerSession.setWorkerProperty(WORKERID_SERVICE,
+                    HSMKeepAliveTimedService.CRYPTOWORKERS, "");
             workerSession.setWorkerProperty(WORKERID_SERVICE,
                     ServiceConfig.WORK_LOG_TYPES, "SECURE_AUDITLOGGING");
-            workerSession.reloadConfiguration(WORKERID_CRYPTOWORKER1);
-            workerSession.reloadConfiguration(WORKERID_CRYPTOWORKER2);
             workerSession.reloadConfiguration(WORKERID_SERVICE);
              
             int linesBefore = readEntriesCount(auditLogFile);
-            waitForServiceToRun(30);
+            final String line = waitForNextLine(linesBefore, 30);
 
-            final List<String> lines = readEntries(auditLogFile, linesBefore, 3);
-            String line = lines.get(0);
-            
-            LOG.info(line);
-            // first audit line should be keytest for worker 1
-            assertTrue("Contains event", line.contains("EVENT: KEYTEST"));
-            assertTrue("Contains module", line.contains("MODULE: KEY_MANAGEMENT"));
-            assertTrue("Contains worker",
-                    line.contains("WORKER_ID: " + WORKERID_CRYPTOWORKER1));
-            
-            // first audit line should be keytest for worker 1
-            line = lines.get(1);
-            LOG.info(line);
-            assertTrue("Contains event", line.contains("EVENT: KEYTEST"));
-            assertTrue("Contains module", line.contains("MODULE: KEY_MANAGEMENT"));
-            assertTrue("Contains worker",
-                    line.contains("WORKER_ID: " + WORKERID_CRYPTOWORKER2));
-            
-            // auditlog of the service invocation
-            line = lines.get(2);
-            LOG.info(line);
-            assertTrue("Contains event", line.contains("EVENT: TIMED_SERVICE_RUN"));
-            assertTrue("Contains module", line.contains("MODULE: SERVICE"));
-            assertTrue("Contains worker",
-                    line.contains("WORKER_ID: " + WORKERID_SERVICE));
+            if (line != null) {
+                LOG.info(line);
+                assertTrue("Contains event", line.contains("EVENT: TIMED_SERVICE_RUN"));
+                assertTrue("Contains module", line.contains("MODULE: SERVICE"));
+                assertTrue("Contains worker",
+                        line.contains("WORKER_ID: " + WORKERID_SERVICE));
+            } else {
+                fail("No audit log entry for service invocation found");
+            }
         } finally {
             removeWorker(WORKERID_SERVICE);
             removeWorker(WORKERID_CRYPTOWORKER1);
@@ -901,24 +880,23 @@ public class SystemLoggingTest extends ModulesTestCase {
         }
     }
     
-    private void waitForServiceToRun(final int maxTries) throws Exception {
+    private String waitForNextLine(final int linesBefore, final int maxTries) throws Exception {
         try {
             for (int i = 0; i < maxTries; i++) {
-                final File debugFile1 =
-                        new File(getSignServerHome() + File.separator +
-                            "~testkey-" + WORKERID_CRYPTOWORKER1);
-                final File debugFile2 =
-                        new File(getSignServerHome() + File.separator +
-                            "~testkey-" + WORKERID_CRYPTOWORKER2);
+                final List<String> lines =
+                        readEntries(auditLogFile, linesBefore, 1);
                 
-                if (debugFile1.exists() && debugFile2.exists()) {
-                    return;
+                if (!lines.isEmpty()) {
+                    return lines.get(0);
                 }
+                
                 Thread.sleep(1000);
             }
         } catch (InterruptedException ex) {
             LOG.error("Interrupted", ex);
         }
+        
+        return null;
     }
     
     @Test

@@ -29,12 +29,12 @@ public class HSMKeepAliveTimedServiceUnitTest extends TestCase {
     private static int DUMMY_WORKERID = 42;
     
     /**
-     * Test that omitting the CRYPTOWORKERS property results in a configuration
+     * Test that omitting the CRYPTOTOKENS property results in a configuration
      * error.
      * 
      * @throws Exception 
      */
-    public void test01missingCryptoWorkers() throws Exception {
+    public void test01missingCryptoTokens() throws Exception {
        final HSMKeepAliveTimedService instance =
                new HSMKeepAliveTimedService() {
                     @Override
@@ -48,16 +48,16 @@ public class HSMKeepAliveTimedServiceUnitTest extends TestCase {
        final List<String> fatalErrors =
             instance.getStatus(Collections.<String>emptyList()).getFatalErrors();
 
-       assertTrue("Should contain error", fatalErrors.contains("Must specify CRYPTOWORKERS"));
+       assertTrue("Should contain error", fatalErrors.contains("Must specify CRYPTOTOKENS"));
     }
     
     /**
-     * Test that setting an empty value for CRYPTOWORKERS is not producing
+     * Test that setting an empty value for CRYPTOTOKEN is not producing
      * a config error.
      * 
      * @throws Exception 
      */
-    public void test02emptyCryptoWorkers() throws Exception {
+    public void test02emptyCryptoTokens() throws Exception {
         final HSMKeepAliveTimedService instance =
                new HSMKeepAliveTimedService() {
                    @Override
@@ -67,7 +67,7 @@ public class HSMKeepAliveTimedServiceUnitTest extends TestCase {
                };
         final WorkerConfig config = new WorkerConfig();
         
-        config.setProperty(HSMKeepAliveTimedService.CRYPTOWORKERS, "");
+        config.setProperty(HSMKeepAliveTimedService.CRYPTOTOKENS, "");
         instance.init(DUMMY_WORKERID, config, null, null);
         
         final List<String> fatalErrors =

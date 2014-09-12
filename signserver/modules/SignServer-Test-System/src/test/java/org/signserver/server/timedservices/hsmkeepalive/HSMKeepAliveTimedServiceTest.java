@@ -260,7 +260,7 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
     public void test04runServiceWithNonExistingWorkers() throws Exception {
         try {
             workerSession.setWorkerProperty(WORKERID_SERVICE,
-                    HSMKeepAliveTimedService.CRYPTOWORKERS,
+                    HSMKeepAliveTimedService.CRYPTOTOKENS,
                     "CryptoWorker1,CryptoWorker2,NonExistingWorker,9994711");
             workerSession.reloadConfiguration(WORKERID_SERVICE);
             
@@ -287,7 +287,7 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
                          "TestKey2", getDebugKeyAlias(WORKERID_CRYPTOWORKER2));
         } finally {
             workerSession.setWorkerProperty(WORKERID_SERVICE,
-                    HSMKeepAliveTimedService.CRYPTOWORKERS,
+                    HSMKeepAliveTimedService.CRYPTOTOKENS,
                     "CryptoWorker1,CryptoWorker2");
             workerSession.reloadConfiguration(WORKERID_SERVICE);
             setServiceActive(false);
@@ -304,7 +304,7 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
     public void test05runServiceWithWorkerIds() throws Exception {
         try {
             workerSession.setWorkerProperty(WORKERID_SERVICE,
-                    HSMKeepAliveTimedService.CRYPTOWORKERS, "5801,5802");
+                    HSMKeepAliveTimedService.CRYPTOTOKENS, "5801,5802");
             workerSession.reloadConfiguration(WORKERID_SERVICE);
             
             setServiceActive(true);
@@ -322,7 +322,7 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
                          "TestKey2", getDebugKeyAlias(WORKERID_CRYPTOWORKER2));
         } finally {
             workerSession.setWorkerProperty(WORKERID_SERVICE,
-                    HSMKeepAliveTimedService.CRYPTOWORKERS,
+                    HSMKeepAliveTimedService.CRYPTOTOKENS,
                     "CryptoWorker1,CryptoWorker2");
             workerSession.reloadConfiguration(WORKERID_SERVICE);
             setServiceActive(false);

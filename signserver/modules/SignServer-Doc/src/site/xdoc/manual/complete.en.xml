@@ -4950,10 +4950,11 @@ didn't succeed when testing the key.
                         </p>
                     </subsubsection>
                     <subsubsection name="Available Properties">
-<p><b>CRYPTOWORKERS</b> = Comma-separated list of worker names or worker IDs of
+<p><b>CRYPTOTOKENS</b> = Comma-separated list of worker names or worker IDs of
 workers whos keys should be tested. This would typically be crypto workers i.e.
 corresponding to different slots in an HSM, but could also be regular workers
-with crypto tokens configured directly). This property is required.</p>
+with crypto tokens configured directly). This property is required,
+but can be set to an empty value if only audit logging is needed (see below).</p>
 <p><b>NOTE:</b> if secure audit logging is used and a separate crypto token
 is used for logging, the service logging described above using the WORK_LOG_TYPES
 property and the SECURE_AUDITLOGGING value can be used to write to the audit log

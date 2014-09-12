@@ -39,12 +39,12 @@ public class HSMKeepAliveTimedService extends BaseTimedService {
 
     private static Logger LOG = Logger.getLogger(HSMKeepAliveTimedService.class);
     
-    public static String CRYPTOWORKERS = "CRYPTOWORKERS";
+    public static String CRYPTOTOKENS = "CRYPTOTOKENS";
     
     static String TESTKEY = "TESTKEY";
     static String DEFAULTKEY = "DEFAULTKEY";
 
-    private List<String> cryptoWorkers;
+    private List<String> cryptoTokens;
  
     @EJB
     private IWorkerSession workerSession;
@@ -53,11 +53,11 @@ public class HSMKeepAliveTimedService extends BaseTimedService {
     public void init(int workerId, WorkerConfig config, WorkerContext workerContext, EntityManager workerEM) {
         super.init(workerId, config, workerContext, workerEM);
 
-        final String cryptoWorkersValue = config.getProperty(CRYPTOWORKERS);
+        final String cryptoTokensValue = config.getProperty(CRYPTOTOKENS);
 
-        if (cryptoWorkersValue != null) {
-            cryptoWorkers = new LinkedList<String>();
-            cryptoWorkers.addAll(Arrays.asList(cryptoWorkersValue.split(",")));
+        if (cryptoTokensValue != null) {
+            cryptoTokens = new LinkedList<String>();
+            cryptoTokens.addAll(Arrays.asList(cryptoTokensValue.split(",")));
         }
     }
     
@@ -80,7 +80,7 @@ public class HSMKeepAliveTimedService extends BaseTimedService {
     public void work() throws ServiceExecutionFailedException {
         final IWorkerSession session = getWorkerSession();
 
-        for (final String workerIdOrName : cryptoWorkers) {
+        for (final String workerIdOrName : cryptoTokens) {
             int workerId;
             
             try {
@@ -136,8 +136,8 @@ public class HSMKeepAliveTimedService extends BaseTimedService {
     protected List<String> getFatalErrors() {
         final List<String> errors = new LinkedList<String>(super.getFatalErrors());
         
-        if (cryptoWorkers == null) {
-            errors.add("Must specify " + CRYPTOWORKERS);
+        if (cryptoTokens == null) {
+            errors.add("Must specify " + CRYPTOTOKENS);
         }
         
         errors.addAll(getCryptoworkerErrors());
@@ -148,9 +148,9 @@ public class HSMKeepAliveTimedService extends BaseTimedService {
         final List<String> errors = new LinkedList<String>();
         final IWorkerSession session = getWorkerSession();
         
-        if (session != null && cryptoWorkers != null) {
+        if (session != null && cryptoTokens != null) {
             int cryptoWorkerId;
-            for (final String workerIdOrName : cryptoWorkers) {
+            for (final String workerIdOrName : cryptoTokens) {
                 try {
                     cryptoWorkerId = Integer.valueOf(workerIdOrName);
                     

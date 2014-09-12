@@ -4822,7 +4822,7 @@ but can be changed by editing minimum-delivery-interval-in-millis in domain.xml.
 <b>CRON</b> = Property that should define a CRON expression of how often the service should run.  It should conform to Unix CRON standard. (One and only one of INTERVAL, INTERVALMS or CRON is required)
                 </p>
                 <p>
-<b>WORK_LOG_TYPES</b> = Property specifying a comma-separated list log types that should be used for logging invocations of the service.<br/>
+<b>WORK_LOG_TYPES</b> = Property specifying a comma-separated list of log types that should be used for logging invocations of the service.<br/>
 The following values can be used:
 
 <table>

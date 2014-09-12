@@ -49,7 +49,6 @@ import org.signserver.common.ServiceConfig;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.server.timedservices.hsmkeepalive.HSMKeepAliveTimedService;
-import org.signserver.server.timedservices.hsmkeepalive.TestKeyDebugCryptoToken;
 import org.signserver.statusrepo.IStatusRepositorySession;
 
 /**

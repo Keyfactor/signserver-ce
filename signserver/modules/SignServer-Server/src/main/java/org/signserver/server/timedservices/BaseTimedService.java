@@ -41,9 +41,9 @@ public abstract class BaseTimedService extends BaseWorker implements ITimedServi
     /** Log4j instance for actual implementation class */
     private final transient Logger log = Logger.getLogger(this.getClass());
 
-    private Set<ITimedService.LogType> logTypes =
+    private final Set<ITimedService.LogType> logTypes =
             EnumSet.noneOf(ITimedService.LogType.class);
-    private List<String> fatalErrors = new LinkedList<String>();
+    private final List<String> fatalErrors = new LinkedList<String>();
     
     protected BaseTimedService() {
     }

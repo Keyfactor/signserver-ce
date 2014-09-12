@@ -24,6 +24,7 @@ import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
+import org.signserver.common.ServiceConfig;
 import org.signserver.common.SignServerUtil;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.testutils.ModulesTestCase;
@@ -110,6 +111,12 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
             return null;
         }
     }
+    
+    private void setServiceActive(final boolean active) {
+        workerSession.setWorkerProperty(WORKERID_SERVICE, ServiceConfig.ACTIVE,
+                Boolean.valueOf(active).toString());
+        workerSession.reloadConfiguration(WORKERID_SERVICE);
+    }
    
     public void test00setupDatabase() throws Exception {
         setProperties(new File(getSignServerHome(), "res/test/test-hsmkeepalive-configuration.properties"));
@@ -136,6 +143,7 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
      */
     public void test01runServiceWithTwoWorkers() throws Exception {
         try {
+            setServiceActive(true);
             // make sure the service had time to run
             waitForServiceToRun(Arrays.asList(WORKERID_CRYPTOWORKER1, WORKERID_CRYPTOWORKER2),
                 30);
@@ -149,6 +157,7 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
             assertEquals("TESTKEY alias used for worker 2",
                          "TestKey2", getDebugKeyAlias(WORKERID_CRYPTOWORKER2));
         } finally {
+            setServiceActive(false);
             deleteDebugFile(WORKERID_CRYPTOWORKER1);
             deleteDebugFile(WORKERID_CRYPTOWORKER2);
         }
@@ -168,6 +177,7 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
             workerSession.reloadConfiguration(WORKERID_CRYPTOWORKER1);
             workerSession.reloadConfiguration(WORKERID_CRYPTOWORKER2);
             
+            setServiceActive(true);
             // make sure the service had time to run
             waitForServiceToRun(Arrays.asList(WORKERID_CRYPTOWORKER1, WORKERID_CRYPTOWORKER2),
                     30);
@@ -186,6 +196,7 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
             workerSession.reloadConfiguration(WORKERID_CRYPTOWORKER1);
             workerSession.reloadConfiguration(WORKERID_CRYPTOWORKER2);
 
+            setServiceActive(false);
             deleteDebugFile(WORKERID_CRYPTOWORKER1);
             deleteDebugFile(WORKERID_CRYPTOWORKER2);
         }
@@ -209,6 +220,7 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
             workerSession.reloadConfiguration(WORKERID_CRYPTOWORKER1);
             workerSession.reloadConfiguration(WORKERID_CRYPTOWORKER2);
             
+            setServiceActive(true);
             // make sure the service had time to run
             waitForServiceToRun(Arrays.asList(WORKERID_CRYPTOWORKER1, WORKERID_CRYPTOWORKER2),
                     30);
@@ -231,6 +243,7 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
             workerSession.reloadConfiguration(WORKERID_CRYPTOWORKER1);
             workerSession.reloadConfiguration(WORKERID_CRYPTOWORKER2);
 
+            setServiceActive(false);
             deleteDebugFile(WORKERID_CRYPTOWORKER1);
             deleteDebugFile(WORKERID_CRYPTOWORKER2);
         }
@@ -259,6 +272,7 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
             assertTrue("Should contain error",
                     fatalErrors.contains("Invalid worker ID: 9994711"));
             
+            setServiceActive(true);
             // make sure the service had time to run
             waitForServiceToRun(Arrays.asList(WORKERID_CRYPTOWORKER1, WORKERID_CRYPTOWORKER2),
                     30);
@@ -276,6 +290,7 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
                     HSMKeepAliveTimedService.CRYPTOWORKERS,
                     "CryptoWorker1,CryptoWorker2");
             workerSession.reloadConfiguration(WORKERID_SERVICE);
+            setServiceActive(false);
             deleteDebugFile(WORKERID_CRYPTOWORKER1);
             deleteDebugFile(WORKERID_CRYPTOWORKER2);
         }
@@ -292,6 +307,7 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
                     HSMKeepAliveTimedService.CRYPTOWORKERS, "5801,5802");
             workerSession.reloadConfiguration(WORKERID_SERVICE);
             
+            setServiceActive(true);
             // make sure the service had time to run
             waitForServiceToRun(Arrays.asList(WORKERID_CRYPTOWORKER1, WORKERID_CRYPTOWORKER2),
                     30);
@@ -309,6 +325,7 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
                     HSMKeepAliveTimedService.CRYPTOWORKERS,
                     "CryptoWorker1,CryptoWorker2");
             workerSession.reloadConfiguration(WORKERID_SERVICE);
+            setServiceActive(false);
             deleteDebugFile(WORKERID_CRYPTOWORKER1);
             deleteDebugFile(WORKERID_CRYPTOWORKER2);
         }
@@ -336,6 +353,8 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
                     TestKeyDebugCryptoToken.DISABLE_TESTKEY, "true");
             workerSession.reloadConfiguration(WORKERID_CRYPTOWORKER1);
             workerSession.reloadConfiguration(WORKERID_CRYPTOWORKER2);
+            
+            setServiceActive(true);
             // make sure the service had time to run
             waitForServiceToRun(Arrays.asList(WORKERID_CRYPTOWORKER1, WORKERID_CRYPTOWORKER2),
                     30);
@@ -355,6 +374,8 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
                     TestKeyDebugCryptoToken.DISABLE_TESTKEY);
             workerSession.reloadConfiguration(WORKERID_CRYPTOWORKER1);
             workerSession.reloadConfiguration(WORKERID_CRYPTOWORKER2);
+            
+            setServiceActive(false);
             deleteDebugFile(WORKERID_CRYPTOWORKER1);
             deleteDebugFile(WORKERID_CRYPTOWORKER2);
         }

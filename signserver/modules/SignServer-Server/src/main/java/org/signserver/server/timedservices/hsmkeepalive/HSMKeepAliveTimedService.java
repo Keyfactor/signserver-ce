@@ -82,19 +82,19 @@ public class HSMKeepAliveTimedService extends BaseTimedService {
 
         if (cryptoTokens != null) {
             for (final String workerIdOrName : cryptoTokens) {
-                int workerId;
+                int cryptoWorkerId;
 
                 try {
-                    workerId = Integer.valueOf(workerIdOrName);
+                    cryptoWorkerId = Integer.valueOf(workerIdOrName);
                 } catch (NumberFormatException e) {
-                    workerId = session.getWorkerId(workerIdOrName);
+                    cryptoWorkerId = session.getWorkerId(workerIdOrName);
                 }
 
-                if (workerId == 0) {
+                if (cryptoWorkerId == 0) {
                     LOG.error("No such worker: " + workerIdOrName);
                 }
 
-                final String keyAlias = getKeyAliasForWorker(session, workerId);
+                final String keyAlias = getKeyAliasForWorker(session, cryptoWorkerId);
 
                 if (keyAlias == null) {
                     LOG.error("TESTKEY or DEFAULTKEY is not set for worker: " +
@@ -103,7 +103,7 @@ public class HSMKeepAliveTimedService extends BaseTimedService {
                 }
 
                 try {
-                    session.testKey(workerId, keyAlias, null);
+                    session.testKey(cryptoWorkerId, keyAlias, null);
                 } catch (CryptoTokenOfflineException e) {
                     LOG.warn("Crypto token offline for worker " + workerIdOrName +
                             ": " + e.getMessage());

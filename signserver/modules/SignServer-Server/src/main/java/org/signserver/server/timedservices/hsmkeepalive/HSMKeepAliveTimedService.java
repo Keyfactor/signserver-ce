@@ -37,7 +37,7 @@ import org.signserver.server.timedservices.BaseTimedService;
  */
 public class HSMKeepAliveTimedService extends BaseTimedService {
 
-    private static Logger LOG = Logger.getLogger(HSMKeepAliveTimedService.class);
+    private static final Logger LOG = Logger.getLogger(HSMKeepAliveTimedService.class);
     
     public static String CRYPTOTOKENS = "CRYPTOTOKENS";
     

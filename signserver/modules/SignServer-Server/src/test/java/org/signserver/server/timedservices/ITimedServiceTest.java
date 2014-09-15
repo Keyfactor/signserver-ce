@@ -31,7 +31,7 @@ import org.signserver.server.ServiceExecutionFailedException;
  */
 public class ITimedServiceTest extends TestCase {
     
-    private static int DUMMY_WORKERID = 42;
+    private static final int DUMMY_WORKERID = 42;
     
     private ITimedService createInstance() {
         return new BaseTimedService() {

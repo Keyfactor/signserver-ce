@@ -80,36 +80,39 @@ public class HSMKeepAliveTimedService extends BaseTimedService {
     public void work() throws ServiceExecutionFailedException {
         final IWorkerSession session = getWorkerSession();
 
-        for (final String workerIdOrName : cryptoTokens) {
-            int workerId;
-            
-            try {
-                workerId = Integer.valueOf(workerIdOrName);
-            } catch (NumberFormatException e) {
-                workerId = session.getWorkerId(workerIdOrName);
-            }
-            
-            if (workerId == 0) {
-                LOG.error("No such worker: " + workerIdOrName);
-            }
-            
-            final String keyAlias = getKeyAliasForWorker(session, workerId);
-            
-            if (keyAlias == null) {
-                LOG.error("TESTKEY or DEFAULTKEY is not set for worker: " +
-                        workerIdOrName);
-            }
-            
-            try {
-                session.testKey(workerId, keyAlias, null);
-            } catch (CryptoTokenOfflineException e) {
-                LOG.warn("Crypto token offline for worker " + workerIdOrName +
-                        ": " + e.getMessage());
-            } catch (InvalidWorkerIdException e) {
-                LOG.error("Invalid worker ID: " + e.getMessage());
-            } catch (KeyStoreException e) {
-                LOG.error("Keystore exception for worker " + workerIdOrName +
-                        ": " + e.getMessage());
+        if (cryptoTokens != null) {
+            for (final String workerIdOrName : cryptoTokens) {
+                int workerId;
+
+                try {
+                    workerId = Integer.valueOf(workerIdOrName);
+                } catch (NumberFormatException e) {
+                    workerId = session.getWorkerId(workerIdOrName);
+                }
+
+                if (workerId == 0) {
+                    LOG.error("No such worker: " + workerIdOrName);
+                }
+
+                final String keyAlias = getKeyAliasForWorker(session, workerId);
+
+                if (keyAlias == null) {
+                    LOG.error("TESTKEY or DEFAULTKEY is not set for worker: " +
+                            workerIdOrName);
+                    continue;
+                }
+
+                try {
+                    session.testKey(workerId, keyAlias, null);
+                } catch (CryptoTokenOfflineException e) {
+                    LOG.warn("Crypto token offline for worker " + workerIdOrName +
+                            ": " + e.getMessage());
+                } catch (InvalidWorkerIdException e) {
+                    LOG.error("Invalid worker ID: " + e.getMessage());
+                } catch (KeyStoreException e) {
+                    LOG.error("Keystore exception for worker " + workerIdOrName +
+                            ": " + e.getMessage());
+                }
             }
         }
     }

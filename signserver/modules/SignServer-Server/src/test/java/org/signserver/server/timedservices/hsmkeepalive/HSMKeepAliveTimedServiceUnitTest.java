@@ -26,7 +26,7 @@ import org.signserver.ejb.interfaces.IWorkerSession;
  */
 public class HSMKeepAliveTimedServiceUnitTest extends TestCase {
     
-    private static int DUMMY_WORKERID = 42;
+    private static final int DUMMY_WORKERID = 42;
     
     /**
      * Test that omitting the CRYPTOTOKENS property results in a configuration

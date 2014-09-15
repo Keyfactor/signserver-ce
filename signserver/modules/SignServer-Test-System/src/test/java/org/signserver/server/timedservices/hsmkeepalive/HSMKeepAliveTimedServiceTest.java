@@ -40,9 +40,9 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
     
     private static final Logger LOG = Logger.getLogger(HSMKeepAliveTimedServiceTest.class);
     
-    private static int WORKERID_SERVICE = 5800;
-    private static int WORKERID_CRYPTOWORKER1 = 5801;
-    private static int WORKERID_CRYPTOWORKER2 = 5802;
+    private static final int WORKERID_SERVICE = 5800;
+    private static final int WORKERID_CRYPTOWORKER1 = 5801;
+    private static final int WORKERID_CRYPTOWORKER2 = 5802;
 
     private final IWorkerSession workerSession = getWorkerSession();
 

@@ -414,6 +414,51 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
         }
     }
     
+    /**
+     * Test that adding non-existing workers in front of the crypto token list,
+     * execution is still continuing for existing workers.
+     * 
+     * @throws Exception 
+     */
+    public void test08runServiceWithNonExistingWorkerBeforeExisting() throws Exception {
+        try {
+            workerSession.setWorkerProperty(WORKERID_SERVICE,
+                    HSMKeepAliveTimedService.CRYPTOTOKENS,
+                    "NonExistingWorker,9994711,CryptoWorker1,CryptoWorker2,");
+            workerSession.reloadConfiguration(WORKERID_SERVICE);
+            
+            final List<String> fatalErrors =
+                    workerSession.getStatus(WORKERID_SERVICE).getFatalErrors();
+            
+            assertTrue("Should contain error",
+                    fatalErrors.contains("No such worker: NonExistingWorker"));
+            assertTrue("Should contain error",
+                    fatalErrors.contains("Invalid worker ID: 9994711"));
+            
+            setServiceActive(true);
+            // make sure the service had time to run
+            waitForServiceToRun(Arrays.asList(WORKERID_CRYPTOWORKER1, WORKERID_CRYPTOWORKER2),
+                    30);
+            // check that the service has run and tested keys for both configured workers
+            assertTrue("testKey run on worker 1",
+                        debugFileExists(WORKERID_CRYPTOWORKER1));
+            assertTrue("testKey run on worker 2",
+                        debugFileExists(WORKERID_CRYPTOWORKER2));
+            assertEquals("TESTKEY alias used for worker 1",
+                         "TestKey1", getDebugKeyAlias(WORKERID_CRYPTOWORKER1));
+            assertEquals("TESTKEY alias used for worker 2",
+                         "TestKey2", getDebugKeyAlias(WORKERID_CRYPTOWORKER2));
+        } finally {
+            workerSession.setWorkerProperty(WORKERID_SERVICE,
+                    HSMKeepAliveTimedService.CRYPTOTOKENS,
+                    "CryptoWorker1,CryptoWorker2");
+            workerSession.reloadConfiguration(WORKERID_SERVICE);
+            setServiceActive(false);
+            deleteDebugFile(WORKERID_CRYPTOWORKER1);
+            deleteDebugFile(WORKERID_CRYPTOWORKER2);
+        }
+    }
+    
     public void test99tearDownDatabase() throws Exception {
         removeWorker(WORKERID_SERVICE);
         removeWorker(WORKERID_CRYPTOWORKER1);

@@ -789,7 +789,7 @@ public class AdministratorsFrame extends javax.swing.JFrame {
         }
         
         // Archive auditors
-        if (archiveAuditors != null && auditors.contains(";")) {
+        if (archiveAuditors != null && archiveAuditors.contains(";")) {
             for (final String entryString : archiveAuditors.split(";")) {
                 final String[] parts = entryString.split(",", 2);
                 final Credential cred = new Credential(parts[0], parts[1]);

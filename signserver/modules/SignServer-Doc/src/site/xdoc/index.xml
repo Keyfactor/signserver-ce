@@ -104,10 +104,11 @@ Some of the major new features in version 3.6 are:
 </p>
 <ul>
     <li>Independent worker and crypto token configuration</li>
-    <li>Underlaying CESeCore library upgraded</li>
+    <li>Underlying CESeCore library upgraded</li>
     <li>Separation between community and enterprise editions</li>                    
     <li>New application: SignServer TimeMonitor (enterprise edition)</li>
-    <li>Querying of database archive from WS and GUI</li>
+    <li>Querying of database archive from WS and GUI</li>    
+    <li>Support for specifying HSM slot by label</li>
     <li>HSM keep alive service</li>
 </ul>
 <p>

@@ -2,9 +2,20 @@ SignServer 3.6.0
 ----------------
 
 New features and improvements:
-Bug fixes:
+ - Independent worker and crypto token configuration
+ - Querying of database archive from WS and GUI
+ - Support for specifying HSM slot by label
+ - HSM keep alive service
+ - Underlying CESeCore library upgraded
+ - Separation between community and enterprise editions
+ - New application: SignServer TimeMonitor (enterprise edition only)
 
-TODO
+Bug fixes:
+ - Fixed an error when querying the audit log without any conditions
+ - Removed a duplicated invocation in the Admin GUI
+
+See ChangeLog.txt for the full list of changes.
+
 
 SignServer 3.5.2
 ----------------

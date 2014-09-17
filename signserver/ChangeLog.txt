@@ -1,7 +1,38 @@
-SignServer 3.6.0, 2014-09-xx
+SignServer 3.6.0, 2014-09-18
 ----------------------------
 
-TODO
+** Bug
+    * [DSS-831] - Duplicate calls to getstatus in AdminGUI
+    * [DSS-841] - Querying auditlog with no query conditions gives exception
+
+** Improvement
+    * [DSS-470] - Improved operations for querying archived data
+    * [DSS-605] - Upgrade to BouncyCastle 1.49
+    * [DSS-689] - Include time source used in worker log
+    * [DSS-734] - Upgrade to CESeCore from EJBCA 6.1
+    * [DSS-793] - Support ECC for database integrity protection
+    * [DSS-809] - Refactor out common code from the crypto tokens and improve KeyStoreCryptoToken
+    * [DSS-830] - Improve how worker status information is returned
+    * [DSS-835] - Improve source code quality
+    * [DSS-845] - Silence error message about worker missing certificate chain
+    * [DSS-852] - Write pidfile in timemonitor start script
+    * [DSS-853] - Use a custom log4j file for the TimeMonitor
+    * [DSS-854] - Add archiving options to time-stamp signer sample configuration files
+    * [DSS-855] - Create sample database index for the ArchiveData table
+    * [DSS-856] - Include PKCS#11 attributes in sample configuration
+
+** New Feature
+    * [DSS-716] - Separate worker and crypto token management
+    * [DSS-771] - Support for JVM OPTS in all wrapper scripts
+    * [DSS-776] - Slot label support
+    * [DSS-803] - Add SignServer TimeMonitor to the main repository
+    * [DSS-818] - TimeMonitor should be able to query a SignServer worker for its configuration
+    * [DSS-819] - Sample configuration for TimeMonitor logging to syslog
+    * [DSS-820] - Support in AdminGUI for querying and managing the archive
+    * [DSS-821] - HSM keep alive service
+
+** Task
+    * [DSS-609] - Remove PublicCryptoToken from SignServer after upgrading CESeCore
 
 
 SignServer 3.5.2, 2014-07-08

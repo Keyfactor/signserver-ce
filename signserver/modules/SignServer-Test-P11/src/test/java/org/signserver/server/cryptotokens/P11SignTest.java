@@ -1045,13 +1045,25 @@ public class P11SignTest extends ModulesTestCase {
         final int workerId = WORKER_XML;
         
         try {
+            final String expectedErrorPrefix =
+                    "Failed to initialize crypto token: The shared library file can't be read: ";
             setXMLSignerProperties(workerId, false);
             workerSession.setWorkerProperty(workerId, "SHAREDLIBRARY", "/foo/bar/libdummy.so");
             workerSession.reloadConfiguration(workerId);
 
             final List<String> errors = workerSession.getStatus(workerId).getFatalErrors();
+            boolean foundExpectedError = false;
+            
+            // check the prefix of the error strings
+            // Windows treats path starting with / as relative to working
+            // drive letter (i.e. C:\) and the path delimiters gets replaced
+            // with \ (coming from the root FileNotFoundException)
+            for (final String error : errors) {
+                foundExpectedError = error.startsWith(expectedErrorPrefix);
+            }
+            
             assertTrue("Should contain error about lib but was: " + errors,
-                    errors.contains("Failed to initialize crypto token: The shared library file can't be read: /foo/bar/libdummy.so"));
+                    foundExpectedError);
         } finally {
             removeWorker(workerId);
         }

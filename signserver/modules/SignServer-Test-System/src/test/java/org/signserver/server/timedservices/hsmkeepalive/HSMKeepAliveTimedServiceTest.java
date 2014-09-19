@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.Level;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.junit.Before;
@@ -118,7 +119,11 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
         workerSession.reloadConfiguration(WORKERID_SERVICE);
 
         if (!active) {
-            Thread.sleep(1000);
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ex) {
+                //NoPMD: ignored
+            }
         }
     }
    

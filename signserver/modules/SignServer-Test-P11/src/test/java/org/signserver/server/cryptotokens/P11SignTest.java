@@ -1059,9 +1059,12 @@ public class P11SignTest extends ModulesTestCase {
             // drive letter (i.e. C:\) and the path delimiters gets replaced
             // with \ (coming from the root FileNotFoundException)
             for (final String error : errors) {
-                foundExpectedError = error.startsWith(expectedErrorPrefix);
+                if (error.startsWith(expectedErrorPrefix)) {
+                    foundExpectedError = true;
+                    break;
+                }
             }
-            
+
             assertTrue("Should contain error about lib but was: " + errors,
                     foundExpectedError);
         } finally {

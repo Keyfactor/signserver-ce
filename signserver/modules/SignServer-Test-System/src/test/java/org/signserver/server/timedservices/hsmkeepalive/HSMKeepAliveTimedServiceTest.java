@@ -81,6 +81,8 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
             for (int i = 0; i < maxTries; i++) {
                 boolean missingFile = false;
                 
+                Thread.sleep(1000);
+                
                 for (final int workerId : workerIds) {
                     if (!debugFileExists(workerId)) {
                         missingFile = true;
@@ -91,7 +93,6 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
                 if (!missingFile) {
                     break;
                 }
-                Thread.sleep(1000);
             }
         } catch (InterruptedException ex) {
             LOG.error("Interrupted", ex);

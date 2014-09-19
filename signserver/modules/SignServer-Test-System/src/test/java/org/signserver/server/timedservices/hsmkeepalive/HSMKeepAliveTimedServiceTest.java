@@ -116,6 +116,10 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
         workerSession.setWorkerProperty(WORKERID_SERVICE, ServiceConfig.ACTIVE,
                 Boolean.valueOf(active).toString());
         workerSession.reloadConfiguration(WORKERID_SERVICE);
+
+        if (!active) {
+            Thread.sleep(1000);
+        }
     }
    
     public void test00setupDatabase() throws Exception {

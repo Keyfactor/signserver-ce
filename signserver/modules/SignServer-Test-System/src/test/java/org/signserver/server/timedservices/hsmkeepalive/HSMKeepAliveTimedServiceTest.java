@@ -66,7 +66,15 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
     private void deleteDebugFile(final int workerId) {
         final File debugFile = getDebugFile(workerId);
 
-        debugFile.delete();
+        // don't try to delete debug file if not already existing
+        if (!debugFile.exists()) {
+            return;
+        }
+        
+        if (!debugFile.delete()) {
+            LOG.error("Failed to delete debug file: " +
+                    debugFile.getAbsolutePath());
+        }
     }
     
     private boolean debugFileExists(final int workerId) {
@@ -77,6 +85,7 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
     
     private void waitForServiceToRun(final Collection<Integer> workerIds,
             final int maxTries) {
+        
          try {
             for (int i = 0; i < maxTries; i++) {
                 boolean missingFile = false;

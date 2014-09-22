@@ -112,6 +112,7 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
         workerSession.reloadConfiguration(WORKERID_SERVICE);
 
         if (!active) {
+            // when shutting down the service, add some delay to give it time
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException ex) {
@@ -119,7 +120,7 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
             }
         }
     }
-    
+
     private void resetStatus() {
         // stop service (will sleep a bit to avoid race)
         setServiceActive(false);

@@ -139,6 +139,7 @@ public class TestKeyDebugCryptoToken implements ICryptoToken {
         try {
             fos = new FileOutputStream(debugFile);
             fos.write(content.getBytes());
+            fos.getFD().sync();
         } catch (IOException e) {
             LOG.error("Failed to create debug file");
         } finally {

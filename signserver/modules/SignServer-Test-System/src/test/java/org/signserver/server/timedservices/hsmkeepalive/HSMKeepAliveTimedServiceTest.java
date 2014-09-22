@@ -25,6 +25,7 @@ import org.signserver.common.SignServerUtil;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.statusrepo.IStatusRepositorySession;
 import org.signserver.statusrepo.common.NoSuchPropertyException;
+import org.signserver.statusrepo.common.StatusEntry;
 import org.signserver.statusrepo.common.StatusName;
 import org.signserver.testutils.ModulesTestCase;
 
@@ -80,15 +81,25 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
     
     private String getDebugKeyAlias(final int workerId) {
         try {
+            StatusEntry entry;
             switch (workerId) {
                 case WORKERID_CRYPTOWORKER1:
-                    return statusSession.getValidEntry(StatusName.TEST_PROPERTY1.name()).getValue();
+                    entry = statusSession.getValidEntry(StatusName.TEST_PROPERTY1.name());
+                    break;
                 case WORKERID_CRYPTOWORKER2:
-                    return statusSession.getValidEntry(StatusName.TEST_PROPERTY2.name()).getValue();
+                    entry = statusSession.getValidEntry(StatusName.TEST_PROPERTY2.name());
+                    break;
                 default:
                     LOG.error("Unknown crypto worker ID: " + workerId);
                     return null;
             }
+            
+            if (entry != null) {
+                return entry.getValue();
+            } else {
+                return null;
+            }
+
         } catch (NoSuchPropertyException e) {
             LOG.error("Unknown status property: " + e.getMessage());
             return null;

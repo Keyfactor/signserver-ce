@@ -11,9 +11,7 @@
  *                                                                       *
  *************************************************************************/
 package org.signserver.server.timedservices.hsmkeepalive;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.PrivateKey;
@@ -23,6 +21,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
+import javax.naming.NamingException;
 import org.apache.log4j.Logger;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenInitializationFailureException;
@@ -30,7 +29,10 @@ import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.KeyTestResult;
+import org.signserver.common.ServiceLocator;
 import org.signserver.server.cryptotokens.ICryptoToken;
+import org.signserver.statusrepo.IStatusRepositorySession;
+import org.signserver.statusrepo.common.NoSuchPropertyException;
 
 /**
  * Test crypto token recording testKey() operations.
@@ -42,14 +44,16 @@ public class TestKeyDebugCryptoToken implements ICryptoToken {
 
     private static Logger LOG = Logger.getLogger(TestKeyDebugCryptoToken.class);
 
-    private String outPath;
+    private String debugProperty;
     private String testKey;
     private boolean disableTestKey;
+      
+    private IStatusRepositorySession statusSession;
     
     /**
-     * Output path for debug files.
+     * Status repository property to set.
      */
-    public static String TESTKEY_DEBUG_OUTPATH = "TESTKEY_DEBUG_OUTPATH";
+    public static String TESTKEY_DEBUG_PROPERTY = "TESTKEY_DEBUG_PROPERTY";
     
     /**
      * Property to set to simulate missing TESTKEY.
@@ -58,15 +62,19 @@ public class TestKeyDebugCryptoToken implements ICryptoToken {
     
     @Override
     public void init(int workerId, Properties props) throws CryptoTokenInitializationFailureException {
-        this.outPath = props.getProperty(TESTKEY_DEBUG_OUTPATH);
+        this.debugProperty = props.getProperty(TESTKEY_DEBUG_PROPERTY);
         this.testKey = props.getProperty(HSMKeepAliveTimedService.TESTKEY);
         this.disableTestKey =
                 Boolean.parseBoolean(props.getProperty(DISABLE_TESTKEY,
                                                        Boolean.FALSE.toString()));
-        
-        // to prevent a possible race condition, delete the output file
-        // when re-initing the token
-        new File(outPath).delete();
+    
+        try {
+            statusSession = ServiceLocator.getInstance().lookupLocal(
+                    IStatusRepositorySession.class);
+        } catch (NamingException ex) {
+            throw new RuntimeException("Unable to lookup worker session",
+                    ex);
+        }
     }
 
     @Override
@@ -121,9 +129,6 @@ public class TestKeyDebugCryptoToken implements ICryptoToken {
 
     @Override
     public Collection<KeyTestResult> testKey(String alias, char[] authCode) throws CryptoTokenOfflineException, KeyStoreException {
-        // record the invocation
-        final File debugFile =
-                new File(outPath);
         boolean success = true;
         String message = "";
         String content = alias;
@@ -134,24 +139,13 @@ public class TestKeyDebugCryptoToken implements ICryptoToken {
             message = "no such key";
             content = "_NoKey";
         }
-        
-        FileOutputStream fos = null;
         try {
-            fos = new FileOutputStream(debugFile);
-            fos.write(content.getBytes());
-            fos.getFD().sync();
-        } catch (IOException e) {
-            LOG.error("Failed to create debug file");
-        } finally {
-            if (fos != null) {
-                try {
-                    fos.close();
-                } catch (IOException e) {
-                    // NOPMD ignored
-                }
-            }
+            statusSession.update(debugProperty, content);
+        } catch (NoSuchPropertyException ex) {
+            throw new CryptoTokenOfflineException("Unknown status property: " +
+                    debugProperty);
         }
-        
+
         return Arrays.asList(new KeyTestResult(alias, success, message, null));
     }
 

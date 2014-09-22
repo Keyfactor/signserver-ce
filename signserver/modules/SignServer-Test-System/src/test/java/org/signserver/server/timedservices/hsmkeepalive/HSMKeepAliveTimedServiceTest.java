@@ -13,14 +13,9 @@
 package org.signserver.server.timedservices.hsmkeepalive;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.logging.Level;
-import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
@@ -28,6 +23,9 @@ import org.junit.runners.MethodSorters;
 import org.signserver.common.ServiceConfig;
 import org.signserver.common.SignServerUtil;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.statusrepo.IStatusRepositorySession;
+import org.signserver.statusrepo.common.NoSuchPropertyException;
+import org.signserver.statusrepo.common.StatusName;
 import org.signserver.testutils.ModulesTestCase;
 
 /**
@@ -46,63 +44,32 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
     private static final int WORKERID_CRYPTOWORKER2 = 5802;
 
     private final IWorkerSession workerSession = getWorkerSession();
-
-    private File signServerHome;
-    
+    private final IStatusRepositorySession statusSession = getStatusSession();
+  
     @Before
     @Override
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
-        signServerHome = getSignServerHome();
-        deleteDebugFile(WORKERID_CRYPTOWORKER1);
-        deleteDebugFile(WORKERID_CRYPTOWORKER2);
     }
     
-    private File getDebugFile(final int workerId) {
-        return new File(signServerHome,
-                         "~testkey-" + workerId);
-    }
-    
-    private void deleteDebugFile(final int workerId) {
-        final File debugFile = getDebugFile(workerId);
-
-        // don't try to delete debug file if not already existing
-        if (!debugFile.exists()) {
-            return;
-        }
-        
-        LOG.info("Can write debug file: " +
-                Boolean.toString(debugFile.canWrite()));
-        
-        if (!debugFile.delete()) {
-            LOG.error("Failed to delete debug file: " +
-                    debugFile.getAbsolutePath());
-        }
-    }
-    
-    private boolean debugFileExists(final int workerId) {
-        final File debugFile = getDebugFile(workerId);
-
-        return debugFile.exists() && debugFile.isFile();
-    }
-    
+ 
     private void waitForServiceToRun(final Collection<Integer> workerIds,
             final int maxTries) {
         
          try {
             for (int i = 0; i < maxTries; i++) {
-                boolean missingFile = false;
+                boolean missingAlias = false;
                 
                 Thread.sleep(1000);
                 
                 for (final int workerId : workerIds) {
-                    if (!debugFileExists(workerId)) {
-                        missingFile = true;
+                    if (getDebugKeyAlias(workerId) == null) {
+                        missingAlias = true;
                         break;
                     }
                 }
                 
-                if (!missingFile) {
+                if (!missingAlias) {
                     break;
                 }
             }
@@ -112,16 +79,18 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
     }
     
     private String getDebugKeyAlias(final int workerId) {
-        final File debugFile = getDebugFile(workerId);
- 
         try {
-            final FileInputStream fis = new FileInputStream(debugFile);
-            
-            return IOUtils.toString(fis);
-        } catch (FileNotFoundException e) {
-            return null;
-        } catch (IOException e) {
-            LOG.error("Error reading debug file: " + e.getMessage());
+            switch (workerId) {
+                case WORKERID_CRYPTOWORKER1:
+                    return statusSession.getValidEntry(StatusName.TEST_PROPERTY1.name()).getValue();
+                case WORKERID_CRYPTOWORKER2:
+                    return statusSession.getValidEntry(StatusName.TEST_PROPERTY2.name()).getValue();
+                default:
+                    LOG.error("Unknown crypto worker ID: " + workerId);
+                    return null;
+            }
+        } catch (NoSuchPropertyException e) {
+            LOG.error("Unknown status property: " + e.getMessage());
             return null;
         }
     }
@@ -139,19 +108,22 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
             }
         }
     }
+    
+    private void resetStatus() {
+        // stop service (will sleep a bit to avoid race)
+        setServiceActive(false);
+        // reset status repository
+        try {
+            statusSession.update(StatusName.TEST_PROPERTY1.name(), null);
+            statusSession.update(StatusName.TEST_PROPERTY2.name(), null);
+        } catch (NoSuchPropertyException e) {
+            LOG.error("Unknown status property: " + e.getMessage());
+        }
+    }
    
     public void test00setupDatabase() throws Exception {
         setProperties(new File(getSignServerHome(), "res/test/test-hsmkeepalive-configuration.properties"));
-        
-        // set debug outpaths
-        workerSession.setWorkerProperty(WORKERID_CRYPTOWORKER1,
-                TestKeyDebugCryptoToken.TESTKEY_DEBUG_OUTPATH,
-                getDebugFile(WORKERID_CRYPTOWORKER1).getAbsolutePath());
-        workerSession.setWorkerProperty(WORKERID_CRYPTOWORKER2,
-                TestKeyDebugCryptoToken.TESTKEY_DEBUG_OUTPATH,
-                getDebugFile(WORKERID_CRYPTOWORKER2).getAbsolutePath());
-        
-        
+
         workerSession.reloadConfiguration(WORKERID_SERVICE);
         workerSession.reloadConfiguration(WORKERID_CRYPTOWORKER1);
         workerSession.reloadConfiguration(WORKERID_CRYPTOWORKER2);
@@ -169,19 +141,19 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
             // make sure the service had time to run
             waitForServiceToRun(Arrays.asList(WORKERID_CRYPTOWORKER1, WORKERID_CRYPTOWORKER2),
                 30);
+            
+            final String keyAlias1 = getDebugKeyAlias(WORKERID_CRYPTOWORKER1);
+            final String keyAlias2 = getDebugKeyAlias(WORKERID_CRYPTOWORKER2);
+
             // check that the service has run and tested keys for both configured workers
-            assertTrue("testKey run on worker 1",
-                        debugFileExists(WORKERID_CRYPTOWORKER1));
-            assertTrue("testKey run on worker 2",
-                        debugFileExists(WORKERID_CRYPTOWORKER2));
+            assertNotNull("testKey run on worker 1", keyAlias1);
+            assertNotNull("testKey run on worker 2", keyAlias2);
             assertEquals("TESTKEY alias used for worker 1",
-                         "TestKey1", getDebugKeyAlias(WORKERID_CRYPTOWORKER1));
+                         "TestKey1", keyAlias1);
             assertEquals("TESTKEY alias used for worker 2",
-                         "TestKey2", getDebugKeyAlias(WORKERID_CRYPTOWORKER2));
+                         "TestKey2", keyAlias2);
         } finally {
-            setServiceActive(false);
-            deleteDebugFile(WORKERID_CRYPTOWORKER1);
-            deleteDebugFile(WORKERID_CRYPTOWORKER2);
+            resetStatus();
         }
     }
     
@@ -203,24 +175,24 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
             // make sure the service had time to run
             waitForServiceToRun(Arrays.asList(WORKERID_CRYPTOWORKER1, WORKERID_CRYPTOWORKER2),
                     30);
+            
+            final String keyAlias1 = getDebugKeyAlias(WORKERID_CRYPTOWORKER1);
+            final String keyAlias2 = getDebugKeyAlias(WORKERID_CRYPTOWORKER2);
+            
             // check that the service has run and tested keys for both configured workers
-            assertTrue("testKey run on worker 1",
-                        debugFileExists(WORKERID_CRYPTOWORKER1));
-            assertTrue("testKey run on worker 2",
-                        debugFileExists(WORKERID_CRYPTOWORKER2));
+            assertNotNull("testKey run on worker 1", keyAlias1);
+            assertNotNull("testKey run on worker 2", keyAlias2);
             assertEquals("TESTKEY alias used for worker 1",
-                         "TestKey1", getDebugKeyAlias(WORKERID_CRYPTOWORKER1));
+                         "TestKey1", keyAlias1);
             assertEquals("TESTKEY alias used for worker 2",
-                         "TestKey2", getDebugKeyAlias(WORKERID_CRYPTOWORKER2));
+                         "TestKey2", keyAlias2);
         } finally {
             workerSession.removeWorkerProperty(WORKERID_CRYPTOWORKER1, "DEFAULTKEY");
             workerSession.removeWorkerProperty(WORKERID_CRYPTOWORKER2, "DEFAULTKEY");
             workerSession.reloadConfiguration(WORKERID_CRYPTOWORKER1);
             workerSession.reloadConfiguration(WORKERID_CRYPTOWORKER2);
 
-            setServiceActive(false);
-            deleteDebugFile(WORKERID_CRYPTOWORKER1);
-            deleteDebugFile(WORKERID_CRYPTOWORKER2);
+            resetStatus();
         }
     }
     
@@ -246,15 +218,17 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
             // make sure the service had time to run
             waitForServiceToRun(Arrays.asList(WORKERID_CRYPTOWORKER1, WORKERID_CRYPTOWORKER2),
                     30);
+            
+            final String keyAlias1 = getDebugKeyAlias(WORKERID_CRYPTOWORKER1);
+            final String keyAlias2 = getDebugKeyAlias(WORKERID_CRYPTOWORKER2);
+            
             // check that the service has run and tested keys for both configured workers
-            assertTrue("testKey run on worker 1",
-                        debugFileExists(WORKERID_CRYPTOWORKER1));
-            assertTrue("testKey run on worker 2",
-                        debugFileExists(WORKERID_CRYPTOWORKER2));
+            assertNotNull("testKey run on worker 1", keyAlias1);
+            assertNotNull("testKey run on worker 2", keyAlias2);
             assertEquals("DEFAULTKEY alias used for worker 1",
-                         "DefaultKey1", getDebugKeyAlias(WORKERID_CRYPTOWORKER1));
+                         "DefaultKey1", keyAlias1);
             assertEquals("DEFAULTKEY alias used for worker 2",
-                         "DefaultKey2", getDebugKeyAlias(WORKERID_CRYPTOWORKER2));
+                         "DefaultKey2", keyAlias2);
         } finally {
             workerSession.removeWorkerProperty(WORKERID_CRYPTOWORKER1, "DEFAULTKEY");
             workerSession.removeWorkerProperty(WORKERID_CRYPTOWORKER2, "DEFAULTKEY");
@@ -265,9 +239,7 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
             workerSession.reloadConfiguration(WORKERID_CRYPTOWORKER1);
             workerSession.reloadConfiguration(WORKERID_CRYPTOWORKER2);
 
-            setServiceActive(false);
-            deleteDebugFile(WORKERID_CRYPTOWORKER1);
-            deleteDebugFile(WORKERID_CRYPTOWORKER2);
+            resetStatus();
         }
     }
     
@@ -298,23 +270,24 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
             // make sure the service had time to run
             waitForServiceToRun(Arrays.asList(WORKERID_CRYPTOWORKER1, WORKERID_CRYPTOWORKER2),
                     30);
+            
+            final String keyAlias1 = getDebugKeyAlias(WORKERID_CRYPTOWORKER1);
+            final String keyAlias2 = getDebugKeyAlias(WORKERID_CRYPTOWORKER2);
+            
             // check that the service has run and tested keys for both configured workers
-            assertTrue("testKey run on worker 1",
-                        debugFileExists(WORKERID_CRYPTOWORKER1));
-            assertTrue("testKey run on worker 2",
-                        debugFileExists(WORKERID_CRYPTOWORKER2));
+            assertNotNull("testKey run on worker 1", keyAlias1);
+            assertNotNull("testKey run on worker 2", keyAlias2);
             assertEquals("TESTKEY alias used for worker 1",
-                         "TestKey1", getDebugKeyAlias(WORKERID_CRYPTOWORKER1));
+                         "TestKey1", keyAlias1);
             assertEquals("TESTKEY alias used for worker 2",
-                         "TestKey2", getDebugKeyAlias(WORKERID_CRYPTOWORKER2));
+                         "TestKey2", keyAlias2);
         } finally {
             workerSession.setWorkerProperty(WORKERID_SERVICE,
                     HSMKeepAliveTimedService.CRYPTOTOKENS,
                     "CryptoWorker1,CryptoWorker2");
             workerSession.reloadConfiguration(WORKERID_SERVICE);
-            setServiceActive(false);
-            deleteDebugFile(WORKERID_CRYPTOWORKER1);
-            deleteDebugFile(WORKERID_CRYPTOWORKER2);
+            
+            resetStatus();
         }
     }
     
@@ -333,23 +306,24 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
             // make sure the service had time to run
             waitForServiceToRun(Arrays.asList(WORKERID_CRYPTOWORKER1, WORKERID_CRYPTOWORKER2),
                     30);
+            
+            final String keyAlias1 = getDebugKeyAlias(WORKERID_CRYPTOWORKER1);
+            final String keyAlias2 = getDebugKeyAlias(WORKERID_CRYPTOWORKER2);
+            
             // check that the service has run and tested keys for both configured workers
-            assertTrue("testKey run on worker 1",
-                        debugFileExists(WORKERID_CRYPTOWORKER1));
-            assertTrue("testKey run on worker 2",
-                        debugFileExists(WORKERID_CRYPTOWORKER2));
+            assertNotNull("testKey run on worker 1", keyAlias1);
+            assertNotNull("testKey run on worker 2", keyAlias2);
             assertEquals("TESTKEY alias used for worker 1",
-                         "TestKey1", getDebugKeyAlias(WORKERID_CRYPTOWORKER1));
+                         "TestKey1", keyAlias1);
             assertEquals("TESTKEY alias used for worker 2",
-                         "TestKey2", getDebugKeyAlias(WORKERID_CRYPTOWORKER2));
+                         "TestKey2", keyAlias2);
         } finally {
             workerSession.setWorkerProperty(WORKERID_SERVICE,
                     HSMKeepAliveTimedService.CRYPTOTOKENS,
                     "CryptoWorker1,CryptoWorker2");
             workerSession.reloadConfiguration(WORKERID_SERVICE);
-            setServiceActive(false);
-            deleteDebugFile(WORKERID_CRYPTOWORKER1);
-            deleteDebugFile(WORKERID_CRYPTOWORKER2);
+            
+            resetStatus();
         }
     }
     
@@ -380,11 +354,13 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
             // make sure the service had time to run
             waitForServiceToRun(Arrays.asList(WORKERID_CRYPTOWORKER1, WORKERID_CRYPTOWORKER2),
                     30);
+            
+            final String keyAlias1 = getDebugKeyAlias(WORKERID_CRYPTOWORKER1);
+            final String keyAlias2 = getDebugKeyAlias(WORKERID_CRYPTOWORKER2);
+            
             // check that the service has run and didn't use simulated, non-existing key
-            assertEquals("No key found",
-                         "_NoKey", getDebugKeyAlias(WORKERID_CRYPTOWORKER1));
-            assertEquals("No key",
-                         "_NoKey", getDebugKeyAlias(WORKERID_CRYPTOWORKER2));
+            assertEquals("No key found", "_NoKey", keyAlias1);
+            assertEquals("No key", "_NoKey", keyAlias2);
         } finally {
             workerSession.removeWorkerProperty(WORKERID_CRYPTOWORKER1,
                     "DEFAULTKEY");
@@ -397,9 +373,7 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
             workerSession.reloadConfiguration(WORKERID_CRYPTOWORKER1);
             workerSession.reloadConfiguration(WORKERID_CRYPTOWORKER2);
             
-            setServiceActive(false);
-            deleteDebugFile(WORKERID_CRYPTOWORKER1);
-            deleteDebugFile(WORKERID_CRYPTOWORKER2);
+            resetStatus();
         }
     }
     
@@ -421,18 +395,24 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
             // make sure the service had time to run
             waitForServiceToRun(Arrays.asList(WORKERID_CRYPTOWORKER2),
                 30);
-            // check that the service has run and tested keys for both configured workers
-            assertTrue("testKey run on worker 2",
-                        debugFileExists(WORKERID_CRYPTOWORKER2));
+            
+            final String keyAlias1 = getDebugKeyAlias(WORKERID_CRYPTOWORKER1);
+            final String keyAlias2 = getDebugKeyAlias(WORKERID_CRYPTOWORKER2);
+            
+            // check that the service has run and tested keys for the configured
+            // worker
+            assertNotNull("testKey run on worker 2", keyAlias2);
             assertEquals("TESTKEY alias used for worker 2",
-                         "TestKey2", getDebugKeyAlias(WORKERID_CRYPTOWORKER2));
+                         "TestKey2", keyAlias2);
+            
+            // check that the service was not run for the worker with no
+            // suitable alias
+            assertNull("testKey not run on worker 1", keyAlias1);
         } finally {
             workerSession.setWorkerProperty(WORKERID_CRYPTOWORKER1,
                     HSMKeepAliveTimedService.TESTKEY, "TestKey1");
             workerSession.reloadConfiguration(WORKERID_CRYPTOWORKER1);
-            setServiceActive(false);
-            deleteDebugFile(WORKERID_CRYPTOWORKER1);
-            deleteDebugFile(WORKERID_CRYPTOWORKER2);
+            resetStatus();
         }
     }
     
@@ -461,23 +441,23 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
             // make sure the service had time to run
             waitForServiceToRun(Arrays.asList(WORKERID_CRYPTOWORKER1, WORKERID_CRYPTOWORKER2),
                     30);
+            
+            final String keyAlias1 = getDebugKeyAlias(WORKERID_CRYPTOWORKER1);
+            final String keyAlias2 = getDebugKeyAlias(WORKERID_CRYPTOWORKER2);
+
             // check that the service has run and tested keys for both configured workers
-            assertTrue("testKey run on worker 1",
-                        debugFileExists(WORKERID_CRYPTOWORKER1));
-            assertTrue("testKey run on worker 2",
-                        debugFileExists(WORKERID_CRYPTOWORKER2));
+            assertNotNull("testKey run on worker 1", keyAlias1);
+            assertNotNull("testKey run on worker 2", keyAlias2);
             assertEquals("TESTKEY alias used for worker 1",
-                         "TestKey1", getDebugKeyAlias(WORKERID_CRYPTOWORKER1));
+                         "TestKey1", keyAlias1);
             assertEquals("TESTKEY alias used for worker 2",
-                         "TestKey2", getDebugKeyAlias(WORKERID_CRYPTOWORKER2));
+                         "TestKey2", keyAlias2);
         } finally {
             workerSession.setWorkerProperty(WORKERID_SERVICE,
                     HSMKeepAliveTimedService.CRYPTOTOKENS,
                     "CryptoWorker1,CryptoWorker2");
             workerSession.reloadConfiguration(WORKERID_SERVICE);
-            setServiceActive(false);
-            deleteDebugFile(WORKERID_CRYPTOWORKER1);
-            deleteDebugFile(WORKERID_CRYPTOWORKER2);
+            resetStatus();
         }
     }
     

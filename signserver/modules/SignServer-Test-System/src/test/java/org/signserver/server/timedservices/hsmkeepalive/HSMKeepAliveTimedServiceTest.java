@@ -71,6 +71,9 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
             return;
         }
         
+        LOG.info("Can write debug file: " +
+                Boolean.toString(debugFile.canWrite()));
+        
         if (!debugFile.delete()) {
             LOG.error("Failed to delete debug file: " +
                     debugFile.getAbsolutePath());

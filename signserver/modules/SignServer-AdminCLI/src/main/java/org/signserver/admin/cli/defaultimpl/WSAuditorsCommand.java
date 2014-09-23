@@ -25,9 +25,9 @@ public class WSAuditorsCommand extends AbstractWSClientsCommand {
     		+ "Usage: signserver wsauditors -add -cert <PEM or DER file>\n"
             + "Usage: signserver wsauditors -remove -certserialno <certificate serial number> -issuerdn <issuer DN>\n"
             + "Usage: signserver wsauditors -list\n"
-            + "Example 1: signserver wsauditors -add -certserialno 0123ABCDEF -issuerdn \"CN=Neo Morpheus, C=SE\"\n"
+            + "Example 1: signserver wsauditors -add -certserialno 123ABCDEF -issuerdn \"CN=Neo Morpheus, C=SE\"\n"
             + "Example 2: signserver wsauditors -add -cert wsauditor.pem\n"
-            + "Example 3: signserver wsauditors -remove -certserialno 0123ABCDEF -issuerdn \"CN=Neo Morpheus, C=SE\"\n"
+            + "Example 3: signserver wsauditors -remove -certserialno 123ABCDEF -issuerdn \"CN=Neo Morpheus, C=SE\"\n"
             + "Example 4: signserver wsauditors -list";
 
     @Override

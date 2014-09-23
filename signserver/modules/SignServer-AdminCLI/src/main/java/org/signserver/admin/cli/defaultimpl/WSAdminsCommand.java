@@ -54,9 +54,9 @@ public class WSAdminsCommand extends AbstractAdminCommand {
             + "Usage: signserver wsadmins -remove -certserialno <certificate serial number> -issuerdn <issuer DN>\n"
             + "Usage: signserver wsadmins -list\n"
             + "Usage: signserver wsadmins -allowany [true|false]\n"
-            + "Example 1: signserver wsadmins -add -certserialno 0123ABCDEF -issuerdn \"CN=Neo Morpheus, C=SE\"\n"
+            + "Example 1: signserver wsadmins -add -certserialno 123ABCDEF -issuerdn \"CN=Neo Morpheus, C=SE\"\n"
             + "Example 2: signserver wsadmins -add -cert wsadmin.pem\n"
-            + "Example 3: signserver wsadmins -remove -certserialno 0123ABCDEF -issuerdn \"CN=Neo Morpheus, C=SE\"\n"
+            + "Example 3: signserver wsadmins -remove -certserialno 123ABCDEF -issuerdn \"CN=Neo Morpheus, C=SE\"\n"
             + "Example 4: signserver wsadmins -list\n"
             + "Example 5: signserver wsadmins -allowany\n"
             + "Example 6: signserver wsadmins -allowany false";

@@ -20,9 +20,9 @@ package org.signserver.admin.cli.defaultimpl;
 public class WSArchiveAuditorsCommand extends AbstractWSClientsCommand {
     
     private static final String USAGE =
-            "Usage: signserver wsarchiveauditors -add -certserialno <certificate serial number> -issuerdn <issuer DN>\n"
+            "Usage: signserver wsarchiveauditors -add -certserialno <certificate serial number (in hex)> -issuerdn <issuer DN>\n"
                 + "Usage: signserver warchiveauditors -add -cert <PEM or DER file>\n"
-            + "Usage: signserver warchiveauditors -remove -certserialno <certificate serial number> -issuerdn <issuer DN>\n"
+            + "Usage: signserver warchiveauditors -remove -certserialno <certificate serial number (in hex)> -issuerdn <issuer DN>\n"
             + "Usage: signserver warchiveauditors -list\n"
             + "Example 1: signserver warchiveauditors -add -certserialno 123ABCDEF -issuerdn \"CN=Neo Morpheus, C=SE\"\n"
             + "Example 2: signserver warchiveauditors -add -cert wsauditor.pem\n"

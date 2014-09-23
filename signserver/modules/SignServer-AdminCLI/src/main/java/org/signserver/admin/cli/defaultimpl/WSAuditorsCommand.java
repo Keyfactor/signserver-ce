@@ -21,9 +21,9 @@ public class WSAuditorsCommand extends AbstractWSClientsCommand {
     
    
     private static final String USAGE =
-            "Usage: signserver wsauditors -add -certserialno <certificate serial number> -issuerdn <issuer DN>\n"
+            "Usage: signserver wsauditors -add -certserialno <certificate serial number (in hex)> -issuerdn <issuer DN>\n"
     		+ "Usage: signserver wsauditors -add -cert <PEM or DER file>\n"
-            + "Usage: signserver wsauditors -remove -certserialno <certificate serial number> -issuerdn <issuer DN>\n"
+            + "Usage: signserver wsauditors -remove -certserialno <certificate serial number (in hex)> -issuerdn <issuer DN>\n"
             + "Usage: signserver wsauditors -list\n"
             + "Example 1: signserver wsauditors -add -certserialno 123ABCDEF -issuerdn \"CN=Neo Morpheus, C=SE\"\n"
             + "Example 2: signserver wsauditors -add -cert wsauditor.pem\n"

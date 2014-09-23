@@ -1445,7 +1445,7 @@ SignServer.
                         </p>
                         <p>
 Authorizes an administrator to use the Admin Web Service interface by
-certificate serialnumber and issuer DN.
+certificate serialnumber (in hexadecimal) and issuer DN.
                         </p>
                         <p>
 <b>wsadmins -remove:</b>
@@ -1476,7 +1476,7 @@ audit log of SignServer.
                         </p>
                         <p>
 Authorizes an auditor to use the Admin Web Service interface by
-certificate serialnumber and issuer DN.
+certificate serialnumber (given in hexadecimal) and issuer DN.
                         </p>
                         <p>
 <b>wsauditors -remove:</b>
@@ -1498,7 +1498,7 @@ archive of SignServer.
 <b>wsarchiveauditors -add:</b>
                         </p>
                         <p>
-Authorizes an auditor, by specifying a certificate serial number and issuer DN, to use the Admin Web Service interface for querying the archive.
+Authorizes an auditor, by specifying a certificate serial number (in hexadecimal) and issuer DN, to use the Admin Web Service interface for querying the archive.
                         </p>
                         <p>
 <b>wsarchiveauditors -remove:</b>
@@ -2941,8 +2941,8 @@ The WSDL file is located at the URL http://&lt;hostname&gt;:8080/signserver/Admi
 Authorizing administrators can be done using the Admin CLI command "wsadmins".
                     </p>
                     <source>
-Usage: signserver wsadmins -add -certserialno &lt;certificate serial number&gt; -issuerdn &lt;issuer DN&gt;
-Usage: signserver wsadmins -remove -certserialno &lt;certificate serial number&gt; -issuerdn &lt;issuer DN&gt;
+Usage: signserver wsadmins -add -certserialno &lt;certificate serial number (in hex)&gt; -issuerdn &lt;issuer DN&gt;
+Usage: signserver wsadmins -remove -certserialno &lt;certificate serial number (in hex)&gt; -issuerdn &lt;issuer DN&gt;
 Usage: signserver wsadmins -list
 Example 1: signserver wsadmins -add -certserialno 123abcdef -issuerdn "C=SE, CN=Neo Morpheus"
 Example 2: signserver wsadmins -remove -certserialno 123abcdef -issuerdn "C=SE, CN=Neo Morpheus"

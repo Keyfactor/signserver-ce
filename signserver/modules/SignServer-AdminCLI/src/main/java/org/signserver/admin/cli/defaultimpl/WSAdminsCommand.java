@@ -49,9 +49,9 @@ public class WSAdminsCommand extends AbstractAdminCommand {
     private static final Options OPTIONS;
     
     private static final String USAGE =
-            "Usage: signserver wsadmins -add -certserialno <certificate serial number> -issuerdn <issuer DN>\n"
+            "Usage: signserver wsadmins -add -certserialno <certificate serial number (in hex)> -issuerdn <issuer DN>\n"
     		+ "Usage: signserver wsadmins -add -cert <PEM or DER file>\n"
-            + "Usage: signserver wsadmins -remove -certserialno <certificate serial number> -issuerdn <issuer DN>\n"
+            + "Usage: signserver wsadmins -remove -certserialno <certificate serial number (in hex)> -issuerdn <issuer DN>\n"
             + "Usage: signserver wsadmins -list\n"
             + "Usage: signserver wsadmins -allowany [true|false]\n"
             + "Example 1: signserver wsadmins -add -certserialno 123ABCDEF -issuerdn \"CN=Neo Morpheus, C=SE\"\n"

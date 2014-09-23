@@ -174,19 +174,19 @@
       
         <li><div class="menuheader">Used Services</div>
           <p><br/>
-          <a href="http://sourceforge.net/projects/signserver"><img style="border:none; margin-left:20px" src="http://sflogo.sourceforge.net/sflogo.php?group_id=190195&amp;type=13" width="120" height="30" alt="Get SignServer at SourceForge.net. Fast, secure and Free Open Source software downloads" /></a>
+          <a href="http://sourceforge.net/projects/signserver"><img style="border:none; margin-left:20px;" src="http://sflogo.sourceforge.net/sflogo.php?group_id=190195&amp;type=13" width="120" height="30" alt="Get SignServer at SourceForge.net. Fast, secure and Free Open Source software downloads" /></a>
           </p>
         </li>
         <li><div class="menuheader">PKI by PrimeKey</div>
           <p>
           <br/>
                 <a href="http://www.primekey.se/Products/EJBCA+PKI/" target="ejbca">
-                <img style="border:none; margin-left:20px" src="$relativePath/images/ejbca_pki_by_primekey.png" alt="EJBCA PKI by PrimeKey"/>
+                <img style="border:none; margin-left:20px;" src="$relativePath/images/ejbca_pki_by_primekey.png" alt="Click the PKI-by-PrimeKey-EJBCA-logo to visit www.ejbca.org"/>
                 </a>
           </p>
           <p>
                 <a href="http://www.primekey.se/" target="primekey">
-                <img style="border:none; margin-left:20px" src="$relativePath/images/logo-PrimeKey.png" alt="PKI by PrimeKey"/>
+                <img style="border:none; margin-left:20px;" src="$relativePath/images/logo-PrimeKey.png" alt="Click the PrimeKey logo to check out the products and services offered at www.primekey.se" title="The logo squares follow a given magnitude of primes, symbolizing the encryption method of PrimeKey PKI."/>
                 </a>
           </p>
         </li>
@@ -215,20 +215,20 @@
       <div class="logobar">
           <table width="100%">
             <tr>
-                <td width="15%"><a href="http://www.signserver.org/"><img src="$relativePath/images/SignServer_pki_by_primekey.png" alt="SignServer" width="212" height="71" style="border:none"/></a></td>
+                <td width="15%"><a href="http://www.signserver.org/"><img src="$relativePath/images/SignServer_pki_by_primekey.png" alt="Click the PKI-by-PrimeKey-SignServer-logo to visit www.signserver.org" title="The logo squares follow a given magnitude of primes, symbolizing the encryption method of PrimeKey PKI." width="212" height="71" style="border:none;"/></a></td>
                 <td style="text-align:right">
                     <div class="searchcaption">
                             Search signserver.org for:<br />
                             <form id="searchForm" target="_blank" onsubmit="q.value = query.value + ' site:signserver.org'" action="http://www.google.com/search" method="get">
                                 <input name="q" type="hidden">
-                                <div style="height: 18px; white-space: nowrap">
+                                <div style="height: 18px; white-space: nowrap;">
                                     <input name="query" id="searchBox" maxlength="255" />
                                     <input type="submit" value="Go" />
                                 </div>
                             </form>
                     </div>
                 </td>
-        		<!-- <td align="center" id="services"><a href="http://www.primekey.se/" target="primekey">PrimeKey Support, Development and Maintenance services</a></td> -->
+        	<td id="services"><a href="http://www.primekey.se/Services/Support/?pk_campaign=ssorg&pk_kwd=head_click-here" target="pk">Click here to learn about PrimeKey Support Services!</a></td>
             </tr>
           </table>
       </div>
@@ -237,8 +237,8 @@
 #end
 
 #macro (footer)
-      <p class="copyright">
-        Copyright &copy; 2007-2014&nbsp;SignServer team. All rights reserved.
+      <p class="copyright" style="text-align:center;">
+        Copyright &copy; 2007-2014 SignServer team. All rights reserved.
         <script type="text/javascript" language="JavaScript"><!--
                 document.write(" - "+"Last Published: " + document.lastModified);
               //  -->
@@ -254,7 +254,7 @@ var piwikTracker = Piwik.getTracker(pkBaseURL + "piwik.php", 6);
 piwikTracker.trackPageView();
 piwikTracker.enableLinkTracking();
 } catch( err ) {}
-</script><noscript><p><img src="//stat.primekey.se/piwik/piwik.php?idsite=6" style="border:0" alt="" /></p></noscript>
+</script><noscript><p><img src="//stat.primekey.se/piwik/piwik.php?idsite=6" style="border:0;" alt="" /></p></noscript>
 <!-- End Piwik Tracking Code -->      
     </body>
   </html>

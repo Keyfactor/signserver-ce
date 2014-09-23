@@ -182,7 +182,6 @@
   #header()
   <div class="main">
   <div class="content">
-    <!-- <h1 class="title">$root.getChild("properties").getChild("title").getText()</h1> -->
     #chapterminitoc ($root)
     #minitoc ($root)
 

@@ -15,6 +15,7 @@ package org.signserver.module.tsa;
 import java.math.BigInteger;
 import java.security.Security;
 import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertNotNull;
 import org.apache.log4j.Logger;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.tsp.TSPAlgorithms;
@@ -85,6 +86,36 @@ public class TimeStampSignerUnitTest {
 
         LogMap logMap = LogMap.getInstance(requestContext);
         assertEquals("timesource", LocalComputerTimeSource.class.getSimpleName(), logMap.get("TSA_TIMESOURCE"));
+    }
+    
+    /**
+     * Test that the log contains the TSA_TIMESTAMPRESPONSE_ENCODED entry and
+     * that the entry is not encoded with line breaks.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testLogResponse() throws Exception {
+        LOG.info("testLogResponse");
+        TimeStampRequestGenerator timeStampRequestGenerator =
+                new TimeStampRequestGenerator();
+        TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
+                TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
+        byte[] requestBytes = timeStampRequest.getEncoded();
+        GenericSignRequest signRequest = new GenericSignRequest(100, requestBytes);
+        final RequestContext requestContext = new RequestContext();
+        final GenericSignResponse res = (GenericSignResponse) workerSession.process(
+                WORKER1, signRequest, requestContext);
+
+        final TimeStampResponse timeStampResponse = new TimeStampResponse(
+                (byte[]) res.getProcessedData());
+        timeStampResponse.validate(timeStampRequest);
+
+        LogMap logMap = LogMap.getInstance(requestContext);
+        assertNotNull("response",
+                logMap.get(ITimeStampLogger.LOG_TSA_TIMESTAMPRESPONSE_ENCODED));
+        assertEquals("log line doesn't contain newlines", -1,
+                logMap.get(ITimeStampLogger.LOG_TSA_TIMESTAMPRESPONSE_ENCODED).lastIndexOf('\n'));
     }
 
     private void setupWorkers() {

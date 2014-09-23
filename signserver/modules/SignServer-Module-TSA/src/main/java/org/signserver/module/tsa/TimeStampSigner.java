@@ -456,7 +456,7 @@ public class TimeStampSigner extends BaseSigner {
             logMap.put(ITimeStampLogger.LOG_TSA_TIMESTAMPREQUEST_CRITEXTOIDS,
                     String.valueOf(timeStampRequest.getCriticalExtensionOIDs()));
             logMap.put(ITimeStampLogger.LOG_TSA_TIMESTAMPREQUEST_ENCODED,
-                    new String(Base64.encode(requestbytes)));
+                    new String(Base64.encode(requestbytes, false)));
             logMap.put(ITimeStampLogger.LOG_TSA_TIMESTAMPREQUEST_NONCRITEXTOIDS,
                     String.valueOf(timeStampRequest.getNonCriticalExtensionOIDs()));
             logMap.put(ITimeStampLogger.LOG_TSA_TIMESTAMPREQUEST_NOUNCE,
@@ -469,7 +469,7 @@ public class TimeStampSigner extends BaseSigner {
             logMap.put(ITimeStampLogger
                         .LOG_TSA_TIMESTAMPREQUEST_MESSAGEIMPRINTDIGEST,
                     new String(Base64.encode(
-                        timeStampRequest.getMessageImprintDigest())));
+                        timeStampRequest.getMessageImprintDigest(), false)));
 
             final TimeStampTokenGenerator timeStampTokenGen =
                     getTimeStampTokenGenerator(timeStampRequest, logMap);
@@ -499,7 +499,7 @@ public class TimeStampSigner extends BaseSigner {
                             timeStampResponse.getFailInfo().intValue()));
             }
             logMap.put(ITimeStampLogger.LOG_TSA_TIMESTAMPRESPONSE_ENCODED,
-                    new String(Base64.encode(signedbytes)));
+                    new String(Base64.encode(signedbytes, false)));
             logMap.put(ITimeStampLogger.LOG_TSA_PKISTATUS_STRING,
                     timeStampResponse.getStatusString());
             

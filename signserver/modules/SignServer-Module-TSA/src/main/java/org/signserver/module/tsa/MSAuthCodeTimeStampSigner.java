@@ -377,7 +377,7 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
             final String archiveId = createArchiveId(requestbytes, (String) requestContext.get(RequestContext.TRANSACTION_ID));
 
             final GenericSignResponse signResponse;
-            byte[] signedbytes = Base64.encode(der);
+            byte[] signedbytes = Base64.encode(der, false);
             
             logMap.put(ITimeStampLogger.LOG_TSA_TIMESTAMPRESPONSE_ENCODED,
                     new String(signedbytes));

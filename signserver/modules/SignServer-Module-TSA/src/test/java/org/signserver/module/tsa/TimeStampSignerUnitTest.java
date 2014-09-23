@@ -97,7 +97,7 @@ public class TimeStampSignerUnitTest {
      */
     @Test
     public void testLogBase64Entries() throws Exception {
-        LOG.info("testLogResponse");
+        LOG.info("testLogBase64Entries");
         TimeStampRequestGenerator timeStampRequestGenerator =
                 new TimeStampRequestGenerator();
         TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(

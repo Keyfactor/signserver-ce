@@ -89,18 +89,19 @@ public class TimeStampSignerUnitTest {
     }
     
     /**
-     * Test that the log contains the TSA_TIMESTAMPRESPONSE_ENCODED entry and
-     * that the entry is not encoded with line breaks.
+     * Test that the base 64-encoded log entries for request and response
+     * are not encoded with newlines, as this causes an extra base 64 encoding
+     * with a B64: prefix by Base64PutHashMap.
      * 
      * @throws Exception 
      */
     @Test
-    public void testLogResponse() throws Exception {
+    public void testLogBase64Entries() throws Exception {
         LOG.info("testLogResponse");
         TimeStampRequestGenerator timeStampRequestGenerator =
                 new TimeStampRequestGenerator();
         TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
-                TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
+                TSPAlgorithms.SHA1, new byte[2000], BigInteger.valueOf(100));
         byte[] requestBytes = timeStampRequest.getEncoded();
         GenericSignRequest signRequest = new GenericSignRequest(100, requestBytes);
         final RequestContext requestContext = new RequestContext();
@@ -116,6 +117,10 @@ public class TimeStampSignerUnitTest {
                 logMap.get(ITimeStampLogger.LOG_TSA_TIMESTAMPRESPONSE_ENCODED));
         assertEquals("log line doesn't contain newlines", -1,
                 logMap.get(ITimeStampLogger.LOG_TSA_TIMESTAMPRESPONSE_ENCODED).lastIndexOf('\n'));
+        assertNotNull("request",
+                logMap.get(ITimeStampLogger.LOG_TSA_TIMESTAMPREQUEST_ENCODED));
+        assertEquals("log line doesn't contain newlines", -1,
+                logMap.get(ITimeStampLogger.LOG_TSA_TIMESTAMPREQUEST_ENCODED).lastIndexOf('\n'));
     }
 
     private void setupWorkers() {

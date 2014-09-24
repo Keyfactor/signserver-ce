@@ -467,21 +467,22 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
 
     /**
      * Method that returns the certificate used when signing
-     * @throws CryptoTokenOfflineException 
+     * @return the configured certificate (if one), otherwise the certificate in the token (if one)
+     * @throws CryptoTokenOfflineException
      */
     public Certificate getSigningCertificate() throws CryptoTokenOfflineException {
         if (cert == null) {
+            final ICryptoToken token;
             try {
-                final ICryptoToken token = getCryptoToken();
-                if (token != null) {
-                    cert = (X509Certificate) token.getCertificate(ICryptoToken.PURPOSE_SIGN);
-                }
+                token = getCryptoToken();
             } catch (SignServerException e) {
                 log.error(FAILED_TO_GET_CRYPTO_TOKEN_ + e.getMessage());
                 throw new CryptoTokenOfflineException(e);
             }
-            if (cert == null) {
-                cert = (new ProcessableConfig(config)).getSignerCertificate();
+            cert = (new ProcessableConfig(config)).getSignerCertificate();
+
+            if (cert == null && token != null) {
+                cert = (X509Certificate) token.getCertificate(ICryptoToken.PURPOSE_SIGN);
             }
         }
         return cert;
@@ -489,25 +490,25 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
 
     /**
      * Method that returns the certificate chain used when signing
-     * @throws CryptoTokenOfflineException 
+     * @return the configured certificate chain (if one), otherwise the certificate chain in the token (if one)
+     * @throws CryptoTokenOfflineException
      */
     public List<Certificate> getSigningCertificateChain() throws CryptoTokenOfflineException {
         if (certChain == null) {
+            ICryptoToken cToken;
             try {
-                ICryptoToken cToken = getCryptoToken();
-                if (cToken != null) {
-                    certChain = cToken.getCertificateChain(ICryptoToken.PURPOSE_SIGN);
-                    if (certChain == null) {
-                        log.debug("Signtoken did not contain a certificate chain, looking in config.");
-                        certChain = (new ProcessableConfig(config)).getSignerCertificateChain();
-                        if (certChain == null) {
-                            log.debug("Neither Signtoken or ProcessableConfig contains a certificate chain!");
-                        }
-                    }
-                }
+                cToken = getCryptoToken();
             } catch (SignServerException e) {
                 log.error(FAILED_TO_GET_CRYPTO_TOKEN_ + e.getMessage());
                 throw new CryptoTokenOfflineException(e);
+            }
+            certChain = (new ProcessableConfig(config)).getSignerCertificateChain();
+
+            if (certChain == null && cToken != null) {
+                certChain = cToken.getCertificateChain(ICryptoToken.PURPOSE_SIGN);
+            }
+            if (certChain == null) {
+                log.debug("Neither configuration nor token contains a certificate chain!");
             }
         }
         return certChain;

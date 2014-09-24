@@ -83,9 +83,9 @@ public class AdminWS {
     }
     
     
-    private Set<AdminEntry> admins;
-    private Set<AdminEntry> auditors;
-    private Set<AdminEntry> archiveAuditors;
+    private Set<ClientEntry> admins;
+    private Set<ClientEntry> auditors;
+    private Set<ClientEntry> archiveAuditors;
     
 
     
@@ -101,48 +101,48 @@ public class AdminWS {
     @EJB
     private SecurityEventsAuditorSessionLocal auditor;
     
-    private Set<AdminEntry> getAdmins() {
+    private Set<ClientEntry> getAdmins() {
         if (admins == null) {
             final String adminsProperty = global.getGlobalConfiguration().getProperty(
                 GlobalConfiguration.SCOPE_GLOBAL, "WSADMINS");
             
             if (adminsProperty == null) {
                 LOG.warn("No WSADMINS global property set.");
-                admins = new HashSet<AdminEntry>();
+                admins = new HashSet<ClientEntry>();
             } else {
-                admins = AdminEntry.adminEntriesFromProperty(adminsProperty);
+                admins = ClientEntry.clientEntriesFromProperty(adminsProperty);
             }
         }
         
         return admins;
     }
     
-    private Set<AdminEntry> getAuditors() {
+    private Set<ClientEntry> getAuditors() {
         if (auditors == null) {
             final String auditorsProperty = global.getGlobalConfiguration().getProperty(
                 GlobalConfiguration.SCOPE_GLOBAL, "WSAUDITORS");
             
             if (auditorsProperty == null) {
                 LOG.warn("No WSAUDITORS global property set.");
-                auditors = new HashSet<AdminEntry>();
+                auditors = new HashSet<ClientEntry>();
             } else {
-                auditors = AdminEntry.adminEntriesFromProperty(auditorsProperty);
+                auditors = ClientEntry.clientEntriesFromProperty(auditorsProperty);
             }
         }
         
         return auditors;
     }
     
-    private Set<AdminEntry> getArchiveAuditors() {
+    private Set<ClientEntry> getArchiveAuditors() {
         if (archiveAuditors == null) {
             final String archiveAuditorsProperty = global.getGlobalConfiguration().getProperty(
                 GlobalConfiguration.SCOPE_GLOBAL, "WSARCHIVEAUDITORS");
             
             if (archiveAuditorsProperty == null) {
                 LOG.warn("No WSARCHIVEAUDITORS global property set.");
-                archiveAuditors = new HashSet<AdminEntry>();
+                archiveAuditors = new HashSet<ClientEntry>();
             } else {
-                archiveAuditors = AdminEntry.adminEntriesFromProperty(archiveAuditorsProperty);
+                archiveAuditors = ClientEntry.clientEntriesFromProperty(archiveAuditorsProperty);
             }
         }
         
@@ -1180,7 +1180,7 @@ public class AdminWS {
     }
     
     private boolean hasAuthorization(final X509Certificate cert,
-            final Set<AdminEntry> authSet) {
+            final Set<ClientEntry> authSet) {
         
         if (LOG.isDebugEnabled()) {
             LOG.debug("Checking authorization for: SN: " +
@@ -1189,7 +1189,7 @@ public class AdminWS {
                     authSet);
         }
         
-        return authSet.contains(new AdminEntry(cert));
+        return authSet.contains(new ClientEntry(cert));
     }
 
     private X509Certificate[] getClientCertificates() {

@@ -24,27 +24,27 @@ import org.apache.log4j.Logger;
  * @author Marcus Lundblad
  * @version $Id$
  */
-public class AdminEntry {
+public class ClientEntry {
     /** Logger for this class. */
-    private static Logger LOG = Logger.getLogger(AdminEntry.class);
+    private static Logger LOG = Logger.getLogger(ClientEntry.class);
 
     private BigInteger serialNumber;
     private String issuerDN;
 
-    public AdminEntry(final BigInteger serialNumber, final String issuerDN) {
+    public ClientEntry(final BigInteger serialNumber, final String issuerDN) {
         this.serialNumber = serialNumber;
         this.issuerDN = issuerDN;
     }
 
-    public AdminEntry(final X509Certificate cert) {
+    public ClientEntry(final X509Certificate cert) {
         this.serialNumber = cert.getSerialNumber();
         this.issuerDN = cert.getIssuerDN().toString();
     }
 
     @Override
     public boolean equals(final Object other) {
-        if (other instanceof AdminEntry) {
-            final AdminEntry otherEntry = (AdminEntry) other;
+        if (other instanceof ClientEntry) {
+            final ClientEntry otherEntry = (ClientEntry) other;
 
             return serialNumber.equals(otherEntry.serialNumber)
                     && issuerDN.equals(otherEntry.issuerDN);
@@ -66,8 +66,8 @@ public class AdminEntry {
         return "(SN: " + serialNumber.toString(16) + ", Issuer: " + issuerDN + ")";
     }
     
-    public static Set<AdminEntry> adminEntriesFromProperty(final String property) {
-        final Set<AdminEntry> result = new HashSet<AdminEntry>();
+    public static Set<ClientEntry> clientEntriesFromProperty(final String property) {
+        final Set<ClientEntry> result = new HashSet<ClientEntry>();
         
         for (final String entry : property.split(";")) {
             final String[] splittedEntry = entry.split(",", 2);
@@ -76,7 +76,7 @@ public class AdminEntry {
                 LOG.warn("Malformed admin entry: " + entry);
             }
             
-            result.add(new AdminEntry(new BigInteger(splittedEntry[0], 16),
+            result.add(new ClientEntry(new BigInteger(splittedEntry[0], 16),
                                         splittedEntry[1]));
         }
         

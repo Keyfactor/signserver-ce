@@ -15,6 +15,7 @@ package org.signserver.adminws;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.math.BigInteger;
 import java.security.KeyStoreException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -81,7 +82,53 @@ public class AdminWS {
         INT_COLUMNS.add(ArchiveMetadata.SIGNER_ID);
         INT_COLUMNS.add(ArchiveMetadata.TYPE);
     }
+    
+    private static class AdminEntry {
+        private BigInteger serialNumber;
+        private String issuerDN;
+        
+        public AdminEntry(final BigInteger serialNumber, final String issuerDN) {
+            this.serialNumber = serialNumber;
+            this.issuerDN = issuerDN;
+        }
+        
+        public AdminEntry(final X509Certificate cert) {
+            this.serialNumber = cert.getSerialNumber();
+            this.issuerDN = cert.getIssuerDN().toString();
+        }
+        
+        @Override
+        public boolean equals(final Object other) {
+            if (other instanceof AdminEntry) {
+                final AdminEntry otherEntry = (AdminEntry) other;
+                
+                return serialNumber.equals(otherEntry.serialNumber) &&
+                        issuerDN.equals(otherEntry.issuerDN);
+            } else {
+                return false;
+            }
+        }
 
+        @Override
+        public int hashCode() {
+            int hash = 3;
+            hash = 67 * hash + (this.serialNumber != null ? this.serialNumber.hashCode() : 0);
+            hash = 67 * hash + (this.issuerDN != null ? this.issuerDN.hashCode() : 0);
+            return hash;
+        }
+
+        @Override
+        public String toString() {
+            return "(SN: " + serialNumber.toString(16) + ", Issuer: " + issuerDN + ")";        
+        }
+    }
+
+    private Set<AdminEntry> admins;
+    private Set<AdminEntry> auditors;
+    private Set<AdminEntry> archiveAuditors;
+    
+
+    
     @Resource
     private WebServiceContext wsContext;
 
@@ -94,7 +141,71 @@ public class AdminWS {
     @EJB
     private SecurityEventsAuditorSessionLocal auditor;
     
-
+    private Set<AdminEntry> getAdmins() {
+        if (admins == null) {
+            final String adminsProperty = global.getGlobalConfiguration().getProperty(
+                GlobalConfiguration.SCOPE_GLOBAL, "WSADMINS");
+            
+            if (adminsProperty == null) {
+                LOG.warn("No WSADMINS global property set.");
+                admins = new HashSet<AdminEntry>();
+            } else {
+                admins = adminEntriesFromProperty(adminsProperty);
+            }
+        }
+        
+        return admins;
+    }
+    
+    private Set<AdminEntry> getAuditors() {
+        if (auditors == null) {
+            final String auditorsProperty = global.getGlobalConfiguration().getProperty(
+                GlobalConfiguration.SCOPE_GLOBAL, "WSAUDITORS");
+            
+            if (auditorsProperty == null) {
+                LOG.warn("No WSAUDITORS global property set.");
+                auditors = new HashSet<AdminEntry>();
+            } else {
+                auditors = adminEntriesFromProperty(auditorsProperty);
+            }
+        }
+        
+        return auditors;
+    }
+    
+    private Set<AdminEntry> getArchiveAuditors() {
+        if (archiveAuditors == null) {
+            final String archiveAuditorsProperty = global.getGlobalConfiguration().getProperty(
+                GlobalConfiguration.SCOPE_GLOBAL, "WSARCHIVEAUDITORS");
+            
+            if (archiveAuditorsProperty == null) {
+                LOG.warn("No WSARCHIVEAUDITORS global property set.");
+                archiveAuditors = new HashSet<AdminEntry>();
+            } else {
+                archiveAuditors = adminEntriesFromProperty(archiveAuditorsProperty);
+            }
+        }
+        
+        return archiveAuditors;
+    }
+   
+    private static Set<AdminEntry> adminEntriesFromProperty(final String property) {
+        final Set<AdminEntry> result = new HashSet<AdminEntry>();
+        
+        for (final String entry : property.split(";")) {
+            final String[] splittedEntry = entry.split(",", 2);
+            
+            if (splittedEntry.length != 2) {
+                LOG.warn("Malformed admin entry: " + entry);
+            }
+            
+            result.add(new AdminEntry(new BigInteger(splittedEntry[0], 16),
+                                        splittedEntry[1]));
+        }
+        
+        return result;
+    }
+    
     /**
      * Returns the Id of a worker given a name
      *
@@ -1111,40 +1222,29 @@ public class AdminWS {
         if (allowAnyWSAdmin) {
             return true;
         } else {
-            return hasAuthorization(cert, "WSADMINS");
+            return hasAuthorization(cert, getAdmins());
         }
     }
     
     private boolean isAuditorAuthorized(final X509Certificate cert) { 
-        return hasAuthorization(cert, "WSAUDITORS");
+        return hasAuthorization(cert, getAuditors());
     }
     
     private boolean isArchiveAuditorAuthorized(final X509Certificate cert) {
-        return hasAuthorization(cert, "WSARCHIVEAUDITORS");
+        return hasAuthorization(cert, getArchiveAuditors());
     }
     
-    private boolean hasAuthorization(final X509Certificate cert, final String authProperty) {
-        boolean authorized = false;
-        final String admins = global.getGlobalConfiguration().getProperty(
-                GlobalConfiguration.SCOPE_GLOBAL, authProperty);
-        final String admin = cert.getSerialNumber().toString(16) + "," +
-                cert.getIssuerDN();
-
+    private boolean hasAuthorization(final X509Certificate cert,
+            final Set<AdminEntry> authSet) {
+        
         if (LOG.isDebugEnabled()) {
-            LOG.debug("admin: " + admin + ", admins: " + admins);
+            LOG.debug("Checking authorization for: SN: " +
+                    cert.getSerialNumber().toString(16) +
+                    " issuer: " + cert.getIssuerDN() + " agains admin set: " +
+                    authSet);
         }
-
-        if (admins == null) {
-            LOG.warn("No " + authProperty + " global property set");
-        } else {
-            for (String entry : admins.split(";")) {
-                if (entry.trim().equalsIgnoreCase(admin)) {
-                    authorized = true;
-                    break;
-                }
-            }
-        }
-        return authorized;
+        
+        return authSet.contains(new AdminEntry(cert));
     }
 
     private X509Certificate[] getClientCertificates() {

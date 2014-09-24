@@ -15,7 +15,6 @@ package org.signserver.adminws;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.math.BigInteger;
 import java.security.KeyStoreException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -83,46 +82,7 @@ public class AdminWS {
         INT_COLUMNS.add(ArchiveMetadata.TYPE);
     }
     
-    private static class AdminEntry {
-        private BigInteger serialNumber;
-        private String issuerDN;
-        
-        public AdminEntry(final BigInteger serialNumber, final String issuerDN) {
-            this.serialNumber = serialNumber;
-            this.issuerDN = issuerDN;
-        }
-        
-        public AdminEntry(final X509Certificate cert) {
-            this.serialNumber = cert.getSerialNumber();
-            this.issuerDN = cert.getIssuerDN().toString();
-        }
-        
-        @Override
-        public boolean equals(final Object other) {
-            if (other instanceof AdminEntry) {
-                final AdminEntry otherEntry = (AdminEntry) other;
-                
-                return serialNumber.equals(otherEntry.serialNumber) &&
-                        issuerDN.equals(otherEntry.issuerDN);
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        public int hashCode() {
-            int hash = 3;
-            hash = 67 * hash + (this.serialNumber != null ? this.serialNumber.hashCode() : 0);
-            hash = 67 * hash + (this.issuerDN != null ? this.issuerDN.hashCode() : 0);
-            return hash;
-        }
-
-        @Override
-        public String toString() {
-            return "(SN: " + serialNumber.toString(16) + ", Issuer: " + issuerDN + ")";        
-        }
-    }
-
+    
     private Set<AdminEntry> admins;
     private Set<AdminEntry> auditors;
     private Set<AdminEntry> archiveAuditors;
@@ -150,7 +110,7 @@ public class AdminWS {
                 LOG.warn("No WSADMINS global property set.");
                 admins = new HashSet<AdminEntry>();
             } else {
-                admins = adminEntriesFromProperty(adminsProperty);
+                admins = AdminEntry.adminEntriesFromProperty(adminsProperty);
             }
         }
         
@@ -166,7 +126,7 @@ public class AdminWS {
                 LOG.warn("No WSAUDITORS global property set.");
                 auditors = new HashSet<AdminEntry>();
             } else {
-                auditors = adminEntriesFromProperty(auditorsProperty);
+                auditors = AdminEntry.adminEntriesFromProperty(auditorsProperty);
             }
         }
         
@@ -182,29 +142,14 @@ public class AdminWS {
                 LOG.warn("No WSARCHIVEAUDITORS global property set.");
                 archiveAuditors = new HashSet<AdminEntry>();
             } else {
-                archiveAuditors = adminEntriesFromProperty(archiveAuditorsProperty);
+                archiveAuditors = AdminEntry.adminEntriesFromProperty(archiveAuditorsProperty);
             }
         }
         
         return archiveAuditors;
     }
    
-    private static Set<AdminEntry> adminEntriesFromProperty(final String property) {
-        final Set<AdminEntry> result = new HashSet<AdminEntry>();
-        
-        for (final String entry : property.split(";")) {
-            final String[] splittedEntry = entry.split(",", 2);
-            
-            if (splittedEntry.length != 2) {
-                LOG.warn("Malformed admin entry: " + entry);
-            }
-            
-            result.add(new AdminEntry(new BigInteger(splittedEntry[0], 16),
-                                        splittedEntry[1]));
-        }
-        
-        return result;
-    }
+    
     
     /**
      * Returns the Id of a worker given a name

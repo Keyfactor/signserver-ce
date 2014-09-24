@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.admin.cli.defaultimpl;
 
+import java.math.BigInteger;
 import java.security.cert.X509Certificate;
 import java.util.List;
 import javax.ejb.EJBException;
@@ -100,7 +101,13 @@ public class WSAdminsCommand extends AbstractAdminCommand {
      * @param line The command line to read from
      */
     private void parseCommandLine(final CommandLine line) {
-        certSerialNo = line.getOptionValue(CERTSERIALNO, null);
+        final String serialNoString = line.getOptionValue(CERTSERIALNO, null);
+        
+        if (serialNoString != null) {
+            final BigInteger serialNo = new BigInteger(serialNoString, 16);
+        
+            certSerialNo = serialNo.toString(16);
+        }
         issuerDN = line.getOptionValue(ISSUERDN, null);
         cert = line.getOptionValue(CERT, null);
         if (line.hasOption(ADD)) {

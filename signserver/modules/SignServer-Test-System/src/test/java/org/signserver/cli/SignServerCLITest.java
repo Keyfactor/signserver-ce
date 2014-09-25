@@ -279,6 +279,25 @@ public class SignServerCLITest extends ModulesTestCase {
         assertNotPrinted("", cli.getOut(), "ef34242d2324");
         assertNotPrinted("", cli.getOut(), "CN=Test Root CA");
         
+        // Test adding wsadmin with leading zero in serial number
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+            cli.execute("wsadmins", "-add", "-certserialno", "0df34242d2324",
+            		"-issuerdn", "CN=Test Root CA"));
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS,
+        	cli.execute("wsadmins", "-list"));
+       
+        assertPrinted("", cli.getOut(), "df34242d2324");
+        assertPrinted("", cli.getOut(), "CN=Test Root CA");
+        
+        // Test removing previously added admin
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS,
+        		cli.execute("wsadmins", "-remove", "-certserialno", "0df34242d2324",
+            		"-issuerdn", "CN=Test Root CA"));
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS,
+        		cli.execute("wsadmins", "-list"));
+        assertNotPrinted("", cli.getOut(), "df34242d2324");
+        assertNotPrinted("", cli.getOut(), "CN=Test Root CA");
+
         // Test setting any WS admin allowed
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,
                 cli.execute("wsadmins", "-allowany"));
@@ -347,6 +366,24 @@ public class SignServerCLITest extends ModulesTestCase {
         		cli.execute("wsauditors", "-list"));
         assertNotPrinted("", cli.getOut(), "ef34343d2428");
         assertNotPrinted("", cli.getOut(), "CN=Test Root CA 2");
+        
+        // Test adding wsadmin using with leading zero in serial number
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+            cli.execute("wsauditors", "-add", "-certserialno", "0df34343d2428",
+            		"-issuerdn", "CN=Test Root CA 2"));
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS,
+        	cli.execute("wsauditors", "-list"));
+        assertPrinted("", cli.getOut(), "df34343d2428");
+        assertPrinted("", cli.getOut(), "CN=Test Root CA 2");
+        
+        // Test removing previously added admin
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS,
+        		cli.execute("wsauditors", "-remove", "-certserialno", "0df34343d2428",
+            		"-issuerdn", "CN=Test Root CA 2"));
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS,
+        		cli.execute("wsauditors", "-list"));
+        assertNotPrinted("", cli.getOut(), "df34343d2428");
+        assertNotPrinted("", cli.getOut(), "CN=Test Root CA 2");
     }
     
     /**
@@ -371,6 +408,24 @@ public class SignServerCLITest extends ModulesTestCase {
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,
                         cli.execute("wsarchiveauditors", "-list"));
         assertNotPrinted("", cli.getOut(), "ef34343d2428");
+        assertNotPrinted("", cli.getOut(), "CN=Test Root CA 2");
+        
+        // Test adding wsadmin using explicit parameters
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+            cli.execute("wsarchiveauditors", "-add", "-certserialno", "0df34343d2428",
+                        "-issuerdn", "CN=Test Root CA 2"));
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS,
+                cli.execute("wsarchiveauditors", "-list"));
+        assertPrinted("", cli.getOut(), "df34343d2428");
+        assertPrinted("", cli.getOut(), "CN=Test Root CA 2");
+        
+        // Test removing previously added admin
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS,
+                        cli.execute("wsarchiveauditors", "-remove", "-certserialno", "0df34343d2428",
+                        "-issuerdn", "CN=Test Root CA 2"));
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS,
+                        cli.execute("wsarchiveauditors", "-list"));
+        assertNotPrinted("", cli.getOut(), "df34343d2428");
         assertNotPrinted("", cli.getOut(), "CN=Test Root CA 2");
     }
     

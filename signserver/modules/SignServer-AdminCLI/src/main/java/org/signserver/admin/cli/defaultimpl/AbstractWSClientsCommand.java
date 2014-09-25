@@ -12,8 +12,9 @@
  *************************************************************************/
 package org.signserver.admin.cli.defaultimpl;
 
+import java.math.BigInteger;
 import java.security.cert.X509Certificate;
-import java.util.List;
+import java.util.Set;
 
 import javax.ejb.EJBException;
 
@@ -22,10 +23,10 @@ import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.ejbca.util.CertTools;
-import org.signserver.admin.cli.defaultimpl.AbstractAdminCommand.ClientEntry;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.cli.spi.UnexpectedCommandFailureException;
+import org.signserver.common.ClientEntry;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.SignServerUtil;
 
@@ -119,7 +120,8 @@ public abstract class AbstractWSClientsCommand extends AbstractAdminCommand {
         try {
             final String admins = getGlobalConfigurationSession().getGlobalConfiguration().getProperty(
                     GlobalConfiguration.SCOPE_GLOBAL, getClientsProperty());
-            final List<ClientEntry> entries = parseClientEntries(admins);
+            final Set<ClientEntry> entries =
+                    ClientEntry.clientEntriesFromProperty(admins);
 
             if (LIST.equals(operation)) {
                 final StringBuilder buff = new StringBuilder();
@@ -127,18 +129,18 @@ public abstract class AbstractWSClientsCommand extends AbstractAdminCommand {
                 buff.append("\n");
                 for (ClientEntry entry : entries) {
                     buff.append(String.format("%-20s %s",
-                            entry.getCertSerialNo(), entry.getIssuerDN()));
+                            entry.getSerialNumber().toString(16), entry.getIssuerDN()));
                     buff.append("\n");
                 }
                 getOutputStream().println(buff.toString());
             } else if (ADD.equals(operation)) {
                 if (cert == null) {
                         // serial number and issuer DN was entered manually
-                        entries.add(new ClientEntry(certSerialNo, issuerDN));
+                        entries.add(new ClientEntry(new BigInteger(certSerialNo, 16),
+                                                    issuerDN));
                 } else {
                         // read serial number and issuer DN from cert file
                         X509Certificate certificate = SignServerUtil.getCertFromFile(cert);
-                        String sn = certificate.getSerialNumber().toString(16);
                         String dn = certificate.getIssuerX500Principal().getName();
                         
                         CertTools.BasicX509NameTokenizer tok = new CertTools.BasicX509NameTokenizer(dn);
@@ -152,17 +154,19 @@ public abstract class AbstractWSClientsCommand extends AbstractAdminCommand {
                                 }
                         }
                         
-                        entries.add(new ClientEntry(sn, buf.toString()));
+                        entries.add(new ClientEntry(certificate.getSerialNumber(),
+                                                    buf.toString()));
                 }
                 getGlobalConfigurationSession().setProperty(
                         GlobalConfiguration.SCOPE_GLOBAL, getClientsProperty(),
-                        serializeClientEntries(entries));
+                        ClientEntry.serializeClientEntries(entries));
                 getOutputStream().println("Auditor added");
             } else if (REMOVE.equals(operation)) {
-                if (entries.remove(new ClientEntry(certSerialNo, issuerDN))) {
+                if (entries.remove(new ClientEntry(new BigInteger(certSerialNo, 16),
+                                                   issuerDN))) {
                     getGlobalConfigurationSession().setProperty(
                             GlobalConfiguration.SCOPE_GLOBAL, getClientsProperty(),
-                            serializeClientEntries(entries));
+                            ClientEntry.serializeClientEntries(entries));
                     getOutputStream().println("Auditor removed");
                 } else {
                     getErrorStream().println("No such auditor");

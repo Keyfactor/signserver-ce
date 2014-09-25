@@ -14,7 +14,9 @@ package org.signserver.common;
 
 import java.math.BigInteger;
 import java.security.cert.X509Certificate;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import org.apache.log4j.Logger;
 
@@ -39,6 +41,14 @@ public class ClientEntry {
     public ClientEntry(final X509Certificate cert) {
         this.serialNumber = cert.getSerialNumber();
         this.issuerDN = cert.getIssuerDN().toString();
+    }
+    
+    public BigInteger getSerialNumber() {
+        return serialNumber;
+    }
+    
+    public String getIssuerDN() {
+        return issuerDN;
     }
 
     @Override
@@ -81,5 +91,16 @@ public class ClientEntry {
         }
         
         return result;
+    }
+    
+    public static String serializeClientEntries(final Collection<ClientEntry> entries) {
+        final StringBuilder buff = new StringBuilder();
+        for (final ClientEntry entry : entries) {
+            buff.append(entry.getSerialNumber().toString(16));
+            buff.append(",");
+            buff.append(entry.getIssuerDN());
+            buff.append(";");
+        }
+        return buff.toString();
     }
 }

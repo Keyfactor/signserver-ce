@@ -14,8 +14,6 @@ package org.signserver.admin.cli.defaultimpl;
 
 import java.rmi.RemoteException;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.signserver.cli.spi.AbstractCommand;
@@ -95,75 +93,4 @@ public abstract class AbstractAdminCommand extends AbstractCommand {
     protected Logger getLogger() {
         return logger;
     }
-
-    /**
-     * Internal class representing client authentications used for WS adminstration commands.
-     */
-    protected static class ClientEntry {
-
-        private String certSerialNo;
-        private String issuerDN;
-
-        public ClientEntry(String certSerialNo, String issuerDN) {
-            this.certSerialNo = certSerialNo;
-            this.issuerDN = issuerDN;
-        }
-
-        public String getCertSerialNo() {
-            return certSerialNo;
-        }
-
-        public String getIssuerDN() {
-            return issuerDN;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj == null) {
-                return false;
-            }
-            if (getClass() != obj.getClass()) {
-                return false;
-            }
-            final ClientEntry other = (ClientEntry) obj;
-            if ((this.certSerialNo == null) ? (other.certSerialNo != null) : !this.certSerialNo.equals(other.certSerialNo)) {
-                return false;
-            }
-            if ((this.issuerDN == null) ? (other.issuerDN != null) : !this.issuerDN.equals(other.issuerDN)) {
-                return false;
-            }
-            return true;
-        }
-
-        @Override
-        public int hashCode() {
-            int hash = 7;
-            hash = 89 * hash + (this.certSerialNo != null ? this.certSerialNo.hashCode() : 0);
-            hash = 89 * hash + (this.issuerDN != null ? this.issuerDN.hashCode() : 0);
-            return hash;
-        }
-    }
-    
-    protected static List<ClientEntry> parseClientEntries(final String clientEntries) {
-        final List<ClientEntry> entries = new LinkedList<ClientEntry>();
-        if (clientEntries != null && clientEntries.contains(";")) {
-            for (String entry : clientEntries.split(";")) {
-                final String[] parts = entry.split(",", 2);
-                entries.add(new ClientEntry(parts[0], parts[1]));
-            }
-        }
-        return entries;
-    }
-
-    protected static String serializeClientEntries(final List<ClientEntry> entries) {
-        final StringBuilder buff = new StringBuilder();
-        for (final ClientEntry entry : entries) {
-            buff.append(entry.getCertSerialNo());
-            buff.append(",");
-            buff.append(entry.getIssuerDN());
-            buff.append(";");
-        }
-        return buff.toString();
-    }
-    
 }

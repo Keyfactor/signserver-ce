@@ -14,7 +14,7 @@ package org.signserver.admin.cli.defaultimpl;
 
 import java.math.BigInteger;
 import java.security.cert.X509Certificate;
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 import javax.ejb.EJBException;
 import org.apache.commons.cli.CommandLine;
@@ -165,7 +165,7 @@ public class WSAdminsCommand extends AbstractAdminCommand {
             if (admins != null) {
                 entries = ClientEntry.clientEntriesFromProperty(admins);
             } else {
-                entries = Collections.emptySet();
+                entries = new HashSet<ClientEntry>();
             }
 
             if (LIST.equals(operation)) {

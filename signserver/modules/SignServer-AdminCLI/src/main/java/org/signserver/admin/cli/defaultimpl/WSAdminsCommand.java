@@ -14,6 +14,7 @@ package org.signserver.admin.cli.defaultimpl;
 
 import java.math.BigInteger;
 import java.security.cert.X509Certificate;
+import java.util.Collections;
 import java.util.Set;
 import javax.ejb.EJBException;
 import org.apache.commons.cli.CommandLine;
@@ -159,9 +160,14 @@ public class WSAdminsCommand extends AbstractAdminCommand {
         try {
             final String admins = getGlobalConfigurationSession().getGlobalConfiguration().getProperty(
                     GlobalConfiguration.SCOPE_GLOBAL, "WSADMINS");
-            final Set<ClientEntry> entries =
-                    ClientEntry.clientEntriesFromProperty(admins);
+            final Set<ClientEntry> entries;
             
+            if (admins != null) {
+                entries = ClientEntry.clientEntriesFromProperty(admins);
+            } else {
+                entries = Collections.emptySet();
+            }
+
             if (LIST.equals(operation)) {
                 final String allowAnyWSAdminProp =
                         getGlobalConfigurationSession().getGlobalConfiguration()

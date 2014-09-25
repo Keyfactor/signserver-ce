@@ -192,10 +192,11 @@ public class WSAdminsCommand extends AbstractAdminCommand {
                 }
                 getOutputStream().println(buff.toString());
             } else if (ADD.equals(operation)) {
+                final boolean added;
             	if (cert == null) {
             		// serial number and issuer DN was entered manually
-            		entries.add(new ClientEntry(new BigInteger(certSerialNo, 16), 
-                                                    issuerDN));
+                        added = entries.add(new ClientEntry(new BigInteger(certSerialNo, 16), 
+                                                issuerDN));
             	} else {
             		// read serial number and issuer DN from cert file
             		X509Certificate certificate = SignServerUtil.getCertFromFile(cert);
@@ -211,14 +212,19 @@ public class WSAdminsCommand extends AbstractAdminCommand {
             				buf.append(", ");
             			}
             		}
-            		
-            		entries.add(new ClientEntry(certificate.getSerialNumber(),
+           		
+                        added = entries.add(new ClientEntry(certificate.getSerialNumber(),
                                                     buf.toString()));
             	}
-                getGlobalConfigurationSession().setProperty(
+                
+                if (added) {
+                    getGlobalConfigurationSession().setProperty(
                         GlobalConfiguration.SCOPE_GLOBAL, "WSADMINS",
                         ClientEntry.serializeClientEntries(entries));
-                getOutputStream().println("Administrator added");
+                    getOutputStream().println("Administrator added");
+                } else {
+                    getOutputStream().println("Administrator already exists");
+                }
             } else if (REMOVE.equals(operation)) {
                 if (entries.remove(new ClientEntry(new BigInteger(certSerialNo, 16),
                                                    issuerDN))) {

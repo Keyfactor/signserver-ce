@@ -140,9 +140,11 @@ public abstract class AbstractWSClientsCommand extends AbstractAdminCommand {
                 }
                 getOutputStream().println(buff.toString());
             } else if (ADD.equals(operation)) {
+                final boolean added;
+                
                 if (cert == null) {
                         // serial number and issuer DN was entered manually
-                        entries.add(new ClientEntry(new BigInteger(certSerialNo, 16),
+                        added = entries.add(new ClientEntry(new BigInteger(certSerialNo, 16),
                                                     issuerDN));
                 } else {
                         // read serial number and issuer DN from cert file
@@ -160,13 +162,18 @@ public abstract class AbstractWSClientsCommand extends AbstractAdminCommand {
                                 }
                         }
                         
-                        entries.add(new ClientEntry(certificate.getSerialNumber(),
+                        added = entries.add(new ClientEntry(certificate.getSerialNumber(),
                                                     buf.toString()));
                 }
-                getGlobalConfigurationSession().setProperty(
-                        GlobalConfiguration.SCOPE_GLOBAL, getClientsProperty(),
-                        ClientEntry.serializeClientEntries(entries));
-                getOutputStream().println("Auditor added");
+                
+                if (added) {
+                    getGlobalConfigurationSession().setProperty(
+                            GlobalConfiguration.SCOPE_GLOBAL, getClientsProperty(),
+                            ClientEntry.serializeClientEntries(entries));
+                    getOutputStream().println("Auditor added");
+                } else {
+                    getOutputStream().println("Auditor already exists");
+                }
             } else if (REMOVE.equals(operation)) {
                 if (entries.remove(new ClientEntry(new BigInteger(certSerialNo, 16),
                                                    issuerDN))) {

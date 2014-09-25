@@ -86,8 +86,12 @@ public class ClientEntry {
                 LOG.warn("Malformed admin entry: " + entry);
             }
             
-            result.add(new ClientEntry(new BigInteger(splittedEntry[0], 16),
+            try {
+                result.add(new ClientEntry(new BigInteger(splittedEntry[0], 16),
                                         splittedEntry[1]));
+            } catch (NumberFormatException e) {
+                LOG.warn("Malformed serial number: " + splittedEntry[0]);
+            }
         }
         
         return result;

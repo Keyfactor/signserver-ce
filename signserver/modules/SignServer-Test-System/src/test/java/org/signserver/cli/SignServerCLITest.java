@@ -262,20 +262,20 @@ public class SignServerCLITest extends ModulesTestCase {
     public void testWSAdmins() throws Exception {
     	// Test adding wsadmin using explicit parameters
         assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
-            cli.execute("wsadmins", "-add", "-certserialno", "EF34242D2324",
+            cli.execute("wsadmins", "-add", "-certserialno", "ef34242D2324",
             		"-issuerdn", "CN=Test Root CA"));
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,
         	cli.execute("wsadmins", "-list"));
-        assertPrinted("", cli.getOut(), "EF34242D2324");
+        assertPrinted("", cli.getOut(), "ef34242D2324");
         assertPrinted("", cli.getOut(), "CN=Test Root CA");
         
         // Test removing previously added admin
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,
-        		cli.execute("wsadmins", "-remove", "-certserialno", "EF34242D2324",
+        		cli.execute("wsadmins", "-remove", "-certserialno", "ef34242D2324",
             		"-issuerdn", "CN=Test Root CA"));
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,
         		cli.execute("wsadmins", "-list"));
-        assertNotPrinted("", cli.getOut(), "EF34242D2324");
+        assertNotPrinted("", cli.getOut(), "ef34242D2324");
         assertNotPrinted("", cli.getOut(), "CN=Test Root CA");
         
         // Test setting any WS admin allowed
@@ -331,20 +331,20 @@ public class SignServerCLITest extends ModulesTestCase {
     public void testWSAuditors() throws Exception {
     	// Test adding wsadmin using explicit parameters
         assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
-            cli.execute("wsauditors", "-add", "-certserialno", "EF34343D2428",
+            cli.execute("wsauditors", "-add", "-certserialno", "ef34343D2428",
             		"-issuerdn", "CN=Test Root CA 2"));
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,
         	cli.execute("wsauditors", "-list"));
-        assertPrinted("", cli.getOut(), "EF34343D2428");
+        assertPrinted("", cli.getOut(), "ef34343D2428");
         assertPrinted("", cli.getOut(), "CN=Test Root CA 2");
         
         // Test removing previously added admin
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,
-        		cli.execute("wsauditors", "-remove", "-certserialno", "EF34343D2428",
+        		cli.execute("wsauditors", "-remove", "-certserialno", "ef34343D2428",
             		"-issuerdn", "CN=Test Root CA 2"));
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,
         		cli.execute("wsauditors", "-list"));
-        assertNotPrinted("", cli.getOut(), "EF34343D2428");
+        assertNotPrinted("", cli.getOut(), "ef34343D2428");
         assertNotPrinted("", cli.getOut(), "CN=Test Root CA 2");
     }
     
@@ -356,20 +356,20 @@ public class SignServerCLITest extends ModulesTestCase {
     public void testWSArchiveAuditors() throws Exception {
         // Test adding wsadmin using explicit parameters
         assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
-            cli.execute("wsarchiveauditors", "-add", "-certserialno", "EF34343D2428",
+            cli.execute("wsarchiveauditors", "-add", "-certserialno", "ef34343D2428",
                         "-issuerdn", "CN=Test Root CA 2"));
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,
                 cli.execute("wsarchiveauditors", "-list"));
-        assertPrinted("", cli.getOut(), "EF34343D2428");
+        assertPrinted("", cli.getOut(), "ef34343D2428");
         assertPrinted("", cli.getOut(), "CN=Test Root CA 2");
         
         // Test removing previously added admin
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,
-                        cli.execute("wsarchiveauditors", "-remove", "-certserialno", "EF34343D2428",
+                        cli.execute("wsarchiveauditors", "-remove", "-certserialno", "ef34343D2428",
                         "-issuerdn", "CN=Test Root CA 2"));
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,
                         cli.execute("wsarchiveauditors", "-list"));
-        assertNotPrinted("", cli.getOut(), "EF34343D2428");
+        assertNotPrinted("", cli.getOut(), "ef34343D2428");
         assertNotPrinted("", cli.getOut(), "CN=Test Root CA 2");
     }
     

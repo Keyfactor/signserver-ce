@@ -270,6 +270,12 @@ public class SignServerCLITest extends ModulesTestCase {
         assertPrinted("", cli.getOut(), "ef34242d2324");
         assertPrinted("", cli.getOut(), "CN=Test Root CA");
         
+        // try adding the same admin again
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+            cli.execute("wsadmins", "-add", "-certserialno", "ef34242d2324",
+            		"-issuerdn", "CN=Test Root CA"));
+        assertPrinted("", cli.getOut(), "Administrator already exists");
+        
         // Test removing previously added admin
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,
         		cli.execute("wsadmins", "-remove", "-certserialno", "ef34242d2324",
@@ -379,6 +385,12 @@ public class SignServerCLITest extends ModulesTestCase {
         assertPrinted("", cli.getOut(), "ef34343d2428");
         assertPrinted("", cli.getOut(), "CN=Test Root CA 2");
         
+        // Test adding the same client again
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+            cli.execute("wsauditors", "-add", "-certserialno", "ef34343d2428",
+            		"-issuerdn", "CN=Test Root CA 2"));
+        assertPrinted("", cli.getOut(), "Auditor already exists");
+        
         // Test removing previously added admin
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,
         		cli.execute("wsauditors", "-remove", "-certserialno", "ef34343d2428",
@@ -439,6 +451,12 @@ public class SignServerCLITest extends ModulesTestCase {
                 cli.execute("wsarchiveauditors", "-list"));
         assertPrinted("", cli.getOut(), "ef34343d2428");
         assertPrinted("", cli.getOut(), "CN=Test Root CA 2");
+        
+        // Test adding the same client again
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+            cli.execute("wsarchiveauditors", "-add", "-certserialno", "ef34343d2428",
+                        "-issuerdn", "CN=Test Root CA 2"));
+        assertPrinted("", cli.getOut(), "Auditor already exists");
         
         // Test removing previously added admin
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,

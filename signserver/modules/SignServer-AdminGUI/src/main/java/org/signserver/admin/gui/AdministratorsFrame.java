@@ -13,6 +13,7 @@
 package org.signserver.admin.gui;
 
 import java.awt.event.ActionEvent;
+import java.math.BigInteger;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,6 +34,7 @@ import org.jdesktop.application.Task;
 import org.signserver.admin.gui.adminws.gen
         .AdminNotAuthorizedException_Exception;
 import org.signserver.admin.gui.adminws.gen.WsGlobalConfiguration;
+import org.signserver.common.ClientEntry;
 import  org.signserver.common.GlobalConfiguration;
 
 /**
@@ -84,9 +86,9 @@ public class AdministratorsFrame extends javax.swing.JFrame {
             public Object getValueAt(int rowIndex, int columnIndex) {
                 final Object result;
                 if (columnIndex == 0) {
-                    result = entries.get(rowIndex).getCredential().getCertSerialNo();
+                    result = entries.get(rowIndex).getClient().getSerialNumber().toString(16);
                 } else if (columnIndex == 1) {
-                    result = entries.get(rowIndex).getCredential().getIssuerDN();
+                    result = entries.get(rowIndex).getClient().getIssuerDN();
                 } else if (columnIndex == 2) {
                     result = entries.get(rowIndex).isAdmin();
                 } else if (columnIndex == 3) {
@@ -418,8 +420,10 @@ public class AdministratorsFrame extends javax.swing.JFrame {
                 final String certSerialNo = editCertSerialNoTextField.getText();
                 final String issuerDN = editIssuerDNTextField.getText();
 
-                final HashMap<Credential, Entry> admins = parseAdmins();
-                final Credential cred = new Credential(certSerialNo, issuerDN);
+                final HashMap<ClientEntry, Entry> admins = parseAdmins();
+                final ClientEntry cred =
+                        new ClientEntry(new BigInteger(certSerialNo, 16),
+                                        issuerDN);
                 
                 if (admins.containsKey(cred)) {
                     JOptionPane.showMessageDialog(this,
@@ -469,9 +473,9 @@ public class AdministratorsFrame extends javax.swing.JFrame {
             if (row != -1) {
                 final Entry oldEntry = entries.get(row);
 
-                editCertSerialNoTextField.setText(oldEntry.getCredential().getCertSerialNo());
+                editCertSerialNoTextField.setText(oldEntry.getClient().getSerialNumber().toString(16));
                 editCertSerialNoTextField.setEditable(true);
-                editIssuerDNTextField.setText(oldEntry.getCredential().getIssuerDN());
+                editIssuerDNTextField.setText(oldEntry.getClient().getIssuerDN());
                 editRoleAdministratorCheckBox.setSelected(oldEntry.isAdmin());
                 editRoleAuditorCheckBox.setSelected(oldEntry.isAuditor());
                 editRoleArchiveAuditorCheckBox.setSelected(oldEntry.isArchiveAuditor());
@@ -481,16 +485,18 @@ public class AdministratorsFrame extends javax.swing.JFrame {
                         JOptionPane.PLAIN_MESSAGE);
                 if (res == JOptionPane.OK_OPTION) {
                     
-                    HashMap<Credential, Entry> admins = parseAdmins();
+                    HashMap<ClientEntry, Entry> admins = parseAdmins();
                     
-                    final Credential newCred = new Credential(editCertSerialNoTextField.getText(), 
-                            editIssuerDNTextField.getText());
+                    final ClientEntry newCred =
+                            new ClientEntry(new BigInteger(editCertSerialNoTextField.getText(),
+                                                           16), 
+                                            editIssuerDNTextField.getText());
 
-                    if (!admins.containsKey(oldEntry.getCredential())) {
+                    if (!admins.containsKey(oldEntry.getClient())) {
                         JOptionPane.showMessageDialog(this,
                                 "No such administrator");
                     } else {
-                        admins.remove(oldEntry.getCredential());
+                        admins.remove(oldEntry.getClient());
                         
                         final Entry newEntry =
                                 new Entry(newCred,
@@ -543,13 +549,13 @@ public class AdministratorsFrame extends javax.swing.JFrame {
                         JOptionPane.QUESTION_MESSAGE);
                 if (res == JOptionPane.YES_OPTION) {
                     final Entry oldEntry = entries.get(row);
-                    HashMap<Credential, Entry> admins = parseAdmins();
+                    HashMap<ClientEntry, Entry> admins = parseAdmins();
 
-                    if (!admins.containsKey(oldEntry.getCredential())) {
+                    if (!admins.containsKey(oldEntry.getClient())) {
                         JOptionPane.showMessageDialog(this,
                                 "No such administrator");
                     } else {
-                        admins.remove(oldEntry.getCredential());
+                        admins.remove(oldEntry.getClient());
 
                         if (oldEntry.isAdmin()) {
                             SignServerAdminGUIApplication.getAdminWS()
@@ -737,7 +743,7 @@ public class AdministratorsFrame extends javax.swing.JFrame {
     private javax.swing.JButton removeButton;
     // End of variables declaration//GEN-END:variables
 
-    private LinkedHashMap<Credential, Entry> parseAdmins()
+    private LinkedHashMap<ClientEntry, Entry> parseAdmins()
             throws AdminNotAuthorizedException_Exception {
         String admins = null;
         String auditors = null;
@@ -758,17 +764,19 @@ public class AdministratorsFrame extends javax.swing.JFrame {
             }
         }
 
-        final LinkedHashMap<Credential, Entry> entryMap = new LinkedHashMap<Credential, Entry>();
+        final LinkedHashMap<ClientEntry, Entry> entryMap =
+                new LinkedHashMap<ClientEntry, Entry>();
 
         // Admins
         if (admins != null && admins.contains(";")) {
             for (String entryString : admins.split(";")) {
                 final String[] parts = entryString.split(",", 2);
-                final Credential cred = new Credential(parts[0], parts[1]);
-                Entry entry = entryMap.get(cred);
+                final ClientEntry client =
+                        new ClientEntry(new BigInteger(parts[0], 16), parts[1]);
+                Entry entry = entryMap.get(client);
                 if (entry == null) {
-                    entry = new Entry(cred);
-                    entryMap.put(cred, entry);
+                    entry = new Entry(client);
+                    entryMap.put(client, entry);
                 }
                 entry.setAdmin(true);
             }
@@ -778,11 +786,12 @@ public class AdministratorsFrame extends javax.swing.JFrame {
         if (auditors != null && auditors.contains(";")) {
             for (String entryString : auditors.split(";")) {
                 final String[] parts = entryString.split(",", 2);
-                final Credential cred = new Credential(parts[0], parts[1]);
-                Entry entry = entryMap.get(cred);
+                final ClientEntry client =
+                        new ClientEntry(new BigInteger(parts[0], 16), parts[1]);
+                Entry entry = entryMap.get(client);
                 if (entry == null) {
-                    entry = new Entry(cred);
-                    entryMap.put(cred, entry);
+                    entry = new Entry(client);
+                    entryMap.put(client, entry);
                 }
                 entry.setAuditor(true);
             }
@@ -792,11 +801,12 @@ public class AdministratorsFrame extends javax.swing.JFrame {
         if (archiveAuditors != null && archiveAuditors.contains(";")) {
             for (final String entryString : archiveAuditors.split(";")) {
                 final String[] parts = entryString.split(",", 2);
-                final Credential cred = new Credential(parts[0], parts[1]);
-                Entry entry = entryMap.get(cred);
+                final ClientEntry client =
+                        new ClientEntry(new BigInteger(parts[0], 16), parts[1]);
+                Entry entry = entryMap.get(client);
                 if (entry == null) {
-                    entry = new Entry(cred);
-                    entryMap.put(cred, entry);
+                    entry = new Entry(client);
+                    entryMap.put(client, entry);
                 }
                 entry.setArchiveAuditor(true);
             }
@@ -805,111 +815,66 @@ public class AdministratorsFrame extends javax.swing.JFrame {
         return entryMap;
     }
 
-    private static String serializeAdmins(final Map<Credential, Entry> entries) {
+    private static String serializeAdmins(final Map<ClientEntry, Entry> entries) {
         final StringBuilder buff = new StringBuilder();
         for (Entry entry : entries.values()) {
             if (entry.isAdmin()) {
-                buff.append(entry.getCredential().getCertSerialNo());
+                buff.append(entry.getClient().getSerialNumber().toString(16));
                 buff.append(",");
-                buff.append(entry.getCredential().getIssuerDN());
+                buff.append(entry.getClient().getIssuerDN());
                 buff.append(";");
             }
         }
         return buff.toString();
     }
 
-    private static String serializeAuditors(final Map<Credential, Entry> entries) {
+    private static String serializeAuditors(final Map<ClientEntry, Entry> entries) {
         final StringBuilder buff = new StringBuilder();
         for (Entry entry : entries.values()) {
             if (entry.isAuditor()) {
-                buff.append(entry.getCredential().getCertSerialNo());
+                buff.append(entry.getClient().getSerialNumber().toString(16));
                 buff.append(",");
-                buff.append(entry.getCredential().getIssuerDN());
+                buff.append(entry.getClient().getIssuerDN());
                 buff.append(";");
             }
         }
         return buff.toString();
     }
     
-        private static String serializeArchiveAuditors(final Map<Credential, Entry> entries) {
+        private static String serializeArchiveAuditors(final Map<ClientEntry, Entry> entries) {
         final StringBuilder buff = new StringBuilder();
         for (Entry entry : entries.values()) {
             if (entry.isArchiveAuditor()) {
-                buff.append(entry.getCredential().getCertSerialNo());
+                buff.append(entry.getClient().getSerialNumber().toString(16));
                 buff.append(",");
-                buff.append(entry.getCredential().getIssuerDN());
+                buff.append(entry.getClient().getIssuerDN());
                 buff.append(";");
             }
         }
         return buff.toString();
-    }
-    
-    private static class Credential {
-        private String certSerialNo;
-        private String issuerDN;
-
-        public Credential(String certSerialNo, String issuerDN) {
-            this.certSerialNo = certSerialNo;
-            this.issuerDN = issuerDN;
-        }
-
-        public String getCertSerialNo() {
-            return certSerialNo;
-        }
-
-        public String getIssuerDN() {
-            return issuerDN;
-        }
-
-        @Override
-        public int hashCode() {
-            int hash = 7;
-            hash = 59 * hash + (this.certSerialNo != null ? this.certSerialNo.hashCode() : 0);
-            hash = 59 * hash + (this.issuerDN != null ? this.issuerDN.hashCode() : 0);
-            return hash;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj == null) {
-                return false;
-            }
-            if (getClass() != obj.getClass()) {
-                return false;
-            }
-            final Credential other = (Credential) obj;
-            if ((this.certSerialNo == null) ? (other.certSerialNo != null) : !this.certSerialNo.equals(other.certSerialNo)) {
-                return false;
-            }
-            if ((this.issuerDN == null) ? (other.issuerDN != null) : !this.issuerDN.equals(other.issuerDN)) {
-                return false;
-            }
-            return true;
-        }
-        
     }
 
     private static class Entry {
         
-        private final Credential credential;
+        private final ClientEntry client;
         private boolean admin;
         private boolean auditor;
         private boolean archiveAuditor;
 
-        public Entry(final Credential credential, final boolean admin, 
+        public Entry(final ClientEntry client, final boolean admin, 
                 final boolean auditor, final boolean archiveAuditor) {
-            this.credential = credential;
+            this.client = client;
             this.admin = admin;
             this.auditor = auditor;
             this.archiveAuditor = archiveAuditor;
         }
 
-        private Entry(final Credential cred) {
-            this.credential = cred;
+        private Entry(final ClientEntry client) {
+            this.client = client;
         }
 
-        public Credential getCredential() {
-            return credential;
+        public ClientEntry getClient() {
+            return client;
         }
 
         public boolean isAdmin() {
@@ -939,7 +904,7 @@ public class AdministratorsFrame extends javax.swing.JFrame {
         @Override
         public int hashCode() {
             int hash = 7;
-            hash = 53 * hash + (this.credential != null ? this.credential.hashCode() : 0);
+            hash = 53 * hash + (this.client != null ? this.client.hashCode() : 0);
             hash = 53 * hash + (this.admin ? 1 : 0);
             hash = 53 * hash + (this.auditor ? 1 : 0);
             hash = 53 * hash + (this.archiveAuditor ? 1 : 0);
@@ -955,7 +920,8 @@ public class AdministratorsFrame extends javax.swing.JFrame {
                 return false;
             }
             final Entry other = (Entry) obj;
-            if (this.credential != other.credential && (this.credential == null || !this.credential.equals(other.credential))) {
+            if (this.client != other.client &&
+                    (this.client == null || !this.client.equals(other.client))) {
                 return false;
             }
             if (this.admin != other.admin) {

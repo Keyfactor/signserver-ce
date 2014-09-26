@@ -119,13 +119,8 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
 
     @Test
     public void test00SetupDatabase() throws Exception {
-
-        // XMLSIGNER: module
-        setProperties(new File(getSignServerHome(), "res/test/test-xmlsigner-configuration.properties"));
-
         // XMLSIGNER: endentity1
         setupSigner(SIGNER1_WORKERID, SIGNER1_WORKER, keystoreFileEndentity8, KEYSTORE8_PASSWORD);
-
 
         // VALIDATION
         workerSession.setWorkerProperty(CERTVALIDATION_WORKERID, "VAL1.ISSUER1.CRLPATHS", crlToUse.toURI().toString());

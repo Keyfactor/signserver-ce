@@ -274,41 +274,8 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             auditLog(adminInfo, SignServerEventTypes.RELOAD_WORKER_CONFIG, SignServerModuleTypes.WORKER_CONFIG,
                     Integer.toString(workerId), Collections.<String, Object>emptyMap());
 
-            // Try to insert a key usage counter entry for this worker's public
-            // key
-            // Get worker instance
-            final IWorker worker = workerManagerSession.getWorker(workerId, globalConfigurationSession);
-            if (worker instanceof BaseProcessable) {
-                try {
-                    final Certificate cert = ((BaseProcessable)worker)
-                            .getSigningCertificate();
-                    if (cert != null) {
-                        final String keyHash = KeyUsageCounterHash
-                                .create(cert.getPublicKey());
-
-                        KeyUsageCounter counter
-                                = keyUsageCounterDataService.getCounter(keyHash);
-
-                        if (counter == null) {
-                            keyUsageCounterDataService.create(keyHash);
-                            if (LOG.isDebugEnabled()) {
-                                LOG.debug("Worker[" + workerId + "]: "
-                                        + "new key usage counter initialized");
-                            }
-                        } else {
-                            if (LOG.isDebugEnabled()) {
-                                LOG.debug("Worker[" + workerId + "]: "
-                                        + "key usage counter: " + counter.getCounter());
-                            }
-                        }
-                    }
-                } catch (CryptoTokenOfflineException ex) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Worker[ " + workerId + "]: "
-                            + "Crypto token offline trying to create key usage counter");
-                    }
-                }
-            }
+            // Try to initialize the key usage counter
+            initKeyUsageCounter(workerManagerSession.getWorker(workerId, globalConfigurationSession));
         }
 
         if (workerId == 0 || getWorkers(
@@ -341,6 +308,9 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         IProcessable signer = (IProcessable) worker;
 
         signer.activateSigner(authenticationCode);
+
+        // Try to initialize the key usage counter
+        initKeyUsageCounter(worker);
     }
 
     /* (non-Javadoc)
@@ -1034,6 +1004,41 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         return searchArchiveWithIds(new AdminInfo("CLI user", null, null),
                 uniqueIds, includeData);
     }
-    
 
+    private void initKeyUsageCounter(final IWorker worker) {
+        // Try to insert a key usage counter entry for this worker's public
+        // key
+        // Get worker instance
+        if (worker instanceof BaseProcessable) {
+            try {
+                final Certificate cert = ((BaseProcessable)worker)
+                        .getSigningCertificate();
+                if (cert != null) {
+                    final String keyHash = KeyUsageCounterHash
+                            .create(cert.getPublicKey());
+
+                    KeyUsageCounter counter
+                            = keyUsageCounterDataService.getCounter(keyHash);
+
+                    if (counter == null) {
+                        keyUsageCounterDataService.create(keyHash);
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Worker[" + worker.getConfig().getProperty("NAME") + "]: "
+                                    + "new key usage counter initialized");
+                        }
+                    } else {
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Worker[" + worker.getConfig().getProperty("NAME") + "]: "
+                                    + "key usage counter: " + counter.getCounter());
+                        }
+                    }
+                }
+            } catch (CryptoTokenOfflineException ex) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Worker[ " + worker.getConfig().getProperty("NAME") + "]: "
+                        + "Crypto token offline trying to create key usage counter");
+                }
+            }
+        }
+    }
 }

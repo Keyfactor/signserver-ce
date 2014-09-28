@@ -14,7 +14,7 @@
                 <li>Support multiple hash algorithms for signatures, MD5, SHA-1, SHA-2.</li>
                 <li>Compliant with NSA SUITE B algorithms and certificates.</li>
 
-                <li>Support for Hardware Security Modules (HSMs). Built in support for Thales/nCipher, SafeNet Luna, SafeNet ProtectServer, Utimaco CryptoServer, AEP Keyper, ARX CoSign, PrimeCardHSM and other HSMs with a good PKCS#11 library.</li>
+                <li>Support for Hardware Security Modules (HSMs). Built in support for Thales/nCipher, SafeNet Luna, SafeNet ProtectServer, Utimaco CryptoServer, AEP Keyper, ARX CoSign and other HSMs with a good PKCS#11 library.</li>
                 <li>Support for software based keys for lower security requirements or development.</li>
 
                 <li>Multiple Signers and Validators, serve all your digital signature needs within one instance of SignServer.</li>

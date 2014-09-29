@@ -13,14 +13,27 @@ professional services are provided by <a href="http://www.primekey.se">PrimeKey 
 </p>
 </section>
 
+<section name="3rd Party Integration">
+<p>
+Looking to integrate a 3rd party application with SignServer? SignServer has the most flexible range of standard, and non standard, protocols for seamless integration.
+<br/>Contact <a href="https://www.primekey.se/Company/Contact/">PrimeKey</a> if you need more information or assistance.
+</p>
+</section>
+
+<section name="Security Notifications">
+<p>
+If you have a security notification regarding SignServer, please send an email to <i>security at primekey dot se</i>.
+</p>
+</section>
+
 <section name="Contributors">
 <p>
 The best way to contact the project admins are using email.
 </p>
 <ul>
-<li>Send an email to the signserver-develop <a href="#Mailing%20Lists">mailing list</a>.</li>
+<li>Send an email to the signserver-develop <a href="#Mailing%20Lists">mailing list</a> (see below).</li>
 <li>Send an email directly to a project <a href="http://sourceforge.net/projects/signserver/">administrator</a>.</li>
-<li>Send an email directly to <i>ejbca-support at primekey dot se</i>.</li>
+<li>Send an email to PrimeKey at <i>sales at primekey dot se</i>.</li>
 </ul>
 </section>
 
@@ -34,14 +47,14 @@ First of all, have a look at the SignServer documentation resources gathered bel
 <section name="Training">
 <p>
 <i>Established SignServer Training</i><br/>
-<a href="http://www.primekey.se/Services/Training">Training Courses</a> for advanced users can be requested from PrimeKey and their partners.
+<a href="http://www.primekey.se/Services/Training">Training Courses</a> for advanced users are held internationally by PrimeKey and their partners.
 </p>
 </section>
 
 <section name="Mailing Lists">
 <p>
- The SignServer project has two public mailing lists hosted on Sourceforge. To subscribe to any of the lists or
- browse archived messages, click the links below.
+The SignServer project has two public mailing lists hosted on Sourceforge. To subscribe to
+either list, or browse archived messages, simply click optional link(s) below.
 </p>
 <p>
 <a href="http://lists.sourceforge.net/mailman/listinfo/signserver-announce">signserver-announce</a> A low traffic
@@ -49,7 +62,7 @@ First of all, have a look at the SignServer documentation resources gathered bel
 </p>
 <p>
 <a href="http://lists.sourceforge.net/mailman/listinfo/signserver-develop">signserver-develop</a> is used for
-discussions of a more technical nature. Almost anything regarding SignServer can be posted on this list. 
+discussions of a more technical nature. Almost anything regarding SignServer can be posted on this list.
 </p>
 </section>
 

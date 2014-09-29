@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.apache.log4j.Logger;
+import org.ejbca.util.CertTools;
 
 /**
  * Class representing admin or client authorization.
@@ -41,7 +42,7 @@ public class ClientEntry {
      */
     public ClientEntry(final BigInteger serialNumber, final String issuerDN) {
         this.serialNumber = serialNumber;
-        this.issuerDN = issuerDN;
+        this.issuerDN = CertTools.stringToBCDNString(issuerDN);
     }
 
     /**
@@ -51,7 +52,19 @@ public class ClientEntry {
      */
     public ClientEntry(final X509Certificate cert) {
         this.serialNumber = cert.getSerialNumber();
-        this.issuerDN = cert.getIssuerDN().toString();
+        this.issuerDN = CertTools.stringToBCDNString(cert.getIssuerDN().toString());
+    }
+    
+    /**
+     * Construct a client entry given an instance of AuthorizedClient.
+     * 
+     * @param client 
+     */
+    public ClientEntry(final AuthorizedClient client) {
+        this.serialNumber = new BigInteger(client.getCertSN(), 16);
+        // AuthorizedClient already performes a CertTools.stringToBCDNSString
+        // internally
+        this.issuerDN = client.getIssuerDN();
     }
     
     public BigInteger getSerialNumber() {
@@ -111,6 +124,17 @@ public class ClientEntry {
             }
         }
         
+        return result;
+    }
+    
+    public static Set<ClientEntry> clientEntriesFromAuthClients(
+            final Collection<AuthorizedClient> authClients) {
+        final Set<ClientEntry> result = new HashSet<ClientEntry>();
+        
+        for (final AuthorizedClient authClient : authClients) {
+            result.add(new ClientEntry(authClient));
+        }
+
         return result;
     }
     

@@ -33,11 +33,22 @@ public class ClientEntry {
     private BigInteger serialNumber;
     private String issuerDN;
 
+    /**
+     * Construct a client entry given certificate serial number and issuer.
+     * 
+     * @param serialNumber Certificate serial number
+     * @param issuerDN Issuer DN
+     */
     public ClientEntry(final BigInteger serialNumber, final String issuerDN) {
         this.serialNumber = serialNumber;
         this.issuerDN = issuerDN;
     }
 
+    /**
+     * Construct a client entry given a certificate.
+     * 
+     * @param cert Certificate representing the entry 
+     */
     public ClientEntry(final X509Certificate cert) {
         this.serialNumber = cert.getSerialNumber();
         this.issuerDN = cert.getIssuerDN().toString();
@@ -76,6 +87,12 @@ public class ClientEntry {
         return "(SN: " + serialNumber.toString(16) + ", Issuer: " + issuerDN + ")";
     }
     
+    /**
+     * Given a configuration property, generate a set of client entries.
+     * 
+     * @param property Configuration property (semicolon-separated string)
+     * @return Set of client entries
+     */
     public static Set<ClientEntry> clientEntriesFromProperty(final String property) {
         final Set<ClientEntry> result = new HashSet<ClientEntry>();
         
@@ -97,6 +114,13 @@ public class ClientEntry {
         return result;
     }
     
+    /**
+     * Given a collection of client entries, returns a serialized string
+     * representation for saving to global properties.
+     * 
+     * @param entries Collection of client entries
+     * @return String representation
+     */
     public static String serializeClientEntries(final Collection<ClientEntry> entries) {
         final StringBuilder buff = new StringBuilder();
         for (final ClientEntry entry : entries) {

@@ -13,8 +13,21 @@
               <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" attributes="0">
-                          <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" alignment="1" attributes="0">
+                          <Component id="certificateSerialNumberErrorLabel" pref="371" max="32767" attributes="0"/>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <Component id="loadCurrentAdminCertButton" linkSize="3" min="-2" pref="97" max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="editRoleAdministratorCheckBox" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <Component id="editRoleAuditorCheckBox" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="editRoleArchiveAuditorCheckBox" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="1" attributes="0">
+                          <Group type="103" groupAlignment="1" attributes="0">
+                              <Component id="issuerErrorLabel" alignment="0" pref="377" max="32767" attributes="0"/>
                               <Component id="editCertSerialNoTextField" alignment="0" pref="377" max="32767" attributes="0"/>
                               <Component id="jLabel1" alignment="0" pref="377" max="32767" attributes="0"/>
                               <Component id="editIssuerDNTextField" alignment="0" pref="377" max="32767" attributes="0"/>
@@ -23,14 +36,6 @@
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="loadFromCertificateButton" linkSize="3" min="-2" pref="111" max="-2" attributes="0"/>
-                      </Group>
-                      <Component id="loadCurrentAdminCertButton" linkSize="3" alignment="1" min="-2" pref="97" max="-2" attributes="0"/>
-                      <Group type="102" alignment="0" attributes="0">
-                          <Component id="editRoleAdministratorCheckBox" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Component id="editRoleAuditorCheckBox" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="editRoleArchiveAuditorCheckBox" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
@@ -48,12 +53,17 @@
                       <Component id="loadFromCertificateButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="loadCurrentAdminCertButton" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="loadCurrentAdminCertButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="certificateSerialNumberErrorLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
                   <EmptySpace min="-2" pref="9" max="-2" attributes="0"/>
                   <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="editIssuerDNTextField" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="32767" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="issuerErrorLabel" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace pref="45" max="32767" attributes="0"/>
                   <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
@@ -133,6 +143,20 @@
           <Properties>
             <Property name="text" type="java.lang.String" resourceKey="editRoleArchiveAuditorCheckBox.text"/>
             <Property name="name" type="java.lang.String" value="editRoleArchiveAuditorCheckBox" noResource="true"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="certificateSerialNumberErrorLabel">
+          <Properties>
+            <Property name="foreground" type="java.awt.Color" resourceKey="certificateSerialNumberErrorLabel.foreground"/>
+            <Property name="text" type="java.lang.String" resourceKey="certificateSerialNumberErrorLabel.text"/>
+            <Property name="name" type="java.lang.String" value="certificateSerialNumberErrorLabel" noResource="true"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="issuerErrorLabel">
+          <Properties>
+            <Property name="foreground" type="java.awt.Color" resourceKey="issuerErrorLabel.foreground"/>
+            <Property name="text" type="java.lang.String" resourceKey="issuerErrorLabel.text"/>
+            <Property name="name" type="java.lang.String" value="issuerErrorLabel" noResource="true"/>
           </Properties>
         </Component>
       </SubComponents>

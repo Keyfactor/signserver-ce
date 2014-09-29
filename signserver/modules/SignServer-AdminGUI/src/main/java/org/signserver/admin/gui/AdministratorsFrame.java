@@ -147,6 +147,9 @@ public class AdministratorsFrame extends javax.swing.JFrame {
         allowAnyCheckbox.setSelected(allowAnyWSAdmin);
         
         loadCurrentAdminCertButton.setEnabled(SignServerAdminGUIApplication.getAdminCertificate() != null);
+        
+        certificateSerialNumberErrorLabel.setVisible(false);
+        issuerErrorLabel.setVisible(false);
     }
 
     /** This method is called from within the constructor to
@@ -169,6 +172,8 @@ public class AdministratorsFrame extends javax.swing.JFrame {
         editRoleAdministratorCheckBox = new javax.swing.JCheckBox();
         editRoleAuditorCheckBox = new javax.swing.JCheckBox();
         editRoleArchiveAuditorCheckBox = new javax.swing.JCheckBox();
+        certificateSerialNumberErrorLabel = new javax.swing.JLabel();
+        issuerErrorLabel = new javax.swing.JLabel();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jScrollPane6 = new javax.swing.JScrollPane();
@@ -226,6 +231,14 @@ public class AdministratorsFrame extends javax.swing.JFrame {
         editRoleArchiveAuditorCheckBox.setText(resourceMap.getString("editRoleArchiveAuditorCheckBox.text")); // NOI18N
         editRoleArchiveAuditorCheckBox.setName("editRoleArchiveAuditorCheckBox"); // NOI18N
 
+        certificateSerialNumberErrorLabel.setForeground(resourceMap.getColor("certificateSerialNumberErrorLabel.foreground")); // NOI18N
+        certificateSerialNumberErrorLabel.setText(resourceMap.getString("certificateSerialNumberErrorLabel.text")); // NOI18N
+        certificateSerialNumberErrorLabel.setName("certificateSerialNumberErrorLabel"); // NOI18N
+
+        issuerErrorLabel.setForeground(resourceMap.getColor("issuerErrorLabel.foreground")); // NOI18N
+        issuerErrorLabel.setText(resourceMap.getString("issuerErrorLabel.text")); // NOI18N
+        issuerErrorLabel.setName("issuerErrorLabel"); // NOI18N
+
         javax.swing.GroupLayout editPanelLayout = new javax.swing.GroupLayout(editPanel);
         editPanel.setLayout(editPanelLayout);
         editPanelLayout.setHorizontalGroup(
@@ -233,22 +246,26 @@ public class AdministratorsFrame extends javax.swing.JFrame {
             .addGroup(editPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(editPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(editPanelLayout.createSequentialGroup()
-                        .addGroup(editPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(editCertSerialNoTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 377, Short.MAX_VALUE)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 377, Short.MAX_VALUE)
-                            .addComponent(editIssuerDNTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 377, Short.MAX_VALUE)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 377, Short.MAX_VALUE)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 377, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(loadFromCertificateButton, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(loadCurrentAdminCertButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, editPanelLayout.createSequentialGroup()
+                        .addComponent(certificateSerialNumberErrorLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 371, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
+                        .addComponent(loadCurrentAdminCertButton, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(editPanelLayout.createSequentialGroup()
                         .addComponent(editRoleAdministratorCheckBox)
                         .addGap(18, 18, 18)
                         .addComponent(editRoleAuditorCheckBox)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(editRoleArchiveAuditorCheckBox)))
+                        .addComponent(editRoleArchiveAuditorCheckBox))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, editPanelLayout.createSequentialGroup()
+                        .addGroup(editPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(issuerErrorLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 377, Short.MAX_VALUE)
+                            .addComponent(editCertSerialNoTextField, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 377, Short.MAX_VALUE)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 377, Short.MAX_VALUE)
+                            .addComponent(editIssuerDNTextField, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 377, Short.MAX_VALUE)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 377, Short.MAX_VALUE)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 377, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(loadFromCertificateButton, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
 
@@ -264,12 +281,16 @@ public class AdministratorsFrame extends javax.swing.JFrame {
                     .addComponent(editCertSerialNoTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(loadFromCertificateButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(loadCurrentAdminCertButton)
+                .addGroup(editPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(loadCurrentAdminCertButton)
+                    .addComponent(certificateSerialNumberErrorLabel))
                 .addGap(9, 9, 9)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(editIssuerDNTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(issuerErrorLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 45, Short.MAX_VALUE)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(editPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -403,54 +424,88 @@ public class AdministratorsFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private boolean isValidSerialNumber(final String serial) {
+        try {
+            final BigInteger serialNumber = new BigInteger(serial, 16);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+    
+    private int showConfirmDialog(final boolean serialNumberInvalid,
+                                  final boolean issuerInvalid) {
+        certificateSerialNumberErrorLabel.setVisible(serialNumberInvalid);
+        issuerErrorLabel.setVisible(issuerInvalid);
+        
+        return JOptionPane.showConfirmDialog(this, editPanel,
+                        "Edit administrator", JOptionPane.OK_CANCEL_OPTION,
+                        JOptionPane.PLAIN_MESSAGE);
+    }
+    
     private void addButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
         try {
             editCertSerialNoTextField.setText("");
             editCertSerialNoTextField.setEditable(true);
             editIssuerDNTextField.setText("");
             
-            final int res = JOptionPane.showConfirmDialog(this, editPanel,
-                    "Add property", JOptionPane.OK_CANCEL_OPTION,
-                    JOptionPane.PLAIN_MESSAGE);
-            if (res == JOptionPane.OK_OPTION) {
-                final boolean admin = editRoleAdministratorCheckBox.isSelected();
-                final boolean auditor = editRoleAuditorCheckBox.isSelected();
-                final boolean archiveAuditor = editRoleArchiveAuditorCheckBox.isSelected();
-                
-                final String certSerialNo = editCertSerialNoTextField.getText();
-                final String issuerDN = editIssuerDNTextField.getText();
+            boolean serialNumberInvalid = false;
+            boolean issuerInvalid = false;
+            
+            for (;;) {
+                final int res =
+                            showConfirmDialog(serialNumberInvalid, issuerInvalid);
 
-                final HashMap<ClientEntry, Entry> admins = parseAdmins();
-                final ClientEntry cred =
-                        new ClientEntry(new BigInteger(certSerialNo, 16),
-                                        issuerDN);
-                
-                if (admins.containsKey(cred)) {
-                    JOptionPane.showMessageDialog(this,
-                            "The administrator already existed");
+                if (res == JOptionPane.OK_OPTION) {
+                    final boolean admin = editRoleAdministratorCheckBox.isSelected();
+                    final boolean auditor = editRoleAuditorCheckBox.isSelected();
+                    final boolean archiveAuditor = editRoleArchiveAuditorCheckBox.isSelected();
+
+                    final String certSerialNo = editCertSerialNoTextField.getText();
+                    final String issuerDN = editIssuerDNTextField.getText();
+
+                    serialNumberInvalid =
+                            !isValidSerialNumber(certSerialNo);
+                    issuerInvalid = issuerDN.isEmpty();
+
+                    if (!serialNumberInvalid && !issuerInvalid) {
+                    
+                        final HashMap<ClientEntry, Entry> admins = parseAdmins();
+                        final ClientEntry cred =
+                                new ClientEntry(new BigInteger(certSerialNo, 16),
+                                                issuerDN);
+
+                        if (admins.containsKey(cred)) {
+                            JOptionPane.showMessageDialog(this,
+                                    "The administrator already existed");
+                        } else {
+                            final Entry newEntry =
+                                    new Entry(cred, admin, auditor, archiveAuditor);
+                            admins.put(cred, newEntry);
+
+                            if (admin) {
+                                SignServerAdminGUIApplication.getAdminWS()
+                                    .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
+                                    "WSADMINS",
+                                    serializeAdmins(admins));
+                            }
+                            if (auditor) {
+                                SignServerAdminGUIApplication.getAdminWS()
+                                    .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
+                                    "WSAUDITORS",
+                                    serializeAuditors(admins));
+                            }
+                            if (archiveAuditor) {
+                                SignServerAdminGUIApplication.getAdminWS()
+                                    .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
+                                    "WSARCHIVEAUDITORS",
+                                    serializeArchiveAuditors(admins));
+                            }
+                        }
+                        break;
+                    }
                 } else {
-                    final Entry newEntry =
-                            new Entry(cred, admin, auditor, archiveAuditor);
-                    admins.put(cred, newEntry);
-
-                    if (admin) {
-                        SignServerAdminGUIApplication.getAdminWS()
-                            .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
-                            "WSADMINS",
-                            serializeAdmins(admins));
-                    }
-                    if (auditor) {
-                        SignServerAdminGUIApplication.getAdminWS()
-                            .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
-                            "WSAUDITORS",
-                            serializeAuditors(admins));
-                    }
-                    if (archiveAuditor) {
-                        SignServerAdminGUIApplication.getAdminWS()
-                            .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
-                            "WSARCHIVEAUDITORS",
-                            serializeArchiveAuditors(admins));
-                    }
+                    break;
                 }
                 refreshButton.doClick();
             }
@@ -466,6 +521,8 @@ public class AdministratorsFrame extends javax.swing.JFrame {
         }
 }//GEN-LAST:event_addButtonActionPerformed
 
+
+    
     private void editButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
         try {
             final int row = adminsTable.getSelectedRow();
@@ -480,51 +537,68 @@ public class AdministratorsFrame extends javax.swing.JFrame {
                 editRoleAuditorCheckBox.setSelected(oldEntry.isAuditor());
                 editRoleArchiveAuditorCheckBox.setSelected(oldEntry.isArchiveAuditor());
 
-                final int res = JOptionPane.showConfirmDialog(this, editPanel,
-                        "Edit administrator", JOptionPane.OK_CANCEL_OPTION,
-                        JOptionPane.PLAIN_MESSAGE);
-                if (res == JOptionPane.OK_OPTION) {
-                    
-                    HashMap<ClientEntry, Entry> admins = parseAdmins();
-                    
-                    final ClientEntry newCred =
-                            new ClientEntry(new BigInteger(editCertSerialNoTextField.getText(),
-                                                           16), 
-                                            editIssuerDNTextField.getText());
+                boolean serialNumberInvalid = false;
+                boolean issuerInvalid = false;
+                
+                for (;;) {
+                    final int res =
+                            showConfirmDialog(serialNumberInvalid, issuerInvalid);
+                    if (res == JOptionPane.OK_OPTION) {
+                        final String certSerialNumber =
+                                editCertSerialNoTextField.getText();
+                        final String issuerDN =
+                                editIssuerDNTextField.getText();
 
-                    if (!admins.containsKey(oldEntry.getClient())) {
-                        JOptionPane.showMessageDialog(this,
-                                "No such administrator");
-                    } else {
-                        admins.remove(oldEntry.getClient());
+                        serialNumberInvalid =
+                                !isValidSerialNumber(certSerialNumber);
+                        issuerInvalid = issuerDN.isEmpty();
                         
-                        final Entry newEntry =
-                                new Entry(newCred,
-                                    editRoleAdministratorCheckBox.isSelected(),
-                                    editRoleAuditorCheckBox.isSelected(),
-                                    editRoleArchiveAuditorCheckBox.isSelected());
-                        
-                        if (admins.containsKey(newCred)) {
-                            JOptionPane.showMessageDialog(this,
-                            "The administrator already existed");
-                        } else {
-                            admins.put(newCred, newEntry);
+                        if (!serialNumberInvalid && !issuerInvalid) {
+                            HashMap<ClientEntry, Entry> admins = parseAdmins();
+
+                            final ClientEntry newCred =
+                                    new ClientEntry(new BigInteger(certSerialNumber,
+                                                                   16), 
+                                                    issuerDN);
+
+                            if (!admins.containsKey(oldEntry.getClient())) {
+                                JOptionPane.showMessageDialog(this,
+                                        "No such administrator");
+                            } else {
+                                admins.remove(oldEntry.getClient());
+
+                                final Entry newEntry =
+                                        new Entry(newCred,
+                                            editRoleAdministratorCheckBox.isSelected(),
+                                            editRoleAuditorCheckBox.isSelected(),
+                                            editRoleArchiveAuditorCheckBox.isSelected());
+
+                                if (admins.containsKey(newCred)) {
+                                    JOptionPane.showMessageDialog(this,
+                                    "The administrator already existed");
+                                } else {
+                                    admins.put(newCred, newEntry);
+                                }
+                                SignServerAdminGUIApplication.getAdminWS()
+                                    .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
+                                    "WSADMINS",
+                                    serializeAdmins(admins));
+                                SignServerAdminGUIApplication.getAdminWS()
+                                    .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
+                                    "WSAUDITORS",
+                                    serializeAuditors(admins));
+                                SignServerAdminGUIApplication.getAdminWS()
+                                    .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
+                                    "WSARCHIVEAUDITORS",
+                                    serializeArchiveAuditors(admins));
+                            }
+                            break;
                         }
-                        SignServerAdminGUIApplication.getAdminWS()
-                            .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
-                            "WSADMINS",
-                            serializeAdmins(admins));
-                        SignServerAdminGUIApplication.getAdminWS()
-                            .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
-                            "WSAUDITORS",
-                            serializeAuditors(admins));
-                        SignServerAdminGUIApplication.getAdminWS()
-                            .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
-                            "WSARCHIVEAUDITORS",
-                            serializeArchiveAuditors(admins));
+                    } else {
+                        break;
                     }
-                    refreshButton.doClick();
                 }
+                refreshButton.doClick();
             }
         } catch (AdminNotAuthorizedException_Exception ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage(),
@@ -722,6 +796,7 @@ public class AdministratorsFrame extends javax.swing.JFrame {
     private javax.swing.JButton addButton;
     private javax.swing.JTable adminsTable;
     private javax.swing.JCheckBox allowAnyCheckbox;
+    private javax.swing.JLabel certificateSerialNumberErrorLabel;
     private javax.swing.JButton editButton;
     private javax.swing.JTextField editCertSerialNoTextField;
     private javax.swing.JTextField editIssuerDNTextField;
@@ -729,6 +804,7 @@ public class AdministratorsFrame extends javax.swing.JFrame {
     private javax.swing.JCheckBox editRoleAdministratorCheckBox;
     private javax.swing.JCheckBox editRoleArchiveAuditorCheckBox;
     private javax.swing.JCheckBox editRoleAuditorCheckBox;
+    private javax.swing.JLabel issuerErrorLabel;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;

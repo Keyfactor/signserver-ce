@@ -42,7 +42,7 @@ public class ClientEntry {
      */
     public ClientEntry(final BigInteger serialNumber, final String issuerDN) {
         this.serialNumber = serialNumber;
-        this.issuerDN = CertTools.stringToBCDNString(issuerDN);
+        this.issuerDN = issuerDN;
     }
 
     /**
@@ -52,7 +52,7 @@ public class ClientEntry {
      */
     public ClientEntry(final X509Certificate cert) {
         this.serialNumber = cert.getSerialNumber();
-        this.issuerDN = CertTools.stringToBCDNString(cert.getIssuerDN().toString());
+        this.issuerDN = cert.getIssuerDN().toString();
     }
     
     /**

@@ -424,6 +424,13 @@ public class AdministratorsFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Utility method to determine if a string represents a valid serial numer
+     * in hexadecimal format.
+     * 
+     * @param serial String representing a serial number
+     * @return True if given string is valid
+     */
     private boolean isValidSerialNumber(final String serial) {
         try {
             final BigInteger serialNumber = new BigInteger(serial, 16);
@@ -433,6 +440,15 @@ public class AdministratorsFrame extends javax.swing.JFrame {
         }
     }
     
+    /**
+     * Show administrator add/edit dialog.
+     * 
+     * @param serialNumberInvalid Set to true to indicate a previously entered
+     *                            invalid serial number
+     * @param issuerInvalid Set to true to indicate a previously entered invalid
+     *                      issuer DN
+     * @return Dialog selection @see JOptionPane.showConfirmDialog
+     */
     private int showConfirmDialog(final boolean serialNumberInvalid,
                                   final boolean issuerInvalid) {
         certificateSerialNumberErrorLabel.setVisible(serialNumberInvalid);

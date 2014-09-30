@@ -15,6 +15,8 @@ package org.signserver.server;
 import java.math.BigInteger;
 import java.security.Security;
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
+import java.util.List;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import static org.junit.Assert.fail;
@@ -46,6 +48,9 @@ public class ClientCertAuthorizerTest {
             "123456789AB";
     private static final String TEST_ISSUER = "CN=foo,O=TestOrganization,C=SE";
     
+    private static final String OTHER_SERIALNUMBER = "a987654321";
+    private static final String OTHER_ISSUER = "CN=other,O=OtherOrganization,C=SE";
+    
     private X509Certificate testCert;
     
     @Before
@@ -65,19 +70,20 @@ public class ClientCertAuthorizerTest {
     /**
      * Test assumed accepted request with specified configured auth client.
      * 
-     * @param serialNumber
-     * @param issuer
+     * @param authClients List of authorized clients
      * @throws Exception 
      */
-    private void testAuthorized(final String serialNumber, final String issuer,
+    private void testAuthorized(final List<AuthorizedClient> authClients,
                               final boolean expectAuthorized)
             throws Exception {
         final ClientCertAuthorizer instance = new ClientCertAuthorizer();
         final ProcessableConfig config =
                 new ProcessableConfig(new WorkerConfig());
         
-        if (serialNumber != null && issuer != null) {
-            config.addAuthorizedClient(new AuthorizedClient(serialNumber, issuer)); 
+        if (authClients != null) {
+            for (final AuthorizedClient client : authClients) {
+                config.addAuthorizedClient(client); 
+            }
         }
    
         instance.init(DUMMY_WORKER_ID, config.getWorkerConfig(), null);
@@ -99,6 +105,20 @@ public class ClientCertAuthorizerTest {
         } catch (Exception e) {
             fail("Unexpected exception: " + e.getClass().getName());
         }
+    }
+    
+    /**
+     * Test assumed accepted request with specified configured auth client.
+     * 
+     * @param serialNumber Serial number of authorized client's cert
+     * @param issuer Issuer DN of authorized client's cert
+     * @throws Exception 
+     */
+    private void testAuthorized(final String serialNumber, final String issuer,
+            final boolean expectAuthorized)
+            throws Exception {
+        testAuthorized(Arrays.asList(new AuthorizedClient(serialNumber, issuer)),
+                expectAuthorized);
     }
     
     /**
@@ -129,7 +149,7 @@ public class ClientCertAuthorizerTest {
      */
     @Test
     public void test03NotAcceptedWithNoAuthorizedClients() throws Exception {
-        testAuthorized(null, null, false);
+        testAuthorized(null, false);
     }
     
     /**
@@ -140,5 +160,18 @@ public class ClientCertAuthorizerTest {
     @Test
     public void test04AcceptedWithUpperCaseHex() throws Exception {
         testAuthorized(TEST_SERIALNUMBER_UPPER_CASE, TEST_ISSUER, true);
+    }
+    
+    /**
+     * Test that specifying additional authorized clients, the original client
+     * is still authorized.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void test05AcceptedWithAddionalAuthClient() throws Exception {
+       testAuthorized(Arrays.asList(
+               new AuthorizedClient(OTHER_SERIALNUMBER, OTHER_ISSUER),
+               new AuthorizedClient(TEST_SERIALNUMBER, TEST_ISSUER)), true);
     }
 }

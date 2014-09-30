@@ -66,14 +66,17 @@ public class ClientCertAuthorizerTest {
      * @param issuer
      * @throws Exception 
      */
-    private void testAccepted(final String serialNumber, final String issuer)
+    private void testAuthorized(final String serialNumber, final String issuer,
+                              final boolean expectAuthorized)
             throws Exception {
         final ClientCertAuthorizer instance = new ClientCertAuthorizer();
         final ProcessableConfig config =
                 new ProcessableConfig(new WorkerConfig());
         
-        config.addAuthorizedClient(new AuthorizedClient(serialNumber, issuer)); 
-        
+        if (serialNumber != null && issuer != null) {
+            config.addAuthorizedClient(new AuthorizedClient(serialNumber, issuer)); 
+        }
+   
         instance.init(DUMMY_WORKER_ID, config.getWorkerConfig(), null);
         
         final ProcessRequest request = new GenericSignRequest();
@@ -83,9 +86,13 @@ public class ClientCertAuthorizerTest {
         
         try {
             instance.isAuthorized(request, context);
-            // should pass
+            if (!expectAuthorized) {
+                fail("Should not be authorized");
+            }
         } catch (IllegalRequestException e) {
-            fail("Request should be authorized: " + e.getMessage());
+            if (expectAuthorized) {
+                fail("Request should be authorized: " + e.getMessage());
+            }
         } catch (Exception e) {
             fail("Unexpected exception: " + e.getClass().getName());
         }
@@ -98,7 +105,7 @@ public class ClientCertAuthorizerTest {
      */
     @Test
     public void test01AcceptedCert() throws Exception {
-        testAccepted(TEST_SERIALNUMBER, TEST_ISSUER);
+        testAuthorized(TEST_SERIALNUMBER, TEST_ISSUER, true);
     }
     
     /**
@@ -108,6 +115,11 @@ public class ClientCertAuthorizerTest {
      */
     @Test
     public void test02AcceptedWithLeadingZero() throws Exception {
-        testAccepted(TEST_SERIALNUMBER_WITH_LEADING_ZERO, TEST_ISSUER);
+        testAuthorized(TEST_SERIALNUMBER_WITH_LEADING_ZERO, TEST_ISSUER, true);
+    }
+    
+    @Test
+    public void test03NotAcceptedWithNoAuthorizedClients() throws Exception {
+        testAuthorized(null, null, false);
     }
 }

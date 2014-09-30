@@ -2949,7 +2949,8 @@ Example 2: signserver wsadmins -remove -certserialno 123abcdef -issuerdn "C=SE, 
 Example 3: signserver wsadmins -list
                     </source>
                     <p>
-Notice that the certificate serial number should be entered with lower case characters. 
+Notice that the certificate serial number should be entered as the hexadecimal
+representation (leading zeros and upper/lowercase is not significant). 
 Also notice that the issuer DN currently should be entered in the reversed order 
 and with spaces after each component. In the example above the issuer DN from the 
 certificate actually is "CN=Neo Morpheus, C=SE". 

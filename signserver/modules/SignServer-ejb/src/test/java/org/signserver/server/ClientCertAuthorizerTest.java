@@ -38,9 +38,10 @@ import org.signserver.test.utils.builders.CertBuilder;
  */
 public class ClientCertAuthorizerTest {
     
-    private static int DUMMY_WORKER_ID = 4711;
-    private static String TEST_SERIALNUMBER = "123456789";
-    private static String TEST_ISSUER = "CN=foo,O=TestOrganization,C=SE";
+    private static final int DUMMY_WORKER_ID = 4711;
+    private static final String TEST_SERIALNUMBER = "123456789";
+    private static final String TEST_SERIALNUMBER_WITH_LEADING_ZERO = "0123456789";
+    private static final String TEST_ISSUER = "CN=foo,O=TestOrganization,C=SE";
     
     private X509Certificate testCert;
     
@@ -59,18 +60,19 @@ public class ClientCertAuthorizerTest {
     }
     
     /**
-     * Test a basic configuration with request cert matching configuration.
+     * Test assumed accepted request with specified configured auth client.
      * 
+     * @param serialNumber
+     * @param issuer
      * @throws Exception 
      */
-    @Test
-    public void test01AcceptedCert() throws Exception {
+    private void testAccepted(final String serialNumber, final String issuer)
+            throws Exception {
         final ClientCertAuthorizer instance = new ClientCertAuthorizer();
         final ProcessableConfig config =
                 new ProcessableConfig(new WorkerConfig());
         
-        config.addAuthorizedClient(new AuthorizedClient(TEST_SERIALNUMBER,
-                                                        TEST_ISSUER)); 
+        config.addAuthorizedClient(new AuthorizedClient(serialNumber, issuer)); 
         
         instance.init(DUMMY_WORKER_ID, config.getWorkerConfig(), null);
         
@@ -87,5 +89,25 @@ public class ClientCertAuthorizerTest {
         } catch (Exception e) {
             fail("Unexpected exception: " + e.getClass().getName());
         }
+    }
+    
+    /**
+     * Test a basic configuration with request cert matching configuration.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void test01AcceptedCert() throws Exception {
+        testAccepted(TEST_SERIALNUMBER, TEST_ISSUER);
+    }
+    
+    /**
+     * Test that specifying serial number with leading zero is supported.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void test02AcceptedWithLeadingZero() throws Exception {
+        testAccepted(TEST_SERIALNUMBER_WITH_LEADING_ZERO, TEST_ISSUER);
     }
 }

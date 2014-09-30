@@ -39,8 +39,11 @@ import org.signserver.test.utils.builders.CertBuilder;
 public class ClientCertAuthorizerTest {
     
     private static final int DUMMY_WORKER_ID = 4711;
-    private static final String TEST_SERIALNUMBER = "123456789";
-    private static final String TEST_SERIALNUMBER_WITH_LEADING_ZERO = "0123456789";
+    private static final String TEST_SERIALNUMBER = "123456789ab";
+    private static final String TEST_SERIALNUMBER_WITH_LEADING_ZERO =
+            "0123456789ab";
+    private static final String TEST_SERIALNUMBER_UPPER_CASE =
+            "123456789AB";
     private static final String TEST_ISSUER = "CN=foo,O=TestOrganization,C=SE";
     
     private X509Certificate testCert;
@@ -118,8 +121,24 @@ public class ClientCertAuthorizerTest {
         testAuthorized(TEST_SERIALNUMBER_WITH_LEADING_ZERO, TEST_ISSUER, true);
     }
     
+    /**
+     * Test that requests are not authorized when there is no authorized clients
+     * set.
+     * 
+     * @throws Exception 
+     */
     @Test
     public void test03NotAcceptedWithNoAuthorizedClients() throws Exception {
         testAuthorized(null, null, false);
+    }
+    
+    /**
+     * Test that specifying serial number with upper case hex letters works.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void test04AcceptedWithUpperCaseHex() throws Exception {
+        testAuthorized(TEST_SERIALNUMBER_UPPER_CASE, TEST_ISSUER, true);
     }
 }

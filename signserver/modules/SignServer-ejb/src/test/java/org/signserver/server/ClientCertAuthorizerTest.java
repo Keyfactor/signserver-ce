@@ -174,4 +174,15 @@ public class ClientCertAuthorizerTest {
                new AuthorizedClient(OTHER_SERIALNUMBER, OTHER_ISSUER),
                new AuthorizedClient(TEST_SERIALNUMBER, TEST_ISSUER)), true);
     }
+    
+    /**
+     * Test that specifying a different authorized client, a request is not
+     * accepted.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void test06NotAcceptedWithOtherClient() throws Exception {
+       testAuthorized(OTHER_SERIALNUMBER, OTHER_ISSUER, false); 
+    }
 }

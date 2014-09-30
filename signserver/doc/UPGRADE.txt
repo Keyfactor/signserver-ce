@@ -18,6 +18,11 @@ RELEASE_NOTES.txt for more information about such upgrades.
 4. See any special instructions for the version you are upgrading below.
 5. Build and deploy as described in the installation guide.
 
+From SignServer 3.5.x to SignServer 3.6.x
+-----------------------------------------
+
+   (No database changes required)
+
 
 From SignServer 3.4.x to SignServer 3.5.x
 -----------------------------------------
@@ -30,7 +35,7 @@ From SignServer 3.4.x to SignServer 3.5.x
 
 2) Dependency upgraded:
 
-The XML Security library has been updated to version 1.5.5. This requires 
+The XML Security library has been updated to version 1.5.7. This requires 
 special handling if JBoss 5 is used. See the Notice section of 
 RELEASE_NOTES.txt for details.
 

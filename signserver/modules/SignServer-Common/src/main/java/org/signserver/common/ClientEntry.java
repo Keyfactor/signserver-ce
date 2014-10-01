@@ -123,6 +123,13 @@ public class ClientEntry {
         return result;
     }
     
+    /**
+     * Given a collection of AuthorizedClient instances, produces a set of
+     * ClientEntry instances.
+     * 
+     * @param authClients Collection of authorized clients
+     * @return Set of client entries
+     */
     public static Set<ClientEntry> clientEntriesFromAuthClients(
             final Collection<AuthorizedClient> authClients) {
         final Set<ClientEntry> result = new HashSet<ClientEntry>();

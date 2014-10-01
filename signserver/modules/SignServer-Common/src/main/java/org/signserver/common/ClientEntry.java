@@ -16,10 +16,8 @@ import java.math.BigInteger;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import org.apache.log4j.Logger;
-import org.ejbca.util.CertTools;
 
 /**
  * Class representing admin or client authorization.

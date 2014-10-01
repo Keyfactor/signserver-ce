@@ -83,7 +83,7 @@ public class WSAdminsCommand extends AbstractAdminCommand {
     
     
     private String operation;
-    private String certSerialNo;
+    private BigInteger certSerialNo;
     private String issuerDN;
     private String cert;
 
@@ -102,14 +102,20 @@ public class WSAdminsCommand extends AbstractAdminCommand {
      *
      * @param line The command line to read from
      */
-    private void parseCommandLine(final CommandLine line) {
-        final String serialNoString = line.getOptionValue(CERTSERIALNO, null);
+    private void parseCommandLine(final CommandLine line)
+        throws IllegalCommandArgumentsException {
+        final String certSerialNoString =
+                line.getOptionValue(CERTSERIALNO, null);
         
-        if (serialNoString != null) {
-            final BigInteger serialNo = new BigInteger(serialNoString, 16);
-        
-            certSerialNo = serialNo.toString(16);
+        if (certSerialNoString != null) {
+            try {
+                certSerialNo = new BigInteger(certSerialNoString, 16);
+            } catch (NumberFormatException e) {
+                throw new IllegalCommandArgumentsException("Illegal serial number specified: " +
+                        certSerialNoString);
+            }
         }
+        
         issuerDN = line.getOptionValue(ISSUERDN, null);
         cert = line.getOptionValue(CERT, null);
         if (line.hasOption(ADD)) {
@@ -154,6 +160,8 @@ public class WSAdminsCommand extends AbstractAdminCommand {
             parseCommandLine(line);
         } catch (ParseException ex) {
             throw new IllegalCommandArgumentsException(ex.getMessage());
+        } catch (IllegalCommandArgumentsException e) {
+            throw e;
         }
         validateOptions();
         
@@ -195,8 +203,8 @@ public class WSAdminsCommand extends AbstractAdminCommand {
                 final boolean added;
             	if (cert == null) {
             		// serial number and issuer DN was entered manually
-                        added = entries.add(new ClientEntry(new BigInteger(certSerialNo, 16), 
-                                                issuerDN));
+                        added = entries.add(new ClientEntry(certSerialNo, 
+                                                            issuerDN));
             	} else {
             		// read serial number and issuer DN from cert file
             		X509Certificate certificate = SignServerUtil.getCertFromFile(cert);
@@ -226,8 +234,7 @@ public class WSAdminsCommand extends AbstractAdminCommand {
                     getOutputStream().println("Administrator already exists");
                 }
             } else if (REMOVE.equals(operation)) {
-                if (entries.remove(new ClientEntry(new BigInteger(certSerialNo, 16),
-                                                   issuerDN))) {
+                if (entries.remove(new ClientEntry(certSerialNo, issuerDN))) {
                     getGlobalConfigurationSession().setProperty(
                             GlobalConfiguration.SCOPE_GLOBAL, "WSADMINS",
                             ClientEntry.serializeClientEntries(entries));

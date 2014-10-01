@@ -28,6 +28,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.xml.ws.soap.SOAPFaultException;
+import org.apache.log4j.Logger;
 import org.ejbca.util.CertTools;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Task;
@@ -45,6 +46,8 @@ import  org.signserver.common.GlobalConfiguration;
  */
 @SuppressWarnings("PMD.UnusedFormalParameter")
 public class AdministratorsFrame extends javax.swing.JFrame {
+    /** Logger for this class */
+    private static final Logger LOG = Logger.getLogger(AdministratorsFrame.class);
 
     private static final String[] COLUMN_NAMES = new String[] {
         "Certificate serial number",
@@ -863,14 +866,21 @@ public class AdministratorsFrame extends javax.swing.JFrame {
         if (admins != null && admins.contains(";")) {
             for (String entryString : admins.split(";")) {
                 final String[] parts = entryString.split(",", 2);
-                final ClientEntry client =
+                try {
+                    final ClientEntry client =
                         new ClientEntry(new BigInteger(parts[0], 16), parts[1]);
-                Entry entry = entryMap.get(client);
-                if (entry == null) {
-                    entry = new Entry(client);
-                    entryMap.put(client, entry);
+                    Entry entry = entryMap.get(client);
+                    if (entry == null) {
+                        entry = new Entry(client);
+                        entryMap.put(client, entry);
+                    }
+                    entry.setAdmin(true);
+                } catch (NumberFormatException e) {
+                    LOG.error("Invalid serialnumber for administrator: " +
+                            parts[0]);
+                }  catch (ArrayIndexOutOfBoundsException e) {
+                    LOG.error("Invalid administrator definition: " + entryString);
                 }
-                entry.setAdmin(true);
             }
         }
 
@@ -878,14 +888,22 @@ public class AdministratorsFrame extends javax.swing.JFrame {
         if (auditors != null && auditors.contains(";")) {
             for (String entryString : auditors.split(";")) {
                 final String[] parts = entryString.split(",", 2);
-                final ClientEntry client =
+                
+                try {
+                    final ClientEntry client =
                         new ClientEntry(new BigInteger(parts[0], 16), parts[1]);
-                Entry entry = entryMap.get(client);
-                if (entry == null) {
-                    entry = new Entry(client);
-                    entryMap.put(client, entry);
+                    Entry entry = entryMap.get(client);
+                    if (entry == null) {
+                        entry = new Entry(client);
+                        entryMap.put(client, entry);
+                    }
+                    entry.setAuditor(true);
+                } catch (NumberFormatException e) {
+                    LOG.error("Invalid serialnumber for administrator: " +
+                            parts[0]);
+                }  catch (ArrayIndexOutOfBoundsException e) {
+                    LOG.error("Invalid administrator definition: " + entryString);
                 }
-                entry.setAuditor(true);
             }
         }
         
@@ -893,14 +911,22 @@ public class AdministratorsFrame extends javax.swing.JFrame {
         if (archiveAuditors != null && archiveAuditors.contains(";")) {
             for (final String entryString : archiveAuditors.split(";")) {
                 final String[] parts = entryString.split(",", 2);
-                final ClientEntry client =
+                
+                try {
+                    final ClientEntry client =
                         new ClientEntry(new BigInteger(parts[0], 16), parts[1]);
-                Entry entry = entryMap.get(client);
-                if (entry == null) {
-                    entry = new Entry(client);
-                    entryMap.put(client, entry);
-                }
-                entry.setArchiveAuditor(true);
+                    Entry entry = entryMap.get(client);
+                    if (entry == null) {
+                        entry = new Entry(client);
+                        entryMap.put(client, entry);
+                    }
+                    entry.setArchiveAuditor(true);
+                } catch (NumberFormatException e) {
+                    LOG.error("Invalid serialnumber for administrator: " +
+                            parts[0]);
+                }  catch (ArrayIndexOutOfBoundsException e) {
+                    LOG.error("Invalid administrator definition: " + entryString);
+                } 
             }
         }
 

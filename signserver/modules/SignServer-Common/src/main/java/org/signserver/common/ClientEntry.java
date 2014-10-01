@@ -31,8 +31,8 @@ public class ClientEntry {
     /** Logger for this class. */
     private static Logger LOG = Logger.getLogger(ClientEntry.class);
 
-    private BigInteger serialNumber;
-    private String issuerDN;
+    private final BigInteger serialNumber;
+    private final String issuerDN;
 
     /**
      * Construct a client entry given certificate serial number and issuer.
@@ -62,8 +62,6 @@ public class ClientEntry {
      */
     public ClientEntry(final AuthorizedClient client) {
         this.serialNumber = new BigInteger(client.getCertSN(), 16);
-        // AuthorizedClient already performes a CertTools.stringToBCDNSString
-        // internally
         this.issuerDN = client.getIssuerDN();
     }
     

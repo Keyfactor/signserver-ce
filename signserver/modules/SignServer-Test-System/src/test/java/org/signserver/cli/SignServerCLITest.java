@@ -343,6 +343,16 @@ public class SignServerCLITest extends ModulesTestCase {
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,
                 cli.execute("wsadmins", "-list"));
         assertNotPrinted("", cli.getOut(), "ANY CERTIFICATE ACCEPTED FOR WS ADMINISTRATORS");
+        
+        // Test with invalid hexadecimal serial number
+        assertEquals("", CommandLineInterface.RETURN_INVALID_ARGUMENTS,
+                cli.execute("wsadmins", "-add", "-certserialno", "foo",
+                        "-issuerdn", "CN=foo"));
+        assertPrinted("", cli.getOut(), "Illegal serial number specified: foo");
+        assertEquals("", CommandLineInterface.RETURN_INVALID_ARGUMENTS,
+                cli.execute("wsadmins", "-remove", "-certserialno", "foo",
+                        "-issuerdn", "CN=foo"));
+        assertPrinted("", cli.getOut(), "Illegal serial number specified: foo");
     }
     
     /**
@@ -435,6 +445,16 @@ public class SignServerCLITest extends ModulesTestCase {
         		cli.execute("wsauditors", "-list"));
         assertNotPrinted("", cli.getOut(), "ff34343d2428");
         assertNotPrinted("", cli.getOut(), "CN=Test Root CA 2");
+        
+        // Test with invalid hexadecimal serial number
+        assertEquals("", CommandLineInterface.RETURN_INVALID_ARGUMENTS,
+                cli.execute("wsauditors", "-add", "-certserialno", "foo",
+                        "-issuerdn", "CN=foo"));
+        assertPrinted("", cli.getOut(), "Illegal serial number specified: foo");
+        assertEquals("", CommandLineInterface.RETURN_INVALID_ARGUMENTS,
+                cli.execute("wsauditors", "-remove", "-certserialno", "foo",
+                        "-issuerdn", "CN=foo"));
+        assertPrinted("", cli.getOut(), "Illegal serial number specified: foo");
     }
     
     /**
@@ -502,6 +522,16 @@ public class SignServerCLITest extends ModulesTestCase {
                         cli.execute("wsarchiveauditors", "-list"));
         assertNotPrinted("", cli.getOut(), "ff34343d2428");
         assertNotPrinted("", cli.getOut(), "CN=Test Root CA 2");
+        
+        // Test with invalid hexadecimal serial number
+        assertEquals("", CommandLineInterface.RETURN_INVALID_ARGUMENTS,
+                cli.execute("wsarchiveauditors", "-add", "-certserialno", "foo",
+                        "-issuerdn", "CN=foo"));
+        assertPrinted("", cli.getOut(), "Illegal serial number specified: foo");
+        assertEquals("", CommandLineInterface.RETURN_INVALID_ARGUMENTS,
+                cli.execute("wsarchiveauditors", "-remove", "-certserialno", "foo",
+                        "-issuerdn", "CN=foo"));
+        assertPrinted("", cli.getOut(), "Illegal serial number specified: foo");
     }
     
     /**

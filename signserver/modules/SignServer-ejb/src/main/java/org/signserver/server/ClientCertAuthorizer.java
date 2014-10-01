@@ -12,17 +12,13 @@
  *************************************************************************/
 package org.signserver.server;
 
-import java.math.BigInteger;
 import java.security.cert.X509Certificate;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.ejbca.util.CertTools;
-import org.signserver.common.AuthorizedClient;
 import org.signserver.common.ClientEntry;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.ProcessRequest;

@@ -78,11 +78,13 @@ public abstract class AbstractWSClientsCommand extends AbstractAdminCommand {
         final String certSerialNoString =
                 line.getOptionValue(CERTSERIALNO, null);
         
-        try {
-            certSerialNo = new BigInteger(certSerialNoString, 16);
-        } catch (NumberFormatException e) {
-            throw new IllegalCommandArgumentsException("Illegal serial number specified: " +
-                    certSerialNoString);
+        if (certSerialNoString != null) {
+            try {
+                certSerialNo = new BigInteger(certSerialNoString, 16);
+            } catch (NumberFormatException e) {
+                throw new IllegalCommandArgumentsException("Illegal serial number specified: " +
+                        certSerialNoString);
+            }
         }
 
         issuerDN = line.getOptionValue(ISSUERDN, null);

@@ -1353,8 +1353,18 @@ These commands are used to configure the internal client certificate authorizati
                         <p>
 <b>addauthorizedclient:</b>
 Adds a client certificate to a processable workers list of acceptable clients using this worker. Specify
-certificate serial number in hex and the Issuer DN of the client certificate.
+certificate serial number in hex and the Issuer DN of the client certificate using BouncyCaste DNS order
+with no spaces between components. Alternatively a certificate file (PEM or DER format) can be specified,
+from which the serial number and issuer DN is fetched.
                         </p>
+                        <p>
+Usage:
+                        </p>
+                        <source>
+Example 1: signserver addauthorizedclient 1 EF34242D2324 &quot;CN=Test Root CA&quot;<br/>
+Example 2: signserver addauthorizedclient 1 EF3456789ABC &quot;CN=Client,O=Test Organization,C=SE&quot;<br/>
+Example 3: signserver addauthorizedclient 1 client.pem<br/>
+                        </source>
                         <p>
 <b>removeauthorizedclient:</b>
 Removes added client certificate entries.

@@ -1455,8 +1455,18 @@ SignServer.
                         </p>
                         <p>
 Authorizes an administrator to use the Admin Web Service interface by
-certificate serialnumber (in hexadecimal) and issuer DN.
+certificate serialnumber (in hexadecimal) and issuer DN (as specified in the
+certificate, with spaces after the commas separating DN components).
+Alternatively a certificate file can be specified, from which the serial number
+and issuer DN will be taken.
                         </p>
+                        <p>
+Samples:
+                        </p>
+                        <source>
+Example 1: signserver wsadmins -add -certserialno 123ABCDEF -issuerdn &quot;CN=Neo Morpheus, C=SE&quot;<br/>
+Example 2: signserver wsadmins -add -cert wsadmin.pem<br/>
+                        </source>
                         <p>
 <b>wsadmins -remove:</b>
                         </p>

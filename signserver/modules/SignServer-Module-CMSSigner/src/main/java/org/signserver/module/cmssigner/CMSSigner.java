@@ -56,17 +56,46 @@ public class CMSSigner extends BaseSigner {
     private static final String CONTENT_TYPE = "application/pkcs7-signature";
     
     // Property constants
-    public static final String SIGNATUREALGORITHM = "SIGNATUREALGORITHM";
+    public static final String SIGNATUREALGORITHM_PROPERTY = "SIGNATUREALGORITHM";
+    public static final String DETACHEDSIGNATURE_PROPERTY = "DETACHEDSIGNATURE";
+    public static final String ALLOW_SIGNATURETYPE_OVERRIDE_PROPERTY = "ALLOW_DETACHEDSIGNATURE_OVERRIDE";
 
+    private LinkedList<String> configErrors;
     private String signatureAlgorithm;
-    
+
+    private boolean detachedSignature;
+    private boolean allowDetachedSignatureOverride;
+
     @Override
     public void init(final int workerId, final WorkerConfig config,
             final WorkerContext workerContext, final EntityManager workerEM) {
         super.init(workerId, config, workerContext, workerEM);
-        
+
+        // Configuration errors
+        configErrors = new LinkedList<String>();
+
         // Get the signature algorithm
-        signatureAlgorithm = config.getProperty(SIGNATUREALGORITHM);
+        signatureAlgorithm = config.getProperty(SIGNATUREALGORITHM_PROPERTY);
+
+        // Detached signature
+        final String detachedSignatureValue = config.getProperty(DETACHEDSIGNATURE_PROPERTY);
+        if (detachedSignatureValue == null || Boolean.FALSE.toString().equalsIgnoreCase(detachedSignatureValue)) {
+            detachedSignature = false;
+        } else if (Boolean.TRUE.toString().equalsIgnoreCase(detachedSignatureValue)) {
+            detachedSignature = true;
+        } else {
+            configErrors.add("Incorrect value for property " + DETACHEDSIGNATURE_PROPERTY + ". Expecting TRUE or FALSE.");
+        }
+
+        // Allow detached signature override
+        final String allowDetachedSignatureOverrideValue = config.getProperty(ALLOW_SIGNATURETYPE_OVERRIDE_PROPERTY);
+        if (allowDetachedSignatureOverrideValue == null || Boolean.FALSE.toString().equalsIgnoreCase(allowDetachedSignatureOverrideValue)) {
+            allowDetachedSignatureOverride = false;
+        } else if (Boolean.TRUE.toString().equalsIgnoreCase(allowDetachedSignatureOverrideValue)) {
+            allowDetachedSignatureOverride = true;
+        } else {
+            configErrors.add("Incorrect value for property " + ALLOW_SIGNATURETYPE_OVERRIDE_PROPERTY + ". Expecting TRUE or FALSE.");
+        }
     }
 
     @Override
@@ -88,6 +117,10 @@ public class CMSSigner extends BaseSigner {
         if (!(sReq.getRequestData() instanceof byte[])) {
             throw new IllegalRequestException(
                     "Recieved request data wasn't a expected byte[].");
+        }
+
+        if (!configErrors.isEmpty()) {
+            throw new SignServerException("Worker is misconfigured");
         }
 
         byte[] data = (byte[]) sReq.getRequestData();
@@ -122,10 +155,33 @@ public class CMSSigner extends BaseSigner {
             generator.addSignerInfoGenerator(new JcaSignerInfoGeneratorBuilder(
                      new JcaDigestCalculatorProviderBuilder().setProvider("BC").build())
                      .build(contentSigner, (X509Certificate) cert));
-                      
+
             generator.addCertificates(new JcaCertStore(includedCertificates(certs)));
             final CMSTypedData content = new CMSProcessableByteArray(data);
-            final CMSSignedData signedData = generator.generate(content, true);
+
+            // Should the content be detached or not
+            final boolean detached;
+            final Boolean detachedRequested = getDetachedSignatureRequest(requestContext);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Detached signature configured: " + detachedSignature + "\n"
+                        + "Detached signature requested: " + detachedRequested);
+            }
+            if (detachedRequested == null) {
+                detached = detachedSignature;
+            } else {
+                if (detachedRequested) {
+                    if (!detachedSignature && !allowDetachedSignatureOverride) {
+                        throw new IllegalRequestException("Detached signature requested but not allowed");
+                    }
+                } else {
+                    if (detachedSignature && !allowDetachedSignatureOverride) {
+                        throw new IllegalRequestException("Non detached signature requested but not allowed");
+                    }
+                }
+                detached = detachedRequested;
+            }
+
+            final CMSSignedData signedData = generator.generate(content, !detached);
 
             final byte[] signedbytes = signedData.getEncoded();
             final Collection<? extends Archivable> archivables = Arrays.asList(new DefaultArchivable(Archivable.TYPE_RESPONSE, CONTENT_TYPE, signedbytes, archiveId));
@@ -177,6 +233,28 @@ public class CMSSigner extends BaseSigner {
             result = "SHA1withRSA";
         }
 
+        return result;
+    }
+
+    @Override
+    protected List<String> getFatalErrors() {
+        final LinkedList<String> errors = new LinkedList<String>(super.getFatalErrors());
+        errors.addAll(configErrors);
+        return errors;
+    }
+
+    /**
+     * Read the request metadata property for DETACHEDSIGNATURE if any.
+     * @param context to read from
+     * @return null if no DETACHEDSIGNATURE request property specified otherwise
+     * true or false.
+     */
+    private static Boolean getDetachedSignatureRequest(final RequestContext context) {
+        Boolean result = null;
+        final String value = RequestMetadata.getInstance(context).get(DETACHEDSIGNATURE_PROPERTY);
+        if (value != null) {
+            result = Boolean.parseBoolean(value);
+        }
         return result;
     }
 }

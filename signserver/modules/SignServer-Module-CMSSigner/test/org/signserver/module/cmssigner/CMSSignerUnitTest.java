@@ -306,4 +306,31 @@ public class CMSSignerUnitTest {
         byte[] actualData = (byte[]) signedContent.getContent();
         assertEquals(Hex.toHexString(data), Hex.toHexString(actualData));
     }
+
+    /**
+     * Tests that requesting with empty string is the same as not requesting.
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void testDetachedSignatureTrueRequestEmpty() throws Exception {
+        LOG.info("testDetachedSignatureTrueRequestEmpty");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("DETACHEDSIGNATURE", "TRUE");
+        config.setProperty("ALLOW_DETACHEDSIGNATURE_OVERRIDE", "FALSE");
+        CMSSigner instance = new MockedCMSSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+
+        final byte[] data = "my-data".getBytes("ASCII");
+        RequestContext requestContext = new RequestContext();
+        requestContext.put(RequestContext.TRANSACTION_ID, "0000-100-1");
+        GenericSignRequest request = new GenericSignRequest(100, data);
+        RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
+        metadata.put("DETACHEDSIGNATURE", "");
+        GenericSignResponse response = (GenericSignResponse) instance.processData(request, requestContext);
+
+        byte[] cms = response.getProcessedData();
+        CMSSignedData signedData = new CMSSignedData(cms);
+        CMSProcessableByteArray signedContent = (CMSProcessableByteArray) signedData.getSignedContent();
+        assertNull("detached", signedContent);
+    }
 }

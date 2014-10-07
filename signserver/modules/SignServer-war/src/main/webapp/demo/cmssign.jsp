@@ -62,6 +62,14 @@
                         </td>
                     </tr>
                     <tr id="Row2">
+                        <td style="width: 50%" valign="top" align="right">Detached signature:</td>
+                        <td style="width: 50%" valign="top">
+                            <input type="radio" name="REQUEST_METADATA.DETACHEDSIGNATURE" value="" checked="checked"/>Use default
+                            <input type="radio" name="REQUEST_METADATA.DETACHEDSIGNATURE" value="TRUE"/>Detached
+                            <input type="radio" name="REQUEST_METADATA.DETACHEDSIGNATURE" value="FALSE"/>Include content
+                        </td>
+                    </tr>
+                    <tr id="Row2">
                         <td style="width: 50%" valign="top" align="right">Additional meta data (set in the REQUEST_METADATA request parameter):</td>
                         <td style="width: 50%" valign="top">
                             <textarea name="REQUEST_METADATA" cols="40" rows="5"></textarea>

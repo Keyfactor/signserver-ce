@@ -245,6 +245,7 @@ public class CMSSigner extends BaseSigner {
 
     /**
      * Read the request metadata property for DETACHEDSIGNATURE if any.
+     * Note that empty String is treated as an unset property.
      * @param context to read from
      * @return null if no DETACHEDSIGNATURE request property specified otherwise
      * true or false.
@@ -252,7 +253,7 @@ public class CMSSigner extends BaseSigner {
     private static Boolean getDetachedSignatureRequest(final RequestContext context) {
         Boolean result = null;
         final String value = RequestMetadata.getInstance(context).get(DETACHEDSIGNATURE_PROPERTY);
-        if (value != null) {
+        if (value != null && !value.isEmpty()) {
             result = Boolean.parseBoolean(value);
         }
         return result;

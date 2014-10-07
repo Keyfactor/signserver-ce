@@ -179,9 +179,9 @@ public class CMSSignerTest extends ModulesTestCase {
 
         // override signature algorithm if set
         if (sigAlg != null) {
-            workerSession.setWorkerProperty(workerId, CMSSigner.SIGNATUREALGORITHM, sigAlg);
+            workerSession.setWorkerProperty(workerId, CMSSigner.SIGNATUREALGORITHM_PROPERTY, sigAlg);
         } else {
-            workerSession.removeWorkerProperty(workerId, CMSSigner.SIGNATUREALGORITHM);
+            workerSession.removeWorkerProperty(workerId, CMSSigner.SIGNATUREALGORITHM_PROPERTY);
         }
         
         if (includedCertificateLevelsProperty != null) {

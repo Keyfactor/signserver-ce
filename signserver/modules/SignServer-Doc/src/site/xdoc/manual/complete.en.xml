@@ -4516,16 +4516,23 @@ The CMS signer has the fully qualified class name: org.signserver.module.cmssign
                     <subsubsection name="Overview">
                         <p>
 The CMS signer can sign arbitrary data and produces a CMS (RFC 3852) SignedData
-structure in binary format.
+structure in binary format with or without the content encapsulated.
                         </p>
                         <p>
-Currently the signed content is always embedded as well as the signer certificate.
+Currently the signer certificate is always included.
                         </p>
                     </subsubsection>
                     <subsubsection name="Available Properties">
                         <p>
                             <b>SIGNATUREALGORITHM</b> = property specifying the algorithm used to sign the data (default: depending on the signing key: SHA1withDSA for DSA keys,
                                                         SHA1withECDSA for ECDSA keys, otherwise SHA1withRSA)
+                        </p>
+                        <p>
+                            <b>DETACHEDSIGNATURE</b> = property specifying if a detached signature (a.k.a. "external signature") should be used. That is a signature where the content is not included/encapsulated. Default is false.
+                        </p>
+                        <p>
+                            <b>ALLOW_DETACHEDSIGNATURE_OVERRIDE</b> = property specifying if the requestor can request an other value for DETACHEDIGSNATURE than what is configured. Default is false.<br/>
+                            If set to true a request could include a metadata property with an other value for DETACHEDSIGNATURE.
                         </p>
                     </subsubsection>
                 </subsection>

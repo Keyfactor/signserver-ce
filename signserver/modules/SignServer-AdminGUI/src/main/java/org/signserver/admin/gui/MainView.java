@@ -2360,7 +2360,8 @@ private void auditLogTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:
 private void loadFromCertificateButtonPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadFromCertificateButtonPerformed
     LOG.debug("Load from certificate file");
     
-    Utils.selectAndLoadFromCert(authEditPanel, editSerialNumberTextfield, editIssuerDNTextfield);
+    Utils.selectAndLoadFromCert(authEditPanel, editSerialNumberTextfield,
+            editIssuerDNTextfield, false);
 }//GEN-LAST:event_loadFromCertificateButtonPerformed
 
 private void addWorkerItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addWorkerItemActionPerformed

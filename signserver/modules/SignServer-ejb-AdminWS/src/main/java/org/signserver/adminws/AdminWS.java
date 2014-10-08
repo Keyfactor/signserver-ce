@@ -81,14 +81,7 @@ public class AdminWS {
         INT_COLUMNS.add(ArchiveMetadata.SIGNER_ID);
         INT_COLUMNS.add(ArchiveMetadata.TYPE);
     }
-    
-    
-    private Set<ClientEntry> admins;
-    private Set<ClientEntry> auditors;
-    private Set<ClientEntry> archiveAuditors;
-    
 
-    
     @Resource
     private WebServiceContext wsContext;
 
@@ -101,56 +94,19 @@ public class AdminWS {
     @EJB
     private SecurityEventsAuditorSessionLocal auditor;
     
-    private Set<ClientEntry> getAdmins() {
-        if (admins == null) {
-            final String adminsProperty = global.getGlobalConfiguration().getProperty(
-                GlobalConfiguration.SCOPE_GLOBAL, "WSADMINS");
-            
-            if (adminsProperty == null) {
-                LOG.warn("No WSADMINS global property set.");
-                admins = new HashSet<ClientEntry>();
-            } else {
-                admins = ClientEntry.clientEntriesFromProperty(adminsProperty);
-            }
-        }
+    
+    private Set<ClientEntry> getWSClients(final String propertyName) {
+        final String adminsProperty = global.getGlobalConfiguration().getProperty(
+                GlobalConfiguration.SCOPE_GLOBAL, propertyName);
         
-        return admins;
-    }
-    
-    private Set<ClientEntry> getAuditors() {
-        if (auditors == null) {
-            final String auditorsProperty = global.getGlobalConfiguration().getProperty(
-                GlobalConfiguration.SCOPE_GLOBAL, "WSAUDITORS");
-            
-            if (auditorsProperty == null) {
-                LOG.warn("No WSAUDITORS global property set.");
-                auditors = new HashSet<ClientEntry>();
-            } else {
-                auditors = ClientEntry.clientEntriesFromProperty(auditorsProperty);
-            }
+        if (adminsProperty == null) {
+            LOG.warn("No WSADMINS global property set.");
+            return new HashSet<ClientEntry>();
+        } else {
+            return ClientEntry.clientEntriesFromProperty(adminsProperty);
         }
-        
-        return auditors;
     }
-    
-    private Set<ClientEntry> getArchiveAuditors() {
-        if (archiveAuditors == null) {
-            final String archiveAuditorsProperty = global.getGlobalConfiguration().getProperty(
-                GlobalConfiguration.SCOPE_GLOBAL, "WSARCHIVEAUDITORS");
-            
-            if (archiveAuditorsProperty == null) {
-                LOG.warn("No WSARCHIVEAUDITORS global property set.");
-                archiveAuditors = new HashSet<ClientEntry>();
-            } else {
-                archiveAuditors = ClientEntry.clientEntriesFromProperty(archiveAuditorsProperty);
-            }
-        }
-        
-        return archiveAuditors;
-    }
-   
-    
-    
+
     /**
      * Returns the Id of a worker given a name
      *
@@ -1167,16 +1123,16 @@ public class AdminWS {
         if (allowAnyWSAdmin) {
             return true;
         } else {
-            return hasAuthorization(cert, getAdmins());
+            return hasAuthorization(cert, getWSClients("WSADMINS"));
         }
     }
     
     private boolean isAuditorAuthorized(final X509Certificate cert) { 
-        return hasAuthorization(cert, getAuditors());
+        return hasAuthorization(cert, getWSClients("WSAUDITORS"));
     }
     
     private boolean isArchiveAuditorAuthorized(final X509Certificate cert) {
-        return hasAuthorization(cert, getArchiveAuditors());
+        return hasAuthorization(cert, getWSClients("WSARCHIVEAUDITORS"));
     }
     
     private boolean hasAuthorization(final X509Certificate cert,

@@ -15,22 +15,23 @@ package org.signserver.common;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.security.cert.X509Certificate;
 import java.util.List;
+import junit.framework.TestCase;
 
-import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- * TODO: Document me!
+ * Unit tests for the SignServerUtil utility method class.
  *
  * @version @Id$
  */
-public class SignServerUtilTest {
+public class SignServerUtilUnitTest extends TestCase {
 
     private static String signserverhome;
 
-    @Before
+    @Override
     public void setUp() throws Exception {
         signserverhome = System.getenv("SIGNSERVER_HOME");
         assertNotNull(signserverhome);
@@ -91,5 +92,40 @@ public class SignServerUtilTest {
         fw.close();
         assertTrue(SignServerUtil.readValueFromConfigFile("SIGNSERVER_NODEID", confFile).equals("NODE1"));
         assertTrue(SignServerUtil.readValueFromConfigFile("signserver_NODEID", confFile).equals("NODE1"));
+    }
+    
+    /**
+     * Test getting issuer DN from a certificate using the utility method.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testGetTokenizedIssuerDNFromCert() throws Exception {
+        final X509Certificate cert =
+                SignServerUtil.getCertFromFile(signserverhome + File.separator +
+                        "res" + File.separator + "test" + File.separator +
+                        "dss10" + File.separator + "dss10_signer1.pem");
+        
+        assertEquals("Issuer DN",
+                "C=SE, O=SignServer, OU=Testing, CN=DSS Root CA 10",
+                SignServerUtil.getTokenizedIssuerDNFromCert(cert));
+    }
+    
+    /**
+     * Test getting issuer DN from a certificate with reversed DN order
+     * using the utility method.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testGetTokenizedIssuerDNFromCertReversed() throws Exception {
+        final X509Certificate cert =
+                SignServerUtil.getCertFromFile(signserverhome + File.separator +
+                        "res" + File.separator + "test" + File.separator +
+                        "reversed.der");
+        
+        assertEquals("Issuer DN",
+                "CN=ReversedDN3, O=ReversedOrganization, C=SE",
+                SignServerUtil.getTokenizedIssuerDNFromCert(cert));
     }
 }

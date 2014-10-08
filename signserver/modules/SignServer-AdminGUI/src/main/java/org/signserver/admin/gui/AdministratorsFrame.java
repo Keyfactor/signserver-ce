@@ -689,7 +689,8 @@ public class AdministratorsFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void loadFromCertificateButtonPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadFromCertificateButtonPerformed
-        Utils.selectAndLoadFromCert(editPanel, editCertSerialNoTextField, editIssuerDNTextField);
+        Utils.selectAndLoadFromCert(editPanel, editCertSerialNoTextField,
+                editIssuerDNTextField, true);
     }//GEN-LAST:event_loadFromCertificateButtonPerformed
 
     private void allowAnyCheckboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_allowAnyCheckboxActionPerformed

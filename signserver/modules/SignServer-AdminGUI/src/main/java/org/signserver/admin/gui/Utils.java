@@ -39,12 +39,15 @@ public class Utils {
      * or show an error message in associated with the supplied panel.
      * 
      * @param panel Panel requesting the action. Used to attach the open file dialog and a possible error message.
-     * @param serialNumberText field Text field to set the serial number in.
+     * @param serialNumberTextfield field Text field to set the serial number in.
      * @param issuerDNTextfield Text fieald to set the issuer DN in.
+     * @param useTokenizer If true, format the DN as expected by WS admins, otherwise
+     *                     use a format suitable for the ClientCertAuthorizer
      */
     public static void selectAndLoadFromCert(final JPanel panel,
             final JTextField serialNumberTextfield,
-            final JTextField issuerDNTextfield) {
+            final JTextField issuerDNTextfield,
+            final boolean useTokenizer) {
         
         final JFileChooser chooser = new JFileChooser();
         final int res = chooser.showOpenDialog(panel);
@@ -54,7 +57,11 @@ public class Utils {
                 final X509Certificate cert =
                         SignServerUtil.getCertFromFile(chooser.getSelectedFile().getAbsolutePath());
                 serialNumberTextfield.setText(cert.getSerialNumber().toString(16));
-                issuerDNTextfield.setText(cert.getIssuerDN().getName());
+                if (useTokenizer) {
+                    issuerDNTextfield.setText(SignServerUtil.getTokenizedIssuerDNFromCert(cert));
+                } else {
+                    issuerDNTextfield.setText(cert.getIssuerDN().getName());
+                }
             } catch (IllegalArgumentException e) {
                 JOptionPane.showMessageDialog(panel, e.getMessage());
             }

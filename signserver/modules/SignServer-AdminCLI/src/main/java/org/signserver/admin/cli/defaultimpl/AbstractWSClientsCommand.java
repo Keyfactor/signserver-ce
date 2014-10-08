@@ -163,21 +163,9 @@ public abstract class AbstractWSClientsCommand extends AbstractAdminCommand {
                 } else {
                         // read serial number and issuer DN from cert file
                         X509Certificate certificate = SignServerUtil.getCertFromFile(cert);
-                        String dn = certificate.getIssuerX500Principal().getName();
-                        
-                        CertTools.BasicX509NameTokenizer tok = new CertTools.BasicX509NameTokenizer(dn);
-                        StringBuilder buf = new StringBuilder();
-
-                        while (tok.hasMoreTokens()) {
-                                final String token = tok.nextToken();
-                                buf.append(token);
-                                if (tok.hasMoreTokens()) {
-                                        buf.append(", ");
-                                }
-                        }
                         
                         added = entries.add(new ClientEntry(certificate.getSerialNumber(),
-                                                    buf.toString()));
+                                                    SignServerUtil.getTokenizedIssuerDNFromCert(certificate)));
                 }
                 
                 if (added) {

@@ -1455,8 +1455,18 @@ SignServer.
                         </p>
                         <p>
 Authorizes an administrator to use the Admin Web Service interface by
-certificate serialnumber (in hexadecimal) and issuer DN (as specified in the
-certificate, with spaces after the commas separating DN components).
+certificate serialnumber (in hexadecimal) and issuer DN with space after each comma
+separating DN components.
+                        </p>
+                        <p>
+An example using a certificate issued from EJBCA with the default (as specified by EJBCA)
+LDAP DN order:</p>
+<source>C=SE, O=TestOrganization, CN=IssuingCA</source>
+                        <p>
+An example using a certificate issued from EJBCA with the Use LDAP DN order
+option disabled:</p>
+<source>CN=ReverseIssuingCA, O=TestOrganization, C=SE</source>
+                        <p>
 Alternatively a certificate file can be specified, from which the serial number
 and issuer DN will be taken.
                         </p>

@@ -100,7 +100,7 @@ public class AdminWS {
                 GlobalConfiguration.SCOPE_GLOBAL, propertyName);
         
         if (adminsProperty == null) {
-            LOG.warn("No WSADMINS global property set.");
+            LOG.warn(String.format("No %s global property set.", propertyName));
             return new HashSet<ClientEntry>();
         } else {
             return ClientEntry.clientEntriesFromProperty(adminsProperty);

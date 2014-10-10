@@ -112,18 +112,10 @@ public class RenewKeysDialog extends JDialog {
 
             @Override
             public void tableChanged(final TableModelEvent e) {
-                boolean enable = true;
-                for (int row = 0; row < jTable1.getRowCount(); row++) {
-                    if ("".equals(jTable1.getValueAt(row, 2))
-                            || "".equals(jTable1.getValueAt(row, 3))
-                            || "".equals(jTable1.getValueAt(row, 4))) {
-                        enable = false;
-                        break;
-                    }
-                }
-                jButtonGenerate.setEnabled(enable);
+                tableChangedPerformed();
             }
         });
+        tableChangedPerformed();
 
         final BrowseCellEditor editor = new BrowseCellEditor(new JTextField(),
                 JFileChooser.SAVE_DIALOG);
@@ -141,6 +133,8 @@ public class RenewKeysDialog extends JDialog {
                 .setCellEditor(textFieldEditor);
         jTable1.getColumnModel().getColumn(4)
                 .setCellEditor(textFieldEditor);
+
+        getRootPane().setDefaultButton(jButtonGenerate);
     }
 
     /** This method is called from within the constructor to
@@ -277,6 +271,20 @@ public class RenewKeysDialog extends JDialog {
         return resultCode;
     }
 
+    /** Enable/disable the submit button based on the table state. */
+    private void tableChangedPerformed() {
+        boolean enable = true;
+        for (int row = 0; row < jTable1.getRowCount(); row++) {
+            if ("".equals(jTable1.getValueAt(row, 2))
+                    || "".equals(jTable1.getValueAt(row, 3))
+                    || "".equals(jTable1.getValueAt(row, 4))) {
+                enable = false;
+                break;
+            }
+        }
+        jButtonGenerate.setEnabled(enable);
+    }
+
     static String nextAliasInSequence(final String currentAlias) {
         String prefix = currentAlias;
         String nextSequence = "2";
@@ -374,6 +382,10 @@ public class RenewKeysDialog extends JDialog {
                             LOG.debug("Key generation: worker=" + signerId
                                     + ", keyAlg=" + keyAlg + ", keySpec="
                                     + keySpec + ", alias: " + alias);
+                        }
+
+                        if (keyAlg == null || keySpec == null || alias == null) {
+                            return "Please, fill in all required fields";
                         }
 
                         String newAlias = null;

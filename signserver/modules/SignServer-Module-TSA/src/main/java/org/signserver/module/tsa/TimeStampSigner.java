@@ -960,13 +960,22 @@ public class TimeStampSigner extends BaseSigner {
             try {
                 if (certificate instanceof X509Certificate) {
                     final X509Certificate cert = (X509Certificate) certificate;
-                    if (cert.getExtendedKeyUsage() == null 
-                            || !cert.getExtendedKeyUsage().contains(KeyPurposeId.id_kp_timeStamping.getId())) {
+                    final List<String> ekus = cert.getExtendedKeyUsage();
+                    
+                    if (ekus == null 
+                            || !ekus.contains(KeyPurposeId.id_kp_timeStamping.getId())) {
                         result.add("Missing extended key usage timeStamping");
                     }
                     if (cert.getCriticalExtensionOIDs() == null 
                             || !cert.getCriticalExtensionOIDs().contains(org.bouncycastle.asn1.x509.X509Extension.extendedKeyUsage.getId())) {
                         result.add("The extended key usage extension must be present and marked as critical");
+                    }
+                    // if extended key usage contains timeStamping and also other
+                    // usages
+                    if (ekus != null
+                            && ekus.contains(KeyPurposeId.id_kp_timeStamping.getId())
+                            && ekus.size() > 1) {
+                        result.add("No other extended key usages than timeStamping is allowed");
                     }
                 } else {
                     result.add("Unsupported certificate type");

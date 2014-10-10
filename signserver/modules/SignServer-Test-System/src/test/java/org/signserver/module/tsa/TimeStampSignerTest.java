@@ -806,6 +806,19 @@ public class TimeStampSignerTest extends ModulesTestCase {
         critical = true;
         final X509Certificate certCritEku = new JcaX509CertificateConverter().getCertificate(new CertBuilder().setSubject("CN=With critical EKU").setSubjectPublicKey(subject.getPublicKey()).addExtension(new CertExt(X509Extension.extendedKeyUsage, critical, new ExtendedKeyUsage(KeyPurposeId.id_kp_timeStamping))).build());
         
+        // Certificate with additional extended key usage, besides id_kp_timeStamping
+        final X509Certificate certCritEkuAndAdditional =
+                new JcaX509CertificateConverter().getCertificate(new CertBuilder().
+                        setSubject("CN=With critical EKU").
+                        setSubjectPublicKey(subject.getPublicKey()).
+                        addExtension(new CertExt(X509Extension.extendedKeyUsage, 
+                            critical,
+                            new ExtendedKeyUsage(new KeyPurposeId[] {KeyPurposeId.id_kp_timeStamping,
+                                                                     KeyPurposeId.id_kp_emailProtection}
+                        ))).
+                        build());
+        
+        
         try {
             // Fail: No id_kp_timeStamping
             workerSession.uploadSignerCertificate(WORKER2, certNoEku.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
@@ -837,6 +850,20 @@ public class TimeStampSignerTest extends ModulesTestCase {
             assertEquals(1, actualStatus.getFatalErrors().size());
             // error should talk about missing critical EKU
             assertTrue("errorString: " + errorsString, errorsString.contains("critical"));  // Will need adjustment if language changes
+        
+            // Fail: Additional EKU
+            workerSession.uploadSignerCertificate(WORKER2, certCritEkuAndAdditional.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
+            workerSession.uploadSignerCertificateChain(WORKER2, Arrays.asList(certCritEkuAndAdditional.getEncoded()), GlobalConfiguration.SCOPE_GLOBAL);
+            workerSession.reloadConfiguration(WORKER2);
+            actualStatus = workerSession.getStatus(WORKER2);
+            // should be error as the signer certificate is missing id_kp_timeStamping
+            assertEquals(1, actualStatus.getFatalErrors().size());
+            errorsString = actualStatus.getFatalErrors().toString();
+            // error should talk about missing critical EKU
+            assertTrue("Should mention additional extended key usages", 
+                    errorsString.contains("No other extended key usages than timeStamping is allowed"));  // Will need adjustment if language changes
+        
+            
         } finally {
             // Restore
             workerSession.uploadSignerCertificate(WORKER2, subject.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);

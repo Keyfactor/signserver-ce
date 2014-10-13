@@ -56,7 +56,7 @@ public class TimeStampSignerUnitTest {
 
     private static final int WORKER1 = 8890;
     private static final int WORKER2 = 8891;
-    //    private static final int WORKER3 = 8892;
+    private static final int WORKER3 = 8892;
     private static final String NAME = "NAME";
     private static final String AUTHTYPE = "AUTHTYPE";
     private static final String CRYPTOTOKEN_CLASSNAME = "org.signserver.server.cryptotokens.HardCodedCryptoToken";
@@ -166,7 +166,7 @@ public class TimeStampSignerUnitTest {
             config.setProperty(AUTHTYPE, "NOAUTH");
             config.setProperty(TimeStampSigner.DEFAULTTSAPOLICYOID, "1.2.3.4");
             config.setProperty("DEFAULTKEY", HardCodedCryptoTokenAliases.KEY_ALIAS_4);
-            config.setProperty("ACCEPTEDEXTENSIONS", "1.2.74; 1.2.7.2; 1.2.7.8");
+            config.setProperty("ACCEPTEDEXTENSIONS", "1.2.74;1.2.7.2;1.2.7.8");
 
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
                     new TimeStampSigner() {

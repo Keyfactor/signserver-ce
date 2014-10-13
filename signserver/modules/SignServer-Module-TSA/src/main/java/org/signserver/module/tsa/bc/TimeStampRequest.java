@@ -1,4 +1,6 @@
-// copied from BouncyCastle 1.47 (needed for the modified TimeStampTokenGenerator)
+// copied from BouncyCastle 1.47 because:
+// - needed for the modified TimeStampTokenGenerator
+// - patched for DSS-868: Incorrect extension handling
 package org.signserver.module.tsa.bc;
 
 import java.io.ByteArrayInputStream;
@@ -64,6 +66,7 @@ public class TimeStampRequest
         try
         {
             this.req = TimeStampReq.getInstance(new ASN1InputStream(in).readObject());
+            this.extensions = this.req.getExtensions();
         }
         catch (ClassCastException e)
         {
@@ -182,7 +185,7 @@ public class TimeStampRequest
             while(en.hasMoreElements())
             {
                 String  oid = ((DERObjectIdentifier)en.nextElement()).getId();
-                if (!extensions.contains(oid))
+                if (!extensions.contains(new ASN1ObjectIdentifier(oid)))
                 {
                     throw new TSPValidationException("request contains unknown extension.", PKIFailureInfo.unacceptedExtension);
                 }

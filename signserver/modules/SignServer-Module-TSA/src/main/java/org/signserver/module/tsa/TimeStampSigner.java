@@ -692,12 +692,14 @@ public class TimeStampSigner extends BaseSigner {
      * @return Set of Strings
      */
     private Set<String> makeSetOfProperty(final String nonParsedPropery) {
-        Set<String> retval = null;
+        Set<String> retval = new HashSet<String>();
         if (nonParsedPropery != null) {
             final String[] subStrings = nonParsedPropery.split(";");
-            if (subStrings.length > 0) {
-                retval = new HashSet<String>();
-                retval.addAll(Arrays.asList(subStrings));
+            for (String oid : subStrings) {
+                oid = oid.trim();
+                if (!oid.isEmpty()) {
+                    retval.add(oid);
+                }
             }
         }
         return retval;

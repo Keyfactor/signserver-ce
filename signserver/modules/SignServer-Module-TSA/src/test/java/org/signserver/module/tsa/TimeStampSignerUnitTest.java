@@ -27,6 +27,7 @@ import org.bouncycastle.tsp.TimeStampRequestGenerator;
 import org.bouncycastle.tsp.TimeStampResponse;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import org.junit.Before;
 import org.junit.Test;
 import org.signserver.common.GenericSignRequest;
@@ -57,6 +58,7 @@ public class TimeStampSignerUnitTest {
     private static final int WORKER1 = 8890;
     private static final int WORKER2 = 8891;
     private static final int WORKER3 = 8892;
+    private static final int WORKER4 = 8893;
     private static final String NAME = "NAME";
     private static final String AUTHTYPE = "AUTHTYPE";
     private static final String CRYPTOTOKEN_CLASSNAME = "org.signserver.server.cryptotokens.HardCodedCryptoToken";
@@ -179,7 +181,47 @@ public class TimeStampSignerUnitTest {
             workerSession.reloadConfiguration(workerId);
         }
 
+        // WORKER3: empty list of extensions
+        {
+            final int workerId = WORKER3;
+            final WorkerConfig config = new WorkerConfig();
+            config.setProperty(NAME, "TestTimeStampSigner2");
+            config.setProperty(AUTHTYPE, "NOAUTH");
+            config.setProperty(TimeStampSigner.DEFAULTTSAPOLICYOID, "1.2.3.4");
+            config.setProperty("DEFAULTKEY", HardCodedCryptoTokenAliases.KEY_ALIAS_4);
+            config.setProperty("ACCEPTEDEXTENSIONS", "");
 
+            workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
+                    new TimeStampSigner() {
+                @Override
+                protected IGlobalConfigurationSession.IRemote
+                        getGlobalConfigurationSession() {
+                    return globalConfig;
+                }
+            });
+            workerSession.reloadConfiguration(workerId);
+        }
+
+        // WORKER4: some extensions accepted (spaces between OIDs)
+        {
+            final int workerId = WORKER4;
+            final WorkerConfig config = new WorkerConfig();
+            config.setProperty(NAME, "TestTimeStampSigner3");
+            config.setProperty(AUTHTYPE, "NOAUTH");
+            config.setProperty(TimeStampSigner.DEFAULTTSAPOLICYOID, "1.2.3.4");
+            config.setProperty("DEFAULTKEY", HardCodedCryptoTokenAliases.KEY_ALIAS_4);
+            config.setProperty("ACCEPTEDEXTENSIONS", "1.2.74; 1.2.7.2; 1.2.7.8");
+
+            workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
+                    new TimeStampSigner() {
+                @Override
+                protected IGlobalConfigurationSession.IRemote
+                        getGlobalConfigurationSession() {
+                    return globalConfig;
+                }
+            });
+            workerSession.reloadConfiguration(workerId);
+        }
     }
 
     /**
@@ -236,5 +278,82 @@ public class TimeStampSignerUnitTest {
                 Arrays.toString(timeStampResponse.getTimeStampToken().getTimeStampInfo().toASN1Structure().getExtensions().getExtensionOIDs()));
     }
 
+    /**
+     * Tests that a request including an extension listed will accept
+     * the extension also when ACCEPTEDEXTENSIONS contains spaces.
+     * @throws Exception
+     */
+    @Test
+    public void testAcceptedExtensionsWithSpaces() throws Exception {
+        LOG.info("testAcceptedExtensionsWithSpaces");
+        TimeStampRequestGenerator timeStampRequestGenerator =
+                new TimeStampRequestGenerator();
+        timeStampRequestGenerator.addExtension(new ASN1ObjectIdentifier("1.2.7.2"), false, new DEROctetString("Value".getBytes("UTF-8")));
+        TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
+                TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
+        byte[] requestBytes = timeStampRequest.getEncoded();
+        GenericSignRequest signRequest = new GenericSignRequest(100, requestBytes);
+        final RequestContext requestContext = new RequestContext();
+        final GenericSignResponse res = (GenericSignResponse) workerSession.process(
+                WORKER4, signRequest, requestContext);
 
+        final TimeStampResponse timeStampResponse = new TimeStampResponse(
+                (byte[]) res.getProcessedData());
+        timeStampResponse.validate(timeStampRequest);
+        assertEquals("granted", PKIStatus.GRANTED, timeStampResponse.getStatus());
+        assertEquals("extensions in token",
+                Arrays.toString(new ASN1ObjectIdentifier[] { new ASN1ObjectIdentifier("1.2.7.2") }),
+                Arrays.toString(timeStampResponse.getTimeStampToken().getTimeStampInfo().toASN1Structure().getExtensions().getExtensionOIDs()));
+    }
+
+    /**
+     * Tests that a request including an extension not listed will cause a
+     * rejection also when the list of extensions is empty.
+     * @throws Exception
+     */
+    @Test
+    public void testEmptyAcceptedExtensionsOk() throws Exception {
+        LOG.info("testEmptyAcceptedExtensions");
+        TimeStampRequestGenerator timeStampRequestGenerator =
+                new TimeStampRequestGenerator();
+        TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
+                TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
+        byte[] requestBytes = timeStampRequest.getEncoded();
+        GenericSignRequest signRequest = new GenericSignRequest(100, requestBytes);
+        final RequestContext requestContext = new RequestContext();
+        final GenericSignResponse res = (GenericSignResponse) workerSession.process(
+                WORKER3, signRequest, requestContext);
+
+        final TimeStampResponse timeStampResponse = new TimeStampResponse(
+                (byte[]) res.getProcessedData());
+        timeStampResponse.validate(timeStampRequest);
+        assertEquals("granted", PKIStatus.GRANTED, timeStampResponse.getStatus());
+        assertNull("extensions in token", timeStampResponse.getTimeStampToken().getTimeStampInfo().toASN1Structure().getExtensions());
+    }
+
+    /**
+     * Tests
+     * @throws Exception
+     */
+    @Test
+    public void testEmptyAcceptedExtensionsPreventsExtension() throws Exception {
+        LOG.info("testEmptyAcceptedExtensionsPreventsExtension");
+        TimeStampRequestGenerator timeStampRequestGenerator =
+                new TimeStampRequestGenerator();
+        timeStampRequestGenerator.addExtension(new ASN1ObjectIdentifier("1.2.7.9"), false, new DEROctetString("Value".getBytes("UTF-8")));
+        TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
+                TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
+        byte[] requestBytes = timeStampRequest.getEncoded();
+        GenericSignRequest signRequest = new GenericSignRequest(100, requestBytes);
+        final RequestContext requestContext = new RequestContext();
+        final GenericSignResponse res = (GenericSignResponse) workerSession.process(
+                WORKER3, signRequest, requestContext);
+
+        final TimeStampResponse timeStampResponse = new TimeStampResponse(
+                (byte[]) res.getProcessedData());
+        timeStampResponse.validate(timeStampRequest);
+        assertEquals("rejection", PKIStatus.REJECTION, timeStampResponse.getStatus());
+        assertEquals("unacceptedExtension", PKIFailureInfo.unacceptedExtension, timeStampResponse.getFailInfo().intValue());
+    }
 }
+

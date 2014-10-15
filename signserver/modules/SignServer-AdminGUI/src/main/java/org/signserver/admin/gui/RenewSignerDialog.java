@@ -413,13 +413,16 @@ public class RenewSignerDialog extends javax.swing.JDialog {
 
            if (res == JOptionPane.OK_OPTION) {
                authCode = passwordPanelField.getPassword();
+               renewButtonClicked = true;
            }
-           renewButtonClicked = true;
         }
         @Override protected Result doInBackground() {
             // Your Task's code here.  This method runs
             // on a background thread, so don't reference
             // the Swing GUI from here.
+            if (!renewButtonClicked) {
+                return null;
+            }
             final StringBuilder errors = new StringBuilder();
             final StringBuilder warnings = new StringBuilder();
             int success = 0;
@@ -567,31 +570,33 @@ public class RenewSignerDialog extends javax.swing.JDialog {
             // Runs on the EDT.  Update the GUI based on
             // the result computed by doInBackground().
 
-            jTable1.revalidate();
-            table1Changed();
+            if (result != null) {
+                jTable1.revalidate();
+                table1Changed();
 
-            final StringBuilder buff = new StringBuilder();
-            buff.append("Successfully renewed: ");
-            buff.append(result.getSuccessful());
-            buff.append("\n");
-            buff.append("Failures: ");
-            buff.append(result.getFailures());
-            buff.append("\n");
-            buff.append("\n");
-            buff.append(result.getErrors());
-            buff.append(result.getWarnings());
+                final StringBuilder buff = new StringBuilder();
+                buff.append("Successfully renewed: ");
+                buff.append(result.getSuccessful());
+                buff.append("\n");
+                buff.append("Failures: ");
+                buff.append(result.getFailures());
+                buff.append("\n");
+                buff.append("\n");
+                buff.append(result.getErrors());
+                buff.append(result.getWarnings());
 
-            int messageType;
-            if (result.getErrors().length() > 0) {
-                messageType = JOptionPane.ERROR_MESSAGE;
-            } else if (result.getWarnings().length() > 0) {
-                messageType = JOptionPane.WARNING_MESSAGE;
-            } else {
-                messageType = JOptionPane.INFORMATION_MESSAGE;
+                int messageType;
+                if (result.getErrors().length() > 0) {
+                    messageType = JOptionPane.ERROR_MESSAGE;
+                } else if (result.getWarnings().length() > 0) {
+                    messageType = JOptionPane.WARNING_MESSAGE;
+                } else {
+                    messageType = JOptionPane.INFORMATION_MESSAGE;
+                }
+
+                JOptionPane.showMessageDialog(RenewSignerDialog.this,
+                        buff.toString(), "Renew signers", messageType);
             }
-
-            JOptionPane.showMessageDialog(RenewSignerDialog.this,
-                    buff.toString(), "Renew signers", messageType);
         }
     }
 

@@ -14,6 +14,7 @@ package org.signserver.admin.gui;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.signserver.admin.gui.adminws.gen.LogEntry;
 import org.signserver.admin.gui.adminws.gen.LogEntry.AdditionalDetails;
 
@@ -101,18 +102,17 @@ public class DisplayAuditlogEntryFrame extends javax.swing.JFrame {
         buff.append("<tr><td><b>Admin Issuer:</b></td><td>").append(entry.getCustomId()).append("</td></tr>\n");
         buff.append("<tr><td><b>Worker ID:</b></td><td>").append(entry.getSearchDetail2()).append("</td></tr>\n");
         buff.append("<tr><td><b>Node:</b></td><td>").append(entry.getNodeId()).append("</td></tr>\n");
-        buff.append("<tr><td><b>Details:</b></td><td>&nbsp;</td></tr>\n")
-                .append("<tr><td colspan=\"2\">");
+        buff.append("</table>\n");
+        buff.append("<p><b>Details:</b></p><p>\n");
         renderDetails(buff, entry.getAdditionalDetails());
-        buff.append("</td></tr>\n");
-        
-        buff.append("</table></body></html>\n");
+        buff.append("</p></body></html>\n");
         jEditorPane1.setText(buff.toString());
+        jEditorPane1.setCaretPosition(0);
     }
 
     private void renderDetails(StringBuilder buff, AdditionalDetails details) {
         for (LogEntry.AdditionalDetails.Entry entry : details.getEntry()) {
-            buff.append(entry.getKey()).append("=").append(entry.getValue()).append("<br/>\n");
+            buff.append(StringEscapeUtils.escapeHtml(entry.getKey())).append("=").append(StringEscapeUtils.escapeHtml(entry.getValue())).append("<br>\n");
         }
     }
 }

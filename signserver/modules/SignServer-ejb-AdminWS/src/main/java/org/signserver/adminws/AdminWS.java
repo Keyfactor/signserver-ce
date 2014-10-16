@@ -1082,7 +1082,7 @@ public class AdminWS {
                 .append("; ")
                 
                 .append("subjectDN=")
-                .append(certificate.getSubjectDN().getName())
+                .append(SignServerUtil.getTokenizedSubjectDNFromCert(certificate))
                 .append("; ")
                 
                 .append("serialNumber=")
@@ -1090,7 +1090,7 @@ public class AdminWS {
                 .append("; ")
                 
                 .append("issuerDN=")
-                .append(certificate.getIssuerDN().getName())
+                .append(SignServerUtil.getTokenizedIssuerDNFromCert(certificate))
                 .append("; ")
                 
                 .append("authorized=")

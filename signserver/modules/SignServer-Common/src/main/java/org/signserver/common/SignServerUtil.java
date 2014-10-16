@@ -162,17 +162,32 @@ public class SignServerUtil {
         
         return cert;
     }
-    
+
     /**
      * Given a certificate returns a formatted issuer DN as a string
-     * in the format excpected by the admin WS interface.
+     * in the format expected by the admin WS interface.
      * 
      * @param cert Certificate to get issuer from
      * @return Issuer DN in string form
      */
     public static String getTokenizedIssuerDNFromCert(final X509Certificate cert) {
         final String dn = cert.getIssuerX500Principal().getName();
+        return getTokenizedDN(dn);
+    }
 
+    /**
+     * Given a certificate returns a formatted subject DN as a string
+     * in the format expected by the admin WS interface.
+     * 
+     * @param cert Certificate to get issuer from
+     * @return Subject DN in string form
+     */
+    public static String getTokenizedSubjectDNFromCert(final X509Certificate cert) {
+        final String dn = cert.getSubjectX500Principal().getName();
+        return getTokenizedDN(dn);
+    }
+
+    private static String getTokenizedDN(final String dn) {
         CertTools.BasicX509NameTokenizer tok =
                 new CertTools.BasicX509NameTokenizer(dn);
         StringBuilder buf = new StringBuilder();

@@ -1353,8 +1353,7 @@ These commands are used to configure the internal client certificate authorizati
                         <p>
 <b>addauthorizedclient:</b>
 Adds a client certificate to a processable workers list of acceptable clients using this worker. Specify
-certificate serial number in hex and the Issuer DN of the client certificate using BouncyCaste DNS order
-with no spaces between components. Alternatively a certificate file (PEM or DER format) can be specified,
+certificate serial number in hex and the Issuer DN of the client certificate. Alternatively a certificate file (PEM or DER format) can be specified,
 from which the serial number and issuer DN is fetched.
                         </p>
                         <p>

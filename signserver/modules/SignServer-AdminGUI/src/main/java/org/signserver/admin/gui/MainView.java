@@ -23,6 +23,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.math.BigInteger;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
@@ -2107,8 +2108,10 @@ public class MainView extends FrameView {
 
             for (Worker worker : workers) {
                 try {
+                    final BigInteger sn =
+                            new BigInteger(editSerialNumberTextfield.getText(), 16);
                     org.signserver.admin.gui.adminws.gen.AuthorizedClient client = new org.signserver.admin.gui.adminws.gen.AuthorizedClient();
-                    client.setCertSN(editSerialNumberTextfield.getText());
+                    client.setCertSN(sn.toString(16));
                     client.setIssuerDN(editIssuerDNTextfield.getText());
                     SignServerAdminGUIApplication.getAdminWS()
                             .addAuthorizedClient(worker.getWorkerId(), client);
@@ -2116,6 +2119,8 @@ public class MainView extends FrameView {
                             .reloadConfiguration(worker.getWorkerId());
                 } catch (AdminNotAuthorizedException_Exception ex) {
                     showAdminNotAuthorized(ex);
+                } catch (NumberFormatException ex) {
+                    showMalformedSerialNumber(ex);
                 } catch (SOAPFaultException ex) {
                     showServerSideException(ex);
                 } catch (EJBException ex) {
@@ -3093,6 +3098,12 @@ private void displayLogEntryAction() {
                 MainView.this.getFrame(), ex.getMessage(),
         "Authorization denied", JOptionPane.ERROR_MESSAGE);
     }
+    
+    private void showMalformedSerialNumber(NumberFormatException ex) {
+        JOptionPane.showMessageDialog(
+                MainView.this.getFrame(), ex.getMessage(),
+        "Malformed serial number", JOptionPane.ERROR_MESSAGE);
+    }  
 
     private void showServerSideException(final EJBException ex) {
         JOptionPane.showMessageDialog(

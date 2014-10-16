@@ -526,8 +526,8 @@ public class AdministratorsFrame extends javax.swing.JFrame {
                 } else {
                     break;
                 }
-                refreshButton.doClick();
             }
+            refreshButton.doClick();
         } catch (AdminNotAuthorizedException_Exception ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage(),
                     "Authorization denied", JOptionPane.ERROR_MESSAGE);

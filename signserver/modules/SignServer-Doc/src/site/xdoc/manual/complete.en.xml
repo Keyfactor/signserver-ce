@@ -2972,11 +2972,13 @@ Authorizing administrators can be done using the Admin CLI command "wsadmins".
                     </p>
                     <source>
 Usage: signserver wsadmins -add -certserialno &lt;certificate serial number (in hex)&gt; -issuerdn &lt;issuer DN&gt;
+Usage: signserver wsadmins -add -cert &lt;PEM or DER file&gt;
 Usage: signserver wsadmins -remove -certserialno &lt;certificate serial number (in hex)&gt; -issuerdn &lt;issuer DN&gt;
 Usage: signserver wsadmins -list
 Example 1: signserver wsadmins -add -certserialno 123abcdef -issuerdn "C=SE, CN=Neo Morpheus"
-Example 2: signserver wsadmins -remove -certserialno 123abcdef -issuerdn "C=SE, CN=Neo Morpheus"
-Example 3: signserver wsadmins -list
+Example 2: signserver wsadmins -add -cert cert.pem
+Example 3: signserver wsadmins -remove -certserialno 123abcdef -issuerdn "C=SE, CN=Neo Morpheus"
+Example 4: signserver wsadmins -list
                     </source>
                     <p>
 Notice that the certificate serial number should be entered as the hexadecimal
@@ -2984,6 +2986,10 @@ representation (leading zeros and upper/lowercase is not significant).
 Also notice that the issuer DN currently should be entered in the reversed order 
 and with spaces after each component. In the example above the issuer DN from the 
 certificate actually is "CN=Neo Morpheus, C=SE". 
+                    </p>
+                    <p>
+An administrator can also be added by supplying a client certificate as an argument.
+The serial number and issuer DN is then taken from that certificate.
                     </p>
                     <p>
 To troubleshoot an "Administrator not authorized to resource" see the logs for how 

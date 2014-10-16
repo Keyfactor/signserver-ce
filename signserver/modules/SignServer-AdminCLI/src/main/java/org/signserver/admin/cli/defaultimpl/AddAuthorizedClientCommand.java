@@ -44,7 +44,7 @@ public class AddAuthorizedClientCommand extends AbstractAdminCommand {
 
     @Override
     public String getUsages() {
-        return "Usage: signserver addauthorizedclient <signerid> <certificatesn (hex)> <issuerd (in BounyCaste DNS order, without spaces between parts)>\n"
+        return "Usage: signserver addauthorizedclient <signerid> <certificatesn (hex)> <issuerdn>\n"
         	 + "       signserver addauthorizedclient <signerid> <certificate-filename>\n"
                     + "Example 1: signserver addauthorizedclient 1 EF34242D2324 \"CN=Test Root CA\"\n"
                     + "Example 2: signserver addauthorizedclient 1 EF3456789ABC \"CN=Client,O=Test Organization,C=SE\"\n"

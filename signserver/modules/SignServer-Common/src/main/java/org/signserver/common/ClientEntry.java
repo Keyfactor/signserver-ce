@@ -44,16 +44,6 @@ public class ClientEntry {
     }
 
     /**
-     * Construct a client entry given a certificate.
-     * 
-     * @param cert Certificate representing the entry 
-     */
-    public ClientEntry(final X509Certificate cert) {
-        this.serialNumber = cert.getSerialNumber();
-        this.issuerDN = cert.getIssuerDN().toString();
-    }
-    
-    /**
      * Construct a client entry given an instance of AuthorizedClient.
      * 
      * @param client 

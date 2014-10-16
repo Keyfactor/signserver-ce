@@ -1144,8 +1144,8 @@ public class AdminWS {
                     " issuer: " + cert.getIssuerDN() + " agains admin set: " +
                     authSet);
         }
-        
-        return authSet.contains(new ClientEntry(cert));
+
+        return authSet.contains(new ClientEntry(cert.getSerialNumber(), SignServerUtil.getTokenizedIssuerDNFromCert(cert)));
     }
 
     private X509Certificate[] getClientCertificates() {

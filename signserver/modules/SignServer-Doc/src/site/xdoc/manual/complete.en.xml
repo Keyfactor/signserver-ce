@@ -1812,6 +1812,9 @@ Alternatively a certificate file can be loaded, from which the serial number and
 <b> View -&gt; Authorization...</b>: Switches to the Authorization tab for the selected worker.
                         </p>
                         <p>
+Specify certificate serial number in hex and the Issuer DN of the client certificate. Alternatively a certificate file (PEM or DER format) can be loaded, from which the serial number and issuer DN is fetched. 
+                        </p>
+                        <p>
 <b> Help -&gt; About...</b>: Opens the about box doc.
                         </p>
                     </subsubsection>

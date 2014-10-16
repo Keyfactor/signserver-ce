@@ -80,9 +80,9 @@ public class ClientCertAuthorizer implements IAuthorizer {
             if (!authorizedToRequestSignature(clientCert)) {
                 throw new IllegalRequestException("Worker " + workerId + ": "
                         + "Client is not authorized: "
-                        + "\"" + clientCert.getSubjectDN().toString() + "\", "
+                        + "\"" + CertTools.stringToBCDNString(clientCert.getSubjectDN().toString()) + "\", "
                         + "\"" + clientCert.getSerialNumber().toString(16)
-                        + ", " + clientCert.getIssuerDN().toString() + "\"");
+                        + ", " + CertTools.stringToBCDNString(clientCert.getIssuerDN().toString()) + "\"");
             }
         }
     }

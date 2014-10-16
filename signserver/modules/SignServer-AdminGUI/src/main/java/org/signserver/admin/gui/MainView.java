@@ -2150,48 +2150,55 @@ public class MainView extends FrameView {
                     authEditPanel, "Edit authorized client",
                     JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
             if (res == JOptionPane.OK_OPTION) {
-                List<Worker> workers;
-                if (editUpdateAllCheckbox.isSelected()) {
-                    workers = selectedWorkers;
-                } else {
-                    workers = Collections.singletonList(selectedWorker);
-                }
-
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Selected workers: " + workers);
-                }
-
-                final AuthorizedClient oldAuthorizedClient =
-                    new AuthorizedClient();
-                oldAuthorizedClient.setCertSN(serialNumberBefore);
-                oldAuthorizedClient.setIssuerDN(issuerDNBefore);
-
-                final AuthorizedClient client = new AuthorizedClient();
-                client.setCertSN(editSerialNumberTextfield.getText());
-                client.setIssuerDN(editIssuerDNTextfield.getText());
-
-                for (Worker worker : workers) {
-                    try {
-                        boolean removed =
-                                SignServerAdminGUIApplication.getAdminWS()
-                                .removeAuthorizedClient(worker.getWorkerId(),
-                                oldAuthorizedClient);
-                        if (removed) {
-                            SignServerAdminGUIApplication.getAdminWS()
-                                .addAuthorizedClient(worker.getWorkerId(),
-                                    client);
-                            SignServerAdminGUIApplication.getAdminWS()
-                                .reloadConfiguration(worker.getWorkerId());
-                        }
-                    } catch (AdminNotAuthorizedException_Exception ex) {
-                        showAdminNotAuthorized(ex);
-                    } catch (SOAPFaultException ex) {
-                        showServerSideException(ex);
-                    } catch (EJBException ex) {
-                        showServerSideException(ex);
+                try {
+                    List<Worker> workers;
+                    if (editUpdateAllCheckbox.isSelected()) {
+                        workers = selectedWorkers;
+                    } else {
+                        workers = Collections.singletonList(selectedWorker);
                     }
+
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Selected workers: " + workers);
+                    }
+
+                    final AuthorizedClient oldAuthorizedClient =
+                        new AuthorizedClient();
+                    oldAuthorizedClient.setCertSN(serialNumberBefore);
+                    oldAuthorizedClient.setIssuerDN(issuerDNBefore);
+
+                    final AuthorizedClient client = new AuthorizedClient();
+                    final BigInteger sn =
+                            new BigInteger(editSerialNumberTextfield.getText(), 16);
+
+                    client.setCertSN(sn.toString(16));
+                    client.setIssuerDN(editIssuerDNTextfield.getText());
+
+                    for (Worker worker : workers) {
+                        try {
+                            boolean removed =
+                                    SignServerAdminGUIApplication.getAdminWS()
+                                    .removeAuthorizedClient(worker.getWorkerId(),
+                                    oldAuthorizedClient);
+                            if (removed) {
+                                SignServerAdminGUIApplication.getAdminWS()
+                                    .addAuthorizedClient(worker.getWorkerId(),
+                                        client);
+                                SignServerAdminGUIApplication.getAdminWS()
+                                    .reloadConfiguration(worker.getWorkerId());
+                            }
+                        } catch (AdminNotAuthorizedException_Exception ex) {
+                            showAdminNotAuthorized(ex);
+                        } catch (SOAPFaultException ex) {
+                            showServerSideException(ex);
+                        } catch (EJBException ex) {
+                            showServerSideException(ex);
+                        }
+                    }
+                    refreshButton.doClick();
+                } catch (NumberFormatException e) {
+                    showMalformedSerialNumber(e);
                 }
-                refreshButton.doClick();
             }
         }
     }//GEN-LAST:event_authEditButtonActionPerformed

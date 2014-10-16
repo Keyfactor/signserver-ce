@@ -177,7 +177,7 @@ public class SignServerCLITest extends ModulesTestCase {
         // Test authorized clients
         assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
             cli.execute("addauthorizedclient", "TIMESTAMPSIGNER1000", "EF34242D2324", "CN=Test Root CA"));
-        assertPrinted("", cli.getOut(), "Adding the client certificate with sn EF34242D2324");
+        assertPrinted("", cli.getOut(), "Adding the client certificate with sn ef34242d2324");
         // test adding an authorized client via a PEM file
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,
         	cli.execute("addauthorizedclient", "TIMESTAMPSIGNER1000",
@@ -196,7 +196,23 @@ public class SignServerCLITest extends ModulesTestCase {
         assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
             cli.execute("listauthorizedclients", "TIMESTAMPSIGNER1000"));
         assertPrinted("", cli.getOut(), "ef34242d2324, CN=Test Root CA");
+        
+        // test adding an authorized client specifying leading zero in SN
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+            cli.execute("addauthorizedclient", "TIMESTAMPSIGNER1000", "0FF34242D2324", "CN=Test Root CA"));
+        assertPrinted("", cli.getOut(), "Adding the client certificate with sn ff34242d2324");
 
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+            cli.execute("listauthorizedclients", "TIMESTAMPSIGNER1000"));
+        assertPrinted("", cli.getOut(), "ff34242d2324, CN=Test Root CA");
+        
+        // test removing authorized client specifying SN with leading 0 and upper-case
+        assertEquals("", CommandLineInterface.RETURN_SUCCESS, cli.execute("removeauthorizedclient",
+                    "TIMESTAMPSIGNER1000",
+                    "0FF34242D2324",
+                    "CN=Test Root CA"));
+        assertPrinted("", cli.getOut(), "Client Removed");
+        
         assertEquals("", CommandLineInterface.RETURN_SUCCESS, cli.execute("removeauthorizedclient",
                     "TIMESTAMPSIGNER1000",
                     "EF34242D2324",

@@ -1462,6 +1462,9 @@ An example using a certificate issued from EJBCA with the default (as specified 
 LDAP DN order:</p>
 <source>C=SE, O=TestOrganization, CN=IssuingCA</source>
                         <p>
+This is the reversed order compared to how the issuer DN is stored in the certificate.
+                        </p>
+                        <p>
 An example using a certificate issued from EJBCA with the Use LDAP DN order
 option disabled:</p>
 <source>CN=ReverseIssuingCA, O=TestOrganization, C=SE</source>

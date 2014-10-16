@@ -82,7 +82,7 @@ public class AddAuthorizedClientCommand extends AbstractAdminCommand {
 
             AuthorizedClient authClient = new AuthorizedClient(sn.toString(16), issuerdn);
 
-            this.getOutputStream().println("Adding the client certificate with sn " + certsn + " and issuerDN : " + issuerdn + " for signer " + signerid + "\n");
+            this.getOutputStream().println("Adding the client certificate with sn " + sn.toString(16) + " and issuerDN : " + issuerdn + " for signer " + signerid + "\n");
             this.getOutputStream().println("See current configuration with the listauthorizedclients command, activate it with the reload command\n");
 
             getWorkerSession().addAuthorizedClient(signerid, authClient);
@@ -94,7 +94,7 @@ public class AddAuthorizedClientCommand extends AbstractAdminCommand {
             return 0;
 
         } catch (IllegalArgumentException ex) {
-            throw new IllegalCommandArgumentsException(ex.getMessage());
+            throw new IllegalCommandArgumentsException(ex.getMessage());  
         } catch (Exception e) {
             throw new UnexpectedCommandFailureException(e);
         }

@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Set;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
-import org.ejbca.util.CertTools;
+import org.cesecore.util.CertTools;
 import org.signserver.common.ClientEntry;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.ProcessRequest;
@@ -80,16 +80,16 @@ public class ClientCertAuthorizer implements IAuthorizer {
             if (!authorizedToRequestSignature(clientCert)) {
                 throw new IllegalRequestException("Worker " + workerId + ": "
                         + "Client is not authorized: "
-                        + "\"" + CertTools.stringToBCDNString(clientCert.getSubjectDN().toString()) + "\", "
+                        + "\"" + CertTools.stringToBCDNString(clientCert.getSubjectX500Principal().getName()) + "\", "
                         + "\"" + clientCert.getSerialNumber().toString(16)
-                        + ", " + CertTools.stringToBCDNString(clientCert.getIssuerDN().toString()) + "\"");
+                        + ", " + CertTools.stringToBCDNString(clientCert.getIssuerX500Principal().getName()) + "\"");
             }
         }
     }
 
     private boolean authorizedToRequestSignature(final X509Certificate clientCert) {
         final String clientDN = CertTools.stringToBCDNString(
-                clientCert.getIssuerDN().toString());
+                clientCert.getIssuerX500Principal().getName());
 
         final ClientEntry client =
                 new ClientEntry(clientCert.getSerialNumber(), clientDN);

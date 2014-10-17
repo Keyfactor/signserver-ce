@@ -1353,7 +1353,9 @@ These commands are used to configure the internal client certificate authorizati
                         <p>
 <b>addauthorizedclient:</b>
 Adds a client certificate to a processable workers list of acceptable clients using this worker. Specify
-certificate serial number in hex and the Issuer DN of the client certificate. Alternatively a certificate file (PEM or DER format) can be specified,
+certificate serial number in hex and the Issuer DN of the client certificate.
+If DN components contains commas, these needs to be escaped with backslashes.
+Alternatively a certificate file (PEM or DER format) can be specified,
 from which the serial number and issuer DN is fetched.
                         </p>
                         <p>
@@ -1455,7 +1457,7 @@ SignServer.
                         <p>
 Authorizes an administrator to use the Admin Web Service interface by
 certificate serialnumber (in hexadecimal) and issuer DN with space after each comma
-separating DN components.
+separating DN components. If DN components contains commas, these needs to be escaped with backslashes.
                         </p>
                         <p>
 An example on how to enter the issuer DN when using a certificate issued from EJBCA with the default (as specified by EJBCA)
@@ -1778,6 +1780,7 @@ Allows adding webservice administrators, auditors, and archive auditors.
 The administrators can be added by explicitly entering the client certificate's
 serial number in hexadecimal (leading zeroes and letter case is not significant)
 and the issuer DN with space after each comma separating DN components.
+If DN components contains commas, these needs to be escaped with backslashes.
                         </p>
                         <p>
 An example using a certificate issued from EJBCA with the default (as specified by EJBCA) LDAP DN order:
@@ -1812,7 +1815,9 @@ Alternatively a certificate file can be loaded, from which the serial number and
 <b> View -&gt; Authorization...</b>: Switches to the Authorization tab for the selected worker.
                         </p>
                         <p>
-Specify certificate serial number in hex and the Issuer DN of the client certificate. Alternatively a certificate file (PEM or DER format) can be loaded, from which the serial number and issuer DN is fetched. 
+Specify certificate serial number in hex and the Issuer DN of the client certificate.
+If DN components contains commas, these needs to be escaped with backslashes.
+Alternatively a certificate file (PEM or DER format) can be loaded, from which the serial number and issuer DN is fetched. 
                         </p>
                         <p>
 <b> Help -&gt; About...</b>: Opens the about box doc.

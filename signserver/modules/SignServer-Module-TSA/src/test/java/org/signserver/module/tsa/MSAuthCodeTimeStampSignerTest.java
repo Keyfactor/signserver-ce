@@ -13,6 +13,7 @@
 package org.signserver.module.tsa;
 
 import java.math.BigInteger;
+import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Collection;
@@ -34,6 +35,7 @@ import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.util.encoders.Base64;
 import org.ejbca.util.CertTools;
+import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
 import org.signserver.common.IllegalRequestException;
@@ -43,9 +45,11 @@ import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.server.ZeroTimeSource;
+import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.log.LogMap;
 
 import org.signserver.test.utils.mock.GlobalConfigurationSessionMock;
+import org.signserver.test.utils.mock.MockedCryptoToken;
 import org.signserver.test.utils.mock.WorkerSessionMock;
 import org.signserver.testutils.TestUtils;
 
@@ -379,5 +383,30 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
      */
     public void test0IncludeCertificateLevelsNotPermitted() throws Exception {
         testProcessDataWithAlgo("SHA1withRSA", SHA1_OID, null, false, "2");
+    }
+    
+    
+    private static class MockedMSAuthCodeTimeStampSigner
+        extends MSAuthCodeTimeStampSigner {
+        private MockedCryptoToken mockedToken;
+        
+        public MockedMSAuthCodeTimeStampSigner(final MockedCryptoToken mockedToken) {
+            this.mockedToken = mockedToken;
+        }
+
+        @Override
+        public Certificate getSigningCertificate() throws CryptoTokenOfflineException {
+            return mockedToken.getCertificate(ICryptoToken.PURPOSE_SIGN);
+        }
+
+        @Override
+        public List<Certificate> getSigningCertificateChain() throws CryptoTokenOfflineException {
+            return mockedToken.getCertificateChain(ICryptoToken.PURPOSE_SIGN);
+        }
+
+        @Override
+        public ICryptoToken getCryptoToken() {
+            return mockedToken;
+        }
     }
 }

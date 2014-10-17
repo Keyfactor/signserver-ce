@@ -14,13 +14,12 @@
 package org.signserver.admin.gui;
 
 import java.security.cert.X509Certificate;
-import java.util.Map;
-import java.util.Properties;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import org.cesecore.util.CertTools;
 
 import org.signserver.common.SignServerUtil;
 
@@ -41,13 +40,13 @@ public class Utils {
      * @param panel Panel requesting the action. Used to attach the open file dialog and a possible error message.
      * @param serialNumberTextfield field Text field to set the serial number in.
      * @param issuerDNTextfield Text fieald to set the issuer DN in.
-     * @param useTokenizer If true, format the DN as expected by WS admins, otherwise
+     * @param forAdmins If true, format the DN as expected by WS admins, otherwise
      *                     use a format suitable for the ClientCertAuthorizer
      */
     public static void selectAndLoadFromCert(final JPanel panel,
             final JTextField serialNumberTextfield,
             final JTextField issuerDNTextfield,
-            final boolean useTokenizer) {
+            final boolean forAdmins) {
         
         final JFileChooser chooser = new JFileChooser();
         final int res = chooser.showOpenDialog(panel);
@@ -57,10 +56,10 @@ public class Utils {
                 final X509Certificate cert =
                         SignServerUtil.getCertFromFile(chooser.getSelectedFile().getAbsolutePath());
                 serialNumberTextfield.setText(cert.getSerialNumber().toString(16));
-                if (useTokenizer) {
+                if (forAdmins) {
                     issuerDNTextfield.setText(SignServerUtil.getTokenizedIssuerDNFromCert(cert));
                 } else {
-                    issuerDNTextfield.setText(cert.getIssuerDN().getName());
+                    issuerDNTextfield.setText(CertTools.stringToBCDNString(cert.getIssuerX500Principal().getName()));
                 }
             } catch (IllegalArgumentException e) {
                 JOptionPane.showMessageDialog(panel, e.getMessage());

@@ -2112,7 +2112,7 @@ public class MainView extends FrameView {
                             new BigInteger(editSerialNumberTextfield.getText(), 16);
                     org.signserver.admin.gui.adminws.gen.AuthorizedClient client = new org.signserver.admin.gui.adminws.gen.AuthorizedClient();
                     client.setCertSN(sn.toString(16));
-                    client.setIssuerDN(editIssuerDNTextfield.getText());
+                    client.setIssuerDN(org.cesecore.util.CertTools.stringToBCDNString(editIssuerDNTextfield.getText()));
                     SignServerAdminGUIApplication.getAdminWS()
                             .addAuthorizedClient(worker.getWorkerId(), client);
                     SignServerAdminGUIApplication.getAdminWS()
@@ -2172,7 +2172,7 @@ public class MainView extends FrameView {
                             new BigInteger(editSerialNumberTextfield.getText(), 16);
 
                     client.setCertSN(sn.toString(16));
-                    client.setIssuerDN(editIssuerDNTextfield.getText());
+                    client.setIssuerDN(org.cesecore.util.CertTools.stringToBCDNString(editIssuerDNTextfield.getText()));
 
                     for (Worker worker : workers) {
                         try {

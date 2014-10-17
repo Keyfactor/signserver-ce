@@ -60,7 +60,7 @@ public class AddAuthorizedClientCommand extends AbstractAdminCommand {
             
             if (args.length == 3) {
             	certsn = args[1];
-            	issuerdn = args[2];
+            	issuerdn = CertTools.stringToBCDNString(args[2]);
             	sn = new BigInteger(certsn, 16);  // Test that it's a vaild number (hex)
             } else {
             	// read SN and DN from the supplied certificate...

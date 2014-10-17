@@ -54,6 +54,9 @@ public class ClientCertAuthorizer implements IAuthorizer {
         this.workerId = workerId;
         this.authorizedClients =
                 ClientEntry.clientEntriesFromAuthClients(config.getAuthorizedClients());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Configured clients: " + authorizedClients);
+        }
     }
     
     @Override

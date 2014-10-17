@@ -38,7 +38,7 @@ public class AuthorizedClient implements Comparable<Object>, Serializable {
     }
 
     public void setIssuerDN(String issuerDN) {
-        this.issuerDN = CertTools.stringToBCDNString(issuerDN);
+        this.issuerDN = issuerDN;
     }
 
     public AuthorizedClient(String certSN, String issuerDN) {

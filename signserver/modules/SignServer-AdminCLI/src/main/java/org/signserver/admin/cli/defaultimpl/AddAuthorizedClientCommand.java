@@ -12,17 +12,10 @@
  *************************************************************************/
 package org.signserver.admin.cli.defaultimpl;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.math.BigInteger;
 import java.security.Principal;
 import java.security.cert.X509Certificate;
-import java.util.Collection;
-
-import java.security.cert.Certificate;
-
-import org.ejbca.util.CertTools;
+import org.cesecore.util.CertTools;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.cli.spi.UnexpectedCommandFailureException;
@@ -76,8 +69,8 @@ public class AddAuthorizedClientCommand extends AbstractAdminCommand {
             	
             	sn = cert.getSerialNumber();
             	certsn = sn.toString(16);  // needed for the infomational output below
-            	Principal dn = cert.getIssuerDN();
-            	issuerdn = dn.getName();
+            	Principal dn = cert.getIssuerX500Principal();
+            	issuerdn = CertTools.stringToBCDNString(dn.getName());
             }
 
             AuthorizedClient authClient = new AuthorizedClient(sn.toString(16), issuerdn);

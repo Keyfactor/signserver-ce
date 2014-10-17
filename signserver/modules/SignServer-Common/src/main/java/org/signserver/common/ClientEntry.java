@@ -96,17 +96,21 @@ public class ClientEntry {
         final Set<ClientEntry> result = new HashSet<ClientEntry>();
         
         for (final String entry : property.split(";")) {
-            final String[] splittedEntry = entry.split(",", 2);
+            final String trimmedEntry = entry.trim();
             
-            if (splittedEntry.length != 2) {
-                LOG.warn("Malformed admin entry: " + entry);
-            }
-            
-            try {
-                result.add(new ClientEntry(new BigInteger(splittedEntry[0], 16),
-                                        splittedEntry[1]));
-            } catch (NumberFormatException e) {
-                LOG.warn("Malformed serial number: " + splittedEntry[0]);
+            if (!trimmedEntry.isEmpty()) {
+                final String[] splittedEntry = trimmedEntry.split(",", 2);
+
+                if (splittedEntry.length != 2) {
+                    LOG.warn("Malformed admin entry: " + trimmedEntry);
+                }
+
+                try {
+                    result.add(new ClientEntry(new BigInteger(splittedEntry[0], 16),
+                                            splittedEntry[1]));
+                } catch (NumberFormatException e) {
+                    LOG.warn("Malformed serial number: " + splittedEntry[0]);
+                }
             }
         }
         

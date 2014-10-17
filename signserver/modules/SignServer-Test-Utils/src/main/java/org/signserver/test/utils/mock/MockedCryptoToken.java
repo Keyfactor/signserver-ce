@@ -10,7 +10,7 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.module.cmssigner;
+package org.signserver.test.utils.mock;
 
 import java.security.KeyStore;
 import java.security.KeyStoreException;

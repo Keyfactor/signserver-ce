@@ -16,6 +16,7 @@ import java.security.cert.Certificate;
 import java.util.List;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.server.cryptotokens.ICryptoToken;
+import org.signserver.test.utils.mock.MockedCryptoToken;
 
 /**
  * Mocked version of the CMSSigner using a MockedCryptoToken.

@@ -36,6 +36,7 @@ import org.signserver.common.WorkerConfig;
 import org.signserver.server.SignServerContext;
 import org.signserver.test.utils.builders.CertBuilder;
 import org.signserver.test.utils.builders.CryptoUtils;
+import org.signserver.test.utils.mock.MockedCryptoToken;
 
 /**
  * Unit tests for the CMSSigner class.

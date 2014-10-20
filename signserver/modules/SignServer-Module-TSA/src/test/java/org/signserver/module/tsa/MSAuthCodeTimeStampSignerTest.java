@@ -440,6 +440,17 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
                     "No other extended key usages than timeStamping is allowed");
     }
     
+    /**
+     * Internal helper method setting up a mocked signer with configurable
+     * signer certificate extended key usages and expected fatal errors.
+     * 
+     * @param ekus Array of extended keyusages, null if no extended key usage should be set
+     * @param critical True if the extended key usage should be marked as critical
+     * @param expectedFailure True if fatal errors is expected to contain errors
+     * @param expectedErrorMessage Error message expected in the list of fatal
+     *                             error, if null or empty, don't check error message
+     * @throws Exception 
+     */
     private void testWithEKUs(final KeyPurposeId[] ekus,
             final boolean critical, final boolean expectedFailure,
             final String expectedErrorMessage) throws Exception {
@@ -484,10 +495,19 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
         }
     }
     
+    /**
+     * Mocked signer using a mocked crypto token.
+     * 
+     */
     private static class MockedMSAuthCodeTimeStampSigner
         extends MSAuthCodeTimeStampSigner {
         private MockedCryptoToken mockedToken;
         
+        /**
+         * Create a mocked signer using the provided mocked token.
+         * 
+         * @param mockedToken 
+         */
         public MockedMSAuthCodeTimeStampSigner(final MockedCryptoToken mockedToken) {
             this.mockedToken = mockedToken;
         }

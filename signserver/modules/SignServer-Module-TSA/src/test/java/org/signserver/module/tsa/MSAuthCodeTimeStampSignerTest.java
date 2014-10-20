@@ -427,6 +427,19 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
                      true, false, null);
     }
     
+    /**
+     * Test that setting a signer certificate with additional extended key usage
+     * in addition to timeStaming results in a configuration error.
+     * 
+     * @throws Exception 
+     */
+    public void testWithAdditionalEKU() throws Exception {
+       testWithEKUs(new KeyPurposeId[] {KeyPurposeId.id_kp_timeStamping,
+                                        KeyPurposeId.id_kp_emailProtection},
+                    true, true,
+                    "No other extended key usages than timeStamping is allowed");
+    }
+    
     private void testWithEKUs(final KeyPurposeId[] ekus,
             final boolean critical, final boolean expectedFailure,
             final String expectedErrorMessage) throws Exception {

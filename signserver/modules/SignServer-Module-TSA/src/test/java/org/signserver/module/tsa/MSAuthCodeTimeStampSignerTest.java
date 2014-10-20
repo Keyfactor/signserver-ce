@@ -13,6 +13,7 @@
 package org.signserver.module.tsa;
 
 import java.math.BigInteger;
+import java.security.KeyPair;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
@@ -30,7 +31,11 @@ import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.ASN1TaggedObject;
 import org.bouncycastle.asn1.cms.ContentInfo;
+import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
+import org.bouncycastle.asn1.x509.KeyPurposeId;
 import org.bouncycastle.asn1.x509.Time;
+import org.bouncycastle.asn1.x509.X509Extension;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.util.encoders.Base64;
@@ -44,9 +49,13 @@ import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
+import org.signserver.server.SignServerContext;
 import org.signserver.server.ZeroTimeSource;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.log.LogMap;
+import org.signserver.test.utils.builders.CertBuilder;
+import org.signserver.test.utils.builders.CertExt;
+import org.signserver.test.utils.builders.CryptoUtils;
 
 import org.signserver.test.utils.mock.GlobalConfigurationSessionMock;
 import org.signserver.test.utils.mock.MockedCryptoToken;
@@ -385,6 +394,59 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
         testProcessDataWithAlgo("SHA1withRSA", SHA1_OID, null, false, "2");
     }
     
+    /**
+     * Test that setting a signer certificate with no extended key usage
+     * results in a configuration error.
+     * 
+     * @throws Exception 
+     */
+    public void testWithNoEKU() throws Exception {
+        testWithEKUs(null, false, true, "Missing extended key usage timeStamping");
+    }
+    
+    private void testWithEKUs(final KeyPurposeId[] ekus,
+            final boolean critical, final boolean expectedFailure,
+            final String expectedErrorMessage) throws Exception {
+        final KeyPair signerKeyPair = CryptoUtils.generateRSA(1024);
+        final String signatureAlgorithm = "SHA1withRSA";
+        final CertBuilder certBuilder =
+                new CertBuilder().
+                        setSelfSignKeyPair(signerKeyPair).
+                        setNotBefore(new Date()).
+                        setSignatureAlgorithm(signatureAlgorithm);
+                
+        if (ekus != null && ekus.length > 0) {
+            certBuilder.addExtension(new CertExt(X509Extension.extendedKeyUsage, 
+                                                 critical,
+                                                 new ExtendedKeyUsage(ekus)));
+        }
+            
+        final Certificate[] certChain =
+                new Certificate[] {new JcaX509CertificateConverter().getCertificate(
+                        certBuilder.build())};
+        final Certificate signerCertificate = certChain[0];
+        final MockedCryptoToken token =
+                new MockedCryptoToken(signerKeyPair.getPrivate(),
+                                      signerKeyPair.getPublic(), 
+                                      signerCertificate,
+                                      Arrays.asList(certChain), "BC");
+        
+        final MSAuthCodeTimeStampSigner instance =
+                new MockedMSAuthCodeTimeStampSigner(token);
+
+        instance.init(1, new WorkerConfig(), new SignServerContext(), null);
+        
+        final List<String> fatalErrors = instance.getFatalErrors();
+        
+        if (expectedFailure) {
+            assertFalse("Should report fatal error", fatalErrors.isEmpty());
+        }
+        
+        if (expectedErrorMessage != null && !expectedErrorMessage.isEmpty()) {
+            assertTrue("Should contain error",
+                       fatalErrors.contains(expectedErrorMessage));
+        }
+    }
     
     private static class MockedMSAuthCodeTimeStampSigner
         extends MSAuthCodeTimeStampSigner {

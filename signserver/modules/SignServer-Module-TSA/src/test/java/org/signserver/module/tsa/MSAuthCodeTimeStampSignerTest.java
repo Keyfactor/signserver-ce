@@ -501,7 +501,7 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
      */
     private static class MockedMSAuthCodeTimeStampSigner
         extends MSAuthCodeTimeStampSigner {
-        private MockedCryptoToken mockedToken;
+        private final MockedCryptoToken mockedToken;
         
         /**
          * Create a mocked signer using the provided mocked token.

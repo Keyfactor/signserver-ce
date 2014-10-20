@@ -404,6 +404,18 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
         testWithEKUs(null, false, true, "Missing extended key usage timeStamping");
     }
     
+    /**
+     * Test that setting a signer certificate with extended key usage
+     * timeStamping set as non-critical results in a configuration error.
+     * 
+     * @throws Exception 
+     */
+    public void testWithTimestampingEKUNoCritical() throws Exception {
+        testWithEKUs(new KeyPurposeId[] {KeyPurposeId.id_kp_timeStamping},
+                     false, true,
+                     "The extended key usage extension must be present and marked as critical");
+    }
+    
     private void testWithEKUs(final KeyPurposeId[] ekus,
             final boolean critical, final boolean expectedFailure,
             final String expectedErrorMessage) throws Exception {

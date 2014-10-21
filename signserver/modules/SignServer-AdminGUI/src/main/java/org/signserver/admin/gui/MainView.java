@@ -58,7 +58,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.cesecore.audit.impl.integrityprotected.AuditRecordData;
-import org.ejbca.util.CertTools;
+import org.cesecore.util.CertTools;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.FrameView;
@@ -2706,7 +2706,10 @@ private void displayLogEntryAction() {
             final StringBuilder title = new StringBuilder();
             X509Certificate adminCertificate = SignServerAdminGUIApplication.getAdminCertificate();
             if (adminCertificate != null) {
-                String cn = CertTools.getPartFromDN(adminCertificate.getSubjectDN().getName(), "CN");
+                String cn = CertTools.getPartFromDN(adminCertificate.getSubjectX500Principal().getName(), "CN");
+                if (cn == null || cn.isEmpty()) {
+                    cn = adminCertificate.getSerialNumber().toString(16);
+                }
                 title.append(cn).append(" @ ");
             }
             title.append(SignServerAdminGUIApplication.getServerHost());

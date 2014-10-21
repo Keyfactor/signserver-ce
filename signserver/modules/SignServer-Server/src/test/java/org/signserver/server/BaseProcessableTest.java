@@ -12,10 +12,16 @@
  *************************************************************************/
 package org.signserver.server;
 
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
+import org.cesecore.util.CertTools;
+import org.ejbca.util.Base64;
 import org.junit.Test;
 import org.signserver.common.CryptoTokenInitializationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
@@ -29,6 +35,7 @@ import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
+import org.signserver.server.cryptotokens.HardCodedCryptoToken;
 import org.signserver.server.cryptotokens.NullCryptoToken;
 import org.signserver.server.signers.BaseSigner;
 
@@ -239,12 +246,73 @@ public class BaseProcessableTest extends TestCase {
         
         assertTrue("Should contain error", fatalErrors.contains("Crypto token class not found: org.foo.Bar"));
     }
-    
+
+    /**
+     * Tests that when no certificate is explicitly set in the configuration
+     * then certificate from the token is used.
+     * @throws Exception
+     */
+    @Test
+    public void testCertificateInTokenUsed() throws Exception {
+        LOG.info("testCertificateInTokenUsed");
+
+        Properties globalConfig = new Properties();
+        WorkerConfig workerConfig = new WorkerConfig();
+        globalConfig.setProperty("GLOB.WORKER" + workerId + ".CLASSPATH", TestSigner.class.getName());
+        globalConfig.setProperty("GLOB.WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", MockedCryptoToken.class.getName());
+        workerConfig.setProperty("NAME", "TestSigner200");
+        // Note: No SIGNERCERT or SIGNERCERTCHAIN configured so cert from token should be used
+
+        TestSigner instance = new TestSigner(globalConfig);
+        instance.init(workerId, workerConfig, anyContext, null);
+
+        // Certifcate in token is "CN=Signer 4"
+        assertEquals("cert from token", "Signer 4", CertTools.getPartFromDN(((X509Certificate) instance.getSigningCertificate()).getSubjectX500Principal().getName(), "CN"));
+        assertEquals("cert from token", "Signer 4", CertTools.getPartFromDN(((X509Certificate) instance.getSigningCertificateChain().get(0)).getSubjectX500Principal().getName(), "CN"));
+    }
+
+    /**
+     * Tests that when a certificate is explicitly set in the configuration that
+     * certificate is used instead of the one in the token.
+     * @throws Exception
+     */
+    @Test
+    public void testCertificateInTokenOverridden() throws Exception {
+        LOG.info("testCertificateInTokenOverridden");
+
+        Properties globalConfig = new Properties();
+        WorkerConfig workerConfig = new WorkerConfig();
+        globalConfig.setProperty("GLOB.WORKER" + workerId + ".CLASSPATH", TestSigner.class.getName());
+        globalConfig.setProperty("GLOB.WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", MockedCryptoToken.class.getName());
+        workerConfig.setProperty("NAME", "TestSigner200");
+
+        // Configure certbytes3 (CN=End Entity 1)
+        workerConfig.setProperty("SIGNERCERT", "-----BEGIN CERTIFICATE-----\n" + new String(Base64.encode(HardCodedCryptoToken.certbytes3)) + "\n-----END CERTIFICATE-----");
+        workerConfig.setProperty("SIGNERCERTCHAIN", "-----BEGIN CERTIFICATE-----\n" + new String(Base64.encode(HardCodedCryptoToken.certbytes3)) + "\n-----END CERTIFICATE-----");
+
+        TestSigner instance = new TestSigner(globalConfig);
+        instance.init(workerId, workerConfig, anyContext, null);
+
+        // Certifcate in token is "CN=Signer 4", configured certificate is "CN=End Entity 1"
+        assertEquals("cert from token", "End Entity 1", CertTools.getPartFromDN(((X509Certificate) instance.getSigningCertificate()).getSubjectX500Principal().getName(), "CN"));
+        assertEquals("cert from token", "End Entity 1", CertTools.getPartFromDN(((X509Certificate) instance.getSigningCertificateChain().get(0)).getSubjectX500Principal().getName(), "CN"));
+    }
+
     /** CryptoToken only holding its properties and offering a way to access them. */
     private static class MockedCryptoToken extends NullCryptoToken {
 
         private Properties props;
-        
+
+        private static final Certificate CERTIFICATE;
+
+        static {
+            try {
+                CERTIFICATE = CertTools.getCertfromByteArray(HardCodedCryptoToken.certbytes1);
+            } catch (CertificateException ex) {
+                throw new RuntimeException("Load test certificate failed", ex);
+            }
+        }
+
         public MockedCryptoToken() {
             super(WorkerStatus.STATUS_ACTIVE);
         }
@@ -257,8 +325,24 @@ public class BaseProcessableTest extends TestCase {
         public Properties getProps() {
             return props;
         }
+
+        /** Harcoded to certbyte1. **/
+        public static Certificate getCertificate() {
+            return CERTIFICATE;
+        }
+
+        @Override
+        public List<Certificate> getCertificateChain(int purpose) throws CryptoTokenOfflineException {
+            return Arrays.asList(CERTIFICATE);
+        }
+
+        @Override
+        public Certificate getCertificate(int purpose) throws CryptoTokenOfflineException {
+            return CERTIFICATE;
+        }
+
     }
-    
+
     /** Test instance with mocked GlobalConfigurationSession containing the supplied properties. */
     private static class TestSigner extends BaseSigner {
 

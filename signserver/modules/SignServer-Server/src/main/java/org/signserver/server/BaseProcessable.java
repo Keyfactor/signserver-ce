@@ -508,7 +508,9 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
                 certChain = cToken.getCertificateChain(ICryptoToken.PURPOSE_SIGN);
             }
             if (certChain == null) {
-                log.debug("Neither configuration nor token contains a certificate chain!");
+                if (log.isDebugEnabled()) {
+                    log.debug("Neither configuration nor token contains a certificate chain!");
+                }
             }
         }
         return certChain;

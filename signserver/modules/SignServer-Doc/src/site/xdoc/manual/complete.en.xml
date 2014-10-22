@@ -2094,7 +2094,7 @@ One workaround is to edit signserver-gui.cmd and adding the following to the com
                                 </p>
                                 <p>
 The card prompts for the PIN but then doesn't ask for which certificate to login with.
-Instead an error message with the text "Received fatal altert: bad_certificate" is displayed.
+Instead an error message with the text "Received fatal alert: bad_certificate" is displayed.
 This error message indicates that the server did not accept the provided certificate (ie, the issuer was not in the server's truststore). However, in this case the error could be because no certificate was possible to read from the card.
 This has been observed with some type of smart cards.
                                 </p>

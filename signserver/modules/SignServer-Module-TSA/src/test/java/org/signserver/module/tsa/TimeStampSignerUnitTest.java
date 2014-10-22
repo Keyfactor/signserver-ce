@@ -307,8 +307,8 @@ public class TimeStampSignerUnitTest {
     }
 
     /**
-     * Tests that a request including an extension not listed will cause a
-     * rejection also when the list of extensions is empty.
+     * Tests that a request without extension is accepted also when the list of
+     * extensions is empty.
      * @throws Exception
      */
     @Test
@@ -332,7 +332,8 @@ public class TimeStampSignerUnitTest {
     }
 
     /**
-     * Tests
+     * Tests that a request including an extension not listed will cause a
+     * rejection also when the list of extensions is empty.
      * @throws Exception
      */
     @Test

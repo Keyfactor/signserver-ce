@@ -860,7 +860,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
             assertEquals(1, actualStatus.getFatalErrors().size());
             errorsString = actualStatus.getFatalErrors().toString();
             // error should talk about missing critical EKU
-            assertTrue("Should mention additional extended key usages", 
+            assertTrue("Should mention additional extended key usages: " + errorsString, 
                     errorsString.contains("No other extended key usages than timeStamping is allowed"));  // Will need adjustment if language changes
         
             

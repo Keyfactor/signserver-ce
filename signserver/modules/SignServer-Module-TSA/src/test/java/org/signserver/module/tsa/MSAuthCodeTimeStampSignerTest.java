@@ -418,7 +418,7 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
     
     /**
      * Test that setting a signer certificate with extended key usage
-     * timeStamping set as critical resultst in no configuration error.
+     * timeStamping set as critical results in no configuration error.
      * 
      * @throws Exception 
      */
@@ -490,7 +490,7 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
         }
         
         if (expectedErrorMessage != null && !expectedErrorMessage.isEmpty()) {
-            assertTrue("Should contain error",
+            assertTrue("Should contain error: " + fatalErrors,
                        fatalErrors.contains(expectedErrorMessage));
         }
     }

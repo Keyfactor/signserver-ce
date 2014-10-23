@@ -615,7 +615,8 @@ Configure interfaces using the approproate bind address (ie. 0.0.0.0 or 127.0.0.
                         </source>
                         <p>
 Set-up the private port which requires client certificate. 
-Use appropriate values for JBOSS_HOME, key-alias (hostname), password (keystore password) and ca-certificate-password (truststore password).
+Use appropriate values for JBOSS_HOME, key-alias (hostname), password (keystore password), ca-certificate-password (truststore password),
+and supported protocols.
                         </p>
                         <source>
 /socket-binding-group=standard-sockets/socket-binding=httpspriv:add(port="8443",interface="httpspriv")
@@ -626,10 +627,12 @@ Use appropriate values for JBOSS_HOME, key-alias (hostname), password (keystore 
 /subsystem=web/connector=httpspriv/ssl=configuration:write-attribute(name=verify-client, value=true)
 /subsystem=web/connector=httpspriv/ssl=configuration:write-attribute(name=ca-certificate-password, value="changeit")
 /subsystem=web/connector=httpspriv/ssl=configuration:write-attribute(name=ca-certificate-file, value="JBOSS_HOME/standalone/configuration/keystore/truststore.jks")
+/subsystem=web/connector=httpspriv/ssl=configuration:write-attribute(name=protocol,value="TLSv1,TLSv1.1,TLSv1.2") 
                         </source>
                         <p>
 Set-up the public SSL port which doesn't require the client certificate.
-Use appropriate values for JBOSS_HOME, key-alias (hostname), password (keystore password).
+Use appropriate values for JBOSS_HOME, key-alias (hostname), password (keystore password),
+and supported protocols.
                         </p>
                         <source>
 /socket-binding-group=standard-sockets/socket-binding=httpspub:add(port="8442",interface="httpspub")
@@ -637,6 +640,7 @@ Use appropriate values for JBOSS_HOME, key-alias (hostname), password (keystore 
 /subsystem=web/connector=httpspub/ssl=configuration:add(key-alias="localhost")
 /subsystem=web/connector=httpspub/ssl=configuration:write-attribute(name=password, value="serverpwd")
 /subsystem=web/connector=httpspub/ssl=configuration:write-attribute(name=certificate-key-file, value="JBOSS_HOME/standalone/configuration/keystore/keystore.jks")
+/subsystem=web/connector=httpspub/ssl=configuration:write-attribute(name=protocol,value="TLSv1,TLSv1.1,TLSv1.2")
                         </source>
                         <p>
 If the server is not so fast, we have to wait a little before we can reload, otherwise it will be bad

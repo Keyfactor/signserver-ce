@@ -1,0 +1,106 @@
+<project name="glassfish" basedir="../.." default="j2ee:deploy">
+
+    <!-- Declare the JAR files needed to run EJB CLI/system tests using this appserver. -->
+    <property name="appserver.client.jars" value="${appserver.home}/lib/appserv-rt.jar:${appserver.home}/lib/gf-client.jar"/>
+
+    <property environment="env"/>
+
+    <property name="appserver.home" value="${env.APPSRV_HOME}"/>
+    <property name="glassfish.domain" value="domain1"/>
+    <property name="glassfish.server.home.dir" location="${appserver.home}/domains/${glassfish.domain}"/>
+    <property name="glassfish.conf.dir" location="${glassfish.server.home.dir}/config"/>
+    <property name="glassfish.deploy.dir" location="${glassfish.server.home.dir}/autodeploy"/>
+    <property name="keystore.file" value="config/keystore/keystore.jks"/>
+    <property name="truststore.file" value="config/keystore/truststore.jks"/>
+    <property name="remote.keystore.path" value="config"/>
+    <property name="datasource.jndi-name-prefix" value="jdbc/"/>
+
+    <!--
+       Define all extra jar files that needs to be included in the lib
+       folder of signserver.ear when building for this application server.
+       The zipfileset should have the id "appserver.extralibs" and the
+       prefix "lib".
+    -->
+    <zipfileset id="appserver.extralibs" prefix="lib" dir="${basedir}/lib/ext/hibernate">
+        <!--
+           We use Hibernate as JPA provider and as it is
+           not shipped with GlassFish we need to bundle it.
+        -->
+        <include name="*.jar"/>
+        <exclude name="dom4j-1.6.1.jar"/>
+    </zipfileset>
+
+    <!--
+   Do not configure the servlet container, deploys blindly ears
+   This is ideally passed by the caller and is just here as a reminder
+    -->
+    <!--property name="j2ee.web-noconfigure" value="true"/-->
+	
+	
+    <target name="j2ee:check">
+        <!--
+        we could have a dedicated jboss for ejbca, so give users a chance to override
+        otherwise, try to pick the one from environment if it exists
+        -->
+        <fail message="Please set the property 'appserver.home' for this project" unless="appserver.home"/>
+        <available file="${appserver.home}/lib/appserv-rt.jar" property="appserver.home.valid"/>
+        <fail message="'appserver.home' (${appserver.home}) does not seem to be a valid Glassfish home directory" unless="appserver.home.valid"/>
+    </target>
+
+
+    <target name="j2ee:configure"  unless="deploy.hostname.node1" description="Configure the J2EE server with appropriate settings">
+    </target>
+
+
+    <target name="j2ee:compile-ds" depends="j2ee:compile-nocluster-ds, j2ee:compile-cluster-ds"/>	
+
+    <target name="j2ee:compile-nocluster-ds" unless="database.use.mysqlcluster">
+    </target>
+	
+    <target name="j2ee:compile-cluster-ds" if="database.use.mysqlcluster">
+    </target>
+
+
+    <target name="j2ee:deploytruststore">
+    </target>
+			
+    <target name="j2ee:web-configure"  unless="j2ee.web-nohttps.condition"  description="Configure the servlet container">
+    </target>
+	
+    <target name="j2ee:copyPrimeCardJars" description="Deploy the application"  if="primeCard.home"  >
+    </target>
+
+	
+    <target name="j2ee:deploy" description="Deploy the application"  depends="j2ee:compile-ds" >
+        <antcall target="j2ee:deploy:locally" inheritall="true"/>
+        <antcall target="j2ee:deploy:cluster" inheritall="true"/>
+    </target>
+	
+    <target name="j2ee:deploy:cluster" description="Deploy the application" if="deploy.hostname.node1" >
+    </target>
+	
+    <target name="j2ee:deploy:locally" description="Deploy the application" unless="deploy.hostname.node1" depends="j2ee:configure, j2ee:copyPrimeCardJars"  >
+        <echo>Deploying ${ear.dist.file} to ${glassfish.deploy.dir}</echo>
+        <copy file="${ear.dist.file}" todir="${glassfish.deploy.dir}" failonerror="true"/>
+    </target>
+	
+	
+    <target name="j2ee:deploy:remotely" depends="j2ee:web-configure:remotely, j2ee:copyPrimeCardJars:remotely">
+    </target>
+	
+    <target name="j2ee:copyPrimeCardJars:remotely" description="Deploy the application"  if="primeCard.home"  >
+    </target>
+	
+    <target name="j2ee:web-configure:remotely"  unless="j2ee.web-nohttps.condition" description="Configure the servlet container">
+    </target>
+
+    <target name="j2ee:assert-run" description="Check that the server is running">
+        <echo message="Checking that the J2EE server is up and running..."/>
+        <waitfor maxwait="2" maxwaitunit="second" timeoutproperty="j2ee.notrunning">
+            <http url="http://localhost:${httpserver.pubhttp}/"/>
+        </waitfor>
+        <fail message="Please start J2EE server before running this script" if="j2ee.notrunning"/>	
+    </target>
+	
+</project>
+

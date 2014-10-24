@@ -1,0 +1,11 @@
+<jboss-deployment-structure xmlns="urn:jboss:deployment-structure:1.1">
+    <ear-subdeployments-isolated>true</ear-subdeployments-isolated>
+    <deployment>
+        <dependencies>
+        </dependencies>
+        <resources>
+            <!-- This is needed for BC when OracleJDK is used on JBoss 7. See DSS-606. -->
+            <resource-root path="lib/bcprov-jdk15on-1.49.jar" use-physical-code-source="true"/>
+        </resources>
+    </deployment>
+</jboss-deployment-structure>

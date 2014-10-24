@@ -1,0 +1,481 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ======================================================================= -->
+<!--                                                                         -->
+<!--  SignServer: The OpenSource Automated Signing Server                    -->
+<!--                                                                         -->
+<!--  This software is free software; you can redistribute it and/or         -->
+<!--  modify it under the terms of the GNU Lesser General Public             -->
+<!--  License as published by the Free Software Foundation; either           -->
+<!--  version 2.1 of the License, or any later version.                      -->
+<!--                                                                         -->
+<!--  See terms of license at gnu.org.                                       -->
+<!--                                                                         -->
+<!-- ======================================================================= -->
+<!-- Version: $Id: build.xml 4117 2014-01-24 16:08:46Z netmackan $ -->
+<project name="deploytools" default="deploy-ear" basedir="..">
+
+    <!-- =================================================================== -->
+    <!-- Initialization                                                      -->
+    <!-- =================================================================== -->
+
+    <property name="deploytools.version" value="1.1-SNAPSHOT"/>
+
+    <!-- Load properties before including files -->
+    <property environment="env" />
+
+    <!-- Folders -->
+    <property name="res" value="${basedir}/res"/>
+    <property name="conf" value="${basedir}/conf"/>
+    <property name="tmp" value="${basedir}/tmp"/>
+    <property name="this.dir" value="${res}/deploytools/"/>
+
+    <!-- Import property file containing version numbers and other constants -->
+    <property file="${res}/edition.properties"/> <!-- Note: On first run this file might not exist yet -->
+    <property file="${this.dir}/app.properties"/>
+
+    <!-- Deployment properties -->
+    <property file="${user.home}/${app.name}_deploy.properties" />
+    <property file="${conf}/${app.name}_deploy.properties" />
+
+    <!-- Default values -->
+    <property name="appserver.home" value="${env.APPSRV_HOME}"/>
+    <property name="ear.dist.file" value="${tmp}/${app.name}.ear"/>
+
+    <!-- Auto-detect supported application server type -->
+    <available file="${appserver.home}/client/jboss-appclient.jar" property="appserver.type" value="jboss"/>
+    <available file="${appserver.home}/modules/org/jboss/as/standalone/main/module.xml" property="appserver.type" value="jboss"/>
+    <available file="${appserver.home}/modules/system/layers/base/org/jboss/as/standalone/main/module.xml" property="appserver.type" value="jboss"/>
+    <available file="${appserver.home}/client/cxf-api.jar" property="appserver.subtype" value="jboss6"/>
+    <available file="${appserver.home}/common/lib/jboss-javaee.jar" property="appserver.subtype" value="jboss5"/>
+    <available file="${appserver.home}/common/lib/jboss-ejb3-common.jar" property="appserver.subtype" value="jboss5"/>
+    <available file="${appserver.home}/modules/org/jboss/as/standalone/main/module.xml" property="appserver.subtype" value="jboss7"/>
+    <available file="${appserver.home}/modules/system/layers/base/org/jboss/as/standalone/main/module.xml" property="appserver.subtype" value="jbosseap6"/>
+    <available file="${appserver.home}/lib/javaee.jar" property="appserver.type" value="glassfish"/>
+    <available file="${appserver.home}/lib/appserv-ext.jar" property="appserver.subtype" value="glassfish2"/>
+    <available file="${appserver.home}/modules/bean-validator.jar" property="appserver.subtype" value="glassfish3"/>
+    <available file="${appserver.home}/wlserver_10.3/server/lib/wlclient.jar" property="appserver.type" value="weblogic"/>
+    <available file="${appserver.home}/lib/commandlineutils.jar" property="appserver.type" value="websphere"/>
+
+    <!-- Import for the right appserver -->
+    <property name="appserver-impl.file" value="${this.dir}/appserver/${appserver.type}.xml"/>
+    <import file="${appserver-impl.file}" optional="true"/>
+    <import file="${this.dir}/appserver/noappserver.xml"/>
+
+
+    <!-- =================================================================== -->
+    <!-- Initialization                                                      -->
+    <!-- =================================================================== -->
+
+    <target name="init" depends="-pre-init, -do-init, -post-init"/>
+
+    <!-- Target that can be overridden to perform any tasks beforing initing the edition -->
+    <target name="-pre-init"/>
+
+    <!-- Target that can be overridden to perform any tasks after initing the edition -->
+    <target name="-post-init"/>
+
+    <target name="-do-init" depends="-init-edition">
+        <property file="${res}/edition.properties"/>
+    </target>
+
+
+    <!-- =================================================================== -->
+    <!-- Configuration                                                       -->
+    <!-- =================================================================== -->
+
+    <!-- Target to call for configuring the EAR file -->
+    <target name="configure-ear" description="Configure the application" depends="init,-pre-configure-ear, -pre-configure-ear, -do-configure-ear, -post-configure-ear"/>
+
+    <!-- Target that can be overridden to perform any tasks beforing configuring the EAR -->
+    <target name="-pre-configure-ear"/>
+
+    <!-- Target that can be overridden to perform any tasks after configuring the EAR -->
+    <target name="-post-configure-ear"/>
+
+    <!-- Target for initializing Ant tasks -->
+    <target name="-init-tasks">
+        <property name="deploytools.jar" value="${basedir}/lib/ext/DeployTools-Ant-${deploytools.version}.jar"/>
+        <available file="${deploytools.jar}" property="deploytools.jar.available"/>
+        <fail unless="deploytools.jar.available" message="Missing ${deploytools.jar}"/>
+        <path id="deploytools.classpath">
+            <fileset dir="${basedir}/lib/"/>
+            <fileset dir="${basedir}/lib/ext"/>
+        </path>
+        <taskdef name="process-descriptors" classname="org.signserver.deploytools.ant.ProcessModuleDescriptorsTask" classpathref="deploytools.classpath"/>
+        <taskdef name="postprocess-mods" classname="org.signserver.deploytools.ant.PostProcessModulesTask" classpathref="deploytools.classpath"/>
+    </target>
+
+    <!-- Target checking that the application server was identified, otherwise fails with an error message -->
+    <target name="-check-appsrv">
+        <fail unless="appserver.type" message="Unable to identify application server type"/>
+        <available file="${appserver-impl.file}" property="appserver.supported"/>
+        <fail unless="appserver.supported" message="Application server type '${appserver.type}' not supported"/>
+        <fail unless="appserver.client.jars" message="Bug in deploytools: appserver implementation should declare appserver.client.jars containing the classpath needed for remote EJB / systemtests"/>
+    </target>
+
+    <!-- Target checking that the application has been built (at least one essential JAR is avaiable) -->
+    <target name="-check-built">
+        <available file="${basedir}/${app.essential.jar}" property="app.essential.jar.available"/>
+        <fail message="${app.name.cap} needs to be built first ('${app.essential.jar}' not available)" unless="app.essential.jar.available"/>
+    </target>
+
+    <!-- Target displaying system and deployment properties -->
+    <target name="display-properties" depends="init">
+        <echo>
+------------- SYSTEM PROPERTIES --------------
+Ant version                         = ${ant.version}
+JRE version                         = ${java.version}
+JRE vendor                          = ${java.vendor}
+Java home                           = ${java.home}
+Java extensions dir                 = ${java.ext.dirs}
+OS name                             = ${os.name}
+OS architecture                     = ${os.arch}
+OS version                          = ${os.version}
+
+------------- DEPLOY PROPERTIES --------------
+app.version                         = ${app.version}
+deploytools.version                 = ${deploytools.version}
+appserver.type                      = ${appserver.type}
+appserver.subtype                   = ${appserver.subtype}
+appserver.home                      = ${appserver.home}
+datasource.jndi-name                = ${datasource.jndi-name}
+datasource.jndi-name-prefix         = ${datasource.jndi-name-prefix}
+database.name                       = ${database.name}
+database.driver                     = ${database.driver}
+database.nodb.location              = ${database.nodb.location}
+        </echo>
+    </target>
+
+    <!-- Target doing the actual packaging of the EAR file -->
+    <target name="-do-configure-ear" depends="display-properties,-check-appsrv,-check-built, -init-tasks, -init-configure, -preprocess-persistence, -set-ejbjarheader-nodb, j2ee:check">
+        <echo/>
+
+        <condition property="allEnabled">
+            <istrue value="${includemodulesinbuild}"/>
+        </condition>
+
+        <!-- Process all modules descriptors -->
+        <process-descriptors
+            modsDir="mods-available"
+            libSet="toLibs"
+            rootSet="toRoot"
+            configRootSet="toConfigRoot"
+            configConfSet="toConfigConf"
+            applicationXml="appXml"
+            enabledModules="enabledModules"
+            allEnabled="${allEnabled}"/>
+
+        <!-- Write application.xml -->
+        <echo level="verbose">
+            Additions to application.xml: 
+            ${appXml}
+        </echo>
+        <replace file="${app.ear.dir}/META-INF/application.xml" value="${appXml}">
+            <replacetoken><![CDATA[<!--@MODULES@-->]]></replacetoken>
+        </replace>
+
+        <!-- Copy all enterprise modules to EAR root folder -->
+        <echo level="verbose">Enterprise modules to include:
+            ${toRoot}</echo>
+        <copy todir="${app.ear.dir}" flatten="true">
+            <fileset dir="." includes="${toRoot}"/>
+        </copy>
+
+        <!-- Copy are JAR files to EAR lib folder -->
+        <echo level="verbose">
+            Libraries to include:
+            ${toLibs}
+        </echo>
+        <mkdir dir="${app.ear.dir}/lib"/>
+        <copy todir="${app.ear.dir}/lib" flatten="true" verbose="true">
+            <fileset dir="." includes="${toLibs}" excludes="${appserver.lib.excludes}"/>
+        </copy>
+
+        <!-- Perform post-processing for all enabled modules -->
+        <echo/>
+        <echo>Post processing files...</echo>
+        <postprocess-mods
+            destDir="${app.ear.dir}"
+            modules="${enabledModules}"/>
+
+        <!-- Include all configurations -->
+        <echo level="verbose">
+            Configurations to include:
+            /
+            ${toConfigRoot}
+            /conf/
+            ${toConfigConf}
+        </echo>
+        <property name="config.tmp.dir" location="${tmp}/config.jar"/>
+        <delete dir="${config.tmp.dir}"/>
+        <mkdir dir="${config.tmp.dir}"/>
+        <mkdir dir="${config.tmp.dir}/conf"/>
+        <copy todir="${config.tmp.dir}" flatten="true">
+            <fileset dir="." includes="-non-existing-,${toConfigRoot}"/>
+        </copy>
+        <copy todir="${config.tmp.dir}/conf" flatten="true">
+            <fileset dir="." includes="-non-existing-,${toConfigConf}"/>
+        </copy>
+        <mkdir dir="${app.ear.dir}/lib"/>
+        <jar destfile="${app.ear.dir}/lib/config.jar">
+            <zipfileset dir="${config.tmp.dir}" />
+        </jar>
+
+        <!-- Build the ear file from the application.ear-dir folder -->
+        <antcall target="-pre-build-ear"/>
+        <ear destfile="${ear.dist.file}" appxml="${app.ear.dir}/META-INF/application.xml" duplicate="fail">
+            <fileset dir="${app.ear.dir}">
+                <exclude name="META-INF/application.xml" />
+            </fileset>
+            <zipfileset refid="appserver.extralibs"/>
+        </ear>
+        <echo/>
+        <echo message="Configured EAR file available at: ${ear.dist.file}"/>
+        <echo/>
+    </target>
+
+    <target name="-init-configure">
+        <echo>Configuring EAR...
+        </echo>
+
+        <condition property="noDB">
+            <equals arg1="${database.name}" arg2="nodb"/>
+        </condition>
+
+        <property name="app.ear.dir" location="${tmp}/application.ear-dir"/>
+        <property name="database.name" value="${database.name}"/>
+        <delete dir="${app.ear.dir}"/>
+        <mkdir dir="${app.ear.dir}"/>
+
+        <mkdir dir="${app.ear.dir}/META-INF"/>
+        <copy todir="${app.ear.dir}">
+            <fileset dir="${this.dir}/ear" includes="*/*.*"/>
+        </copy>
+    </target>
+
+    <target name="-set-ejbjarheader-nodb" if="noDB">
+        <!-- generate starting and closing comment marks short-circuiting the
+        enterprise-beans tag in the generated ejb-jar.xml file -->
+        <property name="ejbjarheader">
+			<![CDATA[
+    			<!--
+    		]]>
+        </property>
+        <property name="ejbjarfooter">
+    		<![CDATA[
+    			-->
+    		]]>
+        </property>
+        <property name="persistenceheader">
+    		<![CDATA[
+    			<!--
+    		]]>
+        </property>
+        <property name="persistencefooter">
+    		<![CDATA[
+    			-->
+    		]]>
+        </property>
+    </target>
+
+    <target name="-preprocess-persistence">
+        <fail unless="datasource.jndi-name" message="Bug in project setup: Must specify a default value for datasource.jndi-name, this should have been done after including this file."/>
+        <echo message="Database type:      ${database.name}"/>
+        <echo message="DataSource mapping: ${datasource.jndi-name-prefix}${datasource.jndi-name}"/>
+        <condition property="hibernate.dialect" value="org.hibernate.dialect.DB2Dialect">
+            <equals arg1="${database.name}" arg2="db2"/>
+        </condition>
+        <condition property="hibernate.dialect" value="org.hibernate.dialect.DerbyDialect">
+            <equals arg1="${database.name}" arg2="derby"/>
+        </condition>
+        <condition property="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect">
+            <equals arg1="${database.name}" arg2="hsqldb"/>
+        </condition>
+        <condition property="hibernate.dialect" value="org.hibernate.dialect.InformixDialect">
+            <equals arg1="${database.name}" arg2="informix"/>
+        </condition>
+        <condition property="hibernate.dialect" value="org.hibernate.dialect.IngresDialect">
+            <equals arg1="${database.name}" arg2="ingres"/>
+        </condition>
+        <condition property="hibernate.dialect" value="org.hibernate.dialect.SQLServerDialect">
+            <equals arg1="${database.name}" arg2="mssql"/>
+        </condition>
+        <condition property="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect">
+            <equals arg1="${database.name}" arg2="mysql"/>
+        </condition>
+        <condition property="hibernate.dialect" value="org.hibernate.dialect.Oracle10gDialect">
+            <equals arg1="${database.name}" arg2="oracle"/>
+        </condition>
+        <condition property="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect">
+            <equals arg1="${database.name}" arg2="postgres"/>
+        </condition>
+        <condition property="hibernate.dialect" value="org.hibernate.dialect.SybaseDialect">
+            <equals arg1="${database.name}" arg2="sybase"/>
+        </condition>
+        <condition property="hibernate.dialect" value="dummy">
+            <equals arg1="${database.name}" arg2="nodb"/>
+        </condition>
+        <fail unless="hibernate.dialect" message="Unsupported database type '${database.name}'."/>
+    </target>
+
+    <target name="showtime">
+        <tstamp>
+            <format property="completiontime" pattern="yyyy-MM-dd HH:mm:ss Z"/>
+        </tstamp>
+        <echo message="Task completed ${completiontime}."/>
+    </target>
+
+
+    <!-- =================================================================== -->
+    <!-- Editions                                                            -->
+    <!-- =================================================================== -->
+
+    <!-- Initializes edition specific config and creates the edition.properties unless already done. -->
+    <target name="-init-edition" depends="-load-edition, -prepare-edition">
+        <echo>Edition: ${app.edition}</echo>
+    </target>
+    <target name="-load-edition">
+        <available file="${basedir}/res/edition.properties" property="edition.available"/>
+        <property file="${basedir}/res/edition.properties"/>
+    </target>
+    <target name="-prepare-edition" depends="-detect-edition, -prepare-ce, -prepare-be, -prepare-ee" unless="edition.available">
+        <echo level="verbose">Preparing edition</echo>
+        <propertyfile file="${basedir}/res/edition.properties">
+            <entry key="app.edition" value="${app.edition}"/>
+            <entry key="app.edition.lc" value="${app.edition.lc}"/>
+        </propertyfile>
+        <property file="${basedir}/res/edition.properties"/>
+    </target>
+    <target name="-detect-edition">
+        <available file="${basedir}/modules/mod-enterprise" property="mod-enterprise.available"/>
+        <condition property="load-ee.condition">
+            <and>
+                <not><isset property="edition.available"/></not>
+                <isset property="mod-enterprise.available"/>
+            </and>
+        </condition>
+        <condition property="load-be.condition">
+            <and>
+                <not><isset property="edition.available"/></not>
+                <not><isset property="mod-enterprise.available"/></not>
+                <equals arg1="be" arg2="${edition}"/>
+            </and>
+        </condition>
+        <condition property="load-ce.condition">
+            <and>
+                <not><isset property="edition.available"/></not>
+                <not><isset property="mod-enterprise.available"/></not>
+                <not><equals arg1="be" arg2="${edition}"/></not>
+            </and>
+        </condition>
+    </target>
+    <target name="-prepare-ce" depends="-detect-edition" if="load-ce.condition">
+        <echo level="verbose">Prepare CE</echo>
+        <property name="app.edition" value="CE"/>
+        <property name="app.edition.lc" value="ce"/>
+        <!-- Perform any CE specific things here -->
+        <!-- Move all CESeCore CE jars into lib/ext -->
+        <copy todir="${basedir}/lib/ext" failonerror="true" overwrite="true">
+            <fileset dir="${basedir}/lib/ext/cesecore-ce/" includes="*.jar,*.txt"/>
+        </copy>
+    </target>
+    <target name="-prepare-be" depends="-detect-edition" if="load-be.condition">
+        <echo level="verbose">Prepare BE</echo>
+        <property name="app.edition" value="BE"/>
+        <property name="app.edition.lc" value="be"/>
+        <!-- Perform any BE specific things here -->
+        <!-- Move all CESeCore CE jars into lib/ext -->
+        <copy todir="${basedir}/lib/ext" failonerror="true" overwrite="true">
+            <fileset dir="${basedir}/lib/ext/cesecore-ce/" includes="*.jar,*.txt"/>
+        </copy>
+    </target>
+    <target name="-prepare-ee" depends="-detect-edition" if="load-ee.condition">
+        <echo level="verbose">Prepare EE</echo>
+        <property name="app.edition" value="EE"/>
+        <property name="app.edition.lc" value="ee"/>
+        <!-- Perform any EE specific things here -->
+        <!-- Move all CESeCore EE jars into lib/ext -->
+        <copy todir="${basedir}/" failonerror="true" overwrite="true">
+            <fileset dir="${basedir}/modules/mod-enterprise/files/" includes="**/*"/>
+        </copy>
+    </target>
+
+
+    <!-- =================================================================== -->
+    <!-- Deployment                                                          -->
+    <!-- =================================================================== -->
+
+    <!-- Target to call for deploying to application server -->
+    <target name="deploy-ear" description="Configure and deploy to application server" depends="configure-ear, -pre-deploy-ear, -do-deploy-ear, -post-deploy-ear"/>
+
+    <!-- Target that can be overridden to perform any tasks beforing deploying the EAR -->
+    <target name="-pre-deploy-ear"/>
+    
+    <!-- Target that can be overridden to perform any tasks before zipping together the final EAR. -->
+    <target name="-pre-build-ear"/>
+
+    <!-- Target that can be overridden to perform any tasks after deploying the EAR -->
+    <target name="-post-deploy-ear"/>
+
+    <target name="-do-deploy-ear" depends="j2ee:deploy, showtime"/>
+
+
+    <!-- =================================================================== -->
+    <!-- Testing                                                             -->
+    <!-- =================================================================== -->
+
+    <target name="systemtest:jars" description="Run system tests from all systest jars (or specify which to include/exclude)" depends="init,-check-appsrv,-set-systemtest-classpath">
+        <property name="systemtest.dir" value="${tmp}/systemtest"/>
+        <delete dir="${systemtest.dir}"/>
+        <mkdir dir="${systemtest.dir}"/>
+        <property name="systemtest.jars.include" value="lib/*-tests.jar"/>
+        <property name="systemtest.includes" value="**/*Test.class"/>
+        <property name="systemtest.excludes" value="-NO-"/>
+        <echo>Running systemtests for JARs with: 
+            -Dsystemtest.jars.include=${systemtest.jars.include}
+            -Dsystemtest.includes=${systemtest.includes}
+            -Dsystemtest.excludes=${systemtest.excludes}
+        </echo>
+        <unzip dest="${systemtest.dir}">
+            <fileset dir="${basedir}">
+                <include name="${systemtest.jars.include}" />
+            </fileset>
+        </unzip>
+
+        <echo level="verbose">systemtest.path: ${systemtest.path}</echo>
+
+        <property name="junit.output.dir" location="${tmp}/test/results"/>
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="on" haltonfailure="off">
+            <formatter type="xml"/>
+            <batchtest fork="yes" todir="${junit.output.dir}">
+                <resources> 
+                    <fileset dir="${systemtest.dir}" includes="${systemtest.includes}" excludes="${systemtest.excludes}"/>
+                </resources> 
+            </batchtest>
+            <classpath>
+                <path path="${systemtest.path}"/>
+                <fileset dir="${basedir}" includes="${systemtest.jars.include}"/>
+                <pathelement path="${basedir}/lib/ext/ext/junit-4.11.jar"/>
+                <pathelement path="${basedir}/lib/ext/ext/hamcrest-core-1.3.jar"/>
+            </classpath>
+        </junit>
+    </target>
+
+    <target name="systemtest:report" unless="no.report"
+            description="Create HTML test report from previously run systemtests">
+        <mkdir dir="${tmp}/test/reports"/>
+        <junitreport todir="${tmp}/test/reports">
+            <fileset dir="." includes="**/TEST-*.xml"/>
+            <report format="frames" todir="${tmp}/test/reports/html" />
+        </junitreport>
+        <property name="reportfile" location="${tmp}/test/reports/html/index.html"/>
+        <echo message="Test report available at: file://${reportfile}"/>
+    </target>
+
+    <target name="-set-systemtest-classpath">
+        <property name="systemtest.path" value="${basedir}/conf:${basedir}/conf/${appserver.subtype}:${appserver.type}:${this.dir}/cesecore/:${appserver.client.jars}:${basedir}/lib/ext/jdbc/jdbc.jar"/>
+    </target>
+
+</project>
+

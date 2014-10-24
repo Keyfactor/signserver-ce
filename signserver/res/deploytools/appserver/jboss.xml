@@ -1,0 +1,69 @@
+<project name="jboss" basedir="../.." default="j2ee:deploy">
+
+    <!-- Declare the JAR files needed to run EJB CLI/system tests using this appserver. -->
+    <property name="appserver.client.jars" value="${appserver.home}/client/jbossall-client.jar:${appserver.home}/bin/client/jboss-client.jar"/>
+
+    <property name="jboss.config" value="default"/>
+    <property name="jboss.deploy" value="deploy"/>    
+
+    <property name="jboss.lib.dir" location="${appserver.home}/server/${jboss.config}/lib"/>
+    <property name="jboss.server.home.dir" location="${jboss.deploy.dir}/.."/>
+    <property name="keystore.file" value="conf/keystore/keystore.jks"/>
+    <property name="truststore.file" value="conf/keystore/truststore.jks"/>
+    <property name="remote.keystore.path" value="conf"/>
+    <property name="datasource.jndi-name-prefix" value="java:/"/>
+
+    <!--
+        Define all extra jar files that needs to be included in the lib
+        folder of signserver.ear when building for this application server.
+        The zipfileset should have the id "appserver.extralibs" and the
+        prefix "lib".
+    -->
+    <zipfileset id="appserver.extralibs" prefix="lib" dir="lib/ext/ext">
+        <!-- Currently no extra jars are needed for JBoss. -->
+        <exclude name="*"/>
+    </zipfileset>
+
+    <target name="j2ee:check">
+        <fail message="Please set the property 'appserver.home' or environment variable APPSRV_HOME" unless="appserver.home"/>    
+        <condition property="supported.appserver">
+            <or>
+                <equals arg1="${appserver.subtype}" arg2="jboss5" />
+                <equals arg1="${appserver.subtype}" arg2="jboss7" />
+                <equals arg1="${appserver.subtype}" arg2="jbosseap6" />
+            </or>
+        </condition>
+        <fail message="Unsupported JBoss version detected. Only 5.1.x and 7.1.1.Final are supported." unless="supported.appserver"/>
+        <condition property="jboss7">
+            <or>
+                <equals arg1="${appserver.subtype}" arg2="jboss7" />
+                <equals arg1="${appserver.subtype}" arg2="jbosseap6" />
+            </or>
+        </condition>
+
+        <!-- Exclude dom4j on JBoss AS 7 as it does not work (and on EAP 6 only conistency) -->
+        <condition property="appserver.lib.excludes" value="lib/ext/hibernate/dom4j-*.jar">
+            <or>
+                <equals arg1="${appserver.subtype}" arg2="jboss7" />
+                <equals arg1="${appserver.subtype}" arg2="jbosseap6" />
+            </or>
+        </condition>
+    </target>
+
+    <target name="j2ee:configure"  unless="deploy.hostname.node1" depends="j2ee:check, -set-deploy-dir-jboss5, -set-deploy-dir-jboss7"/>
+
+    <target name="-set-deploy-dir-jboss5" depends="j2ee:check" unless="jboss7">
+        <property name="jboss.deploy.dir" location="${appserver.home}/server/${jboss.config}/${jboss.deploy}"/>
+    </target>
+
+    <target name="-set-deploy-dir-jboss7" depends="j2ee:check" if="jboss7">
+        <property name="jboss.deploy.dir" location="${appserver.home}/standalone/deployments"/>
+    </target>
+
+    <target name="j2ee:deploy" depends="j2ee:configure" >
+        <echo message="Deploying ${ear.dist.file} to ${jboss.deploy.dir}"/>
+        <copy file="${ear.dist.file}" todir="${jboss.deploy.dir}" failonerror="true"/>
+        <echo/>
+    </target>
+
+</project>

@@ -1,6 +1,10 @@
 SignServer 3.6.1
 ----------------
 
+New feature:
+ - Added detached signature option to CMSSigner (contributed by
+   Pablo Ruiz García) 
+
 Improvements:
  - Better documentation about how to specify issuer DN for clients and
    webservice administrators

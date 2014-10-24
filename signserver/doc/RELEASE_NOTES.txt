@@ -1,3 +1,31 @@
+SignServer 3.6.1
+----------------
+
+Improvements:
+ - Better documentation about how to specify issuer DN for clients and
+   webservice administrators
+ - Issued timestamping certificates for sample soft keystores
+
+Bug fixes:
+ - Fixed KeyStoreCryptoToken to initialize key usage counter when no password
+   is specified in configuration
+ - Fixed a regression when ACCEPTEDEXTENSIONS was empty
+ - Fixed EJB CLI/GUI access with JBoss AS 7 in Windows
+ - Fixed an issue where timestamp responses where double base64-encoded in
+   the log
+ - Timestamp and MS authenticode timestamp signer will now check that there
+   is only one extended key usage (timeStamping) set at configuration time
+   instead of failing just at runtime
+ - Serial numbers for administrators and clients can be entered with leading
+   zeros and in either case for hexadecimal letters
+ - Fixed an issue where installed certificate does not override certificate
+   in keystore
+ - Fixed adding authorized WS client in GUI from certificate file
+ - Fixed an issue where issuer DN contains characters that needs escaping  
+
+See ChangeLog.txt for the full list of changes.
+
+
 SignServer 3.6.0
 ----------------
 

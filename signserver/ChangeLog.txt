@@ -1,3 +1,36 @@
+SignServer 3.6.1, 2014-10-24
+----------------------------
+
+** Bug
+    * [DSS-544] - KeyStoreCryptoToken does not initialize key usage counter unless password is specified in configuration
+    * [DSS-736] - NPE on RenewSignerDialog Cancel
+    * [DSS-740] - Regression: ACCEPTEDEXTENSIONS can not be empty string
+    * [DSS-759] - NPE when not supplying all info when generating new key in GUI
+    * [DSS-788] - List of wsadmins can contain duplicates
+    * [DSS-840] - SignServer EJB CLI/GUI does not support JBoss AS 7 in Windows
+    * [DSS-842] - Only 'Details' printed when openning events of type 'PROCESS'
+    * [DSS-843] - TimeStamp response logged with double base64 encoding
+    * [DSS-850] - TimeStampSigner only checks that there is exactly one EKU in the certificate at run time
+    * [DSS-858] - Serial numbers entered for admin/client authorization should be treated as numbers
+    * [DSS-860] - Test failures on Windows
+    * [DSS-862] - Installed certificate does not override certificate in keystore
+    * [DSS-865] - Adding authorized WS client from certificate file in GUI is not working
+    * [DSS-868] - Incorrect extension handling in time-stamp signer
+    * [DSS-872] - Client cert authorizer does not accept certificate if issuer contains characters that need escaping
+    * [DSS-874] - Name of admin sometimes displayed as null in AdminGUI title
+
+
+
+** Improvement
+    * [DSS-847] - Issue TS certificate for sample soft crypto token
+    * [DSS-859] - Document how issuer DN for client/admin authorization should be entered
+    * [DSS-875] - Add to instructions for setting up SignServer how to specify SSL/TLS protocol versions
+
+
+** New Feature
+    * [DSS-691] - Added detached signature option to CMSSigner
+
+
 SignServer 3.6.0, 2014-09-18
 ----------------------------
 

@@ -159,8 +159,8 @@ includemodulesinbuild               = ${includemodulesinbuild}
             <exclude name="bin/timemonitor-in-background.sh"/>
             
             <exclude name="**/CVS/**" />
-            <exclude name="signserver_build.properties" />
-            <exclude name="conf/signserver_build.properties" />
+            <exclude name="signserver_deploy.properties" />
+            <exclude name="conf/signserver_deploy.properties" />
             <exclude name="tmp/**" />
             <exclude name="p12/**" />
             <exclude name="mods-available/**" />
@@ -208,8 +208,8 @@ includemodulesinbuild               = ${includemodulesinbuild}
             <exclude name="bin/signserver-gui"/>
             <exclude name="bin/timemonitor-in-background.sh"/>
 
-            <exclude name="signserver_build.properties" />
-            <exclude name="conf/signserver_build.properties" />
+            <exclude name="signserver_deploy.properties" />
+            <exclude name="conf/signserver_deploy.properties" />
             <exclude name="conf/admingui.properties" />
             <exclude name="modules/**" />
             <exclude name="p12/**" />
@@ -262,8 +262,8 @@ includemodulesinbuild               = ${includemodulesinbuild}
 
             <exclude name="doc/lgpl-**" />
             <exclude name="**/CVS/**" />
-            <exclude name="signserver_build.properties" />
-            <exclude name="conf/signserver_build.properties" />
+            <exclude name="signserver_deploy.properties" />
+            <exclude name="conf/signserver_deploy.properties" />
             <exclude name="tmp/**" />
             <exclude name="p12/**" />
             <exclude name="dist/**" />
@@ -626,7 +626,7 @@ SHA-256 checksum: ${zip.bin.sha256}
         </copy>
         <copy todir="${debian.pkgdist.destdir}/signserver-server/${prefix}/${pkg.basename}/conf">
             <fileset dir="${base}/conf">
-                <include name="signserver_build.properties.sample"/>
+                <include name="signserver_deploy.properties.sample"/>
                 <include name="signserver_cli.properties"/>
             </fileset>
         </copy>

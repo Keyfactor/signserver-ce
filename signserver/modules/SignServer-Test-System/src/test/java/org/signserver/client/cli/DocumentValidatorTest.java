@@ -71,8 +71,8 @@ public class DocumentValidatorTest extends ModulesTestCase {
 
     private String getTruststorePassword() {
         Properties config = new Properties();
-        File confFile1 = new File("../../signserver_build.properties");
-        File confFile2 = new File("../../conf/signserver_build.properties");
+        File confFile1 = new File("../../signserver_deploy.properties");
+        File confFile2 = new File("../../conf/signserver_deploy.properties");
         try {
             if (confFile1.exists()) {
                 config.load(new FileInputStream(confFile1));
@@ -80,9 +80,9 @@ public class DocumentValidatorTest extends ModulesTestCase {
                 config.load(new FileInputStream(confFile2));
             }
         } catch (FileNotFoundException ignored) {
-            LOG.debug("No signserver_build.properties");
+            LOG.debug("No signserver_deploy.properties");
         } catch (IOException ex) {
-            LOG.error("Not using signserver_build.properties: " + ex.getMessage());
+            LOG.error("Not using signserver_deploy.properties: " + ex.getMessage());
         }
         return config.getProperty("java.trustpassword", "changeit");
     }

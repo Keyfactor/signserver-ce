@@ -758,11 +758,11 @@ One package is however needed still. In JBoss EAP 6.1 the file is located in <i>
 
                 <subsection name="7. Configure build">
                     <p>
-Copy conf/signserver_build.properties.sample to conf/signserver_build.properties and open
+Copy conf/signserver_deploy.properties.sample to conf/signserver_deploy.properties and open
 it for editing in your favorite text editor.
                     </p>
                     <source>
-cp conf/signserver_build.properties.sample conf/signserver_build.properties
+cp conf/signserver_deploy.properties.sample conf/signserver_deploy.properties
                     </source>
 
                     <subsubsection name="Web GUI configuration">
@@ -905,7 +905,7 @@ The "setproperties" command loads all the properties from a property file that
 can define one or many signers. The code for the signers needs to be deployed
 to the application server together with SignServer either by setting
 includemodulesinbuild=true to include all modules or by setting individual
-module.MODULENAME.include=true properties in signserver_build.properties.
+module.MODULENAME.include=true properties in signserver_deploy.properties.
                         </p>
                         <source>
 bin/signserver setproperties doc/sample-configs/CONFIGURATION.PROPERTIES
@@ -956,7 +956,7 @@ This is a quick start guide to quickly get you setup with a demo Time Stamp serv
                     <ol>
                         <li>
 Make sure the tsa module is built in by setting module.tsa.enabled=true and
-module.tsa.include=true in signserver_build.properties before building and
+module.tsa.include=true in signserver_deploy.properties before building and
 deploying SignServer. Alternativly, set includemodulesinbuild=true to have all
 modules built in.
                         </li>
@@ -995,7 +995,7 @@ To install the PDF signer you can issue the following commands (either instead o
                     <ol>
                         <li>
 Make sure the pdfsigner module is built in by setting module.pdfsigner.enabled=true and
-module.pdfsigner.include=true in signserver_build.properties before building and
+module.pdfsigner.include=true in signserver_deploy.properties before building and
 deploying SignServer. Alternativly, set includemodulesinbuild=true to have all
 modules built in.
                         </li>
@@ -1054,7 +1054,7 @@ Then to install the XML validator you can issue the following commands:
                     <ol>
                         <li>
 Make sure the xmlvalidator module is built in by setting module.xmlvalidator.enabled=true and
-module.xmlvalidator.include=true in signserver_build.properties before building and
+module.xmlvalidator.include=true in signserver_deploy.properties before building and
 deploying SignServer. Alternativly, set includemodulesinbuild=true to have all
 modules built in.
                         </li>
@@ -1094,7 +1094,7 @@ To install the MRTD SOD signer you can issue the following commands:
                     <ol>
                         <li>
 Make sure the mrtdsodsigner module is built in by setting module.mrtdsodsigner.enabled=true and
-module.mrtdsodsigner.include=true in signserver_build.properties before building and
+module.mrtdsodsigner.include=true in signserver_deploy.properties before building and
 deploying SignServer. Alternativly, set includemodulesinbuild=true to have all
 modules built in.
                         </li>
@@ -1679,7 +1679,7 @@ As a complement to the command line interface there is also a graphical user
 interface for managing some of the most basic administrative tasks.
                     </p>
                     <p>
-The SignServer AdminGUI is built by default (unless the property admingui.enabled is set to the value "false" in signserver_build.properties),
+The SignServer AdminGUI is built by default (unless the property admingui.enabled is set to the value "false" in signserver_deploy.properties),
 and can be started using the script bin/signserver-gui.
                     </p>
                     <p>
@@ -2218,7 +2218,7 @@ More information about the MySQL Cluster can be found at
 In SignServer there exists a health check service that can be used for health monitoring. It is also useful for cluster, as it can be checked by load balancers to determine if a node should be active in the cluster (healthy) or taken out of the cluster (unhealthy).
                     </p>
                     <p>
-The servlet is located at the URL: http://localhost:8080/signserver/healthcheck/signserverhealth and configured in signserver_build.properties.
+The servlet is located at the URL: http://localhost:8080/signserver/healthcheck/signserverhealth and configured in signserver_deploy.properties.
                     </p>
                     <p>
 The following configuration parameters may be set to configure authorization and what the service checks: 
@@ -3074,7 +3074,7 @@ This section will show you examples on how the Apache Web Server (version 2.2.20
                         <li>Only accepting requests to specified locations</li>
                     </ul>
                     <p>
-As the requests should go through the proxy you will probably want to configure the application server to only listen to localhost and/or use a firewall blocking the application server ports from external requests. To configure JBoss to only listen to localhost set the following properties in signserver_build.properties:
+As the requests should go through the proxy you will probably want to configure the application server to only listen to localhost and/or use a firewall blocking the application server ports from external requests. To configure JBoss to only listen to localhost set the following properties in signserver_deploy.properties:
                     </p>
                     <source>
 httpsserver.bindaddress.pubhttp=127.0.0.1
@@ -6092,8 +6092,8 @@ Sample modules/mod-mysigners/build.xml:
     <property name="platform.project.dir" location="../../"/>
     <property name="signserver.home" location="../../"/>
     <property file="build.properties"/>
-    <property file="${platform.project.dir}/conf/signserver_build.properties"/>
-    <property file="${platform.project.dir}/signserver_build.properties"/>
+    <property file="${platform.project.dir}/conf/signserver_deploy.properties"/>
+    <property file="${platform.project.dir}/signserver_deploy.properties"/>
     
     <!-- Clean selected modules in this sub module -->
     <target name="-do-clean-module">
@@ -6566,7 +6566,7 @@ Automatic JUnit tests are in the different projects and system tests in SignServ
                     </p>
                     <p>
 Important: For the SignServer test suite to run successful the following 
-properties should be set in signserver_build.properties:
+properties should be set in signserver_deploy.properties:
                     <ul>
                         <li>signserverws.enabled=true</li>
                         <li>genericws.enabled=true</li>
@@ -7564,7 +7564,7 @@ For JBoss 7/EAP6 the following can be edited in JBOSS_HOME/standalone/configurat
 By default the Status Repository produces a log entry for every update. This can 
 be disabled or changed in the configuration so that only changes are 
 logged. See the property <i>statusrepository.log</i> in 
-signserver_build.properties.sample.
+signserver_deploy.properties.sample.
                     </p>
                 </subsection>
 
@@ -7578,7 +7578,7 @@ verifying the audit log.
                 <subsection name="Building">
                     <p>
 The DB CLI is built if the property databasecli.enabled=true is specified in 
-signserver_build.properties. It can also be built using:
+signserver_deploy.properties. It can also be built using:
                     </p>
                     <source>
 $ bin/ant -f modules/SignServer-DatabaseCLI/build.xml dist-module
@@ -7615,7 +7615,7 @@ To increase throughput it is recommended to disable the key usage counter as eve
                 
                 <subsection name="Configuration">
                     <p>
-In signserver_build.properties, set database.type to "nodb".
+In signserver_deploy.properties, set database.type to "nodb".
                     </p>
 					<source>
 database.type=nodb

@@ -20,7 +20,7 @@ import java.util.Properties;
 import org.apache.log4j.Logger;
 
 /**
- * Settings loaded from signserver_build.properties
+ * Settings loaded from signserver_deploy.properties
  * put together during compilation.
  *
  * @author Markus Kilås
@@ -53,8 +53,8 @@ public class SignServerBuildProperties {
 
     private SignServerBuildProperties() {
         // Load built-in compile-time properties
-        File confFile1 = new File(System.getenv("SIGNSERVER_HOME"), "signserver_build.properties");
-        File confFile2 = new File(System.getenv("SIGNSERVER_HOME"), "signserver_build.properties");
+        File confFile1 = new File(System.getenv("SIGNSERVER_HOME"), "signserver_deploy.properties");
+        File confFile2 = new File(System.getenv("SIGNSERVER_HOME"), "signserver_deploy.properties");
         InputStream in = null;
         try {
             if (confFile1.exists()) {
@@ -65,13 +65,13 @@ public class SignServerBuildProperties {
             properties.load(in);
         } catch (IOException ex) {
             throw new RuntimeException(
-                    "Unable to load built-in signserver_build.properties", ex);
+                    "Unable to load built-in signserver_deploy.properties", ex);
         } finally {
             if (in != null) {
                 try {
                     in.close();
                 } catch (IOException ex) {
-                    LOG.error("Error closing signserver_build.properties", ex);
+                    LOG.error("Error closing signserver_deploy.properties", ex);
                 }
             }
         }

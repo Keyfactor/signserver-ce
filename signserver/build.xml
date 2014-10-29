@@ -36,6 +36,11 @@ to work on Windows. -->
     </loadresource>
     <echo level="verbose">basepath: ${basepath}</echo>
 
+    <available file="${conf}/${app.name}_build.properties" property="legacy-build-properties1.available" value="true"/>
+    <available file="${app.name}_build.properties" property="legacy-build-properties2.available" value="true"/>
+    <fail if="legacy-build-properties1.available" message="Legacy signserver_build.properties detected. From 3.7 the file should be called signserver_deploy.properties"/>
+    <fail if="legacy-build-properties2.available" message="Legacy signserver_build.properties detected. From 3.7 the file should be called signserver_deploy.properties"/>
+
     <!-- Project properties such as folder names and locations. Can be overriden 
         by creating a file called signserver-project-custom.properties. -->
     <property file="res/signserver-project-custom.properties"/>

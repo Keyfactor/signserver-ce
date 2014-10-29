@@ -87,9 +87,9 @@
     
     <target name="-set-from-file" unless="var.APPSRV_HOME">
         <!-- Read properties from the main SignServer configuration if available -->
-        <property file="${user.home}/signserver_build.properties" />
-        <property file="../../signserver_build.properties" />
-        <property file="../../conf/signserver_build.properties" />
+        <property file="${user.home}/signserver_deploy.properties" />
+        <property file="../../signserver_deploy.properties" />
+        <property file="../../conf/signserver_deploy.properties" />
 <!--        <echo message="appserver.home = ${appserver.home}"/>-->
         <!-- JBoss5 -->
         <available file="${appserver.home}/client/jbossall-client.jar" property="var.APPSRV_HOME" value="${appserver.home}" />
@@ -156,9 +156,9 @@
     </target>
 
     <target name="-do-module">
-        <property file="${user.home}/signserver_build.properties"/>
-        <property file="${platform.project.dir}/signserver_build.properties"/>
-        <property file="${platform.project.dir}/conf/signserver_build.properties"/>
+        <property file="${user.home}/signserver_deploy.properties"/>
+        <property file="${platform.project.dir}/signserver_deploy.properties"/>
+        <property file="${platform.project.dir}/conf/signserver_deploy.properties"/>
         <property file="${platform.project.dir}/res/modules-project.properties"/>
         <taskdef name="setmoduleprops"
             classname="org.signserver.anttasks.SetModuleEnablePropertiesTask"

@@ -63,8 +63,8 @@ public class SignServerWSServiceTest extends ModulesTestCase {
             "https://" + getHTTPHost() + ":" + getPublicHTTPSPort() + "/signserver/signserverws/signserverws?wsdl";
 
     private static final String[] CONF_FILES = {
-        "signserver_build.properties",
-        "conf/signserver_build.properties",
+        "signserver_deploy.properties",
+        "conf/signserver_deploy.properties",
     };
     
     /** Worker ID as defined in test-configuration.properties. **/
@@ -106,15 +106,15 @@ public class SignServerWSServiceTest extends ModulesTestCase {
             }
         }
         if (confFile == null) {
-            throw new RuntimeException("No signserver_build.properties found");
+            throw new RuntimeException("No signserver_deploy.properties found");
         } else {
         
             try {
                 config.load(new FileInputStream(confFile));
         } catch (FileNotFoundException ignored) {
-            LOG.debug("No signserver_build.properties");
+            LOG.debug("No signserver_deploy.properties");
         } catch (IOException ex) {
-            LOG.error("Not using signserver_build.properties: " + ex.getMessage());
+            LOG.error("Not using signserver_deploy.properties: " + ex.getMessage());
         }
             final String truststore = new File(home, "p12/truststore.jks").getAbsolutePath();
             System.out.println("Truststore: " + truststore);

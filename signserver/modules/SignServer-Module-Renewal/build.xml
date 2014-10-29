@@ -25,7 +25,7 @@
     -->
 
     <!-- Import property file containing version numbers and other constants -->
-    <property file="../../res/compile.properties"/>
+    <property file="../../res/deploytools/app.properties"/>
 
     <property name="dist-module.available" value="true"/>
     <property name="clean.available" value="true"/>

@@ -72,9 +72,9 @@ public class AdminWebServiceTest extends ModulesTestCase {
         final File home;
         final File path1 = new File("../..");
         final File path2 = new File(".");
-        if (new File(path1, "res/compile.properties").exists()) {
+        if (new File(path1, "res/deploytools/app.properties").exists()) {
             home = path1;
-        } else if (new File(path2, "res/compile.properties").exists()) {
+        } else if (new File(path2, "res/deploytools/app.properties").exists()) {
             home = path2;
             } else {
             throw new RuntimeException("Unable to detect SignServer path");

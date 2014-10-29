@@ -13,15 +13,18 @@
 <!-- ======================================================================= -->
 <!-- Version: $Id$ -->
 <project name="signserver" default="usage" basedir=".">
+    <description>SignServer targets.</description>
+    <property name="deploytools.version" value="1.1"/>
+    <import file="res/deploytools/build-impl.xml"/>
 
-    <!-- Load properties before including files -->
-    <property environment="env" />
-    <property name="base" location="."/>
+    <!-- SignServer has some extra application server features -->
+    <property name="dss-appserver-impl.file" value="${basedir}/res/appserver/${appserver.type}.xml"/>
+    <import file="${dss-appserver-impl.file}" optional="true"/>
     
-    <property name="platform.project.dir" location="."/>
-    
+    <!-- TODO: Below should be contributed back to DeployTools -->
     <!-- Replace back slashes with forward slashes for post-processed paths
 to work on Windows. -->
+    <property name="base" location="."/>
     <loadresource property="basepath">
         <propertyresource name="base"/>
         <filterchain>
@@ -33,23 +36,11 @@ to work on Windows. -->
     </loadresource>
     <echo level="verbose">basepath: ${basepath}</echo>
 
-    <!-- Import property file containing version numbers and other constants -->
-    <property file="res/compile.properties"/>
-    
     <!-- Project properties such as folder names and locations. Can be overriden 
         by creating a file called signserver-project-custom.properties. -->
     <property file="res/signserver-project-custom.properties"/>
     <property file="res/signserver-project.properties"/>
-    
 
-    <!-- Give user a chance to override without editing this file
-       (and without typing -D each time it compiles it).
-       First it checks your home directory for signserver_build.properties
-       net it checks the properties file here. -->
-    <property file="${user.home}/${app.name}_build.properties" />
-    <property file="${app.name}_build.properties" />
-    <property file="${conf}/${app.name}_build.properties" />
- 	
     <!--
     A little special something to handle backward compatibility with people
     using JBOSS_HOME. They can switch to APPSRV_HOME now, and both will work.
@@ -69,31 +60,6 @@ to work on Windows. -->
         <istrue value="${j2ee.web-nohttps}"/>
     </condition>
     
-    <!-- Auto-detect supported application server type -->
-    <available file="${appserver.home}/client/jboss-appclient.jar" property="appserver.type" value="jboss"/>
-    <available file="${appserver.home}/modules/org/jboss/as/standalone/main/module.xml" property="appserver.type" value="jboss"/>
-    <available file="${appserver.home}/modules/system/layers/base/org/jboss/as/standalone/main/module.xml" property="appserver.type" value="jboss"/>
-    <available file="${appserver.home}/client/cxf-api.jar" property="appserver.subtype" value="jboss6"/>
-    <available file="${appserver.home}/common/lib/jboss-javaee.jar" property="appserver.subtype" value="jboss5"/>
-    <available file="${appserver.home}/common/lib/jboss-ejb3-common.jar" property="appserver.subtype" value="jboss5"/>
-    <available file="${appserver.home}/modules/org/jboss/as/standalone/main/module.xml" property="appserver.subtype" value="jboss7"/>
-    <available file="${appserver.home}/modules/system/layers/base/org/jboss/as/standalone/main/module.xml" property="appserver.subtype" value="jbosseap6"/>
-    <available file="${appserver.home}/lib/javaee.jar" property="appserver.type" value="glassfish"/>
-    <available file="${appserver.home}/lib/appserv-ext.jar" property="appserver.subtype" value="glassfish2"/>
-    <available file="${appserver.home}/modules/bean-validator.jar" property="appserver.subtype" value="glassfish3"/>
-    <available file="${appserver.home}/wlserver_10.3/server/lib/wlclient.jar" property="appserver.type" value="weblogic"/>
-    <available file="${appserver.home}/lib/commandlineutils.jar" property="appserver.type" value="websphere"/>
-    
-    <!-- Import for the right appserver -->
-    <import file="${res}/appserver/${appserver.type}.xml" optional="true"/>
-    
-    <target name="check-appserver">
-         <fail unless="appserver.type" message="Unable to identify application server type"/>
-         <available file="${res}/appserver/${appserver.type}.xml" property="appserver.supported"/>
-         <fail unless="appserver.supported" message="Application server type '${appserver.type}' not supported"/>
-         <antcall target="j2ee:check"/>
-    </target>
-    
     <import file="${custom.build.xml}" optional="true"/>
 
     <!-- Properties with paths to all module projects -->
@@ -105,6 +71,25 @@ to work on Windows. -->
     
     <import file="${modules}/modules.xml" optional="true"/> 
     <import file="${modules}/compile.xml" optional="true"/>
+    
+    
+    <!--
+        There exist several targets which are by default empty and which can be
+        used for execution of your tasks. These targets are usually executed
+        before and after some main targets. They are:
+
+          -pre-init:                 called before initialization
+          -post-init:                called after initialization
+          -pre-configure-ear:        called before configuring the EAR
+          -pre-build-ear:            called before zipping the final EAR
+          -post-configure-ear:       called after configuring the EAR
+          -pre-deploy-ear:           called before deploying the EAR
+          -post-deploy-ear:          called after deploying the EAR
+        -->
+
+    <!-- Any project-specific targets goes here -->
+    
+    
     
     
     <!-- =================================================================== -->
@@ -127,10 +112,12 @@ bin/ant clean               Cleans temporary files, the final EAR file and if
 Some targets available in both binary and source distribution:
 bin/ant display-properties  Prints the properties that will be used to build or
                             composing the EAR file.
-bin/ant compose-ear         Puts together the final configured EAR file.
+bin/ant configure-ear       Puts together the final configured EAR file.
 bin/ant deploy              Configures the EAR file and then deploys it and 
                             data sources etc (if supported) to the configured 
                             application server.
+bin/ant deploy-ear          Configures the EAR file and then deploys it but does
+                            not do any other application server configurations.
 bin/ant systemtest:jars     Run all available systemtest JARs.
             
 Some targets available only in the source distribution:
@@ -142,50 +129,6 @@ bin/ant test:compile        Compiles the tests so they can be run by an IDE.
 To clean &amp; build and deploy run:
 bin/ant clean build deploy
         </echo>
-    </target>
-    
-    <target name="display-properties">
-        <echo>
-------------- SYSTEM PROPERTIES --------------
-ANT version                         = ${ant.version}
-JRE version                         = ${java.version}
-JRE vendor                          = ${java.vendor}
-Java home                           = ${java.home}
-Java extensions dir                 = ${java.ext.dirs}
-OS name                             = ${os.name}
-OS architecture                     = ${os.arch}
-OS version                          = ${os.version}
-        </echo>
-
-        <!-- Build properties, if source distribution -->
-        <subant target="display-build-properties" inheritall="true">
-            <fileset dir="${base}" includes="modules/compile.xml"/>
-         </subant>
-         
-         <echo>
-------------- CONFIG PROPERTIES --------------
-appserver.type                      = ${appserver.type}
-appserver.subtype                   = ${appserver.subtype}
-appserver.home                      = ${appserver.home}
-web.contentencoding                 = ${web.contentencoding}
-j2ee.web-nohttps                    = ${j2ee.web-nohttps}
-datasource.jndi-name                = ${datasource.jndi-name}
-datasource.jndi-name-prefix         = ${datasource.jndi-name-prefix}
-database.name                       = ${database.name}
-database.url                        = ${database.url}
-database.driver                     = ${database.driver}
-database.username                   = ${database.username}
-database.password                   = ${database.password}
-database.nodb.location              = ${database.nodb.location}
-healthcheck.maintenancefile         = ${healthcheck.maintenancefile}
-        </echo>
-    </target>
-    
-    <target name="showtime">
-        <tstamp>
-                <format property="completiontime" pattern="yyyy-MM-dd HH:mm:ss Z"/>
-        </tstamp>
-        <echo message="Task completed ${completiontime}."/>
     </target>
 
 
@@ -207,145 +150,35 @@ healthcheck.maintenancefile         = ${healthcheck.maintenancefile}
     <!-- =================================================================== -->
     <!-- Configuring                                                         -->
     <!-- =================================================================== -->
-    
-    <target name="-check-built">
-        <fileset dir="lib" includes="SignServer*.jar" id="signserverjar"/>
-        <condition property="signserver-ejb.jar.available">
-          <not>
-            <equals arg1="${toString:signserverjar}" arg2="" />
-          </not>
-        </condition>
-        <available file="lib/SignServer-ejb.jar" property="signserver-ejb.jar.available"/>
-        <fail message="SignServer needs to be built first. Run 'ant build'." unless="signserver-ejb.jar.available"/>
-    </target>
-    
-    <target name="compose-ear" description="Compose the configured EAR file" depends="-check-built, -init-edition, display-properties, -init-configure, -process-modules, -create-admingui-dist">
-        <!-- Build the ear file from the signserver.ear folder -->
-        <ear destfile="${ear.dist.file}" appxml="${signserver.ear.dir}/META-INF/application.xml" duplicate="fail">
-            <fileset dir="${signserver.ear.dir}">
-                <exclude name="META-INF/application.xml" />
-            </fileset>
-            <zipfileset refid="appserver.extralibs"/>
-        </ear>
-        <echo>
-Configured ear file available at: ${ear.dist.file}    
-        </echo>
-    </target>
-    
-    <target name="-process-modules" depends="check-appserver, -init-configure, -preprocess-persistence, -set-ejbjarheader-nodb">
+
+    <!-- We also create an AdminGUI dist. -->
+    <target name="-post-configure-ear" depends="-create-admingui-dist"/>
+
+    <!-- Allow the old name for configure-ear to still be working. -->
+    <target name="compose-ear" depends="configure-ear"/>
+    <!-- Filter out things we don't want from CESeCore. This is project specifc. -->
+    <target name="-pre-build-ear" depends="-init-filters,-init-filter-jars-db,-init-filter-jars-nodb">
         <echo/>
-<!--        <taskdef name="postprocess-jar" classname="org.signserver.anttasks.JarPostProcessTask" classpath="lib/SignServer-BuildTools.jar:lib/ext/commons-io-1.4.jar:lib/ext/commons-lang-2.5.jar"/>-->
+        <echo message="Filtering jars..."/>
 
-        <path id="buildtools.classpath">
-            <pathelement path="lib/ext/clover-dir/lib/clover.jar"/>
-            <fileset dir="lib" includes="SignServer-BuildTools*.jar"/>
-        </path>
-        <taskdef name="mods" classname="org.signserver.anttasks.ProcessModulesTask" classpathref="buildtools.classpath"/>
-
-        <condition property="allEnabled">
-            <istrue value="${includemodulesinbuild}"/>
-        </condition>
-        
-        <mods modsDir="mods-available" libSet="toLibs" rootSet="toRoot" configRootSet="toConfigRoot" configConfSet="toConfigConf" applicationXml="appXml" enabledModules="enabledModules" allEnabled="${allEnabled}"/>
-<!--        <echo>
-Enabled modules:
-    ${enabledModules}</echo>-->
-        <echo level="verbose">
-Additions to application.xml: 
-${appXml}
-        </echo>
-        <replace file="${signserver.ear.dir}/META-INF/application.xml" value="${appXml}">
-            <replacetoken><![CDATA[<!--@MODULES@-->]]></replacetoken>
-        </replace>
-
-        <echo level="verbose">Enterprise modules to include:
-    ${toRoot}</echo>
-        <copy todir="${signserver.ear.dir}" flatten="true">
-            <fileset dir="." includes="${toRoot}"/>
-        </copy>
-        
-        <echo level="verbose">
-Libraries to include:
-    ${toLibs}
-        </echo>
-        <mkdir dir="${signserver.ear.dir}/lib"/>
-        <copy todir="${signserver.ear.dir}/lib" flatten="true" verbose="true">
-            <fileset dir="." includes="${toLibs}" excludes="${appserver.lib.excludes}"/>
-        </copy>
-        
-        <!-- For each module call postprocess -->
-<!--        <taskdef name="antcallforall" classname="org.signserver.anttasks.AntCallForAllTask" classpath="lib/SignServer-BuildTools.jar"/>-->
-
-        <echo/>
-        <echo>Post processing files...</echo>
-
-        <path id="buildtools.classpath">
-            <pathelement path="lib/ext/clover-dir/lib/clover.jar"/>
-            <pathelement path="lib/ext/commons-io-1.4.jar"/>
-            <pathelement path="lib/ext/commons-lang-2.5.jar"/>
-            <fileset dir="lib" includes="SignServer-BuildTools*.jar"/>
-        </path>
-        <taskdef name="postprocess" classname="org.signserver.anttasks.PostProcessModulesTask" classpathref="buildtools.classpath"/>
-
-        <postprocess modules="${enabledModules}"/>
-        
-        <echo/>
-        <echo>Filtering jars...</echo>
-        <antcall target="-filter-jars"/>
-        
-        <echo level="verbose">
-Configurations to include:
-  /
-    ${toConfigRoot}
-  /conf/
-    ${toConfigConf}
-            
-        </echo>
-        
-        <!-- Config -->
-        <property name="config.tmp.dir" location="${tmp}/config.jar"/>
-        <delete dir="${config.tmp.dir}"/>
-        <mkdir dir="${config.tmp.dir}"/>
-        <mkdir dir="${config.tmp.dir}/conf"/>
-        <copy todir="${config.tmp.dir}" flatten="true">
-            <fileset dir="." includes="-non-existing-,${toConfigRoot}"/>
-        </copy>
-        <copy todir="${config.tmp.dir}/conf" flatten="true">
-            <fileset dir="." includes="-non-existing-,${toConfigConf}"/>
-        </copy>
-        
-        <mkdir dir="${signserver.ear.dir}/lib"/>
-        <jar destfile="${signserver.ear.dir}/lib/config.jar">
-            <zipfileset dir="${config.tmp.dir}" />
-        </jar>
-    </target>
-    
-    <!-- 
-        Special trick to filter out different SessionBeans from cesecore-ejb
-        depending on if the NODB mode is used or not.
-    -->
-    <!-- TODO: This is SignServer and CESeCore specific but could be made more generic 
-        by adding properties to the module descriptors to configure what to filter etc. -->
-    <target name="-filter-jars" depends="-init-filter-jars-db,-init-filter-jars-nodb">
-        
         <!-- cesecore-ejb.jar -->
         <property name="cesecore-ejb.jar" value="cesecore-ejb-6.1.1.jar"/>
-        <move todir="${tmp}" file="${signserver.ear.dir}/${cesecore-ejb.jar}"/>
-        <jar destfile="${signserver.ear.dir}/${cesecore-ejb.jar}">
+        <move todir="${tmp}" file="${app.ear.dir}/${cesecore-ejb.jar}"/>
+        <jar destfile="${app.ear.dir}/${cesecore-ejb.jar}">
             <zipfileset src="${tmp}/${cesecore-ejb.jar}" excludes="${cesecore-ejb-excludes}"/>
         </jar>
-        
+
         <!-- cesecore-entities.jar -->
         <property name="cesecore-entities.jar" value="cesecore-entity-6.1.1.jar"/>
-        <move todir="${tmp}" file="${signserver.ear.dir}/lib/${cesecore-entities.jar}"/>
-        <jar destfile="${signserver.ear.dir}/lib/${cesecore-entities.jar}">
+        <move todir="${tmp}" file="${app.ear.dir}/lib/${cesecore-entities.jar}"/>
+        <jar destfile="${app.ear.dir}/lib/${cesecore-entities.jar}">
             <zipfileset src="${tmp}/${cesecore-entities.jar}" excludes="${cesecore.entities.excludes}"/>
         </jar>
-        
+
         <!-- signserver-ejb.jar -->
         <property name="signserver-ejb.jar" value="SignServer-ejb.jar"/>
-        <move todir="${tmp}" file="${signserver.ear.dir}/${signserver-ejb.jar}"/>
-        <jar destfile="${signserver.ear.dir}/${signserver-ejb.jar}">
+        <move todir="${tmp}" file="${app.ear.dir}/${signserver-ejb.jar}"/>
+        <jar destfile="${app.ear.dir}/${signserver-ejb.jar}">
             <zipfileset src="${tmp}/${signserver-ejb.jar}" excludes="${signserver-ejb-excludes}"/>
         </jar>
     </target>
@@ -357,111 +190,10 @@ Configurations to include:
         <property name="cesecore-ejb-excludes" value="${cesecore.ejb.nodb.excludes}"/>
         <property name="signserver-ejb-excludes" value="${signserver.ejb.nodb.excludes}"/>
     </target>
-    
-    
-<!--    <target name="-postprocess-module">
-        <echo>Post processing module: ${_acfa.calledname}</echo>
-        <antcallforall names="${_acfa.postprocess.files}" target="-postprocess-file" prePrefix="_acfa." newPropertyPrefix="_acfa2"/>
-    </target>-->
-    
-<!--    <target name="-postprocess-file">
-        <echo level="verbose">Post processing file "${_acfa2.src}" with includes "${_acfa2.includes}"</echo>
-        <echo>module.type: ${_acfa.module.type}</echo>
-        <property name="_acfa2.dest" value=""/>
-        <postprocess-jar src="lib/${_acfa2.src}" destfile="${signserver.ear.dir}/${_acfa2.dest}${_acfa2.src}" tempdir="${tmp}/${_acfa.calledname}-${_acfa2.src}.dir" replaceincludes="${_acfa2.includes}"/>
-    </target>-->
-        
-    <target name="-init-configure">
-        <echo>
-Configuring EAR...    
-        </echo>
-        
-    	<condition property="noDB">
-    		<equals arg1="${database.name}" arg2="nodb"/>
-    	</condition>
+    <target name="-init-filters"></target>
 
-        <property name="signserver.ear.dir" location="${tmp}/signserver.ear"/>
-        <property name="database.name" value="${database.name}"/>
-    	<delete dir="${signserver.ear.dir}"/>
-        <mkdir dir="${signserver.ear.dir}"/>
-        
-        <mkdir dir="${signserver.ear.dir}/META-INF"/>
-        <copy todir="${signserver.ear.dir}">
-            <fileset dir="${res}/deploy/ear" includes="*/*.*"/>
-        </copy>
-    </target>
-	
-    <target name="-set-ejbjarheader-nodb" if="noDB">
-    	<!-- generate starting and closing comment marks short-circuiting the
-    		enterprise-beans tag in the generated ejb-jar.xml file -->
-    	<property name="ejbjarheader">
-			<![CDATA[
-    			<!--
-    		]]>
-    	</property>
-    	<property name="ejbjarfooter">
-    		<![CDATA[
-    			-->
-    		]]>
-    	</property>
-    	<property name="persistenceheader">
-    		<![CDATA[
-    			<!--
-    		]]>
-    	</property>
-    	<property name="persistencefooter">
-    		<![CDATA[
-    			-->
-    		]]>
-		</property>
-    </target>
-
-    <target name="-preprocess-persistence">
-        <echo message="Database type:      ${database.name}"/>
-        <echo message="DataSource mapping: ${datasource.jndi-name-prefix}${datasource.jndi-name}"/>
-        <condition property="hibernate.dialect" value="org.hibernate.dialect.DB2Dialect">
-            <equals arg1="${database.name}" arg2="db2"/>
-        </condition>
-        <condition property="hibernate.dialect" value="org.hibernate.dialect.DerbyDialect">
-            <equals arg1="${database.name}" arg2="derby"/>
-        </condition>
-        <condition property="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect">
-            <equals arg1="${database.name}" arg2="hsqldb"/>
-        </condition>
-        <condition property="hibernate.dialect" value="org.hibernate.dialect.InformixDialect">
-            <equals arg1="${database.name}" arg2="informix"/>
-        </condition>
-        <condition property="hibernate.dialect" value="org.hibernate.dialect.IngresDialect">
-            <equals arg1="${database.name}" arg2="ingres"/>
-        </condition>
-        <condition property="hibernate.dialect" value="org.hibernate.dialect.SQLServerDialect">
-            <equals arg1="${database.name}" arg2="mssql"/>
-        </condition>
-        <condition property="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect">
-                <equals arg1="${database.name}" arg2="mysql"/>
-        </condition>
-        <condition property="hibernate.dialect" value="org.hibernate.dialect.Oracle10gDialect">
-            <equals arg1="${database.name}" arg2="oracle"/>
-        </condition>
-        <condition property="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect">
-            <equals arg1="${database.name}" arg2="postgres"/>
-        </condition>
-        <condition property="hibernate.dialect" value="org.hibernate.dialect.SybaseDialect">
-            <equals arg1="${database.name}" arg2="sybase"/>
-        </condition>
-    	<condition property="hibernate.dialect" value="dummy">
-    		<equals arg1="${database.name}" arg2="nodb"/>
-    	</condition>
-        <fail unless="hibernate.dialect" message="Unsupported database type '${database.name}'."/>
-    </target>
-    
-    <!-- =================================================================== -->
-    <!-- Deploy target                                                       -->
-    <!-- =================================================================== -->
-    <target name="deploy" depends="check-appserver,compose-ear" description="Deploys SignServer">
-        <antcall target="j2ee:deploy"/>
-        <antcall target="showtime" />
-    </target>
+    <!-- We support the old name for deploy-ear. -->
+    <target name="deploy" depends="deploy-ear,j2ee:deploy-other" description="Deploys SignServer"/>
 
 
     <!-- Target for creating a binary distribution for arbitrary jars and their dependencies. -->
@@ -560,7 +292,7 @@ Configuring EAR...
         <mkdir dir="${dist.dir}"/>
         
         <mkdir dir="${dist.dir}/lib"/>
-        <copy todir="${dist.dir}">
+        <copy todir="${dist.dir}" overwrite="true">
             <fileset dir="." includes="_NON_EXISTING,${dist.includes}" excludes="_NON_EXISTING,${dist.excludes.extra}"/>
         </copy>
         <chmod perm="a+x">
@@ -577,7 +309,8 @@ Configuring EAR...
         <fail unless="dist.zipdest" message="Usage: bin/ant dist:zip -Ddist.zipdest=tmp/admingui-bin.zip -Ddist.zipprefix=admingui"/>
         <fail unless="dist.zipprefix" message="Usage: bin/ant dist:zip -Ddist.zipdest=tmp/admingui-bin.zip -Ddist.zipprefix=admingui"/>
         <property name="dist.zipsrc" location="${tmp}/dist"/>
-        
+
+        <delete file="${dist.zipdest}"/>
         <zip destfile="${dist.zipdest}">
             <zipfileset dir="${dist.zipsrc}" prefix="${dist.zipprefix}" filemode="600" dirmode="700" excludes="bin/*"/>
             <zipfileset dir="${dist.zipsrc}" prefix="${dist.zipprefix}" filemode="700" dirmode="700" includes="bin/*"/>
@@ -619,212 +352,5 @@ Configuring EAR...
             <param name="dist.zipprefix" value="signserver"/>
         </antcall>
     </target>
-    
-    <target name="systemtest:jars" description="Run system tests from all systest jars (or specify which to include/exclude)" depends="-set-systemtest-classpath">
-        <property name="systemtest.dir" value="${tmp}/systemtest"/>
-        <delete dir="${systemtest.dir}"/>
-        <mkdir dir="${systemtest.dir}"/>
-        <property name="systemtest.jars.include" value="lib/*-tests.jar"/>
-        <property name="systemtest.includes" value="**/*Test.class"/>
-        <property name="systemtest.excludes" value="-NO-"/>
-        <echo>Running systemtests for JARs with: 
--Dsystemtest.jars.include=${systemtest.jars.include}
--Dsystemtest.includes=${systemtest.includes}
--Dsystemtest.excludes=${systemtest.excludes}
-        </echo>
-        <unzip dest="${systemtest.dir}">
-            <fileset dir="${basedir}">
-                <include name="${systemtest.jars.include}" />
-            </fileset>    
-        </unzip>
-        
-        <echo level="verbose">systemtest.path: ${systemtest.path}</echo>
-        
-        <property name="junit.output.dir" location="${tmp}/test/results"/>
-        <mkdir dir="${junit.output.dir}"/>
-        <junit fork="yes" printsummary="on" haltonfailure="off">
-            <formatter type="xml"/>
-            <batchtest fork="yes" todir="${junit.output.dir}">
-                <resources> 
-                    <fileset dir="${systemtest.dir}" includes="${systemtest.includes}" excludes="${systemtest.excludes}"/>
-                </resources> 
-            </batchtest>
-            <classpath>
-                <path path="${systemtest.path}"/>
-                <fileset dir="${basedir}" includes="${systemtest.jars.include}"/>
-                <pathelement path="${basedir}/lib/ext/ext/junit-4.11.jar"/>
-                <pathelement path="${basedir}/lib/ext/ext/hamcrest-core-1.3.jar"/>
-            </classpath>
-        </junit>
-    </target>
-    
-    <target name="systemtest:jar" description="Run system tests from arbitrary test-jar">
-        <echo>${systemtest.path}</echo>
-        <fail unless="systemtest.jar" message="Usage: bin/ant systemtest:jar -Dsystemtest.jar=SignServer-Test-AdminWS-tests.jar"/>
-        <echo>Running systemtests for JAR ${systemtest.jar}</echo>
-        <property name="junit.output.dir" location="${tmp}/test/results"/>
-        <mkdir dir="${junit.output.dir}"/>
-        <junit fork="yes" printsummary="on" haltonfailure="off">
-            <formatter type="xml"/>
-            <batchtest fork="yes" todir="${junit.output.dir}">
-                <resources> 
-                   <zipfileset src="${basedir}/lib/${systemtest.jar}" includes="**/*Test.class" excludes="${systemtest.excludes}"/>
-                </resources> 
-            </batchtest>
-            <classpath>
-                <path path="${systemtest.path}"/>
-                <pathelement path="${basedir}/lib/${systemtest.jar}"/>
-                <pathelement path="${basedir}/lib/ext/ext/junit-4.11.jar"/>
-                <pathelement path="${basedir}/lib/ext/ext/hamcrest-core-1.3.jar"/>
-            </classpath>
-        </junit>
-    </target>
-    
-    <target name="systemtest:report" unless="no.report"
-        description="Create HTML test report from previously run systemtests">
-        <mkdir dir="${tmp}/test/reports"/>
-        <junitreport todir="${tmp}/test/reports">
-            <fileset dir="." includes="**/TEST-*.xml"/>
-            <report format="frames" todir="${tmp}/test/reports/html" />
-        </junitreport>
-        <property name="reportfile" location="${tmp}/test/reports/html/index.html"/>
-        <echo message="Test report available at: file://${reportfile}"/>
-    </target>
 
-    <target name="systemtest:adminws" description="Run system tests for AdminWS">
-        <antcall target="systemtest:jar">
-            <param name="systemtest.jar" value="SignServer-Test-AdminWS-tests.jar"/>
-        </antcall>
-    </target>
-    
-    <target name="systemtest:signserverws" description="Run system tests for SignServerWS">
-        <antcall target="systemtest:jar">
-            <param name="systemtest.jar" value="SignServer-Test-SignServerWS-tests.jar"/>
-        </antcall>
-    </target>
-
-    <target name="systemtest:validationws" description="Run system tests for ValidationWS">
-        <antcall target="systemtest:jar">
-            <param name="systemtest.jar" value="SignServer-Test-ValidationWS-tests.jar"/>
-        </antcall>
-    </target>
-    
-    <target name="-set-systemtest-classpath" depends="check-appserver">
-        <!-- JNDI configuration for appserver -->
-        <condition property="appserver.jndi.conf" value="${basedir}/conf/jboss/">
-            <equals arg1="${appserver.subtype}" arg2="jboss5" />
-        </condition>
-        <condition property="appserver.jndi.conf" value="${basedir}/conf/jboss7/">
-            <or>
-                <equals arg1="${appserver.subtype}" arg2="jboss7" />
-                <equals arg1="${appserver.subtype}" arg2="jbosseap6" />
-            </or>
-        </condition>
-        <condition property="appserver.jndi.conf" value="${basedir}/conf/glassfish/">
-            <equals arg1="${appserver.type}" arg2="glassfish" />
-        </condition>
-        <property name="cp.prefix" value="${basedir}/lib/ext/xmlsec-1.5.7.jar"/> <!-- needed as JBoss 5 bundles older version -->
-        <property name="systemtest.path" value="${cp.prefix}:${appserver.jndi.conf}:${basedir}/res/cesecore/:${env.APPSRV_HOME}/client/jbossall-client.jar:conf:${env.APPSRV_HOME}/bin/client/jboss-client.jar:${env.APPSRV_HOME}/lib/appserv-rt.jar:${env.APPSRV_HOME}/lib/gf-client.jar:${basedir}/lib/ext/jdbc/jdbc.jar"/>
-    </target>
-    
-    <target name="systemtest:p11" description="Run system tests for P11" depends="-set-systemtest-classpath">
-        <antcall target="systemtest:jar">
-            <param name="systemtest.jar" value="SignServer-Test-P11-tests.jar"/>
-            <param name="systemtest.path" value="${systemtest.path}"/>
-        </antcall>
-    </target>
-    
-    <target name="systemtest:system" description="Run system tests for system" depends="-set-systemtest-classpath">
-        <echo>${systemtest.path}</echo>
-        <antcall target="systemtest:jar">
-            <param name="systemtest.jar" value="SignServer-Test-System-tests.jar"/>
-            <param name="systemtest.path" value="${systemtest.path}"/>
-        </antcall>
-    </target>
-    
-    <target name="systemtest:databasecli" description="Run system tests for DatabaseCLI" depends="-set-systemtest-classpath">
-            <antcall target="systemtest:jar">
-            <param name="systemtest.jar" value="SignServer-Test-DatabaseCLI-tests.jar"/>
-            <param name="systemtest.path" value="${basedir}/conf:${basedir}/res/cesecore:${systemtest.path}:${basedir}/lib/ext/jdbc/jdbc.jar"/>
-        </antcall>
-    </target>
-    
-    <target name="systemtest:renewal" description="Run system tests for Renewal" depends="-set-systemtest-classpath">
-        <antcall target="systemtest:jar">
-            <param name="systemtest.jar" value="SignServer-Test-Renewal-tests.jar"/>
-            <param name="systemtest.path" value="${systemtest.path}"/>
-        </antcall>
-    </target>
-
-   <!-- Initializes edition specific config and creates the edition.properties unless already done. -->
-   <target name="-init-edition" depends="-load-edition, -prepare-edition">
-        <echo>Edition: ${app.edition}</echo>
-    </target>
-    <target name="-load-edition">
-        <available file="${basedir}/res/edition.properties" property="edition.available"/>
-        <property file="${basedir}/res/edition.properties"/>
-    </target>
-    <target name="-prepare-edition" depends="-detect-edition, -prepare-ce, -prepare-be, -prepare-ee" unless="edition.available">
-        <echo level="verbose">Preparing edition</echo>
-        
-        <propertyfile file="${basedir}/res/edition.properties">
-            <entry key="app.edition" value="${app.edition}"/>
-            <entry key="app.edition.lc" value="${app.edition.lc}"/>
-        </propertyfile>
-        <property file="${basedir}/res/edition.properties"/>
-    </target>
-    <target name="-detect-edition">
-        <available file="${basedir}/modules/mod-enterprise" property="mod-enterprise.available"/>
-        <condition property="load-ee.condition">
-            <and>
-                <not><isset property="edition.available"/></not>
-                <isset property="mod-enterprise.available"/>
-            </and>
-        </condition>
-        <condition property="load-be.condition">
-            <and>
-                <not><isset property="edition.available"/></not>
-                <not><isset property="mod-enterprise.available"/></not>
-                <equals arg1="be" arg2="${edition}"/>
-            </and>
-        </condition>
-        <condition property="load-ce.condition">
-            <and>
-                <not><isset property="edition.available"/></not>
-                <not><isset property="mod-enterprise.available"/></not>
-                <not><equals arg1="be" arg2="${edition}"/></not>
-            </and>
-        </condition>
-    </target>
-    <target name="-prepare-ce" depends="-detect-edition" if="load-ce.condition">
-        <echo level="verbose">Prepare CE</echo>
-        <property name="app.edition" value="CE"/>
-        <property name="app.edition.lc" value="ce"/>
-        <!-- Perform any CE specific things here -->
-        <!-- Move all CESeCore CE jars into lib/ext -->
-        <copy todir="${basedir}/lib/ext" failonerror="true" overwrite="true">
-            <fileset dir="${basedir}/lib/ext/cesecore-ce/" includes="*.jar,*.txt"/>
-        </copy>
-    </target>
-    <target name="-prepare-be" depends="-detect-edition" if="load-be.condition">
-        <echo level="verbose">Prepare BE</echo>
-        <property name="app.edition" value="BE"/>
-        <property name="app.edition.lc" value="be"/>
-        <!-- Perform any BE specific things here -->
-        <!-- Move all CESeCore CE jars into lib/ext -->
-        <copy todir="${basedir}/lib/ext" failonerror="true" overwrite="true">
-            <fileset dir="${basedir}/lib/ext/cesecore-ce/" includes="*.jar,*.txt"/>
-        </copy>
-    </target>
-    <target name="-prepare-ee" depends="-detect-edition" if="load-ee.condition">
-        <echo level="verbose">Prepare EE</echo>
-        <property name="app.edition" value="EE"/>
-        <property name="app.edition.lc" value="ee"/>
-        <!-- Perform any EE specific things here -->
-        <!-- Move all CESeCore EE jars into lib/ext -->
-        <copy todir="${basedir}/" failonerror="true" overwrite="true">
-            <fileset dir="${basedir}/modules/mod-enterprise/files/" includes="**/*"/>
-        </copy>
-    </target>
-   
 </project>

@@ -15,7 +15,7 @@
     <target name="-pre-compile" depends="with.clover"/>
 
     <!-- Import property file containing version numbers and other constants -->
-    <property file="../../res/compile.properties"/>
+    <property file="../../res/deploytools/app.properties"/>
     
     <!--
 

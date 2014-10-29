@@ -21,7 +21,7 @@
     
     <!-- Update version number in resource bundles -->
     <target name="-pre-jar">
-        <property file="../../res/compile.properties"/>
+        <property file="../../res/deploytools/app.properties"/>
         <filter token="APPVERSION" value="${app.version.number}"/>
         <copy todir="target/classes/org/signserver/admin/gui/resources/" filtering="true" overwrite="true">
             <fileset dir="${src.resources.dir}/org/signserver/admin/gui/resources/">

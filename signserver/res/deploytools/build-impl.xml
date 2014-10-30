@@ -474,7 +474,7 @@ database.nodb.location              = ${database.nodb.location}
     </target>
 
     <target name="-set-systemtest-classpath">
-        <property name="systemtest.path" value="${basedir}/conf:${basedir}/conf/${appserver.subtype}:${appserver.type}:${this.dir}/cesecore/:${appserver.client.jars}:${basedir}/lib/ext/jdbc/jdbc.jar"/>
+        <property name="systemtest.path" value="${basedir}/conf:${basedir}/conf/${appserver.subtype}:${basedir}/conf:${basedir}/conf/${appserver.type}:${this.dir}/cesecore/:${appserver.client.jars}:${basedir}/lib/ext/jdbc/jdbc.jar"/>
     </target>
 
 </project>

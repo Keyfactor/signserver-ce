@@ -474,7 +474,20 @@ database.nodb.location              = ${database.nodb.location}
     </target>
 
     <target name="-set-systemtest-classpath">
-        <property name="systemtest.path" value="${basedir}/conf:${basedir}/conf/${appserver.subtype}:${basedir}/conf:${basedir}/conf/${appserver.type}:${this.dir}/cesecore/:${appserver.client.jars}:${basedir}/lib/ext/jdbc/jdbc.jar"/>
+        <condition property="appserver.conf.folder" value="jboss7">
+            <or>
+                <equals arg1="${appserver.subtype}" arg2="jboss7" />
+                <equals arg1="${appserver.subtype}" arg2="jbosseap6" />
+            </or>
+        </condition>
+        <condition property="appserver.conf.folder" value="jboss">
+            <equals arg1="${appserver.type}" arg2="jboss" />
+        </condition>
+        <condition property="appserver.conf.folder" value="glassfish">
+            <equals arg1="${appserver.type}" arg2="glassfish" />
+        </condition>
+
+        <property name="systemtest.path" value="${basedir}/conf:${basedir}/conf/${appserver.conf.folder}:${this.dir}/cesecore/:${appserver.client.jars}:${basedir}/lib/ext/jdbc/jdbc.jar"/>
     </target>
 
 </project>

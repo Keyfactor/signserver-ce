@@ -23,6 +23,9 @@
     <import file="${dss-appserver-impl.file}" optional="true"/>
     <import file="${dss-noappserver-impl.file}" optional="true"/>
 
+    <!-- Used by some SignServer-specific parts. -->
+    <property name="platform.project.dir" location="."/>
+
     <!-- TODO: Below should be contributed back to DeployTools -->
     <!-- Replace back slashes with forward slashes for post-processed paths
 to work on Windows. -->

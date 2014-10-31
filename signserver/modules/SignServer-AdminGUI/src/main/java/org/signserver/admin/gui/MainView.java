@@ -565,7 +565,7 @@ public class MainView extends FrameView {
         editMenu.setText(resourceMap.getString("editMenu.text")); // NOI18N
         editMenu.setName("editMenu"); // NOI18N
 
-        activateMenu.setAction(actionMap.get("removeWorkers")); // NOI18N
+        activateMenu.setAction(actionMap.get("activateWorkers")); // NOI18N
         activateMenu.setText(resourceMap.getString("activateMenu.text")); // NOI18N
         activateMenu.setName("activateMenu"); // NOI18N
         editMenu.add(activateMenu);
@@ -1806,7 +1806,6 @@ public class MainView extends FrameView {
 
         downloadArchiveEntriesButton.setAction(actionMap.get("archiveFetch")); // NOI18N
         downloadArchiveEntriesButton.setText(resourceMap.getString("downloadArchiveEntriesButton.text")); // NOI18N
-        downloadArchiveEntriesButton.setEnabled(false);
         downloadArchiveEntriesButton.setName("downloadArchiveEntriesButton"); // NOI18N
 
         javax.swing.GroupLayout archivePanelLayout = new javax.swing.GroupLayout(archivePanel);

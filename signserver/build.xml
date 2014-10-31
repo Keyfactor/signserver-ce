@@ -317,7 +317,7 @@ bin/ant clean build deploy
         <fail unless="dist.zipprefix" message="Usage: bin/ant dist:zip -Ddist.zipdest=tmp/admingui-bin.zip -Ddist.zipprefix=admingui"/>
         <property name="dist.zipsrc" location="${tmp}/dist"/>
 
-        <delete file="${dist.zipdest}"/>
+        <delete file="${dist.zipdest}" failonerror="false"/>
         <zip destfile="${dist.zipdest}">
             <zipfileset dir="${dist.zipsrc}" prefix="${dist.zipprefix}" filemode="600" dirmode="700" excludes="bin/*"/>
             <zipfileset dir="${dist.zipsrc}" prefix="${dist.zipprefix}" filemode="700" dirmode="700" includes="bin/*"/>

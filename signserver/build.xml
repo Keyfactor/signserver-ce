@@ -19,8 +19,10 @@
 
     <!-- SignServer has some extra application server features -->
     <property name="dss-appserver-impl.file" value="${basedir}/res/appserver/${appserver.type}.xml"/>
+    <property name="dss-noappserver-impl.file" value="${basedir}/res/appserver/noappserver.xml"/>
     <import file="${dss-appserver-impl.file}" optional="true"/>
-    
+    <import file="${dss-noappserver-impl.file}" optional="true"/>
+
     <!-- TODO: Below should be contributed back to DeployTools -->
     <!-- Replace back slashes with forward slashes for post-processed paths
 to work on Windows. -->

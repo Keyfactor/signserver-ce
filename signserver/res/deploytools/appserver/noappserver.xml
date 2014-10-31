@@ -9,6 +9,4 @@
         <echo>Deployment not supported</echo>
     </target>
 
-    <target name="j2ee:deploy-other"/>
-
 </project>

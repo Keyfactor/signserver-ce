@@ -1,0 +1,7 @@
+<project name="signserver-noappserver" basedir=".." default="j2ee:deploy">
+
+    <target name="j2ee:deploy-other">
+        <echo>Nothing more to deploy</echo>
+    </target>
+
+</project>

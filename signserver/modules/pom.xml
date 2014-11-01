@@ -74,7 +74,7 @@
         <module>SignServer-Lib-ODFDOM</module>
         <module>SignServer-AdminGUI</module>
         <module>SignServer-Client-ValidationCLI</module>
-<!--        <module>SignServer-DatabaseCLI</module>
+        <!--        <module>SignServer-DatabaseCLI</module>
         <module>SignServer-Test-DatabaseCLI</module>-->
         <module>SignServer-Test-P11</module>
         <module>SignServer-Test-Renewal</module>

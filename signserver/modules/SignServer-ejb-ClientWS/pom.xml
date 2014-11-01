@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.signserver</groupId>
+        <artifactId>SignServer-Modules</artifactId>
+        <version>3.7-SNAPSHOT</version>
+    </parent>
+    <artifactId>SignServer-ejb-ClientWS</artifactId>
+    <packaging>ejb</packaging>
+
+    <name>SignServer-ejb-ClientWS</name>
+
+    <properties>
+        <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        
+        <dist.jar>${project.build.finalName}.jar</dist.jar>
+        <module.name>clientws</module.name>
+        <module.priority>20</module.priority>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <artifactId>commons-lang</artifactId>
+            <groupId>commons-lang</groupId>
+            <type>jar</type>
+            <version>2.5</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>SignServer-Lib-EJBCA-Util</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>SignServer-Common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.cesecore</groupId>
+            <artifactId>cesecore-common</artifactId>
+            <version>6.1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.cesecore</groupId>
+            <artifactId>cesecore-entity</artifactId>
+            <version>6.1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>SignServer-ejb-interfaces</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>SignServer-Server</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>javax</groupId>
+            <artifactId>javaee-api</artifactId>
+            <version>6.0</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                    <compilerArguments>
+                        <endorseddirs>${endorsed.dir}</endorseddirs>
+                    </compilerArguments>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-ejb-plugin</artifactId>
+                <version>2.3</version>
+                <configuration>
+                    <ejbVersion>3.1</ejbVersion>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    
+</project>

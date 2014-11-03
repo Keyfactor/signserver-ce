@@ -146,6 +146,10 @@ public class MainView extends FrameView {
 
         initComponents();
 
+        // workaround a bug in the NetBeans form editor where the download
+        // archive entries button sometimes looses its default disabled state
+        downloadArchiveEntriesButton.setEnabled(false);
+
         statusSummaryTextPane.setContentType("text/html");
 
         auditlogConditionsModel.addCondition(AuditlogColumn.EVENTTYPE, RelationalOperator.NEQ, "ACCESS_CONTROL");

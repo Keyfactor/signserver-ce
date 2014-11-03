@@ -82,7 +82,10 @@ includemodulesinbuild               = ${includemodulesinbuild}
     <!-- Sub build targets                                                   -->
     <!-- =================================================================== -->
 
-    <target name="-build-buildtools">
+    <target name="-build-buildtools" depends="-init-tasks">
+        <taskdef name="setmoduleprops"
+            classname="org.signserver.deploytools.ant.SetModuleEnablePropertiesTask"
+            classpathref="deploytools.classpath"/>
         <ant inheritall="false" target="jar" antfile="modules/SignServer-BuildTools/build.xml"/>
      </target>
 

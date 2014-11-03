@@ -160,9 +160,6 @@
         <property file="${platform.project.dir}/signserver_deploy.properties"/>
         <property file="${platform.project.dir}/conf/signserver_deploy.properties"/>
         <property file="${platform.project.dir}/res/modules-project.properties"/>
-        <taskdef name="setmoduleprops"
-            classname="org.signserver.anttasks.SetModuleEnablePropertiesTask"
-            classpath="${platform.project.dir}/modules/SignServer-BuildTools/target/classes/"/>
         <setmoduleprops/>
         <property name="dist-module.available" value="false"/>
         <property name="moduleEnable" value="false"/>

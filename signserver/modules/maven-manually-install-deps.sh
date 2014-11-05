@@ -10,8 +10,9 @@ mvn install:install-file -Dfile=lib/ext/xades4j/xades4j-1.3.0-signserver.jar -Dg
 
 
 # Install the DeployTools artifacts from JARS
+DPL_VERSION=1.1.1
 # Based on post by David Blevins: https://www.mail-archive.com/users@maven.apache.org/msg91297.html
-for jar in lib/ext/DeployTools-Common-1.1.1.jar lib/ext/DeployTools-Maven-1.1.1.jar; do
+for jar in lib/ext/DeployTools-Common-${DPL_VERSION}.jar lib/ext/DeployTools-Maven-${DPL_VERSION}.jar; do
     pom=$(jar tvf $jar | grep pom.xml | perl -pe 's,.* ,,')
     props=$(jar tvf $jar | grep pom.properties | perl -pe 's,.* ,,')
 
@@ -27,3 +28,5 @@ for jar in lib/ext/DeployTools-Common-1.1.1.jar lib/ext/DeployTools-Maven-1.1.1.
     fi
 done
 rm META-INF -r
+
+mvn install:install-file -DgroupId=org.signserver.deploytools -DartifactId=DeployTools -Dversion=${DPL_VERSION} -Dpackaging=pom -Dfile=lib/ext/DeployTools-${DPL_VERSION}.pom

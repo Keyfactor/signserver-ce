@@ -12,7 +12,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <dist.jar>${project.build.finalName}.jar</dist.jar>
-        <module.name>module.mrtdsodsigner</module.name>
+        <module.name>module.ooxmlsigner</module.name>
         <module.priority>40</module.priority>
     </properties>
     <dependencies>

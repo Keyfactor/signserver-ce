@@ -615,7 +615,7 @@ Configure interfaces using the approproate bind address (ie. 0.0.0.0 or 127.0.0.
                         </source>
                         <p>
 Set-up the private port which requires client certificate. 
-Use appropriate values for JBOSS_HOME, key-alias (hostname), password (keystore password), ca-certificate-password (truststore password),
+Use appropriate values for key-alias (hostname), password (keystore password), ca-certificate-password (truststore password),
 and supported protocols.
                         </p>
                         <source>
@@ -623,15 +623,15 @@ and supported protocols.
 /subsystem=web/connector=httpspriv:add(protocol=HTTP/1.1, scheme=https, socket-binding=httpspriv, secure=true)
 /subsystem=web/connector=httpspriv/ssl=configuration:add(key-alias="localhost")
 /subsystem=web/connector=httpspriv/ssl=configuration:write-attribute(name=password, value="serverpwd")
-/subsystem=web/connector=httpspriv/ssl=configuration:write-attribute(name=certificate-key-file, value="JBOSS_HOME/standalone/configuration/keystore/keystore.jks")
+/subsystem=web/connector=httpspriv/ssl=configuration:write-attribute(name=certificate-key-file, value="${jboss.server.config.dir}/standalone/configuration/keystore/keystore.jks")
 /subsystem=web/connector=httpspriv/ssl=configuration:write-attribute(name=verify-client, value=true)
 /subsystem=web/connector=httpspriv/ssl=configuration:write-attribute(name=ca-certificate-password, value="changeit")
-/subsystem=web/connector=httpspriv/ssl=configuration:write-attribute(name=ca-certificate-file, value="JBOSS_HOME/standalone/configuration/keystore/truststore.jks")
+/subsystem=web/connector=httpspriv/ssl=configuration:write-attribute(name=ca-certificate-file, value="${jboss.server.config.dir}/standalone/configuration/keystore/truststore.jks")
 /subsystem=web/connector=httpspriv/ssl=configuration:write-attribute(name=protocol,value="TLSv1,TLSv1.1,TLSv1.2") 
                         </source>
                         <p>
 Set-up the public SSL port which doesn't require the client certificate.
-Use appropriate values for JBOSS_HOME, key-alias (hostname), password (keystore password),
+Use appropriate values for key-alias (hostname), password (keystore password),
 and supported protocols.
                         </p>
                         <source>
@@ -639,7 +639,7 @@ and supported protocols.
 /subsystem=web/connector=httpspub:add(protocol=HTTP/1.1, scheme=https, socket-binding=httpspub, secure=true)
 /subsystem=web/connector=httpspub/ssl=configuration:add(key-alias="localhost")
 /subsystem=web/connector=httpspub/ssl=configuration:write-attribute(name=password, value="serverpwd")
-/subsystem=web/connector=httpspub/ssl=configuration:write-attribute(name=certificate-key-file, value="JBOSS_HOME/standalone/configuration/keystore/keystore.jks")
+/subsystem=web/connector=httpspub/ssl=configuration:write-attribute(name=certificate-key-file, value="${jboss.server.config.dir}/standalone/configuration/keystore/keystore.jks")
 /subsystem=web/connector=httpspub/ssl=configuration:write-attribute(name=protocol,value="TLSv1,TLSv1.1,TLSv1.2")
                         </source>
                         <p>
@@ -848,9 +848,8 @@ See <a href="complete.en.html#Signed%20log">Signed log</a> for how to configure 
 
                 <subsection name="8. Build and deploy SignServer">
                     <p>
-Run "ant deploy" to build SignServer and deploy it to the selected application
-server. If the configuration changed since the last build run the clean target
-first.
+Run "bin/ant build deploy" to build SignServer and deploy it to the selected application
+server.
                     </p>
                     <source>
 bin/ant clean build deploy

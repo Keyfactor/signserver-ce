@@ -316,10 +316,18 @@ public class BaseProcessableTest extends TestCase {
         instance.init(workerId, workerConfig, anyContext, null);
         
         final List<String> fatalErrors = instance.getSignerFatalErrors();
+        final String expectedErrorPrefix =
+                "Failed to initialize crypto token: Missing SHAREDLIBRARYNAME property";
+        boolean foundError = false;
         
-        assertTrue("Should contain error",
-                fatalErrors.contains("Failed to initialize crypto token: Missing SHAREDLIBRARY property"));
-        
+        for (final String error : fatalErrors) {
+            if (error.startsWith(expectedErrorPrefix)) {
+                foundError = true;
+                break;
+            }
+        }
+
+        assertTrue("Should contain error", foundError);
     }
     
     /** CryptoToken only holding its properties and offering a way to access them. */

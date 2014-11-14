@@ -1021,13 +1021,22 @@ public class P11SignTest extends ModulesTestCase {
         final int workerId = WORKER_XML;
         
         try {
+            final String expectedPrefix =
+                    "Failed to initialize crypto token: Missing SHAREDLIBRARYNAME property";
             setXMLSignerProperties(workerId, false);
             workerSession.removeWorkerProperty(workerId, "SHAREDLIBRARYNAME");
             workerSession.reloadConfiguration(workerId);
             
             final List<String> errors = workerSession.getStatus(workerId).getFatalErrors();
-            assertTrue("Should contain error",
-                    errors.contains("Failed to initialize crypto token: Missing SHAREDLIBRARY property"));
+            boolean foundError = false;
+            
+            for (final String error : errors) {
+                if (error.startsWith(expectedPrefix)) {
+                    foundError = true;
+                    break;
+                }
+            }
+            assertTrue("Should contain error", foundError);
         } finally {
             removeWorker(workerId);
         }

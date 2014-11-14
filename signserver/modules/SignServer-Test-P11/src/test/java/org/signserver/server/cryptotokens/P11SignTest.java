@@ -1055,7 +1055,7 @@ public class P11SignTest extends ModulesTestCase {
         
         try {
             final String expectedError =
-                    "SHAREDLIBRARYNAME NonExistingLibrary is not referring to a defined value";
+                    "Failed to initialize crypto token: SHAREDLIBRARYNAME NonExistingLibrary is not referring to a defined value";
             setXMLSignerProperties(workerId, false);
             workerSession.setWorkerProperty(workerId, "SHAREDLIBRARYNAME", "NonExistingLibrary");
             workerSession.reloadConfiguration(workerId);

@@ -100,8 +100,8 @@ public class P11SignTest extends ModulesTestCase {
     		"QoSWj4rGpw==";
     
     private static final String TEST_KEY_ALIAS = "p11testkey1234";
-    
-    private final String sharedLibrary;
+
+    private final String sharedLibraryName;
     private final String slot;
     private final String pin;
     private final String existingKey1;
@@ -119,7 +119,7 @@ public class P11SignTest extends ModulesTestCase {
         pdfSampleFile = new File(home, "res/test/pdf/sample.pdf");
         odfSampleFile = new File(home, "res/signingtest/input/test.odt");
         ooxmlSampleFile = new File(home, "res/signingtest/input/test.docx");
-        sharedLibrary = getConfig().getProperty("test.p11.sharedlibrary");
+        sharedLibraryName = getConfig().getProperty("test.p11.sharedLibraryName");
         slot = getConfig().getProperty("test.p11.slot");
         pin = getConfig().getProperty("test.p11.pin");
         existingKey1 = getConfig().getProperty("test.p11.existingkey1");
@@ -142,7 +142,7 @@ public class P11SignTest extends ModulesTestCase {
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + tokenId + ".CLASSPATH", "org.signserver.server.signers.CryptoWorker");
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + tokenId + ".SIGNERTOKEN.CLASSPATH", PKCS11CryptoToken.class.getName());
         workerSession.setWorkerProperty(tokenId, "NAME", "TestCryptoTokenP11");
-        workerSession.setWorkerProperty(tokenId, "SHAREDLIBRARY", sharedLibrary);
+        workerSession.setWorkerProperty(tokenId, "SHAREDLIBRARYNAME", sharedLibraryName);
         workerSession.setWorkerProperty(tokenId, "SLOT", slot);
         workerSession.setWorkerProperty(tokenId, "PIN", pin);
         workerSession.setWorkerProperty(tokenId, "DEFAULTKEY", existingKey1); // Test key
@@ -164,7 +164,7 @@ public class P11SignTest extends ModulesTestCase {
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", PKCS11CryptoToken.class.getName());
         workerSession.setWorkerProperty(workerId, "NAME", "PDFSignerP11");
         workerSession.setWorkerProperty(workerId, "AUTHTYPE", "NOAUTH");
-        workerSession.setWorkerProperty(workerId, "SHAREDLIBRARY", sharedLibrary);
+        workerSession.setWorkerProperty(workerId, "SHAREDLIBRARYNAME", sharedLibraryName);
         workerSession.setWorkerProperty(workerId, "SLOT", slot);
         workerSession.setWorkerProperty(workerId, "PIN", pin);
         workerSession.setWorkerProperty(workerId, "DEFAULTKEY", existingKey1);
@@ -333,7 +333,7 @@ public class P11SignTest extends ModulesTestCase {
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", PKCS11CryptoToken.class.getName());
         workerSession.setWorkerProperty(workerId, "NAME", "TSSignerP11");
         workerSession.setWorkerProperty(workerId, "AUTHTYPE", "NOAUTH");
-        workerSession.setWorkerProperty(workerId, "SHAREDLIBRARY", sharedLibrary);
+        workerSession.setWorkerProperty(workerId, "SHAREDLIBRARYNAME", sharedLibraryName);
         workerSession.setWorkerProperty(workerId, "SLOT", slot);
         workerSession.setWorkerProperty(workerId, "PIN", pin);
         workerSession.setWorkerProperty(workerId, "DEFAULTKEY", existingKey1);
@@ -404,7 +404,7 @@ public class P11SignTest extends ModulesTestCase {
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", PKCS11CryptoToken.class.getName());
         workerSession.setWorkerProperty(workerId, "NAME", "SODSignerP11");
         workerSession.setWorkerProperty(workerId, "AUTHTYPE", "NOAUTH");
-        workerSession.setWorkerProperty(workerId, "SHAREDLIBRARY", sharedLibrary);
+        workerSession.setWorkerProperty(workerId, "SHAREDLIBRARYNAME", sharedLibraryName);
         workerSession.setWorkerProperty(workerId, "SLOT", slot);
         workerSession.setWorkerProperty(workerId, "PIN", pin);
         workerSession.setWorkerProperty(workerId, "DEFAULTKEY", existingKey1);
@@ -475,7 +475,7 @@ public class P11SignTest extends ModulesTestCase {
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", PKCS11CryptoToken.class.getName());
         workerSession.setWorkerProperty(workerId, "NAME", "CMSSignerP11");
         workerSession.setWorkerProperty(workerId, "AUTHTYPE", "NOAUTH");
-        workerSession.setWorkerProperty(workerId, "SHAREDLIBRARY", sharedLibrary);
+        workerSession.setWorkerProperty(workerId, "SHAREDLIBRARYNAME", sharedLibraryName);
         workerSession.setWorkerProperty(workerId, "SLOT", slot);
         workerSession.setWorkerProperty(workerId, "PIN", pin);
         workerSession.setWorkerProperty(workerId, "DEFAULTKEY", existingKey1);
@@ -538,7 +538,7 @@ public class P11SignTest extends ModulesTestCase {
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", PKCS11CryptoToken.class.getName());
         workerSession.setWorkerProperty(workerId, "NAME", "XMLSignerP11");
         workerSession.setWorkerProperty(workerId, "AUTHTYPE", "NOAUTH");
-        workerSession.setWorkerProperty(workerId, "SHAREDLIBRARY", sharedLibrary);
+        workerSession.setWorkerProperty(workerId, "SHAREDLIBRARYNAME", sharedLibraryName);
         workerSession.setWorkerProperty(workerId, "SLOT", slot);
         workerSession.setWorkerProperty(workerId, "PIN", pin);
         workerSession.setWorkerProperty(workerId, "DEFAULTKEY", existingKey1);
@@ -612,7 +612,7 @@ public class P11SignTest extends ModulesTestCase {
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", PKCS11CryptoToken.class.getName());
         workerSession.setWorkerProperty(workerId, "NAME", "ODFSignerP11");
         workerSession.setWorkerProperty(workerId, "AUTHTYPE", "NOAUTH");
-        workerSession.setWorkerProperty(workerId, "SHAREDLIBRARY", sharedLibrary);
+        workerSession.setWorkerProperty(workerId, "SHAREDLIBRARYNAME", sharedLibraryName);
         workerSession.setWorkerProperty(workerId, "SLOT", slot);
         workerSession.setWorkerProperty(workerId, "PIN", pin);
         workerSession.setWorkerProperty(workerId, "DEFAULTKEY", existingKey1);
@@ -675,7 +675,7 @@ public class P11SignTest extends ModulesTestCase {
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", PKCS11CryptoToken.class.getName());
         workerSession.setWorkerProperty(workerId, "NAME", "OOXMLSignerP11");
         workerSession.setWorkerProperty(workerId, "AUTHTYPE", "NOAUTH");
-        workerSession.setWorkerProperty(workerId, "SHAREDLIBRARY", sharedLibrary);
+        workerSession.setWorkerProperty(workerId, "SHAREDLIBRARYNAME", sharedLibraryName);
         workerSession.setWorkerProperty(workerId, "SLOT", slot);
         workerSession.setWorkerProperty(workerId, "PIN", pin);
         workerSession.setWorkerProperty(workerId, "DEFAULTKEY", existingKey1);
@@ -736,7 +736,7 @@ public class P11SignTest extends ModulesTestCase {
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", PKCS11CryptoToken.class.getName());
         workerSession.setWorkerProperty(workerId, "NAME", "MSAuthTSSignerP11");
         workerSession.setWorkerProperty(workerId, "AUTHTYPE", "NOAUTH");
-        workerSession.setWorkerProperty(workerId, "SHAREDLIBRARY", sharedLibrary);
+        workerSession.setWorkerProperty(workerId, "SHAREDLIBRARYNAME", sharedLibraryName);
         workerSession.setWorkerProperty(workerId, "SLOT", slot);
         workerSession.setWorkerProperty(workerId, "PIN", pin);
         workerSession.setWorkerProperty(workerId, "DEFAULTKEY", existingKey1);
@@ -828,7 +828,7 @@ public class P11SignTest extends ModulesTestCase {
              // Setup worker
             globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + workerId + ".CLASSPATH", "org.signserver.module.cmssigner.CMSSigner");
             globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", PKCS11CryptoToken.class.getName());
-            globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "DEFAULT.SHAREDLIBRARY", sharedLibrary);
+            globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "DEFAULT.SHAREDLIBRARYNAME", sharedLibraryName);
             globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "DEFAULT.SLOT", slot);
             workerSession.setWorkerProperty(workerId, "NAME", "CMSSignerP11");
             workerSession.setWorkerProperty(workerId, "AUTHTYPE", "NOAUTH");
@@ -1022,7 +1022,7 @@ public class P11SignTest extends ModulesTestCase {
         
         try {
             setXMLSignerProperties(workerId, false);
-            workerSession.removeWorkerProperty(workerId, "SHAREDLIBRARY");
+            workerSession.removeWorkerProperty(workerId, "SHAREDLIBRARYNAME");
             workerSession.reloadConfiguration(workerId);
             
             final List<String> errors = workerSession.getStatus(workerId).getFatalErrors();
@@ -1045,30 +1045,21 @@ public class P11SignTest extends ModulesTestCase {
         final int workerId = WORKER_XML;
         
         try {
-            final String expectedErrorPrefix =
-                    "Failed to initialize crypto token: The shared library file can't be read: ";
+            final String expectedError =
+                    "SHAREDLIBRARYNAME is not referring to a defined value";
             setXMLSignerProperties(workerId, false);
-            workerSession.setWorkerProperty(workerId, "SHAREDLIBRARY", "/foo/bar/libdummy.so");
+            workerSession.setWorkerProperty(workerId, "SHAREDLIBRARYNAME", "NonExistingLibrary");
             workerSession.reloadConfiguration(workerId);
 
             final List<String> errors = workerSession.getStatus(workerId).getFatalErrors();
-            boolean foundExpectedError = false;
-            
-            // check the prefix of the error strings
-            // Windows treats path starting with / as relative to working
-            // drive letter (i.e. C:\) and the path delimiters gets replaced
-            // with \ (coming from the root FileNotFoundException)
-            for (final String error : errors) {
-                if (error.startsWith(expectedErrorPrefix)) {
-                    foundExpectedError = true;
-                    break;
-                }
-            }
 
-            assertTrue("Should contain error about lib but was: " + errors,
-                    foundExpectedError);
+            assertTrue("Should contain error about lib name but was: " + errors,
+                    errors.contains(expectedError));
         } finally {
             removeWorker(workerId);
         }
     }
+    
+    // TODO: add test checking that specifying library path the old way is
+    // not permitted
 }

@@ -68,6 +68,7 @@ public class CryptoTokenHelper {
     public static final String PROPERTY_SLOTLISTINDEX = "SLOTLISTINDEX";
     public static final String PROPERTY_SLOT = "SLOT";
     public static final String PROPERTY_SHAREDLIBRARY = "SHAREDLIBRARY";
+    public static final String PROPERTY_SHAREDLIBRARYNAME = "SHAREDLIBRARYNAME";
     public static final String PROPERTY_PIN = "PIN";
     public static final String PROPERTY_DEFAULTKEY = "DEFAULTKEY";
     public static final String PROPERTY_AUTHCODE = "AUTHCODE";
@@ -93,6 +94,10 @@ public class CryptoTokenHelper {
         prop = props.getProperty(PROPERTY_SHAREDLIBRARY);
         if (prop != null) {
             props.setProperty("sharedLibrary", prop);
+        }
+        prop = props.getProperty(PROPERTY_SHAREDLIBRARYNAME);
+        if (prop != null) {
+            props.setProperty("sharedLibraryName", prop);
         }
         prop = props.getProperty(PROPERTY_SLOTLABELVALUE);
         if (prop != null) {

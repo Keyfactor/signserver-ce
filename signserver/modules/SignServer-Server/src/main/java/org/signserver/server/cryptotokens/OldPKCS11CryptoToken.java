@@ -71,7 +71,30 @@ public class OldPKCS11CryptoToken extends OldCryptoTokenBase implements ICryptoT
     public void init(final int workerId, final Properties props) {
         LOG.debug(">init");
         String signaturealgoritm = props.getProperty(WorkerConfig.SIGNERPROPERTY_SIGNATUREALGORITHM);
+        
+        final String sharedLibraryName = props.getProperty("sharedLibraryName");
+            
+        if (sharedLibraryName == null) {
+            // TODO: list available libraries (possibly in the exception message
+            LOG.error("Missing SHAREDLIBRARYNAME property");
+            return;
+        }
+
+        final DeployTimeSettings settings = DeployTimeSettings.getInstance();
+
+        final String sharedLibraryProperty = props.getProperty("sharedLibrary");
+        if (sharedLibraryProperty != null) {
+            LOG.error("SHAREDLIBRARY is deprecated, use SHAREDLIBRARYNAME");
+            return;
+        }
+
+        final String sharedLibrary =
+            settings.getP11SharedLibraryFileForName(sharedLibraryName);
+        
         this.properties = fixUpProperties(props);
+        // set the legacy shared library property
+        this.properties.setProperty("SHAREDLIBRARY", sharedLibrary);
+        
         try {
             ((PKCS11CAToken) catoken).init(properties, null, signaturealgoritm, workerId);
         } catch (Exception e) {

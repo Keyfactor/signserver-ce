@@ -36,6 +36,7 @@ import org.cesecore.keys.token.p11.exception.NoSuchSlotException;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenInitializationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
+import org.signserver.common.DeployTimeSettings;
 import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.KeyTestResult;
@@ -109,15 +110,51 @@ public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2 {
             }
 
             props = CryptoTokenHelper.fixP11Properties(props);
+            
+            final String sharedLibraryName = props.getProperty("sharedLibraryName");
+            final DeployTimeSettings settings = DeployTimeSettings.getInstance();
+            
+            if (sharedLibraryName == null) {
+                final StringBuilder sb = new StringBuilder();
+                
+                sb.append("Missing SHAREDLIBRARYNAME property\n");
+                sb.append("Available library names: \n");
+                
+                for (final String name : settings.getP11SharedLibraryNames()) {
+                    sb.append(name);
+                    sb.append("\n");
+                }
+                
+                throw new CryptoTokenInitializationFailureException(sb.toString());
+            }
 
             final String sharedLibraryProperty = props.getProperty("sharedLibrary");
-            if (sharedLibraryProperty == null) {
-                throw new CryptoTokenInitializationFailureException("Missing SHAREDLIBRARY property");
+            if (sharedLibraryProperty != null) {
+                throw new CryptoTokenInitializationFailureException("SHAREDLIBRARY is deprecated, use SHAREDLIBRARYNAME");
             }
-            final File sharedLibrary = new File(sharedLibraryProperty);
+            
+            final String sharedLibraryFile =
+                    settings.getP11SharedLibraryFileForName(sharedLibraryName);
+            
+            if (sharedLibraryFile == null) {
+                throw new CryptoTokenInitializationFailureException("SHAREDLIBRARYNAME is not referring to a defined value");
+            }
+            
+            final File sharedLibrary = new File(sharedLibraryFile);
             if (!sharedLibrary.isFile() || !sharedLibrary.canRead()) {
+                // TODO: maybe this check won't be nesserary?
                 throw new CryptoTokenInitializationFailureException("The shared library file can't be read: " + sharedLibrary.getAbsolutePath());
             }
+            
+            // propagate the shared library property to the delegate
+            final String libraryPath = sharedLibrary.getAbsolutePath();
+            
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Using library path: " + libraryPath);
+            }
+            
+            props.setProperty(CryptoTokenHelper.PROPERTY_SHAREDLIBRARY,
+                    libraryPath);
 
             final String slotLabelType = props.getProperty(CryptoTokenHelper.PROPERTY_SLOTLABELTYPE);
             if (slotLabelType == null) {

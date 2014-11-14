@@ -1046,7 +1046,7 @@ public class P11SignTest extends ModulesTestCase {
         
         try {
             final String expectedError =
-                    "SHAREDLIBRARYNAME is not referring to a defined value";
+                    "SHAREDLIBRARYNAME NonExistingLibrary is not referring to a defined value";
             setXMLSignerProperties(workerId, false);
             workerSession.setWorkerProperty(workerId, "SHAREDLIBRARYNAME", "NonExistingLibrary");
             workerSession.reloadConfiguration(workerId);

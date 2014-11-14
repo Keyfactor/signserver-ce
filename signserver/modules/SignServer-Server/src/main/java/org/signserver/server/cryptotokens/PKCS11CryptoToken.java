@@ -137,7 +137,8 @@ public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2 {
                     settings.getP11SharedLibraryFileForName(sharedLibraryName);
             
             if (sharedLibraryFile == null) {
-                throw new CryptoTokenInitializationFailureException("SHAREDLIBRARYNAME is not referring to a defined value");
+                throw new CryptoTokenInitializationFailureException("SHAREDLIBRARYNAME " +
+                        sharedLibraryName + " is not referring to a defined value");
             }
             
             final File sharedLibrary = new File(sharedLibraryFile);

@@ -1036,7 +1036,7 @@ public class P11SignTest extends ModulesTestCase {
                     break;
                 }
             }
-            assertTrue("Should contain error", foundError);
+            assertTrue("Should contain error: " + errors, foundError);
         } finally {
             removeWorker(workerId);
         }

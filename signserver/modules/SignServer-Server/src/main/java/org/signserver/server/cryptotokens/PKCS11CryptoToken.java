@@ -154,8 +154,7 @@ public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2 {
                 LOG.debug("Using library path: " + libraryPath);
             }
             
-            props.setProperty(CryptoTokenHelper.PROPERTY_SHAREDLIBRARY,
-                    libraryPath);
+            props.setProperty("sharedLibrary", libraryPath);
 
             final String slotLabelType = props.getProperty(CryptoTokenHelper.PROPERTY_SLOTLABELTYPE);
             if (slotLabelType == null) {

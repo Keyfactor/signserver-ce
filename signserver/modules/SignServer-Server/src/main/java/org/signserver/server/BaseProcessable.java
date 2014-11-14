@@ -185,6 +185,10 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
                 if (value != null) {
                     defaultProperties.setProperty(CryptoTokenHelper.PROPERTY_SHAREDLIBRARY, value);
                 }
+                value = gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL + DEFAULT_ + CryptoTokenHelper.PROPERTY_SHAREDLIBRARYNAME);
+                if (value != null) {
+                    defaultProperties.setProperty(CryptoTokenHelper.PROPERTY_SHAREDLIBRARYNAME, value);
+                }
                 value = gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL + DEFAULT_ + CryptoTokenHelper.PROPERTY_SLOT);
                 if (value != null) {
                     defaultProperties.setProperty(CryptoTokenHelper.PROPERTY_SLOT, value);

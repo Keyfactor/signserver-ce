@@ -1150,7 +1150,7 @@ public class P11SignTest extends ModulesTestCase {
     
     /**
      * Test that setting both the old and new property at the same time
-     * is not allowed.
+     * is not allowed when referring to different libraries.
      * 
      * @throws Exception 
      */
@@ -1166,7 +1166,7 @@ public class P11SignTest extends ModulesTestCase {
             setXMLSignerProperties(workerId, false);
             workerSession.removeWorkerProperty(workerId, "SHAREDLIBRARYNAME");
             workerSession.setWorkerProperty(workerId, "SHAREDLIBRARY", sharedLibraryPath);
-            workerSession.setWorkerProperty(workerId, "SHAREDLIBRARYNAME", sharedLibraryName);
+            workerSession.setWorkerProperty(workerId, "SHAREDLIBRARYNAME", "SoftHSM");
             workerSession.reloadConfiguration(workerId);
 
             final List<String> errors = workerSession.getStatus(workerId).getFatalErrors();
@@ -1180,6 +1180,44 @@ public class P11SignTest extends ModulesTestCase {
             }
             
             assertTrue("Should contain error: " + errors, foundError);
+        } finally {
+            removeWorker(workerId);
+        }
+    }
+    
+    /**
+     * Test that setting both the old and new property at the same time
+     * is allowed for backwards compatability when pointing to the same
+     * library.
+     * 
+     * @throws Exception 
+     */
+    public void testBothP11LibraryNameAndOldSharedLibraryPropertyReferringSame() throws Exception {
+        LOG.info("testBothP11LibraryNameAndOldSharedLibraryProperty");
+        
+        final int workerId = WORKER_XML;
+        
+        try {
+            final String unexpectedErrorPrefix =
+                    "Failed to initialize crypto token: Can not specify both SHAREDLIBRARY and SHAREDLIBRARYNAME at the same time";
+            
+            setXMLSignerProperties(workerId, false);
+            workerSession.removeWorkerProperty(workerId, "SHAREDLIBRARYNAME");
+            workerSession.setWorkerProperty(workerId, "SHAREDLIBRARY", sharedLibraryPath);
+            workerSession.setWorkerProperty(workerId, "SHAREDLIBRARYNAME", sharedLibraryName);
+            workerSession.reloadConfiguration(workerId);
+
+            final List<String> errors = workerSession.getStatus(workerId).getFatalErrors();
+            boolean foundError = false;
+            
+            for (final String error : errors) {
+                if (error.startsWith(unexpectedErrorPrefix)) {
+                    foundError = true;
+                    break;
+                }
+            }
+            
+            assertFalse("Should not contain error: " + errors, foundError);
         } finally {
             removeWorker(workerId);
         }

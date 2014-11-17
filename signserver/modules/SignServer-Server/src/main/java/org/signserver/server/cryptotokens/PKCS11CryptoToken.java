@@ -117,12 +117,8 @@ public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2 {
             final String sharedLibraryProperty = props.getProperty("sharedLibrary");
             
             settings = DeployTimeSettings.getInstance();
-            
-            if (sharedLibraryProperty != null && sharedLibraryName != null) {
-                throw new CryptoTokenInitializationFailureException("Can not specify both SHAREDLIBRARY and SHAREDLIBRARYNAME at the same time");
-            }
-            
-            if (sharedLibraryName == null) {
+
+            if (sharedLibraryName == null && sharedLibraryProperty == null) {
                 final StringBuilder sb = new StringBuilder();
                 
                 sb.append("Missing SHAREDLIBRARYNAME property\n");
@@ -132,7 +128,7 @@ public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2 {
             }
 
             
-            if (sharedLibraryProperty != null) {
+            if (sharedLibraryProperty != null && sharedLibraryName == null) {
                 // check if the library was defined at deploy-time
                 if (!settings.isP11LibraryExisting(sharedLibraryProperty)) {
                     throw new CryptoTokenInitializationFailureException("SHAREDLIBRARY is not permitted when pointing to a library not defined at deploy-time");
@@ -140,9 +136,29 @@ public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2 {
             }
             
             final String sharedLibraryFile =
+                    sharedLibraryName == null ?
+                    null :
                     settings.getP11SharedLibraryFileForName(sharedLibraryName);
             
-            if (sharedLibraryFile == null) {
+            if (sharedLibraryProperty != null && sharedLibraryName != null) {
+                if (sharedLibraryFile != null) {
+                    final File byPath = new File(sharedLibraryProperty);
+                    final File byName = new File(sharedLibraryFile);
+
+                    try {
+                        if (!byPath.getCanonicalPath().equals(byName.getCanonicalPath())) {
+                            throw new CryptoTokenInitializationFailureException("Can not specify both SHAREDLIBRARY and SHAREDLIBRARYNAME at the same time");
+                        }
+                    } catch (IOException e) {
+                        throw new CryptoTokenInitializationFailureException("Can not specify both SHAREDLIBRARY and SHAREDLIBRARYNAME at the same time");
+                    }
+                } else {
+                    throw new CryptoTokenInitializationFailureException("Can not specify both SHAREDLIBRARY and SHAREDLIBRARYNAME at the same time");
+                }
+            }
+            
+            
+            if (sharedLibraryFile == null && sharedLibraryProperty == null) {
                 final StringBuilder sb = new StringBuilder();
                 
                 sb.append("SHAREDLIBRARYNAME ");
@@ -154,20 +170,22 @@ public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2 {
                 throw new CryptoTokenInitializationFailureException(sb.toString());
             }
             
-            final File sharedLibrary = new File(sharedLibraryFile);
-            if (!sharedLibrary.isFile() || !sharedLibrary.canRead()) {
-                // TODO: maybe this check won't be nesserary?
-                throw new CryptoTokenInitializationFailureException("The shared library file can't be read: " + sharedLibrary.getAbsolutePath());
+            if (sharedLibraryFile != null) {
+                final File sharedLibrary = new File(sharedLibraryFile);
+                if (!sharedLibrary.isFile() || !sharedLibrary.canRead()) {
+                    // TODO: maybe this check won't be nesserary?
+                    throw new CryptoTokenInitializationFailureException("The shared library file can't be read: " + sharedLibrary.getAbsolutePath());
+                }
+
+                // propagate the shared library property to the delegate
+                final String libraryPath = sharedLibrary.getAbsolutePath();
+
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Using library path: " + libraryPath);
+                }
+
+                props.setProperty("sharedLibrary", libraryPath);
             }
-            
-            // propagate the shared library property to the delegate
-            final String libraryPath = sharedLibrary.getAbsolutePath();
-            
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Using library path: " + libraryPath);
-            }
-            
-            props.setProperty("sharedLibrary", libraryPath);
 
             final String slotLabelType = props.getProperty(CryptoTokenHelper.PROPERTY_SLOTLABELTYPE);
             if (slotLabelType == null) {

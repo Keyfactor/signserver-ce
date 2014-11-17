@@ -842,6 +842,7 @@ public class P11SignTest extends ModulesTestCase {
         } finally {
             removeWorker(workerId);
             globalSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "DEFAULT.SHAREDLIBRARY");
+            globalSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "DEFAULT.SHAREDLIBRARYNAME");
             globalSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "DEFAULT.SLOT");
         }
     }

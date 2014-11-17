@@ -72,6 +72,8 @@ public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2 {
 
     private boolean cachePrivateKey;
     private PrivateKey cachedPrivateKey;
+    
+    private DeployTimeSettings settings;
 
     @Override
     public void init(int workerId, Properties props) throws CryptoTokenInitializationFailureException {
@@ -112,18 +114,13 @@ public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2 {
             props = CryptoTokenHelper.fixP11Properties(props);
             
             final String sharedLibraryName = props.getProperty("sharedLibraryName");
-            final DeployTimeSettings settings = DeployTimeSettings.getInstance();
+            settings = DeployTimeSettings.getInstance();
             
             if (sharedLibraryName == null) {
                 final StringBuilder sb = new StringBuilder();
                 
                 sb.append("Missing SHAREDLIBRARYNAME property\n");
-                sb.append("Available library names: \n");
-                
-                for (final String name : settings.getP11SharedLibraryNames()) {
-                    sb.append(name);
-                    sb.append("\n");
-                }
+                gatherAvailableLibraryNames(sb);
                 
                 throw new CryptoTokenInitializationFailureException(sb.toString());
             }
@@ -140,8 +137,15 @@ public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2 {
                     settings.getP11SharedLibraryFileForName(sharedLibraryName);
             
             if (sharedLibraryFile == null) {
-                throw new CryptoTokenInitializationFailureException("SHAREDLIBRARYNAME " +
-                        sharedLibraryName + " is not referring to a defined value");
+                final StringBuilder sb = new StringBuilder();
+                
+                sb.append("SHAREDLIBRARYNAME ");
+                sb.append(sharedLibraryName);
+                sb.append(" is not referring to a defined value");
+                sb.append("\n");
+                gatherAvailableLibraryNames(sb);
+
+                throw new CryptoTokenInitializationFailureException(sb.toString());
             }
             
             final File sharedLibrary = new File(sharedLibraryFile);
@@ -194,6 +198,15 @@ public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2 {
         }
     }
 
+    private void gatherAvailableLibraryNames(final StringBuilder sb) {
+        sb.append("Available library names: \n");
+                
+        for (final String name : settings.getP11SharedLibraryNames()) {
+            sb.append(name);
+            sb.append("\n");
+        }
+    }
+    
     @Override
     public int getCryptoTokenStatus() {
         int result = delegate.getTokenStatus();

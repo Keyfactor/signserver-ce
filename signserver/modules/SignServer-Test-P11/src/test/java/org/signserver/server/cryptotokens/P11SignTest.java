@@ -1093,6 +1093,7 @@ public class P11SignTest extends ModulesTestCase {
             final String expectedErrorPrefix =
                     "Failed to initialize crypto token: SHAREDLIBRARY is not permitted when pointing to a library not defined at deploy-time";
             setXMLSignerProperties(workerId, false);
+            workerSession.removeWorkerProperty(workerId, "SHAREDLIBRARYNAME");
             workerSession.setWorkerProperty(workerId, "SHAREDLIBRARY", "/opt/lib/libundefinedp11.so");
             workerSession.reloadConfiguration(workerId);
 
@@ -1164,7 +1165,6 @@ public class P11SignTest extends ModulesTestCase {
                     "Failed to initialize crypto token: Can not specify both SHAREDLIBRARY and SHAREDLIBRARYNAME at the same time";
             
             setXMLSignerProperties(workerId, false);
-            workerSession.removeWorkerProperty(workerId, "SHAREDLIBRARYNAME");
             workerSession.setWorkerProperty(workerId, "SHAREDLIBRARY", sharedLibraryPath);
             workerSession.setWorkerProperty(workerId, "SHAREDLIBRARYNAME", "SoftHSM");
             workerSession.reloadConfiguration(workerId);
@@ -1202,7 +1202,6 @@ public class P11SignTest extends ModulesTestCase {
                     "Failed to initialize crypto token: Can not specify both SHAREDLIBRARY and SHAREDLIBRARYNAME at the same time";
             
             setXMLSignerProperties(workerId, false);
-            workerSession.removeWorkerProperty(workerId, "SHAREDLIBRARYNAME");
             workerSession.setWorkerProperty(workerId, "SHAREDLIBRARY", sharedLibraryPath);
             workerSession.setWorkerProperty(workerId, "SHAREDLIBRARYNAME", sharedLibraryName);
             workerSession.reloadConfiguration(workerId);

@@ -1056,16 +1056,24 @@ public class P11SignTest extends ModulesTestCase {
         final int workerId = WORKER_XML;
         
         try {
-            final String expectedError =
+            final String expectedErrorPrefix =
                     "Failed to initialize crypto token: SHAREDLIBRARYNAME NonExistingLibrary is not referring to a defined value";
             setXMLSignerProperties(workerId, false);
             workerSession.setWorkerProperty(workerId, "SHAREDLIBRARYNAME", "NonExistingLibrary");
             workerSession.reloadConfiguration(workerId);
 
             final List<String> errors = workerSession.getStatus(workerId).getFatalErrors();
-
+            boolean foundError = false;
+            
+            for (final String error : errors) {
+                if (error.startsWith(expectedErrorPrefix)) {
+                    foundError = true;
+                    break;
+                }
+            }
+            
             assertTrue("Should contain error about lib name but was: " + errors,
-                    errors.contains(expectedError));
+                        foundError);
         } finally {
             removeWorker(workerId);
         }
@@ -1081,16 +1089,23 @@ public class P11SignTest extends ModulesTestCase {
         final int workerId = WORKER_XML;
         
         try {
-            final String expectedError =
+            final String expectedErrorPrefix =
                     "Failed to initialize crypto token: SHAREDLIBRARY is not permitted when pointing to a library not defined at deploy-time";
             setXMLSignerProperties(workerId, false);
             workerSession.setWorkerProperty(workerId, "SHAREDLIBRARY", "/opt/lib/libundefinedp11.so");
             workerSession.reloadConfiguration(workerId);
 
             final List<String> errors = workerSession.getStatus(workerId).getFatalErrors();
-
+            boolean foundError = false;
+            
+            for (final String error : errors) {
+                if (error.startsWith(expectedErrorPrefix)) {
+                    foundError = true;
+                    break;
+                }
+            }
             assertTrue("Should contain error about lib name but was: " + errors,
-                    errors.contains(expectedError));
+                    foundError);
         } finally {
             removeWorker(workerId);
         }
@@ -1108,14 +1123,25 @@ public class P11SignTest extends ModulesTestCase {
         final int workerId = WORKER_XML;
         
         try {
+            final String unexpectedErrorPrefix =
+                    "Failed to initialize crypto token: SHAREDLIBRARY is not permitted when pointing to a library not defined at deploy-time";
+            
             setXMLSignerProperties(workerId, false);
             workerSession.removeWorkerProperty(workerId, "SHAREDLIBRARYNAME");
             workerSession.setWorkerProperty(workerId, "SHAREDLIBRARY", sharedLibraryPath);
             workerSession.reloadConfiguration(workerId);
 
             final List<String> errors = workerSession.getStatus(workerId).getFatalErrors();
-
-            assertEquals("Should not contain errors", 0, errors.size());
+            boolean foundError = false;
+            
+            for (final String error : errors) {
+                if (error.startsWith(unexpectedErrorPrefix)) {
+                    foundError = true;
+                    break;
+                }
+            }
+            
+            assertFalse("Should not contain error: " + errors, foundError);
         } finally {
             removeWorker(workerId);
         }

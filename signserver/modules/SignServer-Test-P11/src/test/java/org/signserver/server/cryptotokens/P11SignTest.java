@@ -1161,7 +1161,7 @@ public class P11SignTest extends ModulesTestCase {
         
         try {
             final String expectedErrorPrefix =
-                    "Failed to initialize crypto token: Failed to initialize crypto token: Can not specify both SHAREDLIBRARY and SHAREDLIBRARYNAME at the same time";
+                    "Failed to initialize crypto token: Can not specify both SHAREDLIBRARY and SHAREDLIBRARYNAME at the same time";
             
             setXMLSignerProperties(workerId, false);
             workerSession.removeWorkerProperty(workerId, "SHAREDLIBRARYNAME");

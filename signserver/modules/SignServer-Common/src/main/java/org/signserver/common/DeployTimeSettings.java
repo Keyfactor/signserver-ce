@@ -13,12 +13,8 @@
 package org.signserver.common;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import org.apache.log4j.Logger;
 
@@ -33,57 +29,33 @@ public class DeployTimeSettings {
     private static Logger LOG = Logger.getLogger(DeployTimeSettings.class);
     
     private static DeployTimeSettings instance;
-
-    /** Properties put together at deploy-time. */
-    private Properties properties = new Properties();
-    
-    private Map<String, String> p11LibraryMapping = new HashMap<String, String>();
-    
+    private static CompileTimeSettings compileTimeSettings;
+   
     private static int MAX_P11_LIBRARIES = 256;
     
     private static String P11_LIBRARY_PROPERTY_PREFIX = "cryptotoken.p11.lib.";
     private static String P11_LIBRARY_PROPERTY_NAME_SUFFIX = ".name";
     private static String P11_LIBRARY_PROPERTY_FILE_SUFFIX = ".file";
     
+    private Map<String, String> p11LibraryMapping = new HashMap<String, String>();
+    
+    static {
+        compileTimeSettings = CompileTimeSettings.getInstance();
+    }
+    
     private DeployTimeSettings() {
-        // Load built-in compile-time properties
-        InputStream in = null;
-        try {
-            in = GlobalConfiguration.class
-                    .getResourceAsStream("signservercompile.properties");
-            if (in == null) {
-                throw new FileNotFoundException("signservercompile.properties");
-            }
-            properties.load(in);
-            
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("loaded properties: " + properties.toString());
-            }
-            
-            initP11Libraries();
-        } catch (IOException ex) {
-            throw new RuntimeException(
-                    "Unable to load built-in signservercompile.properties", ex);
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException ex) {
-                    LOG.error("Error closing signservercompile.properties", ex);
-                }
-            }
-        }
+        initP11Libraries();
     }
     
     private void initP11Libraries() {
         for (int i = 0; i < MAX_P11_LIBRARIES; i++) {
             final String name =
-                    properties.getProperty(P11_LIBRARY_PROPERTY_PREFIX + i +
+                    compileTimeSettings.getProperty(P11_LIBRARY_PROPERTY_PREFIX + i +
                                            P11_LIBRARY_PROPERTY_NAME_SUFFIX);
             final String path =
-                    properties.getProperty(P11_LIBRARY_PROPERTY_PREFIX + i +
+                    compileTimeSettings.getProperty(P11_LIBRARY_PROPERTY_PREFIX + i +
                                            P11_LIBRARY_PROPERTY_FILE_SUFFIX);
-        
+
             if (name != null) {
                 if (path == null) {
                     if (LOG.isDebugEnabled()) {
@@ -94,6 +66,8 @@ public class DeployTimeSettings {
                 }
                 
                 final File libraryFile = new File(path);
+                
+                
                 
                 if (!libraryFile.isFile()) {
                     if (LOG.isDebugEnabled()) {

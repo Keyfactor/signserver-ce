@@ -123,6 +123,11 @@ public class DeployTimeSettings {
         return p11LibraryMapping.containsValue(path);
     }
     
+    /**
+     * Get a singleton instance of this class.
+     * 
+     * @return An instance
+     */
     public static DeployTimeSettings getInstance() {
         if (instance == null) {
             instance = new DeployTimeSettings();

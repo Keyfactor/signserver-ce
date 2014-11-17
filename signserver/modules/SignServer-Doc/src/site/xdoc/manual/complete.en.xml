@@ -5650,6 +5650,9 @@ disabledMechanisms = {
 <b>Notice:</b> The PKCS#11 attributes configuration is global per shared library. If specified in multiple workers only the configuration from the first worker loaded will be used. Changing the property might not take effect without restarting the application server.
                         </p>
                         <p>
+<b>Notice:</b> For a Thales nCipher 'module protected' slot (slot index 0), CKA_PRIVATE must be false for the CKO_PRIVATEKEY so the key can be used without a login otherwise the key generation will fail with a CKR_USER_NOT_LOGGED_IN PKCS#11 error.
+                        </p>
+                        <p>
 <b>CACHE_PRIVATEKEY</b> = If set to true the private key reference is cached in the worker so that it is not queried for each signature. This could potentially improve performance in some environments. (Default: false)
                         </p>
                     </subsubsection>

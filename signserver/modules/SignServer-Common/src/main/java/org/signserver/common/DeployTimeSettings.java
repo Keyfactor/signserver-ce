@@ -127,6 +127,16 @@ public class DeployTimeSettings {
         return p11LibraryMapping.keySet();
     }
     
+    /**
+     * Returns true if the specified path points to a defined library.
+     * 
+     * @param path
+     * @return 
+     */
+    public boolean isP11LibraryExisting(final String path) {
+        return p11LibraryMapping.containsValue(path);
+    }
+    
     public static DeployTimeSettings getInstance() {
         if (instance == null) {
             instance = new DeployTimeSettings();

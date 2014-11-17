@@ -130,7 +130,10 @@ public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2 {
 
             final String sharedLibraryProperty = props.getProperty("sharedLibrary");
             if (sharedLibraryProperty != null) {
-                throw new CryptoTokenInitializationFailureException("SHAREDLIBRARY is deprecated, use SHAREDLIBRARYNAME");
+                // check if the library was defined at deploy-time
+                if (!settings.isP11LibraryExisting(sharedLibraryProperty)) {
+                    throw new CryptoTokenInitializationFailureException("SHAREDLIBRARY is not permitted when pointing to a library not defined at deploy-time");
+                }
             }
             
             final String sharedLibraryFile =

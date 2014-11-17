@@ -102,6 +102,7 @@ public class P11SignTest extends ModulesTestCase {
     private static final String TEST_KEY_ALIAS = "p11testkey1234";
 
     private final String sharedLibraryName;
+    private final String sharedLibraryPath;
     private final String slot;
     private final String pin;
     private final String existingKey1;
@@ -120,6 +121,7 @@ public class P11SignTest extends ModulesTestCase {
         odfSampleFile = new File(home, "res/signingtest/input/test.odt");
         ooxmlSampleFile = new File(home, "res/signingtest/input/test.docx");
         sharedLibraryName = getConfig().getProperty("test.p11.sharedLibraryName");
+        sharedLibraryPath = getConfig().getProperty("test.p11.sharedLibraryPath");
         slot = getConfig().getProperty("test.p11.slot");
         pin = getConfig().getProperty("test.p11.pin");
         existingKey1 = getConfig().getProperty("test.p11.existingkey1");
@@ -1069,6 +1071,55 @@ public class P11SignTest extends ModulesTestCase {
         }
     }
     
-    // TODO: add test checking that specifying library path the old way is
-    // not permitted
+    /**
+     * Test that specifying the old property SHAREDLIBRARY not pointing to
+     * a value defined in the P11 library list will give a deprecation error.
+     */
+    public void testOldSharedLibraryPropertyPointingToUndefined() throws Exception {
+        LOG.info("testOldSharedLibraryPropertyPointingToUndefined");
+        
+        final int workerId = WORKER_XML;
+        
+        try {
+            final String expectedError =
+                    "Failed to initialize crypto token: SHAREDLIBRARY is not permitted when pointing to a library not defined at deploy-time";
+            setXMLSignerProperties(workerId, false);
+            workerSession.setWorkerProperty(workerId, "SHAREDLIBRARY", "/opt/lib/libundefinedp11.so");
+            workerSession.reloadConfiguration(workerId);
+
+            final List<String> errors = workerSession.getStatus(workerId).getFatalErrors();
+
+            assertTrue("Should contain error about lib name but was: " + errors,
+                    errors.contains(expectedError));
+        } finally {
+            removeWorker(workerId);
+        }
+    }
+    
+    /**
+     * Test that specifying the old property SHAREDLIBRARY pointing to a library
+     * defined in deploy-time works.
+     * 
+     * @throws Exception 
+     */
+    public void testOldSharedLibraryPropertyPointingToDefined() throws Exception {
+        LOG.info("testOldSharedLibraryPropertyPointingToUndefined");
+        
+        final int workerId = WORKER_XML;
+        
+        try {
+            final String expectedError =
+                    "Failed to initialize crypto token: SHAREDLIBRARY is not permitted when pointing to a library not defined at deploy-time";
+            setXMLSignerProperties(workerId, false);
+            workerSession.setWorkerProperty(workerId, "SHAREDLIBRARY", sharedLibraryPath);
+            workerSession.reloadConfiguration(workerId);
+
+            final List<String> errors = workerSession.getStatus(workerId).getFatalErrors();
+
+            assertTrue("Should contain error about lib name but was: " + errors,
+                    errors.contains(expectedError));
+        } finally {
+            removeWorker(workerId);
+        }
+    }
 }

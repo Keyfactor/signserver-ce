@@ -1103,21 +1103,19 @@ public class P11SignTest extends ModulesTestCase {
      * @throws Exception 
      */
     public void testOldSharedLibraryPropertyPointingToDefined() throws Exception {
-        LOG.info("testOldSharedLibraryPropertyPointingToUndefined");
+        LOG.info("testOldSharedLibraryPropertyPointingToDefined");
         
         final int workerId = WORKER_XML;
         
         try {
-            final String expectedError =
-                    "Failed to initialize crypto token: SHAREDLIBRARY is not permitted when pointing to a library not defined at deploy-time";
             setXMLSignerProperties(workerId, false);
+            workerSession.removeWorkerProperty(workerId, "SHAREDLIBRARYNAME");
             workerSession.setWorkerProperty(workerId, "SHAREDLIBRARY", sharedLibraryPath);
             workerSession.reloadConfiguration(workerId);
 
             final List<String> errors = workerSession.getStatus(workerId).getFatalErrors();
 
-            assertTrue("Should contain error about lib name but was: " + errors,
-                    errors.contains(expectedError));
+            assertEquals("Should not contain errors", 0, errors.size());
         } finally {
             removeWorker(workerId);
         }

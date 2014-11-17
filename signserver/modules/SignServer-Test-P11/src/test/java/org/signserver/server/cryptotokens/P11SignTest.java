@@ -1146,4 +1146,41 @@ public class P11SignTest extends ModulesTestCase {
             removeWorker(workerId);
         }
     }
+    
+    /**
+     * Test that setting both the old and new property at the same time
+     * is not allowed.
+     * 
+     * @throws Exception 
+     */
+    public void testBothP11LibraryNameAndOldSharedLibraryProperty() throws Exception {
+        LOG.info("testBothP11LibraryNameAndOldSharedLibraryProperty");
+        
+        final int workerId = WORKER_XML;
+        
+        try {
+            final String expectedErrorPrefix =
+                    "Failed to initialize crypto token: Failed to initialize crypto token: Can not specify both SHAREDLIBRARY and SHAREDLIBRARYNAME at the same time";
+            
+            setXMLSignerProperties(workerId, false);
+            workerSession.removeWorkerProperty(workerId, "SHAREDLIBRARYNAME");
+            workerSession.setWorkerProperty(workerId, "SHAREDLIBRARY", sharedLibraryPath);
+            workerSession.setWorkerProperty(workerId, "SHAREDLIBRARYNAME", sharedLibraryName);
+            workerSession.reloadConfiguration(workerId);
+
+            final List<String> errors = workerSession.getStatus(workerId).getFatalErrors();
+            boolean foundError = false;
+            
+            for (final String error : errors) {
+                if (error.startsWith(expectedErrorPrefix)) {
+                    foundError = true;
+                    break;
+                }
+            }
+            
+            assertTrue("Should contain error: " + errors, foundError);
+        } finally {
+            removeWorker(workerId);
+        }
+    }
 }

@@ -114,7 +114,13 @@ public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2 {
             props = CryptoTokenHelper.fixP11Properties(props);
             
             final String sharedLibraryName = props.getProperty("sharedLibraryName");
+            final String sharedLibraryProperty = props.getProperty("sharedLibrary");
+            
             settings = DeployTimeSettings.getInstance();
+            
+            if (sharedLibraryProperty != null && sharedLibraryName != null) {
+                throw new CryptoTokenInitializationFailureException("Can not specify both SHAREDLIBRARY and SHAREDLIBRARYNAME at the same time");
+            }
             
             if (sharedLibraryName == null) {
                 final StringBuilder sb = new StringBuilder();
@@ -125,7 +131,7 @@ public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2 {
                 throw new CryptoTokenInitializationFailureException(sb.toString());
             }
 
-            final String sharedLibraryProperty = props.getProperty("sharedLibrary");
+            
             if (sharedLibraryProperty != null) {
                 // check if the library was defined at deploy-time
                 if (!settings.isP11LibraryExisting(sharedLibraryProperty)) {

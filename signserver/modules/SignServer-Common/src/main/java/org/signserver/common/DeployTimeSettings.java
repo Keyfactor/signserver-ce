@@ -47,6 +47,9 @@ public class DeployTimeSettings {
         initP11Libraries();
     }
     
+    /**
+     * Initialize P11 library mapping based on deployed settings.
+     */
     private void initP11Libraries() {
         for (int i = 0; i < MAX_P11_LIBRARIES; i++) {
             final String name =
@@ -66,17 +69,26 @@ public class DeployTimeSettings {
                 }
                 
                 final File libraryFile = new File(path);
+                final StringBuilder sb = new StringBuilder();
                 
-                
+                if (LOG.isDebugEnabled()) {
+                    sb.append("Adding: ");
+                    sb.append(path);
+                    sb.append(" for P11 name: ");
+                    sb.append(name);
+                }
                 
                 if (!libraryFile.isFile()) {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Non-existent library path: " + path);
+                        sb.append(" does not exist");
                     }
-                    continue;
+                } else {
+                    p11LibraryMapping.put(name, path);
                 }
                 
-                p11LibraryMapping.put(name, path);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(sb.toString());
+                }
             }
         }
     }

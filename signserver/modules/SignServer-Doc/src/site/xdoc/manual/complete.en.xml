@@ -39,6 +39,11 @@ lookup the validation of a given certificate.
             </section>
 
             <section name="Major changes from previous versions">
+                <subsection name="Changes between version 3.6 and 3.7">
+                    <ul>
+                        <li>PKCS11 libraries used by crypto tokens must be defined at deploy-time</li>
+                    </ul>
+                </subsection>
                 <subsection name="Changes between version 3.5 and 3.6">
                     <ul>
                         <li>Underlaying CESeCore library upgraded to version 6.1</li>

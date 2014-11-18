@@ -83,6 +83,7 @@ public class BaseProcessableTest extends TestCase {
         globalConfig.setProperty("GLOB.WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", MockedCryptoToken.class.getName());
         workerConfig.setProperty("NAME", "TestSigner100");
         workerConfig.setProperty("SHAREDLIBRARY", "/opt/hsm/pkcs11.so");
+        workerConfig.setProperty("SHAREDLIBRARYNAME", "P11Library");
         workerConfig.setProperty("SLOT", "3");
         workerConfig.setProperty("ATTRIBUTESFILE", "/opt/hsm/sunpkcs11.cfg");
         
@@ -98,6 +99,7 @@ public class BaseProcessableTest extends TestCase {
         globalConfig.setProperty("GLOB.WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", MockedCryptoToken.class.getName());
         workerConfig.setProperty("NAME", "TestSigner100");
         workerConfig.setProperty("SHAREDLIBRARY", "/opt/hsm/pkcs11.so");
+        workerConfig.setProperty("SHAREDLIBRARYNAME", "P11Library");
         workerConfig.setProperty("SLOTLISTINDEX", "2");
         workerConfig.setProperty("ATTRIBUTESFILE", "/opt/hsm/sunpkcs11.cfg");
         
@@ -145,6 +147,7 @@ public class BaseProcessableTest extends TestCase {
         globalConfig.setProperty("GLOB.DEFAULT.SLOTLISTINDEX", "33");
         workerConfig.setProperty("NAME", "TestSigner100");
         workerConfig.setProperty("SHAREDLIBRARY", "/opt/hsm/pkcs11.so");
+        workerConfig.setProperty("SHAREDLIBRARYNAME", "P11Library");
         workerConfig.setProperty("SLOTLISTINDEX", "44");
         workerConfig.setProperty("ATTRIBUTES", SAMPLE_ATTRIBUTES);
         

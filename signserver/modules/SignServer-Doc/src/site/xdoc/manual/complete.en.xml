@@ -5589,7 +5589,13 @@ DEFAULTKEY. (optional)
 <b>PIN</b> =   Authentication code for activation. (Only required for auth-activation, otherwise the activatecryptotoken CLI command can be used)
                         </p>
                         <p>
-<b>SHAREDLIBRARY</b> =   Full path to the library containing the PKCS11 interface. (Required)
+<b>SHAREDLIBRARYNAME</b> = Name of pre-defined PKCS11 library to be used. The available libraries can be configured in signserver_deploy.properties.
+If the legacy SHAREDLIBRARY property is also defined, it must point to the same library on the file system. (Required, unless the old SHAREDLIBRARY is set)
+                        </p>
+                        <p>
+<b>SHAREDLIBRARY</b> = Full path to the library containing the PKCS11 interface. From version 3.7.0 this must point to a file declared
+in signserver_deploy.properties (or using the built-in values). If this property is defined at the same time as SHAREDLIBRARYNAME
+they must point to the same library on the file system. NOTE: This property is deprecated.
                         </p>
                         <p>
 <b>SLOTLABELTYPE</b> = Indicates how the slot should be identified. Supported values are SLOT_NUMBER, SLOT_INDEX or SLOT_LABEL. (Required)

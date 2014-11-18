@@ -19,7 +19,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 /**
- * Setting built-in at deploy time.
+ * Manages settings for PKCS11 libaries.
  * 
  * @author Marcus Lundblad
  * @version $Id$

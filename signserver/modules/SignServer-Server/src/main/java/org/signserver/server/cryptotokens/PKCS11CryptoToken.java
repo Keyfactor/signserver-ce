@@ -41,7 +41,6 @@ import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.KeyTestResult;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerStatus;
-import static org.signserver.server.BaseProcessable.PROPERTY_CACHE_PRIVATEKEY;
 
 /**
  * CryptoToken implementation wrapping the new PKCS11CryptoToken from CESeCore.
@@ -58,6 +57,8 @@ import static org.signserver.server.BaseProcessable.PROPERTY_CACHE_PRIVATEKEY;
 public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2 {
 
     private static final Logger LOG = Logger.getLogger(PKCS11CryptoToken.class);
+
+    private static final String PROPERTY_CACHE_PRIVATEKEY = "CACHE_PRIVATEKEY";
 
     private final KeyStorePKCS11CryptoToken delegate;
 

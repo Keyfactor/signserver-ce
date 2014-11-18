@@ -60,7 +60,16 @@ public class PKCS11Settings {
                                            P11_LIBRARY_PROPERTY_FILE_SUFFIX);
 
             if (name != null) {
-                if (path == null) {
+                // if name starts with ${ and ends with }, treat it as a placeholder
+                if (name.startsWith("${") && name.endsWith("}")) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("No P11 library name defined for index " + i);
+                    }
+                    continue;
+                }
+                
+                if (path == null || path.isEmpty() ||
+                        (path.startsWith("${") && path.endsWith("}"))) {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("No P11 library path specified for index " + i
                                 + " with name: " + name);
@@ -69,25 +78,32 @@ public class PKCS11Settings {
                 }
                 
                 final File libraryFile = new File(path);
-                final StringBuilder sb = new StringBuilder();
-                
-                if (LOG.isDebugEnabled()) {
-                    sb.append("Adding: ");
-                    sb.append(path);
-                    sb.append(" for P11 name: ");
-                    sb.append(name);
-                }
                 
                 if (!libraryFile.isFile()) {
                     if (LOG.isDebugEnabled()) {
+                        final StringBuilder sb = new StringBuilder();
+
+                        sb.append("Library file: ");
+                        sb.append(path);
+                        sb.append(" for P11 name: ");
+                        sb.append(name);
                         sb.append(" does not exist");
+                        
+                        LOG.debug(sb.toString());
                     }
                 } else {
+                    if (LOG.isDebugEnabled()) {
+                        final StringBuilder sb = new StringBuilder();
+
+                        sb.append("Adding: ");
+                        sb.append(path);
+                        sb.append(" for P11 name: ");
+                        sb.append(name);
+                        
+                        LOG.debug(sb.toString());
+                    }
+                    
                     p11LibraryMapping.put(name, path);
-                }
-                
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug(sb.toString());
                 }
             }
         }

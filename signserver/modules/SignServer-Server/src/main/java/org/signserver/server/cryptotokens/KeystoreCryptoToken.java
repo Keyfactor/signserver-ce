@@ -414,15 +414,26 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2 {
 
             LOG.debug("generating...");
             final KeyPair keyPair = kpg.generateKeyPair();
-            X509Certificate[] chain = new X509Certificate[1];
+            Certificate[] chain = new Certificate[1];
             chain[0] = getSelfCertificate("CN=" + alias + ", " + SUBJECT_DUMMY
                 + ", C=SE",
                                   (long)30*24*60*60*365, sigAlgName, keyPair);
             LOG.debug("Creating certificate with entry "+alias+'.');
 
             keystore.setKeyEntry(alias, keyPair.getPrivate(), authCode, chain);
-            keystore.store(new FileOutputStream(new File(keystorepath)), 
+            keystore.store(new FileOutputStream(new File(keystorepath)),
                     authenticationCode);
+
+            final KeyEntry entry = new KeyEntry((PrivateKey) keyPair.getPrivate(), 
+                                chain[0], Arrays.asList(chain));
+
+            // If this is the first entry
+            entries.put(alias, entry);
+            if (properties.getProperty(DEFAULTKEY) == null) {
+                properties.setProperty(DEFAULTKEY, alias);
+                entries.put(ICryptoToken.PURPOSE_SIGN, entry);
+                entries.put(ICryptoToken.PURPOSE_DECRYPT, entry);
+            }
 
         } catch (Exception ex) {
             LOG.error(ex, ex);

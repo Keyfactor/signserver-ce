@@ -556,6 +556,7 @@ public class P11SignTest extends ModulesTestCase {
         workerSession.setWorkerProperty(workerId, "AUTHTYPE", "NOAUTH");
         workerSession.setWorkerProperty(workerId, "DEFAULTKEY", existingKey1);
         workerSession.setWorkerProperty(workerId, "CACHE_PRIVATEKEY", String.valueOf(cache));
+        workerSession.setWorkerProperty(workerId, "CRYPTOTOKEN", tokenName);
     }
 
     /**

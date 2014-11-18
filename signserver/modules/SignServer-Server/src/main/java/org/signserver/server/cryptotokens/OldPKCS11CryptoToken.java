@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.server.cryptotokens;
 
+import java.io.File;
 import java.io.IOException;
 import java.security.*;
 import java.security.cert.Certificate;
@@ -58,6 +59,8 @@ public class OldPKCS11CryptoToken extends OldCryptoTokenBase implements ICryptoT
     private Properties properties;
 
     private char[] authenticationCode;
+    
+    private PKCS11Settings settings;
 
     public OldPKCS11CryptoToken() throws InstantiationException {
         catoken = new PKCS11CAToken();
@@ -68,12 +71,98 @@ public class OldPKCS11CryptoToken extends OldCryptoTokenBase implements ICryptoT
      *
      */
     @Override
-    public void init(final int workerId, final Properties props) {
+    public void init(final int workerId, final Properties props) throws CryptoTokenInitializationFailureException {
         LOG.debug(">init");
         String signaturealgoritm = props.getProperty(WorkerConfig.SIGNERPROPERTY_SIGNATUREALGORITHM);
         
-        final String sharedLibraryName = props.getProperty("sharedLibraryName");
-            
+        this.properties = fixUpProperties(props);
+        
+        final String sharedLibraryName = properties.getProperty("sharedLibraryName");
+        final String sharedLibraryProperty = properties.getProperty("sharedLibrary");
+
+        settings = PKCS11Settings.getInstance();
+
+        // at least one the SHAREDLIBRARYNAME or SHAREDLIBRAY
+        // (for backwards compatability) properties must be defined
+        if (sharedLibraryName == null && sharedLibraryProperty == null) {
+            final StringBuilder sb = new StringBuilder();
+
+            sb.append("Missing SHAREDLIBRARYNAME property\n");
+            settings.listAvailableLibraryNames(sb);
+
+            throw new CryptoTokenInitializationFailureException(sb.toString());
+        }
+
+        // if only the old SHAREDLIBRARY property is given, it must point
+        // to one of the libraries defined at deploy-time
+        if (sharedLibraryProperty != null && sharedLibraryName == null) {
+            // check if the library was defined at deploy-time
+            if (!settings.isP11LibraryExisting(sharedLibraryProperty)) {
+                throw new CryptoTokenInitializationFailureException("SHAREDLIBRARY is not permitted when pointing to a library not defined at deploy-time");
+            }
+        }
+
+        // lookup the library defined by SHAREDLIBRARYNAME among the
+        // deploy-time-defined values
+        final String sharedLibraryFile =
+                sharedLibraryName == null ?
+                null :
+                settings.getP11SharedLibraryFileForName(sharedLibraryName);
+
+        // both the old and new properties are allowed at the same time
+        // to ease migration, given that they point to the same library
+        if (sharedLibraryProperty != null && sharedLibraryName != null) {
+            if (sharedLibraryFile != null) {
+                final File byPath = new File(sharedLibraryProperty);
+                final File byName = new File(sharedLibraryFile);
+
+                try {
+                    if (!byPath.getCanonicalPath().equals(byName.getCanonicalPath())) {
+                        // the properties pointed to different libraries
+                        throw new CryptoTokenInitializationFailureException("Can not specify both SHAREDLIBRARY and SHAREDLIBRARYNAME at the same time");
+                    }
+                } catch (IOException e) {
+                    throw new CryptoTokenInitializationFailureException("Can not specify both SHAREDLIBRARY and SHAREDLIBRARYNAME at the same time");
+                }
+            } else {
+                // SHAREDLIBRARYNAME was undefined
+                throw new CryptoTokenInitializationFailureException("Can not specify both SHAREDLIBRARY and SHAREDLIBRARYNAME at the same time");
+            }
+        }
+
+        // if only SHAREDLIBRARYNAME was given and the value couldn't be
+        // found, include a list of available values in the token error
+        // message
+        if (sharedLibraryFile == null && sharedLibraryProperty == null) {
+            final StringBuilder sb = new StringBuilder();
+
+            sb.append("SHAREDLIBRARYNAME ");
+            sb.append(sharedLibraryName);
+            sb.append(" is not referring to a defined value");
+            sb.append("\n");
+            settings.listAvailableLibraryNames(sb);
+
+            throw new CryptoTokenInitializationFailureException(sb.toString());
+        }
+
+        // check the file (again) and pass it on to the underlaying implementation
+        if (sharedLibraryFile != null) {
+            final File sharedLibrary = new File(sharedLibraryFile);
+            if (!sharedLibrary.isFile() || !sharedLibrary.canRead()) {
+                // TODO: maybe this check won't be nesserary?
+                throw new CryptoTokenInitializationFailureException("The shared library file can't be read: " + sharedLibrary.getAbsolutePath());
+            }
+
+            // propagate the shared library property to the delegate
+            final String libraryPath = sharedLibrary.getAbsolutePath();
+
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Using library path: " + libraryPath);
+            }
+
+            properties.setProperty("SHAREDLIBRARY", libraryPath);
+        }    
+        /*
         if (sharedLibraryName == null) {
             // TODO: list available libraries (possibly in the exception message
             LOG.error("Missing SHAREDLIBRARYNAME property");
@@ -94,6 +183,8 @@ public class OldPKCS11CryptoToken extends OldCryptoTokenBase implements ICryptoT
         this.properties = fixUpProperties(props);
         // set the legacy shared library property
         this.properties.setProperty("SHAREDLIBRARY", sharedLibrary);
+         */
+        
         
         try {
             ((PKCS11CAToken) catoken).init(properties, null, signaturealgoritm, workerId);

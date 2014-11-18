@@ -114,6 +114,21 @@ public class PKCS11Settings {
     }
     
     /**
+     * Produce a formatted list of permitted library names
+     * in the given StringBuilder.
+     * 
+     * @param sb StringBuilder instance to add formatted output in
+     */
+    public void listAvailableLibraryNames(final StringBuilder sb) {
+        sb.append("Available library names: \n");
+                
+        for (final String name : getP11SharedLibraryNames()) {
+            sb.append(name);
+            sb.append("\n");
+        }
+    }
+    
+    /**
      * Returns true if the specified path points to a defined library.
      * 
      * @param path

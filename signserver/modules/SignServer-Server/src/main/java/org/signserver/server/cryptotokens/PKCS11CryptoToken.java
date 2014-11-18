@@ -36,7 +36,7 @@ import org.cesecore.keys.token.p11.exception.NoSuchSlotException;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenInitializationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
-import org.signserver.common.DeployTimeSettings;
+import org.signserver.common.PKCS11Settings;
 import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.KeyTestResult;
@@ -73,7 +73,7 @@ public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2 {
     private boolean cachePrivateKey;
     private PrivateKey cachedPrivateKey;
     
-    private DeployTimeSettings settings;
+    private PKCS11Settings settings;
 
     @Override
     public void init(int workerId, Properties props) throws CryptoTokenInitializationFailureException {
@@ -116,7 +116,7 @@ public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2 {
             final String sharedLibraryName = props.getProperty("sharedLibraryName");
             final String sharedLibraryProperty = props.getProperty("sharedLibrary");
             
-            settings = DeployTimeSettings.getInstance();
+            settings = PKCS11Settings.getInstance();
 
             // at least one the SHAREDLIBRARYNAME or SHAREDLIBRAY
             // (for backwards compatability) properties must be defined

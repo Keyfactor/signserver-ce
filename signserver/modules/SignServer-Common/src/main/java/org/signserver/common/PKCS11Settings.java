@@ -24,11 +24,11 @@ import org.apache.log4j.Logger;
  * @author Marcus Lundblad
  * @version $Id$
  */
-public class DeployTimeSettings {
+public class PKCS11Settings {
     /** Logger for this class */
-    private static Logger LOG = Logger.getLogger(DeployTimeSettings.class);
+    private static Logger LOG = Logger.getLogger(PKCS11Settings.class);
     
-    private static DeployTimeSettings instance;
+    private static PKCS11Settings instance;
     private static CompileTimeSettings compileTimeSettings;
    
     private static int MAX_P11_LIBRARIES = 256;
@@ -43,7 +43,7 @@ public class DeployTimeSettings {
         compileTimeSettings = CompileTimeSettings.getInstance();
     }
     
-    private DeployTimeSettings() {
+    private PKCS11Settings() {
         initP11Libraries();
     }
     
@@ -128,9 +128,9 @@ public class DeployTimeSettings {
      * 
      * @return An instance
      */
-    public static DeployTimeSettings getInstance() {
+    public static PKCS11Settings getInstance() {
         if (instance == null) {
-            instance = new DeployTimeSettings();
+            instance = new PKCS11Settings();
         }
         return instance;
     }

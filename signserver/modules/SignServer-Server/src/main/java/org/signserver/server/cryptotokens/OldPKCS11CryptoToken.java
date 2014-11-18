@@ -80,7 +80,7 @@ public class OldPKCS11CryptoToken extends OldCryptoTokenBase implements ICryptoT
             return;
         }
 
-        final DeployTimeSettings settings = DeployTimeSettings.getInstance();
+        final PKCS11Settings settings = PKCS11Settings.getInstance();
 
         final String sharedLibraryProperty = props.getProperty("sharedLibrary");
         if (sharedLibraryProperty != null) {

@@ -86,6 +86,7 @@ public class P11SignTest extends ModulesTestCase {
     private static final int WORKER_SOD = 20002;
     private static final int WORKER_CMS = 20003;
     private static final int WORKER_XML = 20004;
+    private static final int WORKER_XML2 = 20014;
     private static final int WORKER_ODF = 20005;
     private static final int WORKER_OOXML = 20006;
     private static final int WORKER_MSA = 20007;
@@ -100,6 +101,7 @@ public class P11SignTest extends ModulesTestCase {
     		"QoSWj4rGpw==";
     
     private static final String TEST_KEY_ALIAS = "p11testkey1234";
+    private static final String CRYPTO_TOKEN_NAME = "TestCryptoTokenP11";
 
     private final String sharedLibraryName;
     private final String sharedLibraryPath;
@@ -143,7 +145,7 @@ public class P11SignTest extends ModulesTestCase {
         // Setup token
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + tokenId + ".CLASSPATH", "org.signserver.server.signers.CryptoWorker");
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + tokenId + ".SIGNERTOKEN.CLASSPATH", PKCS11CryptoToken.class.getName());
-        workerSession.setWorkerProperty(tokenId, "NAME", "TestCryptoTokenP11");
+        workerSession.setWorkerProperty(tokenId, "NAME", CRYPTO_TOKEN_NAME);
         workerSession.setWorkerProperty(tokenId, "SHAREDLIBRARYNAME", sharedLibraryName);
         workerSession.setWorkerProperty(tokenId, "SLOT", slot);
         workerSession.setWorkerProperty(tokenId, "PIN", pin);
@@ -156,7 +158,7 @@ public class P11SignTest extends ModulesTestCase {
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + workerId + ".CLASSPATH", "org.signserver.module.pdfsigner.PDFSigner");
         workerSession.setWorkerProperty(workerId, "NAME", "PDFSignerP11");
         workerSession.setWorkerProperty(workerId, "AUTHTYPE", "NOAUTH");
-        workerSession.setWorkerProperty(workerId, "CRYPTOTOKEN", "TestCryptoTokenP11");
+        workerSession.setWorkerProperty(workerId, "CRYPTOTOKEN", CRYPTO_TOKEN_NAME);
         workerSession.setWorkerProperty(workerId, "DEFAULTKEY", existingKey1);
     }
 
@@ -546,7 +548,16 @@ public class P11SignTest extends ModulesTestCase {
         workerSession.setWorkerProperty(workerId, "DEFAULTKEY", existingKey1);
         workerSession.setWorkerProperty(workerId, "CACHE_PRIVATEKEY", String.valueOf(cache));
     }
-    
+
+    private void setXMLSignerPropertiesReferingToken(final int workerId, final String tokenName, final boolean cache) throws IOException {
+        // Setup worker
+        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + workerId + ".CLASSPATH", "org.signserver.module.xmlsigner.XMLSigner");
+        workerSession.setWorkerProperty(workerId, "NAME", "XMLSignerRefering");
+        workerSession.setWorkerProperty(workerId, "AUTHTYPE", "NOAUTH");
+        workerSession.setWorkerProperty(workerId, "DEFAULTKEY", existingKey1);
+        workerSession.setWorkerProperty(workerId, "CACHE_PRIVATEKEY", String.valueOf(cache));
+    }
+
     /**
      * Tests setting up a XML Signer, giving it a certificate and sign a document.
      */
@@ -573,7 +584,27 @@ public class P11SignTest extends ModulesTestCase {
             removeWorker(workerId);
         }
     }
-    
+
+    /**
+     * Exercises a signer using a separate token and where the private key is
+     * cached (in the worker).
+     * @throws Exception
+     */
+    public void testXMLSigner_cached_separateToken() throws Exception {
+        final int workerId = WORKER_XML2;
+        try {
+            setupCryptoTokenProperties(CRYPTO_TOKEN, false);
+            workerSession.reloadConfiguration(CRYPTO_TOKEN);
+
+            setXMLSignerPropertiesReferingToken(workerId, CRYPTO_TOKEN_NAME, true);
+            workerSession.reloadConfiguration(workerId);
+
+            xmlSigner(workerId);
+        } finally {
+            removeWorker(workerId);
+        }
+    }
+
     private void xmlSigner(final int workerId) throws Exception {
         // Generate CSR
         PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + workerId, null);

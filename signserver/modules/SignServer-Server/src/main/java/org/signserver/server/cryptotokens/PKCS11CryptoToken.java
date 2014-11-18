@@ -118,6 +118,8 @@ public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2 {
             
             settings = DeployTimeSettings.getInstance();
 
+            // at least one the SHAREDLIBRARYNAME or SHAREDLIBRAY
+            // (for backwards compatability) properties must be defined
             if (sharedLibraryName == null && sharedLibraryProperty == null) {
                 final StringBuilder sb = new StringBuilder();
                 
@@ -127,7 +129,8 @@ public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2 {
                 throw new CryptoTokenInitializationFailureException(sb.toString());
             }
 
-            
+            // if only the old SHAREDLIBRARY property is given, it must point
+            // to one of the libraries defined at deploy-time
             if (sharedLibraryProperty != null && sharedLibraryName == null) {
                 // check if the library was defined at deploy-time
                 if (!settings.isP11LibraryExisting(sharedLibraryProperty)) {
@@ -135,11 +138,15 @@ public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2 {
                 }
             }
             
+            // lookup the library defined by SHAREDLIBRARYNAME among the
+            // deploy-time-defined values
             final String sharedLibraryFile =
                     sharedLibraryName == null ?
                     null :
                     settings.getP11SharedLibraryFileForName(sharedLibraryName);
             
+            // both the old and new properties are allowed at the same time
+            // to ease migration, given that they point to the same library
             if (sharedLibraryProperty != null && sharedLibraryName != null) {
                 if (sharedLibraryFile != null) {
                     final File byPath = new File(sharedLibraryProperty);
@@ -147,17 +154,21 @@ public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2 {
 
                     try {
                         if (!byPath.getCanonicalPath().equals(byName.getCanonicalPath())) {
+                            // the properties pointed to different libraries
                             throw new CryptoTokenInitializationFailureException("Can not specify both SHAREDLIBRARY and SHAREDLIBRARYNAME at the same time");
                         }
                     } catch (IOException e) {
                         throw new CryptoTokenInitializationFailureException("Can not specify both SHAREDLIBRARY and SHAREDLIBRARYNAME at the same time");
                     }
                 } else {
+                    // SHAREDLIBRARYNAME was undefined
                     throw new CryptoTokenInitializationFailureException("Can not specify both SHAREDLIBRARY and SHAREDLIBRARYNAME at the same time");
                 }
             }
             
-            
+            // if only SHAREDLIBRARYNAME was given and the value couldn't be
+            // found, include a list of available values in the token error
+            // message
             if (sharedLibraryFile == null && sharedLibraryProperty == null) {
                 final StringBuilder sb = new StringBuilder();
                 
@@ -170,6 +181,7 @@ public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2 {
                 throw new CryptoTokenInitializationFailureException(sb.toString());
             }
             
+            // check the file (again) and pass it on to the underlaying implementation
             if (sharedLibraryFile != null) {
                 final File sharedLibrary = new File(sharedLibraryFile);
                 if (!sharedLibrary.isFile() || !sharedLibrary.canRead()) {

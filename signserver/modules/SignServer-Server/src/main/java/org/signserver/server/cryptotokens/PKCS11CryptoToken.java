@@ -158,10 +158,11 @@ public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2 {
                             throw new CryptoTokenInitializationFailureException("Can not specify both SHAREDLIBRARY and SHAREDLIBRARYNAME at the same time");
                         }
                     } catch (IOException e) {
+                        // failed to determine canonical paths, treat this as conflicting properties
                         throw new CryptoTokenInitializationFailureException("Can not specify both SHAREDLIBRARY and SHAREDLIBRARYNAME at the same time");
                     }
                 } else {
-                    // SHAREDLIBRARYNAME was undefined
+                    // could not associate SHAREDLIBRARYNAME with a path, treat this as conflicting properties
                     throw new CryptoTokenInitializationFailureException("Can not specify both SHAREDLIBRARY and SHAREDLIBRARYNAME at the same time");
                 }
             }

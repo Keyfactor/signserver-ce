@@ -62,18 +62,12 @@ public class PKCS11Settings {
             if (name != null) {
                 // if name starts with ${ and ends with }, treat it as a placeholder
                 if (name.startsWith("${") && name.endsWith("}")) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("No P11 library name defined for index " + i);
-                    }
                     continue;
                 }
                 
+                // if path is undefined, skip it
                 if (path == null || path.isEmpty() ||
                         (path.startsWith("${") && path.endsWith("}"))) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("No P11 library path specified for index " + i
-                                + " with name: " + name);
-                    }
                     continue;
                 }
                 

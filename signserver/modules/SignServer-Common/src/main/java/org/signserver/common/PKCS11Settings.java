@@ -77,11 +77,12 @@ public class PKCS11Settings {
                     if (LOG.isDebugEnabled()) {
                         final StringBuilder sb = new StringBuilder();
 
-                        sb.append("Library file: ");
+                        sb.append("Library file not found: ");
                         sb.append(path);
                         sb.append(" for P11 name: ");
                         sb.append(name);
-                        sb.append(" does not exist");
+                        sb.append(", with index: ");
+                        sb.append(i);
                         
                         LOG.debug(sb.toString());
                     }
@@ -93,6 +94,8 @@ public class PKCS11Settings {
                         sb.append(path);
                         sb.append(" for P11 name: ");
                         sb.append(name);
+                        sb.append(", with index: ");
+                        sb.append(i);
                         
                         LOG.debug(sb.toString());
                     }

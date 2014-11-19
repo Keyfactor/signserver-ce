@@ -37,6 +37,7 @@ public class PKCS11Settings {
     private static String P11_LIBRARY_PROPERTY_NAME_SUFFIX = ".name";
     private static String P11_LIBRARY_PROPERTY_FILE_SUFFIX = ".file";
     
+    // TODO: this could be generalized to support additional parameters later
     private Map<String, String> p11LibraryMapping = new HashMap<String, String>();
     
     static {

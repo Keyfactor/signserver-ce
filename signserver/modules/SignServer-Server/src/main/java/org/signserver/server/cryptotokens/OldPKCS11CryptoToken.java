@@ -149,19 +149,12 @@ public class OldPKCS11CryptoToken extends OldCryptoTokenBase implements ICryptoT
         if (sharedLibraryFile != null) {
             final File sharedLibrary = new File(sharedLibraryFile);
             if (!sharedLibrary.isFile() || !sharedLibrary.canRead()) {
-                // TODO: maybe this check won't be nesserary?
                 throw new CryptoTokenInitializationFailureException("The shared library file can't be read: " + sharedLibrary.getAbsolutePath());
             }
 
             // propagate the shared library property to the delegate
-            final String libraryPath = sharedLibrary.getAbsolutePath();
-
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Using library path: " + libraryPath);
-            }
-
-            properties.setProperty("SHAREDLIBRARY", libraryPath);
-        }    
+            properties.setProperty("SHAREDLIBRARY", sharedLibraryFile);
+        }
         /*
         if (sharedLibraryName == null) {
             // TODO: list available libraries (possibly in the exception message

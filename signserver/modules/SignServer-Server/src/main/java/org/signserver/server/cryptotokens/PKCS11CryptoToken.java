@@ -186,18 +186,11 @@ public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2 {
             if (sharedLibraryFile != null) {
                 final File sharedLibrary = new File(sharedLibraryFile);
                 if (!sharedLibrary.isFile() || !sharedLibrary.canRead()) {
-                    // TODO: maybe this check won't be nesserary?
                     throw new CryptoTokenInitializationFailureException("The shared library file can't be read: " + sharedLibrary.getAbsolutePath());
                 }
 
                 // propagate the shared library property to the delegate
-                final String libraryPath = sharedLibrary.getAbsolutePath();
-
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Using library path: " + libraryPath);
-                }
-
-                props.setProperty("sharedLibrary", libraryPath);
+                props.setProperty("sharedLibrary", sharedLibraryFile);
             }
 
             final String slotLabelType = props.getProperty(CryptoTokenHelper.PROPERTY_SLOTLABELTYPE);

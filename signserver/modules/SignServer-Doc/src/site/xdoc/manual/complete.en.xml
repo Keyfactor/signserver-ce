@@ -5676,6 +5676,7 @@ Global default values are specified as global values in the global configuration
 The following properties can currently be specified in the global configuration:
                         </p>
                         <ul>
+                            <li>SHAREDLIBRARYNAME</li>
                             <li>SHAREDLIBRARY</li>
                             <li>SLOTLABELTYPE</li>
                             <li>SLOTLABELVALUE</li>

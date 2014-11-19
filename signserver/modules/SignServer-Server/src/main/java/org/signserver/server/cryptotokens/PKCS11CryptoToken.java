@@ -72,6 +72,7 @@ public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2 {
     private boolean cachePrivateKey;
     private PrivateKey cachedPrivateKey;
     
+    // cached P11 library definitions (defined at deploy-time)
     private PKCS11Settings settings;
 
     @Override

@@ -11,18 +11,18 @@ Developer procedures for updating/checking the dependencies
 -----------------------------------------------------------
 
 1) Run the command to update the list of jar-files:
-$ ./list-jar-files.sh > jar-files.txt
+ $ ./update-jars-list.sh
 
-2) Inspect jar-files.txt
- - Compare it to the checked in version
+2) Inspect jars-list.txt
+ - Compare it to the checked in version (svn diff)
  - For new files add which project it belongs to in the last column
  - Check that the checksum matches an upstream release
 
 3) Run the command to update the list of projects:
- - ./list-projects.sh > projects.txt
+ $ ./update-projects-list.sh
 
-4) Inspect projects.txt
- - Compare it to the checked in version
+4) Inspect projects-list.txt
+ - Compare it to the checked in version (svn diff)
  - For new projects add the relevant information
 
 5) Commit the changes
@@ -31,4 +31,4 @@ $ ./list-jar-files.sh > jar-files.txt
 
 
 As a side note, checksums can also be verified using:
-$ cat jar-files.txt | cut -d " " -f 1,3 | sha256sum -c
+$ cat jars-list.txt | cut -d ";" -f 1,3 | sha256sum -c

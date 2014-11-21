@@ -22,7 +22,7 @@ do
     # Fill in project name from previous file
     PROJECT=`grep $f ${PREVFILE} | awk -F\; '{ print $2 }' | sed -e 's/^[ \t]*//'`
 
-    printf "%-120s  %s\n" "${SUM};" "${PROJECT}" >> jar-files.txt
+    printf "%-120s  %s\n" "${SUM};" "${PROJECT}" >> jars-list.txt
 done
 
 for f in $INT
@@ -33,5 +33,5 @@ do
     # Fill in project name from previous file
     PROJECT=`grep $f ${PREVFILE} | awk -F\; '{ print $2 }' | sed -e 's/^[ \t]*//'`
 
-    printf "%-120s  %s\n" "${SUM}" "${PROJECT}" >> jar-files.txt
+    printf "%-120s  %s\n" "${SUM}" "${PROJECT}" >> jars-list.txt
 done

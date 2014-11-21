@@ -23,7 +23,7 @@ do
     OTHER1=`echo ${INFO} | awk -F\; '{ print $3 }'`
     OTHER2=`echo ${INFO} | awk -F\; '{ print $4 }'`
 
-    printf "%-28s %-48s %s %s\n" "$p;" "${LICENSE};" "${OTHER1};" "${OTHER2};" >> projects.txt
+    printf "%-28s %-48s %s %s\n" "$p;" "${LICENSE};" "${OTHER1};" "${OTHER2};" >> projects-list.txt
     IFS=$OURIFS
 done
 IFS=$OLDIFS

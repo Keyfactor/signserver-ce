@@ -12,7 +12,7 @@ mkdir -p ../tmp/
 cp projects-list.txt ../tmp/
 echo -n "" > projects-list.txt
 
-printf "%-28s  %-48s %s %s\n" "\"Project\";" "\"License(s);\"" "\"Project URL\";" "\"Usage description\";" >> projects-list.txt
+printf "%-28s  %-48s %-55s %-38s %s\n" "\"Project\";" "\"License(s)\";" "\"Project URL\";" "\"Usage description\";" "\"Modifications\";" >> projects-list.txt
 OURIFS=$(echo -en "\n\b")
 OLDIFS=$IFS
 IFS=$OURIFS
@@ -23,8 +23,9 @@ do
     LICENSE=`echo ${INFO} | awk -F\; '{ print $2 }'`
     OTHER1=`echo ${INFO} | awk -F\; '{ print $3 }'`
     OTHER2=`echo ${INFO} | awk -F\; '{ print $4 }'`
+    OTHER3=`echo ${INFO} | awk -F\; '{ print $5 }'`
 
-    printf "%-28s %-48s %s %s\n" "$p;" "${LICENSE};" "${OTHER1};" "${OTHER2};" >> projects-list.txt
+    printf "%-28s %-48s %-55s %-38s %s\n" "$p;" "${LICENSE};" "${OTHER1};" "${OTHER2};" "${OTHER3};" >> projects-list.txt
     IFS=$OURIFS
 done
 IFS=$OLDIFS

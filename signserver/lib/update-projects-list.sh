@@ -10,8 +10,9 @@ PROJECTS=`cat jars-list.txt | awk -F\; '{ print $2}' | sed -e 's/^[ \t]*//'| sor
 PREVFILE="../tmp/projects-list.txt"
 mkdir -p ../tmp/
 cp projects-list.txt ../tmp/
-echo "" > projects-list.txt
+echo -n "" > projects-list.txt
 
+printf "%-28s  %-48s %s %s\n" "\"Project\";" "\"License(s);\"" "\"Project URL\";" "\"Usage description\";" >> projects-list.txt
 OURIFS=$(echo -en "\n\b")
 OLDIFS=$IFS
 IFS=$OURIFS

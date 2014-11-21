@@ -12,7 +12,7 @@ INT=`find . -name "*-Lib-*.jar"`
 PREVFILE="../tmp/jars-list.txt"
 mkdir -p ../tmp/
 cp jars-list.txt ../tmp/
-echo "" > jars-list.txt
+echo -n "" > jars-list.txt
 
 for f in $EXT
 do
@@ -33,5 +33,5 @@ do
     # Fill in project name from previous file
     PROJECT=`grep $f ${PREVFILE} | awk -F\; '{ print $2 }' | sed -e 's/^[ \t]*//'`
 
-    printf "%-120s  %s\n" "${SUM}" "${PROJECT}" >> jars-list.txt
+    printf "%-120s  %s\n" "${SUM};" "${PROJECT}" >> jars-list.txt
 done

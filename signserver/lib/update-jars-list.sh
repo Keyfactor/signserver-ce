@@ -3,10 +3,10 @@
 # and which project it comes from (filled in manually).
 
 # External dependencies
-EXT=`find ./ext -name "*.jar"`
+EXT=`find ./ext -name "*.jar" | sort`
 
 # Things we build our self
-INT=`find . -name "*-Lib-*.jar"`
+INT=`find . -name "*-Lib-*.jar" | sort`
 
 # Previous list of dependencies
 PREVFILE="../tmp/jars-list.txt"

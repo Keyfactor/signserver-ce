@@ -36,6 +36,8 @@ import org.signserver.ejb.interfaces.IWorkerSession;
 /**
  * Tests for XMLSigner.
  * 
+ * TODO: Most test cases here can be moved to the unit test in Module-XMSigner.
+ *
  * @author Markus Kilås
  * @version $Id$
  */

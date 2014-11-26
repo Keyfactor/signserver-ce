@@ -86,14 +86,7 @@ public class XMLValidator extends BaseValidator {
             final WorkerContext workerContext, final EntityManager workerEM) {
         super.init(workerId, config, workerContext, workerEM);
 
-        if (workersession == null) {
-            try {
-                workersession = ServiceLocator.getInstance().lookupLocal(
-                        IWorkerSession.class);
-            } catch (NamingException ne) {
-                throw new RuntimeException(ne);
-            }
-        }
+        getWorkerSession();
         getValidationServiceWorkerId();
     }
 
@@ -202,7 +195,7 @@ public class XMLValidator extends BaseValidator {
             try {
                 final int validationWorkerId = getValidationServiceWorkerId();
                 LOG.info("Requesting certificate validation from worker: " + validationWorkerId);
-                response = workersession.process(validationWorkerId, vr, new RequestContext());
+                response = getWorkerSession().process(validationWorkerId, vr, new RequestContext());
                 LOG.info("ProcessResponse: " + response);
 
                 if (response == null) {
@@ -255,7 +248,7 @@ public class XMLValidator extends BaseValidator {
 
     private int getValidationServiceWorkerId() {
         if (validationServiceWorkerId < 1) {
-            validationServiceWorkerId = workersession.getWorkerId(
+            validationServiceWorkerId = getWorkerSession().getWorkerId(
                     config.getProperties().getProperty(PROP_VALIDATIONSERVICEWORKER));
 
             if (validationServiceWorkerId < 1) {
@@ -289,4 +282,20 @@ public class XMLValidator extends BaseValidator {
         xformer.transform(new DOMSource(doc), new StreamResult(out));
         return out.toByteArray();
     }
+
+    /**
+     * @return The worker session. Can be overridden for instance by unit tests.
+     */
+    protected IWorkerSession getWorkerSession() {
+        if (workersession == null) {
+            try {
+                workersession = ServiceLocator.getInstance().lookupLocal(
+                        IWorkerSession.class);
+            } catch (NamingException ne) {
+                throw new RuntimeException(ne);
+            }
+        }
+        return workersession;
+    }
+
 }

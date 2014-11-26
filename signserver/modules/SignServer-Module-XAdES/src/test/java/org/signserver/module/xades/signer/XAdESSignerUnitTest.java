@@ -48,6 +48,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
+import org.signserver.common.IllegalRequestException;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
@@ -61,6 +62,7 @@ import org.signserver.test.utils.builders.CertExt;
 import org.signserver.test.utils.builders.CryptoUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.xml.sax.SAXParseException;
 
 import xades4j.properties.AllDataObjsCommitmentTypeProperty;
 import xades4j.properties.QualifyingProperties;
@@ -277,13 +279,13 @@ public class XAdESSignerUnitTest {
      * 
      * @param token Crypto token to use
      * @param config Signer configuration to use for the test
+     * @param toSign The XML document to sign
      * @param useCertCredential Generate credential for the request from the mocked signer certificate
      * @param username Username to generate a username/password credential in the request context, if null, no credential is passed
      * @return Verification result
      * @throws Exception
      */
-    private XAdESVerificationResult getVerificationResult(final MockedCryptoToken token, final WorkerConfig config,
-            final boolean useCertCredential, final String username) throws Exception {
+    private XAdESVerificationResult getVerificationResult(final MockedCryptoToken token, final WorkerConfig config, String toSign, final boolean useCertCredential, final String username) throws Exception {
         XAdESSigner instance = new MockedXAdESSigner(token);
         
         instance.init(4711, config, null, null);
@@ -302,7 +304,7 @@ public class XAdESSignerUnitTest {
             requestContext.put(RequestContext.CLIENT_CREDENTIAL, cred);
         }
         
-        GenericSignRequest request = new GenericSignRequest(100, "<test100/>".getBytes("UTF-8"));
+        GenericSignRequest request = new GenericSignRequest(100, toSign.getBytes("UTF-8"));
         GenericSignResponse response = (GenericSignResponse) instance.processData(request, requestContext);
         
         byte[] data = response.getProcessedData();
@@ -394,7 +396,7 @@ public class XAdESSignerUnitTest {
             config.setProperty("CLAIMED_ROLE_FROM_USERNAME", "true");
         }
         
-        final XAdESVerificationResult r = getVerificationResult(token, config, useCertCredential, username);
+        final XAdESVerificationResult r = getVerificationResult(token, config, "<testroot/>", useCertCredential, username);
 
         assertEquals("BES", r.getSignatureForm().name());
         assertEquals("Unexpected signature algorithm in signature", expectedSignatureAlgorithmUri, r.getSignatureAlgorithmUri());
@@ -800,7 +802,7 @@ public class XAdESSignerUnitTest {
         WorkerConfig config = new WorkerConfig();
         config.setProperty("INCLUDE_CERTIFICATE_LEVELS", "3");
         
-        final XAdESVerificationResult r = getVerificationResult(tokenWithIntermediateCert, config, false, null);
+        final XAdESVerificationResult r = getVerificationResult(tokenWithIntermediateCert, config, "<testroot/>", false, null);
         assertEquals("BES", r.getSignatureForm().name());
         KeyInfo keyInfo = r.getXmlSignature().getKeyInfo();
         
@@ -826,7 +828,7 @@ public class XAdESSignerUnitTest {
         WorkerConfig config = new WorkerConfig();
         config.setProperty("INCLUDE_CERTIFICATE_LEVELS", "99");
         
-        final XAdESVerificationResult r = getVerificationResult(tokenWithIntermediateCert, config, false, null);
+        final XAdESVerificationResult r = getVerificationResult(tokenWithIntermediateCert, config, "<testroot/>", false, null);
         assertEquals("BES", r.getSignatureForm().name());
         KeyInfo keyInfo = r.getXmlSignature().getKeyInfo();
         
@@ -851,7 +853,7 @@ public class XAdESSignerUnitTest {
         WorkerConfig config = new WorkerConfig();
         config.setProperty("INCLUDE_CERTIFICATE_LEVELS", "1");
         
-        final XAdESVerificationResult r = getVerificationResult(tokenRSA, config, false, null);
+        final XAdESVerificationResult r = getVerificationResult(tokenRSA, config, "<testroot/>", false, null);
         assertEquals("BES", r.getSignatureForm().name());
         KeyInfo keyInfo = r.getXmlSignature().getKeyInfo();
         
@@ -876,7 +878,7 @@ public class XAdESSignerUnitTest {
         WorkerConfig config = new WorkerConfig();
         // Note: No INCLUDE_CERTIFICATE_LEVELS set
         
-        final XAdESVerificationResult r = getVerificationResult(tokenRSA, config, false, null);
+        final XAdESVerificationResult r = getVerificationResult(tokenRSA, config, "<testroot/>", false, null);
         assertEquals("BES", r.getSignatureForm().name());
         KeyInfo keyInfo = r.getXmlSignature().getKeyInfo();
         
@@ -901,7 +903,7 @@ public class XAdESSignerUnitTest {
         WorkerConfig config = new WorkerConfig();
         config.setProperty("INCLUDE_CERTIFICATE_LEVELS", "2");
         
-        final XAdESVerificationResult r = getVerificationResult(tokenWithIntermediateCert, config, false, null);
+        final XAdESVerificationResult r = getVerificationResult(tokenWithIntermediateCert, config, "<testroot/>", false, null);
         assertEquals("BES", r.getSignatureForm().name());
         KeyInfo keyInfo = r.getXmlSignature().getKeyInfo();
         
@@ -1034,6 +1036,35 @@ public class XAdESSignerUnitTest {
             // expected
         } catch (Exception e) {
             fail("Unexpected exception thrown: " + e.getClass().getName());
+        }
+    }
+
+    /**
+     * Tests that a document with a DOCTYPE is not allowed.
+     * @throws Exception
+     */
+    @Test
+    @SuppressWarnings("ThrowableResultIgnored")
+    public void testDTDNotAllowed() throws Exception {
+        LOG.info("testDTDNotAllowed");
+        final String xmlWithDoctype =
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+            "<!DOCTYPE foo [\n" +
+            "  <!ELEMENT foo ANY >\n" +
+            "]><foo/>\n";
+        try {
+            getVerificationResult(tokenRSA, new WorkerConfig(), xmlWithDoctype, false, null);
+            fail("Should have thrown IllegalRequestException as the document contained a DTD");
+        } catch (IllegalRequestException expected) {
+            if (expected.getCause() instanceof SAXParseException) {
+                if (!expected.getCause().getMessage().contains("DOCTYPE")) {
+                    LOG.error("Wrong exception message", expected);
+                    fail("Should be error about doctype: " + expected.getMessage());
+                }
+            } else {
+                LOG.error("Wrong exception cause", expected);
+                fail("Expected SAXParseException but was: " + expected);
+            }
         }
     }
 }

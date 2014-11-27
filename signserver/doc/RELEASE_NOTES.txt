@@ -1,3 +1,17 @@
+SignServer 3.6.2
+----------------
+
+Bug fixes:
+ - Security issue in XML workers
+ - Regression: Menu command for activating workers not working properly in GUI
+
+Improvements:
+ - Honouring rate limiting messages in TimeMonitor
+ - Updated list of 3rd party dependencies and licenses
+
+See ChangeLog.txt for the full list of changes.
+
+
 SignServer 3.6.1
 ----------------
 

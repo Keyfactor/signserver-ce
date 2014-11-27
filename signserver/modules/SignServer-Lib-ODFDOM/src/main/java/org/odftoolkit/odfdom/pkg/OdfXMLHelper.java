@@ -69,6 +69,10 @@ public class OdfXMLHelper {
         factory.setNamespaceAware( true );
         factory.setValidating( false );
 
+        factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+        factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+        factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+
         SAXParser parser = factory.newSAXParser();
         XMLReader xmlReader=parser.getXMLReader();
         // More details at http://xerces.apache.org/xerces2-j/features.html#namespaces
@@ -78,7 +82,9 @@ public class OdfXMLHelper {
         // More details at http://xerces.apache.org/xerces2-j/features.html#xmlns-uris
         xmlReader.setFeature("http://xml.org/sax/features/xmlns-uris", true);             
         xmlReader.setEntityResolver(pkg.getEntityResolver());
-     
+
+        xmlReader.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+
         return xmlReader;
     }
 

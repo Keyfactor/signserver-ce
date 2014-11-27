@@ -1026,7 +1026,12 @@ public abstract class OdfDocument {
 		SAXParserFactory saxFactory = SAXParserFactory.newInstance();
 		saxFactory.setNamespaceAware(true);
 		saxFactory.setValidating(false);
-		SAXParser parser = saxFactory.newSAXParser();
+
+                saxFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+                saxFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+                saxFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+
+                SAXParser parser = saxFactory.newSAXParser();
 		XMLReader xmlReader = parser.getXMLReader();
 		// More details at http://xerces.apache.org/xerces2-j/features.html#namespaces
 		xmlReader.setFeature("http://xml.org/sax/features/namespaces", true);
@@ -1034,6 +1039,8 @@ public abstract class OdfDocument {
 		xmlReader.setFeature("http://xml.org/sax/features/namespace-prefixes", true);
 		// More details at http://xerces.apache.org/xerces2-j/features.html#xmlns-uris
 		xmlReader.setFeature("http://xml.org/sax/features/xmlns-uris", true);
+
+                xmlReader.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
 
 		// initialize the input source's content.xml
 		OdfFileDom fileDom = new OdfFileDom(this, this.getXMLFilePath(file));

@@ -26,8 +26,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
-import org.signserver.common.IllegalRequestException;
 import org.signserver.common.RequestContext;
+import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.test.utils.builders.CertBuilder;
 import org.signserver.test.utils.builders.CryptoUtils;
@@ -412,7 +412,7 @@ public class ODFSignerUnitTest {
         try {
             testBasicODFSign(TEST_ODF_DOC_WITH_DOCTYPE);
             fail("Should have thrown IllegalRequestException as the document contained a DTD");
-        } catch (IllegalRequestException expected) {
+        } catch (SignServerException expected) {
             if (expected.getCause() instanceof SAXParseException) {
                 if (!expected.getCause().getMessage().contains("DOCTYPE")) {
                     LOG.error("Wrong exception message", expected);

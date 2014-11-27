@@ -40,7 +40,7 @@ import org.xml.sax.SAXParseException;
  * System tests (and other tests) are available in the Test-System project.
  *
  * @author Markus Kilås
- * @version @Id$
+ * @version $Id$
  */
 public class ODFSignerUnitTest {
 

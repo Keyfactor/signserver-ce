@@ -120,6 +120,17 @@ public class XMLValidator extends BaseValidator {
 
         Document doc;
         try {
+            // Xerces 1 - http://xerces.apache.org/xerces-j/features.html#external-general-entities
+            // Xerces 2 - http://xerces.apache.org/xerces2-j/features.html#external-general-entities
+            dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+
+            // Xerces 1 - http://xerces.apache.org/xerces-j/features.html#external-parameter-entities
+            // Xerces 2 - http://xerces.apache.org/xerces2-j/features.html#external-parameter-entities
+            dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+
+            // Xerces 2 only - http://xerces.apache.org/xerces2-j/features.html#disallow-doctype-decl
+            dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+
             doc = dbf.newDocumentBuilder().parse(new ByteArrayInputStream(data));
         } catch (ParserConfigurationException ex) {
             throw new SignServerException("Document parsing error", ex);

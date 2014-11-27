@@ -335,13 +335,25 @@ public class XAdESSigner extends BaseSigner {
         if (claimedRoleFromUsername && claimedRoleDefault == null && username == null) {
             throw new SignServerException("Received a request with no user name set, while configured to get claimed role from user name and no default value for claimed role is set.");
         }
-
+        
         try {
             // Parse
             final XadesSigner signer = createSigner(parameters, claimedRole);
-            final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            factory.setNamespaceAware(true);
-            final DocumentBuilder builder = factory.newDocumentBuilder();
+            final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            dbf.setNamespaceAware(true);
+
+            // Xerces 1 - http://xerces.apache.org/xerces-j/features.html#external-general-entities
+            // Xerces 2 - http://xerces.apache.org/xerces2-j/features.html#external-general-entities
+            dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+
+            // Xerces 1 - http://xerces.apache.org/xerces-j/features.html#external-parameter-entities
+            // Xerces 2 - http://xerces.apache.org/xerces2-j/features.html#external-parameter-entities
+            dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+
+            // Xerces 2 only - http://xerces.apache.org/xerces2-j/features.html#disallow-doctype-decl
+            dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+
+            final DocumentBuilder builder = dbf.newDocumentBuilder();
             final Document doc = builder.parse(new ByteArrayInputStream(data));
 
             // Sign

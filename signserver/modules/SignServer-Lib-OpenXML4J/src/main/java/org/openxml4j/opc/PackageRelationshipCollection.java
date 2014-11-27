@@ -47,7 +47,6 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.TreeMap;
-
 import org.apache.log4j.Logger;
 import org.dom4j.Attribute;
 import org.dom4j.Document;
@@ -326,6 +325,10 @@ public final class PackageRelationshipCollection implements
 			throws InvalidFormatException {
 		try {
 			SAXReader reader = new SAXReader();
+                    reader.setFeature("http://xml.org/sax/features/external-general-entities", false);
+                    reader.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+                    reader.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+
 			logger.debug("Parsing relationship: " + relPart.getPartName());
 			Document xmlRelationshipsDoc = reader
 					.read(relPart.getInputStream());

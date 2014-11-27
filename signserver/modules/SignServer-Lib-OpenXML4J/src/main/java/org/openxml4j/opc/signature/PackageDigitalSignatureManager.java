@@ -837,6 +837,11 @@ public final class PackageDigitalSignatureManager {
 
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		dbf.setNamespaceAware(true);
+
+                dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+                dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+                dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+
 		org.w3c.dom.Document doc = dbf.newDocumentBuilder().newDocument();
 
 		final XMLSignatureFactory fac = OPCSignatureHelper
@@ -926,6 +931,10 @@ public final class PackageDigitalSignatureManager {
 		dbf.setNamespaceAware(true);
 		org.w3c.dom.Document doc;
 		try {
+                    dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+                    dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+                    dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+
 			doc = dbf.newDocumentBuilder().newDocument();
 		} catch (ParserConfigurationException e) {
 			throw new OpenXML4JException("Document parsing error", e);

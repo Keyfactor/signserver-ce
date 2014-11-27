@@ -719,6 +719,11 @@ public class OdfPackage {
         SAXParserFactory factory = SAXParserFactory.newInstance();
         factory.setNamespaceAware(true);
         factory.setValidating(false);
+
+        factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+        factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+        factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+
         try {
             factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
         } catch (Exception ex) {
@@ -733,6 +738,8 @@ public class OdfPackage {
         xmlReader.setFeature("http://xml.org/sax/features/namespace-prefixes", true);
         // More details at http://xerces.apache.org/xerces2-j/features.html#xmlns-uris
         xmlReader.setFeature("http://xml.org/sax/features/xmlns-uris", true);
+
+        xmlReader.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
 
         String uri = mBaseURI + OdfPackage.OdfFile.MANIFEST.packagePath;
         xmlReader.setEntityResolver(getEntityResolver());
@@ -908,6 +915,9 @@ public class OdfPackage {
         DocumentBuilderFactory factory = new org.apache.xerces.jaxp.DocumentBuilderFactoryImpl();
         factory.setNamespaceAware(true);
         factory.setValidating(false);
+        factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+        factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+        factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
 
         DocumentBuilder builder = factory.newDocumentBuilder();
         builder.setEntityResolver(getEntityResolver());

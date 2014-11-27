@@ -357,6 +357,9 @@ public class DocumentSignatureManager {
         // create document to hold signature document
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setNamespaceAware(true);
+        dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+        dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+        dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
 
         // create document signature Document
         org.w3c.dom.Document documentSignaturesDoc = dbf.newDocumentBuilder().newDocument();
@@ -439,6 +442,10 @@ public class DocumentSignatureManager {
         // create document to hold signature document
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setNamespaceAware(true);
+        dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+        dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+        dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+
         org.w3c.dom.Document signatureDoc = dbf.newDocumentBuilder().newDocument();
 
         // c14n transform to be used in all references that refer to media-type

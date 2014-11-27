@@ -411,7 +411,7 @@ public abstract class OdfDocument {
 	 * @param pkgPathToChildDocument path to the directory of the embedded ODF document (always relative to ODF package root).
 	 * @param newOdfDocument the OdfDocument to be embedded
 	 */
-	public void embedDocument(String pkgPathToChildDocument, OdfDocument newOdfDocument) {
+	public void embedDocument(String pkgPathToChildDocument, OdfDocument newOdfDocument) throws Exception {
 		newOdfDocument.insertDOMsToPkg();
 		// insert to package and add it to the Manifest
 		pkgPathToChildDocument = ensureValidPackagePath(pkgPathToChildDocument);
@@ -807,7 +807,7 @@ public abstract class OdfDocument {
 //        }
 	}
 
-	private void insertDOMsToPkg() {
+	private void insertDOMsToPkg() throws Exception {
 			if (getContentStream() != null) {
 				mPackage.insert(getContentDom(), getXMLFilePath(OdfXMLFile.CONTENT), null);
 			}

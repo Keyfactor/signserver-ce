@@ -1,3 +1,18 @@
+SignServer 3.6.2, 2014-12-01
+----------------------------
+
+** Bug
+    * [DSS-879] - Regression: Activate menu command shows Remove Worker dialog in AdminGUI
+    * [DSS-890] - Security issue
+
+** Improvement
+    * [DSS-881] - Honour rate limiting messages in TimeMonitor
+
+** Task
+    * [DSS-500] - Update list of 3rd party licenses
+    * [DSS-885] - Update list of dependencies
+
+
 SignServer 3.6.1, 2014-10-24
 ----------------------------
 
@@ -19,13 +34,10 @@ SignServer 3.6.1, 2014-10-24
     * [DSS-872] - Client cert authorizer does not accept certificate if issuer contains characters that need escaping
     * [DSS-874] - Name of admin sometimes displayed as null in AdminGUI title
 
-
-
 ** Improvement
     * [DSS-847] - Issue TS certificate for sample soft crypto token
     * [DSS-859] - Document how issuer DN for client/admin authorization should be entered
     * [DSS-875] - Add to instructions for setting up SignServer how to specify SSL/TLS protocol versions
-
 
 ** New Feature
     * [DSS-691] - Added detached signature option to CMSSigner

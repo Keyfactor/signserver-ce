@@ -43,9 +43,6 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
     /** Log4j instance for actual implementation class */
     private final transient Logger log = Logger.getLogger(this.getClass());
 
-    /** Property specifying if the private key object should be cached. */
-    public static final String PROPERTY_CACHE_PRIVATEKEY = "CACHE_PRIVATEKEY";
-
     private static final String FAILED_TO_GET_CRYPTO_TOKEN_ = "Failed to get crypto token: ";
     private static final String DEFAULT_ = "DEFAULT.";
 
@@ -163,6 +160,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         if (log.isTraceEnabled()) {
             log.trace(">getCryptoToken");
         }
+        final ICryptoToken result;
         if (cryptoToken == null) {
             // Check if a crypto token from an other worker is available
             final ICryptoToken tokenFromOtherWorker1 = getSignServerContext().getCryptoToken();
@@ -178,7 +176,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
             }
 
             if (tokenFromOtherWorker != null) {
-                cryptoToken = tokenFromOtherWorker;
+                result = tokenFromOtherWorker;
             } else {
                 GlobalConfiguration gc = getGlobalConfigurationSession().getGlobalConfiguration();
                 final Properties defaultProperties = new Properties();
@@ -186,10 +184,6 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
                 String value = gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL + DEFAULT_ + CryptoTokenHelper.PROPERTY_SHAREDLIBRARY);
                 if (value != null) {
                     defaultProperties.setProperty(CryptoTokenHelper.PROPERTY_SHAREDLIBRARY, value);
-                }
-                value = gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL + DEFAULT_ + CryptoTokenHelper.PROPERTY_SHAREDLIBRARYNAME);
-                if (value != null) {
-                    defaultProperties.setProperty(CryptoTokenHelper.PROPERTY_SHAREDLIBRARYNAME, value);
                 }
                 value = gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL + DEFAULT_ + CryptoTokenHelper.PROPERTY_SLOT);
                 if (value != null) {
@@ -227,16 +221,16 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
                         log.debug("Found cryptotoken classpath: " + className);
                     }
                     if (className == null) {
-                        cryptoToken = null;
+                        result = null;
                     } else {
                         Class<?> implClass = Class.forName(className);
                         Object obj = implClass.newInstance();
-                        final ICryptoToken token = (ICryptoToken) obj;
+                        cryptoToken = (ICryptoToken) obj;
                         Properties properties = new Properties();
                         properties.putAll(defaultProperties);
                         properties.putAll(config.getProperties());
-                        token.init(workerId, properties);
-                        cryptoToken = token;
+                        cryptoToken.init(workerId, properties);
+                        result = cryptoToken;
                     }
                 } catch (CryptoTokenInitializationFailureException e) {
                     final StringBuilder sb = new StringBuilder();
@@ -305,12 +299,14 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
                     throw new SignServerException("Instantiation error", ie);
                 }
             }
+        } else {
+            result = cryptoToken;
         }
         if (log.isTraceEnabled()) {
             log.trace("<getCryptoToken: " + cryptoToken);
         }
 
-        return cryptoToken;
+        return result;
     }
 
     /**
@@ -326,9 +322,6 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         private final ICryptoTokenV2 delegate;
         private final WorkerConfig config;
 
-        private final boolean cachePrivateKey;
-        private PrivateKey cachedPrivateKey;
-
         /**
          * Constructs a new instance of the wrapped crypto token.
          * @param delegate The V2 implementation.
@@ -337,10 +330,6 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         public WrappedCryptoToken(ICryptoTokenV2 delegate, WorkerConfig config) {
             this.delegate = delegate;
             this.config = config;
-            cachePrivateKey = Boolean.parseBoolean(config.getProperty(PROPERTY_CACHE_PRIVATEKEY, Boolean.FALSE.toString()));
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("cachePrivateKey: " + cachePrivateKey);
-            }
         }
 
         @Override
@@ -365,20 +354,8 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
 
         @Override
         public PrivateKey getPrivateKey(int purpose) throws CryptoTokenOfflineException {
-            final PrivateKey result;
-            if (purpose == ICryptoToken.PURPOSE_NEXTKEY) {
-                result = delegate.getPrivateKey(config.getProperty(CryptoTokenHelper.PROPERTY_NEXTCERTSIGNKEY));
-            } else {
-                if (cachePrivateKey && cachedPrivateKey != null) {
-                    result = cachedPrivateKey;
-                } else {
-                    result = delegate.getPrivateKey(config.getProperty(CryptoTokenHelper.PROPERTY_DEFAULTKEY));
-                    if (cachePrivateKey) {
-                        cachedPrivateKey = result;
-                    }
-                }
-            }
-            return result;
+            final String alias = purpose == ICryptoToken.PURPOSE_NEXTKEY ? config.getProperty(CryptoTokenHelper.PROPERTY_NEXTCERTSIGNKEY) : config.getProperty(CryptoTokenHelper.PROPERTY_DEFAULTKEY);
+            return delegate.getPrivateKey(alias);
         }
 
         @Override

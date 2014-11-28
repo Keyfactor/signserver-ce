@@ -1,22 +1,3 @@
-SignServer 3.7.0
-----------------
-
-New features:
-
-Improvements:
-
-Bug fixes:
-
-Notice:
- - The SignServer build/deployment configuration file has been renamed from
-   signserver_build.properties to signserver_deploy.properties. When upgrading
-   from an earlier version the existing configuration file should be renamed
-   accordingly. The Ant script will complain if a file with the old name is
-   found.
-
-See ChangeLog.txt for the full list of changes.
-
-
 SignServer 3.6.2
 ----------------
 
@@ -33,10 +14,6 @@ See ChangeLog.txt for the full list of changes.
 
 SignServer 3.6.1
 ----------------
-
-New feature:
- - Added detached signature option to CMSSigner (contributed by
-   Pablo Ruiz García) 
 
 Improvements:
  - Better documentation about how to specify issuer DN for clients and

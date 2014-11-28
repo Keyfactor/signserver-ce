@@ -47,8 +47,8 @@ public class AdminWebServiceTest extends ModulesTestCase {
             = new AuthorizedClient();
 
     private static final String[] CONF_FILES = {
-        "signserver_deploy.properties",
-        "conf/signserver_deploy.properties",
+        "signserver_build.properties",
+        "conf/signserver_build.properties",
     };
     
     static {
@@ -72,9 +72,9 @@ public class AdminWebServiceTest extends ModulesTestCase {
         final File home;
         final File path1 = new File("../..");
         final File path2 = new File(".");
-        if (new File(path1, "res/deploytools/app.properties").exists()) {
+        if (new File(path1, "res/compile.properties").exists()) {
             home = path1;
-        } else if (new File(path2, "res/deploytools/app.properties").exists()) {
+        } else if (new File(path2, "res/compile.properties").exists()) {
             home = path2;
             } else {
             throw new RuntimeException("Unable to detect SignServer path");
@@ -89,15 +89,15 @@ public class AdminWebServiceTest extends ModulesTestCase {
             }
         }
         if (confFile == null) {
-            throw new RuntimeException("No signserver_deploy.properties found");
+            throw new RuntimeException("No signserver_build.properties found");
         } else {
         
             try {
                 config.load(new FileInputStream(confFile));
             } catch (FileNotFoundException ignored) {
-                LOG.debug("No signserver_deploy.properties");
+                LOG.debug("No signserver_build.properties");
             } catch (IOException ex) {
-                LOG.error("Not using signserver_deploy.properties: " + ex.getMessage());
+                LOG.error("Not using signserver_build.properties: " + ex.getMessage());
             }
             final String truststore = new File(home, "p12/truststore.jks").getAbsolutePath();
             System.out.println("Truststore: " + truststore);

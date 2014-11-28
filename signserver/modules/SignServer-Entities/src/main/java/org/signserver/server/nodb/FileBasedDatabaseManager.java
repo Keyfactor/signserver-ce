@@ -36,7 +36,7 @@ public class FileBasedDatabaseManager {
     
     private static final FileBasedDatabaseManager instance = new FileBasedDatabaseManager(new File(CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.FILEBASED_DB_FOLDER)));
     
-    /** Name used for this database as database.name in signserver_deploy.properties. */
+    /** Name used for this database as database.name in signserver_build.properties. */
     private static final String DATABASE_NAME = "nodb";
     
     private static final int CURRENT_SCHEMA_VERSION = 1;

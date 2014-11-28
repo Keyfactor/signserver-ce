@@ -9,7 +9,7 @@
 <section name="How to contribute">
 <p>If you are not a committer in SVN we are glad to accept patches. You can send us patches either in diff format (svn diff) or created with an IDE. You can also send us complete files that you have changed, we can see the diffs in our IDE.</p>
 <p>
-The normal process for contributing patches is: 
+The normal process for contribution patches is: 
 <ul>
 <li>Contributor send patches, under the LGPLv2.1+ license, to the signserver-develop mailing list.</li>
 <li>Someone on the SignServer core team will review them, when there is time, and if needed suggest improvements.</li>

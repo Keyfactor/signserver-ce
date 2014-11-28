@@ -18,15 +18,6 @@ RELEASE_NOTES.txt for more information about such upgrades.
 4. See any special instructions for the version you are upgrading below.
 5. Build and deploy as described in the installation guide.
 
-
-From SignServer 3.6.x to SignServer 3.7.x
------------------------------------------
-
-1) Configuration file name change:
-   Pay attention to the change of file name for the configuration file as
-   described in the RELEASE_NOTES.txt.
-
-
 From SignServer 3.5.x to SignServer 3.6.x
 -----------------------------------------
 

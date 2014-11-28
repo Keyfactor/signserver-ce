@@ -32,7 +32,6 @@ import org.cesecore.authentication.tokens.AuthenticationToken;
 import org.cesecore.authentication.tokens.UsernamePrincipal;
 import org.signserver.common.CompileTimeSettings;
 import org.signserver.common.FileBasedDatabaseException;
-import org.signserver.common.PKCS11Settings;
 import org.signserver.common.ServiceLocator;
 import org.signserver.ejb.interfaces.IServiceTimerSession;
 import org.signserver.server.cesecore.AlwaysAllowLocalAuthenticationToken;
@@ -121,11 +120,6 @@ public class StartServicesServlet extends HttpServlet {
             LOG.error("Logging", ex);
             throw new ServletException("Could not log", ex);
         }
-        
-        // instanciate the P11 libraries to avoid possible race-conditions
-        // later on then init:ing crypto tokens, this will also debug log
-        // the available libraries when debug logging is turned on
-        final PKCS11Settings p11Settings = PKCS11Settings.getInstance();
 
         // Cancel old timers as we can not rely on them being cancelled at shutdown
         LOG.debug(">init calling ServiceSession.unload");

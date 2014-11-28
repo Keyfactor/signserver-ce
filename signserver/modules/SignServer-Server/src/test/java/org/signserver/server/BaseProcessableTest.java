@@ -83,7 +83,6 @@ public class BaseProcessableTest extends TestCase {
         globalConfig.setProperty("GLOB.WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", MockedCryptoToken.class.getName());
         workerConfig.setProperty("NAME", "TestSigner100");
         workerConfig.setProperty("SHAREDLIBRARY", "/opt/hsm/pkcs11.so");
-        workerConfig.setProperty("SHAREDLIBRARYNAME", "P11Library");
         workerConfig.setProperty("SLOT", "3");
         workerConfig.setProperty("ATTRIBUTESFILE", "/opt/hsm/sunpkcs11.cfg");
         
@@ -99,7 +98,6 @@ public class BaseProcessableTest extends TestCase {
         globalConfig.setProperty("GLOB.WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", MockedCryptoToken.class.getName());
         workerConfig.setProperty("NAME", "TestSigner100");
         workerConfig.setProperty("SHAREDLIBRARY", "/opt/hsm/pkcs11.so");
-        workerConfig.setProperty("SHAREDLIBRARYNAME", "P11Library");
         workerConfig.setProperty("SLOTLISTINDEX", "2");
         workerConfig.setProperty("ATTRIBUTESFILE", "/opt/hsm/sunpkcs11.cfg");
         
@@ -147,7 +145,6 @@ public class BaseProcessableTest extends TestCase {
         globalConfig.setProperty("GLOB.DEFAULT.SLOTLISTINDEX", "33");
         workerConfig.setProperty("NAME", "TestSigner100");
         workerConfig.setProperty("SHAREDLIBRARY", "/opt/hsm/pkcs11.so");
-        workerConfig.setProperty("SHAREDLIBRARYNAME", "P11Library");
         workerConfig.setProperty("SLOTLISTINDEX", "44");
         workerConfig.setProperty("ATTRIBUTES", SAMPLE_ATTRIBUTES);
         
@@ -183,7 +180,6 @@ public class BaseProcessableTest extends TestCase {
         globalConfig.setProperty("GLOB.WORKER" + workerId + ".CLASSPATH", TestSigner.class.getName());
         globalConfig.setProperty("GLOB.WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", MockedCryptoToken.class.getName());
         globalConfig.setProperty("GLOB.DEFAULT.SHAREDLIBRARY", "/opt/hsm/default-pkcs11.so");
-        globalConfig.setProperty("GLOB.DEFAULT.SHAREDLIBRARYNAME", "DefaultLibrary");
         globalConfig.setProperty("GLOB.DEFAULT.SLOT", "44");
         globalConfig.setProperty("GLOB.DEFAULT.ATTRIBUTESFILE", "/opt/hsm/default-sunpkcs11.cfg");
         globalConfig.setProperty("GLOB.DEFAULT.PIN", "FooBar789");
@@ -197,7 +193,6 @@ public class BaseProcessableTest extends TestCase {
         Properties expectedProperties = new Properties();
         expectedProperties.putAll(workerConfig.getProperties());
         expectedProperties.setProperty("SHAREDLIBRARY", "/opt/hsm/default-pkcs11.so");
-        expectedProperties.setProperty("SHAREDLIBRARYNAME", "DefaultLibrary");
         expectedProperties.setProperty("SLOT", "44");
         expectedProperties.setProperty("ATTRIBUTESFILE", "/opt/hsm/default-sunpkcs11.cfg");
         expectedProperties.setProperty("PIN", "FooBar789");
@@ -208,13 +203,11 @@ public class BaseProcessableTest extends TestCase {
         globalConfig.setProperty("GLOB.WORKER" + workerId + ".CLASSPATH", TestSigner.class.getName());
         globalConfig.setProperty("GLOB.WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", MockedCryptoToken.class.getName());
         globalConfig.setProperty("GLOB.DEFAULT.SHAREDLIBRARY", "/opt/hsm/default-pkcs11.so");
-        globalConfig.setProperty("GLOB.DEFAULT.SHAREDLIBRARYNAME", "DefaultLibrary");
         globalConfig.setProperty("GLOB.DEFAULT.SLOT", "44");
         globalConfig.setProperty("GLOB.DEFAULT.ATTRIBUTESFILE", "/opt/hsm/default-sunpkcs11.cfg");
         globalConfig.setProperty("GLOB.DEFAULT.PIN", "FooBar789");
         workerConfig.setProperty("NAME", "TestSigner100");
         workerConfig.setProperty("SHAREDLIBRARY", "/opt/hsm/pkcs11.so");
-        workerConfig.setProperty("SHAREDLIBRARYNAME", "OverriddenLibrary");
         workerConfig.setProperty("SLOT", "3");
         workerConfig.setProperty("PIN", "AnotherPin");
         workerConfig.setProperty("ATTRIBUTESFILE", "/opt/hsm/sunpkcs11.cfg");
@@ -227,13 +220,14 @@ public class BaseProcessableTest extends TestCase {
         expectedProperties = new Properties();
         expectedProperties.putAll(workerConfig.getProperties());
         expectedProperties.setProperty("SHAREDLIBRARY", "/opt/hsm/pkcs11.so");
-        expectedProperties.setProperty("SHAREDLIBRARYNAME", "OverriddenLibrary");
-        assertEquals("worker overriding SHAREDLIBRARY, SHAREDLIBRARYNAME etc used", 
+        assertEquals("worker overriding SHAREDLIBRARY etc used", 
                 expectedProperties.toString(), actualProperties.toString());
     }
     
     /**
-     * Test the fatal error reported when setting an unknown crypto token class.
+     * Test with an unknown class name as the crypto token.
+     * Should give an appropriate crypto token-related error.
+     * 
      * @throws Exception
      */
     @Test
@@ -304,35 +298,6 @@ public class BaseProcessableTest extends TestCase {
         assertEquals("cert from token", "End Entity 1", CertTools.getPartFromDN(((X509Certificate) instance.getSigningCertificateChain().get(0)).getSubjectX500Principal().getName(), "CN"));
     }
 
-    @Test
-    public void testCryptoToken_P11NoSharedLibrary() throws Exception {
-        Properties globalConfig = new Properties();
-        WorkerConfig workerConfig = new WorkerConfig();
-        
-        // All PKCS#11 properties that can have default values in GlobalConfiguration (except SLOTLISTINDEX)
-        globalConfig.setProperty("GLOB.WORKER" + workerId + ".CLASSPATH", TestSigner.class.getName());
-        globalConfig.setProperty("GLOB.WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", 
-                "org.signserver.server.cryptotokens.PKCS11CryptoToken");
-        workerConfig.setProperty("NAME", "TestSigner100");
-        
-        TestSigner instance = new TestSigner(globalConfig);
-        instance.init(workerId, workerConfig, anyContext, null);
-        
-        final List<String> fatalErrors = instance.getSignerFatalErrors();
-        final String expectedErrorPrefix =
-                "Failed to initialize crypto token: Missing SHAREDLIBRARYNAME property";
-        boolean foundError = false;
-        
-        for (final String error : fatalErrors) {
-            if (error.startsWith(expectedErrorPrefix)) {
-                foundError = true;
-                break;
-            }
-        }
-
-        assertTrue("Should contain error", foundError);
-    }
-    
     /** CryptoToken only holding its properties and offering a way to access them. */
     private static class MockedCryptoToken extends NullCryptoToken {
 

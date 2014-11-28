@@ -1,20 +1,27 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- ======================================================================= -->
-<!--                                                                         -->
-<!--  SignServer: The OpenSource Automated Signing Server                    -->
-<!--                                                                         -->
-<!--  This software is free software; you can redistribute it and/or         -->
-<!--  modify it under the terms of the GNU Lesser General Public             -->
-<!--  License as published by the Free Software Foundation; either           -->
-<!--  version 2.1 of the License, or any later version.                      -->
-<!--                                                                         -->
-<!--  See terms of license at gnu.org.                                       -->
-<!--                                                                         -->
-<!-- ======================================================================= -->
-<!-- Version: $Id: compile.xml 5341 2014-10-29 17:02:47Z netmackan $ -->
+<project name="jboss" basedir=".." default="j2ee:deploy">
+	<property environment="env"/>
 
-<!-- Extra JBoss deploymet functionality. -->
-<project name="signserver-jboss" basedir=".." default="j2ee:deploy">
+    <property name="appserver.home" value="${env.APPSRV_HOME}"/>
+    <property name="jboss.config" value="default"/>
+    <property name="jboss.deploy" value="deploy"/>    
+    
+	<property name="jboss.lib.dir" location="${appserver.home}/server/${jboss.config}/lib"/>
+	<property name="jboss.server.home.dir" location="${jboss.deploy.dir}/.."/>
+	<property name="keystore.file" value="conf/keystore/keystore.jks"/>
+	<property name="truststore.file" value="conf/keystore/truststore.jks"/>
+	<property name="remote.keystore.path" value="conf"/>
+    <property name="datasource.jndi-name-prefix" value="java:/"/>
+
+    <!--
+        Define all extra jar files that needs to be included in the lib
+        folder of signserver.ear when building for this application server.
+        The zipfileset should have the id "appserver.extralibs" and the
+        prefix "lib".
+    -->
+    <zipfileset id="appserver.extralibs" prefix="lib" dir="lib/ext/ext">
+            <!-- Currently no extra jars are needed for JBoss. -->
+            <exclude name="*"/>
+    </zipfileset>
 
 	<!--
 	 Do not configure the servlet container, deploys blindly ears
@@ -23,7 +30,22 @@
 	<!--property name="j2ee.web-noconfigure" value="true"/-->
 	
 	
-    <target name="jboss:check">
+    <target name="j2ee:check" description="Check application server path and type etc">
+        <fail message="Please set the property 'appserver.home' or environment variable APPSRV_HOME" unless="appserver.home"/>    
+        <condition property="supported.appserver">
+            <or>
+                <equals arg1="${appserver.subtype}" arg2="jboss5" />
+        	<equals arg1="${appserver.subtype}" arg2="jboss7" />
+        	<equals arg1="${appserver.subtype}" arg2="jbosseap6" />
+            </or>
+        </condition>
+        <fail message="Unsupported JBoss version detected. Only 5.1.x and 7.1.1.Final are supported." unless="supported.appserver"/>
+        <condition property="jboss7">
+            <or>
+        	<equals arg1="${appserver.subtype}" arg2="jboss7" />
+        	<equals arg1="${appserver.subtype}" arg2="jbosseap6" />
+            </or>
+        </condition>
         <condition property="configure.web">
             <and>
                 <equals arg1="${appserver.subtype}" arg2="jboss5" />
@@ -40,12 +62,29 @@
                 </not>
             </and>
         </condition>
+        
+        <!-- Exclude dom4j on JBoss AS 7 as it does not work (and on EAP 6 only conistency) -->
+        <condition property="appserver.lib.excludes" value="lib/ext/hibernate/dom4j-*.jar">
+            <or>
+        	<equals arg1="${appserver.subtype}" arg2="jboss7" />
+        	<equals arg1="${appserver.subtype}" arg2="jbosseap6" />
+            </or>
+        </condition>
     </target>
 
-    <!-- Currently for JBoss 5 we also can deploy other things like datastore and keystores. -->
-    <target name="j2ee:deploy-other" depends="jboss:check,j2ee:configure, j2ee:web-configure, j2ee:copyPrimeCardJars, j2ee:compile-ds, j2ee:copyDS"/>
 
-    <target name="j2ee:compile-ds" depends="j2ee:compile-nocluster-ds"/>
+    <target name="j2ee:configure"  unless="deploy.hostname.node1" description="Configure the J2EE server with appropriate settings"
+            depends="j2ee:check, -set-deploy-dir-jboss5, -set-deploy-dir-jboss7, j2ee:web-configure"/>
+
+    <target name="-set-deploy-dir-jboss5" depends="j2ee:check" unless="jboss7">
+        <property name="jboss.deploy.dir" location="${appserver.home}/server/${jboss.config}/${jboss.deploy}"/>
+    </target>
+    
+    <target name="-set-deploy-dir-jboss7" depends="j2ee:check" if="jboss7">
+        <property name="jboss.deploy.dir" location="${appserver.home}/standalone/deployments"/>
+    </target>
+    
+    <target name="j2ee:compile-ds" depends="j2ee:compile-nocluster-ds, j2ee:compile-cluster-ds"/>	
 
     <target name="j2ee:compile-nocluster-ds" unless="database.use.mysqlcluster">
     	<copy todir="${tmp}" overwrite="true">
@@ -57,8 +96,20 @@
             </filterchain> 		
         </copy>	
 	</target>
+	
+    <target name="j2ee:compile-cluster-ds" if="database.use.mysqlcluster">
+    	<copy todir="${tmp}" overwrite="true">
+            <fileset dir="res/appserver/jboss">
+            	<include name="signserver-mysql-cluster-ds.xml"/>
+            </fileset>
+            <filterchain>
+                <expandproperties/>
+            </filterchain> 		
+        </copy>
+    	<move file="${tmp}/signserver-mysql-cluster-ds.xml" tofile="${tmp}/signserver-ds.xml"/>
+	</target>
 
-        <target name="j2ee:deploytruststore" unless="jboss7">
+	<target name="j2ee:deploytruststore" unless="jboss7">
 		<!-- copy the truststore file to the server -->
 		<available file="${truststore.keystore}" property="truststore.file.present"/>
 		<fail message="Missing JKS truststorestore file in 'truststore.keystore'" unless="truststore.file.present"/>
@@ -67,11 +118,11 @@
 		</condition>
 		<fail message="Missing Truststore password '${java.trustpassword}'" unless="javatrust.password.present"/>
 		
-		<copy file="${truststore.keystore}" tofile="${appserver.home}/server/${jboss.config}/${truststore.file}" overwrite="true"/>
-		<chmod file="${appserver.home}/server/${jboss.config}/${truststore.file}" perm="600"/>
+		<copy file="${truststore.keystore}" tofile="${jboss.server.home.dir}/${truststore.file}" overwrite="true"/>
+		<chmod file="${jboss.server.home.dir}/${truststore.file}" perm="600"/>		
 	</target>
-
-        <target name="j2ee:web-configure"  if="configure.web"  description="Configure the servlet container">
+			
+	<target name="j2ee:web-configure"  if="configure.web"  description="Configure the servlet container">
         <echo message="Using JBoss deploy directory ${jboss.deploy.dir}"/>
 
 		<!-- copy the keystore file to the server -->
@@ -82,7 +133,7 @@
 		</condition>
 		<fail message="Missing JKS password '${httpsserver.password}'" unless="httpsserver.password.present"/>
 
-		<copy file="${httpsserver.keystore}" tofile="${appserver.home}/server/${jboss.config}/${keystore.file}"/>
+		<copy file="${httpsserver.keystore}" tofile="${jboss.server.home.dir}/${keystore.file}"/>
         <!-- detect jboss web version -->
         <available file="${jboss.deploy.dir}/jbossweb-tomcat55.sar" type="dir" property="jboss.web" value="tomcat55"/>
         <available file="${jboss.deploy.dir}/jboss-web.deployer" type="dir" property="jboss.web" value="tomcat60"/>
@@ -141,6 +192,22 @@
     	</copy>	
 	</target>
 
+	
+	<target name="j2ee:deploy" description="Deploy the application"  depends="j2ee:compile-ds" >
+    	<antcall target="j2ee:deploy:locally" inheritall="true"/>
+    	<antcall target="j2ee:deploy:cluster" inheritall="true"/>
+	</target>
+	
+	<target name="j2ee:deploy:cluster" description="Deploy the application" if="deploy.hostname.node1" >
+		<input addproperty="tmp.passphrase" message="Enter passphrase for ssh authentication:"/>
+    	<antcall target="j2ee:deploy:node1" inheritall="true"/>
+    	<antcall target="j2ee:deploy:node2" inheritall="true"/>
+    	<antcall target="j2ee:deploy:node3" inheritall="true"/>
+    	<antcall target="j2ee:deploy:node4" inheritall="true"/>
+    	<antcall target="j2ee:deploy:node5" inheritall="true"/>
+       	<antcall target="j2ee:deploy:node6" inheritall="true"/>		
+	</target>
+	
 	<target name="j2ee:copyDS" description="Deploy signserver-ds.xml" if="configure.ds">
 		<echo>
 Copying ${tmp}/signserver-ds.xml to ${jboss.deploy.dir}
@@ -151,7 +218,169 @@ Copying ${tmp}/signserver-ds.xml to ${jboss.deploy.dir}
 		    </fileset>	
 		</copy>
 	</target>
+	
+    <target name="j2ee:deploy:locally" description="Deploy the application" unless="deploy.hostname.node1" 
+		depends="j2ee:configure, j2ee:copyPrimeCardJars, j2ee:copyDS">
+    	<echo>
+Deploying ${ear.dist.file} to ${jboss.deploy.dir}
+        </echo>
 
+    	<copy file="${ear.dist.file}" todir="${jboss.deploy.dir}" failonerror="true"/>
+	</target>
+	
+	<target name="j2ee:deploy:node1" if="deploy.hostname.node1" >
+    	<property name="tmp.hostname" value="${deploy.hostname.node1}" />
+		<antcall target="j2ee:deploy:remotely" inheritall="true"/>
+	</target>
+
+	<target name="j2ee:deploy:node2" if="deploy.hostname.node2" >
+    	<property name="tmp.hostname" value="${deploy.hostname.node2}" />
+		<antcall target="j2ee:deploy:remotely" inheritall="true"/>
+	</target>
+			
+	<target name="j2ee:deploy:node3" if="deploy.hostname.node3" >
+    	<property name="tmp.hostname" value="${deploy.hostname.node3}" />
+		<antcall target="j2ee:deploy:remotely" inheritall="true"/>
+	</target>
+	
+	<target name="j2ee:deploy:node4" if="deploy.hostname.node4" >
+    	<property name="tmp.hostname" value="${deploy.hostname.node4}" />
+		<antcall target="j2ee:deploy:remotely" inheritall="true"/>
+	</target>
+			
+	<target name="j2ee:deploy:node5" if="deploy.hostname.node5" >
+    	<property name="tmp.hostname" value="${deploy.hostname.node5}" />
+		<antcall target="j2ee:deploy:remotely" inheritall="true"/>
+	</target>
+	
+	<target name="j2ee:deploy:node6" if="deploy.hostname.node6" >
+    	<property name="tmp.hostname" value="${deploy.hostname.node6}" />
+		<antcall target="j2ee:deploy:remotely" inheritall="true"/>
+	</target>	
+	
+	<target name="j2ee:deploy:remotely" depends="j2ee:web-configure:remotely, j2ee:copyPrimeCardJars:remotely">
+       <echo>Deploying Sign Server Application to host: ${tmp.hostname}</echo>		
+	   <scp keyfile="${deploy.ssh.keyfilepath}" knownhosts="${deploy.ssh.knownhostsfile}" verbose="true" 
+	   	todir="${deploy.ssh.user}@${tmp.hostname}:${deploy.ssh.appsrvhome}/server/${jboss.config}/${jboss.deploy}" passphrase="${tmp.passphrase}">
+	   		<fileset dir="${tmp}">
+            	<include name="signserver-ds.xml"/>
+            </fileset>
+    		<fileset dir="${server.dist.dir}" includes="*.ear"/>   
+	   </scp>
+	</target>
+	
+	<target name="j2ee:copyPrimeCardJars:remotely" description="Deploy the application"  if="primeCard.home"  >
+		   <scp keyfile="${deploy.ssh.keyfilepath}" knownhosts="${deploy.ssh.knownhostsfile}" verbose="true" 
+		   	todir="${deploy.ssh.user}@${tmp.hostname}:${deploy.ssh.appsrvhome}/server/${jboss.config}/${jboss.deploy}" passphrase="${tmp.passphrase}">
+		     	<fileset dir="${server.dist.dir}" includes="rmiclientsslsignservice.jar"/>   		
+  		   	    <fileset dir="${src.appserver}" includes="rmiclientsslsign-service.xml"/> 
+		   </scp>
+		   <scp keyfile="${deploy.ssh.keyfilepath}" knownhosts="${deploy.ssh.knownhostsfile}" verbose="true" 
+		   	todir="${deploy.ssh.user}@${tmp.hostname}:${deploy.ssh.appsrvhome}/server/${jboss.config}/lib" passphrase="${tmp.passphrase}">
+              <fileset dir="${tmp}/lib">     
+                <include name="base-core.jar" />
+                <include name="base-opt.jar" />
+                <include name="pcscOCFTerminal.jar" />
+                <include name="pkcs15.jar" />
+                <include name="securityProvider.jar" />
+                <include name="smartCard.jar" />
+                <include name="keyStoreContainer.jar" />
+            	<include name="utilsForRMISSL.jar" />
+              </fileset>
+		   </scp>	
+	</target>
+	
+	<target name="j2ee:web-configure:remotely"  unless="j2ee.web-nohttps.condition" description="Configure the servlet container">
+		<!-- copy the keystore file to the server -->
+		<available file="${httpsserver.keystore}" property="keystore.file.present"/>
+		<fail message="Missing JKS keystore file in '${basedir}/${httpsserver.keystore}'" unless="keystore.file.present"/>
+		<condition property="httpsserver.password.present">
+			<isset property="httpsserver.password"/> 
+		</condition>
+		<fail message="Missing JKS password '${httpsserver.password}'" unless="httpsserver.password.present"/>
+		<copy file="${httpsserver.keystore}" tofile="tmp/keystore.jks"/>
+		<scp keyfile="${deploy.ssh.keyfilepath}" knownhosts="${deploy.ssh.knownhostsfile}" verbose="true" 
+		   	todir="${deploy.ssh.user}@${tmp.hostname}:${deploy.ssh.appsrvhome}/server/${jboss.config}/${remote.keystore.path}" passphrase="${tmp.passphrase}">
+		     	<fileset file="tmp/keystore.jks"/>   		
+		   </scp>
+		<available file="${truststore.keystore}" property="truststore.file.present"/>
+		<fail message="Missing JKS truststore file in '${basedir}/${truststore.keystore}'" unless="truststore.file.present"/>
+		<condition property="truststore.password.present">
+			<isset property="truststore.password"/> 
+		</condition>
+		<fail message="Missing JKS password '${truststore.password}'" unless="truststore.password.present"/>
+		<copy file="${truststore.keystore}" tofile="tmp/truststore.jks"/>
+		<scp keyfile="${deploy.ssh.keyfilepath}" knownhosts="${deploy.ssh.knownhostsfile}" verbose="true" 
+		   	todir="${deploy.ssh.user}@${tmp.hostname}:${deploy.ssh.appsrvhome}/server/${jboss.config}/${remote.keystore.path}" passphrase="${tmp.passphrase}">
+		     	<fileset file="tmp/truststore.jks"/>   		
+		   </scp>
+        <!-- detect jboss web version -->
+		
+		<!-- configure the tomcat bundle -->
+		<mkdir dir="tmp/tomcat"/>
+        <copy todir="tmp/tomcat" overwrite="true">
+			<fileset dir="res/appserver/jboss/${deploy.tomcat.version}"/>
+			<filterchain>
+			<tokenfilter>
+		    	<replacestring from="@keystore.file@" to="${remote.keystore.path}/keystore.jks"/>
+		    	<replacestring from="@httpsserver.password@" to="${httpsserver.password}"/>
+				<replacestring from="@truststore.file@" to="${truststore.file}"/>
+				<replacestring from="@java.trustpassword@" to="${java.trustpassword}"/>
+		    	<replacestring from="@httpserver.pubhttp@" to="${httpserver.pubhttp}"/>
+		    	<replacestring from="@httpserver.pubhttps@" to="${httpserver.pubhttps}"/>
+		    	<replacestring from="@httpserver.privhttps@" to="${httpserver.privhttps}"/>
+		    	<replacestring from="@web.contentencoding@" to="${web.contentencoding}"/>
+			</tokenfilter>
+			</filterchain>
+        </copy>
+		<scp keyfile="${deploy.ssh.keyfilepath}" knownhosts="${deploy.ssh.knownhostsfile}" verbose="true" 
+		   	todir="${deploy.ssh.user}@${tmp.hostname}:${deploy.ssh.appsrvhome}/server/${jboss.config}/${jboss.deploy}/jbossweb-${deploy.tomcat.version}.sar" passphrase="${tmp.passphrase}"  >
+		     	<fileset dir="tmp/tomcat" includes="*.xml"/>   		
+		   </scp>
+		
+	</target>
+
+	<target name="j2ee:assert-run" description="Check that the server is running">
+        <echo message="Checking that the J2EE server is up and running..."/>
+        <waitfor maxwait="2" maxwaitunit="second" timeoutproperty="j2ee.notrunning">
+            <http url="http://localhost:8080/web-console/"/>
+        </waitfor>
+        <fail message="Please start J2EE server before running this script" if="j2ee.notrunning"/>	
+	</target>
+
+	<target name="j2ee:run" description="Start the J2EE server">
+    	<j2ee-server classname="org.jboss.Main" classpath="${appserver.home}/bin/run.jar">
+            <args>
+                <jvmarg value="-Djboss.home=${appserver.home}"/>
+            </args>
+    	</j2ee-server>
+	</target>
+
+
+    
+	<target name="j2ee:debug" description="Start the J2EE server in debug mode">
+    	<property name="j2ee.debug.transport" value="dt_socket"/>
+    	<property name="j2ee.debug.address" value="5005"/>
+    	<property name="j2ee.debug.jvm.opts" value="-Xdebug -Xnoagent -Xrunjdwp:transport=${j2ee.debug.transport},address=${j2ee.debug.address},server=y,suspend=y"/>
+		<echo message="Connect your debugger using transport '${j2ee.debug.transport}' and address '${j2ee.debug.address}'"/>
+		<antcall target="j2ee:run"/>
+	</target>
+	
+    <macrodef name="j2ee-server">
+		<attribute name="classname"/>
+		<attribute name="classpath"/>
+        <element name="args" optional="yes"/>
+        <sequential>
+        <property name="j2ee.debug.jvm.opts" value=""/>
+		<available file="${java.home}/../lib/tools.jar" property="jdk.present"/>
+		<fail message="Missing tools.jar in ${java.home}/lib. Please use a java JDK" unless="jdk.present"/>
+		<java classname="@{classname}" fork="true">
+	    	<classpath path="@{classpath}:${java.home}/../lib/tools.jar"/>
+	    	<jvmarg line="${j2ee.debug.jvm.opts}"/>
+	    	<args/>
+		</java>
+        </sequential>
+    </macrodef>
 
     <target name="j2ee:copy-xmlsec" description="Copy XML Security JARs to JBoss endorsed folder">
         <echo>

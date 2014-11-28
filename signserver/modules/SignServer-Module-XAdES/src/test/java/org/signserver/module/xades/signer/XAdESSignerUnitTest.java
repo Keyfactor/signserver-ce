@@ -13,8 +13,6 @@
 package org.signserver.module.xades.signer;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
 import java.security.KeyPair;
 import java.security.KeyStore;
 import java.security.NoSuchAlgorithmException;
@@ -31,11 +29,11 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+
 import javax.persistence.EntityManager;
 import javax.xml.crypto.dsig.SignatureMethod;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.apache.xml.security.keys.KeyInfo;
 import org.apache.xml.security.keys.content.X509Data;
@@ -45,9 +43,9 @@ import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.jce.X509KeyUsage;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import static org.junit.Assert.*;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import static org.junit.Assert.*;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
 import org.signserver.common.IllegalRequestException;
@@ -65,6 +63,7 @@ import org.signserver.test.utils.builders.CryptoUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXParseException;
+
 import xades4j.properties.AllDataObjsCommitmentTypeProperty;
 import xades4j.properties.QualifyingProperties;
 import xades4j.properties.SignedDataObjectProperty;
@@ -277,7 +276,7 @@ public class XAdESSignerUnitTest {
 
     /**
      * Internal method to perform a signing operation.
-     *
+     * 
      * @param token Crypto token to use
      * @param config Signer configuration to use for the test
      * @param toSign The XML document to sign

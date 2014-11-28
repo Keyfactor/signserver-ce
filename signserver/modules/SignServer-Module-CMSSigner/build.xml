@@ -19,7 +19,7 @@
     <target name="-pre-compile" depends="with.clover"/>
 
     <!-- Import property file containing version numbers and other constants -->
-    <property file="../../res/deploytools/app.properties"/>
+    <property file="../../res/compile.properties"/>
     
     <!-- Create MAR -->
     <target name="dist-module" depends="jar, descriptor,-do-module-dist"/>

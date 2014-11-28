@@ -8,19 +8,19 @@
 <body>
   <section name="Latest Release">
     <note>
-    SignServer 3.6.1 is now available for <a href="https://sourceforge.net/projects/signserver/files/signserver/3.6/">download from SourceForge</a>.
+    SignServer 3.6.0 is now available for <a href="https://sourceforge.net/projects/signserver/files/signserver/3.6/">download from SourceForge</a>.
     <br/><br/>
     SHA1 checksums:
     <pre>
-d23e766353a1d7e682573eac8c2b530a781fd8ed  signserver-ce-3.6.1.zip
-c31556797c0afd97646b8281252540edd4e2f0f3  signserver-ce-3.6.1-bin.zip
-a555382f4b085116f3c4cff484995ba278d2ec4e  signserver-ce-3.6.1-src.tar.gz
+e7dcef7e080f234e98afe99157e963562e2da1f0  signserver-ce-3.6.0.zip
+329055acdbc9bc086e4a762b714cacd7c9ac4190  signserver-ce-3.6.0-bin.zip
+0117177ed55890d556a4078e4ca93bd3933521e7  signserver-ce-3.6.0-src.tar.gz
     </pre>
     SHA-256 checksums:
     <pre>
-64ff308c7261bb07e767a085e9ee472b2180ae7ecaab611068874c8370ec0a23  signserver-ce-3.6.1.zip
-9a7cc2fb22bdf5e3bdd09c6ec746e60f92562d40b64ae82e742ac13224035e21  signserver-ce-3.6.1-bin.zip
-52b26bf56151dd64a2e4cb93da0193da6d3ec18d5e4552be1169608bf605e508  signserver-ce-3.6.1-src.tar.gz
+3bb555f75c363308ee1f7b82d6678f5fe426da4c557e8f62f5f328994dbfbe54  signserver-ce-3.6.0.zip
+bbcd03c0e02771a9f047f114c71ebebe9dd2a9554e5d33536f5ab554b787ee14  signserver-ce-3.6.0-bin.zip
+15f4ebcd441922c73df47764a01cf46285f4d24f44ea550262e8605dcbcb44f0  signserver-ce-3.6.0-src.tar.gz
     </pre>
     </note>
   </section>

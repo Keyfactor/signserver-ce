@@ -5,8 +5,11 @@ FILES=*
 for f in $FILES
 do
 	echo "Processing $f"
-	rm $f/nbproject.disabled -rf
-	mv $f/nbproject $f/nbproject.disabled
+	if [[ $f != *SignServer-Project* ]]
+	then
+		rm $f/nbproject.disabled -rf
+		mv $f/nbproject $f/nbproject.disabled
+	fi
 done
 
 echo "If NetBeans IDE was running with any of the SignServer projects open it needs to be restarted now to start use the POM.xml:s."

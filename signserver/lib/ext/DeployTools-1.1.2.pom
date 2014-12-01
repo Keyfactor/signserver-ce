@@ -3,12 +3,12 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.signserver.deploytools</groupId>
     <artifactId>DeployTools</artifactId>
-    <version>1.1.1</version>
+    <version>1.1.2</version>
     <packaging>pom</packaging>
     <scm>
-        <connection>scm:svn:https://svn.cesecore.eu/svn/primekey/signserver-labs/deploytools/tags/DeployTools-1.1.1</connection>
-        <developerConnection>scm:svn:https://svn.cesecore.eu/svn/primekey/signserver-labs/deploytools/tags/DeployTools-1.1.1</developerConnection>
-        <url>http://fisheye.primekey.se/browse/SignServer-labs/deploytools/tags/DeployTools-1.1.1</url>
+        <connection>scm:svn:https://svn.cesecore.eu/svn/primekey/signserver-labs/deploytools/tags/DeployTools-1.1.2</connection>
+        <developerConnection>scm:svn:https://svn.cesecore.eu/svn/primekey/signserver-labs/deploytools/tags/DeployTools-1.1.2</developerConnection>
+        <url>http://fisheye.primekey.se/browse/SignServer-labs/deploytools/tags/DeployTools-1.1.2</url>
     </scm>
     <repositories>
       <repository>

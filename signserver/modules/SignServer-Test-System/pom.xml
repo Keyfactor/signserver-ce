@@ -112,7 +112,7 @@
         <dependency>
             <groupId>org.signserver.xades4j</groupId>
             <artifactId>xades4j</artifactId>
-            <version>1.3.0-signserver</version>
+            <version>1.3.2-signserver</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>

@@ -20,7 +20,7 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
+import org.signserver.common.util.PathUtil;
 
 /**
  * Unit tests for the SignServerUtil utility method class.
@@ -33,7 +33,7 @@ public class SignServerUtilUnitTest extends TestCase {
 
     @Override
     public void setUp() throws Exception {
-        signserverhome = System.getenv("SIGNSERVER_HOME");
+        signserverhome = PathUtil.getAppHome().getAbsolutePath();
         assertNotNull(signserverhome);
     }
 

@@ -185,7 +185,7 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
         AuthorizedClient authClient = new AuthorizedClient("123456", "CN=testca");
         workerSession.addAuthorizedClient(3, authClient);
 
-        Collection<?> result = new ProcessableConfig(workerSession.getCurrentWorkerConfig(3)).getAuthorizedClients();
+        Collection<?> result = workerSession.getAuthorizedClients(3);
         boolean exists = false;
         Iterator<?> iter = result.iterator();
         while (iter.hasNext()) {
@@ -201,11 +201,11 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
      */
     @Test
     public void test08RemoveAuthorizedClient() throws Exception {
-        int initialsize = new ProcessableConfig(workerSession.getCurrentWorkerConfig(3)).getAuthorizedClients().size();
+        int initialsize = workerSession.getAuthorizedClients(3).size();
         AuthorizedClient authClient = new AuthorizedClient("123456", "CN=testca");
         assertTrue(workerSession.removeAuthorizedClient(3, authClient));
 
-        Collection<?> result = new ProcessableConfig(workerSession.getCurrentWorkerConfig(3)).getAuthorizedClients();
+        Collection<?> result = workerSession.getAuthorizedClients(3);
         assertTrue(result.size() == initialsize - 1);
 
         boolean exists = false;
@@ -280,6 +280,31 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
         final List<byte[]> certs = workerSession.getSignerCertificateChainBytes(getSignerIdDummy1());
         
         assertNull("Cert chain should be null", certs);
+    }
+    
+    
+    /**
+     * Test that getCurrentWorkerConfig doesn't include the internal authclients
+     * mapping.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void test12noAuthClientsInGetCurrentWorkerConfig() throws Exception {
+        try {
+            workerSession.addAuthorizedClient(getSignerIdDummy1(),
+               new AuthorizedClient("123456789", "CN=SomeUser"));
+            
+            final WorkerConfig config =
+                    workerSession.getCurrentWorkerConfig(getSignerIdDummy1());
+            final ProcessableConfig pc = new ProcessableConfig(config);
+            
+            assertTrue("Should not contain authclients",
+                    pc.getAuthorizedClients().isEmpty());
+        } finally {
+            workerSession.removeAuthorizedClient(getSignerIdDummy1(),
+               new AuthorizedClient("123456789", "CN=SomeUser"));
+        }
     }
 
     @Test

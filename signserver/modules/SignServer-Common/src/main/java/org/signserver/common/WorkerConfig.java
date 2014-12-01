@@ -103,6 +103,15 @@ public class WorkerConfig extends UpgradeableDataHashMap {
     public Properties getProperties() {
         return ((Properties) data.get(PROPERTIES));
     }
+    
+    /**
+     * Sets the worker's properties.
+     * 
+     * @param properties Properties object to set
+     */
+    public void setProperties(final Properties properties) {
+        data.put(PROPERTIES, properties);
+    }
 
     /**
      * Returns the specific property from the configuration

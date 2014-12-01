@@ -118,7 +118,8 @@ public interface IWorkerSession {
             InvalidWorkerIdException;
 
     /**
-     * Returns the current configuration of a worker.
+     * Returns the current configuration of a worker. Only the worker properties
+     * are included in the WorkerConfig instance returned.
      *
      * Observe that this config might not be active until a reload command
      * has been excecuted.

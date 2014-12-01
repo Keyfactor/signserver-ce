@@ -463,7 +463,13 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
      */
     @Override
     public WorkerConfig getCurrentWorkerConfig(int signerId) {
-        return getWorkerConfig(signerId);
+        final WorkerConfig config = new WorkerConfig();
+        final Properties workerProps =
+                getWorkerConfig(signerId).getProperties();
+        
+        config.setProperties(workerProps);
+        
+        return config;
     }
     
     @Override

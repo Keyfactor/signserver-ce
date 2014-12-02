@@ -58,7 +58,7 @@ public class RemoveAuthorizedClientCommand extends AbstractAdminCommand {
                 this.getOutputStream().println("  Error, the given client doesn't seem to exist\n");
             }
 
-            printAuthorizedClients(getWorkerSession().getCurrentWorkerConfig(signerid));
+            printAuthorizedClients(getWorkerSession().getAuthorizedClients(signerid));
 
             this.getOutputStream().println("\n\n");
             return 0;

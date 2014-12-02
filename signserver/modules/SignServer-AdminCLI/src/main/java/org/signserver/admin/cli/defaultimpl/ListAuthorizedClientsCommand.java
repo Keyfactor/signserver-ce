@@ -12,11 +12,11 @@
  *************************************************************************/
 package org.signserver.admin.cli.defaultimpl;
 
+import java.util.Collection;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.cli.spi.UnexpectedCommandFailureException;
-import org.signserver.common.ProcessableConfig;
-import org.signserver.common.WorkerConfig;
+import org.signserver.common.AuthorizedClient;
 
 /**
  * Gets the current configurations list of authorized clients
@@ -45,19 +45,20 @@ public class ListAuthorizedClientsCommand extends AbstractAdminCommand {
             int signerid = getWorkerId(args[0]);
             checkThatWorkerIsProcessable(signerid);
 
-            WorkerConfig config = getWorkerSession().getCurrentWorkerConfig(signerid);
-
+            final Collection<AuthorizedClient> authClients =
+                    getWorkerSession().getAuthorizedClients(signerid);
+            
             this.getOutputStream().println(
                     "OBSERVE that this command displays the current configuration which\n"
                     + "doesn't have to be the same as the active configuration.\n"
                     + "Configurations are activated with the reload command. \n\n"
                     + "The current list of authorized clients to " + signerid + " are :\n");
 
-            if (new ProcessableConfig(config).getAuthorizedClients().isEmpty()) {
+            if (authClients.isEmpty()) {
                 this.getOutputStream().println("  No authorized clients exists-\n");
             }
 
-            printAuthorizedClients(config);
+            printAuthorizedClients(authClients);
 
             this.getOutputStream().println("\n\n");
             return 0;

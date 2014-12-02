@@ -55,20 +55,7 @@ public class PropertiesDumper {
             }
         }
     }
-    
-    /**
-     * Extracts a worker's global and worker properties.
-     * @param workerId Id of worker to get the properties from
-     * @param gc the global configuration
-     * @param workerConfig the worker configuration
-     * @param outProps to write the properties to
-     * @throws CertificateEncodingException in case of certificate encoding errors
-     */
-    public static void dumpWorkerProperties(int workerId, GlobalConfiguration gc, WorkerConfig workerConfig, Properties outProps) throws CertificateEncodingException {
-        ProcessableConfig pConfig = new ProcessableConfig(workerConfig);
-        dumpWorkerProperties(workerId, gc.getConfig(), workerConfig.getProperties(), pConfig.getAuthorizedClients(), outProps);
-    }
-    
+
     /**
      * Extracts a worker's global and worker properties.
      * @param workerId Id of worker to get the properties from

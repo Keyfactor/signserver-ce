@@ -2,7 +2,8 @@
 # Disables NetBeans IDE projects to the pom.xml (Maven) files will be used instead.
 
 FILES=*
-for f in $FILES
+EEFILES=mod-enterprise/*
+for f in $FILES $EEFILES
 do
 	echo "Processing $f"
 	if [[ $f != *SignServer-Project* ]]

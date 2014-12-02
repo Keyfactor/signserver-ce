@@ -37,6 +37,7 @@ import org.bouncycastle.cert.jcajce.JcaX509CRLConverter;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.signserver.common.*;
+import org.signserver.common.util.PathUtil;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.server.cryptotokens.ICryptoToken;
@@ -95,10 +96,9 @@ public class PDFSignerUnitTest extends TestCase {
     
     private JcaX509CertificateConverter converter = new JcaX509CertificateConverter();
 
-    public PDFSignerUnitTest() {
+    public PDFSignerUnitTest() throws FileNotFoundException {
         SignServerUtil.installBCProvider();
-        File home = new File(System.getenv("SIGNSERVER_HOME"));
-        assertTrue("Environment variable SIGNSERVER_HOME", home.exists());
+        File home = PathUtil.getAppHome();
         sampleOk = new File(home, "res/test/ok.pdf");
         sampleRestricted = new File(home, "res/test/sample-restricted.pdf");
         sample = new File(home, "res/test/pdf/sample.pdf");

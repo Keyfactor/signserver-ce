@@ -16,6 +16,7 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.KeyPair;
@@ -64,6 +65,7 @@ import org.signserver.common.SODSignRequest;
 import org.signserver.common.SODSignResponse;
 import org.signserver.common.SignServerException;
 import org.signserver.common.SignServerUtil;
+import org.signserver.common.util.PathUtil;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.test.utils.builders.CryptoUtils;
@@ -116,9 +118,8 @@ public class P11SignTest extends ModulesTestCase {
     private final IWorkerSession workerSession = getWorkerSession();
     private final IGlobalConfigurationSession globalSession = getGlobalSession();
     
-    public P11SignTest() {
-        File home = new File(System.getenv("SIGNSERVER_HOME"));
-        assertTrue("Environment variable SIGNSERVER_HOME", home.exists());
+    public P11SignTest() throws FileNotFoundException {
+        final File home = PathUtil.getAppHome();
         pdfSampleFile = new File(home, "res/test/pdf/sample.pdf");
         odfSampleFile = new File(home, "res/signingtest/input/test.odt");
         ooxmlSampleFile = new File(home, "res/signingtest/input/test.docx");

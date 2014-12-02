@@ -40,6 +40,7 @@ import org.signserver.common.RequestContext;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.util.PathUtil;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.statusrepo.IStatusRepositorySession;
@@ -554,10 +555,7 @@ public class ModulesTestCase extends TestCase {
 
     protected File getSignServerHome() throws Exception {
         if (signServerHome == null) {
-            final String home = System.getenv("SIGNSERVER_HOME");
-            assertNotNull("SIGNSERVER_HOME", home);
-            signServerHome = new File(home);
-            assertTrue("SIGNSERVER_HOME exists", signServerHome.exists());
+            signServerHome = PathUtil.getAppHome();
         }
         return signServerHome;
     }

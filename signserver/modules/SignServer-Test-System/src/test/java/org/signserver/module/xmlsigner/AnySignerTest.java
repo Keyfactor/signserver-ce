@@ -32,6 +32,7 @@ import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestingSecurityManager;
 import org.junit.Before;
 import org.junit.Test;
+import org.signserver.common.util.PathUtil;
 import org.signserver.ejb.interfaces.IWorkerSession;
 
 /**
@@ -51,7 +52,7 @@ public class AnySignerTest extends ModulesTestCase {
     
     private static final int[] WORKERS = new int[] {5676, 5679, 5681, 5682, 5683, 5802, 5803};
 
-    private static String signserverhome;
+    private static File signserverhome;
 
     private static File keystoreFile;
 
@@ -60,8 +61,7 @@ public class AnySignerTest extends ModulesTestCase {
     @Before
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
-        signserverhome = System.getenv("SIGNSERVER_HOME");
-        assertNotNull("Please set SIGNSERVER_HOME environment variable", signserverhome);
+        signserverhome = PathUtil.getAppHome();
     }
 
     @After
@@ -74,7 +74,7 @@ public class AnySignerTest extends ModulesTestCase {
         setProperties(new File(signserverhome, "res/test/test-xmlsigner-configuration.properties"));
         workerSession.reloadConfiguration(WORKERID);
 
-        final File newKeystore = new File(signserverhome + File.separator + "tmp"
+        final File newKeystore = new File(signserverhome, "tmp"
                 + File.separator + "empty-testkeystore.p12");
         if (newKeystore.exists()) {
             assertTrue(newKeystore.delete());

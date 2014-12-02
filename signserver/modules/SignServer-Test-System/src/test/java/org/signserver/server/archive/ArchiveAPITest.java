@@ -33,6 +33,7 @@ import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestingSecurityManager;
 import org.junit.Before;
 import org.junit.Test;
+import org.signserver.common.util.PathUtil;
 import org.signserver.ejb.interfaces.IWorkerSession;
 
 /**
@@ -62,8 +63,7 @@ public class ArchiveAPITest extends ModulesTestCase {
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
         TestingSecurityManager.install();
-        String signserverhome = System.getenv("SIGNSERVER_HOME");
-        assertNotNull(signserverhome);
+        final File signserverhome = PathUtil.getAppHome();
         File tmp = new File(signserverhome, "tmp");
         archiver0File = new File(tmp, "archiver0.out");
         archiver1File = new File(tmp, "archiver1.out");

@@ -53,8 +53,6 @@ public class SoftCryptoTokenTest extends ModulesTestCase {
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER88.SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.SoftCryptoToken");
 
         workerSession.setWorkerProperty(88, "AUTHTYPE", "NOAUTH");
-        String signserverhome = System.getenv("SIGNSERVER_HOME");
-        assertNotNull(signserverhome);
         workerSession.setWorkerProperty(88, "KEYALG", "RSA");
         workerSession.setWorkerProperty(88, "KEYSPEC", "2048");
 

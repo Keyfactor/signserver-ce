@@ -44,6 +44,7 @@ import org.signserver.validationservice.common.ValidationServiceConstants;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
+import org.signserver.common.util.PathUtil;
 
 /**
  * Tests for the CRL Validator.
@@ -91,10 +92,7 @@ public class CRLValidatorTest {
         sSSession = ServiceLocator.getInstance().lookupRemote(
                 IWorkerSession.IRemote.class);
 
-        String envSignServerHome = System.getenv("SIGNSERVER_HOME");
-        assertNotNull("Environment variable SIGNSERVER_HOME must be set!", envSignServerHome);
-        signServerHome = new File(envSignServerHome);
-        assertTrue(signServerHome.exists());
+        signServerHome = PathUtil.getAppHome();
     }
 
     @Test

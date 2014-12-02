@@ -32,6 +32,7 @@ import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestingSecurityManager;
 import org.junit.Before;
 import org.junit.Test;
+import org.signserver.common.util.PathUtil;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class CustomAuthTest extends ModulesTestCase {
@@ -45,7 +46,7 @@ public class CustomAuthTest extends ModulesTestCase {
     @Before
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
-        signserverhome = System.getenv("SIGNSERVER_HOME");
+        signserverhome = PathUtil.getAppHome().getAbsolutePath();
         assertNotNull(signserverhome);
     }
 
@@ -64,7 +65,6 @@ public class CustomAuthTest extends ModulesTestCase {
 
         workerSession.setWorkerProperty(9, "AUTHTYPE", "org.signserver.server.DummyAuthorizer");
         workerSession.setWorkerProperty(9, "TESTAUTHPROP", "DATA");
-        assertNotNull(signserverhome);
         workerSession.setWorkerProperty(9, "KEYSTOREPATH", signserverhome + "/res/test/dss10/dss10_tssigner1.p12");
         workerSession.setWorkerProperty(9, "KEYSTOREPASSWORD", "foo123");
         workerSession.setWorkerProperty(9, TimeStampSigner.DEFAULTTSAPOLICYOID, "1.0.1.2.33");

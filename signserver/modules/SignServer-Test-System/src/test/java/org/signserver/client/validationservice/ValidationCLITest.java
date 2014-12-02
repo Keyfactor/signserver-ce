@@ -37,6 +37,7 @@ import org.signserver.testutils.TestingSecurityManager;
 import org.signserver.validationservice.server.ValidationTestUtils;
 import org.junit.Before;
 import org.junit.Test;
+import org.signserver.common.util.PathUtil;
 import org.signserver.testutils.ModulesTestCase;
 
 /**
@@ -67,8 +68,7 @@ public class ValidationCLITest extends ModulesTestCase {
                 IGlobalConfigurationSession.IRemote.class);
         sSSession = ServiceLocator.getInstance().lookupRemote(
                 IWorkerSession.IRemote.class);
-        signserverhome = System.getenv("SIGNSERVER_HOME");
-        assertNotNull("SIGNSERVER_HOME env variable", signserverhome);
+        signserverhome = PathUtil.getAppHome().getAbsolutePath();
     }
 
     @Test

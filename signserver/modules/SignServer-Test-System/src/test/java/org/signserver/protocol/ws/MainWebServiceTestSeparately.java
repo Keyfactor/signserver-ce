@@ -60,9 +60,9 @@ import org.signserver.validationservice.common.ValidateResponse;
 import org.signserver.validationservice.common.Validation;
 import org.signserver.validationservice.common.ValidationServiceConstants;
 import org.signserver.validationservice.server.ValidationTestUtils;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
+import org.signserver.common.util.PathUtil;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 
@@ -107,7 +107,7 @@ public class MainWebServiceTestSeparately extends ModulesTestCase {
         workerSession.setWorkerProperty(9, "AUTHTYPE", "org.signserver.server.DummyAuthorizer");
         workerSession.setWorkerProperty(9, "TESTAUTHPROP", "DATA");
         workerSession.setWorkerProperty(9, "NAME", "TestTimeStamp");
-        String signserverhome = System.getenv("SIGNSERVER_HOME");
+        final String signserverhome = PathUtil.getAppHome().getAbsolutePath();
         assertNotNull(signserverhome);
         workerSession.setWorkerProperty(9, "KEYSTOREPATH", signserverhome + "/src/test/timestamp1.p12");
         //sSSession.setWorkerProperty(9, "KEYSTOREPASSWORD", "foo123");

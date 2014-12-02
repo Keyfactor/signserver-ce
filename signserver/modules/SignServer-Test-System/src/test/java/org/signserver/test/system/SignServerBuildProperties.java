@@ -14,10 +14,12 @@ package org.signserver.test.system;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 import org.apache.log4j.Logger;
+import org.signserver.common.util.PathUtil;
 
 /**
  * Settings loaded from signserver_deploy.properties
@@ -51,10 +53,11 @@ public class SignServerBuildProperties {
         DEFAULT_PROPERTIES.put(DATASOURCE_JNDINAME, "SignServerDS");
     }
 
-    private SignServerBuildProperties() {
+    private SignServerBuildProperties() throws FileNotFoundException {
         // Load built-in compile-time properties
-        File confFile1 = new File(System.getenv("SIGNSERVER_HOME"), "signserver_deploy.properties");
-        File confFile2 = new File(System.getenv("SIGNSERVER_HOME"), "signserver_deploy.properties");
+        final File home = PathUtil.getAppHome();
+        File confFile1 = new File(home, "conf/signserver_deploy.properties");
+        File confFile2 = new File(home, "signserver_deploy.properties");
         InputStream in = null;
         try {
             if (confFile1.exists()) {
@@ -77,7 +80,7 @@ public class SignServerBuildProperties {
         }
     }
 
-    public static SignServerBuildProperties getInstance() {
+    public static SignServerBuildProperties getInstance() throws FileNotFoundException {
         if (instance == null) {
             instance = new SignServerBuildProperties();
         }

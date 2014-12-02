@@ -47,6 +47,7 @@ import org.bouncycastle.asn1.DERPrintableString;
 import org.bouncycastle.asn1.DERUTF8String;
 import org.signserver.client.cli.defaultimpl.AliasKeyManager;
 import static org.junit.Assert.*;
+import org.signserver.common.util.PathUtil;
 
 /**
  * Class containing utility methods used to simplify testing.
@@ -145,8 +146,8 @@ public class TestUtils {
         return buildConfig;
     }
     
-    public File getTruststoreFile() {
-        return new File(System.getenv("SIGNSERVER_HOME"), "p12/truststore.jks");
+    public File getTruststoreFile() throws FileNotFoundException {
+        return new File(PathUtil.getAppHome(), "p12/truststore.jks");
     }
      
     public String getTrustStorePassword() {

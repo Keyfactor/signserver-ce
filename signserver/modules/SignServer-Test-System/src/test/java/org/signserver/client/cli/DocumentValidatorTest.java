@@ -30,6 +30,7 @@ import org.signserver.testutils.TestingSecurityManager;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
+import org.signserver.common.util.PathUtil;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 
@@ -51,7 +52,7 @@ public class DocumentValidatorTest extends ModulesTestCase {
 
     private static final String VALIDATION_WORKER = "TestValidationWorker";
 
-    private static String signserverhome;
+    private static File signserverhome;
 
     private final IWorkerSession workerSession = getWorkerSession();
     private final IGlobalConfigurationSession globalSession = getGlobalSession();
@@ -60,8 +61,7 @@ public class DocumentValidatorTest extends ModulesTestCase {
     protected void setUp() throws Exception {
         SignServerUtil.installBCProvider();
         TestingSecurityManager.install();
-        signserverhome = System.getenv("SIGNSERVER_HOME");
-        assertNotNull("Please set SIGNSERVER_HOME environment variable", signserverhome);
+        signserverhome = PathUtil.getAppHome();
     }
 
     @After
@@ -123,13 +123,13 @@ public class DocumentValidatorTest extends ModulesTestCase {
                                     "-workername", "TestXMLValidator",
                                     "-data", XMLValidatorTestData.TESTXML1,
                                     "-host", getHTTPHost(), "-port", String.valueOf(getPublicHTTPSPort()),
-                                    "-truststore", new File(new File(signserverhome), "p12/truststore.jks").getAbsolutePath(),
+                                    "-truststore", new File(signserverhome, "p12/truststore.jks").getAbsolutePath(),
                                     "-truststorepwd", getTruststorePassword()) :
                             execute("validatedocument",
                                     "-workername", "TestXMLValidator",
                                     "-data", XMLValidatorTestData.TESTXML1,
                                     "-host", getHTTPHost(), "-port", String.valueOf(getPublicHTTPSPort()),
-                                    "-truststore", new File(new File(signserverhome), "p12/truststore.jks").getAbsolutePath(),
+                                    "-truststore", new File(signserverhome, "p12/truststore.jks").getAbsolutePath(),
                                     "-truststorepwd", getTruststorePassword(),
                                     "-protocol", protocol));
                     
@@ -160,7 +160,7 @@ public class DocumentValidatorTest extends ModulesTestCase {
             final List<String> argList = new LinkedList<String>(Arrays.asList("validatedocument", "-workername",
                                             "TestXMLValidator", "-infile", doc.getAbsolutePath(),
                                             "-host", getHTTPHost(), "-port", String.valueOf(getPublicHTTPSPort()),
-                                            "-truststore", new File(new File(signserverhome), "p12/truststore.jks").getAbsolutePath(),
+                                            "-truststore", new File(signserverhome, "p12/truststore.jks").getAbsolutePath(),
                                             "-truststorepwd", getTruststorePassword()));
             
             if (protocol != null) {

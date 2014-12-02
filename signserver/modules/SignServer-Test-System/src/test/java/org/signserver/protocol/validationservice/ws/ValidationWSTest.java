@@ -91,8 +91,6 @@ public class ValidationWSTest extends ModulesTestCase {
         sSSession.setWorkerProperty(16, "VAL1.CLASSPATH", "org.signserver.validationservice.server.DummyValidator");
         sSSession.setWorkerProperty(16, "VAL1.TESTPROP", "TEST");
         sSSession.setWorkerProperty(16, "VAL1.ISSUER1.CERTCHAIN", ValidationTestUtils.genPEMStringFromChain(validChain1));
-        String signserverhome = System.getenv("SIGNSERVER_HOME");
-        assertNotNull(signserverhome);
 
         sSSession.reloadConfiguration(16);
     }

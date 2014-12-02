@@ -26,6 +26,7 @@ import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestingSecurityManager;
 import org.junit.Test;
+import org.signserver.common.util.PathUtil;
 
 /**
  * Tests for the signdocument command of Client CLI.
@@ -52,7 +53,7 @@ public class DocumentSignerTest extends ModulesTestCase {
 
     private static final int[] WORKERS = new int[] {5676, 5679, 5681, 5682, 5683, 5802, 5803, 6676};
 
-    private static String signserverhome;
+    private static File signserverhome;
     
     private final IWorkerSession workerSession = getWorkerSession();
     
@@ -60,9 +61,7 @@ public class DocumentSignerTest extends ModulesTestCase {
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
         TestingSecurityManager.install();
-        signserverhome = System.getenv("SIGNSERVER_HOME");
-        LOG.info("HOME:"+signserverhome);
-        assertNotNull("Please set SIGNSERVER_HOME environment variable", signserverhome);
+        signserverhome = PathUtil.getAppHome();
         setupSSLKeystores();
     }
 

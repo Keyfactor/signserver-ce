@@ -344,3 +344,45 @@ j2ee.web-nohttps=true
 #   CHANGES:        Only updates where the value is changed are logged.
 #   NONE:           No updates are logged.
 #statusrepository.log=ALL
+
+# ------------- PKCS11 library definitions -------------------------------------
+#
+# PKCS11 library definitions, each library is defined by a "friendly" name (the one
+# used for the SHAREDLIBRARYNAME property of a crypto worker) and a libray path.
+# Only library paths that actually exists on the file system is added to the list.
+# The valid indexes is from 0 to 255.
+# For security reasons it is possible to disable the built-in defintions by commenting out
+# the entries below and setting the file parameter to the empty string.
+
+#cryptotoken.p11.lib.0.name=SoftHSM
+#cryptotoken.p11.lib.0.file=/usr/lib/softhsm/libsofthsm.so
+#cryptotoken.p11.lib.10.name=SafeNet ProtectServer Gold Emulator
+#cryptotoken.p11.lib.10.file=/opt/ETcpsdk/lib/linux-x86_64/libctsw.so
+#cryptotoken.p11.lib.11.name=SafeNet ProtectServer Gold
+#cryptotoken.p11.lib.11.file=/opt/ETcpsdk/lib/linux-x86_64/libcryptoki.so
+#cryptotoken.p11.lib.20.name=SafeNet Luna SA
+#cryptotoken.p11.lib.20.file=/usr/lunasa/lib/libCryptoki2_64.so
+#cryptotoken.p11.lib.21.name=SafeNet Luna PCI
+#cryptotoken.p11.lib.21.file=/usr/lunapci/lib/libCryptoki2_64.so
+#cryptotoken.p11.lib.22.name=SafeNet Luna PCI
+#cryptotoken.p11.lib.22.file=/Program Files/LunaPCI/cryptoki.dll
+#cryptotoken.p11.lib.30.name=Utimaco
+#cryptotoken.p11.lib.30.file=/opt/utimaco/p11/libcs2_pkcs11.so
+#cryptotoken.p11.lib.31.name=Utimaco
+#cryptotoken.p11.lib.31.file=/opt/Utimaco/Software/PKCS11/lib/Linux-x86-64/libcs2_pkcs11.so
+#cryptotoken.p11.lib.32.name=Utimaco
+#cryptotoken.p11.lib.32.file=/etc/utimaco/libcs2_pkcs11.so
+#cryptotoken.p11.lib.33.name=Utimaco
+#cryptotoken.p11.lib.33.file=C:/Program Files/Utimaco/SafeGuard CryptoServer/Lib/cs2_pkcs11.dll
+#cryptotoken.p11.lib.40.name=nCipher
+#cryptotoken.p11.lib.40.file=/opt/nfast/toolkits/pkcs11/libcknfast.so
+#cryptotoken.p11.lib.50.name=ARX CoSign
+#cryptotoken.p11.lib.50.file=C:/windows/system32/sadaptor.dll
+#cryptotoken.p11.lib.60.name=OpenSC
+#cryptotoken.p11.lib.60.file=/usr/lib/x86_64-linux-gnu/opensc-pkcs11.so
+#cryptotoken.p11.lib.61.name=OpenSC
+#cryptotoken.p11.lib.61.file=/usr/lib/i386-linux-gnu/opensc-pkcs11.so
+#cryptotoken.p11.lib.62.name=OpenSC
+#cryptotoken.p11.lib.62.file=/usr/local/lib/opensc-pkcs11.so
+#cryptotoken.p11.lib.63.name=OpenSC
+#cryptotoken.p11.lib.63.file=C:/Windows/system32/opensc-pkcs11.dll

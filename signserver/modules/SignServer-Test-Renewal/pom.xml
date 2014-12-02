@@ -11,6 +11,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <dist.jar>${project.build.finalName}-tests.jar</dist.jar>
+        <skipTests>true</skipTests>
     </properties>
     <dependencies>
         <dependency>
@@ -62,7 +63,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.16</version>
                 <configuration>
-                    <skipTests>true</skipTests>
+                    <skipTests>${skipTests}</skipTests>
                 </configuration>
             </plugin>
             <plugin>

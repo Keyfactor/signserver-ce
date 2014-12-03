@@ -38,7 +38,9 @@ import org.signserver.test.utils.builders.CryptoUtils;
 import org.signserver.testutils.ModulesTestCase;
 
 /**
- *
+ * Abstract base class containing utility methods for the keystore crypto token
+ * tests.
+ * 
  * @author Marcus Lundblad
  * @version $Id$
  */

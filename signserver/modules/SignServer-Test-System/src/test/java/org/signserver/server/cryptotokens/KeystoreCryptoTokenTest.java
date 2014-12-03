@@ -19,36 +19,22 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import javax.security.auth.x500.X500Principal;
 import static junit.framework.TestCase.assertEquals;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
-import org.bouncycastle.asn1.x500.X500Name;
-import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
-import org.bouncycastle.pkcs.PKCS10CertificationRequest;
-import org.bouncycastle.util.encoders.Base64;
-import org.signserver.common.Base64SignerCertReqData;
 import org.signserver.common.GlobalConfiguration;
-import org.signserver.common.KeyTestResult;
-import org.signserver.common.PKCS10CertReqInfo;
 import org.signserver.common.SignServerUtil;
-import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
-import org.signserver.ejb.interfaces.IWorkerSession;
-import org.signserver.test.utils.builders.CryptoUtils;
-import org.signserver.testutils.ModulesTestCase;
 
 /**
  * System tests for the KeystoreCryptoToken.
@@ -56,7 +42,7 @@ import org.signserver.testutils.ModulesTestCase;
  * @author Markus Kilås
  * @version $Id$
  */
-public class KeystoreCryptoTokenTest extends ModulesTestCase {
+public class KeystoreCryptoTokenTest extends KeystoreCryptoTokenTestBase {
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(KeystoreCryptoTokenTest.class);
     
@@ -66,13 +52,9 @@ public class KeystoreCryptoTokenTest extends ModulesTestCase {
     private static final String SIGN_KEY_ALIAS = "p12signkey1234";
     private static final String TEST_KEY_ALIAS = "p12testkey1234";
     private static final String KEYSTORE_NAME = "p12testkeystore1234";
-    private static final String pin = "foo123";
     
     private File keystoreFile;
-    
-    private final IWorkerSession workerSession = getWorkerSession();
-    private final IGlobalConfigurationSession globalSession = getGlobalSession();
-    
+ 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -184,38 +166,6 @@ public class KeystoreCryptoTokenTest extends ModulesTestCase {
             removeWorker(workerId);
             removeWorker(tokenId);
         }
-    }
-
-    private void cmsSigner(final int workerId) throws Exception {
-        // Generate CSR
-        PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + workerId, null);
-        Base64SignerCertReqData reqData = (Base64SignerCertReqData) getWorkerSession().getCertificateRequest(workerId, certReqInfo, false);
-
-        // Issue certificate
-        PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
-        KeyPair issuerKeyPair = CryptoUtils.generateRSA(512);
-        X509CertificateHolder cert = new X509v3CertificateBuilder(new X500Name("CN=TestP11 Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
-
-        // Install certificate and chain
-        workerSession.uploadSignerCertificate(workerId, cert.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
-        workerSession.uploadSignerCertificateChain(workerId, Arrays.asList(cert.getEncoded()), GlobalConfiguration.SCOPE_GLOBAL);
-        workerSession.reloadConfiguration(workerId);
-
-        // Test active
-        List<String> errors = workerSession.getStatus(workerId).getFatalErrors();
-        assertEquals("errors: " + errors, 0, errors.size());
-
-        // Test signing
-        signGenericDocument(workerId, "Sample data".getBytes());
-    }
-    
-    private Set<String> getKeyAliases(final int workerId) throws Exception {
-        Collection<KeyTestResult> testResults = workerSession.testKey(workerId, "all", pin.toCharArray());
-        final HashSet<String> results = new HashSet<String>();
-        for (KeyTestResult testResult : testResults) {
-            results.add(testResult.getAlias());
-        }
-        return results;
     }
     
     public void testGenerateKey() throws Exception {

@@ -576,6 +576,24 @@ public interface IWorkerSession {
                 final ISignerCertReqInfo certReqInfo,
                 final boolean explicitEccParameters) throws
                 CryptoTokenOfflineException, InvalidWorkerIdException;
+        
+        /**
+         * Get keystore data, used by the KeystoreInConfigCryptoToken.
+         * 
+         * @param adminInfo Administrator info
+         * @param signerId ID of the signer
+         * @return Keystore data
+         */
+        byte[] getKeystoreData(final AdminInfo adminInfo, final int signerId);
+        
+        /**
+         * Set keystore data, used by the KeystoreInConfigCryptoToken
+         * @param adminInfo Administator info
+         * @param signerId ID of the signer
+         * @param keystoreData Keystore data to set
+         */
+        void setKeystoreData(final AdminInfo adminInfo, final int signerId,
+                final byte[] keystoreData);
             
         /**
          * Method used to upload a certificate to a signers active configuration.

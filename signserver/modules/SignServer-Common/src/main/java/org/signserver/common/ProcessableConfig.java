@@ -25,8 +25,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import org.apache.log4j.Logger;
+import org.bouncycastle.util.encoders.Base64;
 import org.ejbca.util.CertTools;
 import static org.signserver.common.util.PropertiesConstants.AUTHORIZED_CLIENTS;
+import static org.signserver.common.util.PropertiesConstants.KEYSTORE_DATA;
 import static org.signserver.common.util.PropertiesConstants.SIGNERCERT;
 import static org.signserver.common.util.PropertiesConstants.SIGNERCERTCHAIN;
 
@@ -258,5 +260,30 @@ public class ProcessableConfig {
 
     public WorkerConfig getWorkerConfig() {
         return workerConfig;
+    }
+    
+    /**
+     * Get the keystore data used by the KeystoreInConfigCryptoToken.
+     * 
+     * @return Keystore data in PKCS#12 format
+     */
+    public byte[] getKeystoreData() {
+        final String keystoreDataString =
+                (String) workerConfig.getData().get(KEYSTORE_DATA);
+        
+        if (keystoreDataString != null) {
+            return Base64.decode(keystoreDataString);
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Set the keystore data used by the KeystoreInConfigCryptoToken.
+     * 
+     * @param keystoreData 
+     */
+    public void setKeystoreData(final byte[] keystoreData) {
+        workerConfig.getData().put(KEYSTORE_DATA, new String(Base64.encode(keystoreData)));
     }
 }

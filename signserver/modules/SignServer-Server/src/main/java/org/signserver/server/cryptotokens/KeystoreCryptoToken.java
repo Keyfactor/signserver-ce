@@ -19,6 +19,7 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.*;
+import javax.naming.NamingException;
 import javax.security.auth.x500.X500Principal;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
@@ -30,6 +31,8 @@ import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.ejbca.util.keystore.KeyTools;
 import org.signserver.common.*;
+import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.server.log.AdminInfo;
 
 /**
  * Class that uses a PKCS12 or JKS file on the file system for signing.
@@ -61,6 +64,7 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2 {
 
     public static final String TYPE_PKCS12 = "PKCS12";
     public static final String TYPE_JKS = "JKS";
+    public static final String TYPE_INTERNAL = "INTERNAL";
 
     private static final String SUBJECT_DUMMY = "L=_SignServer_DUMMY_CERT_";
 
@@ -76,10 +80,13 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2 {
 
     private char[] authenticationCode;
 
-
+    private IWorkerSession.ILocal workerSession;
+    private int workerId;
+    
     @Override
     public void init(int workerId, Properties properties) throws CryptoTokenInitializationFailureException {
         this.properties = properties;
+        this.workerId = workerId;
         keystorepath = properties.getProperty(KEYSTOREPATH);
         keystorepassword = properties.getProperty(KEYSTOREPASSWORD);
         keystoretype = properties.getProperty(KEYSTORETYPE);
@@ -90,18 +97,21 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2 {
         }
 
         if (!TYPE_PKCS12.equals(keystoretype) &&
-            !TYPE_JKS.equals(keystoretype)) {
-            throw new CryptoTokenInitializationFailureException("KEYSTORETYPE should be either PKCS12 or JKS");
+            !TYPE_JKS.equals(keystoretype) &&
+            !TYPE_INTERNAL.equals(keystoretype)) {
+            throw new CryptoTokenInitializationFailureException("KEYSTORETYPE should be either PKCS12, JKS, or INTERNAL");
         }
 
         // check keystore file
-        if (keystorepath == null) {
-            throw new CryptoTokenInitializationFailureException("Missing KEYSTOREPATH property");
-        } else {
-            final File keystoreFile = new File(keystorepath);
+        if (TYPE_PKCS12.equals(keystoretype) || TYPE_JKS.equals(keystoretype)) {
+            if (keystorepath == null) {
+                throw new CryptoTokenInitializationFailureException("Missing KEYSTOREPATH property");
+            } else {
+                final File keystoreFile = new File(keystorepath);
 
-            if (!keystoreFile.isFile()) {
-                throw new CryptoTokenInitializationFailureException("File not found: " + keystorepath);
+                if (!keystoreFile.isFile()) {
+                    throw new CryptoTokenInitializationFailureException("File not found: " + keystorepath);
+                }
             }
         }
     }
@@ -421,8 +431,23 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2 {
             LOG.debug("Creating certificate with entry "+alias+'.');
 
             keystore.setKeyEntry(alias, keyPair.getPrivate(), authCode, chain);
-            keystore.store(new FileOutputStream(new File(keystorepath)),
-                    authenticationCode);
+            
+            final OutputStream os;
+            
+            if (TYPE_INTERNAL.equalsIgnoreCase(keystoretype)) {
+                os = new ByteArrayOutputStream();
+            } else {
+                os = new FileOutputStream(new File(keystorepath));
+            }
+            
+            keystore.store(os, authenticationCode);
+            
+            if (TYPE_INTERNAL.equalsIgnoreCase(keystoretype)) {
+                final ByteArrayOutputStream baos = (ByteArrayOutputStream) os;
+                
+                getWorkerSession().setKeystoreData(new AdminInfo("Internal", null, null),
+                        workerId, baos.toByteArray());
+            }
 
             final KeyEntry entry = new KeyEntry((PrivateKey) keyPair.getPrivate(), 
                                 chain[0], Arrays.asList(chain));
@@ -475,25 +500,41 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2 {
         return new JcaX509CertificateConverter().getCertificate(cg.build(contentSigner));
     }
 
-    private static KeyStore getKeystore(final String type, final String path,
+    private KeyStore getKeystore(final String type, final String path,
             final char[] authCode) throws
             KeyStoreException, CertificateException, NoSuchProviderException,
             NoSuchAlgorithmException, FileNotFoundException, IOException {
         final KeyStore result;
-        if (TYPE_PKCS12.equalsIgnoreCase(type)) {
+        if (TYPE_PKCS12.equalsIgnoreCase(type) ||
+            TYPE_INTERNAL.equalsIgnoreCase(type)) {
             result = KeyStore.getInstance("PKCS12", "BC");
         } else {
             result = KeyStore.getInstance("JKS");
         }
 
-        if (path == null) {
-            throw new FileNotFoundException("Missing property "
-                    + KeystoreCryptoToken.KEYSTOREPATH + ".");
-        }
         InputStream in = null;
+        
         try {
-            in = new FileInputStream(path);
+            if (!TYPE_INTERNAL.equalsIgnoreCase(type)) {
+                if (path == null) {
+                    throw new FileNotFoundException("Missing property "
+                            + KeystoreCryptoToken.KEYSTOREPATH + ".");
+                }
+            
+                in = new FileInputStream(path);
+            } else {
+                // load data from internal worker data...
+                final byte[] keystoreData =
+                        getWorkerSession().getKeystoreData(new AdminInfo("Internal", null, null),
+                                        this.workerId);
+                if (keystoreData != null) {
+                    in = new ByteArrayInputStream(keystoreData);
+                }
+            }
+
             result.load(in, authCode);
+        } catch (NamingException e) {
+            throw new KeyStoreException("Failed to get worker session: " + e.getMessage());
         } finally {
             if (in != null) {
                 try {
@@ -513,8 +554,24 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2 {
         if (result) {
             OutputStream out = null;
             try {
-                out = new FileOutputStream(new File(keystorepath));
+                if (!TYPE_INTERNAL.equalsIgnoreCase(keystoretype)) {
+                    out = new FileOutputStream(new File(keystorepath));
+                } else {
+                    // use internal worker data
+                    out = new ByteArrayOutputStream();
+                }
                 keyStore.store(out, authenticationCode);
+                
+                if (TYPE_INTERNAL.equalsIgnoreCase(keystoretype)) {
+                    final byte[] data = ((ByteArrayOutputStream) out).toByteArray();
+                    
+                    getWorkerSession().setKeystoreData(new AdminInfo("Internal", null, null), 
+                                                       this.workerId, data);
+                }
+            } catch (NamingException ex) {
+                LOG.error("Unable to lookup worker session: " + ex.getMessage(),
+                          ex);
+                throw new SignServerException("Unable to persist key removal");
             } catch (IOException ex) {
                 LOG.error("Unable to persist new keystore after key removal: " + ex.getMessage(), ex);
                 throw new SignServerException("Unable to persist key removal");
@@ -554,6 +611,14 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2 {
             }
             throw new CryptoTokenOfflineException(ex.getMessage(), ex);
         }
+    }
+    
+    protected IWorkerSession.ILocal getWorkerSession() throws NamingException {
+        if (workerSession == null) {
+            workerSession = ServiceLocator.getInstance().lookupLocal(
+                    IWorkerSession.ILocal.class);
+        }
+        return workerSession;
     }
 
     private static class KeyEntry {

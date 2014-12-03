@@ -408,6 +408,16 @@ public class WorkerSessionMock implements IWorkerSession.ILocal,
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
+    public byte[] getKeystoreData(AdminInfo adminInfo, int signerId) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setKeystoreData(AdminInfo adminInfo, int signerId, byte[] keystoreData) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 
 
     private static class Worker {

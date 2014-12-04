@@ -51,6 +51,10 @@ public abstract class KeystoreCryptoTokenTestBase extends ModulesTestCase {
     protected static final String pin = "foo123";
 
     protected void cmsSigner(final int workerId) throws Exception {
+        cmsSigner(workerId, true);
+    }
+    
+    protected void cmsSigner(final int workerId, final boolean expectActive) throws Exception {
         // Generate CSR
         PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + workerId, null);
         Base64SignerCertReqData reqData = (Base64SignerCertReqData) getWorkerSession().getCertificateRequest(workerId, certReqInfo, false);
@@ -65,10 +69,12 @@ public abstract class KeystoreCryptoTokenTestBase extends ModulesTestCase {
         workerSession.uploadSignerCertificateChain(workerId, Arrays.asList(cert.getEncoded()), GlobalConfiguration.SCOPE_GLOBAL);
         workerSession.reloadConfiguration(workerId);
 
-        // Test active
-        List<String> errors = workerSession.getStatus(workerId).getFatalErrors();
-        assertEquals("errors: " + errors, 0, errors.size());
-
+        if (expectActive) {
+            // Test active
+            List<String> errors = workerSession.getStatus(workerId).getFatalErrors();
+            assertEquals("errors: " + errors, 0, errors.size());
+        }
+            
         // Test signing
         signGenericDocument(workerId, "Sample data".getBytes());
     }

@@ -270,8 +270,8 @@ public class KeystoreInConfigCryptoTokenTest extends KeystoreCryptoTokenTestBase
 
         try {
             setCMSSignerPropertiesSeparateToken(workerId, tokenId, true);
-            workerSession.reloadConfiguration(workerId);
             workerSession.reloadConfiguration(tokenId);
+            workerSession.reloadConfiguration(workerId);
             workerSession.generateSignerKey(tokenId, "RSA", "1024", SIGN_KEY_ALIAS, pin.toCharArray());
             workerSession.reloadConfiguration(tokenId);
 

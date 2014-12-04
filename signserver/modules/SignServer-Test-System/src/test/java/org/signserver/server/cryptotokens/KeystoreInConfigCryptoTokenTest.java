@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import org.apache.log4j.Logger;
+import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.KeyTestResult;
 import org.signserver.common.SignServerUtil;
@@ -79,8 +80,9 @@ public class KeystoreInConfigCryptoTokenTest extends KeystoreCryptoTokenTestBase
 
         try {
             setCMSSignerPropertiesSeparateToken(workerId, tokenId, true);
-            workerSession.reloadConfiguration(workerId);
+
             workerSession.reloadConfiguration(tokenId);
+            workerSession.reloadConfiguration(workerId);
             workerSession.generateSignerKey(tokenId, "RSA", "1024", SIGN_KEY_ALIAS, pin.toCharArray());
             workerSession.reloadConfiguration(tokenId);
 
@@ -104,8 +106,10 @@ public class KeystoreInConfigCryptoTokenTest extends KeystoreCryptoTokenTestBase
         
         try {
             setCMSSignerPropertiesSeparateToken(workerId, tokenId, true);
-            workerSession.reloadConfiguration(workerId);
+            
             workerSession.reloadConfiguration(tokenId);
+            workerSession.reloadConfiguration(workerId);
+            
 
             // Add a reference key
             workerSession.generateSignerKey(workerId, "RSA", "1024", "somekey123", pin.toCharArray());
@@ -246,6 +250,44 @@ public class KeystoreInConfigCryptoTokenTest extends KeystoreCryptoTokenTestBase
             result = testResult.iterator().next();
             assertTrue("Success testing key", result.isSuccess());
             assertEquals("Testing correct alias", "anotherkey", result.getAlias());
+            
+        } finally {
+            removeWorker(workerId);
+            removeWorker(tokenId);
+        }
+    }
+    
+    /**
+     * Test generating a key in a token, signing and then removing the key and
+     * failing signing an additional time.
+     * 
+     * @throws Exception 
+     */
+    public void testSigningAndRemovingKey() throws Exception {
+        LOG.info("testSigning");
+        final int workerId = WORKER_CMS;
+        final int tokenId = CRYPTO_TOKEN;
+
+        try {
+            setCMSSignerPropertiesSeparateToken(workerId, tokenId, true);
+            workerSession.reloadConfiguration(workerId);
+            workerSession.reloadConfiguration(tokenId);
+            workerSession.generateSignerKey(tokenId, "RSA", "1024", SIGN_KEY_ALIAS, pin.toCharArray());
+            workerSession.reloadConfiguration(tokenId);
+
+            cmsSigner(workerId);
+            
+            workerSession.removeKey(tokenId, SIGN_KEY_ALIAS);
+            workerSession.reloadConfiguration(tokenId);
+            
+            try {
+                cmsSigner(workerId, false);
+            } catch (CryptoTokenOfflineException expected) {
+                // expected
+            } catch (Exception e) {
+                fail("Unexpected exception: " + e.getClass().getName() + ": " + e.getMessage());
+            }
+            
             
         } finally {
             removeWorker(workerId);

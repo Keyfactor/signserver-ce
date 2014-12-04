@@ -89,6 +89,11 @@ public class KeystoreInConfigCryptoTokenTest extends KeystoreCryptoTokenTestBase
         }
     }
     
+    /**
+     * Test generating an additional key.
+     * 
+     * @throws Exception 
+     */
     public void testGenerateKey() throws Exception {
         LOG.info("testGenerateKey");
         
@@ -132,7 +137,54 @@ public class KeystoreInConfigCryptoTokenTest extends KeystoreCryptoTokenTestBase
             removeWorker(workerId);
             removeWorker(tokenId);
         }
-        
     }
+    
+    /**
+     * Test removing a key.
+     * 
+     * @throws Exception 
+     */
+    public void testRemoveKey() throws Exception {
+        LOG.info("testRemoveKey_separateToken");
 
+        final int workerId = WORKER_CMS;
+        final int tokenId = CRYPTO_TOKEN;
+        try {
+            setCMSSignerPropertiesSeparateToken(workerId, tokenId, true);
+            workerSession.reloadConfiguration(tokenId);
+            workerSession.reloadConfiguration(workerId);
+
+            // Add a reference key
+            workerSession.generateSignerKey(tokenId, "RSA", "1024", "somekey123", pin.toCharArray());
+
+            // Check available aliases
+            Set<String> aliases1 = getKeyAliases(tokenId);
+
+            if (aliases1.isEmpty()) {
+                throw new Exception("getKeyAliases is not working or the slot is empty");
+            }
+
+            if (!aliases1.contains(TEST_KEY_ALIAS)) {
+                // Generate a testkey
+                workerSession.generateSignerKey(tokenId, "RSA", "1024", TEST_KEY_ALIAS, pin.toCharArray());
+                aliases1 = getKeyAliases(tokenId);
+            }
+            if (!aliases1.contains(TEST_KEY_ALIAS)) {
+                throw new Exception("Pre-condition failed: Key with alias " + TEST_KEY_ALIAS + " did not exist and it could not be created");
+            }
+            workerSession.reloadConfiguration(tokenId);
+
+            // Remove the key
+            workerSession.removeKey(tokenId, TEST_KEY_ALIAS);
+
+            // Now expect the TEST_KEY_ALIAS to have been removed
+            Set<String> aliases2 = getKeyAliases(tokenId);
+            Set<String> expected = new HashSet<String>(aliases1);
+            expected.remove(TEST_KEY_ALIAS);
+            assertEquals("new key removed", expected, aliases2);
+        } finally {
+            removeWorker(workerId);
+            removeWorker(tokenId);
+        }
+    }
 }

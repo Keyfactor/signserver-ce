@@ -12,6 +12,8 @@
  *************************************************************************/
 package org.signserver.server.cryptotokens;
 
+import java.util.HashSet;
+import java.util.Set;
 import org.apache.log4j.Logger;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.SignServerUtil;
@@ -72,6 +74,7 @@ public class KeystoreInConfigCryptoTokenTest extends KeystoreCryptoTokenTestBase
         LOG.info("testSigning");
         final int workerId = WORKER_CMS;
         final int tokenId = CRYPTO_TOKEN;
+
         try {
             setCMSSignerPropertiesSeparateToken(workerId, tokenId, true);
             workerSession.reloadConfiguration(workerId);
@@ -82,7 +85,54 @@ public class KeystoreInConfigCryptoTokenTest extends KeystoreCryptoTokenTestBase
             cmsSigner(workerId);
         } finally {
             removeWorker(workerId);
+            removeWorker(tokenId);
         }
+    }
+    
+    public void testGenerateKey() throws Exception {
+        LOG.info("testGenerateKey");
+        
+        final int workerId = WORKER_CMS;
+        final int tokenId = CRYPTO_TOKEN;
+        
+        try {
+            setCMSSignerPropertiesSeparateToken(workerId, tokenId, true);
+            workerSession.reloadConfiguration(workerId);
+            workerSession.reloadConfiguration(tokenId);
+
+            // Add a reference key
+            workerSession.generateSignerKey(workerId, "RSA", "1024", "somekey123", pin.toCharArray());
+            
+            // Check available aliases
+            Set<String> aliases1 = getKeyAliases(workerId);
+            
+            if (aliases1.isEmpty()) {
+                throw new Exception("getKeyAliases is not working or the slot is empty");
+            }
+            
+            // If the key already exists, try to remove it first
+            if (aliases1.contains(TEST_KEY_ALIAS)) {
+                workerSession.removeKey(workerId, TEST_KEY_ALIAS);
+                aliases1 = getKeyAliases(workerId);
+            }
+            if (aliases1.contains(TEST_KEY_ALIAS)) {
+                throw new Exception("Pre-condition failed: Key with alias " + TEST_KEY_ALIAS + " already exists and removing it failed");
+            }
+
+            // Generate a testkey
+            workerSession.generateSignerKey(workerId, "RSA", "1024", TEST_KEY_ALIAS, pin.toCharArray());
+            
+            // Now expect the new TEST_KEY_ALIAS
+            Set<String> expected = new HashSet<String>(aliases1);
+            expected.add(TEST_KEY_ALIAS);
+            Set<String> aliases2 = getKeyAliases(workerId);
+            assertEquals("new key added", expected, aliases2);
+            
+        } finally {
+            removeWorker(workerId);
+            removeWorker(tokenId);
+        }
+        
     }
 
 }

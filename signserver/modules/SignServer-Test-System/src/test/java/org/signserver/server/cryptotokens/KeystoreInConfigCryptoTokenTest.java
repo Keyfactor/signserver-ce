@@ -280,7 +280,7 @@ public class KeystoreInConfigCryptoTokenTest extends KeystoreCryptoTokenTestBase
             
             try {
                 cmsSigner(workerId, false);
-            } catch (CryptoTokenOfflineException expected) {
+            } catch (CryptoTokenOfflineException expected) { //NOPMD
                 // expected
             } catch (Exception e) {
                 fail("Unexpected exception: " + e.getClass().getName() + ": " + e.getMessage());

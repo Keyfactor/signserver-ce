@@ -16,7 +16,6 @@ package org.signserver.server.cryptotokens;
 import java.util.Properties;
 import org.signserver.common.CryptoTokenInitializationFailureException;
 import static org.signserver.server.cryptotokens.KeystoreCryptoToken.KEYSTORETYPE;
-import static org.signserver.server.cryptotokens.KeystoreCryptoToken.TYPE_PKCS12;
 
 /**
  *

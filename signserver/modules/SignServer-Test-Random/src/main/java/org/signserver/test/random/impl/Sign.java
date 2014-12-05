@@ -64,15 +64,16 @@ public class Sign implements Task {
     private final WorkerSpec signer;
     private final IWorkerSession.IRemote workerSession;
     private final Random random;
-    private int counter;
-    private final RequestContext requestContext = new RequestContext();
+    private int counter;    
+    private final RequestContextPreProcessor preProcessor;
     
     private static final String TESTXML1 = "<doc>Some sample XML to sign</doc>";
 
-    public Sign(final WorkerSpec signerId, final IWorkerSession.IRemote workerSession, final Random random) {
+    public Sign(final WorkerSpec signerId, final IWorkerSession.IRemote workerSession, final Random random, final RequestContextPreProcessor preProcessor) {
         this.signer = signerId;
         this.workerSession = workerSession;
         this.random = random;
+        this.preProcessor = preProcessor;
     }
     
     @Override
@@ -94,6 +95,10 @@ public class Sign implements Task {
     
     private void process(final WorkerSpec signer, final int reqid) throws FailedException, IllegalRequestException, CryptoTokenOfflineException, SignServerException {
         final ProcessResponse result;
+        final RequestContext requestContext = new RequestContext();
+        if (preProcessor != null) {
+            preProcessor.preProcess(requestContext);
+        }
         switch (signer.getWorkerType()) {
             case xml: {
                 // Process

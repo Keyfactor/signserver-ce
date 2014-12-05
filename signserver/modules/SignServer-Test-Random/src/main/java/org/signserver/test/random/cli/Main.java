@@ -20,11 +20,14 @@ import org.apache.commons.cli.*;
 import org.apache.log4j.Logger;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.InvalidWorkerIdException;
+import org.signserver.common.RequestContext;
 import org.signserver.ejb.interfaces.IWorkerSession.IRemote;
+import org.signserver.server.UsernamePasswordClientCredential;
 import org.signserver.test.random.*;
 import org.signserver.test.random.impl.IncrementProperty;
 import org.signserver.test.random.impl.IncrementPropertyThread;
 import org.signserver.test.random.impl.RenewSigner;
+import org.signserver.test.random.impl.RequestContextPreProcessor;
 import org.signserver.test.random.impl.SigningThread;
 
 /**
@@ -46,6 +49,9 @@ public class Main {
     private static final String TEST_SUITE = "testsuite";
     private static final String THREAD_GROUP_1 = "threadgroup1";
     private static final String THREAD_GROUP_2 = "threadgroup2";
+    private static final String USERPREFIX = "userprefix";
+    private static final String USERSUFFIXMIN = "usersuffixmin";
+    private static final String USERSUFFIXMAX = "usersuffixmax";
     
     private static final String NL = System.getProperty("line.separator");
     private static final String COMMAND = "randomtest";
@@ -60,6 +66,7 @@ public class Main {
                 .append("a) ").append(COMMAND).append(" -testsuite signWhileUpdatingConfig -workergroup1 5678/xml,5679/tsa,5680/xml -threadgroup1 4 -workergroup2 5677/xml,5678/xml,5679/tsa -threadgroup2 3 -timelimit 30000").append(NL)
                 .append("b) ").append(COMMAND).append(" -testsuite signAndCountSignings -workergroup1 5678/xml,5679/tsa,5680/xml -threadgroup1 10 -timelimit 30000").append(NL)
                 .append("c) ").append(COMMAND).append(" -testsuite signWhileRenewing -workergroup1 300/xml -workergroup2 301/xml,302/xml -threadgroup1 5 -workergroup3 309/renew -timelimit 20000")
+                .append("d) ").append(COMMAND).append(" -testsuite signWithRandomUsers -workergroup1 300/xml -threadgroup1 5 -timelimit 20000 -userprefix testuser -usersuffixmin 1 -usersuffixmax 100")
                 .append(NL)
                 .append("Available worker types:").append(NL)
                 .append(" - workerType can be any of ").append(Arrays.asList(WorkerType.values())).append(NL)
@@ -74,7 +81,10 @@ public class Main {
                 .append("Test suite: signWhileRenewing").append(NL)
                 .append(" - Signs documents with the workers from group 1 with the number of threads defined for group 1").append(NL)
                 .append(" - Renews signers from group 2 using the one renewal worker in group 3").append(NL)
-                .append(" - Notice that group 3 should only include one renewal worker").append(NL);
+                .append(" - Notice that group 3 should only include one renewal worker").append(NL)
+                .append("Test suite: signWithRandomUsers").append(NL)
+                .append(" - Signs documents with the workers from group 1 with the number of threads defined for group 1").append(NL)
+                .append(" - Sends requests from usernames starting with the supplied 'userprefix' and ends with a random number between 'usersuffixmin' and 'usersuffixmax'").append(NL);
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         final HelpFormatter formatter = new HelpFormatter();
         PrintWriter pw = new PrintWriter(bout);
@@ -86,7 +96,8 @@ public class Main {
     private enum TestSuites {
         signWhileUpdatingConfig,
         signAndCountSignings,
-        signWhileRenewing
+        signWhileRenewing,
+        signWithRandomUsers,
     }
     
     static {
@@ -99,6 +110,9 @@ public class Main {
         OPTIONS.addOption(WORKER_GROUP_3, true, "Third group of workers. Comma separated list of workerId/workerType");
         OPTIONS.addOption(THREAD_GROUP_1, true, "Number of threads in group 1.");
         OPTIONS.addOption(THREAD_GROUP_2, true, "Number of threads in group 2.");
+        OPTIONS.addOption(USERPREFIX, true, "Prefix for usernames.");
+        OPTIONS.addOption(USERSUFFIXMIN, true, "Lowest suffix for usernames in form of an integer value (inclusive).");
+        OPTIONS.addOption(USERSUFFIXMAX, true, "Highest suffix for usernames in form of an integer value (inclusive).");
     }
 
     /**
@@ -286,6 +300,22 @@ public class Main {
                     case signWhileRenewing:
                         signWhileRenewing(threads, context);
                         break;
+                    case signWithRandomUsers: {
+                        final String userPrefix = commandLine.getOptionValue(USERPREFIX, null);
+                        if (userPrefix == null) {
+                            throw new ParseException("Missing required option: " + USERPREFIX);
+                        }
+                        final String userSuffixMin = commandLine.getOptionValue(USERSUFFIXMIN, null);
+                        if (userSuffixMin == null) {
+                            throw new ParseException("Missing required option: " + USERSUFFIXMIN);
+                        }
+                        final String userSuffixMax = commandLine.getOptionValue(USERSUFFIXMAX, null);
+                        if (userSuffixMax == null) {
+                            throw new ParseException("Missing required option: " + USERSUFFIXMAX);
+                        }
+                        signWithRandomUsers(threads, context, userPrefix, Integer.parseInt(userSuffixMin), Integer.parseInt(userSuffixMax));
+                        break;
+                    }
                     default:
                         throw new Exception("Unsupported test suite: " + ts);
                 }
@@ -357,7 +387,7 @@ public class Main {
         // Group 1: Threads signing documents with the workers in group 1
         for (int i = 0; i < context.getThreadsGroup1(); i++) {
             final WorkerSpec worker = context.getWorkerGroup1().get(i%context.getWorkerGroup1().size());
-            final SigningThread signingThread = new SigningThread("Signer-" + i + "-" + worker.getWorkerId(), context.getCallback(), context.getPauser(), context.getMasterRandom().nextLong(), worker, context.getWorkerSession());
+            final SigningThread signingThread = new SigningThread("Signer-" + i + "-" + worker.getWorkerId(), context.getCallback(), context.getPauser(), context.getMasterRandom().nextLong(), worker, context.getWorkerSession(), null);
             signingThreads.add(signingThread);
         }
         threads.addAll(signingThreads);
@@ -440,7 +470,7 @@ public class Main {
         // Group 1: Threads signing documents with the workers in group 1
         for (int i = 0; i < context.getThreadsGroup1(); i++) {
             final WorkerSpec worker = context.getWorkerGroup1().get(i%context.getWorkerGroup1().size());
-            final SigningThread signingThread = new SigningThread("Signer-" + i + "-" + worker.getWorkerId(), context.getCallback(), null, context.getMasterRandom().nextLong(), worker, context.getWorkerSession());
+            final SigningThread signingThread = new SigningThread("Signer-" + i + "-" + worker.getWorkerId(), context.getCallback(), null, context.getMasterRandom().nextLong(), worker, context.getWorkerSession(), null);
             threads.add(signingThread);
         }
         
@@ -488,7 +518,7 @@ public class Main {
         // Group 1: Threads signing documents with the workers in group 1
         for (int i = 0; i < context.getThreadsGroup1(); i++) {
             final WorkerSpec worker = context.getWorkerGroup1().get(i%context.getWorkerGroup1().size());
-            final SigningThread signingThread = new SigningThread("Signer-" + i + "-" + worker.getWorkerId(), context.getCallback(), null, context.getMasterRandom().nextLong(), worker, context.getWorkerSession());
+            final SigningThread signingThread = new SigningThread("Signer-" + i + "-" + worker.getWorkerId(), context.getCallback(), null, context.getMasterRandom().nextLong(), worker, context.getWorkerSession(), null);
             threads.add(signingThread);
         }
         
@@ -531,6 +561,40 @@ public class Main {
 
         };
         threads.add(renewals);
+    }
+
+    /**
+     * Creates one group of threads performing signings and sends the request
+     * with usernames as specified.
+     * @param threads to run
+     * @param context for the tests
+     * @param userPrefix Prefix for the username
+     * @param userSuffixMin Minimum username number
+     * @param userSuffixMax Maximum username number
+     * @throws Exception in case of errors
+     */
+    private static void signWithRandomUsers(final List<WorkerThread> threads, final TestContext context, final String userPrefix, final int userSuffixMin, final int userSuffixMax) throws Exception {
+
+        if (context.getThreadsGroup1() == null) {
+            throw new ParseException("Missing -threadgroup1");
+        }
+
+        // Group 1: Threads signing documents with the workers in group 1
+        for (int i = 0; i < context.getThreadsGroup1(); i++) {
+            final WorkerSpec worker = context.getWorkerGroup1().get(i%context.getWorkerGroup1().size());
+            final SigningThread signingThread = new SigningThread("Signer-" + i + "-" + worker.getWorkerId(), context.getCallback(), null, context.getMasterRandom().nextLong(), worker, context.getWorkerSession(), new RequestContextPreProcessor() {
+
+                @Override
+                public void preProcess(RequestContext requestContext) {
+                    final String username = userPrefix + (userSuffixMin + context.getMasterRandom().nextInt(userSuffixMax - userSuffixMin + 1));
+                    requestContext.put(RequestContext.CLIENT_CREDENTIAL, new UsernamePasswordClientCredential(username, ""));
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Username: " + username);
+                    }
+                }
+            });
+            threads.add(signingThread);
+        }
     }
 
 }

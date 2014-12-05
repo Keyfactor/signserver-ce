@@ -24,13 +24,13 @@ public class SigningThread extends WorkerThread {
     private final Sign sign;
     private final Pauser pauser;
 
-    public SigningThread(final String name, final FailureCallback failureCallback, final Pauser pauser, final long seed, final WorkerSpec worker, final IWorkerSession.IRemote workerSession) {
+    public SigningThread(final String name, final FailureCallback failureCallback, final Pauser pauser, final long seed, final WorkerSpec worker, final IWorkerSession.IRemote workerSession, final RequestContextPreProcessor preProcessor) {
         super(name, failureCallback);
         this.pauser = pauser;
         this.random = new Random(seed);
         this.worker = worker;
         this.workerSession = workerSession;
-        sign = new Sign(worker, workerSession, random);
+        sign = new Sign(worker, workerSession, random, preProcessor);
     }
 
     @Override

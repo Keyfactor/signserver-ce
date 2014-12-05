@@ -18,7 +18,8 @@ import org.signserver.common.CryptoTokenInitializationFailureException;
 import static org.signserver.server.cryptotokens.KeystoreCryptoToken.KEYSTORETYPE;
 
 /**
- *
+ * Crypto token storing the keystore in the configuration in the database.
+ * 
  * @author Marcus Lundblad
  * @version $Id$
  */

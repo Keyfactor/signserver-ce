@@ -44,6 +44,7 @@ public interface AliasSelector {
     /**
      * Get a key alias for a given process request (i.e. sign request).
      * 
+     * @param purpose Key purpose
      * @param processble The processable instance handling the request
      * @param signRequest The request
      * @param requestContext The request context
@@ -53,7 +54,7 @@ public interface AliasSelector {
      * @throws CryptoTokenOfflineException
      * @throws SignServerException 
      */
-    String getAlias(final IProcessable processble, final ProcessRequest signRequest,
+    String getAlias(final int purpose, final IProcessable processble, final ProcessRequest signRequest,
                     final RequestContext requestContext)
             throws IllegalRequestException, CryptoTokenOfflineException,
                    SignServerException;

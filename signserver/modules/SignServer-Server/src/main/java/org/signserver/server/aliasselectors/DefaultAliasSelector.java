@@ -21,6 +21,8 @@ import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.server.IProcessable;
 import org.signserver.server.WorkerContext;
+import org.signserver.server.cryptotokens.CryptoTokenHelper;
+import org.signserver.server.cryptotokens.ICryptoToken;
 
 /**
  * Default alias selector giving the DEFAULTKEY alias configured for the
@@ -33,19 +35,21 @@ import org.signserver.server.WorkerContext;
  */
 public class DefaultAliasSelector implements AliasSelector {
     
-    private String alias;
+    private String defaultAlias;
+    private String nextKeyAlias;
 
     @Override
     public void init(final int workerId, final WorkerConfig config,
                      final WorkerContext workerContext,
                      final EntityManager workerEM) {
-        alias = config.getProperty("DEFAULTKEY");
+        defaultAlias = config.getProperty(CryptoTokenHelper.PROPERTY_DEFAULTKEY);
+        nextKeyAlias = config.getProperty(CryptoTokenHelper.PROPERTY_NEXTCERTSIGNKEY);
     }
 
     @Override
-    public String getAlias(final IProcessable processble,
+    public String getAlias(final int purpose, final IProcessable processble,
                            final ProcessRequest signRequest,
                            final RequestContext requestContext) {
-        return alias;
+        return purpose == ICryptoToken.PURPOSE_NEXTKEY ? nextKeyAlias : defaultAlias;
     }
 }

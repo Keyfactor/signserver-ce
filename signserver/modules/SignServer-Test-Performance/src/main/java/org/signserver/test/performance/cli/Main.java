@@ -52,6 +52,9 @@ public class Main {
     private static final String INFILE = "infile";
     private static final String DATA = "data";
     private static final Options OPTIONS;
+    private static final String USERPREFIX = "userprefix";
+    private static final String USERSUFFIXMIN = "usersuffixmin";
+    private static final String USERSUFFIXMAX = "usersuffixmax";
     
     private static final String NL = System.getProperty("line.separator");
     private static final String COMMAND = "stresstest";
@@ -65,7 +68,11 @@ public class Main {
     private static String infile;
 
     private static byte[] data;
-    
+
+    private static String userPrefix;
+    private static Integer usersuffixMin;
+    private static Integer usersuffixMax;
+
     private enum TestSuites {
         TimeStamp1,
         DocumentSigner1,
@@ -87,6 +94,9 @@ public class Main {
                 "Optional. Directory to output statistics to. If set, each threads creates a file in this directory to output its response times to. The directory must exist.");
         OPTIONS.addOption(INFILE, true, "Input file used for DocumentSigner1 testsuite.");
         OPTIONS.addOption(DATA, true, "Input data to be used with the DocumentSigner1 testsuite using an XMLSigner.");
+        OPTIONS.addOption(USERPREFIX, true, "Prefix for usernames.");
+        OPTIONS.addOption(USERSUFFIXMIN, true, "Lowest suffix for usernames in form of an integer value (inclusive).");
+        OPTIONS.addOption(USERSUFFIXMAX, true, "Highest suffix for usernames in form of an integer value (inclusive).");
     }
 
     /**
@@ -103,8 +113,10 @@ public class Main {
                 .append("c) ").append(COMMAND)
                 .append(" -testsuite DocumentSigner1 -threads 4 -processurl http://localhost:8080/signserver/process -worker PDFSigner -infile test.pdf").append(NL)
                 .append("d) ").append(COMMAND)
-                .append(" -testsuite DocumentSigner1 -threads 4 -processurl http://localhost:8080/signserver/process -worker XMLSigner -data \"<root/>\"").append(NL);
-                
+                .append(" -testsuite DocumentSigner1 -threads 4 -processurl http://localhost:8080/signserver/process -worker XMLSigner -data \"<root/>\"").append(NL)
+                .append("e) ").append(COMMAND)
+                .append(" -testsuite DocumentSigner1 -threads 4 -processurl http://localhost:8080/signserver/process -worker XMLSigner -data \"<root/>\" -userprefix user -usersuffixmin 1 -usersuffixmax 50").append(NL);
+
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         final HelpFormatter formatter = new HelpFormatter();
         PrintWriter pw = new PrintWriter(bout);
@@ -222,7 +234,32 @@ public class Main {
             } else {
                 statFolder = null;
             }
-            
+
+            // Support for sending requests with (optionally random) username specified
+            userPrefix = commandLine.getOptionValue(USERPREFIX, null);
+            final String userSuffixMinValue = commandLine.getOptionValue(USERSUFFIXMIN, null);
+            final String userSuffixMaxValue = commandLine.getOptionValue(USERSUFFIXMAX, null);
+            final String userNameDescription;
+            if (userPrefix == null) {
+                if (userSuffixMinValue != null || userSuffixMaxValue != null) {
+                    throw new ParseException(USERSUFFIXMIN + " and " + USERSUFFIXMAX + " requires a " + USERPREFIX + " option");
+                }
+                userNameDescription = "n/a";
+            } else {
+                if ((userSuffixMinValue == null && userSuffixMaxValue != null)
+                        || (userSuffixMinValue != null && userSuffixMaxValue == null)) {
+                    throw new ParseException("Specify either both or none of " + USERSUFFIXMIN + " and " + USERSUFFIXMAX);
+                } else {
+                    if (userSuffixMinValue != null) {
+                        usersuffixMin = Integer.parseInt(userSuffixMinValue);
+                        usersuffixMax = Integer.parseInt(userSuffixMaxValue);
+                        userNameDescription = "[" + userPrefix + usersuffixMin + ", " + userPrefix + usersuffixMax + "]";
+                    } else {
+                        userNameDescription = userPrefix;
+                    }
+                }
+            }
+
             // Print info
             LOG.info(String.format(
                   "-- Configuration -----------------------------------------------------------%n"
@@ -233,8 +270,9 @@ public class Main {
                 + "   Max wait time:           %10d ms%n"
                 + "   Time limit:              %10d ms%n"
                 + "   URL:                     %s%n"
+                + "   Username(s):             %s%n"
                 + "   Output statistics:       %s%n"
-                + "-------------------------------------------------------------------------------%n", new Date(), ts.name(), numThreads, warmupTime, maxWaitTime, limitedTime, url, statFolder == null ? "no" : statFolder.getAbsolutePath()));
+                + "-------------------------------------------------------------------------------%n", new Date(), ts.name(), numThreads, warmupTime, maxWaitTime, limitedTime, url, userNameDescription, statFolder == null ? "no" : statFolder.getAbsolutePath()));
 
             final LinkedList<WorkerThread> threads = new LinkedList<WorkerThread>();
             final FailureCallback callback = new FailureCallback() {
@@ -277,7 +315,7 @@ public class Main {
                     timeStamp1(threads, numThreads, callback, url, maxWaitTime, warmupTime, limitedTime, statFolder);
                     break;
                 case DocumentSigner1:
-                    documentSigner1(threads, numThreads, callback, url, useWorkerServlet, workerNameOrId, maxWaitTime, warmupTime, limitedTime, statFolder);
+                    documentSigner1(threads, numThreads, callback, url, useWorkerServlet, workerNameOrId, maxWaitTime, warmupTime, limitedTime, statFolder, userPrefix, usersuffixMin, usersuffixMax);
                     break;
                 default:
                     throw new Exception("Unsupported test suite");
@@ -438,7 +476,8 @@ public class Main {
     private static void documentSigner1(final List<WorkerThread> threads, final int numThreads,
             final FailureCallback failureCallback, final String url, final boolean useWorkerServlet, 
             final String workerNameOrId, int maxWaitTime, long warmupTime,
-            final long limitedTime, final File statFolder) throws Exception {
+            final long limitedTime, final File statFolder,
+            final String userPrefix, final Integer userSuffixMin, final Integer userSuffixMax) throws Exception {
         final Random random = new Random();
         for (int i = 0; i < numThreads; i++) {
             final String name = "DocumentSigner1-" + i;
@@ -449,7 +488,8 @@ public class Main {
                 statFile = new File(statFolder, name + ".csv");
             }
             threads.add(new DocumentSignerThread(name, failureCallback, url, useWorkerServlet, data, workerNameOrId, maxWaitTime,
-                    random.nextInt(), warmupTime, limitedTime, statFile));
+                    random.nextInt(), warmupTime, limitedTime, statFile,
+                    userPrefix, userSuffixMin, userSuffixMax));
         }
     }
 }

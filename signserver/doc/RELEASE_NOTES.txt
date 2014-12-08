@@ -13,6 +13,7 @@ Notice:
    from an earlier version the existing configuration file should be renamed
    accordingly. The Ant script will complain if a file with the old name is
    found.
+ - The new KeystoreInConfigCryptoToken is not supported under GlassFish 2.
 
 See ChangeLog.txt for the full list of changes.
 

@@ -103,6 +103,7 @@ limit is exceeded or key usage period expires.</li>
                 <li>Integrity protected <a href="complete.en.html#Logging">audit log</a> (log signing), with digital signature or HMAC protection.</li>
                 <li>Command line tool for verification of audit and database integrity protection.</li>
                 <li>SignServer TimeMonitor application and modules for monitoring time synchronization in TSA set-ups.</li>
+                <li>ePassport CSCA master list signer compliant with ICAO requirements</li>
             </ul>
         </subsection>
   </section>

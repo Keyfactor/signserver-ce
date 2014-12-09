@@ -338,7 +338,8 @@ public class XAdESSigner extends BaseSigner {
         
         try {
             // Parse
-            final XadesSigner signer = createSigner(parameters, claimedRole);
+            final XadesSigner signer =
+                    createSigner(parameters, claimedRole, signRequest, requestContext);
             final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             dbf.setNamespaceAware(true);
 
@@ -406,13 +407,20 @@ public class XAdESSigner extends BaseSigner {
      * Creates the signer implementation given the parameters.
      *
      * @param params Parameters such as XAdES form and TSA properties.
+     * @param claimedRole
+     * @param request Signing request
+     * @param context Request context
      * @return The signer implementation
      * @throws SignServerException In case an unsupported XAdES form was specified
      * @throws XadesProfileResolutionException if the dependencies of the signer cannot be resolved
      * @throws CryptoTokenOfflineException If the private key is not available
      */
-    private XadesSigner createSigner(final XAdESSignerParameters params, final String claimedRole)
-            throws SignServerException, XadesProfileResolutionException, CryptoTokenOfflineException {
+    private XadesSigner createSigner(final XAdESSignerParameters params,
+                                     final String claimedRole,
+                                     final ProcessRequest request,
+                                     final RequestContext context)
+            throws SignServerException, XadesProfileResolutionException,
+                   CryptoTokenOfflineException, IllegalRequestException {
         // Setup key and certificiates
         final List<X509Certificate> xchain = new LinkedList<X509Certificate>();
         for (Certificate cert : this.getSigningCertificateChain()) {
@@ -420,7 +428,9 @@ public class XAdESSigner extends BaseSigner {
                 xchain.add((X509Certificate) cert);
             }
         }
-        final KeyingDataProvider kdp = new CertificateAndChainKeyingDataProvider(xchain, this.getCryptoToken().getPrivateKey(ICryptoToken.PURPOSE_SIGN));
+        final KeyingDataProvider kdp =
+                new CertificateAndChainKeyingDataProvider(xchain,
+                    getPrivateKey(ICryptoToken.PURPOSE_SIGN, request, context));
         
         // Signing profile
         XadesSigningProfile xsp;                   

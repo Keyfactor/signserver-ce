@@ -32,6 +32,8 @@ import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Hex;
 import org.signserver.common.*;
+import org.signserver.server.aliasselectors.AliasSelector;
+import org.signserver.server.aliasselectors.DefaultAliasSelector;
 import org.signserver.server.cryptotokens.CryptoTokenHelper;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.cryptotokens.IKeyGenerator;
@@ -53,7 +55,11 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
     
     private X509Certificate cert;
     private List<Certificate> certChain;
+    
+    private AliasSelector aliasSelector;
 
+    private List<String> fatalErrors;
+    
     /**
      * Holds fatal errors gathered when initing the crypto token.
      */
@@ -68,8 +74,110 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         super.init(workerId, config, workerContext, workerEM);
         
         cryptoTokenFatalErrors = new LinkedList<String>();
+        fatalErrors = new LinkedList<String>();
+        
+        // initialize key alias selector
+        final String aliasSelectorClass =
+                config.getProperty(WorkerConfig.PROPERTY_ALIASSELECTOR);
+        
+        if (aliasSelectorClass == null) {
+            aliasSelector = new DefaultAliasSelector();
+        } else {
+            try {
+                final Class<?> implClass = Class.forName(aliasSelectorClass);
+                final Object instance = implClass.newInstance();
+                
+                aliasSelector = (AliasSelector) instance;
+            } catch (ClassNotFoundException e) {
+                fatalErrors.add("Alias selector class not found: " +
+                                aliasSelectorClass);
+            } catch (InstantiationException e) {
+                fatalErrors.add("Failed to instansiate alias selector: " +
+                                e.getMessage());
+            } catch (IllegalAccessException e) {
+                fatalErrors.add("Failed to access alias selector class: " +
+                                e.getMessage());
+            }
+        }
+        
+        aliasSelector.init(workerId, config, workerContext, workerEM);
     }
 
+    /**
+     * Get alias given a specific purpose.
+     * 
+     * @param purpose
+     * @param request
+     * @param context
+     * @return Key alias to use
+     * @throws IllegalRequestException
+     * @throws CryptoTokenOfflineException
+     * @throws SignServerException
+     */
+    private String getAlias(final int purpose, final ProcessRequest request,
+                            final RequestContext context)
+            throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+       return aliasSelector.getAlias(purpose, this, request, context);
+    }
+    
+    /**
+     * Get private key for a signing request.
+     * This will delegate to the alias selector if the crypto token implements
+     * the new token API.
+     * 
+     * @param purpose
+     * @param request
+     * @param context
+     * @return
+     * @throws IllegalRequestException
+     * @throws CryptoTokenOfflineException
+     * @throws SignServerException 
+     */
+    protected PrivateKey getPrivateKey(final int purpose,
+                                       final ProcessRequest request,
+                                       final RequestContext context)
+            throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+        final ICryptoToken token = getCryptoToken();
+        
+        if (token instanceof ICryptoTokenV2) {
+            final String alias =
+                    aliasSelector.getAlias(purpose, this, request, context);
+
+            return ((ICryptoTokenV2) token).getPrivateKey(alias);
+        } else {
+            return token.getPrivateKey(purpose);
+        }
+    }
+    
+    /**
+     * Get public key for a signing request.
+     * This will delegate to the alias selector if the crypto token implements
+     * the new token API.
+     * 
+     * @param purpose
+     * @param request
+     * @param context
+     * @return
+     * @throws IllegalRequestException
+     * @throws CryptoTokenOfflineException
+     * @throws SignServerException 
+     */
+    protected PublicKey getPublicKey(final int purpose,
+                                     final ProcessRequest request,
+                                     final RequestContext context)
+            throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+        final ICryptoToken token = getCryptoToken();
+        
+        if (token instanceof ICryptoTokenV2) {
+            final String alias =
+                    aliasSelector.getAlias(purpose, this, request, context);
+            
+            return ((ICryptoTokenV2) token).getPublicKey(alias);
+        } else {
+            return token.getPublicKey(purpose);
+        }
+    }
+    
     @Override
     public void activateSigner(String authenticationCode)
             throws CryptoTokenAuthenticationFailureException,
@@ -668,4 +776,14 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
     protected List<String> getCryptoTokenFatalErrors() {
         return cryptoTokenFatalErrors;
     }
+
+    @Override
+    protected List<String> getFatalErrors() {
+        final List<String> errors = super.getFatalErrors();
+        
+        errors.addAll(fatalErrors);
+        return errors;
+    }
+    
+    
 }

@@ -67,6 +67,11 @@ public class WorkerConfig extends UpgradeableDataHashMap {
     /** Worker property: INCLUDE_CERTIFICATE_LEVELS. */
     public static final String PROPERTY_INCLUDE_CERTIFICATE_LEVELS = "INCLUDE_CERTIFICATE_LEVELS";  
 
+    /**
+     * Used to override the key alias selector used by a worker.
+     */
+    public static final String PROPERTY_ALIASSELECTOR = "ALIASSELECTOR";
+    
     private static String nodeId = null;
     
     @SuppressWarnings("unchecked")

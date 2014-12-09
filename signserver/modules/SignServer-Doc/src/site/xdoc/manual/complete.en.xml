@@ -4618,6 +4618,26 @@ Currently the signer certificate is always included.
                         </p>
                     </subsubsection>
                 </subsection>
+
+                <subsection name="Master List Signer">
+                    <p>
+The Master List signer has the fully qualified class name: org.signserver.module.masterlist.signer.MasterListSigner
+                    </p>
+                    <subsubsection name="Overview">
+                        <p>
+Produces a signed list of CSCA certificates according to the ICAO specification MRTD TR CSCA countersigning and Master List issuance, version 1.0.
+                        </p>
+                        <p>
+As mandated by the specification, both the signer certificate and the CSCA certificates are included in the signature. The INCLUDE_CERTIFICATE_LEVELS property is thus not allowed.
+                        </p>
+                    </subsubsection>
+                    <subsubsection name="Available Properties">
+                        <p>
+                            <b>SIGNATUREALGORITHM</b> = property specifying the algorithm used to sign the data (default: depending on the signing key: SHA1withDSA for DSA keys,
+                                                        SHA1withECDSA for ECDSA keys, otherwise SHA1withRSA)
+                        </p>
+                    </subsubsection>
+                </subsection>
             </section>
 
             <section name="SignServer Document Validators">

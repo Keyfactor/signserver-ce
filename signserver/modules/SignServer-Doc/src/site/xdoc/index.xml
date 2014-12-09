@@ -75,7 +75,7 @@ SignServer has ready to use modules for:
 <ul>
 <li>TimeStamp Authority (RFC 3161 compliant and MS authenticode)</li>
 <li>Signers for different documents: PDF, XML, XAdES (BES and T), ODF, OOXML, MRTD (ePassport
-    document signer)</li>
+    document signer), Master List (ePassport CSCA ML signer)</li>
 <li>General purpose signers: CMS</li>
 <li>Validators for documents: XML, XAdES-BES, XAdES-T</li>
 </ul>

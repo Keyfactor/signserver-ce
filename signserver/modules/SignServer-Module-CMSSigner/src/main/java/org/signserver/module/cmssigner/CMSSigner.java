@@ -144,8 +144,8 @@ public class CMSSigner extends BaseSigner {
         LOG.debug("SigningCert: " + ((X509Certificate) cert).getSubjectDN());
 
         // Private key
-        PrivateKey privKey
-                = getCryptoToken().getPrivateKey(ICryptoToken.PURPOSE_SIGN);
+        PrivateKey privKey =
+                getPrivateKey(ICryptoToken.PURPOSE_SIGN, signRequest, requestContext);
 
         try {
             final CMSSignedDataGenerator generator

@@ -153,7 +153,8 @@ public class MRTDSODSigner extends BaseSigner {
             }
         }
         final X509Certificate cert = (X509Certificate) getSigningCertificate();
-        final PrivateKey privKey = token.getPrivateKey(ICryptoToken.PURPOSE_SIGN);
+        final PrivateKey privKey =
+                getPrivateKey(ICryptoToken.PURPOSE_SIGN, signRequest, requestContext);
         final String provider = token.getProvider(ICryptoToken.PURPOSE_SIGN);
 
         if (cert == null) {

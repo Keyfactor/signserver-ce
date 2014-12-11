@@ -109,7 +109,7 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
 
         try {
             signerCertificate =
-                    (X509Certificate) getSigningCertificate(null, null);
+                    (X509Certificate) getSigningCertificate();
             final long keyUsageLimit = Long.valueOf(config.getProperty(SignServerConstants.KEYUSAGELIMIT, "-1"));
 
             if (token != null) {
@@ -230,7 +230,7 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
         // Check if certificate matches key
         Certificate certificate = null;
         try {
-            certificate = getSigningCertificate(null, null);
+            certificate = getSigningCertificate();
             final ICryptoToken token = getCryptoToken();
             if (token == null) {
                 if (LOG.isDebugEnabled()) {
@@ -321,7 +321,7 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
     
     protected Store getCertStoreWithChain(Certificate signingCert) throws InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchProviderException, CryptoTokenOfflineException, CertStoreException, CertificateEncodingException, IOException {
         List<Certificate> signingCertificateChain =
-                getSigningCertificateChain(null, null);
+                getSigningCertificateChain();
         
         if (signingCertificateChain == null) {
             throw new CryptoTokenOfflineException("Certificate chain not available");

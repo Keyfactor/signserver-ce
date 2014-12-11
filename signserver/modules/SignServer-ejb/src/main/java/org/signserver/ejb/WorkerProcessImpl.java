@@ -483,7 +483,7 @@ class WorkerProcessImpl {
         Certificate cert;
 
         if (worker instanceof BaseProcessable) {
-            cert = ((BaseProcessable) worker).getSigningCertificate(null, null);
+            cert = ((BaseProcessable) worker).getSigningCertificate();
         } else {
             // The following will not work for keystores where the SIGNSERCERT
             // property is not set
@@ -536,7 +536,7 @@ class WorkerProcessImpl {
         Certificate ret = null;
         final IWorker worker = workerManagerSession.getWorker(signerId, globalConfigurationSession);
         if (worker instanceof BaseProcessable) {
-            ret = ((BaseProcessable) worker).getSigningCertificate(null, null);
+            ret = ((BaseProcessable) worker).getSigningCertificate();
         }
         return ret;
     }

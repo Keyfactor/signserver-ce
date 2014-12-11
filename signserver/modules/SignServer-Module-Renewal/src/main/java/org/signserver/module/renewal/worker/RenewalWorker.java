@@ -812,7 +812,7 @@ public class RenewalWorker extends BaseSigner {
         public X509Certificate[] getCertificateChain(String string) {
             try {
                 final List<Certificate> chain =
-                        getSigningCertificateChain(null, null);
+                        getSigningCertificateChain();
                 return chain.toArray(new X509Certificate[chain.size()]);
             } catch (CryptoTokenOfflineException ex) {
                 LOG.error("Offline getting chain", ex);

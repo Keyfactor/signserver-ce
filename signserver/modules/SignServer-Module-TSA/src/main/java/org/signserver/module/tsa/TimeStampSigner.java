@@ -893,7 +893,7 @@ public class TimeStampSigner extends BaseSigner {
         boolean result = true;
         try {
             final List<Certificate> signingCertificateChain =
-                    getSigningCertificateChain(null, null);
+                    getSigningCertificateChain();
             if (signingCertificateChain != null) {
                 List<Certificate> chain = (List<Certificate>) signingCertificateChain;
                 for (int i = 0; i < chain.size(); i++) {
@@ -962,8 +962,7 @@ public class TimeStampSigner extends BaseSigner {
             }
 
             // Check if certificat has the required EKU
-            final Certificate certificate =
-                    getSigningCertificate(null, null);
+            final Certificate certificate = getSigningCertificate();
             try {
                 if (certificate instanceof X509Certificate) {
                     final X509Certificate cert = (X509Certificate) certificate;

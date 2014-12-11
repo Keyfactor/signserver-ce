@@ -12,6 +12,8 @@
  *************************************************************************/
 package org.signserver.server.aliasselectors;
 
+import java.util.Collections;
+import java.util.List;
 import javax.persistence.EntityManager;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
@@ -51,5 +53,10 @@ public class DefaultAliasSelector implements AliasSelector {
                            final ProcessRequest signRequest,
                            final RequestContext requestContext) {
         return purpose == ICryptoToken.PURPOSE_NEXTKEY ? nextKeyAlias : defaultAlias;
+    }
+    
+    @Override
+    public List<String> getFatalErrors() {
+        return Collections.emptyList();
     }
 }

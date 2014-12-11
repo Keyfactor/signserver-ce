@@ -887,6 +887,8 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         final List<String> errors = super.getFatalErrors();
         
         errors.addAll(fatalErrors);
+        errors.addAll(aliasSelector.getFatalErrors());
+        
         return errors;
     }
     

@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.server.aliasselectors;
 
+import java.util.List;
 import javax.persistence.EntityManager;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
@@ -62,4 +63,11 @@ public interface AliasSelector {
                     final RequestContext requestContext)
             throws IllegalRequestException, CryptoTokenOfflineException,
                    SignServerException;
+    
+    /**
+     * Get fatal configuration errors for the alias selector.
+     * 
+     * @return List of error strings, or an empty list if there is no errors.
+     */
+    List<String> getFatalErrors();
 }

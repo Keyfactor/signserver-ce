@@ -741,7 +741,8 @@ public class TimeStampSigner extends BaseSigner {
             
             Certificate cert = this.getSigningCertificate(request, context);
             
-            PrivateKey privKey = this.getCryptoToken().getPrivateKey(ICryptoToken.PURPOSE_SIGN);
+            PrivateKey privKey =
+                    getPrivateKey(ICryptoToken.PURPOSE_SIGN, request, context);
             ContentSigner cs =
             		new JcaContentSignerBuilder(signatureAlgorithm).setProvider(this.getCryptoToken().getProvider(ICryptoToken.PROVIDERUSAGE_SIGN)).build(privKey);
             JcaSignerInfoGeneratorBuilder sigb = new JcaSignerInfoGeneratorBuilder(calcProv);

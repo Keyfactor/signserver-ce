@@ -649,6 +649,20 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         
         return cert;
     }
+    
+    /**
+     * Method that returns the certificate used when signing.
+     * If the worker has a configured certificate this is returned.
+     * Otherwise a certificate from the crypto token is returned.
+     * This method is called with no signing request and context and assumes
+     * an alias selector having a default behavior for this.
+     * 
+     * @return Signing certificate
+     * @throws CryptoTokenOfflineException 
+     */
+    public Certificate getSigningCertificate() throws CryptoTokenOfflineException {
+        return getSigningCertificate(null, null);
+    }
 
     /**
      * Method that returns the certificate chain used when signing.
@@ -704,6 +718,21 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         return certChain;
     }
 
+    /**
+     * Method that returns the certificate chain used when signing.
+     * If the worker has a configured certificate chain this is returned.
+     * Otherwise a certificate chain from the crypto token is returned.
+     * This method is called with no signing request and context and assumes
+     * an alias selector having a default behavior for this.
+     * 
+     * @return Signing certificate chain
+     * @throws CryptoTokenOfflineException 
+     */
+    public List<Certificate> getSigningCertificateChain() throws CryptoTokenOfflineException {
+        return getSigningCertificateChain(null, null);
+    }
+
+    
     /**
      * Method sending the request info to the signtoken
      * @return the request or null if method isn't supported by signertoken.

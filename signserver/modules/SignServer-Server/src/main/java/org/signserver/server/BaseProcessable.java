@@ -195,7 +195,6 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
             token.activate(authenticationCode);
             
             // Check if certificate matches key
-            /* TODO: should perhaps be done when using the DefaultAliasSelector
             Certificate certificate = getSigningCertificate();
             if (certificate == null) {
                 log.info("Activate: Signer " + workerId + ": No certificate");
@@ -210,7 +209,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
                         + ": Certificate does not match key");
                 }
             }
-            */
+
             if (log.isTraceEnabled()) {
                 log.trace("<activateSigner");
             }

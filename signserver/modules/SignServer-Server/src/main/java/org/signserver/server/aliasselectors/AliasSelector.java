@@ -45,7 +45,8 @@ public interface AliasSelector {
      * Get a key alias for a given process request (i.e. sign request).
      * If the signRequest and requestContext parameters are null, an implementation
      * of this interface can choose to i.e. return a default alias to be used
-     * outside of a signing request.
+     * outside of a signing request or to return null to indicate that no alias
+     * has been selected.
      * 
      * @param purpose Key purpose
      * @param processble The processable instance handling the request

@@ -1338,12 +1338,16 @@ public class PDFSignerUnitTest extends TestCase {
         }
         
         @Override
-        public Certificate getSigningCertificate() throws CryptoTokenOfflineException {
+        public Certificate getSigningCertificate(final ProcessRequest request,
+                                                 final RequestContext context)
+                throws CryptoTokenOfflineException {
             return mockedToken.getCertificate(ICryptoToken.PURPOSE_SIGN);
         }
 
         @Override
-        public List<Certificate> getSigningCertificateChain() throws CryptoTokenOfflineException {
+        public List<Certificate> getSigningCertificateChain(final ProcessRequest request,
+                                                            final RequestContext context)
+                throws CryptoTokenOfflineException {
             return mockedToken.getCertificateChain(ICryptoToken.PURPOSE_SIGN);
         }
 
@@ -1402,7 +1406,9 @@ public class PDFSignerUnitTest extends TestCase {
         instance.setIncludeCertificateLevels(1);
         
         try {
-            byte[] signedPdfbytes = instance.addSignatureToPDFDocument(params, pdfbytes, null, 0);
+            byte[] signedPdfbytes =
+                    instance.addSignatureToPDFDocument(params, pdfbytes, null, 0,
+                                                       null, null);
             assertNotNull(signedPdfbytes);
         } catch (SignServerException ex) {
             LOG.debug("failed to sign", ex);

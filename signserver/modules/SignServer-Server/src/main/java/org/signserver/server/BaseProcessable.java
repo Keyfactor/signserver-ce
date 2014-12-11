@@ -77,17 +77,37 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         final String aliasSelectorClass =
                 config.getProperty(WorkerConfig.PROPERTY_ALIASSELECTOR);
         
-        if (aliasSelectorClass == null) {
-            aliasSelector = new DefaultAliasSelector();
+        aliasSelector = createAliasSelector(aliasSelectorClass);
+        
+        if (aliasSelector != null) {
+            aliasSelector.init(workerId, config, workerContext, workerEM);
+        }
+    }
+    
+    /**
+     * Creates an instance of AliasSelector given the value set for the
+     * ALIASSELECTOR worker property.
+     * Signers can override this method to provide a custom default
+     * implementation of an alias selector.
+     * An implementation should set fatalErrors in case of failure.
+     * 
+     * @param aliasSelectorClassName The value of the ALIASSELECTOR property
+     * @return An instance implementing AliasSelector, or null if in case of error
+     */
+    protected AliasSelector createAliasSelector(final String aliasSelectorClassName) {
+        AliasSelector selector = null;
+        
+        if (aliasSelectorClassName == null) {
+            selector = new DefaultAliasSelector();
         } else {
             try {
-                final Class<?> implClass = Class.forName(aliasSelectorClass);
+                final Class<?> implClass = Class.forName(aliasSelectorClassName);
                 final Object instance = implClass.newInstance();
                 
-                aliasSelector = (AliasSelector) instance;
+                selector = (AliasSelector) instance;
             } catch (ClassNotFoundException e) {
                 fatalErrors.add("Alias selector class not found: " +
-                                aliasSelectorClass);
+                                aliasSelectorClassName);
             } catch (InstantiationException e) {
                 fatalErrors.add("Failed to instansiate alias selector: " +
                                 e.getMessage());
@@ -97,7 +117,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
             }
         }
         
-        aliasSelector.init(workerId, config, workerContext, workerEM);
+        return selector;
     }
 
     /**

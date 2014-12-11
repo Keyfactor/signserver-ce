@@ -275,7 +275,9 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                     Integer.toString(workerId), Collections.<String, Object>emptyMap());
 
             // Try to initialize the key usage counter
-            initKeyUsageCounter(workerManagerSession.getWorker(workerId, globalConfigurationSession));
+            initKeyUsageCounter(workerManagerSession.getWorker(workerId,
+                                                               globalConfigurationSession),
+                                null, null);
         }
 
         if (workerId == 0 || getWorkers(
@@ -310,7 +312,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         signer.activateSigner(authenticationCode);
 
         // Try to initialize the key usage counter
-        initKeyUsageCounter(worker);
+        initKeyUsageCounter(worker, null, null);
     }
 
     /* (non-Javadoc)
@@ -703,10 +705,17 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
 
     @Override
     public Certificate getSignerCertificate(final int signerId) throws CryptoTokenOfflineException {
+         return getSignerCertificate(signerId, null, null);
+    }
+
+    private Certificate getSignerCertificate(final int signerId,
+                                            final ProcessRequest request,
+                                            final RequestContext context)
+            throws CryptoTokenOfflineException {
         Certificate ret = null;
         final IWorker worker = workerManagerSession.getWorker(signerId, globalConfigurationSession);
         if (worker instanceof BaseProcessable) {
-            ret = ((BaseProcessable) worker).getSigningCertificate();
+            ret = ((BaseProcessable) worker).getSigningCertificate(request, context);
         }
         return ret;
     }
@@ -714,10 +723,17 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     @Override
     public List<Certificate> getSignerCertificateChain(final int signerId)
             throws CryptoTokenOfflineException {
+        return getSignerCertificateChain(signerId, null, null);
+    }
+        
+    private List<Certificate> getSignerCertificateChain(final int signerId,
+                                                       final ProcessRequest request,
+                                                       final RequestContext context)
+            throws CryptoTokenOfflineException {
         List<Certificate> ret = null;
         IWorker worker = workerManagerSession.getWorker(signerId, globalConfigurationSession);
         if (worker instanceof BaseProcessable) {
-            ret = ((BaseProcessable) worker).getSigningCertificateChain();
+            ret = ((BaseProcessable) worker).getSigningCertificateChain(request, context);
         }
         return ret;
     }
@@ -725,8 +741,16 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     @Override
     public byte[] getSignerCertificateBytes(final int signerId) 
             throws CryptoTokenOfflineException {
+        return getSignerCertificateBytes(signerId, null, null);
+    }
+    
+    private byte[] getSignerCertificateBytes(final int signerId,
+                                            final ProcessRequest request,
+                                            final RequestContext context) 
+            throws CryptoTokenOfflineException {
         try {
-            final Certificate cert = getSignerCertificate(signerId);
+            final Certificate cert =
+                    getSignerCertificate(signerId, request, context);
             return cert == null ? null : cert.getEncoded();
         } catch (CertificateEncodingException ex) {
             throw new CryptoTokenOfflineException(ex);
@@ -736,7 +760,15 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     @Override
     public List<byte[]> getSignerCertificateChainBytes(final int signerId)
             throws CryptoTokenOfflineException {
-        final List<Certificate> certs = getSignerCertificateChain(signerId);
+        return getSignerCertificateChainBytes(signerId, null, null);
+    }
+    
+    public List<byte[]> getSignerCertificateChainBytes(final int signerId,
+                                                       final ProcessRequest request,
+                                                       final RequestContext context)
+            throws CryptoTokenOfflineException {
+        final List<Certificate> certs =
+                getSignerCertificateChain(signerId, request, context);
         final List<byte[]> res = new LinkedList<byte[]>();
         
         if (certs == null) {
@@ -1028,14 +1060,16 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                 uniqueIds, includeData);
     }
 
-    private void initKeyUsageCounter(final IWorker worker) {
+    private void initKeyUsageCounter(final IWorker worker,
+                                     final ProcessRequest request,
+                                     final RequestContext context) {
         // Try to insert a key usage counter entry for this worker's public
         // key
         // Get worker instance
         if (worker instanceof BaseProcessable) {
             try {
                 final Certificate cert = ((BaseProcessable)worker)
-                        .getSigningCertificate();
+                        .getSigningCertificate(request, context);
                 if (cert != null) {
                     final String keyHash = KeyUsageCounterHash
                             .create(cert.getPublicKey());

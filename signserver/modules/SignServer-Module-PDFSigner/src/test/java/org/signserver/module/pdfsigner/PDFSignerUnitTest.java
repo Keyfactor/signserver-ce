@@ -1375,12 +1375,16 @@ public class PDFSignerUnitTest extends TestCase {
             }
 
             @Override
-            public Certificate getSigningCertificate() throws CryptoTokenOfflineException {
+            public Certificate getSigningCertificate(final ProcessRequest request,
+                                                     final RequestContext context)
+                    throws CryptoTokenOfflineException {
                 return signerCertificate;
             }
 
             @Override
-            public List<Certificate> getSigningCertificateChain() throws CryptoTokenOfflineException {
+            public List<Certificate> getSigningCertificateChain(final ProcessRequest request,
+                                                                final RequestContext context)
+                    throws CryptoTokenOfflineException {
                 return Arrays.asList(certChain);
             }
 

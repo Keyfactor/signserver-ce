@@ -62,7 +62,7 @@ public class Test1Signer extends BaseSigner {
         
         String archiveId = String.valueOf(request.getRequestID()) + "-" + System.currentTimeMillis();
         result = new GenericSignResponse(request.getRequestID(),
-                signedbytes, getSigningCertificate(), 
+                signedbytes, getSigningCertificate(processRequest, requestContext), 
                 archiveId,
                 Collections.singletonList(new ArchiveDataArchivable(archiveId, new ArchiveData(signedbytes), Archivable.TYPE_RESPONSE)));
         

@@ -300,7 +300,8 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
             byte[] content = octets.getOctets();
            
             // get signing cert certificate chain and private key
-            List<Certificate> certList = this.getSigningCertificateChain();
+            List<Certificate> certList =
+                    this.getSigningCertificateChain(signRequest, requestContext);
             if (certList == null) {
                 throw new SignServerException(
                         "Null certificate chain. This signer needs a certificate.");
@@ -391,14 +392,15 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
             if (signRequest instanceof GenericServletRequest) {
                 signResponse = new GenericServletResponse(sReq.getRequestID(),
                         		signedbytes,
-                                    getSigningCertificate(),
+                                    getSigningCertificate(signRequest,
+                                                          requestContext),
                                     archiveId,
                                     archivables,
                                     RESPONSE_CONTENT_TYPE);
             } else {
                 signResponse = new GenericSignResponse(sReq.getRequestID(),
                         signedbytes,
-                        getSigningCertificate(),
+                        getSigningCertificate(signRequest, requestContext),
                         archiveId,
                         archivables);
             }
@@ -518,7 +520,8 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
     private boolean validateChain() {
         boolean result = true;
         try {
-            final List<Certificate> signingCertificateChain = getSigningCertificateChain();
+            final List<Certificate> signingCertificateChain =
+                    getSigningCertificateChain(null, null);
             if (signingCertificateChain != null) {
                 List<Certificate> chain = (List<Certificate>) signingCertificateChain;
                 for (int i = 0; i < chain.size(); i++) {
@@ -587,7 +590,7 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
             }
 
             // Check if certificat has the required EKU
-            final Certificate certificate = getSigningCertificate();
+            final Certificate certificate = getSigningCertificate(null, null);
             try {
                 if (certificate instanceof X509Certificate) {
                     final X509Certificate cert = (X509Certificate) certificate;

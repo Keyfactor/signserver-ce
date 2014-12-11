@@ -137,7 +137,8 @@ public class XMLSigner extends BaseSigner {
         }
         
         // Get certificate chain and signer certificate
-        List<Certificate> certs = this.getSigningCertificateChain();
+        List<Certificate> certs =
+                this.getSigningCertificateChain(signRequest, requestContext);
         if (certs == null) {
             throw new IllegalArgumentException("Null certificate chain. This signer needs a certificate.");
         }
@@ -148,7 +149,7 @@ public class XMLSigner extends BaseSigner {
                 LOG.debug("Adding to chain: " + ((X509Certificate) cert).getSubjectDN());
             }
         }
-        Certificate cert = this.getSigningCertificate();
+        Certificate cert = this.getSigningCertificate(signRequest, requestContext);
         LOG.debug("SigningCert: " + ((X509Certificate) cert).getSubjectDN());
 
         // Private key
@@ -236,9 +237,13 @@ public class XMLSigner extends BaseSigner {
         final Collection<? extends Archivable> archivables = Arrays.asList(new DefaultArchivable(Archivable.TYPE_RESPONSE, CONTENT_TYPE, signedbytes, archiveId));
 
         if (signRequest instanceof GenericServletRequest) {
-            signResponse = new GenericServletResponse(sReq.getRequestID(), signedbytes, getSigningCertificate(), archiveId, archivables, CONTENT_TYPE);
+            signResponse = new GenericServletResponse(sReq.getRequestID(), signedbytes,
+                    getSigningCertificate(signRequest, requestContext),
+                    archiveId, archivables, CONTENT_TYPE);
         } else {
-            signResponse = new GenericSignResponse(sReq.getRequestID(), signedbytes, getSigningCertificate(), archiveId, archivables);
+            signResponse = new GenericSignResponse(sReq.getRequestID(), signedbytes,
+                    getSigningCertificate(signRequest, requestContext),
+                    archiveId, archivables);
         }
         
         // The client can be charged for the request

@@ -127,7 +127,8 @@ public class CMSSigner extends BaseSigner {
         final String archiveId = createArchiveId(data, (String) requestContext.get(RequestContext.TRANSACTION_ID));
 
         // Get certificate chain and signer certificate
-        List<Certificate> certs = this.getSigningCertificateChain();
+        List<Certificate> certs =
+                this.getSigningCertificateChain(signRequest, requestContext);
         if (certs == null) {
             throw new IllegalArgumentException(
                     "Null certificate chain. This signer needs a certificate.");
@@ -140,7 +141,7 @@ public class CMSSigner extends BaseSigner {
                         + ((X509Certificate) cert).getSubjectDN());
             }
         }
-        Certificate cert = this.getSigningCertificate();
+        Certificate cert = this.getSigningCertificate(signRequest, requestContext);
         LOG.debug("SigningCert: " + ((X509Certificate) cert).getSubjectDN());
 
         // Private key
@@ -188,13 +189,14 @@ public class CMSSigner extends BaseSigner {
 
             if (signRequest instanceof GenericServletRequest) {
                 signResponse = new GenericServletResponse(sReq.getRequestID(),
-                        signedbytes, getSigningCertificate(), archiveId,
-                        archivables,
-                        CONTENT_TYPE);
+                        signedbytes,
+                        getSigningCertificate(signRequest, requestContext),
+                        archiveId, archivables, CONTENT_TYPE);
             } else {
                 signResponse = new GenericSignResponse(sReq.getRequestID(),
-                        signedbytes, getSigningCertificate(), archiveId,
-                        archivables);
+                        signedbytes,
+                        getSigningCertificate(signRequest, requestContext),
+                        archiveId, archivables);
             }
             
             // Suggest new file name

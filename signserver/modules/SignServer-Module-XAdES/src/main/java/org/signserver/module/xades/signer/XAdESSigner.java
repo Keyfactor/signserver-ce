@@ -392,9 +392,13 @@ public class XAdESSigner extends BaseSigner {
         final ProcessResponse response;
         final Collection<? extends Archivable> archivables = Arrays.asList(new DefaultArchivable(Archivable.TYPE_RESPONSE, CONTENT_TYPE, signedbytes, archiveId));
         if (signRequest instanceof GenericServletRequest) {
-            response = new GenericServletResponse(sReq.getRequestID(), signedbytes, getSigningCertificate(), archiveId, archivables, CONTENT_TYPE);
+            response = new GenericServletResponse(sReq.getRequestID(), signedbytes,
+                    getSigningCertificate(signRequest, requestContext),
+                    archiveId, archivables, CONTENT_TYPE);
         } else {
-            response = new GenericSignResponse(sReq.getRequestID(), signedbytes, getSigningCertificate(), archiveId, archivables);
+            response = new GenericSignResponse(sReq.getRequestID(), signedbytes,
+                    getSigningCertificate(signRequest, requestContext),
+                    archiveId, archivables);
         }
         
         // The client can be charged for the request
@@ -423,7 +427,7 @@ public class XAdESSigner extends BaseSigner {
                    CryptoTokenOfflineException, IllegalRequestException {
         // Setup key and certificiates
         final List<X509Certificate> xchain = new LinkedList<X509Certificate>();
-        for (Certificate cert : this.getSigningCertificateChain()) {
+        for (Certificate cert : this.getSigningCertificateChain(request, context)) {
             if (cert instanceof X509Certificate) {
                 xchain.add((X509Certificate) cert);
             }

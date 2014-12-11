@@ -20,7 +20,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.cert.Certificate;
-import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -49,13 +48,11 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
     public static final String PROPERTY_CACHE_PRIVATEKEY = "CACHE_PRIVATEKEY";
 
     private static final String FAILED_TO_GET_CRYPTO_TOKEN_ = "Failed to get crypto token: ";
+    private static final String FAILED_TO_GET_ALIAS_ = "Failed to get alias: ";
     private static final String DEFAULT_ = "DEFAULT.";
 
     protected ICryptoToken cryptoToken;
-    
-    private X509Certificate cert;
-    private List<Certificate> certChain;
-    
+
     private AliasSelector aliasSelector;
 
     private List<String> fatalErrors;
@@ -198,6 +195,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
             token.activate(authenticationCode);
             
             // Check if certificate matches key
+            /* TODO: should perhaps be done when using the DefaultAliasSelector
             Certificate certificate = getSigningCertificate();
             if (certificate == null) {
                 log.info("Activate: Signer " + workerId + ": No certificate");
@@ -212,6 +210,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
                         + ": Certificate does not match key");
                 }
             }
+            */
             if (log.isTraceEnabled()) {
                 log.trace("<activateSigner");
             }
@@ -597,53 +596,111 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
     }
 
     /**
-     * Method that returns the certificate used when signing
-     * @return the configured certificate (if one), otherwise the certificate in the token (if one)
+     * Method that returns the certificate used when signing.
+     * If the worker has a configured certificate this is returned.
+     * Otherwise a certificate from the crypto token is returned,
+     * based on the request and request context depending on which alias selector
+     * is configured.
+     * 
+     * @param request Signing request
+     * @param context Request context
+     * @return Signing certificate
      * @throws CryptoTokenOfflineException
      */
-    public Certificate getSigningCertificate() throws CryptoTokenOfflineException {
+    public Certificate getSigningCertificate(final ProcessRequest request,
+                                             final RequestContext context)
+            throws CryptoTokenOfflineException {
+        
+        Certificate cert =
+                (new ProcessableConfig(config)).getSignerCertificate();
+        
         if (cert == null) {
             final ICryptoToken token;
+            
             try {
                 token = getCryptoToken();
             } catch (SignServerException e) {
                 log.error(FAILED_TO_GET_CRYPTO_TOKEN_ + e.getMessage());
                 throw new CryptoTokenOfflineException(e);
             }
-            cert = (new ProcessableConfig(config)).getSignerCertificate();
-
-            if (cert == null && token != null) {
-                cert = (X509Certificate) token.getCertificate(ICryptoToken.PURPOSE_SIGN);
+            
+            if (token != null) {
+                if (token instanceof ICryptoTokenV2) {
+                    final ICryptoTokenV2 tokenV2 =
+                            (ICryptoTokenV2) token;
+                    
+                    try {
+                        final String alias =
+                            getAlias(ICryptoToken.PURPOSE_SIGN, request, context);
+                    
+                        cert = tokenV2.getCertificate(alias);
+                    } catch (IllegalRequestException e) {
+                        log.error(FAILED_TO_GET_ALIAS_ + e.getMessage());
+                        throw new CryptoTokenOfflineException(e);
+                    } catch (SignServerException e) {
+                        log.error(FAILED_TO_GET_ALIAS_ + e.getMessage());
+                        throw new CryptoTokenOfflineException(e);
+                    }
+                } else {
+                    cert = token.getCertificate(ICryptoToken.PURPOSE_SIGN);
+                }
             }
         }
+        
         return cert;
     }
 
     /**
-     * Method that returns the certificate chain used when signing
-     * @return the configured certificate chain (if one), otherwise the certificate chain in the token (if one)
+     * Method that returns the certificate chain used when signing.
+     * If the worker has a configured certificate chain this is returned.
+     * Otherwise a certificate chain from the crypto token is returned,
+     * based on the request and request context depending on which alias selector
+     * is configured.
+     * 
+     * @param request Signing request
+     * @param context Request context
+     * @return The certificate chain used for signing
      * @throws CryptoTokenOfflineException
      */
-    public List<Certificate> getSigningCertificateChain() throws CryptoTokenOfflineException {
+    public List<Certificate> getSigningCertificateChain(final ProcessRequest request,
+                                                        final RequestContext context)
+            throws CryptoTokenOfflineException {
+        List<Certificate> certChain =
+                (new ProcessableConfig(config)).getSignerCertificateChain();
+        
         if (certChain == null) {
-            ICryptoToken cToken;
+            final ICryptoToken token;
+            
             try {
-                cToken = getCryptoToken();
+                token = getCryptoToken();
             } catch (SignServerException e) {
                 log.error(FAILED_TO_GET_CRYPTO_TOKEN_ + e.getMessage());
                 throw new CryptoTokenOfflineException(e);
             }
-            certChain = (new ProcessableConfig(config)).getSignerCertificateChain();
-
-            if (certChain == null && cToken != null) {
-                certChain = cToken.getCertificateChain(ICryptoToken.PURPOSE_SIGN);
-            }
-            if (certChain == null) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Neither configuration nor token contains a certificate chain!");
+            
+            if (token != null) {
+                if (token instanceof ICryptoTokenV2) {
+                    final ICryptoTokenV2 tokenV2 =
+                            (ICryptoTokenV2) token;
+                    
+                    try {
+                        final String alias =
+                            getAlias(ICryptoToken.PURPOSE_SIGN, request, context);
+                    
+                        certChain = tokenV2.getCertificateChain(alias);
+                    } catch (IllegalRequestException e) {
+                        log.error(FAILED_TO_GET_ALIAS_ + e.getMessage());
+                        throw new CryptoTokenOfflineException(e);
+                    } catch (SignServerException e) {
+                        log.error(FAILED_TO_GET_ALIAS_ + e.getMessage());
+                        throw new CryptoTokenOfflineException(e);
+                    }
+                } else {
+                    certChain = token.getCertificateChain(ICryptoToken.PURPOSE_SIGN);
                 }
             }
         }
+        
         return certChain;
     }
 

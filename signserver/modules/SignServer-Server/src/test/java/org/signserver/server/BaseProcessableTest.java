@@ -273,8 +273,8 @@ public class BaseProcessableTest extends TestCase {
         instance.init(workerId, workerConfig, anyContext, null);
 
         // Certifcate in token is "CN=Signer 4"
-        assertEquals("cert from token", "Signer 4", CertTools.getPartFromDN(((X509Certificate) instance.getSigningCertificate()).getSubjectX500Principal().getName(), "CN"));
-        assertEquals("cert from token", "Signer 4", CertTools.getPartFromDN(((X509Certificate) instance.getSigningCertificateChain().get(0)).getSubjectX500Principal().getName(), "CN"));
+        assertEquals("cert from token", "Signer 4", CertTools.getPartFromDN(((X509Certificate) instance.getSigningCertificate(null, null)).getSubjectX500Principal().getName(), "CN"));
+        assertEquals("cert from token", "Signer 4", CertTools.getPartFromDN(((X509Certificate) instance.getSigningCertificateChain(null, null).get(0)).getSubjectX500Principal().getName(), "CN"));
     }
 
     /**
@@ -300,8 +300,8 @@ public class BaseProcessableTest extends TestCase {
         instance.init(workerId, workerConfig, anyContext, null);
 
         // Certifcate in token is "CN=Signer 4", configured certificate is "CN=End Entity 1"
-        assertEquals("cert from token", "End Entity 1", CertTools.getPartFromDN(((X509Certificate) instance.getSigningCertificate()).getSubjectX500Principal().getName(), "CN"));
-        assertEquals("cert from token", "End Entity 1", CertTools.getPartFromDN(((X509Certificate) instance.getSigningCertificateChain().get(0)).getSubjectX500Principal().getName(), "CN"));
+        assertEquals("cert from token", "End Entity 1", CertTools.getPartFromDN(((X509Certificate) instance.getSigningCertificate(null, null)).getSubjectX500Principal().getName(), "CN"));
+        assertEquals("cert from token", "End Entity 1", CertTools.getPartFromDN(((X509Certificate) instance.getSigningCertificateChain(null, null).get(0)).getSubjectX500Principal().getName(), "CN"));
     }
 
     @Test

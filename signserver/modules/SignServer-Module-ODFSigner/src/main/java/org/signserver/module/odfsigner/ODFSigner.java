@@ -100,9 +100,11 @@ public class ODFSigner extends BaseSigner {
         }
 
         // get signing key and construct KeyInfo to be included in signature
-        PrivateKey signingPrivateKey = getCryptoToken().getPrivateKey(
-                ICryptoToken.PURPOSE_SIGN);
-        X509Certificate signingCertificate = (X509Certificate) getSigningCertificate();
+        PrivateKey signingPrivateKey =
+                getPrivateKey(ICryptoToken.PURPOSE_SIGN,
+                              signRequest, requestContext);
+        X509Certificate signingCertificate =
+                (X509Certificate) getSigningCertificate(signRequest, requestContext);
 
         // create DocumentSignatureManager with OpenOffice31CompatibilityMode
         // mode.
@@ -139,10 +141,14 @@ public class ODFSigner extends BaseSigner {
 
         if (signRequest instanceof GenericServletRequest) {
             signResponse = new GenericServletResponse(sReq.getRequestID(),
-                    signedbytes, getSigningCertificate(), archiveId, archivables, CONTENT_TYPE);
+                    signedbytes, getSigningCertificate(signRequest,
+                                                       requestContext),
+                    archiveId, archivables, CONTENT_TYPE);
         } else {
             signResponse = new GenericSignResponse(sReq.getRequestID(),
-                    signedbytes, getSigningCertificate(), archiveId, archivables);
+                    signedbytes, getSigningCertificate(signRequest,
+                                                       requestContext),
+                    archiveId, archivables);
         }
         
         // The client can be charged for the request

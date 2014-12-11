@@ -120,11 +120,12 @@ public class OOXMLSigner extends BaseSigner {
                 docxPackage);
 
         // get signing key
-        PrivateKey privateKey = getCryptoToken().getPrivateKey(
-                ICryptoToken.PURPOSE_SIGN);
+        PrivateKey privateKey = 
+                getPrivateKey(ICryptoToken.PURPOSE_SIGN, signRequest, requestContext);
 
         // get signing certificate
-        X509Certificate cert = (X509Certificate) getSigningCertificate();
+        X509Certificate cert =
+                (X509Certificate) getSigningCertificate(signRequest, requestContext);
         
         // sign document
         try {
@@ -147,10 +148,14 @@ public class OOXMLSigner extends BaseSigner {
 
         if (signRequest instanceof GenericServletRequest) {
             signResponse = new GenericServletResponse(sReq.getRequestID(),
-                    signedbytes, getSigningCertificate(), archiveId, archivables, CONTENT_TYPE);
+                    signedbytes,
+                    getSigningCertificate(signRequest, requestContext),
+                    archiveId, archivables, CONTENT_TYPE);
         } else {
             signResponse = new GenericSignResponse(sReq.getRequestID(),
-                    signedbytes, getSigningCertificate(), archiveId, archivables);
+                    signedbytes,
+                    getSigningCertificate(signRequest, requestContext),
+                    archiveId, archivables);
         }
 
         // The client can be charged for the request

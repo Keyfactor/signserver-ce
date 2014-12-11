@@ -513,12 +513,16 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
         }
 
         @Override
-        public Certificate getSigningCertificate() throws CryptoTokenOfflineException {
+        public Certificate getSigningCertificate(final ProcessRequest request,
+                                                 final RequestContext context)
+                throws CryptoTokenOfflineException {
             return mockedToken.getCertificate(ICryptoToken.PURPOSE_SIGN);
         }
 
         @Override
-        public List<Certificate> getSigningCertificateChain() throws CryptoTokenOfflineException {
+        public List<Certificate> getSigningCertificateChain(
+                final ProcessRequest request, final RequestContext context)
+                throws CryptoTokenOfflineException {
             return mockedToken.getCertificateChain(ICryptoToken.PURPOSE_SIGN);
         }
 

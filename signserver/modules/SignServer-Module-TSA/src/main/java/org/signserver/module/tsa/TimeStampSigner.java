@@ -472,7 +472,8 @@ public class TimeStampSigner extends BaseSigner {
                         timeStampRequest.getMessageImprintDigest(), false)));
 
             final TimeStampTokenGenerator timeStampTokenGen =
-                    getTimeStampTokenGenerator(timeStampRequest, logMap);
+                    getTimeStampTokenGenerator(timeStampRequest, logMap,
+                                               signRequest, requestContext);
 
             final TimeStampResponseGenerator timeStampResponseGen =
                     getTimeStampResponseGenerator(timeStampTokenGen);
@@ -519,14 +520,14 @@ public class TimeStampSigner extends BaseSigner {
             if (signRequest instanceof GenericServletRequest) {
                 signResponse = new GenericServletResponse(sReq.getRequestID(),
                         signedbytes,
-                                    getSigningCertificate(),
+                                    getSigningCertificate(signRequest, requestContext),
                                     archiveId,
                                     archivables, 
                                     RESPONSE_CONTENT_TYPE);
             } else {
                 signResponse = new GenericSignResponse(sReq.getRequestID(),
                         signedbytes,
-                        getSigningCertificate(),
+                        getSigningCertificate(signRequest, requestContext),
                         archiveId,
                         archivables);
             }
@@ -707,7 +708,9 @@ public class TimeStampSigner extends BaseSigner {
 
     private TimeStampTokenGenerator getTimeStampTokenGenerator(
             final TimeStampRequest timeStampRequest,
-            final LogMap logMap) throws
+            final LogMap logMap,
+            final ProcessRequest request, final RequestContext context)
+            throws
                 IllegalRequestException,
                 CryptoTokenOfflineException,
                 InvalidAlgorithmParameterException,
@@ -726,7 +729,7 @@ public class TimeStampSigner extends BaseSigner {
             logMap.put(ITimeStampLogger.LOG_TSA_POLICYID, tSAPolicyOID.getId());
 
             final X509Certificate signingCert
-                    = (X509Certificate) getSigningCertificate();
+                    = (X509Certificate) getSigningCertificate(request, context);
             if (signingCert == null) {
                 throw new CryptoTokenOfflineException(
                         "No certificate for this signer");
@@ -736,7 +739,7 @@ public class TimeStampSigner extends BaseSigner {
             DigestCalculator calc = calcProv.get(new AlgorithmIdentifier(TSPAlgorithms.SHA1));
             
             
-            Certificate cert = this.getSigningCertificate();
+            Certificate cert = this.getSigningCertificate(request, context);
             
             PrivateKey privKey = this.getCryptoToken().getPrivateKey(ICryptoToken.PURPOSE_SIGN);
             ContentSigner cs =
@@ -889,7 +892,8 @@ public class TimeStampSigner extends BaseSigner {
     private boolean validateChain() {
         boolean result = true;
         try {
-            final List<Certificate> signingCertificateChain = getSigningCertificateChain();
+            final List<Certificate> signingCertificateChain =
+                    getSigningCertificateChain(null, null);
             if (signingCertificateChain != null) {
                 List<Certificate> chain = (List<Certificate>) signingCertificateChain;
                 for (int i = 0; i < chain.size(); i++) {
@@ -958,7 +962,8 @@ public class TimeStampSigner extends BaseSigner {
             }
 
             // Check if certificat has the required EKU
-            final Certificate certificate = getSigningCertificate();
+            final Certificate certificate =
+                    getSigningCertificate(null, null);
             try {
                 if (certificate instanceof X509Certificate) {
                     final X509Certificate cert = (X509Certificate) certificate;

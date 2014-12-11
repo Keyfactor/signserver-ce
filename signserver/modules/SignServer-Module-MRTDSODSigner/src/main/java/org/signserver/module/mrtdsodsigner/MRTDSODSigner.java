@@ -152,7 +152,8 @@ public class MRTDSODSigner extends BaseSigner {
                 }
             }
         }
-        final X509Certificate cert = (X509Certificate) getSigningCertificate();
+        final X509Certificate cert =
+                (X509Certificate) getSigningCertificate(signRequest, requestContext);
         final PrivateKey privKey =
                 getPrivateKey(ICryptoToken.PURPOSE_SIGN, signRequest, requestContext);
         final String provider = token.getProvider(ICryptoToken.PURPOSE_SIGN);
@@ -257,7 +258,9 @@ public class MRTDSODSigner extends BaseSigner {
 
         // Verify the Signature before returning
         try {
-            verifySignatureAndChain(sod, getSigningCertificateChain());
+            verifySignatureAndChain(sod,
+                                    getSigningCertificateChain(signRequest,
+                                                               requestContext));
 
             if (log.isDebugEnabled()) {
                 log.debug("SOD verified correctly, returning SOD.");

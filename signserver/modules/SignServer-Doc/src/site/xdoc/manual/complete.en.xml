@@ -5570,6 +5570,10 @@ when using the legacy method to set-up crypto tokens).
 To backup the content of the crypto token, a database backup should be made.
                         </p>
                         <p>
+The password supplied when activating the token the first time will be used
+as the keystore password.
+                        </p>
+                        <p>
 This crypto token is not compatible with running under GlassFish version 2.    
                         </p>
                     </subsubsection>

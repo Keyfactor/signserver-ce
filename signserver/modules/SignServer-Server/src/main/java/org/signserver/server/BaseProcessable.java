@@ -884,8 +884,9 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
 
     @Override
     protected List<String> getFatalErrors() {
-        final List<String> errors = super.getFatalErrors();
-        
+        final List<String> errors = new LinkedList<String>();
+
+        errors.addAll(super.getFatalErrors());
         errors.addAll(fatalErrors);
         errors.addAll(aliasSelector.getFatalErrors());
         

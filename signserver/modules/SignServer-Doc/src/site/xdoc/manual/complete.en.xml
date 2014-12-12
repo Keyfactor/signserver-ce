@@ -5563,6 +5563,13 @@ A CryptoToken using a PKCS#12 keystore stored in the configuration (in the
 database).
                         </p>
                         <p>
+The content of the keystore is not part of the regular worker properties.
+Thus, it is not included when running the <source>dumpproperties</source>
+command. It is also removed when removing the crypto worker (or regular worker
+when using the legacy method to set-up crypto tokens).
+To backup the content of the crypto token, a database backup should be made.
+                        </p>
+                        <p>
 This crypto token is not compatible with running under GlassFish version 2.    
                         </p>
                     </subsubsection>

@@ -63,4 +63,19 @@ public class AuthorizedUsernameAliasSelectorUnitTest extends TestCase {
        assertEquals("Alias", "key_user4711",
                selector.getAlias(ICryptoToken.PURPOSE_SIGN, null, null, context));
     }
+    
+    /**
+     * Test that when no username is set in the request, null is returned.
+     * 
+     * @throws Exception 
+     */
+    public void testGetAliasWithNoUsername() throws Exception {
+       final AliasSelector selector = new AuthorizedUsernameAliasSelector();
+       final RequestContext context = new RequestContext();
+
+       selector.init(4711, new WorkerConfig(), null, null);
+       
+       assertNull("Alias", selector.getAlias(ICryptoToken.PURPOSE_SIGN,
+                                             null, null, context));
+    }
 }

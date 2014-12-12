@@ -43,4 +43,24 @@ public class AuthorizedUsernameAliasSelectorUnitTest extends TestCase {
        assertEquals("Alias", "user4711",
                selector.getAlias(ICryptoToken.PURPOSE_SIGN, null, null, context));
     }
+    
+    /**
+     * Test getting alias with a alias prefix set.
+     * 
+     * @throws Exception 
+     */
+    public void testGetAliasWithUsernameAndPrefix() throws Exception {
+       final WorkerConfig config = new WorkerConfig();
+       final AliasSelector selector = new AuthorizedUsernameAliasSelector();
+       final RequestContext context = new RequestContext();
+       
+       config.setProperty(AuthorizedUsernameAliasSelector.PROPERTY_ALIAS_PREFIX,
+                          "key_");
+       context.put(RequestContext.CLIENT_CREDENTIAL,
+               new UsernamePasswordClientCredential("user4711", "secret"));
+       selector.init(4711, config, null, null);
+       
+       assertEquals("Alias", "key_user4711",
+               selector.getAlias(ICryptoToken.PURPOSE_SIGN, null, null, context));
+    }
 }

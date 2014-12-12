@@ -16,8 +16,10 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
+import javax.persistence.EntityManager;
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
 import org.cesecore.util.CertTools;
@@ -35,6 +37,7 @@ import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
+import org.signserver.server.aliasselectors.AliasSelector;
 import org.signserver.server.cryptotokens.HardCodedCryptoToken;
 import org.signserver.server.cryptotokens.NullCryptoToken;
 import org.signserver.server.signers.BaseSigner;
@@ -333,6 +336,33 @@ public class BaseProcessableTest extends TestCase {
         assertTrue("Should contain error", foundError);
     }
     
+    /**
+     * Test a worker implementation overriding alias selector creation and
+     * getting fatal error from alias selector.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testOverrideAliasSelector() throws Exception {
+        Properties globalConfig = new Properties();
+        WorkerConfig workerConfig = new WorkerConfig();
+        
+        // All PKCS#11 properties that can have default values in GlobalConfiguration (except SLOTLISTINDEX)
+        globalConfig.setProperty("GLOB.WORKER" + workerId + ".CLASSPATH", TestSigner.class.getName());
+        globalConfig.setProperty("GLOB.WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", 
+                "org.signserver.server.cryptotokens.PKCS11CryptoToken");
+        workerConfig.setProperty("NAME", "TestSigner100");
+        
+        TestSigner instance = new TestSigner(globalConfig);
+        instance.init(workerId, workerConfig, anyContext, null);
+        
+        final List<String> fatalErrors = instance.getSignerFatalErrors();
+       
+        // test the alias selector fatal error
+        assertTrue("Should contain alias selector error",
+                fatalErrors.contains("Test alias selector error"));
+    }
+    
     /** CryptoToken only holding its properties and offering a way to access them. */
     private static class MockedCryptoToken extends NullCryptoToken {
 
@@ -428,6 +458,29 @@ public class BaseProcessableTest extends TestCase {
             return super.getFatalErrors();
         }
         
+        @Override
+        protected AliasSelector createAliasSelector(final String className) {
+            return new TestAliasSelector();
+        }
+        
+    }
+    
+    private static class TestAliasSelector implements AliasSelector {
+
+        @Override
+        public void init(int workerId, WorkerConfig config, WorkerContext workerContext, EntityManager workerEM) {
+            
+        }
+
+        @Override
+        public String getAlias(int purpose, IProcessable processble, ProcessRequest signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+            return "Test";
+        }
+
+        @Override
+        public List<String> getFatalErrors() {
+            return Collections.singletonList("Test alias selector error");
+        }
         
     }
 }

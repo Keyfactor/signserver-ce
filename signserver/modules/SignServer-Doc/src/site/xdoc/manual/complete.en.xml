@@ -5568,7 +5568,7 @@ This crypto token is not compatible with running under GlassFish version 2.
                     </subsubsection>
                     <subsubsection name="SIGNERTOKEN.CLASSPATH">
                         <p>
-The fully qualified class name is: <b>org.signserver.server.cryptotokens.KeystoreInCryptoToken</b>
+The fully qualified class name is: <b>org.signserver.server.cryptotokens.KeystoreInConfigCryptoToken</b>
                         </p>
                     </subsubsection>
                     <subsubsection name="Available Properties">

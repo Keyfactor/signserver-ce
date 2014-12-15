@@ -78,4 +78,24 @@ public class AuthorizedUsernameAliasSelectorUnitTest extends TestCase {
        assertNull("Alias", selector.getAlias(ICryptoToken.PURPOSE_SIGN,
                                              null, null, context));
     }
+    
+    /**
+     * Test setting an unknown object as CLIENT_CREDENTIAL in the request.
+     * getAlias() should return null in this case.
+     * 
+     * @throws Exception 
+     */
+    public void testGetAliasWithStrangeRequest() throws Exception {
+        final WorkerConfig config = new WorkerConfig();
+        final AliasSelector selector = new AuthorizedUsernameAliasSelector();
+        final RequestContext context = new RequestContext();
+
+        config.setProperty(AuthorizedUsernameAliasSelector.PROPERTY_ALIAS_PREFIX,
+                           "key_");
+        context.put(RequestContext.CLIENT_CREDENTIAL, "strange value");
+        selector.init(4711, config, null, null);
+
+        assertNull("Alias should be null",
+                selector.getAlias(ICryptoToken.PURPOSE_SIGN, null, null, context));
+    }
 }

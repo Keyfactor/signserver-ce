@@ -337,30 +337,30 @@ public class BaseProcessableTest extends TestCase {
     }
     
     /**
-     * Test a worker implementation overriding alias selector creation and
-     * getting fatal error from alias selector.
+     * Test the override mechanism for alias selectors.
      * 
      * @throws Exception 
      */
     @Test
-    public void testOverrideAliasSelector() throws Exception {
+    public void testDefaulAliasSelector() throws Exception {
         Properties globalConfig = new Properties();
         WorkerConfig workerConfig = new WorkerConfig();
         
-        // All PKCS#11 properties that can have default values in GlobalConfiguration (except SLOTLISTINDEX)
-        globalConfig.setProperty("GLOB.WORKER" + workerId + ".CLASSPATH", TestSigner.class.getName());
-        globalConfig.setProperty("GLOB.WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", 
-                "org.signserver.server.cryptotokens.PKCS11CryptoToken");
-        workerConfig.setProperty("NAME", "TestSigner100");
-        
         TestSigner instance = new TestSigner(globalConfig);
+        
         instance.init(workerId, workerConfig, anyContext, null);
         
-        final List<String> fatalErrors = instance.getSignerFatalErrors();
-       
-        // test the alias selector fatal error
-        assertTrue("Should contain alias selector error",
-                fatalErrors.contains("Test alias selector error"));
+        final AliasSelector selector = instance.createAliasSelector(null);
+        
+        assertTrue("Alias selector implementation: " + selector.getClass().getName(),
+                    selector instanceof TestAliasSelector);
+        assertEquals("Alias", "Test",
+                selector.getAlias(workerId, instance, null, null));
+        
+        final List<String> errors = instance.getSignerFatalErrors();
+        
+        assertTrue("Contains alias selector fatal error",
+                errors.contains("Test alias selector error"));
     }
     
     /** CryptoToken only holding its properties and offering a way to access them. */

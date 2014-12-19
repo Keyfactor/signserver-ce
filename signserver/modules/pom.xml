@@ -4,7 +4,7 @@
     <artifactId>SignServer-Modules</artifactId>
     <version>3.7-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>SignServer</name>
+    <name>SignServer Modules</name>
     <repositories>
         <repository>
             <id>nexus1.lab.primekey.se-releases</id>
@@ -86,6 +86,7 @@
         <module>SignServer-Test-Random</module>
         <module>SignServer-Test-Performance</module>
         <module>SignServer-war-Healthcheck</module>
+        <module>mod-enterprise</module>
     </modules>
     <dependencies>
         <dependency>

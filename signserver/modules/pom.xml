@@ -35,6 +35,21 @@
             <url>http://nexus1.lab.primekey.se:8081/nexus/content/repositories/snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
+
+    <profiles>
+        <profile>
+            <id>profile-ee</id>
+            <activation>
+                <file>
+                    <exists>mod-enterprise</exists>
+                </file>
+            </activation>
+            <modules>
+                <module>mod-enterprise</module>
+            </modules>
+        </profile>
+    </profiles>
+
     <modules>
         <module>SignServer-Lib-EJBCA-util</module>
         <module>SignServer-Common</module>

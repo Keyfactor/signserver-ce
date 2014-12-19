@@ -89,8 +89,6 @@
         <module>SignServer-Lib-ODFDOM</module>
         <module>SignServer-AdminGUI</module>
         <module>SignServer-Client-ValidationCLI</module>
-        <!--        <module>SignServer-DatabaseCLI</module>
-        <module>SignServer-Test-DatabaseCLI</module>-->
         <module>SignServer-Test-P11</module>
         <module>SignServer-Test-Renewal</module>
         <module>SignServer-Test-SignServerWS</module>
@@ -101,6 +99,7 @@
         <module>SignServer-Test-Random</module>
         <module>SignServer-Test-Performance</module>
         <module>SignServer-war-Healthcheck</module>
+        <module>SignServer-Doc</module>
     </modules>
     <dependencies>
         <dependency>

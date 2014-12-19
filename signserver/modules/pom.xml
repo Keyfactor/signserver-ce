@@ -86,7 +86,6 @@
         <module>SignServer-Test-Random</module>
         <module>SignServer-Test-Performance</module>
         <module>SignServer-war-Healthcheck</module>
-        <module>mod-enterprise</module>
     </modules>
     <dependencies>
         <dependency>

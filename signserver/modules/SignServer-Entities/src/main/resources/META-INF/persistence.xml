@@ -2,7 +2,7 @@
 <persistence version="1.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd">
 
   <!--COMMENT-REPLACEMENT(persistenceheader)-->
-  
+
   <persistence-unit name="SignServerJPA" transaction-type="JTA">
     <provider>org.hibernate.ejb.HibernatePersistence</provider>
     <jta-data-source>${datasource.jndi-name-prefix}${datasource.jndi-name}</jta-data-source>
@@ -11,24 +11,26 @@
     <class>org.signserver.server.config.entities.WorkerConfigDataBean</class>
     <class>org.signserver.server.entities.KeyUsageCounter</class>
     <class>org.signserver.server.archive.olddbarchiver.entities.ArchiveDataBean</class>
+    <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="hibernate.dialect" value="${hibernate.dialect}"/>
       <property name="hibernate.hbm2ddl.auto" value="update"/>
     </properties>
   </persistence-unit>
-  
+
   <persistence-unit name="ejbca" transaction-type="JTA">
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
-        <jta-data-source>${datasource.jndi-name-prefix}${datasource.jndi-name}</jta-data-source>        
+        <jta-data-source>${datasource.jndi-name-prefix}${datasource.jndi-name}</jta-data-source>
         <mapping-file>META-INF/cesecore-orm-${database.name}.xml</mapping-file>
         <class>org.cesecore.audit.impl.integrityprotected.AuditRecordData</class>
+        <exclude-unlisted-classes>true</exclude-unlisted-classes>
         <properties>
             <property name="hibernate.dialect" value="${hibernate.dialect}"/>
-            
+
             <property name="hibernate.hbm2ddl.auto" value="update"/>
             <property name="hibernate.query.jpaql_strict_compliance" value="true"/>
 
-            <property name="hibernate.show_sql" value="false"/> 
+            <property name="hibernate.show_sql" value="false"/>
         </properties>
     </persistence-unit>
 

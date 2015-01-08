@@ -98,4 +98,23 @@ public class AuthorizedUsernameAliasSelectorUnitTest extends TestCase {
         assertNull("Alias should be null",
                 selector.getAlias(ICryptoToken.PURPOSE_SIGN, null, null, context));
     }
+    
+    /**
+     * Test that when no key prefix has been set, the alias returned equals
+     * the user name in the request.
+     * 
+     * @throws Exception 
+     */
+    public void testGetAliasNoPrefix() throws Exception {
+        final WorkerConfig config = new WorkerConfig();
+        final AliasSelector selector = new AuthorizedUsernameAliasSelector();
+        final RequestContext context = new RequestContext();
+       
+        context.put(RequestContext.CLIENT_CREDENTIAL,
+            new UsernamePasswordClientCredential("user4711", "secret"));
+        selector.init(4711, config, null, null);
+       
+        assertEquals("Alias", "user4711",
+               selector.getAlias(ICryptoToken.PURPOSE_SIGN, null, null, context));
+    }
 }

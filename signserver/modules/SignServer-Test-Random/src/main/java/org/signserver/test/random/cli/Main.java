@@ -386,7 +386,7 @@ public class Main {
         // Threads signing documents
         // Group 1: Threads signing documents with the workers in group 1
         for (int i = 0; i < context.getThreadsGroup1(); i++) {
-            final WorkerSpec worker = context.getWorkerGroup1().get(i%context.getWorkerGroup1().size());
+            final WorkerSpec worker = context.getWorkerGroup1().get(i % context.getWorkerGroup1().size());
             final SigningThread signingThread = new SigningThread("Signer-" + i + "-" + worker.getWorkerId(), context.getCallback(), context.getPauser(), context.getMasterRandom().nextLong(), worker, context.getWorkerSession(), null);
             signingThreads.add(signingThread);
         }

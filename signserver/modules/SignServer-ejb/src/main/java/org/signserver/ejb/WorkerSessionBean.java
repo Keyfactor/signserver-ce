@@ -662,6 +662,16 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             final boolean explicitEccParameters,
             final boolean defaultKey) throws
             CryptoTokenOfflineException, InvalidWorkerIdException {
+        return getCertificateRequestInternal(adminInfo, signerId, certReqInfo,
+                explicitEccParameters, null, defaultKey);
+    }
+    
+    private ICertReqData getCertificateRequestInternal(final AdminInfo adminInfo, int signerId,
+            ISignerCertReqInfo certReqInfo,
+            final boolean explicitEccParameters,
+            final String keyAlias,
+            final boolean defaultKey)
+        throws CryptoTokenOfflineException, InvalidWorkerIdException {
         if (LOG.isTraceEnabled()) {
             LOG.trace(">getCertificateRequest: signerId=" + signerId);
         }
@@ -681,9 +691,14 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                     getClass().getName());
         }
 
-        ICertReqData ret = processable.genCertificateRequest(certReqInfo,
+        final ICertReqData ret;
+        if (keyAlias != null) {
+            ret = processable.genCertificateRequest(certReqInfo,
+                    explicitEccParameters, keyAlias);
+        } else {
+            ret = processable.genCertificateRequest(certReqInfo,
                 explicitEccParameters, defaultKey);
-        
+        }
         
         final HashMap<String, Object> auditMap = new HashMap<String, Object>();
         
@@ -702,6 +717,26 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         }
         return ret;
     }
+
+    @Override
+    public ICertReqData getCertificateRequest(AdminInfo adminInfo, int signerId,
+            ISignerCertReqInfo certReqInfo, boolean explicitEccParameters,
+            String keyAlias)
+            throws CryptoTokenOfflineException, InvalidWorkerIdException {
+        return getCertificateRequestInternal(adminInfo, signerId, certReqInfo,
+                explicitEccParameters, keyAlias, false);
+    }
+
+    @Override
+    public ICertReqData getCertificateRequest(int signerId,
+            ISignerCertReqInfo certReqInfo, boolean explicitEccParameters,
+            String keyAlias)
+            throws CryptoTokenOfflineException, InvalidWorkerIdException {
+        return getCertificateRequest(new AdminInfo("CLI user", null, null),
+                signerId, certReqInfo, explicitEccParameters, keyAlias);
+    }
+    
+    
 
     @Override
     public Certificate getSignerCertificate(final int signerId) throws CryptoTokenOfflineException {

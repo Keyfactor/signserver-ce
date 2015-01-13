@@ -208,6 +208,26 @@ public interface IWorkerSession {
             ISignerCertReqInfo certReqInfo, boolean explicitEccParameters, 
             boolean defaultKey) throws CryptoTokenOfflineException,
             InvalidWorkerIdException;
+    
+    /**
+     * Method used to let a signer generate a certificate request
+     * using the signers own genCertificateRequest method given a key alias.
+     * 
+     * @param signerId ID of the signer
+     * @param certReqInfo information used by the signer to create the request
+     * @param explicitEccParameters false should be default and will use
+     * NamedCurve encoding of ECC public keys (IETF recommendation), use true
+     * to include all parameters explicitly (ICAO ePassport requirement).
+     * @param keyAlias key alias to use in the crypto token.
+     * @return Certificate request data
+     * @throws CryptoTokenOfflineException
+     * @throws InvalidWorkerIdException 
+     */
+    ICertReqData getCertificateRequest(int signerId,
+            ISignerCertReqInfo certReqInfo, boolean explicitEccParameters,
+            String keyAlias)
+            throws CryptoTokenOfflineException, InvalidWorkerIdException;
+            
 
     /**
      * Method returning the current signing certificate for the signer.
@@ -576,6 +596,27 @@ public interface IWorkerSession {
                 final ISignerCertReqInfo certReqInfo,
                 final boolean explicitEccParameters) throws
                 CryptoTokenOfflineException, InvalidWorkerIdException;
+        
+        /**
+         * Method used to let a signer generate a certificate request
+         * using the signers own genCertificateRequest method. Using the specified
+         * key alias from the crypto token.
+         *
+         * @param adminInfo Administrator info
+         * @param signerId id of the signer
+         * @param certReqInfo information used by the signer to create the request
+         * @param explicitEccParameters false should be default and will use
+         * NamedCurve encoding of ECC public keys (IETF recommendation), use true
+         * to include all parameters explicitly (ICAO ePassport requirement).
+         * @param keyAlias key alias to use from the crypto token
+         * @return certificate request data
+         * @throws CryptoTokenOfflineException
+         * @throws InvalidWorkerIdException
+         */
+        ICertReqData getCertificateRequest(final AdminInfo adminInfo, final int signerId,
+                final ISignerCertReqInfo certReqInfo,
+                final boolean explicitEccParameters, final String keyAlias)
+                throws CryptoTokenOfflineException, InvalidWorkerIdException;
         
         /**
          * Get keystore data, used by the KeystoreInConfigCryptoToken.

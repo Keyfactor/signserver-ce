@@ -79,6 +79,20 @@ public interface IProcessable extends IWorker {
             throws CryptoTokenOfflineException;
 
     /**
+     * Generate a certificate request using the worker's crypto token, given
+     * a key alias.
+     * 
+     * @param info Certificate request info
+     * @param explicitEccParameters If explicit ECC parameters should be used
+     * @param keyAlias Key alias in crypto token
+     * @return Certificate request data
+     * @throws CryptoTokenOfflineException 
+     */
+    ICertReqData genCertificateRequest(ISignerCertReqInfo info,
+            boolean explicitEccParameters, String keyAlias)
+            throws CryptoTokenOfflineException;
+    
+    /**
      * Method specifying which type of authentication that should be performed before signature is performed
      * Returns one of the AUTHTYPE_ constants
      */

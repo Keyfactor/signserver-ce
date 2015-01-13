@@ -760,18 +760,50 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
     public ICertReqData genCertificateRequest(ISignerCertReqInfo info,
             final boolean explicitEccParameters, final boolean defaultKey)
             throws CryptoTokenOfflineException {
+        return genCertificateRequest(info, explicitEccParameters, null,
+                defaultKey);
+    }
+
+    @Override
+    public ICertReqData genCertificateRequest(ISignerCertReqInfo info,
+            boolean explicitEccParameters, String keyAlias)
+            throws CryptoTokenOfflineException {
+        return genCertificateRequest(info, explicitEccParameters, keyAlias,
+                false);
+    }
+    
+    private ICertReqData genCertificateRequest(final ISignerCertReqInfo info,
+            final boolean explicitEccParameters, final String keyAlias,
+            final boolean defaultKey)
+            throws CryptoTokenOfflineException {
         if (log.isTraceEnabled()) {
             log.trace(">genCertificateRequest");
         }
         
         try {
-            ICryptoToken token = getCryptoToken();
+            final ICryptoToken token = getCryptoToken();
             if (log.isDebugEnabled()) {
                 log.debug("Found a crypto token of type: " + token.getClass().getName());
                 log.debug("Token status is: " + token.getCryptoTokenStatus());
             }
-            ICertReqData data = token.genCertificateRequest(info,
+            
+            final ICertReqData data;
+            
+            if (keyAlias != null) {
+                if (token instanceof ICryptoTokenV2) {
+                    final ICryptoTokenV2 tokenV2 = (ICryptoTokenV2) token;
+                    
+                    data = tokenV2.genCertificateRequest(info,
+                                                         explicitEccParameters,
+                                                         keyAlias);
+                } else {
+                    throw new CryptoTokenOfflineException("Crypto token doesn't support generating certificate request with key alias");
+                }
+            } else {
+                data = token.genCertificateRequest(info,
                     explicitEccParameters, defaultKey);
+            }
+
             if (log.isTraceEnabled()) {
                 log.trace("<genCertificateRequest");
             }

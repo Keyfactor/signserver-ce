@@ -24,6 +24,7 @@ import org.signserver.common.WorkerConfig;
 import org.signserver.server.IProcessable;
 import org.signserver.server.UsernamePasswordClientCredential;
 import org.signserver.server.WorkerContext;
+import org.signserver.server.cryptotokens.CryptoTokenHelper;
 
 /**
  * Alias selector implementation selecting a key alias based
@@ -37,11 +38,13 @@ public class AuthorizedUsernameAliasSelector implements AliasSelector {
     public static String PROPERTY_ALIAS_PREFIX = "ALIAS_PREFIX";
     
     private String prefix;
+    private String defaultKey;
     
     @Override
     public void init(final int workerId, final WorkerConfig config,
                      final WorkerContext workerContext, EntityManager workerEM) {
         prefix = config.getProperty(PROPERTY_ALIAS_PREFIX, "");
+        defaultKey = config.getProperty(CryptoTokenHelper.PROPERTY_DEFAULTKEY);
     }
 
     @Override
@@ -49,17 +52,21 @@ public class AuthorizedUsernameAliasSelector implements AliasSelector {
                            final ProcessRequest signRequest,
                            final RequestContext requestContext)
             throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
-        final Object cred =
-                requestContext.get(RequestContext.CLIENT_CREDENTIAL);
-        
-        if (cred != null && cred instanceof UsernamePasswordClientCredential) {
-            final String username =
-                    ((UsernamePasswordClientCredential) cred).getUsername();
-            
-            return prefix + username;
+        if (requestContext != null) {
+            final Object cred =
+                    requestContext.get(RequestContext.CLIENT_CREDENTIAL);
+
+            if (cred != null && cred instanceof UsernamePasswordClientCredential) {
+                final String username =
+                        ((UsernamePasswordClientCredential) cred).getUsername();
+
+                return prefix + username;
+            } else {
+                return null;
+            }
+        } else {
+            return defaultKey;
         }
-        
-        return null;
     }
 
     @Override

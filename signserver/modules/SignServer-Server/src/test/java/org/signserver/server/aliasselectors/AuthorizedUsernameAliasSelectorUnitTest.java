@@ -16,6 +16,7 @@ import junit.framework.TestCase;
 import org.signserver.common.RequestContext;
 import org.signserver.common.WorkerConfig;
 import org.signserver.server.UsernamePasswordClientCredential;
+import org.signserver.server.cryptotokens.CryptoTokenHelper;
 import org.signserver.server.cryptotokens.ICryptoToken;
 
 /**
@@ -116,5 +117,38 @@ public class AuthorizedUsernameAliasSelectorUnitTest extends TestCase {
        
         assertEquals("Alias", "user4711",
                selector.getAlias(ICryptoToken.PURPOSE_SIGN, null, null, context));
+    }
+    
+    /**
+     * Test that the alias selector falls back on DEFAULTKEY when there is
+     * no request context.
+     * 
+     * @throws Exception 
+     */
+    public void testGetAliasNoContext() throws Exception {
+        final WorkerConfig config = new WorkerConfig();
+        final AliasSelector selector = new AuthorizedUsernameAliasSelector();
+        
+        config.setProperty(CryptoTokenHelper.PROPERTY_DEFAULTKEY, "defaultkey");
+        selector.init(4711, config, null, null);
+        
+        assertEquals("Alias", "defaultkey",
+                selector.getAlias(ICryptoToken.PURPOSE_SIGN, null, null, null));
+    }
+    
+    /**
+     * Test that the alias selector returns null when there is no request
+     * context and no DEFAULTKEY (should not get an NPE).
+     * 
+     * @throws Exception 
+     */
+    public void testGetAliasNoContextNoDefault() throws Exception {
+        final WorkerConfig config = new WorkerConfig();
+        final AliasSelector selector = new AuthorizedUsernameAliasSelector();
+        
+        selector.init(4711, config, null, null);
+        
+        assertNull("Alias",
+                selector.getAlias(ICryptoToken.PURPOSE_SIGN, null, null, null));
     }
 }

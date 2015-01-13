@@ -128,6 +128,11 @@ public class MockedWorkerSession implements IWorkerSession {
     }
 
     @Override
+    public ICertReqData getCertificateRequest(int signerId, ISignerCertReqInfo certReqInfo, boolean explicitEccParameters, String keyAlias) throws CryptoTokenOfflineException, InvalidWorkerIdException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
     public Certificate getSignerCertificate(int signerId) throws CryptoTokenOfflineException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }

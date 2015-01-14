@@ -28,11 +28,13 @@ import org.signserver.common.PKCS10CertReqInfo;
  */
 public class GenerateCertReqCommand extends AbstractAdminCommand {
 
-    private static final String HELP = "Usage: signserver generatecertreq <workerid> <dn> <signature algorithm>  <cert-req-filename> [-explicitecc] [-nextkey]\n"
+    private static final String HELP = "Usage: signserver generatecertreq <workerid> <dn> <signature algorithm>  <cert-req-filename> [-explicitecc] [-alias <key alias>|-nextkey]\n"
             + "Example: signserver generatecertreq 1 \"CN=TestCertReq\"  \"SHA1WithRSA\" /home/user/certtreq.pem\n"
             + "Example: signserver generatecertreq 1 \"CN=TestCertReq\"  \"SHA1WithRSA\" /home/user/certtreq.pem -nextkey\n"
-            + "Example: signserver generatecertreq 1 \"CN=TestCertReq\"  \"SHA1WithECDSA\" /home/user/certtreq.pem -explicitecc\n"
-            + "Example: signserver generatecertreq 1 \"CN=TestCertReq\"  \"SHA1WithECDSA\" /home/user/certtreq.pem -explicitecc -nextkey\n\n";
+            + "Example: signserver generatecertreq 1 \"CN=TestCertReq\" \"SHA1WithRSA\" /home/user/certreq.pem -alias user1\n"
+            + "Example: signserver generatecertreq 1 \"CN=TestCertReq\"  \"SHA1WithECDSA\" /home/user/certreq.pem -explicitecc\n"
+            + "Example: signserver generatecertreq 1 \"CN=TestCertReq\"  \"SHA1WithECDSA\" /home/user/certreq.pem -explicitecc -nextkey\n"
+            + "Example: signserver generatecertreq 1 \"CN=TestCertReq\" \"SHA1WithECDSA\" /home/user/certreq.pem -explicitecc -alias user1\n\n";
     private static final String FAIL = "Error: No worker with the given name could be found";
     private static final String SUCCESS = "PKCS10 Request successfully written to file ";
 
@@ -47,7 +49,7 @@ public class GenerateCertReqCommand extends AbstractAdminCommand {
     }
 
     public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException, UnexpectedCommandFailureException {
-        if (args.length < 4 || args.length > 6) {
+        if (args.length < 4 || args.length > 7) {
             throw new IllegalCommandArgumentsException(HELP);
         }
         try {
@@ -58,21 +60,49 @@ public class GenerateCertReqCommand extends AbstractAdminCommand {
             final String filename = args[3];
             boolean defaultKey = true;
             boolean explicitecc = false;
-
+            String keyAlias = null;
+            
             if (args.length > 4) {
                 if ("-nextkey".equals(args[4])) {
                     defaultKey = false;
                 } else if ("-explicitecc".equals(args[4])) {
                     explicitecc = true;
+                } else if ("-alias".equals(args[4])) {
+                    if (args.length > 5) {
+                        keyAlias = args[5];
+                    } else {
+                        getErrorStream().println("Missing argument for -alias");
+                        throw new IllegalCommandArgumentsException(HELP);
+                    }
                 } else {
+                    getErrorStream().println("Unknown argument: " + args[4]);
                     throw new IllegalCommandArgumentsException(HELP);
                 }
+
                 if (args.length > 5) {
                     if ("-nextkey".equals(args[5])) {
                         defaultKey = false;
                     } else if ("-explicitecc".equals(args[5])) {
                         explicitecc = true;
-                    } else {
+                    } else if ("-alias".equals(args[5])) {
+                        if (args.length > 6) {
+                            keyAlias = args[6];
+                        } else {
+                            getErrorStream().println("Missing argument for -alias");
+                            throw new IllegalCommandArgumentsException(HELP);
+                        }
+                    } else if (keyAlias == null) {
+                        getErrorStream().println("Unknown argument: " + args[5]);
+                        throw new IllegalCommandArgumentsException(HELP);
+                    }
+                }
+              
+                if (args.length > 6) {
+                    // the argument following -alias could only be -explitecc
+                    if ("-explicitecc".equals(args[6])) {
+                        explicitecc = true;
+                    } else if (keyAlias == null) {
+                        getErrorStream().println("Unknown argument: " + args[6]);
                         throw new IllegalCommandArgumentsException(HELP);
                     }
                 }
@@ -90,7 +120,14 @@ public class GenerateCertReqCommand extends AbstractAdminCommand {
             }
 
             PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo(sigAlg, dn, null);
-            Base64SignerCertReqData reqData = (Base64SignerCertReqData) getWorkerSession().getCertificateRequest(id, certReqInfo, explicitecc, defaultKey);
+            final Base64SignerCertReqData reqData;
+            
+            if (keyAlias != null) {
+                reqData = (Base64SignerCertReqData) getWorkerSession().getCertificateRequest(id, certReqInfo, explicitecc, keyAlias);
+            } else {
+                reqData = (Base64SignerCertReqData) getWorkerSession().getCertificateRequest(id, certReqInfo, explicitecc, defaultKey);
+            }
+   
             if (reqData == null) {
                 throw new Exception("Base64SignerCertReqData returned was null. Unable to generate certificate request.");
             }

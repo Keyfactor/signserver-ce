@@ -47,7 +47,7 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jScrollPane1" pref="212" max="32767" attributes="0"/>
+              <Component id="jScrollPane1" pref="206" max="32767" attributes="0"/>
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="separate" max="-2" attributes="0"/>
@@ -76,7 +76,6 @@
           <action class="org.signserver.admin.gui.GenerateRequestsDialog" id="generateRequests" methodName="generateRequests"/>
         </Property>
         <Property name="text" type="java.lang.String" resourceKey="jButtonGenerate.text"/>
-        <Property name="enabled" type="boolean" value="false"/>
         <Property name="name" type="java.lang.String" value="jButtonGenerate" noResource="true"/>
       </Properties>
       <Events>
@@ -126,7 +125,7 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="signedFormatRadioButton" min="-2" pref="209" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="signersComboBox" pref="194" max="32767" attributes="0"/>
+                  <Component id="signersComboBox" pref="196" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>

@@ -74,7 +74,7 @@ public class GenerateRequestsDialog extends JDialog {
 
     private int resultCode = CANCEL;
 
-    private Vector<Vector<String>> data;
+    private Vector<Vector<Object>> data;
 
     private JComboBox sigAlgComboBox = new JComboBox(new String[] {
         "SHA1WithRSA",
@@ -88,8 +88,23 @@ public class GenerateRequestsDialog extends JDialog {
         "SHA1WithDSA"
     });
 
-    private JComboBox aliasComboBox = new JComboBox(new String[] {
-         NEXT_KEY, DEFAULT_KEY});
+    private static enum HardCodedAlias {
+        NEXT_KEY {
+            @Override
+            public String toString() {
+                return GenerateRequestsDialog.NEXT_KEY;
+            }
+        },
+        DEFAULT_KEY {
+            @Override
+            public String toString() {
+                return GenerateRequestsDialog.DEFAULT_KEY;
+            }
+        }
+    }
+    
+    private JComboBox aliasComboBox = new JComboBox(new Object[] {
+         HardCodedAlias.NEXT_KEY, HardCodedAlias.DEFAULT_KEY});
 
     private List<Worker> workers;
 
@@ -99,13 +114,14 @@ public class GenerateRequestsDialog extends JDialog {
             final ResourceMap resourceMap) {
         super(parent, modal);
         this.workers = new ArrayList<Worker>(workers);
+        aliasComboBox.setEditable(true);
         sigAlgComboBox.setEditable(true);
         initComponents();
         setTitle("Generate CSRs for " + workers.size() + " signers");
 
-        data = new Vector<Vector<String>>();
+        data = new Vector<Vector<Object>>();
         for (Worker worker : workers) {
-            Vector<String> cols = new Vector<String>();
+            Vector<Object> cols = new Vector<Object>();
             cols.add(worker.getName() + " (" + worker.getWorkerId() + ")");
             if (worker.getConfiguration().getProperty("NEXTCERTSIGNKEY") != null) {
                 cols.add(NEXT_KEY);
@@ -126,7 +142,7 @@ public class GenerateRequestsDialog extends JDialog {
 
             @Override
             public void setValueAt(Object aValue, int row, int column) {
-                data.get(row).set(column, (String) aValue);
+                data.get(row).set(column, aValue);
                 super.setValueAt(aValue, row, column);
             }
 
@@ -360,7 +376,7 @@ public class GenerateRequestsDialog extends JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    public Vector<Vector<String>> getData() {
+    public Vector<Vector<Object>> getData() {
         return data;
     }
 
@@ -419,18 +435,18 @@ public class GenerateRequestsDialog extends JDialog {
             for (int row = 0; row < data.size(); row++) {
                 final Worker worker = workers.get(row);
                 final int workerid = worker.getWorkerId();
-                final String key = (String) data.get(row).get(1);
+                final Object key = data.get(row).get(1);
                 final String sigAlg =  (String) data.get(row).get(2);
                 final String dn = (String) data.get(row).get(3);
                 final String filename = (String) data.get(row).get(4);
 
-                final boolean defaultKey= DEFAULT_KEY.equals(key);
+                final boolean usingKeyAlias = key instanceof String;
 
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("worker=" + workerid + ", key=" + key
                             + ", dn=" + dn + ", sigAlg=" + sigAlg
                             + ", filename=" + filename
-                            + ", defaultKey=" + defaultKey);
+                            + ", key=" + key);
                 }
 
                 FileOutputStream fos = null;
@@ -442,11 +458,30 @@ public class GenerateRequestsDialog extends JDialog {
                     certReqInfo.setSignatureAlgorithm(sigAlg);
                     certReqInfo.setSubjectDN(dn);
                     certReqInfo.setAttributes(null);
-                    final Base64SignerCertReqData reqData =
+                    
+                    final Base64SignerCertReqData reqData;
+                    
+                    if (usingKeyAlias) {
+                        final String keyAlias = (String) key;
+                        
+                        reqData =
+                            (Base64SignerCertReqData) SignServerAdminGUIApplication
+                                .getAdminWS()
+                                .getPKCS10CertificateRequestForAlias(workerid,
+                                    certReqInfo, explicitEccParameters, keyAlias);
+                    } else {
+                        final HardCodedAlias alias =
+                                (HardCodedAlias) key;
+                        final boolean defaultKey =
+                                (alias == HardCodedAlias.DEFAULT_KEY);
+                        
+                        reqData =
                         (Base64SignerCertReqData) SignServerAdminGUIApplication
                             .getAdminWS()
                             .getPKCS10CertificateRequestForKey(workerid,
                             certReqInfo, explicitEccParameters, defaultKey);
+                    }
+
                     if (reqData == null) {
                         final String error =
                             "Unable to generate certificate request for signer "

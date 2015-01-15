@@ -256,7 +256,31 @@ public class AdminWebServiceTest extends ModulesTestCase {
             // OK
         }
     }
+    
+    public void testGetPKCS10CertificateRequest() throws Exception {
+        try {
+            adminWS.getPKCS10CertificateRequest(10, null, false);
+        } catch (AdminNotAuthorizedException_Exception ignored) {
+            // OK
+        }
+    }
 
+    public void testGetPKCS10CertificateRequestForAlias() throws Exception {
+        try {
+            adminWS.getPKCS10CertificateRequestForAlias(10, null, false, "user1");
+        } catch (AdminNotAuthorizedException_Exception ignored) {
+            // OK
+        }
+    }
+    
+    public void testGetPKCS10CertificateRequestForKey() throws Exception {
+        try {
+            adminWS.getPKCS10CertificateRequestForKey(10, null, false, true);
+        } catch (AdminNotAuthorizedException_Exception ignored) {
+            // OK
+        }
+    }
+    
     // TODO add test methods here. The name must begin with 'test'. For example:
     // public void testHello() {}
 

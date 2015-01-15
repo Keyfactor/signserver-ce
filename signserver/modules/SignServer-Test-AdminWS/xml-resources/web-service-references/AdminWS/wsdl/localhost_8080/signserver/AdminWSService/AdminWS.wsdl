@@ -28,6 +28,8 @@
    <xs:element name='getKeyUsageCounterValue' type='tns:getKeyUsageCounterValue'/>
    <xs:element name='getKeyUsageCounterValueResponse' type='tns:getKeyUsageCounterValueResponse'/>
    <xs:element name='getPKCS10CertificateRequest' type='tns:getPKCS10CertificateRequest'/>
+   <xs:element name='getPKCS10CertificateRequestForAlias' type='tns:getPKCS10CertificateRequestForAlias'/>
+   <xs:element name='getPKCS10CertificateRequestForAliasResponse' type='tns:getPKCS10CertificateRequestForAliasResponse'/>
    <xs:element name='getPKCS10CertificateRequestForKey' type='tns:getPKCS10CertificateRequestForKey'/>
    <xs:element name='getPKCS10CertificateRequestForKeyResponse' type='tns:getPKCS10CertificateRequestForKeyResponse'/>
    <xs:element name='getPKCS10CertificateRequestResponse' type='tns:getPKCS10CertificateRequestResponse'/>
@@ -334,6 +336,19 @@
     </xs:sequence>
    </xs:complexType>
    <xs:complexType name='getPKCS10CertificateRequestForKeyResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='return' type='tns:base64SignerCertReqData'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='getPKCS10CertificateRequestForAlias'>
+    <xs:sequence>
+     <xs:element name='signerId' type='xs:int'/>
+     <xs:element minOccurs='0' name='certReqInfo' type='tns:pkcs10CertReqInfo'/>
+     <xs:element name='explicitEccParameters' type='xs:boolean'/>
+     <xs:element name='keyAlias' type='xs:string'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='getPKCS10CertificateRequestForAliasResponse'>
     <xs:sequence>
      <xs:element minOccurs='0' name='return' type='tns:base64SignerCertReqData'/>
     </xs:sequence>
@@ -728,6 +743,9 @@
  <message name='AdminWS_getPKCS10CertificateRequestForKey'>
   <part element='tns:getPKCS10CertificateRequestForKey' name='getPKCS10CertificateRequestForKey'></part>
  </message>
+ <message name='AdminWS_getPKCS10CertificateRequestForAlias'>
+  <part element='tns:getPKCS10CertificateRequestForAlias' name='getPKCS10CertificateRequestForAlias'></part>
+ </message>
  <message name='AdminWS_getAuthorizedClients'>
   <part element='tns:getAuthorizedClients' name='getAuthorizedClients'></part>
  </message>
@@ -757,6 +775,9 @@
  </message>
  <message name='AdminWS_getPKCS10CertificateRequestForKeyResponse'>
   <part element='tns:getPKCS10CertificateRequestForKeyResponse' name='getPKCS10CertificateRequestForKeyResponse'></part>
+ </message>
+ <message name='AdminWS_getPKCS10CertificateRequestForAliasResponse'>
+  <part element='tns:getPKCS10CertificateRequestForAliasResponse' name='getPKCS10CertificateRequestForAliasResponse'></part>
  </message>
  <message name='AdminWS_getSigningValidityNotAfter'>
   <part element='tns:getSigningValidityNotAfter' name='getSigningValidityNotAfter'></part>
@@ -962,6 +983,13 @@
   <operation name='getPKCS10CertificateRequestForKey' parameterOrder='getPKCS10CertificateRequestForKey'>
    <input message='tns:AdminWS_getPKCS10CertificateRequestForKey'></input>
    <output message='tns:AdminWS_getPKCS10CertificateRequestForKeyResponse'></output>
+   <fault message='tns:AdminNotAuthorizedException' name='AdminNotAuthorizedException'></fault>
+   <fault message='tns:CryptoTokenOfflineException' name='CryptoTokenOfflineException'></fault>
+   <fault message='tns:InvalidWorkerIdException' name='InvalidWorkerIdException'></fault>
+  </operation>
+  <operation name='getPKCS10CertificateRequestForAlias' parameterOrder='getPKCS10CertificateRequestForAlias'>
+   <input message='tns:AdminWS_getPKCS10CertificateRequestForAlias'></input>
+   <output message='tns:AdminWS_getPKCS10CertificateRequestForAliasResponse'></output>
    <fault message='tns:AdminNotAuthorizedException' name='AdminNotAuthorizedException'></fault>
    <fault message='tns:CryptoTokenOfflineException' name='CryptoTokenOfflineException'></fault>
    <fault message='tns:InvalidWorkerIdException' name='InvalidWorkerIdException'></fault>
@@ -1276,6 +1304,24 @@
    </fault>
   </operation>
   <operation name='getPKCS10CertificateRequestForKey'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+   <fault name='AdminNotAuthorizedException'>
+    <soap:fault name='AdminNotAuthorizedException' use='literal'/>
+   </fault>
+   <fault name='CryptoTokenOfflineException'>
+    <soap:fault name='CryptoTokenOfflineException' use='literal'/>
+   </fault>
+   <fault name='InvalidWorkerIdException'>
+    <soap:fault name='InvalidWorkerIdException' use='literal'/>
+   </fault>
+  </operation>
+  <operation name='getPKCS10CertificateRequestForAlias'>
    <soap:operation soapAction=''/>
    <input>
     <soap:body use='literal'/>

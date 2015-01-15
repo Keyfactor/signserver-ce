@@ -290,12 +290,7 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2 {
             }
         }
         KeyEntry entry = entries.get(purpose);
-        // If key for 'purpose' not available and no nextKey defined, try with
-        // default
-        if ((entry == null || entry.getCertificate() == null)
-                && !properties.containsKey(NEXTKEY)) {
-            entry = entries.get(PURPOSE_SIGN);
-        }
+
         if (entry == null || entry.getCertificate() == null) {
             throw new CryptoTokenOfflineException(
                     "No key available for purpose: " + purpose);

@@ -388,6 +388,27 @@ public class AdminWS {
         return (Base64SignerCertReqData) data;
     }
 
+    @WebMethod(operationName = "getPKCS10CertificateRequestForAlias")
+    public Base64SignerCertReqData getPKCS10CertificateRequestForAlias(
+            @WebParam(name = "signerId") final int signerId,
+            @WebParam(name = "certReqInfo") final PKCS10CertReqInfo certReqInfo,
+            @WebParam(name = "explicitEccParameters")
+                final boolean explicitEccParameters,
+            @WebParam(name = "keyAlias") final String keyAlias)
+                throws CryptoTokenOfflineException, InvalidWorkerIdException,
+                    AdminNotAuthorizedException {
+        
+        final AdminInfo adminInfo = requireAdminAuthorization("getPKCS10CertificateRequestForKey",
+                String.valueOf(signerId));
+        
+        final ICertReqData data = worker.getCertificateRequest(adminInfo, signerId,
+                certReqInfo, explicitEccParameters, keyAlias);
+        if (!(data instanceof Base64SignerCertReqData)) {
+            throw new RuntimeException("Unsupported cert req data");
+        }
+        return (Base64SignerCertReqData) data;
+    }
+    
     /**
      * Method returning the current signing certificate for the signer.
      * @param signerId Id of signer

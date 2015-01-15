@@ -464,6 +464,27 @@ public class AdminLayerEJBImpl implements AdminWS {
         }
     }
 
+    @Override
+    public Base64SignerCertReqData getPKCS10CertificateRequestForAlias(int signerId, Pkcs10CertReqInfo certReqInfo, boolean explicitEccParameters, String keyAlias) throws AdminNotAuthorizedException_Exception, CryptoTokenOfflineException_Exception, InvalidWorkerIdException_Exception {
+        final Base64SignerCertReqData result;
+        try {
+            final ICertReqData data = worker.getCertificateRequest(signerId, 
+                    new PKCS10CertReqInfo(certReqInfo.getSignatureAlgorithm(),
+                    certReqInfo.getSubjectDN(), null), explicitEccParameters,
+                    keyAlias);
+            if (!(data instanceof org.signserver.common.Base64SignerCertReqData)) {
+                throw new RuntimeException("Unsupported cert req data: " + data);
+            }
+            result = new Base64SignerCertReqData();
+            result.setBase64CertReq(((org.signserver.common.Base64SignerCertReqData) data).getBase64CertReq());
+            return result;
+        } catch (CryptoTokenOfflineException ex) {
+            throw wrap(ex);
+        } catch (InvalidWorkerIdException ex) {
+            throw wrap(ex);
+        }
+    }
+
     /**
      * Method returning the current signing certificate for the signer.
      * @param signerId Id of signer

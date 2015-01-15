@@ -13,22 +13,14 @@
 package org.signserver.server.cryptotokens;
 
 import java.io.*;
-import java.math.BigInteger;
 import java.security.*;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
 import java.util.*;
 import javax.naming.NamingException;
-import javax.security.auth.x500.X500Principal;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
-import org.bouncycastle.cert.X509v3CertificateBuilder;
-import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
-import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
 import org.bouncycastle.jce.ECNamedCurveTable;
-import org.bouncycastle.operator.ContentSigner;
-import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.ejbca.util.keystore.KeyTools;
 import org.signserver.common.*;
 import org.signserver.ejb.interfaces.IWorkerSession;
@@ -65,8 +57,6 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2 {
     public static final String TYPE_PKCS12 = "PKCS12";
     public static final String TYPE_JKS = "JKS";
     public static final String TYPE_INTERNAL = "INTERNAL";
-
-    private static final String SUBJECT_DUMMY = "L=_SignServer_DUMMY_CERT_";
 
     private String keystorepath = null;
     private String keystorepassword = null;
@@ -329,11 +319,8 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2 {
             Certificate result = entry.getCertificate();
 
             // Do not return the dummy certificate
-            if (result instanceof X509Certificate) {
-                if (((X509Certificate) result).getSubjectDN().getName()
-                        .contains(SUBJECT_DUMMY)) {
-                    result = null;
-                }
+            if (CryptoTokenHelper.isDummyCertificate(result)) {
+                result = null;
             }
             return result;
         } catch (CryptoTokenOfflineException ex) {
@@ -346,11 +333,8 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2 {
         List<Certificate> result = entry.getCertificateChain();
         // Do not return the dummy certificate
         if (result.size() == 1) {
-            if (result.get(0) instanceof X509Certificate) {
-                if (((X509Certificate) result.get(0)).getSubjectDN().getName()
-                        .contains(SUBJECT_DUMMY)) {
-                    result = null;
-                }
+            if (CryptoTokenHelper.isDummyCertificate(result.get(0))) {
+                result = null;
             }
         }
         return result;
@@ -425,9 +409,7 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2 {
             LOG.debug("generating...");
             final KeyPair keyPair = kpg.generateKeyPair();
             Certificate[] chain = new Certificate[1];
-            chain[0] = getSelfCertificate("CN=" + alias + ", " + SUBJECT_DUMMY
-                + ", C=SE",
-                                  (long)30*24*60*60*365, sigAlgName, keyPair);
+            chain[0] = CryptoTokenHelper.createDummyCertificate(alias, sigAlgName, keyPair, getProvider(PROVIDERUSAGE_SIGN));
             LOG.debug("Creating certificate with entry "+alias+'.');
 
             keystore.setKeyEntry(alias, keyPair.getPrivate(), authCode, chain);
@@ -473,31 +455,6 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2 {
             throw new CryptoTokenOfflineException("Not activated");
         }
         return ks;
-    }
-
-    private X509Certificate getSelfCertificate (String myname,
-                                                long validity,
-                                                String sigAlg,
-                                                KeyPair keyPair) throws Exception {
-        final long currentTime = new Date().getTime();
-        final Date firstDate = new Date(currentTime-24*60*60*1000);
-        final Date lastDate = new Date(currentTime + validity * 1000);
-
-        // Add all mandatory attributes
-        LOG.debug("keystore signing algorithm " + sigAlg);
-
-        final PublicKey publicKey = keyPair.getPublic();
-        if (publicKey == null) {
-            throw new Exception("Public key is null");
-        }
-
-        X509v3CertificateBuilder cg = new JcaX509v3CertificateBuilder(new X500Principal(myname), BigInteger.valueOf(firstDate.getTime()), firstDate, lastDate, new X500Principal(myname), publicKey);
-        final JcaContentSignerBuilder contentSignerBuilder = new JcaContentSignerBuilder(sigAlg);
-        contentSignerBuilder.setProvider(getProvider(PROVIDERUSAGE_SIGN));
-
-        final ContentSigner contentSigner = contentSignerBuilder.build(keyPair.getPrivate());
-
-        return new JcaX509CertificateConverter().getCertificate(cg.build(contentSigner));
     }
 
     private KeyStore getKeystore(final String type, final String path,

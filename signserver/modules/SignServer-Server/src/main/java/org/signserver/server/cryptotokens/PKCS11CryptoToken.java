@@ -30,7 +30,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
-import java.util.logging.Level;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.cesecore.keys.token.CryptoTokenAuthenticationFailedException;

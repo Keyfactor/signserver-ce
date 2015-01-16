@@ -26,9 +26,11 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SignatureException;
 import java.security.cert.Certificate;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
+import java.util.logging.Level;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.cesecore.keys.token.CryptoTokenAuthenticationFailedException;
@@ -335,22 +337,45 @@ public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2 {
 
     @Override
     public Certificate getCertificate(int purpose) throws CryptoTokenOfflineException {
-        return null;
+        final String alias = purpose == ICryptoToken.PURPOSE_NEXTKEY ? nextKeyAlias : keyAlias;
+        return getCertificate(alias);
     }
 
     @Override
     public List<Certificate> getCertificateChain(int purpose) throws CryptoTokenOfflineException {
-        return null;
+        final String alias = purpose == ICryptoToken.PURPOSE_NEXTKEY ? nextKeyAlias : keyAlias;
+        return getCertificateChain(alias);
     }
 
     @Override
     public Certificate getCertificate(String alias) throws CryptoTokenOfflineException {
-        return null;
+        try {
+            Certificate result = delegate.getActivatedKeyStore().getCertificate(alias);
+            
+            // Do not return the dummy certificate
+            if (CryptoTokenHelper.isDummyCertificate(result)) {
+                result = null;
+            }
+            return result;
+        } catch (KeyStoreException ex) {
+            throw new CryptoTokenOfflineException(ex);
+        }
     }
 
     @Override
     public List<Certificate> getCertificateChain(String alias) throws CryptoTokenOfflineException {
-        return null;
+        try {
+            final List<Certificate> result;
+            final Certificate[] certChain = delegate.getActivatedKeyStore().getCertificateChain(alias);
+            if (certChain == null || (certChain.length == 1 && CryptoTokenHelper.isDummyCertificate(certChain[0]))) {
+                result = null;
+            } else {
+                result = Arrays.asList(certChain);
+            }
+            return result;
+        } catch (KeyStoreException ex) {
+            throw new CryptoTokenOfflineException(ex);
+        }
     }
 
     @Override

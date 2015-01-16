@@ -1341,7 +1341,8 @@ Used when uploading a complete certificate chain to the worker. Which command th
 <b>generatecertreq:</b>
 Used to generate a certificate request for a worker to be signed by a certificate authority. It takes
 distinguished name and signature algorithm as parameters and writes the request in PEM format to
-file.
+file. An optional key alias can be specified to generate a request given a specific key alias
+from the crypto token.
                         </p>
                         <p>
 <b>activatecryptotoken:</b>
@@ -2000,7 +2001,9 @@ key alias, SUCCESS and the public key hash if the test signing succeded.
                     <subsubsection name="Generate CSR dialog">
                         <p>
 Generates certificate signing requests (CSR:s) in PKCS#10 format for all listed 
-signers and either for the current key (Default key) or the next key. 
+signers. In the key dropdown menu either the current key (Default key) or the next key
+can be selected. It is also possible to manually enter a value in the field to
+generate a CSR for a specific key alias in the crypto token.
 Signature algorithm, subject distingueshed name (DN) and Filename must be 
 specified if not already taken from the worker's configuration. The format of 
 the request could either be a Standard CSR file or a CSR wrapped in PKCS#7/CMS 

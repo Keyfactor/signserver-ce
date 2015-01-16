@@ -275,7 +275,7 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2 {
         return "BC";
     }
 
-    private KeyEntry getKeyEntry(final Object purpose) throws CryptoTokenOfflineException {
+    private KeyEntry getKeyEntry(final Object purposeOrAlias) throws CryptoTokenOfflineException {
         if (entries == null) {
             if (keystorepassword != null) {
                 try {
@@ -289,11 +289,18 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2 {
                 throw new CryptoTokenOfflineException("Signtoken isn't active.");
             }
         }
-        KeyEntry entry = entries.get(purpose);
-
+        KeyEntry entry = entries.get(purposeOrAlias);
+        // If key for 'purpose' not available
+        // (and a key alias was not specified) and no nextKey defined, try with
+        // default
+        if ((entry == null || entry.getCertificate() == null)
+                && !properties.containsKey(NEXTKEY)
+                && !(purposeOrAlias instanceof String)) {
+            entry = entries.get(PURPOSE_SIGN);
+        }
         if (entry == null || entry.getCertificate() == null) {
             throw new CryptoTokenOfflineException(
-                    "No key available for purpose: " + purpose);
+                    "No key available for purpose: " + purposeOrAlias);
         }
         return entry;
     }

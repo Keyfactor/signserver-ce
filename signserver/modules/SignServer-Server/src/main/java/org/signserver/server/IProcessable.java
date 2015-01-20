@@ -13,7 +13,9 @@
 package org.signserver.server;
 
 import java.security.KeyStoreException;
+import java.security.cert.Certificate;
 import java.util.Collection;
+import java.util.List;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.ProcessRequest;
@@ -129,4 +131,15 @@ public interface IProcessable extends IWorker {
      * @see WorkerStatus#STATUS_OFFLINE
      */
     int getCryptoTokenStatus();
+    
+    /**
+     * Import a signing certificate chain to the signer's crypto token.
+     * 
+     * @param certChain Certificate chain to import 
+     * @param alias Alias to use in the crypto token
+     * @throws CryptoTokenOfflineException
+     * @throws IllegalArgumentException 
+     */
+    void importCertificateChain(List<Certificate> certChain, String alias)
+            throws CryptoTokenOfflineException, IllegalArgumentException;
 }

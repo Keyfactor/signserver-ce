@@ -17,6 +17,7 @@ import java.security.*;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.util.*;
+import java.util.logging.Level;
 import javax.naming.NamingException;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
@@ -43,7 +44,8 @@ import org.signserver.server.log.AdminInfo;
  * @author Philip Vendil, Markus Kilas
  * @version $Id$
  */
-public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2 {
+public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2,
+        ICryptoTokenV3 {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(KeystoreCryptoToken.class);
@@ -571,6 +573,57 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2 {
             throw new CryptoTokenOfflineException(ex.getMessage(), ex);
         }
     }
+
+    @Override
+    public void importCertificateChain(final List<Certificate> certChain,
+                                       final String alias)
+            throws CryptoTokenOfflineException, IllegalArgumentException {
+        
+        if (certChain.size() < 1) {
+            throw new IllegalArgumentException("Certificate chain can not be empty");
+        }
+        
+        try {
+            final KeyStore keyStore = getKeyStore();
+            final Key key = keyStore.getKey(alias, authenticationCode);
+            
+            keyStore.setKeyEntry(alias, key, authenticationCode,
+                    certChain.toArray(new Certificate[0]));
+            
+            // persist keystore
+            OutputStream out = null;
+            
+            if (!TYPE_INTERNAL.equalsIgnoreCase(keystoretype)) {
+                out = new FileOutputStream(new File(keystorepath));
+            } else {
+                // use internal worker data
+                out = new ByteArrayOutputStream();
+            }
+            keyStore.store(out, authenticationCode);
+
+            if (TYPE_INTERNAL.equalsIgnoreCase(keystoretype)) {
+                final byte[] data = ((ByteArrayOutputStream) out).toByteArray();
+
+                getWorkerSession().setKeystoreData(new AdminInfo("Internal", null, null), 
+                                                   this.workerId, data);
+            }
+                
+            // update in-memory representation
+            KeyEntry entry = getKeyEntry(alias);
+            final Certificate signingCert = certChain.get(0);
+            
+            if (entry == null) {
+                entry = new KeyEntry();
+            }
+            
+            entry.setCertificate(signingCert);
+            entry.setCertificateChain(certChain);
+        } catch (Exception e) {
+            throw new CryptoTokenOfflineException(e);
+        }   
+    }
+    
+    
     
     protected IWorkerSession.ILocal getWorkerSession() throws NamingException {
         if (workerSession == null) {
@@ -581,10 +634,13 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2 {
     }
 
     private static class KeyEntry {
-        private final PrivateKey privateKey;
-        private final Certificate certificate;
-        private final List<Certificate> certificateChain;
+        private PrivateKey privateKey;
+        private Certificate certificate;
+        private List<Certificate> certificateChain;
 
+        public KeyEntry() {
+        }
+        
         public KeyEntry(final PrivateKey privateKey,
                 final Certificate certificate,
                 final List<Certificate> certificateChain) {
@@ -603,6 +659,18 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2 {
 
         public PrivateKey getPrivateKey() {
             return privateKey;
+        }
+        
+        public void setCertificate(final Certificate cert) {
+            certificate = cert;
+        }
+        
+        public void setCertificateChain(final List<Certificate> certChain) {
+            certificateChain = certChain;
+        }
+        
+        public void setPrivateKey(final PrivateKey privKey) {
+            privateKey = privKey;
         }
     }
 }

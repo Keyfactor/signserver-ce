@@ -45,6 +45,7 @@ public class DefaultAdminCommandFactory extends AbstractCommandFactory implement
         put("getstatus", GetStatusCommand.class);
         put("getstatusproperties", GetStatusPropertiesCommand.class);
         put("getstatusproperty", GetStatusPropertyCommand.class);
+        put("importcertificatechain", ImportCertificateChainCommand.class);
         put("listauthorizedclients", ListAuthorizedClientsCommand.class);
         put("reload", ReloadCommand.class);
         put("removeauthorizedclient", RemoveAuthorizedClientCommand.class);

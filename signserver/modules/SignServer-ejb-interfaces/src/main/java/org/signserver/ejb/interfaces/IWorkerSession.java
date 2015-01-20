@@ -370,6 +370,21 @@ public interface IWorkerSession {
              throws CertificateException;
 
     /**
+     * Method used to import a complete certificate chain to a crypto token.
+     * 
+     * @param signerId ID of the signer
+     * @param signerCerts the certificate chain to upload
+     * @param alias key alias to use in the token
+     * @throws CryptoTokenOfflineException
+     * @throws CertificateException
+     * @throws IllegalArgumentException 
+     */
+    void importCertificateChain(int signerId, List<byte[]> signerCerts,
+            String alias)
+            throws CryptoTokenOfflineException, CertificateException,
+                   IllegalArgumentException;
+    
+    /**
      * Methods that generates a free worker id that can be used for new signers.
      */
     int genFreeWorkerId();
@@ -659,6 +674,22 @@ public interface IWorkerSession {
                 Collection<byte[]> signerCerts, String scope) throws CertificateException;
 
         
+        /**
+         * Method used to import a complete certificate chain to a crypto token.
+         * 
+         * @param adminInfo
+         * @param signerId ID of the signer
+         * @param signerCerts the certificate chain to upload
+         * @param alias key alias to use in the token
+         * @throws CryptoTokenOfflineException
+         * @throws CertificateException
+         * @throws IllegalArgumentException 
+         */
+        void importCertificateChain(AdminInfo adminInfo, int signerId,
+                List<byte[]> signerCerts, String alias)
+                throws CryptoTokenOfflineException, CertificateException,
+                       IllegalArgumentException;
+
         /**
          * The Worker Beans main method. Takes  requests processes them
          * and returns a response.

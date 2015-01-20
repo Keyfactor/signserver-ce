@@ -430,7 +430,15 @@ public class WorkerSessionMock implements IWorkerSession.ILocal,
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    @Override
+    public void importCertificateChain(int signerId, List<byte[]> signerCerts, String alias) throws CryptoTokenOfflineException, CertificateException, IllegalArgumentException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
+    @Override
+    public void importCertificateChain(AdminInfo adminInfo, int signerId, List<byte[]> signerCerts, String alias) throws CryptoTokenOfflineException, CertificateException, IllegalArgumentException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
     private static class Worker {
         private IProcessable processable;

@@ -897,6 +897,36 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         auditLogCertChainInstalled(adminInfo, signerId, new String (CertTools.getPEMFromCerts(certs)), scopeGlobal ? "GLOBAL" : "NODE", scopeGlobal ? null : WorkerConfig.getNodeId());
     }
 
+    @Override
+    public void importCertificateChain(final AdminInfo adminInfo,
+                                       final int signerId,
+                                       final List<byte[]> signerCerts,
+                                       final String alias)
+            throws CryptoTokenOfflineException, CertificateException, IllegalArgumentException {
+        final List<Certificate> certs = new LinkedList<Certificate>();
+        
+        for (final byte[] certBytes : signerCerts) {
+            final X509Certificate cert =
+                    (X509Certificate) CertTools.getCertfromByteArray(certBytes);
+            
+            certs.add(cert);
+        }
+        
+        final IWorker worker = workerManagerSession.getWorker(signerId, globalConfigurationSession);
+        
+        if (worker instanceof BaseProcessable) {
+            ((BaseProcessable) worker).importCertificateChain(certs, alias);
+        }
+    }
+
+    @Override
+    public void importCertificateChain(int signerId, List<byte[]> signerCerts, String alias) throws CryptoTokenOfflineException, CertificateException, IllegalArgumentException {
+        importCertificateChain(new AdminInfo("CLI user", null, null), signerId,
+                signerCerts, alias);
+    }
+    
+    
+
     /* (non-Javadoc)
      * @see org.signserver.ejb.interfaces.IWorkerSession#genFreeWorkerId()
      */

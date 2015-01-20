@@ -38,6 +38,7 @@ import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.cryptotokens.IKeyGenerator;
 import org.signserver.server.cryptotokens.IKeyRemover;
 import org.signserver.server.cryptotokens.ICryptoTokenV2;
+import org.signserver.server.cryptotokens.ICryptoTokenV3;
 
 public abstract class BaseProcessable extends BaseWorker implements IProcessable, IKeyRemover {
 
@@ -885,6 +886,30 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
             throw new CryptoTokenOfflineException(e);
         }
     }
+
+    @Override
+    public void importCertificateChain(List<Certificate> certChain, String alias) throws CryptoTokenOfflineException, IllegalArgumentException {
+        try {
+            final ICryptoToken token = getCryptoToken();
+            
+            if (token == null) {
+                throw new CryptoTokenOfflineException("Crypto token offline");
+            }
+            
+            if (token instanceof ICryptoTokenV3) {
+                final ICryptoTokenV3 tokenV3 = (ICryptoTokenV3) token;
+                
+                tokenV3.importCertificateChain(certChain, alias);
+            } else {
+                throw new IllegalArgumentException("Import certificate not supported by crypto token");
+            }
+        } catch (SignServerException e) {
+            log.error(FAILED_TO_GET_CRYPTO_TOKEN_ + e.getMessage());
+            throw new CryptoTokenOfflineException(e);
+        }
+    }
+    
+    
     
     /**
      * Computes an archive id based on the data and the request id.

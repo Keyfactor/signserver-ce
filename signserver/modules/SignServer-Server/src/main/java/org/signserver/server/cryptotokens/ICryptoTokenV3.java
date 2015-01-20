@@ -25,6 +25,16 @@ import org.signserver.common.CryptoTokenOfflineException;
  */
 public interface ICryptoTokenV3 extends ICryptoTokenV2 {
     
+    /**
+     * Import certificate chain to a crypto token.
+     * 
+     * @param certChain Certificate chain to import, should contain signing certificate
+     * @param alias Key alias to import certificate chain in
+     * @param athenticationCode Alias-specific authentication code. If this is null
+     *                          uses the token's authentication code (set when activating)
+     * @throws CryptoTokenOfflineException
+     * @throws IllegalArgumentException 
+     */
     void importCertificateChain(List<Certificate> certChain, String alias,
             char[] athenticationCode)
             throws CryptoTokenOfflineException, IllegalArgumentException;

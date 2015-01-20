@@ -226,7 +226,9 @@ public class MockedWorkerSession implements IWorkerSession {
     public List<Integer> getWorkers(int workerType) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
-    
 
+    @Override
+    public void importCertificateChain(int signerId, List<byte[]> signerCerts, String alias) throws CryptoTokenOfflineException, CertificateException, IllegalArgumentException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

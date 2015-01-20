@@ -898,10 +898,10 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     }
 
     @Override
-    public void importCertificateChain(final AdminInfo adminInfo,
-                                       final int signerId,
+    public void importCertificateChain(final AdminInfo adminInfo, final int signerId,
                                        final List<byte[]> signerCerts,
-                                       final String alias)
+                                       final String alias,
+                                       final char[] authenticationCode)
             throws CryptoTokenOfflineException, CertificateException, IllegalArgumentException {
         final List<Certificate> certs = new LinkedList<Certificate>();
         
@@ -915,14 +915,18 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         final IWorker worker = workerManagerSession.getWorker(signerId, globalConfigurationSession);
         
         if (worker instanceof BaseProcessable) {
-            ((BaseProcessable) worker).importCertificateChain(certs, alias);
+            ((BaseProcessable) worker).importCertificateChain(certs, alias, null);
         }
     }
 
     @Override
-    public void importCertificateChain(int signerId, List<byte[]> signerCerts, String alias) throws CryptoTokenOfflineException, CertificateException, IllegalArgumentException {
+    public void importCertificateChain(final int signerId,
+                                       final List<byte[]> signerCerts,
+                                       final String alias,
+                                       final char[] authenticationCode)
+            throws CryptoTokenOfflineException, CertificateException, IllegalArgumentException {
         importCertificateChain(new AdminInfo("CLI user", null, null), signerId,
-                signerCerts, alias);
+                signerCerts, alias, authenticationCode);
     }
     
     

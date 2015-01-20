@@ -888,7 +888,10 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
     }
 
     @Override
-    public void importCertificateChain(List<Certificate> certChain, String alias) throws CryptoTokenOfflineException, IllegalArgumentException {
+    public void importCertificateChain(final List<Certificate> certChain,
+                                       final String alias,
+                                       final char[] authenticationCode)
+            throws CryptoTokenOfflineException, IllegalArgumentException {
         try {
             final ICryptoToken token = getCryptoToken();
             
@@ -899,7 +902,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
             if (token instanceof ICryptoTokenV3) {
                 final ICryptoTokenV3 tokenV3 = (ICryptoTokenV3) token;
                 
-                tokenV3.importCertificateChain(certChain, alias);
+                tokenV3.importCertificateChain(certChain, alias, authenticationCode);
             } else {
                 throw new IllegalArgumentException("Import certificate not supported by crypto token");
             }

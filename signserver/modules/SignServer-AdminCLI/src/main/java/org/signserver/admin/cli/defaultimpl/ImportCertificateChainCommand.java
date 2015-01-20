@@ -37,7 +37,7 @@ public class ImportCertificateChainCommand extends AbstractAdminCommand {
 
     @Override
     public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException, UnexpectedCommandFailureException {
-        if (args.length != 3) {
+        if (args.length != 3 && args.length != 4) {
             throw new IllegalCommandArgumentsException("Wrong number of arguments");
         }
         
@@ -45,7 +45,12 @@ public class ImportCertificateChainCommand extends AbstractAdminCommand {
             final int signerid = getWorkerId(args[0]);
             final String filename = args[1];
             final String alias = args[2];
+            String authCode = null;
 
+            if (authCode != null) {
+                authCode = args[3];
+            }
+            
             final List<Certificate> certs = CertTools.getCertsFromPEM(filename);
 
             if (certs.isEmpty()) {
@@ -62,7 +67,8 @@ public class ImportCertificateChainCommand extends AbstractAdminCommand {
                 this.getOutputStream().println("\n");
             }
 
-            getWorkerSession().importCertificateChain(signerid, bcerts, alias);
+            getWorkerSession().importCertificateChain(signerid, bcerts, alias,
+                    authCode != null ? authCode.getBytes() : null);
             return 0;
         } catch (IllegalCommandArgumentsException e) {
             throw e;

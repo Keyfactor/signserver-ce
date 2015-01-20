@@ -25,6 +25,7 @@ import org.signserver.common.CryptoTokenOfflineException;
  */
 public interface ICryptoTokenV3 extends ICryptoTokenV2 {
     
-    void importCertificateChain(List<Certificate> certChain, String alias)
+    void importCertificateChain(List<Certificate> certChain, String alias,
+            char[] athenticationCode)
             throws CryptoTokenOfflineException, IllegalArgumentException;
 }

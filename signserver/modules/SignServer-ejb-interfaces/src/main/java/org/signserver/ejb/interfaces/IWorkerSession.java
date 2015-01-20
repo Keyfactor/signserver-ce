@@ -380,7 +380,7 @@ public interface IWorkerSession {
      * @throws IllegalArgumentException 
      */
     void importCertificateChain(int signerId, List<byte[]> signerCerts,
-            String alias)
+                                String alias,char[] athenticationCode)
             throws CryptoTokenOfflineException, CertificateException,
                    IllegalArgumentException;
     
@@ -686,7 +686,7 @@ public interface IWorkerSession {
          * @throws IllegalArgumentException 
          */
         void importCertificateChain(AdminInfo adminInfo, int signerId,
-                List<byte[]> signerCerts, String alias)
+                List<byte[]> signerCerts, String alias, char[] athenticationCode)
                 throws CryptoTokenOfflineException, CertificateException,
                        IllegalArgumentException;
 

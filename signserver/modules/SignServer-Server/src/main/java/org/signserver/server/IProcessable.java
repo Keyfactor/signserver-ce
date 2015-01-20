@@ -140,6 +140,7 @@ public interface IProcessable extends IWorker {
      * @throws CryptoTokenOfflineException
      * @throws IllegalArgumentException 
      */
-    void importCertificateChain(List<Certificate> certChain, String alias)
+    void importCertificateChain(List<Certificate> certChain, String alias,
+            char[] authenticationCode)
             throws CryptoTokenOfflineException, IllegalArgumentException;
 }

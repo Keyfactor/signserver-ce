@@ -576,19 +576,21 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2,
 
     @Override
     public void importCertificateChain(final List<Certificate> certChain,
-                                       final String alias)
-            throws CryptoTokenOfflineException, IllegalArgumentException {
-        
+                                       final String alias,
+                                       final char[] authCode)
+        throws CryptoTokenOfflineException, IllegalArgumentException {
         if (certChain.size() < 1) {
             throw new IllegalArgumentException("Certificate chain can not be empty");
         }
         
         try {
             final KeyStore keyStore = getKeyStore();
-            final Key key = keyStore.getKey(alias, authenticationCode);
+            final Key key =
+                    keyStore.getKey(alias, authCode != null ? authCode : authenticationCode);
             
-            keyStore.setKeyEntry(alias, key, authenticationCode,
-                    certChain.toArray(new Certificate[0]));
+            keyStore.setKeyEntry(alias, key,
+                                 authCode != null ? authCode : authenticationCode,
+                                 certChain.toArray(new Certificate[0]));
             
             // persist keystore
             OutputStream out = null;

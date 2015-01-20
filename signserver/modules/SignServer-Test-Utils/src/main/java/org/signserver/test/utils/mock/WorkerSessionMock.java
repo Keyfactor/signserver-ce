@@ -431,12 +431,12 @@ public class WorkerSessionMock implements IWorkerSession.ILocal,
     }
 
     @Override
-    public void importCertificateChain(int signerId, List<byte[]> signerCerts, String alias) throws CryptoTokenOfflineException, CertificateException, IllegalArgumentException {
+    public void importCertificateChain(int signerId, List<byte[]> signerCerts, String alias, char[] authenticationCode) throws CryptoTokenOfflineException, CertificateException, IllegalArgumentException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public void importCertificateChain(AdminInfo adminInfo, int signerId, List<byte[]> signerCerts, String alias) throws CryptoTokenOfflineException, CertificateException, IllegalArgumentException {
+    public void importCertificateChain(AdminInfo adminInfo, int signerId, List<byte[]> signerCerts, String alias, char[] authenticationCode) throws CryptoTokenOfflineException, CertificateException, IllegalArgumentException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

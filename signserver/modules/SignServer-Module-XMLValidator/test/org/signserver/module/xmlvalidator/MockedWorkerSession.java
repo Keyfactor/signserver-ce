@@ -228,7 +228,7 @@ public class MockedWorkerSession implements IWorkerSession {
     }
 
     @Override
-    public void importCertificateChain(int signerId, List<byte[]> signerCerts, String alias) throws CryptoTokenOfflineException, CertificateException, IllegalArgumentException {
+    public void importCertificateChain(int signerId, List<byte[]> signerCerts, String alias, char[] athenticationCode) throws CryptoTokenOfflineException, CertificateException, IllegalArgumentException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

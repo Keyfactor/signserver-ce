@@ -68,7 +68,7 @@ public class ImportCertificateChainCommand extends AbstractAdminCommand {
             }
 
             getWorkerSession().importCertificateChain(signerid, bcerts, alias,
-                    authCode != null ? authCode.getBytes() : null);
+                    authCode != null ? authCode.toCharArray() : null);
             return 0;
         } catch (IllegalCommandArgumentsException e) {
             throw e;

@@ -137,6 +137,8 @@ public interface IProcessable extends IWorker {
      * 
      * @param certChain Certificate chain to import 
      * @param alias Alias to use in the crypto token
+     * @param authenticationCode Authentication code for the key entry, or use
+     *                           the token's authentication code if null
      * @throws CryptoTokenOfflineException
      * @throws IllegalArgumentException 
      */

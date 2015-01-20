@@ -375,12 +375,15 @@ public interface IWorkerSession {
      * @param signerId ID of the signer
      * @param signerCerts the certificate chain to upload
      * @param alias key alias to use in the token
+     * @param authenticationCode authentication code used for the key entry,
+     *                          or use the authentication code used when activating
+     *                          the token if null
      * @throws CryptoTokenOfflineException
      * @throws CertificateException
      * @throws IllegalArgumentException 
      */
     void importCertificateChain(int signerId, List<byte[]> signerCerts,
-                                String alias,char[] athenticationCode)
+                                String alias,char[] authenticationCode)
             throws CryptoTokenOfflineException, CertificateException,
                    IllegalArgumentException;
     
@@ -681,12 +684,14 @@ public interface IWorkerSession {
          * @param signerId ID of the signer
          * @param signerCerts the certificate chain to upload
          * @param alias key alias to use in the token
+         * @param authenticationCode authentication code for the key entry,
+         *                           or null to use the token authentication code
          * @throws CryptoTokenOfflineException
          * @throws CertificateException
          * @throws IllegalArgumentException 
          */
         void importCertificateChain(AdminInfo adminInfo, int signerId,
-                List<byte[]> signerCerts, String alias, char[] athenticationCode)
+                List<byte[]> signerCerts, String alias, char[] authenticationCode)
                 throws CryptoTokenOfflineException, CertificateException,
                        IllegalArgumentException;
 

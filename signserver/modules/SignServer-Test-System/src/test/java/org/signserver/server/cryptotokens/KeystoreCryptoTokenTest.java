@@ -18,7 +18,9 @@ import java.math.BigInteger;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.KeyStore;
+import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -258,6 +260,60 @@ public class KeystoreCryptoTokenTest extends KeystoreCryptoTokenTestBase {
         }
     }
 
+    public void testImportCertificateChain() throws Exception {
+        LOG.info("testActivateWithNewKeystore");
+
+        final boolean autoActivate = false;
+
+        final int workerId = WORKER_CMS;
+        try {
+            setCMSSignerPropertiesCombined(workerId, autoActivate);
+
+            // Generate key and issue certificate
+            final KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA", "BC");
+            kpg.initialize(1024);
+            final KeyPair keyPair = kpg.generateKeyPair();
+
+            // Create a key-pair and certificate in the keystore
+            FileOutputStream out = null;
+            try {
+                KeyStore ks = KeyStore.getInstance("PKCS12", "BC");
+                ks.load(null, null);
+
+                
+                final X509Certificate[] chain = new X509Certificate[1];
+                chain[0] = getSelfCertificate("CN=Test", (long) 30*24*60*60*365, keyPair);
+                ks.setKeyEntry("newkey11", keyPair.getPrivate(), pin.toCharArray(), chain);
+
+                out = new FileOutputStream(keystoreFile);
+                ks.store(out, pin.toCharArray());
+            } finally {
+                IOUtils.closeQuietly(out);
+            }
+
+            workerSession.reloadConfiguration(workerId);
+
+            // Activate first so we can generate a key
+            workerSession.activateSigner(workerId, pin);
+
+            List<String> errors = workerSession.getStatus(workerId).getFatalErrors();
+            assertTrue("Fatal errors: " + errors, workerSession.getStatus(workerId).getFatalErrors().isEmpty());
+            
+            // generate a new certificate
+            final X509Certificate newCert =
+                    getSelfCertificate("CN=TestNew", (long) 30*24*60*60*365, keyPair);
+            
+            workerSession.importCertificateChain(workerId,
+                    Arrays.asList(newCert.getEncoded()), "newkey11", null);
+            
+            final Certificate readCert = workerSession.getSignerCertificate(workerId);
+            assertTrue("Matching certificates", Arrays.equals(newCert.getEncoded(), readCert.getEncoded()));
+        } finally {
+            FileUtils.deleteQuietly(keystoreFile);
+            removeWorker(workerId);
+        }
+    }
+    
     /** Creates a self signed certificate. */
     private X509Certificate getSelfCertificate(String alias, long validity, KeyPair keyPair) throws Exception {
         final long currentTime = new Date().getTime();

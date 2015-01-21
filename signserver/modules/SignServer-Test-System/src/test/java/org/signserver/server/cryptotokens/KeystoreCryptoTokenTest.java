@@ -261,7 +261,7 @@ public class KeystoreCryptoTokenTest extends KeystoreCryptoTokenTestBase {
     }
 
     public void testImportCertificateChain() throws Exception {
-        LOG.info("testActivateWithNewKeystore");
+        LOG.info("testImportCertificateChain");
 
         final boolean autoActivate = false;
 

@@ -13,6 +13,7 @@ import org.cesecore.util.CertTools;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.cli.spi.UnexpectedCommandFailureException;
+import org.signserver.common.OperationUnsupportedException;
 import org.signserver.common.WorkerStatus;
 
 /**
@@ -70,8 +71,9 @@ public class ImportCertificateChainCommand extends AbstractAdminCommand {
             getWorkerSession().importCertificateChain(signerid, bcerts, alias,
                     authCode != null ? authCode.toCharArray() : null);
             return 0;
-        } catch (IllegalCommandArgumentsException e) {
-            throw e;
+        } catch (OperationUnsupportedException e) {
+            getErrorStream().println("Error: " + e.getMessage());
+            return -1;
         } catch (Exception e) {
             throw new UnexpectedCommandFailureException(e);
         }

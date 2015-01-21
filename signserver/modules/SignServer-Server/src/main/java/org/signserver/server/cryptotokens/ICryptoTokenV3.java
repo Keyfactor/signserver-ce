@@ -33,7 +33,7 @@ public interface ICryptoTokenV3 extends ICryptoTokenV2 {
      * @param athenticationCode Alias-specific authentication code. If this is null
      *                          uses the token's authentication code (set when activating)
      * @throws CryptoTokenOfflineException
-     * @throws IllegalArgumentException 
+     * @throws IllegalArgumentException
      */
     void importCertificateChain(List<Certificate> certChain, String alias,
             char[] athenticationCode)

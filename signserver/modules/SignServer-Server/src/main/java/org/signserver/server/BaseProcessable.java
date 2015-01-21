@@ -891,7 +891,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
     public void importCertificateChain(final List<Certificate> certChain,
                                        final String alias,
                                        final char[] authenticationCode)
-            throws CryptoTokenOfflineException, IllegalArgumentException {
+            throws CryptoTokenOfflineException, OperationUnsupportedException {
         try {
             final ICryptoToken token = getCryptoToken();
             
@@ -904,7 +904,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
                 
                 tokenV3.importCertificateChain(certChain, alias, authenticationCode);
             } else {
-                throw new IllegalArgumentException("Import certificate not supported by crypto token");
+                throw new OperationUnsupportedException("Import certificate not supported by crypto token");
             }
         } catch (SignServerException e) {
             log.error(FAILED_TO_GET_CRYPTO_TOKEN_ + e.getMessage());

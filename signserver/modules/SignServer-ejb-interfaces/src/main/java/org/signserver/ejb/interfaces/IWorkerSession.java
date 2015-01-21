@@ -34,6 +34,7 @@ import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.KeyTestResult;
+import org.signserver.common.OperationUnsupportedException;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
@@ -380,12 +381,12 @@ public interface IWorkerSession {
      *                          the token if null
      * @throws CryptoTokenOfflineException
      * @throws CertificateException
-     * @throws IllegalArgumentException 
+     * @throws OperationUnsupportedException 
      */
     void importCertificateChain(int signerId, List<byte[]> signerCerts,
                                 String alias,char[] authenticationCode)
             throws CryptoTokenOfflineException, CertificateException,
-                   IllegalArgumentException;
+                   OperationUnsupportedException;
     
     /**
      * Methods that generates a free worker id that can be used for new signers.
@@ -688,12 +689,12 @@ public interface IWorkerSession {
          *                           or null to use the token authentication code
          * @throws CryptoTokenOfflineException
          * @throws CertificateException
-         * @throws IllegalArgumentException 
+         * @throws OperationUnsupportedException 
          */
         void importCertificateChain(AdminInfo adminInfo, int signerId,
                 List<byte[]> signerCerts, String alias, char[] authenticationCode)
                 throws CryptoTokenOfflineException, CertificateException,
-                       IllegalArgumentException;
+                       OperationUnsupportedException;
 
         /**
          * The Worker Beans main method. Takes  requests processes them

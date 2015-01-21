@@ -902,7 +902,8 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                                        final List<byte[]> signerCerts,
                                        final String alias,
                                        final char[] authenticationCode)
-            throws CryptoTokenOfflineException, CertificateException, IllegalArgumentException {
+            throws CryptoTokenOfflineException, CertificateException,
+                   OperationUnsupportedException {
         final List<Certificate> certs = new LinkedList<Certificate>();
         
         for (final byte[] certBytes : signerCerts) {
@@ -924,7 +925,8 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                                        final List<byte[]> signerCerts,
                                        final String alias,
                                        final char[] authenticationCode)
-            throws CryptoTokenOfflineException, CertificateException, IllegalArgumentException {
+            throws CryptoTokenOfflineException, CertificateException,
+                   OperationUnsupportedException {
         importCertificateChain(new AdminInfo("CLI user", null, null), signerId,
                 signerCerts, alias, authenticationCode);
     }

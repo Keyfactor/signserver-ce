@@ -30,6 +30,7 @@ import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.KeyTestResult;
+import org.signserver.common.OperationUnsupportedException;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
@@ -228,7 +229,7 @@ public class MockedWorkerSession implements IWorkerSession {
     }
 
     @Override
-    public void importCertificateChain(int signerId, List<byte[]> signerCerts, String alias, char[] athenticationCode) throws CryptoTokenOfflineException, CertificateException, IllegalArgumentException {
+    public void importCertificateChain(int signerId, List<byte[]> signerCerts, String alias, char[] athenticationCode) throws CryptoTokenOfflineException, CertificateException, OperationUnsupportedException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

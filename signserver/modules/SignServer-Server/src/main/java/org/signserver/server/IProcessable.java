@@ -26,6 +26,7 @@ import org.signserver.common.IllegalRequestException;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.KeyTestResult;
+import org.signserver.common.OperationUnsupportedException;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.cryptotokens.IKeyGenerator;
 
@@ -140,9 +141,9 @@ public interface IProcessable extends IWorker {
      * @param authenticationCode Authentication code for the key entry, or use
      *                           the token's authentication code if null
      * @throws CryptoTokenOfflineException
-     * @throws IllegalArgumentException 
+     * @throws OperationUnsupportedException
      */
     void importCertificateChain(List<Certificate> certChain, String alias,
             char[] authenticationCode)
-            throws CryptoTokenOfflineException, IllegalArgumentException;
+            throws CryptoTokenOfflineException, OperationUnsupportedException;
 }

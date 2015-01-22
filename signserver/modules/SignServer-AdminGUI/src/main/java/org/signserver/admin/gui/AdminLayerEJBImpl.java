@@ -811,6 +811,19 @@ public class AdminLayerEJBImpl implements AdminWS {
         }
     }
 
+    /**
+     * Method used to import a certificate chain to a crypto token.
+     * 
+     * @param workerIdOrName ID or name of the (crypto)worker
+     * @param certificateChain Certificate chain to import
+     * @param alias Alias to use in the token
+     * @param authCode Authentication code (used if the alias is using a
+     *                 separate authentication code), if null, use the
+     *                 authentication code used to activate the token.
+     * @throws AdminNotAuthorizedException_Exception
+     * @throws IllegalRequestException_Exception
+     * @throws OperationUnsupportedException_Exception
+     */
     @Override
     public void importCertificateChain(final String workerIdOrName,
                                        final List<byte[]> certificateChain,

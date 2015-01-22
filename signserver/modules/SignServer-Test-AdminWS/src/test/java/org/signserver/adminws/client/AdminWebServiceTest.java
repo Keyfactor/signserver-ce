@@ -281,6 +281,14 @@ public class AdminWebServiceTest extends ModulesTestCase {
         }
     }
     
+    public void testImportCertificateChain() throws Exception {
+        try {
+            adminWS.importCertificateChain("10", null, null, null);
+        } catch (AdminNotAuthorizedException_Exception ignored) {
+            // OK
+        }
+    }
+    
     // TODO add test methods here. The name must begin with 'test'. For example:
     // public void testHello() {}
 

@@ -882,7 +882,7 @@ public class AdminWS {
             @WebParam(name="workerIdOrName") String workerIdOrName,
             @WebParam(name="certificateChain") List<byte[]> certChain,
             @WebParam(name="alias") String alias,
-            @WebParam(name="authenticationCode") char[] authCode)
+            @WebParam(name="authenticationCode") String authCode)
             throws CryptoTokenOfflineException, CertificateException,
                    OperationUnsupportedException, AdminNotAuthorizedException {
         final AdminInfo adminInfo =
@@ -890,7 +890,8 @@ public class AdminWS {
                                           workerIdOrName);
         final int workerId = getWorkerId(workerIdOrName);
         
-        worker.importCertificateChain(adminInfo, workerId, certChain, alias, authCode);
+        worker.importCertificateChain(adminInfo, workerId, certChain, alias,
+                                      authCode.toCharArray());
     }
     
     

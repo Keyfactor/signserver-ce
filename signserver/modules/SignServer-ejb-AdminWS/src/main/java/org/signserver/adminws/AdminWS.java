@@ -863,6 +863,20 @@ public class AdminWS {
         return result;
     }
     
+    /**
+     * Method used to import a certificate chain to a crypto token.
+     * 
+     * @param workerIdOrName ID or name of (crypto)worker
+     * @param certChain Certificate chain to import
+     * @param alias Alias to import into in the crypto token
+     * @param authCode Set if the alias is protected by an individual authentication
+     *                 code. If null, uses the authentication code used when activating
+     *                 the token
+     * @throws CryptoTokenOfflineException
+     * @throws CertificateException
+     * @throws OperationUnsupportedException
+     * @throws AdminNotAuthorizedException 
+     */
     @WebMethod(operationName = "importCertificateChain")
     public void importCertificateChain(
             @WebParam(name="workerIdOrName") String workerIdOrName,

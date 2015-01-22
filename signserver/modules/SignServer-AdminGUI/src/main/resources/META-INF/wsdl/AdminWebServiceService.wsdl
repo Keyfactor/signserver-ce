@@ -7,6 +7,7 @@
    <xs:element name='IllegalRequestException' type='tns:IllegalRequestException'/>
    <xs:element name='InvalidWorkerIdException' type='tns:InvalidWorkerIdException'/>
    <xs:element name='KeyStoreException' type='tns:KeyStoreException'/>
+   <xs:element name='OperationUnsupportedException' type='tns:OperationUnsupportedException'/>
    <xs:element name='ResyncException' type='tns:ResyncException'/>
    <xs:element name='SignServerException' type='tns:SignServerException'/>
    <xs:element name='activateSigner' type='tns:activateSigner'/>
@@ -51,6 +52,8 @@
    <xs:element name='globalReloadResponse' type='tns:globalReloadResponse'/>
    <xs:element name='globalResync' type='tns:globalResync'/>
    <xs:element name='globalResyncResponse' type='tns:globalResyncResponse'/>
+   <xs:element name='importCertificateChain' type='tns:importCertificateChain'/>
+   <xs:element name='importCertificateChainResponse' type='tns:importCertificateChainResponse'/>
    <xs:element name='process' type='tns:process'/>
    <xs:element name='processResponse' type='tns:processResponse'/>
    <xs:element name="queryArchive" type="tns:queryArchive"/>
@@ -114,6 +117,11 @@
     <xs:sequence>
      <xs:element minOccurs='0' name='message' type='xs:string'/>
     </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='OperationUnsupportedException'>
+       <xs:sequence>
+           <xs:element minOccurs='0' name='message' type='xs:string'/>
+       </xs:sequence>
    </xs:complexType>
    <xs:complexType name='getStatus'>
     <xs:sequence>
@@ -473,6 +481,17 @@
    <xs:complexType name='uploadSignerCertificateChainResponse'>
     <xs:sequence/>
    </xs:complexType>
+   <xs:complexType name='importCertificateChain'>
+       <xs:sequence>
+           <xs:element name='workerIdOrName' type='xs:string'/>
+           <xs:element maxOccurs='unbounded' name='certificateChain' type='xs:base64Binary'/>
+           <xs:element name='alias' type='xs:string'/>
+           <xs:element minOccurs='0' name='authCode' type='xs:string'/>
+       </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='importCertificateChainResponse'>
+       <xs:sequence/>
+   </xs:complexType>
    <xs:complexType name='setGlobalProperty'>
     <xs:sequence>
      <xs:element minOccurs='0' name='scope' type='xs:string'/>
@@ -800,6 +819,12 @@
  <message name='AdminWS_uploadSignerCertificate'>
   <part element='tns:uploadSignerCertificate' name='uploadSignerCertificate'></part>
  </message>
+ <message name='AdminWS_importCertificateChain'>
+  <part element='tns:importCertificateChain' name='importCertificateChain'></part>
+ </message>
+ <message name='AdminWS_importCertificateChainResponse'>
+  <part element='tns:importCertificateChainResponse' name='importCertificateChainResponse'></part>
+ </message>
  <message name='AdminWS_getStatusResponse'>
   <part element='tns:getStatusResponse' name='getStatusResponse'></part>
  </message>
@@ -811,6 +836,9 @@
  </message>
  <message name='AdminNotAuthorizedException'>
   <part element='tns:AdminNotAuthorizedException' name='AdminNotAuthorizedException'></part>
+ </message>
+ <message name='OperationUnsupportedException'>
+     <part element='tns:OperationUnsupportedException' name='OperationUnsupportedException'></part>
  </message>
  <message name='AdminWS_uploadSignerCertificateChain'>
   <part element='tns:uploadSignerCertificateChain' name='uploadSignerCertificateChain'></part>
@@ -1109,6 +1137,13 @@
    <output message='tns:AdminWS_uploadSignerCertificateChainResponse'></output>
    <fault message='tns:IllegalRequestException' name='IllegalRequestException'></fault>
    <fault message='tns:AdminNotAuthorizedException' name='AdminNotAuthorizedException'></fault>
+  </operation>
+  <operation name='importCertificateChain' parameterOrder='importSignerCertificateChain'>
+   <input message='tns:AdminWS_importCertificateChain'></input>
+   <output message='tns:AdminWS_importCertificateChainResponse'></output>
+   <fault message='tns:IllegalRequestException' name='IllegalRequestException'></fault>
+   <fault message='tns:AdminNotAuthorizedException' name='AdminNotAuthorizedException'></fault>
+   <fault message='tns:OperationUnsupportedException' name='OperationUnsupportedException'></fault>
   </operation>
   <operation name="queryArchive">
       <input message="tns:AdminWS_queryArchive" name="queryArchive"/>
@@ -1652,6 +1687,24 @@
    </output>
    <fault name='IllegalRequestException'>
     <soap:fault name='IllegalRequestException' use='literal'/>
+   </fault>
+   <fault name='AdminNotAuthorizedException'>
+    <soap:fault name='AdminNotAuthorizedException' use='literal'/>
+   </fault>
+  </operation>
+  <operation name='importCertificateChain'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+   <fault name='IllegalRequestException'>
+    <soap:fault name='IllegalRequestException' use='literal'/>
+   </fault>
+   <fault name='OperationUnsupportedException'>
+       <soap:fault name='OperationUnsupportedException' use='literal'/>
    </fault>
    <fault name='AdminNotAuthorizedException'>
     <soap:fault name='AdminNotAuthorizedException' use='literal'/>

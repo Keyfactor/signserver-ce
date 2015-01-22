@@ -863,6 +863,23 @@ public class AdminWS {
         return result;
     }
     
+    @WebMethod(operationName = "importCertificateChain")
+    public void importCertificateChain(
+            @WebParam(name="workerIdOrName") String workerIdOrName,
+            @WebParam(name="certificateChain") List<byte[]> certChain,
+            @WebParam(name="alias") String alias,
+            @WebParam(name="authenticationCode") char[] authCode)
+            throws CryptoTokenOfflineException, CertificateException,
+                   OperationUnsupportedException, AdminNotAuthorizedException {
+        final AdminInfo adminInfo =
+                requireAdminAuthorization("importCertificateChain",
+                                          workerIdOrName);
+        final int workerId = getWorkerId(workerIdOrName);
+        
+        worker.importCertificateChain(adminInfo, workerId, certChain, alias, authCode);
+    }
+    
+    
     /**
      * Query the audit log.
      *

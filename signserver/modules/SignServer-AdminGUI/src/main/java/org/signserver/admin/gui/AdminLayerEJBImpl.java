@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.logging.Level;
 import javax.naming.NamingException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -58,6 +59,7 @@ import org.signserver.admin.gui.adminws.gen.KeyStoreException_Exception;
 import org.signserver.admin.gui.adminws.gen.KeyTestResult;
 import org.signserver.admin.gui.adminws.gen.LogEntry;
 import org.signserver.admin.gui.adminws.gen.LogEntry.AdditionalDetails;
+import org.signserver.admin.gui.adminws.gen.OperationUnsupportedException_Exception;
 import org.signserver.admin.gui.adminws.gen.Pkcs10CertReqInfo;
 import org.signserver.admin.gui.adminws.gen.QueryCondition;
 import org.signserver.admin.gui.adminws.gen.QueryOrdering;
@@ -74,6 +76,7 @@ import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.ICertReqData;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.InvalidWorkerIdException;
+import org.signserver.common.OperationUnsupportedException;
 import org.signserver.common.PKCS10CertReqInfo;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.RequestAndResponseManager;
@@ -807,6 +810,36 @@ public class AdminLayerEJBImpl implements AdminWS {
                     "Unable to parse certificate", null, ex);
         }
     }
+
+    @Override
+    public void importCertificateChain(final String workerIdOrName,
+                                       final List<byte[]> certificateChain,
+                                       final String alias,
+                                       final String authCode)
+            throws AdminNotAuthorizedException_Exception,
+                   IllegalRequestException_Exception,
+                   OperationUnsupportedException_Exception {
+        try {
+            final int workerId = getWorkerId(workerIdOrName);
+            
+            worker.importCertificateChain(workerId, certificateChain, alias,
+                    authCode.toCharArray());
+        } catch (CryptoTokenOfflineException ex) {
+            LOG.error("Crypto token offline: ", ex);
+            throw new IllegalRequestException_Exception("Cryptotoken offline",
+                                                        null, ex);
+        } catch (CertificateException ex) {
+            LOG.error("Unable to parse certificate", ex);
+            throw new IllegalRequestException_Exception(
+                    "Unable to parse certificate", null, ex);
+        } catch (OperationUnsupportedException ex) {
+            LOG.error("Unable to parse certificate", ex);
+            throw new OperationUnsupportedException_Exception(
+                    "Operation is not supported by crypto token", null, ex);
+        }
+    }
+    
+    
 
     // "Insert Code > Add Web Service Operation")
 

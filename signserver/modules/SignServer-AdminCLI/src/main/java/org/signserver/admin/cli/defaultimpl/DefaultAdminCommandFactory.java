@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.admin.cli.defaultimpl;
 
+import org.signserver.admin.cli.QueryTokenEntriesCommand;
 import org.signserver.admin.cli.defaultimpl.archive.FindFromArchiveIdCommand;
 import org.signserver.admin.cli.defaultimpl.archive.FindFromRequestCertCommand;
 import org.signserver.admin.cli.defaultimpl.archive.FindFromRequestIPCommand;
@@ -47,6 +48,7 @@ public class DefaultAdminCommandFactory extends AbstractCommandFactory implement
         put("getstatusproperty", GetStatusPropertyCommand.class);
         put("importcertificatechain", ImportCertificateChainCommand.class);
         put("listauthorizedclients", ListAuthorizedClientsCommand.class);
+        put("querytokenentries", QueryTokenEntriesCommand.class);
         put("reload", ReloadCommand.class);
         put("removeauthorizedclient", RemoveAuthorizedClientCommand.class);
         put("removeproperty", RemovePropertyCommand.class);

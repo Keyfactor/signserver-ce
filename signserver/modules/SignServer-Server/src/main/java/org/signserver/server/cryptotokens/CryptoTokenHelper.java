@@ -499,7 +499,7 @@ public class CryptoTokenHelper {
                         } catch (ProviderException ex) {} // NOPMD: We ignore if it is not supported
 
                         final Certificate[] chain = keyStore.getCertificateChain(keyAlias);
-                        entry.setCertificateChain(chain);
+                        // TODO entry.setParsedChain(chain);
                     }
                     tokenEntries.add(entry);
 

@@ -28,7 +28,7 @@ public class ImportCertificateChainCommand extends AbstractAdminCommand {
 
     @Override
     public String getDescription() {
-        return "Import a certificate chain to a signer's crypto token.";
+        return "Import a certificate chain to a signer's crypto token";
     }
 
     @Override

@@ -31,7 +31,9 @@ import org.signserver.common.SignServerUtil;
  *
  */
 public class Utils {
-
+    public static final String NEXT_KEY = "Next key";
+    public static final String DEFAULT_KEY = "Default key";
+    
     /**
      * Open a file selector that lets the user select a certificate file.
      * Fill the supplied serial number and issuer DN text fields with the values from the cert
@@ -67,5 +69,19 @@ public class Utils {
         }
     }
     
+    public static enum HardCodedAlias {
+        NEXT_KEY {
+            @Override
+            public String toString() {
+                return Utils.NEXT_KEY;
+            }
+        },
+        DEFAULT_KEY {
+            @Override
+            public String toString() {
+                return Utils.DEFAULT_KEY;
+            }
+        }
+    }
 
 }

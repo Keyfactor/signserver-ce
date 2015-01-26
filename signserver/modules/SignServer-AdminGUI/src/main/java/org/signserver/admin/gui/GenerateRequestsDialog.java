@@ -69,9 +69,7 @@ public class GenerateRequestsDialog extends JDialog {
         "DN",
         "Filename"
     }));
-    private static final String NEXT_KEY = "Next key";
-    private static final String DEFAULT_KEY = "Default key";
-
+    
     private int resultCode = CANCEL;
 
     private Vector<Vector<Object>> data;
@@ -88,23 +86,8 @@ public class GenerateRequestsDialog extends JDialog {
         "SHA1WithDSA"
     });
 
-    private static enum HardCodedAlias {
-        NEXT_KEY {
-            @Override
-            public String toString() {
-                return GenerateRequestsDialog.NEXT_KEY;
-            }
-        },
-        DEFAULT_KEY {
-            @Override
-            public String toString() {
-                return GenerateRequestsDialog.DEFAULT_KEY;
-            }
-        }
-    }
-    
     private JComboBox aliasComboBox = new JComboBox(new Object[] {
-         HardCodedAlias.NEXT_KEY, HardCodedAlias.DEFAULT_KEY});
+         Utils.HardCodedAlias.NEXT_KEY, Utils.HardCodedAlias.DEFAULT_KEY});
 
     private List<Worker> workers;
 
@@ -124,9 +107,9 @@ public class GenerateRequestsDialog extends JDialog {
             Vector<Object> cols = new Vector<Object>();
             cols.add(worker.getName() + " (" + worker.getWorkerId() + ")");
             if (worker.getConfiguration().getProperty("NEXTCERTSIGNKEY") != null) {
-                cols.add(NEXT_KEY);
+                cols.add(Utils.NEXT_KEY);
             } else {
-                cols.add(DEFAULT_KEY);
+                cols.add(Utils.DEFAULT_KEY);
             }
             cols.add(worker.getConfiguration().getProperty("SIGNATUREALGORITHM",
                     ""));
@@ -470,10 +453,10 @@ public class GenerateRequestsDialog extends JDialog {
                                 .getPKCS10CertificateRequestForAlias(workerid,
                                     certReqInfo, explicitEccParameters, keyAlias);
                     } else {
-                        final HardCodedAlias alias =
-                                (HardCodedAlias) key;
+                        final Utils.HardCodedAlias alias =
+                                (Utils.HardCodedAlias) key;
                         final boolean defaultKey =
-                                (alias == HardCodedAlias.DEFAULT_KEY);
+                                (alias == Utils.HardCodedAlias.DEFAULT_KEY);
                         
                         reqData =
                         (Base64SignerCertReqData) SignServerAdminGUIApplication

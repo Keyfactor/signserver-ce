@@ -35,6 +35,8 @@ import org.cesecore.audit.log.SecurityEventsLoggerSessionLocal;
 import org.cesecore.authentication.tokens.UsernamePrincipal;
 import org.cesecore.authorization.AuthorizationDeniedException;
 import org.cesecore.util.query.QueryCriteria;
+import org.cesecore.util.query.elems.LogicOperator;
+import org.cesecore.util.query.elems.Term;
 import org.ejbca.util.CertTools;
 import org.signserver.common.*;
 import org.signserver.common.KeyTestResult;
@@ -1174,17 +1176,17 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     }
 
     @Override
-    public TokenSearchResults searchTokenEntries(final int workerId, int startIndex, int max, QueryCriteria criteria) throws CryptoTokenOfflineException, KeyStoreException, SignServerException, InvalidWorkerIdException {
-        return searchTokenEntries(new AdminInfo("CLI user", null, null), workerId, startIndex, max, criteria);
+    public TokenSearchResults searchTokenEntries(final int workerId, int startIndex, int max, final List<Term> queryTerms, final LogicOperator queryOperator) throws CryptoTokenOfflineException, KeyStoreException, SignServerException, InvalidWorkerIdException {
+        return searchTokenEntries(new AdminInfo("CLI user", null, null), workerId, startIndex, max, queryTerms, queryOperator);
     }
     
     @Override
-    public TokenSearchResults searchTokenEntries(final AdminInfo adminInfo, final int workerId, int startIndex, int max, QueryCriteria criteria) throws CryptoTokenOfflineException, KeyStoreException, SignServerException, InvalidWorkerIdException {
+    public TokenSearchResults searchTokenEntries(final AdminInfo adminInfo, final int workerId, int startIndex, int max, final List<Term> queryTerms, final LogicOperator queryOperator) throws CryptoTokenOfflineException, KeyStoreException, SignServerException, InvalidWorkerIdException {
         final IWorker worker = workerManagerSession.getWorker(workerId, globalConfigurationSession);
         if (worker instanceof BaseProcessable) {
             ICryptoToken cryptoToken = ((BaseProcessable) worker).getCryptoToken();
             if (cryptoToken instanceof ICryptoTokenV3) {
-                return ((ICryptoTokenV3) cryptoToken).searchTokenEntries(startIndex, max, criteria);
+                return ((ICryptoTokenV3) cryptoToken).searchTokenEntries(startIndex, max, queryTerms, queryOperator);
             } else {
                 throw new SignServerException("Operation not supported by crypto token");
             }

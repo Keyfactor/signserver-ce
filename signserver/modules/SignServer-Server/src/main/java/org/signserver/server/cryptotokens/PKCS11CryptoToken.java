@@ -38,6 +38,8 @@ import org.apache.log4j.Logger;
 import org.cesecore.keys.token.CryptoTokenAuthenticationFailedException;
 import org.cesecore.keys.token.p11.exception.NoSuchSlotException;
 import org.cesecore.util.query.QueryCriteria;
+import org.cesecore.util.query.elems.LogicOperator;
+import org.cesecore.util.query.elems.Term;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenInitializationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
@@ -495,8 +497,8 @@ public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2,
     }
 
     @Override
-    public TokenSearchResults searchTokenEntries(int startIndex, int max, QueryCriteria criteria) throws CryptoTokenOfflineException, KeyStoreException {
-        return CryptoTokenHelper.searchTokenEntries(getKeyStore(), startIndex, max, criteria);
+    public TokenSearchResults searchTokenEntries(int startIndex, int max, List<Term> queryTerms, LogicOperator queryOperator) throws CryptoTokenOfflineException, KeyStoreException {
+        return CryptoTokenHelper.searchTokenEntries(getKeyStore(), startIndex, max, queryTerms, queryOperator);
     }
 
     private static class KeyStorePKCS11CryptoToken extends org.cesecore.keys.token.PKCS11CryptoToken {

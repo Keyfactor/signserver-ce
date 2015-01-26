@@ -24,6 +24,8 @@ import org.apache.log4j.Logger;
 import org.cesecore.audit.AuditLogEntry;
 import org.cesecore.authorization.AuthorizationDeniedException;
 import org.cesecore.util.query.QueryCriteria;
+import org.cesecore.util.query.elems.LogicOperator;
+import org.cesecore.util.query.elems.Term;
 import org.junit.Before;
 import org.junit.Test;
 import org.signserver.common.ArchiveDataVO;
@@ -82,8 +84,8 @@ public class KeystoreCryptoTokenTest extends CryptoTokenTestBase {
     }
 
     @Override
-    protected TokenSearchResults searchTokenEntries(int startIndex, int max, QueryCriteria criteria) throws CryptoTokenOfflineException, KeyStoreException {
-        return instance.searchTokenEntries(startIndex, max, criteria);
+    protected TokenSearchResults searchTokenEntries(int startIndex, int max, List<Term> queryTerms, LogicOperator queryOperator) throws CryptoTokenOfflineException, KeyStoreException {
+        return instance.searchTokenEntries(startIndex, max, queryTerms, queryOperator);
     }
 
     @Override
@@ -380,7 +382,7 @@ public class KeystoreCryptoTokenTest extends CryptoTokenTestBase {
                 }
 
                 @Override
-                public TokenSearchResults searchTokenEntries(AdminInfo adminInfo, int workerId, int startIndex, int max, QueryCriteria criteria) throws CryptoTokenOfflineException, KeyStoreException, InvalidWorkerIdException, SignServerException {
+                public TokenSearchResults searchTokenEntries(AdminInfo adminInfo, int workerId, int startIndex, int max, List<Term> queryTerms, LogicOperator queryOperator) throws CryptoTokenOfflineException, KeyStoreException, InvalidWorkerIdException, SignServerException {
                     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
                 }
             };

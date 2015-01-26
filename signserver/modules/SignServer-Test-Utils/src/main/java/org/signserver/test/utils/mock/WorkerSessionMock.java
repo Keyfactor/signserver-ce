@@ -21,6 +21,8 @@ import org.apache.log4j.Logger;
 import org.cesecore.audit.AuditLogEntry;
 import org.cesecore.authorization.AuthorizationDeniedException;
 import org.cesecore.util.query.QueryCriteria;
+import org.cesecore.util.query.elems.LogicOperator;
+import org.cesecore.util.query.elems.Term;
 import org.signserver.common.ArchiveDataVO;
 import org.signserver.common.ArchiveMetadata;
 import org.signserver.common.AuthorizedClient;
@@ -439,12 +441,12 @@ public class WorkerSessionMock implements IWorkerSession.ILocal,
     }
 
     @Override
-    public TokenSearchResults searchTokenEntries(AdminInfo adminInfo, int workerId, int startIndex, int max, QueryCriteria criteria) throws CryptoTokenOfflineException, KeyStoreException, InvalidWorkerIdException, SignServerException {
+    public TokenSearchResults searchTokenEntries(AdminInfo adminInfo, int workerId, int startIndex, int max, List<Term> queryTerms, LogicOperator queryOperator) throws CryptoTokenOfflineException, KeyStoreException, InvalidWorkerIdException, SignServerException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public TokenSearchResults searchTokenEntries(int workerId, int startIndex, int max, QueryCriteria criteria) throws CryptoTokenOfflineException, KeyStoreException, InvalidWorkerIdException, SignServerException {
+    public TokenSearchResults searchTokenEntries(int workerId, int startIndex, int max, List<Term> queryTerms, LogicOperator queryOperator) throws CryptoTokenOfflineException, KeyStoreException, InvalidWorkerIdException, SignServerException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

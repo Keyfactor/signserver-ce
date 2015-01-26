@@ -24,6 +24,8 @@ import javax.ejb.Remote;
 import org.cesecore.audit.AuditLogEntry;
 import org.cesecore.authorization.AuthorizationDeniedException;
 import org.cesecore.util.query.QueryCriteria;
+import org.cesecore.util.query.elems.LogicOperator;
+import org.cesecore.util.query.elems.Term;
 import org.signserver.common.ArchiveDataVO;
 import org.signserver.common.ArchiveMetadata;
 import org.signserver.common.AuthorizedClient;
@@ -466,7 +468,7 @@ public interface IWorkerSession {
         String JNDI_NAME = "signserver/WorkerSessionBean/remote";
         
         List<? extends AuditLogEntry> selectAuditLogs(int startIndex, int max, QueryCriteria criteria, String logDeviceId) throws AuthorizationDeniedException;
-        TokenSearchResults searchTokenEntries(int workerId, final int startIndex, final int max, final QueryCriteria criteria) 
+        TokenSearchResults searchTokenEntries(int workerId, final int startIndex, final int max, final List<Term> queryTerms, final LogicOperator queryOperator) 
             throws CryptoTokenOfflineException, KeyStoreException, InvalidWorkerIdException, SignServerException;
     }
 
@@ -758,7 +760,7 @@ public interface IWorkerSession {
                 final boolean includeData)
                 throws AuthorizationDeniedException;
         
-        TokenSearchResults searchTokenEntries(final AdminInfo adminInfo, int workerId, final int startIndex, final int max, final QueryCriteria criteria) 
+        TokenSearchResults searchTokenEntries(final AdminInfo adminInfo, int workerId, final int startIndex, final int max, final List<Term> queryTerms, final LogicOperator queryOperator) 
             throws CryptoTokenOfflineException, KeyStoreException, InvalidWorkerIdException, SignServerException;
     }
 }

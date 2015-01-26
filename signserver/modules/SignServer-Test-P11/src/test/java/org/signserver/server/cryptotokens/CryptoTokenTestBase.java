@@ -14,9 +14,13 @@ package org.signserver.server.cryptotokens;
 
 import java.security.KeyStoreException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 import org.apache.log4j.Logger;
-import org.cesecore.util.query.QueryCriteria;
+import org.cesecore.util.query.elems.LogicOperator;
+import org.cesecore.util.query.elems.RelationalOperator;
+import org.cesecore.util.query.elems.Term;
 import static org.junit.Assert.*;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.InvalidWorkerIdException;
@@ -35,11 +39,48 @@ public abstract class CryptoTokenTestBase extends ModulesTestCase {
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(CryptoTokenTestBase.class);
     
-    protected abstract TokenSearchResults searchTokenEntries(final int startIndex, final int max, final QueryCriteria criteria) 
+    protected abstract TokenSearchResults searchTokenEntries(final int startIndex, final int max, List<Term> queryTerms, LogicOperator queryOperator) 
             throws CryptoTokenOfflineException, KeyStoreException, InvalidWorkerIdException, SignServerException;
     
     protected abstract void generateKey(String keyType, String keySpec, String alias) throws CryptoTokenOfflineException, InvalidWorkerIdException, SignServerException;
     protected abstract boolean destroyKey(String alias) throws CryptoTokenOfflineException, InvalidWorkerIdException, SignServerException, KeyStoreException;
+    
+//    private static final Set<String> longFields;
+//    private static final Set<String> dateFields;
+//    private static final Set<RelationalOperator> noArgOps;
+//    private static final Set<String> allowedFields;
+    
+    // TODO: This could be useful in some accessible helper class
+    
+//    static {
+//        longFields = new HashSet<String>();
+//        longFields.add(AuditRecordData.FIELD_SEQUENCENUMBER);
+//        
+//        dateFields = new HashSet<String>();
+//        dateFields.add(AuditRecordData.FIELD_TIMESTAMP);
+//        
+//        noArgOps = new HashSet<RelationalOperator>();
+//        noArgOps.add(RelationalOperator.NULL);
+//        noArgOps.add(RelationalOperator.NOTNULL);
+//        
+//        // allowed fields from CESeCore
+//        // TODO: should maybe define this in CESeCore?
+//        allowedFields = new HashSet<String>();
+//        allowedFields.add(AuditRecordData.FIELD_ADDITIONAL_DETAILS);
+//        allowedFields.add(AuditRecordData.FIELD_AUTHENTICATION_TOKEN);
+//        allowedFields.add(AuditRecordData.FIELD_CUSTOM_ID);
+//        allowedFields.add(AuditRecordData.FIELD_EVENTSTATUS);
+//        allowedFields.add(AuditRecordData.FIELD_EVENTTYPE);
+//        allowedFields.add(AuditRecordData.FIELD_MODULE);
+//        allowedFields.add(AuditRecordData.FIELD_NODEID);
+//        allowedFields.add(AuditRecordData.FIELD_SEARCHABLE_DETAIL1);
+//        allowedFields.add(AuditRecordData.FIELD_SEARCHABLE_DETAIL2);
+//        allowedFields.add(AuditRecordData.FIELD_SERVICE);
+//        allowedFields.add(AuditRecordData.FIELD_SEQUENCENUMBER);
+//        allowedFields.add(AuditRecordData.FIELD_TIMESTAMP);
+//    }
+    public static final String FIELD_ALIAS = "alias";
+    
     
     /**
      * TODO tests...
@@ -54,7 +95,7 @@ public abstract class CryptoTokenTestBase extends ModulesTestCase {
         
         try {
             // First it is empty
-            TokenSearchResults searchResults = searchTokenEntries(0, Integer.MAX_VALUE, QueryCriteria.create());
+            TokenSearchResults searchResults = searchTokenEntries(0, Integer.MAX_VALUE, Collections.<Term>emptyList(), LogicOperator.AND);
             LinkedList<String> aliases = new LinkedList<String>();
             for (TokenEntry entry : searchResults.getEntries()) {
                 aliases.add(entry.getAlias());
@@ -68,7 +109,7 @@ public abstract class CryptoTokenTestBase extends ModulesTestCase {
                 generateKey("RSA", "1024", alias);
             }
 
-            searchResults = searchTokenEntries(0, Integer.MAX_VALUE, QueryCriteria.create());
+            searchResults = searchTokenEntries(0, Integer.MAX_VALUE, Collections.<Term>emptyList(), LogicOperator.AND);
             aliases = new LinkedList<String>();
             for (TokenEntry entry : searchResults.getEntries()) {
                 aliases.add(entry.getAlias());
@@ -88,7 +129,7 @@ public abstract class CryptoTokenTestBase extends ModulesTestCase {
             LOG.info("allAliases: " + Arrays.toString(allAliases));
 
             // Search 1 at the time
-            searchResults = searchTokenEntries(0, 1, QueryCriteria.create());
+            searchResults = searchTokenEntries(0, 1, Collections.<Term>emptyList(), LogicOperator.AND);
             aliases = new LinkedList<String>();
             for (TokenEntry entry : searchResults.getEntries()) {
                 aliases.add(entry.getAlias());
@@ -97,7 +138,7 @@ public abstract class CryptoTokenTestBase extends ModulesTestCase {
             assertTrue("more entries available", searchResults.isMoreEntriesAvailable());
 
             // Search 1 at the time
-            searchResults = searchTokenEntries(1, 1, QueryCriteria.create());
+            searchResults = searchTokenEntries(1, 1, Collections.<Term>emptyList(), LogicOperator.AND);
             aliases = new LinkedList<String>();
             for (TokenEntry entry : searchResults.getEntries()) {
                 aliases.add(entry.getAlias());
@@ -106,7 +147,7 @@ public abstract class CryptoTokenTestBase extends ModulesTestCase {
             assertTrue("more entries available", searchResults.isMoreEntriesAvailable());
 
             // Search 4 at the time, and then there are no more
-            searchResults = searchTokenEntries(2, 5, QueryCriteria.create());
+            searchResults = searchTokenEntries(2, 5, Collections.<Term>emptyList(), LogicOperator.AND);
             aliases = new LinkedList<String>();
             for (TokenEntry entry : searchResults.getEntries()) {
                 aliases.add(entry.getAlias());
@@ -115,13 +156,24 @@ public abstract class CryptoTokenTestBase extends ModulesTestCase {
             assertFalse("no more entries available", searchResults.isMoreEntriesAvailable());
 
             // Querying out of index returns empty results
-            searchResults = searchTokenEntries(7, 1, QueryCriteria.create());
+            searchResults = searchTokenEntries(7, 1, Collections.<Term>emptyList(), LogicOperator.AND);
             aliases = new LinkedList<String>();
             for (TokenEntry entry : searchResults.getEntries()) {
                 aliases.add(entry.getAlias());
             }
             assertArrayEquals(new String[] {}, aliases.toArray());
             assertFalse("no more entries available", searchResults.isMoreEntriesAvailable());
+            
+            // Query a specific entry
+            searchResults = searchTokenEntries(0, Integer.MAX_VALUE, Arrays.asList(new Term(RelationalOperator.EQ, CryptoTokenHelper.TokenEntryFields.alias.name(), allAliases[3])), LogicOperator.AND);
+            aliases = new LinkedList<String>();
+            for (TokenEntry entry : searchResults.getEntries()) {
+                aliases.add(entry.getAlias());
+            }
+            assertArrayEquals(new String[] { allAliases[3] }, aliases.toArray());
+            assertFalse("no more entries available", searchResults.isMoreEntriesAvailable());
+            
+            
         } finally {
             for (String alias : testAliases) {
                 try {

@@ -16,6 +16,8 @@ import java.security.KeyStoreException;
 import java.security.cert.Certificate;
 import java.util.List;
 import org.cesecore.util.query.QueryCriteria;
+import org.cesecore.util.query.elems.LogicOperator;
+import org.cesecore.util.query.elems.Term;
 import org.signserver.common.CryptoTokenOfflineException;
 
 /**
@@ -43,6 +45,6 @@ public interface ICryptoTokenV3 extends ICryptoTokenV2 {
             char[] athenticationCode)
             throws CryptoTokenOfflineException, IllegalArgumentException;
     
-    TokenSearchResults searchTokenEntries(final int startIndex, final int max, final QueryCriteria criteria) 
+    TokenSearchResults searchTokenEntries(final int startIndex, final int max, final List<Term> queryTerms, final LogicOperator queryOperator) 
             throws CryptoTokenOfflineException, KeyStoreException;
 }

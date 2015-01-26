@@ -13,8 +13,10 @@ package org.signserver.server.cryptotokens;/************************************
  *************************************************************************/
 
 import java.security.KeyStoreException;
+import java.util.List;
 import org.apache.log4j.Logger;
-import org.cesecore.util.query.QueryCriteria;
+import org.cesecore.util.query.elems.LogicOperator;
+import org.cesecore.util.query.elems.Term;
 import org.junit.Before;
 import org.junit.Test;
 import org.signserver.common.CryptoTokenOfflineException;
@@ -94,7 +96,7 @@ public class P11CryptoTokenTest extends CryptoTokenTestBase {
         try {
             setupCryptoTokenProperties(CRYPTO_TOKEN);
             workerSession.reloadConfiguration(CRYPTO_TOKEN);
-
+        
             searchTokenEntriesHelper(existingKey1);
         } finally {
             removeWorker(CRYPTO_TOKEN);
@@ -102,8 +104,8 @@ public class P11CryptoTokenTest extends CryptoTokenTestBase {
     }
 
     @Override
-    protected TokenSearchResults searchTokenEntries(int startIndex, int max, QueryCriteria criteria) throws CryptoTokenOfflineException, KeyStoreException, InvalidWorkerIdException, SignServerException {
-        return getWorkerSession().searchTokenEntries(CRYPTO_TOKEN, startIndex, max, criteria);
+    protected TokenSearchResults searchTokenEntries(int startIndex, int max, List<Term> queryTerms, LogicOperator queryOperator) throws CryptoTokenOfflineException, KeyStoreException, InvalidWorkerIdException, SignServerException {
+        return getWorkerSession().searchTokenEntries(CRYPTO_TOKEN, startIndex, max, queryTerms, queryOperator);
     }
 
     @Override

@@ -38,6 +38,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Properties;
 import javax.security.auth.x500.X500Principal;
 import org.apache.log4j.Logger;
@@ -53,7 +54,8 @@ import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequestBuilder;
 import org.bouncycastle.util.encoders.Hex;
 import org.cesecore.keys.token.p11.Pkcs11SlotLabelType;
-import org.cesecore.util.query.QueryCriteria;
+import org.cesecore.util.query.elems.LogicOperator;
+import org.cesecore.util.query.elems.Term;
 import org.ejbca.util.Base64;
 import org.ejbca.util.CertTools;
 import org.signserver.common.Base64SignerCertReqData;
@@ -86,6 +88,10 @@ public class CryptoTokenHelper {
     public static final String PROPERTY_AUTHCODE = "AUTHCODE";
     public static final String PROPERTY_SLOTLABELTYPE = "SLOTLABELTYPE";
     public static final String PROPERTY_SLOTLABELVALUE = "SLOTLABELVALUE";
+    
+    public enum TokenEntryFields {
+        alias,
+    }
     
     /** DN part used to mark dummy certificates by SignServer. */
     private static final String SUBJECT_DUMMY = "L=_SignServer_DUMMY_CERT_";
@@ -465,41 +471,94 @@ public class CryptoTokenHelper {
         return new JcaX509CertificateConverter().getCertificate(cg.build(contentSigner));
     }
 
-    public static TokenSearchResults searchTokenEntries(KeyStore keyStore, int startIndex, int max, QueryCriteria criteria) throws CryptoTokenOfflineException {
+    public static TokenSearchResults searchTokenEntries(KeyStore keyStore, int startIndex, int max, List<Term> queryTerms, LogicOperator queryOperator) throws CryptoTokenOfflineException {
         
         try {
             final ArrayList<TokenEntry> tokenEntries = new ArrayList<TokenEntry>();
-            final Enumeration<String> e = keyStore.aliases(); // TODO: Is any order guaranteed?
-            for (int i = 0; i < startIndex + max && e.hasMoreElements(); i++) {
+            final Enumeration<String> e = keyStore.aliases(); // We assume the order is the same for every call unless entries has been added or removed
+            for (int i = 0; i < startIndex + max && e.hasMoreElements();) {
                 final String keyAlias = e.nextElement();
-                
-                if (i < startIndex) {
-                    continue;
-                }
-                
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("checking keyAlias: " + keyAlias);
-                }
-
                 TokenEntry entry = new TokenEntry(keyAlias);
-
-                if (keyStore.isKeyEntry(keyAlias)) { // TODO: The API should support other types as well
-                    try {
-                        Date creationDate = keyStore.getCreationDate(keyAlias);
-                        entry.setCreationDate(creationDate);
-                    } catch (ProviderException ex) {}
-                    catch (Throwable t) {
-                        System.err.println("t.class:" + t.getClass());
+                
+                if (shouldBeInclude(entry, queryTerms, queryOperator)) {
+                    if (i < startIndex) {
+                        i++;
+                        continue;
                     }
 
-                    final Certificate[] chain = keyStore.getCertificateChain(keyAlias);
-                    entry.setCertificateChain(chain);
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("checking keyAlias: " + keyAlias);
+                    }
+
+                    if (keyStore.isKeyEntry(keyAlias)) { // TODO: The API should support other types as well
+                        try {
+                            Date creationDate = keyStore.getCreationDate(keyAlias);
+                            entry.setCreationDate(creationDate);
+                        } catch (ProviderException ex) {}
+                        catch (Throwable t) {
+                            System.err.println("t.class:" + t.getClass());
+                        }
+
+                        final Certificate[] chain = keyStore.getCertificateChain(keyAlias);
+                        entry.setCertificateChain(chain);
+                    }
+                    tokenEntries.add(entry);
+
+                    // Increase index
+                    i++;
                 }
-                tokenEntries.add(entry);
             }
             return new TokenSearchResults(tokenEntries, e.hasMoreElements());
         } catch (KeyStoreException ex) {
             throw new CryptoTokenOfflineException(ex);
         }
     }
+    
+    private static boolean shouldBeInclude(TokenEntry entry, List<Term> terms, LogicOperator op) {
+        if (op != LogicOperator.AND && op != LogicOperator.OR) {
+            throw new IllegalArgumentException("Unsupported logic operator: " + op);
+        }
+        if (terms.isEmpty()) {
+            return false;
+        }
+        
+        boolean anyMatch = false;
+        boolean anyMismatch = false;
+        for (Term term : terms) { // TODO can be optimized drop out of loop earlier
+            if (matches(entry, term)) {
+                anyMatch = true;
+            } else {
+                anyMismatch = true;
+            }
+        }
+        
+        return (op == LogicOperator.OR && anyMatch) || (op == LogicOperator.AND && !anyMismatch); 
+    }
+    
+    private static boolean matches(TokenEntry entry, Term term) {
+        final boolean result;
+        
+        final Object actualValue;
+        switch (TokenEntryFields.valueOf(term.getName())) {
+            case alias: {
+                actualValue = entry.getAlias();
+                break;
+            }
+            default: {
+                throw new IllegalArgumentException("Unsupported token entry field in query terms: " + term.getName());
+            }
+        }
+        switch (term.getOperator()) {
+            case EQ: {
+                result = term.getValue().equals(actualValue);
+                break;
+            }
+            default: {
+                throw new IllegalArgumentException("Operator not yet supported in query terms: " + term.getOperator().name());
+            }
+        }
+        
+        return result;
+    }
+
 }

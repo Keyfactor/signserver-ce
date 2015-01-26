@@ -480,7 +480,7 @@ public class CryptoTokenHelper {
                 final String keyAlias = e.nextElement();
                 TokenEntry entry = new TokenEntry(keyAlias);
                 
-                if (shouldBeInclude(entry, queryTerms, queryOperator)) {
+                if (shouldBeIncluded(entry, queryTerms, queryOperator)) {
                     if (i < startIndex) {
                         i++;
                         continue;
@@ -514,12 +514,12 @@ public class CryptoTokenHelper {
         }
     }
     
-    private static boolean shouldBeInclude(TokenEntry entry, List<Term> terms, LogicOperator op) {
+    private static boolean shouldBeIncluded(TokenEntry entry, List<Term> terms, LogicOperator op) {
         if (op != LogicOperator.AND && op != LogicOperator.OR) {
             throw new IllegalArgumentException("Unsupported logic operator: " + op);
         }
         if (terms.isEmpty()) {
-            return false;
+            return true;
         }
         
         boolean anyMatch = false;

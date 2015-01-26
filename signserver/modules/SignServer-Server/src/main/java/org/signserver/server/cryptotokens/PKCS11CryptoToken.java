@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
+import java.security.Key;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -25,11 +26,13 @@ import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SignatureException;
+import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
+import java.util.logging.Level;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.cesecore.keys.token.CryptoTokenAuthenticationFailedException;
@@ -58,7 +61,8 @@ import static org.signserver.server.BaseProcessable.PROPERTY_CACHE_PRIVATEKEY;
  * @author Markus Kilås
  * @version $Id$
  */
-public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2, ICryptoTokenV3 {
+public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2,
+                                          ICryptoTokenV3 {
 
     private static final Logger LOG = Logger.getLogger(PKCS11CryptoToken.class);
 
@@ -468,8 +472,26 @@ public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2, ICryptoT
     }
 
     @Override
-    public void importCertificateChain(List<Certificate> certChain, String alias, char[] athenticationCode) throws CryptoTokenOfflineException, IllegalArgumentException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void importCertificateChain(final List<Certificate> certChain,
+                                       final String alias,
+                                       final char[] athenticationCode)
+            throws CryptoTokenOfflineException, IllegalArgumentException {
+        try {
+            final KeyStore keyStore = delegate.getActivatedKeyStore();
+            final Key key = keyStore.getKey(alias, athenticationCode);
+            
+            keyStore.setKeyEntry(alias, key, athenticationCode,
+                                 certChain.toArray(new Certificate[0]));
+        } catch (KeyStoreException ex) {
+            LOG.error(ex, ex);
+            throw new CryptoTokenOfflineException(ex);
+        } catch (NoSuchAlgorithmException ex) {
+            LOG.error(ex, ex);
+            throw new CryptoTokenOfflineException(ex);
+        } catch (UnrecoverableKeyException ex) {
+            LOG.error(ex, ex);
+            throw new CryptoTokenOfflineException(ex);
+        }
     }
 
     @Override

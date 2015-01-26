@@ -164,7 +164,7 @@ public abstract class CryptoTokenTestBase extends ModulesTestCase {
             assertArrayEquals(new String[] {}, aliases.toArray());
             assertFalse("no more entries available", searchResults.isMoreEntriesAvailable());
             
-            // Query a specific entry
+            // Query one specific entry
             searchResults = searchTokenEntries(0, Integer.MAX_VALUE, Arrays.asList(new Term(RelationalOperator.EQ, CryptoTokenHelper.TokenEntryFields.alias.name(), allAliases[3])), LogicOperator.AND);
             aliases = new LinkedList<String>();
             for (TokenEntry entry : searchResults.getEntries()) {
@@ -173,6 +173,41 @@ public abstract class CryptoTokenTestBase extends ModulesTestCase {
             assertArrayEquals(new String[] { allAliases[3] }, aliases.toArray());
             assertFalse("no more entries available", searchResults.isMoreEntriesAvailable());
             
+            // Query two specific entries
+            searchResults = searchTokenEntries(0, Integer.MAX_VALUE, Arrays.asList(new Term(RelationalOperator.EQ, CryptoTokenHelper.TokenEntryFields.alias.name(), allAliases[3]), new Term(RelationalOperator.EQ, CryptoTokenHelper.TokenEntryFields.alias.name(), allAliases[1])), LogicOperator.OR);
+            aliases = new LinkedList<String>();
+            for (TokenEntry entry : searchResults.getEntries()) {
+                aliases.add(entry.getAlias());
+            }
+            assertArrayEquals(new String[] { allAliases[1], allAliases[3] }, aliases.toArray());
+            assertFalse("no more entries available", searchResults.isMoreEntriesAvailable());
+            
+            // Query all except 3 and 1
+            searchResults = searchTokenEntries(0, Integer.MAX_VALUE, Arrays.asList(new Term(RelationalOperator.NEQ, CryptoTokenHelper.TokenEntryFields.alias.name(), allAliases[3]), new Term(RelationalOperator.NEQ, CryptoTokenHelper.TokenEntryFields.alias.name(), allAliases[1])), LogicOperator.AND);
+            aliases = new LinkedList<String>();
+            for (TokenEntry entry : searchResults.getEntries()) {
+                aliases.add(entry.getAlias());
+            }
+            assertArrayEquals(new String[] { allAliases[0], allAliases[2], allAliases[4], allAliases[5], allAliases[6] }, aliases.toArray());
+            assertFalse("no more entries available", searchResults.isMoreEntriesAvailable());
+            
+            // Query all except 3 and 1, only get the 4 first entries
+            searchResults = searchTokenEntries(0, 4, Arrays.asList(new Term(RelationalOperator.NEQ, CryptoTokenHelper.TokenEntryFields.alias.name(), allAliases[3]), new Term(RelationalOperator.NEQ, CryptoTokenHelper.TokenEntryFields.alias.name(), allAliases[1])), LogicOperator.AND);
+            aliases = new LinkedList<String>();
+            for (TokenEntry entry : searchResults.getEntries()) {
+                aliases.add(entry.getAlias());
+            }
+            assertArrayEquals(new String[] { allAliases[0], allAliases[2], allAliases[4], allAliases[5] }, aliases.toArray());
+            assertTrue("more entries available", searchResults.isMoreEntriesAvailable());
+            
+            // Query all except 3 and 1 (same as last), but get the next one
+            searchResults = searchTokenEntries(4, Integer.MAX_VALUE, Arrays.asList(new Term(RelationalOperator.NEQ, CryptoTokenHelper.TokenEntryFields.alias.name(), allAliases[3]), new Term(RelationalOperator.NEQ, CryptoTokenHelper.TokenEntryFields.alias.name(), allAliases[1])), LogicOperator.AND);
+            aliases = new LinkedList<String>();
+            for (TokenEntry entry : searchResults.getEntries()) {
+                aliases.add(entry.getAlias());
+            }
+            assertArrayEquals(new String[] { allAliases[6] }, aliases.toArray());
+            assertFalse("no more entries available", searchResults.isMoreEntriesAvailable());
             
         } finally {
             for (String alias : testAliases) {

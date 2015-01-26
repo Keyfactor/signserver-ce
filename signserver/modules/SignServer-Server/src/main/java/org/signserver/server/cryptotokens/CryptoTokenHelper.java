@@ -472,11 +472,13 @@ public class CryptoTokenHelper {
     }
 
     public static TokenSearchResults searchTokenEntries(KeyStore keyStore, int startIndex, int max, List<Term> queryTerms, LogicOperator queryOperator) throws CryptoTokenOfflineException {
-        
+        final TokenSearchResults result;
         try {
             final ArrayList<TokenEntry> tokenEntries = new ArrayList<TokenEntry>();
             final Enumeration<String> e = keyStore.aliases(); // We assume the order is the same for every call unless entries has been added or removed
-            for (int i = 0; i < startIndex + max && e.hasMoreElements();) {
+            
+            final long maxIndex = (long) startIndex + max;
+            for (int i = 0; i < maxIndex && e.hasMoreElements();) {
                 final String keyAlias = e.nextElement();
                 TokenEntry entry = new TokenEntry(keyAlias);
                 
@@ -494,10 +496,7 @@ public class CryptoTokenHelper {
                         try {
                             Date creationDate = keyStore.getCreationDate(keyAlias);
                             entry.setCreationDate(creationDate);
-                        } catch (ProviderException ex) {}
-                        catch (Throwable t) {
-                            System.err.println("t.class:" + t.getClass());
-                        }
+                        } catch (ProviderException ex) {} // NOPMD: We ignore if it is not supported
 
                         final Certificate[] chain = keyStore.getCertificateChain(keyAlias);
                         entry.setCertificateChain(chain);
@@ -508,10 +507,11 @@ public class CryptoTokenHelper {
                     i++;
                 }
             }
-            return new TokenSearchResults(tokenEntries, e.hasMoreElements());
+            result = new TokenSearchResults(tokenEntries, e.hasMoreElements());
         } catch (KeyStoreException ex) {
             throw new CryptoTokenOfflineException(ex);
         }
+        return result;
     }
     
     private static boolean shouldBeIncluded(TokenEntry entry, List<Term> terms, LogicOperator op) {
@@ -551,6 +551,10 @@ public class CryptoTokenHelper {
         switch (term.getOperator()) {
             case EQ: {
                 result = term.getValue().equals(actualValue);
+                break;
+            }
+            case NEQ: {
+                result = !term.getValue().equals(actualValue);
                 break;
             }
             default: {

@@ -12,13 +12,17 @@
  *************************************************************************/
 package org.signserver.server.cryptotokens;
 
+import java.security.KeyStoreException;
 import java.security.cert.Certificate;
 import java.util.List;
+import org.cesecore.util.query.QueryCriteria;
 import org.signserver.common.CryptoTokenOfflineException;
 
 /**
  * Third version of the crypto token interface.
- * Adding support for importing certificates to crypto tokens.
+ * Adding support for:
+ * - importing certificates to crypto tokens
+ * - search for entries in the crypto token
  * 
  * @author Marcus Lundblad
  * @version $Id$
@@ -38,4 +42,7 @@ public interface ICryptoTokenV3 extends ICryptoTokenV2 {
     void importCertificateChain(List<Certificate> certChain, String alias,
             char[] athenticationCode)
             throws CryptoTokenOfflineException, IllegalArgumentException;
+    
+    TokenSearchResults searchTokenEntries(final int startIndex, final int max, final QueryCriteria criteria) 
+            throws CryptoTokenOfflineException, KeyStoreException;
 }

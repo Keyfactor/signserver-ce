@@ -50,7 +50,10 @@ import org.signserver.server.cesecore.AlwaysAllowLocalAuthenticationToken;
 import org.signserver.server.config.entities.FileBasedWorkerConfigDataService;
 import org.signserver.server.config.entities.IWorkerConfigDataService;
 import org.signserver.server.config.entities.WorkerConfigDataService;
+import org.signserver.server.cryptotokens.ICryptoToken;
+import org.signserver.server.cryptotokens.ICryptoTokenV3;
 import org.signserver.server.cryptotokens.IKeyRemover;
+import org.signserver.server.cryptotokens.TokenSearchResults;
 import org.signserver.server.entities.FileBasedKeyUsageCounterDataService;
 import org.signserver.server.entities.IKeyUsageCounterDataService;
 import org.signserver.server.entities.KeyUsageCounter;
@@ -1167,6 +1170,26 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                         + "Crypto token offline trying to create key usage counter");
                 }
             }
+        }
+    }
+
+    @Override
+    public TokenSearchResults searchTokenEntries(final int workerId, int startIndex, int max, QueryCriteria criteria) throws CryptoTokenOfflineException, KeyStoreException, SignServerException {
+        return searchTokenEntries(new AdminInfo("CLI user", null, null), workerId, startIndex, max, criteria);
+    }
+    
+    @Override
+    public TokenSearchResults searchTokenEntries(final AdminInfo adminInfo, final int workerId, int startIndex, int max, QueryCriteria criteria) throws CryptoTokenOfflineException, KeyStoreException, SignServerException {
+        final IWorker worker = workerManagerSession.getWorker(workerId, globalConfigurationSession);
+        if (worker instanceof BaseProcessable) {
+            ICryptoToken cryptoToken = ((BaseProcessable) worker).getCryptoToken();
+            if (cryptoToken instanceof ICryptoTokenV3) {
+                return ((ICryptoTokenV3) cryptoToken).searchTokenEntries(startIndex, max, criteria);
+            } else {
+                throw new SignServerException("Operation not supported by crypto token");
+            }
+        } else {
+            throw new SignServerException("Crypto token operations not supported by worker");
         }
     }
 }

@@ -17,11 +17,11 @@ import java.security.*;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.util.*;
-import java.util.logging.Level;
 import javax.naming.NamingException;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.bouncycastle.jce.ECNamedCurveTable;
+import org.cesecore.util.query.QueryCriteria;
 import org.ejbca.util.keystore.KeyTools;
 import org.signserver.common.*;
 import org.signserver.ejb.interfaces.IWorkerSession;
@@ -382,6 +382,13 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2,
             final char[] authCode) throws CryptoTokenOfflineException,
             KeyStoreException {
         return CryptoTokenHelper.testKey(getKeyStore(), alias, authCode, "BC");
+    }
+    
+    @Override
+    public TokenSearchResults searchTokenEntries(final int startIndex, final int max, final QueryCriteria criteria) 
+            throws CryptoTokenOfflineException, KeyStoreException {
+        KeyStore keyStore = getKeyStore();
+        return CryptoTokenHelper.searchTokenEntries(keyStore, startIndex, max, criteria);
     }
 
     @Override

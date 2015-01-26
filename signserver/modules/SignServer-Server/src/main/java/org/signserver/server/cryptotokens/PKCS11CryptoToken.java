@@ -34,6 +34,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.cesecore.keys.token.CryptoTokenAuthenticationFailedException;
 import org.cesecore.keys.token.p11.exception.NoSuchSlotException;
+import org.cesecore.util.query.QueryCriteria;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenInitializationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
@@ -57,7 +58,7 @@ import static org.signserver.server.BaseProcessable.PROPERTY_CACHE_PRIVATEKEY;
  * @author Markus Kilås
  * @version $Id$
  */
-public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2 {
+public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2, ICryptoTokenV3 {
 
     private static final Logger LOG = Logger.getLogger(PKCS11CryptoToken.class);
 
@@ -464,6 +465,16 @@ public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2 {
             LOG.error(ex, ex);
             throw new CryptoTokenOfflineException(ex);
         }
+    }
+
+    @Override
+    public void importCertificateChain(List<Certificate> certChain, String alias, char[] athenticationCode) throws CryptoTokenOfflineException, IllegalArgumentException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public TokenSearchResults searchTokenEntries(int startIndex, int max, QueryCriteria criteria) throws CryptoTokenOfflineException, KeyStoreException {
+        return CryptoTokenHelper.searchTokenEntries(getKeyStore(), startIndex, max, criteria);
     }
 
     private static class KeyStorePKCS11CryptoToken extends org.cesecore.keys.token.PKCS11CryptoToken {

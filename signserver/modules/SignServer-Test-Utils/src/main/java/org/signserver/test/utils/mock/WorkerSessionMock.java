@@ -17,9 +17,6 @@ import java.security.KeyStoreException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.util.*;
-
-import javax.persistence.EntityManager;
-
 import org.apache.log4j.Logger;
 import org.cesecore.audit.AuditLogEntry;
 import org.cesecore.authorization.AuthorizationDeniedException;
@@ -45,7 +42,7 @@ import org.signserver.common.WorkerStatus;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.server.IProcessable;
 import org.signserver.server.SignServerContext;
-import org.signserver.server.WorkerContext;
+import org.signserver.server.cryptotokens.TokenSearchResults;
 import org.signserver.server.log.AdminInfo;
 import org.signserver.server.log.LogMap;
 
@@ -439,6 +436,16 @@ public class WorkerSessionMock implements IWorkerSession.ILocal,
     @Override
     public void importCertificateChain(AdminInfo adminInfo, int signerId, List<byte[]> signerCerts, String alias, char[] authenticationCode) throws CryptoTokenOfflineException, CertificateException, OperationUnsupportedException {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public TokenSearchResults searchTokenEntries(AdminInfo adminInfo, int workerId, int startIndex, int max, QueryCriteria criteria) throws CryptoTokenOfflineException, KeyStoreException, InvalidWorkerIdException, SignServerException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public TokenSearchResults searchTokenEntries(int workerId, int startIndex, int max, QueryCriteria criteria) throws CryptoTokenOfflineException, KeyStoreException, InvalidWorkerIdException, SignServerException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     private static class Worker {

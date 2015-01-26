@@ -22,6 +22,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
+import java.security.ProviderException;
 import java.security.PublicKey;
 import java.security.Signature;
 import java.security.SignatureException;
@@ -32,6 +33,7 @@ import java.security.cert.X509Certificate;
 import java.security.interfaces.DSAKey;
 import java.security.interfaces.ECKey;
 import java.security.interfaces.RSAKey;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
@@ -51,6 +53,7 @@ import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequestBuilder;
 import org.bouncycastle.util.encoders.Hex;
 import org.cesecore.keys.token.p11.Pkcs11SlotLabelType;
+import org.cesecore.util.query.QueryCriteria;
 import org.ejbca.util.Base64;
 import org.ejbca.util.CertTools;
 import org.signserver.common.Base64SignerCertReqData;
@@ -460,5 +463,43 @@ public class CryptoTokenHelper {
         final ContentSigner contentSigner = contentSignerBuilder.build(keyPair.getPrivate());
 
         return new JcaX509CertificateConverter().getCertificate(cg.build(contentSigner));
+    }
+
+    public static TokenSearchResults searchTokenEntries(KeyStore keyStore, int startIndex, int max, QueryCriteria criteria) throws CryptoTokenOfflineException {
+        
+        try {
+            final ArrayList<TokenEntry> tokenEntries = new ArrayList<TokenEntry>();
+            final Enumeration<String> e = keyStore.aliases(); // TODO: Is any order guaranteed?
+            for (int i = 0; i < startIndex + max && e.hasMoreElements(); i++) {
+                final String keyAlias = e.nextElement();
+                
+                if (i < startIndex) {
+                    continue;
+                }
+                
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("checking keyAlias: " + keyAlias);
+                }
+
+                TokenEntry entry = new TokenEntry(keyAlias);
+
+                if (keyStore.isKeyEntry(keyAlias)) { // TODO: The API should support other types as well
+                    try {
+                        Date creationDate = keyStore.getCreationDate(keyAlias);
+                        entry.setCreationDate(creationDate);
+                    } catch (ProviderException ex) {}
+                    catch (Throwable t) {
+                        System.err.println("t.class:" + t.getClass());
+                    }
+
+                    final Certificate[] chain = keyStore.getCertificateChain(keyAlias);
+                    entry.setCertificateChain(chain);
+                }
+                tokenEntries.add(entry);
+            }
+            return new TokenSearchResults(tokenEntries, e.hasMoreElements());
+        } catch (KeyStoreException ex) {
+            throw new CryptoTokenOfflineException(ex);
+        }
     }
 }

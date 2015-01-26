@@ -41,6 +41,7 @@ import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
+import org.signserver.server.cryptotokens.TokenSearchResults;
 import org.signserver.server.log.AdminInfo;
 
 /**
@@ -465,6 +466,8 @@ public interface IWorkerSession {
         String JNDI_NAME = "signserver/WorkerSessionBean/remote";
         
         List<? extends AuditLogEntry> selectAuditLogs(int startIndex, int max, QueryCriteria criteria, String logDeviceId) throws AuthorizationDeniedException;
+        TokenSearchResults searchTokenEntries(int workerId, final int startIndex, final int max, final QueryCriteria criteria) 
+            throws CryptoTokenOfflineException, KeyStoreException, InvalidWorkerIdException, SignServerException;
     }
 
     /**
@@ -754,5 +757,8 @@ public interface IWorkerSession {
                 final List<String> uniqueIds, 
                 final boolean includeData)
                 throws AuthorizationDeniedException;
+        
+        TokenSearchResults searchTokenEntries(final AdminInfo adminInfo, int workerId, final int startIndex, final int max, final QueryCriteria criteria) 
+            throws CryptoTokenOfflineException, KeyStoreException, InvalidWorkerIdException, SignServerException;
     }
 }

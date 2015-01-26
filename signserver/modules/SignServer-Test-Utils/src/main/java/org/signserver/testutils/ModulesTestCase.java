@@ -158,7 +158,7 @@ public class ModulesTestCase extends TestCase {
        +"AwIBhjAJBgcqhkjOOAQDAzAAMC0CFQCEGSmvJf6rxy6u7ZqY25qE7Hy21gIUPW4q"
        +"++YIS2fHyu+H4Pjgnodx5zI=";
    
-    private IWorkerSession workerSession;
+    private IWorkerSession.IRemote workerSession;
     private IGlobalConfigurationSession globalSession;
     private IStatusRepositorySession statusSession;
 
@@ -213,7 +213,7 @@ public class ModulesTestCase extends TestCase {
     
     
 
-    protected IWorkerSession getWorkerSession() {
+    protected IWorkerSession.IRemote getWorkerSession() {
         if (workerSession == null) {
             try {
                 workerSession = ServiceLocator.getInstance().lookupRemote(

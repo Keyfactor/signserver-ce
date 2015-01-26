@@ -30,6 +30,7 @@ import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Hex;
+import org.cesecore.util.query.QueryCriteria;
 import org.signserver.common.*;
 import org.signserver.server.aliasselectors.AliasSelector;
 import org.signserver.server.aliasselectors.DefaultAliasSelector;
@@ -886,7 +887,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
             throw new CryptoTokenOfflineException(e);
         }
     }
-
+   
     @Override
     public void importCertificateChain(final List<Certificate> certChain,
                                        final String alias,

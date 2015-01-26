@@ -91,10 +91,14 @@ public class P11CryptoTokenTest extends CryptoTokenTestBase {
     
     @Test
     public void testSearchTokenEntries_PKCS11CryptoToken() throws Exception {
-        
-        setupCryptoTokenProperties(CRYPTO_TOKEN);
-        
-        searchTokenEntriesHelper(existingKey1);
+        try {
+            setupCryptoTokenProperties(CRYPTO_TOKEN);
+            workerSession.reloadConfiguration(CRYPTO_TOKEN);
+
+            searchTokenEntriesHelper(existingKey1);
+        } finally {
+            removeWorker(CRYPTO_TOKEN);
+        }
     }
 
     @Override

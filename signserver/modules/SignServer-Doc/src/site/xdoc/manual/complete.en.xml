@@ -1338,6 +1338,13 @@ Used to upload the certificate when the worker only needs the actual signing cer
 Used when uploading a complete certificate chain to the worker. Which command that is supposed to be used is depending on the worker and crypto token used.
                         </p>
                         <p>
+<b>importcertificatechain:</b>
+Used to import a certificate chain into a crypto token. It takes a worker ID of the crypto worker
+(or a worker ID of a worker with the crypto token configured in the legacy way)
+and a path pointing to a file containing the certificate chain and a key alias to import to.
+This is currently supported by the PKCS11 and keystore crypto token implementations.
+                        </p>
+                        <p>
 <b>generatecertreq:</b>
 Used to generate a certificate request for a worker to be signed by a certificate authority. It takes
 distinguished name and signature algorithm as parameters and writes the request in PEM format to

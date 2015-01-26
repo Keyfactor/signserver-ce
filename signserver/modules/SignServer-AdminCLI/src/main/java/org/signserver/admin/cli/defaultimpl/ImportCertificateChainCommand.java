@@ -33,7 +33,8 @@ public class ImportCertificateChainCommand extends AbstractAdminCommand {
 
     @Override
     public String getUsages() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return "Usage: signserver importcertificatechain <workerid> <certchain file> <alias>\n"
+                    + "Example: signserver importcertificatechain 1 user1-chain.pem user1\n\n";
     }
 
     @Override

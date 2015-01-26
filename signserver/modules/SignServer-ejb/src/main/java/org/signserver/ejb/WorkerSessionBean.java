@@ -1174,12 +1174,12 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     }
 
     @Override
-    public TokenSearchResults searchTokenEntries(final int workerId, int startIndex, int max, QueryCriteria criteria) throws CryptoTokenOfflineException, KeyStoreException, SignServerException {
+    public TokenSearchResults searchTokenEntries(final int workerId, int startIndex, int max, QueryCriteria criteria) throws CryptoTokenOfflineException, KeyStoreException, SignServerException, InvalidWorkerIdException {
         return searchTokenEntries(new AdminInfo("CLI user", null, null), workerId, startIndex, max, criteria);
     }
     
     @Override
-    public TokenSearchResults searchTokenEntries(final AdminInfo adminInfo, final int workerId, int startIndex, int max, QueryCriteria criteria) throws CryptoTokenOfflineException, KeyStoreException, SignServerException {
+    public TokenSearchResults searchTokenEntries(final AdminInfo adminInfo, final int workerId, int startIndex, int max, QueryCriteria criteria) throws CryptoTokenOfflineException, KeyStoreException, SignServerException, InvalidWorkerIdException {
         final IWorker worker = workerManagerSession.getWorker(workerId, globalConfigurationSession);
         if (worker instanceof BaseProcessable) {
             ICryptoToken cryptoToken = ((BaseProcessable) worker).getCryptoToken();
@@ -1188,6 +1188,9 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             } else {
                 throw new SignServerException("Operation not supported by crypto token");
             }
+        } else if (worker == null) {
+            throw new InvalidWorkerIdException("Given SignerId " + workerId
+                    + " doesn't exist");
         } else {
             throw new SignServerException("Crypto token operations not supported by worker");
         }

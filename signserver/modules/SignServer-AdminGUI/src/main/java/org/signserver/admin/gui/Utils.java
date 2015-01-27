@@ -73,13 +73,13 @@ public class Utils {
         NEXT_KEY {
             @Override
             public String toString() {
-                return Utils.NEXT_KEY;
+                return Utils.NEXT_KEY + "(hardcoded)";
             }
         },
         DEFAULT_KEY {
             @Override
             public String toString() {
-                return Utils.DEFAULT_KEY;
+                return Utils.DEFAULT_KEY + "(hardcoded)";
             }
         }
     }

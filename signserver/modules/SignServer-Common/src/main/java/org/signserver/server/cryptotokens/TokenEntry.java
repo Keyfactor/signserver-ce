@@ -21,22 +21,37 @@ import java.util.Map;
 import org.ejbca.util.CertTools;
 
 /**
- * Represents an entry in the token with at minimum an alias.
+ * Represents an entry in the token with at minimum an alias and a type.
  *
  * @author Markus Kilås
  * @version $Id$
  */
 public class TokenEntry implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+    
+    public static final String TYPE_PRIVATEKEY_ENTRY = "PRIVATEKEY_ENTRY";
+    public static final String TYPE_SECRETKEY_ENTRY = "SECRATEKEY_ENTRY";
+    public static final String TYPE_TRUSTED_ENTRY = "TRUSTED_ENTRY";
+    
     private final String alias;
+    private final String type;
 
-    private Date creationDate;
     private byte[][] chain;
     private transient Certificate[] parsedChain; // Certificate might not be serializable
+    private byte[] trustedCertificate;
+    private transient Certificate parsedTrustedCertificate; // Certificate might not be serializable
+    private Date creationDate;
+    
     private Map<String, String> info;
     
-    public TokenEntry(String alias) {
+    public TokenEntry(String alias, String type) {
         this.alias = alias;
+        this.type = type;
+    }
+    
+    public String getType() {
+        return this.type;
     }
 
     public void setCreationDate(Date creationDate) {
@@ -44,15 +59,15 @@ public class TokenEntry implements Serializable {
     }
 
     public void setParsedChain(Certificate[] chain) throws CertificateEncodingException {
-        this.parsedChain = chain;
         this.chain = new byte[chain.length][];
         for (int i = 0; i < chain.length; i++) {
             this.chain[i] = chain[i].getEncoded();
         }
+        this.parsedChain = chain;
     }
     
     public Certificate[] getParsedChain() throws CertificateException {
-        if (this.parsedChain == null) {
+        if (this.parsedChain == null && this.chain != null) {
             this.parsedChain = new Certificate[this.chain.length];
             int i = 0;
             for (byte[] certBytes : this.chain) {
@@ -80,6 +95,26 @@ public class TokenEntry implements Serializable {
 
     public Date getCreationDate() {
         return creationDate;
+    }
+
+    public byte[] getTrustedCertificate() {
+        return trustedCertificate;
+    }
+
+    public void setTrustedCertificate(byte[] trustedCertificate) {
+        this.trustedCertificate = trustedCertificate;
+    }
+
+    public Certificate getParsedTrustedCertificate() throws CertificateException {
+        if (this.parsedTrustedCertificate == null && this.trustedCertificate != null) {
+            this.parsedTrustedCertificate = CertTools.getCertfromByteArray(this.trustedCertificate, "BC");
+        }
+        return this.parsedTrustedCertificate;
+    }
+
+    public void setParsedTrustedCertificate(Certificate parsedTrustedCertificate) throws CertificateEncodingException {
+        this.trustedCertificate = parsedTrustedCertificate.getEncoded();
+        this.parsedTrustedCertificate = parsedTrustedCertificate;
     }
     
     public void setInfo(Map<String, String> info) {

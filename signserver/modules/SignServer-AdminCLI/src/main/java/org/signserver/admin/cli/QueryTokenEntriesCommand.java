@@ -12,11 +12,14 @@
  *************************************************************************/
 package org.signserver.admin.cli;
 
+import java.security.cert.CertificateException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.GnuParser;
@@ -36,8 +39,11 @@ import org.signserver.server.cryptotokens.TokenEntry;
 import org.signserver.server.cryptotokens.TokenSearchResults;
 
 /**
+ * Command for printing key aliases in a crypto token and optionally other
+ * information including the certificate chain.
  *
- * @author user
+ * @author Markus Kilås
+ * @version $Id$
  */
 public class QueryTokenEntriesCommand extends AbstractCommand {
 
@@ -57,6 +63,8 @@ public class QueryTokenEntriesCommand extends AbstractCommand {
     private static final Set<String> dateFields;
     private static final Set<RelationalOperator> noArgOps;
     private static final Set<String> allowedFields;
+    
+    private static final String INDENT = "   ";
 
     private String tokenIdOrName;
     private int from = 0;
@@ -64,7 +72,7 @@ public class QueryTokenEntriesCommand extends AbstractCommand {
     private boolean verbose = false;
     private List<Term> terms;
     
-    
+        
     private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ");
     
     @Override
@@ -132,7 +140,7 @@ public class QueryTokenEntriesCommand extends AbstractCommand {
             
                 int i = startIndex;
                 for (TokenEntry entry : searchResults.getEntries()) {
-                    getOutputStream().println(i + ": " + entry.getAlias());
+                    renderEntry(i, entry, verbose);
                     i++;
                 }
                 startIndex = startIndex + searchResults.getEntries().size();
@@ -229,6 +237,39 @@ public class QueryTokenEntriesCommand extends AbstractCommand {
             throws IllegalArgumentException, NumberFormatException, java.text.ParseException {
         return AdminCLIUtils.parseCriteria(criteria, allowedFields, noArgOps,
                 Collections.<String>emptySet(), longFields, dateFields);
+    }
+    
+    private void renderEntry(int i, TokenEntry entry, boolean verbose) {
+        getOutputStream().println(i + ": " + entry.getAlias());
+        if (verbose) {
+            final StringBuilder sb = new StringBuilder();
+            sb.append(INDENT).append("Type: ").append(entry.getType()).append("\n");
+            if (entry.getCreationDate() != null) {
+                sb.append(INDENT).append("Creation date: ").append(entry.getCreationDate()).append("\n");
+            }
+            try {
+                if (entry.getParsedChain() != null) {
+                    sb.append(INDENT).append("Certificate chain: ").append("\n").append(Arrays.toString(entry.getParsedChain())).append("\n");
+                }
+            } catch (CertificateException ex) {
+                sb.append(INDENT).append("Certificate chain: ").append("Unable to parse: ").append(ex.getMessage()).append("\n");
+            }
+            try {
+                if (entry.getParsedTrustedCertificate() != null) {
+                    sb.append(INDENT).append("Trusted certificate: ").append("\n").append(entry.getParsedTrustedCertificate()).append("\n");
+                }
+            } catch (CertificateException ex) {
+                sb.append(INDENT).append("Trusted certificate: ").append("Unable to parse: ").append(ex.getMessage()).append("\n");
+            }
+            if (entry.getInfo() != null && !entry.getInfo().isEmpty()) {
+                sb.append(INDENT).append("Additional information:\n");
+                for (Map.Entry<String, String> info : entry.getInfo().entrySet()) {
+                    sb.append(INDENT).append(INDENT).append(info.getKey()).append(": ").append(info.getValue()).append("\n");
+                }
+            }
+            sb.append("\n");
+            getOutputStream().println(sb.toString());
+        }
     }
     
 }

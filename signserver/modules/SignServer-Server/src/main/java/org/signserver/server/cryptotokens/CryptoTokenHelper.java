@@ -28,6 +28,7 @@ import java.security.Signature;
 import java.security.SignatureException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.DSAKey;
@@ -480,7 +481,19 @@ public class CryptoTokenHelper {
             final long maxIndex = (long) startIndex + max;
             for (int i = 0; i < maxIndex && e.hasMoreElements();) {
                 final String keyAlias = e.nextElement();
-                TokenEntry entry = new TokenEntry(keyAlias);
+                
+                final String type;
+                if (keyStore.entryInstanceOf(keyAlias, KeyStore.PrivateKeyEntry.class)) {
+                    type = TokenEntry.TYPE_PRIVATEKEY_ENTRY;
+                } else if (keyStore.entryInstanceOf(keyAlias, KeyStore.SecretKeyEntry.class)) {
+                    type = TokenEntry.TYPE_SECRETKEY_ENTRY;
+                } else if (keyStore.entryInstanceOf(keyAlias, KeyStore.TrustedCertificateEntry.class)) {
+                    type = TokenEntry.TYPE_TRUSTED_ENTRY;
+                }  else {
+                    type = null;
+                }
+                
+                TokenEntry entry = new TokenEntry(keyAlias, type);
                 
                 if (shouldBeIncluded(entry, queryTerms, queryOperator)) {
                     if (i < startIndex) {
@@ -491,15 +504,26 @@ public class CryptoTokenHelper {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("checking keyAlias: " + keyAlias);
                     }
+                    
+                    try {
+                        Date creationDate = keyStore.getCreationDate(keyAlias);
+                        entry.setCreationDate(creationDate);
+                    } catch (ProviderException ex) {} // NOPMD: We ignore if it is not supported
 
-                    if (keyStore.isKeyEntry(keyAlias)) { // TODO: The API should support other types as well
-                        try {
-                            Date creationDate = keyStore.getCreationDate(keyAlias);
-                            entry.setCreationDate(creationDate);
-                        } catch (ProviderException ex) {} // NOPMD: We ignore if it is not supported
-
+                    if (TokenEntry.TYPE_PRIVATEKEY_ENTRY.equals(type)) {
                         final Certificate[] chain = keyStore.getCertificateChain(keyAlias);
-                        // TODO entry.setParsedChain(chain);
+                        try {
+                            entry.setParsedChain(chain);
+                        } catch (CertificateEncodingException ex) {
+                            LOG.error("Certificate could not be encoded for alias: " + keyAlias, ex);
+                        }
+                    } else if (TokenEntry.TYPE_TRUSTED_ENTRY.equals(type)) {
+                        Certificate certificate = keyStore.getCertificate(keyAlias);
+                        try {
+                            entry.setParsedTrustedCertificate(certificate);
+                        } catch (CertificateEncodingException ex) {
+                            LOG.error("Certificate could not be encoded for alias: " + keyAlias, ex);
+                        }
                     }
                     tokenEntries.add(entry);
 

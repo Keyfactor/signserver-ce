@@ -90,9 +90,9 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
             Vector<Object> cols = new Vector<Object>();
             cols.add(signer.getName() + " (" + signer.getWorkerId() + ")");
             if (signer.getConfiguration().getProperty("NEXTCERTSIGNKEY") != null) {
-                cols.add(Utils.NEXT_KEY);
+                cols.add(Utils.HardCodedAlias.NEXT_KEY);
             } else {
-                cols.add(Utils.DEFAULT_KEY);
+                cols.add(Utils.HardCodedAlias.DEFAULT_KEY);
             }
             cols.add("");
             cols.add("");
@@ -133,6 +133,7 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
         columnCertChain.setCellRenderer(new BrowseCellRenderer());
         final DefaultCellEditor aliasComboBoxFieldEditor
                 = new DefaultCellEditor(aliasComboBox);
+        aliasComboBox.setEditable(true);
         aliasComboBoxFieldEditor.setClickCountToStart(1);
         jTable1.getColumn("Key").setCellEditor(aliasComboBoxFieldEditor);
     }

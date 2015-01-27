@@ -107,9 +107,9 @@ public class GenerateRequestsDialog extends JDialog {
             Vector<Object> cols = new Vector<Object>();
             cols.add(worker.getName() + " (" + worker.getWorkerId() + ")");
             if (worker.getConfiguration().getProperty("NEXTCERTSIGNKEY") != null) {
-                cols.add(Utils.NEXT_KEY);
+                cols.add(Utils.HardCodedAlias.NEXT_KEY);
             } else {
-                cols.add(Utils.DEFAULT_KEY);
+                cols.add(Utils.HardCodedAlias.DEFAULT_KEY);
             }
             cols.add(worker.getConfiguration().getProperty("SIGNATUREALGORITHM",
                     ""));

@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Vector;
 import javax.ejb.EJBException;
 import javax.swing.DefaultCellEditor;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -67,6 +68,7 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
         COLUMN_NAMES.add("Key");
         COLUMN_NAMES.add("Signer certificate");
         COLUMN_NAMES.add("Certificate chain");
+        COLUMN_NAMES.add("Install in token");
     };
 
     private int resultCode = CANCEL;
@@ -76,6 +78,7 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
 
     private JComboBox aliasComboBox = new JComboBox(new Object[] {
          Utils.HardCodedAlias.NEXT_KEY, Utils.HardCodedAlias.DEFAULT_KEY});
+    private JCheckBox installInTokenCheckbox = new JCheckBox();
 
     /** Creates new form InstallCertificatesDialog. */
     public InstallCertificatesDialog(java.awt.Frame parent, boolean modal,
@@ -96,6 +99,7 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
             }
             cols.add("");
             cols.add("");
+            cols.add(false);
             data.add(cols);
         }
         jTable1.setModel(new DefaultTableModel(data, COLUMN_NAMES) {
@@ -127,6 +131,7 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
         editor.setClickCountToStart(1);
         final TableColumn columnSignerCert = jTable1.getColumn("Signer certificate");
         final TableColumn columnCertChain = jTable1.getColumn("Certificate chain");
+        final TableColumn installInToken = jTable1.getColumn("Install in token");
         columnSignerCert.setCellEditor(editor);
         columnCertChain.setCellEditor(editor);
         columnSignerCert.setCellRenderer(new BrowseCellRenderer());
@@ -136,6 +141,10 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
         aliasComboBox.setEditable(true);
         aliasComboBoxFieldEditor.setClickCountToStart(1);
         jTable1.getColumn("Key").setCellEditor(aliasComboBoxFieldEditor);
+        final DefaultCellEditor installInTokenCheckboxFieldEditor
+                = new DefaultCellEditor(installInTokenCheckbox);
+        installInToken.setCellEditor(installInTokenCheckboxFieldEditor);
+        installInToken.setCellRenderer(new CheckboxCellRenderer());
     }
 
     /** This method is called from within the constructor to
@@ -277,7 +286,7 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
                 final File signerCertFile = new File(data.get(row).get(2).toString());
                 final File signerChainFile = new File(data.get(row).get(3).toString());
 
-                final boolean defaultKey= Utils.DEFAULT_KEY.equals(key);
+                final boolean defaultKey = Utils.DEFAULT_KEY.equals(key);
 
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("signer=" + workerid + "cert=\"" + signerCertFile

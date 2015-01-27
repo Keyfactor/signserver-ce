@@ -60,9 +60,6 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
     public static final int CANCEL = 0;
     public static final int OK = 1;
 
-    private static final String NEXT_KEY = "Next key";
-    private static final String DEFAULT_KEY = "Default key";
-
     @SuppressWarnings("UseOfObsoleteCollectionType")
     private static final Vector<String> COLUMN_NAMES = new Vector<String>();
     static {
@@ -75,10 +72,10 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
     private int resultCode = CANCEL;
 
     private List<Worker> signers;
-    private Vector<Vector<String>> data;
+    private Vector<Vector<Object>> data;
 
-    private JComboBox aliasComboBox = new JComboBox(new String[] {
-         NEXT_KEY, DEFAULT_KEY});
+    private JComboBox aliasComboBox = new JComboBox(new Object[] {
+         Utils.HardCodedAlias.NEXT_KEY, Utils.HardCodedAlias.DEFAULT_KEY});
 
     /** Creates new form InstallCertificatesDialog. */
     public InstallCertificatesDialog(java.awt.Frame parent, boolean modal,
@@ -87,15 +84,15 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
         this.signers = new ArrayList<Worker>(signers);
         initComponents();
         setTitle("Install certificates for " + signers.size() + " signers");
-        data = new Vector<Vector<String>>();
+        data = new Vector<Vector<Object>>();
         for (int row = 0; row < signers.size(); row++) {
             Worker signer = signers.get(row);
-            Vector<String> cols = new Vector<String>();
+            Vector<Object> cols = new Vector<Object>();
             cols.add(signer.getName() + " (" + signer.getWorkerId() + ")");
             if (signer.getConfiguration().getProperty("NEXTCERTSIGNKEY") != null) {
-                cols.add(NEXT_KEY);
+                cols.add(Utils.NEXT_KEY);
             } else {
-                cols.add(DEFAULT_KEY);
+                cols.add(Utils.DEFAULT_KEY);
             }
             cols.add("");
             cols.add("");
@@ -276,10 +273,10 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
                 final Worker signer = signers.get(row);
                 final int workerid = signer.getWorkerId();
                 final String key = (String) data.get(row).get(1);
-                final File signerCertFile = new File(data.get(row).get(2));
-                final File signerChainFile = new File(data.get(row).get(3));
+                final File signerCertFile = new File(data.get(row).get(2).toString());
+                final File signerChainFile = new File(data.get(row).get(3).toString());
 
-                final boolean defaultKey= DEFAULT_KEY.equals(key);
+                final boolean defaultKey= Utils.DEFAULT_KEY.equals(key);
 
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("signer=" + workerid + "cert=\"" + signerCertFile

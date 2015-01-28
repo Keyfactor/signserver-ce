@@ -30,6 +30,9 @@ import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
@@ -123,7 +126,28 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
                     }
                 }
                 jButtonInstall.setEnabled(enable);
+                
+                final int selectedRow = jTable1.getSelectedRow();
+                final boolean installInToken =
+                        (Boolean) jTable1.getValueAt(selectedRow, 4);
+                
+                aliasComboBox.setEditable(installInToken);
             }
+            
+            
+        });
+        
+        jTable1.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                final int selectedRow = jTable1.getSelectedRow();
+                final boolean installInToken =
+                        (Boolean) jTable1.getValueAt(selectedRow, 4);
+                
+                aliasComboBox.setEditable(installInToken);
+            }
+            
         });
 
         final BrowseCellEditor editor = new BrowseCellEditor(new JTextField(),
@@ -138,13 +162,15 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
         columnCertChain.setCellRenderer(new BrowseCellRenderer());
         final DefaultCellEditor aliasComboBoxFieldEditor
                 = new DefaultCellEditor(aliasComboBox);
-        aliasComboBox.setEditable(true);
+        aliasComboBox.setEditable(false);
         aliasComboBoxFieldEditor.setClickCountToStart(1);
         jTable1.getColumn("Key").setCellEditor(aliasComboBoxFieldEditor);
         final DefaultCellEditor installInTokenCheckboxFieldEditor
                 = new DefaultCellEditor(installInTokenCheckbox);
         installInToken.setCellEditor(installInTokenCheckboxFieldEditor);
         installInToken.setCellRenderer(new CheckboxCellRenderer());
+        
+        jTable1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     }
 
     /** This method is called from within the constructor to

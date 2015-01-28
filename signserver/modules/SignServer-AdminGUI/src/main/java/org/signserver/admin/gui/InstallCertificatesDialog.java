@@ -127,11 +127,7 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
                 }
                 jButtonInstall.setEnabled(enable);
                 
-                final int selectedRow = jTable1.getSelectedRow();
-                final boolean installInToken =
-                        (Boolean) jTable1.getValueAt(selectedRow, 4);
-                
-                aliasComboBox.setEditable(installInToken);
+                updateAliasCombobox();
             }
             
             
@@ -141,11 +137,7 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
 
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                final int selectedRow = jTable1.getSelectedRow();
-                final boolean installInToken =
-                        (Boolean) jTable1.getValueAt(selectedRow, 4);
-                
-                aliasComboBox.setEditable(installInToken);
+                updateAliasCombobox();
             }
             
         });
@@ -171,6 +163,14 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
         installInToken.setCellRenderer(new CheckboxCellRenderer());
         
         jTable1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    }
+    
+    private void updateAliasCombobox() {
+        final int selectedRow = jTable1.getSelectedRow();
+        final boolean installInToken =
+                (Boolean) jTable1.getValueAt(selectedRow, 4);
+        
+        aliasComboBox.setEditable(installInToken);
     }
 
     /** This method is called from within the constructor to

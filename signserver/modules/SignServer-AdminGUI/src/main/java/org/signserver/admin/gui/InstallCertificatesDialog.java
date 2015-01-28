@@ -20,8 +20,10 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 import javax.ejb.EJBException;
 import javax.swing.DefaultCellEditor;
@@ -82,6 +84,9 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
     private JComboBox aliasComboBox = new JComboBox(new Object[] {
          Utils.HardCodedAlias.NEXT_KEY, Utils.HardCodedAlias.DEFAULT_KEY});
     private JCheckBox installInTokenCheckbox = new JCheckBox();
+    
+    private Map<Integer, Utils.HardCodedAlias> savedAliases =
+            new HashMap<Integer, Utils.HardCodedAlias>();
 
     /** Creates new form InstallCertificatesDialog. */
     public InstallCertificatesDialog(java.awt.Frame parent, boolean modal,
@@ -169,8 +174,26 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
         final int selectedRow = jTable1.getSelectedRow();
         final boolean installInToken =
                 (Boolean) jTable1.getValueAt(selectedRow, 4);
+        final boolean wasEditable = aliasComboBox.isEditable();
+        final Object selectedAlias = jTable1.getValueAt(selectedRow, 1);
         
+        // update editability of the alias key alias
         aliasComboBox.setEditable(installInToken);
+        
+        if (!wasEditable && installInToken) {
+            // record the old (hard-coded) selection
+            savedAliases.put(selectedRow,
+                             (Utils.HardCodedAlias) jTable1.getValueAt(selectedRow, 1));
+        } else if (wasEditable && !installInToken
+                   && selectedAlias instanceof String) {
+            // restore the saved hard-coded alias
+            final Utils.HardCodedAlias savedAlias =
+                    savedAliases.get(selectedRow);
+            
+            jTable1.setValueAt(savedAlias != null ?
+                               savedAlias : Utils.HardCodedAlias.DEFAULT_KEY,
+                               selectedRow, 1);
+        }
     }
 
     /** This method is called from within the constructor to

@@ -179,20 +179,34 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
         
         // update editability of the alias key alias
         aliasComboBox.setEditable(installInToken);
-        
-        if (!wasEditable && installInToken) {
+
+        if (!wasEditable && installInToken
+            && selectedAlias instanceof Utils.HardCodedAlias) {
             // record the old (hard-coded) selection
             savedAliases.put(selectedRow,
                              (Utils.HardCodedAlias) jTable1.getValueAt(selectedRow, 1));
         } else if (wasEditable && !installInToken
                    && selectedAlias instanceof String) {
-            // restore the saved hard-coded alias
-            final Utils.HardCodedAlias savedAlias =
-                    savedAliases.get(selectedRow);
+            final int confirm =
+                    JOptionPane.showConfirmDialog(this,
+                                                  "Reset manually edited alias?",
+                                                  "Reset alias",
+                                                  JOptionPane.YES_NO_CANCEL_OPTION,
+                                                  JOptionPane.INFORMATION_MESSAGE);            
             
-            jTable1.setValueAt(savedAlias != null ?
-                               savedAlias : Utils.HardCodedAlias.DEFAULT_KEY,
-                               selectedRow, 1);
+            if (confirm == JOptionPane.OK_OPTION) {
+                // restore the saved hard-coded alias
+                final Utils.HardCodedAlias savedAlias =
+                        savedAliases.get(selectedRow);
+
+                jTable1.setValueAt(savedAlias != null ?
+                                   savedAlias : Utils.HardCodedAlias.DEFAULT_KEY,
+                                   selectedRow, 1);
+            } else {
+                // restore the state for install to crypto token when
+                // user wants to keep the manually entered alias
+                jTable1.setValueAt(true, selectedRow, 4);
+            }
         }
     }
 

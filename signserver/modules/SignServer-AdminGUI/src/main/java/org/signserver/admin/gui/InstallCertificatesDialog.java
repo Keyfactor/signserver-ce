@@ -48,6 +48,7 @@ import org.jdesktop.application.Task;
 import org.signserver.admin.gui.adminws.gen
         .AdminNotAuthorizedException_Exception;
 import org.signserver.admin.gui.adminws.gen.IllegalRequestException_Exception;
+import org.signserver.admin.gui.adminws.gen.OperationUnsupportedException_Exception;
 import org.signserver.common.GlobalConfiguration;
 
 /**
@@ -124,8 +125,12 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
             public void tableChanged(final TableModelEvent e) {
                 boolean enable = true;
                 for (int row = 0; row < jTable1.getRowCount(); row++) {
-                    if ("".equals(jTable1.getValueAt(row, 2))
-                            || "".equals(jTable1.getValueAt(row, 3))) {
+                    final String cert = (String) jTable1.getValueAt(row, 2);
+                    final String certChain = (String) jTable1.getValueAt(row, 3);
+                    final boolean installInToken =
+                            (Boolean) jTable1.getValueAt(row, 4);
+                    
+                    if (("".equals(cert) && !installInToken) || "".equals(certChain)) {
                         enable = false;
                         break;
                     }
@@ -346,10 +351,15 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
                 final Worker signer = signers.get(row);
                 final int workerid = signer.getWorkerId();
                 final String key = (String) data.get(row).get(1);
-                final File signerCertFile = new File(data.get(row).get(2).toString());
-                final File signerChainFile = new File(data.get(row).get(3).toString());
+                final String cert = data.get(row).get(2).toString();
+                final String certChain = data.get(row).get(3).toString();
+                final File signerCertFile =
+                        "".equals(cert) ? null : new File(cert);
+                final File signerChainFile = new File(certChain);
 
                 final boolean defaultKey = Utils.DEFAULT_KEY.equals(key);
+                final boolean editedAlias = key instanceof String;
+                final boolean installInToken = (Boolean) data.get(row).get(4);
 
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("signer=" + workerid + "cert=\"" + signerCertFile
@@ -361,9 +371,11 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
                     final String scope = GlobalConfiguration.SCOPE_GLOBAL;
 
                     final Collection<Certificate> signerCerts =
-                            CertTools.getCertsFromPEM(
-                            signerCertFile.getAbsolutePath());
-                    if (signerCerts.isEmpty()) {
+                            signerCertFile != null ?
+                            CertTools.getCertsFromPEM(signerCertFile.getAbsolutePath()) :
+                            null;
+                    
+                    if (signerCerts != null && signerCerts.isEmpty()) {
                         final String error =
                             "Problem with signer certificate file for signer "
                             + workerid + ":\n" + "No certificate in file";
@@ -371,7 +383,7 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
                         errors.append(error);
                         errors.append("\n");
                     } else {
-                        if (signerCerts.size() != 1) {
+                        if (signerCerts != null && signerCerts.size() != 1) {
                             final String warning =
                                     "Warning: More than one certificate "
                                     + "found in signer certificate file for signer "
@@ -380,8 +392,10 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
                             warnings.append(warning);
                             warnings.append("\n");
                         }
-                        final X509Certificate signerCert
-                                = (X509Certificate) signerCerts.iterator().next();
+                        final X509Certificate signerCert =
+                                signerCerts != null ?
+                                (X509Certificate) signerCerts.iterator().next() :
+                                null;
 
                         List<Certificate> signerChain;
 
@@ -397,36 +411,55 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
                                 errors.append("\n");
                             }
 
-                            if (signerChain.contains(signerCert)) {
-                                LOG.debug("Chain contains signercert");
-                            } else {
-                                LOG.debug("Adding signercert to chain");
-                                signerChain.add(0, signerCert);
+                            if (signerCert != null) {
+                                if (signerChain.contains(signerCert)) {
+                                    LOG.debug("Chain contains signercert");
+                                } else {
+                                    LOG.debug("Adding signercert to chain");
+                                    signerChain.add(0, signerCert);
+                                }
                             }
 
-                            SignServerAdminGUIApplication.getAdminWS()
-                                    .uploadSignerCertificateChain(workerid,
-                                        asByteArrayList(signerChain), scope);
-                            SignServerAdminGUIApplication.getAdminWS()
-                                    .uploadSignerCertificate(workerid, 
-                                    asByteArray(signerCert), scope);
-                            // Set DEFAULTKEY to NEXTCERTSIGNKEY
-                            if (defaultKey) {
-                                LOG.debug("Uploaded was for DEFAULTKEY");
-                            } else if (!defaultKey) {
-                                LOG.debug("Uploaded was for NEXTCERTSIGNKEY");
-                                final String nextCertSignKey
-                                        = signer.getConfiguration()
-                                            .getProperty("NEXTCERTSIGNKEY");
-                               SignServerAdminGUIApplication.getAdminWS()
-                                       .setWorkerProperty(workerid, "DEFAULTKEY",
-                                       nextCertSignKey);
-                               SignServerAdminGUIApplication.getAdminWS()
-                                       .removeWorkerProperty(workerid,
-                                       "NEXTCERTSIGNKEY");
+                            if (installInToken) {
+                                final String alias =
+                                        editedAlias ?
+                                        (String) data.get(row).get(1) :
+                                        defaultKey ?
+                                        signer.getConfiguration().getProperty("DEFAULTKEY") :
+                                        signer.getConfiguration().getProperty("NEXTCERTSIGNKEY");
+                                
+                                SignServerAdminGUIApplication.getAdminWS()
+                                        .importCertificateChain(Integer.toString(workerid),
+                                                                asByteArrayList(signerChain),
+                                                                alias, null);
+                            } else {
+                                SignServerAdminGUIApplication.getAdminWS()
+                                        .uploadSignerCertificateChain(workerid,
+                                            asByteArrayList(signerChain), scope);
+                                SignServerAdminGUIApplication.getAdminWS()
+                                        .uploadSignerCertificate(workerid, 
+                                        asByteArray(signerCert), scope);
                             }
-                            SignServerAdminGUIApplication.getAdminWS()
-                                    .reloadConfiguration(workerid);
+                               
+                            if (!editedAlias) {
+                                // Set DEFAULTKEY to NEXTCERTSIGNKEY
+                                if (defaultKey) {
+                                    LOG.debug("Uploaded was for DEFAULTKEY");
+                                } else if (!defaultKey) {
+                                    LOG.debug("Uploaded was for NEXTCERTSIGNKEY");
+                                    final String nextCertSignKey
+                                            = signer.getConfiguration()
+                                                .getProperty("NEXTCERTSIGNKEY");
+                                   SignServerAdminGUIApplication.getAdminWS()
+                                           .setWorkerProperty(workerid, "DEFAULTKEY",
+                                           nextCertSignKey);
+                                   SignServerAdminGUIApplication.getAdminWS()
+                                           .removeWorkerProperty(workerid,
+                                           "NEXTCERTSIGNKEY");
+                                }
+                                SignServerAdminGUIApplication.getAdminWS()
+                                        .reloadConfiguration(workerid);
+                            }
 
                             signers.remove(signer);
                             data.remove(row);
@@ -436,6 +469,13 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
                             final String error =
                                 "Authorization denied for worker "
                                 + workerid;
+                            LOG.error(error, ex);
+                            errors.append(error).append(":\n").append(ex.getMessage());
+                            errors.append("\n");
+                        } catch (OperationUnsupportedException_Exception ex) {
+                            final String error =
+                                    "Importing certificate chain is not supported by crypto token for worker "
+                                    + workerid;
                             LOG.error(error, ex);
                             errors.append(error).append(":\n").append(ex.getMessage());
                             errors.append("\n");

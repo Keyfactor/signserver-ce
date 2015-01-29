@@ -833,10 +833,16 @@ public class AdminLayerEJBImpl implements AdminWS {
                    IllegalRequestException_Exception,
                    OperationUnsupportedException_Exception {
         try {
-            final int workerId = getWorkerId(workerIdOrName);
+            int workerId;
+            
+            try {
+                workerId = Integer.parseInt(workerIdOrName);
+            } catch (NumberFormatException e) {
+                workerId = getWorkerId(workerIdOrName);
+            }
             
             worker.importCertificateChain(workerId, certificateChain, alias,
-                    authCode.toCharArray());
+                    authCode != null ? authCode.toCharArray() : null);
         } catch (CryptoTokenOfflineException ex) {
             LOG.error("Crypto token offline: ", ex);
             throw new IllegalRequestException_Exception("Cryptotoken offline",

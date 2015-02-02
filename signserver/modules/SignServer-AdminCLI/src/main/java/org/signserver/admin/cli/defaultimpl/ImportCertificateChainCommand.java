@@ -15,7 +15,6 @@ package org.signserver.admin.cli.defaultimpl;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import org.cesecore.util.CertTools;
 import org.signserver.cli.spi.CommandFailureException;
@@ -42,7 +41,7 @@ public class ImportCertificateChainCommand extends AbstractAdminCommand {
 
     @Override
     public String getUsages() {
-        return "Usage: signserver importcertificatechain <workerid> <certchain file> <alias>\n"
+        return "Usage: signserver importcertificatechain <workerid> <certchain file> <alias> [authcode]\n"
                     + "Example: signserver importcertificatechain 1 user1-chain.pem user1\n\n";
     }
 

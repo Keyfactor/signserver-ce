@@ -13,6 +13,9 @@
 package org.signserver.server.cryptotokens;
 
 import java.security.KeyStoreException;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -24,6 +27,7 @@ import org.cesecore.util.query.elems.Term;
 import static org.junit.Assert.*;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.InvalidWorkerIdException;
+import org.signserver.common.OperationUnsupportedException;
 import org.signserver.common.SignServerException;
 import org.signserver.testutils.ModulesTestCase;
 
@@ -45,6 +49,11 @@ public abstract class CryptoTokenTestBase extends ModulesTestCase {
     protected abstract void generateKey(String keyType, String keySpec, String alias) throws CryptoTokenOfflineException, InvalidWorkerIdException, SignServerException;
     protected abstract boolean destroyKey(String alias) throws CryptoTokenOfflineException, InvalidWorkerIdException, SignServerException, KeyStoreException;
     
+    protected abstract void importCertificateChain(List<Certificate> chain, String alias)
+            throws CryptoTokenOfflineException, IllegalArgumentException,
+                   CertificateException, CertificateEncodingException,
+                   OperationUnsupportedException;
+
 //    private static final Set<String> longFields;
 //    private static final Set<String> dateFields;
 //    private static final Set<RelationalOperator> noArgOps;

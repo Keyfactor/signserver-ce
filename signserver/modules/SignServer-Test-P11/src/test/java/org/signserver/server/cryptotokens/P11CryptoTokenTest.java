@@ -13,6 +13,10 @@ package org.signserver.server.cryptotokens;/************************************
  *************************************************************************/
 
 import java.security.KeyStoreException;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
+import java.util.LinkedList;
 import java.util.List;
 import org.apache.log4j.Logger;
 import org.cesecore.util.query.elems.LogicOperator;
@@ -22,6 +26,7 @@ import org.junit.Test;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.InvalidWorkerIdException;
+import org.signserver.common.OperationUnsupportedException;
 import org.signserver.common.SignServerException;
 import org.signserver.common.SignServerUtil;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
@@ -117,6 +122,21 @@ public class P11CryptoTokenTest extends CryptoTokenTestBase {
     protected boolean destroyKey(String alias) throws CryptoTokenOfflineException, InvalidWorkerIdException, SignServerException, KeyStoreException {
         return getWorkerSession().removeKey(CRYPTO_TOKEN, alias);
     }
+
+    @Override
+    protected void importCertificateChain(List<Certificate> chain, String alias)
+            throws CryptoTokenOfflineException, IllegalArgumentException,
+            CertificateException, CertificateEncodingException, OperationUnsupportedException {
+        getWorkerSession().importCertificateChain(CRYPTO_TOKEN, getCertByteArrayList(chain), alias, null);
+    }
     
-    
+    private List<byte[]> getCertByteArrayList(final List<Certificate> chain) throws CertificateEncodingException {
+        final List<byte[]> result = new LinkedList<byte[]>();
+        
+        for (final Certificate cert : chain) {
+            result.add(cert.getEncoded());
+        }
+        
+        return result;
+    }
 }

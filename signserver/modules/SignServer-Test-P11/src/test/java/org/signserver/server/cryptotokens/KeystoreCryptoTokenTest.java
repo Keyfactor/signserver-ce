@@ -13,16 +13,26 @@
 package org.signserver.server.cryptotokens;
 
 import java.math.BigInteger;
+import java.security.KeyPair;
 import java.security.KeyStoreException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 import org.apache.log4j.Logger;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cert.X509v3CertificateBuilder;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.bouncycastle.pkcs.PKCS10CertificationRequest;
+import org.bouncycastle.util.encoders.Base64;
 import org.cesecore.audit.AuditLogEntry;
 import org.cesecore.authorization.AuthorizationDeniedException;
+import org.cesecore.util.CertTools;
 import org.cesecore.util.query.QueryCriteria;
 import org.cesecore.util.query.elems.LogicOperator;
 import org.cesecore.util.query.elems.Term;
@@ -31,7 +41,9 @@ import org.junit.Test;
 import org.signserver.common.ArchiveDataVO;
 import org.signserver.common.ArchiveMetadata;
 import org.signserver.common.AuthorizedClient;
+import org.signserver.common.Base64SignerCertReqData;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
+import org.signserver.common.CryptoTokenInitializationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
@@ -39,6 +51,7 @@ import org.signserver.common.IllegalRequestException;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.KeyTestResult;
 import org.signserver.common.OperationUnsupportedException;
+import org.signserver.common.PKCS10CertReqInfo;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
@@ -48,6 +61,7 @@ import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.server.log.AdminInfo;
+import org.signserver.test.utils.builders.CryptoUtils;
 
 /**
  * Generic CryptoToken tests using KeyStoreCryptoToken.
@@ -73,16 +87,48 @@ public class KeystoreCryptoTokenTest extends CryptoTokenTestBase {
         SignServerUtil.installBCProvider();
     }
     
-    @Test
-    public void testSearchTokenEntries_KeystoreCryptoToken() throws Exception {
+    private void initKeystore() throws CryptoTokenInitializationFailureException,
+                                       CryptoTokenAuthenticationFailureException,
+                                       CryptoTokenOfflineException {
         Properties config = new Properties();
         config.setProperty("KEYSTOREPASSWORD", "password123123213");
         instance.init(1, config);
         instance.activate("password123123213");
         instance.generateKey("RSA", "1024", existingKey1, null);
+    }
+    
+    @Test
+    public void testSearchTokenEntries_KeystoreCryptoToken() throws Exception {
+        initKeystore();
         searchTokenEntriesHelper(existingKey1);
     }
 
+    @Test
+    public void testImportCertificateChain() throws Exception {
+        final ISignerCertReqInfo req =
+                new PKCS10CertReqInfo("SHA1WithRSA", "CN=imported", null);
+        initKeystore();
+        final Base64SignerCertReqData reqData =
+                (Base64SignerCertReqData) instance.genCertificateRequest(req, false, existingKey1);
+        
+        // Issue certificate
+        PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
+        KeyPair issuerKeyPair = CryptoUtils.generateRSA(512);
+        X509CertificateHolder cert = new X509v3CertificateBuilder(new X500Name("CN=Test Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
+
+        // import certficate chain
+        instance.importCertificateChain(Arrays.asList(CertTools.getCertfromByteArray(cert.getEncoded())), existingKey1, null);
+        
+        final List<Certificate> chain = instance.getCertificateChain(existingKey1);
+        
+        assertEquals("Number of certs", 1, chain.size());
+        
+        final Certificate foundCert = chain.get(0);
+        
+        assertTrue("Imported cert",
+                Arrays.equals(foundCert.getEncoded(), cert.getEncoded()));
+    }
+    
     @Override
     protected TokenSearchResults searchTokenEntries(int startIndex, int max, List<Term> queryTerms, LogicOperator queryOperator) throws CryptoTokenOfflineException, KeyStoreException {
         return instance.searchTokenEntries(startIndex, max, queryTerms, queryOperator);
@@ -97,6 +143,12 @@ public class KeystoreCryptoTokenTest extends CryptoTokenTestBase {
     protected boolean destroyKey(String alias) throws CryptoTokenOfflineException, InvalidWorkerIdException, SignServerException, KeyStoreException {
         return instance.removeKey(alias);
     }
+
+    @Override
+    protected void importCertificateChain(List<Certificate> chain, String alias) throws CryptoTokenOfflineException, IllegalArgumentException {
+        instance.importCertificateChain(chain, alias, null);
+    }
+
     
     private static class MockedKeystoreInConfig extends KeystoreInConfigCryptoToken {
         @Override

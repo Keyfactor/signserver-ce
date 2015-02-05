@@ -25,6 +25,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GlobalConfiguration;
+import org.signserver.common.ICertReqData;
+import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.OperationUnsupportedException;
 import org.signserver.common.SignServerException;
@@ -107,6 +109,18 @@ public class P11CryptoTokenTest extends CryptoTokenTestBase {
             removeWorker(CRYPTO_TOKEN);
         }
     }
+    
+    @Test
+    public void testImportCertificateChain_PKCS11CryptoToken() throws Exception {
+        try {
+            setupCryptoTokenProperties(CRYPTO_TOKEN);
+            workerSession.reloadConfiguration(CRYPTO_TOKEN);
+        
+            importCertificateChainHelper(existingKey1);
+        } finally {
+            removeWorker(CRYPTO_TOKEN);
+        }
+    }
 
     @Override
     protected TokenSearchResults searchTokenEntries(int startIndex, int max, List<Term> queryTerms, LogicOperator queryOperator) throws CryptoTokenOfflineException, KeyStoreException, InvalidWorkerIdException, SignServerException {
@@ -138,5 +152,18 @@ public class P11CryptoTokenTest extends CryptoTokenTestBase {
         }
         
         return result;
+    }
+
+    @Override
+    protected ICertReqData genCertificateRequest(final ISignerCertReqInfo req,
+                                                 final boolean explicitEccParameters,
+                                                 final String alias)
+            throws CryptoTokenOfflineException, InvalidWorkerIdException {
+        return getWorkerSession().getCertificateRequest(CRYPTO_TOKEN, req, explicitEccParameters, alias);
+    }
+
+    @Override
+    protected List<Certificate> getCertificateChain(String alias) throws CryptoTokenOfflineException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

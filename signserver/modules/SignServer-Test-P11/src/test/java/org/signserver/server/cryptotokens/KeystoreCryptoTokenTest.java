@@ -149,6 +149,20 @@ public class KeystoreCryptoTokenTest extends CryptoTokenTestBase {
         instance.importCertificateChain(chain, alias, null);
     }
 
+    @Override
+    protected ICertReqData genCertificateRequest(final ISignerCertReqInfo req,
+                                                 final boolean explicitEccParameters,
+                                                 final String alias)
+            throws CryptoTokenOfflineException {
+        return instance.genCertificateRequest(req, explicitEccParameters, alias);
+    }
+
+    @Override
+    protected List<Certificate> getCertificateChain(final String alias)
+            throws CryptoTokenOfflineException {
+        return instance.getCertificateChain(alias);
+    }
+
     
     private static class MockedKeystoreInConfig extends KeystoreInConfigCryptoToken {
         @Override

@@ -12,23 +12,43 @@
  *************************************************************************/
 package org.signserver.server.cryptotokens;
 
+import java.io.IOException;
+import java.math.BigInteger;
+import java.security.KeyPair;
 import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import org.apache.log4j.Logger;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cert.X509v3CertificateBuilder;
+import org.bouncycastle.operator.OperatorCreationException;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.bouncycastle.pkcs.PKCS10CertificationRequest;
+import org.bouncycastle.util.encoders.Base64;
+import org.cesecore.util.CertTools;
 import org.cesecore.util.query.elems.LogicOperator;
 import org.cesecore.util.query.elems.RelationalOperator;
 import org.cesecore.util.query.elems.Term;
 import static org.junit.Assert.*;
+import org.signserver.common.Base64SignerCertReqData;
 import org.signserver.common.CryptoTokenOfflineException;
+import org.signserver.common.ICertReqData;
+import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.OperationUnsupportedException;
+import org.signserver.common.PKCS10CertReqInfo;
 import org.signserver.common.SignServerException;
+import org.signserver.test.utils.builders.CryptoUtils;
 import org.signserver.testutils.ModulesTestCase;
 
 /**
@@ -53,6 +73,14 @@ public abstract class CryptoTokenTestBase extends ModulesTestCase {
             throws CryptoTokenOfflineException, IllegalArgumentException,
                    CertificateException, CertificateEncodingException,
                    OperationUnsupportedException;
+    
+    protected abstract ICertReqData genCertificateRequest(ISignerCertReqInfo req,
+                                                               boolean explicitEccParameters,
+                                                               String alias)
+            throws CryptoTokenOfflineException, InvalidWorkerIdException;
+    
+    protected abstract List<Certificate> getCertificateChain(String alias)
+            throws CryptoTokenOfflineException;
 
 //    private static final Set<String> longFields;
 //    private static final Set<String> dateFields;
@@ -227,6 +255,36 @@ public abstract class CryptoTokenTestBase extends ModulesTestCase {
                 }
             }
         }
+    }
+    
+    protected void importCertificateChainHelper(final String existingKey) 
+            throws NoSuchAlgorithmException, NoSuchProviderException,
+                   OperatorCreationException, IOException, CertificateException,
+                   CryptoTokenOfflineException, 
+                   IllegalArgumentException, 
+                   CertificateEncodingException, 
+                   OperationUnsupportedException, InvalidWorkerIdException {
+        final ISignerCertReqInfo req =
+                new PKCS10CertReqInfo("SHA1WithRSA", "CN=imported", null);
+        final Base64SignerCertReqData reqData =
+                (Base64SignerCertReqData) genCertificateRequest(req, false, existingKey);
+        
+        // Issue certificate
+        PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
+        KeyPair issuerKeyPair = CryptoUtils.generateRSA(512);
+        X509CertificateHolder cert = new X509v3CertificateBuilder(new X500Name("CN=Test Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
+
+        // import certficate chain
+        importCertificateChain(Arrays.asList(CertTools.getCertfromByteArray(cert.getEncoded())), existingKey);
+        
+        final List<Certificate> chain = getCertificateChain(existingKey);
+        
+        assertEquals("Number of certs", 1, chain.size());
+        
+        final Certificate foundCert = chain.get(0);
+        
+        assertTrue("Imported cert",
+                Arrays.equals(foundCert.getEncoded(), cert.getEncoded()));
     }
     
 }

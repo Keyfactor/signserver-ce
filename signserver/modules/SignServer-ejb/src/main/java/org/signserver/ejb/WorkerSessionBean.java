@@ -824,6 +824,38 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         }
         return res;
     }
+
+    @Override
+    public List<Certificate> getSigningCertificateChain(final AdminInfo adminInfo,
+                                                        final int signerId,
+                                                        final String alias)
+            throws CryptoTokenOfflineException, InvalidWorkerIdException {
+        final IWorker worker = workerManagerSession.getWorker(signerId,
+                                                              globalConfigurationSession);
+        
+        if (worker == null) {
+            throw new InvalidWorkerIdException("Given SignerId " + signerId
+                    + " doesn't exist");
+        }
+        
+        List<Certificate> ret = null;
+        
+        if (worker instanceof BaseProcessable) {
+            ret = ((BaseProcessable) worker).getSigningCertificateChain(alias);
+        }
+        
+        return ret;
+    }
+
+    @Override
+    public List<Certificate> getSignerCertificateChain(final int signerId,
+                                                       final String alias)
+            throws CryptoTokenOfflineException, InvalidWorkerIdException {
+        return getSigningCertificateChain(new AdminInfo("CLI user", null, null),
+                                         signerId, alias);
+    }
+    
+    
     
     @Override
     public boolean removeKey(final AdminInfo adminInfo, final int signerId, final String alias) throws CryptoTokenOfflineException, InvalidWorkerIdException, KeyStoreException, SignServerException {

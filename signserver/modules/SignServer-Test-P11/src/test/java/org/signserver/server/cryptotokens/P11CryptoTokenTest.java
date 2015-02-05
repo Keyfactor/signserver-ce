@@ -163,7 +163,8 @@ public class P11CryptoTokenTest extends CryptoTokenTestBase {
     }
 
     @Override
-    protected List<Certificate> getCertificateChain(String alias) throws CryptoTokenOfflineException {
-        throw new UnsupportedOperationException("Not supported yet.");
+    protected List<Certificate> getCertificateChain(String alias)
+            throws CryptoTokenOfflineException, InvalidWorkerIdException {
+        return getWorkerSession().getSignerCertificateChain(CRYPTO_TOKEN, alias);
     }
 }

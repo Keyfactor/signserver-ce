@@ -685,6 +685,27 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         return getSigningCertificate(null, null);
     }
 
+    public List<Certificate> getSigningCertificateChain(final String alias)
+            throws CryptoTokenOfflineException {
+        final ICryptoToken token;
+        List<Certificate> ret = null;
+        
+        try {
+            token = getCryptoToken();
+        } catch (SignServerException e) {
+            log.error(FAILED_TO_GET_CRYPTO_TOKEN_ + e.getMessage());
+            throw new CryptoTokenOfflineException(e);
+        }
+
+        if (token != null) {
+            if (token instanceof ICryptoTokenV2) {
+                ret = ((ICryptoTokenV2) token).getCertificateChain(alias);
+            }
+        }
+        
+        return ret;
+    }
+    
     /**
      * Method that returns the certificate chain used when signing.
      * If the worker has a configured certificate chain this is returned.

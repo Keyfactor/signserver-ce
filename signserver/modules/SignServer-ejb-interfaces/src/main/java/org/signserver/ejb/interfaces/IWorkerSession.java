@@ -267,6 +267,21 @@ public interface IWorkerSession {
             throws CryptoTokenOfflineException;
     
     /**
+     * Method returning the signing certificate chain for the signer given
+     * a key alias.
+     * 
+     * @param signerId
+     * @param alias
+     * @return The certificate chain, or null if there is no chain for the
+     *         given alias
+     * @throws CryptoTokenOfflineException 
+     * @throws InvalidWorkerIdException
+     */
+    public List<Certificate> getSignerCertificateChain(int signerId,
+                                                       String alias)
+            throws CryptoTokenOfflineException, InvalidWorkerIdException;
+    
+    /**
      * Method returning the current signing certificate chain for the signer.
      * @param signerId Id of signer
      * @return Current signing certificate chain if the worker is a signer and it
@@ -602,6 +617,21 @@ public interface IWorkerSession {
                 final boolean explicitEccParameters,
                 final boolean defaultKey) throws
                 CryptoTokenOfflineException, InvalidWorkerIdException;
+        
+        /**
+         * Method that gets the signing certificate chain given a key alias.
+         * 
+         * @param adminInfo
+         * @param signerId
+         * @param alias
+         * @return Certificate chain, or null if no such alias exists in the token
+         * @throws CryptoTokenOfflineException
+         * @throws InvalidWorkerIdException
+         */
+        List<Certificate> getSigningCertificateChain(AdminInfo adminInfo,
+                                                     int signerId,
+                                                     String alias)
+                throws CryptoTokenOfflineException, InvalidWorkerIdException;
             
         /**
          * Method used to let a signer generate a certificate request

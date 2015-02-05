@@ -80,7 +80,7 @@ public abstract class CryptoTokenTestBase extends ModulesTestCase {
             throws CryptoTokenOfflineException, InvalidWorkerIdException;
     
     protected abstract List<Certificate> getCertificateChain(String alias)
-            throws CryptoTokenOfflineException;
+            throws CryptoTokenOfflineException, InvalidWorkerIdException;
 
 //    private static final Set<String> longFields;
 //    private static final Set<String> dateFields;

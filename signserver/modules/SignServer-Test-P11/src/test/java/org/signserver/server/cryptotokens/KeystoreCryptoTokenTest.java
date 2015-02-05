@@ -451,6 +451,16 @@ public class KeystoreCryptoTokenTest extends CryptoTokenTestBase {
                 public TokenSearchResults searchTokenEntries(AdminInfo adminInfo, int workerId, int startIndex, int max, List<Term> queryTerms, LogicOperator queryOperator) throws CryptoTokenOfflineException, KeyStoreException, InvalidWorkerIdException, SignServerException {
                     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
                 }
+
+                @Override
+                public List<Certificate> getSigningCertificateChain(AdminInfo adminInfo, int signerId, String alias) throws CryptoTokenOfflineException {
+                    throw new UnsupportedOperationException("Not supported yet.");
+                }
+
+                @Override
+                public List<Certificate> getSignerCertificateChain(int signerId, String alias) throws CryptoTokenOfflineException {
+                    throw new UnsupportedOperationException("Not supported yet.");
+                }
             };
         }
     }

@@ -2023,6 +2023,11 @@ the CA the signature of the request can be verified.
                         <p>
 Installs signer certificate and certificate chains for the listed workers and
 if next key is choosen that key becomes the new default key.
+If the "Install in token" check box is selected, the certificate chain will be
+imported to the worker's crypto token (if the crypto token supports this operation).
+When this is selected, the key alias to import the chain to in the token can
+be manually entered in the key column. This is currently only supported for
+keystore and PKCS11 crypto tokens.
                         </p>
                         <p>
 <b>Signer certificate</b>: Browse for the signer certificate file in PEM format.

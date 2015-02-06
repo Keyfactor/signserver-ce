@@ -946,7 +946,6 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         for (final byte[] certBytes : signerCerts) {
             final X509Certificate cert =
                     (X509Certificate) CertTools.getCertfromByteArray(certBytes);
-            
             certs.add(cert);
         }
         

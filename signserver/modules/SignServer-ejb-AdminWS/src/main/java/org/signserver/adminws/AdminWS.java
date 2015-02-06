@@ -879,10 +879,10 @@ public class AdminWS {
      */
     @WebMethod(operationName = "importCertificateChain")
     public void importCertificateChain(
-            @WebParam(name="workerIdOrName") String workerIdOrName,
-            @WebParam(name="certificateChain") List<byte[]> certChain,
-            @WebParam(name="alias") String alias,
-            @WebParam(name="authenticationCode") String authCode)
+            @WebParam(name="workerIdOrName") final String workerIdOrName,
+            @WebParam(name="certificateChain") final List<byte[]> certChain,
+            @WebParam(name="alias") final String alias,
+            @WebParam(name="authenticationCode") final String authCode)
             throws CryptoTokenOfflineException, CertificateException,
                    OperationUnsupportedException, AdminNotAuthorizedException {
         final AdminInfo adminInfo =

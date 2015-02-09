@@ -926,7 +926,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
                 
                 tokenV3.importCertificateChain(certChain, alias, authenticationCode);
             } else {
-                throw new OperationUnsupportedException("Import certificate not supported by crypto token");
+                throw new OperationUnsupportedException("Importing certificate chain is not supported by crypto token");
             }
         } catch (SignServerException e) {
             log.error(FAILED_TO_GET_CRYPTO_TOKEN_ + e.getMessage());

@@ -257,7 +257,8 @@ public abstract class CryptoTokenTestBase extends ModulesTestCase {
         }
     }
     
-    protected void importCertificateChainHelper(final String existingKey) 
+    protected void importCertificateChainHelper(final String existingKey,
+                                                final String existingKey2) 
             throws NoSuchAlgorithmException, NoSuchProviderException,
                    OperatorCreationException, IOException, CertificateException,
                    CryptoTokenOfflineException, 
@@ -266,7 +267,7 @@ public abstract class CryptoTokenTestBase extends ModulesTestCase {
                    OperationUnsupportedException, InvalidWorkerIdException {
         final ISignerCertReqInfo req =
                 new PKCS10CertReqInfo("SHA1WithRSA", "CN=imported", null);
-        final Base64SignerCertReqData reqData =
+        Base64SignerCertReqData reqData =
                 (Base64SignerCertReqData) genCertificateRequest(req, false, existingKey);
         
         // Issue certificate
@@ -277,11 +278,32 @@ public abstract class CryptoTokenTestBase extends ModulesTestCase {
         // import certficate chain
         importCertificateChain(Arrays.asList(CertTools.getCertfromByteArray(cert.getEncoded())), existingKey);
         
-        final List<Certificate> chain = getCertificateChain(existingKey);
+        List<Certificate> chain = getCertificateChain(existingKey);
         
         assertEquals("Number of certs", 1, chain.size());
         
-        final Certificate foundCert = chain.get(0);
+        Certificate foundCert = chain.get(0);
+        
+        assertTrue("Imported cert",
+                Arrays.equals(foundCert.getEncoded(), cert.getEncoded()));
+        
+        // Isse additional certificate
+        reqData =
+                (Base64SignerCertReqData) genCertificateRequest(req, false, existingKey2);
+        
+        csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
+        issuerKeyPair = CryptoUtils.generateRSA(512);
+        cert = new X509v3CertificateBuilder(new X500Name("CN=Test Issuer2"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
+
+        // import certficate chain
+        importCertificateChain(Arrays.asList(CertTools.getCertfromByteArray(cert.getEncoded())), existingKey2);
+        
+        // check that previously imported cert chain is un-affected
+        chain = getCertificateChain(existingKey);
+        
+        assertEquals("Number of certs", 1, chain.size());
+        
+        foundCert = chain.get(0);
         
         assertTrue("Imported cert",
                 Arrays.equals(foundCert.getEncoded(), cert.getEncoded()));

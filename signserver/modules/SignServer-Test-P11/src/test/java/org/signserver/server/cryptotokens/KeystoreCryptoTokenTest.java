@@ -76,7 +76,8 @@ public class KeystoreCryptoTokenTest extends CryptoTokenTestBase {
     private final MockedKeystoreInConfig instance = new MockedKeystoreInConfig();
     
     private final String existingKey1 = getConfig().getProperty("test.p11.existingkey1");
-    
+    private final String existingKey2 = getConfig().getProperty("test.p11.existingkey2");
+
     public KeystoreCryptoTokenTest() {
     }
     
@@ -95,6 +96,7 @@ public class KeystoreCryptoTokenTest extends CryptoTokenTestBase {
         instance.init(1, config);
         instance.activate("password123123213");
         instance.generateKey("RSA", "1024", existingKey1, null);
+        instance.generateKey("RSA", "1024", existingKey2, null);
     }
     
     @Test
@@ -105,28 +107,8 @@ public class KeystoreCryptoTokenTest extends CryptoTokenTestBase {
 
     @Test
     public void testImportCertificateChain() throws Exception {
-        final ISignerCertReqInfo req =
-                new PKCS10CertReqInfo("SHA1WithRSA", "CN=imported", null);
         initKeystore();
-        final Base64SignerCertReqData reqData =
-                (Base64SignerCertReqData) instance.genCertificateRequest(req, false, existingKey1);
-        
-        // Issue certificate
-        PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
-        KeyPair issuerKeyPair = CryptoUtils.generateRSA(512);
-        X509CertificateHolder cert = new X509v3CertificateBuilder(new X500Name("CN=Test Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
-
-        // import certficate chain
-        instance.importCertificateChain(Arrays.asList(CertTools.getCertfromByteArray(cert.getEncoded())), existingKey1, null);
-        
-        final List<Certificate> chain = instance.getCertificateChain(existingKey1);
-        
-        assertEquals("Number of certs", 1, chain.size());
-        
-        final Certificate foundCert = chain.get(0);
-        
-        assertTrue("Imported cert",
-                Arrays.equals(foundCert.getEncoded(), cert.getEncoded()));
+        importCertificateChainHelper(existingKey1, existingKey2);
     }
     
     @Override

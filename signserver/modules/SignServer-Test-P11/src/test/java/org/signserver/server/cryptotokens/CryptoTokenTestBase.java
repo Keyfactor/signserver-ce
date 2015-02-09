@@ -273,7 +273,7 @@ public abstract class CryptoTokenTestBase extends ModulesTestCase {
         // Issue certificate
         PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
         KeyPair issuerKeyPair = CryptoUtils.generateRSA(512);
-        X509CertificateHolder cert = new X509v3CertificateBuilder(new X500Name("CN=Test Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
+        final X509CertificateHolder cert = new X509v3CertificateBuilder(new X500Name("CN=Test Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
 
         // import certficate chain
         importCertificateChain(Arrays.asList(CertTools.getCertfromByteArray(cert.getEncoded())), existingKey);
@@ -293,10 +293,10 @@ public abstract class CryptoTokenTestBase extends ModulesTestCase {
         
         csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
         issuerKeyPair = CryptoUtils.generateRSA(512);
-        cert = new X509v3CertificateBuilder(new X500Name("CN=Test Issuer2"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
+        final X509CertificateHolder newCert = new X509v3CertificateBuilder(new X500Name("CN=Test Issuer2"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
 
         // import certficate chain
-        importCertificateChain(Arrays.asList(CertTools.getCertfromByteArray(cert.getEncoded())), existingKey2);
+        importCertificateChain(Arrays.asList(CertTools.getCertfromByteArray(newCert.getEncoded())), existingKey2);
         
         // check that previously imported cert chain is un-affected
         chain = getCertificateChain(existingKey);

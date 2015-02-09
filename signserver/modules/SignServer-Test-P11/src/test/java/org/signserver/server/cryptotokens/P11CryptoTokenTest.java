@@ -52,7 +52,6 @@ public class P11CryptoTokenTest extends CryptoTokenTestBase {
     private final String slot;
     private final String pin;
     private final String existingKey1;
-    private final String existingKey2;
     
     private final IWorkerSession workerSession = getWorkerSession();
     private final IGlobalConfigurationSession globalSession = getGlobalSession();
@@ -63,7 +62,6 @@ public class P11CryptoTokenTest extends CryptoTokenTestBase {
         slot = getConfig().getProperty("test.p11.slot");
         pin = getConfig().getProperty("test.p11.pin");
         existingKey1 = getConfig().getProperty("test.p11.existingkey1");
-        existingKey2 = getConfig().getProperty("test.p11.existingkey2");
     }
     
     @Before
@@ -118,7 +116,7 @@ public class P11CryptoTokenTest extends CryptoTokenTestBase {
             setupCryptoTokenProperties(CRYPTO_TOKEN);
             workerSession.reloadConfiguration(CRYPTO_TOKEN);
         
-            importCertificateChainHelper(existingKey1, existingKey2);
+            importCertificateChainHelper(existingKey1);
         } finally {
             removeWorker(CRYPTO_TOKEN);
         }

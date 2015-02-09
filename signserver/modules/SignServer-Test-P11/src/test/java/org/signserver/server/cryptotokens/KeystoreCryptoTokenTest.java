@@ -96,7 +96,6 @@ public class KeystoreCryptoTokenTest extends CryptoTokenTestBase {
         instance.init(1, config);
         instance.activate("password123123213");
         instance.generateKey("RSA", "1024", existingKey1, null);
-        instance.generateKey("RSA", "1024", existingKey2, null);
     }
     
     @Test
@@ -108,7 +107,7 @@ public class KeystoreCryptoTokenTest extends CryptoTokenTestBase {
     @Test
     public void testImportCertificateChain() throws Exception {
         initKeystore();
-        importCertificateChainHelper(existingKey1, existingKey2);
+        importCertificateChainHelper(existingKey1);
     }
     
     @Override

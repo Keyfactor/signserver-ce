@@ -27,6 +27,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.cert.X509CertificateHolder;
@@ -257,56 +258,68 @@ public abstract class CryptoTokenTestBase extends ModulesTestCase {
         }
     }
     
-    protected void importCertificateChainHelper(final String existingKey,
-                                                final String existingKey2) 
+    protected void importCertificateChainHelper(final String existingKey) 
             throws NoSuchAlgorithmException, NoSuchProviderException,
                    OperatorCreationException, IOException, CertificateException,
                    CryptoTokenOfflineException, 
                    IllegalArgumentException, 
                    CertificateEncodingException, 
-                   OperationUnsupportedException, InvalidWorkerIdException {
-        final ISignerCertReqInfo req =
-                new PKCS10CertReqInfo("SHA1WithRSA", "CN=imported", null);
-        Base64SignerCertReqData reqData =
-                (Base64SignerCertReqData) genCertificateRequest(req, false, existingKey);
+                   OperationUnsupportedException, InvalidWorkerIdException, 
+                   SignServerException {
+        final String additionalAlias = "additionalKey";
         
-        // Issue certificate
-        PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
-        KeyPair issuerKeyPair = CryptoUtils.generateRSA(512);
-        final X509CertificateHolder cert = new X509v3CertificateBuilder(new X500Name("CN=Test Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
+        try {
+            final ISignerCertReqInfo req =
+                    new PKCS10CertReqInfo("SHA1WithRSA", "CN=imported", null);
+            Base64SignerCertReqData reqData =
+                    (Base64SignerCertReqData) genCertificateRequest(req, false, existingKey);
 
-        // import certficate chain
-        importCertificateChain(Arrays.asList(CertTools.getCertfromByteArray(cert.getEncoded())), existingKey);
-        
-        List<Certificate> chain = getCertificateChain(existingKey);
-        
-        assertEquals("Number of certs", 1, chain.size());
-        
-        Certificate foundCert = chain.get(0);
-        
-        assertTrue("Imported cert",
-                Arrays.equals(foundCert.getEncoded(), cert.getEncoded()));
-        
-        // Isse additional certificate
-        reqData =
-                (Base64SignerCertReqData) genCertificateRequest(req, false, existingKey2);
-        
-        csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
-        issuerKeyPair = CryptoUtils.generateRSA(512);
-        final X509CertificateHolder newCert = new X509v3CertificateBuilder(new X500Name("CN=Test Issuer2"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
+            // Issue certificate
+            PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
+            KeyPair issuerKeyPair = CryptoUtils.generateRSA(512);
+            final X509CertificateHolder cert = new X509v3CertificateBuilder(new X500Name("CN=Test Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
 
-        // import certficate chain
-        importCertificateChain(Arrays.asList(CertTools.getCertfromByteArray(newCert.getEncoded())), existingKey2);
-        
-        // check that previously imported cert chain is un-affected
-        chain = getCertificateChain(existingKey);
-        
-        assertEquals("Number of certs", 1, chain.size());
-        
-        foundCert = chain.get(0);
-        
-        assertTrue("Imported cert",
-                Arrays.equals(foundCert.getEncoded(), cert.getEncoded()));
+            // import certficate chain
+            importCertificateChain(Arrays.asList(CertTools.getCertfromByteArray(cert.getEncoded())), existingKey);
+
+            List<Certificate> chain = getCertificateChain(existingKey);
+
+            assertEquals("Number of certs", 1, chain.size());
+
+            Certificate foundCert = chain.get(0);
+
+            assertTrue("Imported cert",
+                    Arrays.equals(foundCert.getEncoded(), cert.getEncoded()));
+
+            generateKey("RSA", "1024", additionalAlias);
+
+            // Isse additional certificate
+            reqData =
+                    (Base64SignerCertReqData) genCertificateRequest(req, false, additionalAlias);
+
+            csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
+            issuerKeyPair = CryptoUtils.generateRSA(512);
+            final X509CertificateHolder newCert = new X509v3CertificateBuilder(new X500Name("CN=Test Issuer2"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
+
+            // import certficate chain
+            importCertificateChain(Arrays.asList(CertTools.getCertfromByteArray(newCert.getEncoded())), additionalAlias);
+
+            // check that previously imported cert chain is un-affected
+            chain = getCertificateChain(existingKey);
+
+            assertEquals("Number of certs", 1, chain.size());
+
+            foundCert = chain.get(0);
+
+            assertTrue("Imported cert",
+                    Arrays.equals(foundCert.getEncoded(), cert.getEncoded()));
+        } finally {
+            try {
+                destroyKey(additionalAlias);
+            } catch (KeyStoreException ex) {
+                LOG.error("Failed to remove additional key");
+            }
+        }
     }
     
 }

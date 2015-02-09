@@ -31,7 +31,7 @@ import org.signserver.common.WorkerStatus;
  */
 public class ImportCertificateChainCommand extends AbstractAdminCommand {
     
-    private static final String TRYING = "Importing the following signer certificates  : \n";
+    private static final String DONE = "Imported the following signer certificates  : \n";
     private static final String FAIL = "Invalid PEM file, couldn't find any certificate";
 
     @Override
@@ -51,7 +51,7 @@ public class ImportCertificateChainCommand extends AbstractAdminCommand {
         if (args.length != 3 && args.length != 4) {
             throw new IllegalCommandArgumentsException("Wrong number of arguments");
         }
-        
+
         try {
             final int signerid = getWorkerId(args[0]);
             final String filename = args[1];
@@ -68,18 +68,22 @@ public class ImportCertificateChainCommand extends AbstractAdminCommand {
                 throw new IllegalCommandArgumentsException(FAIL);
             }
 
-            this.getOutputStream().println(TRYING);
-
             final ArrayList<byte[]> bcerts = new ArrayList<byte[]>();
             for (final Certificate cert : certs) {
-                X509Certificate x509Cert = (X509Certificate) cert;
                 bcerts.add(cert.getEncoded());
-                WorkerStatus.printCert(x509Cert, getOutputStream());
-                this.getOutputStream().println("\n");
             }
 
             getWorkerSession().importCertificateChain(signerid, bcerts, alias,
                     authCode != null ? authCode.toCharArray() : null);
+            
+            this.getOutputStream().println(DONE);
+            
+            // print out certificate chain
+            for (final Certificate cert : certs) {
+                WorkerStatus.printCert((X509Certificate) cert, getOutputStream());
+                this.getOutputStream().println("\n");
+            }   
+            
             return 0;
         } catch (OperationUnsupportedException e) {
             getErrorStream().println("Error: " + e.getMessage());

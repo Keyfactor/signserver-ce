@@ -768,7 +768,7 @@ cp conf/signserver_build.properties.sample conf/signserver_build.properties
                     <subsubsection name="Web GUI configuration">
                         <p>
 Uncomment j2ee.web-nohttps=true if SignServer should be used to configure the
-keystore in JBoss.
+keystore in JBoss 5.
                         </p>
                         <source>
 #j2ee.web-nohttps=true

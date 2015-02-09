@@ -42,7 +42,8 @@ public class ImportCertificateChainCommand extends AbstractAdminCommand {
     @Override
     public String getUsages() {
         return "Usage: signserver importcertificatechain <workerid> <certchain file> <alias> [authcode]\n"
-                    + "Example: signserver importcertificatechain 1 user1-chain.pem user1\n\n";
+                + "Example: signserver importcertificatechain 1 user1-chain.pem user1\n"
+                + "Example: signserver importcertificatechain 2 user2-chain.pem user2 foo123\n\n";
     }
 
     @Override

@@ -96,7 +96,13 @@ public class KeystoreCryptoTokenTest extends CryptoTokenTestBase {
         initKeystore();
         importCertificateChainHelper(existingKey1);
     }
-    
+
+    @Test
+    public void testExportCertificateChain() throws Exception {
+        initKeystore();
+        exportCertificatesHelper(existingKey1);
+    }
+
     @Override
     protected TokenSearchResults searchTokenEntries(int startIndex, int max, List<Term> queryTerms, LogicOperator queryOperator) throws CryptoTokenOfflineException, KeyStoreException {
         return instance.searchTokenEntries(startIndex, max, queryTerms, queryOperator);

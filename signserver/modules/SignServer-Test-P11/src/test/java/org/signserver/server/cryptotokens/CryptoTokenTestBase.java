@@ -21,17 +21,19 @@ import java.security.NoSuchProviderException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
+import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
@@ -320,6 +322,57 @@ public abstract class CryptoTokenTestBase extends ModulesTestCase {
                 LOG.error("Failed to remove additional key");
             }
         }
+    }
+    
+    /**
+     * Tests export of certificate chain. First imports a generate certificate
+     * chain and then checks that it can be read back. Then imports an other
+     * chain and checks again.
+     * @param existingKey entry to use
+     */
+    protected void exportCertificatesHelper(final String existingKey) throws CryptoTokenOfflineException,
+            KeyStoreException, InvalidWorkerIdException, SignServerException,
+            IllegalArgumentException, CertificateException,
+            CertificateEncodingException, OperationUnsupportedException,
+            NoSuchAlgorithmException, NoSuchProviderException,
+            OperatorCreationException, IOException {
+        
+        final ISignerCertReqInfo req = new PKCS10CertReqInfo("SHA1WithRSA", "CN=imported", null);
+        final Base64SignerCertReqData reqData = (Base64SignerCertReqData) genCertificateRequest(req, false, existingKey);
+
+        // Generate a certificate chain that we will try to import and later export
+        KeyPair issuerKeyPair = CryptoUtils.generateRSA(512);
+        final X509CertificateHolder issuerCert = new JcaX509v3CertificateBuilder(new X500Name("CN=Test Import/Export CA"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(3650)), new X500Name("CN=Test Import/Export CA"), issuerKeyPair.getPublic()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
+        PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));            
+        final X509CertificateHolder subjectCert1 = new X509v3CertificateBuilder(new X500Name("CN=Test Import/Export CA"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), new X500Name("CN=Test Import/Export 1"), csr.getSubjectPublicKeyInfo()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
+        final X509CertificateHolder subjectCert2 = new X509v3CertificateBuilder(new X500Name("CN=Test Import/Export CA"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), new X500Name("CN=Test Import/Export 2"), csr.getSubjectPublicKeyInfo()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
+
+        // Import certficate chain 1
+        importCertificateChain(Arrays.asList(CertTools.getCertfromByteArray(subjectCert1.getEncoded()), CertTools.getCertfromByteArray(issuerCert.getEncoded())), existingKey);
+
+        // Find the entry
+        TokenSearchResults searchResults = searchTokenEntries(0, Integer.MAX_VALUE, Arrays.asList(new Term(RelationalOperator.EQ, CryptoTokenHelper.TokenEntryFields.alias.name(), existingKey)), LogicOperator.AND);
+        LinkedList<String> aliases = new LinkedList<String>();
+        for (TokenEntry entry : searchResults.getEntries()) {
+            aliases.add(entry.getAlias());
+        }
+        assertArrayEquals(new String[] { existingKey }, aliases.toArray());
+        TokenEntry entry = searchResults.getEntries().iterator().next();
+        Certificate[] parsedChain = entry.getParsedChain();
+
+        assertEquals("right subject", new JcaX509CertificateConverter().getCertificate(subjectCert1).getSubjectX500Principal().getName(), ((X509Certificate) parsedChain[0]).getSubjectX500Principal().getName());
+        assertEquals("right issuer", new JcaX509CertificateConverter().getCertificate(issuerCert).getSubjectX500Principal().getName(), ((X509Certificate) parsedChain[1]).getSubjectX500Principal().getName());
+
+        // Import certificate chain 2
+        importCertificateChain(Arrays.asList(CertTools.getCertfromByteArray(subjectCert2.getEncoded()), CertTools.getCertfromByteArray(issuerCert.getEncoded())), existingKey);
+
+        // Find the entry
+        searchResults = searchTokenEntries(0, Integer.MAX_VALUE, Arrays.asList(new Term(RelationalOperator.EQ, CryptoTokenHelper.TokenEntryFields.alias.name(), existingKey)), LogicOperator.AND);
+        entry = searchResults.getEntries().iterator().next();
+        parsedChain = entry.getParsedChain();
+
+        assertEquals("right subject", new JcaX509CertificateConverter().getCertificate(subjectCert2).getSubjectX500Principal().getName(), ((X509Certificate) parsedChain[0]).getSubjectX500Principal().getName());
+        assertEquals("right issuer", new JcaX509CertificateConverter().getCertificate(issuerCert).getSubjectX500Principal().getName(), ((X509Certificate) parsedChain[1]).getSubjectX500Principal().getName());
     }
     
 }

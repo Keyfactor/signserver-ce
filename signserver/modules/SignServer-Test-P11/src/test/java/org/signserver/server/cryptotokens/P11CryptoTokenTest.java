@@ -122,6 +122,18 @@ public class P11CryptoTokenTest extends CryptoTokenTestBase {
         }
     }
 
+    @Test
+    public void testExportCertificateChain_PKCS11CryptoToken() throws Exception {
+        try {
+            setupCryptoTokenProperties(CRYPTO_TOKEN);
+            workerSession.reloadConfiguration(CRYPTO_TOKEN);
+        
+            exportCertificatesHelper(existingKey1);
+        } finally {
+            removeWorker(CRYPTO_TOKEN);
+        }
+    }
+
     @Override
     protected TokenSearchResults searchTokenEntries(int startIndex, int max, List<Term> queryTerms, LogicOperator queryOperator) throws CryptoTokenOfflineException, KeyStoreException, InvalidWorkerIdException, SignServerException {
         return getWorkerSession().searchTokenEntries(CRYPTO_TOKEN, startIndex, max, queryTerms, queryOperator);

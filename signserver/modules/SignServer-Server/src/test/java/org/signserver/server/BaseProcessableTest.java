@@ -12,22 +12,31 @@
  *************************************************************************/
 package org.signserver.server;
 
+import java.security.KeyStoreException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import javax.persistence.EntityManager;
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
 import org.cesecore.util.CertTools;
+import org.cesecore.util.query.elems.LogicOperator;
+import org.cesecore.util.query.elems.Term;
 import org.ejbca.util.Base64;
 import org.junit.Test;
 import org.signserver.common.CryptoTokenInitializationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GlobalConfiguration;
+import org.signserver.common.ICertReqData;
+import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
@@ -39,7 +48,9 @@ import org.signserver.common.WorkerStatus;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.server.aliasselectors.AliasSelector;
 import org.signserver.server.cryptotokens.HardCodedCryptoToken;
+import org.signserver.server.cryptotokens.ICryptoTokenV3;
 import org.signserver.server.cryptotokens.NullCryptoToken;
+import org.signserver.server.cryptotokens.TokenSearchResults;
 import org.signserver.server.signers.BaseSigner;
 
 /**
@@ -363,13 +374,45 @@ public class BaseProcessableTest extends TestCase {
                 errors.contains("Test alias selector error"));
     }
     
+    @Test
+    public void testImportCertificateChain() throws Exception {
+        LOG.info("testGetCryptoToken_noDefaults");
+        
+        Properties globalConfig = new Properties();
+        WorkerConfig workerConfig = new WorkerConfig();
+        
+        // Exercising all properties (except SLOTLISTINDEX)
+        globalConfig.setProperty("GLOB.WORKER" + workerId + ".CLASSPATH", TestSigner.class.getName());
+        globalConfig.setProperty("GLOB.WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", MockedCryptoToken.class.getName());
+        workerConfig.setProperty("NAME", "TestSigner100");
+        
+        TestSigner instance = new TestSigner(globalConfig);
+        instance.init(workerId, workerConfig, anyContext, null);
+        
+            
+        final List<Certificate> chain =
+                Arrays.asList(CertTools.getCertfromByteArray(HardCodedCryptoToken.certbytes2));
+        
+        instance.importCertificateChain(chain, "alias2", null);
+        
+        final List<Certificate> importedChain =
+                instance.getSigningCertificateChain("alias2");
+        
+        assertTrue("Matching certificate",
+                Arrays.equals(chain.get(0).getEncoded(),
+                              importedChain.get(0).getEncoded()));
+    }
+    
     /** CryptoToken only holding its properties and offering a way to access them. */
-    private static class MockedCryptoToken extends NullCryptoToken {
+    private static class MockedCryptoToken
+        extends NullCryptoToken implements ICryptoTokenV3 {
 
         private Properties props;
 
         private static final Certificate CERTIFICATE;
-
+        private final Map<String, List<Certificate>> importedChains =
+                new HashMap<String, List<Certificate>>();
+        
         static {
             try {
                 CERTIFICATE = CertTools.getCertfromByteArray(HardCodedCryptoToken.certbytes1);
@@ -404,6 +447,58 @@ public class BaseProcessableTest extends TestCase {
         @Override
         public Certificate getCertificate(int purpose) throws CryptoTokenOfflineException {
             return CERTIFICATE;
+        }
+
+        @Override
+        public void importCertificateChain(List<Certificate> certChain, String alias, char[] athenticationCode) throws CryptoTokenOfflineException, IllegalArgumentException {
+            importedChains.put(alias, certChain);
+        }
+
+        @Override
+        public TokenSearchResults searchTokenEntries(int startIndex, int max, List<Term> queryTerms, LogicOperator queryOperator) throws CryptoTokenOfflineException, KeyStoreException {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public PrivateKey getPrivateKey(String alias) throws CryptoTokenOfflineException {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public PublicKey getPublicKey(String alias) throws CryptoTokenOfflineException {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public ICertReqData genCertificateRequest(ISignerCertReqInfo info, boolean explicitEccParameters, String keyAlias) throws CryptoTokenOfflineException {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public Certificate getCertificate(String alias) throws CryptoTokenOfflineException {
+            return CERTIFICATE;
+        }
+
+        @Override
+        public List<Certificate> getCertificateChain(String alias) throws CryptoTokenOfflineException {
+            final List<Certificate> chain = importedChains.get(alias);
+            
+            if (chain == null) {
+                // fall-back to the hard-coded cert
+                return Collections.singletonList(CERTIFICATE);
+            }
+            
+            return chain;
+        }
+
+        @Override
+        public void generateKey(String keyAlgorithm, String keySpec, String alias, char[] authCode) throws CryptoTokenOfflineException, IllegalArgumentException {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public boolean removeKey(String alias) throws CryptoTokenOfflineException, KeyStoreException, SignServerException {
+            throw new UnsupportedOperationException("Not supported yet.");
         }
 
     }

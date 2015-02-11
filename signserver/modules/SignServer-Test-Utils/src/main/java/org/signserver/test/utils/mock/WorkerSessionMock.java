@@ -441,12 +441,12 @@ public class WorkerSessionMock implements IWorkerSession.ILocal,
     }
 
     @Override
-    public TokenSearchResults searchTokenEntries(AdminInfo adminInfo, int workerId, int startIndex, int max, List<Term> queryTerms, LogicOperator queryOperator) throws CryptoTokenOfflineException, KeyStoreException, InvalidWorkerIdException, SignServerException {
+    public TokenSearchResults searchTokenEntries(AdminInfo adminInfo, int workerId, int startIndex, int max, QueryCriteria qc) throws CryptoTokenOfflineException, KeyStoreException, InvalidWorkerIdException, SignServerException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public TokenSearchResults searchTokenEntries(int workerId, int startIndex, int max, List<Term> queryTerms, LogicOperator queryOperator) throws CryptoTokenOfflineException, KeyStoreException, InvalidWorkerIdException, SignServerException {
+    public TokenSearchResults searchTokenEntries(int workerId, int startIndex, int max, QueryCriteria qc) throws CryptoTokenOfflineException, KeyStoreException, InvalidWorkerIdException, SignServerException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

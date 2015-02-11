@@ -497,8 +497,8 @@ public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2,
     }
 
     @Override
-    public TokenSearchResults searchTokenEntries(int startIndex, int max, List<Term> queryTerms, LogicOperator queryOperator) throws CryptoTokenOfflineException, KeyStoreException {
-        return CryptoTokenHelper.searchTokenEntries(getKeyStore(), startIndex, max, queryTerms, queryOperator);
+    public TokenSearchResults searchTokenEntries(int startIndex, int max, QueryCriteria qc) throws CryptoTokenOfflineException, KeyStoreException {
+        return CryptoTokenHelper.searchTokenEntries(getKeyStore(), startIndex, max, qc);
     }
 
     private static class KeyStorePKCS11CryptoToken extends org.cesecore.keys.token.PKCS11CryptoToken {

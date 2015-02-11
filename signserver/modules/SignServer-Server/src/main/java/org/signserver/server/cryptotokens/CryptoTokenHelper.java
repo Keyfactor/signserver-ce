@@ -34,6 +34,7 @@ import java.security.cert.X509Certificate;
 import java.security.interfaces.DSAKey;
 import java.security.interfaces.ECKey;
 import java.security.interfaces.RSAKey;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -42,6 +43,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import javax.security.auth.x500.X500Principal;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.PredicateUtils;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
@@ -55,7 +58,13 @@ import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequestBuilder;
 import org.bouncycastle.util.encoders.Hex;
 import org.cesecore.keys.token.p11.Pkcs11SlotLabelType;
+import org.cesecore.util.QueryParameterException;
+import org.cesecore.util.query.Elem;
+import org.cesecore.util.query.QueryCriteria;
+import org.cesecore.util.query.clauses.Order;
 import org.cesecore.util.query.elems.LogicOperator;
+import org.cesecore.util.query.elems.Operation;
+import org.cesecore.util.query.elems.RelationalOperator;
 import org.cesecore.util.query.elems.Term;
 import org.ejbca.util.Base64;
 import org.ejbca.util.CertTools;
@@ -91,7 +100,17 @@ public class CryptoTokenHelper {
     public static final String PROPERTY_SLOTLABELVALUE = "SLOTLABELVALUE";
     
     public enum TokenEntryFields {
+        /** Key alias of entry. */
         alias,
+        
+        /**
+         * Type of entry.
+         * @see TokenEntry#TYPE_PRIVATEKEY_ENTRY
+         * @see TokenEntry#TYPE_SECRETKEY_ENTRY
+         * @see TokenEntry#TYPE_TRUSTED_ENTRY
+         */
+        type,
+        
     }
     
     /** DN part used to mark dummy certificates by SignServer. */
@@ -472,7 +491,7 @@ public class CryptoTokenHelper {
         return new JcaX509CertificateConverter().getCertificate(cg.build(contentSigner));
     }
 
-    public static TokenSearchResults searchTokenEntries(KeyStore keyStore, int startIndex, int max, List<Term> queryTerms, LogicOperator queryOperator) throws CryptoTokenOfflineException {
+    public static TokenSearchResults searchTokenEntries(KeyStore keyStore, int startIndex, int max, QueryCriteria qc) throws CryptoTokenOfflineException {
         final TokenSearchResults result;
         try {
             final ArrayList<TokenEntry> tokenEntries = new ArrayList<TokenEntry>();
@@ -495,7 +514,7 @@ public class CryptoTokenHelper {
                 
                 TokenEntry entry = new TokenEntry(keyAlias, type);
                 
-                if (shouldBeIncluded(entry, queryTerms, queryOperator)) {
+                if (shouldBeIncluded(entry, qc)) {
                     if (i < startIndex) {
                         i++;
                         continue;
@@ -538,6 +557,63 @@ public class CryptoTokenHelper {
         return result;
     }
     
+    private static boolean shouldBeIncluded(TokenEntry tokenEntry, QueryCriteria qc) {
+        final List<Elem> elements = qc.getElements();
+        final List<Elem> terms = new ArrayList<Elem>();
+            
+        CollectionUtils.selectRejected(elements, PredicateUtils.instanceofPredicate(Order.class), terms);
+        System.out.println("Terms: " + terms);
+        if (terms.size() > 1) {
+            throw new RuntimeException("TODO: Should this really happen?"); // TODO
+        } else if (terms.isEmpty()) {
+            return true;
+        }
+        
+        return generate(tokenEntry, terms.iterator().next());
+    }
+    
+//    private static boolean termTraversal(TokenEntry tokenEntry, List<Elem> elements) {
+//        for (final Elem element : elements) {
+//            generate(tokenEntry, element);
+//        }
+//    }
+    
+    private static boolean generate(TokenEntry tokenEntry, final Elem elem) {
+        if (elem instanceof Operation) {
+            return generateRestriction(tokenEntry, (Operation) elem);
+        } else if (elem instanceof Term) {
+            return generateRestriction(tokenEntry, (Term) elem);
+        } else if (elem instanceof Order) {
+            return generateRestriction(tokenEntry, (Order) elem);
+        } else {
+            throw new QueryParameterException("No matched restriction");
+        }
+    }
+    
+    private static boolean generateRestriction(TokenEntry tokenEntry, final Operation op) {
+        boolean left = generateRestriction(tokenEntry, op.getTerm());
+        final Elem elem = op.getElement();
+        
+        if (op.getOperator() == LogicOperator.OR && left) {
+            return true;
+        } else if (op.getOperator() == LogicOperator.AND && !left) {
+            return false;
+        } else if (elem == null) {
+            return left;
+        } else {
+            return generate(tokenEntry, elem);
+        }
+    }
+
+    private static boolean generateRestriction(TokenEntry tokenEntry, final Term term) {
+        return matches(tokenEntry, term);
+    }
+
+    private static boolean generateRestriction(TokenEntry tokenEntry, final Order order) {
+        System.out.println("NOP");
+        return true;
+    }
+
     private static boolean shouldBeIncluded(TokenEntry entry, List<Term> terms, LogicOperator op) {
         if (op != LogicOperator.AND && op != LogicOperator.OR) {
             throw new IllegalArgumentException("Unsupported logic operator: " + op);
@@ -579,6 +655,38 @@ public class CryptoTokenHelper {
             }
             case NEQ: {
                 result = !term.getValue().equals(actualValue);
+                break;
+            }
+            case NULL: {
+                result = term.getValue() == null;
+                break;
+            }
+            case NOTNULL: {
+                result = term.getValue() != null;
+                break;
+            }
+            case LIKE: {
+                if (term.getValue() instanceof String) {
+                    final String value = (String) term.getValue();
+                    // TODO: At the moment we only support '%' and only in beginning and/or end of value
+                    final boolean wildcardInBeginning = value.startsWith("%");
+                    final boolean wildcardAtEnd = value.endsWith("%");
+                    
+                    if (!wildcardInBeginning && !wildcardAtEnd) {
+                        result = value.equals(actualValue);
+                    } else {
+                        final String content = value.substring(wildcardInBeginning ? 1 : 0, wildcardAtEnd ? value.length() - 1 : value.length());
+                        if (wildcardInBeginning && wildcardAtEnd) {
+                            result = actualValue.toString().contains(content);
+                        } else if (wildcardInBeginning) {
+                            result = actualValue.toString().endsWith(content);
+                        } else {
+                            result = actualValue.toString().startsWith(content);
+                        }
+                    }
+                } else {
+                    result = false;
+                }
                 break;
             }
             default: {

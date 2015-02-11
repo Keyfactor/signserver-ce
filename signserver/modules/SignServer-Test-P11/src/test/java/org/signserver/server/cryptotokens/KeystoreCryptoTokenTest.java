@@ -14,12 +14,17 @@ package org.signserver.server.cryptotokens;
 
 import java.math.BigInteger;
 import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
+import java.util.logging.Level;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 import org.apache.log4j.Logger;
 import org.cesecore.audit.AuditLogEntry;
 import org.cesecore.authorization.AuthorizationDeniedException;
@@ -104,8 +109,8 @@ public class KeystoreCryptoTokenTest extends CryptoTokenTestBase {
     }
 
     @Override
-    protected TokenSearchResults searchTokenEntries(int startIndex, int max, List<Term> queryTerms, LogicOperator queryOperator) throws CryptoTokenOfflineException, KeyStoreException {
-        return instance.searchTokenEntries(startIndex, max, queryTerms, queryOperator);
+    protected TokenSearchResults searchTokenEntries(int startIndex, int max, QueryCriteria qc) throws CryptoTokenOfflineException, KeyStoreException {
+        return instance.searchTokenEntries(startIndex, max, qc);
     }
 
     @Override
@@ -422,7 +427,7 @@ public class KeystoreCryptoTokenTest extends CryptoTokenTestBase {
                 }
 
                 @Override
-                public TokenSearchResults searchTokenEntries(AdminInfo adminInfo, int workerId, int startIndex, int max, List<Term> queryTerms, LogicOperator queryOperator) throws CryptoTokenOfflineException, KeyStoreException, InvalidWorkerIdException, SignServerException {
+                public TokenSearchResults searchTokenEntries(AdminInfo adminInfo, int workerId, int startIndex, int max, QueryCriteria qc) throws CryptoTokenOfflineException, KeyStoreException, InvalidWorkerIdException, SignServerException {
                     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
                 }
 

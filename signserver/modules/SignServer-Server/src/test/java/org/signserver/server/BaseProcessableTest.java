@@ -28,6 +28,7 @@ import javax.persistence.EntityManager;
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
 import org.cesecore.util.CertTools;
+import org.cesecore.util.query.QueryCriteria;
 import org.cesecore.util.query.elems.LogicOperator;
 import org.cesecore.util.query.elems.Term;
 import org.ejbca.util.Base64;
@@ -455,7 +456,7 @@ public class BaseProcessableTest extends TestCase {
         }
 
         @Override
-        public TokenSearchResults searchTokenEntries(int startIndex, int max, List<Term> queryTerms, LogicOperator queryOperator) throws CryptoTokenOfflineException, KeyStoreException {
+        public TokenSearchResults searchTokenEntries(int startIndex, int max, QueryCriteria qc) throws CryptoTokenOfflineException, KeyStoreException {
             throw new UnsupportedOperationException("Not supported yet.");
         }
 

@@ -19,6 +19,7 @@ import java.security.cert.CertificateException;
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.log4j.Logger;
+import org.cesecore.util.query.QueryCriteria;
 import org.cesecore.util.query.elems.LogicOperator;
 import org.cesecore.util.query.elems.Term;
 import org.junit.Before;
@@ -135,8 +136,8 @@ public class P11CryptoTokenTest extends CryptoTokenTestBase {
     }
 
     @Override
-    protected TokenSearchResults searchTokenEntries(int startIndex, int max, List<Term> queryTerms, LogicOperator queryOperator) throws CryptoTokenOfflineException, KeyStoreException, InvalidWorkerIdException, SignServerException {
-        return getWorkerSession().searchTokenEntries(CRYPTO_TOKEN, startIndex, max, queryTerms, queryOperator);
+    protected TokenSearchResults searchTokenEntries(int startIndex, int max, QueryCriteria qc) throws CryptoTokenOfflineException, KeyStoreException, InvalidWorkerIdException, SignServerException {
+        return getWorkerSession().searchTokenEntries(CRYPTO_TOKEN, startIndex, max, qc);
     }
 
     @Override

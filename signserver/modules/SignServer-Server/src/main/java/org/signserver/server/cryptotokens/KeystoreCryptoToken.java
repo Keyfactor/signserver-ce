@@ -387,10 +387,10 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2,
     }
     
     @Override
-    public TokenSearchResults searchTokenEntries(final int startIndex, final int max, List<Term> queryTerms, LogicOperator queryOperator) 
+    public TokenSearchResults searchTokenEntries(final int startIndex, final int max, QueryCriteria qc) 
             throws CryptoTokenOfflineException, KeyStoreException {
         KeyStore keyStore = getKeyStore();
-        return CryptoTokenHelper.searchTokenEntries(keyStore, startIndex, max, queryTerms, queryOperator);
+        return CryptoTokenHelper.searchTokenEntries(keyStore, startIndex, max, qc);
     }
 
     @Override

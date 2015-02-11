@@ -483,7 +483,7 @@ public interface IWorkerSession {
         String JNDI_NAME = "signserver/WorkerSessionBean/remote";
         
         List<? extends AuditLogEntry> selectAuditLogs(int startIndex, int max, QueryCriteria criteria, String logDeviceId) throws AuthorizationDeniedException;
-        TokenSearchResults searchTokenEntries(int workerId, final int startIndex, final int max, final List<Term> queryTerms, final LogicOperator queryOperator) 
+        TokenSearchResults searchTokenEntries(int workerId, final int startIndex, final int max, final QueryCriteria qc) 
             throws CryptoTokenOfflineException, KeyStoreException, InvalidWorkerIdException, SignServerException;
     }
 
@@ -790,7 +790,7 @@ public interface IWorkerSession {
                 final boolean includeData)
                 throws AuthorizationDeniedException;
         
-        TokenSearchResults searchTokenEntries(final AdminInfo adminInfo, int workerId, final int startIndex, final int max, final List<Term> queryTerms, final LogicOperator queryOperator) 
+        TokenSearchResults searchTokenEntries(final AdminInfo adminInfo, int workerId, final int startIndex, final int max, final QueryCriteria qc) 
             throws CryptoTokenOfflineException, KeyStoreException, InvalidWorkerIdException, SignServerException;
     }
 }

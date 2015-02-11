@@ -27,6 +27,8 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.cesecore.audit.impl.integrityprotected.AuditRecordData;
 import org.cesecore.dbprotection.DatabaseProtectionException;
+import org.cesecore.util.query.Elem;
+import org.cesecore.util.query.QueryCriteria;
 import org.cesecore.util.query.elems.LogicOperator;
 import org.cesecore.util.query.elems.RelationalOperator;
 import org.cesecore.util.query.elems.Term;
@@ -70,7 +72,7 @@ public class QueryTokenEntriesCommand extends AbstractCommand {
     private int from = 0;
     private int limit = 0;
     private boolean verbose = false;
-    private List<Term> terms;
+    private List<Elem> terms;
     
         
     private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ");
@@ -129,14 +131,15 @@ public class QueryTokenEntriesCommand extends AbstractCommand {
         try {
             final int tokenId = helper.getWorkerSession().getWorkerId(tokenIdOrName);
 
+            final QueryCriteria qc = QueryCriteria.create().add(AdminCLIUtils.andAll(terms, 0));
+
             // Perform the query
-            // TODO: no limit
             TokenSearchResults searchResults;
             
             int startIndex = from;
             final int max = limit < 1 ? 10 : limit;
             do {
-                searchResults = helper.getWorkerSession().searchTokenEntries(tokenId, startIndex, max, terms, LogicOperator.OR); // TODO operator
+                searchResults = helper.getWorkerSession().searchTokenEntries(tokenId, startIndex, max, qc);
             
                 int i = startIndex;
                 for (TokenEntry entry : searchResults.getEntries()) {
@@ -213,7 +216,7 @@ public class QueryTokenEntriesCommand extends AbstractCommand {
         
         final String[] criterias = line.getOptionValues(CRITERIA);
         
-        terms = new LinkedList<Term>();
+        terms = new LinkedList<Elem>();
         if (criterias != null && criterias.length > 0) {
             for (final String criteria : criterias) {
                 try {

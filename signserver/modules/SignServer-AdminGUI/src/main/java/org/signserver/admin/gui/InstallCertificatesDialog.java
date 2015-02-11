@@ -350,7 +350,7 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
             for (int row = 0; row < data.size(); row++) {
                 final Worker signer = signers.get(row);
                 final int workerid = signer.getWorkerId();
-                final String key = (String) data.get(row).get(1);
+                final Object key = data.get(row).get(1);
                 final String cert = data.get(row).get(2).toString();
                 final String certChain = data.get(row).get(3).toString();
                 final File signerCertFile =
@@ -423,7 +423,7 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
                             if (installInToken) {
                                 final String alias =
                                         editedAlias ?
-                                        (String) data.get(row).get(1) :
+                                        (String) key :
                                         defaultKey ?
                                         signer.getConfiguration().getProperty("DEFAULTKEY") :
                                         signer.getConfiguration().getProperty("NEXTCERTSIGNKEY");

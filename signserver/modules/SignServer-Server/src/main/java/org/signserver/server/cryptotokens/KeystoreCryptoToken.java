@@ -386,9 +386,13 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2,
     
     @Override
     public TokenSearchResults searchTokenEntries(final int startIndex, final int max, QueryCriteria qc, boolean includeData) 
-            throws CryptoTokenOfflineException, KeyStoreException {
-        KeyStore keyStore = getKeyStore();
-        return CryptoTokenHelper.searchTokenEntries(keyStore, startIndex, max, qc, includeData);
+            throws CryptoTokenOfflineException, QueryException {
+        try {
+            KeyStore keyStore = getKeyStore();
+            return CryptoTokenHelper.searchTokenEntries(keyStore, startIndex, max, qc, includeData);
+        } catch (KeyStoreException ex) {
+            throw new CryptoTokenOfflineException(ex);
+        }
     }
 
     @Override

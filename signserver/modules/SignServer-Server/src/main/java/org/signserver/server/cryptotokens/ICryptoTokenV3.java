@@ -12,11 +12,11 @@
  *************************************************************************/
 package org.signserver.server.cryptotokens;
 
-import java.security.KeyStoreException;
 import java.security.cert.Certificate;
 import java.util.List;
 import org.cesecore.util.query.QueryCriteria;
 import org.signserver.common.CryptoTokenOfflineException;
+import org.signserver.common.QueryException;
 
 /**
  * Third version of the crypto token interface.
@@ -44,5 +44,5 @@ public interface ICryptoTokenV3 extends ICryptoTokenV2 {
             throws CryptoTokenOfflineException, IllegalArgumentException;
     
     TokenSearchResults searchTokenEntries(final int startIndex, final int max, final QueryCriteria qc, final boolean includeData) 
-            throws CryptoTokenOfflineException, KeyStoreException;
+            throws CryptoTokenOfflineException, QueryException;
 }

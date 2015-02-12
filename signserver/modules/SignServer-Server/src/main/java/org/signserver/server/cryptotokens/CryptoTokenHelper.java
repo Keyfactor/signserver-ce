@@ -34,7 +34,6 @@ import java.security.cert.X509Certificate;
 import java.security.interfaces.DSAKey;
 import java.security.interfaces.ECKey;
 import java.security.interfaces.RSAKey;
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -64,7 +63,6 @@ import org.cesecore.util.query.QueryCriteria;
 import org.cesecore.util.query.clauses.Order;
 import org.cesecore.util.query.elems.LogicOperator;
 import org.cesecore.util.query.elems.Operation;
-import org.cesecore.util.query.elems.RelationalOperator;
 import org.cesecore.util.query.elems.Term;
 import org.ejbca.util.Base64;
 import org.ejbca.util.CertTools;
@@ -74,6 +72,7 @@ import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.KeyTestResult;
 import org.signserver.common.PKCS10CertReqInfo;
+import org.signserver.common.QueryException;
 import org.signserver.common.SignServerException;
 import org.signserver.server.KeyUsageCounterHash;
 
@@ -491,7 +490,7 @@ public class CryptoTokenHelper {
         return new JcaX509CertificateConverter().getCertificate(cg.build(contentSigner));
     }
 
-    public static TokenSearchResults searchTokenEntries(final KeyStore keyStore, final int startIndex, final int max, final QueryCriteria qc, final boolean includeData) throws CryptoTokenOfflineException {
+    public static TokenSearchResults searchTokenEntries(final KeyStore keyStore, final int startIndex, final int max, final QueryCriteria qc, final boolean includeData) throws CryptoTokenOfflineException, QueryException {
         final TokenSearchResults result;
         try {
             final ArrayList<TokenEntry> tokenEntries = new ArrayList<TokenEntry>();
@@ -560,41 +559,28 @@ public class CryptoTokenHelper {
         return result;
     }
     
-    private static boolean shouldBeIncluded(TokenEntry tokenEntry, QueryCriteria qc) {
-        final List<Elem> elements = qc.getElements();
+    private static boolean shouldBeIncluded(TokenEntry tokenEntry, QueryCriteria qc) throws QueryException {
         final List<Elem> terms = new ArrayList<Elem>();
             
-        CollectionUtils.selectRejected(elements, PredicateUtils.instanceofPredicate(Order.class), terms);
-        System.out.println("Terms: " + terms);
-        if (terms.size() > 1) {
-            throw new RuntimeException("TODO: Should this really happen?"); // TODO
-        } else if (terms.isEmpty()) {
+        CollectionUtils.selectRejected(qc.getElements(), PredicateUtils.instanceofPredicate(Order.class), terms);
+        if (terms.isEmpty()) {
             return true;
         }
-        
         return generate(tokenEntry, terms.iterator().next());
     }
     
-//    private static boolean termTraversal(TokenEntry tokenEntry, List<Elem> elements) {
-//        for (final Elem element : elements) {
-//            generate(tokenEntry, element);
-//        }
-//    }
-    
-    private static boolean generate(TokenEntry tokenEntry, final Elem elem) {
+    private static boolean generate(TokenEntry tokenEntry, final Elem elem) throws QueryException {
         if (elem instanceof Operation) {
             return generateRestriction(tokenEntry, (Operation) elem);
         } else if (elem instanceof Term) {
-            return generateRestriction(tokenEntry, (Term) elem);
-        } else if (elem instanceof Order) {
-            return generateRestriction(tokenEntry, (Order) elem);
+            return matches(tokenEntry, (Term) elem);
         } else {
             throw new QueryParameterException("No matched restriction");
         }
     }
     
-    private static boolean generateRestriction(TokenEntry tokenEntry, final Operation op) {
-        boolean left = generateRestriction(tokenEntry, op.getTerm());
+    private static boolean generateRestriction(TokenEntry tokenEntry, final Operation op) throws QueryException {
+        boolean left = matches(tokenEntry, op.getTerm());
         final Elem elem = op.getElement();
         
         if (op.getOperator() == LogicOperator.OR && left) {
@@ -607,38 +593,8 @@ public class CryptoTokenHelper {
             return generate(tokenEntry, elem);
         }
     }
-
-    private static boolean generateRestriction(TokenEntry tokenEntry, final Term term) {
-        return matches(tokenEntry, term);
-    }
-
-    private static boolean generateRestriction(TokenEntry tokenEntry, final Order order) {
-        System.out.println("NOP");
-        return true;
-    }
-
-    private static boolean shouldBeIncluded(TokenEntry entry, List<Term> terms, LogicOperator op) {
-        if (op != LogicOperator.AND && op != LogicOperator.OR) {
-            throw new IllegalArgumentException("Unsupported logic operator: " + op);
-        }
-        if (terms.isEmpty()) {
-            return true;
-        }
-        
-        boolean anyMatch = false;
-        boolean anyMismatch = false;
-        for (Term term : terms) { // TODO can be optimized drop out of loop earlier
-            if (matches(entry, term)) {
-                anyMatch = true;
-            } else {
-                anyMismatch = true;
-            }
-        }
-        
-        return (op == LogicOperator.OR && anyMatch) || (op == LogicOperator.AND && !anyMismatch); 
-    }
     
-    private static boolean matches(TokenEntry entry, Term term) {
+    private static boolean matches(TokenEntry entry, Term term) throws QueryException {
         final boolean result;
         
         final Object actualValue;
@@ -648,7 +604,7 @@ public class CryptoTokenHelper {
                 break;
             }
             default: {
-                throw new IllegalArgumentException("Unsupported token entry field in query terms: " + term.getName());
+                throw new QueryException("Unsupported token entry field in query terms: " + term.getName(), term);
             }
         }
         switch (term.getOperator()) {
@@ -693,7 +649,7 @@ public class CryptoTokenHelper {
                 break;
             }
             default: {
-                throw new IllegalArgumentException("Operator not yet supported in query terms: " + term.getOperator().name());
+                throw new QueryException("Operator not yet supported in query terms: " + term.getOperator().name(), term);
             }
         }
         

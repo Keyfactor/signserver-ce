@@ -81,13 +81,10 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
 
     private List<Worker> signers;
     private Vector<Vector<Object>> data;
-
-    private JComboBox aliasComboBox = new JComboBox(new Object[] {
-         Utils.HardCodedAlias.NEXT_KEY, Utils.HardCodedAlias.DEFAULT_KEY});
     private JCheckBox installInTokenCheckbox = new JCheckBox();
     
-    private Map<Integer, Utils.HardCodedAlias> savedAliases =
-            new HashMap<Integer, Utils.HardCodedAlias>();
+    private Map<Integer, Utils.HardCodedAliasValue> savedAliases =
+            new HashMap<Integer, Utils.HardCodedAliasValue>();
 
     /** Creates new form InstallCertificatesDialog. */
     public InstallCertificatesDialog(java.awt.Frame parent, boolean modal,
@@ -97,14 +94,17 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
         initComponents();
         setTitle("Install certificates for " + signers.size() + " signers");
         data = new Vector<Vector<Object>>();
+
         for (int row = 0; row < signers.size(); row++) {
             Worker signer = signers.get(row);
             Vector<Object> cols = new Vector<Object>();
             cols.add(signer.getName() + " (" + signer.getWorkerId() + ")");
             if (signer.getConfiguration().getProperty("NEXTCERTSIGNKEY") != null) {
-                cols.add(Utils.HardCodedAlias.NEXT_KEY);
+                cols.add(new Utils.HardCodedAliasValue(Utils.HardCodedAlias.NEXT_KEY,
+                                                       signer));
             } else {
-                cols.add(Utils.HardCodedAlias.DEFAULT_KEY);
+                cols.add(new Utils.HardCodedAliasValue(Utils.HardCodedAlias.DEFAULT_KEY,
+                                                       signer));
             }
             cols.add("");
             cols.add("");
@@ -119,6 +119,24 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
             }
 
         });
+
+        final BrowseCellEditor editor = new BrowseCellEditor(new JTextField(),
+                JFileChooser.OPEN_DIALOG);
+        editor.setClickCountToStart(1);
+        final TableColumn columnSignerCert = jTable1.getColumn("Signer certificate");
+        final TableColumn columnCertChain = jTable1.getColumn("Certificate chain");
+        final TableColumn installInToken = jTable1.getColumn("Install in token");
+        final TableColumn keyColumn = jTable1.getColumn("Key");
+        
+        columnSignerCert.setCellEditor(editor);
+        columnCertChain.setCellEditor(editor);
+        columnSignerCert.setCellRenderer(new BrowseCellRenderer());
+        columnCertChain.setCellRenderer(new BrowseCellRenderer());
+
+        final AliasCellEditor aliasCellEditor =
+                new AliasCellEditor(signers, new JComboBox());
+        keyColumn.setCellEditor(aliasCellEditor);
+
         jTable1.getModel().addTableModelListener(new TableModelListener() {
 
             @Override
@@ -152,21 +170,6 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
             
         });
 
-        final BrowseCellEditor editor = new BrowseCellEditor(new JTextField(),
-                JFileChooser.OPEN_DIALOG);
-        editor.setClickCountToStart(1);
-        final TableColumn columnSignerCert = jTable1.getColumn("Signer certificate");
-        final TableColumn columnCertChain = jTable1.getColumn("Certificate chain");
-        final TableColumn installInToken = jTable1.getColumn("Install in token");
-        columnSignerCert.setCellEditor(editor);
-        columnCertChain.setCellEditor(editor);
-        columnSignerCert.setCellRenderer(new BrowseCellRenderer());
-        columnCertChain.setCellRenderer(new BrowseCellRenderer());
-        final DefaultCellEditor aliasComboBoxFieldEditor
-                = new DefaultCellEditor(aliasComboBox);
-        aliasComboBox.setEditable(false);
-        aliasComboBoxFieldEditor.setClickCountToStart(1);
-        jTable1.getColumn("Key").setCellEditor(aliasComboBoxFieldEditor);
         final DefaultCellEditor installInTokenCheckboxFieldEditor
                 = new DefaultCellEditor(installInTokenCheckbox);
         installInToken.setCellEditor(installInTokenCheckboxFieldEditor);
@@ -179,19 +182,21 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
         final int selectedRow = jTable1.getSelectedRow();
         final boolean installInToken =
                 (Boolean) jTable1.getValueAt(selectedRow, 4);
-        final boolean wasEditable = aliasComboBox.isEditable();
         final Object selectedAlias = jTable1.getValueAt(selectedRow, 1);
-        
-        // update editability of the alias key alias
-        aliasComboBox.setEditable(installInToken);
+        final JComboBox comboBox =
+                (JComboBox) jTable1.getCellEditor(selectedRow, 1)
+                .getTableCellEditorComponent(jTable1, selectedAlias, true, selectedRow, 1);
+        final boolean wasEditable = comboBox.isEditable();
+        final Worker selectedSigner = signers.get(selectedRow); 
 
-        if (!wasEditable && installInToken
-            && selectedAlias instanceof Utils.HardCodedAlias) {
+        // update editability of the alias key alias
+        comboBox.setEditable(installInToken);
+
+        if (selectedAlias instanceof Utils.HardCodedAliasValue) {
             // record the old (hard-coded) selection
             savedAliases.put(selectedRow,
-                             (Utils.HardCodedAlias) jTable1.getValueAt(selectedRow, 1));
-        } else if (wasEditable && !installInToken
-                   && selectedAlias instanceof String) {
+                             (Utils.HardCodedAliasValue) jTable1.getValueAt(selectedRow, 1));
+        } else if (!installInToken && selectedAlias instanceof String) {
             final int confirm =
                     JOptionPane.showConfirmDialog(this,
                                                   "Reset manually edited alias?",
@@ -201,11 +206,13 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
             
             if (confirm == JOptionPane.OK_OPTION) {
                 // restore the saved hard-coded alias
-                final Utils.HardCodedAlias savedAlias =
+                final Utils.HardCodedAliasValue savedAlias =
                         savedAliases.get(selectedRow);
-
+                
                 jTable1.setValueAt(savedAlias != null ?
-                                   savedAlias : Utils.HardCodedAlias.DEFAULT_KEY,
+                                   savedAlias :
+                                   new Utils.HardCodedAliasValue(Utils.HardCodedAlias.DEFAULT_KEY,
+                                                                 selectedSigner),
                                    selectedRow, 1);
             } else {
                 // restore the state for install to crypto token when
@@ -357,7 +364,10 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
                         "".equals(cert) ? null : new File(cert);
                 final File signerChainFile = new File(certChain);
 
-                final boolean defaultKey = Utils.DEFAULT_KEY.equals(key);
+                final boolean defaultKey = 
+                        key instanceof Utils.HardCodedAliasValue &&
+                        ((Utils.HardCodedAliasValue) key).getHardCodedAlias()
+                            .equals(Utils.HardCodedAlias.DEFAULT_KEY);
                 final boolean editedAlias = key instanceof String;
                 final boolean installInToken = (Boolean) data.get(row).get(4);
 

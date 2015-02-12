@@ -73,14 +73,47 @@ public class Utils {
         NEXT_KEY {
             @Override
             public String toString() {
-                return Utils.NEXT_KEY + "(hardcoded)";
+                return Utils.NEXT_KEY;
             }
         },
         DEFAULT_KEY {
             @Override
             public String toString() {
-                return Utils.DEFAULT_KEY + "(hardcoded)";
+                return Utils.DEFAULT_KEY;
             }
+        }
+    }
+    
+    public static class HardCodedAliasValue {
+        private final HardCodedAlias hardCodedAlias;
+        private final Worker worker;
+        
+        public HardCodedAliasValue(final HardCodedAlias hardCodedAlias,
+                                   final Worker worker) {
+            this.hardCodedAlias = hardCodedAlias;
+            this.worker = worker;
+        }
+        
+        @Override
+        public String toString() {
+            final String alias;
+            
+            switch (hardCodedAlias) {
+                case DEFAULT_KEY:
+                    alias = worker.getConfiguration().getProperty("DEFAULTKEY");
+                    break;
+                case NEXT_KEY:
+                    alias = worker.getConfiguration().getProperty("NEXTKEY");
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unknown hard-coded alias");
+            }
+            
+            return hardCodedAlias.toString() + " (" + alias + ")";
+        }
+        
+        public HardCodedAlias getHardCodedAlias() {
+            return hardCodedAlias;
         }
     }
 

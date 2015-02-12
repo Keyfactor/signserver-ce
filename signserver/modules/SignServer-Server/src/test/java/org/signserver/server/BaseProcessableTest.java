@@ -456,7 +456,7 @@ public class BaseProcessableTest extends TestCase {
         }
 
         @Override
-        public TokenSearchResults searchTokenEntries(int startIndex, int max, QueryCriteria qc) throws CryptoTokenOfflineException, KeyStoreException {
+        public TokenSearchResults searchTokenEntries(int startIndex, int max, QueryCriteria qc, boolean includeData) {
             throw new UnsupportedOperationException("Not supported yet.");
         }
 

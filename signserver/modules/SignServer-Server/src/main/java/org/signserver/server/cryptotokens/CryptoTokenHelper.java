@@ -491,7 +491,7 @@ public class CryptoTokenHelper {
         return new JcaX509CertificateConverter().getCertificate(cg.build(contentSigner));
     }
 
-    public static TokenSearchResults searchTokenEntries(KeyStore keyStore, int startIndex, int max, QueryCriteria qc) throws CryptoTokenOfflineException {
+    public static TokenSearchResults searchTokenEntries(final KeyStore keyStore, final int startIndex, final int max, final QueryCriteria qc, final boolean includeData) throws CryptoTokenOfflineException {
         final TokenSearchResults result;
         try {
             final ArrayList<TokenEntry> tokenEntries = new ArrayList<TokenEntry>();
@@ -523,25 +523,28 @@ public class CryptoTokenHelper {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("checking keyAlias: " + keyAlias);
                     }
-                    
-                    try {
-                        Date creationDate = keyStore.getCreationDate(keyAlias);
-                        entry.setCreationDate(creationDate);
-                    } catch (ProviderException ex) {} // NOPMD: We ignore if it is not supported
 
-                    if (TokenEntry.TYPE_PRIVATEKEY_ENTRY.equals(type)) {
-                        final Certificate[] chain = keyStore.getCertificateChain(keyAlias);
+                    // Add additional data
+                    if (includeData) {
                         try {
-                            entry.setParsedChain(chain);
-                        } catch (CertificateEncodingException ex) {
-                            LOG.error("Certificate could not be encoded for alias: " + keyAlias, ex);
-                        }
-                    } else if (TokenEntry.TYPE_TRUSTED_ENTRY.equals(type)) {
-                        Certificate certificate = keyStore.getCertificate(keyAlias);
-                        try {
-                            entry.setParsedTrustedCertificate(certificate);
-                        } catch (CertificateEncodingException ex) {
-                            LOG.error("Certificate could not be encoded for alias: " + keyAlias, ex);
+                            Date creationDate = keyStore.getCreationDate(keyAlias);
+                            entry.setCreationDate(creationDate);
+                        } catch (ProviderException ex) {} // NOPMD: We ignore if it is not supported
+
+                        if (TokenEntry.TYPE_PRIVATEKEY_ENTRY.equals(type)) {
+                            final Certificate[] chain = keyStore.getCertificateChain(keyAlias);
+                            try {
+                                entry.setParsedChain(chain);
+                            } catch (CertificateEncodingException ex) {
+                                LOG.error("Certificate could not be encoded for alias: " + keyAlias, ex);
+                            }
+                        } else if (TokenEntry.TYPE_TRUSTED_ENTRY.equals(type)) {
+                            Certificate certificate = keyStore.getCertificate(keyAlias);
+                            try {
+                                entry.setParsedTrustedCertificate(certificate);
+                            } catch (CertificateEncodingException ex) {
+                                LOG.error("Certificate could not be encoded for alias: " + keyAlias, ex);
+                            }
                         }
                     }
                     tokenEntries.add(entry);

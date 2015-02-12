@@ -29,7 +29,6 @@ import org.cesecore.audit.impl.integrityprotected.AuditRecordData;
 import org.cesecore.dbprotection.DatabaseProtectionException;
 import org.cesecore.util.query.Elem;
 import org.cesecore.util.query.QueryCriteria;
-import org.cesecore.util.query.elems.LogicOperator;
 import org.cesecore.util.query.elems.RelationalOperator;
 import org.cesecore.util.query.elems.Term;
 import org.signserver.admin.cli.defaultimpl.AdminCommandHelper;
@@ -139,7 +138,7 @@ public class QueryTokenEntriesCommand extends AbstractCommand {
             int startIndex = from;
             final int max = limit < 1 ? 10 : limit;
             do {
-                searchResults = helper.getWorkerSession().searchTokenEntries(tokenId, startIndex, max, qc);
+                searchResults = helper.getWorkerSession().searchTokenEntries(tokenId, startIndex, max, qc, verbose);
             
                 int i = startIndex;
                 for (TokenEntry entry : searchResults.getEntries()) {

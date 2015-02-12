@@ -1207,17 +1207,17 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     }
 
     @Override
-    public TokenSearchResults searchTokenEntries(final int workerId, int startIndex, int max, final QueryCriteria qc) throws CryptoTokenOfflineException, KeyStoreException, SignServerException, InvalidWorkerIdException {
-        return searchTokenEntries(new AdminInfo("CLI user", null, null), workerId, startIndex, max, qc);
+    public TokenSearchResults searchTokenEntries(final int workerId, int startIndex, int max, final QueryCriteria qc, final boolean includeData) throws CryptoTokenOfflineException, KeyStoreException, SignServerException, InvalidWorkerIdException {
+        return searchTokenEntries(new AdminInfo("CLI user", null, null), workerId, startIndex, max, qc, includeData);
     }
     
     @Override
-    public TokenSearchResults searchTokenEntries(final AdminInfo adminInfo, final int workerId, int startIndex, int max, final QueryCriteria qc) throws CryptoTokenOfflineException, KeyStoreException, SignServerException, InvalidWorkerIdException {
+    public TokenSearchResults searchTokenEntries(final AdminInfo adminInfo, final int workerId, int startIndex, int max, final QueryCriteria qc, final boolean includeData) throws CryptoTokenOfflineException, KeyStoreException, SignServerException, InvalidWorkerIdException {
         final IWorker worker = workerManagerSession.getWorker(workerId, globalConfigurationSession);
         if (worker instanceof BaseProcessable) {
             ICryptoToken cryptoToken = ((BaseProcessable) worker).getCryptoToken();
             if (cryptoToken instanceof ICryptoTokenV3) {
-                return ((ICryptoTokenV3) cryptoToken).searchTokenEntries(startIndex, max, qc);
+                return ((ICryptoTokenV3) cryptoToken).searchTokenEntries(startIndex, max, qc, includeData);
             } else {
                 throw new SignServerException("Operation not supported by crypto token");
             }

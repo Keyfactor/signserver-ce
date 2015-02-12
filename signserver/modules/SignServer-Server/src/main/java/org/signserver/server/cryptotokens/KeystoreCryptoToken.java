@@ -22,8 +22,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.bouncycastle.jce.ECNamedCurveTable;
 import org.cesecore.util.query.QueryCriteria;
-import org.cesecore.util.query.elems.LogicOperator;
-import org.cesecore.util.query.elems.Term;
 import org.ejbca.util.keystore.KeyTools;
 import org.signserver.common.*;
 import org.signserver.ejb.interfaces.IWorkerSession;
@@ -387,10 +385,10 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2,
     }
     
     @Override
-    public TokenSearchResults searchTokenEntries(final int startIndex, final int max, QueryCriteria qc) 
+    public TokenSearchResults searchTokenEntries(final int startIndex, final int max, QueryCriteria qc, boolean includeData) 
             throws CryptoTokenOfflineException, KeyStoreException {
         KeyStore keyStore = getKeyStore();
-        return CryptoTokenHelper.searchTokenEntries(keyStore, startIndex, max, qc);
+        return CryptoTokenHelper.searchTokenEntries(keyStore, startIndex, max, qc, includeData);
     }
 
     @Override

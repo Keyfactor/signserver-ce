@@ -43,6 +43,6 @@ public interface ICryptoTokenV3 extends ICryptoTokenV2 {
             char[] athenticationCode)
             throws CryptoTokenOfflineException, IllegalArgumentException;
     
-    TokenSearchResults searchTokenEntries(final int startIndex, final int max, final QueryCriteria qc) 
+    TokenSearchResults searchTokenEntries(final int startIndex, final int max, final QueryCriteria qc, final boolean includeData) 
             throws CryptoTokenOfflineException, KeyStoreException;
 }

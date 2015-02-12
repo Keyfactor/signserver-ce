@@ -136,8 +136,8 @@ public class P11CryptoTokenTest extends CryptoTokenTestBase {
     }
 
     @Override
-    protected TokenSearchResults searchTokenEntries(int startIndex, int max, QueryCriteria qc) throws CryptoTokenOfflineException, KeyStoreException, InvalidWorkerIdException, SignServerException {
-        return getWorkerSession().searchTokenEntries(CRYPTO_TOKEN, startIndex, max, qc);
+    protected TokenSearchResults searchTokenEntries(int startIndex, int max, QueryCriteria qc, boolean includeData) throws CryptoTokenOfflineException, KeyStoreException, InvalidWorkerIdException, SignServerException {
+        return getWorkerSession().searchTokenEntries(CRYPTO_TOKEN, startIndex, max, qc, includeData);
     }
 
     @Override

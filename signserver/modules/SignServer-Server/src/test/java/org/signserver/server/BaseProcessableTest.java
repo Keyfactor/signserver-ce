@@ -29,8 +29,6 @@ import junit.framework.TestCase;
 import org.apache.log4j.Logger;
 import org.cesecore.util.CertTools;
 import org.cesecore.util.query.QueryCriteria;
-import org.cesecore.util.query.elems.LogicOperator;
-import org.cesecore.util.query.elems.Term;
 import org.ejbca.util.Base64;
 import org.junit.Test;
 import org.signserver.common.CryptoTokenInitializationFailureException;

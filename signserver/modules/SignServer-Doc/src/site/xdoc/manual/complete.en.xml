@@ -1593,6 +1593,34 @@ of each row displayed are verified. If the verification fails for any of the
 rows matching the search criteria, an error message is displayed. The error message contains 
 information about the first row that failed.
                         </p>
+                        
+                    <p>
+<b>querytokenentries:</b>
+                        </p>
+                        <p>
+Queries the entries (key alias, certificates etc) in a CryptoToken.
+If no limit is given all entries are queried and printed (10 at a time).
+You can specify to start query from an index in the result.
+Search conditions can be added to only search for entries with certain key aliases.
+                        </p>
+                        <p>
+Usage:
+                        </p>
+                        <source>
+signserver querytokenentries -token &lt;id or name&gt; -limit &lt;number&gt; [-criteria  "&lt;field&gt; &lt;op&gt; &lt;value&gt;" [-criteria...]] [-from &lt;index&gt;] [-v]
+                        </source>
+                        <p>
+-limit sets the maximum number of rows matched, this option is required to avoid putting too much load on the server.
+                        </p>
+                        <p>
+&lt;field&gt; is a field name from the token: alias
+                        </p>
+                        <p>
+&lt;op&gt; is a relational operator: EQ, NEQ or LIKE
+                        </p>
+                        <p>
+-v means verbose and if given outputs also entry type as well as any certificates or additional information available in each entry
+                        </p>
                     </subsubsection>
                 </subsection>
                 

@@ -256,7 +256,7 @@ public abstract class CryptoTokenTestBase extends ModulesTestCase {
             // "alias-14", "alias-13", "alias-5", "alias-10", "alias-2", "alias-1"
             // (alias EQ "alias-2") OR (alias LIKE alias-1% AND alias NEQ alias-13) => alias-14, alias-10, alias-2, alias-1
             searchResults = searchTokenEntries(0, Integer.MAX_VALUE, QueryCriteria.create().add(Criteria.or(
-                new Term(RelationalOperator.EQ, CryptoTokenHelper.TokenEntryFields.alias.name(), allAliases[5]),
+                new Term(RelationalOperator.EQ, CryptoTokenHelper.TokenEntryFields.alias.name(), "alias-2"),
                 Criteria.and(
                     new Term(RelationalOperator.LIKE, CryptoTokenHelper.TokenEntryFields.alias.name(), "alias-1%"),
                     new Term(RelationalOperator.NEQ, CryptoTokenHelper.TokenEntryFields.alias.name(), "alias-13")

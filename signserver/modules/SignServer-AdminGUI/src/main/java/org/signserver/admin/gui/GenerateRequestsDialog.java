@@ -107,9 +107,9 @@ public class GenerateRequestsDialog extends JDialog {
             Vector<Object> cols = new Vector<Object>();
             cols.add(worker.getName() + " (" + worker.getWorkerId() + ")");
             if (worker.getConfiguration().getProperty("NEXTCERTSIGNKEY") != null) {
-                cols.add(Utils.HardCodedAlias.NEXT_KEY);
+                cols.add(new Utils.HardCodedAliasValue(Utils.HardCodedAlias.NEXT_KEY, worker));
             } else {
-                cols.add(Utils.HardCodedAlias.DEFAULT_KEY);
+                cols.add(new Utils.HardCodedAliasValue(Utils.HardCodedAlias.DEFAULT_KEY, worker));
             }
             cols.add(worker.getConfiguration().getProperty("SIGNATUREALGORITHM",
                     ""));
@@ -175,8 +175,8 @@ public class GenerateRequestsDialog extends JDialog {
                 comboBoxFieldEditor);
         jTable1.getColumn("DN").setCellEditor(textFieldEditor);
 
-        final DefaultCellEditor aliasComboBoxFieldEditor
-                = new DefaultCellEditor(aliasComboBox);
+        final AliasCellEditor aliasComboBoxFieldEditor
+                = new AliasCellEditor(workers, aliasComboBox, true);
         aliasComboBoxFieldEditor.setClickCountToStart(1);
         jTable1.getColumn("Key").setCellEditor(aliasComboBoxFieldEditor);
 
@@ -453,10 +453,10 @@ public class GenerateRequestsDialog extends JDialog {
                                 .getPKCS10CertificateRequestForAlias(workerid,
                                     certReqInfo, explicitEccParameters, keyAlias);
                     } else {
-                        final Utils.HardCodedAlias alias =
-                                (Utils.HardCodedAlias) key;
+                        final Utils.HardCodedAliasValue alias =
+                                (Utils.HardCodedAliasValue) key;
                         final boolean defaultKey =
-                                (alias == Utils.HardCodedAlias.DEFAULT_KEY);
+                                (alias.getHardCodedAlias() == Utils.HardCodedAlias.DEFAULT_KEY);
                         
                         reqData =
                         (Base64SignerCertReqData) SignServerAdminGUIApplication

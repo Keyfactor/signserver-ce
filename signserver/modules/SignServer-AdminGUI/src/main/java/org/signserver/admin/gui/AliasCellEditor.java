@@ -29,11 +29,15 @@ public class AliasCellEditor extends DefaultCellEditor
     private Object value;
     private final List<Worker> workers;
     private JComboBox comboBox;
+    private boolean alwaysEditable;
     
-    public AliasCellEditor(final List<Worker> workers, final JComboBox comboBox) {
+    public AliasCellEditor(final List<Worker> workers,
+                           final JComboBox comboBox,
+                           final boolean alwaysEditable) {
         super(comboBox);
         this.comboBox = comboBox;
         this.workers = workers;
+        this.alwaysEditable = alwaysEditable;
     }
 
     @Override
@@ -53,9 +57,14 @@ public class AliasCellEditor extends DefaultCellEditor
             comboBox.setModel(new DefaultComboBoxModel(value instanceof String ?
                                     new Object[] {nextKeyObject, defaultKeyObject, value} :
                                     new Object[] {nextKeyObject, defaultKeyObject}));
-            final Object editableValue = table.getValueAt(row, 4);
-            final boolean editable = editableValue instanceof Boolean && (Boolean) editableValue;
-            comboBox.setEditable(editable);
+            
+            if (!alwaysEditable) {
+                final Object editableValue = table.getValueAt(row, 4);
+                final boolean editable = editableValue instanceof Boolean && (Boolean) editableValue;
+                comboBox.setEditable(editable);
+            } else {
+                comboBox.setEditable(true);
+            }
 
             if (value instanceof Utils.HardCodedAliasValue) {
                 final Utils.HardCodedAlias alias = ((Utils.HardCodedAliasValue) value).getHardCodedAlias();

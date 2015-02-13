@@ -134,7 +134,7 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
         columnCertChain.setCellRenderer(new BrowseCellRenderer());
 
         final AliasCellEditor aliasCellEditor =
-                new AliasCellEditor(signers, new JComboBox());
+                new AliasCellEditor(signers, new JComboBox(), false);
         keyColumn.setCellEditor(aliasCellEditor);
 
         jTable1.getModel().addTableModelListener(new TableModelListener() {

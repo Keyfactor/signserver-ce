@@ -604,9 +604,7 @@ public class CryptoTokenHelper {
                 break;
             }
             default: {
-                final QueryException qe = new QueryException("Unsupported token entry field in query terms: " + term.getName());
-                qe.setOffendingTerm(term);
-                throw qe;
+                return new QueryException("Unsupported token entry field in query terms: " + term.getName());
             }
         }
         switch (term.getOperator()) {
@@ -651,9 +649,7 @@ public class CryptoTokenHelper {
                 break;
             }
             default: {
-                final QueryException qe = new QueryException("Operator not yet supported in query terms: " + term.getOperator().name());
-                qe.setOffendingTerm(term);
-                throw qe;
+                return new QueryException("Operator not yet supported in query terms: " + term.getOperator().name());
             }
         }
         

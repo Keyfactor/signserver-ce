@@ -13,9 +13,6 @@
 package org.signserver.common;
 
 import javax.xml.ws.WebFault;
-import org.cesecore.util.query.clauses.Order;
-import org.cesecore.util.query.elems.Operation;
-import org.cesecore.util.query.elems.Term;
 
 /**
  * Exception indicating that the query could not be finished successfully.
@@ -28,10 +25,6 @@ public class QueryException extends Exception {
 
     private static final long serialVersionUID = 1L;
     
-    private Term offendingTerm;
-    private Operation offendingOperation;
-    private Order offendingOrder;
-    
     public QueryException(String msg) {
         super(msg);
     }
@@ -40,28 +33,4 @@ public class QueryException extends Exception {
         super(message, cause);
     }
 
-    public Term getOffendingTerm() {
-        return offendingTerm;
-    }
-
-    public void setOffendingTerm(Term offendingTerm) {
-        this.offendingTerm = offendingTerm;
-    }
-
-    public Operation getOffendingOperation() {
-        return offendingOperation;
-    }
-
-    public void setOffendingOperation(Operation offendingOperation) {
-        this.offendingOperation = offendingOperation;
-    }
-
-    public Order getOffendingOrder() {
-        return offendingOrder;
-    }
-
-    public void setOffendingOrder(Order offendingOrder) {
-        this.offendingOrder = offendingOrder;
-    }
-    
 }

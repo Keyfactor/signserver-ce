@@ -53,6 +53,8 @@
 <xs:element name="queryArchiveWithIdsResponse" type="tns:queryArchiveWithIdsResponse"/>
 <xs:element name="queryAuditLog" type="tns:queryAuditLog"/>
 <xs:element name="queryAuditLogResponse" type="tns:queryAuditLogResponse"/>
+<xs:element name="queryTokenEntries" type="tns:queryTokenEntries"/>
+<xs:element name="queryTokenEntriesResponse" type="tns:queryTokenEntriesResponse"/>
 <xs:element name="reloadConfiguration" type="tns:reloadConfiguration"/>
 <xs:element name="reloadConfigurationResponse" type="tns:reloadConfigurationResponse"/>
 <xs:element name="removeAuthorizedClient" type="tns:removeAuthorizedClient"/>
@@ -143,7 +145,7 @@
 <xs:element minOccurs="0" name="workerIdOrName" type="xs:string"/>
 <xs:element maxOccurs="unbounded" minOccurs="0" name="certificateChain" type="xs:base64Binary"/>
 <xs:element minOccurs="0" name="alias" type="xs:string"/>
-<xs:element maxOccurs="unbounded" minOccurs="0" name="authenticationCode" type="xs:unsignedShort"/>
+<xs:element minOccurs="0" name="authenticationCode" type="xs:string"/>
 </xs:sequence>
 </xs:complexType>
 <xs:complexType name="importCertificateChainResponse">
@@ -552,6 +554,51 @@
 <xs:element name="workerId" type="xs:int"/>
 </xs:sequence>
 </xs:complexType>
+<xs:complexType name="queryTokenEntries">
+<xs:sequence>
+<xs:element minOccurs="0" name="workerNameOrId" type="xs:string"/>
+<xs:element name="startIndex" type="xs:int"/>
+<xs:element name="max" type="xs:int"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="condition" type="tns:queryCondition"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="ordering" type="tns:queryOrdering"/>
+<xs:element name="includeData" type="xs:boolean"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="queryTokenEntriesResponse">
+<xs:sequence>
+<xs:element minOccurs="0" name="return" type="tns:tokenSearchResults"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="tokenSearchResults">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="entries" nillable="true" type="tns:tokenEntry"/>
+<xs:element minOccurs="0" name="moreEntriesAvailable" type="xs:boolean"/>
+<xs:element minOccurs="0" name="numMoreEntries" type="xs:long"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="tokenEntry">
+<xs:sequence>
+<xs:element minOccurs="0" name="alias" type="xs:string"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="chain" nillable="true" type="xs:base64Binary"/>
+<xs:element minOccurs="0" name="creationDate" type="xs:dateTime"/>
+<xs:element name="info">
+<xs:complexType>
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="entry">
+<xs:complexType>
+<xs:sequence>
+<xs:element minOccurs="0" name="key" type="xs:string"/>
+<xs:element minOccurs="0" name="value" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:element minOccurs="0" name="trustedCertificate" type="xs:base64Binary"/>
+<xs:element minOccurs="0" name="type" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
 <xs:complexType name="deactivateSigner">
 <xs:sequence>
 <xs:element name="signerId" type="xs:int"/>
@@ -694,6 +741,14 @@
 <xs:complexType name="ResyncException">
 <xs:sequence/>
 </xs:complexType>
+<xs:element name="AuthorizationDeniedException" type="tns:AuthorizationDeniedException"/>
+<xs:complexType name="AuthorizationDeniedException">
+<xs:sequence/>
+</xs:complexType>
+<xs:element name="QueryException" type="tns:QueryException"/>
+<xs:complexType name="QueryException">
+<xs:sequence/>
+</xs:complexType>
 </xs:schema>
   </wsdl:types>
   <wsdl:message name="removeKey">
@@ -820,6 +875,10 @@
     <wsdl:part element="tns:processResponse" name="parameters">
     </wsdl:part>
   </wsdl:message>
+  <wsdl:message name="AuthorizationDeniedException">
+    <wsdl:part element="tns:AuthorizationDeniedException" name="AuthorizationDeniedException">
+    </wsdl:part>
+  </wsdl:message>
   <wsdl:message name="getPKCS10CertificateRequestResponse">
     <wsdl:part element="tns:getPKCS10CertificateRequestResponse" name="parameters">
     </wsdl:part>
@@ -892,12 +951,20 @@
     <wsdl:part element="tns:AdminNotAuthorizedException" name="AdminNotAuthorizedException">
     </wsdl:part>
   </wsdl:message>
+  <wsdl:message name="queryTokenEntries">
+    <wsdl:part element="tns:queryTokenEntries" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
   <wsdl:message name="generateSignerKey">
     <wsdl:part element="tns:generateSignerKey" name="parameters">
     </wsdl:part>
   </wsdl:message>
   <wsdl:message name="queryArchiveWithIds">
     <wsdl:part element="tns:queryArchiveWithIds" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="QueryException">
+    <wsdl:part element="tns:QueryException" name="QueryException">
     </wsdl:part>
   </wsdl:message>
   <wsdl:message name="getWorkerId">
@@ -986,6 +1053,10 @@
   </wsdl:message>
   <wsdl:message name="uploadSignerCertificateChainResponse">
     <wsdl:part element="tns:uploadSignerCertificateChainResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="queryTokenEntriesResponse">
+    <wsdl:part element="tns:queryTokenEntriesResponse" name="parameters">
     </wsdl:part>
   </wsdl:message>
   <wsdl:message name="reloadConfigurationResponse">
@@ -1311,6 +1382,26 @@
       <wsdl:output message="tns:getStatusResponse" name="getStatusResponse">
     </wsdl:output>
       <wsdl:fault message="tns:AdminNotAuthorizedException" name="AdminNotAuthorizedException">
+    </wsdl:fault>
+      <wsdl:fault message="tns:InvalidWorkerIdException" name="InvalidWorkerIdException">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="queryTokenEntries">
+      <wsdl:input message="tns:queryTokenEntries" name="queryTokenEntries">
+    </wsdl:input>
+      <wsdl:output message="tns:queryTokenEntriesResponse" name="queryTokenEntriesResponse">
+    </wsdl:output>
+      <wsdl:fault message="tns:AuthorizationDeniedException" name="AuthorizationDeniedException">
+    </wsdl:fault>
+      <wsdl:fault message="tns:AdminNotAuthorizedException" name="AdminNotAuthorizedException">
+    </wsdl:fault>
+      <wsdl:fault message="tns:OperationUnsupportedException" name="OperationUnsupportedException">
+    </wsdl:fault>
+      <wsdl:fault message="tns:CryptoTokenOfflineException" name="CryptoTokenOfflineException">
+    </wsdl:fault>
+      <wsdl:fault message="tns:SignServerException" name="SignServerException">
+    </wsdl:fault>
+      <wsdl:fault message="tns:QueryException" name="QueryException">
     </wsdl:fault>
       <wsdl:fault message="tns:InvalidWorkerIdException" name="InvalidWorkerIdException">
     </wsdl:fault>
@@ -1844,6 +1935,36 @@
       </wsdl:fault>
       <wsdl:fault name="CryptoTokenOfflineException">
         <soap:fault name="CryptoTokenOfflineException" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="InvalidWorkerIdException">
+        <soap:fault name="InvalidWorkerIdException" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="queryTokenEntries">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="queryTokenEntries">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="queryTokenEntriesResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="AuthorizationDeniedException">
+        <soap:fault name="AuthorizationDeniedException" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="AdminNotAuthorizedException">
+        <soap:fault name="AdminNotAuthorizedException" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="OperationUnsupportedException">
+        <soap:fault name="OperationUnsupportedException" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="CryptoTokenOfflineException">
+        <soap:fault name="CryptoTokenOfflineException" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="SignServerException">
+        <soap:fault name="SignServerException" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="QueryException">
+        <soap:fault name="QueryException" use="literal"/>
       </wsdl:fault>
       <wsdl:fault name="InvalidWorkerIdException">
         <soap:fault name="InvalidWorkerIdException" use="literal"/>

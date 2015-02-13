@@ -23,7 +23,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import javax.xml.namespace.QName;
-import junit.framework.TestCase;
 import org.apache.log4j.Logger;
 import org.signserver.testutils.ModulesTestCase;
 
@@ -285,6 +284,14 @@ public class AdminWebServiceTest extends ModulesTestCase {
         try {
             adminWS.importCertificateChain("10", null, null, null);
         } catch (AdminNotAuthorizedException_Exception ignored) {
+            // OK
+        }
+    }
+    
+    public void testQueryTokenEntries() throws Exception {
+        try {
+            adminWS.queryTokenEntries("10", 0, 1, null, null, false);
+        } catch (AdminNotAuthorizedException_Exception ignored) { // NOPMD
             // OK
         }
     }

@@ -10,7 +10,7 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.admin.cli;
+package org.signserver.admin.cli.defaultimpl.token;
 
 import java.security.cert.CertificateException;
 import java.text.SimpleDateFormat;
@@ -31,6 +31,7 @@ import org.cesecore.util.query.Elem;
 import org.cesecore.util.query.QueryCriteria;
 import org.cesecore.util.query.elems.RelationalOperator;
 import org.cesecore.util.query.elems.Term;
+import org.signserver.admin.cli.AdminCLIUtils;
 import org.signserver.admin.cli.defaultimpl.AdminCommandHelper;
 import org.signserver.cli.spi.AbstractCommand;
 import org.signserver.cli.spi.CommandFailureException;

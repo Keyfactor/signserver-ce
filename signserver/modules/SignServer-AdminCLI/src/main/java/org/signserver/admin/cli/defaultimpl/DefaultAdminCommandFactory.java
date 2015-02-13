@@ -12,7 +12,7 @@
  *************************************************************************/
 package org.signserver.admin.cli.defaultimpl;
 
-import org.signserver.admin.cli.QueryTokenEntriesCommand;
+import org.signserver.admin.cli.defaultimpl.token.QueryTokenEntriesCommand;
 import org.signserver.admin.cli.defaultimpl.archive.FindFromArchiveIdCommand;
 import org.signserver.admin.cli.defaultimpl.archive.FindFromRequestCertCommand;
 import org.signserver.admin.cli.defaultimpl.archive.FindFromRequestIPCommand;

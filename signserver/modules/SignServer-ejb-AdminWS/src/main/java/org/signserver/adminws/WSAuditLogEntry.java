@@ -14,16 +14,19 @@ package org.signserver.adminws;
 
 import java.util.HashMap;
 import java.util.Map;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 import org.cesecore.audit.AuditLogEntry;
 import org.cesecore.audit.enums.EventStatus;
 
 /**
- * Holder for an log entry.
+ * WS version of AuditLogEntry.
  *
  * @author Markus Kilås
  * @version $Id$
  */
-public class LogEntry {
+@XmlType(name = "logEntry")
+public class WSAuditLogEntry {
     
     private Long timeStamp;
     private String eventType;
@@ -38,10 +41,11 @@ public class LogEntry {
     private Long sequenceNumber;
     private String nodeId;
 
-    public LogEntry() {
+    /** Default no-arg constructor. */
+    public WSAuditLogEntry() {
     }
 
-    public LogEntry(Long timeStamp, String eventType, EventStatus eventStatus, String authToken, String serviceType, String moduleType, String customId, String searchDetail1, String searchDetail2, Map<String, String> additionalDetails, Long sequenceNumber, String nodeId) {
+    public WSAuditLogEntry(Long timeStamp, String eventType, EventStatus eventStatus, String authToken, String serviceType, String moduleType, String customId, String searchDetail1, String searchDetail2, Map<String, String> additionalDetails, Long sequenceNumber, String nodeId) {
         this.timeStamp = timeStamp;
         this.eventType = eventType;
         this.eventStatus = eventStatus;
@@ -55,15 +59,20 @@ public class LogEntry {
         this.sequenceNumber = sequenceNumber;
         this.nodeId = nodeId;
     }
-    
-    public static LogEntry fromAuditLogEntry(final AuditLogEntry src) {
+
+    /**
+     * Converts a AuditLogEntry to a WSAuditLogEntry.
+     * @param src the AuditLogEntry
+     * @return the WSAuditLogEntry
+     */
+    public static WSAuditLogEntry fromAuditLogEntry(final AuditLogEntry src) {
         HashMap<String, String> additionalDetails = new HashMap<String, String>();
         for (Map.Entry<String, Object> entry : src.getMapAdditionalDetails().entrySet()) {
             if (entry.getKey() != null) {
                 additionalDetails.put(entry.getKey(), entry.getValue() == null ? null : entry.getValue().toString());
             }
         }
-        return new LogEntry(src.getTimeStamp(), src.getEventTypeValue().toString(), src.getEventStatusValue(), src.getAuthToken(), src.getServiceTypeValue().toString(), src.getModuleTypeValue().toString(), src.getCustomId(), src.getSearchDetail1(), src.getSearchDetail2(), additionalDetails, src.getSequenceNumber(), src.getNodeId());
+        return new WSAuditLogEntry(src.getTimeStamp(), src.getEventTypeValue().toString(), src.getEventStatusValue(), src.getAuthToken(), src.getServiceTypeValue().toString(), src.getModuleTypeValue().toString(), src.getCustomId(), src.getSearchDetail1(), src.getSearchDetail2(), additionalDetails, src.getSequenceNumber(), src.getNodeId());
     }
 
     public Long getTimeStamp() {

@@ -1207,25 +1207,25 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     }
 
     @Override
-    public TokenSearchResults searchTokenEntries(final int workerId, int startIndex, int max, final QueryCriteria qc, final boolean includeData) throws NotSupportedException, CryptoTokenOfflineException, QueryException, InvalidWorkerIdException, AuthorizationDeniedException, SignServerException {
+    public TokenSearchResults searchTokenEntries(final int workerId, int startIndex, int max, final QueryCriteria qc, final boolean includeData) throws OperationUnsupportedException, CryptoTokenOfflineException, QueryException, InvalidWorkerIdException, AuthorizationDeniedException, SignServerException {
         return searchTokenEntries(new AdminInfo("CLI user", null, null), workerId, startIndex, max, qc, includeData);
     }
     
     @Override
-    public TokenSearchResults searchTokenEntries(final AdminInfo adminInfo, final int workerId, int startIndex, int max, final QueryCriteria qc, final boolean includeData) throws NotSupportedException, CryptoTokenOfflineException, QueryException, InvalidWorkerIdException, AuthorizationDeniedException, SignServerException {
+    public TokenSearchResults searchTokenEntries(final AdminInfo adminInfo, final int workerId, int startIndex, int max, final QueryCriteria qc, final boolean includeData) throws OperationUnsupportedException, CryptoTokenOfflineException, QueryException, InvalidWorkerIdException, AuthorizationDeniedException, SignServerException {
         final IWorker worker = workerManagerSession.getWorker(workerId, globalConfigurationSession);
         if (worker instanceof BaseProcessable) {
             ICryptoToken cryptoToken = ((BaseProcessable) worker).getCryptoToken();
             if (cryptoToken instanceof ICryptoTokenV3) {
                 return ((ICryptoTokenV3) cryptoToken).searchTokenEntries(startIndex, max, qc, includeData);
             } else {
-                throw new NotSupportedException("Operation not supported by crypto token");
+                throw new OperationUnsupportedException("Operation not supported by crypto token");
             }
         } else if (worker == null) {
             throw new InvalidWorkerIdException("Given SignerId " + workerId
                     + " doesn't exist");
         } else {
-            throw new NotSupportedException("Crypto token operations not supported by worker");
+            throw new OperationUnsupportedException("Crypto token operations not supported by worker");
         }
     }
 }

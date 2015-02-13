@@ -34,7 +34,6 @@ import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.KeyTestResult;
-import org.signserver.common.NotSupportedException;
 import org.signserver.common.OperationUnsupportedException;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
@@ -493,7 +492,7 @@ public interface IWorkerSession {
          * @param qc Search criteria for matching results
          * @param includeData If 'false' only the alias and key type is included, otherwise all information available is returned
          * @return the search result
-         * @throws NotSupportedException in case the search operation is not supported by the worker
+         * @throws OperationUnsupportedException in case the search operation is not supported by the worker
          * @throws CryptoTokenOfflineException in case the token is not in a searchable state
          * @throws QueryException in case the query could not be understood or could not be executed
          * @throws InvalidWorkerIdException in case the worker ID is not existing
@@ -501,7 +500,7 @@ public interface IWorkerSession {
          * @throws SignServerException in case of any other problem
          */
         TokenSearchResults searchTokenEntries(int workerId, final int startIndex, final int max, final QueryCriteria qc, final boolean includeData) 
-            throws NotSupportedException, CryptoTokenOfflineException, QueryException, InvalidWorkerIdException, AuthorizationDeniedException, SignServerException;
+            throws OperationUnsupportedException, CryptoTokenOfflineException, QueryException, InvalidWorkerIdException, AuthorizationDeniedException, SignServerException;
     }
 
     /**
@@ -817,7 +816,7 @@ public interface IWorkerSession {
          * @param qc Search criteria for matching results
          * @param includeData If 'false' only the alias and key type is included, otherwise all information available is returned
          * @return the search result
-         * @throws NotSupportedException in case the search operation is not supported by the worker
+         * @throws OperationUnsupportedException in case the search operation is not supported by the worker
          * @throws CryptoTokenOfflineException in case the token is not in a searchable state
          * @throws QueryException in case the query could not be understood or could not be executed
          * @throws InvalidWorkerIdException in case the worker ID is not existing
@@ -825,6 +824,6 @@ public interface IWorkerSession {
          * @throws SignServerException in case of any other problem
          */
         TokenSearchResults searchTokenEntries(final AdminInfo adminInfo, int workerId, final int startIndex, final int max, final QueryCriteria qc, final boolean includeData) 
-            throws NotSupportedException, CryptoTokenOfflineException, QueryException, InvalidWorkerIdException, AuthorizationDeniedException, SignServerException;
+            throws OperationUnsupportedException, CryptoTokenOfflineException, QueryException, InvalidWorkerIdException, AuthorizationDeniedException, SignServerException;
     }
 }

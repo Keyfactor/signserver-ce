@@ -27,6 +27,7 @@ public class QueryOrdering {
     private String column;
     private Order order;
 
+    /** Default no-arg constructor. */
     public QueryOrdering() {
     }
     

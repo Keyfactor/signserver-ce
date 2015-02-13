@@ -28,7 +28,6 @@ import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.InvalidWorkerIdException;
-import org.signserver.common.NotSupportedException;
 import org.signserver.common.OperationUnsupportedException;
 import org.signserver.common.QueryException;
 import org.signserver.common.SignServerException;
@@ -137,7 +136,7 @@ public class P11CryptoTokenTest extends CryptoTokenTestBase {
     }
 
     @Override
-    protected TokenSearchResults searchTokenEntries(int startIndex, int max, QueryCriteria qc, boolean includeData) throws NotSupportedException, CryptoTokenOfflineException, QueryException, InvalidWorkerIdException, SignServerException, AuthorizationDeniedException {
+    protected TokenSearchResults searchTokenEntries(int startIndex, int max, QueryCriteria qc, boolean includeData) throws OperationUnsupportedException, CryptoTokenOfflineException, QueryException, InvalidWorkerIdException, SignServerException, AuthorizationDeniedException {
         return getWorkerSession().searchTokenEntries(CRYPTO_TOKEN, startIndex, max, qc, includeData);
     }
 

@@ -49,7 +49,6 @@ import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.InvalidWorkerIdException;
-import org.signserver.common.NotSupportedException;
 import org.signserver.common.OperationUnsupportedException;
 import org.signserver.common.PKCS10CertReqInfo;
 import org.signserver.common.QueryException;
@@ -70,7 +69,7 @@ public abstract class CryptoTokenTestBase extends ModulesTestCase {
     private static final Logger LOG = Logger.getLogger(CryptoTokenTestBase.class);
     
     protected abstract TokenSearchResults searchTokenEntries(final int startIndex, final int max, final QueryCriteria qc, final boolean includeData) 
-            throws NotSupportedException, CryptoTokenOfflineException, QueryException, InvalidWorkerIdException, SignServerException, AuthorizationDeniedException;
+            throws OperationUnsupportedException, CryptoTokenOfflineException, QueryException, InvalidWorkerIdException, SignServerException, AuthorizationDeniedException;
     
     protected abstract void generateKey(String keyType, String keySpec, String alias) throws CryptoTokenOfflineException, InvalidWorkerIdException, SignServerException;
     protected abstract boolean destroyKey(String alias) throws CryptoTokenOfflineException, InvalidWorkerIdException, SignServerException, KeyStoreException;
@@ -370,7 +369,7 @@ public abstract class CryptoTokenTestBase extends ModulesTestCase {
             IllegalArgumentException, CertificateException,
             CertificateEncodingException, OperationUnsupportedException,
             NoSuchAlgorithmException, NoSuchProviderException,
-            OperatorCreationException, IOException, QueryException, NotSupportedException, AuthorizationDeniedException {
+            OperatorCreationException, IOException, QueryException, OperationUnsupportedException, AuthorizationDeniedException {
         
         final ISignerCertReqInfo req = new PKCS10CertReqInfo("SHA1WithRSA", "CN=imported", null);
         final Base64SignerCertReqData reqData = (Base64SignerCertReqData) genCertificateRequest(req, false, existingKey);

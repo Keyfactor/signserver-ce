@@ -28,6 +28,7 @@ public class WSWorkerConfig implements Serializable {
     private static final long serialVersionUID = 1;
     private Properties properties;
 
+    /** Default no-arg constructor. */
     public WSWorkerConfig() {
     }
 

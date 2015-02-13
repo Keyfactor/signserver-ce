@@ -12,16 +12,17 @@
  *************************************************************************/
 package org.signserver.adminws;
 
+import javax.xml.bind.annotation.XmlType;
 import org.signserver.common.ArchiveMetadata;
 
 /**
- * Holder for archive entries.
- * 
+ * WS version of ArchiveMetadata.
+ *
  * @author Marcus Lundblad
  * @version $Id$
- *
  */
-public class ArchiveEntry {
+@XmlType(name = "archiveEntry")
+public class WSArchiveMetadata {
     private String uniqueId;
     private String archiveId;
     private String requestCertSerialNumber;
@@ -32,10 +33,11 @@ public class ArchiveEntry {
     private Integer type;
     private byte[] archiveData;
 
-    public ArchiveEntry() {
+    /** Default no-arg constructor. */
+    public WSArchiveMetadata() {
     }
     
-    public ArchiveEntry(final String uniqueId, final String archiveId,
+    public WSArchiveMetadata(final String uniqueId, final String archiveId,
             final String requestCertSerialNumber,
             final String requestIssuerDN, final String requestIP, 
             final Integer signerId,
@@ -52,8 +54,13 @@ public class ArchiveEntry {
         this.archiveData = archiveData;
     }
 
-    public static ArchiveEntry fromArchiveMetadata(final ArchiveMetadata src) {
-        return new ArchiveEntry(src.getUniqueId(), src.getArchiveId(),
+    /**
+     * Converts a ArchiveMetadata to a WSArchiveMetaData.
+     * @param src the ArchiveMetadata
+     * @return the WSArchiveMetadata
+     */
+    public static WSArchiveMetadata fromArchiveMetadata(final ArchiveMetadata src) {
+        return new WSArchiveMetadata(src.getUniqueId(), src.getArchiveId(),
                 src.getRequestCertSerialNumber(), src.getRequestIssuerDN(),
                 src.getRequestIP(), src.getSignerId(),
                 src.getTime().getTime(), src.getType(),

@@ -907,7 +907,7 @@ public class AdminWS {
      * @throws AdminNotAuthorizedException  In case the administrator was not authorized to perform the operation
      */
     @WebMethod(operationName="queryAuditLog")
-    public List<LogEntry> queryAuditLog(@WebParam(name="startIndex") int startIndex, @WebParam(name="max") int max, @WebParam(name="condition") final List<QueryCondition> conditions, @WebParam(name="ordering") final List<QueryOrdering> orderings) throws SignServerException, AdminNotAuthorizedException {
+    public List<WSAuditLogEntry> queryAuditLog(@WebParam(name="startIndex") int startIndex, @WebParam(name="max") int max, @WebParam(name="condition") final List<QueryCondition> conditions, @WebParam(name="ordering") final List<QueryOrdering> orderings) throws SignServerException, AdminNotAuthorizedException {
         final AdminInfo adminInfo = requireAuditorAuthorization("queryAuditLog", String.valueOf(startIndex), String.valueOf(max));
         
         // For now we only query one of the available audit devices
@@ -938,10 +938,10 @@ public class AdminWS {
     /**
      * Convert to WS model LogEntry:s.
      */
-    private List<LogEntry> toLogEntries(final List<? extends AuditLogEntry> entries) {
-        final List<LogEntry> results = new LinkedList<LogEntry>();
+    private List<WSAuditLogEntry> toLogEntries(final List<? extends AuditLogEntry> entries) {
+        final List<WSAuditLogEntry> results = new LinkedList<WSAuditLogEntry>();
         for (AuditLogEntry entry : entries) {
-            results.add(LogEntry.fromAuditLogEntry(entry));
+            results.add(WSAuditLogEntry.fromAuditLogEntry(entry));
         }
         return results;
     }
@@ -959,7 +959,7 @@ public class AdminWS {
      * @throws AdminNotAuthorizedException
      */
     @WebMethod(operationName="queryArchive")
-    public List<ArchiveEntry> queryArchive(@WebParam(name="startIndex") int startIndex,
+    public List<WSArchiveMetadata> queryArchive(@WebParam(name="startIndex") int startIndex,
             @WebParam(name="max") int max, @WebParam(name="condition") final List<QueryCondition> conditions,
             @WebParam(name="ordering") final List<QueryOrdering> orderings,
             @WebParam(name="includeData") final boolean includeData)
@@ -986,7 +986,7 @@ public class AdminWS {
     }
     
     @WebMethod(operationName="queryArchiveWithIds")
-    public List<ArchiveEntry> queryArchiveWithIds(@WebParam(name="uniqueIds") List<String> uniqueIds,
+    public List<WSArchiveMetadata> queryArchiveWithIds(@WebParam(name="uniqueIds") List<String> uniqueIds,
             @WebParam(name="includeData") boolean includeData)
             throws SignServerException, AdminNotAuthorizedException {
         final AdminInfo adminInfo =
@@ -998,18 +998,35 @@ public class AdminWS {
             throw new AdminNotAuthorizedException(ex.getMessage());
         }
     }
-   
+    
+    @WebMethod(operationName="queryTokenEntries")
+    public WSTokenSearchResults queryTokenEntries(@WebParam(name="workerNameOrId") String workerNameOrId, @WebParam(name="startIndex") int startIndex, @WebParam(name="max") int max, @WebParam(name="condition") final List<QueryCondition> conditions, @WebParam(name="ordering") final List<QueryOrdering> orderings, @WebParam(name="includeData") boolean includeData) throws OperationUnsupportedException, CryptoTokenOfflineException, QueryException, InvalidWorkerIdException, AuthorizationDeniedException, SignServerException, AdminNotAuthorizedException {
+        final AdminInfo adminInfo = requireAdminAuthorization("queryTokenEntries", workerNameOrId, String.valueOf(startIndex), String.valueOf(max));
+        final List<Elem> elements = toElements(conditions);
+        final QueryCriteria qc = QueryCriteria.create();
+
+        for (QueryOrdering order : orderings) {
+            qc.add(new Order(order.getColumn(), Order.Value.valueOf(order.getOrder().name())));
+        }
+        
+        if (!elements.isEmpty()) {
+            qc.add(andAll(elements, 0));
+        }
+
+        return WSTokenSearchResults.fromTokenSearchResults(worker.searchTokenEntries(adminInfo, getWorkerId(workerNameOrId), startIndex, max, qc, includeData));
+    }
+
     /**
      * Convert to WS model ArchiveEntry:s
      * 
      * @param entries
      * @return
      */
-    private List<ArchiveEntry> toArchiveEntries(final List<? extends ArchiveMetadata> entries) {
-        final List<ArchiveEntry> results = new LinkedList<ArchiveEntry>();
+    private List<WSArchiveMetadata> toArchiveEntries(final List<? extends ArchiveMetadata> entries) {
+        final List<WSArchiveMetadata> results = new LinkedList<WSArchiveMetadata>();
         
         for (final ArchiveMetadata entry : entries) {
-            results.add(ArchiveEntry.fromArchiveMetadata(entry));
+            results.add(WSArchiveMetadata.fromArchiveMetadata(entry));
         }
         
         return results;

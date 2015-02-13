@@ -21,8 +21,6 @@ import org.apache.log4j.Logger;
 import org.cesecore.audit.AuditLogEntry;
 import org.cesecore.authorization.AuthorizationDeniedException;
 import org.cesecore.util.query.QueryCriteria;
-import org.cesecore.util.query.elems.LogicOperator;
-import org.cesecore.util.query.elems.Term;
 import org.signserver.common.ArchiveDataVO;
 import org.signserver.common.ArchiveMetadata;
 import org.signserver.common.AuthorizedClient;
@@ -34,7 +32,6 @@ import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.KeyTestResult;
-import org.signserver.common.NotSupportedException;
 import org.signserver.common.OperationUnsupportedException;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
@@ -443,12 +440,12 @@ public class WorkerSessionMock implements IWorkerSession.ILocal,
     }
 
     @Override
-    public TokenSearchResults searchTokenEntries(AdminInfo adminInfo, int workerId, int startIndex, int max, QueryCriteria qc, boolean includeData) throws NotSupportedException, CryptoTokenOfflineException, QueryException, InvalidWorkerIdException, AuthorizationDeniedException, SignServerException {
+    public TokenSearchResults searchTokenEntries(AdminInfo adminInfo, int workerId, int startIndex, int max, QueryCriteria qc, boolean includeData) throws OperationUnsupportedException, CryptoTokenOfflineException, QueryException, InvalidWorkerIdException, AuthorizationDeniedException, SignServerException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public TokenSearchResults searchTokenEntries(int workerId, int startIndex, int max, QueryCriteria qc, boolean includeData) throws NotSupportedException, CryptoTokenOfflineException, QueryException, InvalidWorkerIdException, AuthorizationDeniedException, SignServerException {
+    public TokenSearchResults searchTokenEntries(int workerId, int startIndex, int max, QueryCriteria qc, boolean includeData) throws OperationUnsupportedException, CryptoTokenOfflineException, QueryException, InvalidWorkerIdException, AuthorizationDeniedException, SignServerException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

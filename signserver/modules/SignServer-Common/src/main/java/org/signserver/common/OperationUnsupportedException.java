@@ -12,6 +12,8 @@
  *************************************************************************/
 package org.signserver.common;
 
+import javax.xml.ws.WebFault;
+
 /**
  * Exception thrown when a runtime implementation doesn't support a given operation.
  * F.ex. used when trying to import signing certificates to a crypto token
@@ -20,8 +22,20 @@ package org.signserver.common;
  * @author Marcus Lundblad
  * @version $Id$
  */
+@WebFault
 public class OperationUnsupportedException extends Exception {
+    private static final long serialVersionUID = 1L;
+
     public OperationUnsupportedException(final String message) {
         super(message);
     }
+
+    public OperationUnsupportedException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public OperationUnsupportedException(Throwable cause) {
+        super(cause);
+    }
+
 }

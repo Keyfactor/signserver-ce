@@ -56,7 +56,6 @@ public class QueryTokenEntriesCommand extends AbstractAdminCommand {
     public static final String FROM = "from";
     public static final String LIMIT = "limit";
     public static final String CRITERIA = "criteria";
-    public static final String OPERATOR = "operator";
     public static final String VERBOSE = "v";
  
     /** The command line options */
@@ -86,7 +85,6 @@ public class QueryTokenEntriesCommand extends AbstractAdminCommand {
         OPTIONS = new Options();
         OPTIONS.addOption(TOKEN, true, "Worker ID or name of CryptoToken");
         OPTIONS.addOption(CRITERIA, true, "Search criteria (can specify multiple criterias)");
-        OPTIONS.addOption(OPERATOR, true, "Operator to put between each criteria, AND or OR");
         OPTIONS.addOption(FROM, true, "Lower index in search result (0-based)");
         OPTIONS.addOption(LIMIT, true, "Maximum number of search results");
         OPTIONS.addOption(VERBOSE, false, "Output the certificate chain and other information available in each entry");
@@ -108,14 +106,12 @@ public class QueryTokenEntriesCommand extends AbstractAdminCommand {
     
     @Override
     public String getUsages() {
-        return "Usage: signserver querytokenentries -token CryptoTokenHSM -limit <number> -operator <operator> [-criteria  \"<field> <op> <value>\" [-criteria...]] [-from <index>] [-v]\n"
-                + "<operator> is a logical operator to put between each criteria: AND, OR\n"
+        return "Usage: signserver querytokenentries -token <id or name> -limit <number> -operator <operator> [-criteria  \"<field> <op> <value>\" [-criteria...]] [-from <index>] [-v]\n"
                 + "<field> is a field name from the token: alias\n"
                 + "<op> is a relational operator: EQ, NEQ or LIKE\n"
                 + "Example: signserver querytokenentries -token CryptoTokenHSM -from 0 -limit 10\n"
                 + "Example: signserver querytokenentries -token CryptoTokenHSM -criteria \"alias EQ key123\n"
-                + "Example: signserver querytokenentries -token CryptoTokenHSM -operator OR -criteria \"alias EQ key2\" -criteria \"alias EQ key3\"\n"
-                + "Example: signserver querytokenentries -token CryptoTokenHSM -from 0 -limit 10 -operator AND -criteria \"alias NEQ key1\" -criteria \"alias NEQ key4\"\n"
+                + "Example: signserver querytokenentries -token CryptoTokenHSM -from 0 -limit 10 -criteria \"alias NEQ key1\" -criteria \"alias NEQ key4\"\n"
                 + "Example: signserver querytokenentries -token CryptoTokenHSM -criteria \"alias LIKE key%\n\n";
     }
     

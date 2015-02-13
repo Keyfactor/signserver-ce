@@ -32,8 +32,8 @@ import org.cesecore.util.query.QueryCriteria;
 import org.cesecore.util.query.elems.RelationalOperator;
 import org.cesecore.util.query.elems.Term;
 import org.signserver.admin.cli.AdminCLIUtils;
+import org.signserver.admin.cli.defaultimpl.AbstractAdminCommand;
 import org.signserver.admin.cli.defaultimpl.AdminCommandHelper;
-import org.signserver.cli.spi.AbstractCommand;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.cli.spi.UnexpectedCommandFailureException;
@@ -47,7 +47,7 @@ import org.signserver.server.cryptotokens.TokenSearchResults;
  * @author Markus Kilås
  * @version $Id$
  */
-public class QueryTokenEntriesCommand extends AbstractCommand {
+public class QueryTokenEntriesCommand extends AbstractAdminCommand {
 
     private final AdminCommandHelper helper = new AdminCommandHelper();
     
@@ -111,11 +111,12 @@ public class QueryTokenEntriesCommand extends AbstractCommand {
         return "Usage: signserver querytokenentries -token CryptoTokenHSM -limit <number> -operator <operator> [-criteria  \"<field> <op> <value>\" [-criteria...]] [-from <index>] [-v]\n"
                 + "<operator> is a logical operator to put between each criteria: AND, OR\n"
                 + "<field> is a field name from the token: alias\n"
-                + "<op> is a relational operator: EQ, NEQ\n"
+                + "<op> is a relational operator: EQ, NEQ or LIKE\n"
                 + "Example: signserver querytokenentries -token CryptoTokenHSM -from 0 -limit 10\n"
                 + "Example: signserver querytokenentries -token CryptoTokenHSM -criteria \"alias EQ key123\n"
-                + "Example: signserver querytokenentries -token CryptoTokenHSM -operator OR -criteria \"alias EQ key2\" -criteria \"alias EQ key3\"\n\n"
-                + "Example: signserver querytokenentries -token CryptoTokenHSM -from 0 -limit 10 -operator AND -criteria \"alias NEQ key1\" -criteria \"alias NEQ key4\"\n\n";
+                + "Example: signserver querytokenentries -token CryptoTokenHSM -operator OR -criteria \"alias EQ key2\" -criteria \"alias EQ key3\"\n"
+                + "Example: signserver querytokenentries -token CryptoTokenHSM -from 0 -limit 10 -operator AND -criteria \"alias NEQ key1\" -criteria \"alias NEQ key4\"\n"
+                + "Example: signserver querytokenentries -token CryptoTokenHSM -criteria \"alias LIKE key%\n\n";
     }
     
     @Override
@@ -129,9 +130,13 @@ public class QueryTokenEntriesCommand extends AbstractCommand {
         }
         
         try {
-            final int tokenId = helper.getWorkerSession().getWorkerId(tokenIdOrName);
+            final int tokenId = getWorkerId(tokenIdOrName);
 
-            final QueryCriteria qc = QueryCriteria.create().add(AdminCLIUtils.andAll(terms, 0));
+            final QueryCriteria qc = QueryCriteria.create();
+            
+            if (terms != null && !terms.isEmpty()) {
+                qc.add(AdminCLIUtils.andAll(terms, 0));
+            }
 
             // Perform the query
             TokenSearchResults searchResults;

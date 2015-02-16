@@ -16,7 +16,11 @@ import java.security.cert.Certificate;
 import java.util.List;
 import org.cesecore.util.query.QueryCriteria;
 import org.signserver.common.CryptoTokenOfflineException;
+import org.signserver.common.IllegalRequestException;
+import org.signserver.common.OperationUnsupportedException;
 import org.signserver.common.QueryException;
+import org.signserver.common.RequestContext;
+import org.signserver.common.SignServerException;
 
 /**
  * Third version of the crypto token interface.
@@ -45,4 +49,41 @@ public interface ICryptoTokenV3 extends ICryptoTokenV2 {
     
     TokenSearchResults searchTokenEntries(final int startIndex, final int max, final QueryCriteria qc, final boolean includeData) 
             throws CryptoTokenOfflineException, QueryException;
+    
+    /**
+     * Aquire a crypto instance in order to perform crypto operations during
+     * a limited scope.
+     * 
+     * It is the caller's responsibility to make sure the call is followed up
+     * by a call to releaseCryptoInstance() for each instance. Use try-final.
+     * 
+     * @param alias of the entry in the CryptoToken to quire an crypto instance for
+     * @param context the request context
+     * @return an crypto instance
+     * @throws CryptoTokenOfflineException
+     * @throws IllegalRequestException
+     * @throws SignServerException 
+     */
+    ICryptoInstance aquireCryptoInstance(String alias, RequestContext context) throws CryptoTokenOfflineException, IllegalRequestException, SignServerException;
+    
+    /**
+     * Releases a previously acquired crypto instance.
+     * @param instance to release
+     */
+    void releaseCryptoInstance(ICryptoInstance instance);
+
+    /**
+     * Generate a new wrapped secret key and obtain the wrapped key data.
+     * 
+     * XXX: This method should probably not be exposed here. Instead adjust the
+     * IKeyGenerator interface or extend it with the RequestContext etc.
+     * 
+     * @param newAlias to use
+     * @param keyAlgorithm for the new key
+     * @param keySpec for the new key
+     * @param context the request context
+     * @return the key data for the new key
+     * @throws SignServerException 
+     */
+    IGeneratedKeyData generateWrappedKey(String newAlias, String keyAlgorithm, String keySpec, RequestContext context) throws OperationUnsupportedException, SignServerException;
 }

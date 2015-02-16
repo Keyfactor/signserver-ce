@@ -646,6 +646,22 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2,
         return workerSession;
     }
 
+    @Override
+    public ICryptoInstance aquireCryptoInstance(String alias, RequestContext context) throws CryptoTokenOfflineException, IllegalRequestException, SignServerException {
+        final KeyEntry entry = getKeyEntry(alias);
+        return new DefaultCryptoInstance(alias, context, ks.getProvider(), entry.getPrivateKey(), entry.getCertificateChain());
+    }
+
+    @Override
+    public void releaseCryptoInstance(ICryptoInstance instance) {
+        // NOP
+    }
+
+    @Override
+    public IGeneratedKeyData generateWrappedKey(String newAlias, String keyAlgorithm, String keySpec, RequestContext context) throws SignServerException, OperationUnsupportedException {
+        throw new OperationUnsupportedException("Generating wrapped key not supported by crypto token");
+    }
+
     private static class KeyEntry {
         private PrivateKey privateKey;
         private Certificate certificate;

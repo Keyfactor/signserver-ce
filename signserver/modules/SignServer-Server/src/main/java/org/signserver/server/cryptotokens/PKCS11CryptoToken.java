@@ -43,8 +43,11 @@ import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.PKCS11Settings;
 import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
+import org.signserver.common.IllegalRequestException;
 import org.signserver.common.KeyTestResult;
+import org.signserver.common.OperationUnsupportedException;
 import org.signserver.common.QueryException;
+import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerStatus;
 import static org.signserver.server.BaseProcessable.PROPERTY_CACHE_PRIVATEKEY;
@@ -501,6 +504,23 @@ public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2,
         } catch (KeyStoreException ex) {
             throw new CryptoTokenOfflineException(ex);
         }
+    }
+
+    @Override
+    public ICryptoInstance aquireCryptoInstance(String alias, RequestContext context) throws CryptoTokenOfflineException, IllegalRequestException, SignServerException {
+        final PrivateKey privateKey = getPrivateKey(alias);
+        final List<Certificate> certificateChain = getCertificateChain(alias);
+        return new DefaultCryptoInstance(alias, context, delegate.getActivatedKeyStore().getProvider(), privateKey, certificateChain);
+    }
+
+    @Override
+    public void releaseCryptoInstance(ICryptoInstance instance) {
+        // NOP
+    }
+
+    @Override
+    public IGeneratedKeyData generateWrappedKey(String newAlias, String keyAlgorithm, String keySpec, RequestContext context) throws OperationUnsupportedException, SignServerException {
+        throw new OperationUnsupportedException("Generating wrapped key not supported by crypto token");
     }
 
     private static class KeyStorePKCS11CryptoToken extends org.cesecore.keys.token.PKCS11CryptoToken {

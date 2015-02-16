@@ -37,6 +37,7 @@ import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.IllegalRequestException;
+import org.signserver.common.OperationUnsupportedException;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
@@ -47,7 +48,9 @@ import org.signserver.common.WorkerStatus;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.server.aliasselectors.AliasSelector;
 import org.signserver.server.cryptotokens.HardCodedCryptoToken;
+import org.signserver.server.cryptotokens.ICryptoInstance;
 import org.signserver.server.cryptotokens.ICryptoTokenV3;
+import org.signserver.server.cryptotokens.IGeneratedKeyData;
 import org.signserver.server.cryptotokens.NullCryptoToken;
 import org.signserver.server.cryptotokens.TokenSearchResults;
 import org.signserver.server.signers.BaseSigner;
@@ -498,6 +501,21 @@ public class BaseProcessableTest extends TestCase {
         @Override
         public boolean removeKey(String alias) throws CryptoTokenOfflineException, KeyStoreException, SignServerException {
             throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public ICryptoInstance aquireCryptoInstance(String alias, RequestContext context) throws CryptoTokenOfflineException, IllegalRequestException, SignServerException {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public void releaseCryptoInstance(ICryptoInstance instance) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public IGeneratedKeyData generateWrappedKey(String newAlias, String keyAlgorithm, String keySpec, RequestContext context) throws OperationUnsupportedException, SignServerException {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
 
     }

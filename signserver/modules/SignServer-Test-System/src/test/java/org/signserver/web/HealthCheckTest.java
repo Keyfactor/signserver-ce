@@ -86,7 +86,7 @@ public class HealthCheckTest extends WebTestCase {
     public void test02CryptoTokenOffline() throws Exception {
         try {
             // Make sure one worker is offline
-            getWorkerSession().removeWorkerProperty(getSignerIdDummy1(), "KEYDATA");
+            getWorkerSession().setWorkerProperty(getSignerIdDummy1(), "KEYSTOREPATH", "_non-existing-path_");
             getWorkerSession().reloadConfiguration(getSignerIdDummy1());
             if (getWorkerSession().getStatus(getSignerIdDummy1()).getFatalErrors().isEmpty()) {
                 throw new Exception("Error in test case. We should have an offline worker to test with");

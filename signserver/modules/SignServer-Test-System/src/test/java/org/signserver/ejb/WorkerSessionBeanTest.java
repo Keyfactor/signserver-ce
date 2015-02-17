@@ -127,14 +127,14 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
         }
         
         // Now change so the crypto token is offline
-        final String keyDataBefore = before.getActiveSignerConfig().getProperty("KEYDATA");
-        workerSession.removeWorkerProperty(getSignerIdDummy1(), "KEYDATA");
+        final String keyDataBefore = before.getActiveSignerConfig().getProperty("KEYSTOREPATH");
+        workerSession.removeWorkerProperty(getSignerIdDummy1(), "KEYSTOREPATH");
         workerSession.reloadConfiguration(getSignerIdDummy1());
         
         final WorkerStatus actual = workerSession.getStatus(getSignerIdDummy1());
         
         // Restore
-        workerSession.setWorkerProperty(getSignerIdDummy1(), "KEYDATA", keyDataBefore);
+        workerSession.setWorkerProperty(getSignerIdDummy1(), "KEYSTOREPATH", keyDataBefore);
         workerSession.reloadConfiguration(getSignerIdDummy1());
         
         assertFalse("getFatalErrors should not be empty", actual.getFatalErrors().isEmpty());
@@ -268,21 +268,6 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
         }
     }
 
-    /**
-     * Test the getSignerCertificateChainBytes method with a worker with no cert chain set.
-     * @throws Exception
-     */
-    @Test
-    public void test11noCertChain() throws Exception {
-        workerSession.removeWorkerProperty(getSignerIdDummy1(), "SIGNERCERTCHAIN");
-        workerSession.reloadConfiguration(getSignerIdDummy1());
-        
-        final List<byte[]> certs = workerSession.getSignerCertificateChainBytes(getSignerIdDummy1());
-        
-        assertNull("Cert chain should be null", certs);
-    }
-    
-    
     /**
      * Test that getCurrentWorkerConfig doesn't include the internal authclients
      * mapping.

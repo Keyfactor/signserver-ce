@@ -248,8 +248,8 @@ public class ModulesTestCase extends TestCase {
         return statusSession;
     }
 
-    protected void addDummySigner1() throws CertificateException, FileNotFoundException {
-        addP12DummySigner(getSignerIdDummy1(), getSignerNameDummy1(), new File(getSignServerHome(), KEYSTORE_SIGNER1_FILE), null, KEYSTORE_SIGNER1_ALIAS);
+    protected void addDummySigner1(boolean autoActivation) throws CertificateException, FileNotFoundException {
+        addP12DummySigner(getSignerIdDummy1(), getSignerNameDummy1(), new File(getSignServerHome(), KEYSTORE_SIGNER1_FILE), autoActivation ? KEYSTORE_PASSWORD : null, KEYSTORE_SIGNER1_ALIAS);
     }
 
     protected int getSignerIdDummy1() {

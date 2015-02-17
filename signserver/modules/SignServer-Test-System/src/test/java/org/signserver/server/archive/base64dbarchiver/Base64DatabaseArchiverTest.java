@@ -52,8 +52,8 @@ public class Base64DatabaseArchiverTest extends ArchiveTestCase {
 
     @Test
     public void test00SetupDatabase() throws Exception {
-        addSoftDummySigner(getSignerIdDummy1(), getSignerNameDummy1());
-        addSoftTimeStampSigner(getSignerIdTimeStampSigner1(), getSignerNameTimeStampSigner1());
+        addDummySigner(getSignerIdDummy1(), getSignerNameDummy1());
+        addTimeStampSigner(getSignerIdTimeStampSigner1(), getSignerNameTimeStampSigner1());
     }
         
     /**

@@ -1,7 +1,7 @@
 # ------------ Audit log configuration ---------------------
 # I you want to use integrity protection of the audit log (in the IntegrityProtectedDevice) you
 # must also configure integrity protection in conf/databaseprotection.properties
-#
+# 
 
 #### Secure audit log configuration.
 

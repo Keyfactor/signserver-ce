@@ -63,7 +63,7 @@ public class XAdESSignerTest extends ModulesTestCase {
         LOG.info("testBasicSigningXAdESFormT");
         try {
 
-            addSoftTimeStampSigner(TS_ID, TS_NAME);
+            addTimeStampSigner(TS_ID, TS_NAME);
             addSigner(XAdESSigner.class.getName(), WORKER_ID, WORKER_NAME);
             workerSession.setWorkerProperty(TS_ID, "DEFAULTTSAPOLICYOID", "1.2.3");
             workerSession.setWorkerProperty(WORKER_ID, "XADESFORM", "T");

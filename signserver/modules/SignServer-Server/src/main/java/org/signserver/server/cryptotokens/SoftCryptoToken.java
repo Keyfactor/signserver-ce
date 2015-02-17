@@ -58,7 +58,9 @@ import org.signserver.ejb.interfaces.IWorkerSession;
  * 
  * @author Philip Vendil
  * @version $Id$
+ * @deprecated This crypto token lacks a lot of functionality. Use any of the other.
  */
+@Deprecated
 public class SoftCryptoToken implements ICryptoToken {
 
     /** Logger for this class. */

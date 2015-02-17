@@ -56,7 +56,7 @@ public class UsernamePasswordAuthorizerTest extends ModulesTestCase {
     @Test
     public void test00SetupDatabase() throws Exception {
         addDummySigner1();
-        addSoftSODSigner(getSignerIdSODSigner1(), getSignerNameSODSigner1());
+        addSigner("org.signserver.module.mrtdsodsigner.MRTDSODSigner", getSignerIdSODSigner1(), getSignerNameSODSigner1());
 
         // Set auth type
         workerSession.setWorkerProperty(getSignerIdDummy1(), "AUTHTYPE",

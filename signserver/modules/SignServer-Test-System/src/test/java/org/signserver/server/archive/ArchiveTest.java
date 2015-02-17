@@ -23,7 +23,6 @@ import org.cesecore.util.query.elems.RelationalOperator;
 import org.cesecore.util.query.elems.Term;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
-import static org.junit.Assert.*;
 import org.junit.Test;
 import org.signserver.common.ArchiveMetadata;
 
@@ -43,7 +42,7 @@ public class ArchiveTest extends ArchiveTestCase {
     	
     @Test
     public void test00SetupDatabase() throws Exception {
-        addSoftDummySigner(getSignerIdDummy1(), getSignerNameDummy1());
+        addDummySigner(getSignerIdDummy1(), getSignerNameDummy1());
         getWorkerSession().setWorkerProperty(getSignerIdDummy1(), 
                 "ARCHIVE", "true");
         getWorkerSession().reloadConfiguration(getSignerIdDummy1());

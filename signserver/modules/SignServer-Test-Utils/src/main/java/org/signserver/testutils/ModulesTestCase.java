@@ -81,7 +81,7 @@ public class ModulesTestCase extends TestCase {
     private static final String KEYSTORE_SIGNER1_ALIAS = "Signer 1";
     private static final String KEYSTORE_TSSIGNER1_FILE = "res/test/dss10/dss10_tssigner1.p12";
     private static final String KEYSTORE_TSSIGNER1_ALIAS = "TS Signer 1";
-    private static final String KEYSTORE_PASSWORD = "foo123";
+    public static final String KEYSTORE_PASSWORD = "foo123";
 
     /**
      * SerialNumber: 32:4d:41:38:af:02:c1:3c
@@ -315,7 +315,7 @@ public class ModulesTestCase extends TestCase {
             final int signerId, final String signerName)
         throws CertificateException, FileNotFoundException {
         addP12DummySigner(className, signerId, signerName,
-                new File(getSignServerHome(), KEYSTORE_SIGNER1_FILE), KEYSTORE_PASSWORD, KEYSTORE_SIGNER1_ALIAS);
+                new File(getSignServerHome(), KEYSTORE_SIGNER1_FILE), null, KEYSTORE_SIGNER1_ALIAS);
     }
 
     /**

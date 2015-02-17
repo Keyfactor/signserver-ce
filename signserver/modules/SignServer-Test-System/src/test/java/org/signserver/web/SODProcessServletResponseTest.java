@@ -26,8 +26,8 @@ import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.module.mrtdsodsigner.MRTDSODSigner;
 import org.signserver.server.signers.EchoRequestMetadataSigner;
 
-import static org.junit.Assert.*;
 import org.junit.Test;
+import org.signserver.testutils.ModulesTestCase;
 
 /**
  * Tests that the right HTTP status codes are returned in different situations.
@@ -56,6 +56,7 @@ public class SODProcessServletResponseTest extends WebTestCase {
     public void test00SetupDatabase() throws Exception {
         addSigner(MRTDSODSigner.class.getName());
         addSigner(EchoRequestMetadataSigner.class.getName(), 123, "DummySigner123");
+        getWorkerSession().activateSigner(getSignerIdDummy1(), ModulesTestCase.KEYSTORE_PASSWORD);
     }
 
     /**
@@ -163,7 +164,7 @@ public class SODProcessServletResponseTest extends WebTestCase {
         } finally {
             // Activat crypto token
             try {
-                getWorkerSession().activateSigner(getSignerIdDummy1(), "");
+                getWorkerSession().activateSigner(getSignerIdDummy1(), "foo123");
             } catch (CryptoTokenAuthenticationFailureException ex) {
                 fail(ex.getMessage());
             } catch (CryptoTokenOfflineException ex) {
@@ -178,7 +179,7 @@ public class SODProcessServletResponseTest extends WebTestCase {
      * Test that when an exception occurs status code 500 is returned.
      */
     @Test
-    public void test05HttpStatus500_exception() {
+    public void test05HttpStatus500_exception() throws Exception {
         Map<String, String> fields = new HashMap<String, String>();
         fields.put("workerName", getSignerNameDummy1());
         fields.put("dataGroup1", "Yy==");
@@ -187,19 +188,25 @@ public class SODProcessServletResponseTest extends WebTestCase {
         fields.put("encoding", "base64");
 
         // Set any bad properties that will make the signer fail with an exception
-        final String originalKeyData = getWorkerSession().getCurrentWorkerConfig(
-                getSignerIdDummy1()).getProperty(KEYDATA);
-        final String badKeyData = "_any-bad-key-data_";
-        getWorkerSession().setWorkerProperty(getSignerIdDummy1(), KEYDATA,
+        final String originalSignatureAlgorithm = getWorkerSession().getCurrentWorkerConfig(
+                getSignerIdDummy1()).getProperty("SIGNATUREALGORITHM");
+        
+        final String badKeyData = "_any-non-existing-alg_";
+        getWorkerSession().setWorkerProperty(getSignerIdDummy1(), "SIGNATUREALGORITHM",
                 badKeyData);
         getWorkerSession().reloadConfiguration(getSignerIdDummy1());
+        getWorkerSession().activateSigner(getSignerIdDummy1(), ModulesTestCase.KEYSTORE_PASSWORD);
 
         try {
             assertStatusReturned(fields, 500, SKIP_MULTIPART);
         } finally {
-            // Restore KEYDATA
-            getWorkerSession().setWorkerProperty(getSignerIdDummy1(), KEYDATA,
-                    originalKeyData);
+            // Restore
+            if (originalSignatureAlgorithm == null) {
+                getWorkerSession().removeWorkerProperty(getSignerIdDummy1(), "SIGNATUREALGORITHM");
+            } else {
+                getWorkerSession().setWorkerProperty(getSignerIdDummy1(), "SIGNATUREALGORITHM",
+                    originalSignatureAlgorithm);
+            }
             getWorkerSession().reloadConfiguration(getSignerIdDummy1());
         }
     }

@@ -302,20 +302,20 @@ public class ModulesTestCase extends TestCase {
     	return PDFSIGNER1_NAME;
     }
 
-    protected void addSigner(final String className) 
+    protected void addSigner(final String className, boolean autoActivate) 
             throws CertificateException, FileNotFoundException {
-        addSigner(className, DUMMY1_SIGNER_ID, DUMMY1_SIGNER_NAME);
+        addSigner(className, DUMMY1_SIGNER_ID, DUMMY1_SIGNER_NAME, autoActivate);
     }
     
-    protected void addDummySigner(final int signerId, final String signerName) throws CertificateException, FileNotFoundException {
-        addSigner("org.signserver.module.xmlsigner.XMLSigner", signerId, signerName);
+    protected void addDummySigner(final int signerId, final String signerName, final boolean autoActivate) throws CertificateException, FileNotFoundException {
+        addSigner("org.signserver.module.xmlsigner.XMLSigner", signerId, signerName, autoActivate);
     }
     
     protected void addSigner(final String className,
-            final int signerId, final String signerName)
+            final int signerId, final String signerName, final boolean autoActivate)
         throws CertificateException, FileNotFoundException {
         addP12DummySigner(className, signerId, signerName,
-                new File(getSignServerHome(), KEYSTORE_SIGNER1_FILE), null, KEYSTORE_SIGNER1_ALIAS);
+                new File(getSignServerHome(), KEYSTORE_SIGNER1_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_SIGNER1_ALIAS);
     }
 
     /**
@@ -439,8 +439,8 @@ public class ModulesTestCase extends TestCase {
         }
     }    
     
-    protected void addTimeStampSigner(final int signerId, final String signerName) throws CertificateException, FileNotFoundException {
-        addP12DummySigner("org.signserver.module.tsa.TimeStampSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_TSSIGNER1_FILE), KEYSTORE_PASSWORD, KEYSTORE_TSSIGNER1_ALIAS);
+    protected void addTimeStampSigner(final int signerId, final String signerName, final boolean autoActivate) throws CertificateException, FileNotFoundException {
+        addP12DummySigner("org.signserver.module.tsa.TimeStampSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_TSSIGNER1_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_TSSIGNER1_ALIAS);
     }
     
     

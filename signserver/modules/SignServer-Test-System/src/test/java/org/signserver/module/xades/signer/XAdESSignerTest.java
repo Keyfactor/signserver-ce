@@ -63,15 +63,13 @@ public class XAdESSignerTest extends ModulesTestCase {
         LOG.info("testBasicSigningXAdESFormT");
         try {
 
-            addTimeStampSigner(TS_ID, TS_NAME);
-            addSigner(XAdESSigner.class.getName(), WORKER_ID, WORKER_NAME);
+            addTimeStampSigner(TS_ID, TS_NAME, true);
+            addSigner(XAdESSigner.class.getName(), WORKER_ID, WORKER_NAME, true);
             workerSession.setWorkerProperty(TS_ID, "DEFAULTTSAPOLICYOID", "1.2.3");
             workerSession.setWorkerProperty(WORKER_ID, "XADESFORM", "T");
             workerSession.setWorkerProperty(WORKER_ID, "TSA_WORKER", TS_NAME);
             workerSession.reloadConfiguration(TS_ID);
             workerSession.reloadConfiguration(WORKER_ID);
-            workerSession.activateSigner(TS_ID, KEYSTORE_PASSWORD);
-            workerSession.activateSigner(WORKER_ID, KEYSTORE_PASSWORD);
 
             RequestContext requestContext = new RequestContext();
             requestContext.put(RequestContext.TRANSACTION_ID, "0000-100-1");

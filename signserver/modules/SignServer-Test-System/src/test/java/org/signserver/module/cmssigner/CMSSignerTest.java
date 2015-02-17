@@ -68,7 +68,7 @@ public class CMSSignerTest extends ModulesTestCase {
 
     @Test
     public void test00SetupDatabase() throws Exception {
-        addSigner("org.signserver.module.cmssigner.CMSSigner");
+        addSigner("org.signserver.module.cmssigner.CMSSigner", true);
     }
 
     /**

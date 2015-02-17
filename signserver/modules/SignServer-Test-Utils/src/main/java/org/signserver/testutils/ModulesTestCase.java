@@ -286,6 +286,11 @@ public class ModulesTestCase extends TestCase {
                 getSignerIdPDFSigner1(), getSignerNamePDFSigner1(), new File(getSignServerHome(), KEYSTORE_SIGNER1_FILE), KEYSTORE_PASSWORD, KEYSTORE_SIGNER1_ALIAS);
     }
     
+    protected void addPDFSigner(final int workerId, final String workerName, final boolean autoActivate) throws FileNotFoundException {
+        addP12DummySigner("org.signserver.module.pdfsigner.PDFSigner",
+                workerId, workerName, new File(getSignServerHome(), KEYSTORE_SIGNER1_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_SIGNER1_ALIAS);
+    }
+    
     protected int getSignerIdCMSSigner1() {
         return CMSSIGNER1_ID;
     }

@@ -69,7 +69,7 @@ public class SignerStatusReportWorkerTest extends WebTestCase {
     private static final int WORKERID_SIGNER3 = 5676;
     private static final String WORKER_SIGNER3 = "TestXMLSigner";
     
-    private static final int[] WORKERS = new int[] {5676, 5679, 5681, 5682, 5683, 5802, 5803};
+    private static final int[] WORKERS = new int[] {WORKERID_WORKER, WORKERID_SIGNER1, WORKERID_SIGNER2, WORKERID_SIGNER3};
 
     private SignerStatusReportParser parser = new SignerStatusReportParser();
     
@@ -92,11 +92,9 @@ public class SignerStatusReportWorkerTest extends WebTestCase {
      */
     @Test
     public void test00SetupDatabase() throws Exception {
-
-        setProperties(new File(getSignServerHome(), "res/test/test-xmlsigner-configuration.properties"));
-        workerSession.reloadConfiguration(WORKERID_SIGNER1);
-        workerSession.reloadConfiguration(WORKERID_SIGNER2);
-        workerSession.reloadConfiguration(WORKERID_SIGNER3);
+        addDummySigner(WORKERID_SIGNER1, WORKER_SIGNER1, false);
+        addDummySigner(WORKERID_SIGNER2, WORKER_SIGNER2, false);
+        addDummySigner(WORKERID_SIGNER3, WORKER_SIGNER3, false);
 
         // Setup service
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
@@ -108,6 +106,9 @@ public class SignerStatusReportWorkerTest extends WebTestCase {
                 WORKER_SIGNER1+","+WORKER_SIGNER2+","+WORKER_SIGNER3);
 
         workerSession.reloadConfiguration(WORKERID_WORKER);
+        workerSession.activateSigner(WORKERID_SIGNER1, "foo123");
+        workerSession.activateSigner(WORKERID_SIGNER2, "foo123");
+        workerSession.activateSigner(WORKERID_SIGNER3, "foo123");
     }
 
     @Test
@@ -163,15 +164,12 @@ public class SignerStatusReportWorkerTest extends WebTestCase {
 
         assertNotNull("Worker 1 present", status.get(WORKER_SIGNER1));
         assertEquals("Worker 1 OFFLINE", "OFFLINE", status.get(WORKER_SIGNER1).get("status"));
-        assertNotNull("Worker 1 signings", status.get(WORKER_SIGNER1).get("signings"));
 
         assertNotNull("Worker 2 present", status.get(WORKER_SIGNER2));
         assertEquals("Worker 2 active", "ACTIVE", status.get(WORKER_SIGNER2).get("status"));
-        assertNotNull("Worker 2 signings", status.get(WORKER_SIGNER2).get("signings"));
 
         assertNotNull("Worker 3 present", status.get(WORKER_SIGNER3));
         assertEquals("Worker 3 active", "ACTIVE", status.get(WORKER_SIGNER3).get("status"));
-        assertNotNull("Worker 3 signings", status.get(WORKER_SIGNER3).get("signings"));
         
         // test that there is no fatal errors before removing the WORKERS property
         WorkerStatus workerStatus = workerSession.getStatus(WORKERID_WORKER);

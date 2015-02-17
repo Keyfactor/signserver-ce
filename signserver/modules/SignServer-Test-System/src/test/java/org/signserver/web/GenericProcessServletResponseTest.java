@@ -27,7 +27,6 @@ import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.module.xmlvalidator.XMLValidatorTestData;
 import org.signserver.server.signers.EchoRequestMetadataSigner;
 
-import static org.junit.Assert.*;
 import org.junit.Test;
 import org.signserver.testutils.ModulesTestCase;
 

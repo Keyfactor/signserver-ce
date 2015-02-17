@@ -42,8 +42,6 @@ public class TimeStampCommandTest extends ModulesTestCase {
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(TimeStampCommandTest.class);
 
-    private static final int WORKER1 = 8911;
-
     private final CLITestHelper cli = getClientCLI();
     
     private static final String SAMPLE_QUERY_FILE = "res/test/sample.tsq";
@@ -61,8 +59,10 @@ public class TimeStampCommandTest extends ModulesTestCase {
 	
     @Test
     public void test00SetupDatabase() throws Exception {
-        setProperties(getClass().getResourceAsStream("ts-cli-configuration1.properties"));
-        workerSession.reloadConfiguration(WORKER1);
+        addTimeStampSigner(getSignerIdTimeStampSigner1(), getSignerNameTimeStampSigner1(), true);
+        workerSession.setWorkerProperty(getSignerIdTimeStampSigner1(), "DEFAULTTSAPOLICYOID", "1.2.13.1");
+        workerSession.setWorkerProperty(getSignerIdTimeStampSigner1(), "ACCEPTEDPOLICIES", "1.2.13.1;1.2.13.9");
+        workerSession.reloadConfiguration(getSignerIdTimeStampSigner1());
     }
 
     @Test
@@ -79,7 +79,7 @@ public class TimeStampCommandTest extends ModulesTestCase {
     public void test02requestATimestamp() throws Exception {
         File responseFile = File.createTempFile("signserver-" + this.getClass().getName() + "-response1-", null);
         responseFile.deleteOnExit();
-        assertEquals(CommandLineInterface.RETURN_SUCCESS, cli.execute("timestamp", "-instr", "Any text we want to have a timestamp for...123", "-outrep", responseFile.getAbsolutePath(), "-url", "http://localhost:8080/signserver/tsa?workerId=" + WORKER1));
+        assertEquals(CommandLineInterface.RETURN_SUCCESS, cli.execute("timestamp", "-instr", "Any text we want to have a timestamp for...123", "-outrep", responseFile.getAbsolutePath(), "-url", "http://localhost:8080/signserver/tsa?workerId=" + getSignerIdTimeStampSigner1()));
         InputStream in = null;
         try {
             in = new FileInputStream(responseFile);
@@ -103,7 +103,7 @@ public class TimeStampCommandTest extends ModulesTestCase {
         File responseFile = File.createTempFile("signserver-" + this.getClass().getName() + "-response2-", null);
         responseFile.deleteOnExit();
         assertEquals(CommandLineInterface.RETURN_SUCCESS, cli.execute("timestamp", "-instr", "Any text we want to have a timestamp for...123", "-outrep", responseFile.getAbsolutePath(), 
-                "-url", "https://" + getHTTPHost() + ":" + getPublicHTTPSPort() + "/signserver/tsa?workerId=" + WORKER1, 
+                "-url", "https://" + getHTTPHost() + ":" + getPublicHTTPSPort() + "/signserver/tsa?workerId=" + getSignerIdTimeStampSigner1(), 
                 "-truststore", getTestUtils().getTruststoreFile().getAbsolutePath(), "-truststorepwd", getTestUtils().getTrustStorePassword()));
         InputStream in = null;
         try {
@@ -170,6 +170,6 @@ public class TimeStampCommandTest extends ModulesTestCase {
 
     @Test
     public void test99TearDownDatabase() throws Exception {
-        removeWorker(WORKER1);
+        removeWorker(getSignerIdTimeStampSigner1());
     }
 }

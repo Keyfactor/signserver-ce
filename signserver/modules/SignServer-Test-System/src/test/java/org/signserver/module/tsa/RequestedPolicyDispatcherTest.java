@@ -15,6 +15,7 @@ package org.signserver.module.tsa;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.cert.Certificate;
+import java.util.Properties;
 import java.util.Random;
 import org.bouncycastle.asn1.cmp.PKIFailureInfo;
 import org.bouncycastle.asn1.cmp.PKIStatus;
@@ -75,11 +76,42 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
      */
     @Test
     public void test00SetupDatabase() throws Exception {
-        setProperties(getClass().getResourceAsStream("ts-setup1.properties"));
+        
+        Properties conf = new Properties();
+        // TSDispatcher
+        conf.setProperty("GLOB.WORKER8910.CLASSPATH", "org.signserver.module.tsa.RequestedPolicyDispatcher");
+        conf.setProperty("GLOB.WORKER8910.SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.HardCodedCryptoToken");
+        conf.setProperty("WORKER8910.NAME", "TestTSDispatcher1");
+        conf.setProperty("WORKER8910.AUTHTYPE", "NOAUTH");
+        conf.setProperty("WORKER8910.MAPPINGS", "1.2.13.1:TestTSUnit1;1.2.13.2:TestTSUnit2;1.2.13.3:TestTSUnit3");
+        conf.setProperty("WORKER8910.DEFAULTWORKER", "TestTSUnit1");
+        
+        // TSDispatcher2
+        conf.setProperty("GLOB.WORKER8909.CLASSPATH", "org.signserver.module.tsa.RequestedPolicyDispatcher");
+        conf.setProperty("GLOB.WORKER8909.SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.HardCodedCryptoToken");
+        conf.setProperty("WORKER8909.NAME", "TestTSDispatcher2");
+        conf.setProperty("WORKER8909.AUTHTYPE", "NOAUTH");
+        conf.setProperty("WORKER8909.MAPPINGS", "1.2.13.1:TestTSUnit1;1.2.13.2:TestTSUnit2;1.2.13.3:TestTSUnit3");
+        conf.setProperty("WORKER8909.DEFAULTWORKER", "TestTSUnit1");
+        conf.setProperty("WORKER8909.USEDEFAULTIFMISMATCH", "true");
+        
+        setProperties(conf);
         workerSession.reloadConfiguration(DISPATCHER0);
         workerSession.reloadConfiguration(DISPATCHER9);
+        
+        addTimeStampSigner(WORKER1, "TestTSUnit1", true);
+        workerSession.setWorkerProperty(WORKER1, "DEFAULTTSAPOLICYOID", "1.2.13.1");
+        workerSession.setWorkerProperty(WORKER1, "ACCEPTEDPOLICIES", "1.2.13.1;1.2.13.9");
         workerSession.reloadConfiguration(WORKER1);
+
+        addTimeStampSigner(WORKER2, "TestTSUnit2", true);
+        workerSession.setWorkerProperty(WORKER2, "DEFAULTTSAPOLICYOID", "1.2.13.2");
+        workerSession.setWorkerProperty(WORKER2, "ACCEPTEDPOLICIES", "1.2.13.2");
         workerSession.reloadConfiguration(WORKER2);
+        
+        addTimeStampSigner(WORKER3, "TestTSUnit3", true);
+        workerSession.setWorkerProperty(WORKER3, "DEFAULTTSAPOLICYOID", "1.2.13.3");
+        workerSession.setWorkerProperty(WORKER3, "ACCEPTEDPOLICIES", "1.2.13.3");
         workerSession.reloadConfiguration(WORKER3);
     }
 

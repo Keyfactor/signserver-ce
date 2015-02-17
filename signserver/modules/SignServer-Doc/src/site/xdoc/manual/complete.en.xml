@@ -3516,7 +3516,7 @@ MAX_FORWARDED_ADDRESSES=10
 <b>AUTHTYPE</b> = org.signserver.server.DispatchedAuthorizer    
                         </p>
                         <p>
-<b>AUTHORIZEALLDISPATCHERS</b> = True, if any Dispatcher should be authorized. (Default: true, currently only true is supported)
+<b>AUTHORIZEALLDISPATCHERS</b> = True, if any Dispatcher should be authorized. (Required) (currently only true is supported)
                         </p>
                         <p>
 Only accepts requests that has gone through a Dispatcher. This Authorizer only checks the present of the DISPATCHER_AUTHORIZED_CLIENT field in the request context to know that the request has passed a Dispatcher.

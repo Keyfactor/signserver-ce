@@ -76,6 +76,7 @@ public class TokenEntriesCLITest extends ModulesTestCase {
             workerSession.setWorkerProperty(tokenId, "KEYSTOREPATH", ks.getAbsolutePath());
             workerSession.setWorkerProperty(tokenId, "KEYSTOREPASSWORD", "foo123");
             workerSession.reloadConfiguration(tokenId);
+            workerSession.activateSigner(tokenId, "foo123");
             workerSession.generateSignerKey(tokenId, "RSA", "512", testKeyAlias1, "foo123".toCharArray());
             
             assertEquals(CommandLineInterface.RETURN_SUCCESS,
@@ -109,6 +110,7 @@ public class TokenEntriesCLITest extends ModulesTestCase {
             workerSession.setWorkerProperty(tokenId, "KEYSTOREPATH", ks.getAbsolutePath());
             workerSession.setWorkerProperty(tokenId, "KEYSTOREPASSWORD", "foo123");
             workerSession.reloadConfiguration(tokenId);
+            workerSession.activateSigner(tokenId, "foo123");
             
             for (String alias : aliases) {
                 workerSession.generateSignerKey(tokenId, "RSA", "512", alias, "foo123".toCharArray());

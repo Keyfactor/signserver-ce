@@ -97,7 +97,7 @@ public class SystemLoggingTest extends ModulesTestCase {
     @Test
     public void test00SetupDatabase() throws Exception {
         LOG.info(">test00SetupDatabase");
-        addDummySigner(signerId, "TestSigner6000");
+        addDummySigner(signerId, "TestSigner6000", true);
         workerSession.setWorkerProperty(signerId, "WORKERLOGGER", "org.signserver.server.log.SecurityEventsWorkerLogger");
         workerSession.reloadConfiguration(signerId);
     }

@@ -37,9 +37,7 @@ import org.signserver.testutils.ModulesTestCase;
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class SODProcessServletResponseTest extends WebTestCase {
-    
-    private static final String KEYDATA = "KEYDATA";
-    
+
     /** multipart/form-data is not supported by the SODProcessServlet. */
     private static final boolean SKIP_MULTIPART = true;
 
@@ -54,8 +52,8 @@ public class SODProcessServletResponseTest extends WebTestCase {
      */
     @Test
     public void test00SetupDatabase() throws Exception {
-        addSigner(MRTDSODSigner.class.getName());
-        addSigner(EchoRequestMetadataSigner.class.getName(), 123, "DummySigner123");
+        addSigner(MRTDSODSigner.class.getName(), false);
+        addSigner(EchoRequestMetadataSigner.class.getName(), 123, "DummySigner123", true);
         getWorkerSession().activateSigner(getSignerIdDummy1(), ModulesTestCase.KEYSTORE_PASSWORD);
     }
 

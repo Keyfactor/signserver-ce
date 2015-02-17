@@ -88,7 +88,7 @@ public class ArchiveAPITest extends ModulesTestCase {
 
     @Test
     public void test00SetupDatabase() throws Exception {
-        addSigner(Test1Signer.class.getName());
+        addSigner(Test1Signer.class.getName(), true);
     }
 
     /**

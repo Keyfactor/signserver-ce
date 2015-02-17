@@ -46,7 +46,7 @@ public class UsernameAuthorizerTest extends ModulesTestCase {
 
     @Test
     public void test00SetupDatabase() throws Exception {
-        addDummySigner1();
+        addDummySigner1(true);
 
         // Set auth type
         workerSession.setWorkerProperty(getSignerIdDummy1(), "AUTHTYPE",

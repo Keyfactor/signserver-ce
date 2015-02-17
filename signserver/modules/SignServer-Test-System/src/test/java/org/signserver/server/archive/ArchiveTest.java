@@ -42,7 +42,7 @@ public class ArchiveTest extends ArchiveTestCase {
     	
     @Test
     public void test00SetupDatabase() throws Exception {
-        addDummySigner(getSignerIdDummy1(), getSignerNameDummy1());
+        addDummySigner(getSignerIdDummy1(), getSignerNameDummy1(), true);
         getWorkerSession().setWorkerProperty(getSignerIdDummy1(), 
                 "ARCHIVE", "true");
         getWorkerSession().reloadConfiguration(getSignerIdDummy1());

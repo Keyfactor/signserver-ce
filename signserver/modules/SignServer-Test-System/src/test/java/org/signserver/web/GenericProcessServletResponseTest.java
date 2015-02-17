@@ -53,10 +53,10 @@ public class GenericProcessServletResponseTest extends WebTestCase {
      */
     @Test
     public void test00SetupDatabase() throws Exception {
-        addDummySigner1();
+        addDummySigner1(false);
         addCMSSigner1();
         addXMLValidator();
-        addSigner(EchoRequestMetadataSigner.class.getName(), 123, "DummySigner123");
+        addSigner(EchoRequestMetadataSigner.class.getName(), 123, "DummySigner123", true);
         getWorkerSession().activateSigner(getSignerIdDummy1(), ModulesTestCase.KEYSTORE_PASSWORD);
         getWorkerSession().activateSigner(getSignerIdCMSSigner1(), ModulesTestCase.KEYSTORE_PASSWORD);
     }

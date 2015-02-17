@@ -60,7 +60,7 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
         workerSession.setWorkerProperty(3, "NAME", "testWorker");
         workerSession.reloadConfiguration(3);
                 
-        addDummySigner1();
+        addDummySigner1(true);
     }
 
     /*

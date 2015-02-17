@@ -57,7 +57,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
     @Test
     public void test00SetupDatabase() throws Exception {
         LOG.info(">test00SetupDatabase");
-        addDummySigner1();
+        addDummySigner1(true);
 
         // Set auth type
         workerSession.setWorkerProperty(getSignerIdDummy1(), "AUTHTYPE",

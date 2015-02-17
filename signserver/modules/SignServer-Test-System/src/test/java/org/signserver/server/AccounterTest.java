@@ -44,7 +44,7 @@ public class AccounterTest extends ModulesTestCase {
     public void testNoAccounter() throws Exception {
         LOG.info("testNoAccounter");
         try {
-            addSigner(Test1Signer.class.getName());
+            addSigner(Test1Signer.class.getName(), true);
             
             // Setup Accounter
             getWorkerSession().setWorkerProperty(getSignerIdDummy1(), "ACCOUNTER", NoAccounter.class.getName());
@@ -69,7 +69,7 @@ public class AccounterTest extends ModulesTestCase {
     public void testGlobalConfigSampleAccounter() throws Exception {
         LOG.info("testGlobalConfigSampleAccounter");
         try {
-            addSigner(Test1Signer.class.getName());
+            addSigner(Test1Signer.class.getName(), true);
             
             // Setup Accounter
             getWorkerSession().setWorkerProperty(getSignerIdDummy1(), "ACCOUNTER", GlobalConfigSampleAccounter.class.getName());

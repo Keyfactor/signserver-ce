@@ -64,8 +64,7 @@ public class HealthCheckTest extends WebTestCase {
      */
     @Test
     public void test00SetupDatabase() throws Exception {
-        addDummySigner1();
-        getWorkerSession().activateSigner(getSignerIdDummy1(), KEYSTORE_PASSWORD);
+        addDummySigner1(true);
     }
 
     /**

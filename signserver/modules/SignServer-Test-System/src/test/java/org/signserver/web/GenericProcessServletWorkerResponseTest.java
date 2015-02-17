@@ -53,7 +53,7 @@ public class GenericProcessServletWorkerResponseTest extends WebTestCase {
 
 	@Before
 	public void setUp() throws Exception {
-		addDummySigner1();
+		addDummySigner1(true);
 		currentWorkerName = this.getSignerNameDummy1();
 		// test by default will use a URI on the form /signserver/worker/...
 		trailingSlash = true;

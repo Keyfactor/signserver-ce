@@ -440,7 +440,7 @@ public class ModulesTestCase extends TestCase {
     }    
     
     protected void addTimeStampSigner(final int signerId, final String signerName) throws CertificateException, FileNotFoundException {
-        addP12DummySigner(signerId, signerName, new File(getSignServerHome(), KEYSTORE_TSSIGNER1_FILE), KEYSTORE_PASSWORD, KEYSTORE_TSSIGNER1_ALIAS);
+        addP12DummySigner("org.signserver.module.tsa.TimeStampSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_TSSIGNER1_FILE), KEYSTORE_PASSWORD, KEYSTORE_TSSIGNER1_ALIAS);
     }
     
     

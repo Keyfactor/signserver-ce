@@ -70,6 +70,8 @@ public class XAdESSignerTest extends ModulesTestCase {
             workerSession.setWorkerProperty(WORKER_ID, "TSA_WORKER", TS_NAME);
             workerSession.reloadConfiguration(TS_ID);
             workerSession.reloadConfiguration(WORKER_ID);
+            workerSession.activateSigner(TS_ID, KEYSTORE_PASSWORD);
+            workerSession.activateSigner(WORKER_ID, KEYSTORE_PASSWORD);
 
             RequestContext requestContext = new RequestContext();
             requestContext.put(RequestContext.TRANSACTION_ID, "0000-100-1");

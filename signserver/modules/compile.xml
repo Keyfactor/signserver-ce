@@ -447,15 +447,6 @@ SHA-256 checksum: ${zip.bin.sha256}
     <target name="test:signserver:pre-run">
         <fail message="Please set the environment variable 'SIGNSERVER_HOME' before running the junit tests." unless="env.SIGNSERVER_HOME"/>
         <echo> Important, in order for all tests to complete must the web service and validation web service interfaces be enabled, and HTTPS be turned on.</echo>
-        <echo> For Test-SignServerWS to complete the following must be run first:
-            bin/signserver.sh setproperties res/test/test-signserverws-configuration.properties
-            bin/signserver.sh reload 7001
-        </echo>
-        <echo> For Test-ValidationWS to complete the following must be run first:
-            bin/signserver.sh setproperties res/test/test-validationws-configuration.properties
-            bin/signserver.sh reload 7101
-        </echo>
-
         <delete dir="${test.dir}/reports" />
         <mkdir dir="${test.dir}/reports/html" />
     </target>

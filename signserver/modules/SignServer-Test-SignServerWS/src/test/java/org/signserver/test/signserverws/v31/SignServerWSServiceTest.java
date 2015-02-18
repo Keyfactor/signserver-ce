@@ -22,9 +22,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import javax.xml.namespace.QName;
-import junit.framework.TestCase;
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Base64;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
 import org.signserver.common.RequestAndResponseManager;
@@ -52,6 +53,7 @@ import org.signserver.testutils.ModulesTestCase;
  * @author Markus Kilås
  * @version $Id$
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class SignServerWSServiceTest extends ModulesTestCase {
 
     /** Logger for this class. */
@@ -146,11 +148,15 @@ public class SignServerWSServiceTest extends ModulesTestCase {
     protected String getWsEndPointUrl() {
     	return ENDPOINT;
     }
+    
+    public void test00SetupDatabase() throws Exception {
+        addDummySigner(7001, "SignServerWSServiceTest_XMLSigner1", true);
+    }
 
     // TODO add test methods here. The name must begin with 'test'. For example:
     // public void testHello() {}
 
-    public void testGetStatusExisting() {
+    public void test01GetStatusExisting() {
         try {
             final List<WorkerStatusWS> statuses = ws.getStatus(WORKERID);
             assertEquals("Number of results", 1, statuses.size());
@@ -166,7 +172,7 @@ public class SignServerWSServiceTest extends ModulesTestCase {
         }
     }
 
-    public void testGetStatusNonExisting() {
+    public void test02GetStatusNonExisting() {
         try {
             final List<WorkerStatusWS> statuses
                     = ws.getStatus(NONEXISTING_WORKERID);
@@ -177,7 +183,7 @@ public class SignServerWSServiceTest extends ModulesTestCase {
         }
     }
 
-    public void testProcessOk() {
+    public void test03ProcessOk() {
         try {
             final List<ProcessRequestWS> requests = new ArrayList<ProcessRequestWS>();
             final ProcessRequestWS request = new ProcessRequestWS();
@@ -208,7 +214,7 @@ public class SignServerWSServiceTest extends ModulesTestCase {
         }
     }
 
-    public void testProcessNonExisting() {
+    public void test04ProcessNonExisting() {
         try {
             final List<ProcessRequestWS> requests = new ArrayList<ProcessRequestWS>();
             final ProcessRequestWS request = new ProcessRequestWS();
@@ -233,7 +239,7 @@ public class SignServerWSServiceTest extends ModulesTestCase {
         }
     }
 
-    public void testProcessIllegalRequest() {
+    public void test05ProcessIllegalRequest() {
         try {
             final List<ProcessRequestWS> requests = new ArrayList<ProcessRequestWS>();
             final ProcessRequestWS request = new ProcessRequestWS();
@@ -256,6 +262,10 @@ public class SignServerWSServiceTest extends ModulesTestCase {
         } catch (SignServerException_Exception ex) {
             // OK (sort of, better would have been an illegalrequest)
         }
+    }
+    
+    public void test99RemoveDatabase() throws Exception {
+        removeWorker(7001);
     }
 
     private String toString(WorkerStatusWS status) {

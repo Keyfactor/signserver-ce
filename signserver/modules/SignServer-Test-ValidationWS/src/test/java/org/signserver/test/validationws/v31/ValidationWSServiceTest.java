@@ -19,8 +19,10 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Properties;
 import javax.xml.namespace.QName;
-import junit.framework.TestCase;
 import org.apache.log4j.Logger;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
+import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.validationservice.common.ValidationServiceConstants;
 
@@ -33,6 +35,7 @@ import org.signserver.validationservice.common.ValidationServiceConstants;
  * @author Markus Kilås
  * @version $Id$
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ValidationWSServiceTest extends ModulesTestCase {
 
     /** Logger for this class. */
@@ -151,11 +154,31 @@ public class ValidationWSServiceTest extends ModulesTestCase {
     protected String getWsEndPointUrl() {
     	return ENDPOINT;
     }
-
+    
+    IWorkerSession workerSession = getWorkerSession();
+    
+    public void test00SetupDatabase() throws Exception {
+        addSigner("org.signserver.validationservice.server.ValidationServiceWorker", 7101, "ValidationWSServiceTest_CertValidationWorker1", true);
+        workerSession.setWorkerProperty(7101, "VAL1.CLASSPATH", "org.signserver.validationservice.server.DummyValidator");
+        workerSession.setWorkerProperty(7101, "VAL1.TESTPROP", "TEST");
+        workerSession.setWorkerProperty(7101, "VAL1.REVOKED", "");
+        
+        // Issuer 1: CN=AdminCA1, O=EJBCA Sample, C=SE
+        workerSession.setWorkerProperty(7101, "VAL1.ISSUER1.CERTCHAIN", "\n-----BEGIN CERTIFICATE-----\nMIIDUzCCAjugAwIBAgIIKvuaicGKsjUwDQYJKoZIhvcNAQEFBQAwNzERMA8GA1UEAwwIQWRtaW5DQTExFTATBgNVBAoMDEVKQkNBIFNhbXBsZTELMAkGA1UEBhMCU0UwHhcNMDgxMTI0MTIwMDUwWhcNMTgxMTIyMTIwMDUwWjA3MREwDwYDVQQDDAhBZG1pbkNBMTEVMBMGA1UECgwMRUpCQ0EgU2FtcGxlMQswCQYDVQQGEwJTRTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAIG+Lo4CGuFXfsJF0Py5k9zAWaPUtqBpBBZ+O7V8Mj0JoJgPxzkneohDp2B66+/sbw3/MTDJhmhBNG0kGViT1gzEAMiZ7KS1UqT1FTMNhkb+ODhEgvhzqWZnFoKf4t6lV4/lzZRMKT7OFY7gVBRQKR5LqX8YDDGZwMgQ/Xb0NsCDGPFenfmstWsJMaFghd4LC6iMfGtxvLblnqGJDDrU3is+0c/f70sBSVf4IBCaXQ3XFPouAh+dZqgFy1NYymBPh4eXr6OuG8tjO7NrRU1xIkC3QVDNyKp756rNxwh1uFxP3AWr2RQDFj14ree0CkKTnIeK4QwQdZunN4V1Zc5b0ScCAwEAAaNjMGEwHQYDVR0OBBYEFMyClzyen614uGbZtRzIILlfXAnAMA8GA1UdEwEB/wQFMAMBAf8wHwYDVR0jBBgwFoAUzIKXPJ6frXi4Ztm1HMgguV9cCcAwDgYDVR0PAQH/BAQDAgGGMA0GCSqGSIb3DQEBBQUAA4IBAQApUHb6jiI6BGGUDj4/vxQVHq4pvcp2XnZpCgkk55a3+L3yQfnkog5CQ/XbMhLofmw1NR+snBURiMzUDmjH40ey96X/S5M+qYTE/6eQ/CDURBBeXvAR7JfdTMeuzh4nHNKn1EeN0axfOQCkPLl4swhogeh0PqL9LTlp5nhfVkasKeit41wuuOIJkOW4AA+ZG+O6LOHWhsI6YH80m4XkHeF8nQNkcTy+bE1fKpSBICZW5RxRT8uwjIxoAKN+w0J4Zlow9G9cZVcxDtB/H14OE2ZQXmDYd9UyFcFJzcicJ3qforXTWGHYo63gV+8OT8s5x7DuvosToPtn89JR1nb8E/sx\n-----END CERTIFICATE-----\n");
+        
+        // Issuer 2: CN=DemoRootCA1, OU=EJBCA, O=SignServer Sample, C=SE
+        workerSession.setWorkerProperty(7101, "VAL1.ISSUER2.CERTCHAIN", "\n-----BEGIN CERTIFICATE-----\nMIICfjCCAeegAwIBAgIIGo+E2d/oU9EwDQYJKoZIhvcNAQEFBQAwTzEUMBIGA1UEAwwLRGVtb1Jvb3RDQTExDjAMBgNVBAsMBUVKQkNBMRowGAYDVQQKDBFTaWduU2VydmVyIFNhbXBsZTELMAkGA1UEBhMCU0UwHhcNMDkxMTA5MTQ0MTIzWhcNMzQxMTEwMTQ0MTIzWjBPMRQwEgYDVQQDDAtEZW1vUm9vdENBMTEOMAwGA1UECwwFRUpCQ0ExGjAYBgNVBAoMEVNpZ25TZXJ2ZXIgU2FtcGxlMQswCQYDVQQGEwJTRTCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAm9kfNe5zQ6d/J4FShC0ud2KAX7Wso+ulcI/2zyYFUnj2QcUVZ3KEwXyDjWlFOkXX5LVbmiDMglr/iPgKeh+L1Pd4nQ3ydW+jG1a0Yxe6eyaQqaflrsIai3JXmllUMp7kTc7ylcuuNmkxiTX2vhYltqgdVdfJ29eDwBVnkmPAsNsCAwEAAaNjMGEwHQYDVR0OBBYEFIC1Yu2E2Ia344+IumPUHchd5ylLMA8GA1UdEwEB/wQFMAMBAf8wHwYDVR0jBBgwFoAUgLVi7YTYhrfjj4i6Y9QdyF3nKUswDgYDVR0PAQH/BAQDAgGGMA0GCSqGSIb3DQEBBQUAA4GBAI+eyurSlvV/W23UskU85CsPid/Hiy0cvMWtc5i+ZWQTDEyW53n1nc2yHpSBY30wUbd8p0Qbdl03Y+S/n+arItiAPqC/RZttgTfcztwSU/nWugIrgwoPltA4H582IBzO7cmJ26jGwQQsD6uCCTQSJK9xlqXQw8Uyj+N6SvE3p+wq\n-----END CERTIFICATE-----\n");
+        
+        // Issuer 3: CN=DemoRootCA2, OU=EJBCA, O=SignServer Sample, C=SE
+        workerSession.setWorkerProperty(7101, "VAL1.ISSUER3.CERTCHAIN", "\n-----BEGIN CERTIFICATE-----\nMIIDPTCCAvygAwIBAgIIJgIAcQevf5UwCQYHKoZIzjgEAzBPMRQwEgYDVQQDDAtEZW1vUm9vdENBMjEOMAwGA1UECwwFRUpCQ0ExGjAYBgNVBAoMEVNpZ25TZXJ2ZXIgU2FtcGxlMQswCQYDVQQGEwJTRTAeFw0wOTExMDkxNjA5NDhaFw0zNDExMTAxNjA5NDhaME8xFDASBgNVBAMMC0RlbW9Sb290Q0EyMQ4wDAYDVQQLDAVFSkJDQTEaMBgGA1UECgwRU2lnblNlcnZlciBTYW1wbGUxCzAJBgNVBAYTAlNFMIIBtzCCASsGByqGSM44BAEwggEeAoGBAI+d9uiMBBzqdvlV3wSMdwRv/Qx2POGqh+m0M0tMYEwIGBdZHm3+QSKIDTjcLRJgCGgTXSAJPCZtp43+kWCV5iGbbemBchOCh4Oe/4IPQERlfJhyMH0gXLglG9KSbuKkqMSzaZoZk06q750KBKusKhK+mvhp08++KyXZna3p6itdAhUAntjYRJsYqqQtIt0htCGCEAHCkg8CgYA4E4VMplm16uizoUL+9erNtLI886f8pdO5vXhcQG9IpZ0J7N6M4WQy8CFzTKjRJLs27TO2gDP8BE50mMOnbRvYmGIJsQ9lZHTjUqltWh9PJ0VKF0fCwQbA3aY+v8PiHxELvami+YyBiYjE2C6b1ArKOw1QsEL0KakJcr22yWFaKgOBhQACgYEAiTsSMcEKhYCWg2ULDwD/4ueYyDcRvyoSrT7uCdGU0Y/w2wPuI+kV5RfHxjs6YLDuJsQJg6rfi3RfgmwQJVzClDfgUN12qzRbSidepg/7ipkCGk0/eyY1A99z3K+FUZm2MVgune4ywCorPUpxz6WHS7/dSWYMWtSrr92PzgnwZbKjYzBhMB0GA1UdDgQWBBRJ3xUuyl6ZroD3lFm3nw/AhCPeJTAPBgNVHRMBAf8EBTADAQH/MB8GA1UdIwQYMBaAFEnfFS7KXpmugPeUWbefD8CEI94lMA4GA1UdDwEB/wQEAwIBhjAJBgcqhkjOOAQDAzAAMC0CFQCEGSmvJf6rxy6u7ZqY25qE7Hy21gIUPW4q++YIS2fHyu+H4Pjgnodx5zI=\n-----END CERTIFICATE-----\n");
+        
+        workerSession.reloadConfiguration(7101);
+    }        
+    
     // TODO add test methods here. The name must begin with 'test'. For example:
     // public void testHello() {}
 
-    public void testGetStatusOk() {
+    public void test01GetStatusOk() {
         try {
             final String status = ws.getStatus(
                     WORKER_NAME);
@@ -166,7 +189,7 @@ public class ValidationWSServiceTest extends ModulesTestCase {
         }
     }
 
-    public void testGetStatusNonExisting() {
+    public void test02GetStatusNonExisting() {
         try {
             final String status = ws.getStatus(NONEXISTING_WORKER);
             fail("Should have thrown exception but got status: " + status);
@@ -175,7 +198,7 @@ public class ValidationWSServiceTest extends ModulesTestCase {
         }
     }
 
-    public void testIsValid() {
+    public void test03IsValid() {
         try {
             final ValidationResponse response
                 = ws.isValid(WORKER_NAME, CERT_XMLSIGNER4,
@@ -195,7 +218,7 @@ public class ValidationWSServiceTest extends ModulesTestCase {
         }
     }
 
-    public void testIsValidNonExisting() {
+    public void test04IsValidNonExisting() {
         try {
             ws.isValid(NONEXISTING_WORKER, CERT_XMLSIGNER4,
                 ValidationServiceConstants.CERTPURPOSE_ELECTRONIC_SIGNATURE);
@@ -206,6 +229,10 @@ public class ValidationWSServiceTest extends ModulesTestCase {
             LOG.error(ex, ex);
             fail(ex.getMessage());
         }
+    }
+    
+    public void test99RemoveDatabase() throws Exception {
+        removeWorker(7101);
     }
 
     private String toString(ValidationResponse response) {

@@ -70,8 +70,7 @@ public class OOXMLSignerTest extends ModulesTestCase {
 
     @Test
     public void test00SetupDatabase() throws Exception {
-        setProperties(new File(getSignServerHome(), "res/test/test-ooxmlsigner-configuration.properties"));
-        workerSession.reloadConfiguration(WORKERID);
+        addSigner("org.signserver.module.ooxmlsigner.OOXMLSigner", WORKERID, "TestOOXMLSigner", true);
     }
 
     @Test

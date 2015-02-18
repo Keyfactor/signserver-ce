@@ -108,7 +108,9 @@ public class HealthCheckTest extends WebTestCase {
     @Test
     public void test03TimeSourceNotInsync() throws Exception {
         try {
-            setProperties(new File(getSignServerHome(), "res/test/test_healthcheck_timestamp_configuration.properties"));
+            addTimeStampSigner(TSA_WORKER, "TestTSA4", true);
+            workerSession.setWorkerProperty(TSA_WORKER, "DEFAULTTSAPOLICYOID", "1.2.3");
+            workerSession.setWorkerProperty(TSA_WORKER, "TIMESOURCE", "org.signserver.server.StatusReadingLocalComputerTimeSource");
             workerSession.reloadConfiguration(TSA_WORKER);
 
             // Test without insync

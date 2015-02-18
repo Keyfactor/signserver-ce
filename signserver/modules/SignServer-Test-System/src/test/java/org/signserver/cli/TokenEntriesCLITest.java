@@ -105,7 +105,7 @@ public class TokenEntriesCLITest extends ModulesTestCase {
         final File ks = createEmptyKeystore();
         try {
             globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + tokenId + ".CLASSPATH", "org.signserver.server.signers.CryptoWorker");
-            globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + tokenId + ".SIGNERTOKEN.CLASSPATH", KeystoreInConfigCryptoToken.class.getName());
+            globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + tokenId + ".SIGNERTOKEN.CLASSPATH", P12CryptoToken.class.getName());
             workerSession.setWorkerProperty(tokenId, "NAME", "TestP12CryptoToken" + tokenId);
             workerSession.setWorkerProperty(tokenId, "KEYSTOREPATH", ks.getAbsolutePath());
             workerSession.setWorkerProperty(tokenId, "KEYSTOREPASSWORD", "foo123");

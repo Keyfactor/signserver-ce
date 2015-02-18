@@ -312,6 +312,10 @@ public class ModulesTestCase extends TestCase {
         addSigner(className, DUMMY1_SIGNER_ID, DUMMY1_SIGNER_NAME, autoActivate);
     }
     
+    protected void addSigner(final String className) throws CertificateException, FileNotFoundException {
+        addSigner(className, true);
+    }
+    
     protected void addDummySigner(final int signerId, final String signerName, final boolean autoActivate) throws CertificateException, FileNotFoundException {
         addSigner("org.signserver.module.xmlsigner.XMLSigner", signerId, signerName, autoActivate);
     }

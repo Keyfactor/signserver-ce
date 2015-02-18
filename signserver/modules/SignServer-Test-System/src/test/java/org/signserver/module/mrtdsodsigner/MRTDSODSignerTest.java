@@ -131,8 +131,10 @@ public class MRTDSODSignerTest extends ModulesTestCase {
         workerSession.reloadConfiguration(WORKER4);
         workerSession.reloadConfiguration(WORKER5);
         workerSession.reloadConfiguration(WORKER1B);
-        workerSession.reloadConfiguration(WORKER1C);
-        workerSession.reloadConfiguration(WORKER1D);
+        //workerSession.reloadConfiguration(WORKER1C);
+        addSigner("org.signserver.module.mrtdsodsigner.MRTDSODSigner", WORKER1C, "TestMRTDSODSigner1c", true);
+        //workerSession.reloadConfiguration(WORKER1D);
+        addSigner("org.signserver.module.mrtdsodsigner.MRTDSODSigner", WORKER1D, "TestMRTDSODSigner1d", true);
     }
 
     /**

@@ -154,11 +154,24 @@ public class TimeStampSignerTest extends ModulesTestCase {
     }
 
     @Test
-    public void test00SetupDatabase() throws Exception {
-        setProperties(new File(getSignServerHome(), "res/test/test-timestampsigner-configuration.properties"));
+    public void test00SetupDatabase() throws Exception {        
+        addTimeStampSigner(WORKER1, "TestTSA1", true);
+        workerSession.setWorkerProperty(WORKER1, "DEFAULTTSAPOLICYOID", "1.2.3");
         workerSession.reloadConfiguration(WORKER1);
+        
+        addTimeStampSigner(WORKER2, "TestTSA2", true);
+        workerSession.setWorkerProperty(WORKER2, "DEFAULTTSAPOLICYOID", "1.2.3");
+        workerSession.setWorkerProperty(WORKER2, "ACCEPTEDPOLICIES", "1.2.3");
         workerSession.reloadConfiguration(WORKER2);
+        
+        addTimeStampSigner(WORKER3, "TestTSA3", true);
+        workerSession.setWorkerProperty(WORKER3, "DEFAULTTSAPOLICYOID", "1.2.3");
+        workerSession.setWorkerProperty(WORKER3, "TIMESOURCE", "org.signserver.server.NullTimeSource");
         workerSession.reloadConfiguration(WORKER3);
+        
+        addTimeStampSigner(WORKER4, "TestTSA4", true);
+        workerSession.setWorkerProperty(WORKER4, "DEFAULTTSAPOLICYOID", "1.2.3");
+        workerSession.setWorkerProperty(WORKER4, "TIMESOURCE", "org.signserver.server.StatusReadingLocalComputerTimeSource");
         workerSession.reloadConfiguration(WORKER4);
     }
 

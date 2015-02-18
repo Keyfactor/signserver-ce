@@ -70,9 +70,10 @@ public class PDFSignerTest extends ModulesTestCase {
 
     @Test
     public void test00SetupDatabase() throws Exception {
-        setProperties(new File(getSignServerHome(), "res/test/test-pdfsigner-configuration.properties"));
-        setProperties(new File(getSignServerHome(), "res/test/test-timestampsigner-configuration.properties"));
+        addPDFSigner(WORKERID, "TestPDFSigner", true);
         workerSession.reloadConfiguration(WORKERID);
+        addTimeStampSigner(TSAWORKERID, "TestTSA1", true);
+        workerSession.setWorkerProperty(TSAWORKERID, "DEFAULTTSAPOLICYOID", "1.2.3");
         workerSession.reloadConfiguration(TSAWORKERID);
     }
 

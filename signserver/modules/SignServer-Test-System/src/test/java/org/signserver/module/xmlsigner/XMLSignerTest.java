@@ -31,6 +31,7 @@ import org.signserver.testutils.ModulesTestCase;
 import org.w3c.dom.Document;
 import org.junit.Before;
 import org.junit.Test;
+import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 
 /**
@@ -56,11 +57,12 @@ public class XMLSignerTest extends ModulesTestCase {
     
     private static final int DEBUGWORKER = 5805;
     
-    private static final int[] WORKERS = new int[] {5676, 5679, 5681, 5682, 5683, 5802, 5803, 5804, 5805};
+    private static final int[] WORKERS = new int[] {WORKERID, WORKERID2, WORKERID3, DEBUGWORKER};
 
     private static final String TESTXML1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><root><my-tag>My Data</my-tag></root>";
 
     private final IWorkerSession workerSession = getWorkerSession();
+    private final IGlobalConfigurationSession globalSession = getGlobalSession();
     
     @Before
     public void setUp() throws Exception {
@@ -69,19 +71,28 @@ public class XMLSignerTest extends ModulesTestCase {
 
     @Test
     public void test00SetupDatabase() throws Exception {
-        setProperties(new File(getSignServerHome(), "res/test/test-xmlsigner-configuration.properties"));
-        workerSession.reloadConfiguration(WORKERID);
-
+        addSigner("org.signserver.module.xmlsigner.XMLSigner", WORKERID, "TestXMLSigner", true);
+        
         // Update path to JKS file
+        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + WORKERID2 + ".CLASSPATH", "org.signserver.module.xmlsigner.XMLSigner");
+        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + WORKERID2 + "SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.JKSCryptoToken");
+        workerSession.setWorkerProperty(WORKERID2, "NAME", "TestXMLSignerDSA");
+        workerSession.setWorkerProperty(WORKERID2, "AUTHTYPE", "NOAUTH");
         workerSession.setWorkerProperty(WORKERID2, "KEYSTOREPATH",
                 new File(getSignServerHome() + File.separator + "res" + File.separator + "test" + File.separator + "xmlsigner4.jks").getAbsolutePath());
+        workerSession.setWorkerProperty(WORKERID2, "KEYSTOREPASSWORD", "foo123");
         workerSession.reloadConfiguration(WORKERID2);
         
+        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + WORKERID3 + "CLASSPATH", "org.signserver.module.xmlsigner.XMLSigner");
+        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + WORKERID3 + "SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.P12CryptoToken");
+        workerSession.setWorkerProperty(WORKERID2, "NAME", "TestXMLSignerECDSA");
+        workerSession.setWorkerProperty(WORKERID2, "AUTHTYPE", "NOAUTH");
         workerSession.setWorkerProperty(WORKERID3, "KEYSTOREPATH",
                 new File(getSignServerHome() + File.separator + "res" + File.separator + "test" + File.separator + "xmlsignerec.p12").getAbsolutePath());
+        workerSession.setWorkerProperty(WORKERID3, "KEYSTOREPASSWORD", "foo123");
         workerSession.reloadConfiguration(WORKERID3);
         
-        workerSession.reloadConfiguration(DEBUGWORKER);
+        addSigner("org.signserver.module.xmlsigner.DebugSigner", DEBUGWORKER, "XMLDebugSigner", false);
     }
 
     /**

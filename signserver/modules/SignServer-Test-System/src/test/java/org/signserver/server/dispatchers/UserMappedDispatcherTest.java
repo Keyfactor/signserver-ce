@@ -12,9 +12,26 @@
  *************************************************************************/
 package org.signserver.server.dispatchers;
 
-import java.io.File;
+import java.io.IOException;
+import java.math.BigInteger;
+import java.security.KeyPair;
+import java.security.PrivateKey;
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 import org.apache.log4j.Logger;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cert.X509v3CertificateBuilder;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
+import org.bouncycastle.operator.OperatorCreationException;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.bouncycastle.pkcs.PKCS10CertificationRequest;
+import org.bouncycastle.util.encoders.Base64;
+import org.ejbca.util.CertTools;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 import org.signserver.common.*;
@@ -23,6 +40,7 @@ import org.signserver.testutils.ModulesTestCase;
 import org.junit.Before;
 import org.junit.Test;
 import org.signserver.server.UsernamePasswordClientCredential;
+import org.signserver.test.utils.builders.CryptoUtils;
 
 /**
  * Tests for the UserMappedDispatcher.
@@ -33,24 +51,23 @@ import org.signserver.server.UsernamePasswordClientCredential;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class UserMappedDispatcherTest extends ModulesTestCase {
 
-    /**
-     * WORKERID used in this test case as defined in
-     * junittest-part-config.properties.
-     */
+    /** Logger for this class */
+    private static final Logger LOG = Logger.getLogger(UserMappedDispatcherTest.class);
+
     private static final int WORKERID_DISPATCHER = 5780;
     private static final int WORKERID_1 = 5681;
+    private static final String WORKERNAME_1 = "TestXMLSigner81";
     private static final int WORKERID_2 = 5682;
+    private static final String WORKERNAME_2 = "TestXMLSigner82";
     private static final int WORKERID_3 = 5683;
+    private static final String WORKERNAME_3 = "TestXMLSigner83";
     
-    private static final int[] WORKERS = new int[] {5676, 5679, 5681, 5682, 5683, 5802, 5803};
+    private static final int[] WORKERS = new int[] {WORKERID_DISPATCHER, WORKERID_1, WORKERID_2, WORKERID_3};
     
     /**
      * Dummy authentication code used to test activation of a dispatcher worker
      */
     private static final String DUMMY_AUTH_CODE = "1234";
-
-    /** Logger for this class */
-    private static final Logger LOG = Logger.getLogger(UserMappedDispatcherTest.class);
     
     private final IWorkerSession workerSession = getWorkerSession();
     
@@ -62,12 +79,24 @@ public class UserMappedDispatcherTest extends ModulesTestCase {
 
     @Test
     public void test00SetupDatabase() throws Exception {
-        setProperties(new File(getSignServerHome(), "res/test/test-xmlsigner-configuration.properties"));
-
+        Properties conf = new Properties();
+        conf.setProperty("GLOB.WORKER5780.CLASSPATH", "org.signserver.server.dispatchers.UserMappedDispatcher");
+        conf.setProperty("WORKER5780.NAME", "UserMappedDispatcher80");
+        conf.setProperty("WORKER5780.AUTHTYPE", "org.signserver.server.UsernameAuthorizer");
+        conf.setProperty("WORKER5780.ACCEPT_ALL_USERNAMES", "true");
+        conf.setProperty("WORKER5780.USERNAME_MAPPING", "user1:TestXMLSigner81, user2:TestXMLSigner82 ,user3:TestXMLSigner83,user4:NonExistingWorker,user5:UserMappedDispatcher80");
+        setProperties(conf);
         workerSession.reloadConfiguration(WORKERID_DISPATCHER);
-        workerSession.reloadConfiguration(WORKERID_1);
-        workerSession.reloadConfiguration(WORKERID_2);
-        workerSession.reloadConfiguration(WORKERID_3);
+
+        KeyPair issuerKeyPair = CryptoUtils.generateRSA(512);
+
+        // Setup signers with different certificates
+        addDummySigner(WORKERID_1, WORKERNAME_1, true);
+        addCertificate(issuerKeyPair.getPrivate(), WORKERID_1, WORKERNAME_1);
+        addDummySigner(WORKERID_2, "TestXMLSigner82", true);
+        addCertificate(issuerKeyPair.getPrivate(), WORKERID_2, WORKERNAME_2);
+        addDummySigner(WORKERID_3, "TestXMLSigner83", true);
+        addCertificate(issuerKeyPair.getPrivate(), WORKERID_3, WORKERNAME_3);
     }
 
     /**
@@ -125,7 +154,7 @@ public class UserMappedDispatcherTest extends ModulesTestCase {
             
             X509Certificate cert = (X509Certificate) res.getSignerCertificate();
             assertEquals("Response from signer 81", 
-                    "CN=testdocumentsigner81,OU=Testing,O=SignServer,C=SE", cert.getSubjectDN().getName());
+                    "CN=" + WORKERNAME_1, cert.getSubjectDN().getName());
     
             // Send request to dispatcher as user2
             context.put(RequestContext.CLIENT_CREDENTIAL, 
@@ -134,7 +163,7 @@ public class UserMappedDispatcherTest extends ModulesTestCase {
                     request, context);
             cert = (X509Certificate) res.getSignerCertificate();
             assertEquals("Response from signer 82", 
-                    "CN=testdocumentsigner82,OU=Testing,O=SignServer,C=SE", cert.getSubjectDN().getName());
+                    "CN=" + WORKERNAME_2, cert.getSubjectDN().getName());
     
             // Send request to dispatcher as user3
             context.put(RequestContext.CLIENT_CREDENTIAL, 
@@ -143,7 +172,7 @@ public class UserMappedDispatcherTest extends ModulesTestCase {
                     request, context);
             cert = (X509Certificate) res.getSignerCertificate();
             assertEquals("Response from signer 83", 
-                    "CN=testdocumentsigner83,OU=Testing,O=SignServer,C=SE", cert.getSubjectDN().getName());
+                    "CN=" + WORKERNAME_3, cert.getSubjectDN().getName());
     
             // Send request to dispatcher as user4 for which the worker does not exist
             try {
@@ -220,4 +249,11 @@ public class UserMappedDispatcherTest extends ModulesTestCase {
         }
     }
 
+    private void addCertificate(PrivateKey issuerPrivateKey, int workerId, String workerName) throws CryptoTokenOfflineException, InvalidWorkerIdException, IOException, CertificateException, OperatorCreationException {
+        Base64SignerCertReqData reqData = (Base64SignerCertReqData) workerSession.getCertificateRequest(workerId, new PKCS10CertReqInfo("SHA1withRSA", "CN=" + workerName, null), false);
+        PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
+        X509CertificateHolder cert = new X509v3CertificateBuilder(new X500Name("CN=Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerPrivateKey));
+        workerSession.setWorkerProperty(workerId, "SIGNERCERTCHAIN", new String(CertTools.getPEMFromCerts(Arrays.asList(new JcaX509CertificateConverter().getCertificate(cert)))));
+        workerSession.reloadConfiguration(workerId);
+    }
 }

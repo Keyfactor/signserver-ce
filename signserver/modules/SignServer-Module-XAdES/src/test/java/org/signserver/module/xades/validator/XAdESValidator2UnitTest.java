@@ -261,7 +261,7 @@ public class XAdESValidator2UnitTest {
      * Hard-coded signed XML document with a timestamp with a time stamp including a
      * certificate chain with an intermediate sub CA certificate.
      */
-    final private String SIGNED_XML_WITH_INTERMEDIATE_TS_CERT =
+    private static final String SIGNED_XML_WITH_INTERMEDIATE_TS_CERT =
             "<?xml version=\"1.0\" encoding=\"UTF-8\"?><ds:Signature xmlns:ds=\"http://www.w3.org/2000/09/xmldsig#\" Id=\"xmldsig-820bd1d9-9110-436f-920c-8f2d02190bbb\">\n"+
             "<ds:SignedInfo>\n"+
             "<ds:CanonicalizationMethod Algorithm=\"http://www.w3.org/TR/2001/REC-xml-c14n-20010315\"/>\n"+
@@ -495,7 +495,7 @@ public class XAdESValidator2UnitTest {
                 conv.getCertificate(signer1Cert), 
                 chain1, 
                 "BC");
-        LOG.debug("Chain 1: \n" + new String(CertTools.getPEMFromCerts(chain1)) + "\n");
+        LOG.debug("Chain 1: \n" + new String(CertTools.getPEMFromCerts(chain1), "ASCII") + "\n");
         
         // Sign a document by signer 1
         XAdESSigner instance = new MockedXAdESSigner(token1);
@@ -629,10 +629,6 @@ public class XAdESValidator2UnitTest {
                 .addExtension(new CertExt(Extension.extendedKeyUsage, false, new ExtendedKeyUsage(KeyPurposeId.id_kp_OCSPSigning)))
                 .addExtension(new CertExt(OCSPObjectIdentifiers.id_pkix_ocsp_nocheck, false, new DERNull()))
                 .build();
-        final List<Certificate> ocspSigner1Chain = Arrays.<Certificate>asList(
-                    conv.getCertificate(ocspSigner1Cert),
-                    conv.getCertificate(rootcaCert)
-                );
         
         // ocspSigner 2, OCSP responder issued by the sub CA2 with an ocsp-nocheck in the signer cert
         ocspSigner2KeyPair = CryptoUtils.generateRSA(1024);
@@ -645,11 +641,6 @@ public class XAdESValidator2UnitTest {
                 .addExtension(new CertExt(Extension.extendedKeyUsage, false, new ExtendedKeyUsage(KeyPurposeId.id_kp_OCSPSigning)))
                 .addExtension(new CertExt(OCSPObjectIdentifiers.id_pkix_ocsp_nocheck, false, new DERNull()))
                 .build();
-        final List<Certificate> ocspSigner2Chain = Arrays.<Certificate>asList(
-                    conv.getCertificate(ocspSigner2Cert),
-                    conv.getCertificate(subca2Cert),
-                    conv.getCertificate(rootcaCert)
-                );
         
         // Sign a document by signer 3
         instance = new MockedXAdESSigner(token3);

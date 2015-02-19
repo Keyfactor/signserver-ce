@@ -16,13 +16,19 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.Security;
 import java.security.cert.Certificate;
 import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.signserver.common.*;
+import org.signserver.server.cryptotokens.DefaultCryptoInstance;
+import org.signserver.server.cryptotokens.ICryptoInstance;
 import org.signserver.server.cryptotokens.ICryptoToken;
+import org.signserver.server.cryptotokens.ICryptoTokenV3;
+import org.signserver.server.cryptotokens.IGeneratedKeyData;
+import org.signserver.server.cryptotokens.TokenSearchResults;
 
 /**
  * CryptoToken backed by the provided Keys and Certificates.
@@ -31,7 +37,7 @@ import org.signserver.server.cryptotokens.ICryptoToken;
  * @author Markus Kilås
  * @version $Id$
  */
-public class MockedCryptoToken implements ICryptoToken {
+public class MockedCryptoToken implements ICryptoToken, ICryptoTokenV3 {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(MockedCryptoToken.class);
@@ -114,6 +120,66 @@ public class MockedCryptoToken implements ICryptoToken {
 
     public int getPrivateKeyCalls() {
         return privateKeyCalls;
+    }
+
+    @Override
+    public void importCertificateChain(List<Certificate> certChain, String alias, char[] athenticationCode) throws CryptoTokenOfflineException, IllegalArgumentException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public TokenSearchResults searchTokenEntries(int startIndex, int max, org.cesecore.util.query.QueryCriteria qc, boolean includeData) throws CryptoTokenOfflineException, QueryException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ICryptoInstance aquireCryptoInstance(String alias, RequestContext context) throws CryptoTokenOfflineException, IllegalRequestException, SignServerException {
+        return new DefaultCryptoInstance(alias, context, Security.getProvider(provider), privateKey, certificateChain);
+    }
+
+    @Override
+    public void releaseCryptoInstance(ICryptoInstance instance) {
+        // NOP
+    }
+
+    @Override
+    public IGeneratedKeyData generateWrappedKey(String newAlias, String keyAlgorithm, String keySpec, RequestContext context) throws OperationUnsupportedException, SignServerException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public PrivateKey getPrivateKey(String alias) throws CryptoTokenOfflineException {
+        return privateKey;
+    }
+
+    @Override
+    public PublicKey getPublicKey(String alias) throws CryptoTokenOfflineException {
+        return signerCertificate.getPublicKey();
+    }
+
+    @Override
+    public ICertReqData genCertificateRequest(ISignerCertReqInfo info, boolean explicitEccParameters, String keyAlias) throws CryptoTokenOfflineException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Certificate getCertificate(String alias) throws CryptoTokenOfflineException {
+        return signerCertificate;
+    }
+
+    @Override
+    public List<Certificate> getCertificateChain(String alias) throws CryptoTokenOfflineException {
+        return certificateChain;
+    }
+
+    @Override
+    public void generateKey(String keyAlgorithm, String keySpec, String alias, char[] authCode) throws CryptoTokenOfflineException, IllegalArgumentException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean removeKey(String alias) throws CryptoTokenOfflineException, KeyStoreException, SignServerException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     

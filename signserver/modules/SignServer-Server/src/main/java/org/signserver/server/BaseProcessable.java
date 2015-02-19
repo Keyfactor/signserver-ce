@@ -826,7 +826,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
      */
     public List<Certificate> getSigningCertificateChain(final ICryptoInstance crypto) {
         final List<Certificate> result;
-        final List<Certificate> certChainFromConfig = (new ProcessableConfig(config)).getSignerCertificateChain();
+        final List<Certificate> certChainFromConfig = config == null ? null : (new ProcessableConfig(config)).getSignerCertificateChain();
         if (certChainFromConfig == null) {
             result = crypto.getCertificateChain();
         } else {

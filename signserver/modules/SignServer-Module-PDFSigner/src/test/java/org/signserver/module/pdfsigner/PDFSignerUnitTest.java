@@ -1407,7 +1407,7 @@ public class PDFSignerUnitTest extends TestCase {
         
         try {
             byte[] signedPdfbytes =
-                    instance.addSignatureToPDFDocument(params, pdfbytes, null, 0,
+                    instance.addSignatureToPDFDocument(token.aquireCryptoInstance("any-alias", null), params, pdfbytes, null, 0,
                                                        null, null);
             assertNotNull(signedPdfbytes);
         } catch (SignServerException ex) {
@@ -1465,7 +1465,7 @@ public class PDFSignerUnitTest extends TestCase {
         return response.getProcessedData();
     }
 
-    private void setupWorkers() {
+    private void setupWorkers() throws NoSuchAlgorithmException, NoSuchProviderException, CertBuilderException, CertificateException {
 
         final GlobalConfigurationSessionMock globalMock
                 = new GlobalConfigurationSessionMock();
@@ -1474,6 +1474,7 @@ public class PDFSignerUnitTest extends TestCase {
         workerSession = workerMock;
 
         // WORKER1
+        final MockedCryptoToken token = generateToken(false);
         {
             final int workerId = WORKER1;
             final WorkerConfig config = new WorkerConfig();
@@ -1486,6 +1487,11 @@ public class PDFSignerUnitTest extends TestCase {
                 protected IGlobalConfigurationSession.IRemote
                         getGlobalConfigurationSession() {
                     return globalConfig;
+                }
+                        
+                @Override
+                public ICryptoToken getCryptoToken() {
+                    return token;
                 }
             });
             workerSession.reloadConfiguration(workerId);

@@ -179,28 +179,32 @@ public class WorkerManagerSessionBean implements IWorkerManagerSessionLocal {
         }
         if (splittedKey.length > 1) {
             if (splittedKey[1].equals("CLASSPATH")) {
-                int id = Integer.parseInt(splittedKey[0]);
-                if (workerType == GlobalConfiguration.WORKERTYPE_ALL) {
-                    retval.add(new Integer(id));
-                } else {
-                    IWorker obj = getWorker(id, globalConfigurationSession);
-                    if (workerType == GlobalConfiguration.WORKERTYPE_PROCESSABLE) {
-                        if (obj instanceof IProcessable) {
-                            if (LOG.isDebugEnabled()) {
-                                LOG.debug("Adding Signer " + id);
-                            }
-                            retval.add(new Integer(id));
-                        }
+                try {
+                    int id = Integer.parseInt(splittedKey[0]);
+                    if (workerType == GlobalConfiguration.WORKERTYPE_ALL) {
+                        retval.add(new Integer(id));
                     } else {
-                        if (workerType == GlobalConfiguration.WORKERTYPE_SERVICES && !signersOnly) {
-                            if (obj instanceof ITimedService) {
+                        IWorker obj = getWorker(id, globalConfigurationSession);
+                        if (workerType == GlobalConfiguration.WORKERTYPE_PROCESSABLE) {
+                            if (obj instanceof IProcessable) {
                                 if (LOG.isDebugEnabled()) {
-                                    LOG.debug("Adding Service " + id);
+                                    LOG.debug("Adding Signer " + id);
                                 }
                                 retval.add(new Integer(id));
                             }
+                        } else {
+                            if (workerType == GlobalConfiguration.WORKERTYPE_SERVICES && !signersOnly) {
+                                if (obj instanceof ITimedService) {
+                                    if (LOG.isDebugEnabled()) {
+                                        LOG.debug("Adding Service " + id);
+                                    }
+                                    retval.add(new Integer(id));
+                                }
+                            }
                         }
                     }
+                } catch (NumberFormatException ex) {
+                    LOG.error("Unparsable property: " + key + ": " + ex.getMessage());
                 }
             }
         }

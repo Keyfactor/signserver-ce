@@ -129,8 +129,9 @@ public class CMSSigner extends BaseSigner {
         ICryptoInstance crypto = null;
         try {
             crypto = aquireCryptoInstance(ICryptoToken.PURPOSE_SIGN, signRequest, requestContext);
+            final X509Certificate cert = (X509Certificate) getSigningCertificate(crypto);
             if (LOG.isDebugEnabled()) {
-                LOG.debug("SigningCert: " + ((X509Certificate) crypto.getCertificate()).getSubjectDN());
+                LOG.debug("SigningCert: " + cert);
             }
             
             // Get certificate chain and signer certificate
@@ -145,7 +146,7 @@ public class CMSSigner extends BaseSigner {
             final ContentSigner contentSigner = new JcaContentSignerBuilder(sigAlg).setProvider(crypto.getProvider()).build(crypto.getPrivateKey());
             generator.addSignerInfoGenerator(new JcaSignerInfoGeneratorBuilder(
                      new JcaDigestCalculatorProviderBuilder().setProvider("BC").build())
-                     .build(contentSigner, (X509Certificate) getSigningCertificate(crypto)));
+                     .build(contentSigner, cert));
 
             generator.addCertificates(new JcaCertStore(includedCertificates(certs)));
             final CMSTypedData content = new CMSProcessableByteArray(data);

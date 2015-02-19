@@ -44,8 +44,8 @@ public class DefaultCryptoInstance implements ICryptoInstance {
         this.provider = provider;
         this.privateKey = privateKey;
         this.certificateChain = certificateChain;
-        this.certificate = certificateChain.isEmpty() ? null : certificateChain.get(0);
-        this.publicKey = this.certificate.getPublicKey();
+        this.certificate = (certificateChain == null || certificateChain.isEmpty()) ? null : certificateChain.get(0);
+        this.publicKey = this.certificate == null ? null : this.certificate.getPublicKey();
         this.secretKey = null;
     }
     

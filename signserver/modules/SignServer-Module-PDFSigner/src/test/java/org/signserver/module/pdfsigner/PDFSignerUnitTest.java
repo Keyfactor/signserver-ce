@@ -46,6 +46,7 @@ import org.signserver.test.utils.builders.CertBuilderException;
 import org.signserver.test.utils.builders.CertExt;
 import org.signserver.test.utils.builders.CryptoUtils;
 import org.signserver.test.utils.mock.GlobalConfigurationSessionMock;
+import org.signserver.test.utils.mock.MockedCryptoToken;
 import org.signserver.test.utils.mock.WorkerSessionMock;
 
 /**

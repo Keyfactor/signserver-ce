@@ -43,7 +43,6 @@ import org.signserver.common.GenericValidationRequest;
 import org.signserver.common.GenericValidationResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.WorkerConfig;
-import org.signserver.module.xades.signer.MockedCryptoToken;
 import org.signserver.module.xades.signer.MockedXAdESSigner;
 import org.signserver.module.xades.signer.XAdESSigner;
 import org.signserver.module.xades.signer.XAdESSignerUnitTest;
@@ -72,6 +71,7 @@ import org.junit.Before;
 import org.signserver.common.SignServerException;
 import org.signserver.test.utils.builders.ocsp.OCSPResponseBuilder;
 import org.signserver.test.utils.builders.ocsp.OcspRespObject;
+import org.signserver.test.utils.mock.MockedCryptoToken;
 import org.signserver.validationservice.server.OCSPResponse;
 import org.xml.sax.SAXParseException;
 

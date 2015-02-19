@@ -62,6 +62,7 @@ import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.test.utils.builders.CertBuilder;
 import org.signserver.test.utils.builders.CertExt;
 import org.signserver.test.utils.builders.CryptoUtils;
+import org.signserver.test.utils.mock.MockedCryptoToken;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXParseException;

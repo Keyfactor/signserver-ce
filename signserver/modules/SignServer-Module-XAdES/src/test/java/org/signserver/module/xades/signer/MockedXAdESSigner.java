@@ -18,6 +18,7 @@ import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.RequestContext;
 import org.signserver.server.cryptotokens.ICryptoToken;
+import org.signserver.test.utils.mock.MockedCryptoToken;
 
 /**
  * Mocked version of the XAdESSigner using a MockedCryptoToken.

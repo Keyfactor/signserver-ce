@@ -14,7 +14,6 @@ package org.signserver.module.odfsigner;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Collection;
@@ -30,6 +29,7 @@ import org.signserver.common.*;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.DefaultArchivable;
+import org.signserver.server.cryptotokens.ICryptoInstance;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.signers.BaseSigner;
 
@@ -99,30 +99,31 @@ public class ODFSigner extends BaseSigner {
                     "Data received is not in valid odf format", e);
         }
 
-        // get signing key and construct KeyInfo to be included in signature
-        PrivateKey signingPrivateKey =
-                getPrivateKey(ICryptoToken.PURPOSE_SIGN,
-                              signRequest, requestContext);
-        X509Certificate signingCertificate =
-                (X509Certificate) getSigningCertificate(signRequest, requestContext);
-
-        // create DocumentSignatureManager with OpenOffice31CompatibilityMode
-        // mode.
-        // we are using OpenOffice31CompatibilityMode , because user wants to
-        // see signatures (and if we are in draftv1.2 mode then open office cant
-        // show signatures
-        // because openoffice expects signatures to be placed in
-        // META-ING/documentsignatures.xml file)
-        DocumentSignatureManager dsm = new DocumentSignatureManager(odfDoc,
-                SignatureCreationMode.OpenOffice31CompatibilityMode);
-
-        // sign document
-        // pForceCreateNewSignatureGroup parameter is false , because we are in
-        // OpenOffice31CompatibilityMode
+        ICryptoInstance crypto = null;
         try {
-            dsm.SignDocument(signingPrivateKey, signingCertificate, false);
-        } catch (Exception e) {
-            throw new SignServerException("Problem signing odf document", e);
+            // get signing key and construct KeyInfo to be included in signature
+            crypto = aquireCryptoInstance(ICryptoToken.PURPOSE_SIGN, signRequest, requestContext);
+
+            // create DocumentSignatureManager with OpenOffice31CompatibilityMode
+            // mode.
+            // we are using OpenOffice31CompatibilityMode , because user wants to
+            // see signatures (and if we are in draftv1.2 mode then open office cant
+            // show signatures
+            // because openoffice expects signatures to be placed in
+            // META-ING/documentsignatures.xml file)
+            DocumentSignatureManager dsm = new DocumentSignatureManager(odfDoc,
+                    SignatureCreationMode.OpenOffice31CompatibilityMode);
+
+            // sign document
+            // pForceCreateNewSignatureGroup parameter is false , because we are in
+            // OpenOffice31CompatibilityMode
+            try {
+                dsm.SignDocument(crypto.getPrivateKey(), (X509Certificate) getSigningCertificate(crypto), false);
+            } catch (Exception e) {
+                throw new SignServerException("Problem signing odf document", e);
+            }
+        } finally {
+            releaseCryptoInstance(crypto);
         }
 
         // save document to output stream

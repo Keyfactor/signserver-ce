@@ -49,6 +49,7 @@ import org.signserver.common.*;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.DefaultArchivable;
+import org.signserver.server.cryptotokens.ICryptoInstance;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.signers.BaseSigner;
 import org.w3c.dom.Document;
@@ -135,89 +136,97 @@ public class XMLSigner extends BaseSigner {
         } catch (ClassNotFoundException e) {
             throw new SignServerException("Problem with JSR105 provider", e);
         }
-        
-        // Get certificate chain and signer certificate
-        List<Certificate> certs =
-                this.getSigningCertificateChain(signRequest, requestContext);
-        if (certs == null) {
-            throw new IllegalArgumentException("Null certificate chain. This signer needs a certificate.");
-        }
-        List<X509Certificate> x509CertChain = new LinkedList<X509Certificate>();
-        for (Certificate cert : includedCertificates(certs)) {
-            if (cert instanceof X509Certificate) {
-                x509CertChain.add((X509Certificate) cert);
-                LOG.debug("Adding to chain: " + ((X509Certificate) cert).getSubjectDN());
-            }
-        }
-        Certificate cert = this.getSigningCertificate(signRequest, requestContext);
-        LOG.debug("SigningCert: " + ((X509Certificate) cert).getSubjectDN());
 
-        // Private key
-        PrivateKey privKey =
-                getPrivateKey(ICryptoToken.PURPOSE_SIGN, signRequest, requestContext);
-
-        SignedInfo si;
-        try {
-            final String sigAlg = signatureAlgorithm == null ? getDefaultSignatureAlgorithm(privKey) : signatureAlgorithm;
-            Reference ref = fac.newReference("",
-                    fac.newDigestMethod(DigestMethod.SHA1, null),
-                    Collections.singletonList(fac.newTransform(Transform.ENVELOPED, (XMLStructure) null)),
-                    null, null);
-
-            si = fac.newSignedInfo(fac.newCanonicalizationMethod(CanonicalizationMethod.INCLUSIVE_WITH_COMMENTS, (XMLStructure) null),
-                    fac.newSignatureMethod(getSignatureMethod(sigAlg), null),
-                    Collections.singletonList(ref));
-
-        } catch (InvalidAlgorithmParameterException ex) {
-            throw new SignServerException("XML signing algorithm error", ex);
-        } catch (NoSuchAlgorithmException ex) {
-            throw new SignServerException("XML signing algorithm error", ex);
-        }
-
-        KeyInfo ki = null;
-
-        if (!x509CertChain.isEmpty()) {
-            KeyInfoFactory kif = fac.getKeyInfoFactory();
-            X509Data x509d = kif.newX509Data(x509CertChain);
-
-            List<XMLStructure> kviItems = new LinkedList<XMLStructure>();
-            kviItems.add(x509d);
-            ki = kif.newKeyInfo(kviItems);
-        }
-   
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        dbf.setNamespaceAware(true);
+        Certificate cert;
         Document doc;
-
+        ICryptoInstance crypto = null;
         try {
-            // Xerces 1 - http://xerces.apache.org/xerces-j/features.html#external-general-entities
-            // Xerces 2 - http://xerces.apache.org/xerces2-j/features.html#external-general-entities
-            dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            crypto = aquireCryptoInstance(ICryptoToken.PURPOSE_SIGN, signRequest, requestContext);
 
-            // Xerces 1 - http://xerces.apache.org/xerces-j/features.html#external-parameter-entities
-            // Xerces 2 - http://xerces.apache.org/xerces2-j/features.html#external-parameter-entities
-            dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+            // Get certificate chain and signer certificate
+            final List<Certificate> certs = getSigningCertificateChain(crypto);
+            if (certs == null) {
+                throw new IllegalArgumentException("Null certificate chain. This signer needs a certificate.");
+            }
+            List<X509Certificate> x509CertChain = new LinkedList<X509Certificate>();
+            for (Certificate c : includedCertificates(certs)) {
+                if (c instanceof X509Certificate) {
+                    x509CertChain.add((X509Certificate) c);
+                    LOG.debug("Adding to chain: " + ((X509Certificate) c).getSubjectDN());
+                }
+            }
+            cert = this.getSigningCertificate(crypto);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("SigningCert: " + ((X509Certificate) cert).getSubjectDN());
+            }
 
-            // Xerces 2 only - http://xerces.apache.org/xerces2-j/features.html#disallow-doctype-decl
-            dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            // Private key
+            final PrivateKey privKey = crypto.getPrivateKey();
 
-            doc = dbf.newDocumentBuilder().parse(new ByteArrayInputStream(data));
-        } catch (SAXException ex) {
-            throw new IllegalRequestException("Document parsing error", ex);
-        } catch (ParserConfigurationException ex) {
-            throw new SignServerException("Document parsing error", ex);
-        } catch (IOException ex) {
-            throw new SignServerException("Document parsing error", ex);
-        }
-        DOMSignContext dsc = new DOMSignContext(privKey, doc.getDocumentElement());
+            SignedInfo si;
+            try {
+                final String sigAlg = signatureAlgorithm == null ? getDefaultSignatureAlgorithm(privKey) : signatureAlgorithm;
+                Reference ref = fac.newReference("",
+                        fac.newDigestMethod(DigestMethod.SHA1, null),
+                        Collections.singletonList(fac.newTransform(Transform.ENVELOPED, (XMLStructure) null)),
+                        null, null);
 
-        XMLSignature signature = fac.newXMLSignature(si, ki);
-        try {
-            signature.sign(dsc);
-        } catch (MarshalException ex) {
-            throw new SignServerException("Signature generation error", ex);
-        } catch (XMLSignatureException ex) {
-            throw new SignServerException("Signature generation error", ex);
+                si = fac.newSignedInfo(fac.newCanonicalizationMethod(CanonicalizationMethod.INCLUSIVE_WITH_COMMENTS, (XMLStructure) null),
+                        fac.newSignatureMethod(getSignatureMethod(sigAlg), null),
+                        Collections.singletonList(ref));
+
+            } catch (InvalidAlgorithmParameterException ex) {
+                throw new SignServerException("XML signing algorithm error", ex);
+            } catch (NoSuchAlgorithmException ex) {
+                throw new SignServerException("XML signing algorithm error", ex);
+            }
+
+            KeyInfo ki = null;
+
+            if (!x509CertChain.isEmpty()) {
+                KeyInfoFactory kif = fac.getKeyInfoFactory();
+                X509Data x509d = kif.newX509Data(x509CertChain);
+
+                List<XMLStructure> kviItems = new LinkedList<XMLStructure>();
+                kviItems.add(x509d);
+                ki = kif.newKeyInfo(kviItems);
+            }
+
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            dbf.setNamespaceAware(true);
+
+            try {
+                // Xerces 1 - http://xerces.apache.org/xerces-j/features.html#external-general-entities
+                // Xerces 2 - http://xerces.apache.org/xerces2-j/features.html#external-general-entities
+                dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+
+                // Xerces 1 - http://xerces.apache.org/xerces-j/features.html#external-parameter-entities
+                // Xerces 2 - http://xerces.apache.org/xerces2-j/features.html#external-parameter-entities
+                dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+
+                // Xerces 2 only - http://xerces.apache.org/xerces2-j/features.html#disallow-doctype-decl
+                dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+
+                doc = dbf.newDocumentBuilder().parse(new ByteArrayInputStream(data));
+            } catch (SAXException ex) {
+                throw new IllegalRequestException("Document parsing error", ex);
+            } catch (ParserConfigurationException ex) {
+                throw new SignServerException("Document parsing error", ex);
+            } catch (IOException ex) {
+                throw new SignServerException("Document parsing error", ex);
+            }
+            DOMSignContext dsc = new DOMSignContext(privKey, doc.getDocumentElement());
+
+            XMLSignature signature = fac.newXMLSignature(si, ki);
+            try {
+                signature.sign(dsc);
+            } catch (MarshalException ex) {
+                throw new SignServerException("Signature generation error", ex);
+            } catch (XMLSignatureException ex) {
+                throw new SignServerException("Signature generation error", ex);
+            }
+        } finally {
+            releaseCryptoInstance(crypto);
         }
 
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
@@ -238,11 +247,11 @@ public class XMLSigner extends BaseSigner {
 
         if (signRequest instanceof GenericServletRequest) {
             signResponse = new GenericServletResponse(sReq.getRequestID(), signedbytes,
-                    getSigningCertificate(signRequest, requestContext),
+                    cert,
                     archiveId, archivables, CONTENT_TYPE);
         } else {
             signResponse = new GenericSignResponse(sReq.getRequestID(), signedbytes,
-                    getSigningCertificate(signRequest, requestContext),
+                    cert,
                     archiveId, archivables);
         }
         

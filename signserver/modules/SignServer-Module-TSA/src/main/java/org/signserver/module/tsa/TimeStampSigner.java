@@ -53,6 +53,7 @@ import org.signserver.server.ITimeSource;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.DefaultArchivable;
+import org.signserver.server.cryptotokens.ICryptoInstance;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.log.LogMap;
@@ -439,7 +440,9 @@ public class TimeStampSigner extends BaseSigner {
 
 
         GenericSignResponse signResponse = null;
+        ICryptoInstance crypto = null;
         try {
+            crypto = aquireCryptoInstance(ICryptoToken.PURPOSE_SIGN, signRequest, requestContext);
             final byte[] requestbytes = (byte[]) sReq.getRequestData();
 
             if (requestbytes == null || requestbytes.length == 0) {
@@ -472,8 +475,7 @@ public class TimeStampSigner extends BaseSigner {
                         timeStampRequest.getMessageImprintDigest(), false)));
 
             final TimeStampTokenGenerator timeStampTokenGen =
-                    getTimeStampTokenGenerator(timeStampRequest, logMap,
-                                               signRequest, requestContext);
+                    getTimeStampTokenGenerator(crypto, timeStampRequest, logMap);
 
             final TimeStampResponseGenerator timeStampResponseGen =
                     getTimeStampResponseGenerator(timeStampTokenGen);
@@ -601,6 +603,8 @@ public class TimeStampSigner extends BaseSigner {
         	logMap.put(ITimeStampLogger.LOG_TSA_EXCEPTION,
         			exception.getMessage());
         	throw exception;
+        } finally {
+            releaseCryptoInstance(crypto);
         }
 
         return signResponse;
@@ -707,9 +711,9 @@ public class TimeStampSigner extends BaseSigner {
     }
 
     private TimeStampTokenGenerator getTimeStampTokenGenerator(
+            final ICryptoInstance crypto,
             final TimeStampRequest timeStampRequest,
-            final LogMap logMap,
-            final ProcessRequest request, final RequestContext context)
+            final LogMap logMap)
             throws
                 IllegalRequestException,
                 CryptoTokenOfflineException,
@@ -729,7 +733,7 @@ public class TimeStampSigner extends BaseSigner {
             logMap.put(ITimeStampLogger.LOG_TSA_POLICYID, tSAPolicyOID.getId());
 
             final X509Certificate signingCert
-                    = (X509Certificate) getSigningCertificate(request, context);
+                    = (X509Certificate) getSigningCertificate(crypto);
             if (signingCert == null) {
                 throw new CryptoTokenOfflineException(
                         "No certificate for this signer");
@@ -737,16 +741,11 @@ public class TimeStampSigner extends BaseSigner {
             
             DigestCalculatorProvider calcProv = new BcDigestCalculatorProvider();    
             DigestCalculator calc = calcProv.get(new AlgorithmIdentifier(TSPAlgorithms.SHA1));
-            
-            
-            Certificate cert = this.getSigningCertificate(request, context);
-            
-            PrivateKey privKey =
-                    getPrivateKey(ICryptoToken.PURPOSE_SIGN, request, context);
+
             ContentSigner cs =
-            		new JcaContentSignerBuilder(signatureAlgorithm).setProvider(this.getCryptoToken().getProvider(ICryptoToken.PROVIDERUSAGE_SIGN)).build(privKey);
+            		new JcaContentSignerBuilder(signatureAlgorithm).setProvider(crypto.getProvider()).build(crypto.getPrivateKey());
             JcaSignerInfoGeneratorBuilder sigb = new JcaSignerInfoGeneratorBuilder(calcProv);
-            X509CertificateHolder certHolder = new X509CertificateHolder(cert.getEncoded());
+            X509CertificateHolder certHolder = new X509CertificateHolder(signingCert.getEncoded());
             
             // set signed attribute table generator based on property
             sigb.setSignedAttributeGenerator(
@@ -782,7 +781,7 @@ public class TimeStampSigner extends BaseSigner {
                 timeStampTokenGen.setTSA(new GeneralName(x500Name));
             }
            
-            timeStampTokenGen.addCertificates(getCertStoreWithChain(signingCert));
+            timeStampTokenGen.addCertificates(getCertStoreWithChain(signingCert, getSigningCertificateChain(crypto)));
 
         } catch (IllegalArgumentException e) {
             LOG.error("IllegalArgumentException: ", e);

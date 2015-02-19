@@ -15,7 +15,6 @@ package org.signserver.module.ooxmlsigner;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
@@ -34,6 +33,7 @@ import org.signserver.common.*;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.DefaultArchivable;
+import org.signserver.server.cryptotokens.ICryptoInstance;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.signers.BaseSigner;
 
@@ -119,19 +119,16 @@ public class OOXMLSigner extends BaseSigner {
         PackageDigitalSignatureManager dsm = new PackageDigitalSignatureManager(
                 docxPackage);
 
-        // get signing key
-        PrivateKey privateKey = 
-                getPrivateKey(ICryptoToken.PURPOSE_SIGN, signRequest, requestContext);
-
-        // get signing certificate
-        X509Certificate cert =
-                (X509Certificate) getSigningCertificate(signRequest, requestContext);
-        
-        // sign document
+        ICryptoInstance crypto = null;
         try {
-            dsm.SignDocument(privateKey, cert);
+            crypto = aquireCryptoInstance(ICryptoToken.PURPOSE_SIGN, signRequest, requestContext);
+        
+            // sign document
+            dsm.SignDocument(crypto.getPrivateKey(), (X509Certificate) getSigningCertificate(crypto));
         } catch (OpenXML4JException e1) {
             throw new SignServerException("Problem signing document", e1);
+        } finally {
+            releaseCryptoInstance(crypto);
         }
 
         // save output to package
@@ -172,6 +169,5 @@ public class OOXMLSigner extends BaseSigner {
         errors.addAll(configErrors);
         return errors;
     }
-    
-    
+
 }

@@ -53,6 +53,7 @@ import org.signserver.server.UsernamePasswordClientCredential;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.DefaultArchivable;
+import org.signserver.server.cryptotokens.ICryptoInstance;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -336,10 +337,13 @@ public class XAdESSigner extends BaseSigner {
             throw new SignServerException("Received a request with no user name set, while configured to get claimed role from user name and no default value for claimed role is set.");
         }
         
+        ICryptoInstance crypto = null;
         try {
+            crypto = aquireCryptoInstance(ICryptoToken.PURPOSE_SIGN, signRequest, requestContext);
+
             // Parse
             final XadesSigner signer =
-                    createSigner(parameters, claimedRole, signRequest, requestContext);
+                    createSigner(crypto, parameters, claimedRole, signRequest, requestContext);
             final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             dbf.setNamespaceAware(true);
 
@@ -386,6 +390,8 @@ public class XAdESSigner extends BaseSigner {
             throw new SignServerException("Exception signing document", ex);
         } catch (TransformerException ex) {
             throw new SignServerException("Transformation failure", ex);
+        } finally {
+            releaseCryptoInstance(crypto);
         }
         
         // Response
@@ -410,6 +416,7 @@ public class XAdESSigner extends BaseSigner {
     /**
      * Creates the signer implementation given the parameters.
      *
+     * @param crypto instance
      * @param params Parameters such as XAdES form and TSA properties.
      * @param claimedRole
      * @param request Signing request
@@ -419,22 +426,22 @@ public class XAdESSigner extends BaseSigner {
      * @throws XadesProfileResolutionException if the dependencies of the signer cannot be resolved
      * @throws CryptoTokenOfflineException If the private key is not available
      */
-    private XadesSigner createSigner(final XAdESSignerParameters params,
-                                     final String claimedRole,
-                                     final ProcessRequest request,
-                                     final RequestContext context)
+    private XadesSigner createSigner(final ICryptoInstance crypto,
+                                    final XAdESSignerParameters params,
+                                    final String claimedRole,
+                                    final ProcessRequest request,
+                                    final RequestContext context)
             throws SignServerException, XadesProfileResolutionException,
                    CryptoTokenOfflineException, IllegalRequestException {
         // Setup key and certificiates
         final List<X509Certificate> xchain = new LinkedList<X509Certificate>();
-        for (Certificate cert : this.getSigningCertificateChain(request, context)) {
+        for (Certificate cert : this.getSigningCertificateChain(crypto)) {
             if (cert instanceof X509Certificate) {
                 xchain.add((X509Certificate) cert);
             }
         }
         final KeyingDataProvider kdp =
-                new CertificateAndChainKeyingDataProvider(xchain,
-                    getPrivateKey(ICryptoToken.PURPOSE_SIGN, request, context));
+                new CertificateAndChainKeyingDataProvider(xchain, crypto.getPrivateKey());
         
         // Signing profile
         XadesSigningProfile xsp;                   

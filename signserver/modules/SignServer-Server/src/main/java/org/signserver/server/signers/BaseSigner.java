@@ -318,11 +318,13 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
 
         return result;
     }
-    
+
+    @Deprecated
     protected Store getCertStoreWithChain(Certificate signingCert) throws InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchProviderException, CryptoTokenOfflineException, CertStoreException, CertificateEncodingException, IOException {
-        List<Certificate> signingCertificateChain =
-                getSigningCertificateChain();
-        
+        return getCertStoreWithChain(signingCert, getSigningCertificateChain());
+    }
+    
+    protected Store getCertStoreWithChain(Certificate signingCert, List<Certificate> signingCertificateChain) throws InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchProviderException, CryptoTokenOfflineException, CertStoreException, CertificateEncodingException, IOException {
         if (signingCertificateChain == null) {
             throw new CryptoTokenOfflineException("Certificate chain not available");
         } else {

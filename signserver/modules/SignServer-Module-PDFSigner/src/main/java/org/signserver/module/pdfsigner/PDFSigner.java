@@ -38,6 +38,7 @@ import org.signserver.server.UsernamePasswordClientCredential;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.DefaultArchivable;
+import org.signserver.server.cryptotokens.ICryptoInstance;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.log.LogMap;
@@ -278,7 +279,10 @@ public class PDFSigner extends BaseSigner {
             Event event = (Event) requestContext.get(RequestContext.STATISTICS_EVENT);
             event.addCustomStatistics("PDFBYTES", pdfbytes.length);
         }
+        
+        ICryptoInstance crypto = null;
         try {
+            crypto = aquireCryptoInstance(ICryptoToken.PURPOSE_SIGN, signRequest, requestContext);
 
             if (params.isRefuseDoubleIndirectObjects()) {
                 checkForDuplicateObjects(pdfbytes);
@@ -299,7 +303,7 @@ public class PDFSigner extends BaseSigner {
             }
             
             byte[] signedbytes =
-                    addSignatureToPDFDocument(params, pdfbytes, password, 0,
+                    addSignatureToPDFDocument(crypto, params, pdfbytes, password, 0,
                                               signRequest, requestContext);
             final Collection<? extends Archivable> archivables = Arrays.asList(new DefaultArchivable(Archivable.TYPE_RESPONSE, CONTENT_TYPE, signedbytes, archiveId));
             
@@ -332,6 +336,8 @@ public class PDFSigner extends BaseSigner {
             throw new IllegalRequestException("The supplied password could not be read: " + ex.getMessage(), ex);
         } catch (IOException e) {
             throw new IllegalRequestException("Could not sign document: " + e.getMessage(), e);
+        } finally {
+            releaseCryptoInstance(crypto);
         }
 
         return signResponse;
@@ -521,7 +527,7 @@ public class PDFSigner extends BaseSigner {
         }
     }
     
-    protected byte[] addSignatureToPDFDocument(PDFSignerParameters params,
+    protected byte[] addSignatureToPDFDocument(final ICryptoInstance crypto, PDFSignerParameters params,
             byte[] pdfbytes, byte[] password, int contentEstimated,
             final ProcessRequest request, final RequestContext context)
             throws IOException, DocumentException,
@@ -530,16 +536,14 @@ public class PDFSigner extends BaseSigner {
     	boolean secondTry = contentEstimated != 0;
     	
         // get signing cert certificate chain and private key
-        List<Certificate> certs =
-                this.getSigningCertificateChain(request, context);
+        final List<Certificate> certs = getSigningCertificateChain(crypto);
         if (certs == null) {
             throw new SignServerException(
                     "Null certificate chain. This signer needs a certificate.");
         }
         final List<Certificate> includedCerts = includedCertificates(certs);
         Certificate[] certChain = includedCerts.toArray(new Certificate[includedCerts.size()]);
-        PrivateKey privKey =
-                getPrivateKey(ICryptoToken.PURPOSE_SIGN, request, context);
+        PrivateKey privKey = crypto.getPrivateKey();
 
         // need to check digest algorithms for DSA private key at signing
         // time since we can't be sure what key a configured alias selector gives back
@@ -683,8 +687,7 @@ public class PDFSigner extends BaseSigner {
         // include signer certificate crl inside cms package if requested
         CRL[] crlList = null;
         if (params.isEmbed_crl()) {
-            crlList = getCrlsForChain(this.getSigningCertificateChain(request,
-                                                                      context));
+            crlList = getCrlsForChain(certs);
         }
         sap.setCrypto(null, certChain, crlList,
                 PdfSignatureAppearance.SELF_SIGNED);
@@ -791,7 +794,7 @@ public class PDFSigner extends BaseSigner {
         		}
  
            		// try signing again
-        		return addSignatureToPDFDocument(params, pdfbytes,
+        		return addSignatureToPDFDocument(crypto, params, pdfbytes,
                                                          password, contentExact,
                                                          request, context);
         	} else {

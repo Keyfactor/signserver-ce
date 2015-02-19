@@ -33,6 +33,11 @@ import javax.crypto.SecretKey;
 public interface ICryptoInstance /** Java7: extends AutoClosable */ {
 
     /**
+     * @return The certificate (or null for secret keys)
+     */
+    Certificate getCertificate();
+    
+    /**
      * @return Get the certificate chain (or null for secret keys)
      */
     List<Certificate> getCertificateChain();

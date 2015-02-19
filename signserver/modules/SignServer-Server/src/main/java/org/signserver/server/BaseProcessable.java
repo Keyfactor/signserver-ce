@@ -18,7 +18,9 @@ import java.security.KeyStoreException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
+import java.security.Provider;
 import java.security.PublicKey;
+import java.security.Security;
 import java.security.cert.Certificate;
 import java.util.Arrays;
 import java.util.Collection;
@@ -30,11 +32,12 @@ import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Hex;
-import org.cesecore.util.query.QueryCriteria;
 import org.signserver.common.*;
 import org.signserver.server.aliasselectors.AliasSelector;
 import org.signserver.server.aliasselectors.DefaultAliasSelector;
 import org.signserver.server.cryptotokens.CryptoTokenHelper;
+import org.signserver.server.cryptotokens.DefaultCryptoInstance;
+import org.signserver.server.cryptotokens.ICryptoInstance;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.cryptotokens.IKeyGenerator;
 import org.signserver.server.cryptotokens.IKeyRemover;
@@ -151,7 +154,10 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
      * @throws IllegalRequestException
      * @throws CryptoTokenOfflineException
      * @throws SignServerException 
+     * @see #aquireCryptoInstance(java.lang.String, org.signserver.common.RequestContext) 
+     * @deprecated Use aqcuireCryptoInstance and releaseCryptoInstance
      */
+    @Deprecated
     protected PrivateKey getPrivateKey(final int purpose,
                                        final ProcessRequest request,
                                        final RequestContext context)
@@ -627,7 +633,9 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
      * @param context Request context
      * @return Signing certificate
      * @throws CryptoTokenOfflineException
+     * @deprecated Use getSigningCertificate(ICryptoInstance)
      */
+    @Deprecated
     public Certificate getSigningCertificate(final ProcessRequest request,
                                              final RequestContext context)
             throws CryptoTokenOfflineException {
@@ -670,6 +678,26 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         
         return cert;
     }
+
+    /**
+     * Method that returns the certificate used when signing.
+     * If the worker has a configured certificate this is returned.
+     * Otherwise a certificate from the crypto token is returned.
+     * 
+     * @param crypto instance to get certificate from in case there is non in config
+     * @return Signing certificate
+     * @throws CryptoTokenOfflineException
+     */
+    public Certificate getSigningCertificate(ICryptoInstance crypto) throws CryptoTokenOfflineException {
+        final Certificate result;
+        final Certificate certFromConfig = (new ProcessableConfig(config)).getSignerCertificate();
+        if (certFromConfig == null) {
+            result = crypto.getCertificate();
+        } else {
+            result = certFromConfig;
+        }
+        return result;
+    }
     
     /**
      * Method that returns the certificate used when signing.
@@ -681,10 +709,19 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
      * @return Signing certificate
      * @throws CryptoTokenOfflineException 
      */
+    @Deprecated
     public Certificate getSigningCertificate() throws CryptoTokenOfflineException {
         return getSigningCertificate(null, null);
     }
 
+    /**
+     * 
+     * @param alias
+     * @return
+     * @throws CryptoTokenOfflineException 
+     * @deprecated Use getSigningCertificateChain(ICryptoInstance)
+     */
+    @Deprecated
     public List<Certificate> getSigningCertificateChain(final String alias)
             throws CryptoTokenOfflineException {
         final ICryptoToken token;
@@ -717,7 +754,9 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
      * @param context Request context
      * @return The certificate chain used for signing
      * @throws CryptoTokenOfflineException
+     * @deprecated Use getSigningCertificateChain(ICryptoInstance)
      */
+    @Deprecated
     public List<Certificate> getSigningCertificateChain(final ProcessRequest request,
                                                         final RequestContext context)
             throws CryptoTokenOfflineException {
@@ -769,12 +808,33 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
      * 
      * @return Signing certificate chain
      * @throws CryptoTokenOfflineException 
+     * @deprecated Use getSigningCertificateChain(ICryptoInstance)
      */
+    @Deprecated
     public List<Certificate> getSigningCertificateChain() throws CryptoTokenOfflineException {
         return getSigningCertificateChain(null, null);
     }
 
     
+    /**
+     * Method that returns the certificate chain used when signing.
+     * If the worker has a configured certificate chain this is returned.
+     * Otherwise a certificate chain from the crypto token is returned.
+     * 
+     * @param crypto instance to get chain from unless it is not available in config
+     * @return The certificate chain used for signing
+     */
+    public List<Certificate> getSigningCertificateChain(final ICryptoInstance crypto) {
+        final List<Certificate> result;
+        final List<Certificate> certChainFromConfig = (new ProcessableConfig(config)).getSignerCertificateChain();
+        if (certChainFromConfig == null) {
+            result = crypto.getCertificateChain();
+        } else {
+            result = certChainFromConfig;
+        }
+        return result;
+    }
+
     /**
      * Method sending the request info to the signtoken
      * @return the request or null if method isn't supported by signertoken.
@@ -974,6 +1034,50 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         
         return errors;
     }
-    
+ 
+    /**
+     * Aquire a crypto instance in order to perform crypto operations during
+     * a limited scope.
+     * 
+     * It is the caller's responsibility to make sure the call is followed up
+     * by a call to releaseCryptoInstance() for each instance. Use try-final.
+     * 
+     * @param context the request context
+     * @return an crypto instance
+     * @throws CryptoTokenOfflineException
+     * @throws IllegalRequestException
+     * @throws SignServerException 
+     */
+    protected ICryptoInstance aquireCryptoInstance(final int purpose, final ProcessRequest request, final RequestContext context) throws SignServerException, CryptoTokenOfflineException, IllegalRequestException {
+        final ICryptoInstance result;
+        final String alias = aliasSelector.getAlias(purpose, this, request, context);
+        ICryptoToken token = getCryptoToken();
+        if (token instanceof ICryptoTokenV3) {
+            // Great this is V3 (3.7)
+            ICryptoTokenV3 token3 = (ICryptoTokenV3) token;
+            result = token3.aquireCryptoInstance(alias, context);
+        } else if (token instanceof ICryptoTokenV2) {
+            // Backwards compatibility for old V2 tokens (3.6)
+            ICryptoTokenV2 token2 = (ICryptoTokenV2) token;
+            PrivateKey privateKey = token2.getPrivateKey(alias);
+            Provider provider = Security.getProvider(token2.getProvider(ICryptoToken.PROVIDERUSAGE_SIGN));
+            result = new DefaultCryptoInstance(alias, context, provider, privateKey, token2.getCertificateChain(alias));
+        } else {
+            // V1 (<3.6) does not support aliases so not much we can do
+            throw new SignServerException("Operation not supported by crypto token");
+        }
+        return result;
+    }
+
+    /**
+     * Releases a previously acquired crypto instance.
+     * @param instance to release
+     */
+    protected void releaseCryptoInstance(final ICryptoInstance instance) throws SignServerException {
+        ICryptoToken token = getCryptoToken();
+        if (token instanceof ICryptoTokenV3) {
+            ((ICryptoTokenV3) token).releaseCryptoInstance(instance);
+        }
+    }
     
 }

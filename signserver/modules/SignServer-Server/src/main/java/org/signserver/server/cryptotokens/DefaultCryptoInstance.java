@@ -33,6 +33,7 @@ public class DefaultCryptoInstance implements ICryptoInstance {
     private final Provider provider;
     private final PrivateKey privateKey;
     private final PublicKey publicKey;
+    private final Certificate certificate;
     private final List<Certificate> certificateChain;
     private final SecretKey secretKey;
     private boolean invalid;
@@ -43,7 +44,8 @@ public class DefaultCryptoInstance implements ICryptoInstance {
         this.provider = provider;
         this.privateKey = privateKey;
         this.certificateChain = certificateChain;
-        this.publicKey = certificateChain.isEmpty() ? null : certificateChain.get(0).getPublicKey();
+        this.certificate = certificateChain.isEmpty() ? null : certificateChain.get(0);
+        this.publicKey = this.certificate.getPublicKey();
         this.secretKey = null;
     }
     
@@ -54,6 +56,7 @@ public class DefaultCryptoInstance implements ICryptoInstance {
         this.privateKey = privateKey;
         this.publicKey = publicKey;
         this.certificateChain = null;
+        this.certificate = null;
         this.secretKey = null;
     }
     
@@ -63,6 +66,7 @@ public class DefaultCryptoInstance implements ICryptoInstance {
         this.provider = provider;
         this.privateKey = null;
         this.certificateChain = null;
+        this.certificate = null;
         this.publicKey = null;
         this.secretKey = secretKey;
     }
@@ -85,6 +89,11 @@ public class DefaultCryptoInstance implements ICryptoInstance {
     public List<Certificate> getCertificateChain() {
         ensureValid();
         return certificateChain;
+    }
+
+    @Override
+    public Certificate getCertificate() {
+        return certificate;
     }
 
     @Override
@@ -119,5 +128,5 @@ public class DefaultCryptoInstance implements ICryptoInstance {
     public String toString() {
         return "CryptoInstanceImpl{ alias: " + alias + " }";
     }
-    
+
 }

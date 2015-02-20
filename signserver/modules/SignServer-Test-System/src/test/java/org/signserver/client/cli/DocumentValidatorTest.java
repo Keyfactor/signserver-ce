@@ -91,7 +91,6 @@ public class DocumentValidatorTest extends ModulesTestCase {
 
         // VALIDATION SERVICE
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER17.CLASSPATH", "org.signserver.validationservice.server.ValidationServiceWorker");
-        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER17.SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.HardCodedCryptoToken");
         workerSession.setWorkerProperty(17, "AUTHTYPE", "NOAUTH");
         workerSession.setWorkerProperty(17, "NAME", VALIDATION_WORKER);
         workerSession.setWorkerProperty(17, "VAL1.CLASSPATH", "org.signserver.validationservice.server.DummyValidator");

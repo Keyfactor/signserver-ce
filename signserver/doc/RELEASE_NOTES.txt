@@ -14,6 +14,11 @@ Notice:
    accordingly. The Ant script will complain if a file with the old name is
    found.
  - The new KeystoreInConfigCryptoToken is not supported under GlassFish 2.
+ - HardCodedCryptoToken is no longer supported for most use cases. Previously,
+   the token could have been configured in Certificate or Document validators
+   as those required a token to function. Since long this has not been
+   required and if any of your validators has this token configured it should
+   be removed or they might give an error.
 
 See ChangeLog.txt for the full list of changes.
 

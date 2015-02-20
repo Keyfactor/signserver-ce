@@ -131,7 +131,6 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
 
         // XMLVALIDATOR: worker
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + CERTVALIDATION_WORKERID + ".CLASSPATH", "org.signserver.module.xmlvalidator.XMLValidator");
-        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + CERTVALIDATION_WORKERID + ".SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.HardCodedCryptoToken");
         workerSession.setWorkerProperty(XMLVALIDATOR_WORKERID, "NAME", XMLVALIDATOR_WORKER);
         workerSession.setWorkerProperty(XMLVALIDATOR_WORKERID, "AUTHTYPE", "NOAUTH");
         workerSession.setWorkerProperty(XMLVALIDATOR_WORKERID, "VALIDATIONSERVICEWORKER", CERTVALIDATION_WORKER);
@@ -153,7 +152,6 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
 
     private void setupValidation() {
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + CERTVALIDATION_WORKERID + ".CLASSPATH", "org.signserver.validationservice.server.ValidationServiceWorker");
-        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + CERTVALIDATION_WORKERID + ".SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.HardCodedCryptoToken");
         workerSession.setWorkerProperty(CERTVALIDATION_WORKERID, "AUTHTYPE", "NOAUTH");
         workerSession.setWorkerProperty(CERTVALIDATION_WORKERID, "NAME", CERTVALIDATION_WORKER);
         workerSession.setWorkerProperty(CERTVALIDATION_WORKERID, "VAL1.CLASSPATH", "org.signserver.validationservice.server.CRLValidator");

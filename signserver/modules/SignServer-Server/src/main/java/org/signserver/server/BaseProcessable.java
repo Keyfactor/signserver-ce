@@ -32,6 +32,7 @@ import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Hex;
+import org.cesecore.util.query.QueryCriteria;
 import org.signserver.common.*;
 import org.signserver.server.aliasselectors.AliasSelector;
 import org.signserver.server.aliasselectors.DefaultAliasSelector;
@@ -43,6 +44,8 @@ import org.signserver.server.cryptotokens.IKeyGenerator;
 import org.signserver.server.cryptotokens.IKeyRemover;
 import org.signserver.server.cryptotokens.ICryptoTokenV2;
 import org.signserver.server.cryptotokens.ICryptoTokenV3;
+import org.signserver.server.cryptotokens.IGeneratedKeyData;
+import org.signserver.server.cryptotokens.TokenSearchResults;
 
 public abstract class BaseProcessable extends BaseWorker implements IProcessable, IKeyRemover {
 
@@ -302,10 +305,13 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
             final ICryptoToken tokenFromOtherWorker1 = getSignServerContext().getCryptoToken();
             final ICryptoToken tokenFromOtherWorker;
 
-            // If it is a V2 crypto token we can wrap it and let this worker
+            // If it is a V2 or V3 crypto token we can wrap it and let this worker
             // decide which key to use. Otherwise the key is decided by the old
             // crypto token
-            if (tokenFromOtherWorker1 instanceof ICryptoTokenV2) {
+            if (tokenFromOtherWorker1 instanceof ICryptoTokenV3) {
+                tokenFromOtherWorker = new WrappedCryptoTokenV3((ICryptoTokenV3) tokenFromOtherWorker1, config);
+            }
+            else if (tokenFromOtherWorker1 instanceof ICryptoTokenV2) {
                 tokenFromOtherWorker = new WrappedCryptoToken((ICryptoTokenV2) tokenFromOtherWorker1, config);
             } else {
                 tokenFromOtherWorker = tokenFromOtherWorker1;
@@ -605,6 +611,45 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         }
 
     };
+
+    private static class WrappedCryptoTokenV3 extends WrappedCryptoToken implements ICryptoTokenV3 {
+        
+        /** Logger for this class. */
+        private static final Logger LOG = Logger.getLogger(WrappedCryptoTokenV3.class);
+
+        private final ICryptoTokenV3 delegate;
+
+        public WrappedCryptoTokenV3(ICryptoTokenV3 delegate, WorkerConfig config) {
+            super(delegate, config);
+            this.delegate = delegate;
+        }
+        
+        @Override
+        public void importCertificateChain(List<Certificate> certChain, String alias, char[] athenticationCode) throws CryptoTokenOfflineException, IllegalArgumentException {
+            delegate.importCertificateChain(certChain, alias, athenticationCode);
+        }
+
+        @Override
+        public TokenSearchResults searchTokenEntries(int startIndex, int max, QueryCriteria qc, boolean includeData) throws CryptoTokenOfflineException, QueryException {
+            return delegate.searchTokenEntries(startIndex, max, qc, includeData);
+        }
+
+        @Override
+        public ICryptoInstance aquireCryptoInstance(String alias, RequestContext context) throws CryptoTokenOfflineException, IllegalRequestException, SignServerException {
+            return delegate.aquireCryptoInstance(alias, context);
+        }
+
+        @Override
+        public void releaseCryptoInstance(ICryptoInstance instance) {
+            delegate.releaseCryptoInstance(instance);
+        }
+
+        @Override
+        public IGeneratedKeyData generateWrappedKey(String newAlias, String keyAlgorithm, String keySpec, RequestContext context) throws OperationUnsupportedException, SignServerException {
+            return delegate.generateWrappedKey(newAlias, keyAlgorithm, keySpec, context);
+        }
+        
+    }
 
     @Override
     public int getCryptoTokenStatus() {

@@ -434,8 +434,8 @@ public class HardCodedCryptoToken implements ICryptoToken, ICryptoTokenV3 {
     }
     
     private void checkAlias(final String alias) throws CryptoTokenOfflineException {
-        if (!supportedAlias.equals(alias)) {
-            throw new CryptoTokenOfflineException("Only key alias " + alias + " supported by this token");
+        if (alias != null && !supportedAlias.equals(alias)) {
+            throw new CryptoTokenOfflineException("Only key alias " + supportedAlias + " supported by this token");
         }
     }
 

@@ -81,6 +81,7 @@ public class XMLSignerTest extends ModulesTestCase {
         workerSession.setWorkerProperty(WORKERID2, "KEYSTOREPATH",
                 new File(getSignServerHome() + File.separator + "res" + File.separator + "test" + File.separator + "xmlsigner4.jks").getAbsolutePath());
         workerSession.setWorkerProperty(WORKERID2, "KEYSTOREPASSWORD", "foo123");
+        workerSession.setWorkerProperty(WORKERID2, "DEFAULTKEY", "xmlsigner4");
         workerSession.reloadConfiguration(WORKERID2);
         
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + WORKERID3 + ".CLASSPATH", "org.signserver.module.xmlsigner.XMLSigner");
@@ -90,6 +91,7 @@ public class XMLSignerTest extends ModulesTestCase {
         workerSession.setWorkerProperty(WORKERID3, "KEYSTOREPATH",
                 new File(getSignServerHome() + File.separator + "res" + File.separator + "test" + File.separator + "xmlsignerec.p12").getAbsolutePath());
         workerSession.setWorkerProperty(WORKERID3, "KEYSTOREPASSWORD", "foo123");
+        workerSession.setWorkerProperty(WORKERID3, "DEFAULTKEY", "xmlsignerec");
         workerSession.reloadConfiguration(WORKERID3);
         
         addSigner("org.signserver.module.xmlsigner.DebugSigner", DEBUGWORKER, "XMLDebugSigner", false);

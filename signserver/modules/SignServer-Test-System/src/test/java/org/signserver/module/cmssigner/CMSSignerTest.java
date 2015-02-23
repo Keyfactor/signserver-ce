@@ -109,7 +109,8 @@ public class CMSSignerTest extends ModulesTestCase {
         if (!keystore.exists()) {
             throw new FileNotFoundException(keystore.getAbsolutePath());
         }
-        addP12DummySigner("org.signserver.module.cmssigner.CMSSigner", WORKERID_ECDSA, "TestCMSSignerP12ECDSA", keystore, "foo123", null);
+        addP12DummySigner("org.signserver.module.cmssigner.CMSSigner", WORKERID_ECDSA,
+            "TestCMSSignerP12ECDSA", keystore, "foo123", "signerec");
         workerSession.reloadConfiguration(WORKERID_ECDSA);
         
         helperBasicCMSSign(WORKERID_ECDSA, "SHA1withECDSA", "1.3.14.3.2.26", "1.2.840.10045.4.1", null, 1);

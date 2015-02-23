@@ -292,14 +292,6 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2,
             }
         }
         KeyEntry entry = entries.get(purposeOrAlias);
-        // If key for 'purpose' not available
-        // (and a key alias was not specified) and no nextKey defined, try with
-        // default
-        if ((entry == null || entry.getCertificate() == null)
-                && !properties.containsKey(NEXTKEY)
-                && !(purposeOrAlias instanceof String)) {
-            entry = entries.get(PURPOSE_SIGN);
-        }
         if (entry == null || entry.getCertificate() == null) {
             throw new CryptoTokenOfflineException(
                     "No key available for purpose: " + purposeOrAlias);

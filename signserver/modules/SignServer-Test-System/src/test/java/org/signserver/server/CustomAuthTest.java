@@ -67,6 +67,7 @@ public class CustomAuthTest extends ModulesTestCase {
         workerSession.setWorkerProperty(9, "TESTAUTHPROP", "DATA");
         workerSession.setWorkerProperty(9, "KEYSTOREPATH", signserverhome + "/res/test/dss10/dss10_tssigner1.p12");
         workerSession.setWorkerProperty(9, "KEYSTOREPASSWORD", "foo123");
+        workerSession.setWorkerProperty(9, "DEFAULTKEY", "TS Signer 1");
         workerSession.setWorkerProperty(9, TimeStampSigner.DEFAULTTSAPOLICYOID, "1.0.1.2.33");
         workerSession.setWorkerProperty(9, TimeStampSigner.TSA, "CN=TimeStampTest1");
         workerSession.setWorkerProperty(9, SignServerConstants.MODULENAME, "TSA");

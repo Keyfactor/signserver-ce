@@ -72,11 +72,11 @@ public class SODSignerTest extends ModulesTestCase {
         addSigner("org.signserver.module.mrtdsodsigner.MRTDSODSigner", WORKERID, "TestMRTDSODSigner1", true);
 
         // WORKER1 uses a P12 keystore
-        workerSession.removeWorkerProperty(WORKERID, "DEFAULTKEY");
         workerSession.setWorkerProperty(WORKERID, "KEYSTOREPATH",
                 getSignServerHome().getAbsolutePath()
                 + File.separator + "res" + File.separator + "test"
                 + File.separator + "demods1.p12");
+        workerSession.setWorkerProperty(WORKERID, "DEFAULTKEY", "demods1");
         workerSession.reloadConfiguration(WORKERID);
         
         // Dummy worker echoing request metadata

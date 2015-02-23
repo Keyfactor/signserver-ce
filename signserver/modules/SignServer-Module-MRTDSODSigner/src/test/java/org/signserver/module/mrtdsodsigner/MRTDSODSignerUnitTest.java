@@ -740,7 +740,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
             config.setProperty(AUTHTYPE, "NOAUTH");
             config.setProperty("DIGESTALGORITHM", "SHA512");
             config.setProperty("SIGNATUREALGORITHM", "SHA512withRSAandMGF1");
-            config.setProperty("defaultKey", HardCodedCryptoTokenAliases.KEY_ALIAS_2); // Use a larger key
+            config.setProperty(DEFAULTKEY, HardCodedCryptoTokenAliases.KEY_ALIAS_2); // Use a larger key
             
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
                     new MRTDSODSigner() {

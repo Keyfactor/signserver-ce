@@ -248,6 +248,7 @@ public class KeystoreCryptoTokenTest extends KeystoreCryptoTokenTestBase {
                 IOUtils.closeQuietly(out);
             }
 
+            workerSession.setWorkerProperty(workerId, "DEFAULTKEY", "newkey11");
             workerSession.reloadConfiguration(workerId);
 
             // Activate first so we can generate a key

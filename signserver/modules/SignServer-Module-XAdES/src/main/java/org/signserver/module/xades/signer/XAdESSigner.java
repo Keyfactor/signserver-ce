@@ -435,7 +435,11 @@ public class XAdESSigner extends BaseSigner {
                    CryptoTokenOfflineException, IllegalRequestException {
         // Setup key and certificiates
         final List<X509Certificate> xchain = new LinkedList<X509Certificate>();
-        for (Certificate cert : this.getSigningCertificateChain(crypto)) {
+        final List<Certificate> chain = this.getSigningCertificateChain(crypto);
+        if (chain == null) {
+            throw new CryptoTokenOfflineException("No certificate chain");
+        }
+        for (Certificate cert : chain) {
             if (cert instanceof X509Certificate) {
                 xchain.add((X509Certificate) cert);
             }

@@ -895,7 +895,8 @@ public class TimeStampSignerTest extends ModulesTestCase {
             if (!keystore.exists()) {
                 throw new FileNotFoundException(keystore.getAbsolutePath());
             }
-            addP12DummySigner(TimeStampSigner.class.getName(), workerId, "TestTimeStampP12ECDSA", keystore, "foo123", null);
+            addP12DummySigner(TimeStampSigner.class.getName(), workerId,
+                    "TestTimeStampP12ECDSA", keystore, "foo123", "signerec");
             workerSession.setWorkerProperty(workerId, "DEFAULTTSAPOLICYOID", "1.2.3");
             workerSession.setWorkerProperty(workerId, "SIGNATUREALGORITHM", "SHA1WithECDSA");
             workerSession.reloadConfiguration(workerId);

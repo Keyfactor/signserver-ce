@@ -60,6 +60,8 @@ public class KeystoreInConfigCryptoTokenTest extends KeystoreCryptoTokenTestBase
         } else {
             workerSession.removeWorkerProperty(workerId, "KEYSTOREPASSWORD");
         }
+        
+        workerSession.setWorkerProperty(tokenId, "DEFAULTKEY", SIGN_KEY_ALIAS);
 
         // Setup worker
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + workerId + ".CLASSPATH", "org.signserver.module.cmssigner.CMSSigner");

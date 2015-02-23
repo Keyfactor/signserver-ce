@@ -88,6 +88,7 @@ public class KeystoreCryptoTokenTest extends KeystoreCryptoTokenTestBase {
         workerSession.setWorkerProperty(workerId, "KEYSTORETYPE", "PKCS12");
         workerSession.setWorkerProperty(workerId, "AUTHTYPE", "NOAUTH");
         workerSession.setWorkerProperty(workerId, "KEYSTOREPATH", keystoreFile.getAbsolutePath());
+        workerSession.setWorkerProperty(workerId, "DEFAULTKEY", SIGN_KEY_ALIAS);
         if (autoActivate) {
             workerSession.setWorkerProperty(workerId, "KEYSTOREPASSWORD", pin);
         } else {
@@ -114,6 +115,7 @@ public class KeystoreCryptoTokenTest extends KeystoreCryptoTokenTestBase {
         workerSession.setWorkerProperty(tokenId, "NAME", "TestCryptoTokenP12");
         workerSession.setWorkerProperty(tokenId, "KEYSTORETYPE", "PKCS12");
         workerSession.setWorkerProperty(tokenId, "KEYSTOREPATH", keystoreFile.getAbsolutePath());
+        workerSession.setWorkerProperty(tokenId, "DEFAULTKEY", SIGN_KEY_ALIAS);   
         if (autoActivate) {
             workerSession.setWorkerProperty(tokenId, "KEYSTOREPASSWORD", pin);
         } else {

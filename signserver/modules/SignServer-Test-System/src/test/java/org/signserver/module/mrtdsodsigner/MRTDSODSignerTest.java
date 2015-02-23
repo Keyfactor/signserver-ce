@@ -104,6 +104,9 @@ public class MRTDSODSignerTest extends ModulesTestCase {
             "sX/0d4c1L1hohgpeJ2nbSeZ3SbSx/eNqhglBls/PSdEFqTpbAK7d+LfqkjDbKWbB\n" +
             "iVFbkjAvj/aacdk=\n" +
             "-----END CERTIFICATE-----";
+    
+    private static final String ALIAS_DEMODSEC = "MRTD Sod Signer";
+    private static final String ALIAS_DEMODS1 = "demods1";
 
     private final IWorkerSession workerSession = getWorkerSession();
     
@@ -131,6 +134,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
                 + File.separator + "res" + File.separator + "test"
                 + File.separator + "demods1.p12");
         workerSession.setWorkerProperty(WORKER1, "KEYSTOREPASSWORD", "foo123");
+        workerSession.setWorkerProperty(WORKER1, "DEFAULTKEY", ALIAS_DEMODS1);
 
         // WORKER1B uses a P12 keystore
         workerSession.setWorkerProperty(WORKER1B, "KEYSTOREPATH",
@@ -138,6 +142,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
                 + File.separator + "res" + File.separator + "test"
                 + File.separator + "dss10/dss10_signer1.p12");
         workerSession.setWorkerProperty(WORKER1B, "KEYSTOREPASSWORD", "foo123");
+        workerSession.setWorkerProperty(WORKER1B, "DEFAULTKEY", "Signer 1");
 
         // WORKER2 uses a P12 keystore
         workerSession.setWorkerProperty(WORKER2, "KEYSTOREPATH",
@@ -145,6 +150,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
                 + File.separator + "res" + File.separator + "test"
                 + File.separator + "demods1.p12");
         workerSession.setWorkerProperty(WORKER2, "KEYSTOREPASSWORD", "foo123");
+        workerSession.setWorkerProperty(WORKER2, "DEFAULTKEY", ALIAS_DEMODS1);
 
         // WORKER3 uses a P12 keystore
         workerSession.setWorkerProperty(WORKER3, "KEYSTOREPATH",
@@ -152,6 +158,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
                 + File.separator + "res" + File.separator + "test"
                 + File.separator + "demods1.p12");
         workerSession.setWorkerProperty(WORKER3, "KEYSTOREPASSWORD", "foo123");
+        workerSession.setWorkerProperty(WORKER3, "DEFAULTKEY", ALIAS_DEMODS1);
 
         // WORKER4 uses a P12 keystore
         workerSession.setWorkerProperty(WORKER4, "KEYSTOREPATH",
@@ -159,6 +166,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
                 + File.separator + "res" + File.separator + "test"
                 + File.separator + "demods1.p12");
         workerSession.setWorkerProperty(WORKER4, "KEYSTOREPASSWORD", "foo123");
+        workerSession.setWorkerProperty(WORKER4, "DEFAULTKEY", ALIAS_DEMODS1);
 
         // WORKER5 uses a P12 keystore and ECC
         workerSession.setWorkerProperty(WORKER5, "KEYSTOREPATH",
@@ -166,6 +174,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
                 + File.separator + "res" + File.separator + "test"
                 + File.separator + "demodsecc1.p12");
         workerSession.setWorkerProperty(WORKER5, "KEYSTOREPASSWORD", "foo123");
+        workerSession.setWorkerProperty(WORKER5, "DEFAULTKEY", ALIAS_DEMODSEC);
 
         workerSession.reloadConfiguration(WORKER1);
         workerSession.reloadConfiguration(WORKER2);
@@ -287,6 +296,9 @@ public class MRTDSODSignerTest extends ModulesTestCase {
         workerSession.setWorkerProperty(WORKER1B,
                 SignServerConstants.MINREMAININGCERTVALIDITY, "6300");
         workerSession.reloadConfiguration(WORKER1B);
+        
+        System.out.println("remaining: " + workerSession.getSigningValidityNotAfter(WORKER1B));
+        
         // Signing operation should not work now
         boolean thrown = false;
         try {

@@ -144,11 +144,6 @@ public class MockedCryptoToken implements ICryptoToken, ICryptoTokenV3 {
     }
 
     @Override
-    public IGeneratedKeyData generateWrappedKey(String newAlias, String keyAlgorithm, String keySpec, RequestContext context) throws OperationUnsupportedException, SignServerException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
     public PrivateKey getPrivateKey(String alias) throws CryptoTokenOfflineException {
         return privateKey;
     }

@@ -525,11 +525,6 @@ public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2,
         // NOP
     }
 
-    @Override
-    public IGeneratedKeyData generateWrappedKey(String newAlias, String keyAlgorithm, String keySpec, RequestContext context) throws OperationUnsupportedException, SignServerException {
-        throw new OperationUnsupportedException("Generating wrapped key not supported by crypto token");
-    }
-
     private static class KeyStorePKCS11CryptoToken extends org.cesecore.keys.token.PKCS11CryptoToken {
 
         public KeyStorePKCS11CryptoToken() throws InstantiationException {

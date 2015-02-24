@@ -657,11 +657,6 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2,
         // NOP
     }
 
-    @Override
-    public IGeneratedKeyData generateWrappedKey(String newAlias, String keyAlgorithm, String keySpec, RequestContext context) throws SignServerException, OperationUnsupportedException {
-        throw new OperationUnsupportedException("Generating wrapped key not supported by crypto token");
-    }
-
     private static class KeyEntry {
         private PrivateKey privateKey;
         private Certificate certificate;

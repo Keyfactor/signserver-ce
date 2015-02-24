@@ -89,20 +89,5 @@ public interface ICryptoTokenV3 extends ICryptoTokenV2 {
             char[] authCode,
             IServices services) throws CryptoTokenOfflineException,
                 IllegalArgumentException;
-    
-    
-    /**
-     * Generate a new wrapped secret key and obtain the wrapped key data.
-     * 
-     * XXX: This method should probably not be exposed here. Instead adjust the
-     * IKeyGenerator interface or extend it with the RequestContext etc.
-     * 
-     * @param newAlias to use
-     * @param keyAlgorithm for the new key
-     * @param keySpec for the new key
-     * @param context the request context
-     * @return the key data for the new key
-     * @throws SignServerException 
-     */
-    IGeneratedKeyData generateWrappedKey(String newAlias, String keyAlgorithm, String keySpec, RequestContext context) throws OperationUnsupportedException, SignServerException;
+
 }

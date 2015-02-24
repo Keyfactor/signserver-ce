@@ -645,11 +645,6 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         }
 
         @Override
-        public IGeneratedKeyData generateWrappedKey(String newAlias, String keyAlgorithm, String keySpec, RequestContext context) throws OperationUnsupportedException, SignServerException {
-            return delegate.generateWrappedKey(newAlias, keyAlgorithm, keySpec, context);
-        }
-
-        @Override
         public void generateKey(String keyAlgorithm, String keySpec, String alias, char[] authCode, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
             delegate.generateKey(keyAlgorithm, keySpec, alias, authCode, services);
         }

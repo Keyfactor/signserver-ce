@@ -5559,7 +5559,8 @@ The fully qualified class name is: <b>org.signserver.server.cryptotokens.P12Cryp
 <b>KEYSTOREPASSWORD</b>: The password that locks the key-store. Used for automatic activation.
                         </p>
                         <p>
-<b>DEFAULTKEY</b>: The key to use. If not specified the first found key is used. (optional)
+<b>DEFAULTKEY</b>: The key to use. If a key is not derived from each signing request
+(using an implementation of the AliasSelector interface), this needs to be defined. (optional)
                         </p>
                     </subsubsection>
                 </subsection>
@@ -5591,7 +5592,8 @@ The fully qualified class name is: <b>org.signserver.server.cryptotokens.JKSCryp
 <b>KEYSTOREPASSWORD</b>: The password that locks the key-store. Used for automatic activation.
                         </p>
                         <p>
-<b>DEFAULTKEY</b>: The key to use. If not specified the first found key is used. (optional)
+<b>DEFAULTKEY</b>: The key to use. If a key is not derived from each signing request
+(using an implementation of the AliasSelector interface), this needs to be defined. (optional)
                         </p>
                         <p>
 <b>NEXTCERTSIGNKEY</b>: The next key to use. See PKCS11CryptoToken. (optional)

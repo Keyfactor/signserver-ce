@@ -26,6 +26,11 @@ From SignServer 3.6.x to SignServer 3.7.x
    Pay attention to the change of file name for the configuration file as
    described in the RELEASE_NOTES.txt.
 
+2) The KeystoreCryptoToken will no longer use the first available key when
+   signing if DEFAULTKEY has not been set. Having a defined DEFAULTKEY is
+   not needed if using runtime-decided keys (using the AliasSelector
+   interfaces).
+
 
 From SignServer 3.5.x to SignServer 3.6.x
 -----------------------------------------

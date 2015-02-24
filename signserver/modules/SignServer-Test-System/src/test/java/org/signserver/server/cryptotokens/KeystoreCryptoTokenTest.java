@@ -35,6 +35,7 @@ import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.SignServerUtil;
 
@@ -550,6 +551,32 @@ public class KeystoreCryptoTokenTest extends KeystoreCryptoTokenTestBase {
             final List<String> errors = workerSession.getStatus(workerId).getFatalErrors();
             assertTrue("Should contain error",
                     errors.contains("Failed to initialize crypto token: File not found: non-existing.p12"));
+        } finally {
+            removeWorker(workerId);
+        }
+    }
+    
+    /**
+     * Test that unsetting DEFAULTKEY results in a CryptoTokenOfflineException.
+     * 
+     * @throws Exception 
+     */
+    public void testNoDefaultKey() throws Exception {
+        LOG.info("testNoDefaultKey");
+        
+        final int workerId = WORKER_CMS;
+        
+        try {
+            setCMSSignerPropertiesCombined(workerId, true);
+            // unset DEFAULTKEY
+            workerSession.removeWorkerProperty(workerId, "DEFAULTKEY");
+            workerSession.reloadConfiguration(workerId);
+            
+            cmsSigner(workerId);
+        } catch (CryptoTokenOfflineException e) {
+            // expected
+        } catch (Exception e) {
+            fail("Unexpected exception: " + e.getClass().getName());
         } finally {
             removeWorker(workerId);
         }

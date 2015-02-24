@@ -68,6 +68,7 @@ public class KeystoreInConfigCryptoTokenTest extends KeystoreCryptoTokenTestBase
         workerSession.setWorkerProperty(workerId, "NAME", "CMSSignerConfigToken");
         workerSession.setWorkerProperty(workerId, "AUTHTYPE", "NOAUTH");
         workerSession.setWorkerProperty(workerId, "CRYPTOTOKEN", "TestCryptoTokenInConfig");
+        workerSession.setWorkerProperty(workerId, "DEFAULTKEY", SIGN_KEY_ALIAS);
     }
     
     /**

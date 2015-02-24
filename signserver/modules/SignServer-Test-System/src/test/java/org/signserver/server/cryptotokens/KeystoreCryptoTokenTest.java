@@ -127,6 +127,7 @@ public class KeystoreCryptoTokenTest extends KeystoreCryptoTokenTestBase {
         workerSession.setWorkerProperty(workerId, "NAME", "CMSSignerP12");
         workerSession.setWorkerProperty(workerId, "AUTHTYPE", "NOAUTH");
         workerSession.setWorkerProperty(workerId, "CRYPTOTOKEN", "TestCryptoTokenP12");
+        workerSession.setWorkerProperty(workerId, "DEFAULTKEY", SIGN_KEY_ALIAS);
     }
 
     /**

@@ -25,6 +25,7 @@ import org.cesecore.util.query.QueryCriteria;
 import org.ejbca.util.keystore.KeyTools;
 import org.signserver.common.*;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.server.IServices;
 import org.signserver.server.log.AdminInfo;
 
 /**
@@ -377,7 +378,7 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2,
     }
     
     @Override
-    public TokenSearchResults searchTokenEntries(final int startIndex, final int max, QueryCriteria qc, boolean includeData) 
+    public TokenSearchResults searchTokenEntries(final int startIndex, final int max, QueryCriteria qc, boolean includeData, IServices services) 
             throws CryptoTokenOfflineException, QueryException {
         try {
             KeyStore keyStore = getKeyStore();
@@ -453,6 +454,12 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2,
             LOG.error(ex, ex);
             throw new CryptoTokenOfflineException(ex);
         }
+    }
+    
+    // TODO: This method could be used instead of the getWorkerSession lookup
+    @Override
+    public void generateKey(String keyAlgorithm, String keySpec, String alias, char[] authCode, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
+        generateKey(keyAlgorithm, keySpec, alias, authCode);
     }
 
     @Override
@@ -580,7 +587,8 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2,
     @Override
     public void importCertificateChain(final List<Certificate> certChain,
                                        final String alias,
-                                       final char[] authCode)
+                                       final char[] authCode,
+                                       final IServices services)
         throws CryptoTokenOfflineException, IllegalArgumentException {
         if (certChain.size() < 1) {
             throw new IllegalArgumentException("Certificate chain can not be empty");

@@ -21,6 +21,7 @@ import org.signserver.common.OperationUnsupportedException;
 import org.signserver.common.QueryException;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
+import org.signserver.server.IServices;
 
 /**
  * Third version of the crypto token interface.
@@ -32,6 +33,8 @@ import org.signserver.common.SignServerException;
  * @version $Id$
  */
 public interface ICryptoTokenV3 extends ICryptoTokenV2 {
+
+    // TODO: Add IServices to old methods from V2
     
     /**
      * Import certificate chain to a crypto token.
@@ -40,14 +43,15 @@ public interface ICryptoTokenV3 extends ICryptoTokenV2 {
      * @param alias Key alias to import certificate chain in
      * @param athenticationCode Alias-specific authentication code. If this is null
      *                          uses the token's authentication code (set when activating)
+     * @param services
      * @throws CryptoTokenOfflineException
      * @throws IllegalArgumentException
      */
     void importCertificateChain(List<Certificate> certChain, String alias,
-            char[] athenticationCode)
+            char[] athenticationCode, IServices services)
             throws CryptoTokenOfflineException, IllegalArgumentException;
     
-    TokenSearchResults searchTokenEntries(final int startIndex, final int max, final QueryCriteria qc, final boolean includeData) 
+    TokenSearchResults searchTokenEntries(final int startIndex, final int max, final QueryCriteria qc, final boolean includeData, IServices services) 
             throws CryptoTokenOfflineException, QueryException;
     
     /**
@@ -72,6 +76,21 @@ public interface ICryptoTokenV3 extends ICryptoTokenV2 {
      */
     void releaseCryptoInstance(ICryptoInstance instance);
 
+    /**
+     * Generate a new keypair.
+     * @param keyAlgorithm Key algorithm
+     * @param keySpec Key specification
+     * @param alias Name of the new key
+     * @param authCode Authorization code
+     * @throws CryptoTokenOfflineException
+     * @throws IllegalArgumentException
+     */
+    void generateKey(String keyAlgorithm, String keySpec, String alias,
+            char[] authCode,
+            IServices services) throws CryptoTokenOfflineException,
+                IllegalArgumentException;
+    
+    
     /**
      * Generate a new wrapped secret key and obtain the wrapped key data.
      * 

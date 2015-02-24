@@ -395,7 +395,7 @@ public class BaseProcessableTest extends TestCase {
         final List<Certificate> chain =
                 Arrays.asList(CertTools.getCertfromByteArray(HardCodedCryptoToken.certbytes2));
         
-        instance.importCertificateChain(chain, "alias2", null);
+        instance.importCertificateChain(chain, "alias2", null, new ServicesImpl());
         
         final List<Certificate> importedChain =
                 instance.getSigningCertificateChain("alias2");
@@ -452,12 +452,12 @@ public class BaseProcessableTest extends TestCase {
         }
 
         @Override
-        public void importCertificateChain(List<Certificate> certChain, String alias, char[] athenticationCode) throws CryptoTokenOfflineException, IllegalArgumentException {
+        public void importCertificateChain(List<Certificate> certChain, String alias, char[] athenticationCode, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
             importedChains.put(alias, certChain);
         }
 
         @Override
-        public TokenSearchResults searchTokenEntries(int startIndex, int max, QueryCriteria qc, boolean includeData) {
+        public TokenSearchResults searchTokenEntries(int startIndex, int max, QueryCriteria qc, boolean includeData, IServices services) {
             throw new UnsupportedOperationException("Not supported yet.");
         }
 
@@ -515,6 +515,11 @@ public class BaseProcessableTest extends TestCase {
 
         @Override
         public IGeneratedKeyData generateWrappedKey(String newAlias, String keyAlgorithm, String keySpec, RequestContext context) throws OperationUnsupportedException, SignServerException {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public void generateKey(String keyAlgorithm, String keySpec, String alias, char[] authCode, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
 

@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.ejb;
 
+import org.signserver.server.ServicesImpl;
 import java.math.BigInteger;
 import java.security.KeyStoreException;
 import java.security.cert.Certificate;
@@ -21,9 +22,12 @@ import java.security.cert.X509Certificate;
 import java.util.*;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.EJBException;
+import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
+import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
@@ -35,13 +39,13 @@ import org.cesecore.audit.log.SecurityEventsLoggerSessionLocal;
 import org.cesecore.authentication.tokens.UsernamePrincipal;
 import org.cesecore.authorization.AuthorizationDeniedException;
 import org.cesecore.util.query.QueryCriteria;
-import org.cesecore.util.query.elems.LogicOperator;
-import org.cesecore.util.query.elems.Term;
 import org.ejbca.util.CertTools;
 import org.signserver.common.*;
 import org.signserver.common.KeyTestResult;
 import org.signserver.common.util.PropertiesConstants;
+import org.signserver.ejb.interfaces.IDispatcherWorkerSession;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
+import org.signserver.ejb.interfaces.IInternalWorkerSession;
 import org.signserver.ejb.interfaces.IServiceTimerSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.ejb.worker.impl.IWorkerManagerSessionLocal;
@@ -63,6 +67,7 @@ import org.signserver.server.entities.KeyUsageCounterDataService;
 import org.signserver.server.log.*;
 import org.signserver.server.nodb.FileBasedDatabaseManager;
 import org.signserver.server.statistics.StatisticsManager;
+import org.signserver.statusrepo.IStatusRepositorySession;
 
 /**
  * The main worker session bean.
@@ -99,27 +104,44 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     @EJB
     private SecurityEventsAuditorSessionLocal auditorSession;
     
+    @Resource
+    private SessionContext ctx;
+    
     EntityManager em;
 
     private WorkerProcessImpl processImpl;
+    private final ServicesImpl servicesImpl = new ServicesImpl();
 
     @PostConstruct
     public void create() {
-        if (em == null) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("No EntityManager injected. Running without database.");
+        try {
+            if (em == null) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("No EntityManager injected. Running without database.");
+                }
+                workerConfigService = new FileBasedWorkerConfigDataService(FileBasedDatabaseManager.getInstance());
+                keyUsageCounterDataService = new FileBasedKeyUsageCounterDataService(FileBasedDatabaseManager.getInstance());
+            } else {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("EntityManager injected. Running with database.");
+                }
+                workerConfigService = new WorkerConfigDataService(em);
+                archiveDataService = new ArchiveDataService(em);
+                keyUsageCounterDataService = new KeyUsageCounterDataService(em);
             }
-            workerConfigService = new FileBasedWorkerConfigDataService(FileBasedDatabaseManager.getInstance());
-            keyUsageCounterDataService = new FileBasedKeyUsageCounterDataService(FileBasedDatabaseManager.getInstance());
-        } else {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("EntityManager injected. Running with database.");
-            }
-            workerConfigService = new WorkerConfigDataService(em);
-            archiveDataService = new ArchiveDataService(em);
-            keyUsageCounterDataService = new KeyUsageCounterDataService(em);
+            processImpl = new WorkerProcessImpl(em, keyUsageCounterDataService, globalConfigurationSession, workerManagerSession, logSession);
+            
+            // XXX Needs to be duplicated in each xWorkerSessionBean
+            servicesImpl.put(EntityManager.class, em);
+            servicesImpl.put(IWorkerSession.ILocal.class, ctx.getBusinessObject(IWorkerSession.ILocal.class));
+            servicesImpl.put(IGlobalConfigurationSession.ILocal.class, globalConfigurationSession);
+            servicesImpl.put(SecurityEventsLoggerSessionLocal.class, logSession);
+            servicesImpl.put(IInternalWorkerSession.ILocal.class, ServiceLocator.getInstance().lookupLocal(IInternalWorkerSession.ILocal.class));
+            servicesImpl.put(IDispatcherWorkerSession.ILocal.class, ServiceLocator.getInstance().lookupLocal(IDispatcherWorkerSession.ILocal.class));
+            servicesImpl.put(IStatusRepositorySession.ILocal.class, ServiceLocator.getInstance().lookupLocal(IStatusRepositorySession.ILocal.class));
+        } catch (NamingException ex) {
+            throw new IllegalStateException("Lookup of services failed: " + ex.getMessage());
         }
-        processImpl = new WorkerProcessImpl(em, keyUsageCounterDataService, globalConfigurationSession, workerManagerSession, logSession);
     }
 
     @Override
@@ -127,6 +149,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             final ProcessRequest request, final RequestContext requestContext)
             throws IllegalRequestException, CryptoTokenOfflineException,
             SignServerException {
+        requestContext.setServices(servicesImpl);
         return processImpl.process(workerId, request, requestContext);
     }
     
@@ -135,11 +158,10 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             final ProcessRequest request, final RequestContext requestContext)
             throws IllegalRequestException, CryptoTokenOfflineException,
             SignServerException {
-
+        requestContext.setServices(servicesImpl);
         if (LOG.isDebugEnabled()) {
             LOG.debug(">process: " + workerId);
         }
-
         return processImpl.process(adminInfo, workerId, request, requestContext);
     }
 
@@ -385,8 +407,13 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             }
         }
 
-        signer.generateKey(keyAlgorithm, keySpec, alias,
+        if (signer instanceof BaseProcessable) {
+            ((BaseProcessable) signer).generateKey(keyAlgorithm, keySpec, alias,
+                authCode, servicesImpl);
+        } else {
+            signer.generateKey(keyAlgorithm, keySpec, alias,
                 authCode);
+        }
         
         final HashMap<String, Object> auditMap = new HashMap<String, Object>();
         auditMap.put("KEYALG", keyAlgorithm);
@@ -952,7 +979,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         final IWorker worker = workerManagerSession.getWorker(signerId, globalConfigurationSession);
         
         if (worker instanceof BaseProcessable) {
-            ((BaseProcessable) worker).importCertificateChain(certs, alias, null);
+            ((BaseProcessable) worker).importCertificateChain(certs, alias, null, servicesImpl);
         }
     }
 
@@ -1217,7 +1244,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         if (worker instanceof BaseProcessable) {
             ICryptoToken cryptoToken = ((BaseProcessable) worker).getCryptoToken();
             if (cryptoToken instanceof ICryptoTokenV3) {
-                return ((ICryptoTokenV3) cryptoToken).searchTokenEntries(startIndex, max, qc, includeData);
+                return ((ICryptoTokenV3) cryptoToken).searchTokenEntries(startIndex, max, qc, includeData, servicesImpl);
             } else {
                 throw new OperationUnsupportedException("Operation not supported by crypto token");
             }

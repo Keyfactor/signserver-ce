@@ -51,6 +51,7 @@ import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerStatus;
 import static org.signserver.server.BaseProcessable.PROPERTY_CACHE_PRIVATEKEY;
+import org.signserver.server.IServices;
 
 /**
  * CryptoToken implementation wrapping the new PKCS11CryptoToken from CESeCore.
@@ -473,11 +474,17 @@ public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2,
             throw new CryptoTokenOfflineException(ex);
         }
     }
+    
+    @Override
+    public void generateKey(String keyAlgorithm, String keySpec, String alias, char[] authCode, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
+        generateKey(keyAlgorithm, keySpec, alias, authCode);
+    }
 
     @Override
     public void importCertificateChain(final List<Certificate> certChain,
                                        final String alias,
-                                       final char[] athenticationCode)
+                                       final char[] athenticationCode,
+                                       final IServices services)
             throws CryptoTokenOfflineException, IllegalArgumentException {
         try {
             final KeyStore keyStore = delegate.getActivatedKeyStore();
@@ -498,7 +505,7 @@ public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2,
     }
 
     @Override
-    public TokenSearchResults searchTokenEntries(final int startIndex, final int max, final QueryCriteria qc, final boolean includeData) throws CryptoTokenOfflineException, QueryException {
+    public TokenSearchResults searchTokenEntries(final int startIndex, final int max, final QueryCriteria qc, final boolean includeData, final IServices services) throws CryptoTokenOfflineException, QueryException {
         try {
             return CryptoTokenHelper.searchTokenEntries(getKeyStore(), startIndex, max, qc, includeData);
         } catch (KeyStoreException ex) {

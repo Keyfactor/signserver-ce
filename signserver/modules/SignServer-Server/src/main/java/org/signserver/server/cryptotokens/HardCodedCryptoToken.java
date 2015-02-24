@@ -45,6 +45,7 @@ import org.signserver.common.QueryException;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerStatus;
+import org.signserver.server.IServices;
 import static org.signserver.server.cryptotokens.HardCodedCryptoTokenAliases.KEY_ALIAS_1;
 import static org.signserver.server.cryptotokens.HardCodedCryptoTokenAliases.KEY_ALIAS_2;
 import static org.signserver.server.cryptotokens.HardCodedCryptoTokenAliases.KEY_ALIAS_3;
@@ -440,12 +441,12 @@ public class HardCodedCryptoToken implements ICryptoToken, ICryptoTokenV3 {
     }
 
     @Override
-    public void importCertificateChain(List<Certificate> certChain, String alias, char[] athenticationCode) throws CryptoTokenOfflineException, IllegalArgumentException {
+    public void importCertificateChain(List<Certificate> certChain, String alias, char[] athenticationCode, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public TokenSearchResults searchTokenEntries(int startIndex, int max, QueryCriteria qc, boolean includeData) throws CryptoTokenOfflineException, QueryException {
+    public TokenSearchResults searchTokenEntries(int startIndex, int max, QueryCriteria qc, boolean includeData, IServices services) throws CryptoTokenOfflineException, QueryException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -495,6 +496,11 @@ public class HardCodedCryptoToken implements ICryptoToken, ICryptoTokenV3 {
 
     @Override
     public void generateKey(String keyAlgorithm, String keySpec, String alias, char[] authCode) throws CryptoTokenOfflineException, IllegalArgumentException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void generateKey(String keyAlgorithm, String keySpec, String alias, char[] authCode, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

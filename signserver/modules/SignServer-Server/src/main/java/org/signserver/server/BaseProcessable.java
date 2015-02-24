@@ -625,13 +625,13 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         }
         
         @Override
-        public void importCertificateChain(List<Certificate> certChain, String alias, char[] athenticationCode) throws CryptoTokenOfflineException, IllegalArgumentException {
-            delegate.importCertificateChain(certChain, alias, athenticationCode);
+        public void importCertificateChain(List<Certificate> certChain, String alias, char[] athenticationCode, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
+            delegate.importCertificateChain(certChain, alias, athenticationCode, services);
         }
 
         @Override
-        public TokenSearchResults searchTokenEntries(int startIndex, int max, QueryCriteria qc, boolean includeData) throws CryptoTokenOfflineException, QueryException {
-            return delegate.searchTokenEntries(startIndex, max, qc, includeData);
+        public TokenSearchResults searchTokenEntries(int startIndex, int max, QueryCriteria qc, boolean includeData, IServices services) throws CryptoTokenOfflineException, QueryException {
+            return delegate.searchTokenEntries(startIndex, max, qc, includeData, services);
         }
 
         @Override
@@ -647,6 +647,11 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         @Override
         public IGeneratedKeyData generateWrappedKey(String newAlias, String keyAlgorithm, String keySpec, RequestContext context) throws OperationUnsupportedException, SignServerException {
             return delegate.generateWrappedKey(newAlias, keyAlgorithm, keySpec, context);
+        }
+
+        @Override
+        public void generateKey(String keyAlgorithm, String keySpec, String alias, char[] authCode, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
+            delegate.generateKey(keyAlgorithm, keySpec, alias, authCode, services);
         }
         
     }
@@ -977,10 +982,19 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
     public void generateKey(final String keyAlgorithm, final String keySpec,
             final String alias, final char[] authCode)
             throws CryptoTokenOfflineException, IllegalArgumentException {
+        generateKey(keyAlgorithm, keySpec, alias, authCode, new ServicesImpl());
+    }
+    
+    public void generateKey(final String keyAlgorithm, final String keySpec,
+            final String alias, final char[] authCode, final IServices services)
+            throws CryptoTokenOfflineException, IllegalArgumentException {
         try {
             ICryptoToken token = getCryptoToken();
             if (token == null) {
                 throw new CryptoTokenOfflineException("Crypto token offline");
+            } else if (token instanceof ICryptoTokenV3) {
+                ((ICryptoTokenV3) token).generateKey(keyAlgorithm, keySpec, alias,
+                        authCode, services);
             } else if (token instanceof IKeyGenerator) {
                 ((IKeyGenerator) token).generateKey(keyAlgorithm, keySpec, alias,
                         authCode);
@@ -1017,7 +1031,8 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
     @Override
     public void importCertificateChain(final List<Certificate> certChain,
                                        final String alias,
-                                       final char[] authenticationCode)
+                                       final char[] authenticationCode,
+                                       final IServices services)
             throws CryptoTokenOfflineException, OperationUnsupportedException {
         try {
             final ICryptoToken token = getCryptoToken();
@@ -1029,7 +1044,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
             if (token instanceof ICryptoTokenV3) {
                 final ICryptoTokenV3 tokenV3 = (ICryptoTokenV3) token;
                 
-                tokenV3.importCertificateChain(certChain, alias, authenticationCode);
+                tokenV3.importCertificateChain(certChain, alias, authenticationCode, services);
             } else {
                 throw new OperationUnsupportedException("Importing certificate chain is not supported by crypto token");
             }

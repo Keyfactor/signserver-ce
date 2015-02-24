@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.signserver.common.*;
+import org.signserver.server.IServices;
 import org.signserver.server.cryptotokens.DefaultCryptoInstance;
 import org.signserver.server.cryptotokens.ICryptoInstance;
 import org.signserver.server.cryptotokens.ICryptoToken;
@@ -123,12 +124,12 @@ public class MockedCryptoToken implements ICryptoToken, ICryptoTokenV3 {
     }
     
     @Override
-    public void importCertificateChain(List<Certificate> certChain, String alias, char[] athenticationCode) throws CryptoTokenOfflineException, IllegalArgumentException {
+    public void importCertificateChain(List<Certificate> certChain, String alias, char[] athenticationCode, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public TokenSearchResults searchTokenEntries(int startIndex, int max, org.cesecore.util.query.QueryCriteria qc, boolean includeData) throws CryptoTokenOfflineException, QueryException {
+    public TokenSearchResults searchTokenEntries(int startIndex, int max, org.cesecore.util.query.QueryCriteria qc, boolean includeData, IServices services) throws CryptoTokenOfflineException, QueryException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -179,6 +180,11 @@ public class MockedCryptoToken implements ICryptoToken, ICryptoTokenV3 {
 
     @Override
     public boolean removeKey(String alias) throws CryptoTokenOfflineException, KeyStoreException, SignServerException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void generateKey(String keyAlgorithm, String keySpec, String alias, char[] authCode, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

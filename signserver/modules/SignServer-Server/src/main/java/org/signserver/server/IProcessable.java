@@ -144,6 +144,7 @@ public interface IProcessable extends IWorker {
      * @throws OperationUnsupportedException
      */
     void importCertificateChain(List<Certificate> certChain, String alias,
-            char[] authenticationCode)
+            char[] authenticationCode,
+            IServices services)
             throws CryptoTokenOfflineException, OperationUnsupportedException;
 }

@@ -91,7 +91,7 @@ public class XMLSignerTest extends ModulesTestCase {
         workerSession.setWorkerProperty(WORKERID3, "KEYSTOREPATH",
                 new File(getSignServerHome() + File.separator + "res" + File.separator + "test" + File.separator + "xmlsignerec.p12").getAbsolutePath());
         workerSession.setWorkerProperty(WORKERID3, "KEYSTOREPASSWORD", "foo123");
-        workerSession.setWorkerProperty(WORKERID3, "DEFAULTKEY", "xmlsignerec");
+        workerSession.setWorkerProperty(WORKERID3, "DEFAULTKEY", "signerec");
         workerSession.reloadConfiguration(WORKERID3);
         
         addSigner("org.signserver.module.xmlsigner.DebugSigner", DEBUGWORKER, "XMLDebugSigner", false);

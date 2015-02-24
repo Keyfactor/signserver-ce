@@ -47,6 +47,7 @@ import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.server.ServicesImpl;
 import org.signserver.server.log.AdminInfo;
 
 /**
@@ -104,7 +105,7 @@ public class KeystoreCryptoTokenTest extends CryptoTokenTestBase {
 
     @Override
     protected TokenSearchResults searchTokenEntries(int startIndex, int max, QueryCriteria qc, boolean includeData) throws CryptoTokenOfflineException, QueryException {
-        return instance.searchTokenEntries(startIndex, max, qc, includeData);
+        return instance.searchTokenEntries(startIndex, max, qc, includeData, new ServicesImpl());
     }
 
     @Override
@@ -119,7 +120,7 @@ public class KeystoreCryptoTokenTest extends CryptoTokenTestBase {
 
     @Override
     protected void importCertificateChain(List<Certificate> chain, String alias) throws CryptoTokenOfflineException, IllegalArgumentException {
-        instance.importCertificateChain(chain, alias, null);
+        instance.importCertificateChain(chain, alias, null, new ServicesImpl());
     }
 
     @Override

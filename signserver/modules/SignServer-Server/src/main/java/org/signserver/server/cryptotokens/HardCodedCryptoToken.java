@@ -503,4 +503,9 @@ public class HardCodedCryptoToken implements ICryptoToken, ICryptoTokenV3 {
     public boolean removeKey(String alias) throws CryptoTokenOfflineException, KeyStoreException, SignServerException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    @Override
+    public ICertReqData genCertificateRequest(ISignerCertReqInfo info, boolean explicitEccParameters, String keyAlias, IServices services) throws CryptoTokenOfflineException {
+        return null;
+    }
 }

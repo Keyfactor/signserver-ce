@@ -16,6 +16,8 @@ import java.security.cert.Certificate;
 import java.util.List;
 import org.cesecore.util.query.QueryCriteria;
 import org.signserver.common.CryptoTokenOfflineException;
+import org.signserver.common.ICertReqData;
+import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.OperationUnsupportedException;
 import org.signserver.common.QueryException;
@@ -90,4 +92,7 @@ public interface ICryptoTokenV3 extends ICryptoTokenV2 {
             IServices services) throws CryptoTokenOfflineException,
                 IllegalArgumentException;
 
+    ICertReqData genCertificateRequest(ISignerCertReqInfo info,
+            boolean explicitEccParameters, String keyAlias, IServices services)
+            throws CryptoTokenOfflineException;
 }

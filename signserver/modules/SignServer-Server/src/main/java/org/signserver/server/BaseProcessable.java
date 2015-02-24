@@ -648,6 +648,11 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         public void generateKey(String keyAlgorithm, String keySpec, String alias, char[] authCode, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
             delegate.generateKey(keyAlgorithm, keySpec, alias, authCode, services);
         }
+
+        @Override
+        public ICertReqData genCertificateRequest(ISignerCertReqInfo info, boolean explicitEccParameters, String keyAlias, IServices services) throws CryptoTokenOfflineException {
+            return delegate.genCertificateRequest(info, explicitEccParameters, keyAlias, services);
+        }
         
     }
 
@@ -880,6 +885,14 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         return result;
     }
 
+    public ICertReqData genCertificateRequest(ISignerCertReqInfo certReqInfo, boolean explicitEccParameters, String keyAlias, IServices services) throws CryptoTokenOfflineException {
+        return genCertificateRequest(certReqInfo, explicitEccParameters, keyAlias, explicitEccParameters, services);
+    }
+
+    public ICertReqData genCertificateRequest(ISignerCertReqInfo certReqInfo, boolean explicitEccParameters, boolean defaultKey, IServices services) throws CryptoTokenOfflineException {
+        return genCertificateRequest(certReqInfo, explicitEccParameters, null, defaultKey, services);
+    }
+
     /**
      * Method sending the request info to the signtoken
      * @return the request or null if method isn't supported by signertoken.
@@ -889,7 +902,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
             final boolean explicitEccParameters, final boolean defaultKey)
             throws CryptoTokenOfflineException {
         return genCertificateRequest(info, explicitEccParameters, null,
-                defaultKey);
+                defaultKey, new ServicesImpl());
     }
 
     @Override
@@ -897,12 +910,12 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
             boolean explicitEccParameters, String keyAlias)
             throws CryptoTokenOfflineException {
         return genCertificateRequest(info, explicitEccParameters, keyAlias,
-                false);
+                false, new ServicesImpl());
     }
     
     private ICertReqData genCertificateRequest(final ISignerCertReqInfo info,
             final boolean explicitEccParameters, final String keyAlias,
-            final boolean defaultKey)
+            final boolean defaultKey, final IServices services)
             throws CryptoTokenOfflineException {
         if (log.isTraceEnabled()) {
             log.trace(">genCertificateRequest");
@@ -918,7 +931,14 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
             final ICertReqData data;
             
             if (keyAlias != null) {
-                if (token instanceof ICryptoTokenV2) {
+                if (token instanceof ICryptoTokenV3) {
+                    final ICryptoTokenV3 tokenV3 = (ICryptoTokenV3) token;
+                    
+                    data = tokenV3.genCertificateRequest(info,
+                                                         explicitEccParameters,
+                                                         keyAlias,
+                                                         services);
+                } else if (token instanceof ICryptoTokenV2) {
                     final ICryptoTokenV2 tokenV2 = (ICryptoTokenV2) token;
                     
                     data = tokenV2.genCertificateRequest(info,

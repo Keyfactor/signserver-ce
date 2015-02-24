@@ -525,6 +525,11 @@ public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2,
         // NOP
     }
 
+    @Override
+    public ICertReqData genCertificateRequest(ISignerCertReqInfo info, boolean explicitEccParameters, String keyAlias, IServices services) throws CryptoTokenOfflineException {
+        return genCertificateRequest(info, explicitEccParameters, keyAlias);
+    }
+
     private static class KeyStorePKCS11CryptoToken extends org.cesecore.keys.token.PKCS11CryptoToken {
 
         public KeyStorePKCS11CryptoToken() throws InstantiationException {

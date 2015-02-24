@@ -724,12 +724,22 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         }
 
         final ICertReqData ret;
-        if (keyAlias != null) {
-            ret = processable.genCertificateRequest(certReqInfo,
-                    explicitEccParameters, keyAlias);
+        if (processable instanceof BaseProcessable) {
+            if (keyAlias != null) {
+                ret = ((BaseProcessable) processable).genCertificateRequest(certReqInfo,
+                        explicitEccParameters, keyAlias, servicesImpl);
+            } else {
+                ret = ((BaseProcessable) processable).genCertificateRequest(certReqInfo,
+                    explicitEccParameters, defaultKey, servicesImpl);
+            }
         } else {
-            ret = processable.genCertificateRequest(certReqInfo,
-                explicitEccParameters, defaultKey);
+            if (keyAlias != null) {
+                ret = processable.genCertificateRequest(certReqInfo,
+                        explicitEccParameters, keyAlias);
+            } else {
+                ret = processable.genCertificateRequest(certReqInfo,
+                    explicitEccParameters, defaultKey);
+            }
         }
         
         final HashMap<String, Object> auditMap = new HashMap<String, Object>();

@@ -26,6 +26,7 @@ import org.ejbca.util.keystore.KeyTools;
 import org.signserver.common.*;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.server.IServices;
+import org.signserver.server.ServicesImpl;
 import org.signserver.server.log.AdminInfo;
 
 /**
@@ -571,6 +572,11 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2,
 
     @Override
     public ICertReqData genCertificateRequest(ISignerCertReqInfo info, boolean explicitEccParameters, String keyAlias) throws CryptoTokenOfflineException {
+        return genCertificateRequest(info, explicitEccParameters, keyAlias, new ServicesImpl());
+    }
+    
+    @Override
+    public ICertReqData genCertificateRequest(ISignerCertReqInfo info, boolean explicitEccParameters, String keyAlias, IServices services) throws CryptoTokenOfflineException {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Alias: " + keyAlias);
         }

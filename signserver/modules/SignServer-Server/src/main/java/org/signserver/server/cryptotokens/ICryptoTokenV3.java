@@ -12,13 +12,16 @@
  *************************************************************************/
 package org.signserver.server.cryptotokens;
 
+import java.security.KeyStoreException;
 import java.security.cert.Certificate;
+import java.util.Collection;
 import java.util.List;
 import org.cesecore.util.query.QueryCriteria;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.IllegalRequestException;
+import org.signserver.common.KeyTestResult;
 import org.signserver.common.QueryException;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
@@ -94,4 +97,9 @@ public interface ICryptoTokenV3 extends ICryptoTokenV2 {
     ICertReqData genCertificateRequest(ISignerCertReqInfo info,
             boolean explicitEccParameters, String keyAlias, IServices services)
             throws CryptoTokenOfflineException;
+    
+    Collection<KeyTestResult> testKey(String alias,
+            char[] authCode,
+            IServices Services)
+            throws CryptoTokenOfflineException, KeyStoreException;
 }

@@ -440,6 +440,11 @@ public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2,
         final KeyStore keyStore = delegate.getActivatedKeyStore();
         return CryptoTokenHelper.testKey(keyStore, alias, authCode, keyStore.getProvider().getName());
     }
+    
+    @Override
+    public Collection<KeyTestResult> testKey(String alias, char[] authCode, IServices services) throws CryptoTokenOfflineException, KeyStoreException {
+        return testKey(alias, authCode);
+    }
 
     @Override
     public KeyStore getKeyStore() throws UnsupportedOperationException, CryptoTokenOfflineException, KeyStoreException {

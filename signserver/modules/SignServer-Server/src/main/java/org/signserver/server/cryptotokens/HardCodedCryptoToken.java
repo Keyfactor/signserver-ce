@@ -425,6 +425,14 @@ public class HardCodedCryptoToken implements ICryptoToken, ICryptoTokenV3 {
             throws CryptoTokenOfflineException, KeyStoreException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+    
+    @Override
+    public Collection<KeyTestResult> testKey(final String alias,
+            final char[] authCode,
+            final IServices services)
+            throws CryptoTokenOfflineException, KeyStoreException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
     @Override
     public KeyStore getKeyStore() throws UnsupportedOperationException,

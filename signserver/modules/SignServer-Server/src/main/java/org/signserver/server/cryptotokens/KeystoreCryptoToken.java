@@ -377,7 +377,15 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2,
             KeyStoreException {
         return CryptoTokenHelper.testKey(getKeyStore(), alias, authCode, "BC");
     }
-    
+
+    @Override
+    public Collection<KeyTestResult> testKey(final String alias,
+            final char[] authCode,
+            final IServices services) throws CryptoTokenOfflineException,
+            KeyStoreException {
+        return testKey(alias, authCode);
+    }
+
     @Override
     public TokenSearchResults searchTokenEntries(final int startIndex, final int max, QueryCriteria qc, boolean includeData, IServices services) 
             throws CryptoTokenOfflineException, QueryException {

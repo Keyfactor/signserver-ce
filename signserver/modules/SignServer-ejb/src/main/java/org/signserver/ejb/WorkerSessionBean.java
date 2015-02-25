@@ -483,7 +483,12 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             alias = config.getProperty("DEFAULTKEY");
         }
         
-        final Collection<KeyTestResult> result = signer.testKey(alias, authCode);
+        final Collection<KeyTestResult> result;
+        if (signer instanceof BaseProcessable) {
+            result = ((BaseProcessable) signer).testKey(alias, authCode, servicesImpl);
+        } else {
+            result = signer.testKey(alias, authCode);
+        }
         final HashMap<String, Object> auditMap = new HashMap<String, Object>();
         auditMap.put("KEYALIAS", alias);
         auditMap.put("TESTRESULTS", createResultsReport(result));

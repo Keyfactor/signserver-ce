@@ -652,6 +652,11 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         public ICertReqData genCertificateRequest(ISignerCertReqInfo info, boolean explicitEccParameters, String keyAlias, IServices services) throws CryptoTokenOfflineException {
             return delegate.genCertificateRequest(info, explicitEccParameters, keyAlias, services);
         }
+
+        @Override
+        public Collection<org.signserver.common.KeyTestResult> testKey(String alias, char[] authCode, IServices Services) throws CryptoTokenOfflineException, KeyStoreException {
+            return delegate.testKey(alias, authCode, Services);
+        }
         
     }
 
@@ -1028,6 +1033,11 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
     @Override
     public Collection<org.signserver.common.KeyTestResult> testKey(String alias, char[] authCode)
             throws CryptoTokenOfflineException, KeyStoreException {
+        return testKey(alias, authCode, new ServicesImpl());
+    }
+    
+    public Collection<org.signserver.common.KeyTestResult> testKey(String alias,
+        char[] authCode, IServices services) throws CryptoTokenOfflineException, KeyStoreException {
         try {
             ICryptoToken token = getCryptoToken();
             
@@ -1035,7 +1045,11 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
                 throw new CryptoTokenOfflineException("Crypto token offline");
             }
         
-            return token.testKey(alias, authCode);
+            if (token instanceof ICryptoTokenV3) {
+                return ((ICryptoTokenV3) token).testKey(alias, authCode, services);
+            } else {
+                return token.testKey(alias, authCode);
+            }
         } catch (SignServerException e) {
             log.error(FAILED_TO_GET_CRYPTO_TOKEN_ + e.getMessage());
             throw new CryptoTokenOfflineException(e);

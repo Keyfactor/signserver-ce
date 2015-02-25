@@ -122,6 +122,11 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2,
     }
 
     @Override
+    public int getCryptoTokenStatus(final IServices services) {
+        return getCryptoTokenStatus();
+    }
+
+    @Override
     public void activate(String authenticationcode)
             throws CryptoTokenAuthenticationFailureException,
             CryptoTokenOfflineException {

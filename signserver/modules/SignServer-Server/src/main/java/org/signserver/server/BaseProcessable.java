@@ -44,7 +44,6 @@ import org.signserver.server.cryptotokens.IKeyGenerator;
 import org.signserver.server.cryptotokens.IKeyRemover;
 import org.signserver.server.cryptotokens.ICryptoTokenV2;
 import org.signserver.server.cryptotokens.ICryptoTokenV3;
-import org.signserver.server.cryptotokens.IGeneratedKeyData;
 import org.signserver.server.cryptotokens.TokenSearchResults;
 
 public abstract class BaseProcessable extends BaseWorker implements IProcessable, IKeyRemover {

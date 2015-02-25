@@ -337,6 +337,11 @@ public class HardCodedCryptoToken implements ICryptoToken, ICryptoTokenV3 {
     public int getCryptoTokenStatus() {
         return WorkerStatus.STATUS_ACTIVE;
     }
+    
+    @Override
+    public int getCryptoTokenStatus(final IServices services) {
+        return getCryptoTokenStatus();
+    }
 
     /**
      * Not used in current implementation

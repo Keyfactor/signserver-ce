@@ -21,6 +21,7 @@ import junit.framework.TestCase;
 import org.signserver.common.ServiceConfig;
 import org.signserver.common.WorkerConfig;
 import org.signserver.server.ServiceExecutionFailedException;
+import org.signserver.server.ServicesImpl;
 
 /**
  * Unit test for ITimedService.
@@ -72,7 +73,7 @@ public class ITimedServiceTest extends TestCase {
         }
 
         final List<String> fatalErrors =
-                instance.getStatus(Collections.<String>emptyList()).getFatalErrors();
+                instance.getStatus(Collections.<String>emptyList(), new ServicesImpl()).getFatalErrors();
         
         if (expectedErrors.isEmpty()) {
             assertTrue("Should not contain errors", fatalErrors.isEmpty());

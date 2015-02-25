@@ -52,5 +52,5 @@ public interface IWorker {
      * IAuthorizer.
      * @return a WorkerStatus object.
      */
-    public WorkerStatus getStatus(final List<String> additionalFatalErrors);
+    public WorkerStatus getStatus(final List<String> additionalFatalErrors, final IServices services);
 }

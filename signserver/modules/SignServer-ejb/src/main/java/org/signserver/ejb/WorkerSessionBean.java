@@ -273,7 +273,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                 errorsAtEjbLevel.add(ex.getLocalizedMessage());
             }
         }
-        return worker.getStatus(errorsAtEjbLevel);
+        return worker.getStatus(errorsAtEjbLevel, servicesImpl);
     }
 
     /* (non-Javadoc)

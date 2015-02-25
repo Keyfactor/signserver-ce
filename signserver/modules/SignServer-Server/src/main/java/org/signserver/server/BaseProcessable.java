@@ -657,6 +657,11 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         public Collection<org.signserver.common.KeyTestResult> testKey(String alias, char[] authCode, IServices Services) throws CryptoTokenOfflineException, KeyStoreException {
             return delegate.testKey(alias, authCode, Services);
         }
+
+        @Override
+        public int getCryptoTokenStatus(IServices services) {
+            return delegate.getCryptoTokenStatus(services);
+        }
         
     }
 

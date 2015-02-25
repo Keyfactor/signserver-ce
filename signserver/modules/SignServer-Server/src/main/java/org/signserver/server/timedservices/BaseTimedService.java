@@ -29,6 +29,7 @@ import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 import org.signserver.common.WorkerStatusInfo;
 import org.signserver.server.BaseWorker;
+import org.signserver.server.IServices;
 import org.signserver.server.WorkerContext;
 
 /**
@@ -141,7 +142,7 @@ public abstract class BaseTimedService extends BaseWorker implements ITimedServi
     }
 
     @Override
-    public WorkerStatus getStatus(final List<String> additionalFatalErrors) {
+    public WorkerStatus getStatus(final List<String> additionalFatalErrors, final IServices services) {
         final List<String> fatalErrorsIncludingAdditionalErrors = new LinkedList<String>(additionalFatalErrors);
         fatalErrorsIncludingAdditionalErrors.addAll(getFatalErrors());
 

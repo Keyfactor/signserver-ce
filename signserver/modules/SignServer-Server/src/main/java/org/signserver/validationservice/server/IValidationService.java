@@ -19,6 +19,7 @@ import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
+import org.signserver.server.IServices;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.validationservice.common.ValidateRequest;
 import org.signserver.validationservice.common.ValidateResponse;
@@ -64,5 +65,5 @@ public interface IValidationService {
      * the signer is activated or not, or equivalent for a service.
      * @return a WorkerStatus object.
      */
-    WorkerStatus getStatus();
+    WorkerStatus getStatus(IServices services);
 }

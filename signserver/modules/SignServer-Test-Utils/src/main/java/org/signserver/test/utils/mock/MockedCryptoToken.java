@@ -67,6 +67,10 @@ public class MockedCryptoToken implements ICryptoToken, ICryptoTokenV3 {
         LOG.debug(">getCryptoTokenStatus");
         return WorkerStatus.STATUS_ACTIVE;
     }
+    
+    public int getCryptoTokenStatus(final IServices services) {
+        return getCryptoTokenStatus();
+    }
 
     public void activate(String authenticationcode) throws CryptoTokenAuthenticationFailureException, CryptoTokenOfflineException {
         LOG.debug(">activate");

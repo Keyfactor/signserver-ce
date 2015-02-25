@@ -24,6 +24,7 @@ import org.signserver.common.StaticWorkerStatus;
 import org.signserver.common.WorkerStatus;
 import org.signserver.common.WorkerStatusInfo;
 import org.signserver.server.BaseProcessable;
+import org.signserver.server.IServices;
 import org.signserver.server.signers.BaseSigner;
 
 /**
@@ -42,7 +43,7 @@ public abstract class BaseDispatcher extends BaseProcessable {
      * @see org.signserver.server.IProcessable#getStatus()
      */
     @Override
-    public WorkerStatus getStatus(final List<String> additionalFatalErrors) {
+    public WorkerStatus getStatus(final List<String> additionalFatalErrors, final IServices services) {
         final List<String> fatalErrors = new LinkedList<String>(additionalFatalErrors);
         fatalErrors.addAll(getFatalErrors());
 

@@ -238,6 +238,11 @@ public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2,
     }
 
     @Override
+    public int getCryptoTokenStatus(IServices services) {
+        return getCryptoTokenStatus();
+    }
+
+    @Override
     public int getCryptoTokenStatus() {
         int result = delegate.getTokenStatus();
 

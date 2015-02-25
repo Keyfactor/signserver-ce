@@ -35,10 +35,12 @@ import org.bouncycastle.util.Selector;
 import org.bouncycastle.util.Store;
 import org.signserver.common.*;
 import org.signserver.server.BaseProcessable;
+import org.signserver.server.IServices;
 import org.signserver.server.KeyUsageCounterHash;
 import org.signserver.server.ValidityTimeUtils;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.cryptotokens.ICryptoToken;
+import org.signserver.server.cryptotokens.ICryptoTokenV3;
 import org.signserver.server.entities.KeyUsageCounter;
 
 /**
@@ -85,7 +87,7 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
      * @see org.signserver.server.IProcessable#getStatus()
      */
     @Override
-    public WorkerStatus getStatus(final List<String> additionalFatalErrors) {
+    public WorkerStatus getStatus(final List<String> additionalFatalErrors, final IServices services) {
         WorkerStatusInfo info;
         final List<String> fatalErrors = new LinkedList<String>(additionalFatalErrors);
         fatalErrors.addAll(getFatalErrors());
@@ -112,7 +114,9 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
                     (X509Certificate) getSigningCertificate();
             final long keyUsageLimit = Long.valueOf(config.getProperty(SignServerConstants.KEYUSAGELIMIT, "-1"));
 
-            if (token != null) {
+            if (token instanceof ICryptoTokenV3) {
+                status = ((ICryptoTokenV3) token).getCryptoTokenStatus(services);
+            } else if (token != null) {
                 status = token.getCryptoTokenStatus();
             }
 

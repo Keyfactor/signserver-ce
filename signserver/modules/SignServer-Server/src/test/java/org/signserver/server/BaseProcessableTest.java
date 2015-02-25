@@ -528,6 +528,11 @@ public class BaseProcessableTest extends TestCase {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
 
+        @Override
+        public int getCryptoTokenStatus(IServices services) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
     }
 
     /** Test instance with mocked GlobalConfigurationSession containing the supplied properties. */

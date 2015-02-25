@@ -23,6 +23,7 @@ import org.signserver.common.StaticWorkerStatus;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 import org.signserver.common.WorkerStatusInfo;
+import org.signserver.server.IServices;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.validationservice.common.ValidationServiceConstants;
 import org.signserver.validationservice.server.validcache.ValidationCache;
@@ -92,7 +93,7 @@ public abstract class BaseValidationService implements IValidationService {
      * @see org.signserver.validationservice.server.IValidationService#getStatus()
      */
     @Override
-    public WorkerStatus getStatus() {
+    public WorkerStatus getStatus(final IServices services) {
         final List<WorkerStatusInfo.Entry> briefEntries = new LinkedList<WorkerStatusInfo.Entry>();
         final List<WorkerStatusInfo.Entry> completeEntries = new LinkedList<WorkerStatusInfo.Entry>();
 

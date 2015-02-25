@@ -40,6 +40,8 @@ public interface ICryptoTokenV3 extends ICryptoTokenV2 {
 
     // TODO: Add IServices to old methods from V2
     
+    int getCryptoTokenStatus(IServices services);
+    
     /**
      * Import certificate chain to a crypto token.
      * 

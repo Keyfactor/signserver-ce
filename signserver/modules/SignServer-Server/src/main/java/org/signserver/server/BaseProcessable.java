@@ -934,7 +934,6 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
             final ICryptoToken token = getCryptoToken();
             if (log.isDebugEnabled()) {
                 log.debug("Found a crypto token of type: " + token.getClass().getName());
-                log.debug("Token status is: " + token.getCryptoTokenStatus());
             }
             
             final ICertReqData data;

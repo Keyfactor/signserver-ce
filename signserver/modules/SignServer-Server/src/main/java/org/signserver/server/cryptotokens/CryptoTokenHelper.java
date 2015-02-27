@@ -625,7 +625,7 @@ public class CryptoTokenHelper {
                 break;
             }
             case LIKE: {
-                if (term.getValue() instanceof String) {
+                if (term.getValue() instanceof String && actualValue != null) {
                     final String value = (String) term.getValue();
                     // TODO: At the moment we only support '%' and only in beginning and/or end of value
                     final boolean wildcardInBeginning = value.startsWith("%");

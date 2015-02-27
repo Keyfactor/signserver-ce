@@ -404,6 +404,11 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2,
 
     @Override
     public void generateKey(String keyAlgorithm, String keySpec, String alias, char[] authCode) throws CryptoTokenOfflineException, IllegalArgumentException {
+        throw new UnsupportedOperationException("Old method not supported, use V3 or later");
+    }
+
+    @Override
+    public void generateKey(String keyAlgorithm, String keySpec, String alias, char[] authCode, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
         if (keySpec == null) {
             throw new IllegalArgumentException("Missing keyspec parameter");
         }
@@ -449,7 +454,11 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2,
             if (TYPE_INTERNAL.equalsIgnoreCase(keystoretype)) {
                 final ByteArrayOutputStream baos = (ByteArrayOutputStream) os;
                 
-                getWorkerSession().setKeystoreData(new AdminInfo("Internal", null, null),
+                final IWorkerSession.ILocal workerSessionLocal = services.get(IWorkerSession.ILocal.class);
+                if (workerSessionLocal == null) {
+                    throw new IllegalStateException("No WorkerSession available");
+                }
+                workerSessionLocal.setKeystoreData(new AdminInfo("Internal", null, null),
                         workerId, baos.toByteArray());
             }
 
@@ -468,12 +477,6 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2,
             LOG.error(ex, ex);
             throw new CryptoTokenOfflineException(ex);
         }
-    }
-    
-    // TODO: This method could be used instead of the getWorkerSession lookup
-    @Override
-    public void generateKey(String keyAlgorithm, String keySpec, String alias, char[] authCode, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
-        generateKey(keyAlgorithm, keySpec, alias, authCode);
     }
 
     @Override

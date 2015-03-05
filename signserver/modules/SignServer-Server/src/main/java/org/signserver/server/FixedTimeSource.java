@@ -16,24 +16,27 @@ import java.util.Date;
 import java.util.Properties;
 
 /**
- * Simple class implementing the ITimeSource interface always returns time 0.
- * This is mainly intended to use for testing to get a predictable non-null time
- * value.
+ * Simple class implementing the ITimeSource interface always returns the
+ * configured fixed time. This is mainly intended to use for testing to get a
+ * predictable non-null time value.
  *
- * @author Marcus Lundblad
+ * @author Markus Kilås
  * @version $Id$
- *
  */
-public class ZeroTimeSource implements ITimeSource {
+public class FixedTimeSource implements ITimeSource {
 
+    public static final String FIXEDTIME = "FIXEDTIME";
+    
+    private Date time;
+    
     @Override
     public void init(Properties props) {
-        // no properties defined
+        time = new Date(Long.parseLong(props.getProperty(FIXEDTIME, "0")));
     }
 
     @Override
     public Date getGenTime() {
-        return new Date(0);
+        return time;
     }
 
 }

@@ -210,7 +210,7 @@ public class ModulesTestCase extends TestCase {
     
     
 
-    protected IWorkerSession.IRemote getWorkerSession() {
+    public IWorkerSession.IRemote getWorkerSession() {
         if (workerSession == null) {
             try {
                 workerSession = ServiceLocator.getInstance().lookupRemote(
@@ -222,7 +222,7 @@ public class ModulesTestCase extends TestCase {
         return workerSession;
     }
 
-    protected IGlobalConfigurationSession getGlobalSession() {
+    public IGlobalConfigurationSession getGlobalSession() {
         if (globalSession == null) {
             try {
                 globalSession = ServiceLocator.getInstance().lookupRemote(
@@ -235,7 +235,7 @@ public class ModulesTestCase extends TestCase {
         return globalSession;
     }
 
-    protected IStatusRepositorySession getStatusSession() {
+    public IStatusRepositorySession getStatusSession() {
         if (statusSession == null) {
             try {
                 statusSession = ServiceLocator.getInstance().lookupRemote(
@@ -248,79 +248,79 @@ public class ModulesTestCase extends TestCase {
         return statusSession;
     }
 
-    protected void addDummySigner1(boolean autoActivation) throws CertificateException, FileNotFoundException {
+    public void addDummySigner1(boolean autoActivation) throws CertificateException, FileNotFoundException {
         addP12DummySigner(getSignerIdDummy1(), getSignerNameDummy1(), new File(getSignServerHome(), KEYSTORE_SIGNER1_FILE), autoActivation ? KEYSTORE_PASSWORD : null, KEYSTORE_SIGNER1_ALIAS);
     }
 
-    protected int getSignerIdDummy1() {
+    public int getSignerIdDummy1() {
         return DUMMY1_SIGNER_ID;
     }
 
-    protected String getSignerNameDummy1() {
+    public String getSignerNameDummy1() {
         return DUMMY1_SIGNER_NAME;
     }
     
-    protected int getSignerIdTimeStampSigner1() {
+    public int getSignerIdTimeStampSigner1() {
         return TIMESTAMPSIGNER1_SIGNER_ID;
     }
 
-    protected String getSignerNameTimeStampSigner1() {
+    public String getSignerNameTimeStampSigner1() {
         return TIMESTAMPSIGNER1_SIGNER_NAME;
     }
     
-    protected int getSignerIdSODSigner1() {
+    public int getSignerIdSODSigner1() {
         return SODSIGNER1_SIGNER_ID;
     }
 
-    protected String getSignerNameSODSigner1() {
+    public String getSignerNameSODSigner1() {
         return SODSIGNER1_SIGNER_NAME;
     }
     
-    protected void addCMSSigner1() throws CertificateException, FileNotFoundException {
+    public void addCMSSigner1() throws CertificateException, FileNotFoundException {
         addP12DummySigner("org.signserver.module.cmssigner.CMSSigner",
                 getSignerIdCMSSigner1(), getSignerNameCMSSigner1(), new File(getSignServerHome(), KEYSTORE_SIGNER1_FILE), KEYSTORE_PASSWORD, KEYSTORE_SIGNER1_ALIAS);
     }
     
-    protected void addPDFSigner1() throws CertificateException, FileNotFoundException {
+    public void addPDFSigner1() throws CertificateException, FileNotFoundException {
     	addP12DummySigner("org.signserver.module.pdfsigner.PDFSigner",
                 getSignerIdPDFSigner1(), getSignerNamePDFSigner1(), new File(getSignServerHome(), KEYSTORE_SIGNER1_FILE), KEYSTORE_PASSWORD, KEYSTORE_SIGNER1_ALIAS);
     }
     
-    protected void addPDFSigner(final int workerId, final String workerName, final boolean autoActivate) throws FileNotFoundException {
+    public void addPDFSigner(final int workerId, final String workerName, final boolean autoActivate) throws FileNotFoundException {
         addP12DummySigner("org.signserver.module.pdfsigner.PDFSigner",
                 workerId, workerName, new File(getSignServerHome(), KEYSTORE_SIGNER1_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_SIGNER1_ALIAS);
     }
     
-    protected int getSignerIdCMSSigner1() {
+    public int getSignerIdCMSSigner1() {
         return CMSSIGNER1_ID;
     }
     
-    protected String getSignerNameCMSSigner1() {
+    public String getSignerNameCMSSigner1() {
         return CMSSIGNER1_NAME;
     }
     
-    protected int getSignerIdPDFSigner1() {
+    public int getSignerIdPDFSigner1() {
     	return PDFSIGNER1_ID;
     }
     
-    protected String getSignerNamePDFSigner1() {
+    public String getSignerNamePDFSigner1() {
     	return PDFSIGNER1_NAME;
     }
 
-    protected void addSigner(final String className, boolean autoActivate) 
+    public void addSigner(final String className, boolean autoActivate) 
             throws CertificateException, FileNotFoundException {
         addSigner(className, DUMMY1_SIGNER_ID, DUMMY1_SIGNER_NAME, autoActivate);
     }
     
-    protected void addSigner(final String className) throws CertificateException, FileNotFoundException {
+    public void addSigner(final String className) throws CertificateException, FileNotFoundException {
         addSigner(className, true);
     }
     
-    protected void addDummySigner(final int signerId, final String signerName, final boolean autoActivate) throws CertificateException, FileNotFoundException {
+    public void addDummySigner(final int signerId, final String signerName, final boolean autoActivate) throws CertificateException, FileNotFoundException {
         addSigner("org.signserver.module.xmlsigner.XMLSigner", signerId, signerName, autoActivate);
     }
     
-    protected void addSigner(final String className,
+    public void addSigner(final String className,
             final int signerId, final String signerName, final boolean autoActivate)
         throws CertificateException, FileNotFoundException {
         addP12DummySigner(className, signerId, signerName,
@@ -336,7 +336,7 @@ public class ModulesTestCase extends TestCase {
      * @throws IOException
      * @throws CertificateException in case a certificate could not be decoded 
      */
-    protected void setProperties(final File file) throws IOException, CertificateException {
+    public void setProperties(final File file) throws IOException, CertificateException {
         InputStream in = null;
         try {
             in = new FileInputStream(file);
@@ -359,7 +359,7 @@ public class ModulesTestCase extends TestCase {
      * @throws IOException
      * @throws CertificateException in case a certificate could not be decoded 
      */
-    protected void setProperties(final InputStream in) throws IOException, CertificateException {
+    public void setProperties(final InputStream in) throws IOException, CertificateException {
         try {
             Properties properties = new Properties();
             properties.load(in);
@@ -379,7 +379,7 @@ public class ModulesTestCase extends TestCase {
      * @param file The properties file to load
      * @throws CertificateException in case a certificate could not be decoded
      */
-    protected void setProperties(final Properties properties) throws CertificateException {
+    public void setProperties(final Properties properties) throws CertificateException {
         for (Object o : properties.keySet()) {
             if (o instanceof String) {
                 String key = (String) o;
@@ -410,20 +410,20 @@ public class ModulesTestCase extends TestCase {
         }
     }
     
-    protected void addP12DummySigner(final int signerId, final String signerName, final File keystore, final String password, final String alias) {
+    public void addP12DummySigner(final int signerId, final String signerName, final File keystore, final String password, final String alias) {
         addP12DummySigner("org.signserver.module.xmlsigner.XMLSigner",
                 signerId, signerName, keystore, password, alias);
     }
 
-    protected void addP12DummySigner(final String className, final int signerId, final String signerName, final File keystore, final String password, final String alias) {
+    public void addP12DummySigner(final String className, final int signerId, final String signerName, final File keystore, final String password, final String alias) {
         addDummySigner(className, "org.signserver.server.cryptotokens.P12CryptoToken", signerId, signerName, keystore, password, alias);
     }
     
-    protected void addJKSDummySigner(final String className, final int signerId, final String signerName, final File keystore, final String password, final String alias) {
+    public void addJKSDummySigner(final String className, final int signerId, final String signerName, final File keystore, final String password, final String alias) {
         addDummySigner(className, "org.signserver.server.cryptotokens.JKSCryptoToken", signerId, signerName, keystore, password, alias);
     }
     
-    protected void addDummySigner(final String className, final String cryptoTokenClassName, final int signerId, final String signerName, final File keystore, final String password, final String alias) {
+    public void addDummySigner(final String className, final String cryptoTokenClassName, final int signerId, final String signerName, final File keystore, final String password, final String alias) {
         getGlobalSession().setProperty(GlobalConfiguration.SCOPE_GLOBAL,
             "WORKER" + signerId + ".CLASSPATH", className);
         getGlobalSession().setProperty(GlobalConfiguration.SCOPE_GLOBAL,
@@ -448,16 +448,16 @@ public class ModulesTestCase extends TestCase {
         }
     }    
     
-    protected void addTimeStampSigner(final int signerId, final String signerName, final boolean autoActivate) throws CertificateException, FileNotFoundException {
+    public void addTimeStampSigner(final int signerId, final String signerName, final boolean autoActivate) throws CertificateException, FileNotFoundException {
         addP12DummySigner("org.signserver.module.tsa.TimeStampSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_TSSIGNER1_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_TSSIGNER1_ALIAS);
     }
     
-    protected void addMSTimeStampSigner(final int signerId, final String signerName, final boolean autoActivate) throws CertificateException, FileNotFoundException {
+    public void addMSTimeStampSigner(final int signerId, final String signerName, final boolean autoActivate) throws CertificateException, FileNotFoundException {
         addP12DummySigner("org.signserver.module.tsa.MSAuthCodeTimeStampSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_TSSIGNER1_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_TSSIGNER1_ALIAS);
     }
     
     
-    protected void addXMLValidator() throws Exception {
+    public void addXMLValidator() throws Exception {
         // VALIDATION SERVICE
         getGlobalSession().setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + VALIDATION_SERVICE_WORKER_ID + ".CLASSPATH", "org.signserver.validationservice.server.ValidationServiceWorker");
         getGlobalSession().setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + VALIDATION_SERVICE_WORKER_ID + ".SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.HardCodedCryptoToken");
@@ -503,7 +503,7 @@ public class ModulesTestCase extends TestCase {
         }
     }
 
-    protected void removeWorker(final int workerId) throws Exception {
+    public void removeWorker(final int workerId) throws Exception {
         removeGlobalProperties(workerId);
         WorkerConfig wc = getWorkerSession().getCurrentWorkerConfig(workerId);
         LOG.info("Got current config: " + wc.getProperties());
@@ -517,59 +517,59 @@ public class ModulesTestCase extends TestCase {
         LOG.info("Got current config after: " + wc.getProperties());
     }
 
-    protected File getSignServerHome() throws FileNotFoundException {
+    public File getSignServerHome() throws FileNotFoundException {
         if (signServerHome == null) {
             signServerHome = PathUtil.getAppHome();
         }
         return signServerHome;
     }
 
-    protected Properties getConfig() {
+    public Properties getConfig() {
         return config;
     }
 
-    protected int getPublicHTTPPort() {
+    public int getPublicHTTPPort() {
         return Integer.parseInt(config.getProperty("httpserver.pubhttp"));
     }
 
-    protected int getPublicHTTPSPort() {
+    public int getPublicHTTPSPort() {
         return Integer.parseInt(config.getProperty("httpserver.pubhttps"));
     }
 
-    protected int getPrivateHTTPSPort() {
+    public int getPrivateHTTPSPort() {
         return Integer.parseInt(config.getProperty("httpserver.privhttps"));
     }
     
-    protected String getHTTPHost() {
+    public String getHTTPHost() {
         return config.getProperty("httpserver.hostname", "localhost");
     }
     
-    protected String getPreferredHTTPProtocol() {
+    public String getPreferredHTTPProtocol() {
         return config.getProperty("httpserver.prefproto", "http://");
     }
     
-    protected int getPreferredHTTPPort() {
+    public int getPreferredHTTPPort() {
         return Integer.parseInt(config.getProperty("httpserver.prefport", config.getProperty("httpserver.pubhttp")));
     }
     
     /** @return IP used by JUnit tests to access SignServer through the HTTPHost. */
-    protected String getClientIP() {
+    public String getClientIP() {
         return config.getProperty("httpclient.ipaddress", "127.0.0.1");
     }
 
     /** Setup keystores for SSL. **/
-    protected void setupSSLKeystores() throws KeyStoreException, IOException, FileNotFoundException, NoSuchAlgorithmException, CertificateException, KeyManagementException, UnrecoverableKeyException {
+    public void setupSSLKeystores() throws KeyStoreException, IOException, FileNotFoundException, NoSuchAlgorithmException, CertificateException, KeyManagementException, UnrecoverableKeyException {
         testUtils.setupSSLTruststore();
     }
     
-    protected TestUtils getTestUtils() {
+    public TestUtils getTestUtils() {
         return testUtils;
     }
 
     /**
      * Make a GenericSignRequest.
      */
-    protected GenericSignResponse signGenericDocument(final int workerId, final byte[] data) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+    public GenericSignResponse signGenericDocument(final int workerId, final byte[] data) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
         final int requestId = random.nextInt();
         final GenericSignRequest request = new GenericSignRequest(requestId, data);
         final GenericSignResponse response = (GenericSignResponse) getWorkerSession().process(workerId, request, new RequestContext());

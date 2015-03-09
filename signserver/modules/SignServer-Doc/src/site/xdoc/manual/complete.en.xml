@@ -4614,6 +4614,72 @@ Currently the signer certificate is always included.
                     </subsubsection>
                 </subsection>
 
+                <subsection name="Authenticode Signer">
+                    <note>
+This is a SignServer Enterprise Edition (EE) feature.
+                    </note>
+                    <p>
+The Authenticode signer has the fully qualified class name: org.signserver.module.authenticode.signer.AuthenticodeSigner
+                    </p>
+                    <subsubsection name="Overview">
+                        <p>
+The Authenticode signer signs portablable executable files such as Windows executables and shared libraries (.exe, .dll and .ocx etc) according to the Windows Authenticode Portable Executable Signature Format.
+The signature can optionally include a timestamp response from a TSA using the Authenticode format.
+                        </p>
+                    </subsubsection>
+                    <subsubsection name="Available Properties">
+                        <p>
+                            <b>PROGRAM_NAME</b> = Program name to embed in the signature (Optional, default: none)
+                        </p>
+                        <p>
+                            <b>ALLOW_PROGRAM_NAME_OVERRIDE</b> = If the requestor should be able to override the program name by supplying it as a request metadata property (Optional, default: false)
+                        </p>
+
+                        <p>
+                            <b>PROGRAM_URL</b> = Program URL to embed in the signature (Optional, default: none)
+                        </p>
+                        <p>
+                            <b>ALLOW_PROGRAM_URL_OVERRIDE</b> = If the requestor should be able to override the program URL by supplying it as a request metadata property (Optional, default: false)
+                        </p>
+
+                        <p>
+                            <b>SIGNATUREALGORITHM</b> = Signature algorithm (Optional, default: depending on the signing key, SHA1withRSA, SHA1withDSA or SHA1withECDSA)
+                        </p>
+
+                        <p>
+                            <b>DIGESTALGORITHM</b> = Algorithm for the digest of the binary (Optional, default: SHA-1)
+                        </p>
+
+                        <p>
+                            <b>TSA_WORKER</b> = Worker ID or name of internal (authenticode) timestamp signer in the same SignServer (Optional, default: none). This property can not be combined with TSA_URL.
+                        </p>
+                        
+                        <p>
+                            <b>TSA_URL</b> = URL of external (authenticode) timestamp authority (Optional, default: none). This property can not be combined with TSA_WORKER.
+                        </p>
+                        
+                        <p>
+                            <b>TSA_USERNAME</b> = Login username used if the TSA uses HTTP Basic Auth (Optional, default: none).
+                        </p>
+                        <p>
+                            <b>TSA_PASSWORD</b> = Login password used if the TSA uses HTTP Basic Auth (Required if TSA_USERNAME specified, default: none).
+                        </p>
+                    </subsubsection>
+                    
+                    <subsubsection name="Request Properties">
+                        <p>
+                            This worker can accept the following request metdata properties, given that they are configured to be allowed:
+                        </p>
+                        <p><b>PROGRAM_NAME</b> = Program name text to use instead of the configured one (if any).
+                                                 Specifying an empty value removes the configured program name.
+                                                 Without ALLOW_PROGRAM_NAME_OVERRIDE configured in the worker request including this request property will not be allowed.</p>
+                        <p><b>PROGRAM_URL</b> = Program URL to use instead of the configured one (if any).
+                                                 Specifying an empty value removes the configured program URL.
+                                                 Without ALLOW_PROGRAM_URL_OVERRIDE configured in the worker request including this request property will not be allowed.</p>
+                    </subsubsection>
+                    
+                </subsection>
+
                 <subsection name="Master List Signer">
                     <note>
 This is a SignServer Enterprise Edition (EE) feature.

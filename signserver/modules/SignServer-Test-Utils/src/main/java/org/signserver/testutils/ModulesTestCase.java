@@ -81,6 +81,8 @@ public class ModulesTestCase extends TestCase {
     private static final String KEYSTORE_SIGNER1_ALIAS = "Signer 1";
     private static final String KEYSTORE_TSSIGNER1_FILE = "res/test/dss10/dss10_tssigner1.p12";
     private static final String KEYSTORE_TSSIGNER1_ALIAS = "TS Signer 1";
+    private static final String KEYSTORE_AUTHCODESIGNER1_FILE = "res/test/dss10/dss10_authcodesigner1.p12";
+    private static final String KEYSTORE_AUTHCODESIGNER1_ALIAS = "Auth Code Signer 1";
     public static final String KEYSTORE_PASSWORD = "foo123";
 
     /**
@@ -454,6 +456,10 @@ public class ModulesTestCase extends TestCase {
     
     public void addMSTimeStampSigner(final int signerId, final String signerName, final boolean autoActivate) throws CertificateException, FileNotFoundException {
         addP12DummySigner("org.signserver.module.tsa.MSAuthCodeTimeStampSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_TSSIGNER1_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_TSSIGNER1_ALIAS);
+    }
+    
+    public void addMSAuthCodeSigner(final int signerId, final String signerName, final boolean autoActivate) throws CertificateException, FileNotFoundException {
+        addP12DummySigner("org.signserver.module.authenticode.signer.AuthenticodeSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_AUTHCODESIGNER1_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_AUTHCODESIGNER1_ALIAS);
     }
     
     

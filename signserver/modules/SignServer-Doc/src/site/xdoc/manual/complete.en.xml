@@ -4662,16 +4662,16 @@ Currently the signer certificate is always included.
                     </subsubsection>
                 </subsection>
                 
-                <subsection name="Authenticode Signer">
+                <subsection name="MS Authenticode Signer">
                     <note>
 This is a SignServer Enterprise Edition (EE) feature.
                     </note>
                     <p>
-The Authenticode signer has the fully qualified class name: org.signserver.module.authenticode.signer.AuthenticodeSigner
+The signer has the fully qualified class name: org.signserver.module.msauthcode.signer.MSAuthCodeSigner
                     </p>
                     <subsubsection name="Overview">
                         <p>
-The Authenticode signer signs portablable executable files such as Windows executables and shared libraries (.exe, .dll and .ocx etc) according to the Windows Authenticode Portable Executable Signature Format.
+The signer signs portablable executable files such as Windows executables and shared libraries (.exe, .dll and .ocx etc) according to the Windows Authenticode Portable Executable Signature Format.
 The signature can optionally include a timestamp response from a TSA using the Authenticode format.
                         </p>
                     </subsubsection>

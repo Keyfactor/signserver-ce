@@ -23,6 +23,7 @@
 <li><a href="http://sourceforge.net/projects/openxml4j/">openxml4j</a>, Library for parsing and manipulating open office xml documents.</li>
 <li><a href="http://jaxen.codehaus.org/index.html">Jaxen.</a></li>
 <li><a href="https://code.google.com/p/xades4j/">XAdES4j</a>, A Java library for XAdES signature services.</li>
+<li><a href="https://ebourg.github.io/jsign/">Jsign</a>, a Java implementation of Microsoft Authenticode for signing Windows executable files.</li>
 </ul>
 
 </section>

@@ -69,6 +69,7 @@ c2240f5969aa619042b26f967152601268d543df0c733d09f58b8adf9872aa14  ./ext/hibernat
 a045eac0ff80c5c0fd29b680599f27598abff16b1e6c9df46ce962a4e0b1390e  ./ext/javaee-api-6.0.jar;                               "GlassFish Java EE API"
 7f1621299e3e47638571a4fffda5c33bf2b80d6b4cb1cae52e0f6b85d7ac343a  ./ext/javaee-web-api-6.0/javaee-web-api-6.0.jar;        "GlassFish Java EE API"
 496755798224b0c8f0c4471177852f1bef296a524a2df7765ef9df5054e5ae9f  ./ext/jaxen-1.1.jar;                                    "Jaxen"
+860da917732feda045cae0672446c2ba4933e919a9b720eb3e0595225d932ef7  ./ext/jsign-1.2-signserver.jar;                         "Jsign"
 74cc3b16f27177a93e4b2bd952468b18aab6913e973b77bc4e1522a717247433  ./ext/ldap.jar;                                         "OpenLDAP"
 e3bff9ab64a09b1ac2800f3b5fb1e3d99728064acb6dd3924938507638a404fb  ./ext/log4j-1.2.14.jar;                                 "Log4j"
 78134c71aa9f9cebbc96a837f12c85590a4f2b587b51831a45faafb68381b1fc  ./ext/no-clover/clover.jar;                             "SignServer"

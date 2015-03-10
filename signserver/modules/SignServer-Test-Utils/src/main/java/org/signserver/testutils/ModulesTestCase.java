@@ -85,6 +85,14 @@ public class ModulesTestCase extends TestCase {
     //Value created by calling org.signserver.server.cryptotokens.CryptoTokenUtils.CreateKeyDataForSoftCryptoToken using the dss10_tssigner1.p12
     private static final String KEYDATA2 = "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";
     
+    private static final String KEYSTORE_SIGNER1_FILE = "res/test/dss10/dss10_signer1.p12";
+    private static final String KEYSTORE_SIGNER1_ALIAS = "Signer 1";
+    private static final String KEYSTORE_TSSIGNER1_FILE = "res/test/dss10/dss10_tssigner1.p12";
+    private static final String KEYSTORE_TSSIGNER1_ALIAS = "TS Signer 1";
+    private static final String KEYSTORE_AUTHCODESIGNER1_FILE = "res/test/dss10/dss10_authcodesigner1.p12";
+    private static final String KEYSTORE_AUTHCODESIGNER1_ALIAS = "Auth Code Signer 1";
+    public static final String KEYSTORE_PASSWORD = "foo123";
+
     /**
      * SerialNumber: 32:4d:41:38:af:02:c1:3c
      * IssuerDN: CN=DSS Root CA 10, OU=Testing, O=SignServer, C=SE
@@ -212,7 +220,7 @@ public class ModulesTestCase extends TestCase {
     
     
 
-    protected IWorkerSession getWorkerSession() {
+    public IWorkerSession getWorkerSession() {
         if (workerSession == null) {
             try {
                 workerSession = ServiceLocator.getInstance().lookupRemote(
@@ -224,7 +232,7 @@ public class ModulesTestCase extends TestCase {
         return workerSession;
     }
 
-    protected IGlobalConfigurationSession getGlobalSession() {
+    public IGlobalConfigurationSession getGlobalSession() {
         if (globalSession == null) {
             try {
                 globalSession = ServiceLocator.getInstance().lookupRemote(
@@ -237,7 +245,7 @@ public class ModulesTestCase extends TestCase {
         return globalSession;
     }
 
-    protected IStatusRepositorySession getStatusSession() {
+    public IStatusRepositorySession getStatusSession() {
         if (statusSession == null) {
             try {
                 statusSession = ServiceLocator.getInstance().lookupRemote(
@@ -250,66 +258,66 @@ public class ModulesTestCase extends TestCase {
         return statusSession;
     }
 
-    protected void addDummySigner1() throws CertificateException {
+    public void addDummySigner1() throws CertificateException {
         addSoftDummySigner(getSignerIdDummy1(), getSignerNameDummy1());
     }
 
-    protected int getSignerIdDummy1() {
+    public int getSignerIdDummy1() {
         return DUMMY1_SIGNER_ID;
     }
 
-    protected String getSignerNameDummy1() {
+    public String getSignerNameDummy1() {
         return DUMMY1_SIGNER_NAME;
     }
     
-    protected int getSignerIdTimeStampSigner1() {
+    public int getSignerIdTimeStampSigner1() {
         return TIMESTAMPSIGNER1_SIGNER_ID;
     }
 
-    protected String getSignerNameTimeStampSigner1() {
+    public String getSignerNameTimeStampSigner1() {
         return TIMESTAMPSIGNER1_SIGNER_NAME;
     }
     
-    protected int getSignerIdSODSigner1() {
+    public int getSignerIdSODSigner1() {
         return SODSIGNER1_SIGNER_ID;
     }
 
-    protected String getSignerNameSODSigner1() {
+    public String getSignerNameSODSigner1() {
         return SODSIGNER1_SIGNER_NAME;
     }
     
-    protected void addCMSSigner1() throws CertificateException {
+    public void addCMSSigner1() throws CertificateException {
         addSoftDummySigner("org.signserver.module.cmssigner.CMSSigner",
                 getSignerIdCMSSigner1(), getSignerNameCMSSigner1(), KEYDATA1, CERTCHAIN1);
     }
     
-    protected void addPDFSigner1() throws CertificateException {
+    public void addPDFSigner1() throws CertificateException {
     	addSoftDummySigner("org.signserver.module.pdfsigner.PDFSigner",
                 getSignerIdPDFSigner1(), getSignerNamePDFSigner1(), KEYDATA1, CERTCHAIN1);
     }
     
-    protected int getSignerIdCMSSigner1() {
+    public int getSignerIdCMSSigner1() {
         return CMSSIGNER1_ID;
     }
     
-    protected String getSignerNameCMSSigner1() {
+    public String getSignerNameCMSSigner1() {
         return CMSSIGNER1_NAME;
     }
     
-    protected int getSignerIdPDFSigner1() {
+    public int getSignerIdPDFSigner1() {
     	return PDFSIGNER1_ID;
     }
     
-    protected String getSignerNamePDFSigner1() {
+    public String getSignerNamePDFSigner1() {
     	return PDFSIGNER1_NAME;
     }
 
-    protected void addSigner(final String className) 
+    public void addSigner(final String className) 
             throws CertificateException {
         addSigner(className, DUMMY1_SIGNER_ID, DUMMY1_SIGNER_NAME);
     }
     
-    protected void addSigner(final String className,
+    public void addSigner(final String className,
             final int signerId, final String signerName)
         throws CertificateException {
         addSoftDummySigner(className, signerId, signerName,
@@ -325,7 +333,7 @@ public class ModulesTestCase extends TestCase {
      * @throws IOException
      * @throws CertificateException in case a certificate could not be decoded 
      */
-    protected void setProperties(final File file) throws IOException, CertificateException {
+    public void setProperties(final File file) throws IOException, CertificateException {
         InputStream in = null;
         try {
             in = new FileInputStream(file);
@@ -348,7 +356,7 @@ public class ModulesTestCase extends TestCase {
      * @throws IOException
      * @throws CertificateException in case a certificate could not be decoded 
      */
-    protected void setProperties(final InputStream in) throws IOException, CertificateException {
+    public void setProperties(final InputStream in) throws IOException, CertificateException {
         try {
             Properties properties = new Properties();
             properties.load(in);
@@ -368,7 +376,7 @@ public class ModulesTestCase extends TestCase {
      * @param file The properties file to load
      * @throws CertificateException in case a certificate could not be decoded
      */
-    protected void setProperties(final Properties properties) throws CertificateException {
+    public void setProperties(final Properties properties) throws CertificateException {
         for (Object o : properties.keySet()) {
             if (o instanceof String) {
                 String key = (String) o;
@@ -399,12 +407,46 @@ public class ModulesTestCase extends TestCase {
         }
     }
 
-    protected void addSoftDummySigner(final int signerId, final String signerName, final String keyData, final String certChain) throws CertificateException {
+    public void addP12DummySigner(final int signerId, final String signerName, final File keystore, final String password, final String alias) {
+        addP12DummySigner("org.signserver.module.xmlsigner.XMLSigner",
+                signerId, signerName, keystore, password, alias);
+    }
+
+    public void addP12DummySigner(final String className, final int signerId, final String signerName, final File keystore, final String password, final String alias) {
+        addDummySigner(className, "org.signserver.server.cryptotokens.P12CryptoToken", signerId, signerName, keystore, password, alias);
+    }
+
+    public void addSoftDummySigner(final int signerId, final String signerName, final String keyData, final String certChain) throws CertificateException {
         addSoftDummySigner("org.signserver.module.xmlsigner.XMLSigner",
                 signerId, signerName, keyData, certChain);
     }
     
-    protected void addP12DummySigner(final int signerId, final String signerName, final File keystore, final String password) {
+    public void addDummySigner(final String className, final String cryptoTokenClassName, final int signerId, final String signerName, final File keystore, final String password, final String alias) {
+        getGlobalSession().setProperty(GlobalConfiguration.SCOPE_GLOBAL,
+            "WORKER" + signerId + ".CLASSPATH", className);
+        getGlobalSession().setProperty(GlobalConfiguration.SCOPE_GLOBAL,
+            "WORKER" + signerId + ".SIGNERTOKEN.CLASSPATH",
+            cryptoTokenClassName);
+        getWorkerSession().setWorkerProperty(signerId, "NAME", signerName);
+        getWorkerSession().setWorkerProperty(signerId, "AUTHTYPE", "NOAUTH");
+        getWorkerSession().setWorkerProperty(signerId, "KEYSTOREPATH", keystore.getAbsolutePath());
+        if (alias != null) {
+            getWorkerSession().setWorkerProperty(signerId, "DEFAULTKEY", alias);
+        }
+        if (password != null) {
+            getWorkerSession().setWorkerProperty(signerId, "KEYSTOREPASSWORD", password);
+        }
+
+        getWorkerSession().reloadConfiguration(signerId);
+        try {
+            assertNotNull("Check signer available",
+                    getWorkerSession().getStatus(signerId));
+        } catch (InvalidWorkerIdException ex) {
+            fail("Worker was not added succefully: " + ex.getMessage());
+        }
+    }
+
+    public void addP12DummySigner(final int signerId, final String signerName, final File keystore, final String password) {
         addP12DummySigner("org.signserver.module.xmlsigner.XMLSigner",
                 signerId, signerName, keystore, password);
     }
@@ -490,8 +532,16 @@ public class ModulesTestCase extends TestCase {
         addSoftSODSigner(signerId, signerName, KEYDATA1, CERTCHAIN1);
     }
     
+    public void addMSTimeStampSigner(final int signerId, final String signerName, final boolean autoActivate) throws CertificateException, FileNotFoundException {
+        addP12DummySigner("org.signserver.module.tsa.MSAuthCodeTimeStampSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_TSSIGNER1_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_TSSIGNER1_ALIAS);
+    }
     
-    protected void addXMLValidator() throws Exception {
+    public void addMSAuthCodeSigner(final int signerId, final String signerName, final boolean autoActivate) throws CertificateException, FileNotFoundException {
+        addP12DummySigner("org.signserver.module.msauthcode.signer.MSAuthCodeSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_AUTHCODESIGNER1_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_AUTHCODESIGNER1_ALIAS);
+    }
+    
+    
+    public void addXMLValidator() throws Exception {
         // VALIDATION SERVICE
         getGlobalSession().setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + VALIDATION_SERVICE_WORKER_ID + ".CLASSPATH", "org.signserver.validationservice.server.ValidationServiceWorker");
         getGlobalSession().setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + VALIDATION_SERVICE_WORKER_ID + ".SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.HardCodedCryptoToken");
@@ -538,7 +588,7 @@ public class ModulesTestCase extends TestCase {
         }
     }
 
-    protected void removeWorker(final int workerId) throws Exception {
+    public void removeWorker(final int workerId) throws Exception {
         removeGlobalProperties(workerId);
         WorkerConfig wc = getWorkerSession().getCurrentWorkerConfig(workerId);
         LOG.info("Got current config: " + wc.getProperties());
@@ -552,7 +602,7 @@ public class ModulesTestCase extends TestCase {
         LOG.info("Got current config after: " + wc.getProperties());
     }
 
-    protected File getSignServerHome() throws Exception {
+    public File getSignServerHome() throws FileNotFoundException {
         if (signServerHome == null) {
             final String home = System.getenv("SIGNSERVER_HOME");
             assertNotNull("SIGNSERVER_HOME", home);
@@ -562,52 +612,52 @@ public class ModulesTestCase extends TestCase {
         return signServerHome;
     }
 
-    protected Properties getConfig() {
+    public Properties getConfig() {
         return config;
     }
 
-    protected int getPublicHTTPPort() {
+    public int getPublicHTTPPort() {
         return Integer.parseInt(config.getProperty("httpserver.pubhttp"));
     }
 
-    protected int getPublicHTTPSPort() {
+    public int getPublicHTTPSPort() {
         return Integer.parseInt(config.getProperty("httpserver.pubhttps"));
     }
 
-    protected int getPrivateHTTPSPort() {
+    public int getPrivateHTTPSPort() {
         return Integer.parseInt(config.getProperty("httpserver.privhttps"));
     }
     
-    protected String getHTTPHost() {
+    public String getHTTPHost() {
         return config.getProperty("httpserver.hostname", "localhost");
     }
     
-    protected String getPreferredHTTPProtocol() {
+    public String getPreferredHTTPProtocol() {
         return config.getProperty("httpserver.prefproto", "http://");
     }
     
-    protected int getPreferredHTTPPort() {
+    public int getPreferredHTTPPort() {
         return Integer.parseInt(config.getProperty("httpserver.prefport", config.getProperty("httpserver.pubhttp")));
     }
     
     /** @return IP used by JUnit tests to access SignServer through the HTTPHost. */
-    protected String getClientIP() {
+    public String getClientIP() {
         return config.getProperty("httpclient.ipaddress", "127.0.0.1");
     }
 
     /** Setup keystores for SSL. **/
-    protected void setupSSLKeystores() throws KeyStoreException, IOException, FileNotFoundException, NoSuchAlgorithmException, CertificateException, KeyManagementException, UnrecoverableKeyException {
+    public void setupSSLKeystores() throws KeyStoreException, IOException, FileNotFoundException, NoSuchAlgorithmException, CertificateException, KeyManagementException, UnrecoverableKeyException {
         testUtils.setupSSLTruststore();
     }
     
-    protected TestUtils getTestUtils() {
+    public TestUtils getTestUtils() {
         return testUtils;
     }
 
     /**
      * Make a GenericSignRequest.
      */
-    protected GenericSignResponse signGenericDocument(final int workerId, final byte[] data) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+    public GenericSignResponse signGenericDocument(final int workerId, final byte[] data) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
         final int requestId = random.nextInt();
         final GenericSignRequest request = new GenericSignRequest(requestId, data);
         final GenericSignResponse response = (GenericSignResponse) getWorkerSession().process(workerId, request, new RequestContext());

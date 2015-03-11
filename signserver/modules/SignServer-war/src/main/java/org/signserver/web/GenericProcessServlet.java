@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
+import org.apache.commons.fileupload.FileUploadBase;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
@@ -36,6 +37,7 @@ import org.bouncycastle.util.encoders.Base64;
 import org.ejbca.util.CertTools;
 import org.signserver.common.*;
 import org.signserver.common.util.PropertiesConstants;
+import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.server.CertificateClientCredential;
 import org.signserver.server.IClientCredential;
@@ -81,6 +83,7 @@ public class GenericProcessServlet extends AbstractProcessServlet {
 
     private static final String PROCESS_TYPE_PROPERTY_NAME = "processType";
     private static final String CERT_PURPOSES_PROPERTY_NAME = "certPurposes";
+    private static final String HTTP_MAX_UPLOAD_SIZE = "HTTP_MAX_UPLOAD_SIZE";
     
     private enum ProcessType {
         signDocument,
@@ -92,6 +95,9 @@ public class GenericProcessServlet extends AbstractProcessServlet {
 
     @EJB
     private IWorkerSession.ILocal workersession;
+    
+    @EJB
+    private IGlobalConfigurationSession.ILocal globalSession;
 
     private IWorkerSession.ILocal getWorkerSession() {
         if (workersession == null) {
@@ -137,6 +143,8 @@ public class GenericProcessServlet extends AbstractProcessServlet {
         	workerId = getWorkerSession().getWorkerId(workerNameOverride);
         	workerRequest = true;
         }
+        
+        final long maxUploadSize = getMaxUploadSize();
 
         ProcessType processType = ProcessType.signDocument;
         final MetaDataHolder metadataHolder = new MetaDataHolder();
@@ -146,7 +154,7 @@ public class GenericProcessServlet extends AbstractProcessServlet {
             final ServletFileUpload upload = new ServletFileUpload(factory);
 
             // Limit the maximum size of input
-            upload.setSizeMax(MAX_UPLOAD_SIZE);
+            upload.setSizeMax(maxUploadSize);
 
             try {
                 final List items = upload.parseRequest(req);
@@ -243,6 +251,11 @@ public class GenericProcessServlet extends AbstractProcessServlet {
                         }
                     }
                 }
+            } catch (FileUploadBase.SizeLimitExceededException ex) {
+                LOG.error(HTTP_MAX_UPLOAD_SIZE + " exceeded: " + ex.getLocalizedMessage());
+                res.sendError(HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE,
+                    "Maximum content length is " + maxUploadSize + " bytes");
+                return;
             } catch (FileUploadException ex) {
                 throw new ServletException("Upload failed", ex);
             }
@@ -352,10 +365,10 @@ public class GenericProcessServlet extends AbstractProcessServlet {
         }
         
         // Limit the maximum size of input
-        if (data.length > MAX_UPLOAD_SIZE) {
-            LOG.error("Content length exceeds 100MB, not processed: " + req.getContentLength());
+        if (data.length > maxUploadSize) {
+            LOG.error("Content length exceeds " + maxUploadSize + ", not processed: " + req.getContentLength());
             res.sendError(HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE,
-                    "Maximum content length is 100 MB");
+                    "Maximum content length is " + maxUploadSize + " bytes");
         } else {
             processRequest(req, res, workerId, data, fileName, pdfPassword, processType,
                     metadataHolder);
@@ -603,5 +616,25 @@ public class GenericProcessServlet extends AbstractProcessServlet {
             throws IOException {
         LOG.info("Bad request: " + message);
         res.sendError(HttpServletResponse.SC_BAD_REQUEST, message);
+    }
+    
+    private long getMaxUploadSize() {
+        final String confValue = globalSession.getGlobalConfiguration().getProperty(GlobalConfiguration.SCOPE_GLOBAL, HTTP_MAX_UPLOAD_SIZE);
+        long result = MAX_UPLOAD_SIZE;
+        if (confValue != null) {
+            try {
+                result = Long.parseLong(confValue);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Using " + HTTP_MAX_UPLOAD_SIZE + ": " + result);
+                }
+            } catch (NumberFormatException ex) {
+                LOG.error("Incorrect value for global configuration property " + HTTP_MAX_UPLOAD_SIZE + ": " + ex.getLocalizedMessage());
+            }
+        } else {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Using default max upload size as no " + HTTP_MAX_UPLOAD_SIZE + " configured");
+            }
+        }
+        return result;
     }
 }

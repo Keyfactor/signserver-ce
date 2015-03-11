@@ -18,6 +18,7 @@ import java.net.HttpURLConnection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import org.bouncycastle.util.Arrays;
 
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
@@ -27,8 +28,8 @@ import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.module.xmlvalidator.XMLValidatorTestData;
 import org.signserver.server.signers.EchoRequestMetadataSigner;
 
-import static org.junit.Assert.*;
 import org.junit.Test;
+import org.signserver.common.GlobalConfiguration;
 
 /**
  * Tests that the right HTTP status codes are returned in different situations.
@@ -507,7 +508,40 @@ public class GenericProcessServletResponseTest extends WebTestCase {
         assertEquals("Contains property", "BAR", props.getProperty("FOO"));
         assertEquals("Contains property", "BAR2", props.getProperty("FOO2"));
     }
-    
+
+    /**
+     * Tests that the maximum upload size can be configured and is enforced.
+     * @throws Exception 
+     */
+    @Test
+    public void test22MaxUploadSize() throws Exception {
+        try {
+            getGlobalSession().setProperty(GlobalConfiguration.SCOPE_GLOBAL, "HTTP_MAX_UPLOAD_SIZE", "700"); // 700 bytes max
+            getGlobalSession().reload();
+            
+            Map<String, String> fields = new HashMap<String, String>();
+            fields.put("workerName", getSignerNameCMSSigner1());
+            
+            // Test with a small number of bytes
+            // Note we can not test with 700 bytes as there is also headers that take up space
+            byte[] data = new byte[10];
+            Arrays.fill(data, "a".getBytes("ASCII")[0]);
+            fields.put("data", new String(data, "ASCII"));
+            
+            assertStatusReturned(fields, 200);
+            
+            // Test with more than 700 bytes upload
+            data = new byte[701];
+            Arrays.fill(data, "a".getBytes("ASCII")[0]);
+            fields.put("data", new String(data, "ASCII"));
+            
+            assertStatusReturned(fields, 413);
+        } finally {
+            getGlobalSession().removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "HTTP_MAX_UPLOAD_SIZE");
+            getGlobalSession().reload();
+        }
+    }
+
     /**
      * Remove the workers created etc.
      * @throws Exception in case of error

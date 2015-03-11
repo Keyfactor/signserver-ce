@@ -2586,7 +2586,7 @@ try {
                                         <li><b>HTTP 400</b> (Bad Request): The request could not be fulfilled. Some request data were missing or incorrect etc.</li>
                                         <li><b>HTTP 401</b> (Unauthorized): The worker requires user authentication</li>
                                         <li><b>HTTP 404</b> (Not Found): The requested workerName or workerId does not represent an existing worker</li>
-                                        <li><b>HTTP 413</b> (Request Entity Too Large): The data field or uploaded file is too large</li> 
+                                        <li><b>HTTP 413</b> (Request Entity Too Large): The data field or uploaded file is too large. See the HTTP_MAX_UPLOAD_SIZE global configuration property.</li> 
                                         <li><b>HTTP 500</b> (Internal Server Error): There was an internal error when processing the request. Typically indicating an configuration problem or unexpected error at the server side.</li>
                                         <li><b>HTTP 503</b> (Service Unavailable): The worker is not active, its crypto token is not activated or similar</li>
                                     </ul>
@@ -2628,6 +2628,10 @@ try {
                             "multipart/form-data" the message body is not parsed but instead directly passed to the worker specified by workerName or workerId
                             in the URI's query string.
                         </p>
+                        
+                        <subsubsection name="Configuration">
+                            <p><b>HTTP_MAX_UPLOAD_SIZE</b> = Global configuration property that can be set to specify the maximum size (in bytes) of the HTTP request (Defaut: 104857600).</p>
+                        </subsubsection>
 
                         <subsubsection name="Samples">
                             <ul>

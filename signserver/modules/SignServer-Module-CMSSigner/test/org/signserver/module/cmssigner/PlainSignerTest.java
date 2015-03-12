@@ -57,9 +57,6 @@ public class PlainSignerTest {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(PlainSignerTest.class);
-    
-    private static final ASN1ObjectIdentifier ID_SHA1WITHDSA = new ASN1ObjectIdentifier("1.2.840.10040.4.3");
-    private static final ASN1ObjectIdentifier ID_SHA256WITHDSA = new ASN1ObjectIdentifier("2.16.840.1.101.3.4.3.2");
 
     private static MockedCryptoToken tokenRSA;
     private static MockedCryptoToken tokenDSA;
@@ -244,6 +241,18 @@ public class PlainSignerTest {
         byte[] plainText = "some-data".getBytes("ASCII");
         GenericSignResponse resp = sign(plainText, tokenRSA, createConfig("SHA256withRSA"));
         assertSignedAndVerifiable(plainText, "SHA256withRSA", tokenRSA, resp);
+    }
+
+    /**
+     * Test signing using when SHA256withRSAandMGF1 is explicitly specified.
+     * @throws Exception 
+     */
+    @Test
+    public void testNormalSigning_SHA256withRSAandMGF1() throws Exception {
+        LOG.info("testNormalSigning_RSAandMGF1");
+        byte[] plainText = "some-data".getBytes("ASCII");
+        GenericSignResponse resp = sign(plainText, tokenRSA, createConfig("SHA256withRSAandMGF1"));
+        assertSignedAndVerifiable(plainText, "SHA256withRSAandMGF1", tokenRSA, resp);
     }
 
     /**

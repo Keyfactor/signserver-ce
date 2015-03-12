@@ -4754,6 +4754,24 @@ As mandated by the specification, both the signer certificate and the CSCA certi
                         </p>
                     </subsubsection>
                 </subsection>
+                
+                <subsection name="Plain Signer">
+                    <p>
+The Plain signer has the fully qualified class name: org.signserver.module.cmssigner.PlainSigner
+                    </p>
+                    <subsubsection name="Overview">
+                        <p>
+The Plain signer can sign arbitrary data and simply produces a signature in the
+format determined by the configured signature algorithm.
+                        </p>
+                    </subsubsection>
+                    <subsubsection name="Available Properties">
+                        <p>
+                            <b>SIGNATUREALGORITHM</b> = property specifying the algorithm used to sign the data (default: depending on the signing key: SHA1withDSA for DSA keys,
+                                                        SHA1withECDSA for ECDSA keys, otherwise SHA1withRSA)
+                        </p>
+                    </subsubsection>
+                </subsection>
             </section>
 
             <section name="SignServer Document Validators">

@@ -21,7 +21,6 @@ import java.util.LinkedList;
 import java.util.Properties;
 
 import java.util.List;
-import javax.ejb.EJB;
 import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.servlet.ServletConfig;
@@ -34,7 +33,6 @@ import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.WorkerStatus;
-import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.healthcheck.HealthCheckUtils;
 import org.signserver.server.nodb.FileBasedDatabaseManager;

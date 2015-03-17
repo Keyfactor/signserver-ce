@@ -30,6 +30,8 @@ import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession.ILocal;
 import org.signserver.server.*;
+import org.signserver.server.IAuthorizer;
+import org.signserver.server.IAccounter;
 import org.signserver.server.archive.Archiver;
 import org.signserver.server.config.entities.FileBasedWorkerConfigDataService;
 import org.signserver.server.config.entities.IWorkerConfigDataService;

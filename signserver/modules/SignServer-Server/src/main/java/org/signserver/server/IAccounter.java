@@ -16,6 +16,8 @@ import java.util.Properties;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
+import org.signserver.server.AccounterException;
+import org.signserver.server.IClientCredential;
 
 /**
  * Interface for Accounters.

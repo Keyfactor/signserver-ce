@@ -26,37 +26,48 @@ import org.signserver.common.ServiceLocator;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 
 /**
- * Sample accounter for demonstration purpuses only which holds accounts in
+ * Sample accounter for demonstration purposes only which holds accounts in
  * the global configuration.
- *
- * Two properties are used in the global configuration:
- *
- * GLOBALCONFIGSAMPLEACCOUNTER_USERS = Mapping from credential to accountno
- * Ex: user1,password:account1; user2,password2:account2
- *
- * GLOBALCONFIGSAMPLEACCOUNTER_ACCOUNTS = Map from accountno to balance
- * Ex: account1:14375; account2:12
- *
+ * <p>
+ *    The accounter has two global configuration properties:
+ * </p>
+ * <ul>
+ *    <li>
+ *        <b>GLOBALCONFIGSAMPLEACCOUNTER_USERS</b> = Mapping from credential to
+ *           account number (Required).<br/>
+ *           Ex: user1,password:account1; user2,password2:account2
+ *    </li>
+ *    <li><b>GLOBALCONFIGSAMPLEACCOUNTER_ACCOUNTS</b> = Map from account
+ *           number to balance (Required)<br/>
+ *          Ex: account1:14375; account2:12         
+ *    </li>
+ * </ul>
+ * <p>
+ *    Note: This accounter is not safe for use in production as concurrent
+ *    requests can overwrite the balance. Instead an accounter using a real
+ *    database should be used.
+ * </p>
  *
  * @author Markus Kilås
  * @version $Id$
  */
 public class GlobalConfigSampleAccounter implements IAccounter {
 
-    private static final Logger LOG =
-            Logger.getLogger(GlobalConfigSampleAccounter.class);
+    /** Logger for this class. */
+    private static final Logger LOG
+            = Logger.getLogger(GlobalConfigSampleAccounter.class);
 
-    public static final String GLOBALCONFIGSAMPLEACCOUNTER_ACCOUNTS =
-            "GLOBALCONFIGSAMPLEACCOUNTER_ACCOUNTS";
-    public static final String GLOBALCONFIGSAMPLEACCOUNTER_USERS =
-            "GLOBALCONFIGSAMPLEACCOUNTER_USERS";
-    
+    // Global configuration properties
+    public static final String GLOBALCONFIGSAMPLEACCOUNTER_ACCOUNTS
+            = "GLOBALCONFIGSAMPLEACCOUNTER_ACCOUNTS";
+    public static final String GLOBALCONFIGSAMPLEACCOUNTER_USERS
+            = "GLOBALCONFIGSAMPLEACCOUNTER_USERS";
 
     private IGlobalConfigurationSession gCSession;
 
     @Override
     public void init(final Properties props) {
-        LOG.debug("init");
+        // This accounter does not use any worker properties
     }
 
     @Override
@@ -70,6 +81,7 @@ public class GlobalConfigSampleAccounter implements IAccounter {
         }
 
         try {
+            // Read global configuration values
             final GlobalConfiguration config =
                     getGlobalConfigurationSession().getGlobalConfiguration();
             final String usersMapping =
@@ -79,13 +91,16 @@ public class GlobalConfigSampleAccounter implements IAccounter {
                     config.getProperty(GlobalConfiguration.SCOPE_GLOBAL,
                     GLOBALCONFIGSAMPLEACCOUNTER_ACCOUNTS);
 
+            // Parse users "table"
             final Map<String, String> usersTable =
                     parseCredentialMapping(usersMapping);
 
+            // Parse accounts "table"
             final Map<String, Integer> accountsTable =
                     parseAccountMapping(accountsMapping);
 
-            String key;
+            // Get username (or certificate serial number) from request
+            final String key;
             if (credential instanceof CertificateClientCredential) {
                 final CertificateClientCredential certCred =
                         (CertificateClientCredential) credential;
@@ -95,25 +110,30 @@ public class GlobalConfigSampleAccounter implements IAccounter {
                 final UsernamePasswordClientCredential passCred =
                         (UsernamePasswordClientCredential) credential;
 
-                key = passCred.getUsername() + ","
-                        + passCred.getPassword();
+                key = passCred.getUsername() + "," + passCred.getPassword();
             } else if (credential == null) {
-                LOG.debug("Null credential");
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("No credential");
+                }
                 key = null;
 
             } else {
-                LOG.debug("Unknown credential type: "
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Unknown credential type: "
                         + credential.getClass().getName());
+                }
                 key = null;
             }
 
-            String accountNo = usersTable.get(key);
+            // Get account
+            final String accountNo = usersTable.get(key);
 
             // No account for user given the credential supplied
             if (accountNo == null) {
                 return false;
             }
 
+            // Get current balance
             Integer balance = accountsTable.get(accountNo);
 
             // No account
@@ -127,24 +147,30 @@ public class GlobalConfigSampleAccounter implements IAccounter {
 
             // No funds
             if (balance  < 0) {
+                // Purchase not granted
                 return false;
             }
 
+            // Store the new balance
             getGlobalConfigurationSession().setProperty(
                     GlobalConfiguration.SCOPE_GLOBAL,
                     GLOBALCONFIGSAMPLEACCOUNTER_ACCOUNTS,
                     storeAccountMapping(accountsTable));
 
+            // Purchase granted
             return true;
 
         } catch (NamingException ex) {
-            throw new AccounterException("Unable to connect to accounter internal database", ex);
+            throw new AccounterException(
+                    "Unable to connect to accounter internal database", ex);
         }
     }
 
-     private IGlobalConfigurationSession getGlobalConfigurationSession() throws NamingException {
+    private IGlobalConfigurationSession getGlobalConfigurationSession()
+            throws NamingException {
         if (gCSession == null) {
-            gCSession = ServiceLocator.getInstance().lookupLocal(IGlobalConfigurationSession.class);
+            gCSession = ServiceLocator.getInstance().lookupLocal(
+                    IGlobalConfigurationSession.class);
         }
         return gCSession;
     }
@@ -189,7 +215,8 @@ public class GlobalConfigSampleAccounter implements IAccounter {
         for (String entry : entries) {
             final String[] keyvalue = entry.trim().split(":");
             if (keyvalue.length == 2) {
-                result.put(keyvalue[0].trim(), Integer.parseInt(keyvalue[1].trim()));
+                result.put(keyvalue[0].trim(),
+                        Integer.parseInt(keyvalue[1].trim()));
             }
         }
         if (LOG.isDebugEnabled()) {
@@ -222,5 +249,4 @@ public class GlobalConfigSampleAccounter implements IAccounter {
         }
         return sb.toString();
     }
-    
 }

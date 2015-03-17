@@ -72,6 +72,6 @@ public abstract class BaseDispatcher extends BaseProcessable {
         }
         completeEntries.add(new WorkerStatusInfo.Entry("Authorized clients (serial number, issuer DN)", clientsValue.toString()));
 
-        return new StaticWorkerStatus(new WorkerStatusInfo(workerId, config.getProperty("NAME"), "Dispatcher", WorkerStatus.STATUS_ACTIVE, briefEntries, Collections.<String>emptyList(), completeEntries, config));
+        return new StaticWorkerStatus(new WorkerStatusInfo(workerId, config.getProperty("NAME"), "Dispatcher", WorkerStatus.STATUS_ACTIVE, briefEntries, fatalErrors, completeEntries, config));
     }
 }

@@ -14,7 +14,6 @@ package org.signserver.module.cmssigner;
 
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Signature;
@@ -33,6 +32,7 @@ import org.signserver.common.*;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.DefaultArchivable;
+import org.signserver.server.cryptotokens.ICryptoInstance;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.signers.BaseSigner;
 
@@ -100,26 +100,26 @@ public class PlainSigner extends BaseSigner {
         byte[] data = (byte[]) sReq.getRequestData();
         final String archiveId = createArchiveId(data, (String) requestContext.get(RequestContext.TRANSACTION_ID));
 
-        // Get certificate chain and signer certificate
-        List<Certificate> certs = this.getSigningCertificateChain();
-        if (certs == null) {
-            throw new IllegalArgumentException(
-                    "Null certificate chain. This signer needs a certificate.");
-        }
-
-        Certificate cert = this.getSigningCertificate();
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("SigningCert: " + ((X509Certificate) cert).getSubjectDN());
-        }
-
-        // Private key
-        PrivateKey privKey
-                = getCryptoToken().getPrivateKey(ICryptoToken.PURPOSE_SIGN);
-
+        ICryptoInstance crypto = null;
         try {
+            crypto = aquireCryptoInstance(ICryptoToken.PURPOSE_SIGN, signRequest, requestContext);
+            // Get certificate chain and signer certificate
+            final List<Certificate> certs = this.getSigningCertificateChain(crypto);
+            if (certs == null) {
+                throw new IllegalArgumentException(
+                        "Null certificate chain. This signer needs a certificate.");
+            }
+
+            final Certificate cert = this.getSigningCertificate(crypto);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("SigningCert: " + ((X509Certificate) cert).getSubjectDN());
+            }
+
+            // Private key
+            final PrivateKey privKey = crypto.getPrivateKey();
 
             final String sigAlg = signatureAlgorithm == null ? getDefaultSignatureAlgorithm(cert.getPublicKey()) : signatureAlgorithm;
-            Signature signature = Signature.getInstance(sigAlg, getCryptoToken().getProvider(ICryptoToken.PROVIDERUSAGE_SIGN));
+            final Signature signature = Signature.getInstance(sigAlg, crypto.getProvider());
             signature.initSign(privKey);
             signature.update(data);
 
@@ -152,15 +152,14 @@ public class PlainSigner extends BaseSigner {
         } catch (NoSuchAlgorithmException ex) {
             LOG.error("Error initializing signer", ex);
             throw new SignServerException("Error initializing signer", ex);
-        } catch (NoSuchProviderException ex) {
-            LOG.error("Error initializing signer", ex);
-            throw new SignServerException("Error initializing signer", ex);
         } catch (InvalidKeyException ex) {
             LOG.error("Error initializing signer", ex);
             throw new SignServerException("Error initializing signer", ex);
         } catch (SignatureException ex) {
             LOG.error("Error initializing signer", ex);
             throw new SignServerException("Error initializing signer", ex);
+        } finally {
+            releaseCryptoInstance(crypto);
         }
     }
     

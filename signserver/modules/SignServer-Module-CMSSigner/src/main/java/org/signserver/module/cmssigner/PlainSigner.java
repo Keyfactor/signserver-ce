@@ -40,7 +40,7 @@ import org.signserver.server.signers.BaseSigner;
  * A Signer signing arbitrary content and produces a plain signature.
  *
  * @author Markus Kilås
- * @version $Id: CMSSigner_1.java 5264 2014-10-07 08:34:16Z netmackan $
+ * @version $Id$
  */
 public class PlainSigner extends BaseSigner {
 
@@ -108,7 +108,9 @@ public class PlainSigner extends BaseSigner {
         }
 
         Certificate cert = this.getSigningCertificate();
-        LOG.debug("SigningCert: " + ((X509Certificate) cert).getSubjectDN());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("SigningCert: " + ((X509Certificate) cert).getSubjectDN());
+        }
 
         // Private key
         PrivateKey privKey

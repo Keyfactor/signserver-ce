@@ -1152,8 +1152,14 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
 
     private String createResultsReport(final Collection<KeyTestResult> results) {
         final StringBuilder buff = new StringBuilder();
-        for (KeyTestResult result : results) {
-            buff.append(result.toString()).append("\n");
+        final Iterator<KeyTestResult> it = results.iterator();
+        
+        while (it.hasNext()) {
+            final KeyTestResult result = it.next();
+            buff.append(result.toString());
+            if (it.hasNext()) {
+                buff.append(", ");
+            }
         }
         return buff.toString();
     }

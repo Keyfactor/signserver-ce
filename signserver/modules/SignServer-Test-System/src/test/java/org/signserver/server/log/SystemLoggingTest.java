@@ -643,7 +643,7 @@ public class SystemLoggingTest extends ModulesTestCase {
             workerSession.activateSigner(p12SignerId, "foo123");
             workerSession.testKey(p12SignerId, "ts_key00004", "foo123".toCharArray());
             
-            lines = readEntries(auditLogFile, linesBefore + 1, 1);
+            lines = readEntries(auditLogFile, linesBefore + 2, 1);
             LOG.info(lines);
             line = lines.get(0);
             assertTrue("Contains event", line.contains("EVENT: KEYTEST"));
@@ -654,7 +654,7 @@ public class SystemLoggingTest extends ModulesTestCase {
             
             // Test key with all, to assure not extra base 64 encoding is done
             workerSession.testKey(p12SignerId, "all", "foo123".toCharArray());
-            lines = readEntries(auditLogFile, linesBefore + 2, 1);
+            lines = readEntries(auditLogFile, linesBefore + 3, 1);
             LOG.info(lines);
             line = lines.get(0);
             assertTrue("Contains test results", line.contains("KeyTestResult{alias=ts_key00004, success=true"));
@@ -663,7 +663,7 @@ public class SystemLoggingTest extends ModulesTestCase {
             PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=TS Signer 1,C=SE", null);
             ICertReqData req = workerSession.getCertificateRequest(p12SignerId, certReqInfo, false);
             Base64SignerCertReqData reqData = (Base64SignerCertReqData) req;
-            lines = readEntries(auditLogFile, linesBefore + 2, 1);
+            lines = readEntries(auditLogFile, linesBefore + 4, 1);
             LOG.info(lines);
             line = lines.get(0);
             assertTrue("Contains event", line.contains("EVENT: GENCSR"));

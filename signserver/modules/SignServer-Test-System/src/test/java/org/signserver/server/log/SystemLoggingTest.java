@@ -627,6 +627,7 @@ public class SystemLoggingTest extends ModulesTestCase {
             // Test keygen
             int linesBefore = readEntriesCount(auditLogFile);
             workerSession.generateSignerKey(p12SignerId, "RSA", "512", "ts_key00004", "foo123".toCharArray());
+            workerSession.generateSignerKey(p12SignerId, "RSA", "512", "additionalKey", "foo123".toCharArray());
 
             List<String> lines = readEntries(auditLogFile, linesBefore, 1);
             LOG.info(lines);
@@ -649,6 +650,13 @@ public class SystemLoggingTest extends ModulesTestCase {
             assertTrue("Contains module", line.contains("MODULE: KEY_MANAGEMENT"));
             assertTrue("Contains worker id", line.contains("WORKER_ID: " + p12SignerId));
             assertTrue("Contains alias", line.contains("KEYALIAS: ts_key00004"));
+            assertTrue("Contains test results", line.contains("KeyTestResult{alias=ts_key00004, success=true"));
+            
+            // Test key with all, to assure not extra base 64 encoding is done
+            workerSession.testKey(p12SignerId, "all", "foo123".toCharArray());
+            lines = readEntries(auditLogFile, linesBefore + 2, 1);
+            LOG.info(lines);
+            line = lines.get(0);
             assertTrue("Contains test results", line.contains("KeyTestResult{alias=ts_key00004, success=true"));
             
             // Test gencsr

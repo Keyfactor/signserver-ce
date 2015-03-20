@@ -19,6 +19,7 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.*;
+import java.util.logging.Level;
 import javax.security.auth.x500.X500Principal;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
@@ -117,6 +118,85 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2 {
         return WorkerStatus.STATUS_OFFLINE;
     }
 
+    /**
+     * (Re)read from keystore to in-memory represesentation.
+     */
+    private void readFromKeystore(final String authenticationcode)
+            throws KeyStoreException, CertificateException,
+                   NoSuchProviderException, NoSuchAlgorithmException,
+                   IOException,
+                   UnrecoverableKeyException {
+        if (authenticationcode != null) {
+            this.authenticationCode = authenticationcode.toCharArray();
+        }
+        this.ks = getKeystore(keystoretype, keystorepath, authenticationCode);
+
+        entries = new HashMap<Object, KeyEntry>();
+
+        Enumeration<String> e = ks.aliases();
+        while (e.hasMoreElements()) {
+            final String alias = e.nextElement();
+            if (ks.isKeyEntry(alias)) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Alias " + alias + " is KeyEntry.");
+                }
+                final Key key = ks.getKey(alias, authenticationCode);
+                if (key instanceof PrivateKey) {
+                    final Certificate[] chain = KeyTools.getCertChain(ks,
+                            alias);
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Loaded certificate chain with length "
+                                + chain.length + " from keystore.");
+                    }
+
+                    final KeyEntry entry = new KeyEntry((PrivateKey) key,
+                            chain[0], Arrays.asList(chain));
+
+                    entries.put(alias, entry);
+                } else {
+                    LOG.error("Not a private key for alias " + alias);
+                }
+            }
+        }
+
+        // Use the first entry as default key if none specified
+        if (properties.getProperty(DEFAULTKEY) == null) {
+            e = ks.aliases();
+
+            while (e.hasMoreElements()) {
+                final String alias = e.nextElement();
+                if (ks.isKeyEntry(alias)) {
+                    if (ks.getKey(alias, authenticationCode) != null) {
+                        LOG.debug("Aliases " + alias + " is KeyEntry.");
+                        properties.setProperty(DEFAULTKEY, alias);
+                        break;
+                    }
+                }
+            }
+        }
+
+        final String defaultKey = properties.getProperty(DEFAULTKEY);
+        if (defaultKey != null) {
+            final KeyEntry entry = entries.get(defaultKey);
+            if (entry != null) {
+                entries.put(ICryptoToken.PURPOSE_SIGN, entry);
+                entries.put(ICryptoToken.PURPOSE_DECRYPT, entry);
+            } else {
+                LOG.error("Not a private key for alias " + defaultKey);
+            }
+        }
+
+        final String nextKey = properties.getProperty(NEXTKEY);
+        if (nextKey != null) {
+            final KeyEntry entry = entries.get(nextKey);
+            if (entry != null) {
+                entries.put(ICryptoToken.PURPOSE_NEXTKEY, entry);
+            } else {
+                LOG.error("Not a private key for alias " + defaultKey);
+            }
+        }
+    }
+    
     @Override
     public void activate(String authenticationcode)
             throws CryptoTokenAuthenticationFailureException,
@@ -128,77 +208,7 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2 {
         }
 
         try {
-            this.ks = getKeystore(keystoretype, keystorepath,
-                    authenticationcode.toCharArray());
-
-            this.authenticationCode = authenticationcode.toCharArray();
-
-            entries = new HashMap<Object, KeyEntry>();
-
-            Enumeration<String> e = ks.aliases();
-            while (e.hasMoreElements()) {
-                final String alias = e.nextElement();
-                if (ks.isKeyEntry(alias)) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Alias " + alias + " is KeyEntry.");
-                    }
-                    final Key key = ks.getKey(alias, authenticationcode.toCharArray());
-                    if (key instanceof PrivateKey) {
-                        final Certificate[] chain = KeyTools.getCertChain(ks,
-                                alias);
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Loaded certificate chain with length "
-                                    + chain.length + " from keystore.");
-                        }
-
-                        final KeyEntry entry = new KeyEntry((PrivateKey) key, 
-                                chain[0], Arrays.asList(chain));
-
-                        entries.put(alias, entry);
-                    } else {
-                        LOG.error("Not a private key for alias " + alias);
-                    }
-                }
-            }
-
-            // Use the first entry as default key if none specified
-            if (properties.getProperty(DEFAULTKEY) == null) {
-                e = ks.aliases();
-
-                while (e.hasMoreElements()) {
-                    final String alias = e.nextElement();
-                    if (ks.isKeyEntry(alias)) {
-                        if (ks.getKey(alias,
-                                authenticationcode.toCharArray()) != null) {
-                            LOG.debug("Aliases " + alias + " is KeyEntry.");
-                                properties.setProperty(DEFAULTKEY, alias);
-                            break;
-                        }
-                    }
-                }
-            }
-
-            final String defaultKey = properties.getProperty(DEFAULTKEY);
-            if (defaultKey != null) {
-                final KeyEntry entry = entries.get(defaultKey);
-                if (entry != null) {
-                    entries.put(ICryptoToken.PURPOSE_SIGN, entry);
-                    entries.put(ICryptoToken.PURPOSE_DECRYPT, entry);
-                } else {
-                    LOG.error("Not a private key for alias " + defaultKey);
-                }
-            }
-
-            final String nextKey = properties.getProperty(NEXTKEY);
-            if (nextKey != null) {
-                final KeyEntry entry = entries.get(nextKey);
-                if (entry != null) {
-                    entries.put(ICryptoToken.PURPOSE_NEXTKEY, entry);
-                } else {
-                    LOG.error("Not a private key for alias " + defaultKey);
-                }
-            }
-
+            readFromKeystore(authenticationcode);
         } catch (KeyStoreException e1) {
             LOG.error("Error :", e1);
             throw new CryptoTokenAuthenticationFailureException("KeyStoreException " + e1.getMessage());
@@ -504,6 +514,7 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2 {
             try {
                 out = new FileOutputStream(new File(keystorepath));
                 keyStore.store(out, authenticationCode);
+                readFromKeystore(null);
             } catch (IOException ex) {
                 LOG.error("Unable to persist new keystore after key removal: " + ex.getMessage(), ex);
                 throw new SignServerException("Unable to persist key removal");
@@ -511,6 +522,12 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2 {
                 LOG.error("Unable to persist new keystore after key removal: " + ex.getMessage(), ex);
                 throw new SignServerException("Unable to persist key removal");
             } catch (CertificateException ex) {
+                LOG.error("Unable to persist new keystore after key removal: " + ex.getMessage(), ex);
+                throw new SignServerException("Unable to persist key removal");
+            } catch (NoSuchProviderException ex) {
+                LOG.error("Unable to persist new keystore after key removal: " + ex.getMessage(), ex);
+                throw new SignServerException("Unable to persist key removal");
+            } catch (UnrecoverableKeyException ex) {
                 LOG.error("Unable to persist new keystore after key removal: " + ex.getMessage(), ex);
                 throw new SignServerException("Unable to persist key removal");
             } finally {

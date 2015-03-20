@@ -238,7 +238,7 @@
 
 #macro (footer)
       <p class="copyright" style="text-align:center;">
-        Copyright &copy; 2007-2014 SignServer team. All rights reserved.
+        Copyright &copy; 2007-2015 PrimeKey Solutions AB.
         <script type="text/javascript" language="JavaScript"><!--
                 document.write(" - "+"Last Published: " + document.lastModified);
               //  -->

@@ -5,6 +5,15 @@
   </properties>
 
   <body>
+        <section name="Trademarks">
+            <p>
+Oracle and Java are registered trademarks of Oracle and/or its affiliates. Other names may be trademarks of their respective owners.
+            </p>
+            <p>
+EJBCA is a registered trademark of PrimeKey Solutions AB.
+            </p>
+        </section>
+
     <section name="Credits">
 <p>
  Software that the SignServer uses library of and couldn't have been created without them:

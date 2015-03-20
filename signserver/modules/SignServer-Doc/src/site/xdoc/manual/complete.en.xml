@@ -6630,6 +6630,32 @@ public interface IExtendedCryptoToken extends ICryptoToken {
                         </pre>
                     </subsubsection>
                 </subsection>
+            
+                <subsection name="Sample Workers and Components">
+                    <note>
+This is a SignServer Enterprise Edition (EE) feature.
+                    </note>
+                    <p>
+There is a module containing sample and skeleton implementation of allmost all
+the different kinds of workers as well as different components. 
+                    </p>
+                    <p>
+The source of the module is located in SIGNSERVER_HOME/modules/mod-enterprise/SignServer-Module-Sample/.
+                    </p>
+                    <p>
+The following implementations are available:
+                    </p>
+                    <ul>
+                        <li>SkeletonTimedService, HelloTimedService</li>
+                        <li>SkeletonWorker, HelloWorker</li>
+                        <li>SkeletonDispatcher, StatisticalDispatcher</li>
+                        <li>SkeletonSigner, TextSigner</li>
+                        <li>SkeletonValidator, TextValidator</li>
+                        <li>SkeletonArchiver, FileArchiver</li>
+                        <li>SkeletonAccounter, GlobalConfigAccounter</li>
+                        <li>SkeletonAuthorizer, ReversedNameAuthorizer</li>
+                    </ul>
+                </subsection>
             </section>
 
             <section name="Other Customizations">

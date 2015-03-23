@@ -119,7 +119,7 @@ public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2 {
     }
 
     /**
-     * (Re)read from keystore to in-memory represesentation.
+     * (Re)read from keystore to in-memory representation.
      */
     private void readFromKeystore(final String authenticationcode)
             throws KeyStoreException, CertificateException,

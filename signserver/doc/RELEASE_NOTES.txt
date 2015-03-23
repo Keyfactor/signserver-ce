@@ -1,22 +1,3 @@
-SignServer 3.6.3
-----------------
-
-New Features and Improvements:
- - Authenticode signer for portable executables (enterprise edition only).
- - CSCA Master List Signer (enterprise edition only).
- - Signer that produces plain signatures.
- - Configurable maximum upload limit.
-
-Bug fixes:
- - Key test results now displays correctly in audit log.
- - Database tables now only listed once during deployment.
- - Soft keys are now also removed directly from memory.
- - JBoss config folder directory corrected in installation instructions.
- - Dispatchers status page now lists configuration errors.
-
-See ChangeLog.txt for the full list of changes.
-
-
 SignServer 3.7.0
 ----------------
 
@@ -38,6 +19,25 @@ Notice:
    as those required a token to function. Since long this has not been
    required and if any of your validators has this token configured it should
    be removed or they might give an error.
+
+See ChangeLog.txt for the full list of changes.
+
+
+SignServer 3.6.3
+----------------
+
+New Features and Improvements:
+ - Authenticode signer for portable executables (enterprise edition only).
+ - CSCA Master List Signer (enterprise edition only).
+ - Signer that produces plain signatures.
+ - Configurable maximum upload limit.
+
+Bug fixes:
+ - Key test results now displays correctly in audit log.
+ - Database tables now only listed once during deployment.
+ - Soft keys are now also removed directly from memory.
+ - JBoss config folder directory corrected in installation instructions.
+ - Dispatchers status page now lists configuration errors.
 
 See ChangeLog.txt for the full list of changes.
 

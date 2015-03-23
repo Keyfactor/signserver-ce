@@ -1,3 +1,22 @@
+SignServer 3.6.3
+----------------
+
+New Features and Improvements:
+ - Authenticode signer for portable executables.
+ - CSCA Master List Signer (ePassport).
+ - Signer that produces plain signatures.
+ - Configurable maximum upload limit.
+
+Bug fixes:
+ - Key test results now displays correctly in audit log.
+ - Database tables now only listed once during deployment.
+ - Soft keys are now also removed directly from memory.
+ - JBoss config folder directory corrected in installation instructions.
+ - Dispatchers status page now lists configuration errors.
+
+See ChangeLog.txt for the full list of changes.
+
+
 SignServer 3.7.0
 ----------------
 

@@ -279,6 +279,16 @@ public class KeystoreInConfigCryptoTokenTest extends KeystoreCryptoTokenTestBase
             cmsSigner(workerId);
             
             workerSession.removeKey(tokenId, SIGN_KEY_ALIAS);
+            
+            try {
+                cmsSigner(workerId);
+                fail("Should get a CryptoTokenOfflineException trying to sign with key removed");
+            } catch (CryptoTokenOfflineException e) {
+                // expected
+            } catch (Exception e) {
+                fail("Unexpected exception: " +
+                        e.getClass() + ": " + e.getMessage());
+            }           
             workerSession.reloadConfiguration(tokenId);
             
             try {

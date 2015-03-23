@@ -1,3 +1,28 @@
+SignServer 3.6.3, 2015-04-01
+----------------------------
+
+** Bug
+    * [DSS-882] - Keytest result logged with double base64 encoding in auditlog
+    * [DSS-907] - Database tables listed twice during deployment
+    * [DSS-912] - Soft key only removed immediately from disk by remove key command
+    * [DSS-915] - Incorrect JBoss config folder directory in installation instructions
+    * [DSS-940] - Dispatchers status does not list fatal errors
+
+** Improvement
+    * [DSS-930] - Make maximum upload limit configurable
+    * [DSS-937] - Add a default getStatus method implementation in BaseWorker
+    * [DSS-941] - Move IAuthorizer and IAccounter to the SignServer-Server sub project
+
+** New Feature
+    * [DSS-870] - Implement MS Authenticode signer
+    * [DSS-886] - Signer that produces a plain signature
+    * [DSS-901] - Implement CSCA Master List Signer
+    * [DSS-936] - Create module with sample and skeleton implementations
+
+** Task
+    * [DSS-921] - Add notice about trademarks in the documentation/web page
+
+
 SignServer 3.6.2, 2014-11-28
 ----------------------------
 

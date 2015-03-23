@@ -17,7 +17,6 @@ import java.security.*;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.util.*;
-import java.util.logging.Level;
 import javax.naming.NamingException;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;

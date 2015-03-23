@@ -6537,7 +6537,7 @@ public interface IExtendedCryptoToken extends ICryptoToken {
 This is a SignServer Enterprise Edition (EE) feature.
                     </note>
                     <p>
-There is a module containing sample and skeleton implementation of allmost all
+There is a module containing sample and skeleton implementation of almost all
 the different kinds of workers as well as different components. 
                     </p>
                     <p>

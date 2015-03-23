@@ -19,7 +19,6 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.*;
-import java.util.logging.Level;
 import javax.security.auth.x500.X500Principal;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;

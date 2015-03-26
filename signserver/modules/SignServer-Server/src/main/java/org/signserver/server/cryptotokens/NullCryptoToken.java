@@ -208,7 +208,10 @@ public class NullCryptoToken extends BaseCryptoToken {
 
     @Override
     public Certificate getCertificate(String alias) throws CryptoTokenOfflineException {
-        throw new CryptoTokenOfflineException("Unsupported by crypto token");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("getCertificate(" + alias + ")");
+        }
+        return null;
     }
 
     @Override

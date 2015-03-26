@@ -894,10 +894,12 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         return result;
     }
 
+    @Override
     public ICertReqData genCertificateRequest(ISignerCertReqInfo certReqInfo, boolean explicitEccParameters, String keyAlias, IServices services) throws CryptoTokenOfflineException {
         return genCertificateRequest(certReqInfo, explicitEccParameters, keyAlias, explicitEccParameters, services);
     }
 
+    @Override
     public ICertReqData genCertificateRequest(ISignerCertReqInfo certReqInfo, boolean explicitEccParameters, boolean defaultKey, IServices services) throws CryptoTokenOfflineException {
         return genCertificateRequest(certReqInfo, explicitEccParameters, null, defaultKey, services);
     }
@@ -1008,6 +1010,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         generateKey(keyAlgorithm, keySpec, alias, authCode, new ServicesImpl());
     }
     
+    @Override
     public void generateKey(final String keyAlgorithm, final String keySpec,
             final String alias, final char[] authCode, final IServices services)
             throws CryptoTokenOfflineException, IllegalArgumentException {
@@ -1040,6 +1043,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         return testKey(alias, authCode, new ServicesImpl());
     }
     
+    @Override
     public Collection<org.signserver.common.KeyTestResult> testKey(String alias,
         char[] authCode, IServices services) throws CryptoTokenOfflineException, KeyStoreException {
         try {
@@ -1172,4 +1176,14 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         }
     }
     
+    @Override
+    public TokenSearchResults searchTokenEntries(int startIndex, int max, final QueryCriteria qc, final boolean includeData, final IServices servicesImpl) throws SignServerException, CryptoTokenOfflineException, QueryException, OperationUnsupportedException {
+        final ICryptoToken token = getCryptoToken();
+        if (token instanceof ICryptoTokenV3) {
+            return ((ICryptoTokenV3) token).searchTokenEntries(startIndex, max, qc, includeData, servicesImpl);
+        } else {
+            throw new OperationUnsupportedException("Operation not supported by crypto token");
+        }
+    }
+
 }

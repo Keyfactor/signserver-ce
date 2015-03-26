@@ -16,6 +16,7 @@ import java.security.KeyStoreException;
 import java.security.cert.Certificate;
 import java.util.Collection;
 import java.util.List;
+import org.cesecore.util.query.QueryCriteria;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.ProcessRequest;
@@ -27,8 +28,12 @@ import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.KeyTestResult;
 import org.signserver.common.OperationUnsupportedException;
+import org.signserver.common.QueryException;
+import org.signserver.common.WorkerStatus;
 import org.signserver.server.cryptotokens.ICryptoToken;
+import org.signserver.server.cryptotokens.ICryptoTokenV3;
 import org.signserver.server.cryptotokens.IKeyGenerator;
+import org.signserver.server.cryptotokens.TokenSearchResults;
 
 /**
  * IProcessable is an interface that all processable workers should implement.
@@ -94,7 +99,11 @@ public interface IProcessable extends IWorker {
     ICertReqData genCertificateRequest(ISignerCertReqInfo info,
             boolean explicitEccParameters, String keyAlias)
             throws CryptoTokenOfflineException;
-    
+
+    ICertReqData genCertificateRequest(ISignerCertReqInfo certReqInfo, boolean explicitEccParameters, String keyAlias, IServices services) throws CryptoTokenOfflineException;
+
+    ICertReqData genCertificateRequest(ISignerCertReqInfo certReqInfo, boolean explicitEccParameters, boolean defaultKey, IServices services) throws CryptoTokenOfflineException;
+        
     /**
      * Method specifying which type of authentication that should be performed before signature is performed
      * Returns one of the AUTHTYPE_ constants
@@ -120,11 +129,24 @@ public interface IProcessable extends IWorker {
                 IllegalArgumentException;
 
     /**
+     * @see ICryptoTokenV3#generateKey(java.lang.String, java.lang.String, java.lang.String, char[], org.signserver.server.IServices) 
+     */
+    void generateKey(final String keyAlgorithm, final String keySpec,
+            final String alias, final char[] authCode, final IServices services)
+            throws CryptoTokenOfflineException, IllegalArgumentException;
+    
+    /**
      * @see ICryptoToken#testKey(java.lang.String, char[])
      */
-    public Collection<KeyTestResult> testKey(String alias,
+    Collection<KeyTestResult> testKey(String alias,
             char[] authCode)
             throws CryptoTokenOfflineException, KeyStoreException;
+
+    /**
+     * @see ICryptoTokenV3#testKey(java.lang.String, char[], org.signserver.server.IServices) 
+     */
+    Collection<org.signserver.common.KeyTestResult> testKey(String alias,
+        char[] authCode, IServices services) throws CryptoTokenOfflineException, KeyStoreException;
  
     /**
      * @return The status of the crypto token
@@ -147,4 +169,6 @@ public interface IProcessable extends IWorker {
             char[] authenticationCode,
             IServices services)
             throws CryptoTokenOfflineException, OperationUnsupportedException;
+    
+    TokenSearchResults searchTokenEntries(int startIndex, int max, final QueryCriteria qc, final boolean includeData, final IServices servicesImpl) throws SignServerException, CryptoTokenOfflineException, QueryException, OperationUnsupportedException;
 }

@@ -12,7 +12,6 @@
  *************************************************************************/
 package org.signserver.ejb;
 
-import org.signserver.server.ServicesImpl;
 import java.math.BigInteger;
 import java.security.KeyStoreException;
 import java.security.cert.Certificate;
@@ -110,38 +109,48 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     EntityManager em;
 
     private WorkerProcessImpl processImpl;
-    private final ServicesImpl servicesImpl = new ServicesImpl();
+    private final AllServicesImpl servicesImpl = new AllServicesImpl();
 
     @PostConstruct
     public void create() {
-        try {
-            if (em == null) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("No EntityManager injected. Running without database.");
-                }
-                workerConfigService = new FileBasedWorkerConfigDataService(FileBasedDatabaseManager.getInstance());
-                keyUsageCounterDataService = new FileBasedKeyUsageCounterDataService(FileBasedDatabaseManager.getInstance());
-            } else {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("EntityManager injected. Running with database.");
-                }
-                workerConfigService = new WorkerConfigDataService(em);
-                archiveDataService = new ArchiveDataService(em);
-                keyUsageCounterDataService = new KeyUsageCounterDataService(em);
+        if (em == null) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("No EntityManager injected. Running without database.");
             }
-            processImpl = new WorkerProcessImpl(em, keyUsageCounterDataService, globalConfigurationSession, workerManagerSession, logSession);
-            
-            // XXX Needs to be duplicated in each xWorkerSessionBean
-            servicesImpl.put(EntityManager.class, em);
-            servicesImpl.put(IWorkerSession.ILocal.class, ctx.getBusinessObject(IWorkerSession.ILocal.class));
-            servicesImpl.put(IGlobalConfigurationSession.ILocal.class, globalConfigurationSession);
-            servicesImpl.put(SecurityEventsLoggerSessionLocal.class, logSession);
-            servicesImpl.put(IInternalWorkerSession.ILocal.class, ServiceLocator.getInstance().lookupLocal(IInternalWorkerSession.ILocal.class));
-            servicesImpl.put(IDispatcherWorkerSession.ILocal.class, ServiceLocator.getInstance().lookupLocal(IDispatcherWorkerSession.ILocal.class));
-            servicesImpl.put(IStatusRepositorySession.ILocal.class, ServiceLocator.getInstance().lookupLocal(IStatusRepositorySession.ILocal.class));
-        } catch (NamingException ex) {
-            throw new IllegalStateException("Lookup of services failed: " + ex.getMessage());
+            workerConfigService = new FileBasedWorkerConfigDataService(FileBasedDatabaseManager.getInstance());
+            keyUsageCounterDataService = new FileBasedKeyUsageCounterDataService(FileBasedDatabaseManager.getInstance());
+        } else {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("EntityManager injected. Running with database.");
+            }
+            workerConfigService = new WorkerConfigDataService(em);
+            archiveDataService = new ArchiveDataService(em);
+            keyUsageCounterDataService = new KeyUsageCounterDataService(em);
         }
+        processImpl = new WorkerProcessImpl(em, keyUsageCounterDataService, globalConfigurationSession, workerManagerSession, logSession);
+
+        // XXX The lookups will fail on GlassFish V2
+        // When we no longer support GFv2 we can refactor this code
+        IInternalWorkerSession.ILocal internalSession = null;
+        IDispatcherWorkerSession.ILocal dispatcherSession = null;
+        IStatusRepositorySession.ILocal statusSession = null;
+        try {
+            internalSession = ServiceLocator.getInstance().lookupLocal(IInternalWorkerSession.ILocal.class);
+            dispatcherSession = ServiceLocator.getInstance().lookupLocal(IDispatcherWorkerSession.ILocal.class);
+            statusSession = ServiceLocator.getInstance().lookupLocal(IStatusRepositorySession.ILocal.class);
+        } catch (NamingException ex) {
+            LOG.error("Lookup services failed. This is expected on GlassFish V2: " + ex.getExplanation());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Lookup services failed", ex);
+            }
+        }
+        // Add all services
+        servicesImpl.putAll(
+                em,
+                ctx.getBusinessObject(IWorkerSession.ILocal.class),
+                globalConfigurationSession,
+                logSession, 
+                internalSession, dispatcherSession, statusSession);
     }
 
     @Override

@@ -5729,6 +5729,9 @@ The fully qualified class name is: <b>org.signserver.server.cryptotokens.Keystor
                 </subsection>
 
                 <subsection name="PrimeCardHSMCryptoToken">
+                    <note>
+This crypto token will be removed in a future version.
+                    </note>
                     <subsubsection name="Overview">
                         <p>
 Using PrimeCardHSM it's possible to use a SmartCard to generate 2048-bit RSA signatures. The SmartCard can perform about one signature a second. PrimeCardHSM is proprietary software by PrimeKey Solutions AB.
@@ -5944,6 +5947,9 @@ bin/signserver reload 9
                 </subsection>
                 
                 <subsection name="OldPKCS11CryptoToken">
+                    <note>
+This crypto token will be removed in a future version. Use PKCS11CryptoToken instead.
+                    </note>
                     <subsubsection name="Overview">
                         <p>
 The OldPKCS11CryptoToken implementation (before the use of CESeCore) is only available as a fallback for a limited time. This implementation is deprecated. The PKCS11CryptoToken should be used instead.
@@ -5962,6 +5968,9 @@ Currently most properties from the PKCS11CryptoToken can be used.
                 </subsection>
 
                 <subsection name="SoftCryptoToken">
+                    <note>
+This crypto token will be removed in a future version. Use KeystoreCryptoToken or KeystoreInConfigCryptoToken instead.
+                    </note>
                     <subsubsection name="Overview">
                         <p>
 The SoftCryptoToken is a simple token managing it's own soft keys instead of using a PKCS12 file. It can be used for test and demonstration purposes. The keys are stored in the worker's properties and is generated when genCertificateRequest is called. One key is used for all purposes and a new key is generated for every certificate request.

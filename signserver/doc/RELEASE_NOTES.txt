@@ -19,6 +19,9 @@ Notice:
    as those required a token to function. Since long this has not been
    required and if any of your validators has this token configured it should
    be removed or they might give an error.
+ - SoftCryptoToken is no longer supported. The token was mainly used for quick
+   demo setups but does not support the API in 3.7. Use KeystoreCryptoToken or
+   KeystoreInConfigCryptoToken instead.
 
 See ChangeLog.txt for the full list of changes.
 

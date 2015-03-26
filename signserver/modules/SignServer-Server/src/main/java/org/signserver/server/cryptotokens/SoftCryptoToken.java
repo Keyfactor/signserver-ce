@@ -84,6 +84,9 @@ public class SoftCryptoToken implements ICryptoToken {
      */
     @Override
     public void init(int workerId, Properties props) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Init deprecated SoftCryptoToken");
+        }
         this.workerId = workerId;
         keySpec = props.getProperty(PROPERTY_KEYSPEC, "2048");
         keyAlg = props.getProperty(PROPERTY_KEYALG, "RSA");

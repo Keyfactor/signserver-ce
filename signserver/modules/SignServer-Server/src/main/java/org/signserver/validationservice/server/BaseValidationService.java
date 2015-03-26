@@ -97,9 +97,6 @@ public abstract class BaseValidationService implements IValidationService {
         final List<WorkerStatusInfo.Entry> briefEntries = new LinkedList<WorkerStatusInfo.Entry>();
         final List<WorkerStatusInfo.Entry> completeEntries = new LinkedList<WorkerStatusInfo.Entry>();
 
-        // Token status
-        briefEntries.add(new WorkerStatusInfo.Entry("Token status", ct.getCryptoTokenStatus() == WorkerStatus.STATUS_ACTIVE ? "Active" : "Offline"));
-
         // Number of validators
         briefEntries.add(new WorkerStatusInfo.Entry("Number of validators", String.valueOf(validators.size())));
 
@@ -125,7 +122,7 @@ public abstract class BaseValidationService implements IValidationService {
         }
         completeEntries.add(new WorkerStatusInfo.Entry("Validators", validatorsValue.toString()));
 
-        return new StaticWorkerStatus(new WorkerStatusInfo(workerId, config.getProperty("NAME"), "Validation Service", ct.getCryptoTokenStatus(), briefEntries, Collections.<String>emptyList(), completeEntries, config));
+        return new StaticWorkerStatus(new WorkerStatusInfo(workerId, config.getProperty("NAME"), "Validation Service", WorkerStatus.STATUS_ACTIVE, briefEntries, Collections.<String>emptyList(), completeEntries, config));
     }
 
     /**

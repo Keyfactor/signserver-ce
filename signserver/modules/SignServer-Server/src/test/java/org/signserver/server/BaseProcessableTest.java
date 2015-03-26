@@ -12,14 +12,10 @@
  *************************************************************************/
 package org.signserver.server;
 
-import java.security.KeyStoreException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -29,16 +25,12 @@ import javax.persistence.EntityManager;
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
 import org.cesecore.util.CertTools;
-import org.cesecore.util.query.QueryCriteria;
 import org.ejbca.util.Base64;
 import org.junit.Test;
 import org.signserver.common.CryptoTokenInitializationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GlobalConfiguration;
-import org.signserver.common.ICertReqData;
-import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.IllegalRequestException;
-import org.signserver.common.KeyTestResult;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
@@ -49,10 +41,7 @@ import org.signserver.common.WorkerStatus;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.server.aliasselectors.AliasSelector;
 import org.signserver.server.cryptotokens.HardCodedCryptoToken;
-import org.signserver.server.cryptotokens.ICryptoInstance;
-import org.signserver.server.cryptotokens.ICryptoTokenV3;
 import org.signserver.server.cryptotokens.NullCryptoToken;
-import org.signserver.server.cryptotokens.TokenSearchResults;
 import org.signserver.server.signers.BaseSigner;
 
 /**
@@ -406,8 +395,7 @@ public class BaseProcessableTest extends TestCase {
     }
     
     /** CryptoToken only holding its properties and offering a way to access them. */
-    private static class MockedCryptoToken
-        extends NullCryptoToken implements ICryptoTokenV3 {
+    private static class MockedCryptoToken extends NullCryptoToken {
 
         private Properties props;
 
@@ -457,26 +445,6 @@ public class BaseProcessableTest extends TestCase {
         }
 
         @Override
-        public TokenSearchResults searchTokenEntries(int startIndex, int max, QueryCriteria qc, boolean includeData, IServices services) {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-
-        @Override
-        public PrivateKey getPrivateKey(String alias) throws CryptoTokenOfflineException {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-
-        @Override
-        public PublicKey getPublicKey(String alias) throws CryptoTokenOfflineException {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-
-        @Override
-        public ICertReqData genCertificateRequest(ISignerCertReqInfo info, boolean explicitEccParameters, String keyAlias) throws CryptoTokenOfflineException {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-
-        @Override
         public Certificate getCertificate(String alias) throws CryptoTokenOfflineException {
             return CERTIFICATE;
         }
@@ -491,46 +459,6 @@ public class BaseProcessableTest extends TestCase {
             }
             
             return chain;
-        }
-
-        @Override
-        public void generateKey(String keyAlgorithm, String keySpec, String alias, char[] authCode) throws CryptoTokenOfflineException, IllegalArgumentException {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-
-        @Override
-        public boolean removeKey(String alias) throws CryptoTokenOfflineException, KeyStoreException, SignServerException {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-
-        @Override
-        public ICryptoInstance aquireCryptoInstance(String alias, RequestContext context) throws CryptoTokenOfflineException, IllegalRequestException, SignServerException {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public void releaseCryptoInstance(ICryptoInstance instance) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public void generateKey(String keyAlgorithm, String keySpec, String alias, char[] authCode, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-        
-        @Override
-        public ICertReqData genCertificateRequest(ISignerCertReqInfo info, boolean explicitEccParameters, String keyAlias, IServices services) throws CryptoTokenOfflineException {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public Collection<KeyTestResult> testKey(String alias, char[] authCode, IServices Services) throws CryptoTokenOfflineException, KeyStoreException {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public int getCryptoTokenStatus(IServices services) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
 
     }

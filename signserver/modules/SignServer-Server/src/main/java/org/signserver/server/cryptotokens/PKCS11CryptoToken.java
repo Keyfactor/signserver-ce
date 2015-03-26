@@ -64,8 +64,7 @@ import org.signserver.server.IServices;
  * @author Markus Kilås
  * @version $Id$
  */
-public class PKCS11CryptoToken implements ICryptoToken, ICryptoTokenV2,
-                                          ICryptoTokenV3 {
+public class PKCS11CryptoToken extends BaseCryptoToken implements ICryptoToken, ICryptoTokenV2, ICryptoTokenV3 {
 
     private static final Logger LOG = Logger.getLogger(PKCS11CryptoToken.class);
 

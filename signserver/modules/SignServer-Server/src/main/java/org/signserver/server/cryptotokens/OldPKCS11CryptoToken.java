@@ -49,7 +49,9 @@ import org.signserver.server.KeyUsageCounterHash;
  * @see org.signserver.server.cryptotokens.ICryptoToken
  * @author Tomas Gustavsson, Philip Vendil
  * @version $Id$
+ * @deprecated Use the PKCS11CryptoToken instead
  */
+@Deprecated
 public class OldPKCS11CryptoToken extends OldCryptoTokenBase implements ICryptoToken,
         IKeyGenerator, IKeyRemover {
 

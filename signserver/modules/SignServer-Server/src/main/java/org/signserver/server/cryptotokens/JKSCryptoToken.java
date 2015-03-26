@@ -29,8 +29,7 @@ import org.signserver.common.CryptoTokenInitializationFailureException;
  *
  * $Id$
  */
-public class JKSCryptoToken extends KeystoreCryptoToken
-        implements ICryptoToken {
+public class JKSCryptoToken extends KeystoreCryptoToken {
 
     @Override
     public void init(final int workerId, final Properties props) throws CryptoTokenInitializationFailureException {

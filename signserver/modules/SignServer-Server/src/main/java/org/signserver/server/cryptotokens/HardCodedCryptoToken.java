@@ -58,7 +58,7 @@ import static org.signserver.server.cryptotokens.HardCodedCryptoTokenAliases.KEY
  * @deprecated Use a real crypto token instead.
  */
 @Deprecated
-public class HardCodedCryptoToken implements ICryptoToken, ICryptoTokenV3 {
+public class HardCodedCryptoToken extends BaseCryptoToken {
     
     private X509Certificate cert;
     

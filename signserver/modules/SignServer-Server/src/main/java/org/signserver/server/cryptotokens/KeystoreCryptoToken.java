@@ -46,8 +46,7 @@ import org.signserver.server.log.AdminInfo;
  * @author Philip Vendil, Markus Kilas
  * @version $Id$
  */
-public class KeystoreCryptoToken implements ICryptoToken, ICryptoTokenV2,
-        ICryptoTokenV3 {
+public class KeystoreCryptoToken extends BaseCryptoToken {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(KeystoreCryptoToken.class);

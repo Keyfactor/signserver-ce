@@ -22,12 +22,18 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import org.apache.log4j.Logger;
+import org.cesecore.util.query.QueryCriteria;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenInitializationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
+import org.signserver.common.IllegalRequestException;
 import org.signserver.common.KeyTestResult;
+import org.signserver.common.QueryException;
+import org.signserver.common.RequestContext;
+import org.signserver.common.SignServerException;
+import org.signserver.server.IServices;
 
 /**
  * Empty crypto token implementation that can be used by workers not really needing 
@@ -39,7 +45,7 @@ import org.signserver.common.KeyTestResult;
  * @author Markus Kilås
  * @version $Id$
  */
-public class NullCryptoToken implements ICryptoToken {
+public class NullCryptoToken extends BaseCryptoToken {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(NullCryptoToken.class);
@@ -143,6 +149,80 @@ public class NullCryptoToken implements ICryptoToken {
         if (LOG.isDebugEnabled()) {
             LOG.debug("getKeyStore");
         }
+        throw new CryptoTokenOfflineException("Unsupported by crypto token");
+    }
+
+    @Override
+    public int getCryptoTokenStatus(IServices services) {
+        return getCryptoTokenStatus();
+    }
+
+    @Override
+    public void importCertificateChain(List<Certificate> certChain, String alias, char[] athenticationCode, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
+        throw new CryptoTokenOfflineException("Unsupported by crypto token");
+    }
+
+    @Override
+    public TokenSearchResults searchTokenEntries(int startIndex, int max, QueryCriteria qc, boolean includeData, IServices services) throws CryptoTokenOfflineException, QueryException {
+        throw new CryptoTokenOfflineException("Unsupported by crypto token");
+    }
+
+    @Override
+    public ICryptoInstance aquireCryptoInstance(String alias, RequestContext context) throws CryptoTokenOfflineException, IllegalRequestException, SignServerException {
+        throw new CryptoTokenOfflineException("Unsupported by crypto token");
+    }
+
+    @Override
+    public void releaseCryptoInstance(ICryptoInstance instance) {
+    }
+
+    @Override
+    public void generateKey(String keyAlgorithm, String keySpec, String alias, char[] authCode, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
+        throw new CryptoTokenOfflineException("Unsupported by crypto token");
+    }
+
+    @Override
+    public ICertReqData genCertificateRequest(ISignerCertReqInfo info, boolean explicitEccParameters, String keyAlias, IServices services) throws CryptoTokenOfflineException {
+        throw new CryptoTokenOfflineException("Unsupported by crypto token");
+    }
+
+    @Override
+    public Collection<KeyTestResult> testKey(String alias, char[] authCode, IServices Services) throws CryptoTokenOfflineException, KeyStoreException {
+        throw new CryptoTokenOfflineException("Unsupported by crypto token");
+    }
+
+    @Override
+    public PrivateKey getPrivateKey(String alias) throws CryptoTokenOfflineException {
+        throw new CryptoTokenOfflineException("Unsupported by crypto token");
+    }
+
+    @Override
+    public PublicKey getPublicKey(String alias) throws CryptoTokenOfflineException {
+        throw new CryptoTokenOfflineException("Unsupported by crypto token");
+    }
+
+    @Override
+    public ICertReqData genCertificateRequest(ISignerCertReqInfo info, boolean explicitEccParameters, String keyAlias) throws CryptoTokenOfflineException {
+        throw new CryptoTokenOfflineException("Unsupported by crypto token");
+    }
+
+    @Override
+    public Certificate getCertificate(String alias) throws CryptoTokenOfflineException {
+        throw new CryptoTokenOfflineException("Unsupported by crypto token");
+    }
+
+    @Override
+    public List<Certificate> getCertificateChain(String alias) throws CryptoTokenOfflineException {
+        throw new CryptoTokenOfflineException("Unsupported by crypto token");
+    }
+
+    @Override
+    public void generateKey(String keyAlgorithm, String keySpec, String alias, char[] authCode) throws CryptoTokenOfflineException, IllegalArgumentException {
+        throw new CryptoTokenOfflineException("Unsupported by crypto token");
+    }
+
+    @Override
+    public boolean removeKey(String alias) throws CryptoTokenOfflineException, KeyStoreException, SignServerException {
         throw new CryptoTokenOfflineException("Unsupported by crypto token");
     }
     

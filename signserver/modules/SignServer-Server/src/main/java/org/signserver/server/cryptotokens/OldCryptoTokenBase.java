@@ -40,7 +40,9 @@ import org.signserver.common.*;
  * @see org.signserver.server.cryptotokens.ICryptoToken
  * @author Philip Vendil, Tomas Gustavsson
  * @version $Id$
+ * @deprecated Will be removed in a future release
  */
+@Deprecated
 public abstract class OldCryptoTokenBase implements ICryptoToken {
 
     private static final Logger log = Logger.getLogger(OldCryptoTokenBase.class);

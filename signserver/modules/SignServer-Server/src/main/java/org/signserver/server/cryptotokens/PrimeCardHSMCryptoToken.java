@@ -27,7 +27,9 @@ import org.signserver.common.WorkerConfig;
  * @see org.signserver.server.cryptotokens.ICryptoToken
  * @author Philip Vendil
  * @version $Id$
+ * @deprecated Will be removed in a future release
  */
+@Deprecated
 public class PrimeCardHSMCryptoToken extends OldCryptoTokenBase implements ICryptoToken {
 
     /** Logger for this class. */

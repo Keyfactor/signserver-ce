@@ -12,27 +12,14 @@
  *************************************************************************/
 package org.signserver.server.cryptotokens;
 
-import java.util.Properties;
-
-import org.signserver.common.CryptoTokenInitializationFailureException;
-
 /**
- * Class that uses a p12 file on the file system for signing. Only one key and purpose is supported
- * the same key for all purposes will be returned.
- * 
- * loads on activation and releases the keys from memory when deactivating
- * 
- * Available properties are:
- * KEYSTOREPATH : The full path to the key store to load. (required)
- * KEYSTOREPASSWORD : The password that locks the key store.
- * 
- * $Id$
+ * Base class for crypto tokens.
+ * When we add new methods to the ICryptoToken:interfaces default
+ * implementations can be added here.
+ *
+ * @author Markus Kilås
+ * @version $Id$
  */
-public class P12CryptoToken extends KeystoreCryptoToken {
-
-    @Override
-    public void init(final int workerId, final Properties props) throws CryptoTokenInitializationFailureException {
-        props.setProperty(KEYSTORETYPE, TYPE_PKCS12);
-        super.init(workerId, props);
-    }
+public abstract class BaseCryptoToken implements ICryptoToken, ICryptoTokenV3 {
+    
 }

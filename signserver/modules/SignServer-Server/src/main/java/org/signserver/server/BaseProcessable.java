@@ -13,6 +13,7 @@
 package org.signserver.server;
 
 import java.io.UnsupportedEncodingException;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.MessageDigest;
@@ -29,6 +30,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Level;
 
 import javax.persistence.EntityManager;
 
@@ -41,13 +43,16 @@ import org.signserver.server.aliasselectors.DefaultAliasSelector;
 import org.signserver.server.cryptotokens.CryptoInstances;
 import org.signserver.server.cryptotokens.CryptoTokenHelper;
 import org.signserver.server.cryptotokens.DefaultCryptoInstance;
+import org.signserver.common.DuplicateAliasException;
 import org.signserver.server.cryptotokens.ICryptoInstance;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.cryptotokens.IKeyGenerator;
 import org.signserver.server.cryptotokens.IKeyRemover;
 import org.signserver.server.cryptotokens.ICryptoTokenV2;
 import org.signserver.server.cryptotokens.ICryptoTokenV3;
+import org.signserver.common.NoSuchAliasException;
 import org.signserver.server.cryptotokens.TokenSearchResults;
+import org.signserver.common.UnsupportedCryptoTokenParameter;
 
 public abstract class BaseProcessable extends BaseWorker implements IProcessable, IKeyRemover {
 
@@ -627,17 +632,30 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         }
         
         @Override
-        public void importCertificateChain(List<Certificate> certChain, String alias, char[] athenticationCode, Map<String, Object> params, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
+        public void importCertificateChain(List<Certificate> certChain, String alias, char[] athenticationCode, Map<String, Object> params, IServices services) throws
+                CryptoTokenOfflineException,
+                NoSuchAliasException,
+                InvalidAlgorithmParameterException,
+                UnsupportedCryptoTokenParameter {
             delegate.importCertificateChain(certChain, alias, athenticationCode, params, services);
         }
 
         @Override
-        public TokenSearchResults searchTokenEntries(int startIndex, int max, QueryCriteria qc, boolean includeData, Map<String, Object> params, IServices services) throws CryptoTokenOfflineException, QueryException {
+        public TokenSearchResults searchTokenEntries(int startIndex, int max, QueryCriteria qc, boolean includeData, Map<String, Object> params, IServices services) throws
+                CryptoTokenOfflineException,
+                QueryException,
+                InvalidAlgorithmParameterException,
+                UnsupportedCryptoTokenParameter {
             return delegate.searchTokenEntries(startIndex, max, qc, includeData, params, services);
         }
 
         @Override
-        public ICryptoInstance acquireCryptoInstance(String alias, Map<String, Object> params, RequestContext context) throws CryptoTokenOfflineException, IllegalRequestException, SignServerException {
+        public ICryptoInstance acquireCryptoInstance(String alias, Map<String, Object> params, RequestContext context) throws
+                CryptoTokenOfflineException,
+                NoSuchAliasException, 
+                InvalidAlgorithmParameterException,
+                UnsupportedCryptoTokenParameter,
+                IllegalRequestException {
             return delegate.acquireCryptoInstance(alias, params, context);
         }
 
@@ -647,12 +665,19 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         }
 
         @Override
-        public void generateKey(String keyAlgorithm, String keySpec, String alias, char[] authCode, Map<String, Object> params, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
+        public void generateKey(String keyAlgorithm, String keySpec, String alias, char[] authCode, Map<String, Object> params, IServices services) throws
+                CryptoTokenOfflineException,
+                DuplicateAliasException, 
+                NoSuchAlgorithmException,
+                InvalidAlgorithmParameterException,
+                UnsupportedCryptoTokenParameter {
             delegate.generateKey(keyAlgorithm, keySpec, alias, authCode, params, services);
         }
 
         @Override
-        public ICertReqData genCertificateRequest(ISignerCertReqInfo info, boolean explicitEccParameters, String keyAlias, IServices services) throws CryptoTokenOfflineException {
+        public ICertReqData genCertificateRequest(ISignerCertReqInfo info, boolean explicitEccParameters, String keyAlias, IServices services) throws
+                CryptoTokenOfflineException,
+                NoSuchAliasException {
             return delegate.genCertificateRequest(info, explicitEccParameters, keyAlias, services);
         }
 
@@ -898,12 +923,12 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
     }
 
     @Override
-    public ICertReqData genCertificateRequest(ISignerCertReqInfo certReqInfo, boolean explicitEccParameters, String keyAlias, IServices services) throws CryptoTokenOfflineException {
+    public ICertReqData genCertificateRequest(ISignerCertReqInfo certReqInfo, boolean explicitEccParameters, String keyAlias, IServices services) throws CryptoTokenOfflineException, NoSuchAliasException {
         return genCertificateRequest(certReqInfo, explicitEccParameters, keyAlias, explicitEccParameters, services);
     }
 
     @Override
-    public ICertReqData genCertificateRequest(ISignerCertReqInfo certReqInfo, boolean explicitEccParameters, boolean defaultKey, IServices services) throws CryptoTokenOfflineException {
+    public ICertReqData genCertificateRequest(ISignerCertReqInfo certReqInfo, boolean explicitEccParameters, boolean defaultKey, IServices services) throws CryptoTokenOfflineException, NoSuchAliasException {
         return genCertificateRequest(certReqInfo, explicitEccParameters, null, defaultKey, services);
     }
 
@@ -914,7 +939,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
     @Override
     public ICertReqData genCertificateRequest(ISignerCertReqInfo info,
             final boolean explicitEccParameters, final boolean defaultKey)
-            throws CryptoTokenOfflineException {
+            throws CryptoTokenOfflineException, NoSuchAliasException {
         return genCertificateRequest(info, explicitEccParameters, null,
                 defaultKey, new ServicesImpl());
     }
@@ -922,7 +947,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
     @Override
     public ICertReqData genCertificateRequest(ISignerCertReqInfo info,
             boolean explicitEccParameters, String keyAlias)
-            throws CryptoTokenOfflineException {
+            throws CryptoTokenOfflineException, NoSuchAliasException {
         return genCertificateRequest(info, explicitEccParameters, keyAlias,
                 false, new ServicesImpl());
     }
@@ -930,7 +955,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
     private ICertReqData genCertificateRequest(final ISignerCertReqInfo info,
             final boolean explicitEccParameters, final String keyAlias,
             final boolean defaultKey, final IServices services)
-            throws CryptoTokenOfflineException {
+            throws CryptoTokenOfflineException, NoSuchAliasException {
         if (log.isTraceEnabled()) {
             log.trace(">genCertificateRequest");
         }
@@ -1008,14 +1033,22 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
      */
     @Override
     public void generateKey(final String keyAlgorithm, final String keySpec,
-            final String alias, final char[] authCode)
-            throws CryptoTokenOfflineException, IllegalArgumentException {
+            final String alias, final char[] authCode) throws
+            CryptoTokenOfflineException,
+            DuplicateAliasException, 
+            NoSuchAlgorithmException,
+            InvalidAlgorithmParameterException,
+            UnsupportedCryptoTokenParameter {
         generateKey(keyAlgorithm, keySpec, alias, authCode, Collections.<String, Object>emptyMap(), new ServicesImpl());
     }
     
     @Override
-    public void generateKey(final String keyAlgorithm, final String keySpec, final String alias, final char[] authCode, Map<String, Object> params, final IServices services)
-            throws CryptoTokenOfflineException, IllegalArgumentException {
+    public void generateKey(final String keyAlgorithm, final String keySpec, final String alias, final char[] authCode, Map<String, Object> params, final IServices services) throws
+            CryptoTokenOfflineException,
+            DuplicateAliasException, 
+            NoSuchAlgorithmException,
+            InvalidAlgorithmParameterException,
+            UnsupportedCryptoTokenParameter {
         try {
             ICryptoToken token = getCryptoToken();
             if (token == null) {
@@ -1067,8 +1100,12 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
     }
    
     @Override
-    public void importCertificateChain(final List<Certificate> certChain, final String alias, final char[] authenticationCode, Map<String, Object> params, final IServices services)
-            throws CryptoTokenOfflineException, OperationUnsupportedException {
+    public void importCertificateChain(final List<Certificate> certChain, final String alias, final char[] authenticationCode, Map<String, Object> params, final IServices services) throws
+            CryptoTokenOfflineException,
+            NoSuchAliasException,
+            InvalidAlgorithmParameterException,
+            UnsupportedCryptoTokenParameter,
+            OperationUnsupportedException {
         try {
             final ICryptoToken token = getCryptoToken();
             
@@ -1144,11 +1181,17 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
      * @throws SignServerException 
      */
     protected ICryptoInstance acquireCryptoInstance(final int purpose, final ProcessRequest request, final RequestContext context) throws SignServerException, CryptoTokenOfflineException, IllegalRequestException {
-        return acquireCryptoInstance(purpose, request, Collections.<String, Object>emptyMap(), context);
+        try {
+            return acquireCryptoInstance(purpose, request, Collections.<String, Object>emptyMap(), context);
+        } catch (UnsupportedCryptoTokenParameter ex) {
+            throw new SignServerException("Empty list of parameters not supported by crypto token", ex);
+        } catch (InvalidAlgorithmParameterException ex) {
+            throw new SignServerException("Empty list of parameters reported as invalid by crypto token", ex);
+        }
     }
     
     /**
-     * Aquire a crypto instance in order to perform crypto operations during
+     * Acquire a crypto instance in order to perform crypto operations during
      * a limited scope.
      * 
      * It is the caller's responsibility to make sure the call is followed up
@@ -1160,14 +1203,18 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
      * @throws IllegalRequestException
      * @throws SignServerException 
      */
-    protected ICryptoInstance acquireCryptoInstance(final int purpose, final ProcessRequest request, final Map<String, Object> params, final RequestContext context) throws SignServerException, CryptoTokenOfflineException, IllegalRequestException {
+    protected ICryptoInstance acquireCryptoInstance(final int purpose, final ProcessRequest request, final Map<String, Object> params, final RequestContext context) throws SignServerException, CryptoTokenOfflineException, IllegalRequestException, InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter {
         final ICryptoInstance result;
         final String alias = aliasSelector.getAlias(purpose, this, request, context);
         ICryptoToken token = getCryptoToken();
         if (token instanceof ICryptoTokenV3) {
-            // Great this is V3 (3.7)
-            ICryptoTokenV3 token3 = (ICryptoTokenV3) token;
-            result = token3.acquireCryptoInstance(alias, params, context);
+            try {
+                // Great this is V3 (3.7)
+                ICryptoTokenV3 token3 = (ICryptoTokenV3) token;
+                result = token3.acquireCryptoInstance(alias, params, context);
+            } catch (NoSuchAliasException ex) {
+                throw new CryptoTokenOfflineException("Key not available: " + ex.getMessage());
+            }
         } else if (token instanceof ICryptoTokenV2) {
             // Backwards compatibility for old V2 tokens (3.6)
             ICryptoTokenV2 token2 = (ICryptoTokenV2) token;
@@ -1200,12 +1247,22 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
     }
     
     @Override
-    public TokenSearchResults searchTokenEntries(int startIndex, int max, final QueryCriteria qc, final boolean includeData, final IServices servicesImpl) throws SignServerException, CryptoTokenOfflineException, QueryException, OperationUnsupportedException {
-        final ICryptoToken token = getCryptoToken();
-        if (token instanceof ICryptoTokenV3) {
-            return ((ICryptoTokenV3) token).searchTokenEntries(startIndex, max, qc, includeData, null, servicesImpl);
-        } else {
-            throw new OperationUnsupportedException("Operation not supported by crypto token");
+    public TokenSearchResults searchTokenEntries(int startIndex, int max, final QueryCriteria qc, final boolean includeData, final Map<String, Object> params, final IServices servicesImpl) throws
+            CryptoTokenOfflineException,
+            QueryException,
+            InvalidAlgorithmParameterException,
+            UnsupportedCryptoTokenParameter,
+            OperationUnsupportedException {
+        try {
+            final ICryptoToken token = getCryptoToken();
+            if (token instanceof ICryptoTokenV3) {
+                return ((ICryptoTokenV3) token).searchTokenEntries(startIndex, max, qc, includeData, params, servicesImpl);
+            } else {
+                throw new OperationUnsupportedException("Operation not supported by crypto token");
+            }
+        } catch (SignServerException ex) {
+            log.error(FAILED_TO_GET_CRYPTO_TOKEN_ + ex.getMessage());
+            throw new CryptoTokenOfflineException(ex);
         }
     }
 

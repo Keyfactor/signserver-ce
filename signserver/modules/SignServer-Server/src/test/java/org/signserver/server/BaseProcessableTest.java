@@ -416,7 +416,7 @@ public class BaseProcessableTest extends TestCase {
         }
 
         @Override
-        public void init(int workerId, Properties props) throws CryptoTokenInitializationFailureException {
+        public void init(int workerId, Properties props) {
             this.props = props;
         }
 

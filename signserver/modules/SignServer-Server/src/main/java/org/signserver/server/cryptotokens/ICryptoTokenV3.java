@@ -12,7 +12,12 @@
  *************************************************************************/
 package org.signserver.server.cryptotokens;
 
+import org.signserver.common.UnsupportedCryptoTokenParameter;
+import org.signserver.common.NoSuchAliasException;
+import org.signserver.common.DuplicateAliasException;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
 import java.util.Collection;
 import java.util.List;
@@ -38,8 +43,6 @@ import org.signserver.server.IServices;
  * @version $Id$
  */
 public interface ICryptoTokenV3 extends ICryptoTokenV2 {
-
-    // TODO: Add IServices to old methods from V2
     
     int getCryptoTokenStatus(IServices services);
     
@@ -56,11 +59,18 @@ public interface ICryptoTokenV3 extends ICryptoTokenV2 {
      * @throws IllegalArgumentException
      */
     void importCertificateChain(List<Certificate> certChain, String alias,
-            char[] athenticationCode, Map<String, Object> params, IServices services)
-            throws CryptoTokenOfflineException, IllegalArgumentException;
+            char[] athenticationCode, Map<String, Object> params,
+            IServices services) throws 
+            CryptoTokenOfflineException,
+            NoSuchAliasException,
+            InvalidAlgorithmParameterException,
+            UnsupportedCryptoTokenParameter;
     
-    TokenSearchResults searchTokenEntries(final int startIndex, final int max, final QueryCriteria qc, final boolean includeData, Map<String, Object> params, IServices services) 
-            throws CryptoTokenOfflineException, QueryException;
+    TokenSearchResults searchTokenEntries(final int startIndex, final int max, final QueryCriteria qc, final boolean includeData, Map<String, Object> params, IServices services) throws
+            CryptoTokenOfflineException,
+            QueryException,
+            InvalidAlgorithmParameterException,
+            UnsupportedCryptoTokenParameter;
     
     /**
      * Acquire a crypto instance in order to perform crypto operations during
@@ -77,8 +87,13 @@ public interface ICryptoTokenV3 extends ICryptoTokenV2 {
      * @throws IllegalRequestException
      * @throws SignServerException 
      */
-    ICryptoInstance acquireCryptoInstance(String alias, Map<String, Object> params, RequestContext context) throws CryptoTokenOfflineException, IllegalRequestException, SignServerException;
-    
+    ICryptoInstance acquireCryptoInstance(String alias, Map<String, Object> params, RequestContext context) throws
+            CryptoTokenOfflineException, 
+            NoSuchAliasException, 
+            InvalidAlgorithmParameterException,
+            UnsupportedCryptoTokenParameter,
+            IllegalRequestException;
+
     /**
      * Releases a previously acquired crypto instance.
      * @param instance to release
@@ -98,13 +113,19 @@ public interface ICryptoTokenV3 extends ICryptoTokenV2 {
      * @throws IllegalArgumentException
      */
     void generateKey(String keyAlgorithm, String keySpec, String alias,
-            char[] authCode, Map<String, Object> params, IServices services) throws CryptoTokenOfflineException,
-                IllegalArgumentException;
+            char[] authCode, Map<String, Object> params, IServices services) throws
+            CryptoTokenOfflineException,
+            DuplicateAliasException, 
+            NoSuchAlgorithmException,
+            InvalidAlgorithmParameterException,
+            UnsupportedCryptoTokenParameter;
 
     ICertReqData genCertificateRequest(ISignerCertReqInfo info,
             boolean explicitEccParameters, String keyAlias, IServices services)
-            throws CryptoTokenOfflineException;
-    
+            throws
+            CryptoTokenOfflineException,
+            NoSuchAliasException;
+
     Collection<KeyTestResult> testKey(String alias,
             char[] authCode,
             IServices Services)

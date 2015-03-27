@@ -13,7 +13,9 @@
 package org.signserver.ejb;
 
 import java.math.BigInteger;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
@@ -55,8 +57,11 @@ import org.signserver.server.cesecore.AlwaysAllowLocalAuthenticationToken;
 import org.signserver.server.config.entities.FileBasedWorkerConfigDataService;
 import org.signserver.server.config.entities.IWorkerConfigDataService;
 import org.signserver.server.config.entities.WorkerConfigDataService;
+import org.signserver.common.DuplicateAliasException;
 import org.signserver.server.cryptotokens.IKeyRemover;
+import org.signserver.common.NoSuchAliasException;
 import org.signserver.server.cryptotokens.TokenSearchResults;
+import org.signserver.common.UnsupportedCryptoTokenParameter;
 import org.signserver.server.entities.FileBasedKeyUsageCounterDataService;
 import org.signserver.server.entities.IKeyUsageCounterDataService;
 import org.signserver.server.entities.KeyUsageCounter;
@@ -414,8 +419,27 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             }
         }
 
-        signer.generateKey(keyAlgorithm, keySpec, alias, authCode, Collections.<String, Object>emptyMap(),
-                servicesImpl);
+        try {
+            signer.generateKey(keyAlgorithm, keySpec, alias, authCode, Collections.<String, Object>emptyMap(),
+                    servicesImpl);
+        } catch (DuplicateAliasException ex) {
+            throw new IllegalArgumentException("The specified alias already exists");
+        } catch (NoSuchAlgorithmException ex) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("No such algorithm", ex);
+            }
+            throw new IllegalArgumentException("No such algorithm");
+        } catch (InvalidAlgorithmParameterException ex) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Invalid or inappropriate algorithm parameters", ex);
+            }
+            throw new IllegalArgumentException("Invalid or inappropriate algorithm parameters");
+        } catch (UnsupportedCryptoTokenParameter ex) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Unsupported crypto token parameter", ex);
+            }
+            throw new IllegalArgumentException("Unsupported crypto token parameter");
+        }
         
         final HashMap<String, Object> auditMap = new HashMap<String, Object>();
         auditMap.put("KEYALG", keyAlgorithm);
@@ -727,12 +751,16 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         }
 
         final ICertReqData ret;
-        if (keyAlias != null) {
-            ret = processable.genCertificateRequest(certReqInfo,
-                    explicitEccParameters, keyAlias, servicesImpl);
-        } else {
-            ret = processable.genCertificateRequest(certReqInfo,
-                explicitEccParameters, defaultKey, servicesImpl);
+        try {
+            if (keyAlias != null) {
+                ret = processable.genCertificateRequest(certReqInfo,
+                        explicitEccParameters, keyAlias, servicesImpl);
+            } else {
+                ret = processable.genCertificateRequest(certReqInfo,
+                    explicitEccParameters, defaultKey, servicesImpl);
+            }
+        } catch (NoSuchAliasException ex) {
+            throw new CryptoTokenOfflineException("No such alias: " + ex.getMessage(), ex);
         }
 
         final HashMap<String, Object> auditMap = new HashMap<String, Object>();
@@ -982,7 +1010,15 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         final IWorker worker = workerManagerSession.getWorker(signerId, globalConfigurationSession);
         
         if (worker instanceof IProcessable) {
-            ((IProcessable) worker).importCertificateChain(certs, alias, authenticationCode, Collections.<String, Object>emptyMap(), servicesImpl);
+            try {
+                ((IProcessable) worker).importCertificateChain(certs, alias, authenticationCode, Collections.<String, Object>emptyMap(), servicesImpl);
+            } catch (NoSuchAliasException ex) {
+                throw new CryptoTokenOfflineException("No such alias: " + ex.getLocalizedMessage());
+            } catch (InvalidAlgorithmParameterException ex) {
+                throw new CryptoTokenOfflineException(ex);
+            } catch (UnsupportedCryptoTokenParameter ex) {
+                throw new CryptoTokenOfflineException(ex);
+            }
         } else {
             throw new OperationUnsupportedException("Import not supported by worker");
         }
@@ -1243,15 +1279,29 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     }
 
     @Override
-    public TokenSearchResults searchTokenEntries(final int workerId, int startIndex, int max, final QueryCriteria qc, final boolean includeData) throws OperationUnsupportedException, CryptoTokenOfflineException, QueryException, InvalidWorkerIdException, AuthorizationDeniedException, SignServerException {
-        return searchTokenEntries(new AdminInfo("CLI user", null, null), workerId, startIndex, max, qc, includeData);
+    public TokenSearchResults searchTokenEntries(final int workerId, int startIndex, int max, final QueryCriteria qc, final boolean includeData, final Map<String, Object> params) throws
+            InvalidWorkerIdException,
+            AuthorizationDeniedException,
+            CryptoTokenOfflineException,
+            QueryException,
+            InvalidAlgorithmParameterException,
+            UnsupportedCryptoTokenParameter,
+            OperationUnsupportedException {
+        return searchTokenEntries(new AdminInfo("CLI user", null, null), workerId, startIndex, max, qc, includeData, params);
     }
     
     @Override
-    public TokenSearchResults searchTokenEntries(final AdminInfo adminInfo, final int workerId, int startIndex, int max, final QueryCriteria qc, final boolean includeData) throws OperationUnsupportedException, CryptoTokenOfflineException, QueryException, InvalidWorkerIdException, AuthorizationDeniedException, SignServerException {
+    public TokenSearchResults searchTokenEntries(final AdminInfo adminInfo, final int workerId, int startIndex, int max, final QueryCriteria qc, final boolean includeData, final Map<String, Object> params) throws
+            InvalidWorkerIdException,
+            AuthorizationDeniedException,
+            CryptoTokenOfflineException,
+            QueryException,
+            InvalidAlgorithmParameterException,
+            UnsupportedCryptoTokenParameter,
+            OperationUnsupportedException {
         final IWorker worker = workerManagerSession.getWorker(workerId, globalConfigurationSession);
         if (worker instanceof IProcessable) {
-            return ((IProcessable) worker).searchTokenEntries(startIndex, max, qc, includeData, servicesImpl);
+            return ((IProcessable) worker).searchTokenEntries(startIndex, max, qc, includeData, params, servicesImpl);
         } else {
             throw new OperationUnsupportedException("Operation not supported by worker");
         }

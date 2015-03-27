@@ -58,7 +58,7 @@ public class NullCryptoToken extends BaseCryptoToken {
     }
     
     @Override
-    public void init(int workerId, Properties props) throws CryptoTokenInitializationFailureException {
+    public void init(int workerId, Properties props) {
         if (LOG.isTraceEnabled()) {
             LOG.trace("init");
         }
@@ -70,14 +70,14 @@ public class NullCryptoToken extends BaseCryptoToken {
     }
 
     @Override
-    public void activate(final String authenticationcode) throws CryptoTokenAuthenticationFailureException, CryptoTokenOfflineException {
+    public void activate(final String authenticationcode) {
         if (LOG.isTraceEnabled()) {
             LOG.trace("activate");
         }
     }
 
     @Override
-    public boolean deactivate() throws CryptoTokenOfflineException {
+    public boolean deactivate() {
         if (LOG.isTraceEnabled()) {
             LOG.trace("deactivate");
         }
@@ -138,7 +138,7 @@ public class NullCryptoToken extends BaseCryptoToken {
     }
 
     @Override
-    public Collection<KeyTestResult> testKey(String alias, char[] authCode) throws CryptoTokenOfflineException, KeyStoreException {
+    public Collection<KeyTestResult> testKey(String alias, char[] authCode) {
         if (LOG.isTraceEnabled()) {
             LOG.trace("testKey");
         }
@@ -146,7 +146,7 @@ public class NullCryptoToken extends BaseCryptoToken {
     }
 
     @Override
-    public KeyStore getKeyStore() throws UnsupportedOperationException, CryptoTokenOfflineException, KeyStoreException {
+    public KeyStore getKeyStore() throws CryptoTokenOfflineException{
         if (LOG.isDebugEnabled()) {
             LOG.debug("getKeyStore");
         }
@@ -159,17 +159,17 @@ public class NullCryptoToken extends BaseCryptoToken {
     }
 
     @Override
-    public void importCertificateChain(List<Certificate> certChain, String alias, char[] athenticationCode, Map<String, Object> params, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
+    public void importCertificateChain(List<Certificate> certChain, String alias, char[] athenticationCode, Map<String, Object> params, IServices services) throws CryptoTokenOfflineException {
         throw new CryptoTokenOfflineException("Unsupported by crypto token");
     }
 
     @Override
-    public TokenSearchResults searchTokenEntries(int startIndex, int max, QueryCriteria qc, boolean includeData, Map<String, Object> params, IServices services) throws CryptoTokenOfflineException, QueryException {
+    public TokenSearchResults searchTokenEntries(int startIndex, int max, QueryCriteria qc, boolean includeData, Map<String, Object> params, IServices services) throws CryptoTokenOfflineException {
         throw new CryptoTokenOfflineException("Unsupported by crypto token");
     }
 
     @Override
-    public ICryptoInstance acquireCryptoInstance(String alias, Map<String, Object> params, RequestContext context) throws CryptoTokenOfflineException, IllegalRequestException, SignServerException {
+    public ICryptoInstance acquireCryptoInstance(String alias, Map<String, Object> params, RequestContext context) throws CryptoTokenOfflineException {
         throw new CryptoTokenOfflineException("Unsupported by crypto token");
     }
 
@@ -178,7 +178,7 @@ public class NullCryptoToken extends BaseCryptoToken {
     }
 
     @Override
-    public void generateKey(String keyAlgorithm, String keySpec, String alias, char[] authCode, Map<String, Object> params, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
+    public void generateKey(String keyAlgorithm, String keySpec, String alias, char[] authCode, Map<String, Object> params, IServices services) throws CryptoTokenOfflineException {
         throw new CryptoTokenOfflineException("Unsupported by crypto token");
     }
 
@@ -188,7 +188,7 @@ public class NullCryptoToken extends BaseCryptoToken {
     }
 
     @Override
-    public Collection<KeyTestResult> testKey(String alias, char[] authCode, IServices Services) throws CryptoTokenOfflineException, KeyStoreException {
+    public Collection<KeyTestResult> testKey(String alias, char[] authCode, IServices Services) throws CryptoTokenOfflineException {
         throw new CryptoTokenOfflineException("Unsupported by crypto token");
     }
 

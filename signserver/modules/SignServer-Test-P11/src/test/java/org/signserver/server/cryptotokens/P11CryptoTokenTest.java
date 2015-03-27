@@ -12,10 +12,12 @@ package org.signserver.server.cryptotokens;/************************************
  *                                                                       *
  *************************************************************************/
 
+import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyStoreException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.log4j.Logger;
@@ -32,6 +34,7 @@ import org.signserver.common.OperationUnsupportedException;
 import org.signserver.common.QueryException;
 import org.signserver.common.SignServerException;
 import org.signserver.common.SignServerUtil;
+import org.signserver.common.UnsupportedCryptoTokenParameter;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 
@@ -136,8 +139,8 @@ public class P11CryptoTokenTest extends CryptoTokenTestBase {
     }
 
     @Override
-    protected TokenSearchResults searchTokenEntries(int startIndex, int max, QueryCriteria qc, boolean includeData) throws OperationUnsupportedException, CryptoTokenOfflineException, QueryException, InvalidWorkerIdException, SignServerException, AuthorizationDeniedException {
-        return getWorkerSession().searchTokenEntries(CRYPTO_TOKEN, startIndex, max, qc, includeData);
+    protected TokenSearchResults searchTokenEntries(int startIndex, int max, QueryCriteria qc, boolean includeData) throws OperationUnsupportedException, CryptoTokenOfflineException, QueryException, InvalidWorkerIdException, SignServerException, AuthorizationDeniedException, InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter {
+        return getWorkerSession().searchTokenEntries(CRYPTO_TOKEN, startIndex, max, qc, includeData, Collections.<String, Object>emptyMap());
     }
 
     @Override

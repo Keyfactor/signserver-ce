@@ -12,6 +12,8 @@
  *************************************************************************/
 package org.signserver.server.cryptotokens;
 
+import org.signserver.common.UnsupportedCryptoTokenParameter;
+import org.signserver.common.NoSuchAliasException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -524,7 +526,12 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
     }
 
     @Override
-    public ICryptoInstance acquireCryptoInstance(String alias, Map<String, Object> params, RequestContext context) throws CryptoTokenOfflineException, IllegalRequestException, SignServerException {
+    public ICryptoInstance acquireCryptoInstance(String alias, Map<String, Object> params, RequestContext context) throws
+            CryptoTokenOfflineException, 
+            NoSuchAliasException, 
+            InvalidAlgorithmParameterException,
+            UnsupportedCryptoTokenParameter,
+            IllegalRequestException {
         final PrivateKey privateKey = getPrivateKey(alias);
         final List<Certificate> certificateChain = getCertificateChain(alias);
         return new DefaultCryptoInstance(alias, context, delegate.getActivatedKeyStore().getProvider(), privateKey, certificateChain);

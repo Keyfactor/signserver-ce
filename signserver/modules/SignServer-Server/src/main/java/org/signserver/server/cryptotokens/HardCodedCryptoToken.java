@@ -12,7 +12,10 @@
  *************************************************************************/
 package org.signserver.server.cryptotokens;
 
+import org.signserver.common.UnsupportedCryptoTokenParameter;
+import org.signserver.common.NoSuchAliasException;
 import java.io.ByteArrayInputStream;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyFactory;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -464,7 +467,12 @@ public class HardCodedCryptoToken extends BaseCryptoToken {
     }
 
     @Override
-    public ICryptoInstance acquireCryptoInstance(String alias, Map<String, Object> params, RequestContext context) throws CryptoTokenOfflineException, IllegalRequestException, SignServerException {
+    public ICryptoInstance acquireCryptoInstance(String alias, Map<String, Object> params, RequestContext context) throws
+            CryptoTokenOfflineException, 
+            NoSuchAliasException, 
+            InvalidAlgorithmParameterException,
+            UnsupportedCryptoTokenParameter,
+            IllegalRequestException {
         checkAlias(alias);
         return new DefaultCryptoInstance(alias, context, Security.getProvider("BC"), privateKey, getCertificateChain(PURPOSE_SIGN));
     }

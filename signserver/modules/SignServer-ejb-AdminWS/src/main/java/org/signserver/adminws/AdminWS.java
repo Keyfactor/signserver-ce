@@ -15,10 +15,12 @@ package org.signserver.adminws;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyStoreException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -26,6 +28,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+import java.util.logging.Level;
 
 import javax.annotation.Resource;
 import javax.ejb.EJB;
@@ -1001,19 +1004,25 @@ public class AdminWS {
     
     @WebMethod(operationName="queryTokenEntries")
     public WSTokenSearchResults queryTokenEntries(@WebParam(name="workerNameOrId") String workerNameOrId, @WebParam(name="startIndex") int startIndex, @WebParam(name="max") int max, @WebParam(name="condition") final List<QueryCondition> conditions, @WebParam(name="ordering") final List<QueryOrdering> orderings, @WebParam(name="includeData") boolean includeData) throws OperationUnsupportedException, CryptoTokenOfflineException, QueryException, InvalidWorkerIdException, AuthorizationDeniedException, SignServerException, AdminNotAuthorizedException {
-        final AdminInfo adminInfo = requireAdminAuthorization("queryTokenEntries", workerNameOrId, String.valueOf(startIndex), String.valueOf(max));
-        final List<Elem> elements = toElements(conditions);
-        final QueryCriteria qc = QueryCriteria.create();
-
-        for (QueryOrdering order : orderings) {
-            qc.add(new Order(order.getColumn(), Order.Value.valueOf(order.getOrder().name())));
+        try {
+            final AdminInfo adminInfo = requireAdminAuthorization("queryTokenEntries", workerNameOrId, String.valueOf(startIndex), String.valueOf(max));
+            final List<Elem> elements = toElements(conditions);
+            final QueryCriteria qc = QueryCriteria.create();
+            
+            for (QueryOrdering order : orderings) {
+                qc.add(new Order(order.getColumn(), Order.Value.valueOf(order.getOrder().name())));
+            }
+            
+            if (!elements.isEmpty()) {
+                qc.add(andAll(elements, 0));
+            }
+            
+            return WSTokenSearchResults.fromTokenSearchResults(worker.searchTokenEntries(adminInfo, getWorkerId(workerNameOrId), startIndex, max, qc, includeData, Collections.<String, Object>emptyMap()));
+        } catch (InvalidAlgorithmParameterException ex) {
+            throw new SignServerException("Crypto token expects supported parameters", ex);
+        } catch (UnsupportedCryptoTokenParameter ex) {
+            throw new SignServerException("Crypto token expects parameters", ex);
         }
-        
-        if (!elements.isEmpty()) {
-            qc.add(andAll(elements, 0));
-        }
-
-        return WSTokenSearchResults.fromTokenSearchResults(worker.searchTokenEntries(adminInfo, getWorkerId(workerNameOrId), startIndex, max, qc, includeData));
     }
 
     /**

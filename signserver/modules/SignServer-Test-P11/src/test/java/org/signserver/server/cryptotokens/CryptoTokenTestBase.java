@@ -14,6 +14,7 @@ package org.signserver.server.cryptotokens;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyPair;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -53,6 +54,7 @@ import org.signserver.common.OperationUnsupportedException;
 import org.signserver.common.PKCS10CertReqInfo;
 import org.signserver.common.QueryException;
 import org.signserver.common.SignServerException;
+import org.signserver.common.UnsupportedCryptoTokenParameter;
 import org.signserver.test.utils.builders.CryptoUtils;
 import org.signserver.testutils.ModulesTestCase;
 
@@ -69,7 +71,7 @@ public abstract class CryptoTokenTestBase extends ModulesTestCase {
     private static final Logger LOG = Logger.getLogger(CryptoTokenTestBase.class);
     
     protected abstract TokenSearchResults searchTokenEntries(final int startIndex, final int max, final QueryCriteria qc, final boolean includeData) 
-            throws OperationUnsupportedException, CryptoTokenOfflineException, QueryException, InvalidWorkerIdException, SignServerException, AuthorizationDeniedException;
+            throws InvalidWorkerIdException, AuthorizationDeniedException, SignServerException, OperationUnsupportedException, CryptoTokenOfflineException, QueryException, InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter;
     
     protected abstract void generateKey(String keyType, String keySpec, String alias) throws CryptoTokenOfflineException, InvalidWorkerIdException, SignServerException;
     protected abstract boolean destroyKey(String alias) throws CryptoTokenOfflineException, InvalidWorkerIdException, SignServerException, KeyStoreException;
@@ -369,7 +371,7 @@ public abstract class CryptoTokenTestBase extends ModulesTestCase {
             IllegalArgumentException, CertificateException,
             CertificateEncodingException, OperationUnsupportedException,
             NoSuchAlgorithmException, NoSuchProviderException,
-            OperatorCreationException, IOException, QueryException, OperationUnsupportedException, AuthorizationDeniedException {
+            OperatorCreationException, IOException, QueryException, OperationUnsupportedException, AuthorizationDeniedException, InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter {
         
         final ISignerCertReqInfo req = new PKCS10CertReqInfo("SHA1WithRSA", "CN=imported", null);
         final Base64SignerCertReqData reqData = (Base64SignerCertReqData) genCertificateRequest(req, false, existingKey);

@@ -13,12 +13,14 @@
 package org.signserver.ejb.interfaces;
 
 import java.math.BigInteger;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyStoreException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import org.cesecore.audit.AuditLogEntry;
@@ -40,6 +42,7 @@ import org.signserver.common.ProcessResponse;
 import org.signserver.common.QueryException;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
+import org.signserver.common.UnsupportedCryptoTokenParameter;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 import org.signserver.server.cryptotokens.TokenSearchResults;
@@ -499,8 +502,14 @@ public interface IWorkerSession {
          * @throws AuthorizationDeniedException in case the operation was not allowed
          * @throws SignServerException in case of any other problem
          */
-        TokenSearchResults searchTokenEntries(int workerId, final int startIndex, final int max, final QueryCriteria qc, final boolean includeData) 
-            throws OperationUnsupportedException, CryptoTokenOfflineException, QueryException, InvalidWorkerIdException, AuthorizationDeniedException, SignServerException;
+        TokenSearchResults searchTokenEntries(int workerId, final int startIndex, final int max, final QueryCriteria qc, final boolean includeData, final Map<String, Object> params) throws 
+                InvalidWorkerIdException,
+                AuthorizationDeniedException,
+                CryptoTokenOfflineException,
+                QueryException,
+                InvalidAlgorithmParameterException,
+                UnsupportedCryptoTokenParameter,
+                OperationUnsupportedException;
     }
 
     /**
@@ -823,7 +832,13 @@ public interface IWorkerSession {
          * @throws AuthorizationDeniedException in case the operation was not allowed
          * @throws SignServerException in case of any other problem
          */
-        TokenSearchResults searchTokenEntries(final AdminInfo adminInfo, int workerId, final int startIndex, final int max, final QueryCriteria qc, final boolean includeData) 
-            throws OperationUnsupportedException, CryptoTokenOfflineException, QueryException, InvalidWorkerIdException, AuthorizationDeniedException, SignServerException;
+        TokenSearchResults searchTokenEntries(final AdminInfo adminInfo, int workerId, final int startIndex, final int max, final QueryCriteria qc, final boolean includeData, final Map<String, Object> params) throws
+            InvalidWorkerIdException,
+            AuthorizationDeniedException,
+            CryptoTokenOfflineException,
+            QueryException,
+            InvalidAlgorithmParameterException,
+            UnsupportedCryptoTokenParameter,
+            OperationUnsupportedException;
     }
 }

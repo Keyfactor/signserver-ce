@@ -31,6 +31,7 @@ import java.security.cert.Certificate;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
@@ -484,7 +485,7 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
     }
     
     @Override
-    public void generateKey(String keyAlgorithm, String keySpec, String alias, char[] authCode, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
+    public void generateKey(String keyAlgorithm, String keySpec, String alias, char[] authCode, Map<String, Object> params, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
         generateKey(keyAlgorithm, keySpec, alias, authCode);
     }
 
@@ -492,6 +493,7 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
     public void importCertificateChain(final List<Certificate> certChain,
                                        final String alias,
                                        final char[] athenticationCode,
+                                       final Map<String, Object> params,
                                        final IServices services)
             throws CryptoTokenOfflineException, IllegalArgumentException {
         try {
@@ -513,7 +515,7 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
     }
 
     @Override
-    public TokenSearchResults searchTokenEntries(final int startIndex, final int max, final QueryCriteria qc, final boolean includeData, final IServices services) throws CryptoTokenOfflineException, QueryException {
+    public TokenSearchResults searchTokenEntries(final int startIndex, final int max, final QueryCriteria qc, final boolean includeData, Map<String, Object> params, final IServices services) throws CryptoTokenOfflineException, QueryException {
         try {
             return CryptoTokenHelper.searchTokenEntries(getKeyStore(), startIndex, max, qc, includeData);
         } catch (KeyStoreException ex) {
@@ -522,14 +524,14 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
     }
 
     @Override
-    public ICryptoInstance aquireCryptoInstance(String alias, RequestContext context) throws CryptoTokenOfflineException, IllegalRequestException, SignServerException {
+    public ICryptoInstance aquireCryptoInstance(String alias, Map<String, Object> params, RequestContext context) throws CryptoTokenOfflineException, IllegalRequestException, SignServerException {
         final PrivateKey privateKey = getPrivateKey(alias);
         final List<Certificate> certificateChain = getCertificateChain(alias);
         return new DefaultCryptoInstance(alias, context, delegate.getActivatedKeyStore().getProvider(), privateKey, certificateChain);
     }
 
     @Override
-    public void releaseCryptoInstance(ICryptoInstance instance) {
+    public void releaseCryptoInstance(ICryptoInstance instance, RequestContext context) {
         // NOP
     }
 

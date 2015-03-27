@@ -400,7 +400,7 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
     }
 
     @Override
-    public TokenSearchResults searchTokenEntries(final int startIndex, final int max, QueryCriteria qc, boolean includeData, IServices services) 
+    public TokenSearchResults searchTokenEntries(final int startIndex, final int max, QueryCriteria qc, boolean includeData, Map<String, Object> params, IServices services) 
             throws CryptoTokenOfflineException, QueryException {
         try {
             KeyStore keyStore = getKeyStore();
@@ -416,7 +416,7 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
     }
 
     @Override
-    public void generateKey(String keyAlgorithm, String keySpec, String alias, char[] authCode, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
+    public void generateKey(String keyAlgorithm, String keySpec, String alias, char[] authCode, Map<String, Object> params, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
         if (keySpec == null) {
             throw new IllegalArgumentException("Missing keyspec parameter");
         }
@@ -626,6 +626,7 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
     public void importCertificateChain(final List<Certificate> certChain,
                                        final String alias,
                                        final char[] authCode,
+                                       final Map<String, Object> params,
                                        final IServices services)
         throws CryptoTokenOfflineException, IllegalArgumentException {
         if (certChain.size() < 1) {
@@ -685,13 +686,13 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
     }
 
     @Override
-    public ICryptoInstance aquireCryptoInstance(String alias, RequestContext context) throws CryptoTokenOfflineException, IllegalRequestException, SignServerException {
+    public ICryptoInstance aquireCryptoInstance(String alias, Map<String, Object> params, RequestContext context) throws CryptoTokenOfflineException, IllegalRequestException, SignServerException {
         final KeyEntry entry = getKeyEntry(alias);
         return new DefaultCryptoInstance(alias, context, ks.getProvider(), entry.getPrivateKey(), entry.getCertificateChain());
     }
 
     @Override
-    public void releaseCryptoInstance(ICryptoInstance instance) {
+    public void releaseCryptoInstance(ICryptoInstance instance, RequestContext context) {
         // NOP
     }
 

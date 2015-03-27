@@ -384,7 +384,7 @@ public class BaseProcessableTest extends TestCase {
         final List<Certificate> chain =
                 Arrays.asList(CertTools.getCertfromByteArray(HardCodedCryptoToken.certbytes2));
         
-        instance.importCertificateChain(chain, "alias2", null, new ServicesImpl());
+        instance.importCertificateChain(chain, "alias2", null, Collections.<String, Object>emptyMap(), new ServicesImpl());
         
         final List<Certificate> importedChain =
                 instance.getSigningCertificateChain("alias2");
@@ -440,7 +440,7 @@ public class BaseProcessableTest extends TestCase {
         }
 
         @Override
-        public void importCertificateChain(List<Certificate> certChain, String alias, char[] athenticationCode, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
+        public void importCertificateChain(List<Certificate> certChain, String alias, char[] athenticationCode, Map<String, Object> params, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
             importedChains.put(alias, certChain);
         }
 

@@ -20,6 +20,7 @@ import java.security.cert.Certificate;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.cesecore.util.query.QueryCriteria;
@@ -158,26 +159,26 @@ public class NullCryptoToken extends BaseCryptoToken {
     }
 
     @Override
-    public void importCertificateChain(List<Certificate> certChain, String alias, char[] athenticationCode, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
+    public void importCertificateChain(List<Certificate> certChain, String alias, char[] athenticationCode, Map<String, Object> params, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
         throw new CryptoTokenOfflineException("Unsupported by crypto token");
     }
 
     @Override
-    public TokenSearchResults searchTokenEntries(int startIndex, int max, QueryCriteria qc, boolean includeData, IServices services) throws CryptoTokenOfflineException, QueryException {
+    public TokenSearchResults searchTokenEntries(int startIndex, int max, QueryCriteria qc, boolean includeData, Map<String, Object> params, IServices services) throws CryptoTokenOfflineException, QueryException {
         throw new CryptoTokenOfflineException("Unsupported by crypto token");
     }
 
     @Override
-    public ICryptoInstance aquireCryptoInstance(String alias, RequestContext context) throws CryptoTokenOfflineException, IllegalRequestException, SignServerException {
+    public ICryptoInstance aquireCryptoInstance(String alias, Map<String, Object> params, RequestContext context) throws CryptoTokenOfflineException, IllegalRequestException, SignServerException {
         throw new CryptoTokenOfflineException("Unsupported by crypto token");
     }
 
     @Override
-    public void releaseCryptoInstance(ICryptoInstance instance) {
+    public void releaseCryptoInstance(ICryptoInstance instance, RequestContext context) {
     }
 
     @Override
-    public void generateKey(String keyAlgorithm, String keySpec, String alias, char[] authCode, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
+    public void generateKey(String keyAlgorithm, String keySpec, String alias, char[] authCode, Map<String, Object> params, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
         throw new CryptoTokenOfflineException("Unsupported by crypto token");
     }
 

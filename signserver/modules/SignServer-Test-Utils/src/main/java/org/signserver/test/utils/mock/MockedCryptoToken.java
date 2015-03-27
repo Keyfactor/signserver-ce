@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 import org.apache.log4j.Logger;
+import org.cesecore.util.query.QueryCriteria;
 import org.signserver.common.*;
 import org.signserver.server.IServices;
 import org.signserver.server.cryptotokens.DefaultCryptoInstance;
@@ -133,7 +134,7 @@ public class MockedCryptoToken implements ICryptoToken, ICryptoTokenV3 {
     }
 
     @Override
-    public TokenSearchResults searchTokenEntries(int startIndex, int max, org.cesecore.util.query.QueryCriteria qc, boolean includeData, IServices services) throws CryptoTokenOfflineException, QueryException {
+    public TokenSearchResults searchTokenEntries(int startIndex, int max, QueryCriteria qc, boolean includeData, IServices services, Map<String, Object> params) throws CryptoTokenOfflineException, QueryException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -143,7 +144,7 @@ public class MockedCryptoToken implements ICryptoToken, ICryptoTokenV3 {
     }
 
     @Override
-    public void releaseCryptoInstance(ICryptoInstance instance) {
+    public void releaseCryptoInstance(ICryptoInstance instance, RequestContext context) {
         // NOP
     }
 

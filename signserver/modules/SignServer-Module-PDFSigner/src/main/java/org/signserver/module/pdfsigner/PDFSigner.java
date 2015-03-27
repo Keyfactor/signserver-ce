@@ -337,7 +337,7 @@ public class PDFSigner extends BaseSigner {
         } catch (IOException e) {
             throw new IllegalRequestException("Could not sign document: " + e.getMessage(), e);
         } finally {
-            releaseCryptoInstance(crypto);
+            releaseCryptoInstance(crypto, requestContext);
         }
 
         return signResponse;

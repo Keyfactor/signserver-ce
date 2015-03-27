@@ -604,7 +604,7 @@ public class TimeStampSigner extends BaseSigner {
         			exception.getMessage());
         	throw exception;
         } finally {
-            releaseCryptoInstance(crypto);
+            releaseCryptoInstance(crypto, requestContext);
         }
 
         return signResponse;

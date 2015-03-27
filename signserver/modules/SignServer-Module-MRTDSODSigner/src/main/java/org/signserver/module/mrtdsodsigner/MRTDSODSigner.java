@@ -257,7 +257,7 @@ public class MRTDSODSigner extends BaseSigner {
         } catch (IOException ex) {
             throw new SignServerException("Problem reconstructing SOD", ex);
         } finally {
-            releaseCryptoInstance(crypto);
+            releaseCryptoInstance(crypto, requestContext);
         }
 
         // Verify the Signature before returning

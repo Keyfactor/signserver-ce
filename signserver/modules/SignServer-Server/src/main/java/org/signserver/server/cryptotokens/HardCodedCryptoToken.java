@@ -30,6 +30,7 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import org.bouncycastle.util.encoders.Base64;
 import org.cesecore.util.query.QueryCriteria;
@@ -453,23 +454,23 @@ public class HardCodedCryptoToken extends BaseCryptoToken {
     }
 
     @Override
-    public void importCertificateChain(List<Certificate> certChain, String alias, char[] athenticationCode, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
+    public void importCertificateChain(List<Certificate> certChain, String alias, char[] athenticationCode, Map<String, Object> params, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public TokenSearchResults searchTokenEntries(int startIndex, int max, QueryCriteria qc, boolean includeData, IServices services) throws CryptoTokenOfflineException, QueryException {
+    public TokenSearchResults searchTokenEntries(int startIndex, int max, QueryCriteria qc, boolean includeData, Map<String, Object> params, IServices services) throws CryptoTokenOfflineException, QueryException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public ICryptoInstance aquireCryptoInstance(String alias, RequestContext context) throws CryptoTokenOfflineException, IllegalRequestException, SignServerException {
+    public ICryptoInstance aquireCryptoInstance(String alias, Map<String, Object> params, RequestContext context) throws CryptoTokenOfflineException, IllegalRequestException, SignServerException {
         checkAlias(alias);
         return new DefaultCryptoInstance(alias, context, Security.getProvider("BC"), privateKey, getCertificateChain(PURPOSE_SIGN));
     }
 
     @Override
-    public void releaseCryptoInstance(ICryptoInstance instance) {
+    public void releaseCryptoInstance(ICryptoInstance instance, RequestContext context) {
     }
 
     @Override
@@ -507,7 +508,7 @@ public class HardCodedCryptoToken extends BaseCryptoToken {
     }
 
     @Override
-    public void generateKey(String keyAlgorithm, String keySpec, String alias, char[] authCode, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
+    public void generateKey(String keyAlgorithm, String keySpec, String alias, char[] authCode, Map<String, Object> params, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

@@ -16,6 +16,7 @@ import java.security.KeyStoreException;
 import java.security.cert.Certificate;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import org.cesecore.util.query.QueryCriteria;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.ICertReqData;
@@ -49,15 +50,16 @@ public interface ICryptoTokenV3 extends ICryptoTokenV2 {
      * @param alias Key alias to import certificate chain in
      * @param athenticationCode Alias-specific authentication code. If this is null
      *                          uses the token's authentication code (set when activating)
-     * @param services
+     * @param params Additional parameters to pass to the crypto token
+     * @param services implementations for the crypto token to use
      * @throws CryptoTokenOfflineException
      * @throws IllegalArgumentException
      */
     void importCertificateChain(List<Certificate> certChain, String alias,
-            char[] athenticationCode, IServices services)
+            char[] athenticationCode, Map<String, Object> params, IServices services)
             throws CryptoTokenOfflineException, IllegalArgumentException;
     
-    TokenSearchResults searchTokenEntries(final int startIndex, final int max, final QueryCriteria qc, final boolean includeData, IServices services) 
+    TokenSearchResults searchTokenEntries(final int startIndex, final int max, final QueryCriteria qc, final boolean includeData, Map<String, Object> params, IServices services) 
             throws CryptoTokenOfflineException, QueryException;
     
     /**
@@ -68,19 +70,21 @@ public interface ICryptoTokenV3 extends ICryptoTokenV2 {
      * by a call to releaseCryptoInstance() for each instance. Use try-final.
      * 
      * @param alias of the entry in the CryptoToken to quire an crypto instance for
+     * @param params Additional parameters to pass to the crypto token
      * @param context the request context
      * @return an crypto instance
      * @throws CryptoTokenOfflineException
      * @throws IllegalRequestException
      * @throws SignServerException 
      */
-    ICryptoInstance aquireCryptoInstance(String alias, RequestContext context) throws CryptoTokenOfflineException, IllegalRequestException, SignServerException;
+    ICryptoInstance aquireCryptoInstance(String alias, Map<String, Object> params, RequestContext context) throws CryptoTokenOfflineException, IllegalRequestException, SignServerException;
     
     /**
      * Releases a previously acquired crypto instance.
      * @param instance to release
+     * @param context the request context
      */
-    void releaseCryptoInstance(ICryptoInstance instance);
+    void releaseCryptoInstance(ICryptoInstance instance, RequestContext context);
 
     /**
      * Generate a new keypair.
@@ -88,12 +92,13 @@ public interface ICryptoTokenV3 extends ICryptoTokenV2 {
      * @param keySpec Key specification
      * @param alias Name of the new key
      * @param authCode Authorization code
+     * @param params Additional parameters to pass to the crypto token
+     * @param services implementations for the crypto token to use
      * @throws CryptoTokenOfflineException
      * @throws IllegalArgumentException
      */
     void generateKey(String keyAlgorithm, String keySpec, String alias,
-            char[] authCode,
-            IServices services) throws CryptoTokenOfflineException,
+            char[] authCode, Map<String, Object> params, IServices services) throws CryptoTokenOfflineException,
                 IllegalArgumentException;
 
     ICertReqData genCertificateRequest(ISignerCertReqInfo info,

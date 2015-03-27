@@ -123,7 +123,7 @@ public class ODFSigner extends BaseSigner {
                 throw new SignServerException("Problem signing odf document", e);
             }
         } finally {
-            releaseCryptoInstance(crypto);
+            releaseCryptoInstance(crypto, requestContext);
         }
 
         // save document to output stream

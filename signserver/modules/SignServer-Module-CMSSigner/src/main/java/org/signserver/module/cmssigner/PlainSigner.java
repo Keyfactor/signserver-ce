@@ -159,7 +159,7 @@ public class PlainSigner extends BaseSigner {
             LOG.error("Error initializing signer", ex);
             throw new SignServerException("Error initializing signer", ex);
         } finally {
-            releaseCryptoInstance(crypto);
+            releaseCryptoInstance(crypto, requestContext);
         }
     }
     

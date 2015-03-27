@@ -17,6 +17,7 @@ import java.security.KeyStoreException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
@@ -83,7 +84,7 @@ public class KeystoreCryptoTokenTest extends CryptoTokenTestBase {
         config.setProperty("KEYSTOREPASSWORD", "password123123213");
         instance.init(1, config);
         instance.activate("password123123213");
-        instance.generateKey("RSA", "1024", existingKey1, null, instance.getMockedServices());
+        instance.generateKey("RSA", "1024", existingKey1, null, Collections.<String, Object>emptyMap(), instance.getMockedServices());
     }
     
     @Test
@@ -106,12 +107,12 @@ public class KeystoreCryptoTokenTest extends CryptoTokenTestBase {
 
     @Override
     protected TokenSearchResults searchTokenEntries(int startIndex, int max, QueryCriteria qc, boolean includeData) throws CryptoTokenOfflineException, QueryException {
-        return instance.searchTokenEntries(startIndex, max, qc, includeData, new ServicesImpl());
+        return instance.searchTokenEntries(startIndex, max, qc, includeData, null, new ServicesImpl());
     }
 
     @Override
     protected void generateKey(String keyType, String keySpec, String alias) throws CryptoTokenOfflineException {
-        instance.generateKey(keyType, keySpec, alias, null, instance.getMockedServices());
+        instance.generateKey(keyType, keySpec, alias, null, Collections.<String, Object>emptyMap(), instance.getMockedServices());
     }
 
     @Override
@@ -121,7 +122,7 @@ public class KeystoreCryptoTokenTest extends CryptoTokenTestBase {
 
     @Override
     protected void importCertificateChain(List<Certificate> chain, String alias) throws CryptoTokenOfflineException, IllegalArgumentException {
-        instance.importCertificateChain(chain, alias, null, new ServicesImpl());
+        instance.importCertificateChain(chain, alias, null, Collections.<String, Object>emptyMap(), new ServicesImpl());
     }
 
     @Override

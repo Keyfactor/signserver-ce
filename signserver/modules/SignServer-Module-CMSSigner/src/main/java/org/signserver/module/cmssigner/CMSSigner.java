@@ -213,7 +213,7 @@ public class CMSSigner extends BaseSigner {
             LOG.error("Error constructing CMS", ex);
             throw new SignServerException("Error constructing CMS", ex);
         } finally {
-            releaseCryptoInstance(crypto);
+            releaseCryptoInstance(crypto, requestContext);
         }
     }
     

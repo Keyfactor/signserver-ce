@@ -16,6 +16,7 @@ import java.security.KeyStoreException;
 import java.security.cert.Certificate;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import org.cesecore.util.query.QueryCriteria;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
@@ -129,10 +130,9 @@ public interface IProcessable extends IWorker {
                 IllegalArgumentException;
 
     /**
-     * @see ICryptoTokenV3#generateKey(java.lang.String, java.lang.String, java.lang.String, char[], org.signserver.server.IServices) 
+     * @see ICryptoTokenV3#generateKey(java.lang.String, java.lang.String, java.lang.String, char[], java.util.Map, org.signserver.server.IServices) 
      */
-    void generateKey(final String keyAlgorithm, final String keySpec,
-            final String alias, final char[] authCode, final IServices services)
+    void generateKey(final String keyAlgorithm, final String keySpec, final String alias, final char[] authCode, Map<String, Object> params, final IServices services)
             throws CryptoTokenOfflineException, IllegalArgumentException;
     
     /**
@@ -165,9 +165,7 @@ public interface IProcessable extends IWorker {
      * @throws CryptoTokenOfflineException
      * @throws OperationUnsupportedException
      */
-    void importCertificateChain(List<Certificate> certChain, String alias,
-            char[] authenticationCode,
-            IServices services)
+    void importCertificateChain(List<Certificate> certChain, String alias, char[] authenticationCode, Map<String, Object> params, IServices services)
             throws CryptoTokenOfflineException, OperationUnsupportedException;
     
     TokenSearchResults searchTokenEntries(int startIndex, int max, final QueryCriteria qc, final boolean includeData, final IServices servicesImpl) throws SignServerException, CryptoTokenOfflineException, QueryException, OperationUnsupportedException;

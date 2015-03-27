@@ -24,8 +24,10 @@ import java.security.Security;
 import java.security.cert.Certificate;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.persistence.EntityManager;
@@ -624,28 +626,28 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         }
         
         @Override
-        public void importCertificateChain(List<Certificate> certChain, String alias, char[] athenticationCode, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
-            delegate.importCertificateChain(certChain, alias, athenticationCode, services);
+        public void importCertificateChain(List<Certificate> certChain, String alias, char[] athenticationCode, Map<String, Object> params, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
+            delegate.importCertificateChain(certChain, alias, athenticationCode, params, services);
         }
 
         @Override
-        public TokenSearchResults searchTokenEntries(int startIndex, int max, QueryCriteria qc, boolean includeData, IServices services) throws CryptoTokenOfflineException, QueryException {
-            return delegate.searchTokenEntries(startIndex, max, qc, includeData, services);
+        public TokenSearchResults searchTokenEntries(int startIndex, int max, QueryCriteria qc, boolean includeData, Map<String, Object> params, IServices services) throws CryptoTokenOfflineException, QueryException {
+            return delegate.searchTokenEntries(startIndex, max, qc, includeData, params, services);
         }
 
         @Override
-        public ICryptoInstance aquireCryptoInstance(String alias, RequestContext context) throws CryptoTokenOfflineException, IllegalRequestException, SignServerException {
-            return delegate.aquireCryptoInstance(alias, context);
+        public ICryptoInstance aquireCryptoInstance(String alias, Map<String, Object> params, RequestContext context) throws CryptoTokenOfflineException, IllegalRequestException, SignServerException {
+            return delegate.aquireCryptoInstance(alias, params, context);
         }
 
         @Override
-        public void releaseCryptoInstance(ICryptoInstance instance) {
-            delegate.releaseCryptoInstance(instance);
+        public void releaseCryptoInstance(ICryptoInstance instance, RequestContext context) {
+            delegate.releaseCryptoInstance(instance, context);
         }
 
         @Override
-        public void generateKey(String keyAlgorithm, String keySpec, String alias, char[] authCode, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
-            delegate.generateKey(keyAlgorithm, keySpec, alias, authCode, services);
+        public void generateKey(String keyAlgorithm, String keySpec, String alias, char[] authCode, Map<String, Object> params, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
+            delegate.generateKey(keyAlgorithm, keySpec, alias, authCode, params, services);
         }
 
         @Override
@@ -1007,12 +1009,11 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
     public void generateKey(final String keyAlgorithm, final String keySpec,
             final String alias, final char[] authCode)
             throws CryptoTokenOfflineException, IllegalArgumentException {
-        generateKey(keyAlgorithm, keySpec, alias, authCode, new ServicesImpl());
+        generateKey(keyAlgorithm, keySpec, alias, authCode, Collections.<String, Object>emptyMap(), new ServicesImpl());
     }
     
     @Override
-    public void generateKey(final String keyAlgorithm, final String keySpec,
-            final String alias, final char[] authCode, final IServices services)
+    public void generateKey(final String keyAlgorithm, final String keySpec, final String alias, final char[] authCode, Map<String, Object> params, final IServices services)
             throws CryptoTokenOfflineException, IllegalArgumentException {
         try {
             ICryptoToken token = getCryptoToken();
@@ -1020,7 +1021,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
                 throw new CryptoTokenOfflineException("Crypto token offline");
             } else if (token instanceof ICryptoTokenV3) {
                 ((ICryptoTokenV3) token).generateKey(keyAlgorithm, keySpec, alias,
-                        authCode, services);
+                        authCode, params, services);
             } else if (token instanceof IKeyGenerator) {
                 ((IKeyGenerator) token).generateKey(keyAlgorithm, keySpec, alias,
                         authCode);
@@ -1065,10 +1066,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
     }
    
     @Override
-    public void importCertificateChain(final List<Certificate> certChain,
-                                       final String alias,
-                                       final char[] authenticationCode,
-                                       final IServices services)
+    public void importCertificateChain(final List<Certificate> certChain, final String alias, final char[] authenticationCode, Map<String, Object> params, final IServices services)
             throws CryptoTokenOfflineException, OperationUnsupportedException {
         try {
             final ICryptoToken token = getCryptoToken();
@@ -1080,7 +1078,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
             if (token instanceof ICryptoTokenV3) {
                 final ICryptoTokenV3 tokenV3 = (ICryptoTokenV3) token;
                 
-                tokenV3.importCertificateChain(certChain, alias, authenticationCode, services);
+                tokenV3.importCertificateChain(certChain, alias, authenticationCode, params, services);
             } else {
                 throw new OperationUnsupportedException("Importing certificate chain is not supported by crypto token");
             }
@@ -1145,13 +1143,30 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
      * @throws SignServerException 
      */
     protected ICryptoInstance aquireCryptoInstance(final int purpose, final ProcessRequest request, final RequestContext context) throws SignServerException, CryptoTokenOfflineException, IllegalRequestException {
+        return aquireCryptoInstance(purpose, request, Collections.<String, Object>emptyMap(), context);
+    }
+    
+    /**
+     * Aquire a crypto instance in order to perform crypto operations during
+     * a limited scope.
+     * 
+     * It is the caller's responsibility to make sure the call is followed up
+     * by a call to releaseCryptoInstance() for each instance. Use try-final.
+     * 
+     * @param context the request context
+     * @return an crypto instance
+     * @throws CryptoTokenOfflineException
+     * @throws IllegalRequestException
+     * @throws SignServerException 
+     */
+    protected ICryptoInstance aquireCryptoInstance(final int purpose, final ProcessRequest request, final Map<String, Object> params, final RequestContext context) throws SignServerException, CryptoTokenOfflineException, IllegalRequestException {
         final ICryptoInstance result;
         final String alias = aliasSelector.getAlias(purpose, this, request, context);
         ICryptoToken token = getCryptoToken();
         if (token instanceof ICryptoTokenV3) {
             // Great this is V3 (3.7)
             ICryptoTokenV3 token3 = (ICryptoTokenV3) token;
-            result = token3.aquireCryptoInstance(alias, context);
+            result = token3.aquireCryptoInstance(alias, params, context);
         } else if (token instanceof ICryptoTokenV2) {
             // Backwards compatibility for old V2 tokens (3.6)
             ICryptoTokenV2 token2 = (ICryptoTokenV2) token;
@@ -1169,10 +1184,10 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
      * Releases a previously acquired crypto instance.
      * @param instance to release
      */
-    protected void releaseCryptoInstance(final ICryptoInstance instance) throws SignServerException {
+    protected void releaseCryptoInstance(final ICryptoInstance instance, RequestContext context) throws SignServerException {
         ICryptoToken token = getCryptoToken();
         if (token instanceof ICryptoTokenV3) {
-            ((ICryptoTokenV3) token).releaseCryptoInstance(instance);
+            ((ICryptoTokenV3) token).releaseCryptoInstance(instance, context);
         }
     }
     
@@ -1180,7 +1195,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
     public TokenSearchResults searchTokenEntries(int startIndex, int max, final QueryCriteria qc, final boolean includeData, final IServices servicesImpl) throws SignServerException, CryptoTokenOfflineException, QueryException, OperationUnsupportedException {
         final ICryptoToken token = getCryptoToken();
         if (token instanceof ICryptoTokenV3) {
-            return ((ICryptoTokenV3) token).searchTokenEntries(startIndex, max, qc, includeData, servicesImpl);
+            return ((ICryptoTokenV3) token).searchTokenEntries(startIndex, max, qc, includeData, null, servicesImpl);
         } else {
             throw new OperationUnsupportedException("Operation not supported by crypto token");
         }

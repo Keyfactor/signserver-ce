@@ -226,7 +226,7 @@ public class XMLSigner extends BaseSigner {
                 throw new SignServerException("Signature generation error", ex);
             }
         } finally {
-            releaseCryptoInstance(crypto);
+            releaseCryptoInstance(crypto, requestContext);
         }
 
         ByteArrayOutputStream bout = new ByteArrayOutputStream();

@@ -391,7 +391,7 @@ public class XAdESSigner extends BaseSigner {
         } catch (TransformerException ex) {
             throw new SignServerException("Transformation failure", ex);
         } finally {
-            releaseCryptoInstance(crypto);
+            releaseCryptoInstance(crypto, requestContext);
         }
         
         // Response

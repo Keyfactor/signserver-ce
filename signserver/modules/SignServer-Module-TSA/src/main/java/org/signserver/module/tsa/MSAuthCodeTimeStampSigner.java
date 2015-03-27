@@ -376,7 +376,7 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
 
                 der = ASN1Primitive.fromByteArray(cmssd.getEncoded()).getEncoded(); 
             } finally {
-                releaseCryptoInstance(crypto);
+                releaseCryptoInstance(crypto, requestContext);
             }
   
             // Log values

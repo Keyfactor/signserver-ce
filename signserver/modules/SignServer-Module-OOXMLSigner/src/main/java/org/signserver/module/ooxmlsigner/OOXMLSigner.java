@@ -128,7 +128,7 @@ public class OOXMLSigner extends BaseSigner {
         } catch (OpenXML4JException e1) {
             throw new SignServerException("Problem signing document", e1);
         } finally {
-            releaseCryptoInstance(crypto);
+            releaseCryptoInstance(crypto, requestContext);
         }
 
         // save output to package

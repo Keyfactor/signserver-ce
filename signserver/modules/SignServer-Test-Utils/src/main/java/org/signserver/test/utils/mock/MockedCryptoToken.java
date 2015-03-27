@@ -139,7 +139,7 @@ public class MockedCryptoToken implements ICryptoToken, ICryptoTokenV3 {
     }
 
     @Override
-    public ICryptoInstance aquireCryptoInstance(String alias, Map<String, Object> params, RequestContext context) throws CryptoTokenOfflineException, IllegalRequestException, SignServerException {
+    public ICryptoInstance acquireCryptoInstance(String alias, Map<String, Object> params, RequestContext context) throws CryptoTokenOfflineException, IllegalRequestException, SignServerException {
         return new DefaultCryptoInstance(alias, context, Security.getProvider(provider), privateKey, certificateChain);
     }
 

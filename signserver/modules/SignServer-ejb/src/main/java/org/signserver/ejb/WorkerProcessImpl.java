@@ -50,6 +50,8 @@ import org.signserver.server.ValidityTimeUtils;
 import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.ArchiveException;
 import org.signserver.server.archive.Archiver;
+import org.signserver.server.cryptotokens.CryptoInstances;
+import org.signserver.server.cryptotokens.ICryptoInstance;
 import org.signserver.server.entities.IKeyUsageCounterDataService;
 import org.signserver.server.log.AdminInfo;
 import org.signserver.server.log.IWorkerLogger;
@@ -415,6 +417,16 @@ class WorkerProcessImpl {
                     new SignServerException("Logging failed", ex);
             LOG.error(exception.getMessage(), exception);
             throw exception;
+        } finally {
+            // Check that the worker is behaving well and have returned all of
+            // its aquired crypto instances
+            final Collection<ICryptoInstance> cryptoInstances
+                    = CryptoInstances.getInstance(requestContext).getAll();
+            if (!cryptoInstances.isEmpty()) {
+                LOG.warn("Worker " + workerId + " did not release "
+                        + cryptoInstances.size() + " crypto instances: "
+                        + cryptoInstances);
+            }
         }
     }
 

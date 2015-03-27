@@ -159,7 +159,7 @@ public class MRTDSODSigner extends BaseSigner {
         final List<Certificate> certChain;
         ICryptoInstance crypto = null;
         try {
-            crypto = aquireCryptoInstance(ICryptoToken.PURPOSE_SIGN, signRequest, requestContext);
+            crypto = acquireCryptoInstance(ICryptoToken.PURPOSE_SIGN, signRequest, requestContext);
 
             cert = (X509Certificate) getSigningCertificate(crypto);
             if (cert == null) {

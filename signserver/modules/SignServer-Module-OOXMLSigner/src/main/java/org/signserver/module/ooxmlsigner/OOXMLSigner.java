@@ -121,7 +121,7 @@ public class OOXMLSigner extends BaseSigner {
 
         ICryptoInstance crypto = null;
         try {
-            crypto = aquireCryptoInstance(ICryptoToken.PURPOSE_SIGN, signRequest, requestContext);
+            crypto = acquireCryptoInstance(ICryptoToken.PURPOSE_SIGN, signRequest, requestContext);
         
             // sign document
             dsm.SignDocument(crypto.getPrivateKey(), (X509Certificate) getSigningCertificate(crypto));

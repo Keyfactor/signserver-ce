@@ -63,7 +63,7 @@ public interface ICryptoTokenV3 extends ICryptoTokenV2 {
             throws CryptoTokenOfflineException, QueryException;
     
     /**
-     * Aquire a crypto instance in order to perform crypto operations during
+     * Acquire a crypto instance in order to perform crypto operations during
      * a limited scope.
      * 
      * It is the caller's responsibility to make sure the call is followed up
@@ -77,7 +77,7 @@ public interface ICryptoTokenV3 extends ICryptoTokenV2 {
      * @throws IllegalRequestException
      * @throws SignServerException 
      */
-    ICryptoInstance aquireCryptoInstance(String alias, Map<String, Object> params, RequestContext context) throws CryptoTokenOfflineException, IllegalRequestException, SignServerException;
+    ICryptoInstance acquireCryptoInstance(String alias, Map<String, Object> params, RequestContext context) throws CryptoTokenOfflineException, IllegalRequestException, SignServerException;
     
     /**
      * Releases a previously acquired crypto instance.

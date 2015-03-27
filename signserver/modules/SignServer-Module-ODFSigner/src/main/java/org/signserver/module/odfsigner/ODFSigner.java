@@ -102,7 +102,7 @@ public class ODFSigner extends BaseSigner {
         ICryptoInstance crypto = null;
         try {
             // get signing key and construct KeyInfo to be included in signature
-            crypto = aquireCryptoInstance(ICryptoToken.PURPOSE_SIGN, signRequest, requestContext);
+            crypto = acquireCryptoInstance(ICryptoToken.PURPOSE_SIGN, signRequest, requestContext);
 
             // create DocumentSignatureManager with OpenOffice31CompatibilityMode
             // mode.

@@ -282,7 +282,7 @@ public class PDFSigner extends BaseSigner {
         
         ICryptoInstance crypto = null;
         try {
-            crypto = aquireCryptoInstance(ICryptoToken.PURPOSE_SIGN, signRequest, requestContext);
+            crypto = acquireCryptoInstance(ICryptoToken.PURPOSE_SIGN, signRequest, requestContext);
 
             if (params.isRefuseDoubleIndirectObjects()) {
                 checkForDuplicateObjects(pdfbytes);

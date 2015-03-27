@@ -38,6 +38,7 @@ import org.cesecore.util.query.QueryCriteria;
 import org.signserver.common.*;
 import org.signserver.server.aliasselectors.AliasSelector;
 import org.signserver.server.aliasselectors.DefaultAliasSelector;
+import org.signserver.server.cryptotokens.CryptoInstances;
 import org.signserver.server.cryptotokens.CryptoTokenHelper;
 import org.signserver.server.cryptotokens.DefaultCryptoInstance;
 import org.signserver.server.cryptotokens.ICryptoInstance;
@@ -636,8 +637,8 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         }
 
         @Override
-        public ICryptoInstance aquireCryptoInstance(String alias, Map<String, Object> params, RequestContext context) throws CryptoTokenOfflineException, IllegalRequestException, SignServerException {
-            return delegate.aquireCryptoInstance(alias, params, context);
+        public ICryptoInstance acquireCryptoInstance(String alias, Map<String, Object> params, RequestContext context) throws CryptoTokenOfflineException, IllegalRequestException, SignServerException {
+            return delegate.acquireCryptoInstance(alias, params, context);
         }
 
         @Override
@@ -1130,7 +1131,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
     }
  
     /**
-     * Aquire a crypto instance in order to perform crypto operations during
+     * Acquire a crypto instance in order to perform crypto operations during
      * a limited scope.
      * 
      * It is the caller's responsibility to make sure the call is followed up
@@ -1142,8 +1143,8 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
      * @throws IllegalRequestException
      * @throws SignServerException 
      */
-    protected ICryptoInstance aquireCryptoInstance(final int purpose, final ProcessRequest request, final RequestContext context) throws SignServerException, CryptoTokenOfflineException, IllegalRequestException {
-        return aquireCryptoInstance(purpose, request, Collections.<String, Object>emptyMap(), context);
+    protected ICryptoInstance acquireCryptoInstance(final int purpose, final ProcessRequest request, final RequestContext context) throws SignServerException, CryptoTokenOfflineException, IllegalRequestException {
+        return acquireCryptoInstance(purpose, request, Collections.<String, Object>emptyMap(), context);
     }
     
     /**
@@ -1159,14 +1160,14 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
      * @throws IllegalRequestException
      * @throws SignServerException 
      */
-    protected ICryptoInstance aquireCryptoInstance(final int purpose, final ProcessRequest request, final Map<String, Object> params, final RequestContext context) throws SignServerException, CryptoTokenOfflineException, IllegalRequestException {
+    protected ICryptoInstance acquireCryptoInstance(final int purpose, final ProcessRequest request, final Map<String, Object> params, final RequestContext context) throws SignServerException, CryptoTokenOfflineException, IllegalRequestException {
         final ICryptoInstance result;
         final String alias = aliasSelector.getAlias(purpose, this, request, context);
         ICryptoToken token = getCryptoToken();
         if (token instanceof ICryptoTokenV3) {
             // Great this is V3 (3.7)
             ICryptoTokenV3 token3 = (ICryptoTokenV3) token;
-            result = token3.aquireCryptoInstance(alias, params, context);
+            result = token3.acquireCryptoInstance(alias, params, context);
         } else if (token instanceof ICryptoTokenV2) {
             // Backwards compatibility for old V2 tokens (3.6)
             ICryptoTokenV2 token2 = (ICryptoTokenV2) token;
@@ -1177,6 +1178,10 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
             // V1 (<3.6) does not support aliases so not much we can do
             throw new SignServerException("Operation not supported by crypto token");
         }
+        
+        // Register the new instance
+        CryptoInstances.getInstance(context).add(result);
+
         return result;
     }
 
@@ -1188,6 +1193,9 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         ICryptoToken token = getCryptoToken();
         if (token instanceof ICryptoTokenV3) {
             ((ICryptoTokenV3) token).releaseCryptoInstance(instance, context);
+
+            // Unregister the instance
+            CryptoInstances.getInstance(context).remove(instance);
         }
     }
     

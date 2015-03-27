@@ -442,7 +442,7 @@ public class TimeStampSigner extends BaseSigner {
         GenericSignResponse signResponse = null;
         ICryptoInstance crypto = null;
         try {
-            crypto = aquireCryptoInstance(ICryptoToken.PURPOSE_SIGN, signRequest, requestContext);
+            crypto = acquireCryptoInstance(ICryptoToken.PURPOSE_SIGN, signRequest, requestContext);
             final byte[] requestbytes = (byte[]) sReq.getRequestData();
 
             if (requestbytes == null || requestbytes.length == 0) {

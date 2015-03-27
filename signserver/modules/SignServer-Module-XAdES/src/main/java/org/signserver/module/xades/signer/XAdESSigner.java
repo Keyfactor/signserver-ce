@@ -339,7 +339,7 @@ public class XAdESSigner extends BaseSigner {
         
         ICryptoInstance crypto = null;
         try {
-            crypto = aquireCryptoInstance(ICryptoToken.PURPOSE_SIGN, signRequest, requestContext);
+            crypto = acquireCryptoInstance(ICryptoToken.PURPOSE_SIGN, signRequest, requestContext);
 
             // Parse
             final XadesSigner signer =

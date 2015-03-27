@@ -102,7 +102,7 @@ public class PlainSigner extends BaseSigner {
 
         ICryptoInstance crypto = null;
         try {
-            crypto = aquireCryptoInstance(ICryptoToken.PURPOSE_SIGN, signRequest, requestContext);
+            crypto = acquireCryptoInstance(ICryptoToken.PURPOSE_SIGN, signRequest, requestContext);
             // Get certificate chain and signer certificate
             final List<Certificate> certs = this.getSigningCertificateChain(crypto);
             if (certs == null) {

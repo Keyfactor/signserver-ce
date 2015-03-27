@@ -1408,7 +1408,7 @@ public class PDFSignerUnitTest extends TestCase {
         
         try {
             byte[] signedPdfbytes =
-                    instance.addSignatureToPDFDocument(token.aquireCryptoInstance("any-alias", null), params, pdfbytes, null, 0,
+                    instance.addSignatureToPDFDocument(token.acquireCryptoInstance("any-alias", Collections.<String, Object>emptyMap(), null), params, pdfbytes, null, 0,
                                                        null, null);
             assertNotNull(signedPdfbytes);
         } catch (SignServerException ex) {

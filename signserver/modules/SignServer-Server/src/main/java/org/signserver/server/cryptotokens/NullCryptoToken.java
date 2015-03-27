@@ -169,7 +169,7 @@ public class NullCryptoToken extends BaseCryptoToken {
     }
 
     @Override
-    public ICryptoInstance aquireCryptoInstance(String alias, Map<String, Object> params, RequestContext context) throws CryptoTokenOfflineException, IllegalRequestException, SignServerException {
+    public ICryptoInstance acquireCryptoInstance(String alias, Map<String, Object> params, RequestContext context) throws CryptoTokenOfflineException, IllegalRequestException, SignServerException {
         throw new CryptoTokenOfflineException("Unsupported by crypto token");
     }
 

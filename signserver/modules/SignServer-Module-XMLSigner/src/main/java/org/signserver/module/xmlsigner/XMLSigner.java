@@ -141,7 +141,7 @@ public class XMLSigner extends BaseSigner {
         Document doc;
         ICryptoInstance crypto = null;
         try {
-            crypto = aquireCryptoInstance(ICryptoToken.PURPOSE_SIGN, signRequest, requestContext);
+            crypto = acquireCryptoInstance(ICryptoToken.PURPOSE_SIGN, signRequest, requestContext);
 
             // Get certificate chain and signer certificate
             final List<Certificate> certs = getSigningCertificateChain(crypto);

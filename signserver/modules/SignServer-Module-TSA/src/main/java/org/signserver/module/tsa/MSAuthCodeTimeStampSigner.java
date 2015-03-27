@@ -305,7 +305,7 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
             byte[] der;
             ICryptoInstance crypto = null;
             try {
-                crypto = aquireCryptoInstance(ICryptoToken.PURPOSE_SIGN, signRequest, requestContext);
+                crypto = acquireCryptoInstance(ICryptoToken.PURPOSE_SIGN, signRequest, requestContext);
 
                 // get signing cert certificate chain and private key
                 List<Certificate> certList =

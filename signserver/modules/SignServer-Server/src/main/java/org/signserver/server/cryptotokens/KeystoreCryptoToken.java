@@ -686,7 +686,7 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
     }
 
     @Override
-    public ICryptoInstance aquireCryptoInstance(String alias, Map<String, Object> params, RequestContext context) throws CryptoTokenOfflineException, IllegalRequestException, SignServerException {
+    public ICryptoInstance acquireCryptoInstance(String alias, Map<String, Object> params, RequestContext context) throws CryptoTokenOfflineException, IllegalRequestException, SignServerException {
         final KeyEntry entry = getKeyEntry(alias);
         return new DefaultCryptoInstance(alias, context, ks.getProvider(), entry.getPrivateKey(), entry.getCertificateChain());
     }

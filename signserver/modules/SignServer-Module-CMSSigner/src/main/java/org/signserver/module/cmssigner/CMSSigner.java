@@ -128,7 +128,7 @@ public class CMSSigner extends BaseSigner {
 
         ICryptoInstance crypto = null;
         try {
-            crypto = aquireCryptoInstance(ICryptoToken.PURPOSE_SIGN, signRequest, requestContext);
+            crypto = acquireCryptoInstance(ICryptoToken.PURPOSE_SIGN, signRequest, requestContext);
             final X509Certificate cert = (X509Certificate) getSigningCertificate(crypto);
             if (LOG.isDebugEnabled()) {
                 LOG.debug("SigningCert: " + cert);

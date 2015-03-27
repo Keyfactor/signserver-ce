@@ -414,7 +414,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             }
         }
 
-        signer.generateKey(keyAlgorithm, keySpec, alias, authCode, params,
+        signer.generateKey(keyAlgorithm, keySpec, alias, authCode, Collections.<String, Object>emptyMap(),
                 servicesImpl);
         
         final HashMap<String, Object> auditMap = new HashMap<String, Object>();
@@ -982,7 +982,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         final IWorker worker = workerManagerSession.getWorker(signerId, globalConfigurationSession);
         
         if (worker instanceof IProcessable) {
-            ((IProcessable) worker).importCertificateChain(certs, alias, authenticationCode, params, servicesImpl);
+            ((IProcessable) worker).importCertificateChain(certs, alias, authenticationCode, Collections.<String, Object>emptyMap(), servicesImpl);
         } else {
             throw new OperationUnsupportedException("Import not supported by worker");
         }

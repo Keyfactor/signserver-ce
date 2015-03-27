@@ -140,7 +140,7 @@ public class QueryTokenEntriesCommand extends AbstractAdminCommand {
             int startIndex = from;
             final int max = limit < 1 ? 10 : limit;
             do {
-                searchResults = helper.getWorkerSession().searchTokenEntries(tokenId, startIndex, max, qc, verbose);
+                searchResults = helper.getWorkerSession().searchTokenEntries(tokenId, startIndex, max, qc, verbose, Collections.<String, Object>emptyMap());
             
                 int i = startIndex;
                 for (TokenEntry entry : searchResults.getEntries()) {

@@ -20,6 +20,7 @@ import java.security.Security;
 import java.security.cert.Certificate;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.cesecore.util.query.QueryCriteria;
@@ -29,7 +30,6 @@ import org.signserver.server.cryptotokens.DefaultCryptoInstance;
 import org.signserver.server.cryptotokens.ICryptoInstance;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.cryptotokens.ICryptoTokenV3;
-import org.signserver.server.cryptotokens.IGeneratedKeyData;
 import org.signserver.server.cryptotokens.TokenSearchResults;
 
 /**
@@ -129,17 +129,17 @@ public class MockedCryptoToken implements ICryptoToken, ICryptoTokenV3 {
     }
     
     @Override
-    public void importCertificateChain(List<Certificate> certChain, String alias, char[] athenticationCode, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
+    public void importCertificateChain(List<Certificate> certChain, String alias, char[] athenticationCode, Map<String, Object> params, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public TokenSearchResults searchTokenEntries(int startIndex, int max, QueryCriteria qc, boolean includeData, IServices services, Map<String, Object> params) throws CryptoTokenOfflineException, QueryException {
+    public TokenSearchResults searchTokenEntries(int startIndex, int max, QueryCriteria qc, boolean includeData, Map<String, Object> params, IServices services) throws CryptoTokenOfflineException, QueryException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public ICryptoInstance aquireCryptoInstance(String alias, RequestContext context) throws CryptoTokenOfflineException, IllegalRequestException, SignServerException {
+    public ICryptoInstance aquireCryptoInstance(String alias, Map<String, Object> params, RequestContext context) throws CryptoTokenOfflineException, IllegalRequestException, SignServerException {
         return new DefaultCryptoInstance(alias, context, Security.getProvider(provider), privateKey, certificateChain);
     }
 
@@ -184,7 +184,7 @@ public class MockedCryptoToken implements ICryptoToken, ICryptoTokenV3 {
     }
 
     @Override
-    public void generateKey(String keyAlgorithm, String keySpec, String alias, char[] authCode, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
+    public void generateKey(String keyAlgorithm, String keySpec, String alias, char[] authCode, Map<String, Object> params, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

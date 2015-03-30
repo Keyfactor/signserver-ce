@@ -1221,6 +1221,8 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
             PrivateKey privateKey = token2.getPrivateKey(alias);
             Provider provider = Security.getProvider(token2.getProvider(ICryptoToken.PROVIDERUSAGE_SIGN));
             result = new DefaultCryptoInstance(alias, context, provider, privateKey, token2.getCertificateChain(alias));
+        } else if (token == null) {
+            throw new CryptoTokenOfflineException("Crypto token not available");
         } else {
             // V1 (<3.6) does not support aliases so not much we can do
             throw new SignServerException("Operation not supported by crypto token");

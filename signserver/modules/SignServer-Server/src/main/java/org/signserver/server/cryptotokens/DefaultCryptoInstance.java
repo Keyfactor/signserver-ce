@@ -38,6 +38,17 @@ public class DefaultCryptoInstance implements ICryptoInstance {
     private final SecretKey secretKey;
     private boolean invalid;
 
+    public DefaultCryptoInstance(String alias, RequestContext context, Provider provider, PrivateKey privateKey, List<Certificate> certificateChain, PublicKey publicKey) {
+        this.alias = alias;
+        this.context = context;
+        this.provider = provider;
+        this.privateKey = privateKey;
+        this.certificateChain = certificateChain;
+        this.certificate = (certificateChain == null || certificateChain.isEmpty()) ? null : certificateChain.get(0);
+        this.publicKey = publicKey == null ? (this.certificate == null ? null : this.certificate.getPublicKey()) : publicKey;
+        this.secretKey = null;
+    }
+
     public DefaultCryptoInstance(String alias, RequestContext context, Provider provider, PrivateKey privateKey, List<Certificate> certificateChain) {
         this.alias = alias;
         this.context = context;

@@ -51,6 +51,7 @@ import org.signserver.common.KeyTestResult;
 import org.signserver.common.QueryException;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
+import org.signserver.common.TokenOutOfSpaceException;
 import org.signserver.common.WorkerStatus;
 import static org.signserver.server.BaseProcessable.PROPERTY_CACHE_PRIVATEKEY;
 import org.signserver.server.IServices;
@@ -85,6 +86,8 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
     
     // cached P11 library definitions (defined at deploy-time)
     private PKCS11Settings settings;
+    
+    private Integer keygenerationLimit;
 
     @Override
     public void init(int workerId, Properties props) throws CryptoTokenInitializationFailureException {
@@ -226,6 +229,16 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
                 sb.append("nextKeyAlias: ").append(nextKeyAlias).append("\n");
                 sb.append("cachePrivateKey: ").append(cachePrivateKey);
                 LOG.debug(sb.toString());
+            }
+
+            // Read property KEYGENERATIONLIMIT
+            final String keygenLimitValue = props.getProperty(CryptoTokenHelper.PROPERTY_KEYGENERATIONLIMIT);
+            if (keygenLimitValue != null && !keygenLimitValue.trim().isEmpty()) {
+                try {
+                    keygenerationLimit = Integer.parseInt(keygenLimitValue.trim());
+                } catch (NumberFormatException ex) {
+                    throw new CryptoTokenInitializationFailureException("Incorrect value for " + CryptoTokenHelper.PROPERTY_KEYGENERATIONLIMIT + ": " + ex.getLocalizedMessage());
+                }
             }
         } catch (org.cesecore.keys.token.CryptoTokenOfflineException ex) {
             LOG.error("Init failed", ex);
@@ -459,7 +472,7 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
     }
 
     @Override
-    public void generateKey(String keyAlgorithm, String keySpec, String alias, char[] authCode) throws CryptoTokenOfflineException, IllegalArgumentException {
+    public void generateKey(String keyAlgorithm, String keySpec, String alias, char[] authCode) throws TokenOutOfSpaceException, CryptoTokenOfflineException, IllegalArgumentException {
         if (keySpec == null) {
             throw new IllegalArgumentException("Missing keyspec parameter");
         }
@@ -475,6 +488,21 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
                 && !keySpec.contains("dsa")) {
             keySpec = "dsa" + keySpec;
         }
+
+        // Check key generation limit, if configured
+        if (keygenerationLimit != null && keygenerationLimit > -1) {
+            final int current;
+            try {
+                current = delegate.getActivatedKeyStore().size();
+                if (current >= keygenerationLimit) {
+                    throw new TokenOutOfSpaceException("Key generation limit exceeded: " + current);
+                }
+            } catch (KeyStoreException ex) {
+                LOG.error("Checking key generation limit failed", ex);
+                throw new TokenOutOfSpaceException("Current number of key entries could not be obtained: " + ex.getMessage(), ex);
+            }
+        }
+        
         try {
             delegate.generateKeyPair(keySpec, alias);
         } catch (InvalidAlgorithmParameterException ex) {

@@ -31,6 +31,7 @@ import org.signserver.common.KeyTestResult;
 import org.signserver.common.QueryException;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
+import org.signserver.common.TokenOutOfSpaceException;
 import org.signserver.server.IServices;
 
 /**
@@ -61,6 +62,7 @@ public interface ICryptoTokenV3 extends ICryptoTokenV2 {
      *                          uses the token's authentication code (set when activating)
      * @param params Additional parameters to pass to the crypto token
      * @param services implementations for the crypto token to use
+     * @throws TokenOutOfSpaceException in case the certificate can not be imported because of space issues
      * @throws CryptoTokenOfflineException In case the token was not active or could not function for any other reasons
      * @throws InvalidAlgorithmParameterException If the supplied crypto token parameters was not valid
      * @throws NoSuchAliasException In case the alias did not exist in the token
@@ -69,6 +71,7 @@ public interface ICryptoTokenV3 extends ICryptoTokenV2 {
     void importCertificateChain(List<Certificate> certChain, String alias,
             char[] athenticationCode, Map<String, Object> params,
             IServices services) throws 
+            TokenOutOfSpaceException,
             CryptoTokenOfflineException,
             NoSuchAliasException,
             InvalidAlgorithmParameterException,
@@ -137,6 +140,7 @@ public interface ICryptoTokenV3 extends ICryptoTokenV2 {
      * @param authCode Authorization code for the key
      * @param params Additional parameters to pass to the crypto token
      * @param services Implementations for the crypto token to use
+     * @throws TokenOutOfSpaceException in case the key can not be generate because of space issues
      * @throws CryptoTokenOfflineException In case the token was not active or could not function for any other reasons
      * @throws DuplicateAliasException In case the alias did already exist
      * @throws NoSuchAlgorithmException If the key algorithm was not understood
@@ -145,6 +149,7 @@ public interface ICryptoTokenV3 extends ICryptoTokenV2 {
      */
     void generateKey(String keyAlgorithm, String keySpec, String alias,
             char[] authCode, Map<String, Object> params, IServices services) throws
+            TokenOutOfSpaceException,
             CryptoTokenOfflineException,
             DuplicateAliasException, 
             NoSuchAlgorithmException,

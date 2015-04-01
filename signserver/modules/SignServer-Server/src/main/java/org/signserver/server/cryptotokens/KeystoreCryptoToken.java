@@ -77,7 +77,8 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
 
     private IWorkerSession.ILocal workerSession;
     private int workerId;
-    
+    private Integer keygenerationLimit;
+
     @Override
     public void init(int workerId, Properties properties) throws CryptoTokenInitializationFailureException {
         this.properties = properties;
@@ -107,6 +108,16 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
                 if (!keystoreFile.isFile()) {
                     throw new CryptoTokenInitializationFailureException("File not found: " + keystorepath);
                 }
+            }
+        }
+
+        // Read property KEYGENERATIONLIMIT
+        final String keygenLimitValue = properties.getProperty(CryptoTokenHelper.PROPERTY_KEYGENERATIONLIMIT);
+        if (keygenLimitValue != null && !keygenLimitValue.trim().isEmpty()) {
+            try {
+                keygenerationLimit = Integer.parseInt(keygenLimitValue.trim());
+            } catch (NumberFormatException ex) {
+                throw new CryptoTokenInitializationFailureException("Incorrect value for " + CryptoTokenHelper.PROPERTY_KEYGENERATIONLIMIT + ": " + ex.getLocalizedMessage());
             }
         }
     }
@@ -433,6 +444,20 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
 
             final KeyStore keystore = getKeyStore();
 
+            // Check key generation limit, if configured
+            if (keygenerationLimit != null && keygenerationLimit > -1) {
+                final int current;
+                try {
+                    current = keystore.size();
+                    if (current >= keygenerationLimit) {
+                        throw new TokenOutOfSpaceException("Key generation limit exceeded: " + current);
+                    }
+                } catch (KeyStoreException ex) {
+                    LOG.error("Checking key generation limit failed", ex);
+                    throw new TokenOutOfSpaceException("Current number of key entries could not be obtained: " + ex.getMessage(), ex);
+                }
+            }
+            
             final KeyPairGenerator kpg = KeyPairGenerator.getInstance(keyAlgorithm, "BC");
 
             if ("ECDSA".equals(keyAlgorithm)) {

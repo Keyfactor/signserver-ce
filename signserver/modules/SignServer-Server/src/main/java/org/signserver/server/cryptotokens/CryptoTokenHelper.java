@@ -98,6 +98,8 @@ public class CryptoTokenHelper {
     public static final String PROPERTY_SLOTLABELTYPE = "SLOTLABELTYPE";
     public static final String PROPERTY_SLOTLABELVALUE = "SLOTLABELVALUE";
     
+    public static final String PROPERTY_KEYGENERATIONLIMIT = "KEYGENERATIONLIMIT";
+    
     public enum TokenEntryFields {
         /** Key alias of entry. */
         alias,

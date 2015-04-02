@@ -585,16 +585,4 @@ public class ModulesTestCase extends TestCase {
         return response;
     }
 
-    /**
-     * @return First certificate in semicolon separated list of base64 encoded certificate
-     */
-    private String getFirstCert(String certChain) {
-        final String result; 
-        if (certChain.contains(";")) {
-            result = certChain.split(";")[0];
-        } else {
-            result = certChain;
-        }
-        return result;
-    }
 }

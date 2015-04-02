@@ -78,10 +78,11 @@ SignServer is based on loadable modules that perform various operations.
 SignServer has ready to use modules for:
 </p>
 <ul>
-<li>TimeStamp Authority (RFC 3161 compliant and MS authenticode)</li>
-<li>Signers for different documents: PDF, XML, XAdES (BES and T), ODF, OOXML, MRTD (ePassport
-    document signer), Master List (ePassport CSCA ML signer), Portable Executables (Authenticode)</li>
-<li>General purpose signers: CMS</li>
+<li>TimeStamp Authority: RFC 3161 and MS authenticode compliant</li>
+<li>Signers for different documents: PDF, XML, XAdES (BES and T), ODF, OOXML</li>
+<li>ePassport Document Signer: MRTD Document Signer, Master List (CSCA ML) Signer</li>
+<li>Code Signing: Portable Executables (Authenticode)</li>
+<li>General purpose signers: CMS, Plain signatures</li>
 <li>Validators for documents: XML, XAdES-BES, XAdES-T</li>
 </ul>
 <p>The modules can be used using HTTP or web services interfaces. SignServer
@@ -100,7 +101,7 @@ Different kinds of tokens can be used to perform sign and crypto operations:
 <ul>
 <li>Soft token using JKS or PKCS12 files.</li>
 <li>PKCS#11 HSM tokens, such as the Utimaco CryptoServer, SafeNet ProtectServer
-    and Luna, nCipher nShield or AEP KeyPer.</li>
+    and Luna, Thales nShield or AEP KeyPer.</li>
 </ul>
 </section>
 

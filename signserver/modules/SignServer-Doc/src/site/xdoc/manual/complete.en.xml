@@ -5607,7 +5607,7 @@ other properties needed by the particular crypto token are available.
 
                 <subsection name="General properties">
                     <p>
-<b>SIGNERTOKEN.CLASSPATH</b>: Fully qualified class name of the crypto token
+<b>SIGNERTOKEN.CLASSPATH</b>: Global configuration property for the fully qualified class name of the crypto token
 implementation to use. See below for available crypto tokens.
                     </p>
                     <p>
@@ -5617,6 +5617,9 @@ implementation to use. See below for available crypto tokens.
                     <p>
 <b>KEYSPEC</b>: Key specification to use when generating new keys (Only for
     cryptotokens supporting key generation).
+                    </p>
+                    <p>
+<b>KEYGENERATIONLIMIT</b>: Limit for the maximum number of keys allowed to be generated. If set and set to 0 or a positive value, key generation is not allowed if the current number of keys equals to or is larger than this value (Default: "" = no limit).
                     </p>
                 </subsection>
 

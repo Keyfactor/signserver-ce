@@ -52,7 +52,6 @@ public class P11CryptoTokenTest extends CryptoTokenTestBase {
     private static final int CRYPTO_TOKEN = 30100;
     
     private final String sharedLibraryName;
-    private final String sharedLibraryPath;
     private final String slot;
     private final String pin;
     private final String existingKey1;
@@ -62,7 +61,6 @@ public class P11CryptoTokenTest extends CryptoTokenTestBase {
     
     public P11CryptoTokenTest() {
         sharedLibraryName = getConfig().getProperty("test.p11.sharedLibraryName");
-        sharedLibraryPath = getConfig().getProperty("test.p11.sharedLibraryPath");
         slot = getConfig().getProperty("test.p11.slot");
         pin = getConfig().getProperty("test.p11.pin");
         existingKey1 = getConfig().getProperty("test.p11.existingkey1");

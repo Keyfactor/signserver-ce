@@ -23,6 +23,7 @@ import javax.naming.NamingException;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.bouncycastle.jce.ECNamedCurveTable;
+import org.bouncycastle.operator.OperatorCreationException;
 import org.cesecore.util.query.QueryCriteria;
 import org.ejbca.util.keystore.KeyTools;
 import org.signserver.common.*;
@@ -508,7 +509,34 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
                 entries.put(ICryptoToken.PURPOSE_DECRYPT, entry);
             }
 
-        } catch (Exception ex) {
+        } catch (UnsupportedOperationException ex) {
+            LOG.error(ex, ex);
+            throw new CryptoTokenOfflineException(ex);
+        } catch (KeyStoreException ex) {
+            LOG.error(ex, ex);
+            throw new CryptoTokenOfflineException(ex);
+        } catch (NoSuchAlgorithmException ex) {
+            LOG.error(ex, ex);
+            throw new CryptoTokenOfflineException(ex);
+        } catch (NoSuchProviderException ex) {
+            LOG.error(ex, ex);
+            throw new CryptoTokenOfflineException(ex);
+        } catch (InvalidAlgorithmParameterException ex) {
+            LOG.error(ex, ex);
+            throw new CryptoTokenOfflineException(ex);
+        } catch (NumberFormatException ex) {
+            LOG.error(ex, ex);
+            throw new CryptoTokenOfflineException(ex);
+        } catch (OperatorCreationException ex) {
+            LOG.error(ex, ex);
+            throw new CryptoTokenOfflineException(ex);
+        } catch (CertificateException ex) {
+            LOG.error(ex, ex);
+            throw new CryptoTokenOfflineException(ex);
+        } catch (IOException ex) {
+            LOG.error(ex, ex);
+            throw new CryptoTokenOfflineException(ex);
+        } catch (IllegalStateException ex) {
             LOG.error(ex, ex);
             throw new CryptoTokenOfflineException(ex);
         }

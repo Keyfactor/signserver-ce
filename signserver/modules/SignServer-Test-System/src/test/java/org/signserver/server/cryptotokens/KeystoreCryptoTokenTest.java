@@ -38,6 +38,7 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.SignServerUtil;
+import org.signserver.common.TokenOutOfSpaceException;
 
 /**
  * System tests for the KeystoreCryptoToken.
@@ -210,6 +211,66 @@ public class KeystoreCryptoTokenTest extends KeystoreCryptoTokenTestBase {
             Set<String> aliases2 = getKeyAliases(workerId);
             assertEquals("new key added", expected, aliases2);
             
+        } finally {
+            FileUtils.deleteQuietly(keystoreFile);
+            removeWorker(workerId);
+        }
+    }
+    
+    /**
+     * Tests that key generation is not allowed when the number of keys has
+     * reached the KEYGENERATIONLIMIT.
+     * Also checks that when allowing for one more keys, the next key can be
+     * generated.
+     */
+    @SuppressWarnings("ThrowableResultIgnored")
+    public void testKeyGenerationLimit() throws Exception {
+        LOG.info("testKeyGenerationLimit");
+        
+        final int workerId = WORKER_CMS;
+        try {
+            setCMSSignerPropertiesCombined(workerId, true);
+            workerSession.reloadConfiguration(workerId);
+            
+            // Add a reference key
+            workerSession.generateSignerKey(workerId, "RSA", "1024", "somekey123", pin.toCharArray());
+            
+            // Check available aliases
+            final int keys = getKeyAliases(workerId).size();
+            
+            // Set the current number of keys as maximum
+            workerSession.setWorkerProperty(workerId, "KEYGENERATIONLIMIT", String.valueOf(keys));
+            workerSession.reloadConfiguration(workerId);
+            
+            // Key generation should fail
+            try {
+                workerSession.generateSignerKey(workerId, "RSA", "1024", TEST_KEY_ALIAS, pin.toCharArray());
+                fail("Should have failed because of no space in token");
+            } catch (TokenOutOfSpaceException expected) { // NOPMD
+                // OK
+            }
+            
+            // Allow for one more keys to be created
+            workerSession.setWorkerProperty(workerId, "KEYGENERATIONLIMIT", String.valueOf(keys + 1));
+            workerSession.reloadConfiguration(workerId);
+            
+            // Generate a new key
+            try {
+                workerSession.generateSignerKey(workerId, "RSA", "1024", TEST_KEY_ALIAS, pin.toCharArray());
+            } catch (CryptoTokenOfflineException ex) {
+                fail("Should have worked but got: " + ex.getLocalizedMessage());
+            }
+            
+            final int keys2 = getKeyAliases(workerId).size();
+            assertEquals("one more key", keys + 1, keys2);
+            
+            // Key generation should fail
+            try {
+                workerSession.generateSignerKey(workerId, "RSA", "1024", TEST_KEY_ALIAS, pin.toCharArray());
+                fail("Should have failed because of no space in token");
+            } catch (TokenOutOfSpaceException expected) { // NOPMD
+                // OK
+            }
         } finally {
             FileUtils.deleteQuietly(keystoreFile);
             removeWorker(workerId);

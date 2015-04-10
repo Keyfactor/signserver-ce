@@ -6030,6 +6030,52 @@ After the certificate chain has been uploaded to the server, the configuration m
                 </subsection>
             </section>
             
+            <section name="Alias Selctors">
+                <p>
+Using alias selectors it is possible to control how the key used for signing
+are selected in run-time based the signing request. For example it is possible
+to have keys selected based on the authenticated user for a signing request.
+                </p>
+                <p>
+The default, if no alias selector is selected is to use a default selector
+behaving in a backwards-compatible way, using the DEFAULTKEY property of the
+crypto worker being used.
+                </p>
+                <p>
+To configure an alternative alias selector, set the <source>ALIASSELECTOR</source>
+worker property of the crypto worker pointing to the class name of an
+implementation for an alias selector to use.
+                </p>
+                
+                <subsection name="Available implementations">
+                    <subsubsection name="DefaultAliasSelector">
+                        <p>
+The fully qualified class name is: <b>org.signserver.server.aliasselectors.DefaultAliasSelector</b>
+                        </p>
+                        <p>
+This alias selector chooses DEFAULTKEY or NEXTCERTSIGNKEY as specified for
+the crypto worker depending on the purpose of the request.
+This alias selector would be used if none has been explicitly set.
+                        </p>
+                    </subsubsection>
+                    <subsubsection name="AuthorizedUsernameAliasSelector">
+                        <p>
+The fully qualified class name is: <b>org.signserver.server.aliasselectors.AuthorizedUsernameAliasSelector</b>
+                        </p>
+                        <p>
+This alias selector chooses keys based on the authorized username in the request.
+                        </p>
+                        <p>
+An optional prefix can be specified using the <source>ALIAS_PREFIX</source>
+worker property. If this is not specified, the plain username will be used as
+the key alias.
+                        </p>
+                    </subsubsection>
+                
+                </subsection>
+            
+            </section>
+            
             <section name="Archivers">
                 <p>
 See also the section about the <a href="complete.en.html#Archiving%20Responses">ARCHIVERS</a> worker property that can be set to one or more of the available Archiver implementations described below.

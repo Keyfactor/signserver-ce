@@ -104,6 +104,7 @@ public class P11SignTest extends ModulesTestCase {
     		"QoSWj4rGpw==";
     
     private static final String TEST_KEY_ALIAS = "p11testkey1234";
+    private static final String TEST_KEY_ALIAS_2 = "somekey123";
     private static final String CRYPTO_TOKEN_NAME = "TestCryptoTokenP11";
 
     private final String sharedLibraryName;
@@ -947,7 +948,7 @@ public class P11SignTest extends ModulesTestCase {
             workerSession.reloadConfiguration(workerId);
             
             // Add a reference key
-            workerSession.generateSignerKey(workerId, "RSA", "1024", "somekey123", pin.toCharArray());
+            workerSession.generateSignerKey(workerId, "RSA", "1024", TEST_KEY_ALIAS_2, pin.toCharArray());
             
             // Check available aliases
             final int keys = getKeyAliases(workerId).size();
@@ -988,6 +989,9 @@ public class P11SignTest extends ModulesTestCase {
         } finally {
             try {
                 workerSession.removeKey(workerId, TEST_KEY_ALIAS);
+            } catch (SignServerException ignored) {}
+            try {
+                workerSession.removeKey(workerId, TEST_KEY_ALIAS_2);
             } catch (SignServerException ignored) {}
             removeWorker(workerId);
         }

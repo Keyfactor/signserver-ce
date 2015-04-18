@@ -23,9 +23,9 @@
 <div class="frame note">
 <div class="label pr">
 <a href="http://blog.ejbca.org?pk_campaign=ssorg&amp;pk_kwd=ejbca-tech-blog" target="blog">EJBCA Tech Blog</a>
-<a href="https://www.primekey.se/Products/EJBCA+PKI/PKI+Appliance/?pk_campaign=ssorg&amp;pk_kwd=pki-in-a-box" target="pk">PKI-in-a-box</a>
-<a href="https://www.primekey.se/Products/SignServer/?pk_campaign=ssorg&amp;pk_kwd=signserver_enterprise" target="pk">SignServer Enterprise</a>
-<a href="https://www.primekey.se/Services/Support/?pk_campaign=ssorg&amp;pk_kwd=enterprise_support" target="pk">Enterprise Support</a>
+<a href="https://www.primekey.se/technologies/products-overview/pki-appliance/?pk_campaign=ssorg&amp;pk_kwd=pki-in-a-box" target="pk">PKI-in-a-box</a>
+<a href="https://www.primekey.se/technologies/products-overview/signserver-enterprise/?pk_campaign=ssorg&amp;pk_kwd=signserver_enterprise" target="pk">SignServer Enterprise</a>
+<a href="https://www.primekey.se/service-support/support/?pk_campaign=ssorg&amp;pk_kwd=enterprise_support" target="pk">Enterprise Support</a>
 </div>
 <div class="content first">
 <p><strong>SignServer 3.6.1 is now out!</strong>
@@ -53,7 +53,7 @@
 
     <p><strong>Stronger Safety with PrimeKey's Appliance!</strong>
   By integrating secure hardware technology with the flexibility, reliability and feature set of SignServer Enterprise (or EJBCA Enterprise), 
-  the turnkey Appliance features an easy to install PKI-in-a-box, offering predictable costs and increased quality to your PKI solution. Check out the simpler, yet safer, <a href="https://www.primekey.se/Products/EJBCA+PKI/PKI+Appliance/?pk_campaign=ssorg&amp;pk_kwd=primekey-pki-appliance" target="pk">PrimeKey PKI Appliance</a>.
+  the turnkey Appliance features an easy to install PKI-in-a-box, offering predictable costs and increased quality to your PKI solution. Check out the simpler, yet safer, <a href="https://www.primekey.se/technologies/products-overview/pki-appliance/?pk_campaign=ssorg&amp;pk_kwd=primekey-pki-appliance" target="pk">PrimeKey PKI Appliance</a>.
   <br /><span class="date"> Posted: 2014-09-30</span>
   </p>
 </div>

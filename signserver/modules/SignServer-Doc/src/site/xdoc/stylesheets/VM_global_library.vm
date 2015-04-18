@@ -180,12 +180,12 @@
         <li><div class="menuheader">PKI by PrimeKey</div>
           <p>
           <br/>
-                <a href="http://www.primekey.se/Products/EJBCA+PKI/" target="ejbca">
+                <a href="https://www.primekey.se/technologies/products-overview/ejbca-enterprise/" target="ejbca">
                 <img style="border:none; margin-left:20px;" src="$relativePath/images/ejbca_pki_by_primekey.png" alt="Click the PKI-by-PrimeKey-EJBCA-logo to visit www.ejbca.org"/>
                 </a>
           </p>
           <p>
-                <a href="http://www.primekey.se/" target="primekey">
+                <a href="https://www.primekey.se/" target="primekey">
                 <img style="border:none; margin-left:20px;" src="$relativePath/images/logo-PrimeKey.png" alt="Click the PrimeKey logo to check out the products and services offered at www.primekey.se" title="The logo squares follow a given magnitude of primes, symbolizing the encryption method of PrimeKey PKI."/>
                 </a>
           </p>

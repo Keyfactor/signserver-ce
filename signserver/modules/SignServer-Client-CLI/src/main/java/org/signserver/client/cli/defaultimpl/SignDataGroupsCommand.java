@@ -21,6 +21,7 @@ import java.util.ResourceBundle;
 import javax.xml.ws.soap.SOAPFaultException;
 import org.apache.commons.cli.*;
 import org.apache.log4j.Logger;
+import org.ejbca.ui.cli.util.ConsolePasswordReader;
 import org.signserver.cli.spi.AbstractCommand;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
@@ -248,7 +249,26 @@ public class SignDataGroupsCommand extends AbstractCommand {
         if (line.hasOption(METADATA)) {
             metadata = MetadataParser.parseMetadata(line.getOptionValues(METADATA));
         }
-        keyStoreOptions.parseCommandLine(line);
+        try {
+            final ConsolePasswordReader passwordReader = createConsolePasswordReader();
+            keyStoreOptions.parseCommandLine(line, passwordReader, out);
+
+            // Prompt for user password if not given
+            if (username != null && password == null) {
+                out.print("Password for user '" + username + "': ");
+                out.flush();
+                password = new String(passwordReader.readPassword());
+            }
+        } catch (IOException ex) {
+            throw new IllegalCommandArgumentsException("Failed to read password: " + ex.getLocalizedMessage());
+        }
+    }
+    
+    /**
+     * @return a ConsolePasswordReader that can be used to read passwords
+     */
+    protected ConsolePasswordReader createConsolePasswordReader() {
+        return new ConsolePasswordReader();
     }
 
     /**

@@ -13,7 +13,10 @@
 package org.signserver.client.cli;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Properties;
 import org.apache.log4j.Logger;
+import org.ejbca.ui.cli.util.ConsolePasswordReader;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
@@ -26,6 +29,8 @@ import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestingSecurityManager;
 import org.junit.Test;
+import org.signserver.cli.spi.CommandContext;
+import org.signserver.cli.spi.CommandFactoryContext;
 import org.signserver.common.util.PathUtil;
 
 /**
@@ -413,6 +418,149 @@ public class DocumentSignerTest extends ModulesTestCase {
         }
     }
     
+    /**
+     * Tests that when not specifying any truststore password on the command
+     * line the code for prompting for the password is called once.
+     * @throws Exception 
+     */
+    @Test
+    public void test13promptForTruststorePassword() throws Exception {
+        // Override the password reading
+        final ArrayList<Boolean> called = new ArrayList<Boolean>();
+        SignDocumentCommand instance = new SignDocumentCommand() {
+            @Override
+            protected ConsolePasswordReader createConsolePasswordReader() {
+                return new ConsolePasswordReader() {
+                    @Override
+                    public char[] readPassword() {
+                        called.add(true);
+                        return "changeit".toCharArray();
+                    }
+                };
+            }
+        };
+        
+        // Sign anything and check that the readPassword was called once
+        try {
+            String res =
+                    new String(execute(instance, "signdocument", "-workername", "TestXMLSigner", "-data", "<root/>",
+                            "-truststore", signserverhome + "/p12/truststore.jks"));
+            assertEquals("calls to readPassword", 1, called.size());
+            assertTrue("contains signature tag: "
+                    + res, res.contains("<root><Signature"));
+        } catch (IllegalCommandArgumentsException ex) {
+            LOG.error("Execution failed", ex);
+            fail(ex.getMessage());
+        }
+    }
+    
+    /**
+     * Tests that when providing a username but not a password the code for
+     * prompting for password is called once.
+     * @throws Exception 
+     */
+    @Test
+    public void test13promptForUserPassword() throws Exception {
+        // Override the password reading
+        final ArrayList<Boolean> called = new ArrayList<Boolean>();
+        SignDocumentCommand instance = new SignDocumentCommand() {
+            @Override
+            protected ConsolePasswordReader createConsolePasswordReader() {
+                return new ConsolePasswordReader() {
+                    @Override
+                    public char[] readPassword() {
+                        called.add(true);
+                        return "foo123".toCharArray();
+                    }
+                };
+            }
+        };
+        
+        // Sign anything and check that the readPassword was called once
+        try {
+            String res =
+                    new String(execute(instance, "signdocument", "-workername", "TestXMLSigner", "-data", "<root/>",
+                            "-username", "user1"));
+            assertEquals("calls to readPassword", 1, called.size());
+            assertTrue("contains signature tag: "
+                    + res, res.contains("<root><Signature"));
+        } catch (IllegalCommandArgumentsException ex) {
+            LOG.error("Execution failed", ex);
+            fail(ex.getMessage());
+        }
+    }
+    
+    /**
+     * Tests that when not specifying any keystore password on the command
+     * line the code for prompting for the password is called once.
+     * @throws Exception 
+     */
+    @Test
+    public void test13promptForKeystorePassword() throws Exception {
+        // Override the password reading
+        final ArrayList<Boolean> called = new ArrayList<Boolean>();
+        SignDocumentCommand instance = new SignDocumentCommand() {
+            @Override
+            protected ConsolePasswordReader createConsolePasswordReader() {
+                return new ConsolePasswordReader() {
+                    @Override
+                    public char[] readPassword() {
+                        called.add(true);
+                        return "foo123".toCharArray();
+                    }
+                };
+            }
+        };
+        
+        // The test might not have been setup to work with client cert auth
+        // so we will not be checking that signing works, just that the prompt
+        // gets called
+        try {
+            execute(instance, "signdocument", "-workername", "TestXMLSigner", "-data", "<root/>",
+                            "-keystore", "/tmp/any-keystore-file-we-dont-care");
+        } catch (RuntimeException expected) { // XXX: The method throwing this RunTimeException should be refactored
+            // OK as the keystore does not exist
+        }
+        assertEquals("calls to readPassword", 1, called.size());
+    }
+    
+    /**
+     * Tests that when not specifying any of user and truststore password they
+     * are both prompted for.
+     * @throws Exception 
+     */
+    @Test
+    public void test13promptForUserAndTruststore() throws Exception {
+        // Override the password reading
+        final ArrayList<Boolean> called = new ArrayList<Boolean>();
+        SignDocumentCommand instance = new SignDocumentCommand() {
+            @Override
+            protected ConsolePasswordReader createConsolePasswordReader() {
+                return new ConsolePasswordReader() {
+                    @Override
+                    public char[] readPassword() {
+                        called.add(true);
+                        return "changeit".toCharArray();
+                    }
+                };
+            }
+        };
+        
+        // Sign anything and check that the readPassword was called twice
+        try {
+            String res =
+                    new String(execute(instance, "signdocument", "-workername", "TestXMLSigner", "-data", "<root/>",
+                            "-username", "user1",
+                            "-truststore", signserverhome + "/p12/truststore.jks"));
+            assertTrue("contains signature tag: "
+                    + res, res.contains("<root><Signature"));
+        } catch (IllegalCommandArgumentsException ex) {
+            LOG.error("Execution failed", ex);
+            fail(ex.getMessage());
+        }
+        assertEquals("calls to readPassword", 2, called.size());
+    }
+    
     @Test
     public void test99TearDownDatabase() throws Exception {
         removeWorker(WORKERID2);
@@ -422,14 +570,19 @@ public class DocumentSignerTest extends ModulesTestCase {
     }
 
     private byte[] execute(String... args) throws IOException, IllegalCommandArgumentsException, CommandFailureException {
+        return execute(new SignDocumentCommand(), args);
+    }
+    
+    private byte[] execute(SignDocumentCommand instance, String... args) throws IOException, IllegalCommandArgumentsException, CommandFailureException {
         byte[] output;
-        final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(out));
+        final ByteArrayOutputStream bout = new ByteArrayOutputStream();
+        final PrintStream out = new PrintStream(bout);
+        System.setOut(out);
+        instance.init(new CommandContext("group1", "signdocument", new CommandFactoryContext(new Properties(), out, System.err)));
         try {
-            final SignDocumentCommand cmd = new SignDocumentCommand();
-            cmd.execute(args);
+            instance.execute(args);
         } finally {
-            output = out.toByteArray();
+            output = bout.toByteArray();
             System.setOut(System.out);
             System.out.write(output);
         }

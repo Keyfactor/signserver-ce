@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.security.*;
 import java.security.cert.CertificateException;
 import java.util.Arrays;
@@ -24,6 +25,7 @@ import java.util.ResourceBundle;
 import javax.net.ssl.*;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
+import org.ejbca.ui.cli.util.ConsolePasswordReader;
 
 /**
  * Handles keystore and truststore options from the command line as well
@@ -86,7 +88,7 @@ public class KeyStoreOptions {
     private boolean useHTTPS;
     private boolean usePrivateHTTPS;
 
-    public void parseCommandLine(CommandLine line) {
+    public void parseCommandLine(CommandLine line, ConsolePasswordReader passwordReader, PrintStream out) throws IOException {
         if (line.hasOption(KeyStoreOptions.TRUSTSTORE)) {
             truststoreFile = new File(line.getOptionValue(KeyStoreOptions.TRUSTSTORE, null));
         }
@@ -102,8 +104,22 @@ public class KeyStoreOptions {
         if (line.hasOption(KeyStoreOptions.KEYALIAS)) {
             keyAlias = line.getOptionValue(KeyStoreOptions.KEYALIAS, null);
         }
+        if (passwordReader != null) {
+            // Prompt for truststore password if not given
+            if (truststoreFile != null && truststorePassword == null) {
+                out.print("Password for truststore: ");
+                out.flush();
+                truststorePassword = new String(passwordReader.readPassword());
+            }
+            // Prompt for keystore password if not given
+            if (keystoreFile != null && keystorePassword == null) {
+                out.print("Password for keystore: ");
+                out.flush();
+                keystorePassword = new String(passwordReader.readPassword());
+            }
+        }
     }
-
+    
     public void validateOptions() throws IllegalArgumentException {
         if (truststoreFile != null && truststorePassword == null) {
             throw new IllegalArgumentException("Missing -truststorepwd");

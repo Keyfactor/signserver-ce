@@ -44,6 +44,7 @@ import org.bouncycastle.util.Selector;
 import org.bouncycastle.util.Store;
 import org.bouncycastle.util.encoders.Base64;
 import org.bouncycastle.util.encoders.Hex;
+import org.ejbca.ui.cli.util.ConsolePasswordReader;
 import org.signserver.cli.CommandLineInterface;
 import org.signserver.cli.spi.AbstractCommand;
 import org.signserver.cli.spi.CommandFailureException;
@@ -291,7 +292,20 @@ public class TimeStampCommand extends AbstractCommand {
                 reqPolicy = cmd.getOptionValue("reqpolicy");
             }
             
-            keyStoreOptions.parseCommandLine(cmd);
+            try {
+                final ConsolePasswordReader passwordReader = createConsolePasswordReader();
+                keyStoreOptions.parseCommandLine(cmd, passwordReader, out);
+
+                // TODO: Add when implementing username/password auth support:
+                // Prompt for user password if not given
+                //if (username != null && password == null) {
+                //    out.print("Password for user '" + username + "': ");
+                //    out.flush();
+                //    password = new String(passwordReader.readPassword());
+                //}
+            } catch (IOException ex) {
+                throw new IllegalCommandArgumentsException("Failed to read password: " + ex.getLocalizedMessage());
+            }
 
             if (print && inreqstring == null && inrepstring == null) {
                 LOG.error("Missing -inreq or -inrep");
@@ -328,6 +342,13 @@ public class TimeStampCommand extends AbstractCommand {
         } catch (Exception ex) {
             throw new UnexpectedCommandFailureException(ex);
         }
+    }
+    
+    /**
+     * @return a ConsolePasswordReader that can be used to read passwords
+     */
+    protected ConsolePasswordReader createConsolePasswordReader() {
+        return new ConsolePasswordReader();
     }
 
     private void run() throws Exception {

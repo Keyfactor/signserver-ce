@@ -2777,7 +2777,7 @@ Requests can be sent to the workers using the Client CLI. After building
 SignServer the script bin/client.sh can be run.
                     </p>
                     <source>
-$ bin/client.sh
+$ bin/signclient
 INFO  usage: client &lt;signdocument | validatedocument | timestamp | validatecertificate | signdatagroups&gt;
                     </source>
 
@@ -2794,23 +2794,32 @@ Request a document to be signed by SignServer
  -infile           File to read data to send to the worker from.
  -keyalias         Alias of the key in the keystore to use for
                    authentication.
- -keystore         Keystore with private key and certificate for client
-                   certificate authentication.
- -keystorepwd      Password for reading the keystore.
+ -keystore         Keystore with private key and certificate for
+                   client certificate authentication.
+ -keystorepwd      Password for reading the keystore.  If keystore is
+                   specified but not this keystore password option,
+                   the CLI will instead prompt for the password.
  -metadata         Additional meta data to send to the signer. The
                    parameters should be given in the form KEY=VALUE.
                    This option can be given multiple times.
  -outfile          File to write the result to. If not specified the
                    result is written to stdout.
- -password         Password for authentication.
+ -password         Password for authentication. If username is
+                   specified but not this password option, the CLI
+                   will instead prompt for the password.
  -pdfpassword      Password for changing the PDF (if required).
- -port             Server port. Default: 8080 (for HTTP), 8442 for HTTPS
-                   and 8443 for HTTPS with client authentication.
+ -port             Server port. Default: 8080 (for HTTP), 8442 for
+                   HTTPS and 8443 for HTTPS with client
+                   authentication.
  -protocol         Method of interacting with SignServer. HTTP,
                    CLIENTWS or WEBSERVICES. Default: HTTP.
  -servlet          Servlet to call. Default /signserver/process
- -truststore       Keystore with trusted certificates to use with HTTPS.
- -truststorepwd    Password for the keystore with trusted certificates.
+ -truststore       Keystore with trusted certificates to use with
+                   HTTPS.
+ -truststorepwd    Password for the keystore with trusted
+                   certificates. If truststore is specified but not
+                   this truststore password option, the CLI will
+                   instead prompt for the password.
  -username         Username for authentication.
  -workerid         ID of worker which should perform the operation.
  -workername       Name of worker which should perform the operation.
@@ -2840,19 +2849,28 @@ Request a document to be validated by SignServer
  -infile           File to read data to send to the worker from.
  -keyalias         Alias of the key in the keystore to use for
                    authentication.
- -keystore         Keystore with private key and certificate for client
-                   certificate authentication.
- -keystorepwd      Password for reading the keystore.
- -metadata &lt;arg&gt; Additional meta data to send to the signer. The
+ -keystore         Keystore with private key and certificate for
+                   client certificate authentication.
+ -keystorepwd      Password for reading the keystore.  If keystore is
+                   specified but not this keystore password option,
+                   the CLI will instead prompt for the password.
+ -metadata         Additional meta data to send to the signer. The
                    parameters should be given in the form KEY=VALUE.
                    This option can be given multiple times.
  -password         Password for authentication.
- -port             Server port. Default: 8080 (for HTTP), 8442 for HTTPS
-                   and 8443 for HTTPS with client authentication.
- -protocol &lt;arg&gt;   Method of interaction with SignServer.
+ -port             Server port. Default: 8080 (for HTTP), 8442 for
+                   HTTPS and 8443 for HTTPS with client
+                   authentication.
+ -protocol         Method of interaction with SignServer.
                    WEBSERVICES, or HTTP. Default: WEBSERVICES.
- -truststore       Keystore with trusted certificates to use with HTTPS.
- -truststorepwd    Password for the keystore with trusted certificates.
+ -servlet          URL to the webservice servlet. Default:
+                   /signserver/signserverws/signserverws?wsdl
+ -truststore       Keystore with trusted certificates to use with
+                   HTTPS.
+ -truststorepwd    Password for the keystore with trusted
+                   certificates. If truststore is specified but not
+                   this truststore password option, the CLI will
+                   instead prompt for the password.
  -username         Username for authentication.
  -workerid         ID of worker which should perform the operation.
  -workername       Name of worker which should perform the operation.
@@ -2892,7 +2910,9 @@ usage: timestamp &lt;options&gt; [url]
                         authentication.
  -keystore &lt;arg&gt;        Keystore with private key and certificate for
                         client certificate authentication.
- -keystorepwd &lt;arg&gt;     Password for reading the keystore.
+ -keystorepwd &lt;arg&gt;     Password for reading the keystore.  If keystore is
+                        specified but not this keystore password option,
+                        the CLI will instead prompt for the password.
  -outrep &lt;file&gt;         Output file to store the recevied TSA reply, if
                         not given the reply is not stored.
  -outreq &lt;file&gt;         Output file to store the sent TSA request, if not
@@ -2907,7 +2927,9 @@ usage: timestamp &lt;options&gt; [url]
  -truststore &lt;arg&gt;      Keystore with trusted certificates to use with
                         HTTPS.
  -truststorepwd &lt;arg&gt;   Password for the keystore with trusted
-                        certificates.
+                        certificates. If truststore is specified but not
+                        this truststore password option, the CLI will
+                        instead prompt for the password.
  -url &lt;url&gt;             Url of TSA, e.g.
                         http://127.0.0.1:8080/signserver/process?workerId=
                         1.
@@ -2993,11 +3015,15 @@ Request MRTD data groups to be signed
                         authentication.
  -keystore &lt;arg&gt;        Keystore with private key and certificate for
                         client certificate authentication.
- -keystorepwd &lt;arg&gt;     Password for reading the keystore.
+ -keystorepwd &lt;arg&gt;     Password for reading the keystore.  If keystore is
+                        specified but not this keystore password option,
+                        the CLI will instead prompt for the password.
  -metadata &lt;arg&gt;        Additional meta data to send to the signer. The
                               parameters should be given in the form KEY=VALUE.
                               This option can be given multiple times.
- -password &lt;arg&gt;        Password for authentication.
+ -password &lt;arg&gt;        Password for authentication. If username is
+                        specified but not this password option, the CLI
+                        will instead prompt for the password.
  -port &lt;arg&gt;            Server port. Default: 8080 (for HTTP), 8442 for
                         HTTPS and 8443 for HTTPS with client
                         authentication.
@@ -3008,7 +3034,9 @@ Request MRTD data groups to be signed
  -truststore &lt;arg&gt;      Keystore with trusted certificates to use with
                         HTTPS.
  -truststorepwd &lt;arg&gt;   Password for the keystore with trusted
-                        certificates.
+                        certificates. If truststore is specified but not
+                        this truststore password option, the CLI will
+                        instead prompt for the password.
  -username &lt;arg&gt;        Username for authentication.
  -workerid &lt;arg&gt;        ID of worker which should perform the operation.
  -workername &lt;arg&gt;      Name of worker which should perform the operation.

@@ -620,6 +620,30 @@ Configuring EAR...
         </antcall>
     </target>
     
+    <target name="dist:clientcli">
+        <available file="${basedir}/lib/SignServer-Client-CLI.jar" property="clientcli.jar" value="SignServer-Client-CLI.jar"/>
+        <available file="${basedir}/lib/SignServer-Client-CLI-${app.version.number}.jar" property="clientcli.jar" value="SignServer-Client-CLI-${app.version.number}.jar"/>
+        <fail unless="clientcli.jar" message="Must build SignServer-Client-CLI first"/>
+        <antcall target="dist">
+            <param name="dist.jars" value="${clientcli.jar}"/>
+            <param name="dist.includes" value="
+                bin/signclient,
+                bin/signclient.cmd,
+                conf/log4j.properties,
+                doc/lgpl-2.1.txt,
+                ${dist.includes.extra}
+                "/>
+        </antcall>
+    </target>
+    <target name="dist:clientcli-zip" description="Create a binary ZIP distribution of the Client CLI">
+        <delete dir="${tmp}/dist"/> <!-- Only include the clientcli in the zip file -->
+        <antcall target="dist:clientcli"/>
+        <antcall target="dist:zip">
+            <param name="dist.zipdest" value="${basedir}/tmp/SignServer-ClientCLI-${app.version.number}-bin.zip"/>
+            <param name="dist.zipprefix" value="signserver"/>
+        </antcall>
+    </target>
+    
     <target name="systemtest:jars" description="Run system tests from all systest jars (or specify which to include/exclude)" depends="-set-systemtest-classpath">
         <property name="systemtest.dir" value="${tmp}/systemtest"/>
         <delete dir="${systemtest.dir}"/>

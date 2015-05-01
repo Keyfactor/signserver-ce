@@ -27,7 +27,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.FileUploadBase;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -150,7 +149,9 @@ public class GenericProcessServlet extends AbstractProcessServlet {
         final MetaDataHolder metadataHolder = new MetaDataHolder();
 
         if (ServletFileUpload.isMultipartContent(req)) {
-            final FileItemFactory factory = new DiskFileItemFactory();
+            final DiskFileItemFactory factory = new DiskFileItemFactory();
+            factory.setSizeThreshold(Integer.MAX_VALUE); // Don't write to disk
+
             final ServletFileUpload upload = new ServletFileUpload(factory);
 
             // Limit the maximum size of input
@@ -235,7 +236,7 @@ public class GenericProcessServlet extends AbstractProcessServlet {
                     return;
                 } else {
                     fileName = fileItem.getName();
-                    data = fileItem.get();
+                    data = fileItem.get();  // Note: Reads entiry file to memory
 
                     if (encoding != null && !encoding.isEmpty()) {
                         if (ENCODING_BASE64.equalsIgnoreCase(encoding)) {

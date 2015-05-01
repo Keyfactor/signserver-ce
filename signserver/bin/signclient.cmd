@@ -4,7 +4,7 @@ rem library classpath
 if "%SIGNSERVER_HOME%" == "" (
   set SIGNSRV_HOME=..
   rem It must work to call both as bin\signserver.cmd or from within bin
-  if not exist signserver.cmd set SIGNSRV_HOME=.
+  if not exist signclient.cmd set SIGNSRV_HOME=.
  ) else (
     set SIGNSRV_HOME=%SIGNSERVER_HOME%
 ) 

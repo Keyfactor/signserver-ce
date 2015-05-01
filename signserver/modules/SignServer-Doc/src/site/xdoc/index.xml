@@ -23,9 +23,9 @@
 <div class="frame note">
 <div class="label pr">
 <a href="http://blog.ejbca.org?pk_campaign=ssorg&amp;pk_kwd=ejbca-tech-blog" target="blog">EJBCA Tech Blog</a>
-<a href="https://www.primekey.se/Products/EJBCA+PKI/PKI+Appliance/?pk_campaign=ssorg&amp;pk_kwd=pki-in-a-box" target="pk">PKI-in-a-box</a>
-<a href="https://www.primekey.se/Products/SignServer/?pk_campaign=ssorg&amp;pk_kwd=signserver_enterprise" target="pk">SignServer Enterprise</a>
-<a href="https://www.primekey.se/Services/Support/?pk_campaign=ssorg&amp;pk_kwd=enterprise_support" target="pk">Enterprise Support</a>
+<a href="https://www.primekey.se/technologies/products-overview/pki-appliance/?pk_campaign=ssorg&amp;pk_kwd=pki-in-a-box" target="pk">PKI-in-a-box</a>
+<a href="https://www.primekey.se/technologies/products-overview/signserver-enterprise/?pk_campaign=ssorg&amp;pk_kwd=signserver_enterprise" target="pk">SignServer Enterprise</a>
+<a href="https://www.primekey.se/service-support/support/?pk_campaign=ssorg&amp;pk_kwd=enterprise_support" target="pk">Enterprise Support</a>
 </div>
 <div class="content first">
 <p><strong>SignServer 3.6.2 is now out!</strong>
@@ -53,7 +53,13 @@
 
     <p><strong>Stronger Safety with PrimeKey's Appliance!</strong>
   By integrating secure hardware technology with the flexibility, reliability and feature set of SignServer Enterprise (or EJBCA Enterprise), 
-  the turnkey Appliance features an easy to install PKI-in-a-box, offering predictable costs and increased quality to your PKI solution. Check out the simpler, yet safer, <a href="https://www.primekey.se/Products/EJBCA+PKI/PKI+Appliance/?pk_campaign=ssorg&amp;pk_kwd=primekey-pki-appliance" target="pk">PrimeKey PKI Appliance</a>.
+  the turnkey Appliance features an easy to install PKI-in-a-box, offering predictable costs and increased quality to your PKI solution. Check out the simpler, yet safer, <a href="https://www.primekey.se/technologies/products-overview/pki-appliance/?pk_campaign=ssorg&amp;pk_kwd=primekey-pki-appliance" target="pk">PrimeKey PKI Appliance</a>.
+        <ul>
+            <li>Code Signing Appliance (Authenticode, CMS, Plain)</li>
+            <li>Document Signing Appliance (PDF, XML, MRTD, ...)</li>
+            <li>Time Stamping Appliance</li>
+            <li>and more...</li>
+        </ul>
   <br /><span class="date"> Posted: 2014-10-24</span>
   </p>
 </div>
@@ -78,10 +84,11 @@ SignServer is based on loadable modules that perform various operations.
 SignServer has ready to use modules for:
 </p>
 <ul>
-<li>TimeStamp Authority (RFC 3161 compliant and MS authenticode)</li>
-<li>Signers for different documents: PDF, XML, XAdES (BES and T), ODF, OOXML, MRTD (ePassport
-    document signer), Master List (ePassport CSCA ML signer), Portable Executables (Authenticode)</li>
-<li>General purpose signers: CMS</li>
+<li>TimeStamp Authority: RFC 3161 and MS authenticode compliant</li>
+<li>Signers for different documents: PDF, XML, XAdES (BES and T), ODF, OOXML</li>
+<li>ePassport Document Signer: MRTD Document Signer, Master List (CSCA ML) Signer</li>
+<li>Code Signing: Portable Executables (Authenticode)</li>
+<li>General purpose signers: CMS, Plain signatures</li>
 <li>Validators for documents: XML, XAdES-BES, XAdES-T</li>
 </ul>
 <p>The modules can be used using HTTP or web services interfaces. SignServer
@@ -100,7 +107,7 @@ Different kinds of tokens can be used to perform sign and crypto operations:
 <ul>
 <li>Soft token using JKS or PKCS12 files.</li>
 <li>PKCS#11 HSM tokens, such as the Utimaco CryptoServer, SafeNet ProtectServer
-    and Luna, nCipher nShield or AEP KeyPer.</li>
+    and Luna, Thales nShield or AEP KeyPer.</li>
 </ul>
 </section>
 
@@ -113,6 +120,7 @@ Some of the major new features in version 3.6 are:
     <li>Underlying CESeCore library upgraded</li>
     <li>Separation between community and enterprise editions</li>                    
     <li>New application: SignServer TimeMonitor (enterprise edition)</li>
+    <li>New signers: Authenticode (enterprise edition), Plain signatures, Master List</li>
     <li>Querying of database archive from WS and GUI</li>    
     <li>Support for specifying HSM slot by label</li>
     <li>HSM keep alive service</li>

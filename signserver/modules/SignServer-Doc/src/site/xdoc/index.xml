@@ -28,9 +28,9 @@
 <a href="https://www.primekey.se/service-support/support/?pk_campaign=ssorg&amp;pk_kwd=enterprise_support" target="pk">Enterprise Support</a>
 </div>
 <div class="content first">
-<p><strong>SignServer 3.6.1 is now out!</strong>
+<p><strong>SignServer 3.6.2 is now out!</strong>
         <a href="download.html">Visit the download section to get SignServer.</a><br />
-  <span class="date"> Posted: 2014-10-30</span>
+  <span class="date"> Posted: 2014-11-28</span>
  </p>
     <p>
         <strong>SignServer Enterprise 3.6.3 is now out!</strong><br/>
@@ -48,13 +48,19 @@
     </div>
 
     <p><a href="features.html">See complete list of features</a><br />
-    <span class="date"> Posted: 2014-10-30</span>
+    <span class="date"> Posted: 2014-10-24</span>
     </p>
 
     <p><strong>Stronger Safety with PrimeKey's Appliance!</strong>
   By integrating secure hardware technology with the flexibility, reliability and feature set of SignServer Enterprise (or EJBCA Enterprise), 
   the turnkey Appliance features an easy to install PKI-in-a-box, offering predictable costs and increased quality to your PKI solution. Check out the simpler, yet safer, <a href="https://www.primekey.se/technologies/products-overview/pki-appliance/?pk_campaign=ssorg&amp;pk_kwd=primekey-pki-appliance" target="pk">PrimeKey PKI Appliance</a>.
-  <br /><span class="date"> Posted: 2014-09-30</span>
+        <ul>
+            <li>Code Signing Appliance (Authenticode, CMS, Plain)</li>
+            <li>Document Signing Appliance (PDF, XML, MRTD, ...)</li>
+            <li>Time Stamping Appliance</li>
+            <li>and more...</li>
+        </ul>
+  <br /><span class="date"> Posted: 2014-10-24</span>
   </p>
 </div>
 </div>
@@ -114,6 +120,7 @@ Some of the major new features in version 3.6 are:
     <li>Underlying CESeCore library upgraded</li>
     <li>Separation between community and enterprise editions</li>                    
     <li>New application: SignServer TimeMonitor (enterprise edition)</li>
+    <li>New signers: Authenticode (enterprise edition), Plain signatures, Master List</li>
     <li>Querying of database archive from WS and GUI</li>    
     <li>Support for specifying HSM slot by label</li>
     <li>HSM keep alive service</li>

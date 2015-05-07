@@ -46,7 +46,7 @@ import org.signserver.protocol.ws.client.SignServerWSClientFactory;
  * @author Markus Kilås
  * @version $Id$
  */
-public class SignDocumentCommand extends AbstractCommand {
+public class SignDocumentCommand extends AbstractCommand implements ConsolePasswordProvider {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(SignDocumentCommand.class);
@@ -221,6 +221,7 @@ public class SignDocumentCommand extends AbstractCommand {
 
     private String username;
     private String password;
+    private boolean promptForPassword;
 
     private String pdfPassword;
 
@@ -335,6 +336,7 @@ public class SignDocumentCommand extends AbstractCommand {
 
             // Prompt for user password if not given
             if (username != null && password == null) {
+                promptForPassword = true;
                 out.print("Password for user '" + username + "': ");
                 out.flush();
                 password = new String(passwordReader.readPassword());
@@ -353,7 +355,8 @@ public class SignDocumentCommand extends AbstractCommand {
     /**
      * @return a ConsolePasswordReader that can be used to read passwords
      */
-    protected ConsolePasswordReader createConsolePasswordReader() {
+    @Override
+    public ConsolePasswordReader createConsolePasswordReader() {
         return new ConsolePasswordReader();
     }
 
@@ -588,7 +591,12 @@ public class SignDocumentCommand extends AbstractCommand {
             
             if (producer != null) {
                 if (ex.getResponseCode() == 401) { // Only abort for authentication failure
-                    producer.tryAgainWithNewPassword(inFile);
+                    if (promptForPassword) {
+                        // If password was not specified at command line, ask again for it
+                        producer.tryAgainWithNewPassword(inFile);
+                    } else {
+                        producer.abort();
+                    }
                 } else {
                     producer.registerFailure();
                 }
@@ -618,7 +626,7 @@ public class SignDocumentCommand extends AbstractCommand {
                     LOG.error("No input files");
                     return 1;
                 }
-                TransferManager producer = new TransferManager(inFiles, username, password, oneFirst);
+                TransferManager producer = new TransferManager(inFiles, username, password, this, out, oneFirst);
                 
                 if (threads == null) {
                     threads = DEFAULT_THREADS;
@@ -676,6 +684,8 @@ public class SignDocumentCommand extends AbstractCommand {
         private final LinkedList<File> files = new LinkedList<File>();
         private final String username;
         private volatile String password;
+        private final ConsolePasswordProvider passwordProvider;
+        private final PrintStream out;
         
         private boolean oneFirst;
         private boolean firstAlreadyServed;
@@ -686,10 +696,12 @@ public class SignDocumentCommand extends AbstractCommand {
         private boolean failed;
         private int success;
         
-        private TransferManager(File[] inFiles, String username, String password, boolean oneFirst) {
+        private TransferManager(File[] inFiles, String username, String password, ConsolePasswordProvider passwordProvider, PrintStream out, boolean oneFirst) {
             files.addAll(Arrays.asList(inFiles));
             this.username = username;
             this.password = password;
+            this.passwordProvider = passwordProvider;
+            this.out = out;
             this.oneFirst = oneFirst;
         }
 
@@ -761,8 +773,16 @@ public class SignDocumentCommand extends AbstractCommand {
                     abort();
                     return;
                 } else {
-                    char[] pass = System.console().readPassword("Enter correct password for user '%s': ", username);
-                    password = new String(pass);
+                    final ConsolePasswordReader passwordReader = passwordProvider.createConsolePasswordReader();
+                    out.print("Enter correct password for user '" + username + "': ");
+                    out.flush();
+                    try {
+                        password = new String(passwordReader.readPassword());
+                    } catch (IOException ex) {
+                        LOG.error("Failed to obtain password from console: " + ex.getLocalizedMessage());
+                        abort();
+                        return;
+                    }
 
                     // We will now only accept one new request until it succeeds
                     oneFirst = true;
@@ -776,7 +796,7 @@ public class SignDocumentCommand extends AbstractCommand {
         }
         
         public String getPassword() {
-            return password; // TODO.......
+            return password;
         }
         
     }

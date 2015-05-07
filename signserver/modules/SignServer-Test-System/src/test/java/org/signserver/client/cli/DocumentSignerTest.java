@@ -481,7 +481,7 @@ public class DocumentSignerTest extends ModulesTestCase {
         final ArrayList<Boolean> called = new ArrayList<Boolean>();
         SignDocumentCommand instance = new SignDocumentCommand() {
             @Override
-            protected ConsolePasswordReader createConsolePasswordReader() {
+            public ConsolePasswordReader createConsolePasswordReader() {
                 return new ConsolePasswordReader() {
                     @Override
                     public char[] readPassword() {
@@ -517,7 +517,7 @@ public class DocumentSignerTest extends ModulesTestCase {
         final ArrayList<Boolean> called = new ArrayList<Boolean>();
         SignDocumentCommand instance = new SignDocumentCommand() {
             @Override
-            protected ConsolePasswordReader createConsolePasswordReader() {
+            public ConsolePasswordReader createConsolePasswordReader() {
                 return new ConsolePasswordReader() {
                     @Override
                     public char[] readPassword() {
@@ -553,7 +553,7 @@ public class DocumentSignerTest extends ModulesTestCase {
         final ArrayList<Boolean> called = new ArrayList<Boolean>();
         SignDocumentCommand instance = new SignDocumentCommand() {
             @Override
-            protected ConsolePasswordReader createConsolePasswordReader() {
+            public ConsolePasswordReader createConsolePasswordReader() {
                 return new ConsolePasswordReader() {
                     @Override
                     public char[] readPassword() {
@@ -568,13 +568,84 @@ public class DocumentSignerTest extends ModulesTestCase {
         // so we will not be checking that signing works, just that the prompt
         // gets called.
         // We use the truststore, any keystore should do it.
+        execute(instance, "signdocument", "-workername", "TestXMLSigner", "-data", "<root/>",
+                            "-keystore", signserverhome + "/p12/truststore.jks");
+        assertEquals("calls to readPassword", 1, called.size());
+    }
+    
+    /**
+     * Tests that when not specifying any keystore password on the command
+     * line the code for prompting for the password is called and if the wrong
+     * password is typed the question is asked again.
+     * @throws Exception 
+     */
+    @Test
+    public void test13promptForKeystorePasswordAgain() throws Exception {
+        LOG.info("test13promptForKeystorePasswordAgain");
+        // Override the password reading
+        final ArrayList<Boolean> calls = new ArrayList<Boolean>();
+        final String[] passwords = new String[] { "incorrect1", "changeit" };
+        SignDocumentCommand instance = new SignDocumentCommand() {
+            @Override
+            public ConsolePasswordReader createConsolePasswordReader() {
+                return new ConsolePasswordReader() {
+                    @Override
+                    public char[] readPassword() {
+                        final String password = passwords[calls.size()];
+                        calls.add(true);
+                        return password.toCharArray();
+                    }
+                };
+            }
+        };
+        
+        // The test might not have been setup to work with client cert auth
+        // so we will not be checking that signing works, just that the prompt
+        // gets called.
+        // We use the truststore, any keystore should do it.
+        execute(instance, "signdocument", "-workername", "TestXMLSigner", "-data", "<root/>",
+                            "-keystore", signserverhome + "/p12/truststore.jks");
+        
+        assertEquals("calls to readPassword", 2, calls.size());
+    }
+    
+    /**
+     * Tests that when not specifying any keystore password on the command
+     * line the code for prompting for the password is called and if the wrong
+     * password is typed the question is asked again.
+     * @throws Exception 
+     */
+    @Test
+    public void test13promptForKeystorePassword3Times() throws Exception {
+        LOG.info("test13promptForKeystorePasswordAgain");
+        // Override the password reading
+        final ArrayList<Boolean> calls = new ArrayList<Boolean>();
+        final String[] passwords = new String[] { "incorrect1", "incorrect2", "incorrect3", "incorrect4", "incorrect5" };
+        SignDocumentCommand instance = new SignDocumentCommand() {
+            @Override
+            public ConsolePasswordReader createConsolePasswordReader() {
+                return new ConsolePasswordReader() {
+                    @Override
+                    public char[] readPassword() {
+                        final String password = passwords[calls.size()];
+                        calls.add(true);
+                        return password.toCharArray();
+                    }
+                };
+            }
+        };
+        
+        // The test might not have been setup to work with client cert auth
+        // so we will not be checking that signing works, just that the prompt
+        // gets called.
+        // We use the truststore, any keystore should do it.
         try {
             execute(instance, "signdocument", "-workername", "TestXMLSigner", "-data", "<root/>",
                             "-keystore", signserverhome + "/p12/truststore.jks");
-        } catch (RuntimeException expected) { // XXX: The method throwing this RunTimeException should be refactored
-            // OK as the keystore does not exist
+        } catch (IllegalCommandArgumentsException expected) {
+            assertTrue("message: " + expected, expected.toString().contains("password was incorrect"));
+            assertEquals("calls to readPassword", 3, calls.size());
         }
-        assertEquals("calls to readPassword", 1, called.size());
     }
     
     /**
@@ -588,7 +659,7 @@ public class DocumentSignerTest extends ModulesTestCase {
         final ArrayList<Boolean> called = new ArrayList<Boolean>();
         SignDocumentCommand instance = new SignDocumentCommand() {
             @Override
-            protected ConsolePasswordReader createConsolePasswordReader() {
+            public ConsolePasswordReader createConsolePasswordReader() {
                 return new ConsolePasswordReader() {
                     @Override
                     public char[] readPassword() {

@@ -56,8 +56,10 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
     /** WORKERID used in this test case as defined in 
      * junittest-part-config.properties for XMLSigner. */
     private static final int WORKERID = 5676;
+    
+    private static final int WORKERID_AUTH = 8000;
 
-    private static final int[] WORKERS = new int[] { WORKERID };
+    private static final int[] WORKERS = new int[] { WORKERID, WORKERID_AUTH };
 
     private static String signserverhome;
     
@@ -88,6 +90,12 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
         // Worker 1
         setProperties(new File(signserverhome, "res/test/test-xmlsigner-configuration.properties"));
         workerSession.reloadConfiguration(WORKERID);
+        
+        // Worker with password auth
+        addSigner("org.signserver.module.xmlsigner.XMLSigner", WORKERID_AUTH, "TestXMLSignerAuth"); // addDummySigner(WORKERID_AUTH, "TestXMLSignerAuth", true);
+        getWorkerSession().setWorkerProperty(WORKERID_AUTH, "AUTHTYPE", "org.signserver.server.UsernamePasswordAuthorizer");
+        getWorkerSession().setWorkerProperty(WORKERID_AUTH, "USER.USER1", "foo123");
+        getWorkerSession().reloadConfiguration(WORKERID_AUTH);
     }
 
     // TODO: Add tests for different illegal combinations of input parameters
@@ -136,8 +144,434 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
             fail(ex.getMessage());
         }
     }
-
     
+    /**
+     * Tests the simple case of siging 2 documents from the input directory.
+     * <pre>
+     * signdocument -workername XMLSigner -indir /tmp/input -outdir /tmp/output
+     * </pre>
+     * @throws Exception
+     */
+    @Test
+    public void test02sign2DocumentsFromInDir() throws Exception {
+        inDir.create();
+        File file1 = inDir.newFile("doc1.xml");
+        FileUtils.writeStringToFile(file1, "<document1/>");
+        File file2 = inDir.newFile("doc2.xml");
+        FileUtils.writeStringToFile(file2, "<document2/>");
+        outDir.create();
+        
+        try {
+
+            String res =
+                    new String(execute("signdocument", 
+                            "-workername", "TestXMLSigner",
+                            "-indir", inDir.getRoot().getAbsolutePath(),
+                            "-outdir", outDir.getRoot().getAbsolutePath()));
+            assertFalse("should not contain the document: "
+                    + res, res.contains("<document"));
+            Set<String> expectedOutFiles = new HashSet<String>(Arrays.asList("doc2.xml", "doc1.xml"));
+            
+            assertEquals("outfiles", expectedOutFiles, new HashSet<String>(Arrays.asList(outDir.getRoot().list())));
+            
+            String file1Content = FileUtils.readFileToString(new File(outDir.getRoot(), file1.getName()));
+            assertTrue("contains signature tag: "
+                    + file1Content, file1Content.contains("<document1><Signature"));
+            
+            String file2Content = FileUtils.readFileToString(new File(outDir.getRoot(), file2.getName()));
+            assertTrue("contains signature tag: "
+                    + file2Content, file2Content.contains("<document2><Signature"));
+            
+        } catch (IllegalCommandArgumentsException ex) {
+            LOG.error("Execution failed", ex);
+            fail(ex.getMessage());
+        }
+    }
+    
+    private ArrayList<File> createInputFiles(int count) throws IOException {
+        ArrayList<File> result = new ArrayList<File>();
+        for (int i = 0; i < count; i++) {
+            File f = inDir.newFile("file" + i + ".xml");
+            FileUtils.writeStringToFile(f, "<doc" + i + "/>");
+            result.add(f);
+        }
+        return result;
+    }
+    
+    private Set<String> getExpectedNames(ArrayList<File> files) {
+        final HashSet<String> results = new HashSet<String>();
+        for (File file : files) {
+            results.add(file.getName());
+        }
+        return results;
+    }
+    
+    private void assertOutfilesSignatures(ArrayList<File> files) throws IOException {
+        assertEquals("outfiles", getExpectedNames(files), new HashSet<String>(Arrays.asList(outDir.getRoot().list())));
+        
+        for (int i = 0; i < files.size(); i++) {
+            final File file = files.get(i);
+            String content = FileUtils.readFileToString(new File(outDir.getRoot(), file.getName()));
+            assertTrue(file.getName() + " contains signature tag: "
+                + content, content.contains("<doc" + i + "><Signature"));
+        }
+    }
+    
+    /**
+     * Tests signing 13 documents from the input directory using 3 threads.
+     * <pre>
+     * signdocument -workername XMLSigner -indir /tmp/input -outdir /tmp/output
+     * </pre>
+     * @throws Exception
+     */
+    @Test
+    public void test02sign13DocumentsFromInDirWith3Threads() throws Exception {
+        // Create 13 input files
+        inDir.create();
+        outDir.create();
+        final ArrayList<File> files = createInputFiles(13);
+
+        try {
+            String res =
+                    new String(execute("signdocument", 
+                            "-workername", "TestXMLSigner",
+                            "-indir", inDir.getRoot().getAbsolutePath(),
+                            "-outdir", outDir.getRoot().getAbsolutePath(),
+                            "-threads", "3"));
+            assertFalse("should not contain any document: "
+                    + res, res.contains("<doc"));
+            
+            assertOutfilesSignatures(files);
+            
+        } catch (IllegalCommandArgumentsException ex) {
+            LOG.error("Execution failed", ex);
+            fail(ex.getMessage());
+        }
+    }
+
+    /**
+     * Test for asking for user password with single thread.
+     * @throws Exception 
+     */
+    @Test
+    public void test03promptForUserPassword1Thread() throws Exception {
+        // Create a few input files
+        inDir.create();
+        outDir.create();
+        final ArrayList<File> files = createInputFiles(5);
+        
+        // Override the password reading
+        final ArrayList<Boolean> called = new ArrayList<Boolean>();
+        SignDocumentCommand instance = new SignDocumentCommand() {
+            @Override
+            public ConsolePasswordReader createConsolePasswordReader() {
+                return new ConsolePasswordReader() {
+                    @Override
+                    public char[] readPassword() {
+                        called.add(true);
+                        return "foo123".toCharArray();
+                    }
+                };
+            }
+        };
+        
+        // Sign anything and check that the readPassword was called once
+        try {
+            String res =
+                    new String(execute(instance, "signdocument",
+                            "-workername", "TestXMLSignerAuth", 
+                            "-indir", inDir.getRoot().getAbsolutePath(),
+                            "-outdir", outDir.getRoot().getAbsolutePath(),
+                            "-username", "user1",
+                            "-threads", "1"));
+            assertEquals("calls to readPassword", 1, called.size());
+            
+            assertOutfilesSignatures(files);
+        } catch (IllegalCommandArgumentsException ex) {
+            LOG.error("Execution failed", ex);
+            fail(ex.getMessage());
+        }
+    }
+    
+    /**
+     * Test for asking for user password with multiple threads.
+     * @throws Exception 
+     */
+    @Test
+    public void test03promptForUserPassword3Thread() throws Exception {
+        // Create a few input files
+        inDir.create();
+        outDir.create();
+        final ArrayList<File> files = createInputFiles(5);
+        
+        // Override the password reading
+        final ArrayList<Boolean> called = new ArrayList<Boolean>();
+        SignDocumentCommand instance = new SignDocumentCommand() {
+            @Override
+            public ConsolePasswordReader createConsolePasswordReader() {
+                return new ConsolePasswordReader() {
+                    @Override
+                    public char[] readPassword() {
+                        called.add(true);
+                        return "foo123".toCharArray();
+                    }
+                };
+            }
+        };
+        
+        // Sign anything and check that the readPassword was called once
+        try {
+            String res =
+                    new String(execute(instance, "signdocument",
+                            "-workername", "TestXMLSignerAuth", 
+                            "-indir", inDir.getRoot().getAbsolutePath(),
+                            "-outdir", outDir.getRoot().getAbsolutePath(),
+                            "-username", "user1",
+                            "-threads", "3"));
+            assertEquals("calls to readPassword", 1, called.size());
+            
+            assertOutfilesSignatures(files);
+        } catch (IllegalCommandArgumentsException ex) {
+            LOG.error("Execution failed", ex);
+            fail(ex.getMessage());
+        }
+    }
+    
+    /**
+     * Test for re-asking for user password with single thread + check that it 
+     * is only asked 1 more time.
+     * @throws Exception 
+     */
+    @Test
+    public void test04promptForUserPasswordAgain1Thread() throws Exception {
+        // Create a few input files
+        inDir.create();
+        outDir.create();
+        final ArrayList<File> files = createInputFiles(5);
+        
+        // Override the password reading
+        final String[] passwords = new String[] { "incorrect1", "foo123" };
+        final ArrayList<Boolean> calls = new ArrayList<Boolean>();
+        SignDocumentCommand instance = new SignDocumentCommand() {
+            @Override
+            public ConsolePasswordReader createConsolePasswordReader() {
+                return new ConsolePasswordReader() {
+                    @Override
+                    public char[] readPassword() {
+                        synchronized (calls) {
+                            final String password = passwords[calls.size()];
+                            calls.add(true);
+                            return password.toCharArray();
+                        }
+                    }
+                };
+            }
+        };
+        
+        // Sign anything and check that the readPassword was called 2 times
+        try {
+            String res =
+                    new String(execute(instance, "signdocument",
+                            "-workername", "TestXMLSignerAuth", 
+                            "-indir", inDir.getRoot().getAbsolutePath(),
+                            "-outdir", outDir.getRoot().getAbsolutePath(),
+                            "-username", "user1",
+                            "-threads", "1"));
+            assertEquals("calls to readPassword", 2, calls.size());
+            
+            assertOutfilesSignatures(files);
+        } catch (IllegalCommandArgumentsException ex) {
+            LOG.error("Execution failed", ex);
+            fail(ex.getMessage());
+        }
+    }
+    
+    /**
+     * Test that one password is specified in command line we do not re-ask.
+     * @throws Exception 
+     */
+    @Test
+    public void test04promptForUserPasswordNotIfSpecified() throws Exception {
+        // Create a few input files
+        inDir.create();
+        outDir.create();
+        final ArrayList<File> files = createInputFiles(5);
+        
+        // Override the password reading
+        final ArrayList<Boolean> calls = new ArrayList<Boolean>();
+        SignDocumentCommand instance = new SignDocumentCommand() {
+            @Override
+            public ConsolePasswordReader createConsolePasswordReader() {
+                return new ConsolePasswordReader() {
+                    @Override
+                    public char[] readPassword() {
+                        synchronized (calls) {
+                            calls.add(true);
+                            return "anything".toCharArray();
+                        }
+                    }
+                };
+            }
+        };
+        
+        // Sign anything and check that the readPassword was not called
+        try {
+            String res =
+                    new String(execute(instance, "signdocument",
+                            "-workername", "TestXMLSignerAuth", 
+                            "-indir", inDir.getRoot().getAbsolutePath(),
+                            "-outdir", outDir.getRoot().getAbsolutePath(),
+                            "-username", "user1",
+                            "-password", "incorrect123",
+                            "-threads", "1"));
+            
+        } catch (CommandFailureException expexted) {
+            assertEquals("calls to readPassword", 0, calls.size());
+        }
+    }
+    
+    /**
+     * Test for re-asking for user password with multiple threads + check that
+     * it is only asked 1 more time.
+     * @throws Exception 
+     */
+    @Test
+    public void test04promptForUserPasswordAgain3Threads() throws Exception {
+        // Create a few input files
+        inDir.create();
+        outDir.create();
+        final ArrayList<File> files = createInputFiles(5);
+        
+        // Override the password reading
+        final String[] passwords = new String[] { "incorrect1", "foo123" };
+        final ArrayList<Boolean> calls = new ArrayList<Boolean>();
+        SignDocumentCommand instance = new SignDocumentCommand() {
+            @Override
+            public ConsolePasswordReader createConsolePasswordReader() {
+                return new ConsolePasswordReader() {
+                    @Override
+                    public char[] readPassword() {
+                        synchronized (calls) {
+                            final String password = passwords[calls.size()];
+                            calls.add(true);
+                            return password.toCharArray();
+                        }
+                    }
+                };
+            }
+        };
+        
+        // Sign anything and check that the readPassword was called 2 times
+        try {
+            execute(instance, "signdocument",
+                    "-workername", "TestXMLSignerAuth", 
+                    "-indir", inDir.getRoot().getAbsolutePath(),
+                    "-outdir", outDir.getRoot().getAbsolutePath(),
+                    "-username", "user1",
+                    "-threads", "3");
+            assertEquals("calls to readPassword", 2, calls.size());
+            
+            assertOutfilesSignatures(files);
+        } catch (IllegalCommandArgumentsException ex) {
+            LOG.error("Execution failed", ex);
+            fail(ex.getMessage());
+        }
+    }
+    
+    /**
+     * Test for re-asking for user password with multiple threads + check that
+     * it is only asked 2 more times.
+     * @throws Exception 
+     */
+    @Test
+    public void test04promptForUserPasswordAgain2_3Threads() throws Exception {
+        // Create a few input files
+        inDir.create();
+        outDir.create();
+        final ArrayList<File> files = createInputFiles(5);
+        
+        // Override the password reading
+        final String[] passwords = new String[] { "incorrect1", "incorrect2", "foo123" };
+        final ArrayList<Boolean> calls = new ArrayList<Boolean>();
+        SignDocumentCommand instance = new SignDocumentCommand() {
+            @Override
+            public ConsolePasswordReader createConsolePasswordReader() {
+                return new ConsolePasswordReader() {
+                    @Override
+                    public char[] readPassword() {
+                        synchronized (calls) {
+                            final String password = passwords[calls.size()];
+                            calls.add(true);
+                            return password.toCharArray();
+                        }
+                    }
+                };
+            }
+        };
+        
+        // Sign anything and check that the readPassword was called 2 times
+        try {
+            execute(instance, "signdocument",
+                    "-workername", "TestXMLSignerAuth", 
+                    "-indir", inDir.getRoot().getAbsolutePath(),
+                    "-outdir", outDir.getRoot().getAbsolutePath(),
+                    "-username", "user1",
+                    "-threads", "3");
+            assertEquals("calls to readPassword", 3, calls.size());
+            
+            assertOutfilesSignatures(files);
+        } catch (IllegalCommandArgumentsException ex) {
+            LOG.error("Execution failed", ex);
+            fail(ex.getMessage());
+        }
+    }
+
+    /**
+     * Test for re-asking for user password with multiple threads + check that
+     * it stops asking for password.
+     * @throws Exception 
+     */
+    @Test
+    public void test04promptForUserPasswordAgainStops_3Threads() throws Exception {
+        // Create a few input files
+        inDir.create();
+        outDir.create();
+        final ArrayList<File> files = createInputFiles(5);
+        
+        // Override the password reading
+        final String[] passwords = new String[] { "incorrect1", "incorrect2", "incorrect3", "incorrect4", "incorrect5" };
+        final ArrayList<Boolean> calls = new ArrayList<Boolean>();
+        SignDocumentCommand instance = new SignDocumentCommand() {
+            @Override
+            public ConsolePasswordReader createConsolePasswordReader() {
+                return new ConsolePasswordReader() {
+                    @Override
+                    public char[] readPassword() {
+                        synchronized (calls) {
+                            final String password = passwords[calls.size()];
+                            calls.add(true);
+                            return password.toCharArray();
+                        }
+                    }
+                };
+            }
+        };
+        
+        // Sign anything and check that the readPassword was called 2 times
+        try {
+            execute(instance, "signdocument",
+                    "-workername", "TestXMLSignerAuth", 
+                    "-indir", inDir.getRoot().getAbsolutePath(),
+                    "-outdir", outDir.getRoot().getAbsolutePath(),
+                    "-username", "user1",
+                    "-threads", "3");
+            
+            assertOutfilesSignatures(files);
+        } catch (CommandFailureException expected) {
+            assertEquals("calls to readPassword", 4, calls.size());
+        }
+    }
+
     @Test
     public void test99TearDownDatabase() throws Exception {
         for (int workerId : WORKERS) {

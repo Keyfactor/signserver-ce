@@ -95,6 +95,9 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
     
     /** Option ONEFIRST. */
     public static final String ONEFIRST = "onefirst";
+    
+    /** Option STARTALL. */
+    public static final String STARTALL = "startall";
 
     /** Option PORT. */
     public static final String PORT = "port";
@@ -164,15 +167,17 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
         OPTIONS.addOption(METADATA, true,
                 TEXTS.getString("METADATA_DESCRIPTION"));
         OPTIONS.addOption(INDIR, true,
-                "TODO");
+                TEXTS.getString("INDIR_DESCRIPTION"));
         OPTIONS.addOption(OUTDIR, true,
-                "TODO");
+                TEXTS.getString("OUTDIR_DESCRIPTION"));
         OPTIONS.addOption(THREADS, true,
-                "TODO");
+                TEXTS.getString("THREADS_DESCRIPTION"));
         OPTIONS.addOption(REMOVEFROMINDIR, false,
-                "TODO");
+                TEXTS.getString("REMOVEFROMINDIR_DESCRIPTION"));
         OPTIONS.addOption(ONEFIRST, false,
-                "TODO");
+                TEXTS.getString("ONEFIRST_DESCRIPTION"));
+        OPTIONS.addOption(STARTALL, false,
+                TEXTS.getString("STARTALL_DESCRIPTION"));
         for (Option option : KeyStoreOptions.getKeyStoreOptions()) {
             OPTIONS.addOption(option);
         }
@@ -215,6 +220,9 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
     
     /** If one request should be set first before starting the remaining threads. */
     private boolean oneFirst;
+    
+    /** If all should be started directly (ie not oneFirst). */
+    private boolean startAll;
 
     /** Protocol to use for contacting SignServer. */
     private Protocol protocol = Protocol.HTTP;
@@ -245,7 +253,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             .append("c) ").append(COMMAND).append(" -workerid 2 -data \"<root/>\" -truststore truststore.jks -truststorepwd changeit").append(NL)
             .append("d) ").append(COMMAND).append(" -workerid 2 -data \"<root/>\" -keystore superadmin.jks -keystorepwd foo123").append(NL)
             .append("e) ").append(COMMAND).append(" -workerid 2 -data \"<root/>\" -metadata param1=value1 -metadata param2=value2").append(NL)
-            .append("f) ").append(COMMAND).append(" -workerid 3 -indir ./input/ -removefromindir -outdir ./output/ -threads 5 -onefirst").append(NL);
+            .append("f) ").append(COMMAND).append(" -workerid 3 -indir ./input/ -removefromindir -outdir ./output/ -threads 5").append(NL);
 
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         final HelpFormatter formatter = new HelpFormatter();
@@ -300,6 +308,9 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
         }
         if (line.hasOption(ONEFIRST)) {
             oneFirst = true;
+        }
+        if (line.hasOption(STARTALL)) {
+            startAll = true;
         }
         if (line.hasOption(PROTOCOL)) {
             protocol = Protocol.valueOf(line.getOptionValue(
@@ -394,6 +405,19 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
 
         if (threads != null && threads < 1) {
             throw new IllegalCommandArgumentsException("Number of threads must be > 0");
+        }
+        
+        if (startAll && oneFirst) {
+            throw new IllegalCommandArgumentsException("Can not specify both -onefirst and -startall");
+        }
+        
+        if ((startAll || oneFirst) && (inDir == null)) {
+            throw new IllegalCommandArgumentsException("The options -onefirst and -startall only supported in batch mode. Specify -indir.");
+        }
+        
+        // Default to use oneFirst if username is specified and not startall
+        if(!startAll && username != null) {
+            oneFirst = true;
         }
 
         keyStoreOptions.validateOptions();
@@ -555,23 +579,23 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                 producer.registerSuccess(); // Login must have worked
             }
         } catch (FileNotFoundException ex) {
-            LOG.error(MessageFormat.format(TEXTS.getString("FILE_NOT_FOUND:"),
-                    ex.getLocalizedMessage())); // TODO
+            LOG.error("Failure for " + (inFile == null ? "" : inFile.getName()) + ": " + MessageFormat.format(TEXTS.getString("FILE_NOT_FOUND:"),
+                    ex.getLocalizedMessage()));
             if (producer != null) {
                 producer.registerFailure();
             }
         } catch (IllegalRequestException ex) {
-            LOG.error(ex.getLocalizedMessage()); // TOOD
+            LOG.error("Failure for " + (inFile == null ? "" : inFile.getName()) + ": " + ex.getMessage());
             if (producer != null) {
                 producer.registerFailure();
             }
         } catch (CryptoTokenOfflineException ex) {
-            LOG.error(ex.getLocalizedMessage()); // TODO
+            LOG.error("Failure for " + (inFile == null ? "" : inFile.getName()) + ": " + ex.getMessage());
             if (producer != null) {
                 producer.registerFailure();
             }
         } catch (SignServerException ex) {
-            LOG.error(ex.getLocalizedMessage()); // TODO
+            LOG.error("Failure for " + (inFile == null ? "" : inFile.getName()) + ": " + ex.getMessage());
             if (producer != null) {
                 producer.registerFailure();
             }

@@ -512,7 +512,7 @@ public class SignDocumentCommand extends AbstractCommand {
             OutputStream out = null;
             try {
                 if (outFile == null) {
-                    out = this.out;
+                    out = System.out;
                 } else {
                     out = new FileOutputStream(outFile);
                 }

@@ -20,9 +20,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
@@ -703,128 +701,9 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
         }
     }
     
-    private static class TransferManager {
-
-        private final LinkedList<File> files = new LinkedList<File>();
-        private final String username;
-        private volatile String password;
-        private final ConsolePasswordProvider passwordProvider;
-        private final PrintStream out;
-        
-        private boolean oneFirst;
-        private boolean firstAlreadyServed;
-        private File first;
-        private int retryCount;
-        
-        private boolean aborted;
-        private boolean failed;
-        private int success;
-        
-        private TransferManager(File[] inFiles, String username, String password, ConsolePasswordProvider passwordProvider, PrintStream out, boolean oneFirst) {
-            files.addAll(Arrays.asList(inFiles));
-            this.username = username;
-            this.password = password;
-            this.passwordProvider = passwordProvider;
-            this.out = out;
-            this.oneFirst = oneFirst;
-        }
-
-        public synchronized File nextFile() {
-            if (aborted) {
-                return null;
-            }
-            
-            if (oneFirst && firstAlreadyServed) {
-                while (oneFirst && !aborted) {
-                    try {
-                        wait();
-                    } catch (InterruptedException ignored) {}
-                }
-                if (aborted) {
-                    return null;
-                }
-            } else if (oneFirst) {
-                firstAlreadyServed = true;
-                first = files.isEmpty() ? null : files.remove();
-                return first;
-            }
-            
-            return files.isEmpty() ? null : files.remove();
-        }
-        
-        public synchronized void abort() {
-            aborted = true;
-            notifyAll();
-        }
-        
-        public synchronized boolean isAborted() {
-            return aborted;
-        }
-        
-        public synchronized void registerFailure() {
-            failed = true;
-            if (oneFirst) { // If the first one did not succeed in onefirst mode we will abort
-                abort();
-            }
-        }
-
-        public synchronized boolean hasFailures() {
-            return failed;
-        }
-        
-        public synchronized void registerSuccess() {
-            success++;
-            if (oneFirst && firstAlreadyServed) {
-                oneFirst = false;
-                notifyAll();
-            }
-        }
-        
-        private boolean hasSuccess() {
-            return success > 0;
-        }
-
-        private synchronized void tryAgainWithNewPassword(File inFile) {
-            // Note more than one thread might be standing in line for this method
-            if (aborted) {
-                return;
-            }
-            
-            // If the password has not worked before, ask for a new password unless we are already waiting for the oneFirst
-            // Or if this is the next attempt for the same file that we just asked password for
-            if ((!hasSuccess() && !oneFirst) || (oneFirst && inFile.equals(first))) {
-                if (++retryCount > 3) {
-                    abort();
-                    return;
-                } else {
-                    final ConsolePasswordReader passwordReader = passwordProvider.createConsolePasswordReader();
-                    out.print("Enter correct password for user '" + username + "': ");
-                    out.flush();
-                    try {
-                        password = new String(passwordReader.readPassword());
-                    } catch (IOException ex) {
-                        LOG.error("Failed to obtain password from console: " + ex.getLocalizedMessage());
-                        abort();
-                        return;
-                    }
-
-                    // We will now only accept one new request until it succeeds
-                    oneFirst = true;
-                    firstAlreadyServed = false;
-                }
-            }
-            
-            // Put back the file to be tested again
-            files.addFirst(inFile);
-            notifyAll();
-        }
-        
-        public String getPassword() {
-            return password;
-        }
-        
-    }
-    
+    /**
+     * Thread for running the upload/download of the data.
+     */
     private class TransferThread extends Thread {
         private final int id;
         private final TransferManager producer;

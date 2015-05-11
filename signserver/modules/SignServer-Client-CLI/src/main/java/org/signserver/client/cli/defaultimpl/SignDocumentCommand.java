@@ -20,9 +20,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
@@ -77,10 +75,10 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
 
     /** Option INFILE. */
     public static final String INFILE = "infile";
-    
+
     /** Option OUTFILE. */
     public static final String OUTFILE = "outfile";
-    
+
     /** Option INDIR. */
     public static final String INDIR = "indir";
 
@@ -205,7 +203,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
 
     /** File to read the signed data to. */
     private File outFile;
-    
+
     /** Directory to read files from. */
     private File inDir;
     
@@ -233,7 +231,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
 
     private String pdfPassword;
 
-    private KeyStoreOptions keyStoreOptions = new KeyStoreOptions();
+    private final KeyStoreOptions keyStoreOptions = new KeyStoreOptions();
 
     /** Meta data parameters passed in */
     private Map<String, String> metadata;
@@ -380,7 +378,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                     "Missing -workername or -workerid");
         } else if (data == null && inFile == null && inDir == null && outDir == null) {
             throw new IllegalCommandArgumentsException("Missing -data, -infile or -indir");
-        } 
+        }
         
         if (inDir != null && outDir == null) {
             throw new IllegalCommandArgumentsException("Missing -outdir");
@@ -502,8 +500,11 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
 
     /**
      * Execute the signing operation.
+     * @param manager for managing the threads
+     * @param inFile directory
+     * @param outFile directory
      */
-    protected void run1(TransferManager producer, final File inFile, final File outFile) {
+    protected void runBatch(TransferManager manager, final File inFile, final File outFile) {
         FileInputStream fin = null;
         try {
             final byte[] bytes;
@@ -517,7 +518,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                 bytes = new byte[(int) inFile.length()];
                 fin.read(bytes);
             }
-            run(producer, requestContext, inFile, bytes, outFile);
+            runFile(manager, requestContext, inFile, bytes, outFile);
         } catch (FileNotFoundException ex) {
             LOG.error(MessageFormat.format(TEXTS.getString("FILE_NOT_FOUND:"),
                     ex.getLocalizedMessage()));
@@ -534,22 +535,31 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
         }
     }
 
-    private void run(TransferManager producer, Map<String, Object> requestContext, final File inFile, final byte[] bytes, final File outFile) {  // TODO: merge with run1 ?, inFile here is only used when removing the file
+    /**
+     * Runs the signing operation for one file.
+     *
+     * @param manager for the threads
+     * @param requestContext for the request
+     * @param inFile directory
+     * @param bytes to sign
+     * @param outFile directory
+     */
+    private void runFile(TransferManager manager, Map<String, Object> requestContext, final File inFile, final byte[] bytes, final File outFile) {  // TODO: merge with runBatch ?, inFile here is only used when removing the file
         try {
-            OutputStream out = null;
+            OutputStream outStream = null;
             try {
                 if (outFile == null) {
-                    out = System.out;
+                    outStream = System.out;
                 } else {
-                    out = new FileOutputStream(outFile);
+                    outStream = new FileOutputStream(outFile);
                 }
-                final DocumentSigner signer = createSigner(producer == null ? password : producer.getPassword());
+                final DocumentSigner signer = createSigner(manager == null ? password : manager.getPassword());
                 
                 // Take start time
                 final long startTime = System.nanoTime();
         
                 // Get the data signed
-                signer.sign(bytes, out, requestContext);
+                signer.sign(bytes, outStream, requestContext);
                 
                 // Take stop time
                 final long estimatedTime = System.nanoTime() - startTime;
@@ -560,75 +570,75 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                         + TimeUnit.NANOSECONDS.toMillis(estimatedTime) + " ms.");
                 }
             } finally {
-                if (out != null && out != System.out) {
-                    out.close();
+                if (outStream != null && outStream != System.out) {
+                    outStream.close();
                 }
             }
-            
+
             if (removeFromIndir && inFile != null && inFile.exists()) {
                 if (inFile.delete()) {
                     LOG.info("Removed " + inFile);
                 } else {
                     LOG.error("Could not remove " + inFile);
-                    if (producer != null) {
-                        producer.registerFailure();
+                    if (manager != null) {
+                        manager.registerFailure();
                     }
                 }
             }
-            if (producer != null) {
-                producer.registerSuccess(); // Login must have worked
+            if (manager != null) {
+                manager.registerSuccess(); // Login must have worked
             }
         } catch (FileNotFoundException ex) {
             LOG.error("Failure for " + (inFile == null ? "" : inFile.getName()) + ": " + MessageFormat.format(TEXTS.getString("FILE_NOT_FOUND:"),
                     ex.getLocalizedMessage()));
-            if (producer != null) {
-                producer.registerFailure();
+            if (manager != null) {
+                manager.registerFailure();
             }
         } catch (IllegalRequestException ex) {
             LOG.error("Failure for " + (inFile == null ? "" : inFile.getName()) + ": " + ex.getMessage());
-            if (producer != null) {
-                producer.registerFailure();
+            if (manager != null) {
+                manager.registerFailure();
             }
         } catch (CryptoTokenOfflineException ex) {
             LOG.error("Failure for " + (inFile == null ? "" : inFile.getName()) + ": " + ex.getMessage());
-            if (producer != null) {
-                producer.registerFailure();
+            if (manager != null) {
+                manager.registerFailure();
             }
         } catch (SignServerException ex) {
             LOG.error("Failure for " + (inFile == null ? "" : inFile.getName()) + ": " + ex.getMessage());
-            if (producer != null) {
-                producer.registerFailure();
+            if (manager != null) {
+                manager.registerFailure();
             }
         } catch (SOAPFaultException ex) {
             if (ex.getCause() instanceof AuthorizationRequiredException) {
                 final AuthorizationRequiredException authEx =
                         (AuthorizationRequiredException) ex.getCause();
-                LOG.error("Authorization required: " + authEx.getMessage()); // TODO
+                LOG.error("Authorization failure for " + (inFile == null ? "" : inFile.getName()) + ": " + authEx.getMessage());
             } else if (ex.getCause() instanceof AccessDeniedException) {
                 final AccessDeniedException authEx =
                         (AccessDeniedException) ex.getCause();
-                LOG.error("Access denied: " + authEx.getMessage()); // TODO
+                LOG.error("Access defined failure for " + (inFile == null ? "" : inFile.getName()) + ": " + authEx.getMessage());
             }
             LOG.error(ex);
         } catch (HTTPException ex) {
             LOG.error("Failure for " + (inFile == null ? "" : inFile.getName()) + ": HTTP Error " + ex.getResponseCode() + ": " + ex.getResponseMessage());
             
-            if (producer != null) {
+            if (manager != null) {
                 if (ex.getResponseCode() == 401) { // Only abort for authentication failure
                     if (promptForPassword) {
                         // If password was not specified at command line, ask again for it
-                        producer.tryAgainWithNewPassword(inFile);
+                        manager.tryAgainWithNewPassword(inFile);
                     } else {
-                        producer.abort();
+                        manager.abort();
                     }
                 } else {
-                    producer.registerFailure();
+                    manager.registerFailure();
                 }
             }
         } catch (IOException ex) {
             LOG.error("Failure for " + (inFile == null ? "" : inFile.getName()) + ": " + ex.getMessage());
-            if (producer != null) {
-                producer.registerFailure();
+            if (manager != null) {
+                manager.registerFailure();
             }
         }
     }
@@ -642,7 +652,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
 
             if (inFile != null) {
                 LOG.debug("Will request for single file " + inFile);
-                run1(null, inFile, outFile);
+                runBatch(null, inFile, outFile);
             } else if(inDir != null) {
                 LOG.debug("Will request for each file in directory " + inDir);
                 File[] inFiles = inDir.listFiles();
@@ -694,7 +704,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                 
             } else {
                 LOG.debug("Will requst for the specified data");
-                run1(null, null, outFile);
+                runBatch(null, null, outFile);
             }
                 
             return 0;
@@ -702,7 +712,10 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             throw new IllegalCommandArgumentsException(ex.getMessage());
         }
     }
-
+    
+    /**
+     * Thread for running the upload/download of the data.
+     */
     private class TransferThread extends Thread {
         private final int id;
         private final TransferManager producer;
@@ -715,14 +728,19 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
         
         @Override
         public void run() {
-            LOG.trace("Starting " + getName() + "...");
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Starting " + getName() + "...");
+            }
             File file;
             while ((file = producer.nextFile()) != null) {
-                LOG.info("Sending " + file + "...");
-
-                run1(producer, file, new File(outDir, file.getName())); // TODO: error handling
+                if (LOG.isInfoEnabled()) {
+                    LOG.info("Sending " + file + "...");
+                }
+                runBatch(producer, file, new File(outDir, file.getName()));
             }
-            LOG.trace(id + ": No more work.");
+            if (LOG.isTraceEnabled()) {
+                LOG.trace(id + ": No more work.");
+            }
         }
     }
     

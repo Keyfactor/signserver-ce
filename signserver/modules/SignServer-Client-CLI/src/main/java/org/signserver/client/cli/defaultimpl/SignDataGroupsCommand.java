@@ -169,7 +169,7 @@ public class SignDataGroupsCommand extends AbstractCommand {
 
     private int repeat = 1;
 
-    private KeyStoreOptions keyStoreOptions = new KeyStoreOptions();
+    private final KeyStoreOptions keyStoreOptions = new KeyStoreOptions();
 
     private Map<String, String> metadata;
 
@@ -410,6 +410,7 @@ public class SignDataGroupsCommand extends AbstractCommand {
         }
     }
 
+    @SuppressWarnings("PMD.DoNotUseThreads") // Not an JEE application
     private static class Worker extends Thread {
 
         private SODSigner signer;

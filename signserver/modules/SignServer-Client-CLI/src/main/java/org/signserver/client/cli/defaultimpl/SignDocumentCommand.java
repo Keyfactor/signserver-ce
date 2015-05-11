@@ -716,6 +716,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
     /**
      * Thread for running the upload/download of the data.
      */
+    @SuppressWarnings("PMD.DoNotUseThreads") // Not an JEE application
     private class TransferThread extends Thread {
         private final int id;
         private final TransferManager producer;

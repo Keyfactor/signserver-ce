@@ -98,14 +98,106 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
         getWorkerSession().reloadConfiguration(WORKERID_AUTH);
     }
 
-    // TODO: Add tests for different illegal combinations of input parameters
-    /*@Test
-    public void test01missingArguments() throws Exception {
+    /**
+     * Tests that values for threads must be larger than 0.
+     * @throws Exception 
+     */
+    @Test
+    public void test01incorrectOptionThreads() throws Exception {
+        inDir.create();
+        File file1 = inDir.newFile("doc1.xml");
+        FileUtils.writeStringToFile(file1, "<document1/>");
+        outDir.create();
+
         try {
-            execute("signdocument");
-            fail("Should have thrown exception about missing arguments");
-        } catch (IllegalCommandArgumentsException expected) {} // NOPMD
-    }*/
+            execute("signdocument", "-workername", "TestXMLSigner",
+                            "-indir", inDir.getRoot().getAbsolutePath(),
+                            "-outdir", outDir.getRoot().getAbsolutePath(),
+                            "-threads", "0");
+            fail("Should have thrown exception threads");
+        } catch (IllegalCommandArgumentsException e) {
+            assertTrue("exception about threads: " + e.getMessage(),
+                    e.getMessage().contains("threads"));
+        }
+
+        try {
+            execute("signdocument", "-workername", "TestXMLSigner",
+                            "-indir", inDir.getRoot().getAbsolutePath(),
+                            "-outdir", outDir.getRoot().getAbsolutePath(),
+                            "-threads", "-1");
+            fail("Should have thrown exception threads");
+        } catch (IllegalCommandArgumentsException e) {
+            assertTrue("exception about threads: " + e.getMessage(),
+                    e.getMessage().contains("threads"));
+        }
+    }
+    
+    /**
+     * Tests that it is not allowed to specify both -indir and -data.
+     * @throws Exception 
+     */
+    @Test
+    public void test01incorrectOptionData() throws Exception {
+        inDir.create();
+        File file1 = inDir.newFile("doc1.xml");
+        FileUtils.writeStringToFile(file1, "<document1/>");
+        outDir.create();
+
+        try {
+            execute("signdocument", "-workername", "TestXMLSigner",
+                            "-indir", inDir.getRoot().getAbsolutePath(),
+                            "-outdir", outDir.getRoot().getAbsolutePath(),
+                            "-data", "<data/>");
+            fail("Should have thrown exception threads");
+        } catch (IllegalCommandArgumentsException e) {
+            assertTrue("exception about data: " + e.getMessage(),
+                    e.getMessage().contains("data") && e.getMessage().contains("indir"));
+        }
+    }
+    
+    /**
+     * Tests that it is not allowed to specify the same -indir and -outdir.
+     * @throws Exception 
+     */
+    @Test
+    public void test01incorrectOptionSameDirs() throws Exception {
+        inDir.create();
+        File file1 = inDir.newFile("doc1.xml");
+        FileUtils.writeStringToFile(file1, "<document1/>");
+
+        try {
+            execute("signdocument", "-workername", "TestXMLSigner",
+                            "-indir", inDir.getRoot().getAbsolutePath(),
+                            "-outdir", inDir.getRoot().getAbsolutePath()); // Note: indir==outdir
+            fail("Should have thrown exception about indir & outdir");
+        } catch (IllegalCommandArgumentsException e) {
+            assertTrue("exception about indir & outdir: " + e.getMessage(),
+                    e.getMessage().contains("indir") && e.getMessage().contains("outdir"));
+        }
+    }
+    
+    /**
+     * Tests that it is not allowed to specify both -onefirst and -startall
+     * @throws Exception 
+     */
+    @Test
+    public void test01incorrectOptionBothOneFirstAndStartAll() throws Exception {
+        inDir.create();
+        File file1 = inDir.newFile("doc1.xml");
+        FileUtils.writeStringToFile(file1, "<document1/>");
+        outDir.create();
+
+        try {
+            execute("signdocument", "-workername", "TestXMLSigner",
+                            "-indir", inDir.getRoot().getAbsolutePath(),
+                            "-outdir", outDir.getRoot().getAbsolutePath(),
+                            "-onefirst", "-startall"); // Note: both
+            fail("Should have thrown exception about onefirst & startall");
+        } catch (IllegalCommandArgumentsException e) {
+            assertTrue("exception about onefirst & startall: " + e.getMessage(),
+                    e.getMessage().contains("onefirst") && e.getMessage().contains("startall"));
+        }
+    }
 
     /**
      * Tests the simple case of siging 1 document from the input directory.

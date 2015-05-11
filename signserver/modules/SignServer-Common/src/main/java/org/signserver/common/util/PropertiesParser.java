@@ -32,8 +32,8 @@ public class PropertiesParser {
      * This only represents the identity of a property, not the actual property value (instance).
      */
     public static class GlobalProperty {
-        private String scope;
-        private String key;
+        private final String scope;
+        private final String key;
         
         public GlobalProperty(final String scope, final String key) {
             this.scope = scope;
@@ -86,8 +86,8 @@ public class PropertiesParser {
      *
      */
     public static class WorkerProperty {
-        private String workerIdOrName;
-        private String key;
+        private final String workerIdOrName;
+        private final String key;
         
         public WorkerProperty(final String workerIdOrName, final String key) {
             this.workerIdOrName = workerIdOrName;
@@ -104,52 +104,45 @@ public class PropertiesParser {
 
         @Override
         public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + ((key == null) ? 0 : key.hashCode());
-            result = prime
-                    * result
-                    + ((workerIdOrName == null) ? 0 : workerIdOrName.hashCode());
-            return result;
+            int hash = 5;
+            hash = 67 * hash + (this.workerIdOrName != null ? this.workerIdOrName.hashCode() : 0);
+            hash = 67 * hash + (this.key != null ? this.key.hashCode() : 0);
+            return hash;
         }
 
         @Override
         public boolean equals(Object obj) {
-            if (this == obj)
-                return true;
-            if (obj == null)
+            if (obj == null) {
                 return false;
-            if (getClass() != obj.getClass())
+            }
+            if (getClass() != obj.getClass()) {
                 return false;
-            WorkerProperty other = (WorkerProperty) obj;
-            if (key == null) {
-                if (other.key != null)
-                    return false;
-            } else if (!key.equals(other.key))
+            }
+            final WorkerProperty other = (WorkerProperty) obj;
+            if ((this.workerIdOrName == null) ? (other.workerIdOrName != null) : !this.workerIdOrName.equals(other.workerIdOrName)) {
                 return false;
-            if (workerIdOrName == null) {
-                if (other.workerIdOrName != null)
-                    return false;
-            } else if (!workerIdOrName.equals(other.workerIdOrName))
+            }
+            if ((this.key == null) ? (other.key != null) : !this.key.equals(other.key)) {
                 return false;
+            }
             return true;
         }
-        
+
 
     }
     
-    private List<String> errors = new LinkedList<String>();
-    private List<String> messages = new LinkedList<String>();
-    private Map<GlobalProperty, String> setGlobalProperties = new HashMap<GlobalProperty, String>();
-    private List<GlobalProperty> removeGlobalProperties = new LinkedList<GlobalProperty>();
-    private Map<WorkerProperty, String> setWorkerProperties = new HashMap<WorkerProperty, String>();
-    private List<WorkerProperty> removeWorkerProperties = new LinkedList<WorkerProperty>();
+    private final List<String> errors = new LinkedList<String>();
+    private final List<String> messages = new LinkedList<String>();
+    private final Map<GlobalProperty, String> setGlobalProperties = new HashMap<GlobalProperty, String>();
+    private final List<GlobalProperty> removeGlobalProperties = new LinkedList<GlobalProperty>();
+    private final Map<WorkerProperty, String> setWorkerProperties = new HashMap<WorkerProperty, String>();
+    private final List<WorkerProperty> removeWorkerProperties = new LinkedList<WorkerProperty>();
     
-    private Map<String, List<AuthorizedClient>> addAuthorizedClients = new HashMap<String, List<AuthorizedClient>>();
-    private Map<String, List<AuthorizedClient>> removeAuthorizedClients = new HashMap<String, List<AuthorizedClient>>();
+    private final Map<String, List<AuthorizedClient>> addAuthorizedClients = new HashMap<String, List<AuthorizedClient>>();
+    private final Map<String, List<AuthorizedClient>> removeAuthorizedClients = new HashMap<String, List<AuthorizedClient>>();
     
-    private Map<String, byte[]> signerCertificates = new HashMap<String, byte[]>();
-    private Map<String, List<byte[]>> signerCertificateChains = new HashMap<String, List<byte[]>>();
+    private final Map<String, byte[]> signerCertificates = new HashMap<String, byte[]>();
+    private final Map<String, List<byte[]>> signerCertificateChains = new HashMap<String, List<byte[]>>();
 
     /**
      * Parse a set of properties.

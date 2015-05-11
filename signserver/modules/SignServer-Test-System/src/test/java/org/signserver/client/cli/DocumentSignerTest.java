@@ -15,6 +15,7 @@ package org.signserver.client.cli;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Properties;
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.ejbca.ui.cli.util.ConsolePasswordReader;
 import org.junit.After;
@@ -124,6 +125,7 @@ public class DocumentSignerTest extends ModulesTestCase {
      */
     @Test
     public void test02signDocumentFromFile() throws Exception {
+        LOG.info("test02signDocumentFromFile");
         try {
             final File doc = File.createTempFile("test.xml", null);
             FileOutputStream out = null;
@@ -149,12 +151,58 @@ public class DocumentSignerTest extends ModulesTestCase {
     }
 
     /**
+     * Tests signing from a file and output the results to a file.
+     * <pre>
+     * signdocument -workername XMLSigner 
+     *     -infile /tmp/document.xml 
+     *     -outfile /tmp/document-signed.xml
+     * </pre>
+     * @throws Exception
+     */
+    @Test
+    public void test02signDocumentFromFileToFile() throws Exception {
+        LOG.info("test02signDocumentFromFileToFile");
+        File inFile = null;
+        File outFile = null;
+        try {
+            inFile = File.createTempFile("test.xml", null);
+            FileUtils.writeStringToFile(inFile, "<tag/>");
+            outFile = new File(inFile.getParentFile(), inFile.getName() + "-signed");
+
+            String res =
+                    new String(execute("signdocument", 
+                            "-workername", "TestXMLSigner", 
+                            "-infile", inFile.getAbsolutePath(),
+                            "-outfile", outFile.getAbsolutePath()));
+            assertFalse("not containing signature tag: "
+                    + res, res.contains("<tag><Signature"));
+            
+            String file1Content = FileUtils.readFileToString(outFile);
+            
+            assertTrue("contains signature tag: "
+                    + file1Content, file1Content.contains("<tag><Signature"));
+            
+        } catch (IllegalCommandArgumentsException ex) {
+            LOG.error("Execution failed", ex);
+            fail(ex.getMessage());
+        } finally {
+            if (inFile != null) {
+                FileUtils.deleteQuietly(inFile);
+            }
+            if (outFile != null) {
+                FileUtils.deleteQuietly(inFile);
+            }
+        }
+    }
+
+    /**
      * Test for the "-pdfpassword" argument.
      * signdocument -workername TestPDFSigner -infile $SIGNSERVER_HOME/res/test/pdf/sample-open123.pdf
      * @throws Exception
      */
     @Test
     public void test03signPDFwithPasswordOverHTTP() throws Exception {
+        LOG.info("test03signPDFwithPasswordOverHTTP");
         try {
 
             byte[] res = execute("signdocument", "-workername", 
@@ -429,7 +477,7 @@ public class DocumentSignerTest extends ModulesTestCase {
         final ArrayList<Boolean> called = new ArrayList<Boolean>();
         SignDocumentCommand instance = new SignDocumentCommand() {
             @Override
-            protected ConsolePasswordReader createConsolePasswordReader() {
+            public ConsolePasswordReader createConsolePasswordReader() {
                 return new ConsolePasswordReader() {
                     @Override
                     public char[] readPassword() {
@@ -465,7 +513,7 @@ public class DocumentSignerTest extends ModulesTestCase {
         final ArrayList<Boolean> called = new ArrayList<Boolean>();
         SignDocumentCommand instance = new SignDocumentCommand() {
             @Override
-            protected ConsolePasswordReader createConsolePasswordReader() {
+            public ConsolePasswordReader createConsolePasswordReader() {
                 return new ConsolePasswordReader() {
                     @Override
                     public char[] readPassword() {
@@ -501,12 +549,12 @@ public class DocumentSignerTest extends ModulesTestCase {
         final ArrayList<Boolean> called = new ArrayList<Boolean>();
         SignDocumentCommand instance = new SignDocumentCommand() {
             @Override
-            protected ConsolePasswordReader createConsolePasswordReader() {
+            public ConsolePasswordReader createConsolePasswordReader() {
                 return new ConsolePasswordReader() {
                     @Override
                     public char[] readPassword() {
                         called.add(true);
-                        return "foo123".toCharArray();
+                        return "changeit".toCharArray();
                     }
                 };
             }
@@ -514,14 +562,86 @@ public class DocumentSignerTest extends ModulesTestCase {
         
         // The test might not have been setup to work with client cert auth
         // so we will not be checking that signing works, just that the prompt
-        // gets called
+        // gets called.
+        // We use the truststore, any keystore should do it.
+        execute(instance, "signdocument", "-workername", "TestXMLSigner", "-data", "<root/>",
+                            "-keystore", signserverhome + "/p12/truststore.jks");
+        assertEquals("calls to readPassword", 1, called.size());
+    }
+    
+    /**
+     * Tests that when not specifying any keystore password on the command
+     * line the code for prompting for the password is called and if the wrong
+     * password is typed the question is asked again.
+     * @throws Exception 
+     */
+    @Test
+    public void test13promptForKeystorePasswordAgain() throws Exception {
+        LOG.info("test13promptForKeystorePasswordAgain");
+        // Override the password reading
+        final ArrayList<Boolean> calls = new ArrayList<Boolean>();
+        final String[] passwords = new String[] { "incorrect1", "changeit" };
+        SignDocumentCommand instance = new SignDocumentCommand() {
+            @Override
+            public ConsolePasswordReader createConsolePasswordReader() {
+                return new ConsolePasswordReader() {
+                    @Override
+                    public char[] readPassword() {
+                        final String password = passwords[calls.size()];
+                        calls.add(true);
+                        return password.toCharArray();
+                    }
+                };
+            }
+        };
+        
+        // The test might not have been setup to work with client cert auth
+        // so we will not be checking that signing works, just that the prompt
+        // gets called.
+        // We use the truststore, any keystore should do it.
+        execute(instance, "signdocument", "-workername", "TestXMLSigner", "-data", "<root/>",
+                            "-keystore", signserverhome + "/p12/truststore.jks");
+        
+        assertEquals("calls to readPassword", 2, calls.size());
+    }
+    
+    /**
+     * Tests that when not specifying any keystore password on the command
+     * line the code for prompting for the password is called and if the wrong
+     * password is typed the question is asked again.
+     * @throws Exception 
+     */
+    @Test
+    public void test13promptForKeystorePassword3Times() throws Exception {
+        LOG.info("test13promptForKeystorePasswordAgain");
+        // Override the password reading
+        final ArrayList<Boolean> calls = new ArrayList<Boolean>();
+        final String[] passwords = new String[] { "incorrect1", "incorrect2", "incorrect3", "incorrect4", "incorrect5" };
+        SignDocumentCommand instance = new SignDocumentCommand() {
+            @Override
+            public ConsolePasswordReader createConsolePasswordReader() {
+                return new ConsolePasswordReader() {
+                    @Override
+                    public char[] readPassword() {
+                        final String password = passwords[calls.size()];
+                        calls.add(true);
+                        return password.toCharArray();
+                    }
+                };
+            }
+        };
+        
+        // The test might not have been setup to work with client cert auth
+        // so we will not be checking that signing works, just that the prompt
+        // gets called.
+        // We use the truststore, any keystore should do it.
         try {
             execute(instance, "signdocument", "-workername", "TestXMLSigner", "-data", "<root/>",
-                            "-keystore", "/tmp/any-keystore-file-we-dont-care");
-        } catch (RuntimeException expected) { // XXX: The method throwing this RunTimeException should be refactored
-            // OK as the keystore does not exist
+                            "-keystore", signserverhome + "/p12/truststore.jks");
+        } catch (IllegalCommandArgumentsException expected) {
+            assertTrue("message: " + expected, expected.toString().contains("password was incorrect"));
+            assertEquals("calls to readPassword", 3, calls.size());
         }
-        assertEquals("calls to readPassword", 1, called.size());
     }
     
     /**
@@ -535,7 +655,7 @@ public class DocumentSignerTest extends ModulesTestCase {
         final ArrayList<Boolean> called = new ArrayList<Boolean>();
         SignDocumentCommand instance = new SignDocumentCommand() {
             @Override
-            protected ConsolePasswordReader createConsolePasswordReader() {
+            public ConsolePasswordReader createConsolePasswordReader() {
                 return new ConsolePasswordReader() {
                     @Override
                     public char[] readPassword() {

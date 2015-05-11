@@ -2839,6 +2839,9 @@ usage: signdocument &lt;-workername WORKERNAME | -workerid WORKERID&gt;
 Request a document to be signed by SignServer
  -data             Data to send to the worker.
  -host             Server name or IP address. Default: localhost
+ -indir            Directory to read input files from. Required if
+                   outdir specified. Can not be combined with infile
+                   or outfile.
  -infile           File to read data to send to the worker from.
  -keyalias         Alias of the key in the keystore to use for
                    authentication.
@@ -2850,6 +2853,13 @@ Request a document to be signed by SignServer
  -metadata         Additional meta data to send to the signer. The
                    parameters should be given in the form KEY=VALUE.
                    This option can be given multiple times.
+ -onefirst         In batch mode, don't send all requests until the
+                   first succeeds. This is primary to prevent too many
+                   incorrect password attempts. Default if username
+                   is provided and -startall not provided.
+ -outdir           Directory to write output files to. Required if
+                   indir specified. Can not be combined with infile
+                   or outfile.
  -outfile          File to write the result to. If not specified the
                    result is written to stdout.
  -password         Password for authentication. If username is
@@ -2861,7 +2871,15 @@ Request a document to be signed by SignServer
                    authentication.
  -protocol         Method of interacting with SignServer. HTTP,
                    CLIENTWS or WEBSERVICES. Default: HTTP.
+ -removefromindir  Specify this flag to have the successfully
+                   processed input files removed from indir.
  -servlet          Servlet to call. Default /signserver/process
+ -startall         In batch mode, send all requests at once, without
+                   waiting for the first to succeed. Default unless
+                   username is provided or -onefirst provided.
+ -threads          Number of threads for sending the requests. Only
+                   allowed in batch mode, ie when indir and outdir
+                   are specified. Default: 1.
  -truststore       Keystore with trusted certificates to use with
                    HTTPS.
  -truststorepwd    Password for the keystore with trusted
@@ -2881,6 +2899,8 @@ d) signdocument -workerid 2 -data "&lt;root/&gt;" -keystore superadmin.jks
 -truststorepwd foo123
 e) signdocument -workerid 2 -data "&lt;root/&gt;" -metadata param1=value1
 -metadata param2=value2
+f) signdocument -workerid 3 -indir ./input/ -removefromindir -outdir
+./output/ -threads 5
                         </source>
                     </subsection>
 

@@ -16,10 +16,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Base64;
 import org.signserver.common.CryptoTokenOfflineException;
@@ -99,17 +98,8 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
                     + " containing data of length " + data.length + " bytes"
                     + " to worker " + workerName);
         }
-
-        // Take start time
-        final long startTime = System.nanoTime();
-
         final Response response = sendRequest(processServlet, data,
-                requestContext);
-
-        // Take stop time
-        final long estimatedTime = System.nanoTime() - startTime;
-
-       
+                requestContext);       
 
         if (LOG.isDebugEnabled()) {
             LOG.debug(String.format("Got sign response "
@@ -119,21 +109,16 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
 
         // Write the signed data
         out.write(response.getData());
-
-        if (LOG.isInfoEnabled()) {
-            LOG.info("Processing took "
-                + TimeUnit.NANOSECONDS.toMillis(estimatedTime) + " ms");
-        }
     }
 
     private Response sendRequest(final URL processServlet,
             final byte[] data,
-            final Map<String, Object> requestContext) {
+            final Map<String, Object> requestContext) throws IOException {
         
         OutputStream out = null;
         InputStream in = null;
         try {
-            final URLConnection conn = processServlet.openConnection();
+            final HttpURLConnection conn = (HttpURLConnection) processServlet.openConnection();
             conn.setDoOutput(true);
             conn.setAllowUserInteraction(false);
 
@@ -197,7 +182,7 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
 
             conn.addRequestProperty("Content-Type",
                     "multipart/form-data; boundary=" + BOUNDARY);
-
+            
             out = conn.getOutputStream();
             
             out.write(sb.toString().getBytes());
@@ -207,7 +192,12 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
             out.flush();
 
             // Get the response
-            in = conn.getInputStream();
+            final int responseCode = conn.getResponseCode();
+            if (responseCode >= 400) {
+                in = conn.getErrorStream();
+            } else {
+                in = conn.getInputStream();
+            }
             final ByteArrayOutputStream os = new ByteArrayOutputStream();
             int len;
             final byte[] buf = new byte[1024];
@@ -216,9 +206,11 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
             }
             os.close();
 
+            if (responseCode >= 400) {
+                throw new HTTPException(processServlet, responseCode, conn.getResponseMessage(), os.toByteArray());
+            }
+            
             return new Response(os.toByteArray());
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
         } finally {
             if (out != null) {
                 try {

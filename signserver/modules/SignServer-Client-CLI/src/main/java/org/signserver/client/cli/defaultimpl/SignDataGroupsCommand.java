@@ -15,6 +15,9 @@ package org.signserver.client.cli.defaultimpl;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -261,6 +264,12 @@ public class SignDataGroupsCommand extends AbstractCommand {
             }
         } catch (IOException ex) {
             throw new IllegalCommandArgumentsException("Failed to read password: " + ex.getLocalizedMessage());
+        } catch (NoSuchAlgorithmException ex) {
+            throw new IllegalCommandArgumentsException("Failure setting up keystores: " + ex.getMessage());
+        } catch (CertificateException ex) {
+            throw new IllegalCommandArgumentsException("Failure setting up keystores: " + ex.getMessage());
+        } catch (KeyStoreException ex) {
+            throw new IllegalCommandArgumentsException("Failure setting up keystores: " + ex.getMessage());
         }
     }
     

@@ -15,10 +15,17 @@ package org.signserver.client.cli.defaultimpl;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.concurrent.TimeUnit;
 import javax.xml.ws.soap.SOAPFaultException;
 import org.apache.commons.cli.*;
 import org.apache.log4j.Logger;
@@ -39,7 +46,7 @@ import org.signserver.protocol.ws.client.SignServerWSClientFactory;
  * @author Markus Kilås
  * @version $Id$
  */
-public class SignDocumentCommand extends AbstractCommand {
+public class SignDocumentCommand extends AbstractCommand implements ConsolePasswordProvider {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(SignDocumentCommand.class);
@@ -74,6 +81,24 @@ public class SignDocumentCommand extends AbstractCommand {
     /** Option OUTFILE. */
     public static final String OUTFILE = "outfile";
 
+    /** Option INDIR. */
+    public static final String INDIR = "indir";
+
+    /** Option OUTDIR. */
+    public static final String OUTDIR = "outdir";
+    
+    /** Option THREADS. */
+    public static final String THREADS = "threads";
+    
+    /** Option REMOVEFROMINDIR. */
+    public static final String REMOVEFROMINDIR = "removefromindir";
+    
+    /** Option ONEFIRST. */
+    public static final String ONEFIRST = "onefirst";
+    
+    /** Option STARTALL. */
+    public static final String STARTALL = "startall";
+
     /** Option PORT. */
     public static final String PORT = "port";
 
@@ -96,6 +121,8 @@ public class SignDocumentCommand extends AbstractCommand {
 
     /** The command line options. */
     private static final Options OPTIONS;
+
+    private static final int DEFAULT_THREADS = 1;
 
     /**
      * Protocols that can be used for accessing SignServer.
@@ -139,6 +166,18 @@ public class SignDocumentCommand extends AbstractCommand {
                 TEXTS.getString("PDFPASSWORD_DESCRIPTION"));
         OPTIONS.addOption(METADATA, true,
                 TEXTS.getString("METADATA_DESCRIPTION"));
+        OPTIONS.addOption(INDIR, true,
+                TEXTS.getString("INDIR_DESCRIPTION"));
+        OPTIONS.addOption(OUTDIR, true,
+                TEXTS.getString("OUTDIR_DESCRIPTION"));
+        OPTIONS.addOption(THREADS, true,
+                TEXTS.getString("THREADS_DESCRIPTION"));
+        OPTIONS.addOption(REMOVEFROMINDIR, false,
+                TEXTS.getString("REMOVEFROMINDIR_DESCRIPTION"));
+        OPTIONS.addOption(ONEFIRST, false,
+                TEXTS.getString("ONEFIRST_DESCRIPTION"));
+        OPTIONS.addOption(STARTALL, false,
+                TEXTS.getString("STARTALL_DESCRIPTION"));
         for (Option option : KeyStoreOptions.getKeyStoreOptions()) {
             OPTIONS.addOption(option);
         }
@@ -167,11 +206,30 @@ public class SignDocumentCommand extends AbstractCommand {
     /** File to read the signed data to. */
     private File outFile;
 
+    /** Directory to read files from. */
+    private File inDir;
+    
+    /** Directory to write files to. */
+    private File outDir;
+    
+    /** Number of threads to use when running in batch mode. */
+    private Integer threads;
+    
+    /** If the successfully processed files should be removed from indir. */
+    private boolean removeFromIndir;
+    
+    /** If one request should be set first before starting the remaining threads. */
+    private boolean oneFirst;
+    
+    /** If all should be started directly (ie not oneFirst). */
+    private boolean startAll;
+
     /** Protocol to use for contacting SignServer. */
     private Protocol protocol = Protocol.HTTP;
 
     private String username;
     private String password;
+    private boolean promptForPassword;
 
     private String pdfPassword;
 
@@ -194,7 +252,8 @@ public class SignDocumentCommand extends AbstractCommand {
             .append("b) ").append(COMMAND).append(" -workername XMLSigner -infile /tmp/document.xml").append(NL)
             .append("c) ").append(COMMAND).append(" -workerid 2 -data \"<root/>\" -truststore truststore.jks -truststorepwd changeit").append(NL)
             .append("d) ").append(COMMAND).append(" -workerid 2 -data \"<root/>\" -keystore superadmin.jks -keystorepwd foo123").append(NL)
-            .append("e) ").append(COMMAND).append(" -workerid 2 -data \"<root/>\" -metadata param1=value1 -metadata param2=value2").append(NL);
+            .append("e) ").append(COMMAND).append(" -workerid 2 -data \"<root/>\" -metadata param1=value1 -metadata param2=value2").append(NL)
+            .append("f) ").append(COMMAND).append(" -workerid 3 -indir ./input/ -removefromindir -outdir ./output/ -threads 5").append(NL);
 
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         final HelpFormatter formatter = new HelpFormatter();
@@ -235,6 +294,24 @@ public class SignDocumentCommand extends AbstractCommand {
         if (line.hasOption(OUTFILE)) {
             outFile = new File(line.getOptionValue(OUTFILE, null));
         }
+        if (line.hasOption(INDIR)) {
+            inDir = new File(line.getOptionValue(INDIR, null));
+        }
+        if (line.hasOption(OUTDIR)) {
+            outDir = new File(line.getOptionValue(OUTDIR, null));
+        }
+        if (line.hasOption(THREADS)) {
+            threads = Integer.parseInt(line.getOptionValue(THREADS, null));
+        }
+        if (line.hasOption(REMOVEFROMINDIR)) {
+            removeFromIndir = true;
+        }
+        if (line.hasOption(ONEFIRST)) {
+            oneFirst = true;
+        }
+        if (line.hasOption(STARTALL)) {
+            startAll = true;
+        }
         if (line.hasOption(PROTOCOL)) {
             protocol = Protocol.valueOf(line.getOptionValue(
                     PROTOCOL, null));
@@ -270,32 +347,79 @@ public class SignDocumentCommand extends AbstractCommand {
 
             // Prompt for user password if not given
             if (username != null && password == null) {
+                promptForPassword = true;
                 out.print("Password for user '" + username + "': ");
                 out.flush();
                 password = new String(passwordReader.readPassword());
             }
         } catch (IOException ex) {
             throw new IllegalCommandArgumentsException("Failed to read password: " + ex.getLocalizedMessage());
+        } catch (NoSuchAlgorithmException ex) {
+            throw new IllegalCommandArgumentsException("Failure setting up keystores: " + ex.getMessage());
+        } catch (CertificateException ex) {
+            throw new IllegalCommandArgumentsException("Failure setting up keystores: " + ex.getMessage());
+        } catch (KeyStoreException ex) {
+            throw new IllegalCommandArgumentsException("Failure setting up keystores: " + ex.getMessage());
         }
     }
     
     /**
      * @return a ConsolePasswordReader that can be used to read passwords
      */
-    protected ConsolePasswordReader createConsolePasswordReader() {
+    @Override
+    public ConsolePasswordReader createConsolePasswordReader() {
         return new ConsolePasswordReader();
     }
 
     /**
-     * Checks that all mandadory options are given.
+     * Checks that all mandatory options are given.
      */
     private void validateOptions() throws IllegalCommandArgumentsException {
         if (workerName == null && workerId == 0) {
             throw new IllegalCommandArgumentsException(
                     "Missing -workername or -workerid");
-        } else if (data == null && inFile == null) {
-            throw new IllegalArgumentException("Missing -data or -infile");
+        } else if (data == null && inFile == null && inDir == null && outDir == null) {
+            throw new IllegalCommandArgumentsException("Missing -data, -infile or -indir");
         }
+        
+        if (inDir != null && outDir == null) {
+            throw new IllegalCommandArgumentsException("Missing -outdir");
+        }
+        if (data != null && inFile != null) {
+            throw new IllegalCommandArgumentsException("Can not specify both -data and -infile");
+        }
+        if (data != null && inDir != null) {
+            throw new IllegalCommandArgumentsException("Can not specify both -data and -indir");
+        }
+        if (inFile != null && inDir != null) {
+            throw new IllegalCommandArgumentsException("Can not specify both -infile and -indir");
+        }
+
+        if (inDir != null && inDir.equals(outDir)) {
+            throw new IllegalCommandArgumentsException("Can not specify the same directory as -indir and -outdir");
+        }
+        
+        if (inDir == null & threads != null) {
+            throw new IllegalCommandArgumentsException("Can not specify -threads unless -indir");
+        }
+
+        if (threads != null && threads < 1) {
+            throw new IllegalCommandArgumentsException("Number of threads must be > 0");
+        }
+        
+        if (startAll && oneFirst) {
+            throw new IllegalCommandArgumentsException("Can not specify both -onefirst and -startall");
+        }
+        
+        if ((startAll || oneFirst) && (inDir == null)) {
+            throw new IllegalCommandArgumentsException("The options -onefirst and -startall only supported in batch mode. Specify -indir.");
+        }
+        
+        // Default to use oneFirst if username is specified and not startall
+        if(!startAll && username != null) {
+            oneFirst = true;
+        }
+
         keyStoreOptions.validateOptions();
     }
 
@@ -306,10 +430,10 @@ public class SignDocumentCommand extends AbstractCommand {
      * @throws MalformedURLException in case an URL can not be constructed
      * using the given host and port
      */
-    private DocumentSigner createSigner() throws MalformedURLException {
+    private DocumentSigner createSigner(final String currentPassword) throws MalformedURLException {
         final DocumentSigner signer;
 
-        keyStoreOptions.setupHTTPS();
+        keyStoreOptions.setupHTTPS(); // TODO: Should be done earlier and only once (not for each signer)
 
         if (port == null) {
             if (keyStoreOptions.isUsePrivateHTTPS()) {
@@ -338,7 +462,7 @@ public class SignDocumentCommand extends AbstractCommand {
                     servlet,
                     workerIdOrName,
                     keyStoreOptions.isUseHTTPS(),
-                    username, password,
+                    username, currentPassword,
                     pdfPassword, metadata);
                 break;
             }
@@ -358,7 +482,7 @@ public class SignDocumentCommand extends AbstractCommand {
                     servlet,
                     workerIdOrName,
                     keyStoreOptions.isUseHTTPS(),
-                    username, password,
+                    username, currentPassword,
                     pdfPassword, metadata);
                 break;
             }
@@ -367,9 +491,9 @@ public class SignDocumentCommand extends AbstractCommand {
                 LOG.debug("Using HTTP as procotol");
                 final URL url = new URL(keyStoreOptions.isUseHTTPS() ? "https" : "http", host, port, servlet);
                 if (workerId == 0) {
-                    signer = new HTTPDocumentSigner(url, workerName, username, password, pdfPassword, metadata);
+                    signer = new HTTPDocumentSigner(url, workerName, username, currentPassword, pdfPassword, metadata);
                 } else {
-                    signer = new HTTPDocumentSigner(url, workerId, username, password, pdfPassword, metadata);
+                    signer = new HTTPDocumentSigner(url, workerId, username, currentPassword, pdfPassword, metadata);
                 }
             }
         }
@@ -379,7 +503,7 @@ public class SignDocumentCommand extends AbstractCommand {
     /**
      * Execute the signing operation.
      */
-    private void run() {
+    protected void run1(TransferManager producer, final File inFile, final File outFile) {
         FileInputStream fin = null;
         try {
             final byte[] bytes;
@@ -393,41 +517,10 @@ public class SignDocumentCommand extends AbstractCommand {
                 bytes = new byte[(int) inFile.length()];
                 fin.read(bytes);
             }
-
-            OutputStream out = null;
-            try {
-                if (outFile == null) {
-                    out = System.out;
-                } else {
-                    out = new FileOutputStream(outFile);
-                }
-                createSigner().sign(bytes, out, requestContext);
-            } finally {
-                if (out != null && out != System.out) {
-                    out.close();
-                }
-            }
-
+            run(producer, requestContext, inFile, bytes, outFile);
         } catch (FileNotFoundException ex) {
             LOG.error(MessageFormat.format(TEXTS.getString("FILE_NOT_FOUND:"),
                     ex.getLocalizedMessage()));
-        } catch (IllegalRequestException ex) {
-            LOG.error(ex.getLocalizedMessage());
-        } catch (CryptoTokenOfflineException ex) {
-            LOG.error(ex.getLocalizedMessage());
-        } catch (SignServerException ex) {
-            LOG.error(ex.getLocalizedMessage());
-        } catch (SOAPFaultException ex) {
-            if (ex.getCause() instanceof AuthorizationRequiredException) {
-                final AuthorizationRequiredException authEx =
-                        (AuthorizationRequiredException) ex.getCause();
-                LOG.error("Authorization required: " + authEx.getMessage());
-            } else if (ex.getCause() instanceof AccessDeniedException) {
-                final AccessDeniedException authEx =
-                        (AccessDeniedException) ex.getCause();
-                LOG.error("Access denied: " + authEx.getMessage());
-            }
-            LOG.error(ex);
         } catch (IOException ex) {
             LOG.error(ex);
         } finally {
@@ -441,16 +534,317 @@ public class SignDocumentCommand extends AbstractCommand {
         }
     }
 
+    private void run(TransferManager producer, Map<String, Object> requestContext, final File inFile, final byte[] bytes, final File outFile) {  // TODO: merge with run1 ?, inFile here is only used when removing the file
+        try {
+            OutputStream out = null;
+            try {
+                if (outFile == null) {
+                    out = System.out;
+                } else {
+                    out = new FileOutputStream(outFile);
+                }
+                final DocumentSigner signer = createSigner(producer == null ? password : producer.getPassword());
+                
+                // Take start time
+                final long startTime = System.nanoTime();
+        
+                // Get the data signed
+                signer.sign(bytes, out, requestContext);
+                
+                // Take stop time
+                final long estimatedTime = System.nanoTime() - startTime;
+                
+                if (LOG.isInfoEnabled()) {
+                    LOG.info("Wrote " + outFile + ".");
+                    LOG.info("Processing " + (inFile == null ? "" : inFile.getName()) + " took "
+                        + TimeUnit.NANOSECONDS.toMillis(estimatedTime) + " ms.");
+                }
+            } finally {
+                if (out != null && out != System.out) {
+                    out.close();
+                }
+            }
+
+            if (removeFromIndir && inFile != null && inFile.exists()) {
+                if (inFile.delete()) {
+                    LOG.info("Removed " + inFile);
+                } else {
+                    LOG.error("Could not remove " + inFile);
+                    if (producer != null) {
+                        producer.registerFailure();
+                    }
+                }
+            }
+            if (producer != null) {
+                producer.registerSuccess(); // Login must have worked
+            }
+        } catch (FileNotFoundException ex) {
+            LOG.error("Failure for " + (inFile == null ? "" : inFile.getName()) + ": " + MessageFormat.format(TEXTS.getString("FILE_NOT_FOUND:"),
+                    ex.getLocalizedMessage()));
+            if (producer != null) {
+                producer.registerFailure();
+            }
+        } catch (IllegalRequestException ex) {
+            LOG.error("Failure for " + (inFile == null ? "" : inFile.getName()) + ": " + ex.getMessage());
+            if (producer != null) {
+                producer.registerFailure();
+            }
+        } catch (CryptoTokenOfflineException ex) {
+            LOG.error("Failure for " + (inFile == null ? "" : inFile.getName()) + ": " + ex.getMessage());
+            if (producer != null) {
+                producer.registerFailure();
+            }
+        } catch (SignServerException ex) {
+            LOG.error("Failure for " + (inFile == null ? "" : inFile.getName()) + ": " + ex.getMessage());
+            if (producer != null) {
+                producer.registerFailure();
+            }
+        } catch (SOAPFaultException ex) {
+            if (ex.getCause() instanceof AuthorizationRequiredException) {
+                final AuthorizationRequiredException authEx =
+                        (AuthorizationRequiredException) ex.getCause();
+                LOG.error("Authorization required: " + authEx.getMessage()); // TODO
+            } else if (ex.getCause() instanceof AccessDeniedException) {
+                final AccessDeniedException authEx =
+                        (AccessDeniedException) ex.getCause();
+                LOG.error("Access denied: " + authEx.getMessage()); // TODO
+            }
+            LOG.error(ex);
+        } catch (HTTPException ex) {
+            LOG.error("Failure for " + (inFile == null ? "" : inFile.getName()) + ": HTTP Error " + ex.getResponseCode() + ": " + ex.getResponseMessage());
+            
+            if (producer != null) {
+                if (ex.getResponseCode() == 401) { // Only abort for authentication failure
+                    if (promptForPassword) {
+                        // If password was not specified at command line, ask again for it
+                        producer.tryAgainWithNewPassword(inFile);
+                    } else {
+                        producer.abort();
+                    }
+                } else {
+                    producer.registerFailure();
+                }
+            }
+        } catch (IOException ex) {
+            LOG.error("Failure for " + (inFile == null ? "" : inFile.getName()) + ": " + ex.getMessage());
+            if (producer != null) {
+                producer.registerFailure();
+            }
+        }
+    }
+
     @Override
     public int execute(String[] args) throws IllegalCommandArgumentsException, CommandFailureException {
         try {
             // Parse the command line
             parseCommandLine(new GnuParser().parse(OPTIONS, args));
             validateOptions();
-            run();
+
+            if (inFile != null) {
+                LOG.debug("Will request for single file " + inFile);
+                run1(null, inFile, outFile);
+            } else if(inDir != null) {
+                LOG.debug("Will request for each file in directory " + inDir);
+                File[] inFiles = inDir.listFiles();
+                if (inFiles == null || inFiles.length == 0) {
+                    LOG.error("No input files");
+                    return 1;
+                }
+                TransferManager producer = new TransferManager(inFiles, username, password, this, out, oneFirst);
+                
+                if (threads == null) {
+                    threads = DEFAULT_THREADS;
+                }
+                final int threadCount = threads > inFiles.length ? inFiles.length : threads;
+                final ArrayList<TransferThread> consumers = new ArrayList<TransferThread>();
+                
+                for (int i = 0; i < threadCount; i++) {
+                    consumers.add(new TransferThread(i, producer));
+                }
+                
+                // Start the threads
+                for (TransferThread consumer : consumers) {
+                    consumer.start();
+                }
+                
+                // Wait for the threads to finish
+                try {
+                    for (TransferThread w : consumers) {
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Waiting for thread " + w.getName());
+                        }
+                        w.join();
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Thread " + w.getName() + " stopped");
+                        }
+                    }
+                } catch (InterruptedException ex) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Interupted when waiting for thread: " + ex.getMessage());
+                    }
+                }
+                
+                if (producer.isAborted()) {
+                    throw new CommandFailureException("Aborted due to failure.");
+                }
+                
+                if (producer.hasFailures()) {
+                    throw new CommandFailureException("At least one file failed.");
+                }
+                
+            } else {
+                LOG.debug("Will requst for the specified data");
+                run1(null, null, outFile);
+            }
+                
             return 0;
         } catch (ParseException ex) {
             throw new IllegalCommandArgumentsException(ex.getMessage());
+        }
+    }
+    
+    private static class TransferManager {
+
+        private final LinkedList<File> files = new LinkedList<File>();
+        private final String username;
+        private volatile String password;
+        private final ConsolePasswordProvider passwordProvider;
+        private final PrintStream out;
+        
+        private boolean oneFirst;
+        private boolean firstAlreadyServed;
+        private File first;
+        private int retryCount;
+        
+        private boolean aborted;
+        private boolean failed;
+        private int success;
+        
+        private TransferManager(File[] inFiles, String username, String password, ConsolePasswordProvider passwordProvider, PrintStream out, boolean oneFirst) {
+            files.addAll(Arrays.asList(inFiles));
+            this.username = username;
+            this.password = password;
+            this.passwordProvider = passwordProvider;
+            this.out = out;
+            this.oneFirst = oneFirst;
+        }
+
+        public synchronized File nextFile() {
+            if (aborted) {
+                return null;
+            }
+            
+            if (oneFirst && firstAlreadyServed) {
+                while (oneFirst && !aborted) {
+                    try {
+                        wait();
+                    } catch (InterruptedException ignored) {}
+                }
+                if (aborted) {
+                    return null;
+                }
+            } else if (oneFirst) {
+                firstAlreadyServed = true;
+                first = files.isEmpty() ? null : files.remove();
+                return first;
+            }
+            
+            return files.isEmpty() ? null : files.remove();
+        }
+        
+        public synchronized void abort() {
+            aborted = true;
+            notifyAll();
+        }
+        
+        public synchronized boolean isAborted() {
+            return aborted;
+        }
+        
+        public synchronized void registerFailure() {
+            failed = true;
+            if (oneFirst) { // If the first one did not succeed in onefirst mode we will abort
+                abort();
+            }
+        }
+
+        public synchronized boolean hasFailures() {
+            return failed;
+        }
+        
+        public synchronized void registerSuccess() {
+            success++;
+            if (oneFirst && firstAlreadyServed) {
+                oneFirst = false;
+                notifyAll();
+            }
+        }
+        
+        private boolean hasSuccess() {
+            return success > 0;
+        }
+
+        private synchronized void tryAgainWithNewPassword(File inFile) {
+            // Note more than one thread might be standing in line for this method
+            if (aborted) {
+                return;
+            }
+            
+            // If the password has not worked before, ask for a new password unless we are already waiting for the oneFirst
+            // Or if this is the next attempt for the same file that we just asked password for
+            if ((!hasSuccess() && !oneFirst) || (oneFirst && inFile.equals(first))) {
+                if (++retryCount > 3) {
+                    abort();
+                    return;
+                } else {
+                    final ConsolePasswordReader passwordReader = passwordProvider.createConsolePasswordReader();
+                    out.print("Enter correct password for user '" + username + "': ");
+                    out.flush();
+                    try {
+                        password = new String(passwordReader.readPassword());
+                    } catch (IOException ex) {
+                        LOG.error("Failed to obtain password from console: " + ex.getLocalizedMessage());
+                        abort();
+                        return;
+                    }
+
+                    // We will now only accept one new request until it succeeds
+                    oneFirst = true;
+                    firstAlreadyServed = false;
+                }
+            }
+            
+            // Put back the file to be tested again
+            files.addFirst(inFile);
+            notifyAll();
+        }
+        
+        public String getPassword() {
+            return password;
+        }
+        
+    }
+    
+    private class TransferThread extends Thread {
+        private final int id;
+        private final TransferManager producer;
+
+        public TransferThread(int id, TransferManager producer) {
+            super("transfer-" + id);
+            this.id = id;
+            this.producer = producer;
+        }
+        
+        @Override
+        public void run() {
+            LOG.trace("Starting " + getName() + "...");
+            File file;
+            while ((file = producer.nextFile()) != null) {
+                LOG.info("Sending " + file + "...");
+
+                run1(producer, file, new File(outDir, file.getName())); // TODO: error handling
+            }
+            LOG.trace(id + ": No more work.");
         }
     }
     

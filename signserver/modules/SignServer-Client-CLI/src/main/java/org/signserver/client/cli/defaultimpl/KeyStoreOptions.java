@@ -88,7 +88,7 @@ public class KeyStoreOptions {
     private boolean useHTTPS;
     private boolean usePrivateHTTPS;
 
-    public void parseCommandLine(CommandLine line, ConsolePasswordReader passwordReader, PrintStream out) throws IOException {
+    public void parseCommandLine(CommandLine line, ConsolePasswordReader passwordReader, PrintStream out) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
         if (line.hasOption(KeyStoreOptions.TRUSTSTORE)) {
             truststoreFile = new File(line.getOptionValue(KeyStoreOptions.TRUSTSTORE, null));
         }
@@ -107,15 +107,47 @@ public class KeyStoreOptions {
         if (passwordReader != null) {
             // Prompt for truststore password if not given
             if (truststoreFile != null && truststorePassword == null) {
-                out.print("Password for truststore: ");
-                out.flush();
-                truststorePassword = new String(passwordReader.readPassword());
+                for (int i = 0; i < 3; i++) {
+                    out.print("Password for truststore: "); 
+                    out.flush();
+                    truststorePassword = new String(passwordReader.readPassword());
+                    try {
+                        KeyStore keystore = KeyStore.getInstance("JKS");
+                        keystore.load(new FileInputStream(truststoreFile), truststorePassword.toCharArray());
+                        break;
+                    } catch (IOException ex) {
+                        if (ex.getCause() instanceof UnrecoverableKeyException) {
+                            if (i >= 2) {
+                                throw ex;
+                            }
+                            continue;
+                        } else {
+                            throw ex;
+                        }
+                    }
+                }
             }
             // Prompt for keystore password if not given
             if (keystoreFile != null && keystorePassword == null) {
-                out.print("Password for keystore: ");
-                out.flush();
-                keystorePassword = new String(passwordReader.readPassword());
+                for (int i = 0; i < 3; i++) {
+                    out.print("Password for keystore: ");
+                    out.flush();
+                    keystorePassword = new String(passwordReader.readPassword());
+                    try {
+                        KeyStore keystore = KeyStore.getInstance("JKS");
+                        keystore.load(new FileInputStream(keystoreFile), keystorePassword.toCharArray());
+                        break;
+                    } catch (IOException ex) {
+                        if (ex.getCause() instanceof UnrecoverableKeyException) {
+                            if (i >= 2) {
+                                throw ex;
+                            }
+                            continue;
+                        } else {
+                            throw ex;
+                        }
+                    }
+                }
             }
         }
     }

@@ -31,7 +31,6 @@ import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.client.cli.defaultimpl.SignDocumentCommand;
 import org.signserver.common.SignServerUtil;
-import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestingSecurityManager;
 import org.junit.Test;
@@ -62,9 +61,7 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
     private static final int[] WORKERS = new int[] { WORKERID, WORKERID_AUTH };
 
     private static String signserverhome;
-    
-    private final IWorkerSession workerSession = getWorkerSession();
-    
+
     @Rule
     private final TemporaryFolder inDir = new TemporaryFolder();
     
@@ -72,6 +69,7 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
     private final TemporaryFolder outDir = new TemporaryFolder();
     
     @Before
+    @Override
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
         TestingSecurityManager.install();
@@ -81,6 +79,7 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
     }
 
     @After
+    @Override
     public void tearDown() throws Exception {
         TestingSecurityManager.remove();
     }	
@@ -368,13 +367,12 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
         
         // Sign anything and check that the readPassword was called once
         try {
-            String res =
-                    new String(execute(instance, "signdocument",
-                            "-workername", "TestXMLSignerAuth", 
-                            "-indir", inDir.getRoot().getAbsolutePath(),
-                            "-outdir", outDir.getRoot().getAbsolutePath(),
-                            "-username", "user1",
-                            "-threads", "1"));
+            execute(instance, "signdocument",
+                    "-workername", "TestXMLSignerAuth", 
+                    "-indir", inDir.getRoot().getAbsolutePath(),
+                    "-outdir", outDir.getRoot().getAbsolutePath(),
+                    "-username", "user1",
+                    "-threads", "1");
             assertEquals("calls to readPassword", 1, called.size());
             
             assertOutfilesSignatures(files);
@@ -412,13 +410,12 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
         
         // Sign anything and check that the readPassword was called once
         try {
-            String res =
-                    new String(execute(instance, "signdocument",
-                            "-workername", "TestXMLSignerAuth", 
-                            "-indir", inDir.getRoot().getAbsolutePath(),
-                            "-outdir", outDir.getRoot().getAbsolutePath(),
-                            "-username", "user1",
-                            "-threads", "3"));
+            execute(instance, "signdocument",
+                    "-workername", "TestXMLSignerAuth", 
+                    "-indir", inDir.getRoot().getAbsolutePath(),
+                    "-outdir", outDir.getRoot().getAbsolutePath(),
+                    "-username", "user1",
+                    "-threads", "3");
             assertEquals("calls to readPassword", 1, called.size());
             
             assertOutfilesSignatures(files);
@@ -461,13 +458,12 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
         
         // Sign anything and check that the readPassword was called 2 times
         try {
-            String res =
-                    new String(execute(instance, "signdocument",
-                            "-workername", "TestXMLSignerAuth", 
-                            "-indir", inDir.getRoot().getAbsolutePath(),
-                            "-outdir", outDir.getRoot().getAbsolutePath(),
-                            "-username", "user1",
-                            "-threads", "1"));
+            execute(instance, "signdocument",
+                    "-workername", "TestXMLSignerAuth", 
+                    "-indir", inDir.getRoot().getAbsolutePath(),
+                    "-outdir", outDir.getRoot().getAbsolutePath(),
+                    "-username", "user1",
+                    "-threads", "1");
             assertEquals("calls to readPassword", 2, calls.size());
             
             assertOutfilesSignatures(files);
@@ -486,7 +482,7 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
         // Create a few input files
         inDir.create();
         outDir.create();
-        final ArrayList<File> files = createInputFiles(5);
+        createInputFiles(5);
         
         // Override the password reading
         final ArrayList<Boolean> calls = new ArrayList<Boolean>();
@@ -507,15 +503,13 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
         
         // Sign anything and check that the readPassword was not called
         try {
-            String res =
-                    new String(execute(instance, "signdocument",
-                            "-workername", "TestXMLSignerAuth", 
-                            "-indir", inDir.getRoot().getAbsolutePath(),
-                            "-outdir", outDir.getRoot().getAbsolutePath(),
-                            "-username", "user1",
-                            "-password", "incorrect123",
-                            "-threads", "1"));
-            
+            execute(instance, "signdocument",
+                    "-workername", "TestXMLSignerAuth", 
+                    "-indir", inDir.getRoot().getAbsolutePath(),
+                    "-outdir", outDir.getRoot().getAbsolutePath(),
+                    "-username", "user1",
+                    "-password", "incorrect123",
+                    "-threads", "1");
         } catch (CommandFailureException expexted) {
             assertEquals("calls to readPassword", 0, calls.size());
         }

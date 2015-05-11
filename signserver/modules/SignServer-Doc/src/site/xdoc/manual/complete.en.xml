@@ -2806,7 +2806,7 @@ Request a document to be signed by SignServer
                    parameters should be given in the form KEY=VALUE.
                    This option can be given multiple times.
  -onefirst         In batch mode, don't send all requests until the
-                   first succeeds. This is primary to prevent to many
+                   first succeeds. This is primary to prevent too many
                    incorrect password attempts. Default if username
                    is provided and -startall not provided.
  -outdir           Directory to write output files to. Required if

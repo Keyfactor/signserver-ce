@@ -42,6 +42,7 @@ import javax.ejb.EJBException;
 import javax.swing.AbstractListModel;
 import javax.swing.ComboBoxModel;
 import javax.swing.Icon;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -145,6 +146,8 @@ public class MainView extends FrameView {
         super(app);
 
         initComponents();
+        
+        final int rowHeights = new JComboBox<String>().getPreferredSize().height;
 
         // workaround a bug in the NetBeans form editor where the download
         // archive entries button sometimes looses its default disabled state
@@ -257,6 +260,7 @@ public class MainView extends FrameView {
                 }
             }
         });
+        propertiesTable.setRowHeight(rowHeights);
 
         configurationTable.getSelectionModel().addListSelectionListener(
                 new ListSelectionListener() {
@@ -271,6 +275,7 @@ public class MainView extends FrameView {
                 }
             }
         });
+        configurationTable.setRowHeight(rowHeights);
 
         authTable.getSelectionModel().addListSelectionListener(
                 new ListSelectionListener() {
@@ -285,6 +290,7 @@ public class MainView extends FrameView {
                 }
             }
         });
+        authTable.setRowHeight(rowHeights);
         
         archiveTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 
@@ -296,6 +302,11 @@ public class MainView extends FrameView {
                 }
             }
         });
+        archiveTable.setRowHeight(rowHeights);
+
+        auditLogTable.setRowHeight(rowHeights);
+        conditionsTable.setRowHeight(rowHeights);
+        archiveConditionsTable.setRowHeight(rowHeights);
 
         displayWorker(null);
 

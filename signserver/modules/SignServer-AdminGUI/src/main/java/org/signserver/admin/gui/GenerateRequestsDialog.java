@@ -180,6 +180,8 @@ public class GenerateRequestsDialog extends JDialog {
         aliasComboBoxFieldEditor.setClickCountToStart(1);
         jTable1.getColumn("Key").setCellEditor(aliasComboBoxFieldEditor);
 
+        jTable1.setRowHeight(sigAlgComboBox.getPreferredSize().height);
+        
         signersComboBox.setRenderer(new SmallWorkerListCellRenderer());
         signersComboBox.setModel(new SignersComboBoxModel(signers));
 

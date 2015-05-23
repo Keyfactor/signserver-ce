@@ -214,6 +214,7 @@ public class RenewSignerDialog extends javax.swing.JDialog {
         final DefaultCellEditor renewalCellEditor
                 = new DefaultCellEditor(signersComboBox);
         jTable1.getColumn("Renewal worker").setCellEditor(renewalCellEditor);
+        jTable1.setRowHeight(signersComboBox.getPreferredSize().height);
 
         refreshButton.doClick();
     }

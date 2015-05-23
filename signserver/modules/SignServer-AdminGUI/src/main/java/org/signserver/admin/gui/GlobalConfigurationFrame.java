@@ -19,6 +19,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Vector;
 import javax.ejb.EJBException;
+import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
@@ -66,6 +67,7 @@ public class GlobalConfigurationFrame extends javax.swing.JFrame {
                 }
             }
         });
+        configurationTable.setRowHeight(new JComboBox<String>().getPreferredSize().height);
         refreshButton.doClick();
     }
 

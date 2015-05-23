@@ -152,6 +152,7 @@ public class TestKeysDialog extends JDialog {
 
         jTable1.getColumnModel().getColumn(1)
                 .setCellEditor(comboBoxFieldEditor);
+        jTable1.setRowHeight(aliasComboBox.getPreferredSize().height);
         tableChangedPerformed(null);
     }
 

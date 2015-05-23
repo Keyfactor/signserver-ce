@@ -133,8 +133,9 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
         columnSignerCert.setCellRenderer(new BrowseCellRenderer());
         columnCertChain.setCellRenderer(new BrowseCellRenderer());
 
+        final JComboBox aliasCellEditorComboBox = new JComboBox();
         final AliasCellEditor aliasCellEditor =
-                new AliasCellEditor(signers, new JComboBox(), false);
+                new AliasCellEditor(signers, aliasCellEditorComboBox, false);
         keyColumn.setCellEditor(aliasCellEditor);
 
         jTable1.getModel().addTableModelListener(new TableModelListener() {
@@ -174,6 +175,7 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
                 = new DefaultCellEditor(installInTokenCheckbox);
         installInToken.setCellEditor(installInTokenCheckboxFieldEditor);
         installInToken.setCellRenderer(new CheckboxCellRenderer());
+        jTable1.setRowHeight(aliasCellEditorComboBox.getPreferredSize().height);
         
         jTable1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     }

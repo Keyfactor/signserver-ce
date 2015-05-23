@@ -22,6 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import javax.ejb.EJBException;
+import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
@@ -129,6 +130,7 @@ public class AdministratorsFrame extends javax.swing.JFrame {
                 }
             }
         });
+        adminsTable.setRowHeight(new JComboBox<String>().getPreferredSize().height);
         refreshButton.doClick();
         
         // set initial state for the allow all checkbox

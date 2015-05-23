@@ -133,6 +133,7 @@ public class RenewKeysDialog extends JDialog {
                 .setCellEditor(textFieldEditor);
         jTable1.getColumnModel().getColumn(4)
                 .setCellEditor(textFieldEditor);
+        jTable1.setRowHeight(keyAlgComboBox.getPreferredSize().height);
 
         getRootPane().setDefaultButton(jButtonGenerate);
     }

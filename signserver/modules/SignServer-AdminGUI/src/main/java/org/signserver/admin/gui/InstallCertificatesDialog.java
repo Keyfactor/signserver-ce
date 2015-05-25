@@ -25,6 +25,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.logging.Level;
 import javax.ejb.EJBException;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JCheckBox;
@@ -47,6 +48,8 @@ import org.jdesktop.application.Application;
 import org.jdesktop.application.Task;
 import org.signserver.admin.gui.adminws.gen
         .AdminNotAuthorizedException_Exception;
+import org.signserver.admin.gui.adminws.gen.CertificateException_Exception;
+import org.signserver.admin.gui.adminws.gen.CryptoTokenOfflineException_Exception;
 import org.signserver.admin.gui.adminws.gen.IllegalRequestException_Exception;
 import org.signserver.admin.gui.adminws.gen.OperationUnsupportedException_Exception;
 import org.signserver.common.GlobalConfiguration;
@@ -513,6 +516,20 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
                             errors.append(error).append(":\n").append(ex.getMessage());
                             errors.append("\n");
                         } catch (EJBException ex) {
+                            final String error =
+                                "Operation failed on server side for signer "
+                                + workerid;
+                            LOG.error(error, ex);
+                            errors.append(error).append(":\n").append(ex.getMessage());
+                            errors.append("\n");
+                        } catch (CertificateException_Exception ex) {
+                            final String error =
+                                "Problem with certificate chain file for signer "
+                                + workerid;
+                            LOG.error(error, ex);
+                            errors.append(error).append(":\n").append(ex.getMessage());
+                            errors.append("\n");
+                        } catch (CryptoTokenOfflineException_Exception ex) {
                             final String error =
                                 "Operation failed on server side for signer "
                                 + workerid;

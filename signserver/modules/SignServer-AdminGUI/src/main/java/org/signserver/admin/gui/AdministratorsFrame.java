@@ -130,7 +130,7 @@ public class AdministratorsFrame extends javax.swing.JFrame {
                 }
             }
         });
-        adminsTable.setRowHeight(new JComboBox<String>().getPreferredSize().height);
+        adminsTable.setRowHeight(new JComboBox/*<String>*/().getPreferredSize().height);
         refreshButton.doClick();
         
         // set initial state for the allow all checkbox

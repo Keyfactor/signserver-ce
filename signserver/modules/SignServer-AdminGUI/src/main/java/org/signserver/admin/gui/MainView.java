@@ -147,7 +147,7 @@ public class MainView extends FrameView {
 
         initComponents();
         
-        final int rowHeights = new JComboBox<String>().getPreferredSize().height;
+        final int rowHeights = new JComboBox/*<String>*/().getPreferredSize().height;
 
         // workaround a bug in the NetBeans form editor where the download
         // archive entries button sometimes looses its default disabled state

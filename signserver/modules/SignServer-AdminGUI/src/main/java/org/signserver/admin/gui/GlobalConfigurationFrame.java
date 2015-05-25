@@ -67,7 +67,7 @@ public class GlobalConfigurationFrame extends javax.swing.JFrame {
                 }
             }
         });
-        configurationTable.setRowHeight(new JComboBox<String>().getPreferredSize().height);
+        configurationTable.setRowHeight(new JComboBox/*<String>*/().getPreferredSize().height);
         refreshButton.doClick();
     }
 

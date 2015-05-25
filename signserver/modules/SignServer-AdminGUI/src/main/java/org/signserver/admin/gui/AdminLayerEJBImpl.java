@@ -15,6 +15,7 @@ package org.signserver.admin.gui;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyStoreException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
@@ -48,8 +49,10 @@ import org.signserver.admin.gui.adminws.gen.AdminNotAuthorizedException;
 import org.signserver.admin.gui.adminws.gen.AdminNotAuthorizedException_Exception;
 import org.signserver.admin.gui.adminws.gen.AdminWS;
 import org.signserver.admin.gui.adminws.gen.ArchiveEntry;
+import org.signserver.admin.gui.adminws.gen.AuthorizationDeniedException_Exception;
 import org.signserver.admin.gui.adminws.gen.AuthorizedClient;
 import org.signserver.admin.gui.adminws.gen.Base64SignerCertReqData;
+import org.signserver.admin.gui.adminws.gen.CertificateException_Exception;
 import org.signserver.admin.gui.adminws.gen.CryptoTokenAuthenticationFailureException_Exception;
 import org.signserver.admin.gui.adminws.gen.CryptoTokenOfflineException_Exception;
 import org.signserver.admin.gui.adminws.gen.EventStatus;
@@ -62,9 +65,11 @@ import org.signserver.admin.gui.adminws.gen.LogEntry.AdditionalDetails;
 import org.signserver.admin.gui.adminws.gen.OperationUnsupportedException_Exception;
 import org.signserver.admin.gui.adminws.gen.Pkcs10CertReqInfo;
 import org.signserver.admin.gui.adminws.gen.QueryCondition;
+import org.signserver.admin.gui.adminws.gen.QueryException_Exception;
 import org.signserver.admin.gui.adminws.gen.QueryOrdering;
 import org.signserver.admin.gui.adminws.gen.ResyncException_Exception;
 import org.signserver.admin.gui.adminws.gen.SignServerException_Exception;
+import org.signserver.admin.gui.adminws.gen.TokenSearchResults;
 import org.signserver.admin.gui.adminws.gen.WsGlobalConfiguration;
 import org.signserver.admin.gui.adminws.gen.WsWorkerConfig;
 import org.signserver.admin.gui.adminws.gen.WsWorkerStatus;
@@ -79,14 +84,17 @@ import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.OperationUnsupportedException;
 import org.signserver.common.PKCS10CertReqInfo;
 import org.signserver.common.ProcessRequest;
+import org.signserver.common.QueryException;
 import org.signserver.common.RequestAndResponseManager;
 import org.signserver.common.RequestContext;
 import org.signserver.common.ResyncException;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerException;
+import org.signserver.common.UnsupportedCryptoTokenParameter;
 import org.signserver.common.WorkerStatus;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.server.cryptotokens.TokenEntry;
 
 /**
  * Implementation of the AdminWS interface but using EJB calls.
@@ -255,6 +263,18 @@ public class AdminLayerEJBImpl implements AdminWS {
         org.signserver.admin.gui.adminws.gen.IllegalRequestException newEx = new org.signserver.admin.gui.adminws.gen.IllegalRequestException();
         newEx.setMessage(ex.getMessage());
         return new IllegalRequestException_Exception(ex.getMessage(), newEx, ex);
+    }
+    
+    private AuthorizationDeniedException_Exception wrap(AuthorizationDeniedException ex) {
+        org.signserver.admin.gui.adminws.gen.AuthorizationDeniedException newEx = new org.signserver.admin.gui.adminws.gen.AuthorizationDeniedException();
+        newEx.setMessage(ex.getMessage());
+        return new AuthorizationDeniedException_Exception(ex.getMessage(), newEx, ex);
+    }
+    
+    private QueryException_Exception wrap(QueryException ex) {
+        org.signserver.admin.gui.adminws.gen.QueryException newEx = new org.signserver.admin.gui.adminws.gen.QueryException();
+        newEx.setMessage(ex.getMessage());
+        return new QueryException_Exception(ex.getMessage(), newEx, ex);
     }
 
     /**
@@ -830,8 +850,9 @@ public class AdminLayerEJBImpl implements AdminWS {
                                        final String alias,
                                        final String authCode)
             throws AdminNotAuthorizedException_Exception,
-                   IllegalRequestException_Exception,
-                   OperationUnsupportedException_Exception {
+                   OperationUnsupportedException_Exception,
+                   CryptoTokenOfflineException_Exception,
+                   CertificateException_Exception {
         try {
             int workerId;
             
@@ -845,16 +866,19 @@ public class AdminLayerEJBImpl implements AdminWS {
                     authCode != null ? authCode.toCharArray() : null);
         } catch (CryptoTokenOfflineException ex) {
             LOG.error("Crypto token offline: ", ex);
-            throw new IllegalRequestException_Exception("Cryptotoken offline",
-                                                        null, ex);
+            throw wrap(ex);
         } catch (CertificateException ex) {
             LOG.error("Unable to parse certificate", ex);
-            throw new IllegalRequestException_Exception(
-                    "Unable to parse certificate", null, ex);
+            org.signserver.admin.gui.adminws.gen.CertificateException newEx = new org.signserver.admin.gui.adminws.gen.CertificateException();
+            newEx.setMessage(ex.getMessage());
+            throw new CertificateException_Exception(
+                    "Unable to parse certificate", newEx);
         } catch (OperationUnsupportedException ex) {
             LOG.error("Unable to parse certificate", ex);
+            org.signserver.admin.gui.adminws.gen.OperationUnsupportedException newEx = new org.signserver.admin.gui.adminws.gen.OperationUnsupportedException();
+            newEx.setMessage(ex.getMessage());
             throw new OperationUnsupportedException_Exception(
-                    "Operation is not supported by crypto token", null, ex);
+                    "Operation is not supported by crypto token", newEx, ex);
         }
     }
     
@@ -1124,6 +1148,43 @@ public class AdminLayerEJBImpl implements AdminWS {
             return toArchiveEntries(worker.searchArchiveWithIds(uniqueIds, includeData));
         } catch (AuthorizationDeniedException ex) {
             throw new AdminNotAuthorizedException_Exception(ex.getMessage(), new AdminNotAuthorizedException());
+        }
+    }
+    
+    @Override
+    public TokenSearchResults queryTokenEntries(String workerNameOrId, int startIndex, int max, List<QueryCondition> condition, List<QueryOrdering> ordering, boolean includeData) throws AdminNotAuthorizedException_Exception, AuthorizationDeniedException_Exception, CryptoTokenOfflineException_Exception, InvalidWorkerIdException_Exception, OperationUnsupportedException_Exception, QueryException_Exception, SignServerException_Exception {
+        try {
+            org.signserver.server.cryptotokens.TokenSearchResults results = worker.searchTokenEntries(Integer.parseInt(workerNameOrId), startIndex, max, null, includeData, null);
+            
+            TokenSearchResults wsResults = new TokenSearchResults();
+            wsResults.setMoreEntriesAvailable(results.isMoreEntriesAvailable());
+            wsResults.setNumMoreEntries(results.getNumMoreEntries());
+            
+            for (TokenEntry entry : results.getEntries()) {
+                org.signserver.admin.gui.adminws.gen.TokenEntry wsEntry = new org.signserver.admin.gui.adminws.gen.TokenEntry();
+                wsEntry.setAlias(entry.getAlias());
+                // TODO wsEntry.setCreationDate(entry.getCreationDate());
+                // TODO wsEntry.setInfo(entry.getInfo());
+                wsEntry.setType(entry.getType());
+                wsEntry.setTrustedCertificate(entry.getTrustedCertificate());
+                wsResults.getEntries().add(wsEntry);
+            }
+            
+            return wsResults;
+        } catch (InvalidWorkerIdException ex) {
+            throw wrap(ex);
+        } catch (AuthorizationDeniedException ex) {
+            throw wrap(ex);
+        } catch (CryptoTokenOfflineException ex) {
+            throw wrap(ex);
+        } catch (QueryException ex) {
+            throw wrap(ex);
+        } catch (InvalidAlgorithmParameterException ex) {
+            throw new RuntimeException(ex); // TODO
+        } catch (UnsupportedCryptoTokenParameter ex) {
+            throw new RuntimeException(ex); // TODO
+        } catch (OperationUnsupportedException ex) {
+            throw new RuntimeException(ex); // TODO
         }
     }
     

@@ -156,22 +156,6 @@
      <xs:element name='workerId' type='xs:int'/>
     </xs:sequence>
    </xs:complexType>
-   <xs:complexType name='removeKey'>
-    <xs:sequence>
-     <xs:element name='signerId' type='xs:int'/>
-     <xs:element minOccurs='0' name='alias' type='xs:string'/>
-    </xs:sequence>
-   </xs:complexType>
-   <xs:complexType name='removeKeyResponse'>
-    <xs:sequence>
-     <xs:element name='return' type='xs:boolean'/>
-    </xs:sequence>
-   </xs:complexType>
-   <xs:complexType name='KeyStoreException'>
-    <xs:sequence>
-     <xs:element minOccurs='0' name='message' type='xs:string'/>
-    </xs:sequence>
-   </xs:complexType>
    <xs:complexType name='getWorkerId'>
     <xs:sequence>
      <xs:element minOccurs='0' name='workerName' type='xs:string'/>
@@ -461,6 +445,22 @@
      <xs:element name='success' type='xs:boolean'/>
     </xs:sequence>
    </xs:complexType>
+   <xs:complexType name='KeyStoreException'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='message' type='xs:string'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='removeKey'>
+    <xs:sequence>
+     <xs:element name='signerId' type='xs:int'/>
+     <xs:element minOccurs='0' name='alias' type='xs:string'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='removeKeyResponse'>
+    <xs:sequence>
+     <xs:element name='return' type='xs:boolean'/>
+    </xs:sequence>
+   </xs:complexType>
    <xs:complexType name='uploadSignerCertificate'>
     <xs:sequence>
      <xs:element name='signerId' type='xs:int'/>
@@ -562,7 +562,7 @@
    </xs:complexType>
    <xs:complexType name='importCertificateChain'>
     <xs:sequence>
-     <xs:element minOccurs='0' name='workerIdOrName' type='xs:string'/>
+     <xs:element name='workerId' type='xs:int'/>
      <xs:element maxOccurs='unbounded' minOccurs='0' name='certificateChain' type='xs:base64Binary'/>
      <xs:element minOccurs='0' name='alias' type='xs:string'/>
      <xs:element minOccurs='0' name='authenticationCode' type='xs:string'/>
@@ -676,7 +676,7 @@
    </xs:complexType>
    <xs:complexType name='queryTokenEntries'>
     <xs:sequence>
-     <xs:element minOccurs='0' name='workerNameOrId' type='xs:string'/>
+     <xs:element name='workerId' type='xs:int'/>
      <xs:element name='startIndex' type='xs:int'/>
      <xs:element name='max' type='xs:int'/>
      <xs:element maxOccurs='unbounded' minOccurs='0' name='condition' type='tns:queryCondition'/>

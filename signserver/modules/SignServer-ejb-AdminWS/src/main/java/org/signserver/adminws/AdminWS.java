@@ -869,7 +869,7 @@ public class AdminWS {
     /**
      * Method used to import a certificate chain to a crypto token.
      * 
-     * @param workerIdOrName ID or name of (crypto)worker
+     * @param workerId ID or name of (crypto)worker
      * @param certChain Certificate chain to import
      * @param alias Alias to import into in the crypto token
      * @param authCode Set if the alias is protected by an individual authentication
@@ -882,7 +882,7 @@ public class AdminWS {
      */
     @WebMethod(operationName = "importCertificateChain")
     public void importCertificateChain(
-            @WebParam(name="workerIdOrName") final String workerIdOrName,
+            @WebParam(name="workerId") final int workerId,
             @WebParam(name="certificateChain") final List<byte[]> certChain,
             @WebParam(name="alias") final String alias,
             @WebParam(name="authenticationCode") final String authCode)
@@ -890,9 +890,7 @@ public class AdminWS {
                    OperationUnsupportedException, AdminNotAuthorizedException {
         final AdminInfo adminInfo =
                 requireAdminAuthorization("importCertificateChain",
-                                          workerIdOrName);
-        final int workerId = getWorkerId(workerIdOrName);
-        
+                                          String.valueOf(workerId), String.valueOf(alias));
         worker.importCertificateChain(adminInfo, workerId, certChain, alias,
                                       authCode.toCharArray());
     }
@@ -1003,9 +1001,9 @@ public class AdminWS {
     }
     
     @WebMethod(operationName="queryTokenEntries")
-    public WSTokenSearchResults queryTokenEntries(@WebParam(name="workerNameOrId") String workerNameOrId, @WebParam(name="startIndex") int startIndex, @WebParam(name="max") int max, @WebParam(name="condition") final List<QueryCondition> conditions, @WebParam(name="ordering") final List<QueryOrdering> orderings, @WebParam(name="includeData") boolean includeData) throws OperationUnsupportedException, CryptoTokenOfflineException, QueryException, InvalidWorkerIdException, AuthorizationDeniedException, SignServerException, AdminNotAuthorizedException {
+    public WSTokenSearchResults queryTokenEntries(@WebParam(name="workerId") int workerId, @WebParam(name="startIndex") int startIndex, @WebParam(name="max") int max, @WebParam(name="condition") final List<QueryCondition> conditions, @WebParam(name="ordering") final List<QueryOrdering> orderings, @WebParam(name="includeData") boolean includeData) throws OperationUnsupportedException, CryptoTokenOfflineException, QueryException, InvalidWorkerIdException, AuthorizationDeniedException, SignServerException, AdminNotAuthorizedException {
         try {
-            final AdminInfo adminInfo = requireAdminAuthorization("queryTokenEntries", workerNameOrId, String.valueOf(startIndex), String.valueOf(max));
+            final AdminInfo adminInfo = requireAdminAuthorization("queryTokenEntries", String.valueOf(workerId), String.valueOf(startIndex), String.valueOf(max));
             final List<Elem> elements = toElements(conditions);
             final QueryCriteria qc = QueryCriteria.create();
             
@@ -1017,7 +1015,7 @@ public class AdminWS {
                 qc.add(andAll(elements, 0));
             }
             
-            return WSTokenSearchResults.fromTokenSearchResults(worker.searchTokenEntries(adminInfo, getWorkerId(workerNameOrId), startIndex, max, qc, includeData, Collections.<String, Object>emptyMap()));
+            return WSTokenSearchResults.fromTokenSearchResults(worker.searchTokenEntries(adminInfo, workerId, startIndex, max, qc, includeData, Collections.<String, Object>emptyMap()));
         } catch (InvalidAlgorithmParameterException ex) {
             throw new SignServerException("Crypto token expects supported parameters", ex);
         } catch (UnsupportedCryptoTokenParameter ex) {

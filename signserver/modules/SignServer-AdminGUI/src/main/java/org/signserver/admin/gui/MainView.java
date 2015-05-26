@@ -87,6 +87,7 @@ import org.signserver.admin.gui.adminws.gen.QueryException_Exception;
 import org.signserver.admin.gui.adminws.gen.QueryOrdering;
 import org.signserver.admin.gui.adminws.gen.RelationalOperator;
 import org.signserver.admin.gui.adminws.gen.SignServerException_Exception;
+import org.signserver.admin.gui.adminws.gen.TokenEntry;
 import org.signserver.admin.gui.adminws.gen.TokenSearchResults;
 import org.signserver.admin.gui.adminws.gen.WsGlobalConfiguration;
 import org.signserver.admin.gui.adminws.gen.WsWorkerConfig;
@@ -318,6 +319,7 @@ public class MainView extends FrameView {
         auditLogTable.setRowHeight(rowHeights);
         conditionsTable.setRowHeight(rowHeights);
         archiveConditionsTable.setRowHeight(rowHeights);
+        cryptoTokenEntriesTable.setRowHeight(rowHeights);
 
         displayWorker(null);
 
@@ -492,9 +494,21 @@ public class MainView extends FrameView {
         authEditButton = new javax.swing.JButton();
         authRemoveButton = new javax.swing.JButton();
         cryptoTokenTab = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        tokenEntriesScrollpane = new javax.swing.JScrollPane();
         cryptoTokenEntriesTable = new javax.swing.JTable();
         tokenEntriesReloadButton = new javax.swing.JButton();
+        tokenEntriesTestButton = new javax.swing.JButton();
+        tokenEntriesImportButton = new javax.swing.JButton();
+        tokenEntriesRemoveButton = new javax.swing.JButton();
+        tokenEntriesDetailsButton = new javax.swing.JButton();
+        tokenEntriesStartIndexTextfield = new javax.swing.JTextField();
+        tokenEntriesDisplayingToIndex = new javax.swing.JLabel();
+        tokenEntriesNextButton = new javax.swing.JButton();
+        jLabel15 = new javax.swing.JLabel();
+        tokenEntriesMaxEntriesTextfield = new javax.swing.JTextField();
+        tokenEntriesFirstButton = new javax.swing.JButton();
+        tokenEntriesPreviousButton = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
         auditPanel = new javax.swing.JPanel();
         jSplitPane2 = new javax.swing.JSplitPane();
         jPanel2 = new javax.swing.JPanel();
@@ -832,7 +846,7 @@ public class MainView extends FrameView {
         statusPanelLayout.setHorizontalGroup(
             statusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, statusPanelLayout.createSequentialGroup()
-                .addContainerGap(1067, Short.MAX_VALUE)
+                .addContainerGap(1209, Short.MAX_VALUE)
                 .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(statusAnimationLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -840,7 +854,7 @@ public class MainView extends FrameView {
                 .addGroup(statusPanelLayout.createSequentialGroup()
                     .addGap(135, 135, 135)
                     .addComponent(statusMessageLabel)
-                    .addContainerGap(1131, Short.MAX_VALUE)))
+                    .addContainerGap(1273, Short.MAX_VALUE)))
         );
         statusPanelLayout.setVerticalGroup(
             statusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1017,13 +1031,13 @@ public class MainView extends FrameView {
         statusPropertiesTabLayout.setHorizontalGroup(
             statusPropertiesTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, statusPropertiesTabLayout.createSequentialGroup()
-                .addContainerGap(827, Short.MAX_VALUE)
+                .addContainerGap(969, Short.MAX_VALUE)
                 .addComponent(statusPropertiesDetailsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
             .addGroup(statusPropertiesTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(statusPropertiesTabLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(statusPropertiesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 799, Short.MAX_VALUE)
+                    .addComponent(statusPropertiesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 941, Short.MAX_VALUE)
                     .addGap(112, 112, 112)))
         );
         statusPropertiesTabLayout.setVerticalGroup(
@@ -1031,11 +1045,11 @@ public class MainView extends FrameView {
             .addGroup(statusPropertiesTabLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(statusPropertiesDetailsButton)
-                .addContainerGap(544, Short.MAX_VALUE))
+                .addContainerGap(678, Short.MAX_VALUE))
             .addGroup(statusPropertiesTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(statusPropertiesTabLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(statusPropertiesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 575, Short.MAX_VALUE)
+                    .addComponent(statusPropertiesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 709, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -1104,7 +1118,7 @@ public class MainView extends FrameView {
             configurationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, configurationTabLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 789, Short.MAX_VALUE)
+                .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 931, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(configurationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(addButton)
@@ -1120,7 +1134,7 @@ public class MainView extends FrameView {
             .addGroup(configurationTabLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(configurationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 575, Short.MAX_VALUE)
+                    .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 709, Short.MAX_VALUE)
                     .addGroup(configurationTabLayout.createSequentialGroup()
                         .addComponent(addButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -1202,7 +1216,7 @@ public class MainView extends FrameView {
         authorizationTabLayout.setHorizontalGroup(
             authorizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(authorizationTabLayout.createSequentialGroup()
-                .addContainerGap(812, Short.MAX_VALUE)
+                .addContainerGap(954, Short.MAX_VALUE)
                 .addGroup(authorizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(authAddButton, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(authEditButton, javax.swing.GroupLayout.Alignment.TRAILING)
@@ -1211,7 +1225,7 @@ public class MainView extends FrameView {
             .addGroup(authorizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(authorizationTabLayout.createSequentialGroup()
                     .addGap(6, 6, 6)
-                    .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 793, Short.MAX_VALUE)
+                    .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 935, Short.MAX_VALUE)
                     .addGap(124, 124, 124)))
         );
 
@@ -1226,11 +1240,11 @@ public class MainView extends FrameView {
                 .addComponent(authEditButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(authRemoveButton)
-                .addContainerGap(440, Short.MAX_VALUE))
+                .addContainerGap(574, Short.MAX_VALUE))
             .addGroup(authorizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(authorizationTabLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 575, Short.MAX_VALUE)
+                    .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 709, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -1238,7 +1252,7 @@ public class MainView extends FrameView {
 
         cryptoTokenTab.setName("cryptoTokenTab"); // NOI18N
 
-        jScrollPane1.setName("jScrollPane1"); // NOI18N
+        tokenEntriesScrollpane.setName("tokenEntriesScrollpane"); // NOI18N
 
         cryptoTokenEntriesTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -1252,30 +1266,139 @@ public class MainView extends FrameView {
             }
         ));
         cryptoTokenEntriesTable.setName("cryptoTokenEntriesTable"); // NOI18N
-        jScrollPane1.setViewportView(cryptoTokenEntriesTable);
+        tokenEntriesScrollpane.setViewportView(cryptoTokenEntriesTable);
 
         tokenEntriesReloadButton.setAction(actionMap.get("reloadTokenEntries")); // NOI18N
         tokenEntriesReloadButton.setText(resourceMap.getString("tokenEntriesReloadButton.text")); // NOI18N
         tokenEntriesReloadButton.setName("tokenEntriesReloadButton"); // NOI18N
 
+        tokenEntriesTestButton.setText(resourceMap.getString("tokenEntriesTestButton.text")); // NOI18N
+        tokenEntriesTestButton.setName("tokenEntriesTestButton"); // NOI18N
+
+        tokenEntriesImportButton.setText(resourceMap.getString("tokenEntriesImportButton.text")); // NOI18N
+        tokenEntriesImportButton.setName("tokenEntriesImportButton"); // NOI18N
+
+        tokenEntriesRemoveButton.setText(resourceMap.getString("tokenEntriesRemoveButton.text")); // NOI18N
+        tokenEntriesRemoveButton.setName("tokenEntriesRemoveButton"); // NOI18N
+
+        tokenEntriesDetailsButton.setText(resourceMap.getString("tokenEntriesDetailsButton.text")); // NOI18N
+        tokenEntriesDetailsButton.setName("tokenEntriesDetailsButton"); // NOI18N
+
+        tokenEntriesStartIndexTextfield.setText(resourceMap.getString("tokenEntriesStartIndexTextfield.text")); // NOI18N
+        tokenEntriesStartIndexTextfield.setName("tokenEntriesStartIndexTextfield"); // NOI18N
+
+        tokenEntriesDisplayingToIndex.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        tokenEntriesDisplayingToIndex.setText(resourceMap.getString("tokenEntriesDisplayingToIndex.text")); // NOI18N
+        tokenEntriesDisplayingToIndex.setName("tokenEntriesDisplayingToIndex"); // NOI18N
+
+        tokenEntriesNextButton.setText(resourceMap.getString("tokenEntriesNextButton.text")); // NOI18N
+        tokenEntriesNextButton.setEnabled(false);
+        tokenEntriesNextButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        tokenEntriesNextButton.setName("tokenEntriesNextButton"); // NOI18N
+        tokenEntriesNextButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        tokenEntriesNextButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tokenEntriesNextButtonActionPerformed(evt);
+            }
+        });
+
+        jLabel15.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel15.setText(resourceMap.getString("jLabel15.text")); // NOI18N
+        jLabel15.setName("jLabel15"); // NOI18N
+
+        tokenEntriesMaxEntriesTextfield.setText(resourceMap.getString("tokenEntriesMaxEntriesTextfield.text")); // NOI18N
+        tokenEntriesMaxEntriesTextfield.setName("tokenEntriesMaxEntriesTextfield"); // NOI18N
+
+        tokenEntriesFirstButton.setText(resourceMap.getString("tokenEntriesFirstButton.text")); // NOI18N
+        tokenEntriesFirstButton.setEnabled(false);
+        tokenEntriesFirstButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        tokenEntriesFirstButton.setName("tokenEntriesFirstButton"); // NOI18N
+        tokenEntriesFirstButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        tokenEntriesFirstButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tokenEntriesFirstButtonActionPerformed(evt);
+            }
+        });
+
+        tokenEntriesPreviousButton.setText(resourceMap.getString("tokenEntriesPreviousButton.text")); // NOI18N
+        tokenEntriesPreviousButton.setEnabled(false);
+        tokenEntriesPreviousButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        tokenEntriesPreviousButton.setName("tokenEntriesPreviousButton"); // NOI18N
+        tokenEntriesPreviousButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        tokenEntriesPreviousButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tokenEntriesPreviousButtonActionPerformed(evt);
+            }
+        });
+
+        jLabel1.setText(resourceMap.getString("jLabel1.text")); // NOI18N
+        jLabel1.setName("jLabel1"); // NOI18N
+
         javax.swing.GroupLayout cryptoTokenTabLayout = new javax.swing.GroupLayout(cryptoTokenTab);
         cryptoTokenTab.setLayout(cryptoTokenTabLayout);
         cryptoTokenTabLayout.setHorizontalGroup(
             cryptoTokenTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, cryptoTokenTabLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 718, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
-                .addComponent(tokenEntriesReloadButton, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
-        cryptoTokenTabLayout.setVerticalGroup(
-            cryptoTokenTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(cryptoTokenTabLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(cryptoTokenTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(tokenEntriesReloadButton)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 575, Short.MAX_VALUE))
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 1041, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, cryptoTokenTabLayout.createSequentialGroup()
+                        .addComponent(tokenEntriesScrollpane, javax.swing.GroupLayout.DEFAULT_SIZE, 816, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
+                        .addGroup(cryptoTokenTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(tokenEntriesImportButton)
+                            .addComponent(tokenEntriesTestButton)
+                            .addComponent(tokenEntriesRemoveButton)
+                            .addComponent(tokenEntriesDetailsButton)))
+                    .addGroup(cryptoTokenTabLayout.createSequentialGroup()
+                        .addComponent(tokenEntriesFirstButton, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tokenEntriesPreviousButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(tokenEntriesReloadButton, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(tokenEntriesNextButton, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(tokenEntriesStartIndexTextfield, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tokenEntriesDisplayingToIndex, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel15)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tokenEntriesMaxEntriesTextfield, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
+        );
+
+        cryptoTokenTabLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {tokenEntriesDetailsButton, tokenEntriesImportButton, tokenEntriesRemoveButton, tokenEntriesTestButton});
+
+        cryptoTokenTabLayout.setVerticalGroup(
+            cryptoTokenTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, cryptoTokenTabLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(cryptoTokenTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(cryptoTokenTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(tokenEntriesNextButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(tokenEntriesFirstButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(tokenEntriesPreviousButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(tokenEntriesReloadButton))
+                    .addGroup(cryptoTokenTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(tokenEntriesStartIndexTextfield)
+                        .addComponent(tokenEntriesDisplayingToIndex)
+                        .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, 43, Short.MAX_VALUE)
+                        .addComponent(tokenEntriesMaxEntriesTextfield)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(cryptoTokenTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(tokenEntriesScrollpane, javax.swing.GroupLayout.DEFAULT_SIZE, 617, Short.MAX_VALUE)
+                    .addGroup(cryptoTokenTabLayout.createSequentialGroup()
+                        .addComponent(tokenEntriesTestButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tokenEntriesImportButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tokenEntriesRemoveButton)
+                        .addGap(18, 18, 18)
+                        .addComponent(tokenEntriesDetailsButton)))
                 .addContainerGap())
         );
 
@@ -1288,8 +1411,8 @@ public class MainView extends FrameView {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(workerTabbedPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 943, Short.MAX_VALUE)
-                    .addComponent(workerComboBox, javax.swing.GroupLayout.Alignment.LEADING, 0, 943, Short.MAX_VALUE))
+                    .addComponent(workerTabbedPane, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(workerComboBox, javax.swing.GroupLayout.Alignment.LEADING, 0, 1085, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -1298,7 +1421,7 @@ public class MainView extends FrameView {
                 .addContainerGap()
                 .addComponent(workerComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(workerTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 650, Short.MAX_VALUE))
+                .addComponent(workerTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 784, Short.MAX_VALUE))
         );
 
         jSplitPane1.setRightComponent(jPanel1);
@@ -1309,14 +1432,14 @@ public class MainView extends FrameView {
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(mainPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1222, Short.MAX_VALUE)
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1364, Short.MAX_VALUE)
                 .addContainerGap())
         );
         mainPanelLayout.setVerticalGroup(
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(mainPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 723, Short.MAX_VALUE)
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 857, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -1389,7 +1512,7 @@ public class MainView extends FrameView {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jButtonAuditConditionRemove, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jButtonAuditConditionAdd, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE))
-                .addGap(321, 321, 321))
+                .addGap(463, 463, 463))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1501,15 +1624,15 @@ public class MainView extends FrameView {
         auditlogTablePanel.setLayout(auditlogTablePanelLayout);
         auditlogTablePanelLayout.setHorizontalGroup(
             auditlogTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1198, Short.MAX_VALUE)
+            .addGap(0, 1340, Short.MAX_VALUE)
             .addGroup(auditlogTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(auditlogTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1198, Short.MAX_VALUE))
+                .addComponent(auditlogTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1340, Short.MAX_VALUE))
         );
         auditlogTablePanelLayout.setVerticalGroup(
             auditlogTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 524, Short.MAX_VALUE)
+            .addGap(0, 658, Short.MAX_VALUE)
             .addGroup(auditlogTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(auditlogTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 524, Short.MAX_VALUE))
+                .addComponent(auditlogTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 658, Short.MAX_VALUE))
         );
 
         auditlogPanel.add(auditlogTablePanel, "auditlogTableCard");
@@ -1526,11 +1649,11 @@ public class MainView extends FrameView {
         auditlogErrorPanel.setLayout(auditlogErrorPanelLayout);
         auditlogErrorPanelLayout.setHorizontalGroup(
             auditlogErrorPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1198, Short.MAX_VALUE)
+            .addComponent(jScrollPane5, javax.swing.GroupLayout.Alignment.TRAILING)
         );
         auditlogErrorPanelLayout.setVerticalGroup(
             auditlogErrorPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 524, Short.MAX_VALUE)
+            .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 658, Short.MAX_VALUE)
         );
 
         auditlogPanel.add(auditlogErrorPanel, "auditlogErrorCard");
@@ -1558,11 +1681,11 @@ public class MainView extends FrameView {
                 .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(auditlogMaxEntriesTextfield, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(260, Short.MAX_VALUE))
+                .addContainerGap(402, Short.MAX_VALUE))
             .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel3Layout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(auditlogPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 1198, Short.MAX_VALUE)
+                    .addComponent(auditlogPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 1340, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -1583,11 +1706,11 @@ public class MainView extends FrameView {
                         .addComponent(auditlogDisplayingToIndex)
                         .addComponent(jLabel8)
                         .addComponent(auditlogMaxEntriesTextfield, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(540, Short.MAX_VALUE))
+                .addContainerGap(674, Short.MAX_VALUE))
             .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                     .addGap(59, 59, 59)
-                    .addComponent(auditlogPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 524, Short.MAX_VALUE)
+                    .addComponent(auditlogPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -1601,14 +1724,14 @@ public class MainView extends FrameView {
             auditPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(auditPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jSplitPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 1222, Short.MAX_VALUE)
+                .addComponent(jSplitPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 1364, Short.MAX_VALUE)
                 .addContainerGap())
         );
         auditPanelLayout.setVerticalGroup(
             auditPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(auditPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jSplitPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 723, Short.MAX_VALUE)
+                .addComponent(jSplitPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 857, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -1682,7 +1805,7 @@ public class MainView extends FrameView {
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jButtonArchiveConditionRemove, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jButtonArchiveAuditConditionAdd, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE))
-                .addGap(321, 321, 321))
+                .addGap(463, 463, 463))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1791,11 +1914,11 @@ public class MainView extends FrameView {
         archiveTablePanel.setLayout(archiveTablePanelLayout);
         archiveTablePanelLayout.setHorizontalGroup(
             archiveTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(archiveTableScrollPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1198, Short.MAX_VALUE)
+            .addComponent(archiveTableScrollPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1340, Short.MAX_VALUE)
         );
         archiveTablePanelLayout.setVerticalGroup(
             archiveTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(archiveTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 475, Short.MAX_VALUE)
+            .addComponent(archiveTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 609, Short.MAX_VALUE)
         );
 
         archiveContentPanel.add(archiveTablePanel, "archiveTableCard");
@@ -1812,11 +1935,11 @@ public class MainView extends FrameView {
         archiveErrorPanel.setLayout(archiveErrorPanelLayout);
         archiveErrorPanelLayout.setHorizontalGroup(
             archiveErrorPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane8, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1198, Short.MAX_VALUE)
+            .addComponent(jScrollPane8, javax.swing.GroupLayout.Alignment.TRAILING)
         );
         archiveErrorPanelLayout.setVerticalGroup(
             archiveErrorPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane8, javax.swing.GroupLayout.DEFAULT_SIZE, 475, Short.MAX_VALUE)
+            .addComponent(jScrollPane8, javax.swing.GroupLayout.DEFAULT_SIZE, 609, Short.MAX_VALUE)
         );
 
         archiveContentPanel.add(archiveErrorPanel, "archiveErrorCard");
@@ -1844,11 +1967,11 @@ public class MainView extends FrameView {
                 .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(archiveMaxEntriesTextfield, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(260, Short.MAX_VALUE))
+                .addContainerGap(402, Short.MAX_VALUE))
             .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel5Layout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(archiveContentPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 1198, Short.MAX_VALUE)
+                    .addComponent(archiveContentPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 1340, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -1869,11 +1992,11 @@ public class MainView extends FrameView {
                         .addComponent(archiveDisplayingToIndex)
                         .addComponent(jLabel13))
                     .addComponent(archivePreviousButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(491, Short.MAX_VALUE))
+                .addContainerGap(625, Short.MAX_VALUE))
             .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
                     .addGap(59, 59, 59)
-                    .addComponent(archiveContentPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 475, Short.MAX_VALUE)
+                    .addComponent(archiveContentPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -1893,14 +2016,14 @@ public class MainView extends FrameView {
                     .addGroup(archivePanelLayout.createSequentialGroup()
                         .addGap(12, 12, 12)
                         .addComponent(downloadArchiveEntriesButton))
-                    .addComponent(jSplitPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 1222, Short.MAX_VALUE))
+                    .addComponent(jSplitPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 1364, Short.MAX_VALUE))
                 .addContainerGap())
         );
         archivePanelLayout.setVerticalGroup(
             archivePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(archivePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jSplitPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 674, Short.MAX_VALUE)
+                .addComponent(jSplitPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 808, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(downloadArchiveEntriesButton)
                 .addContainerGap())
@@ -2527,6 +2650,36 @@ private void addWorkerItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN
         }
     }//GEN-LAST:event_jButtonArchiveConditionRemoveActionPerformed
 
+private void tokenEntriesNextButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tokenEntriesNextButtonActionPerformed
+    // Step forward
+    final int maxEntries = Integer.valueOf(tokenEntriesMaxEntriesTextfield.getText());
+    final int index = Integer.valueOf(tokenEntriesStartIndexTextfield.getText()) + maxEntries;
+    tokenEntriesStartIndexTextfield.setText(String.valueOf(index));
+    
+    // Reload
+    getContext().getTaskService().execute(reloadTokenEntries());
+}//GEN-LAST:event_tokenEntriesNextButtonActionPerformed
+
+private void tokenEntriesFirstButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tokenEntriesFirstButtonActionPerformed
+    tokenEntriesStartIndexTextfield.setText(String.valueOf(1));
+    
+    // Reload
+    getContext().getTaskService().execute(reloadTokenEntries());
+}//GEN-LAST:event_tokenEntriesFirstButtonActionPerformed
+
+private void tokenEntriesPreviousButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tokenEntriesPreviousButtonActionPerformed
+    // Step backwards
+    final int maxEntries = Integer.valueOf(tokenEntriesMaxEntriesTextfield.getText());
+    int index = Integer.valueOf(tokenEntriesStartIndexTextfield.getText()) - maxEntries;
+    if (index < 1) {
+        index = 1;
+    }
+    tokenEntriesStartIndexTextfield.setText(String.valueOf(index));
+    
+    // Reload
+    getContext().getTaskService().execute(reloadTokenEntries());
+}//GEN-LAST:event_tokenEntriesPreviousButtonActionPerformed
+
 private void displayLogEntryAction() {
     final int sel = auditLogTable.getSelectedRow();
     if (sel >= 0) {
@@ -2655,6 +2808,8 @@ private void displayLogEntryAction() {
                 if (!new HashSet<Component>(Arrays.asList(workerTabbedPane.getComponents())).contains(cryptoTokenTab)) {
                     workerTabbedPane.add("CryptoToken", cryptoTokenTab);
                 }
+                tokenEntriesStartIndexTextfield.setText(String.valueOf(1));
+                tokenEntriesReloadButton.doClick();
             } else {
                 workerTabbedPane.remove(cryptoTokenTab);
             }
@@ -3915,7 +4070,9 @@ private Properties toProperties(WsGlobalConfiguration wsgc) {
     }
 
     private class ReloadTokenEntriesTask extends org.jdesktop.application.Task<TokenSearchResults, Void> {
-        
+
+        private int startIndex;
+        private int maxEntries;
         
         ReloadTokenEntriesTask(org.jdesktop.application.Application app) {
             // Runs on the EDT.  Copy GUI state that
@@ -3923,6 +4080,8 @@ private Properties toProperties(WsGlobalConfiguration wsgc) {
             // to ReloadTokenEntriesTask fields, here.
             super(app);
             
+            startIndex = Integer.parseInt(tokenEntriesStartIndexTextfield.getText()) - 1;
+            maxEntries = Integer.parseInt(tokenEntriesMaxEntriesTextfield.getText());
         }
         @Override protected TokenSearchResults doInBackground() {
             try {
@@ -3936,10 +4095,10 @@ private Properties toProperties(WsGlobalConfiguration wsgc) {
                 
                 return SignServerAdminGUIApplication.getAdminWS().queryTokenEntries(
                         selectedWorker.getWorkerId(),
-                        0, 10,
+                        startIndex, maxEntries,
                         Collections.<QueryCondition>emptyList(),
                         Arrays.asList(ordering),
-                        false);
+                        true);
             } catch (AdminNotAuthorizedException_Exception ex) {
                 java.util.logging.Logger.getLogger(MainView.class.getName()).log(Level.SEVERE, null, ex);
             } catch (AuthorizationDeniedException_Exception ex) {
@@ -3960,7 +4119,36 @@ private Properties toProperties(WsGlobalConfiguration wsgc) {
         @Override protected void succeeded(TokenSearchResults result) {
             // Runs on the EDT.  Update the GUI based on
             // the result computed by doInBackground().
-            tokenEntriesModel.setEntries(result.getEntries());
+            
+            final List<TokenEntry> list;
+            
+            if (result == null) {
+                list = Collections.emptyList();
+                tokenEntriesDisplayingToIndex.setText("to " + (startIndex + maxEntries)); // We pretend we got all entries
+                tokenEntriesNextButton.setEnabled(true);
+                // TODO layout.show(auditlogPanel, "auditlogErrorCard");
+                // TODO auditLogTable.setEnabled(false);
+                tokenEntriesScrollpane.setEnabled(false);
+                
+                // TODO: Gray out and display error etc
+                tokenEntriesModel.setEntries(Collections.<TokenEntry>emptyList());
+            } else {
+                list = result.getEntries();
+                tokenEntriesDisplayingToIndex.setText("to " + (startIndex + list.size()));
+                tokenEntriesNextButton.setEnabled(list.size() >= maxEntries);
+                // TODO layout.show(auditlogPanel, "auditlogTableCard");
+                // TODO auditLogTable.setEnabled(true);
+                tokenEntriesScrollpane.setEnabled(false);
+            }
+            
+            tokenEntriesModel.setEntries(list);
+            
+            tokenEntriesFirstButton.setEnabled(startIndex > 0);
+            tokenEntriesPreviousButton.setEnabled(startIndex > 0);
+            
+            // TODO if (exception != null) {
+            //    auditlogErrorEditor.setText(new StringBuilder().append("Reload failed within the selected interval:\n\n").append(exception.getMessage()).toString());
+            //}
         }
     }
 
@@ -4040,10 +4228,12 @@ private Properties toProperties(WsGlobalConfiguration wsgc) {
     javax.swing.JButton jButtonAuditConditionAdd;
     javax.swing.JButton jButtonAuditConditionRemove;
     javax.swing.JEditorPane jEditorPane1;
+    javax.swing.JLabel jLabel1;
     javax.swing.JLabel jLabel10;
     javax.swing.JLabel jLabel11;
     javax.swing.JLabel jLabel12;
     javax.swing.JLabel jLabel13;
+    javax.swing.JLabel jLabel15;
     javax.swing.JLabel jLabel3;
     javax.swing.JLabel jLabel4;
     javax.swing.JLabel jLabel5;
@@ -4056,7 +4246,6 @@ private Properties toProperties(WsGlobalConfiguration wsgc) {
     javax.swing.JPanel jPanel3;
     javax.swing.JPanel jPanel4;
     javax.swing.JPanel jPanel5;
-    javax.swing.JScrollPane jScrollPane1;
     javax.swing.JScrollPane jScrollPane2;
     javax.swing.JScrollPane jScrollPane3;
     javax.swing.JScrollPane jScrollPane4;
@@ -4113,7 +4302,18 @@ private Properties toProperties(WsGlobalConfiguration wsgc) {
     javax.swing.JTextPane statusSummaryTextPane;
     javax.swing.JButton testKeyButton;
     javax.swing.JMenuItem testKeyMenu;
+    javax.swing.JButton tokenEntriesDetailsButton;
+    javax.swing.JLabel tokenEntriesDisplayingToIndex;
+    javax.swing.JButton tokenEntriesFirstButton;
+    javax.swing.JButton tokenEntriesImportButton;
+    javax.swing.JTextField tokenEntriesMaxEntriesTextfield;
+    javax.swing.JButton tokenEntriesNextButton;
+    javax.swing.JButton tokenEntriesPreviousButton;
     javax.swing.JButton tokenEntriesReloadButton;
+    javax.swing.JButton tokenEntriesRemoveButton;
+    javax.swing.JScrollPane tokenEntriesScrollpane;
+    javax.swing.JTextField tokenEntriesStartIndexTextfield;
+    javax.swing.JButton tokenEntriesTestButton;
     javax.swing.JMenu viewMenu;
     javax.swing.JComboBox workerComboBox;
     javax.swing.JTabbedPane workerTabbedPane;

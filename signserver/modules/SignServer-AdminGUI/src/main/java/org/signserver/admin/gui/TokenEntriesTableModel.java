@@ -32,10 +32,10 @@ import org.signserver.admin.gui.adminws.gen.TokenEntry;
 public class TokenEntriesTableModel extends AbstractTableModel {
 
     private static final String[] COLUMNS = new String [] {
-                "", "Alias", "Type", "Certificates", "Creation Date"
+                "Alias", "Type", "Certificates", /*"Creation Date"*/
             };
     
-    private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ");
+    //private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ");
     
     private List<TokenEntry> entries = Collections.emptyList();
     
@@ -53,11 +53,10 @@ public class TokenEntriesTableModel extends AbstractTableModel {
     public Object getValueAt(int rowIndex, int columnIndex) {
         final Object result;
         switch (columnIndex) {
-            case 0: result = ""; break;
-            case 1: result = entries.get(rowIndex).getAlias(); break;
-            case 2: result = entries.get(rowIndex).getType(); break;
-            case 3: result = "TODO"; break;
-            case 4: result = entries.get(rowIndex).getCreationDate(); break;
+            case 0: result = entries.get(rowIndex).getAlias(); break;
+            case 1: result = entries.get(rowIndex).getType(); break;
+            case 2: result = entries.get(rowIndex).getChain(); break;
+            //case 3: result = entries.get(rowIndex).getCreationDate(); break;
             default: result = "";
         }
         return result;

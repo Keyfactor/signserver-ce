@@ -276,6 +276,12 @@ public class AdminLayerEJBImpl implements AdminWS {
         newEx.setMessage(ex.getMessage());
         return new QueryException_Exception(ex.getMessage(), newEx, ex);
     }
+    
+    private OperationUnsupportedException_Exception wrap(OperationUnsupportedException ex) {
+        org.signserver.admin.gui.adminws.gen.OperationUnsupportedException newEx = new org.signserver.admin.gui.adminws.gen.OperationUnsupportedException();
+        newEx.setMessage(ex.getMessage());
+        return new OperationUnsupportedException_Exception(ex.getMessage(), newEx, ex);
+    }
 
     /**
      * Method used to deactivate the signtoken of a signer.
@@ -1179,7 +1185,7 @@ public class AdminLayerEJBImpl implements AdminWS {
         } catch (UnsupportedCryptoTokenParameter ex) {
             throw new RuntimeException(ex); // TODO
         } catch (OperationUnsupportedException ex) {
-            throw new RuntimeException(ex); // TODO
+            throw wrap(ex);
         }
     }
     

@@ -282,7 +282,7 @@ public class AdminWebServiceTest extends ModulesTestCase {
     
     public void testImportCertificateChain() throws Exception {
         try {
-            adminWS.importCertificateChain("10", null, null, null);
+            adminWS.importCertificateChain(10, null, null, null);
         } catch (AdminNotAuthorizedException_Exception ignored) {
             // OK
         }
@@ -290,7 +290,7 @@ public class AdminWebServiceTest extends ModulesTestCase {
     
     public void testQueryTokenEntries() throws Exception {
         try {
-            adminWS.queryTokenEntries("10", 0, 1, null, null, false);
+            adminWS.queryTokenEntries(10, 0, 1, null, null, false);
         } catch (AdminNotAuthorizedException_Exception ignored) { // NOPMD
             // OK
         }

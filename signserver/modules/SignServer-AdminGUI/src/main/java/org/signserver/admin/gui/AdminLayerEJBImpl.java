@@ -834,7 +834,7 @@ public class AdminLayerEJBImpl implements AdminWS {
     /**
      * Method used to import a certificate chain to a crypto token.
      * 
-     * @param workerIdOrName ID or name of the (crypto)worker
+     * @param workerId ID of the (crypto)worker
      * @param certificateChain Certificate chain to import
      * @param alias Alias to use in the token
      * @param authCode Authentication code (used if the alias is using a
@@ -845,7 +845,7 @@ public class AdminLayerEJBImpl implements AdminWS {
      * @throws OperationUnsupportedException_Exception
      */
     @Override
-    public void importCertificateChain(final String workerIdOrName,
+    public void importCertificateChain(final int workerId,
                                        final List<byte[]> certificateChain,
                                        final String alias,
                                        final String authCode)
@@ -854,14 +854,6 @@ public class AdminLayerEJBImpl implements AdminWS {
                    CryptoTokenOfflineException_Exception,
                    CertificateException_Exception {
         try {
-            int workerId;
-            
-            try {
-                workerId = Integer.parseInt(workerIdOrName);
-            } catch (NumberFormatException e) {
-                workerId = getWorkerId(workerIdOrName);
-            }
-            
             worker.importCertificateChain(workerId, certificateChain, alias,
                     authCode != null ? authCode.toCharArray() : null);
         } catch (CryptoTokenOfflineException ex) {
@@ -1152,9 +1144,12 @@ public class AdminLayerEJBImpl implements AdminWS {
     }
     
     @Override
-    public TokenSearchResults queryTokenEntries(String workerNameOrId, int startIndex, int max, List<QueryCondition> condition, List<QueryOrdering> ordering, boolean includeData) throws AdminNotAuthorizedException_Exception, AuthorizationDeniedException_Exception, CryptoTokenOfflineException_Exception, InvalidWorkerIdException_Exception, OperationUnsupportedException_Exception, QueryException_Exception, SignServerException_Exception {
+    public TokenSearchResults queryTokenEntries(int workerId, int startIndex, int max, List<QueryCondition> condition, List<QueryOrdering> ordering, boolean includeData) throws AdminNotAuthorizedException_Exception, AuthorizationDeniedException_Exception, CryptoTokenOfflineException_Exception, InvalidWorkerIdException_Exception, OperationUnsupportedException_Exception, QueryException_Exception, SignServerException_Exception {
         try {
-            org.signserver.server.cryptotokens.TokenSearchResults results = worker.searchTokenEntries(Integer.parseInt(workerNameOrId), startIndex, max, null, includeData, null);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("queryTokenEntries(" + workerId + ", " + startIndex + ", " + max + ", ...");
+            }
+            org.signserver.server.cryptotokens.TokenSearchResults results = worker.searchTokenEntries(workerId, startIndex, max, QueryCriteria.create(), includeData, null);
             
             TokenSearchResults wsResults = new TokenSearchResults();
             wsResults.setMoreEntriesAvailable(results.isMoreEntriesAvailable());

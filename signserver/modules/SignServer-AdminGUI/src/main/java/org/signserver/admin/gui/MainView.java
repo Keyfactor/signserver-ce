@@ -13,6 +13,7 @@
 package org.signserver.admin.gui;
 
 import java.awt.CardLayout;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -33,16 +34,19 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Vector;
+import java.util.logging.Level;
 import javax.ejb.EJBException;
 import javax.swing.AbstractListModel;
 import javax.swing.ComboBoxModel;
 import javax.swing.Icon;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -69,17 +73,21 @@ import org.jdesktop.application.Task;
 import org.jdesktop.application.TaskMonitor;
 import org.signserver.admin.gui.adminws.gen.AdminNotAuthorizedException_Exception;
 import org.signserver.admin.gui.adminws.gen.ArchiveEntry;
+import org.signserver.admin.gui.adminws.gen.AuthorizationDeniedException_Exception;
 import org.signserver.admin.gui.adminws.gen.AuthorizedClient;
 import org.signserver.admin.gui.adminws.gen.CryptoTokenAuthenticationFailureException_Exception;
 import org.signserver.admin.gui.adminws.gen.CryptoTokenOfflineException_Exception;
 import org.signserver.admin.gui.adminws.gen.InvalidWorkerIdException_Exception;
 import org.signserver.admin.gui.adminws.gen.KeyStoreException_Exception;
 import org.signserver.admin.gui.adminws.gen.LogEntry;
+import org.signserver.admin.gui.adminws.gen.OperationUnsupportedException_Exception;
 import org.signserver.admin.gui.adminws.gen.Order;
 import org.signserver.admin.gui.adminws.gen.QueryCondition;
+import org.signserver.admin.gui.adminws.gen.QueryException_Exception;
 import org.signserver.admin.gui.adminws.gen.QueryOrdering;
 import org.signserver.admin.gui.adminws.gen.RelationalOperator;
 import org.signserver.admin.gui.adminws.gen.SignServerException_Exception;
+import org.signserver.admin.gui.adminws.gen.TokenSearchResults;
 import org.signserver.admin.gui.adminws.gen.WsGlobalConfiguration;
 import org.signserver.admin.gui.adminws.gen.WsWorkerConfig;
 import org.signserver.admin.gui.adminws.gen.WsWorkerStatus;
@@ -117,6 +125,7 @@ public class MainView extends FrameView {
     private ArchiveTableModel archiveModel = new ArchiveTableModel();
     private ConditionsTableModel auditlogConditionsModel = new AuditlogConditionsTableModel();
     private ConditionsTableModel archiveConditionsModel = new ArchiveConditionsTableModel();
+    private TokenEntriesTableModel tokenEntriesModel = new TokenEntriesTableModel();
     
     private WorkerPropertyEditor workerPropertyEditor =
             new WorkerPropertyEditor();
@@ -180,6 +189,8 @@ public class MainView extends FrameView {
                 }
             }
         });
+        
+        cryptoTokenEntriesTable.setModel(tokenEntriesModel);
         
         workersList.setCellRenderer(new MyListCellRenderer());
 
@@ -480,6 +491,10 @@ public class MainView extends FrameView {
         authAddButton = new javax.swing.JButton();
         authEditButton = new javax.swing.JButton();
         authRemoveButton = new javax.swing.JButton();
+        cryptoTokenTab = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        cryptoTokenEntriesTable = new javax.swing.JTable();
+        tokenEntriesReloadButton = new javax.swing.JButton();
         auditPanel = new javax.swing.JPanel();
         jSplitPane2 = new javax.swing.JSplitPane();
         jPanel2 = new javax.swing.JPanel();
@@ -873,7 +888,7 @@ public class MainView extends FrameView {
                     .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE)
                     .addComponent(editIssuerDNTextfield, javax.swing.GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE)
                     .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE)
-                    .addComponent(editUpdateAllCheckbox, javax.swing.GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE))
+                    .addComponent(editUpdateAllCheckbox, javax.swing.GroupLayout.PREFERRED_SIZE, 331, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(loadCertButton, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -1016,11 +1031,11 @@ public class MainView extends FrameView {
             .addGroup(statusPropertiesTabLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(statusPropertiesDetailsButton)
-                .addContainerGap(481, Short.MAX_VALUE))
+                .addContainerGap(544, Short.MAX_VALUE))
             .addGroup(statusPropertiesTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(statusPropertiesTabLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(statusPropertiesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 502, Short.MAX_VALUE)
+                    .addComponent(statusPropertiesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 575, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -1105,7 +1120,7 @@ public class MainView extends FrameView {
             .addGroup(configurationTabLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(configurationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 502, Short.MAX_VALUE)
+                    .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 575, Short.MAX_VALUE)
                     .addGroup(configurationTabLayout.createSequentialGroup()
                         .addComponent(addButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -1211,15 +1226,60 @@ public class MainView extends FrameView {
                 .addComponent(authEditButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(authRemoveButton)
-                .addContainerGap(397, Short.MAX_VALUE))
+                .addContainerGap(440, Short.MAX_VALUE))
             .addGroup(authorizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(authorizationTabLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 502, Short.MAX_VALUE)
+                    .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 575, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
         workerTabbedPane.addTab(resourceMap.getString("authorizationTab.TabConstraints.tabTitle"), authorizationTab); // NOI18N
+
+        cryptoTokenTab.setName("cryptoTokenTab"); // NOI18N
+
+        jScrollPane1.setName("jScrollPane1"); // NOI18N
+
+        cryptoTokenEntriesTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        cryptoTokenEntriesTable.setName("cryptoTokenEntriesTable"); // NOI18N
+        jScrollPane1.setViewportView(cryptoTokenEntriesTable);
+
+        tokenEntriesReloadButton.setAction(actionMap.get("reloadTokenEntries")); // NOI18N
+        tokenEntriesReloadButton.setText(resourceMap.getString("tokenEntriesReloadButton.text")); // NOI18N
+        tokenEntriesReloadButton.setName("tokenEntriesReloadButton"); // NOI18N
+
+        javax.swing.GroupLayout cryptoTokenTabLayout = new javax.swing.GroupLayout(cryptoTokenTab);
+        cryptoTokenTab.setLayout(cryptoTokenTabLayout);
+        cryptoTokenTabLayout.setHorizontalGroup(
+            cryptoTokenTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, cryptoTokenTabLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 718, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addComponent(tokenEntriesReloadButton, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        cryptoTokenTabLayout.setVerticalGroup(
+            cryptoTokenTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(cryptoTokenTabLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(cryptoTokenTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(tokenEntriesReloadButton)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 575, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+
+        workerTabbedPane.addTab(resourceMap.getString("cryptoTokenTab.TabConstraints.tabTitle"), cryptoTokenTab); // NOI18N
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -1238,7 +1298,7 @@ public class MainView extends FrameView {
                 .addContainerGap()
                 .addComponent(workerComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(workerTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 567, Short.MAX_VALUE))
+                .addComponent(workerTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 650, Short.MAX_VALUE))
         );
 
         jSplitPane1.setRightComponent(jPanel1);
@@ -1256,7 +1316,7 @@ public class MainView extends FrameView {
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(mainPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 630, Short.MAX_VALUE)
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 723, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -1341,7 +1401,7 @@ public class MainView extends FrameView {
                         .addComponent(jButtonAuditConditionAdd)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButtonAuditConditionRemove))
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 87, Short.MAX_VALUE))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 92, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -1447,9 +1507,9 @@ public class MainView extends FrameView {
         );
         auditlogTablePanelLayout.setVerticalGroup(
             auditlogTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 431, Short.MAX_VALUE)
+            .addGap(0, 524, Short.MAX_VALUE)
             .addGroup(auditlogTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(auditlogTableScrollPane))
+                .addComponent(auditlogTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 524, Short.MAX_VALUE))
         );
 
         auditlogPanel.add(auditlogTablePanel, "auditlogTableCard");
@@ -1470,7 +1530,7 @@ public class MainView extends FrameView {
         );
         auditlogErrorPanelLayout.setVerticalGroup(
             auditlogErrorPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 431, Short.MAX_VALUE)
+            .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 524, Short.MAX_VALUE)
         );
 
         auditlogPanel.add(auditlogErrorPanel, "auditlogErrorCard");
@@ -1498,7 +1558,7 @@ public class MainView extends FrameView {
                 .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(auditlogMaxEntriesTextfield, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(312, Short.MAX_VALUE))
+                .addContainerGap(260, Short.MAX_VALUE))
             .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel3Layout.createSequentialGroup()
                     .addContainerGap()
@@ -1523,11 +1583,11 @@ public class MainView extends FrameView {
                         .addComponent(auditlogDisplayingToIndex)
                         .addComponent(jLabel8)
                         .addComponent(auditlogMaxEntriesTextfield, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(457, Short.MAX_VALUE))
+                .addContainerGap(540, Short.MAX_VALUE))
             .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                     .addGap(59, 59, 59)
-                    .addComponent(auditlogPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 431, Short.MAX_VALUE)
+                    .addComponent(auditlogPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 524, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -1548,7 +1608,7 @@ public class MainView extends FrameView {
             auditPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(auditPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jSplitPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 630, Short.MAX_VALUE)
+                .addComponent(jSplitPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 723, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -1634,7 +1694,7 @@ public class MainView extends FrameView {
                         .addComponent(jButtonArchiveAuditConditionAdd)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButtonArchiveConditionRemove))
-                    .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 87, Short.MAX_VALUE))
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 92, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -1735,7 +1795,7 @@ public class MainView extends FrameView {
         );
         archiveTablePanelLayout.setVerticalGroup(
             archiveTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(archiveTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 392, Short.MAX_VALUE)
+            .addComponent(archiveTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 475, Short.MAX_VALUE)
         );
 
         archiveContentPanel.add(archiveTablePanel, "archiveTableCard");
@@ -1756,7 +1816,7 @@ public class MainView extends FrameView {
         );
         archiveErrorPanelLayout.setVerticalGroup(
             archiveErrorPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane8, javax.swing.GroupLayout.DEFAULT_SIZE, 392, Short.MAX_VALUE)
+            .addComponent(jScrollPane8, javax.swing.GroupLayout.DEFAULT_SIZE, 475, Short.MAX_VALUE)
         );
 
         archiveContentPanel.add(archiveErrorPanel, "archiveErrorCard");
@@ -1784,7 +1844,7 @@ public class MainView extends FrameView {
                 .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(archiveMaxEntriesTextfield, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(312, Short.MAX_VALUE))
+                .addContainerGap(260, Short.MAX_VALUE))
             .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel5Layout.createSequentialGroup()
                     .addContainerGap()
@@ -1809,11 +1869,11 @@ public class MainView extends FrameView {
                         .addComponent(archiveDisplayingToIndex)
                         .addComponent(jLabel13))
                     .addComponent(archivePreviousButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(418, Short.MAX_VALUE))
+                .addContainerGap(491, Short.MAX_VALUE))
             .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
                     .addGap(59, 59, 59)
-                    .addComponent(archiveContentPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 392, Short.MAX_VALUE)
+                    .addComponent(archiveContentPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 475, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -1821,7 +1881,6 @@ public class MainView extends FrameView {
 
         downloadArchiveEntriesButton.setAction(actionMap.get("archiveFetch")); // NOI18N
         downloadArchiveEntriesButton.setText(resourceMap.getString("downloadArchiveEntriesButton.text")); // NOI18N
-        downloadArchiveEntriesButton.setEnabled(false);
         downloadArchiveEntriesButton.setName("downloadArchiveEntriesButton"); // NOI18N
 
         javax.swing.GroupLayout archivePanelLayout = new javax.swing.GroupLayout(archivePanel);
@@ -1841,7 +1900,7 @@ public class MainView extends FrameView {
             archivePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(archivePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jSplitPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 591, Short.MAX_VALUE)
+                .addComponent(jSplitPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 674, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(downloadArchiveEntriesButton)
                 .addContainerGap())
@@ -1901,7 +1960,7 @@ public class MainView extends FrameView {
                 .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, reloadPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(reloadAllWorkersRadioButton, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE)
+                .addComponent(reloadAllWorkersRadioButton, javax.swing.GroupLayout.PREFERRED_SIZE, 372, Short.MAX_VALUE)
                 .addContainerGap())
             .addGroup(reloadPanelLayout.createSequentialGroup()
                 .addContainerGap()
@@ -1971,7 +2030,7 @@ public class MainView extends FrameView {
                 .addContainerGap())
             .addGroup(exportPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(exportAllUnrelatedGlobalCheckbox, javax.swing.GroupLayout.DEFAULT_SIZE, 451, Short.MAX_VALUE)
+                .addComponent(exportAllUnrelatedGlobalCheckbox, javax.swing.GroupLayout.PREFERRED_SIZE, 451, Short.MAX_VALUE)
                 .addContainerGap())
             .addGroup(exportPanelLayout.createSequentialGroup()
                 .addContainerGap()
@@ -2543,6 +2602,9 @@ private void displayLogEntryAction() {
                 }
 
             });
+            
+            workerTabbedPane.remove(cryptoTokenTab);
+            
         } else {
             statusSummaryTextPane.setText("<html><body><pre>\n" + worker.getStatusSummary() + "\n</pre></body></html>");
             statusSummaryTextPane.setCaretPosition(0);
@@ -2586,10 +2648,24 @@ private void displayLogEntryAction() {
                 }
 
             });
+            
+            if (worker.isCryptoConfigured()) {
+                loadCryptoTokenEntries(worker);
+                
+                if (!new HashSet<Component>(Arrays.asList(workerTabbedPane.getComponents())).contains(cryptoTokenTab)) {
+                    workerTabbedPane.add("CryptoToken", cryptoTokenTab);
+                }
+            } else {
+                workerTabbedPane.remove(cryptoTokenTab);
+            }
         }
 
     }
 
+    private void loadCryptoTokenEntries(Worker worker) {
+        
+    }
+    
     @Action(block = Task.BlockingScope.WINDOW)
     public Task refreshWorkers() {
         return new RefreshWorkersTask(getApplication());
@@ -3833,6 +3909,62 @@ private Properties toProperties(WsGlobalConfiguration wsgc) {
     return result;
 }
 
+    @Action
+    public Task reloadTokenEntries() {
+        return new ReloadTokenEntriesTask(getApplication());
+    }
+
+    private class ReloadTokenEntriesTask extends org.jdesktop.application.Task<TokenSearchResults, Void> {
+        
+        
+        ReloadTokenEntriesTask(org.jdesktop.application.Application app) {
+            // Runs on the EDT.  Copy GUI state that
+            // doInBackground() depends on from parameters
+            // to ReloadTokenEntriesTask fields, here.
+            super(app);
+            
+        }
+        @Override protected TokenSearchResults doInBackground() {
+            try {
+                // Your Task's code here.  This method runs
+                // on a background thread, so don't reference
+                // the Swing GUI from here.
+                
+                QueryOrdering ordering = new QueryOrdering();
+                ordering.setOrder(Order.ASC);
+                ordering.setColumn("alias");
+                
+                return SignServerAdminGUIApplication.getAdminWS().queryTokenEntries(
+                        selectedWorker.getWorkerId(),
+                        0, 10,
+                        Collections.<QueryCondition>emptyList(),
+                        Arrays.asList(ordering),
+                        false);
+            } catch (AdminNotAuthorizedException_Exception ex) {
+                java.util.logging.Logger.getLogger(MainView.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (AuthorizationDeniedException_Exception ex) {
+                java.util.logging.Logger.getLogger(MainView.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (CryptoTokenOfflineException_Exception ex) {
+                java.util.logging.Logger.getLogger(MainView.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (InvalidWorkerIdException_Exception ex) {
+                java.util.logging.Logger.getLogger(MainView.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (OperationUnsupportedException_Exception ex) {
+                java.util.logging.Logger.getLogger(MainView.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (QueryException_Exception ex) {
+                java.util.logging.Logger.getLogger(MainView.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SignServerException_Exception ex) {
+                java.util.logging.Logger.getLogger(MainView.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            return null; // TODO
+        }
+        @Override protected void succeeded(TokenSearchResults result) {
+            // Runs on the EDT.  Update the GUI based on
+            // the result computed by doInBackground().
+            tokenEntriesModel.setEntries(result.getEntries());
+        }
+    }
+
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     javax.swing.JButton activateButton;
@@ -3881,6 +4013,8 @@ private Properties toProperties(WsGlobalConfiguration wsgc) {
     javax.swing.JMenuItem configurationMenu;
     javax.swing.JPanel configurationTab;
     javax.swing.JTable configurationTable;
+    javax.swing.JTable cryptoTokenEntriesTable;
+    javax.swing.JPanel cryptoTokenTab;
     javax.swing.JButton deactivateButton;
     javax.swing.JMenuItem deactivateMenu;
     javax.swing.JButton downloadArchiveEntriesButton;
@@ -3922,6 +4056,7 @@ private Properties toProperties(WsGlobalConfiguration wsgc) {
     javax.swing.JPanel jPanel3;
     javax.swing.JPanel jPanel4;
     javax.swing.JPanel jPanel5;
+    javax.swing.JScrollPane jScrollPane1;
     javax.swing.JScrollPane jScrollPane2;
     javax.swing.JScrollPane jScrollPane3;
     javax.swing.JScrollPane jScrollPane4;
@@ -3978,6 +4113,7 @@ private Properties toProperties(WsGlobalConfiguration wsgc) {
     javax.swing.JTextPane statusSummaryTextPane;
     javax.swing.JButton testKeyButton;
     javax.swing.JMenuItem testKeyMenu;
+    javax.swing.JButton tokenEntriesReloadButton;
     javax.swing.JMenu viewMenu;
     javax.swing.JComboBox workerComboBox;
     javax.swing.JTabbedPane workerTabbedPane;

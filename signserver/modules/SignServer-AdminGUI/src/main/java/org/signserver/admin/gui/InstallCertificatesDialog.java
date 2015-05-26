@@ -444,7 +444,7 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
                                         signer.getConfiguration().getProperty("NEXTCERTSIGNKEY");
                                 
                                 SignServerAdminGUIApplication.getAdminWS()
-                                        .importCertificateChain(Integer.toString(workerid),
+                                        .importCertificateChain(workerid,
                                                                 asByteArrayList(signerChain),
                                                                 alias, null);
                             } else {

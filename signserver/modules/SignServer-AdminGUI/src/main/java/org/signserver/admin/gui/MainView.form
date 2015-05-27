@@ -1135,12 +1135,16 @@
                                           <Component id="jLabel1" alignment="0" pref="1041" max="32767" attributes="0"/>
                                           <Group type="102" alignment="1" attributes="0">
                                               <Component id="tokenEntriesScrollpane" pref="816" max="32767" attributes="0"/>
-                                              <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
+                                              <EmptySpace type="separate" max="-2" attributes="0"/>
                                               <Group type="103" groupAlignment="0" attributes="0">
-                                                  <Component id="tokenEntriesImportButton" linkSize="6" min="-2" max="-2" attributes="0"/>
-                                                  <Component id="tokenEntriesTestButton" linkSize="6" alignment="0" min="-2" max="-2" attributes="0"/>
-                                                  <Component id="tokenEntriesRemoveButton" linkSize="6" min="-2" max="-2" attributes="0"/>
-                                                  <Component id="tokenEntriesDetailsButton" linkSize="6" min="-2" max="-2" attributes="0"/>
+                                                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                                      <Component id="tokenEntriesImportButton" linkSize="6" alignment="0" max="32767" attributes="1"/>
+                                                      <Component id="tokenEntriesRemoveButton" linkSize="6" alignment="0" max="32767" attributes="1"/>
+                                                      <Component id="tokenEntriesDetailsButton" linkSize="6" alignment="0" min="-2" max="-2" attributes="1"/>
+                                                  </Group>
+                                                  <Component id="tokenEntriesGenerateCSRButton" linkSize="6" min="-2" max="-2" attributes="1"/>
+                                                  <Component id="tokenEntriesTestButton" linkSize="6" alignment="0" min="-2" max="-2" attributes="1"/>
+                                                  <Component id="tokenEntriesGenerateKeyButton" linkSize="6" alignment="0" min="-2" max="-2" attributes="1"/>
                                               </Group>
                                           </Group>
                                           <Group type="102" alignment="0" attributes="0">
@@ -1187,9 +1191,12 @@
                                       </Group>
                                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="tokenEntriesScrollpane" pref="617" max="32767" attributes="0"/>
-                                          <Group type="102" attributes="0">
+                                          <Group type="102" alignment="0" attributes="0">
+                                              <Component id="tokenEntriesGenerateKeyButton" min="-2" max="-2" attributes="0"/>
+                                              <EmptySpace type="separate" max="-2" attributes="0"/>
                                               <Component id="tokenEntriesTestButton" min="-2" max="-2" attributes="0"/>
+                                              <EmptySpace max="-2" attributes="0"/>
+                                              <Component id="tokenEntriesGenerateCSRButton" min="-2" max="-2" attributes="0"/>
                                               <EmptySpace max="-2" attributes="0"/>
                                               <Component id="tokenEntriesImportButton" min="-2" max="-2" attributes="0"/>
                                               <EmptySpace max="-2" attributes="0"/>
@@ -1197,6 +1204,7 @@
                                               <EmptySpace type="separate" max="-2" attributes="0"/>
                                               <Component id="tokenEntriesDetailsButton" min="-2" max="-2" attributes="0"/>
                                           </Group>
+                                          <Component id="tokenEntriesScrollpane" alignment="1" pref="617" max="32767" attributes="0"/>
                                       </Group>
                                       <EmptySpace max="-2" attributes="0"/>
                                   </Group>
@@ -1235,27 +1243,56 @@
                                 <Property name="name" type="java.lang.String" value="tokenEntriesReloadButton" noResource="true"/>
                               </Properties>
                             </Component>
+                            <Component class="javax.swing.JButton" name="tokenEntriesGenerateKeyButton">
+                              <Properties>
+                                <Property name="text" type="java.lang.String" resourceKey="tokenEntriesGenerateKeyButton.text"/>
+                                <Property name="name" type="java.lang.String" value="tokenEntriesGenerateKeyButton" noResource="true"/>
+                              </Properties>
+                              <Events>
+                                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="tokenEntriesGenerateKeyButtonActionPerformed"/>
+                              </Events>
+                            </Component>
                             <Component class="javax.swing.JButton" name="tokenEntriesTestButton">
                               <Properties>
                                 <Property name="text" type="java.lang.String" resourceKey="tokenEntriesTestButton.text"/>
+                                <Property name="enabled" type="boolean" value="false"/>
                                 <Property name="name" type="java.lang.String" value="tokenEntriesTestButton" noResource="true"/>
                               </Properties>
+                              <Events>
+                                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="tokenEntriesTestButtonActionPerformed"/>
+                              </Events>
+                            </Component>
+                            <Component class="javax.swing.JButton" name="tokenEntriesGenerateCSRButton">
+                              <Properties>
+                                <Property name="text" type="java.lang.String" resourceKey="tokenEntriesGenerateCSRButton.text"/>
+                                <Property name="enabled" type="boolean" value="false"/>
+                                <Property name="name" type="java.lang.String" value="tokenEntriesGenerateCSRButton" noResource="true"/>
+                              </Properties>
+                              <Events>
+                                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="tokenEntriesGenerateCSRButtonActionPerformed"/>
+                              </Events>
                             </Component>
                             <Component class="javax.swing.JButton" name="tokenEntriesImportButton">
                               <Properties>
                                 <Property name="text" type="java.lang.String" resourceKey="tokenEntriesImportButton.text"/>
+                                <Property name="enabled" type="boolean" value="false"/>
                                 <Property name="name" type="java.lang.String" value="tokenEntriesImportButton" noResource="true"/>
                               </Properties>
                             </Component>
                             <Component class="javax.swing.JButton" name="tokenEntriesRemoveButton">
                               <Properties>
                                 <Property name="text" type="java.lang.String" resourceKey="tokenEntriesRemoveButton.text"/>
+                                <Property name="enabled" type="boolean" value="false"/>
                                 <Property name="name" type="java.lang.String" value="tokenEntriesRemoveButton" noResource="true"/>
                               </Properties>
+                              <Events>
+                                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="tokenEntriesRemoveButtonActionPerformed"/>
+                              </Events>
                             </Component>
                             <Component class="javax.swing.JButton" name="tokenEntriesDetailsButton">
                               <Properties>
                                 <Property name="text" type="java.lang.String" resourceKey="tokenEntriesDetailsButton.text"/>
+                                <Property name="enabled" type="boolean" value="false"/>
                                 <Property name="name" type="java.lang.String" value="tokenEntriesDetailsButton" noResource="true"/>
                               </Properties>
                             </Component>

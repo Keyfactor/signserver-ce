@@ -17,6 +17,7 @@ import java.awt.Frame;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 import javax.ejb.EJBException;
@@ -72,10 +73,29 @@ public class TestKeysDialog extends JDialog {
     });
 
     private List<Worker> workers;
-
-    /** Creates new form GenerateRequestsDialog */
-    public TestKeysDialog(final Frame parent, final boolean modal,
-            final List<Worker> workers) {
+    
+    /**
+     * Test one specific key.
+     * @param parent frame
+     * @param modal if the dialog should block
+     * @param worker to test a key from
+     * @param alias of key to test
+     */
+    public TestKeysDialog(final Frame parent, final boolean modal, Worker worker, String alias) {
+        this(parent, modal, Collections.singletonList(worker), alias);
+    }
+    
+    /**
+     * Test keys for the specified workers.
+     * @param parent frame
+     * @param modal if the dialog should block
+     * @param workers to test the keys for
+     */
+    public TestKeysDialog(final Frame parent, final boolean modal, final List<Worker> workers) {
+        this(parent, modal, workers, null);
+    }
+    
+    private TestKeysDialog(final Frame parent, final boolean modal, final List<Worker> workers, String oneAlias) {
         super(parent, modal);
         this.workers = new ArrayList<Worker>(workers);
         aliasComboBox.setEditable(true);
@@ -83,19 +103,26 @@ public class TestKeysDialog extends JDialog {
         setTitle("Test keys for " + workers.size() + " signers");
 
         data = new Vector<Vector<String>>();
-        for (Worker worker : workers) {
+        if (workers.size() == 1 && oneAlias != null) {
+            Worker worker = workers.get(0);
             Vector<String> cols = new Vector<String>();
             cols.add(worker.getName() + " (" + worker.getWorkerId() + ")");
-            String alias
-                    = worker.getConfiguration().getProperty("NEXTCERTSIGNKEY");
-            if (alias == null) {
-                alias = worker.getConfiguration().getProperty("DEFAULTKEY");
-            }
-            if (alias == null) {
-                alias = "all";
-            }
-            cols.add(alias);
+            cols.add(oneAlias);
             data.add(cols);
+        } else {
+            for (Worker worker : workers) {
+                Vector<String> cols = new Vector<String>();
+                cols.add(worker.getName() + " (" + worker.getWorkerId() + ")");
+                String alias = worker.getConfiguration().getProperty("NEXTCERTSIGNKEY");
+                if (alias == null) {
+                    alias = worker.getConfiguration().getProperty("DEFAULTKEY");
+                }
+                if (alias == null) {
+                    alias = "all";
+                }
+                cols.add(alias);
+                data.add(cols);
+            }
         }
         jTable1.setModel(new DefaultTableModel(data, COLUMN_NAMES) {
 
@@ -305,7 +332,7 @@ public class TestKeysDialog extends JDialog {
         dispose();
 }//GEN-LAST:event_jButton2ActionPerformed
 
-    public int showRequestsDialog() {
+    public int showDialog() {
         setVisible(true);
         return resultCode;
     }

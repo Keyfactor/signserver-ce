@@ -91,36 +91,74 @@ public class GenerateRequestsDialog extends JDialog {
 
     private List<Worker> workers;
 
-    /** Creates new form GenerateRequestsDialog. */
+    public GenerateRequestsDialog(final Frame parent, final boolean modal,
+            final Worker worker, final List<String> aliases, final List<Worker> signers,
+            final ResourceMap resourceMap) {
+        this(parent, modal, null, worker, aliases, signers, resourceMap);
+    }
+
     public GenerateRequestsDialog(final Frame parent, final boolean modal,
             final List<Worker> workers, final List<Worker> signers,
             final ResourceMap resourceMap) {
+        this(parent, modal, workers, null, null, signers, resourceMap);
+    }
+    
+    private GenerateRequestsDialog(final Frame parent, final boolean modal,
+            final List<Worker> workers, final Worker worker, final List<String> aliases, final List<Worker> signers,
+            final ResourceMap resourceMap) {
         super(parent, modal);
-        this.workers = new ArrayList<Worker>(workers);
+        if (workers != null && worker != null) {
+            throw new IllegalArgumentException("Specify only one of workers and worker");
+        }
+        if (worker != null && aliases == null) {
+            throw new IllegalArgumentException("Missing list of aliases");
+        }
+
         aliasComboBox.setEditable(true);
         sigAlgComboBox.setEditable(true);
         initComponents();
-        setTitle("Generate CSRs for " + workers.size() + " signers");
 
         data = new Vector<Vector<Object>>();
-        for (Worker worker : workers) {
-            Vector<Object> cols = new Vector<Object>();
-            cols.add(worker.getName() + " (" + worker.getWorkerId() + ")");
-            if (worker.getConfiguration().getProperty("NEXTCERTSIGNKEY") != null) {
-                cols.add(new Utils.HardCodedAliasValue(Utils.HardCodedAlias.NEXT_KEY, worker));
-            } else {
-                cols.add(new Utils.HardCodedAliasValue(Utils.HardCodedAlias.DEFAULT_KEY, worker));
+
+        if (worker != null) {
+            setTitle("Generate CSRs for " + aliases.size() + " keys");
+            Worker[] workersArray = new Worker[aliases.size()];
+            Arrays.fill(workersArray, worker);
+            this.workers = new ArrayList<Worker>(Arrays.asList(workersArray));
+            
+            for (String a : aliases) {
+                Vector<Object> cols = new Vector<Object>();
+                cols.add(worker.getName() + " (" + worker.getWorkerId() + ")");
+                cols.add(a);
+                cols.add(worker.getConfiguration().getProperty("SIGNATUREALGORITHM",
+                        ""));
+                cols.add(worker.getConfiguration().getProperty("REQUESTDN", ""));
+                data.add(cols);
             }
-            cols.add(worker.getConfiguration().getProperty("SIGNATUREALGORITHM",
-                    ""));
-            cols.add(worker.getConfiguration().getProperty("REQUESTDN", ""));
-            data.add(cols);
+        } else {
+            setTitle("Generate CSRs for " + workers.size() + " signers");
+            this.workers = new ArrayList<Worker>(workers);
+
+            for (Worker w : workers) {
+                Vector<Object> cols = new Vector<Object>();
+                cols.add(w.getName() + " (" + w.getWorkerId() + ")");
+                if (w.getConfiguration().getProperty("NEXTCERTSIGNKEY") != null) {
+                    cols.add(new Utils.HardCodedAliasValue(Utils.HardCodedAlias.NEXT_KEY, w));
+                } else {
+                    cols.add(new Utils.HardCodedAliasValue(Utils.HardCodedAlias.DEFAULT_KEY, w));
+                }
+                cols.add(w.getConfiguration().getProperty("SIGNATUREALGORITHM",
+                        ""));
+                cols.add(w.getConfiguration().getProperty("REQUESTDN", ""));
+                data.add(cols);
+            }
         }
         jTable1.setModel(new DefaultTableModel(data, COLUMN_NAMES) {
 
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column > 0;
+                return column > 0
+                        && (aliases == null || column != 1); // Only edit alias if they are not already specified
             }
 
             @Override
@@ -176,7 +214,7 @@ public class GenerateRequestsDialog extends JDialog {
         jTable1.getColumn("DN").setCellEditor(textFieldEditor);
 
         final AliasCellEditor aliasComboBoxFieldEditor
-                = new AliasCellEditor(workers, aliasComboBox, true);
+                = new AliasCellEditor(this.workers, aliasComboBox, true);
         aliasComboBoxFieldEditor.setClickCountToStart(1);
         jTable1.getColumn("Key").setCellEditor(aliasComboBoxFieldEditor);
 
@@ -187,8 +225,8 @@ public class GenerateRequestsDialog extends JDialog {
 
         // Find and select first matching REQUESTSIGNER
         Worker selectedSigner = null;
-        loop1: for (Worker worker : workers) {
-            final String requestSigner = (String) worker.getConfiguration()
+        loop1: for (Worker w : this.workers) {
+            final String requestSigner = (String) w.getConfiguration()
                     .get("REQUESTSIGNER");
             for (Worker signer : signers) {
                 if (signer.getName().equals(requestSigner)) {

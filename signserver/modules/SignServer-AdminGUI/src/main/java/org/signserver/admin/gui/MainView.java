@@ -1339,6 +1339,11 @@ public class MainView extends FrameView {
         tokenEntriesDetailsButton.setText(resourceMap.getString("tokenEntriesDetailsButton.text")); // NOI18N
         tokenEntriesDetailsButton.setEnabled(false);
         tokenEntriesDetailsButton.setName("tokenEntriesDetailsButton"); // NOI18N
+        tokenEntriesDetailsButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tokenEntriesDetailsButtonActionPerformed(evt);
+            }
+        });
 
         tokenEntriesStartIndexTextfield.setText(resourceMap.getString("tokenEntriesStartIndexTextfield.text")); // NOI18N
         tokenEntriesStartIndexTextfield.setName("tokenEntriesStartIndexTextfield"); // NOI18N
@@ -2796,6 +2801,14 @@ private void tokenEntriesImportButtonActionPerformed(java.awt.event.ActionEvent 
         }
     }
 }//GEN-LAST:event_tokenEntriesImportButtonActionPerformed
+
+private void tokenEntriesDetailsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tokenEntriesDetailsButtonActionPerformed
+    final int sel = cryptoTokenEntriesTable.getSelectedRow();
+    if (sel >= 0) {
+        TokenEntryDetailsFrame frame = new TokenEntryDetailsFrame(tokenEntriesModel.getRow(sel));
+        frame.setVisible(true);
+    }
+}//GEN-LAST:event_tokenEntriesDetailsButtonActionPerformed
 
 private void displayLogEntryAction() {
     final int sel = auditLogTable.getSelectedRow();

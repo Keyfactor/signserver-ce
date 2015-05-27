@@ -1321,6 +1321,11 @@ public class MainView extends FrameView {
         tokenEntriesImportButton.setText(resourceMap.getString("tokenEntriesImportButton.text")); // NOI18N
         tokenEntriesImportButton.setEnabled(false);
         tokenEntriesImportButton.setName("tokenEntriesImportButton"); // NOI18N
+        tokenEntriesImportButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tokenEntriesImportButtonActionPerformed(evt);
+            }
+        });
 
         tokenEntriesRemoveButton.setText(resourceMap.getString("tokenEntriesRemoveButton.text")); // NOI18N
         tokenEntriesRemoveButton.setEnabled(false);
@@ -2775,6 +2780,23 @@ private void tokenEntriesGenerateCSRButtonActionPerformed(java.awt.event.ActionE
     }
 }//GEN-LAST:event_tokenEntriesGenerateCSRButtonActionPerformed
 
+private void tokenEntriesImportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tokenEntriesImportButtonActionPerformed
+    if (selectedWorker != null) {
+        final int[] sels = cryptoTokenEntriesTable.getSelectedRows();
+        if (sels.length > 0) {
+            final List<String> aliases = new LinkedList<String>();
+            for (int sel : sels) {
+                aliases.add(tokenEntriesModel.getRow(sel).getAlias());
+            }
+            InstallCertificatesDialog dlg = new InstallCertificatesDialog(
+                    getFrame(), true, selectedWorker, aliases, true);
+            if (dlg.showDialog() == InstallCertificatesDialog.OK) {
+                getContext().getTaskService().execute(refreshWorkers());
+            }
+        }
+    }
+}//GEN-LAST:event_tokenEntriesImportButtonActionPerformed
+
 private void displayLogEntryAction() {
     final int sel = auditLogTable.getSelectedRow();
     if (sel >= 0) {
@@ -3352,7 +3374,7 @@ private void displayLogEntryAction() {
     public void installCertificates() {
         if (selectedWorkers.size() > 0) {
             InstallCertificatesDialog dlg = new InstallCertificatesDialog(
-                    getFrame(), true, selectedWorkers);
+                    getFrame(), true, selectedWorkers, false);
             if (dlg.showDialog() == InstallCertificatesDialog.OK) {
                 getContext().getTaskService().execute(refreshWorkers());
             }

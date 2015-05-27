@@ -19,6 +19,7 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -91,34 +92,73 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
 
     /** Creates new form InstallCertificatesDialog. */
     public InstallCertificatesDialog(java.awt.Frame parent, boolean modal,
-            List<Worker> signers) {
+            List<Worker> signers, boolean tokenOnly) {
+        this(parent, modal, signers, null, null, tokenOnly);
+    }
+    
+    public InstallCertificatesDialog(java.awt.Frame parent, boolean modal,
+            Worker worker, List<String> aliases, boolean tokenOnly) {
+        this(parent, modal, null, worker, aliases, tokenOnly);
+    }
+    
+    private InstallCertificatesDialog(java.awt.Frame parent, boolean modal,
+            List<Worker> signers, Worker worker, final List<String> aliases, final boolean tokenOnly) {
         super(parent, modal);
-        this.signers = new ArrayList<Worker>(signers);
+        if (signers != null && worker != null) {
+            throw new IllegalArgumentException("Specify only one of signers and worker");
+        }
+        if (worker != null && aliases == null) {
+            throw new IllegalArgumentException("Missing list of aliases");
+        }
+        
         initComponents();
-        setTitle("Install certificates for " + signers.size() + " signers");
+
         data = new Vector<Vector<Object>>();
 
-        for (int row = 0; row < signers.size(); row++) {
-            Worker signer = signers.get(row);
-            Vector<Object> cols = new Vector<Object>();
-            cols.add(signer.getName() + " (" + signer.getWorkerId() + ")");
-            if (signer.getConfiguration().getProperty("NEXTCERTSIGNKEY") != null) {
-                cols.add(new Utils.HardCodedAliasValue(Utils.HardCodedAlias.NEXT_KEY,
-                                                       signer));
-            } else {
-                cols.add(new Utils.HardCodedAliasValue(Utils.HardCodedAlias.DEFAULT_KEY,
-                                                       signer));
+        if (worker != null) {
+            setTitle("Install certificates for " + aliases.size() + " token entries");
+            Worker[] workersArray = new Worker[aliases.size()];
+            Arrays.fill(workersArray, worker);
+            this.signers = new ArrayList<Worker>(Arrays.asList(workersArray));
+            
+            for (String a : aliases) {
+                Vector<Object> cols = new Vector<Object>();
+                cols.add(worker.getName() + " (" + worker.getWorkerId() + ")");
+                cols.add(a);
+                cols.add("");
+                cols.add("");
+                cols.add(tokenOnly);
+                data.add(cols);
             }
-            cols.add("");
-            cols.add("");
-            cols.add(false);
-            data.add(cols);
+        } else {
+            setTitle("Install certificates for " + signers.size() + " signers");
+            this.signers = new ArrayList<Worker>(signers);
+            
+            for (int row = 0; row < signers.size(); row++) {
+                Worker signer = signers.get(row);
+                Vector<Object> cols = new Vector<Object>();
+                cols.add(signer.getName() + " (" + signer.getWorkerId() + ")");
+                if (signer.getConfiguration().getProperty("NEXTCERTSIGNKEY") != null) {
+                    cols.add(new Utils.HardCodedAliasValue(Utils.HardCodedAlias.NEXT_KEY,
+                                                           signer));
+                } else {
+                    cols.add(new Utils.HardCodedAliasValue(Utils.HardCodedAlias.DEFAULT_KEY,
+                                                           signer));
+                }
+                cols.add("");
+                cols.add("");
+                cols.add(tokenOnly);
+                data.add(cols);
+            }
         }
+
         jTable1.setModel(new DefaultTableModel(data, COLUMN_NAMES) {
 
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column > 0;
+                return column > 0
+                        && (!tokenOnly || column != 4) // Don't change from token if it is fixed
+                        && (aliases == null || column != 1); // Don't change alias if alises specified
             }
 
         });
@@ -138,7 +178,7 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
 
         final JComboBox aliasCellEditorComboBox = new JComboBox();
         final AliasCellEditor aliasCellEditor =
-                new AliasCellEditor(signers, aliasCellEditorComboBox, false);
+                new AliasCellEditor(this.signers, aliasCellEditorComboBox, false);
         keyColumn.setCellEditor(aliasCellEditor);
 
         jTable1.getModel().addTableModelListener(new TableModelListener() {

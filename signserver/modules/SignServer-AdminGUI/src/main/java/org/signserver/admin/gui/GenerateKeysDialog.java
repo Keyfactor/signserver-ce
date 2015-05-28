@@ -135,8 +135,6 @@ public class GenerateKeysDialog extends JDialog {
         jButtonGenerate = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
-        addButton = new javax.swing.JButton();
-        removeButton = new javax.swing.JButton();
 
         passwordPanel.setName("passwordPanel"); // NOI18N
 
@@ -214,38 +212,18 @@ public class GenerateKeysDialog extends JDialog {
         jTable1.getColumnModel().getColumn(1).setHeaderValue(resourceMap.getString("jTable1.columnModel.title2")); // NOI18N
         jTable1.getColumnModel().getColumn(2).setHeaderValue(resourceMap.getString("jTable1.columnModel.title3")); // NOI18N
 
-        addButton.setText(resourceMap.getString("addButton.text")); // NOI18N
-        addButton.setName("addButton"); // NOI18N
-        addButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addButtonActionPerformed(evt);
-            }
-        });
-
-        removeButton.setText(resourceMap.getString("removeButton.text")); // NOI18N
-        removeButton.setName("removeButton"); // NOI18N
-        removeButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                removeButtonActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 855, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 855, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButtonGenerate))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(addButton, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(removeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jButtonGenerate)))
                 .addContainerGap())
         );
 
@@ -255,12 +233,8 @@ public class GenerateKeysDialog extends JDialog {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 289, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(addButton)
-                    .addComponent(removeButton))
-                .addGap(12, 12, 12)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 303, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButtonGenerate)
                     .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -362,18 +336,6 @@ public class GenerateKeysDialog extends JDialog {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         dispose();
 }//GEN-LAST:event_jButton2ActionPerformed
-
-private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
-    tableModel.addRow(createRow());
-}//GEN-LAST:event_addButtonActionPerformed
-
-private void removeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeButtonActionPerformed
-    int[] selectedRows = jTable1.getSelectedRows();
-    Arrays.sort(selectedRows);
-    for (int i = selectedRows.length - 1; i >= 0; i--) {
-        tableModel.removeRow(selectedRows[i]);
-    }
-}//GEN-LAST:event_removeButtonActionPerformed
 
 
     private Vector<String> createRow() {
@@ -535,7 +497,6 @@ private void removeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton addButton;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButtonGenerate;
     private javax.swing.JScrollPane jScrollPane1;
@@ -543,7 +504,6 @@ private void removeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
     private javax.swing.JPanel passwordPanel;
     private javax.swing.JPasswordField passwordPanelField;
     private javax.swing.JLabel passwordPanelLabel;
-    private javax.swing.JButton removeButton;
     // End of variables declaration//GEN-END:variables
 
 }

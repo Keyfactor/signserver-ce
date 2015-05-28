@@ -2791,7 +2791,14 @@ private void tokenEntriesRemoveButtonActionPerformed(java.awt.event.ActionEvent 
 }//GEN-LAST:event_tokenEntriesRemoveButtonActionPerformed
 
 private void tokenEntriesGenerateKeyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tokenEntriesGenerateKeyButtonActionPerformed
-// TODO add your handling code here:
+    if (selectedWorker != null) {
+        GenerateKeysDialog dlg = new GenerateKeysDialog(getFrame(), true, selectedWorker);
+        dlg.setVisible(true);
+        if (dlg.isGenerateCalled()) {
+            // Reload
+            getContext().getTaskService().execute(reloadTokenEntries());
+        }
+    }
 }//GEN-LAST:event_tokenEntriesGenerateKeyButtonActionPerformed
 
 private void tokenEntriesGenerateCSRButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tokenEntriesGenerateCSRButtonActionPerformed

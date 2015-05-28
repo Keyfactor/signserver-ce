@@ -19,12 +19,12 @@ import java.awt.event.ActionListener;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.text.SimpleDateFormat;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -36,6 +36,8 @@ import org.cesecore.util.CertTools;
 import org.signserver.admin.gui.adminws.gen.TokenEntry;
 
 /**
+ * Frame for displaying details about an entry in a token such as key alias,
+ * type, certificate etc.
  *
  * @author Markus Kilås
  * @version $Id$
@@ -45,14 +47,17 @@ public class TokenEntryDetailsFrame extends javax.swing.JFrame {
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(TokenEntryDetailsFrame.class);
     
+    private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ");
     private static final String COLUMN_CERTIFICATE = "Certificate";
     private List<X509Certificate> chain;
     
     /**
-     * Creates new form TokenEntryDetailsFrame
+     * Creates new form TokenEntryDetailsFrame.
+     * @param entry to display details for
      */
     public TokenEntryDetailsFrame(TokenEntry entry) {
         initComponents();
+        setTitle("Token entry " + entry.getAlias());
         
         X509Certificate signerCert = null;
         try {
@@ -67,7 +72,15 @@ public class TokenEntryDetailsFrame extends javax.swing.JFrame {
                     }
                 }
                 signerCert = this.chain.get(0);
-            } 
+            } else if (entry.getTrustedCertificate() != null && entry.getTrustedCertificate().length > 0) {
+                this.chain = new LinkedList<X509Certificate>();
+                Certificate cert = CertTools.getCertfromByteArray(entry.getTrustedCertificate(), "BC");
+                if (cert instanceof X509Certificate) {
+                    this.chain.add((X509Certificate) cert);
+                } else {
+                    LOG.info("Not an X.509 certificate: " + cert);
+                }
+            }
         } catch (CertificateException ex) {
             LOG.error("Unable to parse certificate from token: " + ex.getMessage(), ex);
             this.chain = null;
@@ -76,17 +89,19 @@ public class TokenEntryDetailsFrame extends javax.swing.JFrame {
         
         final String alias = entry.getAlias();
         final String type = entry.getType();
-        final String creationDate = entry.getCreationDate() == null ? "n/a" : entry.getCreationDate().toString(); // TODO: SimpleDateFormat
+        final String creationDate = entry.getCreationDate() == null ? "n/a" : sdf.format(entry.getCreationDate().toGregorianCalendar().getTime());
         
         final String keyAlg = signerCert == null ? "n/a" : AlgorithmTools.getKeyAlgorithm(signerCert.getPublicKey());
         final String keySpec = signerCert == null ? "n/a" : AlgorithmTools.getKeySpecification(signerCert.getPublicKey());
-        final String certSubjectDN = signerCert == null ? "n/a" : CertTools.getSubjectDN(signerCert);
-        
-        
-        
-        
-        
-        
+        final String certSubjectDN;
+        if (signerCert != null) {
+            certSubjectDN = CertTools.getSubjectDN(signerCert);
+        } else if (chain != null) { // For trusted certificates
+            certSubjectDN = CertTools.getSubjectDN(chain.get(0));
+        } else {
+            certSubjectDN = "n/a";
+        }
+
         Object[][] data = new Object[][] {
             new Object[] { "Alias", alias},
             new Object[] { "Type", type},
@@ -95,17 +110,6 @@ public class TokenEntryDetailsFrame extends javax.swing.JFrame {
             new Object[] { "Key specification", keySpec},
             new Object[] { COLUMN_CERTIFICATE, certSubjectDN},
         };
-                
-        final StringBuilder sb = new StringBuilder();
-        sb.append("<html><body><table border='1'>\n");
-        
-        sb.append("<tr><td>").append("Alias").append("</td><td>").append(alias).append("</td></tr>\n");
-        sb.append("<tr><td>").append("Type").append("</td><td>").append(type).append("</td></tr>\n");
-        sb.append("<tr><td>").append("Creation date").append("</td><td>").append(creationDate).append("</td></tr>\n");
-        sb.append("<tr><td>").append("Key algorithm").append("</td><td>").append(keyAlg).append("</td></tr>\n");
-        sb.append("<tr><td>").append("Key specification").append("</td><td>").append(keySpec).append("</td></tr>\n");
-        
-        sb.append("</table></body></html>\n");
 
         DefaultTableModel model = new DefaultTableModel(data, new String[] {"Name", "Value"}) {
             @Override
@@ -117,13 +121,17 @@ public class TokenEntryDetailsFrame extends javax.swing.JFrame {
         infoTable.setRowHeight(new JComboBox().getPreferredSize().height);
 
         final JButton viewButton = new JButton("View");
-        viewButton.addActionListener(new ActionListener() {
+        if (chain != null && !chain.isEmpty()) {
+            viewButton.addActionListener(new ActionListener() {
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                viewButtonActionPerformed(e);
-            }
-        });
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    viewButtonActionPerformed(e);
+                }
+            });
+        } else {
+            viewButton.setEnabled(false);
+        }
 
         DefaultCellEditor editor = new DefaultCellEditor(new JTextField("")) {
             
@@ -136,10 +144,9 @@ public class TokenEntryDetailsFrame extends javax.swing.JFrame {
                         = super.getTableCellEditorComponent(table, value, isSelected,
                         row, column);
                 final JPanel panel = new JPanel(new BorderLayout());
-                final JLabel label = new JLabel((((JTextField) defaultComponent)).getText());
+                ((JTextField) defaultComponent).setEditable(false);
                 panel.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
-
-                panel.add(label, BorderLayout.CENTER);
+                panel.add(defaultComponent, BorderLayout.CENTER);
                 if (COLUMN_CERTIFICATE.equals(table.getValueAt(row, 0))) {
                     panel.add(viewButton, BorderLayout.EAST);
                 }
@@ -150,7 +157,14 @@ public class TokenEntryDetailsFrame extends javax.swing.JFrame {
         infoTable.getColumnModel().getColumn(1).setCellEditor(editor);
 
         infoTable.getColumnModel().getColumn(1).setCellRenderer(new DefaultTableCellRenderer() {
-            final JButton viewButton = new JButton("View");
+            private final JButton viewButton = new JButton("View");
+
+            {
+                if (chain == null || chain.isEmpty()) {
+                    viewButton.setEnabled(false);
+                }
+            }
+            
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value,
                     boolean isSelected, boolean hasFocus, int row, int column) {
@@ -183,8 +197,11 @@ public class TokenEntryDetailsFrame extends javax.swing.JFrame {
 
         jScrollPane1 = new javax.swing.JScrollPane();
         infoTable = new javax.swing.JTable();
+        closeButton = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Token entry");
+        setLocationByPlatform(true);
 
         infoTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -197,7 +214,15 @@ public class TokenEntryDetailsFrame extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        infoTable.setRowSelectionAllowed(false);
         jScrollPane1.setViewportView(infoTable);
+
+        closeButton.setText("Close");
+        closeButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                closeButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -205,27 +230,39 @@ public class TokenEntryDetailsFrame extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 474, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 786, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(closeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 537, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 418, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(closeButton)
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void closeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeButtonActionPerformed
+        dispose();
+    }//GEN-LAST:event_closeButtonActionPerformed
+
     private void viewButtonActionPerformed(ActionEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        final ViewCertificateFrame frame = new ViewCertificateFrame(chain);
+        frame.setVisible(true);
     }
     
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton closeButton;
     private javax.swing.JTable infoTable;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables

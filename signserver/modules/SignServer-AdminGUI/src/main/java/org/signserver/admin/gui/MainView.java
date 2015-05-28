@@ -42,15 +42,17 @@ import java.util.ResourceBundle;
 import java.util.Vector;
 import java.util.logging.Level;
 import javax.ejb.EJBException;
+import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
 import javax.swing.ComboBoxModel;
 import javax.swing.Icon;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.event.ListSelectionEvent;
@@ -207,6 +209,18 @@ public class MainView extends FrameView {
                     tokenEntriesImportButton.setEnabled(anySelected);
                     tokenEntriesRemoveButton.setEnabled(exactlyOneSelected);
                     tokenEntriesDetailsButton.setEnabled(exactlyOneSelected);
+                }
+            }
+        });
+        
+        final String action = "DetailsOnEnter";
+        KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+        cryptoTokenEntriesTable.getInputMap(JTable.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(enter, action);
+        cryptoTokenEntriesTable.getActionMap().put(action, new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (cryptoTokenEntriesTable.getSelectedRows().length > 0) {
+                    tokenEntriesDetailsButton.doClick();
                 }
             }
         });
@@ -1286,6 +1300,16 @@ public class MainView extends FrameView {
             }
         ));
         cryptoTokenEntriesTable.setName("cryptoTokenEntriesTable"); // NOI18N
+        cryptoTokenEntriesTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                cryptoTokenEntriesTableMouseClicked(evt);
+            }
+        });
+        cryptoTokenEntriesTable.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                cryptoTokenEntriesTableKeyReleased(evt);
+            }
+        });
         tokenEntriesScrollpane.setViewportView(cryptoTokenEntriesTable);
 
         tokenEntriesReloadButton.setAction(actionMap.get("reloadTokenEntries")); // NOI18N
@@ -2809,6 +2833,16 @@ private void tokenEntriesDetailsButtonActionPerformed(java.awt.event.ActionEvent
         frame.setVisible(true);
     }
 }//GEN-LAST:event_tokenEntriesDetailsButtonActionPerformed
+
+private void cryptoTokenEntriesTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cryptoTokenEntriesTableMouseClicked
+    if (evt.getClickCount() > 1) {
+        tokenEntriesDetailsButton.doClick();
+    }
+}//GEN-LAST:event_cryptoTokenEntriesTableMouseClicked
+
+private void cryptoTokenEntriesTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_cryptoTokenEntriesTableKeyReleased
+  
+}//GEN-LAST:event_cryptoTokenEntriesTableKeyReleased
 
 private void displayLogEntryAction() {
     final int sel = auditLogTable.getSelectedRow();

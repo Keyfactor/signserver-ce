@@ -12,15 +12,11 @@
  *************************************************************************/
 package org.signserver.admin.gui;
 
-import java.text.SimpleDateFormat;
 import java.util.Collections;
-import java.util.Date;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.swing.table.AbstractTableModel;
-import org.signserver.admin.gui.adminws.gen.LogEntry;
-import org.signserver.admin.gui.adminws.gen.LogEntry.AdditionalDetails;
-import org.signserver.admin.gui.adminws.gen.LogEntry.AdditionalDetails.Entry;
 import org.signserver.admin.gui.adminws.gen.TokenEntry;
 
 /**
@@ -32,11 +28,17 @@ import org.signserver.admin.gui.adminws.gen.TokenEntry;
 public class TokenEntriesTableModel extends AbstractTableModel {
 
     private static final String[] COLUMNS = new String [] {
-                "Alias", "Type", "Certificates", /*"Creation Date"*/
-            };
+            "Alias", "Type", "Certificates"
+        };
     
-    //private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ");
+    private static final Map<String, String> typeTitles = new HashMap<String, String>();
     
+    static {
+        typeTitles.put(org.signserver.server.cryptotokens.TokenEntry.TYPE_PRIVATEKEY_ENTRY, "Asymmetric");
+        typeTitles.put(org.signserver.server.cryptotokens.TokenEntry.TYPE_SECRETKEY_ENTRY, "Symmetric");
+        typeTitles.put(org.signserver.server.cryptotokens.TokenEntry.TYPE_TRUSTED_ENTRY, "Trusted");
+    }
+
     private List<TokenEntry> entries = Collections.emptyList();
     
     @Override
@@ -52,11 +54,26 @@ public class TokenEntriesTableModel extends AbstractTableModel {
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         final Object result;
+        final TokenEntry entry = entries.get(rowIndex);
         switch (columnIndex) {
-            case 0: result = entries.get(rowIndex).getAlias(); break;
-            case 1: result = entries.get(rowIndex).getType(); break;
-            case 2: result = entries.get(rowIndex).getChain(); break;
-            //case 3: result = entries.get(rowIndex).getCreationDate(); break;
+            case 0: result = entry.getAlias(); break;
+            case 1: {
+                String title = typeTitles.get(entry.getType());
+                if (title == null) {
+                    title = entry.getType();
+                }
+                result = title;
+            } break;
+            case 2: {
+                if (entry.getChain() != null && !entry.getChain().isEmpty()) {
+                    result = String.valueOf(entry.getChain().size());
+                } else if (entry.getTrustedCertificate() != null && entry.getTrustedCertificate().length > 0) {
+                    result = "1";
+                } else {
+                    result = "0";
+                }
+                break;
+            }
             default: result = "";
         }
         return result;

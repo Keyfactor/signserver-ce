@@ -20,6 +20,7 @@ import java.security.KeyStoreException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
@@ -1164,9 +1165,32 @@ public class AdminLayerEJBImpl implements AdminWS {
             for (TokenEntry entry : results.getEntries()) {
                 org.signserver.admin.gui.adminws.gen.TokenEntry wsEntry = new org.signserver.admin.gui.adminws.gen.TokenEntry();
                 wsEntry.setAlias(entry.getAlias());
-                // TODO wsEntry.setCreationDate(entry.getCreationDate());
-                // TODO wsEntry.setInfo(entry.getInfo());
+                
+                if (entry.getCreationDate() != null) {
+                    try {
+                        GregorianCalendar wsDate = new GregorianCalendar();
+                        wsDate.setTime(entry.getCreationDate());
+                        wsEntry.setCreationDate(DatatypeFactory.newInstance().newXMLGregorianCalendar(wsDate));
+                    } catch (DatatypeConfigurationException ex) {
+                        LOG.error("Could not convert date", ex);
+                    }
+                }
+                
+                if (entry.getInfo() != null) {
+                    for (Map.Entry<String, String> item : entry.getInfo().entrySet()) {
+                        org.signserver.admin.gui.adminws.gen.TokenEntry.Info.Entry wsItem = new org.signserver.admin.gui.adminws.gen.TokenEntry.Info.Entry();
+                        wsItem.setKey(item.getKey());
+                        wsItem.setValue(item.getValue());
+                        wsEntry.getInfo().getEntry().add(wsItem);
+                    }
+                }
+
                 wsEntry.setType(entry.getType());
+
+                if (entry.getChain() != null) {
+                    wsEntry.getChain().addAll(Arrays.asList(entry.getChain()));
+                }
+
                 wsEntry.setTrustedCertificate(entry.getTrustedCertificate());
                 wsResults.getEntries().add(wsEntry);
             }

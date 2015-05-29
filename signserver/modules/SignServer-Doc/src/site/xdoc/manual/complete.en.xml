@@ -1963,6 +1963,71 @@ the currently selected workers.
                         </p>
                     </subsubsection>
                     
+                    <subsubsection name="Main window: CryptoToken Tab">
+                        <p>
+The CryptoToken tab is only visible when selecting a worker that either is a CryptoWorker or is a worker that has crypto token configuration.
+The tab allows quering of entries inside the crypto token as well as generating keys, certificate requests and importing certificates etc.
+                        </p>
+                        <p>
+<b>First</b>: Go to the first search results page.
+                        </p>
+                        <p>
+<b>Previous</b>: Go to the previous search results page.
+                        </p>
+                        <p>
+<b>Reload</b>: Reloads the search result according the the current 
+index and the selected number of entries per page.
+                        </p>
+                        <p>
+<b>Next</b>: Go to the next search results page.
+                        </p>
+                        <p>
+<b>Displaying results</b>: Displays the first row index and the last in the current result.
+                        </p>
+                        <p>
+<b>Entries per page:</b>: The maximum number of rows to display in one page.
+                        </p>
+                        <p>
+<b>Generate key...</b>: Opens the key generation dialog. 
+Fill in the alias of the new key that should be generated as well as the key type (ie. RSA, DSA or ECDSA) as well as the the key specification (ie. key length such as "2048" for RSA and DSA or curve name such as "secp256r1" for ECDSA).
+After filling in a key alias a new row will automatically added which allows for generating more keys.
+                        </p>
+                        <p>
+Note that this dialog is different from the <a href="#Renew key dialog">Renew key dialog</a> as in this case the worker's next key property (NEXTCERTSIGNKEY) is not updated.
+                        </p>
+                        <p>
+<b>Test</b>: Opens the <a href="#Test%20key%20dialog">Test key dialog</a> for the selected entry.
+                        </p>
+                        <p>
+<b>Generate CSR...</b>: Opens the <a href="#Generate%20CSR%20dialog">Generate CSR dialog</a> with the key aliases of the selected entries filled in.
+                        </p>
+                        <p>
+                            <b>Import certificates...</b>: Opens the <a href="#Install%20certificates">Install certificates</a> dialog for importing ceritificates to the selected token entries.
+                        </p>
+                        <p>
+Note that installing certificates this way it is only possible to store the certificates in the token and the worker's current key (DEFAULTKEY) and next key (NEXTCERTSIGNKEY) properties are not updated.
+                        </p>
+                        <p>
+<b>Remove</b>: Opens the <a href="#Remove%20key%20dialog">Remove key dialog</a> with the selected key aliases already filled in.
+                        </p>
+                        <p>
+<b>Details...</b>: Opens the details window displaying more information about the token entry:
+<ul>
+    <li>Alias: The key alias</li>
+    <li>Type: The type of entry, ie. private key, secret key or trusted certificate</li>
+    <li>Creation date: If available the time and date the entry was created</li>
+    <li>Certificate: If available, the subject DN of the end entity certificate. The View button opens a window where the certificates can be inspected.</li>
+    <li>Key specification: If available, the key length or curve used</li>
+    <li>Key algorithm: If available, the algorithm used for the key, ie RSA, DSA, ECDSA or AES etc.</li>
+    <li>Additional information might be available depending on the crypto token implementation.</li>
+</ul>
+                        </p>
+                        <p>
+Double clicking or pressing the Enter key on a selected row opens the details window as well.
+                        </p>
+
+                    </subsubsection>
+                    
                     <subsubsection name="Main window: Audit log">
                         <p>
 In the "Audit log" tab controls for querying and filter the audit log exists.

@@ -40,7 +40,6 @@ import java.util.List;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Vector;
-import java.util.logging.Level;
 import javax.ejb.EJBException;
 import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;

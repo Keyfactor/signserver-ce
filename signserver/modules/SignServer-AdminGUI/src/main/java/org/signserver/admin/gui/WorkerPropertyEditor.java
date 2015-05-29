@@ -14,7 +14,6 @@ package org.signserver.admin.gui;
 
 import java.awt.Component;
 import java.awt.Container;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 /**

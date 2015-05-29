@@ -44,7 +44,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.logging.Level;
 import javax.crypto.SecretKey;
 import javax.security.auth.x500.X500Principal;
 import org.apache.commons.collections.CollectionUtils;

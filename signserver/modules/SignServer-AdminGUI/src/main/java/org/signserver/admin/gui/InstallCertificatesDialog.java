@@ -26,7 +26,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
-import java.util.logging.Level;
 import javax.ejb.EJBException;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JCheckBox;

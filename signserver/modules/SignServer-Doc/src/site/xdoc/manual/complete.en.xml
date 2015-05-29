@@ -7470,7 +7470,10 @@ EK4rfPBXEl33gKbsO5aeMHd5iF2jtx7RfYMsOuHKoDSe
                                 <td><b>CERTCHAININSTALLED</b></td>
                                 <td>
                                     <p>
-Logged when a certificate chain was uploaded to the worker configuration.
+Logged when a certificate chain was uploaded to the worker configuration or imported to a crypto token.
+                                    </p>
+                                    <p>
+With MODULE: WORKER_CONFIG the certificate chain was installed in the configuration:
                                     </p>
                                     <p>
 <b>WORKER_ID:</b> The ID of the worker.<br/>
@@ -7506,6 +7509,42 @@ VAfkEktRrO04Hi5eLR+AxW7EVz6l
 ; SCOPE: GLOBAL; REPLY_TIME:1350891906417
 </pre>
                                     </p>
+                                    <p>
+With MODULE: KEY_MANAGEMENT the certificate chain was imported to the token:
+                                    </p>
+                                    <p>
+<b>WORKER_ID:</b> The ID of the worker.<br/>
+<b>CERTIFICATECHAIN:</b> The certificates in PEM format.<br/>
+<b>KEYALIAS: </b> The alias of the entry in the token.<br/>
+                                    </p>
+                                    <p>
+Example:<br/>
+<pre class="code">EVENT: CERTCHAININSTALLED; MODULE: KEY_MANAGEMENT; ADMINISTRATOR: CLI user; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: 5801; KEYALIAS: testkeyalias10; CERTIFICATECHAIN: Subject: CN=testkeyalias10,C=SE
+Issuer: CN=Issuer,C=SE
+-----BEGIN CERTIFICATE-----
+MIIBMjCB3aADAgECAgEBMA0GCSqGSIb3DQEBCwUAMB4xDzANBgNVBAMMBklzc3Vl
+cjELMAkGA1UEBhMCU0UwHhcNMTUwNTI5MTEzMTAyWhcNMTYwNTI4MTEzMTAyWjAm
+MRcwFQYDVQQDDA50ZXN0a2V5YWxpYXMxMDELMAkGA1UEBhMCU0UwXDANBgkqhkiG
+9w0BAQEFAANLADBIAkEAggmuPO78M3hhwh4MrxYzt0LM6vLmI4IWjLxO8EK8R0FV
+cDu5Rruxc/a51LCt8J8dOxm34h0RakqzObbFYZxwZwIDAQABMA0GCSqGSIb3DQEB
+CwUAA0EAYR/N98UTyjnkFMnRmd1dQfsD6cih7Dt6NTi+qxFeMbbuzVA9HhRcXwQn
+NChSJMtvJ9sKslfhlfqwZGPChSFg3g==
+-----END CERTIFICATE-----
+Subject: CN=Issuer,C=SE
+Issuer: CN=Issuer,C=SE
+-----BEGIN CERTIFICATE-----
+MIIBMTCB3KADAgECAghQdZlXUcZalTANBgkqhkiG9w0BAQUFADAeMQ8wDQYDVQQD
+DAZJc3N1ZXIxCzAJBgNVBAYTAlNFMB4XDTE1MDUyOTExMzEwMloXDTE2MDUyODEx
+MzEwMlowHjEPMA0GA1UEAwwGSXNzdWVyMQswCQYDVQQGEwJTRTBcMA0GCSqGSIb3
+DQEBAQUAA0sAMEgCQQCa35ZZru5A2DigDNyOdsZL789dVVlUTXch/Fa0e82X+FLc
+kuMoRqAuxrEw/5+uG1Xi7EkysdgyRPbdYHmv3hBlAgMBAAEwDQYJKoZIhvcNAQEF
+BQADQQAS3us4jsjHRSooeNuaaAdWjrA7b/nVnkhRjEmHUCORJXGwnHykUGB2idj6
+d3UejoxEJ78E+EAYWO2JvKbhV0ku
+-----END CERTIFICATE-----
+; REPLY_TIME:1432899062650
+
+</pre>
+                                    </p>                                    
                                 </td>
                             </tr>
                             <tr>

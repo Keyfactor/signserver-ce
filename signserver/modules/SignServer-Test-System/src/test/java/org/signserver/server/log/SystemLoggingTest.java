@@ -19,14 +19,25 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigInteger;
 import java.security.KeyPair;
 import java.security.KeyStore;
+import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.cert.X509v3CertificateBuilder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.bouncycastle.pkcs.PKCS10CertificationRequest;
+import org.bouncycastle.util.encoders.Base64;
 import org.ejbca.util.CertTools;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
@@ -48,6 +59,7 @@ import org.junit.Test;
 import org.signserver.common.ServiceConfig;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.server.cryptotokens.KeystoreCryptoToken;
 import org.signserver.server.timedservices.hsmkeepalive.HSMKeepAliveTimedService;
 import org.signserver.statusrepo.IStatusRepositorySession;
 
@@ -77,6 +89,7 @@ public class SystemLoggingTest extends ModulesTestCase {
 
     
     private File auditLogFile;
+    private File keystoreFile;
     
     private final IWorkerSession workerSession = getWorkerSession();
     private final IGlobalConfigurationSession globalSession = getGlobalSession();
@@ -525,6 +538,74 @@ public class SystemLoggingTest extends ModulesTestCase {
         
         // Remove the property
         workerSession.removeWorkerProperty(signerId, "NODE47.SIGNERCERTCHAIN");
+    }
+
+    private void setupCryptoToken(int tokenId, String pin) throws Exception {
+        // Create keystore
+        keystoreFile = File.createTempFile("testkeystore", ".p12");
+        FileOutputStream out = null;
+        try {
+            KeyStore ks = KeyStore.getInstance("PKCS12", "BC");
+            ks.load(null, null);
+            out = new FileOutputStream(keystoreFile);
+            ks.store(out, pin.toCharArray());
+        } finally {
+            IOUtils.closeQuietly(out);
+        }
+
+        // Setup crypto token
+        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + tokenId + ".CLASSPATH", "org.signserver.server.signers.CryptoWorker");
+        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + tokenId + ".SIGNERTOKEN.CLASSPATH", KeystoreCryptoToken.class.getName());
+        workerSession.setWorkerProperty(tokenId, "NAME", "TestCryptoTokenP12");
+        workerSession.setWorkerProperty(tokenId, "KEYSTORETYPE", "PKCS12");
+        workerSession.setWorkerProperty(tokenId, "KEYSTOREPATH", keystoreFile.getAbsolutePath());
+        workerSession.setWorkerProperty(tokenId, "KEYSTOREPASSWORD", pin);
+        workerSession.reloadConfiguration(tokenId);
+    }
+    
+    /**
+     * Tests that importing a certificate chain to a token is audit logged
+     * including the complete chain.
+     * @throws Exception 
+     */
+    @Test
+    public void test01LogCertChainInstalledToToken() throws Exception {
+        LOG.info(">test01LogCertChainInstalledToToken");
+        
+        try {
+            setupCryptoToken(WORKERID_CRYPTOWORKER1, "foo123");
+            final String alias = "testkeyalias10";
+            
+            workerSession.generateSignerKey(WORKERID_CRYPTOWORKER1, "RSA", "512", alias, null);
+            
+            PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=testkeyalias10,C=SE", null);
+            ICertReqData req = workerSession.getCertificateRequest(WORKERID_CRYPTOWORKER1, certReqInfo, false);
+            Base64SignerCertReqData reqData = (Base64SignerCertReqData) req;
+            PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
+            
+            int linesBefore = readEntriesCount(auditLogFile);
+
+            // Test with uploadSignerCertificateChain method (global scope)
+            KeyPair issuerKeyPair = CryptoUtils.generateRSA(512);
+            final X509Certificate issuerCert = new JcaX509CertificateConverter().getCertificate(new CertBuilder().setSelfSignKeyPair(issuerKeyPair).setSubject("CN=Issuer, C=SE").build());
+            final X509Certificate cert = new JcaX509CertificateConverter().getCertificate(new X509v3CertificateBuilder(new X500Name("CN=Issuer, C=SE"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate())));
+            
+            workerSession.importCertificateChain(WORKERID_CRYPTOWORKER1, Arrays.asList(cert.getEncoded(), issuerCert.getEncoded()), alias, null);
+
+            List<String> lines = readEntries(auditLogFile, linesBefore, 2);
+            LOG.info(lines);
+
+            String line = getTheLineContaining(lines, "EVENT: CERTCHAININSTALLED");
+            assertNotNull("Contains event", line);
+            assertTrue("Contains module", line.contains("MODULE: KEY_MANAGEMENT"));
+            assertTrue("Contains worker id", line.contains("WORKER_ID: " + WORKERID_CRYPTOWORKER1));
+            assertTrue("Contains certificate", line.contains(new String(org.cesecore.util.CertTools.getPemFromCertificateChain(Arrays.<Certificate>asList(cert, issuerCert))).replace("\r\n", "\n")));
+        } finally {
+            removeWorker(WORKERID_CRYPTOWORKER1);
+            if (keystoreFile != null) {
+                FileUtils.deleteQuietly(keystoreFile);
+            }
+        }
     }
 
     @Test

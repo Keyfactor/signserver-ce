@@ -310,7 +310,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             globalConfigurationSession.reload(adminInfo);
         } else {
             workerManagerSession.reloadWorker(workerId, globalConfigurationSession);
-            auditLog(adminInfo, SignServerEventTypes.RELOAD_WORKER_CONFIG, SignServerModuleTypes.WORKER_CONFIG,
+            auditLog(adminInfo, SignServerEventTypes.RELOAD_WORKER_CONFIG, EventStatus.SUCCESS, SignServerModuleTypes.WORKER_CONFIG,
                     Integer.toString(workerId), Collections.<String, Object>emptyMap());
 
             // Try to initialize the key usage counter
@@ -445,7 +445,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         auditMap.put("KEYALG", keyAlgorithm);
         auditMap.put("KEYSPEC", keySpec);
         auditMap.put("KEYALIAS", alias);
-        auditLog(adminInfo, SignServerEventTypes.KEYGEN, SignServerModuleTypes.KEY_MANAGEMENT, String.valueOf(signerId), auditMap);
+        auditLog(adminInfo, SignServerEventTypes.KEYGEN, EventStatus.SUCCESS, SignServerModuleTypes.KEY_MANAGEMENT, String.valueOf(signerId), auditMap);
         return alias;
     }
 
@@ -514,7 +514,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         final HashMap<String, Object> auditMap = new HashMap<String, Object>();
         auditMap.put("KEYALIAS", alias);
         auditMap.put("TESTRESULTS", createResultsReport(result));
-        auditLog(adminInfo, SignServerEventTypes.KEYTEST, SignServerModuleTypes.KEY_MANAGEMENT, String.valueOf(signerId), auditMap);
+        auditLog(adminInfo, SignServerEventTypes.KEYTEST, EventStatus.SUCCESS, SignServerModuleTypes.KEY_MANAGEMENT, String.valueOf(signerId), auditMap);
         
         return result;
     }
@@ -573,7 +573,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         if ("NODE".equalsIgnoreCase(scope)) {
             auditMap.put("NODE", node);
         }
-        auditLog(adminInfo, SignServerEventTypes.CERTINSTALLED, SignServerModuleTypes.WORKER_CONFIG, String.valueOf(workerId), auditMap);
+        auditLog(adminInfo, SignServerEventTypes.CERTINSTALLED, EventStatus.SUCCESS, SignServerModuleTypes.WORKER_CONFIG, String.valueOf(workerId), auditMap);
     }
     
     private void auditLogCertChainInstalled(final AdminInfo adminInfo, final int workerId, final String value, final String scope, final String node) {
@@ -583,7 +583,17 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         if ("NODE".equalsIgnoreCase(scope)) {
             auditMap.put("NODE", node);
         }
-        auditLog(adminInfo, SignServerEventTypes.CERTCHAININSTALLED, SignServerModuleTypes.WORKER_CONFIG, String.valueOf(workerId), auditMap);
+        auditLog(adminInfo, SignServerEventTypes.CERTCHAININSTALLED, EventStatus.SUCCESS, SignServerModuleTypes.WORKER_CONFIG, String.valueOf(workerId), auditMap);
+    }
+    
+    private void auditLogCertChainInstalledToToken(final AdminInfo adminInfo, EventStatus outcome, final int workerId, final String alias, final String value, final String error) {
+        final HashMap<String, Object> auditMap = new HashMap<String, Object>();
+        auditMap.put("KEYALIAS", alias);
+        auditMap.put("CERTIFICATECHAIN", value);
+        if (error != null) {
+            auditMap.put("ERROR", error);
+        }
+        auditLog(adminInfo, SignServerEventTypes.CERTCHAININSTALLED, outcome, SignServerModuleTypes.KEY_MANAGEMENT, String.valueOf(workerId), auditMap);
     }
     
     @Override
@@ -616,13 +626,13 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             final HashMap<String, Object> auditMap = new HashMap<String, Object>();
             auditMap.put("KEYALIAS", value);
             auditMap.put("SCOPE", "GLOBAL");
-            auditLog(adminInfo, SignServerEventTypes.KEYSELECTED, SignServerModuleTypes.WORKER_CONFIG, String.valueOf(workerId), auditMap);
+            auditLog(adminInfo, SignServerEventTypes.KEYSELECTED, EventStatus.SUCCESS, SignServerModuleTypes.WORKER_CONFIG, String.valueOf(workerId), auditMap);
         } else if (key != null && key.lastIndexOf(".") != -1 && key.substring(key.lastIndexOf(".")).equalsIgnoreCase(".DEFAULTKEY")) {
             final HashMap<String, Object> auditMap = new HashMap<String, Object>();
             auditMap.put("KEYALIAS", value);
             auditMap.put("SCOPE", "NODE");
             auditMap.put("NODE", key.substring(0, key.lastIndexOf(".")));
-            auditLog(adminInfo, SignServerEventTypes.KEYSELECTED, SignServerModuleTypes.WORKER_CONFIG, String.valueOf(workerId), auditMap);
+            auditLog(adminInfo, SignServerEventTypes.KEYSELECTED, EventStatus.SUCCESS, SignServerModuleTypes.WORKER_CONFIG, String.valueOf(workerId), auditMap);
         } else if (PropertiesConstants.SIGNERCERT.equalsIgnoreCase(key)) {
             auditLogCertInstalled(adminInfo, workerId, value, "GLOBAL", null);
         } else if (key != null && key.lastIndexOf(".") != -1 && key.substring(key.lastIndexOf(".")).equalsIgnoreCase("." + PropertiesConstants.SIGNERCERT)) {
@@ -773,7 +783,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         }
         
         auditMap.put("CSR", csr);
-        auditLog(adminInfo, SignServerEventTypes.GENCSR, SignServerModuleTypes.KEY_MANAGEMENT, String.valueOf(signerId), auditMap);
+        auditLog(adminInfo, SignServerEventTypes.GENCSR, EventStatus.SUCCESS, SignServerModuleTypes.KEY_MANAGEMENT, String.valueOf(signerId), auditMap);
         
         if (LOG.isTraceEnabled()) {
             LOG.trace("<getCertificateRequest: signerId=" + signerId);
@@ -931,7 +941,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         final HashMap<String, Object> auditMap = new HashMap<String, Object>();
         auditMap.put("KEYALIAS", alias);
         auditMap.put("SUCCESS", String.valueOf(result));
-        auditLog(adminInfo, SignServerEventTypes.KEYREMOVE, SignServerModuleTypes.KEY_MANAGEMENT, String.valueOf(signerId), auditMap);
+        auditLog(adminInfo, SignServerEventTypes.KEYREMOVE, EventStatus.SUCCESS, SignServerModuleTypes.KEY_MANAGEMENT, String.valueOf(signerId), auditMap);
         
         return result;
     }
@@ -1012,14 +1022,22 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         if (worker instanceof IProcessable) {
             try {
                 ((IProcessable) worker).importCertificateChain(certs, alias, authenticationCode, Collections.<String, Object>emptyMap(), servicesImpl);
+                auditLogCertChainInstalledToToken(adminInfo, EventStatus.SUCCESS, signerId, alias, new String(CertTools.getPEMFromCerts(certs)), null);
             } catch (NoSuchAliasException ex) {
+                auditLogCertChainInstalledToToken(adminInfo, EventStatus.FAILURE, signerId, alias, new String(CertTools.getPEMFromCerts(certs)), ex.getMessage());
                 throw new CryptoTokenOfflineException("No such alias: " + ex.getLocalizedMessage());
             } catch (InvalidAlgorithmParameterException ex) {
+                auditLogCertChainInstalledToToken(adminInfo, EventStatus.FAILURE, signerId, alias, new String(CertTools.getPEMFromCerts(certs)), ex.getMessage());
                 throw new CryptoTokenOfflineException(ex);
             } catch (UnsupportedCryptoTokenParameter ex) {
+                auditLogCertChainInstalledToToken(adminInfo, EventStatus.FAILURE, signerId, alias, new String(CertTools.getPEMFromCerts(certs)), ex.getMessage());
                 throw new CryptoTokenOfflineException(ex);
+            } catch (CryptoTokenOfflineException ex) {
+                auditLogCertChainInstalledToToken(adminInfo, EventStatus.FAILURE, signerId, alias, new String(CertTools.getPEMFromCerts(certs)), ex.getMessage());
+                throw ex;
             }
         } else {
+            auditLogCertChainInstalledToToken(adminInfo, EventStatus.FAILURE, signerId, alias, new String(CertTools.getPEMFromCerts(certs)), "Import not supported by worker");
             throw new OperationUnsupportedException("Import not supported by worker");
         }
     }
@@ -1144,14 +1162,14 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     
     private void auditLog(final AdminInfo adminInfo, SignServerEventTypes eventType, SignServerModuleTypes module,
     		final String workerId) {
-        auditLog(adminInfo, eventType, module, workerId, Collections.<String, Object>emptyMap());
+        auditLog(adminInfo, eventType, EventStatus.SUCCESS, module, workerId, Collections.<String, Object>emptyMap());
     }
     
-    private void auditLog(final AdminInfo adminInfo, SignServerEventTypes eventType, SignServerModuleTypes module, final String workerId, Map<String, Object> additionalDetails) {
+    private void auditLog(final AdminInfo adminInfo, SignServerEventTypes eventType, EventStatus outcome, SignServerModuleTypes module, final String workerId, Map<String, Object> additionalDetails) {
         try {
         	final String serialNo =
         			adminInfo.getCertSerialNumber() == null ? null : adminInfo.getCertSerialNumber().toString(16);
-            logSession.log(eventType, EventStatus.SUCCESS, module, SignServerServiceTypes.SIGNSERVER,
+            logSession.log(eventType, outcome, module, SignServerServiceTypes.SIGNSERVER,
                     adminInfo.getSubjectDN(), adminInfo.getIssuerDN(), serialNo, workerId, additionalDetails);                               
 
         } catch (AuditRecordStorageException ex) {
@@ -1169,7 +1187,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         	configChanges.put(additionalLogKey, additionalLogValue);
         }
         
-        auditLog(adminInfo, SignServerEventTypes.SET_WORKER_CONFIG, SignServerModuleTypes.WORKER_CONFIG,
+        auditLog(adminInfo, SignServerEventTypes.SET_WORKER_CONFIG, EventStatus.SUCCESS, SignServerModuleTypes.WORKER_CONFIG,
         		String.valueOf(workerId), configChanges);
         workerConfigService.setWorkerConfig(workerId, config);
     }

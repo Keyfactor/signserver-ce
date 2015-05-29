@@ -44,6 +44,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Level;
 import javax.crypto.SecretKey;
 import javax.security.auth.x500.X500Principal;
 import org.apache.commons.collections.CollectionUtils;
@@ -497,7 +498,7 @@ public class CryptoTokenHelper {
         return new JcaX509CertificateConverter().getCertificate(cg.build(contentSigner));
     }
 
-    public static TokenSearchResults searchTokenEntries(final KeyStore keyStore, final int startIndex, final int max, final QueryCriteria qc, final boolean includeData) throws CryptoTokenOfflineException, QueryException, UnrecoverableEntryException {
+    public static TokenSearchResults searchTokenEntries(final KeyStore keyStore, final int startIndex, final int max, final QueryCriteria qc, final boolean includeData) throws CryptoTokenOfflineException, QueryException {
         final TokenSearchResults result;
         try {
             final ArrayList<TokenEntry> tokenEntries = new ArrayList<TokenEntry>();
@@ -566,6 +567,9 @@ public class CryptoTokenHelper {
                                 info.put(INFO_KEY_ALGORITHM, secretKey.getAlgorithm());
                                 //info.put(INFO_KEY_SPECIFICATION, AlgorithmTools.getKeySpecification(chain[0].getPublicKey())); // TODO: Key specification support for secret keys
                             } catch (NoSuchAlgorithmException ex) {
+                                info.put("Error", ex.getMessage());
+                                LOG.error("Unable to get secret key for alias: " + keyAlias, ex);
+                            } catch (UnrecoverableEntryException ex) {
                                 info.put("Error", ex.getMessage());
                                 LOG.error("Unable to get secret key for alias: " + keyAlias, ex);
                             }

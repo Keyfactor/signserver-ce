@@ -193,17 +193,17 @@ public class MainView extends FrameView {
             }
         });
         
-        cryptoTokenEntriesTable.setModel(tokenEntriesModel);
-        cryptoTokenEntriesTable.getSelectionModel().addListSelectionListener(
+        tokenEntriesTable.setModel(tokenEntriesModel);
+        tokenEntriesTable.getSelectionModel().addListSelectionListener(
                 new ListSelectionListener() {
 
             @Override
             public void valueChanged(final ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) {
                     final boolean exactlyOneSelected
-                            = cryptoTokenEntriesTable.getSelectedRowCount() == 1;
+                            = tokenEntriesTable.getSelectedRowCount() == 1;
                     final boolean anySelected
-                            = cryptoTokenEntriesTable.getSelectedRowCount() > 0;
+                            = tokenEntriesTable.getSelectedRowCount() > 0;
                     tokenEntriesTestButton.setEnabled(exactlyOneSelected);
                     tokenEntriesGenerateCSRButton.setEnabled(anySelected);
                     tokenEntriesImportButton.setEnabled(anySelected);
@@ -215,11 +215,11 @@ public class MainView extends FrameView {
         
         final String action = "DetailsOnEnter";
         KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
-        cryptoTokenEntriesTable.getInputMap(JTable.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(enter, action);
-        cryptoTokenEntriesTable.getActionMap().put(action, new AbstractAction() {
+        tokenEntriesTable.getInputMap(JTable.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(enter, action);
+        tokenEntriesTable.getActionMap().put(action, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (cryptoTokenEntriesTable.getSelectedRows().length > 0) {
+                if (tokenEntriesTable.getSelectedRows().length > 0) {
                     tokenEntriesDetailsButton.doClick();
                 }
             }
@@ -351,7 +351,7 @@ public class MainView extends FrameView {
         auditLogTable.setRowHeight(rowHeights);
         conditionsTable.setRowHeight(rowHeights);
         archiveConditionsTable.setRowHeight(rowHeights);
-        cryptoTokenEntriesTable.setRowHeight(rowHeights);
+        tokenEntriesTable.setRowHeight(rowHeights);
 
         displayWorker(null);
 
@@ -526,8 +526,6 @@ public class MainView extends FrameView {
         authEditButton = new javax.swing.JButton();
         authRemoveButton = new javax.swing.JButton();
         cryptoTokenTab = new javax.swing.JPanel();
-        tokenEntriesScrollpane = new javax.swing.JScrollPane();
-        cryptoTokenEntriesTable = new javax.swing.JTable();
         tokenEntriesReloadButton = new javax.swing.JButton();
         tokenEntriesGenerateKeyButton = new javax.swing.JButton();
         tokenEntriesTestButton = new javax.swing.JButton();
@@ -543,6 +541,12 @@ public class MainView extends FrameView {
         tokenEntriesFirstButton = new javax.swing.JButton();
         tokenEntriesPreviousButton = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
+        tokenEntriesPanel = new javax.swing.JPanel();
+        tokenEntriesScrollpane = new javax.swing.JScrollPane();
+        tokenEntriesTable = new javax.swing.JTable();
+        tokenEntriesErrorPanel = new javax.swing.JPanel();
+        jScrollPane9 = new javax.swing.JScrollPane();
+        tokenEntriesErrorEditor = new javax.swing.JEditorPane();
         auditPanel = new javax.swing.JPanel();
         jSplitPane2 = new javax.swing.JSplitPane();
         jPanel2 = new javax.swing.JPanel();
@@ -1286,32 +1290,6 @@ public class MainView extends FrameView {
 
         cryptoTokenTab.setName("cryptoTokenTab"); // NOI18N
 
-        tokenEntriesScrollpane.setName("tokenEntriesScrollpane"); // NOI18N
-
-        cryptoTokenEntriesTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        cryptoTokenEntriesTable.setName("cryptoTokenEntriesTable"); // NOI18N
-        cryptoTokenEntriesTable.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                cryptoTokenEntriesTableMouseClicked(evt);
-            }
-        });
-        cryptoTokenEntriesTable.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                cryptoTokenEntriesTableKeyReleased(evt);
-            }
-        });
-        tokenEntriesScrollpane.setViewportView(cryptoTokenEntriesTable);
-
         tokenEntriesReloadButton.setAction(actionMap.get("reloadTokenEntries")); // NOI18N
         tokenEntriesReloadButton.setText(resourceMap.getString("tokenEntriesReloadButton.text")); // NOI18N
         tokenEntriesReloadButton.setName("tokenEntriesReloadButton"); // NOI18N
@@ -1419,6 +1397,58 @@ public class MainView extends FrameView {
         jLabel1.setText(resourceMap.getString("jLabel1.text")); // NOI18N
         jLabel1.setName("jLabel1"); // NOI18N
 
+        tokenEntriesPanel.setName("tokenEntriesPanel"); // NOI18N
+        tokenEntriesPanel.setLayout(new java.awt.CardLayout());
+
+        tokenEntriesScrollpane.setName("tokenEntriesScrollpane"); // NOI18N
+
+        tokenEntriesTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        tokenEntriesTable.setName("tokenEntriesTable"); // NOI18N
+        tokenEntriesTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tokenEntriesTableMouseClicked(evt);
+            }
+        });
+        tokenEntriesTable.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                tokenEntriesTableKeyReleased(evt);
+            }
+        });
+        tokenEntriesScrollpane.setViewportView(tokenEntriesTable);
+
+        tokenEntriesPanel.add(tokenEntriesScrollpane, "tokenEntriesTableCard");
+
+        tokenEntriesErrorPanel.setName("tokenEntriesErrorPanel"); // NOI18N
+
+        jScrollPane9.setName("jScrollPane9"); // NOI18N
+
+        tokenEntriesErrorEditor.setEditable(false);
+        tokenEntriesErrorEditor.setName("tokenEntriesErrorEditor"); // NOI18N
+        jScrollPane9.setViewportView(tokenEntriesErrorEditor);
+
+        javax.swing.GroupLayout tokenEntriesErrorPanelLayout = new javax.swing.GroupLayout(tokenEntriesErrorPanel);
+        tokenEntriesErrorPanel.setLayout(tokenEntriesErrorPanelLayout);
+        tokenEntriesErrorPanelLayout.setHorizontalGroup(
+            tokenEntriesErrorPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane9, javax.swing.GroupLayout.Alignment.TRAILING)
+        );
+        tokenEntriesErrorPanelLayout.setVerticalGroup(
+            tokenEntriesErrorPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane9, javax.swing.GroupLayout.DEFAULT_SIZE, 617, Short.MAX_VALUE)
+        );
+
+        tokenEntriesPanel.add(tokenEntriesErrorPanel, "tokenEntriesErrorCard");
+
         javax.swing.GroupLayout cryptoTokenTabLayout = new javax.swing.GroupLayout(cryptoTokenTab);
         cryptoTokenTab.setLayout(cryptoTokenTabLayout);
         cryptoTokenTabLayout.setHorizontalGroup(
@@ -1428,7 +1458,7 @@ public class MainView extends FrameView {
                 .addGroup(cryptoTokenTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 1041, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, cryptoTokenTabLayout.createSequentialGroup()
-                        .addComponent(tokenEntriesScrollpane, javax.swing.GroupLayout.DEFAULT_SIZE, 816, Short.MAX_VALUE)
+                        .addComponent(tokenEntriesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 816, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
                         .addGroup(cryptoTokenTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(cryptoTokenTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -1490,7 +1520,7 @@ public class MainView extends FrameView {
                         .addComponent(tokenEntriesRemoveButton)
                         .addGap(18, 18, 18)
                         .addComponent(tokenEntriesDetailsButton))
-                    .addComponent(tokenEntriesScrollpane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 617, Short.MAX_VALUE))
+                    .addComponent(tokenEntriesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 617, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -2774,7 +2804,7 @@ private void tokenEntriesPreviousButtonActionPerformed(java.awt.event.ActionEven
 
 private void tokenEntriesTestButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tokenEntriesTestButtonActionPerformed
     if (selectedWorker != null) {
-        final int selectedRow = cryptoTokenEntriesTable.getSelectedRow();
+        final int selectedRow = tokenEntriesTable.getSelectedRow();
         if (selectedRow > -1) {
             TestKeysDialog dlg = new TestKeysDialog(getFrame(),
                     true, selectedWorker, tokenEntriesModel.getRow(selectedRow).getAlias());
@@ -2784,7 +2814,7 @@ private void tokenEntriesTestButtonActionPerformed(java.awt.event.ActionEvent ev
 }//GEN-LAST:event_tokenEntriesTestButtonActionPerformed
 
 private void tokenEntriesRemoveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tokenEntriesRemoveButtonActionPerformed
-    final int sel = cryptoTokenEntriesTable.getSelectedRow();
+    final int sel = tokenEntriesTable.getSelectedRow();
     if (sel >= 0) {
         getContext().getTaskService().execute(new RemoveKeyTask(getApplication(), tokenEntriesModel.getRow(sel).getAlias()));
     }
@@ -2803,7 +2833,7 @@ private void tokenEntriesGenerateKeyButtonActionPerformed(java.awt.event.ActionE
 
 private void tokenEntriesGenerateCSRButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tokenEntriesGenerateCSRButtonActionPerformed
     if (selectedWorker != null) {
-        final int[] sels = cryptoTokenEntriesTable.getSelectedRows();
+        final int[] sels = tokenEntriesTable.getSelectedRows();
         if (sels.length > 0) {
             final List<String> aliases = new LinkedList<String>();
             for (int sel : sels) {
@@ -2818,7 +2848,7 @@ private void tokenEntriesGenerateCSRButtonActionPerformed(java.awt.event.ActionE
 
 private void tokenEntriesImportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tokenEntriesImportButtonActionPerformed
     if (selectedWorker != null) {
-        final int[] sels = cryptoTokenEntriesTable.getSelectedRows();
+        final int[] sels = tokenEntriesTable.getSelectedRows();
         if (sels.length > 0) {
             final List<String> aliases = new LinkedList<String>();
             for (int sel : sels) {
@@ -2834,22 +2864,22 @@ private void tokenEntriesImportButtonActionPerformed(java.awt.event.ActionEvent 
 }//GEN-LAST:event_tokenEntriesImportButtonActionPerformed
 
 private void tokenEntriesDetailsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tokenEntriesDetailsButtonActionPerformed
-    final int sel = cryptoTokenEntriesTable.getSelectedRow();
+    final int sel = tokenEntriesTable.getSelectedRow();
     if (sel >= 0) {
         TokenEntryDetailsFrame frame = new TokenEntryDetailsFrame(tokenEntriesModel.getRow(sel));
         frame.setVisible(true);
     }
 }//GEN-LAST:event_tokenEntriesDetailsButtonActionPerformed
 
-private void cryptoTokenEntriesTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cryptoTokenEntriesTableMouseClicked
+private void tokenEntriesTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tokenEntriesTableMouseClicked
     if (evt.getClickCount() > 1) {
         tokenEntriesDetailsButton.doClick();
     }
-}//GEN-LAST:event_cryptoTokenEntriesTableMouseClicked
+}//GEN-LAST:event_tokenEntriesTableMouseClicked
 
-private void cryptoTokenEntriesTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_cryptoTokenEntriesTableKeyReleased
+private void tokenEntriesTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tokenEntriesTableKeyReleased
   
-}//GEN-LAST:event_cryptoTokenEntriesTableKeyReleased
+}//GEN-LAST:event_tokenEntriesTableKeyReleased
 
 private void displayLogEntryAction() {
     final int sel = auditLogTable.getSelectedRow();
@@ -4253,8 +4283,9 @@ private Properties toProperties(WsGlobalConfiguration wsgc) {
 
     private class ReloadTokenEntriesTask extends org.jdesktop.application.Task<TokenSearchResults, Void> {
 
-        private int startIndex;
-        private int maxEntries;
+        private final int startIndex;
+        private final int maxEntries;
+        private Exception exception;
         
         ReloadTokenEntriesTask(org.jdesktop.application.Application app) {
             // Runs on the EDT.  Copy GUI state that
@@ -4282,21 +4313,42 @@ private Properties toProperties(WsGlobalConfiguration wsgc) {
                         Arrays.asList(ordering),
                         true);
             } catch (AdminNotAuthorizedException_Exception ex) {
-                java.util.logging.Logger.getLogger(MainView.class.getName()).log(Level.SEVERE, null, ex);
+                exception = ex;
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Error during token entries query", ex);
+                }
             } catch (AuthorizationDeniedException_Exception ex) {
-                java.util.logging.Logger.getLogger(MainView.class.getName()).log(Level.SEVERE, null, ex);
+                exception = ex;
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Error during token entries query", ex);
+                }
             } catch (CryptoTokenOfflineException_Exception ex) {
-                java.util.logging.Logger.getLogger(MainView.class.getName()).log(Level.SEVERE, null, ex);
+                exception = ex;
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Error during token entries query", ex);
+                }
             } catch (InvalidWorkerIdException_Exception ex) {
-                java.util.logging.Logger.getLogger(MainView.class.getName()).log(Level.SEVERE, null, ex);
+                exception = ex;
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Error during token entries query", ex);
+                }
             } catch (OperationUnsupportedException_Exception ex) {
-                java.util.logging.Logger.getLogger(MainView.class.getName()).log(Level.SEVERE, null, ex);
+                exception = ex;
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Error during token entries query", ex);
+                }
             } catch (QueryException_Exception ex) {
-                java.util.logging.Logger.getLogger(MainView.class.getName()).log(Level.SEVERE, null, ex);
+                exception = ex;
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Error during token entries query", ex);
+                }
             } catch (SignServerException_Exception ex) {
-                java.util.logging.Logger.getLogger(MainView.class.getName()).log(Level.SEVERE, null, ex);
+                exception = ex;
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Error during token entries query", ex);
+                }
             }
-            return null; // TODO
+            return null;
         }
         @Override protected void succeeded(TokenSearchResults result) {
             // Runs on the EDT.  Update the GUI based on
@@ -4304,22 +4356,21 @@ private Properties toProperties(WsGlobalConfiguration wsgc) {
             
             final List<TokenEntry> list;
             
+            final CardLayout layout = (CardLayout) tokenEntriesPanel.getLayout();
             if (result == null) {
                 list = Collections.emptyList();
                 tokenEntriesDisplayingToIndex.setText("to " + (startIndex + maxEntries)); // We pretend we got all entries
                 tokenEntriesNextButton.setEnabled(true);
-                // TODO layout.show(auditlogPanel, "auditlogErrorCard");
-                // TODO auditLogTable.setEnabled(false);
+                layout.show(tokenEntriesPanel, "tokenEntriesErrorCard");
+                tokenEntriesTable.setEnabled(false);
                 tokenEntriesScrollpane.setEnabled(false);
-                
-                // TODO: Gray out and display error etc
                 tokenEntriesModel.setEntries(Collections.<TokenEntry>emptyList());
             } else {
                 list = result.getEntries();
                 tokenEntriesDisplayingToIndex.setText("to " + (startIndex + list.size()));
                 tokenEntriesNextButton.setEnabled(list.size() >= maxEntries);
-                // TODO layout.show(auditlogPanel, "auditlogTableCard");
-                // TODO auditLogTable.setEnabled(true);
+                layout.show(tokenEntriesPanel, "tokenEntriesTableCard");
+                tokenEntriesTable.setEnabled(true);
                 tokenEntriesScrollpane.setEnabled(false);
             }
             
@@ -4328,9 +4379,9 @@ private Properties toProperties(WsGlobalConfiguration wsgc) {
             tokenEntriesFirstButton.setEnabled(startIndex > 0);
             tokenEntriesPreviousButton.setEnabled(startIndex > 0);
             
-            // TODO if (exception != null) {
-            //    auditlogErrorEditor.setText(new StringBuilder().append("Reload failed within the selected interval:\n\n").append(exception.getMessage()).toString());
-            //}
+            if (exception != null) {
+                tokenEntriesErrorEditor.setText(new StringBuilder().append("Reload failed within the selected interval:\n\n").append(exception.getMessage()).toString());
+            }
         }
     }
 
@@ -4383,7 +4434,6 @@ private Properties toProperties(WsGlobalConfiguration wsgc) {
     javax.swing.JMenuItem configurationMenu;
     javax.swing.JPanel configurationTab;
     javax.swing.JTable configurationTable;
-    javax.swing.JTable cryptoTokenEntriesTable;
     javax.swing.JPanel cryptoTokenTab;
     javax.swing.JButton deactivateButton;
     javax.swing.JMenuItem deactivateMenu;
@@ -4435,6 +4485,7 @@ private Properties toProperties(WsGlobalConfiguration wsgc) {
     javax.swing.JScrollPane jScrollPane6;
     javax.swing.JScrollPane jScrollPane7;
     javax.swing.JScrollPane jScrollPane8;
+    javax.swing.JScrollPane jScrollPane9;
     javax.swing.JToolBar.Separator jSeparator1;
     javax.swing.JToolBar.Separator jSeparator2;
     javax.swing.JPopupMenu.Separator jSeparator3;
@@ -4486,17 +4537,21 @@ private Properties toProperties(WsGlobalConfiguration wsgc) {
     javax.swing.JMenuItem testKeyMenu;
     javax.swing.JButton tokenEntriesDetailsButton;
     javax.swing.JLabel tokenEntriesDisplayingToIndex;
+    javax.swing.JEditorPane tokenEntriesErrorEditor;
+    javax.swing.JPanel tokenEntriesErrorPanel;
     javax.swing.JButton tokenEntriesFirstButton;
     javax.swing.JButton tokenEntriesGenerateCSRButton;
     javax.swing.JButton tokenEntriesGenerateKeyButton;
     javax.swing.JButton tokenEntriesImportButton;
     javax.swing.JTextField tokenEntriesMaxEntriesTextfield;
     javax.swing.JButton tokenEntriesNextButton;
+    javax.swing.JPanel tokenEntriesPanel;
     javax.swing.JButton tokenEntriesPreviousButton;
     javax.swing.JButton tokenEntriesReloadButton;
     javax.swing.JButton tokenEntriesRemoveButton;
     javax.swing.JScrollPane tokenEntriesScrollpane;
     javax.swing.JTextField tokenEntriesStartIndexTextfield;
+    javax.swing.JTable tokenEntriesTable;
     javax.swing.JButton tokenEntriesTestButton;
     javax.swing.JMenu viewMenu;
     javax.swing.JComboBox workerComboBox;

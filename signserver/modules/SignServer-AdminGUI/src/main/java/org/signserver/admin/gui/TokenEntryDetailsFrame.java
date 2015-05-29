@@ -20,8 +20,10 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Vector;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -31,9 +33,9 @@ import javax.swing.JTextField;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import org.apache.log4j.Logger;
-import org.cesecore.certificates.util.AlgorithmTools;
 import org.cesecore.util.CertTools;
 import org.signserver.admin.gui.adminws.gen.TokenEntry;
+import org.signserver.admin.gui.adminws.gen.TokenEntry.Info.Entry;
 
 /**
  * Frame for displaying details about an entry in a token such as key alias,
@@ -91,8 +93,6 @@ public class TokenEntryDetailsFrame extends javax.swing.JFrame {
         final String type = entry.getType();
         final String creationDate = entry.getCreationDate() == null ? "n/a" : sdf.format(entry.getCreationDate().toGregorianCalendar().getTime());
         
-        final String keyAlg = signerCert == null ? "n/a" : AlgorithmTools.getKeyAlgorithm(signerCert.getPublicKey());
-        final String keySpec = signerCert == null ? "n/a" : AlgorithmTools.getKeySpecification(signerCert.getPublicKey());
         final String certSubjectDN;
         if (signerCert != null) {
             certSubjectDN = CertTools.getSubjectDN(signerCert);
@@ -102,16 +102,20 @@ public class TokenEntryDetailsFrame extends javax.swing.JFrame {
             certSubjectDN = "n/a";
         }
 
-        Object[][] data = new Object[][] {
-            new Object[] { "Alias", alias},
-            new Object[] { "Type", type},
-            new Object[] { "Creation date", creationDate},
-            new Object[] { "Key algorithm", keyAlg},
-            new Object[] { "Key specification", keySpec},
-            new Object[] { COLUMN_CERTIFICATE, certSubjectDN},
-        };
+        Vector<Vector<String>> data = new Vector<Vector<String>>();
 
-        DefaultTableModel model = new DefaultTableModel(data, new String[] {"Name", "Value"}) {
+        data.add(new Vector<String>(Arrays.asList("Alias", alias)));
+        data.add(new Vector<String>(Arrays.asList("Type", type)));
+        data.add(new Vector<String>(Arrays.asList("Creation date", creationDate)));
+        data.add(new Vector<String>(Arrays.asList(COLUMN_CERTIFICATE, certSubjectDN)));
+
+        if (entry.getInfo() != null && entry.getInfo().getEntry() != null) {
+            for (Entry item : entry.getInfo().getEntry()) {
+                data.add(new Vector<String>(Arrays.asList(item.getKey(), item.getValue())));
+            }
+        }
+        
+        DefaultTableModel model = new DefaultTableModel(data, new Vector<String>(Arrays.asList("Name", "Value"))) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return column == 1;

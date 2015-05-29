@@ -1177,11 +1177,13 @@ public class AdminLayerEJBImpl implements AdminWS {
                 }
                 
                 if (entry.getInfo() != null) {
+                    org.signserver.admin.gui.adminws.gen.TokenEntry.Info info = new org.signserver.admin.gui.adminws.gen.TokenEntry.Info();
+                    wsEntry.setInfo(info);
                     for (Map.Entry<String, String> item : entry.getInfo().entrySet()) {
                         org.signserver.admin.gui.adminws.gen.TokenEntry.Info.Entry wsItem = new org.signserver.admin.gui.adminws.gen.TokenEntry.Info.Entry();
                         wsItem.setKey(item.getKey());
                         wsItem.setValue(item.getValue());
-                        wsEntry.getInfo().getEntry().add(wsItem);
+                        info.getEntry().add(wsItem);
                     }
                 }
 

@@ -26,6 +26,7 @@ import java.security.ProviderException;
 import java.security.PublicKey;
 import java.security.Signature;
 import java.security.SignatureException;
+import java.security.UnrecoverableEntryException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
@@ -38,9 +39,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import javax.crypto.SecretKey;
 import javax.security.auth.x500.X500Principal;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.PredicateUtils;
@@ -56,6 +60,7 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequestBuilder;
 import org.bouncycastle.util.encoders.Hex;
+import org.cesecore.certificates.util.AlgorithmTools;
 import org.cesecore.keys.token.p11.Pkcs11SlotLabelType;
 import org.cesecore.util.QueryParameterException;
 import org.cesecore.util.query.Elem;
@@ -492,7 +497,7 @@ public class CryptoTokenHelper {
         return new JcaX509CertificateConverter().getCertificate(cg.build(contentSigner));
     }
 
-    public static TokenSearchResults searchTokenEntries(final KeyStore keyStore, final int startIndex, final int max, final QueryCriteria qc, final boolean includeData) throws CryptoTokenOfflineException, QueryException {
+    public static TokenSearchResults searchTokenEntries(final KeyStore keyStore, final int startIndex, final int max, final QueryCriteria qc, final boolean includeData) throws CryptoTokenOfflineException, QueryException, UnrecoverableEntryException {
         final TokenSearchResults result;
         try {
             final ArrayList<TokenEntry> tokenEntries = new ArrayList<TokenEntry>();
@@ -527,6 +532,7 @@ public class CryptoTokenHelper {
 
                     // Add additional data
                     if (includeData) {
+                        Map<String, String> info = new HashMap<String, String>();
                         try {
                             Date creationDate = keyStore.getCreationDate(keyAlias);
                             entry.setCreationDate(creationDate);
@@ -534,9 +540,14 @@ public class CryptoTokenHelper {
 
                         if (TokenEntry.TYPE_PRIVATEKEY_ENTRY.equals(type)) {
                             final Certificate[] chain = keyStore.getCertificateChain(keyAlias);
+                            if (chain.length > 0) {
+                                info.put(INFO_KEY_ALGORITHM, AlgorithmTools.getKeyAlgorithm(chain[0].getPublicKey()));
+                                info.put(INFO_KEY_SPECIFICATION, AlgorithmTools.getKeySpecification(chain[0].getPublicKey()));
+                            }
                             try {
                                 entry.setParsedChain(chain);
                             } catch (CertificateEncodingException ex) {
+                                info.put("Error", ex.getMessage());
                                 LOG.error("Certificate could not be encoded for alias: " + keyAlias, ex);
                             }
                         } else if (TokenEntry.TYPE_TRUSTED_ENTRY.equals(type)) {
@@ -544,9 +555,22 @@ public class CryptoTokenHelper {
                             try {
                                 entry.setParsedTrustedCertificate(certificate);
                             } catch (CertificateEncodingException ex) {
+                                info.put("Error", ex.getMessage());
                                 LOG.error("Certificate could not be encoded for alias: " + keyAlias, ex);
                             }
+                        } else if (TokenEntry.TYPE_SECRETKEY_ENTRY.equals(type)) {
+                            try {
+                                KeyStore.Entry entry1 = keyStore.getEntry(keyAlias, null);
+                                SecretKey secretKey = ((KeyStore.SecretKeyEntry) entry1).getSecretKey();
+
+                                info.put(INFO_KEY_ALGORITHM, secretKey.getAlgorithm());
+                                //info.put(INFO_KEY_SPECIFICATION, AlgorithmTools.getKeySpecification(chain[0].getPublicKey())); // TODO: Key specification support for secret keys
+                            } catch (NoSuchAlgorithmException ex) {
+                                info.put("Error", ex.getMessage());
+                                LOG.error("Unable to get secret key for alias: " + keyAlias, ex);
+                            }
                         }
+                        entry.setInfo(info);
                     }
                     tokenEntries.add(entry);
 
@@ -560,6 +584,8 @@ public class CryptoTokenHelper {
         }
         return result;
     }
+    public static final String INFO_KEY_SPECIFICATION = "Key specification";
+    public static final String INFO_KEY_ALGORITHM = "Key algorithm";
     
     private static boolean shouldBeIncluded(TokenEntry tokenEntry, QueryCriteria qc) throws QueryException {
         final List<Elem> terms = new ArrayList<Elem>();

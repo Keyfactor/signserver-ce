@@ -29,13 +29,13 @@ public class PKCS11Settings {
     private final static Logger LOG = Logger.getLogger(PKCS11Settings.class);
 
     private static PKCS11Settings instance;
-    private static CompileTimeSettings compileTimeSettings;
+    private final static CompileTimeSettings compileTimeSettings;
    
-    private static int MAX_P11_LIBRARIES = 256;
+    private final static int MAX_P11_LIBRARIES = 256;
     
-    private static String P11_LIBRARY_PROPERTY_PREFIX = "cryptotoken.p11.lib.";
-    private static String P11_LIBRARY_PROPERTY_NAME_SUFFIX = ".name";
-    private static String P11_LIBRARY_PROPERTY_FILE_SUFFIX = ".file";
+    private final static String P11_LIBRARY_PROPERTY_PREFIX = "cryptotoken.p11.lib.";
+    private final static String P11_LIBRARY_PROPERTY_NAME_SUFFIX = ".name";
+    private final static String P11_LIBRARY_PROPERTY_FILE_SUFFIX = ".file";
     
     // TODO: this could be generalized to support additional parameters later
     private Map<String, String> p11LibraryMapping = new HashMap<String, String>();

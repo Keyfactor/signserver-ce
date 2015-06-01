@@ -30,18 +30,5 @@ a555382f4b085116f3c4cff484995ba278d2ec4e  signserver-ce-3.6.1-src.tar.gz
     </p>
   </section>
 
-  <section name="Live CD">
-    <p>
-        Get up and running quicker by downloading and running our 
-        <a href="http://download.primekey.se/public/livecd.iso">LiveCD</a>. It
-        contains a (old) sample installation of SignServer and also EJBCA.
-    </p>
-    <p>
-        Requires atleast 1512 MB of memory to run. Please see
-        <a href="http://wiki.ejbca.org/livecd">wiki.ejbca.org/livecd</a>
-        for all information.
-    </p>
-  </section>
 </body>
 </document>
-

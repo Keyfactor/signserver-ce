@@ -351,8 +351,9 @@ j2ee.web-nohttps=true
 # used for the SHAREDLIBRARYNAME property of a crypto worker) and a libray path.
 # Only library paths that actually exists on the file system is added to the list.
 # The valid indexes is from 0 to 255.
-# For security reasons it is possible to disable the built-in defintions by commenting out
-# the entries below and setting the file parameter to the empty string.
+# For security reasons it is possible to disable the built-in definitions by
+# removing the # sign in front of a definition and set the file parameter to
+# an empty string.
 
 #cryptotoken.p11.lib.0.name=SoftHSM
 #cryptotoken.p11.lib.0.file=/usr/lib/softhsm/libsofthsm.so

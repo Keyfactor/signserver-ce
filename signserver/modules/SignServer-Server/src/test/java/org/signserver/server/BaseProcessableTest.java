@@ -309,12 +309,18 @@ public class BaseProcessableTest extends TestCase {
         assertEquals("cert from token", "End Entity 1", CertTools.getPartFromDN(((X509Certificate) instance.getSigningCertificateChain().get(0)).getSubjectX500Principal().getName(), "CN"));
     }
 
+    /**
+     * Test that when specifying neither the SHAREDLIBRARYNAME or legacy
+     * SHAREDLIBRARY property, a configuration error mentioning missing
+     * SHAREDLIBRARYNAME is given (as that is the preferred one to use now).
+     * 
+     * @throws Exception 
+     */
     @Test
     public void testCryptoToken_P11NoSharedLibrary() throws Exception {
         Properties globalConfig = new Properties();
         WorkerConfig workerConfig = new WorkerConfig();
-        
-        // All PKCS#11 properties that can have default values in GlobalConfiguration (except SLOTLISTINDEX)
+
         globalConfig.setProperty("GLOB.WORKER" + workerId + ".CLASSPATH", TestSigner.class.getName());
         globalConfig.setProperty("GLOB.WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", 
                 "org.signserver.server.cryptotokens.PKCS11CryptoToken");

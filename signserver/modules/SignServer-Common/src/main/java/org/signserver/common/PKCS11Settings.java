@@ -26,8 +26,8 @@ import org.apache.log4j.Logger;
  */
 public class PKCS11Settings {
     /** Logger for this class */
-    private static Logger LOG = Logger.getLogger(PKCS11Settings.class);
-    
+    private final static Logger LOG = Logger.getLogger(PKCS11Settings.class);
+
     private static PKCS11Settings instance;
     private static CompileTimeSettings compileTimeSettings;
    

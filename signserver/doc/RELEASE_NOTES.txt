@@ -22,6 +22,11 @@ Notice:
  - SoftCryptoToken is no longer supported. The token was mainly used for quick
    demo setups but does not support the API in 3.7. Use KeystoreCryptoToken or
    KeystoreInConfigCryptoToken instead.
+ - The KeystoreCryptoToken will no longer use the first available key when
+   signing if DEFAULTKEY has not been set. Plese configure your
+   KeystoreCryptoTokens to have a DEFAULTKEY property set.
+   Having a defined DEFAULTKEY is not needed if using runtime-decided keys
+   (using the AliasSelector interfaces).
 
 See ChangeLog.txt for the full list of changes.
 

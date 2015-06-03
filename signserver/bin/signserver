@@ -44,7 +44,7 @@ fi
 
 
 if [ ! -n "${SIGNSERVER_HOME}" ]; then
-  if [ -f $DIR/signserver ]; then
+  if [ -f "$DIR/signserver" ]; then
     SIGNSRV_HOME=$DIR/..
   fi
   if [ -f /usr/share/signserver/bin/signserver ]; then
@@ -66,10 +66,10 @@ else
   SIGNSRV_HOME=$SIGNSERVER_HOME
 fi 
 
-ADMINCLI_JAR=`find ${SIGNSRV_HOME}/lib -name "SignServer-AdminCLI*.jar"`
+ADMINCLI_JAR=`find "${SIGNSRV_HOME}/lib" -name "SignServer-AdminCLI*.jar"`
 
 # Check that classes exist
-if [ ! -f ${ADMINCLI_JAR} ]
+if [ ! -f "${ADMINCLI_JAR}" ]
 then
 	echo "You must build SignServer before using the cli, use 'ant'."
         exit 1
@@ -119,4 +119,4 @@ fi
 
 # Execute the command
 #echo Class-Path: $CP
-exec "$JAVACMD" $JAVA_OPTS -cp $CP $class_name "$@"
+exec "$JAVACMD" ${JAVA_OPTS} -cp "${CP}" $class_name "$@"

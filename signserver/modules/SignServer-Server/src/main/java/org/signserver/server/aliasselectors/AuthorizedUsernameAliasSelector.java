@@ -21,10 +21,11 @@ import org.signserver.common.ProcessRequest;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
+import org.signserver.server.IAuthorizer;
 import org.signserver.server.IProcessable;
-import org.signserver.server.UsernamePasswordClientCredential;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.cryptotokens.CryptoTokenHelper;
+import org.signserver.server.log.LogMap;
 
 /**
  * Alias selector implementation selecting a key alias based
@@ -53,13 +54,10 @@ public class AuthorizedUsernameAliasSelector implements AliasSelector {
                            final RequestContext requestContext)
             throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
         if (requestContext != null) {
-            final Object cred =
-                    requestContext.get(RequestContext.CLIENT_CREDENTIAL);
-
-            if (cred != null && cred instanceof UsernamePasswordClientCredential) {
-                final String username =
-                        ((UsernamePasswordClientCredential) cred).getUsername();
-
+            final LogMap logMap = LogMap.getInstance(requestContext);
+            final String username = logMap.get(IAuthorizer.LOG_USERNAME);
+            
+            if (username != null) {
                 return prefix + username;
             } else {
                 return null;

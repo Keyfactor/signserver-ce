@@ -15,9 +15,10 @@ package org.signserver.server.aliasselectors;
 import junit.framework.TestCase;
 import org.signserver.common.RequestContext;
 import org.signserver.common.WorkerConfig;
-import org.signserver.server.UsernamePasswordClientCredential;
+import org.signserver.server.IAuthorizer;
 import org.signserver.server.cryptotokens.CryptoTokenHelper;
 import org.signserver.server.cryptotokens.ICryptoToken;
+import org.signserver.server.log.LogMap;
 
 /**
  * Unit tests for the username alias selector.
@@ -37,8 +38,9 @@ public class AuthorizedUsernameAliasSelectorUnitTest extends TestCase {
        final AliasSelector selector = new AuthorizedUsernameAliasSelector();
        final RequestContext context = new RequestContext();
        
-       context.put(RequestContext.CLIENT_CREDENTIAL,
-               new UsernamePasswordClientCredential("user4711", "secret"));
+       final LogMap logMap= LogMap.getInstance(context);
+       
+       logMap.put(IAuthorizer.LOG_USERNAME, "user4711");
        selector.init(4711, new WorkerConfig(), null, null);
        
        assertEquals("Alias", "user4711",
@@ -57,8 +59,10 @@ public class AuthorizedUsernameAliasSelectorUnitTest extends TestCase {
        
        config.setProperty(AuthorizedUsernameAliasSelector.PROPERTY_ALIAS_PREFIX,
                           "key_");
-       context.put(RequestContext.CLIENT_CREDENTIAL,
-               new UsernamePasswordClientCredential("user4711", "secret"));
+       
+       final LogMap logMap= LogMap.getInstance(context);
+       
+       logMap.put(IAuthorizer.LOG_USERNAME, "user4711");
        selector.init(4711, config, null, null);
        
        assertEquals("Alias", "key_user4711",
@@ -81,26 +85,6 @@ public class AuthorizedUsernameAliasSelectorUnitTest extends TestCase {
     }
     
     /**
-     * Test setting an unknown object as CLIENT_CREDENTIAL in the request.
-     * getAlias() should return null in this case.
-     * 
-     * @throws Exception 
-     */
-    public void testGetAliasWithStrangeRequest() throws Exception {
-        final WorkerConfig config = new WorkerConfig();
-        final AliasSelector selector = new AuthorizedUsernameAliasSelector();
-        final RequestContext context = new RequestContext();
-
-        config.setProperty(AuthorizedUsernameAliasSelector.PROPERTY_ALIAS_PREFIX,
-                           "key_");
-        context.put(RequestContext.CLIENT_CREDENTIAL, "strange value");
-        selector.init(4711, config, null, null);
-
-        assertNull("Alias should be null",
-                selector.getAlias(ICryptoToken.PURPOSE_SIGN, null, null, context));
-    }
-    
-    /**
      * Test that when no key prefix has been set, the alias returned equals
      * the user name in the request.
      * 
@@ -110,9 +94,9 @@ public class AuthorizedUsernameAliasSelectorUnitTest extends TestCase {
         final WorkerConfig config = new WorkerConfig();
         final AliasSelector selector = new AuthorizedUsernameAliasSelector();
         final RequestContext context = new RequestContext();
+        final LogMap logMap= LogMap.getInstance(context);
        
-        context.put(RequestContext.CLIENT_CREDENTIAL,
-            new UsernamePasswordClientCredential("user4711", "secret"));
+        logMap.put(IAuthorizer.LOG_USERNAME, "user4711");
         selector.init(4711, config, null, null);
        
         assertEquals("Alias", "user4711",

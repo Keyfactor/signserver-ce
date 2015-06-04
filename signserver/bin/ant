@@ -5,5 +5,5 @@ SOURCE="${BASH_SOURCE[0]}"
 while [ -h "$SOURCE" ] ; do SOURCE="$(readlink -f "$SOURCE")"; done
 DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 
-ant -f $DIR/../build.xml -q $@ | grep -v "Trying to override old definition of task http://www.netbeans.org/"
+ant -f "$DIR/../build.xml" -q $@ | grep -v "Trying to override old definition of task http://www.netbeans.org/"
 exit ${PIPESTATUS[0]}

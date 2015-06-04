@@ -6143,14 +6143,14 @@ After the certificate chain has been uploaded to the server, the configuration m
                 </subsection>
             </section>
             
-            <section name="Alias Selctors">
+            <section name="Alias Selectors">
                 <p>
-Using alias selectors it is possible to control how the key used for signing
-are selected in run-time based the signing request. For example it is possible
+By using an alias selector it is possible to control how the key used for signing
+are selected at run-time based the signing request. For example it is possible
 to have keys selected based on the authenticated user for a signing request.
                 </p>
                 <p>
-The default, if no alias selector is selected is to use a default selector
+The default, if no alias selector is explicitly configured is to use a default selector
 behaving in a backwards-compatible way, using the DEFAULTKEY property of the
 crypto worker being used.
                 </p>

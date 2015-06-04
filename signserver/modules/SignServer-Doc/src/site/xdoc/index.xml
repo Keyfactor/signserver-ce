@@ -40,7 +40,7 @@
 <p style="margin:0 0 .2em 0;"><strong>Main Features of SignServer!</strong></p>
     <div>
         <ul style="margin:.4em 0 0 0;">
-            <li><a href="http://signserver.org/sandbox/manual/complete.en.html#SignServer%20Signers">Signers for different signature types</a></li>
+            <li><a href="manual/complete.en.html#SignServer%20Signers">Signers for different signature types</a></li>
             <li>Multiple administration interfaces</li>
             <li>Plug-in functionality</li>
             <li>HSM support</li>

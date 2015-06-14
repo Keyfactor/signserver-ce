@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="SignServer" href="http://signserver.sourceforge.net/">
 
-    <title>SignServer</title>
+    <title>SignServer - Open Source server side Digital Signatures</title>
 
     <body>
        <menusection name="Home" index="0"         href="/index.html">

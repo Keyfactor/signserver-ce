@@ -19,6 +19,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.cert.Certificate;
+import java.util.Arrays;
 import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -37,7 +38,7 @@ import org.signserver.ejb.interfaces.IWorkerSession;
 /**
  * Tests for XMLSigner.
  *
- *  TODO: Most test cases here can be moved to the unit test in Module-XMSigner.
+ * TODO: Most test cases here can be moved to the unit test in Module-XMSigner.
  *
  * @author Markus Kilås
  * @version $Id$
@@ -251,7 +252,16 @@ public class XMLSignerTest extends ModulesTestCase {
      */
     @Test
     public void test15XMLSecVersion() throws Exception {
-        checkDebugProperty("xml-sec.version", "1.5.7");
+        checkDebugProperty("xml-sec.version", "1.5.8");
+    }
+    
+    /**
+     * Test that that expected version of the Xalan library is used.
+     * @throws Exception
+     */
+    @Test
+    public void test16XalanVersion() throws Exception {
+        checkDebugProperty("xalan.version", "2.7.2", "2.7.1-redhat-7");
     }
 
     /**
@@ -264,7 +274,7 @@ public class XMLSignerTest extends ModulesTestCase {
      * @throws SignServerException
      * @throws IOException
      */
-    private void checkDebugProperty(final String property, final String expected)
+    private void checkDebugProperty(final String property, final String... expected)
             throws IllegalRequestException, CryptoTokenOfflineException, SignServerException, IOException {
         final int reqid = 42;
 
@@ -282,7 +292,14 @@ public class XMLSignerTest extends ModulesTestCase {
         final String value = props.getProperty(property);
         
         assertNotNull("Property not found", value);
-        assertEquals("Property value", expected, value);
+        boolean found = false;
+        for (String exp : expected) {
+            if (value.startsWith(exp)) {
+                found = true;
+                break;
+            }
+        }
+        assertTrue("Property value: " + value + " not one of the expected " + Arrays.toString(expected), found);
     }
 
     @Test

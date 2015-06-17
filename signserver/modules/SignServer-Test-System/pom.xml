@@ -205,7 +205,7 @@
                 <configuration>
                     <skipTests>${skipTests}</skipTests>
                     <additionalClasspathElements>
-                        <additionalClasspathElement>${basedir}/../../lib/ext/xmlsec-1.5.7.jar</additionalClasspathElement>
+                        <additionalClasspathElement>${basedir}/../../lib/ext/xmlsec-1.5.8.jar</additionalClasspathElement>
                         <additionalClasspathElement>${basedir}/../../conf</additionalClasspathElement>
                         <additionalClasspathElement>${basedir}/../../conf/${appserver.conf.folder}</additionalClasspathElement>
                         <additionalClasspathElement>${basedir}/../../cesecore</additionalClasspathElement>

@@ -487,7 +487,7 @@ database.nodb.location              = ${database.nodb.location}
             <equals arg1="${appserver.type}" arg2="glassfish" />
         </condition>
 
-        <property name="cp.prefix" value="${basedir}/lib/ext/xmlsec-1.5.7.jar"/> <!-- Needed as JBoss 5 bundles older version. TODO: Better do this in a more generic way. -->
+        <property name="cp.prefix" value="${basedir}/lib/ext/xmlsec-1.5.8.jar"/> <!-- Needed as JBoss 5 bundles older version. TODO: Better do this in a more generic way. -->
         <property name="systemtest.path" value="${cp.prefix}:${basedir}/conf:${basedir}/conf/${appserver.conf.folder}:${this.dir}/cesecore/:${appserver.client.jars}:${basedir}/lib/ext/jdbc/jdbc.jar:${basedir}/lib/ext/hibernate/ejb3-persistence.jar"/>
     </target>
 

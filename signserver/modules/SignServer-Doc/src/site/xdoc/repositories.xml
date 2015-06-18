@@ -8,7 +8,7 @@
 <body>
     <section name="SVN Repository">
         <p>
-            You can find all the sources of SignServer releases in our Subversion source code <a href="https://svn.cesecore.eu/svn/signserver">repository</a>.
+            You can find all the sources of SignServer releases in our Subversion source code <a href="https://svn.cesecore.eu/svn/signserver/">repository</a>.
         </p>
 
         <subsection name="Checking out code">

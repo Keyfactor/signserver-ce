@@ -20,6 +20,7 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.log4j.Logger;
+import org.apache.xalan.Version;
 import org.apache.xalan.processor.TransformerFactoryImpl;
 
 import org.signserver.common.CryptoTokenOfflineException;
@@ -59,7 +60,7 @@ public class DebugSigner extends BaseSigner {
 
         // Due to a bug in Glassfish, using getImplementationVersion isn't working...
         //props.put(XMLSEC_VERSION, Init.class.getPackage().getImplementationVersion());
-        //props.put(XALAN_VERSION, TransformFactoryImpl.class.getPackage().getImplementationVersion());
+        //props.put(XALAN_VERSION, TransformerFactoryImpl.class.getPackage().getImplementationVersion());
     
         // get library version from Maven pom properties (workaroud for Glassfish)
         try {
@@ -68,11 +69,18 @@ public class DebugSigner extends BaseSigner {
             throw new SignServerException("Failed to get xmlsec version", e);
         }
 
-        try {
-            props.put(XALAN_VERSION, getVersionFromFilename(TransformerFactoryImpl.class, "xalan"));
-        } catch (final IOException e) {
-            throw new SignServerException("Failed to get xalan version", e);
+        String xalanVersion = Version.getVersion();
+        if (xalanVersion == null) {
+            xalanVersion = TransformerFactoryImpl.class.getPackage().getImplementationVersion();        
+            if (xalanVersion == null) {
+                try {
+                    xalanVersion = getVersionFromFilename(TransformerFactoryImpl.class, "xalan");
+                } catch (final IOException e) {
+                    throw new SignServerException("Failed to get xalan version", e);
+                }
+            }
         }
+        props.put(XALAN_VERSION, xalanVersion == null ? "0.0" : xalanVersion);
 
         final StringWriter writer = new StringWriter();
         props.list(new PrintWriter(writer));
@@ -120,21 +128,27 @@ public class DebugSigner extends BaseSigner {
      */
     private String getVersionFromFilename(Class clazz, String fileTitle) throws IOException {
         if (clazz.getProtectionDomain() != null) {
-            final String url = clazz.getProtectionDomain().getCodeSource().getLocation().toExternalForm();
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Got URL: " + url);
-            }
-            Pattern pattern = Pattern.compile(".*" + fileTitle + "-(.*).jar");
-            Matcher matcher = pattern.matcher(url);
-            if (matcher.matches()) {
-                return matcher.group(1);
-            } else {
+            if (clazz.getProtectionDomain().getCodeSource() != null) {
+                final String url = clazz.getProtectionDomain().getCodeSource().getLocation().toExternalForm();
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("No " + fileTitle + "- in URL");
+                    LOG.debug("Got URL: " + url);
                 }
+                Pattern pattern = Pattern.compile(".*" + fileTitle + "-(.*).jar");
+                Matcher matcher = pattern.matcher(url);
+                if (matcher.matches()) {
+                    return matcher.group(1);
+                } else {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("No " + fileTitle + "- in URL");
+                    }
+                }
+            } else {
+                LOG.debug("Code source is null");
             }
+        } else {
+            LOG.debug("Protection domain is null");
         }
-        return "0.0";
+        return null;
     }
 
 }

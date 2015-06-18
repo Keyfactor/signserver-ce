@@ -294,8 +294,8 @@ PKCS11 Crypto Token to connect to different PKCS11 implementations.
                     </tr><tr><td>XML Validator</td><td>A Document Validator that validates signed XML documents (XMLDSig)</td>
                     </tr><tr><td>XAdES Signer</td><td>A Signer signing XML documents using XAdES</td>
                     </tr><tr><td>ODF Signer</td><td>A Signer that attaches an electronic signature to an ODF document. ODF Signer is tested with documents produced by <a href="http://www.openoffice.org">OpenOffice.org v 3.1.0</a></td>
-                    </tr><tr><td>ODF (Open Document Format) Document</td><td>XML-based file format for representing electronic documents such as spreadsheets, charts, presentations and word processing documents. <a href="http://en.wikipedia.org/wiki/OpenDocument">more...</a></td>
-                    </tr><tr><td>OOXML (Office Open XML) Document</td><td>XML-based file format  for representing spreadsheets, charts, presentations and word processing documents. <a href="http://en.wikipedia.org/wiki/Office_Open_XML">more...</a></td>
+                    </tr><tr><td>ODF (Open Document Format) Document</td><td>XML-based file format for representing electronic documents such as spreadsheets, charts, presentations and word processing documents. <a href="https://en.wikipedia.org/wiki/OpenDocument">more...</a></td>
+                    </tr><tr><td>OOXML (Office Open XML) Document</td><td>XML-based file format  for representing spreadsheets, charts, presentations and word processing documents. <a href="https://en.wikipedia.org/wiki/Office_Open_XML">more...</a></td>
                     </tr><tr><td>OOXML Signer</td><td>A Signer that attaches an electronic signature to an OOXML document.</td>
                     </tr>
                     <tr>
@@ -363,7 +363,7 @@ Download and unzip the
 <a href="http://sourceforge.net/projects/signserver/files/signserver/">latest
 SignServer release</a> archive from SourceForge or for the absolutely latest
 unstable version checkout from the Subversion (SVN)
-<a href="http://sourceforge.net/projects/signserver/develop">repository</a>.
+<a href="https://svn.cesecore.eu/svn/signserver/trunk/">repository</a>.
                     </p>
                 </subsection>
 
@@ -5761,8 +5761,8 @@ The fully qualified class name is: <b>org.signserver.server.cryptotokens.PrimeCa
                     <subsubsection name="Overview">
                         <p>
 Using PKCS11 it's possible to use a HSM that has a PKCS11 module, such as Utimaco, nCipher, SafeNet or AEP KeyPer. SignServer uses the same underlying implementation of
-PKCS11 crypto tokens as EJBCA. To find out more about supported devices and get information how to configure them you can visit the HSM documentation at <a href="http://ejbca.org/adminguide.html#Hardware%20Security%20Modules%20%28HSM%29">EJBCA.org</a>. 
-The only thing that differs are the token labels strings, which you should use from below for SignServer. A very useful tool from EJBCA is the <a href="http://ejbca.org/userguide.html#EJBCA%20client%20toolbox">ClientToolBox</a>. 
+PKCS11 crypto tokens as EJBCA. To find out more about supported devices and get information how to configure them you can visit the HSM documentation at <a href="http://ejbca.org/docs/adminguide.html#Hardware%20Security%20Modules%20%28HSM%29">EJBCA.org</a>. 
+The only thing that differs are the token labels strings, which you should use from below for SignServer. A very useful tool from EJBCA is the <a href="http://ejbca.org/docs/userguide.html#EJBCA%20client%20toolbox">ClientToolBox</a>. 
 If you can generate anbd test PKCS11 keys using the clientToolBox, you can use them with SignServer.
                         </p>
                     </subsubsection>
@@ -7911,7 +7911,7 @@ Installation package for SignServer 3.2.4 and Debian 6.0 contributed by Antoine 
 
             <section name="References">
                 <ul>
-                    <li>Java  (<a href="http://java.sun.com">http://java.sun.com</a>)</li>
+                    <li>Java  (<a href="http://www.oracle.com/technetwork/java/index.html">http://www.oracle.com/technetwork/java/</a>)</li>
                     <li>JBoss  (<a href="http://www.jboss.org">http://www.jboss.org</a>)</li>
                     <li>Apache Ant (<a href="http://ant.apache.org">http://ant.apache.org</a>)</li>
                     <li>Bouncycastle (<a href="http://www.bouncycastle.org">http://www.bouncycastle.org</a>)</li>

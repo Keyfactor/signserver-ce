@@ -46,7 +46,7 @@ See also doc/DEVELOP.txt for an introduction to setting up your IDE, running tes
 <ul>
 <li>
     <p>
-    <a href="https://www.kambi.com">Kambi Sports Solutions</a> has kindly donated a left over <a href="http://www.meinbergglobal.com/english/products/pci-gps-clock.htm">Meinberg PCI GPS clock</a> to the SignServer project. 
+    <a href="https://kambi.com">Kambi Sports Solutions</a> has kindly donated a left over <a href="https://www.meinbergglobal.com/english/products/pci-gps-clock.htm">Meinberg PCI GPS clock</a> to the SignServer project. 
     The GPS clock will be used to demonstrate how to set up SignServer as Time-stamp authority and integrate it with a GPS clock on a GNU/Linux server.
     </p>
     <p>

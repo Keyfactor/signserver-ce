@@ -100,7 +100,7 @@ limit is exceeded or key usage period expires.</li>
             <ul>
                 <li>Support and maintenance from PrimeKey, world renowned PKI experts.</li>
                 <li>Maintenance and security releases.</li>
-                <li>Integrity protected <a href="complete.en.html#Logging">audit log</a> (log signing), with digital signature or HMAC protection.</li>
+                <li>Integrity protected <a href="manual/complete.en.html#Logging">audit log</a> (log signing), with digital signature or HMAC protection.</li>
                 <li>Command line tool for verification of audit and database integrity protection.</li>
                 <li>SignServer TimeMonitor application and modules for monitoring time synchronization in TSA set-ups.</li>
                 <li>Authenticode signer for signing Windows executable files.</li>

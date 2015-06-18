@@ -17,6 +17,10 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import org.apache.log4j.Logger;
+import org.apache.xalan.processor.TransformerFactoryImpl;
 
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GenericServletResponse;
@@ -31,15 +35,20 @@ import org.apache.xml.security.Init;
 
 /**
  * Signer outputting debug information.
- * Currently only used to output the version of the Apache Sanctuario library.
+ * Currently only used to output the version of the Apache Sanctuario library
+ * and other.
  * 
  * @author Marcus Lundblad
  * @version $Id$
  *
  */
 public class DebugSigner extends BaseSigner {
+    
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(DebugSigner.class);
 
     public static final String XMLSEC_VERSION = "xml-sec.version";
+    public static final String XALAN_VERSION = "xalan.version";
     
     @Override
     public ProcessResponse processData(ProcessRequest signRequest,
@@ -50,21 +59,19 @@ public class DebugSigner extends BaseSigner {
 
         // Due to a bug in Glassfish, using getImplementationVersion isn't working...
         //props.put(XMLSEC_VERSION, Init.class.getPackage().getImplementationVersion());
+        //props.put(XALAN_VERSION, TransformFactoryImpl.class.getPackage().getImplementationVersion());
     
         // get library version from Maven pom properties (workaroud for Glassfish)
-        final InputStream pomPropertiesStream = Init.class
-                .getResourceAsStream("/META-INF/maven/org.apache.santuario/xmlsec/pom.properties");
         try {
-            final Properties pomProperties = new Properties();
-            pomProperties.load(pomPropertiesStream);
-            props.put(XMLSEC_VERSION, pomProperties.getProperty("version"));
+            props.put(XMLSEC_VERSION, getPropertiesFromResource(Init.class, "/META-INF/maven/org.apache.santuario/xmlsec/pom.properties").getProperty("version"));
         } catch (final IOException e) {
             throw new SignServerException("Failed to get xmlsec version", e);
-        } finally {
-            try {
-                pomPropertiesStream.close();
-            } catch (final IOException ignored) { //NOPMD
-            }
+        }
+
+        try {
+            props.put(XALAN_VERSION, getVersionFromFilename(TransformerFactoryImpl.class, "xalan"));
+        } catch (final IOException e) {
+            throw new SignServerException("Failed to get xalan version", e);
         }
 
         final StringWriter writer = new StringWriter();
@@ -76,6 +83,58 @@ public class DebugSigner extends BaseSigner {
                         null, null, null, null);
 
         return resp;
+    }
+    
+    /**
+     * Get a properties file identified by resource from the same place as the
+     * specified class.
+     * @param clazz To get the resource from
+     * @param resource name of the Properties file
+     * @return The loaded properties file
+     * @throws IOException In case the Properties file could not be read
+     */
+    private Properties getPropertiesFromResource(Class clazz, String resource) throws IOException {
+        // get library version from Maven pom properties (workaroud for Glassfish)
+        final InputStream pomPropertiesStream = clazz
+                .getResourceAsStream(resource);
+        try {
+            final Properties pomProperties = new Properties();
+            pomProperties.load(pomPropertiesStream);
+            return pomProperties;
+        } finally {
+            try {
+                pomPropertiesStream.close();
+            } catch (final IOException ignored) { //NOPMD
+            }
+        }
+    }
+    
+    /**
+     * Try to obtain the version of the JAR based on the file name of the JAR,
+     * if available from the class loader.
+     * @param clazz In the JAR to get the version from
+     * @param fileTitle Name of the library 
+     * @return The version from the file name if available or "0.0"
+     * @throws IOException In case the location of the file could not be
+     * obtained.
+     */
+    private String getVersionFromFilename(Class clazz, String fileTitle) throws IOException {
+        if (clazz.getProtectionDomain() != null) {
+            final String url = clazz.getProtectionDomain().getCodeSource().getLocation().toExternalForm();
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Got URL: " + url);
+            }
+            Pattern pattern = Pattern.compile(".*" + fileTitle + "-(.*).jar");
+            Matcher matcher = pattern.matcher(url);
+            if (matcher.matches()) {
+                return matcher.group(1);
+            } else {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("No " + fileTitle + "- in URL");
+                }
+            }
+        }
+        return "0.0";
     }
 
 }

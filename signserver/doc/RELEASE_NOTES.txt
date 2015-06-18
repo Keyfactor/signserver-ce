@@ -14,6 +14,15 @@ Bug fixes:
  - JBoss config folder directory corrected in installation instructions.
  - Dispatchers status page now lists configuration errors.
 
+Notice:
+ - The XML Security library has been updated to version 1.5.8 and its 
+   dependency to version 2.7.2.
+   This fixes a potential security vulnerability in earlier versions.
+   See: http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0107
+   See also the various "Fix XML Security library issue" sections in the
+   Install Guide for the extra steps needed when using JBoss 5, 7 and EAP 
+   respectively.
+
 See ChangeLog.txt for the full list of changes.
 
 

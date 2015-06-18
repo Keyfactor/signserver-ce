@@ -19,6 +19,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.cert.Certificate;
+import java.util.Arrays;
 import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -237,7 +238,20 @@ public class XMLSignerTest extends ModulesTestCase {
      */
     @Test
     public void test15XMLSecVersion() throws Exception {
-        checkDebugProperty("xml-sec.version", "1.5.7");
+        checkDebugProperty("xml-sec.version", "1.5.8");
+    }
+
+    /**
+     * Test that that expected version of the Xalan library is used.
+     * @throws Exception
+     */
+    @Test
+    public void test16XalanVersion() throws Exception {
+        checkDebugProperty("xalan.version", 
+                "Xalan Java 2.7.2", // after copy-xmlsec on JBoss 5
+                "2.7.2", // after manually copying on JBoss AS 7
+                "2.7.1-redhat-7" // on JBoss EAP >= 6.3 or patched
+        );
     }
 
     /**
@@ -250,7 +264,7 @@ public class XMLSignerTest extends ModulesTestCase {
      * @throws SignServerException
      * @throws IOException
      */
-    private void checkDebugProperty(final String property, final String expected)
+    private void checkDebugProperty(final String property, final String... expected)
             throws IllegalRequestException, CryptoTokenOfflineException, SignServerException, IOException {
         final int reqid = 42;
 
@@ -268,7 +282,14 @@ public class XMLSignerTest extends ModulesTestCase {
         final String value = props.getProperty(property);
         
         assertNotNull("Property not found", value);
-        assertEquals("Property value", expected, value);
+        boolean found = false;
+        for (String exp : expected) {
+            if (value.startsWith(exp)) {
+                found = true;
+                break;
+            }
+        }
+        assertTrue("Property value: " + value + " not one of the expected " + Arrays.toString(expected), found);
     }
 
     @Test

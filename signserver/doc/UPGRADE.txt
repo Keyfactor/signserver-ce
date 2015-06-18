@@ -21,7 +21,11 @@ RELEASE_NOTES.txt for more information about such upgrades.
 From SignServer 3.5.x to SignServer 3.6.x
 -----------------------------------------
 
-   (No database changes required)
+1) Dependency upgraded:
+
+The XML Security library has been updated to version 1.5.8 and its 
+dependency to 2.7.2. This requires special handling if JBoss is used. See 
+the Notice section of RELEASE_NOTES.txt for details.
 
 
 From SignServer 3.4.x to SignServer 3.5.x

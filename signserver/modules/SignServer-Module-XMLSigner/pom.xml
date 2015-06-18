@@ -48,7 +48,7 @@
             <version>1.5.8</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.xalan</groupId>
+            <groupId>xalan</groupId>
             <artifactId>xalan</artifactId>
             <version>2.7.2</version>
         </dependency>

@@ -29,6 +29,12 @@ From SignServer 3.6.x to SignServer 3.7.x
 2) Pay attention to changes needed when using soft keystore crypto tokens
    as described in the RELEASE_NOTES.txt.
 
+3) Dependency upgraded:
+
+The XML Security library has been updated to version 1.5.8 and its 
+dependeny to 2.7.2. This requires special handling if JBoss is used. See 
+the Notice section of RELEASE_NOTES.txt for details.
+
 
 From SignServer 3.5.x to SignServer 3.6.x
 -----------------------------------------

@@ -13,6 +13,13 @@ Notice:
    from an earlier version the existing configuration file should be renamed
    accordingly. The Ant script will complain if a file with the old name is
    found.
+ - The XML Security library has been updated to version 1.5.8 and its 
+   dependency to version 2.7.2.
+   This fixes a potential security vulnerability in earlier versions.
+   See: http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0107
+   See also the various "Fix XML Security library issue" sections in the
+   Install Guide for the extra steps needed when using JBoss 5, 7 and EAP 
+   respectively.
  - The new KeystoreInConfigCryptoToken is not supported under GlassFish 2.
  - HardCodedCryptoToken is no longer supported for most use cases. Previously,
    the token could have been configured in Certificate or Document validators
@@ -23,7 +30,7 @@ Notice:
    demo setups but does not support the API in 3.7. Use KeystoreCryptoToken or
    KeystoreInConfigCryptoToken instead.
  - The KeystoreCryptoToken will no longer use the first available key when
-   signing if DEFAULTKEY has not been set. Plese configure your
+   signing if DEFAULTKEY has not been set. Please configure your
    KeystoreCryptoTokens to have a DEFAULTKEY property set.
    Having a defined DEFAULTKEY is not needed if using runtime-decided keys
    (using the AliasSelector interfaces).

@@ -760,6 +760,11 @@ bin/ant j2ee:copy-xmlsec
         &lt;resource-root path="xalan-2.7.2.jar"/&gt;
                                                 </source>
                     </subsubsection>
+                    <subsubsection name="Fix XML Security library issues in JBoss EAP">
+                        <p>
+Make sure to apply the relevant security patches from Red Hat.
+                        </p>
+                    </subsubsection>
                     <subsubsection name="Install Hibernate in GlassFish 3">
                         <p>
 If you are using GlassFish 3 and run with a database you will have to install Hibernate. 

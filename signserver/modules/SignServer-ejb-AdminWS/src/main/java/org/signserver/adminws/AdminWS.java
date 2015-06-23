@@ -868,7 +868,7 @@ public class AdminWS {
     /**
      * Method used to import a certificate chain to a crypto token.
      * 
-     * @param workerId ID or name of (crypto)worker
+     * @param workerId ID of (crypto)worker
      * @param certChain Certificate chain to import
      * @param alias Alias to import into in the crypto token
      * @param authCode Set if the alias is protected by an individual authentication

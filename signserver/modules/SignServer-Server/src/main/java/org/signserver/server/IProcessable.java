@@ -175,8 +175,11 @@ public interface IProcessable extends IWorker {
      * @param alias Alias to use in the crypto token
      * @param authenticationCode Authentication code for the key entry, or use
      *                           the token's authentication code if null
-     * @throws CryptoTokenOfflineException
-     * @throws OperationUnsupportedException
+     * @throws CryptoTokenOfflineException In case the token was not active or could not function for any other reasons
+     * @throws NoSuchAliasException In case the alias did not exist in the token
+     * @throws InvalidAlgorithmParameterException If the supplied crypto token parameters was not valid
+     * @throws OperationUnsupportedException in case the import operation is not supported by the worker
+     * @throws UnsupportedCryptoTokenParameter In case the supplied crypto token parameter was not known or supported by the token
      */
     void importCertificateChain(List<Certificate> certChain, String alias, char[] authenticationCode, Map<String, Object> params, IServices services) throws
             CryptoTokenOfflineException,
@@ -184,8 +187,24 @@ public interface IProcessable extends IWorker {
             InvalidAlgorithmParameterException,
             UnsupportedCryptoTokenParameter,
             OperationUnsupportedException;
-    
-    TokenSearchResults searchTokenEntries(int startIndex, int max, final QueryCriteria qc, final boolean includeData, Map<String, Object> params, final IServices servicesImpl) throws
+
+    /**
+     * Queries the worker's crypto token.
+     *
+     * @param startIndex Start index of first result (0-based)
+     * @param max Maximum number of results to return
+     * @param qc Search criteria for matching results
+     * @param includeData If 'false' only the alias and key type is included, otherwise all information available is returned
+     * @param params Additional parameters to pass to the crypto token
+     * @param services implementations for the crypto token to use
+     * @return the search result
+     * @throws OperationUnsupportedException in case the search operation is not supported by the worker
+     * @throws CryptoTokenOfflineException in case the token is not in a searchable state
+     * @throws InvalidAlgorithmParameterException If the supplied crypto token parameters was not valid
+     * @throws UnsupportedCryptoTokenParameter In case the supplied crypto token parameter was not known or supported by the token
+     * @throws QueryException in case the query could not be understood or could not be executed
+     */
+    TokenSearchResults searchTokenEntries(int startIndex, int max, final QueryCriteria qc, final boolean includeData, Map<String, Object> params, final IServices services) throws
             CryptoTokenOfflineException,
             QueryException,
             InvalidAlgorithmParameterException,

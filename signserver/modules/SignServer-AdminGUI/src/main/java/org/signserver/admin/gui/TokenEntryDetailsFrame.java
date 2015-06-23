@@ -184,10 +184,6 @@ public class TokenEntryDetailsFrame extends javax.swing.JFrame {
                 return viewPanel;
             }
         });
-        
-        
-        
-        
     }
 
     /**
@@ -262,8 +258,6 @@ public class TokenEntryDetailsFrame extends javax.swing.JFrame {
         final ViewCertificateFrame frame = new ViewCertificateFrame(chain);
         frame.setVisible(true);
     }
-    
-    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton closeButton;

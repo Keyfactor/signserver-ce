@@ -481,11 +481,13 @@ public class CryptoTokenHelper {
         final Date lastDate = new Date(currentTime + validity * 1000);
 
         // Add all mandatory attributes
-        LOG.debug("keystore signing algorithm " + sigAlg);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("keystore signing algorithm " + sigAlg);
+        }
 
         final PublicKey publicKey = keyPair.getPublic();
         if (publicKey == null) {
-            throw new NullPointerException("Public key is null");
+            throw new IllegalArgumentException("Public key is null");
         }
 
         X509v3CertificateBuilder cg = new JcaX509v3CertificateBuilder(new X500Principal(myname), BigInteger.valueOf(firstDate.getTime()), firstDate, lastDate, new X500Principal(myname), publicKey);

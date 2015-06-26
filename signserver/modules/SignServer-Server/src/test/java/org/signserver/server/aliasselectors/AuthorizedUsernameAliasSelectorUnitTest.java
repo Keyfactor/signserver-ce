@@ -94,7 +94,7 @@ public class AuthorizedUsernameAliasSelectorUnitTest extends TestCase {
         final WorkerConfig config = new WorkerConfig();
         final AliasSelector selector = new AuthorizedUsernameAliasSelector();
         final RequestContext context = new RequestContext();
-        final LogMap logMap= LogMap.getInstance(context);
+        final LogMap logMap = LogMap.getInstance(context);
        
         logMap.put(IAuthorizer.LOG_USERNAME, "user4711");
         selector.init(4711, config, null, null);

@@ -70,7 +70,7 @@ public class SignServerWSServiceTest extends ModulesTestCase {
     };
     
     /** Worker ID as defined in test-configuration.properties. **/
-    private static final String WORKERID = "7001";
+    private static final String WORKERID = "7003";
 
     /** A worker ID assumed to not be existing. */
     private static final String NONEXISTING_WORKERID = "1231231";
@@ -150,7 +150,7 @@ public class SignServerWSServiceTest extends ModulesTestCase {
     }
     
     public void test00SetupDatabase() throws Exception {
-        addDummySigner(7001, "SignServerWSServiceTest_XMLSigner1", true);
+        addDummySigner(7003, "SignServerWSServiceTest_XMLSigner1", true);
     }
 
     // TODO add test methods here. The name must begin with 'test'. For example:
@@ -163,7 +163,7 @@ public class SignServerWSServiceTest extends ModulesTestCase {
             final WorkerStatusWS status = statuses.get(0);
             LOG.debug("Status: " + toString(status));
 
-            assertEquals("workerName", "7001", status.getWorkerName());
+            assertEquals("workerName", "7003", status.getWorkerName());
             assertEquals("errormessage", null, status.getErrormessage());
             assertEquals("overallStatus", "ALLOK", status.getOverallStatus());
         } catch (InvalidWorkerIdException_Exception ex) {
@@ -265,7 +265,7 @@ public class SignServerWSServiceTest extends ModulesTestCase {
     }
     
     public void test99RemoveDatabase() throws Exception {
-        removeWorker(7001);
+        removeWorker(7003);
     }
 
     private String toString(WorkerStatusWS status) {

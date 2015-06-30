@@ -58,6 +58,8 @@ public interface IWorkerLogger {
     String LOG_RESPONSE_ENCODED = "RESPONSE_ENCODED";
     String LOG_REQUEST_DIGEST = "REQUEST_DIGEST";
     String LOG_REQUEST_DIGEST_ALGORITHM = "REQUEST_DIGEST_ALGORITHM";
+    String LOG_RESPONSE_DIGEST = "RESPONSE_DIGEST";
+    String LOG_RESPONSE_DIGEST_ALGORITHM = "RESPONSE_DIGEST_ALGORITHM";
 
     /**
      * Method called after creation of instance.

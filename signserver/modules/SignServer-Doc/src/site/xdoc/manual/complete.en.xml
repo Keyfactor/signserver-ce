@@ -4867,6 +4867,19 @@ The signature can optionally include a timestamp response from a TSA using the A
                         <p>
                             <b>TSA_PASSWORD</b> = Login password used if the TSA uses HTTP Basic Auth (Required if TSA_USERNAME specified, default: none).
                         </p>
+                        
+                        <p>
+                            <b>DO_LOGREQUEST_DIGEST</b> = If a digest of the request should be computed and logged (Optional, default: true).
+                        </p>
+                        <p>
+                            <b>LOGREQUEST_DIGESTALGORITHM</b> = Algorithm used to create the message digest (hash) of the request document to put in the log (default: SHA256).
+                        </p>
+                        <p>
+                            <b>DO_LOGRESPONSE_DIGEST</b> = If a digest of the response should be computed and logged (Optional, default: true).
+                        </p>
+                        <p>
+                            <b>LOGRESPONSE_DIGESTALGORITHM</b> = Algorithm used to create the message digest (hash) of the response document to put in the log (default: SHA256).
+                        </p>
                     </subsubsection>
                     
                     <subsubsection name="Request Properties">
@@ -4879,6 +4892,21 @@ The signature can optionally include a timestamp response from a TSA using the A
                         <p><b>PROGRAM_URL</b> = Program URL to use instead of the configured one (if any).
                                                  Specifying an empty value removes the configured program URL.
                                                  Without ALLOW_PROGRAM_URL_OVERRIDE configured in the worker request including this request property will not be allowed.</p>
+                    </subsubsection>
+                    
+                    <subsubsection name="Worker Log Fields">
+                        <p>
+                            <b>REQUEST_DIGEST</b> = A message digest (hash) for the request document in hex encoding.
+                        </p>
+                        <p>
+                            <b>REQUEST_DIGEST_ALGORITHM</b> = The name of the message digest (hash) algorithm used for the request digest in the log.
+                        </p>
+                        <p>
+                            <b>RESPONSE_DIGEST</b> = A message digest (hash) for the response document in hex encoding.
+                        </p>
+                        <p>
+                            <b>RESPONSE_DIGEST_ALGORITHM</b> = The name of the message digest (hash) algorithm used for the response digest in the log.
+                        </p>
                     </subsubsection>
                     
                 </subsection>

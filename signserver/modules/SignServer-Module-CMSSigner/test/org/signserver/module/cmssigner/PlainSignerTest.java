@@ -12,8 +12,10 @@
  *************************************************************************/
 package org.signserver.module.cmssigner;
 
+import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.Security;
@@ -30,6 +32,8 @@ import org.bouncycastle.asn1.x509.X509Extension;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509ExtensionUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.util.encoders.Base64;
+import org.bouncycastle.util.encoders.Hex;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -41,6 +45,8 @@ import org.signserver.common.GenericSignResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.WorkerConfig;
 import org.signserver.server.SignServerContext;
+import org.signserver.server.log.IWorkerLogger;
+import org.signserver.server.log.LogMap;
 import org.signserver.test.utils.builders.CertBuilder;
 import org.signserver.test.utils.builders.CertExt;
 import org.signserver.test.utils.builders.CryptoUtils;
@@ -287,10 +293,16 @@ public class PlainSignerTest {
     }
 
     private GenericSignResponse sign(final byte[] data, MockedCryptoToken token, WorkerConfig config) throws Exception {
+        return sign(data, token, config, null);
+    }
+    
+    private GenericSignResponse sign(final byte[] data, MockedCryptoToken token, WorkerConfig config, RequestContext requestContext) throws Exception {
         MockedPlainSigner instance = new MockedPlainSigner(token);
         instance.init(1, config, new SignServerContext(), null);
 
-        RequestContext requestContext = new RequestContext();
+        if (requestContext == null) {
+            requestContext = new RequestContext();
+        }
         requestContext.put(RequestContext.TRANSACTION_ID, "0000-100-1");
 
         GenericSignRequest request = new GenericSignRequest(100, data);
@@ -305,4 +317,43 @@ public class PlainSignerTest {
         assertTrue("consistent signature", signature.verify(resp.getProcessedData()));
     }
     
+    private void assertRequestDigestMatches(byte[] plainText, String digestAlgorithm, GenericSignResponse resp, RequestContext context) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException, SignatureException, UnsupportedEncodingException {
+        assertEquals("digestAlg", "SHA256", LogMap.getInstance(context).get("REQUEST_DIGEST_ALGORITHM"));
+        
+        final MessageDigest md = MessageDigest.getInstance(digestAlgorithm);
+        final String expected = Hex.toHexString(md.digest(plainText));
+        String actual = LogMap.getInstance(context).get("REQUEST_DIGEST");
+        assertEquals("digest", expected, actual);
+    }
+
+    /**
+     * Tests logging of the request digest and request digest algorithm using
+     * the default algorithm.
+     * @throws Exception 
+     */
+    @Test
+    public void testLogRequestDigestDefault() throws Exception {
+        LOG.info("testLogRequestDigestDefault");
+        final RequestContext context = new RequestContext();
+        final byte[] plainText = "some-data".getBytes("ASCII");
+        final GenericSignResponse resp = sign(plainText, tokenRSA, createConfig(null), context);
+
+        assertRequestDigestMatches(plainText, "SHA256", resp, context);
+    }
+
+    /**
+     * Tests logging of the response.
+     * @throws Exception 
+     */
+    @Test
+    public void testLogResponseEncoded() throws Exception {
+        LOG.info("testLogResponseEncoded");
+        final RequestContext context = new RequestContext();
+        final byte[] plainText = "some-data".getBytes("ASCII");
+        final GenericSignResponse resp = sign(plainText, tokenRSA, createConfig(null), context);
+
+        final String expected = new String(Base64.encode(resp.getProcessedData()), "ASCII");
+        assertEquals("responseEncoded", expected, LogMap.getInstance(context).get("RESPONSE_ENCODED"));
+    }
+
 }

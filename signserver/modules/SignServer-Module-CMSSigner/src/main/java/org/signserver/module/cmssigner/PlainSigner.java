@@ -13,6 +13,7 @@
 package org.signserver.module.cmssigner;
 
 import java.security.InvalidKeyException;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -28,12 +29,16 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
+import org.bouncycastle.util.encoders.Base64;
+import org.bouncycastle.util.encoders.Hex;
 import org.signserver.common.*;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.DefaultArchivable;
 import org.signserver.server.cryptotokens.ICryptoInstance;
 import org.signserver.server.cryptotokens.ICryptoToken;
+import org.signserver.server.log.IWorkerLogger;
+import org.signserver.server.log.LogMap;
 import org.signserver.server.signers.BaseSigner;
 
 /**
@@ -52,9 +57,17 @@ public class PlainSigner extends BaseSigner {
 
     // Property constants
     public static final String SIGNATUREALGORITHM_PROPERTY = "SIGNATUREALGORITHM";
+    /**
+     * Algorithm for the request digest put in the log (and used as base for
+     * archive ID).
+     */
+    public static final String LOGREQUEST_DIGESTALGORITHM_PROPERTY = "LOGREQUEST_DIGESTALGORITHM";
 
+    private static final String DEFAULT_LOGREQUEST_DIGESTALGORITHM = "SHA256";
+    
     private LinkedList<String> configErrors;
     private String signatureAlgorithm;
+    private String logRequestDigestAlgorithm;
 
 
     @Override
@@ -70,6 +83,12 @@ public class PlainSigner extends BaseSigner {
         if (signatureAlgorithm != null && signatureAlgorithm.trim().isEmpty()) {
             signatureAlgorithm = null;
         }
+        
+        // Get the log digest algorithm
+        logRequestDigestAlgorithm = config.getProperty(LOGREQUEST_DIGESTALGORITHM_PROPERTY);
+        if (logRequestDigestAlgorithm == null || logRequestDigestAlgorithm.trim().isEmpty()) {
+            logRequestDigestAlgorithm = DEFAULT_LOGREQUEST_DIGESTALGORITHM;
+        }
     }
 
     @Override
@@ -78,6 +97,9 @@ public class PlainSigner extends BaseSigner {
             CryptoTokenOfflineException, SignServerException {
 
         ProcessResponse signResponse;
+        
+        // Log values
+        final LogMap logMap = LogMap.getInstance(requestContext);
 
         // Check that the request contains a valid GenericSignRequest object
         // with a byte[].
@@ -97,8 +119,27 @@ public class PlainSigner extends BaseSigner {
             throw new SignServerException("Worker is misconfigured");
         }
 
-        byte[] data = (byte[]) sReq.getRequestData();
-        final String archiveId = createArchiveId(data, (String) requestContext.get(RequestContext.TRANSACTION_ID));
+        // Get the file name from the request
+        final Object fileNameObject = requestContext.get(RequestContext.FILENAME);
+        final String fileNameOriginal;
+        if (fileNameObject instanceof String) {
+            fileNameOriginal = (String) fileNameObject;
+        } else {
+            fileNameOriginal = null;
+        }
+        
+        final byte[] data = (byte[]) sReq.getRequestData();
+        byte[] digest;
+        logMap.put(IWorkerLogger.LOG_REQUEST_DIGEST_ALGORITHM, logRequestDigestAlgorithm);
+        try {
+            final MessageDigest md = MessageDigest.getInstance(logRequestDigestAlgorithm);
+            digest = md.digest(data);
+            logMap.put(IWorkerLogger.LOG_REQUEST_DIGEST, Hex.toHexString(digest));
+        } catch (NoSuchAlgorithmException ex) {
+            LOG.error("Digest algorithm not supported", ex);
+            throw new SignServerException("Digest algorithm not supported", ex);
+        }
+        final String archiveId = createArchiveId(digest, (String) requestContext.get(RequestContext.TRANSACTION_ID));
 
         ICryptoInstance crypto = null;
         try {
@@ -124,6 +165,9 @@ public class PlainSigner extends BaseSigner {
             signature.update(data);
 
             final byte[] signedbytes = signature.sign();
+            
+            logMap.put(IWorkerLogger.LOG_RESPONSE_ENCODED, Base64.toBase64String(signedbytes));
+            
             final Collection<? extends Archivable> archivables = Arrays.asList(
                     new DefaultArchivable(Archivable.TYPE_REQUEST, CONTENT_TYPE, data, archiveId), 
                     new DefaultArchivable(Archivable.TYPE_RESPONSE, CONTENT_TYPE, signedbytes, archiveId));
@@ -140,8 +184,7 @@ public class PlainSigner extends BaseSigner {
             }
 
             // Suggest new file name
-            final Object fileNameOriginal = requestContext.get(RequestContext.FILENAME);
-            if (fileNameOriginal instanceof String) {
+            if (fileNameOriginal != null) {
                 requestContext.put(RequestContext.RESPONSE_FILENAME, fileNameOriginal + ".sig");
             }
 

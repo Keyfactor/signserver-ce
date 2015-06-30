@@ -55,6 +55,10 @@ public interface IWorkerLogger {
     
     String LOG_ARCHIVE_IDS = "ARCHIVE_IDS";
 
+    String LOG_RESPONSE_ENCODED = "RESPONSE_ENCODED";
+    String LOG_REQUEST_DIGEST = "REQUEST_DIGEST";
+    String LOG_REQUEST_DIGEST_ALGORITHM = "REQUEST_DIGEST_ALGORITHM";
+
     /**
      * Method called after creation of instance.
      * @param props the signers properties.

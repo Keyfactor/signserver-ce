@@ -4921,6 +4921,20 @@ format determined by the configured signature algorithm.
                             <b>SIGNATUREALGORITHM</b> = property specifying the algorithm used to sign the data (default: depending on the signing key: SHA1withDSA for DSA keys,
                                                         SHA1withECDSA for ECDSA keys, otherwise SHA1withRSA)
                         </p>
+                        <p>
+                            <b>LOGREQUEST_DIGESTALGORITHM</b> = property specifying the algorithm used to create the message digest (hash) of the request document to put in the log (default: SHA256).
+                        </p>
+                    </subsubsection>
+                    <subsubsection name="Worker Log Fields">
+                        <p>
+                            <b>REQUEST_DIGEST</b> = A message digest (hash) for the request document in hex encoding.
+                        </p>
+                        <p>
+                            <b>REQUEST_DIGEST_ALGORITHM</b> = The name of the message digest (hash) algorithm used for the request digest in the log.
+                        </p>
+                        <p>
+                            <b>RESPONSE_ENCODED</b> = The response document (plain signature) in base64 encoding.
+                        </p>
                     </subsubsection>
                 </subsection>
             </section>

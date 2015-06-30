@@ -285,9 +285,16 @@ public class PlainSignerTest {
     }
     
     private WorkerConfig createConfig(String signatureAlgorithm) throws Exception {
+        return createConfig(signatureAlgorithm, null);
+    }
+
+    private WorkerConfig createConfig(final String signatureAlgorithm, final String logDigestAlgorithm) throws Exception {
         WorkerConfig config = new WorkerConfig();
         if (signatureAlgorithm != null) {
             config.setProperty("SIGNATUREALGORITHM", signatureAlgorithm);
+        }
+        if (logDigestAlgorithm != null) {
+            config.setProperty("LOGREQUEST_DIGESTALGORITHM", logDigestAlgorithm);
         }
         return config;
     }
@@ -318,7 +325,7 @@ public class PlainSignerTest {
     }
     
     private void assertRequestDigestMatches(byte[] plainText, String digestAlgorithm, GenericSignResponse resp, RequestContext context) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException, SignatureException, UnsupportedEncodingException {
-        assertEquals("digestAlg", "SHA256", LogMap.getInstance(context).get("REQUEST_DIGEST_ALGORITHM"));
+        assertEquals("digestAlg", digestAlgorithm, LogMap.getInstance(context).get("REQUEST_DIGEST_ALGORITHM"));
         
         final MessageDigest md = MessageDigest.getInstance(digestAlgorithm);
         final String expected = Hex.toHexString(md.digest(plainText));
@@ -339,6 +346,21 @@ public class PlainSignerTest {
         final GenericSignResponse resp = sign(plainText, tokenRSA, createConfig(null), context);
 
         assertRequestDigestMatches(plainText, "SHA256", resp, context);
+    }
+    
+    /**
+     * Tests logging of the request digest and request digest algorithm using
+     * SHA1.
+     * @throws Exception 
+     */
+    @Test
+    public void testLogRequestDigestSHA1() throws Exception {
+        LOG.info("testLogRequestDigestSHA1");
+        final RequestContext context = new RequestContext();
+        final byte[] plainText = "some-data".getBytes("ASCII");
+        final GenericSignResponse resp = sign(plainText, tokenRSA, createConfig(null, "SHA1"), context);
+
+        assertRequestDigestMatches(plainText, "SHA1", resp, context);
     }
 
     /**

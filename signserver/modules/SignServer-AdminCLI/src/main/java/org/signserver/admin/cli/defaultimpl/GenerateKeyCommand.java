@@ -18,7 +18,6 @@ import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.log4j.Logger;
-import org.ejbca.ui.cli.util.ConsolePasswordReader;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.cli.spi.UnexpectedCommandFailureException;
@@ -45,7 +44,6 @@ public class GenerateKeyCommand extends AbstractAdminCommand {
             + "Leaving out alias will use the value in property DEFAULTKEY+1.\n"
             + "Leaving out keyalg will use the value in property KEYALG.\n"
             + "Leaving out keyspec will use the value in property KEYSPEC.\n"
-            + "Leaving out authcode will prompt for it.\n"
             + "Example 1: signserver generatekey 71\n"
             + "Example 2: signserver generatekey 71 -keyalg RSA -keyspec 2048\n"
             + "Example 3: signserver generatekey 71 -keyalg RSA -keyspec 2048 -alias signKey2\n"
@@ -56,13 +54,11 @@ public class GenerateKeyCommand extends AbstractAdminCommand {
         OPTIONS.addOption(KEYALG, true, "Key algorithm");
         OPTIONS.addOption(KEYSPEC, true, "Key specification");
         OPTIONS.addOption(ALIAS, true, "Key alias/name");
-        OPTIONS.addOption(AUTHCODE, true, "Authentication code");
     }
     
     private String keyAlg;
     private String keySpec;
     private String alias;
-    private char[] authCode;
 
     @Override
     public String getDescription() {
@@ -89,13 +85,10 @@ public class GenerateKeyCommand extends AbstractAdminCommand {
         if (line.hasOption(ALIAS)) {
             alias = line.getOptionValue(ALIAS, null);
         }
-        if (line.hasOption(AUTHCODE)) {
-            authCode = line.getOptionValue(AUTHCODE, null).toCharArray();
-        }
     }
 
     /**
-     * Checks that all mandadory options are given.
+     * Checks that all mandatory options are given.
      */
     private void validateOptions() {
         // No mandatory options.
@@ -104,7 +97,7 @@ public class GenerateKeyCommand extends AbstractAdminCommand {
     @Override
     public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException, UnexpectedCommandFailureException {
         if (args.length < 1) {
-            throw new IllegalCommandArgumentsException(USAGE);
+            throw new IllegalCommandArgumentsException("Missing arguments");
         }
         try {
             try {
@@ -115,21 +108,13 @@ public class GenerateKeyCommand extends AbstractAdminCommand {
             }
             validateOptions();
 
-            if (authCode == null) {
-                getOutputStream().print("Enter authorization code: ");
-                // Read the password, but mask it so we don't display it on
-                // the console
-                final ConsolePasswordReader r = new ConsolePasswordReader();
-                authCode = r.readPassword();
-            }
-
             int signerId = getWorkerId(args[0]);
             checkThatWorkerIsProcessable(signerId);
 
             LOG.info("Requesting key generation...");
 
             String newAlias = getWorkerSession().generateSignerKey(
-                    signerId, keyAlg, keySpec, alias, authCode);
+                    signerId, keyAlg, keySpec, alias, null);
 
             if (newAlias == null) {
                 out.println("Could not generate key");
@@ -148,8 +133,6 @@ public class GenerateKeyCommand extends AbstractAdminCommand {
             }
         } catch (Exception e) {
             throw new UnexpectedCommandFailureException(e);
-        } finally {
-            authCode = null;
         }
     }
 }

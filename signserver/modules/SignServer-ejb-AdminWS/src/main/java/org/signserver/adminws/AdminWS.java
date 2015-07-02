@@ -540,7 +540,7 @@ public class AdminWS {
                 keyAlgorithm, keySpec, alias);
         
         return worker.generateSignerKey(adminInfo, signerId, keyAlgorithm, keySpec, alias,
-                authCode.toCharArray());
+                authCode == null ? null : authCode.toCharArray());
     }
 
     /**
@@ -566,7 +566,7 @@ public class AdminWS {
 
         // Workaround for KeyTestResult first placed in wrong package
         final Collection<KeyTestResult> results;
-        Collection<?> res = worker.testKey(adminInfo, signerId, alias, authCode.toCharArray());
+        Collection<?> res = worker.testKey(adminInfo, signerId, alias, authCode == null ? null : authCode.toCharArray());
         if (res.size() < 1) {
             results = new LinkedList<KeyTestResult>();
         } else {
@@ -891,7 +891,7 @@ public class AdminWS {
                 requireAdminAuthorization("importCertificateChain",
                                           String.valueOf(workerId), String.valueOf(alias));
         worker.importCertificateChain(adminInfo, workerId, certChain, alias,
-                                      authCode.toCharArray());
+                                      authCode == null ? null : authCode.toCharArray());
     }
     
     

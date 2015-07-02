@@ -404,7 +404,7 @@ public class RenewSignerDialog extends javax.swing.JDialog {
             // to InstallCertificatesTask fields, here.
             super(app);
             passwordPanelLabel.setText(
-                    "Enter authentication code for all workers or leave empty:");
+                    "Enter authentication code for all selected worker(s) or leave empty:");
             passwordPanelField.setText("");
             passwordPanelField.grabFocus();
 

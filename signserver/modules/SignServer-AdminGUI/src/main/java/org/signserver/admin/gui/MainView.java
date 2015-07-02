@@ -3251,7 +3251,7 @@ private void displayLogEntryAction() {
             selected = workersList.getSelectedIndices();
 
             passwordPanelLabel.setText(
-                    "Enter authentication code for all workers or leave empty:");
+                    "Enter authentication code for the selected worker(s) or leave empty:");
             passwordPanelField.setText("");
             passwordPanelField.grabFocus();
 

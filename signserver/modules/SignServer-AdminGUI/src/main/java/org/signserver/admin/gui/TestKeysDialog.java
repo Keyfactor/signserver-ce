@@ -192,48 +192,16 @@ public class TestKeysDialog extends JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        passwordPanel = new javax.swing.JPanel();
-        passwordPanelLabel = new javax.swing.JLabel();
-        passwordPanelField = new javax.swing.JPasswordField();
         jButton2 = new javax.swing.JButton();
         jButtonGenerate = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
 
-        passwordPanel.setName("passwordPanel"); // NOI18N
-
-        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(org.signserver.admin.gui.SignServerAdminGUIApplication.class).getContext().getResourceMap(TestKeysDialog.class);
-        passwordPanelLabel.setText(resourceMap.getString("passwordPanelLabel.text")); // NOI18N
-        passwordPanelLabel.setName("passwordPanelLabel"); // NOI18N
-
-        passwordPanelField.setText(resourceMap.getString("passwordPanelField.text")); // NOI18N
-        passwordPanelField.setName("passwordPanelField"); // NOI18N
-
-        javax.swing.GroupLayout passwordPanelLayout = new javax.swing.GroupLayout(passwordPanel);
-        passwordPanel.setLayout(passwordPanelLayout);
-        passwordPanelLayout.setHorizontalGroup(
-            passwordPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, passwordPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(passwordPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(passwordPanelField, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)
-                    .addComponent(passwordPanelLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        passwordPanelLayout.setVerticalGroup(
-            passwordPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(passwordPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(passwordPanelLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(passwordPanelField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setLocationByPlatform(true);
         setName("Form"); // NOI18N
 
+        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(org.signserver.admin.gui.SignServerAdminGUIApplication.class).getContext().getResourceMap(TestKeysDialog.class);
         jButton2.setText(resourceMap.getString("jButton2.text")); // NOI18N
         jButton2.setName("jButton2"); // NOI18N
         jButton2.addActionListener(new java.awt.event.ActionListener() {
@@ -344,27 +312,12 @@ public class TestKeysDialog extends JDialog {
 
     private class KeyTestingTask extends Task<String, Void> {
 
-        private char[] authCode;
-
         KeyTestingTask(org.jdesktop.application.Application app) {
             // Runs on the EDT.  Copy GUI state that
             // doInBackground() depends on from parameters
             // to KeyTestingTask fields, here.
             super(app);
             resultCode = OK;
-
-            passwordPanelLabel.setText(
-                "Enter authentication code for all workers or leave empty:");
-            passwordPanelField.setText("");
-            passwordPanelField.grabFocus();
-
-            int res = JOptionPane.showConfirmDialog(TestKeysDialog.this,
-                    passwordPanel, "Test keys",
-                    JOptionPane.OK_CANCEL_OPTION);
-
-           if (res == JOptionPane.OK_OPTION) {
-               authCode = passwordPanelField.getPassword();
-           }
         }
         @Override protected String doInBackground() {
             // Your Task's code here.  This method runs
@@ -373,87 +326,77 @@ public class TestKeysDialog extends JDialog {
             int numWorkers = data.size();
             int progress = 0;
             setProgress(progress++, 0, numWorkers);
-            String results = null;
-            if (authCode != null) {
-                final StringBuilder sb = new StringBuilder();
-                try {
-                   for (int row = 0; row < data.size(); row++) {
-                        final Worker worker = workers.get(row);
-                        final int signerId = worker.getWorkerId();
-                        final String alias = data.get(row).get(1);
+            final StringBuilder sb = new StringBuilder();
+            for (int row = 0; row < data.size(); row++) {
+                 final Worker worker = workers.get(row);
+                 final int signerId = worker.getWorkerId();
+                 final String alias = data.get(row).get(1);
 
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Testing keys: worker=" + signerId
-                                    + ", alias: " + alias);
-                        }
+                 if (LOG.isDebugEnabled()) {
+                     LOG.debug("Testing keys: worker=" + signerId
+                             + ", alias: " + alias);
+                 }
 
-                        sb.append("Testing keys for signer " + signerId
-                                + " with alias " + alias + ":");
-                        sb.append("\n");
+                 sb.append("Testing keys for signer ").append(signerId)
+                     .append(" with alias ").append(alias).append(":")
+                     .append("\n");
 
-                        try {
-                            // Test the key
-                            final Collection<KeyTestResult> result =
-                                    SignServerAdminGUIApplication
-                                    .getAdminWS()
-                                    .testKey(signerId, alias, new String(authCode));
+                 try {
+                     // Test the key
+                     final Collection<KeyTestResult> result =
+                             SignServerAdminGUIApplication
+                             .getAdminWS()
+                             .testKey(signerId, alias, "");
 
-                            if (result.isEmpty()) {
-                                sb.append("  ");
-                                sb.append("(No key found, token offline?)");
-                                sb.append("\n");
-                            } else {
-                                for (KeyTestResult key : result) {
-                                    sb.append("  ");
-                                    sb.append(key.getAlias());
-                                    sb.append(", ");
-                                    sb.append(key.isSuccess()
-                                            ? "SUCCESS" : "FAILURE");
-                                    sb.append(", ");
-                                    sb.append(key.getPublicKeyHash());
-                                    sb.append(", ");
-                                    sb.append(key.getStatus());
-                                    sb.append("\n");
-                                }
-                            }
+                     if (result.isEmpty()) {
+                         sb.append("  ");
+                         sb.append("(No key found, token offline?)");
+                         sb.append("\n");
+                     } else {
+                         for (KeyTestResult key : result) {
+                             sb.append("  ");
+                             sb.append(key.getAlias());
+                             sb.append(", ");
+                             sb.append(key.isSuccess()
+                                     ? "SUCCESS" : "FAILURE");
+                             sb.append(", ");
+                             sb.append(key.getPublicKeyHash());
+                             sb.append(", ");
+                             sb.append(key.getStatus());
+                             sb.append("\n");
+                         }
+                     }
 
-                        } catch (AdminNotAuthorizedException_Exception ex) {
-                            sb.append(ex.getMessage());
-                            sb.append("\n");
-                        } catch (CryptoTokenOfflineException_Exception ex) {
-                            sb.append(ex.getMessage());
-                            sb.append("\n");
-                        } catch (InvalidWorkerIdException_Exception ex) {
-                            sb.append(ex.getMessage());
-                            sb.append("\n");
-                        } catch (KeyStoreException_Exception ex) {
-                            sb.append(ex.getMessage());
-                            sb.append("\n");
-                        } catch (EJBException ex) {
-                            LOG.error(ex.getMessage(), ex);
-                            sb.append(ex.getMessage());
-                            sb.append("\n");
-                        } catch (SOAPFaultException ex) {
-                            LOG.error(ex.getMessage(), ex);
-                            sb.append(ex.getMessage());
-                            sb.append("\n");
-                        } catch (RuntimeException ex) {
-                            LOG.error(ex.getMessage(), ex);
-                            sb.append("Not supported by server: ")
-                                    .append(ex.getMessage())
-                                    .append("\n");
-                        }
-                        sb.append("\n");
-                        setProgress(progress++, 0, numWorkers);
-                    }
-                } finally {
-                    for (int i = 0; i < authCode.length; i++) {
-                        authCode[i] = 0;
-                    }
-                }
-                results = sb.toString();
-            }
-            return results;  // return your result
+                 } catch (AdminNotAuthorizedException_Exception ex) {
+                     sb.append(ex.getMessage());
+                     sb.append("\n");
+                 } catch (CryptoTokenOfflineException_Exception ex) {
+                     sb.append(ex.getMessage());
+                     sb.append("\n");
+                 } catch (InvalidWorkerIdException_Exception ex) {
+                     sb.append(ex.getMessage());
+                     sb.append("\n");
+                 } catch (KeyStoreException_Exception ex) {
+                     sb.append(ex.getMessage());
+                     sb.append("\n");
+                 } catch (EJBException ex) {
+                     LOG.error(ex.getMessage(), ex);
+                     sb.append(ex.getMessage());
+                     sb.append("\n");
+                 } catch (SOAPFaultException ex) {
+                     LOG.error(ex.getMessage(), ex);
+                     sb.append(ex.getMessage());
+                     sb.append("\n");
+                 } catch (RuntimeException ex) {
+                     LOG.error(ex.getMessage(), ex);
+                     sb.append("Not supported by server: ")
+                             .append(ex.getMessage())
+                             .append("\n");
+                 }
+                 sb.append("\n");
+                 setProgress(progress++, 0, numWorkers);
+             }
+            return sb.toString();  // return your result
         }
         @Override protected void succeeded(final String results) {
             // Runs on the EDT.  Update the GUI based on
@@ -473,9 +416,6 @@ public class TestKeysDialog extends JDialog {
     private javax.swing.JButton jButtonGenerate;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
-    private javax.swing.JPanel passwordPanel;
-    private javax.swing.JPasswordField passwordPanelField;
-    private javax.swing.JLabel passwordPanelLabel;
     // End of variables declaration//GEN-END:variables
 
 }

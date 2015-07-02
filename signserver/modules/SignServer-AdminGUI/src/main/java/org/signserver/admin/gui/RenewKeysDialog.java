@@ -147,48 +147,16 @@ public class RenewKeysDialog extends JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        passwordPanel = new javax.swing.JPanel();
-        passwordPanelLabel = new javax.swing.JLabel();
-        passwordPanelField = new javax.swing.JPasswordField();
         jButton2 = new javax.swing.JButton();
         jButtonGenerate = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
 
-        passwordPanel.setName("passwordPanel"); // NOI18N
-
-        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(org.signserver.admin.gui.SignServerAdminGUIApplication.class).getContext().getResourceMap(RenewKeysDialog.class);
-        passwordPanelLabel.setText(resourceMap.getString("passwordPanelLabel.text")); // NOI18N
-        passwordPanelLabel.setName("passwordPanelLabel"); // NOI18N
-
-        passwordPanelField.setText(resourceMap.getString("passwordPanelField.text")); // NOI18N
-        passwordPanelField.setName("passwordPanelField"); // NOI18N
-
-        javax.swing.GroupLayout passwordPanelLayout = new javax.swing.GroupLayout(passwordPanel);
-        passwordPanel.setLayout(passwordPanelLayout);
-        passwordPanelLayout.setHorizontalGroup(
-            passwordPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, passwordPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(passwordPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(passwordPanelField, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)
-                    .addComponent(passwordPanelLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        passwordPanelLayout.setVerticalGroup(
-            passwordPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(passwordPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(passwordPanelLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(passwordPanelField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setLocationByPlatform(true);
         setName("Form"); // NOI18N
 
+        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(org.signserver.admin.gui.SignServerAdminGUIApplication.class).getContext().getResourceMap(RenewKeysDialog.class);
         jButton2.setText(resourceMap.getString("jButton2.text")); // NOI18N
         jButton2.setName("jButton2"); // NOI18N
         jButton2.addActionListener(new java.awt.event.ActionListener() {
@@ -339,155 +307,130 @@ public class RenewKeysDialog extends JDialog {
 
     private class RenewKeysTask extends Task<String, Void> {
 
-        private char[] authCode;
-
         RenewKeysTask(final Application app) {
             // Runs on the EDT.  Copy GUI state that
             // doInBackground() depends on from parameters
             // to RenewKeysTask fields, here.
             super(app);
             resultCode = OK;
-
-            passwordPanelLabel.setText(
-                    "Enter authentication code for all workers or leave empty:");
-            passwordPanelField.setText("");
-            passwordPanelField.grabFocus();
-
-            int res = JOptionPane.showConfirmDialog(RenewKeysDialog.this,
-                    passwordPanel, "Generate keys",
-                    JOptionPane.OK_CANCEL_OPTION);
-
-           if (res == JOptionPane.OK_OPTION) {
-               authCode = passwordPanelField.getPassword();
-           }
         }
         @Override protected String doInBackground() {
             // Your Task's code here.  This method runs
             // on a background thread, so don't reference
             // the Swing GUI from here.
             final int numWorkers = data.size();
-            String errors = null;
-            if (authCode != null) {
-                final StringBuilder sb = new StringBuilder();
-                try {
-                   int progress = 0;
-                   setProgress(progress++, 0, numWorkers);
-                   for (int row = 0; row < data.size(); row++) {
-                        final Worker worker = workers.get(row);
-                        final int signerId = worker.getWorkerId();
-                        final String keyAlg =  (String) data.get(row).get(2);
-                        final String keySpec = (String) data.get(row).get(3);
-                        final String alias = (String) data.get(row).get(4);
+            final StringBuilder sb = new StringBuilder();
+            int progress = 0;
+            setProgress(progress++, 0, numWorkers);
+            for (int row = 0; row < data.size(); row++) {
+                 final Worker worker = workers.get(row);
+                 final int signerId = worker.getWorkerId();
+                 final String keyAlg =  (String) data.get(row).get(2);
+                 final String keySpec = (String) data.get(row).get(3);
+                 final String alias = (String) data.get(row).get(4);
 
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Key generation: worker=" + signerId
-                                    + ", keyAlg=" + keyAlg + ", keySpec="
-                                    + keySpec + ", alias: " + alias);
-                        }
+                 if (LOG.isDebugEnabled()) {
+                     LOG.debug("Key generation: worker=" + signerId
+                             + ", keyAlg=" + keyAlg + ", keySpec="
+                             + keySpec + ", alias: " + alias);
+                 }
 
-                        if (keyAlg == null || keySpec == null || alias == null) {
-                            return "Please, fill in all required fields";
-                        }
+                 if (keyAlg == null || keySpec == null || alias == null) {
+                     return "Please, fill in all required fields";
+                 }
 
-                        String newAlias = null;
-                        try {
-                            // Generate key
-                            newAlias = SignServerAdminGUIApplication
-                                .getAdminWS().generateSignerKey(signerId,
-                                keyAlg, keySpec, alias, new String(authCode));
+                 String newAlias = null;
+                 try {
+                     // Generate key
+                     newAlias = SignServerAdminGUIApplication
+                         .getAdminWS().generateSignerKey(signerId,
+                         keyAlg, keySpec, alias, "");
 
-                            if (newAlias == null) {
-                                final String error
-                                        =  "Error generating key for signer "
-                                        + signerId + ":\n"
-                                        + "Could not generate key";
-                                LOG.error(error);
-                                sb.append(error);
-                                sb.append("\n");
-                            }
-                        } catch (EJBException eJBException) {
-                            if (eJBException.getCausedByException()
-                                    instanceof IllegalArgumentException) {
-                                final String error =
-                                        "Error generating key for signer "
-                                        + signerId + ":\n" + eJBException
-                                        .getCausedByException().getMessage();
-                                LOG.error(error, eJBException);
-                                sb.append(error);
-                                sb.append("\n");
-                            } else {
-                                final String error =
-                                        "Error generating key for signer "
-                                        + signerId + ":\n" + eJBException
-                                        .getMessage();
-                                LOG.error(error, eJBException);
-                                sb.append(error);
-                                sb.append("\n");
-                            }
-                        } catch (Exception e) {
-                            final String error =
-                                        "Error generating key for signer "
-                                        + signerId + ":\n" + e
-                                        .getMessage();
-                                LOG.error(error, e);
-                                sb.append(error);
-                                sb.append("\n");
-                        }
+                     if (newAlias == null) {
+                         final String error
+                                 =  "Error generating key for signer "
+                                 + signerId + ":\n"
+                                 + "Could not generate key";
+                         LOG.error(error);
+                         sb.append(error);
+                         sb.append("\n");
+                     }
+                 } catch (EJBException eJBException) {
+                     if (eJBException.getCausedByException()
+                             instanceof IllegalArgumentException) {
+                         final String error =
+                                 "Error generating key for signer "
+                                 + signerId + ":\n" + eJBException
+                                 .getCausedByException().getMessage();
+                         LOG.error(error, eJBException);
+                         sb.append(error);
+                         sb.append("\n");
+                     } else {
+                         final String error =
+                                 "Error generating key for signer "
+                                 + signerId + ":\n" + eJBException
+                                 .getMessage();
+                         LOG.error(error, eJBException);
+                         sb.append(error);
+                         sb.append("\n");
+                     }
+                 } catch (Exception e) {
+                     final String error =
+                                 "Error generating key for signer "
+                                 + signerId + ":\n" + e
+                                 .getMessage();
+                         LOG.error(error, e);
+                         sb.append(error);
+                         sb.append("\n");
+                 }
 
-                        if (newAlias != null) {
-                            try {
-                                LOG.debug("Created key " + newAlias + " for signer "
-                                        + signerId);
+                 if (newAlias != null) {
+                     try {
+                         LOG.debug("Created key " + newAlias + " for signer "
+                                 + signerId);
 
-                                // Update key label
-                                SignServerAdminGUIApplication.getAdminWS()
-                                        .setWorkerProperty(signerId,
-                                        "NEXTCERTSIGNKEY", newAlias);
+                         // Update key label
+                         SignServerAdminGUIApplication.getAdminWS()
+                                 .setWorkerProperty(signerId,
+                                 "NEXTCERTSIGNKEY", newAlias);
 
-                                // Reload configuration
-                                SignServerAdminGUIApplication.getAdminWS()
-                                        .reloadConfiguration(signerId);
+                         // Reload configuration
+                         SignServerAdminGUIApplication.getAdminWS()
+                                 .reloadConfiguration(signerId);
 
-                                LOG.debug("Configured new key " + newAlias
-                                        + " for signer " + signerId);
+                         LOG.debug("Configured new key " + newAlias
+                                 + " for signer " + signerId);
 
-                                workers.remove(worker);
-                                data.remove(row);
-                                row--;
-                            } catch (AdminNotAuthorizedException_Exception e) {
-                                final String error =
-                                        "Error generating key for signer "
-                                        + signerId + ":\n" + e
-                                        .getMessage();
-                                LOG.error(error, e);
-                                sb.append(error);
-                                sb.append("\n");
-                            } catch (SOAPFaultException ex) {
-                                final String error =
-                                    "Operation failed on server side for signer "
-                                    + signerId;
-                                LOG.error(error, ex);
-                                sb.append(error).append(":\n").append(ex.getMessage());
-                                sb.append("\n");
-                            } catch (EJBException ex) {
-                                final String error =
-                                    "Operation failed on server side for signer "
-                                    + signerId;
-                                LOG.error(error, ex);
-                                sb.append(error).append(":\n").append(ex.getMessage());
-                                sb.append("\n");
-                            }
-                        }
-                        setProgress(progress++, 0, numWorkers);
-                    }
-                   errors = sb.toString();
-               } finally {
-                    for (int i = 0; i < authCode.length; i++) {
-                        authCode[i] = 0;
-                    }
-               }
-            }
-            return errors;  // return your result
+                         workers.remove(worker);
+                         data.remove(row);
+                         row--;
+                     } catch (AdminNotAuthorizedException_Exception e) {
+                         final String error =
+                                 "Error generating key for signer "
+                                 + signerId + ":\n" + e
+                                 .getMessage();
+                         LOG.error(error, e);
+                         sb.append(error);
+                         sb.append("\n");
+                     } catch (SOAPFaultException ex) {
+                         final String error =
+                             "Operation failed on server side for signer "
+                             + signerId;
+                         LOG.error(error, ex);
+                         sb.append(error).append(":\n").append(ex.getMessage());
+                         sb.append("\n");
+                     } catch (EJBException ex) {
+                         final String error =
+                             "Operation failed on server side for signer "
+                             + signerId;
+                         LOG.error(error, ex);
+                         sb.append(error).append(":\n").append(ex.getMessage());
+                         sb.append("\n");
+                     }
+                 }
+                 setProgress(progress++, 0, numWorkers);
+             }
+            return sb.toString();  // return your result
         }
         @Override protected void succeeded(final String result) {
             // Runs on the EDT.  Update the GUI based on
@@ -513,9 +456,6 @@ public class RenewKeysDialog extends JDialog {
     private javax.swing.JButton jButtonGenerate;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
-    private javax.swing.JPanel passwordPanel;
-    private javax.swing.JPasswordField passwordPanelField;
-    private javax.swing.JLabel passwordPanelLabel;
     // End of variables declaration//GEN-END:variables
 
 }

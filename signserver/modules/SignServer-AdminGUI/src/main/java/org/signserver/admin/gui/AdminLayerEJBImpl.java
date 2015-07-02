@@ -707,7 +707,7 @@ public class AdminLayerEJBImpl implements AdminWS {
      * @param keySpec Key specification
      * @param alias Name of the new key
      * @param authCode Authorization code
-     * @throws CryptoTokenOfflineException
+     * @throws CryptoTokenOfflineException_Exception
      * @throws IllegalArgumentException
      */
     @Override
@@ -721,7 +721,7 @@ public class AdminLayerEJBImpl implements AdminWS {
             InvalidWorkerIdException_Exception {
         try {
             return worker.generateSignerKey(signerId, keyAlgorithm, keySpec, 
-                    alias, authCode.toCharArray());
+                    alias, authCode == null ? null : authCode.toCharArray());
         } catch (CryptoTokenOfflineException ex) {
             throw wrap(ex);
         } catch (InvalidWorkerIdException ex) {
@@ -750,7 +750,7 @@ public class AdminLayerEJBImpl implements AdminWS {
         try {
             final LinkedList<KeyTestResult> results = new LinkedList<KeyTestResult>();
             final Collection<? extends Object> ress
-                    = worker.testKey(signerId, alias, authCode.toCharArray());
+                    = worker.testKey(signerId, alias, authCode == null ? null : authCode.toCharArray());
             for (Object o : ress) {
                 final KeyTestResult result = new KeyTestResult();
                 

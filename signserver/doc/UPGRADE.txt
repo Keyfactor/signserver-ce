@@ -9,11 +9,19 @@ Upgrades within a major version, from 3.2.1 to 3.2.2 for example, are usually
 plug-in upgrades and can be made simply by deploying the new software. See 
 RELEASE_NOTES.txt for more information about such upgrades.
 
+Upgrading to a major version might require manual changes in the database
+structures. In those cases the changes needed are described below.
+
+
+General procedures:
+-----------------
+
 1. Unpack the new sources
 2. Make sure to copy over the configuration from the old installation or 
-   use the provided signserver_build.properties.sample. Take special care 
-   in reading the "notice" section of the RELEASE_NOTES.txt to see if any 
-   configuration properties changed.
+   use the provided signserver_deploy.properties.sample. Take special care 
+   in reading the "Notice:" section of the RELEASE_NOTES.txt to see if any 
+   configuration properties changed or some manual procedures in addition to
+   those mentioned in this file are needed.
 3. Copy over the p12 folder with keystores (if used).
 4. See any special instructions for the version you are upgrading below.
 5. Build and deploy as described in the installation guide.
@@ -22,14 +30,14 @@ RELEASE_NOTES.txt for more information about such upgrades.
 From SignServer 3.6.x to SignServer 3.7.x
 -----------------------------------------
 
-1) Configuration file name change:
+a) Configuration file name change:
    Pay attention to the change of file name for the configuration file as
    described in the RELEASE_NOTES.txt.
 
-2) Pay attention to changes needed when using soft keystore crypto tokens
+b) Pay attention to changes needed when using soft keystore crypto tokens
    as described in the RELEASE_NOTES.txt.
 
-3) Dependency upgraded:
+c) Dependency upgraded:
 
 The XML Security library has been updated to version 1.5.8 and its 
 dependency to 2.7.2. This requires special handling if JBoss is used. See 
@@ -45,13 +53,13 @@ From SignServer 3.5.x to SignServer 3.6.x
 From SignServer 3.4.x to SignServer 3.5.x
 -----------------------------------------
 
-1) Database schema change: tables removed:
+a) Database schema change: tables removed:
    The following tables are no longer used by SignServer and can optionally be
    removed:
    - "enckeydata"
    - "groupkeydata"
 
-2) Dependency upgraded:
+b) Dependency upgraded:
 
 The XML Security library has been updated to version 1.5.7. This requires 
 special handling if JBoss 5 is used. See the Notice section of 
@@ -61,7 +69,7 @@ RELEASE_NOTES.txt for details.
 From SignServer 3.3.x to SignServer 3.4.x
 -----------------------------------------
 
-1) Database schema change: table renamed:
+a) Database schema change: table renamed:
    A table was renamed to GlobalConfigData. For Oracle this table was previously 
    called "GLOBALCONFIG" while for all other it was called  
    GlobalConfigurationData.
@@ -80,7 +88,7 @@ From SignServer 3.3.x to SignServer 3.4.x
    (using the RENAME statements described above) to not loose the existing 
    configuration.
 
-2) Database schema change: table added:
+b) Database schema change: table added:
    - "AuditRecordData"
 
    Hibernate will try to add this table during startup of the application 
@@ -93,7 +101,7 @@ From SignServer 3.3.x to SignServer 3.4.x
 From SignServer 3.2.x to SignServer 3.3.x
 -----------------------------------------
 
-1) Database schema change:
+a) Database schema change:
 
 An new column in the ArchiveData table was added. Hibernate will try to add this
 column during startup of the application server. However, if the database user 
@@ -109,7 +117,7 @@ ALTER TABLE ArchiveData ADD dataEncoding int(11) DEFAULT NULL;
 After manually changing the database schema the application server should 
 be restarted.
 
-2) Dependency upgraded:
+b) Dependency upgraded:
 
 The BouncyCastle library has been upgraded to version 1.47. Users running 
 Oracle JDK and JBoss will have to replace all bc*.jar copied to JBoss with 

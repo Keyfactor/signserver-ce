@@ -575,7 +575,12 @@ public class ConnectDialog extends javax.swing.JDialog {
     
     private void connectOverWS() {
         try {
-            final String urlstr = settings.getUrl() + WS_PATH;
+            String url = settings.getUrl();
+            // Remove one trailing slash if specified
+            if (url.endsWith("/")) {
+                url = url.substring(0, url.length() - 1);
+            }
+            final String urlstr = url + WS_PATH;
             serverHost = getSimplifiedHostAddress(settings.getUrl());
 
                 KeyStore.CallbackHandlerProtection pp = new KeyStore.CallbackHandlerProtection(new CallbackHandler() {

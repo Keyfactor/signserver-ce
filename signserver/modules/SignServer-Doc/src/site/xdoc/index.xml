@@ -52,6 +52,7 @@
     <span class="date"> Posted: 2014-10-24</span>
     </p>
 
+<!--
     <p><strong>Stronger Safety with PrimeKey's Appliance!</strong>
   By integrating secure hardware technology with the flexibility, reliability and feature set of SignServer Enterprise (or EJBCA Enterprise), 
   the turnkey Appliance features an easy to install PKI-in-a-box, offering predictable costs and increased quality to your PKI solution. Check out the simpler, yet safer, <a href="https://www.primekey.se/technologies/products-overview/pki-appliance/?pk_campaign=ssorg&amp;pk_kwd=primekey-pki-appliance" target="pk">PrimeKey PKI Appliance</a>.
@@ -63,6 +64,16 @@
         </ul>
   <br /><span class="date"> Posted: 2014-10-24</span>
   </p>
+  -->
+    <p><strong>Authenticode Code Signing with SignServer!</strong>
+    <br/>
+    Read our Tech Blog on <a href="http://blog.ejbca.org" target="ejbcablog">Authenticode Code Signing with SignServer</a>, or 
+  <br/>
+  check out the turn-key <a href="https://www.primekey.se/technologies/products-overview/code-signing-appliance/" target="primekey">Code Signing Appliance</a>.
+  <br/>
+  <span class="date"> Posted: 2015-07-05</span>
+  </p>  
+  
 </div>
 </div>
 </td>

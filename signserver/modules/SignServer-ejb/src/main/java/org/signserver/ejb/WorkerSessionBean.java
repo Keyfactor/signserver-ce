@@ -442,9 +442,9 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         }
         
         final HashMap<String, Object> auditMap = new HashMap<String, Object>();
-        auditMap.put("KEYALG", keyAlgorithm);
-        auditMap.put("KEYSPEC", keySpec);
-        auditMap.put("KEYALIAS", alias);
+        auditMap.put(AdditionalDetailsTypes.KEYALG.name(), keyAlgorithm);
+        auditMap.put(AdditionalDetailsTypes.KEYSPEC.name(), keySpec);
+        auditMap.put(AdditionalDetailsTypes.KEYALIAS.name(), alias);
         auditLog(adminInfo, SignServerEventTypes.KEYGEN, EventStatus.SUCCESS, SignServerModuleTypes.KEY_MANAGEMENT, String.valueOf(signerId), auditMap);
         return alias;
     }
@@ -512,8 +512,8 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         final Collection<KeyTestResult> result = signer.testKey(alias, authCode, servicesImpl);
 
         final HashMap<String, Object> auditMap = new HashMap<String, Object>();
-        auditMap.put("KEYALIAS", alias);
-        auditMap.put("TESTRESULTS", createResultsReport(result));
+        auditMap.put(AdditionalDetailsTypes.KEYALIAS.name(), alias);
+        auditMap.put(AdditionalDetailsTypes.TESTRESULTS.name(), createResultsReport(result));
         auditLog(adminInfo, SignServerEventTypes.KEYTEST, EventStatus.SUCCESS, SignServerModuleTypes.KEY_MANAGEMENT, String.valueOf(signerId), auditMap);
         
         return result;
@@ -568,30 +568,30 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     
     private void auditLogCertInstalled(final AdminInfo adminInfo, final int workerId, final String value, final String scope, final String node) {
         final HashMap<String, Object> auditMap = new HashMap<String, Object>();
-        auditMap.put("CERTIFICATE", value);
-        auditMap.put("SCOPE", scope);
+        auditMap.put(AdditionalDetailsTypes.CERTIFICATE.name(), value);
+        auditMap.put(AdditionalDetailsTypes.SCOPE.name(), scope);
         if ("NODE".equalsIgnoreCase(scope)) {
-            auditMap.put("NODE", node);
+            auditMap.put(AdditionalDetailsTypes.NODE.name(), node);
         }
         auditLog(adminInfo, SignServerEventTypes.CERTINSTALLED, EventStatus.SUCCESS, SignServerModuleTypes.WORKER_CONFIG, String.valueOf(workerId), auditMap);
     }
     
     private void auditLogCertChainInstalled(final AdminInfo adminInfo, final int workerId, final String value, final String scope, final String node) {
         final HashMap<String, Object> auditMap = new HashMap<String, Object>();
-        auditMap.put("CERTIFICATECHAIN", value);
-        auditMap.put("SCOPE", scope);
+        auditMap.put(AdditionalDetailsTypes.CERTIFICATECHAIN.name(), value);
+        auditMap.put(AdditionalDetailsTypes.SCOPE.name(), scope);
         if ("NODE".equalsIgnoreCase(scope)) {
-            auditMap.put("NODE", node);
+            auditMap.put(AdditionalDetailsTypes.SCOPE.name(), node);
         }
         auditLog(adminInfo, SignServerEventTypes.CERTCHAININSTALLED, EventStatus.SUCCESS, SignServerModuleTypes.WORKER_CONFIG, String.valueOf(workerId), auditMap);
     }
     
     private void auditLogCertChainInstalledToToken(final AdminInfo adminInfo, EventStatus outcome, final int workerId, final String alias, final String value, final String error) {
         final HashMap<String, Object> auditMap = new HashMap<String, Object>();
-        auditMap.put("KEYALIAS", alias);
-        auditMap.put("CERTIFICATECHAIN", value);
+        auditMap.put(AdditionalDetailsTypes.KEYALIAS.name(), alias);
+        auditMap.put(AdditionalDetailsTypes.CERTIFICATECHAIN.name(), value);
         if (error != null) {
-            auditMap.put("ERROR", error);
+            auditMap.put(AdditionalDetailsTypes.ERROR.name(), error);
         }
         auditLog(adminInfo, SignServerEventTypes.CERTCHAININSTALLED, outcome, SignServerModuleTypes.KEY_MANAGEMENT, String.valueOf(workerId), auditMap);
     }
@@ -624,14 +624,14 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     private void auditLogWorkerPropertyChange(final AdminInfo adminInfo, final int workerId, final String key, final String value) {
         if ("DEFAULTKEY".equalsIgnoreCase(key)) {
             final HashMap<String, Object> auditMap = new HashMap<String, Object>();
-            auditMap.put("KEYALIAS", value);
-            auditMap.put("SCOPE", "GLOBAL");
+            auditMap.put(AdditionalDetailsTypes.KEYALIAS.name(), value);
+            auditMap.put(AdditionalDetailsTypes.SCOPE.name(), "GLOBAL");
             auditLog(adminInfo, SignServerEventTypes.KEYSELECTED, EventStatus.SUCCESS, SignServerModuleTypes.WORKER_CONFIG, String.valueOf(workerId), auditMap);
         } else if (key != null && key.lastIndexOf(".") != -1 && key.substring(key.lastIndexOf(".")).equalsIgnoreCase(".DEFAULTKEY")) {
             final HashMap<String, Object> auditMap = new HashMap<String, Object>();
-            auditMap.put("KEYALIAS", value);
-            auditMap.put("SCOPE", "NODE");
-            auditMap.put("NODE", key.substring(0, key.lastIndexOf(".")));
+            auditMap.put(AdditionalDetailsTypes.KEYALIAS.name(), value);
+            auditMap.put(AdditionalDetailsTypes.SCOPE.name(), "NODE");
+            auditMap.put(AdditionalDetailsTypes.NODE.name(), key.substring(0, key.lastIndexOf(".")));
             auditLog(adminInfo, SignServerEventTypes.KEYSELECTED, EventStatus.SUCCESS, SignServerModuleTypes.WORKER_CONFIG, String.valueOf(workerId), auditMap);
         } else if (PropertiesConstants.SIGNERCERT.equalsIgnoreCase(key)) {
             auditLogCertInstalled(adminInfo, workerId, value, "GLOBAL", null);
@@ -782,7 +782,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             csr = ret.toString();
         }
         
-        auditMap.put("CSR", csr);
+        auditMap.put(AdditionalDetailsTypes.CSR.name(), csr);
         auditLog(adminInfo, SignServerEventTypes.GENCSR, EventStatus.SUCCESS, SignServerModuleTypes.KEY_MANAGEMENT, String.valueOf(signerId), auditMap);
         
         if (LOG.isTraceEnabled()) {
@@ -939,8 +939,8 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             result = false;
         }
         final HashMap<String, Object> auditMap = new HashMap<String, Object>();
-        auditMap.put("KEYALIAS", alias);
-        auditMap.put("SUCCESS", String.valueOf(result));
+        auditMap.put(AdditionalDetailsTypes.KEYALIAS.name(), alias);
+        auditMap.put(AdditionalDetailsTypes.SUCCESS.name(), String.valueOf(result));
         auditLog(adminInfo, SignServerEventTypes.KEYREMOVE, EventStatus.SUCCESS, SignServerModuleTypes.KEY_MANAGEMENT, String.valueOf(signerId), auditMap);
         
         return result;

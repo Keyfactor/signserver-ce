@@ -328,6 +328,10 @@ public class ModulesTestCase extends TestCase {
         addP12DummySigner(className, signerId, signerName,
                 new File(getSignServerHome(), KEYSTORE_SIGNER1_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_SIGNER1_ALIAS);
     }
+    
+    public String getSigner1KeyAlias() {
+        return KEYSTORE_SIGNER1_ALIAS;
+    }
 
     /**
      * Load worker/global properties from file. This is not a complete 

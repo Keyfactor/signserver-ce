@@ -31,11 +31,22 @@ public enum AdditionalDetailsTypes {
     KEYALG,
     KEYSPEC,
     
+    /**
+     * If the "default key" was requested.
+     */
+    FOR_DEFAULTKEY,
+    
+    /**
+     * The configured crypto token, or if none configured the name of the worker
+     * involved or its worker ID.
+     */
+    CRYPTOTOKEN,
+
     TESTRESULTS,
     
     CERTIFICATE,
     CERTIFICATECHAIN,
     
-    CSR,
+    CSR, 
 
 }

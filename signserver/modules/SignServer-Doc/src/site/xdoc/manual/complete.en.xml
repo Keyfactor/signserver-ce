@@ -7596,11 +7596,12 @@ With MODULE: KEY_MANAGEMENT the certificate chain was imported to the token:
                                     <p>
 <b>WORKER_ID:</b> The ID of the worker.<br/>
 <b>CERTIFICATECHAIN:</b> The certificates in PEM format.<br/>
-<b>KEYALIAS: </b> The alias of the entry in the token.<br/>
+<b>KEYALIAS:</b> The alias of the entry in the token.<br/>
+<b>CRYPTOTOKEN:</b> Name of the configured crypto worker or the name or ID of the current worker if no separate crypto worker is used.
                                     </p>
                                     <p>
 Example:<br/>
-<pre class="code">EVENT: CERTCHAININSTALLED; MODULE: KEY_MANAGEMENT; ADMINISTRATOR: CLI user; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: 5801; KEYALIAS: testkeyalias10; CERTIFICATECHAIN: Subject: CN=testkeyalias10,C=SE
+<pre class="code">EVENT: CERTCHAININSTALLED; MODULE: KEY_MANAGEMENT; ADMINISTRATOR: CLI user; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: 5801; KEYALIAS: testkeyalias10; CRYPTOTOKEN: HSMCryptoToken1; CERTIFICATECHAIN: Subject: CN=testkeyalias10,C=SE
 Issuer: CN=Issuer,C=SE
 -----BEGIN CERTIFICATE-----
 MIIBMjCB3aADAgECAgEBMA0GCSqGSIb3DQEBCwUAMB4xDzANBgNVBAMMBklzc3Vl
@@ -7637,12 +7638,13 @@ Logged when the key-pair to use was selected by changing the value of the DEFAUL
                                     <p>
 <b>WORKER_ID:</b> The ID of the worker.<br/>
 <b>KEYALIAS:</b> The new key alias.<br/>
+<b>CRYPTOTOKEN:</b> Name of the configured crypto worker or the name or ID of the current worker if no separate crypto worker is used.<br/>
 <b>SCOPE: </b> If the setting was at GLOBAL or NODE scope.<br/>
 <b>NODE: </b> The ID of the node if the setting was at NODE scope, otherwise not available.
                                     </p>
                                     <p>
 Example:<br/>
-<pre class="code">EVENT: KEYSELECTED; MODULE: WORKER_CONFIG; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: 100; KEYALIAS: ts_key00002; SCOPE: GLOBAL; REPLY_TIME:1350891907048</pre>
+<pre class="code">EVENT: KEYSELECTED; MODULE: WORKER_CONFIG; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: 100; KEYALIAS: ts_key00002; CRYPTOTOKEN: TestSigner6000; SCOPE: GLOBAL; REPLY_TIME:1350891907048</pre>
                                     </p>
                                 </td>
                             </tr>
@@ -7659,12 +7661,13 @@ Logged when a new key-pair was generated using the built-in key generation comma
                                     <p>
 <b>WORKER_ID:</b> The ID of the worker.<br/>
 <b>KEYALIAS:</b> The new key alias.<br/>
+<b>CRYPTOTOKEN:</b> Name of the configured crypto worker or the name or ID of the current worker if no separate crypto worker is used.<br/>
 <b>KEYSPEC:</b> The key specification (ie. RSA/DSA bit length or EC curve).<br/>
 <b>KEYALG:</b> The key algorithm.
                                     </p>
                                     <p>
 Example:<br/>
-<pre class="code">EVENT: KEYGEN; MODULE: KEY_MANAGEMENT; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: 5676; KEYALIAS: ts_key00004; KEYSPEC: 2048; KEYALG: RSA; REPLY_TIME:135089190791</pre>
+<pre class="code">EVENT: KEYGEN; MODULE: KEY_MANAGEMENT; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: 5676; KEYALIAS: ts_key00004; CRYPTOTOKEN: HSMCryptoToken0; KEYSPEC: 2048; KEYALG: RSA; REPLY_TIME:135089190791</pre>
                                     </p>
                                 </td>
                             </tr>
@@ -7677,11 +7680,12 @@ Logged when the key test command was executed and a test signing with either the
                                     <p>
 <b>WORKER_ID:</b> The ID of the worker.<br/>
 <b>KEYALIAS:</b> Alias of the the key to test or "all" to test all available keys in the slot.<br/>
+<b>CRYPTOTOKEN:</b> Name of the configured crypto worker or the name or ID of the current worker if no separate crypto worker is used.<br/>
 <b>TESTRESULTS:</b> The test report with an entry for each tested key.
                                     </p>
                                     <p>
 Example:<br/>            
-<pre class="code">EVENT: KEYTEST; MODULE: KEY_MANAGEMENT; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: 47; KEYALIAS: all; TESTRESULTS: KeyTestResult{alias=tsu47_key00005, success=true, status=, publicKeyHash=979359e5261112b11fac341962bec1e7e6052d9e}
+<pre class="code">EVENT: KEYTEST; MODULE: KEY_MANAGEMENT; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: 47; KEYALIAS: all; CRYPTOTOKEN: HSMCryptoToken1; TESTRESULTS: KeyTestResult{alias=tsu47_key00005, success=true, status=, publicKeyHash=979359e5261112b11fac341962bec1e7e6052d9e}
 KeyTestResult{alias=key5, success=true, status=, publicKeyHash=46b264e4892ef2e4fd9616e4927534ca3597fd9c}
 KeyTestResult{alias=key3, success=true, status=, publicKeyHash=ae64792f1f50e23eb54bf79d46d819bc07db2d79}
 KeyTestResult{alias=key2, success=true, status=, publicKeyHash=b1317f363e6124a8e15bba8c1adb9f20b2f4ef59}
@@ -7698,11 +7702,14 @@ Logged when a certificate signing request (CSR) was generated.
                                     </p>
                                     <p>
 <b>WORKER_ID:</b> The ID of the worker.<br/>
+<b>KEYALIAS:</b> The key alias of the key used to generate the CSR.<br/>
+<b>FOR_DEFAULTKEY: </b> True if the "default key" was requested.<br/>
+<b>CRYPTOTOKEN:</b> Name of the configured crypto worker or the name or ID of the current worker if no separate crypto worker is used.<br/>
 <b>CSR:</b> Base64 encoded CSR (typically in PKCS#10 format).
                                     </p>
                                     <p>
 Example:<br/>
-<pre class="code">EVENT: GENCSR; MODULE: KEY_MANAGEMENT; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: 5676; CSR: MIIBYDCBygIBADAjMRQwEgYDVQQDDAtUUyBTaWduZXIgMTELMAkGA1UEBhMCU0Uw
+<pre class="code">EVENT: GENCSR; MODULE: KEY_MANAGEMENT; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: 5676; KEYALIAS: ts_key00004; CRYPTOTOKEN: HSMCryptoToken0; CSR: MIIBYDCBygIBADAjMRQwEgYDVQQDDAtUUyBTaWduZXIgMTELMAkGA1UEBhMCU0Uw
 gZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBAJt8F51wD+QcX+WLyIxjWu3at3q+
 IiJrL5jIenmggUhjOLHGHOStoNOiYEQAaiiTZ623m9y7O3zhqFdAdWZg+JrfsHQJ
 pjKV9RgvJznl6yk/K54BWOBgqjvbloAUGtn8y8Hf+5DYJUJNFqrzvRLcmCQ9JU0H
@@ -7722,12 +7729,12 @@ Logged when a key was removed or an removal attempt was performed.
                                     <p>
 <b>WORKER_ID:</b> The ID of the worker.<br/>
 <b>KEYALIAS:</b> The key alias of the key removed.<br/>
+<b>CRYPTOTOKEN:</b> Name of the configured crypto worker or the name or ID of the current worker if no separate crypto worker is used.<br/>
 <b>SUCCESS:</b> True if the key was removed or false if the removal failed or if removal was not supported by the token.<br/>
                                     </p>
                                     <p>
 Example:<br/>
-<pre class="code">EVENT: KEYREMOVE; MODULE: KEY_MANAGEMENT; ADMINISTRATOR: CLI user; ISSUER: null; SERIAL_
-NUMBER: null; WORKER_ID: 20003; KEYALIAS: signKey000002 SUCCESS: true; REPLY_TIME:1391008847962</pre>
+<pre class="code">EVENT: KEYREMOVE; MODULE: KEY_MANAGEMENT; ADMINISTRATOR: CLI user; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: 20003; KEYALIAS: signKey000002; CRYPTOTOKEN: HSMCryptoToken1; SUCCESS: true; REPLY_TIME:1391008847962</pre>
                                     </p>
                                 </td>
                             </tr>

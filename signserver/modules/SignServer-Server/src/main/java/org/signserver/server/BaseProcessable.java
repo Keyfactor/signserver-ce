@@ -30,7 +30,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.logging.Level;
 
 import javax.persistence.EntityManager;
 
@@ -53,6 +52,8 @@ import org.signserver.server.cryptotokens.ICryptoTokenV3;
 import org.signserver.common.NoSuchAliasException;
 import org.signserver.server.cryptotokens.TokenSearchResults;
 import org.signserver.common.UnsupportedCryptoTokenParameter;
+import org.signserver.server.log.IWorkerLogger;
+import org.signserver.server.log.LogMap;
 
 public abstract class BaseProcessable extends BaseWorker implements IProcessable, IKeyRemover {
 
@@ -136,7 +137,8 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
     }
 
     /**
-     * Get alias given a specific purpose.
+     * Get alias given a specific purpose and as a side-effect log the chosen
+     * alias in the context (if any).
      * 
      * @param purpose
      * @param request
@@ -146,10 +148,35 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
      * @throws CryptoTokenOfflineException
      * @throws SignServerException
      */
-    private String getAlias(final int purpose, final ProcessRequest request,
+    private String getAliasAndLog(final int purpose, final ProcessRequest request,
                             final RequestContext context)
             throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
-       return aliasSelector.getAlias(purpose, this, request, context);
+        final String alias = aliasSelector.getAlias(purpose, this, request, context);
+        
+        if (context != null) {
+            LogMap.getInstance(context).put(IWorkerLogger.LOG_KEYALIAS, alias);
+            LogMap.getInstance(context).put(IWorkerLogger.LOG_CRYPTOTOKEN, getCryptoToken(workerId, config));
+        }
+        
+        return alias;
+    }
+    
+    /**
+     * Get the name of the configured crypto token or if none, the name or
+     * ID of the current worker.
+     * @param workerId of the worker
+     * @param config for the worker
+     * @return name of crypto token or the worker name or id
+     */
+    private static String getCryptoToken(final int workerId, final WorkerConfig config) {
+        String result = config.getProperty("CRYPTOTOKEN");
+        if (result == null) {
+            result = config.getProperty("NAME");
+            if (result == null) {
+                result = String.valueOf(workerId);
+            }
+        }
+        return result;
     }
     
     /**
@@ -175,8 +202,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         final ICryptoToken token = getCryptoToken();
         
         if (token instanceof ICryptoTokenV2) {
-            final String alias =
-                    aliasSelector.getAlias(purpose, this, request, context);
+            final String alias = getAliasAndLog(purpose, request, context);
 
             return ((ICryptoTokenV2) token).getPrivateKey(alias);
         } else {
@@ -204,8 +230,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         final ICryptoToken token = getCryptoToken();
         
         if (token instanceof ICryptoTokenV2) {
-            final String alias =
-                    aliasSelector.getAlias(purpose, this, request, context);
+            final String alias = getAliasAndLog(purpose, request, context);
             
             return ((ICryptoTokenV2) token).getPublicKey(alias);
         } else {
@@ -747,7 +772,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
                     
                     try {
                         final String alias =
-                            getAlias(ICryptoToken.PURPOSE_SIGN, request, context);
+                            getAliasAndLog(ICryptoToken.PURPOSE_SIGN, request, context);
                     
                         cert = tokenV2.getCertificate(alias);
                     } catch (IllegalRequestException e) {
@@ -867,7 +892,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
                     
                     try {
                         final String alias =
-                            getAlias(ICryptoToken.PURPOSE_SIGN, request, context);
+                            getAliasAndLog(ICryptoToken.PURPOSE_SIGN, request, context);
                     
                         certChain = tokenV2.getCertificateChain(alias);
                     } catch (IllegalRequestException e) {
@@ -1205,7 +1230,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
      */
     protected ICryptoInstance acquireCryptoInstance(final int purpose, final ProcessRequest request, final Map<String, Object> params, final RequestContext context) throws SignServerException, CryptoTokenOfflineException, IllegalRequestException, InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter {
         final ICryptoInstance result;
-        final String alias = aliasSelector.getAlias(purpose, this, request, context);
+        final String alias = getAliasAndLog(purpose, request, context);
         ICryptoToken token = getCryptoToken();
         if (token instanceof ICryptoTokenV3) {
             try {

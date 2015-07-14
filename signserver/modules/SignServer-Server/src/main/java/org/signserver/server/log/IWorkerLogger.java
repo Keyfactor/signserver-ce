@@ -42,6 +42,15 @@ public interface IWorkerLogger {
     String LOG_SIGNER_CERT_SUBJECTDN = "SIGNER_CERT_SUBJECTDN";
     String LOG_SIGNER_CERT_ISSUERDN = "SIGNER_CERT_ISSUERDN";
     String LOG_SIGNER_CERT_SERIALNUMBER = "SIGNER_CERT_SERIALNUMBER";
+    
+    /** The key alias used. */
+    String LOG_KEYALIAS = "KEYALIAS";
+
+    /**
+     * The configured crypto token, or if none configured the name of the worker
+     * involved or its worker ID.
+     */
+    String LOG_CRYPTOTOKEN = "CRYPTOTOKEN";
 
     String LOG_REQUEST_FULLURL = "REQUEST_FULLURL";
     String LOG_REQUEST_LENGTH = "REQUEST_LENGTH";

@@ -445,8 +445,27 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         auditMap.put(AdditionalDetailsTypes.KEYALG.name(), keyAlgorithm);
         auditMap.put(AdditionalDetailsTypes.KEYSPEC.name(), keySpec);
         auditMap.put(AdditionalDetailsTypes.KEYALIAS.name(), alias);
+        auditMap.put(AdditionalDetailsTypes.CRYPTOTOKEN.name(), getCryptoToken(signerId, config));
         auditLog(adminInfo, SignServerEventTypes.KEYGEN, EventStatus.SUCCESS, SignServerModuleTypes.KEY_MANAGEMENT, String.valueOf(signerId), auditMap);
         return alias;
+    }
+    
+    /**
+     * Get the name of the configured crypto token or if none, the name or
+     * ID of the current worker.
+     * @param workerId of the worker
+     * @param config for the worker
+     * @return name of crypto token or the worker name or id
+     */
+    private static String getCryptoToken(final int workerId, final WorkerConfig config) {
+        String result = config.getProperty("CRYPTOTOKEN");
+        if (result == null) {
+            result = config.getProperty("NAME");
+            if (result == null) {
+                result = String.valueOf(workerId);
+            }
+        }
+        return result;
     }
 
     static String nextAliasInSequence(final String currentAlias) {
@@ -513,6 +532,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
 
         final HashMap<String, Object> auditMap = new HashMap<String, Object>();
         auditMap.put(AdditionalDetailsTypes.KEYALIAS.name(), alias);
+        auditMap.put(AdditionalDetailsTypes.CRYPTOTOKEN.name(), getCryptoToken(signerId, config));
         auditMap.put(AdditionalDetailsTypes.TESTRESULTS.name(), createResultsReport(result));
         auditLog(adminInfo, SignServerEventTypes.KEYTEST, EventStatus.SUCCESS, SignServerModuleTypes.KEY_MANAGEMENT, String.valueOf(signerId), auditMap);
         
@@ -563,7 +583,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         WorkerConfig config = getWorkerConfig(workerId);
         config.setProperty(key.toUpperCase(), value);
         setWorkerConfig(adminInfo, workerId, config, null, null);
-        auditLogWorkerPropertyChange(adminInfo, workerId, key, value);
+        auditLogWorkerPropertyChange(adminInfo, workerId, config, key, value);
     }
     
     private void auditLogCertInstalled(final AdminInfo adminInfo, final int workerId, final String value, final String scope, final String node) {
@@ -589,6 +609,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     private void auditLogCertChainInstalledToToken(final AdminInfo adminInfo, EventStatus outcome, final int workerId, final String alias, final String value, final String error) {
         final HashMap<String, Object> auditMap = new HashMap<String, Object>();
         auditMap.put(AdditionalDetailsTypes.KEYALIAS.name(), alias);
+        auditMap.put(AdditionalDetailsTypes.CRYPTOTOKEN.name(), getCryptoToken(workerId, getWorkerConfig(workerId)));
         auditMap.put(AdditionalDetailsTypes.CERTIFICATECHAIN.name(), value);
         if (error != null) {
             auditMap.put(AdditionalDetailsTypes.ERROR.name(), error);
@@ -617,19 +638,21 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         } else {
             setWorkerConfig(adminInfo, workerId, config, null, null);
         }
-        auditLogWorkerPropertyChange(adminInfo, workerId, key, "");
+        auditLogWorkerPropertyChange(adminInfo, workerId, config, key, "");
         return result;
     }
     
-    private void auditLogWorkerPropertyChange(final AdminInfo adminInfo, final int workerId, final String key, final String value) {
+    private void auditLogWorkerPropertyChange(final AdminInfo adminInfo, final int workerId, final WorkerConfig config, final String key, final String value) {
         if ("DEFAULTKEY".equalsIgnoreCase(key)) {
             final HashMap<String, Object> auditMap = new HashMap<String, Object>();
             auditMap.put(AdditionalDetailsTypes.KEYALIAS.name(), value);
+            auditMap.put(AdditionalDetailsTypes.CRYPTOTOKEN.name(), getCryptoToken(workerId, config));
             auditMap.put(AdditionalDetailsTypes.SCOPE.name(), "GLOBAL");
             auditLog(adminInfo, SignServerEventTypes.KEYSELECTED, EventStatus.SUCCESS, SignServerModuleTypes.WORKER_CONFIG, String.valueOf(workerId), auditMap);
         } else if (key != null && key.lastIndexOf(".") != -1 && key.substring(key.lastIndexOf(".")).equalsIgnoreCase(".DEFAULTKEY")) {
             final HashMap<String, Object> auditMap = new HashMap<String, Object>();
             auditMap.put(AdditionalDetailsTypes.KEYALIAS.name(), value);
+            auditMap.put(AdditionalDetailsTypes.CRYPTOTOKEN.name(), getCryptoToken(workerId, config));
             auditMap.put(AdditionalDetailsTypes.SCOPE.name(), "NODE");
             auditMap.put(AdditionalDetailsTypes.NODE.name(), key.substring(0, key.lastIndexOf(".")));
             auditLog(adminInfo, SignServerEventTypes.KEYSELECTED, EventStatus.SUCCESS, SignServerModuleTypes.WORKER_CONFIG, String.valueOf(workerId), auditMap);
@@ -782,6 +805,11 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             csr = ret.toString();
         }
         
+        final WorkerConfig config = getWorkerConfig(signerId);
+        
+        auditMap.put(AdditionalDetailsTypes.KEYALIAS.name(), keyAlias == null && defaultKey ? config.getProperty("DEFAULTKEY") : keyAlias);
+        auditMap.put(AdditionalDetailsTypes.FOR_DEFAULTKEY.name(), String.valueOf(defaultKey));
+        auditMap.put(AdditionalDetailsTypes.CRYPTOTOKEN.name(), getCryptoToken(signerId, config));
         auditMap.put(AdditionalDetailsTypes.CSR.name(), csr);
         auditLog(adminInfo, SignServerEventTypes.GENCSR, EventStatus.SUCCESS, SignServerModuleTypes.KEY_MANAGEMENT, String.valueOf(signerId), auditMap);
         
@@ -940,6 +968,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         }
         final HashMap<String, Object> auditMap = new HashMap<String, Object>();
         auditMap.put(AdditionalDetailsTypes.KEYALIAS.name(), alias);
+        auditMap.put(AdditionalDetailsTypes.CRYPTOTOKEN.name(), getCryptoToken(signerId, getWorkerConfig(signerId)));
         auditMap.put(AdditionalDetailsTypes.SUCCESS.name(), String.valueOf(result));
         auditLog(adminInfo, SignServerEventTypes.KEYREMOVE, EventStatus.SUCCESS, SignServerModuleTypes.KEY_MANAGEMENT, String.valueOf(signerId), auditMap);
         

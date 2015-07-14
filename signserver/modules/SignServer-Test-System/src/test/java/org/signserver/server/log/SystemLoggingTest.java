@@ -59,6 +59,8 @@ import org.junit.Test;
 import org.signserver.common.ServiceConfig;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.module.cmssigner.PlainSigner;
+import org.signserver.server.IProcessable;
 import org.signserver.server.cryptotokens.KeystoreCryptoToken;
 import org.signserver.server.timedservices.hsmkeepalive.HSMKeepAliveTimedService;
 import org.signserver.statusrepo.IStatusRepositorySession;
@@ -81,6 +83,7 @@ public class SystemLoggingTest extends ModulesTestCase {
     private static final String ENTRY_START_MARKER = "EVENT: ";
     
     private final int signerId = 6000;
+    private final String signerName = "TestSigner6000";
     
     /** workers testing timed services audit logging */
     private static final int WORKERID_SERVICE = 5800;
@@ -110,7 +113,7 @@ public class SystemLoggingTest extends ModulesTestCase {
     @Test
     public void test00SetupDatabase() throws Exception {
         LOG.info(">test00SetupDatabase");
-        addDummySigner(signerId, "TestSigner6000", true);
+        addDummySigner(signerId, signerName, true);
         workerSession.setWorkerProperty(signerId, "WORKERLOGGER", "org.signserver.server.log.SecurityEventsWorkerLogger");
         workerSession.reloadConfiguration(signerId);
     }
@@ -540,7 +543,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         workerSession.removeWorkerProperty(signerId, "NODE47.SIGNERCERTCHAIN");
     }
 
-    private void setupCryptoToken(int tokenId, String pin) throws Exception {
+    private void setupCryptoToken(int tokenId, String tokenName, String pin) throws Exception {
         // Create keystore
         keystoreFile = File.createTempFile("testkeystore", ".p12");
         FileOutputStream out = null;
@@ -556,7 +559,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         // Setup crypto token
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + tokenId + ".CLASSPATH", "org.signserver.server.signers.CryptoWorker");
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + tokenId + ".SIGNERTOKEN.CLASSPATH", KeystoreCryptoToken.class.getName());
-        workerSession.setWorkerProperty(tokenId, "NAME", "TestCryptoTokenP12");
+        workerSession.setWorkerProperty(tokenId, "NAME", tokenName);
         workerSession.setWorkerProperty(tokenId, "KEYSTORETYPE", "PKCS12");
         workerSession.setWorkerProperty(tokenId, "KEYSTOREPATH", keystoreFile.getAbsolutePath());
         workerSession.setWorkerProperty(tokenId, "KEYSTOREPASSWORD", pin);
@@ -572,10 +575,11 @@ public class SystemLoggingTest extends ModulesTestCase {
     public void test01LogCertChainInstalledToToken() throws Exception {
         LOG.info(">test01LogCertChainInstalledToToken");
         
+        final String tokenName = "TestCryptoTokenP12_001";
+        final String alias = "testkeyalias10";
+        
         try {
-            setupCryptoToken(WORKERID_CRYPTOWORKER1, "foo123");
-            final String alias = "testkeyalias10";
-            
+            setupCryptoToken(WORKERID_CRYPTOWORKER1, tokenName, "foo123");
             workerSession.generateSignerKey(WORKERID_CRYPTOWORKER1, "RSA", "512", alias, null);
             
             PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=testkeyalias10,C=SE", null);
@@ -599,6 +603,8 @@ public class SystemLoggingTest extends ModulesTestCase {
             assertNotNull("Contains event", line);
             assertTrue("Contains module", line.contains("MODULE: KEY_MANAGEMENT"));
             assertTrue("Contains worker id", line.contains("WORKER_ID: " + WORKERID_CRYPTOWORKER1));
+            assertTrue("Contains crypto token", line.contains("CRYPTOTOKEN: " + tokenName));
+            assertTrue("Contains key alias", line.contains("KEYALIAS: " + alias));
             assertTrue("Contains certificate", line.contains(new String(org.cesecore.util.CertTools.getPemFromCertificateChain(Arrays.<Certificate>asList(cert, issuerCert))).replace("\r\n", "\n")));
         } finally {
             removeWorker(WORKERID_CRYPTOWORKER1);
@@ -626,7 +632,8 @@ public class SystemLoggingTest extends ModulesTestCase {
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
         assertTrue("Contains worker id", line.contains("WORKER_ID: " + signerId));
-        assertTrue("Contains alias", line.contains("ALIAS: ts_key00002"));
+        assertTrue("Contains key alias", line.contains("KEYALIAS: ts_key00002"));
+        assertTrue("Contains crypto token", line.contains("CRYPTOTOKEN: " + signerName));
         assertTrue("Contains scope", line.contains("SCOPE: GLOBAL"));
         
         // Remove the property
@@ -645,7 +652,8 @@ public class SystemLoggingTest extends ModulesTestCase {
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
         assertTrue("Contains worker id", line.contains("WORKER_ID: " + signerId));
-        assertTrue("Contains alias", line.contains("KEYALIAS: ;"));
+        assertTrue("Contains key alias", line.contains("KEYALIAS: ;"));
+        assertTrue("Contains crypto token", line.contains("CRYPTOTOKEN: " + signerName));
         assertTrue("Contains scope", line.contains("SCOPE: GLOBAL"));
         
         
@@ -663,7 +671,8 @@ public class SystemLoggingTest extends ModulesTestCase {
         line = getTheLineContaining(lines, "EVENT: KEYSELECTED");
         assertNotNull("Contains event", line);
         assertTrue("Contains module", line.contains("MODULE: WORKER_CONFIG"));
-        assertTrue("Contains alias", line.contains("ALIAS: ts_key00003"));
+        assertTrue("Contains key alias", line.contains("KEYALIAS: ts_key00003"));
+        assertTrue("Contains crypto token", line.contains("CRYPTOTOKEN: " + signerName));
         assertTrue("Contains scope", line.contains("SCOPE: NODE"));
         assertTrue("Contains node", line.contains("NODE: NODE47"));
         
@@ -679,6 +688,126 @@ public class SystemLoggingTest extends ModulesTestCase {
         LOG.info(">test01LogKeyGenAndTestAndCSR");
         final String signerName = "TestKeyGenAndCSR1";
         final int p12SignerId = 5980;
+        try {
+            // Copy sample P12 to a temporary P12
+            File sampleP12 = new File(getSignServerHome(), "res/test/dss10/dss10_signer3.p12");
+            final String keyInKeystore = "Signer 3";
+            File p12 = File.createTempFile("testkeystore", "tmp");
+            p12.deleteOnExit();
+            KeyStore keystore = KeyStore.getInstance("PKCS12", "BC");
+            FileInputStream fin = null;
+            FileOutputStream fout = null;
+            try {
+                fin = new FileInputStream(sampleP12);
+                fout = new FileOutputStream(p12);
+                keystore.load(fin, "foo123".toCharArray());
+                keystore.store(fout, "foo123".toCharArray());
+            } finally {
+                if (fin != null) {
+                    try {
+                        fin.close();
+                    } catch (IOException ignored) {} // NOPMD
+                }
+                if (fout != null) {
+                    try {
+                        fout.close();
+                    } catch (IOException ignored) {} // NOPMD
+                }
+            }
+            
+            // Add signer using the P12
+            addP12DummySigner(p12SignerId, signerName, p12, "foo123", keyInKeystore);
+            
+            // Test keygen
+            int linesBefore = readEntriesCount(auditLogFile);
+            workerSession.generateSignerKey(p12SignerId, "RSA", "512", "ts_key00004", "foo123".toCharArray());
+            workerSession.generateSignerKey(p12SignerId, "RSA", "512", "additionalKey", "foo123".toCharArray());
+
+            List<String> lines = readEntries(auditLogFile, linesBefore, 1);
+            LOG.info(lines);
+            String line = lines.get(0);
+            assertTrue("Contains event", line.contains("EVENT: KEYGEN"));
+            assertTrue("Contains module", line.contains("MODULE: KEY_MANAGEMENT"));
+            assertTrue("Contains worker id", line.contains("WORKER_ID: " + p12SignerId));
+            assertTrue("Contains alias", line.contains("KEYALIAS: ts_key00004"));
+            assertTrue("Contains spec", line.contains("KEYSPEC: 512"));
+            assertTrue("Contains alg", line.contains("KEYALG: RSA"));
+            assertTrue("Contains crypto token", line.contains("CRYPTOTOKEN: " + signerName));
+
+            // Test keytest
+            workerSession.activateSigner(p12SignerId, "foo123");
+            workerSession.testKey(p12SignerId, "ts_key00004", "foo123".toCharArray());
+            
+            lines = readEntries(auditLogFile, linesBefore + 2, 1);
+            LOG.info(lines);
+            line = lines.get(0);
+            assertTrue("Contains event", line.contains("EVENT: KEYTEST"));
+            assertTrue("Contains module", line.contains("MODULE: KEY_MANAGEMENT"));
+            assertTrue("Contains worker id", line.contains("WORKER_ID: " + p12SignerId));
+            assertTrue("Contains key alias", line.contains("KEYALIAS: ts_key00004"));
+            assertTrue("Contains crypto token", line.contains("CRYPTOTOKEN: " + signerName));
+            assertTrue("Contains test results", line.contains("KeyTestResult{alias=ts_key00004, success=true"));
+            
+            // Test key with all, to assure not extra base 64 encoding is done
+            workerSession.testKey(p12SignerId, "all", "foo123".toCharArray());
+            lines = readEntries(auditLogFile, linesBefore + 3, 1);
+            LOG.info(lines);
+            line = lines.get(0);
+            assertTrue("Contains test results", line.contains("KeyTestResult{alias=ts_key00004, success=true"));
+            
+            // Test gencsr
+            PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=TS Signer 1,C=SE", null);
+            ICertReqData req = workerSession.getCertificateRequest(p12SignerId, certReqInfo, false);
+            Base64SignerCertReqData reqData = (Base64SignerCertReqData) req;
+            lines = readEntries(auditLogFile, linesBefore + 4, 1);
+            LOG.info(lines);
+            line = lines.get(0);
+            assertTrue("Contains event", line.contains("EVENT: GENCSR"));
+            assertTrue("Contains module", line.contains("MODULE: KEY_MANAGEMENT"));
+            assertTrue("Contains worker id", line.contains("WORKER_ID: " + p12SignerId));
+            assertTrue("Contains crypto token", line.contains("CRYPTOTOKEN: " + signerName));
+            assertTrue("Contains key alias: " + line, line.contains("KEYALIAS: " + keyInKeystore));
+            assertTrue("Contains for default key: " + line, line.contains("FOR_DEFAULTKEY: true"));
+            assertTrue("Contains csr", line.contains("CSR: " + new String(reqData.getBase64CertReq())));
+            
+            // Test gencsr            
+            req = workerSession.getCertificateRequest(p12SignerId, certReqInfo, false, "ts_key00004");
+            reqData = (Base64SignerCertReqData) req;
+            lines = readEntries(auditLogFile, linesBefore + 5, 1);
+            LOG.info(lines);
+            line = lines.get(0);
+            assertTrue("Contains event", line.contains("EVENT: GENCSR"));
+            assertTrue("Contains module", line.contains("MODULE: KEY_MANAGEMENT"));
+            assertTrue("Contains worker id", line.contains("WORKER_ID: " + p12SignerId));
+            assertTrue("Contains crypto token", line.contains("CRYPTOTOKEN: " + signerName));
+            assertTrue("Contains key alias: " + line, line.contains("KEYALIAS: ts_key00004"));
+            assertTrue("Contains for default key: " + line, line.contains("FOR_DEFAULTKEY: false"));
+            assertTrue("Contains csr", line.contains("CSR: " + new String(reqData.getBase64CertReq())));
+            
+            // Test remove key
+            workerSession.removeKey(p12SignerId, "ts_key00004");
+            lines = readEntries(auditLogFile, linesBefore + 6, 1);
+            LOG.info(lines);
+            line = lines.get(0);
+            assertTrue("Contains event", line.contains("EVENT: KEYREMOVE"));
+            assertTrue("Contains module", line.contains("MODULE: KEY_MANAGEMENT"));
+            assertTrue("Contains worker id", line.contains("WORKER_ID: " + p12SignerId));
+            assertTrue("Contains crypto token", line.contains("CRYPTOTOKEN: " + signerName));
+            assertTrue("Contains key alias: " + line, line.contains("KEYALIAS: ts_key00004"));
+            
+        } finally {
+            removeWorker(p12SignerId);
+        }
+    }
+    
+    @Test
+    public void test01LogKeyGenAndTestAndCSR_separateToken() throws Exception {
+        LOG.info(">test01LogKeyGenAndTestAndCSR_separateToken");
+        
+        final int workerId = 5881;
+        final String tokenName = "TestKeyGenAndCSR2";
+        final int p12SignerId = 5880;
+        
         try {
             // Copy sample P12 to a temporary P12
             File sampleP12 = new File(getSignServerHome(), "res/test/dss10/dss10_signer3.p12");
@@ -705,39 +834,49 @@ public class SystemLoggingTest extends ModulesTestCase {
                 }
             }
             
-            // Add signer using the P12
-            addP12DummySigner(p12SignerId, signerName, p12, "foo123", null);
+            // Add crypto worker using the P12
+            addP12DummySigner(p12SignerId, tokenName, p12, "foo123", null);
             
+            // Add a separate worker
+            getGlobalSession().setProperty(GlobalConfiguration.SCOPE_GLOBAL,
+            "WORKER" + workerId + ".CLASSPATH", PlainSigner.class.getName());
+            getWorkerSession().setWorkerProperty(workerId, "NAME", "TheWorker" + workerId);
+            getWorkerSession().setWorkerProperty(workerId, "AUTHTYPE", IProcessable.AUTHTYPE_NOAUTH);
+            getWorkerSession().setWorkerProperty(workerId, "CRYPTOTOKEN", tokenName);
+            getWorkerSession().reloadConfiguration(workerId);
+
             // Test keygen
             int linesBefore = readEntriesCount(auditLogFile);
-            workerSession.generateSignerKey(p12SignerId, "RSA", "512", "ts_key00004", "foo123".toCharArray());
-            workerSession.generateSignerKey(p12SignerId, "RSA", "512", "additionalKey", "foo123".toCharArray());
+            workerSession.generateSignerKey(workerId, "RSA", "512", "ts_key00004", "foo123".toCharArray());
+            workerSession.generateSignerKey(workerId, "RSA", "512", "additionalKey", "foo123".toCharArray());
 
             List<String> lines = readEntries(auditLogFile, linesBefore, 1);
             LOG.info(lines);
             String line = lines.get(0);
             assertTrue("Contains event", line.contains("EVENT: KEYGEN"));
             assertTrue("Contains module", line.contains("MODULE: KEY_MANAGEMENT"));
-            assertTrue("Contains worker id", line.contains("WORKER_ID: " + p12SignerId));
-            assertTrue("Contains alias", line.contains("KEYALIAS: ts_key00004"));
+            assertTrue("Contains worker id", line.contains("WORKER_ID: " + workerId));
+            assertTrue("Contains key alias", line.contains("KEYALIAS: ts_key00004"));
             assertTrue("Contains spec", line.contains("KEYSPEC: 512"));
             assertTrue("Contains alg", line.contains("KEYALG: RSA"));
+            assertTrue("Contains crypto token", line.contains("CRYPTOTOKEN: " + tokenName));
 
             // Test keytest
-            workerSession.activateSigner(p12SignerId, "foo123");
-            workerSession.testKey(p12SignerId, "ts_key00004", "foo123".toCharArray());
+            workerSession.activateSigner(workerId, "foo123");
+            workerSession.testKey(workerId, "ts_key00004", "foo123".toCharArray());
             
             lines = readEntries(auditLogFile, linesBefore + 2, 1);
             LOG.info(lines);
             line = lines.get(0);
             assertTrue("Contains event", line.contains("EVENT: KEYTEST"));
             assertTrue("Contains module", line.contains("MODULE: KEY_MANAGEMENT"));
-            assertTrue("Contains worker id", line.contains("WORKER_ID: " + p12SignerId));
-            assertTrue("Contains alias", line.contains("KEYALIAS: ts_key00004"));
+            assertTrue("Contains worker id", line.contains("WORKER_ID: " + workerId));
+            assertTrue("Contains key alias", line.contains("KEYALIAS: ts_key00004"));
+            assertTrue("Contains crypto token", line.contains("CRYPTOTOKEN: " + tokenName));
             assertTrue("Contains test results", line.contains("KeyTestResult{alias=ts_key00004, success=true"));
             
             // Test key with all, to assure not extra base 64 encoding is done
-            workerSession.testKey(p12SignerId, "all", "foo123".toCharArray());
+            workerSession.testKey(workerId, "all", "foo123".toCharArray());
             lines = readEntries(auditLogFile, linesBefore + 3, 1);
             LOG.info(lines);
             line = lines.get(0);
@@ -745,16 +884,31 @@ public class SystemLoggingTest extends ModulesTestCase {
             
             // Test gencsr
             PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=TS Signer 1,C=SE", null);
-            ICertReqData req = workerSession.getCertificateRequest(p12SignerId, certReqInfo, false);
+            ICertReqData req = workerSession.getCertificateRequest(workerId, certReqInfo, false, "ts_key00004");
             Base64SignerCertReqData reqData = (Base64SignerCertReqData) req;
             lines = readEntries(auditLogFile, linesBefore + 4, 1);
             LOG.info(lines);
             line = lines.get(0);
             assertTrue("Contains event", line.contains("EVENT: GENCSR"));
             assertTrue("Contains module", line.contains("MODULE: KEY_MANAGEMENT"));
-            assertTrue("Contains worker id", line.contains("WORKER_ID: " + p12SignerId));
+            assertTrue("Contains worker id", line.contains("WORKER_ID: " + workerId));
+            assertTrue("Contains crypto token", line.contains("CRYPTOTOKEN: " + tokenName));
+            assertTrue("Contains key alias", line.contains("KEYALIAS: ts_key00004"));
+            assertTrue("Contains for default key: " + line, line.contains("FOR_DEFAULTKEY: false"));
             assertTrue("Contains csr", line.contains("CSR: " + new String(reqData.getBase64CertReq())));
+            
+            // Test remove key
+            workerSession.removeKey(workerId, "ts_key00004");
+            lines = readEntries(auditLogFile, linesBefore + 5, 1);
+            LOG.info(lines);
+            line = lines.get(0);
+            assertTrue("Contains event", line.contains("EVENT: KEYREMOVE"));
+            assertTrue("Contains module", line.contains("MODULE: KEY_MANAGEMENT"));
+            assertTrue("Contains worker id", line.contains("WORKER_ID: " + workerId));
+            assertTrue("Contains crypto token", line.contains("CRYPTOTOKEN: " + tokenName));
+            assertTrue("Contains key alias: " + line, line.contains("KEYALIAS: ts_key00004"));
         } finally {
+            removeWorker(workerId);
             removeWorker(p12SignerId);
         }
     }
@@ -969,6 +1123,29 @@ public class SystemLoggingTest extends ModulesTestCase {
             removeWorker(WORKERID_CRYPTOWORKER1);
             removeWorker(WORKERID_CRYPTOWORKER2);
         }
+    }
+    
+     /**
+     * Test that the SecurityEventsWorkerLogger is properly audit-logging process requests.
+     * @throws Exception
+     */
+    @Test
+    public void test07WorkerProcessKeyAlias() throws Exception {
+        LOG.info(">test07WorkerProcessKeyAlias");
+        int linesBefore = readEntriesCount(auditLogFile);
+        
+        GenericSignRequest request = new GenericSignRequest(123, "<test/>".getBytes("UTF-8"));
+        workerSession.process(signerId, request, new RequestContext());
+        
+        List<String> lines = readEntries(auditLogFile, linesBefore, 1);
+        String line = lines.get(0);
+        LOG.info(line);
+        assertTrue("Contains event", line.contains("EVENT: PROCESS"));
+        assertTrue("Contains module", line.contains("MODULE: WORKER"));
+        assertTrue("Contains success", line.contains("PROCESS_SUCCESS: true"));
+        assertTrue("Contains worker id", line.contains("WORKER_ID: " + signerId));
+        assertTrue("Contains key alias", line.contains("KEYALIAS: " + getSigner1KeyAlias()));
+        assertTrue("Contains crypto token", line.contains("CRYPTOTOKEN: " + signerName));
     }
     
     private String waitForNextLine(final int linesBefore, final int maxTries) throws Exception {

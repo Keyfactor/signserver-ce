@@ -3,6 +3,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
         <link rel="stylesheet" href="../publicweb.css" type="text/css"/>
+        <link rel="shortcut icon" href="/signserver/favicon.png"/>
         <title>Office Open XML Signing Demo - SignServer</title>
         <style type="text/css">
             img {

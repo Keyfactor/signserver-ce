@@ -601,7 +601,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         auditMap.put(AdditionalDetailsTypes.CERTIFICATECHAIN.name(), value);
         auditMap.put(AdditionalDetailsTypes.SCOPE.name(), scope);
         if ("NODE".equalsIgnoreCase(scope)) {
-            auditMap.put(AdditionalDetailsTypes.SCOPE.name(), node);
+            auditMap.put(AdditionalDetailsTypes.NODE.name(), node);
         }
         auditLog(adminInfo, SignServerEventTypes.CERTCHAININSTALLED, EventStatus.SUCCESS, SignServerModuleTypes.WORKER_CONFIG, String.valueOf(workerId), auditMap);
     }

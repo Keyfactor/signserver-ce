@@ -29,14 +29,14 @@
           <Component id="jPanel1" alignment="0" max="32767" attributes="0"/>
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="appCopyright" pref="623" max="32767" attributes="0"/>
+              <Component id="appCopyright" pref="704" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
           <Group type="102" alignment="1" attributes="0">
               <Group type="103" groupAlignment="1" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="appDescLabel1" pref="635" max="32767" attributes="0"/>
+                      <Component id="appDescLabel1" pref="716" max="32767" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
@@ -44,19 +44,17 @@
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="appDescLabel" pref="635" max="32767" attributes="0"/>
+                      <Component id="appDescLabel" pref="716" max="32767" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="1" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="versionLabel" alignment="0" pref="129" max="32767" attributes="1"/>
-                          <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
-                              <Component id="homepageLabel1" alignment="0" max="32767" attributes="1"/>
-                              <Component id="vendorLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="homepageLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                          </Group>
+                          <Component id="homepageLabel1" alignment="0" pref="235" max="32767" attributes="1"/>
+                          <Component id="vendorLabel" alignment="0" pref="235" max="32767" attributes="0"/>
+                          <Component id="versionLabel" pref="235" max="32767" attributes="1"/>
+                          <Component id="homepageLabel" alignment="0" pref="235" max="32767" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="43" max="32767" attributes="0"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" max="-2" attributes="0">
                           <Component id="appHomepageLabel1" max="32767" attributes="1"/>
                           <Component id="appHomepageLabel" alignment="1" max="32767" attributes="1"/>
@@ -64,7 +62,7 @@
                           <Component id="appVendorLabel1" alignment="1" min="-2" pref="463" max="-2" attributes="1"/>
                       </Group>
                   </Group>
-                  <Component id="jPanel2" alignment="1" pref="647" max="32767" attributes="0"/>
+                  <Component id="jPanel2" alignment="1" pref="728" max="32767" attributes="0"/>
               </Group>
               <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
           </Group>
@@ -101,8 +99,8 @@
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Component id="appCopyright" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="appDescLabel1" pref="69" max="32767" attributes="0"/>
-              <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
+              <Component id="appDescLabel1" pref="184" max="32767" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
               <Component id="jPanel2" min="-2" max="-2" attributes="0"/>
           </Group>
       </Group>
@@ -118,11 +116,11 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <EmptySpace min="0" pref="647" max="32767" attributes="0"/>
+              <EmptySpace min="0" pref="728" max="32767" attributes="0"/>
               <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jLabel1" pref="623" max="32767" attributes="0"/>
+                      <Component id="jLabel1" pref="704" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -147,7 +145,6 @@
             <Property name="background" type="java.awt.Color" resourceKey="jLabel1.background"/>
             <Property name="icon" type="javax.swing.Icon" resourceKey="jLabel1.icon"/>
             <Property name="text" type="java.lang.String" resourceKey="jLabel1.text"/>
-            <Property name="verticalAlignment" type="int" value="1"/>
             <Property name="name" type="java.lang.String" value="jLabel1" noResource="true"/>
             <Property name="verticalTextPosition" type="int" value="1"/>
           </Properties>

@@ -27,7 +27,10 @@ ul#topMenu li {
 }
 
 .logo {
-    margin: 0;
+    margin-top: 1em;
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-bottom: 0px;
     padding: 0;
     /*                border-bottom: thin solid black;*/
     /*                text-align: right;*/

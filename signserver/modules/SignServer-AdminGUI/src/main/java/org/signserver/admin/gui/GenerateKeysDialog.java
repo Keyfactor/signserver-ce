@@ -358,119 +358,94 @@ public class GenerateKeysDialog extends JDialog {
 
     private class RenewKeysTask extends Task<String, Void> {
 
-        private char[] authCode;
-
         RenewKeysTask(final Application app) {
             // Runs on the EDT.  Copy GUI state that
             // doInBackground() depends on from parameters
             // to RenewKeysTask fields, here.
             super(app);
             resultCode = OK;
-
-            passwordPanelLabel.setText(
-                    "Enter authentication code for all workers or leave empty:");
-            passwordPanelField.setText("");
-            passwordPanelField.grabFocus();
-
-            int res = JOptionPane.showConfirmDialog(GenerateKeysDialog.this,
-                    passwordPanel, "Generate keys",
-                    JOptionPane.OK_CANCEL_OPTION);
-
-           if (res == JOptionPane.OK_OPTION) {
-               authCode = passwordPanelField.getPassword();
-           }
-           generateCalled = true;
+            generateCalled = true;
         }
         @Override protected String doInBackground() {
             // Your Task's code here.  This method runs
             // on a background thread, so don't reference
             // the Swing GUI from here.
             final int numWorkers = data.size();
-            String errors = null;
-            if (authCode != null) {
-                final StringBuilder sb = new StringBuilder();
+            final StringBuilder sb = new StringBuilder();
+            int progress = 0;
+            setProgress(progress++, 0, numWorkers);
+            for (int row = 0; row < data.size() - 1; row++) {
+                final int signerId = worker.getWorkerId();
+                final String alias = (String) data.get(row).get(0);
+                final String keyAlg =  (String) data.get(row).get(1);
+                final String keySpec = (String) data.get(row).get(2);
+
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Key generation: worker=" + signerId
+                            + ", keyAlg=" + keyAlg + ", keySpec="
+                            + keySpec + ", alias: " + alias);
+                }
+
+                if (keyAlg == null || keySpec == null || alias == null) {
+                    return "Please, fill in all required fields";
+                }
+
+                String newAlias = null;
                 try {
-                   int progress = 0;
-                   setProgress(progress++, 0, numWorkers);
-                   for (int row = 0; row < data.size() - 1; row++) {
-                        final int signerId = worker.getWorkerId();
-                        final String alias = (String) data.get(row).get(0);
-                        final String keyAlg =  (String) data.get(row).get(1);
-                        final String keySpec = (String) data.get(row).get(2);
+                    // Generate key
+                    newAlias = SignServerAdminGUIApplication
+                        .getAdminWS().generateSignerKey(signerId,
+                        keyAlg, keySpec, alias, "");
 
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Key generation: worker=" + signerId
-                                    + ", keyAlg=" + keyAlg + ", keySpec="
-                                    + keySpec + ", alias: " + alias);
-                        }
-
-                        if (keyAlg == null || keySpec == null || alias == null) {
-                            return "Please, fill in all required fields";
-                        }
-
-                        String newAlias = null;
-                        try {
-                            // Generate key
-                            newAlias = SignServerAdminGUIApplication
-                                .getAdminWS().generateSignerKey(signerId,
-                                keyAlg, keySpec, alias, new String(authCode));
-
-                            if (newAlias == null) {
-                                final String error
-                                        =  "Error generating key for signer "
-                                        + signerId + ":\n"
-                                        + "Could not generate key";
-                                LOG.error(error);
-                                sb.append(error);
-                                sb.append("\n");
-                            }
-                        } catch (EJBException eJBException) {
-                            if (eJBException.getCausedByException()
-                                    instanceof IllegalArgumentException) {
-                                final String error =
-                                        "Error generating key for signer "
-                                        + signerId + ":\n" + eJBException
-                                        .getCausedByException().getMessage();
-                                LOG.error(error, eJBException);
-                                sb.append(error);
-                                sb.append("\n");
-                            } else {
-                                final String error =
-                                        "Error generating key for signer "
-                                        + signerId + ":\n" + eJBException
-                                        .getMessage();
-                                LOG.error(error, eJBException);
-                                sb.append(error);
-                                sb.append("\n");
-                            }
-                        } catch (Exception e) {
-                            final String error =
-                                        "Error generating key for signer "
-                                        + signerId + ":\n" + e
-                                        .getMessage();
-                                LOG.error(error, e);
-                                sb.append(error);
-                                sb.append("\n");
-                        }
-
-                        if (newAlias != null) {
-                            
-                            LOG.debug("Created key " + newAlias + " for signer "
-                                    + signerId);
-
-                            data.remove(row);
-                            row--;
-                        }
-                        setProgress(progress++, 0, numWorkers);
+                    if (newAlias == null) {
+                        final String error
+                                =  "Error generating key for signer "
+                                + signerId + ":\n"
+                                + "Could not generate key";
+                        LOG.error(error);
+                        sb.append(error);
+                        sb.append("\n");
                     }
-                   errors = sb.toString();
-               } finally {
-                    for (int i = 0; i < authCode.length; i++) {
-                        authCode[i] = 0;
+                } catch (EJBException eJBException) {
+                    if (eJBException.getCausedByException()
+                            instanceof IllegalArgumentException) {
+                        final String error =
+                                "Error generating key for signer "
+                                + signerId + ":\n" + eJBException
+                                .getCausedByException().getMessage();
+                        LOG.error(error, eJBException);
+                        sb.append(error);
+                        sb.append("\n");
+                    } else {
+                        final String error =
+                                "Error generating key for signer "
+                                + signerId + ":\n" + eJBException
+                                .getMessage();
+                        LOG.error(error, eJBException);
+                        sb.append(error);
+                        sb.append("\n");
                     }
-               }
-            }
-            return errors;  // return your result
+                } catch (Exception e) {
+                    final String error =
+                                "Error generating key for signer "
+                                + signerId + ":\n" + e
+                                .getMessage();
+                        LOG.error(error, e);
+                        sb.append(error);
+                        sb.append("\n");
+                }
+
+                if (newAlias != null) {
+
+                    LOG.debug("Created key " + newAlias + " for signer "
+                            + signerId);
+
+                    data.remove(row);
+                    row--;
+                }
+                setProgress(progress++, 0, numWorkers);
+             }
+            return sb.toString();  // return your result
         }
         @Override protected void succeeded(final String result) {
             // Runs on the EDT.  Update the GUI based on

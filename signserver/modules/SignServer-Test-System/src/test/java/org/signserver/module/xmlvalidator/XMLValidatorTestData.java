@@ -162,46 +162,69 @@ public class XMLValidatorTestData {
      * Test CA certificate for ECDSA signatures.
      * 
      * <pre>
-     *  Serial Number: 54:2F:83:82:6A:22:AE:CD
-     *   Signature Algorithm: ecdsaWithSHA256
-     *   Issuer: CN=ECCA
-     *   Validity
-     *       Not Before: Aug 21 08:03:16 2013 GMT
-     *       Not After : Aug 20 13:20:31 2023 GMT
-     *  Subject: CN=TestXMLSignerEC
+     *  Serial Number: 3249049230434342325 (0x2d16f10f95cb95b5)
+     *  Signature Algorithm: ecdsa-with-SHA256
+     *       Issuer: CN=ECCA
+     *       Validity
+     *           Not Before: Jul 15 14:45:55 2015 GMT
+     *           Not After : Jul 15 14:45:55 2040 GMT
+     *       Subject: CN=ECCA
+     *       Subject Public Key Info:
+     *           Public Key Algorithm: id-ecPublicKey
+     *               Public-Key: (256 bit)
+     *               pub: 
+     *                   04:50:ae:f5:90:68:c6:4e:d6:09:85:9f:eb:3b:22:
+     *                   41:4c:e5:ca:e2:43:50:38:94:c9:da:c8:60:f2:0d:
+     *                   02:1d:02:b5:58:b9:d7:9b:d3:f8:b6:9c:f2:86:95:
+     *                   92:3e:c7:46:9b:b9:e9:1e:89:c8:d0:7b:d6:d7:c8:
+     *                   17:ce:ed:e1:16
+     *               ASN1 OID: prime256v1
      * </pre>
      */
     public static final String CERT_ISSUER_ECDSA =
-            "MIIBdzCCAR2gAwIBAgIIVC+Dgmoirs0wCgYIKoZIzj0EAwIwDzENMAsGA1UEAwwERUNDQTAeFw0x"
-            +"MzA4MjAxMzIwMzFaFw0yMzA4MjAxMzIwMzFaMA8xDTALBgNVBAMMBEVDQ0EwWTATBgcqhkjOPQIB"
-            +"BggqhkjOPQMBBwNCAAQkIXc1SKnM/mNsGiK2ldpUmg6LFiJSF6pJk30sPLs9X6WUEwCtjE57CLch"
-            +"Pyk5TaDjosYtTyAK0JMilQO1jSzHo2MwYTAdBgNVHQ4EFgQUdFxJXhx6KUz16PlSiD94IE3KTx8w"
-            +"DwYDVR0TAQH/BAUwAwEB/zAfBgNVHSMEGDAWgBR0XEleHHopTPXo+VKIP3ggTcpPHzAOBgNVHQ8B"
-            +"Af8EBAMCAYYwCgYIKoZIzj0EAwIDSAAwRQIgVkarQSrY+mlfGhsUagHnOmfj274Xx5LmlisUKdRC"
-            +"nz0CIQChndlBeog3cimhCgYNli+zAuKN3+st8FZqPiqe3cZgvA==";
+        "MIIBdjCCAR2gAwIBAgIILRbxD5XLlbUwCgYIKoZIzj0EAwIwDzENMAsGA1UEAwwE\n" +
+        "RUNDQTAeFw0xNTA3MTUxNDQ1NTVaFw00MDA3MTUxNDQ1NTVaMA8xDTALBgNVBAMM\n" +
+        "BEVDQ0EwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAARQrvWQaMZO1gmFn+s7IkFM\n" +
+        "5criQ1A4lMnayGDyDQIdArVYudeb0/i2nPKGlZI+x0abuekeicjQe9bXyBfO7eEW\n" +
+        "o2MwYTAdBgNVHQ4EFgQU3K35Xo+7YRt2sZ04QabVBIxkvp0wDwYDVR0TAQH/BAUw\n" +
+        "AwEB/zAfBgNVHSMEGDAWgBTcrflej7thG3axnThBptUEjGS+nTAOBgNVHQ8BAf8E\n" +
+        "BAMCAYYwCgYIKoZIzj0EAwIDRwAwRAIgbzETZ1s4R01zQxnUIKHJTMb+dORlqU1f\n" +
+        "zfxZFNPd8P4CIFcijw9guK0kCh8L1dC3fGroqdzo5HU4Z1BNh31x3uh2";
      
     /**
      * Test signer certificate for ECDSA signatures.
      * 
      * <pre>
-     * Serial Number: 67:B6:13:8E:2B:75:FA:D2
+     * Serial Number: 2468830956166921450 (0x22430cac98d13cea)
      * Signature Algorithm: ecdsa-with-SHA256
      *   Issuer: CN=ECCA
      *   Validity
-     *       Not Before: Aug 21 08:03:16 2013 GMT
-     *       Not After : Aug 20 13:20:31 2023 GMT
-     *   Subject: CN=TestXMLSignerEC
+     *       Not Before: Jul 16 08:27:59 2015 GMT
+     *       Not After : Jul 15 14:45:55 2040 GMT
+     *   Subject: CN=TestXMLSignerEC, OU=Testing, O=SignServer, C=SE
+     *   Subject Public Key Info:
+     *       Public Key Algorithm: id-ecPublicKey
+     *           Public-Key: (256 bit)
+     *           pub: 
+     *               04:b4:65:bd:d5:52:65:02:39:3f:be:67:f9:47:61:
+     *               7b:52:a6:06:9a:02:7a:12:66:40:99:c8:7a:15:31:
+     *               39:af:1c:28:38:d1:45:09:b5:8c:4e:10:46:59:7a:
+     *               93:e7:44:dd:1d:1e:52:1b:49:1b:a1:58:3d:15:e5:
+     *               76:0a:c2:8c:ef
+     *           ASN1 OID: prime256v1
      * </pre>
      */
     public static final String CERT_XMLSIGNER_ECDSA =
-            "MIIBnDCCAUGgAwIBAgIIZ7YTjit1+tIwCgYIKoZIzj0EAwIwDzENMAsGA1UEAwwERUNDQTAeFw0x"
-            +"MzA4MjEwODAzMTZaFw0yMzA4MjAxMzIwMzFaMBoxGDAWBgNVBAMMD1Rlc3RYTUxTaWduZXJFQzBW"
-            +"MBAGByqGSM49AgEGBSuBBAAKA0IABPNbDHlOmo5S7xC9NaX8qLAVZj1cPOONlWkGU+vrM+1J1Wej"
-            +"c2jXVAkSaxG13omgEdcp6axx1QBPM0mY0Sm79pyjfzB9MB0GA1UdDgQWBBQCxloPGJdVjF7zTQhR"
-            +"FOFQ4SaDIjAMBgNVHRMBAf8EAjAAMB8GA1UdIwQYMBaAFHRcSV4ceilM9ej5Uog/eCBNyk8fMA4G"
-            +"A1UdDwEB/wQEAwIF4DAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwCgYIKoZIzj0EAwID"
-            +"SQAwRgIhAO4Y5vHYsHa6EJUgSy3nobtrMaDlfYizlziQjfER05CQAiEAjEuF6sEbQEgsAtZegUaO"
-            +"j6dyDoVID5JASDarQHELW3I=";      
+        "MIIB0jCCAXigAwIBAgIIIkMMrJjRPOowCgYIKoZIzj0EAwIwDzENMAsGA1UEAwwE\n" +
+        "RUNDQTAeFw0xNTA3MTYwODI3NTlaFw00MDA3MTUxNDQ1NTVaME4xGDAWBgNVBAMM\n" +
+        "D1Rlc3RYTUxTaWduZXJFQzEQMA4GA1UECwwHVGVzdGluZzETMBEGA1UECgwKU2ln\n" +
+        "blNlcnZlcjELMAkGA1UEBhMCU0UwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAAS0\n" +
+        "Zb3VUmUCOT++Z/lHYXtSpgaaAnoSZkCZyHoVMTmvHCg40UUJtYxOEEZZepPnRN0d\n" +
+        "HlIbSRuhWD0V5XYKwozvo38wfTAdBgNVHQ4EFgQUBzUh0nHCSGru6EmeNyZUKTUC\n" +
+        "/sUwDAYDVR0TAQH/BAIwADAfBgNVHSMEGDAWgBTcrflej7thG3axnThBptUEjGS+\n" +
+        "nTAOBgNVHQ8BAf8EBAMCBeAwHQYDVR0lBBYwFAYIKwYBBQUHAwIGCCsGAQUFBwME\n" +
+        "MAoGCCqGSM49BAMCA0gAMEUCIGI2m0wGmD/gJjqLdTUu0rYPjFxpLBxMO3Zs+GwD\n" +
+        "P8lxAiEA59jfL0R4Nmc0MbaRdhnW+gmP1VfhlKJwVMmPqRrlZ9E=";    
     
     public static final String CERT_OTHER =
              "MIIDTjCCAjagAwIBAgIIH51RSUxYOpYwDQYJKoZIhvcNAQEFBQAwPTEXMBUGA1UEAwwOQWRtaW5U"
@@ -259,20 +282,20 @@ public class XMLValidatorTestData {
             +"BrnSTMT6qjEXhDgs2AItRciLaz4h4QJxrKQo3Q==";
     
     static final String SIGNATURE_ECDSA_SHA1 =
-            "9v6sdc/CPn6YqNnko0YIkkNUeCLIz5HWINAmC8e02tkU8OZETFFY5MJtAi/i25SMuyf3IBVRBvKk"
-            +"2RZvOZ1hpw==";
+            "H3d3d6LHOXoS2m6USmGRfjCT94GgiaMWdSy4DW1+lVKFhIJsdo83zh0kZFrt48UedxhrboOsmcqU\n" +
+            "oQnIhr5JyQ==";
     
     static final String SIGNATURE_ECDSA_SHA256 =
-            "/bFy7PxJmNKAPwUEiQO59QOmsIWjNMHZ7hwPGPV/0bEagKb7x7FnFhr9kkYbdTTm5IlWNO8Cf5nW"
-            +"wdemL9zVPw==";
+            "HWReXCc1ssA8ayZupMWvD6O25oTfAX64o4Dcmu5NM4k1XA41fS09w3Lv9WjNPRMBjsNAPmSZhSqm\n" +
+            "+HaNH/HDtg==";
     
     static final String SIGNATURE_ECDSA_SHA384 =
-            "QwqQTquPvoJ5P5u9g3li66N9Br1QKYOrzWIOfvHtq+Y7uDH0l31V8O6pKySGIuYD8zu2nQvqh62l"
-            +"sFJ9jY0kQg==";
+            "XZi2W4ZZFRTZ38G9FTZfwIN3PpBWjCcjrV3vTJ3PvBI9lcgumj9O74iM6vEpip0QNg2RYs5kBh73\n" +
+            "1A4X90Hd1g==";
     
     static final String SIGNATURE_ECDSA_SHA512 =
-            "mNPMvn6M+GCQ4Hf+iXF8y8J2pKelDE/HuVExIFXBjLtHqNsSgTPuEIjCURsjyY8QQkIrDIn29Uqf"
-            +"CM6sphtEIw==";
+            "5N31z35CpQhFbTSO+DvIdWfRBnjjej4olq8egpLYdhNexcX0DeJ+pfA1YKTd3176UL5t0p+lpSns\n" +
+            "uSGUKJOa2g==";
     
     /**
      * Ok sig, ok cert.

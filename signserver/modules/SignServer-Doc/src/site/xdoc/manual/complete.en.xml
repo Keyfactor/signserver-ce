@@ -1953,7 +1953,7 @@ for some properties such as for the certificates.
                         <p>
 <b>Details...</b>: Selecting an property and clicking this button opens a dialog box
 with more information for the property (if supported). Currently for certificates
-this openns the Certificate details dialog.
+this opens the Certificate details dialog.
                         </p>
                     </subsubsection>
 

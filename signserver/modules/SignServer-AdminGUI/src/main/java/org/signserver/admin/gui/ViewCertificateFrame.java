@@ -13,6 +13,11 @@
 package org.signserver.admin.gui;
 
 import java.awt.Component;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateEncodingException;
@@ -22,10 +27,17 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.AbstractListModel;
 import javax.swing.DefaultListCellRenderer;
+import javax.swing.JFileChooser;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+import org.bouncycastle.openssl.PEMWriter;
 import org.bouncycastle.util.encoders.Hex;
 
 /**
@@ -41,14 +53,15 @@ public class ViewCertificateFrame extends javax.swing.JFrame {
     private static final Logger LOG = 
             Logger.getLogger(ViewCertificateFrame.class);
 
+    private final List<X509Certificate> certificates;
     private X509Certificate certificate;
 
     private List<Field> fields;
 
     private List<String> usages;
 
-    /** Creates new form ViewStatusFrame. */
     public ViewCertificateFrame(final List<X509Certificate> certificates) {
+        this.certificates = certificates;
         this.certificate = certificates.get(0);
         initComponents();
         chainList.setModel(new AbstractListModel() {
@@ -228,6 +241,7 @@ public class ViewCertificateFrame extends javax.swing.JFrame {
         jLabel16 = new javax.swing.JLabel();
         jScrollPane6 = new javax.swing.JScrollPane();
         fieldValueEditorPane = new javax.swing.JEditorPane();
+        exportButton = new javax.swing.JButton();
         closeButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -325,31 +339,31 @@ public class ViewCertificateFrame extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 564, Short.MAX_VALUE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 564, Short.MAX_VALUE)
-                    .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 564, Short.MAX_VALUE)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 564, Short.MAX_VALUE)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 564, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 778, Short.MAX_VALUE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 778, Short.MAX_VALUE)
+                    .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 778, Short.MAX_VALUE)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 778, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 778, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(serialNumberField, javax.swing.GroupLayout.DEFAULT_SIZE, 394, Short.MAX_VALUE))
-                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 564, Short.MAX_VALUE)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 564, Short.MAX_VALUE)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 564, Short.MAX_VALUE)
+                        .addComponent(serialNumberField, javax.swing.GroupLayout.DEFAULT_SIZE, 608, Short.MAX_VALUE))
+                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 778, Short.MAX_VALUE)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 778, Short.MAX_VALUE)
+                    .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 778, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(notBeforeLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE))
+                        .addComponent(notBeforeLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 614, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(notAfterLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE))
+                        .addComponent(notAfterLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 614, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(fingerprintLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 564, Short.MAX_VALUE))
+                    .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 778, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -436,6 +450,14 @@ public class ViewCertificateFrame extends javax.swing.JFrame {
         fieldValueEditorPane.setName("fieldValueEditorPane"); // NOI18N
         jScrollPane6.setViewportView(fieldValueEditorPane);
 
+        exportButton.setText(resourceMap.getString("exportButton.text")); // NOI18N
+        exportButton.setName("exportButton"); // NOI18N
+        exportButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -444,11 +466,12 @@ public class ViewCertificateFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jScrollPane6, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 564, Short.MAX_VALUE)
-                    .addComponent(jLabel14, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 564, Short.MAX_VALUE)
-                    .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 564, Short.MAX_VALUE)
-                    .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, 564, Short.MAX_VALUE)
-                    .addComponent(jLabel16, javax.swing.GroupLayout.DEFAULT_SIZE, 564, Short.MAX_VALUE))
+                    .addComponent(jScrollPane5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 778, Short.MAX_VALUE)
+                    .addComponent(jLabel14, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 778, Short.MAX_VALUE)
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 778, Short.MAX_VALUE)
+                    .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, 778, Short.MAX_VALUE)
+                    .addComponent(jLabel16, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 778, Short.MAX_VALUE)
+                    .addComponent(exportButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -461,11 +484,13 @@ public class ViewCertificateFrame extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(jLabel15)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel16)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addComponent(exportButton)
                 .addContainerGap())
         );
 
@@ -486,15 +511,15 @@ public class ViewCertificateFrame extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(closeButton))
+                    .addComponent(closeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTabbedPane1))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 602, Short.MAX_VALUE)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 686, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(closeButton)
                 .addContainerGap())
@@ -507,7 +532,57 @@ public class ViewCertificateFrame extends javax.swing.JFrame {
         dispose();
     }//GEN-LAST:event_closeButtonActionPerformed
 
+private void exportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportButtonActionPerformed
+    if (certificate != null) {
+        final JFileChooser chooser = new JFileChooser();
+        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        chooser.setAcceptAllFileFilterUsed(false);
+        final FileFilter pemFilter = new FileNameExtensionFilter("X.509 Certificate (PEM)", "pem");
+        final FileFilter pemChainFilter = new FileNameExtensionFilter("X.509 Certificate with chain (PEM)", "pem");
+        final FileFilter derFilter = new FileNameExtensionFilter("X.509 Certificate (DER)", "cer", "crt", "der");
+        chooser.addChoosableFileFilter(pemFilter);
+        chooser.addChoosableFileFilter(derFilter);
+        chooser.addChoosableFileFilter(pemChainFilter);
+        chooser.setDialogTitle("Save certificate as file");
+
+        if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+            File file = chooser.getSelectedFile();
+            
+            try {
+                if (chooser.getFileFilter() == derFilter) {
+                    // DER file
+                    FileUtils.writeByteArrayToFile(file, certificate.getEncoded());
+                } else {
+                    // PEM file
+                    BufferedOutputStream out = null;
+                    try {
+                        out = new BufferedOutputStream(new FileOutputStream(file));
+                        PEMWriter pemWriter = new PEMWriter(new OutputStreamWriter(out));
+                        if (chooser.getFileFilter() == pemFilter) {
+                            pemWriter.writeObject(certificate);
+                        } else {
+                            for (X509Certificate cert : certificates) {
+                                pemWriter.writeObject(cert);
+                            }
+                        }
+                        pemWriter.close();
+                    } finally {
+                        IOUtils.closeQuietly(out);
+                    }
+                }
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(this, "Exporting certificate failed:\n" + ex.getLocalizedMessage(),
+                        "Export", JOptionPane.ERROR_MESSAGE);
+            } catch (CertificateEncodingException ex) {
+                JOptionPane.showMessageDialog(this, "Unable to encode certificate:\n" + ex.getLocalizedMessage(),
+                        "Export", JOptionPane.ERROR_MESSAGE);
+            }
+        }    
+    }
+}//GEN-LAST:event_exportButtonActionPerformed
+
     private void viewCertificate(final X509Certificate certificate) {
+        this.certificate = certificate;
         if (certificate == null) {
             fields = null;
             
@@ -583,6 +658,7 @@ public class ViewCertificateFrame extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JList chainList;
     private javax.swing.JButton closeButton;
+    private javax.swing.JButton exportButton;
     private javax.swing.JEditorPane fieldValueEditorPane;
     private javax.swing.JList fieldsList;
     private javax.swing.JLabel fingerprintLabel;

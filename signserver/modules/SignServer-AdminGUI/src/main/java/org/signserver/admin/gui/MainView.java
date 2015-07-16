@@ -3771,9 +3771,19 @@ private void displayLogEntryAction() {
             final JFileChooser chooser = new JFileChooser();
             
             chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            chooser.setAcceptAllFileFilterUsed(false);
+            chooser.setDialogTitle("Save all");
             if (chooser.showSaveDialog(MainView.this.getFrame()) ==
                     JFileChooser.APPROVE_OPTION) {
                 outputDirectory = chooser.getSelectedFile();
+                if (!outputDirectory.exists()) {
+                    if (!outputDirectory.mkdir()) {
+                        JOptionPane.showMessageDialog(MainView.this.getFrame(),
+                        "Unable to create directory:\n" + outputDirectory.getAbsolutePath(), 
+                        "Error", JOptionPane.ERROR_MESSAGE);
+                        outputDirectory = null;
+                    }
+                }
             }
         }
 

@@ -54,6 +54,7 @@ import org.signserver.common.SignServerException;
 import org.signserver.common.TokenOutOfSpaceException;
 import org.signserver.common.WorkerStatus;
 import static org.signserver.server.BaseProcessable.PROPERTY_CACHE_PRIVATEKEY;
+import org.signserver.server.ExceptionUtil;
 import org.signserver.server.IServices;
 
 /**
@@ -304,8 +305,15 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
             LOG.error("Activate failed", ex);
             throw new CryptoTokenOfflineException(ex);
         } catch (CryptoTokenAuthenticationFailedException ex) {
-            LOG.error("Activate failed", ex);
-            throw new CryptoTokenAuthenticationFailureException(ex.getMessage());
+            
+            final StringBuilder sb = new StringBuilder();
+            sb.append("Activate failed");
+            for (final String causeMessage : ExceptionUtil.getCauseMessages(ex)) {
+                sb.append(": ");
+                sb.append(causeMessage);
+            }
+            LOG.error(sb.toString());
+            throw new CryptoTokenAuthenticationFailureException(sb.toString());
         }
     }
 

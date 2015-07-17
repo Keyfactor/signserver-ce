@@ -419,31 +419,8 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
 
                     sb.append("Failed to initialize crypto token");
 
-                    // collect cause messages
-                    final List<String> causes = new LinkedList<String>();
-
-                    causes.add(e.getMessage());
-
-                    Throwable cause = e.getCause();
-
-                    // iterate throug cause until we reach the bottom
-                    while (cause != null) {
-                        final String causeMessage = cause.getMessage();
-
-                        if (log.isDebugEnabled()) {
-                            log.debug("Cause: " + causeMessage);
-                        }
-
-                        // if cause message wasn't already seen, add it to the list
-                        if (!causes.contains(causeMessage)) {
-                            causes.add(causeMessage);
-                        }
-
-                        cause = cause.getCause();
-                    }
-
                     // prepend cause messages with some separators at the tail of our message
-                    for (final String causeMessage : causes) {
+                    for (final String causeMessage : ExceptionUtil.getCauseMessages(e)) {
                         sb.append(": ");
                         sb.append(causeMessage);
                     }

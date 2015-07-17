@@ -3289,7 +3289,7 @@ private void displayLogEntryAction() {
                     } catch (CryptoTokenAuthenticationFailureException_Exception ex) {
                         final String error =
                                 "Authentication failure activating worker "
-                                + workerId;
+                                + workerId + ": " + ex.getMessage();
                         sb.append(error);
                         sb.append("\n");
                         LOG.error(error, ex);

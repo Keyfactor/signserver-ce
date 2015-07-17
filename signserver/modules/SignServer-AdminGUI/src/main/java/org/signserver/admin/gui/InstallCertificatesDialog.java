@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -188,10 +187,9 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
                 for (int row = 0; row < jTable1.getRowCount(); row++) {
                     final String cert = (String) jTable1.getValueAt(row, 2);
                     final String certChain = (String) jTable1.getValueAt(row, 3);
-                    final boolean installInToken =
-                            (Boolean) jTable1.getValueAt(row, 4);
-                    
-                    if (("".equals(cert) && !installInToken) || "".equals(certChain)) {
+
+                    // We require at least one of cert and certChain filled in
+                    if ("".equals(cert) && "".equals(certChain)) {
                         enable = false;
                         break;
                     }
@@ -406,7 +404,8 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
                 final String certChain = data.get(row).get(3).toString();
                 final File signerCertFile =
                         "".equals(cert) ? null : new File(cert);
-                final File signerChainFile = new File(certChain);
+                final File signerChainFile =
+                        "".equals(certChain) ? null : new File(certChain);
 
                 final boolean defaultKey = 
                         key instanceof Utils.HardCodedAliasValue &&
@@ -416,7 +415,7 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
                 final boolean installInToken = (Boolean) data.get(row).get(4);
 
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("signer=" + workerid + "cert=\"" + signerCertFile
+                    LOG.debug("signer=" + workerid + ", cert=\"" + signerCertFile
                         + "\", signerChainFile=\"" + signerChainFile + "\""
                         + ", defaultKey=" + defaultKey);
                 }
@@ -441,21 +440,37 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
                             final String warning =
                                     "Warning: More than one certificate "
                                     + "found in signer certificate file for signer "
-                                    + workerid;
+                                    + workerid + ". The first will be used.";
                             LOG.warn(warning);
                             warnings.append(warning);
                             warnings.append("\n");
                         }
-                        final X509Certificate signerCert =
+                        Certificate signerCert =
                                 signerCerts != null ?
-                                (X509Certificate) signerCerts.iterator().next() :
+                                (Certificate) signerCerts.iterator().next() :
                                 null;
 
                         List<Certificate> signerChain;
 
                         try {
-                            signerChain = (List<Certificate>) CertTools.getCertsFromPEM(
+                            if (signerChainFile == null) {
+                                signerChain = new ArrayList<Certificate>();
+                            } else {
+                                signerChain = (List<Certificate>) CertTools.getCertsFromPEM(
                                     signerChainFile.getAbsolutePath());
+                            }
+
+                            if (signerCert == null) {
+                                signerCert = signerChain.get(0);
+                            } else {
+                                if (signerChain.contains(signerCert)) {
+                                    LOG.debug("Chain contains signercert");
+                                } else {
+                                    LOG.debug("Adding signercert to chain");
+                                    signerChain.add(0, signerCert);
+                                }
+                            }
+                            
                             if (signerChain.isEmpty()) {
                                 final String error =
                                     "Problem with certificate chain file for signer "
@@ -465,15 +480,8 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
                                 errors.append("\n");
                             }
 
-                            if (signerCert != null) {
-                                if (signerChain.contains(signerCert)) {
-                                    LOG.debug("Chain contains signercert");
-                                } else {
-                                    LOG.debug("Adding signercert to chain");
-                                    signerChain.add(0, signerCert);
-                                }
-                            }
-
+                            List<byte[]> signerChainBytes = asByteArrayList(signerChain);
+                            
                             if (installInToken) {
                                 final String alias =
                                         editedAlias ?
@@ -484,12 +492,12 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
                                 
                                 SignServerAdminGUIApplication.getAdminWS()
                                         .importCertificateChain(workerid,
-                                                                asByteArrayList(signerChain),
+                                                                signerChainBytes,
                                                                 alias, null);
                             } else {
                                 SignServerAdminGUIApplication.getAdminWS()
                                         .uploadSignerCertificateChain(workerid,
-                                            asByteArrayList(signerChain), scope);
+                                            signerChainBytes, scope);
                                 SignServerAdminGUIApplication.getAdminWS()
                                         .uploadSignerCertificate(workerid, 
                                         asByteArray(signerCert), scope);
@@ -619,7 +627,7 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
             }
             if (jTable1.getRowCount() == 0) {
                 JOptionPane.showMessageDialog(InstallCertificatesDialog.this,
-                        "All certificates installed. Please verify the installed ceritifcates before activating the signers.");
+                        "All certificates installed. Please verify the installed certificates before activating the signers.");
                 resultCode = OK;
                 dispose();
             }
@@ -635,7 +643,7 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
             return result;
         }
 
-        private byte[] asByteArray(final X509Certificate signerCert)
+        private byte[] asByteArray(final Certificate signerCert)
                 throws CertificateEncodingException {
             return signerCert.getEncoded();
         }

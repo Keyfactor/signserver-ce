@@ -2155,6 +2155,13 @@ the CA the signature of the request can be verified.
                         <p>
 Installs signer certificate and certificate chains for the listed workers and
 if next key is choosen that key becomes the new default key.
+                        </p>
+                        <p>
+At least one of "Signer certificate" and "Signer certificate chain" columns needs to be filled in.
+If a file is chosen for "Signer certificate" then the first certificate from that file will be used as signer certificate. It will also be added to the beginning of the certificate chain (if it is not already there).
+If a file is chosen for "Signer certificate chain" then all of the certificates from that file will be included in the certificate chain. The first certificate will be used as signer certificate (if a "Signer certificate" was not chosen).
+                        </p>
+                        <p>
 If the "Install in token" check box is selected, the certificate chain will be
 imported to the worker's crypto token (if the crypto token supports this operation).
 When this is selected, the key alias to import the chain to in the token can
@@ -2165,9 +2172,8 @@ keystore and PKCS11 crypto tokens.
 <b>Signer certificate</b>: Browse for the signer certificate file in PEM format.
                         </p>
                         <p>
-<b>Certificate chain</b>: Browse for the signer certificate chain file in PEM
-format. The signer certificate is added to the chain if it is not already
-included so normally this could just be the CA certificate.
+<b>Certificate chain</b>: Browse for the signer certificate chain file (or CA certificate(s)) in PEM
+format.
                         </p>
                     </subsubsection>
 

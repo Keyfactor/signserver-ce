@@ -693,6 +693,8 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
             final Key key =
                     keyStore.getKey(alias, authCode != null ? authCode : authenticationCode);
             
+            CryptoTokenHelper.ensureNewPublicKeyMatchesOld(keyStore, alias, certChain.get(0));
+            
             keyStore.setKeyEntry(alias, key,
                                  authCode != null ? authCode : authenticationCode,
                                  certChain.toArray(new Certificate[0]));

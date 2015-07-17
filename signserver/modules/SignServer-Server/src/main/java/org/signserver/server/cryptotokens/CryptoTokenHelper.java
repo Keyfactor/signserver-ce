@@ -688,5 +688,21 @@ public class CryptoTokenHelper {
         
         return result;
     }
+    
+    /**
+     * Checks that the supplied certificate has a public key matching the
+     * exiting one in the keystore.
+     * @param keyStore to get the current public key from
+     * @param alias of the entry to check
+     * @param newCertificate to compare with the current one
+     * @throws KeyStoreException if the keystore has not been initialized
+     * @throws CryptoTokenOfflineException in case the keys does not match
+     */
+    public static void ensureNewPublicKeyMatchesOld(KeyStore keyStore, String alias, Certificate newCertificate) throws KeyStoreException, CryptoTokenOfflineException {
+        Certificate oldCert = keyStore.getCertificate(alias);
+        if (!oldCert.getPublicKey().equals(newCertificate.getPublicKey())) {
+            throw new CryptoTokenOfflineException("New certificate public key does not match current one");
+        }
+    }
 
 }

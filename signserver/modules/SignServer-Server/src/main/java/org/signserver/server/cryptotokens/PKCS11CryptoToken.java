@@ -525,11 +525,13 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
                                        final char[] athenticationCode,
                                        final Map<String, Object> params,
                                        final IServices services)
-            throws CryptoTokenOfflineException, IllegalArgumentException {
+            throws CryptoTokenOfflineException {
         try {
             final KeyStore keyStore = delegate.getActivatedKeyStore();
             final Key key = keyStore.getKey(alias, athenticationCode);
             
+            CryptoTokenHelper.ensureNewPublicKeyMatchesOld(keyStore, alias, certChain.get(0));
+
             keyStore.setKeyEntry(alias, key, athenticationCode,
                                  certChain.toArray(new Certificate[0]));
         } catch (KeyStoreException ex) {

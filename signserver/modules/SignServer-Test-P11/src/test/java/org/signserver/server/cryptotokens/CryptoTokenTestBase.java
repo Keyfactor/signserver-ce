@@ -351,6 +351,19 @@ public abstract class CryptoTokenTestBase extends ModulesTestCase {
 
             assertTrue("Imported cert",
                     Arrays.equals(foundCert.getEncoded(), cert.getEncoded()));
+            
+            
+            // Test that it is not allowed to import a certificate for
+            // an other key
+            try {
+                final List<Certificate> chainForExistingKey = chain;
+                final String aliasForAnOtherKey = additionalAlias;
+                importCertificateChain(chainForExistingKey, aliasForAnOtherKey);
+                fail("Should have thrown exception about the key not matching");
+            } catch (CryptoTokenOfflineException expected) {
+                assertTrue("ex: " + expected.getMessage(), expected.getMessage().contains("does not match"));
+            }
+            
         } finally {
             try {
                 destroyKey(additionalAlias);

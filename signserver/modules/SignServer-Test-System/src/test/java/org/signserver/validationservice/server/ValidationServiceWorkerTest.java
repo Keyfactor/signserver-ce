@@ -150,7 +150,6 @@ public class ValidationServiceWorkerTest {
 
         // Worker 15 - DummyValidator
         gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER15.CLASSPATH", "org.signserver.validationservice.server.ValidationServiceWorker");
-        gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER15.SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.HardCodedCryptoToken");
         sSSession.setWorkerProperty(15, "AUTHTYPE", "NOAUTH");
         sSSession.setWorkerProperty(15, "VAL1.CLASSPATH", "org.signserver.validationservice.server.DummyValidator");
         sSSession.setWorkerProperty(15, "VAL1.TESTPROP", "TEST");
@@ -165,7 +164,6 @@ public class ValidationServiceWorkerTest {
         
         // Worker 16 - NoRevokationCheckingValidator
         gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER16.CLASSPATH", "org.signserver.validationservice.server.ValidationServiceWorker");
-        gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER16.SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.HardCodedCryptoToken");
         sSSession.setWorkerProperty(16, "AUTHTYPE", "NOAUTH");
         sSSession.setWorkerProperty(16, "VAL1.CLASSPATH", "org.signserver.validationservice.server.NoRevocationCheckingValidator");
         sSSession.setWorkerProperty(16, "VAL1.ISSUER1.CERTCHAIN", ValidationTestUtils.genPEMStringFromChain(validChain1));

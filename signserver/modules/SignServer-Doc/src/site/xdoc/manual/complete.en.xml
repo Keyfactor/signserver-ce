@@ -6243,7 +6243,7 @@ crypto worker being used.
                 </p>
                 <p>
 To configure an alternative alias selector, set the <source>ALIASSELECTOR</source>
-worker property of the crypto worker pointing to the class name of an
+worker property of the worker pointing to the class name of an
 implementation for an alias selector to use.
                 </p>
                 

@@ -123,19 +123,15 @@ Different kinds of tokens can be used to perform sign and crypto operations:
 </ul>
 </section>
 
-<section name="What's new in SignServer 3.6?">
+<section name="What's new in SignServer 3.7?">
 <p>
-Some of the major new features in version 3.6 are:
+Some of the major new features in version 3.7 are:
 </p>
 <ul>
-    <li>Independent worker and crypto token configuration</li>
-    <li>Underlying CESeCore library upgraded</li>
-    <li>Separation between community and enterprise editions</li>                    
-    <li>New application: SignServer TimeMonitor (enterprise edition)</li>
-    <li>New signers: Authenticode (enterprise edition), Plain signatures, Master List</li>
-    <li>Querying of database archive from WS and GUI</li>    
-    <li>Support for specifying HSM slot by label</li>
-    <li>HSM keep alive service</li>
+    <li>Individual keys and certificates support</li>
+    <li>Initial support for building using Maven</li>
+    <li>GUI improvments</li>
+    <li>Upgraded dependencies</li>
 </ul>
 <p>
 More information can be found in the <a href="manual.html">manual</a> or in the

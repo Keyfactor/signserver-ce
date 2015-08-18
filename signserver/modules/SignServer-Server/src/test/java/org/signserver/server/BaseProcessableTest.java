@@ -371,6 +371,11 @@ public class BaseProcessableTest extends TestCase {
                 errors.contains("Test alias selector error"));
     }
     
+    /**
+     * Test importing a certificate chain.
+     * 
+     * @throws Exception 
+     */
     @Test
     public void testImportCertificateChain() throws Exception {
         LOG.info("testGetCryptoToken_noDefaults");

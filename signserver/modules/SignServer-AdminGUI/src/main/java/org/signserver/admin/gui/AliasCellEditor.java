@@ -22,6 +22,9 @@ import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 
 /**
+ * Custom cell editor implementing a combo box with pre-defined entries
+ * for the standard hard-coded aliases (DEFAULTKEY and NEXTKEY)
+ * as well as with the possibility of entering a token entry alias manually.
  *
  * @author Marcus Lundblad
  * @version $Id$

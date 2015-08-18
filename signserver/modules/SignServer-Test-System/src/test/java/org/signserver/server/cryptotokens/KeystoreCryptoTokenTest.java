@@ -326,6 +326,10 @@ public class KeystoreCryptoTokenTest extends KeystoreCryptoTokenTestBase {
         }
     }
 
+    /**
+     * Test importing a new certificate chain to an existing keystore.
+     * @throws Exception 
+     */
     public void testImportCertificateChain() throws Exception {
         LOG.info("testImportCertificateChain");
 

@@ -84,7 +84,7 @@
 #end
 
 #macro ( projectanchor $name $value )
-  #if ($value.startsWith("http://"))
+  #if ($value.startsWith("http://") || $value.startsWith("https://"))
     <a href="$value" class="externalLink">$name</a>
   #else
     <a href="$relativePath$value">$name</a>
@@ -94,7 +94,7 @@
 #macro ( link $item )
   #set ($href = $value.getAttributeValue("href"))
   #set ($name = $value.getText() )
-  #if ($href.startsWith("http://"))
+  #if ($href.startsWith("http://") || $href.startsWith("https://"))
     <a href="$href" class="externalLink">$name</a>
   #else
     <a href="$relativePath$href">$name</a>
@@ -173,13 +173,13 @@
       #end
       
         <li><div class="menuheader">Used Services</div>
-          <p><br/>
+          <p><br>
           <a href="http://sourceforge.net/projects/signserver/"><img style="border:none; margin-left:20px;" src="http://sourceforge.net/sflogo.php?group_id=190195&amp;type=13" width="120" height="30" alt="Get SignServer at SourceForge.net. Fast, secure and Free Open Source software downloads" /></a>
           </p>
         </li>
         <li><div class="menuheader">PKI by PrimeKey</div>
           <p>
-          <br/>
+          <br>
                 <a href="https://www.primekey.se/technologies/products-overview/ejbca-enterprise/" target="ejbca">
                 <img style="border:none; margin-left:20px;" src="$relativePath/images/ejbca_pki_by_primekey.png" alt="Click the PKI-by-PrimeKey-EJBCA-logo to visit www.ejbca.org"/>
                 </a>
@@ -221,20 +221,20 @@
       <div class="logobar">
           <table width="100%">
             <tr>
-                <td width="15%"><a href="http://www.signserver.org/"><img src="$relativePath/images/SignServer_pki_by_primekey.png" alt="Click the PKI-by-PrimeKey-SignServer-logo to visit www.signserver.org" title="The logo squares follow a given magnitude of primes, symbolizing the encryption method of PrimeKey PKI." width="245" height="76" style="border:none;"/></a></td>
+                <td width="15%"><a href="http://www.signserver.org/"><img src="$relativePath/images/SignServer_pki_by_primekey.png" alt="Click the PKI-by-PrimeKey-SignServer-logo to visit www.signserver.org" title="The logo squares follow a given magnitude of primes, symbolizing the encryption method of PrimeKey PKI." width="245" height="76" style="border:none;"></a></td>
                 <td style="text-align:right">
                     <div class="searchcaption">
-                            Search signserver.org for:<br />
+                            Search signserver.org for:<br>
                             <form id="searchForm" target="_blank" onsubmit="q.value = query.value + ' site:signserver.org'" action="http://www.google.com/search" method="get">
                                 <input name="q" type="hidden">
                                 <div style="height: 18px; white-space: nowrap;">
-                                    <input name="query" id="searchBox" maxlength="255" />
-                                    <input type="submit" value="Go" />
+                                    <input name="query" id="searchBox" maxlength="255">
+                                    <input type="submit" value="Go">
                                 </div>
                             </form>
                     </div>
                 </td>
-        	<td id="services"><a href="http://www.primekey.se/Services/Support/?pk_campaign=ssorg&pk_kwd=head_click-here" target="pk">Click here to learn about PrimeKey Support Services!</a></td>
+        	<td id="services"><a href="https://www.primekey.se/service-support/support/?pk_campaign=ssorg&amp;pk_kwd=head_click-here" target="pk">Click here to learn about PrimeKey Support Services!</a></td>
             </tr>
           </table>
       </div>

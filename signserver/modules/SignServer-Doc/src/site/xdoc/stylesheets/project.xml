@@ -20,7 +20,7 @@
             <menu name="Documentation">
                 <item name="Manual"	 href="/manual.html"/>
                 <item name="Installation Guide"	 href="/manual/installguide.html"/>
-                <item name="Changelog"    href="http://jira.primekey.se/browse/DSS?report=com.atlassian.jira.plugin.system.project:changelog-panel"/>
+                <item name="Changelog"    href="https://jira.primekey.se/browse/DSS?report=com.atlassian.jira.plugin.system.project:changelog-panel"/>
             </menu>
 
             <menu name="Download">
@@ -29,7 +29,7 @@
 
             <menu name="Contributing">
                 <item name="Contributors"          href="/contributors.html"/>
-                <item name="Bug Database"          href="http://jira.primekey.se/"/>
+                <item name="Bug Database"          href="https://jira.primekey.se/"/>
                 <item name="Repositories"      href="/repositories.html"/>
             </menu>
 

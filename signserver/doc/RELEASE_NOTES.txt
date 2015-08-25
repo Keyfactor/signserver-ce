@@ -34,6 +34,15 @@ Notice:
    KeystoreCryptoTokens to have a DEFAULTKEY property set.
    Having a defined DEFAULTKEY is not needed if using runtime-decided keys
    (using the AliasSelector interfaces).
+ - The old way of specifying PKCS#11 libraries by referencing the path to the
+   dynamic library as a worker property for a crypto worker has been
+   deprecated in favor of using named library definitions.
+   To continue using the old way, you need to make sure there is a defined
+   named library using the same path as manually specified by the worker.
+   If the library is not among the pre-defined libraries, it is possible to
+   add new definitions in the deploy properties.
+   For security reasons, it is also possible to disable any of the pre-defined
+   library definitions.
 
 See ChangeLog.txt for the full list of changes.
 

@@ -37,7 +37,10 @@ a) Configuration file name change:
 b) Pay attention to changes needed when using soft keystore crypto tokens
    as described in the RELEASE_NOTES.txt.
 
-c) Dependency upgraded:
+c) Pay attention to changes needed for PKCS#11 crypto token library definitions
+   as described in the RELEASE_NOTES.txt.
+
+d) Dependency upgraded:
 
 The XML Security library has been updated to version 1.5.8 and its 
 dependency to 2.7.2. This requires special handling if JBoss is used. See 

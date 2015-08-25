@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.signserver</groupId>
         <artifactId>SignServer-Modules</artifactId>
-        <version>3.7-SNAPSHOT</version>
+        <version>3.7.0-SNAPSHOT</version>
     </parent>
     <artifactId>SignServer-ejb-ClientWS</artifactId>
     <packaging>ejb</packaging>

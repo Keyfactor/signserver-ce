@@ -5,26 +5,6 @@
     <version>3.7.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>SignServer Modules</name>
-    <repositories>
-        <repository>
-            <id>nexus1.lab.primekey.se-releases</id>
-            <url>http://nexus1.lab.primekey.se:8081/nexus/content/repositories/releases/</url>
-        </repository>
-        <repository>
-            <id>nexus1.lab.primekey.se-snapshots</id>
-            <url>http://nexus1.lab.primekey.se:8081/nexus/content/repositories/snapshots/</url>
-        </repository>
-    </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>nexus1.lab.primekey.se-releases</id>
-            <url>http://nexus1.lab.primekey.se:8081/nexus/content/repositories/releases/</url>
-        </pluginRepository>
-        <pluginRepository>
-            <id>nexus1.lab.primekey.se-snapshots</id>
-            <url>http://nexus1.lab.primekey.se:8081/nexus/content/repositories/snapshots/</url>
-        </pluginRepository>
-    </pluginRepositories>
     <distributionManagement>
         <repository>
             <id>nexus1.lab.primekey.se-releases</id>

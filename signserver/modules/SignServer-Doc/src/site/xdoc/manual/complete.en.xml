@@ -42,7 +42,7 @@ lookup the validation of a given certificate.
                 <subsection name="Changes between version 3.6 and 3.7">
                     <ul>
                         <li>Individual keys and certificates support</li>
-                        <li>PKCS11 libraries used by crypto tokens must be defined at deploy-time</li>
+                        <li>PKCS#11 libraries used by crypto tokens must be defined at deploy-time</li>
                         <li>Initial support for building using Maven</li>
                     </ul>
                 </subsection>

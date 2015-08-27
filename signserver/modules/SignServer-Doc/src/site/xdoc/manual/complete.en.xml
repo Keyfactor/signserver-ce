@@ -3945,7 +3945,7 @@ If the LEAPSECOND status property value has expired, no valid time will be retur
 Supported Algorithms are: GOST3411, MD5, SHA1, SHA224, SHA256, SHA384, SHA512, RIPEMD128, RIPEMD160, RIPEMD256
                         </p>
                         <p>
-<b>ACCEPTEDPOLICIES</b> =  A ';' separated string containing accepted policies, can be null if it shouldn't be used. (OPTIONAL, Recommended)
+<b>ACCEPTEDPOLICIES</b> =  A ';' separated string containing accepted policies. Note that only policies listed in this property are allowed to be requested. If the property does not contain any policies then no policy can be requested. Requests not including any policy would use the default policy regardless of this property but requests explicitly requesting the default policy would still not be allowed unless it is listed in this property. (OPTIONAL, Recommended)
                         </p>
                         <p>
 <b>ACCEPTEDEXTENSIONS</b> = A ';' separated string containing accepted extensions, can be null if it shouldn't be used. (OPTIONAL)

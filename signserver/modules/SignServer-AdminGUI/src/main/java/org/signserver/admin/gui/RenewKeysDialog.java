@@ -15,6 +15,8 @@ package org.signserver.admin.gui;
 import java.awt.Frame;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 import javax.ejb.EJBException;
@@ -66,6 +68,7 @@ public class RenewKeysDialog extends JDialog {
         "DSA",
         "ECDSA"
     });
+    private final DefaultCellEditor textFieldEditor;
 
     private List<Worker> workers;
 
@@ -120,8 +123,7 @@ public class RenewKeysDialog extends JDialog {
         final BrowseCellEditor editor = new BrowseCellEditor(new JTextField(),
                 JFileChooser.SAVE_DIALOG);
         editor.setClickCountToStart(1);
-        final DefaultCellEditor textFieldEditor
-                = new DefaultCellEditor(new JTextField());
+        textFieldEditor = new DefaultCellEditor(new JTextField());
         final DefaultCellEditor comboBoxFieldEditor
                 = new DefaultCellEditor(keyAlgComboBox);
         comboBoxFieldEditor.setClickCountToStart(1);
@@ -307,12 +309,16 @@ public class RenewKeysDialog extends JDialog {
 
     private class RenewKeysTask extends Task<String, Void> {
 
+        final List<Integer> rowsToRemove;
+        
         RenewKeysTask(final Application app) {
             // Runs on the EDT.  Copy GUI state that
             // doInBackground() depends on from parameters
             // to RenewKeysTask fields, here.
             super(app);
             resultCode = OK;
+            rowsToRemove = new LinkedList<Integer>();
+            textFieldEditor.stopCellEditing();
         }
         @Override protected String doInBackground() {
             // Your Task's code here.  This method runs
@@ -402,8 +408,7 @@ public class RenewKeysDialog extends JDialog {
                                  + " for signer " + signerId);
 
                          workers.remove(worker);
-                         data.remove(row);
-                         row--;
+                         rowsToRemove.add(row);
                      } catch (AdminNotAuthorizedException_Exception e) {
                          final String error =
                                  "Error generating key for signer "
@@ -435,6 +440,16 @@ public class RenewKeysDialog extends JDialog {
         @Override protected void succeeded(final String result) {
             // Runs on the EDT.  Update the GUI based on
             // the result computed by doInBackground().
+            
+            final DefaultTableModel tableModel =
+                    (DefaultTableModel) jTable1.getModel();
+
+            // remove rows from the end to preserv row ordering
+            Collections.reverse(rowsToRemove);
+            for (int row : rowsToRemove) {
+                tableModel.removeRow(row);
+            }
+
             if (result != null) {
                 if (result.length() > 0) {
                     jTable1.revalidate();

@@ -3541,7 +3541,7 @@ This authorizer requires a valid username and password. User accounts are
 configured by setting properties of the form shown above, where
 [NAME] is the username and [PASSWORD] is the clear-text password. In the second
 form [HASHED_PASSWORD] should be replaced with the output of the digest algorithm 
-specified in [HASH_ALGORITHM]. The third form uses a hash value that is appended 
+specified in [HASH_ALGORITHM]. The third form uses a salt that is appended 
 to the password before hashing it.
                         </p>
                         <p>

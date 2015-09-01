@@ -64,6 +64,8 @@ public class GenerateKeysDialog extends JDialog {
     private final Worker worker;
     private boolean generateCalled;
     private final DefaultTableModel tableModel;
+    
+    private final DefaultCellEditor textFieldEditor;
 
     /** Creates new form GenerateRequestsDialog */
     public GenerateKeysDialog(final Frame parent, final boolean modal,
@@ -100,8 +102,7 @@ public class GenerateKeysDialog extends JDialog {
         });
         tableChangedPerformed();
 
-        final DefaultCellEditor textFieldEditor
-                = new DefaultCellEditor(new JTextField());
+        textFieldEditor = new DefaultCellEditor(new JTextField());
         final DefaultCellEditor comboBoxFieldEditor
                 = new DefaultCellEditor(keyAlgComboBox);
         comboBoxFieldEditor.setClickCountToStart(1);
@@ -365,6 +366,7 @@ public class GenerateKeysDialog extends JDialog {
             super(app);
             resultCode = OK;
             generateCalled = true;
+            textFieldEditor.stopCellEditing();
         }
         @Override protected String doInBackground() {
             // Your Task's code here.  This method runs

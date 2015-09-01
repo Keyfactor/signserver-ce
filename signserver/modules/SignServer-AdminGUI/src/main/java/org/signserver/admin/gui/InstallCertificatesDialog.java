@@ -87,6 +87,9 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
     
     private Map<Integer, Utils.HardCodedAliasValue> savedAliases =
             new HashMap<Integer, Utils.HardCodedAliasValue>();
+    
+    final BrowseCellEditor editor;
+    final AliasCellEditor aliasCellEditor;
 
     /** Creates new form InstallCertificatesDialog. */
     public InstallCertificatesDialog(java.awt.Frame parent, boolean modal,
@@ -161,8 +164,7 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
 
         });
 
-        final BrowseCellEditor editor = new BrowseCellEditor(new JTextField(),
-                JFileChooser.OPEN_DIALOG);
+        editor = new BrowseCellEditor(new JTextField(), JFileChooser.OPEN_DIALOG);
         editor.setClickCountToStart(1);
         final TableColumn columnSignerCert = jTable1.getColumn("Signer certificate");
         final TableColumn columnCertChain = jTable1.getColumn("Certificate chain");
@@ -175,7 +177,7 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
         columnCertChain.setCellRenderer(new BrowseCellRenderer());
 
         final JComboBox aliasCellEditorComboBox = new JComboBox();
-        final AliasCellEditor aliasCellEditor =
+        aliasCellEditor =
                 new AliasCellEditor(this.signers, aliasCellEditorComboBox, false);
         keyColumn.setCellEditor(aliasCellEditor);
 
@@ -389,6 +391,8 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
             // doInBackground() depends on from parameters
             // to InstallCertificatesTask fields, here.
             super(app);
+            editor.stopCellEditing();
+            aliasCellEditor.stopCellEditing();
         }
         @Override protected Result doInBackground() {
             // Your Task's code here.  This method runs

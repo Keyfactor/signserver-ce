@@ -90,6 +90,8 @@ public class GenerateRequestsDialog extends JDialog {
          Utils.HardCodedAlias.NEXT_KEY, Utils.HardCodedAlias.DEFAULT_KEY});
 
     private List<Worker> workers;
+    
+    final DefaultCellEditor textFieldEditor;
 
     public GenerateRequestsDialog(final Frame parent, final boolean modal,
             final Worker worker, final List<String> aliases, final List<Worker> signers,
@@ -201,8 +203,7 @@ public class GenerateRequestsDialog extends JDialog {
         final BrowseCellEditor editor = new BrowseCellEditor(new JTextField(),
                 JFileChooser.SAVE_DIALOG);
         editor.setClickCountToStart(1);
-        final DefaultCellEditor textFieldEditor
-                = new DefaultCellEditor(new JTextField());
+        textFieldEditor = new DefaultCellEditor(new JTextField());
         final DefaultCellEditor comboBoxFieldEditor
                 = new DefaultCellEditor(sigAlgComboBox);
         comboBoxFieldEditor.setClickCountToStart(1);
@@ -447,6 +448,8 @@ public class GenerateRequestsDialog extends JDialog {
                     cancel(false);
                 }
             }
+            
+            textFieldEditor.stopCellEditing();
         }
         @Override protected String doInBackground() {
             // Your Task's code here.  This method runs

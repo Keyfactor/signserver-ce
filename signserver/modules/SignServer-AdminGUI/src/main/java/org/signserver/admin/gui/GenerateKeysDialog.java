@@ -21,6 +21,8 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
@@ -102,7 +104,39 @@ public class GenerateKeysDialog extends JDialog {
         });
         tableChangedPerformed();
 
-        textFieldEditor = new DefaultCellEditor(new JTextField());
+        final JTextField textField = new JTextField();
+        
+        // update button state based on the text field content as editing is
+        // in progress, this avoids the problem where you have to click outside
+        // the last edited field to "force" a refresh of the "Generate" button
+        textField.getDocument().addDocumentListener(new DocumentListener() {
+
+            private void changed() {
+                final int col = jTable1.getEditingColumn();
+                final int row = jTable1.getEditingRow();
+                
+                jTable1.getModel().setValueAt(textField.getText(), row, col);              
+                tableChangedPerformed();
+            }
+            
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                changed();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                changed();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                changed();
+            }
+            
+        });
+
+        textFieldEditor = new DefaultCellEditor(textField);
         final DefaultCellEditor comboBoxFieldEditor
                 = new DefaultCellEditor(keyAlgComboBox);
         comboBoxFieldEditor.setClickCountToStart(1);
@@ -275,7 +309,7 @@ public class GenerateKeysDialog extends JDialog {
         
         // Enable/disable the OK button
         boolean enable = !"".equals(jTable1.getValueAt(0, 0)); // First row must not be empty
-        
+
         // Check that all rows except the last one are filled in
         if (enable) {
             for (int row = jTable1.getRowCount() - 2; row >= 0; row--) {

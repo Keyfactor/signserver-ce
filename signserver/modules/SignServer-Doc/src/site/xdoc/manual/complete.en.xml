@@ -428,7 +428,7 @@ For MariaDB you will have to set binlog_format to "row", for instance in /etc/my
 binlog_format=row
                         </source>
                     </subsubsection>
-                    <subsubsection name="Configure database driver for JBoss 5 or GlassFish">
+                    <subsubsection name="Configure database driver for GlassFish">
                         <p>
 Copy the driver for your database to the application server lib folder.
                         </p>    

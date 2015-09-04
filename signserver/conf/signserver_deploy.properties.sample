@@ -34,51 +34,6 @@
 # Default: ${appserver.home}/domains/domain1
 #glassfish.server.home.dir=/home/markus/.netbeans/6.7/GlassFishV2Domain
 
-
-# ------------ Web GUI configuration -------------------------------------------
-
-# Configure the web server in JBoss to use HTTPS and the specified bind address 
-# and ports etc.
-# Setting j2ee.web-nohttps to true skips this step.
-# Default: false
-# Comment out or set to false if the web server should be configured. 
-# Note that you will need p12/tomcat.jks and p12/truststore.jks keystore for web server https configuration. 
-# Note that if this is set to true, configurations for ports and bind addresses set in this
-# file is not taken into account, neither are the default values from SignServer.
-# In this case, the default configuration from JBoss will be un-altered.
-j2ee.web-nohttps=true
-
-# When upgrading, the important options are:
-# - httpsserver.password
-
-# Password for java trust keystore (p12/truststore.jks), default is changeit.
-#java.trustpassword=changeit
-
-# The password used to protect the web servers SSL keystore.
-#httpsserver.password=serverpwd
-
-# The path to the web servers SSL keystore.
-# Default: p12/tomcat.jks
-#httpsserver.keystore=p12/tomcat.jks
-
-# The public port JBoss will listen to http on
-# Default 8080
-#httpserver.pubhttp=8080
-
-# The public port JBoss will listen to https on, no client cert required
-# Default 8442
-#httpserver.pubhttps=8442
-
-# The private port JBoss will listen to https on, client cert required
-# Default 8443
-#httpserver.privhttps=8443
-
-# The interfaces JBoss will bind to. E.g. 127.0.0.1 will only allow connections from localhost.
-# Default 0.0.0.0
-#httpsserver.bindaddress.pubhttp=0.0.0.0
-#httpsserver.bindaddress.pubhttps=0.0.0.0
-#httpsserver.bindaddress.privhttps=0.0.0.0
-
 # ------------- Database configuration -----------------------------------------
 
 # jndi name of the datasource to use in deployment descriptors of ejbs.

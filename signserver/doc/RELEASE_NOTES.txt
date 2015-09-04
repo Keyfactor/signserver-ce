@@ -2,10 +2,17 @@ SignServer 3.7.0
 ----------------
 
 New features:
+ - Indivual keys. Key aliases in crypto tokens can be selected by workers at
+   run-time based on the incoming request using the new AliasSelector interface.
+   An implementation selecting aliases based on the authenticated user of the
+   request is included.
 
 Improvements:
 
 Bug fixes:
+ - Crypto token operations in the administration GUI no requires clicking
+   outside of the last edited input field to be able to performe the action
+   (i.e. when generating keys).
 
 Notice:
  - The SignServer build/deployment configuration file has been renamed from

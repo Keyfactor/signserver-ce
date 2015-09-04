@@ -681,15 +681,6 @@ When using Oracle JDK and JBoss 7 you need to install BC jars as a module in JBo
 How to install modules are described in <a href="https://docs.jboss.org/author/display/MODULES/Defining+a+module">docs.jboss.org/author/display/MODULES/Defining+a+module</a>.
                         </p>
                     </subsubsection>
-                    <subsubsection name="Fix XML Security library issue in JBoss 5">
-                        <p>
-JBoss 5 bundles an older version of the XML Security library which conflicts with the one included in SignServer.
-Run the below Ant target to copy the SignServer version and its dependencies to the JBoss endorsed folder:
-                        </p>
-                        <source>
-bin/ant j2ee:copy-xmlsec
-                        </source>
-                    </subsubsection>
                     <subsubsection name="Fix XML Security library issue 1 in JBoss 7">
                                                 <p>
         JBoss 7 bundles version 1.5.1 of the XML Security library. The library bundled with SignServer is not

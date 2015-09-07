@@ -658,18 +658,6 @@ If the server is not so fast, we have to wait a little before we can reload, oth
                 </subsection>
 
                 <subsection name="6. Configure application server">
-                    <subsubsection name="Fix web service problem in JBoss 5">
-                        <p>
-Edit jboss-beans.xml to force the endpoint URL to be generated based on the WSDL
-request by commenting out the line:
-                        </p>
-<pre>
-    &lt;property name="webServiceHost"&gt;${jboss.bind.address}&lt;/property&gt;
-</pre>
-                        <p>
-For JBoss 5.1.0.GA the file is available under: server/default/deployers/jbossws.deployer/META-INF/
-                        </p>
-                    </subsubsection>
                     <subsubsection name="Fix web service problem in JBoss AS 7/EAP 6">
                         <p>
 Configure WSDL web-host rewriting to use the request host. Needed for webservices to work correctly when requiring client certificate.

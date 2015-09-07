@@ -5860,9 +5860,6 @@ To backup the content of the crypto token, a database backup should be made.
 The password supplied when activating the token the first time will be used
 as the keystore password.
                         </p>
-                        <p>
-This crypto token is not compatible with running under GlassFish version 2.    
-                        </p>
                     </subsubsection>
                     <subsubsection name="SIGNERTOKEN.CLASSPATH">
                         <p>

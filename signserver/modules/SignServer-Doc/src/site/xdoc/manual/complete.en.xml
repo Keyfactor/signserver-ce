@@ -783,13 +783,6 @@ cp conf/signserver_deploy.properties.sample conf/signserver_deploy.properties
 
                     <subsubsection name="Web GUI configuration">
                         <p>
-Uncomment j2ee.web-nohttps=true if SignServer should be used to configure the
-keystore in JBoss 5.
-                        </p>
-                        <source>
-#j2ee.web-nohttps=true
-                        </source>
-                        <p>
 For GlassFish change httpserver.privhttps to a port configured with HTTPS and
 client authentication.
                         </p>

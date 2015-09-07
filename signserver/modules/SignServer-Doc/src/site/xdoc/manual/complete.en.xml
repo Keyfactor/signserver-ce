@@ -428,7 +428,7 @@ For MariaDB you will have to set binlog_format to "row", for instance in /etc/my
 binlog_format=row
                         </source>
                     </subsubsection>
-                    <subsubsection name="Configure database driver for GlassFish">
+                    <subsubsection name="Configure database driver for JBoss 5 or GlassFish">
                         <p>
 Copy the driver for your database to the application server lib folder.
                         </p>    
@@ -529,6 +529,12 @@ Or for MariaDB, mariadb-java-client-1.1.2.jar:
 </pre>
 </p>
                     </subsubsection>
+             
+                    <subsubsection name="Configure data source for JBoss 5">
+                        <p>
+This is done automagically by the SignServer build script later during "ant deploy".
+                        </p>
+                    </subsubsection>
                     
                     <subsubsection name="Configure data source for GlassFish">
                     <p>
@@ -586,6 +592,14 @@ Then restart the application server.
                 </subsection>
 
                 <subsection name="5. Configure web server keystores">
+                    <subsubsection name="JBoss 5 SSL configuration">
+                        <p>
+For JBoss if you are going to protect the HTTP communication with SSL, you need
+a JKS SSL server keystore. Rename the web server keystore to tomcat.jks and put
+it in a 'p12' subdirectory. Place a keystore called truststore.jks in the 'p12' directory
+containing the trusted root certificate(s).
+                        </p>
+                    </subsubsection>
                     <subsubsection name="GlassFish SSL configuration">
                         <p>
 For GlassFish enable client authentication for http-listener-2 and manually
@@ -644,6 +658,18 @@ If the server is not so fast, we have to wait a little before we can reload, oth
                 </subsection>
 
                 <subsection name="6. Configure application server">
+                    <subsubsection name="Fix web service problem in JBoss 5">
+                        <p>
+Edit jboss-beans.xml to force the endpoint URL to be generated based on the WSDL
+request by commenting out the line:
+                        </p>
+<pre>
+    &lt;property name="webServiceHost"&gt;${jboss.bind.address}&lt;/property&gt;
+</pre>
+                        <p>
+For JBoss 5.1.0.GA the file is available under: server/default/deployers/jbossws.deployer/META-INF/
+                        </p>
+                    </subsubsection>
                     <subsubsection name="Fix web service problem in JBoss AS 7/EAP 6">
                         <p>
 Configure WSDL web-host rewriting to use the request host. Needed for webservices to work correctly when requiring client certificate.
@@ -659,6 +685,13 @@ If the server is not so fast, we have to wait a little before we can reload, oth
 :reload
                         </source>
                     </subsubsection>
+                    <subsubsection name="Fix JBoss 5 bug with Oracle JDK">
+                        <p>
+If you are using Oracle's JDK and JBoss 5.1.x you need to copy
+SIGNSERVER_HOME/lib/ext/1.6/bc*.jar to JBOSS_HOME/server/default/lib/. Remember this
+when it's time for upgrades! This is a bug tracked by JBoss as JBAS-7882.
+                        </p>
+                    </subsubsection>
                     <subsubsection name="JBoss 7 and Oracle JDK BouncyCastle issues">
                         <p>
 When using Oracle JDK and JBoss 7 you need to install BC jars as a module in JBoss 7. See <a href="https://issues.jboss.org/browse/JBAS-7882">JBAS-7882</a>.
@@ -666,6 +699,15 @@ When using Oracle JDK and JBoss 7 you need to install BC jars as a module in JBo
                         <p>
 How to install modules are described in <a href="https://docs.jboss.org/author/display/MODULES/Defining+a+module">docs.jboss.org/author/display/MODULES/Defining+a+module</a>.
                         </p>
+                    </subsubsection>
+                    <subsubsection name="Fix XML Security library issue in JBoss 5">
+                        <p>
+JBoss 5 bundles an older version of the XML Security library which conflicts with the one included in SignServer.
+Run the below Ant target to copy the SignServer version and its dependencies to the JBoss endorsed folder:
+                        </p>
+                        <source>
+bin/ant j2ee:copy-xmlsec
+                        </source>
                     </subsubsection>
                     <subsubsection name="Fix XML Security library issue 1 in JBoss 7">
                                                 <p>
@@ -768,6 +810,13 @@ cp conf/signserver_deploy.properties.sample conf/signserver_deploy.properties
                     </source>
 
                     <subsubsection name="Web GUI configuration">
+                        <p>
+Uncomment j2ee.web-nohttps=true if SignServer should be used to configure the
+keystore in JBoss 5.
+                        </p>
+                        <source>
+#j2ee.web-nohttps=true
+                        </source>
                         <p>
 For GlassFish change httpserver.privhttps to a port configured with HTTPS and
 client authentication.
@@ -5859,6 +5908,9 @@ To backup the content of the crypto token, a database backup should be made.
                         <p>
 The password supplied when activating the token the first time will be used
 as the keystore password.
+                        </p>
+                        <p>
+This crypto token is not compatible with running under GlassFish version 2.    
                         </p>
                     </subsubsection>
                     <subsubsection name="SIGNERTOKEN.CLASSPATH">

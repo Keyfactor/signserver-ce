@@ -529,12 +529,6 @@ Or for MariaDB, mariadb-java-client-1.1.2.jar:
 </pre>
 </p>
                     </subsubsection>
-             
-                    <subsubsection name="Configure data source for JBoss 5">
-                        <p>
-This is done automagically by the SignServer build script later during "ant deploy".
-                        </p>
-                    </subsubsection>
                     
                     <subsubsection name="Configure data source for GlassFish">
                     <p>

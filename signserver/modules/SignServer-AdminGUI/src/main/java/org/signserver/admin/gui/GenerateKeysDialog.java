@@ -114,8 +114,7 @@ public class GenerateKeysDialog extends JDialog {
             @Override
             protected void tableChangedPerformed() {
                 GenerateKeysDialog.this.tableChangedPerformed();
-            }
-                    
+            }      
         });
 
         textFieldEditor = new DefaultCellEditor(textField);

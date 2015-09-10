@@ -120,10 +120,23 @@ public class RenewKeysDialog extends JDialog {
         });
         tableChangedPerformed();
 
+        final JTextField textField = new JTextField();
+        
+        // update button state based on the text field content as editing is
+        // in progress, this avoids the problem where you have to click outside
+        // the last edited field to "force" a refresh of the "Generate" button
+        textField.getDocument().addDocumentListener(
+                new TextFieldTableUpdatingDocumentListener(textField, jTable1) {
+            @Override
+            protected void tableChangedPerformed() {
+                RenewKeysDialog.this.tableChangedPerformed();
+            }
+        });
+        
         final BrowseCellEditor editor = new BrowseCellEditor(new JTextField(),
                 JFileChooser.SAVE_DIALOG);
         editor.setClickCountToStart(1);
-        textFieldEditor = new DefaultCellEditor(new JTextField());
+        textFieldEditor = new DefaultCellEditor(textField);
         final DefaultCellEditor comboBoxFieldEditor
                 = new DefaultCellEditor(keyAlgComboBox);
         comboBoxFieldEditor.setClickCountToStart(1);

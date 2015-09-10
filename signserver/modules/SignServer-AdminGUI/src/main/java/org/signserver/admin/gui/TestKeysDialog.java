@@ -142,15 +142,42 @@ public class TestKeysDialog extends JDialog {
 
             @Override
             public void tableChanged(final TableModelEvent e) {
-                tableChangedPerformed(e);
+                tableChangedPerformed();
             }
         });
 
-        final BrowseCellEditor editor = new BrowseCellEditor(new JTextField(),
+        final JTextField textField = new JTextField();
+        
+        // update button state based on the text field content as editing is
+        // in progress, this avoids the problem where you have to click outside
+        // the last edited field to "force" a refresh of the "Generate" button
+        textField.getDocument().addDocumentListener(
+                new TextFieldTableUpdatingDocumentListener(textField, jTable1) {
+            @Override
+            protected void tableChangedPerformed() {
+                TestKeysDialog.this.tableChangedPerformed();
+            }
+        });
+        
+        final JTextField comboBoxTextField =
+                (JTextField) aliasComboBox.getEditor().getEditorComponent();
+        
+        // update button state based on the text field content as editing is
+        // in progress, this avoids the problem where you have to click outside
+        // the last edited field to "force" a refresh of the "Generate" button
+        comboBoxTextField.getDocument().addDocumentListener(
+                new TextFieldTableUpdatingDocumentListener(comboBoxTextField, jTable1) {
+            @Override
+            protected void tableChangedPerformed() {
+                TestKeysDialog.this.tableChangedPerformed();
+            }
+        });
+         
+        final BrowseCellEditor editor = new BrowseCellEditor(textField,
                 JFileChooser.SAVE_DIALOG);
         editor.setClickCountToStart(1);
         final DefaultCellEditor textFieldEditor
-                = new DefaultCellEditor(new JTextField());
+                = new DefaultCellEditor(textField);
         final DefaultCellEditor comboBoxFieldEditor
                 = new DefaultCellEditor(aliasComboBox) {
 
@@ -180,7 +207,7 @@ public class TestKeysDialog extends JDialog {
         jTable1.getColumnModel().getColumn(1)
                 .setCellEditor(comboBoxFieldEditor);
         jTable1.setRowHeight(aliasComboBox.getPreferredSize().height);
-        tableChangedPerformed(null);
+        tableChangedPerformed();
     }
 
     /** This method is called from within the constructor to
@@ -277,7 +304,7 @@ public class TestKeysDialog extends JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void tableChangedPerformed(final TableModelEvent e) {
+    private void tableChangedPerformed() {
         boolean enable = true;
         for (int row = 0; row < jTable1.getRowCount(); row++) {
             if ("".equals(jTable1.getValueAt(row, 1))) {

@@ -109,31 +109,13 @@ public class GenerateKeysDialog extends JDialog {
         // update button state based on the text field content as editing is
         // in progress, this avoids the problem where you have to click outside
         // the last edited field to "force" a refresh of the "Generate" button
-        textField.getDocument().addDocumentListener(new DocumentListener() {
-
-            private void changed() {
-                final int col = jTable1.getEditingColumn();
-                final int row = jTable1.getEditingRow();
-                
-                jTable1.getModel().setValueAt(textField.getText(), row, col);              
-                tableChangedPerformed();
-            }
-            
+        textField.getDocument().addDocumentListener(
+                new TextFieldTableUpdatingDocumentListener(textField, jTable1) {
             @Override
-            public void insertUpdate(DocumentEvent e) {
-                changed();
+            protected void tableChangedPerformed() {
+                GenerateKeysDialog.this.tableChangedPerformed();
             }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                changed();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                changed();
-            }
-            
+                    
         });
 
         textFieldEditor = new DefaultCellEditor(textField);

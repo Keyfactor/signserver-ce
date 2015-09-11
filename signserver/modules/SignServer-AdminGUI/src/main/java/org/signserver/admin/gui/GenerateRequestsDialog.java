@@ -174,36 +174,35 @@ public class GenerateRequestsDialog extends JDialog {
 
             @Override
             public void tableChanged(final TableModelEvent e) {
-                boolean enable = true;
-                for (int row = 0; row < jTable1.getRowCount(); row++) {
-                    if (anyNullOrEmptyString(
-                            jTable1.getValueAt(row, 2),  
-                            jTable1.getValueAt(row, 3), 
-                            jTable1.getValueAt(row, 4))) {
-                        enable = false;
-                        break;
-                    }
-                }
-                jButtonGenerate.setEnabled(enable);
-            }
-            
-            /** @return True if any value is null or equals empty String */
-            private boolean anyNullOrEmptyString(Object... os) {
-                boolean result = false;
-                for (Object o : os) {
-                    if (o == null || "".equals(o)) {
-                        result = true;
-                        break;
-                    }
-                }
-                return result;
+                tableChangedPerformed();
             }
         });
+         
+        final JTextField textField = new JTextField();
+        final JTextField browseTextField = new JTextField();
         
-        final BrowseCellEditor editor = new BrowseCellEditor(new JTextField(),
+        textField.getDocument().addDocumentListener(
+            new TextFieldTableUpdatingDocumentListener(textField, jTable1) {
+
+                @Override
+                protected void tableChangedPerformed() {
+                    GenerateRequestsDialog.this.tableChangedPerformed();
+                }
+        });
+        
+        browseTextField.getDocument().addDocumentListener(
+            new TextFieldTableUpdatingDocumentListener(browseTextField, jTable1) {
+
+                @Override
+                protected void tableChangedPerformed() {
+                    GenerateRequestsDialog.this.tableChangedPerformed();
+                }
+        });
+        
+        final BrowseCellEditor editor = new BrowseCellEditor(browseTextField,
                 JFileChooser.SAVE_DIALOG);
         editor.setClickCountToStart(1);
-        textFieldEditor = new DefaultCellEditor(new JTextField());
+        textFieldEditor = new DefaultCellEditor(textField);
         final DefaultCellEditor comboBoxFieldEditor
                 = new DefaultCellEditor(sigAlgComboBox);
         comboBoxFieldEditor.setClickCountToStart(1);
@@ -244,7 +243,33 @@ public class GenerateRequestsDialog extends JDialog {
         }
         radioButtonsStateChanged(null);
     }
+    
+    private void tableChangedPerformed() {
+        boolean enable = true;
+        for (int row = 0; row < jTable1.getRowCount(); row++) {
+            if (anyNullOrEmptyString(
+                    jTable1.getValueAt(row, 2),  
+                    jTable1.getValueAt(row, 3), 
+                    jTable1.getValueAt(row, 4))) {
+                enable = false;
+                break;
+            }
+        }
+        jButtonGenerate.setEnabled(enable);
+    }
 
+    /** @return True if any value is null or equals empty String */
+    private static boolean anyNullOrEmptyString(Object... os) {
+        boolean result = false;
+        for (Object o : os) {
+            if (o == null || "".equals(o)) {
+                result = true;
+                break;
+            }
+        }
+        return result;
+    }
+    
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is

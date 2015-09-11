@@ -164,7 +164,9 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
 
         });
 
-        editor = new BrowseCellEditor(new JTextField(), JFileChooser.OPEN_DIALOG);
+        final JTextField browseTextField = new JTextField();
+        
+        editor = new BrowseCellEditor(browseTextField, JFileChooser.OPEN_DIALOG);
         editor.setClickCountToStart(1);
         final TableColumn columnSignerCert = jTable1.getColumn("Signer certificate");
         final TableColumn columnCertChain = jTable1.getColumn("Certificate chain");
@@ -181,24 +183,21 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
                 new AliasCellEditor(this.signers, aliasCellEditorComboBox, false);
         keyColumn.setCellEditor(aliasCellEditor);
 
+        browseTextField.getDocument().addDocumentListener(
+                new TextFieldTableUpdatingDocumentListener(browseTextField,
+                                                           jTable1) {
+
+            @Override
+            protected void tableChangedPerformed() {
+                InstallCertificatesDialog.this.tableChangedPerformed();
+            }     
+        });
+
         jTable1.getModel().addTableModelListener(new TableModelListener() {
 
             @Override
             public void tableChanged(final TableModelEvent e) {
-                boolean enable = true;
-                for (int row = 0; row < jTable1.getRowCount(); row++) {
-                    final String cert = (String) jTable1.getValueAt(row, 2);
-                    final String certChain = (String) jTable1.getValueAt(row, 3);
-
-                    // We require at least one of cert and certChain filled in
-                    if ("".equals(cert) && "".equals(certChain)) {
-                        enable = false;
-                        break;
-                    }
-                }
-                jButtonInstall.setEnabled(enable);
-                
-                updateAliasCombobox();
+                tableChangedPerformed();
             }
             
             
@@ -220,6 +219,23 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
         jTable1.setRowHeight(aliasCellEditorComboBox.getPreferredSize().height);
         
         jTable1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    }
+    
+    private void tableChangedPerformed() {
+        boolean enable = true;
+        for (int row = 0; row < jTable1.getRowCount(); row++) {
+            final String cert = (String) jTable1.getValueAt(row, 2);
+            final String certChain = (String) jTable1.getValueAt(row, 3);
+
+            // We require at least one of cert and certChain filled in
+            if ("".equals(cert) && "".equals(certChain)) {
+                enable = false;
+                break;
+            }
+        }
+        jButtonInstall.setEnabled(enable);
+
+        updateAliasCombobox();
     }
     
     private void updateAliasCombobox() {

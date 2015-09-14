@@ -35,7 +35,7 @@ For details and specific versions supported see the <a href="manual/complete.en.
             <a href="http://www.jboss.org/">JBoss web site</a>
             </p>
             <p>
-            For JBoss application server the recommended version is 5.1.0.GA.
+            For JBoss application server the recommended version is 7.1.1.Final.
             </p>
         </subsubsection>
         <subsubsection name="GlassFish Server">
@@ -43,7 +43,7 @@ For details and specific versions supported see the <a href="manual/complete.en.
             <a href="https://glassfish.dev.java.net/">GlassFish web site</a>
             </p>
             <p>
-            For GlassFish the recommended version is Open Source Edition 2.1.1.
+            For GlassFish the recommended version is Open Source Edition 3.1.
             </p>
         </subsubsection>
     </subsection>

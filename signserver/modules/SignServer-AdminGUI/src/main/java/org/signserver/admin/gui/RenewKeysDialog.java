@@ -255,13 +255,17 @@ public class RenewKeysDialog extends JDialog {
         return resultCode;
     }
 
+    private static boolean isSet(final Object value) {
+        return value != null && !"".equals(value);
+    }
+    
     /** Enable/disable the submit button based on the table state. */
     private void tableChangedPerformed() {
         boolean enable = true;
         for (int row = 0; row < jTable1.getRowCount(); row++) {
-            if ("".equals(jTable1.getValueAt(row, 2))
-                    || "".equals(jTable1.getValueAt(row, 3))
-                    || "".equals(jTable1.getValueAt(row, 4))) {
+            if (!isSet(jTable1.getValueAt(row, 2))
+                    || !isSet(jTable1.getValueAt(row, 3))
+                    || !isSet(jTable1.getValueAt(row, 4))) {
                 enable = false;
                 break;
             }

@@ -3781,6 +3781,9 @@ Properties that have common use among most signers:
                     <p>
 <b>INCLUDE_CERTIFICATE_LEVELS</b> = Number of certificate levels to include. This property is supported for all signers except MRTDSODSigner, MRTDSigner, and MSAuthCodeTimeStampSigner. The property is optional and defaults to include all certificates in the chain, except for XAdESSigner, where the default is to only include one certificate (the signing certificate). Setting this to 0 (include no certificates) is not supported for TimeStampSigner. To include all certificates specify at least the same value as number of certificates in the certificate chain.
                     </p>
+                    <p>
+<b>REQUESTDN</b> = Subject DN to be included in a certificate signing request (CSR) by default. Used by interfaces such as the Admin GUI to have a default value already filled in.
+                    </p>
                 </subsection>
 
                 <subsection name="Time-stamp Signer">

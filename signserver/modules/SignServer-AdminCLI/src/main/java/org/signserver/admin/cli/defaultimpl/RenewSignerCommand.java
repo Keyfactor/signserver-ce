@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.admin.cli.defaultimpl;
 
+import java.io.Console;
 import java.util.Properties;
 import javax.ejb.EJBException;
 import org.apache.commons.cli.CommandLine;
@@ -19,7 +20,6 @@ import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.log4j.Logger;
-import org.ejbca.ui.cli.util.ConsolePasswordReader;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.cli.spi.UnexpectedCommandFailureException;
@@ -115,8 +115,13 @@ public class RenewSignerCommand extends AbstractAdminCommand {
             if (authCode == null) {
                 getOutputStream().print("Enter authorization code: ");
                 // Read the password, but mask it so we don't display it on the console
-                ConsolePasswordReader r = new ConsolePasswordReader();
-                authCode = String.valueOf(r.readPassword());
+                final Console console = System.console();
+                
+                if (console != null) {
+                    authCode = String.valueOf(console.readPassword());
+                } else {
+                    throw new CommandFailureException("Unable to read password");
+                }
             }
 
             String workerName = args[0];

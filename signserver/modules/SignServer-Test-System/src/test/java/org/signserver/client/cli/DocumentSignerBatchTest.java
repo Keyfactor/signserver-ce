@@ -36,6 +36,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.signserver.cli.spi.CommandContext;
 import org.signserver.cli.spi.CommandFactoryContext;
+import org.signserver.client.cli.defaultimpl.ConsolePasswordReader;
 
 /**
  * Tests for the signdocument command of Client CLI using the batch mode where

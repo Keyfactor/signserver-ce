@@ -24,7 +24,6 @@ import java.util.ResourceBundle;
 import javax.xml.ws.soap.SOAPFaultException;
 import org.apache.commons.cli.*;
 import org.apache.log4j.Logger;
-import org.ejbca.ui.cli.util.ConsolePasswordReader;
 import org.signserver.cli.spi.AbstractCommand;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
@@ -199,7 +198,7 @@ public class SignDataGroupsCommand extends AbstractCommand {
      * @param line The command line to read from
      */
     private void parseCommandLine(final CommandLine line)
-            throws IllegalCommandArgumentsException {
+            throws IllegalCommandArgumentsException, CommandFailureException {
         if (line.hasOption(WORKERID)) {
                 workerId = Integer.parseInt(line.getOptionValue(
                     WORKERID, null));
@@ -277,7 +276,7 @@ public class SignDataGroupsCommand extends AbstractCommand {
      * @return a ConsolePasswordReader that can be used to read passwords
      */
     protected ConsolePasswordReader createConsolePasswordReader() {
-        return new ConsolePasswordReader();
+        return new DefaultConsolePasswordReader();
     }
 
     /**

@@ -12,12 +12,14 @@
  *************************************************************************/
 package org.signserver.client.cli.defaultimpl;
 
+import org.signserver.cli.spi.CommandFailureException;
+
 /**
- * Interface for providers of a ConsolePasswordReader.
- *
- * @author Markus Kilås
+ * Interface providing facilities for reading a password.
+ * 
+ * @author Marcus Lundblad
  * @version $Id$
  */
-public interface ConsolePasswordProvider {
-    ConsolePasswordReader createConsolePasswordReader();
+public interface ConsolePasswordReader {
+    char[] readPassword() throws CommandFailureException;
 }

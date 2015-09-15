@@ -21,7 +21,6 @@ import java.util.Properties;
 import java.util.Set;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
-import org.ejbca.ui.cli.util.ConsolePasswordReader;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.FixMethodOrder;

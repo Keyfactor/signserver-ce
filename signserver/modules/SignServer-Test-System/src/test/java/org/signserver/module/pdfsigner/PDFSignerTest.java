@@ -23,7 +23,7 @@ import java.security.cert.CertificateParsingException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Pattern;
-import org.ejbca.util.Base64;
+import org.bouncycastle.util.encoders.Base64;
 import org.ejbca.util.CertTools;
 import org.junit.After;
 import org.junit.FixMethodOrder;

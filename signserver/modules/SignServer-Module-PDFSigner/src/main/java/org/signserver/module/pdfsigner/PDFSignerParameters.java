@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 
 import org.apache.log4j.Logger;
-import org.ejbca.util.Base64;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
@@ -29,6 +28,7 @@ import com.lowagie.text.pdf.PdfSignatureAppearance;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import org.bouncycastle.util.encoders.Base64;
 
 /**
  * Class that holds configuration values passed to pdfsigner.

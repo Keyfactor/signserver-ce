@@ -31,8 +31,8 @@ import java.security.cert.CertificateException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import org.cesecore.util.Base64;
 
-import org.ejbca.util.Base64;
 import org.signserver.common.IllegalRequestException;
 
 /**

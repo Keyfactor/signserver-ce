@@ -19,7 +19,7 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
 import org.bouncycastle.jce.X509KeyUsage;
-import org.ejbca.util.Base64;
+import org.bouncycastle.util.encoders.Base64;
 import org.ejbca.util.keystore.KeyTools;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;

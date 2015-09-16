@@ -21,7 +21,7 @@ import java.util.Date;
 import javax.xml.namespace.QName;
 
 import org.bouncycastle.jce.X509KeyUsage;
-import org.ejbca.util.Base64;
+import org.bouncycastle.util.encoders.Base64;
 import org.ejbca.util.keystore.KeyTools;
 import org.junit.Before;
 import org.junit.FixMethodOrder;

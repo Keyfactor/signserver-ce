@@ -22,7 +22,7 @@ import java.security.cert.X509Certificate;
 import java.util.*;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
-import org.ejbca.util.CertTools;
+import org.cesecore.util.CertTools;
 import org.signserver.common.SignServerException;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.validationservice.common.ValidationServiceConstants;

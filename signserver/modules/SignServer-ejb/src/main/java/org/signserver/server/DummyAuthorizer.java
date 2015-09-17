@@ -16,7 +16,7 @@ import java.security.cert.X509Certificate;
 import java.util.Collections;
 import java.util.List;
 import javax.persistence.EntityManager;
-import org.ejbca.util.CertTools;
+import org.cesecore.util.CertTools;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.ProcessRequest;

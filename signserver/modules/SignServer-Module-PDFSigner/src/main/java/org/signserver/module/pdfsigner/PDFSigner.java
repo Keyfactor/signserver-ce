@@ -32,6 +32,7 @@ import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.cesecore.util.CertTools;
 import org.signserver.common.*;
 import org.signserver.ejb.interfaces.IInternalWorkerSession;
 import org.signserver.server.UsernamePasswordClientCredential;
@@ -866,7 +867,7 @@ public class PDFSigner extends BaseSigner {
 
     static URL getCRLDistributionPoint(final Certificate certificate)
             throws CertificateParsingException {
-        return org.signserver.module.pdfsigner.org.ejbca.util.CertTools.getCrlDistributionPoint(certificate);
+        return CertTools.getCrlDistributionPoint(certificate);
     }
 
     /**

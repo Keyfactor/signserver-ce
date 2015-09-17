@@ -40,7 +40,7 @@ import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.util.Selector;
 import org.bouncycastle.util.Store;
 import org.bouncycastle.util.encoders.Base64;
-import org.ejbca.util.CertTools;
+import org.cesecore.util.CertTools;
 import org.signserver.common.*;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.util.RandomPasswordGenerator;

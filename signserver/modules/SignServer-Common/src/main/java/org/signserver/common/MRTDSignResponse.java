@@ -20,8 +20,7 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
-
-import org.ejbca.util.CertTools;
+import org.cesecore.util.CertTools;
 
 /**
  * Class used for the response of the signSession.signData method and contain information

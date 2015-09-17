@@ -20,7 +20,7 @@ import java.security.cert.Certificate;
 import java.util.Collections;
 import junit.framework.TestCase;
 import org.bouncycastle.util.encoders.Base64;
-import org.ejbca.util.CertTools;
+import org.cesecore.util.CertTools;
 import org.signserver.validationservice.common.Validation.Status;
 
 /**

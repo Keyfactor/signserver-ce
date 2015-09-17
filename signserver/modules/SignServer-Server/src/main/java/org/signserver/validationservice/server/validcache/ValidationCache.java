@@ -16,7 +16,7 @@ import java.security.cert.Certificate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.ejbca.util.CertTools;
+import org.cesecore.util.CertTools;
 
 import org.signserver.validationservice.common.Validation;
 

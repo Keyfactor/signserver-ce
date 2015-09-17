@@ -33,7 +33,7 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Base64;
-import org.ejbca.util.CertTools;
+import org.cesecore.util.CertTools;
 import org.signserver.common.*;
 import org.signserver.common.util.PropertiesConstants;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;

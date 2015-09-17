@@ -29,7 +29,7 @@ import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.util.ASN1Dump;
 import org.bouncycastle.cert.jcajce.JcaX500NameUtil;
 import org.bouncycastle.jce.ECKeyUtil;
-import org.ejbca.util.CertTools;
+import org.cesecore.util.CertTools;
 import org.ejbca.util.keystore.KeyTools;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.RequestContext;

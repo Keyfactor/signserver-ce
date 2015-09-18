@@ -23,7 +23,7 @@ import static junit.framework.TestCase.fail;
 import org.apache.log4j.Logger;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.ejbca.util.CertTools;
+import org.cesecore.util.CertTools;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.signserver.common.GenericValidationRequest;

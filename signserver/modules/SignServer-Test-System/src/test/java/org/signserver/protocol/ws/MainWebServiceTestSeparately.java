@@ -29,7 +29,7 @@ import org.bouncycastle.tsp.TSPAlgorithms;
 import org.bouncycastle.tsp.TimeStampRequest;
 import org.bouncycastle.tsp.TimeStampRequestGenerator;
 import org.bouncycastle.tsp.TimeStampResponse;
-import org.ejbca.util.CertTools;
+import org.cesecore.util.CertTools;
 import org.ejbca.util.keystore.KeyTools;
 import org.junit.After;
 import org.junit.FixMethodOrder;

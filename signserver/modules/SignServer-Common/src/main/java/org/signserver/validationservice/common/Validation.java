@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import org.apache.log4j.Logger;
-import org.ejbca.util.CertTools;
+import org.cesecore.util.CertTools;
 
 /**
  * Base validation VO containing the status of a specific certificate.

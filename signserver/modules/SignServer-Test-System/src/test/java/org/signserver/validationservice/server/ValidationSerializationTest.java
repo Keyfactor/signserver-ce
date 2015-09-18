@@ -21,7 +21,7 @@ import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
-import org.ejbca.util.CertTools;
+import org.cesecore.util.CertTools;
 import org.ejbca.util.keystore.KeyTools;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;

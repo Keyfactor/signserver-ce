@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.common;
 
+import org.cesecore.util.CertTools;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.Serializable;
@@ -26,7 +27,6 @@ import java.util.Iterator;
 import java.util.List;
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Base64;
-import org.ejbca.util.CertTools;
 import static org.signserver.common.util.PropertiesConstants.AUTHORIZED_CLIENTS;
 import static org.signserver.common.util.PropertiesConstants.KEYSTORE_DATA;
 import static org.signserver.common.util.PropertiesConstants.SIGNERCERT;
@@ -190,18 +190,20 @@ public class ProcessableConfig {
      * 
      */
     public void setSignerCertificate(X509Certificate signerCert, String scope) {
-        ArrayList<X509Certificate> list = new ArrayList<X509Certificate>();
+        ArrayList<Certificate> list = new ArrayList<Certificate>();
         list.add(signerCert);
         if (scope.equals(GlobalConfiguration.SCOPE_GLOBAL)) {
             try {
-                String stringcert = new String(CertTools.getPEMFromCerts(list));
+                String stringcert =
+                        new String(CertTools.getPemFromCertificateChain(list));
                 put(SIGNERCERT, stringcert);
             } catch (CertificateException e) {
                 LOG.error(e);
             }
         } else {
             try {
-                String stringcert = new String(CertTools.getPEMFromCerts(list));
+                String stringcert =
+                        new String(CertTools.getPemFromCertificateChain(list));
                 put(WorkerConfig.getNodeId() + "." + SIGNERCERT, stringcert);
             } catch (CertificateException e) {
                 LOG.error(e);

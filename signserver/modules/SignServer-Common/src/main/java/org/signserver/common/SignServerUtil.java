@@ -48,6 +48,12 @@ public class SignServerUtil {
         }
     }
 
+    public static synchronized void installBCProviderIfNotAvailable() {
+    	if (Security.getProvider("BC") == null) {
+    		installBCProvider();
+    	}
+    }
+    
     /**
      * Method that takes a configuration, traverses trough it to find all properties beginning
      * with the propertyPrefix and a number between 0 and 255 and returns a list in the given

@@ -26,8 +26,8 @@ import java.util.Date;
 import java.util.List;
 import org.bouncycastle.asn1.x509.CRLDistPoint;
 import org.bouncycastle.jce.X509KeyUsage;
+import org.cesecore.util.CertTools;
 import org.ejbca.core.model.ca.crl.RevokedCertInfo;
-import org.ejbca.util.CertTools;
 import org.ejbca.util.keystore.KeyTools;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
@@ -104,32 +104,32 @@ public class CRLValidatorTest {
         ArrayList<X509Certificate> chain1 = new ArrayList<X509Certificate>();
 
         KeyPair keysRootCA1 = KeyTools.genKeys("1024", "RSA");
-        certRootCA1 = ValidationTestUtils.genCert("CN=RootCA1", "CN=RootCA1", keysRootCA1.getPrivate(), keysRootCA1.getPublic(),
+        certRootCA1 = ValidationTestUtils.genCert(1000000, "CN=RootCA1", "CN=RootCA1", keysRootCA1.getPrivate(), keysRootCA1.getPublic(),
                 new Date(0), new Date(System.currentTimeMillis() + 1000000), true);
 
         KeyPair keysEndEntity1 = KeyTools.genKeys("1024", "RSA");
-        certEndEntity1 = ValidationTestUtils.genCert("CN=EndEntity1", "CN=RootCA1", keysRootCA1.getPrivate(), keysEndEntity1.getPublic(),
+        certEndEntity1 = ValidationTestUtils.genCert(1000000, "CN=EndEntity1", "CN=RootCA1", keysRootCA1.getPrivate(), keysEndEntity1.getPublic(),
                 new Date(0), new Date(System.currentTimeMillis() + 1000000), false, 0, crlDistPointCA1WithUrl);
 
         KeyPair keysEndEntity2 = KeyTools.genKeys("1024", "RSA");
-        certEndEntity2 = ValidationTestUtils.genCert("CN=EndEntity2", "CN=RootCA1", keysRootCA1.getPrivate(), keysEndEntity2.getPublic(),
+        certEndEntity2 = ValidationTestUtils.genCert(1000000, "CN=EndEntity2", "CN=RootCA1", keysRootCA1.getPrivate(), keysEndEntity2.getPublic(),
                 new Date(0), new Date(System.currentTimeMillis() + 1000000), false, 0, crlDistPointCA1WithUrl);
 
         KeyPair keysEndEntity5 = KeyTools.genKeys("1024", "RSA");
-        certEndEntity5Expired = ValidationTestUtils.genCert("CN=EndEntity5", "CN=RootCA1", keysRootCA1.getPrivate(), keysEndEntity5.getPublic(),
+        certEndEntity5Expired = ValidationTestUtils.genCert(1000000, "CN=EndEntity5", "CN=RootCA1", keysRootCA1.getPrivate(), keysEndEntity5.getPublic(),
                 new Date(0), new Date(System.currentTimeMillis() - 2000000), false, 0, crlDistPointCA1WithUrl);
 
         KeyPair keysEndEntity6 = KeyTools.genKeys("1024", "RSA");
-        certEndEntity6NotYetValid = ValidationTestUtils.genCert("CN=EndEntity6", "CN=RootCA1", keysRootCA1.getPrivate(), keysEndEntity6.getPublic(),
+        certEndEntity6NotYetValid = ValidationTestUtils.genCert(1000000, "CN=EndEntity6", "CN=RootCA1", keysRootCA1.getPrivate(), keysEndEntity6.getPublic(),
                 new Date(System.currentTimeMillis() + 1000000), new Date(System.currentTimeMillis() + 3000000), false, 0, crlDistPointCA1WithUrl);
 
         KeyPair keysEndEntity7 = KeyTools.genKeys("1024", "RSA");
         PrivateKey notKeyOfRootCA1 = keysEndEntity1.getPrivate();
-        certEndEntity7WrongIssuer = ValidationTestUtils.genCert("CN=EndEntity7", "CN=RootCA1", notKeyOfRootCA1, keysEndEntity7.getPublic(),
+        certEndEntity7WrongIssuer = ValidationTestUtils.genCert(1000000, "CN=EndEntity7", "CN=RootCA1", notKeyOfRootCA1, keysEndEntity7.getPublic(),
                 new Date(0), new Date(System.currentTimeMillis() + 1000000), false, 0, crlDistPointCA1WithUrl);
 
         KeyPair keysEndEntity8 = KeyTools.genKeys("1024", "RSA");
-        certEndEntity8KeyUsageSig = ValidationTestUtils.genCert("CN=EndEntity8", "CN=RootCA1", keysRootCA1.getPrivate(), keysEndEntity8.getPublic(),
+        certEndEntity8KeyUsageSig = ValidationTestUtils.genCert(1000000, "CN=EndEntity8", "CN=RootCA1", keysRootCA1.getPrivate(), keysEndEntity8.getPublic(),
                 new Date(0), new Date(System.currentTimeMillis() + 1000000), false, X509KeyUsage.digitalSignature | X509KeyUsage.nonRepudiation, crlDistPointCA1WithUrl);
 
         ArrayList<RevokedCertInfo> revoked = new ArrayList<RevokedCertInfo>();
@@ -159,15 +159,15 @@ public class CRLValidatorTest {
         ArrayList<X509Certificate> chain2 = new ArrayList<X509Certificate>();
 
         KeyPair keysRootCA2 = KeyTools.genKeys("1024", "RSA");
-        certRootCA2 = ValidationTestUtils.genCert("CN=RootCA2", "CN=RootCA2", keysRootCA2.getPrivate(), keysRootCA2.getPublic(),
+        certRootCA2 = ValidationTestUtils.genCert(1000000, "CN=RootCA2", "CN=RootCA2", keysRootCA2.getPrivate(), keysRootCA2.getPublic(),
                 new Date(0), new Date(System.currentTimeMillis() + 1000000), true);
 
         KeyPair keysEndEntity3 = KeyTools.genKeys("1024", "RSA");
-        certEndEntity3 = ValidationTestUtils.genCert("CN=EndEntity3", "CN=RootCA2", keysRootCA2.getPrivate(), keysEndEntity3.getPublic(),
+        certEndEntity3 = ValidationTestUtils.genCert(1000000, "CN=EndEntity3", "CN=RootCA2", keysRootCA2.getPrivate(), keysEndEntity3.getPublic(),
                 new Date(0), new Date(System.currentTimeMillis() + 1000000), false, 0, crlDistPointCA2WithIssuer);
 
         KeyPair keysEndEntity4 = KeyTools.genKeys("1024", "RSA");
-        certEndEntity4 = ValidationTestUtils.genCert("CN=EndEntity4", "CN=RootCA2", keysRootCA2.getPrivate(), keysEndEntity4.getPublic(),
+        certEndEntity4 = ValidationTestUtils.genCert(1000000, "CN=EndEntity4", "CN=RootCA2", keysRootCA2.getPrivate(), keysEndEntity4.getPublic(),
                 new Date(0), new Date(System.currentTimeMillis() + 1000000), false, 0, crlDistPointCA2WithIssuer);
 
         ArrayList<RevokedCertInfo> revoked2 = new ArrayList<RevokedCertInfo>();

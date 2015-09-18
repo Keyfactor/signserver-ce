@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.security.KeyPair;
 import java.security.PrivateKey;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
@@ -31,7 +32,7 @@ import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.bouncycastle.util.encoders.Base64;
-import org.ejbca.util.CertTools;
+import org.cesecore.util.CertTools;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 import org.signserver.common.*;
@@ -254,7 +255,10 @@ public class FirstActiveDispatcherTest extends ModulesTestCase {
         Base64SignerCertReqData reqData = (Base64SignerCertReqData) workerSession.getCertificateRequest(workerId, new PKCS10CertReqInfo("SHA1withRSA", "CN=" + workerName, null), false);
         PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
         X509CertificateHolder cert = new X509v3CertificateBuilder(new X500Name("CN=Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerPrivateKey));
-        workerSession.setWorkerProperty(workerId, "SIGNERCERTCHAIN", new String(CertTools.getPEMFromCerts(Arrays.asList(new JcaX509CertificateConverter().getCertificate(cert)))));
+        X509Certificate certificate = new JcaX509CertificateConverter().getCertificate(cert);
+
+        workerSession.setWorkerProperty(workerId, "SIGNERCERTCHAIN",
+                new String(CertTools.getPemFromCertificateChain(Arrays.asList((Certificate) certificate))));
         workerSession.reloadConfiguration(workerId);
     }
 

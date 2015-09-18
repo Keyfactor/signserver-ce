@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.apache.log4j.Logger;
-import org.bouncycastle.asn1.x509.X509NameTokenizer;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.cesecore.util.CertTools;
 

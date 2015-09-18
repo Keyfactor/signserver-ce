@@ -14,7 +14,7 @@ package org.signserver.admin.cli.defaultimpl;
 
 import java.security.cert.X509Certificate;
 import java.util.Collection;
-import org.ejbca.util.CertTools;
+import org.cesecore.util.CertTools;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.cli.spi.UnexpectedCommandFailureException;

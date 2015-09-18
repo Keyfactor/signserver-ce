@@ -44,7 +44,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.log4j.Logger;
 import org.bouncycastle.cert.ocsp.OCSPException;
 import org.bouncycastle.cert.ocsp.OCSPReq;
-import org.ejbca.util.CertTools;
+import org.cesecore.util.CertTools;
 import org.signserver.common.*;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.validators.BaseValidator;

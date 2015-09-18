@@ -52,11 +52,11 @@ public class ValidationSerializationTest {
     @Test
     public void test01ValidationSerialization() throws Exception {
         KeyPair keys = KeyTools.genKeys("1024", "RSA");
-        validRootCA1 = ValidationTestUtils.genCert("CN=ValidRootCA1", "CN=ValidRootCA1", keys.getPrivate(), keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), true);
+        validRootCA1 = ValidationTestUtils.genCert(1000000, "CN=ValidRootCA1", "CN=ValidRootCA1", keys.getPrivate(), keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), true);
 
-        validSubCA1 = ValidationTestUtils.genCert("CN=ValidSubCA1", "CN=ValidRootCA1", keys.getPrivate(), keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), true);
+        validSubCA1 = ValidationTestUtils.genCert(1000000, "CN=ValidSubCA1", "CN=ValidRootCA1", keys.getPrivate(), keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), true);
 
-        validCert1 = ValidationTestUtils.genCert("CN=ValidCert1", "CN=ValidSubCA1", keys.getPrivate(), keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), false);
+        validCert1 = ValidationTestUtils.genCert(1000000, "CN=ValidCert1", "CN=ValidSubCA1", keys.getPrivate(), keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), false);
 
         ArrayList<Certificate> caChain = new ArrayList<Certificate>();
         caChain.add(validSubCA1);

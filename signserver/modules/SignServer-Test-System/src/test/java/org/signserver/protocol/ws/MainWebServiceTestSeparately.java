@@ -116,13 +116,13 @@ public class MainWebServiceTestSeparately extends ModulesTestCase {
         workerSession.reloadConfiguration(9);
 
         KeyPair validRootCA1Keys = KeyTools.genKeys("1024", "RSA");
-        X509Certificate validRootCA1 = ValidationTestUtils.genCert("CN=ValidRootCA1", "CN=ValidRootCA1", validRootCA1Keys.getPrivate(), validRootCA1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), true);
+        X509Certificate validRootCA1 = ValidationTestUtils.genCert(1000000, "CN=ValidRootCA1", "CN=ValidRootCA1", validRootCA1Keys.getPrivate(), validRootCA1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), true);
 
         KeyPair validSubCA1Keys = KeyTools.genKeys("1024", "RSA");
-        X509Certificate validSubCA1 = ValidationTestUtils.genCert("CN=ValidSubCA1", "CN=ValidRootCA1", validRootCA1Keys.getPrivate(), validSubCA1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), true);
+        X509Certificate validSubCA1 = ValidationTestUtils.genCert(1000000, "CN=ValidSubCA1", "CN=ValidRootCA1", validRootCA1Keys.getPrivate(), validSubCA1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), true);
 
         KeyPair validCert1Keys = KeyTools.genKeys("1024", "RSA");
-        validCert1 = ValidationTestUtils.genCert("CN=ValidCert1", "CN=ValidSubCA1", validSubCA1Keys.getPrivate(), validCert1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), false);
+        validCert1 = ValidationTestUtils.genCert(1000000, "CN=ValidCert1", "CN=ValidSubCA1", validSubCA1Keys.getPrivate(), validCert1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), false);
 
 
         ArrayList<X509Certificate> validChain1 = new ArrayList<X509Certificate>();

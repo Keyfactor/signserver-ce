@@ -22,7 +22,7 @@ import javax.xml.namespace.QName;
 
 import org.bouncycastle.jce.X509KeyUsage;
 import org.bouncycastle.util.encoders.Base64;
-import org.ejbca.util.keystore.KeyTools;
+import org.cesecore.keys.util.KeyTools;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -68,15 +68,15 @@ public class ValidationWSTest extends ModulesTestCase {
     @Test
     public void test00SetupDatabase() throws Exception {
         KeyPair validRootCA1Keys = KeyTools.genKeys("1024", "RSA");
-        X509Certificate validRootCA1 = ValidationTestUtils.genCert("CN=ValidRootCA1", "CN=ValidRootCA1", validRootCA1Keys.getPrivate(), validRootCA1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), true);
+        X509Certificate validRootCA1 = ValidationTestUtils.genCert(1000000, "CN=ValidRootCA1", "CN=ValidRootCA1", validRootCA1Keys.getPrivate(), validRootCA1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), true);
 
         KeyPair validSubCA1Keys = KeyTools.genKeys("1024", "RSA");
-        X509Certificate validSubCA1 = ValidationTestUtils.genCert("CN=ValidSubCA1", "CN=ValidRootCA1", validRootCA1Keys.getPrivate(), validSubCA1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), true);
+        X509Certificate validSubCA1 = ValidationTestUtils.genCert(1000000, "CN=ValidSubCA1", "CN=ValidRootCA1", validRootCA1Keys.getPrivate(), validSubCA1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), true);
 
         KeyPair validCert1Keys = KeyTools.genKeys("1024", "RSA");
-        validCert1 = new String(Base64.encode(ValidationTestUtils.genCert("CN=ValidCert1", "CN=ValidSubCA1", validSubCA1Keys.getPrivate(), validCert1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), false).getEncoded()));
-        revokedCert1 = new String(Base64.encode(ValidationTestUtils.genCert("CN=revokedCert1", "CN=ValidSubCA1", validSubCA1Keys.getPrivate(), validCert1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), false).getEncoded()));
-        identificationCert1 = new String(Base64.encode(ValidationTestUtils.genCert("CN=identificationCert1", "CN=ValidSubCA1", validSubCA1Keys.getPrivate(), validCert1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), false, X509KeyUsage.digitalSignature + X509KeyUsage.keyEncipherment).getEncoded()));
+        validCert1 = new String(Base64.encode(ValidationTestUtils.genCert(1000000, "CN=ValidCert1", "CN=ValidSubCA1", validSubCA1Keys.getPrivate(), validCert1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), false).getEncoded()));
+        revokedCert1 = new String(Base64.encode(ValidationTestUtils.genCert(1000000, "CN=revokedCert1", "CN=ValidSubCA1", validSubCA1Keys.getPrivate(), validCert1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), false).getEncoded()));
+        identificationCert1 = new String(Base64.encode(ValidationTestUtils.genCert(1000000, "CN=identificationCert1", "CN=ValidSubCA1", validSubCA1Keys.getPrivate(), validCert1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), false, X509KeyUsage.digitalSignature + X509KeyUsage.keyEncipherment).getEncoded()));
         ArrayList<X509Certificate> validChain1 = new ArrayList<X509Certificate>();
         // Add in the wrong order
         validChain1.add(validRootCA1);

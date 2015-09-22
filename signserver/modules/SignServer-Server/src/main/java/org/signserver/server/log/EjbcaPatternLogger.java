@@ -23,7 +23,6 @@ import org.apache.commons.lang.time.FastDateFormat;
 import org.apache.log4j.Logger;
 import org.apache.log4j.Priority;
 import org.bouncycastle.util.encoders.Hex;
-import org.ejbca.util.IPatternLogger;
 
 /**
  * This class can be extended to create highly configurable log classes.
@@ -32,11 +31,13 @@ import org.ejbca.util.IPatternLogger;
  *
  * Use paramPut(String key, String value) to add values,
  * Use writeln() to log all the stored values and then use flush() to store them to file.
+ * 
+ * Modified to build without the embedded EJBCA-util module.
  *
  * @author thamwickenberg
  * @version $Id$
  */
-public class EjbcaPatternLogger implements IPatternLogger {
+public class EjbcaPatternLogger {
 
     private final Map<String, String> valuepairs = new HashMap<String, String>();
     private final StringWriter sw = new StringWriter();
@@ -48,6 +49,11 @@ public class EjbcaPatternLogger implements IPatternLogger {
     private final String timeZone;
     private final Date startTime;
     private final Priority priority;
+    
+    public static final String LOG_TIME = "LOG_TIME";// The Date and time the request.
+    public static final String LOG_ID = "LOG_ID"; //An integer identifying a log entry for a request
+    public static final String SESSION_ID = "SESSION_ID"; //A random 32 bit number identifying a log entry for a request
+    public static final String REPLY_TIME = "REPLY_TIME";
 
     /**
      * @param m A matcher that is used together with orderstring to determine how output is formatted
@@ -103,18 +109,10 @@ public class EjbcaPatternLogger implements IPatternLogger {
         return sb.toString();
     }
 
-    /**
-     * @see IPatternLogger#paramPut(String, byte[])
-     */
-    @Override
     public void paramPut(String key, byte[] value) {
         paramPut(key, new String(Hex.encode(value)));
     }
 
-    /**
-     * @see IPatternLogger#paramPut(String, String)
-     */
-    @Override
     public void paramPut(String key, String value) {
         //logger.debug("paramput: "+ key+ ";" +value +";" +valuepairs.toString());
         if (value == null) {
@@ -124,10 +122,6 @@ public class EjbcaPatternLogger implements IPatternLogger {
         }
     }
 
-    /**
-     * @see IPatternLogger#paramPut(String, Integer)
-     */
-    @Override
     public void paramPut(String key, Integer value) {
         if (value == null) {
             this.valuepairs.put(key, "");
@@ -136,22 +130,14 @@ public class EjbcaPatternLogger implements IPatternLogger {
         }
     }
 
-    /**
-     * @see IPatternLogger#writeln()
-     */
-    @Override
     public void writeln() {
         this.pw.println(interpolate());
     }
 
-    /**
-     * @see org.ejbca.util.IPatternLogger#flush()
-     */
-    @Override
     public void flush() {
         this.pw.flush();
         String output = this.sw.toString();
-        output = output.replaceAll(IPatternLogger.REPLY_TIME, String.valueOf(new Date().getTime() - this.startTime.getTime()));
+        output = output.replaceAll(REPLY_TIME, String.valueOf(new Date().getTime() - this.startTime.getTime()));
         this.logger.log(priority, output); // Finally output the log row to the logging device
     }
 

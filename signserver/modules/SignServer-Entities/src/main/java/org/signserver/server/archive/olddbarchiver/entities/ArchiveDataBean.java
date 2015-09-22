@@ -22,8 +22,8 @@ import javax.ejb.EJBException;
 import javax.persistence.*;
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Base64;
-import org.ejbca.util.Base64GetHashMap;
-import org.ejbca.util.Base64PutHashMap;
+import org.cesecore.util.Base64GetHashMap;
+import org.cesecore.util.Base64PutHashMap;
 import org.signserver.common.ArchiveData;
 import org.signserver.common.ArchiveDataVO;
 

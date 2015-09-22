@@ -17,8 +17,8 @@ import java.util.HashMap;
 import javax.ejb.EJBException;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
-import org.ejbca.util.Base64GetHashMap;
-import org.ejbca.util.Base64PutHashMap;
+import org.cesecore.util.Base64GetHashMap;
+import org.cesecore.util.Base64PutHashMap;
 import org.signserver.common.ProcessableConfig;
 import org.signserver.common.WorkerConfig;
 

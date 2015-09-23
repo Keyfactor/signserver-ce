@@ -23,7 +23,7 @@ import java.util.Date;
 import java.util.List;
 import javax.net.ssl.SSLSocketFactory;
 import org.apache.commons.cli.*;
-import org.cesecore.util.CertTools;
+import org.ejbca.util.CertTools;
 import org.signserver.cli.CommandLineInterface;
 import org.signserver.cli.spi.AbstractCommand;
 import org.signserver.cli.spi.CommandFailureException;

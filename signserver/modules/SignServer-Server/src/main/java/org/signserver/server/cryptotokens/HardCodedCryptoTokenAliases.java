@@ -10,16 +10,23 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.client.cli.defaultimpl;
-
-import org.signserver.cli.spi.CommandFailureException;
+package org.signserver.server.cryptotokens;
 
 /**
- * Interface providing facilities for reading a password.
- * 
- * @author Marcus Lundblad
+ * Key aliases used by the HardCodedCryptoToken.
+ *
+ * @author Markus Kilås
  * @version $Id$
  */
-public interface ConsolePasswordReader {
-    char[] readPassword() throws CommandFailureException;
+public interface HardCodedCryptoTokenAliases {
+    
+    String KEY_ALIAS_1 = "key00001";
+    
+    String KEY_ALIAS_2 = "key00002";
+    
+    /** CN=End Entity 1, O=Reversed Org, C=SE. **/
+    String KEY_ALIAS_3 = "key00003";
+    
+    /** CN=TS Signer 2, OU=Testing, O=SignServer, C=SE. */
+    String KEY_ALIAS_4 = "key00004";
 }

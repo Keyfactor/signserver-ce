@@ -27,6 +27,7 @@ import java.util.concurrent.TimeUnit;
 import javax.xml.ws.soap.SOAPFaultException;
 import org.apache.commons.cli.*;
 import org.apache.log4j.Logger;
+import org.ejbca.ui.cli.util.ConsolePasswordReader;
 import org.signserver.cli.spi.AbstractCommand;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
@@ -268,7 +269,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
      * @param line The command line to read from
      */
     private void parseCommandLine(final CommandLine line)
-        throws IllegalCommandArgumentsException, CommandFailureException {
+        throws IllegalCommandArgumentsException {
         if (line.hasOption(WORKERNAME)) {
             workerName = line.getOptionValue(WORKERNAME, null);
         }
@@ -365,7 +366,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
      */
     @Override
     public ConsolePasswordReader createConsolePasswordReader() {
-        return new DefaultConsolePasswordReader();
+        return new ConsolePasswordReader();
     }
 
     /**

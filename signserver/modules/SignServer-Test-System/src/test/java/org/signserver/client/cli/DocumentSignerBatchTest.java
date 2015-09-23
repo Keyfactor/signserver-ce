@@ -21,6 +21,7 @@ import java.util.Properties;
 import java.util.Set;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import org.ejbca.ui.cli.util.ConsolePasswordReader;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
@@ -36,7 +37,6 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.signserver.cli.spi.CommandContext;
 import org.signserver.cli.spi.CommandFactoryContext;
-import org.signserver.client.cli.defaultimpl.ConsolePasswordReader;
 
 /**
  * Tests for the signdocument command of Client CLI using the batch mode where

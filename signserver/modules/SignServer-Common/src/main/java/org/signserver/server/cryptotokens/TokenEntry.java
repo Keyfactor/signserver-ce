@@ -18,7 +18,7 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.util.Date;
 import java.util.Map;
-import org.cesecore.util.CertTools;
+import org.ejbca.util.CertTools;
 
 /**
  * Represents an entry in the token with at minimum an alias and a type.

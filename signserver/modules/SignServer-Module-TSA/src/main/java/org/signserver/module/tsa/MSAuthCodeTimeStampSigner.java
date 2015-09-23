@@ -56,7 +56,7 @@ import org.bouncycastle.cms.SignerInfoGeneratorBuilder;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
-import org.cesecore.util.Base64;
+import org.ejbca.util.Base64;
 import org.signserver.common.*;
 import org.signserver.module.tsa.bc.MSAuthCodeCMSUtils;
 import org.signserver.module.tsa.bc.TimeStampRequest;

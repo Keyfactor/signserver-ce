@@ -16,8 +16,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.security.cert.Certificate;
 import java.util.List;
-import org.bouncycastle.util.encoders.Base64;
 
+import org.ejbca.util.Base64;
 import org.junit.After;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;

@@ -12,11 +12,10 @@
  *************************************************************************/
 package org.signserver.admin.cli.defaultimpl;
 
-import java.io.Console;
 import java.io.IOException;
-
 import java.rmi.RemoteException;
 import org.apache.log4j.Logger;
+import org.ejbca.ui.cli.util.ConsolePasswordReader;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.cli.spi.UnexpectedCommandFailureException;
@@ -78,13 +77,8 @@ public class ActivateCryptoTokenCommand extends AbstractAdminCommand {
             } else {
                 getOutputStream().print("Enter authorization code: ");
                 // Read the password, but mask it so we don't display it on the console
-                final Console console = System.console();
-                
-                if (console != null) {
-                    authCode = String.valueOf(console.readPassword());
-                } else {
-                    throw new CommandFailureException("Failed to read password");
-                }
+                ConsolePasswordReader r = new ConsolePasswordReader();
+                authCode = String.valueOf(r.readPassword());
             }
 
             this.getOutputStream().println(TRYING + workerid + "\n");

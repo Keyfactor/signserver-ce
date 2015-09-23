@@ -352,14 +352,16 @@ Make sure all required softwares are installed:
                     <ul>
                         <li>Java 6: OpenJDK 6 or Oracle JDK 6 Update 10 or later*<br/>
                             Java 7: OpenJDK 7** or Oracle JDK 7*</li>
-                        <li>Application server: JBoss AS 7.1.1, JBoss EAP 6.1 or GlassFish Server Open Source Edition 3.1.2</li>
-                        <li>Database: MySQL or MariaDB 5.5, PostgreSQL, Oracle Database 10/11g or without***</li>
+                        <li>Application server: JBoss 5.1.0.GA***, JBoss EAP 5.1, JBoss AS 7.1.1, JBoss EAP 6.1 or GlassFish Server Open Source Edition 2.1.1**** or 3.1.2</li>
+                        <li>Database: MySQL or MariaDB 5.5, HypersonicSQL (bundled with JBoss 5), Oracle Database 10/11g or without*****</li>
                         <li>Build tool: Apache Ant 1.8.0 or later</li>
                     </ul>
                     <p>
 * When using Oracle JDK you must install the 'Unlimited Strength Jurisdiction Policy Files' for JDK for the parts of SignServer that  makes use of strong crypto to work. The policy files can be found at the same place as the JDK download at Oracle. Further information on this can be found in the Oracle documentation on the JCE. <br/>
 ** If the application server supports JDK 7. Works for GlassFish 3 and JBoss 7/EAP 6.<br/>
-*** See <a href="complete.en.html#SignServer%20without%20Database">SignServer without Database</a>
+*** JBoss 5.1.0.GA is available in two different versions (standard and JDK6) which differs in web services stacks. The one called JBoss 5.1.0.GA-JDK6 should be used.<br/>
+**** GlassFish version 2 support will be dropped in an upcoming version. Some features like KeystoreInConfigCryptoToken is not supported.<br/>
+***** See <a href="complete.en.html#SignServer%20without%20Database">SignServer without Database</a>
                     </p>
                 </subsection>
 
@@ -428,7 +430,7 @@ For MariaDB you will have to set binlog_format to "row", for instance in /etc/my
 binlog_format=row
                         </source>
                     </subsubsection>
-                    <subsubsection name="Configure database driver for GlassFish">
+                    <subsubsection name="Configure database driver for JBoss 5 or GlassFish">
                         <p>
 Copy the driver for your database to the application server lib folder.
                         </p>    
@@ -529,6 +531,12 @@ Or for MariaDB, mariadb-java-client-1.1.2.jar:
 </pre>
 </p>
                     </subsubsection>
+             
+                    <subsubsection name="Configure data source for JBoss 5">
+                        <p>
+This is done automagically by the SignServer build script later during "ant deploy".
+                        </p>
+                    </subsubsection>
                     
                     <subsubsection name="Configure data source for GlassFish">
                     <p>
@@ -586,6 +594,14 @@ Then restart the application server.
                 </subsection>
 
                 <subsection name="5. Configure web server keystores">
+                    <subsubsection name="JBoss 5 SSL configuration">
+                        <p>
+For JBoss if you are going to protect the HTTP communication with SSL, you need
+a JKS SSL server keystore. Rename the web server keystore to tomcat.jks and put
+it in a 'p12' subdirectory. Place a keystore called truststore.jks in the 'p12' directory
+containing the trusted root certificate(s).
+                        </p>
+                    </subsubsection>
                     <subsubsection name="GlassFish SSL configuration">
                         <p>
 For GlassFish enable client authentication for http-listener-2 and manually
@@ -644,6 +660,18 @@ If the server is not so fast, we have to wait a little before we can reload, oth
                 </subsection>
 
                 <subsection name="6. Configure application server">
+                    <subsubsection name="Fix web service problem in JBoss 5">
+                        <p>
+Edit jboss-beans.xml to force the endpoint URL to be generated based on the WSDL
+request by commenting out the line:
+                        </p>
+<pre>
+    &lt;property name="webServiceHost"&gt;${jboss.bind.address}&lt;/property&gt;
+</pre>
+                        <p>
+For JBoss 5.1.0.GA the file is available under: server/default/deployers/jbossws.deployer/META-INF/
+                        </p>
+                    </subsubsection>
                     <subsubsection name="Fix web service problem in JBoss AS 7/EAP 6">
                         <p>
 Configure WSDL web-host rewriting to use the request host. Needed for webservices to work correctly when requiring client certificate.
@@ -659,6 +687,13 @@ If the server is not so fast, we have to wait a little before we can reload, oth
 :reload
                         </source>
                     </subsubsection>
+                    <subsubsection name="Fix JBoss 5 bug with Oracle JDK">
+                        <p>
+If you are using Oracle's JDK and JBoss 5.1.x you need to copy
+SIGNSERVER_HOME/lib/ext/1.6/bc*.jar to JBOSS_HOME/server/default/lib/. Remember this
+when it's time for upgrades! This is a bug tracked by JBoss as JBAS-7882.
+                        </p>
+                    </subsubsection>
                     <subsubsection name="JBoss 7 and Oracle JDK BouncyCastle issues">
                         <p>
 When using Oracle JDK and JBoss 7 you need to install BC jars as a module in JBoss 7. See <a href="https://issues.jboss.org/browse/JBAS-7882">JBAS-7882</a>.
@@ -666,6 +701,15 @@ When using Oracle JDK and JBoss 7 you need to install BC jars as a module in JBo
                         <p>
 How to install modules are described in <a href="https://docs.jboss.org/author/display/MODULES/Defining+a+module">docs.jboss.org/author/display/MODULES/Defining+a+module</a>.
                         </p>
+                    </subsubsection>
+                    <subsubsection name="Fix XML Security library issue in JBoss 5">
+                        <p>
+JBoss 5 bundles an older version of the XML Security library which conflicts with the one included in SignServer.
+Run the below Ant target to copy the SignServer version and its dependencies to the JBoss endorsed folder:
+                        </p>
+                        <source>
+bin/ant j2ee:copy-xmlsec
+                        </source>
                     </subsubsection>
                     <subsubsection name="Fix XML Security library issue 1 in JBoss 7">
                                                 <p>
@@ -768,6 +812,13 @@ cp conf/signserver_deploy.properties.sample conf/signserver_deploy.properties
                     </source>
 
                     <subsubsection name="Web GUI configuration">
+                        <p>
+Uncomment j2ee.web-nohttps=true if SignServer should be used to configure the
+keystore in JBoss 5.
+                        </p>
+                        <source>
+#j2ee.web-nohttps=true
+                        </source>
                         <p>
 For GlassFish change httpserver.privhttps to a port configured with HTTPS and
 client authentication.
@@ -1663,8 +1714,8 @@ Sample output:
                         <source>
 2013-07-04 15:29:10,073 INFO  [VerifyLogCommand] The following nodes exists: [server1, server2]
 2013-07-04 15:29:10,074 INFO  [VerifyLogCommand] Start sequences: {server1=0, server2=0}
-2013-07-04 15:29:10,635 INFO  [KeystoreCryptoToken] Invalid authentication code. Token id=400.
-2013-07-04 15:29:10,716 INFO  [KeystoreCryptoToken] Activated Crypto Token with id 400.
+2013-07-04 15:29:10,635 INFO  [SoftCryptoToken] Invalid authentication code. Token id=400.
+2013-07-04 15:29:10,716 INFO  [SoftCryptoToken] Activated Crypto Token with id 400.
 2013-07-04 15:29:10,722 INFO  [VerifyLogCommand] Progress: node=server1 rowCount=3
 2013-07-04 15:29:10,722 INFO  [VerifyLogCommand] Last sequence number: 2
 2013-07-04 15:29:10,745 INFO  [VerifyLogCommand] Progress: node=server2 rowCount=11
@@ -5863,6 +5914,9 @@ To backup the content of the crypto token, a database backup should be made.
 The password supplied when activating the token the first time will be used
 as the keystore password.
                         </p>
+                        <p>
+This crypto token is not compatible with running under GlassFish version 2.    
+                        </p>
                     </subsubsection>
                     <subsubsection name="SIGNERTOKEN.CLASSPATH">
                         <p>
@@ -6096,6 +6150,86 @@ The signer certificate should then be uploaded to the worker wich should use it.
 Upload the signing certificate chain to the signer using the command:
 bin/signserver uploadsignercertificatechain 9 GLOB /tmp/certchain.pem
 bin/signserver reload 9
+                        </p>
+                    </subsubsection>
+                </subsection>
+                
+                <subsection name="OldPKCS11CryptoToken">
+                    <note>
+This crypto token will be removed in a future version. Use PKCS11CryptoToken instead.
+                    </note>
+                    <subsubsection name="Overview">
+                        <p>
+The OldPKCS11CryptoToken implementation (before the use of CESeCore) is only available as a fallback for a limited time. This implementation is deprecated. The PKCS11CryptoToken should be used instead.
+                        </p>
+                    </subsubsection>
+                    <subsubsection name="SIGNERTOKEN.CLASSPATH">
+                        <p>
+The fully qualified class name is: <b>org.signserver.server.cryptotokens.OldPKCS11CryptoToken</b>
+                        </p>
+                    </subsubsection>
+                    <subsubsection name="Available Properties">
+                        <p>
+Currently most properties from the PKCS11CryptoToken can be used.
+                        </p>
+                    </subsubsection>
+                </subsection>
+
+                <subsection name="SoftCryptoToken">
+                    <note>
+This crypto token will be removed in a future version. Use KeystoreCryptoToken or KeystoreInConfigCryptoToken instead.
+                    </note>
+                    <subsubsection name="Overview">
+                        <p>
+The SoftCryptoToken is a simple token managing it's own soft keys instead of using a PKCS12 file. It can be used for test and demonstration purposes. The keys are stored in the worker's properties and is generated when genCertificateRequest is called. One key is used for all purposes and a new key is generated for every certificate request.
+                        </p>
+                        <p>
+The method destroyKey is not supported.
+                        </p>
+                        <p>
+There is also a tool available for constructing the properties from a PKCS12 file
+in CryptoTokenUtils.java. To run the tool outside the IDE first build SignServer
+by running "ant". After that the tool can be executed with something similar
+to:
+                        </p>
+                        <pre>
+java -cp lib/signserver-ejb.jar:lib/ext/1.6/bcprov-jdk.jar:lib/SignServer-Common.jar:lib/ext/ejbca-util.jar org.signserver.server.cryptotokens.CryptoTokenUtils createsoft src/test/dss10/dss10_signer1.p12 "signer 1" foo123
+                        </pre>
+                    </subsubsection>
+                    <subsubsection name="SIGNERTOKEN.CLASSPATH">
+                        <p>
+The fully qualified class name is: <b>org.signserver.server.cryptotokens.SoftCryptoToken</b>
+                        </p>
+                    </subsubsection>
+                    <subsubsection name="Available Properties">
+                        <p>
+<b>KEYDATA</b> =   The serialized KeyPair generated by genCertificateRequest, usually is this setting configured by the SoftCryptoToken itself.
+                        </p>
+                        <p>
+<b>KEYALG</b> = The algorithm used when generating new keys. (Optional, default is "RSA")
+                        </p>
+                        <p>
+<b>KEYSPEC</b> =   The key specification used when generating new keys. (Optional, default is "2048")
+                        </p>
+                    </subsubsection>
+                    <subsubsection name="Example usage">
+                        <p>
+First change the global property of WORKER&lt;ID&gt;.CRYPTOTOKEN.CLASSPATH of the worker you want to use the SoftCryptoToken with. After reload will an empty and inactive SoftCryptoToken be created.
+                        </p>
+                        <p>
+Then generate a certificate request with the command, in this step will new keys be generated
+                        </p>
+                        <pre>
+bin/signserver generatecertreq &lt;id&gt; "CN=Soft Signer token" SHA1WithRSA /tmp/certreq.pem
+                        </pre>
+                        <p>
+Then upload the signing certificate  to the worker using the command:
+                        </p>
+                        <pre>
+bin/signserver uploadsignercertificatechain &lt;id&gt; GLOB /tmp/cert.pem
+                        </pre>
+                        <p>
+After the certificate chain has been uploaded to the server, the configuration must be reloaded and the SoftCryptoToken will be active and ready to use.
                         </p>
                     </subsubsection>
                 </subsection>

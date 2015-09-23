@@ -12,6 +12,8 @@
  *************************************************************************/
 package org.signserver.client.cli.defaultimpl;
 
+import org.ejbca.ui.cli.util.ConsolePasswordReader;
+
 /**
  * Interface for providers of a ConsolePasswordReader.
  *

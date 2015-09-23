@@ -14,7 +14,7 @@ package org.signserver.validationservice.server;
 
 import java.security.cert.Certificate;
 import java.util.List;
-import org.cesecore.util.CertTools;
+import org.ejbca.util.CertTools;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;

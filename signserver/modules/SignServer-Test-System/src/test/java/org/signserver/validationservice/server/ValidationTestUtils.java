@@ -24,13 +24,11 @@ import java.security.SecureRandom;
 import java.security.SignatureException;
 import java.security.cert.CRLException;
 import java.security.cert.CertificateEncodingException;
-import java.security.cert.CertificateException;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.bouncycastle.asn1.DERIA5String;
@@ -39,22 +37,19 @@ import org.bouncycastle.asn1.x509.CRLDistPoint;
 import org.bouncycastle.asn1.x509.CRLNumber;
 import org.bouncycastle.asn1.x509.DistributionPoint;
 import org.bouncycastle.asn1.x509.DistributionPointName;
-import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.GeneralNames;
 import org.bouncycastle.asn1.x509.IssuingDistributionPoint;
 import org.bouncycastle.asn1.x509.X509Extensions;
 import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.jce.X509KeyUsage;
-import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.x509.X509V2CRLGenerator;
 import org.bouncycastle.x509.X509V3CertificateGenerator;
-import org.cesecore.util.Base64;
-import org.cesecore.util.CertTools;
 import org.ejbca.core.model.ca.caadmin.IllegalKeyStoreException;
 import org.ejbca.core.model.ca.catoken.CATokenOfflineException;
 import org.ejbca.core.model.ca.crl.RevokedCertInfo;
-import org.signserver.common.SignServerUtil;
+import org.ejbca.util.Base64;
+import org.ejbca.util.CertTools;
 
 /**
  * Contains help methods for testing the validation service
@@ -66,66 +61,52 @@ import org.signserver.common.SignServerUtil;
  */
 public class ValidationTestUtils {
 
-    public static X509Certificate genCert(long validity, String dn, String issuerdn,
-                                          PrivateKey privKey, PublicKey pubKey,
-                                          Date startDate, Date endDate,
-                                          boolean isCA)
-            throws CertificateEncodingException, InvalidKeyException,
-                   IllegalStateException, NoSuchAlgorithmException,
-                   SignatureException, IOException, NoSuchProviderException,
-                   OperatorCreationException, 
-                   CertificateException {
-        return genCert(validity, dn, issuerdn, privKey, pubKey, startDate, endDate, isCA, 0);
+    public static X509Certificate genCert(String dn, String issuerdn, PrivateKey privKey, PublicKey pubKey, Date startDate, Date endDate, boolean isCA) throws CertificateEncodingException, InvalidKeyException, IllegalStateException, NoSuchAlgorithmException, SignatureException {
+        return genCert(dn, issuerdn, privKey, pubKey, startDate, endDate, isCA, 0);
     }
 
-    public static X509Certificate genCert(long validity, String dn, String issuerdn,
-                                          PrivateKey privKey, PublicKey pubKey,
-                                          Date startDate, Date endDate,
-                                          boolean isCA, int keyUsage)
-            throws CertificateEncodingException, InvalidKeyException,
-                   IllegalStateException, NoSuchAlgorithmException,
-                   SignatureException, IOException, NoSuchProviderException,
-                   OperatorCreationException, 
-                   CertificateException {
-        return genCert(validity, dn, issuerdn, privKey, pubKey, startDate, endDate, isCA, keyUsage, null);
+    public static X509Certificate genCert(String dn, String issuerdn, PrivateKey privKey, PublicKey pubKey, Date startDate, Date endDate, boolean isCA, int keyUsage) throws CertificateEncodingException, InvalidKeyException, IllegalStateException, NoSuchAlgorithmException, SignatureException {
+        return genCert(dn, issuerdn, privKey, pubKey, startDate, endDate, isCA, keyUsage, null);
     }
 
-    public static X509Certificate genCert(long validity, String dn, String issuerdn,
-                                          PrivateKey privKey, PublicKey pubKey,
-                                          Date startDate, Date endDate, 
-                                          boolean isCA, int keyUsage, 
-                                          CRLDistPoint crlDistPoint)
-            throws CertificateEncodingException, InvalidKeyException,
-                   IllegalStateException, NoSuchAlgorithmException,
-                   SignatureException, IOException, NoSuchProviderException,
-                   OperatorCreationException, 
-                   CertificateException {
-        final List<Extension> extensions = new LinkedList<Extension>();
+    public static X509Certificate genCert(String dn, String issuerdn, PrivateKey privKey, PublicKey pubKey, Date startDate, Date endDate, boolean isCA, int keyUsage, CRLDistPoint crlDistPoint) throws CertificateEncodingException, InvalidKeyException, IllegalStateException, NoSuchAlgorithmException, SignatureException {
+        X509V3CertificateGenerator certgen = new X509V3CertificateGenerator();
+
+        byte[] serno = new byte[8];
+        SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
+        random.setSeed((new Date().getTime()));
+        random.nextBytes(serno);
+        certgen.setSerialNumber((new java.math.BigInteger(serno)).abs());
+        certgen.setNotBefore(startDate);
+        certgen.setNotAfter(endDate);
+        certgen.setSignatureAlgorithm("SHA1WithRSA");
+        certgen.setSubjectDN(CertTools.stringToBcX509Name(dn));
+        certgen.setIssuerDN(CertTools.stringToBcX509Name(issuerdn));
+        certgen.setPublicKey(pubKey);
 
         // CRL Distribution point
         if (crlDistPoint != null) {
-            extensions.add(new Extension(Extension.cRLDistributionPoints, false, crlDistPoint.getEncoded()));
+            certgen.addExtension(X509Extensions.CRLDistributionPoints, false, crlDistPoint);
         }
 
         // Basic constranits is always critical and MUST be present at-least in CA-certificates.
         BasicConstraints bc = new BasicConstraints(isCA);
-        extensions.add(new Extension(Extension.basicConstraints, true, bc.getEncoded()));
+        certgen.addExtension(X509Extensions.BasicConstraints.getId(), true, bc);
 
         // Put critical KeyUsage in CA-certificates
         if (keyUsage == 0) {
             if (isCA == true) {
                 int keyusage = X509KeyUsage.keyCertSign + X509KeyUsage.cRLSign;
                 X509KeyUsage ku = new X509KeyUsage(keyusage);
-                extensions.add(new Extension(Extension.keyUsage, true, ku.getEncoded()));
+                certgen.addExtension(X509Extensions.KeyUsage.getId(), true, ku);
             }
         } else {
             X509KeyUsage ku = new X509KeyUsage(keyUsage);
-            extensions.add(new Extension(Extension.keyUsage, true, ku.getEncoded()));
+            certgen.addExtension(X509Extensions.KeyUsage.getId(), true, ku);
         }
+        X509Certificate cert = certgen.generate(privKey);
 
-        //return cert;
-        return CertTools.genSelfCertForPurpose(dn, validity, issuerdn, privKey,
-                pubKey, dn, isCA, keyUsage, endDate, startDate, dn, true, extensions);
+        return cert;
     }
 
     public static String genPEMStringFromChain(List<X509Certificate> chain) throws CertificateEncodingException {

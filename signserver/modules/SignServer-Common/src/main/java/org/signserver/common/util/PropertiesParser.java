@@ -12,8 +12,8 @@
  *************************************************************************/
 package org.signserver.common.util;
 
-import org.bouncycastle.util.encoders.Base64;
 import java.util.*;
+import org.ejbca.util.Base64;
 import org.signserver.common.AuthorizedClient;
 import org.signserver.common.GlobalConfiguration;
 import static org.signserver.common.util.PropertiesConstants.*;

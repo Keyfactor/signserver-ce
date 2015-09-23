@@ -14,7 +14,7 @@ package org.signserver.protocol.ws;
 
 import java.io.IOException;
 import javax.xml.bind.annotation.XmlTransient;
-import org.bouncycastle.util.encoders.Base64;
+import org.ejbca.util.Base64;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.RequestAndResponseManager;
 import org.signserver.common.RequestMetadata;

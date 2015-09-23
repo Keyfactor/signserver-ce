@@ -12,10 +12,10 @@
  *************************************************************************/
 package org.signserver.admin.cli.defaultimpl;
 
-import org.bouncycastle.util.encoders.Base64;
 import java.io.PrintStream;
 import java.rmi.RemoteException;
 import java.util.*;
+import org.ejbca.util.Base64;
 import org.signserver.common.AuthorizedClient;
 import org.signserver.common.GlobalConfiguration;
 import static org.signserver.common.util.PropertiesConstants.*;

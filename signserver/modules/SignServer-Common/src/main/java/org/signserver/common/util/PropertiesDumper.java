@@ -12,8 +12,6 @@
  *************************************************************************/
 package org.signserver.common.util;
 
-import org.cesecore.util.CertTools;
-import org.cesecore.util.Base64;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.cert.Certificate;
@@ -26,6 +24,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import org.apache.log4j.Logger;
+import org.ejbca.util.Base64;
+import org.ejbca.util.CertTools;
 import org.signserver.common.AuthorizedClient;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.ProcessableConfig;

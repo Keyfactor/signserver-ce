@@ -19,8 +19,8 @@ import java.io.DataOutputStream;
 import java.security.cert.Certificate;
 import java.util.Collections;
 import junit.framework.TestCase;
-import org.bouncycastle.util.encoders.Base64;
-import org.cesecore.util.CertTools;
+import org.ejbca.util.Base64;
+import org.ejbca.util.CertTools;
 import org.signserver.validationservice.common.Validation.Status;
 
 /**

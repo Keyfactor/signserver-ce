@@ -25,7 +25,7 @@ import java.util.Collection;
 
 import org.apache.log4j.Logger;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.cesecore.util.CertTools;
+import org.ejbca.util.CertTools;
 
 /**
  * Containing common util methods used for various reasons.
@@ -48,12 +48,6 @@ public class SignServerUtil {
         }
     }
 
-    public static synchronized void installBCProviderIfNotAvailable() {
-    	if (Security.getProvider("BC") == null) {
-    		installBCProvider();
-    	}
-    }
-    
     /**
      * Method that takes a configuration, traverses trough it to find all properties beginning
      * with the propertyPrefix and a number between 0 and 255 and returns a list in the given
@@ -190,16 +184,12 @@ public class SignServerUtil {
      */
     public static String getTokenizedSubjectDNFromCert(final X509Certificate cert) {
         final String dn = cert.getSubjectX500Principal().getName();
-
         return getTokenizedDN(dn);
     }
 
     private static String getTokenizedDN(final String dn) {
-        
-        //CertTools.BasicX509NameTokenizer tok =
-        //        new CertTools.BasicX509NameTokenizer(dn);
-        final BasicX509NameTokenizer tok =
-                new BasicX509NameTokenizer(dn);
+        CertTools.BasicX509NameTokenizer tok =
+                new CertTools.BasicX509NameTokenizer(dn);
         StringBuilder buf = new StringBuilder();
 
         while (tok.hasMoreTokens()) {
@@ -212,91 +202,4 @@ public class SignServerUtil {
 
         return buf.toString();
     }
-    
-    /**
-     * class for breaking up an X500 Name into it's component tokens, ala
-     * java.util.StringTokenizer. Taken from BouncyCastle, but does NOT
-     * use or consider escaped characters. Used for reversing DNs without unescaping.
-     * 
-     * TODO:
-     * Copied from EJBCA-utils, not sure if a corresponding class from BC
-     * could be used nowadays...
-     * 
-     */
-    public static class BasicX509NameTokenizer
-    {
-        private String          oid;
-        private int             index;
-        private StringBuffer    buf = new StringBuffer();
-
-        public BasicX509NameTokenizer(
-            String oid)
-        {
-            this.oid = oid;
-            this.index = -1;
-        }
-
-        public boolean hasMoreTokens()
-        {
-            return (index != oid.length());
-        }
-
-        public String nextToken()
-        {
-            if (index == oid.length())
-            {
-                return null;
-            }
-
-            int     end = index + 1;
-            boolean quoted = false;
-            boolean escaped = false;
-
-            buf.setLength(0);
-
-            while (end != oid.length())
-            {
-                char    c = oid.charAt(end);
-                
-                if (c == '"')
-                {
-                    if (!escaped)
-                    {
-                        buf.append(c);
-                        quoted = !quoted;
-                    }
-                    else
-                    {
-                        buf.append(c);
-                    }
-                    escaped = false;
-                }
-                else
-                { 
-                    if (escaped || quoted)
-                    {
-                        buf.append(c);
-                        escaped = false;
-                    }
-                    else if (c == '\\')
-                    {
-                        buf.append(c);
-                        escaped = true;
-                    }
-                    else if ( (c == ',') && (!escaped) )
-                    {
-                        break;
-                    }
-                    else
-                    {
-                        buf.append(c);
-                    }
-                }
-                end++;
-            }
-
-            index = end;
-            return buf.toString().trim();
-        }
-    } // BasicX509NameTokenizer
 }

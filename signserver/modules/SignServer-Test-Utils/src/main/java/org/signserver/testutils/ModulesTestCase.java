@@ -27,7 +27,7 @@ import java.util.*;
 import javax.naming.NamingException;
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
-import org.bouncycastle.util.encoders.Base64;
+import org.ejbca.util.Base64;
 import org.signserver.admin.cli.AdminCLI;
 import org.signserver.client.cli.ClientCLI;
 import org.signserver.common.CryptoTokenOfflineException;

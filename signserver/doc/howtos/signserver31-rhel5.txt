@@ -1,0 +1,154 @@
+Title:  Standalone Install of SignServer 3.1 on RHEL5.3 / CentOS 5.3
+Author: Christophe Sahut <christophe.sahut@sgs.com>
+Description: This article explains how to install SignServer 3.1 (from SVN) on a RHEL based system. 
+===================================================================================================
+
+# You must have jpackage-utils installed from your vanilla distribution
+yum install jpackage-utils
+
+# Download jpackage50.repo from http://candrews.integralblue.com/wp-content/uploads/2009/07/jpackage50.repo  and put it into /etc/yum.repo.d/
+
+# Get http://candrews.integralblue.com/wp-content/uploads/2009/07/jpackage-utils-compat-el5-0.0.1-1.noarch.rpm and install it:
+rpm -ivh jpackage-utils-compat-el5-0.0.1-1.noarch.rpm
+# You can get more details here http://candrews.integralblue.com/2009/07/install-jboss-4-2-on-centosrhel-5/, thanks to Craig Andrews for the useful tips
+
+# Install Java and Jboss
+yum -y install java-1.6.0-openjdk-devel
+yum -y install jbossas
+chkconfig jbossas on
+
+# Some jboss apps are incompatible with signserver so remove them
+cd /usr/share/jbossas/server/default/deploy
+rm -rf management jmx-console.war jbossws.sar jboss-web.deployer/ROOT.war 
+
+# (Re-)move older libs than the ones provided by the signserver
+rm /usr/share/jbossas/server/default/lib/bcprov-jdk.jar /usr/share/jbossas/server/default/lib/bcmail-jdk.jar
+
+# Fix a bug present in jbossas package https://www.jpackage.org/bugzilla/show_bug.cgi?id=324
+ln -s /usr/share/java/eclipse-ecj.jar /usr/share/java/ecj.jar
+
+# Install MySQL
+yum -y install mysql-server
+chkconfig mysqld on
+service mysqld start
+
+# Install MySQL connector
+yum -y install mysql-connector-java
+cp -a /usr/share/java/mysql-connector-java*  /usr/share/jbossas/server/default/lib
+
+# Create a database and a user
+mysql -u root -p
+	create database signserver;
+	grant all on signserver.* to signserver@localhost identified by 'signserver123';
+	quit
+
+# At line 28 of /usr/share/jbossas/server/default/conf/jboss-log4j.xml, add to avoid too much logs:
+      <param name="Threshold" value="INFO"/>
+
+# Configure /etc/profile by adding these lines at the end:
+export SIGNSERVER_HOME=/opt/signserver
+export JBOSS_HOME=/usr/share/jbossas/
+export SIGNSERVER_NODEID=localhost
+
+# Add this line to /etc/jbossas/jbossas.conf to make the server listen on all the IPs:
+JBOSS_IP=0.0.0.0
+
+# Download apache-ant here http://ant.apache.org/bindownload.cgi, unzip it and run:
+cp -a apache-ant-1.7.1/lib/*.jar /usr/share/ant/lib
+
+# Get signserver from signserver.org SVN :
+cd /opt
+svn co https://signserver.svn.sourceforge.net/svnroot/signserver signserver
+
+cd signserver
+cp signserver_build.properties.sample signserver_build.properties
+
+# Edit signserver_build.properties:
+- server.java.target=1.6
+- client.java.target=1.6
+- j2ee.web-nohttps=true 
+- httpsserver.bindaddress.pubhttp=0.0.0.0
+- database.name=mysql
+- datasource.mapping=mySQL
+- database.url=jdbc:mysql://127.0.0.1:3306/signserver
+- database.driver=com.mysql.jdbc.Driver
+- database.username=signserver
+- database.password=signserver123
+- validationws.enabled=true
+
+
+
+# Build Signserver:
+chown -R jboss.jboss /opt/signserver*
+chsh -s /bin/bash jboss
+su - jboss
+cd /opt/signserver
+source /etc/profile
+ant ant:configure
+ant
+ant deploy
+
+# Start jboss:
+service jbossas start
+
+
+# Install done !
+
+
+# Install dependencies for testing:
+yum -y install ant-junit ant-trax
+
+# Edit sample-configs/qs_timestamp_configuration.properties and replace this line:
+WORKERGENID1.KEYSTOREPATH=C:\\workspace\\signserver\\src\\test\\timestamp1.p12
+# by
+WORKERGENID1.KEYSTOREPATH=/opt/signserver/src/test/timestamp1.p12
+
+
+chmod +x /opt/signserver/bin/signserver.sh 
+cd /opt/signserver
+
+# Get current config
+bin/signserver.sh getstatus complete all 
+
+# Test timestamp
+bin/signserver.sh module add dist-server/tsa.mar demo
+bin/signserver.sh getconfig 1
+bin/signserver.sh reload 1
+cd dist-client/timestampclient 
+java -jar timeStampClient.jar http://127.0.0.1:8080/signserver/process?workerId=1
+
+# Test PDF signer
+bin/signserver.sh module add dist-server/pdfsigner.mar demo
+bin/signserver.sh getconfig 2
+bin/signserver.sh reload 2
+# Go to http://127.0.0.1:8080/signserver/pdfsign.html 
+
+# Test XML signer
+bin/signserver.sh module add dist-server/xmlsigner.mar demo 
+bin/signserver.sh getconfig 3
+bin/signserver.sh reload 3
+bin/signserver.sh getstatus complete 3
+# Go to http://127.0.0.1:8080/signserver/xmlsign.html
+
+# Test XML validator
+# - certificate validation service worker
+bin/signserver.sh setproperties sample-configs/qs_validator_dummy_configuration.properties
+bin/signserver.sh getconfig 4
+bin/signserver.sh reload 4
+bin/signserver.sh getstatus complete CertValidationWorker 
+# - XML validator 
+bin/signserver.sh module add dist-server/xmlvalidator.mar demo 
+bin/signserver.sh getconfig 5
+bin/signserver.sh reload 5
+bin/signserver.sh getstatus complete demoxmlvalidator 
+# Now the SignServer APIs can be used to request XML documents to be validated by the DemoXMLValidator worker. 
+
+# Test MRTD SOD Signer
+bin/signserver.sh module add dist-server/mrtdsodsigner.mar demo 
+bin/signserver.sh getconfig 6
+bin/signserver.sh reload 6
+bin/signserver.sh getstatus complete mrtdsodsigner 
+# Now the SignServer APIs can be used to send MRTD SOD sign requests the MRTDSODSigner. 
+
+
+

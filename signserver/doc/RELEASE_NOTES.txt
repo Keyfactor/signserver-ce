@@ -10,7 +10,7 @@ New features:
 Improvements:
 
 Bug fixes:
- - Crypto token operations in the administration GUI no requires clicking
+ - Crypto token operations in the administration GUI does not require clicking
    outside of the last edited input field to be able to performe the action
    (i.e. when generating keys).
 

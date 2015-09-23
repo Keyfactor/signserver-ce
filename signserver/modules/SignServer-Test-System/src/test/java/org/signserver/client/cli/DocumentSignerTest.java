@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Properties;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import org.ejbca.ui.cli.util.ConsolePasswordReader;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
@@ -31,7 +32,6 @@ import org.signserver.testutils.TestingSecurityManager;
 import org.junit.Test;
 import org.signserver.cli.spi.CommandContext;
 import org.signserver.cli.spi.CommandFactoryContext;
-import org.signserver.client.cli.defaultimpl.ConsolePasswordReader;
 import org.signserver.common.util.PathUtil;
 
 /**

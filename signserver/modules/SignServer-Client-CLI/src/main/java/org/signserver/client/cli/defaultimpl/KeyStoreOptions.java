@@ -25,7 +25,7 @@ import java.util.ResourceBundle;
 import javax.net.ssl.*;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
-import org.signserver.cli.spi.CommandFailureException;
+import org.ejbca.ui.cli.util.ConsolePasswordReader;
 
 /**
  * Handles keystore and truststore options from the command line as well
@@ -88,9 +88,7 @@ public class KeyStoreOptions {
     private boolean useHTTPS;
     private boolean usePrivateHTTPS;
 
-    public void parseCommandLine(CommandLine line, ConsolePasswordReader passwordReader, PrintStream out)
-            throws IOException, NoSuchAlgorithmException, CertificateException,
-                   KeyStoreException, CommandFailureException {
+    public void parseCommandLine(CommandLine line, ConsolePasswordReader passwordReader, PrintStream out) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
         if (line.hasOption(KeyStoreOptions.TRUSTSTORE)) {
             truststoreFile = new File(line.getOptionValue(KeyStoreOptions.TRUSTSTORE, null));
         }
@@ -134,7 +132,6 @@ public class KeyStoreOptions {
                 for (int i = 0; i < 3; i++) {
                     out.print("Password for keystore: ");
                     out.flush();
-                    
                     keystorePassword = new String(passwordReader.readPassword());
                     try {
                         KeyStore keystore = KeyStore.getInstance("JKS");

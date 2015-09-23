@@ -14,6 +14,8 @@ package org.signserver.common;
 
 import java.io.Serializable;
 
+import org.ejbca.util.CertTools;
+
 /**
  * Class representing an authorized client containing the  serial number and 
  * issuerDN of trusted client certs.
@@ -48,7 +50,6 @@ public class AuthorizedClient implements Comparable<Object>, Serializable {
      * Sort by Cert SN
      * @param arg0 must be a AuthorizedClient
      */
-    @Override
     public int compareTo(Object arg0) {
         if (arg0 instanceof AuthorizedClient) {
             return certSN.compareTo(((AuthorizedClient) arg0).getCertSN());

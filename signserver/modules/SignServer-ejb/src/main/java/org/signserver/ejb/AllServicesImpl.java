@@ -22,7 +22,7 @@ import org.signserver.server.ServicesImpl;
 import org.signserver.statusrepo.IStatusRepositorySession;
 
 /**
- * ServicesImpl adding conveniance method adding all services.
+ * ServicesImpl adding convenience method adding all services.
  * The purpose with the method is also to make sure that all new services are
  * added in all places.
  * 

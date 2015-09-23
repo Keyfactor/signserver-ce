@@ -6099,27 +6099,6 @@ bin/signserver reload 9
                         </p>
                     </subsubsection>
                 </subsection>
-                
-                <subsection name="OldPKCS11CryptoToken">
-                    <note>
-This crypto token will be removed in a future version. Use PKCS11CryptoToken instead.
-                    </note>
-                    <subsubsection name="Overview">
-                        <p>
-The OldPKCS11CryptoToken implementation (before the use of CESeCore) is only available as a fallback for a limited time. This implementation is deprecated. The PKCS11CryptoToken should be used instead.
-                        </p>
-                    </subsubsection>
-                    <subsubsection name="SIGNERTOKEN.CLASSPATH">
-                        <p>
-The fully qualified class name is: <b>org.signserver.server.cryptotokens.OldPKCS11CryptoToken</b>
-                        </p>
-                    </subsubsection>
-                    <subsubsection name="Available Properties">
-                        <p>
-Currently most properties from the PKCS11CryptoToken can be used.
-                        </p>
-                    </subsubsection>
-                </subsection>
             </section>
             
             <section name="Alias Selectors">

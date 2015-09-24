@@ -37,7 +37,6 @@ import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.server.LocalComputerTimeSource;
-import org.signserver.server.cryptotokens.HardCodedCryptoTokenAliases;
 import org.signserver.server.log.LogMap;
 import org.signserver.test.utils.mock.GlobalConfigurationSessionMock;
 import org.signserver.test.utils.mock.WorkerSessionMock;
@@ -63,6 +62,8 @@ public class TimeStampSignerUnitTest {
     private static final String AUTHTYPE = "AUTHTYPE";
     private static final String CRYPTOTOKEN_CLASSNAME = "org.signserver.server.cryptotokens.HardCodedCryptoToken";
 
+    private static final String KEY_ALIAS_4 = "key00004";
+    
     private IGlobalConfigurationSession.IRemote globalConfig;
     private IWorkerSession.IRemote workerSession;
 
@@ -147,7 +148,7 @@ public class TimeStampSignerUnitTest {
             config.setProperty(NAME, "TestTimeStampSigner1");
             config.setProperty(AUTHTYPE, "NOAUTH");
             config.setProperty(TimeStampSigner.DEFAULTTSAPOLICYOID, "1.2.3.4");
-            config.setProperty("DEFAULTKEY", HardCodedCryptoTokenAliases.KEY_ALIAS_4);
+            config.setProperty("DEFAULTKEY", KEY_ALIAS_4);
 
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
                     new TimeStampSigner() {
@@ -167,7 +168,7 @@ public class TimeStampSignerUnitTest {
             config.setProperty(NAME, "TestTimeStampSigner3");
             config.setProperty(AUTHTYPE, "NOAUTH");
             config.setProperty(TimeStampSigner.DEFAULTTSAPOLICYOID, "1.2.3.4");
-            config.setProperty("DEFAULTKEY", HardCodedCryptoTokenAliases.KEY_ALIAS_4);
+            config.setProperty("DEFAULTKEY", KEY_ALIAS_4);
             config.setProperty("ACCEPTEDEXTENSIONS", "1.2.74;1.2.7.2;1.2.7.8");
 
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
@@ -188,7 +189,7 @@ public class TimeStampSignerUnitTest {
             config.setProperty(NAME, "TestTimeStampSigner2");
             config.setProperty(AUTHTYPE, "NOAUTH");
             config.setProperty(TimeStampSigner.DEFAULTTSAPOLICYOID, "1.2.3.4");
-            config.setProperty("DEFAULTKEY", HardCodedCryptoTokenAliases.KEY_ALIAS_4);
+            config.setProperty("DEFAULTKEY", KEY_ALIAS_4);
             config.setProperty("ACCEPTEDEXTENSIONS", "");
 
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
@@ -209,7 +210,7 @@ public class TimeStampSignerUnitTest {
             config.setProperty(NAME, "TestTimeStampSigner3");
             config.setProperty(AUTHTYPE, "NOAUTH");
             config.setProperty(TimeStampSigner.DEFAULTTSAPOLICYOID, "1.2.3.4");
-            config.setProperty("DEFAULTKEY", HardCodedCryptoTokenAliases.KEY_ALIAS_4);
+            config.setProperty("DEFAULTKEY", KEY_ALIAS_4);
             config.setProperty("ACCEPTEDEXTENSIONS", "1.2.74; 1.2.7.2; 1.2.7.8");
 
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,

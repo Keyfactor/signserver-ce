@@ -51,8 +51,6 @@ import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.server.SignServerContext;
 import org.signserver.server.ZeroTimeSource;
-import org.signserver.server.cryptotokens.HardCodedCryptoToken;
-import org.signserver.server.cryptotokens.HardCodedCryptoTokenAliases;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.log.LogMap;
 import org.signserver.test.utils.builders.CertBuilder;
@@ -158,7 +156,7 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
         config.setProperty("AUTHTYPE", "NOAUTH");
         config.setProperty("TIMESOURCE", "org.signserver.server.ZeroTimeSource");
         config.setProperty("SIGNATUREALGORITHM", signingAlgo);
-        config.setProperty("DEFAULTKEY", HardCodedCryptoTokenAliases.KEY_ALIAS_1);
+        config.setProperty("DEFAULTKEY", KEY_ALIAS_1);
         
         if (includeSigningCertAttr) {
             config.setProperty("INCLUDE_SIGNING_CERTIFICATE_ATTRIBUTE", "true");

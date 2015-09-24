@@ -40,7 +40,6 @@ import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.module.mrtdsodsigner.jmrtd.SODFile;
-import org.signserver.server.cryptotokens.HardCodedCryptoTokenAliases;
 import org.signserver.test.utils.mock.GlobalConfigurationSessionMock;
 import org.signserver.test.utils.mock.WorkerSessionMock;
 

@@ -30,7 +30,6 @@ import org.bouncycastle.asn1.util.ASN1Dump;
 import org.bouncycastle.cert.jcajce.JcaX500NameUtil;
 import org.bouncycastle.jce.ECKeyUtil;
 import org.cesecore.keys.util.KeyTools;
-import org.cesecore.util.CertTools;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SODSignRequest;
@@ -40,6 +39,7 @@ import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.module.mrtdsodsigner.jmrtd.SODFile;
+import org.signserver.test.utils.CertTools;
 import org.signserver.test.utils.mock.GlobalConfigurationSessionMock;
 import org.signserver.test.utils.mock.WorkerSessionMock;
 

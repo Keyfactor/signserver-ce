@@ -89,11 +89,18 @@ public class ValidationCLITest extends ModulesTestCase {
         validChain1.add(validSubCA1);
 
         gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER16.CLASSPATH", "org.signserver.validationservice.server.ValidationServiceWorker");
-        gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER16.SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.HardCodedCryptoToken");
+        gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER16.SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.KeystoreCryptoToken");
 
 
         sSSession.setWorkerProperty(16, "AUTHTYPE", "NOAUTH");
         sSSession.setWorkerProperty(16, "NAME", "ValTest");
+        sSSession.setWorkerProperty(16, "KEYSTORETYPE", "PKCS12");
+        sSSession.setWorkerProperty(16, "KEYSTOREPATH",
+                getSignServerHome() + File.separator + "res" + File.separator +
+                "test" + File.separator + "dss10" + File.separator +
+                        "dss10_signer1.p12");
+        sSSession.setWorkerProperty(16, "KEYSTOREPASSWORD", "foo123");
+        sSSession.setWorkerProperty(16, "DEFAULTKEY", "Signer 1");
         sSSession.setWorkerProperty(16, "VAL1.CLASSPATH", "org.signserver.validationservice.server.DummyValidator");
         sSSession.setWorkerProperty(16, "VAL1.TESTPROP", "TEST");
         sSSession.setWorkerProperty(16, "VAL1.ISSUER1.CERTCHAIN", ValidationTestUtils.genPEMStringFromChain(validChain1));

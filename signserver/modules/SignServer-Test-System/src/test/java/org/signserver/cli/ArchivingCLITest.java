@@ -64,7 +64,7 @@ public class ArchivingCLITest extends ModulesTestCase {
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,
                 cli.execute("setworkerproperty", "1000", "KEYSTORETYPE", "PKCS12"));
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,
-                cli.execute("setworkerproperty", "1000", "KEYSTORPASSWORD", "foo123"));
+                cli.execute("setworkerproperty", "1000", "KEYSTOREPASSWORD", "foo123"));
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,
                 cli.execute("setworkerproperty", "1000", "DEFAULTKEYALIAS",
                         "TS Signer 1"));

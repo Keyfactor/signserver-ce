@@ -32,7 +32,6 @@ import org.signserver.common.StaticWorkerStatus;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 import org.signserver.ejb.interfaces.IWorkerSession;
-import org.signserver.server.cryptotokens.HardCodedCryptoTokenAliases;
 import org.signserver.testutils.ModulesTestCase;
 
 /**
@@ -53,7 +52,11 @@ public class MRTDSignerTest extends ModulesTestCase {
     @Test
     public void test00SetupDatabase() throws Exception {
         setProperties(new File(getSignServerHome(), "res/test/test-mrtdsigner-configuration.properties"));
-        workerSession.setWorkerProperty(7890, "DEFAULTKEY", HardCodedCryptoTokenAliases.KEY_ALIAS_1);
+        workerSession.setWorkerProperty(7890, "KEYSTOREPATH",
+                getSignServerHome() + File.separator + KEYSTORE_SIGNER1_FILE);
+        workerSession.setWorkerProperty(7890, "KEYSTORETYPE", "PKCS12");
+        workerSession.setWorkerProperty(7890, "KEYSTOREPASSWORD", KEYSTORE_PASSWORD);
+        workerSession.setWorkerProperty(7890, "DEFAULTKEY", KEYSTORE_SIGNER1_ALIAS);
         workerSession.reloadConfiguration(7890);
     }
 

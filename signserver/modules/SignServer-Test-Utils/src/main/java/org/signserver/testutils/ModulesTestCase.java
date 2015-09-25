@@ -77,12 +77,12 @@ public class ModulesTestCase extends TestCase {
     private static final int XML_VALIDATOR_WORKER_ID = 5882;
     private static final String XML_VALIDATOR_WORKER_NAME = "TestXMLValidator";
 
-    private static final String KEYSTORE_SIGNER1_FILE = "res/test/dss10/dss10_signer1.p12";
-    private static final String KEYSTORE_SIGNER1_ALIAS = "Signer 1";
-    private static final String KEYSTORE_TSSIGNER1_FILE = "res/test/dss10/dss10_tssigner1.p12";
-    private static final String KEYSTORE_TSSIGNER1_ALIAS = "TS Signer 1";
-    private static final String KEYSTORE_AUTHCODESIGNER1_FILE = "res/test/dss10/dss10_authcodesigner1.p12";
-    private static final String KEYSTORE_AUTHCODESIGNER1_ALIAS = "Auth Code Signer 1";
+    protected static final String KEYSTORE_SIGNER1_FILE = "res/test/dss10/dss10_signer1.p12";
+    protected static final String KEYSTORE_SIGNER1_ALIAS = "Signer 1";
+    protected static final String KEYSTORE_TSSIGNER1_FILE = "res/test/dss10/dss10_tssigner1.p12";
+    protected static final String KEYSTORE_TSSIGNER1_ALIAS = "TS Signer 1";
+    protected static final String KEYSTORE_AUTHCODESIGNER1_FILE = "res/test/dss10/dss10_authcodesigner1.p12";
+    protected static final String KEYSTORE_AUTHCODESIGNER1_ALIAS = "Auth Code Signer 1";
     public static final String KEYSTORE_PASSWORD = "foo123";
 
     /**

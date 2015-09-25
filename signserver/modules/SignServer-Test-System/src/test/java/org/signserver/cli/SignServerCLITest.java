@@ -120,14 +120,14 @@ public class SignServerCLITest extends ModulesTestCase {
         assertPrinted("", cli.getOut(), "Setting the property NAME to timestampSigner1000 for worker 1000");
 
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,
-                cli.execute("setworkerproperty", "1000", "KEYSTOREPATH",
+                cli.execute("setproperty", "1000", "KEYSTOREPATH",
                         getSignServerHome() + "/res/test/dss10/dss10_tssigner1.p12"));
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,
-                cli.execute("setworkerproperty", "1000", "KEYSTORETYPE", "PKCS12"));
+                cli.execute("setproperty", "1000", "KEYSTORETYPE", "PKCS12"));
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,
-                cli.execute("setworkerproperty", "1000", "KEYSTOREPASSWORD", "foo123"));
+                cli.execute("setproperty", "1000", "KEYSTOREPASSWORD", "foo123"));
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,
-                cli.execute("setworkerproperty", "1000", "DEFAULTKEY", "TS Signer 1"));
+                cli.execute("setproperty", "1000", "DEFAULTKEY", "TS Signer 1"));
         
         assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
                 cli.execute("reload", "1000"));

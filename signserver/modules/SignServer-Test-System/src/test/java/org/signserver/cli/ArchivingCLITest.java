@@ -59,14 +59,14 @@ public class ArchivingCLITest extends ModulesTestCase {
         assertPrinted("", cli.getOut(), "Setting the property NAME to timestampSigner1000 for worker 1000");
         
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,
-                cli.execute("setworkerproperty", "1000", "KEYSTOREPATH",
+                cli.execute("setproperty", TESTTSID, "KEYSTOREPATH",
                         getSignServerHome() + "/res/test/dss10/dss10_tssigner1.p12"));
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,
-                cli.execute("setworkerproperty", "1000", "KEYSTORETYPE", "PKCS12"));
+                cli.execute("setproperty", TESTTSID, "KEYSTORETYPE", "PKCS12"));
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,
-                cli.execute("setworkerproperty", "1000", "KEYSTOREPASSWORD", "foo123"));
+                cli.execute("setproperty", TESTTSID, "KEYSTOREPASSWORD", "foo123"));
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,
-                cli.execute("setworkerproperty", "1000", "DEFAULTKEY", "TS Signer 1"));
+                cli.execute("setproperty", TESTTSID, "DEFAULTKEY", "TS Signer 1"));
        
         assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
                 cli.execute("removeproperty", TESTTSID, "ARCHIVER0.ARCHIVE_OF_TYPE"));

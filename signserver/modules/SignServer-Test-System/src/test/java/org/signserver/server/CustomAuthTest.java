@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.server;
 
+import java.io.File;
 import java.math.BigInteger;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
@@ -26,13 +27,13 @@ import org.signserver.common.*;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.module.tsa.TimeStampSigner;
-import org.signserver.server.cryptotokens.HardCodedCryptoToken;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestingSecurityManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.signserver.common.util.PathUtil;
+import org.signserver.server.cryptotokens.KeystoreCryptoToken;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class CustomAuthTest extends ModulesTestCase {
@@ -93,7 +94,15 @@ public class CustomAuthTest extends ModulesTestCase {
         } catch (IllegalRequestException e) {
         }
 
-        HardCodedCryptoToken token = new HardCodedCryptoToken();
+        final Properties props = new Properties();
+        final KeystoreCryptoToken token = new KeystoreCryptoToken();
+        
+        props.setProperty("KEYSTORETYPE", "PKCS12");
+        props.setProperty("KEYSTOREPATH", getSignServerHome() + File.separator + "res" +
+                        File.separator + "test" + File.separator + "dss10" +
+                        File.separator + "dss10_signer1.p12");
+        props.setProperty("KEYSTOREPASSWORD", "foo123");
+        props.setProperty("DEFAULTKEY", "Signer 1");
         token.init(1, new Properties());
 
         // This test apparently borrows the signer certificate to test with

@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.module.tsa;
 
+import java.io.File;
 import java.math.BigInteger;
 import java.security.KeyPair;
 import java.security.cert.Certificate;
@@ -60,6 +61,7 @@ import org.signserver.test.utils.builders.CryptoUtils;
 import org.signserver.test.utils.mock.GlobalConfigurationSessionMock;
 import org.signserver.test.utils.mock.MockedCryptoToken;
 import org.signserver.test.utils.mock.WorkerSessionMock;
+import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestUtils;
 
 /**
@@ -72,7 +74,7 @@ import org.signserver.testutils.TestUtils;
  * @author Marcus Lundblad
  * @version $Id$
  */
-public class MSAuthCodeTimeStampSignerTest extends TestCase {
+public class MSAuthCodeTimeStampSignerTest extends ModulesTestCase {
     
     /** Logger for this class */
     private static final Logger LOG = Logger.getLogger(MSAuthCodeTimeStampSignerTest.class);
@@ -96,33 +98,29 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
     private static final String SHA256_OID = "2.16.840.1.101.3.4.2.1";
 
     private static byte[] certbytes1 = Base64.decode((
-              "MIIElTCCAn2gAwIBAgIITz1ZKtegWpgwDQYJKoZIhvcNAQELBQAwTTEXMBUGA1UE"
-            + "AwwORFNTIFJvb3QgQ0EgMTAxEDAOBgNVBAsMB1Rlc3RpbmcxEzARBgNVBAoMClNp"
-            + "Z25TZXJ2ZXIxCzAJBgNVBAYTAlNFMB4XDTExMDUyNzA5NTE0NVoXDTIxMDUyNzA5"
-            + "NTE0NVowRzERMA8GA1UEAwwIU2lnbmVyIDQxEDAOBgNVBAsMB1Rlc3RpbmcxEzAR"
-            + "BgNVBAoMClNpZ25TZXJ2ZXIxCzAJBgNVBAYTAlNFMIIBIjANBgkqhkiG9w0BAQEF"
-            + "AAOCAQ8AMIIBCgKCAQEAnCGlYABPTW3Jx607cdkHPDJEGXpKCXkI29zj8BxCIvC3"
-            + "3kyGZB6M7EICU+7vt200u1TmSjx2auTfZI6sA2cDsESlMhKJ+8nj2uj1f5g9MYRb"
-            + "+IIq1IIhDArWwICswnZkWL/5Ncggg2bNcidCblDy5SUQ+xMeXtJQWCU8Zn3a+ySZ"
-            + "Z1ZiYZ10gUu5JValsuOb8YpcT/pqBPF0cgEy6mIe3ANolzxLKNUBYAsQzQnCvgx+"
-            + "GqgbzYHo8fkppSGUFVYdFI0MC9CBT72eOxxQoguICWXus8BdIwebZDGQdluKvTNs"
-            + "ig4hM39G6WvPqoEi9I86VhY9mSyY+WOeU5Y3ZsC8CQIDAQABo38wfTAdBgNVHQ4E"
-            + "FgQUGqddBv2s8iEa5B98MVTbQ2HiFkAwDAYDVR0TAQH/BAIwADAfBgNVHSMEGDAW"
-            + "gBQgeiHe6K27Aqj7cVikCWK52FgFojAOBgNVHQ8BAf8EBAMCBeAwHQYDVR0lBBYw"
-            + "FAYIKwYBBQUHAwIGCCsGAQUFBwMEMA0GCSqGSIb3DQEBCwUAA4ICAQB8HpFOfiTb"
-            + "ylu06tg0yqvix93zZrJWSKT5PjwpqAU+btQ4fFy4GUBG6VuuVr27+FaFND3oaIQW"
-            + "BXdQ1+6ea3Nu9WCnKkLLjg7OjBNWw1LCrHXiAHdIYM3mqayPcf7ezbr6AMnmwDs6"
-            + "/8YAXjyRLmhGb23M8db+3pgTf0Co/CoeQWVa1eJObH7aO4/Koeg4twwbKG0MjwEY"
-            + "ZPi0ZWB93w/llEHbvMNI9dsQWSqIU7W56KRFN66WdqFhjdVPyg86NudH+9jmp4x1"
-            + "Ac9GKGNOYYfDnQCdsrJwZMvcI7bZykbd77ZC3zBzuaISAeRJq3rjHygSeKPHCYDW"
-            + "zAVEP9yaO0fL7HMZ2uqHxokvuOo5SxgVfvLr+kT4ioQHz+r9ehkCf0dbydm7EqyJ"
-            + "Y7YSFUDEqk57dnZDxy7ZgUA/TZf3I3rPjSopDxqiqJbm9L0GPW3zk0pAZx7dgLcq"
-            + "2I8fv+DBEKqJ47/H2V5aopxsRhiKC5u8nEEbAMbBYgjGQT/5K4mBt0gUJFNek7vS"
-            + "a50VH05u8P6yo/3ppDxGCXE2d2JfWlEIx7DRWWij2PuOgDGkvVt2soxtp8Lx+kS6"
-            + "K+G+tA5BGZMyEPdqAakyup7udi4LoB0wfJ58Jr5QNHCx4icUWvCBUM5CTcH4O/pQ"
-            + "oj/7HSYZlqigM72nR8f/gv1TwLVKz+ygzg==").getBytes());
+            "MIIEkTCCAnmgAwIBAgIIeCvAS5OwAJswDQYJKoZIhvcNAQELBQAwTTEXMBUGA1UEAwwORFNTIFJv"
+            + "b3QgQ0EgMTAxEDAOBgNVBAsMB1Rlc3RpbmcxEzARBgNVBAoMClNpZ25TZXJ2ZXIxCzAJBgNVBAYT"
+            + "AlNFMB4XDTExMDUyNzEyMTU1NVoXDTIxMDUyNDEyMTU1NVowSjEUMBIGA1UEAwwLVFMgU2lnbmVy"
+            + "IDExEDAOBgNVBAsMB1Rlc3RpbmcxEzARBgNVBAoMClNpZ25TZXJ2ZXIxCzAJBgNVBAYTAlNFMIIB"
+            + "IjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnT38GG8i/bGnuFMwnOdg+caHMkdPBacRdBaI"
+            + "ggwMPfE50SOZ2TLrDEHJotxYda7HS0+tX5dIcalmEYCls/ptHzO5TQpqdRTuTqxp5cMA379yhD0O"
+            + "qTVNAmHrvPj9IytktoAtB/xcjwkRTHagaCmg5SWNcLKyVUct7nbeRA5yDSJQsCAEGHNZbJ50vATg"
+            + "1DQEyKT87GKfSBsclA0WIIIHMt8/SRhpsUZxESayU6YA4KCxVtexF5x+COLB6CzzlRG9JA8WpX9y"
+            + "KgIMsMDAscsJLiLPjhET5hwAFm5ZRfQQG9LI06QNTGqukuTlDbYrQGAUR5ZXW00WNHfgS00CjUCu"
+            + "0QIDAQABo3gwdjAdBgNVHQ4EFgQUOF0FflO2G+IN6c92pCNlPoorGVwwDAYDVR0TAQH/BAIwADAf"
+            + "BgNVHSMEGDAWgBQgeiHe6K27Aqj7cVikCWK52FgFojAOBgNVHQ8BAf8EBAMCB4AwFgYDVR0lAQH/"
+            + "BAwwCgYIKwYBBQUHAwgwDQYJKoZIhvcNAQELBQADggIBADELkeIO9aiKjS/GaBUUhMr+k5UbVeK6"
+            + "9WapU+7gTsWwa9D2vAOhAkfQ1OcUJoZaminv8pcNfo1Ey5qLtxBCmUy1fVomVWOPl6u1w8B6uYgE"
+            + "608hi2bfx28uIeksqpdqUX0Qf6ReUyl+FOh4xNrsyaF81TrIKt8ekq0iD+YAtT/jqgv4bUvs5fgI"
+            + "ms4QOXgMUzNAP7cPU44KxcmR5I5Uy/Ag82hGIz64hZmeIDT0X59kbQvlZqFaiZvYOikoZSFvdM5k"
+            + "SVfItMgp7qmyLxuM/WaXqJWp6Mm+8ZZmcECugd4AEpE7xIiB7M/KEe+X4ItBNTKdAoaxWa+yeuYS"
+            + "7ol9rHt+Nogelj/06ZRQ0x03UqC7uKpgYAICjQEXIjcZofWSTh9KzKNfS1sQyIQ6yNTT2VMdYW9J"
+            + "C2OLKPV4AEJuBw30X8HOciJRRXOq9KRrIA2RSiaC5/3oAYscWuo31Fmj8CWQknXAIb39gPuZRwGO"
+            + "Jbi1tUu2zmRsUNJfAe3hnvk+uxhnyp2vKB2KN5/VQgisx+8doEK/+Nbj/PPG/zASKimWG++5m0JN"
+            + "Y4chIfR43gDDcF+4INof/8V84wbvUF+TpvP/mYM8wC9OkUyRvzqv9vjWOncCdbdjCuqPxDItwm9h"
+            + "hr+PbxsMaBes9rAiV9YT1FnpA++YpCufveFCQPDbCTgJ").getBytes());
     
-    private static final String KEY_ALIAS_1 = "key00001";
+    private static final String KEY_ALIAS_1 = "TS Signer 1";
     
     @Override
     protected void setUp() throws Exception {
@@ -172,7 +170,7 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
         SignServerUtil.installBCProvider();
         
         final String CRYPTOTOKEN_CLASSNAME =
-                "org.signserver.server.cryptotokens.HardCodedCryptoToken";
+                "org.signserver.server.cryptotokens.KeystoreCryptoToken";
         
         final ProcessRequest signRequest;
         
@@ -186,6 +184,12 @@ public class MSAuthCodeTimeStampSignerTest extends TestCase {
         config.setProperty("TIMESOURCE", "org.signserver.server.ZeroTimeSource");
         config.setProperty("SIGNATUREALGORITHM", signingAlgo);
         config.setProperty("DEFAULTKEY", KEY_ALIAS_1);
+        config.setProperty("KEYSTOREPATH",
+                getSignServerHome() + File.separator + "res" +
+                        File.separator + "test" + File.separator + "dss10" +
+                        File.separator + "dss10_tssigner1.p12");
+        config.setProperty("KEYSTORETYPE", "PKCS12");
+        config.setProperty("KEYSTOREPASSWORD", "foo123");
         
         if (includeSigningCertAttr) {
             config.setProperty("INCLUDE_SIGNING_CERTIFICATE_ATTRIBUTE", "true");

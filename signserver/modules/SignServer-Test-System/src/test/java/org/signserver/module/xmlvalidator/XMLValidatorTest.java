@@ -67,7 +67,14 @@ public class XMLValidatorTest extends ModulesTestCase {
     public void test00SetupDatabase() throws Exception {
         // VALIDATION SERVICE
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER17.CLASSPATH", "org.signserver.validationservice.server.ValidationServiceWorker");
-        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER17.SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.HardCodedCryptoToken");
+        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER17.SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.KeystoreCryptoToken");
+        workerSession.setWorkerProperty(17, "KEYSTOREPATH",
+                getSignServerHome() + File.separator + "res" + File.separator +
+                        "test" + File.separator + "dss10" + File.separator +
+                        "dss10_signer1.p12");
+        workerSession.setWorkerProperty(17, "KEYSTORETYPE", "PKCS12");
+        workerSession.setWorkerProperty(17, "KEYSTOREPASSWORD", "foo123");
+        workerSession.setWorkerProperty(17, "DEFAULTKEY", "Signer 1");
         workerSession.setWorkerProperty(17, "AUTHTYPE", "NOAUTH");
         workerSession.setWorkerProperty(17, "NAME", VALIDATION_WORKER);
         workerSession.setWorkerProperty(17, "VAL1.CLASSPATH", "org.signserver.validationservice.server.DummyValidator");

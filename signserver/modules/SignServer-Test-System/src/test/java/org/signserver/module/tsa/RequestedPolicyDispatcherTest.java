@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.module.tsa;
 
+import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.cert.Certificate;
@@ -80,16 +81,28 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
         Properties conf = new Properties();
         // TSDispatcher
         conf.setProperty("GLOB.WORKER8910.CLASSPATH", "org.signserver.module.tsa.RequestedPolicyDispatcher");
-        conf.setProperty("GLOB.WORKER8910.SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.HardCodedCryptoToken");
+        conf.setProperty("GLOB.WORKER8910.SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.KeystoreCryptoToken");
         conf.setProperty("WORKER8910.NAME", "TestTSDispatcher1");
+        conf.setProperty("WORKER8910.KEYSTOREPATH", getSignServerHome() + 
+                File.separator + "res" + File.separator + "test" + File.separator +
+                "dss10" + File.separator + "dss10_tssigner1.p12");
+        conf.setProperty("WORKER8910.KEYSTORETYPE", "PKCS12");
+        conf.setProperty("WORKER8910.KEYSTOREPASSWORD", "foo123");
+        conf.setProperty("WORKER8910.DEFAULTKEY", "TS Signer 1");
         conf.setProperty("WORKER8910.AUTHTYPE", "NOAUTH");
         conf.setProperty("WORKER8910.MAPPINGS", "1.2.13.1:TestTSUnit1;1.2.13.2:TestTSUnit2;1.2.13.3:TestTSUnit3");
         conf.setProperty("WORKER8910.DEFAULTWORKER", "TestTSUnit1");
         
         // TSDispatcher2
         conf.setProperty("GLOB.WORKER8909.CLASSPATH", "org.signserver.module.tsa.RequestedPolicyDispatcher");
-        conf.setProperty("GLOB.WORKER8909.SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.HardCodedCryptoToken");
+        conf.setProperty("GLOB.WORKER8909.SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.KeystoreCryptoToken");
         conf.setProperty("WORKER8909.NAME", "TestTSDispatcher2");
+        conf.setProperty("WORKER8909.KEYSTOREPATH", getSignServerHome() + 
+                File.separator + "res" + File.separator + "test" + File.separator +
+                "dss10" + File.separator + "dss10_tssigner1.p12");
+        conf.setProperty("WORKER8909.KEYSTORETYPE", "PKCS12");
+        conf.setProperty("WORKER8909.KEYSTOREPASSWORD", "foo123");
+        conf.setProperty("WORKER8909.DEFAULTKEY", "TS Signer 1");
         conf.setProperty("WORKER8909.AUTHTYPE", "NOAUTH");
         conf.setProperty("WORKER8909.MAPPINGS", "1.2.13.1:TestTSUnit1;1.2.13.2:TestTSUnit2;1.2.13.3:TestTSUnit3");
         conf.setProperty("WORKER8909.DEFAULTWORKER", "TestTSUnit1");

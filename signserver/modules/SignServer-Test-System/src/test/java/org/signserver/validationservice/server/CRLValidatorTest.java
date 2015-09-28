@@ -45,6 +45,7 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.signserver.common.util.PathUtil;
+import org.signserver.testutils.ModulesTestCase;
 
 /**
  * Tests for the CRL Validator.
@@ -53,7 +54,7 @@ import org.signserver.common.util.PathUtil;
  * @version $Id$
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class CRLValidatorTest {
+public class CRLValidatorTest extends ModulesTestCase {
 
     private static IGlobalConfigurationSession.IRemote gCSession;
     private static IWorkerSession.IRemote sSSession;
@@ -159,7 +160,7 @@ public class CRLValidatorTest {
         ArrayList<X509Certificate> chain2 = new ArrayList<X509Certificate>();
 
         KeyPair keysRootCA2 = KeyTools.genKeys("1024", "RSA");
-        certRootCA2 = ValidationTestUtils.genCert(1000000, "CN=RootCA2", "CN=RootCA2", keysRootCA2.getPrivate(), keysRootCA2.getPublic(),
+        certRootCA2 = ValidationTestUtils.genCert(1000000, "SHA256withRSA", "CN=RootCA2", keysRootCA2.getPrivate(), keysRootCA2.getPublic(),
                 new Date(0), new Date(System.currentTimeMillis() + 1000000), true);
 
         KeyPair keysEndEntity3 = KeyTools.genKeys("1024", "RSA");
@@ -192,7 +193,14 @@ public class CRLValidatorTest {
 
         // Setup worker
         gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER15.CLASSPATH", "org.signserver.validationservice.server.ValidationServiceWorker");
-        gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER15.SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.HardCodedCryptoToken");
+        gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER15.SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.KeystoreCryptoToken");
+        sSSession.setWorkerProperty(15, "KEYSTOREPATH",
+                getSignServerHome() + File.separator + "res" + File.separator +
+                "test" + File.separator + "dss10" + File.separator +
+                "dss10_signer1.p12");
+        sSSession.setWorkerProperty(15, "KEYSTORETYPE", "PKCS12");
+        sSSession.setWorkerProperty(15, "KEYSTOREPASSWORD", "foo123");
+        sSSession.setWorkerProperty(15, "DEFAULTKEY", "Signer 1");
         sSSession.setWorkerProperty(15, "AUTHTYPE", "NOAUTH");
         sSSession.setWorkerProperty(15, "VAL1.CLASSPATH", "org.signserver.validationservice.server.CRLValidator");
         sSSession.setWorkerProperty(15, "VAL1.ISSUER1.CERTCHAIN", ValidationTestUtils.genPEMStringFromChain(chain1));

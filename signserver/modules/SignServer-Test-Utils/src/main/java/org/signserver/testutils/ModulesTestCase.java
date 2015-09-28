@@ -470,7 +470,18 @@ public class ModulesTestCase extends TestCase {
     public void addXMLValidator() throws Exception {
         // VALIDATION SERVICE
         getGlobalSession().setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + VALIDATION_SERVICE_WORKER_ID + ".CLASSPATH", "org.signserver.validationservice.server.ValidationServiceWorker");
-        getGlobalSession().setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + VALIDATION_SERVICE_WORKER_ID + ".SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.HardCodedCryptoToken");
+        getGlobalSession().setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + VALIDATION_SERVICE_WORKER_ID + ".SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.KeystoreCryptoToken");
+        getWorkerSession().setWorkerProperty(VALIDATION_SERVICE_WORKER_ID,
+                "KEYSTOREPATH",
+                getSignServerHome() + File.separator + "res" + File.separator +
+                        "test" + File.separator + "dss10" + File.separator +
+                        "dss10_signer1.p12");
+        getWorkerSession().setWorkerProperty(VALIDATION_SERVICE_WORKER_ID,
+                "KEYSTORETYPE", "PKCS12");
+        getWorkerSession().setWorkerProperty(VALIDATION_SERVICE_WORKER_ID,
+                "KEYSTOREPASSWORD", "foo123");
+        getWorkerSession().setWorkerProperty(VALIDATION_SERVICE_WORKER_ID,
+                "DEFAULTKEY", "Signer 1");
         getWorkerSession().setWorkerProperty(VALIDATION_SERVICE_WORKER_ID, "AUTHTYPE", "NOAUTH");
         getWorkerSession().setWorkerProperty(VALIDATION_SERVICE_WORKER_ID, "NAME", VALIDATION_SERVICE_WORKER_NAME);
         getWorkerSession().setWorkerProperty(VALIDATION_SERVICE_WORKER_ID, "VAL1.CLASSPATH", "org.signserver.validationservice.server.DummyValidator");

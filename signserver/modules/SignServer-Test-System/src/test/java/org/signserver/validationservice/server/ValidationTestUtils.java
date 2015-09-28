@@ -66,35 +66,25 @@ import org.signserver.common.SignServerUtil;
  */
 public class ValidationTestUtils {
 
-    public static X509Certificate genCert(long validity, String dn, String issuerdn,
-                                          PrivateKey privKey, PublicKey pubKey,
-                                          Date startDate, Date endDate,
-                                          boolean isCA)
+    public static X509Certificate genCert(long validity, String sigAlg, String dn, PrivateKey privKey, PublicKey pubKey, Date startDate, Date endDate, boolean isCA)
             throws CertificateEncodingException, InvalidKeyException,
                    IllegalStateException, NoSuchAlgorithmException,
                    SignatureException, IOException, NoSuchProviderException,
                    OperatorCreationException, 
                    CertificateException {
-        return genCert(validity, dn, issuerdn, privKey, pubKey, startDate, endDate, isCA, 0);
+        return genCert(validity, sigAlg, dn, privKey, pubKey, startDate, endDate, isCA, 0);
     }
 
-    public static X509Certificate genCert(long validity, String dn, String issuerdn,
-                                          PrivateKey privKey, PublicKey pubKey,
-                                          Date startDate, Date endDate,
-                                          boolean isCA, int keyUsage)
+    public static X509Certificate genCert(long validity, String sigAlg, String dn, PrivateKey privKey, PublicKey pubKey, Date startDate, Date endDate, boolean isCA, int keyUsage)
             throws CertificateEncodingException, InvalidKeyException,
                    IllegalStateException, NoSuchAlgorithmException,
                    SignatureException, IOException, NoSuchProviderException,
                    OperatorCreationException, 
                    CertificateException {
-        return genCert(validity, dn, issuerdn, privKey, pubKey, startDate, endDate, isCA, keyUsage, null);
+        return genCert(validity, sigAlg, dn, privKey, pubKey, startDate, endDate, isCA, keyUsage, null);
     }
 
-    public static X509Certificate genCert(long validity, String dn, String issuerdn,
-                                          PrivateKey privKey, PublicKey pubKey,
-                                          Date startDate, Date endDate, 
-                                          boolean isCA, int keyUsage, 
-                                          CRLDistPoint crlDistPoint)
+    public static X509Certificate genCert(long validity, String sigAlg, String dn, PrivateKey privKey, PublicKey pubKey, Date startDate, Date endDate, boolean isCA, int keyUsage, CRLDistPoint crlDistPoint)
             throws CertificateEncodingException, InvalidKeyException,
                    IllegalStateException, NoSuchAlgorithmException,
                    SignatureException, IOException, NoSuchProviderException,
@@ -107,25 +97,9 @@ public class ValidationTestUtils {
             extensions.add(new Extension(Extension.cRLDistributionPoints, false, crlDistPoint.getEncoded()));
         }
 
-        // Basic constranits is always critical and MUST be present at-least in CA-certificates.
-        BasicConstraints bc = new BasicConstraints(isCA);
-        extensions.add(new Extension(Extension.basicConstraints, true, bc.getEncoded()));
-
-        // Put critical KeyUsage in CA-certificates
-        if (keyUsage == 0) {
-            if (isCA == true) {
-                int keyusage = X509KeyUsage.keyCertSign + X509KeyUsage.cRLSign;
-                X509KeyUsage ku = new X509KeyUsage(keyusage);
-                extensions.add(new Extension(Extension.keyUsage, true, ku.getEncoded()));
-            }
-        } else {
-            X509KeyUsage ku = new X509KeyUsage(keyUsage);
-            extensions.add(new Extension(Extension.keyUsage, true, ku.getEncoded()));
-        }
-
         //return cert;
-        return CertTools.genSelfCertForPurpose(dn, validity, issuerdn, privKey,
-                pubKey, dn, isCA, keyUsage, endDate, startDate, dn, true, extensions);
+        return CertTools.genSelfCertForPurpose(dn, validity, null, privKey,
+                pubKey, sigAlg, isCA, keyUsage, endDate, startDate, "BC", true, extensions);
     }
 
     public static String genPEMStringFromChain(List<X509Certificate> chain) throws CertificateEncodingException {

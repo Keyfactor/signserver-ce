@@ -166,7 +166,7 @@ public class SignServerCLITest extends ModulesTestCase {
                 cli.execute("activatesigntoken", TESTTSID, "9876"));
         assertEquals("", CommandLineInterface.RETURN_SUCCESS, cli.execute("activatesigntoken",
                     TESTTSID,
-                    "1234"));
+                    "foo123"));
         assertPrinted("", cli.getOut(), "Activation of worker was successful");
 
 
@@ -177,12 +177,12 @@ public class SignServerCLITest extends ModulesTestCase {
 
         // Test operations by name
         assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
-            cli.execute("activatecryptotoken", "timestampSigner1000", "1234"));
+            cli.execute("activatecryptotoken", "timestampSigner1000", "foo123"));
         assertPrinted("", cli.getOut(), "Activation of worker was successful");
         assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
-            cli.execute("activatecryptotoken", "TIMESTAMPSIGNER1000", "1234"));
+            cli.execute("activatecryptotoken", "TIMESTAMPSIGNER1000", "foo123"));
         assertFalse("", CommandLineInterface.RETURN_SUCCESS ==
-            cli.execute("activatecryptotoken", "TIMESTAMPSIGNER2000", "1234"));
+            cli.execute("activatecryptotoken", "TIMESTAMPSIGNER2000", "foo123"));
 
         // Test authorized clients
         assertEquals("", CommandLineInterface.RETURN_SUCCESS, 

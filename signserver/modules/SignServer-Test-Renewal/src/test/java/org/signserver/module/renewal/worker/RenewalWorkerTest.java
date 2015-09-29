@@ -833,7 +833,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
         config.setProperty("DEFAULTKEY", "defaultKey");
         
         final String CRYPTOTOKEN_CLASSNAME =
-                "org.signserver.server.cryptotokens.HardCodedCryptoToken";
+                "org.signserver.server.cryptotokens.KeystoreCryptoToken";
         
         workerSession.setupWorker(signerId, CRYPTOTOKEN_CLASSNAME, config, new RenewalWorker() {
             @Override

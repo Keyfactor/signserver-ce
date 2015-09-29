@@ -55,7 +55,7 @@ public class RequestAndResponseManagerTest {
         assertTrue(((GenericSignResponse) r).getRequestID() == 13);
 
         KeyPair validCert1Keys = KeyTools.genKeys("512", "RSA");
-        X509Certificate cert = ValidationTestUtils.genCert(1000000, "CN=ValidCert1", "CN=ValidSubCA1", validCert1Keys.getPrivate(), validCert1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), false);
+        X509Certificate cert = ValidationTestUtils.genCert(1000000, "SHA256withRSA", "CN=ValidSubCA1", validCert1Keys.getPrivate(), validCert1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), false);
         resp = new GenericSignResponse(13, data, cert, null, null);
         respData = RequestAndResponseManager.serializeProcessResponse(resp);
         r = RequestAndResponseManager.parseProcessResponse(respData);

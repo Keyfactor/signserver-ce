@@ -104,7 +104,7 @@ public class CustomAuthTest extends ModulesTestCase {
                         File.separator + "dss10_signer1.p12");
         props.setProperty("KEYSTOREPASSWORD", "foo123");
         props.setProperty("DEFAULTKEY", "Signer 1");
-        token.init(1, new Properties());
+        token.init(1, props);
 
         // This test apparently borrows the signer certificate to test with
         // as if it were a client authentication certificate. Well I guess it work...

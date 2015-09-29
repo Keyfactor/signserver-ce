@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.protocol.ws;
 
+import java.io.File;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -131,8 +132,15 @@ public class MainWebServiceTestSeparately extends ModulesTestCase {
         validChain1.add(validSubCA1);
 
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER16.CLASSPATH", "org.signserver.validationservice.server.ValidationServiceWorker");
-        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER16.SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.HardCodedCryptoToken");
+        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER16.SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.KeystoreCryptoToken");
 
+        workerSession.setWorkerProperty(16, "KEYSTOREPATH",
+                signserverhome + File.separator + "res" + File.separator +
+                        "test" + File.separator + "dss10" + File.separator +
+                        "dss10_signer1.p12");
+        workerSession.setWorkerProperty(16, "KEYSTORETYPE", "PKCS12");
+        workerSession.setWorkerProperty(16, "KEYSTOREPASSWORD", "foo123");
+        workerSession.setWorkerProperty(16, "DEFAULTKEY", "Signer 1");
         workerSession.setWorkerProperty(16, "AUTHTYPE", "NOAUTH");
         workerSession.setWorkerProperty(16, "NAME", "ValTest");
         workerSession.setWorkerProperty(16, "VAL1.CLASSPATH", "org.signserver.validationservice.server.DummyValidator");

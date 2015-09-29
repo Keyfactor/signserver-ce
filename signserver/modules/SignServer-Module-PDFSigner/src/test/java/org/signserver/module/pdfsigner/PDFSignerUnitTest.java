@@ -25,7 +25,6 @@ import java.security.PrivateKey;
 import java.security.cert.*;
 import java.util.*;
 
-import junit.framework.TestCase;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.DERBitString;
@@ -48,6 +47,7 @@ import org.signserver.test.utils.builders.CryptoUtils;
 import org.signserver.test.utils.mock.GlobalConfigurationSessionMock;
 import org.signserver.test.utils.mock.MockedCryptoToken;
 import org.signserver.test.utils.mock.WorkerSessionMock;
+import org.signserver.testutils.ModulesTestCase;
 
 /**
  * Unit tests for PDFSigner.
@@ -58,7 +58,7 @@ import org.signserver.test.utils.mock.WorkerSessionMock;
  * @author Markus Kilås
  * @version $Id$
  */
-public class PDFSignerUnitTest extends TestCase {
+public class PDFSignerUnitTest extends ModulesTestCase {
 
     /** Logger for this class. */
     public static final Logger LOG = Logger.getLogger(PDFSignerUnitTest.class);
@@ -71,7 +71,7 @@ public class PDFSignerUnitTest extends TestCase {
     private static final String AUTHTYPE = "AUTHTYPE";
     
     private static final String CRYPTOTOKEN_CLASSNAME = 
-            "org.signserver.server.cryptotokens.HardCodedCryptoToken";
+            "org.signserver.server.cryptotokens.KeystoreCryptoToken";
     private final String SAMPLE_OWNER123_PASSWORD = "owner123";
     private final String SAMPLE_USER_AAA_PASSWORD = "user\u00e5\u00e4\u00f6";
     private final String SAMPLE_OPEN123_PASSWORD = "open123";
@@ -1466,7 +1466,9 @@ public class PDFSignerUnitTest extends TestCase {
         return response.getProcessedData();
     }
 
-    private void setupWorkers() throws NoSuchAlgorithmException, NoSuchProviderException, CertBuilderException, CertificateException {
+    private void setupWorkers()
+            throws NoSuchAlgorithmException, NoSuchProviderException,
+                CertBuilderException, CertificateException, FileNotFoundException {
 
         final GlobalConfigurationSessionMock globalMock
                 = new GlobalConfigurationSessionMock();
@@ -1480,6 +1482,14 @@ public class PDFSignerUnitTest extends TestCase {
             final int workerId = WORKER1;
             final WorkerConfig config = new WorkerConfig();
             config.setProperty(NAME, "TestPDFSigner1");
+            config.setProperty("KEYSTOREPATH",
+                    getSignServerHome() + File.separator + "res" + File.separator +
+                            "test" + File.separator + "dss10" + File.separator +
+                            "dss10_signer1.p12");
+            config.setProperty("KEYSTORETYPE", "PKCS12");
+            config.setProperty("KEYSTOREPASSWORD", "foo123");
+            config.setProperty("DEFAULTKEY", "Signer 1");
+            
             config.setProperty(AUTHTYPE, "NOAUTH");
             
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,

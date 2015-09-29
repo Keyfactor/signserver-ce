@@ -64,6 +64,7 @@ public class DummyAuthorizer implements IAuthorizer {
             throw new IllegalRequestException("Not authorized");
         }
         if (clientCert != null && (CertTools.stringToBCDNString(clientCert.getSubjectDN().toString()).equals("CN=timestamptest,O=PrimeKey Solution AB")
+                || CertTools.stringToBCDNString(clientCert.getSubjectDN().toString()).equals("CN=TS Signer 1,OU=Testing,O=SignServer,C=SE")
                 || CertTools.stringToBCDNString(clientCert.getSubjectDN().toString()).equals("CN=Signer 4,OU=Testing,O=SignServer,C=SE")
                 || clientCert.getSerialNumber().toString(16).equalsIgnoreCase("58ece0453711fe20"))) {
             throw new IllegalRequestException("Not authorized");

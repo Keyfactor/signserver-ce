@@ -101,9 +101,9 @@ public class CustomAuthTest extends ModulesTestCase {
         props.setProperty("KEYSTORETYPE", "PKCS12");
         props.setProperty("KEYSTOREPATH", getSignServerHome() + File.separator + "res" +
                         File.separator + "test" + File.separator + "dss10" +
-                        File.separator + "dss10_signer1.p12");
+                        File.separator + "dss10_tssigner1.p12");
         props.setProperty("KEYSTOREPASSWORD", "foo123");
-        props.setProperty("DEFAULTKEY", "Signer 1");
+        props.setProperty("DEFAULTKEY", "TS Signer 1");
         token.init(1, props);
 
         // This test apparently borrows the signer certificate to test with

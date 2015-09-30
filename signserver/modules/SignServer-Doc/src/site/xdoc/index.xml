@@ -29,15 +29,15 @@
 <a href="https://www.primekey.se/service-support/support/?pk_campaign=ssorg&amp;pk_kwd=enterprise_support" target="pk">Enterprise Support</a>
 </div>
 <div class="content first">
-<p><strong>SignServer 3.6.2 is now out!</strong>
+<p><strong>SignServer 3.7.0 is now out!</strong>
         <a href="download.html">Visit the download section to get SignServer.</a><br />
-  <span class="date"> Posted: 2014-11-28</span>
+  <span class="date"> Posted: 2015-09-30</span>
  </p>
-    <p>
+    <!-- <p>
         <strong>SignServer Enterprise 3.6.3 is now out!</strong><br/>
          For entire non-community features, only available in SignServer Enterprise, see the section on <a href="features.html#Enterprise%20Edition%20features">"Enterprise Edition features" in the features list</a>.<br/>
         <span class="date"> Posted: 2015-04-01</span>
-    </p>
+    </p> -->
 <p style="margin:0 0 .2em 0;"><strong>Main Features of SignServer!</strong></p>
     <div>
         <ul style="margin:.4em 0 0 0;">
@@ -129,6 +129,7 @@ Some of the major new features in version 3.7 are:
 </p>
 <ul>
     <li>Individual keys and certificates support</li>
+    <li>Batch signing support in client CLI</li>
     <li>Initial support for building using Maven</li>
     <li>GUI improvments</li>
     <li>Upgraded dependencies</li>

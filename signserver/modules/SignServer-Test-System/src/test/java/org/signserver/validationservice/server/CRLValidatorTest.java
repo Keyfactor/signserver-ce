@@ -113,7 +113,7 @@ public class CRLValidatorTest extends ModulesTestCase {
                 new Date(0), new Date(System.currentTimeMillis() + 1000000), false, 0, crlDistPointCA1WithUrl);
 
         KeyPair keysEndEntity2 = KeyTools.genKeys("1024", "RSA");
-        certEndEntity2 = ValidationTestUtils.genCert("CN=EndEntity1", "CN=RootCA1", keysRootCA1.getPrivate(), keysEndEntity2.getPublic(),
+        certEndEntity2 = ValidationTestUtils.genCert("CN=EndEntity2", "CN=RootCA1", keysRootCA1.getPrivate(), keysEndEntity2.getPublic(),
                 new Date(0), new Date(System.currentTimeMillis() + 1000000), false, 0, crlDistPointCA1WithUrl);
 
         KeyPair keysEndEntity5 = KeyTools.genKeys("1024", "RSA");

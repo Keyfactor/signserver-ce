@@ -84,47 +84,47 @@ public class ValidationServiceWorkerTest {
     @Test
     public void test00SetupDatabase() throws Exception {
         KeyPair validRootCA1Keys = KeyTools.genKeys("1024", "RSA");
-        validRootCA1 = ValidationTestUtils.genCert(1000000, "SHA256withRSA", "CN=ValidRootCA1", validRootCA1Keys.getPrivate(), validRootCA1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), true);
+        validRootCA1 = ValidationTestUtils.genCert("CN=ValidRootCA1", "CN=ValidRootCA1", validRootCA1Keys.getPrivate(), validRootCA1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), true);
 
         KeyPair validSubCA1Keys = KeyTools.genKeys("1024", "RSA");
-        validSubCA1 = ValidationTestUtils.genCert(1000000, "SHA256withRSA", "CN=ValidSubCA1", validRootCA1Keys.getPrivate(), validSubCA1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), true);
+        validSubCA1 = ValidationTestUtils.genCert("CN=ValidSubCA1", "CN=ValidRootCA1", validRootCA1Keys.getPrivate(), validSubCA1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), true);
 
         KeyPair validCert1Keys = KeyTools.genKeys("1024", "RSA");
-        validCert1 = ValidationTestUtils.genCert(1000000, "SHA256withRSA", "CN=ValidCert1", validSubCA1Keys.getPrivate(), validCert1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), false);
-        revokedCert1 = ValidationTestUtils.genCert(1000000, "SHA256withRSA", "CN=revokedCert1", validSubCA1Keys.getPrivate(), validCert1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), false);
-        expiredCert1 = ValidationTestUtils.genCert(1000000, "SHA256withRSA", "CN=expiredCert1", validSubCA1Keys.getPrivate(), validCert1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() - 1000000), false);
-        noYetValidCert1 = ValidationTestUtils.genCert(1000000, "SHA256withRSA", "CN=noYetValidCert1", validSubCA1Keys.getPrivate(), validCert1Keys.getPublic(), new Date(System.currentTimeMillis() + 1000000), new Date(System.currentTimeMillis() + 2000000), false);
-        badSigCert1 = ValidationTestUtils.genCert(1000000, "SHA256withRSA", "CN=badSigCert1", validRootCA1Keys.getPrivate(), validCert1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), false);
+        validCert1 = ValidationTestUtils.genCert("CN=ValidCert1", "CN=ValidSubCA1", validSubCA1Keys.getPrivate(), validCert1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), false);
+        revokedCert1 = ValidationTestUtils.genCert("CN=revokedCert1", "CN=ValidSubCA1", validSubCA1Keys.getPrivate(), validCert1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), false);
+        expiredCert1 = ValidationTestUtils.genCert("CN=expiredCert1", "CN=ValidSubCA1", validSubCA1Keys.getPrivate(), validCert1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() - 1000000), false);
+        noYetValidCert1 = ValidationTestUtils.genCert("CN=noYetValidCert1", "CN=ValidSubCA1", validSubCA1Keys.getPrivate(), validCert1Keys.getPublic(), new Date(System.currentTimeMillis() + 1000000), new Date(System.currentTimeMillis() + 2000000), false);
+        badSigCert1 = ValidationTestUtils.genCert("CN=badSigCert1", "CN=ValidRootCA1", validRootCA1Keys.getPrivate(), validCert1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), false);
 
-        identificationCert1 = ValidationTestUtils.genCert(1000000, "SHA256withRSA", "CN=identificationCert1", validSubCA1Keys.getPrivate(), validCert1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), false, X509KeyUsage.digitalSignature + X509KeyUsage.keyEncipherment);
-        esigCert1 = ValidationTestUtils.genCert(1000000, "SHA256withRSA", "CN=esigCert1", validSubCA1Keys.getPrivate(), validCert1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), false, X509KeyUsage.nonRepudiation);
-        badKeyUsageCert1 = ValidationTestUtils.genCert(1000000, "SHA256withRSA", "CN=badKeyUsageCert1", validSubCA1Keys.getPrivate(), validCert1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), false, X509KeyUsage.dataEncipherment + X509KeyUsage.cRLSign);
+        identificationCert1 = ValidationTestUtils.genCert("CN=identificationCert1", "CN=ValidSubCA1", validSubCA1Keys.getPrivate(), validCert1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), false, X509KeyUsage.digitalSignature + X509KeyUsage.keyEncipherment);
+        esigCert1 = ValidationTestUtils.genCert("CN=esigCert1", "CN=ValidSubCA1", validSubCA1Keys.getPrivate(), validCert1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), false, X509KeyUsage.nonRepudiation);
+        badKeyUsageCert1 = ValidationTestUtils.genCert("CN=badKeyUsageCert1", "CN=ValidSubCA1", validSubCA1Keys.getPrivate(), validCert1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), false, X509KeyUsage.dataEncipherment + X509KeyUsage.cRLSign);
 
         KeyPair expiredRootCA1Keys = KeyTools.genKeys("1024", "RSA");
-        expiredRootCA1 = ValidationTestUtils.genCert(1000000, "SHA256withRSA", "CN=expiredRootCA1", expiredRootCA1Keys.getPrivate(), expiredRootCA1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() - 1000000), true);
+        expiredRootCA1 = ValidationTestUtils.genCert("CN=expiredRootCA1", "CN=expiredRootCA1", expiredRootCA1Keys.getPrivate(), expiredRootCA1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() - 1000000), true);
 
-        certByExpiredRoot = ValidationTestUtils.genCert(1000000, "SHA256withRSA", "CN=certByExpiredRoot", expiredRootCA1Keys.getPrivate(), validCert1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), false);
+        certByExpiredRoot = ValidationTestUtils.genCert("CN=certByExpiredRoot", "CN=expiredRootCA1", expiredRootCA1Keys.getPrivate(), validCert1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), false);
 
         KeyPair notYetValidSubCA1Keys = KeyTools.genKeys("1024", "RSA");
-        notYetValidCA = ValidationTestUtils.genCert(1000000, "SHA256withRSA", "CN=notYetValidCA", validRootCA1Keys.getPrivate(), notYetValidSubCA1Keys.getPublic(), new Date(System.currentTimeMillis() + 1000000), new Date(System.currentTimeMillis() + 2000000), true);
+        notYetValidCA = ValidationTestUtils.genCert("CN=notYetValidCA", "CN=ValidRootCA1", validRootCA1Keys.getPrivate(), notYetValidSubCA1Keys.getPublic(), new Date(System.currentTimeMillis() + 1000000), new Date(System.currentTimeMillis() + 2000000), true);
 
-        certByNotYetValidSub = ValidationTestUtils.genCert(1000000, "SHA256withRSA", "CN=certByNotYetValidSub", notYetValidSubCA1Keys.getPrivate(), validCert1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), false);
+        certByNotYetValidSub = ValidationTestUtils.genCert("CN=certByNotYetValidSub", "CN=notYetValidCA", notYetValidSubCA1Keys.getPrivate(), validCert1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), false);
 
         KeyPair revocedRootCA1Keys = KeyTools.genKeys("1024", "RSA");
-        revocedRootCA1 = ValidationTestUtils.genCert(1000000, "SHA256withRSA", "CN=revocedRootCA1", revocedRootCA1Keys.getPrivate(), revocedRootCA1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), true);
-        certByRevocedRoot = ValidationTestUtils.genCert(1000000, "SHA256withRSA", "CN=certByRevocedRoot", revocedRootCA1Keys.getPrivate(), validCert1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), false);
+        revocedRootCA1 = ValidationTestUtils.genCert("CN=revocedRootCA1", "CN=revocedRootCA1", revocedRootCA1Keys.getPrivate(), revocedRootCA1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), true);
+        certByRevocedRoot = ValidationTestUtils.genCert("CN=certByRevocedRoot", "CN=revocedRootCA1", revocedRootCA1Keys.getPrivate(), validCert1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), false);
 
 
         KeyPair validSubCA2Keys = KeyTools.genKeys("1024", "RSA");
-        validSubCA2 = ValidationTestUtils.genCert(1000000, "SHA256withRSA", "CN=ValidSubCA2", validRootCA1Keys.getPrivate(), validSubCA2Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), true);
+        validSubCA2 = ValidationTestUtils.genCert("CN=ValidSubCA2", "CN=ValidRootCA1", validRootCA1Keys.getPrivate(), validSubCA2Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), true);
         KeyPair validSubSubCA2Keys = KeyTools.genKeys("1024", "RSA");
-        validSubSubCA2 = ValidationTestUtils.genCert(1000000, "SHA256withRSA", "CN=ValidSubSubCA2", validSubCA2Keys.getPrivate(), validSubSubCA2Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), true);
+        validSubSubCA2 = ValidationTestUtils.genCert("CN=ValidSubSubCA2", "CN=ValidSubCA2", validSubCA2Keys.getPrivate(), validSubSubCA2Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), true);
         KeyPair validSubSubSubCA2Keys = KeyTools.genKeys("1024", "RSA");
-        validSubSubSubCA2 = ValidationTestUtils.genCert(1000000, "SHA256withRSA", "CN=ValidSubSubSubCA2", validSubSubCA2Keys.getPrivate(), validSubSubSubCA2Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), true);
+        validSubSubSubCA2 = ValidationTestUtils.genCert("CN=ValidSubSubSubCA2", "CN=ValidSubSubCA2", validSubSubCA2Keys.getPrivate(), validSubSubSubCA2Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), true);
         KeyPair validSubSubSubSubCA2Keys = KeyTools.genKeys("1024", "RSA");
-        validSubSubSubSubCA2 = ValidationTestUtils.genCert(1000000, "SHA256withRSA", "CN=ValidSubSubSubSubCA2", validSubSubSubCA2Keys.getPrivate(), validSubSubSubSubCA2Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), true);
+        validSubSubSubSubCA2 = ValidationTestUtils.genCert("CN=ValidSubSubSubSubCA2", "CN=ValidSubSubSubCA2", validSubSubSubCA2Keys.getPrivate(), validSubSubSubSubCA2Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), true);
 
-        certSignedByLongChain = ValidationTestUtils.genCert(1000000, "SHA256withRSA", "CN=certSignedByLongChain", validSubSubSubSubCA2Keys.getPrivate(), validCert1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), false);
+        certSignedByLongChain = ValidationTestUtils.genCert("CN=certSignedByLongChain", "CN=ValidSubSubSubSubCA2", validSubSubSubSubCA2Keys.getPrivate(), validCert1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), false);
 
         ArrayList<X509Certificate> validChain1 = new ArrayList<X509Certificate>();
         // Add in the wrong order

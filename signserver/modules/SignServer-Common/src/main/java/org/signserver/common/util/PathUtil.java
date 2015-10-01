@@ -40,7 +40,7 @@ public class PathUtil {
         File f = cwd; // Start with current working directory;
         for (int i = 0; f != null && i < 10; i++) {
             if (new File(f, APPLICATION_SPECIFIC_FILE).exists()) {
-                result = f;
+                result = f.getAbsoluteFile();
                 break;
             }
             f = f.getAbsoluteFile().getParentFile();

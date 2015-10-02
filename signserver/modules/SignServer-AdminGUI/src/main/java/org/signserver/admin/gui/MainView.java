@@ -2856,7 +2856,7 @@ private void tokenEntriesImportButtonActionPerformed(java.awt.event.ActionEvent 
             InstallCertificatesDialog dlg = new InstallCertificatesDialog(
                     getFrame(), true, selectedWorker, aliases, true);
             if (dlg.showDialog() == InstallCertificatesDialog.OK) {
-                getContext().getTaskService().execute(refreshWorkers());
+                getContext().getTaskService().execute(reloadTokenEntries());
             }
         }
     }

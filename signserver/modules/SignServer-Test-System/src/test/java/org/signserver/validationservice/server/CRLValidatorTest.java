@@ -26,9 +26,9 @@ import java.util.Date;
 import java.util.List;
 import org.bouncycastle.asn1.x509.CRLDistPoint;
 import org.bouncycastle.jce.X509KeyUsage;
+import org.cesecore.certificates.crl.RevokedCertInfo;
 import org.cesecore.keys.util.KeyTools;
 import org.cesecore.util.CertTools;
-import org.ejbca.core.model.ca.crl.RevokedCertInfo;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 import org.signserver.common.GlobalConfiguration;
@@ -134,10 +134,16 @@ public class CRLValidatorTest extends ModulesTestCase {
                 new Date(0), new Date(System.currentTimeMillis() + 1000000), false, X509KeyUsage.digitalSignature | X509KeyUsage.nonRepudiation, crlDistPointCA1WithUrl);
 
         ArrayList<RevokedCertInfo> revoked = new ArrayList<RevokedCertInfo>();
-        revoked.add(new RevokedCertInfo("fingerprint", certEndEntity2.getSerialNumber(), new Date(),
-                RevokedCertInfo.REVOKATION_REASON_UNSPECIFIED, new Date(System.currentTimeMillis() + 1000000)));
+        revoked.add(new RevokedCertInfo("fingerprint".getBytes(),
+                certEndEntity2.getSerialNumber().toByteArray(),
+                new Date().getTime(),
+                RevokedCertInfo.REVOCATION_REASON_UNSPECIFIED,
+                new Date(System.currentTimeMillis() + 1000000).getTime()));
 
-        crlRootCA1 = ValidationTestUtils.genCRL(certRootCA1, keysRootCA1.getPrivate(), crlDistPointCA1WithUrl.getDistributionPoints()[0], revoked, 24, 1);
+        crlRootCA1 =
+                ValidationTestUtils.genCRL(certRootCA1, keysRootCA1.getPrivate(),
+                                           crlDistPointCA1WithUrl.getDistributionPoints()[0],
+                                           revoked, 24, 1);
 
         // Write CRL to file
         OutputStream out = null;
@@ -172,8 +178,11 @@ public class CRLValidatorTest extends ModulesTestCase {
                 new Date(0), new Date(System.currentTimeMillis() + 1000000), false, 0, crlDistPointCA2WithIssuer);
 
         ArrayList<RevokedCertInfo> revoked2 = new ArrayList<RevokedCertInfo>();
-        revoked2.add(new RevokedCertInfo("fingerprint2", certEndEntity4.getSerialNumber(), new Date(),
-                RevokedCertInfo.REVOKATION_REASON_UNSPECIFIED, new Date(System.currentTimeMillis() + 1000000)));
+        revoked2.add(new RevokedCertInfo("fingerprint2".getBytes(),
+                certEndEntity4.getSerialNumber().toByteArray(),
+                new Date().getTime(),
+                RevokedCertInfo.REVOCATION_REASON_UNSPECIFIED,
+                new Date(System.currentTimeMillis() + 1000000).getTime()));
 
         crlRootCA2 = ValidationTestUtils.genCRL(certRootCA2, keysRootCA2.getPrivate(), crlDistPointCA2WithIssuer.getDistributionPoints()[0], revoked2, 24, 1);
 

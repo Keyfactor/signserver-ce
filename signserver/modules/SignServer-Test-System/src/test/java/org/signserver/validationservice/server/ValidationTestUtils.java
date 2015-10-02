@@ -50,11 +50,9 @@ import org.bouncycastle.jce.X509Principal;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.x509.X509V2CRLGenerator;
 import org.bouncycastle.x509.X509V3CertificateGenerator;
+import org.cesecore.certificates.crl.RevokedCertInfo;
 import org.cesecore.util.Base64;
 import org.cesecore.util.CertTools;
-import org.ejbca.core.model.ca.caadmin.IllegalKeyStoreException;
-import org.ejbca.core.model.ca.catoken.CATokenOfflineException;
-import org.ejbca.core.model.ca.crl.RevokedCertInfo;
 import org.signserver.common.SignServerUtil;
 
 /**
@@ -133,7 +131,11 @@ public class ValidationTestUtils {
         return retval;
     }
 
-    public static X509CRL genCRL(X509Certificate cacert, PrivateKey privKey, DistributionPoint dp, Collection<RevokedCertInfo> certs, int crlPeriod, int crlnumber) throws CATokenOfflineException, IllegalKeyStoreException, IOException, SignatureException, NoSuchProviderException, InvalidKeyException, CRLException, NoSuchAlgorithmException {
+    public static X509CRL genCRL(X509Certificate cacert, PrivateKey privKey,
+            DistributionPoint dp, Collection<RevokedCertInfo> certs,
+            int crlPeriod, int crlnumber)
+            throws IOException, SignatureException, NoSuchProviderException,
+                InvalidKeyException, CRLException, NoSuchAlgorithmException {
         final String sigAlg = "SHA1WithRSA";
 
         boolean crlDistributionPointOnCrlCritical = true;

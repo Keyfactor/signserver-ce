@@ -20,8 +20,8 @@ import java.util.Map;
 import javax.jws.WebService;
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Base64;
-import org.ejbca.core.protocol.PKCS10RequestMessage;
-import org.ejbca.util.RequestMessageUtils;
+import org.cesecore.certificates.certificate.request.PKCS10RequestMessage;
+import org.cesecore.certificates.certificate.request.RequestMessageUtils;
 import org.signserver.module.renewal
         .ejbcaws.gen.AlreadyRevokedException_Exception;
 import org.signserver.module.renewal.ejbcaws.gen.ApprovalException_Exception;

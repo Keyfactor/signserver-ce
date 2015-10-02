@@ -64,12 +64,12 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.math.ec.ECCurve;
 import org.bouncycastle.util.encoders.Hex;
 import org.bouncycastle.x509.X509V3CertificateGenerator;
+import org.cesecore.certificates.util.DnComponents;
 import org.ejbca.cvc.CVCProvider;
 import org.ejbca.cvc.CVCertificate;
 import org.ejbca.cvc.CardVerifiableCertificate;
 import org.ejbca.cvc.CertificateParser;
 import org.ejbca.cvc.exception.ConstructionException;
-import org.ejbca.util.dn.DnComponents;
 import org.ejbca.cvc.exception.ParseException;
 
 /**
@@ -467,7 +467,7 @@ public class CertTools {
             while (xt.hasMoreTokens()) {
                 last = xt.nextToken();
             }
-            String[] dNObjects = DnComponents.getDnObjects();
+            String[] dNObjects = DnComponents.getDnObjects(false);
             if ( (first != null) && (last != null) ) {
             	first = first.substring(0,first.indexOf('='));
             	last = last.substring(0,last.indexOf('='));

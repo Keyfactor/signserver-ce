@@ -36,7 +36,6 @@
     </profiles>
 
     <modules>
-        <module>SignServer-Lib-EJBCA-util</module>
         <module>SignServer-Common</module>
         <module>SignServer-Entities</module>
         <module>SignServer-ejb</module>

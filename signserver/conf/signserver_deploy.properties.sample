@@ -20,33 +20,16 @@
 # Default <auto-detect>
 #appserver.type=jboss
 
-# JBoss configuration to deploy to
-# Available options are: all, default, minimal
-# Default: default
-#jboss.config=default
-
-# JBoss deploy directory
-# available options are: deploy, farm
-# Default : deploy
-#jboss.deploy=deploy
-
 # GlassFish domain home folder
 # Default: ${appserver.home}/domains/domain1
-#glassfish.server.home.dir=/home/markus/.netbeans/6.7/GlassFishV2Domain
+#glassfish.server.home.dir=/opt/glassfish3/glassfish/domains/domain1
+
 
 # ------------- Database configuration -----------------------------------------
 
 # jndi name of the datasource to use in deployment descriptors of ejbs.
 # default: SignServerDS
 #datasource.jndi-name=SignServerDS
-
-# Prefix for the jndi name of the datasource to use in deployment descriptors of ejbs. 
-# JBoss requires 'java:/' as prefix, while weblogic does not want anything ('') and
-# GlassFish uses jdbc/
-# Default: "java:/" for JBoss and "jndi/" for GlassFish
-#datasource.jndi-name-prefix=java:/
-#datasource.jndi-name-prefix=
-#datasource.jndi-name-prefix=jdbc/
 
 # The database name selected for deployment
 # Default: hsqldb
@@ -62,42 +45,7 @@
 
 # The location of the file-based database when using the nodb database option (the example below would work for JBoss)
 # the directory needs to be present, writable by the application server and empty at first startup.
-#database.nodb.location=server/default/data/nodb
-
-# Database connection URL.
-# This is the URL used to connect to the database, used to configure a new datasource in JBoss.
-# Default: jdbc:hsqldb:${jboss.server.data.dir}${/}hypersonic${/}SignServerLocalDB
-# MySQL/MariaDB standard:
-#database.url=jdbc:mysql://127.0.0.1:3306/signserver?characterEncoding=UTF-8
-# Mysql Clusters should use something like:
-#database.url=jdbc:mysql://host1,host2/signserver
-#database.url=jdbc:mysql://192.168.1.15,192.168.1.18/signserver
-#database.url=jdbc:postgresql://127.0.0.1/signserver
-#database.url=jdbc:microsoft:sqlserver://localhost:1433;DatabaseName=signserver
-#database.url=jdbc:oracle:thin:@127.0.0.1:1521:xe
-#database.url=jdbc:datadirect:oracle://127.0.0.1:1521;SID=signserver
-
-#Uncomment the follwing setting if you are using MySQL cluster. Leave it commented otherwise.
-#database.use.mysqlcluster=true
-
-# JDBC driver classname.
-# The JEE server needs to be configured with the appropriate JDBC driver for
-# the selected database
-# Default: org.hsqldb.jdbcDriver
-#database.driver=org.mariadb.jdbc.Driver
-#database.driver=com.mysql.jdbc.Driver
-#database.driver=org.postgresql.Driver
-#database.driver=com.microsoft.jdbc.sqlserver.SQLServerDriver
-#database.driver=oracle.jdbc.driver.OracleDriver
-#database.driver=com.ddtek.jdbc.oracle.OracleDriver
-
-# Database username.
-# Default: sa (works with hsqldb)
-#database.username=signserver
-
-# Database password.
-# Default: (blank works with hsqldb)
-#database.password=signserver
+#database.nodb.location=/opt/jboss-as-7.1.1.Final/standalone/data/nodb
 
 
 # -------------- Web Services Configuration ------------------------------------
@@ -130,6 +78,7 @@
 #
 # Default: true
 #includemodulesinbuild=true
+
 
 # Include Log4j configuration in EAR (not needed for JBoss)
 # Default: false
@@ -229,6 +178,7 @@
 # Default: false
 #timemonitor.enabled=false
 
+
 # -------------- Additional Web Deployments -----------------------------------
 
 # Deploy the documentation.
@@ -299,6 +249,7 @@
 #   CHANGES:        Only updates where the value is changed are logged.
 #   NONE:           No updates are logged.
 #statusrepository.log=ALL
+
 
 # ------------- PKCS11 library definitions -------------------------------------
 #

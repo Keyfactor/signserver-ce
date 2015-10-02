@@ -18,7 +18,7 @@
     <!-- Initialization                                                      -->
     <!-- =================================================================== -->
 
-    <property name="deploytools.version" value="1.1-SNAPSHOT"/>
+    <property name="deploytools.version" value="2.0-SNAPSHOT"/>
 
     <!-- Load properties before including files -->
     <property environment="env" />
@@ -46,12 +46,9 @@
     <available file="${appserver.home}/modules/org/jboss/as/standalone/main/module.xml" property="appserver.type" value="jboss"/>
     <available file="${appserver.home}/modules/system/layers/base/org/jboss/as/standalone/main/module.xml" property="appserver.type" value="jboss"/>
     <available file="${appserver.home}/client/cxf-api.jar" property="appserver.subtype" value="jboss6"/>
-    <available file="${appserver.home}/common/lib/jboss-javaee.jar" property="appserver.subtype" value="jboss5"/>
-    <available file="${appserver.home}/common/lib/jboss-ejb3-common.jar" property="appserver.subtype" value="jboss5"/>
     <available file="${appserver.home}/modules/org/jboss/as/standalone/main/module.xml" property="appserver.subtype" value="jboss7"/>
     <available file="${appserver.home}/modules/system/layers/base/org/jboss/as/standalone/main/module.xml" property="appserver.subtype" value="jbosseap6"/>
     <available file="${appserver.home}/lib/javaee.jar" property="appserver.type" value="glassfish"/>
-    <available file="${appserver.home}/lib/appserv-ext.jar" property="appserver.subtype" value="glassfish2"/>
     <available file="${appserver.home}/modules/bean-validator.jar" property="appserver.subtype" value="glassfish3"/>
     <available file="${appserver.home}/wlserver_10.3/server/lib/wlclient.jar" property="appserver.type" value="weblogic"/>
     <available file="${appserver.home}/lib/commandlineutils.jar" property="appserver.type" value="websphere"/>
@@ -141,7 +138,6 @@ appserver.home                      = ${appserver.home}
 datasource.jndi-name                = ${datasource.jndi-name}
 datasource.jndi-name-prefix         = ${datasource.jndi-name-prefix}
 database.name                       = ${database.name}
-database.driver                     = ${database.driver}
 database.nodb.location              = ${database.nodb.location}
         </echo>
     </target>
@@ -170,6 +166,9 @@ database.nodb.location              = ${database.nodb.location}
             Additions to application.xml: 
             ${appXml}
         </echo>
+        <replace file="${app.ear.dir}/META-INF/application.xml" value="${app.name.cap}">
+            <replacetoken><![CDATA[@APPNAME@]]></replacetoken>
+        </replace>
         <replace file="${app.ear.dir}/META-INF/application.xml" value="${appXml}">
             <replacetoken><![CDATA[<!--@MODULES@-->]]></replacetoken>
         </replace>
@@ -480,16 +479,12 @@ database.nodb.location              = ${database.nodb.location}
                 <equals arg1="${appserver.subtype}" arg2="jbosseap6" />
             </or>
         </condition>
-        <condition property="appserver.conf.folder" value="jboss">
-            <equals arg1="${appserver.type}" arg2="jboss" />
-        </condition>
         <condition property="appserver.conf.folder" value="glassfish">
             <equals arg1="${appserver.type}" arg2="glassfish" />
         </condition>
 
-        <property name="cp.prefix" value="${basedir}/lib/ext/xmlsec-1.5.8.jar"/> <!-- Needed as JBoss 5 bundles older version. TODO: Better do this in a more generic way. -->
-        <property name="cp.postfix" value="${basedir}/lib/ext/hibernate/antlr-2.7.6.jar:${basedir}/lib/ext/hibernate/dom4j-1.6.1.jar:${basedir}/lib/ext/hibernate/ejb3-persistence.jar:${basedir}/lib/ext/hibernate/hibernate-annotations.jar:${basedir}/lib/ext/hibernate/hibernate-commons-annotations.jar:${basedir}/lib/ext/hibernate/hibernate-core.jar:${basedir}/lib/ext/hibernate/hibernate-entitymanager.jar:${basedir}/lib/ext/hibernate/hibernate-search-3.1.1.GA.jar:${basedir}/lib/ext/hibernate/hibernate-validator-3.1.0.GA.jar:${basedir}/lib/ext/hibernate/javassist-3.4.GA.jar:${basedir}/lib/ext/hibernate/jta-1.1.jar:${basedir}/lib/ext/hibernate/lucene-core-2.4.1.jar:${basedir}/lib/ext/hibernate/slf4j-api-1.5.2.jar:${basedir}/lib/ext/hibernate/slf4j-log4j12.jar"/> <!-- Temporarly workaround until DSS-1010 is fixed. -->
-        <property name="systemtest.path" value="${cp.prefix}:${basedir}/conf:${basedir}/conf/${appserver.conf.folder}:${this.dir}/cesecore/:${appserver.client.jars}:${basedir}/lib/ext/jdbc/jdbc.jar:${cp.postfix}"/>
+        <property name="cp.prefix" value="${basedir}/lib/ext/xmlsec-1.5.7.jar"/> <!-- Needed as JBoss 5 bundles older version. TODO: Better do this in a more generic way. -->
+        <property name="systemtest.path" value="${cp.prefix}:${basedir}/conf:${basedir}/conf/${appserver.conf.folder}:${this.dir}/cesecore/:${appserver.client.jars}:${basedir}/lib/ext/jdbc/jdbc.jar:${basedir}/lib/ext/hibernate/ejb3-persistence.jar"/>
     </target>
 
 </project>

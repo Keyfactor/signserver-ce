@@ -1,16 +1,8 @@
 <project name="jboss" basedir="../.." default="j2ee:deploy">
 
     <!-- Declare the JAR files needed to run EJB CLI/system tests using this appserver. -->
-    <property name="appserver.client.jars" value="${appserver.home}/client/jbossall-client.jar:${appserver.home}/bin/client/jboss-client.jar"/>
+    <property name="appserver.client.jars" value="${appserver.home}/bin/client/jboss-client.jar"/>
 
-    <property name="jboss.config" value="default"/>
-    <property name="jboss.deploy" value="deploy"/>    
-
-    <property name="jboss.lib.dir" location="${appserver.home}/server/${jboss.config}/lib"/>
-    <property name="jboss.server.home.dir" location="${jboss.deploy.dir}/.."/>
-    <property name="keystore.file" value="conf/keystore/keystore.jks"/>
-    <property name="truststore.file" value="conf/keystore/truststore.jks"/>
-    <property name="remote.keystore.path" value="conf"/>
     <property name="datasource.jndi-name-prefix" value="java:/"/>
 
     <!--
@@ -28,7 +20,6 @@
         <fail message="Please set the property 'appserver.home' or environment variable APPSRV_HOME" unless="appserver.home"/>    
         <condition property="supported.appserver">
             <or>
-                <equals arg1="${appserver.subtype}" arg2="jboss5" />
                 <equals arg1="${appserver.subtype}" arg2="jboss7" />
                 <equals arg1="${appserver.subtype}" arg2="jbosseap6" />
             </or>
@@ -50,10 +41,10 @@
         </condition>
     </target>
 
-    <target name="j2ee:configure"  unless="deploy.hostname.node1" depends="j2ee:check, -set-deploy-dir-jboss5, -set-deploy-dir-jboss7"/>
+    <target name="j2ee:configure"  unless="deploy.hostname.node1" depends="j2ee:check, -set-deploy-dir-jboss-other, -set-deploy-dir-jboss7"/>
 
-    <target name="-set-deploy-dir-jboss5" depends="j2ee:check" unless="jboss7">
-        <property name="jboss.deploy.dir" location="${appserver.home}/server/${jboss.config}/${jboss.deploy}"/>
+    <target name="-set-deploy-dir-jboss-other" depends="j2ee:check" unless="jboss7">
+        <fail message="Not supported"/>
     </target>
 
     <target name="-set-deploy-dir-jboss7" depends="j2ee:check" if="jboss7">

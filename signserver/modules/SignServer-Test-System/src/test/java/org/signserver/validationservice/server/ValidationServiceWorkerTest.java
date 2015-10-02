@@ -94,7 +94,7 @@ public class ValidationServiceWorkerTest {
         revokedCert1 = ValidationTestUtils.genCert("CN=revokedCert1", "CN=ValidSubCA1", validSubCA1Keys.getPrivate(), validCert1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), false);
         expiredCert1 = ValidationTestUtils.genCert("CN=expiredCert1", "CN=ValidSubCA1", validSubCA1Keys.getPrivate(), validCert1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() - 1000000), false);
         noYetValidCert1 = ValidationTestUtils.genCert("CN=noYetValidCert1", "CN=ValidSubCA1", validSubCA1Keys.getPrivate(), validCert1Keys.getPublic(), new Date(System.currentTimeMillis() + 1000000), new Date(System.currentTimeMillis() + 2000000), false);
-        badSigCert1 = ValidationTestUtils.genCert("CN=badSigCert1", "CN=ValidRootCA1", validRootCA1Keys.getPrivate(), validCert1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), false);
+        badSigCert1 = ValidationTestUtils.genCert("CN=badSigCert1", "CN=ValidSubCA1", validRootCA1Keys.getPrivate(), validCert1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), false);
 
         identificationCert1 = ValidationTestUtils.genCert("CN=identificationCert1", "CN=ValidSubCA1", validSubCA1Keys.getPrivate(), validCert1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), false, X509KeyUsage.digitalSignature + X509KeyUsage.keyEncipherment);
         esigCert1 = ValidationTestUtils.genCert("CN=esigCert1", "CN=ValidSubCA1", validSubCA1Keys.getPrivate(), validCert1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), false, X509KeyUsage.nonRepudiation);

@@ -100,6 +100,7 @@
         </path>
         <taskdef name="process-descriptors" classname="org.signserver.deploytools.ant.ProcessModuleDescriptorsTask" classpathref="deploytools.classpath"/>
         <taskdef name="postprocess-mods" classname="org.signserver.deploytools.ant.PostProcessModulesTask" classpathref="deploytools.classpath"/>
+        <taskdef name="rewrite-zip-timestamps" classname="org.signserver.deploytools.ant.RewriteZipEntriesTimestampTask" classpathref="deploytools.classpath"/>
     </target>
 
     <!-- Target checking that the application server was identified, otherwise fails with an error message -->
@@ -483,8 +484,9 @@ database.nodb.location              = ${database.nodb.location}
             <equals arg1="${appserver.type}" arg2="glassfish" />
         </condition>
 
-        <property name="cp.prefix" value="${basedir}/lib/ext/xmlsec-1.5.7.jar"/> <!-- Needed as JBoss 5 bundles older version. TODO: Better do this in a more generic way. -->
-        <property name="systemtest.path" value="${cp.prefix}:${basedir}/conf:${basedir}/conf/${appserver.conf.folder}:${this.dir}/cesecore/:${appserver.client.jars}:${basedir}/lib/ext/jdbc/jdbc.jar:${basedir}/lib/ext/hibernate/ejb3-persistence.jar"/>
+        <property name="cp.prefix" value="${basedir}/lib/ext/xmlsec-1.5.8.jar"/> <!-- Needed as JBoss bundles older version. TODO: Better do this in a more generic way. -->
+        <property name="cp.postfix" value="${basedir}/lib/ext/hibernate/antlr-2.7.6.jar:${basedir}/lib/ext/hibernate/dom4j-1.6.1.jar:${basedir}/lib/ext/hibernate/ejb3-persistence.jar:${basedir}/lib/ext/hibernate/hibernate-annotations.jar:${basedir}/lib/ext/hibernate/hibernate-commons-annotations.jar:${basedir}/lib/ext/hibernate/hibernate-core.jar:${basedir}/lib/ext/hibernate/hibernate-entitymanager.jar:${basedir}/lib/ext/hibernate/hibernate-search-3.1.1.GA.jar:${basedir}/lib/ext/hibernate/hibernate-validator-3.1.0.GA.jar:${basedir}/lib/ext/hibernate/javassist-3.4.GA.jar:${basedir}/lib/ext/hibernate/jta-1.1.jar:${basedir}/lib/ext/hibernate/lucene-core-2.4.1.jar:${basedir}/lib/ext/hibernate/slf4j-api-1.5.2.jar:${basedir}/lib/ext/hibernate/slf4j-log4j12.jar"/> <!-- Temporarly workaround until DSS-1010 is fixed. -->
+        <property name="systemtest.path" value="${cp.prefix}:${basedir}/conf:${basedir}/conf/${appserver.conf.folder}:${this.dir}/cesecore/:${appserver.client.jars}:${basedir}/lib/ext/jdbc/jdbc.jar:${cp.postfix}"/>
     </target>
 
 </project>

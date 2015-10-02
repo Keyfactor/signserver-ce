@@ -14,7 +14,7 @@
 <!-- Version: $Id$ -->
 <project name="signserver" default="usage" basedir=".">
     <description>SignServer targets.</description>
-    <property name="deploytools.version" value="1.1.2"/>
+    <property name="deploytools.version" value="2.0-SNAPSHOT"/>
     <import file="res/deploytools/build-impl.xml"/>
 
     <!-- SignServer has some extra application server features -->

@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.ejbca.ui.web.pub.cluster.IHealthCheck;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.ServiceLocator;
@@ -52,7 +51,7 @@ import org.signserver.server.nodb.FileBasedDatabaseManager;
  * @author Philip Vendil
  * @version $Id$
  */
-public class SignServerHealthCheck implements IHealthCheck {
+public class SignServerHealthCheck {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(
@@ -77,7 +76,6 @@ public class SignServerHealthCheck implements IHealthCheck {
         return signserversession;
     }
 
-    @Override
     public void init(final ServletConfig config, final EntityManager em) {
         minfreememory = Integer.parseInt(config.getInitParameter("MinimumFreeMemory")) * 1024 * 1024;
         checkDBString = config.getInitParameter("checkDBString");
@@ -96,7 +94,6 @@ public class SignServerHealthCheck implements IHealthCheck {
         initMaintenanceFile();
     }
 
-    @Override
     public String checkHealth(HttpServletRequest request) {
         final LinkedList<String> errors = new LinkedList<String>();
         

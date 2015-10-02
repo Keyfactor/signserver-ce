@@ -25,9 +25,9 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.apache.log4j.Logger;
+import org.cesecore.util.CertTools;
 import org.cesecore.util.query.QueryCriteria;
 import org.cesecore.util.query.QueryGenerator;
-import org.ejbca.util.CertTools;
 import org.signserver.common.ArchiveData;
 import org.signserver.common.ArchiveMetadata;
 

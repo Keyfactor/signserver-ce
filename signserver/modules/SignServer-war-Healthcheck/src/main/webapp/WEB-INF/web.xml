@@ -4,7 +4,7 @@
     <servlet>
         <description>SignServerHealthCheckServlet</description>
         <servlet-name>SignServerHealthCheckServlet</servlet-name>
-        <servlet-class>org.signserver.healthcheck.pub.HealthCheckServlet</servlet-class>
+        <servlet-class>org.signserver.web.pub.HealthCheckServlet</servlet-class>
         <!-- Required parameters -->
         <init-param>
             <description>Class performing the healthcheck. Must implement the IHealthCheck interface.</description>
@@ -14,7 +14,7 @@
         <init-param>
             <description>Class creating the response to the loadbalancer or monitor software. Must implement the IHealthResponse interface.</description>
             <param-name>HealthResponseClassPath</param-name>
-            <param-value>org.signserver.healthcheck.pub.cluster.TextResponse</param-value>
+            <param-value>org.signserver.web.pub.cluster.TextResponse</param-value>
         </init-param>
         <!-- Optional parameters -->
         <init-param>
@@ -93,7 +93,7 @@
         <persistence-unit-name>SignServerJPA</persistence-unit-name>  
         <persistence-context-type>Transaction</persistence-context-type>  
         <injection-target>   
-                <injection-target-class>org.signserver.healthcheck.pub.HealthCheckServlet</injection-target-class>   
+                <injection-target-class>org.signserver.web.pub.HealthCheckServlet</injection-target-class>   
                 <injection-target-name>em</injection-target-name>  
         </injection-target>  
     </persistence-context-ref>

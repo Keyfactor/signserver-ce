@@ -34,8 +34,8 @@ import org.signserver.common.ServiceLocator;
 import org.signserver.common.WorkerStatus;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.healthcheck.HealthCheckUtils;
-import org.signserver.healthcheck.pub.cluster.IHealthCheck;
 import org.signserver.server.nodb.FileBasedDatabaseManager;
+import org.signserver.web.pub.cluster.IHealthCheck;
 
 /**
  * SignServer Health Checker. 

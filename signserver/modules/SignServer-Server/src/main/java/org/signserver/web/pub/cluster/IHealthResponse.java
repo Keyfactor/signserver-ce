@@ -11,37 +11,38 @@
  *                                                                       *
  *************************************************************************/
 
-package org.signserver.healthcheck.pub.cluster;
+package org.signserver.web.pub.cluster;
 
-import javax.persistence.EntityManager;
 import javax.servlet.ServletConfig;
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 
 /**
- * Inteface used for health polling purposes to see that everything is alive and ok.
+ * Inteface used to generate apporiate responses to different LoadBalancers HTTP requests.
  * 
  * This interface was copied from the old EJBCA-util.
  * 
  * @author Philip Vendil
- * @version $Id: IHealthCheck.java 5585 2008-05-01 20:55:00Z anatom $
+ * @version $Id: IHealthResponse.java 5585 2008-05-01 20:55:00Z anatom $
  */
-public interface IHealthCheck {
-	
+public interface IHealthResponse {
 	
 	/**
-	 * Method used to initialize the health checker with parameters set
+	 * Method used to initialize the health checker responder with parameters set
 	 * in the web.xml file.
 	 * 
 	 *
 	 */
-	void init(ServletConfig config, EntityManager em);
+	public void init(ServletConfig config);
 	
 	/**
-	 * Method used to check the health of a specific application.
-	 * @return Null if everyting is OK, othervise it should return a String as errormessage.
+	 * Method in charge of creating a response to the loadbalancer that this node in the
+	 * cluster shouldn't be used.
+	 * 
+	 * @param status, if status is null then everything is OK, othervise failure with a errormessage
+	 * that might be used in the reply.
+	 * @param resp the HttpServletResponse.
 	 */
-	
-	public String checkHealth(HttpServletRequest request);
+	public void respond(String status, HttpServletResponse resp);
 
 }

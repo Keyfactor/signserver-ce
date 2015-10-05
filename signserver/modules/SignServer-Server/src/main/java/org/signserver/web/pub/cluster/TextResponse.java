@@ -11,7 +11,7 @@
  *                                                                       *
  *************************************************************************/
 
-package org.signserver.healthcheck.pub.cluster;
+package org.signserver.web.pub.cluster;
 
 import java.io.IOException;
 import java.io.Writer;

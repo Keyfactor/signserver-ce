@@ -10,7 +10,7 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.healthcheck.pub;
+package org.signserver.web.pub;
 
 import java.util.concurrent.locks.ReentrantLock;
 

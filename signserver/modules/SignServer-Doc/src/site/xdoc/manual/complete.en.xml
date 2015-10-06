@@ -5881,42 +5881,6 @@ The fully qualified class name is: <b>org.signserver.server.cryptotokens.Keystor
                         </p>
                     </subsubsection>
                 </subsection>
-
-                <subsection name="PrimeCardHSMCryptoToken">
-                    <note>
-This crypto token will be removed in a future version.
-                    </note>
-                    <subsubsection name="Overview">
-                        <p>
-Using PrimeCardHSM it's possible to use a SmartCard to generate 2048-bit RSA signatures. The SmartCard can perform about one signature a second. PrimeCardHSM is proprietary software by PrimeKey Solutions AB.
-                        </p>
-                        <p>
-PrimeCardHSM requires PCSCD software and SmartCard drivers. See separate documentation about installing PrimeCardHSM.
-                        </p>
-                        <p>
-The PrimeCardHSMCryptoToken, doesn't support the destroyKey() method.
-                        </p>
-                    </subsubsection>
-
-                    <subsubsection name="SIGNERTOKEN.CLASSPATH">
-                        <p>
-The fully qualified class name is: <b>org.signserver.server.cryptotokens.PrimeCardHSMCryptoToken</b>
-                        </p>
-                    </subsubsection>
-
-                    <subsubsection name="Available Properties">
-                        <p>
-<b>DEFAULTKEY</b> =   Hash value of the signing key on the card. See PrimeCardHSM documentation for more information.(Required)
-                        </p>
-                                                <p>
-<b>NEXTCERTSIGNKEY</b>: The next key to use. See PKCS11CryptoToken. (optional)
-                        </p>
-                        <p>
-<b>AUTHCODE</b> = Authentication code for automatic activation (Optional).
-                        </p>
-                    </subsubsection>
-                </subsection>
-
                 <subsection name="PKCS11CryptoToken">
                     <subsubsection name="Overview">
                         <p>

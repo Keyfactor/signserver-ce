@@ -189,6 +189,7 @@ public class SignServerAdminGUIApplication extends SingleFrameApplication {
      */
     public static AdminWS getAdminWS() {
         if (adminWS == null) {
+            SignServerUtil.installBCProvider();
 
             final ConnectDialog dlg = new ConnectDialog(null, true,
                     connectFile, defaultConnectFile, baseDir, Protocol.WS == protocol);

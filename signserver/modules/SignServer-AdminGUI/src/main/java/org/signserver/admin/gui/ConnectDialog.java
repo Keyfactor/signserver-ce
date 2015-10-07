@@ -25,6 +25,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -32,6 +33,7 @@ import java.security.NoSuchProviderException;
 import java.security.Provider;
 import java.security.SecureRandom;
 import java.security.Security;
+import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateParsingException;
@@ -43,6 +45,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import javax.naming.NamingException;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.KeyManager;
@@ -61,6 +64,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.xml.namespace.QName;
 import org.apache.log4j.Logger;
 import org.ejbca.util.CertTools;
@@ -115,6 +119,9 @@ public class ConnectDialog extends javax.swing.JDialog {
     
     /** Cache of loaded (PKCS#11 currently only) keystores, to not create a new one when already logged in. */
     private static final Map<String, KeyStore> LOADED_KESTORES = new HashMap<String, KeyStore>();
+    
+    /** Flag indicating if connection succeeded. */
+    private boolean connected;
 
     /** Creates new form ConnectDialog. */
     public ConnectDialog(final Frame parent, final boolean modal,
@@ -194,10 +201,11 @@ public class ConnectDialog extends javax.swing.JDialog {
         connectButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
         defaultsButton = new javax.swing.JButton();
-        jLabel3 = new javax.swing.JLabel();
+        jLabelConnectTo = new javax.swing.JLabel();
         jPanelButtons = new javax.swing.JPanel();
         jRadioButtonLocal = new javax.swing.JRadioButton();
         jRadioButtonRemote = new javax.swing.JRadioButton();
+        jLabelProgress = new javax.swing.JLabel();
 
         passwordLabel.setText("Enter password:");
 
@@ -299,7 +307,7 @@ public class ConnectDialog extends javax.swing.JDialog {
             .addGroup(jPanelRemote1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanelRemote1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(urlTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 478, Short.MAX_VALUE)
+                    .addComponent(urlTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 480, Short.MAX_VALUE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
@@ -341,14 +349,14 @@ public class ConnectDialog extends javax.swing.JDialog {
             .addGroup(jPanelRemote2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanelRemote2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(truststorePasswordField, javax.swing.GroupLayout.DEFAULT_SIZE, 478, Short.MAX_VALUE)
-                    .addComponent(truststoreFilePathLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 478, Short.MAX_VALUE)
+                    .addComponent(truststorePasswordField, javax.swing.GroupLayout.DEFAULT_SIZE, 480, Short.MAX_VALUE)
+                    .addComponent(truststoreFilePathLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 480, Short.MAX_VALUE)
                     .addGroup(jPanelRemote2Layout.createSequentialGroup()
                         .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(truststoreTypeComboBox, 0, 258, Short.MAX_VALUE))
+                        .addComponent(truststoreTypeComboBox, 0, 260, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelRemote2Layout.createSequentialGroup()
-                        .addComponent(truststoreFilePathTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 436, Short.MAX_VALUE)
+                        .addComponent(truststoreFilePathTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 438, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(truststoreBrowseButton, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(truststorePasswordLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -396,13 +404,13 @@ public class ConnectDialog extends javax.swing.JDialog {
             .addGroup(jPanelRemote3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanelRemote3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, 478, Short.MAX_VALUE)
+                    .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, 480, Short.MAX_VALUE)
                     .addGroup(jPanelRemote3Layout.createSequentialGroup()
                         .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(keystoreTypeComboBox, 0, 258, Short.MAX_VALUE))
+                        .addComponent(keystoreTypeComboBox, 0, 260, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelRemote3Layout.createSequentialGroup()
-                        .addComponent(keystoreFilePathTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 436, Short.MAX_VALUE)
+                        .addComponent(keystoreFilePathTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 438, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(keystoreBrowseButton, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
@@ -443,9 +451,9 @@ public class ConnectDialog extends javax.swing.JDialog {
             }
         });
 
-        jLabel3.setText("Connect to:");
+        jLabelConnectTo.setText("Connect to:");
 
-        jPanelButtons.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+        jPanelButtons.setLayout(new java.awt.FlowLayout(0));
 
         buttonGroup1.add(jRadioButtonLocal);
         jRadioButtonLocal.setText("Local SignServer");
@@ -469,15 +477,17 @@ public class ConnectDialog extends javax.swing.JDialog {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanelButtons, javax.swing.GroupLayout.DEFAULT_SIZE, 514, Short.MAX_VALUE)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 514, Short.MAX_VALUE)
-                    .addComponent(jPanelRemote3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanelRemote2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanelRemote1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jPanelRemote3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanelButtons, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 514, Short.MAX_VALUE)
+                    .addComponent(jLabelConnectTo, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 514, Short.MAX_VALUE)
+                    .addComponent(jPanelRemote2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanelRemote1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabelProgress, javax.swing.GroupLayout.DEFAULT_SIZE, 148, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(defaultsButton)
                         .addGap(18, 18, 18)
                         .addComponent(cancelButton)
@@ -492,7 +502,7 @@ public class ConnectDialog extends javax.swing.JDialog {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel3)
+                .addComponent(jLabelConnectTo)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanelButtons, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
@@ -502,19 +512,23 @@ public class ConnectDialog extends javax.swing.JDialog {
                 .addGap(18, 18, 18)
                 .addComponent(jPanelRemote3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(connectButton)
-                    .addComponent(cancelButton)
-                    .addComponent(defaultsButton))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(connectButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(cancelButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(defaultsButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabelProgress, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
+
+        layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {cancelButton, connectButton});
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+        connected = false;
         dispose();
-        SignServerAdminGUIApplication.getApplication().exit(evt);
     }//GEN-LAST:event_cancelButtonActionPerformed
 
     private void saveSettings() {
@@ -565,257 +579,307 @@ public class ConnectDialog extends javax.swing.JDialog {
     }
     
     private void connectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectButtonActionPerformed
-        saveSettings();
-        if (jRadioButtonRemote.isSelected()) {
-            connectOverWS();
-        } else {
-            dispose();
-        }
+        // Prepare for connecting
+        ws = null;
+        enableControls(false);
+        jLabelProgress.setText("Connecting...");
+        
+        // Invoke later so the GUI gets a chance to gray out fields etc
+        // XXX: Better would be if parts of this could be done in a background thread but making that work would require some work
+        SwingUtilities.invokeLater(new Runnable() {
+
+            @Override
+            public void run() {
+                saveSettings();
+                if (jRadioButtonRemote.isSelected()) {
+                    // WS connection
+                    try {
+                        connectOverWS();    
+                    } catch (Exception ex) {
+                        LOG.error("Error connecting", ex);
+                        JOptionPane.showMessageDialog(ConnectDialog.this, ExceptionUtils.catCauses(ex, "\n"), "Connect", JOptionPane.ERROR_MESSAGE);
+                    }
+                } else {
+                    // EJB connection
+                    try {
+                        ws = new AdminLayerEJBImpl();
+                        serverHost = "local";
+                    } catch (NamingException ex) {
+                        LOG.error("Startup error", ex);
+                        JOptionPane.showMessageDialog(null,
+                            "Startup failed. Is the application server running?\n"
+                            + ex.getMessage(),
+                            "SignServer Administration GUI startup",
+                            JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+
+                // If we got this far connecting
+                if (ws != null) {
+                    try {
+                        // Try accessing global configuration to see that we have connection and are authorized
+                        ws.getGlobalConfiguration();
+                        
+                        // All is fine
+                        connected = true;
+                        dispose();
+                    } catch (IllegalStateException ex) {
+                        LOG.error("Error contacting SignServer", ex);
+                        final StringBuilder message = new StringBuilder();
+
+                        // Check if this is a case of JBoss not running
+                        if (ex.getMessage() != null && ex.getMessage().contains("No EJB receiver")) {
+                            message.append("SignServer not deployed or application server not running:\n");
+                        }
+
+                        message.append(ExceptionUtils.catCauses(ex, "\n"));
+                        JOptionPane.showMessageDialog(ConnectDialog.this, message.toString(), "Connect", JOptionPane.ERROR_MESSAGE);
+                    } catch (Throwable ex) {
+                        LOG.error("Error contacting SignServer", ex);
+                        JOptionPane.showMessageDialog(ConnectDialog.this, ExceptionUtils.catCauses(ex, "\n"), "Connect", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+                
+                // Restore for next retry
+                enableControls(true);
+                jLabelProgress.setText("");
+            }
+        });
     }
     
-    private void connectOverWS() {
-        try {
-            String url = settings.getUrl();
-            // Remove one trailing slash if specified
-            if (url.endsWith("/")) {
-                url = url.substring(0, url.length() - 1);
+    private void connectOverWS() throws KeyStoreException, IOException, NoSuchAlgorithmException, NoSuchProviderException, CertificateException, UnrecoverableKeyException, KeyManagementException {
+        String url = settings.getUrl();
+        // Remove one trailing slash if specified
+        if (url.endsWith("/")) {
+            url = url.substring(0, url.length() - 1);
+        }
+        final String urlstr = url + WS_PATH;
+        serverHost = getSimplifiedHostAddress(settings.getUrl());
+
+            KeyStore.CallbackHandlerProtection pp = new KeyStore.CallbackHandlerProtection(new CallbackHandler() {
+
+                @Override
+                public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+                    for (Callback callback : callbacks) {
+                        if (callback instanceof PasswordCallback) {
+                            final PasswordCallback pc = (PasswordCallback) callback;
+                            passwordLabel.setText(pc.getPrompt());
+                            passwordField.setText("");
+                            JOptionPane.showMessageDialog(
+                                    ConnectDialog.this, passwordPanel,
+                                    "Connect", JOptionPane.PLAIN_MESSAGE);
+                            if (passwordField.getPassword() != null) {
+                                pc.setPassword(passwordField.getPassword());
+                            }
+                        } else {
+                            throw new UnsupportedCallbackException(callback, "Unrecognized Callback");
+                        }
+                    }
+                }
+            });
+
+            final KeyStore keystore;
+            final KeyManagerFactory kKeyManagerFactory = KeyManagerFactory.getInstance("SunX509");
+
+            if (settings.getKeystoreType().contains("Windows")) {
+                // CSP
+                keystore = getLoadedKeystoreCSP(settings.getKeystoreType(), pp);
+                kKeyManagerFactory.init(keystore, null);
+            } else if (settings.getKeystoreType().equals("PKCS11")) {
+                // PKCS11
+                keystore = getLoadedKeystorePKCS11("PKCS11",
+                        getResolvedPath(settings.getKeystoreFile()),
+                        settings.getKeystorePassword(), pp);
+                kKeyManagerFactory.init(keystore, null);
+            } else {
+                // PKCS12 must use BC as provider but not JKS
+                final String provider;
+                if (settings.getKeystoreType().equals("PKCS12")) {
+                    provider = "BC";
+                } else {
+                    provider = null;
             }
-            final String urlstr = url + WS_PATH;
-            serverHost = getSimplifiedHostAddress(settings.getUrl());
 
-                KeyStore.CallbackHandlerProtection pp = new KeyStore.CallbackHandlerProtection(new CallbackHandler() {
+            // Ask for password
+            char[] authcode;
+            passwordLabel.setText("Enter password for keystore:");
+            passwordField.setText("");
+            JOptionPane.showMessageDialog(
+                    ConnectDialog.this, passwordPanel,
+                    "Connect", JOptionPane.PLAIN_MESSAGE);
+            if (passwordField.getPassword() != null) {
+                authcode = passwordField.getPassword();
+            } else {
+                authcode = null;
+            }
 
-                    @Override
-                    public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
-                        for (Callback callback : callbacks) {
-                            if (callback instanceof PasswordCallback) {
-                                final PasswordCallback pc = (PasswordCallback) callback;
-                                passwordLabel.setText(pc.getPrompt());
-                                passwordField.setText("");
-                                JOptionPane.showMessageDialog(
-                                        ConnectDialog.this, passwordPanel,
-                                        "Connect", JOptionPane.PLAIN_MESSAGE);
-                                if (passwordField.getPassword() != null) {
-                                    pc.setPassword(passwordField.getPassword());
-                                }
-                            } else {
-                                throw new UnsupportedCallbackException(callback, "Unrecognized Callback");
-                            }
-                        }
-                    }
-                });
+            // Other keystores for instance JKS
+            keystore = getLoadedKeystore(getResolvedPath(settings.getKeystoreFile()),
+                    authcode,
+                    settings.getKeystoreType(),
+                    provider);
 
-                final KeyStore keystore;
-                final KeyManagerFactory kKeyManagerFactory = KeyManagerFactory.getInstance("SunX509");
+            // JKS has password on keys and need to be inited with password
+            if (settings.getKeystoreType().equals("JKS")) {
+                kKeyManagerFactory.init(keystore, authcode);
+            } else {
+                kKeyManagerFactory.init(keystore, null);
+            }
+        }
 
-                if (settings.getKeystoreType().contains("Windows")) {
-                    // CSP
-                    keystore = getLoadedKeystoreCSP(settings.getKeystoreType(), pp);
-                    kKeyManagerFactory.init(keystore, null);
-                } else if (settings.getKeystoreType().equals("PKCS11")) {
-                    // PKCS11
-                    keystore = getLoadedKeystorePKCS11("PKCS11",
-                            getResolvedPath(settings.getKeystoreFile()),
-                            settings.getKeystorePassword(), pp);
-                    kKeyManagerFactory.init(keystore, null);
-                } else {
-                    // PKCS12 must use BC as provider but not JKS
-                    final String provider;
-                    if (settings.getKeystoreType().equals("PKCS12")) {
-                        provider = "BC";
-                    } else {
-                        provider = null;
+        final KeyStore keystoreTrusted;
+        if (TRUSTSTORE_TYPE_PEM.equals(settings.getTruststoreType())) {
+            keystoreTrusted = KeyStore.getInstance("JKS");
+            keystoreTrusted.load(null, null);
+            final Collection certs = CertTools.getCertsFromPEM(
+                    new FileInputStream(getResolvedPath(settings.getTruststoreFile())));
+            int i = 0;
+            for (Object o : certs) {
+                if (o instanceof Certificate) {
+                    keystoreTrusted.setCertificateEntry("cert-" + i,
+                            (Certificate) o);
+                    i++;
                 }
-
-                    // Ask for password
-                    char[] authcode;
-                    passwordLabel.setText("Enter password for keystore:");
-                    passwordField.setText("");
-                    JOptionPane.showMessageDialog(
-                            ConnectDialog.this, passwordPanel,
-                            "Connect", JOptionPane.PLAIN_MESSAGE);
-                    if (passwordField.getPassword() != null) {
-                        authcode = passwordField.getPassword();
-                    } else {
-                        authcode = null;
-                    }
-    
-                    // Other keystores for instance JKS
-                    keystore = getLoadedKeystore(getResolvedPath(settings.getKeystoreFile()),
-                            authcode,
-                            settings.getKeystoreType(),
-                            provider);
-                 
-                    // JKS has password on keys and need to be inited with password
-                    if (settings.getKeystoreType().equals("JKS")) {
-                        kKeyManagerFactory.init(keystore, authcode);
-                    } else {
-                        kKeyManagerFactory.init(keystore, null);
-                    }
+            }
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Loaded " + i + " certs to truststore");
+            }
+        } else if (TRUSTSTORE_TYPE_KEYSTORE.equals(
+                settings.getTruststoreType())) {
+            keystoreTrusted = KeyStore.getInstance("JKS");
+            keystoreTrusted.load(null, null);
+            final Enumeration<String> aliases = keystore.aliases();
+            int i = 0;
+            while(aliases.hasMoreElements()) {
+                final String alias = aliases.nextElement();
+                if (keystore.isCertificateEntry(alias)) {
+                    keystoreTrusted.setCertificateEntry(alias,
+                            keystore.getCertificate(alias));
+                    i++;
                 }
+            }
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Loaded " + i + " certs to truststore");
+            }
+        } else {
+            keystoreTrusted = KeyStore.getInstance(settings.getTruststoreType());
+            keystoreTrusted.load(new FileInputStream(getResolvedPath(settings.getTruststoreFile())), settings.getTruststorePassword());
+        }
 
-                final KeyStore keystoreTrusted;
-                if (TRUSTSTORE_TYPE_PEM.equals(settings.getTruststoreType())) {
-                    keystoreTrusted = KeyStore.getInstance("JKS");
-                    keystoreTrusted.load(null, null);
-                    final Collection certs = CertTools.getCertsFromPEM(
-                            new FileInputStream(getResolvedPath(settings.getTruststoreFile())));
-                    int i = 0;
-                    for (Object o : certs) {
-                        if (o instanceof Certificate) {
-                            keystoreTrusted.setCertificateEntry("cert-" + i,
-                                    (Certificate) o);
-                            i++;
-                        }
-                    }
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Loaded " + i + " certs to truststore");
-                    }
-                } else if (TRUSTSTORE_TYPE_KEYSTORE.equals(
-                        settings.getTruststoreType())) {
-                    keystoreTrusted = KeyStore.getInstance("JKS");
-                    keystoreTrusted.load(null, null);
-                    final Enumeration<String> aliases = keystore.aliases();
-                    int i = 0;
-                    while(aliases.hasMoreElements()) {
-                        final String alias = aliases.nextElement();
-                        if (keystore.isCertificateEntry(alias)) {
-                            keystoreTrusted.setCertificateEntry(alias,
-                                    keystore.getCertificate(alias));
-                            i++;
-                        }
-                    }
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Loaded " + i + " certs to truststore");
-                    }
-                } else {
-                    keystoreTrusted = KeyStore.getInstance(settings.getTruststoreType());
-                    keystoreTrusted.load(new FileInputStream(getResolvedPath(settings.getTruststoreFile())), settings.getTruststorePassword());
-                }
+        final TrustManagerFactory tTrustManagerFactory = TrustManagerFactory.getInstance("SunX509");
+        tTrustManagerFactory.init(keystoreTrusted);
 
-                final TrustManagerFactory tTrustManagerFactory = TrustManagerFactory.getInstance("SunX509");
-                tTrustManagerFactory.init(keystoreTrusted);
+        KeyManager[] keyManagers = kKeyManagerFactory.getKeyManagers();
 
-                KeyManager[] keyManagers = kKeyManagerFactory.getKeyManagers();
+//        final SSLSocketFactory factory = sslc.getSocketFactory();
+        List<GUIKeyManager> guiKeyManagers = new LinkedList<GUIKeyManager>();
+        for (int i = 0; i < keyManagers.length; i++) {
+            if (keyManagers[i] instanceof X509KeyManager) {
+                final GUIKeyManager manager = new GUIKeyManager((X509KeyManager) keyManagers[i]);
+                keyManagers[i] = manager;
+                guiKeyManagers.add(manager);
+            }
+        }
 
-        //        final SSLSocketFactory factory = sslc.getSocketFactory();
-                List<GUIKeyManager> guiKeyManagers = new LinkedList<GUIKeyManager>();
-                for (int i = 0; i < keyManagers.length; i++) {
-                    if (keyManagers[i] instanceof X509KeyManager) {
-                        final GUIKeyManager manager = new GUIKeyManager((X509KeyManager) keyManagers[i]);
-                        keyManagers[i] = manager;
-                        guiKeyManagers.add(manager);
-                    }
-                }
+        // Now construct a SSLContext using these (possibly wrapped)
+        // KeyManagers, and the TrustManagers. We still use a null
+        // SecureRandom, indicating that the defaults should be used.
+        SSLContext context = SSLContext.getInstance("TLS");
 
-                // Now construct a SSLContext using these (possibly wrapped)
-                // KeyManagers, and the TrustManagers. We still use a null
-                // SecureRandom, indicating that the defaults should be used.
-                SSLContext context = SSLContext.getInstance("TLS");
-                
-                if (LOG.isDebugEnabled()) {
-                    StringBuilder buff = new StringBuilder();
-                    buff.append("Available providers: \n");
-                    for (Provider p : Security.getProviders()) {
-                       buff.append(p).append("\n");
-                    }
-                    LOG.info(buff.toString());
-                }
-                
-                context.init(keyManagers, tTrustManagerFactory.getTrustManagers(), new SecureRandom());
+        if (LOG.isDebugEnabled()) {
+            StringBuilder buff = new StringBuilder();
+            buff.append("Available providers: \n");
+            for (Provider p : Security.getProviders()) {
+               buff.append(p).append("\n");
+            }
+            LOG.info(buff.toString());
+        }
 
-                // Finally, we get a SocketFactory, and pass it to SimpleSSLClient.
-                SSLSocketFactory factory = context.getSocketFactory();
-                
-                HttpsURLConnection.setDefaultSSLSocketFactory(factory);
-                
-                final ConnectDialog parent = this;
-                HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
+        context.init(keyManagers, tTrustManagerFactory.getTrustManagers(), new SecureRandom());
 
-                    private X509Certificate verifiedCert = null;
-                    
-                    @Override
-                    public boolean verify(String hostname, SSLSession session) {
-                        
-                        if (!DEFAULT_HOSTNAME_VERIFIER.verify(hostname, session)) {
-                            // don't show warning dialog more than once in a row for the same
-                            // host cert
+        // Finally, we get a SocketFactory, and pass it to SimpleSSLClient.
+        SSLSocketFactory factory = context.getSocketFactory();
+
+        HttpsURLConnection.setDefaultSSLSocketFactory(factory);
+
+        final ConnectDialog parent = this;
+        HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
+
+            private X509Certificate verifiedCert = null;
+
+            @Override
+            public boolean verify(String hostname, SSLSession session) {
+
+                if (!DEFAULT_HOSTNAME_VERIFIER.verify(hostname, session)) {
+                    // don't show warning dialog more than once in a row for the same
+                    // host cert
+                    try {
+                        final X509Certificate cert = (X509Certificate) session.getPeerCertificates()[0];
+
+                        if (verifiedCert != null && verifiedCert.equals(cert)) {
+                            return true;
+                        } else {
+                            final String dn = cert.getSubjectX500Principal().getName();
+                            final String cn = CertTools.getPartFromDN(dn, "CN");
+
+                            hostnameField.setText(hostname);
+                            commonNameField.setText(cn);
+
+                            final DefaultListModel listModel = new DefaultListModel();
+
                             try {
-                                final X509Certificate cert = (X509Certificate) session.getPeerCertificates()[0];
-                            
-                                if (verifiedCert != null && verifiedCert.equals(cert)) {
-                                    return true;
-                                } else {
-                                    final String dn = cert.getSubjectX500Principal().getName();
-                                    final String cn = CertTools.getPartFromDN(dn, "CN");
-                                    
-                                    hostnameField.setText(hostname);
-                                    commonNameField.setText(cn);
+                                final Collection<List<?>> altNames = cert.getSubjectAlternativeNames();
 
-                                    final DefaultListModel listModel = new DefaultListModel();
-                                    
-                                    try {
-                                        final Collection<List<?>> altNames = cert.getSubjectAlternativeNames();
-                                    
-                                        if (altNames != null) {
-                                            for (final List<?> altName : altNames) {
-                                                final Integer type = (Integer) altName.get(0);
-                                                final Object value = altName.get(1);
-                                                final StringBuilder sb = new StringBuilder();
-                                                
-                                                if (type == 2) {
-                                                    sb.append("DNS name: ");
-                                                } else if (type == 7) {
-                                                    sb.append("IP address: ");
-                                                }
-                                                sb.append(value.toString());
-                                                listModel.addElement(sb.toString());
-                                            }
-                                        } else {
-                                            subjectAltNamesList.setEnabled(false);
-                                            listModel.addElement("No subject alternative names found in certificate");
+                                if (altNames != null) {
+                                    for (final List<?> altName : altNames) {
+                                        final Integer type = (Integer) altName.get(0);
+                                        final Object value = altName.get(1);
+                                        final StringBuilder sb = new StringBuilder();
+
+                                        if (type == 2) {
+                                            sb.append("DNS name: ");
+                                        } else if (type == 7) {
+                                            sb.append("IP address: ");
                                         }
-                                    } catch (CertificateParsingException e) {
-                                        listModel.addElement("Failed to parse subject alternative names from certificate");
+                                        sb.append(value.toString());
+                                        listModel.addElement(sb.toString());
                                     }
-
-                                    subjectAltNamesList.setModel(listModel);
-                                    
-                                    final int result = JOptionPane.showConfirmDialog(parent, hostnameMismatchConfirmPanel,
-                                            "Hostname mismatch", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
-                                    verifiedCert = cert;
-                                    return result == JOptionPane.OK_OPTION;
+                                } else {
+                                    subjectAltNamesList.setEnabled(false);
+                                    listModel.addElement("No subject alternative names found in certificate");
                                 }
-                            } catch (SSLPeerUnverifiedException e) {
-                                JOptionPane.showMessageDialog(parent, "Unable to verify peer",
-                                        "Error", JOptionPane.ERROR_MESSAGE);
-                                return false;
+                            } catch (CertificateParsingException e) {
+                                listModel.addElement("Failed to parse subject alternative names from certificate");
                             }
-                        }
-                        
-                        return true;
-                    }
-                });
 
-                AdminWSService service = new AdminWSService(
-                        new URL(urlstr), new QName("http://adminws.signserver.org/", "AdminWSService"));
-                ws = service.getAdminWSPort();
-                
-                // Search the key managers for the selected certificate
-                for (GUIKeyManager manager : guiKeyManagers) {
-                    adminCertificate = manager.getSelectedCertificate();
-                    if (adminCertificate != null) {
-                        break;
+                            subjectAltNamesList.setModel(listModel);
+
+                            final int result = JOptionPane.showConfirmDialog(parent, hostnameMismatchConfirmPanel,
+                                    "Hostname mismatch", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+                            verifiedCert = cert;
+                            return result == JOptionPane.OK_OPTION;
+                        }
+                    } catch (SSLPeerUnverifiedException e) {
+                        JOptionPane.showMessageDialog(parent, "Unable to verify peer",
+                                "Error", JOptionPane.ERROR_MESSAGE);
+                        return false;
                     }
                 }
-                
-                
-            dispose();
-        } catch (Exception ex) {
-            LOG.error("Error connecting", ex);
 
-            
-            JOptionPane.showMessageDialog(this, ExceptionUtils.catCauses(ex, "\n"), "Connect", JOptionPane.ERROR_MESSAGE);
+                return true;
+            }
+        });
+
+        AdminWSService service = new AdminWSService(
+                new URL(urlstr), new QName("http://adminws.signserver.org/", "AdminWSService"));
+        ws = service.getAdminWSPort();
+
+        // Search the key managers for the selected certificate
+        for (GUIKeyManager manager : guiKeyManagers) {
+            adminCertificate = manager.getSelectedCertificate();
+            if (adminCertificate != null) {
+                break;
+            }
         }
     }//GEN-LAST:event_connectButtonActionPerformed
     
@@ -879,6 +943,16 @@ public class ConnectDialog extends javax.swing.JDialog {
             truststoreTypeComboBoxActionPerformed(null);
             urlTextField.requestFocusInWindow();
         }
+    }
+    
+    private void enableControls(final boolean enable) {
+        jRadioButtonLocal.setEnabled(enable);
+        jRadioButtonRemote.setEnabled(enable);
+        defaultsButton.setEnabled(enable);
+        cancelButton.setEnabled(enable);
+        connectButton.setEnabled(enable);
+        jLabelConnectTo.setEnabled(enable);
+        enableRemote(enable && jRadioButtonRemote.isSelected());
     }
     
     private ConnectSettings loadSettingsFromFile(final File file) {
@@ -1056,9 +1130,10 @@ public class ConnectDialog extends javax.swing.JDialog {
     private javax.swing.JPanel hostnameMismatchConfirmPanel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
+    private javax.swing.JLabel jLabelConnectTo;
+    private javax.swing.JLabel jLabelProgress;
     private javax.swing.JPanel jPanelButtons;
     private javax.swing.JPanel jPanelRemote1;
     private javax.swing.JPanel jPanelRemote2;
@@ -1149,6 +1224,13 @@ public class ConnectDialog extends javax.swing.JDialog {
             result = Protocol.WS;
         }
         return result;
+    }
+    
+    /**
+     * @return True if connecting went fine
+     */
+    public boolean isConnected() {
+        return connected;
     }
 
 }

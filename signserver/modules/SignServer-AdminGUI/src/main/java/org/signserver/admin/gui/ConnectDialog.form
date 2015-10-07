@@ -1,6 +1,6 @@
 <?xml version="1.1" encoding="UTF-8" ?>
 
-<Form version="1.3" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JDialogFormInfo">
+<Form version="1.5" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JDialogFormInfo">
   <NonVisualComponents>
     <Container class="javax.swing.JPanel" name="passwordPanel">
 
@@ -167,15 +167,17 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" attributes="0">
+          <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jPanelButtons" alignment="0" pref="514" max="32767" attributes="0"/>
-                  <Component id="jLabel3" alignment="0" pref="514" max="32767" attributes="0"/>
+              <Group type="103" groupAlignment="1" attributes="0">
                   <Component id="jPanelRemote3" alignment="0" max="32767" attributes="0"/>
+                  <Component id="jPanelButtons" alignment="0" pref="514" max="32767" attributes="0"/>
+                  <Component id="jLabelConnectTo" alignment="0" pref="514" max="32767" attributes="0"/>
                   <Component id="jPanelRemote2" alignment="0" max="32767" attributes="0"/>
                   <Component id="jPanelRemote1" alignment="0" max="32767" attributes="0"/>
                   <Group type="102" alignment="1" attributes="0">
+                      <Component id="jLabelProgress" pref="148" max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="defaultsButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="cancelButton" linkSize="1" min="-2" max="-2" attributes="0"/>
@@ -191,7 +193,7 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
+              <Component id="jLabelConnectTo" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="jPanelButtons" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="separate" max="-2" attributes="0"/>
@@ -201,10 +203,13 @@
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Component id="jPanelRemote3" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="32767" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="connectButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="cancelButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="defaultsButton" alignment="3" min="-2" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                  <Component id="connectButton" linkSize="2" alignment="1" max="32767" attributes="1"/>
+                  <Component id="cancelButton" linkSize="2" alignment="1" max="32767" attributes="1"/>
+                  <Group type="103" alignment="1" groupAlignment="3" attributes="0">
+                      <Component id="defaultsButton" alignment="3" max="32767" attributes="1"/>
+                      <Component id="jLabelProgress" alignment="3" min="-2" pref="43" max="-2" attributes="0"/>
+                  </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -227,7 +232,7 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="urlTextField" alignment="0" pref="478" max="32767" attributes="0"/>
+                      <Component id="urlTextField" alignment="0" pref="480" max="32767" attributes="0"/>
                       <Component id="jLabel1" alignment="0" min="-2" pref="182" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
@@ -270,15 +275,15 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="truststorePasswordField" alignment="0" pref="478" max="32767" attributes="0"/>
-                      <Component id="truststoreFilePathLabel" alignment="0" pref="478" max="32767" attributes="0"/>
+                      <Component id="truststorePasswordField" alignment="0" pref="480" max="32767" attributes="0"/>
+                      <Component id="truststoreFilePathLabel" alignment="0" pref="480" max="32767" attributes="0"/>
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="jLabel2" min="-2" pref="208" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="truststoreTypeComboBox" pref="258" max="32767" attributes="0"/>
+                          <Component id="truststoreTypeComboBox" pref="260" max="32767" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="1" attributes="0">
-                          <Component id="truststoreFilePathTextField" pref="436" max="32767" attributes="0"/>
+                          <Component id="truststoreFilePathTextField" pref="438" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="truststoreBrowseButton" min="-2" pref="36" max="-2" attributes="0"/>
                       </Group>
@@ -364,14 +369,14 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jLabel9" alignment="0" pref="478" max="32767" attributes="0"/>
+                      <Component id="jLabel9" alignment="0" pref="480" max="32767" attributes="0"/>
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="jLabel8" min="-2" pref="208" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="keystoreTypeComboBox" pref="258" max="32767" attributes="0"/>
+                          <Component id="keystoreTypeComboBox" pref="260" max="32767" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="1" attributes="0">
-                          <Component id="keystoreFilePathTextField" pref="436" max="32767" attributes="0"/>
+                          <Component id="keystoreFilePathTextField" pref="438" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="keystoreBrowseButton" min="-2" pref="36" max="-2" attributes="0"/>
                       </Group>
@@ -459,7 +464,7 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="defaultsButtonActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JLabel" name="jLabel3">
+    <Component class="javax.swing.JLabel" name="jLabelConnectTo">
       <Properties>
         <Property name="text" type="java.lang.String" value="Connect to:"/>
       </Properties>
@@ -494,5 +499,7 @@
         </Component>
       </SubComponents>
     </Container>
+    <Component class="javax.swing.JLabel" name="jLabelProgress">
+    </Component>
   </SubComponents>
 </Form>

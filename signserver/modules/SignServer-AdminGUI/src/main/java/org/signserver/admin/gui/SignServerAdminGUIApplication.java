@@ -19,7 +19,6 @@ import java.awt.RenderingHints;
 import java.awt.SplashScreen;
 import java.io.File;
 import java.security.cert.X509Certificate;
-import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.swing.JOptionPane;
 import org.apache.commons.cli.CommandLine;
@@ -145,18 +144,7 @@ public class SignServerAdminGUIApplication extends SingleFrameApplication {
                 if (line.hasOption(OPTION_WS)) {
                     protocol = Protocol.WS;
                 } else {
-                    if (isNamingContextAvailable()) {
-                        protocol = Protocol.EJB;
-                    } else {
-                        JOptionPane.showMessageDialog(null,
-                            "Application server libraries not detected."
-                            + "\n\nTo connect to a locally running SignServer instance "
-                            + "\nplease append the appropriate application server "
-                            + "\nJAR-files and if needed a jndi.properties file."
-                            + "\n\nTo connect using web services invoke this command "
-                            + "\nwith the argument \"-ws\".");
-                        protocol = Protocol.WS;
-                    }
+                    protocol = Protocol.EJB;
                 }
                 if (line.hasOption(OPTION_CONNECTFILE)) {
                     connectFile = new File(
@@ -170,10 +158,25 @@ public class SignServerAdminGUIApplication extends SingleFrameApplication {
                     baseDir = new File(line.getOptionValue(OPTION_BASEDIR));
                 }
 
-                try {
-                    launch(SignServerAdminGUIApplication.class, args);
-                } catch (Exception ex) {
-                    displayException(ex);
+                // TODO: is this enough to replace the old EJBCA-util CertTools.installBCProvider()
+                SignServerUtil.installBCProvider();
+
+                final ConnectDialog dlg = new ConnectDialog(null, true,
+                        connectFile, defaultConnectFile, baseDir, Protocol.WS == protocol);
+                dlg.setVisible(true);
+                if (dlg.isConnected()) {
+                    protocol = dlg.getProtocol();
+                    adminWS = dlg.getWS();
+                    serverHost = dlg.getServerHost();
+                    adminCertificate = dlg.getAdminCertificate();
+                    
+                    try {
+                        launch(SignServerAdminGUIApplication.class, args);
+                    } catch (Exception ex) {
+                        displayException(ex);
+                    }
+                } else {
+                    System.exit(1);
                 }
             }
         } catch (ParseException ex) {
@@ -181,24 +184,11 @@ public class SignServerAdminGUIApplication extends SingleFrameApplication {
         }
     }
 
-    private static boolean isNamingContextAvailable() {
-        boolean result;
-        try {
-            final InitialContext ignored = new InitialContext(); //NOPMD
-            result = true;
-        } catch (NamingException ex) {
-            result = false;
-        }
-        return result;
-    }
-
     /**
      * @return The administration interface either EJB remote or web services.
      */
     public static AdminWS getAdminWS() {
         if (adminWS == null) {
-            // TODO: is this enough to replace the old EJBCA-util CertTools.installBCProvider()
-            SignServerUtil.installBCProvider();
 
             final ConnectDialog dlg = new ConnectDialog(null, true,
                     connectFile, defaultConnectFile, baseDir, Protocol.WS == protocol);

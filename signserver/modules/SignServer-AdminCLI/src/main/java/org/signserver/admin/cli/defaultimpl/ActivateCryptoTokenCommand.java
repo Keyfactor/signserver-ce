@@ -108,8 +108,6 @@ public class ActivateCryptoTokenCommand extends AbstractAdminCommand {
             throw new IllegalCommandArgumentsException(ex.getMessage());
         } catch (RemoteException ex) {
             throw new UnexpectedCommandFailureException(ex);
-        } catch (IOException ex) {
-            throw new UnexpectedCommandFailureException(ex);
         } catch (CryptoTokenAuthenticationFailureException ex) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Crypto token authentication failed", ex);

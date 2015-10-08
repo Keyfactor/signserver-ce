@@ -26,13 +26,9 @@ a7f713593007813bf07d19bd1df9f81c86c0719e9a0bb2ef1b98b78313fc940d  ./ext/commons-
 a64e0c73988fef8d5b73fc29d105a3a6e2dc5d9b90a94fca065cd2439dc56590  ./ext/commons-lang-2.5.jar;                             "Apache Commons"
 47d0c01a41e2883fde74dd162e168ca65c7123de17de51973a4f821bb68466ac  ./ext/commons-logging-1.1.1.jar;                        "Apache Commons"
 6fef8af852bf911cc7a156391362ca5e2c0602eaa6dca2050c23f7c751673660  ./ext/CopyLibs/org-netbeans-modules-java-j2seproject-copylibstask.jar;  "NetBeans copylibs task"
-f00e68d5e739e854795bce1ca77d4c3b41fa1e0076f528b3dc73e5655a1414c7  ./ext/DeployTools-Ant-1.1.2.jar;                        "SignServer"
-5c04b650315e947215c4266ddd773d3c060c050da4e6e09ef0f0468345015dd1  ./ext/DeployTools-Ant-1.1-sources.jar;                  "SignServer"
-c9e8b55e373482e8bf62efe6a5d2cc9cfc7f2c1c830d42445f63fda4e3819e6d  ./ext/DeployTools-Common-1.1.1.jar;                     "SignServer"
-7c2134eca5e7a1570dcc91d66f6019ea9a2742e0d7f07f6997ebe965f9ac92fa  ./ext/DeployTools-Common-1.1.2.jar;                     "SignServer"
-79639ca6f14ccc841ad044a04ba7f30a9e6bd21c37649ff7847de546df53e603  ./ext/DeployTools-Common-1.1-sources.jar;               "SignServer"
-e1e4ecf5624b9116de28e225c256e5da42cb97461c3ae21b8add27020096ff49  ./ext/DeployTools-Maven-1.1.2.jar;                      "SignServer"
-72f135fa2af5792d51c6dc3ea6c7311e364c31f45b4a50295ecaf9858a3d895f  ./ext/DeployTools-Maven-1.1-sources.jar;                "SignServer"
+917d8b79f6a481663f33cab7fe1dcebd864ddf8c255c8ee9d9ace69edbae641e  ./ext/DeployTools-Ant-2.0-SNAPSHOT.jar;                 
+23b3cc552c3ee1c265bdce130a3f7f69b9e3a5287bf37b7c08d19057775f3f5c  ./ext/DeployTools-Common-2.0-SNAPSHOT.jar;              
+a7cff6ade0218defd9b6ae844f026c3cd076e053fd2b81aea9872f5360df4800  ./ext/DeployTools-Maven-2.0-SNAPSHOT.jar;               
 bc3e42723c2d9b070751c0070b93d7eeed9a35e4af04adc4a7db91001e25e22d  ./ext/ehcache-core-2.3.2.jar;                           "EHCache"
 df7172ddb6bc9944acb26255e645081528853cdec36039a2d9d3369566dfeb78  ./ext/ext/activation.jar;                               "Velocity"
 66fdef91e9739348df7a096aa384a5685f4e875584cce89386a7a47251c4d8e9  ./ext/ext/hamcrest-core-1.3.jar;                        "Hamcrest"
@@ -81,7 +77,6 @@ a44bd80e82cb0f4cfac0dac8575746223802514e3cec9dc75235bc0de646af14  ./ext/xalan-2.
 6ae540a7c85c814ac64bea48016b3a6f45c95d4765f547fcc0053dc36c94ed5c  ./ext/xercesImpl-2.9.1.jar;                             "Santuario"
 392617e40d961d3910a924d7d4ee893912e860a4d55e8f2b0e18cd4cc60b243f  ./ext/xmlsec-1.5.7.jar;                                 "Santuario"
 f5965da6ba78949bc17724c56de70c4aeb2598663f6abb1ece63854ba21713ba  ./ext/xmlsec-1.5.8.jar;                                 "Santuario"
-                                                                  ./SignServer-Lib-EJBCA-util.jar;                        "EJBCA"
                                                                   ./SignServer-Lib-iText.jar;                             "iText"
                                                                   ./SignServer-Lib-ODFDOM.jar;                            "ODFDOM"
                                                                   ./SignServer-Lib-OpenXML4J.jar;                         "OpenXML4J"

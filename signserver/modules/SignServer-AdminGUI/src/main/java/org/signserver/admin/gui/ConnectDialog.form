@@ -176,10 +176,10 @@
                   <Component id="jPanelRemote2" alignment="0" max="32767" attributes="0"/>
                   <Component id="jPanelRemote1" alignment="0" max="32767" attributes="0"/>
                   <Group type="102" alignment="1" attributes="0">
-                      <Component id="jLabelProgress" pref="148" max="32767" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="jLabelProgress" pref="248" max="32767" attributes="0"/>
+                      <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
                       <Component id="defaultsButton" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="cancelButton" linkSize="1" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="connectButton" linkSize="1" min="-2" max="-2" attributes="0"/>
@@ -202,14 +202,14 @@
               <Component id="jPanelRemote2" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Component id="jPanelRemote3" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="11" max="32767" attributes="0"/>
+              <EmptySpace max="32767" attributes="0"/>
               <Group type="103" groupAlignment="1" max="-2" attributes="0">
                   <Component id="connectButton" linkSize="2" alignment="1" max="32767" attributes="1"/>
-                  <Component id="cancelButton" linkSize="2" alignment="1" max="32767" attributes="1"/>
                   <Group type="103" alignment="1" groupAlignment="3" attributes="0">
-                      <Component id="defaultsButton" alignment="3" max="32767" attributes="1"/>
-                      <Component id="jLabelProgress" alignment="3" min="-2" pref="43" max="-2" attributes="0"/>
+                      <Component id="cancelButton" linkSize="2" alignment="3" max="32767" attributes="1"/>
+                      <Component id="defaultsButton" linkSize="2" alignment="3" max="32767" attributes="1"/>
                   </Group>
+                  <Component id="jLabelProgress" alignment="1" min="-2" pref="43" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>

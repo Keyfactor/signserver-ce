@@ -158,7 +158,6 @@ public class SignServerAdminGUIApplication extends SingleFrameApplication {
                     baseDir = new File(line.getOptionValue(OPTION_BASEDIR));
                 }
 
-                // TODO: is this enough to replace the old EJBCA-util CertTools.installBCProvider()
                 SignServerUtil.installBCProvider();
 
                 final ConnectDialog dlg = new ConnectDialog(null, true,

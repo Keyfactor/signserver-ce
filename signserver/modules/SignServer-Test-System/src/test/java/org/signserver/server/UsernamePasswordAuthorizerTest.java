@@ -104,9 +104,33 @@ public class UsernamePasswordAuthorizerTest extends ModulesTestCase {
             fail("Exception: " + ex.getMessage());
         }
 
-        // With other type of credentials
-        
+        // With other type of credentials (in general credential holder)
         context.put(RequestContext.CLIENT_CREDENTIAL, new DummyCredential());
+        try {
+             workerSession.process(getSignerIdDummy1(), request, context);
+             fail("No AuthorizationRequiredException thrown");
+        } catch (AuthorizationRequiredException ok) {
+            // OK
+        } catch (Exception ex) {
+            LOG.error("Wrong type of exception", ex);
+            fail("Exception: " + ex.getMessage());
+        }
+        
+        // With other type of credentials (password credential holder)
+        context.put(RequestContext.CLIENT_CREDENTIAL_PASSWORD, new DummyCredential());
+        try {
+             workerSession.process(getSignerIdDummy1(), request, context);
+             fail("No AuthorizationRequiredException thrown");
+        } catch (AuthorizationRequiredException ok) {
+            // OK
+        } catch (Exception ex) {
+            LOG.error("Wrong type of exception", ex);
+            fail("Exception: " + ex.getMessage());
+        }
+        
+        // With other type of credentials (in both general and password holder)
+        context.put(RequestContext.CLIENT_CREDENTIAL, new DummyCredential());
+        context.put(RequestContext.CLIENT_CREDENTIAL_PASSWORD, new DummyCredential());
         try {
              workerSession.process(getSignerIdDummy1(), request, context);
              fail("No AuthorizationRequiredException thrown");
@@ -118,8 +142,10 @@ public class UsernamePasswordAuthorizerTest extends ModulesTestCase {
         }
 
         // With wrong password
-        context.put(RequestContext.CLIENT_CREDENTIAL,
-                new UsernamePasswordClientCredential("user1", "FOO1234"));
+        final UsernamePasswordClientCredential cred 
+                = new UsernamePasswordClientCredential("user1", "FOO1234");
+        context.put(RequestContext.CLIENT_CREDENTIAL, cred);
+        context.put(RequestContext.CLIENT_CREDENTIAL_PASSWORD, cred);
         try {
              workerSession.process(getSignerIdDummy1(), request, context);
              fail("No AuthorizationRequiredException thrown");
@@ -143,7 +169,7 @@ public class UsernamePasswordAuthorizerTest extends ModulesTestCase {
                 new GenericSignRequest(1, "<root/>".getBytes());
 
         // With correct username password
-        context.put(RequestContext.CLIENT_CREDENTIAL,
+        context.put(RequestContext.CLIENT_CREDENTIAL_PASSWORD,
                 new UsernamePasswordClientCredential("user1", "foo123"));
         try {
              workerSession.process(getSignerIdDummy1(), request, context);
@@ -167,7 +193,7 @@ public class UsernamePasswordAuthorizerTest extends ModulesTestCase {
                 new GenericSignRequest(1, "<root/>".getBytes());
 
         // With correct username password
-        context.put(RequestContext.CLIENT_CREDENTIAL,
+        context.put(RequestContext.CLIENT_CREDENTIAL_PASSWORD,
                 new UsernamePasswordClientCredential("user2", "foo123"));
         try {
              workerSession.process(getSignerIdDummy1(), request, context);
@@ -191,7 +217,7 @@ public class UsernamePasswordAuthorizerTest extends ModulesTestCase {
                 new GenericSignRequest(1, "<root/>".getBytes());
 
         // With correct username password
-        context.put(RequestContext.CLIENT_CREDENTIAL,
+        context.put(RequestContext.CLIENT_CREDENTIAL_PASSWORD,
                 new UsernamePasswordClientCredential("user3", "foo123"));
         try {
              workerSession.process(getSignerIdDummy1(), request, context);

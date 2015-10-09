@@ -414,32 +414,45 @@ public class GenericProcessServlet extends AbstractProcessServlet {
                 remoteAddr);
         RequestMetadata metadata = RequestMetadata.getInstance(context);
 
-        IClientCredential credential;
+        final CertificateClientCredential credentialCert;
+        final UsernamePasswordClientCredential credentialPassword;
 
         if (clientCertificate instanceof X509Certificate) {
             final X509Certificate cert = (X509Certificate) clientCertificate;
-            LOG.debug("Authentication: certificate");
-            credential = new CertificateClientCredential(
+            LOG.debug("Certificate-authentication: true");
+            credentialCert = new CertificateClientCredential(
                     cert.getSerialNumber().toString(16),
                     cert.getIssuerDN().getName());
+            context.put(RequestContext.CLIENT_CREDENTIAL_CERTIFICATE, credentialCert);
         } else {
-            // Check is client supplied basic-credentials
-            final String authorization =
-                    req.getHeader(HTTP_AUTH_BASIC_AUTHORIZATION);
-            if (authorization != null) {
-                LOG.debug("Authentication: password");
+            LOG.debug("Certificate-authentication: false");
+            credentialCert = null;
+        } 
 
-                final String decoded[] = new String(Base64.decode(
-                        authorization.split("\\s")[1])).split(":", 2);
+        // Check is client supplied basic-credentials
+        final String authorization =
+                req.getHeader(HTTP_AUTH_BASIC_AUTHORIZATION);
+        if (authorization != null) {
+            LOG.debug("Password-authentication: true");
 
-                credential = new UsernamePasswordClientCredential(
-                        decoded[0], decoded[1]);
-            } else {
-                LOG.debug("Authentication: none");
-                credential = null;
-            }
+            final String decoded[] = new String(Base64.decode(
+                    authorization.split("\\s")[1])).split(":", 2);
+
+            credentialPassword = new UsernamePasswordClientCredential(
+                    decoded[0], decoded[1]);
+            context.put(RequestContext.CLIENT_CREDENTIAL_PASSWORD, credentialPassword);
+        } else {
+            LOG.debug("Password-authtentication: false");
+            credentialPassword = null;
         }
-        context.put(RequestContext.CLIENT_CREDENTIAL, credential);
+        
+        // For backwards-compatibility also set CLIENT_CREDENTIAL with
+        // cert if and otherwise if username/password is available
+        if (credentialCert != null) {
+            context.put(RequestContext.CLIENT_CREDENTIAL, credentialCert);
+        } else if (credentialPassword != null) {
+            context.put(RequestContext.CLIENT_CREDENTIAL, credentialPassword);
+        }
 
         // Create log map
         LogMap logMap = LogMap.getInstance(context);

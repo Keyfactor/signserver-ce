@@ -96,7 +96,7 @@ public class UsernameAuthorizer implements IAuthorizer {
             final RequestContext requestContext)
             throws SignServerException, IllegalRequestException {
 
-        final Object o = requestContext.get(RequestContext.CLIENT_CREDENTIAL);
+        final Object o = requestContext.get(RequestContext.CLIENT_CREDENTIAL_PASSWORD);
         
         if (o instanceof UsernamePasswordClientCredential) {
 

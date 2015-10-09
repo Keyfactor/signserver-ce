@@ -325,18 +325,13 @@ Since the 3.0 version there are three kind of processable services. Signers (use
 The main way of communicating with the SignServer is through HTTP (web server) interface. There is also a web services (SOAP WS) interface available but that uses a special binary format for encoding the requests and responses.
                     </p>
                     <p>
-For an overview of the different concepts in the SignServer see illustration 1. The base component is called Worker which is assigned an id, optionally a name and a configuration. A sub component is a Processable which receives and processes requests. A Processable (optionally) have access to a cryptographic token (CryptoToken) in charge of managing the keys of a Processable. A CryptoToken can be either software or hardware based.
+The base component is called Worker which is assigned an id, optionally a name and a configuration. A sub component is a Processable which receives and processes requests. A Processable (optionally) have access to a cryptographic token (CryptoToken) in charge of managing the keys of a Processable. A CryptoToken can be either software or hardware based.
                     </p>
                     <p>
 The applications i administrated through a command-line interface, where the properties and access control can be configured.
                     </p>
                     <p>
 One SignServer can have multiple services for different purposes.
-                    </p>
-
-                    <p>
-                        <a href="../docs/SignServer_Manual_3_0_odt_18c42972.png"><img src="../docs/SignServer_Manual_3_0_odt_18c42972.png" align="middle" border="0" width="493" height="252" alt="SignServer components"/></a><br/>
-                        Illustration 1: Components in the SignServer project
                     </p>
             </section>
 

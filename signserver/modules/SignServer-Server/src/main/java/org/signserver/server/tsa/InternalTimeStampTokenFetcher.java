@@ -76,8 +76,10 @@ public class InternalTimeStampTokenFetcher {
         final RequestContext context = new RequestContext();
 
         if (username != null && password != null) {
-            context.put(RequestContext.CLIENT_CREDENTIAL,
-                    new UsernamePasswordClientCredential(username, password));
+            UsernamePasswordClientCredential cred
+                    = new UsernamePasswordClientCredential(username, password);
+            context.put(RequestContext.CLIENT_CREDENTIAL, cred);
+            context.put(RequestContext.CLIENT_CREDENTIAL_PASSWORD, cred);
         }
 
         final ProcessResponse resp = session.process(workerId, new GenericSignRequest(hashCode(), requestBytes), context);

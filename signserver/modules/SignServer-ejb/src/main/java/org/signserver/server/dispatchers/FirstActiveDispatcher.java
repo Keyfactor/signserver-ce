@@ -47,6 +47,9 @@ public class FirstActiveDispatcher extends BaseDispatcher {
     /** Property WORKERS. */
     private static final String PROPERTY_WORKERS = "WORKERS";
 
+    /** Workersession. */
+    private IDispatcherWorkerSession workerSession;
+
     /** List of workers. */
     private List<String> workers = new LinkedList<String>();
 
@@ -54,14 +57,20 @@ public class FirstActiveDispatcher extends BaseDispatcher {
     @Override
     public void init(final int workerId, final WorkerConfig config,
             final WorkerContext workerContext, final EntityManager workerEM) {
-        super.init(workerId, config, workerContext, workerEM);
+        try {
+            super.init(workerId, config, workerContext, workerEM);
 
-        workers = new LinkedList<String>();
-        final String workersValue = config.getProperty(PROPERTY_WORKERS);
-        if (workersValue == null) {
-            LOG.error("Property WORKERS missing!");
-        } else {
-            workers.addAll(Arrays.asList(workersValue.split(",")));
+            workers = new LinkedList<String>();
+            final String workersValue = config.getProperty(PROPERTY_WORKERS);
+            if (workersValue == null) {
+                LOG.error("Property WORKERS missing!");
+            } else {
+                workers.addAll(Arrays.asList(workersValue.split(",")));
+            }
+            workerSession = ServiceLocator.getInstance().lookupLocal(
+                        IDispatcherWorkerSession.class);
+        } catch (NamingException ex) {
+            LOG.error("Unable to lookup worker session", ex);
         }
     }
 
@@ -82,8 +91,6 @@ public class FirstActiveDispatcher extends BaseDispatcher {
         // Mark request comming from a dispatcher so the DispatchedAuthorizer can be used
         nextContext.put(RequestContext.DISPATCHER_AUTHORIZED_CLIENT, true);
 
-        final IDispatcherWorkerSession.ILocal workerSession = requestContext.getServices().get(IDispatcherWorkerSession.ILocal.class);
-        
         for (String workerName : workers) {
             try {
                 id = workerSession.getWorkerId(workerName);

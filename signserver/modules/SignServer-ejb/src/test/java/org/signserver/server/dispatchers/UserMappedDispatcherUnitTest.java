@@ -43,12 +43,12 @@ public class UserMappedDispatcherUnitTest {
         // Without property
         WorkerConfig config = new WorkerConfig();
         WorkerContext context = new SignServerContext(null, null);
-        UserMappedDispatcher instance = new UserMappedDispatcher();
+        UserMappedDispatcher instance = new MockedUserMapppedDispatcher();
         instance.init(1, config, context, null);
         assertTrue("errs: " + instance.getFatalErrors(), instance.getFatalErrors().toString().contains("USERNAME_MAPPING"));
         
         // With property
-        instance = new UserMappedDispatcher();
+        instance = new MockedUserMapppedDispatcher();
         config.setProperty("USERNAME_MAPPING", "user1:worker1, user2:worker2");
         instance.init(2, config, context, null);
         assertTrue("errs: " + instance.getFatalErrors(), instance.getFatalErrors().isEmpty());
@@ -63,21 +63,29 @@ public class UserMappedDispatcherUnitTest {
 
         WorkerConfig config = new WorkerConfig();
         WorkerContext context = new SignServerContext(null, null);
-        UserMappedDispatcher instance = new UserMappedDispatcher();
+        UserMappedDispatcher instance = new MockedUserMapppedDispatcher();
         config.setProperty("USERNAME_MAPPING", "user1::worker1");
         instance.init(3, config, context, null);
         assertTrue("errs: " + instance.getFatalErrors(), instance.getFatalErrors().toString().contains("USERNAME_MAPPING"));
         
         // Test some border cases without error
-        instance = new UserMappedDispatcher();
+        instance = new MockedUserMapppedDispatcher();
         config.setProperty("USERNAME_MAPPING", "user1:worker1,\nuser2:worker2");
         instance.init(4, config, context, null);
         assertTrue("new line: " + instance.getFatalErrors(), instance.getFatalErrors().isEmpty());
         
-        instance = new UserMappedDispatcher();
+        instance = new MockedUserMapppedDispatcher();
         config.setProperty("USERNAME_MAPPING", "");
         instance.init(5, config, context, null);
         assertTrue("empty: " + instance.getFatalErrors(), instance.getFatalErrors().isEmpty());
+    }
+    
+    /** Mocked UserMappedDispatcher not doing any JNDI lookups. */
+    private static class MockedUserMapppedDispatcher extends UserMappedDispatcher {
+        @Override
+        protected IDispatcherWorkerSession getWorkerSession() {
+            return null;
+        }
     }
     
 }

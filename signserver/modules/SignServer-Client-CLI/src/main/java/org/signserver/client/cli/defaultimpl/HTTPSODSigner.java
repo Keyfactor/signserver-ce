@@ -116,7 +116,7 @@ public class HTTPSODSigner extends AbstractSODSigner {
 
     private Response sendRequest(final URL processServlet,
             final String workerName, final Map<Integer, byte[]> data,
-            final String encoding) {
+            final String encoding) throws IOException {
         
         OutputStream out = null;
         InputStream in = null;
@@ -177,8 +177,6 @@ public class HTTPSODSigner extends AbstractSODSigner {
             os.close();
 
             return new Response(os.toByteArray());
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
         } finally {
             if (out != null) {
                 try {

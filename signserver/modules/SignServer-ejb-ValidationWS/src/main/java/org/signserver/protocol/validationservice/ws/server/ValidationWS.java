@@ -37,6 +37,7 @@ import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.healthcheck.HealthCheckUtils;
 import org.signserver.protocol.validationservice.ws.IValidationWS;
 import org.signserver.protocol.validationservice.ws.ValidationResponse;
+import org.signserver.server.CredentialUtils;
 import org.signserver.server.nodb.FileBasedDatabaseManager;
 import org.signserver.validationservice.common.ValidateRequest;
 import org.signserver.validationservice.common.ValidateResponse;
@@ -99,7 +100,14 @@ public class ValidationWS implements IValidationWS {
         ValidateResponse res = null;
         try {
             ValidateRequest req = new ValidateRequest(reqCert, certPurposes);
-            res = (ValidateResponse) getWorkerSession().process(workerId, req, genRequestContext());
+            X509Certificate clientCertificate = getClientCertificate();
+            RequestContext context = new RequestContext(clientCertificate, getRequestIP());
+            
+            // Add credentials to the context
+            MessageContext msgContext = wsContext.getMessageContext();
+            CredentialUtils.addToRequestContext(context, (HttpServletRequest) msgContext.get(MessageContext.SERVLET_REQUEST), clientCertificate);
+        
+            res = (ValidateResponse) getWorkerSession().process(workerId, req, context);
         } catch (CertificateEncodingException e) {
             throw new IllegalRequestException("Error in request, the requested certificate seem to have a unsupported encoding : " + e.getMessage());
         } catch (CryptoTokenOfflineException e) {
@@ -130,10 +138,6 @@ public class ValidationWS implements IValidationWS {
 
         return retval;
 
-    }
-
-    private RequestContext genRequestContext() {
-        return new RequestContext(getClientCertificate(), getRequestIP());
     }
 
     /**

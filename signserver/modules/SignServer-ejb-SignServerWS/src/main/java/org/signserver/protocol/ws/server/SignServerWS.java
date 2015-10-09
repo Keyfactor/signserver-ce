@@ -20,22 +20,18 @@ import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.jws.WebService;
-import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 import org.apache.log4j.Logger;
-import org.bouncycastle.util.encoders.Base64;
 import org.signserver.common.*;
 import org.signserver.common.util.PropertiesConstants;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.healthcheck.HealthCheckUtils;
 import org.signserver.protocol.ws.*;
-import org.signserver.server.CertificateClientCredential;
-import org.signserver.server.IClientCredential;
-import org.signserver.server.UsernamePasswordClientCredential;
+import org.signserver.server.CredentialUtils;
 import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.log.LogMap;
 import org.signserver.server.nodb.FileBasedDatabaseManager;
@@ -166,34 +162,9 @@ public class SignServerWS implements ISignServerWS {
         X509Certificate clientCertificate = getClientCertificate();
         final RequestContext requestContext = new RequestContext(clientCertificate, requestIP);
 
-        IClientCredential credential;
+        // Add credentials to the context
+        CredentialUtils.addToRequestContext(requestContext, servletRequest, clientCertificate);
 
-        if (clientCertificate instanceof X509Certificate) {
-            final X509Certificate cert = (X509Certificate) clientCertificate;
-            LOG.debug("Authentication: certificate");
-            credential = new CertificateClientCredential(
-                    cert.getSerialNumber().toString(16),
-                    cert.getIssuerDN().getName());
-        } else {
-            // Check is client supplied basic-credentials
-            final String authorization = servletRequest.getHeader(
-                    HTTP_AUTH_BASIC_AUTHORIZATION);
-            if (authorization != null) {
-                LOG.debug("Authentication: password");
-
-                final String decoded[] = new String(Base64.decode(
-                        authorization.split("\\s")[1])).split(":", 2);
-
-                credential = new UsernamePasswordClientCredential(
-                        decoded[0], decoded[1]);
-            } else {
-                LOG.debug("Authentication: none");
-                credential = null;
-            }
-        }
-        requestContext.put(RequestContext.CLIENT_CREDENTIAL, credential);
-        
-        
         final LogMap logMap = LogMap.getInstance(requestContext);
 
         final String xForwardedFor = servletRequest.getHeader(RequestContext.X_FORWARDED_FOR);

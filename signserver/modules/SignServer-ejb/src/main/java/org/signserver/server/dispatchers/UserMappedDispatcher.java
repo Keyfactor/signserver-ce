@@ -113,7 +113,7 @@ public class UserMappedDispatcher extends BaseDispatcher {
         // put in or add some indication of dispatching
         final RequestContext nextContext = requestContext;
 
-        final String username = ((UsernamePasswordClientCredential) requestContext.get(RequestContext.CLIENT_CREDENTIAL)).getUsername();
+        final String username = ((UsernamePasswordClientCredential) requestContext.get(RequestContext.CLIENT_CREDENTIAL_PASSWORD)).getUsername();
         final String workerName = mappings.get(username);
         
         // Mark request comming from a dispatcher so the DispatchedAuthorizer can be used

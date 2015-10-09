@@ -147,7 +147,7 @@ public class UserMappedDispatcherTest extends ModulesTestCase {
             setDispatchedAuthorizerForAllWorkers();
             
             // Send request to dispatcher as user1
-            context.put(RequestContext.CLIENT_CREDENTIAL, 
+            context.put(RequestContext.CLIENT_CREDENTIAL_PASSWORD, 
                     new UsernamePasswordClientCredential("user1", "password"));
             res = (GenericSignResponse) workerSession.process(WORKERID_DISPATCHER,
                     request, context);
@@ -157,7 +157,7 @@ public class UserMappedDispatcherTest extends ModulesTestCase {
                     "CN=" + WORKERNAME_1, cert.getSubjectDN().getName());
     
             // Send request to dispatcher as user2
-            context.put(RequestContext.CLIENT_CREDENTIAL, 
+            context.put(RequestContext.CLIENT_CREDENTIAL_PASSWORD, 
                     new UsernamePasswordClientCredential("user2", "password"));
             res = (GenericSignResponse) workerSession.process(WORKERID_DISPATCHER,
                     request, context);
@@ -166,7 +166,7 @@ public class UserMappedDispatcherTest extends ModulesTestCase {
                     "CN=" + WORKERNAME_2, cert.getSubjectDN().getName());
     
             // Send request to dispatcher as user3
-            context.put(RequestContext.CLIENT_CREDENTIAL, 
+            context.put(RequestContext.CLIENT_CREDENTIAL_PASSWORD, 
                     new UsernamePasswordClientCredential("user3", "password"));
             res = (GenericSignResponse) workerSession.process(WORKERID_DISPATCHER,
                     request, context);
@@ -176,7 +176,7 @@ public class UserMappedDispatcherTest extends ModulesTestCase {
     
             // Send request to dispatcher as user4 for which the worker does not exist
             try {
-                context.put(RequestContext.CLIENT_CREDENTIAL, 
+                context.put(RequestContext.CLIENT_CREDENTIAL_PASSWORD, 
                         new UsernamePasswordClientCredential("user4", "password"));
                 workerSession.process(WORKERID_DISPATCHER, request, context);
                 fail("Should have got SignServerException as the worker configured does not exist");
@@ -187,7 +187,7 @@ public class UserMappedDispatcherTest extends ModulesTestCase {
             // Send request to dispatcher as user5 which mapps to the dispatcher
             // itself
             try {
-                context.put(RequestContext.CLIENT_CREDENTIAL, 
+                context.put(RequestContext.CLIENT_CREDENTIAL_PASSWORD, 
                         new UsernamePasswordClientCredential("user5", "password"));
                 workerSession.process(WORKERID_DISPATCHER, request, context);
                 fail("Should have got SignServerException as it is configured to dispatch to itself");
@@ -197,7 +197,7 @@ public class UserMappedDispatcherTest extends ModulesTestCase {
             
             // Send request to dispatcher as user6 for which there is no mapping
             try {
-                context.put(RequestContext.CLIENT_CREDENTIAL, 
+                context.put(RequestContext.CLIENT_CREDENTIAL_PASSWORD, 
                         new UsernamePasswordClientCredential("user6", "password"));
                 workerSession.process(WORKERID_DISPATCHER, request, context);
                 fail("Should have got IllegalRequestException as there is no mapping");

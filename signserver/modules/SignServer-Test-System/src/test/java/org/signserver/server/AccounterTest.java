@@ -128,14 +128,14 @@ public class AccounterTest extends ModulesTestCase {
      * @return the response
      * @throws Exception 
      */
-    private ProcessResponse signSomething(final boolean success, IClientCredential credential) throws Exception {
+    private ProcessResponse signSomething(final boolean success, UsernamePasswordClientCredential credential) throws Exception {
         final String testDocument = "<document/>";
         RequestContext context = new RequestContext();
         if (!success) {
             RequestMetadata.getInstance(context).put(Test1Signer.METADATA_FAILREQUEST, "true");
         }
         if (credential != null) {
-            context.put(RequestContext.CLIENT_CREDENTIAL, credential);
+            context.put(RequestContext.CLIENT_CREDENTIAL_PASSWORD, credential);
         }
         
         final GenericSignRequest signRequest =

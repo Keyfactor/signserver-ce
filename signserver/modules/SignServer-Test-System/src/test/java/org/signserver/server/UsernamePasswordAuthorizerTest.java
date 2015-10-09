@@ -55,8 +55,8 @@ public class UsernamePasswordAuthorizerTest extends ModulesTestCase {
 
     @Test
     public void test00SetupDatabase() throws Exception {
+        // Dummy Signer
         addDummySigner1(true);
-        addSigner("org.signserver.module.mrtdsodsigner.MRTDSODSigner", getSignerIdSODSigner1(), getSignerNameSODSigner1(), true);
 
         // Set auth type
         workerSession.setWorkerProperty(getSignerIdDummy1(), "AUTHTYPE",
@@ -74,10 +74,20 @@ public class UsernamePasswordAuthorizerTest extends ModulesTestCase {
         // with "salt123") = SHA1(foo123salt123)
         workerSession.setWorkerProperty(getSignerIdDummy1(), "USER.USER3",
                 "26c110963ad873c9b7db331e4c3130c266416d47:SHA1:salt123");
+        
+        workerSession.reloadConfiguration(getSignerIdDummy1());
+        
+        // MRTD SOD Signer
+        addSigner("org.signserver.module.mrtdsodsigner.MRTDSODSigner", getSignerIdSODSigner1(), getSignerNameSODSigner1(), true);
+        
+        // Set auth type
+        workerSession.setWorkerProperty(getSignerIdSODSigner1(), "AUTHTYPE",
+                "org.signserver.server.UsernamePasswordAuthorizer");
+        
         workerSession.setWorkerProperty(getSignerIdSODSigner1(), "USER.USER3",
                 "26c110963ad873c9b7db331e4c3130c266416d47:SHA1:salt123");
         
-        workerSession.reloadConfiguration(getSignerIdDummy1());
+        
         workerSession.reloadConfiguration(getSignerIdSODSigner1());
     }
 
@@ -253,6 +263,21 @@ public class UsernamePasswordAuthorizerTest extends ModulesTestCase {
                     "-username", "user3", "-password", "foo123", "-protocol", "CLIENTWS",
                     "-truststore", new File(getSignServerHome(), "p12/truststore.jks").getAbsolutePath(), "-truststorepwd", "changeit",
                     "-host", getHTTPHost(), "-port", String.valueOf(getPublicHTTPSPort()));
+            assertNotNull("No result", res);
+            assertNotSame("Empty result", 0, res.length);
+        } catch (IllegalCommandArgumentsException ex) {
+            LOG.error("Execution failed", ex);
+            fail(ex.getMessage());
+        }
+    }
+    
+    @Test
+    public void test04HashedAndSaltedPasswordSODOverHTTP() throws Exception {
+        try {
+            byte[] res = execute(new SignDataGroupsCommand(), "signdatagroups", "-workerid", 
+                    String.valueOf(getSignerIdSODSigner1()), "-data", "1=value1&2=value2&3=value3",
+                    "-username", "user3", "-password", "foo123", "-protocol", "HTTP",
+                    "-host", getHTTPHost(), "-port", String.valueOf(getPublicHTTPPort()));
             assertNotNull("No result", res);
             assertNotSame("Empty result", 0, res.length);
         } catch (IllegalCommandArgumentsException ex) {

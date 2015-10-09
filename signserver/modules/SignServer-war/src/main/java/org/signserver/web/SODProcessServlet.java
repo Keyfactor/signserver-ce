@@ -29,6 +29,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.ejbca.util.Base64;
+import org.signserver.common.AccessDeniedException;
+import org.signserver.common.AuthorizationRequiredException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.NoSuchWorkerException;
@@ -262,6 +264,18 @@ public class SODProcessServlet extends AbstractProcessServlet {
                 res.setContentLength(processedBytes.length);
                 res.getOutputStream().write(processedBytes);
                 res.getOutputStream().close();
+            }  catch (AuthorizationRequiredException e) {
+                LOG.debug("Sending back HTTP 401: " + e.getLocalizedMessage());
+
+                final String httpAuthBasicRealm = "SignServer Worker " + workerId;
+
+                res.setHeader(CredentialUtils.HTTP_AUTH_BASIC_WWW_AUTHENTICATE,
+                        "Basic realm=\"" + httpAuthBasicRealm + "\"");
+                res.sendError(HttpServletResponse.SC_UNAUTHORIZED,
+                        "Authorization Required");
+            } catch (AccessDeniedException e) {
+                LOG.debug("Sending back HTTP 403: " + e.getLocalizedMessage());
+                res.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied");
             } catch (NoSuchWorkerException ex) {
                 res.sendError(HttpServletResponse.SC_NOT_FOUND, "Worker Not Found");
             } catch (IllegalRequestException e) {

@@ -28,6 +28,7 @@ import org.ejbca.ui.cli.util.ConsolePasswordReader;
 import org.signserver.cli.spi.AbstractCommand;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
+import org.signserver.client.cli.ClientCLI;
 import org.signserver.common.AuthorizationRequiredException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
@@ -354,46 +355,56 @@ public class SignDataGroupsCommand extends AbstractCommand {
     /**
      * Execute the signing operation.
      */
-    public final void run() {
-        try {
-            final int NUM_WORKERS = 1;
-            Worker workers[] = new Worker[NUM_WORKERS];
-            PrintStream outputStream = getOutputStream();
-            if (outputStream == null) {
-                outputStream = System.out;
-            }
-            for(int i = 0; i < NUM_WORKERS; i++) {
-                workers[i] = new Worker("Worker " + i, createSigner(),
-                        dataGroups, encoding, repeat, outputStream);
-            }
-
-            // Start workers
-            for(Worker worker : workers) {
-                worker.start();
-            }
-
-            // Wait for worker
-            for(Worker worker : workers) {
-                System.err.println("Waiting for " +  worker);
-                try {
-                    worker.join();
-                } catch (InterruptedException ex) {
-                    System.err.println("Interrupted!");
-                }
-            }
-
-            System.err.println("Done");
-
-        } catch (SOAPFaultException ex) {
-            if (ex.getCause() instanceof AuthorizationRequiredException) {
-                final AuthorizationRequiredException authEx =
-                        (AuthorizationRequiredException) ex.getCause();
-                LOG.error("Authorization required: " + authEx.getMessage());
-            }
-            LOG.error(ex);
-        } catch (IOException ex) {
-            LOG.error(ex);
+    public final void run() throws CommandFailureException, IllegalCommandArgumentsException {
+        final int NUM_WORKERS = 1;
+        Worker workers[] = new Worker[NUM_WORKERS];
+        PrintStream outputStream = getOutputStream();
+        if (outputStream == null) {
+            outputStream = System.out;
         }
+        
+        final SODSigner signer;
+        try {
+            signer = createSigner();
+        } catch (MalformedURLException ex) {
+            throw new IllegalCommandArgumentsException("Malformed URL: " + ex.getMessage());
+        }
+        
+        for(int i = 0; i < NUM_WORKERS; i++) {
+            workers[i] = new Worker("Worker " + i, signer,
+                    dataGroups, encoding, repeat, outputStream);
+        }
+
+        // Start workers
+        for(Worker worker : workers) {
+            worker.start();
+        }
+
+        // Wait for worker
+        for(Worker worker : workers) {
+            System.err.println("Waiting for " +  worker);
+            try {
+                worker.join();
+            } catch (InterruptedException ex) {
+                System.err.println("Interrupted!");
+            }
+        }
+
+        // Check for error, XXX: Yes this is ugly and we should remove this stress test feature from here
+        for (Worker worker : workers) {
+            if (worker.getException() != null) {
+                if (worker.getException().getCause() instanceof AuthorizationRequiredException) {
+                    final AuthorizationRequiredException authEx =
+                    (AuthorizationRequiredException) worker.getException().getCause();
+                    LOG.error("Authorization required: " + authEx.getMessage());
+                } else {
+                    LOG.error("Failed", worker.getException());
+                }
+                throw new CommandFailureException(worker.getException().getMessage(), ClientCLI.RETURN_ERROR);
+            }
+        }
+
+        System.err.println("Done");
     }
 
     @Override
@@ -410,6 +421,7 @@ public class SignDataGroupsCommand extends AbstractCommand {
         }
     }
 
+    // XXX: This stress test feature does not belong here. Consider removing it!
     @SuppressWarnings("PMD.DoNotUseThreads") // Not an JEE application
     private static class Worker extends Thread {
 
@@ -418,6 +430,7 @@ public class SignDataGroupsCommand extends AbstractCommand {
         private String encoding;
         private int repeat;
         private OutputStream out;
+        private Exception exception;
 
         public Worker(String name, SODSigner signer, Map<Integer,byte[]> dataGroups,
                 String encoding, int repeat, OutputStream out) {
@@ -436,15 +449,19 @@ public class SignDataGroupsCommand extends AbstractCommand {
                     signer.sign(dataGroups, encoding, out);
                 }
             } catch (IOException ex) {
-                LOG.error(ex);
+                exception = ex;
             } catch (IllegalRequestException ex) {
-                LOG.error(ex);
+                exception = ex;
             } catch (CryptoTokenOfflineException ex) {
-                LOG.error(ex);
+                exception = ex;
             } catch (SignServerException ex) {
-                LOG.error(ex);
+                exception = ex;
             }
             LOG.info("Finished");
+        }
+        
+        public Exception getException() {
+            return exception;
         }
     }
 }

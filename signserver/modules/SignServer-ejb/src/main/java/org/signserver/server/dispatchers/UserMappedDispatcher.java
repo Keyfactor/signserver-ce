@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.signserver.common.CryptoTokenOfflineException;
@@ -24,7 +23,6 @@ import org.signserver.common.IllegalRequestException;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
-import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.IDispatcherWorkerSession;
@@ -50,9 +48,6 @@ public class UserMappedDispatcher extends BaseDispatcher {
 
     /** Property WORKERS. */
     private static final String PROPERTY_USERNAME_MAPPING = "USERNAME_MAPPING";
-
-    /** Workersession. */
-    private IDispatcherWorkerSession workerSession;
 
     /** Mapping. */
     private Map<String, String> mappings;
@@ -82,19 +77,6 @@ public class UserMappedDispatcher extends BaseDispatcher {
                 }
             }
         }
-        this.workerSession = getWorkerSession();
-    }
-    
-    protected IDispatcherWorkerSession getWorkerSession() {
-        if (workerSession == null) {
-            try {
-                workerSession = ServiceLocator.getInstance().lookupLocal(
-                        IDispatcherWorkerSession.class);
-            } catch (NamingException ex) {
-                LOG.error("Unable to lookup worker session", ex);
-            }
-        }
-        return workerSession;
     }
 
     @Override
@@ -123,6 +105,8 @@ public class UserMappedDispatcher extends BaseDispatcher {
             LOG.info("No worker for username: " + username);
             throw new IllegalRequestException("No worker for the specified username");
         }
+        
+        final IDispatcherWorkerSession.ILocal workerSession = requestContext.getServices().get(IDispatcherWorkerSession.ILocal.class);
         
         final int id = workerSession.getWorkerId(workerName);
         if (id == 0) {

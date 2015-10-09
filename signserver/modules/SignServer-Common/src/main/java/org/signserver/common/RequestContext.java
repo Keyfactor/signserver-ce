@@ -95,7 +95,28 @@ public class RequestContext implements Serializable {
      * request.
      */
     public static final String WORKER_FULFILLED_REQUEST = "WORKER_GRANTED_REQUEST";
+    
+    /**
+     * Holds one of client credentials provided such as client certificate or
+     * username/password.
+     * Note: Priority is given to client certificate so this property will
+     * only contain that even if both were supplied by the client.
+     * Authorizer implementations are instead recommended to use the 
+     * <i>CLIENT_CREDENTIAL_CERTIFICATE</i> and
+     * <i>CLIENT_CREDENTIAL_PASSWORD</i> to be able to read both types of
+     * values.
+     */
     public static final String CLIENT_CREDENTIAL = "CLIENT_CREDENTIAL";
+    
+    /**
+     * Holds the client certificate, if provided.
+     */
+    public static final String CLIENT_CREDENTIAL_CERTIFICATE = "CLIENT_CREDENTIAL_CERTIFICATE";
+    
+    /**
+     * Holds the username/password, if provided.
+     */
+    public static final String CLIENT_CREDENTIAL_PASSWORD = "CLIENT_CREDENTIAL_PASSWORD";
     
     /**
      * Filename of file uploaded by client to the process servlet.

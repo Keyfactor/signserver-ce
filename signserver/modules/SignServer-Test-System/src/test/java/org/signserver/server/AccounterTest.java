@@ -135,6 +135,7 @@ public class AccounterTest extends ModulesTestCase {
             RequestMetadata.getInstance(context).put(Test1Signer.METADATA_FAILREQUEST, "true");
         }
         if (credential != null) {
+            context.put(RequestContext.CLIENT_CREDENTIAL, credential);
             context.put(RequestContext.CLIENT_CREDENTIAL_PASSWORD, credential);
         }
         

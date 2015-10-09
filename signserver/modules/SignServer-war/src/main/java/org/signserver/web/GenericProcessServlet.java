@@ -38,9 +38,7 @@ import org.signserver.common.*;
 import org.signserver.common.util.PropertiesConstants;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
-import org.signserver.server.CertificateClientCredential;
-import org.signserver.server.IClientCredential;
-import org.signserver.server.UsernamePasswordClientCredential;
+import org.signserver.server.CredentialUtils;
 import org.signserver.server.log.AdminInfo;
 import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.log.LogMap;
@@ -75,9 +73,6 @@ public class GenericProcessServlet extends AbstractProcessServlet {
     private static final String ENCODING_PROPERTY_NAME = "encoding";
     private static final String ENCODING_BASE64 = "base64";
     private static final long MAX_UPLOAD_SIZE = 100 * 1024 * 1024; // 100MB (100*1024*1024);
-    private static final String HTTP_AUTH_BASIC_AUTHORIZATION = "Authorization";
-    private static final String HTTP_AUTH_BASIC_WWW_AUTHENTICATE =
-            "WWW-Authenticate";
     private static final String PDFPASSWORD_PROPERTY_NAME = "pdfPassword";
 
     private static final String PROCESS_TYPE_PROPERTY_NAME = "processType";
@@ -414,45 +409,8 @@ public class GenericProcessServlet extends AbstractProcessServlet {
                 remoteAddr);
         RequestMetadata metadata = RequestMetadata.getInstance(context);
 
-        final CertificateClientCredential credentialCert;
-        final UsernamePasswordClientCredential credentialPassword;
-
-        if (clientCertificate instanceof X509Certificate) {
-            final X509Certificate cert = (X509Certificate) clientCertificate;
-            LOG.debug("Certificate-authentication: true");
-            credentialCert = new CertificateClientCredential(
-                    cert.getSerialNumber().toString(16),
-                    cert.getIssuerDN().getName());
-            context.put(RequestContext.CLIENT_CREDENTIAL_CERTIFICATE, credentialCert);
-        } else {
-            LOG.debug("Certificate-authentication: false");
-            credentialCert = null;
-        } 
-
-        // Check is client supplied basic-credentials
-        final String authorization =
-                req.getHeader(HTTP_AUTH_BASIC_AUTHORIZATION);
-        if (authorization != null) {
-            LOG.debug("Password-authentication: true");
-
-            final String decoded[] = new String(Base64.decode(
-                    authorization.split("\\s")[1])).split(":", 2);
-
-            credentialPassword = new UsernamePasswordClientCredential(
-                    decoded[0], decoded[1]);
-            context.put(RequestContext.CLIENT_CREDENTIAL_PASSWORD, credentialPassword);
-        } else {
-            LOG.debug("Password-authtentication: false");
-            credentialPassword = null;
-        }
-        
-        // For backwards-compatibility also set CLIENT_CREDENTIAL with
-        // cert if and otherwise if username/password is available
-        if (credentialCert != null) {
-            context.put(RequestContext.CLIENT_CREDENTIAL, credentialCert);
-        } else if (credentialPassword != null) {
-            context.put(RequestContext.CLIENT_CREDENTIAL, credentialPassword);
-        }
+        // Add credentials to the context
+        CredentialUtils.addToRequestContext(context, req, clientCertificate);
 
         // Create log map
         LogMap logMap = LogMap.getInstance(context);
@@ -590,7 +548,7 @@ public class GenericProcessServlet extends AbstractProcessServlet {
 
             final String httpAuthBasicRealm = "SignServer Worker " + workerId;
 
-            res.setHeader(HTTP_AUTH_BASIC_WWW_AUTHENTICATE,
+            res.setHeader(CredentialUtils.HTTP_AUTH_BASIC_WWW_AUTHENTICATE,
                     "Basic realm=\"" + httpAuthBasicRealm + "\"");
             res.sendError(HttpServletResponse.SC_UNAUTHORIZED,
                     "Authorization Required");

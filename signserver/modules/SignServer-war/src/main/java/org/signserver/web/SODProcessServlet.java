@@ -22,10 +22,8 @@ import java.util.Map;
 import java.util.Random;
 import javax.ejb.EJB;
 
-import javax.naming.NamingException;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -34,15 +32,14 @@ import org.ejbca.util.Base64;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.NoSuchWorkerException;
-import org.signserver.common.ProcessableConfig;
 import org.signserver.common.RequestContext;
 import org.signserver.common.RequestMetadata;
 import org.signserver.common.SODSignRequest;
 import org.signserver.common.SODSignResponse;
-import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerException;
 import org.signserver.common.util.PropertiesConstants;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.server.CredentialUtils;
 import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.log.LogMap;
 
@@ -241,6 +238,9 @@ public class SODProcessServlet extends AbstractProcessServlet {
                 if (xForwardedFor != null) {
                     context.put(RequestContext.X_FORWARDED_FOR, xForwardedFor);
                 }
+                
+                // Add credentials to the context
+                CredentialUtils.addToRequestContext(context, req, clientCertificate);
                 
                 addRequestMetaData(metadataHolder, metadata);
 

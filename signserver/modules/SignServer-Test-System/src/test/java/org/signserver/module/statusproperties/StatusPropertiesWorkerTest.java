@@ -27,6 +27,7 @@ import org.signserver.statusrepo.common.StatusName;
 import org.signserver.web.*;
 import static org.junit.Assert.*;
 import org.junit.Test;
+import org.signserver.common.WorkerConfig;
 
 /**
  * Tests that the right HTTP status codes are returned in different situations.
@@ -55,6 +56,7 @@ public class StatusPropertiesWorkerTest extends WebTestCase {
     public void test00SetupDatabase() throws Exception {
         Properties properties = new Properties();
         properties.setProperty("GLOB.WORKER" + WORKERID + ".CLASSPATH", "org.signserver.module.statusproperties.StatusPropertiesWorker");
+        properties.setProperty("WORKER" + WORKERID + "." + WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.statusproperties.StatusPropertiesWorker");
         properties.setProperty("WORKER" + WORKERID + ".NAME", WORKERNAME);
         properties.setProperty("WORKER" + WORKERID + ".AUTHTYPE", "NOAUTH");
         setProperties(properties);

@@ -81,6 +81,7 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
         Properties conf = new Properties();
         // TSDispatcher
         conf.setProperty("GLOB.WORKER8910.CLASSPATH", "org.signserver.module.tsa.RequestedPolicyDispatcher");
+        conf.setProperty("WORKER8910.IMPLEMENTATION_CLASS", "org.signserver.module.tsa.RequestedPolicyDispatcher");
         conf.setProperty("GLOB.WORKER8910.SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.KeystoreCryptoToken");
         conf.setProperty("WORKER8910.NAME", "TestTSDispatcher1");
         conf.setProperty("WORKER8910.KEYSTOREPATH", getSignServerHome() + 
@@ -95,6 +96,7 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
         
         // TSDispatcher2
         conf.setProperty("GLOB.WORKER8909.CLASSPATH", "org.signserver.module.tsa.RequestedPolicyDispatcher");
+        conf.setProperty("WORKER8909.IMPLEMENTATION_CLASS", "org.signserver.module.tsa.RequestedPolicyDispatcher");
         conf.setProperty("GLOB.WORKER8909.SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.KeystoreCryptoToken");
         conf.setProperty("WORKER8909.NAME", "TestTSDispatcher2");
         conf.setProperty("WORKER8909.KEYSTOREPATH", getSignServerHome() + 

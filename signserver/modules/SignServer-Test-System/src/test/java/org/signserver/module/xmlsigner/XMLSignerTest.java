@@ -76,6 +76,7 @@ public class XMLSignerTest extends ModulesTestCase {
         
         // Update path to JKS file
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + WORKERID2 + ".CLASSPATH", "org.signserver.module.xmlsigner.XMLSigner");
+        workerSession.setWorkerProperty(WORKERID2, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.xmlsigner.XMLSigner");
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + WORKERID2 + ".SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.JKSCryptoToken");
         workerSession.setWorkerProperty(WORKERID2, "NAME", "TestXMLSignerDSA");
         workerSession.setWorkerProperty(WORKERID2, "AUTHTYPE", "NOAUTH");
@@ -86,6 +87,7 @@ public class XMLSignerTest extends ModulesTestCase {
         workerSession.reloadConfiguration(WORKERID2);
         
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + WORKERID3 + ".CLASSPATH", "org.signserver.module.xmlsigner.XMLSigner");
+        workerSession.setWorkerProperty(WORKERID3, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.xmlsigner.XMLSigner");
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + WORKERID3 + ".SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.P12CryptoToken");
         workerSession.setWorkerProperty(WORKERID3, "NAME", "TestXMLSignerECDSA");
         workerSession.setWorkerProperty(WORKERID3, "AUTHTYPE", "NOAUTH");

@@ -13,11 +13,11 @@
 package org.signserver.web;
 
 import java.io.IOException;
+import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import javax.ejb.EJB;
-import javax.naming.NamingException;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.UnavailableException;
@@ -32,10 +32,17 @@ import org.cesecore.authentication.tokens.AuthenticationToken;
 import org.cesecore.authentication.tokens.UsernamePrincipal;
 import org.signserver.common.CompileTimeSettings;
 import org.signserver.common.FileBasedDatabaseException;
+import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.PKCS11Settings;
-import org.signserver.common.ServiceLocator;
+import org.signserver.common.WorkerConfig;
+import static org.signserver.common.util.PropertiesConstants.GLOBAL_PREFIX_DOT;
+import static org.signserver.common.util.PropertiesConstants.OLDWORKER_PREFIX;
+import static org.signserver.common.util.PropertiesConstants.WORKER_PREFIX;
+import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IServiceTimerSession;
+import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.server.cesecore.AlwaysAllowLocalAuthenticationToken;
+import org.signserver.server.log.AdminInfo;
 import org.signserver.server.log.SignServerEventTypes;
 import org.signserver.server.log.SignServerModuleTypes;
 import org.signserver.server.log.SignServerServiceTypes;
@@ -66,6 +73,12 @@ public class StartServicesServlet extends HttpServlet {
 
     @EJB
     private IStatusRepositorySession.ILocal statusRepositorySession;
+
+    @EJB
+    private IGlobalConfigurationSession.ILocal globalSession;
+    
+    @EJB
+    private IWorkerSession.ILocal workerSession;
 
     @EJB
     private SecurityEventsLoggerSessionLocal logSession;
@@ -150,6 +163,10 @@ public class StartServicesServlet extends HttpServlet {
             }
         }
 
+        // Perform database upgrade if needed
+        LOG.debug(">init database upgrade");
+        upgradeDatabase(new AdminInfo("CLI user", null, null));
+        
         LOG.debug(">init calling ServiceSession.load");
         
         // Start the timed services session
@@ -184,4 +201,43 @@ public class StartServicesServlet extends HttpServlet {
         res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Servlet doesn't support requests is only loaded on startup.");
         LOG.debug("<doGet()");
     } // doGet
+
+    private void upgradeDatabase(AdminInfo admin) {
+        
+        // Perform the upgrade from DSS-1055
+        final GlobalConfiguration globalConfig = globalSession.getGlobalConfiguration();
+        final Enumeration<String> keys = globalConfig.getKeyEnumeration();
+        while (keys.hasMoreElements()) {
+            final String key = keys.nextElement();
+            
+            if (key.startsWith(GLOBAL_PREFIX_DOT)) {
+                String strippedKey = key.substring(GLOBAL_PREFIX_DOT.length());
+                if (strippedKey.startsWith(WORKER_PREFIX) || strippedKey.startsWith(OLDWORKER_PREFIX)) {
+                    try {
+                        final String strippedKey2;
+                        if (strippedKey.startsWith(WORKER_PREFIX)) {
+                            strippedKey2 = strippedKey.substring(WORKER_PREFIX.length());
+                        } else {
+                            strippedKey2 = strippedKey.substring(OLDWORKER_PREFIX.length());
+                        }
+
+                        String splittedKey = strippedKey2.substring(0, strippedKey2.indexOf('.'));
+                        String propertykey = strippedKey2.substring(strippedKey2.indexOf('.') + 1);
+                        final int workerid = Integer.parseInt(splittedKey);
+
+                        if (propertykey.equalsIgnoreCase(GlobalConfiguration.WORKERPROPERTY_CLASSPATH.substring(1))) {
+                            if (!workerSession.getCurrentWorkerConfig(workerid).getProperties().containsKey(WorkerConfig.IMPLEMENTATION_CLASS)) {
+                                workerSession.setWorkerProperty(admin, workerid, WorkerConfig.IMPLEMENTATION_CLASS, globalConfig.getProperty(key));
+                                LOG.info("Upgraded config for worker " + workerid);
+                            } else {
+                                LOG.debug("Worker " + workerid + " already upgraded");
+                            }
+                        }
+                    } catch (Exception ex) {
+                        LOG.error("Upgrade failed for global config property: " + strippedKey, ex);
+                    }
+                }
+            }
+        }
+    }
 }

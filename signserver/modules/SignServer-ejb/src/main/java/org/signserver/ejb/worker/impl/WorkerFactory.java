@@ -17,7 +17,6 @@ import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.signserver.common.*;
 import org.signserver.common.util.PropertiesConstants;
-import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.server.*;
 import org.signserver.server.archive.Archiver;
 import org.signserver.server.archive.ArchiverInitException;
@@ -26,6 +25,7 @@ import org.signserver.server.config.entities.IWorkerConfigDataService;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.log.AllFieldsWorkerLogger;
 import org.signserver.server.log.IWorkerLogger;
+import org.signserver.server.signers.NoImplementationWorker;
 
 /**
  * Class used to manage different signers used in the system, uses the configuration in
@@ -74,19 +74,17 @@ public class WorkerFactory {
      * 
      * @param signerId the Id that should match the one in the config file.
      * @param workerConfigHome The service interface of the signer config entity bean
-     * @param gCSession
      * @param workerContext
      * @return A ISigner as defined in the configuration file, or null if no configuration
      * for the specified signerId could be found.
      */
     public synchronized IWorker getWorker(int workerId, 
             IWorkerConfigDataService workerConfigHome, 
-            IGlobalConfigurationSession gCSession, 
             IWorkerManagerSessionLocal workerManagerSession,
             SignServerContext workerContext) {
         Integer id = new Integer(workerId);
 
-        loadWorkers(workerConfigHome, gCSession, workerManagerSession, workerContext);
+        loadWorkers(workerConfigHome, workerManagerSession, workerContext);
         IWorker ret = (IWorker) workerStore.get(id);
         if (ret == null) {
             LOG.info("Trying to get worker with Id that does not exist: " + workerId);
@@ -105,9 +103,9 @@ public class WorkerFactory {
      * @param workerConfigHome The home interface of the signer config entity bean
      * @return the id of the signer or 0 if no worker with the name is found.
      */
-    public synchronized int getWorkerIdFromName(String workerName, IWorkerConfigDataService workerConfigHome, IGlobalConfigurationSession gCSession, IWorkerManagerSessionLocal workerManagerSession, SignServerContext workerContext) {
+    public synchronized int getWorkerIdFromName(String workerName, IWorkerConfigDataService workerConfigHome, IWorkerManagerSessionLocal workerManagerSession, SignServerContext workerContext) {
         int retval = 0;
-        loadWorkers(workerConfigHome, gCSession, workerManagerSession, workerContext);
+        loadWorkers(workerConfigHome, workerManagerSession, workerContext);
         if (nameToIdMap.get(workerName) == null) {
             return retval;
         }
@@ -120,7 +118,7 @@ public class WorkerFactory {
     /**
      * Method to load all available signers
      */
-    private void loadWorkers(IWorkerConfigDataService workerConfigHome, IGlobalConfigurationSession gCSession, IWorkerManagerSessionLocal workerManagerSession, SignServerContext workerContext) {
+    private void loadWorkers(IWorkerConfigDataService workerConfigHome, IWorkerManagerSessionLocal workerManagerSession, SignServerContext workerContext) {
         if (workerStore == null) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Loading workers into WorkerFactory.");
@@ -128,31 +126,36 @@ public class WorkerFactory {
             workerStore = new HashMap<Integer, IWorker>();
             nameToIdMap = new HashMap<String, Integer>();
 
-            Collection<Integer> workers = workerManagerSession.getWorkers(GlobalConfiguration.WORKERTYPE_ALL, gCSession);
-            GlobalConfiguration gc = gCSession.getGlobalConfiguration();
+            Collection<Integer> workers = workerManagerSession.getWorkers(WorkerConfig.WORKERTYPE_ALL);
             Iterator<Integer> iter = workers.iterator();
             while (iter.hasNext()) {
                 Integer nextId = (Integer) iter.next();
-                final String classpath = gc.getWorkerClassPath(nextId.intValue());
+                WorkerConfig config = workerConfigHome.getWorkerProperties(nextId.intValue());
+                final String classpath = config.getImplementationClass();
                 
                 try {
                     
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Loading worker with classpath: " + classpath);
                     }
-                    if (classpath != null) {
+
+                    // XXX: This is duplicated
+                    final IWorker worker;
+                    if (classpath == null) {
+                        worker = new NoImplementationWorker();
+                    } else {
                         ClassLoader cl = this.getClass().getClassLoader();
                         Class<?> implClass = cl.loadClass(classpath);
 
-                        Object obj = implClass.newInstance();
-
-                        getWorkerStore().put(nextId, (IWorker) obj);
-
-                        WorkerConfig config = workerConfigHome.getWorkerProperties(nextId.intValue());
-                        if (config.getProperties().getProperty(PropertiesConstants.NAME) != null) {
-                            getNameToIdMap().put(config.getProperties().getProperty(PropertiesConstants.NAME).toUpperCase(), nextId);
-                        }
+                        worker = (IWorker) implClass.newInstance();
                     }
+                    getWorkerStore().put(nextId, worker);
+
+                    if (config.getProperties().getProperty(PropertiesConstants.NAME) != null) {
+                        getNameToIdMap().put(config.getProperties().getProperty(PropertiesConstants.NAME).toUpperCase(), nextId);
+                    }
+
+                    initWorker(worker, nextId, config, workerConfigHome, workerManagerSession, workerContext);
                 } catch (ClassNotFoundException e) {
                     LOG.error("Worker class not found (is the module included in the build?): " + classpath);
                 } catch (IllegalAccessException e) {
@@ -161,16 +164,10 @@ public class WorkerFactory {
                     LOG.error("Could not instantiate worker class: " + classpath);
                 }
             }
-
-            for (Map.Entry<Integer, IWorker> entry : getWorkerStore().entrySet()) {
-                initWorker(entry.getValue(), entry.getKey(), gCSession, workerConfigHome, workerManagerSession, workerContext);
-            }
         }
     }
     
-    private void initWorker(final IWorker worker, final int workerId, final IGlobalConfigurationSession gCSession, final IWorkerConfigDataService workerConfigHome, final IWorkerManagerSessionLocal workerManagerSession, final SignServerContext workerContext) {
-        WorkerConfig config = workerConfigHome.getWorkerProperties(workerId);
-
+    private void initWorker(final IWorker worker, final int workerId, final WorkerConfig config, final IWorkerConfigDataService workerConfigHome, final IWorkerManagerSessionLocal workerManagerSession, final SignServerContext workerContext) {
         final String cryptoTokenName = config.getProperty("CRYPTOTOKEN");
         SignServerContext context = workerContext.newInstance();
         if (cryptoTokenName != null) {
@@ -181,7 +178,7 @@ public class WorkerFactory {
                     synchronized (WorkerFactory.this) {
                         Integer cryptoWorkerId = nameToIdMap.get(cryptoTokenName.toUpperCase());
                         if (cryptoWorkerId != null) {
-                            IWorker cryptoWorker = getWorker(cryptoWorkerId, workerConfigHome, gCSession, workerManagerSession, workerContext.newInstance());
+                            IWorker cryptoWorker = getWorker(cryptoWorkerId, workerConfigHome, workerManagerSession, workerContext.newInstance());
                             if (cryptoWorker instanceof BaseProcessable) {
                                 return ((BaseProcessable) cryptoWorker).getCryptoToken();
                             } else {
@@ -219,7 +216,7 @@ public class WorkerFactory {
      * Method used to force a reload of worker. 
      * @param id of worker
      */
-    public synchronized void reloadWorker(int id, IWorkerConfigDataService workerConfigHome, IGlobalConfigurationSession gCSession, IWorkerManagerSessionLocal workerManagerSession, SignServerContext workerContext) {
+    public synchronized void reloadWorker(int id, IWorkerConfigDataService workerConfigHome, IWorkerManagerSessionLocal workerManagerSession, SignServerContext workerContext) {
         if (workerStore == null) {
             workerStore = new HashMap<Integer, IWorker>();
             nameToIdMap = new HashMap<String, Integer>();
@@ -255,24 +252,29 @@ public class WorkerFactory {
                 }
             }
         }
-        GlobalConfiguration gc = gCSession.getGlobalConfiguration();
 
         try {
-            String classpath = gc.getWorkerClassPath(id);
-            if (classpath != null) {
-                WorkerConfig config = workerConfigHome.getWorkerProperties(id);
+            WorkerConfig config = workerConfigHome.getWorkerProperties(id);
+            String classpath = config.getImplementationClass();
+
+            // XXX: This is duplicated
+            final IWorker worker;
+            if (classpath == null) {
+                worker = new NoImplementationWorker();
+            } else {
                 ClassLoader cl = this.getClass().getClassLoader();
                 Class<?> implClass = cl.loadClass(classpath);
 
-                Object obj = implClass.newInstance();
-                if (obj instanceof IProcessable) {
-                    if (config.getProperties().getProperty(PropertiesConstants.NAME) != null) {
-                        getNameToIdMap().put(config.getProperties().getProperty(PropertiesConstants.NAME).toUpperCase(), new Integer(id));
-                    }
-                }
-                initWorker((IWorker) obj, id, gCSession, workerConfigHome, workerManagerSession, workerContext);
-                getWorkerStore().put(new Integer(id), (IWorker) obj);
+                worker = (IWorker) implClass.newInstance();
             }
+            getWorkerStore().put(id, worker);
+
+            if (config.getProperties().getProperty(PropertiesConstants.NAME) != null) {
+                getNameToIdMap().put(config.getProperties().getProperty(PropertiesConstants.NAME).toUpperCase(), id);
+            }
+
+            initWorker(worker, id, config, workerConfigHome, workerManagerSession, workerContext);
+            
         } catch (ClassNotFoundException e) {
             LOG.error("Error reloading worker : " + e.getMessage(), e);
         } catch (IllegalAccessException e) {

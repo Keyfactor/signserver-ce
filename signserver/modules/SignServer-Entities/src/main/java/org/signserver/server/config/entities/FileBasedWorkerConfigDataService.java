@@ -14,7 +14,13 @@ package org.signserver.server.config.entities;
 
 import java.beans.XMLDecoder;
 import java.io.*;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import javax.ejb.EJBException;
 import org.apache.log4j.Logger;
@@ -263,5 +269,22 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
         if (manager.getSchemaVersion() != SCHEMA_VERSION) {
             throw new FileBasedDatabaseException("Unsupported schema version: " + manager.getSchemaVersion());
         }
+    }
+
+    @Override
+    public List<Integer> findAllIds() {
+        final LinkedList<Integer> result = new LinkedList<>();
+        
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(folder.toPath(), PREFIX + "*" + SUFFIX)) {
+            Iterator<Path> iterator = stream.iterator();
+            while (iterator.hasNext()) {
+                final String fileName = iterator.next().toFile().getName();
+                final String id = fileName.substring(PREFIX.length(), fileName.length() - SUFFIX.length());
+                result.add(Integer.parseInt(id));
+            }
+        } catch (IOException ex) {
+            LOG.error("Querying all workers failed", ex);
+        }
+        return result;
     }
 }

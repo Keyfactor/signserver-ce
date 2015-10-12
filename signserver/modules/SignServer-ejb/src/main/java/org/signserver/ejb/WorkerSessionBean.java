@@ -130,7 +130,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             archiveDataService = new ArchiveDataService(em);
             keyUsageCounterDataService = new KeyUsageCounterDataService(em);
         }
-        processImpl = new WorkerProcessImpl(em, keyUsageCounterDataService, globalConfigurationSession, workerManagerSession, logSession);
+        processImpl = new WorkerProcessImpl(em, keyUsageCounterDataService, workerManagerSession, logSession);
 
         // XXX The lookups will fail on GlassFish V2
         // When we no longer support GFv2 we can refactor this code
@@ -266,7 +266,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
      */
     @Override
     public WorkerStatus getStatus(int workerId) throws InvalidWorkerIdException {
-        IWorker worker = workerManagerSession.getWorker(workerId, globalConfigurationSession);
+        IWorker worker = workerManagerSession.getWorker(workerId);
         if (worker == null) {
             throw new InvalidWorkerIdException("Given SignerId " + workerId
                     + " doesn't exist");
@@ -293,7 +293,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
      */
     @Override
     public int getWorkerId(String signerName) {
-        return workerManagerSession.getIdFromName(signerName, globalConfigurationSession);
+        return workerManagerSession.getIdFromName(signerName);
     }
    
     @Override
@@ -309,18 +309,17 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         if (workerId == 0) {
             globalConfigurationSession.reload(adminInfo);
         } else {
-            workerManagerSession.reloadWorker(workerId, globalConfigurationSession);
+            workerManagerSession.reloadWorker(workerId);
             auditLog(adminInfo, SignServerEventTypes.RELOAD_WORKER_CONFIG, EventStatus.SUCCESS, SignServerModuleTypes.WORKER_CONFIG,
                     Integer.toString(workerId), Collections.<String, Object>emptyMap());
 
             // Try to initialize the key usage counter
-            initKeyUsageCounter(workerManagerSession.getWorker(workerId,
-                                                               globalConfigurationSession),
+            initKeyUsageCounter(workerManagerSession.getWorker(workerId),
                                 null, null);
         }
 
         if (workerId == 0 || getWorkers(
-                GlobalConfiguration.WORKERTYPE_SERVICES).contains(
+                WorkerConfig.WORKERTYPE_SERVICES).contains(
                 workerId)) {
             serviceTimerSession.unload(workerId);
             serviceTimerSession.load(workerId);
@@ -336,7 +335,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     public void activateSigner(int signerId, String authenticationCode)
             throws CryptoTokenAuthenticationFailureException,
             CryptoTokenOfflineException, InvalidWorkerIdException {
-        IWorker worker = workerManagerSession.getWorker(signerId, globalConfigurationSession);
+        IWorker worker = workerManagerSession.getWorker(signerId);
         if (worker == null) {
             throw new InvalidWorkerIdException("Given SignerId " + signerId
                     + " doesn't exist");
@@ -360,7 +359,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     @Override
     public boolean deactivateSigner(int signerId)
             throws CryptoTokenOfflineException, InvalidWorkerIdException {
-        IWorker worker = workerManagerSession.getWorker(signerId, globalConfigurationSession);
+        IWorker worker = workerManagerSession.getWorker(signerId);
         if (worker == null) {
             throw new InvalidWorkerIdException("Given SignerId " + signerId
                     + " doesn't exist");
@@ -390,7 +389,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             throws CryptoTokenOfflineException, InvalidWorkerIdException,
                 IllegalArgumentException {
 
-        IWorker worker = workerManagerSession.getWorker(signerId, globalConfigurationSession);
+        IWorker worker = workerManagerSession.getWorker(signerId);
         if (worker == null) {
             throw new InvalidWorkerIdException("Given SignerId " + signerId
                     + " doesn't exist");
@@ -510,7 +509,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             throws CryptoTokenOfflineException, InvalidWorkerIdException,
             KeyStoreException {
 
-        IWorker worker = workerManagerSession.getWorker(signerId, globalConfigurationSession);
+        IWorker worker = workerManagerSession.getWorker(signerId);
         if (worker == null) {
             throw new InvalidWorkerIdException("Given SignerId " + signerId
                     + " doesn't exist");
@@ -767,7 +766,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         if (LOG.isTraceEnabled()) {
             LOG.trace(">getCertificateRequest: signerId=" + signerId);
         }
-        IWorker worker = workerManagerSession.getWorker(signerId, globalConfigurationSession);
+        IWorker worker = workerManagerSession.getWorker(signerId);
         if (worker == null) {
             throw new InvalidWorkerIdException("Given SignerId " + signerId
                     + " doesn't exist");
@@ -849,7 +848,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                                             final RequestContext context)
             throws CryptoTokenOfflineException {
         Certificate ret = null;
-        final IWorker worker = workerManagerSession.getWorker(signerId, globalConfigurationSession);
+        final IWorker worker = workerManagerSession.getWorker(signerId);
         if (worker instanceof BaseProcessable) {
             ret = ((BaseProcessable) worker).getSigningCertificate(request, context);
         }
@@ -867,7 +866,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                                                        final RequestContext context)
             throws CryptoTokenOfflineException {
         List<Certificate> ret = null;
-        IWorker worker = workerManagerSession.getWorker(signerId, globalConfigurationSession);
+        IWorker worker = workerManagerSession.getWorker(signerId);
         if (worker instanceof BaseProcessable) {
             ret = ((BaseProcessable) worker).getSigningCertificateChain(request, context);
         }
@@ -926,8 +925,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                                                         final int signerId,
                                                         final String alias)
             throws CryptoTokenOfflineException, InvalidWorkerIdException {
-        final IWorker worker = workerManagerSession.getWorker(signerId,
-                                                              globalConfigurationSession);
+        final IWorker worker = workerManagerSession.getWorker(signerId);
         
         if (worker == null) {
             throw new InvalidWorkerIdException("Given SignerId " + signerId
@@ -955,7 +953,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     
     @Override
     public boolean removeKey(final AdminInfo adminInfo, final int signerId, final String alias) throws CryptoTokenOfflineException, InvalidWorkerIdException, KeyStoreException, SignServerException {
-        IWorker worker = workerManagerSession.getWorker(signerId, globalConfigurationSession);
+        IWorker worker = workerManagerSession.getWorker(signerId);
         if (worker == null) {
             throw new InvalidWorkerIdException("Given SignerId " + signerId
                     + " doesn't exist");
@@ -1046,7 +1044,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             certs.add(cert);
         }
         
-        final IWorker worker = workerManagerSession.getWorker(signerId, globalConfigurationSession);
+        final IWorker worker = workerManagerSession.getWorker(signerId);
         
         if (worker instanceof IProcessable) {
             try {
@@ -1088,7 +1086,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     @Override
     public int genFreeWorkerId() {
         Collection<Integer> ids = getWorkers(
-                GlobalConfiguration.WORKERTYPE_ALL);
+                WorkerConfig.WORKERTYPE_ALL);
         int max = 0;
         Iterator<Integer> iter = ids.iterator();
         while (iter.hasNext()) {
@@ -1186,7 +1184,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
      */
     @Override
     public List<Integer> getWorkers(int workerType) {
-        return workerManagerSession.getWorkers(workerType, globalConfigurationSession);
+        return workerManagerSession.getWorkers(workerType);
     }
     
     private void auditLog(final AdminInfo adminInfo, SignServerEventTypes eventType, SignServerModuleTypes module,
@@ -1346,7 +1344,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             InvalidAlgorithmParameterException,
             UnsupportedCryptoTokenParameter,
             OperationUnsupportedException {
-        final IWorker worker = workerManagerSession.getWorker(workerId, globalConfigurationSession);
+        final IWorker worker = workerManagerSession.getWorker(workerId);
         if (worker instanceof IProcessable) {
             return ((IProcessable) worker).searchTokenEntries(startIndex, max, qc, includeData, params, servicesImpl);
         } else {

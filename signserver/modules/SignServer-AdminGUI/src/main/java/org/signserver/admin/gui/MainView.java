@@ -95,6 +95,7 @@ import org.signserver.admin.gui.adminws.gen.WsWorkerConfig;
 import org.signserver.admin.gui.adminws.gen.WsWorkerStatus;
 import org.signserver.common.ArchiveMetadata;
 import org.signserver.common.GlobalConfiguration;
+import org.signserver.common.WorkerConfig;
 import org.signserver.common.util.PropertiesDumper;
 
 /**
@@ -3048,7 +3049,7 @@ private void displayLogEntryAction() {
                 Properties globalConfig = toProperties(SignServerAdminGUIApplication.getAdminWS().getGlobalConfiguration());
                 List<Integer> workerIds = SignServerAdminGUIApplication
                         .getAdminWS()
-                        .getWorkers(GlobalConfiguration.WORKERTYPE_ALL);
+                        .getWorkers(WorkerConfig.WORKERTYPE_ALL);
                 int workers = 0;
                 for (Integer workerId : workerIds) {
                     setProgress(workers, 0, workerIds.size());

@@ -24,6 +24,7 @@ import org.cesecore.audit.enums.EventStatus;
 import org.cesecore.audit.log.SecurityEventsLoggerSessionLocal;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.ServiceConfig;
+import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IServiceTimerSession;
 import org.signserver.ejb.worker.impl.IWorkerManagerSessionLocal;
@@ -95,7 +96,7 @@ public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, ISe
             UserTransaction ut = sessionCtx.getUserTransaction();
             try {
                 ut.begin();
-                IWorker worker = workerManagerSession.getWorker(timerInfo.intValue(), globalConfigurationSession);
+                IWorker worker = workerManagerSession.getWorker(timerInfo.intValue());
                 if (worker != null) {
                     serviceConfig = new ServiceConfig(worker.getConfig());
                     timedService = (ITimedService) worker;
@@ -226,7 +227,7 @@ public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, ISe
 
         final Collection<Integer> serviceIds;
         if (serviceId == 0) {
-            serviceIds = workerManagerSession.getWorkers(GlobalConfiguration.WORKERTYPE_SERVICES, globalConfigurationSession);
+            serviceIds = workerManagerSession.getWorkers(WorkerConfig.WORKERTYPE_SERVICES);
         } else {
             serviceIds = new ArrayList<Integer>();
             serviceIds.add(new Integer(serviceId));
@@ -235,7 +236,7 @@ public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, ISe
         while (iter.hasNext()) {
             Integer nextId = (Integer) iter.next();
             if (!existingTimers.contains(nextId)) {
-                ITimedService timedService = (ITimedService) workerManagerSession.getWorker(nextId.intValue(), globalConfigurationSession);
+                ITimedService timedService = (ITimedService) workerManagerSession.getWorker(nextId.intValue());
                 if (timedService != null && timedService.isActive() && timedService.getNextInterval() != ITimedService.DONT_EXECUTE) {
                     sessionCtx.getTimerService().createTimer((timedService.getNextInterval()), nextId);
                 }

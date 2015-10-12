@@ -41,14 +41,14 @@ public interface IWorkerManagerSessionLocal {
      * @param globalSession Global session that will be used for lookup
      * @return The worker instance
      */
-    IWorker getWorker(final int workerId, final IGlobalConfigurationSession globalSession);
+    IWorker getWorker(final int workerId);
 
     /**
      * @param workerName worker name to query the ID for
      * @param globalSession Global session that will be used for lookup
      * @return returning the ID of the named Worker
      */
-    int getIdFromName(final String workerName, final IGlobalConfigurationSession globalSession);
+    int getIdFromName(final String workerName);
 
     /**
      * Force a reload of the given worker.
@@ -56,7 +56,7 @@ public interface IWorkerManagerSessionLocal {
      * @param workerId Id of worker to reload
      * @param globalConfigurationSession Global session that will be used for lookup
      */
-    void reloadWorker(int workerId, ILocal globalConfigurationSession);
+    void reloadWorker(int workerId);
 
     /**
      * Get the worker's configured worker logger.
@@ -113,6 +113,6 @@ public interface IWorkerManagerSessionLocal {
      * @see GlobalConfiguration#WORKERTYPE_ALL
      * @see GlobalConfiguration#WORKERTYPE_PROCESSABLE
      */
-    List<Integer> getWorkers(int workerType, IGlobalConfigurationSession globalConfigurationSession);
+    List<Integer> getWorkers(int workerType);
     
 }

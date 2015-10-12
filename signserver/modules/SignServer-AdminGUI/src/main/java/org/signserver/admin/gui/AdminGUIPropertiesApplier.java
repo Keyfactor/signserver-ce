@@ -20,6 +20,7 @@ import org.signserver.admin.gui.adminws.gen.AdminNotAuthorizedException_Exceptio
 import org.signserver.admin.gui.adminws.gen.IllegalRequestException_Exception;
 import org.signserver.common.AuthorizedClient;
 import org.signserver.common.GlobalConfiguration;
+import org.signserver.common.WorkerConfig;
 import org.signserver.common.util.PropertiesApplier;
 
 /**
@@ -117,7 +118,7 @@ public class AdminGUIPropertiesApplier extends PropertiesApplier {
     @Override
     protected int genFreeWorkerId() throws PropertiesApplierException {
         try {
-            final List<Integer> workerIds = SignServerAdminGUIApplication.getAdminWS().getWorkers(GlobalConfiguration.WORKERTYPE_ALL);
+            final List<Integer> workerIds = SignServerAdminGUIApplication.getAdminWS().getWorkers(WorkerConfig.WORKERTYPE_ALL);
             int max = 0;
             
             for (final int workerId : workerIds) {

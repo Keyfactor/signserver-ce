@@ -430,8 +430,7 @@ public class ModulesTestCase extends TestCase {
     }
     
     public void addDummySigner(final String className, final String cryptoTokenClassName, final int signerId, final String signerName, final File keystore, final String password, final String alias) {
-        getGlobalSession().setProperty(GlobalConfiguration.SCOPE_GLOBAL,
-            "WORKER" + signerId + ".CLASSPATH", className);
+        getWorkerSession().setWorkerProperty(signerId, "IMPLEMENTATION_CLASS", className);
         getGlobalSession().setProperty(GlobalConfiguration.SCOPE_GLOBAL,
             "WORKER" + signerId + ".SIGNERTOKEN.CLASSPATH",
             cryptoTokenClassName);
@@ -469,7 +468,7 @@ public class ModulesTestCase extends TestCase {
     
     public void addXMLValidator() throws Exception {
         // VALIDATION SERVICE
-        getGlobalSession().setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + VALIDATION_SERVICE_WORKER_ID + ".CLASSPATH", "org.signserver.validationservice.server.ValidationServiceWorker");
+        getWorkerSession().setWorkerProperty(VALIDATION_SERVICE_WORKER_ID, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.validationservice.server.ValidationServiceWorker");
         getGlobalSession().setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + VALIDATION_SERVICE_WORKER_ID + ".SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.KeystoreCryptoToken");
         getWorkerSession().setWorkerProperty(VALIDATION_SERVICE_WORKER_ID,
                 "KEYSTOREPATH",
@@ -492,7 +491,7 @@ public class ModulesTestCase extends TestCase {
         getWorkerSession().reloadConfiguration(VALIDATION_SERVICE_WORKER_ID);
 
         // XMLVALIDATOR
-        getGlobalSession().setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + XML_VALIDATOR_WORKER_ID + ".CLASSPATH", "org.signserver.module.xmlvalidator.XMLValidator");
+        getWorkerSession().setWorkerProperty(XML_VALIDATOR_WORKER_ID, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.xmlvalidator.XMLValidator");
         getWorkerSession().setWorkerProperty(XML_VALIDATOR_WORKER_ID, "NAME", XML_VALIDATOR_WORKER_NAME);
         getWorkerSession().setWorkerProperty(XML_VALIDATOR_WORKER_ID, "AUTHTYPE", "NOAUTH");
         getWorkerSession().setWorkerProperty(XML_VALIDATOR_WORKER_ID, "VALIDATIONSERVICEWORKER", VALIDATION_SERVICE_WORKER_NAME);

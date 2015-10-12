@@ -771,8 +771,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
         final String keystorePassword = "foo123";
         createEmptyKeystore("PKCS12", keystorePath, keystorePassword);
     	
-    	getGlobalSession().setProperty(GlobalConfiguration.SCOPE_GLOBAL,
-                "WORKER" + signerId + ".CLASSPATH",
+    	getWorkerSession().setWorkerProperty(signerId, WorkerConfig.IMPLEMENTATION_CLASS,
                 "org.signserver.module.renewal.worker.RenewalWorker");
             getGlobalSession().setProperty(GlobalConfiguration.SCOPE_GLOBAL,
                 "WORKER" + signerId + ".SIGNERTOKEN.CLASSPATH",

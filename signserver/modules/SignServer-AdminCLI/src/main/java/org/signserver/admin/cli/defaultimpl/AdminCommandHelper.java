@@ -21,6 +21,7 @@ import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.common.CESeCoreModules;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.ServiceLocator;
+import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.statusrepo.IStatusRepositorySession;
@@ -144,7 +145,7 @@ public class AdminCommandHelper {
      * @throws RemoteException 
      */
     public void checkThatWorkerIsProcessable(int signerid) throws RemoteException, IllegalCommandArgumentsException {
-        Collection<Integer> signerIds = getWorkerSession().getWorkers(GlobalConfiguration.WORKERTYPE_PROCESSABLE);
+        Collection<Integer> signerIds = getWorkerSession().getWorkers(WorkerConfig.WORKERTYPE_PROCESSABLE);
         if (!signerIds.contains(new Integer(signerid))) {
             throw new IllegalCommandArgumentsException("Error: given workerId doesn't seem to point to any processable worker in the system.");
         }

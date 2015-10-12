@@ -38,7 +38,7 @@ import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerConstants;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
-import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
+import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.ejb.worker.impl.IWorkerManagerSessionLocal;
 import org.signserver.server.AccounterException;
 import org.signserver.server.BaseProcessable;
@@ -77,8 +77,6 @@ class WorkerProcessImpl {
 
     private final IKeyUsageCounterDataService keyUsageCounterDataService;
 
-    private final IGlobalConfigurationSession.ILocal globalConfigurationSession;
-
     private final IWorkerManagerSessionLocal workerManagerSession;
 
     private final SecurityEventsLoggerSessionLocal logSession;
@@ -91,10 +89,9 @@ class WorkerProcessImpl {
      * @param workerManagerSession The worker manager session
      * @param logSession The log session
      */
-    public WorkerProcessImpl(EntityManager em, IKeyUsageCounterDataService keyUsageCounterDataService, IGlobalConfigurationSession.ILocal globalConfigurationSession, IWorkerManagerSessionLocal workerManagerSession, SecurityEventsLoggerSessionLocal logSession) {
+    public WorkerProcessImpl(EntityManager em, IKeyUsageCounterDataService keyUsageCounterDataService, IWorkerManagerSessionLocal workerManagerSession, SecurityEventsLoggerSessionLocal logSession) {
         this.em = em;
         this.keyUsageCounterDataService = keyUsageCounterDataService;
-        this.globalConfigurationSession = globalConfigurationSession;
         this.workerManagerSession = workerManagerSession;
         this.logSession = logSession;
     }
@@ -144,7 +141,7 @@ class WorkerProcessImpl {
                 (String) requestContext.get(RequestContext.REMOTE_IP));
 
         // Get worker instance
-        final IWorker worker = workerManagerSession.getWorker(workerId, globalConfigurationSession);
+        final IWorker worker = workerManagerSession.getWorker(workerId);
 
         if (worker == null) {
             NoSuchWorkerException ex = new NoSuchWorkerException(String.valueOf(workerId));
@@ -546,7 +543,7 @@ class WorkerProcessImpl {
 
     private Certificate getSignerCertificate(final int signerId) throws CryptoTokenOfflineException {
         Certificate ret = null;
-        final IWorker worker = workerManagerSession.getWorker(signerId, globalConfigurationSession);
+        final IWorker worker = workerManagerSession.getWorker(signerId);
         if (worker instanceof BaseProcessable) {
             ret = ((BaseProcessable) worker).getSigningCertificate();
         }
@@ -557,7 +554,7 @@ class WorkerProcessImpl {
      * @see org.signserver.ejb.interfaces.IWorkerSession#getWorkerId(java.lang.String)
      */
     public int getWorkerId(String signerName) {
-        return workerManagerSession.getIdFromName(signerName, globalConfigurationSession);
+        return workerManagerSession.getIdFromName(signerName);
     }
 
 }

@@ -20,6 +20,7 @@ import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.cli.spi.UnexpectedCommandFailureException;
 import org.signserver.common.AuthorizedClient;
 import org.signserver.common.GlobalConfiguration;
+import org.signserver.common.WorkerConfig;
 import org.signserver.common.util.PropertiesDumper;
 import org.signserver.ejb.interfaces.IWorkerSession;
 
@@ -85,7 +86,7 @@ public class DumpPropertiesCommand extends AbstractAdminCommand {
     }
 
     private void dumpAllProperties(Properties outProps) throws RemoteException, Exception {
-        List<Integer> workers = getWorkerSession().getWorkers(GlobalConfiguration.WORKERTYPE_ALL);
+        List<Integer> workers = getWorkerSession().getWorkers(WorkerConfig.WORKERTYPE_ALL);
 
         // First output all global properties
         GlobalConfiguration gc = getGlobalConfigurationSession().getGlobalConfiguration();

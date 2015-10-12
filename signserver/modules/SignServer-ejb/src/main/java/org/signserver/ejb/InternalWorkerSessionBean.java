@@ -87,7 +87,7 @@ public class InternalWorkerSessionBean implements IInternalWorkerSession.ILocal,
             }
             keyUsageCounterDataService = new KeyUsageCounterDataService(em);
         }
-        processImpl = new WorkerProcessImpl(em, keyUsageCounterDataService, globalConfigurationSession, workerManagerSession, logSession);
+        processImpl = new WorkerProcessImpl(em, keyUsageCounterDataService, workerManagerSession, logSession);
 
         // XXX The lookups will fail on GlassFish V2
         // When we no longer support GFv2 we can refactor this code

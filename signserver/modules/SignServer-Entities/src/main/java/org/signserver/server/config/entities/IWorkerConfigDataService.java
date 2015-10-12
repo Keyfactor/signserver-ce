@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.server.config.entities;
 
+import java.util.List;
 import org.signserver.common.WorkerConfig;
 
 /**
@@ -50,4 +51,6 @@ public interface IWorkerConfigDataService {
      * @param implClassName The name of the worker
      */
     void create(int workerId, String implClassName);
+    
+    List<Integer> findAllIds();
 }

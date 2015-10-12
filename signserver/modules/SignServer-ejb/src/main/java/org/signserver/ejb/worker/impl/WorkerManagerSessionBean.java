@@ -12,9 +12,8 @@
  *************************************************************************/
 package org.signserver.ejb.worker.impl;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -24,11 +23,8 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 
 import org.cesecore.audit.log.SecurityEventsLoggerSessionLocal;
-import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.WorkerConfig;
-import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
-import org.signserver.ejb.interfaces.IGlobalConfigurationSession.ILocal;
 import org.signserver.server.*;
 import org.signserver.server.IAuthorizer;
 import org.signserver.server.IAccounter;
@@ -87,21 +83,21 @@ public class WorkerManagerSessionBean implements IWorkerManagerSessionLocal {
     }
 
     @Override
-    public IWorker getWorker(final int workerId, final IGlobalConfigurationSession globalSession) {
+    public IWorker getWorker(final int workerId) {
         return workerFactory.getWorker(workerId,
-                workerConfigService, globalSession, this, workerContext);
+                workerConfigService, this, workerContext);
     }
     
     @Override
-    public int getIdFromName(final String workerName, final IGlobalConfigurationSession globalSession) {
+    public int getIdFromName(final String workerName) {
         return workerFactory.getWorkerIdFromName(workerName.
-                toUpperCase(), workerConfigService, globalSession, this, workerContext);
+                toUpperCase(), workerConfigService, this, workerContext);
     }
 
     @Override
-    public void reloadWorker(int workerId, ILocal globalConfigurationSession) {
+    public void reloadWorker(int workerId) {
         workerFactory.reloadWorker(workerId,
-                    workerConfigService, globalConfigurationSession, this, workerContext);
+                    workerConfigService, this, workerContext);
     }
 
     @Override
@@ -145,71 +141,23 @@ public class WorkerManagerSessionBean implements IWorkerManagerSessionLocal {
      * @see org.signserver.ejb.interfaces.IWorkerSession#getWorkers(int)
      */
     @Override
-    public List<Integer> getWorkers(int workerType, IGlobalConfigurationSession globalConfigurationSession) {
-        ArrayList<Integer> retval = new ArrayList<Integer>();
-        GlobalConfiguration gc = globalConfigurationSession.getGlobalConfiguration();
-
-        Enumeration<String> en = gc.getKeyEnumeration();
-        while (en.hasMoreElements()) {
-            String key = en.nextElement();
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("getWorkers, processing key : " + key);
-            }
-            if (key.startsWith("GLOB.WORKER")) {
-                retval = (ArrayList<Integer>) getWorkerHelper(retval, key, workerType, false, globalConfigurationSession);
-            }
-            if (key.startsWith("GLOB.SIGNER")) {
-                retval = (ArrayList<Integer>) getWorkerHelper(retval, key, workerType, true, globalConfigurationSession);
-            }
-        }
-        return retval;
-    }
-
-    private List<Integer> getWorkerHelper(List<Integer> retval, String key, int workerType, boolean signersOnly, IGlobalConfigurationSession globalConfigurationSession) {
-
-        String unScopedKey = key.substring("GLOB.".length());
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("unScopedKey : " + unScopedKey);
-        }
-        String strippedKey = key.substring("GLOB.WORKER".length());
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("strippedKey : " + strippedKey);
-        }
-        String[] splittedKey = strippedKey.split("\\.");
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("splittedKey : " + splittedKey.length + ", " + splittedKey[0]);
-        }
-        if (splittedKey.length > 1) {
-            if (splittedKey[1].equals("CLASSPATH")) {
-                try {
-                    int id = Integer.parseInt(splittedKey[0]);
-                    if (workerType == GlobalConfiguration.WORKERTYPE_ALL) {
-                        retval.add(new Integer(id));
-                    } else {
-                        IWorker obj = getWorker(id, globalConfigurationSession);
-                        if (workerType == GlobalConfiguration.WORKERTYPE_PROCESSABLE) {
-                            if (obj instanceof IProcessable) {
-                                if (LOG.isDebugEnabled()) {
-                                    LOG.debug("Adding Signer " + id);
-                                }
-                                retval.add(new Integer(id));
-                            }
-                        } else {
-                            if (workerType == GlobalConfiguration.WORKERTYPE_SERVICES && !signersOnly) {
-                                if (obj instanceof ITimedService) {
-                                    if (LOG.isDebugEnabled()) {
-                                        LOG.debug("Adding Service " + id);
-                                    }
-                                    retval.add(new Integer(id));
-                                }
-                            }
-                        }
-                    }
-                } catch (NumberFormatException ex) {
-                    LOG.error("Unparsable property: " + key + ": " + ex.getMessage());
+    public List<Integer> getWorkers(int workerType) {
+        final List<Integer> retval;
+        
+        List<Integer> allIds = workerConfigService.findAllIds();
+        if (workerType == WorkerConfig.WORKERTYPE_ALL) {
+            retval = allIds;
+        } else {
+            retval = new LinkedList<>();
+            for (Integer id : allIds) {
+                IWorker obj = getWorker(id);
+                if ((workerType == WorkerConfig.WORKERTYPE_PROCESSABLE && obj instanceof IProcessable)
+                        || (workerType == WorkerConfig.WORKERTYPE_SERVICES && obj instanceof ITimedService)) {
+                    retval.add(id);
                 }
             }
         }
+
         return retval;
     }
     

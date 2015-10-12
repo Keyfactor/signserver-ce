@@ -30,9 +30,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.ServiceLocator;
+import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.healthcheck.HealthCheckUtils;
@@ -143,7 +143,7 @@ public class SignServerHealthCheck implements IHealthCheck {
 
     private List<String> checkSigners() {
         final LinkedList<String> result = new LinkedList<String>();
-        Iterator<Integer> iter = getWorkerSession().getWorkers(GlobalConfiguration.WORKERTYPE_PROCESSABLE).iterator();
+        Iterator<Integer> iter = getWorkerSession().getWorkers(WorkerConfig.WORKERTYPE_PROCESSABLE).iterator();
         while (iter.hasNext()) {
             int processableId = ((Integer) iter.next()).intValue();
 

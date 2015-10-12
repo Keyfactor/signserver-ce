@@ -22,6 +22,7 @@ import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.cli.spi.UnexpectedCommandFailureException;
 import org.signserver.common.GlobalConfiguration;
+import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 
 /**
@@ -76,7 +77,7 @@ public class GetStatusCommand extends AbstractCommand {
                     displayGlobalConfiguration();
                 }
 
-                List<Integer> workers = helper.getWorkerSession().getWorkers(GlobalConfiguration.WORKERTYPE_PROCESSABLE);
+                List<Integer> workers = helper.getWorkerSession().getWorkers(WorkerConfig.WORKERTYPE_PROCESSABLE);
 
                 Collections.sort(workers);
 

@@ -855,8 +855,7 @@ public class SystemLoggingTest extends ModulesTestCase {
             addP12DummySigner(p12SignerId, tokenName, p12, "foo123", null);
             
             // Add a separate worker
-            getGlobalSession().setProperty(GlobalConfiguration.SCOPE_GLOBAL,
-            "WORKER" + workerId + ".CLASSPATH", PlainSigner.class.getName());
+            getWorkerSession().setWorkerProperty(workerId, WorkerConfig.IMPLEMENTATION_CLASS, PlainSigner.class.getName());
             getWorkerSession().setWorkerProperty(workerId, "NAME", "TheWorker" + workerId);
             getWorkerSession().setWorkerProperty(workerId, "AUTHTYPE", IProcessable.AUTHTYPE_NOAUTH);
             getWorkerSession().setWorkerProperty(workerId, "CRYPTOTOKEN", tokenName);

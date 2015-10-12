@@ -14,8 +14,11 @@ package org.signserver.server.config.entities;
 
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import javax.ejb.EJBException;
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import org.apache.log4j.Logger;
 import org.cesecore.util.Base64GetHashMap;
 import org.cesecore.util.Base64PutHashMap;
@@ -107,6 +110,19 @@ public class WorkerConfigDataService implements IWorkerConfigDataService {
         return workerConf;
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Integer> findAllIds() {
+        final LinkedList<Integer> result = new LinkedList<>();
+        Query query = em.createQuery("SELECT w from WorkerConfigDataBean w"); // TODO: More efficient way to just query the IDs
+        List<WorkerConfigDataBean> list = (List<WorkerConfigDataBean>) query.getResultList();
+        for (WorkerConfigDataBean wcdb : list) {
+            result.add(wcdb.getSignerId());
+        }
+        
+        return result;
+    }
+    
     /**
      * Method that saves the Worker Config to database.
      */
@@ -155,6 +171,10 @@ public class WorkerConfigDataService implements IWorkerConfigDataService {
             if (wcdb == null) {
                 wcdb = em.find(WorkerConfigDataBean.class, workerId);
             }
+            if (wcdb == null) {
+                create(workerId, WorkerConfig.class.getName());
+                wcdb = em.find(WorkerConfigDataBean.class, workerId);
+            }
             wcdb.setSignerConfigData(baos.toString("UTF8"));
             em.persist(wcdb);
         } catch (UnsupportedEncodingException e) {
@@ -167,13 +187,10 @@ public class WorkerConfigDataService implements IWorkerConfigDataService {
      */
     @Override
     public WorkerConfig getWorkerProperties(int workerId) {
-
         WorkerConfig workerConfig = getWorkerConfig(workerId);
         if (workerConfig == null) {
-            create(workerId, WorkerConfig.class.getName());
-            workerConfig = getWorkerConfig(workerId);
+            workerConfig = new WorkerConfig();
         }
-
         return workerConfig;
     }
 

@@ -11,7 +11,7 @@
  *                                                                       *
  *************************************************************************/
  
-package org.signserver.web.pub;
+package org.signserver.web;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.signserver.common.SignServerUtil;
+import org.signserver.web.pub.SameRequestRateLimiter;
 import org.signserver.web.pub.cluster.IHealthCheck;
 import org.signserver.web.pub.cluster.IHealthResponse;
 

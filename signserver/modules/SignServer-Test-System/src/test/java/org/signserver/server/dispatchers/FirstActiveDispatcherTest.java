@@ -81,6 +81,7 @@ public class FirstActiveDispatcherTest extends ModulesTestCase {
     public void test00SetupDatabase() throws Exception {
         Properties conf = new Properties();
         conf.setProperty("GLOB.WORKER" + WORKERID_DISPATCHER + ".CLASSPATH", "org.signserver.server.dispatchers.FirstActiveDispatcher");
+        conf.setProperty("WORKER" + WORKERID_DISPATCHER + ".IMPLEMENTATION_CLASS", "org.signserver.server.dispatchers.FirstActiveDispatcher");
         conf.setProperty("WORKER" + WORKERID_DISPATCHER + ".NAME", "FirstActiveDispatcher80");
         conf.setProperty("WORKER" + WORKERID_DISPATCHER + ".AUTHTYPE", "NOAUTH");
         conf.setProperty("WORKER" + WORKERID_DISPATCHER + ".WORKERS", "TestXMLSigner81,TestXMLSigner82, TestXMLSigner83");

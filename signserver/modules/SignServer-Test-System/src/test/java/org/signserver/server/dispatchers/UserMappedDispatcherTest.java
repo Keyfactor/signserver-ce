@@ -82,6 +82,7 @@ public class UserMappedDispatcherTest extends ModulesTestCase {
     public void test00SetupDatabase() throws Exception {
         Properties conf = new Properties();
         conf.setProperty("GLOB.WORKER5780.CLASSPATH", "org.signserver.server.dispatchers.UserMappedDispatcher");
+        conf.setProperty("WORKER5780.IMPLEMENTATION_CLASS", "org.signserver.server.dispatchers.UserMappedDispatcher");
         conf.setProperty("WORKER5780.NAME", "UserMappedDispatcher80");
         conf.setProperty("WORKER5780.AUTHTYPE", "org.signserver.server.UsernameAuthorizer");
         conf.setProperty("WORKER5780.ACCEPT_ALL_USERNAMES", "true");

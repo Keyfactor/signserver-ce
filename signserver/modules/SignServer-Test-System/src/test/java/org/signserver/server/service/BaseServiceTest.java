@@ -28,6 +28,7 @@ import org.signserver.common.ServiceConfig;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.StaticWorkerStatus;
+import org.signserver.common.WorkerConfig;
 import org.signserver.common.util.PathUtil;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
@@ -57,6 +58,7 @@ public class BaseServiceTest {
     @Test
     public void test00SetupDatabase() throws Exception {
         gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + WORKER_ID + ".CLASSPATH", "org.signserver.server.timedservices.DummyTimedService");
+        sSSession.setWorkerProperty(WORKER_ID, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.server.timedservices.DummyTimedService");
 
         sSSession.setWorkerProperty(WORKER_ID, ServiceConfig.ACTIVE, "TRUE");
         sSSession.setWorkerProperty(WORKER_ID, ServiceConfig.INTERVAL,

@@ -950,9 +950,15 @@ deploying SignServer. Alternativly, set includemodulesinbuild=true to have all
 modules built in.
                         </li>
                         <li>
-Setup the soft crypto token (if not already done) and activate it with its ID:<br/>
-<code>$ bin/signserver setproperties doc/sample-configs/soft-crypto-configuration.properties<br/>
-$ bin/signserver reload 1</code>
+Setup the keystore crypto token (if not already done) and activate it with its ID:<br/>
+<code>$ bin/signserver setproperties doc/sample-configs/keystore-crypto-configuration.properties</code><br/>
+Update the crypto token's KEYSTOREPATH property to point to a PKCS#12 keystore containing keys and<br/>
+certificate suitable for timestamp signing (the sample keystore in res/test/dss10/dss10_tssigner1.p12 can be used).<br/>
+Update the keystore password and set the crypto token's default key.<br/>
+<code>$ bin/signserver setproperty 1 KEYSTOREPATH $SIGNSERVER_HOME/res/test/dss10/dss10_tssigner1.p12</code><br/>
+<code>$ bin/signserver setproperty 1 KEYSTOREPASSWORD foo123</code><br/>
+<code>$ bin/signserver setproperty 1 DEFAULTKEY &quot;TS Signer 1&quot;</code><br/> 
+<code>$ bin/signserver reload 1</code><br/>
                         </li>
                         <li>
 Load the Timestamp demo configuration and notice the generated worker ID (in this
@@ -989,9 +995,15 @@ deploying SignServer. Alternativly, set includemodulesinbuild=true to have all
 modules built in.
                         </li>
                         <li>
-Setup the soft crypto token (if not already done) and activate it with its ID:<br/>
-<code>$ bin/signserver setproperties doc/sample-configs/soft-crypto-configuration.properties<br/>
-$ bin/signserver reload 1</code>
+Setup the keystore crypto token (if not already done) and activate it with its ID:<br/>
+<code>$ bin/signserver setproperties doc/sample-configs/keystore-crypto-configuration.properties</code><br/>
+Update the crypto token's KEYSTOREPATH property to point to a PKCS#12 keystore containing keys and<br/>
+certificate suitable for document signing (the sample keystore in res/test/dss10/dss10_signer1.p12 can be used).<br/>
+Update the keystore password and set the crypto token's default key.<br/>
+<code>$ bin/signserver setproperty 1 KEYSTOREPATH $SIGNSERVER_HOME/res/test/dss10/dss10_signer1.p12</code><br/>
+<code>$ bin/signserver setproperty 1 KEYSTOREPASSWORD foo123</code><br/>
+<code>$ bin/signserver setproperty 1 DEFAULTKEY &quot;Signer 1&quot;</code><br/> 
+<code>$ bin/signserver reload 1</code>
                         </li>
                         <li>
 Load the PDF signer demo configuration and notice the generated worker ID (in this

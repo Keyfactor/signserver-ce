@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><project xmlns="http://www.netbeans.org/ns/project/1">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://www.netbeans.org/ns/project/1">
     <type>org.netbeans.modules.web.project</type>
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/web-project/3">
@@ -13,6 +14,36 @@
                 </library>
                 <library dirs="200">
                     <file>${libs.CryptoDependencies.classpath}</file>
+                </library>
+                <library dirs="200">
+                    <file>${libs.CESeCore.classpath}</file>
+                </library>
+                <library dirs="200">
+                    <file>${reference.SignServer-Entities.jar}</file>
+                </library>
+                <library dirs="200">
+                    <file>${reference.SignServer-Common.jar}</file>
+                </library>
+                <library dirs="200">
+                    <file>${reference.SignServer-Server.jar}</file>
+                </library>
+                <library dirs="200">
+                    <file>${reference.SignServer-ejb-interfaces.jar}</file>
+                </library>
+                <library dirs="100">
+                    <file>${reference.SignServer-ejb.dist}</file>
+                </library>
+                <library dirs="100">
+                    <file>${reference.SignServer-ejb-AdminWS.dist}</file>
+                </library>
+                <library dirs="100">
+                    <file>${reference.SignServer-ejb-ValidationWS.dist}</file>
+                </library>
+                <library dirs="100">
+                    <file>${reference.SignServer-ejb-SignServerWS.dist}</file>
+                </library>
+                <library dirs="100">
+                    <file>${reference.SignServer-ejb-ClientWS.dist}</file>
                 </library>
             </web-module-libraries>
             <web-module-additional-libraries/>
@@ -31,6 +62,78 @@
         <references xmlns="http://www.netbeans.org/ns/ant-project-references/1">
             <reference>
                 <foreign-project>SignServer-BuildTools</foreign-project>
+                <artifact-type>jar</artifact-type>
+                <script>build.xml</script>
+                <target>jar</target>
+                <clean-target>clean</clean-target>
+                <id>jar</id>
+            </reference>
+            <reference>
+                <foreign-project>SignServer-Common</foreign-project>
+                <artifact-type>jar</artifact-type>
+                <script>build.xml</script>
+                <target>jar</target>
+                <clean-target>clean</clean-target>
+                <id>jar</id>
+            </reference>
+            <reference>
+                <foreign-project>SignServer-Entities</foreign-project>
+                <artifact-type>jar</artifact-type>
+                <script>build.xml</script>
+                <target>jar</target>
+                <clean-target>clean</clean-target>
+                <id>jar</id>
+            </reference>
+            <reference>
+                <foreign-project>SignServer-Server</foreign-project>
+                <artifact-type>jar</artifact-type>
+                <script>build.xml</script>
+                <target>jar</target>
+                <clean-target>clean</clean-target>
+                <id>jar</id>
+            </reference>
+            <reference>
+                <foreign-project>SignServer-ejb</foreign-project>
+                <artifact-type>jar</artifact-type>
+                <script>build.xml</script>
+                <target>dist</target>
+                <clean-target>clean</clean-target>
+                <id>dist</id>
+            </reference>
+            <reference>
+                <foreign-project>SignServer-ejb-AdminWS</foreign-project>
+                <artifact-type>jar</artifact-type>
+                <script>build.xml</script>
+                <target>dist</target>
+                <clean-target>clean</clean-target>
+                <id>dist</id>
+            </reference>
+            <reference>
+                <foreign-project>SignServer-ejb-ClientWS</foreign-project>
+                <artifact-type>jar</artifact-type>
+                <script>build.xml</script>
+                <target>dist</target>
+                <clean-target>clean</clean-target>
+                <id>dist</id>
+            </reference>
+            <reference>
+                <foreign-project>SignServer-ejb-SignServerWS</foreign-project>
+                <artifact-type>jar</artifact-type>
+                <script>build.xml</script>
+                <target>dist</target>
+                <clean-target>clean</clean-target>
+                <id>dist</id>
+            </reference>
+            <reference>
+                <foreign-project>SignServer-ejb-ValidationWS</foreign-project>
+                <artifact-type>jar</artifact-type>
+                <script>build.xml</script>
+                <target>dist</target>
+                <clean-target>clean</clean-target>
+                <id>dist</id>
+            </reference>
+            <reference>
+                <foreign-project>SignServer-ejb-interfaces</foreign-project>
                 <artifact-type>jar</artifact-type>
                 <script>build.xml</script>
                 <target>jar</target>

@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><project xmlns="http://www.netbeans.org/ns/project/1">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://www.netbeans.org/ns/project/1">
     <type>org.netbeans.modules.web.project</type>
     <configuration>
         <buildExtensions xmlns="http://www.netbeans.org/ns/ant-build-extender/1"/>
@@ -38,10 +39,6 @@
                 </library>
                 <library dirs="200">
                     <file>${libs.CESeCore.classpath}</file>
-                </library>
-                <library dirs="200">
-                    <file>${libs.junit_4.classpath}</file>
-                    <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
             </web-module-libraries>
             <web-module-additional-libraries/>

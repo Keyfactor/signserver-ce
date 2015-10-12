@@ -894,9 +894,53 @@ exists or setup the property manually. For example like this:
         <ant antfile="${project.SignServer-BuildTools}/build.xml" inheritall="false" target="jar">
             <property name="deploy.on.save" value="false"/>
         </ant>
+        <ant antfile="${project.SignServer-Common}/build.xml" inheritall="false" target="jar">
+            <property name="deploy.on.save" value="false"/>
+        </ant>
+        <ant antfile="${project.SignServer-Entities}/build.xml" inheritall="false" target="jar">
+            <property name="deploy.on.save" value="false"/>
+        </ant>
+        <ant antfile="${project.SignServer-Server}/build.xml" inheritall="false" target="jar">
+            <property name="deploy.on.save" value="false"/>
+        </ant>
+        <ant antfile="${project.SignServer-ejb}/build.xml" inheritall="false" target="dist"/>
+        <ant antfile="${project.SignServer-ejb-AdminWS}/build.xml" inheritall="false" target="dist"/>
+        <ant antfile="${project.SignServer-ejb-ClientWS}/build.xml" inheritall="false" target="dist"/>
+        <ant antfile="${project.SignServer-ejb-SignServerWS}/build.xml" inheritall="false" target="dist"/>
+        <ant antfile="${project.SignServer-ejb-ValidationWS}/build.xml" inheritall="false" target="dist"/>
+        <ant antfile="${project.SignServer-ejb-interfaces}/build.xml" inheritall="false" target="jar">
+            <property name="deploy.on.save" value="false"/>
+        </ant>
     </target>
     <target depends="init" if="dist.ear.dir" name="deps-ear-jar" unless="no.deps">
         <ant antfile="${project.SignServer-BuildTools}/build.xml" inheritall="false" target="jar">
+            <property name="deploy.on.save" value="false"/>
+        </ant>
+        <ant antfile="${project.SignServer-Common}/build.xml" inheritall="false" target="jar">
+            <property name="deploy.on.save" value="false"/>
+        </ant>
+        <ant antfile="${project.SignServer-Entities}/build.xml" inheritall="false" target="jar">
+            <property name="deploy.on.save" value="false"/>
+        </ant>
+        <ant antfile="${project.SignServer-Server}/build.xml" inheritall="false" target="jar">
+            <property name="deploy.on.save" value="false"/>
+        </ant>
+        <ant antfile="${project.SignServer-ejb}/build.xml" inheritall="false" target="dist-ear">
+            <property location="${build.dir}" name="dist.ear.dir"/>
+        </ant>
+        <ant antfile="${project.SignServer-ejb-AdminWS}/build.xml" inheritall="false" target="dist-ear">
+            <property location="${build.dir}" name="dist.ear.dir"/>
+        </ant>
+        <ant antfile="${project.SignServer-ejb-ClientWS}/build.xml" inheritall="false" target="dist-ear">
+            <property location="${build.dir}" name="dist.ear.dir"/>
+        </ant>
+        <ant antfile="${project.SignServer-ejb-SignServerWS}/build.xml" inheritall="false" target="dist-ear">
+            <property location="${build.dir}" name="dist.ear.dir"/>
+        </ant>
+        <ant antfile="${project.SignServer-ejb-ValidationWS}/build.xml" inheritall="false" target="dist-ear">
+            <property location="${build.dir}" name="dist.ear.dir"/>
+        </ant>
+        <ant antfile="${project.SignServer-ejb-interfaces}/build.xml" inheritall="false" target="jar">
             <property name="deploy.on.save" value="false"/>
         </ant>
     </target>
@@ -1470,6 +1514,15 @@ exists or setup the property manually. For example like this:
             -->
     <target depends="init" name="deps-clean" unless="no.deps">
         <ant antfile="${project.SignServer-BuildTools}/build.xml" inheritall="false" target="clean"/>
+        <ant antfile="${project.SignServer-Common}/build.xml" inheritall="false" target="clean"/>
+        <ant antfile="${project.SignServer-Entities}/build.xml" inheritall="false" target="clean"/>
+        <ant antfile="${project.SignServer-Server}/build.xml" inheritall="false" target="clean"/>
+        <ant antfile="${project.SignServer-ejb}/build.xml" inheritall="false" target="clean"/>
+        <ant antfile="${project.SignServer-ejb-AdminWS}/build.xml" inheritall="false" target="clean"/>
+        <ant antfile="${project.SignServer-ejb-ClientWS}/build.xml" inheritall="false" target="clean"/>
+        <ant antfile="${project.SignServer-ejb-SignServerWS}/build.xml" inheritall="false" target="clean"/>
+        <ant antfile="${project.SignServer-ejb-ValidationWS}/build.xml" inheritall="false" target="clean"/>
+        <ant antfile="${project.SignServer-ejb-interfaces}/build.xml" inheritall="false" target="clean"/>
     </target>
     <target depends="init" name="do-clean">
         <condition property="build.dir.to.clean" value="${build.web.dir}">

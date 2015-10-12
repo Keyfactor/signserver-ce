@@ -1,3 +1,5 @@
+package org.signserver.web.pub;
+
 /*************************************************************************
  *                                                                       *
  *  EJBCA: The OpenSource Certificate Authority                          *
@@ -11,7 +13,7 @@
  *                                                                       *
  *************************************************************************/
  
-package org.signserver.web;
+
 
 import java.io.IOException;
 import java.util.Arrays;

@@ -87,7 +87,7 @@ public class CredentialUtils {
         }
         
         // For backwards-compatibility also set CLIENT_CREDENTIAL with
-        // cert if and otherwise if username/password is available
+        // cert if available and otherwise username/password if available
         if (credentialCert != null) {
             context.put(RequestContext.CLIENT_CREDENTIAL, credentialCert);
         } else if (credentialPassword != null) {

@@ -37,6 +37,7 @@ import org.signserver.testutils.TestingSecurityManager;
 import org.signserver.validationservice.server.ValidationTestUtils;
 import org.junit.Before;
 import org.junit.Test;
+import org.signserver.common.WorkerConfig;
 import org.signserver.common.util.PathUtil;
 import org.signserver.testutils.ModulesTestCase;
 
@@ -89,6 +90,7 @@ public class ValidationCLITest extends ModulesTestCase {
         validChain1.add(validSubCA1);
 
         gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER16.CLASSPATH", "org.signserver.validationservice.server.ValidationServiceWorker");
+        sSSession.setWorkerProperty(16, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.validationservice.server.ValidationServiceWorker");
         gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER16.SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.KeystoreCryptoToken");
 
 
@@ -175,6 +177,7 @@ public class ValidationCLITest extends ModulesTestCase {
         gCSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER16.CLASSPATH");
         gCSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER16.SIGNERTOKEN.CLASSPATH");
 
+        sSSession.removeWorkerProperty(16, WorkerConfig.IMPLEMENTATION_CLASS);
         sSSession.removeWorkerProperty(16, "AUTHTYPE");
         sSSession.removeWorkerProperty(16, "VAL1.CLASSPATH");
         sSSession.removeWorkerProperty(16, "VAL1.TESTPROP");

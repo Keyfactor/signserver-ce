@@ -185,6 +185,7 @@ public class BaseServiceTest {
     public void test99TearDownDatabase() throws Exception {
         gCSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + WORKER_ID + ".CLASSPATH");
 
+        sSSession.removeWorkerProperty(WORKER_ID, WorkerConfig.IMPLEMENTATION_CLASS);
         sSSession.removeWorkerProperty(WORKER_ID, "INTERVAL");
         sSSession.removeWorkerProperty(WORKER_ID, "INTERVALMS");
         sSSession.removeWorkerProperty(WORKER_ID, "CRON");

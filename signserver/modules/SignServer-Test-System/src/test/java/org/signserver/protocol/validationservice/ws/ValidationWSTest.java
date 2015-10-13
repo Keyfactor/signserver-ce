@@ -112,7 +112,7 @@ public class ValidationWSTest extends ModulesTestCase {
         }
 
         try {
-            getValidationWS().getStatus("17");
+            getValidationWS().getStatus("1717");
             assertTrue(false);
         } catch (IllegalRequestException_Exception e) {
         }
@@ -137,7 +137,7 @@ public class ValidationWSTest extends ModulesTestCase {
         assertTrue(res.getRevocationDate() == null);
 
         try {
-            getValidationWS().isValid("17", validCert1, ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
+            getValidationWS().isValid("1717", validCert1, ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
             assertTrue(false);
         } catch (IllegalRequestException_Exception e) {
         }

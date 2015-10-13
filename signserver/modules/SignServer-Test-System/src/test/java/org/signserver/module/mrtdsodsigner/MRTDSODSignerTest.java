@@ -222,7 +222,8 @@ public class MRTDSODSignerTest extends ModulesTestCase {
 
         // Set property to limit remaining cert validity
         CertificateFactory cf = CertificateFactory.getInstance("X.509", "BC");
-        X509Certificate cert = (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(TestCerts.certbytes1));
+        X509Certificate cert =
+                (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(Base64.decode(TestCerts.CERT1.getBytes())));
 
         workerSession.uploadSignerCertificate(WORKER1, cert.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
         workerSession.setWorkerProperty(WORKER1, SignServerConstants.MINREMAININGCERTVALIDITY, "6300");

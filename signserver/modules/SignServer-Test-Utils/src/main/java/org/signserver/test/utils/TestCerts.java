@@ -55,7 +55,7 @@ public interface TestCerts {
             "iVFbkjAvj/aacdk=\n" +
             "-----END CERTIFICATE-----";
     
-    static byte[] certbytes1 = Base64.decode((
+    static String CERT1 =
               "MIIElTCCAn2gAwIBAgIITz1ZKtegWpgwDQYJKoZIhvcNAQELBQAwTTEXMBUGA1UE"
             + "AwwORFNTIFJvb3QgQ0EgMTAxEDAOBgNVBAsMB1Rlc3RpbmcxEzARBgNVBAoMClNp"
             + "Z25TZXJ2ZXIxCzAJBgNVBAYTAlNFMB4XDTExMDUyNzA5NTE0NVoXDTIxMDUyNzA5"
@@ -80,5 +80,5 @@ public interface TestCerts {
             + "2I8fv+DBEKqJ47/H2V5aopxsRhiKC5u8nEEbAMbBYgjGQT/5K4mBt0gUJFNek7vS"
             + "a50VH05u8P6yo/3ppDxGCXE2d2JfWlEIx7DRWWij2PuOgDGkvVt2soxtp8Lx+kS6"
             + "K+G+tA5BGZMyEPdqAakyup7udi4LoB0wfJ58Jr5QNHCx4icUWvCBUM5CTcH4O/pQ"
-            + "oj/7HSYZlqigM72nR8f/gv1TwLVKz+ygzg==").getBytes());
+            + "oj/7HSYZlqigM72nR8f/gv1TwLVKz+ygzg==";
 }

@@ -51,13 +51,17 @@ public class CredentialUtils {
 
         if (clientCertificate instanceof X509Certificate) {
             final X509Certificate cert = (X509Certificate) clientCertificate;
-            LOG.debug("Certificate-authentication: true");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Certificate-authentication: true");
+            }
             credentialCert = new CertificateClientCredential(
                     cert.getSerialNumber().toString(16),
                     cert.getIssuerDN().getName());
             context.put(RequestContext.CLIENT_CREDENTIAL_CERTIFICATE, credentialCert);
         } else {
-            LOG.debug("Certificate-authentication: false");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Certificate-authentication: false");
+            }
             credentialCert = null;
         } 
 
@@ -65,7 +69,9 @@ public class CredentialUtils {
         final String authorization =
                 req.getHeader(HTTP_AUTH_BASIC_AUTHORIZATION);
         if (authorization != null) {
-            LOG.debug("Password-authentication: true");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Password-authentication: true");
+            }
 
             final String decoded[] = new String(Base64.decode(
                     authorization.split("\\s")[1])).split(":", 2);
@@ -74,7 +80,9 @@ public class CredentialUtils {
                     decoded[0], decoded[1]);
             context.put(RequestContext.CLIENT_CREDENTIAL_PASSWORD, credentialPassword);
         } else {
-            LOG.debug("Password-authentication: false");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Password-authentication: false");
+            }
             credentialPassword = null;
         }
         

@@ -17,7 +17,6 @@ import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Properties;
 import javax.crypto.Cipher;
 import org.signserver.common.*;
@@ -52,6 +51,8 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
     public void test00SetupDatabase() throws Exception {
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
                 "WORKER3.CLASSPATH",
+                "org.signserver.module.mrtdsigner.MRTDSigner");
+        workerSession.setWorkerProperty(3, WorkerConfig.IMPLEMENTATION_CLASS,
                 "org.signserver.module.mrtdsigner.MRTDSigner");
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
                 "WORKER3.SIGNERTOKEN.CLASSPATH",

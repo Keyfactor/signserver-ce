@@ -27,6 +27,7 @@ import org.signserver.web.WebTestCase;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
+import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 
@@ -99,6 +100,8 @@ public class SignerStatusReportWorkerTest extends WebTestCase {
         // Setup service
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
             "WORKER" + WORKERID_WORKER + ".CLASSPATH",
+            "org.signserver.module.signerstatusreport.SignerStatusReportWorker");
+        workerSession.setWorkerProperty(WORKERID_WORKER, WorkerConfig.IMPLEMENTATION_CLASS,
             "org.signserver.module.signerstatusreport.SignerStatusReportWorker");
         
         workerSession.setWorkerProperty(WORKERID_WORKER, "AUTHTYPE", "NOAUTH");

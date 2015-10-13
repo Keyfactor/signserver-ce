@@ -30,6 +30,7 @@ import org.signserver.testutils.TestingSecurityManager;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
+import org.signserver.common.WorkerConfig;
 import org.signserver.common.util.PathUtil;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
@@ -91,6 +92,7 @@ public class DocumentValidatorTest extends ModulesTestCase {
 
         // VALIDATION SERVICE
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER17.CLASSPATH", "org.signserver.validationservice.server.ValidationServiceWorker");
+        workerSession.setWorkerProperty(17, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.validationservice.server.ValidationServiceWorker");
         workerSession.setWorkerProperty(17, "AUTHTYPE", "NOAUTH");
         workerSession.setWorkerProperty(17, "NAME", VALIDATION_WORKER);
         workerSession.setWorkerProperty(17, "VAL1.CLASSPATH", "org.signserver.validationservice.server.DummyValidator");

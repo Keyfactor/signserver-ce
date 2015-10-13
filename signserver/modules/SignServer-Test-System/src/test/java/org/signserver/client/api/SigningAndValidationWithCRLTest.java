@@ -395,14 +395,7 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
         removeWorker(XMLVALIDATOR_WORKERID);
 
         // VALIDATION SERVICE
-        globalSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + CERTVALIDATION_WORKERID + ".CLASSPATH");
-        globalSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + CERTVALIDATION_WORKERID + ".SIGNERTOKEN.CLASSPATH");
-        workerSession.removeWorkerProperty(CERTVALIDATION_WORKERID, "AUTHTYPE");
-        workerSession.removeWorkerProperty(CERTVALIDATION_WORKERID, "VAL1.CLASSPATH");
-        workerSession.removeWorkerProperty(CERTVALIDATION_WORKERID, "VAL1.TESTPROP");
-        workerSession.removeWorkerProperty(CERTVALIDATION_WORKERID, "VAL1.ISSUER1.CERTCHAIN");
-        workerSession.removeWorkerProperty(CERTVALIDATION_WORKERID, "VAL1.ISSUER1.CRLPATHS");
-        workerSession.reloadConfiguration(CERTVALIDATION_WORKERID);
+        removeWorker(CERTVALIDATION_WORKERID);
 
         // XMLSIGNER
         for (int workerId : WORKERS) {

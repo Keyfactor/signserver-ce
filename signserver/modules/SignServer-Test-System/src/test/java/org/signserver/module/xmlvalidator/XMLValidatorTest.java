@@ -458,18 +458,8 @@ public class XMLValidatorTest extends ModulesTestCase {
     public void test99TearDownDatabase() throws Exception {
         removeWorker(WORKERID);
 
-        workerSession.removeWorkerProperty(WORKERID, "RETURNDOCUMENT");
-        workerSession.removeWorkerProperty(WORKERID, "STRIPSIGNATURE");
-        workerSession.reloadConfiguration(WORKERID);
-
         // Remove validation service worker
-        globalSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER17.CLASSPATH");
-        globalSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER17.SIGNERTOKEN.CLASSPATH");
-        workerSession.removeWorkerProperty(17, "AUTHTYPE");
-        workerSession.removeWorkerProperty(17, "VAL1.CLASSPATH");
-        workerSession.removeWorkerProperty(17, "VAL1.ISSUER1.CERTCHAIN");
-        workerSession.removeWorkerProperty(17, "VAL1.TESTPROP");
-        workerSession.removeWorkerProperty(17, "VAL1.REVOKED");
+        removeWorker(17);
     }
 
     private void checkXmlWellFormed(InputStream in) {

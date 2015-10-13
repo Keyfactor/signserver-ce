@@ -73,8 +73,13 @@ public class BaseProcessableTest extends TestCase {
             "        CKA_SIGN = true\n" +
             "        CKA_UNWRAP = true\n" +
             "}";
-    
-    private static byte[] certbytes1 = Base64.decode((
+
+    /**
+    subject=/CN=Signer 4/OU=Testing/O=SignServer/C=SE
+    issuer=/CN=DSS Root CA 10/OU=Testing/O=SignServer/C=SE
+    valid until=27/05/2021 09:51:45 GMT
+    */
+    private static final String CERT1 =
               "MIIElTCCAn2gAwIBAgIITz1ZKtegWpgwDQYJKoZIhvcNAQELBQAwTTEXMBUGA1UE"
             + "AwwORFNTIFJvb3QgQ0EgMTAxEDAOBgNVBAsMB1Rlc3RpbmcxEzARBgNVBAoMClNp"
             + "Z25TZXJ2ZXIxCzAJBgNVBAYTAlNFMB4XDTExMDUyNzA5NTE0NVoXDTIxMDUyNzA5"
@@ -99,34 +104,41 @@ public class BaseProcessableTest extends TestCase {
             + "2I8fv+DBEKqJ47/H2V5aopxsRhiKC5u8nEEbAMbBYgjGQT/5K4mBt0gUJFNek7vS"
             + "a50VH05u8P6yo/3ppDxGCXE2d2JfWlEIx7DRWWij2PuOgDGkvVt2soxtp8Lx+kS6"
             + "K+G+tA5BGZMyEPdqAakyup7udi4LoB0wfJ58Jr5QNHCx4icUWvCBUM5CTcH4O/pQ"
-            + "oj/7HSYZlqigM72nR8f/gv1TwLVKz+ygzg==").getBytes());
+            + "oj/7HSYZlqigM72nR8f/gv1TwLVKz+ygzg==";
     
-    private static byte[] certbytes2 = Base64.decode((
-              "MIID7zCCAqigAwIBAgIIWOzgRTcR/iAwPAYJKoZIhvcNAQEKMC+gDzANBglghkgB"
-            + "ZQMEAgEFAKEcMBoGCSqGSIb3DQEBCDANBglghkgBZQMEAgEFADA/MRMwEQYDVQQD"
-            + "EwpTZXRlY1Rlc3QyMRswGQYDVQQKExJSaWtzcG9saXNzdHlyZWxzZW4xCzAJBgNV"
-            + "BAYTAlNFMB4XDTA1MDkxMjA5MTg1MloXDTE1MDkwOTA5Mjg1MlowZzEcMBoGA1UE"
-            + "AxMTVGVzdCBhdiBFeHByZXNzUGFzczEOMAwGA1UEBRMFMTIzNDUxDTALBgNVBAsT"
-            + "BFBhc3MxGzAZBgNVBAoTElJpa3Nwb2xpc3N0eXJlbHNlbjELMAkGA1UEBhMCU0Uw"
-            + "ggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDmZqPJNogVtiRZ9loOFJ7U"
-            + "PMsrqWXZZ8R+nTPB72+kQ+4qOpgUHfto7QpSbs9/9wGrUsxc/mpadt/gRTztl6FW"
-            + "GQ4TknOkoDFP+MilP08u5ZbOJrbN3E7vy0dEszzO9aHLBHXV1w2pWTlVV2kWABpl"
-            + "4R4lfyWBroqpahhSReOrgL/utgcVgWkpYYb9Rx67aSl83F3lNZBMUTGR4gi/eQ5z"
-            + "ug+VYDDWLyBPw7jymspQ+RwbeDaR7k8lS4sRI/QgJtVTDtzMgTPlfvWDQIxofdki"
-            + "ZnG3t30aDxif5O3qaUbwMSA4Jfo6xgc2f+NPdFjhYarRTezNB8D4J4yT02U5bI6H"
-            + "AgMBAAGjaTBnMA4GA1UdDwEB/wQEAwIHgDAdBgNVHQ4EFgQUKvx2IjcjhAFFpp80"
-            + "ytO9KsC+rGgwHwYDVR0jBBgwFoAU19fDl5KAW2KqbuIHGG24AL+RfvAwFQYDVR0g"
-            + "BA4wDDAKBggqhXBUCgEBATA8BgkqhkiG9w0BAQowL6APMA0GCWCGSAFlAwQCAQUA"
-            + "oRwwGgYJKoZIhvcNAQEIMA0GCWCGSAFlAwQCAQUAA4IBAQBIH8UOXoaZ/ImkF6Co"
-            + "eIII6KHsd+5CAro0hiBXDAkuLmPSVHp6jgv7chv0W7CL89veu7Vy+7aow1hVkGC9"
-            + "XTmgrCGiKzw9+XGJsunLmAMhLj/QztnkJgQBo/09geM+w5UTdR+5PP9nRs9oJtlU"
-            + "FCOcN8VJEeIvgDyWoMUDG7K1YvjmkEU6CPVYrL2PAdY0bPZvTIymC1HuyPmMnf83"
-            + "QKHW0KKtb4uhkruTkX87yZm7fZZXfso6HeUKQ0+fbcqmQdXFEcJJEKSHTCcu5BVj"
-            + "JebCC2FiSP88KPGGW5D351LJ+UL8En3oA5eHxZCy/LeGejPw0N02XjVFfBZEKnf6"
-            + "5a94").getBytes());
-
-
-
+    /**
+    subject=/CN=Signer 1/OU=Testing/O=SignServer/C=SE
+    issuer=/CN=DSS Root CA 10/OU=Testing/O=SignServer/C=SE
+    valid until=2025-06-01
+    Taken from res/test/dss10/dss10_signer1.pem
+    */
+    private static final String CERT2 =
+            "MIIElTCCAn2gAwIBAgIIQZNa2mLuDoowDQYJKoZIhvcNAQELBQAwTTEXMBUGA1UE"
+          +  "AwwORFNTIFJvb3QgQ0EgMTAxEDAOBgNVBAsMB1Rlc3RpbmcxEzARBgNVBAoMClNp"
+          +  "Z25TZXJ2ZXIxCzAJBgNVBAYTAlNFMB4XDTE1MDYwMTE0MDQ0MVoXDTI1MDYwMTE0"
+          +  "MDQ0MVowRzERMA8GA1UEAwwIU2lnbmVyIDExEDAOBgNVBAsMB1Rlc3RpbmcxEzAR"
+          +  "BgNVBAoMClNpZ25TZXJ2ZXIxCzAJBgNVBAYTAlNFMIIBIjANBgkqhkiG9w0BAQEF"
+          +  "AAOCAQ8AMIIBCgKCAQEAy0GX45lzDRhUU/jhCCeqKKZcFWlOQiDxUcd6JOq38drU"
+          +  "alL9u2+gr+dcBFKRBOGmFxjMGVJ4nDO8uI3dl+BOrFbykUAnf1Yk/t8E2ZmgdQMP"
+          +  "4Cz6iXwlgWj8YRnQ6wEk2gcAp45SARfyEYdtArYvbTxOFoxb9KOjwji89yxCR/pb"
+          +  "RHz/q3RoXgq6E/g8mTmIt4CAgvD5VVFiNP7XWKd4Ptw4bjQY8RW5k8291o1ErHbD"
+          +  "Zvvqvps4E9cIu35v1LtXjlFkwVJ4xc0L61Ak+cjcwAUcGqTHQ7P9KdjcOLztsw0X"
+          +  "3jTZi5nLg3y4FukeOzkjxk5nh0Jr3/F3M7wuY2BS6wIDAQABo38wfTAdBgNVHQ4E"
+          +  "FgQUDsECWxG3XbAJooXiXmQrIz/d0l4wDAYDVR0TAQH/BAIwADAfBgNVHSMEGDAW"
+          +  "gBQgeiHe6K27Aqj7cVikCWK52FgFojAOBgNVHQ8BAf8EBAMCBeAwHQYDVR0lBBYw"
+          +  "FAYIKwYBBQUHAwIGCCsGAQUFBwMEMA0GCSqGSIb3DQEBCwUAA4ICAQAr2nSyOwkD"
+          +  "WPWiIqomXHsBHXwr35kvwqNSqM5Lh9if0XUDj0HudXH+nenyH9FAMkX1rfOm+SjQ"
+          +  "Wmw5mgwgvpDyaI8J6NBSf0Kve9Qxn8Yh224oVZogHS7LYFULd9FE3UdLv0ZrD2i+"
+          +  "0aXEZXaCEJBxNY+iVOpGdBdBgY6c7MD6Ib1Py7bQeslSOjmHNs7OnE5aZaLfmUQ3"
+          +  "0EprvX0Zzx0mhjm8BU41+m7Yg4W94mbZX0AGjEKL8v4NRQkNdv2/wgKNGKK+OvII"
+          +  "E/a3g8i68Jy5xbEI5sVcp6Z6qIa+6+5li33Gblwr86DnQFmm0IrCmgVyT2RuzNeX"
+          +  "FcgenbHJO/udOchn1b65wwzfIuqo5SpJmzsS9HvbsdJOCvXbRRJibjC0TN73Bmag"
+          +  "H0wv4t9TawbRH/8M3JvWIAV7DIuyiosC6F9jN319zWkzPllesNsjmWzE05fwcZky"
+          +  "4RSsS+eYmHxn9oEi1nS4igv0o/4lpz8WZ9KQSNTWP89wXPMW7bT1XUqMehSXk5Q1"
+          +  "3Ao/AXPF+4ZP4QJZMa2OHdDaNPMBinK0fZzoV/RFx5mzQm+XJCcdZBHbB+JEw14V"
+          +  "BQHSf/Icgab1tANxgQSk8IOhZ0/OQ6LdfoTmRVsrxz58tzvA8Fw+FcyyIni8p6ve"
+          +  "2oETepx5f5yVfLJzAdcgTXwo6R52yBgw2w==";
+    
     /** Tests the base case were no default properties are used to configure the PKCS11CryptoToken. */
     @Test
     public void testGetCryptoToken_noDefaults() throws Exception {
@@ -339,28 +351,27 @@ public class BaseProcessableTest extends TestCase {
      * certificate is used instead of the one in the token.
      * @throws Exception
      */
-    // TODO: this should be removed, I think
-//    @Test
-//    public void testCertificateInTokenOverridden() throws Exception {
-//        LOG.info("testCertificateInTokenOverridden");
-//
-//        Properties globalConfig = new Properties();
-//        WorkerConfig workerConfig = new WorkerConfig();
-//        globalConfig.setProperty("GLOB.WORKER" + workerId + ".CLASSPATH", TestSigner.class.getName());
-//        globalConfig.setProperty("GLOB.WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", MockedCryptoToken.class.getName());
-//        workerConfig.setProperty("NAME", "TestSigner200");
-//
-//        // Configure certbytes3 (CN=End Entity 1)
-//        workerConfig.setProperty("SIGNERCERT", "-----BEGIN CERTIFICATE-----\n" + new String(Base64.encode(HardCodedCryptoToken.certbytes3)) + "\n-----END CERTIFICATE-----");
-//        workerConfig.setProperty("SIGNERCERTCHAIN", "-----BEGIN CERTIFICATE-----\n" + new String(Base64.encode(HardCodedCryptoToken.certbytes3)) + "\n-----END CERTIFICATE-----");
-//
-//        TestSigner instance = new TestSigner(globalConfig);
-//        instance.init(workerId, workerConfig, anyContext, null);
-//
-//        // Certifcate in token is "CN=Signer 4", configured certificate is "CN=End Entity 1"
-//        assertEquals("cert from token", "End Entity 1", CertTools.getPartFromDN(((X509Certificate) instance.getSigningCertificate()).getSubjectX500Principal().getName(), "CN"));
-//        assertEquals("cert from token", "End Entity 1", CertTools.getPartFromDN(((X509Certificate) instance.getSigningCertificateChain().get(0)).getSubjectX500Principal().getName(), "CN"));
-//    }
+    @Test
+    public void testCertificateInTokenOverridden() throws Exception {
+        LOG.info("testCertificateInTokenOverridden");
+
+        Properties globalConfig = new Properties();
+        WorkerConfig workerConfig = new WorkerConfig();
+        globalConfig.setProperty("GLOB.WORKER" + workerId + ".CLASSPATH", TestSigner.class.getName());
+        globalConfig.setProperty("GLOB.WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", MockedCryptoToken.class.getName());
+        workerConfig.setProperty("NAME", "TestSigner200");
+
+        // Configure certbytes3 (CN=End Entity 1)
+        workerConfig.setProperty("SIGNERCERT", "-----BEGIN CERTIFICATE-----\n" + CERT2 + "\n-----END CERTIFICATE-----");
+        workerConfig.setProperty("SIGNERCERTCHAIN", "-----BEGIN CERTIFICATE-----\n" + CERT2 + "\n-----END CERTIFICATE-----");
+
+        TestSigner instance = new TestSigner(globalConfig);
+        instance.init(workerId, workerConfig, anyContext, null);
+
+        // Certifcate in token is "CN=Signer 4", configured certificate is "CN=End Entity 1"
+        assertEquals("cert from token", "Signer 1", CertTools.getPartFromDN(((X509Certificate) instance.getSigningCertificate()).getSubjectX500Principal().getName(), "CN"));
+        assertEquals("cert from token", "Signer 1", CertTools.getPartFromDN(((X509Certificate) instance.getSigningCertificateChain().get(0)).getSubjectX500Principal().getName(), "CN"));
+    }
 
     /**
      * Test that when specifying neither the SHAREDLIBRARYNAME or legacy
@@ -446,7 +457,7 @@ public class BaseProcessableTest extends TestCase {
         
             
         final List<Certificate> chain =
-                Arrays.asList(CertTools.getCertfromByteArray(certbytes2));
+                Arrays.asList(CertTools.getCertfromByteArray(Base64.decode(CERT2)));
         
         instance.importCertificateChain(chain, "alias2", null, Collections.<String, Object>emptyMap(), new ServicesImpl());
         
@@ -469,7 +480,8 @@ public class BaseProcessableTest extends TestCase {
         
         static {
             try {
-                CERTIFICATE = CertTools.getCertfromByteArray(certbytes1);
+                CERTIFICATE =
+                        CertTools.getCertfromByteArray(Base64.decode(CERT1.getBytes()));
             } catch (CertificateException ex) {
                 throw new RuntimeException("Load test certificate failed", ex);
             }

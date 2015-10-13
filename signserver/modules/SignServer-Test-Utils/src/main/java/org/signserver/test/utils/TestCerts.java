@@ -1,18 +1,29 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+/*************************************************************************
+ *                                                                       *
+ *  SignServer: The OpenSource Automated Signing Server                  *
+ *                                                                       *
+ *  This software is free software; you can redistribute it and/or       *
+ *  modify it under the terms of the GNU Lesser General Public           *
+ *  License as published by the Free Software Foundation; either         *
+ *  version 2.1 of the License, or any later version.                    *
+ *                                                                       *
+ *  See terms of license at gnu.org.                                     *
+ *                                                                       *
+ *************************************************************************/
 package org.signserver.test.utils;
 
-import org.bouncycastle.util.encoders.Base64;
-
 /**
- *
+ * Hard-coded test certificates used by some tests.
+ * 
  * @author Marcus Lundblad
  * @version $Id$
  */
 public interface TestCerts {
+    /**
+     * Issuer: CN=Test V3 Certificate
+     * Not Before: Jan  1 09:00:00 2025 GMT
+     * Not After : Jan  1 09:00:00 2030 GMT
+     */
     static final String SIGNER1C_CERT = 
             "-----BEGIN CERTIFICATE-----\n" +
             "MIIDBzCCAe+gAwIBAgIBATANBgkqhkiG9w0BAQUFADAeMRwwGgYDVQQDExNUZXN0\n" +
@@ -34,6 +45,11 @@ public interface TestCerts {
             "ZvlQhYEZsj0eJMc=\n" +
             "-----END CERTIFICATE-----";
     
+    /**
+     * Issuer: CN=Test V3 Certificate
+     * Subject: CN=Test V3 Certificate
+     * Valid until: 01/01/2020 09:00:00 GMT
+     */
     static final String SIGNER1D_CERT =
             "-----BEGIN CERTIFICATE-----\n" +
             "MIIDBzCCAe+gAwIBAgIBATANBgkqhkiG9w0BAQUFADAeMRwwGgYDVQQDExNUZXN0\n" +
@@ -55,6 +71,11 @@ public interface TestCerts {
             "iVFbkjAvj/aacdk=\n" +
             "-----END CERTIFICATE-----";
     
+    /**
+    subject=/CN=Signer 4/OU=Testing/O=SignServer/C=SE
+    issuer=/CN=DSS Root CA 10/OU=Testing/O=SignServer/C=SE
+    valid until=27/05/2021 09:51:45 GMT
+    */
     static String CERT1 =
               "MIIElTCCAn2gAwIBAgIITz1ZKtegWpgwDQYJKoZIhvcNAQELBQAwTTEXMBUGA1UE"
             + "AwwORFNTIFJvb3QgQ0EgMTAxEDAOBgNVBAsMB1Rlc3RpbmcxEzARBgNVBAoMClNp"

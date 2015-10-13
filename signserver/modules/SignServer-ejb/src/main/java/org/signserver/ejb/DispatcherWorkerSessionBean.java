@@ -32,7 +32,7 @@ import org.signserver.ejb.interfaces.IDispatcherWorkerSession;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IInternalWorkerSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
-import org.signserver.ejb.worker.impl.IWorkerManagerSessionLocal;
+import org.signserver.ejb.worker.impl.WorkerManagerSingletonBean;
 import org.signserver.server.entities.FileBasedKeyUsageCounterDataService;
 import org.signserver.server.entities.IKeyUsageCounterDataService;
 import org.signserver.server.entities.KeyUsageCounterDataService;
@@ -60,7 +60,7 @@ public class DispatcherWorkerSessionBean implements IDispatcherWorkerSession.ILo
     private IGlobalConfigurationSession.ILocal globalConfigurationSession;
 
     @EJB
-    private IWorkerManagerSessionLocal workerManagerSession;
+    private WorkerManagerSingletonBean workerManagerSession;
 
     @EJB
     private SecurityEventsLoggerSessionLocal logSession;

@@ -27,7 +27,7 @@ import org.signserver.common.ServiceConfig;
 import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IServiceTimerSession;
-import org.signserver.ejb.worker.impl.IWorkerManagerSessionLocal;
+import org.signserver.ejb.worker.impl.WorkerManagerSingletonBean;
 import org.signserver.server.IWorker;
 import org.signserver.server.ServiceExecutionFailedException;
 import org.signserver.server.log.SignServerEventTypes;
@@ -52,7 +52,7 @@ public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, ISe
     private IGlobalConfigurationSession.ILocal globalConfigurationSession;
     
     @EJB
-    private IWorkerManagerSessionLocal workerManagerSession;
+    private WorkerManagerSingletonBean workerManagerSession;
     
     @EJB
     private SecurityEventsLoggerSessionLocal logSession;

@@ -49,7 +49,7 @@ import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IInternalWorkerSession;
 import org.signserver.ejb.interfaces.IServiceTimerSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
-import org.signserver.ejb.worker.impl.IWorkerManagerSessionLocal;
+import org.signserver.ejb.worker.impl.WorkerManagerSingletonBean;
 import org.signserver.server.*;
 import org.signserver.server.archive.olddbarchiver.entities.ArchiveDataBean;
 import org.signserver.server.archive.olddbarchiver.entities.ArchiveDataService;
@@ -98,7 +98,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     private IServiceTimerSession.ILocal serviceTimerSession;
     
     @EJB
-    private IWorkerManagerSessionLocal workerManagerSession;
+    private WorkerManagerSingletonBean workerManagerSession;
     
     @EJB
     private SecurityEventsLoggerSessionLocal logSession;

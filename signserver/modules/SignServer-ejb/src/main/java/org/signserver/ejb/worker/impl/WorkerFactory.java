@@ -40,15 +40,13 @@ public class WorkerFactory {
 
     /** Logger for this class. */
     public static final Logger LOG = Logger.getLogger(WorkerFactory.class);
-    
+
     private static final String WORKERLOGGER = "WORKERLOGGER";
-    
+
     private static final String ACCOUNTER = "ACCOUNTER";
-    
-    private static final WorkerFactory INSTANCE = new WorkerFactory();
-    
+
     private Map<Integer, IWorker> workerStore;
-    
+
     private Map<Integer, IAuthorizer> authenticatorStore;
     
     private Map<String, Integer> nameToIdMap;
@@ -59,11 +57,7 @@ public class WorkerFactory {
     
     private final Map<Integer, List<Archiver>> archiversStore  = new HashMap<Integer, List<Archiver>>();
     
-    private WorkerFactory() {}
-
-    protected synchronized static WorkerFactory getInstance() {
-        return INSTANCE;
-    }
+    protected WorkerFactory() {}
 
     /**
      * Method returning a worker given it's id. The signer should be defined in 
@@ -80,7 +74,7 @@ public class WorkerFactory {
      */
     public synchronized IWorker getWorker(int workerId, 
             IWorkerConfigDataService workerConfigHome, 
-            IWorkerManagerSessionLocal workerManagerSession,
+            WorkerManagerSingletonBean workerManagerSession,
             SignServerContext workerContext) {
         Integer id = new Integer(workerId);
 
@@ -103,7 +97,7 @@ public class WorkerFactory {
      * @param workerConfigHome The home interface of the signer config entity bean
      * @return the id of the signer or 0 if no worker with the name is found.
      */
-    public synchronized int getWorkerIdFromName(String workerName, IWorkerConfigDataService workerConfigHome, IWorkerManagerSessionLocal workerManagerSession, SignServerContext workerContext) {
+    public synchronized int getWorkerIdFromName(String workerName, IWorkerConfigDataService workerConfigHome, WorkerManagerSingletonBean workerManagerSession, SignServerContext workerContext) {
         int retval = 0;
         loadWorkers(workerConfigHome, workerManagerSession, workerContext);
         if (nameToIdMap.get(workerName) == null) {
@@ -118,7 +112,7 @@ public class WorkerFactory {
     /**
      * Method to load all available signers
      */
-    private void loadWorkers(IWorkerConfigDataService workerConfigHome, IWorkerManagerSessionLocal workerManagerSession, SignServerContext workerContext) {
+    private void loadWorkers(IWorkerConfigDataService workerConfigHome, WorkerManagerSingletonBean workerManagerSession, SignServerContext workerContext) {
         if (workerStore == null) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Loading workers into WorkerFactory.");
@@ -167,7 +161,7 @@ public class WorkerFactory {
         }
     }
     
-    private void initWorker(final IWorker worker, final int workerId, final WorkerConfig config, final IWorkerConfigDataService workerConfigHome, final IWorkerManagerSessionLocal workerManagerSession, final SignServerContext workerContext) {
+    private void initWorker(final IWorker worker, final int workerId, final WorkerConfig config, final IWorkerConfigDataService workerConfigHome, final WorkerManagerSingletonBean workerManagerSession, final SignServerContext workerContext) {
         final String cryptoTokenName = config.getProperty("CRYPTOTOKEN");
         SignServerContext context = workerContext.newInstance();
         if (cryptoTokenName != null) {
@@ -216,7 +210,7 @@ public class WorkerFactory {
      * Method used to force a reload of worker. 
      * @param id of worker
      */
-    public synchronized void reloadWorker(int id, IWorkerConfigDataService workerConfigHome, IWorkerManagerSessionLocal workerManagerSession, SignServerContext workerContext) {
+    public synchronized void reloadWorker(int id, IWorkerConfigDataService workerConfigHome, WorkerManagerSingletonBean workerManagerSession, SignServerContext workerContext) {
         if (workerStore == null) {
             workerStore = new HashMap<Integer, IWorker>();
             nameToIdMap = new HashMap<String, Integer>();

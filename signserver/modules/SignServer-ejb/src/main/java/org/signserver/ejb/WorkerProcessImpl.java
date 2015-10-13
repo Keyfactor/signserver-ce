@@ -39,7 +39,7 @@ import org.signserver.common.SignServerConstants;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.IWorkerSession;
-import org.signserver.ejb.worker.impl.IWorkerManagerSessionLocal;
+import org.signserver.ejb.worker.impl.WorkerManagerSingletonBean;
 import org.signserver.server.AccounterException;
 import org.signserver.server.BaseProcessable;
 import org.signserver.server.IClientCredential;
@@ -77,7 +77,7 @@ class WorkerProcessImpl {
 
     private final IKeyUsageCounterDataService keyUsageCounterDataService;
 
-    private final IWorkerManagerSessionLocal workerManagerSession;
+    private final WorkerManagerSingletonBean workerManagerSession;
 
     private final SecurityEventsLoggerSessionLocal logSession;
 
@@ -89,7 +89,7 @@ class WorkerProcessImpl {
      * @param workerManagerSession The worker manager session
      * @param logSession The log session
      */
-    public WorkerProcessImpl(EntityManager em, IKeyUsageCounterDataService keyUsageCounterDataService, IWorkerManagerSessionLocal workerManagerSession, SecurityEventsLoggerSessionLocal logSession) {
+    public WorkerProcessImpl(EntityManager em, IKeyUsageCounterDataService keyUsageCounterDataService, WorkerManagerSingletonBean workerManagerSession, SecurityEventsLoggerSessionLocal logSession) {
         this.em = em;
         this.keyUsageCounterDataService = keyUsageCounterDataService;
         this.workerManagerSession = workerManagerSession;

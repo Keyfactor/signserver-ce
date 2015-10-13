@@ -179,13 +179,8 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
         synchronized (manager) {
             workerConfig = getWorkerConfig(workerId);
             if (workerConfig == null) {
-                create(workerId, WorkerConfig.class.getName());
-                workerConfig = getWorkerConfig(workerId);
+                workerConfig = new WorkerConfig();
             }
-        }
-        
-        if (workerConfig == null) {
-            throw new FileBasedDatabaseException("Could not load from or write data to file based database");
         }
 
         return workerConfig;

@@ -24,6 +24,7 @@ import org.signserver.common.WorkerStatus;
 import org.signserver.testutils.ModulesTestCase;
 import org.junit.Before;
 import org.junit.Test;
+import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 
@@ -103,6 +104,8 @@ public class SignerStatusReportTimedServiceTest extends ModulesTestCase {
         // Setup service
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
             "WORKER" + WORKERID_SERVICE + ".CLASSPATH",
+            "org.signserver.server.timedservices.SignerStatusReportTimedService");
+        workerSession.setWorkerProperty(WORKERID_SERVICE, WorkerConfig.IMPLEMENTATION_CLASS,
             "org.signserver.server.timedservices.SignerStatusReportTimedService");
 
         workerSession.setWorkerProperty(WORKERID_SERVICE, "WORKERS",

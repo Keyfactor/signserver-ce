@@ -1,3 +1,16 @@
+SignServer 4.0.0
+----------------
+
+
+Notice:
+ - The way to specify a worker's implementation class name in properties form
+   has changed. Previously it was specified as:
+   GLOB.WORKER4711.CLASSPATH=org.signserver.module.pdfsigner.PDFSigner
+   But now it should be specified as a worker property:
+   WORKER4711.IMPLEMENTATION_CLASS=org.signserver.module.pdfsigner.PDFSigner
+   Exported configurations might have to be adopted.
+   SignServer will try to upgrade existing configurations during startup.
+
 SignServer 3.7.0
 ----------------
 

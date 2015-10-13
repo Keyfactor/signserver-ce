@@ -44,6 +44,7 @@ import org.signserver.validationservice.common.ValidationServiceConstants;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
+import org.signserver.common.WorkerConfig;
 import org.signserver.common.util.PathUtil;
 import org.signserver.testutils.ModulesTestCase;
 
@@ -202,6 +203,7 @@ public class CRLValidatorTest extends ModulesTestCase {
 
         // Setup worker
         gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER15.CLASSPATH", "org.signserver.validationservice.server.ValidationServiceWorker");
+        sSSession.setWorkerProperty(15, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.validationservice.server.ValidationServiceWorker");
         gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER15.SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.KeystoreCryptoToken");
         sSSession.setWorkerProperty(15, "KEYSTOREPATH",
                 getSignServerHome() + File.separator + "res" + File.separator +
@@ -433,6 +435,7 @@ public class CRLValidatorTest extends ModulesTestCase {
     @Test
     public void test99RemoveDatabase() throws Exception {
         gCSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER15.CLASSPATH");
+        sSSession.removeWorkerProperty(15, WorkerConfig.IMPLEMENTATION_CLASS);
         gCSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER15.SIGNERTOKEN.CLASSPATH");
 
         sSSession.removeWorkerProperty(15, "AUTHTYPE");

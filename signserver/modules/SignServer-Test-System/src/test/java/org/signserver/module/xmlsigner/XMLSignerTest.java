@@ -75,9 +75,8 @@ public class XMLSignerTest extends ModulesTestCase {
         addSigner("org.signserver.module.xmlsigner.XMLSigner", WORKERID, "TestXMLSigner", true);
         
         // Update path to JKS file
-        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + WORKERID2 + ".CLASSPATH", "org.signserver.module.xmlsigner.XMLSigner");
         workerSession.setWorkerProperty(WORKERID2, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.xmlsigner.XMLSigner");
-        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + WORKERID2 + ".SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.JKSCryptoToken");
+        workerSession.setWorkerProperty(WORKERID2, WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, "org.signserver.server.cryptotokens.JKSCryptoToken");
         workerSession.setWorkerProperty(WORKERID2, "NAME", "TestXMLSignerDSA");
         workerSession.setWorkerProperty(WORKERID2, "AUTHTYPE", "NOAUTH");
         workerSession.setWorkerProperty(WORKERID2, "KEYSTOREPATH",
@@ -86,9 +85,8 @@ public class XMLSignerTest extends ModulesTestCase {
         workerSession.setWorkerProperty(WORKERID2, "DEFAULTKEY", "xmlsigner4");
         workerSession.reloadConfiguration(WORKERID2);
         
-        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + WORKERID3 + ".CLASSPATH", "org.signserver.module.xmlsigner.XMLSigner");
         workerSession.setWorkerProperty(WORKERID3, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.xmlsigner.XMLSigner");
-        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + WORKERID3 + ".SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.P12CryptoToken");
+        workerSession.setWorkerProperty(WORKERID3, WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, "org.signserver.server.cryptotokens.P12CryptoToken");
         workerSession.setWorkerProperty(WORKERID3, "NAME", "TestXMLSignerECDSA");
         workerSession.setWorkerProperty(WORKERID3, "AUTHTYPE", "NOAUTH");
         workerSession.setWorkerProperty(WORKERID3, "KEYSTOREPATH",

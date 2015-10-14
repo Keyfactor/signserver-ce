@@ -21,11 +21,10 @@ import static junit.framework.TestCase.assertEquals;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
-import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.SignServerUtil;
+import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
-import org.signserver.server.cryptotokens.KeystoreInConfigCryptoToken;
 import org.signserver.server.cryptotokens.P12CryptoToken;
 import org.signserver.testutils.CLITestHelper;
 import static org.signserver.testutils.CLITestHelper.assertPrinted;
@@ -70,8 +69,8 @@ public class TokenEntriesCLITest extends ModulesTestCase {
         final String testKeyAlias1 = "testKeyAlias1";
         final File ks = createEmptyKeystore();
         try {
-            globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + tokenId + ".CLASSPATH", "org.signserver.server.signers.CryptoWorker");
-            globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + tokenId + ".SIGNERTOKEN.CLASSPATH", P12CryptoToken.class.getName());
+            workerSession.setWorkerProperty(tokenId, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.server.signers.CryptoWorker");
+            workerSession.setWorkerProperty(tokenId, WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, P12CryptoToken.class.getName());
             workerSession.setWorkerProperty(tokenId, "NAME", "TestP12CryptoToken" + tokenId);
             workerSession.setWorkerProperty(tokenId, "KEYSTOREPATH", ks.getAbsolutePath());
             workerSession.setWorkerProperty(tokenId, "KEYSTOREPASSWORD", "foo123");
@@ -104,8 +103,8 @@ public class TokenEntriesCLITest extends ModulesTestCase {
         }
         final File ks = createEmptyKeystore();
         try {
-            globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + tokenId + ".CLASSPATH", "org.signserver.server.signers.CryptoWorker");
-            globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + tokenId + ".SIGNERTOKEN.CLASSPATH", P12CryptoToken.class.getName());
+            workerSession.setWorkerProperty(tokenId, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.server.signers.CryptoWorker");
+            workerSession.setWorkerProperty(tokenId, WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, P12CryptoToken.class.getName());
             workerSession.setWorkerProperty(tokenId, "NAME", "TestP12CryptoToken" + tokenId);
             workerSession.setWorkerProperty(tokenId, "KEYSTOREPATH", ks.getAbsolutePath());
             workerSession.setWorkerProperty(tokenId, "KEYSTOREPASSWORD", "foo123");

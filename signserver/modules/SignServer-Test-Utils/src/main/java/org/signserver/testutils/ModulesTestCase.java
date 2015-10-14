@@ -431,9 +431,7 @@ public class ModulesTestCase extends TestCase {
     
     public void addDummySigner(final String className, final String cryptoTokenClassName, final int signerId, final String signerName, final File keystore, final String password, final String alias) {
         getWorkerSession().setWorkerProperty(signerId, "IMPLEMENTATION_CLASS", className);
-        getGlobalSession().setProperty(GlobalConfiguration.SCOPE_GLOBAL,
-            "WORKER" + signerId + ".SIGNERTOKEN.CLASSPATH",
-            cryptoTokenClassName);
+        getWorkerSession().setWorkerProperty(signerId, "CRYPTOTOKEN_IMPLEMENTATION_CLASS", cryptoTokenClassName);
         getWorkerSession().setWorkerProperty(signerId, "NAME", signerName);
         getWorkerSession().setWorkerProperty(signerId, "AUTHTYPE", "NOAUTH");
         getWorkerSession().setWorkerProperty(signerId, "KEYSTOREPATH", keystore.getAbsolutePath());
@@ -469,7 +467,7 @@ public class ModulesTestCase extends TestCase {
     public void addXMLValidator() throws Exception {
         // VALIDATION SERVICE
         getWorkerSession().setWorkerProperty(VALIDATION_SERVICE_WORKER_ID, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.validationservice.server.ValidationServiceWorker");
-        getGlobalSession().setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + VALIDATION_SERVICE_WORKER_ID + ".SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.KeystoreCryptoToken");
+        getWorkerSession().setWorkerProperty(VALIDATION_SERVICE_WORKER_ID, WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, "org.signserver.server.cryptotokens.KeystoreCryptoToken");
         getWorkerSession().setWorkerProperty(VALIDATION_SERVICE_WORKER_ID,
                 "KEYSTOREPATH",
                 getSignServerHome() + File.separator + "res" + File.separator +

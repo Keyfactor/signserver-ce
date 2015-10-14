@@ -41,7 +41,6 @@ import org.signserver.validationservice.common.ValidateRequest;
 import org.signserver.validationservice.common.ValidateResponse;
 import org.signserver.validationservice.common.Validation;
 import org.signserver.validationservice.common.ValidationServiceConstants;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.signserver.common.WorkerConfig;
@@ -202,9 +201,8 @@ public class CRLValidatorTest extends ModulesTestCase {
         chain2.add(certRootCA2);
 
         // Setup worker
-        gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER15.CLASSPATH", "org.signserver.validationservice.server.ValidationServiceWorker");
         sSSession.setWorkerProperty(15, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.validationservice.server.ValidationServiceWorker");
-        gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER15.SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.KeystoreCryptoToken");
+        sSSession.setWorkerProperty(15, WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, "org.signserver.server.cryptotokens.KeystoreCryptoToken");
         sSSession.setWorkerProperty(15, "KEYSTOREPATH",
                 getSignServerHome() + File.separator + "res" + File.separator +
                 "test" + File.separator + "dss10" + File.separator +

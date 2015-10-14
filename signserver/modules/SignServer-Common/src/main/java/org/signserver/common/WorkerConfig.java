@@ -77,6 +77,11 @@ public class WorkerConfig extends UpgradeableDataHashMap {
      */
     public static final String IMPLEMENTATION_CLASS = "IMPLEMENTATION_CLASS";
     
+    /**
+     * Fully qualified implementation class name for the crypto token.
+     */
+    public static final String CRYPTOTOKEN_IMPLEMENTATION_CLASS = "CRYPTOTOKEN_IMPLEMENTATION_CLASS";
+    
     private static String nodeId = null;
 
     public static final int WORKERTYPE_SERVICES = 3;
@@ -166,6 +171,10 @@ public class WorkerConfig extends UpgradeableDataHashMap {
     
     public String getImplementationClass() {
         return getProperty(IMPLEMENTATION_CLASS);
+    }
+    
+    public String getCryptoTokenImplementationClass() {
+        return getProperty(CRYPTOTOKEN_IMPLEMENTATION_CLASS);
     }
 
     /**

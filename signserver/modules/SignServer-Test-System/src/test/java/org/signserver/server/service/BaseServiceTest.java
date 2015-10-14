@@ -57,7 +57,6 @@ public class BaseServiceTest {
 
     @Test
     public void test00SetupDatabase() throws Exception {
-        gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + WORKER_ID + ".CLASSPATH", "org.signserver.server.timedservices.DummyTimedService");
         sSSession.setWorkerProperty(WORKER_ID, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.server.timedservices.DummyTimedService");
 
         sSSession.setWorkerProperty(WORKER_ID, ServiceConfig.ACTIVE, "TRUE");

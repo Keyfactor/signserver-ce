@@ -25,7 +25,6 @@ import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 import org.signserver.common.GenericSignResponse;
 import org.signserver.common.GenericValidationResponse;
-import org.signserver.common.GlobalConfiguration;
 import org.signserver.server.cryptotokens.P12CryptoToken;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.validationservice.common.Validation;
@@ -132,7 +131,6 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
         setProperties(new File(getSignServerHome(), "res/test/test-xmlvalidator-configuration.properties"));
 
         // XMLVALIDATOR: worker
-        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + CERTVALIDATION_WORKERID + ".CLASSPATH", "org.signserver.module.xmlvalidator.XMLValidator");
         workerSession.setWorkerProperty(CERTVALIDATION_WORKERID, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.xmlvalidator.XMLValidator");
         workerSession.setWorkerProperty(XMLVALIDATOR_WORKERID, "NAME", XMLVALIDATOR_WORKER);
         workerSession.setWorkerProperty(XMLVALIDATOR_WORKERID, "AUTHTYPE", "NOAUTH");
@@ -142,9 +140,8 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
 
     private void setupSigner(int workerId, String workerName, File keystore,
                              String keystorePassword, final String defaultAlias) throws Exception {
-        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + workerId + ".CLASSPATH", "org.signserver.module.xmlsigner.XMLSigner");
         workerSession.setWorkerProperty(workerId, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.xmlsigner.XMLSigner");
-        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.P12CryptoToken");
+        workerSession.setWorkerProperty(workerId, WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, "org.signserver.server.cryptotokens.P12CryptoToken");
         workerSession.setWorkerProperty(workerId, "NAME", workerName);
         workerSession.setWorkerProperty(workerId, "AUTHTYPE", "NOAUTH");
         workerSession.setWorkerProperty(workerId, P12CryptoToken.KEYSTOREPATH, keystore.getAbsolutePath());
@@ -158,7 +155,6 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
     }
 
     private void setupValidation() {
-        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + CERTVALIDATION_WORKERID + ".CLASSPATH", "org.signserver.validationservice.server.ValidationServiceWorker");
         workerSession.setWorkerProperty(CERTVALIDATION_WORKERID, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.validationservice.server.ValidationServiceWorker");
         workerSession.setWorkerProperty(CERTVALIDATION_WORKERID, "AUTHTYPE", "NOAUTH");
         workerSession.setWorkerProperty(CERTVALIDATION_WORKERID, "NAME", CERTVALIDATION_WORKER);

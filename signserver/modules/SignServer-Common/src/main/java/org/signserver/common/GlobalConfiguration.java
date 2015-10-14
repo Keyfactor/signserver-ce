@@ -40,9 +40,6 @@ public class GlobalConfiguration implements Serializable {
     public static final String STATE_OUTOFSYNC = "OUTOFSYNC";
     public static final String WORKERPROPERTY_BASE = "WORKER";
     public static final String WORKERPROPERTY_CLASSPATH = ".CLASSPATH";
-    public static final String CRYPTOTOKENPROPERTY_BASE = ".CRYPTOTOKEN";
-    public static final String OLD_CRYPTOTOKENPROPERTY_BASE = ".SIGNERTOKEN";
-    public static final String CRYPTOTOKENPROPERTY_CLASSPATH = ".CLASSPATH";
 
     private final Properties config;
     private final String state;
@@ -94,26 +91,6 @@ public class GlobalConfiguration implements Serializable {
      */
     public String getState() {
         return state;
-    }
-
-    /**
-     * Returns the property specific to a cryptotoken,
-     * This should only be used with signers and not with
-     * cryptotokens.
-     *
-     * @param workerId
-     * @param cryptotokenproperty
-     * @return return the given cryptotoken property or nul
-     */
-    public String getCryptoTokenProperty(int workerId,
-            String cryptotokenproperty) {
-        String key = WORKERPROPERTY_BASE + workerId
-                + CRYPTOTOKENPROPERTY_BASE + cryptotokenproperty;
-        if (getProperty(SCOPE_GLOBAL, key) == null) {
-            key = WORKERPROPERTY_BASE + workerId
-                    + OLD_CRYPTOTOKENPROPERTY_BASE + cryptotokenproperty;
-        }
-        return getProperty(SCOPE_GLOBAL, key);
     }
 
     /**

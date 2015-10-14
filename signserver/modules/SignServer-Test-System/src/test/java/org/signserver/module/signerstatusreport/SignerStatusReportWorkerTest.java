@@ -98,9 +98,6 @@ public class SignerStatusReportWorkerTest extends WebTestCase {
         addDummySigner(WORKERID_SIGNER3, WORKER_SIGNER3, false);
 
         // Setup service
-        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
-            "WORKER" + WORKERID_WORKER + ".CLASSPATH",
-            "org.signserver.module.signerstatusreport.SignerStatusReportWorker");
         workerSession.setWorkerProperty(WORKERID_WORKER, WorkerConfig.IMPLEMENTATION_CLASS,
             "org.signserver.module.signerstatusreport.SignerStatusReportWorker");
         

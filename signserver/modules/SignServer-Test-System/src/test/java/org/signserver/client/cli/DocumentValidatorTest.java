@@ -22,7 +22,6 @@ import org.junit.After;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.client.cli.defaultimpl.ValidateDocumentCommand;
-import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.SignServerUtil;
 import org.signserver.module.xmlvalidator.XMLValidatorTestData;
 import org.signserver.testutils.ModulesTestCase;
@@ -91,7 +90,6 @@ public class DocumentValidatorTest extends ModulesTestCase {
     public void test00SetupDatabase() throws Exception {
 
         // VALIDATION SERVICE
-        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER17.CLASSPATH", "org.signserver.validationservice.server.ValidationServiceWorker");
         workerSession.setWorkerProperty(17, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.validationservice.server.ValidationServiceWorker");
         workerSession.setWorkerProperty(17, "AUTHTYPE", "NOAUTH");
         workerSession.setWorkerProperty(17, "NAME", VALIDATION_WORKER);

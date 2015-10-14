@@ -61,9 +61,8 @@ public class CustomAuthTest extends ModulesTestCase {
 
     @Test
     public void test00SetupDatabase() throws Exception {
-        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER9.CLASSPATH", "org.signserver.module.tsa.TimeStampSigner");
         workerSession.setWorkerProperty(9, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.tsa.TimeStampSigner");
-        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER9.SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.P12CryptoToken");
+        workerSession.setWorkerProperty(9, WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, "org.signserver.server.cryptotokens.P12CryptoToken");
 
         workerSession.setWorkerProperty(9, "AUTHTYPE", "org.signserver.server.DummyAuthorizer");
         workerSession.setWorkerProperty(9, "TESTAUTHPROP", "DATA");

@@ -126,11 +126,9 @@ public abstract class AbstractTestCase extends TestCase {
                     "org.signserver.server.cryptotokens.JKSCryptoToken" :
                     "org.signserver.server.cryptotokens.P12CryptoToken";
 
-        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
-            "WORKER" + signerId + ".CLASSPATH",
+        workerSession.setWorkerProperty(signerId, WorkerConfig.IMPLEMENTATION_CLASS,
             "org.signserver.module.xmlsigner.XMLSigner");
-        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
-            "WORKER" + signerId + ".SIGNERTOKEN.CLASSPATH", signerTokenClass);
+        workerSession.setWorkerProperty(signerId, WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, signerTokenClass);
 
         workerSession.setWorkerProperty(signerId, "NAME", signerName);
         workerSession.setWorkerProperty(signerId, "AUTHTYPE", "NOAUTH");

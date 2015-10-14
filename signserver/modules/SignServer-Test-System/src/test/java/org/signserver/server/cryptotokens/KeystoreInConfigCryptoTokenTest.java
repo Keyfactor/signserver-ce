@@ -17,7 +17,6 @@ import java.util.HashSet;
 import java.util.Set;
 import org.apache.log4j.Logger;
 import org.signserver.common.CryptoTokenOfflineException;
-import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.KeyTestResult;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerConfig;
@@ -52,9 +51,8 @@ public class KeystoreInConfigCryptoTokenTest extends KeystoreCryptoTokenTestBase
     
     private void setCMSSignerPropertiesSeparateToken(final int workerId, final int tokenId, boolean autoActivate) throws Exception {
         // Setup crypto token
-        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + tokenId + ".CLASSPATH", "org.signserver.server.signers.CryptoWorker");
         workerSession.setWorkerProperty(tokenId, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.server.signers.CryptoWorker");
-        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + tokenId + ".SIGNERTOKEN.CLASSPATH", KeystoreInConfigCryptoToken.class.getName());
+        workerSession.setWorkerProperty(tokenId, WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, KeystoreInConfigCryptoToken.class.getName());
         workerSession.setWorkerProperty(tokenId, "NAME", "TestCryptoTokenInConfig");
 
         if (autoActivate) {
@@ -66,7 +64,6 @@ public class KeystoreInConfigCryptoTokenTest extends KeystoreCryptoTokenTestBase
         workerSession.setWorkerProperty(tokenId, "DEFAULTKEY", SIGN_KEY_ALIAS);
 
         // Setup worker
-        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + workerId + ".CLASSPATH", "org.signserver.module.cmssigner.CMSSigner");
         workerSession.setWorkerProperty(workerId, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.cmssigner.CMSSigner");
         workerSession.setWorkerProperty(workerId, "NAME", "CMSSignerConfigToken");
         workerSession.setWorkerProperty(workerId, "AUTHTYPE", "NOAUTH");

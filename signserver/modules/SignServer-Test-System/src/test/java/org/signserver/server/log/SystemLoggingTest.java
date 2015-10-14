@@ -574,8 +574,8 @@ public class SystemLoggingTest extends ModulesTestCase {
         }
 
         // Setup crypto token
-        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + tokenId + ".CLASSPATH", "org.signserver.server.signers.CryptoWorker");
-        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + tokenId + ".SIGNERTOKEN.CLASSPATH", KeystoreCryptoToken.class.getName());
+        workerSession.setWorkerProperty(tokenId, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.server.signers.CryptoWorker");
+        workerSession.setWorkerProperty(tokenId, WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, KeystoreCryptoToken.class.getName());
         workerSession.setWorkerProperty(tokenId, "NAME", tokenName);
         workerSession.setWorkerProperty(tokenId, "KEYSTORETYPE", "PKCS12");
         workerSession.setWorkerProperty(tokenId, "KEYSTOREPATH", keystoreFile.getAbsolutePath());

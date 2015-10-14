@@ -89,9 +89,8 @@ public class ValidationCLITest extends ModulesTestCase {
         validChain1.add(validRootCA1);
         validChain1.add(validSubCA1);
 
-        gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER16.CLASSPATH", "org.signserver.validationservice.server.ValidationServiceWorker");
         sSSession.setWorkerProperty(16, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.validationservice.server.ValidationServiceWorker");
-        gCSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER16.SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.KeystoreCryptoToken");
+        sSSession.setWorkerProperty(16, WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, "org.signserver.server.cryptotokens.KeystoreCryptoToken");
 
 
         sSSession.setWorkerProperty(16, "AUTHTYPE", "NOAUTH");

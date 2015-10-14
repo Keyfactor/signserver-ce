@@ -66,9 +66,8 @@ public class XMLValidatorTest extends ModulesTestCase {
     @Test
     public void test00SetupDatabase() throws Exception {
         // VALIDATION SERVICE
-        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER17.CLASSPATH", "org.signserver.validationservice.server.ValidationServiceWorker");
         workerSession.setWorkerProperty(17, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.validationservice.server.ValidationServiceWorker");
-        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER17.SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.KeystoreCryptoToken");
+        workerSession.setWorkerProperty(17, WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, "org.signserver.server.cryptotokens.KeystoreCryptoToken");
         workerSession.setWorkerProperty(17, "KEYSTOREPATH",
                 getSignServerHome() + File.separator + "res" + File.separator +
                         "test" + File.separator + "dss10" + File.separator +

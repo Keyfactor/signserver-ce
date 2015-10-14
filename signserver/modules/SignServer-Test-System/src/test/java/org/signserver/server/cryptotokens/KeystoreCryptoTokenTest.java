@@ -36,9 +36,9 @@ import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.signserver.common.CryptoTokenOfflineException;
-import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.TokenOutOfSpaceException;
+import org.signserver.common.WorkerConfig;
 
 /**
  * System tests for the KeystoreCryptoToken.
@@ -84,8 +84,8 @@ public class KeystoreCryptoTokenTest extends KeystoreCryptoTokenTestBase {
         }
 
         // Setup worker
-        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + workerId + ".CLASSPATH", "org.signserver.module.cmssigner.CMSSigner");
-        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", KeystoreCryptoToken.class.getName());
+        workerSession.setWorkerProperty(workerId, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.cmssigner.CMSSigner");
+        workerSession.setWorkerProperty(workerId, WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, KeystoreCryptoToken.class.getName());
         workerSession.setWorkerProperty(workerId, "NAME", "CMSSignerP12");
         workerSession.setWorkerProperty(workerId, "KEYSTORETYPE", "PKCS12");
         workerSession.setWorkerProperty(workerId, "AUTHTYPE", "NOAUTH");
@@ -112,8 +112,8 @@ public class KeystoreCryptoTokenTest extends KeystoreCryptoTokenTestBase {
         }
 
         // Setup crypto token
-        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + tokenId + ".CLASSPATH", "org.signserver.server.signers.CryptoWorker");
-        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + tokenId + ".SIGNERTOKEN.CLASSPATH", KeystoreCryptoToken.class.getName());
+        workerSession.setWorkerProperty(tokenId, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.server.signers.CryptoWorker");
+        workerSession.setWorkerProperty(tokenId, WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, KeystoreCryptoToken.class.getName());
         workerSession.setWorkerProperty(tokenId, "NAME", "TestCryptoTokenP12");
         workerSession.setWorkerProperty(tokenId, "KEYSTORETYPE", "PKCS12");
         workerSession.setWorkerProperty(tokenId, "KEYSTOREPATH", keystoreFile.getAbsolutePath());
@@ -125,7 +125,7 @@ public class KeystoreCryptoTokenTest extends KeystoreCryptoTokenTestBase {
         }
 
         // Setup worker
-        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + workerId + ".CLASSPATH", "org.signserver.module.cmssigner.CMSSigner");
+        workerSession.setWorkerProperty(workerId, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.cmssigner.CMSSigner");
         workerSession.setWorkerProperty(workerId, "NAME", "CMSSignerP12");
         workerSession.setWorkerProperty(workerId, "AUTHTYPE", "NOAUTH");
         workerSession.setWorkerProperty(workerId, "CRYPTOTOKEN", "TestCryptoTokenP12");

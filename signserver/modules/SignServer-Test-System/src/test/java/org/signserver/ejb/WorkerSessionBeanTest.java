@@ -37,7 +37,6 @@ import org.signserver.ejb.interfaces.IWorkerSession;
 public class WorkerSessionBeanTest extends ModulesTestCase {
 
     private final IWorkerSession workerSession = getWorkerSession();
-    private final IGlobalConfigurationSession globalSession = getGlobalSession();
     
     /**
      * Set up the test case
@@ -49,13 +48,9 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
 
     @Test
     public void test00SetupDatabase() throws Exception {
-        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
-                "WORKER3.CLASSPATH",
-                "org.signserver.module.mrtdsigner.MRTDSigner");
         workerSession.setWorkerProperty(3, WorkerConfig.IMPLEMENTATION_CLASS,
                 "org.signserver.module.mrtdsigner.MRTDSigner");
-        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
-                "WORKER3.SIGNERTOKEN.CLASSPATH",
+        workerSession.setWorkerProperty(3, WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS,
                 "org.signserver.server.cryptotokens.KeystoreCryptoToken");
 
         workerSession.setWorkerProperty(3, "KEYSTOREPATH",

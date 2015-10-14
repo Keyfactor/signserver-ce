@@ -63,6 +63,7 @@ import org.signserver.validationservice.common.ValidationServiceConstants;
 import org.signserver.validationservice.server.ValidationTestUtils;
 import org.junit.Before;
 import org.junit.Test;
+import org.signserver.common.WorkerConfig;
 import org.signserver.common.util.PathUtil;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
@@ -102,8 +103,8 @@ public class MainWebServiceTestSeparately extends ModulesTestCase {
 
     @Test
     public void test00SetupDatabase() throws Exception {
-        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER9.CLASSPATH", "org.signserver.module.tsa.TimeStampSigner");
-        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER9.SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.P12CryptoToken");
+        workerSession.setWorkerProperty(9, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.tsa.TimeStampSigner");
+        workerSession.setWorkerProperty(9, WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, "org.signserver.server.cryptotokens.P12CryptoToken");
 
         workerSession.setWorkerProperty(9, "AUTHTYPE", "org.signserver.server.DummyAuthorizer");
         workerSession.setWorkerProperty(9, "TESTAUTHPROP", "DATA");
@@ -131,8 +132,8 @@ public class MainWebServiceTestSeparately extends ModulesTestCase {
         validChain1.add(validRootCA1);
         validChain1.add(validSubCA1);
 
-        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER16.CLASSPATH", "org.signserver.validationservice.server.ValidationServiceWorker");
-        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER16.SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.KeystoreCryptoToken");
+        workerSession.setWorkerProperty(16, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.validationservice.server.ValidationServiceWorker");
+        workerSession.setWorkerProperty(16, WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, "org.signserver.server.cryptotokens.KeystoreCryptoToken");
 
         workerSession.setWorkerProperty(16, "KEYSTOREPATH",
                 signserverhome + File.separator + "res" + File.separator +

@@ -202,6 +202,10 @@ public class StartServicesServlet extends HttpServlet {
         LOG.debug("<doGet()");
     } // doGet
 
+    private static final String CRYPTOTOKENPROPERTY_BASE = ".CRYPTOTOKEN";
+    private static final String OLD_CRYPTOTOKENPROPERTY_BASE = ".SIGNERTOKEN";
+    private static final String CRYPTOTOKENPROPERTY_CLASSPATH = ".CLASSPATH";
+    
     private void upgradeDatabase(AdminInfo admin) {
         
         // Perform the upgrade from DSS-1055
@@ -231,6 +235,15 @@ public class StartServicesServlet extends HttpServlet {
                                 LOG.info("Upgraded config for worker " + workerid);
                             } else {
                                 LOG.debug("Worker " + workerid + " already upgraded");
+                            }
+                        } else if (propertykey.equalsIgnoreCase(".CRYPTOTOKEN.CLASSPATH") 
+                                    || propertykey.equalsIgnoreCase(".SIGNERTOKEN.CLASSPATH")) {
+                            
+                            if (!workerSession.getCurrentWorkerConfig(workerid).getProperties().containsKey(WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS)) {
+                                workerSession.setWorkerProperty(admin, workerid, WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, globalConfig.getProperty(key));
+                                LOG.info("Upgraded crypto config for worker " + workerid);
+                            } else {
+                                LOG.debug("Worker " + workerid + " cryptotoken already upgraded");
                             }
                         }
                     } catch (Exception ex) {

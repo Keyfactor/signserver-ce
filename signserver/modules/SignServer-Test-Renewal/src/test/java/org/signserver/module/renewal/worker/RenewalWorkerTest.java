@@ -773,8 +773,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
     	
     	getWorkerSession().setWorkerProperty(signerId, WorkerConfig.IMPLEMENTATION_CLASS,
                 "org.signserver.module.renewal.worker.RenewalWorker");
-            getGlobalSession().setProperty(GlobalConfiguration.SCOPE_GLOBAL,
-                "WORKER" + signerId + ".SIGNERTOKEN.CLASSPATH",
+        getWorkerSession().setWorkerProperty(signerId, WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS,
                 "org.signserver.server.cryptotokens.P12CryptoToken");
 
         getWorkerSession().setWorkerProperty(signerId, "NAME", signerName);

@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.TreeMap;
 import javax.persistence.EntityManager;
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
@@ -148,8 +149,8 @@ public class BaseProcessableTest extends TestCase {
         WorkerConfig workerConfig = new WorkerConfig();
         
         // Exercising all properties (except SLOTLISTINDEX)
-        globalConfig.setProperty("GLOB.WORKER" + workerId + ".CLASSPATH", TestSigner.class.getName());
-        globalConfig.setProperty("GLOB.WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", MockedCryptoToken.class.getName());
+        workerConfig.setProperty(WorkerConfig.IMPLEMENTATION_CLASS, TestSigner.class.getName());
+        workerConfig.setProperty(WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, MockedCryptoToken.class.getName());
         workerConfig.setProperty("NAME", "TestSigner100");
         workerConfig.setProperty("SHAREDLIBRARY", "/opt/hsm/pkcs11.so");
         workerConfig.setProperty("SHAREDLIBRARYNAME", "P11Library");
@@ -161,11 +162,11 @@ public class BaseProcessableTest extends TestCase {
         MockedCryptoToken actualToken = (MockedCryptoToken) instance.getCryptoToken();
         Properties actualProperties = actualToken.getProps();
         
-        assertEquals("same as worker config", workerConfig.getProperties().toString(), actualProperties.toString());
+        assertEquals("same as worker config", new TreeMap<>(workerConfig.getProperties()).toString(), new TreeMap<>(actualProperties).toString());
         
         // Exercising all properties (except SLOT)
-        globalConfig.setProperty("GLOB.WORKER" + workerId + ".CLASSPATH", TestSigner.class.getName());
-        globalConfig.setProperty("GLOB.WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", MockedCryptoToken.class.getName());
+        workerConfig.setProperty(WorkerConfig.IMPLEMENTATION_CLASS, TestSigner.class.getName());
+        workerConfig.setProperty(WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, MockedCryptoToken.class.getName());
         workerConfig.setProperty("NAME", "TestSigner100");
         workerConfig.setProperty("SHAREDLIBRARY", "/opt/hsm/pkcs11.so");
         workerConfig.setProperty("SHAREDLIBRARYNAME", "P11Library");
@@ -177,7 +178,7 @@ public class BaseProcessableTest extends TestCase {
         actualToken = (MockedCryptoToken) instance.getCryptoToken();
         actualProperties = actualToken.getProps();
         
-        assertEquals("same as worker config", workerConfig.getProperties().toString(), actualProperties.toString());
+        assertEquals("same as worker config", new TreeMap<>(workerConfig.getProperties()).toString(), new TreeMap<>(actualProperties).toString());
     }
     
     /** 
@@ -193,8 +194,8 @@ public class BaseProcessableTest extends TestCase {
         WorkerConfig workerConfig = new WorkerConfig();
         
         // SLOTLISTINDEX only in GlobalConfiguration
-        globalConfig.setProperty("GLOB.WORKER" + workerId + ".CLASSPATH", TestSigner.class.getName());
-        globalConfig.setProperty("GLOB.WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", MockedCryptoToken.class.getName());
+        workerConfig.setProperty(WorkerConfig.IMPLEMENTATION_CLASS, TestSigner.class.getName());
+        workerConfig.setProperty(WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, MockedCryptoToken.class.getName());
         globalConfig.setProperty("GLOB.DEFAULT.SLOTLISTINDEX", "33");
         workerConfig.setProperty("NAME", "TestSigner100");
         workerConfig.setProperty("ATTRIBUTES", SAMPLE_ATTRIBUTES);
@@ -211,8 +212,8 @@ public class BaseProcessableTest extends TestCase {
                 expectedProperties.toString(), actualProperties.toString());
         
         // SLOTLISTINDEX both in GlobalConfiguration and in Worker Config
-        globalConfig.setProperty("GLOB.WORKER" + workerId + ".CLASSPATH", TestSigner.class.getName());
-        globalConfig.setProperty("GLOB.WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", MockedCryptoToken.class.getName());
+        workerConfig.setProperty(WorkerConfig.IMPLEMENTATION_CLASS, TestSigner.class.getName());
+        workerConfig.setProperty(WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, MockedCryptoToken.class.getName());
         globalConfig.setProperty("GLOB.DEFAULT.SLOTLISTINDEX", "33");
         workerConfig.setProperty("NAME", "TestSigner100");
         workerConfig.setProperty("SHAREDLIBRARY", "/opt/hsm/pkcs11.so");
@@ -249,8 +250,8 @@ public class BaseProcessableTest extends TestCase {
         WorkerConfig workerConfig = new WorkerConfig();
         
         // All PKCS#11 properties that can have default values in GlobalConfiguration (except SLOTLISTINDEX, ATTRIBUTES)
-        globalConfig.setProperty("GLOB.WORKER" + workerId + ".CLASSPATH", TestSigner.class.getName());
-        globalConfig.setProperty("GLOB.WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", MockedCryptoToken.class.getName());
+        workerConfig.setProperty(WorkerConfig.IMPLEMENTATION_CLASS, TestSigner.class.getName());
+        workerConfig.setProperty(WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, MockedCryptoToken.class.getName());
         globalConfig.setProperty("GLOB.DEFAULT.SHAREDLIBRARY", "/opt/hsm/default-pkcs11.so");
         globalConfig.setProperty("GLOB.DEFAULT.SHAREDLIBRARYNAME", "DefaultLibrary");
         globalConfig.setProperty("GLOB.DEFAULT.SLOT", "44");
@@ -271,11 +272,11 @@ public class BaseProcessableTest extends TestCase {
         expectedProperties.setProperty("ATTRIBUTESFILE", "/opt/hsm/default-sunpkcs11.cfg");
         expectedProperties.setProperty("PIN", "FooBar789");
         assertEquals("default SHAREDLIBRARY etc used", 
-                expectedProperties.toString(), actualProperties.toString());
-        
+                new TreeMap<>(expectedProperties).toString(), new TreeMap<>(actualProperties).toString());
+
         // All PKCS#11 properties that can have default values GlobalConfiguration and overriden in Worker Config (except SLOTLISTINDEX, ATTRIBUTES)
-        globalConfig.setProperty("GLOB.WORKER" + workerId + ".CLASSPATH", TestSigner.class.getName());
-        globalConfig.setProperty("GLOB.WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", MockedCryptoToken.class.getName());
+        workerConfig.setProperty(WorkerConfig.IMPLEMENTATION_CLASS, TestSigner.class.getName());
+        workerConfig.setProperty(WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, MockedCryptoToken.class.getName());
         globalConfig.setProperty("GLOB.DEFAULT.SHAREDLIBRARY", "/opt/hsm/default-pkcs11.so");
         globalConfig.setProperty("GLOB.DEFAULT.SHAREDLIBRARYNAME", "DefaultLibrary");
         globalConfig.setProperty("GLOB.DEFAULT.SLOT", "44");
@@ -310,8 +311,8 @@ public class BaseProcessableTest extends TestCase {
         Properties globalConfig = new Properties();
         WorkerConfig workerConfig = new WorkerConfig();
         
-        globalConfig.setProperty("GLOB.WORKER" + workerId + ".CLASSPATH", TestSigner.class.getName());
-        globalConfig.setProperty("GLOB.WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", "org.foo.Bar");
+        workerConfig.setProperty(WorkerConfig.IMPLEMENTATION_CLASS, TestSigner.class.getName());
+        workerConfig.setProperty(WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, "org.foo.Bar");
         workerConfig.setProperty("NAME", "TestSigner100");
         
         TestSigner instance = new TestSigner(globalConfig);
@@ -333,8 +334,8 @@ public class BaseProcessableTest extends TestCase {
 
         Properties globalConfig = new Properties();
         WorkerConfig workerConfig = new WorkerConfig();
-        globalConfig.setProperty("GLOB.WORKER" + workerId + ".CLASSPATH", TestSigner.class.getName());
-        globalConfig.setProperty("GLOB.WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", MockedCryptoToken.class.getName());
+        workerConfig.setProperty(WorkerConfig.IMPLEMENTATION_CLASS, TestSigner.class.getName());
+        workerConfig.setProperty(WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, MockedCryptoToken.class.getName());
         workerConfig.setProperty("NAME", "TestSigner200");
         // Note: No SIGNERCERT or SIGNERCERTCHAIN configured so cert from token should be used
 
@@ -357,8 +358,8 @@ public class BaseProcessableTest extends TestCase {
 
         Properties globalConfig = new Properties();
         WorkerConfig workerConfig = new WorkerConfig();
-        globalConfig.setProperty("GLOB.WORKER" + workerId + ".CLASSPATH", TestSigner.class.getName());
-        globalConfig.setProperty("GLOB.WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", MockedCryptoToken.class.getName());
+        workerConfig.setProperty(WorkerConfig.IMPLEMENTATION_CLASS, TestSigner.class.getName());
+        workerConfig.setProperty(WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, MockedCryptoToken.class.getName());
         workerConfig.setProperty("NAME", "TestSigner200");
 
         // Configure certbytes3 (CN=End Entity 1)
@@ -385,8 +386,8 @@ public class BaseProcessableTest extends TestCase {
         Properties globalConfig = new Properties();
         WorkerConfig workerConfig = new WorkerConfig();
 
-        globalConfig.setProperty("GLOB.WORKER" + workerId + ".CLASSPATH", TestSigner.class.getName());
-        globalConfig.setProperty("GLOB.WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", 
+        workerConfig.setProperty(WorkerConfig.IMPLEMENTATION_CLASS, TestSigner.class.getName());
+        workerConfig.setProperty(WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, 
                 "org.signserver.server.cryptotokens.PKCS11CryptoToken");
         workerConfig.setProperty("NAME", "TestSigner100");
         
@@ -448,8 +449,8 @@ public class BaseProcessableTest extends TestCase {
         WorkerConfig workerConfig = new WorkerConfig();
         
         // Exercising all properties (except SLOTLISTINDEX)
-        globalConfig.setProperty("GLOB.WORKER" + workerId + ".CLASSPATH", TestSigner.class.getName());
-        globalConfig.setProperty("GLOB.WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", MockedCryptoToken.class.getName());
+        workerConfig.setProperty(WorkerConfig.IMPLEMENTATION_CLASS, TestSigner.class.getName());
+        workerConfig.setProperty(WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, MockedCryptoToken.class.getName());
         workerConfig.setProperty("NAME", "TestSigner100");
         
         TestSigner instance = new TestSigner(globalConfig);

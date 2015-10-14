@@ -843,23 +843,21 @@ public class AddWorkerDialog extends javax.swing.JDialog {
         final String workerId =
                 ((JTextField) workerIdComboBox.getEditor().getEditorComponent())
                 .getText();
-        final String classPath = workerImplementationField.getText();
-        final String tokenClassPath = tokenImplementationField.getText();
+        final String workerClassName = workerImplementationField.getText();
+        final String tokenClassName = tokenImplementationField.getText();
         final String workerName = workerNameField.getText();
         final String workerPrefix =
                 PropertiesConstants.WORKER_PREFIX + workerId;
        
-        // insert CLASSPATH global property
-        properties.setProperty(PropertiesConstants.GLOBAL_PREFIX_DOT +
-                workerPrefix + "." + PropertiesConstants.CLASSPATH,
-                classPath);
+        // insert IMPLEMENTATION_CLASS property
+        properties.setProperty(workerPrefix + "." + PropertiesConstants.IMPLEMENTATION_CLASS,
+                workerClassName);
         
-        if (tokenClassPath != null && !tokenClassPath.isEmpty()) {
-            // insert SIGNERTOKEN.CLASSPATH global property
-            properties.setProperty(PropertiesConstants.GLOBAL_PREFIX_DOT +
-                    workerPrefix + "." + PropertiesConstants.SIGNERTOKEN +
-                    "." + PropertiesConstants.CLASSPATH,
-                    tokenClassPath);
+        if (tokenClassName != null && !tokenClassName.isEmpty()) {
+            // insert CRYPTOTOKEN_IMPLEMENTATION_CLASS property
+            properties.setProperty(workerPrefix + "."
+                    + PropertiesConstants.CRYPTOTOKEN_IMPLEMENTATION_CLASS,
+                    tokenClassName);
         }
         
         // insert NAME worker property   

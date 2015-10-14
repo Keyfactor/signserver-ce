@@ -1,8 +1,15 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+/*************************************************************************
+ *                                                                       *
+ *  SignServer: The OpenSource Automated Signing Server                  *
+ *                                                                       *
+ *  This software is free software; you can redistribute it and/or       *
+ *  modify it under the terms of the GNU Lesser General Public           *
+ *  License as published by the Free Software Foundation; either         *
+ *  version 2.1 of the License, or any later version.                    *
+ *                                                                       *
+ *  See terms of license at gnu.org.                                     *
+ *                                                                       *
+ *************************************************************************/
 package org.signserver.server.signers;
 
 import java.util.Collections;
@@ -24,6 +31,8 @@ import org.signserver.server.ServiceExecutionFailedException;
 import org.signserver.server.timedservices.ITimedService;
 
 /**
+ * Worker implementation to use as a placeholder for instance in the case a
+ * worker is missing the IMPLEMENTATION_CLASS property.
  *
  * @author Markus Kilås
  * @version $Id$
@@ -35,7 +44,11 @@ public class NoImplementationWorker extends BaseSigner implements ITimedService 
 
     private static final String WORKER_TYPE = "Worker";
 
-    
+
+    /**
+     * This implementation requires no certificates.
+     * @return Always true.
+     */
     @Override
     protected boolean isNoCertificates() {
         return true;
@@ -50,7 +63,12 @@ public class NoImplementationWorker extends BaseSigner implements ITimedService 
         }
         return status;
     }
-    
+
+    /**
+     * Get the fatal errors for this worker.
+     * @return List of errors which for this implementation always will contain
+     * an error message
+     */
     @Override
     public List<String> getFatalErrors() {
         LinkedList<String> errors = new LinkedList<>();
@@ -58,31 +76,57 @@ public class NoImplementationWorker extends BaseSigner implements ITimedService 
         return errors;
     }
 
+    /**
+     * Receives requests but always throws exception as the worker is
+     * misconfigured.
+     * @param signRequest ignored
+     * @param requestContext ignored
+     * @return never
+     * @throws IllegalRequestException
+     * @throws CryptoTokenOfflineException
+     * @throws SignServerException always as the worker is misconfigured
+     */
     @Override
     public ProcessResponse processData(ProcessRequest signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
         throw new SignServerException("Worker is misconfigured");
     }
 
+    /**
+     * Receives timed service requests but only logs an error.
+     * @throws ServiceExecutionFailedException 
+     */
     @Override
     public void work() throws ServiceExecutionFailedException {
         LOG.error("Service is misconfigured");
     }
 
+    /** 
+     * @return Always DONT_EXECUTE
+     */
     @Override
     public long getNextInterval() {
         return DONT_EXECUTE;
     }
 
+    /**
+     * @return Always false
+     */
     @Override
     public boolean isActive() {
         return false;
     }
 
+    /**
+     * @return Always false
+     */
     @Override
     public boolean isSingleton() {
         return false;
     }
 
+    /**
+     * @return No log types
+     */
     @Override
     public Set<LogType> getLogTypes() {
         return Collections.emptySet();

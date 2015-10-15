@@ -57,9 +57,13 @@ public class WorkerConfigDataService implements IWorkerConfigDataService {
         }
         WorkerConfigDataBean wcdb = new WorkerConfigDataBean();
         wcdb.setSignerId(workerId);
+        final String name = "UnamedWorker" + workerId;
+        wcdb.setSignerName(name);
 
         try {
-            setWorkerConfig(workerId, (WorkerConfig) this.getClass().getClassLoader().loadClass(configClassPath).newInstance(), wcdb);
+            final WorkerConfig config = (WorkerConfig) this.getClass().getClassLoader().loadClass(configClassPath).newInstance();
+            config.setProperty("NAME", name); // TODO
+            setWorkerConfig(workerId, config, wcdb);
         } catch (Exception e) {
             LOG.error(e);
         }
@@ -77,36 +81,43 @@ public class WorkerConfigDataService implements IWorkerConfigDataService {
         WorkerConfigDataBean wcdb = em.find(WorkerConfigDataBean.class, workerId);
 
         if (wcdb != null) {
-            java.beans.XMLDecoder decoder;
-            try {
-                decoder =
-                        new java.beans.XMLDecoder(
-                        new java.io.ByteArrayInputStream(wcdb.getSignerConfigData().getBytes("UTF8")));
-            } catch (UnsupportedEncodingException e) {
-                throw new EJBException(e);
-            }
-
-            HashMap h = (HashMap) decoder.readObject();
-            decoder.close();
-            // Handle Base64 encoded string values
-            HashMap data = new Base64GetHashMap(h);
-
-            if (data.get(WorkerConfig.CLASS) == null) {
-                // Special case, need to upgrade from signserver 1.0
-                workerConf = new ProcessableConfig(new WorkerConfig()).getWorkerConfig();
-                workerConf.loadData(data);
-                workerConf.upgrade();
-            } else {
-                try {
-                    workerConf = new WorkerConfig();
-                    workerConf.loadData(data);
-                    workerConf.upgrade();
-                } catch (Exception e) {
-                    LOG.error(e);
-                }
-            }
+            workerConf = parseWorkerConfig(wcdb);
         }
 
+        return workerConf;
+    }
+    
+    private WorkerConfig parseWorkerConfig(WorkerConfigDataBean wcdb) {
+        final WorkerConfig workerConf;
+        java.beans.XMLDecoder decoder;
+        try {
+            decoder =
+                    new java.beans.XMLDecoder(
+                    new java.io.ByteArrayInputStream(wcdb.getSignerConfigData().getBytes("UTF8")));
+        } catch (UnsupportedEncodingException e) {
+            throw new EJBException(e);
+        }
+
+        HashMap h = (HashMap) decoder.readObject();
+        decoder.close();
+        // Handle Base64 encoded string values
+        HashMap data = new Base64GetHashMap(h);
+
+        if (data.get(WorkerConfig.CLASS) == null) {
+            // Special case, need to upgrade from signserver 1.0
+            workerConf = new ProcessableConfig(new WorkerConfig()).getWorkerConfig();
+            workerConf.loadData(data);
+            workerConf.upgrade();
+        } else {
+            workerConf = new WorkerConfig();
+            try {
+                workerConf.loadData(data);
+                workerConf.upgrade();
+            } catch (Exception e) {
+                LOG.error(e);
+            }
+        }
+        workerConf.setProperty("NAME", wcdb.getSignerName());
         return workerConf;
     }
 
@@ -176,6 +187,12 @@ public class WorkerConfigDataService implements IWorkerConfigDataService {
                 wcdb = em.find(WorkerConfigDataBean.class, workerId);
             }
             wcdb.setSignerConfigData(baos.toString("UTF8"));
+            
+            // Update name
+            if (signconf.getProperty("NAME") != null) {
+                wcdb.setSignerName(signconf.getProperty("NAME"));
+            }
+
             em.persist(wcdb);
         } catch (UnsupportedEncodingException e) {
             throw new EJBException(e);
@@ -192,6 +209,29 @@ public class WorkerConfigDataService implements IWorkerConfigDataService {
             workerConfig = new WorkerConfig();
         }
         return workerConfig;
+    }
+
+    @Override
+    public void populateNameColumn() {
+        Query query = em.createQuery("SELECT w from WorkerConfigDataBean w WHERE w.signerName IS NULL"); // TODO: More efficient way to query
+        List<WorkerConfigDataBean> list = (List<WorkerConfigDataBean>) query.getResultList();
+        if (list.isEmpty()) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Found no worker configurations without name column");
+            }
+        } else {
+            LOG.info("Found " + list.size() + " worker configurations without name column");
+            for (WorkerConfigDataBean wcdb : list) {
+                WorkerConfig config = parseWorkerConfig(wcdb);
+                String name = config.getProperty("NAME");
+                if (name == null) {
+                    name = "UpgradedWorker-" + wcdb.getSignerId();
+                }
+                LOG.info("Upgrading worker configuration " + wcdb.getSignerId() + " with name " + name);
+                wcdb.setSignerName(name);
+                em.persist(wcdb);
+            }
+        }
     }
 
 }

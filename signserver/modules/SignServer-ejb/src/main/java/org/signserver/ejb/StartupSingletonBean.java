@@ -39,6 +39,7 @@ import static org.signserver.common.util.PropertiesConstants.WORKER_PREFIX;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IServiceTimerSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.ejb.worker.impl.WorkerManagerSingletonBean;
 import org.signserver.server.cesecore.AlwaysAllowLocalAuthenticationToken;
 import org.signserver.server.log.AdminInfo;
 import org.signserver.server.log.SignServerEventTypes;
@@ -81,7 +82,10 @@ public class StartupSingletonBean {
 
     @EJB
     private SecurityEventsLoggerSessionLocal logSession;
-    
+
+    @EJB
+    private WorkerManagerSingletonBean workerManager;
+
     private IServiceTimerSession.ILocal getTimedServiceSession(){
     	return timedServiceSession;
     }
@@ -229,5 +233,8 @@ public class StartupSingletonBean {
                 }
             }
         }
+        
+        // Perform the upgrade from DSS-1058
+        workerManager.upgradeWorkerNames();
     }
 }

@@ -219,5 +219,9 @@ public class WorkerManagerSingletonBean {
         
         return ejbs;
     }
+
+    public void upgradeWorkerNames() {
+        workerConfigService.populateNameColumn();
+    }
     
 }

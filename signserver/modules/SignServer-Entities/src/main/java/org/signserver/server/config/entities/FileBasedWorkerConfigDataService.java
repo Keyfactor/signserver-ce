@@ -23,7 +23,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import javax.ejb.EJBException;
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import org.bouncycastle.util.encoders.Base64;
 import org.cesecore.util.Base64GetHashMap;
 import org.cesecore.util.Base64PutHashMap;
 import org.signserver.common.FileBasedDatabaseException;
@@ -45,7 +47,9 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
     
     private final FileBasedDatabaseManager manager;
     private final File folder;
-    private static final String PREFIX = "signerdata-";
+    private static final String DATA_PREFIX = "signerdata-";
+    private static final String NAME_PREFIX = "signername-";
+    private static final String ID_PREFIX = "signerid-";
     private static final String SUFFIX = ".dat";
     private static final int SCHEMA_VERSION = 1;
 
@@ -82,6 +86,16 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
         try {
             synchronized (manager) {
                 wcdb = loadData(workerId);
+                /*if (wcdb != null) {
+                    final File nameFile = getNameFile(workerId);
+                    final String name;
+                    if (nameFile.exists()) {
+                        name = FileUtils.readFileToString(nameFile);
+                    } else {
+                        name = "UnamedWorker" + workerId;
+                    }
+                    wcdb.setSignerName(name);
+                }*/
             }
 
             if (wcdb != null) {
@@ -141,6 +155,37 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
                 WorkerConfigDataBean wcdb = new WorkerConfigDataBean();
                 wcdb.setSignerId(workerId);
                 wcdb.setSignerConfigData(baos.toString("UTF8"));
+                
+                // Update name if needed
+                String newName = signconf.getProperty("NAME");
+                if (newName != null) {
+                    
+                    final File oldNameFile = getNameFile(workerId);
+                    if (oldNameFile.exists()) {
+                        String oldName = FileUtils.readFileToString(oldNameFile);
+                        
+                        if (!newName.equals(oldName)) {
+                            final File newIdFile = getIdFile(newName);
+                            if (newIdFile.exists()) {
+                                throw new FileBasedDatabaseException("Duplicated name: \"" + newName + "\"");
+                            }
+                            
+                            wcdb.setSignerName(newName);
+                            if (!getIdFile(oldName).renameTo(newIdFile)) {
+                                throw new FileBasedDatabaseException("Could not rename from " + oldName + " to " + newName);
+                            }
+                            FileUtils.writeStringToFile(getNameFile(workerId), newName, "UTF-8");
+                        }
+                    } else {
+                        final File newIdFile = getIdFile(newName);
+                        if (newIdFile.exists()) {
+                            throw new FileBasedDatabaseException("Duplicated name: \"" + newName + "\"");
+                        }
+                        wcdb.setSignerName(newName);
+                        FileUtils.writeStringToFile(getNameFile(workerId), newName, "UTF-8");
+                    }
+                }
+
                 writeData(workerId, wcdb);
             } catch (IOException ex) {
                 throw new FileBasedDatabaseException("Could not load from or write data to file based database", ex);
@@ -160,6 +205,19 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
         try {
             synchronized (manager) {
                 removeData(workerId);
+                
+                File nameFile = getNameFile(workerId);
+                if (nameFile.exists()) {
+                    String name = FileUtils.readFileToString(nameFile);
+                    File idFile = getIdFile(name);
+                    if (!idFile.delete()) {
+                        LOG.error("File could not be removed: " + idFile.getAbsolutePath());
+                    }
+                    if (!nameFile.delete()) {
+                        LOG.error("File could not be removed: " + idFile.getAbsolutePath());
+                    }
+                }
+                
                 retval = loadData(workerId) == null;
             }
         } catch (IOException ex) {
@@ -191,7 +249,7 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
         checkSchemaVersion();
         
         WorkerConfigDataBean result;
-        final File file = new File(folder, PREFIX + workerId + SUFFIX);
+        final File file = new File(folder, DATA_PREFIX + workerId + SUFFIX);
         
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         byte[] buff = new byte[4096];
@@ -228,7 +286,7 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
         assert Thread.holdsLock(manager);
         checkSchemaVersion();
         
-        final File file = new File(folder, PREFIX + workerId + SUFFIX);
+        final File file = new File(folder, DATA_PREFIX + workerId + SUFFIX);
         
         OutputStream out = null;
         FileOutputStream fout = null;
@@ -256,7 +314,7 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
     
     private void removeData(int workerId) throws IOException {
         assert Thread.holdsLock(manager);
-        final File file = new File(folder, PREFIX + workerId + SUFFIX);
+        final File file = new File(folder, DATA_PREFIX + workerId + SUFFIX);
         file.delete();
     }
     
@@ -270,16 +328,78 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
     public List<Integer> findAllIds() {
         final LinkedList<Integer> result = new LinkedList<>();
         
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(folder.toPath(), PREFIX + "*" + SUFFIX)) {
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(folder.toPath(), DATA_PREFIX + "*" + SUFFIX)) {
             Iterator<Path> iterator = stream.iterator();
             while (iterator.hasNext()) {
                 final String fileName = iterator.next().toFile().getName();
-                final String id = fileName.substring(PREFIX.length(), fileName.length() - SUFFIX.length());
+                final String id = fileName.substring(DATA_PREFIX.length(), fileName.length() - SUFFIX.length());
                 result.add(Integer.parseInt(id));
             }
         } catch (IOException ex) {
             LOG.error("Querying all workers failed", ex);
         }
         return result;
+    }
+
+    @Override
+    public void populateNameColumn() { // TODO Check schema.version etc
+        synchronized (manager) {
+            List<Integer> list = findAllWithoutName();
+
+            if (list.isEmpty()) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Found no worker configurations without name column");
+                }
+            } else {
+                LOG.info("Found " + list.size() + " worker configurations without name column");
+                for (Integer id : list) {
+                    WorkerConfig config = getWorkerConfig(id);
+
+                    String name = config.getProperty("NAME");
+                    if (name == null) {
+                        name = "UpgradedWorker-" + id;
+                    }
+                    LOG.info("Upgrading worker configuration " + id + " with name " + name);
+                    try {
+                        FileUtils.writeStringToFile(getNameFile(id), name, "UTF-8");
+                        FileUtils.writeStringToFile(getIdFile(name), String.valueOf(id), "UTF-8");
+                    } catch (IOException ex) {
+                        LOG.error("Adding name file failed for worker configuration " + id, ex);
+                    }
+                }
+            }
+        }
+    }
+
+    private List<Integer> findAllWithoutName() {
+        final LinkedList<Integer> result = new LinkedList<>();
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(folder.toPath(), DATA_PREFIX + "*" + SUFFIX)) {
+            Iterator<Path> iterator = stream.iterator();
+            while (iterator.hasNext()) {
+                final String fileName = iterator.next().toFile().getName();
+                final int id = Integer.parseInt(fileName.substring(DATA_PREFIX.length(), fileName.length() - SUFFIX.length()));
+                final File nameFile = getNameFile(id);
+                
+                if (!nameFile.exists()) {
+                    result.add(id);
+                }
+                
+            }
+        } catch (IOException ex) {
+            LOG.error("Querying all workers failed", ex);
+        }
+        return result;
+    }
+
+    private File getNameFile(final int workerId) {
+        return new File(folder, NAME_PREFIX + String.valueOf(workerId) + SUFFIX);
+    }
+
+    private File getIdFile(final String name) {
+        try {
+            return new File(folder, ID_PREFIX + Base64.toBase64String(name.getBytes("UTF-8")) + SUFFIX);
+        } catch (UnsupportedEncodingException ex) {
+            throw new RuntimeException("Unable to UTF-8 encode", ex);
+        }
     }
 }

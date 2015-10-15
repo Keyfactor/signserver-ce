@@ -10,20 +10,18 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.web;
+package org.signserver.ejb;
 
-import java.io.IOException;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.ejb.EJB;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.UnavailableException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.ejb.EJBException;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
 import org.apache.log4j.Logger;
 import org.cesecore.audit.enums.EventStatus;
 import org.cesecore.audit.log.AuditRecordStorageException;
@@ -53,12 +51,13 @@ import org.signserver.statusrepo.common.StatusEntry;
 import org.signserver.statusrepo.common.StatusName;
 
 /**
- * Servlet used to start services by calling the ServiceTimerSession.load() at
- * startup.
+ * EJB Singleton used to start services and perform upgrades etc.
  * 
  * @version $Id$
  */
-public class StartServicesServlet extends HttpServlet {
+@Startup
+@Singleton
+public class StartupSingletonBean {
 
     private static final long serialVersionUID = 1L;
     
@@ -66,7 +65,7 @@ public class StartServicesServlet extends HttpServlet {
     
     /** Logger for this class. */
     private static final Logger LOG
-            = Logger.getLogger(StartServicesServlet.class);
+            = Logger.getLogger(StartupSingletonBean.class);
     
     @EJB
     private IServiceTimerSession.ILocal timedServiceSession;
@@ -91,12 +90,9 @@ public class StartServicesServlet extends HttpServlet {
         return statusRepositorySession;
     }
 
-    /**
-     * Method used to remove all active timers
-     * @see javax.servlet.GenericServlet#destroy()
-     */
-    @Override
-    public void destroy() {
+
+    @PreDestroy
+    private void destroy() {
         final String version = CompileTimeSettings.getInstance().getProperty(
                 CompileTimeSettings.SIGNSERVER_VERSION);
 
@@ -109,14 +105,10 @@ public class StartServicesServlet extends HttpServlet {
         } catch (Exception ex) {
             LOG.info("Exception caught trying to cancel timers. This happens with some application servers: " + ex.getMessage());
         }
-
-        super.destroy();
     }
 
-    @Override
-    public void init(ServletConfig config) throws ServletException {
-        super.init(config);
-
+    @PostConstruct
+    private void startup() {
         final CompileTimeSettings settings = CompileTimeSettings.getInstance();
         final String version = settings.getProperty(
                 CompileTimeSettings.SIGNSERVER_VERSION);
@@ -132,7 +124,7 @@ public class StartServicesServlet extends HttpServlet {
             logSession.log(SignServerEventTypes.SIGNSERVER_STARTUP, EventStatus.SUCCESS, SignServerModuleTypes.SERVICE, SignServerServiceTypes.SIGNSERVER, admin.toString(), null, null, null, details);
         } catch (AuditRecordStorageException ex) {
             LOG.error("Logging", ex);
-            throw new ServletException("Could not log", ex);
+            throw new EJBException("Could not log", ex);
         }
         
         // instanciate the P11 libraries to avoid possible race-conditions
@@ -150,7 +142,7 @@ public class StartServicesServlet extends HttpServlet {
             try {
                 nodb.initialize();
             } catch (FileBasedDatabaseException ex) {
-                throw new UnavailableException(ex.getMessage());
+                throw new EJBException(ex.getMessage());
             }
             
             final List<String> fatalErrors = nodb.getFatalErrors();
@@ -159,7 +151,7 @@ public class StartServicesServlet extends HttpServlet {
                 buff.append("Error initializing file based database manager: ");
                 buff.append(fatalErrors);
                 LOG.error(buff.toString());
-                throw new UnavailableException(buff.toString());
+                throw new EJBException(buff.toString());
             }
         }
 
@@ -182,25 +174,10 @@ public class StartServicesServlet extends HttpServlet {
                 }
             }
         } catch (NoSuchPropertyException ex) {
-            throw new RuntimeException(ex);
+            throw new EJBException(ex);
         }
         
-    } // init
-
-    @Override
-    public void doPost(HttpServletRequest req, HttpServletResponse res)
-            throws IOException, ServletException {
-        LOG.debug(">doPost()");
-        doGet(req, res);
-        LOG.debug("<doPost()");
-    } //doPost
-
-    @Override
-    public void doGet(HttpServletRequest req,  HttpServletResponse res) throws java.io.IOException, ServletException {
-        LOG.debug(">doGet()");
-        res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Servlet doesn't support requests is only loaded on startup.");
-        LOG.debug("<doGet()");
-    } // doGet
+    }
 
     private static final String CRYPTOTOKENPROPERTY_BASE = ".CRYPTOTOKEN";
     private static final String OLD_CRYPTOTOKENPROPERTY_BASE = ".SIGNERTOKEN";

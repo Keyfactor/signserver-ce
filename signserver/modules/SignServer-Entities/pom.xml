@@ -32,6 +32,11 @@
             <version>1.2.14</version>
         </dependency>
         <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>1.4</version>
+        </dependency>
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>SignServer-Lib-EJBCA-Util</artifactId>
             <version>${project.version}</version>

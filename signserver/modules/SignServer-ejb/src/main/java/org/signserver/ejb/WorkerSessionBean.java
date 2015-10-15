@@ -630,7 +630,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         WorkerConfig config = getWorkerConfig(workerId);
 
         result = config.removeProperty(key.toUpperCase());
-        if (config.getProperties().size() == 0) {
+        if (config.getProperties().size() <= 1) {
             workerConfigService.removeWorkerConfig(workerId);
             LOG.debug("WorkerConfig is empty and therefore removed.");
             auditLog(adminInfo, SignServerEventTypes.SET_WORKER_CONFIG, SignServerModuleTypes.WORKER_CONFIG, String.valueOf(workerId));

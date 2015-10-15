@@ -239,13 +239,14 @@ public class WorkerConfigDataService implements IWorkerConfigDataService {
         }
     }
 
-    @Override
+    //@Override
     public int findId(String workerName) {
         Query query = em.createQuery("SELECT w.signerId from WorkerConfigDataBean w WHERE w.signerName = :name").setParameter("name", workerName);
         Object o = query.getSingleResult();
         if (o instanceof Integer) {
             return (Integer) o;
         } else {
+            LOG.debug("oo   o: " + 0);
             return 0;
         }
     }

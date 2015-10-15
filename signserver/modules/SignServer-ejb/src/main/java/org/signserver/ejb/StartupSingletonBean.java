@@ -217,8 +217,8 @@ public class StartupSingletonBean {
                             } else {
                                 LOG.debug("Worker " + workerid + " already upgraded");
                             }
-                        } else if (propertykey.equalsIgnoreCase(".CRYPTOTOKEN.CLASSPATH") 
-                                    || propertykey.equalsIgnoreCase(".SIGNERTOKEN.CLASSPATH")) {
+                        } else if (propertykey.equalsIgnoreCase("CRYPTOTOKEN.CLASSPATH") 
+                                    || propertykey.equalsIgnoreCase("SIGNERTOKEN.CLASSPATH")) {
                             
                             if (!workerSession.getCurrentWorkerConfig(workerid).getProperties().containsKey(WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS)) {
                                 workerSession.setWorkerProperty(admin, workerid, WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, globalConfig.getProperty(key));

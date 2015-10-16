@@ -271,7 +271,7 @@ public class SignServerCLITest extends ModulesTestCase {
 
         assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
                 cli.execute("getconfig", TESTTSID));
-        assertNotPrinted("", cli.getOut(), "NAME=timestampSigner1000");
+        assertNotPrinted("", cli.getOut(), "AUTHTYPE=NOAUTH");
 
         assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
                 cli.execute("removeproperty", TESTTSID, "TESTKEY"));

@@ -12,8 +12,6 @@
  *************************************************************************/
 package org.signserver.server.config.entities;
 
-import java.io.File;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -21,7 +19,6 @@ import java.util.List;
 import javax.ejb.EJBException;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.cesecore.util.Base64GetHashMap;
 import org.cesecore.util.Base64PutHashMap;
@@ -239,14 +236,13 @@ public class WorkerConfigDataService implements IWorkerConfigDataService {
         }
     }
 
-    //@Override
+    @Override
     public int findId(String workerName) {
         Query query = em.createQuery("SELECT w.signerId from WorkerConfigDataBean w WHERE w.signerName = :name").setParameter("name", workerName);
         Object o = query.getSingleResult();
         if (o instanceof Integer) {
             return (Integer) o;
         } else {
-            LOG.debug("oo   o: " + 0);
             return 0;
         }
     }

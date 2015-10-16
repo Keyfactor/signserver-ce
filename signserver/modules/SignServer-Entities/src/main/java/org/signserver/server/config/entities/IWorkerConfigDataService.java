@@ -55,4 +55,6 @@ public interface IWorkerConfigDataService {
     List<Integer> findAllIds();
 
     void populateNameColumn();
+
+    public int findId(String workerName);
 }

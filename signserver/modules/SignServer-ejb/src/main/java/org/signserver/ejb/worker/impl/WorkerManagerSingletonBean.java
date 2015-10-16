@@ -57,12 +57,12 @@ public class WorkerManagerSingletonBean {
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(WorkerManagerSingletonBean.class);
     
-    EntityManager em;
+    private EntityManager em;
     
     private IWorkerConfigDataService workerConfigService;
     private IKeyUsageCounterDataService keyUsageCounterDataService;
     
-    private final WorkerFactory workerFactory = new WorkerFactory();
+    private WorkerFactory workerFactory;
     
     private SignServerContext workerContext;
     
@@ -85,6 +85,7 @@ public class WorkerManagerSingletonBean {
             keyUsageCounterDataService = new KeyUsageCounterDataService(em);
         }
         workerContext = new SignServerContext(em, keyUsageCounterDataService);
+        workerFactory = new WorkerFactory(workerConfigService, workerContext);
     }
 
     /**
@@ -94,8 +95,7 @@ public class WorkerManagerSingletonBean {
      * @return The worker instance
      */
     public IWorker getWorker(final int workerId) {
-        return workerFactory.getWorker(workerId,
-                workerConfigService, this, workerContext);
+        return workerFactory.getWorker(workerId);
     }
     
     /**
@@ -103,8 +103,7 @@ public class WorkerManagerSingletonBean {
      * @return returning the ID of the named Worker
      */
     public int getIdFromName(final String workerName) {
-        return workerFactory.getWorkerIdFromName(workerName.
-                toUpperCase(), workerConfigService, this, workerContext);
+        return workerFactory.getWorkerIdFromName(workerName.toUpperCase());
     }
 
     /**
@@ -113,8 +112,7 @@ public class WorkerManagerSingletonBean {
      * @param workerId Id of worker to reload
      */
     public void reloadWorker(int workerId) {
-        workerFactory.reloadWorker(workerId,
-                    workerConfigService, this, workerContext);
+        workerFactory.reloadWorker(workerId);
     }
 
     /**
@@ -214,7 +212,7 @@ public class WorkerManagerSingletonBean {
     }
     
     private Map<Class<?>, Object> getEjbs() {
-        final Map<Class<?>, Object> ejbs = new HashMap<Class<? extends Object>, Object>();
+        final Map<Class<?>, Object> ejbs = new HashMap<>();
         ejbs.put(SecurityEventsLoggerSessionLocal.class, logSession);
         
         return ejbs;

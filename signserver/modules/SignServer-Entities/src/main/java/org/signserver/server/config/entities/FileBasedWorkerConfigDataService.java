@@ -13,6 +13,7 @@
 package org.signserver.server.config.entities;
 
 import java.beans.XMLDecoder;
+import java.beans.XMLEncoder;
 import java.io.*;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -66,7 +67,7 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
 
         try {
             setWorkerConfig(workerId, (WorkerConfig) this.getClass().getClassLoader().loadClass(configClassPath).newInstance());
-        } catch (Exception e) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | FileBasedDatabaseException e) {
             LOG.error(e);
         }
     }
@@ -124,9 +125,6 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
         return result;
     }
 
-    /**
-     * Method that saves the Worker Config to database.
-     */
     @Override
     public void setWorkerConfig(int workerId, WorkerConfig signconf) throws FileBasedDatabaseException {
         synchronized (manager) {
@@ -142,11 +140,10 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
                 throw new IllegalArgumentException("WorkerConfig should return a Map");
             }
 
-            java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
-
-            java.beans.XMLEncoder encoder = new java.beans.XMLEncoder(baos);
-            encoder.writeObject(a);
-            encoder.close();
+            final ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
+            try (XMLEncoder encoder = new XMLEncoder(baos)) {
+                encoder.writeObject(a);
+            }
 
             try {
                 if (LOG.isDebugEnabled()) {
@@ -397,7 +394,7 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
         return result;
     }
     
-    //@Override
+    @Override
     public int findId(String workerName) {
         int result = 0;
         synchronized (manager) {

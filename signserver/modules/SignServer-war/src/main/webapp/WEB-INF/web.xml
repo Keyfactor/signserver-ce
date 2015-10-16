@@ -10,11 +10,6 @@
         <servlet-class>org.signserver.web.WorkerServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>GenericWSServlet</servlet-name>
-        <servlet-class>org.signserver.web.GenericWSServlet</servlet-class>
-        <load-on-startup>1</load-on-startup>
-    </servlet>
-    <servlet>
         <servlet-name>SODProcessServlet</servlet-name>
         <servlet-class>org.signserver.web.SODProcessServlet</servlet-class>
     </servlet>
@@ -53,10 +48,6 @@
     <servlet-mapping>
         <servlet-name>WorkerServlet</servlet-name>
         <url-pattern>/worker/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>GenericWSServlet</servlet-name>
-        <url-pattern>/ws/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>SODProcessServlet</servlet-name>

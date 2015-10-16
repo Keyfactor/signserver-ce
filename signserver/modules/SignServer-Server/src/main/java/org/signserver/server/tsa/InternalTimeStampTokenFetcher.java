@@ -30,6 +30,7 @@ import org.bouncycastle.asn1.cmp.PKIStatus;
 import org.bouncycastle.tsp.*;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
+import org.signserver.common.InvalidWorkerIdException;
 
 /**
  * Fetching time-stamp tokens internally using the internal worker session.
@@ -62,7 +63,11 @@ public class InternalTimeStampTokenFetcher {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Not a workerId, maybe workerName: " + workerNameOrId);
             }
-            workerId = session.getWorkerId(workerNameOrId);
+            try {
+                workerId = session.getWorkerId(workerNameOrId);
+            } catch (InvalidWorkerIdException ex2) {
+                throw new SignServerException(ex2.getMessage());
+            }
         }
 
         // Setup the time stamp request

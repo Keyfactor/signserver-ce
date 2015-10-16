@@ -18,10 +18,12 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.ejb.EJBException;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import org.apache.log4j.Logger;
 import org.cesecore.util.Base64GetHashMap;
 import org.cesecore.util.Base64PutHashMap;
+import org.signserver.common.NoSuchWorkerException;
 import org.signserver.common.ProcessableConfig;
 import org.signserver.common.WorkerConfig;
 
@@ -237,13 +239,20 @@ public class WorkerConfigDataService implements IWorkerConfigDataService {
     }
 
     @Override
-    public int findId(String workerName) {
-        Query query = em.createQuery("SELECT w.signerId from WorkerConfigDataBean w WHERE w.signerName = :name").setParameter("name", workerName);
-        Object o = query.getSingleResult();
-        if (o instanceof Integer) {
-            return (Integer) o;
-        } else {
-            return 0;
+    public int findId(String workerName) throws NoSuchWorkerException {
+        int result = 0;
+        try {
+            Query query = em.createQuery("SELECT w.signerId from WorkerConfigDataBean w WHERE w.signerName = :name").setParameter("name", workerName);
+            Object o = query.getSingleResult();
+            if (o instanceof Integer) {
+                result = (Integer) o;
+            }
+        } catch (NoResultException ex) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("No worker named " + workerName + " found: " + ex.getMessage());
+            }
+            throw new NoSuchWorkerException(workerName);
         }
+        return result;
     }
 }

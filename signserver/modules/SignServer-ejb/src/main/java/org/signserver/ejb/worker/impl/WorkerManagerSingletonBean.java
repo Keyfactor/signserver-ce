@@ -28,6 +28,7 @@ import org.apache.log4j.Logger;
 import org.cesecore.audit.log.SecurityEventsLoggerSessionLocal;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.IllegalRequestException;
+import org.signserver.common.NoSuchWorkerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.server.*;
 import org.signserver.server.IAuthorizer;
@@ -93,16 +94,18 @@ public class WorkerManagerSingletonBean {
      *
      * @param workerId Id of worker to get
      * @return The worker instance
+     * @throws NoSuchWorkerException in case the worker does not exist
      */
-    public IWorker getWorker(final int workerId) {
+    public IWorker getWorker(final int workerId) throws NoSuchWorkerException {
         return workerFactory.getWorker(workerId);
     }
     
     /**
      * @param workerName worker name to query the ID for
      * @return returning the ID of the named Worker
+     * @throws NoSuchWorkerException in case no worker with that name exists
      */
-    public int getIdFromName(final String workerName) {
+    public int getIdFromName(final String workerName) throws NoSuchWorkerException {
         return workerFactory.getWorkerIdFromName(workerName.toUpperCase());
     }
 
@@ -200,10 +203,14 @@ public class WorkerManagerSingletonBean {
         } else {
             retval = new LinkedList<>();
             for (Integer id : allIds) {
-                IWorker obj = getWorker(id);
-                if ((workerType == WorkerConfig.WORKERTYPE_PROCESSABLE && obj instanceof IProcessable)
-                        || (workerType == WorkerConfig.WORKERTYPE_SERVICES && obj instanceof ITimedService)) {
-                    retval.add(id);
+                try {
+                    IWorker obj = getWorker(id);
+                    if ((workerType == WorkerConfig.WORKERTYPE_PROCESSABLE && obj instanceof IProcessable)
+                            || (workerType == WorkerConfig.WORKERTYPE_SERVICES && obj instanceof ITimedService)) {
+                        retval.add(id);
+                    }
+                } catch (NoSuchWorkerException ex) {
+                    LOG.error("Worker no longer exists: " + ex.getMessage());
                 }
             }
         }

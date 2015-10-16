@@ -279,8 +279,9 @@ public class SignServerWS implements ISignServerWS {
         if (workerIdOrName.substring(0, 1).matches("\\d")) {
             retval = Integer.parseInt(workerIdOrName);
         } else {
-            retval = getWorkerSession().getWorkerId(workerIdOrName);
-            if (retval == 0) {
+            try {
+                retval = getWorkerSession().getWorkerId(workerIdOrName);
+            } catch (InvalidWorkerIdException ex) {
                 throw new IllegalRequestException("Error: No worker with the given name could be found");
             }
         }

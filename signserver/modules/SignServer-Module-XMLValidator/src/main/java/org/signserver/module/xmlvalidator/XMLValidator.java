@@ -259,17 +259,16 @@ public class XMLValidator extends BaseValidator {
 
     private int getValidationServiceWorkerId() {
         if (validationServiceWorkerId < 1) {
-            validationServiceWorkerId = getWorkerSession().getWorkerId(
-                    config.getProperties().getProperty(PROP_VALIDATIONSERVICEWORKER));
-
-            if (validationServiceWorkerId < 1) {
-                LOG.warn("XMLValidator[" + workerId + "] "
-                        + "Could not find worker for property "
-                        + PROP_VALIDATIONSERVICEWORKER + ": "
-                        + config.getProperties().getProperty(PROP_VALIDATIONSERVICEWORKER));
-            } else {
+            try {
+                validationServiceWorkerId = getWorkerSession().getWorkerId(
+                        config.getProperties().getProperty(PROP_VALIDATIONSERVICEWORKER));
                 LOG.info("XMLValidator[" + workerId + "] "
                         + "Will use validation service worker: " + validationServiceWorkerId);
+            } catch (InvalidWorkerIdException ex) {
+                LOG.warn("XMLValidator[" + workerId + "] "
+                    + "Could not find worker for property "
+                    + PROP_VALIDATIONSERVICEWORKER + ": "
+                    + config.getProperties().getProperty(PROP_VALIDATIONSERVICEWORKER));
             }
         }
         return validationServiceWorkerId;

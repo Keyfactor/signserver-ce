@@ -60,11 +60,9 @@ public class SignerStatusReportBuilder implements ReportBuilder {
         final StringBuilder sb = new StringBuilder();
 
         for (String worker : workers) {
-            int workerId = workerSession.getWorkerId(worker);
-            if (workerId == 0) {
-                LOG.warn("No such worker: \"" + worker + "\"");
-            } else {
+            try {
                 LOG.debug("Worker: " + worker);
+                int workerId = workerSession.getWorkerId(worker);
                 String statusString = STATUS_ACTIVE;
                 KeyUsageCounter signings = null;
                 final String pk = getKeyHash(workerId);
@@ -83,7 +81,7 @@ public class SignerStatusReportBuilder implements ReportBuilder {
                     }
                     if (status instanceof StaticWorkerStatus &&
                             ((StaticWorkerStatus) status).getTokenStatus()
-                                == WorkerStatus.STATUS_OFFLINE) {
+                            == WorkerStatus.STATUS_OFFLINE) {
                         statusString = STATUS_OFFLINE;
                     }
 
@@ -127,8 +125,8 @@ public class SignerStatusReportBuilder implements ReportBuilder {
                 if (signings != null) {
                     final long keyUsageLimit = Long.valueOf(
                             workerSession.getCurrentWorkerConfig(workerId)
-                            .getProperty(
-                                SignServerConstants.KEYUSAGELIMIT, "-1"));
+                                    .getProperty(
+                                            SignServerConstants.KEYUSAGELIMIT, "-1"));
                     sb.append("signings=");
                     sb.append(signings.getCounter());
                     sb.append(SEPARATOR);
@@ -138,6 +136,8 @@ public class SignerStatusReportBuilder implements ReportBuilder {
                 }
 
                 sb.append("\n");
+            } catch (InvalidWorkerIdException ex) {
+                LOG.warn("No such worker: \"" + worker + "\"");
             }
         }
         return sb;

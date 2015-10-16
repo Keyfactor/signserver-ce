@@ -188,6 +188,8 @@ public class RequestedPolicyDispatcher extends BaseDispatcher {
             throw new SignServerException("Response message could not be constructed", e);
         } catch (TSPException e) {
             throw new SignServerException("Response message could not be constructed", e);
+        } catch (InvalidWorkerIdException ex) {
+            throw new SignServerException("Internal policy mapping misconfigured, invalid worker", ex);
         }
         return result;
     }

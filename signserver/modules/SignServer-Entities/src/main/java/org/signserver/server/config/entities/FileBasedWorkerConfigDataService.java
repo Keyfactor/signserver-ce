@@ -30,6 +30,7 @@ import org.bouncycastle.util.encoders.Base64;
 import org.cesecore.util.Base64GetHashMap;
 import org.cesecore.util.Base64PutHashMap;
 import org.signserver.common.FileBasedDatabaseException;
+import org.signserver.common.NoSuchWorkerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.server.nodb.FileBasedDatabaseManager;
 
@@ -395,17 +396,18 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
     }
     
     @Override
-    public int findId(String workerName) {
+    public int findId(String workerName) throws NoSuchWorkerException {
         int result = 0;
         synchronized (manager) {
             final File idFile = getIdFile(workerName);
             if (idFile.exists()) {
                 try {
-                    Integer.parseInt(FileUtils.readFileToString(idFile, "UTF-8"));
+                    result = Integer.parseInt(FileUtils.readFileToString(idFile, "UTF-8"));
                 } catch (IOException ex) {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Unable to read " + idFile.getAbsolutePath() + ": " + ex.getMessage());
                     }
+                    throw new NoSuchWorkerException(workerName);
                 }
             }
         }

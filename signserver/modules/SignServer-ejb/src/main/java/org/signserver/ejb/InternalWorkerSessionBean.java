@@ -23,6 +23,8 @@ import org.apache.log4j.Logger;
 import org.cesecore.audit.log.SecurityEventsLoggerSessionLocal;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
+import org.signserver.common.InvalidWorkerIdException;
+import org.signserver.common.NoSuchWorkerException;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
@@ -132,8 +134,12 @@ public class InternalWorkerSessionBean implements IInternalWorkerSession.ILocal,
     }
 
     @Override
-    public int getWorkerId(String workerName) {
-        return processImpl.getWorkerId(workerName);
+    public int getWorkerId(String workerName) throws InvalidWorkerIdException {
+        try {
+            return processImpl.getWorkerId(workerName);
+        } catch (NoSuchWorkerException ex) {
+            throw new InvalidWorkerIdException(ex.getMessage());
+        }
     }
 
 }

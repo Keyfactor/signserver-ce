@@ -21,6 +21,7 @@ import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
+import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
@@ -124,21 +125,23 @@ public class UserMappedDispatcher extends BaseDispatcher {
             throw new IllegalRequestException("No worker for the specified username");
         }
         
-        final int id = workerSession.getWorkerId(workerName);
-        if (id == 0) {
-            LOG.warn("Non existing worker: \"" + workerName + "\"");
-            throw new SignServerException("Non-existing worker configured in mapping");
-        } else if (id == workerId) {
-            LOG.warn("Ignoring dispatching to it self (worker "
-                    + id + ")");
-            throw new SignServerException("Dispatcher configured to dispatch to itself");
-        } else {
-            response = workerSession.process(id, signRequest,
-                    nextContext);
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Dispatched to worker: "
-                        + workerName + " (" + id + ")");
+        try {
+            final int id = workerSession.getWorkerId(workerName);
+            if (id == workerId) {
+                LOG.warn("Ignoring dispatching to it self (worker "
+                        + id + ")");
+                throw new SignServerException("Dispatcher configured to dispatch to itself");
+            } else {
+                response = workerSession.process(id, signRequest,
+                        nextContext);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Dispatched to worker: "
+                            + workerName + " (" + id + ")");
+                }
             }
+        } catch (InvalidWorkerIdException ex) {
+            LOG.warn("Non existing worker: \"" + workerName + "\"");
+            throw new SignServerException("Non-existing worker configured in mapping", ex);
         }
         return response;
     }

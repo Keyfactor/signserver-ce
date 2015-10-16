@@ -13,6 +13,7 @@
 package org.signserver.server.config.entities;
 
 import java.util.List;
+import org.signserver.common.NoSuchWorkerException;
 import org.signserver.common.WorkerConfig;
 
 /**
@@ -56,5 +57,5 @@ public interface IWorkerConfigDataService {
 
     void populateNameColumn();
 
-    public int findId(String workerName);
+    public int findId(String workerName) throws NoSuchWorkerException;
 }

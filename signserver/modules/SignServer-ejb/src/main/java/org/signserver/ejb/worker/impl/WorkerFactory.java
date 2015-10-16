@@ -71,15 +71,19 @@ public class WorkerFactory {
      * @param workerId the Id that should match the one in the config file.
      * @return A ISigner as defined in the configuration file, or null if no configuration
      * for the specified signerId could be found.
+     * @throws NoSuchWorkerException In case the worker ID does not exist
      */
-    public synchronized IWorker getWorker(int workerId) {
+    public synchronized IWorker getWorker(int workerId) throws NoSuchWorkerException {
         IWorker result = workerStore.get(workerId);
         if (result == null) {
             loadWorker(workerId);
         }
         result = workerStore.get(workerId);
         if (result == null) {
-            LOG.info("Trying to get worker with Id that does not exist: " + workerId);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Trying to get worker with Id that does not exist: " + workerId);
+            }
+            throw new NoSuchWorkerException(String.valueOf(workerId));
         }
         return result;
     }
@@ -92,20 +96,18 @@ public class WorkerFactory {
      * the flush method is called.
      *
      * @param workerName the name of a named worker.
-     * @return the id of the signer or 0 if no worker with the name is found.
+     * @return the id of the worker
+     * @throws NoSuchWorkerException in case a worker with the name does not exist
      */
-    public synchronized int getWorkerIdFromName(String workerName) {
-        Integer result = 0;
-        if (workerName != null) {
-            result = nameToIdMap.get(workerName);
-            if (result == null) {
-                result = workerConfigHome.findId(workerName);
-                if (result != 0) {
-                    nameToIdMap.put(workerName.toUpperCase(), result);
-                }
-            }
+    public synchronized int getWorkerIdFromName(final String workerName) throws NoSuchWorkerException {
+        if (workerName == null) {
+            throw new NullPointerException("workerName is null");
         }
-        LOG.debug("getSignerIdFromName : returning " + result);
+        Integer result = nameToIdMap.get(workerName);
+        if (result == null) {
+            result = workerConfigHome.findId(workerName);
+            nameToIdMap.put(workerName.toUpperCase(), result);
+        }
         return result;
     }
 
@@ -157,15 +159,18 @@ public class WorkerFactory {
                 @Override
                 public ICryptoToken getCurrentCryptoToken() throws SignServerException {
                     synchronized (WorkerFactory.this) {
-                        Integer cryptoWorkerId = nameToIdMap.get(cryptoTokenName.toUpperCase());
-                        if (cryptoWorkerId != null) {
-                            IWorker cryptoWorker = getWorker(cryptoWorkerId);
+                        try {
+                            IWorker cryptoWorker = getWorker(getWorkerIdFromName(cryptoTokenName.toUpperCase()));
                             if (cryptoWorker instanceof BaseProcessable) {
                                 return ((BaseProcessable) cryptoWorker).getCryptoToken();
                             } else {
+                                if (LOG.isDebugEnabled()) {
+                                    LOG.debug("Not a processable worker: " + cryptoWorker);
+                                }
                                 return null;
                             }
-                        } else {
+                        } catch (NoSuchWorkerException ex) {
+                            LOG.info("Unable to get crypto worker: " + cryptoTokenName);
                             return null;
                         }
                     }

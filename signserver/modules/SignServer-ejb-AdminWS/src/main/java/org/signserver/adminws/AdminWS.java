@@ -121,7 +121,11 @@ public class AdminWS {
             throws AdminNotAuthorizedException {
         requireAdminAuthorization("getWorkerId", workerName);
 
-        return worker.getWorkerId(workerName);
+        try {
+            return worker.getWorkerId(workerName);
+        } catch (InvalidWorkerIdException ex) {
+            return 0;
+        }
     }
 
     /**

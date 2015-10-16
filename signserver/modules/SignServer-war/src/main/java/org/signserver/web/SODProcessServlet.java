@@ -33,6 +33,7 @@ import org.signserver.common.AccessDeniedException;
 import org.signserver.common.AuthorizationRequiredException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
+import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.NoSuchWorkerException;
 import org.signserver.common.RequestContext;
 import org.signserver.common.RequestMetadata;
@@ -117,7 +118,11 @@ public class SODProcessServlet extends AbstractProcessServlet {
         String name = req.getParameter(WORKERNAME_PROPERTY_NAME);
         if (name != null) {
             LOG.debug("Found a signerName in the request: " + name);
-            workerId = getWorkerSession().getWorkerId(name);
+            try {
+                workerId = getWorkerSession().getWorkerId(name);
+            } catch (InvalidWorkerIdException ex) {
+                res.sendError(HttpServletResponse.SC_NOT_FOUND, "Worker Not Found");
+            }
         }
         String id = req.getParameter(WORKERID_PROPERTY_NAME);
         if (id != null) {

@@ -20,6 +20,7 @@ import org.signserver.common.GenericSignResponse;
 import org.signserver.common.GenericValidationRequest;
 import org.signserver.common.GenericValidationResponse;
 import org.signserver.common.IllegalRequestException;
+import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
@@ -73,8 +74,9 @@ public class SigningAndValidationEJB implements ISigningAndValidation {
         if (workerIdOrName.substring(0, 1).matches("\\d")) {
             retval = Integer.parseInt(workerIdOrName);
         } else {
-            retval = signserver.getWorkerId(workerIdOrName);
-            if (retval == 0) {
+            try {
+                retval = signserver.getWorkerId(workerIdOrName);
+            } catch (InvalidWorkerIdException ex) {
                 throw new IllegalRequestException("Error: No worker with the given name could be found");
             }
         }

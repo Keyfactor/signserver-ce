@@ -114,10 +114,7 @@ public class ClientWS {
                 LOG.debug("Service unvailable", ex);
             }
             throw new InternalServerException("Service unavailable: " + ex.getMessage());
-        } catch (AuthorizationRequiredException ex) {
-            LOG.info("Request failed: " + ex.getMessage());
-            throw new RequestFailedException(ex.getMessage());
-        } catch (AccessDeniedException ex) {
+        } catch (AuthorizationRequiredException | AccessDeniedException | InvalidWorkerIdException ex) {
             LOG.info("Request failed: " + ex.getMessage());
             throw new RequestFailedException(ex.getMessage());
         } catch (SignServerException ex) {
@@ -218,13 +215,7 @@ public class ClientWS {
                 LOG.debug("Service unvailable", ex);
             }
             throw new InternalServerException("Service unavailable: " + ex.getMessage());
-        } catch (IllegalRequestException ex) {
-            LOG.info("Request failed: " + ex.getMessage());
-            throw new RequestFailedException(ex.getMessage());
-        } catch (AuthorizationRequiredException ex) {
-            LOG.info("Request failed: " + ex.getMessage());
-            throw new RequestFailedException(ex.getMessage());
-        } catch (AccessDeniedException ex) {
+        } catch (IllegalRequestException | AuthorizationRequiredException | AccessDeniedException | InvalidWorkerIdException ex) {
             LOG.info("Request failed: " + ex.getMessage());
             throw new RequestFailedException(ex.getMessage());
         } catch (SignServerException ex) {
@@ -255,7 +246,7 @@ public class ClientWS {
         return null;
     }
     
-    private int getWorkerId(String workerIdOrName) {
+    private int getWorkerId(String workerIdOrName) throws InvalidWorkerIdException {
         final int retval;
 
         if (workerIdOrName.substring(0, 1).matches("\\d")) {

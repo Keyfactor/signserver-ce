@@ -126,7 +126,11 @@ public class ValidationWS implements IValidationWS {
         if (serviceName.substring(0, 1).matches("\\d")) {
             retval = Integer.parseInt(serviceName);
         } else {
-            retval = getWorkerSession().getWorkerId(serviceName);
+            try {
+                retval = getWorkerSession().getWorkerId(serviceName);
+            } catch (InvalidWorkerIdException ex) {
+                retval = 0;
+            }
         }
 
         if (retval != 0) {

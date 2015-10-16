@@ -87,7 +87,7 @@ public interface IWorkerSession {
      * @param workerName of the worker, cannot be null
      * @return The Id of a named worker or 0 if no such name exists
      */
-    int getWorkerId(String workerName);
+    int getWorkerId(String workerName) throws InvalidWorkerIdException;
 
     /**
      * Method used when a configuration have been updated. And should be

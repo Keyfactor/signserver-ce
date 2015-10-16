@@ -543,9 +543,15 @@ class WorkerProcessImpl {
 
     private Certificate getSignerCertificate(final int signerId) throws CryptoTokenOfflineException {
         Certificate ret = null;
-        final IWorker worker = workerManagerSession.getWorker(signerId);
-        if (worker instanceof BaseProcessable) {
-            ret = ((BaseProcessable) worker).getSigningCertificate();
+        try {
+            final IWorker worker = workerManagerSession.getWorker(signerId);
+            if (worker instanceof BaseProcessable) {
+                ret = ((BaseProcessable) worker).getSigningCertificate();
+            }
+        } catch (NoSuchWorkerException ex) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("No such worker: " + ex.getMessage());
+            }
         }
         return ret;
     }
@@ -553,7 +559,7 @@ class WorkerProcessImpl {
     /**
      * @see org.signserver.ejb.interfaces.IWorkerSession#getWorkerId(java.lang.String)
      */
-    public int getWorkerId(String signerName) {
+    public int getWorkerId(String signerName) throws NoSuchWorkerException {
         return workerManagerSession.getIdFromName(signerName);
     }
 

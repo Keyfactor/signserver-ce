@@ -16,6 +16,7 @@ import java.security.KeyStoreException;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
 import javax.ejb.EJB;
 import javax.naming.NamingException;
 import javax.persistence.EntityManager;
@@ -85,13 +86,14 @@ public class HSMKeepAliveTimedService extends BaseTimedService {
                 int cryptoWorkerId;
 
                 try {
-                    cryptoWorkerId = Integer.valueOf(workerIdOrName);
-                } catch (NumberFormatException e) {
-                    cryptoWorkerId = session.getWorkerId(workerIdOrName);
-                }
-
-                if (cryptoWorkerId == 0) {
+                    try {
+                        cryptoWorkerId = Integer.valueOf(workerIdOrName);
+                    } catch (NumberFormatException e) {
+                        cryptoWorkerId = session.getWorkerId(workerIdOrName);
+                    }
+                } catch (InvalidWorkerIdException ex) {
                     LOG.error("No such worker: " + workerIdOrName);
+                    continue;
                 }
 
                 final String keyAlias = getKeyAliasForWorker(session, cryptoWorkerId);
@@ -151,10 +153,9 @@ public class HSMKeepAliveTimedService extends BaseTimedService {
         final IWorkerSession session = getWorkerSession();
         
         if (session != null && cryptoTokens != null) {
-            int cryptoWorkerId;
             for (final String workerIdOrName : cryptoTokens) {
                 try {
-                    cryptoWorkerId = Integer.valueOf(workerIdOrName);
+                    int cryptoWorkerId = Integer.valueOf(workerIdOrName);
                     
                     try {
                         session.getStatus(cryptoWorkerId);
@@ -162,9 +163,9 @@ public class HSMKeepAliveTimedService extends BaseTimedService {
                         errors.add("Invalid worker ID: " + cryptoWorkerId);
                     }
                 } catch (NumberFormatException e) {
-                    cryptoWorkerId = session.getWorkerId(workerIdOrName);
-                    
-                    if (cryptoWorkerId == 0) {
+                    try {
+                        session.getWorkerId(workerIdOrName);
+                    } catch (InvalidWorkerIdException ex) {
                         errors.add("No such worker: " + workerIdOrName);
                     }
                 }

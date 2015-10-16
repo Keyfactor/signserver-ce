@@ -171,7 +171,12 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
                             }
                             
                             wcdb.setSignerName(newName);
-                            if (!getIdFile(oldName).renameTo(newIdFile)) {
+                            final File oldIdFile = getIdFile(oldName);
+                            if (!oldIdFile.renameTo(newIdFile)) {
+                                if (LOG.isDebugEnabled()) {
+                                    LOG.debug("Old ID file " + oldIdFile.getAbsolutePath() + " exists: " + oldIdFile.exists());
+                                    LOG.debug("New ID file " + newIdFile.getAbsolutePath() + " exists: " + newIdFile.exists());
+                                }
                                 throw new FileBasedDatabaseException("Could not rename from " + oldName + " to " + newName);
                             }
                             FileUtils.writeStringToFile(getNameFile(workerId), newName, "UTF-8");
@@ -183,6 +188,7 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
                         }
                         wcdb.setSignerName(newName);
                         FileUtils.writeStringToFile(getNameFile(workerId), newName, "UTF-8");
+                        FileUtils.writeStringToFile(newIdFile, String.valueOf(workerId), "UTF-8");
                     }
                 }
 
@@ -387,6 +393,24 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
             }
         } catch (IOException ex) {
             LOG.error("Querying all workers failed", ex);
+        }
+        return result;
+    }
+    
+    @Override
+    public int findId(String workerName) {
+        int result = 0;
+        synchronized (manager) {
+            final File idFile = getIdFile(workerName);
+            if (idFile.exists()) {
+                try {
+                    Integer.parseInt(FileUtils.readFileToString(idFile, "UTF-8"));
+                } catch (IOException ex) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Unable to read " + idFile.getAbsolutePath() + ": " + ex.getMessage());
+                    }
+                }
+            }
         }
         return result;
     }

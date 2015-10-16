@@ -5100,7 +5100,7 @@ Here is an example configuration of a validation service to clarify things even 
                         </p>
                         <pre>
 # Set up the worker -> validation service wrapper
-GLOB.WORKER1.CLASSPATH= org.signserver.validationservice .server.ValidationServiceWorker
+WORKER1.IMPLEMENTATION_CLASS=org.signserver.validationservice .server.ValidationServiceWorker
 #Uncomment and set class path to custom validation service, othervise is default #used.
 #WORKER1.TYPE=
 

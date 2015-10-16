@@ -26,13 +26,13 @@ import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 
 /**
- * Gets the current status of the given worker
+ * Gets the current status of the given worker or all workers.
  *
  * @version $Id$
  */
 public class GetStatusCommand extends AbstractCommand {
 
-    private AdminCommandHelper helper = new AdminCommandHelper();
+    private final AdminCommandHelper helper = new AdminCommandHelper();
     
     private static final String ERROR_MESSAGE = 
             "Usage: signserver getstatus <complete | brief> <workerId | workerName | all> \n"
@@ -77,14 +77,14 @@ public class GetStatusCommand extends AbstractCommand {
                     displayGlobalConfiguration();
                 }
 
-                List<Integer> workers = helper.getWorkerSession().getWorkers(WorkerConfig.WORKERTYPE_PROCESSABLE);
+                List<Integer> workers = helper.getWorkerSession().getWorkers(WorkerConfig.WORKERTYPE_ALL);
 
                 Collections.sort(workers);
 
                 Iterator<?> iter = workers.iterator();
                 while (iter.hasNext()) {
                     Integer id = (Integer) iter.next();
-                    displayWorkerStatus(id.intValue(), helper.getWorkerSession().getStatus(id.intValue()), complete);
+                    displayWorkerStatus(id, helper.getWorkerSession().getStatus(id), complete);
                 }
             } else {
                 int id = helper.getWorkerId(args[1]);

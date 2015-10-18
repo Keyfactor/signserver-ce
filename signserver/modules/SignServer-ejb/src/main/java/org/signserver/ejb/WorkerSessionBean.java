@@ -1192,7 +1192,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     }
     
     private WorkerConfig getWorkerConfig(int workerId) {
-        return workerConfigService.getWorkerProperties(workerId);
+        return workerConfigService.getWorkerProperties(workerId, true);
     }
 
     private String generateTransactionID() {
@@ -1227,7 +1227,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     
     private void setWorkerConfig(final AdminInfo adminInfo, final int workerId, final WorkerConfig config,
     		final String additionalLogKey, final String additionalLogValue) {
-        final WorkerConfig oldConfig = workerConfigService.getWorkerProperties(workerId);       
+        final WorkerConfig oldConfig = workerConfigService.getWorkerProperties(workerId, true);       
         Map<String, Object> configChanges = WorkerConfig.propertyDiff(oldConfig, config);
         
         if (additionalLogKey != null) {

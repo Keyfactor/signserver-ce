@@ -235,12 +235,12 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
      * @see org.signserver.ejb.IWorkerConfigDataService#getWorkerProperties(int)
      */
     @Override
-    public WorkerConfig getWorkerProperties(int workerId) {
+    public WorkerConfig getWorkerProperties(int workerId, boolean create) {
         WorkerConfig workerConfig;
         
         synchronized (manager) {
             workerConfig = getWorkerConfig(workerId);
-            if (workerConfig == null) {
+            if (workerConfig == null && create) { // XXX remove 'create' parameter and instead let caller do the 'new'
                 workerConfig = new WorkerConfig();
             }
         }

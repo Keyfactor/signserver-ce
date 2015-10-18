@@ -115,38 +115,40 @@ public class WorkerFactory {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Loading worker into WorkerFactory: " + workerId);
         }
-        WorkerConfig config = workerConfigHome.getWorkerProperties(workerId);
-        final String classpath = config.getImplementationClass();
+        WorkerConfig config = workerConfigHome.getWorkerProperties(workerId, false);
+        if (config != null) {
+            final String classpath = config.getImplementationClass();
 
-        try {
+            try {
 
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Loading worker with classpath: " + classpath);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Loading worker with classpath: " + classpath);
+                }
+
+                // XXX: This is duplicated
+                final IWorker worker;
+                if (classpath == null) {
+                    worker = new NoImplementationWorker();
+                } else {
+                    ClassLoader cl = this.getClass().getClassLoader();
+                    Class<?> implClass = cl.loadClass(classpath);
+
+                    worker = (IWorker) implClass.newInstance();
+                }
+                workerStore.put(workerId, worker);
+
+                if (config.getProperties().getProperty(PropertiesConstants.NAME) != null) {
+                    nameToIdMap.put(config.getProperties().getProperty(PropertiesConstants.NAME).toUpperCase(), workerId);
+                }
+
+                initWorker(worker, workerId, config);
+            } catch (ClassNotFoundException e) {
+                LOG.error("Worker class not found (is the module included in the build?): " + classpath);
+            } catch (IllegalAccessException e) {
+                LOG.error("Could not access worker class: " + classpath);
+            } catch (InstantiationException e) {
+                LOG.error("Could not instantiate worker class: " + classpath);
             }
-
-            // XXX: This is duplicated
-            final IWorker worker;
-            if (classpath == null) {
-                worker = new NoImplementationWorker();
-            } else {
-                ClassLoader cl = this.getClass().getClassLoader();
-                Class<?> implClass = cl.loadClass(classpath);
-
-                worker = (IWorker) implClass.newInstance();
-            }
-            workerStore.put(workerId, worker);
-
-            if (config.getProperties().getProperty(PropertiesConstants.NAME) != null) {
-                nameToIdMap.put(config.getProperties().getProperty(PropertiesConstants.NAME).toUpperCase(), workerId);
-            }
-
-            initWorker(worker, workerId, config);
-        } catch (ClassNotFoundException e) {
-            LOG.error("Worker class not found (is the module included in the build?): " + classpath);
-        } catch (IllegalAccessException e) {
-            LOG.error("Could not access worker class: " + classpath);
-        } catch (InstantiationException e) {
-            LOG.error("Could not instantiate worker class: " + classpath);
         }
     }
 
@@ -218,27 +220,28 @@ public class WorkerFactory {
         }
 
         try {
-            WorkerConfig config = workerConfigHome.getWorkerProperties(id);
-            String className = config.getImplementationClass();
+            WorkerConfig config = workerConfigHome.getWorkerProperties(id, false);
+            if (config != null) {
+                String className = config.getImplementationClass();
 
-            // XXX: This is duplicated
-            final IWorker worker;
-            if (className == null) {
-                worker = new NoImplementationWorker();
-            } else {
-                ClassLoader cl = this.getClass().getClassLoader();
-                Class<?> implClass = cl.loadClass(className);
+                // XXX: This is duplicated
+                final IWorker worker;
+                if (className == null) {
+                    worker = new NoImplementationWorker();
+                } else {
+                    ClassLoader cl = this.getClass().getClassLoader();
+                    Class<?> implClass = cl.loadClass(className);
 
-                worker = (IWorker) implClass.newInstance();
+                    worker = (IWorker) implClass.newInstance();
+                }
+                workerStore.put(id, worker);
+
+                if (config.getProperties().getProperty(PropertiesConstants.NAME) != null) {
+                    nameToIdMap.put(config.getProperties().getProperty(PropertiesConstants.NAME).toUpperCase(), id);
+                }
+
+                initWorker(worker, id, config);
             }
-            workerStore.put(id, worker);
-
-            if (config.getProperties().getProperty(PropertiesConstants.NAME) != null) {
-                nameToIdMap.put(config.getProperties().getProperty(PropertiesConstants.NAME).toUpperCase(), id);
-            }
-
-            initWorker(worker, id, config);
-
         } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
             LOG.error("Error reloading worker : " + e.getMessage(), e);
         }

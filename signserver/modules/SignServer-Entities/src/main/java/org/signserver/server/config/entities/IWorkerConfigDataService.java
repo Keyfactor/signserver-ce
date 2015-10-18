@@ -30,7 +30,7 @@ public interface IWorkerConfigDataService {
      * @param workerId Id of worker
      * @return The worker configuration
      */
-    WorkerConfig getWorkerProperties(int workerId);
+    WorkerConfig getWorkerProperties(int workerId, boolean create);
     
     /**
      * Remove the worker's configuration.

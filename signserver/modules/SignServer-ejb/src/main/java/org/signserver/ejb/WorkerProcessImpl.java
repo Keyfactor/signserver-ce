@@ -141,10 +141,10 @@ class WorkerProcessImpl {
                 (String) requestContext.get(RequestContext.REMOTE_IP));
 
         // Get worker instance
-        final IWorker worker = workerManagerSession.getWorker(workerId);
-
-        if (worker == null) {
-            NoSuchWorkerException ex = new NoSuchWorkerException(String.valueOf(workerId));
+        final IWorker worker;
+        try {
+            worker = workerManagerSession.getWorker(workerId);
+        } catch (NoSuchWorkerException ex) {
             Map<String, Object> details = new LinkedHashMap<String, Object>();
             final String serNo = adminInfo.getCertSerialNumber() != null ? adminInfo.getCertSerialNumber().toString(16) : null;
 

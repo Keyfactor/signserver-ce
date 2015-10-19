@@ -14,7 +14,7 @@
                 <item name="Credits"               href="/credits.html"/>
                 <item name="Reference installations" href="/installations.html"/>
                 <item name="Required software"  href="/required.html"/>
-                <item name="SourceForge project" href="http://sourceforge.net/projects/signserver/"/>
+                <item name="SourceForge project" href="https://sourceforge.net/projects/signserver/"/>
             </menu>
 
             <menu name="Documentation">

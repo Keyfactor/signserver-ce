@@ -368,7 +368,7 @@ Make sure all required softwares are installed:
                 <subsection name="2. Unpack SignServer">
                     <p>
 Download and unzip the
-<a href="http://sourceforge.net/projects/signserver/files/signserver/">latest
+<a href="https://sourceforge.net/projects/signserver/files/signserver/">latest
 SignServer release</a> archive from SourceForge or for the absolutely latest
 unstable version checkout from the Subversion (SVN)
 <a href="https://svn.cesecore.eu/svn/signserver/trunk/">repository</a>.

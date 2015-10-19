@@ -710,7 +710,26 @@ public class TimeStampCommand extends AbstractCommand {
                     replyBytes);
             timeStampResponse.validate(timeStampRequest);
 
-            LOG.info("TimeStampRequest validated");
+            final int status = timeStampResponse.getStatus();
+            final PKIFailureInfo failInfo = timeStampResponse.getFailInfo();
+            final String statusString = timeStampResponse.getStatusString();
+            
+            final StringBuilder sb = new StringBuilder();
+            
+            sb.append("TimeStampRequest validated with status code: ");
+            sb.append(status);
+            
+            if (failInfo != null) {
+                sb.append(", failure: ");
+                sb.append(failInfo);
+            }
+            
+            if (statusString != null && !"".equals(statusString)) {
+                sb.append(" (");
+                sb.append(statusString);
+                sb.append(")");
+            }
+            LOG.info(sb.toString());
 
             if (LOG.isDebugEnabled()) {
                 final Date genTime;
@@ -719,9 +738,9 @@ public class TimeStampCommand extends AbstractCommand {
                 } else {
                     genTime = null;
                 }
-                LOG.debug("(Status: " + timeStampResponse.getStatus()
-                        + ", " + timeStampResponse.getFailInfo() + "): "
-                        + timeStampResponse.getStatusString() + (genTime != null ? (", genTime: " + genTime.getTime()) : "") + "\n");
+                LOG.debug("(Status: " + status
+                        + ", " + failInfo + "): "
+                        + statusString + (genTime != null ? (", genTime: " + genTime.getTime()) : "") + "\n");
                 
             }
 

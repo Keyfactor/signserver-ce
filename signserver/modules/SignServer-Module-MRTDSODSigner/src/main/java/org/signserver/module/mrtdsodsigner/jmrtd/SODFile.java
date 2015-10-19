@@ -42,6 +42,7 @@ import java.security.spec.PSSParameterSpec;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Logger;
 import javax.security.auth.x500.X500Principal;
@@ -126,45 +127,50 @@ public class SODFile extends PassportFile
         
         static {
         	
-            algorithmParameters.put("SHA1withRSAandMGF1", new RSASSAPSSparams(
-                    new AlgorithmIdentifier(X509ObjectIdentifiers.id_SHA1,
-                        new DERNull()),
-                    new AlgorithmIdentifier(PKCS1_MGF1_OID, 
-                    new AlgorithmIdentifier(X509ObjectIdentifiers.id_SHA1,
-                        new DERNull())),
-                    new ASN1Integer(20), new ASN1Integer(1)));
+            algorithmParameters.put("SHA1withRSAandMGF1".toLowerCase(Locale.ENGLISH),
+                    new RSASSAPSSparams(
+                        new AlgorithmIdentifier(X509ObjectIdentifiers.id_SHA1,
+                            new DERNull()),
+                        new AlgorithmIdentifier(PKCS1_MGF1_OID, 
+                        new AlgorithmIdentifier(X509ObjectIdentifiers.id_SHA1,
+                            new DERNull())),
+                        new ASN1Integer(20), new ASN1Integer(1)));
             
-            algorithmParameters.put("SHA224withRSAandMGF1", new RSASSAPSSparams(
-                    new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha224,
-                        new DERNull()),
-                    new AlgorithmIdentifier(PKCS1_MGF1_OID, 
-                    new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha224,
-                        new DERNull())),
-                    new ASN1Integer(28), new ASN1Integer(1)));
+            algorithmParameters.put("SHA224withRSAandMGF1".toLowerCase(Locale.ENGLISH),
+                    new RSASSAPSSparams(
+                        new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha224,
+                            new DERNull()),
+                        new AlgorithmIdentifier(PKCS1_MGF1_OID, 
+                        new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha224,
+                            new DERNull())),
+                        new ASN1Integer(28), new ASN1Integer(1)));
             
-            algorithmParameters.put("SHA256withRSAandMGF1", new RSASSAPSSparams(
-                    new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha256,
-                        new DERNull()),
-                    new AlgorithmIdentifier(PKCS1_MGF1_OID, 
-                    new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha256,
-                        new DERNull())),
-                    new ASN1Integer(32), new ASN1Integer(1)));
+            algorithmParameters.put("SHA256withRSAandMGF1".toLowerCase(Locale.ENGLISH),
+                    new RSASSAPSSparams(
+                        new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha256,
+                            new DERNull()),
+                        new AlgorithmIdentifier(PKCS1_MGF1_OID, 
+                        new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha256,
+                            new DERNull())),
+                        new ASN1Integer(32), new ASN1Integer(1)));
             
-            algorithmParameters.put("SHA384withRSAandMGF1", new RSASSAPSSparams(
-                    new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha384,
-                        new DERNull()),
-                    new AlgorithmIdentifier(PKCS1_MGF1_OID, 
-                    new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha384,
-                        new DERNull())),
-                    new ASN1Integer(48), new ASN1Integer(1)));
+            algorithmParameters.put("SHA384withRSAandMGF1".toLowerCase(Locale.ENGLISH),
+                    new RSASSAPSSparams(
+                        new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha384,
+                            new DERNull()),
+                        new AlgorithmIdentifier(PKCS1_MGF1_OID, 
+                        new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha384,
+                            new DERNull())),
+                        new ASN1Integer(48), new ASN1Integer(1)));
             
-            algorithmParameters.put("SHA512withRSAandMGF1", new RSASSAPSSparams(
-                    new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha512,
-                        new DERNull()),
-                    new AlgorithmIdentifier(PKCS1_MGF1_OID, 
-                    new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha512,
-                        new DERNull())),
-                    new ASN1Integer(64), new ASN1Integer(1)));
+            algorithmParameters.put("SHA512withRSAandMGF1".toLowerCase(Locale.ENGLISH),
+                    new RSASSAPSSparams(
+                        new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha512,
+                            new DERNull()),
+                        new AlgorithmIdentifier(PKCS1_MGF1_OID, 
+                        new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha512,
+                            new DERNull())),
+                        new ASN1Integer(64), new ASN1Integer(1)));
         }
 
 	private SignedData signedData;
@@ -770,7 +776,7 @@ public class SODFile extends PassportFile
 //                    // (i.e. SunPKCS11 provider). Instead we assume they
 //                    // use the default parameters.
                     digestEncryptionAlgorithmParams =
-                            algorithmParameters.get(digestEncryptionAlgorithm);
+                            algorithmParameters.get(digestEncryptionAlgorithm.toLowerCase(Locale.ENGLISH));
 //                }
             } else {
                 digestEncryptionAlgorithmParams = null;

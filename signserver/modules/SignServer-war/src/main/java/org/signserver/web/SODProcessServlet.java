@@ -122,6 +122,7 @@ public class SODProcessServlet extends AbstractProcessServlet {
                 workerId = getWorkerSession().getWorkerId(name);
             } catch (InvalidWorkerIdException ex) {
                 res.sendError(HttpServletResponse.SC_NOT_FOUND, "Worker Not Found");
+                return;
             }
         }
         String id = req.getParameter(WORKERID_PROPERTY_NAME);

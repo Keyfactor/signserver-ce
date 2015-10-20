@@ -88,8 +88,7 @@
                 If you want to verify the signed PDFs nicely you must download the CA certificate from your CA and install it in acrobat reader.
             </p>
             <ul>
-                <li>In Ubuntu you can enable the medibuntu repository and then <strong>apt-get install acroread acroread-plugins</strong>.</li>
-                <li>You can also simply download Acrobat Reader from Adobe.</li>
+                <li>You can download Acrobat Reader from Adobe (note that the GNU/Linux version has been discontinued).</li>
                 <li>Download the root CA certificate and install in Acrobat reader (v8) in <i>Document->Manage Trusted Identities->Display: Certificates->Add Contacts</i>. Edit Trust and enable at least <i>Signatures and as a trusted root</i></li>
             </ul>
 

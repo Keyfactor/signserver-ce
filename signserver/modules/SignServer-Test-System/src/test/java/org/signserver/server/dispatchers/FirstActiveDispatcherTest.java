@@ -242,14 +242,14 @@ public class FirstActiveDispatcherTest extends ModulesTestCase {
     	}
     }
 
-    /*@Test
+    @Test
     public void test99TearDownDatabase() throws Exception {
         LOG.info("test99TearDownDatabase");
         removeWorker(WORKERID_DISPATCHER);
         for (int workerId : WORKERS) {
             removeWorker(workerId);
         }
-    }*/
+    }
 
     private void addCertificate(PrivateKey issuerPrivateKey, int workerId, String workerName) throws CryptoTokenOfflineException, InvalidWorkerIdException, IOException, CertificateException, OperatorCreationException {
         Base64SignerCertReqData reqData = (Base64SignerCertReqData) workerSession.getCertificateRequest(workerId, new PKCS10CertReqInfo("SHA1withRSA", "CN=" + workerName, null), false);

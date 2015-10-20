@@ -23,7 +23,6 @@ import org.cesecore.keys.util.KeyTools;
 import org.cesecore.util.CertTools;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
-import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.RequestContext;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerUtil;
@@ -33,23 +32,22 @@ import org.signserver.validationservice.common.ValidateRequest;
 import org.signserver.validationservice.common.ValidateResponse;
 import org.signserver.validationservice.common.Validation;
 import org.signserver.validationservice.common.ValidationServiceConstants;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.signserver.common.WorkerConfig;
+import org.signserver.testutils.ModulesTestCase;
 
 /**
  * TODO: Document me!
- * 
+ *
  * @version $Id$
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class ValidationServiceWorkerTest {
+public class ValidationServiceWorkerTest extends ModulesTestCase {
 
     private static final int WORKER_DUMMY = 15;
     private static final int WORKER_NOREVOCATION = 16;
-    
-    private static IGlobalConfigurationSession.IRemote gCSession = null;
+
     private static IWorkerSession.IRemote sSSession = null;
     private static X509Certificate validRootCA1;
     private static X509Certificate validSubCA1;
@@ -76,8 +74,6 @@ public class ValidationServiceWorkerTest {
     @Before
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
-        gCSession = ServiceLocator.getInstance().lookupRemote(
-                IGlobalConfigurationSession.IRemote.class);
         sSSession = ServiceLocator.getInstance().lookupRemote(
                 IWorkerSession.IRemote.class);
     }
@@ -162,7 +158,7 @@ public class ValidationServiceWorkerTest {
         sSSession.setWorkerProperty(15, "VAL2.ISSUER1.CERTCHAIN", ValidationTestUtils.genPEMStringFromChain(revocedRootCA1Chain));
         sSSession.setWorkerProperty(15, "VAL2.ISSUER250.CERTCHAIN", ValidationTestUtils.genPEMStringFromChain(longChain));
         sSSession.reloadConfiguration(15);
-        
+
         // Worker 16 - NoRevokationCheckingValidator
         sSSession.setWorkerProperty(16, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.validationservice.server.ValidationServiceWorker");
         sSSession.setWorkerProperty(16, "AUTHTYPE", "NOAUTH");
@@ -180,12 +176,12 @@ public class ValidationServiceWorkerTest {
     public void test01BasicValidation() throws Exception {
         basicValidation(WORKER_DUMMY);
     }
-    
+
     @Test
     public void test01BasicValidationNoRevocationChecking() throws Exception {
         basicValidation(WORKER_NOREVOCATION);
     }
-    
+
     private void basicValidation(final int workerId) throws Exception {
         ValidateRequest req = new ValidateRequest(validCert1, ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
         ValidateResponse res = (ValidateResponse) sSSession.process(workerId, req, new RequestContext());
@@ -222,12 +218,12 @@ public class ValidationServiceWorkerTest {
     public void test03ExpiredCertificate() throws Exception {
         expiredCertificate(WORKER_DUMMY);
     }
-    
+
     @Test
     public void test03ExpiredCertificateNoRevocation() throws Exception {
         expiredCertificate(WORKER_NOREVOCATION);
     }
-    
+
     private void expiredCertificate(final int workerId) throws Exception {
         ValidateRequest req = new ValidateRequest(expiredCert1, ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
         ValidateResponse res = (ValidateResponse) sSSession.process(workerId, req, new RequestContext());
@@ -246,12 +242,12 @@ public class ValidationServiceWorkerTest {
     public void test04NotYetValidCertificate() throws Exception {
         notYetValidCertificate(WORKER_DUMMY);
     }
-    
+
     @Test
     public void test04NotYetValidCertificateNoRevocation() throws Exception {
         notYetValidCertificate(WORKER_NOREVOCATION);
     }
-    
+
     private void notYetValidCertificate(final int workerId) throws Exception {
         ValidateRequest req = new ValidateRequest(noYetValidCert1, ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
         ValidateResponse res = (ValidateResponse) sSSession.process(workerId, req, new RequestContext());
@@ -270,12 +266,12 @@ public class ValidationServiceWorkerTest {
     public void test05BadSignatureCertificate() throws Exception {
         badSignatureCertificate(WORKER_DUMMY);
     }
-    
+
     @Test
     public void test05BadSignatureCertificateNoRevocation() throws Exception {
         badSignatureCertificate(WORKER_NOREVOCATION);
     }
-    
+
     private void badSignatureCertificate(final int workerId) throws Exception {
         ValidateRequest req = new ValidateRequest(badSigCert1, ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
         ValidateResponse res = (ValidateResponse) sSSession.process(workerId, req, new RequestContext());
@@ -294,12 +290,12 @@ public class ValidationServiceWorkerTest {
     public void test06signedByExpiredRootCertificate() throws Exception {
         signedByExpiredRootCertificate(WORKER_DUMMY);
     }
-    
+
     @Test
     public void test06signedByExpiredRootCertificateNoRevocation() throws Exception {
         signedByExpiredRootCertificate(WORKER_NOREVOCATION);
     }
-    
+
     private void signedByExpiredRootCertificate(final int workerId) throws Exception {
         ValidateRequest req = new ValidateRequest(certByExpiredRoot, ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
         ValidateResponse res = (ValidateResponse) sSSession.process(workerId, req, new RequestContext());
@@ -317,12 +313,12 @@ public class ValidationServiceWorkerTest {
     public void test07signedByNotYetValidSubCA() throws Exception {
         signedByNotYetValidSubCA(WORKER_DUMMY);
     }
-    
+
     @Test
     public void test07signedByNotYetValidSubCANoRevocation() throws Exception {
         signedByNotYetValidSubCA(WORKER_NOREVOCATION);
     }
-    
+
     private void signedByNotYetValidSubCA(final int workerId) throws Exception {
         ValidateRequest req = new ValidateRequest(certByNotYetValidSub, ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
         ValidateResponse res = (ValidateResponse) sSSession.process(workerId, req, new RequestContext());
@@ -357,12 +353,12 @@ public class ValidationServiceWorkerTest {
     public void test10LongChainValidation() throws Exception {
         longChainValidation(WORKER_DUMMY);
     }
-    
+
     @Test
     public void test10LongChainValidationNoRevocation() throws Exception {
         longChainValidation(WORKER_NOREVOCATION);
     }
-    
+
     private void longChainValidation(final int workerId) throws Exception {
         ValidateRequest req = new ValidateRequest(certSignedByLongChain, null);
         ValidateResponse res = (ValidateResponse) sSSession.process(workerId, req, new RequestContext());
@@ -384,12 +380,12 @@ public class ValidationServiceWorkerTest {
     public void test11CertPurpose() throws Exception {
         certPurpose(WORKER_DUMMY);
     }
-    
+
     @Test
     public void test11CertPurposeNoRevocation() throws Exception {
         certPurpose(WORKER_NOREVOCATION);
     }
-    
+
     private void certPurpose(final int workerId) throws Exception {
         ValidateRequest req = new ValidateRequest(identificationCert1, ValidationServiceConstants.CERTPURPOSE_IDENTIFICATION);
         ValidateResponse res = (ValidateResponse) sSSession.process(workerId, req, new RequestContext());
@@ -550,36 +546,7 @@ public class ValidationServiceWorkerTest {
 
     @Test
     public void test99RemoveDatabase() throws Exception {
-        // Worker 15
-        gCSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER15.CLASSPATH");
-        gCSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER15.SIGNERTOKEN.CLASSPATH");
-        sSSession.removeWorkerProperty(15, "AUTHTYPE");
-        sSSession.removeWorkerProperty(15, "VAL1.CLASSPATH");
-        sSSession.removeWorkerProperty(15, "VAL1.ISSUER1.CERTCHAIN");
-        sSSession.removeWorkerProperty(15, "VAL1.ISSUER2.CERTCHAIN");
-        sSSession.removeWorkerProperty(15, "VAL1.ISSUER4.CERTCHAIN");
-        sSSession.removeWorkerProperty(15, "VAL2.CLASSPATH");
-        sSSession.removeWorkerProperty(15, "VAL2.TESTPROP");
-        sSSession.removeWorkerProperty(15, "VAL2.ISSUER1.CERTCHAIN");
-        sSSession.removeWorkerProperty(15, "VAL2.ISSUER250.CERTCHAIN");
-        sSSession.removeWorkerProperty(15, "VAL1.WAITTIME");
-        sSSession.removeWorkerProperty(15, "CACHEDISSUERS");
-        sSSession.reloadConfiguration(15);
-        
-        // Worker 16
-        gCSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER16.CLASSPATH");
-        gCSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER16.SIGNERTOKEN.CLASSPATH");
-        sSSession.removeWorkerProperty(16, "AUTHTYPE");
-        sSSession.removeWorkerProperty(16, "VAL1.CLASSPATH");
-        sSSession.removeWorkerProperty(16, "VAL1.ISSUER1.CERTCHAIN");
-        sSSession.removeWorkerProperty(16, "VAL1.ISSUER2.CERTCHAIN");
-        sSSession.removeWorkerProperty(16, "VAL1.ISSUER4.CERTCHAIN");
-        sSSession.removeWorkerProperty(16, "VAL2.CLASSPATH");
-        sSSession.removeWorkerProperty(16, "VAL2.TESTPROP");
-        sSSession.removeWorkerProperty(16, "VAL2.ISSUER1.CERTCHAIN");
-        sSSession.removeWorkerProperty(16, "VAL2.ISSUER250.CERTCHAIN");
-        sSSession.removeWorkerProperty(16, "VAL1.WAITTIME");
-        sSSession.removeWorkerProperty(16, "CACHEDISSUERS");
-        sSSession.reloadConfiguration(16);
+        removeWorker(15);
+        removeWorker(16);
     }
 }

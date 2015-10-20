@@ -100,10 +100,13 @@ public class WorkerFactory {
      * @throws NoSuchWorkerException in case a worker with the name does not exist
      */
     public synchronized int getWorkerIdFromName(final String workerName) throws NoSuchWorkerException {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(">getWorkerIdFromName(" + workerName + ")");
+        }
         if (workerName == null) {
             throw new NullPointerException("workerName is null");
         }
-        Integer result = nameToIdMap.get(workerName);
+        Integer result = nameToIdMap.get(workerName.toUpperCase());
         if (result == null) {
             result = workerConfigHome.findId(workerName);
             nameToIdMap.put(workerName.toUpperCase(), result);
@@ -162,7 +165,7 @@ public class WorkerFactory {
                 public ICryptoToken getCurrentCryptoToken() throws SignServerException {
                     synchronized (WorkerFactory.this) {
                         try {
-                            IWorker cryptoWorker = getWorker(getWorkerIdFromName(cryptoTokenName.toUpperCase()));
+                            IWorker cryptoWorker = getWorker(getWorkerIdFromName(cryptoTokenName));
                             if (cryptoWorker instanceof BaseProcessable) {
                                 return ((BaseProcessable) cryptoWorker).getCryptoToken();
                             } else {

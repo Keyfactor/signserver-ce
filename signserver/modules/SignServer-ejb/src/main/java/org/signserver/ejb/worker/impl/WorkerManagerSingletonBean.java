@@ -106,7 +106,10 @@ public class WorkerManagerSingletonBean {
      * @throws NoSuchWorkerException in case no worker with that name exists
      */
     public int getIdFromName(final String workerName) throws NoSuchWorkerException {
-        return workerFactory.getWorkerIdFromName(workerName.toUpperCase());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(">getIdFromName(" + workerName + ")");
+        }
+        return workerFactory.getWorkerIdFromName(workerName);
     }
 
     /**

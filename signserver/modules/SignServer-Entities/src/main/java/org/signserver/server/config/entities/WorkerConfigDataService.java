@@ -240,12 +240,17 @@ public class WorkerConfigDataService implements IWorkerConfigDataService {
 
     @Override
     public int findId(String workerName) throws NoSuchWorkerException {
-        int result = 0;
+        final int result;
         try {
             Query query = em.createQuery("SELECT w.signerId from WorkerConfigDataBean w WHERE w.signerName = :name").setParameter("name", workerName);
             Object o = query.getSingleResult();
             if (o instanceof Integer) {
                 result = (Integer) o;
+            } else {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Query result is " + o);
+                }
+                throw new NoSuchWorkerException(workerName);
             }
         } catch (NoResultException ex) {
             if (LOG.isDebugEnabled()) {

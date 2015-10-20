@@ -80,7 +80,6 @@ public class FirstActiveDispatcherTest extends ModulesTestCase {
     @Test
     public void test00SetupDatabase() throws Exception {
         Properties conf = new Properties();
-        conf.setProperty("GLOB.WORKER" + WORKERID_DISPATCHER + ".CLASSPATH", "org.signserver.server.dispatchers.FirstActiveDispatcher");
         conf.setProperty("WORKER" + WORKERID_DISPATCHER + ".IMPLEMENTATION_CLASS", "org.signserver.server.dispatchers.FirstActiveDispatcher");
         conf.setProperty("WORKER" + WORKERID_DISPATCHER + ".NAME", "FirstActiveDispatcher80");
         conf.setProperty("WORKER" + WORKERID_DISPATCHER + ".AUTHTYPE", "NOAUTH");
@@ -93,9 +92,9 @@ public class FirstActiveDispatcherTest extends ModulesTestCase {
         // Setup signers with different certificates
         addDummySigner(WORKERID_1, WORKERNAME_1, true);
         addCertificate(issuerKeyPair.getPrivate(), WORKERID_1, WORKERNAME_1);
-        addDummySigner(WORKERID_2, "TestXMLSigner82", true);
+        addDummySigner(WORKERID_2, WORKERNAME_2, true);
         addCertificate(issuerKeyPair.getPrivate(), WORKERID_2, WORKERNAME_2);
-        addDummySigner(WORKERID_3, "TestXMLSigner83", true);
+        addDummySigner(WORKERID_3, WORKERNAME_3, true);
         addCertificate(issuerKeyPair.getPrivate(), WORKERID_3, WORKERNAME_3);
     }
     
@@ -243,14 +242,14 @@ public class FirstActiveDispatcherTest extends ModulesTestCase {
     	}
     }
 
-    @Test
+    /*@Test
     public void test99TearDownDatabase() throws Exception {
         LOG.info("test99TearDownDatabase");
         removeWorker(WORKERID_DISPATCHER);
         for (int workerId : WORKERS) {
             removeWorker(workerId);
         }
-    }
+    }*/
 
     private void addCertificate(PrivateKey issuerPrivateKey, int workerId, String workerName) throws CryptoTokenOfflineException, InvalidWorkerIdException, IOException, CertificateException, OperatorCreationException {
         Base64SignerCertReqData reqData = (Base64SignerCertReqData) workerSession.getCertificateRequest(workerId, new PKCS10CertReqInfo("SHA1withRSA", "CN=" + workerName, null), false);

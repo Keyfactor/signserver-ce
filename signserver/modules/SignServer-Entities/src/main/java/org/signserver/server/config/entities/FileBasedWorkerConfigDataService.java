@@ -61,13 +61,12 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
     }
 
     @Override
-    public void create(int workerId, String configClassPath) {
+    public void create(int workerId, String configClassName) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Creating worker config data, id=" + workerId);
+            LOG.debug(">create(" + workerId + ", " + configClassName + ")");
         }
-
         try {
-            setWorkerConfig(workerId, (WorkerConfig) this.getClass().getClassLoader().loadClass(configClassPath).newInstance());
+            setWorkerConfig(workerId, (WorkerConfig) this.getClass().getClassLoader().loadClass(configClassName).newInstance());
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | FileBasedDatabaseException e) {
             LOG.error(e);
         }
@@ -81,14 +80,16 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
      */
     @SuppressWarnings("unchecked")
     private WorkerConfig getWorkerConfig(int workerId)  throws FileBasedDatabaseException {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(">getWorkerConfig(" + workerId + ")");
+        }
         WorkerConfig result = null;
-
         WorkerConfigDataBean wcdb;
         
         try {
             synchronized (manager) {
                 wcdb = loadData(workerId);
-                /*if (wcdb != null) {
+                if (wcdb != null) {
                     final File nameFile = getNameFile(workerId);
                     final String name;
                     if (nameFile.exists()) {
@@ -97,7 +98,7 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
                         name = "UnamedWorker" + workerId;
                     }
                     wcdb.setSignerName(name);
-                }*/
+                }
             }
 
             if (wcdb != null) {
@@ -111,12 +112,16 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
                 decoder.close();
                 // Handle Base64 encoded string values
                 HashMap data = new Base64GetHashMap(h);
+                result = new WorkerConfig();
                 try {
-                    result = new WorkerConfig();
                     result.loadData(data);
                     result.upgrade();
                 } catch (Exception e) {
                     LOG.error(e);
+                }
+                
+                if (wcdb.getSignerName() != null) {
+                    result.setProperty("NAME", wcdb.getSignerName());
                 }
             }
         } catch (IOException ex) {
@@ -141,14 +146,14 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
                 throw new IllegalArgumentException("WorkerConfig should return a Map");
             }
 
-            final ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
+            final ByteArrayOutputStream baos = new ByteArrayOutputStream();
             try (XMLEncoder encoder = new XMLEncoder(baos)) {
                 encoder.writeObject(a);
             }
 
             try {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("WorkerConfig data: \n" + baos.toString("UTF8"));
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("WorkerConfig data: \n" + baos.toString("UTF8"));
                 }
                 WorkerConfigDataBean wcdb = new WorkerConfigDataBean();
                 wcdb.setSignerId(workerId);
@@ -156,7 +161,11 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
                 
                 // Update name if needed
                 String newName = signconf.getProperty("NAME");
-                if (newName != null) {
+                if (newName == null) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("No name in config");
+                    }
+                } else {
                     
                     final File oldNameFile = getNameFile(workerId);
                     if (oldNameFile.exists()) {
@@ -167,9 +176,15 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
                             if (newIdFile.exists()) {
                                 throw new FileBasedDatabaseException("Duplicated name: \"" + newName + "\"");
                             }
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("New name: " + newName + ", oldName: " + oldName);
+                            }
                             
                             wcdb.setSignerName(newName);
                             final File oldIdFile = getIdFile(oldName);
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("Rename from " + oldIdFile.getName() + " to " + newIdFile.getName());
+                            }
                             if (!oldIdFile.renameTo(newIdFile)) {
                                 if (LOG.isDebugEnabled()) {
                                     LOG.debug("Old ID file " + oldIdFile.getAbsolutePath() + " exists: " + oldIdFile.exists());
@@ -177,16 +192,19 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
                                 }
                                 throw new FileBasedDatabaseException("Could not rename from " + oldName + " to " + newName);
                             }
-                            FileUtils.writeStringToFile(getNameFile(workerId), newName, "UTF-8");
+                            writeName(workerId, newName);
                         }
                     } else {
                         final File newIdFile = getIdFile(newName);
                         if (newIdFile.exists()) {
                             throw new FileBasedDatabaseException("Duplicated name: \"" + newName + "\"");
                         }
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("New name: " + newName);
+                        }
                         wcdb.setSignerName(newName);
-                        FileUtils.writeStringToFile(getNameFile(workerId), newName, "UTF-8");
-                        FileUtils.writeStringToFile(newIdFile, String.valueOf(workerId), "UTF-8");
+                        writeName(workerId, newName);
+                        writeID(newName, workerId);
                     }
                 }
 
@@ -250,37 +268,26 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
 
     private WorkerConfigDataBean loadData(final int workerId) throws IOException {
         assert Thread.holdsLock(manager);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(">loadData(" + workerId + ")");
+        }
         checkSchemaVersion();
         
         WorkerConfigDataBean result;
         final File file = new File(folder, DATA_PREFIX + workerId + SUFFIX);
-        
-        ByteArrayOutputStream bout = new ByteArrayOutputStream();
-        byte[] buff = new byte[4096];
-        
-        InputStream in = null;
+
         try {
-            in = new BufferedInputStream(new FileInputStream(file));
-            int read;
-            while ((read = in.read(buff)) != -1) {
-                bout.write(buff, 0, read);
-            }
-            String data = bout.toString("UTF-8");
+            final String data = FileUtils.readFileToString(file, "UTF-8");
             result = new WorkerConfigDataBean();
             result.setSignerId(workerId);
             result.setSignerConfigData(data);
-            
-            XMLDecoder decoder;
-            decoder = new XMLDecoder(new FileInputStream(file));
-            HashMap h = (HashMap) decoder.readObject();
-            decoder.close();
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Read from file: " + file.getName());
+            }
         } catch (FileNotFoundException ex) {
             result = null;
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException ignored) {} // NOPMD
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("No such file: " + file.getName());
             }
         }
         return result;
@@ -288,6 +295,9 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
 
     private void writeData(int workerId, WorkerConfigDataBean dataStore) throws IOException {
         assert Thread.holdsLock(manager);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(">writeData(" + workerId + ")");
+        }
         checkSchemaVersion();
         
         final File file = new File(folder, DATA_PREFIX + workerId + SUFFIX);
@@ -303,6 +313,9 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
             out.write(dataStore.getSignerConfigData().getBytes("UTF-8"));
             out.flush();
             fout.getFD().sync();
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Wrote file: " + file.getName());
+            }
         } finally {
             if (out != null) {
                 try {
@@ -318,8 +331,13 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
     
     private void removeData(int workerId) throws IOException {
         assert Thread.holdsLock(manager);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(">removeData(" + workerId + ")");
+        }
         final File file = new File(folder, DATA_PREFIX + workerId + SUFFIX);
-        file.delete();
+        if (!file.delete()) {
+            LOG.error("File not removed: " + file.getAbsolutePath());
+        }
     }
     
     private void checkSchemaVersion() {
@@ -330,24 +348,32 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
 
     @Override
     public List<Integer> findAllIds() {
-        final LinkedList<Integer> result = new LinkedList<>();
-        
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(folder.toPath(), DATA_PREFIX + "*" + SUFFIX)) {
-            Iterator<Path> iterator = stream.iterator();
-            while (iterator.hasNext()) {
-                final String fileName = iterator.next().toFile().getName();
-                final String id = fileName.substring(DATA_PREFIX.length(), fileName.length() - SUFFIX.length());
-                result.add(Integer.parseInt(id));
+        synchronized (manager) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(">findAllIds()");
             }
-        } catch (IOException ex) {
-            LOG.error("Querying all workers failed", ex);
+            final LinkedList<Integer> result = new LinkedList<>();
+
+            try (DirectoryStream<Path> stream = Files.newDirectoryStream(folder.toPath(), DATA_PREFIX + "*" + SUFFIX)) {
+                Iterator<Path> iterator = stream.iterator();
+                while (iterator.hasNext()) {
+                    final String fileName = iterator.next().toFile().getName();
+                    final String id = fileName.substring(DATA_PREFIX.length(), fileName.length() - SUFFIX.length());
+                    result.add(Integer.parseInt(id));
+                }
+            } catch (IOException ex) {
+                LOG.error("Querying all workers failed", ex);
+            }
+            return result;
         }
-        return result;
     }
 
     @Override
     public void populateNameColumn() { // TODO Check schema.version etc
         synchronized (manager) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(">populateNameColumn()");
+            }
             List<Integer> list = findAllWithoutName();
 
             if (list.isEmpty()) {
@@ -365,8 +391,8 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
                     }
                     LOG.info("Upgrading worker configuration " + id + " with name " + name);
                     try {
-                        FileUtils.writeStringToFile(getNameFile(id), name, "UTF-8");
-                        FileUtils.writeStringToFile(getIdFile(name), String.valueOf(id), "UTF-8");
+                        writeName(id, name);
+                        writeID(name, id);
                     } catch (IOException ex) {
                         LOG.error("Adding name file failed for worker configuration " + id, ex);
                     }
@@ -374,8 +400,28 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
             }
         }
     }
+    
+    private void writeName(int id, String name) throws IOException {
+        final File file = getNameFile(id);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Write name \"" + name + "\" for ID " + id + " to " + file.getName());
+        }
+        FileUtils.writeStringToFile(file, name, "UTF-8"); // TODO: Replace with one that fd.sync()
+    }
+    
+    private void writeID(String name, int id) throws IOException {
+        final File file = getIdFile(name);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Write ID " + id + " for name \"" + name + "\" to " + file.getName());
+        }
+        FileUtils.writeStringToFile(file, String.valueOf(id), "UTF-8");  // TODO: Replace with one that fd.sync()
+    }
 
     private List<Integer> findAllWithoutName() {
+        assert Thread.holdsLock(manager);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(">findAllWithoutName()");
+        }
         final LinkedList<Integer> result = new LinkedList<>();
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(folder.toPath(), DATA_PREFIX + "*" + SUFFIX)) {
             Iterator<Path> iterator = stream.iterator();
@@ -397,8 +443,11 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
     
     @Override
     public int findId(String workerName) throws NoSuchWorkerException {
-        int result = 0;
         synchronized (manager) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(">findId(" + workerName + ")");
+            }
+            final int result;
             final File idFile = getIdFile(workerName);
             if (idFile.exists()) {
                 try {
@@ -409,9 +458,11 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
                     }
                     throw new NoSuchWorkerException(workerName);
                 }
+            } else {
+                throw new NoSuchWorkerException(workerName);
             }
+            return result;
         }
-        return result;
     }
 
     private File getNameFile(final int workerId) {

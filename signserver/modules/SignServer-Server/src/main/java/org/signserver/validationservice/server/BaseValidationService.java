@@ -98,7 +98,9 @@ public abstract class BaseValidationService implements IValidationService {
         final List<WorkerStatusInfo.Entry> completeEntries = new LinkedList<WorkerStatusInfo.Entry>();
 
         // Number of validators
-        briefEntries.add(new WorkerStatusInfo.Entry("Number of validators", String.valueOf(validators.size())));
+        if (validators != null) {
+            briefEntries.add(new WorkerStatusInfo.Entry("Number of validators", String.valueOf(validators.size())));
+        }
 
         // Properties
         final StringBuilder configValue = new StringBuilder();

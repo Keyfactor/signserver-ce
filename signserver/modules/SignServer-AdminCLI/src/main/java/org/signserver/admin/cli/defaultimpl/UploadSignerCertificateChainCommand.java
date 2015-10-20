@@ -34,8 +34,8 @@ public class UploadSignerCertificateChainCommand extends AbstractAdminCommand {
     private static final String HELP = "Usage: signserver uploadsignercertificatechain <signerid | name> <NODE | GLOB> <filename> \n"
             + "Example: signserver uploadsignercertificatechain 1 GLOB /home/user/signercertchain.pem\n\n";
     private static final String TRYING = "Uploading the following signer certificates  : \n";
-    private static final String BADPEM = "Error: scope must be one of 'glob' or 'node'";
-    private static final String FAIL = "Invalid PEM file, couldn't find any certificate";
+    private static final String FAIL = "Error: scope must be one of 'glob' or 'node'";
+    private static final String EMPTY = "Invalid PEM file, couldn't find any certificate";
 
     @Override
     public String getDescription() {
@@ -71,7 +71,7 @@ public class UploadSignerCertificateChainCommand extends AbstractAdminCommand {
             String filename = args[2];
             Collection<Certificate> certs = CertTools.getCertsFromPEM(filename);
             if (certs.isEmpty()) {
-                throw new IllegalCommandArgumentsException(BADPEM);
+                throw new IllegalCommandArgumentsException(EMPTY);
             }
 
             this.getOutputStream().println(TRYING);

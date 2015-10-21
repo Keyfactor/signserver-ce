@@ -244,7 +244,7 @@
 
 #macro (footer)
       <p class="copyright" style="text-align:center;">
-        Copyright &copy; 2007-2015 PrimeKey Solutions AB.
+        Copyright &copy; 2006-2015 PrimeKey Solutions AB.
         <script type="text/javascript" language="JavaScript"><!--
                 document.write(" - "+"Last Published: " + document.lastModified);
               //  -->

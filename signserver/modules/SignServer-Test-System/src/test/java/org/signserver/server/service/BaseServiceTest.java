@@ -18,30 +18,27 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Date;
 import org.apache.log4j.Logger;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.ServiceConfig;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.StaticWorkerStatus;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.util.PathUtil;
-import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.testutils.ModulesTestCase;
 
 /**
  * TODO: Document me! See issue DSS-610
  * @version $Id$
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class BaseServiceTest {
+public class BaseServiceTest extends ModulesTestCase {
     private static final Logger LOG = Logger.getLogger(BaseServiceTest.class);
     
-    private static IGlobalConfigurationSession.IRemote gCSession = null;
     private static IWorkerSession.IRemote sSSession = null;
     private static String tmpFile;
     private static final int INTERVAL = 8;
@@ -51,7 +48,6 @@ public class BaseServiceTest {
     @Before
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
-        gCSession = ServiceLocator.getInstance().lookupRemote(IGlobalConfigurationSession.IRemote.class);
         sSSession = ServiceLocator.getInstance().lookupRemote(IWorkerSession.IRemote.class);
     }
 
@@ -182,16 +178,7 @@ public class BaseServiceTest {
 
     @Test    
     public void test99TearDownDatabase() throws Exception {
-        gCSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + WORKER_ID + ".CLASSPATH");
-
-        sSSession.removeWorkerProperty(WORKER_ID, WorkerConfig.IMPLEMENTATION_CLASS);
-        sSSession.removeWorkerProperty(WORKER_ID, "INTERVAL");
-        sSSession.removeWorkerProperty(WORKER_ID, "INTERVALMS");
-        sSSession.removeWorkerProperty(WORKER_ID, "CRON");
-        sSSession.removeWorkerProperty(WORKER_ID, ServiceConfig.SINGLETON);
-        sSSession.removeWorkerProperty(WORKER_ID, "OUTPATH");
-
-        sSSession.reloadConfiguration(WORKER_ID);
+        removeWorker(WORKER_ID);
     }
 
     private int readCount() throws IOException {

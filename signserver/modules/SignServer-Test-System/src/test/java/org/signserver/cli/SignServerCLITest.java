@@ -24,7 +24,6 @@ import org.signserver.testutils.CLITestHelper;
 import static org.signserver.testutils.CLITestHelper.assertNotPrinted;
 import static org.signserver.testutils.CLITestHelper.assertPrinted;
 import org.signserver.testutils.ModulesTestCase;
-import static org.junit.Assert.*;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -42,15 +41,17 @@ public class SignServerCLITest extends ModulesTestCase {
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(SignServerCLITest.class);
     
-    private static final String TESTID = "100";
-    private static final String TESTTSID = "1000";
+    private static final int WORKERID1 = 100;
+    private static final String TESTID = String.valueOf(WORKERID1);
+    private static final int WORKERID2 = 1000;
+    private static final String TESTTSID = String.valueOf(WORKERID2);
 
     private CLITestHelper cli = getAdminCLI();
     private CLITestHelper clientCLI = getClientCLI();
 
 
     @Test
-    public void testBasicSetup() throws Exception {
+    public void test01BasicSetup() throws Exception {
         
         assertEquals("No arguments", CommandLineInterface.RETURN_INVALID_ARGUMENTS, 
                 cli.execute("noarguments"));
@@ -112,7 +113,7 @@ public class SignServerCLITest extends ModulesTestCase {
     }
 
     @Test
-    public void testSetupTimeStamp() throws Exception {
+    public void test01SetupTimeStamp() throws Exception {
 
         assertTrue(new File(getSignServerHome() + "/res/test/test_add_timestamp_configuration.properties").exists());
         assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
@@ -263,7 +264,7 @@ public class SignServerCLITest extends ModulesTestCase {
     }
 
     @Test
-    public void testRemoveTimeStamp() throws Exception {
+    public void test01RemoveTimeStamp() throws Exception {
         // Remove and restore
         assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
                 cli.execute("setproperties", getSignServerHome() + "/res/test/test_rem_timestamp_configuration.properties"));
@@ -286,7 +287,7 @@ public class SignServerCLITest extends ModulesTestCase {
      * @throws Exception
      */
     @Test
-    public void testWSAdmins() throws Exception {
+    public void test01WSAdmins() throws Exception {
     	// Test adding wsadmin using explicit parameters
         assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
             cli.execute("wsadmins", "-add", "-certserialno", "ef34242d2324",
@@ -387,7 +388,7 @@ public class SignServerCLITest extends ModulesTestCase {
      * @throws Exception
      */
     @Test
-    public void testWSAdminsFromFile() throws Exception {
+    public void test01WSAdminsFromFile() throws Exception {
     	// Test adding wsadmin using a PEM file
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,
         		cli.execute("wsadmins", "-add",
@@ -412,7 +413,7 @@ public class SignServerCLITest extends ModulesTestCase {
      * @throws Exception
      */
     @Test
-    public void testWSAuditors() throws Exception {
+    public void test01WSAuditors() throws Exception {
     	// Test adding wsadmin using explicit parameters
         assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
             cli.execute("wsauditors", "-add", "-certserialno", "ef34343d2428",
@@ -489,7 +490,7 @@ public class SignServerCLITest extends ModulesTestCase {
      * @throws Exception
      */
     @Test
-    public void testWSArchiveAuditors() throws Exception {
+    public void test01WSArchiveAuditors() throws Exception {
         // Test adding wsadmin using explicit parameters
         assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
             cli.execute("wsarchiveauditors", "-add", "-certserialno", "ef34343d2428",
@@ -566,7 +567,7 @@ public class SignServerCLITest extends ModulesTestCase {
      * @throws Exception
      */
     @Test
-    public void testWSAuditorsFromFile() throws Exception {
+    public void test01WSAuditorsFromFile() throws Exception {
     	// Test adding wsadmin using a PEM file
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,
         		cli.execute("wsauditors", "-add",
@@ -591,7 +592,7 @@ public class SignServerCLITest extends ModulesTestCase {
      * @throws Exception
      */
     @Test
-    public void testWSArchiveAuditorsFromFile() throws Exception {
+    public void test01WSArchiveAuditorsFromFile() throws Exception {
         // Test adding wsadmin using a PEM file
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,
                         cli.execute("wsarchiveauditors", "-add",
@@ -616,7 +617,7 @@ public class SignServerCLITest extends ModulesTestCase {
      * based on the request filename property
      * @throws Exception
      */
-    public void testWSWithFileName() throws Exception {
+    public void test01WSWithFileName() throws Exception {
     	// set up a test PDF signer using the file logger to log to a temporary file
     	File logFile = File.createTempFile("pdf-signer", ".log");
     	File outFile = File.createTempFile("dummy-output", ".pdf");
@@ -665,5 +666,12 @@ public class SignServerCLITest extends ModulesTestCase {
     	removeWorker(getSignerIdPDFSigner1());
     	
     	assertTrue("FILENAME property is not logged", found);
+    }
+    
+    @Test
+    public void test99TearDownDatabase() throws Exception {
+        LOG.info(">test99TearDownDatabase");
+        removeWorker(WORKERID1);
+        removeWorker(WORKERID2);
     }
 }

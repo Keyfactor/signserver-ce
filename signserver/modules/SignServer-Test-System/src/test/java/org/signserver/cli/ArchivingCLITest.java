@@ -21,7 +21,6 @@ import org.signserver.testutils.CLITestHelper;
 import static org.signserver.testutils.CLITestHelper.assertNotPrinted;
 import static org.signserver.testutils.CLITestHelper.assertPrinted;
 import org.signserver.testutils.ModulesTestCase;
-import static org.junit.Assert.*;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -41,7 +40,8 @@ public class ArchivingCLITest extends ModulesTestCase {
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(SignServerCLITest.class);
     
-    private static final String TESTTSID = "1000";
+    private static final int WORKERID = 1000;
+    private static final String TESTTSID = String.valueOf(WORKERID);
 
     private CLITestHelper cli = getAdminCLI();
 
@@ -50,7 +50,7 @@ public class ArchivingCLITest extends ModulesTestCase {
      * Tests archiving commands for timestamp token.
      */
     @Test
-    public void testSetupTimeStamp() throws Exception {
+    public void test01SetupTimeStamp() throws Exception {
         LOG.debug(">testSetupTimeStamp");
 
         assertTrue(new File(getSignServerHome() + "/res/test/test_add_timestamp_archive_configuration.properties").exists());
@@ -143,7 +143,7 @@ public class ArchivingCLITest extends ModulesTestCase {
      * archived.
      */
     @Test
-    public void testArchiveRequestAndResponse() throws Exception {
+    public void test01ArchiveRequestAndResponse() throws Exception {
         LOG.debug(">testSetupTimeStamp");
 
         assertTrue(new File(getSignServerHome() + "/res/test/test_add_timestamp_archive_configuration.properties").exists());
@@ -239,7 +239,7 @@ public class ArchivingCLITest extends ModulesTestCase {
     }
     
     @Test
-    public void testRemoveTimeStamp() throws Exception {
+    public void test01RemoveTimeStamp() throws Exception {
         LOG.debug(">testRemoveTimeStamp");
         // Remove and restore
         assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
@@ -256,5 +256,11 @@ public class ArchivingCLITest extends ModulesTestCase {
         assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
                 cli.execute("reload", TESTTSID));
         assertPrinted("", cli.getOut(), "SignServer reloaded successfully");
+    }
+    
+    @Test
+    public void test99TearDownDatabase() throws Exception {
+        LOG.info(">test99TearDownDatabase");
+        removeWorker(WORKERID);
     }
 }

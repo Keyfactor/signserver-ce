@@ -38,6 +38,7 @@ import java.util.Properties;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.cesecore.keys.token.CryptoTokenAuthenticationFailedException;
+import org.cesecore.keys.token.p11.Pkcs11SlotLabelType;
 import org.cesecore.keys.token.p11.exception.NoSuchSlotException;
 import org.cesecore.util.query.QueryCriteria;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
@@ -211,6 +212,13 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
             final String slotLabelType = props.getProperty(CryptoTokenHelper.PROPERTY_SLOTLABELTYPE);
             if (slotLabelType == null) {
                 throw new CryptoTokenInitializationFailureException("Missing " + CryptoTokenHelper.PROPERTY_SLOTLABELTYPE + " property");
+            }
+            final Pkcs11SlotLabelType slotLabelTypeValue =
+                    Pkcs11SlotLabelType.getFromKey(slotLabelType);
+            if (slotLabelTypeValue == null) {
+                throw new CryptoTokenInitializationFailureException("Illegal " +
+                        CryptoTokenHelper.PROPERTY_SLOTLABELTYPE + " property: " +
+                        slotLabelType);
             }
             final String slotLabelValue = props.getProperty(CryptoTokenHelper.PROPERTY_SLOTLABELVALUE);
             if (slotLabelValue == null) {

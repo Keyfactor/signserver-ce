@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.ejb.worker.impl;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -26,7 +27,6 @@ import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 
 import org.cesecore.audit.log.SecurityEventsLoggerSessionLocal;
-import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.NoSuchWorkerException;
 import org.signserver.common.WorkerConfig;
@@ -97,7 +97,7 @@ public class WorkerManagerSingletonBean {
      * @throws NoSuchWorkerException in case the worker does not exist
      */
     public IWorker getWorker(final int workerId) throws NoSuchWorkerException {
-        return workerFactory.getWorker(workerId);
+            return workerFactory.getWorker(workerId);
     }
     
     /**
@@ -190,19 +190,35 @@ public class WorkerManagerSingletonBean {
     }
     
     /**
-     * List all available worker IDs of the given type.
+     * List all worker IDs available in database of the given type.
      *
      * @param workerType type of worker to list
      * @return a list of all available worker IDs of the given type
-     * @see GlobalConfiguration#WORKERTYPE_ALL
-     * @see GlobalConfiguration#WORKERTYPE_PROCESSABLE
+     * @see WorkerConfig#WORKERTYPE_ALL
+     * @see WorkerConfig#WORKERTYPE_PROCESSABLE
+     * @see WorkerConfig#WORKERTYPE_SERVICES
      */
-    public List<Integer> getWorkers(int workerType) {
-        final List<Integer> retval;
-        
-        List<Integer> allIds = workerConfigService.findAllIds();
+    public List<Integer> getAllWorkerIDs(int workerType) {
+        return filterWorkers(workerConfigService.findAllIds(), workerType);
+    }
+    
+    /**
+     * List all loaded worker IDs of the given type.
+     *
+     * @param workerType type of worker to list
+     * @return a list of all available worker IDs of the given type
+     * @see WorkerConfig#WORKERTYPE_ALL
+     * @see WorkerConfig#WORKERTYPE_PROCESSABLE
+     * @see WorkerConfig#WORKERTYPE_SERVICES
+     */
+    public List<Integer> getCachedWorkerIDs(int workerType) {
+        return filterWorkers(workerFactory.getCachedWorkerIds(), workerType);
+    }
+    
+    private List<Integer> filterWorkers(Collection<Integer> allIds, int workerType) {
+        final LinkedList<Integer> retval;
         if (workerType == WorkerConfig.WORKERTYPE_ALL) {
-            retval = allIds;
+            retval = new LinkedList<>(allIds);
         } else {
             retval = new LinkedList<>();
             for (Integer id : allIds) {
@@ -217,7 +233,6 @@ public class WorkerManagerSingletonBean {
                 }
             }
         }
-
         return retval;
     }
     

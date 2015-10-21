@@ -206,11 +206,11 @@ public class WorkerFactory {
      */
     public synchronized void reloadWorker(int id) {
         if (id != 0) {
-            workerStore.put(id, null);
-            authenticatorStore.put(id, null);
-            workerLoggerStore.put(id, null);
-            accounterStore.put(id, null);
-            archiversStore.put(id, null);
+            workerStore.remove(id);
+            authenticatorStore.remove(id);
+            workerLoggerStore.remove(id);
+            accounterStore.remove(id);
+            archiversStore.remove(id);
 
             Iterator<String> iter = nameToIdMap.keySet().iterator();
 
@@ -408,6 +408,10 @@ public class WorkerFactory {
             }
         }
         return archiversStore.get(workerId);  // TODO: just return archivers!
+    }
+
+    public synchronized Collection<Integer> getCachedWorkerIds() {
+        return workerStore.keySet();
     }
 
 }

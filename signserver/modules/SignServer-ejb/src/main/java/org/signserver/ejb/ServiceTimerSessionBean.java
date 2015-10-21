@@ -228,7 +228,7 @@ public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, ISe
 
         final Collection<Integer> serviceIds;
         if (serviceId == 0) {
-            serviceIds = workerManagerSession.getWorkers(WorkerConfig.WORKERTYPE_SERVICES);
+            serviceIds = workerManagerSession.getAllWorkerIDs(WorkerConfig.WORKERTYPE_SERVICES);
         } else {
             serviceIds = new ArrayList<Integer>();
             serviceIds.add(new Integer(serviceId));

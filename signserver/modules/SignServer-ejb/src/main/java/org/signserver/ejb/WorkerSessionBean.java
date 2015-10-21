@@ -1206,7 +1206,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
      */
     @Override
     public List<Integer> getWorkers(int workerType) {
-        return workerManagerSession.getWorkers(workerType);
+        return workerManagerSession.getAllWorkerIDs(workerType);
     }
     
     private void auditLog(final AdminInfo adminInfo, SignServerEventTypes eventType, SignServerModuleTypes module,

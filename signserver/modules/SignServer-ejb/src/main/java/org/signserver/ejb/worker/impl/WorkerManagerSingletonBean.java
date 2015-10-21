@@ -231,5 +231,9 @@ public class WorkerManagerSingletonBean {
     public void upgradeWorkerNames() {
         workerConfigService.populateNameColumn();
     }
+
+    public boolean removeWorker(int workerId) {
+        return workerConfigService.removeWorkerConfig(workerId);
+    }
     
 }

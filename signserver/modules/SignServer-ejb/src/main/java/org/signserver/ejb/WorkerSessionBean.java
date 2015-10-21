@@ -313,16 +313,18 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         if (workerId == 0) {
             globalConfigurationSession.reload(adminInfo);
         } else {
-            try {
-                workerManagerSession.reloadWorker(workerId);
-                auditLog(adminInfo, SignServerEventTypes.RELOAD_WORKER_CONFIG, EventStatus.SUCCESS, SignServerModuleTypes.WORKER_CONFIG,
-                        Integer.toString(workerId), Collections.<String, Object>emptyMap());
+            workerManagerSession.reloadWorker(workerId);
+            auditLog(adminInfo, SignServerEventTypes.RELOAD_WORKER_CONFIG, EventStatus.SUCCESS, SignServerModuleTypes.WORKER_CONFIG,
+                    Integer.toString(workerId), Collections.<String, Object>emptyMap());
                 
-                // Try to initialize the key usage counter
+            // Try to initialize the key usage counter
+            try {
                 initKeyUsageCounter(workerManagerSession.getWorker(workerId),
                         null, null);
             } catch (NoSuchWorkerException ex) {
-                LOG.error("Worker no longer exists: " + ex.getMessage(), ex);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Worker no longer exists so not initializing key usage counter: " + ex.getMessage());
+                }
             }
         }
 
@@ -637,7 +639,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
 
         result = config.removeProperty(key.toUpperCase());
         if (config.getProperties().size() <= 1) {
-            workerConfigService.removeWorkerConfig(workerId);
+            workerManagerSession.removeWorker(workerId);
             LOG.debug("WorkerConfig is empty and therefore removed.");
             auditLog(adminInfo, SignServerEventTypes.SET_WORKER_CONFIG, SignServerModuleTypes.WORKER_CONFIG, String.valueOf(workerId));
         } else {

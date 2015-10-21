@@ -165,47 +165,47 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("No name in config");
                     }
-                } else {
+                    newName = "UnamedWorker" + workerId;
+                }
                     
-                    final File oldNameFile = getNameFile(workerId);
-                    if (oldNameFile.exists()) {
-                        String oldName = FileUtils.readFileToString(oldNameFile);
-                        
-                        if (!newName.equals(oldName)) {
-                            final File newIdFile = getIdFile(newName);
-                            if (newIdFile.exists()) {
-                                throw new FileBasedDatabaseException("Duplicated name: \"" + newName + "\"");
-                            }
-                            if (LOG.isDebugEnabled()) {
-                                LOG.debug("New name: " + newName + ", oldName: " + oldName);
-                            }
-                            
-                            wcdb.setSignerName(newName);
-                            final File oldIdFile = getIdFile(oldName);
-                            if (LOG.isDebugEnabled()) {
-                                LOG.debug("Rename from " + oldIdFile.getName() + " to " + newIdFile.getName());
-                            }
-                            if (!oldIdFile.renameTo(newIdFile)) {
-                                if (LOG.isDebugEnabled()) {
-                                    LOG.debug("Old ID file " + oldIdFile.getAbsolutePath() + " exists: " + oldIdFile.exists());
-                                    LOG.debug("New ID file " + newIdFile.getAbsolutePath() + " exists: " + newIdFile.exists());
-                                }
-                                throw new FileBasedDatabaseException("Could not rename from " + oldName + " to " + newName);
-                            }
-                            writeName(workerId, newName);
-                        }
-                    } else {
+                final File oldNameFile = getNameFile(workerId);
+                if (oldNameFile.exists()) {
+                    String oldName = FileUtils.readFileToString(oldNameFile);
+
+                    if (!newName.equals(oldName)) {
                         final File newIdFile = getIdFile(newName);
                         if (newIdFile.exists()) {
                             throw new FileBasedDatabaseException("Duplicated name: \"" + newName + "\"");
                         }
                         if (LOG.isDebugEnabled()) {
-                            LOG.debug("New name: " + newName);
+                            LOG.debug("New name: " + newName + ", oldName: " + oldName);
                         }
+
                         wcdb.setSignerName(newName);
+                        final File oldIdFile = getIdFile(oldName);
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Rename from " + oldIdFile.getName() + " to " + newIdFile.getName());
+                        }
+                        if (!oldIdFile.renameTo(newIdFile)) {
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("Old ID file " + oldIdFile.getAbsolutePath() + " exists: " + oldIdFile.exists());
+                                LOG.debug("New ID file " + newIdFile.getAbsolutePath() + " exists: " + newIdFile.exists());
+                            }
+                            throw new FileBasedDatabaseException("Could not rename from " + oldName + " to " + newName);
+                        }
                         writeName(workerId, newName);
-                        writeID(newName, workerId);
                     }
+                } else {
+                    final File newIdFile = getIdFile(newName);
+                    if (newIdFile.exists()) {
+                        throw new FileBasedDatabaseException("Duplicated name: \"" + newName + "\"");
+                    }
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("New name: " + newName);
+                    }
+                    wcdb.setSignerName(newName);
+                    writeName(workerId, newName);
+                    writeID(newName, workerId);
                 }
 
                 writeData(workerId, wcdb);
@@ -335,7 +335,7 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
             LOG.debug(">removeData(" + workerId + ")");
         }
         final File file = new File(folder, DATA_PREFIX + workerId + SUFFIX);
-        if (!file.delete()) {
+        if (!file.delete() && file.exists()) {
             LOG.error("File not removed: " + file.getAbsolutePath());
         }
     }

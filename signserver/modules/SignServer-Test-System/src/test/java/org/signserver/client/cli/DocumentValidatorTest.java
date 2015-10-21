@@ -274,6 +274,7 @@ public class DocumentValidatorTest extends ModulesTestCase {
  
     public void test99TearDownDatabase() throws Exception {
         removeWorker(WORKERID);
+        removeWorker(17);
     }
 
     private byte[] execute(String... args) throws IllegalCommandArgumentsException, IOException, CommandFailureException {

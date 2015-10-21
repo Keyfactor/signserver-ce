@@ -321,16 +321,7 @@ public class MainWebServiceTestSeparately extends ModulesTestCase {
     @Test
     public void test99TearDownDatabase() throws Exception {
         removeWorker(9);
-
-        globalSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER16.CLASSPATH");
-        globalSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER16.SIGNERTOKEN.CLASSPATH");
-
-        workerSession.removeWorkerProperty(16, "AUTHTYPE");
-        workerSession.removeWorkerProperty(16, "VAL1.CLASSPATH");
-        workerSession.removeWorkerProperty(16, "VAL1.TESTPROP");
-        workerSession.removeWorkerProperty(16, "VAL1.ISSUER1.CERTCHAIN");
-
-        workerSession.reloadConfiguration(16);
+        removeWorker(16);
     }
 
     /**

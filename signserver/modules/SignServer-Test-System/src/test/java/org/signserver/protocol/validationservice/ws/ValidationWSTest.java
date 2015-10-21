@@ -171,15 +171,7 @@ public class ValidationWSTest extends ModulesTestCase {
 
     @Test
     public void test99RemoveDatabase() throws Exception {
-        gCSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER16.CLASSPATH");
-        gCSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER16.SIGNERTOKEN.CLASSPATH");
-
-        sSSession.removeWorkerProperty(16, "AUTHTYPE");
-        sSSession.removeWorkerProperty(16, "VAL1.CLASSPATH");
-        sSSession.removeWorkerProperty(16, "VAL1.TESTPROP");
-        sSSession.removeWorkerProperty(16, "VAL1.ISSUER1.CERTCHAIN");
-
-        sSSession.reloadConfiguration(16);
+        removeWorker(16);
     }
     
     private org.signserver.protocol.validationservice.ws.gen.ValidationWS getValidationWS() throws Exception {

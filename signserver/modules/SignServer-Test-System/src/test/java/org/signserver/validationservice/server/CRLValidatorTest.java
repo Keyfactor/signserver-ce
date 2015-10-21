@@ -432,17 +432,6 @@ public class CRLValidatorTest extends ModulesTestCase {
     // TODO: Add more tests for the CRLValidator here
     @Test
     public void test99RemoveDatabase() throws Exception {
-        gCSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER15.CLASSPATH");
-        sSSession.removeWorkerProperty(15, WorkerConfig.IMPLEMENTATION_CLASS);
-        gCSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER15.SIGNERTOKEN.CLASSPATH");
-
-        sSSession.removeWorkerProperty(15, "AUTHTYPE");
-        sSSession.removeWorkerProperty(15, "VAL1.CLASSPATH");
-        sSSession.removeWorkerProperty(15, "VAL1.ISSUER1.CERTCHAIN");
-        sSSession.removeWorkerProperty(15, "VAL1.ISSUER1.CRLPATHS");
-        sSSession.removeWorkerProperty(15, "VAL1.ISSUER2.CERTCHAIN");
-        sSSession.removeWorkerProperty(15, "VAL1.ISSUER2.CRLPATHS");
-
-        sSSession.reloadConfiguration(15);
+        removeWorker(15);
     }
 }

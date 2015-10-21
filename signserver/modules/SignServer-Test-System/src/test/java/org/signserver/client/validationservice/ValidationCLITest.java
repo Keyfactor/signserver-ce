@@ -26,7 +26,6 @@ import org.junit.runners.MethodSorters;
 import org.signserver.cli.CommandLineInterface;
 import org.signserver.client.cli.ClientCLI;
 import org.signserver.client.cli.validationservice.ValidateCertificateCommand;
-import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerUtil;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
@@ -172,18 +171,7 @@ public class ValidationCLITest extends ModulesTestCase {
 
     @Test
     public void test99RemoveDatabase() throws Exception {
-
-        gCSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER16.CLASSPATH");
-        gCSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER16.SIGNERTOKEN.CLASSPATH");
-
-        sSSession.removeWorkerProperty(16, WorkerConfig.IMPLEMENTATION_CLASS);
-        sSSession.removeWorkerProperty(16, "AUTHTYPE");
-        sSSession.removeWorkerProperty(16, "VAL1.CLASSPATH");
-        sSSession.removeWorkerProperty(16, "VAL1.TESTPROP");
-        sSSession.removeWorkerProperty(16, "VAL1.ISSUER1.CERTCHAIN");
-
-
-        sSSession.reloadConfiguration(16);
+        removeWorker(16);
 
         TestingSecurityManager.remove();
     }

@@ -17,11 +17,13 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
+import org.apache.log4j.Logger;
 import org.signserver.cli.spi.AbstractCommand;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.cli.spi.UnexpectedCommandFailureException;
 import org.signserver.common.GlobalConfiguration;
+import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.WorkerStatus;
 
 /**
@@ -30,6 +32,9 @@ import org.signserver.common.WorkerStatus;
  * @version $Id$
  */
 public class GetStatusCommand extends AbstractCommand {
+    
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(GetStatusCommand.class);
 
     private final AdminCommandHelper helper = new AdminCommandHelper();
     
@@ -76,15 +81,21 @@ public class GetStatusCommand extends AbstractCommand {
                     displayGlobalConfiguration();
                 }
 
-                List<Integer> workers = helper.getWorkerSession().getWorkers(GlobalConfiguration.WORKERTYPE_ALL);
+                try {
+                    List<Integer> workers = helper.getWorkerSession().getWorkers(GlobalConfiguration.WORKERTYPE_ALL);
 
-                Collections.sort(workers);
+                    Collections.sort(workers);
 
-                Iterator<?> iter = workers.iterator();
-                while (iter.hasNext()) {
-                    Integer id = (Integer) iter.next();
-                    displayWorkerStatus(id, helper.getWorkerSession().getStatus(id), complete);
-                }
+                    Iterator<?> iter = workers.iterator();
+                    while (iter.hasNext()) {
+                        Integer id = (Integer) iter.next();
+                        displayWorkerStatus(id, helper.getWorkerSession().getStatus(id), complete);
+                    }
+                } catch (InvalidWorkerIdException ex) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Worker does not exist. Maybe not reloaded: " + ex.getMessage());
+                    }
+                } 
             } else {
                 int id = helper.getWorkerId(args[1]);
                 displayWorkerStatus(id, helper.getWorkerSession().getStatus(id), complete);

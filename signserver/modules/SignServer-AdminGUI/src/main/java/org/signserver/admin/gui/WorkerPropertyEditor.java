@@ -137,7 +137,7 @@ public class WorkerPropertyEditor extends Container {
      * @return The property value entered
      */
     public String getValue() {
-        return editPropertyValueTextArea.getText();
+        return editPropertyValueTextArea.getText().trim();
     }
     
     /**

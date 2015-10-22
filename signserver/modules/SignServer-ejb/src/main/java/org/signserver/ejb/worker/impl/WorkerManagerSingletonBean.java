@@ -29,6 +29,7 @@ import org.apache.log4j.Logger;
 import org.cesecore.audit.log.SecurityEventsLoggerSessionLocal;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.NoSuchWorkerException;
+import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.server.*;
 import org.signserver.server.IAuthorizer;
@@ -127,9 +128,9 @@ public class WorkerManagerSingletonBean {
      * @param workerId Id of worker
      * @param awc Worker configuration
      * @return An instance of the worker's worker logger
-     * @throws IllegalRequestException in case the instance could not be loaded correctly
+     * @throws SignServerException in case the instance could not be loaded correctly
      */
-    public IWorkerLogger getWorkerLogger(int workerId, WorkerConfig awc) throws IllegalRequestException {
+    public IWorkerLogger getWorkerLogger(int workerId, WorkerConfig awc) throws SignServerException {
         final IWorkerLogger logger = workerFactory.getWorkerLogger(workerId, awc, em);
         logger.setEjbs(getEjbs());
         

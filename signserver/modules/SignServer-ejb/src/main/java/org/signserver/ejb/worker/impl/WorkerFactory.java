@@ -289,7 +289,7 @@ public class WorkerFactory {
 
     public synchronized IWorkerLogger getWorkerLogger(final int workerId,
             final WorkerConfig config, final EntityManager em)
-            throws IllegalRequestException {
+            throws SignServerException {
         IWorkerLogger workerLogger = workerLoggerStore.get(workerId);
         if (workerLogger == null) {
             final String fullClassName = config.getProperty(WORKERLOGGER);
@@ -310,7 +310,7 @@ public class WorkerFactory {
                             + "fully qualified class name "
                             + "of an IWorkerLogger.";
                     LOG.error(error, e);
-                    throw new IllegalRequestException(error);
+                    throw new SignServerException(error);
                 }
             }
             workerLogger.init(config.getProperties());

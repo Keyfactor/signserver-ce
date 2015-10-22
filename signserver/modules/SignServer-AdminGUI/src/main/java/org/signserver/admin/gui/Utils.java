@@ -103,7 +103,7 @@ public class Utils {
                     alias = worker.getConfiguration().getProperty("DEFAULTKEY");
                     break;
                 case NEXT_KEY:
-                    alias = worker.getConfiguration().getProperty("NEXTKEY");
+                    alias = worker.getConfiguration().getProperty("NEXTCERTSIGNKEY");
                     break;
                 default:
                     throw new IllegalArgumentException("Unknown hard-coded alias");

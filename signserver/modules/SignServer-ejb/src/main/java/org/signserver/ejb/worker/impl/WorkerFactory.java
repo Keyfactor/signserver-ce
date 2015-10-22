@@ -324,7 +324,7 @@ public class WorkerFactory {
 
     public synchronized IWorkerLogger getWorkerLogger(final int workerId,
             final WorkerConfig config, final EntityManager em)
-            throws IllegalRequestException {
+            throws IllegalRequestException, SignServerException {
         IWorkerLogger workerLogger = getWorkerLoggerStore().get(workerId);
         if (workerLogger == null) {
             final String fullClassName = config.getProperty(WORKERLOGGER);
@@ -345,7 +345,7 @@ public class WorkerFactory {
                             + "fully qualified class name "
                             + "of an IWorkerLogger.";
                     LOG.error(error, e);
-                    throw new IllegalRequestException(error);
+                    throw new SignServerException(error);
                 } catch (InstantiationException e) {
                     final String error =
                             "Error worker with id " + workerId
@@ -356,7 +356,7 @@ public class WorkerFactory {
                             + "fully qualified class name "
                             + "of an IWorkerLogger.";
                     LOG.error(error, e);
-                    throw new IllegalRequestException(error);
+                    throw new SignServerException(error);
 
                 } catch (IllegalAccessException e) {
                     final String error =
@@ -368,7 +368,7 @@ public class WorkerFactory {
                             + "fully qualified class name "
                             + "of an IWorkerLogger.";
                     LOG.error(error, e);
-                    throw new IllegalRequestException(error);
+                    throw new SignServerException(error);
                 }
             }
             workerLogger.init(config.getProperties());

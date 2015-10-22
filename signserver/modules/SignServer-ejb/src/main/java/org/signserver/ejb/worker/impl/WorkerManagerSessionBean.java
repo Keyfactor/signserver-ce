@@ -26,6 +26,7 @@ import javax.persistence.EntityManager;
 import org.cesecore.audit.log.SecurityEventsLoggerSessionLocal;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.IllegalRequestException;
+import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession.ILocal;
@@ -105,7 +106,7 @@ public class WorkerManagerSessionBean implements IWorkerManagerSessionLocal {
     }
 
     @Override
-    public IWorkerLogger getWorkerLogger(int workerId, WorkerConfig awc) throws IllegalRequestException {
+    public IWorkerLogger getWorkerLogger(int workerId, WorkerConfig awc) throws SignServerException {
         final IWorkerLogger logger = workerFactory.getWorkerLogger(workerId, awc, em);
         logger.setEjbs(getEjbs());
         

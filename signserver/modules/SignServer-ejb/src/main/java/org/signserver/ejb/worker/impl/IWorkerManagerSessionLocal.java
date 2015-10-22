@@ -16,6 +16,7 @@ import java.util.List;
 import javax.ejb.Local;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.IllegalRequestException;
+import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession.ILocal;
@@ -64,9 +65,9 @@ public interface IWorkerManagerSessionLocal {
      * @param workerId Id of worker
      * @param awc Worker configuration
      * @return An instance of the worker's worker logger
-     * @throws IllegalRequestException in case the instance could not be loaded correctly
+     * @throws SignServerException in case the instance could not be loaded correctly
      */
-    IWorkerLogger getWorkerLogger(int workerId, WorkerConfig awc) throws IllegalRequestException;
+    IWorkerLogger getWorkerLogger(int workerId, WorkerConfig awc) throws SignServerException;
 
     /**
      * Get the worker's authorizer.

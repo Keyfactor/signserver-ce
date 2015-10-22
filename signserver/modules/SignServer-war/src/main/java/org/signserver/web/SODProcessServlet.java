@@ -271,7 +271,9 @@ public class SODProcessServlet extends AbstractProcessServlet {
                 res.getOutputStream().write(processedBytes);
                 res.getOutputStream().close();
             }  catch (AuthorizationRequiredException e) {
-                LOG.debug("Sending back HTTP 401: " + e.getLocalizedMessage());
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Sending back HTTP 401: " + e.getLocalizedMessage());
+                }
 
                 final String httpAuthBasicRealm = "SignServer Worker " + workerId;
 
@@ -280,7 +282,9 @@ public class SODProcessServlet extends AbstractProcessServlet {
                 res.sendError(HttpServletResponse.SC_UNAUTHORIZED,
                         "Authorization Required");
             } catch (AccessDeniedException e) {
-                LOG.debug("Sending back HTTP 403: " + e.getLocalizedMessage());
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Sending back HTTP 403: " + e.getLocalizedMessage());
+                }
                 res.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied");
             } catch (NoSuchWorkerException ex) {
                 res.sendError(HttpServletResponse.SC_NOT_FOUND, "Worker Not Found");

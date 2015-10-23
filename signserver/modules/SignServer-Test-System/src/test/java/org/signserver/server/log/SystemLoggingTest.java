@@ -13,6 +13,7 @@
 package org.signserver.server.log;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -28,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -56,10 +58,12 @@ import org.signserver.test.utils.builders.CryptoUtils;
 import org.signserver.testutils.ModulesTestCase;
 import org.junit.Before;
 import org.junit.Test;
+import org.signserver.common.GenericSignResponse;
 import org.signserver.common.ServiceConfig;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.module.cmssigner.PlainSigner;
+import org.signserver.module.xmlsigner.DebugSigner;
 import org.signserver.server.IProcessable;
 import org.signserver.server.cryptotokens.KeystoreCryptoToken;
 import org.signserver.server.timedservices.hsmkeepalive.HSMKeepAliveTimedService;
@@ -90,6 +94,7 @@ public class SystemLoggingTest extends ModulesTestCase {
     private static final int WORKERID_CRYPTOWORKER1 = 5801;
     private static final int WORKERID_CRYPTOWORKER2 = 5802;
 
+    private static final int WORKERID_DEBUGSIGNER = 6001;
     
     private File auditLogFile;
     private File keystoreFile;
@@ -116,6 +121,31 @@ public class SystemLoggingTest extends ModulesTestCase {
         addDummySigner(signerId, signerName, true);
         workerSession.setWorkerProperty(signerId, "WORKERLOGGER", "org.signserver.server.log.SecurityEventsWorkerLogger");
         workerSession.reloadConfiguration(signerId);
+        
+        addSigner("org.signserver.module.xmlsigner.DebugSigner", WORKERID_DEBUGSIGNER, "EnvDebugSigner", false);
+    }
+
+    @Test
+    public void test01ACheckNodeIds() throws Exception {
+        final String local = System.getenv("SIGNSERVER_NODEID");
+        
+        final GenericSignRequest signRequest =
+                new GenericSignRequest(43, "foo".getBytes());
+        final GenericSignResponse res = 
+                (GenericSignResponse) workerSession.process(WORKERID_DEBUGSIGNER,
+                    signRequest, new RequestContext());
+        final byte[] data = res.getProcessedData();
+
+        final Properties props = new Properties();
+        props.load(new ByteArrayInputStream(data));
+        
+        final String remote = props.getProperty(DebugSigner.SIGNSERVER_NODEID_VALUE);
+        
+        if ((local != null && !local.equals(remote)) 
+                || (remote != null && !remote.equals(local))) {
+            throw new Exception("Not the same SIGNSERVER_NODEID server: <" + remote +">, test: <" + local + "> "
+                    + "This tests assume same SIGNSERVER_NODEID in appserver and test JVM. Tests checking NODE will fail.");
+        }
     }
 
     @Test
@@ -1171,6 +1201,7 @@ public class SystemLoggingTest extends ModulesTestCase {
     public void test99TearDownDatabase() throws Exception {
         LOG.info(">test99TearDownDatabase");
         removeWorker(signerId);
+        removeWorker(WORKERID_DEBUGSIGNER);
     }
 
     private void setLoggingFields(final String includeFields, final String excludeFields) {

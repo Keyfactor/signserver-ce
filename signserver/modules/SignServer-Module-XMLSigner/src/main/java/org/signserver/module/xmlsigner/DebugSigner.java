@@ -50,6 +50,7 @@ public class DebugSigner extends BaseSigner {
 
     public static final String XMLSEC_VERSION = "xml-sec.version";
     public static final String XALAN_VERSION = "xalan.version";
+    public static final String SIGNSERVER_NODEID_VALUE = "signserver_nodeid.value";
     
     @Override
     public ProcessResponse processData(ProcessRequest signRequest,
@@ -82,6 +83,10 @@ public class DebugSigner extends BaseSigner {
         }
         props.put(XALAN_VERSION, xalanVersion == null ? "0.0" : xalanVersion);
 
+        // Add the SIGNSERVER_NODEID environment variable
+        String nodeId = System.getenv("SIGNSERVER_NODEID");
+        props.put(SIGNSERVER_NODEID_VALUE, nodeId == null ? "(null)" : nodeId);
+        
         final StringWriter writer = new StringWriter();
         props.list(new PrintWriter(writer));
         

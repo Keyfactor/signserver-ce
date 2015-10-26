@@ -296,6 +296,33 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
         }
     }
 
+    /**
+     * Test that setting a non-existing WORKERLOGGER results in a fatal error.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void test13invalidWorkerLogger() throws Exception {
+        try {
+            workerSession.setWorkerProperty(getSignerIdDummy1(),
+                "WORKERLOGGER", "nonexistant");
+            workerSession.reloadConfiguration(getSignerIdDummy1());
+            
+            final List<String> fatalErrors =
+                    workerSession.getStatus(getSignerIdDummy1()).getFatalErrors();
+            boolean foundError = false;
+            for (final String fatalError : fatalErrors) {
+                // check for an error message mentioning WORKERLOGGER
+                foundError = fatalError.indexOf("WORKERLOGGER") != -1;
+            }
+            assertTrue("Should contain error", foundError);
+        } finally {
+            workerSession.removeWorkerProperty(getSignerIdDummy1(),
+                    "WORKERLOGGER");
+            workerSession.reloadConfiguration(getSignerIdDummy1());
+        }
+    }
+    
     @Test
     public void test99TearDownDatabase() throws Exception {
         removeWorker(3);

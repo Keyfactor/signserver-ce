@@ -284,6 +284,33 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                 }
                 errorsAtEjbLevel.add(ex.getLocalizedMessage());
             }
+            
+            try {
+                workerManagerSession.getWorkerLogger(workerId, worker.getConfig());
+            } catch (SignServerException ex) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Unable to get worker logger for worker: " + workerId, ex);
+                }
+                errorsAtEjbLevel.add(ex.getLocalizedMessage());
+            }
+            
+            try {
+                workerManagerSession.getAccounter(workerId, worker.getConfig());
+            } catch (SignServerException ex) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Unable to get accounter for worker: " + workerId, ex);
+                }
+                errorsAtEjbLevel.add(ex.getLocalizedMessage());
+            }
+            
+            try {
+                workerManagerSession.getArchivers(workerId, worker.getConfig());
+            } catch (SignServerException ex) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Unable to get archivers for worker: " + workerId, ex);
+                }
+                errorsAtEjbLevel.add(ex.getLocalizedMessage());
+            }
         }
         return worker.getStatus(errorsAtEjbLevel, servicesImpl);
     }

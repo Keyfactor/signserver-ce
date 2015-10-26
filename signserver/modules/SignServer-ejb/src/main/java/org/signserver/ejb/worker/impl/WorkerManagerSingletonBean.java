@@ -144,9 +144,9 @@ public class WorkerManagerSingletonBean {
      * @param authenticationType The authentication type/implementation class name
      * @param awc Worker configuration
      * @return An instance of the worker's authorizer
-     * @throws IllegalRequestException in case the instance could not be loaded correctly
+     * @throws SignServerException in case the instance could not be loaded correctly
      */
-    public IAuthorizer getAuthenticator(int workerId, String authenticationType, WorkerConfig awc) throws IllegalRequestException {
+    public IAuthorizer getAuthenticator(int workerId, String authenticationType, WorkerConfig awc) throws SignServerException {
         return workerFactory.getAuthenticator(workerId,
                             authenticationType,
                             awc,
@@ -159,9 +159,9 @@ public class WorkerManagerSingletonBean {
      * @param workerId Id of worker
      * @param awc Worker configuration
      * @return An instance of the worker's accounter
-     * @throws IllegalRequestException in case the instance could not be loaded correctly
+     * @throws SignServerException in case the instance could not be loaded correctly
      */
-    public IAccounter getAccounter(int workerId, WorkerConfig awc) throws IllegalRequestException {
+    public IAccounter getAccounter(int workerId, WorkerConfig awc) throws SignServerException {
         final IAccounter result = workerFactory.getAccounter(workerId,
                                     awc,
                                     em);
@@ -177,9 +177,9 @@ public class WorkerManagerSingletonBean {
      * @param workerId Id of worker
      * @param awc Worker configuration
      * @return A list of the worker's archiver instances
-     * @throws IllegalRequestException in case the instances could not be loaded correctly
+     * @throws SignServerException in case the instances could not be loaded correctly
      */
-    public List<Archiver> getArchivers(int workerId, WorkerConfig awc) throws IllegalRequestException {
+    public List<Archiver> getArchivers(int workerId, WorkerConfig awc) throws SignServerException {
         return workerFactory.getArchivers(workerId, awc, workerContext);
     }
 

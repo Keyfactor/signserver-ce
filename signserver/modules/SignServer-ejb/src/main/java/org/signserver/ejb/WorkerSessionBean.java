@@ -275,7 +275,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                     final IAuthorizer authenticator = workerManagerSession.getAuthenticator(
                             workerId, processable.getAuthenticationType(), worker.getConfig());
                     errorsAtEjbLevel.addAll(authenticator.getFatalErrors());
-                } catch (IllegalRequestException ex) {
+                } catch (SignServerException ex) {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Unable to get authenticator for worker: " + workerId, ex);
                     }

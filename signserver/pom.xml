@@ -1,0 +1,27 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.signserver</groupId>
+    <artifactId>SignServer</artifactId>
+    <version>4.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>SignServer</name>
+    <properties>
+        <!-- fixedTime / dist.fixedTime is used for deterministic builds. -->
+        <fixedTime/>
+        <dist.fixedTime>${fixedTime}</dist.fixedTime>
+    </properties>
+    <distributionManagement>
+        <repository>
+            <id>nexus1.lab.primekey.se-releases</id>
+            <url>http://nexus1.lab.primekey.se:8081/nexus/content/repositories/releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>nexus1.lab.primekey.se-snapshots</id>
+            <url>http://nexus1.lab.primekey.se:8081/nexus/content/repositories/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <modules>
+        <module>modules</module>
+    </modules>
+</project>

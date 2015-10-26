@@ -76,9 +76,9 @@ public interface IWorkerManagerSessionLocal {
      * @param authenticationType The authentication type/implementation class name
      * @param awc Worker configuration
      * @return An instance of the worker's authorizer
-     * @throws IllegalRequestException in case the instance could not be loaded correctly
+     * @throws SignServerException in case the instance could not be loaded correctly
      */
-    IAuthorizer getAuthenticator(int workerId, String authenticationType, WorkerConfig awc) throws IllegalRequestException;
+    IAuthorizer getAuthenticator(int workerId, String authenticationType, WorkerConfig awc) throws SignServerException;
 
     /**
      * Get the worker's configured accounter.
@@ -86,9 +86,9 @@ public interface IWorkerManagerSessionLocal {
      * @param workerId Id of worker
      * @param awc Worker configuration
      * @return An instance of the worker's accounter
-     * @throws IllegalRequestException in case the instance could not be loaded correctly
+     * @throws SignServerException in case the instance could not be loaded correctly
      */
-    IAccounter getAccounter(int workerId, WorkerConfig awc) throws IllegalRequestException;
+    IAccounter getAccounter(int workerId, WorkerConfig awc) throws SignServerException;
 
     /**
      * Get the worker's archivers.
@@ -96,9 +96,9 @@ public interface IWorkerManagerSessionLocal {
      * @param workerId Id of worker
      * @param awc Worker configuration
      * @return A list of the worker's archiver instances
-     * @throws IllegalRequestException in case the instances could not be loaded correctly
+     * @throws SignServerException in case the instances could not be loaded correctly
      */
-    List<Archiver> getArchivers(int workerId, WorkerConfig awc) throws IllegalRequestException;
+    List<Archiver> getArchivers(int workerId, WorkerConfig awc) throws SignServerException;
 
     /**
      * Forget all created instances of workers and their resources.

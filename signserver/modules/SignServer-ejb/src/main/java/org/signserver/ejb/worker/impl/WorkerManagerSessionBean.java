@@ -114,7 +114,8 @@ public class WorkerManagerSessionBean implements IWorkerManagerSessionLocal {
     }
 
     @Override
-    public IAuthorizer getAuthenticator(int workerId, String authenticationType, WorkerConfig awc) throws IllegalRequestException {
+    public IAuthorizer getAuthenticator(int workerId, String authenticationType, WorkerConfig awc)
+            throws SignServerException {
         return workerFactory.getAuthenticator(workerId,
                             authenticationType,
                             awc,
@@ -122,7 +123,7 @@ public class WorkerManagerSessionBean implements IWorkerManagerSessionLocal {
     }
 
     @Override
-    public IAccounter getAccounter(int workerId, WorkerConfig awc) throws IllegalRequestException {
+    public IAccounter getAccounter(int workerId, WorkerConfig awc) throws SignServerException {
         final IAccounter result = workerFactory.getAccounter(workerId,
                                     awc,
                                     em);
@@ -133,7 +134,7 @@ public class WorkerManagerSessionBean implements IWorkerManagerSessionLocal {
     }
 
     @Override
-    public List<Archiver> getArchivers(int workerId, WorkerConfig awc) throws IllegalRequestException {
+    public List<Archiver> getArchivers(int workerId, WorkerConfig awc) throws SignServerException {
         return workerFactory.getArchivers(workerId, awc, workerContext);
     }
 

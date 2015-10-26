@@ -260,7 +260,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             throw new CryptoTokenOfflineException(ex);
         }
     }
-
+    
     /* (non-Javadoc)
      * @see org.signserver.ejb.interfaces.IWorkerSession#getStatus(int)
      */
@@ -278,7 +278,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                 final IAuthorizer authenticator = workerManagerSession.getAuthenticator(
                         workerId, processable.getAuthenticationType(), worker.getConfig());
                 errorsAtEjbLevel.addAll(authenticator.getFatalErrors());
-            } catch (IllegalRequestException ex) {
+            } catch (SignServerException ex) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Unable to get authenticator for worker: " + workerId, ex);
                 }

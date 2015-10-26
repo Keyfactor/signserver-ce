@@ -289,7 +289,8 @@ public class WorkerFactory {
      * @param authType one of ISigner.AUTHTYPE_ constants or class path to custom implementation
      * @return initialized authorizer.
      */
-    public synchronized IAuthorizer getAuthenticator(int workerId, String authType, WorkerConfig config, EntityManager em) throws IllegalRequestException {
+    public synchronized IAuthorizer getAuthenticator(int workerId, String authType, WorkerConfig config, EntityManager em)
+            throws SignServerException {
         if (getAuthenticatorStore().get(workerId) == null) {
             IAuthorizer auth = null;
             if (authType.equalsIgnoreCase(IProcessable.AUTHTYPE_NOAUTH)) {
@@ -302,13 +303,13 @@ public class WorkerFactory {
                     auth = (IAuthorizer) c.newInstance();
                 } catch (ClassNotFoundException e) {
                     LOG.error("Error worker with id " + workerId + " misconfiguration, AUTHTYPE setting : " + authType + " is not a correct class path.", e);
-                    throw new IllegalRequestException("Error worker with id " + workerId + " misconfiguration, AUTHTYPE setting : " + authType + " is not a correct class path.");
+                    throw new SignServerException("Error worker with id " + workerId + " misconfiguration, AUTHTYPE setting : " + authType + " is not a correct class path.");
                 } catch (InstantiationException e) {
                     LOG.error("Error worker with id " + workerId + " misconfiguration, AUTHTYPE setting : " + authType + " is not a correct class path.", e);
-                    throw new IllegalRequestException("Error worker with id " + workerId + " misconfiguration, AUTHTYPE setting : " + authType + " is not a correct class path.");
+                    throw new SignServerException("Error worker with id " + workerId + " misconfiguration, AUTHTYPE setting : " + authType + " is not a correct class path.");
                 } catch (IllegalAccessException e) {
                     LOG.error("Error worker with id " + workerId + " misconfiguration, AUTHTYPE setting : " + authType + " is not a correct class path.", e);
-                    throw new IllegalRequestException("Error worker with id " + workerId + " misconfiguration, AUTHTYPE setting : " + authType + " is not a correct class path.");
+                    throw new SignServerException("Error worker with id " + workerId + " misconfiguration, AUTHTYPE setting : " + authType + " is not a correct class path.");
                 }
             }
             
@@ -380,7 +381,7 @@ public class WorkerFactory {
 
     public synchronized IAccounter getAccounter(final int workerId,
             final WorkerConfig config, final EntityManager em)
-            throws IllegalRequestException {
+            throws SignServerException {
         IAccounter accounter = getAccounterStore().get(workerId);
         if (accounter == null) {
             final String fullClassName = config.getProperty(ACCOUNTER);
@@ -401,7 +402,7 @@ public class WorkerFactory {
                             + "fully qualified class name "
                             + "of an IAccounter.";
                     LOG.error(error, e);
-                    throw new IllegalRequestException(error);
+                    throw new SignServerException(error);
                 } catch (InstantiationException e) {
                     final String error =
                             "Error worker with id " + workerId
@@ -412,7 +413,7 @@ public class WorkerFactory {
                             + "fully qualified class name "
                             + "of an IAccounter.";
                     LOG.error(error, e);
-                    throw new IllegalRequestException(error);
+                    throw new SignServerException(error);
 
                 } catch (IllegalAccessException e) {
                     final String error =
@@ -424,7 +425,7 @@ public class WorkerFactory {
                             + "fully qualified class name "
                             + "of an IAccounter.";
                     LOG.error(error, e);
-                    throw new IllegalRequestException(error);
+                    throw new SignServerException(error);
                 }
             }
             accounter.init(config.getProperties());
@@ -435,7 +436,7 @@ public class WorkerFactory {
 
     public synchronized List<Archiver> getArchivers(final int workerId,
             final WorkerConfig config, final SignServerContext context)
-            throws IllegalRequestException {
+            throws SignServerException {
         List<Archiver> archivers = getArchiversStore().get(workerId);
         if (archivers == null) {
             archivers = new LinkedList<Archiver>();
@@ -468,7 +469,7 @@ public class WorkerFactory {
                                         + "failed to initialize archiver "
                                         + index + ".";
                                 LOG.error(error, e);
-                                throw new IllegalRequestException(error);
+                                throw new SignServerException(error);
                             }
                             index++;
                         } catch (ClassNotFoundException e) {
@@ -482,7 +483,7 @@ public class WorkerFactory {
                                     + "fully qualified class name "
                                     + "of an Archiver.";
                             LOG.error(error, e);
-                            throw new IllegalRequestException(error);
+                            throw new SignServerException(error);
                         } catch (InstantiationException e) {
                             final String error =
                                     "Error worker with id " + workerId
@@ -494,7 +495,7 @@ public class WorkerFactory {
                                     + "fully qualified class name "
                                     + "of an Archiver.";
                             LOG.error(error, e);
-                            throw new IllegalRequestException(error);
+                            throw new SignServerException(error);
 
                         } catch (IllegalAccessException e) {
                             final String error =
@@ -507,7 +508,7 @@ public class WorkerFactory {
                                     + "fully qualified class name "
                                     + "of an Archiver.";
                             LOG.error(error, e);
-                            throw new IllegalRequestException(error);
+                            throw new SignServerException(error);
                         }
                     }
                     getArchiversStore().put(workerId, archivers);

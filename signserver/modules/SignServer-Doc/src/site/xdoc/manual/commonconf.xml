@@ -8,6 +8,12 @@
     </properties>
 
     <body>
+        
+        <macro name="toc">
+            <param name="section" value="0"/>
+            <param name="fromDepth" value="0"/>
+            <param name="toDepth" value="4"/>
+        </macro>
 
         <chapter name="Introduction" shortname="introduction">
             <section name="Introduction/scope">

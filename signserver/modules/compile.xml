@@ -15,131 +15,32 @@
 <project name="compile" default="build" basedir=".">
 
     <import file="../build.xml"/>
-    <import file="modules.xml"/>
+    
+    <!-- This file is normally not included from the root build.xml so we need 
+    to set up some properties otherwise defined there. -->
+    <property name="platform.project.dir" location="../../"/>
+    <property name="signserver.home" location="../../"/>
+    <property name="server.dist.dir" value="${signserver.home}/lib"/>
 
 
     <!-- =================================================================== -->
     <!-- Main targets                                                        -->
     <!-- =================================================================== -->
     
-    <target name="init" depends="display-build-properties, -init-edition">
+    <target name="init" depends="-init-edition">
         <!-- Create the time stamp -->
         <tstamp/>
-        <mkdir dir="${mods-available}"/>
     </target>
     
-    <target name="display-build-properties">
-        <echo>
--------------- BUILD PROPERTIES --------------
-signserverws.enabled                = ${signserverws.enabled}
-validationws.enabled                = ${validationws.enabled}
-adminws.enabled                     = ${adminws.enabled}
-webdoc.enabled                      = ${webdoc.enabled}
-timestampclient.enabled             = ${timestampclient.enabled}
-validationclient.enabled            = ${validationclient.enabled}
-pdfperformancetest.enabled          = ${pdfperformancetest.enabled}
-signingandvalidationapi.enabled     = ${signingandvalidationapi.enabled}
-admingui.enabled                    = ${admingui.enabled}
-clientcli.enabled                   = ${clientcli.enabled}
-includemodulesinbuild               = ${includemodulesinbuild}
+    <target name="build">
+        <echo level="warn">
+            
+            Make sure SignServer is built using 'mvn clean install' before running this target!
+            
         </echo>
     </target>
-
-    <target name="build" description="Build everything enabled" depends="
-        display-build-properties,
-        init,
-        -build-buildtools,
-        modules">
-            <antcall target="showtime"/>
-    </target>
-
-
-    <target name="clean-build">
-        <echo>Cleaning built files</echo>
-        <delete dir="../lib/" failonerror="true">
-            <include name="*.*ar"/>
-            <include name="*.zip"/>
-        </delete>
-        <delete dir="${apidoc}" />
-        <delete dir="${tmp}"/>	
-        <delete dir="${debian.pkgdist.destdir}"/>
-        <delete dir="${mods-available}"/>
-        <delete dir="${test.dir}" />
-        <delete file="../velocity.log"/>
-
-        <!-- Clean all modules -->
-        <echo>Cleaning sub projects</echo>
-        <subant target="-do-clean-module" failonerror="true">
-            <fileset dir="${modules}">
-                <include name="SignServer-*/build.xml"/>
-                <include name="mod-*/build.xml"/>
-            </fileset>
-         </subant>
-    </target>
-
-
-    <!-- =================================================================== -->
-    <!-- Sub build targets                                                   -->
-    <!-- =================================================================== -->
-
-    <target name="-build-buildtools" depends="-init-tasks">
-        <taskdef name="setmoduleprops"
-            classname="org.signserver.deploytools.ant.SetModuleEnablePropertiesTask"
-            classpathref="deploytools.classpath"/>
-        <ant inheritall="false" target="jar" antfile="modules/SignServer-BuildTools/build.xml"/>
-     </target>
-
-    <target name="doc" description="Build SignServer web site and docs">
-        <ant antfile="modules/SignServer-Doc/build.xml" target="build"
-            inheritall="false"/>
-    </target>
-
-    <target name="javadoc" description="Build JavaDoc for SignServer">
-        <!-- Load the classpath variable -->
-        <property file="lib/nblibraries.properties"/>
-        <mkdir dir="${apidoc}" />
-        <javadoc failonerror="true" useexternalfile="true" packagenames="org.signserver.*" maxmemory="256m" destdir="${apidoc}"
-        	extdirs="${lib}:${lib}/ext:${ant.home}/lib:${lib}/ext:${lib}/${server.java.target}/:${lib}/${client.java.target}/:${lib}/reports:${lib}/quartz:${lib}/module/odfsigner/odfdom.jar" author="true" version="true" use="true" windowtitle="${app.name.cap} API" bottom="Copyright &#169; 2005-2014 PrimeKey Solutions AB." encoding="utf-8" charset="utf-8">
-
-                <!-- Include all java files in the modules folder but excluding the tests -->
-                <fileset dir="modules" includes="*/src/main/java/**/*.java,*/target/generated/jax-wsCache/**/*.java" excludes="*/test/**/*.java,SignServer-Lib-*/**/*"/>
-                
-                <!-- When possible: this should be moved out to a properties file instead -->
-                <classpath>
-                    <fileset dir="lib/ext" includes="*.jar" />
-                    <fileset dir="lib" includes="*.jar"/>
-                    <fileset dir="lib/ext/ext" includes="*.jar" />
-                    <fileset dir="lib/ext/hibernate" includes="*.jar"/>
-                    <fileset dir="${ant.home}/lib" includes="ant.jar" />
-                    <path path="${libs.JBoss-Java-EE-Library.classpath}" />                    
-                </classpath>
-                <classpath path="lib/ext/swing-app-framework/appframework-1.0.3.jar:lib/ext/swing-app-framework/swing-worker-1.1.jar:lib/ext/beans-binding/beansbinding-1.2.1.jar"/>
-        </javadoc>
-        <echo message="Local documentation is now available in file://${apidoc}/index.html"/>
-    </target>
-
-
-    <!-- =================================================================== -->
-    <!-- Test part                                                           -->
-    <!-- =================================================================== -->
-
-    <!-- Run tests -->
-    <target name="test:run" depends="test:signserver:run" 
-        description="Run the default JUnit testcases"/>
-
-    <!-- Run all tests -->
-    <target name="test:runall" depends="test:signserver:runall"
-        description="Run all JUnit testcases"/>
-
-    <target name="test:runperf" description="Test performace of signing modules">
-        <antcall target="test:signserver:performance"/>
-    </target>
     
-    <target name="build-systemtests" description="Build all systemtest JARs">
-        <subant target="-do-test-module" verbose="false">
-            <fileset dir="modules" includes="${build.systemtest.includes}" excludes="${build.systemtest.excludes}"/>
-        </subant>
-    </target>
+    <target name="build-systemtests"/>
         
 
     <!-- =================================================================== -->
@@ -441,116 +342,6 @@ SHA-256 checksum: ${zip.bin.sha256}
 
 
     <!-- =================================================================== -->
-    <!-- Tests                                                               -->
-    <!-- =================================================================== -->
-
-    <target name="test:signserver:pre-run">
-        <fail message="Please set the environment variable 'SIGNSERVER_HOME' before running the junit tests." unless="env.SIGNSERVER_HOME"/>
-        <echo> Important, in order for all tests to complete must the web service and validation web service interfaces be enabled, and HTTPS be turned on.</echo>
-        <delete dir="${test.dir}/reports" />
-        <mkdir dir="${test.dir}/reports/html" />
-    </target>
-
-    <!-- Target that can be called to explicit compile all tests for instance
-        to get rid of build errors in your IDE if you are using Eclipse -->
-    <target name="test:signserver:compile" depends="test:compile"/>
-    <target name="test:compile" description="Compile all tests">
-        <!-- SignServer-Test-SignServerWS -->
-        <ant target="compile-test" inheritall="false"
-            antfile="${testsignserverws.dir}/build.xml"/>
-
-        <!-- SignServer-Test-ValidationWS -->
-        <ant target="compile-test" inheritall="false"
-            antfile="${testvalidationws.dir}/build.xml"/>
-
-        <!-- SignServer-Test-AdminWS -->
-        <ant target="compile-test" inheritall="false"
-            antfile="${testadminws.dir}/build.xml"/>
-
-        <!-- SignServer-Test-System -->
-        <ant target="compile-test" inheritall="false"
-            antfile="${testsystem.dir}/build.xml"/>
-        
-        <!-- SignServer-Test-P11 -->
-        <ant target="compile-test" inheritall="false"
-            antfile="modules/SignServer-Test-P11/build.xml"/>
-    </target>
-	
-    <target name="test:signserver:run" depends="test:signserver:pre-run"
-        description="Run the default JUnit testcases">
-
-        <!-- Run all tests defined in modules-project.properties. -->
-        <subant target="test">
-            <fileset dir="." includes="${tests.modules.includes}"/>
-        </subant>
-        <antcall target="test:report"/>
-    </target>
-    
-    <target name="test:p11:run" description="Run the HSM JUnit testcases">
-
-        <!-- Run all tests defined in modules-project.properties. -->
-        <subant target="test">
-            <fileset file="modules/SignServer-Test-P11/build.xml"/>
-        </subant>
-    </target>
-
-    <target name="test:report"
-        description="Create HTML test report from previously run tests">
-        <!-- Create report for all tests -->
-        <junitreport todir="${test.dir}/reports">
-            <fileset dir="." includes="**/test/results/TEST-*.xml"/>
-            <report format="frames" todir="${test.dir}/reports/html" />
-        </junitreport>
-        <property name="reportfile" location="${test.dir}/reports/html/index.html"/>
-        <echo message="Test report available at: file://${reportfile}"/>
-    </target>
-
-    <target name="test:signserver:runall"
-        depends="test:signserver:pre-run, build">
-
-        <!-- Currently we run all tests by default. When that is no longer the
-            case copy and modify the test:signserver:run target to here -->
-        <antcall target="test:signserver:run"/>
-    </target>
-
-    <!-- Keept only for backwards compatibility -->
-    <target name="test:signserver:runone" depends="test:runone"/>
-
-    <target name="test:runone" description="Run a single JUnit-test specified -Dtest.runone=classname">
-        <fail message="'test.runone' not set. Example -Dtest.runone=TestXMLSigner" unless="test.runone" />
-        <ant antfile="${testsystem.dir}/build.xml" target="test:runone" usenativebasedir="true" inheritall="false">
-            <property name="test.runone" value="${test.runone}"/>
-        </ant>
-    </target>
-
-    <target name="test:pdfperformance" description="Run PDF performance test locally">
-        <available file="${performanceTestToolJar}" property="perfTestExists"/>
-        <antcall target="test:signserver:initpdfperformance" />
-        <antcall target="j2ee:assert-run" />
-        <property name="performancetest.host" value="http://localhost:8080/signserver/" />
-        <property name="performancetest.runtime" value="3000" />
-        <property name="performancetest.threads" value="10" />
-        <property name="performancetest.intervalsize" value="1" />
-        <property name="performancetest.statisticsdir" value="${tmp}/statistics/" />
-        <mkdir dir="${performancetest.statisticsdir}"/>
-        <echo>Starting performance tests..</echo>
-        <echo>Assuming: </echo>
-        <echo> - collected data to be found in ${performancetest.statisticsdir} (set by worker property STATISTICS.CSVFILE.OUTPUTDIR).</echo>
-        <echo> - A PDF worker with name "PDFSigner" exists.</echo>
-        <echo />
-        <echo>Processed data can be found in ${performancetest.statisticsdir}.</echo>
-        <delete dir="${testperf.dir}" />
-        
-        <ant antfile="modules/SignServer-Client-CLI/build.xml" target="run" usenativebasedir="true">
-            <property name="application.args" value="pdfperformancetest test ${performancetest.runtime} ${performancetest.threads} ${performancetest.host}"/>
-        </ant>
-        <ant antfile="modules/SignServer-Client-CLI/build.xml" target="run" usenativebasedir="true">
-            <property name="application.args" value="pdfperformancetest postprocess ${performancetest.statisticsdir} ${performancetest.intervalsize}"/>
-        </ant>
-    </target>
-
-
-    <!-- =================================================================== -->
     <!-- Debian packaging                                                    -->
     <!-- =================================================================== -->
     <target name="debian-pkgdist" depends="clean, unix-create-jar-symlinks, build" 
@@ -788,8 +579,8 @@ SHA-256 checksum: ${zip.bin.sha256}
         <mkdir dir="lib/ext"/>
         <symlink link="lib/ext/commons-lang-2.5.jar" resource="${ext/commons-lang-2.5.jar}"/>
     </target>
-    <target name="unix-create-jar-symlinks" depends="-pre-symlink,-build-buildtools">
-        <taskdef name="symlinklibs" classname="org.signserver.anttasks.UnixSymlinkLibsTask" classpath="lib/SignServer-BuildTools.jar"/>
+    <target name="unix-create-jar-symlinks" depends="-pre-symlink">
+        <taskdef name="symlinklibs" classname="org.signserver.deploytools.ant.UnixSymlinkLibsTask" classpath="lib/ext/DeployTools-${deploytools.version}.jar"/>
         <symlinklibs action="create" dir="${libdir}" mappingsFile="${mappingsFile}"/>
     </target>
 

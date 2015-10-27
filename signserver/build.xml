@@ -79,7 +79,6 @@ to work on Windows. -->
         <istrue value="${web.admingui.dist.enabled}"/>
     </condition>
     
-    <import file="${modules}/modules.xml" optional="true"/> 
     <import file="${modules}/compile.xml" optional="true"/>
     
     
@@ -129,15 +128,6 @@ bin/ant deploy              Configures the EAR file and then deploys it and
 bin/ant deploy-ear          Configures the EAR file and then deploys it but does
                             not do any other application server configurations.
 bin/ant systemtest:jars     Run all available systemtest JARs.
-            
-Some targets available only in the source distribution:
-bin/ant build               Builds everything enabled.
-bin/ant build-systemtests   Builds the systemtest JARs.
-bin/ant test:run            Run the default JUnit tests.
-bin/ant test:compile        Compiles the tests so they can be run by an IDE.
-            
-To clean &amp; build and deploy run:
-bin/ant clean build deploy
         </echo>
     </target>
 
@@ -149,11 +139,6 @@ bin/ant clean build deploy
     <target name="clean">
         <echo>Cleaning tmp</echo>
         <delete dir="${tmp}"/>	
-
-        <!-- Clean everything if this is a source distribution -->
-        <subant target="clean-build" inheritall="true" failonerror="true">
-            <fileset dir="${base}" includes="modules/compile.xml"/>
-         </subant>
     </target>
 
     

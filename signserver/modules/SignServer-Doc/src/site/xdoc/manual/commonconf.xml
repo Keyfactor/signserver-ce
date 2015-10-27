@@ -1,42 +1,46 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!-- $Id$ -->
-
-<document>
+<document xmlns="http://maven.apache.org/XDOC/2.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
 
     <properties>
         <title>SignServer Manual</title>
     </properties>
 
-    <body>
+    <body title="Common Configuration">
         
+        <h1>Common Configuration</h1>
+
         <macro name="toc">
             <param name="section" value="0"/>
             <param name="fromDepth" value="0"/>
             <param name="toDepth" value="4"/>
         </macro>
 
-        <chapter name="Common configuration" shortname="commonconf">
-
+            <section name="Introduction">
 		<p>
 		Configuring workers are done by setting properties in the worker configuration.
 		There is one set of configuration options that are handled by the framework, and that applies to all workers, then there are worker specific properties handled by the worker implementation.
 		</p>
 		<p>Properties are usually defined in the module configuration file used to install a module, or configured manually using one of the <i>bin/signserver setproperty</i> variant.</p>
 		
+            </section>
+                
             <section name="Setting Authorization Type">
                 <subsection name="SignServer">
                     <p>
 By default (if the property is not set) is client-certificate authentication required for a signature request to be processed. This can be changed with the AUTHTYPE property.
                     </p>
-                    <subsubsection name="No authentication">
+                    <h4>No authentication</h4>
                         <p>
 <b>AUTHTYPE</b> =  NOAUTH
                         </p>
                         <p>
 Sets the server to not require any authentication.
                         </p>
-                    </subsubsection>
-                    <subsubsection name="Client certificate authentication">
+
+                    <h4>Client certificate authentication</h4>
                         <p>
 <b>AUTHTYPE</b> =  CLIENTCERT
                         </p>
@@ -45,8 +49,8 @@ Sets the server to not require any authentication.
  in the application server's truststore. Authorized clients is configured
  manually using the CLI interface.
                         </p>
-                    </subsubsection>
-                    <subsubsection name="Username/password-based authentication">
+
+                    <h4>Username/password-based authentication</h4>
                         <p>
 <b>AUTHTYPE</b> = org.signserver.server.UsernamePasswordAuthorizer
                         </p>
@@ -68,8 +72,8 @@ If a valid username and
 password is not supplied the worker throws an AuthorizationRequiredException
 which in case of the HTTP interfaces causes a HTTP Basic Authentication (RFC 2617).
                         </p>
-                    </subsubsection>
-                    <subsubsection name="Username-based authentication">
+
+                    <h4>Username-based authentication</h4>
                         <p>
 <b>AUTHTYPE</b> = org.signserver.server.UsernameAuthorizer
                         </p>
@@ -92,8 +96,8 @@ front-end.
 The Authorizer can be configured to either accept all usernames or only accept
 those usernames listed in one of its properties.
                         </p>
-                    </subsubsection>
-                    <subsubsection name="Remote address authentication">
+
+                    <h4>Remote address authentication</h4>
                         <p>
 <b>AUTHTYPE</b> = org.signserver.server.RemoteAddressAuthorizer
                         </p>
@@ -120,8 +124,8 @@ Autorizer could be configured for the XMLValidator.
                         <p>
 <b>Logging:</b> This authorizer will add the remote IP address to the log field AUTHORIZED_ADDRESS.
                         </p>
-                    </subsubsection>
-                    <subsubsection name="List-based Address Authorizer">
+
+                    <h4>List-based Address Authorizer</h4>
                         <p>
 <b>AUTHTYPE</b> = org.signserver.server.ListBasedAddressAuthorizer
                         </p>
@@ -193,8 +197,8 @@ MAX_FORWARDED_ADDRESSES=10
 (if it's available in the request) in the log field AUTHORIZED_FORWARDED_ADDRESS.
                         </p>
   
-                    </subsubsection>
-                    <subsubsection name="DispatchedAuthorizer">
+
+                    <h4>DispatchedAuthorizer</h4>
                         <p>
 <b>AUTHTYPE</b> = org.signserver.server.DispatchedAuthorizer    
                         </p>
@@ -204,12 +208,12 @@ MAX_FORWARDED_ADDRESSES=10
                         <p>
 Only accepts requests that has gone through a Dispatcher. This Authorizer only checks the present of the DISPATCHER_AUTHORIZED_CLIENT field in the request context to know that the request has passed a Dispatcher.
                         </p>
-                    </subsubsection>
-                    <subsubsection name="Custom">
+
+                    <h4>Custom</h4>
                         <p>
 This authorization functionality doesn't work for all use cases. Then it's possible to create a customized authorizer and specify it's class path as value in the AUTHTYPE property. The Processable will then automatically instantiate and use it. How to develop such a plug-in is explained in the developers section.
                         </p>
-                    </subsubsection>
+
                 </subsection>
             </section>
 
@@ -319,8 +323,7 @@ a certificate request using the RenewalWorker or through to admin GUI. (default:
 <b>NOCERTIFICATES</b> = Setting this to true tells SignServer to not warn if no signer certificate is configured for this worker. This could be useful for special types of workers not performing any signing operations.
                 </p>
             </section>
-		</chapter>
-	
+
     </body>
 </document>
 

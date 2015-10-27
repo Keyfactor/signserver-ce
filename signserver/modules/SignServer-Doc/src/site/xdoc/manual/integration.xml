@@ -1,21 +1,23 @@
 <?xml version="1.0"?>
 <!-- $Id$ -->
-
-<document>
+<document xmlns="http://maven.apache.org/XDOC/2.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
 
     <properties>
         <title>SignServer Manual</title>
     </properties>
 
-    <body>
+    <body title="Integration">
         
+        <h1>Integration</h1>
+
         <macro name="toc">
             <param name="section" value="0"/>
             <param name="fromDepth" value="0"/>
             <param name="toDepth" value="4"/>
         </macro>
 
-        <chapter name="Integration" shortname="integration">
             <!--<p>
                 TODO: Introduction
             </p>-->
@@ -50,6 +52,7 @@ Generic operation for request signing of any binary (or character) data.
                             </p>
                             <p>
 Parameters:
+                            </p>
                                 <ul>
                                     <li>
 <b>worker</b> (string)<br/>
@@ -64,9 +67,9 @@ Optional additional request data. For instance the PDFSigner accepts the PDF pas
 The document/data to process.
                                     </li>
                                 </ul>
-                            </p>
                             <p>
 Output:
+                            </p>
                                 <ul>
                                     <li>
 <b>archiveId</b> (string)
@@ -90,14 +93,13 @@ Identifier for the request/response.
 The signer certificate in binary format if available.
                                     </li>
                                 </ul>
-                            </p>
                             <p>
 Faults:
+                            </p>
                                 <ul>
                                     <li>RequestFailedException</li>
                                     <li>InternalServerException</li>
                                 </ul>
-                            </p>
                         </td>
                     </tr>
                     
@@ -117,6 +119,7 @@ The ePassport production system calls this operation to get an SOD for the suppl
                             </p>
                             <p>
 Parameters:
+                            </p>
                                 <ul>
                                     <li>
 <b>worker</b> (string)<br/>
@@ -132,9 +135,9 @@ The sodRequest should contain a sequence of datagroups (id 1-16 and their values
 optionally also the version of the LDS to use and the version of Unicode.
                                     </li>
                                 </ul>
-                            </p>
                             <p>
 Output:
+                            </p>
                                 <ul>
                                     <li>
 <b>archiveId</b> (string)
@@ -158,14 +161,13 @@ Identifier for the request/response.
 The signer (DS) certificate in binary format if available.
                                     </li>
                                 </ul>
-                            </p>
                             <p>
 Faults:
+                            </p>
                                 <ul>
                                     <li>RequestFailedException</li>
                                     <li>InternalServerException</li>
                                 </ul>
-                            </p>
                         </td>
                     </tr>
                     
@@ -173,7 +175,7 @@ Faults:
             </subsection>
         </section>
         
-        <section name="The old Web Services interface" shortname="signserverws">
+        <section name="The old Web Services interface" id="signserverws">
                 <p>
 The SignServerWS is the old web services interface now replaced by SignServer ClientWS. It was 
 new to version 3.0 and at the time replaced the RMI-SSL interface from version 1.0 and 2.0 for two reasons, the RMI-SSL were based on a commercial library and it only worked for Java clients.
@@ -218,7 +220,7 @@ Built along with the WebService is a Java API that can be used by clients. It's 
 				To use the API include the file lib/SignServer-Client-SigningAndValidationAPI.jar.
 			</p>
 			<subsection name="Sample Code">
-				<subsubsection name="Signing and validating an XML document">
+                            <h4>Signing and validating an XML document</h4>
                                     <source>
 try {
     System.setProperty("javax.net.ssl.trustStore", "p12/truststore.jks");
@@ -248,7 +250,6 @@ try {
 } catch (Exception ex) {
     ex.printStackTrace();
 }                                   </source>
-				</subsubsection>
 
 			</subsection>
 		</section>
@@ -338,11 +339,11 @@ try {
                             in the URI's query string.
                         </p>
 
-                        <subsubsection name="Configuration">
+                        <h4>Configuration</h4>
                             <p><b>HTTP_MAX_UPLOAD_SIZE</b> = Global configuration property that can be set to specify the maximum size (in bytes) of the HTTP request (Defaut: 104857600).</p>
-                        </subsubsection>
+                        
 
-                        <subsubsection name="Samples">
+                        <h4>Samples</h4>
                             <ul>
                                 <li>
                                     HTTP GET:<br/>
@@ -369,7 +370,7 @@ try {
                                     </ul>
                                 </li>
                             </ul>
-                        </subsubsection>
+                        
 
                     </subsection>
                     <subsection name="WorkerServlet">
@@ -420,7 +421,7 @@ try {
                             </tr>
                         </table>
 
-                        <subsubsection name="Samples">
+                        <h4>Samples</h4>
                             <ul>
                                 <li>
                                     HTTP GET:<br/>
@@ -429,7 +430,7 @@ try {
                                     <br/>
                                 </li>
                             </ul>
-                        </subsubsection>
+                        
 
                     </subsection>
                     <subsection name="SODProcessServlet">
@@ -469,18 +470,18 @@ try {
                         </table>
 
 
-                        <subsubsection name="Samples">
+                        <h4>Samples</h4>
                             <ul>
                                 <li>
                                     See /signserver/demo/mrtdsodsign.jsp.<br/>
                                     <br/>
                                 </li>
                             </ul>
-                        </subsubsection>
+                        
                     </subsection>
 		</section>
 
-                <section name="Client Command Line Interface (CLI)" shortname="clientcli">
+                <section name="Client Command Line Interface (CLI)" id="clientcli">
                     <p>
 Requests can be sent to the workers using the Client CLI. After building
 SignServer the script bin/client.sh can be run.
@@ -778,7 +779,7 @@ b) signdatagroups -workername MRTDSODSigner -data "1=value1&amp;2=value2&amp;3=v
 
                 </section>
 
-                <section name="Administration Web Service" shortname="adminws">
+                <section name="Administration Web Service" id="adminws">
                     <p>
 The SignServer AdminWS can be used for remote administration of SignServer
 over client authenticated HTTPS. Access is granted based on a list of
@@ -1043,7 +1044,6 @@ Also remember if you are proxying from multiple virtual hosts (i.e. if you have 
                 </subsection>
                 
             </section>
-        </chapter>
 
     </body>
 </document>

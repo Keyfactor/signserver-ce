@@ -1,13 +1,16 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!-- $Id$ -->
-
-<document>
+<document xmlns="http://maven.apache.org/XDOC/2.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
 
     <properties>
         <title>SignServer Manual</title>
     </properties>
 
-    <body>
+    <body title="Usage Guide">
+
+        <h1>Usage Guide</h1>
         
         <macro name="toc">
             <param name="section" value="0"/>
@@ -15,7 +18,6 @@
             <param name="toDepth" value="4"/>
         </macro>
 
-        <chapter name="Usage Guide" shortname="usageguide">
             <section name="Introduction">
                 <p>   
                 </p>
@@ -48,7 +50,7 @@ There is a special property file for the cli interface called signserver_cli.pro
 Its possible to customize the CLI with your own code. How to do this is described in the development section.
                 </p>
                 <subsection name="Administration CLI">
-                    <subsubsection name="General Commands">
+                    <h4>General Commands</h4>
                         <p>
 <b>getstatus:</b>
 Returns the status of the given worker, it says if its crypto token is active or not and the loaded 'active' configuration. It is possible to get a <i>brief</i> summary or a <i>complete</i> listing for one worker or all configured workers. If all workers are displayed will also all the global configuration parameters be displayed.
@@ -177,9 +179,8 @@ Used to activate crypto tokens. Authentication code is usually the PIN used to u
 <b>deactivatecryptotoken:</b>
 Brings a crypto token off-line. Not used if token is set to auto-activation.
                         </p>
-                    </subsubsection>
 
-                    <subsubsection name="SignServer Specific Commands">
+                    <h4>SignServer Specific Commands</h4>
                         <p><b>Authorization Related</b></p>
                         <p>
 These commands are used to configure the internal client certificate authorization when it is turned on. It controls which clients that is authorized to request a processable worker.
@@ -439,13 +440,13 @@ signserver querytokenentries -token &lt;id or name&gt; -limit &lt;number&gt; [-c
                         <p>
 -v means verbose and if given outputs also entry type as well as any certificates or additional information available in each entry
                         </p>
-                    </subsubsection>
                 </subsection>
                 
                 <subsection name="Database CLI">
-                    <note>
-This is a SignServer Enterprise Edition (EE) feature.
-                    </note>
+                    <div class="frame note">
+                        <div class="label">Note</div>
+                        <div class="content">This is a SignServer Enterprise Edition (EE) feature.</div>
+                    </div>
                     <p>
 The SignServer Database CLI uses Java Persistence API (JPA) to connect to the 
 SignServer database. The CLI is configured by the dbcli.* properties in 
@@ -464,7 +465,8 @@ Sample usage:
                     <source>
 bin/signserver-db audit
                     </source>
-                    <subsubsection name="Verify Auditlog Command">
+                    
+                    <h4>Verify Auditlog Command</h4>
                         <source>
 Usage: verifylog -all
        verifylog [-node NODENAME[:OFFSET] ...]
@@ -501,9 +503,8 @@ Sample output:
 2013-07-04 15:29:10,747 INFO  [VerifyLogCommand] Verification finished with success
 2013-07-04 15:29:10,747 INFO  [VerifyLogCommand] Last sequences: {server1=2, server2=7}
                         </source>
-                    </subsubsection>
                     
-                    <subsubsection name="Archiving of the audit log">
+                    <h4>Archiving of the audit log</h4>
                         <p>
 As the Database CLI audit verifylog command checks for gabs in the sequence numbering entries from the audit log can not be archived/moved to other storage without special care.
 However since the command now supports the option to specify from which sequence number to start the verification the following scheme for archiving is proposed:                            
@@ -524,11 +525,10 @@ The next time the log should be verified start the verification from the last se
 Again note down the last sequence number for each node and all entries up to the sequence number before the last for each node can now be archived.
                             </li>
                         </ol>
-                        <note>
-It is important to not remove the row with the last sequence number for any node as if the application is restarted the sequence numbering would than start again from 0 for that node.
-                        </note>
-                    </subsubsection>
-                    
+                        <div class="frame note">
+                            <div class="label">Note</div>
+                            <div class="content">It is important to not remove the row with the last sequence number for any node as if the application is restarted the sequence numbering would than start again from 0 for that node.</div>
+                        </div>
                 </subsection>
 
                 <subsection name="Administration GUI">
@@ -550,7 +550,7 @@ already selected when the dialog opens.
 See also the <a href="#Admin%20GUI%20troubleshooting">Admin GUI troubleshooting</a> section.
                     </p>
 
-                    <subsubsection name="Connect to SignServer dialog">
+                    <h4>Connect to SignServer dialog</h4>
                         <p>
 First select either to connect to a local or remote instance. If a remote one
 is selected then also specify URL to SignServer server as well as keystore and
@@ -584,18 +584,16 @@ keystore and no truststore is used.
 path. Options are: JKS, PKCS12 or PKCS11. If PKCS11 is choosen the keystore file
 path should be the path to the PKCS#11 shared library file.
                         </p>
-                    </subsubsection>
 
-                    <subsubsection name="Main window">
+                    <h4>Main window</h4>
                         <p>
 The SignServer Administration GUI main window consists of a menu bar, a toolbar,
 the working area and at the bottom a status bar. The working area constists of a
 left and right part where the left is a list of all configured workers and the
 right shows details for the selected workers (if any).
                         </p>
-                    </subsubsection>
 
-                    <subsubsection name="Main window: Menu bar">
+                    <h4>Main window: Menu bar</h4>
 		        <p>
 <b> File -&gt; Add Worker/Load Configuration…</b>: Opens the dialog to import a configuration or set-up a worker manually by specifying worker parameters. When selecting "Load from file" it is possible to load a configuration file. This is equivalent of the "setproperties" <a href="complete.en.html#Administration%20CLI">Admin CLI</a> command. Selecting "Add worker" enables setting up a worker from scratch by manually specifying a worker ID (the default selected will generate an ID dynamically), worker name, fully qualified class name for the implementation, and (optionally) a signer token implementation. Additional properties can be added using the table below. When the required parameters are given, the "Next" button will enable moving to the next step where additional manual editing of the resulting configuration can be made (the format is the same as the worker properties files). Clicking the "Apply" button from this stage will load the current configuration. The dialog can be dismissed in both states using the "Cancel" button.
 			</p>
@@ -688,9 +686,8 @@ Alternatively a certificate file (PEM or DER format) can be loaded, from which t
                         <p>
 <b> Help -&gt; About...</b>: Opens the about box doc.
                         </p>
-                    </subsubsection>
 
-                    <subsubsection name="Main window: Tool bar">
+                    <h4>Main window: Tool bar</h4>
                         <p>
 <b>Refresh</b>: Refreshes the information about all workers.
                         </p>
@@ -715,16 +712,15 @@ Alternatively a certificate file (PEM or DER format) can be loaded, from which t
                         <p>
 <b>Renew signer...</b>: Opens the Renew signer dialog for the selected worker(s).
                         </p>
-                    </subsubsection>
 
-                    <subsubsection name="Main window: Status Summary Tab">
+
+                    <h4>Main window: Status Summary Tab</h4>
                         <p>
 Displays the status summary for the selected worker in the same format as the
 CLI command "signserver getstatus complete".
                         </p>
-                    </subsubsection>
 
-                    <subsubsection name="Main window: Status Properties Tab">
+                    <h4>Main window: Status Properties Tab</h4>
                         <p>
 Displays the status in properties format with the option of viewing details
 for some properties such as for the certificates.
@@ -734,9 +730,8 @@ for some properties such as for the certificates.
 with more information for the property (if supported). Currently for certificates
 this opens the Certificate details dialog.
                         </p>
-                    </subsubsection>
 
-                    <subsubsection name="Main window: Configuration Tab">
+                    <h4>Main window: Configuration Tab</h4>
                         <p>
 Lists all the selected worker's configuration properties and gives the ability
 to add, remove or edit properties.
@@ -750,9 +745,8 @@ to add, remove or edit properties.
                         <p>
 <b>Remove</b>: Removes the selected property.
                         </p>
-                    </subsubsection>
 
-                    <subsubsection name="Main window: Authorization Tab">
+                    <h4>Main window: Authorization Tab</h4>
                         <p>
 Lists all the authorized client certificates for the selected worker. Notice 
 that this only applies if the worker has the AUTHTYPE set to CLIENTCERT 
@@ -779,9 +773,8 @@ the currently selected workers.
 "Apply changes to all selected workers" is checked the client is modified in all
 the currently selected workers.
                         </p>
-                    </subsubsection>
                     
-                    <subsubsection name="Main window: CryptoToken Tab">
+                    <h4>Main window: CryptoToken Tab</h4>
                         <p>
 The CryptoToken tab is only visible when selecting a worker that either is a CryptoWorker or is a worker that has crypto token configuration.
 The tab allows quering of entries inside the crypto token as well as generating keys, certificate requests and importing certificates etc.
@@ -830,6 +823,7 @@ Note that installing certificates this way it is only possible to store the cert
                         </p>
                         <p>
 <b>Details...</b>: Opens the details window displaying more information about the token entry:
+                        </p>
 <ul>
     <li>Alias: The key alias</li>
     <li>Type: The type of entry, ie. private key, secret key or trusted certificate</li>
@@ -839,14 +833,12 @@ Note that installing certificates this way it is only possible to store the cert
     <li>Key algorithm: If available, the algorithm used for the key, ie RSA, DSA, ECDSA or AES etc.</li>
     <li>Additional information might be available depending on the crypto token implementation.</li>
 </ul>
-                        </p>
                         <p>
 Double clicking or pressing the Enter key on a selected row opens the details window as well.
                         </p>
 
-                    </subsubsection>
                     
-                    <subsubsection name="Main window: Audit log">
+                    <h4>Main window: Audit log</h4>
                         <p>
 In the "Audit log" tab controls for querying and filter the audit log exists.
                         </p>
@@ -872,10 +864,9 @@ of each row displayed are verified. If the verification fails for any of the
 rows in a page, an error message is displayed. The error message contains 
 information about the first row that failed.
                         </p>
-                        
-                    </subsubsection>
 
-<subsubsection name="Main window: Archive">
+
+                    <h4>Main window: Archive</h4>
                         <p>
 In the "Archive" tab controls for querying and filter the archive.
                         </p>
@@ -896,27 +887,24 @@ When selection one or more rows from the search result, the "Fetch selected arch
 button is enabled. Clicking this button opens a dialog allowing to select a download directory
 and downloading the archived data of the selected rows.
                         </p>
-                        
-                    </subsubsection>
 
-                    <subsubsection name="Renew key dialog">
+
+                    <h4>Renew key dialog</h4>
                         <p>
 Generates new keys for all the listed workers. For this to work all workers should
 have the same password. Key algorithm, Key specification and New key alias must
 be specified if it is not taken from the worker's configuration.
                         </p>
-                    </subsubsection>
 
-                    <subsubsection name="Test key dialog">
+                    <h4>Test key dialog</h4>
                         <p>
 Test keys for all the listed workers. It is optional to either test the current
 key or the next key (if any) or all the keys in the keystore. For this to work
 all workers should have the same password. The results shows for each key the
 key alias, SUCCESS and the public key hash if the test signing succeded.
                         </p>
-                    </subsubsection>
 
-                    <subsubsection name="Generate CSR dialog">
+                    <h4>Generate CSR dialog</h4>
                         <p>
 Generates certificate signing requests (CSR:s) in PKCS#10 format for all listed 
 signers. In the key dropdown menu either the current key (Default key) or the next key
@@ -928,9 +916,8 @@ the request could either be a Standard CSR file or a CSR wrapped in PKCS#7/CMS
 signed object created by a RequestSigner. The with the last option is that at 
 the CA the signature of the request can be verified.
                         </p>
-                    </subsubsection>
 
-                    <subsubsection name="Install certificates">
+                    <h4>Install certificates</h4>
                         <p>
 Installs signer certificate and certificate chains for the listed workers and
 if next key is choosen that key becomes the new default key.
@@ -954,9 +941,8 @@ keystore and PKCS11 crypto tokens.
 <b>Certificate chain</b>: Browse for the signer certificate chain file (or CA certificate(s)) in PEM
 format.
                         </p>
-                    </subsubsection>
 
-                    <subsubsection name="Renew signer dialog">
+                    <h4>Renew signer dialog</h4>
                         <p>
 Requests a Renewal worker to renew all the choosen and selected workers. The 
 Renewal worker will generate a new key if there isn't already a next key available 
@@ -966,24 +952,21 @@ the current default key. Notice how the "Not valid after" date and possibly also
 the Signings column changes and the Renewal checkbox gets unchecked after a
 successfull renewal.
                         </p>
-                    </subsubsection>
                     
-                    <subsubsection name="Remove key dialog">
+                    <h4>Remove key dialog</h4>
                         <p>
 Enter the key alias of the key to remove from the crypto token. Note that 
 multiple workers might be using the key. If the crypto token supports key 
 removal the key will be deleted and it might not be possible to restore it.
                         </p>
-                    </subsubsection>
 
-                    <subsubsection name="Global configuration dialog">
+                    <h4>Global configuration dialog</h4>
                         <p>
 Lists all the global configuration properties and gives the ability to add,
 remove or edit properties.
                         </p>
-                    </subsubsection>
 
-                    <subsubsection name="Administrators dialog">
+                    <h4>Administrators dialog</h4>
                         <p>
 Lists all the authorized WS administrators, auditors, and archive auditors and gives the ability to add,
 remove or edit them.
@@ -1002,9 +985,9 @@ administrators the checkbox can be unchecked. It is recommended to add your self
 using the "Load current" button to be sure the correct information is filled in 
 before disabling access for admins not in the list.
                         </p>
-                    </subsubsection>
 
-                    <subsubsection name="Admin GUI troubleshooting">
+
+                    <h4>Admin GUI troubleshooting</h4>
                         <ul>
                             <li>
                                 <p>
@@ -1050,8 +1033,6 @@ A workaround that has been working in those cases are:
                                 </ol>
                             </li>
                         </ul>
-                    </subsubsection>
-
                 </subsection>
 
                 <subsection name="Working with Workers">
@@ -1062,7 +1043,7 @@ ID. A worker can also be configured with a name by setting the property NAME.
 After the configuration has been activated (by issuing reload with the worker ID) 
 that name can also be used to address the worker.
                     </p>
-                    <subsubsection name="Configuring">
+                    <h4>Configuring</h4>
                         <p>
 A worker is configured by setting properties for it. Specifically if the plugin
 is built-in it is specified by setting the property CLASSPATH to the fully
@@ -1087,8 +1068,8 @@ reload command:
                         <source>
 bin/signserver reload WORKER-ID
                         </source>
-                    </subsubsection>
-                <subsubsection name="Remove Workers">
+
+                    <h4>Remove Workers</h4>
                     <p>
                     You can list which workers you have with the command:
                     </p>
@@ -1118,7 +1099,6 @@ Status of Signer with Id 1 is :
 bin/signserver removeworker 1
 bin/signserver reload all                    
                     </source>
-                </subsubsection>
             </subsection>
             </section>
 
@@ -1149,7 +1129,7 @@ More information about the MySQL Cluster can be found at
                     </p>
                </subsection>
                <subsection name="Healthcheck">
-                   <subsubsection name="Setting up the Health check servlet">
+                   <h4>Setting up the Health check servlet</h4>
                     <p>
 In SignServer there exists a health check service that can be used for health monitoring. It is also useful for cluster, as it can be checked by load balancers to determine if a node should be active in the cluster (healthy) or taken out of the cluster (unhealthy).
                     </p>
@@ -1184,9 +1164,8 @@ If this property is not set (or an invalid file is given), the maintenance funct
 affect the error message returned when in maintenance mode (the part of the string after <source>MAINT: </source>
 (defaults to <source>DOWN_FOR_MAINTENANCE</source>).
                     </p>
-                </subsubsection>
                 
-                <subsubsection name="Available tests and responses">
+                <h4>Available tests and responses</h4>
                     <ul>
                         <li>
                             <p>
@@ -1230,7 +1209,6 @@ Each (non-disabled) worker is checked for a number of things. If anything failed
 Workers that are disabled by having the worker property DISABLED=true are not considered in the Health check report.
                         </li>
                     </ul>
-                </subsubsection>
                </subsection>
             </section>
 
@@ -1241,7 +1219,6 @@ Workers that are disabled by having the worker property DISABLED=true are not co
                 </p>
             </section>-->
   
-        </chapter>
 
     </body>
 </document>

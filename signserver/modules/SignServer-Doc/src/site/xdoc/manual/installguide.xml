@@ -1,13 +1,16 @@
 <?xml version="1.0"?>
 <!-- $Id$ -->
-
-<document>
+<document xmlns="http://maven.apache.org/XDOC/2.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
 
     <properties>
         <title>SignServer Manual</title>
     </properties>
 
-    <body>
+    <body title="Installation Guide">
+        
+        <h1>Installation Guide</h1>
         
         <macro name="toc">
             <param name="section" value="0"/>
@@ -15,7 +18,6 @@
             <param name="toDepth" value="4"/>
         </macro>
 
-        <chapter name="Installation Guide" shortname="installguide">
 
             <section name="Server installation">
                 <subsection name="1. Check prerequisites">
@@ -47,38 +49,38 @@ unstable version checkout from the Subversion (SVN)
                 </subsection>
 
                 <subsection name="3. Set environment variables">
-                    <subsubsection name="APPSRV_HOME">
+                    <h4>APPSRV_HOME</h4>
                         <p>
 Set APPSRV_HOME to point to your application server installation (<code>/opt/jboss</code> could be a symbolic link).
                         </p>
                         <source>
 export APPSRV_HOME=/opt/jboss
                         </source>
-                    </subsubsection>
-                    <subsubsection name="ANT_OPTS">
+
+                    <h4>ANT_OPTS</h4>
                         <p>
 Set ANT_OPTS to give Ant more memory for building SignServer.
                         </p>
                         <source>
 export ANT_OPTS="-Xmx512m -XX:MaxPermSize=128m"
                         </source>
-                    </subsubsection>
-                    <subsubsection name="SIGNSERVER_HOME">
+
+                    <h4>SIGNSERVER_HOME</h4>
                         <p>
 Set SIGNSERVER_HOME to point to your SignServer installation.
                         </p>
                         <source>
 export SIGNSERVER_HOME=/opt/signserver
                         </source>
-                    </subsubsection>
-                    <subsubsection name="SIGNSERVER_NODEID">
+
+                    <h4>SIGNSERVER_NODEID</h4>
                         <p>
 Set SIGNSERVER_NODEID to an unique ID for the server.
                         </p>
                         <source>
 export SIGNSERVER_NODEID=node1
                         </source>
-                    </subsubsection>
+
                 </subsection>
 
                 <subsection name="4. Setup database">
@@ -93,22 +95,23 @@ create tables during startup of SignServer but if the database user does not
 have table create permissions or if you run on GlassFish the tables must be
 created manually. See doc/sql-scripts/create-tables-signserver34-*.sql.
                     </p>
-                    <subsubsection name="MariaDB binlog format configuration">
+                    <h4>MariaDB binlog format configuration</h4>
                         <p>
 For MariaDB you will have to set binlog_format to "row", for instance in /etc/mysql/my.cnf:
                         </p>
                         <source>
 binlog_format=row
                         </source>
-                    </subsubsection>
-                    <subsubsection name="Configure database driver for GlassFish">
+
+                    <h4>Configure database driver for GlassFis</h4>
                         <p>
 Copy the driver for your database to the application server lib folder.
                         </p>    
-                    </subsubsection>
-                    <subsubsection name="Configure database driver for JBoss AS 7 or JBoss EAP 6">
+
+                    <h4>Configure database driver for JBoss AS 7 or JBoss EAP 6</h4>
 <p>
 In JBoss 7/EAP6 it is not enough to just drop the JAR archive with a database JDBC driver into the deployments directory. Instead you will have to perform the following steps (for MySQL or MariaDB):
+</p>
 <ol>
 <li>Create the necessary directories (relative to JBoss 7 base directory):
 <br/>
@@ -182,8 +185,8 @@ Or for MariaDB, mariadb-java-client-1.1.2.jar:
 </pre>
 </li>
 </ol>
-</p>
-<p>For PostgreSQL you would use the following values instead:
+
+<p>For PostgreSQL you would use the following values instead:</p>
 <pre>
 &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
 &lt;module xmlns=&quot;urn:jboss:module:1.0&quot; name=&quot;org.postgresql&quot;&gt;
@@ -200,10 +203,8 @@ Or for MariaDB, mariadb-java-client-1.1.2.jar:
 /subsystem=datasources/jdbc-driver=org.postgresql.Driver:add(driver-name=org.postgresql.Driver,driver-module-name=org.postgresql,driver-xa-datasource-class-name=org.postgresql.xa.PGXADataSource)
 :reload
 </pre>
-</p>
-                    </subsubsection>
-                    
-                    <subsubsection name="Configure data source for GlassFish">
+    
+                <h4>Configure data source for GlassFish</h4>
                     <p>
 For GlassFish also configure a connection pool and JNDI resource:
                     </p>
@@ -226,11 +227,10 @@ For GlassFish also configure a connection pool and JNDI resource:
                              JNDI Name: jdbc/SignServerDS<br/>
                              Pool Name: MySQLPool
                          </li>
-                        <ul></ul>
                     </ol>
-                    </subsubsection>
+
                     
-                    <subsubsection name="Configure data source for JBoss AS 7.1">
+                    <h4>Configure data source for JBoss AS 7.1</h4>
                         <p>
 The examples are for installing a MariaDB datasource using the jboss-cli with the driver installed as described above. </p>
 <p>A normal datasource (Note: no --enabled=true for JBoss AS 7.1):</p>
@@ -241,9 +241,9 @@ data-source add --name=signserverds --driver-name="org.mariadb.jdbc.Driver" --co
                         <p>
 Then restart the application server.
                         </p>
-                    </subsubsection>
+
                     
-                    <subsubsection name="Configure data source for JBoss EAP 6">
+                    <h4>Configure data source for JBoss EAP 6</h4>
                         <p>
 The examples are for installing a MariaDB datasource using the jboss-cli with the driver installed as described above. </p>
 <p>A normal datasource (Note: --enabled=true for JBoss EAP 6.x):</p>
@@ -254,18 +254,18 @@ data-source add --name=signserverds --driver-name="org.mariadb.jdbc.Driver" --co
                         <p>
 Then restart the application server.
                         </p>
-                    </subsubsection>
+
                     
                 </subsection>
 
                 <subsection name="5. Configure web server keystores">
-                    <subsubsection name="GlassFish SSL configuration">
+                    <h4>GlassFish SSL configuration</h4>
                         <p>
 For GlassFish enable client authentication for http-listener-2 and manually
 update the keystores with the right certificates.
                         </p>
-                    </subsubsection>
-                    <subsubsection name="JBoss 7/EAP 6 SSL configuration">
+
+                    <h4>JBoss 7/EAP 6 SSL configuration</h4>
                         <p>
 Copy the keystore file as JBOSS7_HOME/standalone/configuration/keystore/keystore.jks and the trust store as
                           JBOSS7_HOME/standalone/configuration/keystore/truststore.jks.
@@ -313,11 +313,11 @@ If the server is not so fast, we have to wait a little before we can reload, oth
                         <source>
 :reload
                         </source>
-                    </subsubsection>
+
                 </subsection>
 
                 <subsection name="6. Configure application server">
-                    <subsubsection name="Fix web service problem in JBoss AS 7/EAP 6">
+                    <h4>Fix web service problem in JBoss AS 7/EAP 6</h4>
                         <p>
 Configure WSDL web-host rewriting to use the request host. Needed for webservices to work correctly when requiring client certificate.
                         </p>
@@ -331,16 +331,16 @@ If the server is not so fast, we have to wait a little before we can reload, oth
                         <source>
 :reload
                         </source>
-                    </subsubsection>
-                    <subsubsection name="JBoss 7 and Oracle JDK BouncyCastle issues">
+
+                    <h4>JBoss 7 and Oracle JDK BouncyCastle issues</h4>
                         <p>
 When using Oracle JDK and JBoss 7 you need to install BC jars as a module in JBoss 7. See <a href="https://issues.jboss.org/browse/JBAS-7882">JBAS-7882</a>.
                         </p>
                         <p>
 How to install modules are described in <a href="https://docs.jboss.org/author/display/MODULES/Defining+a+module">docs.jboss.org/author/display/MODULES/Defining+a+module</a>.
                         </p>
-                    </subsubsection>
-                    <subsubsection name="Fix XML Security library issue 1 in JBoss 7">
+
+                    <h4>Fix XML Security library issue 1 in JBoss 7</h4>
                                                 <p>
         JBoss 7 bundles version 1.5.1 of the XML Security library. The library bundled with SignServer is not
         properly overriding the JBoss-bundled version.
@@ -364,8 +364,8 @@ How to install modules are described in <a href="https://docs.jboss.org/author/d
                                                 <source>
         &lt;resource-root path="xmlsec-1.5.8.jar"/&gt;
                                                 </source>
-                    </subsubsection>
-                    <subsubsection name="Fix XML Security library issue 2 in JBoss 7">
+
+                    <h4>Fix XML Security library issue 2 in JBoss 7</h4>
                                                 <p>
         JBoss 7 bundles version 2.7.1 of the Xalan library. The library bundled with SignServer is not
         properly overriding the JBoss-bundled version.
@@ -391,13 +391,13 @@ How to install modules are described in <a href="https://docs.jboss.org/author/d
         &lt;resource-root path="serializer-2.7.2.jar"/&gt;
         &lt;resource-root path="xalan-2.7.2.jar"/&gt;
                                                 </source>
-                    </subsubsection>
-                    <subsubsection name="Fix XML Security library issues in JBoss EAP">
+
+                    <h4>Fix XML Security library issues in JBoss EAP</h4>
                         <p>
 Make sure to apply the relevant security patches from Red Hat.
                         </p>
-                    </subsubsection>
-                    <subsubsection name="Install Hibernate in GlassFish 3">
+
+                    <h4>Install Hibernate in GlassFish 3</h4>
                         <p>
 If you are using GlassFish 3 and run with a database you will have to install Hibernate. 
 Run pkg install in the GlassFish folder:
@@ -405,8 +405,8 @@ Run pkg install in the GlassFish folder:
                         <source>
 ./bin/pkg install hibernate
                         </source>
-                    </subsubsection>
-                    <subsubsection name="JBoss 7/EAP 6 and PKCS11">
+
+                    <h4>JBoss 7/EAP 6 and PKCS11</h4>
                         <p>
 JBoss 7/EAP 6 isolates away most sun classes. That means you will not be able to send certificates through remote EJB calls, and will not be able to use the Sun PKCS#11 provider.
 These classes can be made available by editing the file
@@ -427,7 +427,7 @@ One package is however needed still. In JBoss EAP 6.1 the file is located in <i>
                         <source>
 &lt;path name="sun/security/pkcs11/wrapper"/&gt;
                         </source>
-                    </subsubsection>
+
                 </subsection>
 
 
@@ -440,7 +440,7 @@ it for editing in your favorite text editor.
 cp conf/signserver_deploy.properties.sample conf/signserver_deploy.properties
                     </source>
 
-                    <subsubsection name="Web GUI configuration">
+                    <h4>Web GUI configuration</h4>
                         <p>
 For GlassFish change httpserver.privhttps to a port configured with HTTPS and
 client authentication.
@@ -448,9 +448,9 @@ client authentication.
                         <source>
 httpserver.privhttps=8181
                         </source>
-                    </subsubsection>    
+    
                         
-                    <subsubsection name="Database configuration">
+                    <h4>Database configuration</h4>
                         <p>
 For GlassFish make sure the datasource.jndi-name and datasource.jndi-name-prefix
 matches the resource configured in the admin console.
@@ -476,9 +476,9 @@ database.driver=com.mysql.jdbc.Driver
 database.username=signserver
 database.password=signserver
                         </source>
-                    </subsubsection>
 
-                    <subsubsection name="Web Service Configuration">
+
+                    <h4>Web Service Configuration</h4>
                         <p>
 Enable or disable the web services.
                         </p>
@@ -489,9 +489,9 @@ validationws.enabled=true
 adminws.enabled=true
 clientws.enabled=true
                         </source>
-                    </subsubsection>
 
-                    <subsubsection name="Modules Configuration">
+
+                    <h4>Modules Configuration</h4>
                         <p>
 Enable all modules that should be built and choose if they should be included in the SignServer enterprise application archive (EAR). By setting includemodulesinbuild=true (default) all modules are built in. Otherwise for each module specify that it should be enabled and included:
                         </p>
@@ -507,7 +507,7 @@ For GlassFish to enable debug logging include the Log4j module.
 module.log4j.enabled=true
 module.log4j.include=true
                         </source>
-                    </subsubsection>
+
                     
                     <p>
 See <a href="complete.en.html#Signed%20log">Signed log</a> for how to configure for signed audit logs in the database.
@@ -531,7 +531,7 @@ database tables were created.
 					<p>
 After startup a few different user interfaces are available.	
 					</p>
-					<subsubsection name="Command Line Interface">
+                                        <h4>Command Line Interface</h4>
                     <source>
 bin/signserver getstatus brief all
 Assuming JBoss JNDI provider...
@@ -542,18 +542,17 @@ Executing Command on host : localhost
 
 Current version of server is : SignServer 3.5.0alpha0
                     </source>
-					</subsubsection>
-					<subsubsection name="Graphical User Interface">
+
+                                        <h4>Graphical User Interface</h4>
 						<source>
 bin/signserver-gui
 bin/signserver-gui -ws
 						</source>
-					</subsubsection>
-					<subsubsection name="Web Interface">
+
+                                        <h4>Web Interface</h4>
 					<p>
 Point your web browser to <a href="http://localhost:8080/signserver">http://localhost:8080/signserver</a> for demo web pages and local documentation.
 					</p>
-					</subsubsection>
                 </subsection>
             </section>
 
@@ -566,7 +565,7 @@ SignServer CLI.
                     <p>
 Signers (and other workers) can be loaded by setting properties using "setproperty" or "setproperties" etc.
                     </p>
-                    <subsubsection name="setproperties">
+                    <h4>setproperties</h4>
                         <p>
 The "setproperties" command loads all the properties from a property file that
 can define one or many signers. The code for the signers needs to be deployed
@@ -577,7 +576,7 @@ module.MODULENAME.include=true properties in signserver_deploy.properties.
                         <source>
 bin/signserver setproperties doc/sample-configs/CONFIGURATION.PROPERTIES
                         </source>
-                    </subsubsection>
+
                     <p>
 After adding or changing a property for a worker (by
 any of the "setpropery" or "setproperties" commands) the configuration needs be
@@ -592,15 +591,15 @@ bin/signserver reload 4711
                     <p>
 This is a quick start guide to quickly get you setup with a crypto token and a set of workers/signers for testing and demonstration purposes.
                     </p>
-                    <subsubsection name="Setup a sample crypto token">
+                    <h4>Setup a sample crypto token</h4>
 <p>Set up a crypto token called CryptoTokenSoft which uses a hard coded software keystore:</p>
 <code>$ bin/signserver setproperties doc/sample-configs/soft-crypto-configuration.properties</code>
                         <p>
 Activate the configuration using the assigned worker ID that was printed (for instance 1):
                         </p>
 <code>$ bin/signserver reload 1</code>
-                    </subsubsection>
-                    <subsubsection name="Add sample workers">
+
+                    <h4>Add sample workers</h4>
                         <p>
 Workers can then be set up using the setproperties followed by the reload command. Sample configurations
 are available in doc/sample-configs which by default uses the sample crypto token:
@@ -611,7 +610,7 @@ Activate the configuration using the assigned worker ID that was printed (for in
                         </p>
 <code>$ bin/signserver reload 2</code>
 <p>See the following section for some example for specific workers.</p>
-                    </subsubsection>
+
 
                 </subsection>
 
@@ -802,7 +801,7 @@ Now <a href="integration.html">the SignServer APIs</a> can be used to send MRTD 
 Also you can use the HTML page <a href="http://localhost:8080/signserver/demo/mrtdsodsign.jsp">http://localhost:8080/signserver/demo/mrtdsodsign.jsp</a> to enter requests and get the SOd back.
 This HTML form also functions as a sample to show how you can make HTTP requests from the personalisation system to the Document Signer.
                     </p>
-                    <subsubsection name="Production configuration with HSM">
+                    <h4>Production configuration with HSM</h4>
                         <p>
 To install a production signer using an HSM instead of the CryptoTokenSoft, make 
 a copy of doc/sample-configs/pkcs11-crypto-configuration.properties and configure
@@ -844,7 +843,7 @@ bin/signserver reload 9
 Hint: you can use EJBCA to create keys on a PKCS#11 HSM using clientToolBox.<br/>
 ejbcaClientToolBox.sh PKCS11HSMKeyTool generate /opt/ETcpsdk/lib/linux-x86_64/libcryptoki.so 2048 DSSignKey 5
                         </p>
-                    </subsubsection>
+
             </subsection>
 
             </section>
@@ -854,7 +853,6 @@ ejbcaClientToolBox.sh PKCS11HSMKeyTool generate /opt/ETcpsdk/lib/linux-x86_64/li
 See SIGNSERVER_HOME/doc/RELEASE_NOTES.txt and UPGRADE.txt for information about upgrading from an earlier version of SignServer. 
                 </p>
             </section>
-        </chapter>
 
     </body>
 </document>

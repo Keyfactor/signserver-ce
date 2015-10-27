@@ -1,13 +1,16 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!-- $Id$ -->
-
-<document>
+<document xmlns="http://maven.apache.org/XDOC/2.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
 
     <properties>
         <title>SignServer Manual</title>
     </properties>
 
-    <body>
+    <body title="Introduction">
+        
+        <h1>Introduction</h1>
         
         <macro name="toc">
             <param name="section" value="0"/>
@@ -15,7 +18,6 @@
             <param name="toDepth" value="4"/>
         </macro>
 
-        <chapter name="Introduction" shortname="introduction">
             <section name="Introduction/scope">
                 <p>
 The SignServer is an application framework performing cryptographic operations
@@ -39,7 +41,7 @@ adds signature automatically to a uploaded OOXML document, and a validation serv
 lookup the validation of a given certificate.
                 </p>
                 <p>
-                    <a href="../images/architecture.png"><img src="../images/architecture.png" align="middle" border="0" width="641" height="305" ALT="architecture"/></a><br/>
+                    <a href="../images/architecture.png"><img src="../images/architecture.png" align="middle" border="0" width="641" height="305" alt="architecture"/></a><br/>
                     Drawing 1: Overview of a possible set up of a highly available SignServer solution
                 </p>
             </section>
@@ -340,9 +342,6 @@ The applications i administrated through a command-line interface, where the pro
 One SignServer can have multiple services for different purposes.
                     </p>
             </section>
-
-        </chapter>
-
     </body>
 </document>
 

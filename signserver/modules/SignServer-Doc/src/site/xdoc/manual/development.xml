@@ -1,13 +1,16 @@
 <?xml version="1.0"?>
 <!-- $Id$ -->
-
-<document>
+<document xmlns="http://maven.apache.org/XDOC/2.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
 
     <properties>
         <title>SignServer Manual</title>
     </properties>
 
-    <body>
+    <body title="Development">
+        
+        <h1>Development</h1>
         
         <macro name="toc">
             <param name="section" value="0"/>
@@ -15,14 +18,15 @@
             <param name="toDepth" value="4"/>
         </macro>
 
-        <chapter name="Development" shortname="development">
+        <section name="Introduction">
             <p>
 This section describes the details of how to develop your own plug-ins for the SignServer API. It goes through most of the necessary interfaces to get going.
             </p>
             <p>
 See also doc/DEVELOP.txt.                
             </p>
-            
+        </section>
+        
             <section name="Custom modules">
                 <p>
 Custom code can be included in the SignServer build process by placing the projects under the modules directory and adhere to the modules contract.    
@@ -35,11 +39,13 @@ Second, in the project folder there should be an Ant script called build.xml.
                 </p>
                 <p>
 Third, if the project should be called it should define the properties:
+                </p>
                     <ul>
                         <li><b>modulename</b>: The name of the module. Will be used as prefix to the enable-property. Example: module.pdfsigner (the enable property will then be module.pdfsigner.enabled)</li>
                         <li><b>clean.available</b>: True if the "clean" target should be called when the rest of SignServer is getting cleaned.</li>
                         <li><b>dist-module.available</b>: True if the "dist-module" target should be called when SignServer is getting built</li>
                     </ul>
+                <p>
                     Example:
                 </p>
                 <pre>
@@ -52,15 +58,16 @@ Forth, the dist-module target should take care of moving all distributables to t
                 </p>
                 <p>
 The priorities are basically like this:
+                </p>
                     <ul>
                         <li>10: Essential core modules (like signserverejb and signservercommon)</li>
                         <li>20: Other core modules (like web services)</li>
                         <li>30: Other core modules (like web components etc)</li>
                         <li>40: Other modules (like signers/validators etc)</li>
                     </ul>
-                </p>
                 <p>
 The module descriptor can contain:
+                </p>
                     <ul>
                         <li>module.name: Same as the modulename property</li>
                         <li>module.type: The type of the module. "lib" if the module should be put in signserver.ear/lib, "ejb" if it is an EJB module or "war" if it is and WAR module.</li>
@@ -74,6 +81,7 @@ The module descriptor can contain:
                         <li>postprocess.file1.includes: Only if postprocess.files. Ant includes pattern with files in the jar to postprocess (example: META-INF/ejb-jar.xml)</li>
                         <li>postprocess.file1.dest: Only if postprocess.files specified. Location to put the resulting JAR in the final EAR. Default "" (the root) but should be set to "lib/" for library JARs.</li>
                     </ul>
+                <p>
                     Example (mods-available/40_module.pdfsigner.properties):
                 </p>
                 <pre>
@@ -187,16 +195,16 @@ Reload the service with the CLI reload command.
                     </li>
                 </ul>
                 <subsection name="Implementing Workers">
-                    <subsubsection name="The ISigner Interface">
+                    <h4>The ISigner Interface</h4>
                         <p>
 A Signer is a component used to perform some form of cryptographic processing of requested data and to create a custom signer class it should  implement the org.signserver.server.signers.ISigner interface. There exists a BaseSigner that can be inherited taking care of some of the functionality. If the BaseSigner is inherited the only method that needs to be implemented is 'processData() '.
                         </p>
                         <p>
 There exists a DummySigner implementation that is used for demonstration purposes.
                         </p>
-                    </subsubsection>
 
-                    <subsubsection name="The ITimedService Interface">
+
+                    <h4>The ITimedService Interface</h4>
                         <p>
 There are two kinds of timed services, singleton or non-singleton. A singleton service is only run at one of the nodes at the time while non-singleton services are run at all nodes simultaneously. If a singleton service fails to run on one of the nodes will one of the other nodes take over the service
 automatically.
@@ -231,9 +239,9 @@ public void work() throws ServiceExecutionFailedException;
                         <p>
 There exists a DummyTimedService implementation that is used for demonstration purposes.
                         </p>
-                    </subsubsection>
 
-                    <subsubsection name="IValidationService Interface">
+
+                    <h4>IValidationService Interface</h4>
                         <p>
 Just as the other worker plug-ins have the validator service a base class taking care of most of the common methods and the only method that needs to be implemented is the 'validate' method below. But for most applications should the DefaultValidationService work. What is probably more interesting is to develop a custom IValidator used to integrate the default validation service against different certificate status repositories. See section called 'Other Customizations' for details of how to implement a Validator.
                         </p>
@@ -251,11 +259,11 @@ Just as the other worker plug-ins have the validator service a base class taking
  */
 ValidateResponse validate(ValidateRequest validationRequest) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException;
                         </pre>
-                    </subsubsection>
+
                 </subsection>
 
                 <subsection name="Implementing Crypto Tokens">
-                    <subsubsection name="The ICryptoToken Interface">
+                    <h4>The ICryptoToken Interface</h4>
                         <ul>
                             <li>
 A custom crypto token needs to implement the interface org.signserver.server.cryptotokens.ICryptoToken.  See P12CryptoToken for an example implementation.
@@ -378,9 +386,9 @@ public interface ICryptoToken {
 	public boolean destroyKey(int purpose);
 }
                         </pre>
-                    </subsubsection>
 
-                    <subsubsection name="The Extended Crypto Token Interface">
+
+                    <h4>The Extended Crypto Token Interface</h4>
                         <p>
 The default group key service need support for symmetric keys in addition the the functionality provided in the basic crypto token which mainly focuses on asymmetric key functionality.
                         </p>
@@ -440,13 +448,14 @@ public interface IExtendedCryptoToken extends ICryptoToken {
 
 }
                         </pre>
-                    </subsubsection>
+
                 </subsection>
             
                 <subsection name="Sample Workers and Components">
-                    <note>
-This is a SignServer Enterprise Edition (EE) feature.
-                    </note>
+                    <div class="frame note">
+                        <div class="label">Note</div>
+                        <div class="content">This is a SignServer Enterprise Edition (EE) feature.</div>
+                    </div>
                     <p>
 There is a module containing sample and skeleton implementation of almost all
 the different kinds of workers as well as different components. 
@@ -614,6 +623,7 @@ Automatic JUnit tests are in the different projects and system tests in SignServ
                     <p>
 Important: For the SignServer test suite to run successful the following 
 properties should be set in signserver_deploy.properties:
+                    </p>
                     <ul>
                         <li>signserverws.enabled=true</li>
                         <li>genericws.enabled=true</li>
@@ -628,7 +638,6 @@ properties should be set in signserver_deploy.properties:
                         <li>clusterclassloader.useclassversions=true</li>
                         <li>healthcheck.maintenancefile=/path/to/signserver/maintenance.properties (where /path/to/signserver is the path where SignServer is located)</li>
                     </ul>
-                    </p>
                     <p>
 For the Database CLI tests to run successfully you will need to put the JDBC 
 driver for your database as lib/ext/jdbc/jdbc.jar.
@@ -657,7 +666,7 @@ If SignServer is configured to run without database some tests needs to be exclu
 bin/ant test:run -Dexcludes="**/ArchivingCLITest*,**/Base64DatabaseArchiverTest*,**/OldDatabaseArchiverTest*,**/ArchiveTest*,**/AuditLogCLITest*,**/DatabaseCLITest*,**/VerifyLogCommandTest*"
                     </source>
                     
-                    <subsubsection name="System tests with HSM">
+                    <h4>System tests with HSM</h4>
                         <p>
 To run system tests with an HSM create an properties file in SIGNSERVER_HOME called test-config.properties containing the PKCS#11 configuration including the key alias for an existing RSA key-pair:                            
                         </p>
@@ -673,7 +682,7 @@ The tests can be run with:
                         <source>
 ant test:p11:run test:report
                         </source>
-                    </subsubsection>
+
                 </subsection>
                 
                 <subsection name="Random testing">
@@ -682,7 +691,7 @@ SignServer-Test-Random is a tool for random testing of SignServer. Each test sui
 has different requirements configured workers in the different worker groups and 
 how many threads that can be used etc. See the source code for further details.
                     </p>
-                    <subsubsection name="Building and running">
+                    <h4>Building and running</h4>
                         <p>
 Build from modules/SignServer-Test-Random/ using:
                         </p>
@@ -691,9 +700,9 @@ Build from modules/SignServer-Test-Random/ using:
 It can then be run from SIGNSERVER_HOME using:
                         </p>
                         <source>bin/randomtest</source>
-                    </subsubsection>
+
                     
-                    <subsubsection name="Usage">
+                    <h4>Usage</h4>
                         <source>
 usage: randomtest &lt;options&gt;
 Random testing tool
@@ -747,7 +756,7 @@ defined for group 1
 - Renews signers from group 2 using the one renewal worker in group 3
 - Notice that group 3 should only include one renewal worker
                         </source>
-                    </subsubsection>
+
                     
                 </subsection>
                 
@@ -756,7 +765,7 @@ defined for group 1
 SignServer-Test-Performance is a tool for performance testing of SignServer. Currently it contains only one
 test suite for testing time stamping. See the source code for further details.
                     </p>
-                    <subsubsection name="Building and running">
+                    <h4>Building and running</h4>
                         <p>
 Build from modules/SignServer-Test-Performance/ using:
                         </p>
@@ -765,9 +774,9 @@ Build from modules/SignServer-Test-Performance/ using:
 It can then be run from SIGNSERVER_HOME using:
                         </p>
                         <source>bin/stresstest</source>
-                    </subsubsection>
+
                     
-                    <subsubsection name="Usage">
+                    <h4>Usage</h4>
                         <source>
 usage: stresstest &lt;options&gt;
 Performance testing tool
@@ -812,11 +821,9 @@ http://localhost:8080/signserver/worker -worker 1 -data "&lt;root/&gt;"
               				overview is printed containing number of signings, and statistics (average,
               				minimum, and maximum) for response times.
                                 </p>
-					</subsubsection>
                 </subsection>
                 
             </section>
-        </chapter>
 
     </body>
 </document>

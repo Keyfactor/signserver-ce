@@ -1,13 +1,16 @@
 <?xml version="1.0"?>
 <!-- $Id$ -->
-
-<document>
+<document xmlns="http://maven.apache.org/XDOC/2.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
 
     <properties>
         <title>SignServer Manual</title>
     </properties>
 
-    <body>
+    <body title="Plugins">
+        
+        <h1>Plugins</h1>
         
         <macro name="toc">
             <param name="section" value="0"/>
@@ -15,7 +18,6 @@
             <param name="toDepth" value="4"/>
         </macro>
 		
-        <chapter name="Plugins" shortname="plugins">
             <!--<p> TODO:
 from: manual31.odt:ch7, src
 There could also be a listing of all modules and for each module:
@@ -55,7 +57,7 @@ Properties that have common use among most signers:
 The time-stamp signer has the class name: org.signserver.server.signers.TimeStampSigner
                     </p>
 
-                    <subsubsection name="Overview">
+                    <h4>Overview</h4>
                         <p>
 The time stamp server generates time stamp tokens and have the support for the following options:
                         </p>
@@ -90,9 +92,9 @@ If no 'worker Id' parameter is specified then will the id of 1 be used as defaul
                         <p>
 The time-stamp signer requires a time-stamp certificate with the extended key usage 'time-stamp' only. The extended key usage extension must be critical.
                         </p>
-                    </subsubsection>
 
-                    <subsubsection name="Available Properties">
+
+                    <h4>Available Properties</h4>
                         <p>
 The following properties can be configured with the signer:
                         </p>
@@ -208,9 +210,9 @@ versions of OpenJDK's jarsigner utility. (OPTIONAL), default true.
                         <p>
 <b>INCLUDESIGNINGTIMEATTRIBUTE</b> = Specifies if the signingTime signed CMS attribute should be included in the response. (OPTIONAL), default true.
                         </p>
-                    </subsubsection>
+
                     
-                    <subsubsection name="TimeStampSigner Certificates">
+                    <h4>TimeStampSigner Certificates</h4>
                         <p>
 Specifying a signer certificate is required as information from that certificate will be used to indicate which signer signed the time-stamp token.
                         </p>
@@ -220,7 +222,7 @@ The signer certificate MUST be included in the configured certificate chain.
 Other certificates might also be included in the chain (typically intermediate CA certificates).
 However, if REQUIREVALIDCHAIN=true is specified only the signer certificate directly followed by its issuer and then the issuer's issuer and so on is allowed. All certificates will be verified if there is a certificate coming after it. No check is made that the last certificate is a root certificate as that certificate is usually not included.
                         </p>
-                    </subsubsection>
+
                 </subsection>
 
 				<subsection name="MS Authenticode Time Stamp Signer">
@@ -228,12 +230,12 @@ However, if REQUIREVALIDCHAIN=true is specified only the signer certificate dire
 
 The class name is: org.signserver.server.signers.tsa.MSAuthCodeTimeStampSigner
 					</p>
-					<subsubsection name="Overview">
+                                        <h4>Overview</h4>
 						<p>
 This time stamp signer is compatible with the Microsoft Authenticode time-stamping code signing.
                         </p>
-					</subsubsection>
-					<subsubsection name="Available Properties">
+
+                                        <h4>Available Properties</h4>
 					    <p>
 <b>TIMESOURCE</b> = property containing the fully qualified name of the class implementing  the ITimeSource that should be used (OPTIONAL).
 This property has the same values as for TimeStampSigner <a href="complete.en.html#Available%20Properties">above</a>.
@@ -244,35 +246,35 @@ This property has the same values as for TimeStampSigner <a href="complete.en.ht
 						<p>
 <b>INCLUDE_SIGNING_CERTIFICATE_ATTRIBUTE</b> = Specifies if the signing certificate attribute (id-aa-signingCertificate) [RFC2634] should be included in the response (OPTIONAL, default: false).
 					    </p>
-					</subsubsection>
-					<subsubsection name="Howto">
+					
+                                        <h4>Howto</h4>
 						<p>
 There is a howto about testing Authenticode signing available in <code>doc/howtos/test_ms_authcode.txt</code>
 						</p>
-					</subsubsection>
+					
 				</subsection>
 
                 <subsection name="MRTD Signer">
                     <p>
 The MRTD signer has the class name: org.signserver.module.mrtdsigner.MRTDSigner
                     </p>
-                    <subsubsection name="Overview">
+                    <h4>Overview</h4>
                         <p>
 The MRTD Signer performs a RSA signing operation on incoming data. The data should already be padded. This signer could be used to sign 'Machine Readable Travel Documents' i.e. electronic passports.
                         </p>
-                    </subsubsection>
-                    <subsubsection name="Available Properties">
+
+                    <h4>Available Properties</h4>
                         <p>
 No configuration properties exists.
                         </p>
-                    </subsubsection>
+
                 </subsection>
                 
                 <subsection name="MRTD SOD Signer">
                     <p>
 The MRTD SOD signer has the class name: org.signserver.module.mrtdsodsigner.MRTDSODSigner
                     </p>
-                    <subsubsection name="Overview">
+                    <h4>Overview</h4>
                         <p>
 The MRTD SOD Signer creates the complete security object (SOd) for a MRTD (Machine Readable Travel Document, i.e. electronic passports, residence permit etc) by signing the provided data groups (DGs).
                         </p>
@@ -281,8 +283,8 @@ Note 1: The Document Signer (DS) certificate is included in the SOd.<br/>
 Note 2: The SOd is verified (including certificate path) before it is returned so the certificate chain must contain the Country Signing CA (CSCA) certificate.<br/>
 Note 3: See also the integration guide for <a href="complete.en.html#SODProcessServlet">SODProcessServlet</a> or the <a href="complete.en.html#Client%20Web%20Service">ClientWS</a> interface.
                         </p>
-                    </subsubsection>
-                    <subsubsection name="Available Properties">
+
+                    <h4>Available Properties</h4>
                         <p>
 <b>DODATAGROUPHASHING</b> = True if this signer first should hash the DG values. Otherwise the values are assumed to be hashes already. (Optional, default is false)<br/>
 <b>DIGESTALGORITHM</b> = Message digest algorithm that is applied or should be applied to the values. (Optional, default is SHA256)<br/>
@@ -290,7 +292,7 @@ Note 3: See also the integration guide for <a href="complete.en.html#SODProcessS
 <b>LDSVERSION</b> = Version of Logical Data Structure (LDS). For LDS version 1.7 enter "0107" and for version 1.8 "0108". (Optional, default is 0107)<br/>
 <b>UNICODEVERSION</b> = Version of Unicode used in the datagroups. Required if LDS 1.8 is used. Example: "040000" for Unicode version 4.0.0.<br/>
                         </p>
-                    </subsubsection>
+
                 </subsection>
 
                 <subsection name="PDF Signer">
@@ -298,7 +300,7 @@ Note 3: See also the integration guide for <a href="complete.en.html#SODProcessS
 The PDF signer has the class name: org.signserver.module.PDFSigner
                     </p>
 
-                    <subsubsection name="Overview">
+                    <h4>Overview</h4>
                         <p>
 The main purpose of the PDF signer is to add digital signatures to PDF documents. 
                         </p>
@@ -315,14 +317,15 @@ Also CRL or OCSP Response of the signer's certificate can be embedded inside the
                         <p>
 The PDF Signer can also be configured to enforce that certain PDF permissions are not available in the signed document and/or that certain permissions should be removed.
                         </p>
-                    </subsubsection>
+
                     
-                    <subsubsection name="PDF passwords">
+                    <h4>PDF passwords</h4>
                         <p>
 PDF documents can optionally be protected by a password.
                         </p>
                         <p>
 There are two different types of passwords:
+                        </p>
                             <ul>
                                 <li>
                                     User password:<br/>
@@ -333,11 +336,12 @@ There are two different types of passwords:
                                     Also sometimes referred to as "permission password" or "security restriction password". It can be used for reading an encrypted document and making changes to a document that has permissions.
                                 </li>
                             </ul>
+                        <p>
 If a document is protected by an owner password it has to be supplied with the request for SignServer to sign the document. If the document is protected by a user password, either the user password or the owner password has to be supplied with the request for SignServer to sign the document.
                         </p>
-                    </subsubsection>
+
                     
-                    <subsubsection name="PDFSigner Requests">
+                    <h4>PDFSigner Requests</h4>
                         <p>
 PDF signing requests can be served using either web services or the web server interface (HTTP). See <a href="integration.html">Integration</a> for general information about the different interfaces.    
                         </p>
@@ -348,9 +352,9 @@ For the web server interface the GenericProcessServlet can be used. The PDFSigne
                         <p>
 For the old web services interface the request should contain an encoded GenericProcessesRequest and the response will be an GenericProcessResponse. It is possible to supply a PDF password by including it in the requestMetaData with the key "pdfPassword".
                         </p>
-                    </subsubsection>
 
-                    <subsubsection name="Worker Properties">
+
+                    <h4>Worker Properties</h4>
                         <p>
 The following properties can be configured with the signer:
                         </p>
@@ -622,6 +626,7 @@ Pattern used for creating sub-folders under the ARCHIVETODISK_PATH_BASE folder.
                                         </p>
                                         <p>
 Current date can be put in by adding ${DATE:yyyy} where yyyy can be replaced be the same syntax as defined in the class java.text.SimpleDateFormat. Other fields are:
+                                        </p>
                                         <ul>
                                             <li>${WORKERID}</li>
                                             <li>${WORKERNAME}</li>
@@ -630,7 +635,6 @@ Current date can be put in by adding ${DATE:yyyy} where yyyy can be replaced be 
                                             <li>${TRANSACTIONID}</li>
                                             <li>${USERNAME}</li>
                                         </ul>
-                                        </p>
                                         <p>
 Default: "${DATE:yyyy/MM/dd}".
                                         </p>
@@ -666,6 +670,7 @@ Reject signing of the document if any of the permissions in the comma separated 
                                         </p>
                                         <p>
 Available permissions (from the PDF reference, version 1.6, page 99, TABLE 3.20):
+                                        </p>
 											<table cellspacing="1" cellpadding="4" class="ForrestTable">
 												<tr>
 													<td>ALLOW_PRINTING</td>
@@ -742,7 +747,7 @@ whether ALLOW_PRINTING is also set).
 													</td>
 												</tr>
 											</table>
-                                        </p>
+
                                         <p>
 Default: unset/empty (no permissions are rejected)
                                         </p>
@@ -831,34 +836,32 @@ Attempting to sign such a document will result in a failure.
                                     <p>
 Supported hash algorithms.
                                     </p>
-                                    <p>
-                                        <table>
-                                            <tr>
-                                                <th>Algorithm</th>
-                                                <th>PDF version</th>
-                                            </tr>
-                                            <tr>
-                                                <td>SHA1</td>
-                                                <td>1.3</td>
-                                            </tr>
-                                            <tr>
-                                                <td>SHA256</td>
-                                                <td>1.6</td>
-                                            </tr>
-                                            <tr>
-                                                <td>SHA384</td>
-                                                <td>1.7</td>
-                                            </tr>
-                                            <tr>
-                                                <td>SHA512</td>
-                                                <td>1.7</td>
-                                            </tr>
-                                            <tr>
-                                                <td>RIPEMD160</td>
-                                                <td>1.7</td>
-                                            </tr>
-                                        </table>
-                                    </p>
+                                    <table>
+                                        <tr>
+                                            <th>Algorithm</th>
+                                            <th>PDF version</th>
+                                        </tr>
+                                        <tr>
+                                            <td>SHA1</td>
+                                            <td>1.3</td>
+                                        </tr>
+                                        <tr>
+                                            <td>SHA256</td>
+                                            <td>1.6</td>
+                                        </tr>
+                                        <tr>
+                                            <td>SHA384</td>
+                                            <td>1.7</td>
+                                        </tr>
+                                        <tr>
+                                            <td>SHA512</td>
+                                            <td>1.7</td>
+                                        </tr>
+                                        <tr>
+                                            <td>RIPEMD160</td>
+                                            <td>1.7</td>
+                                        </tr>
+                                    </table>
  
                                     <p>
 Default SHA1.
@@ -866,46 +869,46 @@ Default SHA1.
                                 </td>
                             </tr>
                         </table>
-                    </subsubsection>
+
                 </subsection>
 
                 <subsection name="ODF Signer">
                         <p>
 Fully qualified class name: org.signserver.module.odfsigner.ODFSigner
                         </p>
-                    <subsubsection name="Overview">
+                        <h4>Overview</h4>
                         <p>
 ODF Signer, which stands for Open Document Format Signer is a plug-in to SignServer that applies server side signature to documents in ODF format. It has been tested with OpenOffice.org 3.1.
                         </p>
                         <p>
 	   ODF Signer supports only "invisible" signatures, that is unlike PDF signer there's no pictorial representation of the digital signature. When you open signed document in OpenOffice.org you can verify signature using toolbars, or the notifier in status bar (red mark), which notifies user that the document is digitally signed.
                         </p>
-                    </subsubsection>
-                    <subsubsection name="Available Properties">
+
+                    <h4>Available Properties</h4>
                         <p>
 	  Other than standard worker properties, ODF Signer does not have any other custom ODF signer specific properties.
                         </p>
-                    </subsubsection>
+
                 </subsection>
 
                 <subsection name="XML Signer">
                     <p>
 Fully qualified class name: org.signserver.module.xmlsigner.XMLSigner
                     </p>
-                    <subsubsection name="Overview">
+                    <h4>Overview</h4>
                         <p>
 The XML Signer creates enveloped XML signatures using XMLDSig.
                         </p>
                         <p>
 The signed XML document can be validated using the XML Validator.
                         </p>
-                    </subsubsection>
-                    <subsubsection name="Available Properties">
+
+                    <h4>Available Properties</h4>
                         <p>
 				<b>SIGNATUREALGORITHM</b> = property specifying the algorithm used to sign the data (default: depending on the signer's private key: SHA1withDSA for DSA keys, SHA1withRSA for RSA keys, and SHA1withECDSA for ECDSA keys.)
                         </p>
-                    </subsubsection>
-                    <subsubsection name="Supported Signature Algorithms">
+
+                    <h4>Supported Signature Algorithms</h4>
                         <ul>
                             <li>SHA1withDSA</li>
                             <li>SHA1withRSA</li>
@@ -917,14 +920,14 @@ The signed XML document can be validated using the XML Validator.
                             <li>SHA384withECDSA</li>
                             <li>SHA512withECDSA</li>
                         </ul>
-                    </subsubsection>
+
                 </subsection>
                 
                 <subsection name="XAdES Signer">
                     <p>
 Fully qualified class name: org.signserver.module.xades.signer.XAdESSigner
                     </p>
-                    <subsubsection name="Overview">
+                    <h4>Overview</h4>
                         <p>
 The XAdES Signer creates XML signatures according to the specified profile of XAdES.
                         </p>
@@ -932,8 +935,8 @@ The XAdES Signer creates XML signatures according to the specified profile of XA
 The signed XML document can be validated using the XML Validator.
                         </p>
                         -->
-                    </subsubsection>
-                    <subsubsection name="Available Properties">
+
+                    <h4>Available Properties</h4>
                         <p>
                             <b>XADESFORM</b> = Which profile of XAdES to use. Currently BES and T is supported. Default: BES<br/>
                             <b>COMMITMENT_TYPES</b> = List of commitment types to be indicated in the signature. Multiple values can be given separated by ",". See list below for valid values. Optionally the constant NONE can be used to explicitly state that no commitment types should be included (this constant can only be used alone). Optional. Default: no commitment types are included.<br/> 
@@ -953,8 +956,8 @@ The signed XML document can be validated using the XML Validator.
                             <b>TSA_USERNAME</b> = Login username used if the TSA uses HTTP Basic Auth.<br/>
                             <b>TSA_PASSWORD</b> = Login password used if the TSA uses HTTP Basic Auth.<br/>
                         </p>
-                    </subsubsection>
-                    <subsubsection name="Commitment Types">
+
+                    <h4>Commitment Types</h4>
                         <table>
                             <tr>
                                 <th>Value</th>
@@ -989,36 +992,36 @@ The signed XML document can be validated using the XML Validator.
                                 <td>Indicates that the entity providing that indication has sent the signed data object (but not necessarily created it)</td>
                             </tr>
                         </table>
-                    </subsubsection>
+
                 </subsection>
 
                 <subsection name="OOXML Signer">
                     <p>
 Fully qualified class name: org.signserver.module.ooxmlsigner.OOXMLSigner
                     </p>
-                    <subsubsection name="Overview">
+                    <h4>Overview</h4>
                         <p>
 OOXML Signer, which stands for Office Open XML Signer is a plug-in to SignServer that applies server side signature to documents in OOXML format. It has been tested with MS Office 2007.
                         </p>
                         <p>
 	   Currently OOXML Signer supports only "invisible" signatures , that is unlike PDF signer there's no pictorial representation of the digital signature. When you open signed document in MS Office you can verify signature using toolbars, or the notifier in status bar (red mark), which notifies user that the document is digitally signed.
                         </p>
-                    </subsubsection>
-                    <subsubsection name="Available Properties">
+
+                    <h4>Available Properties</h4>
                         <p>
 	  Other than standard worker properties, OOXML Signer does not have any other custom OOXML signer specific properties.
                         </p>
                         <p>
 NOTE : In later versions of OOXML Signer it is planned to add support for visible signatures and custom signature image.
                         </p>
-                    </subsubsection>
+
                 </subsection>
 
                 <subsection name="CMS Signer">
                     <p>
 The CMS signer has the fully qualified class name: org.signserver.module.cmssigner.CMSSigner
                     </p>
-                    <subsubsection name="Overview">
+                    <h4>Overview</h4>
                         <p>
 The CMS signer can sign arbitrary data and produces a CMS (RFC 3852) SignedData
 structure in binary format with or without the content encapsulated.
@@ -1026,8 +1029,8 @@ structure in binary format with or without the content encapsulated.
                         <p>
 Currently the signer certificate is always included.
                         </p>
-                    </subsubsection>
-                    <subsubsection name="Available Properties">
+
+                    <h4>Available Properties</h4>
                         <p>
                             <b>SIGNATUREALGORITHM</b> = property specifying the algorithm used to sign the data (default: depending on the signing key: SHA1withDSA for DSA keys,
                                                         SHA1withECDSA for ECDSA keys, otherwise SHA1withRSA)
@@ -1039,23 +1042,24 @@ Currently the signer certificate is always included.
                             <b>ALLOW_DETACHEDSIGNATURE_OVERRIDE</b> = property specifying if the requestor can request an other value for DETACHEDIGSNATURE than what is configured. Default is false.<br/>
                             If set to true a request could include a metadata property with an other value for DETACHEDSIGNATURE.
                         </p>
-                    </subsubsection>
+
                 </subsection>
                 
                 <subsection name="MS Authenticode Signer">
-                    <note>
-This is a SignServer Enterprise Edition (EE) feature.
-                    </note>
+                    <div class="frame note">
+                        <div class="label">Note</div>
+                        <div class="content">This is a SignServer Enterprise Edition (EE) feature.</div>
+                    </div>
                     <p>
 The signer has the fully qualified class name: org.signserver.module.msauthcode.signer.MSAuthCodeSigner
                     </p>
-                    <subsubsection name="Overview">
+                    <h4>Overview</h4>
                         <p>
 The signer signs portablable executable files such as Windows executables and shared libraries (.exe, .dll and .ocx etc) according to the Windows Authenticode Portable Executable Signature Format.
 The signature can optionally include a timestamp response from a TSA using the Authenticode format.
                         </p>
-                    </subsubsection>
-                    <subsubsection name="Available Properties">
+
+                    <h4>Available Properties</h4>
                         <p>
                             <b>PROGRAM_NAME</b> = Program name to embed in the signature (Optional, default: none)
                         </p>
@@ -1105,9 +1109,9 @@ The signature can optionally include a timestamp response from a TSA using the A
                         <p>
                             <b>LOGRESPONSE_DIGESTALGORITHM</b> = Algorithm used to create the message digest (hash) of the response document to put in the log (default: SHA256).
                         </p>
-                    </subsubsection>
+
                     
-                    <subsubsection name="Request Properties">
+                    <h4>Request Properties</h4>
                         <p>
                             This worker can accept the following request metdata properties, given that they are configured to be allowed:
                         </p>
@@ -1117,9 +1121,9 @@ The signature can optionally include a timestamp response from a TSA using the A
                         <p><b>PROGRAM_URL</b> = Program URL to use instead of the configured one (if any).
                                                  Specifying an empty value removes the configured program URL.
                                                  Without ALLOW_PROGRAM_URL_OVERRIDE configured in the worker request including this request property will not be allowed.</p>
-                    </subsubsection>
+
                     
-                    <subsubsection name="Worker Log Fields">
+                    <h4>Worker Log Fields</h4>
                         <p>
                             <b>REQUEST_DIGEST</b> = A message digest (hash) for the request document in hex encoding.
                         </p>
@@ -1132,44 +1136,45 @@ The signature can optionally include a timestamp response from a TSA using the A
                         <p>
                             <b>RESPONSE_DIGEST_ALGORITHM</b> = The name of the message digest (hash) algorithm used for the response digest in the log.
                         </p>
-                    </subsubsection>
+
                     
                 </subsection>
 
                 <subsection name="Master List Signer">
-                    <note>
-This is a SignServer Enterprise Edition (EE) feature.
-                    </note>
+                    <div class="frame note">
+                        <div class="label">Note</div>
+                        <div class="content">This is a SignServer Enterprise Edition (EE) feature.</div>
+                    </div>
                     <p>
 The Master List signer has the fully qualified class name: org.signserver.module.masterlist.signer.MasterListSigner
                     </p>
-                    <subsubsection name="Overview">
+                    <h4>Overview</h4>
                         <p>
 Produces a signed list of CSCA certificates according to the ICAO specification MRTD TR CSCA countersigning and Master List issuance, version 1.0.
                         </p>
                         <p>
 As mandated by the specification, both the signer certificate and the CSCA certificates are included in the signature. The INCLUDE_CERTIFICATE_LEVELS property is thus not allowed.
                         </p>
-                    </subsubsection>
-                    <subsubsection name="Available Properties">
+
+                    <h4>Available Properties</h4>
                         <p>
                             <b>SIGNATUREALGORITHM</b> = property specifying the algorithm used to sign the data (default: depending on the signing key: SHA1withDSA for DSA keys,
                                                         SHA1withECDSA for ECDSA keys, otherwise SHA1withRSA)
                         </p>
-                    </subsubsection>
+
                 </subsection>
                 
                 <subsection name="Plain Signer">
                     <p>
 The Plain signer has the fully qualified class name: org.signserver.module.cmssigner.PlainSigner
                     </p>
-                    <subsubsection name="Overview">
+                    <h4>Overview</h4>
                         <p>
 The Plain signer can sign arbitrary data and simply produces a signature in the
 format determined by the configured signature algorithm.
                         </p>
-                    </subsubsection>
-                    <subsubsection name="Available Properties">
+
+                    <h4>Available Properties</h4>
                         <p>
                             <b>SIGNATUREALGORITHM</b> = property specifying the algorithm used to sign the data (default: depending on the signing key: SHA1withDSA for DSA keys,
                                                         SHA1withECDSA for ECDSA keys, otherwise SHA1withRSA)
@@ -1177,8 +1182,8 @@ format determined by the configured signature algorithm.
                         <p>
                             <b>LOGREQUEST_DIGESTALGORITHM</b> = property specifying the algorithm used to create the message digest (hash) of the request document to put in the log (default: SHA256).
                         </p>
-                    </subsubsection>
-                    <subsubsection name="Worker Log Fields">
+
+                    <h4>Worker Log Fields</h4>
                         <p>
                             <b>REQUEST_DIGEST</b> = A message digest (hash) for the request document in hex encoding.
                         </p>
@@ -1188,7 +1193,7 @@ format determined by the configured signature algorithm.
                         <p>
                             <b>RESPONSE_ENCODED</b> = The response document (plain signature) in base64 encoding.
                         </p>
-                    </subsubsection>
+
                 </subsection>
             </section>
 
@@ -1199,30 +1204,30 @@ Document Validators checks the signature and the certificate(s) in documents.
 
                 <subsection name="XML Validator">
 
-                    <subsubsection name="Overview">
+                    <h4>Overview</h4>
                         <p>
 The XML validator validates the signature of XML documents. The certificate is checked by the configured certificate validation service.
                         </p>
-                    </subsubsection>
-                    <subsubsection name="Available Properties">
+
+                    <h4>Available Properties</h4>
                         <p><b>VALIDATIONSERVICEWORKER</b> = Name or id of validation service worker for handling certificate validation</p>
                         <p><b>RETURNDOCUMENT</b> = True if the response should contain the validated document</p>
                         <p><b>STRIPSIGNATURE</b> = True if the signature should be removed from the document if it is returned</p>
-                    </subsubsection>
+
                 </subsection>
                 
                 <subsection name="XAdES Validator">
 
-                    <subsubsection name="Overview">
+                    <h4>Overview</h4>
                         <p>
 The XAdES validator validates the signature of XAdES documents and validatates the certificate chain. The validator will also validate embedded timestamp tokens in XAdES form T-signed documents.
                         </p>
-                    </subsubsection>
-                    <subsubsection name="Available Properties">
+
+                    <h4>Available Properties</h4>
                         <p><b>TRUSTANCHORS</b> = Trusted certificates. In PEM format. When validating a XAdES form T-signed document, must include the trusted certificate for the time stamp authory as well. Required.</p>
                         <p><b>CERTIFICATES</b> = Intermediate CA certificates that might be needed to build a trust path from the signer certificates to any of the trusted certifivcates. In PEM format.</p>
                         <p><b>REVOCATION_CHECKING</b> = True if revocation checking should be performed. The intermediate CA certificates (if any) and the signer certificate needs to have an Authority Information Access URL to an online OCSP responder or an CRL Distribution Point from where a CRL can be downloaded. If both are available the OCSP responder will be consulted first and then the CRL if the reseponder were unavailable. Default: true</p>
-                    </subsubsection>
+
                 </subsection>
             </section>
 
@@ -1237,17 +1242,17 @@ Dispatchers are workers that forwards the request to other workers.
 Fully qualified class name: org.signserver.server.dispatchers.FirstActiveDispatcher
                     </p>
                         
-                    <subsubsection name="Overview">
+                    <h4>Overview</h4>
                         <p>
 Dispatches the request to the first of the configured workers that has an active
 cryptotoken. This dispatcher can be useful if you want to have one worker to call
 that forwards the request to any of the configured workers that has a valid
 certificate etc.
                         </p>
-                    </subsubsection>
-                    <subsubsection name="Available Properties">
+
+                    <h4>Available Properties</h4>
                         <p><b>WORKERS</b> = Comma separated list of workerNameS to try to forward requests to.</p>
-                    </subsubsection>
+
                 </subsection>
                 
                 <subsection name="RequestedPolicyDispatcher">
@@ -1255,7 +1260,7 @@ certificate etc.
 Fully qualified class name: org.signserver.module.tsa.RequestedPolicyDispatcher
                     </p>
                         
-                    <subsubsection name="Overview">
+                    <h4>Overview</h4>
                         <p>
 Dispatches the Time-stamp request to an other signer based on the requested TSA Policy according to an configured mapping table.
 
@@ -1264,8 +1269,8 @@ This dispatcher can be useful if you want to have multiple signers (Time Stamp U
                         <p>
 See also the DispatchedAuthorizer which if configured by a signer can allow all requests that has gone through a Dispatcher.
                         </p>
-                    </subsubsection>
-                    <subsubsection name="Available Properties">
+
+                    <h4>Available Properties</h4>
                         <p><b>DEFAULTWORKER</b> = Worker name or ID to dispatch to in case no policy was requested.</p>
                         <p><b>USEDEFAULTIFMISMATCH</b> = If true dispatches to DEFAULTWORKER in case no mapping existed for the requested policy OID (default: false)</p>
                         <p><b>MAPPINGS</b> = Mapping from requested policy OID to a worker name.
@@ -1278,7 +1283,7 @@ In case there is a mapping (or no mapping and USEDEFAULTIFMISMATCH is true, the 
 to determine if the status string is included.
 Setting this to true triggers a bug in some versions of OpenJDK's jarsigner utility. (OPTIONAL), default true.
                         </p>
-                    </subsubsection>
+
                 </subsection>
                 
                 <subsection name="UserMappedDispatcher">
@@ -1287,17 +1292,17 @@ Setting this to true triggers a bug in some versions of OpenJDK's jarsigner util
 Fully qualified class name: org.signserver.server.dispatchers.UserMappedDispatcher
                     </p>
                         
-                    <subsubsection name="Overview">
+                    <h4>Overview</h4>
                         <p>
 Dispatches the request to a worker based on a mapping from username and workername.
                         </p>
-                    </subsubsection>
-                    <subsubsection name="Available Properties">
+
+                    <h4>Available Properties</h4>
                         <p><b>USERNAME_MAPPING</b> = Comma separated list of mappings from user name to worker name.
                         <br/>The property is of the form:
                         <br/>username1:workername1, username2:workername2
                         </p>
-                    </subsubsection>
+
                 </subsection>
             </section>
 
@@ -1321,7 +1326,7 @@ The validation service framework is mostly used with X509v3 certificates but oth
 Another concept in the Validation Service Framework is that the client also can ask the service to check the type of certificate that the certificate might be used for. A certificate type could be IDENTIFICATION or ELECTRONIC SIGNATURE.
                 </p>
                 <subsection name="DefaultValidationService">
-                    <subsubsection name="Overview">
+                    <h4>Overview</h4>
                         <p>
 The default validation service have a set of Validators. A validator is responsible to checking the validity against one or more issuers using for example CRL check or OCSP/XKMS lookup or just by checking some database. Currently there are no ready to use validators, these remain to be developed in future versions of the SignServer.
                         </p>
@@ -1335,8 +1340,8 @@ If not configured otherwise will the validation service use the DefaultX509CertT
 There exists a validation specific WebService that can be used for platform independent client calls.
 The WebService must be enabled during the build and isn't by default. The WebService WSDL file is located at the URL http://&lt;hostname&gt;:8080/signserver/validationws/validationws?wsdl and it contains two calls one is 'isValid' that performs the validation check and the other is a getStatus call that checks the health of the node and its underlying systems. The last calls can be used by clients for monitoring or implementing redundancy.
                         </p>
-                    </subsubsection>
-                    <subsubsection name="Available Properties">
+
+                    <h4>Available Properties</h4>
                         <p>
 The following properties can be configured with the default validation service:
                         </p>
@@ -1393,44 +1398,44 @@ WORKER1.VAL1.ISSUER2.CERTCHAIN=EFWAASDFADFASDFKASDKFW1231.....
 WORKER1.VAL2.CLASSPATH=&lt;Class path to some validator&gt;
 WORKER1.VAL2.ISSUER1.CERTCHAIN=EFWAASDFADFASDFKASDKFW1231.....
                         </pre>
-                    </subsubsection>
+
                 </subsection>
 
                 <subsection name="Certificate Validators">
-                    <subsubsection name="CRLValidator">
+                    <h4>CRLValidator</h4>
                         <p>
 Class name: <b>org.signserver.validationservice.server.CRLValidator</b>
                         </p>
                         <!-- TODO: Document as part of DSS-251 -->
-                    </subsubsection>
-                    <subsubsection name="OCSPValidator">
+
+                    <h4>OCSPValidator</h4>
                         <p>
 Class name: <b>org.signserver.validationservice.server.OCSPValidator</b>
                         </p>
                         <!-- TODO: Document as part of DSS-251 -->
-                    </subsubsection>
-                    <subsubsection name="OCSPCRLValidator">
+
+                    <h4>OCSPCRLValidator</h4>
                         <p>
 Class name: <b>org.signserver.validationservice.server.OCSPCRLValidator</b>
                         </p>
                         <!-- TODO: Document as part of DSS-251 -->
-                    </subsubsection>
-                    <subsubsection name="NoRevocationCheckingValidator">
+
+                    <h4>NoRevocationCheckingValidator</h4>
                         <p>
 Class name: <b>org.signserver.validationservice.server.NoRevocationCheckingValidator</b>
                         </p>
                         <p>
 Certificate Validator that validates the certificate chain but does not perform any revocation checking. This can be useful for demonstation purposes or when revocation checking should not be performed.
                         </p>
-                    </subsubsection>
-                    <subsubsection name="DummyValidator">
+
+                    <h4>DummyValidator</h4>
                         <p>
 Class name: <b>org.signserver.validationservice.server.DummyValidator</b>
                         </p>
                         <p>
 Certificate Validator that only works for specific issuers and certificates and is only available for testing and demonstration purposes as no real certificate validation is performed. The keystores under res/test/dss10/ with certificates issued by "DSS Root CA 10" can for instance be used together with this validator.
                         </p>
-                    </subsubsection>
+
                 </subsection>
                 
                 <subsection name="The Validation CLI interface.">
@@ -1506,7 +1511,7 @@ but can be changed by editing minimum-delivery-interval-in-millis in domain.xml.
                 <p>
 <b>WORK_LOG_TYPES</b> = Property specifying a comma-separated list of log types that should be used for logging invocations of the service.<br/>
 The following values can be used:
-
+                </p>
 <table>
     <tr>
         <td>INFO_LOGGING</td>
@@ -1517,7 +1522,7 @@ The following values can be used:
         <td>Use CESeCore secure audit logging</td>
     </tr>
 </table>
-
+                <p>
 By default, if this property is not set, INFO_LOGGING is used.
 It is possible to turn off logging by setting this property to an empty value.
 Errors during service invocations will always be logged at error level using Log4J.
@@ -1529,7 +1534,7 @@ to the audit log.
                     <p>
 Fully qualified class name: org.signserver.module.signerstatusreport.SignerStatusReportTimedService
                     </p>
-                    <subsubsection name="Overview">
+                    <h4>Overview</h4>
                         <p>
 The SignerStatusReportTimedService is a timed service that outputs status for a
 set of workers to a file. The information includes each workers crypto token status
@@ -1550,6 +1555,7 @@ workerName=WORKERNAME3, status=STATUS3, KEY3=VALUE3, KEY4=VALUE4, ...
                         </pre>
                         <p>
 <b>Rules:</b>
+                        </p>
 <ul>
     <li>Each line contains a set of properties for one worker.</li>
     <li>Lines are separated by a system dependent newline character (CR,
@@ -1560,9 +1566,9 @@ space (", ").</li>
 present.</li>
     <li>The property "workerName" is always the first property.</li>
 </ul>
-                        </p>
                         <p>
 <b>Properties:</b>
+                        </p>
 <ul>
     <li><b>workerName</b>: name of the worker. Example: "sod71" or "sod72"</li>
     <li><b>status</b>: status of the worker's crypto token and key. Either
@@ -1575,7 +1581,6 @@ used by this worker.</li>
     <li><b>signLimit</b>: the maximum number of signatures this worker is allowed
 to perfom or -1 if there is no limit.</li>
 </ul>
-                        </p>
                         <p>
 <b>Examples:</b>
                         </p>
@@ -1604,8 +1609,8 @@ OFFLINE for some other reason.
                         <p>
 Sod74 is OFFLINE and has no certificate configured.
                         </p>
-                    </subsubsection>
-                    <subsubsection name="Available Properties">
+
+                    <h4>Available Properties</h4>
 <p><b>WORKERS</b> = Comma separated list of worker names (signers) that should
 be monitored.</p>
 <p><b>OUTPUTFILE</b> = File that the information will be written to. If the file
@@ -1613,14 +1618,14 @@ exists the content will be overwritten. The application server needs to have wri
 access to this file when the service is executed.
 
                         </p>
-                    </subsubsection>
+
                     
                 </subsection>
                 <subsection name="HSMKeepAliveTimedService">
                     <p>
 Fully qualified class name: org.signserver.server.timedservices.hsmkeepalive.HSMKeepAliveTimedService
                     </p>
-                    <subsubsection name="Overview">
+                    <h4>Overview</h4>
                         <p>
 The HSMKeepAliveTimedService is a timed service that can be used to periodically
 run the test key operation on selected crypto workers. This is intended as a
@@ -1630,8 +1635,8 @@ it will fall back on DEFAULTKEY.
 Notice that the service will not fallback on DEFAULTKEY if TESTKEY is set, but
 didn't succeed when testing the key.
                         </p>
-                    </subsubsection>
-                    <subsubsection name="Available Properties">
+
+                    <h4>Available Properties</h4>
 <p><b>CRYPTOTOKENS</b> = Comma-separated list of worker names or worker IDs of
 workers whos keys should be tested. This would typically be crypto workers i.e.
 corresponding to different slots in an HSM, but could also be regular workers
@@ -1643,7 +1648,7 @@ property and the SECURE_AUDITLOGGING value can be used to write to the audit log
 at the same time as testing crypto worker keys, to keep the auditlog crypto token
 from timing-out.
 </p>
-                    </subsubsection>
+
                 </subsection>
                 <subsection name="Installing a service">
                     <p>To install a service you use the same commands as for installing a worker:</p>
@@ -1682,16 +1687,16 @@ The Crypto Worker is a worker not performing any operations on its own and inste
                     <p>
 Fully qualified class name: <b>org.signserver.server.signers.CryptoWorker</b>
                     </p>
-                    <subsubsection name="Worker properties">
+                    <h4>Worker properties</h4>
                         <p>
 See the <a href="complete.en.html#Available%20CryptoTokens">Available CryptoTokens</a> for the required properties of the configured crypto token.
                         </p>
-                    </subsubsection>
+
                 </subsection>
 
                 <subsection name="RenewalWorker">
                     
-                    <subsubsection name="Overview">
+                    <h4>Overview</h4>
                     <p>
 The RenewalWorker can be used for generation a new key-pair and renewing a worker's certificate from EJBCA using web services (WS). The RenewalWorker should be configured with its own CryptoToken and an SSL client authentication certificate with permissions set up in EJBCA to issue certificates. Some properties are configured for the RenewalWorker such as the EJBCA WS endpoint URL and truststore details, other properties should be set on the worker that should be renewed (the renewee) and some arguments are provided when the worker is invoked.
                     </p>
@@ -1701,9 +1706,9 @@ Known limitation: It might not be possible to have multiple renewal workers usin
                     <p>
 Fully qualified class name: <b>org.signserver.module.renewal.worker.RenewalWorker</b>
                     </p>
-                    </subsubsection>
+
                     
-                    <subsubsection name="Requesting the worker">
+                    <h4>Requesting the worker</h4>
                     <p>
 After setting up an RenewalWorker and installing its certificate signers (and other workers), can easily be renewed using the SignServer AdminGUI. See <a href="complete.en.html#Renew%20signer%20dialog">Renew Signer dialog</a>. As the RenewalWorker is a worker it can also be invoked using the normal client APIs. Using the demo web pages: <a href="http://localhost:8080/signserver/demo/genericsign.jsp">Generic Signing Demo</a>:
                     </p>
@@ -1730,15 +1735,15 @@ The renewal can also be initiated from the <a href="complete.en.html#Administrat
                     <source>
 bin/signserver renewsigner MySigner -renewalworker MyRenewalWorker -authcode foo123
                     </source>
-                    </subsubsection>
+
                     
-                    <subsubsection name="RenewalWorker operations">
+                    <h4>RenewalWorker operations</h4>
                     <p>
 The RenewalWorker starts by generating a new key-pair (unless an NEXTCERTSIGNKEY is already set for the renewee or the request property FORDEFAULTKEY=true is set in the request). The HSM/keystore password needs to be submitted as part of the request (AUTHCODE request property) to generate a new key-pair. After the key-pair has been generated and tested successfully the key alias is set as the NEXTCERTSIGNKEY property. A certificate signing request is created for the key and the worker sends the request to EJBCA to issue a certificate for the configured end entity. After receiving the certificate and certificate chain they are installed for the worker and the DEFAULTKEY property is updated with the value from NEXTCERTSIGNKEY and that property is removed.
                     </p>
-                    </subsubsection>
+
                     
-                    <subsubsection name="Worker Properties">
+                    <h4>Worker Properties</h4>
                         <p><b>EJBCAWSURL</b> = URL to the EJBCA. Must be specified. Example: https://ca-server:8443/ejbca</p>
                         <p><b>TRUSTSTOREPATH</b> = Path to the keystore containing the CA's SSL server certificate as a trusted entry. Used instead of TRUSTSTOREVALUE. If this property is not specified, TRUSTSTOREVALUE must be set.</p>
                         <p><b>TRUSTSTOREVALUE</b> = Keystore containing the CA's SSL server certificate as a trusted entry. Used instead of TRUSTSTOREPATH. If this property is not specified, TRUSTSTOREPATH must be set. If TRUSTSTORETYPE is not PEM the keystore is stored in the property in base64 encoding.</p>
@@ -1746,8 +1751,8 @@ The RenewalWorker starts by generating a new key-pair (unless an NEXTCERTSIGNKEY
                         <p><b>TRUSTSTOREPASSWORD</b> = Password protecting the truststore keystore. This property must be set if TRUSTSTORETYPE is not PEM.</p>
                         <p><b>KEYSTOREPASSWORD</b> = The password that locks the key-store. Required for JKS.</p>
                         <p><b>DEFAULTKEY</b> = Key alias to use from the crypto token. This property must be set.</p>
-                    </subsubsection>
-                    <subsubsection name="Properties of renewee">
+
+                    <h4>Properties of renewee</h4>
                         <p><b>RENEWENDENTITY</b> = Name of the existing end entity in EJBCA</p>
                         <p><b>REQUESTDN</b> = Subject DN to set in the certificate signing request (PKCS#10).</p>
                         <p><b>SIGNATUREALGORITHM</b> = Signature algorithm to use when signing the certificate signing request (PKCS#10)</p>
@@ -1758,17 +1763,17 @@ The RenewalWorker starts by generating a new key-pair (unless an NEXTCERTSIGNKEY
                         <p><b>DEFAULTKEY</b> = Key alias for the current existing key. The worker will update this property.</p>
                         <p><b>NEXTCERTSIGNKEY</b> = Key alias for the next existing key. If this property exists a new key-pair will not be generated. The worker will update/remove this property.</p>
                         
-                    </subsubsection>
-                    <subsubsection name="Request Properties">
+
+                    <h4>Request Properties</h4>
                         <p><b>WORKER</b> = Name of the worker that should be renewed.</p>
                         <p><b>AUTHCODE</b> = HSM/keystore password for activation.</p>
                         <p><b>FORDEFAULTKEY</b> = If the current key should be used instead of the next key or a new key. (Optional, default: false)</p>
-                    </subsubsection>
-                    <subsubsection name="Response Properties">
+
+                    <h4>Response Properties</h4>
                         <p><b>RESULT</b> = "OK" if the renewal succeeded otherwise "FAILURE".</p>
                         <p><b>MESSAGE</b> = Error message if any.</p>
-                    </subsubsection>
-                    <subsubsection name="Renewal modes">
+
+                    <h4>Renewal modes</h4>
                         <table>
                             <tr>
                                 <th colspan="2">Renewee</th>
@@ -1827,7 +1832,7 @@ The RenewalWorker starts by generating a new key-pair (unless an NEXTCERTSIGNKEY
                                 <td>Same alias</td>
                             </tr>
                         </table>
-                    </subsubsection>
+
                 </subsection>
                 
                 <subsection name="StatusPropertiesWorker">
@@ -1835,53 +1840,54 @@ The RenewalWorker starts by generating a new key-pair (unless an NEXTCERTSIGNKEY
 Fully qualified class name: org.signserver.module.statusproperties.StatusPropertiesWorker
                     </p>
 
-                    <subsubsection name="Overview">
+                    <h4>Overview</h4>
                         <p>
 The StatusPropertiesWorker can be used to query and setting status properties in the status repository.
                         </p>
-                    </subsubsection>
-                    <subsubsection name="Worker Properties">
+
+                    <h4>Worker Properties</h4>
                         <p>(none)</p>
-                    </subsubsection>
-                    <subsubsection name="Request Properties">
+
+                    <h4>Request Properties</h4>
                         <p><b>GET</b> - Comma-separated list of status properties to query</p>
                         <p><b>x.VALUE</b> - Where x is a status property: Sets the value of the property</p>
                         <p><b>x.EXPIRATION</b> - Where x is a status property: Sets the expiration time 
                             for x (x.VALUE must also be specified)</p>
                         <p>If no property is specified all valid status properties are returned</p>
-                    </subsubsection>
-                    <subsubsection name="Response Properties">
+
+                    <h4>Response Properties</h4>
                         <p><b>x.VALUE</b> = See Request Properties</p>
                         <p><b>x.EXPIRATION</b> = See Request Properties</p>
-                    </subsubsection>
+
                 </subsection>
 
                 <subsection name="TimeMonitorManager">
-                    <note>
-The TimeMonitorManager is an Enterprise Edition feature.
-                    </note>
+                    <div class="frame note">
+                        <div class="label">Note</div>
+                        <div class="content">The TimeMonitorManager is an Enterprise Edition feature.</div>
+                    </div>
                     <p>
 Fully qualified class name: org.signserver.module.timemonitormanager.TimeMonitorManager
                     </p>
 
-                    <subsubsection name="Overview">
+                    <h4>Overview</h4>
                         <p>
 Similar to the StatusPropertiesWorker, the TimeMonitorManager also supports setting status properties in the status repository. In addition the TimeMonitorManager also supports dynamic configuration of the TimeMonitor as well as gives a complete view of the state of the TimeMonitor.
                         </p>
-                    </subsubsection>
-                    <subsubsection name="Worker Properties">
+
+                    <h4>Worker Properties</h4>
                         <p>All worker properties starting with either "TIMEMONITOR." or "TIMESERVER." are sent to the TimeMonitor if it asks for it.</p>
                         <p>See the <a href="complete.en.html#SignServer%20TimeMonitor">SignServer TimeMonitor</a> manual for the list of available properties.</p>
-                    </subsubsection>
-                    <subsubsection name="Request Properties">
+
+                    <h4>Request Properties</h4>
                         <p><b>x.VALUE</b> - Where x is a status property: Sets the value of the property</p>
                         <p><b>x.EXPIRATION</b> - Where x is a status property: Sets the expiration time 
                             for x (x.VALUE must also be specified)</p>
-                    </subsubsection>
-                    <subsubsection name="Response Properties">
+
+                    <h4>Response Properties</h4>
                         <p><b>x.UPDATE</b> = The time when the property was written</p>
-                    </subsubsection>
-                    <subsubsection name="Status output">
+
+                    <h4>Status output</h4>
                         <p>
 Much information about the state of the TimeMonitor is available in the getstatus output of the TimeMonitorManager:
                         </p>
@@ -1963,30 +1969,31 @@ Status of Worker with id 300 (TimeMonitorManager) is:
       2014-08-26 11:36:44,782 INFO  Time back in calibration: offset abs(0)  max accepted offset 997
       2014-08-26 11:36:44,793 INFO  State changed to: INSYNC,REPORTED,NONE
                         ]]></source>
-                    </subsubsection>
+
                 </subsection>
                 
                 <subsection name="TimeMonitorStatusReportWorker">
-                    <note>
-The TimeMonitorStatusReportWorker is an Enterprise Edition feature.
-                    </note>
+                    <div class="frame note">
+                        <div class="label">Note</div>
+                        <div class="content">The TimeMonitorStatusReportWorker is an Enterprise Edition feature.</div>
+                    </div>
                     <p>
 Fully qualified class name: org.signserver.module.timemonitormanager.TimeMonitorStatusReportWorker
                     </p>
 
-                    <subsubsection name="Overview">
+                    <h4>Overview</h4>
                         <p>
 Worker that outputs the TimeMonitor state line as described in the <a href="complete.en.html#SignServer%20TimeMonitor">SignServer TimeMonitor</a> manual.
                         </p>
-                    </subsubsection>
-                    <subsubsection name="Response">
+
+                    <h4>Response</h4>
                         <p>
                             Sample output:
                         </p>
                         <source><![CDATA[
 1409055102120,INSYNC,REPORTED,NONE,1ccdf46b,0,507,7,6
                         ]]></source>
-                    </subsubsection>
+
                 </subsection>
 
                 <subsection name="SignerStatusReportWorker">
@@ -1994,7 +2001,7 @@ Worker that outputs the TimeMonitor state line as described in the <a href="comp
 Fully qualified class name: org.signserver.module.signerstatusreport.SignerStatusReportWorker
                     </p>
 
-                    <subsubsection name="Overview">
+                    <h4>Overview</h4>
                         <p>
 The SignerStatusReportWorker is a worker that returns a status report for a configured 
 set of workers. The information includes each workers crypto token status
@@ -2004,11 +2011,11 @@ a configured limit of number of signatures, this value is also included. This
 worker returns the report in the same format as defined for the 
 <a href="#SignerStatusReportTimedService">SignerStatusReportTimedService</a>.
                         </p>
-                    </subsubsection>
-                    <subsubsection name="Worker Properties">
+
+                    <h4>Worker Properties</h4>
                         <p><b>WORKERS</b> = Comma separated list of worker names (signers) that should
 be monitored.</p>
-                    </subsubsection>
+
                 </subsection>
             </section>
 
@@ -2042,7 +2049,7 @@ implementation to use. See below for available crypto tokens.
                 </subsection>
 
                 <subsection name="P12CryptoToken">
-                    <subsubsection name="Overview">
+                    <h4>Overview</h4>
                         <p>
 A CryptoToken using a PKCS#12 (.p12/.pfx) key-store in the local file-system. 
                         </p>
@@ -2052,15 +2059,15 @@ In a clustered environment the key store must placed at the same location at all
                         <p>
 The P12CryptoToken, doesn't support the destroyKey() method
                         </p>
-                    </subsubsection>
 
-                    <subsubsection name="SIGNERTOKEN.CLASSPATH">
+
+                    <h4>SIGNERTOKEN.CLASSPATH</h4>
                         <p>
 The fully qualified class name is: <b>org.signserver.server.cryptotokens.P12CryptoToken</b>
                         </p>
-                    </subsubsection>
 
-                    <subsubsection name="Available Properties">
+
+                    <h4>Available Properties</h4>
                         <p>
 <b>KEYSTOREPATH</b>: The full path to the key-store file to load. (required)
                         </p>
@@ -2071,11 +2078,11 @@ The fully qualified class name is: <b>org.signserver.server.cryptotokens.P12Cryp
 <b>DEFAULTKEY</b>: The key to use. If a key is not derived from each signing request
 (using an implementation of the AliasSelector interface), this needs to be defined. (optional)
                         </p>
-                    </subsubsection>
+
                 </subsection>
 
                 <subsection name="JKSCryptoToken">
-                    <subsubsection name="Overview">
+                    <h4>Overview</h4>
                         <p>
 A CryptoToken using a Java Key Store (.jks) in the file-system.
                         </p>
@@ -2085,15 +2092,15 @@ In a clustered environment must the key store be at the same location at all nod
                         <p>
 The JKSCryptoToken, doesn't support the destroyKey() method
                         </p>
-                    </subsubsection>
 
-                    <subsubsection name="SIGNERTOKEN.CLASSPATH">
+
+                    <h4>SIGNERTOKEN.CLASSPATH</h4>
                         <p>
 The fully qualified class name is: <b>org.signserver.server.cryptotokens.JKSCryptoToken</b>
                         </p>
-                    </subsubsection>
 
-                    <subsubsection name="Available Properties">
+
+                    <h4>Available Properties</h4>
                         <p>
 <b>KEYSTOREPATH</b>: The full path to the key-store to load. (required)
                         </p>
@@ -2107,11 +2114,11 @@ The fully qualified class name is: <b>org.signserver.server.cryptotokens.JKSCryp
                         <p>
 <b>NEXTCERTSIGNKEY</b>: The next key to use. See PKCS11CryptoToken. (optional)
                         </p>
-                    </subsubsection>
+
                 </subsection>
                 
                 <subsection name="KeystoreInConfigCryptoToken">
-                    <subsubsection name="Overview">
+                    <h4>Overview</h4>
                         <p>
 A CryptoToken using a PKCS#12 keystore stored in the configuration (in the
 database).
@@ -2127,13 +2134,13 @@ To backup the content of the crypto token, a database backup should be made.
 The password supplied when activating the token the first time will be used
 as the keystore password.
                         </p>
-                    </subsubsection>
-                    <subsubsection name="SIGNERTOKEN.CLASSPATH">
+
+                    <h4>SIGNERTOKEN.CLASSPATH</h4>
                         <p>
 The fully qualified class name is: <b>org.signserver.server.cryptotokens.KeystoreInConfigCryptoToken</b>
                         </p>
-                    </subsubsection>
-                    <subsubsection name="Available Properties">
+
+                    <h4>Available Properties</h4>
                         <p>
 <b>KEYSTOREPASSWORD</b>: The password that locks the key-store. Used for automatic activation.
                         </p>
@@ -2143,23 +2150,23 @@ The fully qualified class name is: <b>org.signserver.server.cryptotokens.Keystor
                         <p>
 <b>NEXTCERTSIGNKEY</b>: The next key to use. See PKCS11CryptoToken. (optional)
                         </p>
-                    </subsubsection>
+
                 </subsection>
                 <subsection name="PKCS11CryptoToken">
-                    <subsubsection name="Overview">
+                    <h4>Overview</h4>
                         <p>
 Using PKCS11 it's possible to use a HSM that has a PKCS11 module, such as Utimaco, nCipher, SafeNet or AEP KeyPer. SignServer uses the same underlying implementation of
 PKCS11 crypto tokens as EJBCA. To find out more about supported devices and get information how to configure them you can visit the HSM documentation at <a href="http://ejbca.org/docs/adminguide.html#Hardware%20Security%20Modules%20%28HSM%29">EJBCA.org</a>. 
 The only thing that differs are the token labels strings, which you should use from below for SignServer. A very useful tool from EJBCA is the <a href="http://ejbca.org/docs/userguide.html#EJBCA%20client%20toolbox">ClientToolBox</a>. 
 If you can generate anbd test PKCS11 keys using the clientToolBox, you can use them with SignServer.
                         </p>
-                    </subsubsection>
-                    <subsubsection name="SIGNERTOKEN.CLASSPATH">
+
+                    <h4>SIGNERTOKEN.CLASSPATH</h4>
                         <p>
 The fully qualified class name is: <b>org.signserver.server.cryptotokens.PKCS11CryptoToken</b>
                         </p>
-                    </subsubsection>
-                    <subsubsection name="Available Properties">
+
+                    <h4>Available Properties</h4>
                         <p>
 <b>DEFAULTKEY</b> =   The key alias. (Required)
                         </p>
@@ -2246,8 +2253,8 @@ disabledMechanisms = {
                         <p>
 <b>CACHE_PRIVATEKEY</b> = If set to true the private key reference is cached in the worker so that it is not queried for each signature. This could potentially improve performance in some environments. (Default: false)
                         </p>
-                    </subsubsection>
-                    <subsubsection name="Default global properties">
+
+                    <h4>Default global properties</h4>
                         <p>
 Some worker properties can instead by specified as default values in the global configuration so they does not have to be repeated in every worker. Individual workers can override the default global values (if any) by specifying the property as usual.
                         </p>
@@ -2266,8 +2273,8 @@ The following properties can currently be specified in the global configuration:
                             <li>ATTRIBUTESFILE</li>
                             <li>PIN</li>
                         </ul>
-                    </subsubsection>
-                    <subsubsection name="Example usage">
+
+                    <h4>Example usage</h4>
                         <p>
 Edit (preferably a copy of) pkcs11-crypto-configuration.properties to match your PKCS#11 token. Run the following command to set up the token:
                         </p>
@@ -2325,7 +2332,7 @@ Upload the signing certificate chain to the signer using the command:
 bin/signserver uploadsignercertificatechain 9 GLOB /tmp/certchain.pem
 bin/signserver reload 9
                         </p>
-                    </subsubsection>
+
                 </subsection>
             </section>
             
@@ -2347,7 +2354,7 @@ implementation for an alias selector to use.
                 </p>
                 
                 <subsection name="Available implementations">
-                    <subsubsection name="DefaultAliasSelector">
+                    <h4>DefaultAliasSelector</h4>
                         <p>
 The fully qualified class name is: <b>org.signserver.server.aliasselectors.DefaultAliasSelector</b>
                         </p>
@@ -2356,8 +2363,8 @@ This alias selector chooses DEFAULTKEY or NEXTCERTSIGNKEY as specified for
 the crypto worker depending on the purpose of the request.
 This alias selector would be used if none has been explicitly set.
                         </p>
-                    </subsubsection>
-                    <subsubsection name="AuthorizedUsernameAliasSelector">
+
+                    <h4>AuthorizedUsernameAliasSelector</h4>
                         <p>
 The fully qualified class name is: <b>org.signserver.server.aliasselectors.AuthorizedUsernameAliasSelector</b>
                         </p>
@@ -2369,7 +2376,7 @@ An optional prefix can be specified using the <source>ALIAS_PREFIX</source>
 worker property. If this is not specified, the plain username will be used as
 the key alias.
                         </p>
-                    </subsubsection>
+
                 
                 </subsection>
             
@@ -2390,7 +2397,7 @@ The data is stored in an XML encoded Base64PutHashMap. In the "dataEncoding" col
 The fully qualified class name is: <b>org.signserver.server.archive.olddbarchiver.OldDatabaseArchiver</b>
                     </p>
                     
-                    <subsubsection name="Worker Properties">
+                    <h4>Worker Properties</h4>
                         <p>
 <b>ARCHIVERx.ARCHIVE_OF_TYPE</b> = Where "x" is the index of the Archiver in the ARCHIVERS property. Determines what this Archiver should archive. Alternatives are: "REQUEST", "RESPONSE" or "REQUEST_AND_RESPONSE". Default is "RESPONSE".<br/>
 Example: ARCHIVER0.ARCHIVE_OF_TYPE=REQUEST_AND_RESPONSE
@@ -2419,9 +2426,9 @@ account for the number of forwarded addresses by MAX_FORWARDED_ADDRESSES above.
 The default is "false" (not included).
 This property is only used when USE_FORWARDED_ADDRESS is set to "true".
                         </p> 
-                    </subsubsection>
+
                     
-                    <subsubsection name="ArchiveData table">
+                    <h4>ArchiveData table</h4>
                         <p>
 The exact database table structure is described in the SQL scripts available under doc/sql-scripts/.                            
                         </p>
@@ -2497,7 +2504,7 @@ Where DATA_ENCODING_XML uses the Base64PutHashMap and DATA_ENCODING_BASE64 uses 
                                 </td>
                             </tr>
                         </table>
-                    </subsubsection>
+
                 </subsection>
                 
                 <subsection name="Base64DatabaseArchiver">
@@ -2511,11 +2518,11 @@ In the "dataEncoding" column this format is indicated as DATA_ENCODING_BASE64.
 The fully qualified class name is: <b>org.signserver.server.archive.base64dbarchiver.Base64DatabaseArchiver</b>
                     </p>
                     
-                    <subsubsection name="Worker Properties">
+                    <h4>Worker Properties</h4>
                         <p>
 <b>ARCHIVERx.ARCHIVE_OF_TYPE</b> = Same as for OldDatabaseArchiver above.
                         </p>
-                    </subsubsection>
+
                     
                 </subsection>
                 
@@ -2543,7 +2550,7 @@ Accounter holding the clients balances internally in the global configuration.<b
 Note: This Accounter is only for demonstration purposes and will not work under load. A production Accounter should use an implementation using a proper database.
                     </p>
                     
-                    <subsubsection name="Global Configuration Properties">
+                    <h4>Global Configuration Properties</h4>
                         <p>
 <b>GLOBALCONFIGSAMPLEACCOUNTER_USERS</b> = Mapping from credential to account name<br/>
 <b>GLOBALCONFIGSAMPLEACCOUNTER_ACCOUNTS</b> = Mapping from account name to a balance
@@ -2555,11 +2562,8 @@ Example:
 GLOBALCONFIGSAMPLEACCOUNTER_USERS = user1,password:account1; user2,password2:account2
 GLOBALCONFIGSAMPLEACCOUNTER_ACCOUNTS = account1:14375; account2:12
                         </source>
-                    </subsubsection>
+
                 </subsection>
             </section>
-        </chapter>
-
     </body>
 </document>
-

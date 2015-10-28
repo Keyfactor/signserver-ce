@@ -28,11 +28,6 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>SignServer-Lib-EJBCA-Util</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>SignServer-Lib-OpenXML4J</artifactId>
             <version>${project.version}</version>
         </dependency>

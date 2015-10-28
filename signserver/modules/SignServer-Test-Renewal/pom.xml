@@ -37,11 +37,6 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>SignServer-Lib-EJBCA-Util</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>SignServer-Test-Utils</artifactId>
             <version>${project.version}</version>
         </dependency>

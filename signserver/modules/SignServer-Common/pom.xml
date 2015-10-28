@@ -52,5 +52,11 @@
             <type>jar</type>
             <version>6.1.1</version>
         </dependency>
+        <dependency>
+            <artifactId>cert-cvc</artifactId>
+            <groupId>org.ejbca.cvc</groupId>
+            <type>jar</type>
+            <version>1.2.11</version>
+        </dependency>
     </dependencies>
 </project>

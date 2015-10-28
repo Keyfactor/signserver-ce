@@ -10,6 +10,18 @@ http://sourceforge.net/apps/mediawiki/signserver/index.php?title=Developers or
 click the Wiki link on http://www.signserver.org.
 
 
+Building
+--------
+
+Note:
+Before Maven version 3.2.3 plugins and artifacts were fetched from the Central 
+Repository over insecure HTTP. Make sure to edit your ~/.m2/settings.xml to
+override the URL of Maven Central. See doc/sample-maven-settings.xml for an
+example.
+
+
+
+
 Eclipse
 -------
 To build successfully using Eclipse, there are .classpath and .project files in

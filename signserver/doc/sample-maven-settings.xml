@@ -34,7 +34,7 @@
             </activation>
             <repositories>
                 <!-- PrimeKey Releases Repository -->
-                <repository>
+                <!-- <repository>
                     <id>primekey-releases</id>
                     <name>PrimeKey Internal Releases</name>
                     <url>https://nexus1.se.lab.primekey:8443/nexus/content/repositories/releases</url>
@@ -48,10 +48,10 @@
                         <updatePolicy>never</updatePolicy>
                         <checksumPolicy>fail</checksumPolicy>
                     </snapshots>
-                </repository>
+                </repository> -->
                 
                 <!-- PrimeKey Snapshots Repository -->
-                <repository>
+                <!-- <repository>
                     <id>primekey-snapshots</id>
                     <name>PrimeKey Internal Snapshots</name>
                     <url>https://nexus1.se.lab.primekey:8443/nexus/content/repositories/snapshots</url>
@@ -65,9 +65,9 @@
                         <updatePolicy>never</updatePolicy>
                         <checksumPolicy>fail</checksumPolicy>
                     </snapshots>
-                </repository>
+                </repository> -->
                 
-                <!-- Use PrimeKey repository as proxy for Central -->
+                <!-- Use HTTPS for Central -->
                 <repository>
                     <id>central</id>
                     <url>https://repo.maven.apache.org/maven2</url>
@@ -86,7 +86,7 @@
             </repositories>
             <pluginRepositories>
                 <!-- PrimeKey Plugin Releases Repository -->
-                <pluginRepository>
+                <!-- <pluginRepository>
                     <id>primekey-releases</id>
                     <name>PrimeKey Internal Releases</name>
                     <url>https://nexus1.se.lab.primekey:8443/nexus/content/repositories/releases</url>
@@ -100,20 +100,20 @@
                         <updatePolicy>never</updatePolicy>
                         <checksumPolicy>fail</checksumPolicy>
                     </snapshots>
-                </pluginRepository>
+                </pluginRepository> -->
                 
                 <!-- PrimeKey Plugin Snapshots Repository -->
-                <pluginRepository>
+                <!-- <pluginRepository>
                     <id>primekey-snapshots</id>
                     <name>PrimeKey Internal Snapshots</name>
                     <url>https://nexus1.se.lab.primekey:8443/nexus/content/repositories/snapshots</url>
-                </pluginRepository>
+                </pluginRepository> -->
                 
-                <!-- Use PrimeKey Plugin repository as proxy for Central -->
+                <!-- Use HTTPS for Central -->
                 <pluginRepository>
                     <id>central</id>
-                    <!-- <url>https://repo.maven.apache.org/maven2</url> -->
-                    <url>https://nexus1.se.lab.primekey:8443/nexus/content/repositories/central</url>
+                    <url>https://repo.maven.apache.org/maven2</url>
+                    <!-- <url>https://nexus1.se.lab.primekey:8443/nexus/content/repositories/central</url> -->
                     <releases>
                         <enabled>true</enabled>
                         <updatePolicy>always</updatePolicy>

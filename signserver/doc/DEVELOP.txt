@@ -1,6 +1,21 @@
 DEVELOP
 ------
 
+This file contains instructions needed for building and developing
+SignServer.
+
+
+Checking out from Subversion      
+----------------------------
+
+After checking out from	SVN you	need to	run any of the Ant targets for the
+workspace to recognize if it is	the Community or Enterprise Edition:
+$ bin/ant init
+
+This will copy some files into the right location as well as creating the
+res/edition.properties file to flag that this has been done.
+
+
 After checking out the project there will be errors in the IDE because some 
 source files (i.e. Web Services stubs) has not been generated yet. Those errors 
 will disappear after configuring and building SignServer.
@@ -10,20 +25,35 @@ http://sourceforge.net/apps/mediawiki/signserver/index.php?title=Developers or
 click the Wiki link on http://www.signserver.org.
 
 
+
 Building
 --------
 
-Note:
-Before Maven version 3.2.3 plugins and artifacts were fetched from the Central 
+Maven is used for building the sources.
+
+Note 1:
+Before Maven version 3.2.3, plugins and artifacts were fetched from the Central 
 Repository over insecure HTTP. Make sure to edit your ~/.m2/settings.xml to
 override the URL of Maven Central. See doc/sample-maven-settings.xml for an
 example.
 
+Note 2:
+Some of our dependencies (and Maven plugins) are not yet in Central but are
+available in PrimeKey's internal repository as well as under lib/ext.
+To have this dependencies installed there is a script to run:
+$ ./modules/maven-manually-install-deps.sh
 
+To build using Maven from the command line use for instance:
+$ mvn install
+
+This will build all of the SignServer modules, putting the artifacts under
+./lib/ and the SignServer/DeployTools module descriptors in ./mods-available.
 
 
 Eclipse
 -------
+
+
 To build successfully using Eclipse, there are .classpath and .project files in
 the package and in the source code repository.
 Checkout SignServer either using the Subversion CLI or as a project in Eclipse.
@@ -36,40 +66,35 @@ Then do a Refresh and Clean and Build in the IDE.
 
 NetBeans IDE
 ------------
-There are multiple NetBeans IDE projects for SignServer. The project 
-modules/SignServer-Project is a NetBeans IDE FreeForm project that uses the
-Ant-scripts for building and includes the sources from most modules. In addition 
-each module has its own project under the folder modules/ that can be opened 
-with NetBeans IDE.
+Open the Maven projects directly in the IDE.
 
+NetBeans IDE 8.0 is recommended with one exception:
 The SignServer AdminGUI uses the Swing Application Framework and requires 
 NetBeans IDE =7.0.x for changing some of the GUI parts.
 
-For the 3.2 branch don't let a newer version than 7.0.x update the build scripts
-as we only require Ant 1.7.1.
 
-For trunk newer versions can be used as we require Ant 1.8.1 or later and 
-we target NetBeans IDE 8.0.
-
-When the projects are first opened there might be a missing dependency 
-"clover.jar". This will go away after building the project.
+Eclipse
+-------
+Each SignServer subproject is an Maven project. Open or import it to Eclipse
+as done for any Maven project.
+TODO: This is currently untested.
 
 
 Writing Documentation
 ---------------------
-The SignServer documentation is built using Apache Anakia/Velocity from XML 
-source files under modules/SignServer-Doc/src/xdocs/ when running 
-"bin/ant doc".
-
-The file manual/complete.en.xml contains the source for all chapters in the 
-manual.
+The SignServer documentation is built by maven-site-plugin using Doxia from 
+xdoc (XML) source files under modules/SignServer-Doc and are then placed
+in ./doc/htdocs as well as included in the SignServer-Doc-web.war.
 
 
 Automated Tests
 ---------------
 SignServer uses JUnit for automated testing. Test cases exists in multiple 
-projects. Which tests are included in the default suite is defined by the 
-property "tests.modules.includes" in modules/modules-project.properties.
+projects. 
+
+Unit tests are run when building with Maven unless -DskipTests is specifed.
+System tests are placed in JAR files and can later be run with Ant:
+$ bin/ant systemtest:jars
 
 This is roughly how tests are currently organized:
 * Each new module can include its own Unit tests.

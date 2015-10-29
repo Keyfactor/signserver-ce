@@ -14,6 +14,7 @@ package org.signserver.client.cli.defaultimpl;
 
 import java.io.*;
 import java.math.BigInteger;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.MessageDigest;
@@ -338,6 +339,10 @@ public class TimeStampCommand extends AbstractCommand {
             // oops, something went wrong
             out.println(usage(options));
             return CommandLineInterface.RETURN_INVALID_ARGUMENTS;
+        } catch (HTTPException ex) {
+            err.println("Failure: HTTP error: " + ex.getResponseCode() + ": " +
+                    ex.getResponseMessage());
+            return CommandLineInterface.RETURN_ERROR;
         } catch (Exception ex) {
             throw new UnexpectedCommandFailureException(ex);
         }
@@ -644,7 +649,7 @@ public class TimeStampCommand extends AbstractCommand {
             keyStoreOptions.setupHTTPS();
 
             URL url;
-            URLConnection urlConn;
+            HttpURLConnection urlConn;
             DataOutputStream printout;
             DataInputStream input;
 
@@ -657,7 +662,7 @@ public class TimeStampCommand extends AbstractCommand {
                 LOG.debug("Sending request at: " + startMillis);
             }
 
-            urlConn = url.openConnection();
+            urlConn = (HttpURLConnection) url.openConnection();
 
             urlConn.setDoInput(true);
             urlConn.setDoOutput(true);
@@ -672,12 +677,24 @@ public class TimeStampCommand extends AbstractCommand {
             printout.close();
 
             // Get response data.
-            input = new DataInputStream(urlConn.getInputStream());
-
+            final int responseCode = urlConn.getResponseCode();
+            
+            if (responseCode >= 400) {
+                input = new DataInputStream(urlConn.getErrorStream());
+            } else {
+                input = new DataInputStream(urlConn.getInputStream());
+            }
+                
             final ByteArrayOutputStream baos = new ByteArrayOutputStream();
             int b;
             while ((b = input.read()) != -1) {
                 baos.write(b);
+            }
+            
+            if (responseCode >= 400) {
+                throw new HTTPException(url, responseCode,
+                                        urlConn.getResponseMessage(),
+                                        baos.toByteArray());
             }
 
             // Take stop time

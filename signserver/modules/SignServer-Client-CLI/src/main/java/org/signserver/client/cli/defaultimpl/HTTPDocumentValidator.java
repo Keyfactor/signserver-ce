@@ -16,8 +16,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -85,9 +85,10 @@ public class HTTPDocumentValidator extends AbstractDocumentValidator {
 
         InputStream in = null;
         OutputStream outStream = null;
-        
+
         try {
-            final URLConnection conn = processServlet.openConnection();
+            final HttpURLConnection conn =
+                    (HttpURLConnection) processServlet.openConnection();
             
             conn.setDoOutput(true);
             conn.setAllowUserInteraction(false);
@@ -166,7 +167,14 @@ public class HTTPDocumentValidator extends AbstractDocumentValidator {
             outStream.flush();
             
             // Get the response
-            in = conn.getInputStream();
+            final int responseCode = conn.getResponseCode();
+            
+            if (responseCode >= 400) {
+                in = conn.getErrorStream();
+            } else {
+                in = conn.getInputStream();
+            }
+
             final ByteArrayOutputStream os = new ByteArrayOutputStream();
             int len;
             final byte[] buf = new byte[1024];
@@ -174,6 +182,12 @@ public class HTTPDocumentValidator extends AbstractDocumentValidator {
                 os.write(buf, 0, len);
             }
             os.close();
+            
+            if (responseCode >= 400) {
+                throw new HTTPException(processServlet, responseCode,
+                                        conn.getResponseMessage(),
+                                        os.toByteArray());
+            }
             
             // read string from response
             final String response = os.toString();
@@ -185,6 +199,9 @@ public class HTTPDocumentValidator extends AbstractDocumentValidator {
             }
             out.write("\n".getBytes());            
             
+        } catch (HTTPException ex) {
+            // let the validation command handle HTTP error responses
+            throw ex;
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         } finally {

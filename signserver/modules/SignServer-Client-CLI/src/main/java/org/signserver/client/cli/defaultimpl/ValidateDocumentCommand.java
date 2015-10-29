@@ -369,6 +369,9 @@ public class ValidateDocumentCommand extends AbstractCommand {
                 LOG.error("Authorization required: " + authEx.getMessage());
             }
             LOG.error(ex);
+        } catch (HTTPException ex) {
+            LOG.error("Failure: HTTP error: " + ex.getResponseCode() + ": " +
+                      ex.getResponseMessage());
         } catch (IOException ex) {
             LOG.error(ex);
         } finally {

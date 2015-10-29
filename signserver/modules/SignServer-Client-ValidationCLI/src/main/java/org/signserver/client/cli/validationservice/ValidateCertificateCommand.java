@@ -13,6 +13,7 @@
 package org.signserver.client.cli.validationservice;
 
 import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.cert.CertificateEncodingException;
@@ -28,6 +29,7 @@ import org.signserver.cli.CommandLineInterface;
 import org.signserver.cli.spi.AbstractCommand;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
+import org.signserver.client.cli.defaultimpl.HTTPException;
 import org.signserver.common.RequestAndResponseManager;
 import org.signserver.common.SignServerUtil;
 import org.signserver.protocol.ws.ProcessRequestWS;
@@ -476,7 +478,8 @@ public class ValidateCertificateCommand extends AbstractCommand {
         InputStream in = null;
         
         try {
-            final URLConnection conn = processServlet.openConnection();
+            final HttpURLConnection conn =
+                    (HttpURLConnection) processServlet.openConnection();
         
             conn.setDoOutput(true);
             conn.setAllowUserInteraction(false);
@@ -535,7 +538,14 @@ public class ValidateCertificateCommand extends AbstractCommand {
             out.flush();
             
             // Get the response
-            in = conn.getInputStream();
+            final int responseCode = conn.getResponseCode();
+            
+            if (responseCode >= 400) {
+                in = conn.getErrorStream();
+            } else {
+                in = conn.getInputStream();
+            }
+
             final ByteArrayOutputStream os = new ByteArrayOutputStream();
             int len;
             final byte[] buf = new byte[1024];
@@ -543,6 +553,12 @@ public class ValidateCertificateCommand extends AbstractCommand {
                 os.write(buf, 0, len);
             }
             os.close();
+            
+            if (responseCode >= 400) {
+                throw new HTTPException(processServlet, responseCode,
+                                        conn.getResponseMessage(),
+                                        os.toByteArray());
+            }
             
             // read string from response
             final String response = os.toString();
@@ -563,6 +579,9 @@ public class ValidateCertificateCommand extends AbstractCommand {
             final ValidateResponse validateResponse = new ValidateResponse(validation, responseParts[1].split(","));
             
             return validateResponse;
+        } catch (HTTPException e) {
+            //
+            throw e;
         } catch (IOException e) {
             throw new RuntimeException(e);
         } finally {

@@ -390,11 +390,17 @@ public class SignDataGroupsCommand extends AbstractCommand {
 
             // Check for error, XXX: Yes this is ugly and we should remove this stress test feature from here
         for (Worker worker : workers) {
-            if (worker.getException() != null) {
-                if (worker.getException().getCause() instanceof AuthorizationRequiredException) {
+            final Exception exception = worker.getException();
+            if (exception != null) {
+                if (exception.getCause() instanceof AuthorizationRequiredException) {
                 final AuthorizationRequiredException authEx =
-                    (AuthorizationRequiredException) worker.getException().getCause();
+                    (AuthorizationRequiredException) exception.getCause();
                 LOG.error("Authorization required: " + authEx.getMessage());
+                } else if (exception instanceof HTTPException) {
+                    final HTTPException httpException = (HTTPException) exception;
+                    throw new CommandFailureException("Failure: HTTP error: " +
+                            httpException.getResponseCode() + ": " +
+                            httpException.getResponseMessage());
                 } else {
                     LOG.error("Failed", worker.getException());
                 }

@@ -16,6 +16,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -121,7 +122,8 @@ public class HTTPSODSigner extends AbstractSODSigner {
         OutputStream out = null;
         InputStream in = null;
         try {
-            final URLConnection conn = processServlet.openConnection();
+            final HttpURLConnection conn =
+                    (HttpURLConnection) processServlet.openConnection();
             conn.setDoOutput(true);
             conn.setAllowUserInteraction(false);
 
@@ -167,7 +169,14 @@ public class HTTPSODSigner extends AbstractSODSigner {
             out.flush();
 
             // Get the response
-            in = conn.getInputStream();
+            final int responseCode = conn.getResponseCode();
+            
+            if (responseCode >= 400) {
+                in = conn.getErrorStream();
+            } else {
+                in = conn.getInputStream();
+            }
+
             final ByteArrayOutputStream os = new ByteArrayOutputStream();
             int len;
             final byte[] buf = new byte[1024];
@@ -175,6 +184,12 @@ public class HTTPSODSigner extends AbstractSODSigner {
                 os.write(buf, 0, len);
             }
             os.close();
+            
+            if (responseCode >= 400) {
+                throw new HTTPException(processServlet, responseCode,
+                                        conn.getResponseMessage(),
+                                        os.toByteArray());
+            }
 
             return new Response(os.toByteArray());
         } finally {

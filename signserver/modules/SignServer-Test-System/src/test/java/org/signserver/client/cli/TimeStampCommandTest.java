@@ -167,6 +167,23 @@ public class TimeStampCommandTest extends ModulesTestCase {
         out = new String(cli.getOut().toByteArray());
         assertTrue("No response in: " + out, out.contains("Time-stamp response") && out.contains("}"));
     }
+    
+    /**
+     * Test that trying to use a URL pointing to a non-existing worker will
+     * print out the HTTP error code and message on the error stream.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void test06unknownWorker() throws Exception {
+        assertEquals(CommandLineInterface.RETURN_ERROR,
+                cli.execute("timestamp", "-instr",
+                            "Any text we want to have a timestamp for...123",
+                            "-url", "http://localhost:8080/signserver/tsa?workerName=_nonExisting"));
+        final String err = new String(cli.getErr().toByteArray());
+        assertTrue("Prints HTTP error 404: " + err,
+                err.contains("Failure: HTTP error: 404: Not Found"));
+    }
 
     @Test
     public void test99TearDownDatabase() throws Exception {

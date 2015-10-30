@@ -965,7 +965,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
             final ICryptoToken token = getCryptoToken();
             
             if (token == null) {
-                throw new CryptoTokenOfflineException("No crypto token defined");
+                throw new CryptoTokenOfflineException("Crypto token offline");
             }
             
             if (log.isDebugEnabled()) {

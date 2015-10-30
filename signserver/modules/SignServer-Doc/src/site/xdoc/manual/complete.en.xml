@@ -435,9 +435,9 @@ binlog_format=row
 Copy the driver for your database to the application server lib folder.
                         </p>    
                     </subsubsection>
-                    <subsubsection name="Configure database driver for JBoss AS 7 or JBoss EAP 6">
+                    <subsubsection name="Configure database driver for JBoss AS 7, JBoss EAP 6 or WildFly">
 <p>
-In JBoss 7/EAP6 it is not enough to just drop the JAR archive with a database JDBC driver into the deployments directory. Instead you will have to perform the following steps (for MySQL or MariaDB):
+In JBoss 7/EAP6/WildFly it is not enough to just drop the JAR archive with a database JDBC driver into the deployments directory. Instead you will have to perform the following steps (for MySQL or MariaDB):
 <ol>
 <li>Create the necessary directories (relative to JBoss 7 base directory):
 <br/>
@@ -453,7 +453,7 @@ Or for MariaDB, mariadb-java-client-1.1.2.jar:
 <pre>
 mkdir -p modules/org/mariadb/main/
 </pre>
-On JBoss 7.2 or EAP 6.1:
+On JBoss 7.2, EAP 6.1 (or later) or WildFly:
 <pre>
 mkdir -p modules/system/layers/base/org/mariadb/main/
 </pre>
@@ -578,7 +578,7 @@ Then restart the application server.
                         </p>
                     </subsubsection>
                     
-                    <subsubsection name="Configure data source for JBoss EAP 6">
+                    <subsubsection name="Configure data source for JBoss EAP 6 or WildFly">
                         <p>
 The examples are for installing a MariaDB datasource using the jboss-cli with the driver installed as described above. </p>
 <p>A normal datasource (Note: --enabled=true for JBoss EAP 6.x):</p>
@@ -657,6 +657,43 @@ If the server is not so fast, we have to wait a little before we can reload, oth
 :reload
                         </source>
                     </subsubsection>
+                
+                <subsubsection name="WildFly 9 SSL configuration">
+                        <p>
+Copy the keystore file as WILDFLY_HOME/standalone/configuration/keystore/keystore.jks and the trust store as
+                          WILDFLY_HOME/standalone/configuration/keystore/truststore.jks.
+                        </p>
+                        <p>
+Configure interfaces using the approproate bind address (ie. 0.0.0.0 or 127.0.0.1).
+                        </p>
+                        <source>
+/interface=http:add(inet-address="0.0.0.0")
+/interfaces=/interface=httpspub:add(inet-address="0.0.0.0")
+/interfaces=/interface=httpspriv:add(inet-address="0.0.0.0")
+                        </source>
+                        <p>
+Set-up the private port which requires client certificate. 
+Use appropriate values for key-alias (hostname), password (keystore password), ca-certificate-password (truststore password),
+and supported protocols.
+                        </p>
+                        <source>
+/socket-binding-group=standard-sockets/socket-binding=httpspriv:add(port="8443",interface="httpspriv")
+/core-service=management/security-realm=SSLRealm:add()
+/core-service=management/security-realm=SSLRealm/server-identity=ssl:add(keystore-path="keystore/keystore.jks", keystore-relative-to="jboss.server.config.dir", keystore-password="serverpwd", alias="localhost")
+/core-service=management/security-realm=SSLRealm/authentication=truststore:add(keystore-path="keystore/truststore.jks", keystore-relative-to="jboss.server.config.dir", keystore-password="changeit")
+/subsystem=undertow/server=default-server/https-listener=httpspriv:add(socket-binding="httpspriv", security-realm="SSLRealm", verify-client=REQUIRED)
+                        </source>
+                        <p>
+Set-up the public SSL port which doesn't require the client certificate.
+                        </p>
+                        <source>
+/socket-binding-group=standard-sockets/socket-binding=httpspub:add(port="8442",interface="httpspub")
+/subsystem=undertow/server=default-server/https-listener=httpspub:add(socket-binding="httpspub", security-realm="SSLRealm")
+                        </source>
+                        <source>
+reload
+                        </source>
+                    </subsubsection>
                 </subsection>
 
                 <subsection name="6. Configure application server">
@@ -672,7 +709,7 @@ request by commenting out the line:
 For JBoss 5.1.0.GA the file is available under: server/default/deployers/jbossws.deployer/META-INF/
                         </p>
                     </subsubsection>
-                    <subsubsection name="Fix web service problem in JBoss AS 7/EAP 6">
+                    <subsubsection name="Fix web service problem in JBoss AS 7/EAP 6/WildFly">
                         <p>
 Configure WSDL web-host rewriting to use the request host. Needed for webservices to work correctly when requiring client certificate.
                         </p>
@@ -777,7 +814,7 @@ Run pkg install in the GlassFish folder:
 ./bin/pkg install hibernate
                         </source>
                     </subsubsection>
-                    <subsubsection name="JBoss 7/EAP 6 and PKCS11">
+                    <subsubsection name="JBoss 7/EAP 6/WildFly and PKCS11">
                         <p>
 JBoss 7/EAP 6 isolates away most sun classes. That means you will not be able to send certificates through remote EJB calls, and will not be able to use the Sun PKCS#11 provider.
 These classes can be made available by editing the file
@@ -792,8 +829,8 @@ These classes can be made available by editing the file
 This will allow an application to use these internal Sun/Oracle/OpenJDK classes.
                         </p>
                         <p>
-This is not needed in JBoss EAP 6.1/JBoss 7.2, because the two first packages are exported by default since <a href="https://issues.jboss.org/browse/JBPAPP6-1748">JBPAPP6-1748</a>.
-One package is however needed still. In JBoss EAP 6.1 the file is located in <i>modules/system/layers/base/sun/jdk/main/module.xml</i>.
+This is not needed in JBoss EAP 6.1/JBoss 7.2/WildFly and later, because the two first packages are exported by default since <a href="https://issues.jboss.org/browse/JBPAPP6-1748">JBPAPP6-1748</a>.
+One package is however needed still. Since JBoss EAP 6.1 the file is located in <i>modules/system/layers/base/sun/jdk/main/module.xml</i>.
                         </p>
                         <source>
 &lt;path name="sun/security/pkcs11/wrapper"/&gt;

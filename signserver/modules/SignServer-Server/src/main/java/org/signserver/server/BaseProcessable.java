@@ -964,6 +964,11 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         
         try {
             final ICryptoToken token = getCryptoToken();
+            
+            if (token == null) {
+                throw new CryptoTokenOfflineException("No crypto token defined");
+            }
+            
             if (log.isDebugEnabled()) {
                 log.debug("Found a crypto token of type: " + token.getClass().getName());
             }

@@ -86,6 +86,7 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
 	
     @Test
     public void test00SetupDatabase() throws Exception {
+        LOG.info("test00SetupDatabase");
         // Worker 1
         addDummySigner(WORKERID, "TestXMLSigner", true);
         
@@ -102,6 +103,7 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
      */
     @Test
     public void test01incorrectOptionThreads() throws Exception {
+        LOG.info("test01incorrectOptionThreads");
         inDir.create();
         File file1 = inDir.newFile("doc1.xml");
         FileUtils.writeStringToFile(file1, "<document1/>");
@@ -136,6 +138,7 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
      */
     @Test
     public void test01incorrectOptionData() throws Exception {
+        LOG.info("test01incorrectOptionData");
         inDir.create();
         File file1 = inDir.newFile("doc1.xml");
         FileUtils.writeStringToFile(file1, "<document1/>");
@@ -159,6 +162,7 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
      */
     @Test
     public void test01incorrectOptionSameDirs() throws Exception {
+        LOG.info("test01incorrectOptionSameDirs");
         inDir.create();
         File file1 = inDir.newFile("doc1.xml");
         FileUtils.writeStringToFile(file1, "<document1/>");
@@ -180,6 +184,7 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
      */
     @Test
     public void test01incorrectOptionBothOneFirstAndStartAll() throws Exception {
+        LOG.info("test01incorrectOptionBothOneFirstAndStartAll");
         inDir.create();
         File file1 = inDir.newFile("doc1.xml");
         FileUtils.writeStringToFile(file1, "<document1/>");
@@ -206,6 +211,7 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
      */
     @Test
     public void test02sign1DocumentFromInDir() throws Exception {
+        LOG.info("test02sign1DocumentFromInDir");
         inDir.create();
         File file1 = inDir.newFile("doc1.xml");
         FileUtils.writeStringToFile(file1, "<document1/>");
@@ -244,6 +250,7 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
      */
     @Test
     public void test02sign2DocumentsFromInDir() throws Exception {
+        LOG.info("test02sign2DocumentsFromInDir");
         inDir.create();
         File file1 = inDir.newFile("doc1.xml");
         FileUtils.writeStringToFile(file1, "<document1/>");
@@ -316,6 +323,7 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
      */
     @Test
     public void test02sign13DocumentsFromInDirWith3Threads() throws Exception {
+        LOG.info("test02sign13DocumentsFromInDirWith3Threads");
         // Create 13 input files
         inDir.create();
         outDir.create();
@@ -345,6 +353,7 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
      */
     @Test
     public void test03promptForUserPassword1Thread() throws Exception {
+        LOG.info("test03promptForUserPassword1Thread");
         // Create a few input files
         inDir.create();
         outDir.create();
@@ -388,6 +397,7 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
      */
     @Test
     public void test03promptForUserPassword3Thread() throws Exception {
+        LOG.info("test03promptForUserPassword3Thread");
         // Create a few input files
         inDir.create();
         outDir.create();
@@ -432,6 +442,7 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
      */
     @Test
     public void test04promptForUserPasswordAgain1Thread() throws Exception {
+        LOG.info("test04promptForUserPasswordAgain1Thread");
         // Create a few input files
         inDir.create();
         outDir.create();
@@ -479,6 +490,7 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
      */
     @Test
     public void test04promptForUserPasswordNotIfSpecified() throws Exception {
+        LOG.info("test04promptForUserPasswordNotIfSpecified");
         // Create a few input files
         inDir.create();
         outDir.create();
@@ -522,6 +534,7 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
      */
     @Test
     public void test04promptForUserPasswordAgain3Threads() throws Exception {
+        LOG.info("test04promptForUserPasswordAgain3Threads");
         // Create a few input files
         inDir.create();
         outDir.create();
@@ -570,6 +583,7 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
      */
     @Test
     public void test04promptForUserPasswordAgain2_3Threads() throws Exception {
+        LOG.info("test04promptForUserPasswordAgain2_3Threads");
         // Create a few input files
         inDir.create();
         outDir.create();
@@ -618,6 +632,7 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
      */
     @Test
     public void test04promptForUserPasswordAgainStops_3Threads() throws Exception {
+        LOG.info("test04promptForUserPasswordAgainStops_3Threads");
         // Create a few input files
         inDir.create();
         outDir.create();
@@ -659,6 +674,7 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
 
     @Test
     public void test99TearDownDatabase() throws Exception {
+        LOG.info("test99TearDownDatabase");
         for (int workerId : WORKERS) {
             removeWorker(workerId);
         }

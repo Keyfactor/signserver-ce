@@ -181,8 +181,10 @@ public class TimeStampCommandTest extends ModulesTestCase {
                             "Any text we want to have a timestamp for...123",
                             "-url", "http://localhost:8080/signserver/tsa?workerName=_nonExisting"));
         final String err = new String(cli.getErr().toByteArray());
+        // JBoss seems to rewrite HTTP error message, so check both variants
         assertTrue("Prints HTTP error 404: " + err,
-                err.contains("Failure: HTTP error: 404: Not Found"));
+                err.contains("Failure: HTTP error: 404: Not Found") ||
+                err.contains("Failure: HTTP error: 404: Worker Not Found"));
     }
 
     @Test

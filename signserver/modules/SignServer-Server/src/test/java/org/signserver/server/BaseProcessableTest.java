@@ -423,7 +423,6 @@ public class BaseProcessableTest extends TestCase {
         
             // Exercising all properties (except SLOTLISTINDEX)
             globalConfig.setProperty("GLOB.WORKER" + workerId + ".CLASSPATH", TestSigner.class.getName());
-            globalConfig.setProperty("GLOB.WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", MockedCryptoToken.class.getName());
             workerConfig.setProperty("NAME", "TestSigner100");
         
             TestSigner instance = new TestSigner(globalConfig);

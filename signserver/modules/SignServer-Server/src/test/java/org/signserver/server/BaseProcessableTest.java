@@ -30,7 +30,9 @@ import org.junit.Test;
 import org.signserver.common.CryptoTokenInitializationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GlobalConfiguration;
+import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.IllegalRequestException;
+import org.signserver.common.PKCS10CertReqInfo;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
@@ -403,6 +405,40 @@ public class BaseProcessableTest extends TestCase {
         assertTrue("Matching certificate",
                 Arrays.equals(chain.get(0).getEncoded(),
                               importedChain.get(0).getEncoded()));
+    }
+    
+    /**
+     * Test that trying to generate a cert request with no crypto token set
+     * will generate a proper CryptoTokenOfflineException.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testGenerateCSRNoCryptoToken() throws Exception {
+        LOG.info("testGenerateCSRNoCryptoToken");
+        
+        try {
+            Properties globalConfig = new Properties();
+            WorkerConfig workerConfig = new WorkerConfig();
+        
+            // Exercising all properties (except SLOTLISTINDEX)
+            globalConfig.setProperty("GLOB.WORKER" + workerId + ".CLASSPATH", TestSigner.class.getName());
+            globalConfig.setProperty("GLOB.WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH", MockedCryptoToken.class.getName());
+            workerConfig.setProperty("NAME", "TestSigner100");
+        
+            TestSigner instance = new TestSigner(globalConfig);
+            instance.init(workerId, workerConfig, anyContext, null);
+            
+            final ISignerCertReqInfo reqInfo =
+                    new PKCS10CertReqInfo("SHA1withRSA", "CN=someguy", null);
+            
+            instance.genCertificateRequest(reqInfo, false, "somekey");
+            fail("Should throw CryptoTokenOfflineException");
+        } catch (CryptoTokenOfflineException e) {
+            // expected
+        } catch (Exception e) {
+            fail("Unkown exception thrown: " + e.getClass().getName());
+        }
     }
     
     /** CryptoToken only holding its properties and offering a way to access them. */

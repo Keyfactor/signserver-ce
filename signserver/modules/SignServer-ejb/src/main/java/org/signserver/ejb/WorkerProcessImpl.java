@@ -85,7 +85,6 @@ class WorkerProcessImpl {
      * Constructs a new instance of WorkerProcessImpl.
      * @param em The EntityManager (if used)
      * @param keyUsageCounterDataService The key usage counter data service
-     * @param globalConfigurationSession The global configuration session
      * @param workerManagerSession The worker manager session
      * @param logSession The log session
      */

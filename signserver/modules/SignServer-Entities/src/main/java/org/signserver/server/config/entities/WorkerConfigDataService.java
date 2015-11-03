@@ -40,7 +40,7 @@ public class WorkerConfigDataService implements IWorkerConfigDataService {
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(WorkerConfigDataService.class);
     
-    private EntityManager em;
+    private final EntityManager em;
 
     public WorkerConfigDataService(EntityManager em) {
         this.em = em;
@@ -50,7 +50,7 @@ public class WorkerConfigDataService implements IWorkerConfigDataService {
      * Entity Bean holding info about a workers (service or signer) configuration
      * 
      * @param workerId uniqe Id of the worker 
-     *
+     * @param configClassPath Class name of the worker implementation
      */
     @Override
     public void create(int workerId, String configClassPath) {
@@ -185,10 +185,10 @@ public class WorkerConfigDataService implements IWorkerConfigDataService {
             }
             if (wcdb == null) {
                 wcdb = em.find(WorkerConfigDataBean.class, workerId);
-            }
-            if (wcdb == null) {
-                create(workerId, WorkerConfig.class.getName());
-                wcdb = em.find(WorkerConfigDataBean.class, workerId);
+                if (wcdb == null) {
+                    create(workerId, WorkerConfig.class.getName());
+                    wcdb = em.find(WorkerConfigDataBean.class, workerId);
+                }
             }
             wcdb.setSignerConfigData(baos.toString("UTF8"));
             

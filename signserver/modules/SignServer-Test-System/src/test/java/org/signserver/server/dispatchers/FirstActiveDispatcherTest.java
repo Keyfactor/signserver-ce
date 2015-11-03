@@ -40,7 +40,6 @@ import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.testutils.ModulesTestCase;
 import org.junit.Before;
 import org.junit.Test;
-import org.signserver.test.utils.builders.CertBuilder;
 import org.signserver.test.utils.builders.CryptoUtils;
 
 /**

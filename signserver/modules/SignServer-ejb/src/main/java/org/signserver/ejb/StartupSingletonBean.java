@@ -215,7 +215,9 @@ public class StartupSingletonBean {
                                 workerSession.setWorkerProperty(admin, workerid, WorkerConfig.IMPLEMENTATION_CLASS, globalConfig.getProperty(key));
                                 LOG.info("Upgraded config for worker " + workerid);
                             } else {
-                                LOG.debug("Worker " + workerid + " already upgraded");
+                                if (LOG.isDebugEnabled()) {
+                                    LOG.debug("Worker " + workerid + " already upgraded");
+                                }
                             }
                         } else if (propertykey.equalsIgnoreCase("CRYPTOTOKEN.CLASSPATH") 
                                     || propertykey.equalsIgnoreCase("SIGNERTOKEN.CLASSPATH")) {
@@ -224,7 +226,9 @@ public class StartupSingletonBean {
                                 workerSession.setWorkerProperty(admin, workerid, WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, globalConfig.getProperty(key));
                                 LOG.info("Upgraded crypto config for worker " + workerid);
                             } else {
-                                LOG.debug("Worker " + workerid + " cryptotoken already upgraded");
+                                if (LOG.isDebugEnabled()) {
+                                    LOG.debug("Worker " + workerid + " cryptotoken already upgraded");
+                                }
                             }
                         }
                     } catch (Exception ex) {

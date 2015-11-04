@@ -1,4 +1,4 @@
--- DDL for SignServer 3.5.x on MySQL/MariaDB
+-- DDL for SignServer 4.0.x on MySQL/MariaDB
 -- ------------------------------------------------------
 -- Version: $Id$
 -- Comment: 

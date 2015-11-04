@@ -1,4 +1,4 @@
--- DDL for SignServer 3.5.x on Postgres
+-- DDL for SignServer 4.0.x on Postgres
 
 
 --
@@ -38,6 +38,7 @@ CREATE TABLE globalconfigdata (
 
 CREATE TABLE signerconfigdata (
     signerid integer NOT NULL,
+    signername character varying(255),
     signerconfigdata text
 );
 

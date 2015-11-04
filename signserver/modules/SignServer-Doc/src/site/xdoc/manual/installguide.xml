@@ -520,7 +520,6 @@ Enable or disable the web services.
                         </p>
                         <source>
 signserverws.enabled=true
-genericws.enabled=true
 validationws.enabled=true
 adminws.enabled=true
 clientws.enabled=true

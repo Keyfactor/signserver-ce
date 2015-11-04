@@ -626,7 +626,6 @@ properties should be set in signserver_deploy.properties:
                     </p>
                     <ul>
                         <li>signserverws.enabled=true</li>
-                        <li>genericws.enabled=true</li>
                         <li>validationws.enabled=true</li>
                         <li>adminws.enabled=true</li>
                         <li>timestampclient.enabled=true</li>

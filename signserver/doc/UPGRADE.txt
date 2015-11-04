@@ -26,10 +26,31 @@ General procedures:
 4. See any special instructions for the version you are upgrading below.
 5. Build and deploy as described in the installation guide.
 
-From SignServer 3.x.y to SignServer 4.0.x
+
+From SignServer 3.7.x to SignServer 4.0.x
 -----------------------------------------
 
-a) Previosly deprecated crypto token implementations has been removed:
+a) Database schema change:
+
+An new column in the signerconfigdata table was added. Hibernate will try to
+ add this column during startup of the application server. However, if the 
+database user used by the data store does not have enough privileges (ie. no 
+alter table rights) the table has to be altered manually:
+
+For Oracle:
+ALTER TABLE signerconfigdata ADD signerName VARCHAR(255);
+
+For MySQL:
+ALTER TABLE signerconfigdata ADD signerName VARCHAR(255);
+
+After manually changing the database schema the application server should 
+be restarted.
+
+Note: During startup of SignServer each worker configuration will be checked
+and if an empty signerName column is found the name will be populated with
+the value from the NAME worker property.
+
+b) Previosly deprecated crypto token implementations has been removed:
 SoftCryptoToken, HardCodedCryptoToken, OldPKCS11CryptoToken, and
 PrimeCardHSMCryptoToken.
 
@@ -37,6 +58,7 @@ For SoftCryptoToken and HardCodedCryptoToken, used for demonstration purposes,
 use KeystoreCryptoToken with the supplied sample configuration.
 For OldPKCS11CryptoToken, configurations should be upgraded to use
 PKCS11CryptoToken.
+
 
 From SignServer 3.6.x to SignServer 3.7.x
 -----------------------------------------

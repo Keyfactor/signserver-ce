@@ -9,7 +9,7 @@ DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 ANT_EXEC=/usr/bin/ant
 
 if [[ x"$ANT_HOME" != x"" ]]; then
-	ANT_EXEC=$ANT_HOME/bin/ant
+    ANT_EXEC=$ANT_HOME/bin/ant
 fi
 
 $ANT_EXEC -f "$DIR/../build.xml" -q $@ | grep -v "Trying to override old definition of task http://www.netbeans.org/"

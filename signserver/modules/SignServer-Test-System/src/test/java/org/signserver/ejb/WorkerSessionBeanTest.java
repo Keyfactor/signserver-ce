@@ -298,15 +298,20 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
     }
 
     /**
-     * Test that setting a non-existing WORKERLOGGER results in a fatal error.
+     * Try setting a class property (such as WORKERLOGGER, AUTHORIZER to
+     * a nonexisting class and check for an expected error.
      * 
+     * @param property Property to try with
+     * @param expectedErrorString Error string to expect as part of a fatal
+     *                            error component
      * @throws Exception 
      */
-    @Test
-    public void test13invalidWorkerLogger() throws Exception {
+    private void testWithInvalidClass(final String property,
+                                      final String expectedErrorString)
+            throws Exception {
         try {
             workerSession.setWorkerProperty(getSignerIdDummy1(),
-                "WORKERLOGGER", "nonexistant");
+                property, "nonexistant");
             workerSession.reloadConfiguration(getSignerIdDummy1());
             
             final List<String> fatalErrors =
@@ -314,16 +319,40 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
             boolean foundError = false;
             for (final String fatalError : fatalErrors) {
                 // check for an error message mentioning WORKERLOGGER
-                foundError = fatalError.indexOf("WORKERLOGGER") != -1;
+                foundError = fatalError.indexOf(expectedErrorString) != -1;
             }
             assertTrue("Should contain error", foundError);
         } finally {
-            workerSession.removeWorkerProperty(getSignerIdDummy1(),
-                    "WORKERLOGGER");
+            workerSession.removeWorkerProperty(getSignerIdDummy1(), property);
             workerSession.reloadConfiguration(getSignerIdDummy1());
         }
     }
     
+    /**
+     * Test that setting a non-existing WORKERLOGGER results in a fatal error.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void test13invalidWorkerLogger() throws Exception {
+        testWithInvalidClass("WORKERLOGGER", "WORKERLOGGER");
+    }
+    
+    @Test
+    public void test14invalidAuthorizer() throws Exception {
+        testWithInvalidClass("AUTHTYPE", "AUTHTYPE");
+    }
+    
+    @Test
+    public void test15invalidAccounter() throws Exception {
+        testWithInvalidClass("ACCOUNTER", "ACCOUNTER");
+    }
+    
+    @Test
+    public void test16invalidArchiver() throws Exception {
+        testWithInvalidClass("ARCHIVERS", "ARCHIVERS");
+    }
+
     @Test
     public void test99TearDownDatabase() throws Exception {
         removeWorker(3);

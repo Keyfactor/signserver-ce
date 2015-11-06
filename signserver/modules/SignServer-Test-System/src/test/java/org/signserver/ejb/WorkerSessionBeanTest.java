@@ -319,7 +319,10 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
             boolean foundError = false;
             for (final String fatalError : fatalErrors) {
                 // check for an error message mentioning WORKERLOGGER
-                foundError = fatalError.indexOf(expectedErrorString) != -1;
+                if (fatalError.indexOf(expectedErrorString) != -1) {
+                    foundError = true;
+                    break;
+                }
             }
             assertTrue("Should contain error", foundError);
         } finally {

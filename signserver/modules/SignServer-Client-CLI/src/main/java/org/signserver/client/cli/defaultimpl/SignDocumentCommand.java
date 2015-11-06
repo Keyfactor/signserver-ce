@@ -505,25 +505,24 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
      * @param outFile directory
      */
     protected void runBatch(TransferManager manager, final File inFile, final File outFile) {
-        FileInputStream fin = null;
+        InputStream fin = null;
         try {
-            final byte[] bytes;
+            final long size;
 
             Map<String, Object> requestContext = new HashMap<String, Object>();
             if (inFile == null) {
-                bytes = data.getBytes();
+                byte[] bs = data.getBytes();
+                fin = new ByteArrayInputStream(bs);
+                size = bs.length;
             } else {
                 requestContext.put("FILENAME", inFile.getName());
-                fin = new FileInputStream(inFile);
-                bytes = new byte[(int) inFile.length()];
-                fin.read(bytes);
+                fin = new BufferedInputStream(new FileInputStream(inFile));
+                size = inFile.length();
             }
-            runFile(manager, requestContext, inFile, bytes, outFile);
+            runFile(manager, requestContext, inFile, fin, size, outFile);
         } catch (FileNotFoundException ex) {
             LOG.error(MessageFormat.format(TEXTS.getString("FILE_NOT_FOUND:"),
                     ex.getLocalizedMessage()));
-        } catch (IOException ex) {
-            LOG.error(ex);
         } finally {
             if (fin != null) {
                 try {
@@ -544,7 +543,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
      * @param bytes to sign
      * @param outFile directory
      */
-    private void runFile(TransferManager manager, Map<String, Object> requestContext, final File inFile, final byte[] bytes, final File outFile) {  // TODO: merge with runBatch ?, inFile here is only used when removing the file
+    private void runFile(TransferManager manager, Map<String, Object> requestContext, final File inFile, final InputStream bytes, final long size, final File outFile) {  // TODO: merge with runBatch ?, inFile here is only used when removing the file
         try {
             OutputStream outStream = null;
             try {
@@ -559,7 +558,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                 final long startTime = System.nanoTime();
         
                 // Get the data signed
-                signer.sign(bytes, outStream, requestContext);
+                signer.sign(bytes, size, outStream, requestContext);
                 
                 // Take stop time
                 final long estimatedTime = System.nanoTime() - startTime;

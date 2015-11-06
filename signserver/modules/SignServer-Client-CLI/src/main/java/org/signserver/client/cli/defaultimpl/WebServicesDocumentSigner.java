@@ -13,12 +13,13 @@
 package org.signserver.client.cli.defaultimpl;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import org.apache.log4j.Logger;
+import org.apache.commons.io.IOUtils;
 import org.signserver.client.api.ISignServerWorker;
 import org.signserver.client.api.SigningAndValidationWS;
 import org.signserver.common.*;
@@ -62,7 +63,8 @@ public class WebServicesDocumentSigner extends AbstractDocumentSigner {
         this.metadata = metadata;
     }
 
-    protected void doSign(final byte[] data, final String encoding,
+    @Override
+    protected void doSign(final InputStream data, final long size, final String encoding,
             final OutputStream out, final Map<String, Object> requestContext)
             throws IllegalRequestException,
                 CryptoTokenOfflineException, SignServerException,
@@ -72,7 +74,7 @@ public class WebServicesDocumentSigner extends AbstractDocumentSigner {
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Sending sign request with id " + requestId
-                    + " containing data of length " + data.length + " bytes"
+                    + " containing data of length " + size + " bytes"
                     + " to worker " + workerName);
         }
 
@@ -98,7 +100,7 @@ public class WebServicesDocumentSigner extends AbstractDocumentSigner {
         }
         
         final ProcessResponse response = signServer.process(workerName,
-                new GenericSignRequest(requestId, data), context);
+                new GenericSignRequest(requestId, IOUtils.toByteArray(data)), context);
 
         // Take stop time
         final long estimatedTime = System.nanoTime() - startTime;

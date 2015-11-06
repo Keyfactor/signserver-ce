@@ -20,6 +20,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
 import org.apache.log4j.Logger;
+import org.apache.commons.io.IOUtils;
 import org.bouncycastle.util.encoders.Base64;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
@@ -85,7 +86,8 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
         this.metadata = metadata;
     }
 
-    protected void doSign(final byte[] data, final String encoding,
+    @Override
+    protected void doSign(final InputStream in, final long size, final String encoding,
             final OutputStream out, final Map<String,Object> requestContext)
             throws IllegalRequestException,
                 CryptoTokenOfflineException, SignServerException,
@@ -95,11 +97,11 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Sending sign request "
-                    + " containing data of length " + data.length + " bytes"
+                    + " containing data of length " + size + " bytes"
                     + " to worker " + workerName);
         }
-        final Response response = sendRequest(processServlet, data,
-                requestContext);       
+        final Response response = sendRequest(processServlet, in, size,
+                requestContext);
 
         if (LOG.isDebugEnabled()) {
             LOG.debug(String.format("Got sign response "
@@ -112,11 +114,12 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
     }
 
     private Response sendRequest(final URL processServlet,
-            final byte[] data,
+            final InputStream in,
+            final long size,
             final Map<String, Object> requestContext) throws IOException {
         
         OutputStream out = null;
-        InputStream in = null;
+        InputStream responseIn = null;
         try {
             final HttpURLConnection conn = (HttpURLConnection) processServlet.openConnection();
             conn.setDoOutput(true);
@@ -182,26 +185,32 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
 
             conn.addRequestProperty("Content-Type",
                     "multipart/form-data; boundary=" + BOUNDARY);
+
+            final byte[] preData = sb.toString().getBytes("ASCII");
+            final byte[] postData = ("\r\n--" + BOUNDARY + "--\r\n").getBytes("ASCII");
             
+            if (size >= 0) {
+                conn.setFixedLengthStreamingMode(preData.length + size + postData.length);
+            }
+
             out = conn.getOutputStream();
-            
-            out.write(sb.toString().getBytes());
-            out.write(data);
-            
-            out.write(("\r\n--" + BOUNDARY + "--\r\n").getBytes());
+
+            out.write(preData);
+            IOUtils.copyLarge(in, out);
+            out.write(postData);
             out.flush();
 
             // Get the response
             final int responseCode = conn.getResponseCode();
             if (responseCode >= 400) {
-                in = conn.getErrorStream();
+                responseIn = conn.getErrorStream();
             } else {
-                in = conn.getInputStream();
+                responseIn = conn.getInputStream();
             }
             final ByteArrayOutputStream os = new ByteArrayOutputStream();
             int len;
             final byte[] buf = new byte[1024];
-            while ((len = in.read(buf)) > 0) {
+            while ((len = responseIn.read(buf)) > 0) {
                 os.write(buf, 0, len);
             }
             os.close();
@@ -219,9 +228,9 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
                     throw new RuntimeException(ex);
                 }
             }
-            if (in != null) {
+            if (responseIn != null) {
                 try {
-                    in.close();
+                    responseIn.close();
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }

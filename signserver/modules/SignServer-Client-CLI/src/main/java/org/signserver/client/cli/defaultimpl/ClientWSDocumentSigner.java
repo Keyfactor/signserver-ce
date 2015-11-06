@@ -13,6 +13,7 @@
 package org.signserver.client.cli.defaultimpl;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -23,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import org.apache.log4j.Logger;
+import org.apache.commons.io.IOUtils;
 import org.bouncycastle.util.encoders.Base64;
 import org.signserver.client.clientws.ClientWS;
 import org.signserver.client.clientws.ClientWSService;
@@ -80,7 +82,7 @@ public class ClientWSDocumentSigner extends AbstractDocumentSigner {
         }
     }
 
-    protected void doSign(final byte[] data, final String encoding,
+    protected void doSign(final InputStream data, final long size, final String encoding,
             final OutputStream out, final Map<String, Object> requestContext)
             throws IllegalRequestException,
                 CryptoTokenOfflineException, SignServerException,
@@ -90,7 +92,7 @@ public class ClientWSDocumentSigner extends AbstractDocumentSigner {
 
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Sending sign request with id " + requestId
-                        + " containing data of length " + data.length + " bytes"
+                        + " containing data of length " + size + " bytes"
                         + " to worker " + workerName);
             }
 
@@ -128,7 +130,7 @@ public class ClientWSDocumentSigner extends AbstractDocumentSigner {
             }
             
             final DataResponse response = signServer.processData(workerName,
-                    requestMetadata, data);
+                    requestMetadata, IOUtils.toByteArray(data));
 
             // Take stop time
             final long estimatedTime = System.nanoTime() - startTime;

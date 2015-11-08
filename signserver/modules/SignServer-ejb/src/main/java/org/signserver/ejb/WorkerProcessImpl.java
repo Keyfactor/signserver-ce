@@ -259,7 +259,7 @@ class WorkerProcessImpl {
             try {
                 // Check if the signer has a signer certificate and if that
                 // certificate have ok validity and private key usage periods.
-                checkSignerValidity(workerId, awc, logMap);
+                checkSignerValidity(processable, workerId, awc, logMap);
 
                 // Check key usage limit (preliminary check only)
                 if (LOG.isDebugEnabled()) {
@@ -453,32 +453,34 @@ class WorkerProcessImpl {
      * @param awc
      * @throws CryptoTokenOfflineException
      */
-    private void checkSignerValidity(final int workerId,
+    private void checkSignerValidity(final IProcessable worker, final int workerId,
             final WorkerConfig awc, final LogMap logMap)
             throws CryptoTokenOfflineException {
 
         // If the signer have a certificate, check that it is usable
-        final Certificate signerCert = getSignerCertificate(workerId);
-        if (signerCert instanceof X509Certificate) {
-            final X509Certificate cert = (X509Certificate) signerCert;
+        if (worker instanceof BaseProcessable) {
+            final Certificate signerCert = ((BaseProcessable) worker).getSigningCertificate();
 
-            // Log client certificate
-            logMap.put(IWorkerLogger.LOG_SIGNER_CERT_SUBJECTDN,
-                    cert.getSubjectDN().getName());
-            logMap.put(IWorkerLogger.LOG_SIGNER_CERT_ISSUERDN,
-                    cert.getIssuerDN().getName());
-            logMap.put(IWorkerLogger.LOG_SIGNER_CERT_SERIALNUMBER,
-                    cert.getSerialNumber().toString(16));
+            if (signerCert instanceof X509Certificate) {
+                final X509Certificate cert = (X509Certificate) signerCert;
 
-            ValidityTimeUtils.checkSignerValidity(workerId, awc, cert);
-        } else { // if (cert != null)
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Worker does not have a signing certificate. Worker: "
-                        + workerId);
+                // Log client certificate
+                logMap.put(IWorkerLogger.LOG_SIGNER_CERT_SUBJECTDN,
+                        cert.getSubjectDN().getName());
+                logMap.put(IWorkerLogger.LOG_SIGNER_CERT_ISSUERDN,
+                        cert.getIssuerDN().getName());
+                logMap.put(IWorkerLogger.LOG_SIGNER_CERT_SERIALNUMBER,
+                        cert.getSerialNumber().toString(16));
+
+                ValidityTimeUtils.checkSignerValidity(workerId, awc, cert);
+            } else { // if (cert != null)
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Worker does not have a signing certificate. Worker: "
+                            + workerId);
+                }
             }
         }
-
-    } // checkCertificateValidity
+    }
 
     /**
      * Checks that if this worker has a certificate (ie the worker is a Signer)
@@ -546,15 +548,6 @@ class WorkerProcessImpl {
                     + "No certificate so not checking signing key usage counter");
             }
         }
-    }
-
-    private Certificate getSignerCertificate(final int signerId) throws CryptoTokenOfflineException {
-        Certificate ret = null;
-        final IWorker worker = workerManagerSession.getWorker(signerId, globalConfigurationSession);
-        if (worker instanceof BaseProcessable) {
-            ret = ((BaseProcessable) worker).getSigningCertificate();
-        }
-        return ret;
     }
 
     /**

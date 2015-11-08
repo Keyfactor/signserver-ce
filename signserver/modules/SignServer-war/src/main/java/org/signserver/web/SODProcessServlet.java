@@ -252,9 +252,6 @@ public class SODProcessServlet extends AbstractProcessServlet {
                 
                 addRequestMetaData(metadataHolder, metadata);
 
-                logMap.put(IWorkerLogger.LOG_WORKER_NAME,
-                        getWorkerSession().getCurrentWorkerConfig(workerId).getProperty(PropertiesConstants.NAME));
-                
                 response = (SODSignResponse) getWorkerSession().process(workerId, signRequest, context);
 
                 if (response.getRequestID() != requestId) {

@@ -38,6 +38,7 @@ import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerConstants;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.util.PropertiesConstants;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.ejb.worker.impl.WorkerManagerSingletonBean;
 import org.signserver.server.AccounterException;
@@ -159,6 +160,9 @@ class WorkerProcessImpl {
             throw ex;
         }
         final WorkerConfig awc = worker.getConfig();
+
+        // Log the worker name
+        logMap.put(IWorkerLogger.LOG_WORKER_NAME, awc.getProperty(PropertiesConstants.NAME));
 
         // Get worker log instance
         final IWorkerLogger workerLogger = workerManagerSession.getWorkerLogger(workerId, awc);

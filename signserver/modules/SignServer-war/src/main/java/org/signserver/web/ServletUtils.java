@@ -25,6 +25,19 @@ class ServletUtils {
     /* Logger for this class */
     private static Logger LOG = Logger.getLogger(ServletUtils.class);
 
+    /**
+     * Property used to indicate an overriding worker name property in
+     * a forwarded servlet request (used by the worker-specifyable servlets).
+     */
+    static final String WORKERNAME_PROPERTY_OVERRIDE = "workerNameOverride";
+
+    /**
+     * Parse out the worker name from a servlet request.
+     * 
+     * @param req Servlet request
+     * @param uriPrefix The prefix of the request URI (such as /process/worker/)
+     * @return A worker name if matching, otherwise null
+     */
     static String parseWorkerName(final HttpServletRequest req,
                            final String uriPrefix) {
         final String requestURI = req.getRequestURI();

@@ -38,38 +38,37 @@ public class WorkerServlet extends HttpServlet {
             WorkerServlet.class);
 
 	private static final String PROCESS_SERVLET_URL = "/process";
-	private static final String WORKERNAME_PROPERTY_OVERRIDE = "workerNameOverride";
 	private static final String WORKER_URI_START = "/signserver/worker/";
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		final String workerName =
-                        ServletUtils.parseWorkerName(req, WORKER_URI_START);
-		
-		if (workerName == null) {
-			// give a 404 error
-			resp.sendError(HttpServletResponse.SC_NOT_FOUND, "No worker specified");
-		} else {
-			req.setAttribute(WORKERNAME_PROPERTY_OVERRIDE, workerName);
-			// dispatch the message to the GeneralProcessServlet
-			ServletContext context = getServletContext();
-			RequestDispatcher dispatcher =
-					context.getRequestDispatcher(PROCESS_SERVLET_URL);
-			
-			if (LOG.isDebugEnabled()) {
-				LOG.debug("Forwarding request to: " + PROCESS_SERVLET_URL);
-			}
-			
-			dispatcher.forward(req, resp);
-		}
-			
+            final String workerName =
+                    ServletUtils.parseWorkerName(req, WORKER_URI_START);
+
+            if (workerName == null) {
+                // give a 404 error
+                resp.sendError(HttpServletResponse.SC_NOT_FOUND,
+                               "No worker specified");
+            } else {
+                req.setAttribute(ServletUtils.WORKERNAME_PROPERTY_OVERRIDE,
+                                 workerName);
+                // dispatch the message to the GeneralProcessServlet
+                ServletContext context = getServletContext();
+                RequestDispatcher dispatcher =
+                                context.getRequestDispatcher(PROCESS_SERVLET_URL);
+
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Forwarding request to: " + PROCESS_SERVLET_URL);
+                }
+
+                dispatcher.forward(req, resp);
+            }	
 	}
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		doGet(req, resp);
+            doGet(req, resp);
 	}
-
 }

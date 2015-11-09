@@ -422,7 +422,13 @@ public class ValidateCertificateCommand extends AbstractCommand {
             vresp = runWS(sslf, cert);
             break;
         case HTTP:
-            vresp = runHTTP(cert);
+            try {
+                vresp = runHTTP(cert);
+            } catch (HTTPException ex) {
+                println("Failure: HTTP error: " + ex.getResponseCode() + ": " +
+                        ex.getResponseMessage());
+                return RETURN_ERROR;
+            }
             break;
         default:
             throw new IllegalArgumentException("Unknown protocol: " + protocol.toString());
@@ -579,9 +585,6 @@ public class ValidateCertificateCommand extends AbstractCommand {
             final ValidateResponse validateResponse = new ValidateResponse(validation, responseParts[1].split(","));
             
             return validateResponse;
-        } catch (HTTPException e) {
-            //
-            throw e;
         } catch (IOException e) {
             throw new RuntimeException(e);
         } finally {

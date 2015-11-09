@@ -16,6 +16,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.HttpRetryException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
@@ -190,21 +191,28 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
             final byte[] postData = ("\r\n--" + BOUNDARY + "--\r\n").getBytes("ASCII");
             
             if (size >= 0) {
-                conn.setFixedLengthStreamingMode(preData.length + size + postData.length);
+                long totalSize = (long) preData.length + size + (long) postData.length;
+                if (totalSize > Integer.MAX_VALUE) {
+                    LOG.warn("Too large input to use streaming mode in Java 6");
+                } else {
+                    conn.setFixedLengthStreamingMode((int) totalSize);
+                }
             }
 
             out = conn.getOutputStream();
 
             out.write(preData);
-            IOUtils.copyLarge(in, out);
+            final long copied = IOUtils.copyLarge(in, out);
+            if (copied != size) {
+                throw new IOException("Expected file size of " + size + " but only read " + copied + " bytes");
+            }
             out.write(postData);
             out.flush();
 
             // Get the response
             final int responseCode = conn.getResponseCode();
-            if (responseCode >= 400) {
-                responseIn = conn.getErrorStream();
-            } else {
+            responseIn = conn.getErrorStream();
+            if (responseIn == null) {             
                 responseIn = conn.getInputStream();
             }
             final ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -220,6 +228,15 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
             }
             
             return new Response(os.toByteArray());
+        } catch (HttpRetryException ex) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(ex.getReason());
+            }
+            if (ex.responseCode() == 401) {
+                throw new HTTPException(processServlet, 401, "Authentication required", null);
+            } else {
+                throw ex;
+            }
         } finally {
             if (out != null) {
                 try {

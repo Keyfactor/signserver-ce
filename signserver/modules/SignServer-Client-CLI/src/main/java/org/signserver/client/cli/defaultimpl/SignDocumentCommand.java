@@ -638,11 +638,6 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             if (manager != null) {
                 manager.registerFailure();
             }
-        } catch (Throwable ex) { // NOPMD We want to catch all here to abort
-            LOG.error("Unexpected failure for " + (inFile == null ? "" : inFile.getName()) + ": " + ex.getMessage() + ". Aborting.", ex);
-            if (manager != null) {
-                manager.abort();
-            }
         }
     }
 
@@ -663,7 +658,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                     LOG.error("No input files");
                     return 1;
                 }
-                TransferManager producer = new TransferManager(inFiles, username, password, this, out, oneFirst);
+                final TransferManager producer = new TransferManager(inFiles, username, password, this, out, oneFirst);
                 
                 if (threads == null) {
                     threads = DEFAULT_THREADS;
@@ -671,8 +666,18 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                 final int threadCount = threads > inFiles.length ? inFiles.length : threads;
                 final ArrayList<TransferThread> consumers = new ArrayList<TransferThread>();
                 
+                final Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {
+                    @Override
+                    public void uncaughtException(Thread t, Throwable e) {                        
+                        LOG.error("Unexpected failure in thread " + t.getName() + ". Aborting.", e);
+                        producer.abort();
+                    }
+                };
+                
                 for (int i = 0; i < threadCount; i++) {
-                    consumers.add(new TransferThread(i, producer));
+                    final TransferThread t = new TransferThread(i, producer);
+                    t.setUncaughtExceptionHandler(handler);
+                    consumers.add(t);
                 }
                 
                 // Start the threads

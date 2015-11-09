@@ -420,8 +420,7 @@ public class BaseProcessableTest extends TestCase {
         try {
             Properties globalConfig = new Properties();
             WorkerConfig workerConfig = new WorkerConfig();
-        
-            // Exercising all properties (except SLOTLISTINDEX)
+
             globalConfig.setProperty("GLOB.WORKER" + workerId + ".CLASSPATH", TestSigner.class.getName());
             workerConfig.setProperty("NAME", "TestSigner100");
         

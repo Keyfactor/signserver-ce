@@ -41,32 +41,11 @@ public class WorkerServlet extends HttpServlet {
 	private static final String WORKERNAME_PROPERTY_OVERRIDE = "workerNameOverride";
 	private static final String WORKER_URI_START = "/signserver/worker/";
 	
-	private String parseWorkerName(HttpServletRequest req) {
-		final String requestURI = req.getRequestURI();
-		
-		if (LOG.isDebugEnabled()) {
-			LOG.debug("Parsing request: " + requestURI);
-		}
-
-		if (requestURI.length() >= WORKER_URI_START.length() &&
-				WORKER_URI_START.equals(requestURI.substring(0, WORKER_URI_START.length()))) {
-			final String namePart = requestURI.substring(WORKER_URI_START.length());
-			
-			// if the parts after /worker/ starts with another / then just reject the URL
-			if (namePart.length() > 0 && namePart.charAt(0) == '/') {
-				return null;
-			}
-			
-			return namePart;
-		}
-				
-		return null;
-	}
-	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		final String workerName = parseWorkerName(req);
+		final String workerName =
+                        ServletUtils.parseWorkerName(req, WORKER_URI_START);
 		
 		if (workerName == null) {
 			// give a 404 error

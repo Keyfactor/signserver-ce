@@ -12,7 +12,6 @@
  *************************************************************************/
 package org.signserver.client.cli.defaultimpl;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -101,25 +100,18 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
                     + " containing data of length " + size + " bytes"
                     + " to worker " + workerName);
         }
-        final Response response = sendRequest(processServlet, in, size,
-                requestContext);
-
+        sendRequest(processServlet, in, size, out, requestContext);
         if (LOG.isDebugEnabled()) {
-            LOG.debug(String.format("Got sign response "
-                    + "with signed data of length %d bytes.",
-                    response.getData().length));
+            LOG.debug("Got sign response");
         }
-
-        // Write the signed data
-        out.write(response.getData());
     }
 
-    private Response sendRequest(final URL processServlet,
+    private void sendRequest(final URL processServlet,
             final InputStream in,
             final long size,
-            final Map<String, Object> requestContext) throws IOException {
+            final OutputStream out, final Map<String, Object> requestContext) throws IOException {
         
-        OutputStream out = null;
+        OutputStream requestOut = null;
         InputStream responseIn = null;
         try {
             final HttpURLConnection conn = (HttpURLConnection) processServlet.openConnection();
@@ -199,15 +191,15 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
                 }
             }
 
-            out = conn.getOutputStream();
-
-            out.write(preData);
-            final long copied = IOUtils.copyLarge(in, out);
+            // Write the request: preData, data, postData
+            requestOut = conn.getOutputStream();
+            requestOut.write(preData);
+            final long copied = IOUtils.copyLarge(in, requestOut);
             if (copied != size) {
                 throw new IOException("Expected file size of " + size + " but only read " + copied + " bytes");
             }
-            out.write(postData);
-            out.flush();
+            requestOut.write(postData);
+            requestOut.flush();
 
             // Get the response
             final int responseCode = conn.getResponseCode();
@@ -215,19 +207,14 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
             if (responseIn == null) {             
                 responseIn = conn.getInputStream();
             }
-            final ByteArrayOutputStream os = new ByteArrayOutputStream();
-            int len;
-            final byte[] buf = new byte[1024];
-            while ((len = responseIn.read(buf)) > 0) {
-                os.write(buf, 0, len);
-            }
-            os.close();
 
-            if (responseCode >= 400) {
-                throw new HTTPException(processServlet, responseCode, conn.getResponseMessage(), os.toByteArray());
+            // Read the body to the output if OK otherwise to the error message
+            if (responseCode < 400) {
+                IOUtils.copy(responseIn, out);
+            } else {
+                final byte[] errorBody = IOUtils.toByteArray(responseIn);
+                throw new HTTPException(processServlet, responseCode, conn.getResponseMessage(), errorBody);
             }
-            
-            return new Response(os.toByteArray());
         } catch (HttpRetryException ex) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug(ex.getReason());
@@ -238,9 +225,9 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
                 throw ex;
             }
         } finally {
-            if (out != null) {
+            if (requestOut != null) {
                 try {
-                    out.close();
+                    requestOut.close();
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
@@ -256,17 +243,4 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
 
     }
 
-    private static class Response {
-
-        private byte[] data;
-
-        public Response(byte[] data) {
-            this.data = data;
-        }
-
-        public byte[] getData() {
-            return data;
-        }
-        
-    }
 }

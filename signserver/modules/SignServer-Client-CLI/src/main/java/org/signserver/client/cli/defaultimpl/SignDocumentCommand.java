@@ -638,6 +638,11 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             if (manager != null) {
                 manager.registerFailure();
             }
+        } catch (Throwable ex) { // NOPMD We want to catch all here to abort
+            LOG.error("Unexpected failure for " + (inFile == null ? "" : inFile.getName()) + ": " + ex.getMessage() + ". Aborting.", ex);
+            if (manager != null) {
+                manager.abort();
+            }
         }
     }
 

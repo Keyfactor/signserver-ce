@@ -114,15 +114,22 @@ public class SODProcessServlet extends AbstractProcessServlet {
         String ldsVersion;
         String unicodeVersion;
 
-        String name = req.getParameter(WORKERNAME_PROPERTY_NAME);
-        if (name != null) {
-            LOG.debug("Found a signerName in the request: " + name);
-            workerId = getWorkerSession().getWorkerId(name);
-        }
-        String id = req.getParameter(WORKERID_PROPERTY_NAME);
-        if (id != null) {
-            LOG.debug("Found a signerId in the request: " + id);
-            workerId = Integer.parseInt(id);
+        final String workerNameOverride =
+            (String) req.getAttribute(ServletUtils.WORKERNAME_PROPERTY_OVERRIDE);
+
+        if (workerNameOverride != null) {
+            workerId = getWorkerSession().getWorkerId(workerNameOverride);
+        } else {
+            final String name = req.getParameter(WORKERNAME_PROPERTY_NAME);
+            if (name != null) {
+                LOG.debug("Found a signerName in the request: " + name);
+                workerId = getWorkerSession().getWorkerId(name);
+            }
+            final String id = req.getParameter(WORKERID_PROPERTY_NAME);
+            if (id != null) {
+                LOG.debug("Found a signerId in the request: " + id);
+                workerId = Integer.parseInt(id);
+            }
         }
 
         final MetaDataHolder metadataHolder = new MetaDataHolder();

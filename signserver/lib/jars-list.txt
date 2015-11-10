@@ -12,11 +12,10 @@ fb6c597622193e910e529d46bb0025851dcef6c3fd42cb95a2815ca586dcde78  ./ext/cesecore
 17e6a8effb03f0114940e9d3fa048622ff36ea2761c884a27321b9039a496c24  ./ext/cesecore-ejb-6.1.1.jar;                           "CESeCore"
 4f24ad94bd531a5dfb21f1a3b76fd0e7e6db9b130dc4b40006e88e381eaf6d63  ./ext/cesecore-entity-6.1.1.jar;                        "CESeCore"
 de10e65dbbac6afa4f5b5bea6debdbf3e84db2b5444937c8c8a116807de902ec  ./ext/cesecore-interfaces-6.1.1.jar;                    "CESeCore"
-78134c71aa9f9cebbc96a837f12c85590a4f2b587b51831a45faafb68381b1fc  ./ext/clover-dir/lib/clover.jar;                        "SignServer"
 ef1a913e90a316b82546a900b2ae49b3d65ce07c137c93a047298181fd3ca117  ./ext/commons-beanutils.jar;                            "Apache Commons"
 e7cd8951956d349b568b7ccfd4f5b2529a8c113e67c32b028f52ffda371259d9  ./ext/commons-cli-1.2.jar;                              "Apache Commons"
 1bafd2ece2e88db4cdf835a7f8f0de65fab5b1147977a5dcc59b7c1b8c6f5080  ./ext/commons-codec-1.3.jar;                            "Apache Commons"
-093fea360752de55afcb80cf713403eb1a66cb7dc0d529955b6f4a96f975df5c  ./ext/commons-collections-3.2.jar;                      "Apache Commons"
+27195bf48eb37054aa3a46ab6b8d50d677bebbe483d93cd1c23a0c149c9010f4  ./ext/commons-collections-3.2.jar;                      "Apache Commons"
 e5c824dd43b40517a111da36887c2b1233a1128f0a8fa464f6b32e5b78163998  ./ext/commons-configuration-1.5.jar;                    "Apache Commons"
 c6ea4802fbc9af277420d67d4db4b2fd0469773dda89489d834619b843f17ddd  ./ext/commons-configuration-1.6.jar;                    "Apache Commons"
 05662373044f3dff112567b7bb5dfa1174e91e074c0c727b4412788013f49d56  ./ext/commons-digester-1.8.jar;                         "Apache Commons"
@@ -76,6 +75,6 @@ c43a2c7eb43b486979e079883142d53ec4e18e2982994d8a24c82c7bed9f836e  ./ext/xades4j-
 a44bd80e82cb0f4cfac0dac8575746223802514e3cec9dc75235bc0de646af14  ./ext/xalan-2.7.2.jar;                                  "Santuario"
 6ae540a7c85c814ac64bea48016b3a6f45c95d4765f547fcc0053dc36c94ed5c  ./ext/xercesImpl-2.9.1.jar;                             "Santuario"
 f5965da6ba78949bc17724c56de70c4aeb2598663f6abb1ece63854ba21713ba  ./ext/xmlsec-1.5.8.jar;                                 "Santuario"
-                                                                  ./SignServer-Lib-iText.jar;                             "iText"
-                                                                  ./SignServer-Lib-ODFDOM.jar;                            "ODFDOM"
-                                                                  ./SignServer-Lib-OpenXML4J.jar;                         "OpenXML4J"
+                                                                  ./SignServer-Lib-iText-4.0.0-SNAPSHOT.jar;              
+                                                                  ./SignServer-Lib-ODFDOM-4.0.0-SNAPSHOT.jar;             
+                                                                  ./SignServer-Lib-OpenXML4J-4.0.0-SNAPSHOT.jar;          

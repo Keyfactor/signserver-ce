@@ -67,7 +67,6 @@ public class GenericProcessServlet extends AbstractProcessServlet {
     private static final String METHOD_GET = "GET";    
     private static final String WORKERID_PROPERTY_NAME = "workerId";
     private static final String WORKERNAME_PROPERTY_NAME = "workerName";
-    private static final String WORKERNAME_PROPERTY_OVERRIDE = "workerNameOverride";
     private static final String DATA_PROPERTY_NAME = "data";
     private static final String ENCODING_PROPERTY_NAME = "encoding";
     private static final String ENCODING_BASE64 = "base64";
@@ -128,11 +127,10 @@ public class GenericProcessServlet extends AbstractProcessServlet {
             LOG.debug("Received a request with length: "
                     + req.getContentLength());
         }
-        
-        try {
 
+        try {
             final String workerNameOverride =
-                            (String) req.getAttribute(WORKERNAME_PROPERTY_OVERRIDE);
+                            (String) req.getAttribute(ServletUtils.WORKERNAME_PROPERTY_OVERRIDE);
 
             if (workerNameOverride != null) {
                     workerId = getWorkerSession().getWorkerId(workerNameOverride);

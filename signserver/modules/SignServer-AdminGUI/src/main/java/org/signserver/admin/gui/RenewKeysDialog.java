@@ -424,7 +424,6 @@ public class RenewKeysDialog extends JDialog {
                          LOG.debug("Configured new key " + newAlias
                                  + " for signer " + signerId);
 
-                         workers.remove(worker);
                          rowsToRemove.add(row);
                      } catch (AdminNotAuthorizedException_Exception e) {
                          final String error =
@@ -465,6 +464,7 @@ public class RenewKeysDialog extends JDialog {
             Collections.reverse(rowsToRemove);
             for (int row : rowsToRemove) {
                 tableModel.removeRow(row);
+                workers.remove(row);
             }
 
             if (result != null) {

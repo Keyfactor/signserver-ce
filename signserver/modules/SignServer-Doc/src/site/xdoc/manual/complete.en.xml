@@ -3511,7 +3511,7 @@ Notice: Some application servers (i.e. JBoss 4) might have problems writing the 
 This example shows how it is possible to limit access to only specified resources. 
                     </p>
                     <p>
-If you are going to grant different users access to different workers always remember to first deny access from the root location. The reason is that there are other ways to access a worker than the "/worker/*" pattern. For instance /process, /tsa, /pdf and /sod etc as well as using the web services interfaces /signserverws, /SignServerWSService, /validationws, /ValidationWSService and /ClientWSService all can be used to invoke <b>any</b> worker.
+If you are going to grant different users access to different workers always remember to first deny access from the root location. The reason is that there are other ways to access a worker than the "/worker/*" or "/sodworker/*" pattern. For instance /process, /tsa, /pdf and /sod etc as well as using the web services interfaces /signserverws, /SignServerWSService, /validationws, /ValidationWSService and /ClientWSService all can be used to invoke <b>any</b> worker.
                     </p>
                     <p>
 If you instead relay on SignServer to do the authentication/authorization it could still be good from a security point to only grant access to the locations you intend to use. In that case you would probably want to also give access to the  web services interfaces, /worker and /process etc.
@@ -3561,6 +3561,12 @@ Also remember if you are proxying from multiple virtual hosts (i.e. if you have 
     <Location /worker/XMLSigner>
 	Order Allow,Deny
 	Allow from all
+    </Location>
+                        
+    # Grant everybody access to the MRTDSODSigner
+    <Location /sodworker/MRTDSODSigner>
+        Order Allow,Deny
+        Allow from all
     </Location>
 
     # Grant valid users access to the CMSSigner

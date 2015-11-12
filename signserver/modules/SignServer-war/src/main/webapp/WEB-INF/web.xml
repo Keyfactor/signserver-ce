@@ -77,7 +77,7 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>SODProcessWorkerServlet</servlet-name>
-        <url-pattern>/sod/worker/*</url-pattern>
+        <url-pattern>/sodworker/*</url-pattern>
     </servlet-mapping>
     <!-- block HTTP methods other than GET and POST -->
     <security-constraint>

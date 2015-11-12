@@ -52,7 +52,7 @@ public class SODProcessWorkerServletResponseTest extends WebTestCase {
         return getPreferredHTTPProtocol() + getHTTPHost() + ":" +
                                 getPreferredHTTPPort() + "/signserver/" +
 				(extraSlashBeforeServletName ? "/" : "") +
-				"sod/worker" + (trailingSlash ? "/" : "") +
+				"sodworker" + (trailingSlash ? "/" : "") +
 				(extraSlashBeforeWorkerName ? "/" : "" ) +
 				currentWorkerName;
     }

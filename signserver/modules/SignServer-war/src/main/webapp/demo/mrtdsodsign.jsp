@@ -62,7 +62,7 @@
             <p>Note 1: Please provide the hashes of the respective data groups if the signer is configured to accept hashes instead of the actual data.</p>
             <p>Note 2: When submitting this form using a web browser it is not possible to enter binary data directly into the input fields. Then first base64 encode the data and choose the Base64 encoding option and the signer will decode the data before signing it.</p>
 
-            <form id="requestform" action="../sod/worker/MRTDSODSigner" method="post">
+            <form id="requestform" action="../sodworker/MRTDSODSigner" method="post">
                 <p>
                     DG1: <input type="text" size="80" name="dataGroup1" value="Yy=="/><br/>
                     DG2: <input type="text" size="80" name="dataGroup2" value="Yy=="/><br/>

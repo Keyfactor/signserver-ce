@@ -40,10 +40,8 @@ import org.signserver.common.RequestMetadata;
 import org.signserver.common.SODSignRequest;
 import org.signserver.common.SODSignResponse;
 import org.signserver.common.SignServerException;
-import org.signserver.common.util.PropertiesConstants;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.server.CredentialUtils;
-import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.log.LogMap;
 
 /**

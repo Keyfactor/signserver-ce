@@ -12,17 +12,11 @@
  *************************************************************************/
 package org.signserver.web;
 
-import java.io.IOException;
-import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
-import org.signserver.common.CryptoTokenAuthenticationFailureException;
-import org.signserver.common.CryptoTokenOfflineException;
-import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.module.mrtdsodsigner.MRTDSODSigner;
 import org.signserver.server.signers.EchoRequestMetadataSigner;
 

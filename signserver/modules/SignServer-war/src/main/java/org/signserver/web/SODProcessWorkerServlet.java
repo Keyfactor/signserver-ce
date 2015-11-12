@@ -31,7 +31,7 @@ public class SODProcessWorkerServlet extends HttpServlet {
     private static final Logger LOG = Logger.getLogger(WorkerServlet.class);
 
     private static final String SOD_SERVLET_URL = "/sod";
-    private static final String WORKER_URI_START = "/signserver/sod/worker/";
+    private static final String WORKER_URI_START = "/signserver/sodworker/";
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)

@@ -26,7 +26,7 @@
 
             <h4>Online Resources</h4>
             <ul class="resourcesList">
-                <li><a href="http://www.signserver.org">SignServer Web Site</a></li>
+                <li><a href="https://www.signserver.org">SignServer Web Site</a></li>
             </ul>
 
             <%@include file="WEB-INF/jspf/footer.jspf" %>

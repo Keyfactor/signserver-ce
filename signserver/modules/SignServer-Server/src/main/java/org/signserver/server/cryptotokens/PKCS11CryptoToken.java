@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.Key;
@@ -30,6 +31,7 @@ import java.security.PublicKey;
 import java.security.SignatureException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -520,11 +522,24 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
         }
         
         try {
-            delegate.generateKeyPair(keySpec, alias);
+            if ("RSA".equalsIgnoreCase(keyAlgorithm) &&
+                keySpec.contains("exp")) {
+                delegate.generateKeyPair(
+                        CryptoTokenHelper.getPublicExponentParamSpecForRSA(keySpec),
+                        alias);
+            } else {
+                delegate.generateKeyPair(keySpec, alias);
+            }
         } catch (InvalidAlgorithmParameterException ex) {
             LOG.error(ex, ex);
             throw new CryptoTokenOfflineException(ex);
         } catch (org.cesecore.keys.token.CryptoTokenOfflineException ex) {
+            LOG.error(ex, ex);
+            throw new CryptoTokenOfflineException(ex);
+        } catch (CertificateException ex) {
+            LOG.error(ex, ex);
+            throw new CryptoTokenOfflineException(ex);
+        } catch (IOException ex) {
             LOG.error(ex, ex);
             throw new CryptoTokenOfflineException(ex);
         }

@@ -14,6 +14,7 @@ package org.signserver.server.cryptotokens;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
 import java.security.KeyStore;
@@ -35,6 +36,8 @@ import java.security.cert.X509Certificate;
 import java.security.interfaces.DSAKey;
 import java.security.interfaces.ECKey;
 import java.security.interfaces.RSAKey;
+import java.security.spec.AlgorithmParameterSpec;
+import java.security.spec.RSAKeyGenParameterSpec;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -703,6 +706,28 @@ public class CryptoTokenHelper {
         if (!oldCert.getPublicKey().equals(newCertificate.getPublicKey())) {
             throw new CryptoTokenOfflineException("New certificate public key does not match current one");
         }
+    }
+    
+    public static AlgorithmParameterSpec getPublicExponentParamSpecForRSA(final String keySpec)
+        throws InvalidAlgorithmParameterException {
+        final String[] parts = keySpec.split("exp");
+
+        if (parts.length != 2) {
+            throw new InvalidAlgorithmParameterException("Invalid specification of public exponent");
+        }
+
+        final int keyLength = Integer.parseInt(parts[0].trim());
+        final String exponentString = parts[1].trim();
+        final BigInteger exponent;
+
+        if (exponentString.startsWith("0x")) {
+            exponent =
+                    new BigInteger(exponentString.substring(2), 16);
+        } else {
+            exponent = new BigInteger(exponentString);
+        }
+
+        return new RSAKeyGenParameterSpec(keyLength, exponent);
     }
 
 }

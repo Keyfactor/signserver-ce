@@ -527,7 +527,7 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
             if ("RSA".equalsIgnoreCase(keyAlgorithm) &&
                 keySpec.contains("exp")) {
                 delegate.generateKeyPair(
-                        CryptoTokenUtils.getPublicExponentParamSpecForRSA(keySpec),
+                        CryptoTokenHelper.getPublicExponentParamSpecForRSA(keySpec),
                         alias);
             } else {
                 delegate.generateKeyPair(keySpec, alias);

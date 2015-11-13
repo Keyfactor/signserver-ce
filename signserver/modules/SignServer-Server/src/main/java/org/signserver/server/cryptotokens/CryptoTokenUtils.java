@@ -238,28 +238,6 @@ public final class CryptoTokenUtils {
         fis.close();
         return myKS;
     }
-
-    public static AlgorithmParameterSpec getPublicExponentParamSpecForRSA(final String keySpec)
-        throws InvalidAlgorithmParameterException {
-        final String[] parts = keySpec.split("exp");
-
-        if (parts.length != 2) {
-            throw new InvalidAlgorithmParameterException("Invalid specification of public exponent");
-        }
-
-        final int keyLength = Integer.parseInt(parts[0].trim());
-        final String exponentString = parts[1].trim();
-        final BigInteger exponent;
-
-        if (exponentString.startsWith("0x")) {
-            exponent =
-                    new BigInteger(exponentString.substring(2), 16);
-        } else {
-            exponent = new BigInteger(exponentString);
-        }
-
-        return new RSAKeyGenParameterSpec(keyLength, exponent);
-    }
     
     /**
      * Command line tool for generating the data for a SoftCryptoToken.

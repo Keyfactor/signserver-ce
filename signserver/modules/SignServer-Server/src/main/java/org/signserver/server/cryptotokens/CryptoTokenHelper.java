@@ -708,6 +708,19 @@ public class CryptoTokenHelper {
         }
     }
     
+    /**
+     * Get an AlgorithmParameterSpec for RSA given a key specification given
+     * a string of the form "<key length> exp <decimal>" or
+     * "<key length> exp 0x<hexadecimal>.
+     * 
+     * Examples: "2048 exp 65537", "2048 exp 0x10001"
+     * 
+     * The spaces surrounding "exp" are optional.
+     * 
+     * @param keySpec
+     * @return
+     * @throws InvalidAlgorithmParameterException 
+     */
     public static AlgorithmParameterSpec getPublicExponentParamSpecForRSA(final String keySpec)
         throws InvalidAlgorithmParameterException {
         final String[] parts = keySpec.split("exp");

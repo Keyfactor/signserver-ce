@@ -12,6 +12,10 @@
  *************************************************************************/
 package org.signserver.server.cryptotokens;
 
+import java.math.BigInteger;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.spec.AlgorithmParameterSpec;
+import java.security.spec.RSAKeyGenParameterSpec;
 import java.util.Properties;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -117,6 +121,68 @@ public class CryptoTokenHelperTest extends TestCase {
         assertEquals("{ATTRIBUTESFILE=/opt/attributes.cfg, DEFAULTKEY=default, PIN=1234, SHAREDLIBRARY=/opt/nfast/toolkits/pkcs11/libcknfast.so, SLOTLABELTYPE=SLOT_LABEL, SLOTLABELVALUE=MyLabel, attributesFile=/opt/attributes.cfg, defaultKey=default, pin=1234, sharedLibrary=/opt/nfast/toolkits/pkcs11/libcknfast.so, slotLabelType=SLOT_LABEL, slotLabelValue=MyLabel}", p.toString());
     }
     
+    /**
+     * Test an RSA keyspec with a public exponent expressed in decimal format.
+     * 
+     * @throws Exception 
+     */
+    public final void testRSAAlgorithmSpecWithDecimalExponent() throws Exception {
+        final RSAKeyGenParameterSpec spec =
+                (RSAKeyGenParameterSpec)
+                CryptoTokenHelper.getPublicExponentParamSpecForRSA("2048 exp 65537");
+        
+        assertEquals("Key length", 2048, spec.getKeysize());
+        assertEquals("Public exponent",
+                     new BigInteger("65537"), spec.getPublicExponent());
+    }
+    
+    /**
+     * Test an RSA keyspec with a public exponent expressed in hexadecimal format.
+     * 
+     * @throws Exception 
+     */
+    public final void testRSAAlgorithmSpecWithHexExponent() throws Exception {
+        final RSAKeyGenParameterSpec spec =
+                (RSAKeyGenParameterSpec)
+                CryptoTokenHelper.getPublicExponentParamSpecForRSA("2048 exp 0x10001");
+        
+        assertEquals("Key length", 2048, spec.getKeysize());
+        assertEquals("Public exponent",
+                     new BigInteger("65537"), spec.getPublicExponent());
+    }
+    
+    /**
+     * Test that using a mis-spelled exponent separator results in the correct
+     * exception.
+     * 
+     * @throws Exception 
+     */
+    public final void testRSAAlgorithmSpecWithInvalidSeparator() throws Exception {
+        try {
+            CryptoTokenHelper.getPublicExponentParamSpecForRSA("2048 exr 65537");
+            fail("Should throw an InvalidAlgorithmParameterException");
+        } catch (InvalidAlgorithmParameterException ex) {
+            // expected
+        } catch (Exception ex) {
+            fail("Unexpected exception: " + ex.getClass().getName());
+        }
+    }
+    
+    /**
+     * Test that specifying the keyspec without spaces around "exp" also works.
+     * 
+     * @throws Exception 
+     */
+    public final void testRSAAlgorithmSpecWithoutSpaces() throws Exception {
+        final RSAKeyGenParameterSpec spec =
+                (RSAKeyGenParameterSpec)
+                CryptoTokenHelper.getPublicExponentParamSpecForRSA("2048exp65537");
+        
+        assertEquals("Key length", 2048, spec.getKeysize());
+        assertEquals("Public exponent",
+                     new BigInteger("65537"), spec.getPublicExponent());
+    }
+
     // TODO: Tests for dummy certificates temporarly moved to
     // SignServer-Test-System but can be moved back after upgrading to
     // BC >= 1.50

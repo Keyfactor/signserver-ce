@@ -18,6 +18,7 @@ import java.io.*;
 import java.security.*;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.security.spec.AlgorithmParameterSpec;
 import java.util.*;
 import javax.naming.NamingException;
 import org.apache.commons.io.IOUtils;
@@ -464,7 +465,13 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
             if ("ECDSA".equals(keyAlgorithm)) {
                 kpg.initialize(ECNamedCurveTable.getParameterSpec(keySpec));
             } else {
-                kpg.initialize(Integer.valueOf(keySpec));
+                if ("RSA".equals(keyAlgorithm) && keySpec.contains("exp")) {
+                    final AlgorithmParameterSpec spec =
+                            CryptoTokenHelper.getPublicExponentParamSpecForRSA(keySpec);
+                    kpg.initialize(spec);
+                } else {
+                    kpg.initialize(Integer.valueOf(keySpec));
+                }
             }
 
             final String sigAlgName = "SHA1With" + keyAlgorithm;

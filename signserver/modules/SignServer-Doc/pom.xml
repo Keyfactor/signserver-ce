@@ -9,7 +9,7 @@
     </parent>
     <artifactId>SignServer-Doc</artifactId>
     <name>SignServer-Doc</name>
-    <url>http://www.signserver.org/</url>
+    <url>https://www.signserver.org/</url>
     <inceptionYear>2007</inceptionYear>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

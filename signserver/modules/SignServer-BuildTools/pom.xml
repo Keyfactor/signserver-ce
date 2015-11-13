@@ -9,7 +9,7 @@
     <groupId>org.signserver</groupId>
     <artifactId>SignServer-BuildTools</artifactId>
     <name>SignServer-BuildTools</name>
-    <url>http://www.signserver.org</url>
+    <url>https://www.signserver.org</url>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <dist.jar>${project.build.finalName}.jar</dist.jar>

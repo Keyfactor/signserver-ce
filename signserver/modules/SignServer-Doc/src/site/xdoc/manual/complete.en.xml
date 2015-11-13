@@ -2403,7 +2403,7 @@ The Main WebService using the Java client API manages the HA parts itself and th
                 </subsection>
                 <subsection name="Setting up a MySQL Cluster">
                     <p>
-The database backed of the SignServer can be made redundant using MySQL Cluster. Details on how to set-up the MySQL cluster can be found in the document <a href="../docs/SignServer_3_0_Installation_Guide.pdf">SignServer_3_0_Installation_Guide.pdf</a> that can be downloaded from <a href="http://www.signserver.org">www.signserver.org</a>.
+The database backed of the SignServer can be made redundant using MySQL Cluster. Details on how to set-up the MySQL cluster can be found in the document <a href="../docs/SignServer_3_0_Installation_Guide.pdf">SignServer_3_0_Installation_Guide.pdf</a> that can be downloaded from <a href="https://www.signserver.org">www.signserver.org</a>.
 More information about the MySQL Cluster can be found at
 <a href="http://www.mysql.com/products/database/cluster/">http://www.mysql.com/products/database/cluster/</a>.
                     </p>

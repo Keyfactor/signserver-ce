@@ -16,6 +16,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.math.BigInteger;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.Key;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -28,6 +30,8 @@ import java.security.Security;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.security.spec.AlgorithmParameterSpec;
+import java.security.spec.RSAKeyGenParameterSpec;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -235,6 +239,28 @@ public final class CryptoTokenUtils {
         return myKS;
     }
 
+    public static AlgorithmParameterSpec getPublicExponentParamSpecForRSA(final String keySpec)
+        throws InvalidAlgorithmParameterException {
+        final String[] parts = keySpec.split("exp");
+
+        if (parts.length != 2) {
+            throw new InvalidAlgorithmParameterException("Invalid specification of public exponent");
+        }
+
+        final int keyLength = Integer.parseInt(parts[0].trim());
+        final String exponentString = parts[1].trim();
+        final BigInteger exponent;
+
+        if (exponentString.startsWith("0x")) {
+            exponent =
+                    new BigInteger(exponentString.substring(2), 16);
+        } else {
+            exponent = new BigInteger(exponentString);
+        }
+
+        return new RSAKeyGenParameterSpec(keyLength, exponent);
+    }
+    
     /**
      * Command line tool for generating the data for a SoftCryptoToken.
      * See the SoftCryptoToken section of the manual for how to execute

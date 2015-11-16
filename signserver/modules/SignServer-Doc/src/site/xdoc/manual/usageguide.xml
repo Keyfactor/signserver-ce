@@ -801,6 +801,7 @@ index and the selected number of entries per page.
                         <p>
 <b>Generate key...</b>: Opens the key generation dialog. 
 Fill in the alias of the new key that should be generated as well as the key type (ie. RSA, DSA or ECDSA) as well as the the key specification (ie. key length such as "2048" for RSA and DSA or curve name such as "secp256r1" for ECDSA).
+For RSA keys, a custom public exponent can be expressed as part of the key specification by entering a value such as "2048 exp 5" or "2048 exp 0x10001", expressing the exponent value in decimal or hexadecimal form.
 After filling in a key alias a new row will automatically added which allows for generating more keys.
                         </p>
                         <p>

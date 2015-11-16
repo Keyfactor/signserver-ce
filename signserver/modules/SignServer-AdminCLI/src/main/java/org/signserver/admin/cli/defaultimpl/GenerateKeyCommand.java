@@ -44,10 +44,15 @@ public class GenerateKeyCommand extends AbstractAdminCommand {
             + "Leaving out alias will use the value in property DEFAULTKEY+1.\n"
             + "Leaving out keyalg will use the value in property KEYALG.\n"
             + "Leaving out keyspec will use the value in property KEYSPEC.\n"
+            + "For RSA keys, a custom public exponent can be expressed as part of\n"
+            + "the keyspec by appending \"exp\" and the value of the exponent\n"
+            + "given in decimal or hexadecimal prefixed by \"0x\"\n"
             + "Example 1: signserver generatekey 71\n"
             + "Example 2: signserver generatekey 71 -keyalg RSA -keyspec 2048\n"
             + "Example 3: signserver generatekey 71 -keyalg RSA -keyspec 2048 -alias signKey2\n"
-            + "Example 4: signserver generatekey 71 -keyalg ECDSA -keyspec secp256r1 -alias signKey2";
+            + "Example 4: signserver generatekey 71 -keyalg RSA -keyspec 2048exp5 -alias keyWithCustomExp\n"
+            + "Example 5: signserver generatekey 71 -keyalg RSA -keyspec 2048exp0x10001 -alias keyWithCustomExp2\n"
+            + "Example 6: signserver generatekey 71 -keyalg ECDSA -keyspec secp256r1 -alias signKey2";
 
     static {
         OPTIONS = new Options();

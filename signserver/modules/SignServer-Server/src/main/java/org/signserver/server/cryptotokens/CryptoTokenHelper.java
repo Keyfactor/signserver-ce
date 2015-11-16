@@ -36,6 +36,7 @@ import java.security.cert.X509Certificate;
 import java.security.interfaces.DSAKey;
 import java.security.interfaces.ECKey;
 import java.security.interfaces.RSAKey;
+import java.security.interfaces.RSAPublicKey;
 import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.RSAKeyGenParameterSpec;
 import java.util.ArrayList;
@@ -63,6 +64,7 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequestBuilder;
 import org.bouncycastle.util.encoders.Hex;
+import org.cesecore.certificates.util.AlgorithmConstants;
 import org.cesecore.certificates.util.AlgorithmTools;
 import org.cesecore.keys.token.p11.Pkcs11SlotLabelType;
 import org.cesecore.util.QueryParameterException;
@@ -546,8 +548,18 @@ public class CryptoTokenHelper {
                         if (TokenEntry.TYPE_PRIVATEKEY_ENTRY.equals(type)) {
                             final Certificate[] chain = keyStore.getCertificateChain(keyAlias);
                             if (chain.length > 0) {
-                                info.put(INFO_KEY_ALGORITHM, AlgorithmTools.getKeyAlgorithm(chain[0].getPublicKey()));
-                                info.put(INFO_KEY_SPECIFICATION, AlgorithmTools.getKeySpecification(chain[0].getPublicKey()));
+                                final PublicKey pubKey = chain[0].getPublicKey();
+                                final String keyAlgorithm =
+                                        AlgorithmTools.getKeyAlgorithm(pubKey);
+                                info.put(INFO_KEY_ALGORITHM, keyAlgorithm);
+                                info.put(INFO_KEY_SPECIFICATION,
+                                         AlgorithmTools.getKeySpecification(pubKey));
+                                if (AlgorithmConstants.KEYALGORITHM_RSA.equals(keyAlgorithm)) {
+                                    final RSAPublicKey rsaKey = (RSAPublicKey) pubKey;
+                                    
+                                    info.put(INFO_KEY_PUBLIC_EXPONENT,
+                                             rsaKey.getPublicExponent().toString(10));
+                                }
                             }
                             try {
                                 entry.setParsedChain(chain);
@@ -594,6 +606,7 @@ public class CryptoTokenHelper {
     }
     public static final String INFO_KEY_SPECIFICATION = "Key specification";
     public static final String INFO_KEY_ALGORITHM = "Key algorithm";
+    public static final String INFO_KEY_PUBLIC_EXPONENT = "Public exponent";
     
     private static boolean shouldBeIncluded(TokenEntry tokenEntry, QueryCriteria qc) throws QueryException {
         final List<Elem> terms = new ArrayList<Elem>();

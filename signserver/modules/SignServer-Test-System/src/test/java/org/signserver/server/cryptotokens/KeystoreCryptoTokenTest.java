@@ -21,6 +21,7 @@ import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -37,6 +38,7 @@ import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GlobalConfiguration;
+import org.signserver.common.KeyTestResult;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.TokenOutOfSpaceException;
 
@@ -211,6 +213,14 @@ public class KeystoreCryptoTokenTest extends KeystoreCryptoTokenTestBase {
             Set<String> aliases2 = getKeyAliases(workerId);
             assertEquals("new key added", expected, aliases2);
             
+            // Generate a key with a custom RSA public exponent
+            workerSession.generateSignerKey(workerId, "RSA", "2048 exp 5", 
+                                            "keywithexponent", pin.toCharArray());
+            final Collection<KeyTestResult> testResults =
+                    workerSession.testKey(workerId, "keywithexponent", pin.toCharArray());
+            for (final KeyTestResult testResult : testResults) {
+                assertTrue("Testkey successful", testResult.isSuccess());
+            }
         } finally {
             FileUtils.deleteQuietly(keystoreFile);
             removeWorker(workerId);

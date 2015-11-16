@@ -924,6 +924,14 @@ public class P11SignTest extends ModulesTestCase {
             Set<String> aliases2 = getKeyAliases(workerId);
             assertEquals("new key added", expected, aliases2);
             
+            // Generate a key with a custom RSA public exponent
+            workerSession.generateSignerKey(workerId, "RSA", "2048 exp 5", 
+                                            "keywithexponent", pin.toCharArray());
+            final Collection<KeyTestResult> testResults =
+                    workerSession.testKey(workerId, "keywithexponent", pin.toCharArray());
+            for (final KeyTestResult testResult : testResults) {
+                assertTrue("Testkey successful", testResult.isSuccess());
+            }
         } finally {
             try {
                 workerSession.removeKey(workerId, TEST_KEY_ALIAS);

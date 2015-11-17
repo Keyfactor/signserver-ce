@@ -19,7 +19,6 @@ import java.util.Properties;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import junit.framework.TestCase;
-import org.apache.log4j.Logger;
 
 /**
  * Tests that the hard token properties are set correctly for PKCS11 crypto tokens.

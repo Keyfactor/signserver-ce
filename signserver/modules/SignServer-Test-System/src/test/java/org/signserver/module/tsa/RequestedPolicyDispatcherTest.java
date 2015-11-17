@@ -18,6 +18,7 @@ import java.math.BigInteger;
 import java.security.cert.Certificate;
 import java.util.Properties;
 import java.util.Random;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.cmp.PKIFailureInfo;
 import org.bouncycastle.asn1.cmp.PKIStatus;
 import org.bouncycastle.tsp.*;
@@ -52,11 +53,16 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
     /** Worker ID for test worker. */
     private static final int WORKER3 = 8913;
 
-    private static final String WORKER1_PROFILE = "1.2.13.1";
-    private static final String WORKER1_ALTERNATIVE_PROFILE = "1.2.13.9";
-    private static final String WORKER2_PROFILE = "1.2.13.2";
-    private static final String WORKER3_PROFILE = "1.2.13.3";
-    private static final String UNSUPPORTED_PROFILE = "1.2.13.55";
+    private static final ASN1ObjectIdentifier WORKER1_PROFILE =
+            new ASN1ObjectIdentifier("1.2.13.1");
+    private static final ASN1ObjectIdentifier WORKER1_ALTERNATIVE_PROFILE =
+            new ASN1ObjectIdentifier("1.2.13.9");
+    private static final ASN1ObjectIdentifier WORKER2_PROFILE =
+            new ASN1ObjectIdentifier("1.2.13.2");
+    private static final ASN1ObjectIdentifier WORKER3_PROFILE =
+            new ASN1ObjectIdentifier("1.2.13.3");
+    private static final ASN1ObjectIdentifier UNSUPPORTED_PROFILE =
+            new ASN1ObjectIdentifier("1.2.13.55");
     
     private Random random = new Random(4711);
 

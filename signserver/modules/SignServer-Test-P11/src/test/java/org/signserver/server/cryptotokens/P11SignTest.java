@@ -938,6 +938,9 @@ public class P11SignTest extends ModulesTestCase {
             try {
                 workerSession.removeKey(workerId, TEST_KEY_ALIAS);
             } catch (SignServerException ignored) {}
+            try {
+                workerSession.removeKey(workerId, "keywithexponent");
+            } catch (SignServerException ignored) {}
             removeWorker(workerId);
         }
     }

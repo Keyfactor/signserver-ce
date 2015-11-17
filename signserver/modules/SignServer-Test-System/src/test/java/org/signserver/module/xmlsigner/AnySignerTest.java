@@ -15,10 +15,16 @@ package org.signserver.module.xmlsigner;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.security.*;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.RSAPublicKeySpec;
 import java.util.Collection;
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.crypto.params.RSAKeyParameters;
+import org.bouncycastle.crypto.util.PublicKeyFactory;
 import org.bouncycastle.jce.ECKeyUtil;
-import org.bouncycastle.jce.PKCS10CertificationRequest;
+import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.bouncycastle.util.encoders.Base64;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.After;
@@ -91,6 +97,19 @@ public class AnySignerTest extends ModulesTestCase {
 
         keystoreFile = newKeystore;
     }
+    
+    private PublicKey getPublicKeyFromRequest(final PKCS10CertificationRequest req)
+        throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
+        final SubjectPublicKeyInfo subjectPublicKeyInfo =
+                req.getSubjectPublicKeyInfo();
+        final RSAKeyParameters rsa =
+                (RSAKeyParameters) PublicKeyFactory.createKey(subjectPublicKeyInfo);
+        final RSAPublicKeySpec rsaSpec =
+                new RSAPublicKeySpec(rsa.getModulus(), rsa.getExponent());
+        final KeyFactory kf = KeyFactory.getInstance("RSA");
+        
+        return kf.generatePublic(rsaSpec);
+    }
 
     @Test
     public void test01GenerateKey() throws Exception {
@@ -132,12 +151,12 @@ public class AnySignerTest extends ModulesTestCase {
         final PKCS10CertificationRequest req
                 = new PKCS10CertificationRequest(Base64.decode(reqBytes));
 
-        final PublicKey actualPubKey = req.getPublicKey();
+        final PublicKey actualPubKey = getPublicKeyFromRequest(req);
 
         assertEquals("key in request", pubKey, actualPubKey);
         
         // Test that the DN is in the correct order
-        String actualDN = req.getCertificationRequestInfo().getSubject().toString();
+        String actualDN = req.getSubject().toString();
         assertTrue("dn: " + actualDN, actualDN.startsWith("CN=test01GenerateKey") && actualDN.endsWith("C=SE"));
     }
 
@@ -187,7 +206,7 @@ public class AnySignerTest extends ModulesTestCase {
         final PKCS10CertificationRequest req
                 = new PKCS10CertificationRequest(Base64.decode(reqBytes));
 
-        final PublicKey actualPubKey = req.getPublicKey();
+        final PublicKey actualPubKey = getPublicKeyFromRequest(req);
 
         assertEquals("key in request", pubKey, actualPubKey);
     }
@@ -207,7 +226,7 @@ public class AnySignerTest extends ModulesTestCase {
         final PKCS10CertificationRequest req
                 = new PKCS10CertificationRequest(Base64.decode(reqBytes));
 
-        final PublicKey actualPubKey = req.getPublicKey();
+        final PublicKey actualPubKey = getPublicKeyFromRequest(req);
         final PublicKey afterConvert = ECKeyUtil.publicToExplicitParameters(
                 actualPubKey, "BC");
 
@@ -235,7 +254,7 @@ public class AnySignerTest extends ModulesTestCase {
         final PKCS10CertificationRequest req
                 = new PKCS10CertificationRequest(Base64.decode(reqBytes));
 
-        final PublicKey actualPubKey = req.getPublicKey();
+        final PublicKey actualPubKey = getPublicKeyFromRequest(req);
         final PublicKey afterConvert = ECKeyUtil.publicToExplicitParameters(
                 actualPubKey, "BC");
 

@@ -14,7 +14,6 @@ package org.signserver.server.cryptotokens;
 
 import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
-import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.RSAKeyGenParameterSpec;
 import java.util.Properties;
 import java.util.SortedMap;
@@ -28,10 +27,6 @@ import org.apache.log4j.Logger;
  * @version $Id$
  */
 public class CryptoTokenHelperTest extends TestCase {
-    
-    /** Logger for this class. */
-    private static final Logger LOG = Logger.getLogger(CryptoTokenHelperTest.class);
-
     /**
      * Tests some slot properties, including ATTRIBUTES.
      * @throws Exception

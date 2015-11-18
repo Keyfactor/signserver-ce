@@ -17,14 +17,19 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.*;
+import java.security.spec.ECPublicKeySpec;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.Collection;
+import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.crypto.params.ECKeyParameters;
 import org.bouncycastle.crypto.params.RSAKeyParameters;
 import org.bouncycastle.crypto.util.PublicKeyFactory;
 import org.bouncycastle.jce.ECKeyUtil;
+import org.bouncycastle.math.ec.ECPoint;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
+import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequest;
 import org.bouncycastle.util.encoders.Base64;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.After;
@@ -99,16 +104,10 @@ public class AnySignerTest extends ModulesTestCase {
     }
     
     private PublicKey getPublicKeyFromRequest(final PKCS10CertificationRequest req)
-        throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
-        final SubjectPublicKeyInfo subjectPublicKeyInfo =
-                req.getSubjectPublicKeyInfo();
-        final RSAKeyParameters rsa =
-                (RSAKeyParameters) PublicKeyFactory.createKey(subjectPublicKeyInfo);
-        final RSAPublicKeySpec rsaSpec =
-                new RSAPublicKeySpec(rsa.getModulus(), rsa.getExponent());
-        final KeyFactory kf = KeyFactory.getInstance("RSA");
-        
-        return kf.generatePublic(rsaSpec);
+            throws InvalidKeyException, NoSuchAlgorithmException {
+        final JcaPKCS10CertificationRequest jcaPKCS10CertificationRequest =
+                new JcaPKCS10CertificationRequest(req);
+        return jcaPKCS10CertificationRequest.getPublicKey();
     }
 
     @Test

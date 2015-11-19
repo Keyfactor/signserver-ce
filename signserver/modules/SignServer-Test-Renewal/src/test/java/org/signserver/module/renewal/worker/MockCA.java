@@ -25,12 +25,20 @@ import java.util.Collection;
 import java.util.Date;
 import javax.security.auth.x500.X500Principal;
 import org.apache.log4j.Logger;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.cms.CMSProcessable;
 import org.bouncycastle.cms.CMSProcessableByteArray;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.CMSSignedDataGenerator;
 import org.bouncycastle.cms.CMSSignedGenerator;
-import org.bouncycastle.x509.X509V3CertificateGenerator;
+import org.bouncycastle.cert.X509v3CertificateBuilder;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
+import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
+import org.bouncycastle.operator.ContentSigner;
+import org.bouncycastle.operator.DefaultSignatureAlgorithmIdentifierFinder;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 
 /**
  * Mock implementation of a CA.
@@ -82,21 +90,23 @@ public class MockCA {
         final long currentTime = new Date().getTime();
         final Date firstDate = new Date(currentTime - 24 * 60 * 60 * 1000);
         final Date lastDate = new Date(currentTime + validity * 1000);
-        X509V3CertificateGenerator cg = new X509V3CertificateGenerator();
-        // Add all mandatory attributes
-        cg.setSerialNumber(BigInteger.valueOf(firstDate.getTime()));
-        LOG.debug("keystore signing algorithm " + sigAlg);
-        cg.setSignatureAlgorithm(sigAlg);
-        cg.setSubjectDN(new X500Principal(subject));
-        
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("keystore signing algorithm " + sigAlg);
+        }
+
         if (pubKey == null) {
             throw new Exception("Public key is null");
         }
-        cg.setPublicKey(pubKey);
-        cg.setNotBefore(firstDate);
-        cg.setNotAfter(lastDate);
-        cg.setIssuerDN(new X500Principal(issuer));
-        return cg.generate(caPrivateKey, "BC");
+        
+        final JcaX509v3CertificateBuilder cb =
+                new JcaX509v3CertificateBuilder(new X500Name(issuer),
+                                             BigInteger.valueOf(firstDate.getTime()),
+                                             firstDate, lastDate,
+                                             new X500Name(subject), pubKey);
+
+        ContentSigner contentSigner = new JcaContentSignerBuilder(sigAlg).setProvider("BC").build(caPrivateKey);
+        return new JcaX509CertificateConverter().getCertificate(cb.build(contentSigner));
     }
 
     public X509Certificate issueCertificate(String subject,

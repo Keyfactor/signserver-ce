@@ -273,7 +273,7 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
             ASN1ObjectIdentifier oid = ASN1ObjectIdentifier.getInstance(asn1seq.getObjectAt(0));
             ASN1Sequence asn1seq1 = ASN1Sequence.getInstance(asn1seq.getObjectAt(1));
 
-            final ContentInfo ci = new ContentInfo(asn1seq1);
+            final ContentInfo ci = ContentInfo.getInstance(asn1seq1);
             
             if (!oid.getId().equals(msOID)) {
                     LOG.error("Invalid OID in request: " + oid.getId());

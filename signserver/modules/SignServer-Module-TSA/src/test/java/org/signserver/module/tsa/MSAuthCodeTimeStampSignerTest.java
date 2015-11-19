@@ -306,8 +306,8 @@ public class MSAuthCodeTimeStampSignerTest extends ModulesTestCase {
         
         // check ContentInfo, according to the Microsoft specification, the contentInfo in the response is
         // identical to the contentInfo in the request
-        final ContentInfo expCi = new ContentInfo(seq2);
-        final ContentInfo ci = new ContentInfo(ASN1Sequence.getInstance(asn1seq1.getObjectAt(2)));
+        final ContentInfo expCi = ContentInfo.getInstance(seq2);
+        final ContentInfo ci = ContentInfo.getInstance(ASN1Sequence.getInstance(asn1seq1.getObjectAt(2)));
         
         assertEquals("Content info should match the request", expCi, ci);
         

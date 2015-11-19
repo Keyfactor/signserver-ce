@@ -432,7 +432,7 @@ public class TimeStampTokenGenerator
 
         ASN1ObjectIdentifier digestAlgOID = request.getMessageImprintAlgOID();
 
-        AlgorithmIdentifier algID = new AlgorithmIdentifier(digestAlgOID, new DERNull());
+        AlgorithmIdentifier algID = new AlgorithmIdentifier(digestAlgOID, DERNull.INSTANCE);
         MessageImprint      messageImprint = new MessageImprint(algID, request.getMessageImprintDigest());
 
         Accuracy accuracy = null;

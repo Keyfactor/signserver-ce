@@ -627,7 +627,7 @@ public class XAdESValidator2UnitTest {
                 .setSubject("CN=OCSP Responder 1, O=XAdES Test, C=SE")
                 .addExtension(new CertExt(Extension.basicConstraints, false, new BasicConstraints(false)))
                 .addExtension(new CertExt(Extension.extendedKeyUsage, false, new ExtendedKeyUsage(KeyPurposeId.id_kp_OCSPSigning)))
-                .addExtension(new CertExt(OCSPObjectIdentifiers.id_pkix_ocsp_nocheck, false, new DERNull()))
+                .addExtension(new CertExt(OCSPObjectIdentifiers.id_pkix_ocsp_nocheck, false, DERNull.INSTANCE))
                 .build();
         
         // ocspSigner 2, OCSP responder issued by the sub CA2 with an ocsp-nocheck in the signer cert
@@ -639,7 +639,7 @@ public class XAdESValidator2UnitTest {
                 .setSubject("CN=OCSP Responder 2, O=XAdES Test, C=SE")
                 .addExtension(new CertExt(Extension.basicConstraints, false, new BasicConstraints(false)))
                 .addExtension(new CertExt(Extension.extendedKeyUsage, false, new ExtendedKeyUsage(KeyPurposeId.id_kp_OCSPSigning)))
-                .addExtension(new CertExt(OCSPObjectIdentifiers.id_pkix_ocsp_nocheck, false, new DERNull()))
+                .addExtension(new CertExt(OCSPObjectIdentifiers.id_pkix_ocsp_nocheck, false, DERNull.INSTANCE))
                 .build();
         
         // Sign a document by signer 3

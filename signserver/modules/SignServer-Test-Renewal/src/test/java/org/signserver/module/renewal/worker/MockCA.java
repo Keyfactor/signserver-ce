@@ -34,11 +34,17 @@ import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.CMSSignedDataGenerator;
 import org.bouncycastle.cms.CMSSignedGenerator;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
+import org.bouncycastle.cert.jcajce.JcaCertStore;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
+import org.bouncycastle.cms.CMSTypedData;
+import org.bouncycastle.cms.SignerInfoGenerator;
+import org.bouncycastle.cms.jcajce.JcaSignerInfoGeneratorBuilder;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.DefaultSignatureAlgorithmIdentifierFinder;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
+import org.bouncycastle.util.Store;
 
 /**
  * Mock implementation of a CA.
@@ -124,17 +130,19 @@ public class MockCA {
                 ? Arrays.asList(cert, caCertificate) : Arrays.asList(cert);
 
         try {
-            CMSProcessable msg = new CMSProcessableByteArray(
-                    "EJBCA".getBytes());
-            CertStore certStore = CertStore.getInstance("Collection",
-                    new CollectionCertStoreParameters(certs), "BC");
-            CMSSignedDataGenerator gen = new CMSSignedDataGenerator();
-
-            gen.addSigner(keyPair.getPrivate(), caCertificate,
-                    CMSSignedGenerator.DIGEST_SHA1);
-            gen.addCertificatesAndCRLs(certStore);
-            CMSSignedData s = gen.generate(msg, true, "BC");
-
+            final CMSSignedDataGenerator gen = new CMSSignedDataGenerator();
+            final ContentSigner contentSigner =
+                    new JcaContentSignerBuilder("SHA1withRSA").setProvider("BC").build(keyPair.getPrivate());
+            
+            gen.addSignerInfoGenerator(new JcaSignerInfoGeneratorBuilder(
+                     new JcaDigestCalculatorProviderBuilder().setProvider("BC").build())
+                     .build(contentSigner, cert));
+            gen.addCertificates(new JcaCertStore(certs));
+            
+            final CMSTypedData content =
+                    new CMSProcessableByteArray("EJBCA".getBytes());
+            final CMSSignedData s = gen.generate(content);
+            
             return s.getEncoded();
         } catch (Exception e) {
             throw new RuntimeException(e);

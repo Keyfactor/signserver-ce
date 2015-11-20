@@ -300,7 +300,7 @@ public class ValidationUtils {
         }
 
         final RespID id = brep.getResponderId();
-        final DERTaggedObject to = (DERTaggedObject)id.toASN1Object().toASN1Object();
+        final DERTaggedObject to = (DERTaggedObject)id.toASN1Object().toASN1Primitive();
         final RespID respId;
 
         final X509CertificateHolder[] chain = brep.getCerts();

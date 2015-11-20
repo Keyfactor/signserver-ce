@@ -23,7 +23,11 @@ import java.util.Collection;
 import org.apache.log4j.Logger;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.SignerInformation;
+import org.bouncycastle.cms.SignerInformationVerifier;
+import org.bouncycastle.cms.jcajce.JcaSignerInfoVerifierBuilder;
 import org.bouncycastle.jce.X509Principal;
+import org.bouncycastle.operator.ContentVerifierProvider;
+import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.bouncycastle.x509.AttributeCertificateHolder;
 import org.junit.After;
 import org.junit.Before;
@@ -224,9 +228,12 @@ public class CMSSignerTest extends ModulesTestCase {
         final SignerInformation signer
                 = (SignerInformation) signers.iterator().next();
 
+        final SignerInformationVerifier sigVerifier =
+                new JcaSignerInfoVerifierBuilder(new JcaDigestCalculatorProviderBuilder().build()).setProvider("BC").build(signercert.getPublicKey());
+
         // Verify using the signer's certificate
         assertTrue("Verification using signer certificate",
-                signer.verify(signercert.getPublicKey(), "BC"));
+                signer.verify(sigVerifier));
 
         // Check that the signer's certificate is included
         CertStore certs = signedData.getCertificatesAndCRLs("Collection", "BC");

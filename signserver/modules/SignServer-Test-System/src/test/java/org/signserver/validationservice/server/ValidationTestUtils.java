@@ -43,7 +43,6 @@ import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.GeneralNames;
 import org.bouncycastle.asn1.x509.IssuingDistributionPoint;
-import org.bouncycastle.asn1.x509.X509Extensions;
 import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.jce.X509KeyUsage;
 import org.bouncycastle.jce.X509Principal;
@@ -92,12 +91,12 @@ public class ValidationTestUtils {
 
         // CRL Distribution point
         if (crlDistPoint != null) {
-            certgen.addExtension(X509Extensions.CRLDistributionPoints, false, crlDistPoint);
+            certgen.addExtension(Extension.cRLDistributionPoints, false, crlDistPoint);
         }
 
         // Basic constranits is always critical and MUST be present at-least in CA-certificates.
         BasicConstraints bc = new BasicConstraints(isCA);
-        certgen.addExtension(X509Extensions.BasicConstraints.getId(), true, bc);
+        certgen.addExtension(Extension.basicConstraints, true, bc);
 
         // Put critical KeyUsage in CA-certificates
 
@@ -106,11 +105,11 @@ public class ValidationTestUtils {
                 int keyusage = X509KeyUsage.keyCertSign + X509KeyUsage.cRLSign;
 
                 X509KeyUsage ku = new X509KeyUsage(keyusage);
-                certgen.addExtension(X509Extensions.KeyUsage.getId(), true, ku);
+                certgen.addExtension(Extension.keyUsage, true, ku);
             }
         } else {
             X509KeyUsage ku = new X509KeyUsage(keyUsage);
-            certgen.addExtension(X509Extensions.KeyUsage.getId(), true, ku);
+            certgen.addExtension(Extension.keyUsage, true, ku);
         }
 
         X509Certificate cert = certgen.generate(privKey);
@@ -152,7 +151,7 @@ public class ValidationTestUtils {
         crlgen.setSignatureAlgorithm(sigAlg);
 
         CRLNumber crlnum = new CRLNumber(BigInteger.valueOf(crlnumber));
-        crlgen.addExtension(X509Extensions.CRLNumber.getId(), crlNumberCritical, crlnum);
+        crlgen.addExtension(Extension.cRLNumber, crlNumberCritical, crlnum);
 
         // Make DNs
         crlgen.setIssuerDN(cacert.getSubjectX500Principal());
@@ -171,7 +170,7 @@ public class ValidationTestUtils {
         // According to the RFC, IDP must be a critical extension.
         // Nonetheless, at the moment, Mozilla is not able to correctly
         // handle the IDP extension and discards the CRL if it is critical.
-        crlgen.addExtension(X509Extensions.IssuingDistributionPoint.getId(), crlDistributionPointOnCrlCritical, idp);
+        crlgen.addExtension(Extension.issuingDistributionPoint, crlDistributionPointOnCrlCritical, idp);
 
         X509CRL crl;
         crl = crlgen.generate(privKey, "BC");

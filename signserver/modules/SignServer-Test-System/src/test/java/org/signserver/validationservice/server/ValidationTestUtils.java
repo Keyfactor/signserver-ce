@@ -41,11 +41,16 @@ import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.GeneralNames;
 import org.bouncycastle.asn1.x509.IssuingDistributionPoint;
-//import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x509.CertificateList;
+import org.bouncycastle.cert.X509CRLHolder;
 import org.bouncycastle.jce.X509KeyUsage;
 import org.bouncycastle.jce.X509Principal;
-import org.bouncycastle.x509.X509V2CRLGenerator;
+import org.bouncycastle.cert.X509v2CRLBuilder;
+import org.bouncycastle.jce.provider.X509CRLObject;
+import org.bouncycastle.operator.ContentSigner;
+import org.bouncycastle.operator.OperatorCreationException;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.x509.X509V3CertificateGenerator;
 import org.cesecore.certificates.crl.RevokedCertInfo;
 import org.cesecore.util.Base64;
@@ -130,7 +135,7 @@ public class ValidationTestUtils {
             DistributionPoint dp, Collection<RevokedCertInfo> certs,
             int crlPeriod, int crlnumber)
             throws IOException, SignatureException, NoSuchProviderException,
-                InvalidKeyException, CRLException, NoSuchAlgorithmException {
+                InvalidKeyException, CRLException, NoSuchAlgorithmException, OperatorCreationException {
         final String sigAlg = "SHA1WithRSA";
 
         boolean crlDistributionPointOnCrlCritical = true;
@@ -141,22 +146,19 @@ public class ValidationTestUtils {
 
         // crlperiod is hours = crlperiod*60*60*1000 milliseconds
         nextUpdate.setTime(nextUpdate.getTime() + (crlPeriod * (long) (60 * 60 * 1000)));
-        X509V2CRLGenerator crlgen = new X509V2CRLGenerator();
-        crlgen.setThisUpdate(thisUpdate);
-        crlgen.setNextUpdate(nextUpdate);
-        crlgen.setSignatureAlgorithm(sigAlg);
+        X509v2CRLBuilder crlBuilder =
+                new X509v2CRLBuilder(new X500Name(cacert.getIssuerX500Principal().getName()),
+                                     thisUpdate);
+        crlBuilder.setNextUpdate(nextUpdate);
 
         CRLNumber crlnum = new CRLNumber(BigInteger.valueOf(crlnumber));
-        crlgen.addExtension(Extension.cRLNumber, crlNumberCritical, crlnum);
-
-        // Make DNs
-        crlgen.setIssuerDN(cacert.getSubjectX500Principal());
+        crlBuilder.addExtension(Extension.cRLNumber, crlNumberCritical, crlnum);
 
         if (certs != null) {
             Iterator<RevokedCertInfo> it = certs.iterator();
             while (it.hasNext()) {
                 RevokedCertInfo certinfo = it.next();
-                crlgen.addCRLEntry(certinfo.getUserCertificate(), certinfo.getRevocationDate(), certinfo.getReason());
+                crlBuilder.addCRLEntry(certinfo.getUserCertificate(), certinfo.getRevocationDate(), certinfo.getReason());
             }
         }
 
@@ -166,11 +168,18 @@ public class ValidationTestUtils {
         // According to the RFC, IDP must be a critical extension.
         // Nonetheless, at the moment, Mozilla is not able to correctly
         // handle the IDP extension and discards the CRL if it is critical.
-        crlgen.addExtension(Extension.issuingDistributionPoint, crlDistributionPointOnCrlCritical, idp);
+        crlBuilder.addExtension(Extension.issuingDistributionPoint, crlDistributionPointOnCrlCritical, idp);
 
         X509CRL crl;
-        crl = crlgen.generate(privKey, "BC");
+        final ContentSigner signer =
+                new JcaContentSignerBuilder(sigAlg).setProvider("BC").build(privKey);
+        final X509CRLHolder crlHolder = crlBuilder.build(signer);
+        
+        final CertificateList cl = crlHolder.toASN1Structure();
+
         // Verify before sending back
+        crl = new X509CRLObject(cl);
+
         crl.verify(cacert.getPublicKey());
 
         return crl;

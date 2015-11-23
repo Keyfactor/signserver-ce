@@ -24,12 +24,14 @@ import java.security.SecureRandom;
 import java.security.SignatureException;
 import java.security.cert.CRLException;
 import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateParsingException;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import org.bouncycastle.asn1.ASN1Sequence;
 
 import org.bouncycastle.asn1.DERIA5String;
 import org.bouncycastle.asn1.x509.BasicConstraints;
@@ -42,16 +44,20 @@ import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.GeneralNames;
 import org.bouncycastle.asn1.x509.IssuingDistributionPoint;
 import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x509.Certificate;
 import org.bouncycastle.asn1.x509.CertificateList;
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.cert.CertIOException;
 import org.bouncycastle.cert.X509CRLHolder;
+import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.jce.X509KeyUsage;
-import org.bouncycastle.jce.X509Principal;
 import org.bouncycastle.cert.X509v2CRLBuilder;
 import org.bouncycastle.jce.provider.X509CRLObject;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
-import org.bouncycastle.x509.X509V3CertificateGenerator;
+import org.bouncycastle.cert.X509v3CertificateBuilder;
+import org.bouncycastle.jce.provider.X509CertificateObject;
 import org.cesecore.certificates.crl.RevokedCertInfo;
 import org.cesecore.util.Base64;
 
@@ -65,39 +71,37 @@ import org.cesecore.util.Base64;
  */
 public class ValidationTestUtils {
 
-    public static X509Certificate genCert(String dn, String issuerdn, PrivateKey privKey, PublicKey pubKey, Date startDate, Date endDate, boolean isCA) throws CertificateEncodingException, InvalidKeyException, IllegalStateException, NoSuchAlgorithmException, SignatureException {
+    public static X509Certificate genCert(String dn, String issuerdn, PrivateKey privKey, PublicKey pubKey, Date startDate, Date endDate, boolean isCA) throws CertificateEncodingException, InvalidKeyException, IllegalStateException, NoSuchAlgorithmException, SignatureException, CertIOException, OperatorCreationException, CertificateParsingException {
        return genCert(dn, issuerdn, privKey, pubKey, startDate, endDate, isCA, 0);
-
     }
 
 
-    public static X509Certificate genCert(String dn, String issuerdn, PrivateKey privKey, PublicKey pubKey, Date startDate, Date endDate, boolean isCA, int keyUsage) throws CertificateEncodingException, InvalidKeyException, IllegalStateException, NoSuchAlgorithmException, SignatureException {
+    public static X509Certificate genCert(String dn, String issuerdn, PrivateKey privKey, PublicKey pubKey, Date startDate, Date endDate, boolean isCA, int keyUsage) throws CertificateEncodingException, InvalidKeyException, IllegalStateException, NoSuchAlgorithmException, SignatureException, CertIOException, OperatorCreationException, CertificateParsingException {
         return genCert(dn, issuerdn, privKey, pubKey, startDate, endDate, isCA, keyUsage, null);
     }
 
-    public static X509Certificate genCert(String dn, String issuerdn, PrivateKey privKey, PublicKey pubKey, Date startDate, Date endDate, boolean isCA, int keyUsage, CRLDistPoint crlDistPoint) throws CertificateEncodingException, InvalidKeyException, IllegalStateException, NoSuchAlgorithmException, SignatureException {
-        X509V3CertificateGenerator certgen = new X509V3CertificateGenerator();
-
+    public static X509Certificate genCert(String dn, String issuerdn, PrivateKey privKey, PublicKey pubKey, Date startDate, Date endDate, boolean isCA, int keyUsage, CRLDistPoint crlDistPoint) throws CertificateEncodingException, InvalidKeyException, IllegalStateException, NoSuchAlgorithmException, SignatureException, CertIOException, OperatorCreationException, CertificateParsingException {        
         byte[] serno = new byte[8];
         SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
         random.setSeed((new Date().getTime()));
         random.nextBytes(serno);
-        certgen.setSerialNumber((new java.math.BigInteger(serno)).abs());
-        certgen.setNotBefore(startDate);
-        certgen.setNotAfter(endDate);
-        certgen.setSignatureAlgorithm("SHA1WithRSA");
-        certgen.setSubjectDN(new X509Principal(dn));
-        certgen.setIssuerDN(new X509Principal(issuerdn));
-        certgen.setPublicKey(pubKey);
+
+        final SubjectPublicKeyInfo spki =
+                new SubjectPublicKeyInfo(ASN1Sequence.getInstance(pubKey.getEncoded()));
+        final X509v3CertificateBuilder certBuilder =
+                new X509v3CertificateBuilder(new X500Name(issuerdn),
+                                             (new BigInteger(serno)).abs(),
+                                             startDate, endDate,
+                                             new X500Name(dn), spki);
 
         // CRL Distribution point
         if (crlDistPoint != null) {
-            certgen.addExtension(Extension.cRLDistributionPoints, false, crlDistPoint);
+            certBuilder.addExtension(Extension.cRLDistributionPoints, false, crlDistPoint);
         }
 
         // Basic constranits is always critical and MUST be present at-least in CA-certificates.
         BasicConstraints bc = new BasicConstraints(isCA);
-        certgen.addExtension(Extension.basicConstraints, true, bc);
+        certBuilder.addExtension(Extension.basicConstraints, true, bc);
 
         // Put critical KeyUsage in CA-certificates
 
@@ -106,16 +110,20 @@ public class ValidationTestUtils {
                 int keyusage = X509KeyUsage.keyCertSign + X509KeyUsage.cRLSign;
 
                 X509KeyUsage ku = new X509KeyUsage(keyusage);
-                certgen.addExtension(Extension.keyUsage, true, ku);
+                certBuilder.addExtension(Extension.keyUsage, true, ku);
             }
         } else {
             X509KeyUsage ku = new X509KeyUsage(keyUsage);
-            certgen.addExtension(Extension.keyUsage, true, ku);
+            certBuilder.addExtension(Extension.keyUsage, true, ku);
         }
 
-        X509Certificate cert = certgen.generate(privKey);
+        final ContentSigner signer =
+                new JcaContentSignerBuilder("SHA1WithRSA").setProvider("BC").build(privKey);
+        final X509CertificateHolder certHolder = certBuilder.build(signer);
 
-        return cert;
+        final Certificate cert = certHolder.toASN1Structure();
+        
+        return new X509CertificateObject(cert);
     }
 
     public static String genPEMStringFromChain(List<X509Certificate> chain) throws CertificateEncodingException {

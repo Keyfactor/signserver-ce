@@ -39,6 +39,9 @@ import org.bouncycastle.asn1.x509.X509Extension;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.SignerInformation;
+import org.bouncycastle.cms.SignerInformationVerifier;
+import org.bouncycastle.cms.jcajce.JcaSignerInfoVerifierBuilder;
+import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.bouncycastle.util.encoders.Base64;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GenericSignRequest;
@@ -317,8 +320,9 @@ public class MSAuthCodeTimeStampSignerTest extends ModulesTestCase {
                 = (SignerInformation) signers.iterator().next();
 
         // Verify using the signer's certificate
-        assertTrue("Verification using signer certificate",
-                signer.verify(signercert.getPublicKey(), "BC"));
+        final SignerInformationVerifier verifier =
+            new JcaSignerInfoVerifierBuilder(new JcaDigestCalculatorProviderBuilder().build()).setProvider("BC").build(signercert.getPublicKey());
+        assertTrue("Verification using signer certificate", signer.verify(verifier));
 
         // Check that the time source is being logged
         LogMap logMap = LogMap.getInstance(requestContext);

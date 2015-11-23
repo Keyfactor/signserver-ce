@@ -43,11 +43,21 @@ import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.KeyPurposeId;
 import org.bouncycastle.asn1.x509.X509Extension;
+import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
+import org.bouncycastle.cms.CMSSignatureAlgorithmNameGenerator;
+import org.bouncycastle.cms.DefaultCMSSignatureAlgorithmNameGenerator;
 import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.cms.SignerInformationVerifier;
+import org.bouncycastle.cms.bc.BcRSASignerInfoVerifierBuilder;
 import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
+import org.bouncycastle.operator.DefaultDigestAlgorithmIdentifierFinder;
+import org.bouncycastle.operator.DefaultSignatureAlgorithmIdentifierFinder;
+import org.bouncycastle.operator.DigestAlgorithmIdentifierFinder;
+import org.bouncycastle.operator.DigestCalculatorProvider;
+import org.bouncycastle.operator.SignatureAlgorithmIdentifierFinder;
+import org.bouncycastle.operator.bc.BcDigestCalculatorProvider;
 import org.bouncycastle.tsp.*;
 import org.bouncycastle.util.encoders.Base64;
 import org.junit.After;
@@ -431,9 +441,10 @@ public class TimeStampSignerTest extends ModulesTestCase {
         final TimeStampToken token = timeStampResponse.getTimeStampToken();
         
         try {
-        	
-        	token.validate(cert, "BC");
-        	
+                final SignerInformationVerifier infoVerifier =
+                        new JcaSimpleSignerInfoVerifierBuilder().setProvider("BC").build((X509Certificate) cert);
+
+                token.validate(infoVerifier);
         } catch (TSPException e) {
         	fail("Failed to validate response token");
         }

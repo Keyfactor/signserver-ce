@@ -27,7 +27,13 @@ import org.bouncycastle.cms.SignerInformationVerifier;
 import org.bouncycastle.cms.jcajce.JcaSignerInfoVerifierBuilder;
 import org.bouncycastle.jce.X509Principal;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
-import org.bouncycastle.x509.AttributeCertificateHolder;
+import org.bouncycastle.util.Store;
+//import org.bouncycastle.x509.AttributeCertificateHolder;
+import org.bouncycastle.cert.AttributeCertificateHolder;
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cms.SignerId;
+import org.bouncycastle.jce.provider.X509CertificateObject;
+import org.bouncycastle.util.Selector;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
@@ -235,14 +241,23 @@ public class CMSSignerTest extends ModulesTestCase {
                 signer.verify(sigVerifier));
 
         // Check that the signer's certificate is included
-        CertStore certs = signedData.getCertificatesAndCRLs("Collection", "BC");
-        X509Principal issuer = new X509Principal(signer.getSID().getIssuer());
-        CertSelector cs = new AttributeCertificateHolder(issuer, signer.getSID().getSerialNumber());
-        Collection<? extends Certificate> signerCerts
-                = certs.getCertificates(cs);
+        final Store certStore = signedData.getCertificates();
+       
+        final SignerId sid = signer.getSID();
+        final Selector certSelector =
+                new AttributeCertificateHolder(sid.getIssuer(),
+                                               sid.getSerialNumber());
+                
+        Collection<? extends X509CertificateHolder> signerCerts =
+                certStore.getMatches(certSelector);
+        
         assertEquals("Certificate included", expectedIncludedCertificateLevels, signerCerts.size());
         if (!signerCerts.isEmpty()) {
-            assertEquals(signercert, signerCerts.iterator().next());
+            final X509CertificateHolder certHolder =
+                    signerCerts.iterator().next();
+            final X509CertificateObject cert =
+                    new X509CertificateObject(certHolder.toASN1Structure());
+            assertEquals(signercert, cert);
         }
 
         // check the signature algorithm

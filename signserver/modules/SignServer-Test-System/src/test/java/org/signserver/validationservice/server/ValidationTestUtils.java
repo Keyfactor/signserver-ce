@@ -43,7 +43,8 @@ import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.GeneralNames;
 import org.bouncycastle.asn1.x509.IssuingDistributionPoint;
-import org.bouncycastle.asn1.x509.X509Name;
+//import org.bouncycastle.asn1.x509.X509Name;
+import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.jce.X509KeyUsage;
 import org.bouncycastle.jce.X509Principal;
 import org.bouncycastle.operator.OperatorCreationException;
@@ -188,7 +189,7 @@ public class ValidationTestUtils {
     }
 
     public static CRLDistPoint generateDistPointWithIssuer(String issuer) {
-        GeneralName gn = new GeneralName(new X509Name(issuer));
+        GeneralName gn = new GeneralName(new X500Name(issuer));
         GeneralNames gns = new GeneralNames(gn);
         DistributionPointName dpn = new DistributionPointName(0, gns);
         return new CRLDistPoint(new DistributionPoint[]{new DistributionPoint(dpn, null, null)});

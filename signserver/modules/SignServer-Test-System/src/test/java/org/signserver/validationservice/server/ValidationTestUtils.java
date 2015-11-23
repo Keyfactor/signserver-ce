@@ -24,13 +24,11 @@ import java.security.SecureRandom;
 import java.security.SignatureException;
 import java.security.cert.CRLException;
 import java.security.cert.CertificateEncodingException;
-import java.security.cert.CertificateException;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.bouncycastle.asn1.DERIA5String;
@@ -47,13 +45,10 @@ import org.bouncycastle.asn1.x509.IssuingDistributionPoint;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.jce.X509KeyUsage;
 import org.bouncycastle.jce.X509Principal;
-import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.x509.X509V2CRLGenerator;
 import org.bouncycastle.x509.X509V3CertificateGenerator;
 import org.cesecore.certificates.crl.RevokedCertInfo;
 import org.cesecore.util.Base64;
-import org.cesecore.util.CertTools;
-import org.signserver.common.SignServerUtil;
 
 /**
  * Contains help methods for testing the validation service

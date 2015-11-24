@@ -17,34 +17,23 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.cert.CertStore;
-import java.security.cert.CollectionCertStoreParameters;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
-import javax.security.auth.x500.X500Principal;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.x500.X500Name;
-import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
-import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
-import org.bouncycastle.cms.CMSProcessable;
 import org.bouncycastle.cms.CMSProcessableByteArray;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.CMSSignedDataGenerator;
-import org.bouncycastle.cms.CMSSignedGenerator;
-import org.bouncycastle.cert.X509v3CertificateBuilder;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
 import org.bouncycastle.cms.CMSTypedData;
-import org.bouncycastle.cms.SignerInfoGenerator;
 import org.bouncycastle.cms.jcajce.JcaSignerInfoGeneratorBuilder;
 import org.bouncycastle.operator.ContentSigner;
-import org.bouncycastle.operator.DefaultSignatureAlgorithmIdentifierFinder;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
-import org.bouncycastle.util.Store;
 
 /**
  * Mock implementation of a CA.

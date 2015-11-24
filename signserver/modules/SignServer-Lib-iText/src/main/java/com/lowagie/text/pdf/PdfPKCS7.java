@@ -503,7 +503,8 @@ public class PdfPKCS7 {
                 if (ts != null) {
                     ASN1Set attributeValues = ts.getAttrValues();
                     ASN1Sequence tokenSequence = ASN1Sequence.getInstance(attributeValues.getObjectAt(0));
-                    ContentInfo contentInfo = new ContentInfo(tokenSequence);
+                    ContentInfo contentInfo =
+                            ContentInfo.getInstance(tokenSequence);
                     this.timeStampToken = new TimeStampToken(contentInfo);
                 }
             }

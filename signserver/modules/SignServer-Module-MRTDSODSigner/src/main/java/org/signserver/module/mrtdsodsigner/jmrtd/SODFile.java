@@ -595,7 +595,7 @@ public class SODFile extends PassportFile
 			LOGGER.warning("Found " + signerInfos.size() + " signerInfos");
 		}
 		for (int i = 0; i < signerInfos.size(); i++) {
-			SignerInfo info = new SignerInfo((DERSequence)signerInfos.getObjectAt(i));
+			SignerInfo info = SignerInfo.getInstance((DERSequence)signerInfos.getObjectAt(i));
 			return info;
 		}
 		return null;

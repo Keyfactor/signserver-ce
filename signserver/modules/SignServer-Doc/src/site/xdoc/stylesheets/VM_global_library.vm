@@ -225,7 +225,7 @@
                 <td style="text-align:right">
                     <div class="searchcaption">
                             Search signserver.org for:<br>
-                            <form id="searchForm" target="_blank" onsubmit="q.value = query.value + ' site:signserver.org'" action="http://www.google.com/search" method="get">
+                            <form id="searchForm" target="_blank" onsubmit="q.value = query.value + ' site:signserver.org'" action="https://www.google.com/search" method="get">
                                 <input name="q" type="hidden">
                                 <div style="height: 18px; white-space: nowrap;">
                                     <input name="query" id="searchBox" maxlength="255">

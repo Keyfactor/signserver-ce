@@ -44,7 +44,7 @@ public class InternalTSAClient implements TSAClient {
     @Override
     public byte[] getTimeStampToken(PdfPKCS7 caller, byte[] imprint)
             throws Exception {
-        final TimeStampToken token = fetcher.fetchToken(imprint, X509ObjectIdentifiers.id_SHA1);
+        final TimeStampToken token = fetcher.fetchToken(imprint, X509ObjectIdentifiers.id_SHA1, null);
         final byte[] encoded = token.getEncoded();
         tokenSizeEstimated = encoded.length;
         return encoded;

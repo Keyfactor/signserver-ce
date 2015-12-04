@@ -800,9 +800,14 @@ bin/ant j2ee:copy-xmlsec
         &lt;resource-root path="xalan-2.7.2.jar"/&gt;
                                                 </source>
                     </subsubsection>
-                    <subsubsection name="Fix XML Security library issues in JBoss EAP">
+                    <subsubsection name="Fix Commons Collections Security issue in JBoss 7 and earlier">
                         <p>
-Make sure to apply the relevant security patches from Red Hat.
+JBoss 7 bundles version 3.2.1 of Commons Collections which has potential security issues. SignServer uses version 3.2.2. Perform similar changes as in the previous section to have JBoss use the 3.2.2 version instead.
+                        </p>
+                    </subsubsection>
+                    <subsubsection name="Fix Security issues in JBoss EAP">
+                        <p>
+Make sure to apply the relevant security patches from Red Hat. Pay special attention to the above mentioned XML Security and Commons Collections libraries etc.
                         </p>
                     </subsubsection>
                     <subsubsection name="Install Hibernate in GlassFish 3">

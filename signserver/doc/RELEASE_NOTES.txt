@@ -1,3 +1,16 @@
+SignServer 3.7.1
+----------------
+
+
+Notice:
+ - The Commons Collections library has been updated to version 3.2.2.
+   This fixes a potential security vulnerability in earlier versions.
+   See also the relevant "Fix Commons Collections Security issue in JBoss 7
+   and earlier" and "Fix Security issues in JBoss EAP" sections of the
+   installation guide to make sure the issue is also addressed in the
+   application server.
+
+
 SignServer 3.7.0
 ----------------
 

@@ -46,6 +46,12 @@ The XML Security library has been updated to version 1.5.8 and its
 dependency to 2.7.2. This requires special handling if JBoss is used. See 
 the Notice section of RELEASE_NOTES.txt for details.
 
+e) Dependency upgraded:
+
+The Commons Collections library has been updated to version 2.3.3. This might
+also need to be take care of in the application server. See the Notice section
+of RELEASE_NOTES.txt for details.
+
 
 From SignServer 3.5.x to SignServer 3.6.x
 -----------------------------------------

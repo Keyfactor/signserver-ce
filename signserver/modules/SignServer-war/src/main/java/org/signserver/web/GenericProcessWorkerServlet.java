@@ -31,9 +31,9 @@ import org.apache.log4j.Logger;
  * @version $Id$
  *
  */
-public class WorkerServlet extends HttpServlet {
+public class GenericProcessWorkerServlet extends HttpServlet {
     /** Logger for this class. */
-    private static final Logger LOG = Logger.getLogger(WorkerServlet.class);
+    private static final Logger LOG = Logger.getLogger(GenericProcessWorkerServlet.class);
 
     private static final String PROCESS_SERVLET_URL = "/process";
     private static final String WORKER_URI_START = "/signserver/worker/";

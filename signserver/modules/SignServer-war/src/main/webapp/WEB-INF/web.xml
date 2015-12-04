@@ -6,8 +6,8 @@
         <servlet-class>org.signserver.web.GenericProcessServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>WorkerServlet</servlet-name>
-        <servlet-class>org.signserver.web.WorkerServlet</servlet-class>
+        <servlet-name>GenericProcessWorkerServlet</servlet-name>
+        <servlet-class>org.signserver.web.GenericProcessWorkerServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>SODProcessServlet</servlet-name>
@@ -50,7 +50,7 @@
         <url-pattern>/process</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>WorkerServlet</servlet-name>
+        <servlet-name>GenericProcessWorkerServlet</servlet-name>
         <url-pattern>/worker/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>

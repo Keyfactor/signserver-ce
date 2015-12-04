@@ -28,7 +28,7 @@ import org.apache.log4j.Logger;
  */
 public class SODProcessWorkerServlet extends HttpServlet {
         /** Logger for this class. */
-    private static final Logger LOG = Logger.getLogger(WorkerServlet.class);
+    private static final Logger LOG = Logger.getLogger(SODProcessWorkerServlet.class);
 
     private static final String SOD_SERVLET_URL = "/sod";
     private static final String WORKER_URI_START = "/signserver/sodworker/";

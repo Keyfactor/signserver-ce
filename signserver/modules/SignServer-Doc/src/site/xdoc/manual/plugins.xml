@@ -1140,6 +1140,114 @@ The signature can optionally include a timestamp response from a TSA using the A
                     
                 </subsection>
 
+                <subsection name="JArchive Signer">
+                    <div class="frame note">
+                        <div class="label">Note</div>
+                        <div class="content">This is a SignServer Enterprise Edition (EE) feature.</div>
+                    </div>
+                    <p>
+The signer has the fully qualified class name: org.signserver.module.jarchive.signer.JArchiveSigner
+                    </p>
+                    <h4>Overview</h4>
+                        <p>
+The signer signs Java Archives or ZIP files (.jar, .war, .ear, .apk and .zip etc) according to the JAR File Specification.
+The signature can optionally include a timestamp response from a TSA using the RFC#3161 format.
+                        </p>
+
+                    <h4>Available Properties</h4>
+                        <p>
+                            <b>SIGNATUREALGORITHM</b> = Algorithm for signing
+                            (Optional, default: "SHA256withRSA")
+                        </p>
+                        <p>
+                           <b>DIGESTALGORITHM</b> = Algorithm for message digests
+                           (Optional, default: "SHA-256")
+                        </p>
+                        <p>
+                           <b>ZIPALIGN</b> = True if the offset at which each file entry's data starts should be aligned to 4 bytes.
+                           (Optional, default: False)
+                        </p>
+                        <p>
+                           <b>KEEPSIGNATURE</b> = True if existing signature files should be kept. If this is false no previous META-INF/*.SF,.RSA,.DS or .EC files are kept.
+                           (Optional, default: True)
+                        </p>
+                        <p>
+                           <b>REPLACESIGNATURE</b> = True if an existing signature with the same name should be overwritten and not fail with an error.
+                           (Optional, default: True)
+                        </p>
+                        <p>
+                           <b>SIGNATURE_NAME_TYPE</b> = What type of signature name to use.
+                           With the type VALUE, the name is taken from the <i>SIGNATURE_NAME_VALUE</i> property.
+                           With the type KEYALIAS, the name is taken from the key alias of the key used to sign the response after converting it according to the signature name rules (see the SIGNATURE_NAME_VALUE property).
+                           (Optional, default: KEYALIAS)
+                        </p>
+                        <p>
+                           <b>SIGNATURE_NAME_VALUE</b> = The value for the signature name if the SIGNAURE_NAME_TYPE requires a value.
+                           With the type VALUE, the name is taken directly from this property but must follow the signature name rules:
+                        </p>
+                        <ul>
+                           <li>Only characters from A-Z0-9_.-</li>
+                           <li>Minimum 1 character</li>
+                           <li>Maximum 8 characters</li>
+                        </ul>
+                        <p>
+                          (Optional or required depending on SIGNATURE_NAME_TYPE)
+                        </p>
+
+                        <p>
+                            <b>TSA_WORKER</b> = Worker ID or name of internal (RFC#3161) timestamp signer in the same SignServer (Optional, default: none). This property can not be combined with TSA_URL.
+                        </p>
+                        
+                        <p>
+                            <b>TSA_URL</b> = URL of external (authenticode) timestamp authority (Optional, default: none). This property can not be combined with TSA_WORKER.
+                        </p>
+                        
+                        <p>
+                            <b>TSA_USERNAME</b> = Login username used if the TSA uses HTTP Basic Auth (Optional, default: none).
+                        </p>
+                        <p>
+                            <b>TSA_PASSWORD</b> = Login password used if the TSA uses HTTP Basic Auth (Required if TSA_USERNAME specified, default: none).
+                        </p>
+                        
+                        <p>
+                            <b>TSA_POLICYOID</b> = Time-stamping policy OID to request from the TSA (Optional, default: none).
+                        </p>
+                        
+                        <p>
+                            <b>DO_LOGREQUEST_DIGEST</b> = If a digest of the request should be computed and logged (Optional, default: true).
+                        </p>
+                        <p>
+                            <b>LOGREQUEST_DIGESTALGORITHM</b> = Algorithm used to create the message digest (hash) of the request document to put in the log (default: SHA256).
+                        </p>
+                        <p>
+                            <b>DO_LOGRESPONSE_DIGEST</b> = If a digest of the response should be computed and logged (Optional, default: true).
+                        </p>
+                        <p>
+                            <b>LOGRESPONSE_DIGESTALGORITHM</b> = Algorithm used to create the message digest (hash) of the response document to put in the log (default: SHA256).
+                        </p>
+
+                    
+                    <!-- <h4>Request Properties</h4>
+                        <p>
+                            This worker can accept the following request metdata properties, given that they are configured to be allowed:
+                        </p> -->
+                    
+                    <h4>Worker Log Fields</h4>
+                        <p>
+                            <b>REQUEST_DIGEST</b> = A message digest (hash) for the request document in hex encoding.
+                        </p>
+                        <p>
+                            <b>REQUEST_DIGEST_ALGORITHM</b> = The name of the message digest (hash) algorithm used for the request digest in the log.
+                        </p>
+                        <p>
+                            <b>RESPONSE_DIGEST</b> = A message digest (hash) for the response document in hex encoding.
+                        </p>
+                        <p>
+                            <b>RESPONSE_DIGEST_ALGORITHM</b> = The name of the message digest (hash) algorithm used for the response digest in the log.
+                        </p>
+                    
+                </subsection>
+
                 <subsection name="Master List Signer">
                     <div class="frame note">
                         <div class="label">Note</div>

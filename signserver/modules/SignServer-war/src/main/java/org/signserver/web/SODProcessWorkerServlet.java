@@ -22,6 +22,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 
 /**
+ * Servlet handling requests addressed to a specific SOD worker using a URL
+ * of the form /signserver/sodworker/<worker name>
  *
  * @author Marcus Lundblad
  * @version $Id$

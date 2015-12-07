@@ -131,6 +131,7 @@ Some of the major new features in version 3.7 are:
     <li>Individual keys and certificates support</li>
     <li>Initial support for building using Maven</li>
     <li>GUI improvments</li>
+    <li>Signer for Java archives (JAR)</li>
     <li>Upgraded dependencies</li>
 </ul>
 <p>

@@ -104,6 +104,7 @@ limit is exceeded or key usage period expires.</li>
                 <li>Command line tool for verification of audit and database integrity protection.</li>
                 <li>SignServer TimeMonitor application and modules for monitoring time synchronization in TSA set-ups.</li>
                 <li>Authenticode signer for signing Windows executable files.</li>
+                <li>JAR signer for signing Java archives (and Android apps).</li>
                 <li>ePassport CSCA master list signer compliant with ICAO requirements.</li>
             </ul>
         </subsection>

@@ -66,7 +66,7 @@ public class InternalTimeStampTokenProvider implements TimeStampTokenProvider {
         try {
             MessageDigest md = messageDigestProvider.getEngine(digestAlgUri);
             byte[] imprint = md.digest(tsDigestInput);
-            TimeStampToken token = fetcher.fetchToken(imprint, digestUriToOidMap.get(digestAlgUri));
+            TimeStampToken token = fetcher.fetchToken(imprint, digestUriToOidMap.get(digestAlgUri), null);
             return new TimeStampTokenRes(token.getEncoded(), token.getTimeStampInfo().getGenTime());
         } catch (UnsupportedAlgorithmException ex) {
             throw new TimeStampTokenGenerationException("Digest algorithm not supported", ex);

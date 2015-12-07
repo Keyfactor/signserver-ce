@@ -136,6 +136,7 @@ Some of the major new features in version 3.7 are:
     <li>Batch signing support in client CLI</li>
     <li>Initial support for building using Maven</li>
     <li>GUI improvments</li>
+    <li>Signer for Java archives (JAR)</li>
     <li>Upgraded dependencies</li>
 </ul>
 <p>

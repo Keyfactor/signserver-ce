@@ -54,7 +54,7 @@ public class InternalTimeStampTokenFetcher {
         this.password = password;
     }
 
-    public TimeStampToken fetchToken(byte[] imprint, ASN1ObjectIdentifier digestOID) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException, TSPException, IOException {
+    public TimeStampToken fetchToken(byte[] imprint, ASN1ObjectIdentifier digestOID, ASN1ObjectIdentifier reqPolicy) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException, TSPException, IOException {
         int workerId;
         try {
             workerId = Integer.parseInt(workerNameOrId);
@@ -68,6 +68,10 @@ public class InternalTimeStampTokenFetcher {
         // Setup the time stamp request
         TimeStampRequestGenerator tsqGenerator = new TimeStampRequestGenerator();
         tsqGenerator.setCertReq(true);
+
+        if (reqPolicy != null) {
+            tsqGenerator.setReqPolicy(reqPolicy);
+        }
 
         BigInteger nonce = BigInteger.valueOf(System.currentTimeMillis());
         TimeStampRequest request = tsqGenerator.generate(digestOID, imprint, nonce);

@@ -102,13 +102,6 @@ public class AnySignerTest extends ModulesTestCase {
 
         keystoreFile = newKeystore;
     }
-    
-    private PublicKey getPublicKeyFromRequest(final PKCS10CertificationRequest req)
-            throws InvalidKeyException, NoSuchAlgorithmException {
-        final JcaPKCS10CertificationRequest jcaPKCS10CertificationRequest =
-                new JcaPKCS10CertificationRequest(req);
-        return jcaPKCS10CertificationRequest.getPublicKey();
-    }
 
     @Test
     public void test01GenerateKey() throws Exception {

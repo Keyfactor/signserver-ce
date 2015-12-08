@@ -10,7 +10,7 @@ mvn install:install-file -Dfile=lib/ext/xades4j-1.3.2-signserver.jar -DgroupId=o
 mvn install:install-file -Dfile=lib/ext/quartz-1.6.0.jar -DgroupId=opensymphony -DartifactId=quartz -Dversion=1.6.0 -Dpackaging=jar
 
 # Install the DeployTools artifacts from JARS
-DPL_VERSION=2.0-SNAPSHOT
+DPL_VERSION=2.0
 # Based on post by David Blevins: https://www.mail-archive.com/users@maven.apache.org/msg91297.html
 for jar in lib/ext/DeployTools-Common-${DPL_VERSION}.jar lib/ext/DeployTools-Maven-${DPL_VERSION}.jar lib/ext/jsign-1.2-signserver.jar; do
     pom=$(jar tvf $jar | grep pom.xml | perl -pe 's,.* ,,')
@@ -29,4 +29,4 @@ for jar in lib/ext/DeployTools-Common-${DPL_VERSION}.jar lib/ext/DeployTools-Mav
 done
 rm META-INF -r
 
-mvn install:install-file -DgroupId=org.signserver.deploytools -DartifactId=DeployTools -Dversion=${DPL_VERSION} -Dpackaging=pom -Dfile=lib/ext/DeployTools-${DPL_VERSION}.pom
+mvn install:install-file -DgroupId=org.signserver.deploytools -DartifactId=DeployTools -Dversion=${DPL_VERSION} -Dpackaging=pom -Dfile=lib/ext/DeployTools-${DPL_VERSION}-pom.xml

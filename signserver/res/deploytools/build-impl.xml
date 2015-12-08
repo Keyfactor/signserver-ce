@@ -18,7 +18,7 @@
     <!-- Initialization                                                      -->
     <!-- =================================================================== -->
 
-    <property name="deploytools.version" value="2.0-SNAPSHOT"/>
+    <property name="deploytools.version" value="2.0"/>
 
     <!-- Load properties before including files -->
     <property environment="env" />

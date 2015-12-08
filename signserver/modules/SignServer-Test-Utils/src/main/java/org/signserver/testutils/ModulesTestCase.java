@@ -17,9 +17,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.InvalidKeyException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
@@ -27,7 +29,9 @@ import java.util.*;
 import javax.naming.NamingException;
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
-import org.ejbca.util.Base64;
+import org.bouncycastle.pkcs.PKCS10CertificationRequest;
+import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequest;
+import org.bouncycastle.util.encoders.Base64;
 import org.signserver.admin.cli.AdminCLI;
 import org.signserver.client.cli.ClientCLI;
 import org.signserver.common.CryptoTokenOfflineException;
@@ -593,4 +597,10 @@ public class ModulesTestCase extends TestCase {
         return response;
     }
 
+    protected PublicKey getPublicKeyFromRequest(final PKCS10CertificationRequest req)
+            throws InvalidKeyException, NoSuchAlgorithmException {
+        final JcaPKCS10CertificationRequest jcaPKCS10CertificationRequest =
+                new JcaPKCS10CertificationRequest(req);
+        return jcaPKCS10CertificationRequest.getPublicKey();
+    }
 }

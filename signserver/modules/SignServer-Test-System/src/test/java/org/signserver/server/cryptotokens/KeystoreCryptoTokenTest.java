@@ -20,6 +20,7 @@ import java.security.KeyPairGenerator;
 import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
+import java.security.interfaces.RSAPublicKey;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -28,6 +29,7 @@ import java.util.List;
 import java.util.Set;
 import javax.security.auth.x500.X500Principal;
 import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertTrue;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
@@ -36,9 +38,13 @@ import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.bouncycastle.pkcs.PKCS10CertificationRequest;
+import org.bouncycastle.util.encoders.Base64;
+import org.signserver.common.Base64SignerCertReqData;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.KeyTestResult;
+import org.signserver.common.PKCS10CertReqInfo;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.TokenOutOfSpaceException;
 
@@ -221,6 +227,20 @@ public class KeystoreCryptoTokenTest extends KeystoreCryptoTokenTestBase {
             for (final KeyTestResult testResult : testResults) {
                 assertTrue("Testkey successful", testResult.isSuccess());
             }
+
+            // Generate CSR, and check the public key's public exponent
+            final PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA",
+                "CN=test01GenerateKey,C=SE", null);
+            Base64SignerCertReqData data = (Base64SignerCertReqData) workerSession
+                .getCertificateRequest(workerId, certReqInfo, false, "keywithexponent");
+            final byte[] reqBytes = data.getBase64CertReq();
+            final PKCS10CertificationRequest req
+                = new PKCS10CertificationRequest(Base64.decode(reqBytes));
+
+            final RSAPublicKey pubKey = (RSAPublicKey) getPublicKeyFromRequest(req);
+            
+            assertEquals("Returned public exponent",
+                    BigInteger.valueOf(5), pubKey.getPublicExponent());
         } finally {
             FileUtils.deleteQuietly(keystoreFile);
             removeWorker(workerId);

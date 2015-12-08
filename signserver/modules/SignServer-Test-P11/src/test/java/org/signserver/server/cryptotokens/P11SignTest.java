@@ -19,8 +19,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.security.InvalidKeyException;
 import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
 import java.security.cert.Certificate;
+import java.security.interfaces.RSAPublicKey;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -47,6 +51,7 @@ import org.bouncycastle.cms.SignerInformationStore;
 import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
+import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequest;
 import org.bouncycastle.tsp.TSPAlgorithms;
 import org.bouncycastle.tsp.TimeStampRequest;
 import org.bouncycastle.tsp.TimeStampRequestGenerator;
@@ -58,6 +63,7 @@ import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
 import org.signserver.common.GlobalConfiguration;
+import org.signserver.common.ICertReqData;
 import org.signserver.common.KeyTestResult;
 import org.signserver.common.PKCS10CertReqInfo;
 import org.signserver.common.RequestContext;
@@ -932,6 +938,20 @@ public class P11SignTest extends ModulesTestCase {
             for (final KeyTestResult testResult : testResults) {
                 assertTrue("Testkey successful", testResult.isSuccess());
             }
+            
+            // Generate CSR, and check the public key's public exponent
+            final PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA",
+                "CN=test01GenerateKey,C=SE", null);
+            Base64SignerCertReqData data = (Base64SignerCertReqData) workerSession
+                .getCertificateRequest(workerId, certReqInfo, false, "keywithexponent");
+            final byte[] reqBytes = data.getBase64CertReq();
+            final PKCS10CertificationRequest req
+                = new PKCS10CertificationRequest(Base64.decode(reqBytes));
+
+            final RSAPublicKey pubKey = (RSAPublicKey) getPublicKeyFromRequest(req);
+            
+            assertEquals("Returned public exponent",
+                    BigInteger.valueOf(5), pubKey.getPublicExponent());
         } finally {
             try {
                 workerSession.removeKey(workerId, TEST_KEY_ALIAS);

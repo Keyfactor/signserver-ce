@@ -965,13 +965,6 @@ public class P11SignTest extends ModulesTestCase {
         }
     }
     
-    private PublicKey getPublicKeyFromRequest(final PKCS10CertificationRequest req)
-            throws InvalidKeyException, NoSuchAlgorithmException {
-        final JcaPKCS10CertificationRequest jcaPKCS10CertificationRequest =
-                new JcaPKCS10CertificationRequest(req);
-        return jcaPKCS10CertificationRequest.getPublicKey();
-    }
-    
     /**
      * Tests that key generation is not allowed when the number of keys has
      * reached the KEYGENERATIONLIMIT.

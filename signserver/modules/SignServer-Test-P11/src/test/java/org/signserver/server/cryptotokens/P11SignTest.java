@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.security.KeyPair;
 import java.security.cert.Certificate;
+import java.security.interfaces.RSAPublicKey;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -934,6 +935,15 @@ public class P11SignTest extends ModulesTestCase {
             for (final KeyTestResult testResult : testResults) {
                 assertTrue("Testkey successful", testResult.isSuccess());
             }
+            
+            // check the public exponent of the public key
+            final List<Certificate> signerCertificateChain =
+                    workerSession.getSignerCertificateChain(workerId,
+                                                            "keywithexponent");
+            final Certificate issuer = signerCertificateChain.get(0);
+            final RSAPublicKey pubKey = (RSAPublicKey) issuer.getPublicKey();
+            
+            assertEquals("Returned public exponent", 5, pubKey.getPublicExponent());
         } finally {
             try {
                 workerSession.removeKey(workerId, TEST_KEY_ALIAS);

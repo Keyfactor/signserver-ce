@@ -952,7 +952,8 @@ public class P11SignTest extends ModulesTestCase {
 
             final RSAPublicKey pubKey = (RSAPublicKey) getPublicKeyFromRequest(req);
             
-            assertEquals("Returned public exponent", 5, pubKey.getPublicExponent());
+            assertEquals("Returned public exponent",
+                    BigInteger.valueOf(5), pubKey.getPublicExponent());
         } finally {
             try {
                 workerSession.removeKey(workerId, TEST_KEY_ALIAS);

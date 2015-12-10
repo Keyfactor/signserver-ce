@@ -27,9 +27,9 @@ reliability.
                 <p>
 The SignServer comes with a RFC 3161 compliant Time-Stamp signer serving requests through
 HTTP or client-authenticated HTTPS. A MRTD (Machine Readable Travel Document, i.e. electronic
-passport) signer. A PDF signer that adds a signature automatically to a uploaded PDF document,
+passport) signer. A PDF signer that adds a signature automatically to an uploaded PDF document,
 ODF signer that adds a signature automatically to uploaded ODF document, OOXML Signer that
-adds signature automatically to a uploaded OOXML document, and a validation service used to
+adds signature automatically to an uploaded OOXML document, and a validation service used to
 lookup the validation of a given certificate.
                 </p>
                 <p>
@@ -131,8 +131,8 @@ to EJBCA.
 Better audit and transaction logging.
                         </li>
                         <li>
-New build scripts and project structure with the goal of decouple the different
-SignServer modules and sub-projects and simplify future development.
+New build scripts and project structure with the goal of decoupling the different
+SignServer modules and sub-projects and simplifying future development.
                         </li>
                         <li>
 Front page listing all demo web pages.
@@ -255,7 +255,7 @@ PKCS11 Crypto Token to connect to different PKCS11 implementations.
   It is now possible to dynamically add and remove available signers
                         </li>
                         <li>
-  A new type of component, "Service" that is run on a timely basis, used to perform
+  A new type of component, "Service" that runs on a timely basis, used to perform
   maintenance or report generation.
                         </li>
                         <li>
@@ -266,7 +266,7 @@ PKCS11 Crypto Token to connect to different PKCS11 implementations.
                         </li>
                         <li>
   This makes it possible to set-up a configuration in test environment, dump the configuration
-  and configure the same it in production.
+  and configure the same in production.
                         </li>
                     </ul>
                 </subsection>
@@ -283,7 +283,7 @@ PKCS11 Crypto Token to connect to different PKCS11 implementations.
                     </tr><tr><td>TimedService (former Service)</td><td>A TimedService is a task that is run on a timely basis, performing maintenance tasks like changing active key or generate a report.</td>
                     </tr><tr><td>Worker</td><td>A common name for Processable (Signer or other type of service) and TimedService</td>
                     </tr><tr><td>Processable</td><td>A type of worker that is used to process requests, i.e. not a TimedService.</td>
-                    </tr><tr><td>Worker Configuration</td><td>Each Worker can be configured with properties specific for that worker. There are two sets of worker configuration one "Active" that is used by the signer and one "current" which is the one configured by the administrator. The current configuration isn't used in production until the administrator issued the reload command. This makes it possible for the administrator to configure multiple properties and double-check them before they are actually used.</td>
+                    </tr><tr><td>Worker Configuration</td><td>Each Worker can be configured with properties specific for that worker. There are two sets of worker configuration one "Active" that is used by the signer and one "current" which is the one configured by the administrator. The current configuration isn't used in production until the administrator issues the reload command. This makes it possible for the administrator to configure multiple properties and double-check them before they are actually used.</td>
                     </tr><tr><td>Global Configuration Store</td><td>Is a dynamic store used to define available Workers and their Crypto Tokens. But other data that needs to be read globally could be set there as well. The global configuration properties are activated immediately. There are two different scopes for the store data, Global Scope and Node Scope.</td>
                     </tr><tr><td>Global Scope</td><td>Data stored in the global configuration that can be read by all nodes in the cluster.</td>
                     </tr><tr><td>Node Scope</td><td>Data that is node specific and can only be read within the same node.</td>
@@ -325,10 +325,10 @@ Since the 3.0 version there are three kind of processable services. Signers (use
 The main way of communicating with the SignServer is through HTTP (web server) interface. There is also a web services (SOAP WS) interface available but that uses a special binary format for encoding the requests and responses.
                     </p>
                     <p>
-For an overview of the different concepts in the SignServer see illustration 1. The base component is called Worker which is assigned an id, optionally a name and a configuration. A sub component is a Processable which receives and processes requests. A Processable (optionally) have access to a cryptographic token (CryptoToken) in charge of managing the keys of a Processable. A CryptoToken can be either software or hardware based.
+For an overview of the different concepts in the SignServer see illustration 1. The base component is called Worker which is assigned an ID, optionally a name and a configuration. A sub component is a Processable which receives and processes requests. A Processable (optionally) have access to a cryptographic token (CryptoToken) in charge of managing the keys of a Processable. A CryptoToken can be either software or hardware based.
                     </p>
                     <p>
-The applications i administrated through a command-line interface, where the properties and access control can be configured.
+The application is administrated through a command-line interface, where the properties and access control can be configured.
                     </p>
                     <p>
 One SignServer can have multiple services for different purposes.
@@ -415,6 +415,10 @@ export SIGNSERVER_NODEID=node1
 Skip this section and instead follow the instructions in 
 <a href="complete.en.html#SignServer%20without%20Database">SignServer without Database</a> if
 you decide to run SignServer without a database management system.
+                    </p>
+                    <p>
+If you are using a database you will need to get a JDBC driver from the database
+vendor.
                     </p>
                     <p>
 Create a database and user for SignServer. The application server will try to
@@ -614,7 +618,7 @@ Copy the keystore file as JBOSS7_HOME/standalone/configuration/keystore/keystore
                           JBOSS7_HOME/standalone/configuration/keystore/truststore.jks.
                         </p>
                         <p>
-Configure interfaces using the approproate bind address (ie. 0.0.0.0 or 127.0.0.1).
+Configure interfaces using the approproate bind address (i.e. 0.0.0.0 or 127.0.0.1).
                         </p>
                         <source>
 /interfaces=/interface=http:add(inet-address="0.0.0.0")
@@ -664,7 +668,7 @@ Copy the keystore file as WILDFLY_HOME/standalone/configuration/keystore/keystor
                           WILDFLY_HOME/standalone/configuration/keystore/truststore.jks.
                         </p>
                         <p>
-Configure interfaces using the approproate bind address (ie. 0.0.0.0 or 127.0.0.1).
+Configure interfaces using the approproate bind address (i.e. 0.0.0.0 or 127.0.0.1).
                         </p>
                         <source>
 /interface=http:add(inet-address="0.0.0.0")
@@ -1000,7 +1004,7 @@ bin/signserver setproperties doc/sample-configs/CONFIGURATION.PROPERTIES
                     </subsubsection>
                     <p>
 After adding or changing a property for a worker (by
-any of the "setpropery" or "setproperties" commands) the configuration needs be
+any of the "setproperty" or "setproperties" commands) the configuration needs be
 applied by issuing the reload command with the ID of the worker.
                     </p>
                     <source>
@@ -1106,7 +1110,7 @@ You can check the status and configuration with:<br/>
                         </li>
 </ol>
 <p>
-You can now, with your web browser, access the URL <a href="http://localhost:8080/signserver/demo/pdfsign.jsp">http://localhost:8080/signserver/demo/pdfsign.jsp</a> to get PDF documents signed.
+You can now access the URL <a href="http://localhost:8080/signserver/demo/pdfsign.jsp">http://localhost:8080/signserver/demo/pdfsign.jsp</a> with your web browser to get PDF documents signed.
 </p>
                 </subsection>
 
@@ -1357,7 +1361,7 @@ It reads all the configuration properties form a property file and depending on 
 Properties starting with id&lt;num&gt;.
                                 </td>
                                 <td>
-Will set the property to the value of the given id to the worker with the given id.
+Will set the property to the value of the given ID to the worker with the given id.
                                 </td>
                             </tr>
                             <tr>
@@ -1365,7 +1369,7 @@ Will set the property to the value of the given id to the worker with the given 
 Properties starting with name&lt;name&gt;.
                                 </td>
                                 <td>
-Will set the property to a worker with the given name. (If the name doesn't exists a unique id will be generated and assigned).
+Will set the property to a worker with the given name. (If the name doesn't exists a unique ID will be generated and assigned).
                                 </td>
                             </tr>
                             <tr>
@@ -1373,7 +1377,7 @@ Will set the property to a worker with the given name. (If the name doesn't exis
 Property keys containing GENID&lt;NUM&gt;, example WORKERGENID1 or GLOB. WORKERGENID1
                                 </td>
                                 <td>
-The SignServer will find a free unique id and assign substitute all GENID&lt;num&gt; with this id.
+The SignServer will find a free unique ID and assign substitute all GENID&lt;num&gt; with this id.
                                 </td>
                             </tr>
                             <tr>
@@ -1503,7 +1507,7 @@ Command used to extract archived data from database identified by the archive Id
                         </p>
                         <p>
 The Id depends on the worker, in case of the TSA is the TimeStampInfo serial number used.
-The data is stored with the same file title as the archive id and with the file extension 
+The data is stored with the same file title as the archive ID and with the file extension 
 depending on the type of item, for instance ".request" or ".response".
                         </p>
                         <p>
@@ -1511,7 +1515,7 @@ depending on the type of item, for instance ".request" or ".response".
 Used to extract all archived data requested from a specified IP address.
                         </p>
                         <p>
-All data is stored as separate files with the archive id as file title and the file
+All data is stored as separate files with the archive ID as file title and the file
 extension depending on the type of item.
                         </p>
                         <p>
@@ -1519,7 +1523,7 @@ extension depending on the type of item.
 Used to extract all archived data requested from a client by specified it's certificates serial number and  issuer DN.
                         </p>
                         <p>
-All data is stored as separate files with the archive id as file title and the file
+All data is stored as separate files with the archive ID as file title and the file
 extension depending on the type of item.
                         </p>
 			<p>
@@ -1757,7 +1761,7 @@ Sample output:
 2013-07-04 15:29:10,073 INFO  [VerifyLogCommand] The following nodes exists: [server1, server2]
 2013-07-04 15:29:10,074 INFO  [VerifyLogCommand] Start sequences: {server1=0, server2=0}
 2013-07-04 15:29:10,635 INFO  [SoftCryptoToken] Invalid authentication code. Token id=400.
-2013-07-04 15:29:10,716 INFO  [SoftCryptoToken] Activated Crypto Token with id 400.
+2013-07-04 15:29:10,716 INFO  [SoftCryptoToken] Activated Crypto Token with ID 400.
 2013-07-04 15:29:10,722 INFO  [VerifyLogCommand] Progress: node=server1 rowCount=3
 2013-07-04 15:29:10,722 INFO  [VerifyLogCommand] Last sequence number: 2
 2013-07-04 15:29:10,745 INFO  [VerifyLogCommand] Progress: node=server2 rowCount=11
@@ -1854,7 +1858,7 @@ path should be the path to the PKCS#11 shared library file.
                     <subsubsection name="Main window">
                         <p>
 The SignServer Administration GUI main window consists of a menu bar, a toolbar,
-the working area and at the bottom a status bar. The working area constists of a
+the working area and at the bottom a status bar. The working area consists of a
 left and right part where the left is a list of all configured workers and the
 right shows details for the selected workers (if any).
                         </p>
@@ -2072,7 +2076,7 @@ index and the selected number of entries per page.
                         </p>
                         <p>
 <b>Generate key...</b>: Opens the key generation dialog. 
-Fill in the alias of the new key that should be generated as well as the key type (ie. RSA, DSA or ECDSA) as well as the the key specification (ie. key length such as "2048" for RSA and DSA or curve name such as "secp256r1" for ECDSA).
+Fill in the alias of the new key that should be generated as well as the key type (i.e. RSA, DSA or ECDSA) as well as the the key specification (i.e. key length such as "2048" for RSA and DSA or curve name such as "secp256r1" for ECDSA).
 For RSA keys, a custom public exponent can be expressed as part of the key specification by entering a value such as "2048 exp 5" or "2048 exp 0x10001", expressing the exponent value in decimal or hexadecimal form.
 After filling in a key alias a new row will automatically added which allows for generating more keys.
                         </p>
@@ -2098,11 +2102,11 @@ Note that installing certificates this way it is only possible to store the cert
 <b>Details...</b>: Opens the details window displaying more information about the token entry:
 <ul>
     <li>Alias: The key alias</li>
-    <li>Type: The type of entry, ie. private key, secret key or trusted certificate</li>
+    <li>Type: The type of entry, i.e. private key, secret key or trusted certificate</li>
     <li>Creation date: If available the time and date the entry was created</li>
     <li>Certificate: If available, the subject DN of the end entity certificate. The View button opens a window where the certificates can be inspected.</li>
     <li>Key specification: If available, the key length or curve used</li>
-    <li>Key algorithm: If available, the algorithm used for the key, ie RSA, DSA, ECDSA or AES etc.</li>
+    <li>Key algorithm: If available, the algorithm used for the key, i.e. RSA, DSA, ECDSA or AES etc.</li>
     <li>Additional information might be available depending on the crypto token implementation.</li>
 </ul>
                         </p>
@@ -2395,7 +2399,7 @@ Here are some tips on configuration used to make the SignServer redundant. Usual
                 
                 <subsection name="HTTP access requires a load balancer">
                     <p>
-HTTP based workers like the TSA can be clustered using a load balancer accessing a health check servlet returning the state of the SignServer. The basic settings of the health check servlet can be configured in the build configuration file but more advanced settings are done in 'src/web/healthcheck/WEB-INF/web.xml'. With the default settings will the servlet return the text 'ALLOK' when accessing the URL http://localhost:8080/signserver/healthcheck/signserverhealth. If something is wrong with the sign server will an error message be sent back instead.
+HTTP based workers like the TSA can be clustered using a load balancer accessing a health check servlet returning the state of the SignServer. The basic settings of the health check servlet can be configured in the build configuration file but more advanced settings are done in 'src/web/healthcheck/WEB-INF/web.xml'. With the default settings will the servlet return the text 'ALLOK' when accessing the URL http://localhost:8080/signserver/healthcheck/signserverhealth. If something is wrong with SignServer, an error message will be sent back instead.
                     </p>
                     <p>
 The health check servlet can also be used to monitor the SignServer by creating a script that monitors the URL periodically for error messages.
@@ -2790,7 +2794,7 @@ try {
                                         <li><b>HTTP 401</b> (Unauthorized): The worker requires user authentication</li>
                                         <li><b>HTTP 404</b> (Not Found): The requested workerName or workerId does not represent an existing worker</li>
                                         <li><b>HTTP 413</b> (Request Entity Too Large): The data field or uploaded file is too large. See the HTTP_MAX_UPLOAD_SIZE global configuration property.</li>
-                                        <li><b>HTTP 500</b> (Internal Server Error): There was an internal error when processing the request. Typically indicating an configuration problem or unexpected error at the server side.</li>
+                                        <li><b>HTTP 500</b> (Internal Server Error): There was an internal error when processing the request. Typically indicating a configuration problem or unexpected error at the server side.</li>
                                         <li><b>HTTP 503</b> (Service Unavailable): The worker is not active, its crypto token is not activated or similar</li>
                                     </ul>
                                 </td>
@@ -2802,7 +2806,7 @@ try {
                                 <td>Response content:</td>
                                 <td>The signed document for signers.<br/>
                                 A string starting with "VALID" or "INVALID" for document validators.
-                                <sup>*</sup>Note to integrators: In future versions of SignServer there might be more information added after VALID/INVALID, such as a ;-separated list of addtional information or more lines with information.<br/>
+                                <sup>*</sup>Note to integrators: In future versions of SignServer there might be more information added after VALID/INVALID, such as a ;-separated list of additional information or more lines with information.<br/>
                                 A ;-separated string containing
                                 validation status code (see list below), valid purposes, status message, revocation reason (-1 if not revoked), and revocation date (empty when not revoked)
                                 for certificate validators.
@@ -2904,7 +2908,7 @@ try {
                                         <li><b>HTTP 401</b> (Unauthorized): The worker requires user authentication</li>
                                         <li><b>HTTP 404</b> (Not Found): The requested workerName or workerId does not represent an existing worker</li>
                                         <li><b>HTTP 413</b> (Request Entity Too Large): The data field or uploaded file is too large</li> 
-                                        <li><b>HTTP 500</b> (Internal Server Error): There was an internal error when processing the request. Typically indicating an configuration problem or unexpected error at the server side.</li>
+                                        <li><b>HTTP 500</b> (Internal Server Error): There was an internal error when processing the request. Typically indicating a configuration problem or unexpected error at the server side.</li>
                                         <li><b>HTTP 503</b> (Service Unavailable): The worker is not active, its crypto token is not activated or similar</li>
                                     </ul>
                                 </td>
@@ -3079,7 +3083,7 @@ Request a document to be signed by SignServer
                    waiting for the first to succeed. Default unless
                    username is provided or -onefirst provided.
  -threads          Number of threads for sending the requests. Only
-                   allowed in batch mode, ie when indir and outdir
+                   allowed in batch mode, i.e. when indir and outdir
                    are specified. Default: 1.
  -truststore       Keystore with trusted certificates to use with
                    HTTPS.
@@ -3237,7 +3241,7 @@ usage: Usage: java -jar validate.jar &lt;options&gt;
                                 8442 for SSL).
  -protocol &lt;protocol&gt;           Protocol to use, either WEBSERVICES or
                                 HTTP. Default: WEBSERVICES.
- -service &lt;service-name&gt;        The name or id of the validation service
+ -service &lt;service-name&gt;        The name or ID of the validation service
                                 to process request. (Required)
  -silent                        Don't produce any output, only return
                                 value.
@@ -3255,8 +3259,8 @@ The following values is returned by the program that can be used when scripting.
    4   : Certificate doesn't verify
    5   : CA Certificate have been revoked
    6   : CA Certificate is not yet valid
-   7   : CA Certificate have expired.
-   8   : Certificate have no valid certificate purpose.
+   7   : CA Certificate have expired
+   8   : Certificate have no valid certificate purpose
 
 Sample usages:
 a) validatecertificate -service CertValidationWorker -hosts localhost -cert
@@ -3691,7 +3695,7 @@ case for the XMLValidator which delegates the validation of the certificate to
 a CertValidator. If the CertValidator had a RemoteAddressAuthorizer allowing
 access from "null" then the XMLValidator would be able to use it. To restrict
 users from using the CertValidator (indirectly through the XMLValidator) an
-Autorizer could be configured for the XMLValidator.
+Authorizer could be configured for the XMLValidator.
                         </p>
                         <p>
 <b>Logging:</b> This authorizer will add the remote IP address to the log field AUTHORIZED_ADDRESS.
@@ -3827,7 +3831,7 @@ See also the section about all <a href="complete.en.html#Archivers">available Ar
             <section name="Accounter">
                 <p>
 An Accounter is responsible for somehow charging a client for a successful 
-request or to deny the requst if the client has insufficient funds.
+request or to deny the request if the client has insufficient funds.
                 </p>
                 <p>
 When a request has been processed, and if the worker marked the request as 
@@ -3967,7 +3971,7 @@ Timestamps requests are served through a http service at the URL:
 'http://&lt;host name&gt;/signserver/process?workerId=&lt;worker Id&gt;'
                         </pre>
                         <p>
-If no 'worker Id' parameter is specified then will the id of 1 be used as default.
+If no 'worker Id' parameter is specified then will the ID of 1 be used as default.
                         </p>
                         <p>
 The time-stamp signer requires a time-stamp certificate with the extended key usage 'time-stamp' only. The extended key usage extension must be critical.
@@ -4340,7 +4344,7 @@ Default: not set (no custom image).
 These properties are ignored if ADD_VISIBLE_SIGNATURE is set to False.
                                     </p>
                                     <p>
-NOTE: in clustered environment it is more manageable and advised to specify image as base64 string, since image data will be stored in central database. Otherwise each node should contain copy of the image, and each image managed separately (ex: on image updates, or insertion of new image for different worker)
+NOTE: in clustered environment it is more manageable and advised to specify image as base64 string, since image data will be stored in central database. Otherwise each node should contain copy of the image, and each image managed separately (e.g. on image updates, or insertion of new image for different worker)
                                     </p>
                                 </td>
                             </tr>
@@ -4933,7 +4937,7 @@ The signer has the fully qualified class name: org.signserver.module.msauthcode.
                     </p>
                     <subsubsection name="Overview">
                         <p>
-The signer signs portablable executable files such as Windows executables and shared libraries (.exe, .dll and .ocx etc) according to the Windows Authenticode Portable Executable Signature Format.
+The signer signs portable executable files such as Windows executables and shared libraries (.exe, .dll and .ocx etc) according to the Windows Authenticode Portable Executable Signature Format.
 The signature can optionally include a timestamp response from a TSA using the Authenticode format.
                         </p>
                     </subsubsection>
@@ -5200,7 +5204,7 @@ The XML validator validates the signature of XML documents. The certificate is c
                         </p>
                     </subsubsection>
                     <subsubsection name="Available Properties">
-                        <p><b>VALIDATIONSERVICEWORKER</b> = Name or id of validation service worker for handling certificate validation</p>
+                        <p><b>VALIDATIONSERVICEWORKER</b> = Name or ID of validation service worker for handling certificate validation</p>
                         <p><b>RETURNDOCUMENT</b> = True if the response should contain the validated document</p>
                         <p><b>STRIPSIGNATURE</b> = True if the signature should be removed from the document if it is returned</p>
                     </subsubsection>
@@ -5301,7 +5305,7 @@ Dispatches the request to a worker based on a mapping from username and workerna
 The validation service framework is used to validate certificates from one or more issuers. It can be used to  have one central point of performing revokation statuses to simplify the integration of external PKIs within an enterprise.
                 </p>
                 <p>
-The validation service framework also provides a validation cache that can be used to increase performance for those cases a application does multiple lookups of the same certificate within a short period of time.
+The validation service framework also provides a validation cache that can be used to increase performance for those cases an application does multiple lookups of the same certificate within a short period of time.
                 </p>
                 <p>
 Out-of-the-Box there exists a DefaultValidationService that should satisfy most use cases but it's possible to develop a custom ValidationService if necessary. See the developer section for more details.
@@ -5352,13 +5356,13 @@ The validation service have three types of properties, general properties (that 
                         </p>
                         <p>
 <i>Validator properties:</i><br/>
-Validator properties is specified with the prefix of 'validator&lt;validatorId&gt;.' or 'val&lt;validatorId&gt;.' were validator Id should be an integer between 1 and 255. For instance, to specify the type of a validator with an id of 1 then specify 'val1.classpath=some.classpath.SomeClass'. This validator will be initialized with all its validator specific properties (with 'val&lt;id&gt;.' prefix removed) as well as the general ones.
+Validator properties is specified with the prefix of 'validator&lt;validatorId&gt;.' or 'val&lt;validatorId&gt;.' were validator Id should be an integer between 1 and 255. For instance, to specify the type of a validator with an ID of 1 then specify 'val1.classpath=some.classpath.SomeClass'. This validator will be initialized with all its validator specific properties (with 'val&lt;id&gt;.' prefix removed) as well as the general ones.
                         </p>
                         <p>
 <b>CLASSPATH</b> = Fully qualified class name of the validator that should be used. (Required for each configured validator)
                         </p>
                         <p>
-<i>Issuer properties:</i>  Issuer properties are specified as 'val&lt;val id&gt;.issuer&lt;issuer id&gt;.&lt;property&gt;' were issuer id is a positive integer between 1 and 255. All generic and validator specific properties (with the given validator id) will also be propagated to the specific issuer configuration.
+<i>Issuer properties:</i>  Issuer properties are specified as 'val&lt;val id&gt;.issuer&lt;issuer id&gt;.&lt;property&gt;' were issuer ID is a positive integer between 1 and 255. All generic and validator specific properties (with the given validator id) will also be propagated to the specific issuer configuration.
                         </p>
                         <p>
 <b>CERTCHAIN</b> = The certificate path of the CA certificates used to verify the certificate. Should be a appended BASE64 string. (Required for each configured issuer).
@@ -5369,7 +5373,7 @@ Here is an example configuration of a validation service to clarify things even 
                         <pre>
 # Set up the worker -> validation service wrapper
 GLOB.WORKER1.CLASSPATH= org.signserver.validationservice .server.ValidationServiceWorker
-#Uncomment and set class path to custom validation service, othervise is default #used.
+#Uncomment and set class path to custom validation service, otherwise is default #used.
 #WORKER1.TYPE=
 
 # Name of Service (Optional)
@@ -5448,7 +5452,7 @@ Here is a list of available options:
 -hosts &lt;hosts&gt;                 		: A ',' separated string containing the hostnames of the validation service nodes. Ex 'host1.someorg.org,host2.someorg.org' (Required)
 -pem                    	       		: Certificate is in PEM format (Default).
 -port &lt;port&gt;                   		: Remote port of service (Default is 8080 or 8442 for SSL).
--service &lt;service-name&gt;        	: The name or id of the validation service to process request. (Required)
+-service &lt;service-name&gt;        	: The name or ID of the validation service to process request. (Required)
 -silent                        			: Don't produce any output, only return value.
 -truststore &lt;jks-file&gt;         		: Path to JKS truststore containing trusted CA for SSL Server certificates.(for HTTPS connections)
 -truststorepwd &lt;password&gt;      	: Password to unlock the truststore.
@@ -5465,8 +5469,8 @@ The following return values is used:
 4   : Certificate doesn't verify
 5   : CA Certificate have been revoked
 6   : CA Certificate is not yet valid
-7   : CA Certificate have expired.
-8   : Certificate have no valid certificate purpose.
+7   : CA Certificate have expired
+8   : Certificate have no valid certificate purpose
                    </pre>
 
                 </subsection>
@@ -5909,7 +5913,7 @@ Much information about the state of the TimeMonitor is available in the getstatu
                                 <b>Timings</b>: Prints the current time values from the TimeMonitor.
                             </li>
                             <li>
-                                <b>Configuration</b>: Prints the configuration values in the manager (not necesarly read by the TimeMonitor yet).
+                                <b>Configuration</b>: Prints the configuration values in the manager (not necessarily read by the TimeMonitor yet).
                             </li>
                             <li>
                                 <b>Last TimeMonitor log entries</b>: Prints the last log entries obtained from the last update from the TimeMonitor.
@@ -5919,7 +5923,7 @@ Much information about the state of the TimeMonitor is available in the getstatu
                             Sample output:
                         </p>
                         <source><![CDATA[
-Status of Worker with id 300 (TimeMonitorManager) is:
+Status of Worker with ID 300 (TimeMonitorManager) is:
    Worker status : Active
    Time monitor  : Running
    Last update   : 2014-08-26 11:43:39,176
@@ -7064,7 +7068,7 @@ public interface IExtendedCryptoToken extends ICryptoToken {
 
 	/**
 	 * Instructs the crypto token to generate a key stored in the device returning only
-	 * a alias reference to the key.
+	 * an alias reference to the key.
 	 *
 	 * @param keyAlg the key algorithm to generate, it's up to the caller to check that the crypto token
 	 * @param keySpec keySpec specification of the key, it's up to the caller to check that the crypto token
@@ -7079,7 +7083,7 @@ public interface IExtendedCryptoToken extends ICryptoToken {
 	/**
 	 * Method used to encrypt data using a key stored in the crypto token. This
 	 * method should mainly be used for symmetric encryption.
-	 * @param keyRef a alias reference to the key that should be used.
+	 * @param keyRef an alias reference to the key that should be used.
 	 * @param data the data to encrypt.
 	 * @return the encrypted data.
 	 * @throws CryptoTokenOfflineException if the token isn't online.
@@ -7089,7 +7093,7 @@ public interface IExtendedCryptoToken extends ICryptoToken {
 	/**
 	 * Method used to decrypt data using a key stored in the crypto token. This
 	 * method should mainly be used for symmetric encryption.
-	 * @param keyRef a alias reference to the key that should be used.
+	 * @param keyRef an alias reference to the key that should be used.
 	 * @param data the data to decrypt.
 	 * @return the encrypted data.
 	 * @throws CryptoTokenOfflineException if the token isn't online.
@@ -7179,7 +7183,7 @@ public interface IAuthorizer {
 	/**
 	 * Method called by the worker upon first call to the authenticator after instantiation.
 	 *
-	 * @param workerId id of worker.
+	 * @param workerId ID of worker.
 	 * @param config active worker configuration of worker
 	 * @param em the SignServer EntityManager
 	 * @throws SignServerException if unexpected error occurred during initialization.
@@ -7225,7 +7229,7 @@ avoided)
                     <pre>
 /**
 * Method setting a global configuration property. For node. prefix will the
-node id be appended.
+node ID be appended.
 * @param scope, one of the GlobalConfiguration.SCOPE_ constants
 * @param key of the property should not have any scope prefix, never null
 * @param value the value, never null.
@@ -7237,7 +7241,7 @@ key,java.lang.String value ) ;
 * @param scope, one of the GlobalConfiguration.SCOPE_ constants
 * @param key of the property should start with either glob. or node., never
 null
-* @return true if removal was successful, othervise false.
+* @return true if removal was successful, otherwise false.
 */
 public boolean removeProperty( java.lang.String scope,java.lang.String key )
 ;
@@ -7881,7 +7885,7 @@ Logged when a new key-pair was generated using the built-in key generation comma
 <b>WORKER_ID:</b> The ID of the worker.<br/>
 <b>KEYALIAS:</b> The new key alias.<br/>
 <b>CRYPTOTOKEN:</b> Name of the configured crypto worker or the name or ID of the current worker if no separate crypto worker is used.<br/>
-<b>KEYSPEC:</b> The key specification (ie. RSA/DSA bit length or EC curve).<br/>
+<b>KEYSPEC:</b> The key specification (i.e. RSA/DSA bit length or EC curve).<br/>
 <b>KEYALG:</b> The key algorithm.
                                     </p>
                                     <p>
@@ -8039,7 +8043,7 @@ databaseprotection.version.0 = 2
 
                         <p>
 Note: each SignServer node writing to the audit log needs to use different node IDs. By default the hostname is used. If multiple instances 
-are running from the same host set the node id manually in conf/cesecore.properties as cluster.nodeid.
+are running from the same host set the node ID manually in conf/cesecore.properties as cluster.nodeid.
                         </p>
                         <p>
 If enableverify is set to true, all individual log entries that are displayed 

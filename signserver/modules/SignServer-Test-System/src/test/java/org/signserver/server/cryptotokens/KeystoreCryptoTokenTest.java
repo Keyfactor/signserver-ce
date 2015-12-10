@@ -45,6 +45,7 @@ import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.KeyTestResult;
 import org.signserver.common.PKCS10CertReqInfo;
+import org.signserver.common.SignServerException;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.TokenOutOfSpaceException;
 
@@ -218,16 +219,39 @@ public class KeystoreCryptoTokenTest extends KeystoreCryptoTokenTestBase {
             expected.add(TEST_KEY_ALIAS);
             Set<String> aliases2 = getKeyAliases(workerId);
             assertEquals("new key added", expected, aliases2);
+        } finally {
+            FileUtils.deleteQuietly(keystoreFile);
+            removeWorker(workerId);
+        }
+    }
+    
+    /**
+     * Test that generating a key with a specified key spec results in the
+     * expected public exponent on the public key.
+     * 
+     * @param spec
+     * @param expected
+     * @throws Exception 
+     */
+    private void testGenerateKeyWithPublicExponent(final String spec,
+                                                   final BigInteger expected)
+        throws Exception {
+        
+        final int workerId = WORKER_CMS;
+        
+        try {
+            setCMSSignerPropertiesCombined(workerId, true);
+            workerSession.reloadConfiguration(workerId);
             
             // Generate a key with a custom RSA public exponent
-            workerSession.generateSignerKey(workerId, "RSA", "2048 exp 5", 
+            workerSession.generateSignerKey(workerId, "RSA", spec, 
                                             "keywithexponent", pin.toCharArray());
             final Collection<KeyTestResult> testResults =
                     workerSession.testKey(workerId, "keywithexponent", pin.toCharArray());
             for (final KeyTestResult testResult : testResults) {
                 assertTrue("Testkey successful", testResult.isSuccess());
             }
-
+            
             // Generate CSR, and check the public key's public exponent
             final PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA",
                 "CN=test01GenerateKey,C=SE", null);
@@ -240,11 +264,30 @@ public class KeystoreCryptoTokenTest extends KeystoreCryptoTokenTestBase {
             final RSAPublicKey pubKey = (RSAPublicKey) getPublicKeyFromRequest(req);
             
             assertEquals("Returned public exponent",
-                    BigInteger.valueOf(5), pubKey.getPublicExponent());
+                         expected, pubKey.getPublicExponent());
         } finally {
-            FileUtils.deleteQuietly(keystoreFile);
+            try {
+                workerSession.removeKey(workerId, "keywithexponent");
+            } catch (SignServerException ignored) {}
             removeWorker(workerId);
         }
+    }
+    
+    /**
+     * Test generating a key with a specified public exponent in the spec
+     * @throws Exception 
+     */
+    public void testGenerateKeyWithPublicExponentDefault() throws Exception {
+        testGenerateKeyWithPublicExponent("2048 exp 5", BigInteger.valueOf(5));
+    }
+    
+    /**
+     * Test generateing a key with a custom specified public exponent
+     * 
+     * @throws Exception 
+     */
+    public void testGenerateKeyWithPublicExponentCustom() throws Exception {
+        testGenerateKeyWithPublicExponent("2048", BigInteger.valueOf(0x10001));
     }
     
     /**

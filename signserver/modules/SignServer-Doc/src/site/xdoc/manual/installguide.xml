@@ -90,6 +90,10 @@ Skip this section and instead follow the instructions in
 you decide to run SignServer without a database management system.
                     </p>
                     <p>
+If you are using a database you will need to get a JDBC driver from the database
+vendor.
+                    </p>
+                    <p>
 Create a database and user for SignServer. The application server will try to
 create tables during startup of SignServer but if the database user does not
 have table create permissions or if you run on GlassFish the tables must be
@@ -271,7 +275,7 @@ Copy the keystore file as JBOSS7_HOME/standalone/configuration/keystore/keystore
                           JBOSS7_HOME/standalone/configuration/keystore/truststore.jks.
                         </p>
                         <p>
-Configure interfaces using the approproate bind address (ie. 0.0.0.0 or 127.0.0.1).
+Configure interfaces using the approproate bind address (i.e. 0.0.0.0 or 127.0.0.1).
                         </p>
                         <source>
 /interfaces=/interface=http:add(inet-address="0.0.0.0")
@@ -321,7 +325,7 @@ Copy the keystore file as WILDFLY_HOME/standalone/configuration/keystore/keystor
                           WILDFLY_HOME/standalone/configuration/keystore/truststore.jks.
                         </p>
                         <p>
-Configure interfaces using the approproate bind address (ie. 0.0.0.0 or 127.0.0.1).
+Configure interfaces using the approproate bind address (i.e. 0.0.0.0 or 127.0.0.1).
                         </p>
                         <source>
 /interface=http:add(inet-address="0.0.0.0")
@@ -619,7 +623,7 @@ bin/signserver setproperties doc/sample-configs/CONFIGURATION.PROPERTIES
 
                     <p>
 After adding or changing a property for a worker (by
-any of the "setpropery" or "setproperties" commands) the configuration needs be
+any of the "setproperty" or "setproperties" commands) the configuration needs be
 applied by issuing the reload command with the ID of the worker.
                     </p>
                     <source>
@@ -737,7 +741,7 @@ You can check the status and configuration with:<br/>
                         </li>
 </ol>
 <p>
-You can now, with your web browser, access the URL <a href="http://localhost:8080/signserver/demo/pdfsign.jsp">http://localhost:8080/signserver/demo/pdfsign.jsp</a> to get PDF documents signed.
+You can now access the URL <a href="http://localhost:8080/signserver/demo/pdfsign.jsp">http://localhost:8080/signserver/demo/pdfsign.jsp</a> with your web browser to get PDF documents signed.
 </p>
                 </subsection>
 

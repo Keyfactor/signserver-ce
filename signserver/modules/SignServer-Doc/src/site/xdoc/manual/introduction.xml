@@ -35,9 +35,9 @@ reliability.
                 <p>
 The SignServer comes with a RFC 3161 compliant Time-Stamp signer serving requests through
 HTTP or client-authenticated HTTPS. A MRTD (Machine Readable Travel Document, i.e. electronic
-passport) signer. A PDF signer that adds a signature automatically to a uploaded PDF document,
+passport) signer. A PDF signer that adds a signature automatically to an uploaded PDF document,
 ODF signer that adds a signature automatically to uploaded ODF document, OOXML Signer that
-adds signature automatically to a uploaded OOXML document, and a validation service used to
+adds signature automatically to an uploaded OOXML document, and a validation service used to
 lookup the validation of a given certificate.
                 </p>
                 <p>
@@ -139,8 +139,8 @@ to EJBCA.
 Better audit and transaction logging.
                         </li>
                         <li>
-New build scripts and project structure with the goal of decouple the different
-SignServer modules and sub-projects and simplify future development.
+New build scripts and project structure with the goal of decoupling the different
+SignServer modules and sub-projects and simplifying future development.
                         </li>
                         <li>
 Front page listing all demo web pages.
@@ -263,7 +263,7 @@ PKCS11 Crypto Token to connect to different PKCS11 implementations.
   It is now possible to dynamically add and remove available signers
                         </li>
                         <li>
-  A new type of component, "Service" that is run on a timely basis, used to perform
+  A new type of component, "Service" that runs on a timely basis, used to perform
   maintenance or report generation.
                         </li>
                         <li>
@@ -274,7 +274,7 @@ PKCS11 Crypto Token to connect to different PKCS11 implementations.
                         </li>
                         <li>
   This makes it possible to set-up a configuration in test environment, dump the configuration
-  and configure the same it in production.
+  and configure the same in production.
                         </li>
                     </ul>
                 </subsection>
@@ -291,7 +291,7 @@ PKCS11 Crypto Token to connect to different PKCS11 implementations.
                     </tr><tr><td>TimedService (former Service)</td><td>A TimedService is a task that is run on a timely basis, performing maintenance tasks like changing active key or generate a report.</td>
                     </tr><tr><td>Worker</td><td>A common name for Processable (Signer or other type of service) and TimedService</td>
                     </tr><tr><td>Processable</td><td>A type of worker that is used to process requests, i.e. not a TimedService.</td>
-                    </tr><tr><td>Worker Configuration</td><td>Each Worker can be configured with properties specific for that worker. There are two sets of worker configuration one "Active" that is used by the signer and one "current" which is the one configured by the administrator. The current configuration isn't used in production until the administrator issued the reload command. This makes it possible for the administrator to configure multiple properties and double-check them before they are actually used.</td>
+                    </tr><tr><td>Worker Configuration</td><td>Each Worker can be configured with properties specific for that worker. There are two sets of worker configuration one "Active" that is used by the signer and one "current" which is the one configured by the administrator. The current configuration isn't used in production until the administrator issues the reload command. This makes it possible for the administrator to configure multiple properties and double-check them before they are actually used.</td>
                     </tr><tr><td>Global Configuration Store</td><td>Is a dynamic store used to define available Workers and their Crypto Tokens. But other data that needs to be read globally could be set there as well. The global configuration properties are activated immediately. There are two different scopes for the store data, Global Scope and Node Scope.</td>
                     </tr><tr><td>Global Scope</td><td>Data stored in the global configuration that can be read by all nodes in the cluster.</td>
                     </tr><tr><td>Node Scope</td><td>Data that is node specific and can only be read within the same node.</td>
@@ -333,10 +333,10 @@ Since the 3.0 version there are three kind of processable services. Signers (use
 The main way of communicating with the SignServer is through HTTP (web server) interface. There is also a web services (SOAP WS) interface available but that uses a special binary format for encoding the requests and responses.
                     </p>
                     <p>
-The base component is called Worker which is assigned an id, optionally a name and a configuration. A sub component is a Processable which receives and processes requests. A Processable (optionally) have access to a cryptographic token (CryptoToken) in charge of managing the keys of a Processable. A CryptoToken can be either software or hardware based.
+The base component is called Worker which is assigned an ID, optionally a name and a configuration. A sub component is a Processable which receives and processes requests. A Processable (optionally) have access to a cryptographic token (CryptoToken) in charge of managing the keys of a Processable. A CryptoToken can be either software or hardware based.
                     </p>
                     <p>
-The applications i administrated through a command-line interface, where the properties and access control can be configured.
+The application is administrated through a command-line interface, where the properties and access control can be configured.
                     </p>
                     <p>
 One SignServer can have multiple services for different purposes.

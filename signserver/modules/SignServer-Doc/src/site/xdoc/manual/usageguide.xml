@@ -94,7 +94,7 @@ It reads all the configuration properties form a property file and depending on 
 Properties starting with id&lt;num&gt;.
                                 </td>
                                 <td>
-Will set the property to the value of the given id to the worker with the given id.
+Will set the property to the value of the given ID to the worker with the given id.
                                 </td>
                             </tr>
                             <tr>
@@ -102,7 +102,7 @@ Will set the property to the value of the given id to the worker with the given 
 Properties starting with name&lt;name&gt;.
                                 </td>
                                 <td>
-Will set the property to a worker with the given name. (If the name doesn't exists a unique id will be generated and assigned).
+Will set the property to a worker with the given name. (If the name doesn't exists a unique ID will be generated and assigned).
                                 </td>
                             </tr>
                             <tr>
@@ -110,7 +110,7 @@ Will set the property to a worker with the given name. (If the name doesn't exis
 Property keys containing GENID&lt;NUM&gt;, example WORKERGENID1 or GLOB. WORKERGENID1
                                 </td>
                                 <td>
-The SignServer will find a free unique id and assign substitute all GENID&lt;num&gt; with this id.
+The SignServer will find a free unique ID and assign substitute all GENID&lt;num&gt; with this id.
                                 </td>
                             </tr>
                             <tr>
@@ -239,7 +239,7 @@ Command used to extract archived data from database identified by the archive Id
                         </p>
                         <p>
 The Id depends on the worker, in case of the TSA is the TimeStampInfo serial number used.
-The data is stored with the same file title as the archive id and with the file extension 
+The data is stored with the same file title as the archive ID and with the file extension 
 depending on the type of item, for instance ".request" or ".response".
                         </p>
                         <p>
@@ -247,7 +247,7 @@ depending on the type of item, for instance ".request" or ".response".
 Used to extract all archived data requested from a specified IP address.
                         </p>
                         <p>
-All data is stored as separate files with the archive id as file title and the file
+All data is stored as separate files with the archive ID as file title and the file
 extension depending on the type of item.
                         </p>
                         <p>
@@ -255,7 +255,7 @@ extension depending on the type of item.
 Used to extract all archived data requested from a client by specified it's certificates serial number and  issuer DN.
                         </p>
                         <p>
-All data is stored as separate files with the archive id as file title and the file
+All data is stored as separate files with the archive ID as file title and the file
 extension depending on the type of item.
                         </p>
 			<p>
@@ -494,7 +494,7 @@ Sample output:
 2013-07-04 15:29:10,073 INFO  [VerifyLogCommand] The following nodes exists: [server1, server2]
 2013-07-04 15:29:10,074 INFO  [VerifyLogCommand] Start sequences: {server1=0, server2=0}
 2013-07-04 15:29:10,635 INFO  [SoftCryptoToken] Invalid authentication code. Token id=400.
-2013-07-04 15:29:10,716 INFO  [SoftCryptoToken] Activated Crypto Token with id 400.
+2013-07-04 15:29:10,716 INFO  [SoftCryptoToken] Activated Crypto Token with ID 400.
 2013-07-04 15:29:10,722 INFO  [VerifyLogCommand] Progress: node=server1 rowCount=3
 2013-07-04 15:29:10,722 INFO  [VerifyLogCommand] Last sequence number: 2
 2013-07-04 15:29:10,745 INFO  [VerifyLogCommand] Progress: node=server2 rowCount=11
@@ -588,7 +588,7 @@ path should be the path to the PKCS#11 shared library file.
                     <h4>Main window</h4>
                         <p>
 The SignServer Administration GUI main window consists of a menu bar, a toolbar,
-the working area and at the bottom a status bar. The working area constists of a
+the working area and at the bottom a status bar. The working area consists of a
 left and right part where the left is a list of all configured workers and the
 right shows details for the selected workers (if any).
                         </p>
@@ -800,7 +800,7 @@ index and the selected number of entries per page.
                         </p>
                         <p>
 <b>Generate key...</b>: Opens the key generation dialog. 
-Fill in the alias of the new key that should be generated as well as the key type (ie. RSA, DSA or ECDSA) as well as the the key specification (ie. key length such as "2048" for RSA and DSA or curve name such as "secp256r1" for ECDSA).
+Fill in the alias of the new key that should be generated as well as the key type (i.e. RSA, DSA or ECDSA) as well as the the key specification (i.e. key length such as "2048" for RSA and DSA or curve name such as "secp256r1" for ECDSA).
 For RSA keys, a custom public exponent can be expressed as part of the key specification by entering a value such as "2048 exp 5" or "2048 exp 0x10001", expressing the exponent value in decimal or hexadecimal form.
 After filling in a key alias a new row will automatically added which allows for generating more keys.
                         </p>
@@ -827,11 +827,11 @@ Note that installing certificates this way it is only possible to store the cert
                         </p>
 <ul>
     <li>Alias: The key alias</li>
-    <li>Type: The type of entry, ie. private key, secret key or trusted certificate</li>
+    <li>Type: The type of entry, i.e. private key, secret key or trusted certificate</li>
     <li>Creation date: If available the time and date the entry was created</li>
     <li>Certificate: If available, the subject DN of the end entity certificate. The View button opens a window where the certificates can be inspected.</li>
     <li>Key specification: If available, the key length or curve used</li>
-    <li>Key algorithm: If available, the algorithm used for the key, ie RSA, DSA, ECDSA or AES etc.</li>
+    <li>Key algorithm: If available, the algorithm used for the key, i.e. RSA, DSA, ECDSA or AES etc.</li>
     <li>Additional information might be available depending on the crypto token implementation.</li>
 </ul>
                         <p>
@@ -1110,7 +1110,7 @@ Here are some tips on configuration used to make the SignServer redundant. Usual
                 
                 <subsection name="HTTP access requires a load balancer">
                     <p>
-HTTP based workers like the TSA can be clustered using a load balancer accessing a health check servlet returning the state of the SignServer. The basic settings of the health check servlet can be configured in the build configuration file but more advanced settings are done in 'src/web/healthcheck/WEB-INF/web.xml'. With the default settings will the servlet return the text 'ALLOK' when accessing the URL http://localhost:8080/signserver/healthcheck/signserverhealth. If something is wrong with the sign server will an error message be sent back instead.
+HTTP based workers like the TSA can be clustered using a load balancer accessing a health check servlet returning the state of the SignServer. The basic settings of the health check servlet can be configured in the build configuration file but more advanced settings are done in 'src/web/healthcheck/WEB-INF/web.xml'. With the default settings will the servlet return the text 'ALLOK' when accessing the URL http://localhost:8080/signserver/healthcheck/signserverhealth. If something is wrong with SignServer, an error message will be sent back instead.
                     </p>
                     <p>
 The health check servlet can also be used to monitor the SignServer by creating a script that monitors the URL periodically for error messages.

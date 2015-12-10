@@ -413,7 +413,7 @@ public interface IExtendedCryptoToken extends ICryptoToken {
 
 	/**
 	 * Instructs the crypto token to generate a key stored in the device returning only
-	 * a alias reference to the key.
+	 * an alias reference to the key.
 	 *
 	 * @param keyAlg the key algorithm to generate, it's up to the caller to check that the crypto token
 	 * @param keySpec keySpec specification of the key, it's up to the caller to check that the crypto token
@@ -428,7 +428,7 @@ public interface IExtendedCryptoToken extends ICryptoToken {
 	/**
 	 * Method used to encrypt data using a key stored in the crypto token. This
 	 * method should mainly be used for symmetric encryption.
-	 * @param keyRef a alias reference to the key that should be used.
+	 * @param keyRef an alias reference to the key that should be used.
 	 * @param data the data to encrypt.
 	 * @return the encrypted data.
 	 * @throws CryptoTokenOfflineException if the token isn't online.
@@ -438,7 +438,7 @@ public interface IExtendedCryptoToken extends ICryptoToken {
 	/**
 	 * Method used to decrypt data using a key stored in the crypto token. This
 	 * method should mainly be used for symmetric encryption.
-	 * @param keyRef a alias reference to the key that should be used.
+	 * @param keyRef an alias reference to the key that should be used.
 	 * @param data the data to decrypt.
 	 * @return the encrypted data.
 	 * @throws CryptoTokenOfflineException if the token isn't online.
@@ -529,7 +529,7 @@ public interface IAuthorizer {
 	/**
 	 * Method called by the worker upon first call to the authenticator after instantiation.
 	 *
-	 * @param workerId id of worker.
+	 * @param workerId ID of worker.
 	 * @param config active worker configuration of worker
 	 * @param em the SignServer EntityManager
 	 * @throws SignServerException if unexpected error occurred during initialization.
@@ -575,7 +575,7 @@ avoided)
                     <pre>
 /**
 * Method setting a global configuration property. For node. prefix will the
-node id be appended.
+node ID be appended.
 * @param scope, one of the GlobalConfiguration.SCOPE_ constants
 * @param key of the property should not have any scope prefix, never null
 * @param value the value, never null.
@@ -587,7 +587,7 @@ key,java.lang.String value ) ;
 * @param scope, one of the GlobalConfiguration.SCOPE_ constants
 * @param key of the property should start with either glob. or node., never
 null
-* @return true if removal was successful, othervise false.
+* @return true if removal was successful, otherwise false.
 */
 public boolean removeProperty( java.lang.String scope,java.lang.String key )
 ;

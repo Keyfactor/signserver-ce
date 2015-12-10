@@ -87,7 +87,7 @@ Timestamps requests are served through a http service at the URL:
 'http://&lt;host name&gt;/signserver/process?workerId=&lt;worker Id&gt;'
                         </pre>
                         <p>
-If no 'worker Id' parameter is specified then will the id of 1 be used as default.
+If no 'worker Id' parameter is specified then will the ID of 1 be used as default.
                         </p>
                         <p>
 The time-stamp signer requires a time-stamp certificate with the extended key usage 'time-stamp' only. The extended key usage extension must be critical.
@@ -462,7 +462,7 @@ Default: not set (no custom image).
 These properties are ignored if ADD_VISIBLE_SIGNATURE is set to False.
                                     </p>
                                     <p>
-NOTE: in clustered environment it is more manageable and advised to specify image as base64 string, since image data will be stored in central database. Otherwise each node should contain copy of the image, and each image managed separately (ex: on image updates, or insertion of new image for different worker)
+NOTE: in clustered environment it is more manageable and advised to specify image as base64 string, since image data will be stored in central database. Otherwise each node should contain copy of the image, and each image managed separately (e.g. on image updates, or insertion of new image for different worker)
                                     </p>
                                 </td>
                             </tr>
@@ -1055,7 +1055,7 @@ The signer has the fully qualified class name: org.signserver.module.msauthcode.
                     </p>
                     <h4>Overview</h4>
                         <p>
-The signer signs portablable executable files such as Windows executables and shared libraries (.exe, .dll and .ocx etc) according to the Windows Authenticode Portable Executable Signature Format.
+The signer signs portable executable files such as Windows executables and shared libraries (.exe, .dll and .ocx etc) according to the Windows Authenticode Portable Executable Signature Format.
 The signature can optionally include a timestamp response from a TSA using the Authenticode format.
                         </p>
 
@@ -1318,7 +1318,7 @@ The XML validator validates the signature of XML documents. The certificate is c
                         </p>
 
                     <h4>Available Properties</h4>
-                        <p><b>VALIDATIONSERVICEWORKER</b> = Name or id of validation service worker for handling certificate validation</p>
+                        <p><b>VALIDATIONSERVICEWORKER</b> = Name or ID of validation service worker for handling certificate validation</p>
                         <p><b>RETURNDOCUMENT</b> = True if the response should contain the validated document</p>
                         <p><b>STRIPSIGNATURE</b> = True if the signature should be removed from the document if it is returned</p>
 
@@ -1419,7 +1419,7 @@ Dispatches the request to a worker based on a mapping from username and workerna
 The validation service framework is used to validate certificates from one or more issuers. It can be used to  have one central point of performing revokation statuses to simplify the integration of external PKIs within an enterprise.
                 </p>
                 <p>
-The validation service framework also provides a validation cache that can be used to increase performance for those cases a application does multiple lookups of the same certificate within a short period of time.
+The validation service framework also provides a validation cache that can be used to increase performance for those cases an application does multiple lookups of the same certificate within a short period of time.
                 </p>
                 <p>
 Out-of-the-Box there exists a DefaultValidationService that should satisfy most use cases but it's possible to develop a custom ValidationService if necessary. See the developer section for more details.
@@ -1470,13 +1470,13 @@ The validation service have three types of properties, general properties (that 
                         </p>
                         <p>
 <i>Validator properties:</i><br/>
-Validator properties is specified with the prefix of 'validator&lt;validatorId&gt;.' or 'val&lt;validatorId&gt;.' were validator Id should be an integer between 1 and 255. For instance, to specify the type of a validator with an id of 1 then specify 'val1.classpath=some.classpath.SomeClass'. This validator will be initialized with all its validator specific properties (with 'val&lt;id&gt;.' prefix removed) as well as the general ones.
+Validator properties is specified with the prefix of 'validator&lt;validatorId&gt;.' or 'val&lt;validatorId&gt;.' were validator Id should be an integer between 1 and 255. For instance, to specify the type of a validator with an ID of 1 then specify 'val1.classpath=some.classpath.SomeClass'. This validator will be initialized with all its validator specific properties (with 'val&lt;id&gt;.' prefix removed) as well as the general ones.
                         </p>
                         <p>
 <b>CLASSPATH</b> = Fully qualified class name of the validator that should be used. (Required for each configured validator)
                         </p>
                         <p>
-<i>Issuer properties:</i>  Issuer properties are specified as 'val&lt;val id&gt;.issuer&lt;issuer id&gt;.&lt;property&gt;' were issuer id is a positive integer between 1 and 255. All generic and validator specific properties (with the given validator id) will also be propagated to the specific issuer configuration.
+<i>Issuer properties:</i>  Issuer properties are specified as 'val&lt;val id&gt;.issuer&lt;issuer id&gt;.&lt;property&gt;' were issuer ID is a positive integer between 1 and 255. All generic and validator specific properties (with the given validator id) will also be propagated to the specific issuer configuration.
                         </p>
                         <p>
 <b>CERTCHAIN</b> = The certificate path of the CA certificates used to verify the certificate. Should be a appended BASE64 string. (Required for each configured issuer).
@@ -1487,7 +1487,7 @@ Here is an example configuration of a validation service to clarify things even 
                         <pre>
 # Set up the worker -> validation service wrapper
 WORKER1.IMPLEMENTATION_CLASS=org.signserver.validationservice .server.ValidationServiceWorker
-#Uncomment and set class path to custom validation service, othervise is default #used.
+#Uncomment and set class path to custom validation service, otherwise is default #used.
 #WORKER1.TYPE=
 
 # Name of Service (Optional)
@@ -1566,7 +1566,7 @@ Here is a list of available options:
 -hosts &lt;hosts&gt;                 		: A ',' separated string containing the hostnames of the validation service nodes. Ex 'host1.someorg.org,host2.someorg.org' (Required)
 -pem                    	       		: Certificate is in PEM format (Default).
 -port &lt;port&gt;                   		: Remote port of service (Default is 8080 or 8442 for SSL).
--service &lt;service-name&gt;        	: The name or id of the validation service to process request. (Required)
+-service &lt;service-name&gt;        	: The name or ID of the validation service to process request. (Required)
 -silent                        			: Don't produce any output, only return value.
 -truststore &lt;jks-file&gt;         		: Path to JKS truststore containing trusted CA for SSL Server certificates.(for HTTPS connections)
 -truststorepwd &lt;password&gt;      	: Password to unlock the truststore.
@@ -1583,8 +1583,8 @@ The following return values is used:
 4   : Certificate doesn't verify
 5   : CA Certificate have been revoked
 6   : CA Certificate is not yet valid
-7   : CA Certificate have expired.
-8   : Certificate have no valid certificate purpose.
+7   : CA Certificate have expired
+8   : Certificate have no valid certificate purpose
                    </pre>
 
                 </subsection>
@@ -2028,7 +2028,7 @@ Much information about the state of the TimeMonitor is available in the getstatu
                                 <b>Timings</b>: Prints the current time values from the TimeMonitor.
                             </li>
                             <li>
-                                <b>Configuration</b>: Prints the configuration values in the manager (not necesarly read by the TimeMonitor yet).
+                                <b>Configuration</b>: Prints the configuration values in the manager (not necessarily read by the TimeMonitor yet).
                             </li>
                             <li>
                                 <b>Last TimeMonitor log entries</b>: Prints the last log entries obtained from the last update from the TimeMonitor.
@@ -2038,7 +2038,7 @@ Much information about the state of the TimeMonitor is available in the getstatu
                             Sample output:
                         </p>
                         <source><![CDATA[
-Status of Worker with id 300 (TimeMonitorManager) is:
+Status of Worker with ID 300 (TimeMonitorManager) is:
    Worker status : Active
    Time monitor  : Running
    Last update   : 2014-08-26 11:43:39,176

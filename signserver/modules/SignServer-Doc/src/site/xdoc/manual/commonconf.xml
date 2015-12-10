@@ -119,7 +119,7 @@ case for the XMLValidator which delegates the validation of the certificate to
 a CertValidator. If the CertValidator had a RemoteAddressAuthorizer allowing
 access from "null" then the XMLValidator would be able to use it. To restrict
 users from using the CertValidator (indirectly through the XMLValidator) an
-Autorizer could be configured for the XMLValidator.
+Authorizer could be configured for the XMLValidator.
                         </p>
                         <p>
 <b>Logging:</b> This authorizer will add the remote IP address to the log field AUTHORIZED_ADDRESS.
@@ -255,7 +255,7 @@ See also the section about all <a href="complete.en.html#Archivers">available Ar
             <section name="Accounter">
                 <p>
 An Accounter is responsible for somehow charging a client for a successful 
-request or to deny the requst if the client has insufficient funds.
+request or to deny the request if the client has insufficient funds.
                 </p>
                 <p>
 When a request has been processed, and if the worker marked the request as 

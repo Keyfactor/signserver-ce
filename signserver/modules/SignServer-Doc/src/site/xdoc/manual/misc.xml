@@ -410,7 +410,7 @@ Logged when a new key-pair was generated using the built-in key generation comma
 <b>WORKER_ID:</b> The ID of the worker.<br/>
 <b>KEYALIAS:</b> The new key alias.<br/>
 <b>CRYPTOTOKEN:</b> Name of the configured crypto worker or the name or ID of the current worker if no separate crypto worker is used.<br/>
-<b>KEYSPEC:</b> The key specification (ie. RSA/DSA bit length or EC curve).<br/>
+<b>KEYSPEC:</b> The key specification (i.e. RSA/DSA bit length or EC curve).<br/>
 <b>KEYALG:</b> The key algorithm.
                                     </p>
                                     <p>
@@ -568,7 +568,7 @@ databaseprotection.version.0 = 2
 
                         <p>
 Note: each SignServer node writing to the audit log needs to use different node IDs. By default the hostname is used. If multiple instances 
-are running from the same host set the node id manually in conf/cesecore.properties as cluster.nodeid.
+are running from the same host set the node ID manually in conf/cesecore.properties as cluster.nodeid.
                         </p>
                         <p>
 If enableverify is set to true, all individual log entries that are displayed 

@@ -297,7 +297,7 @@ try {
                                         <li><b>HTTP 401</b> (Unauthorized): The worker requires user authentication</li>
                                         <li><b>HTTP 404</b> (Not Found): The requested workerName or workerId does not represent an existing worker</li>
                                         <li><b>HTTP 413</b> (Request Entity Too Large): The data field or uploaded file is too large. See the HTTP_MAX_UPLOAD_SIZE global configuration property.</li>
-                                        <li><b>HTTP 500</b> (Internal Server Error): There was an internal error when processing the request. Typically indicating an configuration problem or unexpected error at the server side.</li>
+                                        <li><b>HTTP 500</b> (Internal Server Error): There was an internal error when processing the request. Typically indicating a configuration problem or unexpected error at the server side.</li>
                                         <li><b>HTTP 503</b> (Service Unavailable): The worker is not active, its crypto token is not activated or similar</li>
                                     </ul>
                                 </td>
@@ -309,7 +309,7 @@ try {
                                 <td>Response content:</td>
                                 <td>The signed document for signers.<br/>
                                 A string starting with "VALID" or "INVALID" for document validators.
-                                <sup>*</sup>Note to integrators: In future versions of SignServer there might be more information added after VALID/INVALID, such as a ;-separated list of addtional information or more lines with information.<br/>
+                                <sup>*</sup>Note to integrators: In future versions of SignServer there might be more information added after VALID/INVALID, such as a ;-separated list of additional information or more lines with information.<br/>
                                 A ;-separated string containing
                                 validation status code (see list below), valid purposes, status message, revocation reason (-1 if not revoked), and revocation date (empty when not revoked)
                                 for certificate validators.
@@ -411,7 +411,7 @@ try {
                                         <li><b>HTTP 401</b> (Unauthorized): The worker requires user authentication</li>
                                         <li><b>HTTP 404</b> (Not Found): The requested workerName or workerId does not represent an existing worker</li>
                                         <li><b>HTTP 413</b> (Request Entity Too Large): The data field or uploaded file is too large</li> 
-                                        <li><b>HTTP 500</b> (Internal Server Error): There was an internal error when processing the request. Typically indicating an configuration problem or unexpected error at the server side.</li>
+                                        <li><b>HTTP 500</b> (Internal Server Error): There was an internal error when processing the request. Typically indicating a configuration problem or unexpected error at the server side.</li>
                                         <li><b>HTTP 503</b> (Service Unavailable): The worker is not active, its crypto token is not activated or similar</li>
                                     </ul>
                                 </td>
@@ -586,7 +586,7 @@ Request a document to be signed by SignServer
                    waiting for the first to succeed. Default unless
                    username is provided or -onefirst provided.
  -threads          Number of threads for sending the requests. Only
-                   allowed in batch mode, ie when indir and outdir
+                   allowed in batch mode, i.e. when indir and outdir
                    are specified. Default: 1.
  -truststore       Keystore with trusted certificates to use with
                    HTTPS.
@@ -744,7 +744,7 @@ usage: Usage: java -jar validate.jar &lt;options&gt;
                                 8442 for SSL).
  -protocol &lt;protocol&gt;           Protocol to use, either WEBSERVICES or
                                 HTTP. Default: WEBSERVICES.
- -service &lt;service-name&gt;        The name or id of the validation service
+ -service &lt;service-name&gt;        The name or ID of the validation service
                                 to process request. (Required)
  -silent                        Don't produce any output, only return
                                 value.
@@ -762,8 +762,8 @@ The following values is returned by the program that can be used when scripting.
    4   : Certificate doesn't verify
    5   : CA Certificate have been revoked
    6   : CA Certificate is not yet valid
-   7   : CA Certificate have expired.
-   8   : Certificate have no valid certificate purpose.
+   7   : CA Certificate have expired
+   8   : Certificate have no valid certificate purpose
 
 Sample usages:
 a) validatecertificate -service CertValidationWorker -hosts localhost -cert

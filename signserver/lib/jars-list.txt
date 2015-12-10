@@ -42,7 +42,6 @@ c121a8b0afc2f4c182ee3af65f8c61132fb126870b43b9e94148ea1c797d59dc  ./ext/ext/jcom
 df4a0c7f8cf272f358241864c175cb8a3d1837b0dfe41b7331e20967e243e644  ./ext/ext/jdom-b9.jar;                                  "Velocity"
 4a2a1eb6d188a43e1e97bb7c7d204a5bdd1aaec0d82203cf1b1156ff697d7f8e  ./ext/ext/jfreechart-1.0.9.jar;                         "JFreeChart"
 e142af87ed5c390486afd915b556357162905a01eb3bf94b6cd5c507933c6679  ./ext/ext/jline-0.9.94.jar;                             "JLine"
-f31c86f0b0ea14191774e3dd493abc4dff8cdd2ba6db6642f8c0f47b35f5a241  ./ext/ext/jsch-0.1.32.jar;                              "Jsch"
 90a8e1603eeca48e7e879f3afbc9560715322985f39a274f6f6070b43f9d06fe  ./ext/ext/junit-4.11.jar;                               "JUnit"
 375e70b97500b23f5ce79f65de6576452c4f8062b48b96afc83ddf1f1c35a1c2  ./ext/ext/nekohtml.jar;                                 "Velocity"
 c4b9f13c55d742f4b46b0c48fd18bbed3448765fdc83a46bf86ac7db32f85469  ./ext/ext/servlet-2.3.jar;                              "Java API for Servlets"

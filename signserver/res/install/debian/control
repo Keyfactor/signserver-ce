@@ -1,7 +1,7 @@
 Source: signserver3.3
 Section: misc
 Priority: optional
-Maintainer: Markus Kilås <markus@primekey.se>
+Maintainer: Markus KilÃ¥s <markus@primekey.se>
 Build-Depends: ant (>= 1.8.0), ant-optional, debhelper (>= 5),
  default-jdk (>= 1.6),
  glassfish-appserv (>=1:2ur2-b04-6),
@@ -24,7 +24,6 @@ Build-Depends: ant (>= 1.8.0), ant-optional, debhelper (>= 5),
  libjdom1-java,
  libjfreechart-java,
  libjline-java,
- libjsch-java,
  liblog4j1.2-java,
  libnekohtml-java,
  libquartz-java,

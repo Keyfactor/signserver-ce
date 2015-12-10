@@ -25,7 +25,6 @@ Plan is to make a binary package of the "not found" packages and depend on that 
 1818662   20 -rw-r--r--   1 han      han         20385 May  1 22:40 ./ext/ejb/jboss-ejb3x.jar			libjboss-ejb3x-java 4.2.2.GA-5	libjboss-ejb3x-java (4.2.3.GA-1)
 1524092  128 -rw-r--r--   1 han      han        124724 May  1 22:40 ./ext/xml-apis.jar				libjaxp1.3-java	1.3.04-3	libjaxp1.3-java (1.3.04-5ubuntu2)
 1524095  124 -rw-r--r--   1 han      han        121070 May  1 22:40 ./ext/junit-3.8.1.jar			junit 3.8.2-1			junit (3.8.2-4)
-1524091  172 -rw-r--r--   1 han      han        171658 May  1 22:40 ./ext/jsch-0.1.32.jar			libjsch-java 0.1.37-3		libjsch-java (0.1.42-1build1)
 1524096  140 -rw-r--r--   1 han      han        137410 May  1 22:40 ./ext/jdom-b9.jar				libjdom1-java(1.0-4)		libjdom1-java (1.1.1+dfsg-1)
 1966304   72 -rw-r--r--   1 han      han         67115 May  1 22:40 ./ext/velocity/nekohtml.jar			libnekohtml-java 0.9.5+dfsg-1.1	libnekohtml-java (1.9.13-1)
 1966301  128 -rw-r--r--   1 han      han        124724 May  1 22:40 ./ext/velocity/xml-apis.jar			libxalan2-java 2.7.1-2		libxalan2-java (2.7.1-5ubuntu1)

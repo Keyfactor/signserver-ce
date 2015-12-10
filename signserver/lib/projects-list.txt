@@ -17,7 +17,6 @@
 "JBoss Java EE API";          "LGPLv2.1+";                                     "http://www.jboss.org";                                 "Used at compile-time to be able to compile without an application server.";  "No.";
 "JFreeChart";                 "LGPLv2.1+";                                     "http://jfree.org";                                     "Used for plotting diagrams in performance test.";  "No.";
 "JLine";                      "BSD";                                           "http://jline.sourceforge.net";                         "Dependency of EJBCA.";                "No.";
-"Jsch";                       "BSD";                                           "http://www.jcraft.com/jsch";                           "Used to publish web site over SSH.";  "No.";
 "Jsign";                      "Apache 2.0";                                    "https://ebourg.github.io/jsign";                       "Used by MSAuthCodeSigner to sign Portable Executables";  "Yes, support for overriding timestamp client implementation. Various minor improvments. Patches has been contributed to upstream.";
 "JUnit";                      "Eclipse Public License";                        "http://junit.org";                                     "Core dependency used for automated testing.";  "No.";
 "Log4j";                      "Apache 2.0";                                    "http://logging.apache.org/log4j";                      "Core dependency used for producing logs." ;  "No.";

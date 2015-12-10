@@ -34,7 +34,7 @@ import org.signserver.statusrepo.common.StatusName;
  * NONE, PAUSE or STOP.
  * 
  *
- * $Id$
+ * @version $Id$
  */
 public class StatusReadingLocalComputerTimeSource implements ITimeSource {
 

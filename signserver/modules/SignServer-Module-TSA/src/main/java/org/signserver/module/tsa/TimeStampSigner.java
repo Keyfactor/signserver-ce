@@ -264,7 +264,6 @@ public class TimeStampSigner extends BaseSigner {
     private boolean validChain = true;
 
     private int maxSerialNumberLength;
-    private String serialNumberError;
     
     // we restrict the allowed serial number size limit to between 64 and 160 bits
     // note: the generated serial number will always be positive
@@ -288,6 +287,8 @@ public class TimeStampSigner extends BaseSigner {
             final EntityManager workerEntityManager) {
         super.init(signerId, config, workerContext, workerEntityManager);
 
+        configErrors = new LinkedList<String>();
+
         // Overrides the default worker logger to be this worker
         //  implementation's default instead of the WorkerSessionBean's
         if (config.getProperty("WORKERLOGGER") == null) {
@@ -303,7 +304,7 @@ public class TimeStampSigner extends BaseSigner {
                         + timeSource.getClass().getName());
             }
         } catch (SignServerException e) {
-            LOG.error("Could not create time source: " + e.getMessage());
+            configErrors.add("Could not create time source: " + e.getMessage());
         }
         
         // Get the signature algorithm
@@ -318,13 +319,13 @@ public class TimeStampSigner extends BaseSigner {
         final String policyId = config.getProperties().getProperty(DEFAULTTSAPOLICYOID);
         
         try {
-        	if (policyId != null) {
-        		defaultTSAPolicyOID = new ASN1ObjectIdentifier(policyId);
-        	} else {
-        		LOG.error("Error: No default TSA Policy OID have been configured");
-        	}
+            if (policyId != null) {
+                defaultTSAPolicyOID = new ASN1ObjectIdentifier(policyId);
+            } else {
+                configErrors.add("No default TSA policy OID has been configured");
+            }
         } catch (IllegalArgumentException iae) {
-        	LOG.error("Error: TSA Policy OID " + policyId + " is invalid");
+            configErrors.add("TSA policy OID " + policyId + " is invalid: " + iae.getLocalizedMessage());
         }
        
         if (LOG.isDebugEnabled()) {
@@ -344,6 +345,7 @@ public class TimeStampSigner extends BaseSigner {
         final String maxSerialNumberLengthProp = config.getProperty(MAXSERIALNUMBERLENGTH);
         
         if (maxSerialNumberLengthProp != null) {
+            String serialNumberError = null;
             try {
         	maxSerialNumberLength = Integer.parseInt(maxSerialNumberLengthProp);
             } catch (NumberFormatException e) {
@@ -358,6 +360,10 @@ public class TimeStampSigner extends BaseSigner {
                     serialNumberError = "Maximum serial number length specified is too small: " + maxSerialNumberLength;
                 }
             }
+
+            if (serialNumberError != null) {
+                configErrors.add(serialNumberError);
+            }
         }
         
         includeStatusString = Boolean.parseBoolean(config.getProperty(INCLUDESTATUSSTRING, "true"));
@@ -366,7 +372,7 @@ public class TimeStampSigner extends BaseSigner {
         tsaNameFromCert = Boolean.parseBoolean(config.getProperty(TSA_FROM_CERT, "false"));
         
         if (tsaName != null && tsaNameFromCert) {
-            LOG.error("Error: Can not set " + TSA_FROM_CERT + " to true and set " + TSA + " worker property at the same time");
+            configErrors.add("Error: Can not set " + TSA_FROM_CERT + " to true and set " + TSA + " worker property at the same time");
         }
         
         includeSigningTimeAttribute = Boolean.valueOf(config.getProperty(INCLUDESIGNINGTIMEATTRIBUTE, "true"));
@@ -374,7 +380,9 @@ public class TimeStampSigner extends BaseSigner {
         ordering = Boolean.parseBoolean(config.getProperty(ORDERING, "false"));
         includeOrdering = Boolean.parseBoolean(config.getProperty(INCLUDEORDERING, "false"));
         
-        configErrors = new LinkedList<String>();
+        if (ordering && !includeOrdering) {
+            configErrors.add("INCLUDEORDERING can not be set to \"false\" when ORDERING is set to \"true\"");
+        }
         
         if (hasSetIncludeCertificateLevels && includeCertificateLevels == 0) {
             configErrors.add("Illegal value for property " + WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS + ". Only numbers >= 1 supported.");
@@ -419,6 +427,10 @@ public class TimeStampSigner extends BaseSigner {
             throw exception;
         }
         
+        if (!configErrors.isEmpty()) {
+            throw new SignServerException("Worker is misconfigured");
+        }
+
         if (!validChain) {
             LOG.error("Certificate chain not correctly configured");
             throw new CryptoTokenOfflineException("Certificate chain not correctly configured");
@@ -1007,37 +1019,7 @@ public class TimeStampSigner extends BaseSigner {
         	}
         }
 
-        final String serialNumberError = getSerialNumberError();
-
-        if (serialNumberError != null) {
-            result.add(serialNumberError);
-        }
-        
-        // check default policy
-        if (defaultTSAPolicyOID == null) {
-            result.add("No default TSA policy OID has been configured, or is invalid");
-        }
-
-        // check TSA naming properties conflict
-        if (tsaName != null && tsaNameFromCert) {
-            result.add("Can not set " + TSA_FROM_CERT + " to true and set " + TSA + " worker property at the same time");
-        }
-
-        if (ordering && !includeOrdering) {
-            result.add("INCLUDEORDERING can not be set to \"false\" when ORDERING is set to \"true\"");
-        }
-        
         return result;
     }
-    
-    /**
-     * Get serial number error
-     * We run this stand-alone from the unit test
-     * 
-     */
-    protected String getSerialNumberError() {
-        return serialNumberError;
-    }
-    
-    
+
 }

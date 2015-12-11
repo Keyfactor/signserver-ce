@@ -1112,7 +1112,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
         final List<String> errors = status.getFatalErrors();
         
         assertTrue("Should mention missing default policy OID: " + errors,
-                errors.contains("No default TSA policy OID has been configured, or is invalid"));
+                errors.contains("No default TSA policy OID has been configured"));
         
         // restore
         workerSession.setWorkerProperty(WORKER1, TimeStampSigner.DEFAULTTSAPOLICYOID, "1.2.3");
@@ -1129,10 +1129,10 @@ public class TimeStampSignerTest extends ModulesTestCase {
         workerSession.reloadConfiguration(WORKER1);
         
         final WorkerStatus status = workerSession.getStatus(WORKER1);
-        final List<String> errors = status.getFatalErrors();
+        final String errors = status.getFatalErrors().toString();
         
         assertTrue("Should mention missing default policy OID: " + errors,
-                errors.contains("No default TSA policy OID has been configured, or is invalid"));
+                errors.contains("TSA policy OID foobar is invalid"));
         
         // restore
         workerSession.setWorkerProperty(WORKER1, TimeStampSigner.DEFAULTTSAPOLICYOID, "1.2.3");
@@ -1157,6 +1157,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
      */
     @Test
     public void test32ExplicitTSAName() throws Exception {
+        workerSession.removeWorkerProperty(WORKER1, TimeStampSigner.TSA_FROM_CERT);
         workerSession.setWorkerProperty(WORKER1, TimeStampSigner.TSA, "CN=test");
         workerSession.reloadConfiguration(WORKER1);
         
@@ -1179,6 +1180,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
      */
     @Test
     public void test34TSANameFromCert() throws Exception {
+       workerSession.removeWorkerProperty(WORKER1, TimeStampSigner.TSA);
        workerSession.setWorkerProperty(WORKER1, TimeStampSigner.TSA_FROM_CERT, "true");
        workerSession.reloadConfiguration(WORKER1);
        
@@ -1271,6 +1273,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
     @Test
     public void test38orderingDefault() throws Exception {
         // reset ORDERING property
+        workerSession.removeWorkerProperty(WORKER1, TimeStampSigner.INCLUDEORDERING);
         workerSession.removeWorkerProperty(WORKER1, TimeStampSigner.ORDERING);
         workerSession.reloadConfiguration(WORKER1);
         
@@ -1295,6 +1298,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
     public void test39orderingTrue() throws Exception {
         // reset ORDERING property
         workerSession.setWorkerProperty(WORKER1, TimeStampSigner.ORDERING, "true");
+        workerSession.setWorkerProperty(WORKER1, TimeStampSigner.INCLUDEORDERING, "true");
         workerSession.reloadConfiguration(WORKER1);
         
         final byte[] res = getResponseData(WORKER1);
@@ -1324,6 +1328,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
     @Test
     public void test40orderingFalse() throws Exception {
         // reset ORDERING property
+        workerSession.removeWorkerProperty(WORKER1, TimeStampSigner.INCLUDEORDERING);
         workerSession.setWorkerProperty(WORKER1, TimeStampSigner.ORDERING, "false");
         workerSession.reloadConfiguration(WORKER1);
         

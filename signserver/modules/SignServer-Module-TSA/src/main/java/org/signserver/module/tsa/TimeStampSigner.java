@@ -372,7 +372,7 @@ public class TimeStampSigner extends BaseSigner {
         tsaNameFromCert = Boolean.parseBoolean(config.getProperty(TSA_FROM_CERT, "false"));
         
         if (tsaName != null && tsaNameFromCert) {
-            configErrors.add("Error: Can not set " + TSA_FROM_CERT + " to true and set " + TSA + " worker property at the same time");
+            configErrors.add("Can not set " + TSA_FROM_CERT + " to true and set " + TSA + " worker property at the same time");
         }
         
         includeSigningTimeAttribute = Boolean.valueOf(config.getProperty(INCLUDESIGNINGTIMEATTRIBUTE, "true"));
@@ -386,6 +386,12 @@ public class TimeStampSigner extends BaseSigner {
         
         if (hasSetIncludeCertificateLevels && includeCertificateLevels == 0) {
             configErrors.add("Illegal value for property " + WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS + ". Only numbers >= 1 supported.");
+        }
+
+        // Print the errors for troubleshooting
+        if (!configErrors.isEmpty()) {
+            LOG.info("Configuration errors for worker " + workerId + ": \n"
+                    + configErrors.toString());
         }
     }
 

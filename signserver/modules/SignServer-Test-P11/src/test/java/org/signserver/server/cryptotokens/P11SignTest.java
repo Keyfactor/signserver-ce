@@ -952,7 +952,7 @@ public class P11SignTest extends ModulesTestCase {
             setCMSSignerProperties(workerId, false);
             workerSession.reloadConfiguration(workerId);
             
-            // Generate a key with a custom RSA public exponent
+            // Generate a key given a key spec
             workerSession.generateSignerKey(workerId, "RSA", spec, 
                                             "keywithexponent", pin.toCharArray());
             final Collection<KeyTestResult> testResults =
@@ -983,19 +983,20 @@ public class P11SignTest extends ModulesTestCase {
     }
     
     /**
-     * Test generating a key with a specified public exponent in the spec
+     * Test generating a key with a custom specified public exponent in the spec.
+     *
      * @throws Exception 
      */
-    public void testGenerateKeyWithPublicExponentDefault() throws Exception {
+    public void testGenerateKeyWithPublicExponentCustom() throws Exception {
         testGenerateKeyWithPublicExponent("2048 exp 5", BigInteger.valueOf(5));
     }
     
     /**
-     * Test generateing a key with a custom specified public exponent
+     * Test generateing a key with the default public exponent.
      * 
      * @throws Exception 
      */
-    public void testGenerateKeyWithPublicExponentCustom() throws Exception {
+    public void testGenerateKeyWithPublicExponentDefault() throws Exception {
         testGenerateKeyWithPublicExponent("2048", BigInteger.valueOf(0x10001));
     }
     

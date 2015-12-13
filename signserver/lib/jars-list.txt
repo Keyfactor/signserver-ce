@@ -33,7 +33,6 @@ c9e8b55e373482e8bf62efe6a5d2cc9cfc7f2c1c830d42445f63fda4e3819e6d  ./ext/DeployTo
 79639ca6f14ccc841ad044a04ba7f30a9e6bd21c37649ff7847de546df53e603  ./ext/DeployTools-Common-1.1-sources.jar;               "SignServer"
 e1e4ecf5624b9116de28e225c256e5da42cb97461c3ae21b8add27020096ff49  ./ext/DeployTools-Maven-1.1.2.jar;                      "SignServer"
 72f135fa2af5792d51c6dc3ea6c7311e364c31f45b4a50295ecaf9858a3d895f  ./ext/DeployTools-Maven-1.1-sources.jar;                "SignServer"
-bc3e42723c2d9b070751c0070b93d7eeed9a35e4af04adc4a7db91001e25e22d  ./ext/ehcache-core-2.3.2.jar;                           "EHCache"
 df7172ddb6bc9944acb26255e645081528853cdec36039a2d9d3369566dfeb78  ./ext/ext/activation.jar;                               "Velocity"
 66fdef91e9739348df7a096aa384a5685f4e875584cce89386a7a47251c4d8e9  ./ext/ext/hamcrest-core-1.3.jar;                        "Hamcrest"
 a05fde33f991da0e52b3b580d46062834505c2fe28c362d32868cf497bfd3bfb  ./ext/ext/jboss-ejb3x.jar;                              "JBoss Java EE API"

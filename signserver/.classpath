@@ -150,7 +150,6 @@
 	<classpathentry kind="lib" path="lib/ext/cesecore/commons-configuration-1.5.jar"/>
 	<classpathentry kind="lib" path="lib/ext/cesecore/commons-digester-1.8.jar"/>
 	<classpathentry kind="lib" path="lib/ext/cesecore/commons-el-1.0.jar"/>
-	<classpathentry kind="lib" path="lib/ext/cesecore/ehcache-core-2.3.2.jar"/>
 	<classpathentry kind="lib" path="lib/ext/cesecore/jackson-all-1.7.0.jar"/>
 	<classpathentry kind="lib" path="lib/ext/cesecore/ldap.jar"/>
 	<classpathentry kind="lib" path="lib/ext/commons-io-1.4.jar"/>

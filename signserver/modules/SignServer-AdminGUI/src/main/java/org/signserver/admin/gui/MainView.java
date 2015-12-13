@@ -157,6 +157,10 @@ public class MainView extends FrameView {
         super(app);
 
         initComponents();
+
+        // Set the application icon
+        ResourceMap resourceMap = getResourceMap();
+        getFrame().setIconImage(resourceMap.getImageIcon("applicationIcon").getImage());
         
         final int rowHeights = new JComboBox/*<String>*/().getPreferredSize().height;
 
@@ -356,7 +360,6 @@ public class MainView extends FrameView {
 
         // status bar initialization - message timeout, idle icon and busy
         // animation, etc
-        ResourceMap resourceMap = getResourceMap();
         int messageTimeout = resourceMap.getInteger("StatusBar.messageTimeout");
         messageTimer = new Timer(messageTimeout, new ActionListener() {
             

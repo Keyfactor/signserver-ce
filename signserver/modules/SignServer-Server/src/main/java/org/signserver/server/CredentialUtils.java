@@ -73,12 +73,22 @@ public class CredentialUtils {
                 LOG.debug("Password-authentication: true");
             }
 
-            final String decoded[] = new String(Base64.decode(
-                    authorization.split("\\s")[1])).split(":", 2);
-
-            credentialPassword = new UsernamePasswordClientCredential(
-                    decoded[0], decoded[1]);
-            context.put(RequestContext.CLIENT_CREDENTIAL_PASSWORD, credentialPassword);
+            final String[] parts = authorization.split("\\s");
+            if (parts.length < 2) {
+                LOG.warn("Malformed HTTP Authorization header");
+                credentialPassword = null;
+            } else {
+                final String decoded[] = new String(Base64.decode(
+                        parts[1])).split(":", 2);
+                if (decoded.length < 2) {
+                    LOG.warn("Malformed HTTP Authorization header");
+                    credentialPassword = null;
+                } else {
+                    credentialPassword = new UsernamePasswordClientCredential(
+                            decoded[0], decoded[1]);
+                    context.put(RequestContext.CLIENT_CREDENTIAL_PASSWORD, credentialPassword);
+                }
+            }
         } else {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Password-authentication: false");

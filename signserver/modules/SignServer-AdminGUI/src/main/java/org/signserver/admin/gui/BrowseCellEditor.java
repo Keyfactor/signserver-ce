@@ -54,8 +54,19 @@ class BrowseCellEditor extends DefaultCellEditor {
 
     private void customEditorButtonActionPerformed() {
         stopCellEditing();
-        File currentFile = new File((String) table.getValueAt(row, column));
-        chooser.setSelectedFile(currentFile);
+        final String currentFile = (String) table.getValueAt(row, column);
+        if (currentFile != null && !currentFile.isEmpty()) {
+            chooser.setSelectedFile(new File(currentFile));
+        } else {
+            // Workaround for missing features/bug in JFileChooser when
+            // trying to de-select a file. Without the multiple setSelectedFile
+            // the previous file will stay selected without it being possible
+            // to click OK
+            File currentDir = chooser.getCurrentDirectory();
+            chooser.setSelectedFile(currentDir);
+            chooser.setSelectedFile(new File(""));
+            chooser.setCurrentDirectory(currentDir);
+        }
         final int result;
         if (chooser.getDialogType() == JFileChooser.OPEN_DIALOG) {
             result = chooser.showOpenDialog(null);

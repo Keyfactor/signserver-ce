@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.signserver</groupId>
         <artifactId>SignServer-Modules</artifactId>
-        <version>3.7.1-beta1</version>
+        <version>3.7.1-SNAPSHOT</version>
     </parent>
     <artifactId>SignServer-Test-Performance</artifactId>
     <name>SignServer-Test-Performance</name>

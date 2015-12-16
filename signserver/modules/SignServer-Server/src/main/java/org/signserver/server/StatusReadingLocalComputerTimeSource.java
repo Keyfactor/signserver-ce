@@ -143,18 +143,14 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
                             // Handle leap second strategy STOP
                             if (leapSecondHandlingStrategy == LeapSecondHandlingStrategy.STOP 
                                     && potentialLeap) {
-                                if (LOG.isDebugEnabled()) {
-                                    LOG.debug("Stopping issuance");
-                                }
+                                LOG.info("Stopping issuance");
                                 result = null;
                             } else {
 
                                 for (int i = 0; i < 6 && potentialLeap; i++) {
                                         // sleep for the amount of time nessesary to skip over the leap second
                                         try {
-                                                if (LOG.isDebugEnabled()) {
-                                                    LOG.debug("Waiting for leapsecond to pass");
-                                                }
+                                                LOG.info("Waiting for leapsecond to pass");
 
                                                 pause();
 

@@ -1,3 +1,65 @@
+SignServer 3.7.1, 2015-12-31
+----------------------------
+
+** Bug
+    * [DSS-643] - SHA256withRSAandMGF1 signature algorithm with different casings gives invalid signature
+    * [DSS-833] - NPE in genCertificateRequest if worker is missing a CryptoToken
+    * [DSS-955] - Old text about Acrobat Reader and Linux on PDF signing demo page
+    * [DSS-957] - Confusing error message when trying to upload empty certificate file
+    * [DSS-960] - SIGNSERVER_HOME/bin can not be put in PATH
+    * [DSS-964] - AdminCLI prints info-level messages about IMPLICITLYCA not being set
+    * [DSS-1003] - Refreshes workers when importing certificate to token
+    * [DSS-1012] - TimeMonitor Configuration: enter key after value makes value invalid
+    * [DSS-1015] - Username/password not accepted if client certificate presented
+    * [DSS-1016] - Copyright on web site says 2007-2015 however according to JIRA we had a release in 2006
+    * [DSS-1018] - Trying to override a request property when it is not allowed gives Internal Server Error
+    * [DSS-1022] - Incorrect CyptoToken Configuration for SLOTLABELTYPE does not produce appropriate error
+    * [DSS-1035] - Previous Santuario JAR not removed after upgrade
+    * [DSS-1039] - Incorrect worker logger property gives HTTP error 400
+    * [DSS-1047] - No error message in GUI when local connection to JBoss 7 fails
+    * [DSS-1050] - Generate CSR dialog shows the key alias for next key as 'null'
+    * [DSS-1051] - getSignServerHome() in ModulesTestCase will not always give an absolute path
+    * [DSS-1060] - Admin CLI getstatus command does not list services
+    * [DSS-1066] - Fix image on web page not using HTTPS
+    * [DSS-1070] - AdminGUI prints info-level messages about IMPLICITLYCA not being set
+    * [DSS-1071] - Bundled jsch can not be used to publish site
+    * [DSS-1079] - The FirstActiveDispatcher logs using the dispatchees fields
+    * [DSS-1087] - signclient doesn't find its JAR if there is a version number in the file name
+    * [DSS-1091] - Security issue
+    * [DSS-1092] - Regression: Renewing keys for multiple workers at once does not fully work in GUI
+    * [DSS-1093] - File not properly selected in open dialog when installing certificate in some situations
+    * [DSS-1095] - Sample/test ECDSA certificate expired Nov 15, 2015
+    * [DSS-1097] - TimeStampSigner does not refuse to sign on incorrect configuration
+    * [DSS-1098] - ArrayIndexOutOfBoundsException on syntactically incorrect HTTP auth header
+
+** Improvement
+    * [DSS-427] - Support for HTTP basic auth in SODProcessServlet
+    * [DSS-849] - Client CLI commands using HTTP should output the HTTP status message for errors
+    * [DSS-897] - Make it possible to override workerName in the request by specifying it in URL also for SODProcessServlet
+    * [DSS-919] - TimeStamp CLI command should output the status of the response by default
+    * [DSS-967] - Support for large files in Client CLI signdocument (HTTP)
+    * [DSS-994] - Increase log level for leapsecond handling
+    * [DSS-1014] - Use the favicon as AdminGUI icon
+    * [DSS-1025] - Keep connection dialog open even if no 'Local SignServer' is available
+    * [DSS-1031] - Improved language in TimeMonitor manual
+    * [DSS-1053] - Improved language in the manual
+    * [DSS-1072] - Make system logging JUnit tests check that SIGNSERVER_NODEID is available both on server and client side
+    * [DSS-1088] - Increase performance by replacing expensive call in GenericProcessServlet
+    * [DSS-1089] - Increase performance by eliminating extra call to obtain worker when checking certificate validity
+
+** New Feature
+    * [DSS-732] - Installation instructions on WildFly 9
+    * [DSS-971] - Add support for key generation with custom RSA public exponent
+    * [DSS-998] - Java Jarsign support for code signing
+    * [DSS-1024] - Add sample TLS keystore and truststore for demo or test setups
+
+** Task
+    * [DSS-733] - Try compiling and running on JDK8
+    * [DSS-1040] - Update site publishing script to use the new signserver.org server
+    * [DSS-1073] - Update link to signserver.org from public web to use HTTPS
+    * [DSS-1078] - Remove the unused ehcache library
+
+
 SignServer 3.7.0, 2015-09-23
 ----------------------------
 
@@ -20,8 +82,6 @@ SignServer 3.7.0, 2015-09-23
     * [DSS-996] - JUnit test test01GetStatusExisting fails randomly
     * [DSS-1000] - Some XMLValidatorTests starting to fail: curve unknown (to sun.security.ec)
     * [DSS-1007] - Unable to make changes in the Key renewal dialog after a failure
-
-
 
 ** Improvement
     * [DSS-386] - Change unit tests to use more user friendly keystores than the SoftCryptoToken
@@ -59,14 +119,12 @@ SignServer 3.7.0, 2015-09-23
     * [DSS-987] - Add support for exporting certificates in AdminGUI
 
 
-
 ** Task
     * [DSS-895] - Deprecate GlassFish V2 support
     * [DSS-926] - Compare the new AdminWS WSDL with the 3.6 version
     * [DSS-935] - Make TimeMonitorManager unit tests run on all Jenkins jobs
     * [DSS-978] - Update SignServer logo and favicon
     * [DSS-995] - Re-check for redirected or broken links on signserver.org
-
 
 ** Sub-task
     * [DSS-753] - Soft crypto token with keystore in worker config
@@ -84,6 +142,7 @@ SignServer 3.7.0, 2015-09-23
     * [DSS-916] - Operation for querying keys/certificates from a CryptoToken
     * [DSS-927] - GUI for managing keys/certificates in CryptoTokens
     * [DSS-946] - Configurable limit on number of keys in a slot
+
 
 SignServer 3.6.3, 2015-04-01
 ----------------------------

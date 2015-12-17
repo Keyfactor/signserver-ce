@@ -37,6 +37,7 @@ import javax.servlet.ServletInputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -53,7 +54,10 @@ import org.bouncycastle.util.encoders.Base64;
  * @version $Id$
  */
 public class CredentialUtilsTest {
-    
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(CredentialUtils.class);
+
     /**
      * subject=/CN=Signer 1/OU=Testing/O=SignServer/C=SE
      * issuer=/CN=DSS Root CA 10/OU=Testing/O=SignServer/C=SE
@@ -86,22 +90,22 @@ public class CredentialUtilsTest {
           +  "3Ao/AXPF+4ZP4QJZMa2OHdDaNPMBinK0fZzoV/RFx5mzQm+XJCcdZBHbB+JEw14V"
           +  "BQHSf/Icgab1tANxgQSk8IOhZ0/OQ6LdfoTmRVsrxz58tzvA8Fw+FcyyIni8p6ve"
           +  "2oETepx5f5yVfLJzAdcgTXwo6R52yBgw2w==";
-    
+
     public CredentialUtilsTest() {
     }
-    
+
     @BeforeClass
     public static void setUpClass() {
     }
-    
+
     @AfterClass
     public static void tearDownClass() {
     }
-    
+
     @Before
     public void setUp() {
     }
-    
+
     @After
     public void tearDown() {
     }
@@ -112,25 +116,25 @@ public class CredentialUtilsTest {
      */
     @Test
     public void testAddToRequestContext_certOnly() throws Exception {
-        System.out.println("testAddToRequestContext_certOnly");
-        
+        LOG.info("testAddToRequestContext_certOnly");
+
         // Only a certificate
         RequestContext context = new RequestContext();
         HttpServletRequest req = new MockedHttpServletRequest(Collections.<String, String>emptyMap());
         CertificateFactory factory = CertificateFactory.getInstance("X.509");
         X509Certificate cert = (X509Certificate) factory.generateCertificate(new ByteArrayInputStream(Base64.decode(CERT)));
-        
+
         CredentialUtils.addToRequestContext(context, req, cert);
         CertificateClientCredential credNew = (CertificateClientCredential) context.get(RequestContext.CLIENT_CREDENTIAL_CERTIFICATE);
         CertificateClientCredential credLegacy = (CertificateClientCredential) context.get(RequestContext.CLIENT_CREDENTIAL);
-        
+
         assertNotNull("has put the certificate in new field", credNew);
         assertNotNull("has put the certificate in legacy field", credLegacy);
         assertEquals("serial number", cert.getSerialNumber().toString(16), credNew.getSerialNumber());
-        assertEquals("issuer DN", cert.getIssuerDN().getName(), credNew.getIssuerDN()); // XXX getIssuerDN is implementation specific but that is what we use at the moment        
+        assertEquals("issuer DN", cert.getIssuerDN().getName(), credNew.getIssuerDN()); // XXX getIssuerDN is implementation specific but that is what we use at the moment
         assertEquals("same value in both fields", credNew, credLegacy);
     }
-    
+
     /**
      * Tests that the certificate is available in the cert field and the
      * password in the password field as well as the certificate in the
@@ -139,8 +143,8 @@ public class CredentialUtilsTest {
      */
     @Test
     public void testAddToRequestContext_certAndPassword() throws Exception {
-        System.out.println("testAddToRequestContext_certAndPassword");
-        
+        LOG.info("testAddToRequestContext_certAndPassword");
+
         // Certificate and user1:foo456
         String username = "user1";
         String password = "foo456";
@@ -150,31 +154,31 @@ public class CredentialUtilsTest {
         HttpServletRequest req = new MockedHttpServletRequest(headers);
         CertificateFactory factory = CertificateFactory.getInstance("X.509");
         X509Certificate cert = (X509Certificate) factory.generateCertificate(new ByteArrayInputStream(Base64.decode(CERT)));
-        
+
         CredentialUtils.addToRequestContext(context, req, cert);
         CertificateClientCredential credNew = (CertificateClientCredential) context.get(RequestContext.CLIENT_CREDENTIAL_CERTIFICATE);
         CertificateClientCredential credLegacy = (CertificateClientCredential) context.get(RequestContext.CLIENT_CREDENTIAL);
-        
+
         UsernamePasswordClientCredential credNewPassword = (UsernamePasswordClientCredential) context.get(RequestContext.CLIENT_CREDENTIAL_PASSWORD);
         assertNotNull("has put password in new field", credNewPassword);
         assertEquals("username", username, credNewPassword.getUsername());
         assertEquals("password", password, credNewPassword.getPassword());
-        
+
         assertNotNull("has put the certificate in new field", credNew);
         assertNotNull("has put the certificate in legacy field", credLegacy);
         assertEquals("serial number", cert.getSerialNumber().toString(16), credNew.getSerialNumber());
-        assertEquals("issuer DN", cert.getIssuerDN().getName(), credNew.getIssuerDN()); // XXX getIssuerDN is implementation specific but that is what we use at the moment        
+        assertEquals("issuer DN", cert.getIssuerDN().getName(), credNew.getIssuerDN()); // XXX getIssuerDN is implementation specific but that is what we use at the moment
         assertEquals("same value in both fields", credNew, credLegacy);
     }
-    
+
     /**
      * Tests that the provided username/password is available in both fields.
      * @throws java.lang.Exception
      */
     @Test
     public void testAddToRequestContext_onlyPassword() throws Exception {
-        System.out.println("testAddToRequestContext_onlyPassword");
-        
+        LOG.info("testAddToRequestContext_onlyPassword");
+
         // Certificate and user1:foo456
         String username = "user1";
         String password = "foo456";
@@ -182,7 +186,7 @@ public class CredentialUtilsTest {
         HashMap<String, String> headers = new HashMap<String, String>();
         headers.put("Authorization", "basic " + Base64.toBase64String((username + ":" + password).getBytes("UTF-8")));
         HttpServletRequest req = new MockedHttpServletRequest(headers);
-        
+
         CredentialUtils.addToRequestContext(context, req, null);
         UsernamePasswordClientCredential credNew = (UsernamePasswordClientCredential) context.get(RequestContext.CLIENT_CREDENTIAL_PASSWORD);
         UsernamePasswordClientCredential credLegacy = (UsernamePasswordClientCredential) context.get(RequestContext.CLIENT_CREDENTIAL);
@@ -193,7 +197,57 @@ public class CredentialUtilsTest {
         assertEquals("password", password, credNew.getPassword());
         assertEquals("same value in both fields", credNew, credLegacy);
     }
-    
+
+    /**
+     * Tests some syntactically incorrect headers.
+     * @throws Exception
+     */
+    @Test
+    public void testAddToRequestContext_incorrectSyntax() throws Exception {
+        LOG.info("testAddToRequestContext_incorrectSyntax");
+
+        // Missing colon is not correct
+        assertNotAddedToContext("no colon", "Authorization", "basic " + Base64.toBase64String("NoColon".getBytes("UTF-8")));
+
+        // Empty data in base64 is not correct
+        assertNotAddedToContext("empty user+pass", "Authorization", "basic " + Base64.toBase64String("".getBytes("UTF-8")));
+
+        // Missing base64 is not correct
+        assertNotAddedToContext("empty after basic 1", "Authorization", "basic ");
+
+        // Missing base64 is not correct
+        assertNotAddedToContext("empty after basic 2", "Authorization", "basic");
+
+        // Only basic supported
+        assertNotAddedToContext("not basic", "Authorization", "other ");
+
+        // No header should not add anything
+        assertNotAddedToContext("no header", null, null);
+    }
+
+    /**
+     * Asserts that no credentials are added to the request context.
+     * @param message to print in case of JUnit assertion failure
+     * @param headerKey to add or null if the header should not be added
+     * @param headerValue the value
+     * @throws UnsupportedEncodingException
+     */
+    private void assertNotAddedToContext(String message, String headerKey, String headerValue) throws UnsupportedEncodingException{
+        RequestContext context = new RequestContext();
+        HashMap<String, String> headers = new HashMap<String, String>();
+        if (headerKey != null) {
+            headers.put(headerKey, headerValue);
+        }
+        HttpServletRequest req = new MockedHttpServletRequest(headers);
+
+        CredentialUtils.addToRequestContext(context, req, null);
+
+        assertNull("has not put password in new field for " + message,
+                context.get(RequestContext.CLIENT_CREDENTIAL_PASSWORD));
+        assertNull("has not put password in legacy field for " + message,
+                context.get(RequestContext.CLIENT_CREDENTIAL));
+    }
+
     private static class MockedHttpServletRequest implements HttpServletRequest {
 
         private final Map<String, String> headers;
@@ -201,7 +255,7 @@ public class CredentialUtilsTest {
         public MockedHttpServletRequest(Map<String, String> headers) {
             this.headers = headers;
         }
-        
+
         @Override
         public String getAuthType() {
             throw new UnsupportedOperationException("Not supported yet.");
@@ -451,18 +505,18 @@ public class CredentialUtilsTest {
         public String getRealPath(String string) {
             throw new UnsupportedOperationException("Not supported yet.");
         }
-        
+
     };
-    
+
     private static class MockedCertificate extends Certificate {
 
         private final int id;
-        
+
         public MockedCertificate(int id) {
             super("MockedCert");
             this.id = id;
         }
-        
+
         @Override
         public byte[] getEncoded() throws CertificateEncodingException {
             throw new UnsupportedOperationException("Not supported yet.");
@@ -487,7 +541,7 @@ public class CredentialUtilsTest {
         public PublicKey getPublicKey() {
             throw new UnsupportedOperationException("Not supported yet.");
         }
-        
+
         @Override
         public boolean equals(Object obj) {
             if (obj == null) {
@@ -511,5 +565,5 @@ public class CredentialUtilsTest {
         }
 
     };
-    
+
 }

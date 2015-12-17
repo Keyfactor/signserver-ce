@@ -1,6 +1,26 @@
 SignServer 3.7.1
 ----------------
 
+New features:
+    - Java code signing support (including Android).
+    - Support for key generation with custom RSA public exponent.
+
+Improvements:
+    - Support for large files in Client CLI.
+    - Minor performance improvements.
+    - Improved output from Client CLI.
+    - MRTD signing interface improvements (ePassport).
+    - Administration GUI improvements.
+    - Improved language in the manuals.
+
+Bug fixes:
+    - Security issue in Commons Collections library.
+    - Regression: Renewing keys for multiple workers at once did not fully work
+      in the Administration GUI.
+    - Bin folder can not be put in the PATH environment variable.
+    - Username/password not accepted if client certificate presented.
+    - The FirstActiveDispatcher logs using the dispatchees fields.
+    - 24 other bug fixes.
 
 Notice:
  - The Commons Collections library has been updated to version 3.2.2.
@@ -9,6 +29,8 @@ Notice:
    and earlier" and "Fix Security issues in JBoss EAP" sections of the
    installation guide to make sure the issue is also addressed in the
    application server.
+
+See ChangeLog.txt for the full list of changes.
 
 
 SignServer 3.7.0

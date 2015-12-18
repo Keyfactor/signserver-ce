@@ -34,7 +34,7 @@
         <dependency>
             <groupId>org.cesecore</groupId>
             <artifactId>cesecore-common</artifactId>
-            <version>6.1.1</version>
+            <version>${cesecore.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>

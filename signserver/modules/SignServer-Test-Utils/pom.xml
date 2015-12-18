@@ -71,19 +71,19 @@
             <artifactId>cesecore-common</artifactId>
             <groupId>org.cesecore</groupId>
             <type>jar</type>
-            <version>6.1.1</version>
+            <version>${cesecore.version}</version>
         </dependency>
         <dependency>
             <artifactId>cesecore-entity</artifactId>
             <groupId>org.cesecore</groupId>
             <type>jar</type>
-            <version>6.1.1</version>
+            <version>${cesecore.version}</version>
         </dependency>
         <dependency>
             <artifactId>cesecore-interfaces</artifactId>
             <groupId>org.cesecore</groupId>
             <type>jar</type>
-            <version>6.1.1</version>
+            <version>${cesecore.version}</version>
         </dependency>
         <dependency>
             <groupId>javax</groupId>

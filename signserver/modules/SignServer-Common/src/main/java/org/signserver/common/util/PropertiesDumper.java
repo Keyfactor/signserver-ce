@@ -122,7 +122,7 @@ public class PropertiesDumper {
                 }
             } catch (CertificateException e) {
                 LOG.error(e);
-            } catch (IOException e) {
+            } catch (IllegalStateException e) {
                 LOG.error(e);
             }
         }
@@ -138,7 +138,7 @@ public class PropertiesDumper {
                 result = CertTools.getCertsFromPEM(new ByteArrayInputStream(stringcert.getBytes()));
             } catch (CertificateException e) {
                 LOG.error(e);
-            } catch (IOException e) {
+            } catch (IllegalStateException e) {
                 LOG.error(e);
             }
         }

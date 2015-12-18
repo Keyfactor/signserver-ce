@@ -10,9 +10,9 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.server.cesecoreintegration;
+package se.primekey.sampleapp1.core.ejb.cesecoreintegration;
 
-import javax.ejb.EJBException;
+// No persistence: import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -51,44 +51,33 @@ public class AccessTreeUpdateMockSessionBean implements AccessTreeUpdateSessionL
      */
     private AccessTreeUpdateData authTreeData = null;
 
-    /**
-     * Returns a reference to the AuthorizationTreeUpdateData
-     */
     @Override
-    public AccessTreeUpdateData getAccessTreeUpdateData() {
-        if (authTreeData == null) {
-            authTreeData = findByPrimaryKey(AccessTreeUpdateData.AUTHORIZATIONTREEUPDATEDATA);
-            if (authTreeData == null) {
-                try {
-                    final AccessTreeUpdateData temp = new AccessTreeUpdateData();
-                    // No persistence: entityManager.persist(temp);
-                    authTreeData = temp;
-                } catch (Exception e) {
-                    final String msg = INTERNAL_RESOURCES.getLocalizedMessage("authorization.errorcreateauthtree");
-                    LOG.error(msg, e);
-                    throw new EJBException(e);
-                }
-            }
-        }
-        return authTreeData;
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)    // We don't modify the database in this call
+    public int getAccessTreeUpdateNumber() {
+        // No persistence: final AccessTreeUpdateData accessTreeUpdateData = entityManager.find(AccessTreeUpdateData.class, AccessTreeUpdateData.AUTHORIZATIONTREEUPDATEDATA);
+        // No persistence: if (accessTreeUpdateData==null) {
+        // No persistence:     // No update has yet been persisted, so we return the default value
+            return AccessTreeUpdateData.DEFAULTACCESSTREEUPDATENUMBER;
+        // No persistence: }
+        // No persistence: return accessTreeUpdateData.getAccessTreeUpdateNumber();
     }
 
-    /**
-     * Method incrementing the authorization tree update number and thereby signaling to other beans that they should reconstruct their access trees.
-     */
     @Override
     public void signalForAccessTreeUpdate() {
-        getAccessTreeUpdateData().incrementAccessTreeUpdateNumber();
-    }
-
-    /**
-     * Finds a AccessTreeUpdateData object by its primary key. Note that this object will not be in context.
-     * 
-     * @return the found entity instance or null if the entity does not exist.
-     */
-    private AccessTreeUpdateData findByPrimaryKey(final Integer primaryKey) {
-        // No persistence: return entityManager.find(AccessTreeUpdateData.class, primaryKey);
-        return null;
+        /* No persistence: AccessTreeUpdateData accessTreeUpdateData = entityManager.find(AccessTreeUpdateData.class, AccessTreeUpdateData.AUTHORIZATIONTREEUPDATEDATA);
+        if (accessTreeUpdateData==null) {
+            // We need to create the database row and incremented the value directly since this is an call to update it
+            try {
+                accessTreeUpdateData = new AccessTreeUpdateData();
+                accessTreeUpdateData.setAccessTreeUpdateNumber(AccessTreeUpdateData.DEFAULTACCESSTREEUPDATENUMBER+1);
+                entityManager.persist(accessTreeUpdateData);
+            } catch (Exception e) {
+                LOG.error(InternalResources.getInstance().getLocalizedMessage("authorization.errorcreateauthtree"), e);
+                throw new EJBException(e);
+            }
+        } else {
+            accessTreeUpdateData.setAccessTreeUpdateNumber(accessTreeUpdateData.getAccessTreeUpdateNumber() + 1);
+        }*/
     }
 
 }

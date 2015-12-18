@@ -161,7 +161,7 @@ public class ProcessableConfig {
                 }
             } catch (CertificateException e) {
                 LOG.error(e);
-            } catch (IOException e) {
+            } catch (IllegalStateException e) {
                 LOG.error(e);
             }
 
@@ -230,7 +230,7 @@ public class ProcessableConfig {
                 result = CertTools.getCertsFromPEM(new ByteArrayInputStream(stringcert.getBytes()));
             } catch (CertificateException e) {
                 LOG.error(e);
-            } catch (IOException e) {
+            } catch (IllegalStateException e) {
                 LOG.error(e);
             }
         }

@@ -10,7 +10,7 @@
         <!-- fixedTime / dist.fixedTime is used for deterministic builds. -->
         <fixedTime/>
         <dist.fixedTime>${fixedTime}</dist.fixedTime>
-        <cesecore.version>6.1.1</cesecore.version>
+        <cesecore.version>6.4.1</cesecore.version>
     </properties>
     <distributionManagement>
         <repository>

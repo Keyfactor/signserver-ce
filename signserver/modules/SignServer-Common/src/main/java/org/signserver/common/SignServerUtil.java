@@ -143,9 +143,7 @@ public class SignServerUtil {
                 }
                 
                 cert = (X509Certificate) certs.iterator().next();
-        } catch (CertificateException cex) {
-                throw new IllegalArgumentException("Could not fetch certificate from PEM file: " + cex.getMessage());
-        } catch (IOException ioex) {
+        } catch (IOException | CertificateException ioex) {
                 // try to treat the file as a binary certificate file
                         FileInputStream fis = null;
 
@@ -155,7 +153,9 @@ public class SignServerUtil {
                         fis.read(content, 0, fis.available());
                         cert = (X509Certificate) CertTools.getCertfromByteArray(content);
                 } catch (Exception ex) {
-                        throw new IllegalArgumentException("Could not read certificate in DER format: " + ex.getMessage());
+                    IllegalArgumentException ex2 = new IllegalArgumentException("Could not read certificate in DER format: " + ex.getMessage());
+                    ex2.addSuppressed(ioex);
+                    throw ex2;
                 } finally {
                         if (fis != null) {
                                 try {

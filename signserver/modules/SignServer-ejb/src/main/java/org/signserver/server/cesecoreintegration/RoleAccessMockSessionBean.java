@@ -13,11 +13,14 @@
 package org.signserver.server.cesecoreintegration;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import org.cesecore.authentication.AuthenticationFailedException;
+import org.cesecore.authentication.tokens.AuthenticationToken;
+import org.cesecore.authentication.tokens.LocalJvmOnlyAuthenticationToken;
 import org.cesecore.authorization.rules.AccessRuleData;
 import org.cesecore.authorization.rules.AccessRuleState;
 import org.cesecore.authorization.user.AccessMatchType;
@@ -88,7 +91,7 @@ public class RoleAccessMockSessionBean implements RoleAccessSessionLocal, RoleAc
     @SuppressWarnings("unchecked")
     @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public Collection<RoleData> getAllRoles() {
+    public List<RoleData> getAllRoles() {
         return allRoles;
     }
     
@@ -156,5 +159,34 @@ public class RoleAccessMockSessionBean implements RoleAccessSessionLocal, RoleAc
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public RoleData findRole(final Integer primaryKey) {
         return primaryKey == 1 ? allRoles.get(0) : null;
+    }
+
+    @Override
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public List<String> getRolesMatchingAuthenticationToken(final AuthenticationToken authenticationToken) throws AuthenticationFailedException {
+        final List<RoleData> roleDatas = getAllRoles();
+        final List<String> roleNames = new ArrayList<String>();
+        for (final RoleData roleData : roleDatas) {
+            for (final AccessUserAspectData a : roleData.getAccessUsers().values()) {
+                if (authenticationToken.matches(a)) {
+                    roleNames.add(roleData.getRoleName());
+}
+            }
+        }
+        return roleNames;
+    }
+
+    /*
+     * NOTE: This separate method for remote EJB calls exists for a good reason: If this is invoked as a part of a
+     * local transaction, the LocalJvmOnlyAuthenticationToken will be valid for subsequent authentication calls.
+     */
+    @Override
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public List<String> getRolesMatchingAuthenticationTokenRemote(final AuthenticationToken authenticationToken) throws AuthenticationFailedException {
+        if (authenticationToken instanceof LocalJvmOnlyAuthenticationToken) {
+            // Ensure that the matching procedure below also works for remote EJB calls
+            ((LocalJvmOnlyAuthenticationToken) authenticationToken).initRandomToken();
+        }
+        return getRolesMatchingAuthenticationToken(authenticationToken);
     }
 }

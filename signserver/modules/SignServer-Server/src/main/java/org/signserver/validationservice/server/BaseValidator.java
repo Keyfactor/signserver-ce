@@ -131,7 +131,7 @@ public abstract class BaseValidator implements IValidator {
                                 issuerFound = true;
                                 break;
                             }
-                        } catch (IOException e) {
+                        } catch (IllegalStateException e) {
                             // eat up the exception to continue looping
                             LOG.error(e.getMessage(), e);
                         }
@@ -180,7 +180,7 @@ public abstract class BaseValidator implements IValidator {
             } catch (CertificateException e) {
                 LOG.error("Error constructing certificate chain from setting " + ValidationServiceConstants.VALIDATIONSERVICE_ISSUERCERTCHAIN + " is missing for issuer "
                         + issuerId + ", validator id " + validatorId + ", worker id" + workerId, e);
-            } catch (IOException e) {
+            } catch (IllegalStateException e) {
                 LOG.error("Error constructing certificate chain from setting " + ValidationServiceConstants.VALIDATIONSERVICE_ISSUERCERTCHAIN + " is missing for issuer "
                         + issuerId + ", validator id " + validatorId + ", worker id" + workerId, e);
             }

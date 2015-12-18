@@ -20,6 +20,7 @@ import java.security.cert.X509Certificate;
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.cesecore.keys.token.CachingKeyStoreWrapper;
 import org.cesecore.keys.util.KeyStoreTools;
 
 /**
@@ -52,7 +53,7 @@ public class CryptoTokenHelperSystemTest extends TestCase {
         
         KeyStore ks = KeyStore.getInstance("PKCS12", "BC");
         ks.load(null, null);
-        KeyStoreTools cesecoreTool = new KeyStoreTools(ks, "BC");
+        KeyStoreTools cesecoreTool = new KeyStoreTools(new CachingKeyStoreWrapper(ks, false), "BC");
         cesecoreTool.generateKeyPair("1024", "entry1");
         
         X509Certificate certificate = (X509Certificate) ks.getCertificate("entry1");

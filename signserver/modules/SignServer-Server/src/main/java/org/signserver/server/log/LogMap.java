@@ -43,4 +43,18 @@ public class LogMap extends HashMap<String, String> {
         }
         return result;
     }
+
+    @Override
+    public Object clone() {
+        final LogMap newLogMap = new LogMap();
+        
+        for (final String key : this.keySet()) {
+            final String value = (String) get(key);
+            newLogMap.put(key, value);
+        }
+        
+        return newLogMap;
+    }
+    
+    
 }

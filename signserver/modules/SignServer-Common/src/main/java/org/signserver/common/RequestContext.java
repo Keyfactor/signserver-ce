@@ -249,4 +249,32 @@ public class RequestContext implements Serializable {
     public void setServices(IServices services) {
         this.services = services;
     }
+    
+    /**
+     * Make a copy of the request context with a deep-copied log map to avoid
+     * passing on a reference for dispatcher workers.
+     * 
+     * @return A new request context 
+     */
+    public RequestContext copyWithNewLogMap() {
+        final RequestContext newContext = new RequestContext();
+        
+        newContext.services = services;
+        newContext.context = new HashMap<String, Object>();
+        
+        for (final String key : context.keySet()) {
+            final Object value = context.get(key);
+            if (LOGMAP.equals(key)) {
+                /* take a deep-copy of the log map, the map contains strings,
+                   so cloning each entry is enough */
+                final HashMap<String, String> logMap =
+                        (HashMap<String, String>) value;
+                newContext.context.put(LOGMAP, logMap.clone());
+            } else {
+                newContext.context.put(key, value);
+            }
+        }
+        
+        return newContext;
+    }
 }

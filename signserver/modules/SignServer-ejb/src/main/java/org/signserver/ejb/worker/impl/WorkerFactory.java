@@ -168,10 +168,16 @@ public class WorkerFactory {
     }
     
     @SuppressWarnings("deprecation") // TODO: We use getEntityManager in the correct way. So this deprecation warning is not correct.
-    private void loadWorkerWithComponents(final int workerId, final SignServerContext context) {
+    private void loadWorkerWithComponents(final int workerId, final SignServerContext context) throws NoSuchWorkerException {
         // TODO: refactor: this is a strange contruct
         loadWorker(workerId);
         final IWorker worker = workerStore.get(workerId);
+        if (worker == null) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Trying to get worker with Id that does not exist: " + workerId);
+            }
+            throw new NoSuchWorkerException(String.valueOf(workerId));
+        }
         
         final WorkerConfig config = worker.getConfig();
         final EntityManager em = context.getEntityManager();
@@ -317,7 +323,7 @@ public class WorkerFactory {
      * @return initialized authorizer.
      * @throws SignServerException
      */
-    private synchronized IAuthorizer getAuthenticator(int workerId, String authType, WorkerConfig config, EntityManager em)
+    private IAuthorizer getAuthenticator(int workerId, String authType, WorkerConfig config, EntityManager em)
             throws SignServerException {
         IAuthorizer auth = null;
         if (authType.equalsIgnoreCase(IProcessable.AUTHTYPE_NOAUTH)) {
@@ -342,7 +348,7 @@ public class WorkerFactory {
         return auth;
     }
 
-    private synchronized IWorkerLogger getWorkerLogger(final int workerId,
+    private IWorkerLogger getWorkerLogger(final int workerId,
             final WorkerConfig config, final EntityManager em)
             throws SignServerException {
         IWorkerLogger workerLogger;
@@ -371,7 +377,7 @@ public class WorkerFactory {
         return workerLogger;
     }
 
-    private synchronized IAccounter getAccounter(final int workerId,
+    private IAccounter getAccounter(final int workerId,
             final WorkerConfig config, final EntityManager em)
             throws SignServerException {
         final IAccounter accounter;
@@ -400,7 +406,7 @@ public class WorkerFactory {
         return accounter;
     }
 
-    private synchronized List<Archiver> getArchivers(final int workerId,
+    private List<Archiver> getArchivers(final int workerId,
             final WorkerConfig config, final SignServerContext context)
             throws SignServerException {
         final List<Archiver> archivers = new LinkedList<>();

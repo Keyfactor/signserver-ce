@@ -17,6 +17,9 @@ import java.util.Properties;
 import java.util.regex.Pattern;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.signserver.common.RequestContext;
+import org.signserver.common.WorkerConfig;
+import org.signserver.server.SignServerContext;
 
 /**
  * Completely configurable WorkerLogger.
@@ -56,29 +59,24 @@ public class PatternWorkerLogger implements IWorkerLogger {
     }
 
     @Override
-    public void init(Properties properties) {
-        this.pattern = Pattern.compile(properties.getProperty("LOGPATTERN",
+    public void init(final int workerId, final WorkerConfig config, final SignServerContext context) {
+        this.pattern = Pattern.compile(config.getProperty("LOGPATTERN",
                 DEFAULT_LOGPATTERN));
-        this.orderString = properties.getProperty("LOGORDER", DEFAULT_LOGORDER);
-        this.logDateFormat = properties.getProperty("LOGDATEFORMAT", DEFAULT_LOGDATEFORMAT);
-        this.timeZone = properties.getProperty("LOGTIMEZONE", DEFAULT_LOGTIMEZONE);
-        this.logLevel = Level.toLevel(properties.getProperty("LOGLEVEL_DEFAULT",
+        this.orderString = config.getProperty("LOGORDER", DEFAULT_LOGORDER);
+        this.logDateFormat = config.getProperty("LOGDATEFORMAT", DEFAULT_LOGDATEFORMAT);
+        this.timeZone = config.getProperty("LOGTIMEZONE", DEFAULT_LOGTIMEZONE);
+        this.logLevel = Level.toLevel(config.getProperty("LOGLEVEL_DEFAULT",
         		DEFAULT_LOGLEVEL), Level.INFO);
     }
 
     @Override
-    public void log(final AdminInfo adminInfo, Map<String, String> entries) throws WorkerLoggerException {
+    public void log(final AdminInfo adminInfo, final Map<String, String> fields, final RequestContext context) throws WorkerLoggerException {
         final EjbcaPatternLogger pl = new EjbcaPatternLogger(this.pattern.matcher(
                 this.orderString), this.orderString, ACCOUNTLOG,
                 this.logDateFormat, this.timeZone, this.logLevel);
-        pl.putAll(entries);
+        pl.putAll(fields);
         pl.writeln();
         pl.flush();
-    }
-
-    @Override
-    public void setEjbs(Map<Class<?>, ?> ejbs) {
-        // NO-OP for this implementation    
     }
     
 }

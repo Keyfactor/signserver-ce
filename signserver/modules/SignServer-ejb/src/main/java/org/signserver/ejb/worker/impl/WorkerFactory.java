@@ -314,7 +314,7 @@ public class WorkerFactory {
                     throw new SignServerException(error);
                 }
             }
-            workerLogger.init(config.getProperties());
+            workerLogger.init(workerId, config, workerContext.newInstance());
             workerLoggerStore.put(workerId, workerLogger);
         }
         return workerLoggerStore.get(workerId);

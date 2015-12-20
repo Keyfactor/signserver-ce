@@ -131,10 +131,7 @@ public class WorkerManagerSingletonBean {
      * @throws SignServerException in case the instance could not be loaded correctly
      */
     public IWorkerLogger getWorkerLogger(int workerId, WorkerConfig awc) throws SignServerException {
-        final IWorkerLogger logger = workerFactory.getWorkerLogger(workerId, awc, em);
-        logger.setEjbs(getEjbs());
-        
-        return logger;
+        return workerFactory.getWorkerLogger(workerId, awc, em);
     }
 
     /**

@@ -13,10 +13,12 @@
 package org.signserver.server.log;
 
 import java.util.Map;
-import java.util.Properties;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.signserver.common.RequestContext;
+import org.signserver.common.WorkerConfig;
+import org.signserver.server.SignServerContext;
 
 /**
  * An IWorkerLogger that renders the log line by appending all the log fields
@@ -35,19 +37,21 @@ public class AllFieldsWorkerLogger implements IWorkerLogger {
     private Level logLevel;
     
     @Override
-    public void init(final Properties props) {
-        this.logLevel = Level.toLevel(props.getProperty("LOGLEVEL_DEFAULT",
+    public void init(final int workerId, final WorkerConfig config, final SignServerContext context) {
+        this.logLevel = Level.toLevel(config.getProperty("LOGLEVEL_DEFAULT",
         		DEFAULT_LOGLEVEL), Level.INFO);
     }
 
     /**
      * Render the log line by putting together all the fields and separating
      * them with semi-colon.
+     * @param adminInfo unused
      * @param fields The fields to include.
+     * @param context unused
      * @throws WorkerLoggerException
      */
     @Override
-    public void log(final AdminInfo adminInfo, final Map<String, String> fields)
+    public void log(final AdminInfo adminInfo, final Map<String, String> fields, final RequestContext context)
             throws WorkerLoggerException {
         final StringBuilder str = new StringBuilder();
         str.append("AllVariablesLogger; ");
@@ -67,10 +71,4 @@ public class AllFieldsWorkerLogger implements IWorkerLogger {
         ACCOUNTLOG.log(this.logLevel, str.toString());
     }
 
-    @Override
-    public void setEjbs(Map<Class<?>, ?> ejbs) {
-        // NO-OP for this implementation
-    }
-    
-    
 }

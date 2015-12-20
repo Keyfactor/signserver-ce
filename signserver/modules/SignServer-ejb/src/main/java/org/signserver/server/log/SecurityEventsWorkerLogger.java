@@ -15,59 +15,57 @@ package org.signserver.server.log;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.cesecore.audit.enums.EventStatus;
 import org.cesecore.audit.log.SecurityEventsLoggerSessionLocal;
+import org.signserver.common.RequestContext;
+import org.signserver.common.WorkerConfig;
+import org.signserver.server.SignServerContext;
 
 /**
- * Worker logger implementation using CESeCore's SecurityEventsLogger
- * 
+ * Worker logger implementation using CESeCore's SecurityEventsLogger.
+ *
  * @author Marcus Lundblad
  * @version $Id$
- *
  */
-
 public class SecurityEventsWorkerLogger implements IWorkerLogger {
     /** Logger for this class. */
-    private Logger LOG = Logger.getLogger(SecurityEventsWorkerLogger.class);
-    
-    private SecurityEventsLoggerSessionLocal logger;
-    
+    private final Logger LOG = Logger.getLogger(SecurityEventsWorkerLogger.class);
+
     /** configuration keys for selecting included/excluded fields. */
     private static final String INCLUDE_FIELDS = "LOGINCLUDEFIELDS";
     private static final String EXCLUDE_FIELDS = "LOGEXCLUDEFIELDS";
-    
+
     private Set<String> includedFields;
     private Set<String> excludedFields;
-    
+
     private boolean configError;
-    
+
     @Override
-    public void init(Properties props) {
-        final String include = props.getProperty(INCLUDE_FIELDS);
-        final String exclude = props.getProperty(EXCLUDE_FIELDS);
-        
+    public void init(final int workerId, final WorkerConfig config, final SignServerContext context) {
+        final String include = config.getProperty(INCLUDE_FIELDS);
+        final String exclude = config.getProperty(EXCLUDE_FIELDS);
+
         if (include != null && exclude != null) {
             LOG.error("Can only set one of " + INCLUDE_FIELDS + " and " + EXCLUDE_FIELDS);
             configError = true;
         }
-        
+
         if (include != null) {
             final String[] includes = include.split(",");
-            includedFields = new HashSet<String>();
-            
+            includedFields = new HashSet<>();
+
             for (final String field : includes) {
                 includedFields.add(field.trim());
             }
         }
-        
+
         if (exclude != null) {
             final String[] excludes = exclude.split(",");
-            excludedFields = new HashSet<String>();
-            
+            excludedFields = new HashSet<>();
+
             for (final String field : excludes) {
                 excludedFields.add(field.trim());
             }
@@ -75,13 +73,17 @@ public class SecurityEventsWorkerLogger implements IWorkerLogger {
     }
 
     @Override
-    public void log(final AdminInfo adminInfo, Map<String, String> fields) throws WorkerLoggerException {
-        final Map<String, Object> details = new LinkedHashMap<String, Object>();
-        
+    public void log(final AdminInfo adminInfo, final Map<String, String> fields, final RequestContext context) throws WorkerLoggerException {
+        final Map<String, Object> details = new LinkedHashMap<>();
+
         if (configError) {
             throw new WorkerLoggerException("Can only set one of " + INCLUDE_FIELDS + " and " + EXCLUDE_FIELDS);
         }
-        
+        final SecurityEventsLoggerSessionLocal logger = context.getServices().get(SecurityEventsLoggerSessionLocal.class);
+        if (logger == null) {
+            throw new WorkerLoggerException("Logger unavailable: " + SecurityEventsLoggerSessionLocal.class.getName());
+        }
+
         // strip out the worker ID from the additionalDetails field (it's put customID)
         for (String key : fields.keySet()) {
             if (!IWorkerLogger.LOG_WORKER_ID.equals(key) &&
@@ -96,11 +98,6 @@ public class SecurityEventsWorkerLogger implements IWorkerLogger {
                 Boolean.toString(true).equals(sucess) ? EventStatus.SUCCESS : EventStatus.FAILURE,
                 SignServerModuleTypes.WORKER, SignServerServiceTypes.SIGNSERVER, adminInfo.getSubjectDN(),
                 adminInfo.getIssuerDN(), serNo, fields.get(IWorkerLogger.LOG_WORKER_ID), details);
-    }
-
-    @Override
-    public void setEjbs(Map<Class<?>, ?> ejbs) {
-        logger = (SecurityEventsLoggerSessionLocal) ejbs.get(SecurityEventsLoggerSessionLocal.class);
     }
 
 }

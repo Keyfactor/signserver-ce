@@ -178,7 +178,7 @@ class WorkerProcessImpl {
                 final IllegalRequestException ex = new IllegalRequestException(
                         "Worker exists but isn't a processable: " + workerId);
                 // auditLog(startTime, workerId, false, requestContext, ex);
-                logException(adminInfo, ex, logMap, workerLogger);
+                logException(adminInfo, ex, logMap, workerLogger, requestContext);
                 throw ex;
             }
             final IProcessable processable = (IProcessable) worker;
@@ -202,7 +202,7 @@ class WorkerProcessImpl {
                         + ex.getMessage(), ex);
                 logMap.put(IWorkerLogger.LOG_CLIENT_AUTHORIZED,
                         String.valueOf(false));
-                logException(adminInfo, ex, logMap, workerLogger);
+                logException(adminInfo, ex, logMap, workerLogger, requestContext);
                 throw exception;
             } catch (SignServerException ex) {
                 final SignServerException exception =
@@ -210,7 +210,7 @@ class WorkerProcessImpl {
                         + ex.getMessage(), ex);
                 logMap.put(IWorkerLogger.LOG_CLIENT_AUTHORIZED,
                         String.valueOf(false));
-                logException(adminInfo, ex, logMap, workerLogger);
+                logException(adminInfo, ex, logMap, workerLogger, requestContext);
                 throw exception;
             }
 
@@ -234,7 +234,7 @@ class WorkerProcessImpl {
                         new CryptoTokenOfflineException("Error Signer : "
                         + workerId
                         + " is disabled and cannot perform any signature operations");
-                logException(adminInfo, exception, logMap, workerLogger);
+                logException(adminInfo, exception, logMap, workerLogger, requestContext);
                 throw exception;
             }
 
@@ -245,7 +245,7 @@ class WorkerProcessImpl {
                 keyUsageLimit = Long.valueOf(awc.getProperty(SignServerConstants.KEYUSAGELIMIT, "-1"));
             } catch (NumberFormatException ex) {
                 final SignServerException exception = new SignServerException("Incorrect value in worker property " + SignServerConstants.KEYUSAGELIMIT, ex);
-                logException(adminInfo, exception, logMap, workerLogger);
+                logException(adminInfo, exception, logMap, workerLogger, requestContext);
                 throw exception;
             }
             final boolean keyUsageLimitSpecified = keyUsageLimit != -1;
@@ -268,7 +268,7 @@ class WorkerProcessImpl {
             } catch (CryptoTokenOfflineException ex) {
                 final CryptoTokenOfflineException exception =
                         new CryptoTokenOfflineException(ex);
-                logException(adminInfo, exception, logMap, workerLogger);
+                logException(adminInfo, exception, logMap, workerLogger, requestContext);
                 throw exception;
             }
 
@@ -287,7 +287,7 @@ class WorkerProcessImpl {
                         "SignServerException calling signer with id " + workerId
                         + " : " + e.getMessage(), e);
                 LOG.error(exception.getMessage(), exception);
-                logException(adminInfo, exception, logMap, workerLogger);
+                logException(adminInfo, exception, logMap, workerLogger, requestContext);
                 throw exception;
             } catch (IllegalRequestException ex) {
                 final IllegalRequestException exception =
@@ -296,12 +296,12 @@ class WorkerProcessImpl {
 					LOG.info("Illegal request calling signer with id " + workerId
                         + " : " + ex.getMessage());
 				}
-				logException(adminInfo, exception, logMap, workerLogger);
+				logException(adminInfo, exception, logMap, workerLogger, requestContext);
                 throw exception;
             } catch (CryptoTokenOfflineException ex) {
                 final CryptoTokenOfflineException exception =
                         new CryptoTokenOfflineException(ex);
-                logException(adminInfo, exception, logMap, workerLogger);
+                logException(adminInfo, exception, logMap, workerLogger, requestContext);
                 throw exception;
             }
 
@@ -325,14 +325,14 @@ class WorkerProcessImpl {
                     final SignServerException exception =
                             new SignServerException("Accounter failed: "
                             + ex.getMessage(), ex);
-                    logException(adminInfo, ex, logMap, workerLogger);
+                    logException(adminInfo, ex, logMap, workerLogger, requestContext);
                     throw exception;
                 }
                 if (!purchased) {
                     final String error = "Purchase not granted";
                     logMap.put(IWorkerLogger.LOG_EXCEPTION, error);
                     logMap.put(IWorkerLogger.LOG_PROCESS_SUCCESS, String.valueOf(false));
-                    workerLogger.log(adminInfo, logMap);
+                    workerLogger.log(adminInfo, logMap, requestContext);
                     throw new NotGrantedException(error);
                 }
             } else {
@@ -407,7 +407,7 @@ class WorkerProcessImpl {
             if (logVal == null) {
             	logMap.put(IWorkerLogger.LOG_PROCESS_SUCCESS, String.valueOf(true));
             }
-            workerLogger.log(adminInfo, logMap);
+            workerLogger.log(adminInfo, logMap, requestContext);
 
             LOG.debug("<process");
             return res;
@@ -435,10 +435,10 @@ class WorkerProcessImpl {
     }
 
     private void logException(final AdminInfo adminInfo, Exception ex, LogMap logMap,
-    		IWorkerLogger workerLogger) throws WorkerLoggerException {
+    		IWorkerLogger workerLogger, RequestContext requestContext) throws WorkerLoggerException {
     	logMap.put(IWorkerLogger.LOG_EXCEPTION, ex.getMessage());
     	logMap.put(IWorkerLogger.LOG_PROCESS_SUCCESS, String.valueOf(false));
-    	workerLogger.log(adminInfo, logMap);
+    	workerLogger.log(adminInfo, logMap, requestContext);
     }
 
     /**

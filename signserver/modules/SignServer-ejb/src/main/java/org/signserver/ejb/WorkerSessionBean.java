@@ -62,6 +62,7 @@ import org.signserver.server.cryptotokens.IKeyRemover;
 import org.signserver.common.NoSuchAliasException;
 import org.signserver.server.cryptotokens.TokenSearchResults;
 import org.signserver.common.UnsupportedCryptoTokenParameter;
+import org.signserver.ejb.worker.impl.WorkerWithComponents;
 import org.signserver.server.entities.FileBasedKeyUsageCounterDataService;
 import org.signserver.server.entities.IKeyUsageCounterDataService;
 import org.signserver.server.entities.KeyUsageCounter;
@@ -266,51 +267,19 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
      */
     @Override
     public WorkerStatus getStatus(int workerId) throws InvalidWorkerIdException {
+        final List<String> errorsAtEjbLevel = new LinkedList<>();
+        WorkerWithComponents worker = null;
         try {
-            IWorker worker = workerManagerSession.getWorker(workerId);
-            final List<String> errorsAtEjbLevel = new LinkedList<String>();
-            if (worker instanceof IProcessable) {
-                final IProcessable processable = (IProcessable) worker;
-                try {
-                    final IAuthorizer authenticator = workerManagerSession.getAuthenticator(
-                            workerId, processable.getAuthenticationType(), worker.getConfig());
-                    errorsAtEjbLevel.addAll(authenticator.getFatalErrors());
-                } catch (SignServerException ex) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Unable to get authenticator for worker: " + workerId, ex);
-                    }
-                    errorsAtEjbLevel.add(ex.getLocalizedMessage());
-                }
+            worker = workerManagerSession.getWorkerWithComponents(workerId);
+            
+            final IAuthorizer authorizer = worker.getAuthorizer();
+            if (authorizer != null) {
+                errorsAtEjbLevel.addAll(authorizer.getFatalErrors());
             }
             
-            try {
-                workerManagerSession.getWorkerLogger(workerId, worker.getConfig());
-            } catch (SignServerException ex) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Unable to get worker logger for worker: " + workerId, ex);
-                }
-                errorsAtEjbLevel.add(ex.getLocalizedMessage());
-            }
-            
-            try {
-                workerManagerSession.getAccounter(workerId, worker.getConfig());
-            } catch (SignServerException ex) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Unable to get accounter for worker: " + workerId, ex);
-                }
-                errorsAtEjbLevel.add(ex.getLocalizedMessage());
-            }
-            
-            try {
-                workerManagerSession.getArchivers(workerId, worker.getConfig());
-            } catch (SignServerException ex) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Unable to get archivers for worker: " + workerId, ex);
-                }
-                errorsAtEjbLevel.add(ex.getLocalizedMessage());
-            }
-            
-            return worker.getStatus(errorsAtEjbLevel, servicesImpl);
+            errorsAtEjbLevel.addAll(worker.getCreateErrors());
+        
+            return worker.getWorker().getStatus(errorsAtEjbLevel, servicesImpl);
         } catch (NoSuchWorkerException ex) {
             throw new InvalidWorkerIdException(ex.getMessage());
         }

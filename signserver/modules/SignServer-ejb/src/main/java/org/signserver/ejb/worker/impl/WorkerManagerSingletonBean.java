@@ -27,21 +27,15 @@ import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 
 import org.cesecore.audit.log.SecurityEventsLoggerSessionLocal;
-import org.signserver.common.IllegalRequestException;
 import org.signserver.common.NoSuchWorkerException;
-import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.server.*;
-import org.signserver.server.IAuthorizer;
-import org.signserver.server.IAccounter;
-import org.signserver.server.archive.Archiver;
 import org.signserver.server.config.entities.FileBasedWorkerConfigDataService;
 import org.signserver.server.config.entities.IWorkerConfigDataService;
 import org.signserver.server.config.entities.WorkerConfigDataService;
 import org.signserver.server.entities.FileBasedKeyUsageCounterDataService;
 import org.signserver.server.entities.IKeyUsageCounterDataService;
 import org.signserver.server.entities.KeyUsageCounterDataService;
-import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.nodb.FileBasedDatabaseManager;
 import org.signserver.server.timedservices.ITimedService;
 
@@ -101,6 +95,10 @@ public class WorkerManagerSingletonBean {
             return workerFactory.getWorker(workerId);
     }
     
+    public WorkerWithComponents getWorkerWithComponents(final int workerId) throws NoSuchWorkerException {
+        return workerFactory.getWorkerWithComponents(workerId, workerContext);
+    }
+    
     /**
      * @param workerName worker name to query the ID for
      * @return returning the ID of the named Worker
@@ -120,64 +118,6 @@ public class WorkerManagerSingletonBean {
      */
     public void reloadWorker(int workerId) {
         workerFactory.reloadWorker(workerId);
-    }
-
-    /**
-     * Get the worker's configured worker logger.
-     *
-     * @param workerId Id of worker
-     * @param awc Worker configuration
-     * @return An instance of the worker's worker logger
-     * @throws SignServerException in case the instance could not be loaded correctly
-     */
-    public IWorkerLogger getWorkerLogger(int workerId, WorkerConfig awc) throws SignServerException {
-        return workerFactory.getWorkerLogger(workerId, awc, em);
-    }
-
-    /**
-     * Get the worker's authorizer.
-     *
-     * @param workerId Id of worker
-     * @param authenticationType The authentication type/implementation class name
-     * @param awc Worker configuration
-     * @return An instance of the worker's authorizer
-     * @throws SignServerException in case the instance could not be loaded correctly
-     */
-    public IAuthorizer getAuthenticator(int workerId, String authenticationType, WorkerConfig awc) throws SignServerException {
-        return workerFactory.getAuthenticator(workerId,
-                            authenticationType,
-                            awc,
-                            em);
-    }
-
-    /**
-     * Get the worker's configured accounter.
-     * 
-     * @param workerId Id of worker
-     * @param awc Worker configuration
-     * @return An instance of the worker's accounter
-     * @throws SignServerException in case the instance could not be loaded correctly
-     */
-    public IAccounter getAccounter(int workerId, WorkerConfig awc) throws SignServerException {
-        final IAccounter result = workerFactory.getAccounter(workerId,
-                                    awc,
-                                    em);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Returning Accounter: " + result);
-        }
-        return result;
-    }
-
-    /**
-     * Get the worker's archivers.
-     *
-     * @param workerId Id of worker
-     * @param awc Worker configuration
-     * @return A list of the worker's archiver instances
-     * @throws SignServerException in case the instances could not be loaded correctly
-     */
-    public List<Archiver> getArchivers(int workerId, WorkerConfig awc) throws SignServerException {
-        return workerFactory.getArchivers(workerId, awc, workerContext);
     }
 
     /**

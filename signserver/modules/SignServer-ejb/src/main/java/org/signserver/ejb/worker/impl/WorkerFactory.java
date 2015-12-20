@@ -45,6 +45,8 @@ public class WorkerFactory {
 
     private static final String ACCOUNTER = "ACCOUNTER";
 
+    private Map<Integer, WorkerWithComponents> workers = new HashMap<>();
+
     private Map<Integer, IWorker> workerStore = new HashMap<>();
     private Map<Integer, IAuthorizer> authenticatorStore = new HashMap<>();
     private Map<Integer, IWorkerLogger> workerLoggerStore = new HashMap<>();
@@ -79,6 +81,21 @@ public class WorkerFactory {
             loadWorker(workerId);
         }
         result = workerStore.get(workerId);
+        if (result == null) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Trying to get worker with Id that does not exist: " + workerId);
+            }
+            throw new NoSuchWorkerException(String.valueOf(workerId));
+        }
+        return result;
+    }
+    
+    public synchronized WorkerWithComponents getWorkerWithComponents(final int workerId, final SignServerContext context) throws NoSuchWorkerException {
+        WorkerWithComponents result = workers.get(workerId);
+        if (result == null) {
+            loadWorkerWithComponents(workerId, context);
+        }
+        result = workers.get(workerId);
         if (result == null) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Trying to get worker with Id that does not exist: " + workerId);
@@ -153,6 +170,56 @@ public class WorkerFactory {
                 LOG.error("Could not instantiate worker class: " + classpath);
             }
         }
+    }
+    
+    @SuppressWarnings("deprecation") // TODO: We use getEntityManager in the correct way. So this deprecation warning is not correct.
+    private void loadWorkerWithComponents(final int workerId, final SignServerContext context) {
+        // TODO: refactor: this is a strange contruct
+        loadWorker(workerId);
+        final IWorker worker = workerStore.get(workerId);
+        
+        final WorkerConfig config = worker.getConfig();
+        final EntityManager em = context.getEntityManager();
+        final List<String> createErrors = new LinkedList<>();
+        
+        // Worker Logger
+        IWorkerLogger workerLogger = null;
+        try {
+            workerLogger = getWorkerLogger(workerId, config, em);
+        } catch (SignServerException ex) {
+            createErrors.add(ex.getLocalizedMessage());
+        }
+
+        // Authorizer
+        IAuthorizer authorizer = null;
+        if (worker instanceof IProcessable) {
+            try {
+                final String authType = ((IProcessable) worker).getAuthenticationType();
+                authorizer = getAuthenticator(workerId, authType, config, em);
+            } catch (SignServerException ex) {
+                createErrors.add(ex.getLocalizedMessage());
+            }
+        }
+
+        // Accounter
+        IAccounter accounter = null;
+        try {
+            accounter = getAccounter(workerId, config, em);
+        } catch (SignServerException ex) {
+            createErrors.add(ex.getLocalizedMessage());
+        }
+        
+        // Archivers
+        List<Archiver> archivers = null;
+        try {
+            archivers = getArchivers(workerId, config, context);
+        } catch (SignServerException ex) {
+            createErrors.add(ex.getLocalizedMessage());
+        }        
+        
+        // Worker with components
+        WorkerWithComponents workerWithComponents = new WorkerWithComponents(worker, createErrors, workerLogger, authorizer, accounter, archivers);
+        workers.put(workerId, workerWithComponents);
     }
 
     private void initWorker(final IWorker worker, final int workerId, final WorkerConfig config) {

@@ -41,8 +41,10 @@ import org.signserver.common.WorkerConfig;
 import org.signserver.common.util.PropertiesConstants;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.ejb.worker.impl.WorkerManagerSingletonBean;
+import org.signserver.ejb.worker.impl.WorkerWithComponents;
 import org.signserver.server.AccounterException;
 import org.signserver.server.BaseProcessable;
+import org.signserver.server.IAuthorizer;
 import org.signserver.server.IClientCredential;
 import org.signserver.server.IProcessable;
 import org.signserver.server.IWorker;
@@ -141,9 +143,9 @@ class WorkerProcessImpl {
                 (String) requestContext.get(RequestContext.REMOTE_IP));
 
         // Get worker instance
-        final IWorker worker;
+        final WorkerWithComponents worker;
         try {
-            worker = workerManagerSession.getWorker(workerId);
+            worker = workerManagerSession.getWorkerWithComponents(workerId);
         } catch (NoSuchWorkerException ex) {
             Map<String, Object> details = new LinkedHashMap<String, Object>();
             final String serNo = adminInfo.getCertSerialNumber() != null ? adminInfo.getCertSerialNumber().toString(16) : null;
@@ -159,13 +161,13 @@ class WorkerProcessImpl {
                     adminInfo.getSubjectDN(), adminInfo.getIssuerDN(), serNo, null, details);
             throw ex;
         }
-        final WorkerConfig awc = worker.getConfig();
+        final WorkerConfig awc = worker.getWorker().getConfig();
 
         // Log the worker name
         logMap.put(IWorkerLogger.LOG_WORKER_NAME, awc.getProperty(PropertiesConstants.NAME));
 
         // Get worker log instance
-        final IWorkerLogger workerLogger = workerManagerSession.getWorkerLogger(workerId, awc);
+        final IWorkerLogger workerLogger = worker.getWorkerLogger();
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Worker[" + workerId + "]: " + "WorkerLogger: "
@@ -174,24 +176,32 @@ class WorkerProcessImpl {
 
         try {
             // Get processable
-            if (!(worker instanceof IProcessable)) {
+            if (!(worker.getWorker() instanceof IProcessable)) {
                 final IllegalRequestException ex = new IllegalRequestException(
                         "Worker exists but isn't a processable: " + workerId);
                 // auditLog(startTime, workerId, false, requestContext, ex);
                 logException(adminInfo, ex, logMap, workerLogger, requestContext);
                 throw ex;
             }
-            final IProcessable processable = (IProcessable) worker;
+            final IProcessable processable = (IProcessable) worker.getWorker();
 
             // Check authorization
             logMap.put(IWorkerLogger.LOG_WORKER_AUTHTYPE,
                     processable.getAuthenticationType());
             try {
-                workerManagerSession.getAuthenticator(workerId,
-                            processable.getAuthenticationType(),
-                            awc).isAuthorized(request, requestContext);
-                logMap.put(IWorkerLogger.LOG_CLIENT_AUTHORIZED,
-                        String.valueOf(true));
+                IAuthorizer authorizer = worker.getAuthorizer();
+                if (authorizer == null) {
+                    final SignServerException exception =
+                        new SignServerException("Authorization misconfigured");
+                    logMap.put(IWorkerLogger.LOG_CLIENT_AUTHORIZED,
+                            String.valueOf(false));
+                    logException(adminInfo, exception, logMap, workerLogger, requestContext);
+                    throw exception;
+                } else {
+                    authorizer.isAuthorized(request, requestContext);
+                    logMap.put(IWorkerLogger.LOG_CLIENT_AUTHORIZED,
+                            String.valueOf(true));
+                }
             } catch (AuthorizationRequiredException ex) {
                 throw ex;
             } catch (AccessDeniedException ex) {
@@ -234,6 +244,17 @@ class WorkerProcessImpl {
                         new CryptoTokenOfflineException("Error Signer : "
                         + workerId
                         + " is disabled and cannot perform any signature operations");
+                logException(adminInfo, exception, logMap, workerLogger, requestContext);
+                throw exception;
+            }
+            
+            // Check for errors at EJB level
+            if (worker.hasCreateErrors()) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Worker " + workerId + " has create errors: " + worker.getCreateErrors());
+                }
+                final SignServerException exception = new SignServerException("Worker is misconfigured");
+                LOG.error(exception.getMessage(), exception);
                 logException(adminInfo, exception, logMap, workerLogger, requestContext);
                 throw exception;
             }
@@ -315,9 +336,7 @@ class WorkerProcessImpl {
                             (IClientCredential) requestContext.get(
                                         RequestContext.CLIENT_CREDENTIAL);
 
-                    purchased = workerManagerSession.getAccounter(workerId,
-                                    awc).purchase(credential, request, res,
-                                            requestContext);
+                    purchased = worker.getAccounter().purchase(credential, request, res, requestContext);
 
                     logMap.put(IWorkerLogger.LOG_PURCHASED, String.valueOf(purchased));
                 } catch (AccounterException ex) {
@@ -346,7 +365,7 @@ class WorkerProcessImpl {
                 final Collection<? extends Archivable> archivables = arres.getArchivables();
                 if (archivables != null) {
                     // Archive all Archivables using all ArchiverS
-                    final List<Archiver> archivers = workerManagerSession.getArchivers(workerId, awc);
+                    final List<Archiver> archivers = worker.getArchivers();
                     if (archivers != null) {
                         try {
                             for (Archiver archiver : archivers) {
@@ -435,7 +454,10 @@ class WorkerProcessImpl {
     }
 
     private void logException(final AdminInfo adminInfo, Exception ex, LogMap logMap,
-    		IWorkerLogger workerLogger, RequestContext requestContext) throws WorkerLoggerException {
+    		IWorkerLogger workerLogger, RequestContext requestContext) throws WorkerLoggerException {        
+        if (workerLogger == null) {
+            throw new WorkerLoggerException("Worker logger misconfigured", ex);
+        }
     	logMap.put(IWorkerLogger.LOG_EXCEPTION, ex.getMessage());
     	logMap.put(IWorkerLogger.LOG_PROCESS_SUCCESS, String.valueOf(false));
     	workerLogger.log(adminInfo, logMap, requestContext);

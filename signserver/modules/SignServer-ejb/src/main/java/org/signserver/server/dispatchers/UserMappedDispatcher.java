@@ -110,8 +110,6 @@ public class UserMappedDispatcher extends BaseDispatcher {
 
         // TODO: Look for loops
 
-        // TODO: Perhaps clone or something because there are already values
-        // put in or add some indication of dispatching
         final RequestContext nextContext = requestContext.copyWithNewLogMap();
 
         final String username = ((UsernamePasswordClientCredential) requestContext.get(RequestContext.CLIENT_CREDENTIAL_PASSWORD)).getUsername();

@@ -83,8 +83,6 @@ public class FirstActiveDispatcher extends BaseDispatcher {
 
         // TODO: Look for loops
 
-        // TODO: Perhaps clone or something because there are already values
-        // put in or add some indication of dispatching
         final RequestContext nextContext = requestContext.copyWithNewLogMap();
         int id = 0;
         

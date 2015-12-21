@@ -118,7 +118,7 @@ public class RequestedPolicyDispatcher extends BaseDispatcher {
         final LogMap logMap = LogMap.getInstance(context);
         
         // Check context
-        final RequestContext nextContext = context;
+        final RequestContext nextContext = context.copyWithNewLogMap();
         if (context.get(this.getClass().getName()) != null) {
             throw new SignServerException("Dispatcher called more then one time for the same request. Aborting.");
         } else {
@@ -173,7 +173,7 @@ public class RequestedPolicyDispatcher extends BaseDispatcher {
                 }
                 
                 // Mark request comming from a dispatcher so the DispatchedAuthorizer can be used
-                context.put(RequestContext.DISPATCHER_AUTHORIZED_CLIENT, true);
+                nextContext.put(RequestContext.DISPATCHER_AUTHORIZED_CLIENT, true);
                 
                 HttpServletRequest httpRequest = null;
                 if (sReq instanceof GenericServletRequest) {
@@ -181,7 +181,7 @@ public class RequestedPolicyDispatcher extends BaseDispatcher {
                 }
                 ProcessRequest newRequest = new GenericServletRequest(sReq.getRequestID(), (byte[]) sReq.getRequestData(), httpRequest);
                 
-                result = (GenericSignResponse) getWorkerSession().process(toWorkerId, newRequest, context);
+                result = (GenericSignResponse) getWorkerSession().process(toWorkerId, newRequest, nextContext);
             }
         } catch (IOException e) {
             logMap.put(ITimeStampLogger.LOG_TSA_EXCEPTION, e.getMessage());

@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.signserver</groupId>
         <artifactId>SignServer-Modules</artifactId>
-        <version>3.7.1-pk1</version>
+        <version>3.7.1-pk2</version>
     </parent>
     <artifactId>SignServer-Module-MRTDSODSigner</artifactId>
     <name>SignServer-Module-MRTDSODSigner</name>

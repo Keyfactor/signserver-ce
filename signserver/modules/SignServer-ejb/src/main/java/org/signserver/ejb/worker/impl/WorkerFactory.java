@@ -71,6 +71,10 @@ public class WorkerFactory {
      * @throws NoSuchWorkerException In case the worker ID does not exist
      */
     public synchronized IWorker getWorker(int workerId) throws NoSuchWorkerException {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace(">getWorker(" + workerId + ")");
+        }
+        
         IWorker result = workerStore.get(workerId);
         if (result == null) {
             loadWorker(workerId);
@@ -81,6 +85,9 @@ public class WorkerFactory {
                 LOG.debug("Trying to get worker with Id that does not exist: " + workerId);
             }
             throw new NoSuchWorkerException(String.valueOf(workerId));
+        }
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("getWorker(" + workerId + ") returning instance: " + result);
         }
         return result;
     }
@@ -96,6 +103,9 @@ public class WorkerFactory {
                 LOG.debug("Trying to get worker with Id that does not exist: " + workerId);
             }
             throw new NoSuchWorkerException(String.valueOf(workerId));
+        }
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("getWorkerWithComponents(" + workerId + ") returning instance: " + result + " containing " + result.getWorker());
         }
         return result;
     }
@@ -128,7 +138,7 @@ public class WorkerFactory {
 
     private void loadWorker(int workerId) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Loading worker into WorkerFactory: " + workerId);
+            LOG.debug(">loadWorker(" + workerId + ")");
         }
         WorkerConfig config = workerConfigHome.getWorkerProperties(workerId, false);
         if (config != null) {
@@ -151,6 +161,10 @@ public class WorkerFactory {
                     worker = (IWorker) implClass.newInstance();
                 }
                 workerStore.put(workerId, worker);
+                workers.remove(workerId);
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("loadWorker(" + workerId + "): instance " + worker);
+                }
 
                 if (config.getProperties().getProperty(PropertiesConstants.NAME) != null) {
                     nameToIdMap.put(config.getProperties().getProperty(PropertiesConstants.NAME).toUpperCase(), workerId);
@@ -169,9 +183,15 @@ public class WorkerFactory {
     
     @SuppressWarnings("deprecation") // TODO: We use getEntityManager in the correct way. So this deprecation warning is not correct.
     private void loadWorkerWithComponents(final int workerId, final SignServerContext context) throws NoSuchWorkerException {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace(">loadWorkerWithComponents(" + workerId + ")");
+        }
         // TODO: refactor: this is a strange contruct
-        loadWorker(workerId);
-        final IWorker worker = workerStore.get(workerId);
+        IWorker worker = workerStore.get(workerId);
+        if (worker == null) {
+            loadWorker(workerId);
+            worker = workerStore.get(workerId);
+        }
         if (worker == null) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Trying to get worker with Id that does not exist: " + workerId);
@@ -261,6 +281,9 @@ public class WorkerFactory {
      *
      */
     public synchronized void flush() {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace(">flush()");
+        }
         workerStore = new HashMap<>();
         workers = new HashMap<>();
         nameToIdMap = new HashMap<>();
@@ -271,9 +294,15 @@ public class WorkerFactory {
      * @param id of worker
      */
     public synchronized void reloadWorker(int id) {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace(">reloadWorker(" + id + ")");
+        }
         if (id != 0) {
             workerStore.remove(id);
             workers.remove(id);
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("reloadWorker(" + id + "): removed instance");
+            }
 
             Iterator<String> iter = nameToIdMap.keySet().iterator();
 
@@ -301,6 +330,10 @@ public class WorkerFactory {
                     worker = (IWorker) implClass.newInstance();
                 }
                 workerStore.put(id, worker);
+                workers.remove(id);
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("reloadWorker(" + id + "): instance " + worker);
+                }
 
                 if (config.getProperties().getProperty(PropertiesConstants.NAME) != null) {
                     nameToIdMap.put(config.getProperties().getProperty(PropertiesConstants.NAME).toUpperCase(), id);

@@ -36,6 +36,8 @@ import static junit.framework.TestCase.assertNotNull;
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Base64;
 import org.cesecore.util.CertTools;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
 import org.signserver.admin.cli.AdminCLI;
 import org.signserver.cli.CommandLineInterface;
 import org.signserver.common.CryptoTokenOfflineException;
@@ -70,6 +72,7 @@ import org.signserver.testutils.CLITestHelper;
  * @author Markus Kilås
  * @version $Id$
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class RenewalWorkerTest extends AbstractTestCase {
     
     private static final String EJBCAWSURL_PREFIX

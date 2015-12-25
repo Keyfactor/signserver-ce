@@ -274,10 +274,10 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
             final List<String> fatalErrors =
                     workerSession.getStatus(new WorkerIdentifier(WORKERID_SERVICE)).getFatalErrors();
             
-            assertTrue("Should contain error",
-                    fatalErrors.contains("No such worker: NonExistingWorker"));
-            assertTrue("Should contain error",
-                    fatalErrors.contains("Invalid worker ID: 9994711"));
+            assertTrue("Should contain error: " + fatalErrors,
+                    fatalErrors.contains("Invalid worker: Worker{name: NonExistingWorker}"));
+            assertTrue("Should contain error: " + fatalErrors,
+                    fatalErrors.contains("Invalid worker: Worker{id: 9994711}"));
             
             setServiceActive(true);
             // make sure the service had time to run
@@ -445,10 +445,10 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
             final List<String> fatalErrors =
                     workerSession.getStatus(new WorkerIdentifier(WORKERID_SERVICE)).getFatalErrors();
             
-            assertTrue("Should contain error",
-                    fatalErrors.contains("No such worker: NonExistingWorker"));
-            assertTrue("Should contain error",
-                    fatalErrors.contains("Invalid worker ID: 9994711"));
+            assertTrue("Should contain error: " + fatalErrors,
+                    fatalErrors.contains("Invalid worker: Worker{name: NonExistingWorker}"));
+            assertTrue("Should contain error: " + fatalErrors,
+                    fatalErrors.contains("Invalid worker: Worker{id: 9994711}"));
             
             setServiceActive(true);
             // make sure the service had time to run

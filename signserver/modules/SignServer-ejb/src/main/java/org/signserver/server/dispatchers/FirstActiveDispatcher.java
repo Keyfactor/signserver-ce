@@ -95,6 +95,7 @@ public class FirstActiveDispatcher extends BaseDispatcher {
         nextContext.put(RequestContext.DISPATCHER_AUTHORIZED_CLIENT, true);
 
         for (String workerName : workers) {
+            workerName = workerName.trim();
             try {
                 if (name.equals(workerName)) {
                     LOG.warn("Ignoring dispatching to it self (worker "

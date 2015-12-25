@@ -21,7 +21,7 @@ import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
-import org.signserver.common.InvalidWorkerIdException;
+import org.signserver.common.NoSuchWorkerException;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
@@ -133,11 +133,15 @@ public class UserMappedDispatcher extends BaseDispatcher {
                     + workerName + ")");
             throw new SignServerException("Dispatcher configured to dispatch to itself");
         } else {
-            response = workerSession.process(new WorkerIdentifier(workerName), signRequest,
-                    nextContext);
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Dispatched to worker: "
-                        + workerName + " (" + workerName + ")");
+            try {
+                response = workerSession.process(new WorkerIdentifier(workerName), signRequest,
+                        nextContext);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Dispatched to worker: "
+                            + workerName + " (" + workerName + ")");
+                }
+            } catch (NoSuchWorkerException ex) {
+                throw new SignServerException("Worker is misconfigured", ex);
             }
         }
         return response;

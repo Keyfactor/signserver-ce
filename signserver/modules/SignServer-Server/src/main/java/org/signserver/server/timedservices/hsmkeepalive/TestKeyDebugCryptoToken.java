@@ -30,6 +30,7 @@ import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.KeyTestResult;
 import org.signserver.common.ServiceLocator;
+import org.signserver.common.WorkerStatus;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.statusrepo.IStatusRepositorySession;
 import org.signserver.statusrepo.common.NoSuchPropertyException;
@@ -79,7 +80,7 @@ public class TestKeyDebugCryptoToken implements ICryptoToken {
 
     @Override
     public int getCryptoTokenStatus() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return WorkerStatus.STATUS_ACTIVE;
     }
 
     @Override

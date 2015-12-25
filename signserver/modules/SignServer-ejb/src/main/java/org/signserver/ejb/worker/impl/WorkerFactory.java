@@ -31,8 +31,6 @@ import org.signserver.server.signers.UnloadableWorker;
  * Loads worker configurations and instantiates the implementations and caches
  * those.
  *
- * XXX: Large scary singleton. Consider re-design.
- *
  * @author Philip Vendil
  * @version $Id$
  */
@@ -42,7 +40,6 @@ public class WorkerFactory {
     public static final Logger LOG = Logger.getLogger(WorkerFactory.class);
 
     private static final String WORKERLOGGER = "WORKERLOGGER";
-
     private static final String ACCOUNTER = "ACCOUNTER";
 
     private final IWorkerConfigDataService workerConfigHome;
@@ -80,20 +77,6 @@ public class WorkerFactory {
         }
         return result;
     }
-    
-    /*public synchronized IWorker getWorker(WorkerIdentity worker) throws NoSuchWorkerException {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace(">getWorker(\"" + workerName + "\")");
-        }
-        IWorker result = cache.getWorkerOnly(workerName);
-        if (result == null) {
-            result = loadWorker(workerName);
-        }
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("getWorker(\"" + workerName + "\") returning instance: " + result);
-        }
-        return result;
-    }*/
 
     public synchronized WorkerWithComponents getWorkerWithComponents(final WorkerIdentifier wi, final SignServerContext context) throws NoSuchWorkerException {
         WorkerWithComponents result = cache.getWorkerWithComponents(wi);
@@ -105,18 +88,7 @@ public class WorkerFactory {
         }
         return result;
     }
-    
-    /*public synchronized WorkerWithComponents getWorkerWithComponents(final String workerName, final SignServerContext context) throws NoSuchWorkerException {
-        WorkerWithComponents result = cache.getWorkerWithComponents(workerName);
-        if (result == null) {
-            result = loadWorkerWithComponents(workerName, context);
-        }
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("getWorkerWithComponents(" + workerName + ") returning instance: " + result + " containing " + result.getWorker());
-        }
-        return result;
-    }*/
-    
+
     private IWorker loadWorker(final WorkerIdentifier wi) throws NoSuchWorkerException {
         final int workerId;
         if (wi.hasId()) {
@@ -128,10 +100,10 @@ public class WorkerFactory {
         // Load worker from database
         IWorker result;
         WorkerConfig config = workerConfigHome.getWorkerProperties(workerId, false);
-        final String className = config.getImplementationClass();
         if (config == null) {
             throw new NoSuchWorkerException(String.valueOf(workerId));
         } else {
+            final String className = config.getImplementationClass();
             if (className == null) {
                 result = new UnloadableWorker("Missing property " + WorkerConfig.IMPLEMENTATION_CLASS);
             } else {
@@ -221,40 +193,6 @@ public class WorkerFactory {
         cache.putWorkerWithComponents(workerId, result);
         return result;
     }
-    
-    /*private IWorker loadWorker(final String workerName) throws NoSuchWorkerException {
-        return loadWorker(workerConfigHome.findId(workerName));
-    }
-    
-    private WorkerWithComponents loadWorkerWithComponents(final String workerName, final SignServerContext context) throws NoSuchWorkerException {
-        return loadWorkerWithComponents(workerConfigHome.findId(workerName), context);
-    }*/
-
-    /**
-     * Method returning a id of a named Worker
-     *
-     *
-     * The worker will only be created upon first call, then it's stored in memory until
-     * the flush method is called.
-     *
-     * @param workerName the name of a named worker.
-     * @return the id of the worker
-     * @throws NoSuchWorkerException in case a worker with the name does not exist
-     */
-    /*public synchronized int getWorkerIdFromName(final String workerName) throws NoSuchWorkerException {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(">getWorkerIdFromName(" + workerName + ")");
-        }
-        if (workerName == null) {
-            throw new NullPointerException("workerName is null");
-        }
-        Integer result = nameToIdMap.get(workerName.toUpperCase());
-        if (result == null) {
-            result = workerConfigHome.findId(workerName);
-            nameToIdMap.put(workerName.toUpperCase(), result);
-        }
-        return result;
-    }*/
 
     private void initWorker(final IWorker worker, final int workerId, final WorkerConfig config) {
         final String cryptoTokenName = config.getProperty("CRYPTOTOKEN");
@@ -302,7 +240,7 @@ public class WorkerFactory {
 
     /**
      * Method used to force a reload of worker.
-     * @param id of worker
+     * @param wi of worker
      */
     public synchronized void reloadWorker(WorkerIdentifier wi) {
         if (LOG.isTraceEnabled()) {
@@ -320,6 +258,10 @@ public class WorkerFactory {
         } catch (NoSuchWorkerException ex) {
             LOG.error("Error reloading worker : " + ex.getMessage());
         }
+    }
+    
+    public synchronized Collection<Integer> getCachedWorkerIds() {
+        return cache.keySet();
     }
 
     /**
@@ -468,10 +410,6 @@ public class WorkerFactory {
             }
         }
         return archivers;
-    }
-
-    public synchronized Collection<Integer> getCachedWorkerIds() {
-        return cache.keySet();
     }
 
 }

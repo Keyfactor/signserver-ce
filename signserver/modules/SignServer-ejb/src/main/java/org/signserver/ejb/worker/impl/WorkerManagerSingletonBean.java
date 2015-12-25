@@ -13,20 +13,14 @@
 package org.signserver.ejb.worker.impl;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-
 import javax.annotation.PostConstruct;
 import javax.ejb.ConcurrencyManagement;
 import javax.ejb.ConcurrencyManagementType;
-import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
-
-import org.cesecore.audit.log.SecurityEventsLoggerSessionLocal;
 import org.signserver.common.NoSuchWorkerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
@@ -62,10 +56,7 @@ public class WorkerManagerSingletonBean {
     private WorkerFactory workerFactory;
     
     private SignServerContext workerContext;
-    
-    @EJB
-    private SecurityEventsLoggerSessionLocal logSession;
-    
+
     @PostConstruct
     public void create() {
         if (em == null) {
@@ -102,23 +93,11 @@ public class WorkerManagerSingletonBean {
     public WorkerWithComponents getWorkerWithComponents(final WorkerIdentifier wi) throws NoSuchWorkerException {
         return workerFactory.getWorkerWithComponents(wi, workerContext);
     }
-    
-    /**
-     * @param workerName worker name to query the ID for
-     * @return returning the ID of the named Worker
-     * @throws NoSuchWorkerException in case no worker with that name exists
-     */
-    /*public int getIdFromName(final String workerName) throws NoSuchWorkerException {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(">getIdFromName(" + workerName + ")");
-        }
-        return workerFactory.getWorkerIdFromName(workerName);
-    }*/
 
     /**
      * Force a reload of the given worker.
      *
-     * @param workerId Id of worker to reload
+     * @param wi to reload
      */
     public void reloadWorker(WorkerIdentifier wi) {
         workerFactory.reloadWorker(wi);
@@ -177,20 +156,9 @@ public class WorkerManagerSingletonBean {
         }
         return retval;
     }
-    
-    private Map<Class<?>, Object> getEjbs() {
-        final Map<Class<?>, Object> ejbs = new HashMap<>();
-        ejbs.put(SecurityEventsLoggerSessionLocal.class, logSession);
-        
-        return ejbs;
-    }
 
     public void upgradeWorkerNames() {
         workerConfigService.populateNameColumn();
     }
 
-    /*public boolean removeWorker(WorkerIdentifier workerId) {
-        return workerConfigService.removeWorkerConfig(workerId);
-    }*/
-    
 }

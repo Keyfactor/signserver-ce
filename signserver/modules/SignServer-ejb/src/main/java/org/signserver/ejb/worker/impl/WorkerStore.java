@@ -1,8 +1,15 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+/*************************************************************************
+ *                                                                       *
+ *  SignServer: The OpenSource Automated Signing Server                  *
+ *                                                                       *
+ *  This software is free software; you can redistribute it and/or       *
+ *  modify it under the terms of the GNU Lesser General Public           *
+ *  License as published by the Free Software Foundation; either         *
+ *  version 2.1 of the License, or any later version.                    *
+ *                                                                       *
+ *  See terms of license at gnu.org.                                     *
+ *                                                                       *
+ *************************************************************************/
 package org.signserver.ejb.worker.impl;
 
 import java.util.Collection;
@@ -13,8 +20,11 @@ import org.signserver.common.WorkerIdentifier;
 import org.signserver.server.IWorker;
 
 /**
+ * Holder for loaded workers and workers+components as well as the mapping from
+ * worker name to worker ID.
  *
- * @author user
+ * @author Markus Kilås
+ * @version $Id$
  */
 public class WorkerStore {
     private final Map<Integer, WorkerWithComponents> workersWithComponents = new HashMap<>();
@@ -38,19 +48,6 @@ public class WorkerStore {
         return result;
     }
     
-    /*public IWorker getWorkerOnly(int workerId) {
-        return workersOnly.get(workerId);
-    }
-    
-    public IWorker getWorkerOnly(String workerName) {
-        IWorker result = null;
-        final Integer workerId = nameToIdMap.get(workerName);
-        if (workerId != null) {
-            result = workersOnly.get(workerId);
-        }
-        return result;
-    }*/
-    
     public WorkerWithComponents getWorkerWithComponents(WorkerIdentifier wi) {
         WorkerWithComponents result = null;
         if (wi.hasId()) {
@@ -63,19 +60,6 @@ public class WorkerStore {
         }
         return result;
     }
-    
-    /*public WorkerWithComponents getWorkerWithComponents(int workerId) {
-        return workersWithComponents.get(workerId);
-    }
-    
-    public WorkerWithComponents getWorkerWithComponents(String workerName) {
-        WorkerWithComponents result = null;
-        final Integer workerId = nameToIdMap.get(workerName);
-        if (workerId != null) {
-            result = workersWithComponents.get(workerId);
-        }
-        return result;
-    }*/
     
     public Integer getWorkerId(String name) {
         return nameToIdMap.get(name.toUpperCase());

@@ -132,7 +132,7 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
         setProperties(new File(getSignServerHome(), "res/test/test-xmlvalidator-configuration.properties"));
 
         // XMLVALIDATOR: worker
-        workerSession.setWorkerProperty(CERTVALIDATION_WORKERID, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.xmlvalidator.XMLValidator");
+        workerSession.setWorkerProperty(XMLVALIDATOR_WORKERID, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.xmlvalidator.XMLValidator");
         workerSession.setWorkerProperty(XMLVALIDATOR_WORKERID, "NAME", XMLVALIDATOR_WORKER);
         workerSession.setWorkerProperty(XMLVALIDATOR_WORKERID, "AUTHTYPE", "NOAUTH");
         workerSession.setWorkerProperty(XMLVALIDATOR_WORKERID, "VALIDATIONSERVICEWORKER", CERTVALIDATION_WORKER);

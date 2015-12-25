@@ -727,7 +727,7 @@ public class PDFSigner extends BaseSigner {
                 tsc = getTimeStampClient(params.getTsa_url(), params.getTsa_username(), params.getTsa_password());
             } else {
                 tsc = new InternalTSAClient(getWorkerSession(),
-                        new WorkerIdentifier(params.getTsa_worker()), params.getTsa_username(), params.getTsa_password());
+                        WorkerIdentifier.createFromIdOrName(params.getTsa_worker()), params.getTsa_username(), params.getTsa_password());
             }
         }
 

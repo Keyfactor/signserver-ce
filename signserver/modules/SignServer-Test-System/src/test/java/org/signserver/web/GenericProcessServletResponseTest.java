@@ -23,6 +23,7 @@ import org.signserver.common.InvalidWorkerIdException;
 
 import org.junit.Test;
 import org.signserver.common.WorkerIdentifier;
+import org.signserver.server.signers.EchoRequestMetadataSigner;
 import org.signserver.testutils.ModulesTestCase;
 
 /**
@@ -48,11 +49,11 @@ public class GenericProcessServletResponseTest extends WebTestCase {
     @Test
     public void test00SetupDatabase() throws Exception {
         addDummySigner1(false);
-        //addCMSSigner1();
-        //addXMLValidator();
-        //addSigner(EchoRequestMetadataSigner.class.getName(), 123, "DummySigner123", true);
-        //getWorkerSession().activateSigner(getSignerIdDummy1(), ModulesTestCase.KEYSTORE_PASSWORD);
-        //getWorkerSession().activateSigner(getSignerIdCMSSigner1(), ModulesTestCase.KEYSTORE_PASSWORD);
+        addCMSSigner1();
+        addXMLValidator();
+        addSigner(EchoRequestMetadataSigner.class.getName(), 123, "DummySigner123", true);
+        getWorkerSession().activateSigner(new WorkerIdentifier(getSignerIdDummy1()), ModulesTestCase.KEYSTORE_PASSWORD);
+        getWorkerSession().activateSigner(new WorkerIdentifier(getSignerIdCMSSigner1()), ModulesTestCase.KEYSTORE_PASSWORD);
     }
 
 
@@ -80,14 +81,14 @@ public class GenericProcessServletResponseTest extends WebTestCase {
             assertStatusReturned(fields, 500);
         } finally {
             // Restore
-            /*if (originalSignatureAlgorithm == null) {
+            if (originalSignatureAlgorithm == null) {
                 getWorkerSession().removeWorkerProperty(getSignerIdDummy1(), "SIGNATUREALGORITHM");
             } else {
                 getWorkerSession().setWorkerProperty(getSignerIdDummy1(), "SIGNATUREALGORITHM",
                     originalSignatureAlgorithm);
             }
             getWorkerSession().reloadConfiguration(getSignerIdDummy1());
-            getWorkerSession().activateSigner(getSignerIdDummy1(), ModulesTestCase.KEYSTORE_PASSWORD);*/
+            getWorkerSession().activateSigner(new WorkerIdentifier(getSignerIdDummy1()), ModulesTestCase.KEYSTORE_PASSWORD);
         }
     }
 
@@ -97,12 +98,12 @@ public class GenericProcessServletResponseTest extends WebTestCase {
      * Remove the workers created etc.
      * @throws Exception in case of error
      */
-    /*@Test
+    @Test
     public void test99TearDownDatabase() throws Exception {
         removeWorker(getSignerIdDummy1());
         removeWorker(getSignerIdCMSSigner1());
         removeWorker(getWorkerIdXmlValidator());
         removeWorker(getWorkerIdValidationService());
         removeWorker(123);
-    }*/
+    }
 }

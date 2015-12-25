@@ -61,6 +61,7 @@ import org.junit.Test;
 import org.signserver.common.GenericSignResponse;
 import org.signserver.common.ServiceConfig;
 import org.signserver.common.SignServerUtil;
+import org.signserver.common.WorkerIdentifier;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.module.cmssigner.PlainSigner;
@@ -133,7 +134,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         final GenericSignRequest signRequest =
                 new GenericSignRequest(43, "foo".getBytes());
         final GenericSignResponse res = 
-                (GenericSignResponse) workerSession.process(WORKERID_DEBUGSIGNER,
+                (GenericSignResponse) workerSession.process(new WorkerIdentifier(WORKERID_DEBUGSIGNER),
                     signRequest, new RequestContext());
         final byte[] data = res.getProcessedData();
 
@@ -627,10 +628,10 @@ public class SystemLoggingTest extends ModulesTestCase {
         
         try {
             setupCryptoToken(WORKERID_CRYPTOWORKER1, tokenName, "foo123");
-            workerSession.generateSignerKey(WORKERID_CRYPTOWORKER1, "RSA", "512", alias, null);
+            workerSession.generateSignerKey(new WorkerIdentifier(WORKERID_CRYPTOWORKER1), "RSA", "512", alias, null);
             
             PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=testkeyalias10,C=SE", null);
-            ICertReqData req = workerSession.getCertificateRequest(WORKERID_CRYPTOWORKER1, certReqInfo, false);
+            ICertReqData req = workerSession.getCertificateRequest(new WorkerIdentifier(WORKERID_CRYPTOWORKER1), certReqInfo, false);
             Base64SignerCertReqData reqData = (Base64SignerCertReqData) req;
             PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
             
@@ -641,7 +642,7 @@ public class SystemLoggingTest extends ModulesTestCase {
             final X509Certificate issuerCert = new JcaX509CertificateConverter().getCertificate(new CertBuilder().setSelfSignKeyPair(issuerKeyPair).setSubject("CN=Issuer, C=SE").build());
             final X509Certificate cert = new JcaX509CertificateConverter().getCertificate(new X509v3CertificateBuilder(new X500Name("CN=Issuer, C=SE"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate())));
             
-            workerSession.importCertificateChain(WORKERID_CRYPTOWORKER1, Arrays.asList(cert.getEncoded(), issuerCert.getEncoded()), alias, null);
+            workerSession.importCertificateChain(new WorkerIdentifier(WORKERID_CRYPTOWORKER1), Arrays.asList(cert.getEncoded(), issuerCert.getEncoded()), alias, null);
 
             List<String> lines = readEntries(auditLogFile, linesBefore, 2);
             LOG.info(lines);
@@ -767,8 +768,8 @@ public class SystemLoggingTest extends ModulesTestCase {
             
             // Test keygen
             int linesBefore = readEntriesCount(auditLogFile);
-            workerSession.generateSignerKey(p12SignerId, "RSA", "512", "ts_key00004", "foo123".toCharArray());
-            workerSession.generateSignerKey(p12SignerId, "RSA", "512", "additionalKey", "foo123".toCharArray());
+            workerSession.generateSignerKey(new WorkerIdentifier(p12SignerId), "RSA", "512", "ts_key00004", "foo123".toCharArray());
+            workerSession.generateSignerKey(new WorkerIdentifier(p12SignerId), "RSA", "512", "additionalKey", "foo123".toCharArray());
 
             List<String> lines = readEntries(auditLogFile, linesBefore, 1);
             LOG.info(lines);
@@ -782,8 +783,8 @@ public class SystemLoggingTest extends ModulesTestCase {
             assertTrue("Contains crypto token", line.contains("CRYPTOTOKEN: " + signerName));
 
             // Test keytest
-            workerSession.activateSigner(p12SignerId, "foo123");
-            workerSession.testKey(p12SignerId, "ts_key00004", "foo123".toCharArray());
+            workerSession.activateSigner(new WorkerIdentifier(p12SignerId), "foo123");
+            workerSession.testKey(new WorkerIdentifier(p12SignerId), "ts_key00004", "foo123".toCharArray());
             
             lines = readEntries(auditLogFile, linesBefore + 2, 1);
             LOG.info(lines);
@@ -796,7 +797,7 @@ public class SystemLoggingTest extends ModulesTestCase {
             assertTrue("Contains test results", line.contains("KeyTestResult{alias=ts_key00004, success=true"));
             
             // Test key with all, to assure not extra base 64 encoding is done
-            workerSession.testKey(p12SignerId, "all", "foo123".toCharArray());
+            workerSession.testKey(new WorkerIdentifier(p12SignerId), "all", "foo123".toCharArray());
             lines = readEntries(auditLogFile, linesBefore + 3, 1);
             LOG.info(lines);
             line = lines.get(0);
@@ -804,7 +805,7 @@ public class SystemLoggingTest extends ModulesTestCase {
             
             // Test gencsr
             PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=TS Signer 1,C=SE", null);
-            ICertReqData req = workerSession.getCertificateRequest(p12SignerId, certReqInfo, false);
+            ICertReqData req = workerSession.getCertificateRequest(new WorkerIdentifier(p12SignerId), certReqInfo, false);
             Base64SignerCertReqData reqData = (Base64SignerCertReqData) req;
             lines = readEntries(auditLogFile, linesBefore + 4, 1);
             LOG.info(lines);
@@ -818,7 +819,7 @@ public class SystemLoggingTest extends ModulesTestCase {
             assertTrue("Contains csr", line.contains("CSR: " + new String(reqData.getBase64CertReq())));
             
             // Test gencsr            
-            req = workerSession.getCertificateRequest(p12SignerId, certReqInfo, false, "ts_key00004");
+            req = workerSession.getCertificateRequest(new WorkerIdentifier(p12SignerId), certReqInfo, false, "ts_key00004");
             reqData = (Base64SignerCertReqData) req;
             lines = readEntries(auditLogFile, linesBefore + 5, 1);
             LOG.info(lines);
@@ -832,7 +833,7 @@ public class SystemLoggingTest extends ModulesTestCase {
             assertTrue("Contains csr", line.contains("CSR: " + new String(reqData.getBase64CertReq())));
             
             // Test remove key
-            workerSession.removeKey(p12SignerId, "ts_key00004");
+            workerSession.removeKey(new WorkerIdentifier(p12SignerId), "ts_key00004");
             lines = readEntries(auditLogFile, linesBefore + 6, 1);
             LOG.info(lines);
             line = lines.get(0);
@@ -893,8 +894,8 @@ public class SystemLoggingTest extends ModulesTestCase {
 
             // Test keygen
             int linesBefore = readEntriesCount(auditLogFile);
-            workerSession.generateSignerKey(workerId, "RSA", "512", "ts_key00004", "foo123".toCharArray());
-            workerSession.generateSignerKey(workerId, "RSA", "512", "additionalKey", "foo123".toCharArray());
+            workerSession.generateSignerKey(new WorkerIdentifier(workerId), "RSA", "512", "ts_key00004", "foo123".toCharArray());
+            workerSession.generateSignerKey(new WorkerIdentifier(workerId), "RSA", "512", "additionalKey", "foo123".toCharArray());
 
             List<String> lines = readEntries(auditLogFile, linesBefore, 1);
             LOG.info(lines);
@@ -908,8 +909,8 @@ public class SystemLoggingTest extends ModulesTestCase {
             assertTrue("Contains crypto token", line.contains("CRYPTOTOKEN: " + tokenName));
 
             // Test keytest
-            workerSession.activateSigner(workerId, "foo123");
-            workerSession.testKey(workerId, "ts_key00004", "foo123".toCharArray());
+            workerSession.activateSigner(new WorkerIdentifier(workerId), "foo123");
+            workerSession.testKey(new WorkerIdentifier(workerId), "ts_key00004", "foo123".toCharArray());
             
             lines = readEntries(auditLogFile, linesBefore + 2, 1);
             LOG.info(lines);
@@ -922,7 +923,7 @@ public class SystemLoggingTest extends ModulesTestCase {
             assertTrue("Contains test results", line.contains("KeyTestResult{alias=ts_key00004, success=true"));
             
             // Test key with all, to assure not extra base 64 encoding is done
-            workerSession.testKey(workerId, "all", "foo123".toCharArray());
+            workerSession.testKey(new WorkerIdentifier(workerId), "all", "foo123".toCharArray());
             lines = readEntries(auditLogFile, linesBefore + 3, 1);
             LOG.info(lines);
             line = lines.get(0);
@@ -930,7 +931,7 @@ public class SystemLoggingTest extends ModulesTestCase {
             
             // Test gencsr
             PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=TS Signer 1,C=SE", null);
-            ICertReqData req = workerSession.getCertificateRequest(workerId, certReqInfo, false, "ts_key00004");
+            ICertReqData req = workerSession.getCertificateRequest(new WorkerIdentifier(workerId), certReqInfo, false, "ts_key00004");
             Base64SignerCertReqData reqData = (Base64SignerCertReqData) req;
             lines = readEntries(auditLogFile, linesBefore + 4, 1);
             LOG.info(lines);
@@ -944,7 +945,7 @@ public class SystemLoggingTest extends ModulesTestCase {
             assertTrue("Contains csr", line.contains("CSR: " + new String(reqData.getBase64CertReq())));
             
             // Test remove key
-            workerSession.removeKey(workerId, "ts_key00004");
+            workerSession.removeKey(new WorkerIdentifier(workerId), "ts_key00004");
             lines = readEntries(auditLogFile, linesBefore + 5, 1);
             LOG.info(lines);
             line = lines.get(0);
@@ -983,7 +984,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         
         final int nonExistingWorkerId = 1234567;
         try {
-            workerSession.process(nonExistingWorkerId, new GenericSignRequest(123, "<a/>".getBytes()), new RequestContext());
+            workerSession.process(new WorkerIdentifier(nonExistingWorkerId), new GenericSignRequest(123, "<a/>".getBytes()), new RequestContext());
             throw new Exception("Should have failed as it was a request to non existing worker");
         } catch (IllegalRequestException ignored) { //NOPMD
             // OK
@@ -1026,7 +1027,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         int linesBefore = readEntriesCount(auditLogFile);
         
         GenericSignRequest request = new GenericSignRequest(123, "<test/>".getBytes("UTF-8"));
-        workerSession.process(signerId, request, new RequestContext());
+        workerSession.process(new WorkerIdentifier(signerId), request, new RequestContext());
         
         List<String> lines = readEntries(auditLogFile, linesBefore, 1);
         String line = lines.get(0);
@@ -1051,7 +1052,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         int linesBefore = readEntriesCount(auditLogFile);
         
         GenericSignRequest request = new GenericSignRequest(123, "<test/>".getBytes("UTF-8"));
-        workerSession.process(signerId, request, new RequestContext());
+        workerSession.process(new WorkerIdentifier(signerId), request, new RequestContext());
         
         List<String> lines = readEntries(auditLogFile, linesBefore, 1);
         String line = lines.get(0);
@@ -1075,7 +1076,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         int linesBefore = readEntriesCount(auditLogFile);
         
         GenericSignRequest request = new GenericSignRequest(123, "<test/>".getBytes("UTF-8"));
-        workerSession.process(signerId, request, new RequestContext());
+        workerSession.process(new WorkerIdentifier(signerId), request, new RequestContext());
         
         List<String> lines = readEntries(auditLogFile, linesBefore, 1);
         String line = lines.get(0);
@@ -1096,7 +1097,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         
         try {
             GenericSignRequest request = new GenericSignRequest(123, "<test/>".getBytes("UTF-8"));
-            workerSession.process(signerId, request, new RequestContext());
+            workerSession.process(new WorkerIdentifier(signerId), request, new RequestContext());
         } catch (SignServerException e) {
             // expected
             return;
@@ -1118,7 +1119,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         
         try {
             GenericSignRequest request = new GenericSignRequest(123, "bogus".getBytes("UTF-8"));
-            workerSession.process(signerId, request, new RequestContext());
+            workerSession.process(new WorkerIdentifier(signerId), request, new RequestContext());
         } catch (IllegalRequestException e) {
             // expected
         }
@@ -1181,7 +1182,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         int linesBefore = readEntriesCount(auditLogFile);
         
         GenericSignRequest request = new GenericSignRequest(123, "<test/>".getBytes("UTF-8"));
-        workerSession.process(signerId, request, new RequestContext());
+        workerSession.process(new WorkerIdentifier(signerId), request, new RequestContext());
         
         List<String> lines = readEntries(auditLogFile, linesBefore, 1);
         String line = lines.get(0);

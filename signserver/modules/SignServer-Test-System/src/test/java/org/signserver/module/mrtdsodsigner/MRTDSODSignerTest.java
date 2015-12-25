@@ -238,7 +238,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
         assertTrue(thrown);
         
         // Test that there is an error as the signer is not valid yet
-        WorkerStatus status = workerSession.getStatus(WORKER1);
+        WorkerStatus status = workerSession.getStatus(new WorkerIdentifier(WORKER1));
         String errors = status.getFatalErrors().toString();
         assertTrue(errors, errors.contains("xpired"));
     }
@@ -270,7 +270,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
         assertTrue(thrown);
         
         // Test that there is an error as the signer is not valid yet
-        WorkerStatus status = workerSession.getStatus(WORKER1B);
+        WorkerStatus status = workerSession.getStatus(new WorkerIdentifier(WORKER1B));
         String errors = status.getFatalErrors().toString();
         assertTrue(errors, errors.contains("xpired"));
     }
@@ -299,7 +299,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
         assertEquals(2030, cal.get(Calendar.YEAR));
 
         //    test#2	getSignerValidityNotBefore: cert#1, bCert       = 2025
-        d = workerSession.getSigningValidityNotBefore(WORKER1C);
+        d = workerSession.getSigningValidityNotBefore(new WorkerIdentifier(WORKER1C));
         assertNotNull("test#2 not null", d);
         cal.setTime(d);
         assertEquals(2025, cal.get(Calendar.YEAR));
@@ -314,7 +314,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
         assertEquals(2020, cal.get(Calendar.YEAR));
 
         //    test#4	getSignerValidityNotBefore: cert#1, bPriv       = 2015
-        d = workerSession.getSigningValidityNotBefore(WORKER1C);
+        d = workerSession.getSigningValidityNotBefore(new WorkerIdentifier(WORKER1C));
         assertNotNull("test#4 not null", d);
         cal.setTime(d);
         assertEquals(2015, cal.get(Calendar.YEAR));
@@ -327,7 +327,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
         assertEquals(2020, cal.get(Calendar.YEAR));
 
         //    test#6		getSignerValidityNotBefore: cert#1, bCert, bPrive = 2015
-        d = workerSession.getSigningValidityNotBefore(WORKER1C);
+        d = workerSession.getSigningValidityNotBefore(new WorkerIdentifier(WORKER1C));
         assertNotNull("test#6 not null", d);
         cal.setTime(d);
         assertEquals(2015, cal.get(Calendar.YEAR));
@@ -342,7 +342,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
         assertEquals(2020, cal.get(Calendar.YEAR));
 
         //    test#8		getSignerValidityNotBefore: cert#1, bCert, r10	  = 2015
-        d = workerSession.getSigningValidityNotBefore(WORKER1C);
+        d = workerSession.getSigningValidityNotBefore(new WorkerIdentifier(WORKER1C));
         assertNotNull("test#8 not null", d);
         cal.setTime(d);
         assertEquals(2025, cal.get(Calendar.YEAR));
@@ -355,7 +355,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
         assertEquals(2026, cal.get(Calendar.YEAR));
 
         //    test#10:	getSignerValidityNotBefore: cert#1, bCert, r4		  = 2025
-        d = workerSession.getSigningValidityNotBefore(WORKER1C);
+        d = workerSession.getSigningValidityNotBefore(new WorkerIdentifier(WORKER1C));
         assertNotNull("test#10 not null", d);
         cal.setTime(d);
         assertEquals(2025, cal.get(Calendar.YEAR));
@@ -372,7 +372,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
 
         //    test#22		getSignerValidityNotBefore: cert#2, bCert	  = 2015
         assertNotNull("test#22 not null", d);
-        d = workerSession.getSigningValidityNotBefore(WORKER1D);
+        d = workerSession.getSigningValidityNotBefore(new WorkerIdentifier(WORKER1D));
         cal.setTime(d);
         assertEquals(2015, cal.get(Calendar.YEAR));
 
@@ -386,7 +386,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
         assertEquals(2030, cal.get(Calendar.YEAR));
 
         //    test#24		getSignerValidityNotBefore: cert#2, bPriv	 = 2025
-        d = workerSession.getSigningValidityNotBefore(WORKER1D);
+        d = workerSession.getSigningValidityNotBefore(new WorkerIdentifier(WORKER1D));
         assertNotNull("test#24 not null", d);
         cal.setTime(d);
         assertEquals(2025, cal.get(Calendar.YEAR));
@@ -399,7 +399,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
         assertEquals(2020, cal.get(Calendar.YEAR));
 
         //    test#26		getSignerValidityNotBefore: cert#2, bCert, bPriv = 2025
-        d = workerSession.getSigningValidityNotBefore(WORKER1D);
+        d = workerSession.getSigningValidityNotBefore(new WorkerIdentifier(WORKER1D));
         assertNotNull("test#26 not null", d);
         cal.setTime(d);
         assertEquals(2025, cal.get(Calendar.YEAR));
@@ -414,7 +414,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
         assertEquals(2010, cal.get(Calendar.YEAR));
 
         //    test#28		getSignerValidityNotBefore: cert#2, bCert, r10	  = 2015
-        d = workerSession.getSigningValidityNotBefore(WORKER1D);
+        d = workerSession.getSigningValidityNotBefore(new WorkerIdentifier(WORKER1D));
         assertNotNull("test#28 not null", d);
         cal.setTime(d);
         assertEquals(2015, cal.get(Calendar.YEAR));
@@ -427,7 +427,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
         assertEquals(2016, cal.get(Calendar.YEAR));
 
         //    test#30:	getSignerValidityNotBefore: cert#2, bCert, r4		  = 2015
-        d = workerSession.getSigningValidityNotBefore(WORKER1D);
+        d = workerSession.getSigningValidityNotBefore(new WorkerIdentifier(WORKER1D));
         assertNotNull("test#30 not null", d);
         cal.setTime(d);
         assertEquals(2015, cal.get(Calendar.YEAR));
@@ -447,7 +447,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
             expectedHashes = dataGroups;
         }
 
-        SODSignResponse res = (SODSignResponse) workerSession.process(workerId, new SODSignRequest(requestId, dataGroups), new RequestContext());
+        SODSignResponse res = (SODSignResponse) workerSession.process(new WorkerIdentifier(workerId), new SODSignRequest(requestId, dataGroups), new RequestContext());
         assertNotNull(res);
         assertEquals(requestId, res.getRequestID());
         Certificate signercert = res.getSignerCertificate();
@@ -478,7 +478,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
      */
     @Test
     public void test05GetStatus() throws Exception {
-        StaticWorkerStatus stat = (StaticWorkerStatus) workerSession.getStatus(7897);
+        StaticWorkerStatus stat = (StaticWorkerStatus) workerSession.getStatus(new WorkerIdentifier(7897));
         assertTrue(stat.getTokenStatus() == WorkerStatus.STATUS_ACTIVE);
     }
 
@@ -492,7 +492,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
             workerSession.setWorkerProperty(WORKER1, WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS, "2");
             workerSession.reloadConfiguration(WORKER1);
             
-            final List<String> errors = workerSession.getStatus(WORKER1).getFatalErrors();
+            final List<String> errors = workerSession.getStatus(new WorkerIdentifier(WORKER1)).getFatalErrors();
             
             assertTrue("Should contain error", errors.contains(WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS + " is not supported."));
         } finally {

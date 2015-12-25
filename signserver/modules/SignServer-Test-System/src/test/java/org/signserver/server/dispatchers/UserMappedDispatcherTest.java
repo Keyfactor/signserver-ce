@@ -151,7 +151,7 @@ public class UserMappedDispatcherTest extends ModulesTestCase {
             // Send request to dispatcher as user1
             context.put(RequestContext.CLIENT_CREDENTIAL_PASSWORD, 
                     new UsernamePasswordClientCredential("user1", "password"));
-            res = (GenericSignResponse) workerSession.process(WORKERID_DISPATCHER,
+            res = (GenericSignResponse) workerSession.process(new WorkerIdentifier(WORKERID_DISPATCHER),
                     request, context);
             
             X509Certificate cert = (X509Certificate) res.getSignerCertificate();
@@ -161,7 +161,7 @@ public class UserMappedDispatcherTest extends ModulesTestCase {
             // Send request to dispatcher as user2
             context.put(RequestContext.CLIENT_CREDENTIAL_PASSWORD, 
                     new UsernamePasswordClientCredential("user2", "password"));
-            res = (GenericSignResponse) workerSession.process(WORKERID_DISPATCHER,
+            res = (GenericSignResponse) workerSession.process(new WorkerIdentifier(WORKERID_DISPATCHER),
                     request, context);
             cert = (X509Certificate) res.getSignerCertificate();
             assertEquals("Response from signer 82", 
@@ -170,7 +170,7 @@ public class UserMappedDispatcherTest extends ModulesTestCase {
             // Send request to dispatcher as user3
             context.put(RequestContext.CLIENT_CREDENTIAL_PASSWORD, 
                     new UsernamePasswordClientCredential("user3", "password"));
-            res = (GenericSignResponse) workerSession.process(WORKERID_DISPATCHER,
+            res = (GenericSignResponse) workerSession.process(new WorkerIdentifier(WORKERID_DISPATCHER),
                     request, context);
             cert = (X509Certificate) res.getSignerCertificate();
             assertEquals("Response from signer 83", 
@@ -180,7 +180,7 @@ public class UserMappedDispatcherTest extends ModulesTestCase {
             try {
                 context.put(RequestContext.CLIENT_CREDENTIAL_PASSWORD, 
                         new UsernamePasswordClientCredential("user4", "password"));
-                workerSession.process(WORKERID_DISPATCHER, request, context);
+                workerSession.process(new WorkerIdentifier(WORKERID_DISPATCHER), request, context);
                 fail("Should have got SignServerException as the worker configured does not exist");
             } catch(SignServerException expected) { // NOPMD
                 // OK
@@ -191,7 +191,7 @@ public class UserMappedDispatcherTest extends ModulesTestCase {
             try {
                 context.put(RequestContext.CLIENT_CREDENTIAL_PASSWORD, 
                         new UsernamePasswordClientCredential("user5", "password"));
-                workerSession.process(WORKERID_DISPATCHER, request, context);
+                workerSession.process(new WorkerIdentifier(WORKERID_DISPATCHER), request, context);
                 fail("Should have got SignServerException as it is configured to dispatch to itself");
             } catch(SignServerException expected) { // NOPMD
                 // OK
@@ -201,7 +201,7 @@ public class UserMappedDispatcherTest extends ModulesTestCase {
             try {
                 context.put(RequestContext.CLIENT_CREDENTIAL_PASSWORD, 
                         new UsernamePasswordClientCredential("user6", "password"));
-                workerSession.process(WORKERID_DISPATCHER, request, context);
+                workerSession.process(new WorkerIdentifier(WORKERID_DISPATCHER), request, context);
                 fail("Should have got IllegalRequestException as there is no mapping");
             } catch(IllegalRequestException expected) { // NOPMD
                 // OK
@@ -220,7 +220,7 @@ public class UserMappedDispatcherTest extends ModulesTestCase {
     public void test02Activate() throws Exception {
         LOG.info("test02Activate");
     	try {
-            workerSession.activateSigner(WORKERID_DISPATCHER, DUMMY_AUTH_CODE);
+            workerSession.activateSigner(new WorkerIdentifier(WORKERID_DISPATCHER), DUMMY_AUTH_CODE);
     	} catch (Exception e) {
             LOG.error("Exception thrown", e);
             fail("Failed to activate the dispatcher");
@@ -235,7 +235,7 @@ public class UserMappedDispatcherTest extends ModulesTestCase {
     public void test03Deactivate() throws Exception {
         LOG.info("test03Deactivate");
     	try {
-    		workerSession.deactivateSigner(WORKERID_DISPATCHER);
+    		workerSession.deactivateSigner(new WorkerIdentifier(WORKERID_DISPATCHER));
     	} catch (Exception e) {
     		LOG.error("Exception thrown", e);
     		fail("Failed to deactive the dispatcher");
@@ -252,7 +252,7 @@ public class UserMappedDispatcherTest extends ModulesTestCase {
     }
 
     private void addCertificate(PrivateKey issuerPrivateKey, int workerId, String workerName) throws CryptoTokenOfflineException, InvalidWorkerIdException, IOException, CertificateException, OperatorCreationException {
-        Base64SignerCertReqData reqData = (Base64SignerCertReqData) workerSession.getCertificateRequest(workerId, new PKCS10CertReqInfo("SHA1withRSA", "CN=" + workerName, null), false);
+        Base64SignerCertReqData reqData = (Base64SignerCertReqData) workerSession.getCertificateRequest(new WorkerIdentifier(workerId), new PKCS10CertReqInfo("SHA1withRSA", "CN=" + workerName, null), false);
         PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
         X509CertificateHolder cert = new X509v3CertificateBuilder(new X500Name("CN=Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerPrivateKey));
         workerSession.setWorkerProperty(workerId, "SIGNERCERTCHAIN", new String(CertTools.getPemFromCertificateChain(Arrays.asList((Certificate) new JcaX509CertificateConverter().getCertificate(cert)))));

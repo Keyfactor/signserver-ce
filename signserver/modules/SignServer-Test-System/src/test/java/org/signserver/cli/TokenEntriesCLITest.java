@@ -23,6 +23,7 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerIdentifier;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.server.cryptotokens.P12CryptoToken;
@@ -75,8 +76,8 @@ public class TokenEntriesCLITest extends ModulesTestCase {
             workerSession.setWorkerProperty(tokenId, "KEYSTOREPATH", ks.getAbsolutePath());
             workerSession.setWorkerProperty(tokenId, "KEYSTOREPASSWORD", "foo123");
             workerSession.reloadConfiguration(tokenId);
-            workerSession.activateSigner(tokenId, "foo123");
-            workerSession.generateSignerKey(tokenId, "RSA", "512", testKeyAlias1, "foo123".toCharArray());
+            workerSession.activateSigner(new WorkerIdentifier(tokenId), "foo123");
+            workerSession.generateSignerKey(new WorkerIdentifier(tokenId), "RSA", "512", testKeyAlias1, "foo123".toCharArray());
             
             assertEquals(CommandLineInterface.RETURN_SUCCESS,
                      cli.execute("querytokenentries", "-token", String.valueOf(tokenId), "-from", "0", "-limit", "1", "-criteria", "alias LIKE %KeyAlias%"));
@@ -109,10 +110,10 @@ public class TokenEntriesCLITest extends ModulesTestCase {
             workerSession.setWorkerProperty(tokenId, "KEYSTOREPATH", ks.getAbsolutePath());
             workerSession.setWorkerProperty(tokenId, "KEYSTOREPASSWORD", "foo123");
             workerSession.reloadConfiguration(tokenId);
-            workerSession.activateSigner(tokenId, "foo123");
+            workerSession.activateSigner(new WorkerIdentifier(tokenId), "foo123");
             
             for (String alias : aliases) {
-                workerSession.generateSignerKey(tokenId, "RSA", "512", alias, "foo123".toCharArray());
+                workerSession.generateSignerKey(new WorkerIdentifier(tokenId), "RSA", "512", alias, "foo123".toCharArray());
             }
 
             assertEquals(CommandLineInterface.RETURN_SUCCESS,

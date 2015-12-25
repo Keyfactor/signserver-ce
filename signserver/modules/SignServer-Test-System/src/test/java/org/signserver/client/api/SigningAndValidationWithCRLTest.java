@@ -31,6 +31,7 @@ import org.signserver.validationservice.common.Validation;
 import org.w3c.dom.Document;
 import org.junit.Test;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerIdentifier;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 
@@ -151,7 +152,7 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
         workerSession.reloadConfiguration(workerId);
 
         // We are using a P12CryptoToken so we also need to activate it
-        workerSession.activateSigner(SIGNER1_WORKERID, KEYSTORE8_PASSWORD);
+        workerSession.activateSigner(new WorkerIdentifier(SIGNER1_WORKERID), KEYSTORE8_PASSWORD);
     }
 
     private void setupValidation() {

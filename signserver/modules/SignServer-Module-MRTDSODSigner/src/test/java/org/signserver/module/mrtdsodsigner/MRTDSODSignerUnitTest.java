@@ -36,6 +36,7 @@ import org.signserver.common.SODSignRequest;
 import org.signserver.common.SODSignResponse;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerIdentifier;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.module.mrtdsodsigner.jmrtd.SODFile;
@@ -566,7 +567,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
             expectedHashes = dataGroups;
     	}
 
-        SODSignResponse res = (SODSignResponse) workerSession.process(workerId,
+        SODSignResponse res = (SODSignResponse) workerSession.process(new WorkerIdentifier(workerId),
                 new SODSignRequest(requestId, dataGroups),
                 getRequestContext());
         assertNotNull(res);

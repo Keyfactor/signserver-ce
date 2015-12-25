@@ -37,6 +37,7 @@ import org.signserver.admin.cli.defaultimpl.AdminCommandHelper;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.cli.spi.UnexpectedCommandFailureException;
+import org.signserver.common.WorkerIdentifier;
 import org.signserver.server.cryptotokens.TokenEntry;
 import org.signserver.server.cryptotokens.TokenSearchResults;
 
@@ -126,7 +127,7 @@ public class QueryTokenEntriesCommand extends AbstractAdminCommand {
         }
         
         try {
-            final int tokenId = getWorkerId(tokenIdOrName);
+            final WorkerIdentifier wi = WorkerIdentifier.createFromIdOrName(tokenIdOrName);
 
             final QueryCriteria qc = QueryCriteria.create();
             
@@ -140,7 +141,7 @@ public class QueryTokenEntriesCommand extends AbstractAdminCommand {
             int startIndex = from;
             final int max = limit < 1 ? 10 : limit;
             do {
-                searchResults = helper.getWorkerSession().searchTokenEntries(tokenId, startIndex, max, qc, verbose, Collections.<String, Object>emptyMap());
+                searchResults = helper.getWorkerSession().searchTokenEntries(wi, startIndex, max, qc, verbose, Collections.<String, Object>emptyMap());
             
                 int i = startIndex;
                 for (TokenEntry entry : searchResults.getEntries()) {

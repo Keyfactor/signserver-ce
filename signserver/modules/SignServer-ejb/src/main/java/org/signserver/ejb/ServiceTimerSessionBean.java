@@ -26,6 +26,7 @@ import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.NoSuchWorkerException;
 import org.signserver.common.ServiceConfig;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerIdentifier;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IServiceTimerSession;
 import org.signserver.ejb.worker.impl.WorkerManagerSingletonBean;
@@ -97,7 +98,7 @@ public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, ISe
             UserTransaction ut = sessionCtx.getUserTransaction();
             try {
                 ut.begin();
-                IWorker worker = workerManagerSession.getWorker(timerInfo.intValue());
+                IWorker worker = workerManagerSession.getWorker(new WorkerIdentifier(timerInfo));
                 serviceConfig = new ServiceConfig(worker.getConfig());
                 timedService = (ITimedService) worker;
                 sessionCtx.getTimerService().createTimer(timedService.getNextInterval(), timerInfo);
@@ -239,7 +240,7 @@ public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, ISe
             if (!existingTimers.contains(nextId)) {
                 ITimedService timedService;
                 try {
-                    timedService = (ITimedService) workerManagerSession.getWorker(nextId);
+                    timedService = (ITimedService) workerManagerSession.getWorker(new WorkerIdentifier(nextId));
                     if (timedService.isActive() && timedService.getNextInterval() != ITimedService.DONT_EXECUTE) {
                         sessionCtx.getTimerService().createTimer((timedService.getNextInterval()), nextId);
                     }

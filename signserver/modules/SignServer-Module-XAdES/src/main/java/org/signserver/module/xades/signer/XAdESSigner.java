@@ -48,6 +48,7 @@ import org.signserver.common.GenericSignResponse;
 import org.signserver.common.ISignRequest;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerIdentifier;
 import org.signserver.ejb.interfaces.IInternalWorkerSession;
 import org.signserver.server.UsernamePasswordClientCredential;
 import org.signserver.server.WorkerContext;
@@ -237,11 +238,11 @@ public class XAdESSigner extends BaseSigner {
                 } else {
                     // Use worker name/ID of internal TSA
                     try {
-                        internalTimeStampTokenProvider = new InternalTimeStampTokenProvider(new DefaultMessageDigestProvider("BC"), getWorkerSession(), tsaWorker, tsaUsername, tsaPassword);
+                        internalTimeStampTokenProvider = new InternalTimeStampTokenProvider(new DefaultMessageDigestProvider("BC"), getWorkerSession(), WorkerIdentifier.createFromIdOrName(tsaWorker.trim()), tsaUsername, tsaPassword);
                     } catch (NoSuchProviderException ex) {
                         configErrors.add("No such message digest provider: " + ex.getMessage());
-            }
-        }
+                    }
+                }
             }
         }
         

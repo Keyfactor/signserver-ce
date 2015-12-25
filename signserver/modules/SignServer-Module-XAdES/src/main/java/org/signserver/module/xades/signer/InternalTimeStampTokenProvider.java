@@ -24,6 +24,7 @@ import org.bouncycastle.tsp.TimeStampToken;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;
+import org.signserver.common.WorkerIdentifier;
 import org.signserver.ejb.interfaces.IInternalWorkerSession;
 import org.signserver.server.tsa.InternalTimeStampTokenFetcher;
 import xades4j.UnsupportedAlgorithmException;
@@ -56,9 +57,9 @@ public class InternalTimeStampTokenProvider implements TimeStampTokenProvider {
     private final InternalTimeStampTokenFetcher fetcher;
 
     public InternalTimeStampTokenProvider(final MessageDigestEngineProvider messageDigestProvider,
-            final IInternalWorkerSession session, final String workerNameOrId, final String username, final String password) {
+            final IInternalWorkerSession session, final WorkerIdentifier wi, final String username, final String password) {
         this.messageDigestProvider = messageDigestProvider;
-        this.fetcher = new InternalTimeStampTokenFetcher(session, workerNameOrId, username, password);
+        this.fetcher = new InternalTimeStampTokenFetcher(session, wi, username, password);
     }
 
     @Override

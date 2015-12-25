@@ -174,7 +174,7 @@ public class PDFSignerTest extends ModulesTestCase {
 
     @Test
     public void test02GetStatus() throws Exception {
-        StaticWorkerStatus stat = (StaticWorkerStatus) workerSession.getStatus(WORKERID);
+        StaticWorkerStatus stat = (StaticWorkerStatus) workerSession.getStatus(new WorkerIdentifier(WORKERID));
         assertTrue(stat.getTokenStatus() == WorkerStatus.STATUS_ACTIVE);
     }
 
@@ -519,7 +519,7 @@ public class PDFSignerTest extends ModulesTestCase {
             CryptoTokenOfflineException, SignServerException {
         final GenericSignRequest request = new GenericSignRequest(1234,
                 data);
-        final GenericSignResponse response = (GenericSignResponse) workerSession.process(workerId, request, new RequestContext());
+        final GenericSignResponse response = (GenericSignResponse) workerSession.process(new WorkerIdentifier(workerId), request, new RequestContext());
         return response;
     }
 

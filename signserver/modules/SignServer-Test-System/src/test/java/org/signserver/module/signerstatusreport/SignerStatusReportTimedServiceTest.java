@@ -24,6 +24,7 @@ import org.signserver.testutils.ModulesTestCase;
 import org.junit.Before;
 import org.junit.Test;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerIdentifier;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 
@@ -113,9 +114,9 @@ public class SignerStatusReportTimedServiceTest extends ModulesTestCase {
         workerSession.setWorkerProperty(WORKERID_SERVICE, "ACTIVE", "FALSE");
 
         workerSession.reloadConfiguration(WORKERID_SERVICE);
-        workerSession.activateSigner(WORKERID_SIGNER1, "foo123");
-        workerSession.activateSigner(WORKERID_SIGNER2, "foo123");
-        workerSession.activateSigner(WORKERID_SIGNER3, "foo123");
+        workerSession.activateSigner(new WorkerIdentifier(WORKERID_SIGNER1), "foo123");
+        workerSession.activateSigner(new WorkerIdentifier(WORKERID_SIGNER2), "foo123");
+        workerSession.activateSigner(new WorkerIdentifier(WORKERID_SIGNER3), "foo123");
     }
 
     @Test
@@ -151,7 +152,7 @@ public class SignerStatusReportTimedServiceTest extends ModulesTestCase {
         // Disable one worker and check the result
 //        workerSession.setWorkerProperty(WORKERID_SIGNER1, "DISABLED", "TRUE");
 //        workerSession.reloadConfiguration(WORKERID_SIGNER1);
-        workerSession.deactivateSigner(WORKERID_SIGNER1);
+        workerSession.deactivateSigner(new WorkerIdentifier(WORKERID_SIGNER1));
         
         outputFile.delete();
 
@@ -180,7 +181,7 @@ public class SignerStatusReportTimedServiceTest extends ModulesTestCase {
         assertNotNull("Worker 3 signings", status.get(WORKER_SIGNER3).get("signings"));
         
         // test that there are no fatal errors before removing required properties
-        WorkerStatus workerStatus = workerSession.getStatus(WORKERID_SERVICE);
+        WorkerStatus workerStatus = workerSession.getStatus(new WorkerIdentifier(WORKERID_SERVICE));
         List<String> errors = workerStatus.getFatalErrors();
         assertTrue("No fatal errors", errors.isEmpty());
         
@@ -189,7 +190,7 @@ public class SignerStatusReportTimedServiceTest extends ModulesTestCase {
         workerSession.removeWorkerProperty(WORKERID_SERVICE, "OUTPUTFILE");
         workerSession.reloadConfiguration(WORKERID_SERVICE);
         
-        workerStatus = workerSession.getStatus(WORKERID_SERVICE);
+        workerStatus = workerSession.getStatus(new WorkerIdentifier(WORKERID_SERVICE));
         errors = workerStatus.getFatalErrors();
         assertTrue("Should mention missing WORKERS property", errors.contains("Property WORKERS missing"));
         assertTrue("Should mention missing OUTPUTFILE property", errors.contains("Property OUTPUTFILE missing"));

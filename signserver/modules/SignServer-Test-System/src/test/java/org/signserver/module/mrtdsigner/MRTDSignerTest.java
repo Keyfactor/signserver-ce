@@ -30,6 +30,7 @@ import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.StaticWorkerStatus;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.WorkerStatus;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.testutils.ModulesTestCase;
@@ -73,7 +74,7 @@ public class MRTDSignerTest extends ModulesTestCase {
         signrequests.add(signreq1);
         signrequests.add(signreq2);
 
-        MRTDSignResponse res = (MRTDSignResponse) workerSession.process(7890, new MRTDSignRequest(reqid, signrequests), new RequestContext());
+        MRTDSignResponse res = (MRTDSignResponse) workerSession.process(new WorkerIdentifier(7890), new MRTDSignRequest(reqid, signrequests), new RequestContext());
         assertTrue(res != null);
         assertTrue(reqid == res.getRequestID());
         Certificate signercert = res.getSignerCertificate();
@@ -115,7 +116,7 @@ public class MRTDSignerTest extends ModulesTestCase {
      */
     @Test
     public void test02GetStatus() throws Exception {
-        StaticWorkerStatus stat = (StaticWorkerStatus) workerSession.getStatus(7890);
+        StaticWorkerStatus stat = (StaticWorkerStatus) workerSession.getStatus(new WorkerIdentifier(7890));
         assertTrue(stat.getTokenStatus() == WorkerStatus.STATUS_ACTIVE);
 
     }
@@ -125,7 +126,7 @@ public class MRTDSignerTest extends ModulesTestCase {
         int reqid = 13;
         byte[] signreq1 = "Hello World".getBytes();
 
-        GenericSignResponse res = (GenericSignResponse) workerSession.process(7890, new GenericSignRequest(reqid, signreq1), new RequestContext());
+        GenericSignResponse res = (GenericSignResponse) workerSession.process(new WorkerIdentifier(7890), new GenericSignRequest(reqid, signreq1), new RequestContext());
         assertTrue(res != null);
         assertTrue(reqid == res.getRequestID());
         Certificate signercert = res.getSignerCertificate();
@@ -150,7 +151,7 @@ public class MRTDSignerTest extends ModulesTestCase {
            workerSession.setWorkerProperty(7890, WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS, "2");
            workerSession.reloadConfiguration(7890);
            
-           final List<String> errors = workerSession.getStatus(7890).getFatalErrors();
+           final List<String> errors = workerSession.getStatus(new WorkerIdentifier(7890)).getFatalErrors();
            
            assertTrue("Should contain error", errors.contains(WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS + " is not supported."));
        } finally {

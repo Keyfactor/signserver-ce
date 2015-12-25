@@ -103,7 +103,7 @@ public class Sign implements Task {
             case xml: {
                 // Process
                 final GenericSignRequest signRequest = new GenericSignRequest(reqid, TESTXML1.getBytes());
-                final ProcessResponse response = workerSession.process(signer.getWorkerId(), signRequest, requestContext);
+                final ProcessResponse response = workerSession.process(new WorkerIdentifier(signer.getWorkerId()), signRequest, requestContext);
 
                 // Check result
                 GenericSignResponse res = (GenericSignResponse) response;
@@ -126,7 +126,7 @@ public class Sign implements Task {
 
                     GenericSignRequest signRequest =
                             new GenericSignRequest(reqid, requestBytes);
-                    final GenericSignResponse res = (GenericSignResponse) workerSession.process(signer.getWorkerId(), signRequest, requestContext);
+                    final GenericSignResponse res = (GenericSignResponse) workerSession.process(new WorkerIdentifier(signer.getWorkerId()), signRequest, requestContext);
 
                     // Check result
                     if (reqid != res.getRequestID()) {

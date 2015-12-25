@@ -27,6 +27,7 @@ import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.StaticWorkerStatus;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.util.PathUtil;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.testutils.ModulesTestCase;
@@ -89,7 +90,7 @@ public class BaseServiceTest extends ModulesTestCase {
      */
     @Test
     public void test02GetStatus() throws Exception {
-        StaticWorkerStatus status = (StaticWorkerStatus) sSSession.getStatus(WORKER_ID);
+        StaticWorkerStatus status = (StaticWorkerStatus) sSSession.getStatus(new WorkerIdentifier(WORKER_ID));
         Date lastRun = new ServiceConfig(status.getActiveSignerConfig()).getLastRunTimestamp();
         assertTrue(lastRun.before(new Date()));
         assertTrue(lastRun.after(new Date(System.currentTimeMillis() - INTERVALMS * 2)));

@@ -28,6 +28,7 @@ import org.signserver.common.RequestContext;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerIdentifier;
 import org.signserver.ejb.interfaces.IDispatcherWorkerSession;
 import org.signserver.server.UsernamePasswordClientCredential;
 import org.signserver.server.WorkerContext;
@@ -60,12 +61,16 @@ public class UserMappedDispatcher extends BaseDispatcher {
 
     /** Configuration errors. */
     private LinkedList<String> configErrors;
+    
+    private String name;
 
     @Override
     public void init(final int workerId, final WorkerConfig config,
             final WorkerContext workerContext, final EntityManager workerEM) {
         super.init(workerId, config, workerContext, workerEM);
         configErrors = new LinkedList<String>();
+        
+        name = config.getProperty("NAME");
 
         mappings = new HashMap<String, String>();
         final String workersValue = config.getProperty(PROPERTY_USERNAME_MAPPING);
@@ -123,23 +128,17 @@ public class UserMappedDispatcher extends BaseDispatcher {
             throw new IllegalRequestException("No worker for the specified username");
         }
         
-        try {
-            final int id = workerSession.getWorkerId(workerName);
-            if (id == workerId) {
-                LOG.warn("Ignoring dispatching to it self (worker "
-                        + id + ")");
-                throw new SignServerException("Dispatcher configured to dispatch to itself");
-            } else {
-                response = workerSession.process(id, signRequest,
-                        nextContext);
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Dispatched to worker: "
-                            + workerName + " (" + id + ")");
-                }
+        if (name.equals(workerName)) {
+            LOG.warn("Ignoring dispatching to it self (worker "
+                    + workerName + ")");
+            throw new SignServerException("Dispatcher configured to dispatch to itself");
+        } else {
+            response = workerSession.process(new WorkerIdentifier(workerName), signRequest,
+                    nextContext);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Dispatched to worker: "
+                        + workerName + " (" + workerName + ")");
             }
-        } catch (InvalidWorkerIdException ex) {
-            LOG.warn("Non existing worker: \"" + workerName + "\"");
-            throw new SignServerException("Non-existing worker configured in mapping", ex);
         }
         return response;
     }

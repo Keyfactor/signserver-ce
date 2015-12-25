@@ -91,6 +91,7 @@ import org.signserver.common.ResyncException;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerException;
 import org.signserver.common.UnsupportedCryptoTokenParameter;
+import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.WorkerStatus;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
@@ -160,7 +161,7 @@ public class AdminLayerEJBImpl implements AdminWS {
             throws InvalidWorkerIdException_Exception {
         try {
             final WsWorkerStatus result;
-            final WorkerStatus status = worker.getStatus(workerId);
+            final WorkerStatus status = worker.getStatus(new WorkerIdentifier(workerId));
             if (status == null) {
                 result = null;
             } else {
@@ -177,10 +178,10 @@ public class AdminLayerEJBImpl implements AdminWS {
                 result.setOk(status.getFatalErrors().isEmpty() ? null : "offline");
                 result.setWorkerId(workerId);
                 final ByteArrayOutputStream bout1 = new ByteArrayOutputStream();
-                status.displayStatus(workerId, new PrintStream(bout1), false);
+                status.displayStatus(new PrintStream(bout1), false);
                 result.setStatusText(bout1.toString());
                 final ByteArrayOutputStream bout2 = new ByteArrayOutputStream();
-                status.displayStatus(workerId, new PrintStream(bout2), true);
+                status.displayStatus(new PrintStream(bout2), true);
                 result.setCompleteStatusText(bout2.toString());
             }
             return result;
@@ -217,7 +218,7 @@ public class AdminLayerEJBImpl implements AdminWS {
             throws CryptoTokenAuthenticationFailureException_Exception,
             CryptoTokenOfflineException_Exception, InvalidWorkerIdException_Exception {
         try {
-            worker.activateSigner(signerId, authenticationCode);
+            worker.activateSigner(new WorkerIdentifier(signerId), authenticationCode);
         } catch (CryptoTokenAuthenticationFailureException ex) {
             throw wrap(ex);
         } catch (CryptoTokenOfflineException ex) {
@@ -301,7 +302,7 @@ public class AdminLayerEJBImpl implements AdminWS {
                 throws CryptoTokenOfflineException_Exception,
             InvalidWorkerIdException_Exception {
         try {
-            return worker.deactivateSigner(signerId);
+            return worker.deactivateSigner(new WorkerIdentifier(signerId));
         } catch (CryptoTokenOfflineException ex) {
             throw wrap(ex);
         } catch (InvalidWorkerIdException ex) {
@@ -445,7 +446,7 @@ public class AdminLayerEJBImpl implements AdminWS {
             InvalidWorkerIdException_Exception {
         final Base64SignerCertReqData result;
         try {
-            final ICertReqData data = worker.getCertificateRequest(signerId,
+            final ICertReqData data = worker.getCertificateRequest(new WorkerIdentifier(signerId),
                     new PKCS10CertReqInfo(certReqInfo.getSignatureAlgorithm(),
                     certReqInfo.getSubjectDN(), null), explicitEccParameters);
             if (!(data instanceof org.signserver.common.Base64SignerCertReqData)) {
@@ -480,7 +481,7 @@ public class AdminLayerEJBImpl implements AdminWS {
                 InvalidWorkerIdException_Exception {
         final Base64SignerCertReqData result;
         try {
-            final ICertReqData data = worker.getCertificateRequest(signerId, 
+            final ICertReqData data = worker.getCertificateRequest(new WorkerIdentifier(signerId), 
                     new PKCS10CertReqInfo(certReqInfo.getSignatureAlgorithm(),
                     certReqInfo.getSubjectDN(), null), explicitEccParameters,
                     defaultKey);
@@ -501,7 +502,7 @@ public class AdminLayerEJBImpl implements AdminWS {
     public Base64SignerCertReqData getPKCS10CertificateRequestForAlias(int signerId, Pkcs10CertReqInfo certReqInfo, boolean explicitEccParameters, String keyAlias) throws AdminNotAuthorizedException_Exception, CryptoTokenOfflineException_Exception, InvalidWorkerIdException_Exception {
         final Base64SignerCertReqData result;
         try {
-            final ICertReqData data = worker.getCertificateRequest(signerId, 
+            final ICertReqData data = worker.getCertificateRequest(new WorkerIdentifier(signerId), 
                     new PKCS10CertReqInfo(certReqInfo.getSignatureAlgorithm(),
                     certReqInfo.getSubjectDN(), null), explicitEccParameters,
                     keyAlias);
@@ -531,7 +532,7 @@ public class AdminLayerEJBImpl implements AdminWS {
             final int signerId)
             throws CryptoTokenOfflineException_Exception {
         try {
-            return worker.getSignerCertificateBytes(signerId);
+            return worker.getSignerCertificateBytes(new WorkerIdentifier(signerId));
         } catch (CryptoTokenOfflineException ex) {
             throw wrap(ex);
         } catch (RuntimeException ex) {
@@ -545,7 +546,7 @@ public class AdminLayerEJBImpl implements AdminWS {
             final int signerId)
             throws CryptoTokenOfflineException_Exception {
         try {
-            return getEncoded(worker.getSignerCertificate(signerId));
+            return getEncoded(worker.getSignerCertificate(new WorkerIdentifier(signerId)));
         } catch (CryptoTokenOfflineException ex) {
             throw wrap(ex);
         }
@@ -576,7 +577,7 @@ public class AdminLayerEJBImpl implements AdminWS {
             final int signerId)
             throws CryptoTokenOfflineException_Exception {
         try {
-            return worker.getSignerCertificateChainBytes(signerId);
+            return worker.getSignerCertificateChainBytes(new WorkerIdentifier(signerId));
         } catch (CryptoTokenOfflineException ex) {
             throw wrap(ex);
         } catch (RuntimeException ex) {
@@ -591,7 +592,7 @@ public class AdminLayerEJBImpl implements AdminWS {
             throws CryptoTokenOfflineException_Exception {
         try {
             final List<byte[]> result;
-            final List<Certificate> certs = worker.getSignerCertificateChain(signerId);
+            final List<Certificate> certs = worker.getSignerCertificateChain(new WorkerIdentifier(signerId));
             if (certs == null) {
                 result = null;
             } else {
@@ -647,7 +648,7 @@ public class AdminLayerEJBImpl implements AdminWS {
             throws CryptoTokenOfflineException_Exception {
         try {
             final GregorianCalendar c = new GregorianCalendar();
-            final Date time = worker.getSigningValidityNotBefore(workerId);
+            final Date time = worker.getSigningValidityNotBefore(new WorkerIdentifier(workerId));
             if (time == null) {
                 return null;
             } else {
@@ -667,7 +668,7 @@ public class AdminLayerEJBImpl implements AdminWS {
             AdminNotAuthorizedException_Exception,
             CryptoTokenOfflineException_Exception {
         try {
-            return worker.getKeyUsageCounterValue(workerId);
+            return worker.getKeyUsageCounterValue(new WorkerIdentifier(workerId));
         } catch(CryptoTokenOfflineException ex) {
             throw wrap(ex);
         }
@@ -692,7 +693,7 @@ public class AdminLayerEJBImpl implements AdminWS {
     @Override
     public boolean removeKey(int signerId, String alias) throws AdminNotAuthorizedException_Exception, CryptoTokenOfflineException_Exception, InvalidWorkerIdException_Exception, KeyStoreException_Exception, SignServerException_Exception {
         try {
-            return worker.removeKey(signerId, alias);
+            return worker.removeKey(new WorkerIdentifier(signerId), alias);
         } catch (CryptoTokenOfflineException ex) {
             throw wrap(ex);
         } catch (InvalidWorkerIdException ex) {
@@ -724,7 +725,7 @@ public class AdminLayerEJBImpl implements AdminWS {
             throws CryptoTokenOfflineException_Exception,
             InvalidWorkerIdException_Exception {
         try {
-            return worker.generateSignerKey(signerId, keyAlgorithm, keySpec, 
+            return worker.generateSignerKey(new WorkerIdentifier(signerId), keyAlgorithm, keySpec, 
                     alias, authCode == null ? null : authCode.toCharArray());
         } catch (CryptoTokenOfflineException ex) {
             throw wrap(ex);
@@ -754,7 +755,7 @@ public class AdminLayerEJBImpl implements AdminWS {
         try {
             final LinkedList<KeyTestResult> results = new LinkedList<KeyTestResult>();
             final Collection<? extends Object> ress
-                    = worker.testKey(signerId, alias, authCode == null ? null : authCode.toCharArray());
+                    = worker.testKey(new WorkerIdentifier(signerId), alias, authCode == null ? null : authCode.toCharArray());
             for (Object o : ress) {
                 final KeyTestResult result = new KeyTestResult();
                 
@@ -864,7 +865,7 @@ public class AdminLayerEJBImpl implements AdminWS {
                    CryptoTokenOfflineException_Exception,
                    CertificateException_Exception {
         try {
-            worker.importCertificateChain(workerId, certificateChain, alias,
+            worker.importCertificateChain(new WorkerIdentifier(workerId), certificateChain, alias,
                     authCode != null ? authCode.toCharArray() : null);
         } catch (CryptoTokenOfflineException ex) {
             LOG.error("Crypto token offline: ", ex);
@@ -997,8 +998,6 @@ public class AdminLayerEJBImpl implements AdminWS {
 
         final RequestContext requestContext = new RequestContext();
 
-        final int workerId = getWorkerId(workerIdOrName);
-
         for (byte[] requestBytes : requests) {
             final ProcessRequest req;
             try {
@@ -1013,7 +1012,7 @@ public class AdminLayerEJBImpl implements AdminWS {
             }
             try {
                 result.add(RequestAndResponseManager.serializeProcessResponse(
-                    worker.process(workerId, req, requestContext)));
+                    worker.process(WorkerIdentifier.createFromIdOrName(workerIdOrName), req, requestContext)));
             } catch (IOException ex) {
                 LOG.error("Error serializing process response", ex);
                 final IllegalRequestException fault
@@ -1159,7 +1158,7 @@ public class AdminLayerEJBImpl implements AdminWS {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("queryTokenEntries(" + workerId + ", " + startIndex + ", " + max + ", ...");
             }
-            org.signserver.server.cryptotokens.TokenSearchResults results = worker.searchTokenEntries(workerId, startIndex, max, QueryCriteria.create(), includeData, null);
+            org.signserver.server.cryptotokens.TokenSearchResults results = worker.searchTokenEntries(new WorkerIdentifier(workerId), startIndex, max, QueryCriteria.create(), includeData, null);
             
             TokenSearchResults wsResults = new TokenSearchResults();
             wsResults.setMoreEntriesAvailable(results.isMoreEntriesAvailable());

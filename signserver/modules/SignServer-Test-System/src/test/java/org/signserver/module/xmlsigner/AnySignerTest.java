@@ -32,6 +32,7 @@ import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestingSecurityManager;
 import org.junit.Before;
 import org.junit.Test;
+import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.util.PathUtil;
 import org.signserver.ejb.interfaces.IWorkerSession;
 
@@ -98,12 +99,12 @@ public class AnySignerTest extends ModulesTestCase {
         final char[] authCode = "foo123".toCharArray();
         final String newKeyAlias = "newkey0001";
 
-        final String actualNewAlias = workerSession.generateSignerKey(WORKERID, "RSA",
+        final String actualNewAlias = workerSession.generateSignerKey(new WorkerIdentifier(WORKERID), "RSA",
                 "2048", newKeyAlias, authCode);
         
         assertEquals("alias", newKeyAlias, actualNewAlias);
 
-        final Collection<KeyTestResult> results = workerSession.testKey(WORKERID,
+        final Collection<KeyTestResult> results = workerSession.testKey(new WorkerIdentifier(WORKERID),
                 newKeyAlias, authCode);
         final KeyTestResult result = results.iterator().next();
         assertEquals("alias in result", newKeyAlias, result.getAlias());
@@ -127,7 +128,7 @@ public class AnySignerTest extends ModulesTestCase {
         final PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA",
                 "CN=test01GenerateKey,C=SE", null);
         Base64SignerCertReqData data = (Base64SignerCertReqData) workerSession
-                .getCertificateRequest(WORKERID, certReqInfo, false, false);
+                .getCertificateRequest(new WorkerIdentifier(WORKERID), certReqInfo, false, false);
         byte[] reqBytes = data.getBase64CertReq();
         final PKCS10CertificationRequest req
                 = new PKCS10CertificationRequest(Base64.decode(reqBytes));
@@ -151,12 +152,12 @@ public class AnySignerTest extends ModulesTestCase {
         final char[] authCode = "foo123".toCharArray();
         final String newKeyAlias = "newkey0002";
 
-        final String actualNewAlias = workerSession.generateSignerKey(WORKERID, 
+        final String actualNewAlias = workerSession.generateSignerKey(new WorkerIdentifier(WORKERID), 
                 "ECDSA", "secp256r1", newKeyAlias, authCode);
 
         assertEquals("alias", newKeyAlias, actualNewAlias);
 
-        final Collection<KeyTestResult> results = workerSession.testKey(WORKERID,
+        final Collection<KeyTestResult> results = workerSession.testKey(new WorkerIdentifier(WORKERID),
                 newKeyAlias, authCode);
         final KeyTestResult result = results.iterator().next();
         assertEquals("alias in result", newKeyAlias, result.getAlias());
@@ -182,7 +183,7 @@ public class AnySignerTest extends ModulesTestCase {
         final PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo(
                 "SHA1WithECDSA", "CN=test02GenerateKey", null);
         Base64SignerCertReqData data = (Base64SignerCertReqData) workerSession
-                .getCertificateRequest(WORKERID, certReqInfo, false, false);
+                .getCertificateRequest(new WorkerIdentifier(WORKERID), certReqInfo, false, false);
         byte[] reqBytes = data.getBase64CertReq();
         final PKCS10CertificationRequest req
                 = new PKCS10CertificationRequest(Base64.decode(reqBytes));
@@ -201,7 +202,7 @@ public class AnySignerTest extends ModulesTestCase {
         final PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo(
                 "SHA1WithECDSA", "CN=test02GenerateKey", null);
         Base64SignerCertReqData data = (Base64SignerCertReqData) workerSession
-                .getCertificateRequest(WORKERID, certReqInfo, explicitEcc,
+                .getCertificateRequest(new WorkerIdentifier(WORKERID), certReqInfo, explicitEcc,
                 false);
         byte[] reqBytes = data.getBase64CertReq();
         final PKCS10CertificationRequest req
@@ -229,7 +230,7 @@ public class AnySignerTest extends ModulesTestCase {
         final PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo(
                 "SHA1WithECDSA", "CN=test02GenerateKey", null);
         Base64SignerCertReqData data = (Base64SignerCertReqData) workerSession
-                .getCertificateRequest(WORKERID, certReqInfo, explicitEcc,
+                .getCertificateRequest(new WorkerIdentifier(WORKERID), certReqInfo, explicitEcc,
                 false);
         byte[] reqBytes = data.getBase64CertReq();
         final PKCS10CertificationRequest req

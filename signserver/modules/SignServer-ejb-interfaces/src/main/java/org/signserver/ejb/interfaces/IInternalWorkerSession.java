@@ -21,6 +21,7 @@ import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
+import org.signserver.common.WorkerIdentifier;
 import org.signserver.server.log.AdminInfo;
 
 /**
@@ -36,7 +37,7 @@ public interface IInternalWorkerSession {
     /**
      * @see IWorkerSession#process(int, org.signserver.common.ProcessRequest, org.signserver.common.RequestContext)
      */
-    ProcessResponse process(int workerId, ProcessRequest request,
+    ProcessResponse process(WorkerIdentifier wi, ProcessRequest request,
             RequestContext requestContext)
             throws IllegalRequestException, CryptoTokenOfflineException,
             SignServerException;
@@ -44,7 +45,7 @@ public interface IInternalWorkerSession {
     /**
      * @see IWorkerSession#getWorkerId(java.lang.String)
      */
-    int getWorkerId(String workerName) throws InvalidWorkerIdException;
+    //int getWorkerId(String workerName) throws InvalidWorkerIdException;
 
     /** Remote view. */
     @Remote
@@ -57,7 +58,7 @@ public interface IInternalWorkerSession {
         /**
          * @see IWorkerSession.ILocal#process(org.signserver.server.log.AdminInfo, int, org.signserver.common.ProcessRequest, org.signserver.common.RequestContext)
          */
-        ProcessResponse process(final AdminInfo info, int workerId, ProcessRequest request,
+        ProcessResponse process(final AdminInfo info, WorkerIdentifier wi, ProcessRequest request,
                 RequestContext requestContext)
                 throws IllegalRequestException, CryptoTokenOfflineException,
                 SignServerException;

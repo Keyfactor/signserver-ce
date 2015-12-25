@@ -411,7 +411,7 @@ public class RenewalWorker extends BaseSigner {
             throw new IllegalArgumentException("Missing authcode in request");
         }
 
-        final String newAlias = getWorkerSession().generateSignerKey(workerId,
+        final String newAlias = getWorkerSession().generateSignerKey(new WorkerIdentifier(workerId),
                 keyAlg, keySpec, null, authcode);
 
         // Log
@@ -421,7 +421,7 @@ public class RenewalWorker extends BaseSigner {
         }
 
         final Collection<KeyTestResult> results = getWorkerSession().testKey(
-                workerId, newAlias, authcode);
+                new WorkerIdentifier(workerId), newAlias, authcode);
         if (results.size() != 1) {
             throw new CryptoTokenOfflineException("Key testing failed: "
                     + "No result");
@@ -442,7 +442,7 @@ public class RenewalWorker extends BaseSigner {
 
             LOG.debug("Key generated, tested and set");
 
-            getWorkerSession().activateSigner(workerId,
+            getWorkerSession().activateSigner(new WorkerIdentifier(workerId),
                     String.valueOf(authcode));
 
             LOG.debug("Worker activated");
@@ -591,7 +591,7 @@ public class RenewalWorker extends BaseSigner {
                 subjectDN, null);
         final Base64SignerCertReqData reqData
                 = (Base64SignerCertReqData) getWorkerSession()
-                .getCertificateRequest(workerId, certReqInfo, explicitEccParameters, defaultKey);
+                .getCertificateRequest(new WorkerIdentifier(workerId), certReqInfo, explicitEccParameters, defaultKey);
         if (reqData == null) {
             throw new RuntimeException(
                     "Base64SignerCertReqData returned was null."

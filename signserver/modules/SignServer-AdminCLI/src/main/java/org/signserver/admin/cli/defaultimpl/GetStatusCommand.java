@@ -25,6 +25,7 @@ import org.signserver.cli.spi.UnexpectedCommandFailureException;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.WorkerStatus;
 
 /**
@@ -89,8 +90,7 @@ public class GetStatusCommand extends AbstractCommand {
 
                     Iterator<?> iter = workers.iterator();
                     while (iter.hasNext()) {
-                        Integer id = (Integer) iter.next();
-                        displayWorkerStatus(id, helper.getWorkerSession().getStatus(id), complete);
+                        displayWorkerStatus(helper.getWorkerSession().getStatus(new WorkerIdentifier((Integer) iter.next())), complete);
                     }
                 } catch (InvalidWorkerIdException ex) {
                     if (LOG.isDebugEnabled()) {
@@ -98,8 +98,8 @@ public class GetStatusCommand extends AbstractCommand {
                     }
                 } 
             } else {
-                int id = helper.getWorkerId(args[1]);
-                displayWorkerStatus(id, helper.getWorkerSession().getStatus(id), complete);
+                final WorkerIdentifier wi = WorkerIdentifier.createFromIdOrName(args[1]);
+                displayWorkerStatus(helper.getWorkerSession().getStatus(wi), complete);
             }
         } catch (Exception e) {
             if (e instanceof IllegalCommandArgumentsException) {
@@ -110,8 +110,8 @@ public class GetStatusCommand extends AbstractCommand {
         return 0;
     }
     
-    private void displayWorkerStatus(int workerid, WorkerStatus status, boolean complete) {
-        status.displayStatus(workerid, out, complete);
+    private void displayWorkerStatus(WorkerStatus status, boolean complete) {
+        status.displayStatus(out, complete);
         out.println();
     }
 

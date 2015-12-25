@@ -27,6 +27,7 @@ import org.signserver.module.mrtdsodsigner.MRTDSODSigner;
 import org.signserver.server.signers.EchoRequestMetadataSigner;
 
 import org.junit.Test;
+import org.signserver.common.WorkerIdentifier;
 import org.signserver.testutils.ModulesTestCase;
 
 /**
@@ -54,7 +55,7 @@ public class SODProcessServletResponseTest extends WebTestCase {
     public void test00SetupDatabase() throws Exception {
         addSigner(MRTDSODSigner.class.getName(), false);
         addSigner(EchoRequestMetadataSigner.class.getName(), 123, "DummySigner123", true);
-        getWorkerSession().activateSigner(getSignerIdDummy1(), ModulesTestCase.KEYSTORE_PASSWORD);
+        getWorkerSession().activateSigner(new WorkerIdentifier(getSignerIdDummy1()), ModulesTestCase.KEYSTORE_PASSWORD);
     }
 
     /**
@@ -151,7 +152,7 @@ public class SODProcessServletResponseTest extends WebTestCase {
         try {
             // Deactivate crypto token
             try {
-                getWorkerSession().deactivateSigner(getSignerIdDummy1());
+                getWorkerSession().deactivateSigner(new WorkerIdentifier(getSignerIdDummy1()));
             } catch (CryptoTokenOfflineException ex) {
                 fail(ex.getMessage());
             } catch (InvalidWorkerIdException ex) {
@@ -162,7 +163,7 @@ public class SODProcessServletResponseTest extends WebTestCase {
         } finally {
             // Activat crypto token
             try {
-                getWorkerSession().activateSigner(getSignerIdDummy1(), "foo123");
+                getWorkerSession().activateSigner(new WorkerIdentifier(getSignerIdDummy1()), "foo123");
             } catch (CryptoTokenAuthenticationFailureException ex) {
                 fail(ex.getMessage());
             } catch (CryptoTokenOfflineException ex) {
@@ -193,7 +194,7 @@ public class SODProcessServletResponseTest extends WebTestCase {
         getWorkerSession().setWorkerProperty(getSignerIdDummy1(), "SIGNATUREALGORITHM",
                 badKeyData);
         getWorkerSession().reloadConfiguration(getSignerIdDummy1());
-        getWorkerSession().activateSigner(getSignerIdDummy1(), ModulesTestCase.KEYSTORE_PASSWORD);
+        getWorkerSession().activateSigner(new WorkerIdentifier(getSignerIdDummy1()), ModulesTestCase.KEYSTORE_PASSWORD);
 
         try {
             assertStatusReturned(fields, 500, SKIP_MULTIPART);

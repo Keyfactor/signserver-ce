@@ -27,6 +27,7 @@ import org.signserver.server.log.IWorkerLogger;
  */
 public class WorkerWithComponents {
 
+    private final int id;
     private final IWorker worker;
     private final List<String> createErrors;
     private final IWorkerLogger workerLogger;
@@ -34,7 +35,8 @@ public class WorkerWithComponents {
     private final IAccounter accounter;
     private final List<Archiver> archivers;
 
-    public WorkerWithComponents(IWorker worker, List<String> createErrors, IWorkerLogger workerLogger, IAuthorizer authorizer, IAccounter accounter, List<Archiver> archivers) {
+    public WorkerWithComponents(int id, IWorker worker, List<String> createErrors, IWorkerLogger workerLogger, IAuthorizer authorizer, IAccounter accounter, List<Archiver> archivers) {
+        this.id = id;
         this.worker = worker;
         this.createErrors = createErrors;
         this.workerLogger = workerLogger;
@@ -69,6 +71,10 @@ public class WorkerWithComponents {
 
     public List<Archiver> getArchivers() {
         return archivers;
+    }
+
+    public int getId() {
+        return id;
     }
     
 }

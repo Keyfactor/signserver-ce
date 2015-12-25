@@ -16,7 +16,7 @@ import java.util.*;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.signserver.common.*;
-import org.signserver.common.util.PropertiesConstants;
+import org.signserver.common.WorkerIdentifier;
 import org.signserver.server.*;
 import org.signserver.server.archive.Archiver;
 import org.signserver.server.archive.ArchiverInitException;
@@ -25,7 +25,7 @@ import org.signserver.server.config.entities.IWorkerConfigDataService;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.log.AllFieldsWorkerLogger;
 import org.signserver.server.log.IWorkerLogger;
-import org.signserver.server.signers.NoImplementationWorker;
+import org.signserver.server.signers.UnloadableWorker;
 
 /**
  * Loads worker configurations and instantiates the implementations and caches
@@ -45,13 +45,10 @@ public class WorkerFactory {
 
     private static final String ACCOUNTER = "ACCOUNTER";
 
-    private Map<Integer, WorkerWithComponents> workers = new HashMap<>();
-    private Map<Integer, IWorker> workerStore = new HashMap<>();
-
-    private Map<String, Integer> nameToIdMap = new HashMap<>();
-
     private final IWorkerConfigDataService workerConfigHome;
     private final SignServerContext workerContext;
+
+    private final WorkerStore cache = new WorkerStore();
 
     protected WorkerFactory(IWorkerConfigDataService workerConfigHome, SignServerContext workerContext) {
         this.workerConfigHome = workerConfigHome;
@@ -65,144 +62,125 @@ public class WorkerFactory {
      * The worker will only be created upon first call, then it's stored in memory until
      * the flush method is called.
      *
-     * @param workerId the Id that should match the one in the config file.
+     * @param wi the Id that should match the one in the config file.
      * @return A ISigner as defined in the configuration file, or null if no configuration
      * for the specified signerId could be found.
      * @throws NoSuchWorkerException In case the worker ID does not exist
      */
-    public synchronized IWorker getWorker(int workerId) throws NoSuchWorkerException {
+    public synchronized IWorker getWorker(WorkerIdentifier wi) throws NoSuchWorkerException {
         if (LOG.isTraceEnabled()) {
-            LOG.trace(">getWorker(" + workerId + ")");
+            LOG.trace(">getWorker(" + wi + ")");
+        }
+        IWorker result = cache.getWorkerOnly(wi);
+        if (result == null) {
+            result = loadWorker(wi);
+        }
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("getWorker(" + wi + ") returning instance: " + result);
+        }
+        return result;
+    }
+    
+    /*public synchronized IWorker getWorker(WorkerIdentity worker) throws NoSuchWorkerException {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace(">getWorker(\"" + workerName + "\")");
+        }
+        IWorker result = cache.getWorkerOnly(workerName);
+        if (result == null) {
+            result = loadWorker(workerName);
+        }
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("getWorker(\"" + workerName + "\") returning instance: " + result);
+        }
+        return result;
+    }*/
+
+    public synchronized WorkerWithComponents getWorkerWithComponents(final WorkerIdentifier wi, final SignServerContext context) throws NoSuchWorkerException {
+        WorkerWithComponents result = cache.getWorkerWithComponents(wi);
+        if (result == null) {
+            result = loadWorkerWithComponents(wi, context);
+        }
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("getWorkerWithComponents(" + wi + ") returning instance: " + result + " containing " + result.getWorker());
+        }
+        return result;
+    }
+    
+    /*public synchronized WorkerWithComponents getWorkerWithComponents(final String workerName, final SignServerContext context) throws NoSuchWorkerException {
+        WorkerWithComponents result = cache.getWorkerWithComponents(workerName);
+        if (result == null) {
+            result = loadWorkerWithComponents(workerName, context);
+        }
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("getWorkerWithComponents(" + workerName + ") returning instance: " + result + " containing " + result.getWorker());
+        }
+        return result;
+    }*/
+    
+    private IWorker loadWorker(final WorkerIdentifier wi) throws NoSuchWorkerException {
+        final int workerId;
+        if (wi.hasId()) {
+            workerId = wi.getId();
+        } else {
+            workerId = workerConfigHome.findId(wi.getName());
+        }
+
+        // Load worker from database
+        IWorker result;
+        WorkerConfig config = workerConfigHome.getWorkerProperties(workerId, false);
+        final String className = config.getImplementationClass();
+        if (config == null) {
+            throw new NoSuchWorkerException(String.valueOf(workerId));
+        } else {
+            if (className == null) {
+                result = new UnloadableWorker("Missing property " + WorkerConfig.IMPLEMENTATION_CLASS);
+            } else {
+                try {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Loading worker with class name: " + className);
+                    }
+                    ClassLoader cl = this.getClass().getClassLoader();
+                    Class<?> implClass = cl.loadClass(className);
+                    result = (IWorker) implClass.newInstance();
+                } catch (ClassNotFoundException e) {
+                    result = new UnloadableWorker("Worker class not found (is the module included in the build?): " + className + ": " + e.getLocalizedMessage());
+                } catch (IllegalAccessException e) {
+                    result = new UnloadableWorker("Could not access worker class: " + className + ": " + e.getLocalizedMessage());
+                } catch (InstantiationException e) {
+                    result = new UnloadableWorker("Could not instantiate worker class: " + className + ": " + e.getLocalizedMessage());
+                }
+            }
+
+            initWorker(result, workerId, config);
+
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("loadWorker(" + workerId + "): instance " + result);
+            }
+
+            cache.putWorkerOnly(workerId, result);
+        }
+        return result;
+    }
+    
+    private WorkerWithComponents loadWorkerWithComponents(final WorkerIdentifier wi, final SignServerContext context) throws NoSuchWorkerException {
+        final int workerId;
+        if (wi.hasId()) {
+            workerId = wi.getId();
+        } else {
+            workerId = workerConfigHome.findId(wi.getName());
         }
         
-        IWorker result = workerStore.get(workerId);
-        if (result == null) {
-            loadWorker(workerId);
-        }
-        result = workerStore.get(workerId);
-        if (result == null) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Trying to get worker with Id that does not exist: " + workerId);
-            }
-            throw new NoSuchWorkerException(String.valueOf(workerId));
-        }
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("getWorker(" + workerId + ") returning instance: " + result);
-        }
-        return result;
-    }
-    
-    public synchronized WorkerWithComponents getWorkerWithComponents(final int workerId, final SignServerContext context) throws NoSuchWorkerException {
-        WorkerWithComponents result = workers.get(workerId);
-        if (result == null) {
-            loadWorkerWithComponents(workerId, context);
-        }
-        result = workers.get(workerId);
-        if (result == null) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Trying to get worker with Id that does not exist: " + workerId);
-            }
-            throw new NoSuchWorkerException(String.valueOf(workerId));
-        }
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("getWorkerWithComponents(" + workerId + ") returning instance: " + result + " containing " + result.getWorker());
-        }
-        return result;
-    }
-
-    /**
-     * Method returning a id of a named Worker
-     *
-     *
-     * The worker will only be created upon first call, then it's stored in memory until
-     * the flush method is called.
-     *
-     * @param workerName the name of a named worker.
-     * @return the id of the worker
-     * @throws NoSuchWorkerException in case a worker with the name does not exist
-     */
-    public synchronized int getWorkerIdFromName(final String workerName) throws NoSuchWorkerException {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(">getWorkerIdFromName(" + workerName + ")");
-        }
-        if (workerName == null) {
-            throw new NullPointerException("workerName is null");
-        }
-        Integer result = nameToIdMap.get(workerName.toUpperCase());
-        if (result == null) {
-            result = workerConfigHome.findId(workerName);
-            nameToIdMap.put(workerName.toUpperCase(), result);
-        }
-        return result;
-    }
-
-    private void loadWorker(int workerId) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(">loadWorker(" + workerId + ")");
-        }
-        WorkerConfig config = workerConfigHome.getWorkerProperties(workerId, false);
-        if (config != null) {
-            final String classpath = config.getImplementationClass();
-
-            try {
-
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Loading worker with classpath: " + classpath);
-                }
-
-                // XXX: This is duplicated
-                final IWorker worker;
-                if (classpath == null) {
-                    worker = new NoImplementationWorker();
-                } else {
-                    ClassLoader cl = this.getClass().getClassLoader();
-                    Class<?> implClass = cl.loadClass(classpath);
-
-                    worker = (IWorker) implClass.newInstance();
-                }
-                workerStore.put(workerId, worker);
-                workers.remove(workerId);
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("loadWorker(" + workerId + "): instance " + worker);
-                }
-
-                if (config.getProperties().getProperty(PropertiesConstants.NAME) != null) {
-                    nameToIdMap.put(config.getProperties().getProperty(PropertiesConstants.NAME).toUpperCase(), workerId);
-                }
-
-                initWorker(worker, workerId, config);
-            } catch (ClassNotFoundException e) {
-                LOG.error("Worker class not found (is the module included in the build?): " + classpath);
-            } catch (IllegalAccessException e) {
-                LOG.error("Could not access worker class: " + classpath);
-            } catch (InstantiationException e) {
-                LOG.error("Could not instantiate worker class: " + classpath);
-            }
-        }
-    }
-    
-    @SuppressWarnings("deprecation") // TODO: We use getEntityManager in the correct way. So this deprecation warning is not correct.
-    private void loadWorkerWithComponents(final int workerId, final SignServerContext context) throws NoSuchWorkerException {
+        WorkerWithComponents result;
         if (LOG.isTraceEnabled()) {
             LOG.trace(">loadWorkerWithComponents(" + workerId + ")");
         }
-        // TODO: refactor: this is a strange contruct
-        IWorker worker = workerStore.get(workerId);
-        if (worker == null) {
-            loadWorker(workerId);
-            worker = workerStore.get(workerId);
-        }
-        if (worker == null) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Trying to get worker with Id that does not exist: " + workerId);
-            }
-            throw new NoSuchWorkerException(String.valueOf(workerId));
-        }
-        
+        final IWorker worker = getWorker(wi);
+
         final WorkerConfig config = worker.getConfig();
+        @SuppressWarnings("deprecation")
         final EntityManager em = context.getEntityManager();
         final List<String> createErrors = new LinkedList<>();
-        
+
         // Worker Logger
         IWorkerLogger workerLogger = null;
         try {
@@ -229,19 +207,54 @@ public class WorkerFactory {
         } catch (SignServerException ex) {
             createErrors.add(ex.getLocalizedMessage());
         }
-        
+
         // Archivers
         List<Archiver> archivers = null;
         try {
             archivers = getArchivers(workerId, config, context);
         } catch (SignServerException ex) {
             createErrors.add(ex.getLocalizedMessage());
-        }        
-        
+        }
+
         // Worker with components
-        WorkerWithComponents workerWithComponents = new WorkerWithComponents(worker, createErrors, workerLogger, authorizer, accounter, archivers);
-        workers.put(workerId, workerWithComponents);
+        result = new WorkerWithComponents(workerId, worker, createErrors, workerLogger, authorizer, accounter, archivers);
+        cache.putWorkerWithComponents(workerId, result);
+        return result;
     }
+    
+    /*private IWorker loadWorker(final String workerName) throws NoSuchWorkerException {
+        return loadWorker(workerConfigHome.findId(workerName));
+    }
+    
+    private WorkerWithComponents loadWorkerWithComponents(final String workerName, final SignServerContext context) throws NoSuchWorkerException {
+        return loadWorkerWithComponents(workerConfigHome.findId(workerName), context);
+    }*/
+
+    /**
+     * Method returning a id of a named Worker
+     *
+     *
+     * The worker will only be created upon first call, then it's stored in memory until
+     * the flush method is called.
+     *
+     * @param workerName the name of a named worker.
+     * @return the id of the worker
+     * @throws NoSuchWorkerException in case a worker with the name does not exist
+     */
+    /*public synchronized int getWorkerIdFromName(final String workerName) throws NoSuchWorkerException {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(">getWorkerIdFromName(" + workerName + ")");
+        }
+        if (workerName == null) {
+            throw new NullPointerException("workerName is null");
+        }
+        Integer result = nameToIdMap.get(workerName.toUpperCase());
+        if (result == null) {
+            result = workerConfigHome.findId(workerName);
+            nameToIdMap.put(workerName.toUpperCase(), result);
+        }
+        return result;
+    }*/
 
     private void initWorker(final IWorker worker, final int workerId, final WorkerConfig config) {
         final String cryptoTokenName = config.getProperty("CRYPTOTOKEN");
@@ -253,7 +266,7 @@ public class WorkerFactory {
                 public ICryptoToken getCurrentCryptoToken() throws SignServerException {
                     synchronized (WorkerFactory.this) {
                         try {
-                            IWorker cryptoWorker = getWorker(getWorkerIdFromName(cryptoTokenName));
+                            IWorker cryptoWorker = getWorker(new WorkerIdentifier(cryptoTokenName));
                             if (cryptoWorker instanceof BaseProcessable) {
                                 return ((BaseProcessable) cryptoWorker).getCryptoToken();
                             } else {
@@ -284,65 +297,28 @@ public class WorkerFactory {
         if (LOG.isTraceEnabled()) {
             LOG.trace(">flush()");
         }
-        workerStore = new HashMap<>();
-        workers = new HashMap<>();
-        nameToIdMap = new HashMap<>();
+        cache.clearAll();
     }
 
     /**
      * Method used to force a reload of worker.
      * @param id of worker
      */
-    public synchronized void reloadWorker(int id) {
+    public synchronized void reloadWorker(WorkerIdentifier wi) {
         if (LOG.isTraceEnabled()) {
-            LOG.trace(">reloadWorker(" + id + ")");
+            LOG.trace(">reloadWorker(" + wi + ")");
         }
-        if (id != 0) {
-            workerStore.remove(id);
-            workers.remove(id);
+        if (wi.hasName() || (wi.hasId() && wi.getId() != null)) {
+            cache.clear(wi);
             if (LOG.isTraceEnabled()) {
-                LOG.trace("reloadWorker(" + id + "): removed instance");
-            }
-
-            Iterator<String> iter = nameToIdMap.keySet().iterator();
-
-            while (iter.hasNext()) {
-                String next = iter.next();
-                if (nameToIdMap.get(next) == null || nameToIdMap.get(next) == id) {
-                    iter.remove();
-                }
+                LOG.trace("reloadWorker(" + wi + "): removed instance");
             }
         }
 
         try {
-            WorkerConfig config = workerConfigHome.getWorkerProperties(id, false);
-            if (config != null) {
-                String className = config.getImplementationClass();
-
-                // XXX: This is duplicated
-                final IWorker worker;
-                if (className == null) {
-                    worker = new NoImplementationWorker();
-                } else {
-                    ClassLoader cl = this.getClass().getClassLoader();
-                    Class<?> implClass = cl.loadClass(className);
-
-                    worker = (IWorker) implClass.newInstance();
-                }
-                workerStore.put(id, worker);
-                workers.remove(id);
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("reloadWorker(" + id + "): instance " + worker);
-                }
-
-                if (config.getProperties().getProperty(PropertiesConstants.NAME) != null) {
-                    nameToIdMap.put(config.getProperties().getProperty(PropertiesConstants.NAME).toUpperCase(), id);
-                }
-
-                initWorker(worker, id, config);
-            }
-        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
-            LOG.error("Error reloading worker : " + e.getMessage(), e);
+            loadWorker(wi);
+        } catch (NoSuchWorkerException ex) {
+            LOG.error("Error reloading worker : " + ex.getMessage());
         }
     }
 
@@ -495,7 +471,7 @@ public class WorkerFactory {
     }
 
     public synchronized Collection<Integer> getCachedWorkerIds() {
-        return workerStore.keySet();
+        return cache.keySet();
     }
 
 }

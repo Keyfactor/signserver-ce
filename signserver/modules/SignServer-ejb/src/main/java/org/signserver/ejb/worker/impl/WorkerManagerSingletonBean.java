@@ -29,6 +29,7 @@ import org.apache.log4j.Logger;
 import org.cesecore.audit.log.SecurityEventsLoggerSessionLocal;
 import org.signserver.common.NoSuchWorkerException;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerIdentifier;
 import org.signserver.server.*;
 import org.signserver.server.config.entities.FileBasedWorkerConfigDataService;
 import org.signserver.server.config.entities.IWorkerConfigDataService;
@@ -82,21 +83,24 @@ public class WorkerManagerSingletonBean {
         }
         workerContext = new SignServerContext(em, keyUsageCounterDataService);
         workerFactory = new WorkerFactory(workerConfigService, workerContext);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Created WorkerFactory instance: " + workerFactory);
+        }
     }
 
     /**
      * Get a worker instance given the workerId.
      *
-     * @param workerId Id of worker to get
+     * @param wi Id of worker to get
      * @return The worker instance
      * @throws NoSuchWorkerException in case the worker does not exist
      */
-    public IWorker getWorker(final int workerId) throws NoSuchWorkerException {
-            return workerFactory.getWorker(workerId);
+    public IWorker getWorker(final WorkerIdentifier wi) throws NoSuchWorkerException {
+        return workerFactory.getWorker(wi);
     }
     
-    public WorkerWithComponents getWorkerWithComponents(final int workerId) throws NoSuchWorkerException {
-        return workerFactory.getWorkerWithComponents(workerId, workerContext);
+    public WorkerWithComponents getWorkerWithComponents(final WorkerIdentifier wi) throws NoSuchWorkerException {
+        return workerFactory.getWorkerWithComponents(wi, workerContext);
     }
     
     /**
@@ -104,20 +108,20 @@ public class WorkerManagerSingletonBean {
      * @return returning the ID of the named Worker
      * @throws NoSuchWorkerException in case no worker with that name exists
      */
-    public int getIdFromName(final String workerName) throws NoSuchWorkerException {
+    /*public int getIdFromName(final String workerName) throws NoSuchWorkerException {
         if (LOG.isDebugEnabled()) {
             LOG.debug(">getIdFromName(" + workerName + ")");
         }
         return workerFactory.getWorkerIdFromName(workerName);
-    }
+    }*/
 
     /**
      * Force a reload of the given worker.
      *
      * @param workerId Id of worker to reload
      */
-    public void reloadWorker(int workerId) {
-        workerFactory.reloadWorker(workerId);
+    public void reloadWorker(WorkerIdentifier wi) {
+        workerFactory.reloadWorker(wi);
     }
 
     /**
@@ -161,7 +165,7 @@ public class WorkerManagerSingletonBean {
             retval = new LinkedList<>();
             for (Integer id : allIds) {
                 try {
-                    IWorker obj = getWorker(id);
+                    IWorker obj = getWorker(new WorkerIdentifier(id));
                     if ((workerType == WorkerConfig.WORKERTYPE_PROCESSABLE && obj instanceof IProcessable)
                             || (workerType == WorkerConfig.WORKERTYPE_SERVICES && obj instanceof ITimedService)) {
                         retval.add(id);
@@ -185,8 +189,8 @@ public class WorkerManagerSingletonBean {
         workerConfigService.populateNameColumn();
     }
 
-    public boolean removeWorker(int workerId) {
+    /*public boolean removeWorker(WorkerIdentifier workerId) {
         return workerConfigService.removeWorkerConfig(workerId);
-    }
+    }*/
     
 }

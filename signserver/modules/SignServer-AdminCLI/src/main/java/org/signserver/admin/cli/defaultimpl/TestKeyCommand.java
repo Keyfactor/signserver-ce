@@ -22,6 +22,7 @@ import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.cli.spi.UnexpectedCommandFailureException;
 import org.signserver.common.KeyTestResult;
+import org.signserver.common.WorkerIdentifier;
 
 /**
  * Command used to test one or more keys associated with a Crypto Token.
@@ -94,8 +95,7 @@ public class TestKeyCommand extends AbstractAdminCommand {
             throw new IllegalCommandArgumentsException("Missing arguments");
         }
         try {
-            int signerId = getWorkerId(args[0]);
-            checkThatWorkerIsProcessable(signerId);
+            final WorkerIdentifier wi = WorkerIdentifier.createFromIdOrName(args[0]);
 
             String alias = null;
 
@@ -115,7 +115,7 @@ public class TestKeyCommand extends AbstractAdminCommand {
                 LOG.info("Test key with alias " + alias + ".");
             }
 
-            final Collection<KeyTestResult> results = getWorkerSession().testKey(signerId, alias, null);
+            final Collection<KeyTestResult> results = getWorkerSession().testKey(wi, alias, null);
 
             for (KeyTestResult key : results) {
                 final StringBuilder sb = new StringBuilder();

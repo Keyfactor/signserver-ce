@@ -40,6 +40,7 @@ import org.signserver.common.GenericSignResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerIdentifier;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestingSecurityManager;
@@ -201,7 +202,7 @@ public class CMSSignerTest extends ModulesTestCase {
         workerSession.reloadConfiguration(workerId);
         
         final GenericSignResponse res =
-                (GenericSignResponse) workerSession.process(workerId, signRequest, new RequestContext());
+                (GenericSignResponse) workerSession.process(new WorkerIdentifier(workerId), signRequest, new RequestContext());
         final byte[] data = res.getProcessedData();
    
         // Answer to right question

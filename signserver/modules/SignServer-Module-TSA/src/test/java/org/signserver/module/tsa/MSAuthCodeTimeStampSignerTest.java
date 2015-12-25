@@ -51,6 +51,7 @@ import org.signserver.common.ProcessRequest;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerIdentifier;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.server.SignServerContext;
 import org.signserver.server.ZeroTimeSource;
@@ -228,7 +229,7 @@ public class MSAuthCodeTimeStampSignerTest extends ModulesTestCase {
         signRequest = new GenericSignRequest(REQUEST_ID, requestData);
 
         final RequestContext requestContext = new RequestContext();
-        GenericSignResponse resp = (GenericSignResponse) workerMock.process(SIGNER_ID, signRequest, requestContext);
+        GenericSignResponse resp = (GenericSignResponse) workerMock.process(new WorkerIdentifier(SIGNER_ID), signRequest, requestContext);
         
         // check that the response contains the needed attributes
         byte[] buf = resp.getProcessedData();

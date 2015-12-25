@@ -120,7 +120,7 @@ public class XMLSignerTest extends ModulesTestCase {
         }
 
         final GenericSignResponse res = 
-                (GenericSignResponse) workerSession.process(workerId,
+                (GenericSignResponse) workerSession.process(new WorkerIdentifier(workerId),
                     signRequest, new RequestContext());
         final byte[] data = res.getProcessedData();
 
@@ -203,7 +203,7 @@ public class XMLSignerTest extends ModulesTestCase {
     
     @Test
     public void test07GetStatus() throws Exception {
-        final StaticWorkerStatus stat = (StaticWorkerStatus) workerSession.getStatus(WORKERID);
+        final StaticWorkerStatus stat = (StaticWorkerStatus) workerSession.getStatus(new WorkerIdentifier(WORKERID));
         assertSame("Status", stat.getTokenStatus(), WorkerStatus.STATUS_ACTIVE);
     }
 
@@ -286,7 +286,7 @@ public class XMLSignerTest extends ModulesTestCase {
                 new GenericSignRequest(reqid, "foo".getBytes());
 
         final GenericSignResponse res = 
-                (GenericSignResponse) workerSession.process(DEBUGWORKER,
+                (GenericSignResponse) workerSession.process(new WorkerIdentifier(DEBUGWORKER),
                     signRequest, new RequestContext());
         final byte[] data = res.getProcessedData();
 

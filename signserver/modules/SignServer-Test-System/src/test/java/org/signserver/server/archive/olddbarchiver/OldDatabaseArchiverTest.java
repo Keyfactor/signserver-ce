@@ -31,6 +31,7 @@ import org.signserver.server.archive.ArchiveTest;
 import org.signserver.server.archive.ArchiveTestCase;
 import org.junit.Before;
 import org.junit.Test;
+import org.signserver.common.WorkerIdentifier;
 import org.signserver.ejb.interfaces.IWorkerSession;
 
 /**
@@ -440,7 +441,7 @@ public class OldDatabaseArchiverTest extends ArchiveTestCase {
                 new GenericSignRequest(reqid, requestBytes);
 
         final GenericSignResponse response = (GenericSignResponse) workerSession.process(
-                signerId, signRequest, new RequestContext());
+                new WorkerIdentifier(signerId), signRequest, new RequestContext());
         assertNotNull("no response", response);
         
         return response.getArchivables();

@@ -27,6 +27,7 @@ import org.bouncycastle.asn1.x509.PrivateKeyUsagePeriod;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.SignServerConstants;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerIdentifier;
 
 /**
  * Utility methods for checking the validity time of signer certificates.
@@ -56,7 +57,7 @@ public class ValidityTimeUtils {
      * @return The validity date
      * @throws CryptoTokenOfflineException if the signing validity could not be obtained
      */
-    public static Date getSigningValidity(final boolean notAfter, final int workerId,
+    public static Date getSigningValidity(final boolean notAfter, final WorkerIdentifier workerId,
             final WorkerConfig awc, final X509Certificate cert)
             throws CryptoTokenOfflineException {
         Date certDate = null;
@@ -182,7 +183,7 @@ public class ValidityTimeUtils {
      * @throws CryptoTokenOfflineException with an error message if the signer 
      * was not within the validity time or there was an error obtaining the time
      */
-    public static void checkSignerValidity(final int workerId, final WorkerConfig awc, final X509Certificate cert) throws CryptoTokenOfflineException {
+    public static void checkSignerValidity(final WorkerIdentifier workerId, final WorkerConfig awc, final X509Certificate cert) throws CryptoTokenOfflineException {
         // Check certificate, privatekey and minremaining validities
         final Date notBefore =
                 ValidityTimeUtils.getSigningValidity(false, workerId, awc, cert);

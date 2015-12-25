@@ -26,7 +26,6 @@ import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 import org.apache.log4j.Logger;
 import org.signserver.common.*;
-import org.signserver.common.util.PropertiesConstants;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.healthcheck.HealthCheckUtils;
@@ -68,6 +67,7 @@ public class SignServerWS implements ISignServerWS {
 
     private int minimumFreeMemory = 1;
     
+    @Override
     public Collection<WorkerStatusWS> getStatus(String workerIdOrName)
             throws InvalidWorkerIdException {
         LOG.debug("WS getStatus called");
@@ -84,19 +84,10 @@ public class SignServerWS implements ISignServerWS {
             errors.addAll(HealthCheckUtils.checkMemory(getMinimumFreeMemory()));
         }
 
-        int workerId = 0;
-        try {
-            if (!workerIdOrName.equalsIgnoreCase(ISignServerWS.ALLWORKERS)) {
-                workerId = getWorkerId(workerIdOrName);
-            }
-        } catch (IllegalRequestException e) {
-            throw new InvalidWorkerIdException("Worker id or name " + workerIdOrName + " couldn't be found.");
-        }
-
-        if (workerId != 0) {
+        if (!workerIdOrName.equalsIgnoreCase(ISignServerWS.ALLWORKERS)) {
             // Specified WorkerId
             if (errors.isEmpty()) {
-                errors.addAll(checkSigner(workerId));
+                errors.addAll(checkSigner(WorkerIdentifier.createFromIdOrName(workerIdOrName)));
             }
             WorkerStatusWS resp = new WorkerStatusWS();
             resp.setWorkerName(workerIdOrName);
@@ -117,7 +108,7 @@ public class SignServerWS implements ISignServerWS {
             for (Iterator<Integer> iterator = signers.iterator(); iterator.hasNext();) {
                 int next = iterator.next();
                 if (errors.isEmpty()) {
-                    errors.addAll(checkSigner(next));
+                    errors.addAll(checkSigner(new WorkerIdentifier(next)));
                 }
 
                 WorkerStatusWS resp = new WorkerStatusWS();
@@ -138,9 +129,9 @@ public class SignServerWS implements ISignServerWS {
         return retval;
     }
 
-    private List<String> checkSigner(int workerId) throws InvalidWorkerIdException {
-        final LinkedList<String> result = new LinkedList<String>();
-        final WorkerStatus status = getWorkerSession().getStatus(workerId);
+    private List<String> checkSigner(WorkerIdentifier wi) throws InvalidWorkerIdException {
+        final LinkedList<String> result = new LinkedList<>();
+        final WorkerStatus status = getWorkerSession().getStatus(wi);
         for (String error : status.getFatalErrors()) {
             result.add("Worker " + status.getWorkerId() + ": " + error + "\n");
         }
@@ -182,9 +173,9 @@ public class SignServerWS implements ISignServerWS {
             requestContext.put(RequestContext.X_FORWARDED_FOR, xForwardedFor);
         }
         
-        int workerId = getWorkerId(workerIdOrName);
+        final WorkerIdentifier wi = WorkerIdentifier.createFromIdOrName(workerIdOrName);
 
-        ArrayList<Certificate> signerCertificateChain = getSignerCertificateChain(workerId);
+        ArrayList<Certificate> signerCertificateChain = getSignerCertificateChain(wi);
 
         for (Iterator<ProcessRequestWS> iterator = requests.iterator(); iterator.hasNext();) {
             ProcessRequestWS next = iterator.next();
@@ -210,10 +201,14 @@ public class SignServerWS implements ISignServerWS {
             	logMap.put(IWorkerLogger.LOG_FILENAME, fileName);
             }
             
-            logMap.put(IWorkerLogger.LOG_WORKER_NAME,
-                    getWorkerSession().getCurrentWorkerConfig(workerId).getProperty(PropertiesConstants.NAME));
+            if (wi.hasName()) {
+                logMap.put(IWorkerLogger.LOG_WORKER_NAME, wi.getName());
+            }
+            if (wi.hasId()) {
+                logMap.put(IWorkerLogger.LOG_WORKER_ID, String.valueOf(wi.getId()));
+            }
 
-            ProcessResponse resp = getWorkerSession().process(workerId, req, requestContext);
+            ProcessResponse resp = getWorkerSession().process(wi, req, requestContext);
             ProcessResponseWS wsresp = new ProcessResponseWS();
             try {
                 wsresp.setResponseData(RequestAndResponseManager.serializeProcessResponse(resp));
@@ -236,10 +231,10 @@ public class SignServerWS implements ISignServerWS {
         return retval;
     }
 
-    private ArrayList<Certificate> getSignerCertificateChain(int workerId) throws InvalidWorkerIdException {
+    private ArrayList<Certificate> getSignerCertificateChain(WorkerIdentifier wi) throws InvalidWorkerIdException {
         ArrayList<Certificate> retval = null;
         try {
-            WorkerStatus ws = getWorkerSession().getStatus(workerId);
+            WorkerStatus ws = getWorkerSession().getStatus(wi);
             ProcessableConfig sc = new ProcessableConfig(ws.getActiveSignerConfig());
             Collection<java.security.cert.Certificate> signerCertificateChain = sc.getSignerCertificateChain();
 

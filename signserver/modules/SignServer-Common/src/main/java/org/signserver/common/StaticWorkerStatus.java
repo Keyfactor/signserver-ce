@@ -48,11 +48,11 @@ public class StaticWorkerStatus extends WorkerStatus {
     }
 
     @Override
-    public void displayStatus(int workerId, PrintStream out, boolean complete) {
+    public void displayStatus(PrintStream out, boolean complete) {
         final List<String> errors = getFatalErrors();
 
         // Title
-        out.println("Status of " + info.getWorkerType() + " with id " + workerId + " (" + info.getWorkerName() + ") is:");
+        out.println("Status of " + info.getWorkerType() + " with id " + info.getWorkerId() + " (" + info.getWorkerName() + ") is:");
 
         // Brief statuses
         int keyWidth = maxWidth(14, info.getBriefEntries());

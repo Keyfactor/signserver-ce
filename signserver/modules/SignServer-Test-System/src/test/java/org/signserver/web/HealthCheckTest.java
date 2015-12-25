@@ -23,6 +23,7 @@ import org.signserver.statusrepo.IStatusRepositorySession;
 import org.signserver.statusrepo.common.StatusName;
 import org.junit.Before;
 import org.junit.Test;
+import org.signserver.common.WorkerIdentifier;
 import org.signserver.ejb.interfaces.IWorkerSession;
 
 /**
@@ -88,7 +89,7 @@ public class HealthCheckTest extends WebTestCase {
             // Make sure one worker is offline
             getWorkerSession().setWorkerProperty(getSignerIdDummy1(), "KEYSTOREPATH", "_non-existing-path_");
             getWorkerSession().reloadConfiguration(getSignerIdDummy1());
-            if (getWorkerSession().getStatus(getSignerIdDummy1()).getFatalErrors().isEmpty()) {
+            if (getWorkerSession().getStatus(new WorkerIdentifier(getSignerIdDummy1())).getFatalErrors().isEmpty()) {
                 throw new Exception("Error in test case. We should have an offline worker to test with");
             }
 

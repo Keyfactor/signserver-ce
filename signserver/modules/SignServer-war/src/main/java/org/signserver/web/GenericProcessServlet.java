@@ -117,7 +117,7 @@ public class GenericProcessServlet extends AbstractProcessServlet {
             throws IOException, ServletException {
         LOG.debug(">doPost()");
 
-        int workerId = 1;
+        WorkerIdentifier wi = null;
         byte[] data = null;
         String fileName = null;
         String pdfPassword = null;
@@ -128,199 +128,109 @@ public class GenericProcessServlet extends AbstractProcessServlet {
                     + req.getContentLength());
         }
 
-        try {
-            final String workerNameOverride =
-                            (String) req.getAttribute(ServletUtils.WORKERNAME_PROPERTY_OVERRIDE);
+        final String workerNameOverride =
+                        (String) req.getAttribute(ServletUtils.WORKERNAME_PROPERTY_OVERRIDE);
 
-            if (workerNameOverride != null) {
-                    workerId = getWorkerSession().getWorkerId(workerNameOverride);
-                    workerRequest = true;
-            }
+        if (workerNameOverride != null) {
+            wi = new WorkerIdentifier(workerNameOverride);
+            workerRequest = true;
+        }
 
-            final long maxUploadSize = getMaxUploadSize();
+        final long maxUploadSize = getMaxUploadSize();
 
-            ProcessType processType = ProcessType.signDocument;
-            final MetaDataHolder metadataHolder = new MetaDataHolder();
+        ProcessType processType = ProcessType.signDocument;
+        final MetaDataHolder metadataHolder = new MetaDataHolder();
 
-            if (ServletFileUpload.isMultipartContent(req)) {
-                final DiskFileItemFactory factory = new DiskFileItemFactory();
-                factory.setSizeThreshold(Integer.MAX_VALUE); // Don't write to disk
+        if (ServletFileUpload.isMultipartContent(req)) {
+            final DiskFileItemFactory factory = new DiskFileItemFactory();
+            factory.setSizeThreshold(Integer.MAX_VALUE); // Don't write to disk
 
-                final ServletFileUpload upload = new ServletFileUpload(factory);
+            final ServletFileUpload upload = new ServletFileUpload(factory);
 
-                // Limit the maximum size of input
-                upload.setSizeMax(maxUploadSize);
+            // Limit the maximum size of input
+            upload.setSizeMax(maxUploadSize);
 
-                try {
-                    final List items = upload.parseRequest(req);
-                    final Iterator iter = items.iterator();
-                    FileItem fileItem = null;
-                    String encoding = null;
-                    while (iter.hasNext()) {
-                        final Object o = iter.next();
-                        if (o instanceof FileItem) {
-                            final FileItem item = (FileItem) o;
+            try {
+                final List items = upload.parseRequest(req);
+                final Iterator iter = items.iterator();
+                FileItem fileItem = null;
+                String encoding = null;
+                while (iter.hasNext()) {
+                    final Object o = iter.next();
+                    if (o instanceof FileItem) {
+                        final FileItem item = (FileItem) o;
 
-                            if (item.isFormField()) {
-                                if (!workerRequest) {
-                                    if (WORKERNAME_PROPERTY_NAME.equals(item.getFieldName())) {
-                                        if (LOG.isDebugEnabled()) {
-                                            LOG.debug("Found a signerName in the request: "
-                                                    + item.getString());
-                                        }
-                                        workerId = getWorkerSession().getWorkerId(item.getString());
-                                    } else if (WORKERID_PROPERTY_NAME.equals(item.getFieldName())) {
-                                        if (LOG.isDebugEnabled()) {
-                                            LOG.debug("Found a signerId in the request: "
-                                                    + item.getString());
-                                        }
-                                        try {
-                                            workerId = Integer.parseInt(item.getString());
-                                        } catch (NumberFormatException ignored) {
-                                        }
+                        if (item.isFormField()) {
+                            if (!workerRequest) {
+                                if (WORKERNAME_PROPERTY_NAME.equals(item.getFieldName())) {
+                                    if (LOG.isDebugEnabled()) {
+                                        LOG.debug("Found a signerName in the request: "
+                                                + item.getString());
+                                    }
+                                    wi = new WorkerIdentifier(item.getString());
+                                } else if (WORKERID_PROPERTY_NAME.equals(item.getFieldName())) {
+                                    if (LOG.isDebugEnabled()) {
+                                        LOG.debug("Found a signerId in the request: "
+                                                + item.getString());
+                                    }
+                                    try {
+                                        wi = new WorkerIdentifier(Integer.parseInt(item.getString()));
+                                    } catch (NumberFormatException ignored) {
                                     }
                                 }
+                            }
 
-                                final String itemFieldName = item.getFieldName();
+                            final String itemFieldName = item.getFieldName();
 
-                                if (PDFPASSWORD_PROPERTY_NAME.equals(itemFieldName)) {
-                                    if (LOG.isDebugEnabled()) {
-                                        LOG.debug("Found a pdfPassword in the request.");
-                                    }
-                                    pdfPassword = item.getString("ISO-8859-1");
-                                } else if (PROCESS_TYPE_PROPERTY_NAME.equals(itemFieldName)) {
-                                    final String processTypeAttribute = item.getString("ISO-8859-1");
+                            if (PDFPASSWORD_PROPERTY_NAME.equals(itemFieldName)) {
+                                if (LOG.isDebugEnabled()) {
+                                    LOG.debug("Found a pdfPassword in the request.");
+                                }
+                                pdfPassword = item.getString("ISO-8859-1");
+                            } else if (PROCESS_TYPE_PROPERTY_NAME.equals(itemFieldName)) {
+                                final String processTypeAttribute = item.getString("ISO-8859-1");
 
-                                    if (LOG.isDebugEnabled()) {
-                                        LOG.debug("Found process type in the request: " + processTypeAttribute);
-                                    }
+                                if (LOG.isDebugEnabled()) {
+                                    LOG.debug("Found process type in the request: " + processTypeAttribute);
+                                }
 
-                                    if (processTypeAttribute != null) {
-                                        try {
-                                            processType = ProcessType.valueOf(processTypeAttribute);
-                                        } catch (IllegalArgumentException e) {
-                                            sendBadRequest(res, "Illegal process type: " + processTypeAttribute);
-                                            return;
-                                        }
-                                    } else {
-                                        processType = ProcessType.signDocument;
-                                    }
-                                } else if (ENCODING_PROPERTY_NAME.equals(itemFieldName)) {
-                                    encoding = item.getString("ISO-8859-1");
-                                } else if (isFieldMatchingMetaData(itemFieldName)) {
+                                if (processTypeAttribute != null) {
                                     try {
-                                        metadataHolder.handleMetaDataProperty(itemFieldName,
-                                                item.getString("ISO-8859-1"));
-                                    } catch (IOException e) {
-                                        sendBadRequest(res, "Malformed properties given using REQUEST_METADATA.");
+                                        processType = ProcessType.valueOf(processTypeAttribute);
+                                    } catch (IllegalArgumentException e) {
+                                        sendBadRequest(res, "Illegal process type: " + processTypeAttribute);
                                         return;
                                     }
+                                } else {
+                                    processType = ProcessType.signDocument;
                                 }
-                            } else {
-                                // We only care for one upload at a time right now
-                                if (fileItem == null) {
-                                    fileItem = item;
+                            } else if (ENCODING_PROPERTY_NAME.equals(itemFieldName)) {
+                                encoding = item.getString("ISO-8859-1");
+                            } else if (isFieldMatchingMetaData(itemFieldName)) {
+                                try {
+                                    metadataHolder.handleMetaDataProperty(itemFieldName,
+                                            item.getString("ISO-8859-1"));
+                                } catch (IOException e) {
+                                    sendBadRequest(res, "Malformed properties given using REQUEST_METADATA.");
+                                    return;
                                 }
+                            }
+                        } else {
+                            // We only care for one upload at a time right now
+                            if (fileItem == null) {
+                                fileItem = item;
                             }
                         }
                     }
+                }
 
-                    if (fileItem == null) {
-                        sendBadRequest(res, "Missing file content in upload");
-                        return;
-                    } else {
-                        fileName = fileItem.getName();
-                        data = fileItem.get();  // Note: Reads entiry file to memory
-
-                        if (encoding != null && !encoding.isEmpty()) {
-                            if (ENCODING_BASE64.equalsIgnoreCase(encoding)) {
-                                if (LOG.isDebugEnabled()) {
-                                    LOG.debug("Decoding base64 data");
-                                }
-                                data = Base64.decode(data);
-                            } else {
-                                sendBadRequest(res,
-                                        "Unknown encoding for the 'data' field: "
-                                        + encoding);
-                                return;
-                            }
-                        }
-                    }
-                } catch (FileUploadBase.SizeLimitExceededException ex) {
-                    LOG.error(HTTP_MAX_UPLOAD_SIZE + " exceeded: " + ex.getLocalizedMessage());
-                    res.sendError(HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE,
-                        "Maximum content length is " + maxUploadSize + " bytes");
+                if (fileItem == null) {
+                    sendBadRequest(res, "Missing file content in upload");
                     return;
-                } catch (FileUploadException ex) {
-                    throw new ServletException("Upload failed", ex);
-                }
-            } else {
-                if (!workerRequest) {
-                    String name = req.getParameter(WORKERNAME_PROPERTY_NAME);
-                    if (name != null) {
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Found a signerName in the request: " + name);
-                        }
-                        workerId = getWorkerSession().getWorkerId(name);
-                    }
-                    String id = req.getParameter(WORKERID_PROPERTY_NAME);
-                    if (id != null) {
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Found a signerId in the request: " + id);
-                        }
-                        workerId = Integer.parseInt(id);
-                    }
-                }
-
-                final Enumeration<String> params = req.getParameterNames();
-
-                while (params.hasMoreElements()) {
-                    final String property = params.nextElement();
-                    if (PDFPASSWORD_PROPERTY_NAME.equals(property)) {
-                        pdfPassword = (String) req.getParameter(PDFPASSWORD_PROPERTY_NAME);
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Found a pdfPassword in the request.");
-                        }
-                    } else if (isFieldMatchingMetaData(property)) {
-                       try {
-                           metadataHolder.handleMetaDataProperty(property,
-                                   req.getParameter(property));
-                       } catch (IOException e) {
-                           sendBadRequest(res, "Malformed properties given using REQUEST_METADATA.");
-                           return;
-                       }
-                   }
-                }
-
-
-
-                final String processTypeAttribute = (String) req.getParameter(PROCESS_TYPE_PROPERTY_NAME);
-
-                if (processTypeAttribute != null) {
-                    try {
-                        processType = ProcessType.valueOf(processTypeAttribute);
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Found process type in the request: " + processType.name());
-                        }
-                    } catch (IllegalArgumentException e) {
-                        sendBadRequest(res, "Illegal process type: " + processTypeAttribute);
-                        return;
-                    }
                 } else {
-                    processType = ProcessType.signDocument;
-                }
+                    fileName = fileItem.getName();
+                    data = fileItem.get();  // Note: Reads entiry file to memory
 
-                if (METHOD_GET.equalsIgnoreCase(req.getMethod())
-                        || (req.getContentType() != null && req.getContentType().contains(FORM_URL_ENCODED))) {
-                    LOG.debug("Request is FORM_URL_ENCODED");
-
-                    if (req.getParameter(DATA_PROPERTY_NAME) == null) {
-                        sendBadRequest(res, "Missing field 'data' in request");
-                        return;
-                    }
-                    data = req.getParameter(DATA_PROPERTY_NAME).getBytes();
-
-                    String encoding = req.getParameter(ENCODING_PROPERTY_NAME);
                     if (encoding != null && !encoding.isEmpty()) {
                         if (ENCODING_BASE64.equalsIgnoreCase(encoding)) {
                             if (LOG.isDebugEnabled()) {
@@ -334,42 +244,132 @@ public class GenericProcessServlet extends AbstractProcessServlet {
                             return;
                         }
                     }
-                } else {
-                    // Pass-through the content to be handled by worker if
-                    // unknown content-type
+                }
+            } catch (FileUploadBase.SizeLimitExceededException ex) {
+                LOG.error(HTTP_MAX_UPLOAD_SIZE + " exceeded: " + ex.getLocalizedMessage());
+                res.sendError(HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE,
+                    "Maximum content length is " + maxUploadSize + " bytes");
+                return;
+            } catch (FileUploadException ex) {
+                throw new ServletException("Upload failed", ex);
+            }
+        } else {
+            if (!workerRequest) {
+                String name = req.getParameter(WORKERNAME_PROPERTY_NAME);
+                if (name != null) {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Request Content-type: " + req.getContentType());
+                        LOG.debug("Found a signerName in the request: " + name);
                     }
-
-                    // Get an input stream and read the bytes from the stream
-                    InputStream in = req.getInputStream();
-                    ByteArrayOutputStream os = new ByteArrayOutputStream();
-                    int len;
-                    byte[] buf = new byte[1024];
-                    while ((len = in.read(buf)) > 0) {
-                        os.write(buf, 0, len);
+                    wi = new WorkerIdentifier(name);
+                }
+                String id = req.getParameter(WORKERID_PROPERTY_NAME);
+                if (id != null) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Found a signerId in the request: " + id);
                     }
-                    in.close();
-                    os.close();
-                    data = os.toByteArray();
+                    wi = new WorkerIdentifier(Integer.parseInt(id));
                 }
             }
 
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Request of type: " + processType.name());
+            final Enumeration<String> params = req.getParameterNames();
+
+            while (params.hasMoreElements()) {
+                final String property = params.nextElement();
+                if (PDFPASSWORD_PROPERTY_NAME.equals(property)) {
+                    pdfPassword = (String) req.getParameter(PDFPASSWORD_PROPERTY_NAME);
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Found a pdfPassword in the request.");
+                    }
+                } else if (isFieldMatchingMetaData(property)) {
+                   try {
+                       metadataHolder.handleMetaDataProperty(property,
+                               req.getParameter(property));
+                   } catch (IOException e) {
+                       sendBadRequest(res, "Malformed properties given using REQUEST_METADATA.");
+                       return;
+                   }
+               }
             }
 
-            // Limit the maximum size of input
-            if (data.length > maxUploadSize) {
-                LOG.error("Content length exceeds " + maxUploadSize + ", not processed: " + req.getContentLength());
-                res.sendError(HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE,
-                        "Maximum content length is " + maxUploadSize + " bytes");
+
+
+            final String processTypeAttribute = (String) req.getParameter(PROCESS_TYPE_PROPERTY_NAME);
+
+            if (processTypeAttribute != null) {
+                try {
+                    processType = ProcessType.valueOf(processTypeAttribute);
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Found process type in the request: " + processType.name());
+                    }
+                } catch (IllegalArgumentException e) {
+                    sendBadRequest(res, "Illegal process type: " + processTypeAttribute);
+                    return;
+                }
             } else {
-                processRequest(req, res, workerId, data, fileName, pdfPassword, processType,
-                        metadataHolder);
+                processType = ProcessType.signDocument;
             }
-        } catch (InvalidWorkerIdException ex) {
-            res.sendError(HttpServletResponse.SC_NOT_FOUND, "Worker Not Found");
+
+            if (METHOD_GET.equalsIgnoreCase(req.getMethod())
+                    || (req.getContentType() != null && req.getContentType().contains(FORM_URL_ENCODED))) {
+                LOG.debug("Request is FORM_URL_ENCODED");
+
+                if (req.getParameter(DATA_PROPERTY_NAME) == null) {
+                    sendBadRequest(res, "Missing field 'data' in request");
+                    return;
+                }
+                data = req.getParameter(DATA_PROPERTY_NAME).getBytes();
+
+                String encoding = req.getParameter(ENCODING_PROPERTY_NAME);
+                if (encoding != null && !encoding.isEmpty()) {
+                    if (ENCODING_BASE64.equalsIgnoreCase(encoding)) {
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Decoding base64 data");
+                        }
+                        data = Base64.decode(data);
+                    } else {
+                        sendBadRequest(res,
+                                "Unknown encoding for the 'data' field: "
+                                + encoding);
+                        return;
+                    }
+                }
+            } else {
+                // Pass-through the content to be handled by worker if
+                // unknown content-type
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Request Content-type: " + req.getContentType());
+                }
+
+                // Get an input stream and read the bytes from the stream
+                InputStream in = req.getInputStream();
+                ByteArrayOutputStream os = new ByteArrayOutputStream();
+                int len;
+                byte[] buf = new byte[1024];
+                while ((len = in.read(buf)) > 0) {
+                    os.write(buf, 0, len);
+                }
+                in.close();
+                os.close();
+                data = os.toByteArray();
+            }
+        }
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Request of type: " + processType.name());
+        }
+
+        // Limit the maximum size of input
+        if (data.length > maxUploadSize) {
+            LOG.error("Content length exceeds " + maxUploadSize + ", not processed: " + req.getContentLength());
+            res.sendError(HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE,
+                    "Maximum content length is " + maxUploadSize + " bytes");
+        } else {
+            if (wi == null) {
+                res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing worker name or ID");
+            } else {
+                processRequest(req, res, wi, data, fileName, pdfPassword, processType,
+                    metadataHolder);
+            }
         }
 
         LOG.debug("<doPost()");
@@ -391,12 +391,12 @@ public class GenericProcessServlet extends AbstractProcessServlet {
         LOG.debug("<doGet()");
     } // doGet
 
-    private void processRequest(final HttpServletRequest req, final HttpServletResponse res, final int workerId, final byte[] data,
+    private void processRequest(final HttpServletRequest req, final HttpServletResponse res, final WorkerIdentifier wi, final byte[] data,
             String fileName, final String pdfPassword, final ProcessType processType,
             final MetaDataHolder metadataHolder) throws java.io.IOException, ServletException {
         final String remoteAddr = req.getRemoteAddr();
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Recieved HTTP process request for worker " + workerId + ", from ip " + remoteAddr);
+            LOG.debug("Recieved HTTP process request for worker " + wi + ", from ip " + remoteAddr);
         }
 
         // Client certificate
@@ -456,7 +456,7 @@ public class GenericProcessServlet extends AbstractProcessServlet {
             switch (processType) {
             case signDocument:
                 final GenericServletResponse servletResponse =
-                    (GenericServletResponse) getWorkerSession().process(new AdminInfo("Client user", null, null), workerId,
+                    (GenericServletResponse) getWorkerSession().process(new AdminInfo("Client user", null, null), wi,
                         new GenericServletRequest(requestId, data, req), context);
                
                 if (servletResponse.getRequestID() != requestId) { // TODO: Is this possible to get at all?
@@ -479,7 +479,7 @@ public class GenericProcessServlet extends AbstractProcessServlet {
                 break;
             case validateDocument:
                 final GenericValidationResponse validationResponse =
-                    (GenericValidationResponse) getWorkerSession().process(new AdminInfo("Client user", null, null), workerId, 
+                    (GenericValidationResponse) getWorkerSession().process(new AdminInfo("Client user", null, null), wi, 
                             new GenericValidationRequest(requestId, data), context);
                     
                 responseText = validationResponse.isValid() ? "VALID" : "INVALID";
@@ -503,7 +503,7 @@ public class GenericProcessServlet extends AbstractProcessServlet {
                 
                     final String certPurposes = req.getParameter(CERT_PURPOSES_PROPERTY_NAME);
                     final ValidateResponse certValidationResponse =
-                            (ValidateResponse) getWorkerSession().process(new AdminInfo("Client user", null, null), workerId,
+                            (ValidateResponse) getWorkerSession().process(new AdminInfo("Client user", null, null), wi,
                                     new ValidateRequest(cert, certPurposes), context);
                     final Validation validation = certValidationResponse.getValidation();
                     
@@ -546,7 +546,7 @@ public class GenericProcessServlet extends AbstractProcessServlet {
         } catch (AuthorizationRequiredException e) {
             LOG.debug("Sending back HTTP 401: " + e.getLocalizedMessage());
 
-            final String httpAuthBasicRealm = "SignServer Worker " + workerId;
+            final String httpAuthBasicRealm = "SignServer Worker " + wi;
 
             res.setHeader(CredentialUtils.HTTP_AUTH_BASIC_WWW_AUTHENTICATE,
                     "Basic realm=\"" + httpAuthBasicRealm + "\"");

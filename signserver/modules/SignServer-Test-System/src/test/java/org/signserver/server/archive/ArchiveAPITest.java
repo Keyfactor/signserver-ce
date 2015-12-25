@@ -33,6 +33,7 @@ import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestingSecurityManager;
 import org.junit.Before;
 import org.junit.Test;
+import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.util.PathUtil;
 import org.signserver.ejb.interfaces.IWorkerSession;
 
@@ -334,7 +335,7 @@ public class ArchiveAPITest extends ModulesTestCase {
         final String testDocument = "<document/>";
         final GenericSignRequest signRequest =
                 new GenericSignRequest(371, testDocument.getBytes());
-        workerSession.process(getSignerIdDummy1(),  signRequest, 
+        workerSession.process(new WorkerIdentifier(getSignerIdDummy1()),  signRequest, 
                 new RequestContext());
     }
 }

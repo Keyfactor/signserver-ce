@@ -33,6 +33,7 @@ import org.apache.log4j.Logger;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.WorkerStatus;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.healthcheck.HealthCheckUtils;
@@ -148,7 +149,7 @@ public class SignServerHealthCheck implements IHealthCheck {
             int processableId = ((Integer) iter.next()).intValue();
 
             try {
-                WorkerStatus workerStatus = getWorkerSession().getStatus(processableId);
+                WorkerStatus workerStatus = getWorkerSession().getStatus(new WorkerIdentifier(processableId));
                 if (workerStatus.isDisabled()) {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Not checking worker " + processableId + " as it is disabled");

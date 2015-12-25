@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.ejb.interfaces;
 
+import org.signserver.common.WorkerIdentifier;
 import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyStoreException;
@@ -59,7 +60,7 @@ public interface IWorkerSession {
      * The Worker Beans main method. Takes  requests processes them
      * and returns a response.
      *
-     * @param workerId id of worker who should process the request
+     * @param wi id of worker who should process the request
      * @param request the request
      * @param requestContext context of the request
      * @throws CryptoTokenOfflineException if the signers token isn't activated.
@@ -67,7 +68,7 @@ public interface IWorkerSession {
      * @throws SignServerException if some other error occurred server side
      * during process.
      */
-    ProcessResponse process(int workerId, ProcessRequest request,
+    ProcessResponse process(WorkerIdentifier wi, ProcessRequest request,
             RequestContext requestContext)
             throws IllegalRequestException, CryptoTokenOfflineException,
             SignServerException;
@@ -76,10 +77,10 @@ public interface IWorkerSession {
      * Returns the current status of a processalbe.
      *
      * Should be used with the cmd-line status command.
-     * @param workerId of the signer
+     * @param wi of the signer
      * @return a WorkerStatus class
      */
-    WorkerStatus getStatus(int workerId) throws InvalidWorkerIdException;
+    WorkerStatus getStatus(WorkerIdentifier wi) throws InvalidWorkerIdException;
 
     /**
      * Returns the Id of a worker given a name
@@ -107,7 +108,7 @@ public interface IWorkerSession {
      * @throws CryptoTokenOfflineException
      * @throws CryptoTokenAuthenticationFailureException
      */
-    void activateSigner(int signerId, String authenticationCode)
+    void activateSigner(WorkerIdentifier signerId, String authenticationCode)
             throws CryptoTokenAuthenticationFailureException,
             CryptoTokenOfflineException, InvalidWorkerIdException;
 
@@ -120,7 +121,7 @@ public interface IWorkerSession {
      * @throws CryptoTokenOfflineException
      * @throws CryptoTokenAuthenticationFailureException
      */
-    boolean deactivateSigner(int signerId) throws CryptoTokenOfflineException,
+    boolean deactivateSigner(WorkerIdentifier signerId) throws CryptoTokenOfflineException,
             InvalidWorkerIdException;
 
     /**
@@ -194,7 +195,7 @@ public interface IWorkerSession {
      * NamedCurve encoding of ECC public keys (IETF recommendation), use true
      * to include all parameters explicitly (ICAO ePassport requirement).
      */
-    ICertReqData getCertificateRequest(int signerId,
+    ICertReqData getCertificateRequest(WorkerIdentifier signerId,
             ISignerCertReqInfo certReqInfo, boolean explicitEccParameters)
             throws CryptoTokenOfflineException, InvalidWorkerIdException;
 
@@ -210,7 +211,7 @@ public interface IWorkerSession {
      * @param defaultKey true if the default key should be used otherwise for
      * instance use next key.
      */
-    ICertReqData getCertificateRequest(int signerId,
+    ICertReqData getCertificateRequest(WorkerIdentifier signerId,
             ISignerCertReqInfo certReqInfo, boolean explicitEccParameters, 
             boolean defaultKey) throws CryptoTokenOfflineException,
             InvalidWorkerIdException;
@@ -229,7 +230,7 @@ public interface IWorkerSession {
      * @throws CryptoTokenOfflineException
      * @throws InvalidWorkerIdException 
      */
-    ICertReqData getCertificateRequest(int signerId,
+    ICertReqData getCertificateRequest(WorkerIdentifier signerId,
             ISignerCertReqInfo certReqInfo, boolean explicitEccParameters,
             String keyAlias)
             throws CryptoTokenOfflineException, InvalidWorkerIdException;
@@ -243,7 +244,7 @@ public interface IWorkerSession {
      * @throws CryptoTokenOfflineException In case the crypto token or the worker
      * is not active
      */
-    Certificate getSignerCertificate(int signerId)
+    Certificate getSignerCertificate(WorkerIdentifier signerId)
             throws CryptoTokenOfflineException;
     
     /**
@@ -254,7 +255,7 @@ public interface IWorkerSession {
      * @throws CryptoTokenOfflineException In case the crypto token or the worker
      * is not active
      */
-    byte[] getSignerCertificateBytes(int signerId)
+    byte[] getSignerCertificateBytes(WorkerIdentifier signerId)
             throws CryptoTokenOfflineException;
 
     /**
@@ -265,7 +266,7 @@ public interface IWorkerSession {
      * @throws CryptoTokenOfflineException In case the crypto token or the worker
      * is not active
      */
-    public List<Certificate> getSignerCertificateChain(int signerId)
+    public List<Certificate> getSignerCertificateChain(WorkerIdentifier signerId)
             throws CryptoTokenOfflineException;
     
     /**
@@ -279,7 +280,7 @@ public interface IWorkerSession {
      * @throws CryptoTokenOfflineException 
      * @throws InvalidWorkerIdException
      */
-    public List<Certificate> getSignerCertificateChain(int signerId,
+    public List<Certificate> getSignerCertificateChain(WorkerIdentifier signerId,
                                                        String alias)
             throws CryptoTokenOfflineException, InvalidWorkerIdException;
     
@@ -291,7 +292,7 @@ public interface IWorkerSession {
      * @throws CryptoTokenOfflineException In case the crypto token or the worker
      * is not active
      */
-    public List<byte[]> getSignerCertificateChainBytes(int signerId)
+    public List<byte[]> getSignerCertificateChainBytes(WorkerIdentifier signerId)
             throws CryptoTokenOfflineException;
 
     /**
@@ -311,7 +312,7 @@ public interface IWorkerSession {
      * @throws CryptoTokenOfflineException In case the cryptotoken is offline
      * for some reason.
      */
-    Date getSigningValidityNotBefore(int workerId)
+    Date getSigningValidityNotBefore(WorkerIdentifier workerId)
             throws CryptoTokenOfflineException;
 
     /**
@@ -322,7 +323,7 @@ public interface IWorkerSession {
      * @return Value of the key usage counter or -1
      * @throws CryptoTokenOfflineException
      */
-    long getKeyUsageCounterValue(final int workerId) 
+    long getKeyUsageCounterValue(final WorkerIdentifier workerId) 
             throws CryptoTokenOfflineException;
 
     /**
@@ -337,7 +338,7 @@ public interface IWorkerSession {
      * @throws KeyStoreException for keystore related errors
      * @throws SignServerException in case the key alias could not be found etc
      */
-    boolean removeKey(int signerId, String alias) 
+    boolean removeKey(WorkerIdentifier signerId, String alias) 
             throws CryptoTokenOfflineException, InvalidWorkerIdException, 
             KeyStoreException, SignServerException;
     
@@ -351,7 +352,7 @@ public interface IWorkerSession {
      * @throws CryptoTokenOfflineException
      * @throws IllegalArgumentException
      */
-    String generateSignerKey(int signerId, String keyAlgorithm,
+    String generateSignerKey(WorkerIdentifier signerId, String keyAlgorithm,
             String keySpec, String alias, char[] authCode)
             throws CryptoTokenOfflineException, InvalidWorkerIdException;
 
@@ -365,7 +366,7 @@ public interface IWorkerSession {
      * @throws CryptoTokenOfflineException
      * @throws KeyStoreException
      */
-    Collection<KeyTestResult> testKey(final int signerId, final String alias,
+    Collection<KeyTestResult> testKey(final WorkerIdentifier signerId, final String alias,
             char[] authCode) throws CryptoTokenOfflineException,
             InvalidWorkerIdException, KeyStoreException;
     
@@ -403,7 +404,7 @@ public interface IWorkerSession {
      * @throws CertificateException
      * @throws OperationUnsupportedException 
      */
-    void importCertificateChain(int signerId, List<byte[]> signerCerts,
+    void importCertificateChain(WorkerIdentifier signerId, List<byte[]> signerCerts,
                                 String alias,char[] authenticationCode)
             throws CryptoTokenOfflineException, CertificateException,
                    OperationUnsupportedException;
@@ -502,7 +503,7 @@ public interface IWorkerSession {
          * @throws AuthorizationDeniedException in case the operation was not allowed
          * @throws SignServerException in case of any other problem
          */
-        TokenSearchResults searchTokenEntries(int workerId, final int startIndex, final int max, final QueryCriteria qc, final boolean includeData, final Map<String, Object> params) throws 
+        TokenSearchResults searchTokenEntries(WorkerIdentifier workerId, final int startIndex, final int max, final QueryCriteria qc, final boolean includeData, final Map<String, Object> params) throws 
                 InvalidWorkerIdException,
                 AuthorizationDeniedException,
                 CryptoTokenOfflineException,
@@ -547,7 +548,7 @@ public interface IWorkerSession {
          * @throws KeyStoreException for keystore related errors
          * @throws SignServerException for other errors
          */
-        boolean removeKey(AdminInfo adminInfo, int signerId, String alias) 
+        boolean removeKey(AdminInfo adminInfo, WorkerIdentifier signerId, String alias) 
             throws CryptoTokenOfflineException, InvalidWorkerIdException, 
             KeyStoreException, SignServerException;
         
@@ -563,7 +564,7 @@ public interface IWorkerSession {
          * @throws CryptoTokenOfflineException
          * @throws IllegalArgumentException
          */
-        String generateSignerKey(final AdminInfo adminInfo, int signerId, String keyAlgorithm,
+        String generateSignerKey(final AdminInfo adminInfo, WorkerIdentifier signerId, String keyAlgorithm,
                 String keySpec, String alias, char[] authCode)
                         throws CryptoTokenOfflineException, InvalidWorkerIdException;
         
@@ -578,7 +579,7 @@ public interface IWorkerSession {
          * @throws CryptoTokenOfflineException
          * @throws KeyStoreException
          */
-        Collection<KeyTestResult> testKey(final AdminInfo adminInfo, final int signerId, String alias,
+        Collection<KeyTestResult> testKey(final AdminInfo adminInfo, final WorkerIdentifier signerId, String alias,
                 char[] authCode)
                         throws CryptoTokenOfflineException, InvalidWorkerIdException,
                         KeyStoreException;
@@ -637,7 +638,7 @@ public interface IWorkerSession {
          * NamedCurve encoding of ECC public keys (IETF recommendation), use true
          * to include all parameters explicitly (ICAO ePassport requirement).
          */
-        ICertReqData getCertificateRequest(final AdminInfo adminInfo, int signerId,
+        ICertReqData getCertificateRequest(final AdminInfo adminInfo, WorkerIdentifier signerId,
                 ISignerCertReqInfo certReqInfo,
                 final boolean explicitEccParameters,
                 final boolean defaultKey) throws
@@ -654,7 +655,7 @@ public interface IWorkerSession {
          * @throws InvalidWorkerIdException
          */
         List<Certificate> getSigningCertificateChain(AdminInfo adminInfo,
-                                                     int signerId,
+                                                     WorkerIdentifier signerId,
                                                      String alias)
                 throws CryptoTokenOfflineException, InvalidWorkerIdException;
             
@@ -671,7 +672,7 @@ public interface IWorkerSession {
          * @param defaultKey true if the default key should be used otherwise for
          * instance use next key.
          */
-        ICertReqData getCertificateRequest(final AdminInfo adminInfo, final int signerId,
+        ICertReqData getCertificateRequest(final AdminInfo adminInfo, final WorkerIdentifier signerId,
                 final ISignerCertReqInfo certReqInfo,
                 final boolean explicitEccParameters) throws
                 CryptoTokenOfflineException, InvalidWorkerIdException;
@@ -692,7 +693,7 @@ public interface IWorkerSession {
          * @throws CryptoTokenOfflineException
          * @throws InvalidWorkerIdException
          */
-        ICertReqData getCertificateRequest(final AdminInfo adminInfo, final int signerId,
+        ICertReqData getCertificateRequest(final AdminInfo adminInfo, final WorkerIdentifier signerId,
                 final ISignerCertReqInfo certReqInfo,
                 final boolean explicitEccParameters, final String keyAlias)
                 throws CryptoTokenOfflineException, InvalidWorkerIdException;
@@ -751,7 +752,7 @@ public interface IWorkerSession {
          * @throws CertificateException
          * @throws OperationUnsupportedException 
          */
-        void importCertificateChain(AdminInfo adminInfo, int signerId,
+        void importCertificateChain(AdminInfo adminInfo, WorkerIdentifier signerId,
                 List<byte[]> signerCerts, String alias, char[] authenticationCode)
                 throws CryptoTokenOfflineException, CertificateException,
                        OperationUnsupportedException;
@@ -761,7 +762,7 @@ public interface IWorkerSession {
          * and returns a response.
          *
          * @param adminInfo Administrator information
-         * @param workerId id of worker who should process the request
+         * @param wi id of worker who should process the request
          * @param request the request
          * @param requestContext context of the request
          * @throws CryptoTokenOfflineException if the signers token isn't activated.
@@ -769,7 +770,7 @@ public interface IWorkerSession {
          * @throws SignServerException if some other error occurred server side
          * during process.
          */
-        ProcessResponse process(final AdminInfo info, int workerId, ProcessRequest request,
+        ProcessResponse process(final AdminInfo info, WorkerIdentifier wi, ProcessRequest request,
                 RequestContext requestContext)
                 throws IllegalRequestException, CryptoTokenOfflineException,
                 SignServerException;
@@ -832,7 +833,7 @@ public interface IWorkerSession {
          * @throws AuthorizationDeniedException in case the operation was not allowed
          * @throws SignServerException in case of any other problem
          */
-        TokenSearchResults searchTokenEntries(final AdminInfo adminInfo, int workerId, final int startIndex, final int max, final QueryCriteria qc, final boolean includeData, final Map<String, Object> params) throws
+        TokenSearchResults searchTokenEntries(final AdminInfo adminInfo, WorkerIdentifier workerId, final int startIndex, final int max, final QueryCriteria qc, final boolean includeData, final Map<String, Object> params) throws
             InvalidWorkerIdException,
             AuthorizationDeniedException,
             CryptoTokenOfflineException,

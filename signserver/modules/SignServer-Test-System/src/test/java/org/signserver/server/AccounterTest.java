@@ -20,6 +20,7 @@ import org.signserver.common.NotGrantedException;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.RequestMetadata;
+import org.signserver.common.WorkerIdentifier;
 import org.signserver.server.archive.test1archiver.Test1Signer;
 import org.signserver.testutils.ModulesTestCase;
 
@@ -141,7 +142,7 @@ public class AccounterTest extends ModulesTestCase {
         
         final GenericSignRequest signRequest =
                 new GenericSignRequest(371, testDocument.getBytes());
-        final ProcessResponse process = getWorkerSession().process(getSignerIdDummy1(),  signRequest, 
+        final ProcessResponse process = getWorkerSession().process(new WorkerIdentifier(getSignerIdDummy1()),  signRequest, 
                 context);
         
         return process;

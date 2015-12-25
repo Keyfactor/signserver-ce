@@ -20,6 +20,7 @@ import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.KeyTestResult;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerIdentifier;
 
 /**
  * Test cases for the keystore crypto token storing the keystore in the config.
@@ -84,7 +85,7 @@ public class KeystoreInConfigCryptoTokenTest extends KeystoreCryptoTokenTestBase
 
             workerSession.reloadConfiguration(tokenId);
             workerSession.reloadConfiguration(workerId);
-            workerSession.generateSignerKey(tokenId, "RSA", "1024", SIGN_KEY_ALIAS, pin.toCharArray());
+            workerSession.generateSignerKey(new WorkerIdentifier(tokenId), "RSA", "1024", SIGN_KEY_ALIAS, pin.toCharArray());
             workerSession.reloadConfiguration(tokenId);
 
             cmsSigner(workerId);
@@ -113,7 +114,7 @@ public class KeystoreInConfigCryptoTokenTest extends KeystoreCryptoTokenTestBase
             
 
             // Add a reference key
-            workerSession.generateSignerKey(workerId, "RSA", "1024", "somekey123", pin.toCharArray());
+            workerSession.generateSignerKey(new WorkerIdentifier(workerId), "RSA", "1024", "somekey123", pin.toCharArray());
             
             // Check available aliases
             Set<String> aliases1 = getKeyAliases(workerId);
@@ -124,7 +125,7 @@ public class KeystoreInConfigCryptoTokenTest extends KeystoreCryptoTokenTestBase
             
             // If the key already exists, try to remove it first
             if (aliases1.contains(TEST_KEY_ALIAS)) {
-                workerSession.removeKey(workerId, TEST_KEY_ALIAS);
+                workerSession.removeKey(new WorkerIdentifier(workerId), TEST_KEY_ALIAS);
                 aliases1 = getKeyAliases(workerId);
             }
             if (aliases1.contains(TEST_KEY_ALIAS)) {
@@ -132,7 +133,7 @@ public class KeystoreInConfigCryptoTokenTest extends KeystoreCryptoTokenTestBase
             }
 
             // Generate a testkey
-            workerSession.generateSignerKey(workerId, "RSA", "1024", TEST_KEY_ALIAS, pin.toCharArray());
+            workerSession.generateSignerKey(new WorkerIdentifier(workerId), "RSA", "1024", TEST_KEY_ALIAS, pin.toCharArray());
             
             // Now expect the new TEST_KEY_ALIAS
             Set<String> expected = new HashSet<String>(aliases1);
@@ -162,7 +163,7 @@ public class KeystoreInConfigCryptoTokenTest extends KeystoreCryptoTokenTestBase
             workerSession.reloadConfiguration(workerId);
 
             // Add a reference key
-            workerSession.generateSignerKey(tokenId, "RSA", "1024", "somekey123", pin.toCharArray());
+            workerSession.generateSignerKey(new WorkerIdentifier(tokenId), "RSA", "1024", "somekey123", pin.toCharArray());
 
             // Check available aliases
             Set<String> aliases1 = getKeyAliases(tokenId);
@@ -173,7 +174,7 @@ public class KeystoreInConfigCryptoTokenTest extends KeystoreCryptoTokenTestBase
 
             if (!aliases1.contains(TEST_KEY_ALIAS)) {
                 // Generate a testkey
-                workerSession.generateSignerKey(tokenId, "RSA", "1024", TEST_KEY_ALIAS, pin.toCharArray());
+                workerSession.generateSignerKey(new WorkerIdentifier(tokenId), "RSA", "1024", TEST_KEY_ALIAS, pin.toCharArray());
                 aliases1 = getKeyAliases(tokenId);
             }
             if (!aliases1.contains(TEST_KEY_ALIAS)) {
@@ -182,7 +183,7 @@ public class KeystoreInConfigCryptoTokenTest extends KeystoreCryptoTokenTestBase
             workerSession.reloadConfiguration(tokenId);
 
             // Remove the key
-            workerSession.removeKey(tokenId, TEST_KEY_ALIAS);
+            workerSession.removeKey(new WorkerIdentifier(tokenId), TEST_KEY_ALIAS);
 
             // Now expect the TEST_KEY_ALIAS to have been removed
             Set<String> aliases2 = getKeyAliases(tokenId);
@@ -211,13 +212,13 @@ public class KeystoreInConfigCryptoTokenTest extends KeystoreCryptoTokenTestBase
             workerSession.reloadConfiguration(workerId);
 
             // Add a reference key
-            workerSession.generateSignerKey(tokenId, "RSA", "1024", "somekey123", pin.toCharArray());
+            workerSession.generateSignerKey(new WorkerIdentifier(tokenId), "RSA", "1024", "somekey123", pin.toCharArray());
             workerSession.reloadConfiguration(tokenId);
  
             Collection<KeyTestResult> testResult;
             
             // test key with "all"
-            testResult = workerSession.testKey(tokenId, "all", pin.toCharArray());
+            testResult = workerSession.testKey(new WorkerIdentifier(tokenId), "all", pin.toCharArray());
             assertEquals("Number of keys tested", 1, testResult.size());
             
             KeyTestResult result = testResult.iterator().next();
@@ -225,7 +226,7 @@ public class KeystoreInConfigCryptoTokenTest extends KeystoreCryptoTokenTestBase
             assertEquals("Testing correct alias", "somekey123", result.getAlias());
             
             // test key with explicit alias
-            testResult = workerSession.testKey(tokenId, "somekey123", pin.toCharArray());
+            testResult = workerSession.testKey(new WorkerIdentifier(tokenId), "somekey123", pin.toCharArray());
             assertEquals("Number of keys tested", 1, testResult.size());
             
             result = testResult.iterator().next();
@@ -233,11 +234,11 @@ public class KeystoreInConfigCryptoTokenTest extends KeystoreCryptoTokenTestBase
             assertEquals("Testing correct alias", "somekey123", result.getAlias());
             
             // Add additional key
-            workerSession.generateSignerKey(tokenId, "RSA", "1024", "anotherkey", pin.toCharArray());
+            workerSession.generateSignerKey(new WorkerIdentifier(tokenId), "RSA", "1024", "anotherkey", pin.toCharArray());
             workerSession.reloadConfiguration(tokenId);
             
             // test key with "all"
-            testResult = workerSession.testKey(tokenId, "all", pin.toCharArray());
+            testResult = workerSession.testKey(new WorkerIdentifier(tokenId), "all", pin.toCharArray());
             assertEquals("Number of keys tested", 2, testResult.size());
             
             for (final KeyTestResult keyTestResult : testResult) {
@@ -245,7 +246,7 @@ public class KeystoreInConfigCryptoTokenTest extends KeystoreCryptoTokenTestBase
             }
             
             // test key with explicit alias
-            testResult = workerSession.testKey(tokenId, "anotherkey", pin.toCharArray());
+            testResult = workerSession.testKey(new WorkerIdentifier(tokenId), "anotherkey", pin.toCharArray());
             assertEquals("Number of keys tested", 1, testResult.size());
             
             result = testResult.iterator().next();
@@ -273,12 +274,12 @@ public class KeystoreInConfigCryptoTokenTest extends KeystoreCryptoTokenTestBase
             setCMSSignerPropertiesSeparateToken(workerId, tokenId, true);
             workerSession.reloadConfiguration(tokenId);
             workerSession.reloadConfiguration(workerId);
-            workerSession.generateSignerKey(tokenId, "RSA", "1024", SIGN_KEY_ALIAS, pin.toCharArray());
+            workerSession.generateSignerKey(new WorkerIdentifier(tokenId), "RSA", "1024", SIGN_KEY_ALIAS, pin.toCharArray());
             workerSession.reloadConfiguration(tokenId);
 
             cmsSigner(workerId);
             
-            workerSession.removeKey(tokenId, SIGN_KEY_ALIAS);
+            workerSession.removeKey(new WorkerIdentifier(tokenId), SIGN_KEY_ALIAS);
             
             try {
                 cmsSigner(workerId);

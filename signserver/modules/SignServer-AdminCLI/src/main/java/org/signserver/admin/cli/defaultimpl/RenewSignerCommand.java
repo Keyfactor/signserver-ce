@@ -26,6 +26,7 @@ import org.signserver.cli.spi.UnexpectedCommandFailureException;
 import org.signserver.common.GenericPropertiesRequest;
 import org.signserver.common.GenericPropertiesResponse;
 import org.signserver.common.RequestContext;
+import org.signserver.common.WorkerIdentifier;
 import org.signserver.module.renewal.common.RenewalWorkerProperties;
 
 /**
@@ -51,7 +52,7 @@ public class RenewSignerCommand extends AbstractAdminCommand {
             + "Example 1: signserver renewsigner signer71 -renewalworker RenewalWorker1\n"
             + "Example 2: signserver renewsigner signer71 -renewalworker RenewalWorker1 -authcode foo123\n";
 
-    private String renewalWorker;
+    private WorkerIdentifier renewalWorker;
     private String authCode;
     
     static {
@@ -79,7 +80,7 @@ public class RenewSignerCommand extends AbstractAdminCommand {
      */
     private void parseCommandLine(final CommandLine line) {
         if (line.hasOption(RENEWALWORKER)) {
-            renewalWorker = line.getOptionValue(RENEWALWORKER, null);
+            renewalWorker = new WorkerIdentifier(line.getOptionValue(RENEWALWORKER, null));
         }
         if (line.hasOption(AUTHCODE)) {
             authCode = line.getOptionValue(AUTHCODE, null);
@@ -140,7 +141,7 @@ public class RenewSignerCommand extends AbstractAdminCommand {
 
             final GenericPropertiesResponse response =
                     (GenericPropertiesResponse) getWorkerSession().process(
-                    getWorkerId(renewalWorker), request, new RequestContext(true));
+                    renewalWorker, request, new RequestContext(true));
 
             final Properties responseProperties =
                     response.getProperties();

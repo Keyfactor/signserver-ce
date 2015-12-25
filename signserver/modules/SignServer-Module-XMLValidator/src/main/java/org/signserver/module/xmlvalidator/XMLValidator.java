@@ -206,7 +206,7 @@ public class XMLValidator extends BaseValidator {
             try {
                 final int validationWorkerId = getValidationServiceWorkerId();
                 LOG.info("Requesting certificate validation from worker: " + validationWorkerId);
-                response = getWorkerSession().process(validationWorkerId, vr, new RequestContext());
+                response = getWorkerSession().process(new WorkerIdentifier(validationWorkerId), vr, new RequestContext());
                 LOG.info("ProcessResponse: " + response);
 
                 if (response == null) {

@@ -31,6 +31,7 @@ import org.bouncycastle.tsp.*;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.InvalidWorkerIdException;
+import org.signserver.common.WorkerIdentifier;
 
 /**
  * Fetching time-stamp tokens internally using the internal worker session.
@@ -43,33 +44,19 @@ public class InternalTimeStampTokenFetcher {
     private static final Logger LOG = Logger.getLogger(InternalTimeStampTokenFetcher.class);
 
     private final IInternalWorkerSession session;
-    private final String workerNameOrId;
+    private final WorkerIdentifier wi;
     private final String username;
     private final String password;
 
-    public InternalTimeStampTokenFetcher(final IInternalWorkerSession session, final String workerNameOrId,
+    public InternalTimeStampTokenFetcher(final IInternalWorkerSession session, final WorkerIdentifier wi,
             final String username, final String password) {
         this.session = session;
-        this.workerNameOrId = workerNameOrId;
+        this.wi = wi;
         this.username = username;
         this.password = password;
     }
 
     public TimeStampToken fetchToken(byte[] imprint, ASN1ObjectIdentifier digestOID, ASN1ObjectIdentifier reqPolicy) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException, TSPException, IOException {
-        int workerId;
-        try {
-            workerId = Integer.parseInt(workerNameOrId);
-        } catch (NumberFormatException ex) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Not a workerId, maybe workerName: " + workerNameOrId);
-            }
-            try {
-                workerId = session.getWorkerId(workerNameOrId);
-            } catch (InvalidWorkerIdException ex2) {
-                throw new SignServerException(ex2.getMessage());
-            }
-        }
-
         // Setup the time stamp request
         TimeStampRequestGenerator tsqGenerator = new TimeStampRequestGenerator();
         tsqGenerator.setCertReq(true);
@@ -91,7 +78,7 @@ public class InternalTimeStampTokenFetcher {
             context.put(RequestContext.CLIENT_CREDENTIAL_PASSWORD, cred);
         }
 
-        final ProcessResponse resp = session.process(workerId, new GenericSignRequest(hashCode(), requestBytes), context);
+        final ProcessResponse resp = session.process(wi, new GenericSignRequest(hashCode(), requestBytes), context);
 
         if (resp instanceof GenericSignResponse) {
             final byte[] respBytes = ((GenericSignResponse) resp).getProcessedData();
@@ -100,7 +87,7 @@ public class InternalTimeStampTokenFetcher {
 
             TimeStampToken  tsToken = response.getTimeStampToken();
             if (tsToken == null) {
-                throw new SignServerException("TSA '" + workerNameOrId + "' failed to return time stamp token: " + response.getStatusString());
+                throw new SignServerException("TSA '" + wi + "' failed to return time stamp token: " + response.getStatusString());
             }
 
             if(response.getStatus() != PKIStatus.GRANTED && response.getStatus() != PKIStatus.GRANTED_WITH_MODS) {

@@ -64,6 +64,7 @@ import org.signserver.validationservice.server.ValidationTestUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.util.PathUtil;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
@@ -158,7 +159,7 @@ public class MainWebServiceTestSeparately extends ModulesTestCase {
         assertTrue(statuses.get(0).getWorkerName().equals("9"));
         assertTrue(statuses.get(0).getOverallStatus().equals(org.signserver.protocol.ws.WorkerStatusWS.OVERALLSTATUS_ERROR));
         assertTrue(statuses.get(0).getErrormessage() != null);
-        workerSession.activateSigner(9, "foo123");
+        workerSession.activateSigner(new WorkerIdentifier(9), "foo123");
         statuses = signServerWS.getStatus("TestTimeStamp");
         assertTrue(statuses.size() == 1);
         assertTrue(statuses.get(0).getWorkerName().equals("TestTimeStamp"));
@@ -211,14 +212,14 @@ public class MainWebServiceTestSeparately extends ModulesTestCase {
         workerSession.setWorkerProperty(9, "AUTHTYPE", "NOAUTH");
         workerSession.reloadConfiguration(9);
 
-        workerSession.deactivateSigner(9);
+        workerSession.deactivateSigner(new WorkerIdentifier(9));
         try {
             signServerWS.process("9", WSClientUtil.convertProcessRequestWS(reqs));
             assertTrue(false);
         } catch (CryptoTokenOfflineException_Exception e) {
         }
 
-        workerSession.activateSigner(9, "foo123");
+        workerSession.activateSigner(new WorkerIdentifier(9), "foo123");
 
         List<ProcessResponseWS> resps = signServerWS.process("TestTimeStamp", WSClientUtil.convertProcessRequestWS(reqs));
         assertTrue(resps.size() == 2);

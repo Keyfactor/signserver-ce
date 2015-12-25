@@ -21,6 +21,7 @@ import org.signserver.module.mrtdsodsigner.MRTDSODSigner;
 import org.signserver.server.signers.EchoRequestMetadataSigner;
 
 import org.junit.Test;
+import org.signserver.common.WorkerIdentifier;
 import org.signserver.testutils.ModulesTestCase;
 
 /**
@@ -65,7 +66,7 @@ public class SODProcessWorkerServletResponseTest extends WebTestCase {
     public void test00SetupDatabase() throws Exception {
         addSigner(MRTDSODSigner.class.getName(), false);
         addSigner(EchoRequestMetadataSigner.class.getName(), 123, "DummySigner123", true);
-        getWorkerSession().activateSigner(getSignerIdDummy1(), ModulesTestCase.KEYSTORE_PASSWORD);
+        getWorkerSession().activateSigner(new WorkerIdentifier(getSignerIdDummy1()), ModulesTestCase.KEYSTORE_PASSWORD);
     }
 
     private void assertStatusReturned(final Map<String, String> fields,

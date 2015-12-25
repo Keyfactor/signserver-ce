@@ -22,6 +22,7 @@ import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 import org.signserver.common.ServiceConfig;
 import org.signserver.common.SignServerUtil;
+import org.signserver.common.WorkerIdentifier;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.statusrepo.IStatusRepositorySession;
 import org.signserver.statusrepo.common.NoSuchPropertyException;
@@ -271,7 +272,7 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
             workerSession.reloadConfiguration(WORKERID_SERVICE);
             
             final List<String> fatalErrors =
-                    workerSession.getStatus(WORKERID_SERVICE).getFatalErrors();
+                    workerSession.getStatus(new WorkerIdentifier(WORKERID_SERVICE)).getFatalErrors();
             
             assertTrue("Should contain error",
                     fatalErrors.contains("No such worker: NonExistingWorker"));
@@ -442,7 +443,7 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
             workerSession.reloadConfiguration(WORKERID_SERVICE);
             
             final List<String> fatalErrors =
-                    workerSession.getStatus(WORKERID_SERVICE).getFatalErrors();
+                    workerSession.getStatus(new WorkerIdentifier(WORKERID_SERVICE)).getFatalErrors();
             
             assertTrue("Should contain error",
                     fatalErrors.contains("No such worker: NonExistingWorker"));

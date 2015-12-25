@@ -54,7 +54,7 @@ public class RenewSigner implements Task {
             requestProperties.setProperty("WORKER", String.valueOf(renewee));
             requestProperties.setProperty("AUTHCODE", "foo123"); // TODO
             final GenericPropertiesRequest signRequest = new GenericPropertiesRequest(requestProperties);
-            final GenericPropertiesResponse res =  (GenericPropertiesResponse) workerSession.process(workerId, signRequest, new RequestContext());
+            final GenericPropertiesResponse res =  (GenericPropertiesResponse) workerSession.process(new WorkerIdentifier(workerId), signRequest, new RequestContext());
             final String result = res.getProperties().getProperty("RESULT");
             
             // Check that we got OK back

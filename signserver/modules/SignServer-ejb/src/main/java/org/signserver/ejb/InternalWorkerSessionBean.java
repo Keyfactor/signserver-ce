@@ -23,13 +23,12 @@ import org.apache.log4j.Logger;
 import org.cesecore.audit.log.SecurityEventsLoggerSessionLocal;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
-import org.signserver.common.InvalidWorkerIdException;
-import org.signserver.common.NoSuchWorkerException;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerException;
+import org.signserver.common.WorkerIdentifier;
 import org.signserver.ejb.interfaces.IDispatcherWorkerSession;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IInternalWorkerSession;
@@ -116,30 +115,30 @@ public class InternalWorkerSessionBean implements IInternalWorkerSession.ILocal,
     }
 
     @Override
-    public ProcessResponse process(final int workerId,
+    public ProcessResponse process(final WorkerIdentifier wi,
             final ProcessRequest request, final RequestContext requestContext)
             throws IllegalRequestException, CryptoTokenOfflineException,
             SignServerException {
         requestContext.setServices(servicesImpl);
-        return processImpl.process(workerId, request, requestContext);
+        return processImpl.process(wi, request, requestContext);
     }
 
     @Override
-    public ProcessResponse process(final AdminInfo adminInfo, final int workerId,
+    public ProcessResponse process(final AdminInfo adminInfo, final WorkerIdentifier wi,
             final ProcessRequest request, final RequestContext requestContext)
             throws IllegalRequestException, CryptoTokenOfflineException,
             SignServerException {
         requestContext.setServices(servicesImpl);
-        return processImpl.process(adminInfo, workerId, request, requestContext);
+        return processImpl.process(adminInfo, wi, request, requestContext);
     }
 
-    @Override
+    /*@Override
     public int getWorkerId(String workerName) throws InvalidWorkerIdException {
         try {
             return processImpl.getWorkerId(workerName);
         } catch (NoSuchWorkerException ex) {
             throw new InvalidWorkerIdException(ex.getMessage());
         }
-    }
+    }*/
 
 }

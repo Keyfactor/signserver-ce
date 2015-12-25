@@ -126,7 +126,7 @@ public class CustomAuthTest extends ModulesTestCase {
 
         GenericSignRequest req = new GenericSignRequest(reqid, requestBytes);
 
-        GenericSignResponse res = (GenericSignResponse) workerSession.process(9, req, new RequestContext(cert, ip));
+        GenericSignResponse res = (GenericSignResponse) workerSession.process(new WorkerIdentifier(9), req, new RequestContext(cert, ip));
 
         assertTrue(reqid == res.getRequestID());
 

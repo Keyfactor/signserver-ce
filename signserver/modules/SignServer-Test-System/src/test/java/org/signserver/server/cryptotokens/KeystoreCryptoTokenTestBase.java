@@ -32,6 +32,7 @@ import org.signserver.common.Base64SignerCertReqData;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.KeyTestResult;
 import org.signserver.common.PKCS10CertReqInfo;
+import org.signserver.common.WorkerIdentifier;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.test.utils.builders.CryptoUtils;
@@ -57,7 +58,7 @@ public abstract class KeystoreCryptoTokenTestBase extends ModulesTestCase {
     protected void cmsSigner(final int workerId, final boolean expectActive) throws Exception {
         // Generate CSR
         PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + workerId, null);
-        Base64SignerCertReqData reqData = (Base64SignerCertReqData) getWorkerSession().getCertificateRequest(workerId, certReqInfo, false);
+        Base64SignerCertReqData reqData = (Base64SignerCertReqData) getWorkerSession().getCertificateRequest(new WorkerIdentifier(workerId), certReqInfo, false);
 
         // Issue certificate
         PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
@@ -71,7 +72,7 @@ public abstract class KeystoreCryptoTokenTestBase extends ModulesTestCase {
 
         if (expectActive) {
             // Test active
-            List<String> errors = workerSession.getStatus(workerId).getFatalErrors();
+            List<String> errors = workerSession.getStatus(new WorkerIdentifier(workerId)).getFatalErrors();
             assertEquals("errors: " + errors, 0, errors.size());
         }
             
@@ -80,7 +81,7 @@ public abstract class KeystoreCryptoTokenTestBase extends ModulesTestCase {
     }
     
     protected Set<String> getKeyAliases(final int workerId) throws Exception {
-        Collection<KeyTestResult> testResults = workerSession.testKey(workerId, "all", pin.toCharArray());
+        Collection<KeyTestResult> testResults = workerSession.testKey(new WorkerIdentifier(workerId), "all", pin.toCharArray());
         final HashSet<String> results = new HashSet<String>();
         for (KeyTestResult testResult : testResults) {
             results.add(testResult.getAlias());

@@ -40,6 +40,7 @@ import org.signserver.common.RequestMetadata;
 import org.signserver.common.SODSignRequest;
 import org.signserver.common.SODSignResponse;
 import org.signserver.common.SignServerException;
+import org.signserver.common.WorkerIdentifier;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.server.CredentialUtils;
 import org.signserver.server.log.LogMap;
@@ -109,7 +110,7 @@ public class SODProcessServlet extends AbstractProcessServlet {
             LOG.trace(">doPost()");
         }
 
-        int workerId = 1;
+        WorkerIdentifier wi = null;
         String ldsVersion;
         String unicodeVersion;
 
@@ -117,28 +118,23 @@ public class SODProcessServlet extends AbstractProcessServlet {
             (String) req.getAttribute(ServletUtils.WORKERNAME_PROPERTY_OVERRIDE);
 
         if (workerNameOverride != null) {
-            try {
-                workerId = getWorkerSession().getWorkerId(workerNameOverride);
-            } catch (InvalidWorkerIdException ex) {
-                res.sendError(HttpServletResponse.SC_NOT_FOUND, "Worker Not Found");
-                return;
-            }
+            wi = new WorkerIdentifier(workerNameOverride);
         } else {
             String name = req.getParameter(WORKERNAME_PROPERTY_NAME);
             if (name != null) {
                 LOG.debug("Found a signerName in the request: " + name);
-                try {
-                    workerId = getWorkerSession().getWorkerId(name);
-                } catch (InvalidWorkerIdException ex) {
-                    res.sendError(HttpServletResponse.SC_NOT_FOUND, "Worker Not Found");
-                    return;
-                }
+                wi = new WorkerIdentifier(name);
             }
             String id = req.getParameter(WORKERID_PROPERTY_NAME);
             if (id != null) {
                 LOG.debug("Found a signerId in the request: " + id);
-                workerId = Integer.parseInt(id);
+                wi = new WorkerIdentifier(Integer.parseInt(id));
             }
+        }
+        
+        if (wi == null) {
+            res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing worker name or ID");
+            return;
         }
 
         final MetaDataHolder metadataHolder = new MetaDataHolder();
@@ -149,14 +145,14 @@ public class SODProcessServlet extends AbstractProcessServlet {
         String displayCert = req.getParameter(DISPLAYCERT_PROPERTY_NAME);
         String downloadCert = req.getParameter(DOWNLOADCERT_PROPERTY_NAME);
         if ((displayCert != null) && (displayCert.length() > 0)) {
-            LOG.info("Recieved display cert request for worker " + workerId + ", from ip " + remoteAddr);
-            displaySignerCertificate(res, workerId);
+            LOG.info("Recieved display cert request for worker " + wi + ", from ip " + remoteAddr);
+            displaySignerCertificate(res, wi);
         } else if ((downloadCert != null) && (downloadCert.length() > 0)) {
-            LOG.info("Recieved download cert request for worker " + workerId + ", from ip " + remoteAddr);
-            sendSignerCertificate(res, workerId);
+            LOG.info("Recieved download cert request for worker " + wi + ", from ip " + remoteAddr);
+            sendSignerCertificate(res, wi);
         } else {
             // If the command is to process the signing request, do that.
-            LOG.info("Recieved HTTP process request for worker " + workerId + ", from ip " + remoteAddr);
+            LOG.info("Recieved HTTP process request for worker " + wi + ", from ip " + remoteAddr);
 
             boolean base64Encoded = true;
             String encoding = req.getParameter(ENCODING_PROPERTY_NAME);
@@ -262,7 +258,7 @@ public class SODProcessServlet extends AbstractProcessServlet {
                 
                 addRequestMetaData(metadataHolder, metadata);
 
-                response = (SODSignResponse) getWorkerSession().process(workerId, signRequest, context);
+                response = (SODSignResponse) getWorkerSession().process(wi, signRequest, context);
 
                 if (response.getRequestID() != requestId) {
                     LOG.error("Response ID " + response.getRequestID()
@@ -282,7 +278,7 @@ public class SODProcessServlet extends AbstractProcessServlet {
                     LOG.debug("Sending back HTTP 401: " + e.getLocalizedMessage());
                 }
 
-                final String httpAuthBasicRealm = "SignServer Worker " + workerId;
+                final String httpAuthBasicRealm = "SignServer Worker " + (wi.hasName() ? wi.getName() : String.valueOf(wi.getId()));
 
                 res.setHeader(CredentialUtils.HTTP_AUTH_BASIC_WWW_AUTHENTICATE,
                         "Basic realm=\"" + httpAuthBasicRealm + "\"");
@@ -308,18 +304,18 @@ public class SODProcessServlet extends AbstractProcessServlet {
     } //doPost
 
     private void displaySignerCertificate(final HttpServletResponse response,
-            final int workerId) throws IOException {
+            final WorkerIdentifier wi) throws IOException {
         LOG.debug(">displaySignerCertificate()");
         Certificate cert = null;
         try {
-            cert = getWorkerSession().getSignerCertificate(workerId);
+            cert = getWorkerSession().getSignerCertificate(wi);
         } catch (CryptoTokenOfflineException ignored) {
         }
         response.setContentType(CONTENT_TYPE_TEXT);
         if (cert == null) {
             response.getWriter().print(
                     "No signing certificate found for worker with id "
-                    + workerId);
+                    + wi);
         } else {
             response.getWriter().print(cert);
         }
@@ -327,18 +323,18 @@ public class SODProcessServlet extends AbstractProcessServlet {
     }
 
     private void sendSignerCertificate(final HttpServletResponse response,
-            final int workerId) throws IOException {
+            final WorkerIdentifier wi) throws IOException {
         LOG.debug(">sendSignerCertificate()");
         Certificate cert = null;
         try {
-            cert = getWorkerSession().getSignerCertificate(workerId);
+            cert = getWorkerSession().getSignerCertificate(wi);
         } catch (CryptoTokenOfflineException ignored) {
         }
         try {
             if (cert == null) {
                 response.getWriter().print(
                         "No signing certificate found for worker with id "
-                        + workerId);
+                        + wi);
             } else {
                 byte[] bytes;
                 bytes = cert.getEncoded();

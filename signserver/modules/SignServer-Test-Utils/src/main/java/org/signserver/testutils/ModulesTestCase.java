@@ -44,6 +44,7 @@ import org.signserver.common.RequestContext;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.util.PathUtil;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
@@ -449,7 +450,7 @@ public class ModulesTestCase extends TestCase {
         getWorkerSession().reloadConfiguration(signerId);
         try {
             assertNotNull("Check signer available",
-                    getWorkerSession().getStatus(signerId));
+                    getWorkerSession().getStatus(new WorkerIdentifier(signerId)));
         } catch (InvalidWorkerIdException ex) {
             fail("Worker was not added succefully: " + ex.getMessage());
         }
@@ -600,7 +601,7 @@ public class ModulesTestCase extends TestCase {
     public GenericSignResponse signGenericDocument(final int workerId, final byte[] data) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
         final int requestId = random.nextInt();
         final GenericSignRequest request = new GenericSignRequest(requestId, data);
-        final GenericSignResponse response = (GenericSignResponse) getWorkerSession().process(workerId, request, new RequestContext());
+        final GenericSignResponse response = (GenericSignResponse) getWorkerSession().process(new WorkerIdentifier(workerId), request, new RequestContext());
         assertEquals("requestId", requestId, response.getRequestID());
         Certificate signercert = response.getSignerCertificate();
         assertNotNull(signercert);

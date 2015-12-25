@@ -27,6 +27,7 @@ import org.signserver.common.RequestContext;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerIdentifier;
 import org.signserver.ejb.interfaces.IDispatcherWorkerSession;
 import org.signserver.server.WorkerContext;
 
@@ -54,6 +55,7 @@ public class FirstActiveDispatcher extends BaseDispatcher {
     /** List of workers. */
     private List<String> workers = new LinkedList<String>();
 
+    private String name;
 
     @Override
     public void init(final int workerId, final WorkerConfig config,
@@ -61,6 +63,8 @@ public class FirstActiveDispatcher extends BaseDispatcher {
         try {
             super.init(workerId, config, workerContext, workerEM);
 
+            name = config.getProperty("NAME");
+            
             workers = new LinkedList<String>();
             final String workersValue = config.getProperty(PROPERTY_WORKERS);
             if (workersValue == null) {
@@ -92,12 +96,11 @@ public class FirstActiveDispatcher extends BaseDispatcher {
 
         for (String workerName : workers) {
             try {
-                id = workerSession.getWorkerId(workerName);
-                if (id == workerId) {
+                if (name.equals(workerName)) {
                     LOG.warn("Ignoring dispatching to it self (worker "
-                            + id + ")");
+                            + name + ")");
                 } else {
-                    response = workerSession.process(id, signRequest,
+                    response = workerSession.process(new WorkerIdentifier(workerName), signRequest,
                             nextContext);
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Dispatched to worker: "
@@ -110,8 +113,6 @@ public class FirstActiveDispatcher extends BaseDispatcher {
                     LOG.debug("Skipping offline worker: " + id + " ("
                             + ex.getMessage() + ")");
                 }
-            } catch (InvalidWorkerIdException ex) {
-                LOG.warn("Non existing worker: \"" + workerName + "\"");
             }
         }
         if (response == null) {

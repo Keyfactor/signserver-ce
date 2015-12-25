@@ -26,7 +26,6 @@ import org.cesecore.util.query.QueryCriteria;
 import org.junit.Before;
 import org.junit.Test;
 import org.signserver.common.CryptoTokenOfflineException;
-import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.InvalidWorkerIdException;
@@ -36,6 +35,7 @@ import org.signserver.common.SignServerException;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.UnsupportedCryptoTokenParameter;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerIdentifier;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 
@@ -139,24 +139,24 @@ public class P11CryptoTokenTest extends CryptoTokenTestBase {
 
     @Override
     protected TokenSearchResults searchTokenEntries(int startIndex, int max, QueryCriteria qc, boolean includeData) throws OperationUnsupportedException, CryptoTokenOfflineException, QueryException, InvalidWorkerIdException, SignServerException, AuthorizationDeniedException, InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter {
-        return getWorkerSession().searchTokenEntries(CRYPTO_TOKEN, startIndex, max, qc, includeData, Collections.<String, Object>emptyMap());
+        return getWorkerSession().searchTokenEntries(new WorkerIdentifier(CRYPTO_TOKEN), startIndex, max, qc, includeData, Collections.<String, Object>emptyMap());
     }
 
     @Override
     protected void generateKey(String keyType, String keySpec, String alias) throws CryptoTokenOfflineException, InvalidWorkerIdException, SignServerException {
-        getWorkerSession().generateSignerKey(CRYPTO_TOKEN, keySpec, keySpec, alias, null);
+        getWorkerSession().generateSignerKey(new WorkerIdentifier(CRYPTO_TOKEN), keySpec, keySpec, alias, null);
     }
 
     @Override
     protected boolean destroyKey(String alias) throws CryptoTokenOfflineException, InvalidWorkerIdException, SignServerException, KeyStoreException {
-        return getWorkerSession().removeKey(CRYPTO_TOKEN, alias);
+        return getWorkerSession().removeKey(new WorkerIdentifier(CRYPTO_TOKEN), alias);
     }
 
     @Override
     protected void importCertificateChain(List<Certificate> chain, String alias)
             throws CryptoTokenOfflineException, IllegalArgumentException,
             CertificateException, CertificateEncodingException, OperationUnsupportedException {
-        getWorkerSession().importCertificateChain(CRYPTO_TOKEN, getCertByteArrayList(chain), alias, null);
+        getWorkerSession().importCertificateChain(new WorkerIdentifier(CRYPTO_TOKEN), getCertByteArrayList(chain), alias, null);
     }
     
     private List<byte[]> getCertByteArrayList(final List<Certificate> chain) throws CertificateEncodingException {
@@ -174,12 +174,12 @@ public class P11CryptoTokenTest extends CryptoTokenTestBase {
                                                  final boolean explicitEccParameters,
                                                  final String alias)
             throws CryptoTokenOfflineException, InvalidWorkerIdException {
-        return getWorkerSession().getCertificateRequest(CRYPTO_TOKEN, req, explicitEccParameters, alias);
+        return getWorkerSession().getCertificateRequest(new WorkerIdentifier(CRYPTO_TOKEN), req, explicitEccParameters, alias);
     }
 
     @Override
     protected List<Certificate> getCertificateChain(String alias)
             throws CryptoTokenOfflineException, InvalidWorkerIdException {
-        return getWorkerSession().getSignerCertificateChain(CRYPTO_TOKEN, alias);
+        return getWorkerSession().getSignerCertificateChain(new WorkerIdentifier(CRYPTO_TOKEN), alias);
     }
 }

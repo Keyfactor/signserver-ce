@@ -30,6 +30,7 @@ import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerException;
+import org.signserver.common.WorkerIdentifier;
 import org.signserver.ejb.interfaces.IDispatcherWorkerSession;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IInternalWorkerSession;
@@ -116,30 +117,30 @@ public class DispatcherWorkerSessionBean implements IDispatcherWorkerSession.ILo
     }
 
     @Override
-    public ProcessResponse process(final int workerId,
+    public ProcessResponse process(final WorkerIdentifier wi,
             final ProcessRequest request, final RequestContext requestContext)
             throws IllegalRequestException, CryptoTokenOfflineException,
             SignServerException {
         requestContext.setServices(servicesImpl);
-        return processImpl.process(workerId, request, requestContext);
+        return processImpl.process(wi, request, requestContext);
     }
 
     @Override
-    public ProcessResponse process(final AdminInfo adminInfo, final int workerId,
+    public ProcessResponse process(final AdminInfo adminInfo, final WorkerIdentifier wi,
             final ProcessRequest request, final RequestContext requestContext)
             throws IllegalRequestException, CryptoTokenOfflineException,
             SignServerException {
         requestContext.setServices(servicesImpl);
-        return processImpl.process(adminInfo, workerId, request, requestContext);
+        return processImpl.process(adminInfo, wi, request, requestContext);
     }
 
-    @Override
-    public int getWorkerId(String workerName) throws InvalidWorkerIdException {
-        try {
-            return processImpl.getWorkerId(workerName);
-        } catch (NoSuchWorkerException ex) {
-            throw new InvalidWorkerIdException(ex.getMessage());
-        }
-    }
+//    @Override
+//    public int getWorkerId(String workerName) throws InvalidWorkerIdException {
+//        try {
+//            return processImpl.getWorkerId(workerName);
+//        } catch (NoSuchWorkerException ex) {
+//            throw new InvalidWorkerIdException(ex.getMessage());
+//        }
+//    }
 
 }

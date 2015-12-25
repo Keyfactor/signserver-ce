@@ -138,7 +138,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
                 data);
 
         final GenericSignResponse response = (GenericSignResponse)
-                workerSession.process(WORKER1, request, new RequestContext());
+                workerSession.process(new WorkerIdentifier(WORKER1), request, new RequestContext());
         assertEquals("requestId", 100, response.getRequestID());
 
         Certificate signercert = response.getSignerCertificate();
@@ -153,7 +153,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     public void test02SignWithRestrictionsNoPasswordSupplied() throws Exception { 
         try {
             workerSession.process(
-                WORKER1,
+                new WorkerIdentifier(WORKER1),
                 new GenericSignRequest(200, readFile(sampleRestricted)),
                 new RequestContext());
             fail("Should have thrown exception");
@@ -163,7 +163,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         
         try {
             workerSession.process(
-                WORKER1,
+                new WorkerIdentifier(WORKER1),
                 new GenericSignRequest(200, readFile(sampleOpen123)),
                 new RequestContext());
             fail("Should have thrown exception");
@@ -173,7 +173,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         
         try {
             workerSession.process(
-                WORKER1,
+                new WorkerIdentifier(WORKER1),
                 new GenericSignRequest(200, readFile(sampleOpen123Owner123)),
                 new RequestContext());
             fail("Should have thrown exception");
@@ -183,7 +183,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         
         try {
             workerSession.process(
-                WORKER1,
+                new WorkerIdentifier(WORKER1),
                 new GenericSignRequest(200, readFile(sampleOwner123)),
                 new RequestContext());
             fail("Should have thrown exception");
@@ -1459,7 +1459,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         RequestMetadata.getInstance(context).put(RequestContext.METADATA_PDFPASSWORD, password);
         
         final GenericSignResponse response = 
-                (GenericSignResponse) workerSession.process(WORKER1, 
+                (GenericSignResponse) workerSession.process(new WorkerIdentifier(WORKER1), 
                 new GenericSignRequest(200, readFile(file)), 
                 context);
         assertNotNull(response);

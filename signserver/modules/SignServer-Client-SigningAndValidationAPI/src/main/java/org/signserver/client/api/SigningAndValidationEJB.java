@@ -26,6 +26,7 @@ import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.ServiceLocator;
+import org.signserver.common.WorkerIdentifier;
 import org.signserver.ejb.interfaces.IWorkerSession;
 
 /**
@@ -85,6 +86,6 @@ public class SigningAndValidationEJB implements ISigningAndValidation {
 
     @Override
     public ProcessResponse process(String workerIdOrName, ProcessRequest request, RequestContext context) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
-        return signserver.process(getWorkerId(workerIdOrName), request, context);
+        return signserver.process(WorkerIdentifier.createFromIdOrName(workerIdOrName), request, context);
     }
 }

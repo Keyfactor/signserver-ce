@@ -79,7 +79,7 @@ public class OOXMLSignerTest extends ModulesTestCase {
 
         GenericSignRequest signRequest = new GenericSignRequest(reqid, Base64.decode(TEST_DOCX.getBytes()));
 
-        GenericSignResponse res = (GenericSignResponse) workerSession.process(WORKERID, signRequest, new RequestContext());
+        GenericSignResponse res = (GenericSignResponse) workerSession.process(new WorkerIdentifier(WORKERID), signRequest, new RequestContext());
         byte[] data = res.getProcessedData();
 
         // Answer to right question
@@ -101,7 +101,7 @@ public class OOXMLSignerTest extends ModulesTestCase {
 
     @Test
     public void test02GetStatus() throws Exception {
-        StaticWorkerStatus stat = (StaticWorkerStatus) workerSession.getStatus(WORKERID);
+        StaticWorkerStatus stat = (StaticWorkerStatus) workerSession.getStatus(new WorkerIdentifier(WORKERID));
         assertTrue(stat.getTokenStatus() == WorkerStatus.STATUS_ACTIVE);
     }
     
@@ -116,7 +116,7 @@ public class OOXMLSignerTest extends ModulesTestCase {
             workerSession.setWorkerProperty(WORKERID, WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS, "2");
             workerSession.reloadConfiguration(WORKERID);
             
-            final List<String> errors = workerSession.getStatus(WORKERID).getFatalErrors();
+            final List<String> errors = workerSession.getStatus(new WorkerIdentifier(WORKERID)).getFatalErrors();
             
             assertTrue("Should contain error", errors.contains(WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS + " is not supported."));
         } finally {

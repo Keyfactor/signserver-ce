@@ -16,6 +16,7 @@ import com.lowagie.text.pdf.PdfPKCS7;
 import com.lowagie.text.pdf.TSAClient;
 import org.bouncycastle.asn1.x509.X509ObjectIdentifiers;
 import org.bouncycastle.tsp.TimeStampToken;
+import org.signserver.common.WorkerIdentifier;
 import org.signserver.ejb.interfaces.IInternalWorkerSession;
 import org.signserver.server.tsa.InternalTimeStampTokenFetcher;
 
@@ -31,9 +32,9 @@ public class InternalTSAClient implements TSAClient {
 
     private int tokenSizeEstimated = 7168;
 
-    public InternalTSAClient(final IInternalWorkerSession session, final String workerNameOrId,
+    public InternalTSAClient(final IInternalWorkerSession session, final WorkerIdentifier wi,
             final String username, final String password) {
-        this.fetcher = new InternalTimeStampTokenFetcher(session, workerNameOrId, username, password);
+        this.fetcher = new InternalTimeStampTokenFetcher(session, wi, username, password);
     }
 
     @Override

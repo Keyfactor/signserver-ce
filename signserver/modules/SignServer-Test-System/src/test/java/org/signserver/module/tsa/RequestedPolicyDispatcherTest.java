@@ -474,7 +474,7 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
 
         GenericSignRequest signRequest = new GenericSignRequest(reqid, requestBytes);
 
-        final GenericSignResponse res = (GenericSignResponse) workerSession.process(worker, signRequest, new RequestContext());
+        final GenericSignResponse res = (GenericSignResponse) workerSession.process(new WorkerIdentifier(worker), signRequest, new RequestContext());
 
         assertEquals("Request ID", reqid, res.getRequestID());
 
@@ -493,7 +493,7 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
         byte[] requestBytes = request.getEncoded();
 
         GenericSignRequest signRequest = new GenericSignRequest(reqid, requestBytes);
-        final GenericSignResponse res = (GenericSignResponse) workerSession.process(worker, signRequest, new RequestContext());
+        final GenericSignResponse res = (GenericSignResponse) workerSession.process(new WorkerIdentifier(worker), signRequest, new RequestContext());
         return new TimeStampResponse((byte[]) res.getProcessedData());
     }
     

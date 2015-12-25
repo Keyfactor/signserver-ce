@@ -24,6 +24,7 @@ import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.StaticWorkerStatus;
+import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.WorkerStatus;
 
 /**
@@ -70,8 +71,7 @@ public class ActivateCryptoTokenCommand extends AbstractAdminCommand {
         }
         
         try {
-            int workerid = getWorkerId(args[0]);
-            checkThatWorkerIsProcessable(workerid);
+            WorkerIdentifier wi = WorkerIdentifier.createFromIdOrName(args[0]);
             String authCode;
             if (args.length > 1) {
                 authCode = args[1];
@@ -87,13 +87,13 @@ public class ActivateCryptoTokenCommand extends AbstractAdminCommand {
                 }
             }
 
-            this.getOutputStream().println(TRYING + workerid + "\n");
-            this.getWorkerSession().activateSigner(workerid, authCode);
+            this.getOutputStream().println(TRYING + wi + "\n");
+            this.getWorkerSession().activateSigner(wi, authCode);
 
             boolean active = false;
             
-            if (getWorkerSession().getStatus(workerid) instanceof StaticWorkerStatus) {
-            	active = ((StaticWorkerStatus) getWorkerSession().getStatus(workerid)).getTokenStatus() == WorkerStatus.STATUS_ACTIVE;
+            if (getWorkerSession().getStatus(wi) instanceof StaticWorkerStatus) {
+            	active = ((StaticWorkerStatus) getWorkerSession().getStatus(wi)).getTokenStatus() == WorkerStatus.STATUS_ACTIVE;
             } else {
             	this.getOutputStream().println("No token available");
             }

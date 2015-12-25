@@ -72,7 +72,7 @@ public class SignerStatusReportBuilder implements ReportBuilder {
 
                     WorkerStatus status = null;
                     try {
-                        status = workerSession.getStatus(workerId);
+                        status = workerSession.getStatus(new WorkerIdentifier(workerId));
                     } catch (InvalidWorkerIdException ex) {
                         LOG.error("Invalid worker id: " + workerId, ex);
                     }
@@ -105,7 +105,7 @@ public class SignerStatusReportBuilder implements ReportBuilder {
                 Date notAfter = null;
                 try {
                     notBefore = workerSession.getSigningValidityNotBefore(
-                            workerId);
+                            new WorkerIdentifier(workerId));
                 } catch (CryptoTokenOfflineException ignored) {}
                 if (notBefore != null) {
                     sb.append("validityNotBefore=");
@@ -147,7 +147,7 @@ public class SignerStatusReportBuilder implements ReportBuilder {
         String ret = null;
         try {
             final Certificate cert = workerSession
-                    .getSignerCertificate(worker);
+                    .getSignerCertificate(new WorkerIdentifier(worker));
             if (cert != null) {
                 ret = KeyUsageCounterHash.create(cert.getPublicKey());
             }

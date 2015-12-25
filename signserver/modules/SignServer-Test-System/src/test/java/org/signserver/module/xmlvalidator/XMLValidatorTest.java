@@ -47,7 +47,7 @@ public class XMLValidatorTest extends ModulesTestCase {
      * WORKERID used in this test case as defined in
      * junittest-part-config.properties
      */
-    private static final int WORKERID = 5677;
+    private static final WorkerIdentifier WORKERID = new WorkerIdentifier(5677);
 	
     private static final String VALIDATION_WORKER = "TestValidationWorker";
     private static final String SIGNER2_ISSUERDN = "CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE";
@@ -87,8 +87,8 @@ public class XMLValidatorTest extends ModulesTestCase {
 
         // XMLVALIDATOR
         setProperties(new File(getSignServerHome(), "res/test/test-xmlvalidator-configuration.properties"));
-        workerSession.setWorkerProperty(WORKERID, "VALIDATIONSERVICEWORKER", VALIDATION_WORKER);
-        workerSession.reloadConfiguration(WORKERID);
+        workerSession.setWorkerProperty(WORKERID.getId(), "VALIDATIONSERVICEWORKER", VALIDATION_WORKER);
+        workerSession.reloadConfiguration(WORKERID.getId());
     }
 
     @Test
@@ -107,13 +107,13 @@ public class XMLValidatorTest extends ModulesTestCase {
      * Test validating with a correct signature and certificate.
      * 
      * @param reqid Request ID to use
-     * @param workerId Worker ID
+     * @param wi Worker ID
      * @param xml Document to validate
      * @param expectedSubjectDN Expected subject DN
      * @param expectedIssuerDN Expected issuer DN
      * @throws Exception
      */
-    private void testSigOkCertOk(final int reqid, final int workerId, final String xml,
+    private void testSigOkCertOk(final int reqid, final WorkerIdentifier wi, final String xml,
             final String expectedSubjectDN, final String expectedIssuerDN) throws Exception {
         // OK signature, OK cert
 
@@ -124,7 +124,7 @@ public class XMLValidatorTest extends ModulesTestCase {
 
         try {
             GenericValidationRequest signRequest = new GenericValidationRequest(reqid, data);
-            GenericValidationResponse res = (GenericValidationResponse) workerSession.process(workerId, signRequest, new RequestContext());
+            GenericValidationResponse res = (GenericValidationResponse) workerSession.process(wi, signRequest, new RequestContext());
 
             assertTrue("answer to right question", reqid == res.getRequestID());
 
@@ -339,9 +339,9 @@ public class XMLValidatorTest extends ModulesTestCase {
 
     @Test
     public void test091DocumentReturnedWithoutSignature() throws Exception {
-        workerSession.setWorkerProperty(WORKERID, "RETURNDOCUMENT", "true");
-        workerSession.setWorkerProperty(WORKERID, "STRIPSIGNATURE", "true");
-        workerSession.reloadConfiguration(WORKERID);
+        workerSession.setWorkerProperty(WORKERID.getId(), "RETURNDOCUMENT", "true");
+        workerSession.setWorkerProperty(WORKERID.getId(), "STRIPSIGNATURE", "true");
+        workerSession.reloadConfiguration(WORKERID.getId());
 
         // Just some validation
         int reqid = 21;
@@ -455,7 +455,7 @@ public class XMLValidatorTest extends ModulesTestCase {
     
     @Test
     public void test99TearDownDatabase() throws Exception {
-        removeWorker(WORKERID);
+        removeWorker(WORKERID.getId());
 
         // Remove validation service worker
         removeWorker(17);

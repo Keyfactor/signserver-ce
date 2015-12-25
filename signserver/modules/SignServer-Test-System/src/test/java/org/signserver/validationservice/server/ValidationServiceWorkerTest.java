@@ -35,6 +35,7 @@ import org.signserver.validationservice.common.ValidationServiceConstants;
 import org.junit.Before;
 import org.junit.Test;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerIdentifier;
 import org.signserver.testutils.ModulesTestCase;
 
 /**
@@ -184,7 +185,7 @@ public class ValidationServiceWorkerTest extends ModulesTestCase {
 
     private void basicValidation(final int workerId) throws Exception {
         ValidateRequest req = new ValidateRequest(validCert1, ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
-        ValidateResponse res = (ValidateResponse) sSSession.process(workerId, req, new RequestContext());
+        ValidateResponse res = (ValidateResponse) sSSession.process(new WorkerIdentifier(workerId), req, new RequestContext());
 
         Validation val = res.getValidation();
         assertTrue(val != null);
@@ -199,7 +200,7 @@ public class ValidationServiceWorkerTest extends ModulesTestCase {
     @Test
     public void test02RevokedCertificate() throws Exception {
         ValidateRequest req = new ValidateRequest(revokedCert1, ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
-        ValidateResponse res = (ValidateResponse) sSSession.process(15, req, new RequestContext());
+        ValidateResponse res = (ValidateResponse) sSSession.process(new WorkerIdentifier(15), req, new RequestContext());
 
         Validation val = res.getValidation();
         assertTrue(val != null);
@@ -226,7 +227,7 @@ public class ValidationServiceWorkerTest extends ModulesTestCase {
 
     private void expiredCertificate(final int workerId) throws Exception {
         ValidateRequest req = new ValidateRequest(expiredCert1, ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
-        ValidateResponse res = (ValidateResponse) sSSession.process(workerId, req, new RequestContext());
+        ValidateResponse res = (ValidateResponse) sSSession.process(new WorkerIdentifier(workerId), req, new RequestContext());
 
         Validation val = res.getValidation();
         assertTrue(val != null);
@@ -250,7 +251,7 @@ public class ValidationServiceWorkerTest extends ModulesTestCase {
 
     private void notYetValidCertificate(final int workerId) throws Exception {
         ValidateRequest req = new ValidateRequest(noYetValidCert1, ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
-        ValidateResponse res = (ValidateResponse) sSSession.process(workerId, req, new RequestContext());
+        ValidateResponse res = (ValidateResponse) sSSession.process(new WorkerIdentifier(workerId), req, new RequestContext());
 
         Validation val = res.getValidation();
         assertTrue(val != null);
@@ -274,7 +275,7 @@ public class ValidationServiceWorkerTest extends ModulesTestCase {
 
     private void badSignatureCertificate(final int workerId) throws Exception {
         ValidateRequest req = new ValidateRequest(badSigCert1, ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
-        ValidateResponse res = (ValidateResponse) sSSession.process(workerId, req, new RequestContext());
+        ValidateResponse res = (ValidateResponse) sSSession.process(new WorkerIdentifier(workerId), req, new RequestContext());
 
         Validation val = res.getValidation();
         assertTrue(val != null);
@@ -298,7 +299,7 @@ public class ValidationServiceWorkerTest extends ModulesTestCase {
 
     private void signedByExpiredRootCertificate(final int workerId) throws Exception {
         ValidateRequest req = new ValidateRequest(certByExpiredRoot, ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
-        ValidateResponse res = (ValidateResponse) sSSession.process(workerId, req, new RequestContext());
+        ValidateResponse res = (ValidateResponse) sSSession.process(new WorkerIdentifier(workerId), req, new RequestContext());
 
         Validation val = res.getValidation();
         assertTrue(val != null);
@@ -321,7 +322,7 @@ public class ValidationServiceWorkerTest extends ModulesTestCase {
 
     private void signedByNotYetValidSubCA(final int workerId) throws Exception {
         ValidateRequest req = new ValidateRequest(certByNotYetValidSub, ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
-        ValidateResponse res = (ValidateResponse) sSSession.process(workerId, req, new RequestContext());
+        ValidateResponse res = (ValidateResponse) sSSession.process(new WorkerIdentifier(workerId), req, new RequestContext());
 
         Validation val = res.getValidation();
         assertTrue(val != null);
@@ -336,7 +337,7 @@ public class ValidationServiceWorkerTest extends ModulesTestCase {
     @Test
     public void test09signedByRevocedRootCA() throws Exception {
         ValidateRequest req = new ValidateRequest(certByRevocedRoot, null);
-        ValidateResponse res = (ValidateResponse) sSSession.process(15, req, new RequestContext());
+        ValidateResponse res = (ValidateResponse) sSSession.process(new WorkerIdentifier(15), req, new RequestContext());
 
         Validation val = res.getValidation();
         assertTrue(val != null);
@@ -361,7 +362,7 @@ public class ValidationServiceWorkerTest extends ModulesTestCase {
 
     private void longChainValidation(final int workerId) throws Exception {
         ValidateRequest req = new ValidateRequest(certSignedByLongChain, null);
-        ValidateResponse res = (ValidateResponse) sSSession.process(workerId, req, new RequestContext());
+        ValidateResponse res = (ValidateResponse) sSSession.process(new WorkerIdentifier(workerId), req, new RequestContext());
 
         Validation val = res.getValidation();
         assertTrue(val != null);
@@ -388,7 +389,7 @@ public class ValidationServiceWorkerTest extends ModulesTestCase {
 
     private void certPurpose(final int workerId) throws Exception {
         ValidateRequest req = new ValidateRequest(identificationCert1, ValidationServiceConstants.CERTPURPOSE_IDENTIFICATION);
-        ValidateResponse res = (ValidateResponse) sSSession.process(workerId, req, new RequestContext());
+        ValidateResponse res = (ValidateResponse) sSSession.process(new WorkerIdentifier(workerId), req, new RequestContext());
 
         Validation val = res.getValidation();
         assertTrue(val != null);
@@ -400,7 +401,7 @@ public class ValidationServiceWorkerTest extends ModulesTestCase {
         assertTrue(CertTools.getSubjectDN(cAChain.get(1)).equals("CN=ValidRootCA1"));
 
         req = new ValidateRequest(identificationCert1, ValidationServiceConstants.CERTPURPOSE_ELECTRONIC_SIGNATURE);
-        res = (ValidateResponse) sSSession.process(workerId, req, new RequestContext());
+        res = (ValidateResponse) sSSession.process(new WorkerIdentifier(workerId), req, new RequestContext());
 
         val = res.getValidation();
         assertTrue(val != null);
@@ -412,7 +413,7 @@ public class ValidationServiceWorkerTest extends ModulesTestCase {
         assertTrue(CertTools.getSubjectDN(cAChain.get(1)).equals("CN=ValidRootCA1"));
 
         req = new ValidateRequest(esigCert1, ValidationServiceConstants.CERTPURPOSE_ELECTRONIC_SIGNATURE);
-        res = (ValidateResponse) sSSession.process(workerId, req, new RequestContext());
+        res = (ValidateResponse) sSSession.process(new WorkerIdentifier(workerId), req, new RequestContext());
 
         val = res.getValidation();
         assertTrue(val != null);
@@ -426,7 +427,7 @@ public class ValidationServiceWorkerTest extends ModulesTestCase {
         assertTrue(CertTools.getSubjectDN(cAChain.get(1)).equals("CN=ValidRootCA1"));
 
         req = new ValidateRequest(esigCert1, ValidationServiceConstants.CERTPURPOSE_IDENTIFICATION);
-        res = (ValidateResponse) sSSession.process(workerId, req, new RequestContext());
+        res = (ValidateResponse) sSSession.process(new WorkerIdentifier(workerId), req, new RequestContext());
 
         val = res.getValidation();
         assertTrue(val != null);
@@ -439,7 +440,7 @@ public class ValidationServiceWorkerTest extends ModulesTestCase {
         assertTrue(CertTools.getSubjectDN(cAChain.get(1)).equals("CN=ValidRootCA1"));
 
         req = new ValidateRequest(badKeyUsageCert1, ValidationServiceConstants.CERTPURPOSE_IDENTIFICATION);
-        res = (ValidateResponse) sSSession.process(workerId, req, new RequestContext());
+        res = (ValidateResponse) sSSession.process(new WorkerIdentifier(workerId), req, new RequestContext());
 
         val = res.getValidation();
         assertTrue(val != null);
@@ -451,7 +452,7 @@ public class ValidationServiceWorkerTest extends ModulesTestCase {
         assertTrue(CertTools.getSubjectDN(cAChain.get(1)).equals("CN=ValidRootCA1"));
 
         req = new ValidateRequest(badKeyUsageCert1, ValidationServiceConstants.CERTPURPOSE_ELECTRONIC_SIGNATURE);
-        res = (ValidateResponse) sSSession.process(workerId, req, new RequestContext());
+        res = (ValidateResponse) sSSession.process(new WorkerIdentifier(workerId), req, new RequestContext());
 
         val = res.getValidation();
         assertTrue(val != null);
@@ -463,7 +464,7 @@ public class ValidationServiceWorkerTest extends ModulesTestCase {
         assertTrue(CertTools.getSubjectDN(cAChain.get(1)).equals("CN=ValidRootCA1"));
 
         req = new ValidateRequest(validCert1, ValidationServiceConstants.CERTPURPOSE_ELECTRONIC_SIGNATURE);
-        res = (ValidateResponse) sSSession.process(workerId, req, new RequestContext());
+        res = (ValidateResponse) sSSession.process(new WorkerIdentifier(workerId), req, new RequestContext());
 
         val = res.getValidation();
         assertTrue(val != null);
@@ -475,7 +476,7 @@ public class ValidationServiceWorkerTest extends ModulesTestCase {
         assertTrue(CertTools.getSubjectDN(cAChain.get(1)).equals("CN=ValidRootCA1"));
 
         req = new ValidateRequest(identificationCert1, ValidationServiceConstants.CERTPURPOSE_ELECTRONIC_SIGNATURE + "," + ValidationServiceConstants.CERTPURPOSE_IDENTIFICATION);
-        res = (ValidateResponse) sSSession.process(workerId, req, new RequestContext());
+        res = (ValidateResponse) sSSession.process(new WorkerIdentifier(workerId), req, new RequestContext());
 
         val = res.getValidation();
         assertTrue(val != null);
@@ -491,7 +492,7 @@ public class ValidationServiceWorkerTest extends ModulesTestCase {
 
 
         ValidateRequest req = new ValidateRequest(validCert1, null);
-        ValidateResponse res = (ValidateResponse) sSSession.process(15, req, new RequestContext());
+        ValidateResponse res = (ValidateResponse) sSSession.process(new WorkerIdentifier(15), req, new RequestContext());
 
         Validation val = res.getValidation();
         assertTrue(val != null);
@@ -502,7 +503,7 @@ public class ValidationServiceWorkerTest extends ModulesTestCase {
         assertTrue(CertTools.getSubjectDN(cAChain.get(0)).equals("CN=ValidSubCA1"));
         assertTrue(CertTools.getSubjectDN(cAChain.get(1)).equals("CN=ValidRootCA1"));
 
-        res = (ValidateResponse) sSSession.process(15, req, new RequestContext());
+        res = (ValidateResponse) sSSession.process(new WorkerIdentifier(15), req, new RequestContext());
         Validation val2 = res.getValidation();
         assertTrue(val2 != null);
         assertTrue(val2.getStatus().equals(Validation.Status.VALID));
@@ -514,7 +515,7 @@ public class ValidationServiceWorkerTest extends ModulesTestCase {
         assertTrue(CertTools.getSubjectDN(cAChain.get(1)).equals("CN=ValidRootCA1"));
 
         req = new ValidateRequest(certSignedByLongChain, null);
-        res = (ValidateResponse) sSSession.process(15, req, new RequestContext());
+        res = (ValidateResponse) sSSession.process(new WorkerIdentifier(15), req, new RequestContext());
 
         val = res.getValidation();
         assertTrue(val != null);
@@ -528,7 +529,7 @@ public class ValidationServiceWorkerTest extends ModulesTestCase {
         assertTrue(CertTools.getSubjectDN(cAChain.get(3)).equals("CN=ValidSubCA2"));
         assertTrue(CertTools.getSubjectDN(cAChain.get(4)).equals("CN=ValidRootCA1"));
 
-        res = (ValidateResponse) sSSession.process(15, req, new RequestContext());
+        res = (ValidateResponse) sSSession.process(new WorkerIdentifier(15), req, new RequestContext());
 
         val2 = res.getValidation();
         assertTrue(val2 != null);

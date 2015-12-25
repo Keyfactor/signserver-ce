@@ -24,7 +24,6 @@ import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.StaticWorkerStatus;
-import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 import org.signserver.server.IServices;
 import org.signserver.server.ServiceExecutionFailedException;
@@ -37,13 +36,18 @@ import org.signserver.server.timedservices.ITimedService;
  * @author Markus Kilås
  * @version $Id$
  */
-public class NoImplementationWorker extends BaseSigner implements ITimedService {
+public class UnloadableWorker extends BaseSigner implements ITimedService {
     
     /** Logger for this class. */
-    private static final Logger LOG = Logger.getLogger(NoImplementationWorker.class);
+    private static final Logger LOG = Logger.getLogger(UnloadableWorker.class);
 
     private static final String WORKER_TYPE = "Worker";
 
+    private final String errorMessage;
+
+    public UnloadableWorker(final String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
 
     /**
      * This implementation requires no certificates.
@@ -72,7 +76,7 @@ public class NoImplementationWorker extends BaseSigner implements ITimedService 
     @Override
     public List<String> getFatalErrors() {
         LinkedList<String> errors = new LinkedList<>();
-        errors.add("Missing property " + WorkerConfig.IMPLEMENTATION_CLASS);
+        errors.add(errorMessage);
         return errors;
     }
 

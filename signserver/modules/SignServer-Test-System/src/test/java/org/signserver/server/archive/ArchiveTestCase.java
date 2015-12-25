@@ -68,7 +68,7 @@ public class ArchiveTestCase extends ModulesTestCase {
         }
         
         GenericSignResponse response = (GenericSignResponse) 
-                workerSession.process(getSignerIdDummy1(), signRequest, 
+                workerSession.process(new WorkerIdentifier(getSignerIdDummy1()), signRequest, 
                 context);
         assertNotNull("no response", response);
         
@@ -97,7 +97,7 @@ public class ArchiveTestCase extends ModulesTestCase {
         final GenericSignRequest signRequest =
                 new GenericSignRequest(371, document.getBytes());
         GenericSignResponse response = (GenericSignResponse) 
-                workerSession.process(getSignerIdDummy1(), signRequest, 
+                workerSession.process(new WorkerIdentifier(getSignerIdDummy1()), signRequest, 
                 new RequestContext());
         assertNotNull("no response", response);
         
@@ -121,7 +121,7 @@ public class ArchiveTestCase extends ModulesTestCase {
         final GenericSignRequest signRequest = new GenericSignRequest(reqid, requestBytes);
 
         final GenericSignResponse signResponse = (GenericSignResponse) workerSession.process(
-                signerId, signRequest, new RequestContext());
+                new WorkerIdentifier(signerId), signRequest, new RequestContext());
         assertNotNull("no response", signResponse);
         final byte[] responseBytes = signResponse.getProcessedData();
         final String responseHex = new String(Hex.encode(responseBytes));
@@ -176,7 +176,7 @@ public class ArchiveTestCase extends ModulesTestCase {
         final GenericSignRequest signRequest = new GenericSignRequest(reqid, requestBytes);
 
         final GenericSignResponse signResponse = (GenericSignResponse) workerSession.process(
-                signerId, signRequest, new RequestContext());
+                new WorkerIdentifier(signerId), signRequest, new RequestContext());
         assertNotNull("no response", signResponse);
         final byte[] responseBytes = signResponse.getProcessedData();
         final String responseHex = new String(Hex.encode(responseBytes));
@@ -231,7 +231,7 @@ public class ArchiveTestCase extends ModulesTestCase {
         final GenericSignRequest signRequest = new GenericSignRequest(reqid, requestBytes);
 
         final GenericSignResponse signResponse = (GenericSignResponse) workerSession.process(
-                signerId, signRequest, new RequestContext());
+                new WorkerIdentifier(signerId), signRequest, new RequestContext());
         assertNotNull("no response", signResponse);
         final byte[] responseBytes = signResponse.getProcessedData();
         final String responseHex = new String(Hex.encode(responseBytes));

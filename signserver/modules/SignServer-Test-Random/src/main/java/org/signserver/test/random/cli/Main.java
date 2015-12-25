@@ -21,6 +21,7 @@ import org.apache.log4j.Logger;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.RequestContext;
+import org.signserver.common.WorkerIdentifier;
 import org.signserver.ejb.interfaces.IWorkerSession.IRemote;
 import org.signserver.server.UsernamePasswordClientCredential;
 import org.signserver.test.random.*;
@@ -282,7 +283,7 @@ public class Main {
                     allWorkers.addAll(context.getWorkerGroup3());
                 }
                 for (WorkerSpec worker : allWorkers) {
-                    List<String> fatalErrors = context.getWorkerSession().getStatus(worker.getWorkerId()).getFatalErrors();
+                    List<String> fatalErrors = context.getWorkerSession().getStatus(new WorkerIdentifier(worker.getWorkerId())).getFatalErrors();
                     if (!fatalErrors.isEmpty()) {
                         System.err.println();
                         throw new FailedException("Worker " + worker + ": " + fatalErrors);
@@ -394,7 +395,7 @@ public class Main {
         
         final int workerId = context.getWorkerGroup1().get(0).getWorkerId();
         
-        final long startValue = context.getWorkerSession().getKeyUsageCounterValue(workerId);
+        final long startValue = context.getWorkerSession().getKeyUsageCounterValue(new WorkerIdentifier(workerId));
         
         // Thread pausing signings
         WorkerThread pauseThread = new WorkerThread("Pause", context.getCallback()) {
@@ -413,7 +414,7 @@ public class Main {
                                 signings += w.getOperationsPerformed();
                             }
                             long expected = startValue + signings;
-                            long actual = context.getWorkerSession().getKeyUsageCounterValue(workerId);
+                            long actual = context.getWorkerSession().getKeyUsageCounterValue(new WorkerIdentifier(workerId));
                             if (expected != actual) {
                                 fireFailure("Key usage counter value incorrect. Expected " + expected + ", actual " + actual);
                                 break;

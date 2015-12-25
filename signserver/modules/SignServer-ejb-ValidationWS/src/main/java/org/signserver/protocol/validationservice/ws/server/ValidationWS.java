@@ -75,11 +75,6 @@ public class ValidationWS implements IValidationWS {
     @WebMethod
     public ValidationResponse isValid(@WebParam(name = "serviceName") String serviceName, @WebParam(name = "base64Cert") String base64Cert, @WebParam(name = "certPurposes") String certPurposes) throws IllegalRequestException, SignServerException {
         Certificate reqCert;
-        int workerId = getWorkerId(serviceName);
-
-        if (workerId == 0) {
-            throw new IllegalRequestException("Illegal service name : " + serviceName + " no validation service with such name exists");
-        }
 
         if (base64Cert == null) {
             throw new IllegalRequestException("Error base64Cert parameter cannot be empty, it must contain a Base64 encoded DER encoded certificate.");
@@ -107,7 +102,7 @@ public class ValidationWS implements IValidationWS {
             MessageContext msgContext = wsContext.getMessageContext();
             CredentialUtils.addToRequestContext(context, (HttpServletRequest) msgContext.get(MessageContext.SERVLET_REQUEST), clientCertificate);
         
-            res = (ValidateResponse) getWorkerSession().process(workerId, req, context);
+            res = (ValidateResponse) getWorkerSession().process(new WorkerIdentifier(serviceName), req, context);
         } catch (CertificateEncodingException e) {
             throw new IllegalRequestException("Error in request, the requested certificate seem to have a unsupported encoding : " + e.getMessage());
         } catch (CryptoTokenOfflineException e) {
@@ -188,7 +183,7 @@ public class ValidationWS implements IValidationWS {
     private List<String> checkValidationService(int workerId) {
         final LinkedList<String> result = new LinkedList<String>();
         try {
-            WorkerStatus status = getWorkerSession().getStatus(workerId);
+            WorkerStatus status = getWorkerSession().getStatus(new WorkerIdentifier(workerId));
             for (String error : status.getFatalErrors()) {
                 result.add("Worker " + status.getWorkerId() + ": " + error + "\n");
             }

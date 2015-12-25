@@ -16,7 +16,6 @@ import java.security.KeyStoreException;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
 import javax.ejb.EJB;
 import javax.naming.NamingException;
 import javax.persistence.EntityManager;
@@ -25,6 +24,7 @@ import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerIdentifier;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.server.ServiceExecutionFailedException;
 import org.signserver.server.WorkerContext;
@@ -45,7 +45,7 @@ public class HSMKeepAliveTimedService extends BaseTimedService {
     static String TESTKEY = "TESTKEY";
     static String DEFAULTKEY = "DEFAULTKEY";
 
-    private List<String> cryptoTokens;
+    private List<WorkerIdentifier> cryptoTokens;
  
     @EJB
     private IWorkerSession workerSession;
@@ -57,8 +57,10 @@ public class HSMKeepAliveTimedService extends BaseTimedService {
         final String cryptoTokensValue = config.getProperty(CRYPTOTOKENS);
 
         if (cryptoTokensValue != null) {
-            cryptoTokens = new LinkedList<String>();
-            cryptoTokens.addAll(Arrays.asList(cryptoTokensValue.split(",")));
+            cryptoTokens = new LinkedList<>();
+            for (String token : Arrays.asList(cryptoTokensValue.split(","))) {
+                cryptoTokens.add(WorkerIdentifier.createFromIdOrName(token.trim()));
+            }
         }
     }
     
@@ -80,65 +82,26 @@ public class HSMKeepAliveTimedService extends BaseTimedService {
     @Override
     public void work() throws ServiceExecutionFailedException {
         final IWorkerSession session = getWorkerSession();
-
         if (cryptoTokens != null) {
-            for (final String workerIdOrName : cryptoTokens) {
-                int cryptoWorkerId;
-
+            for (final WorkerIdentifier wi : cryptoTokens) {
                 try {
-                    try {
-                        cryptoWorkerId = Integer.valueOf(workerIdOrName);
-                    } catch (NumberFormatException e) {
-                        cryptoWorkerId = session.getWorkerId(workerIdOrName);
-                    }
-                } catch (InvalidWorkerIdException ex) {
-                    LOG.error("No such worker: " + workerIdOrName);
-                    continue;
-                }
-
-                final String keyAlias = getKeyAliasForWorker(session, cryptoWorkerId);
-
-                if (keyAlias == null) {
-                    LOG.error("TESTKEY or DEFAULTKEY is not set for worker: " +
-                            workerIdOrName);
-                    continue;
-                }
-
-                try {
-                    session.testKey(cryptoWorkerId, keyAlias, null);
+                    session.testKey(wi, null, null);
                 } catch (CryptoTokenOfflineException e) {
-                    LOG.warn("Crypto token offline for worker " + workerIdOrName +
+                    LOG.warn("Crypto token offline for worker " + wi +
                             ": " + e.getMessage());
                 } catch (InvalidWorkerIdException e) {
                     LOG.error("Invalid worker ID: " + e.getMessage());
                 } catch (KeyStoreException e) {
-                    LOG.error("Keystore exception for worker " + workerIdOrName +
+                    LOG.error("Keystore exception for worker " + wi +
                             ": " + e.getMessage());
                 }
             }
         }
     }
-    
-    /**
-     * Get key alias to use for testing a given worker's crypto token.
-     * Use TESTKEY if available, otherwise DEFAULTKEY.
-     * 
-     * @param workerId Worker ID to get key for
-     * @return Key alias, or null if no key alias was found
-     */
-    private String getKeyAliasForWorker(final IWorkerSession session, final int workerId) {
-        final WorkerConfig workerConfig =
-                session.getCurrentWorkerConfig(workerId);
-        
-        final String testKey = workerConfig.getProperty(TESTKEY);
-        final String defaultKey = workerConfig.getProperty(DEFAULTKEY);
-        
-        return testKey != null ? testKey : defaultKey;
-    }
 
     @Override
     protected List<String> getFatalErrors() {
-        final List<String> errors = new LinkedList<String>(super.getFatalErrors());
+        final List<String> errors = new LinkedList<>(super.getFatalErrors());
         
         if (cryptoTokens == null) {
             errors.add("Must specify " + CRYPTOTOKENS);
@@ -149,29 +112,18 @@ public class HSMKeepAliveTimedService extends BaseTimedService {
     }
     
     private List<String> getCryptoworkerErrors() {
-        final List<String> errors = new LinkedList<String>();
+        final List<String> errors = new LinkedList<>();
         final IWorkerSession session = getWorkerSession();
         
         if (session != null && cryptoTokens != null) {
-            for (final String workerIdOrName : cryptoTokens) {
+            for (final WorkerIdentifier wi : cryptoTokens) {
                 try {
-                    int cryptoWorkerId = Integer.valueOf(workerIdOrName);
-                    
-                    try {
-                        session.getStatus(cryptoWorkerId);
-                    } catch (InvalidWorkerIdException e) {
-                        errors.add("Invalid worker ID: " + cryptoWorkerId);
-                    }
-                } catch (NumberFormatException e) {
-                    try {
-                        session.getWorkerId(workerIdOrName);
-                    } catch (InvalidWorkerIdException ex) {
-                        errors.add("No such worker: " + workerIdOrName);
-                    }
+                    session.getStatus(wi);
+                } catch (InvalidWorkerIdException e) {
+                    errors.add("Invalid worker: " + wi);
                 }
             }
-        }
-        
+        }   
         return errors;
     }
 }

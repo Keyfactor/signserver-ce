@@ -20,6 +20,7 @@ import org.signserver.cli.spi.UnexpectedCommandFailureException;
 import org.signserver.common.Base64SignerCertReqData;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.PKCS10CertReqInfo;
+import org.signserver.common.WorkerIdentifier;
 
 /**
  * Commands that requests a signer to generate a PKCS10 certificate request 
@@ -108,16 +109,7 @@ public class GenerateCertReqCommand extends AbstractAdminCommand {
                 }
             }
 
-            final int id;
-            if (workerid.substring(0, 1).matches("\\d")) {
-                id = Integer.parseInt(workerid);
-            } else {
-                // named worker is requested
-                id = getWorkerSession().getWorkerId(workerid);
-                if (id == 0) {
-                    throw new IllegalCommandArgumentsException(FAIL);
-                }
-            }
+            final WorkerIdentifier id = WorkerIdentifier.createFromIdOrName(workerid);
 
             PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo(sigAlg, dn, null);
             final Base64SignerCertReqData reqData;

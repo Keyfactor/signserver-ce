@@ -281,7 +281,7 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
         // Check signer validity
         if (certificate instanceof X509Certificate) {
             try {
-                ValidityTimeUtils.checkSignerValidity(workerId, getConfig(), (X509Certificate) certificate);
+                ValidityTimeUtils.checkSignerValidity(new WorkerIdentifier(workerId), getConfig(), (X509Certificate) certificate);
             } catch (CryptoTokenOfflineException ex) {
                 result.add(ex.getMessage());
                 if (LOG.isDebugEnabled()) {

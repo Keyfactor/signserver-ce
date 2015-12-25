@@ -114,7 +114,7 @@ public class SignerStatusReportBuilder implements ReportBuilder {
                 }
                 try {
                     notAfter = workerSession.getSigningValidityNotAfter(
-                            workerId);
+                            new WorkerIdentifier(workerId));
                 } catch (CryptoTokenOfflineException ignored) {}
                 if (notAfter != null) {
                     sb.append("validityNotAfter=");

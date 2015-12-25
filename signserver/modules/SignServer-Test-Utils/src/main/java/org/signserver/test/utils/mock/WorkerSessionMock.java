@@ -279,7 +279,7 @@ public class WorkerSessionMock implements IWorkerSession.ILocal,
     }
 
     @Override
-    public Date getSigningValidityNotAfter(int workerId) throws
+    public Date getSigningValidityNotAfter(WorkerIdentifier workerId) throws
             CryptoTokenOfflineException {
         throw new UnsupportedOperationException("Not supported yet.");
     }

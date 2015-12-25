@@ -181,24 +181,29 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
 
     /**
      * Gets the last date the specified worker can do signings.
-     * @param workerId Id of worker to check.
+     * @param wi Id of worker to check.
      * @return The last date or null if no last date (=unlimited).
      * @throws CryptoTokenOfflineException In case the cryptotoken is offline
      * for some reason.
      */
     @Override
-    public Date getSigningValidityNotAfter(final int workerId)
+    public Date getSigningValidityNotAfter(final WorkerIdentifier wi)
             throws CryptoTokenOfflineException {
         Date date = null;
-        final Certificate signerCert = getSignerCertificate(new WorkerIdentifier(workerId));
+        final Certificate signerCert = getSignerCertificate(wi);
         if (signerCert instanceof X509Certificate) {
             final X509Certificate cert = (X509Certificate) signerCert;
-            date = ValidityTimeUtils.getSigningValidity(true, new WorkerIdentifier(workerId),
-                    getWorkerConfig(workerId), cert);
+            try {
+                IWorker worker = workerManagerSession.getWorker(wi);
+                date = ValidityTimeUtils.getSigningValidity(true, wi,
+                    worker.getConfig(), cert);
+            } catch (NoSuchWorkerException ex) {
+                throw new CryptoTokenOfflineException(ex.getLocalizedMessage());
+            }
         } else {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Worker does not have a signing certificate. Worker: "
-                        + workerId);
+                        + wi);
             }
         }
         return date;

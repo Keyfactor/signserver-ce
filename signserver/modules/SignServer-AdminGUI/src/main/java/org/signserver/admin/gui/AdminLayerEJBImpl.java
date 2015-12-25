@@ -620,7 +620,7 @@ public class AdminLayerEJBImpl implements AdminWS {
             throws CryptoTokenOfflineException_Exception {
         try {
             final GregorianCalendar c = new GregorianCalendar();
-            final Date time = worker.getSigningValidityNotAfter(workerId);
+            final Date time = worker.getSigningValidityNotAfter(new WorkerIdentifier(workerId));
             if (time == null) {
                 return null;
             } else {

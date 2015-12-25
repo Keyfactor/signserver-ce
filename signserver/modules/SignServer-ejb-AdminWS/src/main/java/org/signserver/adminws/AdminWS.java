@@ -465,7 +465,7 @@ public class AdminWS {
         requireAdminAuthorization("getSigningValidityNotAfter",
                 String.valueOf(workerId));
         
-        return worker.getSigningValidityNotAfter(workerId);
+        return worker.getSigningValidityNotAfter(new WorkerIdentifier(workerId));
     }
 
     /**

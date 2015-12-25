@@ -302,7 +302,7 @@ public interface IWorkerSession {
      * @throws CryptoTokenOfflineException In case the cryptotoken is offline
      * for some reason.
      */
-    Date getSigningValidityNotAfter(int workerId)
+    Date getSigningValidityNotAfter(WorkerIdentifier workerId)
             throws CryptoTokenOfflineException;
 
     /**

@@ -68,7 +68,7 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
     private String keystorepath = null;
     private String keystorepassword = null;
 
-    private KeyStore ks;
+    private volatile KeyStore ks; // Note: Needs volatile as different threads might load the key store at activation time
     private String keystoretype;
     private Properties properties;
 
@@ -152,6 +152,7 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
             this.authenticationCode = authenticationcode.toCharArray();
         }
         this.ks = getKeystore(keystoretype, keystorepath, authenticationCode);
+        LOG.error("Activated: " + this);
 
         entries = new HashMap<Object, KeyEntry>();
 
@@ -552,6 +553,7 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
     @Override
     public KeyStore getKeyStore() throws UnsupportedOperationException,
             CryptoTokenOfflineException, KeyStoreException {
+        LOG.error("getKeyStore(): " + this);
         if (ks == null) {
             throw new CryptoTokenOfflineException("Not activated");
         }

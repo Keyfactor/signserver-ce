@@ -15,6 +15,7 @@ package org.signserver.ejb.worker.impl;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.log4j.Logger;
 import org.signserver.common.util.PropertiesConstants;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.server.IWorker;
@@ -27,6 +28,10 @@ import org.signserver.server.IWorker;
  * @version $Id$
  */
 public class WorkerStore {
+    
+    /** Logger for this class. */
+    private final Logger LOG = Logger.getLogger(WorkerStore.class);
+    
     private final Map<Integer, WorkerWithComponents> workersWithComponents = new HashMap<>();
     private final Map<Integer, IWorker> workersOnly = new HashMap<>();
     private final Map<String, Integer> nameToIdMap = new HashMap<>();
@@ -78,7 +83,10 @@ public class WorkerStore {
     }
     
     private void cacheName(int workerId, IWorker worker) {
-        final String name = getName(workerId);
+        final String name = getName(worker);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("cacheName(" + workerId + "): " + name);
+        }
         if (name != null) {
             nameToIdMap.put(name, workerId);
         }
@@ -89,10 +97,16 @@ public class WorkerStore {
         WorkerWithComponents w = workersWithComponents.get(workerId);
         if (w != null) {
             IWorker worker = w.getWorker();
-            if (worker.getConfig() != null) {
-                if (worker.getConfig().getProperty(PropertiesConstants.NAME) != null) {
-                    result = worker.getConfig().getProperty(PropertiesConstants.NAME).toUpperCase();
-                }
+            result = getName(worker);
+        }
+        return result;
+    }
+    
+    private String getName(IWorker worker) {
+        String result = null;
+        if (worker.getConfig() != null) {
+            if (worker.getConfig().getProperty(PropertiesConstants.NAME) != null) {
+                result = worker.getConfig().getProperty(PropertiesConstants.NAME).toUpperCase();
             }
         }
         return result;

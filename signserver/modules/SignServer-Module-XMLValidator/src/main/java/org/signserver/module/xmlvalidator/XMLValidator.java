@@ -18,6 +18,8 @@ import java.io.IOException;
 import java.security.Provider;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
+import java.util.LinkedList;
+import java.util.List;
 import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.xml.crypto.MarshalException;
@@ -78,15 +80,29 @@ public class XMLValidator extends BaseValidator {
     
     /** Worker session. */
     private ProcessSessionLocal processSession;
+    
+    // Configuration errors
+    private final LinkedList<String> configErrors = new LinkedList<String>();
+    
+    private String validationServiceWorker;
 
     @Override
     public void init(final int workerId, final WorkerConfig config,
             final WorkerContext workerContext, final EntityManager workerEM) {
         super.init(workerId, config, workerContext, workerEM);
+        
+        // Required property: VALIDATIONSERVICEWORKER
+        validationServiceWorker = config.getProperty(PROP_VALIDATIONSERVICEWORKER);
+        if (validationServiceWorker == null || validationServiceWorker.trim().isEmpty()) {
+            configErrors.add("Missing required property: " + PROP_VALIDATIONSERVICEWORKER);
+        }
     }
 
     @Override
     public ProcessResponse processData(ProcessRequest signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+        if (!configErrors.isEmpty()) {
+            throw new SignServerException("Worker is misconfigured");
+        }
 
         // Check that the request contains a valid GenericSignRequest object with a byte[].
         if (!(signRequest instanceof GenericValidationRequest)) {
@@ -200,7 +216,7 @@ public class XMLValidator extends BaseValidator {
 
             try {
                 LOG.info("Requesting certificate validation from worker: " + PROP_VALIDATIONSERVICEWORKER);
-                response = getProcessSession().process(new AdminInfo("Client user", null, null), WorkerIdentifier.createFromIdOrName(PROP_VALIDATIONSERVICEWORKER), vr, new RequestContext());
+                response = getProcessSession().process(new AdminInfo("Client user", null, null), WorkerIdentifier.createFromIdOrName(validationServiceWorker), vr, new RequestContext());
                 LOG.info("ProcessResponse: " + response);
 
                 if (response == null) {
@@ -285,4 +301,12 @@ public class XMLValidator extends BaseValidator {
         return processSession;
     }
 
+    @Override
+    protected List<String> getFatalErrors() {
+        // Add our errors to the list of errors
+        final LinkedList<String> errors = new LinkedList<String>(
+                super.getFatalErrors());
+        errors.addAll(configErrors);
+        return errors;
+    }
 }

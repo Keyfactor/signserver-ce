@@ -73,7 +73,7 @@ public class WorkerFactory {
             result = loadWorker(wi);
         }
         if (LOG.isTraceEnabled()) {
-            LOG.trace("getWorker(" + wi + ") returning instance: " + result);
+            LOG.trace("<getWorker(" + wi + "): " + result);
         }
         return result;
     }
@@ -90,6 +90,9 @@ public class WorkerFactory {
     }
 
     private IWorker loadWorker(final WorkerIdentifier wi) throws NoSuchWorkerException {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace(">loadWorker(" + wi + ")");
+        }
         final int workerId;
         if (wi.hasId()) {
             workerId = wi.getId();
@@ -130,6 +133,9 @@ public class WorkerFactory {
             }
 
             cache.putWorkerOnly(workerId, result);
+        }
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("<loadWorker(" + wi + "): " + result);
         }
         return result;
     }
@@ -191,10 +197,16 @@ public class WorkerFactory {
         // Worker with components
         result = new WorkerWithComponents(workerId, worker, createErrors, workerLogger, authorizer, accounter, archivers);
         cache.putWorkerWithComponents(workerId, result);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("<loadWorkerWithComponents(" + workerId + "): " + worker + " in " + result);
+        }
         return result;
     }
 
     private void initWorker(final IWorker worker, final int workerId, final WorkerConfig config) {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace(">initWorker(" + workerId + "," + worker + ")");
+        }
         final String cryptoTokenName = config.getProperty("CRYPTOTOKEN");
         SignServerContext context = workerContext.newInstance();
         if (cryptoTokenName != null) {
@@ -224,6 +236,9 @@ public class WorkerFactory {
 
         }
         worker.init(workerId, config, context, null);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("<initWorker(" + workerId + ")");
+        }
     }
 
     /**
@@ -257,6 +272,9 @@ public class WorkerFactory {
             loadWorker(wi);
         } catch (NoSuchWorkerException ex) {
             LOG.error("Error reloading worker : " + ex.getMessage());
+        }
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("<reloadWorker(" + wi + ")");
         }
     }
     

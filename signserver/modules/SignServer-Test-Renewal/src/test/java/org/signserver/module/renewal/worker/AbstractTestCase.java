@@ -67,6 +67,8 @@ public abstract class AbstractTestCase extends TestCase {
                 IWorkerSession.IRemote.class);
         globalSession = ServiceLocator.getInstance().lookupRemote(
                 IGlobalConfigurationSession.IRemote.class);
+        processSession = ServiceLocator.getInstance().lookupRemote(
+                ProcessSessionRemote.class);
     }
 
     @Override

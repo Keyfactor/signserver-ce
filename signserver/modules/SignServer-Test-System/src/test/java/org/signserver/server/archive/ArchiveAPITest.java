@@ -36,6 +36,7 @@ import org.junit.Test;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.util.PathUtil;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.ejb.interfaces.ProcessSessionRemote;
 
 /**
  * Tests for the Archiving API.
@@ -58,6 +59,7 @@ public class ArchiveAPITest extends ModulesTestCase {
     private File archiver2File;
     
     private final IWorkerSession workerSession = getWorkerSession();
+    private final ProcessSessionRemote processSession = getProcessSession();
     
     @Before
     @Override
@@ -335,7 +337,7 @@ public class ArchiveAPITest extends ModulesTestCase {
         final String testDocument = "<document/>";
         final GenericSignRequest signRequest =
                 new GenericSignRequest(371, testDocument.getBytes());
-        workerSession.process(new WorkerIdentifier(getSignerIdDummy1()),  signRequest, 
+        processSession.process(new WorkerIdentifier(getSignerIdDummy1()),  signRequest, 
                 new RequestContext());
     }
 }

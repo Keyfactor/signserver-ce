@@ -29,9 +29,10 @@ import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
-import org.signserver.ejb.interfaces.IDispatcherWorkerSession;
+import org.signserver.ejb.interfaces.DispatcherProcessSessionLocal;
 import org.signserver.server.UsernamePasswordClientCredential;
 import org.signserver.server.WorkerContext;
+import org.signserver.server.log.AdminInfo;
 
 /**
  * Dispatching requests based on username with mapping in config.
@@ -54,7 +55,7 @@ public class UserMappedDispatcher extends BaseDispatcher {
     private static final String PROPERTY_USERNAME_MAPPING = "USERNAME_MAPPING";
 
     /** Workersession. */
-    private IDispatcherWorkerSession workerSession;
+    private DispatcherProcessSessionLocal workerSession;
 
     /** Mapping. */
     private Map<String, String> mappings;
@@ -91,11 +92,11 @@ public class UserMappedDispatcher extends BaseDispatcher {
         this.workerSession = getWorkerSession();
     }
     
-    protected IDispatcherWorkerSession getWorkerSession() {
+    protected DispatcherProcessSessionLocal getWorkerSession() {
         if (workerSession == null) {
             try {
                 workerSession = ServiceLocator.getInstance().lookupLocal(
-                        IDispatcherWorkerSession.class);
+                        DispatcherProcessSessionLocal.class);
             } catch (NamingException ex) {
                 LOG.error("Unable to lookup worker session", ex);
             }
@@ -134,7 +135,8 @@ public class UserMappedDispatcher extends BaseDispatcher {
             throw new SignServerException("Dispatcher configured to dispatch to itself");
         } else {
             try {
-                response = workerSession.process(new WorkerIdentifier(workerName), signRequest,
+                response = workerSession.process(new AdminInfo("Client user", null, null),
+                        new WorkerIdentifier(workerName), signRequest,
                         nextContext);
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Dispatched to worker: "

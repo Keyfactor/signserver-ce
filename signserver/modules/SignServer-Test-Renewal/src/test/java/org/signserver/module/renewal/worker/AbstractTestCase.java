@@ -37,6 +37,7 @@ import org.signserver.common.ServiceLocator;
 import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession.IRemote;
+import org.signserver.ejb.interfaces.ProcessSessionRemote;
 
 /**
  * Base class for test cases. Handles creation and deletion of temporary files
@@ -51,6 +52,7 @@ public abstract class AbstractTestCase extends TestCase {
     private static final Logger LOG = Logger.getLogger(AbstractTestCase.class);
     
     private static IWorkerSession.IRemote workerSession;
+    private static ProcessSessionRemote processSession;
     private static IGlobalConfigurationSession.IRemote globalSession;
 
     private Collection<File> tempFiles = new LinkedList<File>();
@@ -187,6 +189,10 @@ public abstract class AbstractTestCase extends TestCase {
 
     public static IRemote getWorkerSession() {
         return workerSession;
+    }
+    
+    public static ProcessSessionRemote getProcessSession() {
+        return processSession;
     }
 
 }

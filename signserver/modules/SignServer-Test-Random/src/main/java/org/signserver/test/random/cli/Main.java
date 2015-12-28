@@ -22,7 +22,8 @@ import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.RequestContext;
 import org.signserver.common.WorkerIdentifier;
-import org.signserver.ejb.interfaces.IWorkerSession.IRemote;
+import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.server.UsernamePasswordClientCredential;
 import org.signserver.test.random.*;
 import org.signserver.test.random.impl.IncrementProperty;
@@ -208,7 +209,8 @@ public class Main {
             }
             
             final AdminCommandHelper helper = new AdminCommandHelper();
-            final IRemote workerSession = helper.getWorkerSession();
+            final IWorkerSession.IRemote workerSession = helper.getWorkerSession();
+            final ProcessSessionRemote processSession = helper.getProcessSession();
             final LinkedList<WorkerThread> threads = new LinkedList<WorkerThread>();
             final FailureCallback callback = new FailureCallback() {
 
@@ -247,6 +249,7 @@ public class Main {
             context.setCallback(callback);
             context.setMasterRandom(masterRandom);
             context.setWorkerSession(workerSession);
+            context.setProcessSession(processSession);
             context.setPauser(new Pauser());
             context.setWorkerGroup1(workerGroup1);
             context.setThreadsGroup1(threadGroup1);
@@ -388,7 +391,7 @@ public class Main {
         // Group 1: Threads signing documents with the workers in group 1
         for (int i = 0; i < context.getThreadsGroup1(); i++) {
             final WorkerSpec worker = context.getWorkerGroup1().get(i % context.getWorkerGroup1().size());
-            final SigningThread signingThread = new SigningThread("Signer-" + i + "-" + worker.getWorkerId(), context.getCallback(), context.getPauser(), context.getMasterRandom().nextLong(), worker, context.getWorkerSession(), null);
+            final SigningThread signingThread = new SigningThread("Signer-" + i + "-" + worker.getWorkerId(), context.getCallback(), context.getPauser(), context.getMasterRandom().nextLong(), worker, context.getProcessSession(), null);
             signingThreads.add(signingThread);
         }
         threads.addAll(signingThreads);
@@ -471,7 +474,7 @@ public class Main {
         // Group 1: Threads signing documents with the workers in group 1
         for (int i = 0; i < context.getThreadsGroup1(); i++) {
             final WorkerSpec worker = context.getWorkerGroup1().get(i%context.getWorkerGroup1().size());
-            final SigningThread signingThread = new SigningThread("Signer-" + i + "-" + worker.getWorkerId(), context.getCallback(), null, context.getMasterRandom().nextLong(), worker, context.getWorkerSession(), null);
+            final SigningThread signingThread = new SigningThread("Signer-" + i + "-" + worker.getWorkerId(), context.getCallback(), null, context.getMasterRandom().nextLong(), worker, context.getProcessSession(), null);
             threads.add(signingThread);
         }
         
@@ -519,7 +522,7 @@ public class Main {
         // Group 1: Threads signing documents with the workers in group 1
         for (int i = 0; i < context.getThreadsGroup1(); i++) {
             final WorkerSpec worker = context.getWorkerGroup1().get(i%context.getWorkerGroup1().size());
-            final SigningThread signingThread = new SigningThread("Signer-" + i + "-" + worker.getWorkerId(), context.getCallback(), null, context.getMasterRandom().nextLong(), worker, context.getWorkerSession(), null);
+            final SigningThread signingThread = new SigningThread("Signer-" + i + "-" + worker.getWorkerId(), context.getCallback(), null, context.getMasterRandom().nextLong(), worker, context.getProcessSession(), null);
             threads.add(signingThread);
         }
         
@@ -528,7 +531,7 @@ public class Main {
         final List<WorkerSpec> renewees = context.getWorkerGroup2();
         final List<RenewSigner> renewers = new LinkedList<RenewSigner>();
         for (WorkerSpec renewee : renewees) {
-            renewers.add(new RenewSigner(workerId, renewee.getWorkerId(), context.getWorkerSession()));
+            renewers.add(new RenewSigner(workerId, renewee.getWorkerId(), context.getProcessSession()));
         }
 
         final long seed = context.getMasterRandom().nextLong();
@@ -583,7 +586,7 @@ public class Main {
         // Group 1: Threads signing documents with the workers in group 1
         for (int i = 0; i < context.getThreadsGroup1(); i++) {
             final WorkerSpec worker = context.getWorkerGroup1().get(i%context.getWorkerGroup1().size());
-            final SigningThread signingThread = new SigningThread("Signer-" + i + "-" + worker.getWorkerId(), context.getCallback(), null, context.getMasterRandom().nextLong(), worker, context.getWorkerSession(), new RequestContextPreProcessor() {
+            final SigningThread signingThread = new SigningThread("Signer-" + i + "-" + worker.getWorkerId(), context.getCallback(), null, context.getMasterRandom().nextLong(), worker, context.getProcessSession(), new RequestContextPreProcessor() {
 
                 @Override
                 public void preProcess(RequestContext requestContext) {

@@ -39,6 +39,7 @@ import org.signserver.common.*;
 import org.signserver.common.util.PathUtil;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.test.utils.builders.CertBuilder;
 import org.signserver.test.utils.builders.CertBuilderException;
@@ -80,6 +81,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     
     private IGlobalConfigurationSession.IRemote globalConfig;
     private IWorkerSession.IRemote workerSession;
+    private ProcessSessionRemote processSession;
 
     private File sampleOk;
     private File sampleRestricted;
@@ -138,7 +140,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
                 data);
 
         final GenericSignResponse response = (GenericSignResponse)
-                workerSession.process(new WorkerIdentifier(WORKER1), request, new RequestContext());
+                processSession.process(new WorkerIdentifier(WORKER1), request, new RequestContext());
         assertEquals("requestId", 100, response.getRequestID());
 
         Certificate signercert = response.getSignerCertificate();
@@ -152,7 +154,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
      */
     public void test02SignWithRestrictionsNoPasswordSupplied() throws Exception { 
         try {
-            workerSession.process(
+            processSession.process(
                 new WorkerIdentifier(WORKER1),
                 new GenericSignRequest(200, readFile(sampleRestricted)),
                 new RequestContext());
@@ -162,7 +164,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         }
         
         try {
-            workerSession.process(
+            processSession.process(
                 new WorkerIdentifier(WORKER1),
                 new GenericSignRequest(200, readFile(sampleOpen123)),
                 new RequestContext());
@@ -172,7 +174,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         }
         
         try {
-            workerSession.process(
+            processSession.process(
                 new WorkerIdentifier(WORKER1),
                 new GenericSignRequest(200, readFile(sampleOpen123Owner123)),
                 new RequestContext());
@@ -182,7 +184,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         }
         
         try {
-            workerSession.process(
+            processSession.process(
                 new WorkerIdentifier(WORKER1),
                 new GenericSignRequest(200, readFile(sampleOwner123)),
                 new RequestContext());
@@ -1459,7 +1461,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         RequestMetadata.getInstance(context).put(RequestContext.METADATA_PDFPASSWORD, password);
         
         final GenericSignResponse response = 
-                (GenericSignResponse) workerSession.process(new WorkerIdentifier(WORKER1), 
+                (GenericSignResponse) processSession.process(new WorkerIdentifier(WORKER1), 
                 new GenericSignRequest(200, readFile(file)), 
                 context);
         assertNotNull(response);
@@ -1475,6 +1477,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         final WorkerSessionMock workerMock = new WorkerSessionMock(globalMock);
         globalConfig = globalMock;
         workerSession = workerMock;
+        processSession = workerMock;
 
         // WORKER1
         final MockedCryptoToken token = generateToken(false);

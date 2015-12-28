@@ -12,59 +12,37 @@
  *************************************************************************/
 package org.signserver.ejb.interfaces;
 
-import javax.ejb.Local;
 import javax.ejb.Remote;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
-import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerIdentifier;
-import org.signserver.server.log.AdminInfo;
 
 /**
- * Interface for the internal worker session bean that should be used by
- * dispatchers.
- * Implements the process and getWorkerId methods as in the normal worker
- * session bean. However, this bean is not intended to be called directly by
- * the client through any of the interfaces but instead by dispatchers.
  *
+ * @author Markus Kilås
  * @version $Id$
- * @see IWorkerSession
- * @see IInternalWorkerSession
  */
-public interface IDispatcherWorkerSession {
+@Remote
+public interface ProcessSessionRemote {
 
     /**
-     * @see IWorkerSession#process(int, org.signserver.common.ProcessRequest, org.signserver.common.RequestContext)
+     * The Worker Beans main method. Takes  requests processes them
+     * and returns a response.
+     *
+     * @param wi id of worker who should process the request
+     * @param request the request
+     * @param requestContext context of the request
+     * @throws CryptoTokenOfflineException if the signers token isn't activated.
+     * @throws IllegalRequestException if illegal request is sent to the method
+     * @throws SignServerException if some other error occurred server side
+     * during process.
      */
     ProcessResponse process(WorkerIdentifier wi, ProcessRequest request,
             RequestContext requestContext)
             throws IllegalRequestException, CryptoTokenOfflineException,
             SignServerException;
-
-    /**
-     * @see IWorkerSession#getWorkerId(java.lang.String)
-     */
-    //int getWorkerId(String workerName) throws InvalidWorkerIdException;
-
-    /** Remote view. */
-    @Remote
-    interface IRemote extends IDispatcherWorkerSession {}
-
-    /** Local view. */
-    @Local
-    interface ILocal extends IDispatcherWorkerSession { 
-
-        /**
-         * @see IWorkerSession.ILocal#process(org.signserver.server.log.AdminInfo, int, org.signserver.common.ProcessRequest, org.signserver.common.RequestContext)
-         */
-        ProcessResponse process(final AdminInfo info, WorkerIdentifier wi, ProcessRequest request,
-                RequestContext requestContext)
-                throws IllegalRequestException, CryptoTokenOfflineException,
-                SignServerException;
-
-    }
 }

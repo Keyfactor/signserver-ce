@@ -28,6 +28,7 @@ import org.signserver.common.SignServerException;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.ejb.interfaces.ProcessSessionRemote;
 
 /**
  * Implements ISigningAndValidation using EJB remote interface.
@@ -38,6 +39,7 @@ import org.signserver.ejb.interfaces.IWorkerSession;
 public class SigningAndValidationEJB implements ISigningAndValidation {
 
     private final IWorkerSession.IRemote signserver;
+    private final ProcessSessionRemote processSession;
 
     /**
      * Creates an instance of SigningAndValidationEJB which lookups the 
@@ -48,6 +50,8 @@ public class SigningAndValidationEJB implements ISigningAndValidation {
     public SigningAndValidationEJB() throws NamingException {
         signserver = ServiceLocator.getInstance().lookupRemote(
                 IWorkerSession.IRemote.class);
+        processSession = ServiceLocator.getInstance().lookupRemote(
+                ProcessSessionRemote.class);
     }
 
     @Override
@@ -86,6 +90,6 @@ public class SigningAndValidationEJB implements ISigningAndValidation {
 
     @Override
     public ProcessResponse process(String workerIdOrName, ProcessRequest request, RequestContext context) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
-        return signserver.process(WorkerIdentifier.createFromIdOrName(workerIdOrName), request, context);
+        return processSession.process(WorkerIdentifier.createFromIdOrName(workerIdOrName), request, context);
     }
 }

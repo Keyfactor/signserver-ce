@@ -27,10 +27,11 @@ import org.bouncycastle.tsp.TSPException;
 import org.bouncycastle.tsp.TimeStampRequest;
 import org.bouncycastle.tsp.TimeStampResponse;
 import org.signserver.common.*;
-import org.signserver.ejb.interfaces.IDispatcherWorkerSession;
+import org.signserver.ejb.interfaces.DispatcherProcessSessionLocal;
 import org.signserver.module.tsa.bc.TimeStampResponseGenerator;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.dispatchers.BaseDispatcher;
+import org.signserver.server.log.AdminInfo;
 import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.log.LogMap;
 
@@ -56,7 +57,7 @@ public class RequestedPolicyDispatcher extends BaseDispatcher {
     public static final String TSA_REQUESTEDPOLICYOID = "TSA_REQUESTEDPOLICYOID";
     
     /** Workersession. */
-    private IDispatcherWorkerSession workerSession;
+    private DispatcherProcessSessionLocal processSession;
     
     private static final String MAPPINGS = "MAPPINGS";
     private static final String DEFAULTWORKER = "DEFAULTWORKER";
@@ -106,8 +107,8 @@ public class RequestedPolicyDispatcher extends BaseDispatcher {
                         .append("useDefaultIfMismatch: ").append(useDefaultIfMismatch).toString());
             }
             
-            workerSession = ServiceLocator.getInstance().lookupLocal(
-                        IDispatcherWorkerSession.class);
+            processSession = ServiceLocator.getInstance().lookupLocal(
+                        DispatcherProcessSessionLocal.class);
         } catch (NamingException ex) {
             LOG.error("Unable to lookup worker session", ex);
         }
@@ -178,7 +179,7 @@ public class RequestedPolicyDispatcher extends BaseDispatcher {
                 }
                 ProcessRequest newRequest = new GenericServletRequest(sReq.getRequestID(), (byte[]) sReq.getRequestData(), httpRequest);
                 
-                result = (GenericSignResponse) getWorkerSession().process(toWorker, newRequest, nextContext);
+                result = (GenericSignResponse) getProcessSession().process(new AdminInfo("Client user", null, null), toWorker, newRequest, nextContext);
             }
         } catch (IOException e) {
             logMap.put(ITimeStampLogger.LOG_TSA_EXCEPTION, e.getMessage());
@@ -189,8 +190,8 @@ public class RequestedPolicyDispatcher extends BaseDispatcher {
         return result;
     }
 
-    private IDispatcherWorkerSession getWorkerSession() {
-        return workerSession;
+    private DispatcherProcessSessionLocal getProcessSession() {
+        return processSession;
     }
     
     private Map<String, WorkerIdentifier> parseMapping(String mapping) {

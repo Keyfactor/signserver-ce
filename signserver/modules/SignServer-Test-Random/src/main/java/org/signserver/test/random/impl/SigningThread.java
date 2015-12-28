@@ -6,7 +6,7 @@ package org.signserver.test.random.impl;
 
 import java.util.Random;
 import org.apache.log4j.Logger;
-import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.test.random.*;
 
 /**
@@ -19,12 +19,12 @@ public class SigningThread extends WorkerThread {
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(IncrementPropertyThread.class);
     private final WorkerSpec worker;
-    private final IWorkerSession.IRemote workerSession;
+    private final ProcessSessionRemote workerSession;
     private final Random random;
     private final Sign sign;
     private final Pauser pauser;
 
-    public SigningThread(final String name, final FailureCallback failureCallback, final Pauser pauser, final long seed, final WorkerSpec worker, final IWorkerSession.IRemote workerSession, final RequestContextPreProcessor preProcessor) {
+    public SigningThread(final String name, final FailureCallback failureCallback, final Pauser pauser, final long seed, final WorkerSpec worker, final ProcessSessionRemote workerSession, final RequestContextPreProcessor preProcessor) {
         super(name, failureCallback);
         this.pauser = pauser;
         this.random = new Random(seed);

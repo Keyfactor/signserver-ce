@@ -22,6 +22,7 @@ import org.signserver.testutils.ModulesTestCase;
 import org.junit.Before;
 import org.junit.Test;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.ejb.interfaces.ProcessSessionRemote;
 
 /**
  * Tests limits for the key usages.
@@ -45,6 +46,7 @@ public class LimitKeyUsagesTest extends ModulesTestCase {
     private static final int LIMIT = 10;
     
     private final IWorkerSession workerSession = getWorkerSession();
+    private final ProcessSessionRemote processSession = getProcessSession();
 
     @Before
     public void setUp() throws Exception {
@@ -222,7 +224,7 @@ public class LimitKeyUsagesTest extends ModulesTestCase {
                 "<root/>".getBytes());
         GenericSignResponse res;
         // Send request to dispatcher
-        res = (GenericSignResponse) workerSession.process(WORKERID_1,
+        res = (GenericSignResponse) processSession.process(WORKERID_1,
                 request, context);
         Certificate cert = res.getSignerCertificate();
         assertNotNull(cert);
@@ -236,7 +238,7 @@ public class LimitKeyUsagesTest extends ModulesTestCase {
             final GenericSignRequest request = new GenericSignRequest(1,
                     "<root/>".getBytes());
             // Send request to dispatcher
-            workerSession.process(WORKERID_1,
+            processSession.process(WORKERID_1,
                     request, context);
         } catch (CryptoTokenOfflineException ok) {
             // OK

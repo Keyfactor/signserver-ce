@@ -29,6 +29,7 @@ import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestingSecurityManager;
 import org.junit.Before;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.ejb.interfaces.ProcessSessionRemote;
 
 /**
  * Re-usable test case for archiving.
@@ -41,6 +42,7 @@ public class ArchiveTestCase extends ModulesTestCase {
     private Random random = new Random();
     
     private final IWorkerSession workerSession = getWorkerSession();
+    private final ProcessSessionRemote processSession = getProcessSession();
     
     @Before
     public void setUp() throws Exception {
@@ -68,7 +70,7 @@ public class ArchiveTestCase extends ModulesTestCase {
         }
         
         GenericSignResponse response = (GenericSignResponse) 
-                workerSession.process(new WorkerIdentifier(getSignerIdDummy1()), signRequest, 
+                processSession.process(new WorkerIdentifier(getSignerIdDummy1()), signRequest, 
                 context);
         assertNotNull("no response", response);
         
@@ -97,7 +99,7 @@ public class ArchiveTestCase extends ModulesTestCase {
         final GenericSignRequest signRequest =
                 new GenericSignRequest(371, document.getBytes());
         GenericSignResponse response = (GenericSignResponse) 
-                workerSession.process(new WorkerIdentifier(getSignerIdDummy1()), signRequest, 
+                processSession.process(new WorkerIdentifier(getSignerIdDummy1()), signRequest, 
                 new RequestContext());
         assertNotNull("no response", response);
         
@@ -120,7 +122,7 @@ public class ArchiveTestCase extends ModulesTestCase {
 
         final GenericSignRequest signRequest = new GenericSignRequest(reqid, requestBytes);
 
-        final GenericSignResponse signResponse = (GenericSignResponse) workerSession.process(
+        final GenericSignResponse signResponse = (GenericSignResponse) processSession.process(
                 new WorkerIdentifier(signerId), signRequest, new RequestContext());
         assertNotNull("no response", signResponse);
         final byte[] responseBytes = signResponse.getProcessedData();
@@ -175,7 +177,7 @@ public class ArchiveTestCase extends ModulesTestCase {
 
         final GenericSignRequest signRequest = new GenericSignRequest(reqid, requestBytes);
 
-        final GenericSignResponse signResponse = (GenericSignResponse) workerSession.process(
+        final GenericSignResponse signResponse = (GenericSignResponse) processSession.process(
                 new WorkerIdentifier(signerId), signRequest, new RequestContext());
         assertNotNull("no response", signResponse);
         final byte[] responseBytes = signResponse.getProcessedData();
@@ -230,7 +232,7 @@ public class ArchiveTestCase extends ModulesTestCase {
 
         final GenericSignRequest signRequest = new GenericSignRequest(reqid, requestBytes);
 
-        final GenericSignResponse signResponse = (GenericSignResponse) workerSession.process(
+        final GenericSignResponse signResponse = (GenericSignResponse) processSession.process(
                 new WorkerIdentifier(signerId), signRequest, new RequestContext());
         assertNotNull("no response", signResponse);
         final byte[] responseBytes = signResponse.getProcessedData();

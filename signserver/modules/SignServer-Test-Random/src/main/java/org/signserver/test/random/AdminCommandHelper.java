@@ -18,6 +18,7 @@ import org.apache.log4j.Logger;
 import org.signserver.common.ServiceLocator;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.statusrepo.IStatusRepositorySession;
 
 /**
@@ -36,6 +37,7 @@ public class AdminCommandHelper {
 
     /** The SignSession. */
     private IWorkerSession.IRemote signsession;
+    private ProcessSessionRemote processSession;
     
     /** The StatusRepositorySession. */
     private IStatusRepositorySession.IRemote statusRepository;
@@ -95,6 +97,19 @@ public class AdminCommandHelper {
             }
         }
         return signsession;
+    }
+    
+    public ProcessSessionRemote getProcessSession() throws RemoteException {
+        if (processSession == null) {
+            try {
+                processSession = ServiceLocator.getInstance().lookupRemote(
+                        ProcessSessionRemote.class);
+            } catch (NamingException e) {
+                LOG.error("Error looking up signserver interface");
+                throw new RemoteException("Error looking up signserver interface", e);
+            }
+        }
+        return processSession;
     }
     
 }

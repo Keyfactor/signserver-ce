@@ -28,6 +28,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.ejb.interfaces.ProcessSessionRemote;
 
 /**
  * Tests for the RemoteAddressAuthorizer.
@@ -45,6 +46,7 @@ public class RemoteAddressAuthorizerTest extends ModulesTestCase {
     private String localIP;
     
     private final IWorkerSession workerSession = getWorkerSession();
+    private final ProcessSessionRemote processSession = getProcessSession();
     
     @Before
     public void setUp() throws Exception {
@@ -158,7 +160,7 @@ public class RemoteAddressAuthorizerTest extends ModulesTestCase {
                 new GenericSignRequest(1, "<root/>".getBytes());
 
         try {
-            workerSession.process(new WorkerIdentifier(getSignerIdDummy1()), request, new RequestContext());
+            processSession.process(new WorkerIdentifier(getSignerIdDummy1()), request, new RequestContext());
         } catch (AuthorizationRequiredException ex) {
             fail(ex.getMessage());
         } catch (AccessDeniedException ex) {

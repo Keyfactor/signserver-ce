@@ -244,11 +244,6 @@ public class KeystoreCryptoTokenTest extends CryptoTokenTestBase {
                     }
 
                     @Override
-                    public ProcessResponse process(AdminInfo info, WorkerIdentifier workerId, ProcessRequest request, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
-                        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-                    }
-
-                    @Override
                     public void reloadConfiguration(AdminInfo adminInfo, int workerId) {
                         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
                     }
@@ -260,11 +255,6 @@ public class KeystoreCryptoTokenTest extends CryptoTokenTestBase {
 
                     @Override
                     public List<ArchiveMetadata> searchArchiveWithIds(AdminInfo adminInfo, List<String> uniqueIds, boolean includeData) throws AuthorizationDeniedException {
-                        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-                    }
-
-                    @Override
-                    public ProcessResponse process(WorkerIdentifier workerId, ProcessRequest request, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
                         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
                     }
 

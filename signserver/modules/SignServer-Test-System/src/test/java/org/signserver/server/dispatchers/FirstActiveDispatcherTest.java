@@ -40,6 +40,7 @@ import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.testutils.ModulesTestCase;
 import org.junit.Before;
 import org.junit.Test;
+import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.test.utils.builders.CryptoUtils;
 
 /**
@@ -70,6 +71,7 @@ public class FirstActiveDispatcherTest extends ModulesTestCase {
     private static final String DUMMY_AUTH_CODE = "1234";
     
     private final IWorkerSession workerSession = getWorkerSession();
+    private final ProcessSessionRemote processSession = getProcessSession();
     
     @Before
     public void setUp() throws Exception {
@@ -147,7 +149,7 @@ public class FirstActiveDispatcherTest extends ModulesTestCase {
             setDispatchedAuthorizerForAllWorkers();
             
             // Send request to dispatcher
-            res = (GenericSignResponse) workerSession.process(new WorkerIdentifier(WORKERID_DISPATCHER),
+            res = (GenericSignResponse) processSession.process(new WorkerIdentifier(WORKERID_DISPATCHER),
                     request, context);
             
             X509Certificate cert = (X509Certificate) res.getSignerCertificate();
@@ -161,7 +163,7 @@ public class FirstActiveDispatcherTest extends ModulesTestCase {
             workerSession.reloadConfiguration(WORKERID_1);
     
             // Send request to dispatcher
-            res = (GenericSignResponse) workerSession.process(new WorkerIdentifier(WORKERID_DISPATCHER),
+            res = (GenericSignResponse) processSession.process(new WorkerIdentifier(WORKERID_DISPATCHER),
                     request, context);
     
             cert = (X509Certificate) res.getSignerCertificate();
@@ -174,7 +176,7 @@ public class FirstActiveDispatcherTest extends ModulesTestCase {
             workerSession.reloadConfiguration(WORKERID_3);
     
             // Send request to dispatcher
-            res = (GenericSignResponse) workerSession.process(new WorkerIdentifier(WORKERID_DISPATCHER),
+            res = (GenericSignResponse) processSession.process(new WorkerIdentifier(WORKERID_DISPATCHER),
                     request, context);
     
             cert = (X509Certificate) res.getSignerCertificate();
@@ -187,7 +189,7 @@ public class FirstActiveDispatcherTest extends ModulesTestCase {
     
             // Send request to dispatcher
             try {
-                workerSession.process(new WorkerIdentifier(WORKERID_DISPATCHER), request, context);
+                processSession.process(new WorkerIdentifier(WORKERID_DISPATCHER), request, context);
                 fail("Should have got CryptoTokenOfflineException");
             } catch(CryptoTokenOfflineException ex) {
                 // OK
@@ -198,7 +200,7 @@ public class FirstActiveDispatcherTest extends ModulesTestCase {
             workerSession.reloadConfiguration(WORKERID_1);
     
             // Send request to dispatcher
-            res = (GenericSignResponse) workerSession.process(new WorkerIdentifier(WORKERID_DISPATCHER),
+            res = (GenericSignResponse) processSession.process(new WorkerIdentifier(WORKERID_DISPATCHER),
                     request, context);
     
             cert = (X509Certificate) res.getSignerCertificate();

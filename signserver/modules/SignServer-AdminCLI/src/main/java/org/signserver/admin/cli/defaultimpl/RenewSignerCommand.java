@@ -140,7 +140,7 @@ public class RenewSignerCommand extends AbstractAdminCommand {
             final GenericPropertiesRequest request = new GenericPropertiesRequest(requestProperties);
 
             final GenericPropertiesResponse response =
-                    (GenericPropertiesResponse) getWorkerSession().process(
+                    (GenericPropertiesResponse) getProcessSession().process(
                     renewalWorker, request, new RequestContext(true));
 
             final Properties responseProperties =

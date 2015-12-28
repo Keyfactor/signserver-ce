@@ -20,7 +20,7 @@ import org.signserver.common.GenericSignResponse;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
-import org.signserver.ejb.interfaces.IInternalWorkerSession;
+import org.signserver.ejb.interfaces.InternalProcessSessionLocal;
 import org.signserver.server.UsernamePasswordClientCredential;
 
 import java.io.IOException;
@@ -32,6 +32,7 @@ import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.WorkerIdentifier;
+import org.signserver.server.log.AdminInfo;
 
 /**
  * Fetching time-stamp tokens internally using the internal worker session.
@@ -43,12 +44,12 @@ import org.signserver.common.WorkerIdentifier;
 public class InternalTimeStampTokenFetcher {
     private static final Logger LOG = Logger.getLogger(InternalTimeStampTokenFetcher.class);
 
-    private final IInternalWorkerSession session;
+    private final InternalProcessSessionLocal session;
     private final WorkerIdentifier wi;
     private final String username;
     private final String password;
 
-    public InternalTimeStampTokenFetcher(final IInternalWorkerSession session, final WorkerIdentifier wi,
+    public InternalTimeStampTokenFetcher(final InternalProcessSessionLocal session, final WorkerIdentifier wi,
             final String username, final String password) {
         this.session = session;
         this.wi = wi;
@@ -78,7 +79,8 @@ public class InternalTimeStampTokenFetcher {
             context.put(RequestContext.CLIENT_CREDENTIAL_PASSWORD, cred);
         }
 
-        final ProcessResponse resp = session.process(wi, new GenericSignRequest(hashCode(), requestBytes), context);
+        final ProcessResponse resp = session.process(new AdminInfo("Client user", null, null), 
+                wi, new GenericSignRequest(hashCode(), requestBytes), context);
 
         if (resp instanceof GenericSignResponse) {
             final byte[] respBytes = ((GenericSignResponse) resp).getProcessedData();

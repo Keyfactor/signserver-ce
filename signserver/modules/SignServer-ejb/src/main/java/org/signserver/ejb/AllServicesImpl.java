@@ -14,10 +14,11 @@ package org.signserver.ejb;
 
 import javax.persistence.EntityManager;
 import org.cesecore.audit.log.SecurityEventsLoggerSessionLocal;
-import org.signserver.ejb.interfaces.IDispatcherWorkerSession;
+import org.signserver.ejb.interfaces.DispatcherProcessSessionLocal;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
-import org.signserver.ejb.interfaces.IInternalWorkerSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.ejb.interfaces.InternalProcessSessionLocal;
+import org.signserver.ejb.interfaces.ProcessSessionLocal;
 import org.signserver.server.ServicesImpl;
 import org.signserver.statusrepo.IStatusRepositorySession;
 
@@ -35,6 +36,7 @@ public class AllServicesImpl extends ServicesImpl {
      * Add all services implementations.
      * @param em EntityManager
      * @param workerSession IWorkerSession
+     * @param processSession ProcessSessionLocal
      * @param globalConfigurationSession IGlobalConfigurationSession
      * @param logSession SecurityEventsLoggerSessionLocal
      * @param internalWorkerSession IInternalWorkerSession
@@ -43,17 +45,19 @@ public class AllServicesImpl extends ServicesImpl {
      */
     public void putAll(final EntityManager em,
             final IWorkerSession.ILocal workerSession,
+            final ProcessSessionLocal processSession,
             final IGlobalConfigurationSession.ILocal globalConfigurationSession,
             final SecurityEventsLoggerSessionLocal logSession,
-            final IInternalWorkerSession.ILocal internalWorkerSession,
-            final IDispatcherWorkerSession.ILocal dispatcherWorkerSession,
+            final InternalProcessSessionLocal internalWorkerSession,
+            final DispatcherProcessSessionLocal dispatcherWorkerSession,
             final IStatusRepositorySession.ILocal statusRespositorySession) {
         put(EntityManager.class, em);
         put(IWorkerSession.ILocal.class, workerSession);
+        put(ProcessSessionLocal.class, processSession);
         put(IGlobalConfigurationSession.ILocal.class, globalConfigurationSession);
         put(SecurityEventsLoggerSessionLocal.class, logSession);
-        put(IInternalWorkerSession.ILocal.class, internalWorkerSession);
-        put(IDispatcherWorkerSession.ILocal.class, dispatcherWorkerSession);
+        put(InternalProcessSessionLocal.class, internalWorkerSession);
+        put(DispatcherProcessSessionLocal.class, dispatcherWorkerSession);
         put(IStatusRepositorySession.ILocal.class, statusRespositorySession);
         // Add additional services here
     }

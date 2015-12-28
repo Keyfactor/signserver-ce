@@ -49,7 +49,7 @@ import org.signserver.common.ISignRequest;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
-import org.signserver.ejb.interfaces.IInternalWorkerSession;
+import org.signserver.ejb.interfaces.InternalProcessSessionLocal;
 import org.signserver.server.UsernamePasswordClientCredential;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.archive.Archivable;
@@ -166,7 +166,7 @@ public class XAdESSigner extends BaseSigner {
             ExtendedTimeStampTokenProvider.class;
     
     private TimeStampTokenProvider internalTimeStampTokenProvider;
-    private IInternalWorkerSession workerSession;
+    private InternalProcessSessionLocal workerSession;
     
     /** 
      * Electronic signature forms defined in ETSI TS 101 903 V1.4.1 (2009-06)
@@ -588,11 +588,11 @@ public class XAdESSigner extends BaseSigner {
         }
     }
 
-    protected IInternalWorkerSession getWorkerSession() {
+    protected InternalProcessSessionLocal getWorkerSession() {
         if (workerSession == null) {
             try {
                 workerSession = ServiceLocator.getInstance().lookupLocal(
-                    IInternalWorkerSession.class);
+                    InternalProcessSessionLocal.class);
             } catch (NamingException ex) {
                 throw new RuntimeException("Unable to lookup worker session",
                         ex);

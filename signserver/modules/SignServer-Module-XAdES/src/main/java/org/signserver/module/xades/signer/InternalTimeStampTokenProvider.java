@@ -25,7 +25,7 @@ import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerIdentifier;
-import org.signserver.ejb.interfaces.IInternalWorkerSession;
+import org.signserver.ejb.interfaces.InternalProcessSessionLocal;
 import org.signserver.server.tsa.InternalTimeStampTokenFetcher;
 import xades4j.UnsupportedAlgorithmException;
 import xades4j.providers.MessageDigestEngineProvider;
@@ -57,7 +57,7 @@ public class InternalTimeStampTokenProvider implements TimeStampTokenProvider {
     private final InternalTimeStampTokenFetcher fetcher;
 
     public InternalTimeStampTokenProvider(final MessageDigestEngineProvider messageDigestProvider,
-            final IInternalWorkerSession session, final WorkerIdentifier wi, final String username, final String password) {
+            final InternalProcessSessionLocal session, final WorkerIdentifier wi, final String username, final String password) {
         this.messageDigestProvider = messageDigestProvider;
         this.fetcher = new InternalTimeStampTokenFetcher(session, wi, username, password);
     }

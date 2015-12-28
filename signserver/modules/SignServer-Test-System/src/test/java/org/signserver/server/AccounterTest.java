@@ -142,7 +142,7 @@ public class AccounterTest extends ModulesTestCase {
         
         final GenericSignRequest signRequest =
                 new GenericSignRequest(371, testDocument.getBytes());
-        final ProcessResponse process = getWorkerSession().process(new WorkerIdentifier(getSignerIdDummy1()),  signRequest, 
+        final ProcessResponse process = getProcessSession().process(new WorkerIdentifier(getSignerIdDummy1()),  signRequest, 
                 context);
         
         return process;

@@ -33,6 +33,7 @@ import org.signserver.testutils.TestingSecurityManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.signserver.common.util.PathUtil;
+import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.server.cryptotokens.KeystoreCryptoToken;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -42,6 +43,7 @@ public class CustomAuthTest extends ModulesTestCase {
     private int moduleVersion;
     
     private final IWorkerSession workerSession = getWorkerSession();
+    private final ProcessSessionRemote processSession = getProcessSession();
     private final IGlobalConfigurationSession globalSession = getGlobalSession();
 
     @Before
@@ -126,7 +128,7 @@ public class CustomAuthTest extends ModulesTestCase {
 
         GenericSignRequest req = new GenericSignRequest(reqid, requestBytes);
 
-        GenericSignResponse res = (GenericSignResponse) workerSession.process(new WorkerIdentifier(9), req, new RequestContext(cert, ip));
+        GenericSignResponse res = (GenericSignResponse) processSession.process(new WorkerIdentifier(9), req, new RequestContext(cert, ip));
 
         assertTrue(reqid == res.getRequestID());
 

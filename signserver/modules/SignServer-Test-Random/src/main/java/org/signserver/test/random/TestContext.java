@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Random;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.ejb.interfaces.IWorkerSession.IRemote;
+import org.signserver.ejb.interfaces.ProcessSessionRemote;
 
 /**
  * Holder for environment and configuration data.
@@ -27,6 +28,7 @@ public class TestContext {
     
     private Random masterRandom;
     private IWorkerSession.IRemote workerSession;
+    private ProcessSessionRemote processSession;
     private FailureCallback callback;
     private Pauser pauser;
     private List<WorkerSpec> workerGroup1;
@@ -65,6 +67,14 @@ public class TestContext {
 
     public void setWorkerSession(IRemote workerSession) {
         this.workerSession = workerSession;
+    }
+
+    public ProcessSessionRemote getProcessSession() {
+        return processSession;
+    }
+
+    public void setProcessSession(ProcessSessionRemote processSession) {
+        this.processSession = processSession;
     }
 
     public List<WorkerSpec> getWorkerGroup1() {

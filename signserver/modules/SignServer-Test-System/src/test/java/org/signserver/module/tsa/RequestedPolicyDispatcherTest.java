@@ -31,6 +31,7 @@ import org.signserver.testutils.TestingSecurityManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.ejb.interfaces.ProcessSessionRemote;
 
 /**
  * Tests for RequestedProfileDistpatcher.
@@ -67,6 +68,7 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
     private Random random = new Random(4711);
 
     private final IWorkerSession workerSession = getWorkerSession();
+    private final ProcessSessionRemote processSession = getProcessSession();
 
     @Before
     public void setUp() throws Exception {
@@ -474,7 +476,7 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
 
         GenericSignRequest signRequest = new GenericSignRequest(reqid, requestBytes);
 
-        final GenericSignResponse res = (GenericSignResponse) workerSession.process(new WorkerIdentifier(worker), signRequest, new RequestContext());
+        final GenericSignResponse res = (GenericSignResponse) processSession.process(new WorkerIdentifier(worker), signRequest, new RequestContext());
 
         assertEquals("Request ID", reqid, res.getRequestID());
 
@@ -493,7 +495,7 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
         byte[] requestBytes = request.getEncoded();
 
         GenericSignRequest signRequest = new GenericSignRequest(reqid, requestBytes);
-        final GenericSignResponse res = (GenericSignResponse) workerSession.process(new WorkerIdentifier(worker), signRequest, new RequestContext());
+        final GenericSignResponse res = (GenericSignResponse) processSession.process(new WorkerIdentifier(worker), signRequest, new RequestContext());
         return new TimeStampResponse((byte[]) res.getProcessedData());
     }
     

@@ -33,7 +33,6 @@ import org.signserver.common.AccessDeniedException;
 import org.signserver.common.AuthorizationRequiredException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
-import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.NoSuchWorkerException;
 import org.signserver.common.RequestContext;
 import org.signserver.common.RequestMetadata;
@@ -42,7 +41,9 @@ import org.signserver.common.SODSignResponse;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.ejb.interfaces.ProcessSessionLocal;
 import org.signserver.server.CredentialUtils;
+import org.signserver.server.log.AdminInfo;
 import org.signserver.server.log.LogMap;
 
 /**
@@ -85,10 +86,17 @@ public class SODProcessServlet extends AbstractProcessServlet {
     private static final String UNICODE_PROPERTY_NAME = "unicodeVersion";
     
     @EJB
-    private IWorkerSession.ILocal workersession;
+    private ProcessSessionLocal processSession;
+    
+    @EJB
+    private IWorkerSession.ILocal workerSession;
 
+    private ProcessSessionLocal getProcessSession() {
+        return processSession;
+    }
+    
     private IWorkerSession.ILocal getWorkerSession() {
-        return workersession;
+        return workerSession;
     }
 
     @Override
@@ -258,7 +266,8 @@ public class SODProcessServlet extends AbstractProcessServlet {
                 
                 addRequestMetaData(metadataHolder, metadata);
 
-                response = (SODSignResponse) getWorkerSession().process(wi, signRequest, context);
+                response = (SODSignResponse) getProcessSession().process(new AdminInfo("Client user", null, null),
+                        wi, signRequest, context);
 
                 if (response.getRequestID() != requestId) {
                     LOG.error("Response ID " + response.getRequestID()

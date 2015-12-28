@@ -158,7 +158,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
         final GenericPropertiesRequest request = new GenericPropertiesRequest(
                 reqProperties);
         GenericPropertiesResponse response
-                = (GenericPropertiesResponse) getWorkerSession().process(
+                = (GenericPropertiesResponse) getProcessSession().process(
                     new WorkerIdentifier(WORKERID), request, new RequestContext());
 
         // OK result
@@ -229,7 +229,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
         final GenericPropertiesRequest request = new GenericPropertiesRequest(
                 reqProperties);
         GenericPropertiesResponse response
-                = (GenericPropertiesResponse) getWorkerSession().process(
+                = (GenericPropertiesResponse) getProcessSession().process(
                     new WorkerIdentifier(WORKERID), request, new RequestContext());
 
         // OK result
@@ -308,7 +308,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
         final GenericPropertiesRequest request = new GenericPropertiesRequest(
                 reqProperties);
         GenericPropertiesResponse response
-                = (GenericPropertiesResponse) getWorkerSession().process(
+                = (GenericPropertiesResponse) getProcessSession().process(
                     new WorkerIdentifier(WORKERID), request, new RequestContext());
 
         // OK result
@@ -383,7 +383,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
         final GenericPropertiesRequest request = new GenericPropertiesRequest(
                 reqProperties);
         GenericPropertiesResponse response
-                = (GenericPropertiesResponse) getWorkerSession().process(
+                = (GenericPropertiesResponse) getProcessSession().process(
                     new WorkerIdentifier(WORKERID), request, new RequestContext());
 
         // OK result
@@ -444,7 +444,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
         final GenericPropertiesRequest request = new GenericPropertiesRequest(
                 reqProperties);
         GenericPropertiesResponse response
-                = (GenericPropertiesResponse) getWorkerSession().process(
+                = (GenericPropertiesResponse) getProcessSession().process(
                     new WorkerIdentifier(WORKERID), request, new RequestContext());
 
         // OK result
@@ -496,7 +496,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
         final GenericPropertiesRequest request = new GenericPropertiesRequest(
                 reqProperties);
         GenericPropertiesResponse response
-                = (GenericPropertiesResponse) getWorkerSession().process(
+                = (GenericPropertiesResponse) getProcessSession().process(
                     new WorkerIdentifier(WORKERID), request, new RequestContext());
 
         // OK result

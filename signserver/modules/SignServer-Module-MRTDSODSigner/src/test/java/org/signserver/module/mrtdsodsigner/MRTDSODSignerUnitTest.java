@@ -30,6 +30,8 @@ import org.bouncycastle.asn1.util.ASN1Dump;
 import org.bouncycastle.cert.jcajce.JcaX500NameUtil;
 import org.bouncycastle.jce.ECKeyUtil;
 import org.cesecore.keys.util.KeyTools;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SODSignRequest;
@@ -39,6 +41,7 @@ import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.module.mrtdsodsigner.jmrtd.SODFile;
 import org.signserver.test.utils.CertTools;
 import org.signserver.test.utils.mock.GlobalConfigurationSessionMock;
@@ -53,6 +56,7 @@ import org.signserver.test.utils.mock.WorkerSessionMock;
  * @author Markus Kilås
  * @version $Id$
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MRTDSODSignerUnitTest extends TestCase {
 
     /** Logger for this class. */
@@ -134,6 +138,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
     
     private IGlobalConfigurationSession.IRemote globalConfig;
     private IWorkerSession.IRemote workerSession;
+    private ProcessSessionRemote processSession;
 
     
     public MRTDSODSignerUnitTest() {
@@ -567,7 +572,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
             expectedHashes = dataGroups;
     	}
 
-        SODSignResponse res = (SODSignResponse) workerSession.process(new WorkerIdentifier(workerId),
+        SODSignResponse res = (SODSignResponse) processSession.process(new WorkerIdentifier(workerId),
                 new SODSignRequest(requestId, dataGroups),
                 getRequestContext());
         assertNotNull(res);
@@ -603,6 +608,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
         final WorkerSessionMock workerMock = new WorkerSessionMock(globalMock);
         globalConfig = globalMock;
         workerSession = workerMock;
+        processSession = workerMock;
 
 
 

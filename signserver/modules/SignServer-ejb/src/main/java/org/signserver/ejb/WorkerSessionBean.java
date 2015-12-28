@@ -44,9 +44,7 @@ import org.cesecore.util.query.QueryCriteria;
 import org.signserver.common.*;
 import org.signserver.common.KeyTestResult;
 import org.signserver.common.util.PropertiesConstants;
-import org.signserver.ejb.interfaces.IDispatcherWorkerSession;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
-import org.signserver.ejb.interfaces.IInternalWorkerSession;
 import org.signserver.ejb.interfaces.IServiceTimerSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.ejb.worker.impl.WorkerManagerSingletonBean;
@@ -63,6 +61,9 @@ import org.signserver.common.NoSuchAliasException;
 import org.signserver.server.cryptotokens.TokenSearchResults;
 import org.signserver.common.UnsupportedCryptoTokenParameter;
 import org.signserver.common.WorkerIdentifier;
+import org.signserver.ejb.interfaces.DispatcherProcessSessionLocal;
+import org.signserver.ejb.interfaces.InternalProcessSessionLocal;
+import org.signserver.ejb.interfaces.ProcessSessionLocal;
 import org.signserver.ejb.worker.impl.WorkerWithComponents;
 import org.signserver.server.entities.FileBasedKeyUsageCounterDataService;
 import org.signserver.server.entities.IKeyUsageCounterDataService;
@@ -113,7 +114,6 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     
     EntityManager em;
 
-    private WorkerProcessImpl processImpl;
     private final AllServicesImpl servicesImpl = new AllServicesImpl();
 
     @PostConstruct
@@ -132,16 +132,15 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
             archiveDataService = new ArchiveDataService(em);
             keyUsageCounterDataService = new KeyUsageCounterDataService(em);
         }
-        processImpl = new WorkerProcessImpl(em, keyUsageCounterDataService, workerManagerSession, logSession);
 
         // XXX The lookups will fail on GlassFish V2
         // When we no longer support GFv2 we can refactor this code
-        IInternalWorkerSession.ILocal internalSession = null;
-        IDispatcherWorkerSession.ILocal dispatcherSession = null;
+        InternalProcessSessionLocal internalSession = null;
+        DispatcherProcessSessionLocal dispatcherSession = null;
         IStatusRepositorySession.ILocal statusSession = null;
         try {
-            internalSession = ServiceLocator.getInstance().lookupLocal(IInternalWorkerSession.ILocal.class);
-            dispatcherSession = ServiceLocator.getInstance().lookupLocal(IDispatcherWorkerSession.ILocal.class);
+            internalSession = ServiceLocator.getInstance().lookupLocal(InternalProcessSessionLocal.class);
+            dispatcherSession = ServiceLocator.getInstance().lookupLocal(DispatcherProcessSessionLocal.class);
             statusSession = ServiceLocator.getInstance().lookupLocal(IStatusRepositorySession.ILocal.class);
         } catch (NamingException ex) {
             LOG.error("Lookup services failed. This is expected on GlassFish V2: " + ex.getExplanation());
@@ -149,34 +148,20 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
                 LOG.debug("Lookup services failed", ex);
             }
         }
-        // Add all services
-        servicesImpl.putAll(
-                em,
-                ctx.getBusinessObject(IWorkerSession.ILocal.class),
-                globalConfigurationSession,
-                logSession, 
-                internalSession, dispatcherSession, statusSession);
-    }
-
-    @Override
-    public ProcessResponse process(final WorkerIdentifier wi,
-            final ProcessRequest request, final RequestContext requestContext)
-            throws IllegalRequestException, CryptoTokenOfflineException,
-            SignServerException {
-        requestContext.setServices(servicesImpl);
-        return processImpl.process(wi, request, requestContext);
-    }
-    
-    @Override
-    public ProcessResponse process(final AdminInfo adminInfo, final WorkerIdentifier wi,
-            final ProcessRequest request, final RequestContext requestContext)
-            throws IllegalRequestException, CryptoTokenOfflineException,
-            SignServerException {
-        requestContext.setServices(servicesImpl);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(">process: " + wi);
+        try {
+            // Add all services
+            servicesImpl.putAll(
+                    em,
+                    ctx.getBusinessObject(IWorkerSession.ILocal.class),
+                    ServiceLocator.getInstance().lookupLocal(ProcessSessionLocal.class),
+                    globalConfigurationSession,
+                    logSession,
+                    internalSession, dispatcherSession, statusSession);
+        } catch (NamingException ex) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Lookup services failed", ex);
+            }
         }
-        return processImpl.process(adminInfo, wi, request, requestContext);
     }
 
     /**

@@ -28,9 +28,11 @@ import org.apache.log4j.Logger;
 import org.signserver.common.*;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.ejb.interfaces.ProcessSessionLocal;
 import org.signserver.healthcheck.HealthCheckUtils;
 import org.signserver.protocol.ws.*;
 import org.signserver.server.CredentialUtils;
+import org.signserver.server.log.AdminInfo;
 import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.log.LogMap;
 import org.signserver.server.nodb.FileBasedDatabaseManager;
@@ -59,6 +61,9 @@ public class SignServerWS implements ISignServerWS {
     
     @EJB
     private IWorkerSession.ILocal workersession;
+    
+    @EJB
+    private ProcessSessionLocal processSession;
     
     /** EntityManager is conditionally injected from ejb-jar.xml. */
     private EntityManager em;
@@ -208,7 +213,8 @@ public class SignServerWS implements ISignServerWS {
                 logMap.put(IWorkerLogger.LOG_WORKER_ID, String.valueOf(wi.getId()));
             }
 
-            ProcessResponse resp = getWorkerSession().process(wi, req, requestContext);
+            ProcessResponse resp = getProcessSession().process(new AdminInfo("Client user", null, null),
+                    wi, req, requestContext);
             ProcessResponseWS wsresp = new ProcessResponseWS();
             try {
                 wsresp.setResponseData(RequestAndResponseManager.serializeProcessResponse(resp));
@@ -307,6 +313,10 @@ public class SignServerWS implements ISignServerWS {
 
     private IWorkerSession.ILocal getWorkerSession() {
         return workersession;
+    }
+    
+    private ProcessSessionLocal getProcessSession() {
+        return processSession;
     }
 
     private IGlobalConfigurationSession.ILocal getGlobalConfigurationSession() {

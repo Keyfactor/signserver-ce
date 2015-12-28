@@ -34,6 +34,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.ejb.interfaces.ProcessSessionRemote;
 
 /**
  * Tests for XMLSigner.
@@ -63,6 +64,7 @@ public class XMLSignerTest extends ModulesTestCase {
     private static final String TESTXML1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><root><my-tag>My Data</my-tag></root>";
 
     private final IWorkerSession workerSession = getWorkerSession();
+    private final ProcessSessionRemote processSession = getProcessSession();
     private final IGlobalConfigurationSession globalSession = getGlobalSession();
     
     @Before
@@ -120,7 +122,7 @@ public class XMLSignerTest extends ModulesTestCase {
         }
 
         final GenericSignResponse res = 
-                (GenericSignResponse) workerSession.process(new WorkerIdentifier(workerId),
+                (GenericSignResponse) processSession.process(new WorkerIdentifier(workerId),
                     signRequest, new RequestContext());
         final byte[] data = res.getProcessedData();
 
@@ -286,7 +288,7 @@ public class XMLSignerTest extends ModulesTestCase {
                 new GenericSignRequest(reqid, "foo".getBytes());
 
         final GenericSignResponse res = 
-                (GenericSignResponse) workerSession.process(new WorkerIdentifier(DEBUGWORKER),
+                (GenericSignResponse) processSession.process(new WorkerIdentifier(DEBUGWORKER),
                     signRequest, new RequestContext());
         final byte[] data = res.getProcessedData();
 

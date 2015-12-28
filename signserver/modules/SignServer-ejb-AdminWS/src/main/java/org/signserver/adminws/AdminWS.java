@@ -52,6 +52,7 @@ import org.cesecore.util.query.elems.Term;
 import org.signserver.common.*;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.ejb.interfaces.ProcessSessionLocal;
 import org.signserver.server.CertificateClientCredential;
 import org.signserver.server.IClientCredential;
 import org.signserver.server.UsernamePasswordClientCredential;
@@ -89,6 +90,9 @@ public class AdminWS {
 
     @EJB
     private IWorkerSession.ILocal worker;
+    
+    @EJB
+    private ProcessSessionLocal processSession;
 
     @EJB
     private IGlobalConfigurationSession.ILocal global;
@@ -857,7 +861,7 @@ public class AdminWS {
             }
             try {
                 result.add(RequestAndResponseManager.serializeProcessResponse(
-                    worker.process(adminInfo, WorkerIdentifier.createFromIdOrName(workerIdOrName), req, requestContext)));
+                    processSession.process(adminInfo, WorkerIdentifier.createFromIdOrName(workerIdOrName), req, requestContext)));
             } catch (IOException ex) {
                 LOG.error("Error serializing process response", ex);
                 throw new IllegalRequestException(

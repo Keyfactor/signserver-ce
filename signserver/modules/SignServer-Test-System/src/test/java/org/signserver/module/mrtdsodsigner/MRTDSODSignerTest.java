@@ -32,6 +32,7 @@ import org.signserver.testutils.TestingSecurityManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.test.utils.TestCerts;
 
 /**
@@ -68,6 +69,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
     private static final String ALIAS_DEMODS1 = "demods1";
 
     private final IWorkerSession workerSession = getWorkerSession();
+    private final ProcessSessionRemote processSession = getProcessSession();
     
     @Before
     protected void setUp() throws Exception {
@@ -457,7 +459,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
             expectedHashes = dataGroups;
         }
 
-        SODSignResponse res = (SODSignResponse) workerSession.process(new WorkerIdentifier(workerId), new SODSignRequest(requestId, dataGroups), new RequestContext());
+        SODSignResponse res = (SODSignResponse) processSession.process(new WorkerIdentifier(workerId), new SODSignRequest(requestId, dataGroups), new RequestContext());
         assertNotNull(res);
         assertEquals(requestId, res.getRequestID());
         Certificate signercert = res.getSignerCertificate();

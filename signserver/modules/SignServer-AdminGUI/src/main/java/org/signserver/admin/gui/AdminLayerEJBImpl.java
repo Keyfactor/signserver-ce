@@ -95,6 +95,7 @@ import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.WorkerStatus;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.ejb.interfaces.InternalProcessSessionRemote;
 import org.signserver.server.cryptotokens.TokenEntry;
 
 /**
@@ -114,22 +115,15 @@ public class AdminLayerEJBImpl implements AdminWS {
     }
     
     private IWorkerSession.IRemote worker;
+    private InternalProcessSessionRemote processSession;
     private IGlobalConfigurationSession.IRemote global;
     private SecurityEventsAuditorSessionRemote auditor;
 
     public AdminLayerEJBImpl() throws NamingException {
-        if (worker == null) {
-            worker = ServiceLocator.getInstance().lookupRemote(
-                    IWorkerSession.IRemote.class);
-        }
-        if (global == null) {
-            global = ServiceLocator.getInstance().lookupRemote(
-                    IGlobalConfigurationSession.IRemote.class);
-        }
-        if (auditor == null) {
-            auditor = ServiceLocator.getInstance().lookupRemote(
-                    SecurityEventsAuditorSessionRemote.class, CESeCoreModules.CORE);
-        }
+        worker = ServiceLocator.getInstance().lookupRemote(IWorkerSession.IRemote.class);
+        processSession = ServiceLocator.getInstance().lookupRemote(InternalProcessSessionRemote.class);
+        global = ServiceLocator.getInstance().lookupRemote(IGlobalConfigurationSession.IRemote.class);
+        auditor = ServiceLocator.getInstance().lookupRemote(SecurityEventsAuditorSessionRemote.class, CESeCoreModules.CORE);
     }
 
     /**
@@ -1012,7 +1006,7 @@ public class AdminLayerEJBImpl implements AdminWS {
             }
             try {
                 result.add(RequestAndResponseManager.serializeProcessResponse(
-                    worker.process(WorkerIdentifier.createFromIdOrName(workerIdOrName), req, requestContext)));
+                    processSession.process(WorkerIdentifier.createFromIdOrName(workerIdOrName), req, requestContext)));
             } catch (IOException ex) {
                 LOG.error("Error serializing process response", ex);
                 final IllegalRequestException fault

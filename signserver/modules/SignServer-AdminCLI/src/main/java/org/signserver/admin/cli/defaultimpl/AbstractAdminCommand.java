@@ -20,7 +20,8 @@ import org.signserver.cli.spi.AbstractCommand;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.common.AuthorizedClient;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
-import org.signserver.ejb.interfaces.IWorkerSession.IRemote;
+import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.statusrepo.IStatusRepositorySession;
 
 /**
@@ -37,10 +38,14 @@ public abstract class AbstractAdminCommand extends AbstractCommand {
     private AdminCommandHelper delegate = new AdminCommandHelper();
 
     /**
-     * @see AdminCommandHelper#getWorkerSession()
+     * @see AdminCommandHelper#getProcessSession()
      */
-    protected IRemote getWorkerSession() throws RemoteException {
+    protected IWorkerSession.IRemote getWorkerSession() throws RemoteException {
         return delegate.getWorkerSession();
+    }
+    
+    protected ProcessSessionRemote getProcessSession() throws RemoteException {
+        return delegate.getProcessSession();
     }
 
     /**

@@ -48,6 +48,7 @@ import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.util.PathUtil;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.statusrepo.IStatusRepositorySession;
 
 /**
@@ -163,6 +164,7 @@ public class ModulesTestCase extends TestCase {
        +"++YIS2fHyu+H4Pjgnodx5zI=";
    
     private IWorkerSession.IRemote workerSession;
+    private ProcessSessionRemote processSession;
     private IGlobalConfigurationSession globalSession;
     private IStatusRepositorySession statusSession;
 
@@ -227,6 +229,18 @@ public class ModulesTestCase extends TestCase {
             }
         }
         return workerSession;
+    }
+    
+    public ProcessSessionRemote getProcessSession() {
+        if (processSession == null) {
+            try {
+                processSession = ServiceLocator.getInstance().lookupRemote(
+                    ProcessSessionRemote.class);
+            } catch (NamingException ex) {
+                fail("Could not lookup IWorkerSession: " + ex.getMessage());
+            }
+        }
+        return processSession;
     }
 
     public IGlobalConfigurationSession getGlobalSession() {
@@ -601,7 +615,7 @@ public class ModulesTestCase extends TestCase {
     public GenericSignResponse signGenericDocument(final int workerId, final byte[] data) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
         final int requestId = random.nextInt();
         final GenericSignRequest request = new GenericSignRequest(requestId, data);
-        final GenericSignResponse response = (GenericSignResponse) getWorkerSession().process(new WorkerIdentifier(workerId), request, new RequestContext());
+        final GenericSignResponse response = (GenericSignResponse) getProcessSession().process(new WorkerIdentifier(workerId), request, new RequestContext());
         assertEquals("requestId", requestId, response.getRequestID());
         Certificate signercert = response.getSignerCertificate();
         assertNotNull(signercert);

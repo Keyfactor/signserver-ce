@@ -14,18 +14,17 @@ package org.signserver.admin.cli.defaultimpl;
 
 import java.rmi.RemoteException;
 import java.util.Collection;
-import java.util.logging.Level;
 import javax.naming.NamingException;
 import org.apache.log4j.Logger;
 import org.cesecore.audit.audit.SecurityEventsAuditorSessionRemote;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.common.CESeCoreModules;
-import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.statusrepo.IStatusRepositorySession;
 
 /**
@@ -43,7 +42,8 @@ public class AdminCommandHelper {
     private IGlobalConfigurationSession.IRemote globalConfig;
 
     /** The SignSession. */
-    private IWorkerSession.IRemote signsession;
+    private ProcessSessionRemote processSession;
+    private IWorkerSession.IRemote workerSession;
     
     /** The StatusRepositorySession. */
     private IStatusRepositorySession.IRemote statusRepository;
@@ -94,17 +94,30 @@ public class AdminCommandHelper {
      * @return SignServerSession
      * @throws RemoteException in case the lookup failed
      */
-    public IWorkerSession.IRemote getWorkerSession() throws RemoteException {
-        if (signsession == null) {
+    public ProcessSessionRemote getProcessSession() throws RemoteException {
+        if (processSession == null) {
             try {
-                signsession = ServiceLocator.getInstance().lookupRemote(
+                processSession = ServiceLocator.getInstance().lookupRemote(
+                        ProcessSessionRemote.class);
+            } catch (NamingException e) {
+                LOG.error("Error looking up signserver interface");
+                throw new RemoteException("Error looking up signserver interface", e);
+            }
+        }
+        return processSession;
+    }
+    
+    public IWorkerSession.IRemote getWorkerSession() throws RemoteException {
+        if (workerSession == null) {
+            try {
+                workerSession = ServiceLocator.getInstance().lookupRemote(
                         IWorkerSession.IRemote.class);
             } catch (NamingException e) {
                 LOG.error("Error looking up signserver interface");
                 throw new RemoteException("Error looking up signserver interface", e);
             }
         }
-        return signsession;
+        return workerSession;
     }
     
     public SecurityEventsAuditorSessionRemote getAuditorSession() throws RemoteException {

@@ -28,8 +28,9 @@ import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
-import org.signserver.ejb.interfaces.IDispatcherWorkerSession;
+import org.signserver.ejb.interfaces.DispatcherProcessSessionLocal;
 import org.signserver.server.WorkerContext;
+import org.signserver.server.log.AdminInfo;
 
 /**
  * Dispatching requests to the first active worker found.
@@ -50,7 +51,7 @@ public class FirstActiveDispatcher extends BaseDispatcher {
     private static final String PROPERTY_WORKERS = "WORKERS";
 
     /** Workersession. */
-    private IDispatcherWorkerSession workerSession;
+    private DispatcherProcessSessionLocal workerSession;
 
     /** List of workers. */
     private List<String> workers = new LinkedList<String>();
@@ -73,7 +74,7 @@ public class FirstActiveDispatcher extends BaseDispatcher {
                 workers.addAll(Arrays.asList(workersValue.split(",")));
             }
             workerSession = ServiceLocator.getInstance().lookupLocal(
-                        IDispatcherWorkerSession.class);
+                        DispatcherProcessSessionLocal.class);
         } catch (NamingException ex) {
             LOG.error("Unable to lookup worker session", ex);
         }
@@ -101,7 +102,8 @@ public class FirstActiveDispatcher extends BaseDispatcher {
                     LOG.warn("Ignoring dispatching to it self (worker "
                             + name + ")");
                 } else {
-                    response = workerSession.process(new WorkerIdentifier(workerName), signRequest,
+                    response = workerSession.process(new AdminInfo("Client user", null, null), 
+                            new WorkerIdentifier(workerName), signRequest,
                             nextContext);
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Dispatched to worker: "

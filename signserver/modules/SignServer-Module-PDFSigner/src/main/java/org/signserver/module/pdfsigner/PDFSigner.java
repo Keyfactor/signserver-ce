@@ -34,7 +34,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.cesecore.util.CertTools;
 import org.signserver.common.*;
-import org.signserver.ejb.interfaces.IInternalWorkerSession;
+import org.signserver.ejb.interfaces.InternalProcessSessionLocal;
 import org.signserver.server.UsernamePasswordClientCredential;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.archive.Archivable;
@@ -155,7 +155,7 @@ public class PDFSigner extends BaseSigner {
     
     private List<String> configErrors;
 
-    private IInternalWorkerSession workerSession;
+    private InternalProcessSessionLocal workerSession;
 
     private String digestAlgorithm = DEFAULTDIGESTALGORITHM;
     private int minimumPdfVersion;
@@ -726,7 +726,7 @@ public class PDFSigner extends BaseSigner {
             if (tsaUrl != null) {
                 tsc = getTimeStampClient(params.getTsa_url(), params.getTsa_username(), params.getTsa_password());
             } else {
-                tsc = new InternalTSAClient(getWorkerSession(),
+                tsc = new InternalTSAClient(getProcessSession(),
                         WorkerIdentifier.createFromIdOrName(params.getTsa_worker()), params.getTsa_username(), params.getTsa_password());
             }
         }
@@ -816,11 +816,11 @@ public class PDFSigner extends BaseSigner {
         return fout.toByteArray();
     }
     
-    protected IInternalWorkerSession getWorkerSession() {
+    protected InternalProcessSessionLocal getProcessSession() {
         if (workerSession == null) {
             try {
                 workerSession = ServiceLocator.getInstance().lookupLocal(
-                    IInternalWorkerSession.class);
+                    InternalProcessSessionLocal.class);
             } catch (NamingException ex) {
                 throw new RuntimeException("Unable to lookup worker session",
                         ex);

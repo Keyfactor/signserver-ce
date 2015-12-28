@@ -26,7 +26,7 @@ import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 import org.apache.log4j.Logger;
 import org.signserver.common.*;
-import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.server.CredentialUtils;
 import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.log.LogMap;
@@ -51,10 +51,10 @@ public class ClientWS {
     private WebServiceContext wsContext;
     
     @EJB
-    private IWorkerSession.ILocal workersession;
+    private ProcessSessionRemote processSession;
     
-    private IWorkerSession.ILocal getWorkerSession() {
-        return workersession;
+    private ProcessSessionRemote getProcessSession() {
+        return processSession;
     }
     
     private final Random random = new Random();
@@ -77,16 +77,12 @@ public class ClientWS {
             @WebParam(name = "data") byte[] data) throws RequestFailedException, InternalServerException {
         final DataResponse result;
         try {
-            final int workerId = getWorkerId(workerIdOrName);
-            if (workerId < 1) {
-                throw new RequestFailedException("No worker with the given name could be found");
-            }
             final RequestContext requestContext = handleRequestContext(requestMetadata);
 
             final int requestId = random.nextInt();
             
             final ProcessRequest req = new GenericSignRequest(requestId, data);
-            final ProcessResponse resp = getWorkerSession().process(WorkerIdentifier.createFromIdOrName(workerIdOrName), req, requestContext);
+            final ProcessResponse resp = getProcessSession().process(WorkerIdentifier.createFromIdOrName(workerIdOrName), req, requestContext);
             
             if (resp instanceof GenericSignResponse) {
                 final GenericSignResponse signResponse = (GenericSignResponse) resp;
@@ -113,7 +109,7 @@ public class ClientWS {
                 LOG.debug("Service unvailable", ex);
             }
             throw new InternalServerException("Service unavailable: " + ex.getMessage());
-        } catch (AuthorizationRequiredException | AccessDeniedException | InvalidWorkerIdException ex) {
+        } catch (AuthorizationRequiredException | AccessDeniedException ex) {
             LOG.info("Request failed: " + ex.getMessage());
             throw new RequestFailedException(ex.getMessage());
         } catch (SignServerException ex) {
@@ -186,7 +182,7 @@ public class ClientWS {
             }
 
             final SODSignRequest req = new SODSignRequest(requestId, dataGroupsMap, ldsVersion, unicodeVersion);
-            final ProcessResponse resp = getWorkerSession().process(WorkerIdentifier.createFromIdOrName(workerIdOrName), req, requestContext);
+            final ProcessResponse resp = getProcessSession().process(WorkerIdentifier.createFromIdOrName(workerIdOrName), req, requestContext);
             
             if (resp instanceof SODSignResponse) {
                 SODSignResponse signResponse = (SODSignResponse) resp; 
@@ -242,17 +238,6 @@ public class ClientWS {
             return certificates[0];
         }
         return null;
-    }
-    
-    private int getWorkerId(String workerIdOrName) throws InvalidWorkerIdException {
-        final int retval;
-
-        if (workerIdOrName.substring(0, 1).matches("\\d")) {
-            retval = Integer.parseInt(workerIdOrName);
-        } else {
-            retval = getWorkerSession().getWorkerId(workerIdOrName);
-        }
-        return retval;
     }
 
     private RequestContext handleRequestContext(final List<Metadata> requestMetadata) {

@@ -35,8 +35,9 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.apache.log4j.Logger;
 import org.signserver.common.*;
-import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.ejb.interfaces.ProcessSessionLocal;
 import org.signserver.server.WorkerContext;
+import org.signserver.server.log.AdminInfo;
 import org.signserver.server.validators.BaseValidator;
 import org.signserver.validationservice.common.ValidateRequest;
 import org.signserver.validationservice.common.ValidateResponse;
@@ -76,18 +77,12 @@ public class XMLValidator extends BaseValidator {
     static final String PROP_STRIPSIGNATURE = "STRIPSIGNATURE";
     
     /** Worker session. */
-    private IWorkerSession workersession;
-    
-    /** ID of validation service worker used for validating certificates. */
-    private transient int validationServiceWorkerId;
+    private ProcessSessionLocal processSession;
 
     @Override
     public void init(final int workerId, final WorkerConfig config,
             final WorkerContext workerContext, final EntityManager workerEM) {
         super.init(workerId, config, workerContext, workerEM);
-
-        getWorkerSession();
-        getValidationServiceWorkerId();
     }
 
     @Override
@@ -204,9 +199,8 @@ public class XMLValidator extends BaseValidator {
             }
 
             try {
-                final int validationWorkerId = getValidationServiceWorkerId();
-                LOG.info("Requesting certificate validation from worker: " + validationWorkerId);
-                response = getWorkerSession().process(new WorkerIdentifier(validationWorkerId), vr, new RequestContext());
+                LOG.info("Requesting certificate validation from worker: " + PROP_VALIDATIONSERVICEWORKER);
+                response = getProcessSession().process(new AdminInfo("Client user", null, null), WorkerIdentifier.createFromIdOrName(PROP_VALIDATIONSERVICEWORKER), vr, new RequestContext());
                 LOG.info("ProcessResponse: " + response);
 
                 if (response == null) {
@@ -257,23 +251,6 @@ public class XMLValidator extends BaseValidator {
         return new GenericValidationResponse(requestId, validSignature && validCertificate, vresponse, processedBytes);
     }
 
-    private int getValidationServiceWorkerId() {
-        if (validationServiceWorkerId < 1) {
-            try {
-                validationServiceWorkerId = getWorkerSession().getWorkerId(
-                        config.getProperties().getProperty(PROP_VALIDATIONSERVICEWORKER));
-                LOG.info("XMLValidator[" + workerId + "] "
-                        + "Will use validation service worker: " + validationServiceWorkerId);
-            } catch (InvalidWorkerIdException ex) {
-                LOG.warn("XMLValidator[" + workerId + "] "
-                    + "Could not find worker for property "
-                    + PROP_VALIDATIONSERVICEWORKER + ": "
-                    + config.getProperties().getProperty(PROP_VALIDATIONSERVICEWORKER));
-            }
-        }
-        return validationServiceWorkerId;
-    }
-
     private byte[] unwrapSignature(Document doc, String tagName) throws TransformerConfigurationException, TransformerException {
 
         // Remove Signature element
@@ -296,16 +273,16 @@ public class XMLValidator extends BaseValidator {
     /**
      * @return The worker session. Can be overridden for instance by unit tests.
      */
-    protected IWorkerSession getWorkerSession() {
-        if (workersession == null) {
+    protected ProcessSessionLocal getProcessSession() {
+        if (processSession == null) {
             try {
-                workersession = ServiceLocator.getInstance().lookupLocal(
-                        IWorkerSession.class);
+                processSession = ServiceLocator.getInstance().lookupLocal(
+                        ProcessSessionLocal.class);
             } catch (NamingException ne) {
                 throw new RuntimeException(ne);
             }
         }
-        return workersession;
+        return processSession;
     }
 
 }

@@ -27,6 +27,7 @@ import org.signserver.common.GenericSignResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.testutils.ModulesTestCase;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -58,6 +59,7 @@ public class XAdESSignerTest extends ModulesTestCase {
     private static final String TS_NAME = "TestTimeStampSigner";
 
     private final IWorkerSession workerSession = getWorkerSession();
+    private final ProcessSessionRemote processSession = getProcessSession();
 
     @Test
     public void testBasicSigningXAdESFormT() throws Exception {
@@ -75,7 +77,7 @@ public class XAdESSignerTest extends ModulesTestCase {
             RequestContext requestContext = new RequestContext();
             requestContext.put(RequestContext.TRANSACTION_ID, "0000-100-1");
             GenericSignRequest request = new GenericSignRequest(100, "<test100/>".getBytes("UTF-8"));
-            GenericSignResponse response = (GenericSignResponse) workerSession.process(new WorkerIdentifier(WORKER_ID), request, requestContext);
+            GenericSignResponse response = (GenericSignResponse) processSession.process(new WorkerIdentifier(WORKER_ID), request, requestContext);
 
             byte[] data = response.getProcessedData();
             final String signedXml = new String(data);

@@ -45,6 +45,7 @@ import org.junit.Test;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.util.PathUtil;
+import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.testutils.ModulesTestCase;
 
 /**
@@ -58,6 +59,8 @@ public class CRLValidatorTest extends ModulesTestCase {
 
     private static IGlobalConfigurationSession.IRemote gCSession;
     private static IWorkerSession.IRemote sSSession;
+    private final ProcessSessionRemote processSession = getProcessSession();
+
     private File signServerHome;
     /** RootCA1 */
     private static X509Certificate certRootCA1;
@@ -226,7 +229,7 @@ public class CRLValidatorTest extends ModulesTestCase {
     @Test
     public void test01NotRevoked() throws Exception {
         ValidateRequest req = new ValidateRequest(certEndEntity1, ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
-        ValidateResponse res = (ValidateResponse) sSSession.process(new WorkerIdentifier(15), req, new RequestContext());
+        ValidateResponse res = (ValidateResponse) processSession.process(new WorkerIdentifier(15), req, new RequestContext());
 
         Validation val = res.getValidation();
         assertTrue(val != null);
@@ -246,7 +249,7 @@ public class CRLValidatorTest extends ModulesTestCase {
     @Test
     public void test02Revoked() throws Exception {
         ValidateRequest req = new ValidateRequest(certEndEntity2, ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
-        ValidateResponse res = (ValidateResponse) sSSession.process(new WorkerIdentifier(15), req, new RequestContext());
+        ValidateResponse res = (ValidateResponse) processSession.process(new WorkerIdentifier(15), req, new RequestContext());
 
         Validation val = res.getValidation();
         assertTrue(val != null);
@@ -270,7 +273,7 @@ public class CRLValidatorTest extends ModulesTestCase {
     @Test
     public void test03NotRevokedDPWithIssuer() throws Exception {
         ValidateRequest req = new ValidateRequest(certEndEntity3, ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
-        ValidateResponse res = (ValidateResponse) sSSession.process(new WorkerIdentifier(15), req, new RequestContext());
+        ValidateResponse res = (ValidateResponse) processSession.process(new WorkerIdentifier(15), req, new RequestContext());
 
         Validation val = res.getValidation();
         assertTrue(val != null);
@@ -290,7 +293,7 @@ public class CRLValidatorTest extends ModulesTestCase {
     @Test
     public void test04RevokedDPWithIssuer() throws Exception {
         ValidateRequest req = new ValidateRequest(certEndEntity4, ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
-        ValidateResponse res = (ValidateResponse) sSSession.process(new WorkerIdentifier(15), req, new RequestContext());
+        ValidateResponse res = (ValidateResponse) processSession.process(new WorkerIdentifier(15), req, new RequestContext());
 
         Validation val = res.getValidation();
         assertTrue(val != null);
@@ -313,7 +316,7 @@ public class CRLValidatorTest extends ModulesTestCase {
     @Test
     public void test05Expired() throws Exception {
         ValidateRequest req = new ValidateRequest(certEndEntity5Expired, ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
-        ValidateResponse res = (ValidateResponse) sSSession.process(new WorkerIdentifier(15), req, new RequestContext());
+        ValidateResponse res = (ValidateResponse) processSession.process(new WorkerIdentifier(15), req, new RequestContext());
 
         Validation val = res.getValidation();
         assertTrue(val != null);
@@ -332,7 +335,7 @@ public class CRLValidatorTest extends ModulesTestCase {
     @Test
     public void test06NotYetValid() throws Exception {
         ValidateRequest req = new ValidateRequest(certEndEntity6NotYetValid, ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
-        ValidateResponse res = (ValidateResponse) sSSession.process(new WorkerIdentifier(15), req, new RequestContext());
+        ValidateResponse res = (ValidateResponse) processSession.process(new WorkerIdentifier(15), req, new RequestContext());
 
         Validation val = res.getValidation();
         assertTrue(val != null);
@@ -351,7 +354,7 @@ public class CRLValidatorTest extends ModulesTestCase {
     @Test
     public void test07WrongIssuer() throws Exception {
         ValidateRequest req = new ValidateRequest(certEndEntity7WrongIssuer, ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
-        ValidateResponse res = (ValidateResponse) sSSession.process(new WorkerIdentifier(15), req, new RequestContext());
+        ValidateResponse res = (ValidateResponse) processSession.process(new WorkerIdentifier(15), req, new RequestContext());
 
         Validation val = res.getValidation();
         assertTrue(val != null);
@@ -372,7 +375,7 @@ public class CRLValidatorTest extends ModulesTestCase {
         // First: test one certificate that has CERTPURPOSE_ELECTRONIC_SIGNATURE and see that it works
         {
             ValidateRequest req = new ValidateRequest(certEndEntity8KeyUsageSig, ValidationServiceConstants.CERTPURPOSE_ELECTRONIC_SIGNATURE);
-            ValidateResponse res = (ValidateResponse) sSSession.process(new WorkerIdentifier(15), req, new RequestContext());
+            ValidateResponse res = (ValidateResponse) processSession.process(new WorkerIdentifier(15), req, new RequestContext());
 
             Validation val = res.getValidation();
             assertTrue(val != null);
@@ -387,7 +390,7 @@ public class CRLValidatorTest extends ModulesTestCase {
         // Second: test one certificate without CERTPURPOSE_ELECTRONIC_SIGNATURE and see that it fails
         {
             ValidateRequest req = new ValidateRequest(certEndEntity1, ValidationServiceConstants.CERTPURPOSE_ELECTRONIC_SIGNATURE);
-            ValidateResponse res = (ValidateResponse) sSSession.process(new WorkerIdentifier(15), req, new RequestContext());
+            ValidateResponse res = (ValidateResponse) processSession.process(new WorkerIdentifier(15), req, new RequestContext());
 
             Validation val = res.getValidation();
             assertTrue(val != null);
@@ -414,7 +417,7 @@ public class CRLValidatorTest extends ModulesTestCase {
         sSSession.reloadConfiguration(15);
 
         ValidateRequest req = new ValidateRequest(certEndEntity3, ValidationServiceConstants.CERTPURPOSE_NO_PURPOSE);
-        ValidateResponse res = (ValidateResponse) sSSession.process(new WorkerIdentifier(15), req, new RequestContext());
+        ValidateResponse res = (ValidateResponse) processSession.process(new WorkerIdentifier(15), req, new RequestContext());
 
         Validation val = res.getValidation();
         assertNotNull(val);

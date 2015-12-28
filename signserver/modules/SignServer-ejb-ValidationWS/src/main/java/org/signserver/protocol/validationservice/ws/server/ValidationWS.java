@@ -32,12 +32,13 @@ import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Base64;
 import org.cesecore.util.CertTools;
 import org.signserver.common.*;
-import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.ejb.interfaces.ProcessSessionLocal;
 import org.signserver.healthcheck.HealthCheckUtils;
 import org.signserver.protocol.validationservice.ws.IValidationWS;
 import org.signserver.protocol.validationservice.ws.ValidationResponse;
 import org.signserver.server.CredentialUtils;
+import org.signserver.server.log.AdminInfo;
 import org.signserver.server.nodb.FileBasedDatabaseManager;
 import org.signserver.validationservice.common.ValidateRequest;
 import org.signserver.validationservice.common.ValidateResponse;
@@ -64,8 +65,8 @@ public class ValidationWS implements IValidationWS {
     private IWorkerSession.ILocal signserversession;
     
     @EJB
-    private IGlobalConfigurationSession.ILocal globalconfigsession;
-    
+    private ProcessSessionLocal processSession;
+
     /** EntityManager is conditionally injected from ejb-jar.xml. */
     private EntityManager em;
 
@@ -102,7 +103,7 @@ public class ValidationWS implements IValidationWS {
             MessageContext msgContext = wsContext.getMessageContext();
             CredentialUtils.addToRequestContext(context, (HttpServletRequest) msgContext.get(MessageContext.SERVLET_REQUEST), clientCertificate);
         
-            res = (ValidateResponse) getWorkerSession().process(WorkerIdentifier.createFromIdOrName(serviceNameOrId), req, context);
+            res = (ValidateResponse) getProcessSession().process(new AdminInfo("Client user", null, null), WorkerIdentifier.createFromIdOrName(serviceNameOrId), req, context);
         } catch (CertificateEncodingException e) {
             throw new IllegalRequestException("Error in request, the requested certificate seem to have a unsupported encoding : " + e.getMessage());
         } catch (CryptoTokenOfflineException e) {
@@ -238,8 +239,9 @@ public class ValidationWS implements IValidationWS {
     private IWorkerSession.ILocal getWorkerSession() {
         return signserversession;
     }
-
-    private IGlobalConfigurationSession.ILocal getGlobalConfigurationSession() {
-        return globalconfigsession;
+    
+    private ProcessSessionLocal getProcessSession() {
+        return processSession;
     }
+
 }

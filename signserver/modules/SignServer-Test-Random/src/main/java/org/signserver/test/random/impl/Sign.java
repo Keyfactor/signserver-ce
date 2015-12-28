@@ -43,6 +43,7 @@ import org.bouncycastle.asn1.cmp.PKIStatus;
 import org.bouncycastle.tsp.*;
 import org.signserver.common.*;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.test.random.FailedException;
 import org.signserver.test.random.Task;
 import org.signserver.test.random.WorkerSpec;
@@ -62,14 +63,14 @@ public class Sign implements Task {
     private static final Logger LOG = Logger.getLogger(Sign.class);
     
     private final WorkerSpec signer;
-    private final IWorkerSession.IRemote workerSession;
+    private final ProcessSessionRemote workerSession;
     private final Random random;
     private int counter;    
     private final RequestContextPreProcessor preProcessor;
     
     private static final String TESTXML1 = "<doc>Some sample XML to sign</doc>";
 
-    public Sign(final WorkerSpec signerId, final IWorkerSession.IRemote workerSession, final Random random, final RequestContextPreProcessor preProcessor) {
+    public Sign(final WorkerSpec signerId, final ProcessSessionRemote workerSession, final Random random, final RequestContextPreProcessor preProcessor) {
         this.signer = signerId;
         this.workerSession = workerSession;
         this.random = random;

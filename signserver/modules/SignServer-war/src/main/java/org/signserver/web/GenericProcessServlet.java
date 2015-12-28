@@ -37,6 +37,7 @@ import org.cesecore.util.CertTools;
 import org.signserver.common.*;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.ejb.interfaces.ProcessSessionLocal;
 import org.signserver.server.CredentialUtils;
 import org.signserver.server.log.AdminInfo;
 import org.signserver.server.log.IWorkerLogger;
@@ -86,22 +87,10 @@ public class GenericProcessServlet extends AbstractProcessServlet {
     private final Random random = new Random();
 
     @EJB
-    private IWorkerSession.ILocal workersession;
+    private ProcessSessionLocal processSession;
     
     @EJB
     private IGlobalConfigurationSession.ILocal globalSession;
-
-    private IWorkerSession.ILocal getWorkerSession() {
-        if (workersession == null) {
-            try {
-                Context context = new InitialContext();
-                workersession = (org.signserver.ejb.interfaces.IWorkerSession.ILocal) context.lookup(IWorkerSession.ILocal.JNDI_NAME);
-            } catch (NamingException e) {
-                LOG.error(e);
-            }
-        }
-        return workersession;
-    }
 
     /**
      * Handles http post.
@@ -456,7 +445,7 @@ public class GenericProcessServlet extends AbstractProcessServlet {
             switch (processType) {
             case signDocument:
                 final GenericServletResponse servletResponse =
-                    (GenericServletResponse) getWorkerSession().process(new AdminInfo("Client user", null, null), wi,
+                    (GenericServletResponse) processSession.process(new AdminInfo("Client user", null, null), wi,
                         new GenericServletRequest(requestId, data, req), context);
                
                 if (servletResponse.getRequestID() != requestId) { // TODO: Is this possible to get at all?
@@ -479,7 +468,7 @@ public class GenericProcessServlet extends AbstractProcessServlet {
                 break;
             case validateDocument:
                 final GenericValidationResponse validationResponse =
-                    (GenericValidationResponse) getWorkerSession().process(new AdminInfo("Client user", null, null), wi, 
+                    (GenericValidationResponse) processSession.process(new AdminInfo("Client user", null, null), wi, 
                             new GenericValidationRequest(requestId, data), context);
                     
                 responseText = validationResponse.isValid() ? "VALID" : "INVALID";
@@ -503,7 +492,7 @@ public class GenericProcessServlet extends AbstractProcessServlet {
                 
                     final String certPurposes = req.getParameter(CERT_PURPOSES_PROPERTY_NAME);
                     final ValidateResponse certValidationResponse =
-                            (ValidateResponse) getWorkerSession().process(new AdminInfo("Client user", null, null), wi,
+                            (ValidateResponse) processSession.process(new AdminInfo("Client user", null, null), wi,
                                     new ValidateRequest(cert, certPurposes), context);
                     final Validation validation = certValidationResponse.getValidation();
                     

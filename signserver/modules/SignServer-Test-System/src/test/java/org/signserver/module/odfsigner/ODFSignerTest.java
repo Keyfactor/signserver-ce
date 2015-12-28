@@ -25,6 +25,7 @@ import org.signserver.common.*;
 import org.signserver.testutils.ModulesTestCase;
 import org.junit.Test;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.ejb.interfaces.ProcessSessionRemote;
 
 /**
  * Test for odfsigner. Worker ID of 5678 is hard coded here and used from
@@ -40,6 +41,7 @@ import org.signserver.ejb.interfaces.IWorkerSession;
 public class ODFSignerTest extends ModulesTestCase {
 
     private final IWorkerSession workerSession = getWorkerSession();
+    private final ProcessSessionRemote processSession = getProcessSession();
     
     /**
      * WORKERID used in this test case as defined in
@@ -68,7 +70,7 @@ public class ODFSignerTest extends ModulesTestCase {
 
         GenericSignRequest signRequest = new GenericSignRequest(reqid, Base64.decode(TEST_ODF_DOC.getBytes()));
 
-        GenericSignResponse res = (GenericSignResponse) workerSession.process(
+        GenericSignResponse res = (GenericSignResponse) processSession.process(
                 new WorkerIdentifier(WORKERID), signRequest, new RequestContext());
         byte[] data = res.getProcessedData();
 

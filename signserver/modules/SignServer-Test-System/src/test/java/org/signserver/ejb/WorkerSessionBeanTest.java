@@ -27,6 +27,7 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.ejb.interfaces.ProcessSessionRemote;
 
 /**
  * TODO: Document me!
@@ -37,6 +38,7 @@ import org.signserver.ejb.interfaces.IWorkerSession;
 public class WorkerSessionBeanTest extends ModulesTestCase {
 
     private final IWorkerSession workerSession = getWorkerSession();
+    private final ProcessSessionRemote processSession = getProcessSession();
     
     /**
      * Set up the test case
@@ -82,7 +84,7 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
         signrequests.add(signreq2);
 
         MRTDSignRequest req = new MRTDSignRequest(reqid, signrequests);
-        MRTDSignResponse res = (MRTDSignResponse) workerSession.process(new WorkerIdentifier(3), req, new RequestContext());
+        MRTDSignResponse res = (MRTDSignResponse) processSession.process(new WorkerIdentifier(3), req, new RequestContext());
 
         assertTrue(reqid == res.getRequestID());
 
@@ -252,7 +254,7 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
         
         // First test that there isn't anything wrong with the worker before
         GenericSignRequest request = new GenericSignRequest(123, "<test/>".getBytes("UTF-8"));
-        workerSession.process(new WorkerIdentifier(getSignerIdDummy1()), request, new RequestContext());
+        processSession.process(new WorkerIdentifier(getSignerIdDummy1()), request, new RequestContext());
         
         try {
             workerSession.setWorkerProperty(getSignerIdDummy1(), "DISABLED", "TRUE");
@@ -260,7 +262,7 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
             
             // Test signing
             request = new GenericSignRequest(124, "<test/>".getBytes("UTF-8"));
-            workerSession.process(new WorkerIdentifier(getSignerIdDummy1()), request, new RequestContext());
+            processSession.process(new WorkerIdentifier(getSignerIdDummy1()), request, new RequestContext());
             fail("Request should have failed as worker is disabled");
         } catch (CryptoTokenOfflineException ex) { // OK
             assertTrue("message should say that worker is disabled: " + ex.getMessage(), ex.getMessage().contains("disabled") || ex.getMessage().contains("Disabled"));

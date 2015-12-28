@@ -72,6 +72,7 @@ import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.util.PathUtil;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.test.utils.builders.CryptoUtils;
 import org.signserver.testutils.ModulesTestCase;
 
@@ -121,6 +122,7 @@ public class P11SignTest extends ModulesTestCase {
     private final File ooxmlSampleFile;
 
     private final IWorkerSession workerSession = getWorkerSession();
+    private final ProcessSessionRemote processSession = getProcessSession();
     private final IGlobalConfigurationSession globalSession = getGlobalSession();
     
     public P11SignTest() throws FileNotFoundException {
@@ -398,7 +400,7 @@ public class P11SignTest extends ModulesTestCase {
         TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
         byte[] requestBytes = timeStampRequest.getEncoded();
         GenericSignRequest signRequest = new GenericSignRequest(567, requestBytes);
-        final GenericSignResponse res = (GenericSignResponse) workerSession.process(new WorkerIdentifier(WORKER_TSA), signRequest, new RequestContext());
+        final GenericSignResponse res = (GenericSignResponse) processSession.process(new WorkerIdentifier(WORKER_TSA), signRequest, new RequestContext());
         Certificate signercert = res.getSignerCertificate();
         assertNotNull(signercert);
         final TimeStampResponse timeStampResponse = new TimeStampResponse((byte[]) res.getProcessedData());
@@ -474,7 +476,7 @@ public class P11SignTest extends ModulesTestCase {
         dgs.put(2, "Yy==".getBytes());
         dgs.put(3, "Yy==".getBytes());
         final SODSignRequest signRequest = new SODSignRequest(233, dgs);
-        final SODSignResponse res = (SODSignResponse) workerSession.process(new WorkerIdentifier(workerId), signRequest, new RequestContext());
+        final SODSignResponse res = (SODSignResponse) processSession.process(new WorkerIdentifier(workerId), signRequest, new RequestContext());
         Certificate signercert = res.getSignerCertificate();
         assertNotNull(signercert);
     }
@@ -830,7 +832,7 @@ public class P11SignTest extends ModulesTestCase {
 
         // Test signing
         GenericSignRequest signRequest = new GenericSignRequest(678, MSAUTHCODE_REQUEST_DATA.getBytes());
-        final GenericSignResponse res = (GenericSignResponse) workerSession.process(new WorkerIdentifier(workerId), signRequest, new RequestContext());
+        final GenericSignResponse res = (GenericSignResponse) processSession.process(new WorkerIdentifier(workerId), signRequest, new RequestContext());
         Certificate signercert = res.getSignerCertificate();
         assertNotNull(signercert);
 

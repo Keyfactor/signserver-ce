@@ -57,23 +57,6 @@ import org.signserver.server.log.AdminInfo;
 public interface IWorkerSession {
 
     /**
-     * The Worker Beans main method. Takes  requests processes them
-     * and returns a response.
-     *
-     * @param wi id of worker who should process the request
-     * @param request the request
-     * @param requestContext context of the request
-     * @throws CryptoTokenOfflineException if the signers token isn't activated.
-     * @throws IllegalRequestException if illegal request is sent to the method
-     * @throws SignServerException if some other error occurred server side
-     * during process.
-     */
-    ProcessResponse process(WorkerIdentifier wi, ProcessRequest request,
-            RequestContext requestContext)
-            throws IllegalRequestException, CryptoTokenOfflineException,
-            SignServerException;
-
-    /**
      * Returns the current status of a processalbe.
      *
      * Should be used with the cmd-line status command.
@@ -756,24 +739,6 @@ public interface IWorkerSession {
                 List<byte[]> signerCerts, String alias, char[] authenticationCode)
                 throws CryptoTokenOfflineException, CertificateException,
                        OperationUnsupportedException;
-
-        /**
-         * The Worker Beans main method. Takes  requests processes them
-         * and returns a response.
-         *
-         * @param adminInfo Administrator information
-         * @param wi id of worker who should process the request
-         * @param request the request
-         * @param requestContext context of the request
-         * @throws CryptoTokenOfflineException if the signers token isn't activated.
-         * @throws IllegalRequestException if illegal request is sent to the method
-         * @throws SignServerException if some other error occurred server side
-         * during process.
-         */
-        ProcessResponse process(final AdminInfo info, WorkerIdentifier wi, ProcessRequest request,
-                RequestContext requestContext)
-                throws IllegalRequestException, CryptoTokenOfflineException,
-                SignServerException;
         
         /**
          * Method used when a configuration have been updated. And should be

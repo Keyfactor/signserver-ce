@@ -41,6 +41,8 @@ import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.WorkerStatus;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.ejb.interfaces.ProcessSessionLocal;
+import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.server.IProcessable;
 import org.signserver.server.SignServerContext;
 import org.signserver.server.cryptotokens.TokenSearchResults;
@@ -53,7 +55,7 @@ import org.signserver.server.log.LogMap;
  * $version $Id$
  */
 public class WorkerSessionMock implements IWorkerSession.ILocal,
-        IWorkerSession.IRemote {
+        IWorkerSession.IRemote, ProcessSessionLocal, ProcessSessionRemote {
 
     private static final Logger LOG = Logger.getLogger(WorkerSessionMock.class);
     

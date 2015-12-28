@@ -29,10 +29,12 @@ import org.signserver.common.RequestContext;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerIdentifier;
-import org.signserver.ejb.interfaces.IDispatcherWorkerSession;
+import org.signserver.ejb.interfaces.DispatcherProcessSessionLocal;
+import org.signserver.ejb.interfaces.DispatcherProcessSessionRemote;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
-import org.signserver.ejb.interfaces.IInternalWorkerSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.ejb.interfaces.InternalProcessSessionLocal;
+import org.signserver.ejb.interfaces.ProcessSessionLocal;
 import org.signserver.ejb.worker.impl.WorkerManagerSingletonBean;
 import org.signserver.server.entities.FileBasedKeyUsageCounterDataService;
 import org.signserver.server.entities.IKeyUsageCounterDataService;
@@ -43,17 +45,17 @@ import org.signserver.statusrepo.IStatusRepositorySession;
 
 /**
  * Session bean implementing the process and getWorkerId methods in the same way
- * as the WorkerSessionBean. This bean is intended to be used from workers and 
- * not directly through any of the client interfaces.
+ * as the WorkerSessionBean. This bean is intended to be used from dispatchers 
+ * and not directly through any of the client interfaces.
  *
  * @author Markus Kilås
  * @version $Id$
  */
 @Stateless
-public class InternalWorkerSessionBean implements IInternalWorkerSession.ILocal, IInternalWorkerSession.IRemote {
+public class DispatcherProcessSessionBean implements DispatcherProcessSessionLocal, DispatcherProcessSessionRemote {
 
     /** Log4j instance for this class. */
-    private static final Logger LOG = Logger.getLogger(InternalWorkerSessionBean.class);
+    private static final Logger LOG = Logger.getLogger(DispatcherProcessSessionBean.class);
 
     private IKeyUsageCounterDataService keyUsageCounterDataService;
 
@@ -68,7 +70,7 @@ public class InternalWorkerSessionBean implements IInternalWorkerSession.ILocal,
 
     /** Injected by ejb-jar.xml. */
     EntityManager em;
-    
+
     @Resource
     private SessionContext ctx;
 
@@ -89,15 +91,15 @@ public class InternalWorkerSessionBean implements IInternalWorkerSession.ILocal,
             keyUsageCounterDataService = new KeyUsageCounterDataService(em);
         }
         processImpl = new WorkerProcessImpl(em, keyUsageCounterDataService, workerManagerSession, logSession);
-
+        
         // XXX The lookups will fail on GlassFish V2
         // When we no longer support GFv2 we can refactor this code
-        IWorkerSession.ILocal workerSession = null;
-        IDispatcherWorkerSession.ILocal dispatcherSession = null;
+        InternalProcessSessionLocal internalSession = null;
+        ProcessSessionLocal processSession = null;
         IStatusRepositorySession.ILocal statusSession = null;
         try {
-            workerSession = ServiceLocator.getInstance().lookupLocal(IWorkerSession.ILocal.class);
-            dispatcherSession = ServiceLocator.getInstance().lookupLocal(IDispatcherWorkerSession.ILocal.class);
+            internalSession = ServiceLocator.getInstance().lookupLocal(InternalProcessSessionLocal.class);
+            processSession = ServiceLocator.getInstance().lookupLocal(ProcessSessionLocal.class);
             statusSession = ServiceLocator.getInstance().lookupLocal(IStatusRepositorySession.ILocal.class);
         } catch (NamingException ex) {
             LOG.error("Lookup services failed. This is expected on GlassFish V2: " + ex.getExplanation());
@@ -105,13 +107,20 @@ public class InternalWorkerSessionBean implements IInternalWorkerSession.ILocal,
                 LOG.debug("Lookup services failed", ex);
             }
         }
-        // Add all services
-        servicesImpl.putAll(
-                em,
-                workerSession,
-                globalConfigurationSession,
-                logSession, 
-                ctx.getBusinessObject(IInternalWorkerSession.ILocal.class), dispatcherSession, statusSession);
+        try {
+            // Add all services
+            servicesImpl.putAll(
+                    em,
+                    ServiceLocator.getInstance().lookupLocal(IWorkerSession.ILocal.class),
+                    processSession,
+                    globalConfigurationSession,
+                    logSession,
+                    internalSession, ctx.getBusinessObject(DispatcherProcessSessionLocal.class), statusSession);
+        } catch (NamingException ex) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Lookup services failed", ex);
+            }
+        }
     }
 
     @Override
@@ -132,13 +141,13 @@ public class InternalWorkerSessionBean implements IInternalWorkerSession.ILocal,
         return processImpl.process(adminInfo, wi, request, requestContext);
     }
 
-    /*@Override
-    public int getWorkerId(String workerName) throws InvalidWorkerIdException {
-        try {
-            return processImpl.getWorkerId(workerName);
-        } catch (NoSuchWorkerException ex) {
-            throw new InvalidWorkerIdException(ex.getMessage());
-        }
-    }*/
+//    @Override
+//    public int getWorkerId(String workerName) throws InvalidWorkerIdException {
+//        try {
+//            return processImpl.getWorkerId(workerName);
+//        } catch (NoSuchWorkerException ex) {
+//            throw new InvalidWorkerIdException(ex.getMessage());
+//        }
+//    }
 
 }

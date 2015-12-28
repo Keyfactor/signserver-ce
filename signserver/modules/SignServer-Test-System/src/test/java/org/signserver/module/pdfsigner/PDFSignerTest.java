@@ -34,6 +34,7 @@ import org.signserver.testutils.TestingSecurityManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.ejb.interfaces.ProcessSessionRemote;
 
 /**
  * Unit tests for the PDFSigner.
@@ -54,6 +55,7 @@ public class PDFSignerTest extends ModulesTestCase {
     private static final String TESTPDF_SIGNED = "pdf/sample-signed.pdf";
 
     private final IWorkerSession workerSession = getWorkerSession();
+    private final ProcessSessionRemote processSession = getProcessSession();
 
     @Before
     public void setUp() throws Exception {
@@ -519,7 +521,7 @@ public class PDFSignerTest extends ModulesTestCase {
             CryptoTokenOfflineException, SignServerException {
         final GenericSignRequest request = new GenericSignRequest(1234,
                 data);
-        final GenericSignResponse response = (GenericSignResponse) workerSession.process(new WorkerIdentifier(workerId), request, new RequestContext());
+        final GenericSignResponse response = (GenericSignResponse) processSession.process(new WorkerIdentifier(workerId), request, new RequestContext());
         return response;
     }
 

@@ -64,21 +64,4 @@ public interface StatusRepositorySession {
      */
     Map<String, StatusEntry> getAllEntries();
 
-    /**
-     * Remote interface.
-     */
-    @Remote
-    interface IRemote extends StatusRepositorySession {
-
-        String JNDI_NAME = "signserver/StatusRepositorySessionBean/remote";
-    }
-
-    /**
-     * Local interface.
-     */
-    @Local
-    interface ILocal extends StatusRepositorySession {
-
-        String JNDI_NAME = "signserver/StatusRepositorySessionBean/local";
-    }
 }

@@ -39,6 +39,7 @@ import org.signserver.common.SODSignResponse;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
+import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.module.mrtdsodsigner.jmrtd.SODFile;
 import org.signserver.test.utils.CertTools;
@@ -136,7 +137,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
     private String keystore4Password;
     private String keystore4DefaultKey;
     
-    private GlobalConfigurationSessionRemote globalConfig;
+    private GlobalConfigurationSessionLocal globalConfig;
     private WorkerSessionRemote workerSession;
     private ProcessSessionRemote processSession;
 
@@ -624,7 +625,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
                     new MRTDSODSigner() {
                 @Override
-                protected GlobalConfigurationSessionRemote
+                protected GlobalConfigurationSessionLocal
                         getGlobalConfigurationSession() {
                     return globalConfig;
                 }
@@ -646,7 +647,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
                     new MRTDSODSigner() {
                 @Override
-                protected GlobalConfigurationSessionRemote
+                protected GlobalConfigurationSessionLocal
                         getGlobalConfigurationSession() {
                     return globalConfig;
                 }
@@ -667,7 +668,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
                     new MRTDSODSigner() {
                 @Override
-                protected GlobalConfigurationSessionRemote
+                protected GlobalConfigurationSessionLocal
                         getGlobalConfigurationSession() {
                     return globalConfig;
                 }
@@ -690,7 +691,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
                     new MRTDSODSigner() {
                 @Override
-                protected GlobalConfigurationSessionRemote
+                protected GlobalConfigurationSessionLocal
                         getGlobalConfigurationSession() {
                     return globalConfig;
                 }
@@ -712,7 +713,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
                     new MRTDSODSigner() {
                 @Override
-                protected GlobalConfigurationSessionRemote
+                protected GlobalConfigurationSessionLocal
                         getGlobalConfigurationSession() {
                     return globalConfig;
                 }
@@ -734,7 +735,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
                     new MRTDSODSigner() {
                 @Override
-                protected GlobalConfigurationSessionRemote
+                protected GlobalConfigurationSessionLocal
                         getGlobalConfigurationSession() {
                     return globalConfig;
                 }
@@ -756,7 +757,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
                     new MRTDSODSigner() {
                 @Override
-                protected GlobalConfigurationSessionRemote
+                protected GlobalConfigurationSessionLocal
                         getGlobalConfigurationSession() {
                     return globalConfig;
                 }
@@ -778,7 +779,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
                     new MRTDSODSigner() {
                 @Override
-                protected GlobalConfigurationSessionRemote
+                protected GlobalConfigurationSessionLocal
                         getGlobalConfigurationSession() {
                     return globalConfig;
                 }
@@ -801,7 +802,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
                     new MRTDSODSigner() {
                 @Override
-                protected GlobalConfigurationSessionRemote
+                protected GlobalConfigurationSessionLocal
                         getGlobalConfigurationSession() {
                     return globalConfig;
                 }
@@ -823,7 +824,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
                     new MRTDSODSigner() {
                 @Override
-                protected GlobalConfigurationSessionRemote
+                protected GlobalConfigurationSessionLocal
                         getGlobalConfigurationSession() {
                     return globalConfig;
                 }
@@ -845,7 +846,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
                     new MRTDSODSigner() {
                 @Override
-                protected GlobalConfigurationSessionRemote
+                protected GlobalConfigurationSessionLocal
                         getGlobalConfigurationSession() {
                     return globalConfig;
                 }
@@ -867,7 +868,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
                     new MRTDSODSigner() {
                 @Override
-                protected GlobalConfigurationSessionRemote
+                protected GlobalConfigurationSessionLocal
                         getGlobalConfigurationSession() {
                     return globalConfig;
                 }
@@ -889,7 +890,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
                     new MRTDSODSigner() {
                 @Override
-                protected GlobalConfigurationSessionRemote
+                protected GlobalConfigurationSessionLocal
                         getGlobalConfigurationSession() {
                     return globalConfig;
                 }
@@ -912,7 +913,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
                     new MRTDSODSigner() {
                 @Override
-                protected GlobalConfigurationSessionRemote
+                protected GlobalConfigurationSessionLocal
                         getGlobalConfigurationSession() {
                     return globalConfig;
                 }
@@ -934,7 +935,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
                     new MRTDSODSigner() {
                 @Override
-                protected GlobalConfigurationSessionRemote
+                protected GlobalConfigurationSessionLocal
                         getGlobalConfigurationSession() {
                     return globalConfig;
                 }
@@ -956,7 +957,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
                     new MRTDSODSigner() {
                 @Override
-                protected GlobalConfigurationSessionRemote
+                protected GlobalConfigurationSessionLocal
                         getGlobalConfigurationSession() {
                     return globalConfig;
                 }

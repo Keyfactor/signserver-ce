@@ -28,7 +28,6 @@ import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Base64;
 import org.cesecore.util.CertTools;
 import org.junit.Test;
-import org.signserver.common.CryptoTokenInitializationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.ISignerCertReqInfo;
@@ -44,7 +43,8 @@ import org.signserver.common.WorkerStatus;
 import org.signserver.server.aliasselectors.AliasSelector;
 import org.signserver.server.cryptotokens.NullCryptoToken;
 import org.signserver.server.signers.BaseSigner;
-import org.signserver.ejb.interfaces.GlobalConfigurationSession;
+import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
+import org.signserver.server.log.AdminInfo;
 
 /**
  * Tests for the BaseProcessable class.
@@ -585,8 +585,8 @@ public class BaseProcessableTest extends TestCase {
         }
         
         @Override
-        protected GlobalConfigurationSession getGlobalConfigurationSession() {
-            return new GlobalConfigurationSession() {
+        protected GlobalConfigurationSessionLocal getGlobalConfigurationSession() {
+            return new GlobalConfigurationSessionLocal() {
 
                 @Override
                 public void setProperty(String scope, String key, String value) {
@@ -610,6 +610,26 @@ public class BaseProcessableTest extends TestCase {
 
                 @Override
                 public void reload() {
+                    throw new UnsupportedOperationException("Not supported yet.");
+                }
+
+                @Override
+                public void setProperty(AdminInfo adminInfo, String scope, String key, String value) {
+                    throw new UnsupportedOperationException("Not supported yet.");
+                }
+
+                @Override
+                public boolean removeProperty(AdminInfo adminInfo, String scope, String key) {
+                    throw new UnsupportedOperationException("Not supported yet.");
+                }
+
+                @Override
+                public void resync(AdminInfo adminInfo) throws ResyncException {
+                    throw new UnsupportedOperationException("Not supported yet.");
+                }
+
+                @Override
+                public void reload(AdminInfo adminInfo) {
                     throw new UnsupportedOperationException("Not supported yet.");
                 }
             };

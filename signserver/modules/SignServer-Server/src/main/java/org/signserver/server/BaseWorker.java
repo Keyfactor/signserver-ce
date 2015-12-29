@@ -27,7 +27,7 @@ import org.signserver.common.StaticWorkerStatus;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 import org.signserver.common.WorkerStatusInfo;
-import org.signserver.ejb.interfaces.GlobalConfigurationSession;
+import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
 
 /**
  * Base class with common methods for workers.
@@ -40,16 +40,16 @@ public abstract class BaseWorker implements IWorker {
     private static final Logger LOG = Logger.getLogger(BaseWorker.class);
     
     /** The global configuration session. */
-    private transient GlobalConfigurationSession globalConfig;
+    private transient GlobalConfigurationSessionLocal globalConfig;
     
     /**
      * @return The global configuration session.
      */
-    protected GlobalConfigurationSession
+    protected GlobalConfigurationSessionLocal
             getGlobalConfigurationSession() { // FIXME: Better to somehow inject this
         if (globalConfig == null) {
             try {
-                globalConfig = ServiceLocator.getInstance().lookupLocal(GlobalConfigurationSession.class);
+                globalConfig = ServiceLocator.getInstance().lookupLocal(GlobalConfigurationSessionLocal.class);
             } catch (NamingException e) {
                 LOG.error(e);
             }

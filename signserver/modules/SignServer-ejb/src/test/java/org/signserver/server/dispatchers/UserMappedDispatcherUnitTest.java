@@ -17,8 +17,6 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.DispatcherProcessSessionLocal;
-import org.signserver.ejb.interfaces.DispatcherProcessSessionRemote;
-import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.server.SignServerContext;
 import org.signserver.server.WorkerContext;
 

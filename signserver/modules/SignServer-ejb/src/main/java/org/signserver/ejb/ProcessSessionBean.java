@@ -44,6 +44,7 @@ import org.signserver.ejb.interfaces.ProcessSessionLocal;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
 
 /**
+ * Session Bean handling the worker process requests.
  *
  * @author Markus Kilås
  * @version $Id$

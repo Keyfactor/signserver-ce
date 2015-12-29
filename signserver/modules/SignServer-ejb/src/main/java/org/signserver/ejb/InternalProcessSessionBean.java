@@ -44,8 +44,8 @@ import org.signserver.server.nodb.FileBasedDatabaseManager;
 import org.signserver.statusrepo.IStatusRepositorySession;
 
 /**
- * Session bean implementing the process and getWorkerId methods in the same way
- * as the WorkerSessionBean. This bean is intended to be used from workers and 
+ * Session bean implementing the process methods in the same way as the
+ * WorkerSessionBean. This bean is intended to be used from workers and 
  * not directly through any of the client interfaces.
  *
  * @author Markus Kilås

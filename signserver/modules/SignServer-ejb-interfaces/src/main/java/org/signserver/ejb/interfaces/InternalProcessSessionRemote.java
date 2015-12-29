@@ -15,8 +15,8 @@ package org.signserver.ejb.interfaces;
 import javax.ejb.Remote;
 
 /**
+ * Interface for the internal process session bean.
  *
- * @author Markus Kilås
  * @version $Id$
  */
 @Remote

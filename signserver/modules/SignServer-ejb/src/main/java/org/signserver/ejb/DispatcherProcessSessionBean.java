@@ -30,7 +30,6 @@ import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.ejb.interfaces.DispatcherProcessSessionLocal;
-import org.signserver.ejb.interfaces.DispatcherProcessSessionRemote;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.ejb.interfaces.InternalProcessSessionLocal;
@@ -44,15 +43,15 @@ import org.signserver.server.nodb.FileBasedDatabaseManager;
 import org.signserver.statusrepo.IStatusRepositorySession;
 
 /**
- * Session bean implementing the process and getWorkerId methods in the same way
- * as the WorkerSessionBean. This bean is intended to be used from dispatchers 
+ * Session bean implementing the process methods in the same way as the
+ * ProcessSessionBean. This bean is intended to be used from dispatchers 
  * and not directly through any of the client interfaces.
  *
  * @author Markus Kilås
  * @version $Id$
  */
 @Stateless
-public class DispatcherProcessSessionBean implements DispatcherProcessSessionLocal, DispatcherProcessSessionRemote {
+public class DispatcherProcessSessionBean implements DispatcherProcessSessionLocal {
 
     /** Log4j instance for this class. */
     private static final Logger LOG = Logger.getLogger(DispatcherProcessSessionBean.class);
@@ -124,15 +123,6 @@ public class DispatcherProcessSessionBean implements DispatcherProcessSessionLoc
     }
 
     @Override
-    public ProcessResponse process(final WorkerIdentifier wi,
-            final ProcessRequest request, final RequestContext requestContext)
-            throws IllegalRequestException, CryptoTokenOfflineException,
-            SignServerException {
-        requestContext.setServices(servicesImpl);
-        return processImpl.process(wi, request, requestContext);
-    }
-
-    @Override
     public ProcessResponse process(final AdminInfo adminInfo, final WorkerIdentifier wi,
             final ProcessRequest request, final RequestContext requestContext)
             throws IllegalRequestException, CryptoTokenOfflineException,
@@ -140,14 +130,5 @@ public class DispatcherProcessSessionBean implements DispatcherProcessSessionLoc
         requestContext.setServices(servicesImpl);
         return processImpl.process(adminInfo, wi, request, requestContext);
     }
-
-//    @Override
-//    public int getWorkerId(String workerName) throws InvalidWorkerIdException {
-//        try {
-//            return processImpl.getWorkerId(workerName);
-//        } catch (NoSuchWorkerException ex) {
-//            throw new InvalidWorkerIdException(ex.getMessage());
-//        }
-//    }
 
 }

@@ -15,12 +15,11 @@ package org.signserver.ejb.interfaces;
 import javax.ejb.Local;
 
 /**
- * Interface for the internal worker session bean that should be used by
+ * Interface for the dispatcher process session bean that should be used by
  * dispatchers.
  *
  * @version $Id: IDispatcherWorkerSession.java 6942 2015-12-25 17:55:39Z netmackan $
- * @see IWorkerSession
- * @see IInternalWorkerSession
+ * @see ProcessSessionLocal
  */
 @Local
 public interface DispatcherProcessSessionLocal extends ProcessSessionLocal {

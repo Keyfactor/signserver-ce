@@ -26,8 +26,9 @@ import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 import org.apache.log4j.Logger;
 import org.signserver.common.*;
-import org.signserver.ejb.interfaces.ProcessSessionRemote;
+import org.signserver.ejb.interfaces.ProcessSessionLocal;
 import org.signserver.server.CredentialUtils;
+import org.signserver.server.log.AdminInfo;
 import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.log.LogMap;
 
@@ -51,9 +52,9 @@ public class ClientWS {
     private WebServiceContext wsContext;
     
     @EJB
-    private ProcessSessionRemote processSession;
+    private ProcessSessionLocal processSession;
     
-    private ProcessSessionRemote getProcessSession() {
+    private ProcessSessionLocal getProcessSession() {
         return processSession;
     }
     
@@ -82,7 +83,7 @@ public class ClientWS {
             final int requestId = random.nextInt();
             
             final ProcessRequest req = new GenericSignRequest(requestId, data);
-            final ProcessResponse resp = getProcessSession().process(WorkerIdentifier.createFromIdOrName(workerIdOrName), req, requestContext);
+            final ProcessResponse resp = getProcessSession().process(new AdminInfo("CLI user", null, null), WorkerIdentifier.createFromIdOrName(workerIdOrName), req, requestContext);
             
             if (resp instanceof GenericSignResponse) {
                 final GenericSignResponse signResponse = (GenericSignResponse) resp;
@@ -182,7 +183,7 @@ public class ClientWS {
             }
 
             final SODSignRequest req = new SODSignRequest(requestId, dataGroupsMap, ldsVersion, unicodeVersion);
-            final ProcessResponse resp = getProcessSession().process(WorkerIdentifier.createFromIdOrName(workerIdOrName), req, requestContext);
+            final ProcessResponse resp = getProcessSession().process(new AdminInfo("CLI user", null, null), WorkerIdentifier.createFromIdOrName(workerIdOrName), req, requestContext);
             
             if (resp instanceof SODSignResponse) {
                 SODSignResponse signResponse = (SODSignResponse) resp; 

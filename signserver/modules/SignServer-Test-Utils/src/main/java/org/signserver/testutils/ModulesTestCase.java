@@ -40,7 +40,7 @@ import org.signserver.common.GenericSignResponse;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.InvalidWorkerIdException;
-import org.signserver.common.RequestContext;
+import org.signserver.common.RemoteRequestContext;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
@@ -615,7 +615,7 @@ public class ModulesTestCase extends TestCase {
     public GenericSignResponse signGenericDocument(final int workerId, final byte[] data) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
         final int requestId = random.nextInt();
         final GenericSignRequest request = new GenericSignRequest(requestId, data);
-        final GenericSignResponse response = (GenericSignResponse) getProcessSession().process(new WorkerIdentifier(workerId), request, new RequestContext());
+        final GenericSignResponse response = (GenericSignResponse) getProcessSession().process(new WorkerIdentifier(workerId), request, new RemoteRequestContext());
         assertEquals("requestId", requestId, response.getRequestID());
         Certificate signercert = response.getSignerCertificate();
         assertNotNull(signercert);

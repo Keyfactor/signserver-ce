@@ -37,7 +37,7 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
-import org.signserver.common.RequestContext;
+import org.signserver.common.RemoteRequestContext;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
@@ -204,7 +204,7 @@ public class CMSSignerTest extends ModulesTestCase {
         workerSession.reloadConfiguration(workerId);
         
         final GenericSignResponse res =
-                (GenericSignResponse) processSession.process(new WorkerIdentifier(workerId), signRequest, new RequestContext());
+                (GenericSignResponse) processSession.process(new WorkerIdentifier(workerId), signRequest, new RemoteRequestContext());
         final byte[] data = res.getProcessedData();
    
         // Answer to right question

@@ -61,7 +61,7 @@ import org.signserver.common.GenericSignResponse;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.KeyTestResult;
 import org.signserver.common.PKCS10CertReqInfo;
-import org.signserver.common.RequestContext;
+import org.signserver.common.RemoteRequestContext;
 import org.signserver.common.SODSignRequest;
 import org.signserver.common.SODSignResponse;
 import org.signserver.common.SignServerException;
@@ -400,7 +400,7 @@ public class P11SignTest extends ModulesTestCase {
         TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
         byte[] requestBytes = timeStampRequest.getEncoded();
         GenericSignRequest signRequest = new GenericSignRequest(567, requestBytes);
-        final GenericSignResponse res = (GenericSignResponse) processSession.process(new WorkerIdentifier(WORKER_TSA), signRequest, new RequestContext());
+        final GenericSignResponse res = (GenericSignResponse) processSession.process(new WorkerIdentifier(WORKER_TSA), signRequest, new RemoteRequestContext());
         Certificate signercert = res.getSignerCertificate();
         assertNotNull(signercert);
         final TimeStampResponse timeStampResponse = new TimeStampResponse((byte[]) res.getProcessedData());
@@ -476,7 +476,7 @@ public class P11SignTest extends ModulesTestCase {
         dgs.put(2, "Yy==".getBytes());
         dgs.put(3, "Yy==".getBytes());
         final SODSignRequest signRequest = new SODSignRequest(233, dgs);
-        final SODSignResponse res = (SODSignResponse) processSession.process(new WorkerIdentifier(workerId), signRequest, new RequestContext());
+        final SODSignResponse res = (SODSignResponse) processSession.process(new WorkerIdentifier(workerId), signRequest, new RemoteRequestContext());
         Certificate signercert = res.getSignerCertificate();
         assertNotNull(signercert);
     }
@@ -832,7 +832,7 @@ public class P11SignTest extends ModulesTestCase {
 
         // Test signing
         GenericSignRequest signRequest = new GenericSignRequest(678, MSAUTHCODE_REQUEST_DATA.getBytes());
-        final GenericSignResponse res = (GenericSignResponse) processSession.process(new WorkerIdentifier(workerId), signRequest, new RequestContext());
+        final GenericSignResponse res = (GenericSignResponse) processSession.process(new WorkerIdentifier(workerId), signRequest, new RemoteRequestContext());
         Certificate signercert = res.getSignerCertificate();
         assertNotNull(signercert);
 

@@ -20,11 +20,10 @@ import org.apache.commons.cli.*;
 import org.apache.log4j.Logger;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.InvalidWorkerIdException;
-import org.signserver.common.RequestContext;
+import org.signserver.common.RemoteRequestContext;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
-import org.signserver.server.UsernamePasswordClientCredential;
 import org.signserver.test.random.*;
 import org.signserver.test.random.impl.IncrementProperty;
 import org.signserver.test.random.impl.IncrementPropertyThread;
@@ -589,9 +588,9 @@ public class Main {
             final SigningThread signingThread = new SigningThread("Signer-" + i + "-" + worker.getWorkerId(), context.getCallback(), null, context.getMasterRandom().nextLong(), worker, context.getProcessSession(), new RequestContextPreProcessor() {
 
                 @Override
-                public void preProcess(RequestContext requestContext) {
+                public void preProcess(RemoteRequestContext requestContext) {
                     final String username = userPrefix + (userSuffixMin + context.getMasterRandom().nextInt(userSuffixMax - userSuffixMin + 1));
-                    requestContext.put(RequestContext.CLIENT_CREDENTIAL, new UsernamePasswordClientCredential(username, ""));
+                    requestContext.setUsername(username);
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Username: " + username);
                     }

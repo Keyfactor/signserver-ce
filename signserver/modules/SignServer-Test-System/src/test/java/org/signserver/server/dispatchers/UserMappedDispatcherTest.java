@@ -142,7 +142,7 @@ public class UserMappedDispatcherTest extends ModulesTestCase {
     public void test01Dispatched() throws Exception {
         try {
             LOG.info("test01Dispatched");
-            final RequestContext context = new RequestContext();
+            final RemoteRequestContext context = new RemoteRequestContext();
             final GenericSignRequest request =
                     new GenericSignRequest(1, "<root/>".getBytes());
     
@@ -151,8 +151,8 @@ public class UserMappedDispatcherTest extends ModulesTestCase {
             setDispatchedAuthorizerForAllWorkers();
             
             // Send request to dispatcher as user1
-            context.put(RequestContext.CLIENT_CREDENTIAL_PASSWORD, 
-                    new UsernamePasswordClientCredential("user1", "password"));
+            context.setUsername("user1");
+            context.setPassword("password");
             res = (GenericSignResponse) processSession.process(new WorkerIdentifier(WORKERID_DISPATCHER),
                     request, context);
             
@@ -161,8 +161,8 @@ public class UserMappedDispatcherTest extends ModulesTestCase {
                     "CN=" + WORKERNAME_1, cert.getSubjectDN().getName());
     
             // Send request to dispatcher as user2
-            context.put(RequestContext.CLIENT_CREDENTIAL_PASSWORD, 
-                    new UsernamePasswordClientCredential("user2", "password"));
+            context.setUsername("user2");
+            context.setPassword("password");
             res = (GenericSignResponse) processSession.process(new WorkerIdentifier(WORKERID_DISPATCHER),
                     request, context);
             cert = (X509Certificate) res.getSignerCertificate();
@@ -170,8 +170,8 @@ public class UserMappedDispatcherTest extends ModulesTestCase {
                     "CN=" + WORKERNAME_2, cert.getSubjectDN().getName());
     
             // Send request to dispatcher as user3
-            context.put(RequestContext.CLIENT_CREDENTIAL_PASSWORD, 
-                    new UsernamePasswordClientCredential("user3", "password"));
+            context.setUsername("user3");
+            context.setPassword("password");
             res = (GenericSignResponse) processSession.process(new WorkerIdentifier(WORKERID_DISPATCHER),
                     request, context);
             cert = (X509Certificate) res.getSignerCertificate();
@@ -180,8 +180,8 @@ public class UserMappedDispatcherTest extends ModulesTestCase {
     
             // Send request to dispatcher as user4 for which the worker does not exist
             try {
-                context.put(RequestContext.CLIENT_CREDENTIAL_PASSWORD, 
-                        new UsernamePasswordClientCredential("user4", "password"));
+                context.setUsername("user4");
+            context.setPassword("password");
                 processSession.process(new WorkerIdentifier(WORKERID_DISPATCHER), request, context);
                 fail("Should have got SignServerException as the worker configured does not exist");
             } catch(SignServerException expected) { // NOPMD
@@ -191,8 +191,8 @@ public class UserMappedDispatcherTest extends ModulesTestCase {
             // Send request to dispatcher as user5 which mapps to the dispatcher
             // itself
             try {
-                context.put(RequestContext.CLIENT_CREDENTIAL_PASSWORD, 
-                        new UsernamePasswordClientCredential("user5", "password"));
+                context.setUsername("user5");
+                context.setPassword("password");
                 processSession.process(new WorkerIdentifier(WORKERID_DISPATCHER), request, context);
                 fail("Should have got SignServerException as it is configured to dispatch to itself");
             } catch(SignServerException expected) { // NOPMD
@@ -201,8 +201,8 @@ public class UserMappedDispatcherTest extends ModulesTestCase {
             
             // Send request to dispatcher as user6 for which there is no mapping
             try {
-                context.put(RequestContext.CLIENT_CREDENTIAL_PASSWORD, 
-                        new UsernamePasswordClientCredential("user6", "password"));
+                context.setUsername("user6");
+                context.setPassword("password");
                 processSession.process(new WorkerIdentifier(WORKERID_DISPATCHER), request, context);
                 fail("Should have got IllegalRequestException as there is no mapping");
             } catch(IllegalRequestException expected) { // NOPMD

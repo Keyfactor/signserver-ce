@@ -25,7 +25,7 @@ import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.cli.spi.UnexpectedCommandFailureException;
 import org.signserver.common.GenericPropertiesRequest;
 import org.signserver.common.GenericPropertiesResponse;
-import org.signserver.common.RequestContext;
+import org.signserver.common.RemoteRequestContext;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.module.renewal.common.RenewalWorkerProperties;
 
@@ -141,7 +141,7 @@ public class RenewSignerCommand extends AbstractAdminCommand {
 
             final GenericPropertiesResponse response =
                     (GenericPropertiesResponse) getProcessSession().process(
-                    renewalWorker, request, new RequestContext(true));
+                    renewalWorker, request, new RemoteRequestContext());
 
             final Properties responseProperties =
                     response.getProperties();

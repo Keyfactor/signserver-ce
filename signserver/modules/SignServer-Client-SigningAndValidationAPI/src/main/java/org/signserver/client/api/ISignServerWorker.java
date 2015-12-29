@@ -16,7 +16,7 @@ import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
-import org.signserver.common.RequestContext;
+import org.signserver.common.RemoteRequestContext;
 import org.signserver.common.SignServerException;
 
 /**
@@ -38,5 +38,5 @@ public interface ISignServerWorker {
      * @throws IllegalRequestException If illegal request is sent to the method.
      * @throws SignServerException If some other error occurred server side during process.
      */
-    ProcessResponse process(String workerIdOrName, ProcessRequest request, RequestContext context) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException;
+    ProcessResponse process(String workerIdOrName, ProcessRequest request, RemoteRequestContext context) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException;
 }

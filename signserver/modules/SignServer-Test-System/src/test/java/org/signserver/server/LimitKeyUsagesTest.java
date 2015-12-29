@@ -218,14 +218,12 @@ public class LimitKeyUsagesTest extends ModulesTestCase {
 
     /** Do a dummy sign. */
     private void doSign() throws Exception {
-
-        final RequestContext context = new RequestContext();
         final GenericSignRequest request = new GenericSignRequest(1,
                 "<root/>".getBytes());
         GenericSignResponse res;
         // Send request to dispatcher
         res = (GenericSignResponse) processSession.process(WORKERID_1,
-                request, context);
+                request, new RemoteRequestContext());
         Certificate cert = res.getSignerCertificate();
         assertNotNull(cert);
     }
@@ -239,7 +237,7 @@ public class LimitKeyUsagesTest extends ModulesTestCase {
                     "<root/>".getBytes());
             // Send request to dispatcher
             processSession.process(WORKERID_1,
-                    request, context);
+                    request, new RemoteRequestContext());
         } catch (CryptoTokenOfflineException ok) {
             // OK
         } catch (Exception ex) {

@@ -33,6 +33,7 @@ import org.signserver.common.GenericValidationResponse;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
+import org.signserver.common.RemoteRequestContext;
 import org.signserver.common.RequestAndResponseManager;
 import org.signserver.common.RequestContext;
 import org.signserver.common.RequestMetadata;
@@ -156,13 +157,20 @@ public class SigningAndValidationWS implements ISigningAndValidation {
         SignServerUtil.installBCProvider();
     }    
 
-    public ProcessResponse process(int workerId, ProcessRequest request, RequestContext context) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+    public ProcessResponse process(int workerId, ProcessRequest request, RemoteRequestContext context) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
         return process("" + workerId, request, context);
     }
 
     @Override
-    public ProcessResponse process(String workerIdOrName, ProcessRequest request, RequestContext context) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
-        List<ProcessResponse> responses = process(workerIdOrName, Collections.singletonList(request), context);
+    public ProcessResponse process(String workerIdOrName, ProcessRequest request, RemoteRequestContext remoteContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+        RequestContext requestContext = new RequestContext(true);
+        if (remoteContext != null) {
+            RequestMetadata metadata = remoteContext.getMetadata();
+            if (metadata != null) {
+                RequestMetadata.getInstance(requestContext).putAll(remoteContext.getMetadata());
+            }
+        }
+        List<ProcessResponse> responses = process(workerIdOrName, Collections.singletonList(request), requestContext);
         if (responses.size() != 1) {
             throw new SignServerException("Unexpected number of responses: " + responses.size());
         }
@@ -194,7 +202,7 @@ public class SigningAndValidationWS implements ISigningAndValidation {
 
             List<ProcessResponseWS> resps;
             try {
-                resps = signserver.process(workerIdOrName, list);
+                resps = getWSPort().process(workerIdOrName, list);
             } catch (CryptoTokenOfflineException_Exception e) {
                 LOG.error(null, e);
                 throw new CryptoTokenOfflineException(e.getMessage());
@@ -226,7 +234,7 @@ public class SigningAndValidationWS implements ISigningAndValidation {
     @Override
     public GenericSignResponse sign(String signIdOrName, byte[] document) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
 
-        ProcessResponse resp = process(signIdOrName, new GenericSignRequest(1, document), new RequestContext());
+        ProcessResponse resp = process(signIdOrName, new GenericSignRequest(1, document), new RemoteRequestContext());
 
         if (!(resp instanceof GenericSignResponse)) {
             throw new SignServerException("Unexpected response type: " + resp.getClass().getName());
@@ -236,11 +244,15 @@ public class SigningAndValidationWS implements ISigningAndValidation {
 
     @Override
     public GenericValidationResponse validate(String validatorIdOrName, byte[] document) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
-        ProcessResponse resp = process(validatorIdOrName, new GenericValidationRequest(1, document), new RequestContext());
+        ProcessResponse resp = process(validatorIdOrName, new GenericValidationRequest(1, document), new RemoteRequestContext());
 
         if (!(resp instanceof GenericValidationResponse)) {
             throw new SignServerException("Unexpected response type: " + resp.getClass().getName());
         }
         return (GenericValidationResponse) resp;
+    }
+    
+    protected SignServerWS getWSPort() {
+        return signserver;
     }
 }

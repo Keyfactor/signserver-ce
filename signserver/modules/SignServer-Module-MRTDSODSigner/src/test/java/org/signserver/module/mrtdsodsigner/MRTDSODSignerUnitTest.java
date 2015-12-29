@@ -33,7 +33,7 @@ import org.cesecore.keys.util.KeyTools;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 import org.signserver.common.IllegalRequestException;
-import org.signserver.common.RequestContext;
+import org.signserver.common.RemoteRequestContext;
 import org.signserver.common.SODSignRequest;
 import org.signserver.common.SODSignResponse;
 import org.signserver.common.SignServerUtil;
@@ -574,7 +574,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
 
         SODSignResponse res = (SODSignResponse) processSession.process(new WorkerIdentifier(workerId),
                 new SODSignRequest(requestId, dataGroups),
-                getRequestContext());
+                new RemoteRequestContext());
         assertNotNull(res);
         assertEquals(requestId, res.getRequestID());
         Certificate signercert = res.getSignerCertificate();
@@ -965,9 +965,4 @@ public class MRTDSODSignerUnitTest extends TestCase {
         }
     }
 
-    private RequestContext getRequestContext() {
-        final RequestContext result = new RequestContext();
-        result.put(RequestContext.TRANSACTION_ID, UUID.randomUUID().toString());
-        return result;
-    }
 }

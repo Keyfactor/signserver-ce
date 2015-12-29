@@ -521,7 +521,7 @@ public class PDFSignerTest extends ModulesTestCase {
             CryptoTokenOfflineException, SignServerException {
         final GenericSignRequest request = new GenericSignRequest(1234,
                 data);
-        final GenericSignResponse response = (GenericSignResponse) processSession.process(new WorkerIdentifier(workerId), request, new RequestContext());
+        final GenericSignResponse response = (GenericSignResponse) processSession.process(new WorkerIdentifier(workerId), request, new RemoteRequestContext());
         return response;
     }
 

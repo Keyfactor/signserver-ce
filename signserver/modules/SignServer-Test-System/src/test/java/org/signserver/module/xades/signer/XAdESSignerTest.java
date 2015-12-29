@@ -24,7 +24,7 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
-import org.signserver.common.RequestContext;
+import org.signserver.common.RemoteRequestContext;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
@@ -74,10 +74,8 @@ public class XAdESSignerTest extends ModulesTestCase {
             workerSession.reloadConfiguration(TS_ID);
             workerSession.reloadConfiguration(WORKER_ID);
 
-            RequestContext requestContext = new RequestContext();
-            requestContext.put(RequestContext.TRANSACTION_ID, "0000-100-1");
             GenericSignRequest request = new GenericSignRequest(100, "<test100/>".getBytes("UTF-8"));
-            GenericSignResponse response = (GenericSignResponse) processSession.process(new WorkerIdentifier(WORKER_ID), request, requestContext);
+            GenericSignResponse response = (GenericSignResponse) processSession.process(new WorkerIdentifier(WORKER_ID), request, new RemoteRequestContext());
 
             byte[] data = response.getProcessedData();
             final String signedXml = new String(data);

@@ -129,7 +129,7 @@ public class ClientWSDocumentSigner extends AbstractDocumentSigner {
                 requestMetadata.add(fileNameMetadata);
             }
             
-            final DataResponse response = signServer.processData(workerName,
+            final DataResponse response = getWSPort().processData(workerName,
                     requestMetadata, IOUtils.toByteArray(data));
 
             // Take stop time
@@ -157,5 +157,9 @@ public class ClientWSDocumentSigner extends AbstractDocumentSigner {
             throw new IllegalRequestException("Client request failed: " + ex.getLocalizedMessage(), ex);
         }
 
+    }
+    
+    protected ClientWS getWSPort() {
+        return signServer;
     }
 }

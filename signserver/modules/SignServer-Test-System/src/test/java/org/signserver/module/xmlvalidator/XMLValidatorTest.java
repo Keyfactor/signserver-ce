@@ -126,7 +126,7 @@ public class XMLValidatorTest extends ModulesTestCase {
 
         try {
             GenericValidationRequest signRequest = new GenericValidationRequest(reqid, data);
-            GenericValidationResponse res = (GenericValidationResponse) processSession.process(wi, signRequest, new RequestContext());
+            GenericValidationResponse res = (GenericValidationResponse) processSession.process(wi, signRequest, new RemoteRequestContext());
 
             assertTrue("answer to right question", reqid == res.getRequestID());
 
@@ -173,7 +173,7 @@ public class XMLValidatorTest extends ModulesTestCase {
             checkXmlWellFormed(new ByteArrayInputStream(data));
 
             GenericValidationRequest signRequest = new GenericValidationRequest(reqid, data);
-            GenericValidationResponse res = (GenericValidationResponse) processSession.process(WORKERID, signRequest, new RequestContext());
+            GenericValidationResponse res = (GenericValidationResponse) processSession.process(WORKERID, signRequest, new RemoteRequestContext());
 
             assertTrue("answer to right question", reqid == res.getRequestID());
 
@@ -197,7 +197,7 @@ public class XMLValidatorTest extends ModulesTestCase {
             checkXmlWellFormed(new ByteArrayInputStream(data));
 
             GenericValidationRequest signRequest = new GenericValidationRequest(reqid, data);
-            GenericValidationResponse res = (GenericValidationResponse) processSession.process(WORKERID, signRequest, new RequestContext());
+            GenericValidationResponse res = (GenericValidationResponse) processSession.process(WORKERID, signRequest, new RemoteRequestContext());
 
             assertTrue("answer to right question", reqid == res.getRequestID());
 
@@ -217,7 +217,7 @@ public class XMLValidatorTest extends ModulesTestCase {
             checkXmlWellFormed(new ByteArrayInputStream(data));
 
             GenericValidationRequest signRequest = new GenericValidationRequest(reqid, data);
-            GenericValidationResponse res = (GenericValidationResponse) processSession.process(WORKERID, signRequest, new RequestContext());
+            GenericValidationResponse res = (GenericValidationResponse) processSession.process(WORKERID, signRequest, new RemoteRequestContext());
 
             assertTrue("answer to right question", reqid == res.getRequestID());
 
@@ -241,7 +241,7 @@ public class XMLValidatorTest extends ModulesTestCase {
 
             GenericValidationRequest signRequest = new GenericValidationRequest(reqid, data);
             GenericValidationResponse res = (GenericValidationResponse) processSession.process(
-                    WORKERID, signRequest, new RequestContext());
+                    WORKERID, signRequest, new RemoteRequestContext());
 
             assertTrue("answer to right question", reqid == res.getRequestID());
 
@@ -265,7 +265,7 @@ public class XMLValidatorTest extends ModulesTestCase {
 
             GenericValidationRequest signRequest = new GenericValidationRequest(reqid, data);
             GenericValidationResponse res = (GenericValidationResponse) processSession.process(
-                    WORKERID, signRequest, new RequestContext());
+                    WORKERID, signRequest, new RemoteRequestContext());
 
             assertTrue("answer to right question", reqid == res.getRequestID());
 
@@ -289,7 +289,7 @@ public class XMLValidatorTest extends ModulesTestCase {
 
             GenericValidationRequest signRequest = new GenericValidationRequest(reqid, data);
             GenericValidationResponse res = (GenericValidationResponse) processSession.process(
-                    WORKERID, signRequest, new RequestContext());
+                    WORKERID, signRequest, new RemoteRequestContext());
 
             assertTrue("answer to right question", reqid == res.getRequestID());
 
@@ -318,7 +318,7 @@ public class XMLValidatorTest extends ModulesTestCase {
 
             GenericValidationRequest signRequest = new GenericValidationRequest(reqid, data);
             GenericValidationResponse res = (GenericValidationResponse) processSession.process(
-                    WORKERID, signRequest, new RequestContext());
+                    WORKERID, signRequest, new RemoteRequestContext());
 
             assertTrue("answer to right question", reqid == res.getRequestID());
 
@@ -355,7 +355,7 @@ public class XMLValidatorTest extends ModulesTestCase {
 
             GenericValidationRequest signRequest = new GenericValidationRequest(reqid, data);
             GenericValidationResponse res = (GenericValidationResponse) processSession.process(
-                    WORKERID, signRequest, new RequestContext());
+                    WORKERID, signRequest, new RemoteRequestContext());
 
             assertTrue("answer to right question", reqid == res.getRequestID());
 
@@ -393,7 +393,7 @@ public class XMLValidatorTest extends ModulesTestCase {
             checkXmlWellFormed(new ByteArrayInputStream(data));
 
             GenericValidationRequest signRequest = new GenericValidationRequest(reqid, data);
-            GenericValidationResponse res = (GenericValidationResponse) processSession.process(WORKERID, signRequest, new RequestContext());
+            GenericValidationResponse res = (GenericValidationResponse) processSession.process(WORKERID, signRequest, new RemoteRequestContext());
 
             assertTrue("answer to right question", reqid == res.getRequestID());
 

@@ -71,7 +71,7 @@ public class ODFSignerTest extends ModulesTestCase {
         GenericSignRequest signRequest = new GenericSignRequest(reqid, Base64.decode(TEST_ODF_DOC.getBytes()));
 
         GenericSignResponse res = (GenericSignResponse) processSession.process(
-                new WorkerIdentifier(WORKERID), signRequest, new RequestContext());
+                new WorkerIdentifier(WORKERID), signRequest, new RemoteRequestContext());
         byte[] data = res.getProcessedData();
 
         // Answer to right question

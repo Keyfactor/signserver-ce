@@ -35,7 +35,9 @@ import org.signserver.common.NotGrantedException;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.ProcessableConfig;
+import org.signserver.common.RemoteRequestContext;
 import org.signserver.common.RequestContext;
+import org.signserver.common.RequestMetadata;
 import org.signserver.common.SignServerConstants;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
@@ -48,8 +50,8 @@ import org.signserver.server.BaseProcessable;
 import org.signserver.server.IAuthorizer;
 import org.signserver.server.IClientCredential;
 import org.signserver.server.IProcessable;
-import org.signserver.server.IWorker;
 import org.signserver.server.KeyUsageCounterHash;
+import org.signserver.server.UsernamePasswordClientCredential;
 import org.signserver.server.ValidityTimeUtils;
 import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.ArchiveException;
@@ -97,6 +99,33 @@ class WorkerProcessImpl {
         this.keyUsageCounterDataService = keyUsageCounterDataService;
         this.workerManagerSession = workerManagerSession;
         this.logSession = logSession;
+    }
+
+    public ProcessResponse process(WorkerIdentifier wi, ProcessRequest request, RemoteRequestContext remoteContext, AllServicesImpl servicesImpl) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+        // Create a new RequestContext at server-side
+        final RequestContext requestContext = new RequestContext(true);
+
+        if (remoteContext != null) {
+            // Put metadata from the request
+            RequestMetadata metadata = remoteContext.getMetadata();
+            if (metadata != null) {
+                RequestMetadata.getInstance(requestContext).putAll(remoteContext.getMetadata());
+            }
+
+            // Put username/password
+            if (remoteContext.getUsername() != null) {
+                UsernamePasswordClientCredential credential = new UsernamePasswordClientCredential(remoteContext.getUsername(), remoteContext.getPassword());
+                requestContext.put(RequestContext.CLIENT_CREDENTIAL, credential);
+                requestContext.put(RequestContext.CLIENT_CREDENTIAL_PASSWORD, credential);
+            }
+        }
+        
+        // Put transaction ID
+        requestContext.put(RequestContext.TRANSACTION_ID, UUID.randomUUID().toString());
+
+        // Put services
+        requestContext.setServices(servicesImpl);
+        return process(new AdminInfo("Client user", null, null), wi, request, requestContext);
     }
 
     /**
@@ -160,12 +189,12 @@ class WorkerProcessImpl {
                     adminInfo.getSubjectDN(), adminInfo.getIssuerDN(), serNo, null, details);
             throw ex;
         }
-        
+
         // Store ID now that we are sure we have it
         final int workerId = worker.getId();
         requestContext.put(RequestContext.WORKER_ID, workerId);
         logMap.put(IWorkerLogger.LOG_WORKER_ID, String.valueOf(workerId));
-        
+
         final WorkerConfig awc = worker.getWorker().getConfig();
 
         // Log the worker name
@@ -252,7 +281,7 @@ class WorkerProcessImpl {
                 logException(adminInfo, exception, logMap, workerLogger, requestContext);
                 throw exception;
             }
-            
+
             // Check for errors at EJB level
             if (worker.hasCreateErrors()) {
                 if (LOG.isDebugEnabled()) {
@@ -459,7 +488,7 @@ class WorkerProcessImpl {
     }
 
     private void logException(final AdminInfo adminInfo, Exception ex, LogMap logMap,
-    		IWorkerLogger workerLogger, RequestContext requestContext) throws WorkerLoggerException {        
+    		IWorkerLogger workerLogger, RequestContext requestContext) throws WorkerLoggerException {
         if (workerLogger == null) {
             throw new WorkerLoggerException("Worker logger misconfigured", ex);
         }

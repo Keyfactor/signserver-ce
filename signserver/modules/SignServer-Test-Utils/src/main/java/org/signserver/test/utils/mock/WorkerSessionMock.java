@@ -35,7 +35,9 @@ import org.signserver.common.OperationUnsupportedException;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.QueryException;
+import org.signserver.common.RemoteRequestContext;
 import org.signserver.common.RequestContext;
+import org.signserver.common.RequestMetadata;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
@@ -62,6 +64,8 @@ public class WorkerSessionMock implements IWorkerSession.ILocal,
     private final GlobalConfigurationSessionMock globalConfig;
 
     private final HashMap<Integer, Worker> workers = new HashMap<>();
+    
+    private RequestContext lastRequestContext;
 
     public WorkerSessionMock(GlobalConfigurationSessionMock globalConfig) {
         this.globalConfig = globalConfig;
@@ -148,8 +152,15 @@ public class WorkerSessionMock implements IWorkerSession.ILocal,
 
     @Override
     public ProcessResponse process(WorkerIdentifier workerId, ProcessRequest request,
-            RequestContext requestContext) throws IllegalRequestException,
+            RemoteRequestContext remoteContext) throws IllegalRequestException,
             CryptoTokenOfflineException, SignServerException {
+        final RequestContext requestContext = new RequestContext(true);
+        if (remoteContext != null) {
+            RequestMetadata metadata = remoteContext.getMetadata();
+            if (metadata != null) {
+                RequestMetadata.getInstance(requestContext).putAll(remoteContext.getMetadata());
+            }
+        }
         return process(new AdminInfo("Mock user", null, null), workerId, request, requestContext);
     }
     
@@ -157,6 +168,7 @@ public class WorkerSessionMock implements IWorkerSession.ILocal,
     public ProcessResponse process(final AdminInfo adminInfo, WorkerIdentifier workerId, ProcessRequest request,
             RequestContext requestContext) throws IllegalRequestException,
             CryptoTokenOfflineException, SignServerException {
+        lastRequestContext = requestContext;
         Worker worker = workers.get(workerId.getId());
         if (worker == null) {
             throw new CryptoTokenOfflineException("No such worker: "
@@ -449,6 +461,10 @@ public class WorkerSessionMock implements IWorkerSession.ILocal,
     @Override
     public List<Certificate> getSignerCertificateChain(WorkerIdentifier signerId, String alias) throws CryptoTokenOfflineException, InvalidWorkerIdException {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public RequestContext getLastRequestContext() {
+        return lastRequestContext;
     }
 
     private static class Worker {

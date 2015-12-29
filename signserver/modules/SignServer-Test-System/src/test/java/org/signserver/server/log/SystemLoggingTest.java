@@ -50,7 +50,6 @@ import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.ICertReqData;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.PKCS10CertReqInfo;
-import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.test.utils.builders.CertBuilder;
@@ -59,6 +58,7 @@ import org.signserver.testutils.ModulesTestCase;
 import org.junit.Before;
 import org.junit.Test;
 import org.signserver.common.GenericSignResponse;
+import org.signserver.common.RemoteRequestContext;
 import org.signserver.common.ServiceConfig;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerIdentifier;
@@ -137,7 +137,7 @@ public class SystemLoggingTest extends ModulesTestCase {
                 new GenericSignRequest(43, "foo".getBytes());
         final GenericSignResponse res = 
                 (GenericSignResponse) processSession.process(new WorkerIdentifier(WORKERID_DEBUGSIGNER),
-                    signRequest, new RequestContext());
+                    signRequest, new RemoteRequestContext());
         final byte[] data = res.getProcessedData();
 
         final Properties props = new Properties();
@@ -986,7 +986,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         
         final int nonExistingWorkerId = 1234567;
         try {
-            processSession.process(new WorkerIdentifier(nonExistingWorkerId), new GenericSignRequest(123, "<a/>".getBytes()), new RequestContext());
+            processSession.process(new WorkerIdentifier(nonExistingWorkerId), new GenericSignRequest(123, "<a/>".getBytes()), new RemoteRequestContext());
             throw new Exception("Should have failed as it was a request to non existing worker");
         } catch (IllegalRequestException ignored) { //NOPMD
             // OK
@@ -1029,7 +1029,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         int linesBefore = readEntriesCount(auditLogFile);
         
         GenericSignRequest request = new GenericSignRequest(123, "<test/>".getBytes("UTF-8"));
-        processSession.process(new WorkerIdentifier(signerId), request, new RequestContext());
+        processSession.process(new WorkerIdentifier(signerId), request, new RemoteRequestContext());
         
         List<String> lines = readEntries(auditLogFile, linesBefore, 1);
         String line = lines.get(0);
@@ -1054,7 +1054,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         int linesBefore = readEntriesCount(auditLogFile);
         
         GenericSignRequest request = new GenericSignRequest(123, "<test/>".getBytes("UTF-8"));
-        processSession.process(new WorkerIdentifier(signerId), request, new RequestContext());
+        processSession.process(new WorkerIdentifier(signerId), request, new RemoteRequestContext());
         
         List<String> lines = readEntries(auditLogFile, linesBefore, 1);
         String line = lines.get(0);
@@ -1078,7 +1078,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         int linesBefore = readEntriesCount(auditLogFile);
         
         GenericSignRequest request = new GenericSignRequest(123, "<test/>".getBytes("UTF-8"));
-        processSession.process(new WorkerIdentifier(signerId), request, new RequestContext());
+        processSession.process(new WorkerIdentifier(signerId), request, new RemoteRequestContext());
         
         List<String> lines = readEntries(auditLogFile, linesBefore, 1);
         String line = lines.get(0);
@@ -1099,7 +1099,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         
         try {
             GenericSignRequest request = new GenericSignRequest(123, "<test/>".getBytes("UTF-8"));
-            processSession.process(new WorkerIdentifier(signerId), request, new RequestContext());
+            processSession.process(new WorkerIdentifier(signerId), request, new RemoteRequestContext());
         } catch (SignServerException e) {
             // expected
             return;
@@ -1121,7 +1121,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         
         try {
             GenericSignRequest request = new GenericSignRequest(123, "bogus".getBytes("UTF-8"));
-            processSession.process(new WorkerIdentifier(signerId), request, new RequestContext());
+            processSession.process(new WorkerIdentifier(signerId), request, new RemoteRequestContext());
         } catch (IllegalRequestException e) {
             // expected
         }
@@ -1184,7 +1184,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         int linesBefore = readEntriesCount(auditLogFile);
         
         GenericSignRequest request = new GenericSignRequest(123, "<test/>".getBytes("UTF-8"));
-        processSession.process(new WorkerIdentifier(signerId), request, new RequestContext());
+        processSession.process(new WorkerIdentifier(signerId), request, new RemoteRequestContext());
         
         List<String> lines = readEntries(auditLogFile, linesBefore, 1);
         String line = lines.get(0);

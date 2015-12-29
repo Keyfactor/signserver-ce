@@ -139,7 +139,7 @@ public class FirstActiveDispatcherTest extends ModulesTestCase {
     public void test01Dispatched() throws Exception {
         LOG.info("test01Dispatched");
         try {
-            final RequestContext context = new RequestContext();
+            final RemoteRequestContext context = new RemoteRequestContext();
     
             final GenericSignRequest request =
                     new GenericSignRequest(1, "<root/>".getBytes());

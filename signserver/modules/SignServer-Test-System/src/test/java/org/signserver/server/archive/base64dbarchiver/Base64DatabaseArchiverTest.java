@@ -164,7 +164,7 @@ public class Base64DatabaseArchiverTest extends ArchiveTestCase {
         getWorkerSession().reloadConfiguration(signerId);
         
         ArchiveDataVO archiveData = testArchive("<document id=\"" + random.nextLong() + "\"/>",
-                "1.2.3.4", "42.42.42.42");
+                "42.42.42.42");
         
         final String ip = archiveData.getRequestIP();
         
@@ -190,11 +190,11 @@ public class Base64DatabaseArchiverTest extends ArchiveTestCase {
         getWorkerSession().reloadConfiguration(signerId);
         
         ArchiveDataVO archiveData = testArchive("<document id=\"" + random.nextLong() + "\"/>",
-                "1.2.3.4", "42.42.42.42");
+                "42.42.42.42");
         
         final String ip = archiveData.getRequestIP();
         
-        assertEquals("Archiver should not use X-Forwarded-For IP address", "1.2.3.4", ip);
+        assertEquals("Archiver should not use X-Forwarded-For IP address", "127.0.0.1", ip);
         
         LOG.debug("<test60archiveWithXForwardedForNotUsed");
     }
@@ -217,11 +217,11 @@ public class Base64DatabaseArchiverTest extends ArchiveTestCase {
         getWorkerSession().reloadConfiguration(signerId);
         
         ArchiveDataVO archiveData = testArchive("<document id=\"" + random.nextLong() + "\"/>",
-                "1.2.3.4", "42.42.42.42");
+                "42.42.42.42");
         
         final String ip = archiveData.getRequestIP();
         
-        assertEquals("Archiver should not use X-Forwarded-For IP address", "1.2.3.4", ip);
+        assertEquals("Archiver should not use X-Forwarded-For IP address", "127.0.0.1", ip);
         
         LOG.debug("<test60archiveWithXForwardedForFalse");
     }
@@ -243,11 +243,11 @@ public class Base64DatabaseArchiverTest extends ArchiveTestCase {
         getWorkerSession().reloadConfiguration(signerId);
         
         ArchiveDataVO archiveData = testArchive("<document id=\"" + random.nextLong() + "\"/>",
-                "1.2.3.4", null);
+                null);
         
         final String ip = archiveData.getRequestIP();
         
-        assertEquals("Archiver should use the request IP address", "1.2.3.4", ip);
+        assertEquals("Archiver should use the request IP address", "127.0.0.1", ip);
         
         LOG.debug("<test60archiveWithXForwardedForWithoutHeader");
     }
@@ -268,11 +268,11 @@ public class Base64DatabaseArchiverTest extends ArchiveTestCase {
         getWorkerSession().reloadConfiguration(signerId);
         
         ArchiveDataVO archiveData = testArchive("<document id=\"" + random.nextLong() + "\"/>",
-                "42.42.42.42", "42.42.42.42, 1.2.3.4");
+                "42.42.42.42, 1.2.3.4");
         
         final String ip = archiveData.getRequestIP();
         
-        assertEquals("Archiver should only archive the last IP address", "1.2.3.4", ip);
+        assertEquals("Archiver should only archive the last IP address", "127.0.0.1", ip);
     }
     
     /**
@@ -291,7 +291,7 @@ public class Base64DatabaseArchiverTest extends ArchiveTestCase {
         getWorkerSession().reloadConfiguration(signerId);
         
         ArchiveDataVO archiveData = testArchive("<document id=\"" + random.nextLong() + "\"/>",
-                "42.42.42.42", "47.47.47.47, 42.42.42.42, 1.2.3.4");
+                "47.47.47.47, 42.42.42.42, 1.2.3.4");
         
         final String ip = archiveData.getRequestIP();
         
@@ -314,7 +314,7 @@ public class Base64DatabaseArchiverTest extends ArchiveTestCase {
         getWorkerSession().reloadConfiguration(signerId);
         
         ArchiveDataVO archiveData = testArchive("<document id=\"" + random.nextLong() + "\"/>",
-                "42.42.42.42", "1.2.3.4");
+                "1.2.3.4");
         
         final String ip = archiveData.getRequestIP();
         
@@ -337,7 +337,7 @@ public class Base64DatabaseArchiverTest extends ArchiveTestCase {
         getWorkerSession().reloadConfiguration(signerId);
         
         ArchiveDataVO archiveData = testArchive("<document id=\"" + random.nextLong() + "\"/>",
-                "42.42.42.42", "42.42.42.42, 1.2.3.4");
+                "42.42.42.42, 1.2.3.4");
         
         final String ip = archiveData.getRequestIP();
         
@@ -361,11 +361,11 @@ public class Base64DatabaseArchiverTest extends ArchiveTestCase {
         getWorkerSession().reloadConfiguration(signerId);
         
         ArchiveDataVO archiveData = testArchive("<document id=\"" + random.nextLong() + "\"/>",
-                "47.47.47.47", "42.42.42.42, 1.2.3.4");
+                "42.42.42.42, 1.2.3.4");
         
         final String ip = archiveData.getRequestIP();
         
-        assertEquals("Archiver should include direct address", "42.42.42.42, 1.2.3.4, 47.47.47.47", ip);
+        assertEquals("Archiver should include direct address", "42.42.42.42, 1.2.3.4, 127.0.0.1", ip);
     }
     
     /**
@@ -386,11 +386,11 @@ public class Base64DatabaseArchiverTest extends ArchiveTestCase {
         getWorkerSession().reloadConfiguration(signerId);
         
         ArchiveDataVO archiveData = testArchive("<document id=\"" + random.nextLong() + "\"/>",
-                "47.47.47.47", "42.42.42.42, 1.2.3.4");
+                "42.42.42.42, 1.2.3.4");
         
         final String ip = archiveData.getRequestIP();
         
-        assertEquals("Archiver should include direct address", "47.47.47.47", ip);
+        assertEquals("Archiver should include direct address", "127.0.0.1", ip);
     }
     
     /**

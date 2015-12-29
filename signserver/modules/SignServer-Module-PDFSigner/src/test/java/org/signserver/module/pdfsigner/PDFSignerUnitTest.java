@@ -140,7 +140,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
                 data);
 
         final GenericSignResponse response = (GenericSignResponse)
-                processSession.process(new WorkerIdentifier(WORKER1), request, new RequestContext());
+                processSession.process(new WorkerIdentifier(WORKER1), request, new RemoteRequestContext());
         assertEquals("requestId", 100, response.getRequestID());
 
         Certificate signercert = response.getSignerCertificate();
@@ -157,7 +157,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
             processSession.process(
                 new WorkerIdentifier(WORKER1),
                 new GenericSignRequest(200, readFile(sampleRestricted)),
-                new RequestContext());
+                new RemoteRequestContext());
             fail("Should have thrown exception");
         } catch (IllegalRequestException ignored) {
             // OK
@@ -167,7 +167,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
             processSession.process(
                 new WorkerIdentifier(WORKER1),
                 new GenericSignRequest(200, readFile(sampleOpen123)),
-                new RequestContext());
+                new RemoteRequestContext());
             fail("Should have thrown exception");
         } catch (IllegalRequestException ignored) {
             // OK
@@ -177,7 +177,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
             processSession.process(
                 new WorkerIdentifier(WORKER1),
                 new GenericSignRequest(200, readFile(sampleOpen123Owner123)),
-                new RequestContext());
+                new RemoteRequestContext());
             fail("Should have thrown exception");
         } catch (IllegalRequestException ignored) {
             // OK
@@ -187,7 +187,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
             processSession.process(
                 new WorkerIdentifier(WORKER1),
                 new GenericSignRequest(200, readFile(sampleOwner123)),
-                new RequestContext());
+                new RemoteRequestContext());
             fail("Should have thrown exception");
         } catch (IllegalRequestException ignored) {
             // OK
@@ -1457,9 +1457,11 @@ public class PDFSignerUnitTest extends ModulesTestCase {
             LOG.debug("\"" + password + "\" " + Arrays.toString(password.toCharArray()));
         }
         
-        RequestContext context = new RequestContext();
-        RequestMetadata.getInstance(context).put(RequestContext.METADATA_PDFPASSWORD, password);
-        
+        RemoteRequestContext context = new RemoteRequestContext();
+        RequestMetadata metadata = new RequestMetadata();
+        metadata.put(RequestContext.METADATA_PDFPASSWORD, password);
+        context.setMetadata(metadata);
+
         final GenericSignResponse response = 
                 (GenericSignResponse) processSession.process(new WorkerIdentifier(WORKER1), 
                 new GenericSignRequest(200, readFile(file)), 

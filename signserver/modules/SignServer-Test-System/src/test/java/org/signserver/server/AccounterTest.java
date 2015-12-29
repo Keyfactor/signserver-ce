@@ -18,7 +18,7 @@ import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.NotGrantedException;
 import org.signserver.common.ProcessResponse;
-import org.signserver.common.RequestContext;
+import org.signserver.common.RemoteRequestContext;
 import org.signserver.common.RequestMetadata;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.server.archive.test1archiver.Test1Signer;
@@ -131,14 +131,16 @@ public class AccounterTest extends ModulesTestCase {
      */
     private ProcessResponse signSomething(final boolean success, UsernamePasswordClientCredential credential) throws Exception {
         final String testDocument = "<document/>";
-        RequestContext context = new RequestContext();
+        RemoteRequestContext context = new RemoteRequestContext();
+        RequestMetadata metadata = new RequestMetadata();
         if (!success) {
-            RequestMetadata.getInstance(context).put(Test1Signer.METADATA_FAILREQUEST, "true");
+            metadata.put(Test1Signer.METADATA_FAILREQUEST, "true");
         }
         if (credential != null) {
-            context.put(RequestContext.CLIENT_CREDENTIAL, credential);
-            context.put(RequestContext.CLIENT_CREDENTIAL_PASSWORD, credential);
+            context.setUsername(credential.getUsername());
+            context.setPassword(credential.getPassword());
         }
+        context.setMetadata(metadata);
         
         final GenericSignRequest signRequest =
                 new GenericSignRequest(371, testDocument.getBytes());

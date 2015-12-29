@@ -21,11 +21,11 @@ import org.junit.runners.MethodSorters;
 import org.signserver.common.AccessDeniedException;
 import org.signserver.common.AuthorizationRequiredException;
 import org.signserver.common.GenericSignRequest;
-import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerUtil;
 import org.signserver.testutils.*;
 import org.junit.Before;
 import org.junit.Test;
+import org.signserver.common.RemoteRequestContext;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
@@ -160,7 +160,7 @@ public class RemoteAddressAuthorizerTest extends ModulesTestCase {
                 new GenericSignRequest(1, "<root/>".getBytes());
 
         try {
-            processSession.process(new WorkerIdentifier(getSignerIdDummy1()), request, new RequestContext());
+            processSession.process(new WorkerIdentifier(getSignerIdDummy1()), request, new RemoteRequestContext());
         } catch (AuthorizationRequiredException ex) {
             fail(ex.getMessage());
         } catch (AccessDeniedException ex) {

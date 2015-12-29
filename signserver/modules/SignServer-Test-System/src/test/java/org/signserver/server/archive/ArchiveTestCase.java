@@ -15,9 +15,12 @@ package org.signserver.server.archive;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import javax.xml.ws.BindingProvider;
+import javax.xml.ws.handler.MessageContext;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.tsp.TSPAlgorithms;
 import org.bouncycastle.tsp.TimeStampRequest;
@@ -28,8 +31,10 @@ import org.signserver.common.*;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestingSecurityManager;
 import org.junit.Before;
+import org.signserver.client.api.SigningAndValidationWS;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
+import org.signserver.protocol.ws.gen.SignServerWS;
 
 /**
  * Re-usable test case for archiving.
@@ -47,31 +52,36 @@ public class ArchiveTestCase extends ModulesTestCase {
     @Before
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
-//        TestingSecurityManager.install();
+        setupSSLKeystores();
     }
 
     @After
     public void tearDown() throws Exception {
         TestingSecurityManager.remove();
-    }	
+    }
     
-    protected ArchiveDataVO testArchive(final String document, final String remoteIP, final String xForwardedFor) throws Exception {
+    private GenericSignResponse processWithWS(WorkerIdentifier wi, byte[] document, final String xForwardedFor) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+        // Use WS (HTTP) so we can supply the X-Forwarded-For header
+        SigningAndValidationWS signingAndValidationWS = new SigningAndValidationWS(getHTTPHost(), getPublicHTTPSPort(), true) {
+            @Override
+            protected SignServerWS getWSPort() {
+                SignServerWS wsPort = super.getWSPort();
+                // Add HTTP header
+                if (xForwardedFor != null) {
+                    ((BindingProvider) wsPort).getRequestContext().put(MessageContext.HTTP_REQUEST_HEADERS,
+                            Collections.singletonMap("X-Forwarded-For", Collections.singletonList(xForwardedFor)));
+                }
+                return wsPort;
+            }
+            
+        };
+        return signingAndValidationWS.sign(wi.hasName() ? wi.getName() : String.valueOf(wi.getId()), document);
+    }
+    
+    protected ArchiveDataVO testArchive(final String document, final String xForwardedFor) throws Exception {
         // Process
-        final GenericSignRequest signRequest =
-                new GenericSignRequest(371, document.getBytes());
-        final RequestContext context =  new RequestContext();
-        
-        if (remoteIP != null) {
-            context.put(RequestContext.REMOTE_IP, remoteIP);
-        }
-        
-        if (xForwardedFor != null) {
-            context.put(RequestContext.X_FORWARDED_FOR, xForwardedFor);
-        }
-        
         GenericSignResponse response = (GenericSignResponse) 
-                processSession.process(new WorkerIdentifier(getSignerIdDummy1()), signRequest, 
-                context);
+                processWithWS(new WorkerIdentifier(getSignerIdDummy1()), document.getBytes(), xForwardedFor);
         assertNotNull("no response", response);
         
         final String expectedArchiveId = response.getArchiveId();
@@ -91,7 +101,7 @@ public class ArchiveTestCase extends ModulesTestCase {
     }
     
     protected ArchiveDataVO testArchive(final String document) throws Exception {
-        return testArchive(document, null, null);
+        return testArchive(document, null);
     }
     
     protected void testNoArchive(final String document) throws Exception {
@@ -100,7 +110,7 @@ public class ArchiveTestCase extends ModulesTestCase {
                 new GenericSignRequest(371, document.getBytes());
         GenericSignResponse response = (GenericSignResponse) 
                 processSession.process(new WorkerIdentifier(getSignerIdDummy1()), signRequest, 
-                new RequestContext());
+                new RemoteRequestContext());
         assertNotNull("no response", response);
         
         final String expectedArchiveId = response.getArchiveId();
@@ -123,7 +133,7 @@ public class ArchiveTestCase extends ModulesTestCase {
         final GenericSignRequest signRequest = new GenericSignRequest(reqid, requestBytes);
 
         final GenericSignResponse signResponse = (GenericSignResponse) processSession.process(
-                new WorkerIdentifier(signerId), signRequest, new RequestContext());
+                new WorkerIdentifier(signerId), signRequest, new RemoteRequestContext());
         assertNotNull("no response", signResponse);
         final byte[] responseBytes = signResponse.getProcessedData();
         final String responseHex = new String(Hex.encode(responseBytes));
@@ -178,7 +188,7 @@ public class ArchiveTestCase extends ModulesTestCase {
         final GenericSignRequest signRequest = new GenericSignRequest(reqid, requestBytes);
 
         final GenericSignResponse signResponse = (GenericSignResponse) processSession.process(
-                new WorkerIdentifier(signerId), signRequest, new RequestContext());
+                new WorkerIdentifier(signerId), signRequest, new RemoteRequestContext());
         assertNotNull("no response", signResponse);
         final byte[] responseBytes = signResponse.getProcessedData();
         final String responseHex = new String(Hex.encode(responseBytes));
@@ -233,7 +243,7 @@ public class ArchiveTestCase extends ModulesTestCase {
         final GenericSignRequest signRequest = new GenericSignRequest(reqid, requestBytes);
 
         final GenericSignResponse signResponse = (GenericSignResponse) processSession.process(
-                new WorkerIdentifier(signerId), signRequest, new RequestContext());
+                new WorkerIdentifier(signerId), signRequest, new RemoteRequestContext());
         assertNotNull("no response", signResponse);
         final byte[] responseBytes = signResponse.getProcessedData();
         final String responseHex = new String(Hex.encode(responseBytes));

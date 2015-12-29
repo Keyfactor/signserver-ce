@@ -85,8 +85,8 @@ import org.signserver.common.OperationUnsupportedException;
 import org.signserver.common.PKCS10CertReqInfo;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.QueryException;
+import org.signserver.common.RemoteRequestContext;
 import org.signserver.common.RequestAndResponseManager;
-import org.signserver.common.RequestContext;
 import org.signserver.common.ResyncException;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerException;
@@ -990,8 +990,6 @@ public class AdminLayerEJBImpl implements AdminWS {
             InvalidWorkerIdException_Exception, SignServerException_Exception {
         final List<byte[]> result = new LinkedList<byte[]>();
 
-        final RequestContext requestContext = new RequestContext();
-
         for (byte[] requestBytes : requests) {
             final ProcessRequest req;
             try {
@@ -1006,7 +1004,7 @@ public class AdminLayerEJBImpl implements AdminWS {
             }
             try {
                 result.add(RequestAndResponseManager.serializeProcessResponse(
-                    processSession.process(WorkerIdentifier.createFromIdOrName(workerIdOrName), req, requestContext)));
+                    processSession.process(WorkerIdentifier.createFromIdOrName(workerIdOrName), req, new RemoteRequestContext())));
             } catch (IOException ex) {
                 LOG.error("Error serializing process response", ex);
                 final IllegalRequestException fault

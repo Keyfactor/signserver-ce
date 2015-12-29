@@ -27,11 +27,11 @@ import org.signserver.client.cli.defaultimpl.SignDataGroupsCommand;
 import org.signserver.client.cli.defaultimpl.SignDocumentCommand;
 import org.signserver.common.AuthorizationRequiredException;
 import org.signserver.common.GenericSignRequest;
-import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerUtil;
 import org.signserver.testutils.ModulesTestCase;
 import org.junit.Before;
 import org.junit.Test;
+import org.signserver.common.RemoteRequestContext;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
@@ -101,7 +101,7 @@ public class UsernamePasswordAuthorizerTest extends ModulesTestCase {
      */
     @Test
     public void test01AuthorizationRequired() throws Exception {
-        final RequestContext context = new RequestContext();
+        final RemoteRequestContext context = new RemoteRequestContext();
 
         final GenericSignRequest request =
                 new GenericSignRequest(1, "<root/>".getBytes());
@@ -117,48 +117,9 @@ public class UsernamePasswordAuthorizerTest extends ModulesTestCase {
             fail("Exception: " + ex.getMessage());
         }
 
-        // With other type of credentials (in general credential holder)
-        context.put(RequestContext.CLIENT_CREDENTIAL, new DummyCredential());
-        try {
-             processSession.process(new WorkerIdentifier(getSignerIdDummy1()), request, context);
-             fail("No AuthorizationRequiredException thrown");
-        } catch (AuthorizationRequiredException ok) {
-            // OK
-        } catch (Exception ex) {
-            LOG.error("Wrong type of exception", ex);
-            fail("Exception: " + ex.getMessage());
-        }
-        
-        // With other type of credentials (password credential holder)
-        context.put(RequestContext.CLIENT_CREDENTIAL_PASSWORD, new DummyCredential());
-        try {
-             processSession.process(new WorkerIdentifier(getSignerIdDummy1()), request, context);
-             fail("No AuthorizationRequiredException thrown");
-        } catch (AuthorizationRequiredException ok) {
-            // OK
-        } catch (Exception ex) {
-            LOG.error("Wrong type of exception", ex);
-            fail("Exception: " + ex.getMessage());
-        }
-        
-        // With other type of credentials (in both general and password holder)
-        context.put(RequestContext.CLIENT_CREDENTIAL, new DummyCredential());
-        context.put(RequestContext.CLIENT_CREDENTIAL_PASSWORD, new DummyCredential());
-        try {
-             processSession.process(new WorkerIdentifier(getSignerIdDummy1()), request, context);
-             fail("No AuthorizationRequiredException thrown");
-        } catch (AuthorizationRequiredException ok) {
-            // OK
-        } catch (Exception ex) {
-            LOG.error("Wrong type of exception", ex);
-            fail("Exception: " + ex.getMessage());
-        }
-
         // With wrong password
-        final UsernamePasswordClientCredential cred 
-                = new UsernamePasswordClientCredential("user1", "FOO1234");
-        context.put(RequestContext.CLIENT_CREDENTIAL, cred);
-        context.put(RequestContext.CLIENT_CREDENTIAL_PASSWORD, cred);
+        context.setUsername("user1");
+        context.setPassword("FOO1234");
         try {
              processSession.process(new WorkerIdentifier(getSignerIdDummy1()), request, context);
              fail("No AuthorizationRequiredException thrown");
@@ -176,14 +137,14 @@ public class UsernamePasswordAuthorizerTest extends ModulesTestCase {
      */
     @Test
     public void test02PlainTextPassword() throws Exception {
-        final RequestContext context = new RequestContext();
+        final RemoteRequestContext context = new RemoteRequestContext();
 
         final GenericSignRequest request =
                 new GenericSignRequest(1, "<root/>".getBytes());
 
         // With correct username password
-        context.put(RequestContext.CLIENT_CREDENTIAL_PASSWORD,
-                new UsernamePasswordClientCredential("user1", "foo123"));
+        context.setUsername("user1");
+        context.setPassword("foo123");
         try {
              processSession.process(new WorkerIdentifier(getSignerIdDummy1()), request, context);
         } catch (AuthorizationRequiredException ex) {
@@ -200,14 +161,14 @@ public class UsernamePasswordAuthorizerTest extends ModulesTestCase {
      */
     @Test
     public void test03HashedPassword() throws Exception {
-        final RequestContext context = new RequestContext();
+        final RemoteRequestContext context = new RemoteRequestContext();
 
         final GenericSignRequest request =
                 new GenericSignRequest(1, "<root/>".getBytes());
 
         // With correct username password
-        context.put(RequestContext.CLIENT_CREDENTIAL_PASSWORD,
-                new UsernamePasswordClientCredential("user2", "foo123"));
+        context.setUsername("user2");
+        context.setPassword("foo123");
         try {
              processSession.process(new WorkerIdentifier(getSignerIdDummy1()), request, context);
         } catch (AuthorizationRequiredException ex) {
@@ -224,14 +185,14 @@ public class UsernamePasswordAuthorizerTest extends ModulesTestCase {
      */
     @Test
     public void test04HashedAndSaltedPassword() throws Exception {
-        final RequestContext context = new RequestContext();
+        final RemoteRequestContext context = new RemoteRequestContext();
 
         final GenericSignRequest request =
                 new GenericSignRequest(1, "<root/>".getBytes());
 
         // With correct username password
-        context.put(RequestContext.CLIENT_CREDENTIAL_PASSWORD,
-                new UsernamePasswordClientCredential("user3", "foo123"));
+        context.setUsername("user3");
+        context.setPassword("foo123");
         try {
              processSession.process(new WorkerIdentifier(getSignerIdDummy1()), request, context);
         } catch (AuthorizationRequiredException ex) {

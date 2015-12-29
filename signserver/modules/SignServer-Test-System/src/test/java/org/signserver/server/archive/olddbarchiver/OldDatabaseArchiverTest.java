@@ -25,12 +25,12 @@ import org.junit.runners.MethodSorters;
 import org.signserver.common.ArchiveDataVO;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
-import org.signserver.common.RequestContext;
 import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.ArchiveTest;
 import org.signserver.server.archive.ArchiveTestCase;
 import org.junit.Before;
 import org.junit.Test;
+import org.signserver.common.RemoteRequestContext;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
@@ -200,7 +200,7 @@ public class OldDatabaseArchiverTest extends ArchiveTestCase {
         getWorkerSession().reloadConfiguration(signerId);
         
         ArchiveDataVO archiveData = testArchive("<document id=\"" + random.nextLong() + "\"/>",
-                "1.2.3.4", "42.42.42.42");
+                "42.42.42.42");
         
         final String ip = archiveData.getRequestIP();
         
@@ -226,11 +226,11 @@ public class OldDatabaseArchiverTest extends ArchiveTestCase {
         getWorkerSession().reloadConfiguration(signerId);
         
         ArchiveDataVO archiveData = testArchive("<document id=\"" + random.nextLong() + "\"/>",
-                "1.2.3.4", "42.42.42.42");
+                "42.42.42.42");
         
         final String ip = archiveData.getRequestIP();
         
-        assertEquals("Archiver should not use X-Forwarded-For IP address", "1.2.3.4", ip);
+        assertEquals("Archiver should not use X-Forwarded-For IP address", "127.0.0.1", ip);
         
         LOG.debug("<test60archiveWithXForwardedForNotUsed");
     }
@@ -253,11 +253,11 @@ public class OldDatabaseArchiverTest extends ArchiveTestCase {
         getWorkerSession().reloadConfiguration(signerId);
         
         ArchiveDataVO archiveData = testArchive("<document id=\"" + random.nextLong() + "\"/>",
-                "1.2.3.4", "42.42.42.42");
+                "42.42.42.42");
         
         final String ip = archiveData.getRequestIP();
         
-        assertEquals("Archiver should not use X-Forwarded-For IP address", "1.2.3.4", ip);
+        assertEquals("Archiver should not use X-Forwarded-For IP address", "127.0.0.1", ip);
         
         LOG.debug("<test60archiveWithXForwardedForFalse");
     }
@@ -279,11 +279,11 @@ public class OldDatabaseArchiverTest extends ArchiveTestCase {
         getWorkerSession().reloadConfiguration(signerId);
         
         ArchiveDataVO archiveData = testArchive("<document id=\"" + random.nextLong() + "\"/>",
-                "1.2.3.4", null);
+                null);
         
         final String ip = archiveData.getRequestIP();
         
-        assertEquals("Archiver should use the request IP address", "1.2.3.4", ip);
+        assertEquals("Archiver should use the request IP address", "127.0.0.1", ip);
         
         LOG.debug("<test60archiveWithXForwardedForWithoutHeader");
     }
@@ -304,7 +304,7 @@ public class OldDatabaseArchiverTest extends ArchiveTestCase {
         getWorkerSession().reloadConfiguration(signerId);
         
         ArchiveDataVO archiveData = testArchive("<document id=\"" + random.nextLong() + "\"/>",
-                "42.42.42.42", "42.42.42.42, 1.2.3.4");
+                "42.42.42.42, 1.2.3.4");
         
         final String ip = archiveData.getRequestIP();
         
@@ -327,11 +327,11 @@ public class OldDatabaseArchiverTest extends ArchiveTestCase {
         getWorkerSession().reloadConfiguration(signerId);
         
         ArchiveDataVO archiveData = testArchive("<document id=\"" + random.nextLong() + "\"/>",
-                "42.42.42.42", "47.47.47.47, 42.42.42.42, 1.2.3.4");
+                "47.47.47.47, 42.42.42.42, 1.2.3.4");
         
         final String ip = archiveData.getRequestIP();
         
-        assertEquals("Archiver should archive the last two IP addresses", "42.42.42.42, 1.2.3.4", ip);
+        assertEquals("Archiver should archive the last two IP addresses", "127.0.0.1, 1.2.3.4", ip);
     }
     
     /**
@@ -350,7 +350,7 @@ public class OldDatabaseArchiverTest extends ArchiveTestCase {
         getWorkerSession().reloadConfiguration(signerId);
         
         ArchiveDataVO archiveData = testArchive("<document id=\"" + random.nextLong() + "\"/>",
-                "42.42.42.42", "1.2.3.4");
+                "1.2.3.4");
         
         final String ip = archiveData.getRequestIP();
         
@@ -373,7 +373,7 @@ public class OldDatabaseArchiverTest extends ArchiveTestCase {
         getWorkerSession().reloadConfiguration(signerId);
         
         ArchiveDataVO archiveData = testArchive("<document id=\"" + random.nextLong() + "\"/>",
-                "42.42.42.42", "42.42.42.42, 1.2.3.4");
+                "42.42.42.42, 1.2.3.4");
         
         final String ip = archiveData.getRequestIP();
         
@@ -397,11 +397,11 @@ public class OldDatabaseArchiverTest extends ArchiveTestCase {
         getWorkerSession().reloadConfiguration(signerId);
         
         ArchiveDataVO archiveData = testArchive("<document id=\"" + random.nextLong() + "\"/>",
-                "47.47.47.47", "42.42.42.42, 1.2.3.4");
+                "42.42.42.42, 1.2.3.4");
         
         final String ip = archiveData.getRequestIP();
         
-        assertEquals("Archiver should include direct address", "42.42.42.42, 1.2.3.4, 47.47.47.47", ip);
+        assertEquals("Archiver should include direct address", "42.42.42.42, 1.2.3.4, 127.0.0.1", ip);
     }
     
     /**
@@ -422,11 +422,11 @@ public class OldDatabaseArchiverTest extends ArchiveTestCase {
         getWorkerSession().reloadConfiguration(signerId);
         
         ArchiveDataVO archiveData = testArchive("<document id=\"" + random.nextLong() + "\"/>",
-                "47.47.47.47", "42.42.42.42, 1.2.3.4");
+                "42.42.42.42, 1.2.3.4");
         
         final String ip = archiveData.getRequestIP();
         
-        assertEquals("Archiver should include direct address", "47.47.47.47", ip);
+        assertEquals("Archiver should include direct address", "127.0.0.1", ip);
     }
     
     protected Collection<? extends Archivable> archiveTimeStamp(int signerId) throws Exception {
@@ -443,7 +443,7 @@ public class OldDatabaseArchiverTest extends ArchiveTestCase {
                 new GenericSignRequest(reqid, requestBytes);
 
         final GenericSignResponse response = (GenericSignResponse) processSession.process(
-                new WorkerIdentifier(signerId), signRequest, new RequestContext());
+                new WorkerIdentifier(signerId), signRequest, new RemoteRequestContext());
         assertNotNull("no response", response);
         
         return response.getArchivables();

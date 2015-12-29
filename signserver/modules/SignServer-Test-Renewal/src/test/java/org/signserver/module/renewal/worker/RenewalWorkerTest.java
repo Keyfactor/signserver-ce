@@ -49,6 +49,7 @@ import org.signserver.common.IllegalRequestException;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
+import org.signserver.common.RemoteRequestContext;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
@@ -159,7 +160,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
                 reqProperties);
         GenericPropertiesResponse response
                 = (GenericPropertiesResponse) getProcessSession().process(
-                    new WorkerIdentifier(WORKERID), request, new RequestContext());
+                    new WorkerIdentifier(WORKERID), request, new RemoteRequestContext());
 
         // OK result
         LOG.info("Response message: " + response.getProperties().getProperty(
@@ -230,7 +231,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
                 reqProperties);
         GenericPropertiesResponse response
                 = (GenericPropertiesResponse) getProcessSession().process(
-                    new WorkerIdentifier(WORKERID), request, new RequestContext());
+                    new WorkerIdentifier(WORKERID), request, new RemoteRequestContext());
 
         // OK result
         LOG.info("Response message: " + response.getProperties().getProperty(
@@ -309,7 +310,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
                 reqProperties);
         GenericPropertiesResponse response
                 = (GenericPropertiesResponse) getProcessSession().process(
-                    new WorkerIdentifier(WORKERID), request, new RequestContext());
+                    new WorkerIdentifier(WORKERID), request, new RemoteRequestContext());
 
         // OK result
         LOG.info("Response message: " + response.getProperties().getProperty(
@@ -384,7 +385,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
                 reqProperties);
         GenericPropertiesResponse response
                 = (GenericPropertiesResponse) getProcessSession().process(
-                    new WorkerIdentifier(WORKERID), request, new RequestContext());
+                    new WorkerIdentifier(WORKERID), request, new RemoteRequestContext());
 
         // OK result
         LOG.info("Response message: " + response.getProperties().getProperty(
@@ -445,7 +446,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
                 reqProperties);
         GenericPropertiesResponse response
                 = (GenericPropertiesResponse) getProcessSession().process(
-                    new WorkerIdentifier(WORKERID), request, new RequestContext());
+                    new WorkerIdentifier(WORKERID), request, new RemoteRequestContext());
 
         // OK result
         LOG.info("Response message: " + response.getProperties().getProperty(
@@ -497,7 +498,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
                 reqProperties);
         GenericPropertiesResponse response
                 = (GenericPropertiesResponse) getProcessSession().process(
-                    new WorkerIdentifier(WORKERID), request, new RequestContext());
+                    new WorkerIdentifier(WORKERID), request, new RemoteRequestContext());
 
         // OK result
         LOG.info("Response message: " + response.getProperties().getProperty(
@@ -606,7 +607,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
                 reqProperties);
         GenericPropertiesResponse response
                 = (GenericPropertiesResponse) workerSession.process(
-                    new WorkerIdentifier(6110), request, new RequestContext());
+                    new WorkerIdentifier(6110), request, new RemoteRequestContext());
         assertNotNull(response);
         
         assertFalse("Explicit ECC parameters not set", workerSession.explicitEccParametersSet);
@@ -639,7 +640,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
                 reqProperties);
         GenericPropertiesResponse response
                 = (GenericPropertiesResponse) workerSession.process(
-                    new WorkerIdentifier(6110), request, new RequestContext());
+                    new WorkerIdentifier(6110), request, new RemoteRequestContext());
         assertNotNull(response);
         
         assertTrue("Explicit ECC parameters set", workerSession.explicitEccParametersSet);
@@ -672,7 +673,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
                 reqProperties);
         GenericPropertiesResponse response
                 = (GenericPropertiesResponse) workerSession.process(
-                    new WorkerIdentifier(6110), request, new RequestContext());
+                    new WorkerIdentifier(6110), request, new RemoteRequestContext());
         assertNotNull(response);
         
         assertFalse("Explicit ECC parameters not set", workerSession.explicitEccParametersSet);

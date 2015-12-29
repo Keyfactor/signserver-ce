@@ -206,7 +206,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
 
 
         final GenericSignResponse res = (GenericSignResponse) processSession.process(
-                worker, signRequest, new RequestContext());
+                worker, signRequest, new RemoteRequestContext());
 
         assertTrue(reqid == res.getRequestID());
 
@@ -266,7 +266,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
 
 
         final GenericSignResponse res = (GenericSignResponse) processSession.process(
-                worker, signRequest, new RequestContext());
+                worker, signRequest, new RemoteRequestContext());
         
         return res.getProcessedData();
     }
@@ -299,7 +299,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
                 requestBytes);
 
         final GenericSignResponse res = (GenericSignResponse) processSession.process(
-                WORKER2, signRequest, new RequestContext());
+                WORKER2, signRequest, new RemoteRequestContext());
 
         final TimeStampResponse timeStampResponse = new TimeStampResponse(
             (byte[]) res.getProcessedData());
@@ -375,7 +375,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
 
 
         final GenericSignResponse res = (GenericSignResponse) processSession.process(
-                WORKER1, signRequest, new RequestContext());
+                WORKER1, signRequest, new RemoteRequestContext());
 
         final CertificateFactory factory = CertificateFactory.getInstance("X.509");
         final X509Certificate cert =
@@ -539,7 +539,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
 
 
         final GenericSignResponse res = (GenericSignResponse) processSession.process(
-                worker, signRequest, new RequestContext());
+                worker, signRequest, new RemoteRequestContext());
 
         assertTrue(reqid == res.getRequestID());
 
@@ -606,7 +606,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
                 new GenericSignRequest(123124, requestBytes);
         try {
             final GenericSignResponse res = (GenericSignResponse) processSession.process(
-                    WORKER2, signRequest, new RequestContext());
+                    WORKER2, signRequest, new RemoteRequestContext());
 
             final TimeStampResponse timeStampResponse = new TimeStampResponse((byte[]) res.getProcessedData());
             timeStampResponse.validate(timeStampRequest);
@@ -659,7 +659,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
                     new GenericSignRequest(123124, requestBytes);
             try {
                 final GenericSignResponse res = (GenericSignResponse) processSession.process(
-                        WORKER2, signRequest, new RequestContext());
+                        WORKER2, signRequest, new RemoteRequestContext());
 
                 final TimeStampResponse timeStampResponse = new TimeStampResponse((byte[]) res.getProcessedData());
                 timeStampResponse.validate(timeStampRequest);
@@ -714,7 +714,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
                     new GenericSignRequest(123124, requestBytes);
             try {
                 final GenericSignResponse res = (GenericSignResponse) processSession.process(
-                        WORKER2, signRequest, new RequestContext());
+                        WORKER2, signRequest, new RemoteRequestContext());
 
                 final TimeStampResponse timeStampResponse = new TimeStampResponse((byte[]) res.getProcessedData());
                 timeStampResponse.validate(timeStampRequest);
@@ -965,7 +965,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
 
         try {
             final GenericSignResponse res = (GenericSignResponse) processSession.process(
-                WORKER1, signRequest, new RequestContext());
+                WORKER1, signRequest, new RemoteRequestContext());
         } catch (IllegalRequestException e) {
             // expected
         } catch (Exception e) {
@@ -987,7 +987,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
 
         try {
             final GenericSignResponse res = (GenericSignResponse) processSession.process(
-                WORKER1, signRequest, new RequestContext());
+                WORKER1, signRequest, new RemoteRequestContext());
         } catch (IllegalRequestException e) {
             // expected
         } catch (Exception e) {
@@ -1009,7 +1009,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
 
         try {
             final GenericSignResponse res = (GenericSignResponse) processSession.process(
-                WORKER1, signRequest, new RequestContext());
+                WORKER1, signRequest, new RemoteRequestContext());
         } catch (IllegalRequestException e) {
             // expected
         } catch (Exception e) {
@@ -1061,7 +1061,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
                 requestBytes);
 
         final GenericSignResponse res = (GenericSignResponse) processSession.process(
-                WORKER2, signRequest, new RequestContext());
+                WORKER2, signRequest, new RemoteRequestContext());
 
         final TimeStampResponse timeStampResponse = new TimeStampResponse(
             (byte[]) res.getProcessedData());
@@ -1089,7 +1089,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
                 requestBytes);
 
         final GenericSignResponse res = (GenericSignResponse) processSession.process(
-                WORKER2, signRequest, new RequestContext());
+                WORKER2, signRequest, new RemoteRequestContext());
 
         final TimeStampResponse timeStampResponse = new TimeStampResponse(
             (byte[]) res.getProcessedData());
@@ -1487,7 +1487,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
                 new GenericSignRequest(123124, requestBytes);
         try {
             final GenericSignResponse res = (GenericSignResponse) processSession.process(
-                    wi, signRequest, new RequestContext());
+                    wi, signRequest, new RemoteRequestContext());
 
             final TimeStampResponse timeStampResponse = new TimeStampResponse((byte[]) res.getProcessedData());
             timeStampResponse.validate(timeStampRequest);
@@ -1509,7 +1509,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
                 new GenericSignRequest(123124, requestBytes);
         try {
             final GenericSignResponse res = (GenericSignResponse) processSession.process(
-                    wi, signRequest, new RequestContext());
+                    wi, signRequest, new RemoteRequestContext());
 
             final TimeStampResponse timeStampResponse = new TimeStampResponse((byte[]) res.getProcessedData());
             timeStampResponse.validate(timeStampRequest);

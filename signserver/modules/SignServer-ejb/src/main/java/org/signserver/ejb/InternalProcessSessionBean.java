@@ -25,6 +25,7 @@ import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
+import org.signserver.common.RemoteRequestContext;
 import org.signserver.common.RequestContext;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerException;
@@ -125,11 +126,10 @@ public class InternalProcessSessionBean implements InternalProcessSessionLocal, 
 
     @Override
     public ProcessResponse process(final WorkerIdentifier wi,
-            final ProcessRequest request, final RequestContext requestContext)
+            final ProcessRequest request, final RemoteRequestContext remoteContext)
             throws IllegalRequestException, CryptoTokenOfflineException,
             SignServerException {
-        requestContext.setServices(servicesImpl);
-        return processImpl.process(wi, request, requestContext);
+        return processImpl.process(wi, request, remoteContext, servicesImpl);
     }
 
     @Override
@@ -140,14 +140,5 @@ public class InternalProcessSessionBean implements InternalProcessSessionLocal, 
         requestContext.setServices(servicesImpl);
         return processImpl.process(adminInfo, wi, request, requestContext);
     }
-
-    /*@Override
-    public int getWorkerId(String workerName) throws InvalidWorkerIdException {
-        try {
-            return processImpl.getWorkerId(workerName);
-        } catch (NoSuchWorkerException ex) {
-            throw new InvalidWorkerIdException(ex.getMessage());
-        }
-    }*/
 
 }

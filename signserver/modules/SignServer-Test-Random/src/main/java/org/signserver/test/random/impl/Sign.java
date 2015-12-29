@@ -42,7 +42,6 @@ import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.cmp.PKIStatus;
 import org.bouncycastle.tsp.*;
 import org.signserver.common.*;
-import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.test.random.FailedException;
 import org.signserver.test.random.Task;
@@ -96,7 +95,7 @@ public class Sign implements Task {
     
     private void process(final WorkerSpec signer, final int reqid) throws FailedException, IllegalRequestException, CryptoTokenOfflineException, SignServerException {
         final ProcessResponse result;
-        final RequestContext requestContext = new RequestContext();
+        final RemoteRequestContext requestContext = new RemoteRequestContext();
         if (preProcessor != null) {
             preProcessor.preProcess(requestContext);
         }

@@ -81,7 +81,7 @@ public class OOXMLSignerTest extends ModulesTestCase {
 
         GenericSignRequest signRequest = new GenericSignRequest(reqid, Base64.decode(TEST_DOCX.getBytes()));
 
-        GenericSignResponse res = (GenericSignResponse) processSession.process(new WorkerIdentifier(WORKERID), signRequest, new RequestContext());
+        GenericSignResponse res = (GenericSignResponse) processSession.process(new WorkerIdentifier(WORKERID), signRequest, new RemoteRequestContext());
         byte[] data = res.getProcessedData();
 
         // Answer to right question

@@ -123,7 +123,7 @@ public class XMLSignerTest extends ModulesTestCase {
 
         final GenericSignResponse res = 
                 (GenericSignResponse) processSession.process(new WorkerIdentifier(workerId),
-                    signRequest, new RequestContext());
+                    signRequest, new RemoteRequestContext());
         final byte[] data = res.getProcessedData();
 
         // Answer to right question
@@ -289,7 +289,7 @@ public class XMLSignerTest extends ModulesTestCase {
 
         final GenericSignResponse res = 
                 (GenericSignResponse) processSession.process(new WorkerIdentifier(DEBUGWORKER),
-                    signRequest, new RequestContext());
+                    signRequest, new RemoteRequestContext());
         final byte[] data = res.getProcessedData();
 
         final Properties props = new Properties();

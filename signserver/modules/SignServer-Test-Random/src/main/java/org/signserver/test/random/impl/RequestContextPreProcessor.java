@@ -12,7 +12,7 @@
  *************************************************************************/
 package org.signserver.test.random.impl;
 
-import org.signserver.common.RequestContext;
+import org.signserver.common.RemoteRequestContext;
 
 /**
  * Responsible for processing a RequestContext before it is sent out as a
@@ -26,5 +26,5 @@ public interface RequestContextPreProcessor {
      * Called before the RequestContext is sent out in a request.
      * @param context to modify
      */
-    void preProcess(RequestContext context);
+    void preProcess(RemoteRequestContext context);
 }

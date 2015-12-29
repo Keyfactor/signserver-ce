@@ -26,7 +26,7 @@ import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
 import org.signserver.common.MRTDSignRequest;
 import org.signserver.common.MRTDSignResponse;
-import org.signserver.common.RequestContext;
+import org.signserver.common.RemoteRequestContext;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.StaticWorkerStatus;
 import org.signserver.common.WorkerConfig;
@@ -76,7 +76,7 @@ public class MRTDSignerTest extends ModulesTestCase {
         signrequests.add(signreq1);
         signrequests.add(signreq2);
 
-        MRTDSignResponse res = (MRTDSignResponse) processSession.process(new WorkerIdentifier(7890), new MRTDSignRequest(reqid, signrequests), new RequestContext());
+        MRTDSignResponse res = (MRTDSignResponse) processSession.process(new WorkerIdentifier(7890), new MRTDSignRequest(reqid, signrequests), new RemoteRequestContext());
         assertTrue(res != null);
         assertTrue(reqid == res.getRequestID());
         Certificate signercert = res.getSignerCertificate();
@@ -128,7 +128,7 @@ public class MRTDSignerTest extends ModulesTestCase {
         int reqid = 13;
         byte[] signreq1 = "Hello World".getBytes();
 
-        GenericSignResponse res = (GenericSignResponse) processSession.process(new WorkerIdentifier(7890), new GenericSignRequest(reqid, signreq1), new RequestContext());
+        GenericSignResponse res = (GenericSignResponse) processSession.process(new WorkerIdentifier(7890), new GenericSignRequest(reqid, signreq1), new RemoteRequestContext());
         assertTrue(res != null);
         assertTrue(reqid == res.getRequestID());
         Certificate signercert = res.getSignerCertificate();

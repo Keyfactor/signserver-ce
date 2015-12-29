@@ -459,7 +459,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
             expectedHashes = dataGroups;
         }
 
-        SODSignResponse res = (SODSignResponse) processSession.process(new WorkerIdentifier(workerId), new SODSignRequest(requestId, dataGroups), new RequestContext());
+        SODSignResponse res = (SODSignResponse) processSession.process(new WorkerIdentifier(workerId), new SODSignRequest(requestId, dataGroups), new RemoteRequestContext());
         assertNotNull(res);
         assertEquals(requestId, res.getRequestID());
         Certificate signercert = res.getSignerCertificate();

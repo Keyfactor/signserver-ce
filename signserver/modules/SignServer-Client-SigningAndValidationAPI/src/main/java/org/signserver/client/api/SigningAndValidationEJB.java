@@ -23,7 +23,7 @@ import org.signserver.common.IllegalRequestException;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
-import org.signserver.common.RequestContext;
+import org.signserver.common.RemoteRequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.WorkerIdentifier;
@@ -57,7 +57,7 @@ public class SigningAndValidationEJB implements ISigningAndValidation {
     @Override
     public GenericSignResponse sign(String signerIdOrName, byte[] xmlDocument) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
         GenericSignRequest request = new GenericSignRequest(1, xmlDocument);
-        ProcessResponse resp = process(signerIdOrName, request, new RequestContext());
+        ProcessResponse resp = process(signerIdOrName, request, new RemoteRequestContext());
         if (!(resp instanceof GenericSignResponse)) {
             throw new SignServerException("Unexpected response type: " + resp.getClass().getName());
         }
@@ -66,7 +66,7 @@ public class SigningAndValidationEJB implements ISigningAndValidation {
 
     @Override
     public GenericValidationResponse validate(String validatorIdOrName, byte[] xmlDocument) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
-        ProcessResponse resp = process(validatorIdOrName, new GenericValidationRequest(1, xmlDocument), new RequestContext());
+        ProcessResponse resp = process(validatorIdOrName, new GenericValidationRequest(1, xmlDocument), new RemoteRequestContext());
         if (!(resp instanceof GenericValidationResponse)) {
             throw new SignServerException("Unexpected response type: " + resp.getClass().getName());
         }
@@ -89,7 +89,7 @@ public class SigningAndValidationEJB implements ISigningAndValidation {
     }
 
     @Override
-    public ProcessResponse process(String workerIdOrName, ProcessRequest request, RequestContext context) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+    public ProcessResponse process(String workerIdOrName, ProcessRequest request, RemoteRequestContext context) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
         return processSession.process(WorkerIdentifier.createFromIdOrName(workerIdOrName), request, context);
     }
 }

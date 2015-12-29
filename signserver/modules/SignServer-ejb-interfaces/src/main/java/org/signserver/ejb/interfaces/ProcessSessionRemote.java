@@ -17,11 +17,13 @@ import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
-import org.signserver.common.RequestContext;
+import org.signserver.common.RemoteRequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerIdentifier;
 
 /**
+ * Remote interface for the process session to be used from CLI/GUI using
+ * the EJB interface.
  *
  * @author Markus Kilås
  * @version $Id$
@@ -35,14 +37,15 @@ public interface ProcessSessionRemote {
      *
      * @param wi id of worker who should process the request
      * @param request the request
-     * @param requestContext context of the request
+     * @param remoteContext context of the request
+     * @return The process response
      * @throws CryptoTokenOfflineException if the signers token isn't activated.
      * @throws IllegalRequestException if illegal request is sent to the method
      * @throws SignServerException if some other error occurred server side
      * during process.
      */
     ProcessResponse process(WorkerIdentifier wi, ProcessRequest request,
-            RequestContext requestContext)
+            RemoteRequestContext remoteContext)
             throws IllegalRequestException, CryptoTokenOfflineException,
             SignServerException;
 }

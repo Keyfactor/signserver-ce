@@ -253,6 +253,8 @@ public class ClientWS {
 
         final LogMap logMap = LogMap.getInstance(requestContext);
 
+        final String xForwardedFor = servletRequest.getHeader(RequestContext.X_FORWARDED_FOR);
+
         // Add HTTP specific log entries
         logMap.put(IWorkerLogger.LOG_REQUEST_FULLURL, 
                 servletRequest.getRequestURL().append("?")
@@ -261,6 +263,10 @@ public class ClientWS {
                 servletRequest.getHeader("Content-Length"));
         logMap.put(IWorkerLogger.LOG_XFORWARDEDFOR,
                 servletRequest.getHeader("X-Forwarded-For"));
+        
+        if (xForwardedFor != null) {
+            requestContext.put(RequestContext.X_FORWARDED_FOR, xForwardedFor);
+        }
         
         if (requestMetadata == null) {
             requestContext.remove(RequestContext.REQUEST_METADATA);

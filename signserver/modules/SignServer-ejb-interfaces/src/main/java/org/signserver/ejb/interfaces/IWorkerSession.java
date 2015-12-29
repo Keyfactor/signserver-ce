@@ -370,8 +370,7 @@ public interface IWorkerSession {
      * @param signerCerts the certificate chain used to sign signature requests
      * @param scope one of GlobalConfiguration.SCOPE_ constants
      */
-    void uploadSignerCertificateChain(int signerId,
-            Collection<byte[]> signerCerts, String scope)
+    void uploadSignerCertificateChain(int signerId, List<byte[]> signerCerts, String scope)
              throws CertificateException;
 
     /**
@@ -718,8 +717,7 @@ public interface IWorkerSession {
          * @param signerCerts the certificate chain used to sign signature requests
          * @param scope one of GlobalConfiguration.SCOPE_ constants
          */
-        void uploadSignerCertificateChain(final AdminInfo adminInfo, int signerId,
-                Collection<byte[]> signerCerts, String scope) throws CertificateException;
+        void uploadSignerCertificateChain(final AdminInfo adminInfo, int signerId, List<byte[]> signerCerts, String scope) throws CertificateException;
 
         
         /**

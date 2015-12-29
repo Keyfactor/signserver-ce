@@ -1016,7 +1016,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     }
 
     @Override
-    public void uploadSignerCertificateChain(int signerId, Collection<byte[]> signerCerts, String scope)
+    public void uploadSignerCertificateChain(int signerId, List<byte[]> signerCerts, String scope)
     	throws CertificateException {
     	uploadSignerCertificateChain(new AdminInfo("CLI user", null, null), signerId, signerCerts, scope);
     }
@@ -1025,8 +1025,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
      * @see org.signserver.ejb.interfaces.IWorkerSession#uploadSignerCertificateChain(int, java.util.Collection, java.lang.String)
      */
     @Override
-    public void uploadSignerCertificateChain(final AdminInfo adminInfo, int signerId,
-            Collection<byte[]> signerCerts, String scope) 
+    public void uploadSignerCertificateChain(final AdminInfo adminInfo, int signerId, List<byte[]> signerCerts, String scope) 
             throws CertificateException {
 
         WorkerConfig config = getWorkerConfig(signerId);

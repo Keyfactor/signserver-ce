@@ -141,8 +141,7 @@ public class WorkerSessionMock implements IWorkerSession.ILocal,
     }
 
     @Override
-    public void uploadSignerCertificateChain(AdminInfo adminInfo, int signerId,
-            Collection<byte[]> signerCerts, String scope)
+    public void uploadSignerCertificateChain(AdminInfo adminInfo, int signerId, List<byte[]> signerCerts, String scope)
                     throws CertificateException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -329,8 +328,7 @@ public class WorkerSessionMock implements IWorkerSession.ILocal,
     }
 
     @Override
-    public void uploadSignerCertificateChain(int signerId,
-            Collection<byte[]> signerCerts, String scope) {
+    public void uploadSignerCertificateChain(int signerId, List<byte[]> signerCerts, String scope) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

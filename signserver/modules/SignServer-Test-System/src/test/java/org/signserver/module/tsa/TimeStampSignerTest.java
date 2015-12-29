@@ -733,7 +733,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
         }
     }
     
-    private Collection<byte[]> asListOfByteArrays(List<Certificate> chain) throws CertificateEncodingException {
+    private List<byte[]> asListOfByteArrays(List<Certificate> chain) throws CertificateEncodingException {
         ArrayList results = new ArrayList(chain.size());
         for (Certificate c : chain) {
             results.add(c.getEncoded());

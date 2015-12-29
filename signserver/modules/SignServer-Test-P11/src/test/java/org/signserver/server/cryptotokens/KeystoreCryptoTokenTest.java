@@ -234,7 +234,7 @@ public class KeystoreCryptoTokenTest extends CryptoTokenTestBase {
                     }
 
                     @Override
-                    public void uploadSignerCertificateChain(AdminInfo adminInfo, int signerId, Collection<byte[]> signerCerts, String scope) throws CertificateException {
+                    public void uploadSignerCertificateChain(AdminInfo adminInfo, int signerId, List<byte[]> signerCerts, String scope) throws CertificateException {
                         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
                     }
 
@@ -384,7 +384,7 @@ public class KeystoreCryptoTokenTest extends CryptoTokenTestBase {
                     }
 
                     @Override
-                    public void uploadSignerCertificateChain(int signerId, Collection<byte[]> signerCerts, String scope) throws CertificateException {
+                    public void uploadSignerCertificateChain(int signerId, List<byte[]> signerCerts, String scope) throws CertificateException {
                         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
                     }
 

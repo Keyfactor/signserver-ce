@@ -13,12 +13,14 @@
 package org.signserver.server.archive;
 
 import java.math.BigInteger;
-import java.util.Arrays;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.handler.MessageContext;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -31,10 +33,14 @@ import org.signserver.common.*;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestingSecurityManager;
 import org.junit.Before;
-import org.signserver.client.api.SigningAndValidationWS;
+import org.signserver.client.clientws.ClientWS;
+import org.signserver.client.clientws.ClientWSService;
+import org.signserver.client.clientws.DataResponse;
+import org.signserver.client.clientws.InternalServerException_Exception;
+import org.signserver.client.clientws.Metadata;
+import org.signserver.client.clientws.RequestFailedException_Exception;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
-import org.signserver.protocol.ws.gen.SignServerWS;
 
 /**
  * Re-usable test case for archiving.
@@ -60,43 +66,38 @@ public class ArchiveTestCase extends ModulesTestCase {
         TestingSecurityManager.remove();
     }
     
-    private GenericSignResponse processWithWS(WorkerIdentifier wi, byte[] document, final String xForwardedFor) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
-        // Use WS (HTTP) so we can supply the X-Forwarded-For header
-        SigningAndValidationWS signingAndValidationWS = new SigningAndValidationWS(getHTTPHost(), getPublicHTTPSPort(), true) {
-            @Override
-            protected SignServerWS getWSPort() {
-                SignServerWS wsPort = super.getWSPort();
-                // Add HTTP header
-                if (xForwardedFor != null) {
-                    ((BindingProvider) wsPort).getRequestContext().put(MessageContext.HTTP_REQUEST_HEADERS,
-                            Collections.singletonMap("X-Forwarded-For", Collections.singletonList(xForwardedFor)));
-                }
-                return wsPort;
+    private DataResponse processWithClientWS(WorkerIdentifier wi, byte[] document, final String xForwardedFor) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException, InternalServerException_Exception, RequestFailedException_Exception {
+        final String url = "https://" + getHTTPHost() + ":" + getPublicHTTPSPort() + "/signserver/ClientWSService/ClientWS?wsdl";
+        final ClientWSService service;
+        try {
+            service = new ClientWSService(new URL(url), new QName("http://clientws.signserver.org/", "ClientWSService"));
+            ClientWS wsPort = service.getClientWSPort();
+            // Add HTTP header
+            if (xForwardedFor != null) {
+                ((BindingProvider) wsPort).getRequestContext().put(MessageContext.HTTP_REQUEST_HEADERS,
+                        Collections.singletonMap("X-Forwarded-For", Collections.singletonList(xForwardedFor)));
             }
-            
-        };
-        return signingAndValidationWS.sign(wi.hasName() ? wi.getName() : String.valueOf(wi.getId()), document);
+            return wsPort.processData(wi.hasName() ? wi.getName() : String.valueOf(wi.getId()), Collections.<Metadata>emptyList(), document);
+        } catch (MalformedURLException ex) {
+            throw new IllegalArgumentException("Malformed URL: "
+                    + url, ex);
+        }
     }
     
     protected ArchiveDataVO testArchive(final String document, final String xForwardedFor) throws Exception {
         // Process
-        GenericSignResponse response = (GenericSignResponse) 
-                processWithWS(new WorkerIdentifier(getSignerIdDummy1()), document.getBytes(), xForwardedFor);
+        DataResponse response = processWithClientWS(new WorkerIdentifier(getSignerIdDummy1()), document.getBytes(), xForwardedFor);
         assertNotNull("no response", response);
-        
+
         final String expectedArchiveId = response.getArchiveId();
-        final Archivable expectedArchiveData = response.getArchivables().iterator().next();
-        
+
         List<ArchiveDataVO> archiveDatas = getWorkerSession().findArchiveDataFromArchiveId(getSignerIdDummy1(), expectedArchiveId);
         ArchiveDataVO archiveData = archiveDatas.get(0);
         assertEquals("same id in db", 
                 expectedArchiveId, archiveData.getArchiveId());
         assertEquals("same signer id in db", 
                 getSignerIdDummy1(), archiveData.getSignerId());
-        
-        assertTrue("same archived data", 
-                Arrays.equals(expectedArchiveData.getContentEncoded(), 
-                archiveData.getArchivedBytes()));
+
         return archiveData;
     }
     

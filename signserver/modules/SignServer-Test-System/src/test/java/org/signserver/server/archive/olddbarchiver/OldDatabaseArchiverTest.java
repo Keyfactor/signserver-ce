@@ -331,7 +331,7 @@ public class OldDatabaseArchiverTest extends ArchiveTestCase {
         
         final String ip = archiveData.getRequestIP();
         
-        assertEquals("Archiver should archive the last two IP addresses", "127.0.0.1, 1.2.3.4", ip);
+        assertEquals("Archiver should archive the last two IP addresses", "42.42.42.42, 1.2.3.4", ip);
     }
     
     /**

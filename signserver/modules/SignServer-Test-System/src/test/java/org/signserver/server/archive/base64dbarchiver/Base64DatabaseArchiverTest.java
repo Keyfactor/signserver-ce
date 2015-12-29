@@ -268,7 +268,7 @@ public class Base64DatabaseArchiverTest extends ArchiveTestCase {
         getWorkerSession().reloadConfiguration(signerId);
         
         ArchiveDataVO archiveData = testArchive("<document id=\"" + random.nextLong() + "\"/>",
-                "42.42.42.42, 1.2.3.4");
+                "42.42.42.42, 127.0.0.1");
         
         final String ip = archiveData.getRequestIP();
         

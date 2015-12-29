@@ -20,7 +20,8 @@ import javax.ejb.Remote;
  *
  * @version $Id$
  */
-public interface IServiceTimerSession {
+@Local
+public interface ServiceTimerSessionLocal {
 
     /**
      * Loads and activates one or all the services from database that are
@@ -51,15 +52,4 @@ public interface IServiceTimerSession {
      */
     void cancelTimer(Integer id);
 
-    @Remote
-    interface IRemote extends IServiceTimerSession {
-
-        String JNDI_NAME = "signserver/ServiceTimerSessionBean/remote";
-    }
-
-    @Local
-    interface ILocal extends IServiceTimerSession {
-
-        String JNDI_NAME = "signserver/ServiceTimerSessionBean/local";
-    }
 }

@@ -32,8 +32,8 @@ import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Base64;
 import org.cesecore.util.CertTools;
 import org.signserver.common.*;
-import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.ejb.interfaces.ProcessSessionLocal;
+import org.signserver.ejb.interfaces.WorkerSessionLocal;
 import org.signserver.healthcheck.HealthCheckUtils;
 import org.signserver.protocol.validationservice.ws.IValidationWS;
 import org.signserver.protocol.validationservice.ws.ValidationResponse;
@@ -62,7 +62,7 @@ public class ValidationWS implements IValidationWS {
     private static final Logger log = Logger.getLogger(ValidationWS.class);
     
     @EJB
-    private IWorkerSession.ILocal signserversession;
+    private WorkerSessionLocal signserversession;
     
     @EJB
     private ProcessSessionLocal processSession;
@@ -236,7 +236,7 @@ public class ValidationWS implements IValidationWS {
         return request.getRemoteAddr();
     }
 
-    private IWorkerSession.ILocal getWorkerSession() {
+    private WorkerSessionLocal getWorkerSession() {
         return signserversession;
     }
     

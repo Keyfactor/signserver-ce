@@ -23,12 +23,12 @@ import org.junit.runners.MethodSorters;
 import org.signserver.common.ServiceConfig;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerIdentifier;
-import org.signserver.ejb.interfaces.IWorkerSession;
-import org.signserver.statusrepo.IStatusRepositorySession;
 import org.signserver.statusrepo.common.NoSuchPropertyException;
 import org.signserver.statusrepo.common.StatusEntry;
 import org.signserver.statusrepo.common.StatusName;
 import org.signserver.testutils.ModulesTestCase;
+import org.signserver.ejb.interfaces.WorkerSession;
+import org.signserver.statusrepo.StatusRepositorySession;
 
 /**
  * System test for the HSM keep-alive timed service.
@@ -45,8 +45,8 @@ public class HSMKeepAliveTimedServiceTest extends ModulesTestCase {
     private static final int WORKERID_CRYPTOWORKER1 = 5801;
     private static final int WORKERID_CRYPTOWORKER2 = 5802;
 
-    private final IWorkerSession workerSession = getWorkerSession();
-    private final IStatusRepositorySession statusSession = getStatusSession();
+    private final WorkerSession workerSession = getWorkerSession();
+    private final StatusRepositorySession statusSession = getStatusSession();
   
     @Before
     @Override

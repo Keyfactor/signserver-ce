@@ -20,9 +20,6 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.*;
 import javax.ejb.EJB;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -35,8 +32,6 @@ import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Base64;
 import org.cesecore.util.CertTools;
 import org.signserver.common.*;
-import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
-import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.ejb.interfaces.ProcessSessionLocal;
 import org.signserver.server.CredentialUtils;
 import org.signserver.server.log.AdminInfo;
@@ -45,6 +40,7 @@ import org.signserver.server.log.LogMap;
 import org.signserver.validationservice.common.ValidateRequest;
 import org.signserver.validationservice.common.ValidateResponse;
 import org.signserver.validationservice.common.Validation;
+import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
 
 /**
  * GenericProcessServlet is a general Servlet passing on it's request info to the worker configured by either
@@ -90,7 +86,7 @@ public class GenericProcessServlet extends AbstractProcessServlet {
     private ProcessSessionLocal processSession;
     
     @EJB
-    private IGlobalConfigurationSession.ILocal globalSession;
+    private GlobalConfigurationSessionLocal globalSession;
 
     /**
      * Handles http post.

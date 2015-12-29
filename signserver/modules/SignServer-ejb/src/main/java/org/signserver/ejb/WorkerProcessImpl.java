@@ -42,7 +42,6 @@ import org.signserver.common.SignServerConstants;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.util.PropertiesConstants;
-import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.ejb.worker.impl.WorkerManagerSingletonBean;
 import org.signserver.ejb.worker.impl.WorkerWithComponents;
 import org.signserver.server.AccounterException;
@@ -68,6 +67,7 @@ import org.signserver.server.log.SignServerServiceTypes;
 import org.signserver.server.log.WorkerLoggerException;
 import org.signserver.server.statistics.Event;
 import org.signserver.server.statistics.StatisticsManager;
+import org.signserver.ejb.interfaces.WorkerSession;
 
 /**
  * Implements the business logic for the process method.
@@ -129,14 +129,14 @@ class WorkerProcessImpl {
     }
 
     /**
-     * @see IWorkerSession#process(int, org.signserver.common.ProcessRequest, org.signserver.common.RequestContext)
+     * @see WorkerSession#process(int, org.signserver.common.ProcessRequest, org.signserver.common.RequestContext)
      */
     public ProcessResponse process(WorkerIdentifier wi, ProcessRequest request, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
         return process(new AdminInfo("Client user", null, null), wi, request, requestContext);
     }
 
     /**
-     * @see IWorkerSession.ILocal#process(org.signserver.server.log.AdminInfo, int, org.signserver.common.ProcessRequest, org.signserver.common.RequestContext)
+     * @see WorkerSessionLocal#process(org.signserver.server.log.AdminInfo, int, org.signserver.common.ProcessRequest, org.signserver.common.RequestContext)
      */
     public ProcessResponse process(final AdminInfo adminInfo, final WorkerIdentifier wi,
             final ProcessRequest request, final RequestContext requestContext)
@@ -603,7 +603,7 @@ class WorkerProcessImpl {
     }
 
     /**
-     * @see org.signserver.ejb.interfaces.IWorkerSession#getWorkerId(java.lang.String)
+     * @see org.signserver.ejb.interfaces.WorkerSession#getWorkerId(java.lang.String)
      */
     /*public int getWorkerId(String signerName) throws NoSuchWorkerException {
         return workerManagerSession.getIdFromName(signerName);

@@ -27,8 +27,6 @@ import org.signserver.common.NoSuchWorkerException;
 import org.signserver.common.ServiceConfig;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
-import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
-import org.signserver.ejb.interfaces.IServiceTimerSession;
 import org.signserver.ejb.worker.impl.WorkerManagerSingletonBean;
 import org.signserver.server.IWorker;
 import org.signserver.server.ServiceExecutionFailedException;
@@ -36,13 +34,15 @@ import org.signserver.server.log.SignServerEventTypes;
 import org.signserver.server.log.SignServerModuleTypes;
 import org.signserver.server.log.SignServerServiceTypes;
 import org.signserver.server.timedservices.ITimedService;
+import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
+import org.signserver.ejb.interfaces.ServiceTimerSessionLocal;
 
 /**
  * Timed service session bean running services on a timely basis.
  */
 @Stateless
 @TransactionManagement(TransactionManagementType.BEAN)
-public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, IServiceTimerSession.IRemote {
+public class ServiceTimerSessionBean implements ServiceTimerSessionLocal {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(ServiceTimerSessionBean.class);
@@ -51,7 +51,7 @@ public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, ISe
     private SessionContext sessionCtx;
     
     @EJB
-    private IGlobalConfigurationSession.ILocal globalConfigurationSession;
+    private GlobalConfigurationSessionLocal globalConfigurationSession;
     
     @EJB
     private WorkerManagerSingletonBean workerManagerSession;

@@ -18,7 +18,7 @@ import javax.ejb.Local;
  * Interface for the internal worker session bean.
  *
  * @version $Id: IDispatcherWorkerSession.java 6942 2015-12-25 17:55:39Z netmackan $
- * @see IWorkerSession
+ * @see WorkerSession
  * @see IInternalWorkerSession
  */
 @Local

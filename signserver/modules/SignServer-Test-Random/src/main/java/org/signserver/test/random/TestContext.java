@@ -14,8 +14,7 @@ package org.signserver.test.random;
 
 import java.util.List;
 import java.util.Random;
-import org.signserver.ejb.interfaces.IWorkerSession;
-import org.signserver.ejb.interfaces.IWorkerSession.IRemote;
+import org.signserver.ejb.interfaces.WorkerSessionRemote;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
 
 /**
@@ -27,7 +26,7 @@ import org.signserver.ejb.interfaces.ProcessSessionRemote;
 public class TestContext {
     
     private Random masterRandom;
-    private IWorkerSession.IRemote workerSession;
+    private WorkerSessionRemote workerSession;
     private ProcessSessionRemote processSession;
     private FailureCallback callback;
     private Pauser pauser;
@@ -61,11 +60,11 @@ public class TestContext {
         this.pauser = pauser;
     }
 
-    public IRemote getWorkerSession() {
+    public WorkerSessionRemote getWorkerSession() {
         return workerSession;
     }
 
-    public void setWorkerSession(IRemote workerSession) {
+    public void setWorkerSession(WorkerSessionRemote workerSession) {
         this.workerSession = workerSession;
     }
 

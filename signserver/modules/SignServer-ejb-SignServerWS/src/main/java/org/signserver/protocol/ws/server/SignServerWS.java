@@ -26,9 +26,9 @@ import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 import org.apache.log4j.Logger;
 import org.signserver.common.*;
-import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
-import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
 import org.signserver.ejb.interfaces.ProcessSessionLocal;
+import org.signserver.ejb.interfaces.WorkerSessionLocal;
 import org.signserver.healthcheck.HealthCheckUtils;
 import org.signserver.protocol.ws.*;
 import org.signserver.server.CredentialUtils;
@@ -57,10 +57,10 @@ public class SignServerWS implements ISignServerWS {
     private static final String HTTP_AUTH_BASIC_AUTHORIZATION = "Authorization";
     
     @EJB
-    private IGlobalConfigurationSession.ILocal globalconfigsession;
+    private GlobalConfigurationSessionLocal globalconfigsession;
     
     @EJB
-    private IWorkerSession.ILocal workersession;
+    private WorkerSessionLocal workersession;
     
     @EJB
     private ProcessSessionLocal processSession;
@@ -274,21 +274,6 @@ public class SignServerWS implements ISignServerWS {
         return request.getRemoteAddr();
     }
 
-    private int getWorkerId(String workerIdOrName) throws IllegalRequestException {
-        int retval = 0;
-
-        if (workerIdOrName.substring(0, 1).matches("\\d")) {
-            retval = Integer.parseInt(workerIdOrName);
-        } else {
-            try {
-                retval = getWorkerSession().getWorkerId(workerIdOrName);
-            } catch (InvalidWorkerIdException ex) {
-                throw new IllegalRequestException("Error: No worker with the given name could be found");
-            }
-        }
-        return retval;
-    }
-
     private int getMinimumFreeMemory() {
         final String minMemory = CompileTimeSettings.getInstance().getProperty(
                 CompileTimeSettings.HEALTHECK_MINIMUMFREEMEMORY);
@@ -311,7 +296,7 @@ public class SignServerWS implements ISignServerWS {
         return checkDBString;
     }
 
-    private IWorkerSession.ILocal getWorkerSession() {
+    private WorkerSessionLocal getWorkerSession() {
         return workersession;
     }
     
@@ -319,7 +304,7 @@ public class SignServerWS implements ISignServerWS {
         return processSession;
     }
 
-    private IGlobalConfigurationSession.ILocal getGlobalConfigurationSession() {
+    private GlobalConfigurationSessionLocal getGlobalConfigurationSession() {
         return globalconfigsession;
     }
 }

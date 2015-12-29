@@ -32,12 +32,12 @@ import org.apache.log4j.Logger;
 
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.SignServerUtil;
-import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.WorkerConfig;
-import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
-import org.signserver.ejb.interfaces.IWorkerSession.IRemote;
+import org.signserver.ejb.interfaces.WorkerSessionRemote;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
+import org.signserver.ejb.interfaces.GlobalConfigurationSession;
+import org.signserver.ejb.interfaces.GlobalConfigurationSessionRemote;
 
 /**
  * Base class for test cases. Handles creation and deletion of temporary files
@@ -51,9 +51,9 @@ public abstract class AbstractTestCase extends TestCase {
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(AbstractTestCase.class);
     
-    private static IWorkerSession.IRemote workerSession;
+    private static WorkerSessionRemote workerSession;
     private static ProcessSessionRemote processSession;
-    private static IGlobalConfigurationSession.IRemote globalSession;
+    private static GlobalConfigurationSessionRemote globalSession;
 
     private Collection<File> tempFiles = new LinkedList<File>();
     private Random random = new Random();
@@ -63,10 +63,8 @@ public abstract class AbstractTestCase extends TestCase {
         super.setUp();
 
         SignServerUtil.installBCProvider();
-        workerSession = ServiceLocator.getInstance().lookupRemote(
-                IWorkerSession.IRemote.class);
-        globalSession = ServiceLocator.getInstance().lookupRemote(
-                IGlobalConfigurationSession.IRemote.class);
+        workerSession = ServiceLocator.getInstance().lookupRemote(WorkerSessionRemote.class);
+        globalSession = ServiceLocator.getInstance().lookupRemote(GlobalConfigurationSessionRemote.class);
         processSession = ServiceLocator.getInstance().lookupRemote(
                 ProcessSessionRemote.class);
     }
@@ -185,11 +183,11 @@ public abstract class AbstractTestCase extends TestCase {
         workerSession.reloadConfiguration(workerId);
     }
 
-    public IGlobalConfigurationSession getGlobalSession() {
+    public GlobalConfigurationSession getGlobalSession() {
         return globalSession;
     }
 
-    public static IRemote getWorkerSession() {
+    public static WorkerSessionRemote getWorkerSession() {
         return workerSession;
     }
     

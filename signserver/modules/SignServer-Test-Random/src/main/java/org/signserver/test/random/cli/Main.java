@@ -22,7 +22,6 @@ import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.RemoteRequestContext;
 import org.signserver.common.WorkerIdentifier;
-import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.test.random.*;
 import org.signserver.test.random.impl.IncrementProperty;
@@ -30,6 +29,7 @@ import org.signserver.test.random.impl.IncrementPropertyThread;
 import org.signserver.test.random.impl.RenewSigner;
 import org.signserver.test.random.impl.RequestContextPreProcessor;
 import org.signserver.test.random.impl.SigningThread;
+import org.signserver.ejb.interfaces.WorkerSessionRemote;
 
 /**
  * Command line interface for random tests.
@@ -208,7 +208,7 @@ public class Main {
             }
             
             final AdminCommandHelper helper = new AdminCommandHelper();
-            final IWorkerSession.IRemote workerSession = helper.getWorkerSession();
+            final WorkerSessionRemote workerSession = helper.getWorkerSession();
             final ProcessSessionRemote processSession = helper.getProcessSession();
             final LinkedList<WorkerThread> threads = new LinkedList<WorkerThread>();
             final FailureCallback callback = new FailureCallback() {

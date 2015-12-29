@@ -36,9 +36,6 @@ import org.signserver.common.WorkerConfig;
 import static org.signserver.common.util.PropertiesConstants.GLOBAL_PREFIX_DOT;
 import static org.signserver.common.util.PropertiesConstants.OLDWORKER_PREFIX;
 import static org.signserver.common.util.PropertiesConstants.WORKER_PREFIX;
-import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
-import org.signserver.ejb.interfaces.IServiceTimerSession;
-import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.ejb.worker.impl.WorkerManagerSingletonBean;
 import org.signserver.server.cesecore.AlwaysAllowLocalAuthenticationToken;
 import org.signserver.server.log.AdminInfo;
@@ -46,10 +43,13 @@ import org.signserver.server.log.SignServerEventTypes;
 import org.signserver.server.log.SignServerModuleTypes;
 import org.signserver.server.log.SignServerServiceTypes;
 import org.signserver.server.nodb.FileBasedDatabaseManager;
-import org.signserver.statusrepo.IStatusRepositorySession;
 import org.signserver.statusrepo.common.NoSuchPropertyException;
 import org.signserver.statusrepo.common.StatusEntry;
 import org.signserver.statusrepo.common.StatusName;
+import org.signserver.ejb.interfaces.WorkerSessionLocal;
+import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
+import org.signserver.ejb.interfaces.ServiceTimerSessionLocal;
+import org.signserver.statusrepo.StatusRepositorySessionLocal;
 
 /**
  * EJB Singleton used to start services and perform upgrades etc.
@@ -69,16 +69,16 @@ public class StartupSingletonBean {
             = Logger.getLogger(StartupSingletonBean.class);
     
     @EJB
-    private IServiceTimerSession.ILocal timedServiceSession;
+    private ServiceTimerSessionLocal timedServiceSession;
 
     @EJB
-    private IStatusRepositorySession.ILocal statusRepositorySession;
+    private StatusRepositorySessionLocal statusRepositorySession;
 
     @EJB
-    private IGlobalConfigurationSession.ILocal globalSession;
+    private GlobalConfigurationSessionLocal globalSession;
     
     @EJB
-    private IWorkerSession.ILocal workerSession;
+    private WorkerSessionLocal workerSession;
 
     @EJB
     private SecurityEventsLoggerSessionLocal logSession;
@@ -86,11 +86,11 @@ public class StartupSingletonBean {
     @EJB
     private WorkerManagerSingletonBean workerManager;
 
-    private IServiceTimerSession.ILocal getTimedServiceSession(){
+    private ServiceTimerSessionLocal getTimedServiceSession(){
     	return timedServiceSession;
     }
 
-    private IStatusRepositorySession.ILocal getStatusRepositorySession() {
+    private StatusRepositorySessionLocal getStatusRepositorySession() {
         return statusRepositorySession;
     }
 

@@ -26,8 +26,8 @@ import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
+import org.signserver.ejb.interfaces.WorkerSession;
 
 /**
  * TODO: Document me!
@@ -37,7 +37,7 @@ import org.signserver.ejb.interfaces.ProcessSessionRemote;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class WorkerSessionBeanTest extends ModulesTestCase {
 
-    private final IWorkerSession workerSession = getWorkerSession();
+    private final WorkerSession workerSession = getWorkerSession();
     private final ProcessSessionRemote processSession = getProcessSession();
     
     /**

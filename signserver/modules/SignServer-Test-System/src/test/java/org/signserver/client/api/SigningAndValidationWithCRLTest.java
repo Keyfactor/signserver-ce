@@ -32,8 +32,8 @@ import org.w3c.dom.Document;
 import org.junit.Test;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
-import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
-import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.ejb.interfaces.WorkerSession;
+import org.signserver.ejb.interfaces.GlobalConfigurationSession;
 
 /**
  * Tests for client API with a CRLValidator.
@@ -63,8 +63,8 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
     private static File crlWithCertRevoked;
     private static File crlToUse;
 
-    private final IWorkerSession workerSession = getWorkerSession();
-    private final IGlobalConfigurationSession globalSession = getGlobalSession();
+    private final WorkerSession workerSession = getWorkerSession();
+    private final GlobalConfigurationSession globalSession = getGlobalSession();
     
     public SigningAndValidationWithCRLTest() throws Exception {
         setupSSLKeystores();

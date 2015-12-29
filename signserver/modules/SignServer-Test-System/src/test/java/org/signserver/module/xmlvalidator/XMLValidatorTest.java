@@ -30,9 +30,9 @@ import org.signserver.validationservice.common.Validation.Status;
 import org.w3c.dom.Document;
 import org.junit.Before;
 import org.junit.Test;
-import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
-import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
+import org.signserver.ejb.interfaces.WorkerSession;
+import org.signserver.ejb.interfaces.GlobalConfigurationSession;
 
 /**
  * TODO: Document me!
@@ -56,9 +56,9 @@ public class XMLValidatorTest extends ModulesTestCase {
     private static final String SIGNEREC_ISSUERDN = "CN=ECCA";
     private static final String SIGNEREC_SUBJECTDN = "CN=TestXMLSignerEC,OU=Testing,O=SignServer,C=SE";
 
-    private final IWorkerSession workerSession = getWorkerSession();
+    private final WorkerSession workerSession = getWorkerSession();
     private final ProcessSessionRemote processSession = getProcessSession();
-    private final IGlobalConfigurationSession globalSession = getGlobalSession();
+    private final GlobalConfigurationSession globalSession = getGlobalSession();
     
     @Before
     public void setUp() throws Exception {

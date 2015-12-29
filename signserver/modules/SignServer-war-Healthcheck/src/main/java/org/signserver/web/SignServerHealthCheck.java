@@ -35,7 +35,7 @@ import org.signserver.common.ServiceLocator;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.WorkerStatus;
-import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.ejb.interfaces.WorkerSession;
 import org.signserver.healthcheck.HealthCheckUtils;
 import org.signserver.server.nodb.FileBasedDatabaseManager;
 import org.signserver.web.pub.cluster.IHealthCheck;
@@ -61,7 +61,7 @@ public class SignServerHealthCheck implements IHealthCheck {
     private static final Logger LOG = Logger.getLogger(
             SignServerHealthCheck.class);
     
-    private IWorkerSession signserversession;
+    private WorkerSession signserversession;
     
     private int minfreememory;
     private String checkDBString;
@@ -69,10 +69,10 @@ public class SignServerHealthCheck implements IHealthCheck {
     private String maintenancePropertyName;
     private EntityManager em;
 
-    private IWorkerSession getWorkerSession() {
+    private WorkerSession getWorkerSession() {
         if (signserversession == null) {
             try {
-                signserversession = ServiceLocator.getInstance().lookupLocal(IWorkerSession.class);
+                signserversession = ServiceLocator.getInstance().lookupLocal(WorkerSession.class);
             } catch (NamingException e) {
                 LOG.error(e);
             }

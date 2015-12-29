@@ -33,8 +33,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.signserver.common.RemoteRequestContext;
 import org.signserver.common.WorkerIdentifier;
-import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
+import org.signserver.ejb.interfaces.WorkerSession;
 
 /**
  * Tests for the UsernamePasswordAuthorizer.
@@ -48,7 +48,7 @@ public class UsernamePasswordAuthorizerTest extends ModulesTestCase {
     private static final Logger LOG = Logger.getLogger(
             UsernamePasswordAuthorizerTest.class);
 
-    private final IWorkerSession workerSession = getWorkerSession();
+    private final WorkerSession workerSession = getWorkerSession();
     private final ProcessSessionRemote processSession = getProcessSession();
     
     @Before

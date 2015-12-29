@@ -33,8 +33,8 @@ import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestingSecurityManager;
 import org.junit.Before;
 import org.junit.Test;
-import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
+import org.signserver.ejb.interfaces.WorkerSession;
 
 /**
  * Unit tests for the PDFSigner.
@@ -54,7 +54,7 @@ public class PDFSignerTest extends ModulesTestCase {
     private static final String TESTPDF_2CATALOGS = "2catalogs.pdf";
     private static final String TESTPDF_SIGNED = "pdf/sample-signed.pdf";
 
-    private final IWorkerSession workerSession = getWorkerSession();
+    private final WorkerSession workerSession = getWorkerSession();
     private final ProcessSessionRemote processSession = getProcessSession();
 
     @Before

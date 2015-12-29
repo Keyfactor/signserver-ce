@@ -32,9 +32,9 @@ import org.signserver.testutils.ModulesTestCase;
 import org.w3c.dom.Document;
 import org.junit.Before;
 import org.junit.Test;
-import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
-import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
+import org.signserver.ejb.interfaces.WorkerSession;
+import org.signserver.ejb.interfaces.GlobalConfigurationSession;
 
 /**
  * Tests for XMLSigner.
@@ -63,9 +63,9 @@ public class XMLSignerTest extends ModulesTestCase {
 
     private static final String TESTXML1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><root><my-tag>My Data</my-tag></root>";
 
-    private final IWorkerSession workerSession = getWorkerSession();
+    private final WorkerSession workerSession = getWorkerSession();
     private final ProcessSessionRemote processSession = getProcessSession();
-    private final IGlobalConfigurationSession globalSession = getGlobalSession();
+    private final GlobalConfigurationSession globalSession = getGlobalSession();
     
     @Before
     public void setUp() throws Exception {

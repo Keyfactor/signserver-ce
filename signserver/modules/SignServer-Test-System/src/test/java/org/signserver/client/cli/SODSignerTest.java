@@ -24,12 +24,12 @@ import org.junit.runners.MethodSorters;
 import org.signserver.admin.cli.AdminCLI;
 import org.signserver.cli.CommandLineInterface;
 import org.signserver.common.SignServerUtil;
-import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.module.mrtdsodsigner.jmrtd.SODFile;
 import org.signserver.server.signers.EchoRequestMetadataSigner;
 import org.signserver.testutils.CLITestHelper;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestingSecurityManager;
+import org.signserver.ejb.interfaces.WorkerSession;
 
 /**
  * Tests for the signdatagroups command of Client CLI.
@@ -52,7 +52,7 @@ public class SODSignerTest extends ModulesTestCase {
     private final CLITestHelper adminCLI = new CLITestHelper(AdminCLI.class);
     private final CLITestHelper clientCLI = new CLITestHelper(ClientCLI.class);
 
-    private final IWorkerSession workerSession = getWorkerSession();
+    private final WorkerSession workerSession = getWorkerSession();
     
     @Before
     @Override

@@ -33,10 +33,10 @@ import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.KeyTestResult;
 import org.signserver.common.PKCS10CertReqInfo;
 import org.signserver.common.WorkerIdentifier;
-import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
-import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.test.utils.builders.CryptoUtils;
 import org.signserver.testutils.ModulesTestCase;
+import org.signserver.ejb.interfaces.WorkerSession;
+import org.signserver.ejb.interfaces.GlobalConfigurationSession;
 
 /**
  * Abstract base class containing utility methods for the keystore crypto token
@@ -47,8 +47,8 @@ import org.signserver.testutils.ModulesTestCase;
  */
 public abstract class KeystoreCryptoTokenTestBase extends ModulesTestCase {
     
-    protected final IWorkerSession workerSession = getWorkerSession();
-    protected final IGlobalConfigurationSession globalSession = getGlobalSession();
+    protected final WorkerSession workerSession = getWorkerSession();
+    protected final GlobalConfigurationSession globalSession = getGlobalSession();
     protected static final String pin = "foo123";
 
     protected void cmsSigner(final int workerId) throws Exception {

@@ -27,8 +27,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.signserver.common.RemoteRequestContext;
 import org.signserver.common.WorkerIdentifier;
-import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
+import org.signserver.ejb.interfaces.WorkerSession;
 
 /**
  * Tests for the RemoteAddressAuthorizer.
@@ -45,7 +45,7 @@ public class RemoteAddressAuthorizerTest extends ModulesTestCase {
 
     private String localIP;
     
-    private final IWorkerSession workerSession = getWorkerSession();
+    private final WorkerSession workerSession = getWorkerSession();
     private final ProcessSessionRemote processSession = getProcessSession();
     
     @Before

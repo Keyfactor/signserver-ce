@@ -62,15 +62,15 @@ import org.signserver.common.RemoteRequestContext;
 import org.signserver.common.ServiceConfig;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerIdentifier;
-import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
-import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.module.cmssigner.PlainSigner;
 import org.signserver.module.xmlsigner.DebugSigner;
 import org.signserver.server.IProcessable;
 import org.signserver.server.cryptotokens.KeystoreCryptoToken;
 import org.signserver.server.timedservices.hsmkeepalive.HSMKeepAliveTimedService;
-import org.signserver.statusrepo.IStatusRepositorySession;
+import org.signserver.ejb.interfaces.WorkerSession;
+import org.signserver.ejb.interfaces.GlobalConfigurationSession;
+import org.signserver.statusrepo.StatusRepositorySession;
 
 /**
  * Tests for audit logging using the System Logger.
@@ -102,10 +102,10 @@ public class SystemLoggingTest extends ModulesTestCase {
     private File auditLogFile;
     private File keystoreFile;
     
-    private final IWorkerSession workerSession = getWorkerSession();
+    private final WorkerSession workerSession = getWorkerSession();
     private final ProcessSessionRemote processSession = getProcessSession();
-    private final IGlobalConfigurationSession globalSession = getGlobalSession();
-    private final IStatusRepositorySession statusSession = getStatusSession();
+    private final GlobalConfigurationSession globalSession = getGlobalSession();
+    private final StatusRepositorySession statusSession = getStatusSession();
     
     @Before
     @Override

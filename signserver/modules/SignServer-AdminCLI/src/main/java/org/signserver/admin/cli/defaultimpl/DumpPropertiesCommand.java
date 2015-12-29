@@ -22,7 +22,7 @@ import org.signserver.common.AuthorizedClient;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.util.PropertiesDumper;
-import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.ejb.interfaces.WorkerSession;
 
 /**
  * Command used to dump all configured properties for a worker or all workers
@@ -103,7 +103,7 @@ public class DumpPropertiesCommand extends AbstractAdminCommand {
     }
 
     private void dumpWorkerProperties(int workerId, Properties outProps) throws RemoteException, Exception {
-        final IWorkerSession ws = getWorkerSession();
+        final WorkerSession ws = getWorkerSession();
         final Properties globalProps =
                 getGlobalConfigurationSession().getGlobalConfiguration().getConfig();
         final Properties workerProps =

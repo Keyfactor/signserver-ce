@@ -39,8 +39,8 @@ import org.signserver.client.clientws.DataResponse;
 import org.signserver.client.clientws.InternalServerException_Exception;
 import org.signserver.client.clientws.Metadata;
 import org.signserver.client.clientws.RequestFailedException_Exception;
-import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
+import org.signserver.ejb.interfaces.WorkerSession;
 
 /**
  * Re-usable test case for archiving.
@@ -52,7 +52,7 @@ public class ArchiveTestCase extends ModulesTestCase {
     
     private Random random = new Random();
     
-    private final IWorkerSession workerSession = getWorkerSession();
+    private final WorkerSession workerSession = getWorkerSession();
     private final ProcessSessionRemote processSession = getProcessSession();
     
     @Before

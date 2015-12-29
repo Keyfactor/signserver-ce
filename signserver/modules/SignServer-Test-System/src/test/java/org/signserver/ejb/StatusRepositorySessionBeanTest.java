@@ -15,9 +15,9 @@ package org.signserver.ejb;
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
 import org.signserver.common.ServiceLocator;
-import org.signserver.statusrepo.IStatusRepositorySession;
 import org.signserver.statusrepo.common.StatusEntry;
 import org.signserver.statusrepo.common.StatusName;
+import org.signserver.statusrepo.StatusRepositorySessionRemote;
 
 /**
  * Tests for the StatusRepositorySessionBean.
@@ -44,13 +44,12 @@ public class StatusRepositorySessionBeanTest extends TestCase {
     private static final long TIMEOUT = 500;
 
     /** The status repository session. */
-    private IStatusRepositorySession.IRemote repository;
+    private StatusRepositorySessionRemote repository;
 
     
     @Override
     protected void setUp() throws Exception {
-        repository = ServiceLocator.getInstance().lookupRemote(
-                    IStatusRepositorySession.IRemote.class);
+        repository = ServiceLocator.getInstance().lookupRemote(StatusRepositorySessionRemote.class);
     }
 
     @Override

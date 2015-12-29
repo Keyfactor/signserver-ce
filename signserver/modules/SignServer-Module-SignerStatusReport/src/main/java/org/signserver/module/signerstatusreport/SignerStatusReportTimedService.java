@@ -25,11 +25,11 @@ import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.WorkerConfig;
-import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.server.ServiceExecutionFailedException;
 import org.signserver.server.SignServerContext;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.timedservices.BaseTimedService;
+import org.signserver.ejb.interfaces.WorkerSession;
 
 /**
  * TimedService that outputs a status report for a configured set of signers.
@@ -57,7 +57,7 @@ public class SignerStatusReportTimedService extends BaseTimedService {
     
     /** Workersession. */
     @EJB
-    private IWorkerSession workerSession; // FIXME: Better to somehow inject this
+    private WorkerSession workerSession; // FIXME: Better to somehow inject this
 
     /**
      * Initializes the worker.
@@ -125,11 +125,10 @@ public class SignerStatusReportTimedService extends BaseTimedService {
         LOG.trace("<work");
     }
 
-    private IWorkerSession getWorkerSession() {
+    private WorkerSession getWorkerSession() {
         if (workerSession == null) {
             try {
-                workerSession = ServiceLocator.getInstance().lookupLocal(
-                        IWorkerSession.class);
+                workerSession = ServiceLocator.getInstance().lookupLocal(WorkerSession.class);
             } catch (NamingException ex) {
                 throw new RuntimeException("Unable to lookup worker session",
                         ex);

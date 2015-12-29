@@ -44,7 +44,6 @@ import org.cesecore.util.CertTools;
 import org.signserver.common.*;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.util.RandomPasswordGenerator;
-import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.module.renewal.common.RenewalWorkerProperties;
 import org.signserver.module.renewal.ejbcaws.gen.*;
 import org.signserver.server.WorkerContext;
@@ -52,6 +51,7 @@ import org.signserver.server.cryptotokens.KeystoreCryptoToken;
 import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.log.LogMap;
 import org.signserver.server.signers.BaseSigner;
+import org.signserver.ejb.interfaces.WorkerSession;
 
 /**
  * Worker renewing certificate (and optionally keys) for a signer by sending
@@ -104,7 +104,7 @@ public class RenewalWorker extends BaseSigner {
     
     /** Workersession. */
     @EJB
-    private IWorkerSession workerSession;
+    private WorkerSession workerSession;
 
     /** Configuration parameters. */
     private String alias;
@@ -570,11 +570,10 @@ public class RenewalWorker extends BaseSigner {
     }
     public static final String TRUSTSTOREVALUE = "TRUSTSTOREVALUE";
 
-    protected IWorkerSession getWorkerSession() {
+    protected WorkerSession getWorkerSession() {
         if (workerSession == null) {
             try {
-                workerSession = ServiceLocator.getInstance().lookupLocal(
-                    IWorkerSession.class);
+                workerSession = ServiceLocator.getInstance().lookupLocal(WorkerSession.class);
             } catch (NamingException ex) {
                 throw new RuntimeException("Unable to lookup worker session",
                         ex);

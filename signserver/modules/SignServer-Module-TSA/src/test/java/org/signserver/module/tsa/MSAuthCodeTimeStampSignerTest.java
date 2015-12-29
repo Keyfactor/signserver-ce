@@ -52,7 +52,6 @@ import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
-import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.server.SignServerContext;
 import org.signserver.server.ZeroTimeSource;
 import org.signserver.server.cryptotokens.ICryptoToken;
@@ -67,6 +66,7 @@ import org.signserver.test.utils.mock.MockedCryptoToken;
 import org.signserver.test.utils.mock.WorkerSessionMock;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestUtils;
+import org.signserver.ejb.interfaces.GlobalConfigurationSessionRemote;
 
 /**
  * 
@@ -180,7 +180,7 @@ public class MSAuthCodeTimeStampSignerTest extends ModulesTestCase {
         
         final GlobalConfigurationSessionMock globalConfig
                 = new GlobalConfigurationSessionMock();
-        final WorkerSessionMock workerMock = new WorkerSessionMock(globalConfig);
+        final WorkerSessionMock workerMock = new WorkerSessionMock();
         
         final WorkerConfig config = new WorkerConfig();
         config.setProperty("NAME", "TestMSAuthCodeTimeStampSigner");
@@ -206,7 +206,7 @@ public class MSAuthCodeTimeStampSignerTest extends ModulesTestCase {
         
         final MSAuthCodeTimeStampSigner worker = new MSAuthCodeTimeStampSigner() {
             @Override
-            protected IGlobalConfigurationSession.IRemote
+            protected GlobalConfigurationSessionRemote
                     getGlobalConfigurationSession() {
                 return globalConfig;
             }

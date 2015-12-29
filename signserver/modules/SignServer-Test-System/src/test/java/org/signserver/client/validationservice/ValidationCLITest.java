@@ -28,8 +28,6 @@ import org.signserver.client.cli.ClientCLI;
 import org.signserver.client.cli.validationservice.ValidateCertificateCommand;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerUtil;
-import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
-import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.testutils.CLITestHelper;
 import static org.signserver.testutils.CLITestHelper.assertPrinted;
 import org.signserver.testutils.TestingSecurityManager;
@@ -39,6 +37,8 @@ import org.junit.Test;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.util.PathUtil;
 import org.signserver.testutils.ModulesTestCase;
+import org.signserver.ejb.interfaces.WorkerSessionRemote;
+import org.signserver.ejb.interfaces.GlobalConfigurationSessionRemote;
 
 /**
  * Tests for the ValidateCertificateCommand.
@@ -50,8 +50,8 @@ public class ValidationCLITest extends ModulesTestCase {
 
     private static String signserverhome;
     
-    private static IGlobalConfigurationSession.IRemote gCSession;
-    private static IWorkerSession.IRemote sSSession;
+    private static GlobalConfigurationSessionRemote gCSession;
+    private static WorkerSessionRemote sSSession;
     
     private static String validCert1;
     private static String revokedCert1;
@@ -64,10 +64,8 @@ public class ValidationCLITest extends ModulesTestCase {
     @Before
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
-        gCSession = ServiceLocator.getInstance().lookupRemote(
-                IGlobalConfigurationSession.IRemote.class);
-        sSSession = ServiceLocator.getInstance().lookupRemote(
-                IWorkerSession.IRemote.class);
+        gCSession = ServiceLocator.getInstance().lookupRemote(GlobalConfigurationSessionRemote.class);
+        sSSession = ServiceLocator.getInstance().lookupRemote(WorkerSessionRemote.class);
         signserverhome = PathUtil.getAppHome().getAbsolutePath();
     }
 

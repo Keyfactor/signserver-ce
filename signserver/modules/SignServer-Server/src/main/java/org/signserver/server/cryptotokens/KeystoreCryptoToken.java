@@ -28,10 +28,10 @@ import org.bouncycastle.operator.OperatorCreationException;
 import org.cesecore.keys.util.KeyTools;
 import org.cesecore.util.query.QueryCriteria;
 import org.signserver.common.*;
-import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.server.IServices;
 import org.signserver.server.ServicesImpl;
 import org.signserver.server.log.AdminInfo;
+import org.signserver.ejb.interfaces.WorkerSessionLocal;
 
 /**
  * Class that uses a PKCS12 or JKS file on the file system for signing.
@@ -77,7 +77,7 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
 
     private char[] authenticationCode;
 
-    private IWorkerSession.ILocal workerSession;
+    private WorkerSessionLocal workerSession;
     private int workerId;
     private Integer keygenerationLimit;
 
@@ -498,7 +498,7 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
             if (TYPE_INTERNAL.equalsIgnoreCase(keystoretype)) {
                 final ByteArrayOutputStream baos = (ByteArrayOutputStream) os;
                 
-                final IWorkerSession.ILocal workerSessionLocal = services.get(IWorkerSession.ILocal.class);
+                final WorkerSessionLocal workerSessionLocal = services.get(WorkerSessionLocal.class);
                 if (workerSessionLocal == null) {
                     throw new IllegalStateException("No WorkerSession available");
                 }
@@ -743,10 +743,9 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
     
     
     
-    protected IWorkerSession.ILocal getWorkerSession() throws NamingException {
+    protected WorkerSessionLocal getWorkerSession() throws NamingException {
         if (workerSession == null) {
-            workerSession = ServiceLocator.getInstance().lookupLocal(
-                    IWorkerSession.ILocal.class);
+            workerSession = ServiceLocator.getInstance().lookupLocal(WorkerSessionLocal.class);
         }
         return workerSession;
     }

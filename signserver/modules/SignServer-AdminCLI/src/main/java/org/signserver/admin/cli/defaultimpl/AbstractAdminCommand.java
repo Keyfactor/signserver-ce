@@ -19,10 +19,10 @@ import org.apache.log4j.Logger;
 import org.signserver.cli.spi.AbstractCommand;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.common.AuthorizedClient;
-import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
-import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
-import org.signserver.statusrepo.IStatusRepositorySession;
+import org.signserver.ejb.interfaces.WorkerSessionRemote;
+import org.signserver.ejb.interfaces.GlobalConfigurationSessionRemote;
+import org.signserver.statusrepo.StatusRepositorySessionRemote;
 
 /**
  * Implements methods useful for Commands.
@@ -40,7 +40,7 @@ public abstract class AbstractAdminCommand extends AbstractCommand {
     /**
      * @see AdminCommandHelper#getProcessSession()
      */
-    protected IWorkerSession.IRemote getWorkerSession() throws RemoteException {
+    protected WorkerSessionRemote getWorkerSession() throws RemoteException {
         return delegate.getWorkerSession();
     }
     
@@ -58,14 +58,14 @@ public abstract class AbstractAdminCommand extends AbstractCommand {
     /**
      * @see AdminCommandHelper#getStatusRepositorySession() 
      */
-    protected IStatusRepositorySession.IRemote getStatusRepositorySession() throws RemoteException {
+    protected StatusRepositorySessionRemote getStatusRepositorySession() throws RemoteException {
         return delegate.getStatusRepositorySession();
     }
 
     /**
      * @see AdminCommandHelper#getGlobalConfigurationSession() 
      */
-    protected IGlobalConfigurationSession.IRemote getGlobalConfigurationSession() throws RemoteException {
+    protected GlobalConfigurationSessionRemote getGlobalConfigurationSession() throws RemoteException {
         return delegate.getGlobalConfigurationSession();
     }
 

@@ -22,7 +22,7 @@ import javax.xml.namespace.QName;
 import org.apache.log4j.Logger;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
-import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.ejb.interfaces.WorkerSession;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.validationservice.common.ValidationServiceConstants;
 
@@ -155,7 +155,7 @@ public class ValidationWSServiceTest extends ModulesTestCase {
     	return ENDPOINT;
     }
     
-    IWorkerSession workerSession = getWorkerSession();
+    WorkerSession workerSession = getWorkerSession();
     
     public void test00SetupDatabase() throws Exception {
         addSigner("org.signserver.validationservice.server.ValidationServiceWorker", 7101, "ValidationWSServiceTest_CertValidationWorker1", true);

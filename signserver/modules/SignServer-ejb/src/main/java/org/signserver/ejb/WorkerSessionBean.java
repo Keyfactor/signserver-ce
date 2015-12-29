@@ -44,9 +44,6 @@ import org.cesecore.util.query.QueryCriteria;
 import org.signserver.common.*;
 import org.signserver.common.KeyTestResult;
 import org.signserver.common.util.PropertiesConstants;
-import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
-import org.signserver.ejb.interfaces.IServiceTimerSession;
-import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.ejb.worker.impl.WorkerManagerSingletonBean;
 import org.signserver.server.*;
 import org.signserver.server.archive.olddbarchiver.entities.ArchiveDataBean;
@@ -72,7 +69,11 @@ import org.signserver.server.entities.KeyUsageCounterDataService;
 import org.signserver.server.log.*;
 import org.signserver.server.nodb.FileBasedDatabaseManager;
 import org.signserver.server.statistics.StatisticsManager;
-import org.signserver.statusrepo.IStatusRepositorySession;
+import org.signserver.ejb.interfaces.WorkerSessionLocal;
+import org.signserver.ejb.interfaces.WorkerSessionRemote;
+import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
+import org.signserver.ejb.interfaces.ServiceTimerSessionLocal;
+import org.signserver.statusrepo.StatusRepositorySessionLocal;
 
 /**
  * The main worker session bean.
@@ -80,8 +81,7 @@ import org.signserver.statusrepo.IStatusRepositorySession;
  * @version $Id$
  */
 @Stateless
-public class WorkerSessionBean implements IWorkerSession.ILocal,
-        IWorkerSession.IRemote {
+public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemote {
     
     /** Log4j instance for this class. */
     private static final Logger LOG = Logger.getLogger(WorkerSessionBean.class);
@@ -95,10 +95,10 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     private IKeyUsageCounterDataService keyUsageCounterDataService;
 
     @EJB
-    private IGlobalConfigurationSession.ILocal globalConfigurationSession;
+    private GlobalConfigurationSessionLocal globalConfigurationSession;
 
     @EJB
-    private IServiceTimerSession.ILocal serviceTimerSession;
+    private ServiceTimerSessionLocal serviceTimerSession;
     
     @EJB
     private WorkerManagerSingletonBean workerManagerSession;
@@ -137,11 +137,11 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         // When we no longer support GFv2 we can refactor this code
         InternalProcessSessionLocal internalSession = null;
         DispatcherProcessSessionLocal dispatcherSession = null;
-        IStatusRepositorySession.ILocal statusSession = null;
+        StatusRepositorySessionLocal statusSession = null;
         try {
             internalSession = ServiceLocator.getInstance().lookupLocal(InternalProcessSessionLocal.class);
             dispatcherSession = ServiceLocator.getInstance().lookupLocal(DispatcherProcessSessionLocal.class);
-            statusSession = ServiceLocator.getInstance().lookupLocal(IStatusRepositorySession.ILocal.class);
+            statusSession = ServiceLocator.getInstance().lookupLocal(StatusRepositorySessionLocal.class);
         } catch (NamingException ex) {
             LOG.error("Lookup services failed. This is expected on GlassFish V2: " + ex.getExplanation());
             if (LOG.isDebugEnabled()) {
@@ -150,9 +150,8 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
         }
         try {
             // Add all services
-            servicesImpl.putAll(
-                    em,
-                    ctx.getBusinessObject(IWorkerSession.ILocal.class),
+            servicesImpl.putAll(em,
+                    ctx.getBusinessObject(WorkerSessionLocal.class),
                     ServiceLocator.getInstance().lookupLocal(ProcessSessionLocal.class),
                     globalConfigurationSession,
                     logSession,
@@ -259,7 +258,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     }
 
     /* (non-Javadoc)
-     * @see org.signserver.ejb.interfaces.IWorkerSession#getStatus(int)
+     * @see org.signserver.ejb.interfaces.WorkerSession#getStatus(int)
      */
     @Override
     public WorkerStatus getStatus(WorkerIdentifier workerId) throws InvalidWorkerIdException {
@@ -282,7 +281,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     }
 
     /* (non-Javadoc)
-     * @see org.signserver.ejb.interfaces.IWorkerSession#getWorkerId(java.lang.String)
+     * @see org.signserver.ejb.interfaces.WorkerSession#getWorkerId(java.lang.String)
      */
     // XXX: Somewhat expensive call, good to avoid as much as possible. Seems to be only config operations really needing the ID all other could use WorkerIdentifier
     @Override
@@ -300,7 +299,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     }
 
     /* (non-Javadoc)
-     * @see org.signserver.ejb.interfaces.IWorkerSession.ILocal#reloadConfiguration(adminInfo, int)
+     * @see org.signserver.ejb.interfaces.WorkerSessionLocal#reloadConfiguration(adminInfo, int)
      */
     @Override
     public void reloadConfiguration(final AdminInfo adminInfo, int workerId) {
@@ -333,7 +332,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     }
 
     /* (non-Javadoc)
-     * @see org.signserver.ejb.interfaces.IWorkerSession#activateSigner(int, java.lang.String)
+     * @see org.signserver.ejb.interfaces.WorkerSession#activateSigner(int, java.lang.String)
      */
     @Override
     public void activateSigner(WorkerIdentifier signerId, String authenticationCode)
@@ -358,7 +357,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     }
 
     /* (non-Javadoc)
-     * @see org.signserver.ejb.interfaces.IWorkerSession#deactivateSigner(int)
+     * @see org.signserver.ejb.interfaces.WorkerSession#deactivateSigner(int)
      */
     @Override
     public boolean deactivateSigner(WorkerIdentifier signerId)
@@ -545,7 +544,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     }
 
     /* (non-Javadoc)
-     * @see org.signserver.ejb.IWorkerSession#getCurrentSignerConfig(int)
+     * @see org.signserver.ejb.WorkerSession#getCurrentSignerConfig(int)
      */
     @Override
     public WorkerConfig getCurrentWorkerConfig(int signerId) {
@@ -581,7 +580,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     }
 
     /* (non-Javadoc)
-     * @see org.signserver.ejb.interfaces.IWorkerSession#setWorkerProperty(int, java.lang.String, java.lang.String)
+     * @see org.signserver.ejb.interfaces.WorkerSession#setWorkerProperty(int, java.lang.String, java.lang.String)
      */
     @Override
     public void setWorkerProperty(final AdminInfo adminInfo, int workerId, String key, String value) {
@@ -628,7 +627,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     }
 
     /* (non-Javadoc)
-     * @see org.signserver.ejb.interfaces.IWorkerSession#removeWorkerProperty(int, java.lang.String)
+     * @see org.signserver.ejb.interfaces.WorkerSession#removeWorkerProperty(int, java.lang.String)
      */
     @Override
     public boolean removeWorkerProperty(final AdminInfo adminInfo, int workerId, String key) {
@@ -673,7 +672,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     }
 
     /* (non-Javadoc)
-     * @see org.signserver.ejb.interfaces.IWorkerSession#getAuthorizedClients(int)
+     * @see org.signserver.ejb.interfaces.WorkerSession#getAuthorizedClients(int)
      */
     @Override
     public Collection<AuthorizedClient> getAuthorizedClients(int signerId) {
@@ -687,7 +686,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     }
     
     /* (non-Javadoc)
-     * @see org.signserver.ejb.interfaces.IWorkerSession#addAuthorizedClient(int, org.signserver.common.AuthorizedClient)
+     * @see org.signserver.ejb.interfaces.WorkerSession#addAuthorizedClient(int, org.signserver.common.AuthorizedClient)
      */
     @Override
     public void addAuthorizedClient(final AdminInfo adminInfo, int signerId, AuthorizedClient authClient) {
@@ -703,7 +702,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     }
     
     /* (non-Javadoc)
-     * @see org.signserver.ejb.interfaces.IWorkerSession#removeAuthorizedClient(int, org.signserver.common.AuthorizedClient)
+     * @see org.signserver.ejb.interfaces.WorkerSession#removeAuthorizedClient(int, org.signserver.common.AuthorizedClient)
      */
     @Override
     public boolean removeAuthorizedClient(final AdminInfo adminInfo, int signerId,
@@ -729,7 +728,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     }
     
     /* (non-Javadoc)
-     * @see org.signserver.ejb.interfaces.IWorkerSession#getCertificateRequest(int, org.signserver.common.ISignerCertReqInfo)
+     * @see org.signserver.ejb.interfaces.WorkerSession#getCertificateRequest(int, org.signserver.common.ISignerCertReqInfo)
      */
     @Override
     public ICertReqData getCertificateRequest(final AdminInfo adminInfo, final WorkerIdentifier signerId,
@@ -751,7 +750,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     }
     
     /* (non-Javadoc)
-     * @see org.signserver.ejb.interfaces.IWorkerSession#getCertificateRequest(int, org.signserver.common.ISignerCertReqInfo)
+     * @see org.signserver.ejb.interfaces.WorkerSession#getCertificateRequest(int, org.signserver.common.ISignerCertReqInfo)
      */
     @Override
     public ICertReqData getCertificateRequest(final AdminInfo adminInfo, WorkerIdentifier signerId,
@@ -1001,7 +1000,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     }
 
     /* (non-Javadoc)
-     * @see org.signserver.ejb.interfaces.IWorkerSession#uploadSignerCertificate(int, java.security.cert.X509Certificate, java.lang.String)
+     * @see org.signserver.ejb.interfaces.WorkerSession#uploadSignerCertificate(int, java.security.cert.X509Certificate, java.lang.String)
      */
     @Override
     public void uploadSignerCertificate(final AdminInfo adminInfo, int signerId, byte[] signerCert,
@@ -1022,7 +1021,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     }
     
     /* (non-Javadoc)
-     * @see org.signserver.ejb.interfaces.IWorkerSession#uploadSignerCertificateChain(int, java.util.Collection, java.lang.String)
+     * @see org.signserver.ejb.interfaces.WorkerSession#uploadSignerCertificateChain(int, java.util.Collection, java.lang.String)
      */
     @Override
     public void uploadSignerCertificateChain(final AdminInfo adminInfo, int signerId, List<byte[]> signerCerts, String scope) 
@@ -1100,7 +1099,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     }
 
     /* (non-Javadoc)
-     * @see org.signserver.ejb.interfaces.IWorkerSession#genFreeWorkerId()
+     * @see org.signserver.ejb.interfaces.WorkerSession#genFreeWorkerId()
      */
     @Override
     public int genFreeWorkerId() {
@@ -1119,7 +1118,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     }
 
     /* (non-Javadoc)
-     * @see org.signserver.ejb.interfaces.IWorkerSession#findArchiveDataFromArchiveId(int, java.lang.String)
+     * @see org.signserver.ejb.interfaces.WorkerSession#findArchiveDataFromArchiveId(int, java.lang.String)
      */
     @Override
     public List<ArchiveDataVO> findArchiveDataFromArchiveId(int signerId,
@@ -1142,7 +1141,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     }
 
     /* (non-Javadoc)
-     * @see org.signserver.ejb.interfaces.IWorkerSession#findArchiveDatasFromRequestIP(int, java.lang.String)
+     * @see org.signserver.ejb.interfaces.WorkerSession#findArchiveDatasFromRequestIP(int, java.lang.String)
      */
     @Override
     public List<ArchiveDataVO> findArchiveDatasFromRequestIP(int signerId,
@@ -1164,7 +1163,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     }
     
     /* (non-Javadoc)
-     * @see org.signserver.ejb.interfaces.IWorkerSession#findArchiveDatasFromRequestCertificate(int, java.math.BigInteger, java.lang.String)
+     * @see org.signserver.ejb.interfaces.WorkerSession#findArchiveDatasFromRequestCertificate(int, java.math.BigInteger, java.lang.String)
      */
     @Override
     public List<ArchiveDataVO> findArchiveDatasFromRequestCertificate(
@@ -1199,7 +1198,7 @@ public class WorkerSessionBean implements IWorkerSession.ILocal,
     }
     
     /**
-     * @see org.signserver.ejb.interfaces.IWorkerSession#getWorkers(int)
+     * @see org.signserver.ejb.interfaces.WorkerSession#getWorkers(int)
      */
     @Override
     public List<Integer> getWorkers(int workerType) {

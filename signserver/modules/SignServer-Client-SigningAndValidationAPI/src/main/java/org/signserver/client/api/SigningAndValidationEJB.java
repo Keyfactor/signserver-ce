@@ -27,8 +27,8 @@ import org.signserver.common.RemoteRequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.WorkerIdentifier;
-import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
+import org.signserver.ejb.interfaces.WorkerSessionRemote;
 
 /**
  * Implements ISigningAndValidation using EJB remote interface.
@@ -38,7 +38,7 @@ import org.signserver.ejb.interfaces.ProcessSessionRemote;
  */
 public class SigningAndValidationEJB implements ISigningAndValidation {
 
-    private final IWorkerSession.IRemote signserver;
+    private final WorkerSessionRemote signserver;
     private final ProcessSessionRemote processSession;
 
     /**
@@ -49,7 +49,7 @@ public class SigningAndValidationEJB implements ISigningAndValidation {
      */
     public SigningAndValidationEJB() throws NamingException {
         signserver = ServiceLocator.getInstance().lookupRemote(
-                IWorkerSession.IRemote.class);
+                WorkerSessionRemote.class);
         processSession = ServiceLocator.getInstance().lookupRemote(
                 ProcessSessionRemote.class);
     }

@@ -25,7 +25,6 @@ import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerUtil;
-import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.validationservice.common.ValidateRequest;
 import org.signserver.validationservice.common.ValidateResponse;
 import org.signserver.validationservice.common.Validation;
@@ -37,6 +36,7 @@ import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.testutils.ModulesTestCase;
+import org.signserver.ejb.interfaces.WorkerSessionRemote;
 
 /**
  * TODO: Document me!
@@ -49,7 +49,7 @@ public class ValidationServiceWorkerTest extends ModulesTestCase {
     private static final int WORKER_DUMMY = 15;
     private static final int WORKER_NOREVOCATION = 16;
 
-    private static IWorkerSession.IRemote sSSession = null;
+    private static WorkerSessionRemote sSSession = null;
     private final ProcessSessionRemote processSession = getProcessSession();
 
     private static X509Certificate validRootCA1;
@@ -77,8 +77,7 @@ public class ValidationServiceWorkerTest extends ModulesTestCase {
     @Before
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
-        sSSession = ServiceLocator.getInstance().lookupRemote(
-                IWorkerSession.IRemote.class);
+        sSSession = ServiceLocator.getInstance().lookupRemote(WorkerSessionRemote.class);
     }
 
     @Test

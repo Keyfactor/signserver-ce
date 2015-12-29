@@ -10,26 +10,15 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.module.xmlvalidator;
+package org.signserver.ejb.interfaces;
 
-import org.signserver.ejb.interfaces.WorkerSession;
+import javax.ejb.Remote;
 
 /**
- * Mocked version of the XMLValidator.
+ * Common interface containing all the session bean methods.
  *
- * @author Markus Kilås
- * @version $Id: MockedXAdESSigner.java 4704 2014-05-16 12:38:10Z netmackan $
+ * @version $Id$
  */
-public class MockedXMLValidator extends XMLValidator {
-    private final WorkerSession mockedWorkerSession;
-
-    public MockedXMLValidator(final WorkerSession mockedWorkerSession) {
-        this.mockedWorkerSession = mockedWorkerSession;
-    }
-
-    @Override
-    protected WorkerSession getWorkerSession() {
-        return mockedWorkerSession;
-    }
-
+@Remote
+public interface GlobalConfigurationSessionRemote extends GlobalConfigurationSession {
 }

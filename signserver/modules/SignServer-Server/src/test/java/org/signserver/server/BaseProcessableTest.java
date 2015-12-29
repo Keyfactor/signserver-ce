@@ -41,10 +41,10 @@ import org.signserver.common.ResyncException;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
-import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.server.aliasselectors.AliasSelector;
 import org.signserver.server.cryptotokens.NullCryptoToken;
 import org.signserver.server.signers.BaseSigner;
+import org.signserver.ejb.interfaces.GlobalConfigurationSession;
 
 /**
  * Tests for the BaseProcessable class.
@@ -585,8 +585,8 @@ public class BaseProcessableTest extends TestCase {
         }
         
         @Override
-        protected IGlobalConfigurationSession getGlobalConfigurationSession() {
-            return new IGlobalConfigurationSession() {
+        protected GlobalConfigurationSession getGlobalConfigurationSession() {
+            return new GlobalConfigurationSession() {
 
                 @Override
                 public void setProperty(String scope, String key, String value) {

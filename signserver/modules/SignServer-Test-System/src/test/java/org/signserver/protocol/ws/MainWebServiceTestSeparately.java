@@ -66,8 +66,8 @@ import org.junit.Test;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.util.PathUtil;
-import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
-import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.ejb.interfaces.WorkerSession;
+import org.signserver.ejb.interfaces.GlobalConfigurationSession;
 
 /**
  * TODO: Document me!
@@ -82,8 +82,8 @@ public class MainWebServiceTestSeparately extends ModulesTestCase {
     private static X509Certificate validCert1;
     private SignServerWS signServerWS;
     
-    private final IWorkerSession workerSession = getWorkerSession();
-    private final IGlobalConfigurationSession globalSession = getGlobalSession();
+    private final WorkerSession workerSession = getWorkerSession();
+    private final GlobalConfigurationSession globalSession = getGlobalSession();
 
     @Before
     public void setUp() throws Exception {

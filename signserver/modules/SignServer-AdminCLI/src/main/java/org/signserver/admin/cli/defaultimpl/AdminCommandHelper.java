@@ -22,10 +22,10 @@ import org.signserver.common.CESeCoreModules;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.WorkerConfig;
-import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
-import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
-import org.signserver.statusrepo.IStatusRepositorySession;
+import org.signserver.ejb.interfaces.WorkerSessionRemote;
+import org.signserver.ejb.interfaces.GlobalConfigurationSessionRemote;
+import org.signserver.statusrepo.StatusRepositorySessionRemote;
 
 /**
  * Helper class with methods useful for many Command implementations.
@@ -39,14 +39,14 @@ public class AdminCommandHelper {
     private static Logger LOG = Logger.getLogger(AdminCommandHelper.class);
     
     /** The global configuration session. */
-    private IGlobalConfigurationSession.IRemote globalConfig;
+    private GlobalConfigurationSessionRemote globalConfig;
 
     /** The SignSession. */
     private ProcessSessionRemote processSession;
-    private IWorkerSession.IRemote workerSession;
+    private WorkerSessionRemote workerSession;
     
     /** The StatusRepositorySession. */
-    private IStatusRepositorySession.IRemote statusRepository;
+    private StatusRepositorySessionRemote statusRepository;
     
     private SecurityEventsAuditorSessionRemote auditorSession;
     
@@ -55,12 +55,11 @@ public class AdminCommandHelper {
      * @return SignServerSession
      * @throws RemoteException in case the lookup failed
      */
-    public IGlobalConfigurationSession.IRemote getGlobalConfigurationSession()
+    public GlobalConfigurationSessionRemote getGlobalConfigurationSession()
             throws RemoteException {
         if (globalConfig == null) {
             try {
-                globalConfig = ServiceLocator.getInstance().lookupRemote(
-                        IGlobalConfigurationSession.IRemote.class);
+                globalConfig = ServiceLocator.getInstance().lookupRemote(GlobalConfigurationSessionRemote.class);
             } catch (NamingException e) {
                 LOG.error("Error instanciating the GlobalConfigurationSession.", e);
                 throw new RemoteException("Error instanciating the GlobalConfigurationSession", e);
@@ -74,12 +73,11 @@ public class AdminCommandHelper {
      * @return SignServerSession
      * @throws RemoteException in case the lookup failed
      */
-    public IStatusRepositorySession.IRemote getStatusRepositorySession()
+    public StatusRepositorySessionRemote getStatusRepositorySession()
             throws RemoteException {
         if (statusRepository == null) {
             try {
-                statusRepository = ServiceLocator.getInstance().lookupRemote(
-                        IStatusRepositorySession.IRemote.class);
+                statusRepository = ServiceLocator.getInstance().lookupRemote(StatusRepositorySessionRemote.class);
             } catch (NamingException e) {
                 LOG.error("Error instanciating the StatusRepositorySession.", e);
                 throw new RemoteException(
@@ -107,11 +105,10 @@ public class AdminCommandHelper {
         return processSession;
     }
     
-    public IWorkerSession.IRemote getWorkerSession() throws RemoteException {
+    public WorkerSessionRemote getWorkerSession() throws RemoteException {
         if (workerSession == null) {
             try {
-                workerSession = ServiceLocator.getInstance().lookupRemote(
-                        IWorkerSession.IRemote.class);
+                workerSession = ServiceLocator.getInstance().lookupRemote(WorkerSessionRemote.class);
             } catch (NamingException e) {
                 LOG.error("Error looking up signserver interface");
                 throw new RemoteException("Error looking up signserver interface", e);

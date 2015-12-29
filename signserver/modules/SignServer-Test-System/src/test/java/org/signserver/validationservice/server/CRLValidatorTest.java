@@ -31,11 +31,8 @@ import org.cesecore.keys.util.KeyTools;
 import org.cesecore.util.CertTools;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
-import org.signserver.common.RequestContext;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerUtil;
-import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
-import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.validationservice.common.ValidateRequest;
 import org.signserver.validationservice.common.ValidateResponse;
 import org.signserver.validationservice.common.Validation;
@@ -48,6 +45,8 @@ import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.util.PathUtil;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.testutils.ModulesTestCase;
+import org.signserver.ejb.interfaces.WorkerSessionRemote;
+import org.signserver.ejb.interfaces.GlobalConfigurationSessionRemote;
 
 /**
  * Tests for the CRL Validator.
@@ -58,8 +57,7 @@ import org.signserver.testutils.ModulesTestCase;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class CRLValidatorTest extends ModulesTestCase {
 
-    private static IGlobalConfigurationSession.IRemote gCSession;
-    private static IWorkerSession.IRemote sSSession;
+    private static WorkerSessionRemote sSSession;
     private final ProcessSessionRemote processSession = getProcessSession();
 
     private File signServerHome;
@@ -91,12 +89,7 @@ public class CRLValidatorTest extends ModulesTestCase {
     @Before
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
-
-        gCSession = ServiceLocator.getInstance().lookupRemote(
-                IGlobalConfigurationSession.IRemote.class);
-        sSSession = ServiceLocator.getInstance().lookupRemote(
-                IWorkerSession.IRemote.class);
-
+        sSSession = ServiceLocator.getInstance().lookupRemote(WorkerSessionRemote.class);
         signServerHome = PathUtil.getAppHome();
     }
 

@@ -26,7 +26,6 @@ import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
 import org.signserver.common.RemoteRequestContext;
 import org.signserver.common.WorkerIdentifier;
-import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.testutils.ModulesTestCase;
 import org.w3c.dom.Document;
@@ -38,6 +37,7 @@ import xades4j.verification.SignatureSpecificVerificationOptions;
 import xades4j.verification.XAdESVerificationResult;
 import xades4j.verification.XadesVerificationProfile;
 import xades4j.verification.XadesVerifier;
+import org.signserver.ejb.interfaces.WorkerSession;
 
 /**
  * System tests for the XAdESSigner.
@@ -58,7 +58,7 @@ public class XAdESSignerTest extends ModulesTestCase {
     private static final int TS_ID = 9902;
     private static final String TS_NAME = "TestTimeStampSigner";
 
-    private final IWorkerSession workerSession = getWorkerSession();
+    private final WorkerSession workerSession = getWorkerSession();
     private final ProcessSessionRemote processSession = getProcessSession();
 
     @Test

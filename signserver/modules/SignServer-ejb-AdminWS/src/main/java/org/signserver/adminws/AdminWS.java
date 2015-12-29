@@ -50,13 +50,13 @@ import org.cesecore.util.query.QueryCriteria;
 import org.cesecore.util.query.clauses.Order;
 import org.cesecore.util.query.elems.Term;
 import org.signserver.common.*;
-import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
-import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.ejb.interfaces.ProcessSessionLocal;
 import org.signserver.server.CertificateClientCredential;
 import org.signserver.server.IClientCredential;
 import org.signserver.server.UsernamePasswordClientCredential;
 import org.signserver.server.log.AdminInfo;
+import org.signserver.ejb.interfaces.WorkerSessionLocal;
+import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
 
 /**
  * Class implementing the Admin WS interface.
@@ -89,13 +89,13 @@ public class AdminWS {
     private WebServiceContext wsContext;
 
     @EJB
-    private IWorkerSession.ILocal worker;
+    private WorkerSessionLocal worker;
     
     @EJB
     private ProcessSessionLocal processSession;
 
     @EJB
-    private IGlobalConfigurationSession.ILocal global;
+    private GlobalConfigurationSessionLocal global;
     
     @EJB
     private SecurityEventsAuditorSessionLocal auditor;

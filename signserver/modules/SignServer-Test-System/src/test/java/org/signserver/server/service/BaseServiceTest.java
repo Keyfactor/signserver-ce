@@ -29,8 +29,8 @@ import org.signserver.common.StaticWorkerStatus;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.util.PathUtil;
-import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.testutils.ModulesTestCase;
+import org.signserver.ejb.interfaces.WorkerSessionRemote;
 
 /**
  * TODO: Document me! See issue DSS-610
@@ -40,7 +40,7 @@ import org.signserver.testutils.ModulesTestCase;
 public class BaseServiceTest extends ModulesTestCase {
     private static final Logger LOG = Logger.getLogger(BaseServiceTest.class);
     
-    private static IWorkerSession.IRemote sSSession = null;
+    private static WorkerSessionRemote sSSession = null;
     private static String tmpFile;
     private static final int INTERVAL = 8;
     private static final int INTERVALMS = INTERVAL * 1000;
@@ -49,7 +49,7 @@ public class BaseServiceTest extends ModulesTestCase {
     @Before
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
-        sSSession = ServiceLocator.getInstance().lookupRemote(IWorkerSession.IRemote.class);
+        sSSession = ServiceLocator.getInstance().lookupRemote(WorkerSessionRemote.class);
     }
 
     @Test

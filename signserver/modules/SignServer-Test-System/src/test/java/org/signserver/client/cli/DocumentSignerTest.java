@@ -25,7 +25,6 @@ import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.client.cli.defaultimpl.SignDocumentCommand;
 import org.signserver.common.SignServerUtil;
-import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestingSecurityManager;
 import org.junit.Test;
@@ -33,6 +32,7 @@ import org.signserver.cli.spi.CommandContext;
 import org.signserver.cli.spi.CommandFactoryContext;
 import org.signserver.client.cli.defaultimpl.ConsolePasswordReader;
 import org.signserver.common.util.PathUtil;
+import org.signserver.ejb.interfaces.WorkerSession;
 
 /**
  * Tests for the signdocument command of Client CLI.
@@ -61,7 +61,7 @@ public class DocumentSignerTest extends ModulesTestCase {
 
     private static File signserverhome;
     
-    private final IWorkerSession workerSession = getWorkerSession();
+    private final WorkerSession workerSession = getWorkerSession();
     
     @Before
     public void setUp() throws Exception {

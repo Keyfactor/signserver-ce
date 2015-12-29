@@ -30,12 +30,12 @@ import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
-import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.server.SignServerContext;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.cryptotokens.NullCryptoToken;
 import org.signserver.server.signers.BaseSigner;
+import org.signserver.ejb.interfaces.WorkerSession;
 
 /**
  * Worker for getting a signer's status report. When called without any request 
@@ -70,7 +70,7 @@ public class SignerStatusReportWorker extends BaseSigner {
 
     /** Workersession. */
     @EJB
-    private IWorkerSession workerSession; // FIXME: Better to somehow inject this
+    private WorkerSession workerSession; // FIXME: Better to somehow inject this
     
     @Override
     public void init(int workerId, WorkerConfig config, WorkerContext workerContext, EntityManager workerEM) {
@@ -104,11 +104,10 @@ public class SignerStatusReportWorker extends BaseSigner {
         return new GenericServletResponse(signRequest.getRequestID(), responseData.getBytes(), null, null, null, "text/plain");
     }
 
-    private IWorkerSession getWorkerSession() {
+    private WorkerSession getWorkerSession() {
         if (workerSession == null) {
             try {
-                workerSession = ServiceLocator.getInstance().lookupLocal(
-                        IWorkerSession.class);
+                workerSession = ServiceLocator.getInstance().lookupLocal(WorkerSession.class);
             } catch (NamingException ex) {
                 throw new RuntimeException("Unable to lookup worker session",
                         ex);

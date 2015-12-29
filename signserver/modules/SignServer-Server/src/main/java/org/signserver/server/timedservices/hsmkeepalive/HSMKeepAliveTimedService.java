@@ -25,10 +25,10 @@ import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
-import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.server.ServiceExecutionFailedException;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.timedservices.BaseTimedService;
+import org.signserver.ejb.interfaces.WorkerSession;
 
 /**
  * Timed service calling testKey() on selected (crypto)workers.
@@ -48,7 +48,7 @@ public class HSMKeepAliveTimedService extends BaseTimedService {
     private List<WorkerIdentifier> cryptoTokens;
  
     @EJB
-    private IWorkerSession workerSession;
+    private WorkerSession workerSession;
     
     @Override
     public void init(int workerId, WorkerConfig config, WorkerContext workerContext, EntityManager workerEM) {
@@ -64,11 +64,10 @@ public class HSMKeepAliveTimedService extends BaseTimedService {
         }
     }
     
-    IWorkerSession getWorkerSession() {
+    WorkerSession getWorkerSession() {
         if (workerSession == null) {
             try {
-                workerSession = ServiceLocator.getInstance().lookupLocal(
-                        IWorkerSession.class);
+                workerSession = ServiceLocator.getInstance().lookupLocal(WorkerSession.class);
             } catch (NamingException ex) {
                 throw new RuntimeException("Unable to lookup worker session",
                         ex);
@@ -81,7 +80,7 @@ public class HSMKeepAliveTimedService extends BaseTimedService {
     
     @Override
     public void work() throws ServiceExecutionFailedException {
-        final IWorkerSession session = getWorkerSession();
+        final WorkerSession session = getWorkerSession();
         if (cryptoTokens != null) {
             for (final WorkerIdentifier wi : cryptoTokens) {
                 try {
@@ -113,7 +112,7 @@ public class HSMKeepAliveTimedService extends BaseTimedService {
     
     private List<String> getCryptoworkerErrors() {
         final List<String> errors = new LinkedList<>();
-        final IWorkerSession session = getWorkerSession();
+        final WorkerSession session = getWorkerSession();
         
         if (session != null && cryptoTokens != null) {
             for (final WorkerIdentifier wi : cryptoTokens) {

@@ -30,8 +30,6 @@ import org.junit.runners.MethodSorters;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.WorkerConfig;
-import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
-import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.protocol.validationservice.ws.gen.IllegalRequestException_Exception;
 import org.signserver.protocol.validationservice.ws.gen.ValidationResponse;
 import org.signserver.protocol.validationservice.ws.gen.ValidationWSService;
@@ -39,6 +37,8 @@ import org.signserver.testutils.ModulesTestCase;
 import org.signserver.validationservice.common.ValidationServiceConstants;
 import org.signserver.validationservice.common.Validation.Status;
 import org.signserver.validationservice.server.ValidationTestUtils;
+import org.signserver.ejb.interfaces.WorkerSessionRemote;
+import org.signserver.ejb.interfaces.GlobalConfigurationSessionRemote;
 
 /**
  * TODO: Document me!
@@ -48,8 +48,7 @@ import org.signserver.validationservice.server.ValidationTestUtils;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ValidationWSTest extends ModulesTestCase {
 
-    private static IGlobalConfigurationSession.IRemote gCSession = null;
-    private static IWorkerSession.IRemote sSSession = null;
+    private static WorkerSessionRemote sSSession = null;
     private static org.signserver.protocol.validationservice.ws.gen.ValidationWS validationWS;
     private static String validCert1;
     private static String revokedCert1;
@@ -59,10 +58,7 @@ public class ValidationWSTest extends ModulesTestCase {
     @Override
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
-        gCSession = ServiceLocator.getInstance().lookupRemote(
-                IGlobalConfigurationSession.IRemote.class);
-        sSSession = ServiceLocator.getInstance().lookupRemote(
-                IWorkerSession.IRemote.class);
+        sSSession = ServiceLocator.getInstance().lookupRemote(WorkerSessionRemote.class);
     }
 
     @Test

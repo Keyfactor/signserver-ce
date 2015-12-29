@@ -36,8 +36,7 @@ import org.signserver.common.SignServerUtil;
 import org.signserver.common.UnsupportedCryptoTokenParameter;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
-import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
-import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.ejb.interfaces.WorkerSessionRemote;
 
 /**
  * Generic CryptoToken tests using PKCS#11.
@@ -57,8 +56,7 @@ public class P11CryptoTokenTest extends CryptoTokenTestBase {
     private final String pin;
     private final String existingKey1;
     
-    private final IWorkerSession workerSession = getWorkerSession();
-    private final IGlobalConfigurationSession globalSession = getGlobalSession();
+    private final WorkerSessionRemote workerSession = getWorkerSession();
     
     public P11CryptoTokenTest() {
         sharedLibraryName = getConfig().getProperty("test.p11.sharedLibraryName");

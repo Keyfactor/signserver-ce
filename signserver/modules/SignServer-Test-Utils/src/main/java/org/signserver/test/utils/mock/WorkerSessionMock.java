@@ -42,9 +42,10 @@ import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.WorkerStatus;
-import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.ejb.interfaces.ProcessSessionLocal;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
+import org.signserver.ejb.interfaces.WorkerSessionLocal;
+import org.signserver.ejb.interfaces.WorkerSessionRemote;
 import org.signserver.server.IProcessable;
 import org.signserver.server.SignServerContext;
 import org.signserver.server.cryptotokens.TokenSearchResults;
@@ -56,21 +57,15 @@ import org.signserver.server.log.LogMap;
  * @author Markus Kilås
  * $version $Id$
  */
-public class WorkerSessionMock implements IWorkerSession.ILocal,
-        IWorkerSession.IRemote, ProcessSessionLocal, ProcessSessionRemote {
+public class WorkerSessionMock implements WorkerSessionLocal,
+        WorkerSessionRemote, ProcessSessionLocal, ProcessSessionRemote {
 
     private static final Logger LOG = Logger.getLogger(WorkerSessionMock.class);
-    
-    private final GlobalConfigurationSessionMock globalConfig;
 
     private final HashMap<Integer, Worker> workers = new HashMap<>();
-    
+
     private RequestContext lastRequestContext;
 
-    public WorkerSessionMock(GlobalConfigurationSessionMock globalConfig) {
-        this.globalConfig = globalConfig;
-    }
-    
     @Override
     public String generateSignerKey(AdminInfo adminInfo, WorkerIdentifier signerId,
             String keyAlgorithm, String keySpec, String alias, char[] authCode)
@@ -163,7 +158,7 @@ public class WorkerSessionMock implements IWorkerSession.ILocal,
         }
         return process(new AdminInfo("Mock user", null, null), workerId, request, requestContext);
     }
-    
+
     @Override
     public ProcessResponse process(final AdminInfo adminInfo, WorkerIdentifier workerId, ProcessRequest request,
             RequestContext requestContext) throws IllegalRequestException,
@@ -197,7 +192,7 @@ public class WorkerSessionMock implements IWorkerSession.ILocal,
     public void reloadConfiguration(int workerId) {
         reloadConfiguration(new AdminInfo("Mock user", null, null), workerId);
     }
-    
+
     @Override
     public void reloadConfiguration(final AdminInfo adminInfo, int workerId) {
         final Worker worker = workers.get(workerId);
@@ -254,7 +249,7 @@ public class WorkerSessionMock implements IWorkerSession.ILocal,
     }
 
     @Override
-    public ICertReqData getCertificateRequest(WorkerIdentifier signerId, 
+    public ICertReqData getCertificateRequest(WorkerIdentifier signerId,
             ISignerCertReqInfo certReqInfo, final boolean explicitEccParameters)
             throws CryptoTokenOfflineException,
             InvalidWorkerIdException {
@@ -262,8 +257,8 @@ public class WorkerSessionMock implements IWorkerSession.ILocal,
     }
 
     @Override
-    public ICertReqData getCertificateRequest(WorkerIdentifier signerId, 
-            ISignerCertReqInfo certReqInfo, final boolean explicitEccParameters, 
+    public ICertReqData getCertificateRequest(WorkerIdentifier signerId,
+            ISignerCertReqInfo certReqInfo, final boolean explicitEccParameters,
             boolean defaultKey) throws CryptoTokenOfflineException,
             InvalidWorkerIdException {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -318,16 +313,16 @@ public class WorkerSessionMock implements IWorkerSession.ILocal,
     public boolean removeKey(WorkerIdentifier signerId, String alias) throws CryptoTokenOfflineException, InvalidWorkerIdException, KeyStoreException, SignServerException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
     @Override
-    public String generateSignerKey(WorkerIdentifier signerId, String keyAlgorithm, 
+    public String generateSignerKey(WorkerIdentifier signerId, String keyAlgorithm,
             String keySpec, String alias, char[] authCode) throws
             CryptoTokenOfflineException, InvalidWorkerIdException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Collection<KeyTestResult> testKey(WorkerIdentifier signerId, String alias, 
+    public Collection<KeyTestResult> testKey(WorkerIdentifier signerId, String alias,
             char[] authCode) throws CryptoTokenOfflineException,
             InvalidWorkerIdException, KeyStoreException {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -354,7 +349,7 @@ public class WorkerSessionMock implements IWorkerSession.ILocal,
             String archiveId) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
+
     @Override
     public List<ArchiveDataVO> findArchiveDatasFromRequestIP(int signerId,
             String requestIP) {
@@ -382,7 +377,7 @@ public class WorkerSessionMock implements IWorkerSession.ILocal,
     public List<byte[]> getSignerCertificateChainBytes(WorkerIdentifier signerId) throws CryptoTokenOfflineException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
+
     @Override
     public List<Integer> getWorkers(int workerType) {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -483,6 +478,6 @@ public class WorkerSessionMock implements IWorkerSession.ILocal,
         public IProcessable getProcessable() {
             return processable;
         }
-        
+
     }
 }

@@ -15,12 +15,12 @@ package org.signserver.ejb;
 import javax.persistence.EntityManager;
 import org.cesecore.audit.log.SecurityEventsLoggerSessionLocal;
 import org.signserver.ejb.interfaces.DispatcherProcessSessionLocal;
-import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
-import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.ejb.interfaces.InternalProcessSessionLocal;
 import org.signserver.ejb.interfaces.ProcessSessionLocal;
 import org.signserver.server.ServicesImpl;
-import org.signserver.statusrepo.IStatusRepositorySession;
+import org.signserver.ejb.interfaces.WorkerSessionLocal;
+import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
+import org.signserver.statusrepo.StatusRepositorySessionLocal;
 
 /**
  * ServicesImpl adding convenience method adding all services.
@@ -35,7 +35,7 @@ public class AllServicesImpl extends ServicesImpl {
     /**
      * Add all services implementations.
      * @param em EntityManager
-     * @param workerSession IWorkerSession
+     * @param workerSession WorkerSession
      * @param processSession ProcessSessionLocal
      * @param globalConfigurationSession IGlobalConfigurationSession
      * @param logSession SecurityEventsLoggerSessionLocal
@@ -44,21 +44,21 @@ public class AllServicesImpl extends ServicesImpl {
      * @param statusRespositorySession IStatusRepositorySession
      */
     public void putAll(final EntityManager em,
-            final IWorkerSession.ILocal workerSession,
+            final WorkerSessionLocal workerSession,
             final ProcessSessionLocal processSession,
-            final IGlobalConfigurationSession.ILocal globalConfigurationSession,
+            final GlobalConfigurationSessionLocal globalConfigurationSession,
             final SecurityEventsLoggerSessionLocal logSession,
             final InternalProcessSessionLocal internalWorkerSession,
             final DispatcherProcessSessionLocal dispatcherWorkerSession,
-            final IStatusRepositorySession.ILocal statusRespositorySession) {
+            final StatusRepositorySessionLocal statusRespositorySession) {
         put(EntityManager.class, em);
-        put(IWorkerSession.ILocal.class, workerSession);
+        put(WorkerSessionLocal.class, workerSession);
         put(ProcessSessionLocal.class, processSession);
-        put(IGlobalConfigurationSession.ILocal.class, globalConfigurationSession);
+        put(GlobalConfigurationSessionLocal.class, globalConfigurationSession);
         put(SecurityEventsLoggerSessionLocal.class, logSession);
         put(InternalProcessSessionLocal.class, internalWorkerSession);
         put(DispatcherProcessSessionLocal.class, dispatcherWorkerSession);
-        put(IStatusRepositorySession.ILocal.class, statusRespositorySession);
+        put(StatusRepositorySessionLocal.class, statusRespositorySession);
         // Add additional services here
     }
 }

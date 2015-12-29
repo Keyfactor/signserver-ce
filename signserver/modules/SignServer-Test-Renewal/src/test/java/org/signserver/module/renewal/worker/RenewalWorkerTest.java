@@ -55,8 +55,7 @@ import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.util.PathUtil;
-import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
-import org.signserver.ejb.interfaces.IWorkerSession.IRemote;
+import org.signserver.ejb.interfaces.WorkerSessionRemote;
 import org.signserver.module.renewal.common.RenewalWorkerProperties;
 import org.signserver.module.renewal.ejbcaws.gen.EjbcaWS;
 import org.signserver.module.renewal.ejbcaws.gen.EjbcaWSService;
@@ -66,6 +65,7 @@ import org.signserver.server.signers.BaseSigner;
 import org.signserver.test.utils.mock.GlobalConfigurationSessionMock;
 import org.signserver.test.utils.mock.WorkerSessionMock;
 import org.signserver.testutils.CLITestHelper;
+import org.signserver.ejb.interfaces.GlobalConfigurationSessionRemote;
 
 /**
  * Test case for the RenewalWorker.
@@ -591,7 +591,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
      */
     public void test10NoECCExplicit() throws Exception {
         final GlobalConfigurationSessionMock conf = new GlobalConfigurationSessionMock();
-        final MockWorkerSession workerSession = new MockWorkerSession(conf);
+        final MockWorkerSession workerSession = new MockWorkerSession();
         
         addRenewalWorkerMock(conf, workerSession, 6110, "RenewalWorkerMock");
         addSignerMock(conf, workerSession, SIGNERID_6102, SIGNER_6102);
@@ -621,7 +621,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
      */
     public void test11TrueECCExplicit() throws Exception {
         final GlobalConfigurationSessionMock conf = new GlobalConfigurationSessionMock();
-        final MockWorkerSession workerSession = new MockWorkerSession(conf);
+        final MockWorkerSession workerSession = new MockWorkerSession();
         
         addRenewalWorkerMock(conf, workerSession, 6110, "RenewalWorkerMock");
         addSignerMock(conf, workerSession, SIGNERID_6102, SIGNER_6102);
@@ -654,7 +654,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
      */
     public void test12FalseECCExplicit() throws Exception {
         final GlobalConfigurationSessionMock conf = new GlobalConfigurationSessionMock();
-        final MockWorkerSession workerSession = new MockWorkerSession(conf);
+        final MockWorkerSession workerSession = new MockWorkerSession();
         
         addRenewalWorkerMock(conf, workerSession, 6110, "RenewalWorkerMock");
         addSignerMock(conf, workerSession, SIGNERID_6102, SIGNER_6102);
@@ -839,13 +839,13 @@ public class RenewalWorkerTest extends AbstractTestCase {
         
         workerSession.setupWorker(signerId, CRYPTOTOKEN_CLASSNAME, config, new RenewalWorker() {
             @Override
-            protected IGlobalConfigurationSession.IRemote
+            protected GlobalConfigurationSessionRemote
                 getGlobalConfigurationSession() {
                 return conf;
             }
 
             @Override
-            protected IRemote getWorkerSession() {
+            protected WorkerSessionRemote getWorkerSession() {
                 return workerSession;
             }
         });
@@ -875,7 +875,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
         
         workerSession.setupWorker(signerId, CRYPTOTOKEN_CLASSNAME, config, new BaseSigner() {
             @Override
-            protected IGlobalConfigurationSession.IRemote
+            protected GlobalConfigurationSessionRemote
                 getGlobalConfigurationSession() {
                 return conf;
             }
@@ -990,10 +990,6 @@ public class RenewalWorkerTest extends AbstractTestCase {
 
         protected boolean explicitEccParametersSet = false;
         private WorkerConfig workerConfig;
-        
-        public MockWorkerSession(GlobalConfigurationSessionMock globalConfig) {
-            super(globalConfig);
-        }
 
         @Override
         public ICertReqData getCertificateRequest(WorkerIdentifier wi, ISignerCertReqInfo certReqInfo,

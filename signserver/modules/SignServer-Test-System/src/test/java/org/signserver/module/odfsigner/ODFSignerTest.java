@@ -24,8 +24,8 @@ import org.junit.runners.MethodSorters;
 import org.signserver.common.*;
 import org.signserver.testutils.ModulesTestCase;
 import org.junit.Test;
-import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
+import org.signserver.ejb.interfaces.WorkerSession;
 
 /**
  * Test for odfsigner. Worker ID of 5678 is hard coded here and used from
@@ -40,7 +40,7 @@ import org.signserver.ejb.interfaces.ProcessSessionRemote;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ODFSignerTest extends ModulesTestCase {
 
-    private final IWorkerSession workerSession = getWorkerSession();
+    private final WorkerSession workerSession = getWorkerSession();
     private final ProcessSessionRemote processSession = getProcessSession();
     
     /**

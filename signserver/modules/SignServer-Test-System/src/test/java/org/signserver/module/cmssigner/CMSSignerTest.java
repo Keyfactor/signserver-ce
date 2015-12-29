@@ -41,10 +41,10 @@ import org.signserver.common.RemoteRequestContext;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
-import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestingSecurityManager;
+import org.signserver.ejb.interfaces.WorkerSession;
 
 /**
  * Tests for CMSSigner.
@@ -61,7 +61,7 @@ public class CMSSignerTest extends ModulesTestCase {
     private static final int WORKERID_ECDSA = 8000;
     private static final int WORKERID_DSA = 8001;
     
-    private final IWorkerSession workerSession = getWorkerSession();
+    private final WorkerSession workerSession = getWorkerSession();
     private final ProcessSessionRemote processSession = getProcessSession();
     
     @Before

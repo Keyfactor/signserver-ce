@@ -24,12 +24,12 @@ import org.junit.Test;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
-import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
-import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.server.cryptotokens.P12CryptoToken;
 import org.signserver.testutils.CLITestHelper;
 import static org.signserver.testutils.CLITestHelper.assertPrinted;
 import org.signserver.testutils.ModulesTestCase;
+import org.signserver.ejb.interfaces.WorkerSession;
+import org.signserver.ejb.interfaces.GlobalConfigurationSession;
 
 /**
  * Tests for the query token entries command.
@@ -40,8 +40,8 @@ import org.signserver.testutils.ModulesTestCase;
 public class TokenEntriesCLITest extends ModulesTestCase {
     private final CLITestHelper cli = getAdminCLI();
     
-    protected final IWorkerSession workerSession = getWorkerSession();
-    protected final IGlobalConfigurationSession globalSession = getGlobalSession();
+    protected final WorkerSession workerSession = getWorkerSession();
+    protected final GlobalConfigurationSession globalSession = getGlobalSession();
 
     @Override
     protected void setUp() throws Exception {

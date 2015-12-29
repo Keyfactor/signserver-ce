@@ -35,8 +35,8 @@ import org.junit.Test;
 import org.signserver.common.RemoteRequestContext;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.util.PathUtil;
-import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
+import org.signserver.ejb.interfaces.WorkerSession;
 
 /**
  * Tests for the Archiving API.
@@ -58,7 +58,7 @@ public class ArchiveAPITest extends ModulesTestCase {
     private File archiver1File;
     private File archiver2File;
     
-    private final IWorkerSession workerSession = getWorkerSession();
+    private final WorkerSession workerSession = getWorkerSession();
     private final ProcessSessionRemote processSession = getProcessSession();
     
     @Before

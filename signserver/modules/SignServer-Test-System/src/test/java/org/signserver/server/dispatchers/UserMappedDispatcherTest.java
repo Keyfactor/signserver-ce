@@ -36,13 +36,13 @@ import org.cesecore.util.CertTools;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 import org.signserver.common.*;
-import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.testutils.ModulesTestCase;
 import org.junit.Before;
 import org.junit.Test;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.server.UsernamePasswordClientCredential;
 import org.signserver.test.utils.builders.CryptoUtils;
+import org.signserver.ejb.interfaces.WorkerSession;
 
 /**
  * Tests for the UserMappedDispatcher.
@@ -71,7 +71,7 @@ public class UserMappedDispatcherTest extends ModulesTestCase {
      */
     private static final String DUMMY_AUTH_CODE = "1234";
     
-    private final IWorkerSession workerSession = getWorkerSession();
+    private final WorkerSession workerSession = getWorkerSession();
     private final ProcessSessionRemote processSession = getProcessSession();
     
     @Before

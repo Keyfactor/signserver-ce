@@ -24,7 +24,7 @@ import org.signserver.server.log.AdminInfo;
  *
  * @version $Id$
  */
-public interface IGlobalConfigurationSession {
+public interface GlobalConfigurationSession {
 
     String LOG_OPERATION = "GLOBALCONFIG_OPERATION";
     String LOG_PROPERTY = "GLOBALCONFIG_PROPERTY";
@@ -68,7 +68,7 @@ public interface IGlobalConfigurationSession {
     void reload();
 
     @Remote
-    interface IRemote extends IGlobalConfigurationSession {
+    interface IRemote extends GlobalConfigurationSession {
 
         String JNDI_NAME = "signserver/GlobalConfigurationSessionBean/remote";
     }
@@ -78,7 +78,7 @@ public interface IGlobalConfigurationSession {
      * Mirrors methods which are audit-logged, taking an extra AdminInfo instance.
      */
     @Local
-    interface ILocal extends IGlobalConfigurationSession {
+    interface ILocal extends GlobalConfigurationSession {
         String JNDI_NAME = "signserver/GlobalConfigurationSessionBean/local";
         
         /**

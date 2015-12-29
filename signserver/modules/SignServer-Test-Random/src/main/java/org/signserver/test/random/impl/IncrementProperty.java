@@ -14,7 +14,7 @@ package org.signserver.test.random.impl;
 
 import org.apache.log4j.Logger;
 import org.signserver.common.WorkerConfig;
-import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.ejb.interfaces.WorkerSessionRemote;
 
 /**
  * Reads a property value, increments it, and writes it back.
@@ -29,9 +29,9 @@ public class IncrementProperty implements Runnable {
     
     private final int signerId;
     private final String propertyName;
-    private final IWorkerSession.IRemote workerSession;
+    private final WorkerSessionRemote workerSession;
 
-    public IncrementProperty(int signerId, String propertyName, IWorkerSession.IRemote workerSession) {
+    public IncrementProperty(int signerId, String propertyName, WorkerSessionRemote workerSession) {
         this.signerId = signerId;
         this.propertyName = propertyName;
         this.workerSession = workerSession;

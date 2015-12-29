@@ -30,8 +30,6 @@ import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.ejb.interfaces.DispatcherProcessSessionLocal;
-import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
-import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.ejb.interfaces.InternalProcessSessionLocal;
 import org.signserver.ejb.interfaces.ProcessSessionLocal;
 import org.signserver.ejb.worker.impl.WorkerManagerSingletonBean;
@@ -40,7 +38,9 @@ import org.signserver.server.entities.IKeyUsageCounterDataService;
 import org.signserver.server.entities.KeyUsageCounterDataService;
 import org.signserver.server.log.AdminInfo;
 import org.signserver.server.nodb.FileBasedDatabaseManager;
-import org.signserver.statusrepo.IStatusRepositorySession;
+import org.signserver.ejb.interfaces.WorkerSessionLocal;
+import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
+import org.signserver.statusrepo.StatusRepositorySessionLocal;
 
 /**
  * Session bean implementing the process methods in the same way as the
@@ -59,7 +59,7 @@ public class DispatcherProcessSessionBean implements DispatcherProcessSessionLoc
     private IKeyUsageCounterDataService keyUsageCounterDataService;
 
     @EJB
-    private IGlobalConfigurationSession.ILocal globalConfigurationSession;
+    private GlobalConfigurationSessionLocal globalConfigurationSession;
 
     @EJB
     private WorkerManagerSingletonBean workerManagerSession;
@@ -95,11 +95,11 @@ public class DispatcherProcessSessionBean implements DispatcherProcessSessionLoc
         // When we no longer support GFv2 we can refactor this code
         InternalProcessSessionLocal internalSession = null;
         ProcessSessionLocal processSession = null;
-        IStatusRepositorySession.ILocal statusSession = null;
+        StatusRepositorySessionLocal statusSession = null;
         try {
             internalSession = ServiceLocator.getInstance().lookupLocal(InternalProcessSessionLocal.class);
             processSession = ServiceLocator.getInstance().lookupLocal(ProcessSessionLocal.class);
-            statusSession = ServiceLocator.getInstance().lookupLocal(IStatusRepositorySession.ILocal.class);
+            statusSession = ServiceLocator.getInstance().lookupLocal(StatusRepositorySessionLocal.class);
         } catch (NamingException ex) {
             LOG.error("Lookup services failed. This is expected on GlassFish V2: " + ex.getExplanation());
             if (LOG.isDebugEnabled()) {
@@ -108,9 +108,8 @@ public class DispatcherProcessSessionBean implements DispatcherProcessSessionLoc
         }
         try {
             // Add all services
-            servicesImpl.putAll(
-                    em,
-                    ServiceLocator.getInstance().lookupLocal(IWorkerSession.ILocal.class),
+            servicesImpl.putAll(em,
+                    ServiceLocator.getInstance().lookupLocal(WorkerSessionLocal.class),
                     processSession,
                     globalConfigurationSession,
                     logSession,

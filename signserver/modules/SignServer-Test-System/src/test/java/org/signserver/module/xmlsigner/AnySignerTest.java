@@ -34,7 +34,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.util.PathUtil;
-import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.ejb.interfaces.WorkerSession;
 
 /**
  * Tests for any Signer.
@@ -54,7 +54,7 @@ public class AnySignerTest extends ModulesTestCase {
 
     private static File keystoreFile;
 
-    private final IWorkerSession workerSession = getWorkerSession();
+    private final WorkerSession workerSession = getWorkerSession();
     
     @Before
     public void setUp() throws Exception {

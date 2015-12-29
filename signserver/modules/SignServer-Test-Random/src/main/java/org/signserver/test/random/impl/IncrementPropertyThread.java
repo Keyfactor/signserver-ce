@@ -14,9 +14,9 @@ package org.signserver.test.random.impl;
 
 import java.util.Random;
 import org.apache.log4j.Logger;
-import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.test.random.FailureCallback;
 import org.signserver.test.random.WorkerThread;
+import org.signserver.ejb.interfaces.WorkerSessionRemote;
 
 /**
  * Increments a property value and for every 10 iteration checks that the actual 
@@ -30,11 +30,11 @@ public class IncrementPropertyThread extends WorkerThread {
     private static final Logger LOG = Logger.getLogger(IncrementPropertyThread.class);
     private final int workerId;
     private final String property;
-    private final IWorkerSession.IRemote workerSession;
+    private final WorkerSessionRemote workerSession;
     private final Random random;
     private final IncrementProperty increment;
 
-    public IncrementPropertyThread(final String name, final FailureCallback failureCallback, final long seed, final int workerId, final String property, IWorkerSession.IRemote workerSession) {
+    public IncrementPropertyThread(final String name, final FailureCallback failureCallback, final long seed, final int workerId, final String property, WorkerSessionRemote workerSession) {
         super(name, failureCallback);
         this.random = new Random(seed);
         this.property = property;

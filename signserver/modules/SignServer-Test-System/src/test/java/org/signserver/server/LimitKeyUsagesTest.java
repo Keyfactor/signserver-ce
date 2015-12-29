@@ -21,8 +21,8 @@ import org.signserver.common.*;
 import org.signserver.testutils.ModulesTestCase;
 import org.junit.Before;
 import org.junit.Test;
-import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
+import org.signserver.ejb.interfaces.WorkerSession;
 
 /**
  * Tests limits for the key usages.
@@ -45,7 +45,7 @@ public class LimitKeyUsagesTest extends ModulesTestCase {
      */
     private static final int LIMIT = 10;
     
-    private final IWorkerSession workerSession = getWorkerSession();
+    private final WorkerSession workerSession = getWorkerSession();
     private final ProcessSessionRemote processSession = getProcessSession();
 
     @Before

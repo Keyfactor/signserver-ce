@@ -70,8 +70,8 @@ import org.signserver.common.TokenOutOfSpaceException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.util.PathUtil;
-import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
-import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.ejb.interfaces.GlobalConfigurationSessionRemote;
+import org.signserver.ejb.interfaces.WorkerSession;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.test.utils.builders.CryptoUtils;
 import org.signserver.testutils.ModulesTestCase;
@@ -121,9 +121,9 @@ public class P11SignTest extends ModulesTestCase {
     private final File odfSampleFile;
     private final File ooxmlSampleFile;
 
-    private final IWorkerSession workerSession = getWorkerSession();
+    private final WorkerSession workerSession = getWorkerSession();
     private final ProcessSessionRemote processSession = getProcessSession();
-    private final IGlobalConfigurationSession globalSession = getGlobalSession();
+    private final GlobalConfigurationSessionRemote globalSession = getGlobalSession();
     
     public P11SignTest() throws FileNotFoundException {
         final File home = PathUtil.getAppHome();

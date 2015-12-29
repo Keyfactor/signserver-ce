@@ -28,7 +28,7 @@ import org.signserver.testutils.ModulesTestCase;
 import org.junit.Before;
 import org.junit.Test;
 import org.signserver.common.WorkerIdentifier;
-import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.ejb.interfaces.WorkerSession;
 
 /**
  * Tests for the ListBasedAddressAuthorizer implementation.
@@ -46,7 +46,7 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
 
     private String localIP;
     
-    private final IWorkerSession workerSession = getWorkerSession();
+    private final WorkerSession workerSession = getWorkerSession();
     
     @Before
     @Override

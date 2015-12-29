@@ -36,20 +36,16 @@ import org.signserver.common.CryptoTokenInitializationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
-import org.signserver.common.IllegalRequestException;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.KeyTestResult;
 import org.signserver.common.OperationUnsupportedException;
-import org.signserver.common.ProcessRequest;
-import org.signserver.common.ProcessResponse;
 import org.signserver.common.QueryException;
-import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.WorkerStatus;
-import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.ejb.interfaces.WorkerSessionLocal;
 import org.signserver.server.IServices;
 import org.signserver.server.ServicesImpl;
 import org.signserver.server.log.AdminInfo;
@@ -144,22 +140,22 @@ public class KeystoreCryptoTokenTest extends CryptoTokenTestBase {
     
     private static class MockedKeystoreInConfig extends KeystoreInConfigCryptoToken {
         
-        private IWorkerSession.ILocal workerSession;
+        private WorkerSessionLocal workerSession;
         
         /**
-        * @return A mocked IServices with the same IWorkerSession.ILocal as a call
+        * @return A mocked IServices with the same WorkerSessionLocal as a call
         * to getWorkerSession() would return
         */
        public IServices getMockedServices() {
            IServices servicesImpl = new ServicesImpl();
-           servicesImpl.put(IWorkerSession.ILocal.class, getWorkerSession());
+           servicesImpl.put(WorkerSessionLocal.class, getWorkerSession());
            return servicesImpl;
        }
     
         @Override
-        protected IWorkerSession.ILocal getWorkerSession() { // TODO Extract to adaptor
+        protected WorkerSessionLocal getWorkerSession() { // TODO Extract to adaptor
             if (workerSession == null) {
-                workerSession = new IWorkerSession.ILocal() {
+                workerSession = new WorkerSessionLocal() {
 
                     private byte[] keystoreData;
 

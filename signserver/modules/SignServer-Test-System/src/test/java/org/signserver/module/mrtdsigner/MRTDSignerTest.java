@@ -32,9 +32,9 @@ import org.signserver.common.StaticWorkerStatus;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.WorkerStatus;
-import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.testutils.ModulesTestCase;
+import org.signserver.ejb.interfaces.WorkerSession;
 
 /**
  * TODO: Document me!
@@ -44,7 +44,7 @@ import org.signserver.testutils.ModulesTestCase;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MRTDSignerTest extends ModulesTestCase {
 
-    private final IWorkerSession workerSession = getWorkerSession();
+    private final WorkerSession workerSession = getWorkerSession();
     private final ProcessSessionRemote processSession = getProcessSession();
     
     @Before

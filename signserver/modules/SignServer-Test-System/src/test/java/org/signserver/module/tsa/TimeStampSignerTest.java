@@ -54,7 +54,6 @@ import org.junit.After;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 import org.signserver.common.*;
-import org.signserver.statusrepo.IStatusRepositorySession;
 import org.signserver.statusrepo.common.StatusName;
 import org.signserver.test.utils.builders.CertBuilder;
 import org.signserver.test.utils.builders.CertExt;
@@ -64,8 +63,9 @@ import org.signserver.testutils.TestingSecurityManager;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
+import org.signserver.ejb.interfaces.WorkerSession;
+import org.signserver.statusrepo.StatusRepositorySessionRemote;
 
 /**
  * Tests for the TimeStampSigner.
@@ -80,7 +80,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
             TimeStampSignerTest.class);
 
     /** The status repository session. */
-    private static IStatusRepositorySession.IRemote repository;
+    private static StatusRepositorySessionRemote repository;
 
     /** Worker ID for test worker. */
     private static final WorkerIdentifier WORKER1 = new WorkerIdentifier(8901);
@@ -136,15 +136,14 @@ public class TimeStampSignerTest extends ModulesTestCase {
 
     private Random random = new Random(4711);
 
-    private final IWorkerSession workerSession = getWorkerSession();
+    private final WorkerSession workerSession = getWorkerSession();
     private final ProcessSessionRemote processSession = getProcessSession();
 
     @Before
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
 
-        repository = ServiceLocator.getInstance().lookupRemote(
-                IStatusRepositorySession.IRemote.class);
+        repository = ServiceLocator.getInstance().lookupRemote(StatusRepositorySessionRemote.class);
     }
 
     /* (non-Javadoc)

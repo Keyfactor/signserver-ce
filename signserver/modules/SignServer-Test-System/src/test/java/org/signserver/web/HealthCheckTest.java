@@ -19,12 +19,12 @@ import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 
 import org.signserver.common.ServiceLocator;
-import org.signserver.statusrepo.IStatusRepositorySession;
 import org.signserver.statusrepo.common.StatusName;
 import org.junit.Before;
 import org.junit.Test;
 import org.signserver.common.WorkerIdentifier;
-import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.ejb.interfaces.WorkerSession;
+import org.signserver.statusrepo.StatusRepositorySessionRemote;
 
 /**
  * Tests the Health check.
@@ -39,9 +39,9 @@ public class HealthCheckTest extends WebTestCase {
     private static final int TSA_WORKER = 8904;
     
     /** The status repository session. */
-    private static IStatusRepositorySession.IRemote repository;
+    private static StatusRepositorySessionRemote repository;
     
-    private final IWorkerSession workerSession = getWorkerSession();
+    private final WorkerSession workerSession = getWorkerSession();
   
     @Override
     protected String getServletURL() {
@@ -53,8 +53,7 @@ public class HealthCheckTest extends WebTestCase {
     @Before
     @Override
     public void setUp() throws Exception {
-        repository = ServiceLocator.getInstance().lookupRemote(
-                IStatusRepositorySession.IRemote.class);
+        repository = ServiceLocator.getInstance().lookupRemote(StatusRepositorySessionRemote.class);
 	}
 
 

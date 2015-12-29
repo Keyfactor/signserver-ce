@@ -18,10 +18,10 @@ import java.util.Date;
 import java.util.List;
 import org.apache.log4j.Logger;
 import org.signserver.common.*;
-import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.server.KeyUsageCounterHash;
 import org.signserver.server.entities.IKeyUsageCounterDataService;
 import org.signserver.server.entities.KeyUsageCounter;
+import org.signserver.ejb.interfaces.WorkerSession;
 
 /**
  * Builds a signer's status report for the chosen signers in a special format.
@@ -46,10 +46,10 @@ public class SignerStatusReportBuilder implements ReportBuilder {
     /** List of worker names. */
     private List<String> workers;
     
-    private final IWorkerSession workerSession;
+    private final WorkerSession workerSession;
     private final IKeyUsageCounterDataService keyUsageCounterDataService;
     
-    public SignerStatusReportBuilder(List<String> workers, IWorkerSession workerSession, IKeyUsageCounterDataService keyUsageCounterDataService) {
+    public SignerStatusReportBuilder(List<String> workers, WorkerSession workerSession, IKeyUsageCounterDataService keyUsageCounterDataService) {
         this.workers = workers;
         this.workerSession = workerSession;
         this.keyUsageCounterDataService = keyUsageCounterDataService;

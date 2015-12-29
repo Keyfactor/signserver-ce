@@ -93,9 +93,9 @@ import org.signserver.common.SignServerException;
 import org.signserver.common.UnsupportedCryptoTokenParameter;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.WorkerStatus;
-import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
-import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.ejb.interfaces.GlobalConfigurationSessionRemote;
 import org.signserver.ejb.interfaces.InternalProcessSessionRemote;
+import org.signserver.ejb.interfaces.WorkerSessionRemote;
 import org.signserver.server.cryptotokens.TokenEntry;
 
 /**
@@ -114,15 +114,15 @@ public class AdminLayerEJBImpl implements AdminWS {
         LONG_COLUMNS.add(AuditLogEntry.FIELD_SEQUENCENUMBER);
     }
     
-    private IWorkerSession.IRemote worker;
+    private WorkerSessionRemote worker;
     private InternalProcessSessionRemote processSession;
-    private IGlobalConfigurationSession.IRemote global;
+    private GlobalConfigurationSessionRemote global;
     private SecurityEventsAuditorSessionRemote auditor;
 
     public AdminLayerEJBImpl() throws NamingException {
-        worker = ServiceLocator.getInstance().lookupRemote(IWorkerSession.IRemote.class);
+        worker = ServiceLocator.getInstance().lookupRemote(WorkerSessionRemote.class);
         processSession = ServiceLocator.getInstance().lookupRemote(InternalProcessSessionRemote.class);
-        global = ServiceLocator.getInstance().lookupRemote(IGlobalConfigurationSession.IRemote.class);
+        global = ServiceLocator.getInstance().lookupRemote(GlobalConfigurationSessionRemote.class);
         auditor = ServiceLocator.getInstance().lookupRemote(SecurityEventsAuditorSessionRemote.class, CESeCoreModules.CORE);
     }
 

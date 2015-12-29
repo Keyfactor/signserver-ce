@@ -40,11 +40,11 @@ import org.signserver.common.SODSignRequest;
 import org.signserver.common.SODSignResponse;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerIdentifier;
-import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.ejb.interfaces.ProcessSessionLocal;
 import org.signserver.server.CredentialUtils;
 import org.signserver.server.log.AdminInfo;
 import org.signserver.server.log.LogMap;
+import org.signserver.ejb.interfaces.WorkerSessionLocal;
 
 /**
  * SODProcessServlet is a Servlet that takes data group hashes from a htto post and puts them in a Map for passing
@@ -89,13 +89,13 @@ public class SODProcessServlet extends AbstractProcessServlet {
     private ProcessSessionLocal processSession;
     
     @EJB
-    private IWorkerSession.ILocal workerSession;
+    private WorkerSessionLocal workerSession;
 
     private ProcessSessionLocal getProcessSession() {
         return processSession;
     }
     
-    private IWorkerSession.ILocal getWorkerSession() {
+    private WorkerSessionLocal getWorkerSession() {
         return workerSession;
     }
 

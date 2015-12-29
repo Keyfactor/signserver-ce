@@ -37,8 +37,6 @@ import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.signserver.common.*;
 import org.signserver.common.util.PathUtil;
-import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
-import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.test.utils.builders.CertBuilder;
@@ -49,6 +47,8 @@ import org.signserver.test.utils.mock.GlobalConfigurationSessionMock;
 import org.signserver.test.utils.mock.MockedCryptoToken;
 import org.signserver.test.utils.mock.WorkerSessionMock;
 import org.signserver.testutils.ModulesTestCase;
+import org.signserver.ejb.interfaces.WorkerSessionRemote;
+import org.signserver.ejb.interfaces.GlobalConfigurationSessionRemote;
 
 /**
  * Unit tests for PDFSigner.
@@ -79,8 +79,8 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     
     private final String ILLEGAL_DIGEST_FOR_DSA_MESSAGE = "Only SHA1 is permitted as digest algorithm for DSA public/private keys";
     
-    private IGlobalConfigurationSession.IRemote globalConfig;
-    private IWorkerSession.IRemote workerSession;
+    private GlobalConfigurationSessionRemote globalConfig;
+    private WorkerSessionRemote workerSession;
     private ProcessSessionRemote processSession;
 
     private File sampleOk;
@@ -1476,7 +1476,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
 
         final GlobalConfigurationSessionMock globalMock
                 = new GlobalConfigurationSessionMock();
-        final WorkerSessionMock workerMock = new WorkerSessionMock(globalMock);
+        final WorkerSessionMock workerMock = new WorkerSessionMock();
         globalConfig = globalMock;
         workerSession = workerMock;
         processSession = workerMock;
@@ -1500,7 +1500,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
                     new PDFSigner() {
                 @Override
-                protected IGlobalConfigurationSession.IRemote
+                protected GlobalConfigurationSessionRemote
                         getGlobalConfigurationSession() {
                     return globalConfig;
                 }

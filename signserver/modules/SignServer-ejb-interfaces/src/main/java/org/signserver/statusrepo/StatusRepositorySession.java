@@ -24,7 +24,7 @@ import org.signserver.statusrepo.common.StatusEntry;
  * @author Markus Kilås
  * @version $Id$
  */
-public interface IStatusRepositorySession {
+public interface StatusRepositorySession {
 
     String LOG_OPERATION = "STATUSREPO_OPERATION";
     String LOG_PROPERTY = "STATUSREPO_PROPERTY";
@@ -68,7 +68,7 @@ public interface IStatusRepositorySession {
      * Remote interface.
      */
     @Remote
-    interface IRemote extends IStatusRepositorySession {
+    interface IRemote extends StatusRepositorySession {
 
         String JNDI_NAME = "signserver/StatusRepositorySessionBean/remote";
     }
@@ -77,7 +77,7 @@ public interface IStatusRepositorySession {
      * Local interface.
      */
     @Local
-    interface ILocal extends IStatusRepositorySession {
+    interface ILocal extends StatusRepositorySession {
 
         String JNDI_NAME = "signserver/StatusRepositorySessionBean/local";
     }

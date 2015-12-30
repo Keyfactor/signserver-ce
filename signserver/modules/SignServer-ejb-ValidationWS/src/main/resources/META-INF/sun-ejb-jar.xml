@@ -5,18 +5,6 @@
     <unique-id>0</unique-id>
     <ejb>
       <ejb-name>ValidationWS</ejb-name>
-      <ejb-ref>
-        <ejb-ref-name>org.signserver.protocol.validationservice.ws.server.ValidationWS/globalconfigsession</ejb-ref-name>
-        <jndi-name>org.signserver.ejb.interfaces.IGlobalConfigurationSession$IRemote</jndi-name>
-      </ejb-ref>
-      <ejb-ref>
-        <ejb-ref-name>org.signserver.protocol.validationservice.ws.server.ValidationWS/signserversession</ejb-ref-name>
-        <jndi-name>org.signserver.ejb.interfaces.IWorkerSession$IRemote</jndi-name>
-      </ejb-ref>
-      <resource-ref>
-        <res-ref-name>org.signserver.protocol.validationservice.ws.server.ValidationWS/wsContext</res-ref-name>
-        <jndi-name>org.signserver.protocol.validationservice.ws.server.ValidationWS/wsContext</jndi-name>
-      </resource-ref>
       <pass-by-reference>false</pass-by-reference>
       <is-read-only-bean>false</is-read-only-bean>
       <refresh-period-in-seconds>-1</refresh-period-in-seconds>

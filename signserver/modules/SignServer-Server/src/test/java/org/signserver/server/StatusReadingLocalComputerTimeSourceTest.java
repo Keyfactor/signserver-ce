@@ -22,7 +22,7 @@ import org.signserver.server.StatusReadingLocalComputerTimeSource.LeapSecondHand
 import org.signserver.statusrepo.common.NoSuchPropertyException;
 import org.signserver.statusrepo.common.StatusEntry;
 import org.signserver.statusrepo.common.StatusName;
-import org.signserver.statusrepo.StatusRepositorySession;
+import org.signserver.statusrepo.StatusRepositorySessionLocal;
 
 /**
  * Tests the leapsecond support in status-reading local timesource.
@@ -430,7 +430,7 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
     /**
      * Base class for status repository mockups.
      */
-    private class LeapsecondStatusRepositorySession implements StatusRepositorySession {
+    private class LeapsecondStatusRepositorySession implements StatusRepositorySessionLocal {
         private final String leapsecondType;
         
         LeapsecondStatusRepositorySession(final String leapsecondType) {

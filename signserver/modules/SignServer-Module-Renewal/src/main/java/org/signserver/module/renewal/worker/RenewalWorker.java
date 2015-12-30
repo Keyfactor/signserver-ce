@@ -26,7 +26,6 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.*;
 
-import javax.ejb.EJB;
 import javax.naming.NamingException;
 import javax.net.ssl.*;
 import javax.persistence.EntityManager;
@@ -51,7 +50,7 @@ import org.signserver.server.cryptotokens.KeystoreCryptoToken;
 import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.log.LogMap;
 import org.signserver.server.signers.BaseSigner;
-import org.signserver.ejb.interfaces.WorkerSession;
+import org.signserver.ejb.interfaces.WorkerSessionLocal;
 
 /**
  * Worker renewing certificate (and optionally keys) for a signer by sending
@@ -103,8 +102,7 @@ public class RenewalWorker extends BaseSigner {
     private List<String> fatalErrors;
     
     /** Workersession. */
-    @EJB
-    private WorkerSession workerSession;
+    private WorkerSessionLocal workerSession;
 
     /** Configuration parameters. */
     private String alias;
@@ -570,10 +568,10 @@ public class RenewalWorker extends BaseSigner {
     }
     public static final String TRUSTSTOREVALUE = "TRUSTSTOREVALUE";
 
-    protected WorkerSession getWorkerSession() {
+    protected WorkerSessionLocal getWorkerSession() {
         if (workerSession == null) {
             try {
-                workerSession = ServiceLocator.getInstance().lookupLocal(WorkerSession.class);
+                workerSession = ServiceLocator.getInstance().lookupLocal(WorkerSessionLocal.class);
             } catch (NamingException ex) {
                 throw new RuntimeException("Unable to lookup worker session",
                         ex);

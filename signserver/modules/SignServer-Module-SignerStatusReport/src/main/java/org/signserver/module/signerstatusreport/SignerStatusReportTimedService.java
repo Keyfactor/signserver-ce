@@ -19,7 +19,6 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import javax.ejb.EJB;
 import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
@@ -29,7 +28,7 @@ import org.signserver.server.ServiceExecutionFailedException;
 import org.signserver.server.SignServerContext;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.timedservices.BaseTimedService;
-import org.signserver.ejb.interfaces.WorkerSession;
+import org.signserver.ejb.interfaces.WorkerSessionLocal;
 
 /**
  * TimedService that outputs a status report for a configured set of signers.
@@ -56,8 +55,7 @@ public class SignerStatusReportTimedService extends BaseTimedService {
     private List<String> workers;
     
     /** Workersession. */
-    @EJB
-    private WorkerSession workerSession; // FIXME: Better to somehow inject this
+    private WorkerSessionLocal workerSession; // FIXME: Better to somehow inject this
 
     /**
      * Initializes the worker.
@@ -125,10 +123,10 @@ public class SignerStatusReportTimedService extends BaseTimedService {
         LOG.trace("<work");
     }
 
-    private WorkerSession getWorkerSession() {
+    private WorkerSessionLocal getWorkerSession() {
         if (workerSession == null) {
             try {
-                workerSession = ServiceLocator.getInstance().lookupLocal(WorkerSession.class);
+                workerSession = ServiceLocator.getInstance().lookupLocal(WorkerSessionLocal.class);
             } catch (NamingException ex) {
                 throw new RuntimeException("Unable to lookup worker session",
                         ex);

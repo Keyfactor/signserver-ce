@@ -33,7 +33,7 @@ import org.signserver.common.ServiceLocator;
 import org.signserver.common.WorkerStatus;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.statusrepo.common.NoSuchPropertyException;
-import org.signserver.statusrepo.StatusRepositorySession;
+import org.signserver.statusrepo.StatusRepositorySessionLocal;
 
 /**
  * Test crypto token recording testKey() operations.
@@ -49,7 +49,7 @@ public class TestKeyDebugCryptoToken implements ICryptoToken {
     private String testKey;
     private boolean disableTestKey;
       
-    private StatusRepositorySession statusSession;
+    private StatusRepositorySessionLocal statusSession;
     
     /**
      * Status repository property to set.
@@ -70,7 +70,7 @@ public class TestKeyDebugCryptoToken implements ICryptoToken {
                                                        Boolean.FALSE.toString()));
     
         try {
-            statusSession = ServiceLocator.getInstance().lookupLocal(StatusRepositorySession.class);
+            statusSession = ServiceLocator.getInstance().lookupLocal(StatusRepositorySessionLocal.class);
         } catch (NamingException ex) {
             throw new RuntimeException("Unable to lookup worker session",
                     ex);

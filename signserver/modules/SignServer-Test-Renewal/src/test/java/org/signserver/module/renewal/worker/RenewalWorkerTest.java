@@ -56,7 +56,7 @@ import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.util.PathUtil;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
-import org.signserver.ejb.interfaces.WorkerSessionRemote;
+import org.signserver.ejb.interfaces.WorkerSessionLocal;
 import org.signserver.module.renewal.common.RenewalWorkerProperties;
 import org.signserver.module.renewal.ejbcaws.gen.EjbcaWS;
 import org.signserver.module.renewal.ejbcaws.gen.EjbcaWSService;
@@ -845,7 +845,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
             }
 
             @Override
-            protected WorkerSessionRemote getWorkerSession() {
+            protected WorkerSessionLocal getWorkerSession() {
                 return workerSession;
             }
         });

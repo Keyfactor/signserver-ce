@@ -35,7 +35,7 @@ import org.signserver.server.WorkerContext;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.cryptotokens.NullCryptoToken;
 import org.signserver.server.signers.BaseSigner;
-import org.signserver.ejb.interfaces.WorkerSession;
+import org.signserver.ejb.interfaces.WorkerSessionLocal;
 
 /**
  * Worker for getting a signer's status report. When called without any request 
@@ -70,7 +70,7 @@ public class SignerStatusReportWorker extends BaseSigner {
 
     /** Workersession. */
     @EJB
-    private WorkerSession workerSession; // FIXME: Better to somehow inject this
+    private WorkerSessionLocal workerSession; // FIXME: Better to somehow inject this
     
     @Override
     public void init(int workerId, WorkerConfig config, WorkerContext workerContext, EntityManager workerEM) {
@@ -104,10 +104,10 @@ public class SignerStatusReportWorker extends BaseSigner {
         return new GenericServletResponse(signRequest.getRequestID(), responseData.getBytes(), null, null, null, "text/plain");
     }
 
-    private WorkerSession getWorkerSession() {
+    private WorkerSessionLocal getWorkerSession() {
         if (workerSession == null) {
             try {
-                workerSession = ServiceLocator.getInstance().lookupLocal(WorkerSession.class);
+                workerSession = ServiceLocator.getInstance().lookupLocal(WorkerSessionLocal.class);
             } catch (NamingException ex) {
                 throw new RuntimeException("Unable to lookup worker session",
                         ex);

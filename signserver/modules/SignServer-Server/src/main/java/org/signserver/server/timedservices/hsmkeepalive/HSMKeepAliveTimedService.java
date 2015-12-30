@@ -28,7 +28,7 @@ import org.signserver.common.WorkerIdentifier;
 import org.signserver.server.ServiceExecutionFailedException;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.timedservices.BaseTimedService;
-import org.signserver.ejb.interfaces.WorkerSession;
+import org.signserver.ejb.interfaces.WorkerSessionLocal;
 
 /**
  * Timed service calling testKey() on selected (crypto)workers.
@@ -48,7 +48,7 @@ public class HSMKeepAliveTimedService extends BaseTimedService {
     private List<WorkerIdentifier> cryptoTokens;
  
     @EJB
-    private WorkerSession workerSession;
+    private WorkerSessionLocal workerSession;
     
     @Override
     public void init(int workerId, WorkerConfig config, WorkerContext workerContext, EntityManager workerEM) {
@@ -64,10 +64,10 @@ public class HSMKeepAliveTimedService extends BaseTimedService {
         }
     }
     
-    WorkerSession getWorkerSession() {
+    WorkerSessionLocal getWorkerSession() {
         if (workerSession == null) {
             try {
-                workerSession = ServiceLocator.getInstance().lookupLocal(WorkerSession.class);
+                workerSession = ServiceLocator.getInstance().lookupLocal(WorkerSessionLocal.class);
             } catch (NamingException ex) {
                 throw new RuntimeException("Unable to lookup worker session",
                         ex);
@@ -80,7 +80,7 @@ public class HSMKeepAliveTimedService extends BaseTimedService {
     
     @Override
     public void work() throws ServiceExecutionFailedException {
-        final WorkerSession session = getWorkerSession();
+        final WorkerSessionLocal session = getWorkerSession();
         if (cryptoTokens != null) {
             for (final WorkerIdentifier wi : cryptoTokens) {
                 try {
@@ -112,7 +112,7 @@ public class HSMKeepAliveTimedService extends BaseTimedService {
     
     private List<String> getCryptoworkerErrors() {
         final List<String> errors = new LinkedList<>();
-        final WorkerSession session = getWorkerSession();
+        final WorkerSessionLocal session = getWorkerSession();
         
         if (session != null && cryptoTokens != null) {
             for (final WorkerIdentifier wi : cryptoTokens) {

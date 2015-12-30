@@ -39,7 +39,7 @@ import org.signserver.server.log.LogMap;
 import org.signserver.test.utils.mock.GlobalConfigurationSessionMock;
 import org.signserver.test.utils.mock.WorkerSessionMock;
 import org.signserver.testutils.ModulesTestCase;
-import org.signserver.ejb.interfaces.GlobalConfigurationSessionRemote;
+import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
 
 /**
  * Unit tests for the TimeStampSigner.
@@ -65,7 +65,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
 
     private static final String KEY_ALIAS = "TS Signer 1";
     
-    private GlobalConfigurationSessionRemote globalConfig;
+    private GlobalConfigurationSessionLocal globalConfig;
     private WorkerSessionRemote workerSession;
     private WorkerSessionMock processSession;
 
@@ -161,7 +161,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
                     new TimeStampSigner() {
                 @Override
-                protected GlobalConfigurationSessionRemote
+                protected GlobalConfigurationSessionLocal
                         getGlobalConfigurationSession() {
                     return globalConfig;
                 }
@@ -188,7 +188,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
                     new TimeStampSigner() {
                 @Override
-                protected GlobalConfigurationSessionRemote
+                protected GlobalConfigurationSessionLocal
                         getGlobalConfigurationSession() {
                     return globalConfig;
                 }
@@ -215,7 +215,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
                     new TimeStampSigner() {
                 @Override
-                protected GlobalConfigurationSessionRemote
+                protected GlobalConfigurationSessionLocal
                         getGlobalConfigurationSession() {
                     return globalConfig;
                 }
@@ -241,7 +241,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
                     new TimeStampSigner() {
                 @Override
-                protected GlobalConfigurationSessionRemote
+                protected GlobalConfigurationSessionLocal
                         getGlobalConfigurationSession() {
                     return globalConfig;
                 }

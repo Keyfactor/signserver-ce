@@ -55,6 +55,7 @@ import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.util.PathUtil;
+import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
 import org.signserver.ejb.interfaces.WorkerSessionRemote;
 import org.signserver.module.renewal.common.RenewalWorkerProperties;
 import org.signserver.module.renewal.ejbcaws.gen.EjbcaWS;
@@ -65,7 +66,6 @@ import org.signserver.server.signers.BaseSigner;
 import org.signserver.test.utils.mock.GlobalConfigurationSessionMock;
 import org.signserver.test.utils.mock.WorkerSessionMock;
 import org.signserver.testutils.CLITestHelper;
-import org.signserver.ejb.interfaces.GlobalConfigurationSessionRemote;
 
 /**
  * Test case for the RenewalWorker.
@@ -839,7 +839,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
         
         workerSession.setupWorker(signerId, CRYPTOTOKEN_CLASSNAME, config, new RenewalWorker() {
             @Override
-            protected GlobalConfigurationSessionRemote
+            protected GlobalConfigurationSessionLocal
                 getGlobalConfigurationSession() {
                 return conf;
             }
@@ -875,7 +875,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
         
         workerSession.setupWorker(signerId, CRYPTOTOKEN_CLASSNAME, config, new BaseSigner() {
             @Override
-            protected GlobalConfigurationSessionRemote
+            protected GlobalConfigurationSessionLocal
                 getGlobalConfigurationSession() {
                 return conf;
             }

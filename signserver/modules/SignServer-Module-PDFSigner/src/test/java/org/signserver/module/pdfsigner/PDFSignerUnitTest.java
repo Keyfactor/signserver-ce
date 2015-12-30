@@ -37,6 +37,7 @@ import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.signserver.common.*;
 import org.signserver.common.util.PathUtil;
+import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.test.utils.builders.CertBuilder;
@@ -48,7 +49,6 @@ import org.signserver.test.utils.mock.MockedCryptoToken;
 import org.signserver.test.utils.mock.WorkerSessionMock;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.ejb.interfaces.WorkerSessionRemote;
-import org.signserver.ejb.interfaces.GlobalConfigurationSessionRemote;
 
 /**
  * Unit tests for PDFSigner.
@@ -79,7 +79,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     
     private final String ILLEGAL_DIGEST_FOR_DSA_MESSAGE = "Only SHA1 is permitted as digest algorithm for DSA public/private keys";
     
-    private GlobalConfigurationSessionRemote globalConfig;
+    private GlobalConfigurationSessionLocal globalConfig;
     private WorkerSessionRemote workerSession;
     private ProcessSessionRemote processSession;
 
@@ -1500,7 +1500,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
                     new PDFSigner() {
                 @Override
-                protected GlobalConfigurationSessionRemote
+                protected GlobalConfigurationSessionLocal
                         getGlobalConfigurationSession() {
                     return globalConfig;
                 }

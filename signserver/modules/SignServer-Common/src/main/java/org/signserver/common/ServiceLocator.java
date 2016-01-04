@@ -40,12 +40,14 @@ public final class ServiceLocator {
     /** The singleton instance. */
     private static ServiceLocator instance;
     
+    private static final NameProvider PROVIDER_JBOSS5 = new JBoss5NameProvider();
     private static final NameProvider PROVIDER_JBOSS7 = new JBoss7NameProvider();
     private static final NameProvider PROVIDER_GLASSFISH = new GlassFishNameProvider();
+    private static final NameProvider PROVIDER_GLASSFISH_REMOTEONLY = new GlassFishNameProvider(true);
     private static final NameProvider PROVIDER_PORTABLE = new PortableNameProvider();
     
     /** List of providers for the remote names. */
-    private static final NameProvider[] NAMES_REMOTE = new NameProvider[] { PROVIDER_JBOSS7, PROVIDER_GLASSFISH };
+    private static final NameProvider[] NAMES_REMOTE = new NameProvider[] { PROVIDER_JBOSS7, PROVIDER_GLASSFISH, PROVIDER_JBOSS5 };
     
     /** 
      * List of providers for the local names.
@@ -54,7 +56,7 @@ public final class ServiceLocator {
      * remote interface. Using the local would have required some configuration 
      * for GlassFish but would instead then make JBoss 5 fail...
      */
-    private static final NameProvider[] NAMES_LOCAL = new NameProvider[] { PROVIDER_PORTABLE, PROVIDER_GLASSFISH, PROVIDER_JBOSS7 };
+    private static final NameProvider[] NAMES_LOCAL = new NameProvider[] { PROVIDER_PORTABLE, PROVIDER_GLASSFISH, PROVIDER_JBOSS7, PROVIDER_JBOSS5, PROVIDER_GLASSFISH_REMOTEONLY };
 
     /** Prefix for CESeCore modules. */
     private static final String CESECORE_APP = "ejbca";

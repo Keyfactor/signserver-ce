@@ -62,7 +62,7 @@
             <artifactId>cert-cvc</artifactId>
             <groupId>org.ejbca.cvc</groupId>
             <type>jar</type>
-            <version>1.2.11</version>
+            <version>1.4.3</version>
         </dependency>
     </dependencies>
 </project>

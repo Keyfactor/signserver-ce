@@ -9,14 +9,14 @@
 <p>
 <i>Ready-made commercial SignServer support</i><br/>
 <a href="https://www.primekey.se/Services/Support">Support programs</a> and other qualified 
-professional services are provided by <a href="https://www.primekey.se">PrimeKey Solutions AB</a>.
+professional services are provided by <a href="https://www.primekey.se/service-support/support/">PrimeKey Solutions AB</a>.
 </p>
 </section>
 
 <section name="3rd Party Integration">
 <p>
 Looking to integrate a 3rd party application with SignServer? SignServer has the most flexible range of standard, and non standard, protocols for seamless integration.
-<br/>Contact <a href="https://www.primekey.se/contact-us/">PrimeKey</a> if you need more information or assistance.
+<br/><a href="https://www.primekey.se/contact-us/">Contact PrimeKey</a> if you need more information or assistance.
 </p>
 </section>
 
@@ -57,7 +57,7 @@ The SignServer project has two public mailing lists hosted on Sourceforge. To su
 either list, or browse archived messages, simply click optional link(s) below.
 </p>
 <p>
-<a href="http://lists.sourceforge.net/mailman/listinfo/signserver-announce">signserver-announce</a> A low traffic
+<a href="http://lists.sourceforge.net/mailman/listinfo/signserver-announce">signserver-announce</a> is a low traffic
  list about new releases and patches.
 </p>
 <p>
@@ -78,7 +78,7 @@ discussions of a more technical nature. Almost anything regarding SignServer can
     For direct chat for help and to meet the project administrators join the chat.
     </p>
     <p>
-    Connect you IRC-chat program to <a href="irc://#signserver@irc.freenode.net">#signserver channel at irc.freenode.net</a>.
+    Connect your IRC chat program to the #signserver channel at irc.freenode.net.
     </p>
 </section>
 

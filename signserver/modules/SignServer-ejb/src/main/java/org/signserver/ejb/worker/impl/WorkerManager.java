@@ -18,14 +18,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 
 import org.cesecore.audit.log.SecurityEventsLoggerSessionLocal;
 import org.signserver.common.GlobalConfiguration;
-import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
@@ -45,17 +41,16 @@ import org.signserver.server.nodb.FileBasedDatabaseManager;
 import org.signserver.server.timedservices.ITimedService;
 
 /**
- * Session bean managing the worker life-cycle.
+ * Bean managing the worker life-cycle.
  *
  * @see WorkerFactory
  * @author Markus Kilås
  * @version $Id$
  */
-@Stateless
-public class WorkerManagerSessionBean implements IWorkerManagerSessionLocal {
+public class WorkerManager implements IWorkerManagerSessionLocal {
     
     /** Logger for this class. */
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(WorkerManagerSessionBean.class);
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(WorkerManager.class);
     
     EntityManager em;
     
@@ -65,12 +60,13 @@ public class WorkerManagerSessionBean implements IWorkerManagerSessionLocal {
     private final WorkerFactory workerFactory = WorkerFactory.getInstance();
     
     private SignServerContext workerContext;
-    
-    @EJB
+
     private SecurityEventsLoggerSessionLocal logSession;
-    
-    @PostConstruct
-    public void create() {
+
+    public WorkerManager(EntityManager em, SecurityEventsLoggerSessionLocal logSession) {
+        this.em = em;
+        this.logSession = logSession;
+
         if (em == null) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("No EntityManager injected. Running without database.");

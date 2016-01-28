@@ -18,6 +18,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.*;
 import javax.ejb.Timer;
+import javax.persistence.EntityManager;
 import javax.transaction.*;
 import org.apache.log4j.Logger;
 import org.cesecore.audit.enums.EventStatus;
@@ -27,6 +28,7 @@ import org.signserver.common.ServiceConfig;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IServiceTimerSession;
 import org.signserver.ejb.worker.impl.IWorkerManagerSessionLocal;
+import org.signserver.ejb.worker.impl.WorkerManager;
 import org.signserver.server.IWorker;
 import org.signserver.server.ServiceExecutionFailedException;
 import org.signserver.server.log.SignServerEventTypes;
@@ -46,12 +48,13 @@ public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, ISe
     
     @Resource
     private SessionContext sessionCtx;
-    
+
+    EntityManager em;
+
     @EJB
     private IGlobalConfigurationSession.ILocal globalConfigurationSession;
     
-    @EJB
-    private IWorkerManagerSessionLocal workerManagerSession;
+    private IWorkerManagerSessionLocal workerManager;
     
     @EJB
     private SecurityEventsLoggerSessionLocal logSession;
@@ -69,6 +72,7 @@ public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, ISe
      */
     @PostConstruct
     public void create() {
+        workerManager = new WorkerManager(em, logSession);
     }
     
     /**
@@ -95,7 +99,7 @@ public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, ISe
             UserTransaction ut = sessionCtx.getUserTransaction();
             try {
                 ut.begin();
-                IWorker worker = workerManagerSession.getWorker(timerInfo.intValue(), globalConfigurationSession);
+                IWorker worker = workerManager.getWorker(timerInfo.intValue(), globalConfigurationSession);
                 if (worker != null) {
                     serviceConfig = new ServiceConfig(worker.getConfig());
                     timedService = (ITimedService) worker;
@@ -226,7 +230,7 @@ public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, ISe
 
         final Collection<Integer> serviceIds;
         if (serviceId == 0) {
-            serviceIds = workerManagerSession.getWorkers(GlobalConfiguration.WORKERTYPE_SERVICES, globalConfigurationSession);
+            serviceIds = workerManager.getWorkers(GlobalConfiguration.WORKERTYPE_SERVICES, globalConfigurationSession);
         } else {
             serviceIds = new ArrayList<Integer>();
             serviceIds.add(new Integer(serviceId));
@@ -235,7 +239,7 @@ public class ServiceTimerSessionBean implements IServiceTimerSession.ILocal, ISe
         while (iter.hasNext()) {
             Integer nextId = (Integer) iter.next();
             if (!existingTimers.contains(nextId)) {
-                ITimedService timedService = (ITimedService) workerManagerSession.getWorker(nextId.intValue(), globalConfigurationSession);
+                ITimedService timedService = (ITimedService) workerManager.getWorker(nextId.intValue(), globalConfigurationSession);
                 if (timedService != null && timedService.isActive() && timedService.getNextInterval() != ITimedService.DONT_EXECUTE) {
                     sessionCtx.getTimerService().createTimer((timedService.getNextInterval()), nextId);
                 }

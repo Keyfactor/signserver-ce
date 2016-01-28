@@ -33,6 +33,7 @@ import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IInternalWorkerSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.ejb.worker.impl.IWorkerManagerSessionLocal;
+import org.signserver.ejb.worker.impl.WorkerManager;
 import org.signserver.server.entities.FileBasedKeyUsageCounterDataService;
 import org.signserver.server.entities.IKeyUsageCounterDataService;
 import org.signserver.server.entities.KeyUsageCounterDataService;
@@ -59,8 +60,7 @@ public class InternalWorkerSessionBean implements IInternalWorkerSession.ILocal,
     @EJB
     private IGlobalConfigurationSession.ILocal globalConfigurationSession;
 
-    @EJB
-    private IWorkerManagerSessionLocal workerManagerSession;
+    private IWorkerManagerSessionLocal workerManager;
 
     @EJB
     private SecurityEventsLoggerSessionLocal logSession;
@@ -87,7 +87,8 @@ public class InternalWorkerSessionBean implements IInternalWorkerSession.ILocal,
             }
             keyUsageCounterDataService = new KeyUsageCounterDataService(em);
         }
-        processImpl = new WorkerProcessImpl(em, keyUsageCounterDataService, globalConfigurationSession, workerManagerSession, logSession);
+        workerManager = new WorkerManager(em, logSession);
+        processImpl = new WorkerProcessImpl(em, keyUsageCounterDataService, globalConfigurationSession, workerManager, logSession);
 
         // XXX The lookups will fail on GlassFish V2
         // When we no longer support GFv2 we can refactor this code

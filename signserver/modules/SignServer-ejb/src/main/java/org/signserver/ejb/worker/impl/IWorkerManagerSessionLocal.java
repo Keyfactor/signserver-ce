@@ -13,9 +13,7 @@
 package org.signserver.ejb.worker.impl;
 
 import java.util.List;
-import javax.ejb.Local;
 import org.signserver.common.GlobalConfiguration;
-import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
@@ -27,12 +25,11 @@ import org.signserver.server.archive.Archiver;
 import org.signserver.server.log.IWorkerLogger;
 
 /**
- * Session bean managing the worker life-cycle.
+ * Bean managing the worker life-cycle.
  *
  * @author Markus Kilås
  * @version $Id$
  */
-@Local
 public interface IWorkerManagerSessionLocal {
 
     /**

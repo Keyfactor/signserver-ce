@@ -27,6 +27,7 @@ import org.cesecore.audit.log.SecurityEventsLoggerSessionLocal;
 import org.signserver.common.*;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.worker.impl.IWorkerManagerSessionLocal;
+import org.signserver.ejb.worker.impl.WorkerManager;
 import org.signserver.server.GlobalConfigurationCache;
 import org.signserver.server.config.entities.FileBasedGlobalConfigurationDataService;
 import org.signserver.server.config.entities.GlobalConfigurationDataBean;
@@ -50,8 +51,7 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(GlobalConfigurationSessionBean.class);
     
-    @EJB
-    private IWorkerManagerSessionLocal workerManagerSession;
+    private IWorkerManagerSessionLocal workerManager;
     
     @EJB
     private SecurityEventsLoggerSessionLocal logSession;
@@ -80,6 +80,7 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
             }
             globalConfigurationDataService = new GlobalConfigurationDataService(em);
         }
+        workerManager = new WorkerManager(em, logSession);
     }
     
     private IGlobalConfigurationDataService getGlobalConfigurationDataService() {
@@ -273,7 +274,7 @@ public class GlobalConfigurationSessionBean implements IGlobalConfigurationSessi
     public void reload(final AdminInfo adminInfo) {
         auditLog(adminInfo, SignServerEventTypes.GLOBAL_CONFIG_RELOAD, null, null);
 
-        workerManagerSession.flush();
+        workerManager.flush();
         cache.setCachedGlobalConfig(null);
         getGlobalConfiguration();
 

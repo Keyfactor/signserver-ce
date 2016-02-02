@@ -63,7 +63,7 @@
         <module>SignServer-Client-SignServerWS</module>
         <module>SignServer-Client-SigningAndValidationAPI</module>
         <module>SignServer-ejb-SignServerWS</module>
-        <!--<module>SignServer-Lib-iText</module>-->
+        <module>SignServer-Lib-iText</module>
         <module>SignServer-Module-CMSSigner</module>
         <module>SignServer-Module-MRTDSigner</module>
         <module>SignServer-Module-MRTDSODSigner</module>

@@ -6,7 +6,7 @@ mvn install:install-file -Dfile=lib/ext/cesecore-entity-6.4.1.jar -DgroupId=org.
 mvn install:install-file -Dfile=lib/ext/cesecore-interfaces-6.4.1.jar -DgroupId=org.cesecore -DartifactId=cesecore-interfaces -Dversion=6.4.1 -Dpackaging=jar
 mvn install:install-file -Dfile=lib/ext/cesecore-ejb-6.4.1.jar -DgroupId=org.cesecore -DartifactId=cesecore-ejb -Dversion=6.4.1 -Dpackaging=ejb
 mvn install:install-file -Dfile=lib/ext/cert-cvc-1.4.3.jar -DgroupId=org.ejbca.cvc -DartifactId=cert-cvc -Dversion=1.4.3 -Dpackaging=jar
-mvn install:install-file -Dfile=lib/ext/xades4j-1.3.2-signserver.jar -DgroupId=org.signserver.xades4j -DartifactId=xades4j -Dversion=1.3.2-signserver -Dpackaging=jar
+mvn install:install-file -Dfile=lib/ext/xades4j-1.3.2-signserver4.jar -DgroupId=org.signserver.xades4j -DartifactId=xades4j -Dversion=1.3.2-signserver4 -Dpackaging=jar
 mvn install:install-file -Dfile=lib/ext/quartz-1.6.0.jar -DgroupId=opensymphony -DartifactId=quartz -Dversion=1.6.0 -Dpackaging=jar
 
 # Install the DeployTools artifacts from JARS

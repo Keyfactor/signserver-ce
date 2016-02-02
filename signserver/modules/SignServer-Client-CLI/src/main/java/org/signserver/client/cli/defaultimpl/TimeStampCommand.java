@@ -507,10 +507,10 @@ public class TimeStampCommand extends AbstractCommand {
         if (request.hasExtensions()) {
             out.print("  Extensions: ");
             for (Object oid : request.getExtensionOIDs()) {
-                if (oid instanceof String) {
-                    out.print("    " + oid + ": ");
-                    out.println(new String(Hex.encode(request.getExtensionValue((String) oid))));
-                }
+                final ASN1ObjectIdentifier asn1Oid =
+                        (ASN1ObjectIdentifier) oid;
+                out.print("    " + oid + ": ");
+                out.println(new String(Hex.encode(request.getExtension(asn1Oid).getEncoded())));
             }
         }
                 

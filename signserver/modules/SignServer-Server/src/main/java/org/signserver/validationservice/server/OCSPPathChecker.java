@@ -21,11 +21,11 @@ import java.security.cert.*;
 import java.util.*;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
+import org.bouncycastle.asn1.ocsp.OCSPResponseStatus;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
 import org.bouncycastle.cert.ocsp.*;
 import org.bouncycastle.cert.ocsp.jcajce.JcaCertificateID;
-import org.bouncycastle.ocsp.OCSPRespStatus;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
@@ -239,7 +239,7 @@ public class OCSPPathChecker extends PKIXCertPathChecker {
     protected void parseAndVerifyOCSPResponse(X509Certificate x509Cert, byte[] derocspresponse) throws NoSuchProviderException, OCSPException, NoSuchAlgorithmException, CertStoreException, IOException, SignServerException, CertificateParsingException, IllegalRequestException, CryptoTokenOfflineException, OperatorCreationException, CertificateEncodingException {
         //parse received ocsp response
         OCSPResp ocspresp = new OCSPResp(derocspresponse);
-        if (ocspresp.getStatus() != OCSPRespStatus.SUCCESSFUL) {
+        if (ocspresp.getStatus() != OCSPResponseStatus.SUCCESSFUL) {
             throw new SignServerException("Unexpected ocsp response status. Response Status Received : " + ocspresp.getStatus());
         }
 

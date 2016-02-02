@@ -245,7 +245,7 @@ public class CertTools {
                 if (isCA == true) {
                     SubjectPublicKeyInfo spki = new SubjectPublicKeyInfo((ASN1Sequence) new ASN1InputStream(
                                 new ByteArrayInputStream(publicKey.getEncoded())).readObject());
-                    SubjectKeyIdentifier ski = new SubjectKeyIdentifier(spki);
+                    SubjectKeyIdentifier ski = new SubjectKeyIdentifier(spki.getEncoded());
 
                     SubjectPublicKeyInfo apki = new SubjectPublicKeyInfo((ASN1Sequence) new ASN1InputStream(
                                 new ByteArrayInputStream(publicKey.getEncoded())).readObject());

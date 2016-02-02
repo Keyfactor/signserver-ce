@@ -40,13 +40,16 @@ import org.bouncycastle.operator.DigestCalculatorProvider;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.bc.BcDigestCalculatorProvider;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
-import org.signserver.module.tsa.bc.TimeStampRequest;
-import org.signserver.module.tsa.bc.TimeStampResponseGenerator;
-import org.signserver.module.tsa.bc.TimeStampTokenGenerator;
+//import org.signserver.module.tsa.bc.TimeStampRequest;
+//import org.signserver.module.tsa.bc.TimeStampResponseGenerator;
+//import org.signserver.module.tsa.bc.TimeStampTokenGenerator;
 import org.bouncycastle.tsp.TSPAlgorithms;
 import org.bouncycastle.tsp.TSPException;
+import org.bouncycastle.tsp.TimeStampRequest;
 import org.bouncycastle.tsp.TimeStampResponse;
+import org.bouncycastle.tsp.TimeStampResponseGenerator;
 import org.bouncycastle.tsp.TimeStampToken;
+import org.bouncycastle.tsp.TimeStampTokenGenerator;
 import org.cesecore.util.Base64;
 import org.signserver.common.*;
 import org.signserver.server.ITimeSource;
@@ -191,7 +194,6 @@ public class TimeStampSigner extends BaseSigner {
     public static final String ACCURACYMILLIS = "ACCURACYMILLIS";
     public static final String ACCURACYSECONDS = "ACCURACYSECONDS";
     public static final String ORDERING = "ORDERING";
-    public static final String INCLUDEORDERING = "INCLUDEORDERING";
     public static final String TSA = "TSA";
     public static final String TSA_FROM_CERT = "TSA_FROM_CERT";
     public static final String REQUIREVALIDCHAIN = "REQUIREVALIDCHAIN";
@@ -277,8 +279,7 @@ public class TimeStampSigner extends BaseSigner {
     private boolean includeSigningTimeAttribute;
     
     private boolean ordering;
-    private boolean includeOrdering;
-    
+   
     private List<String> configErrors;
     
     @Override
@@ -378,11 +379,6 @@ public class TimeStampSigner extends BaseSigner {
         includeSigningTimeAttribute = Boolean.valueOf(config.getProperty(INCLUDESIGNINGTIMEATTRIBUTE, "true"));
         
         ordering = Boolean.parseBoolean(config.getProperty(ORDERING, "false"));
-        includeOrdering = Boolean.parseBoolean(config.getProperty(INCLUDEORDERING, "false"));
-        
-        if (ordering && !includeOrdering) {
-            configErrors.add("INCLUDEORDERING can not be set to \"false\" when ORDERING is set to \"true\"");
-        }
         
         if (hasSetIncludeCertificateLevels && includeCertificateLevels == 0) {
             configErrors.add("Illegal value for property " + WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS + ". Only numbers >= 1 supported.");
@@ -498,11 +494,24 @@ public class TimeStampSigner extends BaseSigner {
             final TimeStampResponseGenerator timeStampResponseGen =
                     getTimeStampResponseGenerator(timeStampTokenGen);
 
-            final TimeStampResponse timeStampResponse =
-                    timeStampResponseGen.generate(timeStampRequest,
-                    serialNumber,
-                    date, includeStatusString);
+            TimeStampResponse timeStampResponse;
 
+            for (final Object o : timeStampRequest.getExtensionOIDs()) {
+                System.out.println("extension: " + o);
+            }
+                 
+            try {
+                timeStampResponse =
+                        timeStampResponseGen.generateGrantedResponse(timeStampRequest,
+                                                                     serialNumber,
+                                                                     date,
+                                                                     includeStatusString ? "Operation Okey" : null);
+            } catch (Exception e) {
+                System.out.println("exception: " + e.getClass().getName() + ": " + e.getMessage());
+                timeStampResponse =
+                        timeStampResponseGen.generateRejectedResponse(e);
+            }
+            
             final TimeStampToken token = timeStampResponse.getTimeStampToken();
             final byte[] signedbytes = timeStampResponse.getEncoded();
             
@@ -703,6 +712,14 @@ public class TimeStampSigner extends BaseSigner {
                     this.config.getProperties().getProperty(ACCEPTEDEXTENSIONS);
             acceptedExtensions = makeSetOfProperty(nonParsedAcceptedExtensions);
         }
+        
+        /*
+        if (acceptedExtensions != null) {
+            for (final String s : acceptedExtensions) {
+                System.out.println("accepted extension: " + s);
+            }
+        }
+        */
 
         return acceptedExtensions;
     }
@@ -771,7 +788,7 @@ public class TimeStampSigner extends BaseSigner {
             
             SignerInfoGenerator sig = sigb.build(cs, certHolder);
             
-            timeStampTokenGen = new TimeStampTokenGenerator(calc, sig, tSAPolicyOID);
+            timeStampTokenGen = new TimeStampTokenGenerator(sig, calc, tSAPolicyOID);
 
             if (config.getProperties().getProperty(ACCURACYMICROS) != null) {
                 timeStampTokenGen.setAccuracyMicros(Integer.parseInt(
@@ -789,7 +806,6 @@ public class TimeStampSigner extends BaseSigner {
             }
 
             timeStampTokenGen.setOrdering(ordering);
-            timeStampTokenGen.setIncludeOrdering(includeOrdering);
 
             if (tsaName != null) {
                 final X500Name x500Name = new X500Name(tsaName);

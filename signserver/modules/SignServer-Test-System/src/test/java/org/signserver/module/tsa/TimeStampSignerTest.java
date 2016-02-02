@@ -42,7 +42,8 @@ import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.KeyPurposeId;
-import org.bouncycastle.asn1.x509.X509Extension;
+//import org.bouncycastle.asn1.x509.X509Extension;
+import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 import org.bouncycastle.cms.SignerInformation;
@@ -810,18 +811,18 @@ public class TimeStampSignerTest extends ModulesTestCase {
         
         // Certificate with non-critical id_kp_timeStamping
         boolean critical = false;
-        final X509Certificate certEku = new JcaX509CertificateConverter().getCertificate(new CertBuilder().setSubject("CN=With non-critical EKU").setSubjectPublicKey(subject.getPublicKey()).addExtension(new CertExt(X509Extension.extendedKeyUsage, critical, new ExtendedKeyUsage(KeyPurposeId.id_kp_timeStamping))).build());
+        final X509Certificate certEku = new JcaX509CertificateConverter().getCertificate(new CertBuilder().setSubject("CN=With non-critical EKU").setSubjectPublicKey(subject.getPublicKey()).addExtension(new CertExt(Extension.extendedKeyUsage, critical, new ExtendedKeyUsage(KeyPurposeId.id_kp_timeStamping))).build());
         
         // OK: Certificate with critical id_kp_timeStamping
         critical = true;
-        final X509Certificate certCritEku = new JcaX509CertificateConverter().getCertificate(new CertBuilder().setSubject("CN=With critical EKU").setSubjectPublicKey(subject.getPublicKey()).addExtension(new CertExt(X509Extension.extendedKeyUsage, critical, new ExtendedKeyUsage(KeyPurposeId.id_kp_timeStamping))).build());
+        final X509Certificate certCritEku = new JcaX509CertificateConverter().getCertificate(new CertBuilder().setSubject("CN=With critical EKU").setSubjectPublicKey(subject.getPublicKey()).addExtension(new CertExt(Extension.extendedKeyUsage, critical, new ExtendedKeyUsage(KeyPurposeId.id_kp_timeStamping))).build());
         
         // Certificate with additional extended key usage, besides id_kp_timeStamping
         final X509Certificate certCritEkuAndAdditional =
                 new JcaX509CertificateConverter().getCertificate(new CertBuilder().
                         setSubject("CN=With critical EKU").
                         setSubjectPublicKey(subject.getPublicKey()).
-                        addExtension(new CertExt(X509Extension.extendedKeyUsage, 
+                        addExtension(new CertExt(Extension.extendedKeyUsage, 
                             critical,
                             new ExtendedKeyUsage(new KeyPurposeId[] {KeyPurposeId.id_kp_timeStamping,
                                                                      KeyPurposeId.id_kp_emailProtection}
@@ -1270,7 +1271,6 @@ public class TimeStampSignerTest extends ModulesTestCase {
     @Test
     public void test38orderingDefault() throws Exception {
         // reset ORDERING property
-        workerSession.removeWorkerProperty(WORKER1.getId(), TimeStampSigner.INCLUDEORDERING);
         workerSession.removeWorkerProperty(WORKER1.getId(), TimeStampSigner.ORDERING);
         workerSession.reloadConfiguration(WORKER1.getId());
         
@@ -1295,7 +1295,6 @@ public class TimeStampSignerTest extends ModulesTestCase {
     public void test39orderingTrue() throws Exception {
         // reset ORDERING property
         workerSession.setWorkerProperty(WORKER1.getId(), TimeStampSigner.ORDERING, "true");
-        workerSession.setWorkerProperty(WORKER1.getId(), TimeStampSigner.INCLUDEORDERING, "true");
         workerSession.reloadConfiguration(WORKER1.getId());
         
         final byte[] res = getResponseData(WORKER1);
@@ -1325,7 +1324,6 @@ public class TimeStampSignerTest extends ModulesTestCase {
     @Test
     public void test40orderingFalse() throws Exception {
         // reset ORDERING property
-        workerSession.removeWorkerProperty(WORKER1.getId(), TimeStampSigner.INCLUDEORDERING);
         workerSession.setWorkerProperty(WORKER1.getId(), TimeStampSigner.ORDERING, "false");
         workerSession.reloadConfiguration(WORKER1.getId());
         
@@ -1348,37 +1346,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
     }
     
     /**
-     * Test that the ordering field is included when ORDERING == false and INCLUDEORDERING == true.
-     * 
-     * @throws Exception
-     */
-    @Test
-    public void test41IncludeOrderingOrderingFalse() throws Exception {
-        // reset ORDERING property
-        workerSession.setWorkerProperty(WORKER1.getId(), TimeStampSigner.ORDERING, "false");
-        workerSession.setWorkerProperty(WORKER1.getId(), TimeStampSigner.INCLUDEORDERING, "true");
-        workerSession.reloadConfiguration(WORKER1.getId());
-        
-        final byte[] res = getResponseData(WORKER1);
-        final ASN1Sequence seq = extractTstInfoSeq(res);
-        final ASN1Encodable o = seq.getObjectAt(5);
-
-        try {
-            final ASN1Boolean b = ASN1Boolean.getInstance(o);
-            assertEquals("Ordering should be set to false", ASN1Boolean.FALSE, b);
-        } catch (IllegalArgumentException e) {
-            fail("Ordering should be included");
-        } catch (Exception e) {
-            fail("Unexpected exception");
-        } finally {
-            workerSession.removeWorkerProperty(WORKER1.getId(), TimeStampSigner.ORDERING);
-            workerSession.removeWorkerProperty(WORKER1.getId(), TimeStampSigner.INCLUDEORDERING);
-            workerSession.reloadConfiguration(WORKER1.getId());
-        }
-    }
-    
-    /**
-     * Test that the ordering field is included when ORDERING == true and INCLUDEORDERING == true.
+     * Test that the ordering field is included when ORDERING == true.
      * 
      * @throws Exception
      */
@@ -1386,7 +1354,6 @@ public class TimeStampSignerTest extends ModulesTestCase {
     public void test42IncludeOrderingOrderingTrue() throws Exception {
         // reset ORDERING property
         workerSession.setWorkerProperty(WORKER1.getId(), TimeStampSigner.ORDERING, "true");
-        workerSession.setWorkerProperty(WORKER1.getId(), TimeStampSigner.INCLUDEORDERING, "true");
         workerSession.reloadConfiguration(WORKER1.getId());
         
         final byte[] res = getResponseData(WORKER1);
@@ -1402,13 +1369,12 @@ public class TimeStampSignerTest extends ModulesTestCase {
             fail("Unexpected exception");
         } finally {
             workerSession.removeWorkerProperty(WORKER1.getId(), TimeStampSigner.ORDERING);
-            workerSession.removeWorkerProperty(WORKER1.getId(), TimeStampSigner.INCLUDEORDERING);
             workerSession.reloadConfiguration(WORKER1.getId());
         }
     }
     
     /**
-     * Test that the ordering field is not included when ORDERING == false and INCLUDEORDERING == false.
+     * Test that the ordering field is not included when ORDERING == false.
      * 
      * @throws Exception
      */
@@ -1416,7 +1382,6 @@ public class TimeStampSignerTest extends ModulesTestCase {
     public void test43NotIncludeOrderingOrderingFalse() throws Exception {
         // reset ORDERING property
         workerSession.setWorkerProperty(WORKER1.getId(), TimeStampSigner.ORDERING, "false");
-        workerSession.setWorkerProperty(WORKER1.getId(), TimeStampSigner.INCLUDEORDERING, "false");
         workerSession.reloadConfiguration(WORKER1.getId());
 
         final byte[] res = getResponseData(WORKER1);
@@ -1432,26 +1397,10 @@ public class TimeStampSignerTest extends ModulesTestCase {
             fail("Unexpected exception");
         } finally {
             workerSession.removeWorkerProperty(WORKER1.getId(), TimeStampSigner.ORDERING);
-            workerSession.removeWorkerProperty(WORKER1.getId(), TimeStampSigner.INCLUDEORDERING);
             workerSession.reloadConfiguration(WORKER1.getId());
         }
     }
-    
-    /**
-     * Test that setting INCLUDEORDERING false and ORDERING true results in a configuration errror.
-     * @throws Exception
-     */
-    @Test
-    public void test44NotIncludeOrderingOrderingTrue() throws Exception {
-        workerSession.setWorkerProperty(WORKER1.getId(), TimeStampSigner.ORDERING, "true");
-        workerSession.setWorkerProperty(WORKER1.getId(), TimeStampSigner.INCLUDEORDERING, "false");
-        workerSession.reloadConfiguration(WORKER1.getId());
-        
-        final List<String> errors = workerSession.getStatus(WORKER1).getFatalErrors();
-        assertTrue("Should mention incompatible configuration values.",
-                errors.contains("INCLUDEORDERING can not be set to \"false\" when ORDERING is set to \"true\""));
-    }
-    
+
     /**
      * Test that setting INCLUDE_CERTIFICATE_LEVELS to 0 is not supported.
      * 

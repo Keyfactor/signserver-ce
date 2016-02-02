@@ -367,7 +367,7 @@ public class SODFile extends PassportFile
 	 */
 	public String getDigestEncryptionAlgorithm() {
 		try {
-                    final DERObjectIdentifier algorithm = getSignerInfo(signedData).getDigestEncryptionAlgorithm().getAlgorithm();
+                    final ASN1ObjectIdentifier algorithm = getSignerInfo(signedData).getDigestEncryptionAlgorithm().getAlgorithm();
                     String result = lookupMnemonicByOID(algorithm);
                     if (PKCS1_RSA_PSS_OID.toString().equals(algorithm.toString())) {
                         try {
@@ -376,7 +376,7 @@ public class SODFile extends PassportFile
                                 AlgorithmParameters params = AlgorithmParameters.getInstance("PSS");
                                 params.init(parameters.toASN1Primitive().getEncoded());
                                 final PSSParameterSpec spec = params.getParameterSpec(PSSParameterSpec.class);
-                                result = lookupMnemonicByOID(new DERObjectIdentifier(spec.getDigestAlgorithm())) + "withRSAand" + lookupMnemonicByOID(new DERObjectIdentifier(spec.getMGFAlgorithm()));
+                                result = lookupMnemonicByOID(new ASN1ObjectIdentifier(spec.getDigestAlgorithm())) + "withRSAand" + lookupMnemonicByOID(new DERObjectIdentifier(spec.getMGFAlgorithm()));
                             }
                         } catch (InvalidParameterSpecException ignored) {}
                         catch (IOException ignored) {}
@@ -464,7 +464,7 @@ public class SODFile extends PassportFile
 			throw new GeneralSecurityException("Unable to get the contents of the security object", ioe);
 		}
 		
-		DERObjectIdentifier encAlgId = getSignerInfo(signedData).getDigestEncryptionAlgorithm().getAlgorithm();
+		ASN1ObjectIdentifier encAlgId = getSignerInfo(signedData).getDigestEncryptionAlgorithm().getAlgorithm();
 		String encAlgJavaString = lookupMnemonicByOID(encAlgId);
 
 		// For the cases where the signature is simply a digest (haven't seen a passport like this, 
@@ -666,7 +666,7 @@ public class SODFile extends PassportFile
 				byte[] storedDigestedContent = null;
 				while (attributes.hasMoreElements()) {
 					Attribute attribute = Attribute.getInstance(attributes.nextElement());
-					DERObjectIdentifier attrType = attribute.getAttrType();
+					ASN1ObjectIdentifier attrType = attribute.getAttrType();
 					if (attrType.equals(RFC_3369_MESSAGE_DIGEST_OID)) {
 						ASN1Set attrValuesSet = attribute.getAttrValues();
 						if (attrValuesSet.size() != 1) {
@@ -795,7 +795,7 @@ public class SODFile extends PassportFile
     }
 
 	private static ASN1Sequence createDigestAlgorithms(String digestAlgorithm) throws NoSuchAlgorithmException {
-		DERObjectIdentifier algorithmIdentifier = lookupOIDByMnemonic(digestAlgorithm);
+		ASN1ObjectIdentifier algorithmIdentifier = lookupOIDByMnemonic(digestAlgorithm);
 		ASN1Encodable[] result = { algorithmIdentifier };
 		return new DERSequence(result);
 	}
@@ -898,7 +898,7 @@ public class SODFile extends PassportFile
 	 *
 	 * @throws NoSuchAlgorithmException if the provided OID is not yet supported
 	 */
-	private static String lookupMnemonicByOID(DERObjectIdentifier oid) throws NoSuchAlgorithmException {
+	private static String lookupMnemonicByOID(ASN1ObjectIdentifier oid) throws NoSuchAlgorithmException {
 		if (oid.equals(X509ObjectIdentifiers.organization)) { return "O"; }
 		if (oid.equals(X509ObjectIdentifiers.organizationalUnitName)) { return "OU"; }
 		if (oid.equals(X509ObjectIdentifiers.commonName)) { return "CN"; }

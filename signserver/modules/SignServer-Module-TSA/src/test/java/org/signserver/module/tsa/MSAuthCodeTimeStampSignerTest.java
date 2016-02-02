@@ -30,7 +30,12 @@ import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.ASN1TaggedObject;
+import org.bouncycastle.asn1.cms.Attribute;
+import org.bouncycastle.asn1.cms.AttributeTable;
 import org.bouncycastle.asn1.cms.ContentInfo;
+import org.bouncycastle.asn1.util.ASN1Dump;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.asn1.x509.AttributeCertificate;
 import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
 import org.bouncycastle.asn1.x509.KeyPurposeId;
 import org.bouncycastle.asn1.x509.Time;
@@ -38,9 +43,11 @@ import org.bouncycastle.asn1.x509.X509Extension;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.SignerInformation;
+import org.bouncycastle.cms.SignerInformationStore;
 import org.bouncycastle.cms.SignerInformationVerifier;
 import org.bouncycastle.cms.jcajce.JcaSignerInfoVerifierBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
+import org.bouncycastle.util.Store;
 import org.bouncycastle.util.encoders.Base64;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GenericSignRequest;
@@ -100,6 +107,7 @@ public class MSAuthCodeTimeStampSignerTest extends ModulesTestCase {
     private static final String MESSAGE_DIGEST_OID = "1.2.840.113549.1.9.4";
     private static final String SHA1_OID = "1.3.14.3.2.26";
     private static final String SHA256_OID = "2.16.840.1.101.3.4.2.1";
+    private static final String SIGNING_CERT_OID = "1.2.840.113549.1.9.16.2.12";
 
     private static byte[] certbytes1 = Base64.decode((
             "MIIEkTCCAnmgAwIBAgIIeCvAS5OwAJswDQYJKoZIhvcNAQELBQAwTTEXMBUGA1UEAwwORFNTIFJv"
@@ -233,47 +241,41 @@ public class MSAuthCodeTimeStampSignerTest extends ModulesTestCase {
         // check that the response contains the needed attributes
         byte[] buf = resp.getProcessedData();
         ASN1Sequence asn1seq = ASN1Sequence.getInstance(Base64.decode(buf));
-        
-        ASN1ObjectIdentifier oid = ASN1ObjectIdentifier.getInstance(asn1seq.getObjectAt(0));
+        CMSSignedData signedData = new CMSSignedData(asn1seq.getEncoded());
         ASN1TaggedObject ato = ASN1TaggedObject.getInstance(asn1seq.getObjectAt(1));
-        
-        assertEquals("Invalid OID in response", SIGNED_DATA_OID, oid.getId());
-        
         ASN1Sequence asn1seq1 = ASN1Sequence.getInstance(ato.getObject());
-
-        ASN1Set asn1set = ASN1Set.getInstance(asn1seq1.getObjectAt(4));
-        ASN1Sequence asn1seq2 = ASN1Sequence.getInstance(asn1set.getObjectAt(0));
-        ASN1TaggedObject ato1 = ASN1TaggedObject.getInstance(asn1seq2.getObjectAt(3));
-        ASN1Sequence asn1seq3 = ASN1Sequence.getInstance(ato1.getObject());
-        ASN1Sequence asn1seq4 = ASN1Sequence.getInstance(asn1seq3.getObjectAt(0));
-        ASN1Sequence asn1seq5 = ASN1Sequence.getInstance(asn1seq3.getObjectAt(1));
-        ASN1Sequence asn1seq6 = ASN1Sequence.getInstance(asn1seq3.getObjectAt(2));
-        
         final X509Certificate cert =
                 (X509Certificate) CertTools.getCertfromByteArray(certbytes1);
         // expected serial number
         final BigInteger sn = cert.getSerialNumber();
 
-        // if INCLUDE_SIGNING_CERTIFICATE_ATTRIBUTE is set to false, the attribute should not be included
+        // if INCLUDE_SIGNING_CERTIFICATE_ATTRIBUTE is set to false, the attribute should not be included       
+        final SignerInformationStore signerInfos = signedData.getSignerInfos();
+        final SignerInformation si = signerInfos.getSigners().iterator().next();
+        final AttributeTable signedAttributes = si.getSignedAttributes();
+        final Attribute signingCertAttr =
+                signedAttributes.get(new ASN1ObjectIdentifier(SIGNING_CERT_OID));
+        
         if (!includeSigningCertAttr) {
-            assertEquals("Number of attributes", 3, asn1seq3.size());
+            assertNull("No signing cert attribute", signingCertAttr);
         } else {
-            final ASN1Sequence scAttr = ASN1Sequence.getInstance(asn1seq3.getObjectAt(3));
-            TestUtils.checkSigningCertificateAttribute(scAttr, cert);
+            TestUtils.checkSigningCertificateAttribute(ASN1Sequence.getInstance(signingCertAttr.toASN1Primitive()), cert);
         }
         
-        ASN1ObjectIdentifier ctOID = ASN1ObjectIdentifier.getInstance(asn1seq4.getObjectAt(0));
-        assertEquals("Invalid OID for content type", CONTENT_TYPE_OID, ctOID.getId());
+        final Attribute contentTypeAttr =
+                signedAttributes.get(new ASN1ObjectIdentifier(CONTENT_TYPE_OID));
+        assertNotNull("Content type attribute", contentTypeAttr);
         
-        ASN1ObjectIdentifier stOID = ASN1ObjectIdentifier.getInstance(asn1seq5.getObjectAt(0));
-        assertEquals("Invalid OID for signing time", SIGNING_TIME_OID, stOID.getId());
+        final Attribute signingTimeAttr =
+                signedAttributes.get(new ASN1ObjectIdentifier(SIGNING_TIME_OID));
+        assertNotNull("Signing time attribute", signingTimeAttr);
         
-        ASN1ObjectIdentifier mdOID = ASN1ObjectIdentifier.getInstance(asn1seq6.getObjectAt(0));
-        assertEquals("Invalid OID for content type", MESSAGE_DIGEST_OID, mdOID.getId());
-        
+        final Attribute messageDigestAttr =
+                signedAttributes.get(new ASN1ObjectIdentifier(MESSAGE_DIGEST_OID));
+        assertNotNull("Message digest attribute", messageDigestAttr);
+
         // get signing time from response
-        ASN1Set set = ASN1Set.getInstance(asn1seq5.getObjectAt(1));
-        ASN1Encodable t = set.getObjectAt(0);
+        final ASN1Encodable t = signingTimeAttr.getAttrValues().getObjectAt(0);
         Time t2 = Time.getInstance(t);
         Date d = t2.getDate();
         
@@ -282,16 +284,13 @@ public class MSAuthCodeTimeStampSignerTest extends ModulesTestCase {
         
         assertEquals("Unexpected signing time in response", d0, d);	
     
+        final AlgorithmIdentifier digAlg =
+                signedData.getDigestAlgorithmIDs().iterator().next();
     
         // check expected signing algo
-        ASN1Set set1 = ASN1Set.getInstance(asn1seq1.getObjectAt(1));
-        ASN1Sequence asn1seq7 = ASN1Sequence.getInstance(set1.getObjectAt(0));
-        ASN1ObjectIdentifier algOid = ASN1ObjectIdentifier.getInstance(asn1seq7.getObjectAt(0));
-        
-        assertEquals("Unexpected digest OID in response", expectedDigestOID, algOid.getId());
+        assertEquals("Unexpected digest OID in response", expectedDigestOID, digAlg.getAlgorithm().getId());
         
         // check that the request is included
-        final CMSSignedData signedData = new CMSSignedData(asn1seq.getEncoded());
         final byte[] content = (byte[]) signedData.getSignedContent()
                 .getContent();
         
@@ -306,7 +305,7 @@ public class MSAuthCodeTimeStampSignerTest extends ModulesTestCase {
         final X509Certificate signercert = (X509Certificate) resp.getSignerCertificate();
         assertEquals("Serial number", sn, signercert.getSerialNumber());
         assertEquals("Issuer", cert.getIssuerDN(), signercert.getIssuerDN());
-        
+
         // check ContentInfo, according to the Microsoft specification, the contentInfo in the response is
         // identical to the contentInfo in the request
         final ContentInfo expCi = ContentInfo.getInstance(seq2);

@@ -51,7 +51,7 @@ import org.bouncycastle.cert.ocsp.OCSPReq;
 import org.bouncycastle.cert.ocsp.OCSPReqBuilder;
 import org.bouncycastle.cert.ocsp.OCSPResp;
 import org.bouncycastle.cert.ocsp.SingleResp;
-import org.bouncycastle.ocsp.OCSPRespStatus;
+import org.bouncycastle.asn1.ocsp.OCSPResponseStatus;
 import org.bouncycastle.operator.DigestCalculatorProvider;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.bc.BcDigestCalculatorProvider;
@@ -237,7 +237,7 @@ public abstract class AbstractCustomCertPathChecker extends PKIXCertPathChecker 
      */
     protected void parseAndVerifyOCSPResponse(X509Certificate x509Cert, OCSPResp ocspresp, X509Certificate cACert) throws NoSuchProviderException, OCSPException, NoSuchAlgorithmException, CertStoreException, IOException, SignServerException, CertificateParsingException, IllegalRequestException, CryptoTokenOfflineException, OperatorCreationException, CertificateEncodingException {
        
-        if (ocspresp.getStatus() != OCSPRespStatus.SUCCESSFUL) {
+        if (ocspresp.getStatus() != OCSPResponseStatus.SUCCESSFUL) {
             throw new SignServerException("Unexpected ocsp response status. Response Status Received : " + ocspresp.getStatus());
         }
 

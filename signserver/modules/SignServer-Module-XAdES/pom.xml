@@ -40,7 +40,7 @@
         <dependency>
             <groupId>org.signserver.xades4j</groupId>
             <artifactId>xades4j</artifactId>
-            <version>1.3.2-signserver</version>
+            <version>${xades4j.version}</version>
         </dependency>
         <dependency>
             <groupId>com.google.inject</groupId>

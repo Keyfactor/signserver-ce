@@ -74,6 +74,7 @@ import org.bouncycastle.cert.ocsp.OCSPException;
 import org.bouncycastle.cert.ocsp.OCSPReq;
 import org.bouncycastle.cert.ocsp.OCSPReqBuilder;
 import org.bouncycastle.cert.ocsp.OCSPResp;
+import org.bouncycastle.cert.ocsp.RevokedStatus;
 import org.bouncycastle.cert.ocsp.SingleResp;
 import org.bouncycastle.cert.ocsp.jcajce.JcaCertificateID;
 import org.bouncycastle.operator.OperatorCreationException;
@@ -166,7 +167,7 @@ public class OcspClientBouncyCastle implements OcspClient {
                     if (status == CertificateStatus.GOOD) {
                         return basicResponse.getEncoded();
                     }
-                    else if (status instanceof org.bouncycastle.ocsp.RevokedStatus) {
+                    else if (status instanceof RevokedStatus) {
                         throw new IOException("OCSP Status is revoked!");
                     }
                     else {

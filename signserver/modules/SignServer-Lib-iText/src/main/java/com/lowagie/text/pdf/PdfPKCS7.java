@@ -83,8 +83,6 @@ import org.bouncycastle.asn1.ASN1OutputStream;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.ASN1TaggedObject;
-import org.bouncycastle.asn1.DEREnumerated;
-import org.bouncycastle.asn1.DERInteger;
 import org.bouncycastle.asn1.DERNull;
 import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.DEROctetString;
@@ -103,6 +101,8 @@ import org.bouncycastle.jce.provider.X509CertParser;
 import com.lowagie.text.ExceptionConverter;
 import java.security.cert.CertificateParsingException;
 import java.util.Date;
+import org.bouncycastle.asn1.ASN1Enumerated;
+import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.cms.ContentInfo;
@@ -408,7 +408,7 @@ public class PdfPKCS7 {
             //     last - signerInfos
 
             // the version
-            version = ((DERInteger)content.getObjectAt(0)).getValue().intValue();
+            version = ((ASN1Integer)content.getObjectAt(0)).getValue().intValue();
 
             // the digestAlgorithms
             digestalgos = new HashSet();
@@ -449,10 +449,10 @@ public class PdfPKCS7 {
             //     2 - the digest algorithm
             //     3 or 4 - digestEncryptionAlgorithm
             //     4 or 5 - encryptedDigest
-            signerversion = ((DERInteger)signerInfo.getObjectAt(0)).getValue().intValue();
+            signerversion = ((ASN1Integer)signerInfo.getObjectAt(0)).getValue().intValue();
             // Get the signing certificate
             ASN1Sequence issuerAndSerialNumber = (ASN1Sequence)signerInfo.getObjectAt(1);
-            BigInteger serialNumber = ((DERInteger)issuerAndSerialNumber.getObjectAt(1)).getValue();
+            BigInteger serialNumber = ((ASN1Integer)issuerAndSerialNumber.getObjectAt(1)).getValue();
             for (Iterator i = certs.iterator(); i.hasNext();) {
                 X509Certificate cert = (X509Certificate)i.next();
                 if (serialNumber.equals(cert.getSerialNumber())) {
@@ -1208,11 +1208,11 @@ public class PdfPKCS7 {
             
             // Add the signerInfo version
             //
-            signerinfo.add(new DERInteger(signerversion));
+            signerinfo.add(new ASN1Integer(signerversion));
             
             v = new ASN1EncodableVector();
             v.add(getIssuer(signCert.getTBSCertificate()));
-            v.add(new DERInteger(signCert.getSerialNumber()));
+            v.add(new ASN1Integer(signCert.getSerialNumber()));
             signerinfo.add(new DERSequence(v));
             
             // Add the digestAlgorithm
@@ -1250,7 +1250,7 @@ public class PdfPKCS7 {
             
             // Finally build the body out of all the components above
             ASN1EncodableVector body = new ASN1EncodableVector();
-            body.add(new DERInteger(version));
+            body.add(new ASN1Integer(version));
             body.add(new DERSet(digestAlgorithms));
             body.add(contentinfo);
             body.add(new DERTaggedObject(false, 0, dercertificates));
@@ -1376,7 +1376,7 @@ public class PdfPKCS7 {
                 ASN1EncodableVector v2 = new ASN1EncodableVector();
                 v2.add(OCSPObjectIdentifiers.id_pkix_ocsp_basic);
                 v2.add(doctet);
-                DEREnumerated den = new DEREnumerated(0);
+                ASN1Enumerated den = new ASN1Enumerated(0);
                 ASN1EncodableVector v3 = new ASN1EncodableVector();
                 v3.add(den);
                 v3.add(new DERTaggedObject(true, 0, new DERSequence(v2)));

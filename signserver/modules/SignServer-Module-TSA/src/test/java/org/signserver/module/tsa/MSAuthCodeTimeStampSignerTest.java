@@ -259,7 +259,7 @@ public class MSAuthCodeTimeStampSignerTest extends ModulesTestCase {
         if (!includeSigningCertAttr) {
             assertNull("No signing cert attribute", signingCertAttr);
         } else {
-            TestUtils.checkSigningCertificateAttribute(ASN1Sequence.getInstance(signingCertAttr.toASN1Primitive()), cert);
+            TestUtils.checkSigningCertificateAttribute(signingCertAttr, cert);
         }
         
         final Attribute contentTypeAttr =

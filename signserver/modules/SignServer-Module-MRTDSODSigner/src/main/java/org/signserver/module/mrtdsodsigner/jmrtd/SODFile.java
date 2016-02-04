@@ -57,7 +57,6 @@ import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.DERNull;
-import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERPrintableString;
 import org.bouncycastle.asn1.DERSequence;
@@ -376,7 +375,7 @@ public class SODFile extends PassportFile
                                 AlgorithmParameters params = AlgorithmParameters.getInstance("PSS");
                                 params.init(parameters.toASN1Primitive().getEncoded());
                                 final PSSParameterSpec spec = params.getParameterSpec(PSSParameterSpec.class);
-                                result = lookupMnemonicByOID(new ASN1ObjectIdentifier(spec.getDigestAlgorithm())) + "withRSAand" + lookupMnemonicByOID(new DERObjectIdentifier(spec.getMGFAlgorithm()));
+                                result = lookupMnemonicByOID(new ASN1ObjectIdentifier(spec.getDigestAlgorithm())) + "withRSAand" + lookupMnemonicByOID(new ASN1ObjectIdentifier(spec.getMGFAlgorithm()));
                             }
                         } catch (InvalidParameterSpecException ignored) {}
                         catch (IOException ignored) {}

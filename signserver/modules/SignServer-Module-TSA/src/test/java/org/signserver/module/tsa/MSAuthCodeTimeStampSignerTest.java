@@ -28,18 +28,15 @@ import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.ASN1TaggedObject;
 import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.cms.AttributeTable;
 import org.bouncycastle.asn1.cms.ContentInfo;
-import org.bouncycastle.asn1.util.ASN1Dump;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
-import org.bouncycastle.asn1.x509.AttributeCertificate;
 import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
 import org.bouncycastle.asn1.x509.KeyPurposeId;
 import org.bouncycastle.asn1.x509.Time;
-import org.bouncycastle.asn1.x509.X509Extension;
+import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.SignerInformation;
@@ -47,7 +44,6 @@ import org.bouncycastle.cms.SignerInformationStore;
 import org.bouncycastle.cms.SignerInformationVerifier;
 import org.bouncycastle.cms.jcajce.JcaSignerInfoVerifierBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
-import org.bouncycastle.util.Store;
 import org.bouncycastle.util.encoders.Base64;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GenericSignRequest;
@@ -335,6 +331,7 @@ public class MSAuthCodeTimeStampSignerTest extends ModulesTestCase {
     
     /**
      * Test of processData method, of class MSAuthCodeTimeStampSigner.
+     * @throws java.lang.Exception
      */
     public void testProcessDataSHA1withRSA() throws Exception {
     	testProcessDataWithAlgo("SHA1withRSA", SHA1_OID, REQUEST_DATA.getBytes(), false, null);
@@ -475,7 +472,7 @@ public class MSAuthCodeTimeStampSignerTest extends ModulesTestCase {
                         setSignatureAlgorithm(signatureAlgorithm);
                 
         if (ekus != null && ekus.length > 0) {
-            certBuilder.addExtension(new CertExt(X509Extension.extendedKeyUsage, 
+            certBuilder.addExtension(new CertExt(Extension.extendedKeyUsage, 
                                                  critical,
                                                  new ExtendedKeyUsage(ekus)));
         }

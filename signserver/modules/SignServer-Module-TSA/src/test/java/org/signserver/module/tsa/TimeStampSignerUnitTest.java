@@ -15,7 +15,6 @@ package org.signserver.module.tsa;
 import java.io.File;
 import java.math.BigInteger;
 import java.security.Security;
-import java.util.Arrays;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;

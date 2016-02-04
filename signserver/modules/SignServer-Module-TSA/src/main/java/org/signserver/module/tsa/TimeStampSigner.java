@@ -40,9 +40,6 @@ import org.bouncycastle.operator.DigestCalculatorProvider;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.bc.BcDigestCalculatorProvider;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
-//import org.signserver.module.tsa.bc.TimeStampRequest;
-//import org.signserver.module.tsa.bc.TimeStampResponseGenerator;
-//import org.signserver.module.tsa.bc.TimeStampTokenGenerator;
 import org.bouncycastle.tsp.TSPAlgorithms;
 import org.bouncycastle.tsp.TSPException;
 import org.bouncycastle.tsp.TimeStampRequest;
@@ -399,6 +396,9 @@ public class TimeStampSigner extends BaseSigner {
      * @param signRequest
      * @param requestContext
      * @return the sign response
+     * @throws IllegalRequestException
+     * @throws CryptoTokenOfflineException
+     * @throws SignServerException
      * @see org.signserver.server.IProcessable#processData(org.signserver.common.ProcessRequest, org.signserver.common.RequestContext)
      */
     @Override
@@ -507,7 +507,6 @@ public class TimeStampSigner extends BaseSigner {
                                                                      date,
                                                                      includeStatusString ? "Operation Okey" : null);
             } catch (Exception e) {
-                System.out.println("exception: " + e.getClass().getName() + ": " + e.getMessage());
                 timeStampResponse =
                         timeStampResponseGen.generateRejectedResponse(e);
             }
@@ -712,14 +711,6 @@ public class TimeStampSigner extends BaseSigner {
                     this.config.getProperties().getProperty(ACCEPTEDEXTENSIONS);
             acceptedExtensions = makeSetOfProperty(nonParsedAcceptedExtensions);
         }
-        
-        /*
-        if (acceptedExtensions != null) {
-            for (final String s : acceptedExtensions) {
-                System.out.println("accepted extension: " + s);
-            }
-        }
-        */
 
         return acceptedExtensions;
     }

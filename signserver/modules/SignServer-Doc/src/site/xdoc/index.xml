@@ -85,49 +85,81 @@
 </table>
    </section>
 
-<section name="What is SignServer?">
-<p>
-SignServer is an application framework performing cryptographic operations for
-other applications. It's intended to be used in environments where keys are
-supposed to be protected in hardware but it isn't possible to connect such
-hardware to existing enterprise applications or where the operations are
-considered extra sensitive so the hardware has to be protected more carefully.
-Another usage is to provide a simplified method to provide signatures in
-different application managed from one location in the company.
-</p>
-<p> 
-SignServer is based on loadable modules that perform various operations.
-SignServer has ready to use modules for:
-</p>
-<ul>
-<li>TimeStamp Authority: RFC 3161 and MS authenticode compliant</li>
-<li>Signers for different documents: PDF, XML, XAdES (BES and T), ODF, OOXML</li>
-<li>ePassport Document Signer: MRTD Document Signer, Master List (CSCA ML) Signer</li>
-<li>Code Signing: Portable Executables (Authenticode)</li>
-<li>General purpose signers: CMS, Plain signatures</li>
-<li>Validators for documents: XML, XAdES-BES, XAdES-T</li>
-</ul>
-<p>The modules can be used using HTTP or web services interfaces. SignServer
-also contains functions for:</p>
-<ul>
-<li>Certificate Validation Service Framework for validating certificates using
-    CRLs or OCSP</li>
-</ul> 
-<p>
-SignServer has been designed for high-availability and can be clustered for
-maximum reliability.
-</p>
-<p>
-Different kinds of tokens can be used to perform sign and crypto operations:
-</p>
-<ul>
-<li>Soft token using JKS or PKCS12 files.</li>
-<li>PKCS#11 HSM tokens, such as the Utimaco CryptoServer, SafeNet ProtectServer
-    and Luna, Thales nShield or AEP KeyPer.</li>
-</ul>
+<section name="Secure Documents and Code">
+    <subsection name="What SignServer does">
+        <p>
+SignServer digitally signs your documents and code, keeping signature keys secure, and your work-flows easy, secure and auditable.
+        </p>
+        <ul>
+            <li>Sign documents: PDF, XML, XAdES (BES and T)</li>
+            <li>Sign code: MS Authenticode, Java including Android APK and Generic</li>
+            <li>Time Stamping: RFC 3161 and MS authenticode time stamps, ETSI compliant</li>
+            <li>ePassport: ICAO compliant MRTD signer</li>
+        </ul>
+        <p>
+Using SignServer you can start signing documents and code in a secure way today.
+        </p>
+    </subsection>
 </section>
 
-<section name="What's new in SignServer 3.7?">
+<section name="Server Side Key Management">
+    <subsection name="How SignServer does it">
+        <p>
+SignServer is a server side signing server with plug-ins for different signature types. 
+Signature keys are kept secure on the server side, and users are authenticated to perform signatures on-line.
+        </p>
+        <ul>
+            <li>Signature keys managed in soft keystores or PKCS#11 Hardware Security Modules</li>
+            <li>Centralized management of Signers, access control and audit</li>
+            <li>Individual signing keys for every user or one central key for the organization</li>
+            <li>GUI or integration APIs ensures integration in your work-flow</li>
+            <li>Sign single documents or batches</li>
+            <li>Easily clustered for high availability and maximum reliability</li>
+        </ul>
+        <p>
+You can also validate documents with the SignServer Validators, including support for CRLs and OCSP. If you want to you can even write your own signing and validation plug-ins.
+        </p>
+        <p>
+See the full list of <a href="features.html">features</a>.
+        </p>
+    </subsection>
+</section>
+
+<section name="About Trust">
+    <subsection name="Why we do it">
+        <p>
+We believe central signing is superior because server side digital signatures give maximum control and security, allowing your staff and applications 
+to conveniently sign code and documents.
+You get the highest security while saving on work and costs.
+        </p>
+        <p>
+Instead of managing a myriad of distributed “signing islands” where each team has its own solution, using a central 
+signing solution simplifies administration, improves security and lowers cost.
+        </p>
+        <ul>
+            <li>Protection of signing keys</li>
+            <li>Easy to control</li>
+            <li>Policy and audit compliance</li>
+        </ul>
+    </subsection>
+</section>
+
+<section name="Open Source Software">
+    <p>
+SignServer is OSI Certified Open Source Software licensed under the <i>LGPL v2.1 or later</i> license. OSI Certified is a certification mark of the Open Source Initiative.
+    </p>
+    <p>        
+The source code of SignServer Community Edition is hosted publicly in a Subversion repository and downloads including the complete source code are available.
+    </p>
+</section>
+
+<section name="Support and Development">
+    <p>
+SignServer Enterprise with commercial support, development, integration and maintenance for SignServer is available through <a href="https://www.primekey.se/?pk_campaign=ssorg&amp;pk_kwd=footer_primekey-solutions">PrimeKey Solutions</a>.
+    </p>
+</section>
+
+<section name="New Features in SignServer 3.7">
 <p>
 Some of the major new features in version 3.7 are:
 </p>
@@ -143,21 +175,6 @@ Some of the major new features in version 3.7 are:
 More information can be found in the <a href="manual.html">manual</a> or in the
 <a href="https://jira.primekey.se/browse/DSS?report=com.atlassian.jira.plugin.system.project:changelog-panel">changelog</a>.
 </p>
-</section>
-
-<section name="Open Source Software">
-<p>
-SignServer is OSI Certified Open Source Software.
-OSI Certified is a certification mark of the Open Source Initiative.
-</p>
-<p>
-The source code of SignServer is hosted in a (mostly) public <a href="repositories.html">Subversion repository</a> and downloads including ones with the complete source code can be downloaded from <a href="https://sourceforge.net/projects/signserver/">SourceForge</a>.
-</p>
-</section>
-
-<section name="Support and development">
-    <p>Commercial support, development, integration and maintenance for SignServer is available through <a href="https://www.primekey.se/?pk_campaign=ssorg&amp;pk_kwd=footer_primekey-solutions" target="pk">PrimeKey Solutions</a>. 
-    </p>
 </section>
 
 </body>

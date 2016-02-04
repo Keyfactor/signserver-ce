@@ -225,6 +225,7 @@ public abstract class AbstractCustomCertPathChecker extends PKIXCertPathChecker 
      * 
      * @param x509Cert - certificate originally passed to validator for validation
      * @param ocspresp - ocsp response received from ocsp responder
+     * @param cACert
      * @throws OCSPException 
      * @throws NoSuchProviderException 
      * @throws IOException 
@@ -234,6 +235,8 @@ public abstract class AbstractCustomCertPathChecker extends PKIXCertPathChecker 
      * @throws CertificateParsingException 
      * @throws CryptoTokenOfflineException 
      * @throws IllegalRequestException 
+     * @throws org.bouncycastle.operator.OperatorCreationException 
+     * @throws java.security.cert.CertificateEncodingException 
      */
     protected void parseAndVerifyOCSPResponse(X509Certificate x509Cert, OCSPResp ocspresp, X509Certificate cACert) throws NoSuchProviderException, OCSPException, NoSuchAlgorithmException, CertStoreException, IOException, SignServerException, CertificateParsingException, IllegalRequestException, CryptoTokenOfflineException, OperatorCreationException, CertificateEncodingException {
        

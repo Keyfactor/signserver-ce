@@ -55,7 +55,6 @@ import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.TokenOutOfSpaceException;
 import org.signserver.common.WorkerStatus;
-import static org.signserver.server.BaseProcessable.PROPERTY_CACHE_PRIVATEKEY;
 import org.signserver.server.ExceptionUtil;
 import org.signserver.server.IServices;
 
@@ -77,6 +76,9 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
 
     private final KeyStorePKCS11CryptoToken delegate;
 
+    /** Our worker cache entry name. */
+    private static final String WORKERCACHE_ENTRY = "PKCS11CryptoToken.CRYPTO_INSTANCE";
+
     public PKCS11CryptoToken() throws InstantiationException {
         delegate = new KeyStorePKCS11CryptoToken();
     }
@@ -84,9 +86,6 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
     private String keyAlias;
     private String nextKeyAlias;
 
-    private boolean cachePrivateKey;
-    private PrivateKey cachedPrivateKey;
-    
     // cached P11 library definitions (defined at deploy-time)
     private PKCS11Settings settings;
     
@@ -231,13 +230,10 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
             keyAlias = props.getProperty("defaultKey");
             nextKeyAlias = props.getProperty("nextCertSignKey");
 
-            cachePrivateKey = Boolean.parseBoolean(props.getProperty(PROPERTY_CACHE_PRIVATEKEY, Boolean.FALSE.toString()));
-
             if (LOG.isDebugEnabled()) { 
                 final StringBuilder sb = new StringBuilder();
                 sb.append("keyAlias: ").append(keyAlias).append("\n");
                 sb.append("nextKeyAlias: ").append(nextKeyAlias).append("\n");
-                sb.append("cachePrivateKey: ").append(cachePrivateKey);
                 LOG.debug(sb.toString());
             }
 
@@ -338,14 +334,7 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
         if (purpose == ICryptoToken.PURPOSE_NEXTKEY) {
             result = getPrivateKey(nextKeyAlias);
         } else {
-            if (cachePrivateKey && cachedPrivateKey != null) {
-                result = cachedPrivateKey;
-            } else {
-                result = getPrivateKey(keyAlias);
-                if (cachePrivateKey) {
-                    cachedPrivateKey = result;
-                }
-            }
+            result = getPrivateKey(keyAlias);
         }
         return result;
     }
@@ -587,6 +576,46 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
 
     @Override
     public ICryptoInstance acquireCryptoInstance(String alias, Map<String, Object> params, RequestContext context) throws
+            CryptoTokenOfflineException, 
+            NoSuchAliasException, 
+            InvalidAlgorithmParameterException,
+            UnsupportedCryptoTokenParameter,
+            IllegalRequestException {
+        ICryptoInstance result = null;
+        
+        // Check if the caller requested caching of the private key
+        final Boolean cache = (Boolean) params.get(PARAM_CACHEPRIVATEKEY);
+        if (cache != null && cache) {
+            // Get the supplied worker-instance-specific cache
+            final Map<String, Object> workerCache = (Map<String, Object>) params.get(PARAM_WORKERCACHE);
+            if (workerCache != null) {
+                
+                // Check if we have a cached crypto instance, otherwise create one
+                // Note: The cache is shared between all threads serving this worker so we only allow one to query and update the cache at a time.
+                synchronized (workerCache) {
+                    result = (ICryptoInstance) workerCache.get(WORKERCACHE_ENTRY);
+                    if (result == null) {
+                        result = createCryptoInstance(alias, context);
+                        workerCache.put(WORKERCACHE_ENTRY, result);
+                    }
+                }
+            }
+        }
+        
+        // In case of no caching just load the crypt instance
+        if (result == null) {
+            result = createCryptoInstance(alias, context);
+        }
+        
+        return result;
+    }
+    
+    /**
+     * Queries the keystore for the private key and certificate, creating
+     * the crypto instance.
+     * Possibly expensive call if a network HSM is used.
+     */
+    private ICryptoInstance createCryptoInstance(String alias, RequestContext context) throws
             CryptoTokenOfflineException, 
             NoSuchAliasException, 
             InvalidAlgorithmParameterException,

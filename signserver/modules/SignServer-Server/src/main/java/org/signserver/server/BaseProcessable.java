@@ -26,6 +26,7 @@ import java.security.cert.Certificate;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -73,6 +74,9 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
 
     private List<String> fatalErrors;
     
+    private boolean cachePrivateKey;
+    private final Map<String, Object> workerCache = new HashMap<String, Object>(5);
+    
     /**
      * Holds fatal errors gathered when initing the crypto token.
      */
@@ -98,6 +102,8 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         if (aliasSelector != null) {
             aliasSelector.init(workerId, config, workerContext, workerEM);
         }
+        
+        cachePrivateKey = Boolean.parseBoolean(config.getProperty(PROPERTY_CACHE_PRIVATEKEY, Boolean.FALSE.toString()));
     }
     
     /**
@@ -475,9 +481,6 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         private final ICryptoTokenV2 delegate;
         private final WorkerConfig config;
 
-        private final boolean cachePrivateKey;
-        private PrivateKey cachedPrivateKey;
-
         /**
          * Constructs a new instance of the wrapped crypto token.
          * @param delegate The V2 implementation.
@@ -486,10 +489,6 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         public WrappedCryptoToken(ICryptoTokenV2 delegate, WorkerConfig config) {
             this.delegate = delegate;
             this.config = config;
-            cachePrivateKey = Boolean.parseBoolean(config.getProperty(PROPERTY_CACHE_PRIVATEKEY, Boolean.FALSE.toString()));
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("cachePrivateKey: " + cachePrivateKey);
-            }
         }
 
         @Override
@@ -514,20 +513,13 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
 
         @Override
         public PrivateKey getPrivateKey(int purpose) throws CryptoTokenOfflineException {
-            final PrivateKey result;
+            final String alias;
             if (purpose == ICryptoToken.PURPOSE_NEXTKEY) {
-                result = delegate.getPrivateKey(config.getProperty(CryptoTokenHelper.PROPERTY_NEXTCERTSIGNKEY));
+                alias = config.getProperty(CryptoTokenHelper.PROPERTY_NEXTCERTSIGNKEY);
             } else {
-                if (cachePrivateKey && cachedPrivateKey != null) {
-                    result = cachedPrivateKey;
-                } else {
-                    result = delegate.getPrivateKey(config.getProperty(CryptoTokenHelper.PROPERTY_DEFAULTKEY));
-                    if (cachePrivateKey) {
-                        cachedPrivateKey = result;
-                    }
-                }
+                alias = config.getProperty(CryptoTokenHelper.PROPERTY_DEFAULTKEY);
             }
-            return result;
+            return getPrivateKey(alias);
         }
 
         @Override
@@ -586,6 +578,9 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
 
         @Override
         public PrivateKey getPrivateKey(String alias) throws CryptoTokenOfflineException {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Using deprecated method. No caching will be performed.");
+            }
             return delegate.getPrivateKey(alias);
         }
 
@@ -1216,9 +1211,16 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         ICryptoToken token = getCryptoToken();
         if (token instanceof ICryptoTokenV3) {
             try {
+                // Add our params with caching support
+                final HashMap<String, Object> newParams = new HashMap<String, Object>(params);
+                // Add a per-worker instance cache
+                newParams.put(ICryptoTokenV3.PARAM_WORKERCACHE, workerCache);
+                // Request caching for the default key only
+                newParams.put(ICryptoTokenV3.PARAM_CACHEPRIVATEKEY, cachePrivateKey && alias != null && alias.equals(config.getProperty(CryptoTokenHelper.PROPERTY_DEFAULTKEY)));
+
                 // Great this is V3 (3.7)
                 ICryptoTokenV3 token3 = (ICryptoTokenV3) token;
-                result = token3.acquireCryptoInstance(alias, params, context);
+                result = token3.acquireCryptoInstance(alias, newParams, context);
             } catch (NoSuchAliasException ex) {
                 throw new CryptoTokenOfflineException("Key not available: " + ex.getMessage());
             }
@@ -1240,7 +1242,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
 
         return result;
     }
-
+    
     /**
      * Releases a previously acquired crypto instance.
      * @param instance to release

@@ -47,6 +47,12 @@ import org.signserver.server.IServices;
  * @version $Id$
  */
 public interface ICryptoTokenV3 extends ICryptoTokenV2 {
+
+    /** Crypto token parameter with value of type Boolean telling if the crypto instance should be cached or not. */
+    String PARAM_CACHEPRIVATEKEY = "CACHEPRIVATEKEY";
+    
+    /** Crypto token parameter with the value of type Map&lt;String, Object&gt; containing a cache local to this worker instance but possible shared among multiple threads. */
+    String PARAM_WORKERCACHE = "WORKERCACHE";
     
     /**
      * @return The current state of the crypto token

@@ -2362,10 +2362,10 @@ disabledMechanisms = {
 <b>CACHE_PRIVATEKEY</b> = If set to true the private key and certificate is cached in the worker so that they are not queried for each signature. This could potentially improve performance in some environments, typically where network HSMs or HSM slots with many keys are used. (Default: false)
                         </p>
                         <p>
-<b>Notice</b>: This worker property are to be specified in the worker where the key to be used is specified by the DEFAULTKEY property. It is that key that will be cached locally in the worker. It is important to remember this if the crypto token is configured in a separate worker in which case this property should be specified in the worker that will be using the crypto token and not necesarly in the one having the crypto token configuration.
+<b>Notice</b>: This worker property is to be specified in the worker where the key to be used is specified by the DEFAULTKEY property. It is that key that will be cached locally in the worker. It is important to remember this if the crypto token is configured in a separate worker in which case this property should be specified in the worker that will be using the crypto token and not necessarily in the one having the crypto token configuration.
                         </p>
                         <p>
-<b>Notice</b>: When this option is used also the signer certificate is also cached if it is taken from the token and not overridden by specifying it in the configuration. This means that if the certificate in the token is changed the old certificate will still be used until the worker is reloaded which will clear the cache.
+<b>Notice</b>: When this option is used, the signer certificate is also cached if it is taken from the token and not overridden by specifying it in the configuration. This means that if the certificate in the token is changed the old certificate will still be used until the worker is reloaded which will clear the cache.
                         </p>
 
                     <h4>Default global properties</h4>

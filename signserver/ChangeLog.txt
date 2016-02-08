@@ -1,3 +1,17 @@
+SignServer 3.7.2, 2016-02-08
+----------------------------
+
+** Bug
+    * [DSS-1124] - Performance regression: Introduced EJB calls causes increased response times
+    * [DSS-1134] - Performance regression: Cache key option broken after crypto token API change
+
+** Improvement
+    * [DSS-1129] - Improve documentation for key caching option
+
+** Task
+    * [DSS-1119] - Minor site updates
+
+
 SignServer 3.7.1, 2015-12-31
 ----------------------------
 

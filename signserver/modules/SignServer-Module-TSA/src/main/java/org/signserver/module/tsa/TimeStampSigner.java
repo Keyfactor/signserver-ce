@@ -779,7 +779,7 @@ public class TimeStampSigner extends BaseSigner {
             
             SignerInfoGenerator sig = sigb.build(cs, certHolder);
             
-            timeStampTokenGen = new TimeStampTokenGenerator(sig, calc, tSAPolicyOID);
+            timeStampTokenGen = new TimeStampTokenGenerator(sig, calc, tSAPolicyOID, true);
 
             if (config.getProperties().getProperty(ACCURACYMICROS) != null) {
                 timeStampTokenGen.setAccuracyMicros(Integer.parseInt(

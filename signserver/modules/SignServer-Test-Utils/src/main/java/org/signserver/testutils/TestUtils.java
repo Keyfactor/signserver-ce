@@ -39,6 +39,7 @@ import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.ess.ESSCertID;
 import org.bouncycastle.asn1.ess.SigningCertificate;
+import org.bouncycastle.asn1.x509.IssuerSerial;
 import org.signserver.client.cli.defaultimpl.AliasKeyManager;
 import static org.junit.Assert.*;
 import org.signserver.common.util.PathUtil;
@@ -158,6 +159,10 @@ public class TestUtils {
         final SigningCertificate sc = SigningCertificate.getInstance(vals.getObjectAt(0));
         final ESSCertID certId = sc.getCerts()[0];
         
+        final IssuerSerial is = certId.getIssuerSerial();
+        
         assertTrue("Hash doesn't match", Arrays.equals(digest, certId.getCertHash()));
+        assertEquals("Serial number doesn't match", cert.getSerialNumber(),
+                     is.getSerial().getValue());
     }
 }

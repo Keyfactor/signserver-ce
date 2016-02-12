@@ -224,7 +224,7 @@
                 <td width="15%"><a href="http://www.signserver.org/"><img src="$relativePath/images/SignServer_pki_by_primekey.png" alt="Click the PKI-by-PrimeKey-SignServer-logo to visit www.signserver.org" title="The logo squares follow a given magnitude of primes, symbolizing the encryption method of PrimeKey PKI." width="245" height="76" style="border:none;"></a></td>
                 <td style="text-align:right">
                     <div class="searchcaption">
-                            Search signserver.org for:<br>
+                            Search signserver.org on Google:<br>
                             <form id="searchForm" target="_blank" onsubmit="q.value = query.value + ' site:signserver.org'" action="https://www.google.com/search" method="get">
                                 <input name="q" type="hidden">
                                 <div style="height: 18px; white-space: nowrap;">
@@ -234,8 +234,8 @@
                             </form>
                     </div>
                 </td>
-        	<td id="services"><a href="https://www.primekey.se/service-support/support/?pk_campaign=ssorg&amp;pk_kwd=head_click-here" target="pk">Click here to learn about PrimeKey Support Services!</a></td>
-            </tr>
+        	<td></td>
+        	</tr>
           </table>
       </div>
 

@@ -8,9 +8,9 @@ of the License at
     http://www.apache.org/licenses/LICENSE-2.0 
     
 The jars: 
- quartz-1.6.0.jar
+ quartz-1.6.3.jar
  
-This is version 1.6.0
+This is version 1.6.3
 
-Used mainly to parse cron expressíons to the timed services in signserver
+Used mainly to parse cron expressions to the timed services in signserver
 and to schedule jobs in the mailsigner. 

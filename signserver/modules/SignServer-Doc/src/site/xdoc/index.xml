@@ -7,49 +7,30 @@
   </properties>
 
 <body>
-  <section name="News and Info">
-<table class="promotion"><!--AC table for twitterwidget and Note area-->
-
-<tr>
-<td valign="top"><!--TWITTER WIDGET-->
-<div class="frame note" id="twitter" style="border:0;">
-
-<a class="twitter-timeline" width="260" height="310" data-dnt="true" href="https://twitter.com/primekeyPKI"  data-widget-id="344774465936306176">Tweets by @primekeyPKI</a>
-<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
-
+  <section name="">
+<div id="welcome">        
+<div class="frame">
+<div class="label">
+      SignServer release news &amp; other marvels
 </div>
-</td>
-
-<td colspan="1" rowspan="1" valign="top" align="left">
-<div class="frame note">
-<div class="label pr">
-<a href="http://blog.ejbca.org?pk_campaign=ssorg&amp;pk_kwd=ejbca-tech-blog" target="blog">EJBCA Tech Blog</a>
-<a href="https://www.primekey.se/technologies/products-overview/pki-appliance/?pk_campaign=ssorg&amp;pk_kwd=pki-in-a-box" target="pk">PKI-in-a-box</a>
-<a href="https://www.primekey.se/technologies/products-overview/signserver-enterprise/?pk_campaign=ssorg&amp;pk_kwd=signserver_enterprise" target="pk">SignServer Enterprise</a>
-<a href="https://www.primekey.se/service-support/support/?pk_campaign=ssorg&amp;pk_kwd=enterprise_support" target="pk">Enterprise Support</a>
+<div id="news">
+    <!--TWITTER WIDGET-->
+<div class="frame note" id="twitter" style="border:0; float:left; margin:1em 2em 1em 0;">
+<a class="twitter-timeline" href="https://twitter.com/primekeyPKI" data-widget-id="344774465936306176" width="260" height="275" data-dnt="true">Tweets by @primekeyPKI</a>
+<script type="text/javascript">
+!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
+</script>
 </div>
-<div class="content first">
+
+<div>
 <p><strong>SignServer 3.7.0 is now out!</strong>
         <a href="download.html">Visit the download section to get SignServer.</a><br />
   <span class="date"> Posted: 2015-12-31</span>
  </p>
     <p>
         <strong>SignServer Enterprise 3.7.2 is now out!</strong><br/>
-         For entire non-community features, only available in SignServer Enterprise, see the section on <a href="features.html#Enterprise%20Edition%20features">"Enterprise Edition features" in the features list</a>.<br/>
+         <a href="https://www.primekey.se/technologies/products-overview/signserver-enterprise/">SignServer Enterprise</a> is supported and maintained, with additional features. For entire Enterprise features, see the section on <a href="features.html#Enterprise%20Edition%20features">"Enterprise Edition features" in the features list</a>.<br/>
         <span class="date"> Posted: 2016-02-11</span>
-    </p>
-<p style="margin:0 0 .2em 0;"><strong>Main Features of SignServer!</strong></p>
-    <div>
-        <ul style="margin:.4em 0 0 0;">
-            <li><a href="manual/complete.en.html#SignServer%20Signers">Signers for different signature types</a></li>
-            <li>Multiple administration interfaces</li>
-            <li>Plug-in functionality</li>
-            <li>HSM support</li>
-        </ul>
-    </div>
-
-    <p><a href="features.html">See complete list of features</a><br />
-    <span class="date"> Posted: 2016-01-29</span>
     </p>
 
 <!--
@@ -65,7 +46,7 @@
   <br /><span class="date"> Posted: 2014-10-24</span>
   </p>
   -->
-    <p><strong>EJBCA Tech Blog!</strong> <a href="http://blog.ejbca.org" target="ejbcablog">13 Hardcore EJBCA PKI options explained</a> 
+    <p><strong>SignServer and EJBCA Tech Blog!</strong> <a href="http://blog.ejbca.org" target="ejbcablog">13 Hardcore EJBCA PKI options explained</a> 
     <br/>
     <span class="date"> Posted: 2015-12-07</span>
     </p>
@@ -80,9 +61,8 @@
   
 </div>
 </div>
-</td>
-</tr>
-</table>
+</div>
+</div>
    </section>
 
 <section name="Secure Documents and Code">
@@ -97,7 +77,7 @@ SignServer digitally signs your documents and code, keeping signature keys secur
             <li>ePassport: ICAO compliant MRTD signer</li>
         </ul>
         <p>
-Using SignServer you can start signing documents and code in a secure way today.
+Using SignServer you can start signing documents and code in a secure way today. See the available <a href="manual/complete.en.html#SignServer%20Signers">Signers</a>.
         </p>
     </subsection>
 </section>
@@ -110,9 +90,11 @@ Signature keys are kept secure on the server side, and users are authenticated t
         </p>
         <ul>
             <li>Signature keys managed in soft keystores or PKCS#11 Hardware Security Modules</li>
+            <li><a href="manual/complete.en.html#SignServer%20Signers">Signers for different signature types</a>, and plug-in functionality for your own</li>
             <li>Centralized management of Signers, access control and audit</li>
             <li>Individual signing keys for every user or one central key for the organization</li>
             <li>GUI or integration APIs ensures integration in your work-flow</li>
+            <li>Multiple administration interfaces</li>
             <li>Sign single documents or batches</li>
             <li>Easily clustered for high availability and maximum reliability</li>
         </ul>
@@ -120,7 +102,7 @@ Signature keys are kept secure on the server side, and users are authenticated t
 You can also validate documents with the SignServer Validators, including support for CRLs and OCSP. If you want to you can even write your own signing and validation plug-ins.
         </p>
         <p>
-See the full list of <a href="features.html">features</a>.
+See the complete <a href="features.html">list of features</a>.
         </p>
     </subsection>
 </section>

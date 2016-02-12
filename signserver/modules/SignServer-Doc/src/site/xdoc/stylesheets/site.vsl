@@ -57,10 +57,12 @@
 
 #macro ( section $section)
     <div class="section">
+#if ($section.getAttributeValue("name")!="")
     <h3>
       <a name="$escape.getText($section.getAttributeValue("name"))"></a>
       $section.getAttributeValue("name")
     </h3>
+#end
       #foreach ( $items in $section.getChildren() )
 		#process($items)
       #end
@@ -145,8 +147,6 @@
                         </ul>
 
                     </li>
-
-
                  #end
             </ul>
             #if( $singlepage == "true" )
@@ -162,6 +162,7 @@
  <div id="minitoc-area">
  <ul class="minitoc">
  #foreach ( $section in $sections )
+   #if ($section.getAttributeValue("name")!="")
    <li><a href="#$escape.getText($section.getAttributeValue("name"))">$section.getAttributeValue("name")</a><br>
    #set ($subsections = $section.getChildren("subsection"))
    #if ($subsections.size() > 0)
@@ -172,6 +173,7 @@
 	 </ul>
    #end
    </li>
+   #end
  #end
  </ul>
  </div>

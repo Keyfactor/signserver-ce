@@ -782,9 +782,13 @@ public class RenewalWorker extends BaseSigner {
         
         if (chain == null) {
             Certificate[] ch = keystore.getCertificateChain(alias);
-            result = new X509Certificate[ch.length];
-            for (int i = 0; i < ch.length; i++) {
-                result[i] = (X509Certificate) ch[i];
+            if (ch == null) {
+                result = new X509Certificate[0];
+            } else {
+                result = new X509Certificate[ch.length];
+                for (int i = 0; i < ch.length; i++) {
+                    result[i] = (X509Certificate) ch[i];
+                }
             }
         } else {
             result = chain.toArray(new X509Certificate[chain.size()]);

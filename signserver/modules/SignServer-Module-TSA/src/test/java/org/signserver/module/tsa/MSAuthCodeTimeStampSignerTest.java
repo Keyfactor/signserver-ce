@@ -45,20 +45,18 @@ import org.bouncycastle.cms.SignerInformationVerifier;
 import org.bouncycastle.cms.jcajce.JcaSignerInfoVerifierBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.bouncycastle.util.encoders.Base64;
-import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.RemoteRequestContext;
-import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
 import org.signserver.server.SignServerContext;
 import org.signserver.server.ZeroTimeSource;
-import org.signserver.server.cryptotokens.ICryptoToken;
+import org.signserver.server.cryptotokens.ICryptoTokenV4;
 import org.signserver.server.log.LogMap;
 import org.signserver.test.utils.CertTools;
 import org.signserver.test.utils.builders.CertBuilder;
@@ -222,7 +220,7 @@ public class MSAuthCodeTimeStampSignerTest extends ModulesTestCase {
         // if the INCLUDE_CERTIFICATE_LEVELS property has been set,
         // check that it gives a not supported error
         if (includeCertificateLevels != null) {
-            final List<String> errors = worker.getFatalErrors();
+            final List<String> errors = worker.getFatalErrors(null);
             
             assertTrue("Should contain config error",
                     errors.contains(WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS + " is not supported."));
@@ -492,7 +490,7 @@ public class MSAuthCodeTimeStampSignerTest extends ModulesTestCase {
 
         instance.init(1, new WorkerConfig(), new SignServerContext(), null);
         
-        final List<String> fatalErrors = instance.getFatalErrors();
+        final List<String> fatalErrors = instance.getFatalErrors(null);
         
         if (expectedFailure) {
             assertFalse("Should report fatal error", fatalErrors.isEmpty());
@@ -522,21 +520,7 @@ public class MSAuthCodeTimeStampSignerTest extends ModulesTestCase {
         }
 
         @Override
-        public Certificate getSigningCertificate(final ProcessRequest request,
-                                                 final RequestContext context)
-                throws CryptoTokenOfflineException {
-            return mockedToken.getCertificate(ICryptoToken.PURPOSE_SIGN);
-        }
-
-        @Override
-        public List<Certificate> getSigningCertificateChain(
-                final ProcessRequest request, final RequestContext context)
-                throws CryptoTokenOfflineException {
-            return mockedToken.getCertificateChain(ICryptoToken.PURPOSE_SIGN);
-        }
-
-        @Override
-        public ICryptoToken getCryptoToken() {
+        public ICryptoTokenV4 getCryptoToken() {
             return mockedToken;
         }
     }

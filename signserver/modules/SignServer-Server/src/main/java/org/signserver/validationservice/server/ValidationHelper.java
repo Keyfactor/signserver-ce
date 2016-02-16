@@ -20,7 +20,7 @@ import javax.persistence.EntityManager;
 
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
-import org.signserver.server.cryptotokens.ICryptoToken;
+import org.signserver.server.cryptotokens.ICryptoTokenV4;
 import org.signserver.validationservice.common.ValidationServiceConstants;
 
 /**
@@ -134,7 +134,7 @@ public class ValidationHelper {
      * @return available validators, never null
      * @throws SignServerException if validators are missconfigured.
      */
-    public static HashMap<Integer, IValidator> genValidators(int workerId, WorkerConfig config, EntityManager em, ICryptoToken ct) throws SignServerException {
+    public static HashMap<Integer, IValidator> genValidators(int workerId, WorkerConfig config, EntityManager em, ICryptoTokenV4 ct) throws SignServerException {
         HashMap<Integer, IValidator> retval = new HashMap<Integer, IValidator>();
 
         for (int i = 1; i <= SUPPORTED_NUMBER_OF_VALIDATORS; i++) {

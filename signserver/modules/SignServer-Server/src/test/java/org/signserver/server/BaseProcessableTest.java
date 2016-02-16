@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.server;
 
+import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -25,6 +26,7 @@ import java.util.TreeMap;
 import javax.persistence.EntityManager;
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Base64;
 import org.cesecore.util.CertTools;
 import org.junit.Test;
@@ -44,6 +46,8 @@ import org.signserver.server.aliasselectors.AliasSelector;
 import org.signserver.server.cryptotokens.NullCryptoToken;
 import org.signserver.server.signers.BaseSigner;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
+import org.signserver.server.cryptotokens.DefaultCryptoInstance;
+import org.signserver.server.cryptotokens.ICryptoInstance;
 import org.signserver.server.log.AdminInfo;
 
 /**
@@ -320,7 +324,7 @@ public class BaseProcessableTest extends TestCase {
         TestSigner instance = new TestSigner(globalConfig);
         instance.init(workerId, workerConfig, anyContext, null);
         
-        final List<String> fatalErrors = instance.getSignerFatalErrors();
+        final List<String> fatalErrors = instance.getFatalErrors(null);
         
         assertTrue("Should contain error", fatalErrors.contains("Crypto token class not found: org.foo.Bar"));
     }
@@ -345,8 +349,8 @@ public class BaseProcessableTest extends TestCase {
         instance.init(workerId, workerConfig, anyContext, null);
 
         // Certifcate in token is "CN=Signer 4"
-        assertEquals("cert from token", "Signer 4", CertTools.getPartFromDN(((X509Certificate) instance.getSigningCertificate()).getSubjectX500Principal().getName(), "CN"));
-        assertEquals("cert from token", "Signer 4", CertTools.getPartFromDN(((X509Certificate) instance.getSigningCertificateChain().get(0)).getSubjectX500Principal().getName(), "CN"));
+        assertEquals("cert from token", "Signer 4", CertTools.getPartFromDN(((X509Certificate) instance.getSigningCertificate((IServices) null)).getSubjectX500Principal().getName(), "CN"));
+        assertEquals("cert from token", "Signer 4", CertTools.getPartFromDN(((X509Certificate) instance.getSigningCertificateChain((IServices) null).get(0)).getSubjectX500Principal().getName(), "CN"));
     }
 
     /**
@@ -372,8 +376,8 @@ public class BaseProcessableTest extends TestCase {
         instance.init(workerId, workerConfig, anyContext, null);
 
         // Certifcate in token is "CN=Signer 4", configured certificate is "CN=End Entity 1"
-        assertEquals("cert from token", "Signer 1", CertTools.getPartFromDN(((X509Certificate) instance.getSigningCertificate()).getSubjectX500Principal().getName(), "CN"));
-        assertEquals("cert from token", "Signer 1", CertTools.getPartFromDN(((X509Certificate) instance.getSigningCertificateChain().get(0)).getSubjectX500Principal().getName(), "CN"));
+        assertEquals("cert from token", "Signer 1", CertTools.getPartFromDN(((X509Certificate) instance.getSigningCertificate((IServices) null)).getSubjectX500Principal().getName(), "CN"));
+        assertEquals("cert from token", "Signer 1", CertTools.getPartFromDN(((X509Certificate) instance.getSigningCertificateChain((IServices) null).get(0)).getSubjectX500Principal().getName(), "CN"));
     }
 
     /**
@@ -396,7 +400,7 @@ public class BaseProcessableTest extends TestCase {
         TestSigner instance = new TestSigner(globalConfig);
         instance.init(workerId, workerConfig, anyContext, null);
         
-        final List<String> fatalErrors = instance.getSignerFatalErrors();
+        final List<String> fatalErrors = instance.getFatalErrors(null);
         final String expectedErrorPrefix =
                 "Failed to initialize crypto token: Missing SHAREDLIBRARYNAME property";
         boolean foundError = false;
@@ -432,7 +436,7 @@ public class BaseProcessableTest extends TestCase {
         assertEquals("Alias", "Test",
                 selector.getAlias(workerId, instance, null, null));
         
-        final List<String> errors = instance.getSignerFatalErrors();
+        final List<String> errors = instance.getFatalErrors(null);
         
         assertTrue("Contains alias selector fatal error",
                 errors.contains("Test alias selector error"));
@@ -465,7 +469,11 @@ public class BaseProcessableTest extends TestCase {
         instance.importCertificateChain(chain, "alias2", null, Collections.<String, Object>emptyMap(), new ServicesImpl());
         
         final List<Certificate> importedChain =
-                instance.getSigningCertificateChain("alias2");
+                instance.getSigningCertificateChain("alias2", null);
+        
+        
+        System.out.println("CERT2: " + chain.get(0).toString());
+        System.out.println("ACTUAL: " + importedChain.get(0));
         
         assertTrue("Matching certificate",
                 Arrays.equals(chain.get(0).getEncoded(),
@@ -539,16 +547,8 @@ public class BaseProcessableTest extends TestCase {
         public static Certificate getCertificate() {
             return CERTIFICATE;
         }
-
-        @Override
-        public List<Certificate> getCertificateChain(int purpose) throws CryptoTokenOfflineException {
-            return Arrays.asList(CERTIFICATE);
-        }
-
-        @Override
-        public Certificate getCertificate(int purpose) throws CryptoTokenOfflineException {
-            return CERTIFICATE;
-        }
+        
+        
 
         @Override
         public void importCertificateChain(List<Certificate> certChain, String alias, char[] athenticationCode, Map<String, Object> params, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
@@ -556,20 +556,9 @@ public class BaseProcessableTest extends TestCase {
         }
 
         @Override
-        public Certificate getCertificate(String alias) throws CryptoTokenOfflineException {
-            return CERTIFICATE;
-        }
-
-        @Override
-        public List<Certificate> getCertificateChain(String alias) throws CryptoTokenOfflineException {
-            final List<Certificate> chain = importedChains.get(alias);
-            
-            if (chain == null) {
-                // fall-back to the hard-coded cert
-                return Collections.singletonList(CERTIFICATE);
-            }
-            
-            return chain;
+        public ICryptoInstance acquireCryptoInstance(String alias, Map<String, Object> params, RequestContext context) throws CryptoTokenOfflineException {
+            PrivateKey privateKey = null;
+            return new DefaultCryptoInstance("anyAlias", context, new BouncyCastleProvider(), privateKey, importedChains.isEmpty() ? Arrays.asList(CERTIFICATE) : importedChains.get(alias));
         }
 
     }
@@ -640,8 +629,9 @@ public class BaseProcessableTest extends TestCase {
             throw new UnsupportedOperationException("Not supported yet.");
         }
 
-        List<String> getSignerFatalErrors() {
-            return super.getFatalErrors();
+        @Override
+        protected List<String> getFatalErrors(IServices services) {
+            return super.getFatalErrors(services);
         }
         
         @Override

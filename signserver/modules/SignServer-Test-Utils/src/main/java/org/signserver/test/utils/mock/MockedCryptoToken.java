@@ -29,8 +29,7 @@ import org.signserver.common.*;
 import org.signserver.server.IServices;
 import org.signserver.server.cryptotokens.DefaultCryptoInstance;
 import org.signserver.server.cryptotokens.ICryptoInstance;
-import org.signserver.server.cryptotokens.ICryptoToken;
-import org.signserver.server.cryptotokens.ICryptoTokenV3;
+import org.signserver.server.cryptotokens.ICryptoTokenV4;
 import org.signserver.server.cryptotokens.TokenSearchResults;
 
 /**
@@ -40,16 +39,16 @@ import org.signserver.server.cryptotokens.TokenSearchResults;
  * @author Markus Kilås
  * @version $Id$
  */
-public class MockedCryptoToken implements ICryptoToken, ICryptoTokenV3 {
+public class MockedCryptoToken implements ICryptoTokenV4 {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(MockedCryptoToken.class);
     
-    private PrivateKey privateKey;
-    private PublicKey publicKey;
-    private Certificate signerCertificate;
-    private List<Certificate> certificateChain;
-    private String provider;
+    private final PrivateKey privateKey;
+    private final PublicKey publicKey;
+    private final Certificate signerCertificate;
+    private final List<Certificate> certificateChain;
+    private final String provider;
 
     private int privateKeyCalls;
     
@@ -61,6 +60,7 @@ public class MockedCryptoToken implements ICryptoToken, ICryptoTokenV3 {
         this.provider = provider;
     }
     
+    @Override
     public void init(int workerId, Properties props) throws CryptoTokenInitializationFailureException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -70,15 +70,18 @@ public class MockedCryptoToken implements ICryptoToken, ICryptoTokenV3 {
         return WorkerStatus.STATUS_ACTIVE;
     }
     
+    @Override
     public int getCryptoTokenStatus(final IServices services) {
         return getCryptoTokenStatus();
     }
 
-    public void activate(String authenticationcode) throws CryptoTokenAuthenticationFailureException, CryptoTokenOfflineException {
+    @Override
+    public void activate(String authenticationcode, final IServices services) throws CryptoTokenAuthenticationFailureException, CryptoTokenOfflineException {
         LOG.debug(">activate");
     }
 
-    public boolean deactivate() throws CryptoTokenOfflineException {
+    @Override
+    public boolean deactivate(final IServices services) throws CryptoTokenOfflineException {
         LOG.debug(">deactivate");
         return true;
     }
@@ -150,41 +153,6 @@ public class MockedCryptoToken implements ICryptoToken, ICryptoTokenV3 {
     }
 
     @Override
-    public PrivateKey getPrivateKey(String alias) throws CryptoTokenOfflineException {
-        return privateKey;
-    }
-
-    @Override
-    public PublicKey getPublicKey(String alias) throws CryptoTokenOfflineException {
-        return signerCertificate.getPublicKey();
-    }
-
-    @Override
-    public ICertReqData genCertificateRequest(ISignerCertReqInfo info, boolean explicitEccParameters, String keyAlias) throws CryptoTokenOfflineException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Certificate getCertificate(String alias) throws CryptoTokenOfflineException {
-        return signerCertificate;
-    }
-
-    @Override
-    public List<Certificate> getCertificateChain(String alias) throws CryptoTokenOfflineException {
-        return certificateChain;
-    }
-
-    @Override
-    public void generateKey(String keyAlgorithm, String keySpec, String alias, char[] authCode) throws CryptoTokenOfflineException, IllegalArgumentException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public boolean removeKey(String alias) throws CryptoTokenOfflineException, KeyStoreException, SignServerException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
     public void generateKey(String keyAlgorithm, String keySpec, String alias, char[] authCode, Map<String, Object> params, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
@@ -196,6 +164,11 @@ public class MockedCryptoToken implements ICryptoToken, ICryptoTokenV3 {
 
     @Override
     public Collection<KeyTestResult> testKey(String alias, char[] authCode, IServices Services) throws CryptoTokenOfflineException, KeyStoreException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean removeKey(String alias, IServices services) throws CryptoTokenOfflineException, KeyStoreException, SignServerException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

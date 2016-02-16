@@ -22,7 +22,7 @@ import org.signserver.server.archive.Archiver;
 import org.signserver.server.archive.ArchiverInitException;
 import org.signserver.server.archive.olddbarchiver.OldDatabaseArchiver;
 import org.signserver.server.config.entities.IWorkerConfigDataService;
-import org.signserver.server.cryptotokens.ICryptoToken;
+import org.signserver.server.cryptotokens.ICryptoTokenV4;
 import org.signserver.server.log.AllFieldsWorkerLogger;
 import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.signers.UnloadableWorker;
@@ -213,7 +213,7 @@ public class WorkerFactory {
             context.setCryptoTokenSupplier(new CryptoTokenSupplier() {
 
                 @Override
-                public ICryptoToken getCurrentCryptoToken() throws SignServerException {
+                public ICryptoTokenV4 getCurrentCryptoToken() throws SignServerException {
                     synchronized (WorkerFactory.this) {
                         try {
                             IWorker cryptoWorker = getWorker(new WorkerIdentifier(cryptoTokenName));

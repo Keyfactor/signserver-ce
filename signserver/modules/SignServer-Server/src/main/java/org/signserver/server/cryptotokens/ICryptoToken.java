@@ -36,6 +36,7 @@ import org.signserver.common.KeyTestResult;
  * @author Philip Vendil
  * @version $Id$
  */
+@Deprecated
 public interface ICryptoToken {
 
     int PURPOSE_SIGN = 1;

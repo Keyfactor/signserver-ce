@@ -74,7 +74,7 @@ public class UnloadableWorker extends BaseSigner implements ITimedService {
      * an error message
      */
     @Override
-    public List<String> getFatalErrors() {
+    protected List<String> getFatalErrors(IServices services) {
         LinkedList<String> errors = new LinkedList<>();
         errors.add(errorMessage);
         return errors;

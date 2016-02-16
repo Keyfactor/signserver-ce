@@ -17,6 +17,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.DispatcherProcessSessionLocal;
+import org.signserver.server.IServices;
 import org.signserver.server.SignServerContext;
 import org.signserver.server.WorkerContext;
 
@@ -45,13 +46,14 @@ public class UserMappedDispatcherUnitTest {
         WorkerContext context = new SignServerContext(null, null);
         UserMappedDispatcher instance = new MockedUserMapppedDispatcher();
         instance.init(1, config, context, null);
-        assertTrue("errs: " + instance.getFatalErrors(), instance.getFatalErrors().toString().contains("USERNAME_MAPPING"));
+        IServices services = null;
+        assertTrue("errs: " + instance.getFatalErrors(services), instance.getFatalErrors(services).toString().contains("USERNAME_MAPPING"));
         
         // With property
         instance = new MockedUserMapppedDispatcher();
         config.setProperty("USERNAME_MAPPING", "user1:worker1, user2:worker2");
         instance.init(2, config, context, null);
-        assertTrue("errs: " + instance.getFatalErrors(), instance.getFatalErrors().isEmpty());
+        assertTrue("errs: " + instance.getFatalErrors(services), instance.getFatalErrors(services).isEmpty());
     }
     
     /**
@@ -66,18 +68,19 @@ public class UserMappedDispatcherUnitTest {
         UserMappedDispatcher instance = new MockedUserMapppedDispatcher();
         config.setProperty("USERNAME_MAPPING", "user1::worker1");
         instance.init(3, config, context, null);
-        assertTrue("errs: " + instance.getFatalErrors(), instance.getFatalErrors().toString().contains("USERNAME_MAPPING"));
+        IServices services = null;
+        assertTrue("errs: " + instance.getFatalErrors(services), instance.getFatalErrors(services).toString().contains("USERNAME_MAPPING"));
         
         // Test some border cases without error
         instance = new MockedUserMapppedDispatcher();
         config.setProperty("USERNAME_MAPPING", "user1:worker1,\nuser2:worker2");
         instance.init(4, config, context, null);
-        assertTrue("new line: " + instance.getFatalErrors(), instance.getFatalErrors().isEmpty());
+        assertTrue("new line: " + instance.getFatalErrors(services), instance.getFatalErrors(services).isEmpty());
         
         instance = new MockedUserMapppedDispatcher();
         config.setProperty("USERNAME_MAPPING", "");
         instance.init(5, config, context, null);
-        assertTrue("empty: " + instance.getFatalErrors(), instance.getFatalErrors().isEmpty());
+        assertTrue("empty: " + instance.getFatalErrors(services), instance.getFatalErrors(services).isEmpty());
     }
     
     /** Mocked UserMappedDispatcher not doing any JNDI lookups. */

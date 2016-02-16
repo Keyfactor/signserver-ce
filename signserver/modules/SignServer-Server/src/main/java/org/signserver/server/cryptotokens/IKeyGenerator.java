@@ -21,6 +21,7 @@ import org.signserver.common.CryptoTokenOfflineException;
  * @author Markus Kilås
  * @version $Id$
  */
+@Deprecated
 public interface IKeyGenerator {
 
     /**

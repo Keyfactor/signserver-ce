@@ -312,8 +312,7 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
                 
             // Try to initialize the key usage counter
             try {
-                initKeyUsageCounter(workerManagerSession.getWorker(new WorkerIdentifier(workerId)),
-                        null, null);
+                initKeyUsageCounter(workerManagerSession.getWorker(new WorkerIdentifier(workerId)), servicesImpl);
             } catch (NoSuchWorkerException ex) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Worker no longer exists so not initializing key usage counter: " + ex.getMessage());
@@ -347,10 +346,10 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
             }
             IProcessable signer = (IProcessable) worker;
             
-            signer.activateSigner(authenticationCode);
+            signer.activateSigner(authenticationCode, servicesImpl);
             
             // Try to initialize the key usage counter
-            initKeyUsageCounter(worker, null, null);
+            initKeyUsageCounter(worker, servicesImpl);
         } catch (NoSuchWorkerException ex) {
             throw new InvalidWorkerIdException(ex.getMessage());
         }
@@ -371,7 +370,7 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
             }
             IProcessable signer = (IProcessable) worker;
             
-            return signer.deactivateSigner();
+            return signer.deactivateSigner(servicesImpl);
         } catch (NoSuchWorkerException ex) {
             throw new InvalidWorkerIdException(ex.getMessage());
         }
@@ -845,18 +844,13 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
 
     @Override
     public Certificate getSignerCertificate(final WorkerIdentifier signerId) throws CryptoTokenOfflineException {
-         return getSignerCertificate(signerId, null, null);
-    }
-
-    private Certificate getSignerCertificate(final WorkerIdentifier signerId,
-                                            final ProcessRequest request,
-                                            final RequestContext context)
-            throws CryptoTokenOfflineException {
         Certificate ret = null;
         try {
             final IWorker worker = workerManagerSession.getWorker(signerId);
             if (worker instanceof BaseProcessable) {
-                ret = ((BaseProcessable) worker).getSigningCertificate(request, context);
+                final BaseProcessable processable = (BaseProcessable) worker;
+                
+                ret = processable.getSigningCertificate(servicesImpl);
             }
         } catch (NoSuchWorkerException ex) {
             if (LOG.isDebugEnabled()) {
@@ -869,18 +863,13 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
     @Override
     public List<Certificate> getSignerCertificateChain(final WorkerIdentifier signerId)
             throws CryptoTokenOfflineException {
-        return getSignerCertificateChain(signerId, null, null);
-    }
-        
-    private List<Certificate> getSignerCertificateChain(final WorkerIdentifier signerId,
-                                                       final ProcessRequest request,
-                                                       final RequestContext context)
-            throws CryptoTokenOfflineException {
         List<Certificate> ret = null;
         try {
             IWorker worker = workerManagerSession.getWorker(signerId);
             if (worker instanceof BaseProcessable) {
-                ret = ((BaseProcessable) worker).getSigningCertificateChain(request, context);
+                final BaseProcessable processable = (BaseProcessable) worker;
+                
+                ret = processable.getSigningCertificateChain(servicesImpl);
             }
         } catch (NoSuchWorkerException ex) {
             if (LOG.isDebugEnabled()) {
@@ -893,16 +882,8 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
     @Override
     public byte[] getSignerCertificateBytes(final WorkerIdentifier signerId) 
             throws CryptoTokenOfflineException {
-        return getSignerCertificateBytes(signerId, null, null);
-    }
-    
-    private byte[] getSignerCertificateBytes(final WorkerIdentifier signerId,
-                                            final ProcessRequest request,
-                                            final RequestContext context) 
-            throws CryptoTokenOfflineException {
         try {
-            final Certificate cert =
-                    getSignerCertificate(signerId, request, context);
+            final Certificate cert = getSignerCertificate(signerId);
             return cert == null ? null : cert.getEncoded();
         } catch (CertificateEncodingException ex) {
             throw new CryptoTokenOfflineException(ex);
@@ -912,15 +893,7 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
     @Override
     public List<byte[]> getSignerCertificateChainBytes(final WorkerIdentifier signerId)
             throws CryptoTokenOfflineException {
-        return getSignerCertificateChainBytes(signerId, null, null);
-    }
-    
-    public List<byte[]> getSignerCertificateChainBytes(final WorkerIdentifier signerId,
-                                                       final ProcessRequest request,
-                                                       final RequestContext context)
-            throws CryptoTokenOfflineException {
-        final List<Certificate> certs =
-                getSignerCertificateChain(signerId, request, context);
+        final List<Certificate> certs = getSignerCertificateChain(signerId);
         final List<byte[]> res = new LinkedList<byte[]>();
         
         if (certs == null) {
@@ -946,7 +919,7 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
         try {
             final IWorker worker = workerManagerSession.getWorker(signerId);
             if (worker instanceof BaseProcessable) {
-                ret = ((BaseProcessable) worker).getSigningCertificateChain(alias);
+                ret = ((BaseProcessable) worker).getSigningCertificateChain(alias, servicesImpl);
             }
         } catch (NoSuchWorkerException ex) {
             if (LOG.isDebugEnabled()) {
@@ -1302,16 +1275,14 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
                 uniqueIds, includeData);
     }
 
-    private void initKeyUsageCounter(final IWorker worker,
-                                     final ProcessRequest request,
-                                     final RequestContext context) {
+    private void initKeyUsageCounter(final IWorker worker, final IServices services) {
         // Try to insert a key usage counter entry for this worker's public
         // key
         // Get worker instance
         if (worker instanceof BaseProcessable) {
             try {
                 final Certificate cert = ((BaseProcessable)worker)
-                        .getSigningCertificate(request, context);
+                        .getSigningCertificate(services);
                 if (cert != null) {
                     final String keyHash = KeyUsageCounterHash
                             .create(cert.getPublicKey());

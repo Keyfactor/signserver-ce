@@ -35,12 +35,13 @@ import org.apache.log4j.Logger;
 import org.cesecore.util.CertTools;
 import org.signserver.common.*;
 import org.signserver.ejb.interfaces.InternalProcessSessionLocal;
+import org.signserver.server.IServices;
 import org.signserver.server.UsernamePasswordClientCredential;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.DefaultArchivable;
 import org.signserver.server.cryptotokens.ICryptoInstance;
-import org.signserver.server.cryptotokens.ICryptoToken;
+import org.signserver.server.cryptotokens.ICryptoTokenV4;
 import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.log.LogMap;
 import org.signserver.server.signers.BaseSigner;
@@ -210,17 +211,21 @@ public class PDFSigner extends BaseSigner {
     
     
     @Override
-    protected List<String> getCryptoTokenFatalErrors() {
-        final List<String> errors = super.getCryptoTokenFatalErrors();
+    protected List<String> getCryptoTokenFatalErrors(final IServices services) {
+        final List<String> errors = super.getCryptoTokenFatalErrors(services);
         
         // according to the PDF specification, only SHA1 is permitted as digest algorithm
         // for DSA public/private keys
+        final RequestContext context = new RequestContext(true);
+        context.setServices(services);
+        ICryptoInstance crypto = null;
         try {
-            final ICryptoToken token = getCryptoToken();
+            final ICryptoTokenV4 token = getCryptoToken();    
+            crypto = acquireDefaultCryptoInstance(context);
 
             if (token != null) {
-                final PublicKey pub = token.getPublicKey(ICryptoToken.PURPOSE_SIGN);
-                final PrivateKey priv = token.getPrivateKey(ICryptoToken.PURPOSE_SIGN);
+                final PublicKey pub = crypto.getPublicKey();
+                final PrivateKey priv = crypto.getPrivateKey();
                 
                 if (pub instanceof DSAPublicKey || priv instanceof DSAPrivateKey) {
                     if (!"SHA1".equals(digestAlgorithm)) {
@@ -228,12 +233,17 @@ public class PDFSigner extends BaseSigner {
                     }
                 }
             }
-        } catch (CryptoTokenOfflineException e) { // NOPMD
+        } catch (CryptoTokenOfflineException | SignServerException | InvalidAlgorithmParameterException | UnsupportedCryptoTokenParameter | IllegalRequestException e) { // NOPMD
             // In this case, we can't tell if the keys are DSA
             // appropriate crypto token errors should be handled by the base class
-        } catch (SignServerException e) { // NOPMD
-            // In this case, we can't tell if the keys are DSA
-            // appropriate crypto token errors should be handled by the base class
+        } finally {
+            if (crypto != null) {
+                try {
+                    releaseCryptoInstance(crypto, context);
+                } catch (SignServerException ex) {
+                    LOG.warn("Unable to release crypto instance", ex);
+                }
+            }
         }
 
         return errors;
@@ -283,7 +293,7 @@ public class PDFSigner extends BaseSigner {
         
         ICryptoInstance crypto = null;
         try {
-            crypto = acquireCryptoInstance(ICryptoToken.PURPOSE_SIGN, signRequest, requestContext);
+            crypto = acquireCryptoInstance(ICryptoTokenV4.PURPOSE_SIGN, signRequest, requestContext);
 
             if (params.isRefuseDoubleIndirectObjects()) {
                 checkForDuplicateObjects(pdfbytes);
@@ -311,12 +321,12 @@ public class PDFSigner extends BaseSigner {
             if (signRequest instanceof GenericServletRequest) {
                 signResponse = new GenericServletResponse(sReq.getRequestID(),
                         signedbytes,
-                        getSigningCertificate(signRequest, requestContext),
+                        crypto.getCertificate(),
                         archiveId, archivables, CONTENT_TYPE);
             } else {
                 signResponse = new GenericSignResponse(sReq.getRequestID(),
                         signedbytes, 
-                        getSigningCertificate(signRequest, requestContext),
+                        crypto.getCertificate(),
                         archiveId, archivables);
             }
 
@@ -1086,8 +1096,8 @@ public class PDFSigner extends BaseSigner {
     }
 
     @Override
-    protected List<String> getFatalErrors() {
-        final List<String> fatalErrors = super.getFatalErrors();
+    protected List<String> getFatalErrors(final IServices services) {
+        final List<String> fatalErrors = super.getFatalErrors(services);
         
         fatalErrors.addAll(configErrors);
         return fatalErrors;

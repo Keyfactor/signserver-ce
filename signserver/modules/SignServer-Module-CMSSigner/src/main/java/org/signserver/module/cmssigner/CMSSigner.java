@@ -33,6 +33,7 @@ import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.signserver.common.*;
+import org.signserver.server.IServices;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.DefaultArchivable;
@@ -126,16 +127,18 @@ public class CMSSigner extends BaseSigner {
         byte[] data = (byte[]) sReq.getRequestData();
         final String archiveId = createArchiveId(data, (String) requestContext.get(RequestContext.TRANSACTION_ID));
 
+        X509Certificate cert = null;
+        List<Certificate> certs = null;
         ICryptoInstance crypto = null;
         try {
             crypto = acquireCryptoInstance(ICryptoToken.PURPOSE_SIGN, signRequest, requestContext);
-            final X509Certificate cert = (X509Certificate) getSigningCertificate(crypto);
+            cert = (X509Certificate) getSigningCertificate(crypto);
             if (LOG.isDebugEnabled()) {
                 LOG.debug("SigningCert: " + cert);
             }
             
             // Get certificate chain and signer certificate
-            final List<Certificate> certs = this.getSigningCertificateChain(crypto);
+            certs = includedCertificates(this.getSigningCertificateChain(crypto));
             if (certs == null) {
                 throw new IllegalArgumentException("Null certificate chain. This signer needs a certificate.");
             }
@@ -148,7 +151,7 @@ public class CMSSigner extends BaseSigner {
                      new JcaDigestCalculatorProviderBuilder().setProvider("BC").build())
                      .build(contentSigner, cert));
 
-            generator.addCertificates(new JcaCertStore(includedCertificates(certs)));
+            generator.addCertificates(new JcaCertStore(certs));
             final CMSTypedData content = new CMSProcessableByteArray(data);
 
             // Should the content be detached or not
@@ -181,12 +184,12 @@ public class CMSSigner extends BaseSigner {
             if (signRequest instanceof GenericServletRequest) {
                 signResponse = new GenericServletResponse(sReq.getRequestID(),
                         signedbytes,
-                        getSigningCertificate(signRequest, requestContext),
+                        cert,
                         archiveId, archivables, CONTENT_TYPE);
             } else {
                 signResponse = new GenericSignResponse(sReq.getRequestID(),
                         signedbytes,
-                        getSigningCertificate(signRequest, requestContext),
+                        cert,
                         archiveId, archivables);
             }
             
@@ -232,8 +235,8 @@ public class CMSSigner extends BaseSigner {
     }
 
     @Override
-    protected List<String> getFatalErrors() {
-        final LinkedList<String> errors = new LinkedList<String>(super.getFatalErrors());
+    protected List<String> getFatalErrors(final IServices services) {
+        final LinkedList<String> errors = new LinkedList<String>(super.getFatalErrors(services));
         errors.addAll(configErrors);
         return errors;
     }

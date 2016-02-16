@@ -20,7 +20,7 @@ import javax.persistence.EntityManager;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;
-import org.signserver.server.cryptotokens.ICryptoToken;
+import org.signserver.server.cryptotokens.ICryptoTokenV4;
 import org.signserver.validationservice.common.Validation;
 
 /**
@@ -48,7 +48,7 @@ public interface IValidator {
      * @param ct the extended crypto token used by the validation service.
      * @throws SignServerException if unexpected error occurred during initialization.
      */
-    void init(int workerId, int validatorId, Properties props, EntityManager em, ICryptoToken ct) throws SignServerException;
+    void init(int workerId, int validatorId, Properties props, EntityManager em, ICryptoTokenV4 ct) throws SignServerException;
 
     /**
      * Main method of a Validation Service responsible for validating certificates.

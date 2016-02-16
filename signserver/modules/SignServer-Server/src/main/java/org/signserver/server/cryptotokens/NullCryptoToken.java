@@ -14,24 +14,17 @@ package org.signserver.server.cryptotokens;
 
 import java.security.KeyStore;
 import java.security.KeyStoreException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
 import java.security.cert.Certificate;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.cesecore.util.query.QueryCriteria;
-import org.signserver.common.CryptoTokenAuthenticationFailureException;
-import org.signserver.common.CryptoTokenInitializationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
-import org.signserver.common.IllegalRequestException;
 import org.signserver.common.KeyTestResult;
-import org.signserver.common.QueryException;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.server.IServices;
@@ -65,84 +58,23 @@ public class NullCryptoToken extends BaseCryptoToken {
     }
 
     @Override
-    public int getCryptoTokenStatus() {
+    public int getCryptoTokenStatus(IServices services) {
         return status;
     }
 
     @Override
-    public void activate(final String authenticationcode) {
+    public void activate(final String authenticationcode, IServices services) {
         if (LOG.isTraceEnabled()) {
             LOG.trace("activate");
         }
     }
 
     @Override
-    public boolean deactivate() {
+    public boolean deactivate(IServices services) {
         if (LOG.isTraceEnabled()) {
             LOG.trace("deactivate");
         }
         return true;
-    }
-
-    @Override
-    public PrivateKey getPrivateKey(int purpose) throws CryptoTokenOfflineException {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("getPrivateKey(" + purpose + ")");
-        }
-        throw new CryptoTokenOfflineException("Unsupported by crypto token");
-    }
-
-    @Override
-    public PublicKey getPublicKey(int purpose) throws CryptoTokenOfflineException {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("getPublicKey(" + purpose + ")");
-        }
-        throw new CryptoTokenOfflineException("Unsupported by crypto token");
-    }
-
-    @Override
-    public String getProvider(int providerUsage) {
-        return "BC";
-    }
-
-    @Override
-    public Certificate getCertificate(int purpose) throws CryptoTokenOfflineException {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("getCertificate(" + purpose + ")");
-        }
-        return null;
-    }
-
-    @Override
-    public List<Certificate> getCertificateChain(int purpose) throws CryptoTokenOfflineException {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("getCertificateChain(" + purpose + ")");
-        }
-        throw new CryptoTokenOfflineException("Unsupported by crypto token");
-    }
-
-    @Override
-    public ICertReqData genCertificateRequest(ISignerCertReqInfo info, boolean explicitEccParameters, boolean defaultKey) throws CryptoTokenOfflineException {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("genCertificateRequest");
-        }
-        throw new CryptoTokenOfflineException("Unsupported by crypto token");
-    }
-
-    @Override
-    public boolean destroyKey(int purpose) {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("destroyKey");
-        }
-        return true;
-    }
-
-    @Override
-    public Collection<KeyTestResult> testKey(String alias, char[] authCode) {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("testKey");
-        }
-        return Collections.emptyList();
     }
 
     @Override
@@ -151,11 +83,6 @@ public class NullCryptoToken extends BaseCryptoToken {
             LOG.debug("getKeyStore");
         }
         throw new CryptoTokenOfflineException("Unsupported by crypto token");
-    }
-
-    @Override
-    public int getCryptoTokenStatus(IServices services) {
-        return getCryptoTokenStatus();
     }
 
     @Override
@@ -193,40 +120,7 @@ public class NullCryptoToken extends BaseCryptoToken {
     }
 
     @Override
-    public PrivateKey getPrivateKey(String alias) throws CryptoTokenOfflineException {
-        throw new CryptoTokenOfflineException("Unsupported by crypto token");
-    }
-
-    @Override
-    public PublicKey getPublicKey(String alias) throws CryptoTokenOfflineException {
-        throw new CryptoTokenOfflineException("Unsupported by crypto token");
-    }
-
-    @Override
-    public ICertReqData genCertificateRequest(ISignerCertReqInfo info, boolean explicitEccParameters, String keyAlias) throws CryptoTokenOfflineException {
-        throw new CryptoTokenOfflineException("Unsupported by crypto token");
-    }
-
-    @Override
-    public Certificate getCertificate(String alias) throws CryptoTokenOfflineException {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("getCertificate(" + alias + ")");
-        }
-        return null;
-    }
-
-    @Override
-    public List<Certificate> getCertificateChain(String alias) throws CryptoTokenOfflineException {
-        throw new CryptoTokenOfflineException("Unsupported by crypto token");
-    }
-
-    @Override
-    public void generateKey(String keyAlgorithm, String keySpec, String alias, char[] authCode) throws CryptoTokenOfflineException, IllegalArgumentException {
-        throw new CryptoTokenOfflineException("Unsupported by crypto token");
-    }
-
-    @Override
-    public boolean removeKey(String alias) throws CryptoTokenOfflineException, KeyStoreException, SignServerException {
+    public boolean removeKey(String alias, IServices services) throws CryptoTokenOfflineException, KeyStoreException, SignServerException {
         throw new CryptoTokenOfflineException("Unsupported by crypto token");
     }
     

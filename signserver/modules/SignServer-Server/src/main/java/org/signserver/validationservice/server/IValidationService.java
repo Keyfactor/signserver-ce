@@ -20,7 +20,7 @@ import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 import org.signserver.server.IServices;
-import org.signserver.server.cryptotokens.ICryptoToken;
+import org.signserver.server.cryptotokens.ICryptoTokenV4;
 import org.signserver.validationservice.common.ValidateRequest;
 import org.signserver.validationservice.common.ValidateResponse;
 
@@ -45,7 +45,7 @@ public interface IValidationService {
      * @param em reference to the entity manager
      * @param ct the crypto token used by the validation service.
      */
-    void init(int workerId, WorkerConfig config, EntityManager em, ICryptoToken ct);
+    void init(int workerId, WorkerConfig config, EntityManager em, ICryptoTokenV4 ct);
 
     /**
      * Method used to check the validation of a certificate

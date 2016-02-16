@@ -50,12 +50,13 @@ import org.signserver.common.ServiceLocator;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.ejb.interfaces.InternalProcessSessionLocal;
+import org.signserver.server.IServices;
 import org.signserver.server.UsernamePasswordClientCredential;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.DefaultArchivable;
 import org.signserver.server.cryptotokens.ICryptoInstance;
-import org.signserver.server.cryptotokens.ICryptoToken;
+import org.signserver.server.cryptotokens.ICryptoTokenV4;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -338,13 +339,15 @@ public class XAdESSigner extends BaseSigner {
             throw new SignServerException("Received a request with no user name set, while configured to get claimed role from user name and no default value for claimed role is set.");
         }
         
+        Certificate cert = null;
         ICryptoInstance crypto = null;
         try {
-            crypto = acquireCryptoInstance(ICryptoToken.PURPOSE_SIGN, signRequest, requestContext);
+            crypto = acquireCryptoInstance(ICryptoTokenV4.PURPOSE_SIGN, signRequest, requestContext);
 
             // Parse
             final XadesSigner signer =
                     createSigner(crypto, parameters, claimedRole, signRequest, requestContext);
+            cert = crypto.getCertificate();
             final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             dbf.setNamespaceAware(true);
 
@@ -400,12 +403,10 @@ public class XAdESSigner extends BaseSigner {
         final Collection<? extends Archivable> archivables = Arrays.asList(new DefaultArchivable(Archivable.TYPE_RESPONSE, CONTENT_TYPE, signedbytes, archiveId));
         if (signRequest instanceof GenericServletRequest) {
             response = new GenericServletResponse(sReq.getRequestID(), signedbytes,
-                    getSigningCertificate(signRequest, requestContext),
-                    archiveId, archivables, CONTENT_TYPE);
+                    cert, archiveId, archivables, CONTENT_TYPE);
         } else {
             response = new GenericSignResponse(sReq.getRequestID(), signedbytes,
-                    getSigningCertificate(signRequest, requestContext),
-                    archiveId, archivables);
+                    cert, archiveId, archivables);
         }
         
         // The client can be charged for the request
@@ -492,8 +493,8 @@ public class XAdESSigner extends BaseSigner {
     }
 
     @Override
-    protected List<String> getFatalErrors() {
-        final LinkedList<String> errors = new LinkedList<String>(super.getFatalErrors());
+    protected List<String> getFatalErrors(final IServices services) {
+        final LinkedList<String> errors = new LinkedList<String>(super.getFatalErrors(services));
         errors.addAll(configErrors);
         return errors;
     }

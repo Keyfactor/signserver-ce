@@ -34,6 +34,7 @@ import org.signserver.common.KeyTestResult;
  * @author Markus Kilås
  * @version $Id$
  */
+@Deprecated
 public interface ICryptoTokenV2 extends IKeyGenerator, IKeyRemover {
 
     String ALL_KEYS = "all";

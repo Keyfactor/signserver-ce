@@ -13,7 +13,7 @@
 package org.signserver.server;
 
 import org.signserver.common.SignServerException;
-import org.signserver.server.cryptotokens.ICryptoToken;
+import org.signserver.server.cryptotokens.ICryptoTokenV4;
 
 /**
  * Supplier of the current crypto token.
@@ -28,5 +28,5 @@ public interface CryptoTokenSupplier {
      * @throws SignServerException in case initialization of the crypto token
      * failed
      */
-    ICryptoToken getCurrentCryptoToken() throws SignServerException;
+    ICryptoTokenV4 getCurrentCryptoToken() throws SignServerException;
 }

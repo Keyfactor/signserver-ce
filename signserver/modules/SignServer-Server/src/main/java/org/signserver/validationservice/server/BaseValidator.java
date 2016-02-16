@@ -13,7 +13,6 @@
 package org.signserver.validationservice.server;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.cert.Certificate;
@@ -25,6 +24,7 @@ import org.apache.log4j.Logger;
 import org.cesecore.util.CertTools;
 import org.signserver.common.SignServerException;
 import org.signserver.server.cryptotokens.ICryptoToken;
+import org.signserver.server.cryptotokens.ICryptoTokenV4;
 import org.signserver.validationservice.common.ValidationServiceConstants;
 
 /**
@@ -42,7 +42,7 @@ public abstract class BaseValidator implements IValidator {
     protected int validatorId;
     protected Properties props;
     protected EntityManager em;
-    protected ICryptoToken ct;
+    protected ICryptoTokenV4 ct;
     private HashMap<String, List<Certificate>> certChainMap;
     private HashMap<Integer, Properties> issuerProperties;
 
@@ -70,7 +70,7 @@ public abstract class BaseValidator implements IValidator {
      */
     @Override
     public void init(int workerId, int validatorId, Properties props, EntityManager em,
-            ICryptoToken ct) throws SignServerException {
+            ICryptoTokenV4 ct) throws SignServerException {
         this.workerId = workerId;
         this.validatorId = validatorId;
         this.props = props;

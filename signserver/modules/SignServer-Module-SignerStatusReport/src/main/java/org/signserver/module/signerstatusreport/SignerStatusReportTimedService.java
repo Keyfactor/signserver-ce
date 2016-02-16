@@ -29,6 +29,7 @@ import org.signserver.server.SignServerContext;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.timedservices.BaseTimedService;
 import org.signserver.ejb.interfaces.WorkerSessionLocal;
+import org.signserver.server.IServices;
 
 /**
  * TimedService that outputs a status report for a configured set of signers.
@@ -136,10 +137,10 @@ public class SignerStatusReportTimedService extends BaseTimedService {
     }
 
     @Override
-    protected List<String> getFatalErrors() {
-        final List<String> fatalErrors = new LinkedList<String>();
+    protected List<String> getFatalErrors(final IServices services) {
+        final List<String> fatalErrors = new LinkedList<>();
         
-        fatalErrors.addAll(super.getFatalErrors());
+        fatalErrors.addAll(super.getFatalErrors(services));
         
         if (workers.isEmpty()) {
             fatalErrors.add("Property WORKERS missing");

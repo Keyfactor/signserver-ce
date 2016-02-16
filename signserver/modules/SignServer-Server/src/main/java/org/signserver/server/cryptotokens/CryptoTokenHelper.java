@@ -104,6 +104,7 @@ public class CryptoTokenHelper {
     public static final String PROPERTY_SHAREDLIBRARYNAME = "SHAREDLIBRARYNAME";
     public static final String PROPERTY_PIN = "PIN";
     public static final String PROPERTY_DEFAULTKEY = "DEFAULTKEY";
+    public static final String PROPERTY_TESTKEY = "TESTKEY";
     public static final String PROPERTY_AUTHCODE = "AUTHCODE";
     public static final String PROPERTY_SLOTLABELTYPE = "SLOTLABELTYPE";
     public static final String PROPERTY_SLOTLABELVALUE = "SLOTLABELVALUE";

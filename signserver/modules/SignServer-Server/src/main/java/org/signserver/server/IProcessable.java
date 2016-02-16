@@ -73,7 +73,7 @@ public interface IProcessable extends IWorker {
      *
      * @param authCode
      */
-    void activateSigner(String authCode) throws
+    void activateSigner(String authCode, IServices services) throws
             CryptoTokenAuthenticationFailureException, CryptoTokenOfflineException;
 
     /**
@@ -81,7 +81,7 @@ public interface IProcessable extends IWorker {
      *
      * Optional method, if not supported throw a CryptoTokenOfflineException
      */
-    boolean deactivateSigner() throws CryptoTokenOfflineException;
+    boolean deactivateSigner(IServices services) throws CryptoTokenOfflineException;
 
     /**
      * Method used to tell the processable worker to create a certificate request using its crypto token.
@@ -116,27 +116,7 @@ public interface IProcessable extends IWorker {
      */
     String getAuthenticationType();
 
-    /**
-     * Method used to remove a key in the processable worker that shouldn't be used any more
-     *
-     * Optional method, if not supported return false.
-     *
-     * @param purpose on of ICryptoToken.PURPOSE_ constants
-     * @return true if removal was successful.
-     */
-    boolean destroyKey(int purpose);
-
-    /**
-     * @see IKeyGenerator#generateKey(java.lang.String, java.lang.String,
-     *  java.lang.String, char[])
-     */
-    void generateKey(String keyAlgorithm, String keySpec, String alias,
-            char[] authCode) throws
-            CryptoTokenOfflineException,
-            DuplicateAliasException, 
-            NoSuchAlgorithmException,
-            InvalidAlgorithmParameterException,
-            UnsupportedCryptoTokenParameter;;
+    public boolean removeKey(String alias, IServices services) throws CryptoTokenOfflineException, KeyStoreException, SignServerException;
 
     /**
      * @see ICryptoTokenV3#generateKey(java.lang.String, java.lang.String, java.lang.String, char[], java.util.Map, org.signserver.server.IServices) 
@@ -166,7 +146,7 @@ public interface IProcessable extends IWorker {
      * @see WorkerStatus#STATUS_ACTIVE
      * @see WorkerStatus#STATUS_OFFLINE
      */
-    int getCryptoTokenStatus();
+    int getCryptoTokenStatus(IServices services);
     
     /**
      * Import a signing certificate chain to the signer's crypto token.

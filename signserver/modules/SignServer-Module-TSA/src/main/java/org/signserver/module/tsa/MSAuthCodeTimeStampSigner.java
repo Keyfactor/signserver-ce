@@ -61,6 +61,7 @@ import org.bouncycastle.tsp.TimeStampResponseGenerator;
 import org.cesecore.util.Base64;
 import org.signserver.common.*;
 import org.signserver.module.tsa.bc.MSAuthCodeCMSUtils;
+import org.signserver.server.IServices;
 import org.signserver.server.ITimeSource;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.archive.Archivable;
@@ -198,7 +199,7 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
         // Validate certificates in signer certificate chain
         final String requireValidChain = config.getProperty(REQUIREVALIDCHAIN, Boolean.FALSE.toString());
         if (Boolean.parseBoolean(requireValidChain)) {
-            validChain = validateChain();
+            validChain = validateChain(null);
         }
         
         includeSigningCertificateAttribute =
@@ -300,6 +301,7 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
             ASN1OctetString octets = ASN1OctetString.getInstance(tag.getObject());
             byte[] content = octets.getOctets();
            
+            X509Certificate x509cert = null;
             final ITimeSource timeSrc;
             final Date date;
             byte[] der;
@@ -318,7 +320,7 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
                 Certificate[] certs = (Certificate[]) certList.toArray(new Certificate[certList.size()]);
 
                 // Sign
-                X509Certificate x509cert = (X509Certificate) certs[0]; 
+                x509cert = (X509Certificate) certs[0]; 
 
                 timeSrc = getTimeSource();
                 if (LOG.isDebugEnabled()) {
@@ -356,15 +358,12 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
                 AttributeTable signedAttributesTable = new AttributeTable(signedAttributes);
                 DefaultSignedAttributeTableGenerator signedAttributeGenerator = new DefaultSignedAttributeTableGenerator(signedAttributesTable);
 
-
-                final String provider = cryptoToken.getProvider(ICryptoToken.PROVIDERUSAGE_SIGN);
-
                 SignerInfoGeneratorBuilder signerInfoBuilder =
                         new SignerInfoGeneratorBuilder(new JcaDigestCalculatorProviderBuilder().setProvider("BC").build());
                 signerInfoBuilder.setSignedAttributeGenerator(signedAttributeGenerator);
 
                 JcaContentSignerBuilder contentSigner = new JcaContentSignerBuilder(signatureAlgo);
-                contentSigner.setProvider(provider);
+                contentSigner.setProvider(crypto.getProvider());
 
                 final SignerInfoGenerator sig = signerInfoBuilder.build(contentSigner.build(crypto.getPrivateKey()), new X509CertificateHolder(x509cert.getEncoded()));
 
@@ -400,15 +399,14 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
             if (signRequest instanceof GenericServletRequest) {
                 signResponse = new GenericServletResponse(sReq.getRequestID(),
                         		signedbytes,
-                                    getSigningCertificate(signRequest,
-                                                          requestContext),
+                                    x509cert,
                                     archiveId,
                                     archivables,
                                     RESPONSE_CONTENT_TYPE);
             } else {
                 signResponse = new GenericSignResponse(sReq.getRequestID(),
                         signedbytes,
-                        getSigningCertificate(signRequest, requestContext),
+                        x509cert,
                         archiveId,
                         archivables);
             }
@@ -525,11 +523,11 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
      * certificate is a trusted certificate as the root certificate is normally 
      * not included.
      */
-    private boolean validateChain() {
+    private boolean validateChain(final IServices services) {
         boolean result = true;
         try {
             final List<Certificate> signingCertificateChain =
-                    getSigningCertificateChain();
+                    getSigningCertificateChain(services);
             if (signingCertificateChain != null) {
                 List<Certificate> chain = (List<Certificate>) signingCertificateChain;
                 for (int i = 0; i < chain.size(); i++) {
@@ -583,9 +581,9 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
     }
 
     @Override
-    protected List<String> getFatalErrors() {
-        final List<String> result = new LinkedList<String>();
-        result.addAll(super.getFatalErrors());
+    protected List<String> getFatalErrors(final IServices services) {
+        final List<String> result = new LinkedList<>();
+        result.addAll(super.getFatalErrors(services));
         result.addAll(configErrors);
         
         try {
@@ -598,7 +596,7 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
             }
 
             // Check if certificat has the required EKU
-            final Certificate certificate = getSigningCertificate();
+            final Certificate certificate = getSigningCertificate(services);
             try {
                 if (certificate instanceof X509Certificate) {
                     final X509Certificate cert = (X509Certificate) certificate;

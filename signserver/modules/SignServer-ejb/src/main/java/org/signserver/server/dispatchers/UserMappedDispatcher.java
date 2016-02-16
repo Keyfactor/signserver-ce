@@ -30,6 +30,7 @@ import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.ejb.interfaces.DispatcherProcessSessionLocal;
+import org.signserver.server.IServices;
 import org.signserver.server.UsernamePasswordClientCredential;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.log.AdminInfo;
@@ -150,8 +151,8 @@ public class UserMappedDispatcher extends BaseDispatcher {
     }
 
     @Override
-    protected List<String> getFatalErrors() {
-        final LinkedList<String> errors = new LinkedList<String>(super.getFatalErrors());
+    protected List<String> getFatalErrors(IServices services) {
+        final LinkedList<String> errors = new LinkedList<String>(super.getFatalErrors(services));
         errors.addAll(configErrors);
         return errors;
     }

@@ -26,11 +26,12 @@ import org.odftoolkit.odfdom.doc.OdfDocument;
 import org.odftoolkit.odfdom.pkg.signature.DocumentSignatureManager;
 import org.odftoolkit.odfdom.pkg.signature.SignatureCreationMode;
 import org.signserver.common.*;
+import org.signserver.server.IServices;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.DefaultArchivable;
 import org.signserver.server.cryptotokens.ICryptoInstance;
-import org.signserver.server.cryptotokens.ICryptoToken;
+import org.signserver.server.cryptotokens.ICryptoTokenV4;
 import org.signserver.server.signers.BaseSigner;
 
 /**
@@ -99,10 +100,11 @@ public class ODFSigner extends BaseSigner {
                     "Data received is not in valid odf format", e);
         }
 
+        X509Certificate cert = null;
         ICryptoInstance crypto = null;
         try {
             // get signing key and construct KeyInfo to be included in signature
-            crypto = acquireCryptoInstance(ICryptoToken.PURPOSE_SIGN, signRequest, requestContext);
+            crypto = acquireCryptoInstance(ICryptoTokenV4.PURPOSE_SIGN, signRequest, requestContext);
 
             // create DocumentSignatureManager with OpenOffice31CompatibilityMode
             // mode.
@@ -113,12 +115,14 @@ public class ODFSigner extends BaseSigner {
             // META-ING/documentsignatures.xml file)
             DocumentSignatureManager dsm = new DocumentSignatureManager(odfDoc,
                     SignatureCreationMode.OpenOffice31CompatibilityMode);
+            
+            cert = (X509Certificate) getSigningCertificate(crypto);
 
             // sign document
             // pForceCreateNewSignatureGroup parameter is false , because we are in
             // OpenOffice31CompatibilityMode
             try {
-                dsm.SignDocument(crypto.getPrivateKey(), (X509Certificate) getSigningCertificate(crypto), false);
+                dsm.SignDocument(crypto.getPrivateKey(), cert, false);
             } catch (Exception e) {
                 throw new SignServerException("Problem signing odf document", e);
             }
@@ -142,13 +146,11 @@ public class ODFSigner extends BaseSigner {
 
         if (signRequest instanceof GenericServletRequest) {
             signResponse = new GenericServletResponse(sReq.getRequestID(),
-                    signedbytes, getSigningCertificate(signRequest,
-                                                       requestContext),
+                    signedbytes, cert,
                     archiveId, archivables, CONTENT_TYPE);
         } else {
             signResponse = new GenericSignResponse(sReq.getRequestID(),
-                    signedbytes, getSigningCertificate(signRequest,
-                                                       requestContext),
+                    signedbytes, cert,
                     archiveId, archivables);
         }
         
@@ -159,8 +161,8 @@ public class ODFSigner extends BaseSigner {
     }
 
     @Override
-    protected List<String> getFatalErrors() {
-        final List<String> errors = super.getFatalErrors();
+    protected List<String> getFatalErrors(IServices services) {
+        final List<String> errors = super.getFatalErrors(services);
         
         errors.addAll(configErrors);
         return errors;

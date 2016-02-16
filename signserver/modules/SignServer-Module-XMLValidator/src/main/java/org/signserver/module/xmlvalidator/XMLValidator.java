@@ -38,6 +38,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.log4j.Logger;
 import org.signserver.common.*;
 import org.signserver.ejb.interfaces.ProcessSessionLocal;
+import org.signserver.server.IServices;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.log.AdminInfo;
 import org.signserver.server.validators.BaseValidator;
@@ -302,10 +303,10 @@ public class XMLValidator extends BaseValidator {
     }
 
     @Override
-    protected List<String> getFatalErrors() {
+    protected List<String> getFatalErrors(final IServices services) {
         // Add our errors to the list of errors
         final LinkedList<String> errors = new LinkedList<String>(
-                super.getFatalErrors());
+                super.getFatalErrors(services));
         errors.addAll(configErrors);
         return errors;
     }

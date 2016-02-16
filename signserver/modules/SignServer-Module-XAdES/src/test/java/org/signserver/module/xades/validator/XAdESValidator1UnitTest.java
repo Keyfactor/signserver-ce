@@ -123,7 +123,7 @@ public class XAdESValidator1UnitTest {
         XAdESValidator instance = new XAdESValidator();
         instance.init(signerId, config, workerContext, em);
         
-        assertEquals(Collections.EMPTY_LIST, instance.getFatalErrors());
+        assertEquals(Collections.EMPTY_LIST, instance.getFatalErrors(null));
     }
     
     /**
@@ -141,7 +141,7 @@ public class XAdESValidator1UnitTest {
         XAdESValidator instance = new XAdESValidator();
         instance.init(signerId, config, workerContext, em);
         
-        String errors = instance.getFatalErrors().toString();
+        String errors = instance.getFatalErrors(null).toString();
         assertTrue("error: " + errors, errors.contains("TRUSTANCHORS"));
         
         // Sending an request should give error

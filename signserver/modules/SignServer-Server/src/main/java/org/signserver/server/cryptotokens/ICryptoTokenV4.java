@@ -16,13 +16,17 @@ import org.signserver.common.UnsupportedCryptoTokenParameter;
 import org.signserver.common.NoSuchAliasException;
 import org.signserver.common.DuplicateAliasException;
 import java.security.InvalidAlgorithmParameterException;
+import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import org.cesecore.util.query.QueryCriteria;
+import org.signserver.common.CryptoTokenAuthenticationFailureException;
+import org.signserver.common.CryptoTokenInitializationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
@@ -35,19 +39,29 @@ import org.signserver.common.TokenOutOfSpaceException;
 import org.signserver.server.IServices;
 
 /**
- * Third version of the crypto token interface.
+ * Forth version of the crypto token interface.
  *
- * Adding support for:
- * - importing certificates to crypto tokens
- * - search for entries in the crypto token
- * - getting access to a crypto token during a limited scope
+ * Merging: V2, V3, KeyGenerator and KeyRemover
  * 
  * @author Marcus Lundblad
  * @author Markus Kilås
  * @version $Id$
  */
-@Deprecated
-public interface ICryptoTokenV3 extends ICryptoTokenV2 {
+public interface ICryptoTokenV4 {
+    
+    int PURPOSE_SIGN = 1;
+    
+    int PURPOSE_DECRYPT = 2;
+    
+    /** 
+     * Indicating the next key. Property: "nextCertSignKey".
+     * @see org.ejbca.core.model.SecConst#CAKEYPURPOSE_CERTSIGN_NEXT
+     */
+    int PURPOSE_NEXTKEY = 7;
+    
+    int PROVIDERUSAGE_SIGN = 1;
+    
+    int PROVIDERUSAGE_DECRYPT = 2;
     
     /** Crypto token parameter with value of type Boolean telling if the crypto instance should be cached or not. */
     String PARAM_CACHEPRIVATEKEY = "CACHEPRIVATEKEY";
@@ -55,6 +69,48 @@ public interface ICryptoTokenV3 extends ICryptoTokenV2 {
     /** Crypto token parameter with the value of type Map&lt;String, Object&gt; containing a cache local to this worker instance but possible shared among multiple threads. */
     String PARAM_WORKERCACHE = "WORKERCACHE";
     
+    String ALL_KEYS = "all";
+
+
+    void init(int workerId, Properties props) throws CryptoTokenInitializationFailureException;
+
+    /**
+     * Method used to activate SignTokens when connected after being off-line.
+     * 
+     * @param authenticationcode used to unlock crypto token, i.e PIN for smartcard HSMs
+     * @throws CryptoTokenOfflineException if SignToken is not available or connected.
+     * @throws CryptoTokenAuthenticationFailureException with error message if authentication to crypto token fail.
+     */
+    void activate(String authenticationcode, IServices services) throws CryptoTokenAuthenticationFailureException, CryptoTokenOfflineException;
+
+    /**
+     * Method used to deactivate crypto tokens. 
+     * Used to set a crypto token too off-line status and to reset the HSMs authorization code.
+     * 
+     * @return true if deactivation was successful.
+     */
+    boolean deactivate(IServices services) throws CryptoTokenOfflineException;
+
+    /** Returns the signature Provider that should be used to sign things with
+     *  the PrivateKey object returned by this crypto device implementation.
+     *  @param providerUsage should be one if the ICryptoToken.PROVIDERUSAGE_ constants
+     *  specifying the usage of the private key. 
+     * @return String the name of the Provider
+     */
+    //TODO: Maybe not: String getProvider(int providerUsage);
+
+
+    /**
+     * @return The underlaying KeyStore (if any).
+     * @throws UnsupportedOperationException If this implementation does not
+     *  support KeyStore.
+     * @throws CryptoTokenOfflineException
+     * @throws KeyStoreException
+     */
+    //TODO: Maybe not?
+    KeyStore getKeyStore() throws UnsupportedOperationException,
+            CryptoTokenOfflineException, KeyStoreException;
+
     /**
      * @return The current state of the crypto token
      */
@@ -192,4 +248,16 @@ public interface ICryptoTokenV3 extends ICryptoTokenV2 {
             char[] authCode,
             IServices Services)
             throws CryptoTokenOfflineException, KeyStoreException;
+    
+    /**
+     * Remove a key from the token (if supported).
+     *
+     * @param alias of key to remove
+     * @return True if the key was successfully removed or false it failed or the token does not support key removal
+     * @throws CryptoTokenOfflineException if the token was not activated
+     * @throws KeyStoreException for keystore related errors
+     * @throws SignServerException if the keystore did not contain a key with the specified alias
+     */
+    boolean removeKey(String alias, IServices services) throws CryptoTokenOfflineException, 
+            KeyStoreException, SignServerException;
 }

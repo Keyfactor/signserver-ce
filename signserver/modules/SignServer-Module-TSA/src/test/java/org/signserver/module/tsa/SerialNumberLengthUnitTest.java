@@ -19,7 +19,7 @@ import org.signserver.common.WorkerConfig;
 
 import junit.framework.TestCase;
 import org.signserver.common.WorkerStatus;
-import org.signserver.server.cryptotokens.ICryptoToken;
+import org.signserver.server.cryptotokens.ICryptoTokenV4;
 import org.signserver.server.cryptotokens.NullCryptoToken;
 
 /**
@@ -56,7 +56,7 @@ public class SerialNumberLengthUnitTest extends TestCase {
         // Mock away the crypto stuff as we only test the init() method
         TimeStampSigner signer = new TimeStampSigner() {
                 @Override
-                public ICryptoToken getCryptoToken() throws SignServerException {
+                public ICryptoTokenV4 getCryptoToken() throws SignServerException {
                     return new NullCryptoToken(WorkerStatus.STATUS_ACTIVE);
                 }
         };
@@ -134,7 +134,7 @@ public class SerialNumberLengthUnitTest extends TestCase {
      */
     public void testTooSmallSerialNumberLength() throws Exception {
         final TimeStampSigner signer = createTestSigner(SIGNER_ID_BASE + 2, "6");
-        final String error = signer.getFatalErrors().toString();
+        final String error = signer.getFatalErrors(null).toString();
 		
         assertTrue("Expect error about serial number: " + error,
                 error.contains("Maximum serial number length specified is too small: 6"));
@@ -147,7 +147,7 @@ public class SerialNumberLengthUnitTest extends TestCase {
      */
     public void testTooLargeSerialNumberLength() throws Exception {
         final TimeStampSigner signer = createTestSigner(SIGNER_ID_BASE + 3, "30");
-        final String error = signer.getFatalErrors().toString();
+        final String error = signer.getFatalErrors(null).toString();
         
         assertTrue("Expect error about serial number: " + error,
                 error.contains("Maximum serial number length specified is too large: 30"));
@@ -160,7 +160,7 @@ public class SerialNumberLengthUnitTest extends TestCase {
      */
     public void testInvalidSerialNumberLength() throws Exception {
         final TimeStampSigner signer = createTestSigner(SIGNER_ID_BASE + 4, "foobar");
-        final String error = signer.getFatalErrors().toString();
+        final String error = signer.getFatalErrors(null).toString();
         
         assertTrue("Expect error about serial number: " + error,
                 error.contains("Maximum serial number length specified is invalid: \"foobar\""));

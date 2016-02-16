@@ -34,6 +34,7 @@ import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerStatus;
 import org.signserver.server.cryptotokens.ICryptoToken;
+import org.signserver.server.cryptotokens.ICryptoTokenV4;
 import org.signserver.server.cryptotokens.NullCryptoToken;
 import org.signserver.server.signers.BaseSigner;
 import org.signserver.statusrepo.StatusRepositorySessionLocal;
@@ -72,7 +73,7 @@ public class StatusPropertiesWorker extends BaseSigner {
     private static final String VALUE = "VALUE";
     private static final String EXPIRATION = "EXPIRATION";
     
-    private static final ICryptoToken CRYPTO_TOKEN = new NullCryptoToken(WorkerStatus.STATUS_ACTIVE);
+    private static final ICryptoTokenV4 CRYPTO_TOKEN = new NullCryptoToken(WorkerStatus.STATUS_ACTIVE);
     
     /** StatusRepositorySession. */
     @EJB
@@ -210,8 +211,8 @@ public class StatusPropertiesWorker extends BaseSigner {
     }
 
     @Override
-    public ICryptoToken getCryptoToken() throws SignServerException {
-        ICryptoToken result = super.getCryptoToken();
+    public ICryptoTokenV4 getCryptoToken() throws SignServerException {
+        ICryptoTokenV4 result = super.getCryptoToken();
 
         // Not configuring a crypto token for this worker is not a problem as
         // this worker does not use a crypto token. Instead a dummy instance

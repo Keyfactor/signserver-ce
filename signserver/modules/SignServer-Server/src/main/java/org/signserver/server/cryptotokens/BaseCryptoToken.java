@@ -20,6 +20,6 @@ package org.signserver.server.cryptotokens;
  * @author Markus Kilås
  * @version $Id$
  */
-public abstract class BaseCryptoToken implements ICryptoToken, ICryptoTokenV3 {
+public abstract class BaseCryptoToken implements ICryptoTokenV4 {
     
 }

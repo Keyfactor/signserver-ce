@@ -29,6 +29,7 @@ import org.signserver.server.ServiceExecutionFailedException;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.timedservices.BaseTimedService;
 import org.signserver.ejb.interfaces.WorkerSessionLocal;
+import org.signserver.server.IServices;
 
 /**
  * Timed service calling testKey() on selected (crypto)workers.
@@ -99,8 +100,8 @@ public class HSMKeepAliveTimedService extends BaseTimedService {
     }
 
     @Override
-    protected List<String> getFatalErrors() {
-        final List<String> errors = new LinkedList<>(super.getFatalErrors());
+    protected List<String> getFatalErrors(IServices services) {
+        final List<String> errors = new LinkedList<>(super.getFatalErrors(services));
         
         if (cryptoTokens == null) {
             errors.add("Must specify " + CRYPTOTOKENS);

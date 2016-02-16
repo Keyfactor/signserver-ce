@@ -39,7 +39,7 @@ public abstract class BaseValidator extends BaseProcessable implements IValidato
     @Override
     public WorkerStatus getStatus(final List<String> additionalFatalErrors, final IServices services) {
         final List<String> fatalErrors = new LinkedList<String>(additionalFatalErrors);
-        fatalErrors.addAll(getFatalErrors());
+        fatalErrors.addAll(getFatalErrors(services));
 
         final List<WorkerStatusInfo.Entry> briefEntries = new LinkedList<WorkerStatusInfo.Entry>();
         final List<WorkerStatusInfo.Entry> completeEntries = new LinkedList<WorkerStatusInfo.Entry>();

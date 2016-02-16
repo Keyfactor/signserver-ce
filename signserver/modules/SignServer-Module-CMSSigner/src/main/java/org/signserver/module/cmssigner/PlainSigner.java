@@ -32,6 +32,7 @@ import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Base64;
 import org.bouncycastle.util.encoders.Hex;
 import org.signserver.common.*;
+import org.signserver.server.IServices;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.DefaultArchivable;
@@ -221,8 +222,8 @@ public class PlainSigner extends BaseSigner {
     }
 
     @Override
-    protected List<String> getFatalErrors() {
-        final LinkedList<String> errors = new LinkedList<String>(super.getFatalErrors());
+    protected List<String> getFatalErrors(final IServices services) {
+        final LinkedList<String> errors = new LinkedList<String>(super.getFatalErrors(services));
         errors.addAll(configErrors);
         return errors;
     }

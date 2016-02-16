@@ -31,7 +31,7 @@ import org.cesecore.util.CertTools;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;
-import org.signserver.server.cryptotokens.ICryptoToken;
+import org.signserver.server.cryptotokens.ICryptoTokenV4;
 import org.signserver.validationservice.common.Validation;
 
 /**
@@ -56,7 +56,7 @@ public class CRLValidator extends BaseValidator {
      */
     @Override
     public void init(int workerId, int validatorId, Properties props, EntityManager em,
-            ICryptoToken ct) throws SignServerException {
+            ICryptoTokenV4 ct) throws SignServerException {
         super.init(workerId, validatorId, props, em, ct);
 
     }

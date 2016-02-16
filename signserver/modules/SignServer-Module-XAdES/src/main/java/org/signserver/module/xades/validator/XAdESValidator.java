@@ -46,6 +46,7 @@ import org.bouncycastle.cert.ocsp.OCSPException;
 import org.bouncycastle.cert.ocsp.OCSPReq;
 import org.cesecore.util.CertTools;
 import org.signserver.common.*;
+import org.signserver.server.IServices;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.validators.BaseValidator;
 import org.signserver.validationservice.common.ValidateResponse;
@@ -298,8 +299,8 @@ public class XAdESValidator extends BaseValidator {
     }
 
     @Override
-    protected List<String> getFatalErrors() {
-        final LinkedList<String> errors = new LinkedList<String>(super.getFatalErrors());
+    protected List<String> getFatalErrors(final IServices services) {
+        final LinkedList<String> errors = new LinkedList<String>(super.getFatalErrors(services));
         errors.addAll(configErrors);
         return errors;
     }

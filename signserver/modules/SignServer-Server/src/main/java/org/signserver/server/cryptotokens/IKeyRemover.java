@@ -23,6 +23,7 @@ import org.signserver.common.SignServerException;
  * @author Markus Kilås
  * @version $Id$
  */
+@Deprecated
 public interface IKeyRemover {
 
     /**

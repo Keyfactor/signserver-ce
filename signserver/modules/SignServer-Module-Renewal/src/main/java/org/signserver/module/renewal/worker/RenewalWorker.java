@@ -51,6 +51,7 @@ import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.log.LogMap;
 import org.signserver.server.signers.BaseSigner;
 import org.signserver.ejb.interfaces.WorkerSessionLocal;
+import org.signserver.server.IServices;
 
 /**
  * Worker renewing certificate (and optionally keys) for a signer by sending
@@ -696,7 +697,7 @@ public class RenewalWorker extends BaseSigner {
         for (int i = 0; i < keyManagers.length; i++) {
             if (keyManagers[i] instanceof X509KeyManager) {
                 keyManagers[i] = new AliasKeyManager(
-                        (X509KeyManager) keyManagers[i], alias);
+                        (X509KeyManager) keyManagers[i], alias, getCertificateChain(alias, keystore));
             }
         }
         // Now construct a SSLContext using these (possibly wrapped)
@@ -772,15 +773,36 @@ public class RenewalWorker extends BaseSigner {
         responseData.setProperty(RenewalWorkerProperties.RESPONSE_MESSAGE,
                 message == null ? "" : message);
     }
+
+    private X509Certificate[] getCertificateChain(final String alias, final KeyStore keystore) throws KeyStoreException {
+        X509Certificate[] result;
+        
+        List<Certificate> chain =
+                (new ProcessableConfig(config)).getSignerCertificateChain();
+        
+        if (chain == null) {
+            Certificate[] ch = keystore.getCertificateChain(alias);
+            result = new X509Certificate[ch.length];
+            for (int i = 0; i < ch.length; i++) {
+                result[i] = (X509Certificate) ch[i];
+            }
+        } else {
+            result = chain.toArray(new X509Certificate[chain.size()]);
+        }
+
+        return result;
+    }
   
     class AliasKeyManager implements X509KeyManager {
 
         private final X509KeyManager base;
         private final String alias;
+        private final X509Certificate[] chain;
 
-        public AliasKeyManager(final X509KeyManager base, final String alias) {
+        public AliasKeyManager(final X509KeyManager base, final String alias, final X509Certificate[] chain) {
             this.base = base;
             this.alias = alias;
+            this.chain = chain;
         }
 
         @Override
@@ -807,14 +829,7 @@ public class RenewalWorker extends BaseSigner {
 
         @Override
         public X509Certificate[] getCertificateChain(String string) {
-            try {
-                final List<Certificate> chain =
-                        getSigningCertificateChain();
-                return chain.toArray(new X509Certificate[chain.size()]);
-            } catch (CryptoTokenOfflineException ex) {
-                LOG.error("Offline getting chain", ex);
-                return new X509Certificate[0];
-            }
+            return chain;
         }
 
         @Override
@@ -840,8 +855,8 @@ public class RenewalWorker extends BaseSigner {
     }
 
     @Override
-    protected List<String> getFatalErrors() {
-        final List<String> errors = super.getFatalErrors();
+    protected List<String> getFatalErrors(final IServices services) {
+        final List<String> errors = super.getFatalErrors(services);
         
         errors.addAll(getLocalFatalErrors());
         return errors;

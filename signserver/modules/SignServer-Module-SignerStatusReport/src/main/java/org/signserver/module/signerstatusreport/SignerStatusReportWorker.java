@@ -32,10 +32,11 @@ import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 import org.signserver.server.SignServerContext;
 import org.signserver.server.WorkerContext;
-import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.cryptotokens.NullCryptoToken;
 import org.signserver.server.signers.BaseSigner;
 import org.signserver.ejb.interfaces.WorkerSessionLocal;
+import org.signserver.server.IServices;
+import org.signserver.server.cryptotokens.ICryptoTokenV4;
 
 /**
  * Worker for getting a signer's status report. When called without any request 
@@ -63,7 +64,7 @@ public class SignerStatusReportWorker extends BaseSigner {
     /** Property WORKERS. **/
     private static final String PROPERTY_WORKERS = SignerStatusReportTimedService.PROPERTY_WORKERS;
     
-    private static final ICryptoToken CRYPTO_TOKEN = new NullCryptoToken(WorkerStatus.STATUS_ACTIVE);
+    private static final ICryptoTokenV4 CRYPTO_TOKEN = new NullCryptoToken(WorkerStatus.STATUS_ACTIVE);
     
     private SignerStatusReportBuilder reportBuilder;
     private List<String> workers;
@@ -124,8 +125,8 @@ public class SignerStatusReportWorker extends BaseSigner {
     }
 
     @Override
-    public ICryptoToken getCryptoToken() throws SignServerException {
-        ICryptoToken result = super.getCryptoToken();
+    public ICryptoTokenV4 getCryptoToken() throws SignServerException {
+        ICryptoTokenV4 result = super.getCryptoToken();
 
         // Not configuring a crypto token for this worker is not a problem as
         // this worker does not use a crypto token. Instead a dummy instance
@@ -138,8 +139,8 @@ public class SignerStatusReportWorker extends BaseSigner {
     }
 
     @Override
-    protected List<String> getFatalErrors() {
-        final List<String> fatalErrors = super.getFatalErrors();
+    protected List<String> getFatalErrors(final IServices services) {
+        final List<String> fatalErrors = super.getFatalErrors(services);
         
         if (workers.isEmpty()) {
             fatalErrors.add("Property WORKERS missing");

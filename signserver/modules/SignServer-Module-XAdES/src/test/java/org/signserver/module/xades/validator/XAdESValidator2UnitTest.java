@@ -69,6 +69,8 @@ import org.bouncycastle.operator.bc.BcDigestCalculatorProvider;
 import org.cesecore.util.CertTools;
 import org.junit.Before;
 import org.signserver.common.SignServerException;
+import org.signserver.server.ServicesImpl;
+import org.signserver.server.SignServerContext;
 import org.signserver.test.utils.builders.ocsp.OCSPResponseBuilder;
 import org.signserver.test.utils.builders.ocsp.OcspRespObject;
 import org.signserver.test.utils.mock.MockedCryptoToken;
@@ -500,8 +502,9 @@ public class XAdESValidator2UnitTest {
         // Sign a document by signer 1
         XAdESSigner instance = new MockedXAdESSigner(token1);
         WorkerConfig config = new WorkerConfig();
-        instance.init(4712, config, null, null);
+        instance.init(4712, config, new SignServerContext(), null);
         RequestContext requestContext = new RequestContext();
+        requestContext.setServices(new ServicesImpl());
         requestContext.put(RequestContext.TRANSACTION_ID, "0000-201-1");
         GenericSignRequest request = new GenericSignRequest(201, "<test201/>".getBytes("UTF-8"));
         GenericSignResponse response = (GenericSignResponse) instance.processData(request, requestContext);

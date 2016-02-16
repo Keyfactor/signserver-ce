@@ -204,7 +204,7 @@ public class XAdESSignerUnitTest {
         assertEquals("TSA_USERNAME", "username123", param.getTsaParameters().getUsername());
         assertEquals("TSA_PASSWORD", "password123", param.getTsaParameters().getPassword());
         
-        assertEquals(Collections.EMPTY_LIST, instance.getFatalErrors());
+        assertEquals(Collections.EMPTY_LIST, instance.getFatalErrors(null));
     }
     
     /**
@@ -225,7 +225,7 @@ public class XAdESSignerUnitTest {
         XAdESSigner instance = new MockedXAdESSigner(tokenRSA);
         instance.init(signerId, config, workerContext, em);
         
-        String errors = instance.getFatalErrors().toString();
+        String errors = instance.getFatalErrors(null).toString();
         assertTrue("error: " + errors, errors.contains("XADESFORM"));
     }
     
@@ -247,7 +247,7 @@ public class XAdESSignerUnitTest {
         XAdESSigner instance = new MockedXAdESSigner(tokenRSA);
         instance.init(signerId, config, workerContext, em);
         
-        String errors = instance.getFatalErrors().toString();
+        String errors = instance.getFatalErrors(null).toString();
         assertTrue("error: " + errors, errors.contains("TSA_URL"));
     }
     
@@ -270,7 +270,7 @@ public class XAdESSignerUnitTest {
         
         assertEquals("XADESFORM", "BES", param.getXadesForm().name());
         
-        assertEquals(Collections.EMPTY_LIST, instance.getFatalErrors());
+        assertEquals(Collections.EMPTY_LIST, instance.getFatalErrors(null));
     }
 
     /**
@@ -690,7 +690,7 @@ public class XAdESSignerUnitTest {
         XAdESSigner instance = new MockedXAdESSigner(tokenRSA);
         instance.init(signerId, config, workerContext, em);
         
-        String errors = instance.getFatalErrors().toString();
+        String errors = instance.getFatalErrors(null).toString();
         assertTrue("error: " + errors, errors.contains("can not be empty"));
     }
     
@@ -768,7 +768,7 @@ public class XAdESSignerUnitTest {
         XAdESSigner instance = new MockedXAdESSigner(tokenRSA);
         instance.init(signerId, config, workerContext, em);
         
-        String errors = instance.getFatalErrors().toString();
+        String errors = instance.getFatalErrors(null).toString();
         assertTrue("error: " + errors, errors.contains("commitment type"));
     }
     
@@ -790,7 +790,7 @@ public class XAdESSignerUnitTest {
         XAdESSigner instance = new MockedXAdESSigner(tokenRSA);
         instance.init(signerId, config, workerContext, em);
         
-        String errors = instance.getFatalErrors().toString();
+        String errors = instance.getFatalErrors(null).toString();
         assertTrue("error: " + errors, errors.contains("commitment type"));
     }
     
@@ -933,19 +933,19 @@ public class XAdESSignerUnitTest {
         config.setProperty("INCLUDE_CERTIFICATE_LEVELS", "0");
         XAdESSigner instance = new MockedXAdESSigner(tokenRSA);
         instance.init(4711, config, null, null);
-        List<String> actualErrors = instance.getFatalErrors();
+        List<String> actualErrors = instance.getFatalErrors(null);
         assertTrue("message: " + actualErrors, actualErrors.toString().contains("INCLUDE_CERTIFICATE_LEVELS"));
         
         config.setProperty("INCLUDE_CERTIFICATE_LEVELS", "-1");
         instance = new MockedXAdESSigner(tokenRSA);
         instance.init(4711, config, null, null);
-        actualErrors = instance.getFatalErrors();
+        actualErrors = instance.getFatalErrors(null);
         assertTrue("message: " + actualErrors, actualErrors.toString().contains("INCLUDE_CERTIFICATE_LEVELS"));
         
         config.setProperty("INCLUDE_CERTIFICATE_LEVELS", "qwerty");
         instance = new MockedXAdESSigner(tokenRSA);
         instance.init(4711, config, null, null);
-        actualErrors = instance.getFatalErrors();
+        actualErrors = instance.getFatalErrors(null);
         assertTrue("message: " + actualErrors, actualErrors.toString().contains("INCLUDE_CERTIFICATE_LEVELS"));
     }
     

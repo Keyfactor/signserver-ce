@@ -121,7 +121,7 @@ public abstract class BaseWorker implements IWorker {
      * in case there are no errors
      * @since SignServer 3.2.3
      */
-    protected List<String> getFatalErrors() {
+    protected List<String> getFatalErrors(IServices services) {
         return Collections.emptyList();
     }
 
@@ -135,7 +135,7 @@ public abstract class BaseWorker implements IWorker {
     @Override
     public WorkerStatus getStatus(List<String> additionalFatalErrors, final IServices services) {
         final List<String> fatalErrors = new LinkedList<String>(additionalFatalErrors);
-        fatalErrors.addAll(getFatalErrors());
+        fatalErrors.addAll(getFatalErrors(services));
 
         final List<WorkerStatusInfo.Entry> briefEntries = new LinkedList<WorkerStatusInfo.Entry>();
         final List<WorkerStatusInfo.Entry> completeEntries = new LinkedList<WorkerStatusInfo.Entry>();

@@ -21,6 +21,7 @@ import java.security.cert.*;
 import java.security.cert.Certificate;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.logging.Level;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -49,12 +50,15 @@ import org.signserver.module.tsa.bc.TimeStampRequest;
 import org.signserver.module.tsa.bc.TimeStampResponse;
 import org.signserver.module.tsa.bc.TimeStampResponseGenerator;
 import org.signserver.module.tsa.bc.TimeStampTokenGenerator;
+import org.signserver.server.IServices;
 import org.signserver.server.ITimeSource;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.DefaultArchivable;
 import org.signserver.server.cryptotokens.ICryptoInstance;
 import org.signserver.server.cryptotokens.ICryptoToken;
+import org.signserver.server.cryptotokens.ICryptoTokenV2;
+import org.signserver.server.cryptotokens.ICryptoTokenV4;
 import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.log.LogMap;
 import org.signserver.server.signers.BaseSigner;
@@ -336,7 +340,7 @@ public class TimeStampSigner extends BaseSigner {
         // Validate certificates in signer certificate chain
         final String requireValidChain = config.getProperty(REQUIREVALIDCHAIN, Boolean.FALSE.toString());
         if (Boolean.parseBoolean(requireValidChain)) {
-            validChain = validateChain();
+            validChain = validateChain(null);
         }
         
         maxSerialNumberLength = DEFAULT_MAXSERIALNUMBERLENGTH;
@@ -453,10 +457,11 @@ public class TimeStampSigner extends BaseSigner {
         logMap.put(ITimeStampLogger.LOG_TSA_TIMESOURCE, timeSrc.getClass().getSimpleName());
 
 
+        Certificate cert = null;
         GenericSignResponse signResponse = null;
         ICryptoInstance crypto = null;
         try {
-            crypto = acquireCryptoInstance(ICryptoToken.PURPOSE_SIGN, signRequest, requestContext);
+            crypto = acquireCryptoInstance(ICryptoTokenV4.PURPOSE_SIGN, signRequest, requestContext);
             final byte[] requestbytes = (byte[]) sReq.getRequestData();
 
             if (requestbytes == null || requestbytes.length == 0) {
@@ -513,6 +518,7 @@ public class TimeStampSigner extends BaseSigner {
             
             final TimeStampToken token = timeStampResponse.getTimeStampToken();
             final byte[] signedbytes = timeStampResponse.getEncoded();
+            cert = crypto.getCertificate();
             
             // Log values for timestamp response
             if (LOG.isDebugEnabled()) {
@@ -548,14 +554,14 @@ public class TimeStampSigner extends BaseSigner {
             if (signRequest instanceof GenericServletRequest) {
                 signResponse = new GenericServletResponse(sReq.getRequestID(),
                         signedbytes,
-                                    getSigningCertificate(signRequest, requestContext),
+                                    cert,
                                     archiveId,
                                     archivables, 
                                     RESPONSE_CONTENT_TYPE);
             } else {
                 signResponse = new GenericSignResponse(sReq.getRequestID(),
                         signedbytes,
-                        getSigningCertificate(signRequest, requestContext),
+                        cert,
                         archiveId,
                         archivables);
             }
@@ -914,11 +920,11 @@ public class TimeStampSigner extends BaseSigner {
      * certificate is a trusted certificate as the root certificate is normally 
      * not included.
      */
-    private boolean validateChain() {
+    private boolean validateChain(final IServices services) {
         boolean result = true;
         try {
             final List<Certificate> signingCertificateChain =
-                    getSigningCertificateChain();
+                    getSigningCertificateChain(services);
             if (signingCertificateChain != null) {
                 List<Certificate> chain = (List<Certificate>) signingCertificateChain;
                 for (int i = 0; i < chain.size(); i++) {
@@ -972,9 +978,9 @@ public class TimeStampSigner extends BaseSigner {
     }
 
     @Override
-    protected List<String> getFatalErrors() {
-        final List<String> result = new LinkedList<String>();
-        result.addAll(super.getFatalErrors());
+    protected List<String> getFatalErrors(final IServices services) {
+        final List<String> result = new LinkedList<>();
+        result.addAll(super.getFatalErrors(services));
         result.addAll(configErrors);
         
         try {
@@ -987,7 +993,7 @@ public class TimeStampSigner extends BaseSigner {
             }
 
             // Check if certificat has the required EKU
-            final Certificate certificate = getSigningCertificate();
+            final Certificate certificate = getSigningCertificate(services);
             try {
                 if (certificate instanceof X509Certificate) {
                     final X509Certificate cert = (X509Certificate) certificate;

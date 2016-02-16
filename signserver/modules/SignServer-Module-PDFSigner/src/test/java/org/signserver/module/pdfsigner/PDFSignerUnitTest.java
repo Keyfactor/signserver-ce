@@ -39,7 +39,6 @@ import org.signserver.common.*;
 import org.signserver.common.util.PathUtil;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
-import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.test.utils.builders.CertBuilder;
 import org.signserver.test.utils.builders.CertBuilderException;
 import org.signserver.test.utils.builders.CertExt;
@@ -49,6 +48,7 @@ import org.signserver.test.utils.mock.MockedCryptoToken;
 import org.signserver.test.utils.mock.WorkerSessionMock;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.ejb.interfaces.WorkerSessionRemote;
+import org.signserver.server.cryptotokens.ICryptoTokenV4;
 
 /**
  * Unit tests for PDFSigner.
@@ -1206,13 +1206,13 @@ public class PDFSignerUnitTest extends ModulesTestCase {
 
         final PDFSigner instance = new PDFSigner() {
             @Override
-            public ICryptoToken getCryptoToken() throws SignServerException {
+            public ICryptoTokenV4 getCryptoToken() throws SignServerException {
                 return null;
             }
         };
         instance.init(WORKER1, workerConfig, null, null);
 
-        final List<String> fatalErrors = instance.getFatalErrors();
+        final List<String> fatalErrors = instance.getFatalErrors(null);
         
         assertTrue("Should contain error",
                 fatalErrors.contains("Can not specify " + PDFSigner.TSA_URL + " and " + PDFSigner.TSA_WORKER + " at the same time."));
@@ -1232,13 +1232,13 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         
         final PDFSigner instance = new PDFSigner() {
             @Override
-            public ICryptoToken getCryptoToken() throws SignServerException {
+            public ICryptoTokenV4 getCryptoToken() throws SignServerException {
                 return null;
             }
         };
         instance.init(WORKER1, workerConfig, null, null);
 
-        final List<String> fatalErrors = instance.getFatalErrors();
+        final List<String> fatalErrors = instance.getFatalErrors(null);
         
         assertTrue("Should contain error",
                 fatalErrors.contains("Illegal digest algorithm: IllegalHash"));
@@ -1261,7 +1261,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         
         instance.init(WORKER2, workerConfig, null, null);
         
-        final List<String> fatalErrors = instance.getFatalErrors();
+        final List<String> fatalErrors = instance.getFatalErrors(null);
         
         assertTrue("Should contain error", fatalErrors.contains(ILLEGAL_DIGEST_FOR_DSA_MESSAGE));
     }
@@ -1282,7 +1282,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         
         instance.init(WORKER2, workerConfig, null, null);
         
-        final List<String> fatalErrors = instance.getFatalErrors();
+        final List<String> fatalErrors = instance.getFatalErrors(null);
         
         assertFalse("Should not contain error", fatalErrors.contains(ILLEGAL_DIGEST_FOR_DSA_MESSAGE));
     }
@@ -1304,7 +1304,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         
         instance.init(WORKER2, workerConfig, null, null);
         
-        final List<String> fatalErrors = instance.getFatalErrors();
+        final List<String> fatalErrors = instance.getFatalErrors(null);
         
         assertFalse("Should not contain error", fatalErrors.contains(ILLEGAL_DIGEST_FOR_DSA_MESSAGE));
     }
@@ -1339,23 +1339,9 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         public MockedPDFSigner(final MockedCryptoToken mockedToken) {
             this.mockedToken = mockedToken;
         }
-        
-        @Override
-        public Certificate getSigningCertificate(final ProcessRequest request,
-                                                 final RequestContext context)
-                throws CryptoTokenOfflineException {
-            return mockedToken.getCertificate(ICryptoToken.PURPOSE_SIGN);
-        }
 
         @Override
-        public List<Certificate> getSigningCertificateChain(final ProcessRequest request,
-                                                            final RequestContext context)
-                throws CryptoTokenOfflineException {
-            return mockedToken.getCertificateChain(ICryptoToken.PURPOSE_SIGN);
-        }
-
-        @Override
-        public ICryptoToken getCryptoToken() {
+        public ICryptoTokenV4 getCryptoToken() {
             return mockedToken;
         }
     }
@@ -1382,21 +1368,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
             }
 
             @Override
-            public Certificate getSigningCertificate(final ProcessRequest request,
-                                                     final RequestContext context)
-                    throws CryptoTokenOfflineException {
-                return signerCertificate;
-            }
-
-            @Override
-            public List<Certificate> getSigningCertificateChain(final ProcessRequest request,
-                                                                final RequestContext context)
-                    throws CryptoTokenOfflineException {
-                return Arrays.asList(certChain);
-            }
-
-            @Override
-            public ICryptoToken getCryptoToken() {
+            public ICryptoTokenV4 getCryptoToken() {
                 return token;
             }
             
@@ -1506,7 +1478,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
                 }
                         
                 @Override
-                public ICryptoToken getCryptoToken() {
+                public ICryptoTokenV4 getCryptoToken() {
                     return token;
                 }
             });

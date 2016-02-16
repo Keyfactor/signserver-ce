@@ -27,6 +27,7 @@ import org.cesecore.audit.log.SecurityEventsLoggerSessionLocal;
 import org.signserver.common.AccessDeniedException;
 import org.signserver.common.AuthorizationRequiredException;
 import org.signserver.common.CryptoTokenOfflineException;
+import org.signserver.common.GenericSignResponse;
 import org.signserver.common.IArchivableProcessResponse;
 import org.signserver.common.ISignResponse;
 import org.signserver.common.IllegalRequestException;
@@ -34,7 +35,6 @@ import org.signserver.common.NoSuchWorkerException;
 import org.signserver.common.NotGrantedException;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
-import org.signserver.common.ProcessableConfig;
 import org.signserver.common.RemoteRequestContext;
 import org.signserver.common.RequestContext;
 import org.signserver.common.RequestMetadata;
@@ -45,7 +45,6 @@ import org.signserver.common.util.PropertiesConstants;
 import org.signserver.ejb.worker.impl.WorkerManagerSingletonBean;
 import org.signserver.ejb.worker.impl.WorkerWithComponents;
 import org.signserver.server.AccounterException;
-import org.signserver.server.BaseProcessable;
 import org.signserver.server.IAuthorizer;
 import org.signserver.server.IClientCredential;
 import org.signserver.server.IProcessable;
@@ -68,6 +67,8 @@ import org.signserver.server.log.WorkerLoggerException;
 import org.signserver.server.statistics.Event;
 import org.signserver.server.statistics.StatisticsManager;
 import org.signserver.ejb.interfaces.WorkerSession;
+import org.signserver.ejb.interfaces.WorkerSessionLocal;
+import org.signserver.server.IServices;
 
 /**
  * Implements the business logic for the process method.
@@ -293,40 +294,6 @@ class WorkerProcessImpl {
                 throw exception;
             }
 
-            // Check signer certificate
-            final boolean counterDisabled = awc.getProperties().getProperty(SignServerConstants.DISABLEKEYUSAGECOUNTER, "FALSE").equalsIgnoreCase("TRUE");
-            final long keyUsageLimit;
-            try {
-                keyUsageLimit = Long.valueOf(awc.getProperty(SignServerConstants.KEYUSAGELIMIT, "-1"));
-            } catch (NumberFormatException ex) {
-                final SignServerException exception = new SignServerException("Incorrect value in worker property " + SignServerConstants.KEYUSAGELIMIT, ex);
-                logException(adminInfo, exception, logMap, workerLogger, requestContext);
-                throw exception;
-            }
-            final boolean keyUsageLimitSpecified = keyUsageLimit != -1;
-            if (counterDisabled && keyUsageLimitSpecified) {
-                LOG.error("Worker]" + wi + "]: Configuration error: " +  SignServerConstants.DISABLEKEYUSAGECOUNTER + "=TRUE but " + SignServerConstants.KEYUSAGELIMIT + " is also configured. Key usage counter will still be used.");
-            }
-            try {
-                // Check if the signer has a signer certificate and if that
-                // certificate have ok validity and private key usage periods.
-                checkSignerValidity(processable, workerId, awc, logMap);
-
-                // Check key usage limit (preliminary check only)
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Key usage counter disabled: " + counterDisabled);
-                }
-                if (!counterDisabled || keyUsageLimitSpecified) {
-                    checkSignerKeyUsageCounter(processable, workerId, awc, em,
-                            false);
-                }
-            } catch (CryptoTokenOfflineException ex) {
-                final CryptoTokenOfflineException exception =
-                        new CryptoTokenOfflineException(ex);
-                logException(adminInfo, exception, logMap, workerLogger, requestContext);
-                throw exception;
-            }
-
             // Statistics: start event
             final Event event = StatisticsManager.startEvent(workerId, awc, em);
             requestContext.put(RequestContext.STATISTICS_EVENT, event);
@@ -353,6 +320,44 @@ class WorkerProcessImpl {
 				}
 				logException(adminInfo, exception, logMap, workerLogger, requestContext);
                 throw exception;
+            } catch (CryptoTokenOfflineException ex) {
+                final CryptoTokenOfflineException exception =
+                        new CryptoTokenOfflineException(ex);
+                logException(adminInfo, exception, logMap, workerLogger, requestContext);
+                throw exception;
+            }
+
+            // Check signer certificate
+            final boolean counterDisabled = awc.getProperties().getProperty(SignServerConstants.DISABLEKEYUSAGECOUNTER, "FALSE").equalsIgnoreCase("TRUE");
+            final long keyUsageLimit;
+            try {
+                keyUsageLimit = Long.valueOf(awc.getProperty(SignServerConstants.KEYUSAGELIMIT, "-1"));
+            } catch (NumberFormatException ex) {
+                final SignServerException exception = new SignServerException("Incorrect value in worker property " + SignServerConstants.KEYUSAGELIMIT, ex);
+                logException(adminInfo, exception, logMap, workerLogger, requestContext);
+                throw exception;
+            }
+            final boolean keyUsageLimitSpecified = keyUsageLimit != -1;
+            if (counterDisabled && keyUsageLimitSpecified) {
+                LOG.error("Worker]" + wi + "]: Configuration error: " +  SignServerConstants.DISABLEKEYUSAGECOUNTER + "=TRUE but " + SignServerConstants.KEYUSAGELIMIT + " is also configured. Key usage counter will still be used.");
+            }
+            Certificate signerCertificate = null;
+            if (res instanceof GenericSignResponse) {
+                signerCertificate = ((GenericSignResponse) res).getSignerCertificate();
+            }
+            try {
+                // Check if the signer has a signer certificate and if that
+                // certificate have ok validity and private key usage periods.
+                checkSignerValidity(signerCertificate, workerId, awc, logMap, requestContext.getServices());
+
+                // Check key usage limit (preliminary check only)
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Key usage counter disabled: " + counterDisabled);
+                }
+                if (!counterDisabled || keyUsageLimitSpecified) {
+                    checkSignerKeyUsageCounter(signerCertificate, workerId, awc, em,
+                            false, requestContext.getServices());
+                }
             } catch (CryptoTokenOfflineException ex) {
                 final CryptoTokenOfflineException exception =
                         new CryptoTokenOfflineException(ex);
@@ -432,7 +437,7 @@ class WorkerProcessImpl {
 
             // Check key usage limit
             if (!counterDisabled || keyUsageLimitSpecified) {
-                checkSignerKeyUsageCounter(processable, workerId, awc, em, true);
+                checkSignerKeyUsageCounter(signerCertificate, workerId, awc, em, true, requestContext.getServices());
             }
 
             // Output successfully
@@ -505,31 +510,26 @@ class WorkerProcessImpl {
      * @param awc
      * @throws CryptoTokenOfflineException
      */
-    private void checkSignerValidity(final IProcessable worker, final int workerId,
-            final WorkerConfig awc, final LogMap logMap)
+    private void checkSignerValidity(final Certificate signerCert, final int workerId,
+            final WorkerConfig awc, final LogMap logMap, IServices services)
             throws CryptoTokenOfflineException {
 
-        // If the signer have a certificate, check that it is usable
-        if (worker instanceof BaseProcessable) {
-            final Certificate signerCert = ((BaseProcessable) worker).getSigningCertificate();
+        if (signerCert instanceof X509Certificate) {
+            final X509Certificate cert = (X509Certificate) signerCert;
 
-            if (signerCert instanceof X509Certificate) {
-                final X509Certificate cert = (X509Certificate) signerCert;
+            // Log client certificate
+            logMap.put(IWorkerLogger.LOG_SIGNER_CERT_SUBJECTDN,
+                    cert.getSubjectDN().getName());
+            logMap.put(IWorkerLogger.LOG_SIGNER_CERT_ISSUERDN,
+                    cert.getIssuerDN().getName());
+            logMap.put(IWorkerLogger.LOG_SIGNER_CERT_SERIALNUMBER,
+                    cert.getSerialNumber().toString(16));
 
-                // Log client certificate
-                logMap.put(IWorkerLogger.LOG_SIGNER_CERT_SUBJECTDN,
-                        cert.getSubjectDN().getName());
-                logMap.put(IWorkerLogger.LOG_SIGNER_CERT_ISSUERDN,
-                        cert.getIssuerDN().getName());
-                logMap.put(IWorkerLogger.LOG_SIGNER_CERT_SERIALNUMBER,
-                        cert.getSerialNumber().toString(16));
-
-                ValidityTimeUtils.checkSignerValidity(new WorkerIdentifier(workerId), awc, cert);
-            } else { // if (cert != null)
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Worker does not have a signing certificate. Worker: "
-                            + workerId);
-                }
+            ValidityTimeUtils.checkSignerValidity(new WorkerIdentifier(workerId), awc, cert);
+        } else { // if (cert != null)
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Worker does not have a signing certificate. Worker: "
+                        + workerId);
             }
         }
     }
@@ -543,22 +543,10 @@ class WorkerProcessImpl {
      * @param em
      * @throws CryptoTokenOfflineException
      */
-    private void checkSignerKeyUsageCounter(final IProcessable worker,
+    private void checkSignerKeyUsageCounter(final Certificate cert,
             final int workerId, final WorkerConfig awc, EntityManager em,
-            final boolean increment)
+            final boolean increment, final IServices services)
         throws CryptoTokenOfflineException {
-
-        // If the signer have a certificate, check that the usage of the key
-        // has not reached the limit
-        Certificate cert;
-
-        if (worker instanceof BaseProcessable) {
-            cert = ((BaseProcessable) worker).getSigningCertificate();
-        } else {
-            // The following will not work for keystores where the SIGNSERCERT
-            // property is not set
-            cert = (new ProcessableConfig(awc)).getSignerCertificate();
-        }
 
         if (cert != null) {
             final long keyUsageLimit

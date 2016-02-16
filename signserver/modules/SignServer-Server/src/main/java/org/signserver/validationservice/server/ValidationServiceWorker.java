@@ -125,10 +125,10 @@ public class ValidationServiceWorker extends BaseProcessable {
     }
 
     @Override
-    protected List<String> getFatalErrors() {
+    protected List<String> getFatalErrors(IServices services) {
         final List<String> errors = new LinkedList<String>();
         
-        errors.addAll(super.getFatalErrors());
+        errors.addAll(super.getFatalErrors(services));
         errors.addAll(fatalErrors);
 
         return errors;

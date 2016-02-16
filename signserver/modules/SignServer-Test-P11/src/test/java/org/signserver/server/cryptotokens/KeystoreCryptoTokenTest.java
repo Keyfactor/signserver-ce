@@ -13,6 +13,7 @@
 package org.signserver.server.cryptotokens;
 
 import java.math.BigInteger;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyStoreException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
@@ -36,12 +37,16 @@ import org.signserver.common.CryptoTokenInitializationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
+import org.signserver.common.IllegalRequestException;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.KeyTestResult;
+import org.signserver.common.NoSuchAliasException;
 import org.signserver.common.OperationUnsupportedException;
 import org.signserver.common.QueryException;
+import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.SignServerUtil;
+import org.signserver.common.UnsupportedCryptoTokenParameter;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.WorkerStatus;
@@ -81,7 +86,7 @@ public class KeystoreCryptoTokenTest extends CryptoTokenTestBase {
         Properties config = new Properties();
         config.setProperty("KEYSTOREPASSWORD", "password123123213");
         instance.init(1, config);
-        instance.activate("password123123213");
+        instance.activate("password123123213", instance.getMockedServices());
         instance.generateKey("RSA", "1024", existingKey1, null, Collections.<String, Object>emptyMap(), instance.getMockedServices());
     }
     
@@ -115,7 +120,7 @@ public class KeystoreCryptoTokenTest extends CryptoTokenTestBase {
 
     @Override
     protected boolean destroyKey(String alias) throws CryptoTokenOfflineException, InvalidWorkerIdException, SignServerException, KeyStoreException {
-        return instance.removeKey(alias);
+        return instance.removeKey(alias, instance.getMockedServices());
     }
 
     @Override
@@ -128,13 +133,24 @@ public class KeystoreCryptoTokenTest extends CryptoTokenTestBase {
                                                  final boolean explicitEccParameters,
                                                  final String alias)
             throws CryptoTokenOfflineException {
-        return instance.genCertificateRequest(req, explicitEccParameters, alias);
+        return instance.genCertificateRequest(req, explicitEccParameters, alias, null);
     }
 
     @Override
-    protected List<Certificate> getCertificateChain(final String alias)
-            throws CryptoTokenOfflineException {
-        return instance.getCertificateChain(alias);
+    protected List<Certificate> getCertificateChain(String alias) throws CryptoTokenOfflineException, InvalidWorkerIdException {
+        RequestContext context = new RequestContext(true);
+        context.setServices(instance.getMockedServices());
+        ICryptoInstance crypto = null;
+        try {
+            crypto = instance.acquireCryptoInstance(alias, Collections.<String, Object>emptyMap(), context);
+            return crypto.getCertificateChain();
+        } catch (InvalidAlgorithmParameterException | UnsupportedCryptoTokenParameter | IllegalRequestException | NoSuchAliasException ex) {
+            throw new CryptoTokenOfflineException(ex);
+        } finally {
+            if (crypto != null) {
+                instance.releaseCryptoInstance(crypto, context);
+            }
+        }
     }
 
     

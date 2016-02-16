@@ -15,9 +15,12 @@ package org.signserver.server.cryptotokens;
 import java.io.File;
 import java.security.NoSuchAlgorithmException;
 import java.security.Signature;
+import java.util.Collections;
 import java.util.Properties;
 
 import junit.framework.TestCase;
+import static junit.framework.TestCase.assertTrue;
+import org.signserver.common.RequestContext;
 import org.signserver.common.util.PathUtil;
 
 /**
@@ -44,7 +47,7 @@ public class JKSCryptoTokenTest extends TestCase {
      * @throws Exception
      */
     public final void testGetPrivateKeyWithRSA() throws Exception {
-        signTester("SHA256WITHRSA", "/res/test/xmlsigner2.jks");
+        signTester("SHA256WITHRSA", "/res/test/xmlsigner2.jks", "xmlsigner2aalias");
     }
 
     /**
@@ -53,11 +56,12 @@ public class JKSCryptoTokenTest extends TestCase {
      * @throws Exception
      */
     public final void testGetPrivateKeyWithDSA() throws Exception {
-        signTester("SHA1WITHDSA", "/res/test/xmlsigner4.jks");
+        signTester("SHA1WITHDSA", "/res/test/xmlsigner4.jks", "xmlsigner4");
     }
 
-    public final void signTester(final String signatureAlg, final String file)
+    public final void signTester(final String signatureAlgorithm, final String file, final String alias)
             throws Exception {
+        Signature sig = null;
 
         // Create crypto token
         final JKSCryptoToken signToken = new JKSCryptoToken();
@@ -68,29 +72,35 @@ public class JKSCryptoTokenTest extends TestCase {
         signToken.init(1, props);
 
         // Activate
-        signToken.activate("foo123");
-
-        Signature sig;
+        signToken.activate("foo123", null);
+        
         try {
-            sig = Signature.getInstance(signatureAlg, "BC");
+            sig = Signature.getInstance(signatureAlgorithm, "BC");
         } catch (NoSuchAlgorithmException e) {
-            throw new SecurityException("exception creating signature", e);
+            throw new SecurityException("exception creating signature: " + e.toString());
         }
 
-        sig.initSign(signToken.getPrivateKey(ICryptoToken.PURPOSE_SIGN));
-
+        RequestContext context = new RequestContext(true);
+        ICryptoInstance crypto = null;
         try {
+            crypto = signToken.acquireCryptoInstance("timestamptest", Collections.<String, Object>emptyMap(), context);
+            sig.initSign(crypto.getPrivateKey());
+
+            try {
+                sig.update("Hello World".getBytes());
+            } catch (Exception e) {
+                throw new SecurityException("Error updating with string " + e);
+            }
+
+            byte[] result = sig.sign();
+
+            sig.initVerify(crypto.getPublicKey());
             sig.update("Hello World".getBytes());
-        } catch (Exception e) {
-            throw new SecurityException("Error updating with string", e);
+            assertTrue(sig.verify(result));
+
+            assertTrue(signToken.deactivate(null));
+        } finally {
+            signToken.releaseCryptoInstance(crypto, context);
         }
-
-        final byte[] result = sig.sign();
-
-        sig.initVerify(signToken.getPublicKey(ICryptoToken.PURPOSE_SIGN));
-        sig.update("Hello World".getBytes());
-        assertTrue("verify signature", sig.verify(result));
-
-        assertTrue("deactivate token", signToken.deactivate());
     }
 }

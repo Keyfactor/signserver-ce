@@ -633,7 +633,7 @@ public class SystemLoggingTest extends ModulesTestCase {
             workerSession.generateSignerKey(new WorkerIdentifier(WORKERID_CRYPTOWORKER1), "RSA", "512", alias, null);
             
             PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=testkeyalias10,C=SE", null);
-            ICertReqData req = workerSession.getCertificateRequest(new WorkerIdentifier(WORKERID_CRYPTOWORKER1), certReqInfo, false);
+            ICertReqData req = workerSession.getCertificateRequest(new WorkerIdentifier(WORKERID_CRYPTOWORKER1), certReqInfo, false, alias);
             Base64SignerCertReqData reqData = (Base64SignerCertReqData) req;
             PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
             

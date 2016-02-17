@@ -176,22 +176,26 @@ public class RenewalWorkerTest extends AbstractTestCase {
         // Check that the right DN is included
         assertEquals("Requested DN", "CN=" + SIGNER_6102_ENDENTITY + ",C=SE", mockEjbcaWs.getLastPKCS10().getRequestDN());
         
+        // Should not be any NEXTCERTSIGNKEY
+        assertNull("no NEXTCERTSIGNKEY", getWorkerSession().getCurrentWorkerConfig(SIGNERID_6102)
+                .getProperty("NEXTCERTSIGNKEY"));
+
+        // Should be an DEFAULTKEY
+        assertNotNull("DEFAULTKEY", getWorkerSession().getCurrentWorkerConfig(SIGNERID_6102)
+                .getProperty("DEFAULTKEY"));
+        
         // Should have certificate and chain
         final X509Certificate cert = (X509Certificate) getWorkerSession()
                 .getSignerCertificate(new WorkerIdentifier(SIGNERID_6102));
         assertNotNull(cert);
         final List<java.security.cert.Certificate> chain
                 = getWorkerSession().getSignerCertificateChain(new WorkerIdentifier(SIGNERID_6102));
-        assertNotNull(chain);
-        assertTrue(chain.contains(cert));
-
-        // Should not be any NEXTCERTSIGNKEY
-        assertNull(getWorkerSession().getCurrentWorkerConfig(SIGNERID_6102)
-                .getProperty("NEXTCERTSIGNKEY"));
-
-        // Should be an DEFAULTKEY
-        assertNotNull(getWorkerSession().getCurrentWorkerConfig(SIGNERID_6102)
-                .getProperty("DEFAULTKEY"));
+        assertNotNull("chain", chain);
+        assertFalse("chain not empty", chain.isEmpty());
+        System.out.println("chain: " + chain);
+        System.out.println("cert: " + cert);
+        
+        assertTrue("chain contains cert", chain.contains(cert));
     }
 
     /** 

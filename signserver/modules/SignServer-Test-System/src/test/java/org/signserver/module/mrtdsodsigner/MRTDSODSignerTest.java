@@ -19,17 +19,12 @@ import java.security.KeyPair;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import org.bouncycastle.asn1.x500.X500Name;
-import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
-import org.bouncycastle.asn1.x509.Extension;
-import org.bouncycastle.asn1.x509.KeyPurposeId;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
-import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
+import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.bouncycastle.util.encoders.Base64;
@@ -46,8 +41,6 @@ import org.junit.Test;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.test.utils.TestCerts;
 import org.signserver.ejb.interfaces.WorkerSession;
-import org.signserver.test.utils.builders.CertBuilder;
-import org.signserver.test.utils.builders.CertExt;
 import org.signserver.test.utils.builders.CryptoUtils;
 
 /**
@@ -245,11 +238,14 @@ public class MRTDSODSignerTest extends ModulesTestCase {
         // Issue certificate
         PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
         KeyPair issuerKeyPair = CryptoUtils.generateRSA(512);
-        X509CertificateHolder cert = new X509v3CertificateBuilder(new X500Name("CN=Test validity CSCA"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo())
+        X509CertificateHolder cscaCert = new JcaX509v3CertificateBuilder(new X500Name("CN=Test validity CSCA"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), new X500Name("CN=Test validity CSCA"), issuerKeyPair.getPublic())
+                .build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
+        
+        X509CertificateHolder cert = new X509v3CertificateBuilder(cscaCert.getSubject(), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo())
                 .build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
 
         workerSession.uploadSignerCertificate(WORKER1, cert.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
-        workerSession.uploadSignerCertificateChain(WORKER1, Collections.singletonList(cert.getEncoded()), GlobalConfiguration.SCOPE_GLOBAL);
+        workerSession.uploadSignerCertificateChain(WORKER1, Arrays.asList(cert.getEncoded(), cscaCert.getEncoded()), GlobalConfiguration.SCOPE_GLOBAL);
         workerSession.setWorkerProperty(WORKER1, SignServerConstants.MINREMAININGCERTVALIDITY, "6300");
         workerSession.reloadConfiguration(WORKER1);
         // Signing operation should not work now

@@ -173,7 +173,7 @@ public class SignerStatusReportWorkerTest extends WebTestCase {
         // test that there is no fatal errors before removing the WORKERS property
         WorkerStatus workerStatus = workerSession.getStatus(new WorkerIdentifier(WORKERID_WORKER));
         List<String> errors = workerStatus.getFatalErrors();
-        assertTrue("No fatal errors", errors.isEmpty());
+        assertTrue("No fatal errors: " + errors, errors.isEmpty());
         
         // test that removing the WORKERS property results in a fatal error
         workerSession.removeWorkerProperty(WORKERID_WORKER, "WORKERS");

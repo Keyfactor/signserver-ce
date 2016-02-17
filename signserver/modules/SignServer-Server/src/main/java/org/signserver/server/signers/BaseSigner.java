@@ -109,16 +109,16 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
         int status = WorkerStatus.STATUS_OFFLINE;
         X509Certificate signerCertificate = null;
 
+        if (token != null) {
+            status = token.getCryptoTokenStatus(services);
+        }
+        
         RequestContext context = new RequestContext(true);
         context.setServices(services);
         ICryptoInstance crypto = null;
         try {
             crypto = acquireDefaultCryptoInstance(context);
-            
-            if (token != null) {
-                status = token.getCryptoTokenStatus(services);
-            }
-            
+
             signerCertificate =
                     (X509Certificate) getSigningCertificate(crypto);
             if (signerCertificate != null) {

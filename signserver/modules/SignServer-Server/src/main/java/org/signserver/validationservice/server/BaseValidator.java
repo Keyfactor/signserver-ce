@@ -23,7 +23,6 @@ import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.cesecore.util.CertTools;
 import org.signserver.common.SignServerException;
-import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
 import org.signserver.validationservice.common.ValidationServiceConstants;
 

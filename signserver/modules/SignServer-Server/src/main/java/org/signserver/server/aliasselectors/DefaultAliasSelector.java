@@ -21,7 +21,7 @@ import org.signserver.common.WorkerConfig;
 import org.signserver.server.IProcessable;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.cryptotokens.CryptoTokenHelper;
-import org.signserver.server.cryptotokens.ICryptoToken;
+import org.signserver.server.cryptotokens.ICryptoTokenV4;
 
 /**
  * Default alias selector giving the DEFAULTKEY alias configured for the
@@ -49,7 +49,7 @@ public class DefaultAliasSelector implements AliasSelector {
     public String getAlias(final int purpose, final IProcessable processble,
                            final ProcessRequest signRequest,
                            final RequestContext requestContext) {
-        return purpose == ICryptoToken.PURPOSE_NEXTKEY ? nextKeyAlias : defaultAlias;
+        return purpose == ICryptoTokenV4.PURPOSE_NEXTKEY ? nextKeyAlias : defaultAlias;
     }
     
     @Override

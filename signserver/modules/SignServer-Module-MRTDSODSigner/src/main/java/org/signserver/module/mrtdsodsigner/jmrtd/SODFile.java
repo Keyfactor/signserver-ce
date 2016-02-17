@@ -174,32 +174,6 @@ public class SODFile extends PassportFile
 
 	private SignedData signedData;
 
-	/**
-	 * Constructs a Security Object data structure.
-	 *
-	 * @param digestAlgorithm a digest algorithm, such as "SHA1" or "SHA256"
-	 * @param digestEncryptionAlgorithm a digest encryption algorithm, such as "SHA256withRSA"
-	 * @param dataGroupHashes maps datagroupnumbers (1 to 16) to hashes of the data groups
-	 * @param encryptedDigest the signature (the encrypted digest) over the hashes.
-	 * @param docSigningCertificate the document signing certificate
-	 * 
-	 * @throws NoSuchAlgorithmException if either of the algorithm parameters is not recognized
-	 * @throws CertificateException if the document signing certificate cannot be used
-         * @deprecated Usage of this constructor is unclear. Also currently it will not work with RSASSA-PSS signatures.
-	 */
-        @Deprecated
-	public SODFile(String digestAlgorithm, String digestEncryptionAlgorithm,
-			Map<Integer, byte[]> dataGroupHashes,
-			byte[] encryptedDigest,
-			X509Certificate docSigningCertificate)
-	throws NoSuchAlgorithmException, CertificateException, IOException {
-		signedData = createSignedData(digestAlgorithm,
-				digestEncryptionAlgorithm,
-				dataGroupHashes,
-				encryptedDigest,
-				docSigningCertificate);
-	}
-
     /**
      * Constructs a Security Object data structure using a specified signature provider.
      *

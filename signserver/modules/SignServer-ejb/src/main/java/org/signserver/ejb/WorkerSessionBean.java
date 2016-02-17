@@ -53,7 +53,6 @@ import org.signserver.server.config.entities.FileBasedWorkerConfigDataService;
 import org.signserver.server.config.entities.IWorkerConfigDataService;
 import org.signserver.server.config.entities.WorkerConfigDataService;
 import org.signserver.common.DuplicateAliasException;
-import org.signserver.server.cryptotokens.IKeyRemover;
 import org.signserver.common.NoSuchAliasException;
 import org.signserver.server.cryptotokens.TokenSearchResults;
 import org.signserver.common.UnsupportedCryptoTokenParameter;

@@ -93,7 +93,7 @@ public interface ICryptoTokenV4 {
 
     /** Returns the signature Provider that should be used to sign things with
      *  the PrivateKey object returned by this crypto device implementation.
-     *  @param providerUsage should be one if the ICryptoToken.PROVIDERUSAGE_ constants
+     *  @param providerUsage should be one if the ICryptoTokenV4.PROVIDERUSAGE_ constants
      *  specifying the usage of the private key. 
      * @return String the name of the Provider
      */

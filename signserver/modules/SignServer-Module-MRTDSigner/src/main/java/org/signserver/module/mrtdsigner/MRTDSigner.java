@@ -14,7 +14,6 @@ package org.signserver.module.mrtdsigner;
 
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -36,7 +35,6 @@ import org.signserver.server.WorkerContext;
 import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.DefaultArchivable;
 import org.signserver.server.cryptotokens.ICryptoInstance;
-import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
 import org.signserver.server.signers.BaseSigner;
 

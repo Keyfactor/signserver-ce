@@ -37,7 +37,7 @@ import org.signserver.server.WorkerContext;
 import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.DefaultArchivable;
 import org.signserver.server.cryptotokens.ICryptoInstance;
-import org.signserver.server.cryptotokens.ICryptoToken;
+import org.signserver.server.cryptotokens.ICryptoTokenV4;
 import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.log.LogMap;
 import org.signserver.server.signers.BaseSigner;
@@ -144,7 +144,7 @@ public class PlainSigner extends BaseSigner {
 
         ICryptoInstance crypto = null;
         try {
-            crypto = acquireCryptoInstance(ICryptoToken.PURPOSE_SIGN, signRequest, requestContext);
+            crypto = acquireCryptoInstance(ICryptoTokenV4.PURPOSE_SIGN, signRequest, requestContext);
             // Get certificate chain and signer certificate
             final List<Certificate> certs = this.getSigningCertificateChain(crypto);
             if (certs == null) {

@@ -672,7 +672,7 @@ public class AdminLayerEJBImpl implements AdminWS {
      * Method used to remove a key from a signer.
      *
      * @param signerId id of the signer
-     * @param purpose on of ICryptoToken.PURPOSE_ constants
+     * @param purpose on of ICryptoTokenV4.PURPOSE_ constants
      * @return true if removal was successful.
      * @deprecated No longer used. Use removeKey instead.
      */
@@ -752,32 +752,11 @@ public class AdminLayerEJBImpl implements AdminWS {
                     = worker.testKey(new WorkerIdentifier(signerId), alias, authCode == null ? null : authCode.toCharArray());
             for (Object o : ress) {
                 final KeyTestResult result = new KeyTestResult();
-                
-                // Workaround to support both old
-                // server.KeyTestResult and the new
-                // KeyTestResult
-                if (o instanceof org.signserver.server.KeyTestResult) {
-                    org.signserver.server.KeyTestResult key
-                        = (org.signserver.server.KeyTestResult) o;
-                    result.setAlias(key.getAlias());
-                    result.setSuccess(key.isSuccess());
-                    result.setPublicKeyHash(key.getPublicKeyHash());
-                    result.setStatus(key.getStatus());
-                } else if (o instanceof org.signserver.common.KeyTestResult) {
-                    org.signserver.common.KeyTestResult key
-                        = (org.signserver.common.KeyTestResult) o;
-                    result.setAlias(key.getAlias());
-                    result.setSuccess(key.isSuccess());
-                    result.setPublicKeyHash(key.getPublicKeyHash());
-                    result.setStatus(key.getStatus());
-                } else {
-                    KeyTestResult key
-                            = (KeyTestResult) o;
-                    result.setAlias(key.getAlias());
-                    result.setSuccess(key.isSuccess());
-                    result.setPublicKeyHash(key.getPublicKeyHash());
-                    result.setStatus(key.getStatus());
-                }
+                KeyTestResult key = (KeyTestResult) o;
+                result.setAlias(key.getAlias());
+                result.setSuccess(key.isSuccess());
+                result.setPublicKeyHash(key.getPublicKeyHash());
+                result.setStatus(key.getStatus());
                 results.add(result);
             }
             return results;

@@ -12,12 +12,6 @@
  *************************************************************************/
 package org.signserver.module.xades.signer;
 
-import java.security.cert.Certificate;
-import java.util.List;
-import org.signserver.common.CryptoTokenOfflineException;
-import org.signserver.common.ProcessRequest;
-import org.signserver.common.RequestContext;
-import org.signserver.server.cryptotokens.ICryptoToken;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
 import org.signserver.test.utils.mock.MockedCryptoToken;
 

@@ -38,7 +38,7 @@ import org.signserver.server.WorkerContext;
 import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.DefaultArchivable;
 import org.signserver.server.cryptotokens.ICryptoInstance;
-import org.signserver.server.cryptotokens.ICryptoToken;
+import org.signserver.server.cryptotokens.ICryptoTokenV4;
 import org.signserver.server.signers.BaseSigner;
 
 /**
@@ -131,7 +131,7 @@ public class CMSSigner extends BaseSigner {
         List<Certificate> certs = null;
         ICryptoInstance crypto = null;
         try {
-            crypto = acquireCryptoInstance(ICryptoToken.PURPOSE_SIGN, signRequest, requestContext);
+            crypto = acquireCryptoInstance(ICryptoTokenV4.PURPOSE_SIGN, signRequest, requestContext);
             cert = (X509Certificate) getSigningCertificate(crypto);
             if (LOG.isDebugEnabled()) {
                 LOG.debug("SigningCert: " + cert);

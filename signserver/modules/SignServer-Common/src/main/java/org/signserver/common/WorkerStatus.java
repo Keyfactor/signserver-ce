@@ -67,14 +67,6 @@ public abstract class WorkerStatus implements Serializable {
         this.workerId = workerId;
     }
 
-    /** 
-     * @deprecated Use the constructor taking a list of errors
-     */
-    @Deprecated
-    public WorkerStatus(int workerId, WorkerConfig config) {
-       this(workerId, Collections.<String>emptyList(), config); 
-    }
-    
     public WorkerStatus(int workerId, List<String> fatalErrors, WorkerConfig config) {
         this.workerId = workerId;
         this.fatalErrors.addAll(fatalErrors);

@@ -55,7 +55,7 @@ import org.signserver.module.xades.signer.MockedTimeStampTokenProvider.MockedTim
 import org.signserver.server.CertificateClientCredential;
 import org.signserver.server.UsernamePasswordClientCredential;
 import org.signserver.server.WorkerContext;
-import org.signserver.server.cryptotokens.ICryptoToken;
+import org.signserver.server.cryptotokens.ICryptoTokenV4;
 import org.signserver.test.utils.builders.CertBuilder;
 import org.signserver.test.utils.builders.CertExt;
 import org.signserver.test.utils.builders.CryptoUtils;
@@ -314,7 +314,7 @@ public class XAdESSignerUnitTest {
         CertStore certStore = CertStore.getInstance("Collection", new CollectionCertStoreParameters());
         KeyStore trustAnchors = KeyStore.getInstance("JKS");
         trustAnchors.load(null, "foo123".toCharArray());
-        List<Certificate> chain = token.getCertificateChain(ICryptoToken.PURPOSE_SIGN);
+        List<Certificate> chain = token.getCertificateChain(ICryptoTokenV4.PURPOSE_SIGN);
         System.out.println("trust anchor: " + chain.get(chain.size() - 1));
         trustAnchors.setCertificateEntry("rootcert", chain.get(chain.size() - 1)); // Simply assume last cert in chain is the trust anchor
         
@@ -720,10 +720,10 @@ public class XAdESSignerUnitTest {
         LOG.debug("signedXml: " + signedXml);
         
         // Validation: setup
-        CertStore certStore = CertStore.getInstance("Collection", new CollectionCertStoreParameters(tokenRSA.getCertificateChain(ICryptoToken.PURPOSE_SIGN)));
+        CertStore certStore = CertStore.getInstance("Collection", new CollectionCertStoreParameters(tokenRSA.getCertificateChain(ICryptoTokenV4.PURPOSE_SIGN)));
         KeyStore trustAnchors = KeyStore.getInstance("JKS");
         trustAnchors.load(null, "foo123".toCharArray());
-        trustAnchors.setCertificateEntry("cert", tokenRSA.getCertificate(ICryptoToken.PURPOSE_SIGN));
+        trustAnchors.setCertificateEntry("cert", tokenRSA.getCertificate(ICryptoTokenV4.PURPOSE_SIGN));
         
         CertificateValidationProvider certValidator = new PKIXCertificateValidationProvider(trustAnchors, false, certStore);
         
@@ -817,7 +817,7 @@ public class XAdESSignerUnitTest {
         }
         
         // Check that the intermediate cert is included in the chain
-        assertEquals(tokenWithIntermediateCert.getCertificateChain(ICryptoToken.PURPOSE_SIGN), certs);   
+        assertEquals(tokenWithIntermediateCert.getCertificateChain(ICryptoTokenV4.PURPOSE_SIGN), certs);   
     }
     
     /** Tests specifying many more certificates than available to including all 3 certificate levels in the document. */
@@ -842,7 +842,7 @@ public class XAdESSignerUnitTest {
             }
         }
         // Check that the intermediate cert is included in the chain
-        assertEquals(tokenWithIntermediateCert.getCertificateChain(ICryptoToken.PURPOSE_SIGN), certs);   
+        assertEquals(tokenWithIntermediateCert.getCertificateChain(ICryptoTokenV4.PURPOSE_SIGN), certs);   
     }
     
     /** Tests including 1 certificate level in the document. */
@@ -867,7 +867,7 @@ public class XAdESSignerUnitTest {
             }
         }
         // Check that the signer certificate is the only certificate included
-        assertEquals(Arrays.asList(tokenRSA.getCertificate(ICryptoToken.PURPOSE_SIGN)), certs);   
+        assertEquals(Arrays.asList(tokenRSA.getCertificate(ICryptoTokenV4.PURPOSE_SIGN)), certs);   
     }
     
     /** Tests not specifying any level and using the default value of 1 certificate level. */
@@ -892,7 +892,7 @@ public class XAdESSignerUnitTest {
             }
         }
         // Check that the signer certificate is the only certificate included
-        assertEquals(Arrays.asList(tokenRSA.getCertificate(ICryptoToken.PURPOSE_SIGN)), certs);   
+        assertEquals(Arrays.asList(tokenRSA.getCertificate(ICryptoTokenV4.PURPOSE_SIGN)), certs);   
     }
     
     /** Tests including 2 certificate levels in the document. */
@@ -919,8 +919,8 @@ public class XAdESSignerUnitTest {
         
         // Check that the intermediate cert is included in the chain
         List<Certificate> expected = Arrays.asList(
-                tokenWithIntermediateCert.getCertificateChain(ICryptoToken.PURPOSE_SIGN).get(0),
-                tokenWithIntermediateCert.getCertificateChain(ICryptoToken.PURPOSE_SIGN).get(1)
+                tokenWithIntermediateCert.getCertificateChain(ICryptoTokenV4.PURPOSE_SIGN).get(0),
+                tokenWithIntermediateCert.getCertificateChain(ICryptoTokenV4.PURPOSE_SIGN).get(1)
         );
         assertEquals(expected, actual);
     }

@@ -15,7 +15,7 @@ package org.signserver.module.cmssigner;
 import java.security.cert.Certificate;
 import java.util.List;
 import org.signserver.common.CryptoTokenOfflineException;
-import org.signserver.server.cryptotokens.ICryptoToken;
+import org.signserver.server.cryptotokens.ICryptoTokenV4;
 import org.signserver.test.utils.mock.MockedCryptoToken;
 
 /**
@@ -32,12 +32,12 @@ public class MockedPlainSigner extends PlainSigner {
     
     @Override
     public Certificate getSigningCertificate() throws CryptoTokenOfflineException {
-        return mockedToken.getCertificate(ICryptoToken.PURPOSE_SIGN);
+        return mockedToken.getCertificate(ICryptoTokenV4.PURPOSE_SIGN);
     }
 
     @Override
     public List<Certificate> getSigningCertificateChain() throws CryptoTokenOfflineException {
-        return mockedToken.getCertificateChain(ICryptoToken.PURPOSE_SIGN);
+        return mockedToken.getCertificateChain(ICryptoTokenV4.PURPOSE_SIGN);
     }
 
     @Override

@@ -511,7 +511,7 @@ public class AdminWS {
      * Method used to remove a key from a signer.
      *
      * @param signerId id of the signer
-     * @param purpose on of ICryptoToken.PURPOSE_ constants
+     * @param purpose on of ICryptoTokenV4.PURPOSE_ constants
      * @return true if removal was successful.
      */
     @WebMethod(operationName = "destroyKey")
@@ -578,22 +578,10 @@ public class AdminWS {
         if (res.size() < 1) {
             results = new LinkedList<KeyTestResult>();
         } else {
-            if (res.iterator().next() instanceof org.signserver.server.KeyTestResult) {
-                results = new LinkedList<KeyTestResult>();
-                for (Object res0 : res) {
-                    final org.signserver.server.KeyTestResult res1
-                            = (org.signserver.server.KeyTestResult) res0;
-                    final KeyTestResult res2 = new KeyTestResult(
-                            res1.getAlias(), res1.isSuccess(),
-                            res1.getStatus(), res1.getPublicKeyHash());
-                    results.add(res2);
-                }
-            } else {
-                results = new LinkedList<KeyTestResult>();
-                for (Object o : res) {
-                    if (o instanceof KeyTestResult) {
-                        results.add((KeyTestResult) o);
-                    }
+            results = new LinkedList<>();
+            for (Object o : res) {
+                if (o instanceof KeyTestResult) {
+                    results.add((KeyTestResult) o);
                 }
             }
         }

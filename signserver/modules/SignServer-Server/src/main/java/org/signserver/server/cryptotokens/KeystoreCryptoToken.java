@@ -196,8 +196,8 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
         if (defaultKey != null) {
             final KeyEntry entry = entries.get(defaultKey);
             if (entry != null) {
-                entries.put(ICryptoToken.PURPOSE_SIGN, entry);
-                entries.put(ICryptoToken.PURPOSE_DECRYPT, entry);
+                entries.put(ICryptoTokenV4.PURPOSE_SIGN, entry);
+                entries.put(ICryptoTokenV4.PURPOSE_DECRYPT, entry);
             } else {
                 LOG.error("Not a private key for alias " + defaultKey);
             }
@@ -207,7 +207,7 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
         if (nextKey != null) {
             final KeyEntry entry = entries.get(nextKey);
             if (entry != null) {
-                entries.put(ICryptoToken.PURPOSE_NEXTKEY, entry);
+                entries.put(ICryptoTokenV4.PURPOSE_NEXTKEY, entry);
             } else {
                 LOG.error("Not a private key for alias " + defaultKey);
             }
@@ -437,8 +437,8 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
             entries.put(alias, entry);
             if (properties.getProperty(DEFAULTKEY) == null) {
                 properties.setProperty(DEFAULTKEY, alias);
-                entries.put(ICryptoToken.PURPOSE_SIGN, entry);
-                entries.put(ICryptoToken.PURPOSE_DECRYPT, entry);
+                entries.put(ICryptoTokenV4.PURPOSE_SIGN, entry);
+                entries.put(ICryptoTokenV4.PURPOSE_DECRYPT, entry);
             }
 
         } catch (UnsupportedOperationException ex) {
@@ -594,7 +594,7 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
             LOG.debug("Alias: " + keyAlias);
         }
         try {
-            return CryptoTokenHelper.genCertificateRequest(info, getPrivateKey(keyAlias, services), getProvider(ICryptoToken.PROVIDERUSAGE_SIGN), getPublicKey(keyAlias, services), explicitEccParameters);
+            return CryptoTokenHelper.genCertificateRequest(info, getPrivateKey(keyAlias, services), getProvider(ICryptoTokenV4.PROVIDERUSAGE_SIGN), getPublicKey(keyAlias, services), explicitEccParameters);
         } catch (IllegalArgumentException ex) {
             if (LOG.isDebugEnabled()) {
                 LOG.error("Certificate request error", ex);

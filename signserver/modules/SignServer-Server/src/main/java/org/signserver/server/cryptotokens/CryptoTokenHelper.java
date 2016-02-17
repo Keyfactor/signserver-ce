@@ -228,7 +228,7 @@ public class CryptoTokenHelper {
             final Enumeration<String> e = keyStore.aliases();
             while (e.hasMoreElements()) {
                 final String keyAlias = e.nextElement();
-                if (alias.equalsIgnoreCase(ICryptoToken.ALL_KEYS)
+                if (alias.equalsIgnoreCase(ICryptoTokenV4.ALL_KEYS)
                         || alias.equals(keyAlias)) {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("checking keyAlias: " + keyAlias);

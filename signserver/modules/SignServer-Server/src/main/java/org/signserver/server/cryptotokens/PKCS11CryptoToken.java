@@ -323,36 +323,9 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
         return true;
     }
 
-    /*@Override
-    public PrivateKey getPrivateKey(int purpose) throws CryptoTokenOfflineException {
-        final PrivateKey result;
-        if (purpose == ICryptoToken.PURPOSE_NEXTKEY) {
-            result = getPrivateKey(nextKeyAlias);
-        } else {
-            result = getPrivateKey(keyAlias);
-        }
-        return result;
-    }*/
-
-    /*@Override
-    public PublicKey getPublicKey(int purpose) throws CryptoTokenOfflineException {
-        final String alias = purpose == ICryptoToken.PURPOSE_NEXTKEY ? nextKeyAlias : keyAlias;
-        return getPublicKey(alias);
-    }*/
-
-    //@Override
     private PrivateKey getPrivateKey(String alias) throws CryptoTokenOfflineException {
         try {
             return delegate.getPrivateKey(alias);
-        } catch (org.cesecore.keys.token.CryptoTokenOfflineException ex) {
-            throw new CryptoTokenOfflineException(ex);
-        }
-    }
-
-    //@Override
-    private PublicKey getPublicKey(String alias) throws CryptoTokenOfflineException {
-        try {
-            return delegate.getPublicKey(alias);
         } catch (org.cesecore.keys.token.CryptoTokenOfflineException ex) {
             throw new CryptoTokenOfflineException(ex);
         }
@@ -386,7 +359,7 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
             LOG.debug("alias: " + alias);
         }
         try {
-            return CryptoTokenHelper.genCertificateRequest(info, delegate.getPrivateKey(alias), getProvider(ICryptoToken.PROVIDERUSAGE_SIGN), delegate.getPublicKey(alias), explicitEccParameters);
+            return CryptoTokenHelper.genCertificateRequest(info, delegate.getPrivateKey(alias), getProvider(ICryptoTokenV4.PROVIDERUSAGE_SIGN), delegate.getPublicKey(alias), explicitEccParameters);
         } catch (org.cesecore.keys.token.CryptoTokenOfflineException e) {
             LOG.error("Certificate request error: " + e.getMessage(), e);
             throw new CryptoTokenOfflineException(e);

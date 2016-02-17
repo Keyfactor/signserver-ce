@@ -944,11 +944,13 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
         try {
             IWorker worker = workerManagerSession.getWorker(signerId);
             final boolean result;
-            if (worker instanceof IKeyRemover) {
-                result = ((IKeyRemover) worker).removeKey(alias);
-            } else {
-                result = false;
+            if (!(worker instanceof IProcessable)) {
+                throw new InvalidWorkerIdException(
+                        "Worker exists but isn't a signer.");
             }
+            IProcessable signer = (IProcessable) worker;
+            result = signer.removeKey(alias, servicesImpl);
+        
             final HashMap<String, Object> auditMap = new HashMap<String, Object>();
             auditMap.put(AdditionalDetailsTypes.KEYALIAS.name(), alias);
             auditMap.put(AdditionalDetailsTypes.CRYPTOTOKEN.name(), getCryptoToken(signerId, worker.getConfig()));

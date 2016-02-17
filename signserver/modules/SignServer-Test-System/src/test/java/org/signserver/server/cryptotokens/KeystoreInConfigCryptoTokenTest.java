@@ -183,7 +183,7 @@ public class KeystoreInConfigCryptoTokenTest extends KeystoreCryptoTokenTestBase
             workerSession.reloadConfiguration(tokenId);
 
             // Remove the key
-            workerSession.removeKey(new WorkerIdentifier(tokenId), TEST_KEY_ALIAS);
+            assertTrue("removeKey result", workerSession.removeKey(new WorkerIdentifier(tokenId), TEST_KEY_ALIAS));
 
             // Now expect the TEST_KEY_ALIAS to have been removed
             Set<String> aliases2 = getKeyAliases(tokenId);

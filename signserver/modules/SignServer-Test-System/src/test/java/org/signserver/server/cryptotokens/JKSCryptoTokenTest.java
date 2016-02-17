@@ -83,7 +83,7 @@ public class JKSCryptoTokenTest extends TestCase {
         RequestContext context = new RequestContext(true);
         ICryptoInstance crypto = null;
         try {
-            crypto = signToken.acquireCryptoInstance("timestamptest", Collections.<String, Object>emptyMap(), context);
+            crypto = signToken.acquireCryptoInstance(alias, Collections.<String, Object>emptyMap(), context);
             sig.initSign(crypto.getPrivateKey());
 
             try {

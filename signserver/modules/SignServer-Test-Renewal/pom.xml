@@ -12,6 +12,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <dist.jar>${project.build.finalName}-tests.jar</dist.jar>
         <skipTests>true</skipTests>
+        <appserver.conf.folder>jboss7</appserver.conf.folder>
+        <appserver.home>/opt/jboss-as-7.1.1.Final</appserver.home>
     </properties>
     <dependencies>
         <dependency>
@@ -60,6 +62,18 @@
                 <version>2.16</version>
                 <configuration>
                     <skipTests>${skipTests}</skipTests>
+                    <additionalClasspathElements>
+                        <additionalClasspathElement>${basedir}/../../lib/ext/xmlsec-1.5.8.jar</additionalClasspathElement>
+                        <additionalClasspathElement>${basedir}/../../conf</additionalClasspathElement>
+                        <additionalClasspathElement>${basedir}/../../conf/${appserver.conf.folder}</additionalClasspathElement>
+                        <additionalClasspathElement>${basedir}/../../cesecore</additionalClasspathElement>
+                        <additionalClasspathElement>${basedir}/../../lib/ext/jdbc/jdbc.jar"</additionalClasspathElement>
+                        <additionalClasspathElement>${appserver.home}/bin/client/jboss-client.jar</additionalClasspathElement>
+                        <additionalClasspathElement>${appserver.home}/client/jbossall-client.jar</additionalClasspathElement>
+                    </additionalClasspathElements>
+                    <classpathDependencyExcludes>
+                        <classpathDependencyExcludes>javax:javaee-api</classpathDependencyExcludes>
+                    </classpathDependencyExcludes>
                 </configuration>
             </plugin>
             <plugin>

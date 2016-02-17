@@ -42,6 +42,7 @@ import org.signserver.common.TokenOutOfSpaceException;
 import org.signserver.common.UnsupportedCryptoTokenParameter;
 import org.signserver.common.WorkerStatus;
 import org.signserver.server.IServices;
+import org.signserver.server.cryptotokens.DefaultCryptoInstance;
 import org.signserver.server.cryptotokens.ICryptoInstance;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
 import org.signserver.server.cryptotokens.TokenSearchResults;
@@ -144,12 +145,11 @@ public class TestKeyDebugCryptoToken implements ICryptoTokenV4 {
 
     @Override
     public ICryptoInstance acquireCryptoInstance(String alias, Map<String, Object> params, RequestContext context) throws CryptoTokenOfflineException, NoSuchAliasException, InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter, IllegalRequestException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new DefaultCryptoInstance(alias, context, null, null);
     }
 
     @Override
     public void releaseCryptoInstance(ICryptoInstance instance, RequestContext context) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override

@@ -561,7 +561,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
     public Certificate getSigningCertificate(String alias, IServices services) throws CryptoTokenOfflineException {
         final Certificate result;
         final Certificate certFromConfig;
-        if (alias != null) {
+        if (alias != null && !alias.equals(config.getProperty(CryptoTokenHelper.PROPERTY_DEFAULTKEY))) {
             certFromConfig = null;
         } else {
             certFromConfig = (new ProcessableConfig(config)).getSignerCertificate();

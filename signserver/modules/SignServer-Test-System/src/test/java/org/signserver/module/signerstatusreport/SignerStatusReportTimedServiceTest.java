@@ -103,7 +103,7 @@ public class SignerStatusReportTimedServiceTest extends ModulesTestCase {
 
         // Setup service
         workerSession.setWorkerProperty(WORKERID_SERVICE, WorkerConfig.IMPLEMENTATION_CLASS,
-            "org.signserver.server.timedservices.SignerStatusReportTimedService");
+            "org.signserver.module.signerstatusreport.SignerStatusReportTimedService");
 
         workerSession.setWorkerProperty(WORKERID_SERVICE, "WORKERS",
                 WORKER_SIGNER1+","+WORKER_SIGNER2+","+WORKER_SIGNER3);

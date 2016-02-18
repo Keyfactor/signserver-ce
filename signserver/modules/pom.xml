@@ -45,25 +45,39 @@
     </profiles>
 
     <modules>
+        <!-- Core -->
         <module>SignServer-Common</module>
-        <module>SignServer-Entities</module>
-        <module>SignServer-ejb</module>
-        <module>SignServer-ejb-interfaces</module>
         <module>SignServer-Server</module>
-        <module>SignServer-CLI-Common</module>
-        <module>SignServer-AdminCLI</module>
-        <module>SignServer-war</module>
+        <module>SignServer-Entities</module>
+        <module>SignServer-ejb-interfaces</module>
+        <module>SignServer-ejb</module>
         <module>CESeCore-jars</module>
+        
+        <!-- Interfaces -->
+        <module>SignServer-war</module>
+        <module>SignServer-war-Healthcheck</module>
+        <module>SignServer-AdminCLI</module>
+        <module>SignServer-AdminGUI</module>
+        
         <module>SignServer-ejb-AdminWS</module>
-        <module>SignServer-Test-AdminWS</module>
-        <module>SignServer-Module-Log4j</module>
-        <module>SignServer-Test-Utils</module>
+        <module>SignServer-ejb-SignServerWS</module>
+        <module>SignServer-ejb-ValidationWS</module>
+        <module>SignServer-ejb-ClientWS</module>
+        
+        <module>SignServer-CLI-Common</module>
         <module>SignServer-Client-CLI</module>
         <module>SignServer-Client-ClientWS</module>
         <module>SignServer-Client-SignServerWS</module>
         <module>SignServer-Client-SigningAndValidationAPI</module>
-        <module>SignServer-ejb-SignServerWS</module>
+        <module>SignServer-Client-ValidationCLI</module>
+
+        <!-- Dependencies -->
         <module>SignServer-Lib-iText</module>
+        <module>SignServer-Lib-OpenXML4J</module>
+        <module>SignServer-Lib-ODFDOM</module>
+        
+        <!-- Modules -->
+        <module>SignServer-Module-Log4j</module>
         <module>SignServer-Module-CMSSigner</module>
         <module>SignServer-Module-MRTDSigner</module>
         <module>SignServer-Module-MRTDSODSigner</module>
@@ -78,22 +92,22 @@
         <module>SignServer-Module-XMLValidator</module>
         <module>SignServer-Module-XMLSigner</module>
         <module>SignServer-Module-XAdES</module>
-        <module>SignServer-Lib-OpenXML4J</module>
-        <module>SignServer-Lib-ODFDOM</module>
-        <module>SignServer-AdminGUI</module>
-        <module>SignServer-Client-ValidationCLI</module>
+        
+        <!-- System test and test tools -->        
+        <module>SignServer-Test-Utils</module>
         <module>SignServer-Test-P11</module>
         <module>SignServer-Test-Renewal</module>
         <module>SignServer-Test-SignServerWS</module>
-        <module>SignServer-Test-System</module>
         <module>SignServer-Test-ValidationWS</module>
-        <module>SignServer-ejb-ValidationWS</module>
-        <module>SignServer-ejb-ClientWS</module>
+        <module>SignServer-Test-AdminWS</module>
+        <module>SignServer-Test-System</module>
         <module>SignServer-Test-Random</module>
         <module>SignServer-Test-Performance</module>
-        <module>SignServer-war-Healthcheck</module>
+        
+        <!-- Documentation -->
         <module>SignServer-Doc</module>
-    <module>SignServer-Doc-web</module>
+        <module>SignServer-Doc-web</module>
+
   </modules>
     <dependencies>
         <dependency>

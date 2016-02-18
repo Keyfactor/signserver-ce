@@ -13,7 +13,6 @@
 package org.signserver.server.log;
 
 import java.util.Map;
-import java.util.Properties;
 import java.util.regex.Pattern;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;

@@ -54,9 +54,11 @@ import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
+import org.signserver.server.IServices;
 import org.signserver.server.SignServerContext;
 import org.signserver.server.ZeroTimeSource;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
+import org.signserver.server.log.AdminInfo;
 import org.signserver.server.log.LogMap;
 import org.signserver.test.utils.CertTools;
 import org.signserver.test.utils.builders.CertBuilder;
@@ -65,6 +67,8 @@ import org.signserver.test.utils.builders.CryptoUtils;
 
 import org.signserver.test.utils.mock.GlobalConfigurationSessionMock;
 import org.signserver.test.utils.mock.MockedCryptoToken;
+import org.signserver.test.utils.mock.MockedRequestContext;
+import org.signserver.test.utils.mock.MockedServicesImpl;
 import org.signserver.test.utils.mock.WorkerSessionMock;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestUtils;
@@ -183,6 +187,7 @@ public class MSAuthCodeTimeStampSignerTest extends ModulesTestCase {
         final GlobalConfigurationSessionMock globalConfig
                 = new GlobalConfigurationSessionMock();
         final WorkerSessionMock workerMock = new WorkerSessionMock();
+        final IServices services = new MockedServicesImpl().with(GlobalConfigurationSessionLocal.class, globalConfig);
         
         final WorkerConfig config = new WorkerConfig();
         config.setProperty("NAME", "TestMSAuthCodeTimeStampSigner");
@@ -206,13 +211,7 @@ public class MSAuthCodeTimeStampSignerTest extends ModulesTestCase {
                     includeCertificateLevels);
         }
         
-        final MSAuthCodeTimeStampSigner worker = new MSAuthCodeTimeStampSigner() {
-            @Override
-            protected GlobalConfigurationSessionLocal
-                    getGlobalConfigurationSession() {
-                return globalConfig;
-            }
-        };
+        final MSAuthCodeTimeStampSigner worker = new MSAuthCodeTimeStampSigner();
             
         workerMock.setupWorker(SIGNER_ID, CRYPTOTOKEN_CLASSNAME, config, worker);
         workerMock.reloadConfiguration(SIGNER_ID);
@@ -220,7 +219,7 @@ public class MSAuthCodeTimeStampSignerTest extends ModulesTestCase {
         // if the INCLUDE_CERTIFICATE_LEVELS property has been set,
         // check that it gives a not supported error
         if (includeCertificateLevels != null) {
-            final List<String> errors = worker.getFatalErrors(null);
+            final List<String> errors = worker.getFatalErrors(services);
             
             assertTrue("Should contain config error",
                     errors.contains(WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS + " is not supported."));
@@ -230,7 +229,7 @@ public class MSAuthCodeTimeStampSignerTest extends ModulesTestCase {
         // create sample hard-coded request
         signRequest = new GenericSignRequest(REQUEST_ID, requestData);
 
-        GenericSignResponse resp = (GenericSignResponse) workerMock.process(new WorkerIdentifier(SIGNER_ID), signRequest, new RemoteRequestContext());
+        GenericSignResponse resp = (GenericSignResponse) workerMock.process(new AdminInfo("Client user", null, null), new WorkerIdentifier(SIGNER_ID), signRequest, new MockedRequestContext(services));
         
         // check that the response contains the needed attributes
         byte[] buf = resp.getProcessedData();
@@ -520,7 +519,7 @@ public class MSAuthCodeTimeStampSignerTest extends ModulesTestCase {
         }
 
         @Override
-        public ICryptoTokenV4 getCryptoToken() {
+        public ICryptoTokenV4 getCryptoToken(final IServices services) {
             return mockedToken;
         }
     }

@@ -126,8 +126,8 @@ public class MRTDSODSigner extends BaseSigner {
         
         final SODSignRequest sodRequest = (SODSignRequest) signRequest;
 
-        final ICryptoTokenV4 token = getCryptoToken();
         final IServices services = requestContext.getServices();
+        final ICryptoTokenV4 token = getCryptoToken(services);
         // Trying to do a workaround for issue when the PKCS#11 session becomes invalid
         // If autoactivate is on, we can deactivate and re-activate the token.
         synchronized (syncObj) {

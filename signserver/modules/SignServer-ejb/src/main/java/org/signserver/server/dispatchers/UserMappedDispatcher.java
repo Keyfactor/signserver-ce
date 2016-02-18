@@ -55,9 +55,6 @@ public class UserMappedDispatcher extends BaseDispatcher {
     /** Property WORKERS. */
     private static final String PROPERTY_USERNAME_MAPPING = "USERNAME_MAPPING";
 
-    /** Workersession. */
-    private DispatcherProcessSessionLocal workerSession;
-
     /** Mapping. */
     private Map<String, String> mappings;
 
@@ -90,19 +87,10 @@ public class UserMappedDispatcher extends BaseDispatcher {
                 }
             }
         }
-        this.workerSession = getWorkerSession();
     }
     
-    protected DispatcherProcessSessionLocal getWorkerSession() {
-        if (workerSession == null) {
-            try {
-                workerSession = ServiceLocator.getInstance().lookupLocal(
-                        DispatcherProcessSessionLocal.class);
-            } catch (NamingException ex) {
-                LOG.error("Unable to lookup worker session", ex);
-            }
-        }
-        return workerSession;
+    protected DispatcherProcessSessionLocal getWorkerSession(final RequestContext requestContext) {
+        return requestContext.getServices().get(DispatcherProcessSessionLocal.class);
     }
 
     @Override
@@ -136,7 +124,7 @@ public class UserMappedDispatcher extends BaseDispatcher {
             throw new SignServerException("Dispatcher configured to dispatch to itself");
         } else {
             try {
-                response = workerSession.process(new AdminInfo("Client user", null, null),
+                response = getWorkerSession(requestContext).process(new AdminInfo("Client user", null, null),
                         new WorkerIdentifier(workerName), signRequest,
                         nextContext);
                 if (LOG.isDebugEnabled()) {

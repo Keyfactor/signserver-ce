@@ -17,7 +17,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
-import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
@@ -29,6 +28,7 @@ import org.bouncycastle.tsp.TimeStampResponse;
 import org.bouncycastle.tsp.TimeStampResponseGenerator;
 import org.signserver.common.*;
 import org.signserver.ejb.interfaces.DispatcherProcessSessionLocal;
+import org.signserver.server.IServices;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.dispatchers.BaseDispatcher;
 import org.signserver.server.log.AdminInfo;
@@ -80,37 +80,30 @@ public class RequestedPolicyDispatcher extends BaseDispatcher {
     @Override
     public void init(final int workerId, final WorkerConfig config,
             final WorkerContext workerContext, final EntityManager workerEM) {
-        try {
-            super.init(workerId, config, workerContext, workerEM);
+        super.init(workerId, config, workerContext, workerEM);
 
-            String policyWorkerMapping = config.getProperty(MAPPINGS);
-            if (policyWorkerMapping == null) {
-                LOG.error("Property " + MAPPINGS + " missing!");
-            } else {
-                workerMapping = parseMapping(policyWorkerMapping);
-            }
-            
-            final String val = config.getProperty(DEFAULTWORKER);
-            if (val == null) {
-                defaultWorker = null;
-            } else {
-                defaultWorker = WorkerIdentifier.createFromIdOrName(val);
-            }
+        String policyWorkerMapping = config.getProperty(MAPPINGS);
+        if (policyWorkerMapping == null) {
+            LOG.error("Property " + MAPPINGS + " missing!");
+        } else {
+            workerMapping = parseMapping(policyWorkerMapping);
+        }
 
-            useDefaultIfMismatch = Boolean.parseBoolean(config.getProperty(USEDEFAULTIFMISMATCH, "false"));
-            includeStatusString = Boolean.parseBoolean(config.getProperty(TimeStampSigner.INCLUDESTATUSSTRING, "true"));
-            
-            if (LOG.isDebugEnabled()) {
-                LOG.debug(new StringBuilder()
-                        .append("workerMapping: ").append(workerMapping).append("\n")
-                        .append("defaultWorker: ").append(defaultWorker).append("\n")
-                        .append("useDefaultIfMismatch: ").append(useDefaultIfMismatch).toString());
-            }
-            
-            processSession = ServiceLocator.getInstance().lookupLocal(
-                        DispatcherProcessSessionLocal.class);
-        } catch (NamingException ex) {
-            LOG.error("Unable to lookup worker session", ex);
+        final String val = config.getProperty(DEFAULTWORKER);
+        if (val == null) {
+            defaultWorker = null;
+        } else {
+            defaultWorker = WorkerIdentifier.createFromIdOrName(val);
+        }
+
+        useDefaultIfMismatch = Boolean.parseBoolean(config.getProperty(USEDEFAULTIFMISMATCH, "false"));
+        includeStatusString = Boolean.parseBoolean(config.getProperty(TimeStampSigner.INCLUDESTATUSSTRING, "true"));
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(new StringBuilder()
+                    .append("workerMapping: ").append(workerMapping).append("\n")
+                    .append("defaultWorker: ").append(defaultWorker).append("\n")
+                    .append("useDefaultIfMismatch: ").append(useDefaultIfMismatch).toString());
         }
     }
 
@@ -179,7 +172,7 @@ public class RequestedPolicyDispatcher extends BaseDispatcher {
                 }
                 ProcessRequest newRequest = new GenericServletRequest(sReq.getRequestID(), (byte[]) sReq.getRequestData(), httpRequest);
                 
-                result = (GenericSignResponse) getProcessSession().process(new AdminInfo("Client user", null, null), toWorker, newRequest, nextContext);
+                result = (GenericSignResponse) getProcessSession(context.getServices()).process(new AdminInfo("Client user", null, null), toWorker, newRequest, nextContext);
             }
         } catch (IOException e) {
             logMap.put(ITimeStampLogger.LOG_TSA_EXCEPTION, e.getMessage());
@@ -190,8 +183,8 @@ public class RequestedPolicyDispatcher extends BaseDispatcher {
         return result;
     }
 
-    private DispatcherProcessSessionLocal getProcessSession() {
-        return processSession;
+    private DispatcherProcessSessionLocal getProcessSession(IServices services) {
+        return services.get(DispatcherProcessSessionLocal.class);
     }
     
     private Map<String, WorkerIdentifier> parseMapping(String mapping) {

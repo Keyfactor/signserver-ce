@@ -70,10 +70,10 @@ public class SignServerContext extends WorkerContext {
         this.cryptoTokenSupplier = cryptoTokenSupplier;
     }
 
-    public ICryptoTokenV4 getCryptoToken() throws SignServerException {
+    public ICryptoTokenV4 getCryptoToken(final IServices services) throws SignServerException {
         ICryptoTokenV4 result = null;
         if (cryptoTokenSupplier != null) {
-            result = cryptoTokenSupplier.getCurrentCryptoToken();
+            result = cryptoTokenSupplier.getCurrentCryptoToken(services);
         }
         return result;
     }

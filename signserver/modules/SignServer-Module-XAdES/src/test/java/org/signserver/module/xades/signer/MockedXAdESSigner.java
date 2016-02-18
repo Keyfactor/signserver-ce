@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.module.xades.signer;
 
+import org.signserver.server.IServices;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
 import org.signserver.test.utils.mock.MockedCryptoToken;
 
@@ -29,7 +30,7 @@ public class MockedXAdESSigner extends XAdESSigner {
     }
 
     @Override
-    public ICryptoTokenV4 getCryptoToken() {
+    public ICryptoTokenV4 getCryptoToken(final IServices services) {
         return mockedToken;
     }
     

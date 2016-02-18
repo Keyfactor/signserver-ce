@@ -154,7 +154,8 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
                     ServiceLocator.getInstance().lookupLocal(ProcessSessionLocal.class),
                     globalConfigurationSession,
                     logSession,
-                    internalSession, dispatcherSession, statusSession);
+                    internalSession, dispatcherSession, statusSession,
+                    keyUsageCounterDataService);
         } catch (NamingException ex) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Lookup services failed", ex);

@@ -44,6 +44,7 @@ import org.signserver.server.cryptotokens.ICryptoInstance;
 import org.signserver.common.NoSuchAliasException;
 import org.signserver.server.cryptotokens.TokenSearchResults;
 import org.signserver.common.UnsupportedCryptoTokenParameter;
+import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
 import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.log.LogMap;
@@ -195,7 +196,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
                                      final ProcessRequest request,
                                      final RequestContext context)
             throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
-        final ICryptoToken token = getCryptoToken();
+        final ICryptoToken token = getCryptoToken(services);
         
         if (token instanceof ICryptoTokenV2) {
             final String alias = getAliasAndLog(purpose, request, context);
@@ -215,7 +216,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         }
         
         try {
-            ICryptoTokenV4 token = getCryptoToken();
+            ICryptoTokenV4 token = getCryptoToken(services);
         
             if (token == null) {
         	if (log.isDebugEnabled()) {
@@ -269,14 +270,14 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         
         try {
             final boolean result;
-            final ICryptoTokenV4 token = getCryptoToken();
+            final ICryptoTokenV4 token = getCryptoToken(services);
             if (token == null) {
         	if (log.isDebugEnabled()) {
                     log.debug("Crypto token not found");
         	}
         	result = false;
             } else {
-                result = getCryptoToken().deactivate(services);
+                result = getCryptoToken(services).deactivate(services);
                 if (log.isTraceEnabled()) {
                     log.trace("<deactivateSigner");
                 }
@@ -307,18 +308,18 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
      * @return The used crypto token
      * @throws SignServerException
      */
-    public ICryptoTokenV4 getCryptoToken() throws SignServerException {
+    public ICryptoTokenV4 getCryptoToken(final IServices services) throws SignServerException {
         if (log.isTraceEnabled()) {
             log.trace(">getCryptoToken");
         }
         if (cryptoToken == null) {
             // Check if a crypto token from an other worker is available
-            final ICryptoTokenV4 tokenFromOtherWorker1 = getSignServerContext().getCryptoToken();
+            final ICryptoTokenV4 tokenFromOtherWorker1 = getSignServerContext().getCryptoToken(services);
 
             if (tokenFromOtherWorker1 != null) {
                 cryptoToken = new WrappedCryptoToken(tokenFromOtherWorker1, config);
             } else {
-                GlobalConfiguration gc = getGlobalConfigurationSession().getGlobalConfiguration();
+                final GlobalConfiguration gc = services.get(GlobalConfigurationSessionLocal.class).getGlobalConfiguration();
                 final Properties defaultProperties = new Properties();
                 // TODO: The following could potentially be made generic
                 String value = gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL + DEFAULT_ + CryptoTokenHelper.PROPERTY_SHAREDLIBRARY);
@@ -522,7 +523,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
     public int getCryptoTokenStatus(IServices services) {
         int result = WorkerStatus.STATUS_OFFLINE;
         try {
-            ICryptoTokenV4 token = getCryptoToken();
+            ICryptoTokenV4 token = getCryptoToken(services);
             if (token != null) {
                 result = token.getCryptoTokenStatus(services);
             }
@@ -668,14 +669,6 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
                 defaultKey, new ServicesImpl());
     }
 
-    @Override
-    public ICertReqData genCertificateRequest(ISignerCertReqInfo info,
-            boolean explicitEccParameters, String keyAlias)
-            throws CryptoTokenOfflineException, NoSuchAliasException {
-        return genCertificateRequest(info, explicitEccParameters, keyAlias,
-                false, new ServicesImpl());
-    }
-    
     private ICertReqData genCertificateRequest(final ISignerCertReqInfo info,
             final boolean explicitEccParameters, final String keyAlias,
             final boolean defaultKey, final IServices services)
@@ -685,7 +678,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         }
         
         try {
-            final ICryptoTokenV4 token = getCryptoToken();
+            final ICryptoTokenV4 token = getCryptoToken(services);
             
             if (token == null) {
                 throw new CryptoTokenOfflineException("Crypto token offline");
@@ -722,7 +715,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
     @Override
     public boolean removeKey(String alias, IServices services) throws CryptoTokenOfflineException, KeyStoreException, SignServerException {
         boolean result = false;
-        ICryptoTokenV4 token = getCryptoToken();
+        ICryptoTokenV4 token = getCryptoToken(services);
         if (token == null) {
             throw new CryptoTokenOfflineException("Crypto token offline");
         } else {
@@ -739,7 +732,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
             InvalidAlgorithmParameterException,
             UnsupportedCryptoTokenParameter {
         try {
-            ICryptoTokenV4 token = getCryptoToken();
+            ICryptoTokenV4 token = getCryptoToken(services);
             if (token == null) {
                 throw new CryptoTokenOfflineException("Crypto token offline");
             } else {
@@ -764,7 +757,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
     public Collection<org.signserver.common.KeyTestResult> testKey(String alias,
         char[] authCode, IServices services) throws CryptoTokenOfflineException, KeyStoreException {
         try {
-            ICryptoTokenV4 token = getCryptoToken();
+            ICryptoTokenV4 token = getCryptoToken(services);
             
             if (token == null) {
                 throw new CryptoTokenOfflineException("Crypto token offline");
@@ -785,7 +778,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
             UnsupportedCryptoTokenParameter,
             OperationUnsupportedException {
         try {
-            final ICryptoTokenV4 token = getCryptoToken();
+            final ICryptoTokenV4 token = getCryptoToken(services);
             
             if (token == null) {
                 throw new CryptoTokenOfflineException("Crypto token offline");
@@ -878,7 +871,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
     protected ICryptoInstance acquireCryptoInstance(final int purpose, final ProcessRequest request, final Map<String, Object> params, final RequestContext context) throws SignServerException, CryptoTokenOfflineException, IllegalRequestException, InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter {
         final ICryptoInstance result;
         final String alias = getAliasAndLog(purpose, request, context);
-        ICryptoTokenV4 token = getCryptoToken();
+        ICryptoTokenV4 token = getCryptoToken(context.getServices());
         if (token == null) {
             throw new CryptoTokenOfflineException("Crypto token not available");
         } 
@@ -905,7 +898,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         final ICryptoInstance result;
         String alias = config.getProperty(CryptoTokenHelper.PROPERTY_DEFAULTKEY);
         
-        ICryptoTokenV4 token = getCryptoToken();
+        ICryptoTokenV4 token = getCryptoToken(context.getServices());
         if (token == null) {
             throw new CryptoTokenOfflineException("Crypto token not available");
         } 
@@ -925,7 +918,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
     protected ICryptoInstance acquireDefaultCryptoInstance(String alias, RequestContext context) throws CryptoTokenOfflineException, InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter, IllegalRequestException, SignServerException {
         final ICryptoInstance result;
 
-        ICryptoTokenV4 token = getCryptoToken();
+        ICryptoTokenV4 token = getCryptoToken(context.getServices());
         if (token == null) {
             throw new CryptoTokenOfflineException("Crypto token not available");
         } 
@@ -946,7 +939,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
      * @param instance to release
      */
     protected void releaseCryptoInstance(final ICryptoInstance instance, RequestContext context) throws SignServerException {
-        ICryptoTokenV4 token = getCryptoToken();
+        ICryptoTokenV4 token = getCryptoToken(context.getServices());
         if (token != null) {
             token.releaseCryptoInstance(instance, context);
 
@@ -956,15 +949,15 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
     }
     
     @Override
-    public TokenSearchResults searchTokenEntries(int startIndex, int max, final QueryCriteria qc, final boolean includeData, final Map<String, Object> params, final IServices servicesImpl) throws
+    public TokenSearchResults searchTokenEntries(int startIndex, int max, final QueryCriteria qc, final boolean includeData, final Map<String, Object> params, final IServices services) throws
             CryptoTokenOfflineException,
             QueryException,
             InvalidAlgorithmParameterException,
             UnsupportedCryptoTokenParameter,
             OperationUnsupportedException {
         try {
-            final ICryptoTokenV4 token = getCryptoToken();
-            return token.searchTokenEntries(startIndex, max, qc, includeData, params, servicesImpl);
+            final ICryptoTokenV4 token = getCryptoToken(services);
+            return token.searchTokenEntries(startIndex, max, qc, includeData, params, services);
         } catch (SignServerException ex) {
             log.error(FAILED_TO_GET_CRYPTO_TOKEN_ + ex.getMessage());
             throw new CryptoTokenOfflineException(ex);

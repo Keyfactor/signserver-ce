@@ -41,7 +41,6 @@ public abstract class BaseValidator implements IValidator {
     protected int validatorId;
     protected Properties props;
     protected EntityManager em;
-    protected ICryptoTokenV4 ct;
     private HashMap<String, List<Certificate>> certChainMap;
     private HashMap<Integer, Properties> issuerProperties;
 
@@ -68,13 +67,11 @@ public abstract class BaseValidator implements IValidator {
      * @see org.signserver.validationservice.server.IValidator#init(int, int, java.util.Properties, javax.persistence.EntityManager, org.signserver.server.cryptotokens.ICryptoToken)
      */
     @Override
-    public void init(int workerId, int validatorId, Properties props, EntityManager em,
-            ICryptoTokenV4 ct) throws SignServerException {
+    public void init(int workerId, int validatorId, Properties props, EntityManager em) throws SignServerException {
         this.workerId = workerId;
         this.validatorId = validatorId;
         this.props = props;
         this.em = em;
-        this.ct = ct;
     }
 
     /**

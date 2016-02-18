@@ -113,7 +113,8 @@ public class DispatcherProcessSessionBean implements DispatcherProcessSessionLoc
                     processSession,
                     globalConfigurationSession,
                     logSession,
-                    internalSession, ctx.getBusinessObject(DispatcherProcessSessionLocal.class), statusSession);
+                    internalSession, ctx.getBusinessObject(DispatcherProcessSessionLocal.class), statusSession,
+                    keyUsageCounterDataService);
         } catch (NamingException ex) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Lookup services failed", ex);

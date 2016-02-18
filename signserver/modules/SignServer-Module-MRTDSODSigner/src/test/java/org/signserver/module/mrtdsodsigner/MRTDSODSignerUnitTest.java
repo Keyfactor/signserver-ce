@@ -33,20 +33,22 @@ import org.cesecore.keys.util.KeyTools;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 import org.signserver.common.IllegalRequestException;
-import org.signserver.common.RemoteRequestContext;
+import org.signserver.common.RequestContext;
 import org.signserver.common.SODSignRequest;
 import org.signserver.common.SODSignResponse;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
-import org.signserver.ejb.interfaces.ProcessSessionRemote;
+import org.signserver.ejb.interfaces.ProcessSessionLocal;
 import org.signserver.module.mrtdsodsigner.jmrtd.SODFile;
 import org.signserver.test.utils.CertTools;
 import org.signserver.test.utils.mock.GlobalConfigurationSessionMock;
 import org.signserver.test.utils.mock.WorkerSessionMock;
 import org.signserver.ejb.interfaces.WorkerSessionRemote;
-import org.signserver.ejb.interfaces.GlobalConfigurationSessionRemote;
+import org.signserver.server.IServices;
+import org.signserver.server.log.AdminInfo;
+import org.signserver.test.utils.mock.MockedServicesImpl;
 
 /**
  * Unit tests for MRTDSODSigner.
@@ -139,7 +141,8 @@ public class MRTDSODSignerUnitTest extends TestCase {
     
     private GlobalConfigurationSessionLocal globalConfig;
     private WorkerSessionRemote workerSession;
-    private ProcessSessionRemote processSession;
+    private ProcessSessionLocal processSession;
+    private IServices services;
 
     
     public MRTDSODSignerUnitTest() {
@@ -573,9 +576,12 @@ public class MRTDSODSignerUnitTest extends TestCase {
             expectedHashes = dataGroups;
     	}
 
-        SODSignResponse res = (SODSignResponse) processSession.process(new WorkerIdentifier(workerId),
+        RequestContext context = new RequestContext();
+        context.setServices(services);
+        
+        SODSignResponse res = (SODSignResponse) processSession.process(new AdminInfo("Client user", null, null), new WorkerIdentifier(workerId),
                 new SODSignRequest(requestId, dataGroups),
-                new RemoteRequestContext());
+                context);
         assertNotNull(res);
         assertEquals(requestId, res.getRequestID());
         Certificate signercert = res.getSignerCertificate();
@@ -610,7 +616,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
         globalConfig = globalMock;
         workerSession = workerMock;
         processSession = workerMock;
-
+        services = new MockedServicesImpl().with(GlobalConfigurationSessionLocal.class, globalMock);
 
 
         // WORKER1
@@ -622,14 +628,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
             config.setProperty(KEYSTOREPASSWORD, keystore1Password);
             config.setProperty(AUTHTYPE, "NOAUTH");
             config.setProperty(DEFAULTKEY, keystore1DefaultKey);
-            workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
-                    new MRTDSODSigner() {
-                @Override
-                protected GlobalConfigurationSessionLocal
-                        getGlobalConfigurationSession() {
-                    return globalConfig;
-                }
-            });
+            workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config, new MRTDSODSigner());
             workerSession.reloadConfiguration(workerId);
         }
 
@@ -644,14 +643,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
             config.setProperty("DIGESTALGORITHM", "SHA512");
             config.setProperty("SIGNATUREALGORITHM", "SHA512withRSA");
             config.setProperty(DEFAULTKEY, keystore1DefaultKey);
-            workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
-                    new MRTDSODSigner() {
-                @Override
-                protected GlobalConfigurationSessionLocal
-                        getGlobalConfigurationSession() {
-                    return globalConfig;
-                }
-            });
+            workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config, new MRTDSODSigner());
             workerSession.reloadConfiguration(workerId);
         }
 
@@ -665,14 +657,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
             config.setProperty(AUTHTYPE, "NOAUTH");
             config.setProperty("DODATAGROUPHASHING", "true");
             config.setProperty(DEFAULTKEY, keystore1DefaultKey);
-            workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
-                    new MRTDSODSigner() {
-                @Override
-                protected GlobalConfigurationSessionLocal
-                        getGlobalConfigurationSession() {
-                    return globalConfig;
-                }
-            });
+            workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config, new MRTDSODSigner());
             workerSession.reloadConfiguration(workerId);
         }
 
@@ -688,14 +673,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
             config.setProperty("SIGNATUREALGORITHM", "SHA512withRSA");
             config.setProperty("DODATAGROUPHASHING", "true");
             config.setProperty(DEFAULTKEY, keystore1DefaultKey);
-            workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
-                    new MRTDSODSigner() {
-                @Override
-                protected GlobalConfigurationSessionLocal
-                        getGlobalConfigurationSession() {
-                    return globalConfig;
-                }
-            });
+            workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config, new MRTDSODSigner());
             workerSession.reloadConfiguration(workerId);
         }
 
@@ -710,14 +688,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
             config.setProperty("LDSVERSION", "0108");
             config.setProperty("UNICODEVERSION", "040000");
             config.setProperty(DEFAULTKEY, keystore1DefaultKey);
-            workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
-                    new MRTDSODSigner() {
-                @Override
-                protected GlobalConfigurationSessionLocal
-                        getGlobalConfigurationSession() {
-                    return globalConfig;
-                }
-            });
+            workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config, new MRTDSODSigner());
             workerSession.reloadConfiguration(workerId);
         }
 
@@ -732,14 +703,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
             config.setProperty("DIGESTALGORITHM", "SHA1");
             config.setProperty("SIGNATUREALGORITHM", "SHA1withRSAandMGF1");
             config.setProperty(DEFAULTKEY, keystore1DefaultKey);
-            workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
-                    new MRTDSODSigner() {
-                @Override
-                protected GlobalConfigurationSessionLocal
-                        getGlobalConfigurationSession() {
-                    return globalConfig;
-                }
-            });
+            workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config, new MRTDSODSigner());
             workerSession.reloadConfiguration(workerId);
         }
 
@@ -754,14 +718,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
             config.setProperty("DIGESTALGORITHM", "SHA256");
             config.setProperty("SIGNATUREALGORITHM", "SHA256withRSAandMGF1");
             config.setProperty(DEFAULTKEY, keystore1DefaultKey);
-            workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
-                    new MRTDSODSigner() {
-                @Override
-                protected GlobalConfigurationSessionLocal
-                        getGlobalConfigurationSession() {
-                    return globalConfig;
-                }
-            });
+            workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config, new MRTDSODSigner());
             workerSession.reloadConfiguration(workerId);
         }
 
@@ -776,14 +733,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
             config.setProperty("DIGESTALGORITHM", "SHA384");
             config.setProperty("SIGNATUREALGORITHM", "SHA384withRSAandMGF1");
             config.setProperty(DEFAULTKEY, keystore1DefaultKey);
-            workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
-                    new MRTDSODSigner() {
-                @Override
-                protected GlobalConfigurationSessionLocal
-                        getGlobalConfigurationSession() {
-                    return globalConfig;
-                }
-            });
+            workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config, new MRTDSODSigner());
             workerSession.reloadConfiguration(workerId);
         }
 
@@ -798,15 +748,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
             config.setProperty("DIGESTALGORITHM", "SHA512");
             config.setProperty("SIGNATUREALGORITHM", "SHA512withRSAandMGF1");
             config.setProperty(DEFAULTKEY, "demods1"); // Use a larger key
-            
-            workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
-                    new MRTDSODSigner() {
-                @Override
-                protected GlobalConfigurationSessionLocal
-                        getGlobalConfigurationSession() {
-                    return globalConfig;
-                }
-            });
+            workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config, new MRTDSODSigner());
             workerSession.reloadConfiguration(workerId);
         }
 
@@ -821,14 +763,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
             config.setProperty("DIGESTALGORITHM", "SHA1");
             config.setProperty("SIGNATUREALGORITHM", "SHA256withRSAandMGF1");
             config.setProperty(DEFAULTKEY, keystore1DefaultKey);
-            workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
-                    new MRTDSODSigner() {
-                @Override
-                protected GlobalConfigurationSessionLocal
-                        getGlobalConfigurationSession() {
-                    return globalConfig;
-                }
-            });
+            workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config, new MRTDSODSigner());
             workerSession.reloadConfiguration(workerId);
         }
 
@@ -843,14 +778,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
             config.setProperty("DIGESTALGORITHM", "SHA1");
             config.setProperty("SIGNATUREALGORITHM", "SHA1withRSAandMGF1");
             config.setProperty(DEFAULTKEY, keystore2DefaultKey);
-            workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
-                    new MRTDSODSigner() {
-                @Override
-                protected GlobalConfigurationSessionLocal
-                        getGlobalConfigurationSession() {
-                    return globalConfig;
-                }
-            });
+            workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config, new MRTDSODSigner());
             workerSession.reloadConfiguration(workerId);
         }
 
@@ -865,14 +793,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
             config.setProperty("DIGESTALGORITHM", "SHA256");
             config.setProperty("SIGNATUREALGORITHM", "SHA256withRSAandMGF1");
             config.setProperty(DEFAULTKEY, keystore3DefaultKey);
-            workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
-                    new MRTDSODSigner() {
-                @Override
-                protected GlobalConfigurationSessionLocal
-                        getGlobalConfigurationSession() {
-                    return globalConfig;
-                }
-            });
+            workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config, new MRTDSODSigner());
             workerSession.reloadConfiguration(workerId);
         }
         
@@ -887,14 +808,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
             config.setProperty("DIGESTALGORITHM", "SHA256");
             config.setProperty("SIGNATUREALGORITHM", "SHA256withECDSA");
             config.setProperty(DEFAULTKEY, keystore4DefaultKey);
-            workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
-                    new MRTDSODSigner() {
-                @Override
-                protected GlobalConfigurationSessionLocal
-                        getGlobalConfigurationSession() {
-                    return globalConfig;
-                }
-            });
+            workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config, new MRTDSODSigner());
             workerSession.reloadConfiguration(workerId);
         }
         
@@ -910,14 +824,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
             config.setProperty("DIGESTALGORITHM", "SHA1");
             config.setProperty("SIGNATUREALGORITHM", "SHA1WithRSAandMGF1");
             config.setProperty(DEFAULTKEY, keystore1DefaultKey);
-            workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
-                    new MRTDSODSigner() {
-                @Override
-                protected GlobalConfigurationSessionLocal
-                        getGlobalConfigurationSession() {
-                    return globalConfig;
-                }
-            });
+            workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config, new MRTDSODSigner());
             workerSession.reloadConfiguration(workerId);
         }
         
@@ -932,14 +839,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
             config.setProperty("DIGESTALGORITHM", "SHA1");
             config.setProperty("SIGNATUREALGORITHM", "SHA1WithRSAAndMGF1");
             config.setProperty(DEFAULTKEY, keystore1DefaultKey);
-            workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
-                    new MRTDSODSigner() {
-                @Override
-                protected GlobalConfigurationSessionLocal
-                        getGlobalConfigurationSession() {
-                    return globalConfig;
-                }
-            });
+            workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config, new MRTDSODSigner());
             workerSession.reloadConfiguration(workerId);
         }
         
@@ -954,14 +854,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
             config.setProperty("DIGESTALGORITHM", "SHA256");
             config.setProperty("SIGNATUREALGORITHM", "SHA256WithRSAandMGF1");
             config.setProperty(DEFAULTKEY, keystore1DefaultKey);
-            workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
-                    new MRTDSODSigner() {
-                @Override
-                protected GlobalConfigurationSessionLocal
-                        getGlobalConfigurationSession() {
-                    return globalConfig;
-                }
-            });
+            workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config, new MRTDSODSigner());
             workerSession.reloadConfiguration(workerId);
         }
     }

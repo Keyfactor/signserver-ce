@@ -16,8 +16,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.*;
-import javax.ejb.EJB;
-import javax.naming.NamingException;
 import org.apache.log4j.Logger;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GenericPropertiesRequest;
@@ -30,9 +28,9 @@ import org.signserver.common.IllegalRequestException;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
-import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerStatus;
+import org.signserver.server.IServices;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
 import org.signserver.server.cryptotokens.NullCryptoToken;
 import org.signserver.server.signers.BaseSigner;
@@ -73,20 +71,9 @@ public class StatusPropertiesWorker extends BaseSigner {
     private static final String EXPIRATION = "EXPIRATION";
     
     private static final ICryptoTokenV4 CRYPTO_TOKEN = new NullCryptoToken(WorkerStatus.STATUS_ACTIVE);
-    
-    /** StatusRepositorySession. */
-    @EJB
-    private StatusRepositorySessionLocal statusRepository;
-    
-    private StatusRepositorySessionLocal getStatusRepository() {
-        if (statusRepository == null) {
-            try {
-                statusRepository = ServiceLocator.getInstance().lookupLocal(StatusRepositorySessionLocal.class);
-            } catch (NamingException ex) {
-                throw new RuntimeException("Unable to lookup worker session", ex);
-            }
-        }
-        return statusRepository;
+
+    protected StatusRepositorySessionLocal getStatusRepository(IServices services) {
+        return services.get(StatusRepositorySessionLocal.class);
     }
     
     @Override
@@ -112,7 +99,7 @@ public class StatusPropertiesWorker extends BaseSigner {
         }
         
         // Process the request
-        responseData = process(requestData);
+        responseData = process(requestData, requestContext);
 
         if (request instanceof GenericSignRequest) {
             final GenericSignRequest signRequest = (GenericSignRequest) request;
@@ -143,7 +130,7 @@ public class StatusPropertiesWorker extends BaseSigner {
         return ret;
     }
 
-    private Properties process(Properties requestData) throws IllegalRequestException {
+    private Properties process(final Properties requestData, final RequestContext context) throws IllegalRequestException {
         try {
             Properties result = new Properties();
             
@@ -172,9 +159,9 @@ public class StatusPropertiesWorker extends BaseSigner {
                         String expiration = requestData.getProperty(name + "." + EXPIRATION);
                         try {
                             if (expiration == null) {
-                                getStatusRepository().update(name, requestData.getProperty(key));
+                                getStatusRepository(context.getServices()).update(name, requestData.getProperty(key));
                             } else {
-                                getStatusRepository().update(name, requestData.getProperty(key), Long.parseLong(expiration));
+                                getStatusRepository(context.getServices()).update(name, requestData.getProperty(key), Long.parseLong(expiration));
                             }
                             gets.add(StatusName.valueOf(name));
                         } catch (NumberFormatException ex) {
@@ -188,7 +175,7 @@ public class StatusPropertiesWorker extends BaseSigner {
             
             // Get the current values for the valid properties
             for (StatusName get : gets) {
-                StatusEntry entry = getStatusRepository().getValidEntry(get.name());
+                StatusEntry entry = getStatusRepository(context.getServices()).getValidEntry(get.name());
                 if (entry != null) {
                     result.put(get.name() + "." + UPDATE, String.valueOf(entry.getUpdateTime()));
                     result.put(get.name() + "." + VALUE, entry.getValue() == null ? "" : String.valueOf(entry.getValue()));
@@ -210,8 +197,8 @@ public class StatusPropertiesWorker extends BaseSigner {
     }
 
     @Override
-    public ICryptoTokenV4 getCryptoToken() throws SignServerException {
-        ICryptoTokenV4 result = super.getCryptoToken();
+    public ICryptoTokenV4 getCryptoToken(final IServices services) throws SignServerException {
+        ICryptoTokenV4 result = super.getCryptoToken(services);
 
         // Not configuring a crypto token for this worker is not a problem as
         // this worker does not use a crypto token. Instead a dummy instance

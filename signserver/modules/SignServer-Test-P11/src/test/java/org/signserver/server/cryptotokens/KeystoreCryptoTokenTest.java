@@ -164,12 +164,12 @@ public class KeystoreCryptoTokenTest extends CryptoTokenTestBase {
         */
        public IServices getMockedServices() {
            IServices servicesImpl = new ServicesImpl();
-           servicesImpl.put(WorkerSessionLocal.class, getWorkerSession());
+           servicesImpl.put(WorkerSessionLocal.class, getWorkerSession(null));
            return servicesImpl;
        }
     
         @Override
-        protected WorkerSessionLocal getWorkerSession() { // TODO Extract to adaptor
+        protected WorkerSessionLocal getWorkerSession(final IServices services) { // TODO Extract to adaptor
             if (workerSession == null) {
                 workerSession = new WorkerSessionLocal() {
 

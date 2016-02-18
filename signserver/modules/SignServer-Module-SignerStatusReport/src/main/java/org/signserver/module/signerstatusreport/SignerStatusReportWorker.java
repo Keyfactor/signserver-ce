@@ -15,8 +15,6 @@ package org.signserver.module.signerstatusreport;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import javax.ejb.EJB;
-import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.signserver.common.CryptoTokenOfflineException;
@@ -26,17 +24,16 @@ import org.signserver.common.IllegalRequestException;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
-import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
-import org.signserver.server.SignServerContext;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.cryptotokens.NullCryptoToken;
 import org.signserver.server.signers.BaseSigner;
 import org.signserver.ejb.interfaces.WorkerSessionLocal;
 import org.signserver.server.IServices;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
+import org.signserver.server.entities.IKeyUsageCounterDataService;
 
 /**
  * Worker for getting a signer's status report. When called without any request 
@@ -66,12 +63,8 @@ public class SignerStatusReportWorker extends BaseSigner {
     
     private static final ICryptoTokenV4 CRYPTO_TOKEN = new NullCryptoToken(WorkerStatus.STATUS_ACTIVE);
     
-    private SignerStatusReportBuilder reportBuilder;
     private List<String> workers;
 
-    /** Workersession. */
-    @EJB
-    private WorkerSessionLocal workerSession; // FIXME: Better to somehow inject this
     
     @Override
     public void init(int workerId, WorkerConfig config, WorkerContext workerContext, EntityManager workerEM) {
@@ -83,7 +76,6 @@ public class SignerStatusReportWorker extends BaseSigner {
         } else {
             workers.addAll(Arrays.asList(workersValue.split(",")));
         }
-        reportBuilder = new SignerStatusReportBuilder(workers, getWorkerSession(), ((SignServerContext) workerContext).getKeyUsageCounterDataService());
         LOG.info("Worker[" + workerId +"]: " + "Workers: " + workers.size());
     }
     
@@ -97,24 +89,13 @@ public class SignerStatusReportWorker extends BaseSigner {
         }
         
         // Process the request
+        SignerStatusReportBuilder reportBuilder = new SignerStatusReportBuilder(workers, requestContext.getServices().get(WorkerSessionLocal.class), requestContext.getServices().get(IKeyUsageCounterDataService.class));
         String responseData = reportBuilder.buildReport().toString();
         
         // The client can be charged for the request
         requestContext.setRequestFulfilledByWorker(true);
 
         return new GenericServletResponse(signRequest.getRequestID(), responseData.getBytes(), null, null, null, "text/plain");
-    }
-
-    private WorkerSessionLocal getWorkerSession() {
-        if (workerSession == null) {
-            try {
-                workerSession = ServiceLocator.getInstance().lookupLocal(WorkerSessionLocal.class);
-            } catch (NamingException ex) {
-                throw new RuntimeException("Unable to lookup worker session",
-                        ex);
-            }
-        }
-        return workerSession;
     }
 
     @Override
@@ -125,8 +106,8 @@ public class SignerStatusReportWorker extends BaseSigner {
     }
 
     @Override
-    public ICryptoTokenV4 getCryptoToken() throws SignServerException {
-        ICryptoTokenV4 result = super.getCryptoToken();
+    public ICryptoTokenV4 getCryptoToken(IServices services) throws SignServerException {
+        ICryptoTokenV4 result = super.getCryptoToken(services);
 
         // Not configuring a crypto token for this worker is not a problem as
         // this worker does not use a crypto token. Instead a dummy instance

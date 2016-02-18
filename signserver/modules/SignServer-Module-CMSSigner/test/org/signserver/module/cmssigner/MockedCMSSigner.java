@@ -48,7 +48,7 @@ public class MockedCMSSigner extends CMSSigner {
     }
 
     @Override
-    public ICryptoToken getCryptoToken() {
+    public ICryptoToken getCryptoToken(services) {
         return mockedToken;
     }
 

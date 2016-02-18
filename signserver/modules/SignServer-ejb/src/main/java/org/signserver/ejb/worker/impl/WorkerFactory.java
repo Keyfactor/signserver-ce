@@ -213,12 +213,12 @@ public class WorkerFactory {
             context.setCryptoTokenSupplier(new CryptoTokenSupplier() {
 
                 @Override
-                public ICryptoTokenV4 getCurrentCryptoToken() throws SignServerException {
+                public ICryptoTokenV4 getCurrentCryptoToken(final IServices services) throws SignServerException {
                     synchronized (WorkerFactory.this) {
                         try {
                             IWorker cryptoWorker = getWorker(new WorkerIdentifier(cryptoTokenName));
                             if (cryptoWorker instanceof BaseProcessable) {
-                                return ((BaseProcessable) cryptoWorker).getCryptoToken();
+                                return ((BaseProcessable) cryptoWorker).getCryptoToken(services);
                             } else {
                                 if (LOG.isDebugEnabled()) {
                                     LOG.debug("Not a processable worker: " + cryptoWorker);

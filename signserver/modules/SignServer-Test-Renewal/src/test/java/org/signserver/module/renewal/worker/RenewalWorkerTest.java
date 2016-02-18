@@ -62,6 +62,7 @@ import org.signserver.module.renewal.ejbcaws.gen.EjbcaWS;
 import org.signserver.module.renewal.ejbcaws.gen.EjbcaWSService;
 import org.signserver.module.renewal.ejbcaws.gen.UserDataVOWS;
 import org.signserver.server.IProcessable;
+import org.signserver.server.IServices;
 import org.signserver.server.signers.BaseSigner;
 import org.signserver.test.utils.mock.GlobalConfigurationSessionMock;
 import org.signserver.test.utils.mock.WorkerSessionMock;
@@ -843,13 +844,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
         
         workerSession.setupWorker(signerId, CRYPTOTOKEN_CLASSNAME, config, new RenewalWorker() {
             @Override
-            protected GlobalConfigurationSessionLocal
-                getGlobalConfigurationSession() {
-                return conf;
-            }
-
-            @Override
-            protected WorkerSessionLocal getWorkerSession() {
+            protected WorkerSessionLocal getWorkerSession(IServices services) {
                 return workerSession;
             }
         });
@@ -878,12 +873,6 @@ public class RenewalWorkerTest extends AbstractTestCase {
                 "org.signserver.server.cryptotokens.KeystoreCryptoToken";
         
         workerSession.setupWorker(signerId, CRYPTOTOKEN_CLASSNAME, config, new BaseSigner() {
-            @Override
-            protected GlobalConfigurationSessionLocal
-                getGlobalConfigurationSession() {
-                return conf;
-            }
-
             @Override
             public ProcessResponse processData(ProcessRequest signRequest,
                     RequestContext requestContext)

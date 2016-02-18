@@ -80,98 +80,88 @@ public class GlobalConfigSampleAccounter implements IAccounter {
                 + (String) context.get(RequestContext.TRANSACTION_ID));
         }
 
-        try {
-            // Read global configuration values
-            final GlobalConfiguration config =
-                    getGlobalConfigurationSession().getGlobalConfiguration();
-            final String usersMapping =
-                    config.getProperty(GlobalConfiguration.SCOPE_GLOBAL,
-                    GLOBALCONFIGSAMPLEACCOUNTER_USERS);
-            final String accountsMapping =
-                    config.getProperty(GlobalConfiguration.SCOPE_GLOBAL,
-                    GLOBALCONFIGSAMPLEACCOUNTER_ACCOUNTS);
+        // Read global configuration values
+        final GlobalConfiguration config =
+                getGlobalConfigurationSession(context).getGlobalConfiguration();
+        final String usersMapping =
+                config.getProperty(GlobalConfiguration.SCOPE_GLOBAL,
+                GLOBALCONFIGSAMPLEACCOUNTER_USERS);
+        final String accountsMapping =
+                config.getProperty(GlobalConfiguration.SCOPE_GLOBAL,
+                GLOBALCONFIGSAMPLEACCOUNTER_ACCOUNTS);
 
-            // Parse users "table"
-            final Map<String, String> usersTable =
-                    parseCredentialMapping(usersMapping);
+        // Parse users "table"
+        final Map<String, String> usersTable =
+                parseCredentialMapping(usersMapping);
 
-            // Parse accounts "table"
-            final Map<String, Integer> accountsTable =
-                    parseAccountMapping(accountsMapping);
+        // Parse accounts "table"
+        final Map<String, Integer> accountsTable =
+                parseAccountMapping(accountsMapping);
 
-            // Get username (or certificate serial number) from request
-            final String key;
-            if (credential instanceof CertificateClientCredential) {
-                final CertificateClientCredential certCred =
-                        (CertificateClientCredential) credential;
+        // Get username (or certificate serial number) from request
+        final String key;
+        if (credential instanceof CertificateClientCredential) {
+            final CertificateClientCredential certCred =
+                    (CertificateClientCredential) credential;
 
-                key = certCred.getSerialNumber() + "," + certCred.getIssuerDN();
-            } else if (credential instanceof UsernamePasswordClientCredential) {
-                final UsernamePasswordClientCredential passCred =
-                        (UsernamePasswordClientCredential) credential;
+            key = certCred.getSerialNumber() + "," + certCred.getIssuerDN();
+        } else if (credential instanceof UsernamePasswordClientCredential) {
+            final UsernamePasswordClientCredential passCred =
+                    (UsernamePasswordClientCredential) credential;
 
-                key = passCred.getUsername() + "," + passCred.getPassword();
-            } else if (credential == null) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("No credential");
-                }
-                key = null;
-
-            } else {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Unknown credential type: "
-                        + credential.getClass().getName());
-                }
-                key = null;
+            key = passCred.getUsername() + "," + passCred.getPassword();
+        } else if (credential == null) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("No credential");
             }
+            key = null;
 
-            // Get account
-            final String accountNo = usersTable.get(key);
-
-            // No account for user given the credential supplied
-            if (accountNo == null) {
-                return false;
+        } else {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Unknown credential type: "
+                    + credential.getClass().getName());
             }
-
-            // Get current balance
-            Integer balance = accountsTable.get(accountNo);
-
-            // No account
-            if (balance == null) {
-                return false;
-            }
-
-            // Purchase
-            balance -= 1;
-            accountsTable.put(accountNo, balance);
-
-            // No funds
-            if (balance  < 0) {
-                // Purchase not granted
-                return false;
-            }
-
-            // Store the new balance
-            getGlobalConfigurationSession().setProperty(
-                    GlobalConfiguration.SCOPE_GLOBAL,
-                    GLOBALCONFIGSAMPLEACCOUNTER_ACCOUNTS,
-                    storeAccountMapping(accountsTable));
-
-            // Purchase granted
-            return true;
-
-        } catch (NamingException ex) {
-            throw new AccounterException(
-                    "Unable to connect to accounter internal database", ex);
+            key = null;
         }
+
+        // Get account
+        final String accountNo = usersTable.get(key);
+
+        // No account for user given the credential supplied
+        if (accountNo == null) {
+            return false;
+        }
+
+        // Get current balance
+        Integer balance = accountsTable.get(accountNo);
+
+        // No account
+        if (balance == null) {
+            return false;
+        }
+
+        // Purchase
+        balance -= 1;
+        accountsTable.put(accountNo, balance);
+
+        // No funds
+        if (balance  < 0) {
+            // Purchase not granted
+            return false;
+        }
+
+        // Store the new balance
+        getGlobalConfigurationSession(context).setProperty(
+                GlobalConfiguration.SCOPE_GLOBAL,
+                GLOBALCONFIGSAMPLEACCOUNTER_ACCOUNTS,
+                storeAccountMapping(accountsTable));
+
+        // Purchase granted
+        return true;
     }
 
-    private GlobalConfigurationSessionLocal getGlobalConfigurationSession()
-            throws NamingException {
-        if (gCSession == null) {
-            gCSession = ServiceLocator.getInstance().lookupLocal(GlobalConfigurationSessionLocal.class);
-        }
-        return gCSession;
+    private GlobalConfigurationSessionLocal getGlobalConfigurationSession(RequestContext context) {
+        return context.getServices().get(GlobalConfigurationSessionLocal.class);
     }
 
     private Map<String, String> parseCredentialMapping(String mapping) {

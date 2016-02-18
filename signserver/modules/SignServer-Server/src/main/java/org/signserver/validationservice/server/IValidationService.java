@@ -43,9 +43,8 @@ public interface IValidationService {
      * @param workerId the unique id of the worker
      * @param config the configuration stored in database
      * @param em reference to the entity manager
-     * @param ct the crypto token used by the validation service.
      */
-    void init(int workerId, WorkerConfig config, EntityManager em, ICryptoTokenV4 ct);
+    void init(int workerId, WorkerConfig config, EntityManager em);
 
     /**
      * Method used to check the validation of a certificate

@@ -45,10 +45,9 @@ public interface IValidator {
      * @param props a subset of the worker properties only containing this validators properties, 
      * for instance worker1.val1.propkey will show up as property key 'propkey' in this properies
      * @param em reference to the entity manager
-     * @param ct the extended crypto token used by the validation service.
      * @throws SignServerException if unexpected error occurred during initialization.
      */
-    void init(int workerId, int validatorId, Properties props, EntityManager em, ICryptoTokenV4 ct) throws SignServerException;
+    void init(int workerId, int validatorId, Properties props, EntityManager em) throws SignServerException;
 
     /**
      * Main method of a Validation Service responsible for validating certificates.

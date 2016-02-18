@@ -50,9 +50,6 @@ public class FirstActiveDispatcher extends BaseDispatcher {
     /** Property WORKERS. */
     private static final String PROPERTY_WORKERS = "WORKERS";
 
-    /** Workersession. */
-    private DispatcherProcessSessionLocal workerSession;
-
     /** List of workers. */
     private List<String> workers = new LinkedList<String>();
 
@@ -61,22 +58,16 @@ public class FirstActiveDispatcher extends BaseDispatcher {
     @Override
     public void init(final int workerId, final WorkerConfig config,
             final WorkerContext workerContext, final EntityManager workerEM) {
-        try {
-            super.init(workerId, config, workerContext, workerEM);
+        super.init(workerId, config, workerContext, workerEM);
 
-            name = config.getProperty("NAME");
-            
-            workers = new LinkedList<String>();
-            final String workersValue = config.getProperty(PROPERTY_WORKERS);
-            if (workersValue == null) {
-                LOG.error("Property WORKERS missing!");
-            } else {
-                workers.addAll(Arrays.asList(workersValue.split(",")));
-            }
-            workerSession = ServiceLocator.getInstance().lookupLocal(
-                        DispatcherProcessSessionLocal.class);
-        } catch (NamingException ex) {
-            LOG.error("Unable to lookup worker session", ex);
+        name = config.getProperty("NAME");
+
+        workers = new LinkedList<String>();
+        final String workersValue = config.getProperty(PROPERTY_WORKERS);
+        if (workersValue == null) {
+            LOG.error("Property WORKERS missing!");
+        } else {
+            workers.addAll(Arrays.asList(workersValue.split(",")));
         }
     }
 
@@ -102,7 +93,7 @@ public class FirstActiveDispatcher extends BaseDispatcher {
                     LOG.warn("Ignoring dispatching to it self (worker "
                             + name + ")");
                 } else {
-                    response = workerSession.process(new AdminInfo("Client user", null, null), 
+                    response = requestContext.getServices().get(DispatcherProcessSessionLocal.class).process(new AdminInfo("Client user", null, null), 
                             new WorkerIdentifier(workerName), signRequest,
                             nextContext);
                     if (LOG.isDebugEnabled()) {

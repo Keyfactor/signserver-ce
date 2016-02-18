@@ -48,7 +48,7 @@ public class MockedOOXMLSigner extends OOXMLSigner {
     }
 
     @Override
-    public ICryptoToken getCryptoToken() {
+    public ICryptoToken getCryptoToken(services) {
         return mockedToken;
     }
 

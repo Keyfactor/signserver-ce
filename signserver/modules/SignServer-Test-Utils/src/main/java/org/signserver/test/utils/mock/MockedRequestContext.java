@@ -10,24 +10,25 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.server;
+package org.signserver.test.utils.mock;
 
-import org.signserver.common.SignServerException;
-import org.signserver.server.cryptotokens.ICryptoTokenV4;
+import org.signserver.common.RequestContext;
+import org.signserver.server.IServices;
 
 /**
- * Supplier of the current crypto token.
+ * Version of the RequestContext intended to be used by unit tests.
  *
  * @author Markus Kilås
  * @version $Id$
  */
-public interface CryptoTokenSupplier {
+public class MockedRequestContext extends RequestContext {
+
     /**
-     * @param services implementations to use
-     * @return the current crypto token (worker) if configured and available,
-     * otherwise null
-     * @throws SignServerException in case initialization of the crypto token
-     * failed
+     * Creates a RequestContext and sets the services on it directly for 
+     * convenience.
+     * @param services 
      */
-    ICryptoTokenV4 getCurrentCryptoToken(final IServices services) throws SignServerException;
+    public MockedRequestContext(final IServices services) {
+        setServices(services);
+    }
 }

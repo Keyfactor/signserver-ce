@@ -41,7 +41,7 @@ public class MockedPlainSigner extends PlainSigner {
     }
 
     @Override
-    public ICryptoToken getCryptoToken() {
+    public ICryptoToken getCryptoToken(services) {
         return mockedToken;
     }
 }

@@ -26,7 +26,6 @@ import org.cesecore.util.CertTools;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;
-import org.signserver.server.cryptotokens.ICryptoTokenV4;
 import org.signserver.validationservice.common.Validation;
 
 /**
@@ -53,15 +52,13 @@ public class DummyValidator extends BaseValidator {
      * @param validatorId
      * @param props
      * @param entityManager
-     * @param cryptoToken
      * @throws SignServerException
      * @see org.signserver.validationservice.server.IValidator#init(int, int, java.util.Properties, javax.persistence.EntityManager, org.signserver.server.cryptotokens.ICryptoToken)
      */
     @Override
     public void init(final int workerId, final int validatorId,
-            final Properties props, final EntityManager entityManager,
-            final ICryptoTokenV4 cryptoToken) throws SignServerException {
-        super.init(workerId, validatorId, props, em, ct);
+            final Properties props, final EntityManager entityManager) throws SignServerException {
+        super.init(workerId, validatorId, props, em);
 
         if (props.getProperty("TESTPROP") == null) {
             throw new SignServerException(

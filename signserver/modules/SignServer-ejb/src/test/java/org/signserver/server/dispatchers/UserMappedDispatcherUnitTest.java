@@ -15,6 +15,7 @@ package org.signserver.server.dispatchers;
 import org.apache.log4j.Logger;
 import static org.junit.Assert.*;
 import org.junit.Test;
+import org.signserver.common.RequestContext;
 import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.DispatcherProcessSessionLocal;
 import org.signserver.server.IServices;
@@ -86,7 +87,7 @@ public class UserMappedDispatcherUnitTest {
     /** Mocked UserMappedDispatcher not doing any JNDI lookups. */
     private static class MockedUserMapppedDispatcher extends UserMappedDispatcher {
         @Override
-        protected DispatcherProcessSessionLocal getWorkerSession() {
+        protected DispatcherProcessSessionLocal getWorkerSession(RequestContext context) {
             return null;
         }
     }

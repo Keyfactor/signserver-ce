@@ -115,7 +115,8 @@ public class InternalProcessSessionBean implements InternalProcessSessionLocal, 
                     processSession,
                     globalConfigurationSession,
                     logSession,
-                    ctx.getBusinessObject(InternalProcessSessionLocal.class), dispatcherSession, statusSession);
+                    ctx.getBusinessObject(InternalProcessSessionLocal.class), dispatcherSession, statusSession,
+                    keyUsageCounterDataService);
         } catch (NamingException ex) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Lookup services failed", ex);

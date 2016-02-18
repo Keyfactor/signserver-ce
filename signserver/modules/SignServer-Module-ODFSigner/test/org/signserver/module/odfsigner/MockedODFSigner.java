@@ -48,7 +48,7 @@ public class MockedODFSigner extends ODFSigner {
     }
 
     @Override
-    public ICryptoToken getCryptoToken() {
+    public ICryptoToken getCryptoToken(services) {
         return mockedToken;
     }
 

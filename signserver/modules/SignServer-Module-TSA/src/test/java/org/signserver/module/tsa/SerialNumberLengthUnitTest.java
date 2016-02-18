@@ -19,6 +19,7 @@ import org.signserver.common.WorkerConfig;
 
 import junit.framework.TestCase;
 import org.signserver.common.WorkerStatus;
+import org.signserver.server.IServices;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
 import org.signserver.server.cryptotokens.NullCryptoToken;
 
@@ -56,7 +57,7 @@ public class SerialNumberLengthUnitTest extends TestCase {
         // Mock away the crypto stuff as we only test the init() method
         TimeStampSigner signer = new TimeStampSigner() {
                 @Override
-                public ICryptoTokenV4 getCryptoToken() throws SignServerException {
+                public ICryptoTokenV4 getCryptoToken(final IServices services) throws SignServerException {
                     return new NullCryptoToken(WorkerStatus.STATUS_ACTIVE);
                 }
         };

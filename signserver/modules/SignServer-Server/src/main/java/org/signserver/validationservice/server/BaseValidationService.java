@@ -43,7 +43,6 @@ public abstract class BaseValidationService implements IValidationService {
     protected int workerId;
     protected WorkerConfig config;
     protected EntityManager em;
-    protected ICryptoTokenV4 ct;
     protected HashMap<Integer, IValidator> validators;
     protected ValidationCache validationCache;
 
@@ -53,14 +52,13 @@ public abstract class BaseValidationService implements IValidationService {
      * @see org.signserver.server.IWorker#init(int, org.signserver.common.WorkerConfig, org.signserver.server.WorkerContext, javax.persistence.EntityManager)
      */
     @Override
-    public void init(int workerId, WorkerConfig config, EntityManager em, ICryptoTokenV4 ct) {
+    public void init(int workerId, WorkerConfig config, EntityManager em) {
         this.workerId = workerId;
         this.config = config;
         this.em = em;
-        this.ct = ct;
 
         try {
-            validators = ValidationHelper.genValidators(workerId, config, em, ct);
+            validators = ValidationHelper.genValidators(workerId, config, em);
         } catch (SignServerException e) {
             log.error(e.getMessage(), e);
         }

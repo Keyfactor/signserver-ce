@@ -20,7 +20,6 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.LinkedList;
 import java.util.List;
-import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.xml.crypto.MarshalException;
 import javax.xml.crypto.dsig.XMLSignature;
@@ -117,7 +116,7 @@ public class XMLValidator extends BaseValidator {
 
         byte[] data = (byte[]) sReq.getRequestData();
 
-        GenericValidationResponse response = validate(sReq.getRequestID(), data);
+        GenericValidationResponse response = validate(sReq.getRequestID(), data, requestContext);
         
         // The client can be charged for the request
         requestContext.setRequestFulfilledByWorker(true);
@@ -125,7 +124,7 @@ public class XMLValidator extends BaseValidator {
         return response;
     }
 
-    private GenericValidationResponse validate(final int requestId, byte[] data) throws SignServerException {
+    private GenericValidationResponse validate(final int requestId, byte[] data, RequestContext requestContext) throws SignServerException {
 
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setNamespaceAware(true);
@@ -217,7 +216,7 @@ public class XMLValidator extends BaseValidator {
 
             try {
                 LOG.info("Requesting certificate validation from worker: " + PROP_VALIDATIONSERVICEWORKER);
-                response = getProcessSession().process(new AdminInfo("Client user", null, null), WorkerIdentifier.createFromIdOrName(validationServiceWorker), vr, new RequestContext());
+                response = getProcessSession(requestContext).process(new AdminInfo("Client user", null, null), WorkerIdentifier.createFromIdOrName(validationServiceWorker), vr, new RequestContext());
                 LOG.info("ProcessResponse: " + response);
 
                 if (response == null) {
@@ -290,16 +289,8 @@ public class XMLValidator extends BaseValidator {
     /**
      * @return The worker session. Can be overridden for instance by unit tests.
      */
-    protected ProcessSessionLocal getProcessSession() {
-        if (processSession == null) {
-            try {
-                processSession = ServiceLocator.getInstance().lookupLocal(
-                        ProcessSessionLocal.class);
-            } catch (NamingException ne) {
-                throw new RuntimeException(ne);
-            }
-        }
-        return processSession;
+    protected ProcessSessionLocal getProcessSession(RequestContext requestContext) {
+        return requestContext.getServices().get(ProcessSessionLocal.class);
     }
 
     @Override

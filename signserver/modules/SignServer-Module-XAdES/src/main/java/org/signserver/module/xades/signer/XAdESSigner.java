@@ -22,7 +22,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.xml.crypto.dsig.SignatureMethod;
 import javax.xml.parsers.DocumentBuilder;
@@ -46,7 +45,6 @@ import org.signserver.common.GenericServletResponse;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
 import org.signserver.common.ISignRequest;
-import org.signserver.common.ServiceLocator;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.ejb.interfaces.InternalProcessSessionLocal;
@@ -168,6 +166,11 @@ public class XAdESSigner extends BaseSigner {
     
     private TimeStampTokenProvider internalTimeStampTokenProvider;
     private InternalProcessSessionLocal workerSession;
+    private WorkerIdentifier tsaWorker;
+    private DefaultMessageDigestProvider mdProvider;
+    private String tsaUrl;
+    private String tsaUsername;
+    private String tsaPassword;
     
     /** 
      * Electronic signature forms defined in ETSI TS 101 903 V1.4.1 (2009-06)
@@ -225,12 +228,12 @@ public class XAdESSigner extends BaseSigner {
         // PROPERTY_TSA_URL, PROPERTY_TSA_USERNAME, PROPERTY_TSA_PASSWORD, PROPERTY_TSA_WORKER
         TSAParameters tsa = null;
         if (form == Profiles.T) {
-            final String tsaUrl = config.getProperties().getProperty(PROPERTY_TSA_URL);
-            final String tsaUsername = config.getProperties().getProperty(PROPERTY_TSA_USERNAME);
-            final String tsaPassword = config.getProperties().getProperty(PROPERTY_TSA_PASSWORD);
-            final String tsaWorker = config.getProperties().getProperty(PROPERTY_TSA_WORKER);
+            tsaUrl = config.getProperties().getProperty(PROPERTY_TSA_URL);
+            tsaUsername = config.getProperties().getProperty(PROPERTY_TSA_USERNAME);
+            tsaPassword = config.getProperties().getProperty(PROPERTY_TSA_PASSWORD);
+            final String tsaWorkerName = config.getProperties().getProperty(PROPERTY_TSA_WORKER);
             
-            if (tsaUrl == null && tsaWorker == null) {
+            if (tsaUrl == null && tsaWorkerName == null) {
                 configErrors.add("Property " + PROPERTY_TSA_URL + " or " + PROPERTY_TSA_WORKER + " are required when " + PROPERTY_XADESFORM + " is " + Profiles.T);
             } else {
                 if (tsaUrl != null) {
@@ -238,8 +241,9 @@ public class XAdESSigner extends BaseSigner {
                     tsa = new TSAParameters(tsaUrl, tsaUsername, tsaPassword);
                 } else {
                     // Use worker name/ID of internal TSA
+                    this.tsaWorker = WorkerIdentifier.createFromIdOrName(tsaWorkerName.trim());
                     try {
-                        internalTimeStampTokenProvider = new InternalTimeStampTokenProvider(new DefaultMessageDigestProvider("BC"), getWorkerSession(), WorkerIdentifier.createFromIdOrName(tsaWorker.trim()), tsaUsername, tsaPassword);
+                        this.mdProvider = new DefaultMessageDigestProvider("BC");
                     } catch (NoSuchProviderException ex) {
                         configErrors.add("No such message digest provider: " + ex.getMessage());
                     }
@@ -459,13 +463,13 @@ public class XAdESSigner extends BaseSigner {
             case T:
                 // add timestamp token provider
                 xsp = new XadesTSigningProfile(kdp);
-                if (internalTimeStampTokenProvider == null) {
+                if (tsaUrl != null) {
                     // Use URL to external TSA
                     xsp = xsp.withTimeStampTokenProvider(timeStampTokenProviderImplementation)
                             .withBinding(TSAParameters.class, params.getTsaParameters());
                 } else {
                     // Use internal TSA
-                    xsp = xsp.withTimeStampTokenProvider(internalTimeStampTokenProvider);
+                    xsp = xsp.withTimeStampTokenProvider(new InternalTimeStampTokenProvider(mdProvider, context.getServices().get(InternalProcessSessionLocal.class), tsaWorker, tsaUsername, tsaPassword));
                 }
 
                 break;
@@ -589,16 +593,7 @@ public class XAdESSigner extends BaseSigner {
         }
     }
 
-    protected InternalProcessSessionLocal getWorkerSession() {
-        if (workerSession == null) {
-            try {
-                workerSession = ServiceLocator.getInstance().lookupLocal(
-                    InternalProcessSessionLocal.class);
-            } catch (NamingException ex) {
-                throw new RuntimeException("Unable to lookup worker session",
-                        ex);
-            }
-        }
-        return workerSession;
+    protected InternalProcessSessionLocal getProcessSession(RequestContext requestContext) {
+        return requestContext.getServices().get(InternalProcessSessionLocal.class);
     }
 }

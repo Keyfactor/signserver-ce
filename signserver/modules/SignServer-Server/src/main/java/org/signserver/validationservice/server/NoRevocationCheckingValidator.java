@@ -54,9 +54,8 @@ public class NoRevocationCheckingValidator extends BaseValidator {
      * org.signserver.server.cryptotokens.ICryptoToken)
      */
     @Override
-    public void init(int workerId, int validatorId, Properties props, EntityManager em,
-            ICryptoTokenV4 ct) throws SignServerException {
-        super.init(workerId, validatorId, props, em, ct);
+    public void init(int workerId, int validatorId, Properties props, EntityManager em) throws SignServerException {
+        super.init(workerId, validatorId, props, em);
 
     }
 

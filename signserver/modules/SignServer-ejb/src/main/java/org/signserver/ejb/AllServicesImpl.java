@@ -20,6 +20,7 @@ import org.signserver.ejb.interfaces.ProcessSessionLocal;
 import org.signserver.server.ServicesImpl;
 import org.signserver.ejb.interfaces.WorkerSessionLocal;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
+import org.signserver.server.entities.IKeyUsageCounterDataService;
 import org.signserver.statusrepo.StatusRepositorySessionLocal;
 
 /**
@@ -50,7 +51,8 @@ public class AllServicesImpl extends ServicesImpl {
             final SecurityEventsLoggerSessionLocal logSession,
             final InternalProcessSessionLocal internalWorkerSession,
             final DispatcherProcessSessionLocal dispatcherWorkerSession,
-            final StatusRepositorySessionLocal statusRespositorySession) {
+            final StatusRepositorySessionLocal statusRespositorySession,
+            final IKeyUsageCounterDataService keyUsageCounterDataService) {
         put(EntityManager.class, em);
         put(WorkerSessionLocal.class, workerSession);
         put(ProcessSessionLocal.class, processSession);
@@ -59,6 +61,7 @@ public class AllServicesImpl extends ServicesImpl {
         put(InternalProcessSessionLocal.class, internalWorkerSession);
         put(DispatcherProcessSessionLocal.class, dispatcherWorkerSession);
         put(StatusRepositorySessionLocal.class, statusRespositorySession);
+        put(IKeyUsageCounterDataService.class, keyUsageCounterDataService);
         // Add additional services here
     }
 }

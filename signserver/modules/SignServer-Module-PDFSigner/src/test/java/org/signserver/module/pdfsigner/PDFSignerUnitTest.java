@@ -48,6 +48,7 @@ import org.signserver.test.utils.mock.MockedCryptoToken;
 import org.signserver.test.utils.mock.WorkerSessionMock;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.ejb.interfaces.WorkerSessionRemote;
+import org.signserver.server.IServices;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
 
 /**
@@ -1206,7 +1207,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
 
         final PDFSigner instance = new PDFSigner() {
             @Override
-            public ICryptoTokenV4 getCryptoToken() throws SignServerException {
+            public ICryptoTokenV4 getCryptoToken(final IServices services) throws SignServerException {
                 return null;
             }
         };
@@ -1232,7 +1233,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         
         final PDFSigner instance = new PDFSigner() {
             @Override
-            public ICryptoTokenV4 getCryptoToken() throws SignServerException {
+            public ICryptoTokenV4 getCryptoToken(final IServices services) throws SignServerException {
                 return null;
             }
         };
@@ -1341,7 +1342,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         }
 
         @Override
-        public ICryptoTokenV4 getCryptoToken() {
+        public ICryptoTokenV4 getCryptoToken(final IServices services) {
             return mockedToken;
         }
     }
@@ -1368,7 +1369,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
             }
 
             @Override
-            public ICryptoTokenV4 getCryptoToken() {
+            public ICryptoTokenV4 getCryptoToken(final IServices services) {
                 return token;
             }
             
@@ -1472,13 +1473,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
                     new PDFSigner() {
                 @Override
-                protected GlobalConfigurationSessionLocal
-                        getGlobalConfigurationSession() {
-                    return globalConfig;
-                }
-                        
-                @Override
-                public ICryptoTokenV4 getCryptoToken() {
+                public ICryptoTokenV4 getCryptoToken(final IServices services) {
                     return token;
                 }
             });

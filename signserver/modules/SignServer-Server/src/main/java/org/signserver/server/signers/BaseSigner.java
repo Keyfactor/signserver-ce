@@ -96,7 +96,7 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
 
         ICryptoTokenV4 token = null;
         try {
-            token = getCryptoToken();
+            token = getCryptoToken(services);
         } catch (SignServerException ex) {
             // getFatalErrors will pick up crypto token errors gathered
             // during creation of the crypto token
@@ -224,7 +224,7 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
         final LinkedList<String> errors = new LinkedList<String>(super.getFatalErrors(services));
         // Load crypto token so its errors are checked
         try {
-            getCryptoToken();
+            getCryptoToken(services);
         } catch (SignServerException ignored) {} // NOPMD errors are added to cryptoTokenFatalErrors
         errors.addAll(getCryptoTokenFatalErrors(services));
         if (!isNoCertificates()) {
@@ -257,7 +257,7 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
             crypto = acquireDefaultCryptoInstance(context);
             certificate = getSigningCertificate(crypto);
             certificateChain = getSigningCertificateChain(crypto);
-            final ICryptoTokenV4 token = getCryptoToken();
+            final ICryptoTokenV4 token = getCryptoToken(services);
             if (token == null) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Signer " + workerId + ": No crypto token");

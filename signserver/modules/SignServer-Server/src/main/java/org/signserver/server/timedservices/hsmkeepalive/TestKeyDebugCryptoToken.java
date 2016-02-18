@@ -62,9 +62,7 @@ public class TestKeyDebugCryptoToken implements ICryptoTokenV4 {
     private String debugProperty;
     private String testKey;
     private boolean disableTestKey;
-      
-    private StatusRepositorySessionLocal statusSession;
-    
+
     /**
      * Status repository property to set.
      */
@@ -82,13 +80,6 @@ public class TestKeyDebugCryptoToken implements ICryptoTokenV4 {
         this.disableTestKey =
                 Boolean.parseBoolean(props.getProperty(DISABLE_TESTKEY,
                                                        Boolean.FALSE.toString()));
-    
-        try {
-            statusSession = ServiceLocator.getInstance().lookupLocal(StatusRepositorySessionLocal.class);
-        } catch (NamingException ex) {
-            throw new RuntimeException("Unable to lookup worker session",
-                    ex);
-        }
     }
 
     @Override
@@ -119,7 +110,7 @@ public class TestKeyDebugCryptoToken implements ICryptoTokenV4 {
             content = "_NoKey";
         }
         try {
-            statusSession.update(debugProperty, content);
+            services.get(StatusRepositorySessionLocal.class).update(debugProperty, content);
         } catch (NoSuchPropertyException ex) {
             throw new CryptoTokenOfflineException("Unknown status property: " +
                     debugProperty);

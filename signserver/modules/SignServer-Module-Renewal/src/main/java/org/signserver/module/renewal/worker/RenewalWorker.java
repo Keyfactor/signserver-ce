@@ -25,8 +25,6 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.*;
-
-import javax.naming.NamingException;
 import javax.net.ssl.*;
 import javax.persistence.EntityManager;
 import javax.xml.namespace.QName;
@@ -102,9 +100,6 @@ public class RenewalWorker extends BaseSigner {
 
     private List<String> fatalErrors;
     
-    /** Workersession. */
-    private WorkerSessionLocal workerSession;
-
     /** Configuration parameters. */
     private String alias;
     private String truststoreValue;
@@ -118,7 +113,6 @@ public class RenewalWorker extends BaseSigner {
     public void init(final int workerId, final WorkerConfig config,
             final WorkerContext workerContext, final EntityManager workerEM) {
         initInternal(workerId, config, workerContext, workerEM);
-        getWorkerSession();
     }
     
     /**
@@ -262,6 +256,8 @@ public class RenewalWorker extends BaseSigner {
         // Log renewee
         logMap.put(RenewalWorkerProperties.LOG_RENEWEE, workerName);
 
+        final WorkerSessionLocal workerSession = getWorkerSession(requestContext.getServices());
+        
         try {
             int reneweeId;
             try {
@@ -270,12 +266,12 @@ public class RenewalWorker extends BaseSigner {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Not a workerId, maybe workerName: " + workerName);
                 }
-                reneweeId = getWorkerSession().getWorkerId(workerName);
+                reneweeId = workerSession.getWorkerId(workerName);
             }
             
             // Get the worker config
             final WorkerConfig workerConfig
-                    = getWorkerSession().getCurrentWorkerConfig(reneweeId);
+                    = workerSession.getCurrentWorkerConfig(reneweeId);
             final String sigAlg = workerConfig.getProperty(
                     PROPERTY_SIGNATUREALGORITHM);
             final String subjectDN = workerConfig.getProperty(
@@ -373,7 +369,7 @@ public class RenewalWorker extends BaseSigner {
                     // Renew the key
                     nextCertSignKey = renewKey(reneweeId, keyAlg, keySpec,
                             authCode == null ? null : authCode.toCharArray(),
-                            logMap);
+                            logMap, workerSession);
                 } else {
                     // Request might say that we should use the default key
                     defaultKey = requestForDefaultKey;
@@ -384,7 +380,7 @@ public class RenewalWorker extends BaseSigner {
                 renewWorker(reneweeId, sigAlg, subjectDN, endEntity,
                         Boolean.valueOf(explicitEccParameters),
                         defaultKey, nextCertSignKey,
-                        logMap);
+                        logMap, workerSession, requestContext.getServices());
 
                 responseData.setProperty(
                         RenewalWorkerProperties.RESPONSE_RESULT,
@@ -403,14 +399,14 @@ public class RenewalWorker extends BaseSigner {
 
     private String renewKey(final int workerId, final String keyAlg,
            final String keySpec, final char[] authcode,
-           final LogMap logMap) throws Exception {
+           final LogMap logMap, final WorkerSessionLocal workerSession) throws Exception {
         LOG.debug("<renewKey");
 
         if (authcode == null) {
             throw new IllegalArgumentException("Missing authcode in request");
         }
 
-        final String newAlias = getWorkerSession().generateSignerKey(new WorkerIdentifier(workerId),
+        final String newAlias = workerSession.generateSignerKey(new WorkerIdentifier(workerId),
                 keyAlg, keySpec, null, authcode);
 
         // Log
@@ -419,7 +415,7 @@ public class RenewalWorker extends BaseSigner {
             LOG.debug("Generated new key: " + newAlias);
         }
 
-        final Collection<KeyTestResult> results = getWorkerSession().testKey(
+        final Collection<KeyTestResult> results = workerSession.testKey(
                 new WorkerIdentifier(workerId), newAlias, authcode);
         if (results.size() != 1) {
             throw new CryptoTokenOfflineException("Key testing failed: "
@@ -435,13 +431,13 @@ public class RenewalWorker extends BaseSigner {
             logMap.put(RenewalWorkerProperties.LOG_GENERATEDKEYHASH, 
                     result.getPublicKeyHash());
 
-            getWorkerSession().setWorkerProperty(workerId, NEXTCERTSIGNKEY,
+            workerSession.setWorkerProperty(workerId, NEXTCERTSIGNKEY,
                     newAlias);
-            getWorkerSession().reloadConfiguration(workerId);
+            workerSession.reloadConfiguration(workerId);
 
             LOG.debug("Key generated, tested and set");
 
-            getWorkerSession().activateSigner(new WorkerIdentifier(workerId),
+            workerSession.activateSigner(new WorkerIdentifier(workerId),
                     String.valueOf(authcode));
 
             LOG.debug("Worker activated");
@@ -457,12 +453,13 @@ public class RenewalWorker extends BaseSigner {
             final String sigAlg, final String subjectDN, final String endEntity,
             final boolean explicitEccParameters,
             final boolean defaultKey, final String nextCertSignKey, 
-            final LogMap logMap)
+            final LogMap logMap, final WorkerSessionLocal workerSession,
+            final IServices services)
             throws Exception {
 
         final String pkcs10
                 = createRequestPEM(workerId, sigAlg, subjectDN, 
-                explicitEccParameters, defaultKey);
+                explicitEccParameters, defaultKey, workerSession);
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("PKCS10: " + pkcs10);
@@ -470,7 +467,7 @@ public class RenewalWorker extends BaseSigner {
 
         // Connect to EjbcaWS
         final EjbcaWS ejbcaws = getEjbcaWS(ejbcaWsUrl,
-                alias, truststoreType, truststorePath, truststoreValue, truststorePass);
+                alias, truststoreType, truststorePath, truststoreValue, truststorePass, services);
 
         if (ejbcaws == null) {
             LOG.debug("Could not get EjbcaWS");
@@ -542,10 +539,10 @@ public class RenewalWorker extends BaseSigner {
                     // Public key should match
 
                 // Update worker to use the new certificate
-                getWorkerSession().uploadSignerCertificate(workerId,
+                workerSession.uploadSignerCertificate(workerId,
                         signerCert.getEncoded(),
                         GlobalConfiguration.SCOPE_GLOBAL);
-                getWorkerSession().uploadSignerCertificateChain(workerId,
+                workerSession.uploadSignerCertificateChain(workerId,
                         getCertificateChainBytes(certChain),
                         GlobalConfiguration.SCOPE_GLOBAL);
 
@@ -556,39 +553,31 @@ public class RenewalWorker extends BaseSigner {
                 } else if (!defaultKey && nextCertSignKey != null) {
                     LOG.debug("Uploaded was for NEXTCERTSIGNKEY");
 
-                   getWorkerSession().setWorkerProperty(workerId, "DEFAULTKEY",
+                   workerSession.setWorkerProperty(workerId, "DEFAULTKEY",
                            nextCertSignKey);
-                   getWorkerSession().removeWorkerProperty(workerId,
+                   workerSession.removeWorkerProperty(workerId,
                            NEXTCERTSIGNKEY);
                 }
 
-                getWorkerSession().reloadConfiguration(workerId);
+                workerSession.reloadConfiguration(workerId);
                 LOG.debug("New configuration applied");
             }
         }
     }
     public static final String TRUSTSTOREVALUE = "TRUSTSTOREVALUE";
 
-    protected WorkerSessionLocal getWorkerSession() {
-        if (workerSession == null) {
-            try {
-                workerSession = ServiceLocator.getInstance().lookupLocal(WorkerSessionLocal.class);
-            } catch (NamingException ex) {
-                throw new RuntimeException("Unable to lookup worker session",
-                        ex);
-            }
-        }
-        return workerSession;
+    protected WorkerSessionLocal getWorkerSession(IServices services) {
+        return services.get(WorkerSessionLocal.class);
     }
 
     private String createRequestPEM(int workerId, final String sigAlg, 
             final String subjectDN, final boolean explicitEccParameters,
-            final boolean defaultKey)
+            final boolean defaultKey, final WorkerSessionLocal workerSession)
             throws CryptoTokenOfflineException, InvalidWorkerIdException {
         final PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo(sigAlg,
                 subjectDN, null);
         final Base64SignerCertReqData reqData
-                = (Base64SignerCertReqData) getWorkerSession()
+                = (Base64SignerCertReqData) workerSession
                 .getCertificateRequest(new WorkerIdentifier(workerId), certReqInfo, explicitEccParameters, defaultKey);
         if (reqData == null) {
             throw new RuntimeException(
@@ -605,7 +594,8 @@ public class RenewalWorker extends BaseSigner {
 
     private EjbcaWS getEjbcaWS(final String ejbcaUrl, final String alias,
             final String truststoreType, final String truststorePath,
-            final String truststoreValue, final String truststorePass) throws CryptoTokenOfflineException,
+            final String truststoreValue, final String truststorePass,
+            final IServices services) throws CryptoTokenOfflineException,
             NoSuchAlgorithmException, KeyStoreException,
             UnrecoverableKeyException, IOException, CertificateException,
             NoSuchProviderException, KeyManagementException, SignServerException {
@@ -614,7 +604,7 @@ public class RenewalWorker extends BaseSigner {
 
         final String urlstr = ejbcaUrl + WS_PATH;
 
-        final KeyStore keystore = getCryptoToken().getKeyStore();
+        final KeyStore keystore = getCryptoToken(services).getKeyStore();
 
         // TODO: Check that keystore contains key with the specified alias
         LOG.info("aliases in keystore follows:");

@@ -112,7 +112,8 @@ public class ProcessSessionBean implements ProcessSessionRemote, ProcessSessionL
                     ctx.getBusinessObject(ProcessSessionLocal.class),
                     globalConfigurationSession,
                     logSession,
-                    internalSession, dispatcherSession, statusSession);
+                    internalSession, dispatcherSession, statusSession,
+                    keyUsageCounterDataService);
         } catch (NamingException ex) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Lookup services failed", ex);

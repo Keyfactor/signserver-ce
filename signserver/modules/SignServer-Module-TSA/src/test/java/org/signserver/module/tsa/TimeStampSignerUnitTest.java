@@ -33,13 +33,17 @@ import org.signserver.common.GenericSignResponse;
 import org.signserver.common.RemoteRequestContext;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
-import org.signserver.ejb.interfaces.WorkerSessionRemote;
 import org.signserver.server.LocalComputerTimeSource;
 import org.signserver.server.log.LogMap;
 import org.signserver.test.utils.mock.GlobalConfigurationSessionMock;
 import org.signserver.test.utils.mock.WorkerSessionMock;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
+import org.signserver.ejb.interfaces.WorkerSessionLocal;
+import org.signserver.server.IServices;
+import org.signserver.server.log.AdminInfo;
+import org.signserver.test.utils.mock.MockedRequestContext;
+import org.signserver.test.utils.mock.MockedServicesImpl;
 
 /**
  * Unit tests for the TimeStampSigner.
@@ -66,8 +70,9 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
     private static final String KEY_ALIAS = "TS Signer 1";
     
     private GlobalConfigurationSessionLocal globalConfig;
-    private WorkerSessionRemote workerSession;
+    private WorkerSessionLocal workerSession;
     private WorkerSessionMock processSession;
+    private IServices services;
 
     @Before
     @Override
@@ -89,8 +94,8 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
                 TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
         byte[] requestBytes = timeStampRequest.getEncoded();
         GenericSignRequest signRequest = new GenericSignRequest(100, requestBytes);
-        final GenericSignResponse res = (GenericSignResponse) processSession.process(
-                new WorkerIdentifier(WORKER1), signRequest, new RemoteRequestContext());
+        final GenericSignResponse res = (GenericSignResponse) processSession.process(new AdminInfo("Client user", null, null),
+                new WorkerIdentifier(WORKER1), signRequest, new MockedRequestContext(services));
 
         final TimeStampResponse timeStampResponse = new TimeStampResponse(
                 (byte[]) res.getProcessedData());
@@ -116,8 +121,8 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
                 TSPAlgorithms.SHA1, new byte[2000], BigInteger.valueOf(100));
         byte[] requestBytes = timeStampRequest.getEncoded();
         GenericSignRequest signRequest = new GenericSignRequest(100, requestBytes);
-        final GenericSignResponse res = (GenericSignResponse) processSession.process(
-                new WorkerIdentifier(WORKER1), signRequest, new RemoteRequestContext());
+        final GenericSignResponse res = (GenericSignResponse) processSession.process(new AdminInfo("Client user", null, null),
+                new WorkerIdentifier(WORKER1), signRequest, new MockedRequestContext(services));
 
         final TimeStampResponse timeStampResponse = new TimeStampResponse(
                 (byte[]) res.getProcessedData());
@@ -142,6 +147,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
         globalConfig = globalMock;
         workerSession = workerMock;
         processSession = workerMock;
+        services = new MockedServicesImpl().with(GlobalConfigurationSessionLocal.class, globalMock);
 
         // WORKER1
         {
@@ -159,13 +165,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
             config.setProperty("KEYSTOREPASSWORD", "foo123");
 
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
-                    new TimeStampSigner() {
-                @Override
-                protected GlobalConfigurationSessionLocal
-                        getGlobalConfigurationSession() {
-                    return globalConfig;
-                }
-            });
+                    new TimeStampSigner());
             workerSession.reloadConfiguration(workerId);
         }
 
@@ -186,13 +186,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
             config.setProperty("KEYSTOREPASSWORD", "foo123");
             
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
-                    new TimeStampSigner() {
-                @Override
-                protected GlobalConfigurationSessionLocal
-                        getGlobalConfigurationSession() {
-                    return globalConfig;
-                }
-            });
+                    new TimeStampSigner());
             workerSession.reloadConfiguration(workerId);
         }
 
@@ -213,13 +207,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
             config.setProperty("KEYSTOREPASSWORD", "foo123");
             
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
-                    new TimeStampSigner() {
-                @Override
-                protected GlobalConfigurationSessionLocal
-                        getGlobalConfigurationSession() {
-                    return globalConfig;
-                }
-            });
+                    new TimeStampSigner());
             workerSession.reloadConfiguration(workerId);
         }
 
@@ -239,13 +227,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
             config.setProperty("KEYSTORETYPE", "PKCS12");
             config.setProperty("KEYSTOREPASSWORD", "foo123");
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
-                    new TimeStampSigner() {
-                @Override
-                protected GlobalConfigurationSessionLocal
-                        getGlobalConfigurationSession() {
-                    return globalConfig;
-                }
-            });
+                    new TimeStampSigner());
             workerSession.reloadConfiguration(workerId);
         }
     }
@@ -265,8 +247,8 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
                 TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
         byte[] requestBytes = timeStampRequest.getEncoded();
         GenericSignRequest signRequest = new GenericSignRequest(100, requestBytes);
-        final GenericSignResponse res = (GenericSignResponse) processSession.process(
-                new WorkerIdentifier(WORKER2), signRequest, new RemoteRequestContext());
+        final GenericSignResponse res = (GenericSignResponse) processSession.process(new AdminInfo("Client user", null, null),
+                new WorkerIdentifier(WORKER2), signRequest, new MockedRequestContext(services));
 
         final TimeStampResponse timeStampResponse = new TimeStampResponse(
                 (byte[]) res.getProcessedData());
@@ -290,8 +272,8 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
                 TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
         byte[] requestBytes = timeStampRequest.getEncoded();
         GenericSignRequest signRequest = new GenericSignRequest(100, requestBytes);
-        final GenericSignResponse res = (GenericSignResponse) processSession.process(
-                new WorkerIdentifier(WORKER2), signRequest, new RemoteRequestContext());
+        final GenericSignResponse res = (GenericSignResponse) processSession.process(new AdminInfo("Client user", null, null),
+                new WorkerIdentifier(WORKER2), signRequest, new MockedRequestContext(services));
 
         final TimeStampResponse timeStampResponse = new TimeStampResponse(
                 (byte[]) res.getProcessedData());
@@ -317,8 +299,8 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
                 TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
         byte[] requestBytes = timeStampRequest.getEncoded();
         GenericSignRequest signRequest = new GenericSignRequest(100, requestBytes);
-        final GenericSignResponse res = (GenericSignResponse) processSession.process(
-                new WorkerIdentifier(WORKER4), signRequest, new RemoteRequestContext());
+        final GenericSignResponse res = (GenericSignResponse) processSession.process(new AdminInfo("Client user", null, null),
+                new WorkerIdentifier(WORKER4), signRequest, new MockedRequestContext(services));
 
         final TimeStampResponse timeStampResponse = new TimeStampResponse(
                 (byte[]) res.getProcessedData());
@@ -343,8 +325,8 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
                 TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
         byte[] requestBytes = timeStampRequest.getEncoded();
         GenericSignRequest signRequest = new GenericSignRequest(100, requestBytes);
-        final GenericSignResponse res = (GenericSignResponse) processSession.process(
-                new WorkerIdentifier(WORKER3), signRequest, new RemoteRequestContext());
+        final GenericSignResponse res = (GenericSignResponse) processSession.process(new AdminInfo("Client user", null, null),
+                new WorkerIdentifier(WORKER3), signRequest, new MockedRequestContext(services));
 
         final TimeStampResponse timeStampResponse = new TimeStampResponse(
                 (byte[]) res.getProcessedData());
@@ -368,8 +350,8 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
                 TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
         byte[] requestBytes = timeStampRequest.getEncoded();
         GenericSignRequest signRequest = new GenericSignRequest(100, requestBytes);
-        final GenericSignResponse res = (GenericSignResponse) processSession.process(
-                new WorkerIdentifier(WORKER3), signRequest, new RemoteRequestContext());
+        final GenericSignResponse res = (GenericSignResponse) processSession.process(new AdminInfo("Client user", null, null),
+                new WorkerIdentifier(WORKER3), signRequest, new MockedRequestContext(services));
 
         final TimeStampResponse timeStampResponse = new TimeStampResponse(
                 (byte[]) res.getProcessedData());

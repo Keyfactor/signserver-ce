@@ -153,6 +153,7 @@ public class BaseProcessableTest extends TestCase {
         
         Properties globalConfig = new Properties();
         WorkerConfig workerConfig = new WorkerConfig();
+        MockServices services = new MockServices(globalConfig);
         
         // Exercising all properties (except SLOTLISTINDEX)
         workerConfig.setProperty(WorkerConfig.IMPLEMENTATION_CLASS, TestSigner.class.getName());
@@ -165,7 +166,7 @@ public class BaseProcessableTest extends TestCase {
         
         TestSigner instance = new TestSigner(globalConfig);
         instance.init(workerId, workerConfig, anyContext, null);
-        MockedCryptoToken actualToken = (MockedCryptoToken) instance.getCryptoToken();
+        MockedCryptoToken actualToken = (MockedCryptoToken) instance.getCryptoToken(services);
         Properties actualProperties = actualToken.getProps();
         
         assertEquals("same as worker config", new TreeMap<>(workerConfig.getProperties()).toString(), new TreeMap<>(actualProperties).toString());
@@ -181,7 +182,7 @@ public class BaseProcessableTest extends TestCase {
         
         instance = new TestSigner(globalConfig);
         instance.init(workerId, workerConfig, anyContext, null);
-        actualToken = (MockedCryptoToken) instance.getCryptoToken();
+        actualToken = (MockedCryptoToken) instance.getCryptoToken(services);
         actualProperties = actualToken.getProps();
         
         assertEquals("same as worker config", new TreeMap<>(workerConfig.getProperties()).toString(), new TreeMap<>(actualProperties).toString());
@@ -198,6 +199,7 @@ public class BaseProcessableTest extends TestCase {
         
         Properties globalConfig = new Properties();
         WorkerConfig workerConfig = new WorkerConfig();
+        MockServices services = new MockServices(globalConfig);
         
         // SLOTLISTINDEX only in GlobalConfiguration
         workerConfig.setProperty(WorkerConfig.IMPLEMENTATION_CLASS, TestSigner.class.getName());
@@ -208,7 +210,7 @@ public class BaseProcessableTest extends TestCase {
         
         TestSigner instance = new TestSigner(globalConfig);
         instance.init(workerId, workerConfig, anyContext, null);
-        MockedCryptoToken actualToken = (MockedCryptoToken) instance.getCryptoToken();
+        MockedCryptoToken actualToken = (MockedCryptoToken) instance.getCryptoToken(services);
         Properties actualProperties = actualToken.getProps();
         
         Properties expectedProperties = new Properties(workerConfig.getProperties());
@@ -229,7 +231,7 @@ public class BaseProcessableTest extends TestCase {
         
         instance = new TestSigner(globalConfig);
         instance.init(workerId, workerConfig, anyContext, null);
-        actualToken = (MockedCryptoToken) instance.getCryptoToken();
+        actualToken = (MockedCryptoToken) instance.getCryptoToken(services);
         actualProperties = actualToken.getProps();
         
         expectedProperties = new Properties();
@@ -254,6 +256,7 @@ public class BaseProcessableTest extends TestCase {
         
         Properties globalConfig = new Properties();
         WorkerConfig workerConfig = new WorkerConfig();
+        MockServices services = new MockServices(globalConfig);
         
         // All PKCS#11 properties that can have default values in GlobalConfiguration (except SLOTLISTINDEX, ATTRIBUTES)
         workerConfig.setProperty(WorkerConfig.IMPLEMENTATION_CLASS, TestSigner.class.getName());
@@ -267,7 +270,7 @@ public class BaseProcessableTest extends TestCase {
         
         TestSigner instance = new TestSigner(globalConfig);
         instance.init(workerId, workerConfig, anyContext, null);
-        MockedCryptoToken actualToken = (MockedCryptoToken) instance.getCryptoToken();
+        MockedCryptoToken actualToken = (MockedCryptoToken) instance.getCryptoToken(services);
         Properties actualProperties = actualToken.getProps();
         
         Properties expectedProperties = new Properties();
@@ -297,7 +300,7 @@ public class BaseProcessableTest extends TestCase {
         
         instance = new TestSigner(globalConfig);
         instance.init(workerId, workerConfig, anyContext, null);
-        actualToken = (MockedCryptoToken) instance.getCryptoToken();
+        actualToken = (MockedCryptoToken) instance.getCryptoToken(services);
         actualProperties = actualToken.getProps();
         
         expectedProperties = new Properties();
@@ -316,6 +319,7 @@ public class BaseProcessableTest extends TestCase {
     public void testCryptoToken_unknownClass() throws Exception {
         Properties globalConfig = new Properties();
         WorkerConfig workerConfig = new WorkerConfig();
+        MockServices services = new MockServices(globalConfig);
         
         workerConfig.setProperty(WorkerConfig.IMPLEMENTATION_CLASS, TestSigner.class.getName());
         workerConfig.setProperty(WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, "org.foo.Bar");
@@ -324,7 +328,7 @@ public class BaseProcessableTest extends TestCase {
         TestSigner instance = new TestSigner(globalConfig);
         instance.init(workerId, workerConfig, anyContext, null);
         
-        final List<String> fatalErrors = instance.getFatalErrors(null);
+        final List<String> fatalErrors = instance.getFatalErrors(services);
         
         assertTrue("Should contain error", fatalErrors.contains("Crypto token class not found: org.foo.Bar"));
     }
@@ -339,6 +343,7 @@ public class BaseProcessableTest extends TestCase {
         LOG.info("testCertificateInTokenUsed");
 
         Properties globalConfig = new Properties();
+        MockServices services = new MockServices(globalConfig);
         WorkerConfig workerConfig = new WorkerConfig();
         workerConfig.setProperty(WorkerConfig.IMPLEMENTATION_CLASS, TestSigner.class.getName());
         workerConfig.setProperty(WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, MockedCryptoToken.class.getName());
@@ -349,8 +354,8 @@ public class BaseProcessableTest extends TestCase {
         instance.init(workerId, workerConfig, anyContext, null);
 
         // Certifcate in token is "CN=Signer 4"
-        assertEquals("cert from token", "Signer 4", CertTools.getPartFromDN(((X509Certificate) instance.getSigningCertificate((IServices) null)).getSubjectX500Principal().getName(), "CN"));
-        assertEquals("cert from token", "Signer 4", CertTools.getPartFromDN(((X509Certificate) instance.getSigningCertificateChain((IServices) null).get(0)).getSubjectX500Principal().getName(), "CN"));
+        assertEquals("cert from token", "Signer 4", CertTools.getPartFromDN(((X509Certificate) instance.getSigningCertificate(services)).getSubjectX500Principal().getName(), "CN"));
+        assertEquals("cert from token", "Signer 4", CertTools.getPartFromDN(((X509Certificate) instance.getSigningCertificateChain(services).get(0)).getSubjectX500Principal().getName(), "CN"));
     }
 
     /**
@@ -391,6 +396,7 @@ public class BaseProcessableTest extends TestCase {
     public void testCryptoToken_P11NoSharedLibrary() throws Exception {
         Properties globalConfig = new Properties();
         WorkerConfig workerConfig = new WorkerConfig();
+        MockServices services = new MockServices(globalConfig);
 
         workerConfig.setProperty(WorkerConfig.IMPLEMENTATION_CLASS, TestSigner.class.getName());
         workerConfig.setProperty(WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, 
@@ -400,7 +406,7 @@ public class BaseProcessableTest extends TestCase {
         TestSigner instance = new TestSigner(globalConfig);
         instance.init(workerId, workerConfig, anyContext, null);
         
-        final List<String> fatalErrors = instance.getFatalErrors(null);
+        final List<String> fatalErrors = instance.getFatalErrors(services);
         final String expectedErrorPrefix =
                 "Failed to initialize crypto token: Missing SHAREDLIBRARYNAME property";
         boolean foundError = false;
@@ -424,6 +430,7 @@ public class BaseProcessableTest extends TestCase {
     public void testDefaulAliasSelector() throws Exception {
         Properties globalConfig = new Properties();
         WorkerConfig workerConfig = new WorkerConfig();
+        MockServices services = new MockServices(globalConfig);
         
         TestSigner instance = new TestSigner(globalConfig);
         
@@ -436,7 +443,7 @@ public class BaseProcessableTest extends TestCase {
         assertEquals("Alias", "Test",
                 selector.getAlias(workerId, instance, null, null));
         
-        final List<String> errors = instance.getFatalErrors(null);
+        final List<String> errors = instance.getFatalErrors(services);
         
         assertTrue("Contains alias selector fatal error",
                 errors.contains("Test alias selector error"));
@@ -453,6 +460,7 @@ public class BaseProcessableTest extends TestCase {
         
         Properties globalConfig = new Properties();
         WorkerConfig workerConfig = new WorkerConfig();
+        MockServices services = new MockServices(globalConfig);
         
         // Exercising all properties (except SLOTLISTINDEX)
         workerConfig.setProperty(WorkerConfig.IMPLEMENTATION_CLASS, TestSigner.class.getName());
@@ -466,7 +474,7 @@ public class BaseProcessableTest extends TestCase {
         final List<Certificate> chain =
                 Arrays.asList(CertTools.getCertfromByteArray(Base64.decode(CERT2)));
         
-        instance.importCertificateChain(chain, "alias2", null, Collections.<String, Object>emptyMap(), new ServicesImpl());
+        instance.importCertificateChain(chain, "alias2", null, Collections.<String, Object>emptyMap(), services);
         
         final List<Certificate> importedChain =
                 instance.getSigningCertificateChain("alias2", null);
@@ -493,6 +501,7 @@ public class BaseProcessableTest extends TestCase {
         try {
             Properties globalConfig = new Properties();
             WorkerConfig workerConfig = new WorkerConfig();
+            MockServices services = new MockServices(globalConfig);
 
             globalConfig.setProperty("GLOB.WORKER" + workerId + ".CLASSPATH", TestSigner.class.getName());
             workerConfig.setProperty("NAME", "TestSigner100");
@@ -503,7 +512,7 @@ public class BaseProcessableTest extends TestCase {
             final ISignerCertReqInfo reqInfo =
                     new PKCS10CertReqInfo("SHA1withRSA", "CN=someguy", null);
             
-            instance.genCertificateRequest(reqInfo, false, "somekey");
+            instance.genCertificateRequest(reqInfo, false, "somekey", services);
             fail("Should throw CryptoTokenOfflineException");
         } catch (CryptoTokenOfflineException e) {
             // expected
@@ -572,10 +581,30 @@ public class BaseProcessableTest extends TestCase {
         public TestSigner(Properties globalProperties) {
             this.globalProperties = globalProperties;
         }
+
+        @Override
+        public ProcessResponse processData(ProcessRequest signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        protected List<String> getFatalErrors(IServices services) {
+            return super.getFatalErrors(services);
+        }
         
         @Override
-        protected GlobalConfigurationSessionLocal getGlobalConfigurationSession() {
-            return new GlobalConfigurationSessionLocal() {
+        protected AliasSelector createAliasSelector(final String className) {
+            return new TestAliasSelector();
+        }
+        
+    }
+    
+    private static class MockServices implements IServices {
+
+        private HashMap<Class, Object> services = new HashMap<>();
+        
+        public MockServices(final Properties globalProperties) {
+            services.put(GlobalConfigurationSessionLocal.class, new GlobalConfigurationSessionLocal() {
 
                 @Override
                 public void setProperty(String scope, String key, String value) {
@@ -621,22 +650,17 @@ public class BaseProcessableTest extends TestCase {
                 public void reload(AdminInfo adminInfo) {
                     throw new UnsupportedOperationException("Not supported yet.");
                 }
-            };
-        }
-
-        @Override
-        public ProcessResponse processData(ProcessRequest signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-
-        @Override
-        protected List<String> getFatalErrors(IServices services) {
-            return super.getFatalErrors(services);
+            });
         }
         
         @Override
-        protected AliasSelector createAliasSelector(final String className) {
-            return new TestAliasSelector();
+        public <T> T get(Class<? extends T> type) {
+            return (T) services.get(type);
+        }
+
+        @Override
+        public <T> T put(Class<? extends T> type, T service) {
+            return (T) services.put(type, service);
         }
         
     }

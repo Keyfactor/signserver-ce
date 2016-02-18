@@ -48,7 +48,7 @@ public class MockedXMLSigner extends XMLSigner {
     }
 
     @Override
-    public ICryptoToken getCryptoToken() {
+    public ICryptoToken getCryptoToken(services) {
         return mockedToken;
     }
 

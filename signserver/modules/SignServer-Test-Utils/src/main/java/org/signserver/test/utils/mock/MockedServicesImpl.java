@@ -10,24 +10,28 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.server;
+package org.signserver.test.utils.mock;
 
-import org.signserver.common.SignServerException;
-import org.signserver.server.cryptotokens.ICryptoTokenV4;
+import org.signserver.server.ServicesImpl;
 
 /**
- * Supplier of the current crypto token.
+ * Version of ServicesImpl intended to be used in the unit tests.
  *
  * @author Markus Kilås
  * @version $Id$
  */
-public interface CryptoTokenSupplier {
+public class MockedServicesImpl extends ServicesImpl {
+
     /**
-     * @param services implementations to use
-     * @return the current crypto token (worker) if configured and available,
-     * otherwise null
-     * @throws SignServerException in case initialization of the crypto token
-     * failed
+     * Convenience method for putting a new implementation class.
+     *
+     * @param <T> type for the implementation
+     * @param type class for the type
+     * @param service the implementation
+     * @return 
      */
-    ICryptoTokenV4 getCurrentCryptoToken(final IServices services) throws SignServerException;
+    public <T> MockedServicesImpl with(Class<? extends T> type, T service) {
+        super.put(type, service);
+        return this;
+    }
 }

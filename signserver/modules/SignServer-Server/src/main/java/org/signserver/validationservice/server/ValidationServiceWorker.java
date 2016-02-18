@@ -78,7 +78,7 @@ public class ValidationServiceWorker extends BaseProcessable {
                 Class<?> implClass = Class.forName(classPath);
                 retval = (IValidationService) implClass.newInstance();
 
-                retval.init(workerId, config, em, getCryptoToken());
+                retval.init(workerId, config, em);
             }
         } catch (ClassNotFoundException e) {
             error = "Error instatiating Validation Service, check that the TYPE setting of workerid : " + workerId + " have the correct class path.";

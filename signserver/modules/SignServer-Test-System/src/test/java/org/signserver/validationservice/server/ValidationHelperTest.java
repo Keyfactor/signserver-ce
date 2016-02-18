@@ -73,7 +73,7 @@ public class ValidationHelperTest {
         config.setProperty("val3.KEY6", "key6data");
         config.setProperty("val3.CLASSPATH", "org.signserver.validationservice.server.DummyValidator");
 
-        HashMap<Integer, IValidator> vals = ValidationHelper.genValidators(1, config, null, null);
+        HashMap<Integer, IValidator> vals = ValidationHelper.genValidators(1, config, null);
         assertTrue(vals.get(1) != null);
         assertTrue(vals.get(2) == null);
         assertTrue(vals.get(3) != null);
@@ -81,7 +81,7 @@ public class ValidationHelperTest {
         config.setProperty("VALIDATOR255.KEY8", "key8data");
 
         try {
-            vals = ValidationHelper.genValidators(1, config, null, null);
+            vals = ValidationHelper.genValidators(1, config, null);
             assertTrue(false);
         } catch (SignServerException e) {
         }

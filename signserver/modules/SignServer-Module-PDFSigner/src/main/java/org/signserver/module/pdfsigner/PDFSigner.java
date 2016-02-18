@@ -28,7 +28,6 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -220,7 +219,7 @@ public class PDFSigner extends BaseSigner {
         context.setServices(services);
         ICryptoInstance crypto = null;
         try {
-            final ICryptoTokenV4 token = getCryptoToken();    
+            final ICryptoTokenV4 token = getCryptoToken(services);    
             crypto = acquireDefaultCryptoInstance(context);
 
             if (token != null) {
@@ -736,7 +735,7 @@ public class PDFSigner extends BaseSigner {
             if (tsaUrl != null) {
                 tsc = getTimeStampClient(params.getTsa_url(), params.getTsa_username(), params.getTsa_password());
             } else {
-                tsc = new InternalTSAClient(getProcessSession(),
+                tsc = new InternalTSAClient(getProcessSession(context.getServices()),
                         WorkerIdentifier.createFromIdOrName(params.getTsa_worker()), params.getTsa_username(), params.getTsa_password());
             }
         }
@@ -826,17 +825,8 @@ public class PDFSigner extends BaseSigner {
         return fout.toByteArray();
     }
     
-    protected InternalProcessSessionLocal getProcessSession() {
-        if (workerSession == null) {
-            try {
-                workerSession = ServiceLocator.getInstance().lookupLocal(
-                    InternalProcessSessionLocal.class);
-            } catch (NamingException ex) {
-                throw new RuntimeException("Unable to lookup worker session",
-                        ex);
-            }
-        }
-        return workerSession;
+    protected InternalProcessSessionLocal getProcessSession(IServices services) {
+        return services.get(InternalProcessSessionLocal.class);
     }
 
     /**

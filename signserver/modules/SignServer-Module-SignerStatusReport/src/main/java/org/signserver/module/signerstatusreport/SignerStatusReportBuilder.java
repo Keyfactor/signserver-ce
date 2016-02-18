@@ -21,7 +21,7 @@ import org.signserver.common.*;
 import org.signserver.server.KeyUsageCounterHash;
 import org.signserver.server.entities.IKeyUsageCounterDataService;
 import org.signserver.server.entities.KeyUsageCounter;
-import org.signserver.ejb.interfaces.WorkerSession;
+import org.signserver.ejb.interfaces.WorkerSessionLocal;
 
 /**
  * Builds a signer's status report for the chosen signers in a special format.
@@ -40,16 +40,16 @@ public class SignerStatusReportBuilder implements ReportBuilder {
     private static final String SEPARATOR = ", ";
     
     /** Validity date time format. */
-    private SimpleDateFormat dateFormat
+    private final SimpleDateFormat dateFormat
             = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
     
     /** List of worker names. */
-    private List<String> workers;
+    private final List<String> workers;
     
-    private final WorkerSession workerSession;
+    private final WorkerSessionLocal workerSession;
     private final IKeyUsageCounterDataService keyUsageCounterDataService;
     
-    public SignerStatusReportBuilder(List<String> workers, WorkerSession workerSession, IKeyUsageCounterDataService keyUsageCounterDataService) {
+    public SignerStatusReportBuilder(List<String> workers, WorkerSessionLocal workerSession, IKeyUsageCounterDataService keyUsageCounterDataService) {
         this.workers = workers;
         this.workerSession = workerSession;
         this.keyUsageCounterDataService = keyUsageCounterDataService;

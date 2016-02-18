@@ -20,7 +20,6 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.spec.AlgorithmParameterSpec;
 import java.util.*;
-import javax.naming.NamingException;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.bouncycastle.jce.ECNamedCurveTable;
@@ -137,7 +136,7 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
     /**
      * (Re)read from keystore to in-memory representation.
      */
-    private void readFromKeystore(final String authenticationcode)
+    private void readFromKeystore(final String authenticationcode, final IServices services)
             throws KeyStoreException, CertificateException,
                    NoSuchProviderException, NoSuchAlgorithmException,
                    IOException,
@@ -145,7 +144,7 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
         if (authenticationcode != null) {
             this.authenticationCode = authenticationcode.toCharArray();
         }
-        this.ks = getKeystore(keystoretype, keystorepath, authenticationCode);
+        this.ks = getKeystore(keystoretype, keystorepath, authenticationCode, services);
         LOG.error("Activated: " + this);
 
         entries = new HashMap<Object, KeyEntry>();
@@ -225,7 +224,7 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
         }
 
         try {
-            readFromKeystore(authenticationcode);
+            readFromKeystore(authenticationcode, services);
         } catch (KeyStoreException e1) {
             LOG.error("Error :", e1);
             throw new CryptoTokenAuthenticationFailureException("KeyStoreException " + e1.getMessage());
@@ -485,7 +484,7 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
     }
 
     private KeyStore getKeystore(final String type, final String path,
-            final char[] authCode) throws
+            final char[] authCode, final IServices services) throws
             KeyStoreException, CertificateException, NoSuchProviderException,
             NoSuchAlgorithmException, FileNotFoundException, IOException {
         final KeyStore result;
@@ -509,7 +508,7 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
             } else {
                 // load data from internal worker data...
                 final byte[] keystoreData =
-                        getWorkerSession().getKeystoreData(new AdminInfo("Internal", null, null),
+                        getWorkerSession(services).getKeystoreData(new AdminInfo("Internal", null, null),
                                         this.workerId);
                 if (keystoreData != null) {
                     in = new ByteArrayInputStream(keystoreData);
@@ -517,8 +516,6 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
             }
 
             result.load(in, authCode);
-        } catch (NamingException e) {
-            throw new KeyStoreException("Failed to get worker session: " + e.getMessage());
         } finally {
             if (in != null) {
                 try {
@@ -549,15 +546,11 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
                 if (TYPE_INTERNAL.equalsIgnoreCase(keystoretype)) {
                     final byte[] data = ((ByteArrayOutputStream) out).toByteArray();
                     
-                    getWorkerSession().setKeystoreData(new AdminInfo("Internal", null, null), 
+                    getWorkerSession(services).setKeystoreData(new AdminInfo("Internal", null, null), 
                                                        this.workerId, data);
                 }
                 
-                readFromKeystore(null);
-            } catch (NamingException ex) {
-                LOG.error("Unable to lookup worker session: " + ex.getMessage(),
-                          ex);
-                throw new SignServerException("Unable to persist key removal");
+                readFromKeystore(null, services);
             } catch (IOException ex) {
                 LOG.error("Unable to persist new keystore after key removal: " + ex.getMessage(), ex);
                 throw new SignServerException("Unable to persist key removal");
@@ -639,7 +632,7 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
             if (TYPE_INTERNAL.equalsIgnoreCase(keystoretype)) {
                 final byte[] data = ((ByteArrayOutputStream) out).toByteArray();
 
-                getWorkerSession().setKeystoreData(new AdminInfo("Internal", null, null), 
+                getWorkerSession(services).setKeystoreData(new AdminInfo("Internal", null, null), 
                                                    this.workerId, data);
             }
                 
@@ -657,14 +650,9 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
             throw new CryptoTokenOfflineException(e);
         }   
     }
-    
-    
-    
-    protected WorkerSessionLocal getWorkerSession() throws NamingException {
-        if (workerSession == null) {
-            workerSession = ServiceLocator.getInstance().lookupLocal(WorkerSessionLocal.class);
-        }
-        return workerSession;
+
+    protected WorkerSessionLocal getWorkerSession(final IServices services) {
+        return services.get(WorkerSessionLocal.class);
     }
 
     @Override

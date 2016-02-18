@@ -89,20 +89,6 @@ public interface IProcessable extends IWorker {
             boolean explicitEccParameters, boolean defaultKey)
             throws CryptoTokenOfflineException, NoSuchAliasException;
 
-    /**
-     * Generate a certificate request using the worker's crypto token, given
-     * a key alias.
-     * 
-     * @param info Certificate request info
-     * @param explicitEccParameters If explicit ECC parameters should be used
-     * @param keyAlias Key alias in crypto token
-     * @return Certificate request data
-     * @throws CryptoTokenOfflineException 
-     */
-    ICertReqData genCertificateRequest(ISignerCertReqInfo info,
-            boolean explicitEccParameters, String keyAlias)
-            throws CryptoTokenOfflineException, NoSuchAliasException;
-
     ICertReqData genCertificateRequest(ISignerCertReqInfo certReqInfo, boolean explicitEccParameters, String keyAlias, IServices services) throws CryptoTokenOfflineException, NoSuchAliasException;
 
     ICertReqData genCertificateRequest(ISignerCertReqInfo certReqInfo, boolean explicitEccParameters, boolean defaultKey, IServices services) throws CryptoTokenOfflineException, NoSuchAliasException;

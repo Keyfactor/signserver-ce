@@ -30,9 +30,14 @@ public class GlobalConfigurationSessionMock implements
         GlobalConfigurationSessionLocal {
 
     private GlobalConfiguration globalConfiguration;
-    private Properties config = new Properties();
+    private final Properties config;
 
     public GlobalConfigurationSessionMock() {
+         this(new Properties());
+    }
+    
+    public GlobalConfigurationSessionMock(Properties config) {
+        this.config = config;
          globalConfiguration = new GlobalConfiguration(config,
                  GlobalConfiguration.STATE_INSYNC, "SignServer 4.7.11alpha0");
     }

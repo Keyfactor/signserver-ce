@@ -22,6 +22,7 @@ import org.signserver.common.IllegalRequestException;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
+import org.signserver.common.ServiceContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.StaticWorkerStatus;
 import org.signserver.common.WorkerStatus;
@@ -100,7 +101,7 @@ public class UnloadableWorker extends BaseSigner implements ITimedService {
      * @throws ServiceExecutionFailedException 
      */
     @Override
-    public void work() throws ServiceExecutionFailedException {
+    public void work(final ServiceContext context) throws ServiceExecutionFailedException {
         LOG.error("Service is misconfigured");
     }
 

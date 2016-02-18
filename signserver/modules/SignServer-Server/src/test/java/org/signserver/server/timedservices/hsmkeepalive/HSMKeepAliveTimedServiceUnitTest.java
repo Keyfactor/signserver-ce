@@ -37,12 +37,7 @@ public class HSMKeepAliveTimedServiceUnitTest extends TestCase {
      */
     public void test01missingCryptoTokens() throws Exception {
        final HSMKeepAliveTimedService instance =
-               new HSMKeepAliveTimedService() {
-                    @Override
-                    WorkerSessionLocal getWorkerSession() {
-                        return null;
-                    }
-               };
+               new HSMKeepAliveTimedService();
        
        instance.init(DUMMY_WORKERID, new WorkerConfig(), null, null);
        
@@ -60,12 +55,7 @@ public class HSMKeepAliveTimedServiceUnitTest extends TestCase {
      */
     public void test02emptyCryptoTokens() throws Exception {
         final HSMKeepAliveTimedService instance =
-               new HSMKeepAliveTimedService() {
-                   @Override
-                   WorkerSessionLocal getWorkerSession() {
-                       return null;
-                   }
-               };
+               new HSMKeepAliveTimedService();
         final WorkerConfig config = new WorkerConfig();
         
         config.setProperty(HSMKeepAliveTimedService.CRYPTOTOKENS, "");

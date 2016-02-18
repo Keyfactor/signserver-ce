@@ -16,13 +16,11 @@ import java.security.KeyStoreException;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import javax.ejb.EJB;
-import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.InvalidWorkerIdException;
-import org.signserver.common.ServiceLocator;
+import org.signserver.common.ServiceContext;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.server.ServiceExecutionFailedException;
@@ -47,10 +45,8 @@ public class HSMKeepAliveTimedService extends BaseTimedService {
     static String DEFAULTKEY = "DEFAULTKEY";
 
     private List<WorkerIdentifier> cryptoTokens;
- 
-    @EJB
-    private WorkerSessionLocal workerSession;
-    
+
+
     @Override
     public void init(int workerId, WorkerConfig config, WorkerContext workerContext, EntityManager workerEM) {
         super.init(workerId, config, workerContext, workerEM);
@@ -65,23 +61,9 @@ public class HSMKeepAliveTimedService extends BaseTimedService {
         }
     }
     
-    WorkerSessionLocal getWorkerSession() {
-        if (workerSession == null) {
-            try {
-                workerSession = ServiceLocator.getInstance().lookupLocal(WorkerSessionLocal.class);
-            } catch (NamingException ex) {
-                throw new RuntimeException("Unable to lookup worker session",
-                        ex);
-            }
-        }
-        return workerSession;
-    }
-
-    
-    
     @Override
-    public void work() throws ServiceExecutionFailedException {
-        final WorkerSessionLocal session = getWorkerSession();
+    public void work(final ServiceContext context) throws ServiceExecutionFailedException {
+        final WorkerSessionLocal session = context.getServices().get(WorkerSessionLocal.class);
         if (cryptoTokens != null) {
             for (final WorkerIdentifier wi : cryptoTokens) {
                 try {
@@ -107,13 +89,13 @@ public class HSMKeepAliveTimedService extends BaseTimedService {
             errors.add("Must specify " + CRYPTOTOKENS);
         }
         
-        errors.addAll(getCryptoworkerErrors());
+        errors.addAll(getCryptoworkerErrors(services));
         return errors;
     }
     
-    private List<String> getCryptoworkerErrors() {
+    private List<String> getCryptoworkerErrors(final IServices services) {
         final List<String> errors = new LinkedList<>();
-        final WorkerSessionLocal session = getWorkerSession();
+        final WorkerSessionLocal session = services.get(WorkerSessionLocal.class);
         
         if (session != null && cryptoTokens != null) {
             for (final WorkerIdentifier wi : cryptoTokens) {

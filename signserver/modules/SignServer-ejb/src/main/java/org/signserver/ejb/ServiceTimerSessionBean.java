@@ -18,6 +18,8 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.*;
 import javax.ejb.Timer;
+import javax.naming.NamingException;
+import javax.persistence.EntityManager;
 import javax.transaction.*;
 import org.apache.log4j.Logger;
 import org.cesecore.audit.enums.EventStatus;
@@ -25,8 +27,11 @@ import org.cesecore.audit.log.SecurityEventsLoggerSessionLocal;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.NoSuchWorkerException;
 import org.signserver.common.ServiceConfig;
+import org.signserver.common.ServiceContext;
+import org.signserver.common.ServiceLocator;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
+import org.signserver.ejb.interfaces.DispatcherProcessSessionLocal;
 import org.signserver.ejb.worker.impl.WorkerManagerSingletonBean;
 import org.signserver.server.IWorker;
 import org.signserver.server.ServiceExecutionFailedException;
@@ -35,7 +40,15 @@ import org.signserver.server.log.SignServerModuleTypes;
 import org.signserver.server.log.SignServerServiceTypes;
 import org.signserver.server.timedservices.ITimedService;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
+import org.signserver.ejb.interfaces.InternalProcessSessionLocal;
+import org.signserver.ejb.interfaces.ProcessSessionLocal;
 import org.signserver.ejb.interfaces.ServiceTimerSessionLocal;
+import org.signserver.ejb.interfaces.WorkerSessionLocal;
+import org.signserver.server.entities.FileBasedKeyUsageCounterDataService;
+import org.signserver.server.entities.IKeyUsageCounterDataService;
+import org.signserver.server.entities.KeyUsageCounterDataService;
+import org.signserver.server.nodb.FileBasedDatabaseManager;
+import org.signserver.statusrepo.StatusRepositorySessionLocal;
 
 /**
  * Timed service session bean running services on a timely basis.
@@ -50,6 +63,8 @@ public class ServiceTimerSessionBean implements ServiceTimerSessionLocal {
     @Resource
     private SessionContext sessionCtx;
     
+    private IKeyUsageCounterDataService keyUsageCounterDataService;
+    
     @EJB
     private GlobalConfigurationSessionLocal globalConfigurationSession;
     
@@ -59,6 +74,11 @@ public class ServiceTimerSessionBean implements ServiceTimerSessionLocal {
     @EJB
     private SecurityEventsLoggerSessionLocal logSession;
 
+    /** Injected by ejb-jar.xml. */
+    EntityManager em;
+    
+    private final AllServicesImpl servicesImpl = new AllServicesImpl();
+    
     /**
      * Constant indicating the Id of the "service loader" service.
      * Used in a clustered environment to periodically load available
@@ -72,6 +92,47 @@ public class ServiceTimerSessionBean implements ServiceTimerSessionLocal {
      */
     @PostConstruct
     public void create() {
+        if (em == null) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("No EntityManager injected. Running without database.");
+            }
+            keyUsageCounterDataService = new FileBasedKeyUsageCounterDataService(FileBasedDatabaseManager.getInstance());
+        } else {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("EntityManager injected. Running with database.");
+            }
+            keyUsageCounterDataService = new KeyUsageCounterDataService(em);
+        }
+        
+        // XXX The lookups will fail on GlassFish V2
+        // When we no longer support GFv2 we can refactor this code
+        InternalProcessSessionLocal internalSession = null;
+        ProcessSessionLocal processSession = null;
+        StatusRepositorySessionLocal statusSession = null;
+        try {
+            internalSession = ServiceLocator.getInstance().lookupLocal(InternalProcessSessionLocal.class);
+            processSession = ServiceLocator.getInstance().lookupLocal(ProcessSessionLocal.class);
+            statusSession = ServiceLocator.getInstance().lookupLocal(StatusRepositorySessionLocal.class);
+        } catch (NamingException ex) {
+            LOG.error("Lookup services failed. This is expected on GlassFish V2: " + ex.getExplanation());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Lookup services failed", ex);
+            }
+        }
+        try {
+            // Add all services
+            servicesImpl.putAll(em,
+                    ServiceLocator.getInstance().lookupLocal(WorkerSessionLocal.class),
+                    processSession,
+                    globalConfigurationSession,
+                    logSession,
+                    internalSession, ServiceLocator.getInstance().lookupLocal(DispatcherProcessSessionLocal.class), statusSession,
+                    keyUsageCounterDataService);
+        } catch (NamingException ex) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Lookup services failed", ex);
+            }
+        }
     }
     
     /**
@@ -146,7 +207,7 @@ public class ServiceTimerSessionBean implements ServiceTimerSessionLocal {
                 if (serviceConfig != null && timedService != null) {
                     try {
                         if (timedService.isActive() && timedService.getNextInterval() != ITimedService.DONT_EXECUTE) {
-                            timedService.work();
+                            timedService.work(new ServiceContext(servicesImpl));
                             serviceConfig.setLastRunTimestamp(new Date());
                             for (final ITimedService.LogType logType :
                                     timedService.getLogTypes()) {

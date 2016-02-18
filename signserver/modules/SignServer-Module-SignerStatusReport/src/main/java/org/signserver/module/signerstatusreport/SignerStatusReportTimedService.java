@@ -19,17 +19,16 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
-import org.signserver.common.ServiceLocator;
+import org.signserver.common.ServiceContext;
 import org.signserver.common.WorkerConfig;
 import org.signserver.server.ServiceExecutionFailedException;
-import org.signserver.server.SignServerContext;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.timedservices.BaseTimedService;
 import org.signserver.ejb.interfaces.WorkerSessionLocal;
 import org.signserver.server.IServices;
+import org.signserver.server.entities.IKeyUsageCounterDataService;
 
 /**
  * TimedService that outputs a status report for a configured set of signers.
@@ -52,11 +51,8 @@ public class SignerStatusReportTimedService extends BaseTimedService {
     /** Output file. */
     private File outputFile;
 
-    private SignerStatusReportBuilder reportBuilder;
     private List<String> workers;
     
-    /** Workersession. */
-    private WorkerSessionLocal workerSession; // FIXME: Better to somehow inject this
 
     /**
      * Initializes the worker.
@@ -88,7 +84,6 @@ public class SignerStatusReportTimedService extends BaseTimedService {
         } else {
             workers.addAll(Arrays.asList(workersValue.split(",")));
         }
-        this.reportBuilder = new SignerStatusReportBuilder(workers, getWorkerSession(), ((SignServerContext) workerContext).getKeyUsageCounterDataService());
         LOG.info("Worker[" + workerId +"]: " + "Workers: " + workers.size());
     }
 
@@ -98,12 +93,13 @@ public class SignerStatusReportTimedService extends BaseTimedService {
      * @throws ServiceExecutionFailedException in case of exception
      */
     @Override
-    public final void work() throws ServiceExecutionFailedException {
+    public final void work(final ServiceContext context) throws ServiceExecutionFailedException {
         LOG.trace(">work");
         LOG.info("Worker[" + workerId + "]: Service called");
 
         PrintWriter out = null;
         try {
+            final SignerStatusReportBuilder reportBuilder = new SignerStatusReportBuilder(workers, context.getServices().get(WorkerSessionLocal.class), context.getServices().get(IKeyUsageCounterDataService.class));
             final CharSequence report = reportBuilder.buildReport();
             out = new PrintWriter(new FileOutputStream(outputFile));
             out.print(report);
@@ -122,18 +118,6 @@ public class SignerStatusReportTimedService extends BaseTimedService {
         }
 
         LOG.trace("<work");
-    }
-
-    private WorkerSessionLocal getWorkerSession() {
-        if (workerSession == null) {
-            try {
-                workerSession = ServiceLocator.getInstance().lookupLocal(WorkerSessionLocal.class);
-            } catch (NamingException ex) {
-                throw new RuntimeException("Unable to lookup worker session",
-                        ex);
-            }
-        }
-        return workerSession;
     }
 
     @Override

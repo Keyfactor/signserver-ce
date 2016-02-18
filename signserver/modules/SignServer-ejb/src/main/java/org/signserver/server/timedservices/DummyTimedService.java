@@ -21,6 +21,7 @@ import java.io.IOException;
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
+import org.signserver.common.ServiceContext;
 import org.signserver.common.WorkerConfig;
 import org.signserver.server.ServiceExecutionFailedException;
 import org.signserver.server.WorkerContext;
@@ -55,7 +56,7 @@ public class DummyTimedService extends BaseTimedService {
      * @see org.signserver.server.timedservices.ITimedService#work()
      */
     @Override
-    public void work() throws ServiceExecutionFailedException {
+    public void work(final ServiceContext context) throws ServiceExecutionFailedException {
 
         int currentCount = 0;
 

@@ -13,6 +13,7 @@
 package org.signserver.server.timedservices;
 
 import java.util.Set;
+import org.signserver.common.ServiceContext;
 import org.signserver.server.IWorker;
 import org.signserver.server.ServiceExecutionFailedException;
 
@@ -36,9 +37,10 @@ public interface ITimedService extends IWorker {
      * be implemented by all services. The method is run
      * at a periodical interval defined in getNextInterval.
      * 
+     * @param context Additional context for the execution
      * @throws ServiceExecutionFailedException if execution of a service failed
      */
-    void work() throws ServiceExecutionFailedException;
+    void work(ServiceContext context) throws ServiceExecutionFailedException;
 
     /**
      * @return should return the milliseconds to next time the service should

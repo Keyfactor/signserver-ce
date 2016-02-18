@@ -49,6 +49,7 @@ public interface WorkerSession {
      * Should be used with the cmd-line status command.
      * @param wi of the signer
      * @return a WorkerStatus class
+     * @throws InvalidWorkerIdException in case the worker does not exist
      */
     WorkerStatus getStatus(WorkerIdentifier wi) throws InvalidWorkerIdException;
 
@@ -57,6 +58,7 @@ public interface WorkerSession {
      *
      * @param workerName of the worker, cannot be null
      * @return The Id of a named worker or 0 if no such name exists
+     * @throws InvalidWorkerIdException in case the worker does not exist
      */
     int getWorkerId(String workerName) throws InvalidWorkerIdException;
 
@@ -77,6 +79,7 @@ public interface WorkerSession {
      * @param authenticationCode (PIN) used to activate the token.
      * @throws CryptoTokenOfflineException
      * @throws CryptoTokenAuthenticationFailureException
+     * @throws InvalidWorkerIdException in case the worker does not exist
      */
     void activateSigner(WorkerIdentifier signerId, String authenticationCode)
             throws CryptoTokenAuthenticationFailureException,
@@ -89,7 +92,7 @@ public interface WorkerSession {
      * @param signerId of the signer
      * @return true if deactivation was successful
      * @throws CryptoTokenOfflineException
-     * @throws CryptoTokenAuthenticationFailureException
+     * @throws InvalidWorkerIdException in case the worker does not exist
      */
     boolean deactivateSigner(WorkerIdentifier signerId) throws CryptoTokenOfflineException,
             InvalidWorkerIdException;
@@ -152,6 +155,7 @@ public interface WorkerSession {
      *
      * @param signerId
      * @param authClient
+     * @return true if the client was found and removed
      */
     boolean removeAuthorizedClient(int signerId, AuthorizedClient authClient);
 
@@ -164,6 +168,9 @@ public interface WorkerSession {
      * @param explicitEccParameters false should be default and will use
      * NamedCurve encoding of ECC public keys (IETF recommendation), use true
      * to include all parameters explicitly (ICAO ePassport requirement).
+     * @return the CSR
+     * @throws CryptoTokenOfflineException
+     * @throws InvalidWorkerIdException in case the worker does not exist
      */
     ICertReqData getCertificateRequest(WorkerIdentifier signerId,
             ISignerCertReqInfo certReqInfo, boolean explicitEccParameters)
@@ -180,6 +187,9 @@ public interface WorkerSession {
      * to include all parameters explicitly (ICAO ePassport requirement).
      * @param defaultKey true if the default key should be used otherwise for
      * instance use next key.
+     * @return the CSR
+     * @throws CryptoTokenOfflineException
+     * @throws InvalidWorkerIdException in case the worker does not exist
      */
     ICertReqData getCertificateRequest(WorkerIdentifier signerId,
             ISignerCertReqInfo certReqInfo, boolean explicitEccParameters, 
@@ -319,8 +329,10 @@ public interface WorkerSession {
      * @param keySpec Key specification
      * @param alias Name of the new key
      * @param authCode Authorization code
+     * @return key alias of the generated key
      * @throws CryptoTokenOfflineException
      * @throws IllegalArgumentException
+     * @throws InvalidWorkerIdException in case the worker does not exist
      */
     String generateSignerKey(WorkerIdentifier signerId, String keyAlgorithm,
             String keySpec, String alias, char[] authCode)
@@ -335,6 +347,7 @@ public interface WorkerSession {
      * @return Collection with test results for each key
      * @throws CryptoTokenOfflineException
      * @throws KeyStoreException
+     * @throws InvalidWorkerIdException in case the worker does not exist
      */
     Collection<KeyTestResult> testKey(final WorkerIdentifier signerId, final String alias,
             char[] authCode) throws CryptoTokenOfflineException,
@@ -346,6 +359,7 @@ public interface WorkerSession {
      * @param signerId id of the signer
      * @param signerCert the certificate used to sign signature requests
      * @param scope one of GlobalConfiguration.SCOPE_ constants
+     * @throws CertificateException
      */
     void uploadSignerCertificate(int signerId, byte[] signerCert,
             String scope) throws CertificateException;
@@ -356,6 +370,7 @@ public interface WorkerSession {
      * @param signerId id of the signer
      * @param signerCerts the certificate chain used to sign signature requests
      * @param scope one of GlobalConfiguration.SCOPE_ constants
+     * @throws CertificateException
      */
     void uploadSignerCertificateChain(int signerId, List<byte[]> signerCerts, String scope)
              throws CertificateException;
@@ -380,6 +395,7 @@ public interface WorkerSession {
     
     /**
      * Methods that generates a free worker id that can be used for new signers.
+     * @return the worker ID
      */
     int genFreeWorkerId();
 
@@ -423,6 +439,7 @@ public interface WorkerSession {
      * @param criteria Search criteria for matching results
      * @param includeData If true, include actual archive data in entries
      * @return List of metadata objects describing matching entries
+     * @throws AuthorizationDeniedException
      */
     List<ArchiveMetadata> searchArchive(int startIndex,
             int max, QueryCriteria criteria, boolean includeData)

@@ -35,7 +35,7 @@ public interface ProcessSessionRemote {
      * The Worker Beans main method. Takes  requests processes them
      * and returns a response.
      *
-     * @param wi id of worker who should process the request
+     * @param wi ID of worker who should process the request
      * @param request the request
      * @param remoteContext context of the request
      * @return The process response

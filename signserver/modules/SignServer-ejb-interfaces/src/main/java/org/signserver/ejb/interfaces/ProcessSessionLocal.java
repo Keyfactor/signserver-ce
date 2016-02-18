@@ -23,6 +23,8 @@ import org.signserver.common.WorkerIdentifier;
 import org.signserver.server.log.AdminInfo;
 
 /**
+ * Local interface for the process session to be used internally when invoking
+ * some processing.
  *
  * @author Markus Kilås
  * @version $Id$
@@ -37,6 +39,7 @@ public interface ProcessSessionLocal {
      * @param wi id of worker who should process the request
      * @param request the request
      * @param requestContext context of the request
+     * @return The process response
      * @throws CryptoTokenOfflineException if the signers token isn't activated.
      * @throws IllegalRequestException if illegal request is sent to the method
      * @throws SignServerException if some other error occurred server side

@@ -97,6 +97,7 @@ public class ProcessableConfig {
      * Removes a Certificate SN from the collection of authorized clients	  
      * 
      * @param client the AuthorizedClient to remove
+     * @return true if the client was found and removed
      */
     @SuppressWarnings("unchecked")
     public boolean removeAuthorizedClient(AuthorizedClient client) {

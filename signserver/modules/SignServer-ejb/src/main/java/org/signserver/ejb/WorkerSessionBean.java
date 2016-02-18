@@ -700,9 +700,6 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
     	return removeAuthorizedClient(new AdminInfo("CLI user", null, null), signerId, authClient);
     }
     
-    /* (non-Javadoc)
-     * @see org.signserver.ejb.interfaces.WorkerSession#removeAuthorizedClient(int, org.signserver.common.AuthorizedClient)
-     */
     @Override
     public boolean removeAuthorizedClient(final AdminInfo adminInfo, int signerId,
             AuthorizedClient authClient) {

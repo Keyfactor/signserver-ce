@@ -14,6 +14,7 @@ package org.signserver.server;
 
 import java.util.Date;
 import java.util.Properties;
+import org.signserver.common.RequestContext;
 
 /**
  * Simple class implementing the ITimeSource interface always returns time 0.
@@ -32,7 +33,7 @@ public class ZeroTimeSource implements ITimeSource {
     }
 
     @Override
-    public Date getGenTime() {
+    public Date getGenTime(final RequestContext context) {
         return new Date(0);
     }
 

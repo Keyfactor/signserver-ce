@@ -326,7 +326,7 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("TimeSource: " + timeSrc.getClass().getName());
                 }
-                date = timeSrc.getGenTime();
+                date = timeSrc.getGenTime(requestContext);
 
                 if (date == null) {
                     throw new ServiceUnavailableException("Time source is not available");
@@ -634,7 +634,9 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
         } 
         
         // check time source
-        if (timeSource.getGenTime() == null) {
+        final RequestContext context = new RequestContext(true);
+        context.setServices(services);
+        if (timeSource.getGenTime(context) == null) {
         	result.add("Time source not available");
         	if (LOG.isDebugEnabled()) {
         		LOG.debug("Signer " + workerId + ": time source not available");

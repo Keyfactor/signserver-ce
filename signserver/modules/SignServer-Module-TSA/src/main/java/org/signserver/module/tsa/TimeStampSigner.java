@@ -443,7 +443,7 @@ public class TimeStampSigner extends BaseSigner {
         if (LOG.isDebugEnabled()) {
             LOG.debug("TimeSource: " + timeSrc.getClass().getName());
         }
-        final Date date = timeSrc.getGenTime();
+        final Date date = timeSrc.getGenTime(requestContext);
         final BigInteger serialNumber = getSerialNumber();
 
         // Log values
@@ -1028,7 +1028,9 @@ public class TimeStampSigner extends BaseSigner {
         } 
         
         // check time source
-        if (timeSource.getGenTime() == null) {
+        final RequestContext context = new RequestContext(true);
+        context.setServices(services);
+        if (timeSource.getGenTime(context) == null) {
         	result.add("Time source not available");
         	if (LOG.isDebugEnabled()) {
         		LOG.debug("Signer " + workerId + ": time source not available");

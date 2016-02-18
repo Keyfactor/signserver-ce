@@ -16,9 +16,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
 import java.util.TimeZone;
-import javax.naming.NamingException;
 import org.apache.log4j.Logger;
-import org.signserver.common.ServiceLocator;
+import org.signserver.common.RequestContext;
 import org.signserver.statusrepo.common.NoSuchPropertyException;
 import org.signserver.statusrepo.common.StatusEntry;
 import org.signserver.statusrepo.common.StatusName;
@@ -41,9 +40,6 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(
             StatusReadingLocalComputerTimeSource.class);
-
-    /** Status repository session. */
-    private StatusRepositorySessionLocal statusSession;
 
     private final StatusName insyncPropertyName = StatusName.TIMESOURCE0_INSYNC;
     private final StatusName leapsecondPropertyName = StatusName.LEAPSECOND;
@@ -92,7 +88,6 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
     public void init(final Properties props) {
         final String leapHandling = props.getProperty(LEAPSECOND_HANDLING, LEAPSECOND_HANDLING_DEFAULT);
         try {
-            statusSession = ServiceLocator.getInstance().lookupLocal(StatusRepositorySessionLocal.class);
             leapSecondHandlingStrategy = LeapSecondHandlingStrategy.valueOf(leapHandling);
 
             if (LOG.isDebugEnabled()) {
@@ -100,8 +95,6 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
             }
         } catch (IllegalArgumentException ex) {
             LOG.error("Illegal value for leap second handling strategy: " + leapHandling);
-        } catch (NamingException ex) {
-            LOG.error("Looking up status repository session", ex);
         }
     }
 
@@ -110,9 +103,10 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
      * @return an accurate current time or null if it is not available.
      */
     @Override
-    public Date getGenTime() {
+    public Date getGenTime(final RequestContext context) {
         try {
             final Date result;
+            final StatusRepositorySessionLocal statusSession = context.getServices().get(StatusRepositorySessionLocal.class);
             final StatusEntry entry = statusSession.getValidEntry(insyncPropertyName.name());
             
             if (entry != null && Boolean.valueOf(entry.getValue())) {
@@ -206,17 +200,7 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
     protected void pause() throws InterruptedException {
     	Thread.sleep(LEAPSECOND_WAIT_PERIOD);
     }
-    
-    /**
-     * Set the status session.
-     * This is visible for the unit test
-     * 
-     * @param statusSession
-     */
-    protected void setStatusSession(final StatusRepositorySessionLocal statusSession) {
-        this.statusSession = statusSession;
-    }
-    
+
     /**
      * Sets the handle leapsecond-handling strategy.
      * This is available for the unit test.

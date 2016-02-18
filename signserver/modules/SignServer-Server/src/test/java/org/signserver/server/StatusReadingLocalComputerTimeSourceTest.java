@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.TimeZone;
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
+import org.signserver.common.RequestContext;
 import org.signserver.server.StatusReadingLocalComputerTimeSource.LeapSecondHandlingStrategy;
 import org.signserver.statusrepo.common.NoSuchPropertyException;
 import org.signserver.statusrepo.common.StatusEntry;
@@ -100,6 +101,13 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
         assertNotPotentialLeapsecond(2013, 4, 7, 12, 47, 11, 0);
     }
     
+    private final RequestContext createContext(final String leapSecondState) {
+        RequestContext context = new RequestContext();
+        IServices services = new ServicesImpl();
+        services.put(StatusRepositorySessionLocal.class, new LeapsecondStatusRepositorySession(leapSecondState));
+        context.setServices(services);
+        return context;
+    }
     
     /** 
      * Tests that requesting time when a leap second is near,
@@ -114,18 +122,16 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
         // Strategy: PAUSE
         MockTimeSource timeSource = new MockTimeSource(cal.getTime());
         timeSource.setLeapSecondHandlingStrategy(LeapSecondHandlingStrategy.PAUSE);
-        timeSource.setStatusSession(new LeapsecondStatusRepositorySession(StatusReadingLocalComputerTimeSource.LEAPSECOND_POSITIVE));
         
-        Date date = timeSource.getGenTime();
+        Date date = timeSource.getGenTime(createContext(StatusReadingLocalComputerTimeSource.LEAPSECOND_POSITIVE));
         assertTrue("Timesource did not pause", timeSource.pauseCalled);
         assertNotNull("Should get a time", date);
         
         // Strategy: STOP
         timeSource = new MockTimeSource(cal.getTime());
         timeSource.setLeapSecondHandlingStrategy(LeapSecondHandlingStrategy.STOP);
-        timeSource.setStatusSession(new LeapsecondStatusRepositorySession(StatusReadingLocalComputerTimeSource.LEAPSECOND_POSITIVE));
-        
-        date = timeSource.getGenTime();
+
+        date = timeSource.getGenTime(createContext(StatusReadingLocalComputerTimeSource.LEAPSECOND_POSITIVE));
         assertFalse("Timesource should not pause", timeSource.pauseCalled);
         assertNull("Should not get a time", date);
     }
@@ -147,18 +153,16 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
         // Strategy: PAUSE
         MockTimeSource timeSource = new MockTimeSource(cal.getTime());
         timeSource.setLeapSecondHandlingStrategy(LeapSecondHandlingStrategy.PAUSE);
-        timeSource.setStatusSession(new LeapsecondStatusRepositorySession(StatusReadingLocalComputerTimeSource.LEAPSECOND_NEGATIVE));
         
-        Date date = timeSource.getGenTime();
+        Date date = timeSource.getGenTime(createContext(StatusReadingLocalComputerTimeSource.LEAPSECOND_NEGATIVE));
         assertTrue("Timesource did not pause", timeSource.pauseCalled);
         assertNotNull("Should get a time", date);
         
         // Strategy: STOP
         timeSource = new MockTimeSource(cal.getTime());
         timeSource.setLeapSecondHandlingStrategy(LeapSecondHandlingStrategy.STOP);
-        timeSource.setStatusSession(new LeapsecondStatusRepositorySession(StatusReadingLocalComputerTimeSource.LEAPSECOND_NEGATIVE));
-        
-        date = timeSource.getGenTime();
+
+        date = timeSource.getGenTime(createContext(StatusReadingLocalComputerTimeSource.LEAPSECOND_NEGATIVE));
         assertFalse("Timesource should not pause", timeSource.pauseCalled);
         assertNull("Should not get a time", date);
     }
@@ -171,22 +175,20 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
         LOG.info("test07RequestTimeNoLeapsecond");
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
         cal.set(2013, 0, 16, 23, 59, 59);
-        
+
         // Strategy: PAUSE
     	MockTimeSource timeSource = new MockTimeSource(cal.getTime());
         timeSource.setLeapSecondHandlingStrategy(LeapSecondHandlingStrategy.PAUSE);
-        timeSource.setStatusSession(new LeapsecondStatusRepositorySession(StatusReadingLocalComputerTimeSource.LEAPSECOND_NEGATIVE));
-        
-        Date date = timeSource.getGenTime();
+
+        Date date = timeSource.getGenTime(createContext(StatusReadingLocalComputerTimeSource.LEAPSECOND_NEGATIVE));
         assertFalse("Should not paused", timeSource.pauseCalled);
         assertNotNull("Should get a time", date);
-        
+
         // Strategy: STOP
     	timeSource = new MockTimeSource(cal.getTime());
         timeSource.setLeapSecondHandlingStrategy(LeapSecondHandlingStrategy.STOP);
-        timeSource.setStatusSession(new LeapsecondStatusRepositorySession(StatusReadingLocalComputerTimeSource.LEAPSECOND_NEGATIVE));
-        
-        date = timeSource.getGenTime();
+
+        date = timeSource.getGenTime(createContext(StatusReadingLocalComputerTimeSource.LEAPSECOND_NEGATIVE));
         assertFalse("Should not paused", timeSource.pauseCalled);
         assertNotNull("Should get a time", date);
     }
@@ -203,18 +205,16 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
         // Strategy: PAUSE
         MockTimeSource timeSource = new MockTimeSource(cal.getTime());
         timeSource.setLeapSecondHandlingStrategy(LeapSecondHandlingStrategy.PAUSE);
-        timeSource.setStatusSession(new LeapsecondStatusRepositorySession(StatusReadingLocalComputerTimeSource.LEAPSECOND_NONE));
-        
-        Date date = timeSource.getGenTime();
+
+        Date date = timeSource.getGenTime(createContext(StatusReadingLocalComputerTimeSource.LEAPSECOND_NONE));
         assertFalse("Timesource paused", timeSource.pauseCalled);
         assertNotNull("Should get a time", date);
         
         // Strategy: STOP
         timeSource = new MockTimeSource(cal.getTime());
         timeSource.setLeapSecondHandlingStrategy(LeapSecondHandlingStrategy.STOP);
-        timeSource.setStatusSession(new LeapsecondStatusRepositorySession(StatusReadingLocalComputerTimeSource.LEAPSECOND_NONE));
-        
-        date = timeSource.getGenTime();
+
+        date = timeSource.getGenTime(createContext(StatusReadingLocalComputerTimeSource.LEAPSECOND_NONE));
         assertFalse("Timesource paused", timeSource.pauseCalled);
         assertNotNull("Should get a time", date);
     }
@@ -229,11 +229,10 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
         cal.set(2012, 11, 31, 23, 59, 59);
         final MockTimeSource timeSource =
         		new MockTimeSource(cal.getTime());
-  
-        timeSource.setLeapSecondHandlingStrategy(LeapSecondHandlingStrategy.NONE);
-        timeSource.setStatusSession(new LeapsecondStatusRepositorySession(StatusReadingLocalComputerTimeSource.LEAPSECOND_POSITIVE));
 
-        final Date date = timeSource.getGenTime();
+        timeSource.setLeapSecondHandlingStrategy(LeapSecondHandlingStrategy.NONE);
+
+        final Date date = timeSource.getGenTime(createContext(StatusReadingLocalComputerTimeSource.LEAPSECOND_POSITIVE));
         assertFalse("Timesource paused", timeSource.pauseCalled);
         assertNotNull("Should get a time", date);
     }
@@ -245,21 +244,19 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
         LOG.info("test10RequestTimeLeapsecondNotHandled");
     	Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
         cal.set(2012, 11, 31, 23, 59, 59);
-        
+
         // Strategy: PAUSE
         MockTimeSource timeSource = new MockTimeSource(cal.getTime());
         timeSource.setLeapSecondHandlingStrategy(LeapSecondHandlingStrategy.PAUSE);
-        timeSource.setStatusSession(new LeapsecondStatusRepositorySession(null));
-        
-        Date date = timeSource.getGenTime();
+
+        Date date = timeSource.getGenTime(createContext(null));
         assertNull("Should not get a time", date);
-        
+
         // Strategy: STOP
         timeSource = new MockTimeSource(cal.getTime());
         timeSource.setLeapSecondHandlingStrategy(LeapSecondHandlingStrategy.STOP);
-        timeSource.setStatusSession(new LeapsecondStatusRepositorySession(null));
-        
-        date = timeSource.getGenTime();
+
+        date = timeSource.getGenTime(createContext(null));
         assertNull("Should not get a time", date);
     }
     
@@ -276,18 +273,16 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
         // Strategy: PAUSE
         MockTimeSource timeSource = new MockTimeSource(cal.getTime());
         timeSource.setLeapSecondHandlingStrategy(LeapSecondHandlingStrategy.PAUSE);
-        timeSource.setStatusSession(new LeapsecondStatusRepositorySession(StatusReadingLocalComputerTimeSource.LEAPSECOND_POSITIVE));
-        
-        Date date = timeSource.getGenTime();
+
+        Date date = timeSource.getGenTime(createContext(StatusReadingLocalComputerTimeSource.LEAPSECOND_POSITIVE));
         assertFalse("Should not pause", timeSource.pauseCalled);
         assertNotNull("Should get a time", date);
-        
+
         // Strategy: STOP
         timeSource = new MockTimeSource(cal.getTime());
         timeSource.setLeapSecondHandlingStrategy(LeapSecondHandlingStrategy.STOP);
-        timeSource.setStatusSession(new LeapsecondStatusRepositorySession(StatusReadingLocalComputerTimeSource.LEAPSECOND_POSITIVE));
-        
-        date = timeSource.getGenTime();
+
+        date = timeSource.getGenTime(createContext(StatusReadingLocalComputerTimeSource.LEAPSECOND_POSITIVE));
         assertFalse("Should not pause", timeSource.pauseCalled);
         assertNotNull("Should get a time", date);
     }
@@ -305,18 +300,16 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
         // Strategy: PAUSE
         MockTimeSource timeSource = new MockTimeSource(cal.getTime());
         timeSource.setLeapSecondHandlingStrategy(LeapSecondHandlingStrategy.PAUSE);
-        timeSource.setStatusSession(new LeapsecondStatusRepositorySession(StatusReadingLocalComputerTimeSource.LEAPSECOND_POSITIVE));
-        
-        Date date = timeSource.getGenTime();
+
+        Date date = timeSource.getGenTime(createContext(StatusReadingLocalComputerTimeSource.LEAPSECOND_POSITIVE));
         assertFalse("Timesource paused", timeSource.pauseCalled);
         assertNotNull("Should get a time", date);
         
         // Strategy: STOP
         timeSource = new MockTimeSource(cal.getTime());
         timeSource.setLeapSecondHandlingStrategy(LeapSecondHandlingStrategy.STOP);
-        timeSource.setStatusSession(new LeapsecondStatusRepositorySession(StatusReadingLocalComputerTimeSource.LEAPSECOND_POSITIVE));
-        
-        date = timeSource.getGenTime();
+
+        date = timeSource.getGenTime(createContext(StatusReadingLocalComputerTimeSource.LEAPSECOND_POSITIVE));
         assertFalse("Timesource paused", timeSource.pauseCalled);
         assertNotNull("Should get a time", date);
     }
@@ -411,18 +404,16 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
         // Strategy: PAUSE
         MockTimeSource timeSource = new MockTimeSource(cal.getTime());
         timeSource.setLeapSecondHandlingStrategy(LeapSecondHandlingStrategy.PAUSE);
-        timeSource.setStatusSession(new LeapsecondStatusRepositorySession(StatusReadingLocalComputerTimeSource.LEAPSECOND_POSITIVE));
-        
-        Date date = timeSource.getGenTime();
+
+        Date date = timeSource.getGenTime(createContext(StatusReadingLocalComputerTimeSource.LEAPSECOND_POSITIVE));
         assertTrue("Should pause", timeSource.pauseCalled);
         assertNotNull("Should get a time", date);
-        
+
         // Strategy: STOP
         timeSource = new MockTimeSource(cal.getTime());
         timeSource.setLeapSecondHandlingStrategy(LeapSecondHandlingStrategy.STOP);
-        timeSource.setStatusSession(new LeapsecondStatusRepositorySession(StatusReadingLocalComputerTimeSource.LEAPSECOND_POSITIVE));
-        
-        date = timeSource.getGenTime();
+
+        date = timeSource.getGenTime(createContext(StatusReadingLocalComputerTimeSource.LEAPSECOND_POSITIVE));
         assertFalse("Should not pause", timeSource.pauseCalled);
         assertNull("Should not get a time", date);
     }

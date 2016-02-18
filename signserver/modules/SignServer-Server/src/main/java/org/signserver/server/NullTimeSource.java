@@ -14,6 +14,7 @@ package org.signserver.server;
 
 import java.util.Date;
 import java.util.Properties;
+import org.signserver.common.RequestContext;
 
 /**
  * Simple class implementing the ITimeSource interface but always returns null
@@ -42,7 +43,7 @@ public class NullTimeSource implements ITimeSource {
      * @see org.signserver.server.ITimeSource#getGenTime()
      */
     @Override
-    public final Date getGenTime() {
+    public final Date getGenTime(final RequestContext context) {
         return null;
     }
 }

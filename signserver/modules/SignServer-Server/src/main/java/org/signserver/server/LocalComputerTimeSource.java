@@ -14,6 +14,7 @@ package org.signserver.server;
 
 import java.util.Date;
 import java.util.Properties;
+import org.signserver.common.RequestContext;
 
 /**
  * Simple class implementing the ITimeSource interface taking the current time
@@ -39,7 +40,7 @@ public class LocalComputerTimeSource implements ITimeSource {
      * @see org.signserver.server.ITimeSource#getGenTime()
      */
     @Override
-    public Date getGenTime() {
+    public Date getGenTime(final RequestContext context) {
         return new Date();
     }
 }

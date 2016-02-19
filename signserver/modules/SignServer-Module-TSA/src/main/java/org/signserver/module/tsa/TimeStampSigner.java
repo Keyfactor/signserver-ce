@@ -497,10 +497,6 @@ public class TimeStampSigner extends BaseSigner {
                     getTimeStampResponseGenerator(timeStampTokenGen);
 
             TimeStampResponse timeStampResponse;
-
-            for (final Object o : timeStampRequest.getExtensionOIDs()) {
-                System.out.println("extension: " + o);
-            }
                  
             try {
                 timeStampResponse =

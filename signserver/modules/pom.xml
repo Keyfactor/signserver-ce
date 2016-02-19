@@ -168,11 +168,11 @@
                 <configuration>
                     <additionalClasspathElements>
                         <!-- Include res/cesecore for defaultvalues.properties. -->
-                        <additionalClasspathElement>res/cesecore/</additionalClasspathElement>
-                        <additionalClasspathElement>../res/cesecore/</additionalClasspathElement>
-                        <additionalClasspathElement>../../res/cesecore/</additionalClasspathElement>
-                        <additionalClasspathElement>../../../res/cesecore/</additionalClasspathElement>
-                        <additionalClasspathElement>../../../../res/cesecore/</additionalClasspathElement>
+                        <additionalClasspathElement>res/deploytools/cesecore/</additionalClasspathElement>
+                        <additionalClasspathElement>../res/deploytools/cesecore/</additionalClasspathElement>
+                        <additionalClasspathElement>../../res/deploytools/cesecore/</additionalClasspathElement>
+                        <additionalClasspathElement>../../../res/deploytools/cesecore/</additionalClasspathElement>
+                        <additionalClasspathElement>../../../../res/deploytools/cesecore/</additionalClasspathElement>
                     </additionalClasspathElements>
                 </configuration>
             </plugin>

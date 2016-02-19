@@ -18,8 +18,8 @@
     <import file="res/deploytools/build-impl.xml"/>
 
     <!-- SignServer has some extra application server features -->
-    <property name="dss-appserver-impl.file" value="${basedir}/res/appserver/${appserver.type}.xml"/>
-    <property name="dss-noappserver-impl.file" value="${basedir}/res/appserver/noappserver.xml"/>
+    <property name="dss-appserver-impl.file" value="${basedir}/res/deploytools/appserver/${appserver.type}.xml"/>
+    <property name="dss-noappserver-impl.file" value="${basedir}/res/deploytools/appserver/noappserver.xml"/>
     <import file="${dss-appserver-impl.file}" optional="true"/>
     <import file="${dss-noappserver-impl.file}" optional="true"/>
 
@@ -27,7 +27,7 @@
     <property name="platform.project.dir" location="."/>
 
     <!-- TODO: Below should be contributed back to DeployTools -->
-    <!-- Replace back slashes with forward slashes for post-processed paths
+    <!-- Replace back slashes with forward slashes for post-processed pathsde
 to work on Windows. -->
     <property name="base" location="."/>
     <loadresource property="basepath">
@@ -192,7 +192,7 @@ bin/ant systemtest:jars     Run all available systemtest JARs.
     <target name="-init-filters"></target>
 
     <!-- We support the old name for deploy-ear. -->
-    <target name="deploy" depends="deploy-ear,j2ee:deploy-other" description="Deploys SignServer"/>
+    <target name="deploy" depends="deploy-ear" description="Deploys SignServer"/>
 
 
     <!-- Target for creating a binary distribution for arbitrary jars and their dependencies. -->

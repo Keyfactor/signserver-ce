@@ -8,15 +8,15 @@
 
 <body>
   <section name="">
-<div id="welcome">        
+
 <div class="frame">
 <div class="label">
       SignServer release news &amp; other marvels
 </div>
 <div id="news">
     <!--TWITTER WIDGET-->
-<div class="frame note" id="twitter" style="border:0; float:left; margin:1em 2em 1em 0;">
-<a class="twitter-timeline" href="https://twitter.com/primekeyPKI" data-widget-id="344774465936306176" width="260" height="275" data-dnt="true">Tweets by @primekeyPKI</a>
+<div id="twitter">
+<a class="twitter-timeline" href="https://twitter.com/primekeyPKI" data-widget-id="344774465936306176" width="260" height="295" data-dnt="true">Tweets by @primekeyPKI</a>
 <script type="text/javascript">
 !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
 </script>
@@ -59,7 +59,6 @@
   <span class="date"> Posted: 2015-07-05</span>
   </p>  
   
-</div>
 </div>
 </div>
 </div>

@@ -1,5 +1,6 @@
 /*
- * copied from upstream git, this is needed for the bugfixed TimeStampRequest
+ * copied from upstream git, this is needed for the bugfixed 
+ * using code from github.com/bcgit/bc-java git tree bea9d91835fabcde3be7ec7f5e9b9d9bddcb34cf
  */
 package org.signserver.module.tsa.bc;
 

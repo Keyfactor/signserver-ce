@@ -1,6 +1,7 @@
 /*
  * Copied from upstream git master for bugfix in extensions validation.
  * modified with needed imports
+ * using code from github.com/bcgit/bc-java git tree bea9d91835fabcde3be7ec7f5e9b9d9bddcb34cf
  */
 package org.signserver.module.tsa.bc;
 

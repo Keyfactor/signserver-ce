@@ -506,7 +506,7 @@ public class TimeStampSigner extends BaseSigner {
                                                                      includeStatusString ? "Operation Okay" : null);
             } catch (TSPException e) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Got exception generating response: " + e.getMessage());
+                    LOG.debug("Got exception generating response: ", e);
                 }
                 timeStampResponse =
                         timeStampResponseGen.generateRejectedResponse(e);

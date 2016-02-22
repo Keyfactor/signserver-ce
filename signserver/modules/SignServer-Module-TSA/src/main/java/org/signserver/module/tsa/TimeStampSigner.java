@@ -504,7 +504,10 @@ public class TimeStampSigner extends BaseSigner {
                                                                      serialNumber,
                                                                      date,
                                                                      includeStatusString ? "Operation Okey" : null);
-            } catch (Exception e) {
+            } catch (TSPException e) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Got exception generating response: " + e.getMessage());
+                }
                 timeStampResponse =
                         timeStampResponseGen.generateRejectedResponse(e);
             }

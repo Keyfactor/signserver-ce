@@ -1024,7 +1024,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
      // Test signing
         final TimeStampResponse response = assertSuccessfulTimestamp(WORKER1, true);
 
-        assertEquals("Operation Okey", response.getStatusString());
+        assertEquals("Operation Okay", response.getStatusString());
     }
     
     /**

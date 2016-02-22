@@ -503,7 +503,7 @@ public class TimeStampSigner extends BaseSigner {
                         timeStampResponseGen.generateGrantedResponse(timeStampRequest,
                                                                      serialNumber,
                                                                      date,
-                                                                     includeStatusString ? "Operation Okey" : null);
+                                                                     includeStatusString ? "Operation Okay" : null);
             } catch (TSPException e) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Got exception generating response: " + e.getMessage());

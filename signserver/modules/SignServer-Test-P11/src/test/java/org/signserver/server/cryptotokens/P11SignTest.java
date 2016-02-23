@@ -351,6 +351,7 @@ public class P11SignTest extends ModulesTestCase {
     
     private void setTimeStampSignerProperties(final int workerId, final boolean cache) throws IOException, CryptoTokenOfflineException, InvalidWorkerIdException, NoSuchAlgorithmException, NoSuchProviderException, CertificateException, OperatorCreationException, Exception {
         // Setup worker
+        workerSession.setWorkerProperty(workerId, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         workerSession.setWorkerProperty(workerId, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.tsa.TimeStampSigner");
         workerSession.setWorkerProperty(workerId, WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, PKCS11CryptoToken.class.getName());
         workerSession.setWorkerProperty(workerId, "NAME", "TSSignerP11");
@@ -444,6 +445,7 @@ public class P11SignTest extends ModulesTestCase {
     
     private void setMRTDSODSignerProperties(final int workerId, final boolean cache) throws IOException {
         // Setup worker
+        workerSession.setWorkerProperty(workerId, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         workerSession.setWorkerProperty(workerId, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.mrtdsodsigner.MRTDSODSigner");
         workerSession.setWorkerProperty(workerId, WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, PKCS11CryptoToken.class.getName());
         workerSession.setWorkerProperty(workerId, "NAME", "SODSignerP11");
@@ -515,6 +517,7 @@ public class P11SignTest extends ModulesTestCase {
     
     private void setCMSSignerProperties(final int workerId, final boolean cached) throws IOException {
         // Setup worker
+        workerSession.setWorkerProperty(workerId, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         workerSession.setWorkerProperty(workerId, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.cmssigner.CMSSigner");
         workerSession.setWorkerProperty(workerId, WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, PKCS11CryptoToken.class.getName());
         workerSession.setWorkerProperty(workerId, "NAME", "CMSSignerP11");
@@ -578,6 +581,7 @@ public class P11SignTest extends ModulesTestCase {
     
     private void setXMLSignerProperties(final int workerId, final boolean cache) throws IOException {
         // Setup worker
+        workerSession.setWorkerProperty(workerId, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         workerSession.setWorkerProperty(workerId, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.xmlsigner.XMLSigner");
         workerSession.setWorkerProperty(workerId, WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, PKCS11CryptoToken.class.getName());
         workerSession.setWorkerProperty(workerId, "NAME", "XMLSignerP11");
@@ -591,6 +595,7 @@ public class P11SignTest extends ModulesTestCase {
 
     private void setXMLSignerPropertiesReferingToken(final int workerId, final String tokenName, final boolean cache) throws IOException {
         // Setup worker
+        workerSession.setWorkerProperty(workerId, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         workerSession.setWorkerProperty(workerId, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.xmlsigner.XMLSigner");
         workerSession.setWorkerProperty(workerId, "NAME", "XMLSignerRefering");
         workerSession.setWorkerProperty(workerId, "AUTHTYPE", "NOAUTH");
@@ -682,6 +687,7 @@ public class P11SignTest extends ModulesTestCase {
     
     private void setODFSignerProperties(final int workerId, final boolean cache) throws IOException {
         // Setup worker
+        workerSession.setWorkerProperty(workerId, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         workerSession.setWorkerProperty(workerId, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.odfsigner.ODFSigner");
         workerSession.setWorkerProperty(workerId, WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, PKCS11CryptoToken.class.getName());
         workerSession.setWorkerProperty(workerId, "NAME", "ODFSignerP11");
@@ -745,6 +751,7 @@ public class P11SignTest extends ModulesTestCase {
     
     private void setOOXMLSignerProperties(final int workerId, final boolean cache) throws IOException {
         // Setup worker
+        workerSession.setWorkerProperty(workerId, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         workerSession.setWorkerProperty(workerId, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.ooxmlsigner.OOXMLSigner");
         workerSession.setWorkerProperty(workerId, WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, PKCS11CryptoToken.class.getName());
         workerSession.setWorkerProperty(workerId, "NAME", "OOXMLSignerP11");
@@ -806,6 +813,7 @@ public class P11SignTest extends ModulesTestCase {
 
     private void setMSAuthTimeStampSignerProperties(final int workerId, final boolean cache) throws IOException {
         // Setup worker
+        workerSession.setWorkerProperty(workerId, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         workerSession.setWorkerProperty(workerId, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.tsa.MSAuthCodeTimeStampSigner");
         workerSession.setWorkerProperty(workerId, WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, PKCS11CryptoToken.class.getName());
         workerSession.setWorkerProperty(workerId, "NAME", "MSAuthTSSignerP11");

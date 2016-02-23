@@ -30,6 +30,7 @@ import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerType;
 import org.signserver.common.util.PathUtil;
 import org.signserver.ejb.interfaces.WorkerSession;
 import org.signserver.ejb.interfaces.GlobalConfigurationSession;
@@ -90,6 +91,7 @@ public class DocumentValidatorTest extends ModulesTestCase {
     public void test00SetupDatabase() throws Exception {
 
         // VALIDATION SERVICE
+        workerSession.setWorkerProperty(17, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         workerSession.setWorkerProperty(17, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.validationservice.server.ValidationServiceWorker");
         workerSession.setWorkerProperty(17, "AUTHTYPE", "NOAUTH");
         workerSession.setWorkerProperty(17, "NAME", VALIDATION_WORKER);

@@ -28,15 +28,13 @@ public class WorkerIdentifier implements Serializable {
     private final String name;
 
     public static WorkerIdentifier createFromIdOrName(String idOrName) {
-        final WorkerIdentifier result;
-        Integer id = null;
+        WorkerIdentifier result;
         try {
-            id = Integer.parseInt(idOrName);
-        } catch (NumberFormatException ignored) {} // NOPMD
-        if (id == null) {
+            // Try as int
+            result = new WorkerIdentifier(Integer.parseInt(idOrName));
+        } catch (NumberFormatException ignored) { // NOPMD
+            // Otherwise it is a name
             result = new WorkerIdentifier(idOrName);
-        } else {
-            result = new WorkerIdentifier(id);
         }
         return result;
     }

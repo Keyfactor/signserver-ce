@@ -133,6 +133,7 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
         setProperties(new File(getSignServerHome(), "res/test/test-xmlvalidator-configuration.properties"));
 
         // XMLVALIDATOR: worker
+        workerSession.setWorkerProperty(XMLVALIDATOR_WORKERID, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         workerSession.setWorkerProperty(XMLVALIDATOR_WORKERID, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.xmlvalidator.XMLValidator");
         workerSession.setWorkerProperty(XMLVALIDATOR_WORKERID, "NAME", XMLVALIDATOR_WORKER);
         workerSession.setWorkerProperty(XMLVALIDATOR_WORKERID, "AUTHTYPE", "NOAUTH");
@@ -142,6 +143,7 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
 
     private void setupSigner(int workerId, String workerName, File keystore,
                              String keystorePassword, final String defaultAlias) throws Exception {
+        workerSession.setWorkerProperty(workerId, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         workerSession.setWorkerProperty(workerId, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.xmlsigner.XMLSigner");
         workerSession.setWorkerProperty(workerId, WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, "org.signserver.server.cryptotokens.P12CryptoToken");
         workerSession.setWorkerProperty(workerId, "NAME", workerName);

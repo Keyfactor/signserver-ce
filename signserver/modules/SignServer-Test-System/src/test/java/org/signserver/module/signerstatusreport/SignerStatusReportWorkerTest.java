@@ -27,8 +27,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
+import org.signserver.common.WorkerType;
 import org.signserver.ejb.interfaces.WorkerSession;
-import org.signserver.ejb.interfaces.GlobalConfigurationSession;
 
 /**
  * Tests for SignerStatusReportTimedService.
@@ -74,7 +74,6 @@ public class SignerStatusReportWorkerTest extends WebTestCase {
     private SignerStatusReportParser parser = new SignerStatusReportParser();
     
     private final WorkerSession workerSession = getWorkerSession();
-    private final GlobalConfigurationSession globalSession = getGlobalSession();
 
     @Override
     protected String getServletURL() {
@@ -97,6 +96,7 @@ public class SignerStatusReportWorkerTest extends WebTestCase {
         addDummySigner(WORKERID_SIGNER3, WORKER_SIGNER3, false);
 
         // Setup service
+        workerSession.setWorkerProperty(WORKERID_WORKER, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         workerSession.setWorkerProperty(WORKERID_WORKER, WorkerConfig.IMPLEMENTATION_CLASS,
             "org.signserver.module.signerstatusreport.SignerStatusReportWorker");
         

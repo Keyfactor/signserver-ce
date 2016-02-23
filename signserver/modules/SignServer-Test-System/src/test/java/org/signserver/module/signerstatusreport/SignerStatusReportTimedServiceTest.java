@@ -25,8 +25,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
+import org.signserver.common.WorkerType;
 import org.signserver.ejb.interfaces.WorkerSession;
-import org.signserver.ejb.interfaces.GlobalConfigurationSession;
 
 /**
  * Tests for SignerStatusReportTimedService.
@@ -76,8 +76,7 @@ public class SignerStatusReportTimedServiceTest extends ModulesTestCase {
     private SignerStatusReportParser parser = new SignerStatusReportParser();
 
     private final WorkerSession workerSession = getWorkerSession();
-    private final GlobalConfigurationSession globalSession = getGlobalSession();
-    
+
     @Before
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
@@ -102,6 +101,7 @@ public class SignerStatusReportTimedServiceTest extends ModulesTestCase {
         addDummySigner(WORKERID_SIGNER3, WORKER_SIGNER3, false);
 
         // Setup service
+        workerSession.setWorkerProperty(WORKERID_SERVICE, WorkerConfig.TYPE, WorkerType.TIMED_SERVICE.name());
         workerSession.setWorkerProperty(WORKERID_SERVICE, WorkerConfig.IMPLEMENTATION_CLASS,
             "org.signserver.module.signerstatusreport.SignerStatusReportTimedService");
 

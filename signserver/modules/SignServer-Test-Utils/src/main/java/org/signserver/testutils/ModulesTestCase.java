@@ -517,6 +517,7 @@ public class ModulesTestCase extends TestCase {
         getWorkerSession().reloadConfiguration(VALIDATION_SERVICE_WORKER_ID);
 
         // XMLVALIDATOR
+        getWorkerSession().setWorkerProperty(XML_VALIDATOR_WORKER_ID, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         getWorkerSession().setWorkerProperty(XML_VALIDATOR_WORKER_ID, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.xmlvalidator.XMLValidator");
         getWorkerSession().setWorkerProperty(XML_VALIDATOR_WORKER_ID, "NAME", XML_VALIDATOR_WORKER_NAME);
         getWorkerSession().setWorkerProperty(XML_VALIDATOR_WORKER_ID, "AUTHTYPE", "NOAUTH");

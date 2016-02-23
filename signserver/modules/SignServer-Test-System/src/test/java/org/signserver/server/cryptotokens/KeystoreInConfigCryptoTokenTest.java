@@ -38,7 +38,6 @@ public class KeystoreInConfigCryptoTokenTest extends KeystoreCryptoTokenTestBase
     
     private static final String SIGN_KEY_ALIAS = "p12signkey1234";
     private static final String TEST_KEY_ALIAS = "p12testkey1234";
-    private static final String KEYSTORE_NAME = "p12testkeystore1234";
 
     @Override
     protected void setUp() throws Exception {
@@ -67,7 +66,7 @@ public class KeystoreInConfigCryptoTokenTest extends KeystoreCryptoTokenTestBase
         workerSession.setWorkerProperty(tokenId, "DEFAULTKEY", SIGN_KEY_ALIAS);
 
         // Setup worker
-        workerSession.setWorkerProperty(tokenId, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
+        workerSession.setWorkerProperty(workerId, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         workerSession.setWorkerProperty(workerId, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.cmssigner.CMSSigner");
         workerSession.setWorkerProperty(workerId, "NAME", "CMSSignerConfigToken");
         workerSession.setWorkerProperty(workerId, "AUTHTYPE", "NOAUTH");

@@ -634,7 +634,7 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
         WorkerConfig config = getWorkerConfig(workerId);
 
         result = config.removeProperty(key.toUpperCase());
-        if (config.getProperties().size() <= 1) {
+        if (config.getProperties().size() <= config.getVirtualPropertiesNumber()) {
             workerConfigService.removeWorkerConfig(workerId);
             LOG.debug("WorkerConfig is empty and therefore removed.");
             auditLog(adminInfo, SignServerEventTypes.SET_WORKER_CONFIG, SignServerModuleTypes.WORKER_CONFIG, new WorkerIdentifier(workerId));

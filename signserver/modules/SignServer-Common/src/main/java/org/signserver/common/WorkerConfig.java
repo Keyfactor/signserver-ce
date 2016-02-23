@@ -268,4 +268,14 @@ public class WorkerConfig extends UpgradeableDataHashMap {
         }
         return configFile;
     }
+
+    /**
+     * @return Number of virtual properties that should not be counted as a
+     * user-specified properties. Having a worker with less then this number of
+     * properties means that it is empty.
+     */
+    public int getVirtualPropertiesNumber() {
+        // NAME and TYPE:
+        return 2;
+    }
 }

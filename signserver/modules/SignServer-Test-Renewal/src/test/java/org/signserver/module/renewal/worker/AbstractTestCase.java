@@ -34,6 +34,7 @@ import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerType;
 import org.signserver.ejb.interfaces.WorkerSessionRemote;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.ejb.interfaces.GlobalConfigurationSession;
@@ -128,6 +129,7 @@ public abstract class AbstractTestCase extends TestCase {
                     "org.signserver.server.cryptotokens.JKSCryptoToken" :
                     "org.signserver.server.cryptotokens.P12CryptoToken";
 
+        workerSession.setWorkerProperty(signerId, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         workerSession.setWorkerProperty(signerId, WorkerConfig.IMPLEMENTATION_CLASS,
             "org.signserver.module.xmlsigner.XMLSigner");
         workerSession.setWorkerProperty(signerId, WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, signerTokenClass);

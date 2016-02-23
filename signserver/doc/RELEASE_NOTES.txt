@@ -10,6 +10,11 @@ Notice:
    WORKER4711.IMPLEMENTATION_CLASS=org.signserver.module.pdfsigner.PDFSigner
    Exported configurations might have to be adapted.
    SignServer will try to upgrade existing configurations during startup.
+ - Each worker configuration should now contain a worker property TYPE,
+   specifying the type of worker such as UNKNOWN, PROCESSABLE, TIMED_SERVICE,
+   SPECIAL or CRYPTO_WORKER.
+   Existing workers will get this worker property populated during the startup.
+   See UPGRADE.txt.
 
 See ChangeLog.txt for the full list of changes.
 

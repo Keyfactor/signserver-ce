@@ -30,25 +30,31 @@ General procedures:
 From SignServer 3.7.x to SignServer 4.0.x
 -----------------------------------------
 
-a) Database schema change:
+a) Database schema changes:
 
-An new column in the signerconfigdata table was added. Hibernate will try to
- add this column during startup of the application server. However, if the 
-database user used by the data store does not have enough privileges (ie. no 
+Two new columns in the signerconfigdata table was added. Hibernate will try to
+ add those column during startup of the application server. However, if the 
+database user used by the data store does not have enough privileges (i.e. no 
 alter table rights) the table has to be altered manually:
 
 For Oracle:
 ALTER TABLE signerconfigdata ADD signerName VARCHAR(255);
+ALTER TABLE signerconfigdata ADD signerType VARCHAR(255);
 
 For MySQL:
 ALTER TABLE signerconfigdata ADD signerName VARCHAR(255);
+ALTER TABLE signerconfigdata ADD signerType VARCHAR(255);
 
 After manually changing the database schema the application server should 
 be restarted.
 
-Note: During startup of SignServer each worker configuration will be checked
+Note 1: During startup of SignServer each worker configuration will be checked
 and if an empty signerName column is found the name will be populated with
 the value from the NAME worker property.
+
+Note 2: During startup of SignServer each worker configuration without a
+worker type will get a worker type populated by loading the worker and checking
+the type of the implementation.
 
 b) Previosly deprecated crypto token implementations has been removed:
 SoftCryptoToken, HardCodedCryptoToken, OldPKCS11CryptoToken, and

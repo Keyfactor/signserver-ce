@@ -41,6 +41,7 @@ can sign any document-type and produces the output in Cryptographic Message Synt
                 </p>
 
                 <subsection name="Common Properties">
+                    <!-- XXX: There is already a chapter commonconf.xml where this stuff should be! -->
                     <p>
 Properties that have common use among most signers:
                     </p>

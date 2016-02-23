@@ -27,6 +27,22 @@
 		
             </section>
                 
+            <section name="Generic Worker Properties">
+               <p>
+                   <b>NAME</b> = The name of the worker.
+               </p>
+               <p>
+                   <b>TYPE</b> = The type of the worker. Currently can be one of:
+               </p>
+               <ul>
+                   <li>UNKNOWN: Indicating that the type is not yet known/set.</li>
+                   <li>PROCESSABLE: Processable worker that can be invoked to process (for instance sign) data.</li>
+                   <li>TIMED_SERVICE: Worker scheduled to be run at some interval.</li>
+                   <li>SPECIAL: Not a callable or schedulable worker. Reserved for future use.</li>
+                   <li>CRYPTO_WORKER: A special worker only holding a crypto token mainly to be used by other workers.</li>
+               </ul>
+            </section>
+                
             <section name="Setting Authorization Type">
                 <subsection name="SignServer">
                     <p>

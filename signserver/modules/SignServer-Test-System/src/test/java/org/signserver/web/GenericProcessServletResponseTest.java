@@ -42,8 +42,6 @@ import org.signserver.testutils.ModulesTestCase;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class GenericProcessServletResponseTest extends WebTestCase {
 
-    private static final String KEYDATA = "KEYDATA";
-    
     @Override
     protected String getServletURL() {
         return getPreferredHTTPProtocol() + getHTTPHost() + ":" + getPreferredHTTPPort() + "/signserver/process";

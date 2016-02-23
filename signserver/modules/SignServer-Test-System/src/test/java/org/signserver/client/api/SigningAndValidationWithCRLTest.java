@@ -32,6 +32,7 @@ import org.w3c.dom.Document;
 import org.junit.Test;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
+import org.signserver.common.WorkerType;
 import org.signserver.ejb.interfaces.WorkerSession;
 import org.signserver.ejb.interfaces.GlobalConfigurationSession;
 
@@ -45,7 +46,7 @@ import org.signserver.ejb.interfaces.GlobalConfigurationSession;
 public class SigningAndValidationWithCRLTest extends ModulesTestCase {
 
     /** Logger for this class. */
-    private static Logger LOG = Logger.getLogger(SigningAndValidationWithCRLTest.class);
+    private static final Logger LOG = Logger.getLogger(SigningAndValidationWithCRLTest.class);
     
     private static final int SIGNER1_WORKERID = 5676;
     private static final int CERTVALIDATION_WORKERID = 105;
@@ -156,6 +157,7 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
     }
 
     private void setupValidation() {
+        workerSession.setWorkerProperty(CERTVALIDATION_WORKERID, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         workerSession.setWorkerProperty(CERTVALIDATION_WORKERID, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.validationservice.server.ValidationServiceWorker");
         workerSession.setWorkerProperty(CERTVALIDATION_WORKERID, "AUTHTYPE", "NOAUTH");
         workerSession.setWorkerProperty(CERTVALIDATION_WORKERID, "NAME", CERTVALIDATION_WORKER);

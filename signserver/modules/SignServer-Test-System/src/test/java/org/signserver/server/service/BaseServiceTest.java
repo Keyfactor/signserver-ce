@@ -28,6 +28,7 @@ import org.signserver.common.SignServerUtil;
 import org.signserver.common.StaticWorkerStatus;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
+import org.signserver.common.WorkerType;
 import org.signserver.common.util.PathUtil;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.ejb.interfaces.WorkerSessionRemote;
@@ -54,6 +55,7 @@ public class BaseServiceTest extends ModulesTestCase {
 
     @Test
     public void test00SetupDatabase() throws Exception {
+        sSSession.setWorkerProperty(WORKER_ID, WorkerConfig.TYPE, WorkerType.TIMED_SERVICE.name());
         sSSession.setWorkerProperty(WORKER_ID, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.server.timedservices.DummyTimedService");
 
         sSSession.setWorkerProperty(WORKER_ID, ServiceConfig.ACTIVE, "TRUE");

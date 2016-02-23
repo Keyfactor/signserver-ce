@@ -42,11 +42,11 @@ import org.junit.Test;
 import org.signserver.common.RemoteRequestContext;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
+import org.signserver.common.WorkerType;
 import org.signserver.common.util.PathUtil;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.ejb.interfaces.WorkerSessionRemote;
-import org.signserver.ejb.interfaces.GlobalConfigurationSessionRemote;
 
 /**
  * Tests for the CRL Validator.
@@ -198,6 +198,7 @@ public class CRLValidatorTest extends ModulesTestCase {
         chain2.add(certRootCA2);
 
         // Setup worker
+        sSSession.setWorkerProperty(15, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         sSSession.setWorkerProperty(15, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.validationservice.server.ValidationServiceWorker");
         sSSession.setWorkerProperty(15, WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, "org.signserver.server.cryptotokens.KeystoreCryptoToken");
         sSSession.setWorkerProperty(15, "KEYSTOREPATH",

@@ -34,6 +34,7 @@ import org.junit.Test;
 import org.signserver.common.RemoteRequestContext;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
+import org.signserver.common.WorkerType;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.ejb.interfaces.WorkerSessionRemote;
@@ -148,6 +149,7 @@ public class ValidationServiceWorkerTest extends ModulesTestCase {
         longChain.add(validSubSubCA2);
 
         // Worker 15 - DummyValidator
+        sSSession.setWorkerProperty(15, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         sSSession.setWorkerProperty(15, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.validationservice.server.ValidationServiceWorker");
         sSSession.setWorkerProperty(15, "AUTHTYPE", "NOAUTH");
         sSSession.setWorkerProperty(15, "VAL1.CLASSPATH", "org.signserver.validationservice.server.DummyValidator");
@@ -162,6 +164,7 @@ public class ValidationServiceWorkerTest extends ModulesTestCase {
         sSSession.reloadConfiguration(15);
 
         // Worker 16 - NoRevokationCheckingValidator
+        sSSession.setWorkerProperty(16, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         sSSession.setWorkerProperty(16, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.validationservice.server.ValidationServiceWorker");
         sSSession.setWorkerProperty(16, "AUTHTYPE", "NOAUTH");
         sSSession.setWorkerProperty(16, "VAL1.CLASSPATH", "org.signserver.validationservice.server.NoRevocationCheckingValidator");

@@ -56,8 +56,7 @@ public class DocumentValidatorTest extends ModulesTestCase {
     private static File signserverhome;
 
     private final WorkerSession workerSession = getWorkerSession();
-    private final GlobalConfigurationSession globalSession = getGlobalSession();
-    
+
     @Before
     protected void setUp() throws Exception {
         SignServerUtil.installBCProvider();

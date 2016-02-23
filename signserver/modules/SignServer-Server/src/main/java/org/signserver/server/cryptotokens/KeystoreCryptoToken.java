@@ -145,7 +145,6 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
             this.authenticationCode = authenticationcode.toCharArray();
         }
         this.ks = getKeystore(keystoretype, keystorepath, authenticationCode, services);
-        LOG.error("Activated: " + this);
 
         entries = new HashMap<Object, KeyEntry>();
 

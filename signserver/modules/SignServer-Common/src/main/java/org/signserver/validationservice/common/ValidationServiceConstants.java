@@ -43,7 +43,7 @@ public class ValidationServiceConstants {
      * 
      * Default: org.signserver.validation.server.DefaultValidationService
      */
-    public static final String VALIDATIONSERVICE_TYPE = "TYPE";
+    public static final String VALIDATIONSERVICE_TYPE = "VALIDATIONSERVICE_TYPE";
     public static final String DEFAULT_TYPE = "org.signserver.validationservice.server.DefaultValidationService";
     
     /**

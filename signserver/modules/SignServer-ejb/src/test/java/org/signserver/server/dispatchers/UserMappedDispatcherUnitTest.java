@@ -17,6 +17,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import org.signserver.common.RequestContext;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerType;
 import org.signserver.ejb.interfaces.DispatcherProcessSessionLocal;
 import org.signserver.server.IServices;
 import org.signserver.server.SignServerContext;
@@ -44,6 +45,7 @@ public class UserMappedDispatcherUnitTest {
         
         // Without property
         WorkerConfig config = new WorkerConfig();
+        config.setProperty(WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         WorkerContext context = new SignServerContext(null, null);
         UserMappedDispatcher instance = new MockedUserMapppedDispatcher();
         instance.init(1, config, context, null);
@@ -65,6 +67,7 @@ public class UserMappedDispatcherUnitTest {
         LOG.info("testPropertySyntaxError");
 
         WorkerConfig config = new WorkerConfig();
+        config.setProperty(WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         WorkerContext context = new SignServerContext(null, null);
         UserMappedDispatcher instance = new MockedUserMapppedDispatcher();
         config.setProperty("USERNAME_MAPPING", "user1::worker1");

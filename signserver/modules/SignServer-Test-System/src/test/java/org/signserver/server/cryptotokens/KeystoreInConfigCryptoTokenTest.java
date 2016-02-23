@@ -21,6 +21,7 @@ import org.signserver.common.KeyTestResult;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
+import org.signserver.common.WorkerType;
 
 /**
  * Test cases for the keystore crypto token storing the keystore in the config.
@@ -52,6 +53,7 @@ public class KeystoreInConfigCryptoTokenTest extends KeystoreCryptoTokenTestBase
     
     private void setCMSSignerPropertiesSeparateToken(final int workerId, final int tokenId, boolean autoActivate) throws Exception {
         // Setup crypto token
+        workerSession.setWorkerProperty(tokenId, WorkerConfig.TYPE, WorkerType.CRYPTO_WORKER.name());
         workerSession.setWorkerProperty(tokenId, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.server.signers.CryptoWorker");
         workerSession.setWorkerProperty(tokenId, WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, KeystoreInConfigCryptoToken.class.getName());
         workerSession.setWorkerProperty(tokenId, "NAME", "TestCryptoTokenInConfig");

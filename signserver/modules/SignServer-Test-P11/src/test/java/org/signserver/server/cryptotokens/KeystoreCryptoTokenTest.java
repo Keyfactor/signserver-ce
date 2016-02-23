@@ -50,6 +50,7 @@ import org.signserver.common.UnsupportedCryptoTokenParameter;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.WorkerStatus;
+import org.signserver.common.WorkerType;
 import org.signserver.ejb.interfaces.WorkerSessionLocal;
 import org.signserver.server.IServices;
 import org.signserver.server.ServicesImpl;
@@ -436,7 +437,12 @@ public class KeystoreCryptoTokenTest extends CryptoTokenTestBase {
                     }
 
                     @Override
-                    public List<Integer> getWorkers(int workerType) {
+                    public List<Integer> getWorkers(WorkerType workerType) {
+                        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                    }
+
+                    @Override
+                    public List<Integer> getAllWorkers() {
                         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
                     }
 

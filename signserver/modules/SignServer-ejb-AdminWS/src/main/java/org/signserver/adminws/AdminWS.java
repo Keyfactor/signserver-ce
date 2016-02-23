@@ -739,14 +739,19 @@ public class AdminWS {
      * @param workerType can either be GlobalConfiguration.WORKERTYPE_ALL,
      * _SIGNERS or _SERVICES
      * @return A List if Integers of worker Ids, never null.
+     * @throws AdminNotAuthorizedException
      */
     @WebMethod(operationName = "getWorkers")
     public List<Integer> getWorkers(
             @WebParam(name = "workerType") final int workerType)
                 throws AdminNotAuthorizedException {
         requireAdminAuthorization("getWorkers", String.valueOf(workerType));
-        
-        return worker.getWorkers(workerType);
+
+        if (workerType == WorkerConfig.WORKERTYPE_ALL) {
+            return worker.getAllWorkers();
+        } else {
+            return worker.getWorkers(WorkerType.fromType(workerType));
+        }
     }
 
     /**

@@ -13,7 +13,14 @@
 package org.signserver.server.config.entities;
 
 import java.io.Serializable;
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+import javax.persistence.Table;
+import org.signserver.common.WorkerType;
 
 /**
  * Entity Bean storing each worker configuration.
@@ -25,6 +32,8 @@ import javax.persistence.*;
  * Information stored:
  * <pre>
  * signerId (PrimaryKey, int)
+ * signerName (String)
+ * signerType (int)
  * signerConfigData (WorkerConfig in xml-encoding, String)
  * </pre>
  *
@@ -39,6 +48,10 @@ public class WorkerConfigDataBean implements Serializable {
     
     @Column(length = 255)
     private String signerName;
+    
+    @Column(length = 255)
+    @Enumerated(EnumType.STRING)
+    private WorkerType signerType;
     
     @Lob
     @Column(length = 1048576)
@@ -67,6 +80,14 @@ public class WorkerConfigDataBean implements Serializable {
 
     public void setSignerName(String signerName) {
         this.signerName = signerName;
+    }
+
+    public WorkerType getSignerType() {
+        return signerType;
+    }
+
+    public void setSignerType(WorkerType signerType) {
+        this.signerType = signerType;
     }
 
     /**

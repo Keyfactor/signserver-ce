@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.List;
 import junit.framework.TestCase;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerType;
 import org.signserver.server.ServicesImpl;
 import org.signserver.ejb.interfaces.WorkerSessionLocal;
 
@@ -57,6 +58,7 @@ public class HSMKeepAliveTimedServiceUnitTest extends TestCase {
         final HSMKeepAliveTimedService instance =
                new HSMKeepAliveTimedService();
         final WorkerConfig config = new WorkerConfig();
+        config.setProperty(WorkerConfig.TYPE, WorkerType.TIMED_SERVICE.name());
         
         config.setProperty(HSMKeepAliveTimedService.CRYPTOTOKENS, "");
         instance.init(DUMMY_WORKERID, config, null, null);

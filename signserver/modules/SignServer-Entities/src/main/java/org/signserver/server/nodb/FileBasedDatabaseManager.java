@@ -71,6 +71,13 @@ public class FileBasedDatabaseManager {
         return metadata;
     }
     
+    public void storeMetadata() {
+        synchronized (this) {
+            final Properties properties = getMetadata();
+            dataService.setProperties(properties);
+        }
+    }
+    
     private Properties getMetadataTemplate() {
         final Properties result = new Properties();
         result.setProperty(SCHEMA_VERSION, String.valueOf(CURRENT_SCHEMA_VERSION));

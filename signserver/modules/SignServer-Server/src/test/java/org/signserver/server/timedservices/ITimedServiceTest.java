@@ -21,6 +21,7 @@ import junit.framework.TestCase;
 import org.signserver.common.ServiceConfig;
 import org.signserver.common.ServiceContext;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerType;
 import org.signserver.server.ServiceExecutionFailedException;
 import org.signserver.server.ServicesImpl;
 
@@ -58,6 +59,7 @@ public class ITimedServiceTest extends TestCase {
         final ITimedService instance = createInstance();
         
         final WorkerConfig config = new WorkerConfig();
+        config.setProperty(WorkerConfig.TYPE, WorkerType.TIMED_SERVICE.name());
 
         if (propertyValue != null) {
             config.setProperty(ServiceConfig.WORK_LOG_TYPES, propertyValue);

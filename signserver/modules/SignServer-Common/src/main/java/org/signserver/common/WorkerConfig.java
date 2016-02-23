@@ -82,10 +82,18 @@ public class WorkerConfig extends UpgradeableDataHashMap {
      */
     public static final String CRYPTOTOKEN_IMPLEMENTATION_CLASS = "CRYPTOTOKEN_IMPLEMENTATION_CLASS";
     
+    /**
+     * Type of worker.
+     * @see WorkerType
+     */
+    public static final String TYPE = "TYPE";
+
     private static String nodeId = null;
 
-    public static final int WORKERTYPE_SERVICES = 3;
     public static final int WORKERTYPE_ALL = 1;
+    /** @see WorkerType#TIMED_SERVICE */
+    public static final int WORKERTYPE_SERVICES = 3;
+    /** @see WorkerType#PROCESSABLE */
     public static final int WORKERTYPE_PROCESSABLE = 2;
     public static final int WORKERTYPE_MAILSIGNERS = 4;
     

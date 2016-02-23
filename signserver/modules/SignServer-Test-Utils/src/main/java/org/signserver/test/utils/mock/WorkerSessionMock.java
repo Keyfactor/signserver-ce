@@ -42,6 +42,7 @@ import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.WorkerStatus;
+import org.signserver.common.WorkerType;
 import org.signserver.ejb.interfaces.ProcessSessionLocal;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.ejb.interfaces.WorkerSessionLocal;
@@ -379,7 +380,12 @@ public class WorkerSessionMock implements WorkerSessionLocal,
     }
 
     @Override
-    public List<Integer> getWorkers(int workerType) {
+    public List<Integer> getWorkers(WorkerType workerType) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public List<Integer> getAllWorkers() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

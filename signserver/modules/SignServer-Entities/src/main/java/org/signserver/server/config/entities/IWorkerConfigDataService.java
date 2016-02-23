@@ -15,6 +15,7 @@ package org.signserver.server.config.entities;
 import java.util.List;
 import org.signserver.common.NoSuchWorkerException;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerType;
 
 /**
  * DataService managing the persistence of the worker configuration data.
@@ -58,4 +59,6 @@ public interface IWorkerConfigDataService {
     void populateNameColumn();
 
     public int findId(String workerName) throws NoSuchWorkerException;
+
+    public List<Integer> findAllIds(WorkerType workerType);
 }

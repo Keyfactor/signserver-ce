@@ -35,6 +35,7 @@ import org.signserver.common.OperationUnsupportedException;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
+import org.signserver.common.WorkerType;
 
 /**
  * Interface for the worker session bean.
@@ -458,12 +459,15 @@ public interface WorkerSession {
             throws AuthorizationDeniedException;
     
     /**
-     * Help method that returns all worker, either signers or services defined
-     * in the global configuration.
-     * @param workerType can either be GlobalConfiguration.WORKERTYPE_ALL,
-     * _SIGNERS or _SERVICES
-     * @return A List if Integers of worker Ids, never null.
+     * Get all workers of the give type.
+     * @param workerType to obtain the IDs for
+     * @return list of worker IDs
      */
-    List<Integer> getWorkers(int workerType);
+    List<Integer> getWorkers(WorkerType workerType);
 
+    /**
+     * Get the complete list of workers of any type.
+     * @return list of worker IDs 
+     */
+    List<Integer> getAllWorkers();
 }

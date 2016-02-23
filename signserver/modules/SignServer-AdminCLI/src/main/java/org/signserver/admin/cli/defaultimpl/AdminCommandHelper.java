@@ -22,6 +22,7 @@ import org.signserver.common.CESeCoreModules;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerType;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.ejb.interfaces.WorkerSessionRemote;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionRemote;
@@ -153,13 +154,14 @@ public class AdminCommandHelper {
     }
 
     /**
-     * Help method that checks that the current worker is a signer
-     * @throws Exception 
+     * Help method that checks that the current worker is a signer.
+     * @param signerid
+     * @throws IllegalCommandArgumentsException 
      * @throws RemoteException 
      */
     public void checkThatWorkerIsProcessable(int signerid) throws RemoteException, IllegalCommandArgumentsException {
-        Collection<Integer> signerIds = getWorkerSession().getWorkers(WorkerConfig.WORKERTYPE_PROCESSABLE);
-        if (!signerIds.contains(new Integer(signerid))) {
+        Collection<Integer> signerIds = getWorkerSession().getWorkers(WorkerType.PROCESSABLE);
+        if (!signerIds.contains(signerid)) {
             throw new IllegalCommandArgumentsException("Error: given workerId doesn't seem to point to any processable worker in the system.");
         }
     }

@@ -26,6 +26,7 @@ import org.signserver.common.IllegalRequestException;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerType;
 import org.signserver.module.xades.signer.XAdESSignerUnitTest;
 import org.signserver.server.WorkerContext;
 import org.signserver.validationservice.common.Validation;
@@ -116,6 +117,7 @@ public class XAdESValidator1UnitTest {
         LOG.info("init");
         int signerId = 4711;
         WorkerConfig config = new WorkerConfig();
+        config.setProperty(WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         config.setProperty("TRUSTANCHORS", ROOTCA_CERTIFICATE);
         
         WorkerContext workerContext = null;
@@ -134,6 +136,7 @@ public class XAdESValidator1UnitTest {
         LOG.info("init");
         int signerId = 4711;
         WorkerConfig config = new WorkerConfig();
+        config.setProperty(WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         config.setProperty("CERTIFICATES", ROOTCA_CERTIFICATE);
         
         WorkerContext workerContext = null;

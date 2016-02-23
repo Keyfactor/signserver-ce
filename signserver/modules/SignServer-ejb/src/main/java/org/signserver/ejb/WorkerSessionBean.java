@@ -321,7 +321,7 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
         }
 
         if (workerId == 0 || getWorkers(
-                WorkerConfig.WORKERTYPE_SERVICES).contains(
+                WorkerType.TIMED_SERVICE).contains(
                 workerId)) {
             serviceTimerSession.unload(workerId);
             serviceTimerSession.load(workerId);
@@ -1075,8 +1075,7 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
      */
     @Override
     public int genFreeWorkerId() {
-        Collection<Integer> ids = getWorkers(
-                WorkerConfig.WORKERTYPE_ALL);
+        Collection<Integer> ids = getAllWorkers();
         int max = 0;
         Iterator<Integer> iter = ids.iterator();
         while (iter.hasNext()) {
@@ -1169,12 +1168,14 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
         return UUID.randomUUID().toString();
     }
     
-    /**
-     * @see org.signserver.ejb.interfaces.WorkerSession#getWorkers(int)
-     */
     @Override
-    public List<Integer> getWorkers(int workerType) {
+    public List<Integer> getWorkers(WorkerType workerType) {
         return workerManagerSession.getAllWorkerIDs(workerType);
+    }
+
+    @Override
+    public List<Integer> getAllWorkers() {
+        return workerManagerSession.getAllWorkerIDs();
     }
     
     private void auditLog(final AdminInfo adminInfo, SignServerEventTypes eventType, SignServerModuleTypes module,

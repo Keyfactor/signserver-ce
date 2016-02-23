@@ -31,8 +31,11 @@ import org.cesecore.authentication.tokens.UsernamePrincipal;
 import org.signserver.common.CompileTimeSettings;
 import org.signserver.common.FileBasedDatabaseException;
 import org.signserver.common.GlobalConfiguration;
+import org.signserver.common.NoSuchWorkerException;
 import org.signserver.common.PKCS11Settings;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerIdentifier;
+import org.signserver.common.WorkerType;
 import static org.signserver.common.util.PropertiesConstants.GLOBAL_PREFIX_DOT;
 import static org.signserver.common.util.PropertiesConstants.OLDWORKER_PREFIX;
 import static org.signserver.common.util.PropertiesConstants.WORKER_PREFIX;
@@ -49,6 +52,12 @@ import org.signserver.statusrepo.common.StatusName;
 import org.signserver.ejb.interfaces.WorkerSessionLocal;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
 import org.signserver.ejb.interfaces.ServiceTimerSessionLocal;
+import org.signserver.server.IProcessable;
+import org.signserver.server.IWorker;
+import org.signserver.server.config.entities.FileBasedWorkerConfigDataService;
+import org.signserver.server.signers.CryptoWorker;
+import org.signserver.server.signers.UnloadableWorker;
+import org.signserver.server.timedservices.ITimedService;
 import org.signserver.statusrepo.StatusRepositorySessionLocal;
 
 /**
@@ -157,6 +166,9 @@ public class StartupSingletonBean {
                 LOG.error(buff.toString());
                 throw new EJBException(buff.toString());
             }
+            
+            // Table upgrades
+            new FileBasedWorkerConfigDataService(nodb).upgrade();
         }
 
         // Perform database upgrade if needed
@@ -189,6 +201,9 @@ public class StartupSingletonBean {
     
     private void upgradeDatabase(AdminInfo admin) {
         
+        // Perform the upgrade from DSS-1058
+        workerManager.upgradeWorkerNames();
+
         // Perform the upgrade from DSS-1055
         final GlobalConfiguration globalConfig = globalSession.getGlobalConfiguration();
         final Enumeration<String> keys = globalConfig.getKeyEnumeration();
@@ -238,7 +253,46 @@ public class StartupSingletonBean {
             }
         }
         
-        // Perform the upgrade from DSS-1058
-        workerManager.upgradeWorkerNames();
+        // Perform the upgrade from DSS-1121:
+        // For each not yet upgraded worker (workerType is null or UNKNOWN),
+        // identify the type by checking if it is an instance of the known types.
+        // If it is not, use the SPECIAL type as a last resort.
+        
+        
+        
+        final List<Integer> unknowns = workerManager.getAllWorkerIDs(null);
+        LOG.info("Found " + unknowns.size() + " worker types to upgrade");
+        for (Integer id : unknowns) {
+            try {
+                final IWorker obj = workerManager.getWorker(new WorkerIdentifier(id));
+                
+                final WorkerType type;
+                
+                // Note: The order is important here!
+                // Start by checking for the most specific type
+                if (obj instanceof UnloadableWorker) {
+                    type = WorkerType.SPECIAL;
+                } else if (obj instanceof CryptoWorker) {
+                    type = WorkerType.CRYPTO_WORKER;
+                } else if (obj instanceof ITimedService) {
+                    type = WorkerType.TIMED_SERVICE;
+                } else if (obj instanceof IProcessable) {
+                    type = WorkerType.PROCESSABLE;
+                } else if (obj instanceof CryptoWorker) {
+                    type = WorkerType.CRYPTO_WORKER;
+                } else {
+                    type = WorkerType.SPECIAL;
+                }
+                
+                if (LOG.isInfoEnabled()) {
+                    LOG.info("Implementation " + obj.getClass().getName() + " identified as type " + type.name());
+                }
+                
+                workerSession.setWorkerProperty(admin, id, WorkerConfig.TYPE, type.name());
+                workerSession.reloadConfiguration(admin, id);
+            } catch (NoSuchWorkerException ex) {
+                LOG.error("Worker no longer exists: " + ex.getMessage());
+            }
+        }
     }
 }

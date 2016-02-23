@@ -24,6 +24,7 @@ import org.apache.log4j.Logger;
 import org.signserver.common.NoSuchWorkerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
+import org.signserver.common.WorkerType;
 import org.signserver.server.*;
 import org.signserver.server.config.entities.FileBasedWorkerConfigDataService;
 import org.signserver.server.config.entities.IWorkerConfigDataService;
@@ -111,18 +112,24 @@ public class WorkerManagerSingletonBean {
     }
     
     /**
+     * List all worker IDs available in the database.
+     *
+     * @return a list of all available worker IDs
+     */
+    public List<Integer> getAllWorkerIDs() {
+        return workerConfigService.findAllIds();
+    }
+    
+    /**
      * List all worker IDs available in database of the given type.
      *
      * @param workerType type of worker to list
      * @return a list of all available worker IDs of the given type
-     * @see WorkerConfig#WORKERTYPE_ALL
-     * @see WorkerConfig#WORKERTYPE_PROCESSABLE
-     * @see WorkerConfig#WORKERTYPE_SERVICES
      */
-    public List<Integer> getAllWorkerIDs(int workerType) {
-        return filterWorkers(workerConfigService.findAllIds(), workerType);
+    public List<Integer> getAllWorkerIDs(final WorkerType workerType) {
+        return workerConfigService.findAllIds(workerType);
     }
-    
+
     /**
      * List all loaded worker IDs of the given type.
      *
@@ -132,7 +139,7 @@ public class WorkerManagerSingletonBean {
      * @see WorkerConfig#WORKERTYPE_PROCESSABLE
      * @see WorkerConfig#WORKERTYPE_SERVICES
      */
-    public List<Integer> getCachedWorkerIDs(int workerType) {
+    /*public List<Integer> getCachedWorkerIDs(int workerType) {
         return filterWorkers(workerFactory.getCachedWorkerIds(), workerType);
     }
     
@@ -155,10 +162,10 @@ public class WorkerManagerSingletonBean {
             }
         }
         return retval;
-    }
+    }*/
 
     public void upgradeWorkerNames() {
         workerConfigService.populateNameColumn();
     }
-
+    
 }

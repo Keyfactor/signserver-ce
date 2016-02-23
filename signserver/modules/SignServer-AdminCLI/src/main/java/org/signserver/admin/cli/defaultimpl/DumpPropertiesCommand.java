@@ -86,7 +86,7 @@ public class DumpPropertiesCommand extends AbstractAdminCommand {
     }
 
     private void dumpAllProperties(Properties outProps) throws RemoteException, Exception {
-        List<Integer> workers = getWorkerSession().getWorkers(WorkerConfig.WORKERTYPE_ALL);
+        List<Integer> workers = getWorkerSession().getAllWorkers();
 
         // First output all global properties
         GlobalConfiguration gc = getGlobalConfigurationSession().getGlobalConfiguration();

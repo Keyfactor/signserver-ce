@@ -75,6 +75,7 @@ import org.signserver.common.SignServerUtil;
 import org.signserver.common.TokenOutOfSpaceException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
+import org.signserver.common.WorkerType;
 import org.signserver.common.util.PathUtil;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionRemote;
 import org.signserver.ejb.interfaces.WorkerSession;
@@ -157,6 +158,7 @@ public class P11SignTest extends ModulesTestCase {
 
     private void setupCryptoTokenProperties(final int tokenId, final boolean cache) throws Exception {
         // Setup token
+        workerSession.setWorkerProperty(tokenId, WorkerConfig.TYPE, WorkerType.CRYPTO_WORKER.name());
         workerSession.setWorkerProperty(tokenId, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.server.signers.CryptoWorker");
         workerSession.setWorkerProperty(tokenId, WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, PKCS11CryptoToken.class.getName());
         workerSession.setWorkerProperty(tokenId, "NAME", CRYPTO_TOKEN_NAME);
@@ -169,6 +171,7 @@ public class P11SignTest extends ModulesTestCase {
 
     private void setPDFSignerOnlyProperties(final int workerId) throws Exception {
         // Setup worker
+        workerSession.setWorkerProperty(workerId, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         workerSession.setWorkerProperty(workerId, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.pdfsigner.PDFSigner");
         workerSession.setWorkerProperty(workerId, "NAME", "PDFSignerP11");
         workerSession.setWorkerProperty(workerId, "AUTHTYPE", "NOAUTH");
@@ -178,6 +181,7 @@ public class P11SignTest extends ModulesTestCase {
 
     private void setPDFSignerWithCryptoProperties(final int workerId, final boolean cache) throws Exception {
         // Setup worker
+        workerSession.setWorkerProperty(workerId, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         workerSession.setWorkerProperty(workerId, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.pdfsigner.PDFSigner");
         workerSession.setWorkerProperty(workerId, WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, PKCS11CryptoToken.class.getName());
         workerSession.setWorkerProperty(workerId, "NAME", "PDFSignerP11");

@@ -51,6 +51,7 @@ import org.signserver.common.IllegalRequestException;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerType;
 import org.signserver.module.xades.signer.MockedTimeStampTokenProvider.MockedTimeStampVerificationProvider;
 import org.signserver.server.CertificateClientCredential;
 import org.signserver.server.UsernamePasswordClientCredential;
@@ -187,6 +188,7 @@ public class XAdESSignerUnitTest {
         LOG.info("init");
         int signerId = 4711;
         WorkerConfig config = new WorkerConfig();
+        config.setProperty(WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         config.setProperty("XADESFORM", "T");
         config.setProperty("TSA_URL", "http://example.com/?test=5");
         config.setProperty("TSA_USERNAME", "username123");
@@ -215,6 +217,7 @@ public class XAdESSignerUnitTest {
         LOG.info("init");
         int signerId = 4711;
         WorkerConfig config = new WorkerConfig();
+        config.setProperty(WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         config.setProperty("XADESFORM", "_NonExisting_");
         config.setProperty("TSA_URL", "http://example.com/?test=5");
         config.setProperty("TSA_USERNAME", "username123");
@@ -237,6 +240,7 @@ public class XAdESSignerUnitTest {
         LOG.info("init");
         int signerId = 4711;
         WorkerConfig config = new WorkerConfig();
+        config.setProperty(WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         config.setProperty("XADESFORM", "T");
         // Not set: config.setProperty("TSA_URL", ...
         config.setProperty("TSA_USERNAME", "username123");
@@ -259,6 +263,7 @@ public class XAdESSignerUnitTest {
         LOG.info("init");
         int signerId = 4711;
         WorkerConfig config = new WorkerConfig();
+        config.setProperty(WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         // Not set: config.setProperty("XADESFORM", "T");
         
         WorkerContext workerContext = null;
@@ -378,6 +383,7 @@ public class XAdESSignerUnitTest {
         
         
         WorkerConfig config = new WorkerConfig();
+        config.setProperty(WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         
         if (commitmentTypesProperty != null) {
             config.setProperty("COMMITMENT_TYPES", commitmentTypesProperty);
@@ -683,6 +689,7 @@ public class XAdESSignerUnitTest {
         LOG.info("testProcessData_basicSigningNoCommitmentType");
         int signerId = 4711;
         WorkerConfig config = new WorkerConfig();
+        config.setProperty(WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         config.setProperty("COMMITMENT_TYPES", "");
         
         WorkerContext workerContext = null;
@@ -700,6 +707,7 @@ public class XAdESSignerUnitTest {
 
         XAdESSigner instance = new MockedXAdESSigner(tokenRSA);
         WorkerConfig config = new WorkerConfig();
+        config.setProperty(WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         
         config.setProperty("XADESFORM", "T");
         config.setProperty("TSA_URL", "http://example.com/?test=5");
@@ -761,6 +769,7 @@ public class XAdESSignerUnitTest {
         LOG.info("testUnknownCommitmentType");
         int signerId = 4711;
         WorkerConfig config = new WorkerConfig();
+        config.setProperty(WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         config.setProperty("COMMITMENT_TYPES", "foobar");
         
         WorkerContext workerContext = null;
@@ -783,6 +792,7 @@ public class XAdESSignerUnitTest {
         LOG.info("testUnknownCommitmentType");
         int signerId = 4711;
         WorkerConfig config = new WorkerConfig();
+        config.setProperty(WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         config.setProperty("COMMITMENT_TYPES", "PROOF_OF_ORIGIN, foobar");
         
         WorkerContext workerContext = null;
@@ -799,6 +809,7 @@ public class XAdESSignerUnitTest {
     public void testSigningWithIntermediateCert_3levels() throws Exception {
         LOG.info("testSigningWithIntermediateCert_3levels");
         WorkerConfig config = new WorkerConfig();
+        config.setProperty(WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         config.setProperty("INCLUDE_CERTIFICATE_LEVELS", "3");
         
         final XAdESVerificationResult r = getVerificationResult(tokenWithIntermediateCert, config, "<testroot/>", false, null);
@@ -825,6 +836,7 @@ public class XAdESSignerUnitTest {
     public void testSigningWithIntermediateCert_99levels() throws Exception {
         LOG.info("testSigningWithIntermediateCert_99levels");
         WorkerConfig config = new WorkerConfig();
+        config.setProperty(WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         config.setProperty("INCLUDE_CERTIFICATE_LEVELS", "99");
         
         final XAdESVerificationResult r = getVerificationResult(tokenWithIntermediateCert, config, "<testroot/>", false, null);
@@ -850,6 +862,7 @@ public class XAdESSignerUnitTest {
     public void testSigningWithoutIntermediateCert_1levels() throws Exception {
         LOG.info("testSigningWithoutIntermediateCert_1levels");
         WorkerConfig config = new WorkerConfig();
+        config.setProperty(WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         config.setProperty("INCLUDE_CERTIFICATE_LEVELS", "1");
         
         final XAdESVerificationResult r = getVerificationResult(tokenRSA, config, "<testroot/>", false, null);
@@ -875,6 +888,7 @@ public class XAdESSignerUnitTest {
     public void testSigningWithoutIntermediateCert_defaultLevels() throws Exception {
         LOG.info("testSigningWithoutIntermediateCert_defaultLevels");
         WorkerConfig config = new WorkerConfig();
+        config.setProperty(WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         // Note: No INCLUDE_CERTIFICATE_LEVELS set
         
         final XAdESVerificationResult r = getVerificationResult(tokenRSA, config, "<testroot/>", false, null);
@@ -900,6 +914,7 @@ public class XAdESSignerUnitTest {
     public void testSigningWithIntermediateCert_2levels() throws Exception {
         LOG.info("testSigningWithIntermediateCert_2levels");
         WorkerConfig config = new WorkerConfig();
+        config.setProperty(WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         config.setProperty("INCLUDE_CERTIFICATE_LEVELS", "2");
         
         final XAdESVerificationResult r = getVerificationResult(tokenWithIntermediateCert, config, "<testroot/>", false, null);
@@ -930,6 +945,7 @@ public class XAdESSignerUnitTest {
     public void testInit_includeCertificateLevelsProperty() throws Exception {
         LOG.info("testInit_includeCertificateLevelsProperty");
         WorkerConfig config = new WorkerConfig();
+        config.setProperty(WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         config.setProperty("INCLUDE_CERTIFICATE_LEVELS", "0");
         XAdESSigner instance = new MockedXAdESSigner(tokenRSA);
         instance.init(4711, config, null, null);
@@ -1052,7 +1068,9 @@ public class XAdESSignerUnitTest {
             "  <!ELEMENT foo ANY >\n" +
             "]><foo/>\n";
         try {
-            getVerificationResult(tokenRSA, new WorkerConfig(), xmlWithDoctype, false, null);
+            final WorkerConfig config = new WorkerConfig();
+            config.setProperty(WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
+            getVerificationResult(tokenRSA, config, xmlWithDoctype, false, null);
             fail("Should have thrown IllegalRequestException as the document contained a DTD");
         } catch (IllegalRequestException expected) {
             if (expected.getCause() instanceof SAXParseException) {

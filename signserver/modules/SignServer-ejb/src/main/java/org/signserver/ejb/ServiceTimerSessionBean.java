@@ -31,6 +31,7 @@ import org.signserver.common.ServiceContext;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
+import org.signserver.common.WorkerType;
 import org.signserver.ejb.interfaces.DispatcherProcessSessionLocal;
 import org.signserver.ejb.worker.impl.WorkerManagerSingletonBean;
 import org.signserver.server.IWorker;
@@ -290,7 +291,10 @@ public class ServiceTimerSessionBean implements ServiceTimerSessionLocal {
 
         final Collection<Integer> serviceIds;
         if (serviceId == 0) {
-            serviceIds = workerManagerSession.getAllWorkerIDs(WorkerConfig.WORKERTYPE_SERVICES);
+            serviceIds = workerManagerSession.getAllWorkerIDs(WorkerType.TIMED_SERVICE);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Found " + serviceIds.size() + " timed services");
+            }
         } else {
             serviceIds = new ArrayList<Integer>();
             serviceIds.add(new Integer(serviceId));
@@ -301,9 +305,14 @@ public class ServiceTimerSessionBean implements ServiceTimerSessionLocal {
             if (!existingTimers.contains(nextId)) {
                 ITimedService timedService;
                 try {
-                    timedService = (ITimedService) workerManagerSession.getWorker(new WorkerIdentifier(nextId));
-                    if (timedService.isActive() && timedService.getNextInterval() != ITimedService.DONT_EXECUTE) {
-                        sessionCtx.getTimerService().createTimer((timedService.getNextInterval()), nextId);
+                    IWorker worker = workerManagerSession.getWorker(new WorkerIdentifier(nextId));
+                    if (worker instanceof ITimedService) {
+                        timedService = (ITimedService) worker;
+                        if (timedService.isActive() && timedService.getNextInterval() != ITimedService.DONT_EXECUTE) {
+                            sessionCtx.getTimerService().createTimer((timedService.getNextInterval()), nextId);
+                        }
+                    } else {
+                        LOG.error("Worker implementation is not a timed service. Wrong worker TYPE? for worker " + nextId);
                     }
                 } catch (NoSuchWorkerException ex) {
                     LOG.error("Worker no longer exists: " + ex.getMessage());

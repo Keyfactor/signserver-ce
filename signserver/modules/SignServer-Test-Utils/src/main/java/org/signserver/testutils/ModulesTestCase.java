@@ -45,11 +45,11 @@ import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
+import org.signserver.common.WorkerType;
 import org.signserver.common.util.PathUtil;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionRemote;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.ejb.interfaces.WorkerSessionRemote;
-import org.signserver.statusrepo.StatusRepositorySessionLocal;
 import org.signserver.statusrepo.StatusRepositorySessionRemote;
 
 /**
@@ -450,6 +450,7 @@ public class ModulesTestCase extends TestCase {
     }
     
     public void addDummySigner(final String className, final String cryptoTokenClassName, final int signerId, final String signerName, final File keystore, final String password, final String alias) {
+        getWorkerSession().setWorkerProperty(signerId, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         getWorkerSession().setWorkerProperty(signerId, "IMPLEMENTATION_CLASS", className);
         getWorkerSession().setWorkerProperty(signerId, "CRYPTOTOKEN_IMPLEMENTATION_CLASS", cryptoTokenClassName);
         getWorkerSession().setWorkerProperty(signerId, "NAME", signerName);
@@ -492,6 +493,7 @@ public class ModulesTestCase extends TestCase {
     
     public void addXMLValidator() throws Exception {
         // VALIDATION SERVICE
+        getWorkerSession().setWorkerProperty(VALIDATION_SERVICE_WORKER_ID, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         getWorkerSession().setWorkerProperty(VALIDATION_SERVICE_WORKER_ID, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.validationservice.server.ValidationServiceWorker");
         getWorkerSession().setWorkerProperty(VALIDATION_SERVICE_WORKER_ID, WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, "org.signserver.server.cryptotokens.KeystoreCryptoToken");
         getWorkerSession().setWorkerProperty(VALIDATION_SERVICE_WORKER_ID,

@@ -91,8 +91,10 @@ import org.signserver.common.ResyncException;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerException;
 import org.signserver.common.UnsupportedCryptoTokenParameter;
+import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.WorkerStatus;
+import org.signserver.common.WorkerType;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionRemote;
 import org.signserver.ejb.interfaces.InternalProcessSessionRemote;
 import org.signserver.ejb.interfaces.WorkerSessionRemote;
@@ -935,7 +937,11 @@ public class AdminLayerEJBImpl implements AdminWS {
     @Override
     public List<Integer> getWorkers(
             final int workerType) {
-        return worker.getWorkers(workerType);
+        if (workerType == WorkerConfig.WORKERTYPE_ALL) {
+            return worker.getAllWorkers();
+        } else {
+            return worker.getWorkers(WorkerType.fromType(workerType));
+        }
     }
 
     /**

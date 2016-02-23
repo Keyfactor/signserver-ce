@@ -26,6 +26,7 @@ import org.cesecore.util.Base64PutHashMap;
 import org.signserver.common.NoSuchWorkerException;
 import org.signserver.common.ProcessableConfig;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerType;
 
 /**
  * Entity Service class that acts as migration layer for
@@ -61,6 +62,7 @@ public class WorkerConfigDataService implements IWorkerConfigDataService {
         wcdb.setSignerId(workerId);
         final String name = "UnamedWorker" + workerId;
         wcdb.setSignerName(name);
+        wcdb.setSignerType(WorkerType.UNKNOWN);
 
         try {
             final WorkerConfig config = (WorkerConfig) this.getClass().getClassLoader().loadClass(configClassPath).newInstance();
@@ -122,6 +124,10 @@ public class WorkerConfigDataService implements IWorkerConfigDataService {
         if (wcdb.getSignerName() != null) {
             workerConf.setProperty("NAME", wcdb.getSignerName());
         }
+        if (wcdb.getSignerType() != null) {
+            workerConf.setProperty("TYPE", wcdb.getSignerType().name());
+        }
+        
         return workerConf;
     }
 
@@ -130,6 +136,23 @@ public class WorkerConfigDataService implements IWorkerConfigDataService {
     public List<Integer> findAllIds() {
         final LinkedList<Integer> result = new LinkedList<>();
         Query query = em.createQuery("SELECT w from WorkerConfigDataBean w"); // TODO: More efficient way to just query the IDs
+        List<WorkerConfigDataBean> list = (List<WorkerConfigDataBean>) query.getResultList();
+        for (WorkerConfigDataBean wcdb : list) {
+            result.add(wcdb.getSignerId());
+        }
+        
+        return result;
+    }
+    
+    @Override
+    public List<Integer> findAllIds(final WorkerType workerType) {
+        final LinkedList<Integer> result = new LinkedList<>();
+        Query query;
+        if (workerType == null) {
+            query = em.createQuery("SELECT w from WorkerConfigDataBean w WHERE w.signerType IS NULL OR w.signerType = :workerType").setParameter("workerType", WorkerType.UNKNOWN);
+        } else {
+            query = em.createQuery("SELECT w from WorkerConfigDataBean w WHERE w.signerType = :workerType").setParameter("workerType", workerType);
+        }
         List<WorkerConfigDataBean> list = (List<WorkerConfigDataBean>) query.getResultList();
         for (WorkerConfigDataBean wcdb : list) {
             result.add(wcdb.getSignerId());
@@ -195,6 +218,16 @@ public class WorkerConfigDataService implements IWorkerConfigDataService {
             // Update name
             if (signconf.getProperty("NAME") != null) {
                 wcdb.setSignerName(signconf.getProperty("NAME"));
+            }
+            
+            final String type = signconf.getProperty("TYPE");
+            if (signconf.getProperty("TYPE") != null) {
+                try {
+                    wcdb.setSignerType(WorkerType.valueOf(type));
+                } catch (IllegalArgumentException ex) {
+                    LOG.error("Unable to set worker type: " + ex.getLocalizedMessage());
+                    wcdb.setSignerType(WorkerType.UNKNOWN);
+                }
             }
 
             em.persist(wcdb);

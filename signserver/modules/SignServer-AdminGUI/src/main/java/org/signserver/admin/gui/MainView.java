@@ -96,6 +96,7 @@ import org.signserver.admin.gui.adminws.gen.WsWorkerStatus;
 import org.signserver.common.ArchiveMetadata;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerType;
 import org.signserver.common.util.PropertiesDumper;
 
 /**

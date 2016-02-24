@@ -483,19 +483,17 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
             }
             
             File typeFolder = getTypeFolder(workerType);
-            if (!typeFolder.exists() && !typeFolder.mkdir()) {
-                LOG.error("Unable to create " + typeFolder.getAbsolutePath());
-            }
-            
-            try (DirectoryStream<Path> stream = Files.newDirectoryStream(typeFolder.toPath(), TYPE_PREFIX + "*" + SUFFIX)) {
-                Iterator<Path> iterator = stream.iterator();
-                while (iterator.hasNext()) {
-                    final String fileName = iterator.next().toFile().getName();
-                    final String id = fileName.substring(TYPE_PREFIX.length(), fileName.length() - SUFFIX.length());
-                    result.add(Integer.parseInt(id));
+            if (typeFolder.exists()) {
+                try (DirectoryStream<Path> stream = Files.newDirectoryStream(typeFolder.toPath(), TYPE_PREFIX + "*" + SUFFIX)) {
+                    Iterator<Path> iterator = stream.iterator();
+                    while (iterator.hasNext()) {
+                        final String fileName = iterator.next().toFile().getName();
+                        final String id = fileName.substring(TYPE_PREFIX.length(), fileName.length() - SUFFIX.length());
+                        result.add(Integer.parseInt(id));
+                    }
+                } catch (IOException ex) {
+                    LOG.error("Querying all workers failed", ex);
                 }
-            } catch (IOException ex) {
-                LOG.error("Querying all workers failed", ex);
             }
             return result;
         }

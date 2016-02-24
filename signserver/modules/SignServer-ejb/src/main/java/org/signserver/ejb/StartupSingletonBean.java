@@ -257,9 +257,6 @@ public class StartupSingletonBean {
         // For each not yet upgraded worker (workerType is null or UNKNOWN),
         // identify the type by checking if it is an instance of the known types.
         // If it is not, use the SPECIAL type as a last resort.
-        
-        
-        
         final List<Integer> unknowns = workerManager.getAllWorkerIDs(null);
         LOG.info("Found " + unknowns.size() + " worker types to upgrade");
         for (Integer id : unknowns) {
@@ -283,11 +280,8 @@ public class StartupSingletonBean {
                 } else {
                     type = WorkerType.SPECIAL;
                 }
-                
-                if (LOG.isInfoEnabled()) {
-                    LOG.info("Implementation " + obj.getClass().getName() + " identified as type " + type.name());
-                }
-                
+                LOG.info("Implementation " + obj.getClass().getName() + " identified as type " + type.name());
+
                 workerSession.setWorkerProperty(admin, id, WorkerConfig.TYPE, type.name());
                 workerSession.reloadConfiguration(admin, id);
             } catch (NoSuchWorkerException ex) {

@@ -270,8 +270,6 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
                         }
 
                         wcdb.setSignerType(wt);
-                        
-                        
 
                         final File oldTypeFolder = getTypeFolder(WorkerType.valueOf(oldType));
                         final File oldTypeTypeFile = new File(oldTypeFolder, TYPE_PREFIX + workerId + SUFFIX);
@@ -281,13 +279,6 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
                         if (!oldTypeTypeFile.delete()) {
                             throw new FileBasedDatabaseException("Could not delete old type type file: " + oldTypeTypeFile.getAbsolutePath());
                         }
-                        /*if (!oldTypeTypeFile.renameTo(newTypeFile)) {
-                            if (LOG.isDebugEnabled()) {
-                                LOG.debug("Old type file " + oldTypeTypeFile.getAbsolutePath() + " exists: " + oldTypeTypeFile.exists());
-                                LOG.debug("New type file " + newTypeFile.getAbsolutePath() + " exists: " + newTypeFile.exists());
-                            }
-                            throw new FileBasedDatabaseException("Could not rename from " + oldType + " to " + newType);
-                        }*/
                         writeType(workerId, newType);
                     }
                 } else {

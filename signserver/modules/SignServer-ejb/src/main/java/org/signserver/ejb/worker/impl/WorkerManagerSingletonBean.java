@@ -12,8 +12,6 @@
  *************************************************************************/
 package org.signserver.ejb.worker.impl;
 
-import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.ConcurrencyManagement;
@@ -22,10 +20,10 @@ import javax.ejb.Singleton;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.signserver.common.NoSuchWorkerException;
-import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.WorkerType;
-import org.signserver.server.*;
+import org.signserver.server.IWorker;
+import org.signserver.server.SignServerContext;
 import org.signserver.server.config.entities.FileBasedWorkerConfigDataService;
 import org.signserver.server.config.entities.IWorkerConfigDataService;
 import org.signserver.server.config.entities.WorkerConfigDataService;
@@ -33,7 +31,6 @@ import org.signserver.server.entities.FileBasedKeyUsageCounterDataService;
 import org.signserver.server.entities.IKeyUsageCounterDataService;
 import org.signserver.server.entities.KeyUsageCounterDataService;
 import org.signserver.server.nodb.FileBasedDatabaseManager;
-import org.signserver.server.timedservices.ITimedService;
 
 /**
  * Singleton bean managing the worker life-cycle.
@@ -129,40 +126,6 @@ public class WorkerManagerSingletonBean {
     public List<Integer> getAllWorkerIDs(final WorkerType workerType) {
         return workerConfigService.findAllIds(workerType);
     }
-
-    /**
-     * List all loaded worker IDs of the given type.
-     *
-     * @param workerType type of worker to list
-     * @return a list of all available worker IDs of the given type
-     * @see WorkerConfig#WORKERTYPE_ALL
-     * @see WorkerConfig#WORKERTYPE_PROCESSABLE
-     * @see WorkerConfig#WORKERTYPE_SERVICES
-     */
-    /*public List<Integer> getCachedWorkerIDs(int workerType) {
-        return filterWorkers(workerFactory.getCachedWorkerIds(), workerType);
-    }
-    
-    private List<Integer> filterWorkers(Collection<Integer> allIds, int workerType) {
-        final LinkedList<Integer> retval;
-        if (workerType == WorkerConfig.WORKERTYPE_ALL) {
-            retval = new LinkedList<>(allIds);
-        } else {
-            retval = new LinkedList<>();
-            for (Integer id : allIds) {
-                try {
-                    IWorker obj = getWorker(new WorkerIdentifier(id));
-                    if ((workerType == WorkerConfig.WORKERTYPE_PROCESSABLE && obj instanceof IProcessable)
-                            || (workerType == WorkerConfig.WORKERTYPE_SERVICES && obj instanceof ITimedService)) {
-                        retval.add(id);
-                    }
-                } catch (NoSuchWorkerException ex) {
-                    LOG.error("Worker no longer exists: " + ex.getMessage());
-                }
-            }
-        }
-        return retval;
-    }*/
 
     public void upgradeWorkerNames() {
         workerConfigService.populateNameColumn();

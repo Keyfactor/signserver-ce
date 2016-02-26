@@ -111,6 +111,13 @@ public class CryptoTokenHelper {
     
     public static final String PROPERTY_KEYGENERATIONLIMIT = "KEYGENERATIONLIMIT";
     
+    public static final String PROPERTY_SELFSIGNED_DN = "SELFSIGNED_DN";
+    public static final String PROPERTY_SELFSIGNED_VALIDITY = "SELFSIGNED_VALIDITY";
+    public static final String PROPERTY_SELFSIGNED_SIGNATUREALGORITHM = "SELFSIGNED_SIGNATUREALGORITHM";
+    
+    private static final long DEFAULT_VALIDITY_S = (long)30*24*60*60*365; // 30 year in seconds
+    private static final String DEFAULT_SIGNATUREALGORITHM = "SHA1withRSA"; // Legacy default
+
     public enum TokenEntryFields {
         /** Key alias of entry. */
         alias,
@@ -474,7 +481,11 @@ public class CryptoTokenHelper {
      * @see #isDummyCertificate(java.security.cert.Certificate)
      */
     public static X509Certificate createDummyCertificate(String commonName, String sigAlgName, KeyPair keyPair, String provider) throws OperatorCreationException, CertificateException {
-        return getSelfCertificate("CN=" + commonName + ", " + CryptoTokenHelper.SUBJECT_DUMMY + ", C=SE", (long)30*24*60*60*365, sigAlgName, keyPair, provider);
+        return getSelfCertificate(getDummyCertificateDN(commonName), DEFAULT_VALIDITY_S, sigAlgName, keyPair, provider);
+    }
+    
+    private static String getDummyCertificateDN(String commonName) {
+        return "CN=" + commonName + ", " + CryptoTokenHelper.SUBJECT_DUMMY + ", C=SE";
     }
     
     private static X509Certificate getSelfCertificate (String myname,
@@ -757,4 +768,39 @@ public class CryptoTokenHelper {
         return new RSAKeyGenParameterSpec(keyLength, exponent);
     }
 
+    public static void regenerateCertIfWanted(final String alias, final char[] authCode, final Map<String, Object> params, final KeyStore keyStore, final String provider) throws KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, OperatorCreationException, CertificateException {
+        String dn = (String) params.get(PROPERTY_SELFSIGNED_DN);
+        Long validity = (Long) params.get(PROPERTY_SELFSIGNED_VALIDITY);
+        String signatureAlgorithm = (String) params.get(PROPERTY_SELFSIGNED_SIGNATUREALGORITHM);
+
+        // If any of the params are specified, we should re-generate the certificate
+        if (dn != null || validity != null || signatureAlgorithm != null) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Regenerate self signed certificate requested with values: "
+                        + "DN: " + dn + ", "
+                        + "validity: " + validity + ", "
+                        + "signature algorithm: " + signatureAlgorithm);
+            }
+            // Our default DN
+            if (dn == null) {
+                dn = getDummyCertificateDN(alias);
+            }
+            
+            // Our default validity
+            if (validity == null) {
+                validity = DEFAULT_VALIDITY_S;
+            }
+            
+            // Our default signature algorithm
+            if (signatureAlgorithm == null) {
+                signatureAlgorithm = DEFAULT_SIGNATUREALGORITHM;
+            }
+            
+            final PrivateKey key = (PrivateKey) keyStore.getKey(alias, authCode);
+            final X509Certificate oldCert = (X509Certificate) keyStore.getCertificate(alias);
+            final X509Certificate newCert = getSelfCertificate(dn, validity, signatureAlgorithm, new KeyPair(oldCert.getPublicKey(), key), provider);
+
+            keyStore.setKeyEntry(alias, key, authCode, new Certificate[] { newCert });
+        }
+    }
 }

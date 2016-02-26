@@ -72,6 +72,7 @@ import org.signserver.ejb.interfaces.WorkerSessionLocal;
 import org.signserver.ejb.interfaces.WorkerSessionRemote;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
 import org.signserver.ejb.interfaces.ServiceTimerSessionLocal;
+import org.signserver.server.cryptotokens.CryptoTokenHelper;
 import org.signserver.statusrepo.StatusRepositorySessionLocal;
 
 /**
@@ -415,6 +416,32 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
                 } else {
                     alias = nextAliasInSequence(currentAlias);
                 }
+            }
+            
+            // As we don't yet have a way to directly pass key generation parameters
+            // we are now instead taking those from worker properties.
+            // In the future the properties would just be default values used by
+            // the interfaces when asking the user for the values and the actual
+            // values to use could come as parameters to this method.
+            final HashMap<String, Object> params = new HashMap<String, Object>(3);
+            final String dn = (String) config.getProperty(CryptoTokenHelper.PROPERTY_SELFSIGNED_DN);
+            if (dn != null) {
+                params.put(CryptoTokenHelper.PROPERTY_SELFSIGNED_DN, dn);
+            }
+
+            final String validityValue = (String) config.getProperty(CryptoTokenHelper.PROPERTY_SELFSIGNED_VALIDITY);
+            if (validityValue != null) {
+                try {
+                    final long validity = Long.parseLong(validityValue);
+                    params.put(CryptoTokenHelper.PROPERTY_SELFSIGNED_VALIDITY, validity);
+                } catch (NumberFormatException ex) {
+                    throw new IllegalArgumentException("Incorrect nummeric value for property " + CryptoTokenHelper.PROPERTY_SELFSIGNED_VALIDITY + ": " + ex.getLocalizedMessage());
+                }
+            }
+
+            final String signatureAlgorithm = (String) config.getProperty(CryptoTokenHelper.PROPERTY_SELFSIGNED_SIGNATUREALGORITHM);
+            if (signatureAlgorithm != null) {
+                params.put(CryptoTokenHelper.PROPERTY_SELFSIGNED_SIGNATUREALGORITHM, signatureAlgorithm);
             }
         
             signer.generateKey(keyAlgorithm, keySpec, alias, authCode, Collections.<String, Object>emptyMap(),

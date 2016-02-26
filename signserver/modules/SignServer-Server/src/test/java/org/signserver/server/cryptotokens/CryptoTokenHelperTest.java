@@ -248,7 +248,7 @@ public class CryptoTokenHelperTest extends TestCase {
         
         // Custom signature algorithm
         params.clear();
-        final String expectedSigAlg = "SHA224withRSA";
+        final String expectedSigAlg = "SHA256withRSA";
         params.put("SELFSIGNED_SIGNATUREALGORITHM", expectedSigAlg);
         CryptoTokenHelper.regenerateCertIfWanted(KEYALIAS, "foo123".toCharArray(), params, ks, "BC");
         certAfter = (X509Certificate) ks.getCertificate(KEYALIAS);

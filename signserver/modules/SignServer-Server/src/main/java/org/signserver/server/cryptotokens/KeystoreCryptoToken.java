@@ -484,6 +484,11 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
 
             keystore.setKeyEntry(alias, keyPair.getPrivate(), authCode, chain);
             
+            // TODO: Future optimization: we don't need to regenerate if we create it right from the beginning a few lines up!
+            if (params != null) {
+                CryptoTokenHelper.regenerateCertIfWanted(alias, authCode, params, keystore, keystore.getProvider().getName());
+            }
+            
             final OutputStream os;
             
             if (TYPE_INTERNAL.equalsIgnoreCase(keystoretype)) {
@@ -544,6 +549,9 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
             LOG.error(ex, ex);
             throw new CryptoTokenOfflineException(ex);
         } catch (IllegalStateException ex) {
+            LOG.error(ex, ex);
+            throw new CryptoTokenOfflineException(ex);
+        } catch (UnrecoverableKeyException ex) {
             LOG.error(ex, ex);
             throw new CryptoTokenOfflineException(ex);
         }

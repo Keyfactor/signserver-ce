@@ -38,6 +38,7 @@ import java.util.Map;
 import java.util.Properties;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+import org.bouncycastle.operator.OperatorCreationException;
 import org.cesecore.keys.token.CryptoTokenAuthenticationFailedException;
 import org.cesecore.keys.token.p11.Pkcs11SlotLabelType;
 import org.cesecore.keys.token.p11.exception.NoSuchSlotException;
@@ -479,6 +480,11 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
 
     @Override
     public void generateKey(String keyAlgorithm, String keySpec, String alias, char[] authCode) throws TokenOutOfSpaceException, CryptoTokenOfflineException, IllegalArgumentException {
+        generateKey(keyAlgorithm, keySpec, alias, authCode, null, null);
+    }
+    
+    @Override
+    public void generateKey(String keyAlgorithm, String keySpec, String alias, char[] authCode, Map<String, Object> params, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
         if (keySpec == null) {
             throw new IllegalArgumentException("Missing keyspec parameter");
         }
@@ -518,6 +524,11 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
             } else {
                 delegate.generateKeyPair(keySpec, alias);
             }
+         
+            if (params != null) {
+                final KeyStore ks = delegate.getActivatedKeyStore();
+                CryptoTokenHelper.regenerateCertIfWanted(alias, authCode, params, ks, ks.getProvider().getName());
+            }
         } catch (InvalidAlgorithmParameterException ex) {
             LOG.error(ex, ex);
             throw new CryptoTokenOfflineException(ex);
@@ -530,12 +541,19 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
         } catch (IOException ex) {
             LOG.error(ex, ex);
             throw new CryptoTokenOfflineException(ex);
+        } catch (KeyStoreException ex) {
+            LOG.error(ex, ex);
+            throw new CryptoTokenOfflineException(ex);
+        } catch (NoSuchAlgorithmException ex) {
+            LOG.error(ex, ex);
+            throw new CryptoTokenOfflineException(ex);
+        } catch (UnrecoverableKeyException ex) {
+            LOG.error(ex, ex);
+            throw new CryptoTokenOfflineException(ex);
+        } catch (OperatorCreationException ex) {
+            LOG.error(ex, ex);
+            throw new CryptoTokenOfflineException(ex);
         }
-    }
-    
-    @Override
-    public void generateKey(String keyAlgorithm, String keySpec, String alias, char[] authCode, Map<String, Object> params, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
-        generateKey(keyAlgorithm, keySpec, alias, authCode);
     }
 
     @Override

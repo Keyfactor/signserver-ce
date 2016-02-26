@@ -14,11 +14,27 @@ package org.signserver.server.cryptotokens;
 
 import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.KeyStore;
+import java.security.Security;
+import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
 import java.security.spec.RSAKeyGenParameterSpec;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.concurrent.TimeUnit;
+import javax.security.auth.x500.X500Principal;
 import junit.framework.TestCase;
+import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertTrue;
+import static junit.framework.TestCase.fail;
+import org.apache.log4j.Logger;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.util.encoders.Hex;
 
 /**
  * Tests that the hard token properties are set correctly for PKCS11 crypto tokens.
@@ -26,6 +42,12 @@ import junit.framework.TestCase;
  * @version $Id$
  */
 public class CryptoTokenHelperTest extends TestCase {
+    
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(CryptoTokenHelperTest.class);
+    
+    private static final String KEYALIAS = "theAlias";
+    
     /**
      * Tests some slot properties, including ATTRIBUTES.
      * @throws Exception
@@ -175,6 +197,90 @@ public class CryptoTokenHelperTest extends TestCase {
         assertEquals("Key length", 2048, spec.getKeysize());
         assertEquals("Public exponent",
                      new BigInteger("65537"), spec.getPublicExponent());
+    }
+
+    private static KeyStore createKeyStoreWithAnEntry() throws Exception {
+        KeyStore ks = KeyStore.getInstance("PKCS12", "BC");
+        ks.load(null, null);
+        final KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA", "BC");
+        kpg.initialize(1024);
+
+        final KeyPair keyPair = kpg.generateKeyPair();
+        Certificate[] chain = new Certificate[1];
+        chain[0] = CryptoTokenHelper.createDummyCertificate(KEYALIAS, "SHA1withRSA", keyPair, "BC");
+
+        ks.setKeyEntry(KEYALIAS, keyPair.getPrivate(), null, chain);
+        return ks;
+    }
+
+    /**
+     * Tests the regenerateCertIfWanted method.
+     *
+     * @throws Exception 
+     */
+    public void testRegenerateCertIfWanted() throws Exception {
+        Security.addProvider(new BouncyCastleProvider());
+        final KeyStore ks = createKeyStoreWithAnEntry();
+        final X509Certificate certificate = (X509Certificate) ks.getCertificate(KEYALIAS);
+        
+        // Test with no parameters: should not change the cert
+        final Map<String, Object> params = new HashMap<>();
+        CryptoTokenHelper.regenerateCertIfWanted(KEYALIAS, "foo123".toCharArray(), params, ks, "BC");
+        X509Certificate certAfter = (X509Certificate) ks.getCertificate(KEYALIAS);
+        assertEquals("Same issuer DN", certificate.getIssuerX500Principal().getName(), certAfter.getIssuerX500Principal().getName());
+        assertEquals("Same subject DN", certificate.getSubjectX500Principal().getName(), certAfter.getSubjectX500Principal().getName());
+        assertEquals("Same signature algorithm", certificate.getSigAlgName(), certAfter.getSigAlgName());
+        assertEquals("Same notBefore", certificate.getNotBefore(), certAfter.getNotBefore());
+        assertEquals("Same notAfter", certificate.getNotAfter(), certAfter.getNotAfter());
+        assertTrue("Same cert", Hex.toHexString(certificate.getEncoded()).equals(Hex.toHexString(certAfter.getEncoded())));
+        
+        // Custom DN
+        params.clear();
+        final String expectedDN = "CN=New Name, O=New Organization, C=SE";
+        params.put("SELFSIGNED_DN", expectedDN);
+        CryptoTokenHelper.regenerateCertIfWanted(KEYALIAS, "foo123".toCharArray(), params, ks, "BC");
+        certAfter = (X509Certificate) ks.getCertificate(KEYALIAS);
+        assertEquals("New issuer DN", new X500Principal(expectedDN).getName(), certAfter.getIssuerX500Principal().getName());
+        assertEquals("New subject DN", new X500Principal(expectedDN).getName(), certAfter.getSubjectX500Principal().getName());
+        assertEquals("Same signature algorithm", certificate.getSigAlgName(), certAfter.getSigAlgName());
+        assertEquals("Same notBefore", certificate.getNotBefore(), certAfter.getNotBefore());
+        assertEquals("Same notAfter", certificate.getNotAfter(), certAfter.getNotAfter());
+        
+        // Custom signature algorithm
+        params.clear();
+        final String expectedSigAlg = "SHA224withRSA";
+        params.put("SELFSIGNED_SIGNATUREALGORITHM", expectedSigAlg);
+        CryptoTokenHelper.regenerateCertIfWanted(KEYALIAS, "foo123".toCharArray(), params, ks, "BC");
+        certAfter = (X509Certificate) ks.getCertificate(KEYALIAS);
+        assertEquals("Same issuer DN", certificate.getIssuerX500Principal().getName(), certAfter.getIssuerX500Principal().getName());
+        assertEquals("Same subject DN", certificate.getSubjectX500Principal().getName(), certAfter.getSubjectX500Principal().getName());
+        assertEquals("New signature algorithm", expectedSigAlg, certAfter.getSigAlgName());
+        assertEquals("Same notBefore", certificate.getNotBefore(), certAfter.getNotBefore());
+        assertEquals("Same notAfter", certificate.getNotAfter(), certAfter.getNotAfter());
+
+        // Custom validity
+        params.clear();
+        params.put("SELFSIGNED_VALIDITY", Long.valueOf(1 * 60 * 60)); // 1 hour
+        CryptoTokenHelper.regenerateCertIfWanted(KEYALIAS, "foo123".toCharArray(), params, ks, "BC");
+        certAfter = (X509Certificate) ks.getCertificate(KEYALIAS);
+        assertEquals("Same issuer DN", certificate.getIssuerX500Principal().getName(), certAfter.getIssuerX500Principal().getName());
+        assertEquals("Same subject DN", certificate.getSubjectX500Principal().getName(), certAfter.getSubjectX500Principal().getName());
+        assertEquals("Same signature algorithm", certificate.getSigAlgName(), certAfter.getSigAlgName());
+        assertEquals("New validity time about 1 hour", 1L, TimeUnit.MILLISECONDS.toHours(certAfter.getNotAfter().getTime() - certAfter.getNotBefore().getTime()));
+        
+        // All at once
+        params.clear();
+        final String expectedDN2 = "CN=New Name 2, O=New Organization, C=SE";
+        params.put("SELFSIGNED_DN", expectedDN2);
+        final String expectedSigAlg2 = "SHA256withRSA";
+        params.put("SELFSIGNED_SIGNATUREALGORITHM", expectedSigAlg2);
+        params.put("SELFSIGNED_VALIDITY", Long.valueOf(2 * 60 * 60)); // 2 hour
+        CryptoTokenHelper.regenerateCertIfWanted(KEYALIAS, "foo123".toCharArray(), params, ks, "BC");
+        certAfter = (X509Certificate) ks.getCertificate(KEYALIAS);
+        assertEquals("New issuer DN", new X500Principal(expectedDN2).getName(), certAfter.getIssuerX500Principal().getName());
+        assertEquals("New subject DN", new X500Principal(expectedDN2).getName(), certAfter.getSubjectX500Principal().getName());
+        assertEquals("New signature algorithm", expectedSigAlg2, certAfter.getSigAlgName());
+        assertEquals("New validity time about 2 hour", 2L, TimeUnit.MILLISECONDS.toHours(certAfter.getNotAfter().getTime() - certAfter.getNotBefore().getTime()));
     }
 
     // TODO: Tests for dummy certificates temporarly moved to

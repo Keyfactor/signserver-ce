@@ -104,7 +104,6 @@ public class CryptoTokenHelper {
     public static final String PROPERTY_SHAREDLIBRARYNAME = "SHAREDLIBRARYNAME";
     public static final String PROPERTY_PIN = "PIN";
     public static final String PROPERTY_DEFAULTKEY = "DEFAULTKEY";
-    public static final String PROPERTY_TESTKEY = "TESTKEY";
     public static final String PROPERTY_AUTHCODE = "AUTHCODE";
     public static final String PROPERTY_SLOTLABELTYPE = "SLOTLABELTYPE";
     public static final String PROPERTY_SLOTLABELVALUE = "SLOTLABELVALUE";
@@ -115,7 +114,8 @@ public class CryptoTokenHelper {
     public static final String PROPERTY_SELFSIGNED_VALIDITY = "SELFSIGNED_VALIDITY";
     public static final String PROPERTY_SELFSIGNED_SIGNATUREALGORITHM = "SELFSIGNED_SIGNATUREALGORITHM";
     
-    private static final long DEFAULT_VALIDITY_S = (long)30*24*60*60*365; // 30 year in seconds
+    private static final long DEFAULT_BACKDATE = (long) 10 * 60; // 10 minutes in seconds
+    private static final long DEFAULT_VALIDITY_S = (long) 30 * 24 * 60 * 60 * 365; // 30 year in seconds
     private static final String DEFAULT_SIGNATUREALGORITHM = "SHA1withRSA"; // Legacy default
 
     public enum TokenEntryFields {
@@ -481,7 +481,7 @@ public class CryptoTokenHelper {
      * @see #isDummyCertificate(java.security.cert.Certificate)
      */
     public static X509Certificate createDummyCertificate(String commonName, String sigAlgName, KeyPair keyPair, String provider) throws OperatorCreationException, CertificateException {
-        return getSelfCertificate(getDummyCertificateDN(commonName), DEFAULT_VALIDITY_S, sigAlgName, keyPair, provider);
+        return getSelfCertificate(getDummyCertificateDN(commonName), DEFAULT_BACKDATE, DEFAULT_VALIDITY_S, sigAlgName, keyPair, provider);
     }
     
     private static String getDummyCertificateDN(String commonName) {
@@ -489,12 +489,13 @@ public class CryptoTokenHelper {
     }
     
     private static X509Certificate getSelfCertificate (String myname,
+                                                long backdate,
                                                 long validity,
                                                 String sigAlg,
                                                 KeyPair keyPair,
                                                 String provider) throws OperatorCreationException, CertificateException {
         final long currentTime = new Date().getTime();
-        final Date firstDate = new Date(currentTime-24*60*60*1000);
+        final Date firstDate = new Date(currentTime - backdate * 1000);
         final Date lastDate = new Date(currentTime + validity * 1000);
 
         // Add all mandatory attributes
@@ -798,7 +799,7 @@ public class CryptoTokenHelper {
             
             final PrivateKey key = (PrivateKey) keyStore.getKey(alias, authCode);
             final X509Certificate oldCert = (X509Certificate) keyStore.getCertificate(alias);
-            final X509Certificate newCert = getSelfCertificate(dn, validity, signatureAlgorithm, new KeyPair(oldCert.getPublicKey(), key), provider);
+            final X509Certificate newCert = getSelfCertificate(dn, DEFAULT_BACKDATE, validity, signatureAlgorithm, new KeyPair(oldCert.getPublicKey(), key), provider);
 
             keyStore.setKeyEntry(alias, key, authCode, new Certificate[] { newCert });
         }

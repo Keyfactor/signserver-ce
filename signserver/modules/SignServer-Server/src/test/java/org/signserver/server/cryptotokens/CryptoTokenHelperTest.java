@@ -232,6 +232,7 @@ public class CryptoTokenHelperTest extends TestCase {
         assertEquals("Same signature algorithm", certificate.getSigAlgName(), certAfter.getSigAlgName());
         assertEquals("Same notBefore", certificate.getNotBefore(), certAfter.getNotBefore());
         assertEquals("Same notAfter", certificate.getNotAfter(), certAfter.getNotAfter());
+        assertTrue("Validity time more than about 20 years: " + certAfter.getNotAfter(), TimeUnit.MILLISECONDS.toDays(certAfter.getNotAfter().getTime() - certAfter.getNotBefore().getTime()) > 7300);
         assertTrue("Same cert", Hex.toHexString(certificate.getEncoded()).equals(Hex.toHexString(certAfter.getEncoded())));
         
         // Custom DN
@@ -243,8 +244,7 @@ public class CryptoTokenHelperTest extends TestCase {
         assertEquals("New issuer DN", new X500Principal(expectedDN).getName(), certAfter.getIssuerX500Principal().getName());
         assertEquals("New subject DN", new X500Principal(expectedDN).getName(), certAfter.getSubjectX500Principal().getName());
         assertEquals("Same signature algorithm", certificate.getSigAlgName(), certAfter.getSigAlgName());
-        assertEquals("Same notBefore", certificate.getNotBefore(), certAfter.getNotBefore());
-        assertEquals("Same notAfter", certificate.getNotAfter(), certAfter.getNotAfter());
+        assertTrue("Validity time more than about 20 years: " + certAfter.getNotAfter(), TimeUnit.MILLISECONDS.toDays(certAfter.getNotAfter().getTime() - certAfter.getNotBefore().getTime()) > 7300);
         
         // Custom signature algorithm
         params.clear();
@@ -255,8 +255,7 @@ public class CryptoTokenHelperTest extends TestCase {
         assertEquals("Same issuer DN", certificate.getIssuerX500Principal().getName(), certAfter.getIssuerX500Principal().getName());
         assertEquals("Same subject DN", certificate.getSubjectX500Principal().getName(), certAfter.getSubjectX500Principal().getName());
         assertEquals("New signature algorithm", expectedSigAlg, certAfter.getSigAlgName());
-        assertEquals("Same notBefore", certificate.getNotBefore(), certAfter.getNotBefore());
-        assertEquals("Same notAfter", certificate.getNotAfter(), certAfter.getNotAfter());
+        assertTrue("Validity time more than about 20 years: " + certAfter.getNotAfter(), TimeUnit.MILLISECONDS.toDays(certAfter.getNotAfter().getTime() - certAfter.getNotBefore().getTime()) > 7300);
 
         // Custom validity
         params.clear();

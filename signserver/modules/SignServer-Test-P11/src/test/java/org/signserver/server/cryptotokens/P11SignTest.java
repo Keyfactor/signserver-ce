@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.security.KeyPair;
 import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Arrays;
 import java.util.Collection;
@@ -31,6 +32,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import javax.security.auth.x500.X500Principal;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.fail;
@@ -924,6 +926,55 @@ public class P11SignTest extends ModulesTestCase {
             expected.add(TEST_KEY_ALIAS);
             Set<String> aliases2 = getKeyAliases(workerId);
             assertEquals("new key added", expected, aliases2);
+        } finally {
+            try {
+                workerSession.removeKey(workerId, TEST_KEY_ALIAS);
+            } catch (SignServerException ignored) {}
+            removeWorker(workerId);
+        }
+    }
+    
+    /**
+     * Tests key generation when requesting a custom DN for the self-signed
+     * certificate.
+     *
+     * @throws Exception 
+     */
+    public void testGenerateKey_withCustomDN() throws Exception {
+        LOG.info("testGenerateKey_withCustomDN");
+        
+        final int workerId = WORKER_CMS;
+        try {
+            setCMSSignerProperties(workerId, false);
+            final String expectedDN = "CN=My Custom DN, O=Custom Org, C=SE";
+            workerSession.setWorkerProperty(workerId, "SELFSIGNED_DN", expectedDN);
+            workerSession.setWorkerProperty(workerId, "DEFAULTKEY", TEST_KEY_ALIAS);
+            workerSession.reloadConfiguration(workerId);
+            
+            // Check available aliases
+            Set<String> aliases1 = getKeyAliases(workerId);
+            
+            if (aliases1.isEmpty()) {
+                throw new Exception("getKeyAliases is not working or the slot is empty");
+            }
+            
+            // If the key already exists, try to remove it first
+            if (aliases1.contains(TEST_KEY_ALIAS)) {
+                workerSession.removeKey(workerId, TEST_KEY_ALIAS);
+                aliases1 = getKeyAliases(workerId);
+            }
+            if (aliases1.contains(TEST_KEY_ALIAS)) {
+                throw new Exception("Pre-condition failed: Key with alias " + TEST_KEY_ALIAS + " already exists and removing it failed");
+            }
+
+            // Generate a testkey
+            workerSession.generateSignerKey(workerId, "RSA", "1024", TEST_KEY_ALIAS, pin.toCharArray());
+            
+            // Now expect the new DN
+            final X509Certificate certAfter = (X509Certificate) workerSession.getSignerCertificate(workerId);
+            assertNotNull("New certificate", certAfter);
+            assertEquals("New issuer DN", new X500Principal(expectedDN).getName(), certAfter.getIssuerX500Principal().getName());
+            assertEquals("New subject DN", new X500Principal(expectedDN).getName(), certAfter.getSubjectX500Principal().getName());
         } finally {
             try {
                 workerSession.removeKey(workerId, TEST_KEY_ALIAS);

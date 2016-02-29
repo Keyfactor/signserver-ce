@@ -6038,6 +6038,15 @@ implementation to use. See below for available crypto tokens.
                     <p>
 <b>KEYGENERATIONLIMIT</b>: Limit for the maximum number of keys allowed to be generated. If set and set to 0 or a positive value, key generation is not allowed if the current number of keys equals to or is larger than this value (Default: "" = no limit).
                     </p>
+                    <p>
+<b>SELFSIGNED_DN</b>: Distinguished Name (DN) to use as issuer and subject DN in the self-signed certificate instead of the default one. Note: This property can be set on the worker that is going to use the key so that different options can be used for different workers.
+                    </p>
+                    <p>
+<b>SELFSIGNED_SIGNATUREALGORITHM</b>: Signature algorithm to use in the self-signed certificate instead of the default "SHA1withRSA". Note: This property can be set on the worker that is going to use the key so that different options can be used for different workers.
+                    </p>
+                    <p>
+<b>SELFSIGNED_VALIDITY</b>: Validity time (in seconds) to use in the self-signed certificate instead of the default of about 30 years. Note: This property can be set on the worker that is going to use the key so that different options can be used for different workers.
+                    </p>
                 </subsection>
 
                 <subsection name="P12CryptoToken">

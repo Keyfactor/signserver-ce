@@ -769,6 +769,24 @@ public class CryptoTokenHelper {
         return new RSAKeyGenParameterSpec(keyLength, exponent);
     }
 
+    /**
+     * Inspects the key generation parameters provided and determine if the
+     * certificate should be re-generated with new values and if that is the
+     * case creates the new certificate.
+     * @param alias of the key entry
+     * @param authCode of the key entry (only needed for JKS)
+     * @param params key generation parameters
+     * @param keyStore to query and store the key entry in
+     * @param provider of the keystore
+     * @throws KeyStoreException
+     * @throws NoSuchAlgorithmException
+     * @throws UnrecoverableKeyException
+     * @throws OperatorCreationException
+     * @throws CertificateException 
+     * @see CryptoTokenHelper#PROPERTY_SELFSIGNED_DN
+     * @see CryptoTokenHelper#PROPERTY_SELFSIGNED_SIGNATUREALGORITHM
+     * @see CryptoTokenHelper#PROPERTY_SELFSIGNED_VALIDITY
+     */
     public static void regenerateCertIfWanted(final String alias, final char[] authCode, final Map<String, Object> params, final KeyStore keyStore, final String provider) throws KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, OperatorCreationException, CertificateException {
         String dn = (String) params.get(PROPERTY_SELFSIGNED_DN);
         Long validity = (Long) params.get(PROPERTY_SELFSIGNED_VALIDITY);

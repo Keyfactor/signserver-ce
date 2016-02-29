@@ -444,7 +444,7 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
                 params.put(CryptoTokenHelper.PROPERTY_SELFSIGNED_SIGNATUREALGORITHM, signatureAlgorithm);
             }
         
-            signer.generateKey(keyAlgorithm, keySpec, alias, authCode, Collections.<String, Object>emptyMap(),
+            signer.generateKey(keyAlgorithm, keySpec, alias, authCode, params,
                     servicesImpl);
 
             final HashMap<String, Object> auditMap = new HashMap<String, Object>();

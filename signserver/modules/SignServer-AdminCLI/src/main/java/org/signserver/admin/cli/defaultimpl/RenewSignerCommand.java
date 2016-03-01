@@ -42,17 +42,20 @@ public class RenewSignerCommand extends AbstractAdminCommand {
     
     public static final String RENEWALWORKER = "renewalworker";
     public static final String AUTHCODE = "authcode";
-    
+    public static final String AUTHPROMPT = "authprompt";
+
     /** The command line options. */
     private static final Options OPTIONS;
     
     private static final String USAGE =
-            "Usage: signserver renewsigner <worker name> -renewalworker <worker name> [-authcode <authentication code>]\n"
+            "Usage: signserver renewsigner <worker name> -renewalworker <worker name> [-authcode <authentication code>|-authprompt]\n"
             + "Example 1: signserver renewsigner signer71 -renewalworker RenewalWorker1\n"
-            + "Example 2: signserver renewsigner signer71 -renewalworker RenewalWorker1 -authcode foo123\n";
+            + "Example 2: signserver renewsigner signer71 -renewalworker RenewalWorker1 -authcode foo123\n"
+            + "Example 3: signserver renewsigner signer71 -renewalworker RenewalWorker1 -authprompt\n";
 
     private String renewalWorker;
     private String authCode;
+    private boolean promptForAuthCode;
     
     static {
         OPTIONS = new Options();
@@ -60,6 +63,8 @@ public class RenewSignerCommand extends AbstractAdminCommand {
                 "The worker which performs the renewal");
         OPTIONS.addOption(AUTHCODE, true,
                 "The authentication code to activate the signer to renew");
+        OPTIONS.addOption(AUTHPROMPT, false,
+                "Prompt for authentication code. This option can not be used together with -authcode");
     }
 
     @Override
@@ -83,6 +88,10 @@ public class RenewSignerCommand extends AbstractAdminCommand {
         }
         if (line.hasOption(AUTHCODE)) {
             authCode = line.getOptionValue(AUTHCODE, null);
+        }
+        
+        if (line.hasOption(AUTHPROMPT)) {
+            promptForAuthCode = true;
         }
     }
 
@@ -112,7 +121,11 @@ public class RenewSignerCommand extends AbstractAdminCommand {
         }
         try {
             
-            if (authCode == null) {
+            if (authCode != null && promptForAuthCode) {
+                throw new IllegalCommandArgumentsException("You can not specify both -authcode and -authprompt at the same time");
+            }
+            
+            if (promptForAuthCode) {
                 getOutputStream().print("Enter authorization code: ");
                 // Read the password, but mask it so we don't display it on the console
                 ConsolePasswordReader r = new ConsolePasswordReader();

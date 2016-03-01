@@ -407,10 +407,6 @@ public class RenewalWorker extends BaseSigner {
            final LogMap logMap) throws Exception {
         LOG.debug("<renewKey");
 
-        if (authcode == null) {
-            throw new IllegalArgumentException("Missing authcode in request");
-        }
-
         final String newAlias = getWorkerSession().generateSignerKey(workerId,
                 keyAlg, keySpec, null, authcode);
 

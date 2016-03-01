@@ -1,3 +1,12 @@
+SignServer 3.7.3
+----------------
+
+Notice:
+ - The renewsigner admin CLI command will no longer prompt for an authcode when
+   the -authcode CLI argument is omitted, use the new -authprompt option to get
+   an interactive prompt. When the authcode is not given (or prompted for), the
+   command will not automatically (re)activate the token.
+
 SignServer 3.7.2
 ----------------
 

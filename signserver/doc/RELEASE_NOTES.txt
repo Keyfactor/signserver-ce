@@ -7,6 +7,8 @@ Notice:
    an interactive prompt. When the authcode is not given (or prompted for), the
    command will not automatically (re)activate the token.
 
+See ChangeLog.txt for the full list of changes.
+
 SignServer 3.7.2
 ----------------
 

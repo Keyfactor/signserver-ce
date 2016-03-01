@@ -400,8 +400,10 @@ public class RenewalWorker extends BaseSigner {
     private String renewKey(final int workerId, final String keyAlg,
            final String keySpec, final char[] authcode,
            final LogMap logMap, final WorkerSessionLocal workerSession) throws Exception {
-        LOG.debug("<renewKey");
-
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("<renewKey");
+        }
+            
         final String newAlias = workerSession.generateSignerKey(new WorkerIdentifier(workerId),
                 keyAlg, keySpec, null, authcode);
 
@@ -431,13 +433,19 @@ public class RenewalWorker extends BaseSigner {
                     newAlias);
             workerSession.reloadConfiguration(workerId);
 
-            LOG.debug("Key generated, tested and set");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Key generated, tested and set");
+            }
 
-            workerSession.activateSigner(new WorkerIdentifier(workerId),
-                    String.valueOf(authcode));
+            if (authcode != null) {
+                workerSession.activateSigner(new WorkerIdentifier(workerId),
+                        String.valueOf(authcode));
 
-            LOG.debug("Worker activated");
-            LOG.debug(">renewKey");
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Worker activated");
+                    LOG.debug(">renewKey");
+                }
+            }
             return newAlias;
         } else {
             throw new CryptoTokenOfflineException("Key testing failed: "

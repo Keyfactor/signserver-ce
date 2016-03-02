@@ -45,18 +45,39 @@ import org.signserver.server.log.AdminInfo;
 import org.signserver.server.timedservices.BaseTimedService;
 
 /**
- * Skeleton timed service...
- * log.
+ * Timed service monitoring a number of workers and checks if they need to have
+ * a new certificate, in which case a request to the worker's renewal worker
+ * is sent.
  * <p>
  * The worker has the following worker properties:
  * </p>
  * <ul>
  *    <li>
- *        <b>PROPERTY_NAME...</b> = Description...
- *        (Optional/Required, default: ...)
+ *        <b>WORKERS</b> = Comma-separated list of workers to check the
+ * validity time for and request renewal for if needed. (Required)
  *    </li>
  * </ul>
- * @author ...
+ * 
+ * <p>
+ * The following properties are set in the workers being monitored:
+ * </p>
+ * <ul>
+ *    <li>
+ *        <b>RENEWWORKER</b> = Renewal worker (name) to send the renewal
+ * request to.
+ *    </li>
+ *    <li>
+ *        <b>RENEW_FORDEFAULTKEY</b> = If set to true the certificate request
+ * is sent for the current DEFAULTKEY and no key generation is performed.
+ *    </li>
+ *    <li>
+ *        <b>RENEW_MINREMAININGSIGNINGVALIDITY</b> = The minimum signing
+ * validity that must remain for the worker without it to be up for renewal.
+ * This value is expressed as a number of days, hours, minutes and milliseconds
+ * on the form "*d *h *m *s *ms".
+ *    </li>
+ * </ul>
+ * @author Markus Kilås
  * @version $Id$
  */
 public class RenewalTimedService extends BaseTimedService {
@@ -80,10 +101,17 @@ public class RenewalTimedService extends BaseTimedService {
      */
     private static final String WORKERPROPERTY_RENEW_MINREMININGSIGNINGVALIDITY = "RENEW_MINREMAININGSIGNINGVALIDITY";
 
+    /**
+     * If set to true, no new key is generated and instead the DEFAULTKEY is
+     * used.
+     */
+    private static final String WORKERPROPERTY_RENEW_FORDEFAULTKEY = "RENEW_FORDEFAULTKEY";
+    
     private static final String SEPARATOR = ",";
     
     // Default values
-    private static final String DEFAULT_WORKERPROPERTY_RENEWSIGNINGVALIDITYLEFT = "0d";
+    private static final String DEFAULT_WORKERPROPERTY_RENEW_MINREMAININGSIGNINGVALIDITY = "0d";
+    private static final String DEFAULT_WORKERPROEPRTY_RENEW_FORDEFAULTKEY = Boolean.FALSE.toString();
 
     // Configuration errors
     private final LinkedList<String> configErrors = new LinkedList<String>();
@@ -142,7 +170,7 @@ public class RenewalTimedService extends BaseTimedService {
         for (RenewalStatus status : statuses) {
             if (status.renew) {
                 try {
-                    if (renew(status.workerName, status.renewalWorker, workerSession)) {
+                    if (renew(status.workerName, status.renewalWorker, status.forDefaultKey, workerSession)) {
                         LOG.info("Renewed worker: " + status.workerName);
                     } else {
                         LOG.error("Renewal failed for worker: " + status.workerName);
@@ -184,7 +212,7 @@ public class RenewalTimedService extends BaseTimedService {
         return errors;
     }
 
-    private boolean renew(final String signer, final String renewalWorker, final IWorkerSession.ILocal processSession) throws IllegalRequestException,
+    private boolean renew(final String signer, final String renewalWorker, final boolean forDefaultKey, final IWorkerSession.ILocal processSession) throws IllegalRequestException,
             CryptoTokenOfflineException, SignServerException {
         final boolean result;
 
@@ -193,8 +221,8 @@ public class RenewalTimedService extends BaseTimedService {
             result = false;
         } else {
             final Properties properties = new Properties();
-            properties.setProperty(RenewalWorkerProperties.REQUEST_WORKER,
-                    signer);
+            properties.setProperty(RenewalWorkerProperties.REQUEST_WORKER, signer);
+            properties.setProperty(RenewalWorkerProperties.REQUEST_FORDEFAULTKEY, String.valueOf(forDefaultKey));
 
             final int renewalWorkerId = processSession.getWorkerId(renewalWorker);
             
@@ -256,9 +284,15 @@ public class RenewalTimedService extends BaseTimedService {
                     if (status.renew) {
                         renewalValue.append(" (on next run)");
                     }
+                    if (status.forDefaultKey) {
+                        renewalValue.append(", without key generation");
+                    } else {
+                        renewalValue.append(", with key generation");
+                    }
                     if (status.renewalWorker != null) {
                         renewalValue.append(", using renewal worker \"").append(status.renewalWorker).append("\".");
                     }
+                    
                 }
                 renewalValue.append("\n");
             }
@@ -270,6 +304,15 @@ public class RenewalTimedService extends BaseTimedService {
         return new StaticWorkerStatus(new WorkerStatusInfo(workerId, config.getProperty("NAME"), "Service", WorkerStatus.STATUS_ACTIVE, briefEntries, fatalErrorsIncludingAdditionalErrors, completeEntries, config));
     }
     
+    /**
+     * Query the status and the certificate for each provided worker and
+     * construct a list of renewal statuses containing information about how
+     * and when the renewal will be performed.
+     *
+     * @param workers list of worker names
+     * @param workerSession to use for getting worker information
+     * @return list of renewal statuses
+     */
     protected List<RenewalStatus> getRenewalStatuses(final List<String> workers, final IWorkerSession.ILocal workerSession) {
         final ArrayList<RenewalStatus> result = new ArrayList<RenewalStatus>(workers.size());
         
@@ -290,12 +333,15 @@ public class RenewalTimedService extends BaseTimedService {
                 // Get renewal worker name
                 status.renewalWorker = workerConfig.getProperty(RenewalWorkerProperties.WORKERPROPERTY_RENEWWORKER);
                 
+                // Get if key should be generated or not
+                status.forDefaultKey = Boolean.parseBoolean(workerConfig.getProperty(WORKERPROPERTY_RENEW_FORDEFAULTKEY, DEFAULT_WORKERPROEPRTY_RENEW_FORDEFAULTKEY));
+                
                 if (status.renewalWorker == null) {
                     status.error = "Missing " + RenewalWorkerProperties.WORKERPROPERTY_RENEWWORKER + " property for worker.";
                 } else {
 
                     // Check setting for signing validity left
-                    final String renewWhenLessThan = workerConfig.getProperty(WORKERPROPERTY_RENEW_MINREMININGSIGNINGVALIDITY, DEFAULT_WORKERPROPERTY_RENEWSIGNINGVALIDITYLEFT);
+                    final String renewWhenLessThan = workerConfig.getProperty(WORKERPROPERTY_RENEW_MINREMININGSIGNINGVALIDITY, DEFAULT_WORKERPROPERTY_RENEW_MINREMAININGSIGNINGVALIDITY);
 
                     final SimpleTime renewTime = SimpleTime.getInstance(renewWhenLessThan);
                     if (renewTime == null) {
@@ -324,13 +370,32 @@ public class RenewalTimedService extends BaseTimedService {
         return result;
     }
     
+    /**
+     * Holder for renewal status of a worker.
+     * At minimum it will contain a worker name and either a error message or
+     * more information about the renewal status.
+     */
     public static class RenewalStatus {
+        /** Id of the worker. */
         private int workerId;
+        
+        /** Name of the worker. */
         private final String workerName;
-        private Date renewalDate;
+        
+        /** Error message or null if none. */
         private String error;
+        
+        /** Date after which the worker should be up for renewal. */
+        private Date renewalDate;
+        
+        /** The worker to use as renewal worker. */
         private String renewalWorker;
+        
+        /** True if the worker should be renewed on the next run. */
         private boolean renew;
+        
+        /** True if the default key should be used instead of generating a new. */
+        private boolean forDefaultKey;
 
         public RenewalStatus(String workerName) {
             this.workerName = workerName;
@@ -358,6 +423,10 @@ public class RenewalTimedService extends BaseTimedService {
 
         public boolean isRenew() {
             return renew;
+        }
+
+        public boolean isForDefaultKey() {
+            return forDefaultKey;
         }
         
     }

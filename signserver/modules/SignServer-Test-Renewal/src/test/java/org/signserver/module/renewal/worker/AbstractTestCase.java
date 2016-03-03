@@ -37,6 +37,7 @@ import org.signserver.common.ServiceLocator;
 import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
 import org.signserver.ejb.interfaces.IWorkerSession.IRemote;
+import org.signserver.server.signers.CryptoWorker;
 
 /**
  * Base class for test cases. Handles creation and deletion of temporary files
@@ -152,6 +153,60 @@ public abstract class AbstractTestCase extends TestCase {
         workerSession.reloadConfiguration(signerId);
     }
     
+    protected void addSignerReferencingToken(final int signerId, final String signerName,
+            final String endEntity, final String cryptoToken)
+            throws IOException, KeyStoreException, NoSuchAlgorithmException,
+                CertificateException, NoSuchProviderException {
+
+        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
+            "WORKER" + signerId + ".CLASSPATH", "org.signserver.module.xmlsigner.XMLSigner");
+        workerSession.setWorkerProperty(signerId, "CRYPTOTOKEN", cryptoToken);
+
+        workerSession.setWorkerProperty(signerId, "NAME", signerName);
+        workerSession.setWorkerProperty(signerId, "AUTHTYPE", "NOAUTH");
+        if (endEntity != null) {
+            getWorkerSession().setWorkerProperty(signerId, "RENEWENDENTITY",
+                endEntity);
+            workerSession.setWorkerProperty(signerId, "REQUESTDN",
+                "CN=" + endEntity + ",C=SE");
+        }
+        workerSession.setWorkerProperty(signerId, "SIGNATUREALGORITHM",
+                "SHA256withRSA");
+        workerSession.setWorkerProperty(signerId, "DEFAULTKEY", "key00000");
+        workerSession.setWorkerProperty(signerId, "KEYSPEC", "2048");
+        workerSession.setWorkerProperty(signerId, "KEYALG", "RSA");
+
+        workerSession.reloadConfiguration(signerId);
+    }
+
+    protected void addCryptoWorker(final int signerId, final String signerName, final boolean useJKSToken)
+            throws IOException, KeyStoreException, NoSuchAlgorithmException,
+                CertificateException, NoSuchProviderException {
+
+        // Create keystore
+        final String keystorePath = newTempFile().getAbsolutePath();
+        final String keystorePassword = "foo123";
+        createEmptyKeystore(useJKSToken ? "JKS" : "PKCS12", keystorePath, keystorePassword);
+
+        final String signerTokenClass =
+                useJKSToken ?
+                    "org.signserver.server.cryptotokens.JKSCryptoToken" :
+                    "org.signserver.server.cryptotokens.P12CryptoToken";
+
+        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + signerId + ".CLASSPATH", CryptoWorker.class.getName());
+        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "WORKER" + signerId + ".SIGNERTOKEN.CLASSPATH", signerTokenClass);
+
+        workerSession.setWorkerProperty(signerId, "NAME", signerName);
+        workerSession.setWorkerProperty(signerId, "KEYSTOREPATH", keystorePath);
+        workerSession.setWorkerProperty(signerId, "KEYSTOREPASSWORD",
+                keystorePassword);
+        workerSession.setWorkerProperty(signerId, "DEFAULTKEY", "key00000");
+        workerSession.setWorkerProperty(signerId, "KEYSPEC", "2048");
+        workerSession.setWorkerProperty(signerId, "KEYALG", "RSA");
+
+        workerSession.reloadConfiguration(signerId);
+    }
+
     protected void addSigner(final int signerId, final String signerName,
             final String endEntity)
                     throws IOException, KeyStoreException, NoSuchAlgorithmException,

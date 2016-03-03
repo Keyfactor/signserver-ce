@@ -185,7 +185,7 @@ public class WorkerSessionMock implements WorkerSessionLocal,
     }
 
     @Override
-    public int getWorkerId(String workerName) {
+    public int getWorkerId(String workerName) throws InvalidWorkerIdException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

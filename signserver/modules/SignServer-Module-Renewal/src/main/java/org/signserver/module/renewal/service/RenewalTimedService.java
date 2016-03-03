@@ -158,13 +158,13 @@ public class RenewalTimedService extends BaseTimedService {
 
         final IWorkerSession.ILocal workerSession;
         try {
-            workerSession = ServiceLocator.getInstance().lookupLocal(IWorkerSession.ILocal.class);
+            workerSession = getWorkerSession();
         } catch (NamingException ex) {
             throw new ServiceExecutionFailedException("Unable to lookup internal session beans", ex);
         }
         
         // Gather renewal statuses
-        List<RenewalStatus> statuses = getRenewalStatuses(workers, workerSession);
+        List<RenewalStatus> statuses = getRenewalStatuses(workers, new Date(), workerSession);
         
         // Process each worker up for renewal
         for (RenewalStatus status : statuses) {
@@ -273,8 +273,8 @@ public class RenewalTimedService extends BaseTimedService {
         // Renewal times for workers
         final StringBuilder renewalValue = new StringBuilder();
         try {
-            final IWorkerSession.ILocal workerSession = ServiceLocator.getInstance().lookupLocal(IWorkerSession.ILocal.class);
-            List<RenewalStatus> statuses = getRenewalStatuses(workers, workerSession);
+            final IWorkerSession.ILocal workerSession = getWorkerSession();
+            List<RenewalStatus> statuses = getRenewalStatuses(workers, new Date(), workerSession);
             for (RenewalStatus status : statuses) {
                 renewalValue.append("- ").append(status.workerName).append(" (").append(status.workerId).append("): ");
                 if (status.error != null) {
@@ -310,18 +310,17 @@ public class RenewalTimedService extends BaseTimedService {
      * and when the renewal will be performed.
      *
      * @param workers list of worker names
+     * @param now the current time
      * @param workerSession to use for getting worker information
      * @return list of renewal statuses
      */
-    protected List<RenewalStatus> getRenewalStatuses(final List<String> workers, final IWorkerSession.ILocal workerSession) {
+    protected List<RenewalStatus> getRenewalStatuses(final List<String> workers, final Date now, final IWorkerSession.ILocal workerSession) {
         final ArrayList<RenewalStatus> result = new ArrayList<RenewalStatus>(workers.size());
         
         if (LOG.isDebugEnabled()) {
             LOG.debug("Gathering renewal status for workers: " + workers);
         }
-        
-        final Date now = new Date();
-        
+
         for (String worker : workers) {
             final RenewalStatus status = new RenewalStatus(worker);
             status.workerId = workerSession.getWorkerId(worker);
@@ -368,6 +367,10 @@ public class RenewalTimedService extends BaseTimedService {
             result.add(status);
         }
         return result;
+    }
+
+    protected IWorkerSession.ILocal getWorkerSession() throws NamingException {
+        return ServiceLocator.getInstance().lookupLocal(IWorkerSession.ILocal.class);
     }
     
     /**

@@ -28,7 +28,8 @@ CA Certificates/Keystores:
 
 Signer crypto token keystore:
     dss10-keystore.p12
-        This can be used as a sample keystore crypto token for signers signing docuement, timestamp 		signer, code signing, and for TLS clients.
+        This can be used as a sample keystore crypto token for signers signing docuement, timestamp
+	signer, code signing, and for TLS clients.
         Aliases for document signing: signer00001, signer00002, signer00003
             Keys with certificates issued directly by the root CA, by the root CA using ECDSA key
             and using RSA issued by a sub CA.

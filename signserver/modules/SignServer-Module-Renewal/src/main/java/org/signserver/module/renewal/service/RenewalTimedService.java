@@ -276,7 +276,7 @@ public class RenewalTimedService extends BaseTimedService {
         // Renewal times for workers
         final StringBuilder renewalValue = new StringBuilder();
         try {
-            final IWorkerSession.ILocal workerSession = getWorkerSession();
+            final IWorkerSession workerSession = getWorkerSession();
             List<RenewalStatus> statuses = getRenewalStatuses(workers, new Date(), workerSession);
             for (RenewalStatus status : statuses) {
                 renewalValue.append("- ").append(status.workerName).append(" (").append(status.workerId).append("): ");
@@ -372,8 +372,8 @@ public class RenewalTimedService extends BaseTimedService {
         return result;
     }
 
-    protected IWorkerSession.ILocal getWorkerSession() throws NamingException {
-        return ServiceLocator.getInstance().lookupLocal(IWorkerSession.ILocal.class);
+    protected IWorkerSession getWorkerSession() throws NamingException {
+        return ServiceLocator.getInstance().lookupLocal(IWorkerSession.class);
     }
     
     /**

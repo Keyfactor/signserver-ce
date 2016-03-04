@@ -760,6 +760,8 @@ public class RenewalWorkerTest extends AbstractTestCase {
             
             // Now remove the service when we are kind of sure it won't run while we are doing it
             removeWorker(RENEWALSERVICE_ID);
+
+            removeWorker(CRYPTOWORKER_6200_ID);
         }    
     }
     
@@ -810,6 +812,8 @@ public class RenewalWorkerTest extends AbstractTestCase {
             
             // Now remove the service when we are kind of sure it won't run while we are doing it
             removeWorker(RENEWALSERVICE_ID);
+
+            removeWorker(CRYPTOWORKER_6200_ID);
         }    
     }
 

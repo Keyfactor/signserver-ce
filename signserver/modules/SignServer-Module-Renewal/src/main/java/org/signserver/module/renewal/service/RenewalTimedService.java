@@ -41,7 +41,6 @@ import org.signserver.module.renewal.common.RenewalWorkerProperties;
 import org.signserver.server.IServices;
 import org.signserver.server.ServiceExecutionFailedException;
 import org.signserver.server.WorkerContext;
-import org.signserver.server.log.AdminInfo;
 import org.signserver.server.timedservices.BaseTimedService;
 
 /**
@@ -156,7 +155,7 @@ public class RenewalTimedService extends BaseTimedService {
         LOG.trace(">work");
         LOG.info("Worker[" + workerId + "]: Service called");
 
-        final IWorkerSession.ILocal workerSession;
+        final IWorkerSession workerSession;
         try {
             workerSession = getWorkerSession();
         } catch (NamingException ex) {
@@ -212,7 +211,7 @@ public class RenewalTimedService extends BaseTimedService {
         return errors;
     }
 
-    private boolean renew(final String signer, final String renewalWorker, final boolean forDefaultKey, final IWorkerSession.ILocal processSession) throws IllegalRequestException,
+    private boolean renew(final String signer, final String renewalWorker, final boolean forDefaultKey, final IWorkerSession processSession) throws IllegalRequestException,
             CryptoTokenOfflineException, SignServerException {
         final boolean result;
 
@@ -230,8 +229,7 @@ public class RenewalTimedService extends BaseTimedService {
                 LOG.debug("Trying to renew " + signer + " using renewal worker " + renewalWorker);
             }
             final ProcessResponse processResp
-                    = processSession.process(new AdminInfo("Client user", null, null),
-                            renewalWorkerId,
+                    = processSession.process(renewalWorkerId,
                         new GenericPropertiesRequest(properties),
                         new RequestContext());
             if (processResp instanceof GenericPropertiesResponse) {
@@ -314,7 +312,7 @@ public class RenewalTimedService extends BaseTimedService {
      * @param workerSession to use for getting worker information
      * @return list of renewal statuses
      */
-    protected List<RenewalStatus> getRenewalStatuses(final List<String> workers, final Date now, final IWorkerSession.ILocal workerSession) {
+    protected List<RenewalStatus> getRenewalStatuses(final List<String> workers, final Date now, final IWorkerSession workerSession) {
         final ArrayList<RenewalStatus> result = new ArrayList<RenewalStatus>(workers.size());
         
         if (LOG.isDebugEnabled()) {

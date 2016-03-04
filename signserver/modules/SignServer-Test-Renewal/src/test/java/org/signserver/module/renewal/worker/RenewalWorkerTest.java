@@ -170,9 +170,9 @@ public class RenewalWorkerTest extends AbstractTestCase {
                     new WorkerIdentifier(WORKERID), request, new RemoteRequestContext());
 
         // OK result
-        LOG.info("Response message: " + response.getProperties().getProperty(
-                RenewalWorkerProperties.RESPONSE_MESSAGE));
-        assertEquals(RenewalWorkerProperties.RESPONSE_RESULT_OK,
+        final String message = response.getProperties().getProperty(RenewalWorkerProperties.RESPONSE_MESSAGE);
+        LOG.info("Response message: " + message);
+        assertEquals("message: " + message, RenewalWorkerProperties.RESPONSE_RESULT_OK,
                 response.getProperties().getProperty(
                 RenewalWorkerProperties.RESPONSE_RESULT));
 

@@ -340,7 +340,7 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
         try {
             final List<Certificate> result;
             final Certificate[] certChain = delegate.getActivatedKeyStore().getCertificateChain(alias);
-            if (certChain == null || (certChain.length == 1 && CryptoTokenHelper.isDummyCertificate(certChain[0]))) {
+            if (certChain == null) {
                 result = null;
             } else {
                 result = Arrays.asList(certChain);
@@ -546,7 +546,11 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
             IllegalRequestException {
         final PrivateKey privateKey = getPrivateKey(alias);
         final List<Certificate> certificateChain = getCertificateChain(alias);
-        return new DefaultCryptoInstance(alias, context, delegate.getActivatedKeyStore().getProvider(), privateKey, certificateChain);
+        if (certificateChain.size() == 1 && CryptoTokenHelper.isDummyCertificate(certificateChain.get(0))) {
+            return new DefaultCryptoInstance(alias, context, delegate.getActivatedKeyStore().getProvider(), privateKey, certificateChain.get(0).getPublicKey());
+        } else {
+            return new DefaultCryptoInstance(alias, context, delegate.getActivatedKeyStore().getProvider(), privateKey, certificateChain);
+        }
     }
 
     @Override

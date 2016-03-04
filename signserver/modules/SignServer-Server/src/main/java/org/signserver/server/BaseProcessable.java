@@ -237,14 +237,14 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
                 try {
                     instance = acquireDefaultCryptoInstance(context);
                     if (Arrays.equals(certFromConfig.getPublicKey().getEncoded(),
-                        instance.getCertificate().getEncoded())) {
+                        instance.getPublicKey().getEncoded())) {
                         log.info("Activate: Signer " + workerId
                             + ": Certificate matches key");
                     } else {
                         log.info("Activate: Signer " + workerId
                             + ": Certificate does not match key");
                     }
-                } catch (InvalidAlgorithmParameterException | UnsupportedCryptoTokenParameter | IllegalRequestException | CertificateEncodingException ex) {
+                } catch (InvalidAlgorithmParameterException | UnsupportedCryptoTokenParameter | IllegalRequestException ex) {
                     log.info("Unable to acquire crypto instance to check certificate: " + ex.getMessage(), ex);
                 } finally {
                     if (instance != null) {

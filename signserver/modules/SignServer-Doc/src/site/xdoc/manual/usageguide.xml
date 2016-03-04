@@ -211,8 +211,8 @@ Displays the current list of acceptable clients.
                         </p>
                         <p>
 <b>renewsigner:</b>
-Sends a request for renewal of the specified worker to the specified renewal worker. If the authcode parameter is omitted the command will renew the key without an authcode, assuming the crypto token is auto-activated.
-To get the old behaviour of prompting for the authcode, specify the -authprompt option. When the authcode is not passed as a parameter or prompted for, the token will not be automatically activated after renewal.
+Sends a request for renewal of the specified worker to the specified renewal worker. If the authcode parameter is omitted the command will renew the certificate without an authcode, assuming the crypto token is auto-activated or the worker is using a separate crypto worker (recommended).
+To get the old behaviour of prompting for the authcode, specify the -authprompt option. When the authcode is not passed as a parameter or prompted for, an explicit activation of the token will not be performed.
 See also the section about the <a href="complete.en.html#RenewalWorker">RenewalWorker</a>.
                         </p>
 

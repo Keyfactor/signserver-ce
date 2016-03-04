@@ -672,8 +672,8 @@ Configure interfaces using the approproate bind address (i.e. 0.0.0.0 or 127.0.0
                         </p>
                         <source>
 /interface=http:add(inet-address="0.0.0.0")
-/interfaces=/interface=httpspub:add(inet-address="0.0.0.0")
-/interfaces=/interface=httpspriv:add(inet-address="0.0.0.0")
+/interface=httpspub:add(inet-address="0.0.0.0")
+/interface=httpspriv:add(inet-address="0.0.0.0")
                         </source>
                         <p>
 Set-up the private port which requires client certificate. 
@@ -845,6 +845,16 @@ One package is however needed still. Since JBoss EAP 6.1 the file is located in 
 &lt;path name="sun/security/pkcs11/wrapper"/&gt;
                         </source>
                     </subsubsection>
+                    
+                    <subsubsection name="Change CLI port to access WildFly">
+                        <p>
+In order to be able to access SignServer in WildFly using the SignServer command line interface (remote EJB) edit SIGNSERVER_HOME/conf/jboss7/jboss-ejb-client.properties and change to port 8080:
+                        </p>
+                        <source>
+remote.connection.default.port = 8080
+                        </source>
+                    </subsubsection>
+                    
                 </subsection>
 
 

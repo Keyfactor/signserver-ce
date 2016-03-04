@@ -649,10 +649,14 @@ public class RenewalWorker extends BaseSigner {
             } else { 
                 if (TRUSTSTORE_TYPE_JKS.equals(truststoreType)) {
                     keystoreTrusted = KeyStore.getInstance(truststoreType);
-                    keystoreTrusted.load(new ByteArrayInputStream(Base64.decode(truststoreValue)), truststorePass.toCharArray());
+                    if (!truststoreValue.isEmpty()) {
+                        keystoreTrusted.load(new ByteArrayInputStream(Base64.decode(truststoreValue)), truststorePass.toCharArray());
+                    }
                 } else {
                     keystoreTrusted = KeyStore.getInstance(truststoreType, "BC");
-                    keystoreTrusted.load(new ByteArrayInputStream(Base64.decode(truststoreValue)), truststorePass.toCharArray());
+                    if (!truststoreValue.isEmpty()) {
+                        keystoreTrusted.load(new ByteArrayInputStream(Base64.decode(truststoreValue)), truststorePass.toCharArray());
+                    }
                 }
             }
         } else {

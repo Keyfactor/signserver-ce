@@ -152,7 +152,10 @@ public class RenewalTimedService extends BaseTimedService {
             }
         }
         
-        LOG.trace(">work");
+        if (LOG.isTraceEnabled()) {
+            LOG.trace(">work");
+        }
+
         LOG.info("Worker[" + workerId + "]: Service called");
 
         final IWorkerSession workerSession;
@@ -199,7 +202,9 @@ public class RenewalTimedService extends BaseTimedService {
             }
         }
 
-        LOG.trace("<work");
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("<work");
+        }
     }
 
     @Override

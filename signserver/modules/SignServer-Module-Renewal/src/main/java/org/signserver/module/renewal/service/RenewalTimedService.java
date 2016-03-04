@@ -339,7 +339,7 @@ public class RenewalTimedService extends BaseTimedService {
                             cal2.setTime(notAfter);
 
                             // Account for the min signing validity left
-                            cal2.add(Calendar.MILLISECOND, (int) -renewTime.getLong());
+                            cal2.setTimeInMillis(cal2.getTimeInMillis() - renewTime.getLong());
                             status.renewalDate = cal2.getTime();
 
                             status.renew = now.after(status.renewalDate);

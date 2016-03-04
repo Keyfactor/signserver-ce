@@ -443,9 +443,13 @@ public class RenewalWorker extends BaseSigner {
 
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Worker activated");
-                    LOG.debug(">renewKey");
                 }
             }
+            
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(">renewKey");
+            }
+            
             return newAlias;
         } else {
             throw new CryptoTokenOfflineException("Key testing failed: "

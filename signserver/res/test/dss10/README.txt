@@ -27,7 +27,7 @@ CA Certificates/Keystores:
     		Digital Signature, Certificate Sign, CRL Sign
 
 Signer crypto token keystore:
-    dss10-keystore.p12
+    dss10_keystore.p12
         This can be used as a sample keystore crypto token for signers signing docuement, timestamp
 	signer, code signing, and for TLS clients.
         Aliases for document signing: signer00001, signer00002, signer00003

@@ -5644,7 +5644,119 @@ at the same time as testing crypto worker keys, to keep the auditlog crypto toke
 from timing-out.
 </p>
                     </subsubsection>
+                    </subsection>
+                    
+                    <subsection name="RenewalTimedService">
+                    <p>
+Fully qualified class name: org.signserver.module.renewal.service.RenewalTimedService
+                    </p>
+                    <subsubsection name="Overview">
+                        <p>
+The RenewalTimedService is a timed service that can be used to periodically
+check the signing validity of workers and invoking the renewal worker if
+needed.
+                        </p>
+                    </subsubsection>
+                    <subsubsection name="Setup">
+                        <p>
+A typical setup with automatic renewal contains of at least 4 workers:
+                        </p>
+                        <ol>
+                            <li>
+<p><b>The Crypto Worker:</b></p>
+<p>The worker holding the crypto token.</p>
+<p>Configured just as before but it is required to be a separate worker from the one that will be renewed in order for it to not get deactivated when the worker's configuration changes during the renewal.</p>
+                            </li>
+                            <li>
+<p><b>The renewee(s):</b></p>
+<p>One or more workers which should be automatically renewed.</p>
+<p>Each renewee needs the RENEWWORKER property and can have additional properties:</p>
+                                <ul>
+                                    <li>
+Required property RENEWWORKER: Points out which Renewal worker to use.
+                                    </li>
+                                    <li>
+Optional property RENEW_FORDEFAULTKEY: If set to true the certificate request is sent for the current DEFAULTKEY and no key generation is performed. Default: false.
+                                    </li>
+                                    <li>
+Optional property RENEW_MINREMAININGSIGNINGVALIDITY: The minimum signing validity that must remain for the worker without it to be up for renewal. This value is expressed as a number of days, hours, minutes and milliseconds on the form "*d *h *m *s *ms". Default: "0d".
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+<p><b>The Renewal worker:</b></p>
+<p>The worker performing the renewal.</p>
+<p>See the <a href="complete.en.html#RenewalWorker">RenewalWorker</a> for its configuration.</p>
+                            </li>
+                            <li>
+<p><b>The Renewal Timed service:</b></p> 
+<p>The worker which runs periodically and checks if a worker needs renewal.</p>
+<p>Needs a property listing each worker to check and renew if needed.</p>
+                            </li>
+                        </ol>
+                    </subsubsection>
+                    <subsubsection name="Available Properties">
+<p><b>WORKERS</b> = Comma-separated list of workers to check the validity time for and request renewal for if needed.</p>
+                    </subsubsection>
+                    
+                    <subsubsection name="Execution">
+                        <ul>
+                            <li>
+As all timed services the Renewal Timed Service is executed periodically.
+                            </li>
+                            <li>
+The service checks the configurations and certificates for all the configured workers and creates a list with renewal statuses for each worker.
+                            </li>
+                            <li>
+Then each worker in the list that is configured correctly and is up for renewal is renewed by sending a request for it to the Renewal worker. 
+                            </li>
+                        </ul>
+                        <p>
+A note about crypto token activation:
+                        </p>
+                        <p>
+The workers that should be renewed most have their crypto tokens previously activated.
+Only activated workers configured with a certificate will be scheduled for renewal. This means that the worker needs to be renewed manually the first time to get its initial key and certificate.
+For the renewal service to work automatically the worker that is going to be renewad must use a separate worker (i.e. a CryptoWorker) for its crypto token. If the worker would have its own crypto token configuration the token would be deactivated during the renewal process.                         
+                        </p>
+                    </subsubsection>
+                    
+                    <subsubsection name="Troubleshooting">
+                        <p>
+The list of renewal statuses can be seen by looking at the services' complete status information:
+                        </p>
+                        <source>
+$ bin/signserver getstatus complete RenewalTimedService1
+...
+Workers Renewal Prognose:
+    - TimeStampSigner (102): Renewal after: 2016-03-02 16:14:07,000, with key generation, using renewal worker "RenewalWorker1".
+    - CMSSigner (3): Renewal after: 2016-02-22 16:01:00,000 (on next run), without key generation, using renewal worker "RenewalWorker1".
+                        </source>
+                        <p>
+What we can see from the above example:
+                        </p>
+                        <ul>
+                            <li>
+The service is configured to manage two workers and their names and worker ID are displayed.
+                            </li>
+                            <li>
+Both workers have certificates configured and was active so the service will be able to determine after which date they need to be renewed.
+                            </li>
+                            <li>
+For the CMSSigner the renewal date has already passed and this is indicated by the text "on next run" showing that the renewal will take place as soon as the service runs.
+                            </li>
+                            <li>
+We can assume that the CMSSigner is configured with the worker property "RENEW_FORDEFAULTKEY=true" as the status says "without key generation".
+                            </li>
+                            <li>
+Finally we can see that both workers are configured with "RENEWWORKER=RenewalWorker1".
+                            </li>
+                        </ul>
+                    </subsubsection>
+                    
                 </subsection>
+                
+                
                 <subsection name="Installing a service">
                     <p>To install a service you use the same commands as for installing a worker:</p>
                     <source>
@@ -5754,7 +5866,7 @@ The RenewalWorker starts by generating a new key-pair (unless an NEXTCERTSIGNKEY
                         <p><b>KEYALG</b> = Algorithm for the key generation. Examples: RSA, DSA or ECDSA</p>
                         <p><b>KEYSPEC</b> = Key length (for RSA or DSA) or curve name (for ECDSA). Examples: 2048, 4096, secp256r1</p>
                         <p><b>EXPLICITECC</b> = True if explicit domain parameters should be used instead of NamedCurves. Default: false</p>
-                        <p><b>RENEWWORKER</b> = Name of the default RenewalWorker to use (Optional). Specify this to have the current RenewalWorker already selected in the AdminGUI when renewing signers.</p>
+                        <p><b>RENEWWORKER</b> = Name of the default RenewalWorker to use (Required when using a <a href="complete.en.html#RenewalTimedService">RenewalTimedService</a> otherwise optional). Specify this to have the current RenewalWorker already selected in the AdminGUI when renewing signers.</p>
                         <p><b>DEFAULTKEY</b> = Key alias for the current existing key. The worker will update this property.</p>
                         <p><b>NEXTCERTSIGNKEY</b> = Key alias for the next existing key. If this property exists a new key-pair will not be generated. The worker will update/remove this property.</p>
                         

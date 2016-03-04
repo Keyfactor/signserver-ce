@@ -747,6 +747,18 @@ public class RenewalWorkerTest extends AbstractTestCase {
             assertTrue("New notBefore: " + newNotBefore + ", Old: " + oldNotBefore, newNotBefore.after(oldNotBefore));
             assertFalse("New key", oldCert.getPublicKey().equals(newCert.getPublicKey()));
         } finally {
+            // Disable the service so it won't run again while we try to remove it
+            getWorkerSession().setWorkerProperty(RENEWALSERVICE_ID, "ACTIVE", "FALSE");
+            getWorkerSession().reloadConfiguration(RENEWALSERVICE_ID);
+            
+            // Wait in case it is about to run
+            try {
+                Thread.sleep(30000);
+            } catch (InterruptedException ex) {
+                LOG.error("Interrupted", ex);
+            }
+            
+            // Now remove the service when we are kind of sure it won't run while we are doing it
             removeWorker(RENEWALSERVICE_ID);
         }    
     }
@@ -785,6 +797,18 @@ public class RenewalWorkerTest extends AbstractTestCase {
             
             
         } finally {
+            // Disable the service so it won't run again while we try to remove it
+            getWorkerSession().setWorkerProperty(RENEWALSERVICE_ID, "ACTIVE", "FALSE");
+            getWorkerSession().reloadConfiguration(RENEWALSERVICE_ID);
+            
+            // Wait in case it is about to run
+            try {
+                Thread.sleep(30000);
+            } catch (InterruptedException ex) {
+                LOG.error("Interrupted", ex);
+            }
+            
+            // Now remove the service when we are kind of sure it won't run while we are doing it
             removeWorker(RENEWALSERVICE_ID);
         }    
     }

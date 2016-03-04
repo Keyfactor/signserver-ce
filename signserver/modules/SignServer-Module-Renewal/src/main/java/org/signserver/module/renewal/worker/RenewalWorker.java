@@ -622,11 +622,13 @@ public class RenewalWorker extends BaseSigner {
 
         final KeyStore keystore = getCryptoToken().getKeyStore();
 
-        // TODO: Check that keystore contains key with the specified alias
-        LOG.info("aliases in keystore follows:");
-        Enumeration<String> e = keystore.aliases();
-        while(e.hasMoreElements()) {
-            LOG.info("alias: " + e.nextElement());
+        // Check that the key is there
+        if (!keystore.containsAlias(alias)) {
+            LOG.error("RenewalWorker[" + workerId + "] is missing its key: " + alias);
+        } else {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("RenewalWorker[" + workerId + "] will use its key: " + alias);
+            }
         }
 
         final String keystorePassword = getConfig().getProperty(KeystoreCryptoToken.KEYSTOREPASSWORD);

@@ -138,14 +138,14 @@ public class SODProcessServlet extends AbstractProcessServlet {
         String displayCert = req.getParameter(DISPLAYCERT_PROPERTY_NAME);
         String downloadCert = req.getParameter(DOWNLOADCERT_PROPERTY_NAME);
         if ((displayCert != null) && (displayCert.length() > 0)) {
-            LOG.info("Recieved display cert request for worker " + workerId + ", from ip " + remoteAddr);
+            LOG.info("Received display cert request for worker " + workerId + ", from ip " + remoteAddr);
             displaySignerCertificate(res, workerId);
         } else if ((downloadCert != null) && (downloadCert.length() > 0)) {
-            LOG.info("Recieved download cert request for worker " + workerId + ", from ip " + remoteAddr);
+            LOG.info("Received download cert request for worker " + workerId + ", from ip " + remoteAddr);
             sendSignerCertificate(res, workerId);
         } else {
             // If the command is to process the signing request, do that.
-            LOG.info("Recieved HTTP process request for worker " + workerId + ", from ip " + remoteAddr);
+            LOG.info("Received HTTP process request for worker " + workerId + ", from ip " + remoteAddr);
 
             boolean base64Encoded = true;
             String encoding = req.getParameter(ENCODING_PROPERTY_NAME);

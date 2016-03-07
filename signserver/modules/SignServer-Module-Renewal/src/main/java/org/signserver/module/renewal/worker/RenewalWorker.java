@@ -194,7 +194,7 @@ public class RenewalWorker extends BaseSigner {
             }
         } else {
             throw new IllegalRequestException(
-                "Recieved request was not of expected type.");
+                "Received request was not of expected type.");
         }
 
         // Log values

@@ -118,7 +118,7 @@ public class MRTDSODSigner extends BaseSigner {
 
         // Check that the request contains a valid SODSignRequest object.
         if (!(signRequest instanceof SODSignRequest)) {
-            throw new IllegalRequestException("Recieved request wasn't an expected SODSignRequest.");
+            throw new IllegalRequestException("Received request wasn't an expected SODSignRequest.");
         }
         
         final ISignRequest sReq = (ISignRequest) signRequest;

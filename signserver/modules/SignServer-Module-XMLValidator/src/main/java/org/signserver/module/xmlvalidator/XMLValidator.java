@@ -95,12 +95,12 @@ public class XMLValidator extends BaseValidator {
 
         // Check that the request contains a valid GenericSignRequest object with a byte[].
         if (!(signRequest instanceof GenericValidationRequest)) {
-            throw new IllegalRequestException("Recieved request wasn't a expected GenericValidationRequest.");
+            throw new IllegalRequestException("Received request wasn't a expected GenericValidationRequest.");
         }
         IValidationRequest sReq = (IValidationRequest) signRequest;
 
         if (!(sReq.getRequestData() instanceof byte[])) {
-            throw new IllegalRequestException("Recieved request data wasn't a expected byte[].");
+            throw new IllegalRequestException("Received request data wasn't a expected byte[].");
         }
 
         byte[] data = (byte[]) sReq.getRequestData();

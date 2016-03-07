@@ -421,7 +421,7 @@ public class TimeStampSigner extends BaseSigner {
         if (!(signRequest instanceof GenericSignRequest)) {
             final IllegalRequestException exception =
                     new IllegalRequestException(
-                    "Recieved request wasn't a expected GenericSignRequest. ");
+                    "Received request wasn't a expected GenericSignRequest. ");
             throw exception;
         }
 
@@ -429,7 +429,7 @@ public class TimeStampSigner extends BaseSigner {
                 || (sReq.getRequestData() instanceof byte[]))) {
             final IllegalRequestException exception =
                     new IllegalRequestException(
-                "Recieved request data wasn't a expected TimeStampRequest. ");
+                "Received request data wasn't a expected TimeStampRequest. ");
             throw exception;
         }
         

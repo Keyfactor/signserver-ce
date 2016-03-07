@@ -1,6 +1,10 @@
 SignServer 3.7.3
 ----------------
 
+New features:
+ - Added auto-renewal timed service.
+ - Option to specify options for self-signed certificates.
+
 Notice:
  - The renewsigner admin CLI command will no longer prompt for an authcode when
    the -authcode CLI argument is omitted, use the new -authprompt option to get

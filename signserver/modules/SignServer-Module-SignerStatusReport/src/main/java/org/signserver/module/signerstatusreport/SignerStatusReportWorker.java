@@ -85,7 +85,7 @@ public class SignerStatusReportWorker extends BaseSigner {
         if (request instanceof GenericSignRequest) {
             signRequest = (GenericSignRequest) request;
         } else {
-            throw new IllegalRequestException("Recieved request was not of expected type.");
+            throw new IllegalRequestException("Received request was not of expected type.");
         }
         
         // Process the request

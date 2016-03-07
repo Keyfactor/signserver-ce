@@ -126,7 +126,7 @@ public class RequestedPolicyDispatcher extends BaseDispatcher {
 
         // Check that the request contains a valid TimeStampRequest object.
         if (!(signRequest instanceof GenericSignRequest)) {
-            throw new IllegalRequestException("Recieved request wasn't a expected GenericSignRequest.");
+            throw new IllegalRequestException("Received request wasn't a expected GenericSignRequest.");
         }
         final ISignRequest sReq = (ISignRequest) signRequest;
         

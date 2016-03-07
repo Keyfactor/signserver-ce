@@ -106,14 +106,14 @@ public class PlainSigner extends BaseSigner {
         // with a byte[].
         if (!(signRequest instanceof GenericSignRequest)) {
             throw new IllegalRequestException(
-                    "Recieved request wasn't a expected GenericSignRequest.");
+                    "Received request wasn't a expected GenericSignRequest.");
         }
 
         final ISignRequest sReq = (ISignRequest) signRequest;
 
         if (!(sReq.getRequestData() instanceof byte[])) {
             throw new IllegalRequestException(
-                    "Recieved request data wasn't a expected byte[].");
+                    "Received request data wasn't a expected byte[].");
         }
 
         if (!configErrors.isEmpty()) {

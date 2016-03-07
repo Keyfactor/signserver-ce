@@ -307,12 +307,12 @@ public class XAdESSigner extends BaseSigner {
 
         // Check that the request contains a valid GenericSignRequest object with a byte[].
         if (!(signRequest instanceof GenericSignRequest)) {
-            throw new IllegalRequestException("Recieved request wasn't a expected GenericSignRequest.");
+            throw new IllegalRequestException("Received request wasn't a expected GenericSignRequest.");
         }
         
         final ISignRequest sReq = (ISignRequest) signRequest;
         if (!(sReq.getRequestData() instanceof byte[])) {
-            throw new IllegalRequestException("Recieved request data wasn't a expected byte[].");
+            throw new IllegalRequestException("Received request data wasn't a expected byte[].");
         }
 
         if (!configErrors.isEmpty()) {

@@ -95,7 +95,7 @@ public class StatusPropertiesWorker extends BaseSigner {
             }
         } else {
             throw new IllegalRequestException(
-                "Recieved request was not of expected type.");
+                "Received request was not of expected type.");
         }
         
         // Process the request

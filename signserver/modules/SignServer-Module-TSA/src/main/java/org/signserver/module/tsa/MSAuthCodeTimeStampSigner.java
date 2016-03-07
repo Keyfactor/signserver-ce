@@ -244,7 +244,7 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
             if (!(signRequest instanceof GenericSignRequest)) {
                     final IllegalRequestException exception =
                                     new IllegalRequestException(
-                                                    "Recieved request wasn't an expected GenericSignRequest. ");
+                                                    "Received request wasn't an expected GenericSignRequest. ");
                     LOG.error("Received request wasn't an expected GenericSignRequest");
                     throw exception;
             }
@@ -253,7 +253,7 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
             || (sReq.getRequestData() instanceof byte[]))) {
                     final IllegalRequestException exception =
                                     new IllegalRequestException(
-                                                    "Recieved request data wasn't an expected TimeStampRequest. ");
+                                                    "Received request data wasn't an expected TimeStampRequest. ");
                     LOG.error("Received request data wasn't an expected TimeStampRequest");
                     throw exception;
             }

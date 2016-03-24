@@ -7,8 +7,7 @@ SignServer 3.7.3, 2016-03-07
     * [DSS-1141] - Typo in SignServer log - "received" spelled incorrectly
     * [DSS-1159] - Typo in WildFly 9 configuration
     * [DSS-1161] - Ugly error message when the RenewalWorker's truststore is empty
-
-
+    * [DSS-1164] - Typo in RenewalWorker sample config
 
 ** Improvement
     * [DSS-1130] - Create one sample keystore with all sample keys and certificates
@@ -16,7 +15,6 @@ SignServer 3.7.3, 2016-03-07
     * [DSS-1150] - Renewal worker should not require the AUTHCODE to be provided
     * [DSS-1157] - Properly format the dates in services status reports
     * [DSS-1158] - Don't enumerate the keys in the renewal worker keystore
-
 
 ** New Feature
     * [DSS-331] - Auto-renewal timed service

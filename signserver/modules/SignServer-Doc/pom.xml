@@ -9,8 +9,8 @@
     </parent>
     <artifactId>SignServer-Doc</artifactId>
     <name>SignServer-Doc</name>
-    <url>https://www.signserver.org/</url>
-    <inceptionYear>2007</inceptionYear>
+    <url>https://www.signserver.org/doc/current/</url>
+    <inceptionYear>2006</inceptionYear>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <doc.dir>../../doc/htdocs</doc.dir>

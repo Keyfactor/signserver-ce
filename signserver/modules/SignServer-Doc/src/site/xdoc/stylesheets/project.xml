@@ -1,40 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="SignServer" href="http://signserver.sourceforge.net/">
 
-    <title>SignServer - Open Source server side Digital Signatures</title>
+    <title>Documentation - SignServer - Open Source server side Digital Signatures</title>
 
     <body>
        <menusection name="Home" index="0"         href="/index.html">
-            <menu name="General Information">
-                <item name="Home"                  href="/index.html"/>
-                <item name="Features"              href="/features.html"/>                
-                <item name="Architecture"          href="/architecture.html"/>                
-                <item name="License"               href="/license.html"/>
-                <item name="Contact &amp; Support" href="/contact.html"/>
-                <item name="Credits"               href="/credits.html"/>
-                <item name="Reference installations" href="/installations.html"/>
-                <item name="Required software"  href="/required.html"/>
-                <item name="SourceForge project" href="https://sourceforge.net/projects/signserver/"/>
-            </menu>
 
             <menu name="Documentation">
-                <item name="Manual"	 href="/manual.html"/>
-                <item name="Installation Guide"	 href="/manual/installguide.html"/>
-                <item name="Changelog"    href="https://jira.primekey.se/browse/DSS?report=com.atlassian.jira.plugin.system.project:changelog-panel"/>
+                <item name="Home"                 href="/index.html"/>
+
+                <item name="Architecture"         href="/architecture.html"/>
+                
+                <item name="Manual Overview"	  href="/manual.html"/>
+            </menu>
+                
+            <menu name="Manual">
+                <item name="Introduction"         href="/manual/introduction.html"/>
+                <item name="Installation Guide"	  href="/manual/installguide.html"/>        
+                <item name="Usage Guide"          href="/manual/usageguide.html"/>
+                <item name="Integration"          href="/manual/integration.html"/>
+                <item name="Common Configuration" href="/manual/commonconf.html"/>
+                <item name="Plugins"              href="/manual/plugins.html"/>
+                <item name="Development"          href="/manual/development.html"/>
+                <item name="Miscellaneous"        href="/manual/misc.html"/>
             </menu>
 
-            <menu name="Download">
-                <item name="Latest releases" href="/download.html"/>
-            </menu>
-
-            <menu name="Contributing">
-                <item name="Contributors"          href="/contributors.html"/>
-                <item name="Bug Database"          href="https://jira.primekey.se/"/>
-                <item name="Repositories"      href="/repositories.html"/>
-            </menu>
-
-            <menu name="Continous integration">
-                <item name="Jenkins" href="/hudson.html"/>
+            <menu name="Other">
+                <item name="signserver.org" href="https://www.signserver.org"/>
             </menu>
 
         </menusection>

@@ -35,9 +35,11 @@ import org.bouncycastle.asn1.cmp.PKIStatus;
 import org.bouncycastle.asn1.cmp.PKIStatusInfo;
 import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.tsp.TimeStampResp;
+import org.bouncycastle.asn1.x509.Extensions;
 import org.bouncycastle.tsp.TSPException;
 import org.bouncycastle.tsp.TSPValidationException;
 import org.bouncycastle.tsp.TimeStampResponse;
+import org.bouncycastle.tsp.TimeStampToken;
 
 /**
  * Generator for RFC 3161 Time Stamp Responses.
@@ -207,6 +209,16 @@ public class TimeStampResponseGenerator
         }
     }
 
+    public TimeStampResponse generate(
+            TimeStampRequest request,
+            BigInteger       serialNumber,
+            Date             genTime,
+            boolean          includeStatusString)
+            throws TSPException
+    {
+        return generate(request, serialNumber, genTime, includeStatusString, null);
+    }
+    
     /**
      * Return an appropriate TimeStampResponse.
      * <p>
@@ -223,7 +235,8 @@ public class TimeStampResponseGenerator
         TimeStampRequest    request,
         BigInteger          serialNumber,
         Date                genTime,
-        boolean             includeStatusString)
+        boolean             includeStatusString,
+        Extensions          additionalExtensions)
         throws TSPException
     {
         TimeStampResp resp;
@@ -246,9 +259,11 @@ public class TimeStampResponseGenerator
             PKIStatusInfo pkiStatusInfo = getPKIStatusInfo();
 
             ContentInfo tstTokenContentInfo = null;
-            try
-            {
-                ByteArrayInputStream    bIn = new ByteArrayInputStream(tokenGenerator.generate(request, serialNumber, genTime).toCMSSignedData().getEncoded());
+            try {
+                TimeStampToken          token = additionalExtensions != null ?
+                        tokenGenerator.generate(request, serialNumber, genTime, additionalExtensions) :
+                        tokenGenerator.generate(request, serialNumber, genTime);
+                ByteArrayInputStream    bIn = new ByteArrayInputStream(token.toCMSSignedData().getEncoded());
                 ASN1InputStream         aIn = new ASN1InputStream(bIn);
 
                 tstTokenContentInfo = ContentInfo.getInstance(aIn.readObject());

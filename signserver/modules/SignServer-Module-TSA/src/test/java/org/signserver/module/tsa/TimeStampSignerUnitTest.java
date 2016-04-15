@@ -15,16 +15,23 @@ package org.signserver.module.tsa;
 import java.math.BigInteger;
 import java.security.Security;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.cmp.PKIFailureInfo;
 import org.bouncycastle.asn1.cmp.PKIStatus;
+import org.bouncycastle.asn1.tsp.TSTInfo;
+import org.bouncycastle.asn1.x509.Extension;
+import org.bouncycastle.asn1.x509.Extensions;
+import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.tsp.TSPAlgorithms;
 import org.bouncycastle.tsp.TimeStampRequest;
 import org.bouncycastle.tsp.TimeStampRequestGenerator;
 import org.bouncycastle.tsp.TimeStampResponse;
+import org.bouncycastle.tsp.TimeStampTokenInfo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -32,6 +39,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
+import org.signserver.common.ProcessRequest;
 import org.signserver.common.RequestContext;
 import org.signserver.common.WorkerConfig;
 import org.signserver.ejb.interfaces.IGlobalConfigurationSession;
@@ -59,6 +67,7 @@ public class TimeStampSignerUnitTest {
     private static final int WORKER2 = 8891;
     private static final int WORKER3 = 8892;
     private static final int WORKER4 = 8893;
+    private static final int WORKER5 = 8894;
     private static final String NAME = "NAME";
     private static final String AUTHTYPE = "AUTHTYPE";
     private static final String CRYPTOTOKEN_CLASSNAME = "org.signserver.server.cryptotokens.HardCodedCryptoToken";
@@ -222,6 +231,35 @@ public class TimeStampSignerUnitTest {
             });
             workerSession.reloadConfiguration(workerId);
         }
+        
+        // WORKER5: with additional extensions
+        {
+            final int workerId = WORKER5;
+            final WorkerConfig config = new WorkerConfig();
+            config.setProperty(NAME, "TestTimeStampSigner4");
+            config.setProperty(AUTHTYPE, "NOAUTH");
+            config.setProperty(TimeStampSigner.DEFAULTTSAPOLICYOID, "1.2.3.4");
+            config.setProperty("DEFAULTKEY", HardCodedCryptoTokenAliases.KEY_ALIAS_4);
+            
+            workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
+                    new BaseTimeStampSigner() {
+                @Override
+                protected IGlobalConfigurationSession.IRemote
+                        getGlobalConfigurationSession() {
+                    return globalConfig;
+                }
+
+                @Override
+                protected Extensions getAdditionalExtensions(ProcessRequest request, RequestContext context) {
+                     final Extension ext =
+                             new Extension(new ASN1ObjectIdentifier("1.2.7.9"),
+                                           false,
+                                           new DEROctetString("Value".getBytes()));
+                     return new Extensions(ext);
+                }
+            });
+            workerSession.reloadConfiguration(workerId);
+        }
     }
 
     /**
@@ -355,6 +393,43 @@ public class TimeStampSignerUnitTest {
         timeStampResponse.validate(timeStampRequest);
         assertEquals("rejection", PKIStatus.REJECTION, timeStampResponse.getStatus());
         assertEquals("unacceptedExtension", PKIFailureInfo.unacceptedExtension, timeStampResponse.getFailInfo().intValue());
+    }
+    
+    /**
+     * Test with a custom time stamp signer adding an additional extension.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testAdditionalExtension() throws Exception {
+        LOG.info("testAdditionalExtension");
+        TimeStampRequestGenerator timeStampRequestGenerator =
+                new TimeStampRequestGenerator();
+        TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
+                TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
+        byte[] requestBytes = timeStampRequest.getEncoded();
+        GenericSignRequest signRequest = new GenericSignRequest(100, requestBytes);
+        final RequestContext requestContext = new RequestContext();
+        final GenericSignResponse res = (GenericSignResponse) workerSession.process(
+                WORKER5, signRequest, requestContext);
+
+        final TimeStampResponse timeStampResponse = new TimeStampResponse(
+                (byte[]) res.getProcessedData());
+        timeStampResponse.validate(timeStampRequest);
+    
+        TimeStampTokenInfo timeStampInfo = timeStampResponse.getTimeStampToken().getTimeStampInfo();
+        TSTInfo tstInfo = timeStampInfo.toASN1Structure();
+        
+        Extensions extensions = tstInfo.getExtensions();
+        Extension extension = extensions.getExtension(new ASN1ObjectIdentifier("1.2.7.9"));
+        
+        assertEquals("Number of critical extensions", 0,
+                     extensions.getCriticalExtensionOIDs().length);
+        assertEquals("Number of extensions", 1,
+                     extensions.getExtensionOIDs().length);
+        assertNotNull("Should contain additional extension", extension);
+        assertEquals("Should contain extension value", new DEROctetString("Value".getBytes()),
+                extension.getExtnValue());
     }
 }
 

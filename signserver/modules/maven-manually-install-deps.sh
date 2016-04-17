@@ -9,10 +9,10 @@ mvn install:install-file -Dfile=lib/ext/cert-cvc-1.4.3.jar -DgroupId=org.ejbca.c
 mvn install:install-file -Dfile=lib/ext/xades4j-1.3.2-signserver4.jar -DgroupId=org.signserver.xades4j -DartifactId=xades4j -Dversion=1.3.2-signserver4 -Dpackaging=jar
 
 # Install DeployTools parent POM
+DPL_VERSION=2.0
 mvn install:install-file -DgroupId=org.signserver.deploytools -DartifactId=DeployTools -Dversion=${DPL_VERSION} -Dpackaging=pom -Dfile=lib/ext/DeployTools-${DPL_VERSION}-pom.xml
 
 # Install the DeployTools artifacts from JARS
-DPL_VERSION=2.0
 # Based on post by David Blevins: https://www.mail-archive.com/users@maven.apache.org/msg91297.html
 for jar in lib/ext/DeployTools-Common-${DPL_VERSION}.jar lib/ext/DeployTools-Maven-${DPL_VERSION}.jar lib/ext/jsign-1.2-signserver4.jar; do
     pom=$(jar tvf $jar | grep pom.xml | perl -pe 's,.* ,,')

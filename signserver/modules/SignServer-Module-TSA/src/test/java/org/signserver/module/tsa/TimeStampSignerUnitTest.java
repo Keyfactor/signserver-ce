@@ -15,8 +15,6 @@ package org.signserver.module.tsa;
 import java.math.BigInteger;
 import java.security.Security;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;
@@ -25,7 +23,6 @@ import org.bouncycastle.asn1.cmp.PKIStatus;
 import org.bouncycastle.asn1.tsp.TSTInfo;
 import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.Extensions;
-import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.tsp.TSPAlgorithms;
 import org.bouncycastle.tsp.TimeStampRequest;
@@ -243,7 +240,7 @@ public class TimeStampSignerUnitTest {
             config.setProperty("DEFAULTKEY", HardCodedCryptoTokenAliases.KEY_ALIAS_4);
             
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
-                    new BaseTimeStampSigner() {
+                    new TimeStampSigner() {
                 @Override
                 protected IGlobalConfigurationSession.IRemote
                         getGlobalConfigurationSession() {
@@ -272,7 +269,7 @@ public class TimeStampSignerUnitTest {
             config.setProperty("DEFAULTKEY", HardCodedCryptoTokenAliases.KEY_ALIAS_4);
             
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
-                    new BaseTimeStampSigner() {
+                    new TimeStampSigner() {
                 @Override
                 protected IGlobalConfigurationSession.IRemote
                         getGlobalConfigurationSession() {

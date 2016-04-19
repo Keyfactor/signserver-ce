@@ -25,7 +25,7 @@ import org.signserver.server.config.entities.IWorkerConfigDataService;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
 import org.signserver.server.log.AllFieldsWorkerLogger;
 import org.signserver.server.log.IWorkerLogger;
-import org.signserver.server.signers.UnloadableWorker;
+import org.signserver.server.UnloadableWorker;
 
 /**
  * Loads worker configurations and instantiates the implementations and caches

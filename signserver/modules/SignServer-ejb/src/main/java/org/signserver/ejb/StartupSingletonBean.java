@@ -52,12 +52,8 @@ import org.signserver.statusrepo.common.StatusName;
 import org.signserver.ejb.interfaces.WorkerSessionLocal;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
 import org.signserver.ejb.interfaces.ServiceTimerSessionLocal;
-import org.signserver.server.IProcessable;
 import org.signserver.server.IWorker;
 import org.signserver.server.config.entities.FileBasedWorkerConfigDataService;
-import org.signserver.server.signers.CryptoWorker;
-import org.signserver.server.signers.UnloadableWorker;
-import org.signserver.server.timedservices.ITimedService;
 import org.signserver.statusrepo.StatusRepositorySessionLocal;
 
 /**
@@ -262,24 +258,7 @@ public class StartupSingletonBean {
         for (Integer id : unknowns) {
             try {
                 final IWorker obj = workerManager.getWorker(new WorkerIdentifier(id));
-                
-                final WorkerType type;
-                
-                // Note: The order is important here!
-                // Start by checking for the most specific type
-                if (obj instanceof UnloadableWorker) {
-                    type = WorkerType.SPECIAL;
-                } else if (obj instanceof CryptoWorker) {
-                    type = WorkerType.CRYPTO_WORKER;
-                } else if (obj instanceof ITimedService) {
-                    type = WorkerType.TIMED_SERVICE;
-                } else if (obj instanceof IProcessable) {
-                    type = WorkerType.PROCESSABLE;
-                } else if (obj instanceof CryptoWorker) {
-                    type = WorkerType.CRYPTO_WORKER;
-                } else {
-                    type = WorkerType.SPECIAL;
-                }
+                final WorkerType type = obj.getWorkerType();
                 LOG.info("Implementation " + obj.getClass().getName() + " identified as type " + type.name());
 
                 workerSession.setWorkerProperty(admin, id, WorkerConfig.TYPE, type.name());

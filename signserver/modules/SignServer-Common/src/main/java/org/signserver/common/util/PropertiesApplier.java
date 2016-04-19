@@ -21,6 +21,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.signserver.common.AuthorizedClient;
+import org.signserver.common.WorkerConfig;
 import static org.signserver.common.util.PropertiesConstants.GENID;
 import static org.signserver.common.util.PropertiesConstants.OLDWORKER_PREFIX;
 import static org.signserver.common.util.PropertiesConstants.WORKER_PREFIX;
@@ -90,6 +91,7 @@ public abstract class PropertiesApplier {
                     translateWorkerDatas(parser.getAddAuthorizedClients());
             final Map<Integer, List<AuthorizedClient>> removeAuthorizedClients =
                     translateWorkerDatas(parser.getRemoveAuthorizedClients());
+            final ArrayList<PropertiesParser.WorkerProperty> delayedSetWorkerProperties = new ArrayList<>();
             
             // apply the configuration
             for (final PropertiesParser.GlobalProperty prop : setGlobalProperties.keySet()) {
@@ -100,7 +102,19 @@ public abstract class PropertiesApplier {
                 removeGlobalProperty(prop.getScope(), prop.getKey());
             }
             
+            // apply set worker properties
             for (final PropertiesParser.WorkerProperty prop : setWorkerProperties.keySet()) {
+                if (prop.getKey().equalsIgnoreCase(WorkerConfig.TYPE)) {
+                    // Apply the TYPE properties last so we are sure the IMPLEMENTATION_CLASS has been added first
+                    delayedSetWorkerProperties.add(prop);
+                } else {
+                    // All other properties can be applied now
+                    setWorkerProperty(Integer.parseInt(prop.getWorkerIdOrName()), prop.getKey(), setWorkerProperties.get(prop));
+                }
+            }
+
+            // apply delayed set worker properties
+            for (final PropertiesParser.WorkerProperty prop : delayedSetWorkerProperties) {
                 setWorkerProperty(Integer.parseInt(prop.getWorkerIdOrName()), prop.getKey(), setWorkerProperties.get(prop));
             }
             

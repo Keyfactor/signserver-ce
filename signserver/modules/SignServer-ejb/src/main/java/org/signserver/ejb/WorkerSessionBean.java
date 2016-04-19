@@ -610,6 +610,18 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
      */
     @Override
     public void setWorkerProperty(final AdminInfo adminInfo, int workerId, String key, String value) {
+        // Special case for auto-detecting worker type
+        if (WorkerConfig.TYPE.equalsIgnoreCase(key) && (value == null || value.trim().isEmpty())) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Auto-detecting worker type");
+            }
+            try {
+                IWorker obj = workerManagerSession.getWorker(new WorkerIdentifier(workerId));
+                value = obj.getWorkerType().name();
+            } catch (NoSuchWorkerException ex) {
+                LOG.error("Unable to auto-detect worker type as the worker can not be found: " + ex.getWorkerIdOrName());
+            }
+        }
         WorkerConfig config = getWorkerConfig(workerId);
         config.setProperty(key.toUpperCase(), value);
         setWorkerConfig(adminInfo, workerId, config, null, null);

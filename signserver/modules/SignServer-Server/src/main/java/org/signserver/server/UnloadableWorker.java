@@ -10,7 +10,7 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.server.signers;
+package org.signserver.server;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -28,6 +28,7 @@ import org.signserver.common.StaticWorkerStatus;
 import org.signserver.common.WorkerStatus;
 import org.signserver.server.IServices;
 import org.signserver.server.ServiceExecutionFailedException;
+import org.signserver.server.signers.BaseSigner;
 import org.signserver.server.timedservices.ITimedService;
 
 /**

@@ -16,6 +16,7 @@ import org.bouncycastle.util.encoders.Base64;
 import java.util.*;
 import org.signserver.common.AuthorizedClient;
 import org.signserver.common.GlobalConfiguration;
+import org.signserver.common.WorkerConfig;
 import static org.signserver.common.util.PropertiesConstants.*;
 
 /**
@@ -220,6 +221,20 @@ public class PropertiesParser {
     private void setGlobalProperty(String scope, String key, String value) {
         messages.add("Setting the global property " + key + " to " + value + " with scope " + scope);
         setGlobalProperties.put(new GlobalProperty(scope, key), value);
+        
+        // For backwards compatibility: If the old global config property for IMPLEMENTATION_CLASS is specified, we also set the new property
+        // Note: this logic is somewhat duplicated in SetPropertiesHelper
+        if (key.startsWith(WORKER_PREFIX)) {
+            String strippedKey = key.substring(WORKER_PREFIX.length());
+            String workerId = strippedKey.substring(0, strippedKey.indexOf('.'));
+             
+            if (key.endsWith(".SIGNERTOKEN.CLASSPATH")) {
+                setWorkerProperty(workerId, CRYPTOTOKEN_IMPLEMENTATION_CLASS, value);
+            } else if (key.endsWith(".CLASSPATH")) {
+                setWorkerProperty(workerId, IMPLEMENTATION_CLASS, value);
+                setWorkerProperty(workerId, WorkerConfig.TYPE, ""); // Empty type so it will be auto-detected
+            }
+        }
     }
 
     private void removeGlobalProperty(String scope, String key) {

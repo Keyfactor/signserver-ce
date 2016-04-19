@@ -12,7 +12,6 @@
  *************************************************************************/
 package org.signserver.server;
 
-import java.util.Collections;
 import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,6 +26,8 @@ import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 import org.signserver.common.WorkerStatusInfo;
 import org.signserver.common.WorkerType;
+import org.signserver.server.signers.CryptoWorker;
+import org.signserver.server.timedservices.ITimedService;
 
 /**
  * Base class with common methods for workers.
@@ -172,4 +173,37 @@ public abstract class BaseWorker implements IWorker {
                 config));
     }
 
+    /**
+     * Get the worker type for this worker.
+     *
+     * This is used to set the TYPE property for a worker when the database
+     * is upgraded from an old version that did not have this property or when
+     * the TYPE property is specified as an empty string to trigger this
+     * automatic detection of the type.
+     *
+     * Implementations could potentially override this method to suggest a
+     * different worker type.
+     *
+     * @return The suggested worker type describing this implementation
+     */
+    @Override
+    public WorkerType getWorkerType() {
+        final WorkerType type;
+        // Note: The order is important here!
+        // Start by checking for the most specific type
+        if (this instanceof UnloadableWorker) {
+            type = WorkerType.SPECIAL;
+        } else if (this instanceof CryptoWorker) {
+            type = WorkerType.CRYPTO_WORKER;
+        } else if (this instanceof ITimedService) {
+            type = WorkerType.TIMED_SERVICE;
+        } else if (this instanceof IProcessable) {
+            type = WorkerType.PROCESSABLE;
+        } else if (this instanceof CryptoWorker) {
+            type = WorkerType.CRYPTO_WORKER;
+        } else {
+            type = WorkerType.SPECIAL;
+        }
+        return type;
+    }
 }

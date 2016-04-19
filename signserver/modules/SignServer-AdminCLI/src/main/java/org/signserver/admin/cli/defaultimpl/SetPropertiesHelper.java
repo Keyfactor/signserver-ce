@@ -18,6 +18,7 @@ import java.rmi.RemoteException;
 import java.util.*;
 import org.signserver.common.AuthorizedClient;
 import org.signserver.common.GlobalConfiguration;
+import org.signserver.common.WorkerConfig;
 import static org.signserver.common.util.PropertiesConstants.*;
 
 /**
@@ -182,6 +183,34 @@ public class SetPropertiesHelper {
         out.println("Setting the global property " + key + " to " + value + " with scope " + scope);
         helper.getGlobalConfigurationSession().setProperty(scope, key, value);
 
+        // For backwards compatibility: If the old global config property for IMPLEMENTATION_CLASS is specified, we also set the new property
+        // Note: this logic is somewhat duplicated in PropertiesParser
+        if (key.startsWith(WORKER_PREFIX)) {
+            String strippedKey = key.substring(WORKER_PREFIX.length());
+            String workerIdString = strippedKey.substring(0, strippedKey.indexOf('.'));
+             
+            // Get worker ID
+            final int workerid;
+            if (workerIdString.matches("\\d")) {
+                workerid = Integer.parseInt(workerIdString);
+            } else {
+                if (workerIdString.startsWith(GENID)) {
+                    workerid = getGenId(workerIdString);
+                } else {
+                    workerid = helper.getWorkerId(workerIdString);
+                }
+            }
+            if (workerid == 0) {
+                out.println("Error in propertyfile syntax, couldn't find worker for key : " + key);
+            } else {
+                if (key.endsWith(".SIGNERTOKEN.CLASSPATH")) {
+                    setWorkerProperty(workerid, CRYPTOTOKEN_IMPLEMENTATION_CLASS, value);
+                } else if (key.endsWith(".CLASSPATH")) {
+                    setWorkerProperty(workerid, IMPLEMENTATION_CLASS, value);
+                    setWorkerProperty(workerid, WorkerConfig.TYPE, ""); // Empty type so it will be auto-detected
+                }
+            }
+        }
     }
 
     private void removeGlobalProperty(String scope, String key) throws RemoteException, Exception {

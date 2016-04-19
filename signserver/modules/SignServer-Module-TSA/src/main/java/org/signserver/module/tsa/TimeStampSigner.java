@@ -297,7 +297,7 @@ public class TimeStampSigner extends BaseSigner {
     private boolean ordering;
     private boolean includeOrdering;
     
-    private List<String> configErrors;
+    List<String> configErrors;
     
     @Override
     public void init(final int signerId, final WorkerConfig config,

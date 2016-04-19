@@ -957,6 +957,9 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
             OperationUnsupportedException {
         try {
             final ICryptoTokenV4 token = getCryptoToken(services);
+            if (token == null) {
+                throw new CryptoTokenOfflineException("Crypto token unavailable");
+            }
             return token.searchTokenEntries(startIndex, max, qc, includeData, params, services);
         } catch (SignServerException ex) {
             log.error(FAILED_TO_GET_CRYPTO_TOKEN_ + ex.getMessage());

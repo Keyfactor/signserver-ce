@@ -3,6 +3,7 @@ SignServer 4.0.0
 
 
 Notice:
+ - Database changes were introduced. See UPGRADE.txt for details.
  - The way to specify a worker's implementation class name in properties form
    has changed. Previously it was specified as:
    GLOB.WORKER4711.CLASSPATH=org.signserver.module.pdfsigner.PDFSigner
@@ -15,6 +16,13 @@ Notice:
    SPECIAL or CRYPTO_WORKER.
    Existing workers will get this worker property populated during the startup.
    See UPGRADE.txt.
+ - Previously deprecated crypto token implementations has been removed: 
+   SoftCryptoToken, HardCodedCryptoToken, OldPKCS11CryptoToken, and
+   PrimeCardHSMCryptoToken.
+   For SoftCryptoToken and HardCodedCryptoToken, used for demonstration purposes,
+   use KeystoreCryptoToken with the supplied sample configuration.
+   For OldPKCS11CryptoToken, configurations should be upgraded to use
+   PKCS11CryptoToken.
 
 See ChangeLog.txt for the full list of changes.
 

@@ -56,15 +56,6 @@ Note 2: During startup of SignServer each worker configuration without a
 worker type will get a worker type populated by loading the worker and checking
 the type of the implementation.
 
-b) Previosly deprecated crypto token implementations has been removed:
-SoftCryptoToken, HardCodedCryptoToken, OldPKCS11CryptoToken, and
-PrimeCardHSMCryptoToken.
-
-For SoftCryptoToken and HardCodedCryptoToken, used for demonstration purposes,
-use KeystoreCryptoToken with the supplied sample configuration.
-For OldPKCS11CryptoToken, configurations should be upgraded to use
-PKCS11CryptoToken.
-
 
 From SignServer 3.6.x to SignServer 3.7.x
 -----------------------------------------

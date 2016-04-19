@@ -182,7 +182,7 @@ public class PropertiesParserTest extends TestCase {
             
             assertEquals("Number of global properties", 3, setGlobalProps.size());
             assertEquals("Number of removed global properties", 1, removeGlobalProps.size());
-            assertEquals("Number of worker properties", 3, setWorkerProps.size());
+            assertEquals("Number of worker properties", 3 + 3, setWorkerProps.size()); // 3 normal worker properties and then 3 added for compatibility reasons (i.e. TYPE, IMPLEMENTATION_CLASS and CRYPTOTOKEN_IMPLEMENTATION_CLASS)
             assertEquals("Number of removed worker properties", 1, removeWorkerProps.size());
             
             assertTrue("Should contain global property",

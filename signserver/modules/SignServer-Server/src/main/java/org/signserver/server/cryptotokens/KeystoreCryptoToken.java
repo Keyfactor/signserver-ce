@@ -483,7 +483,6 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
     @Override
     public KeyStore getKeyStore() throws UnsupportedOperationException,
             CryptoTokenOfflineException, KeyStoreException {
-        LOG.error("getKeyStore(): " + this);
         if (ks == null) {
             throw new CryptoTokenOfflineException("Not activated");
         }

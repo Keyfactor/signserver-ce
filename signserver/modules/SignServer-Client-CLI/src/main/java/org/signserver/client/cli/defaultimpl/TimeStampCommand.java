@@ -31,8 +31,14 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.cli.*;
 import org.apache.log4j.Logger;
+import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.ASN1OctetString;
+import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.cmp.PKIFailureInfo;
+import org.bouncycastle.asn1.x509.Extension;
+import org.bouncycastle.asn1.x509.Extensions;
+import org.bouncycastle.asn1.x509.qualified.QCStatement;
 import org.bouncycastle.cert.AttributeCertificateHolder;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cms.CMSSignedData;
@@ -77,6 +83,9 @@ public class TimeStampCommand extends AbstractCommand {
 
     /** End key for certificates in PEM format. */
     private static final String PEM_END = "-----END CERTIFICATE-----";
+    
+    /** OID for the ETSI qualified timestamping extension value */
+    private static final ASN1ObjectIdentifier ID_ETSI_TSTS;
 
     private String urlstring;
 
@@ -109,6 +118,10 @@ public class TimeStampCommand extends AbstractCommand {
     private final Options options = new Options();
     
     private final KeyStoreOptions keyStoreOptions = new KeyStoreOptions();
+    
+    static {
+        ID_ETSI_TSTS = new ASN1ObjectIdentifier("0.4.0.19422.1.1");
+    }
     
     public TimeStampCommand() {
         // Create options
@@ -441,6 +454,25 @@ public class TimeStampCommand extends AbstractCommand {
 
                 out.print("         " + "Policy:                    ");
                 out.println(info.getPolicy());
+                
+                
+                final Extensions exts = info.toASN1Structure().getExtensions();
+                
+                if (exts != null) {
+                    out.println("      Extensions: ");
+                    for (final ASN1ObjectIdentifier oid : exts.getExtensionOIDs()) {
+                        final Extension extension = exts.getExtension(oid);
+                        
+                        out.println("        OID: " + oid.getId());
+                        out.println("        Critical: " +
+                                    (extension.isCritical() ? "yes" : "no"));
+                        
+                        if (oid.equals(Extension.qCStatements)) {
+                            printQualifiedStatement(extension);
+                        }
+                    }
+                    
+                }
             }
             out.println("      Signer ID: ");
             out.println("         Serial Number:             " + token.getSID().getSerialNumber().toString(16));
@@ -481,6 +513,38 @@ public class TimeStampCommand extends AbstractCommand {
         out.println("}");
     }
     
+    private void printQualifiedStatement(final Extension extension)
+        throws IOException {
+        out.println("          Qualified statement");
+        final ASN1Sequence seq =
+                ASN1Sequence.getInstance(extension.getExtnValue().getOctets());
+
+        if (seq != null) {
+            final QCStatement statement =
+                    QCStatement.getInstance(seq.getObjectAt(0));
+
+            if (statement != null) {
+                final ASN1Encodable statementInfo =
+                        statement.getStatementInfo();
+                final ASN1ObjectIdentifier oid =
+                        statement.getStatementId();
+                
+                out.print("          Statement ID: " + oid.getId());
+                
+                if (ID_ETSI_TSTS.equals(oid)) {
+                    out.println(" (ETSI EN 319 422 compliant)");
+                }
+                
+                out.println();
+
+                if (statementInfo != null) {
+                    out.println("          Statment info: " +
+                                Hex.encode(statementInfo.toASN1Primitive().getEncoded()));
+                }
+            }
+        }
+    }
+    
     private void tsaPrintQuery() throws Exception {
         final byte[] bytes = readFiletoBuffer(inreqstring);
 
@@ -511,6 +575,13 @@ public class TimeStampCommand extends AbstractCommand {
                 if (oid instanceof String) {
                     out.print("    " + oid + ": ");
                     out.println(new String(Hex.encode(request.getExtensionValue((String) oid))));
+                    
+                    final ASN1ObjectIdentifier oid2 = new ASN1ObjectIdentifier((String) oid);
+                    final Extension extension = request.getExtension(oid2);
+                    
+                    if (extension.equals(Extension.qCStatements)) {
+                        printQualifiedStatement(extension);
+                    }
                 }
             }
         }

@@ -16,11 +16,28 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigInteger;
-import java.security.*;
-import java.security.cert.*;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.SecureRandom;
+import java.security.SignatureException;
+import java.security.cert.CertStoreException;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateParsingException;
+import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -28,6 +45,7 @@ import org.bouncycastle.asn1.cmp.PKIStatus;
 import org.bouncycastle.asn1.oiw.OIWObjectIdentifiers;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.asn1.x509.Extensions;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.KeyPurposeId;
 import org.bouncycastle.cert.X509CertificateHolder;
@@ -165,7 +183,7 @@ import org.signserver.server.signers.BaseSigner;
  */
 public class TimeStampSigner extends BaseSigner {
 
-    /** Log4j instance for actual implementation class. */
+        /** Log4j instance for actual implementation class. */
     private static final Logger LOG = Logger.getLogger(TimeStampSigner.class);
 
     /** Random generator algorithm. */
@@ -278,7 +296,7 @@ public class TimeStampSigner extends BaseSigner {
     
     private boolean ordering;
    
-    private List<String> configErrors;
+    List<String> configErrors;
     
     @Override
     public void init(final int signerId, final WorkerConfig config,
@@ -495,15 +513,24 @@ public class TimeStampSigner extends BaseSigner {
 
             final TimeStampResponseGenerator timeStampResponseGen =
                     getTimeStampResponseGenerator(timeStampTokenGen);
-
+            
+            final Extensions additionalExtensions =
+                    getAdditionalExtensions(signRequest, requestContext);
             TimeStampResponse timeStampResponse;
-                 
+            
             try {
-                timeStampResponse =
-                        timeStampResponseGen.generateGrantedResponse(timeStampRequest,
-                                                                     serialNumber,
-                                                                     date,
-                                                                     includeStatusString ? "Operation Okay" : null);
+                if (additionalExtensions != null) {
+                    timeStampResponse =
+                            timeStampResponseGen.generateGrantedResponse(timeStampRequest,
+                                                          serialNumber, date,
+                                                          includeStatusString ? "Operation Okay" : null,
+                                                          additionalExtensions);
+                } else {
+                    timeStampResponse =
+                            timeStampResponseGen.generateGrantedResponse(timeStampRequest,
+                                                          serialNumber, date,
+                                                          includeStatusString ? "Operation Okay" : null);
+                }
             } catch (TSPException e) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Got exception generating response: ", e);
@@ -511,7 +538,7 @@ public class TimeStampSigner extends BaseSigner {
                 timeStampResponse =
                         timeStampResponseGen.generateRejectedResponse(e);
             }
-            
+
             final TimeStampToken token = timeStampResponse.getTimeStampToken();
             final byte[] signedbytes = timeStampResponse.getEncoded();
             cert = crypto.getCertificate();
@@ -1038,5 +1065,19 @@ public class TimeStampSigner extends BaseSigner {
 
         return result;
     }
-
+    
+    /**
+     * Get additional time stamp extensions.
+     * 
+     * @param request Signing request
+     * @param context Request context
+     * @return An Extensions object, or null if no additional extensions
+     *         should be included
+     * @throws java.io.IOException
+     */
+    protected Extensions getAdditionalExtensions(ProcessRequest request,
+                                                 RequestContext context)
+            throws IOException {
+        return null;
+    }
 }

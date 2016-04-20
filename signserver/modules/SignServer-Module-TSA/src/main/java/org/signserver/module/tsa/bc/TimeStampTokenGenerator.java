@@ -8,19 +8,26 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import org.bouncycastle.asn1.ASN1Boolean;
+import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.ASN1GeneralizedTime;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.DERInteger;
 import org.bouncycastle.asn1.DERNull;
+import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.cms.AttributeTable;
 import org.bouncycastle.asn1.ess.ESSCertID;
 import org.bouncycastle.asn1.ess.ESSCertIDv2;
@@ -32,6 +39,7 @@ import org.bouncycastle.asn1.tsp.Accuracy;
 import org.bouncycastle.asn1.tsp.MessageImprint;
 import org.bouncycastle.asn1.tsp.TSTInfo;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.asn1.x509.Extensions;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.GeneralNames;
 import org.bouncycastle.asn1.x509.IssuerSerial;
@@ -276,19 +284,21 @@ public class TimeStampTokenGenerator
         this.tsa = tsa;
     }
 
-    /**
-     * Generate a TimeStampToken for the passed in request and serialNumber marking it with the passed in genTime.
-     *
-     * @param request the originating request.
-     * @param serialNumber serial number for the TimeStampToken
-     * @param genTime token generation time.
-     * @return a TimeStampToken
-     * @throws TSPException
-     */
     public TimeStampToken generate(
         TimeStampRequest    request,
         BigInteger          serialNumber,
         Date                genTime)
+    throws TSPException
+    {
+        ASN1Sequence empty = new DERSequence();
+        return generate(request, serialNumber, genTime, Extensions.getInstance(empty));
+    }
+    
+    public TimeStampToken generate(
+        TimeStampRequest    request,
+        BigInteger          serialNumber,
+        Date                genTime,
+        Extensions          additionalExtensions)
         throws TSPException
     {
         ASN1ObjectIdentifier digestAlgOID = request.getMessageImprintAlgOID();
@@ -338,10 +348,37 @@ public class TimeStampTokenGenerator
             tsaPolicy = request.getReqPolicy();
         }
 
+        Extensions exts = request.getExtensions();
+
+        if (additionalExtensions != null &&
+            additionalExtensions.getExtensionOIDs().length > 0) {
+            List<ASN1Encodable> allExtensions =
+                    new LinkedList<ASN1Encodable>();
+            
+            if (exts != null) {
+                ASN1Sequence seq = (ASN1Sequence) exts.toASN1Primitive();
+                ASN1Encodable[] seqArr = seq.toArray();
+                List<ASN1Encodable> seqList = Arrays.asList(seqArr);
+                
+                allExtensions.addAll(seqList);
+            }
+            
+            ASN1Sequence additionalSeq =
+                    (ASN1Sequence) additionalExtensions.toASN1Primitive();
+                ASN1Encodable[] additionalSeqArr = additionalSeq.toArray();
+                List<ASN1Encodable> additionalSeqList =
+                        Arrays.asList(additionalSeqArr);
+            allExtensions.addAll(additionalSeqList);
+            
+            ASN1Sequence allSeq = new DERSequence(allExtensions.toArray(new ASN1Encodable[0]));
+            
+            exts = Extensions.getInstance(allSeq);
+        }
+
         TSTInfo tstInfo = new TSTInfo(tsaPolicy,
                 messageImprint, new ASN1Integer(serialNumber),
                 new ASN1GeneralizedTime(genTime), accuracy, derOrdering,
-                nonce, tsa, request.getExtensions());
+                nonce, tsa, exts);
 
         try
         {

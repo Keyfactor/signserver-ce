@@ -23,6 +23,7 @@ import org.bouncycastle.asn1.cmp.PKIStatus;
 import org.bouncycastle.asn1.cmp.PKIStatusInfo;
 import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.tsp.TimeStampResp;
+import org.bouncycastle.asn1.x509.Extensions;
 import org.bouncycastle.tsp.TSPException;
 import org.bouncycastle.tsp.TSPValidationException;
 
@@ -164,7 +165,7 @@ public class TimeStampResponseGenerator
      * @return a TimeStampResponse.
      * @throws TSPException
      */
-    public TimeStampResponse generate(
+    public TimeStampResponse generateGrantedResponse(
         TimeStampRequest    request,
         BigInteger          serialNumber,
         Date                genTime)
@@ -172,7 +173,7 @@ public class TimeStampResponseGenerator
     {
         try
         {
-            return this.generateGrantedResponse(request, serialNumber, genTime, "Operation Okay");
+            return this.generateGrantedResponse(request, serialNumber, genTime, "Operation Okay", null);
         }
         catch (Exception e)
         {
@@ -195,10 +196,11 @@ public class TimeStampResponseGenerator
     public TimeStampResponse generateGrantedResponse(
         TimeStampRequest    request,
         BigInteger          serialNumber,
-        Date                genTime)
+        Date                genTime,
+        String              statusString)
         throws TSPException
     {
-        return generateGrantedResponse(request, serialNumber, genTime, null);
+        return generateGrantedResponse(request, serialNumber, genTime, statusString, null);
     }
 
     /**
@@ -217,7 +219,8 @@ public class TimeStampResponseGenerator
         TimeStampRequest    request,
         BigInteger          serialNumber,
         Date                genTime,
-        String              statusString)
+        String              statusString,
+        Extensions          additionalExtensions)
         throws TSPException
     {
         if (genTime == null)
@@ -240,7 +243,7 @@ public class TimeStampResponseGenerator
         ContentInfo tstTokenContentInfo;
         try
         {
-            tstTokenContentInfo = tokenGenerator.generate(request, serialNumber, genTime).toCMSSignedData().toASN1Structure();
+            tstTokenContentInfo = tokenGenerator.generate(request, serialNumber, genTime, additionalExtensions).toCMSSignedData().toASN1Structure();
         }
         catch (TSPException e)
         {

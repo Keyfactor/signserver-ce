@@ -254,6 +254,28 @@ There is a howto about testing Authenticode signing available in <code>doc/howto
 						</p>
 					
 				</subsection>
+                                
+                <subsection name="Extended Time Stamp Signer">
+                    <p>
+The extended time stamp signer has the class name: org.signserver.module.tsa.ExtendedTimeStampSigner
+                    </p>
+                    <note>
+This is a SignServer Enterprise Edition (EE) feature.
+                    </note>
+                    <subsubsection name="Overview">
+                        <p>
+The extended time stamp signer, in addition to all features provided by the
+regular time stamp signer, also supports including the qualified time stamp
+extension, as required by EU regulation 910/2014 <a href="https://www.etsi.org/deliver/etsi_en/319400_319499/319422/01.01.01_60/en_319422v010101p.pdf">specification</a>.
+                        </p>
+                    </subsubsection>
+                    <subsubsection name="Available Properties">
+                        <p>
+<b>INCLUDE_QC_EXTENSION</b> = Set this to true to enable including the qualified time stamping extension (default: false)
+                        </p>
+                    </subsubsection>
+                </subsection>
+
 
                 <subsection name="MRTD Signer">
                     <p>

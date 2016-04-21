@@ -106,12 +106,20 @@ public class AdminLayerEJBImpl implements AdminWS {
     private static final Logger LOG = Logger.getLogger(AdminLayerEJBImpl.class);
 
     private static final HashSet<String> LONG_COLUMNS = new HashSet<String>();
+    private static final HashSet<String> INT_COLUMNS = new HashSet<String>();
+    
+    private static final String FIELD_SIGNERID = "signerid";
+    private static final String FIELD_TIME = "time";
+    private static final String FIELD_TYPE = "type";
     
     static {
         LONG_COLUMNS.add(AuditLogEntry.FIELD_TIMESTAMP);
         LONG_COLUMNS.add(AuditLogEntry.FIELD_SEQUENCENUMBER);
+        LONG_COLUMNS.add(FIELD_TIME);
+        INT_COLUMNS.add(FIELD_SIGNERID);
+        INT_COLUMNS.add(FIELD_TYPE);
     }
-    
+
     private IWorkerSession.IRemote worker;
     private IGlobalConfigurationSession.IRemote global;
     private SecurityEventsAuditorSessionRemote auditor;
@@ -1070,6 +1078,10 @@ public class AdminLayerEJBImpl implements AdminWS {
                     && !cond.getOperator().equals(org.signserver.admin.gui.adminws.gen.RelationalOperator.NULL) 
                     && !cond.getOperator().equals(org.signserver.admin.gui.adminws.gen.RelationalOperator.NOTNULL)) {
                 value = Long.parseLong(cond.getValue());
+            } else if (INT_COLUMNS.contains(cond.getColumn())
+                    && !cond.getOperator().equals(org.signserver.admin.gui.adminws.gen.RelationalOperator.NULL) 
+                    && !cond.getOperator().equals(org.signserver.admin.gui.adminws.gen.RelationalOperator.NOTNULL)) {
+                value = Integer.parseInt(cond.getValue());
             } else {
                 value = cond.getValue();
             }

@@ -644,8 +644,8 @@ bin/signserver reload 4711
 This is a quick start guide to quickly get you setup with a crypto token and a set of workers/signers for testing and demonstration purposes.
                     </p>
                     <h4>Setup a sample crypto token</h4>
-<p>Set up a crypto token called CryptoTokenSoft which uses a hard coded software keystore:</p>
-<code>$ bin/signserver setproperties doc/sample-configs/soft-crypto-configuration.properties</code>
+<p>Set up a crypto token called CryptoTokenP12 which uses a keystore-based token:</p>
+<code>$ bin/signserver setproperties doc/sample-configs/keystore-crypto-configuration.properties</code>
                         <p>
 Activate the configuration using the assigned worker ID that was printed (for instance 1):
                         </p>
@@ -830,7 +830,7 @@ modules built in.
                         </li>
                         <li>
 Setup the soft crypto token (if not already done) and activate it with its ID:<br/>
-<code>$ bin/signserver setproperties doc/sample-configs/soft-crypto-configuration.properties<br/>
+<code>$ bin/signserver setproperties doc/sample-configs/keystore-crypto-configuration.properties<br/>
 $ bin/signserver reload 1</code>
                         </li>
                         <li>
@@ -855,7 +855,7 @@ This HTML form also functions as a sample to show how you can make HTTP requests
                     </p>
                     <h4>Production configuration with HSM</h4>
                         <p>
-To install a production signer using an HSM instead of the CryptoTokenSoft, make 
+To install a production signer using an HSM instead of the CryptoTokenP12, make 
 a copy of doc/sample-configs/pkcs11-crypto-configuration.properties and configure
 the necessary properties for the HSM and apply that file using setproperties and
 reload with its worker ID.<br/>

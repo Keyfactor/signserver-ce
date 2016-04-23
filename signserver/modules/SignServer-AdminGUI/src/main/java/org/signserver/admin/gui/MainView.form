@@ -286,127 +286,6 @@
         </Menu>
       </SubComponents>
     </Container>
-    <Container class="javax.swing.JToolBar" name="jToolBar1">
-      <Properties>
-        <Property name="rollover" type="boolean" value="true"/>
-        <Property name="name" type="java.lang.String" value="jToolBar1" noResource="true"/>
-      </Properties>
-
-      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
-      <SubComponents>
-        <Component class="javax.swing.JButton" name="refreshButton">
-          <Properties>
-            <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
-              <action class="org.signserver.admin.gui.MainView" id="refreshWorkers" methodName="refreshWorkers"/>
-            </Property>
-            <Property name="text" type="java.lang.String" resourceKey="refreshButton.text"/>
-            <Property name="focusable" type="boolean" value="false"/>
-            <Property name="horizontalTextPosition" type="int" value="0"/>
-            <Property name="name" type="java.lang.String" value="refreshButton" noResource="true"/>
-            <Property name="verticalTextPosition" type="int" value="3"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JToolBar$Separator" name="jSeparator1">
-          <Properties>
-            <Property name="name" type="java.lang.String" value="jSeparator1" noResource="true"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JButton" name="activateButton">
-          <Properties>
-            <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
-              <action class="org.signserver.admin.gui.MainView" id="activateWorkers" methodName="activateWorkers"/>
-            </Property>
-            <Property name="text" type="java.lang.String" resourceKey="activateButton.text"/>
-            <Property name="focusable" type="boolean" value="false"/>
-            <Property name="horizontalTextPosition" type="int" value="0"/>
-            <Property name="name" type="java.lang.String" value="activateButton" noResource="true"/>
-            <Property name="verticalTextPosition" type="int" value="3"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JButton" name="deactivateButton">
-          <Properties>
-            <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
-              <action class="org.signserver.admin.gui.MainView" id="deactivateWorkers" methodName="deactivateWorkers"/>
-            </Property>
-            <Property name="text" type="java.lang.String" resourceKey="deactivateButton.text"/>
-            <Property name="focusable" type="boolean" value="false"/>
-            <Property name="horizontalTextPosition" type="int" value="0"/>
-            <Property name="name" type="java.lang.String" value="deactivateButton" noResource="true"/>
-            <Property name="verticalTextPosition" type="int" value="3"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JToolBar$Separator" name="jSeparator2">
-          <Properties>
-            <Property name="name" type="java.lang.String" value="jSeparator2" noResource="true"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JButton" name="renewKeyButton">
-          <Properties>
-            <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
-              <action class="org.signserver.admin.gui.MainView" id="renewKeys" methodName="renewKeys"/>
-            </Property>
-            <Property name="text" type="java.lang.String" resourceKey="renewKeyButton.text"/>
-            <Property name="focusable" type="boolean" value="false"/>
-            <Property name="horizontalTextPosition" type="int" value="0"/>
-            <Property name="name" type="java.lang.String" value="renewKeyButton" noResource="true"/>
-            <Property name="verticalTextPosition" type="int" value="3"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JButton" name="testKeyButton">
-          <Properties>
-            <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
-              <action class="org.signserver.admin.gui.MainView" id="testKeys" methodName="testKeys"/>
-            </Property>
-            <Property name="text" type="java.lang.String" resourceKey="testKeyButton.text"/>
-            <Property name="focusable" type="boolean" value="false"/>
-            <Property name="horizontalTextPosition" type="int" value="0"/>
-            <Property name="name" type="java.lang.String" value="testKeyButton" noResource="true"/>
-            <Property name="verticalTextPosition" type="int" value="3"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JButton" name="generateRequestsButton">
-          <Properties>
-            <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
-              <action class="org.signserver.admin.gui.MainView" id="generateRequests" methodName="generateRequests"/>
-            </Property>
-            <Property name="text" type="java.lang.String" resourceKey="generateRequestsButton.text"/>
-            <Property name="focusable" type="boolean" value="false"/>
-            <Property name="horizontalTextPosition" type="int" value="0"/>
-            <Property name="name" type="java.lang.String" value="generateRequestsButton" noResource="true"/>
-            <Property name="verticalTextPosition" type="int" value="3"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JButton" name="installCertificatesButton">
-          <Properties>
-            <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
-              <action class="org.signserver.admin.gui.MainView" id="installCertificates" methodName="installCertificates"/>
-            </Property>
-            <Property name="text" type="java.lang.String" resourceKey="installCertificatesButton.text"/>
-            <Property name="focusable" type="boolean" value="false"/>
-            <Property name="horizontalTextPosition" type="int" value="0"/>
-            <Property name="name" type="java.lang.String" value="installCertificatesButton" noResource="true"/>
-            <Property name="verticalTextPosition" type="int" value="3"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JToolBar$Separator" name="jSeparator6">
-          <Properties>
-            <Property name="name" type="java.lang.String" value="jSeparator6" noResource="true"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JButton" name="renewSignerButton">
-          <Properties>
-            <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
-              <action class="org.signserver.admin.gui.MainView" id="renewSigner" methodName="renewSigner"/>
-            </Property>
-            <Property name="text" type="java.lang.String" resourceKey="renewSignerButton.text"/>
-            <Property name="focusable" type="boolean" value="false"/>
-            <Property name="horizontalTextPosition" type="int" value="0"/>
-            <Property name="name" type="java.lang.String" value="renewSignerButton" noResource="true"/>
-            <Property name="verticalTextPosition" type="int" value="3"/>
-          </Properties>
-        </Component>
-      </SubComponents>
-    </Container>
     <Container class="javax.swing.JPanel" name="statusPanel">
       <Properties>
         <Property name="name" type="java.lang.String" value="statusPanel" noResource="true"/>
@@ -627,24 +506,147 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace max="-2" attributes="0"/>
+                  <Component id="jToolBar1" alignment="0" pref="1388" max="32767" attributes="0"/>
+                  <Group type="102" attributes="0">
+                      <EmptySpace min="12" pref="12" max="12" attributes="0"/>
                       <Component id="jSplitPane1" pref="1364" max="32767" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace min="12" pref="12" max="12" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
+                      <Component id="jToolBar1" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jSplitPane1" pref="857" max="32767" attributes="0"/>
+                      <Component id="jSplitPane1" pref="887" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
           </Layout>
           <SubComponents>
+            <Container class="javax.swing.JToolBar" name="jToolBar1">
+              <Properties>
+                <Property name="rollover" type="boolean" value="true"/>
+                <Property name="name" type="java.lang.String" value="Toolbar" noResource="true"/>
+              </Properties>
+
+              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
+              <SubComponents>
+                <Component class="javax.swing.JButton" name="refreshButton">
+                  <Properties>
+                    <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
+                      <action class="org.signserver.admin.gui.MainView" id="refreshWorkers" methodName="refreshWorkers"/>
+                    </Property>
+                    <Property name="text" type="java.lang.String" resourceKey="refreshButton.text"/>
+                    <Property name="focusable" type="boolean" value="false"/>
+                    <Property name="horizontalTextPosition" type="int" value="0"/>
+                    <Property name="name" type="java.lang.String" value="refreshButton" noResource="true"/>
+                    <Property name="verticalTextPosition" type="int" value="3"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JToolBar$Separator" name="jSeparator1">
+                  <Properties>
+                    <Property name="name" type="java.lang.String" value="jSeparator1" noResource="true"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JButton" name="activateButton">
+                  <Properties>
+                    <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
+                      <action class="org.signserver.admin.gui.MainView" id="activateWorkers" methodName="activateWorkers"/>
+                    </Property>
+                    <Property name="text" type="java.lang.String" resourceKey="activateButton.text"/>
+                    <Property name="focusable" type="boolean" value="false"/>
+                    <Property name="horizontalTextPosition" type="int" value="0"/>
+                    <Property name="name" type="java.lang.String" value="activateButton" noResource="true"/>
+                    <Property name="verticalTextPosition" type="int" value="3"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JButton" name="deactivateButton">
+                  <Properties>
+                    <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
+                      <action class="org.signserver.admin.gui.MainView" id="deactivateWorkers" methodName="deactivateWorkers"/>
+                    </Property>
+                    <Property name="text" type="java.lang.String" resourceKey="deactivateButton.text"/>
+                    <Property name="focusable" type="boolean" value="false"/>
+                    <Property name="horizontalTextPosition" type="int" value="0"/>
+                    <Property name="name" type="java.lang.String" value="deactivateButton" noResource="true"/>
+                    <Property name="verticalTextPosition" type="int" value="3"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JToolBar$Separator" name="jSeparator2">
+                  <Properties>
+                    <Property name="name" type="java.lang.String" value="jSeparator2" noResource="true"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JButton" name="renewKeyButton">
+                  <Properties>
+                    <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
+                      <action class="org.signserver.admin.gui.MainView" id="renewKeys" methodName="renewKeys"/>
+                    </Property>
+                    <Property name="text" type="java.lang.String" resourceKey="renewKeyButton.text"/>
+                    <Property name="focusable" type="boolean" value="false"/>
+                    <Property name="horizontalTextPosition" type="int" value="0"/>
+                    <Property name="name" type="java.lang.String" value="renewKeyButton" noResource="true"/>
+                    <Property name="verticalTextPosition" type="int" value="3"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JButton" name="testKeyButton">
+                  <Properties>
+                    <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
+                      <action class="org.signserver.admin.gui.MainView" id="testKeys" methodName="testKeys"/>
+                    </Property>
+                    <Property name="text" type="java.lang.String" resourceKey="testKeyButton.text"/>
+                    <Property name="focusable" type="boolean" value="false"/>
+                    <Property name="horizontalTextPosition" type="int" value="0"/>
+                    <Property name="name" type="java.lang.String" value="testKeyButton" noResource="true"/>
+                    <Property name="verticalTextPosition" type="int" value="3"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JButton" name="generateRequestsButton">
+                  <Properties>
+                    <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
+                      <action class="org.signserver.admin.gui.MainView" id="generateRequests" methodName="generateRequests"/>
+                    </Property>
+                    <Property name="text" type="java.lang.String" resourceKey="generateRequestsButton.text"/>
+                    <Property name="focusable" type="boolean" value="false"/>
+                    <Property name="horizontalTextPosition" type="int" value="0"/>
+                    <Property name="name" type="java.lang.String" value="generateRequestsButton" noResource="true"/>
+                    <Property name="verticalTextPosition" type="int" value="3"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JButton" name="installCertificatesButton">
+                  <Properties>
+                    <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
+                      <action class="org.signserver.admin.gui.MainView" id="installCertificates" methodName="installCertificates"/>
+                    </Property>
+                    <Property name="text" type="java.lang.String" resourceKey="installCertificatesButton.text"/>
+                    <Property name="focusable" type="boolean" value="false"/>
+                    <Property name="horizontalTextPosition" type="int" value="0"/>
+                    <Property name="name" type="java.lang.String" value="installCertificatesButton" noResource="true"/>
+                    <Property name="verticalTextPosition" type="int" value="3"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JToolBar$Separator" name="jSeparator6">
+                  <Properties>
+                    <Property name="name" type="java.lang.String" value="jSeparator6" noResource="true"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JButton" name="renewSignerButton">
+                  <Properties>
+                    <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
+                      <action class="org.signserver.admin.gui.MainView" id="renewSigner" methodName="renewSigner"/>
+                    </Property>
+                    <Property name="text" type="java.lang.String" resourceKey="renewSignerButton.text"/>
+                    <Property name="focusable" type="boolean" value="false"/>
+                    <Property name="horizontalTextPosition" type="int" value="0"/>
+                    <Property name="name" type="java.lang.String" value="renewSignerButton" noResource="true"/>
+                    <Property name="verticalTextPosition" type="int" value="3"/>
+                  </Properties>
+                </Component>
+              </SubComponents>
+            </Container>
             <Container class="javax.swing.JSplitPane" name="jSplitPane1">
               <Properties>
                 <Property name="name" type="java.lang.String" value="jSplitPane1" noResource="true"/>
@@ -693,7 +695,7 @@
                           <Group type="102" alignment="1" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="1" attributes="0">
-                                  <Component id="workerTabbedPane" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="workerTabbedPane" alignment="0" pref="1085" max="32767" attributes="0"/>
                                   <Component id="workerComboBox" alignment="0" pref="1085" max="32767" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
@@ -706,7 +708,7 @@
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="workerComboBox" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Component id="workerTabbedPane" pref="784" max="32767" attributes="0"/>
+                              <Component id="workerTabbedPane" pref="822" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -793,12 +795,12 @@
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="statusPropertiesDetailsButton" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace pref="678" max="32767" attributes="0"/>
+                                      <EmptySpace pref="732" max="32767" attributes="0"/>
                                   </Group>
                                   <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                                       <Group type="102" alignment="0" attributes="0">
                                           <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="statusPropertiesScrollPane" pref="709" max="32767" attributes="0"/>
+                                          <Component id="statusPropertiesScrollPane" pref="755" max="32767" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
@@ -903,7 +905,7 @@
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="jScrollPane6" alignment="0" pref="709" max="32767" attributes="0"/>
+                                          <Component id="jScrollPane6" alignment="0" pref="755" max="32767" attributes="0"/>
                                           <Group type="102" alignment="0" attributes="0">
                                               <Component id="addButton" min="-2" max="-2" attributes="0"/>
                                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
@@ -1043,12 +1045,12 @@
                                       <Component id="authEditButton" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="authRemoveButton" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace pref="574" max="32767" attributes="0"/>
+                                      <EmptySpace pref="644" max="32767" attributes="0"/>
                                   </Group>
                                   <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                                       <Group type="102" alignment="0" attributes="0">
                                           <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="jScrollPane7" pref="709" max="32767" attributes="0"/>
+                                          <Component id="jScrollPane7" pref="755" max="32767" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
@@ -1134,7 +1136,7 @@
                                       <Group type="103" groupAlignment="0" attributes="0">
                                           <Component id="jLabel1" alignment="0" pref="1041" max="32767" attributes="0"/>
                                           <Group type="102" alignment="1" attributes="0">
-                                              <Component id="tokenEntriesPanel" pref="816" max="32767" attributes="0"/>
+                                              <Component id="tokenEntriesPanel" pref="819" max="32767" attributes="0"/>
                                               <EmptySpace type="separate" max="-2" attributes="0"/>
                                               <Group type="103" groupAlignment="0" attributes="0">
                                                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
@@ -1204,7 +1206,7 @@
                                               <EmptySpace type="separate" max="-2" attributes="0"/>
                                               <Component id="tokenEntriesDetailsButton" min="-2" max="-2" attributes="0"/>
                                           </Group>
-                                          <Component id="tokenEntriesPanel" pref="617" max="32767" attributes="0"/>
+                                          <Component id="tokenEntriesPanel" pref="671" max="32767" attributes="0"/>
                                       </Group>
                                       <EmptySpace min="-2" max="-2" attributes="0"/>
                                   </Group>
@@ -1399,12 +1401,12 @@
                                   <Layout>
                                     <DimensionLayout dim="0">
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="jScrollPane9" alignment="1" max="32767" attributes="0"/>
+                                          <Component id="jScrollPane9" alignment="1" pref="819" max="32767" attributes="0"/>
                                       </Group>
                                     </DimensionLayout>
                                     <DimensionLayout dim="1">
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="jScrollPane9" alignment="0" pref="617" max="32767" attributes="0"/>
+                                          <Component id="jScrollPane9" alignment="0" pref="671" max="32767" attributes="0"/>
                                       </Group>
                                     </DimensionLayout>
                                   </Layout>
@@ -1464,7 +1466,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jSplitPane2" pref="857" max="32767" attributes="0"/>
+                      <Component id="jSplitPane2" pref="918" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -1523,7 +1525,7 @@
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="jButtonAuditConditionRemove" min="-2" max="-2" attributes="0"/>
                                   </Group>
-                                  <Component id="jScrollPane3" alignment="0" pref="92" max="32767" attributes="0"/>
+                                  <Component id="jScrollPane3" alignment="0" pref="87" max="32767" attributes="0"/>
                               </Group>
                               <EmptySpace min="-2" max="-2" attributes="0"/>
                           </Group>
@@ -1643,7 +1645,7 @@
                               <Component id="jLabel8" min="-2" pref="156" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="auditlogMaxEntriesTextfield" min="-2" pref="56" max="-2" attributes="0"/>
-                              <EmptySpace pref="402" max="32767" attributes="0"/>
+                              <EmptySpace pref="406" max="32767" attributes="0"/>
                           </Group>
                           <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
@@ -1671,7 +1673,7 @@
                                       <Component id="auditlogMaxEntriesTextfield" alignment="3" min="-2" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
-                              <EmptySpace pref="674" max="32767" attributes="0"/>
+                              <EmptySpace pref="743" max="32767" attributes="0"/>
                           </Group>
                           <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="1" attributes="0">
@@ -1792,9 +1794,9 @@
                             </DimensionLayout>
                             <DimensionLayout dim="1">
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <EmptySpace min="0" pref="658" max="32767" attributes="0"/>
+                                  <EmptySpace min="0" pref="719" max="32767" attributes="0"/>
                                   <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
-                                      <Component id="auditlogTableScrollPane" alignment="0" pref="658" max="32767" attributes="0"/>
+                                      <Component id="auditlogTableScrollPane" alignment="0" pref="719" max="32767" attributes="0"/>
                                   </Group>
                               </Group>
                             </DimensionLayout>
@@ -1866,12 +1868,12 @@
                           <Layout>
                             <DimensionLayout dim="0">
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jScrollPane5" alignment="1" max="32767" attributes="0"/>
+                                  <Component id="jScrollPane5" alignment="1" pref="1340" max="32767" attributes="0"/>
                               </Group>
                             </DimensionLayout>
                             <DimensionLayout dim="1">
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jScrollPane5" alignment="0" pref="658" max="32767" attributes="0"/>
+                                  <Component id="jScrollPane5" alignment="0" pref="719" max="32767" attributes="0"/>
                               </Group>
                             </DimensionLayout>
                           </Layout>
@@ -1933,7 +1935,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jSplitPane3" pref="808" max="32767" attributes="0"/>
+                      <Component id="jSplitPane3" pref="877" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="downloadArchiveEntriesButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -1994,7 +1996,7 @@
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="jButtonArchiveConditionRemove" min="-2" max="-2" attributes="0"/>
                                   </Group>
-                                  <Component id="jScrollPane4" alignment="0" pref="92" max="32767" attributes="0"/>
+                                  <Component id="jScrollPane4" alignment="0" pref="87" max="32767" attributes="0"/>
                               </Group>
                               <EmptySpace min="-2" max="-2" attributes="0"/>
                           </Group>
@@ -2108,7 +2110,7 @@
                               <Component id="jLabel13" min="-2" pref="156" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="archiveMaxEntriesTextfield" min="-2" pref="56" max="-2" attributes="0"/>
-                              <EmptySpace pref="402" max="32767" attributes="0"/>
+                              <EmptySpace pref="406" max="32767" attributes="0"/>
                           </Group>
                           <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
@@ -2136,7 +2138,7 @@
                                   </Group>
                                   <Component id="archivePreviousButton" alignment="0" max="32767" attributes="1"/>
                               </Group>
-                              <EmptySpace pref="625" max="32767" attributes="0"/>
+                              <EmptySpace pref="702" max="32767" attributes="0"/>
                           </Group>
                           <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="1" attributes="0">
@@ -2254,7 +2256,7 @@
                             </DimensionLayout>
                             <DimensionLayout dim="1">
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="archiveTableScrollPane" alignment="0" pref="609" max="32767" attributes="0"/>
+                                  <Component id="archiveTableScrollPane" alignment="0" pref="678" max="32767" attributes="0"/>
                               </Group>
                             </DimensionLayout>
                           </Layout>
@@ -2346,12 +2348,12 @@
                           <Layout>
                             <DimensionLayout dim="0">
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jScrollPane8" alignment="1" max="32767" attributes="0"/>
+                                  <Component id="jScrollPane8" alignment="1" pref="1340" max="32767" attributes="0"/>
                               </Group>
                             </DimensionLayout>
                             <DimensionLayout dim="1">
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jScrollPane8" alignment="0" pref="609" max="32767" attributes="0"/>
+                                  <Component id="jScrollPane8" alignment="0" pref="678" max="32767" attributes="0"/>
                               </Group>
                             </DimensionLayout>
                           </Layout>

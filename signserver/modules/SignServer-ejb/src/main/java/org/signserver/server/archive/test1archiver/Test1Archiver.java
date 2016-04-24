@@ -36,7 +36,7 @@ import org.signserver.server.archive.ArchiverInitException;
  * @author Markus Kilås
  * @version $Id$
  */
-public class Test1Archiver implements Archiver {
+public class Test1Archiver implements Archiver extends BaseArchiver {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(Test1Archiver.class);

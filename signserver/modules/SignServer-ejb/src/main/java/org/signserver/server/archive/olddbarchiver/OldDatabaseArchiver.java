@@ -42,7 +42,7 @@ import org.signserver.server.log.LogMap;
  * @author Markus Kilås
  * @version $Id$
  */
-public class OldDatabaseArchiver implements Archiver {
+public class OldDatabaseArchiver implements Archiver extends BaseArchiver {
     
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(OldDatabaseArchiver.class);

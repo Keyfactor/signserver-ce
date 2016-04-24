@@ -44,7 +44,7 @@ import org.signserver.server.log.LogMap;
  * @author Markus Kilås
  * @version $Id$
  */
-public class Base64DatabaseArchiver implements Archiver {
+public class Base64DatabaseArchiver implements Archiver extends BaseArchiver {
     
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(Base64DatabaseArchiver.class);

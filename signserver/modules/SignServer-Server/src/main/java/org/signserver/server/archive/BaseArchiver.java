@@ -29,11 +29,10 @@ public abstract class BaseArchiver {
     
     /**
      * Gets fatal errors for the archiver instance.
-     * 
-     * @param services
+     *
      * @return A list a fatal errors
      */
-    public List<String> getFatalErrors(IServices services) {
+    public List<String> getFatalErrors() {
         return fatalErrors;
     }
     

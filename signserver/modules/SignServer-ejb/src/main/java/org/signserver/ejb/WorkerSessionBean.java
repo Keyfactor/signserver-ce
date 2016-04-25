@@ -72,6 +72,7 @@ import org.signserver.ejb.interfaces.WorkerSessionLocal;
 import org.signserver.ejb.interfaces.WorkerSessionRemote;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
 import org.signserver.ejb.interfaces.ServiceTimerSessionLocal;
+import org.signserver.server.archive.Archiver;
 import org.signserver.server.cryptotokens.CryptoTokenHelper;
 import org.signserver.statusrepo.StatusRepositorySessionLocal;
 
@@ -271,6 +272,10 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
             final IAuthorizer authorizer = worker.getAuthorizer();
             if (authorizer != null) {
                 errorsAtEjbLevel.addAll(authorizer.getFatalErrors());
+            }
+            
+            for (final Archiver archiver : worker.getArchivers()) {
+                errorsAtEjbLevel.addAll(archiver.getFatalErrors());
             }
             
             errorsAtEjbLevel.addAll(worker.getCreateErrors());

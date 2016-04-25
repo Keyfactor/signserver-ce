@@ -30,6 +30,7 @@ import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.ArchiveException;
 import org.signserver.server.archive.Archiver;
 import org.signserver.server.archive.ArchiverInitException;
+import org.signserver.server.archive.BaseArchiver;
 import org.signserver.server.archive.olddbarchiver.ArchiveOfTypes;
 import org.signserver.server.archive.olddbarchiver.entities.ArchiveDataService;
 import org.signserver.server.log.IWorkerLogger;
@@ -44,8 +45,8 @@ import org.signserver.server.log.LogMap;
  * @author Markus Kilås
  * @version $Id$
  */
-public class Base64DatabaseArchiver implements Archiver extends BaseArchiver {
-    
+public class Base64DatabaseArchiver extends BaseArchiver implements Archiver {
+
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(Base64DatabaseArchiver.class);
     

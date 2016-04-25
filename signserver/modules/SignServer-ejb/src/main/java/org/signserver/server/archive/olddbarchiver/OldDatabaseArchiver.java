@@ -32,6 +32,7 @@ import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.ArchiveException;
 import org.signserver.server.archive.Archiver;
 import org.signserver.server.archive.ArchiverInitException;
+import org.signserver.server.archive.BaseArchiver;
 import org.signserver.server.archive.olddbarchiver.entities.ArchiveDataService;
 import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.log.LogMap;
@@ -42,7 +43,7 @@ import org.signserver.server.log.LogMap;
  * @author Markus Kilås
  * @version $Id$
  */
-public class OldDatabaseArchiver implements Archiver extends BaseArchiver {
+public class OldDatabaseArchiver extends BaseArchiver implements Archiver {
     
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(OldDatabaseArchiver.class);

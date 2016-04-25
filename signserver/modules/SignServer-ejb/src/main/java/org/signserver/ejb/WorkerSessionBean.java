@@ -274,10 +274,13 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
                 errorsAtEjbLevel.addAll(authorizer.getFatalErrors());
             }
             
-            for (final Archiver archiver : worker.getArchivers()) {
-                errorsAtEjbLevel.addAll(archiver.getFatalErrors());
+            final List<Archiver> archivers = worker.getArchivers();
+            if (archivers != null) {
+                for (final Archiver archiver : worker.getArchivers()) {
+                    errorsAtEjbLevel.addAll(archiver.getFatalErrors());
+                }
             }
-            
+
             errorsAtEjbLevel.addAll(worker.getCreateErrors());
         
             return worker.getWorker().getStatus(errorsAtEjbLevel, servicesImpl);

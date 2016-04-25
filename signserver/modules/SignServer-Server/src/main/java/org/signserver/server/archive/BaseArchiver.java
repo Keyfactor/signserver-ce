@@ -14,6 +14,7 @@ package org.signserver.server.archive;
 
 import java.util.LinkedList;
 import java.util.List;
+import org.signserver.server.IServices;
 
 /**
  * Abstract base implementation of an archiver.
@@ -29,9 +30,10 @@ public abstract class BaseArchiver {
     /**
      * Gets fatal errors for the archiver instance.
      * 
+     * @param services
      * @return A list a fatal errors
      */
-    public List<String> getFatalErrors() {
+    public List<String> getFatalErrors(IServices services) {
         return fatalErrors;
     }
     

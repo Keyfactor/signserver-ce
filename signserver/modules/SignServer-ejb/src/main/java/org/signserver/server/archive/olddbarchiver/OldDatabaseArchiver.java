@@ -63,7 +63,7 @@ public class OldDatabaseArchiver extends BaseArchiver implements Archiver {
     @Override
     public void init(int listIndex, WorkerConfig config, SignServerContext context) throws ArchiverInitException {
         if (!context.isDatabaseConfigured()) {
-            throw new ArchiverInitException("OldDatabaseArchiver requires a database connection");
+            addFatalError("OldDatabaseArchiver requires a database connection");
         }
         
         // Configuration of what to archive
@@ -71,10 +71,12 @@ public class OldDatabaseArchiver extends BaseArchiver implements Archiver {
         try {
             archiveOfTypes = ArchiveOfTypes.valueOf(config.getProperty(propertyArchiveOfType, ArchiveOfTypes.RESPONSE.name()));
         } catch (IllegalArgumentException ex) {
+            final String error =
+                    "Illegal value for worker property " + propertyArchiveOfType;
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Illegal value for worker property " + propertyArchiveOfType + ": " + ex.getMessage());
+                LOG.debug(error + ": " + ex.getMessage());
             }
-            throw new ArchiverInitException("Illegal value for worker property " + propertyArchiveOfType);
+            addFatalError(error);
         }
         
         // configuration for using the X-FORWARDED-FOR header to determine source IP

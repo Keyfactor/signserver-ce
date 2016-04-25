@@ -42,7 +42,7 @@ public abstract class BaseArchiver {
      * 
      * @param error 
      */
-    public void addFatalError(final String error) {
+    protected void addFatalError(final String error) {
         fatalErrors.add(error);
     } 
 }

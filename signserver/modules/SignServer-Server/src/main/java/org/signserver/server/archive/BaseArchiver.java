@@ -23,7 +23,7 @@ import org.signserver.server.IServices;
  * @author Marcus Lundblad
  * @version $Id$
  */
-public abstract class BaseArchiver {
+public abstract class BaseArchiver implements Archiver {
     
     private final List<String> fatalErrors = new LinkedList<>();
     
@@ -32,6 +32,7 @@ public abstract class BaseArchiver {
      *
      * @return A list a fatal errors
      */
+    @Override
     public List<String> getFatalErrors() {
         return fatalErrors;
     }

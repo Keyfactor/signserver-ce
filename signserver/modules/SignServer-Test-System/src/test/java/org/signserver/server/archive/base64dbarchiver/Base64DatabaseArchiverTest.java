@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.server.archive.base64dbarchiver;
 
+import java.util.List;
 import java.util.Random;
 import org.apache.log4j.Logger;
 import org.junit.After;
@@ -22,6 +23,7 @@ import org.signserver.server.archive.ArchiveTest;
 import org.signserver.server.archive.ArchiveTestCase;
 import org.junit.Before;
 import org.junit.Test;
+import org.signserver.common.WorkerIdentifier;
 
 /**
  * Tests for the Base64DatabaseArchiver.
@@ -391,6 +393,32 @@ public class Base64DatabaseArchiverTest extends ArchiveTestCase {
         final String ip = archiveData.getRequestIP();
         
         assertEquals("Archiver should include direct address", "127.0.0.1", ip);
+    }
+    
+    /**
+     * Test that setting an invalid ARCHIVE_OF_TYPE results in a fatal error,
+     * rendering the worker offline.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void test67archiveInvalidArchiverType() throws Exception {
+        final int signerId = getSignerIdDummy1();
+        
+        try {
+            getWorkerSession().setWorkerProperty(signerId,
+                                                 "ARCHIVER0.ARCHIVE_OF_TYPE",
+                                                 "invalid");
+            getWorkerSession().reloadConfiguration(signerId);
+            final List<String> fatalErrors =
+                    getWorkerSession().getStatus(new WorkerIdentifier(signerId)).getFatalErrors();
+            
+            assertTrue("Should contain error", fatalErrors.contains("Illegal value for worker property ARCHIVER0.ARCHIVE_OF_TYPE"));
+        } finally {
+            // restore
+            getWorkerSession().removeWorkerProperty(signerId, "ARCHIVER0.ARCHIVE_OF_TYPE");
+            getWorkerSession().reloadConfiguration(signerId);
+        }
     }
     
     /**

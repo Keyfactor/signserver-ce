@@ -4,7 +4,7 @@
     <bannerLeft>
         <name>SignServer - Open Source server side Digital Signatures</name>
         <src>images/SignServer_pki_by_primekey.png</src>
-        <href>https://www.signserver.org/</href>
+        <href>index.html</href>
     </bannerLeft>
     <publishDate />
     <version/>
@@ -14,8 +14,8 @@
         <version>1.3.1</version>
     </skin>
     <poweredBy>
-        <logo name="EJBCA - PKI by PrimeKey" img="images/ejbca_pki_by_primekey.png" href="https://www.ejbca.org" alt="Click the PKI-by-PrimeKey-EJBCA-logo to visit www.ejbca.org" />
-        <logo name="PrimeKey Solutions" img="images/logo-PrimeKey.png" href="https://www.primekey.se/technologies/products-overview/ejbca-enterprise/" alt="Click the PrimeKey logo to check out the products and services offered at www.primekey.se" />
+        <logo name="EJBCA - PKI by PrimeKey" img="images/ejbca_pki_by_primekey.png" href="https://www.primekey.se/technologies/products-overview/ejbca-enterprise/" alt="Click the PKI-by-PrimeKey-EJBCA-logo to visit www.ejbca.org" />
+        <logo name="PrimeKey Solutions" img="images/logo-PrimeKey.png" href="https://www.primekey.se" alt="Click the PrimeKey logo to check out the products and services offered at www.primekey.se" />
     </poweredBy>
     
     <!--  <bannerRight>
@@ -26,7 +26,7 @@
         <links>
             <item name="PrimeKey Solutions" href="https://www.primekey.se/" />
             <item name="EJBCA" href="https://www.ejbca.org/"/>
-            <item name="SignServer" href="https://www.signserver.org"/>
+            <item name="SignServer.org" href="https://www.signserver.org"/>
         </links>
 
         <menu name="Documentation">

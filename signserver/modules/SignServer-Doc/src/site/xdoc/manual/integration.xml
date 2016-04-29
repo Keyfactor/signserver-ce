@@ -33,7 +33,7 @@
 The SignServer ClientWS interface can be used to request signings from SignServer.
             </p>
             <p>
-The WSDL file is located at the URL http://&lt;hostname&gt;:8080/signserver/ClientWSService/ClientWS?wsdl and locally in the sources under modules/SignServer-Client-ClientWS/xml-resources/web-service-references/ClientWS/wsdl/localhost_8080/signserver/ClientWSService/ClientWS.wsdl.
+The WSDL file is located at the URL <code>http://&lt;hostname&gt;:8080/signserver/ClientWSService/ClientWS?wsdl</code> and locally in the sources under <code>modules/SignServer-Client-ClientWS/xml-resources/web-service-references/ClientWS/wsdl/localhost_8080/signserver/ClientWSService/ClientWS.wsdl</code>.
             </p>
             <subsection name="Operations">
                 <table>
@@ -516,14 +516,13 @@ try {
                         </table>
 
 
-                        <subsubsection name="Samples">
-                            <ul>
-                                <li>
-                                    See /signserver/demo/mrtdsodsign.jsp.<br/>
-                                    <br/>
-                                </li>
-                            </ul>
-                        </subsubsection>
+                        <h4>Samples</h4>
+                        <ul>
+                            <li>
+                                See /signserver/demo/mrtdsodsign.jsp.<br/>
+                                <br/>
+                            </li>
+                        </ul>
                     </subsection>
 		</section>
 
@@ -534,8 +533,7 @@ SignServer the script bin/client.sh can be run.
                     </p>
                     <source>
 $ bin/signclient
-INFO  usage: client &lt;signdocument | validatedocument | timestamp | validatecertificate | signdatagroups&gt;
-                    </source>
+usage: signclient &lt;signdocument | validatedocument | timestamp | validatecertificate | signdatagroups&gt;</source>
 
                     <subsection name="signdocument">
                         <p>
@@ -608,8 +606,7 @@ d) signdocument -workerid 2 -data "&lt;root/&gt;" -keystore superadmin.jks
 e) signdocument -workerid 2 -data "&lt;root/&gt;" -metadata param1=value1
 -metadata param2=value2
 f) signdocument -workerid 3 -indir ./input/ -removefromindir -outdir
-./output/ -threads 5
-                        </source>
+./output/ -threads 5</source>
                     </subsection>
 
                     <subsection name="validatedocument">
@@ -660,8 +657,7 @@ d) validatedocument -workerid 2 -infile /tmp/signed.xml -keystore
 superadmin.jks -truststorepwd foo123
 e) validatedocument -workername XMLValidator -protocol HTTP -infile
 /tmp/signed.xml
-f) validatedocument -workername XMLValidator -infile /tmp/signed.xml -metadata param1=value1 -metadata param2=value2
-                        </source>
+f) validatedocument -workername XMLValidator -infile /tmp/signed.xml -metadata param1=value1 -metadata param2=value2</source>
                     </subsection>
 
                     <subsection name="timestamp">
@@ -717,8 +713,7 @@ usage: timestamp &lt;options&gt; [url]
 Sample usages:
 a) timestamp -url http://localhost:8080/signserver/tsa?workerName=TimeStampSigner
 b) timestamp -print -inreq query.tsq
-c) timestamp -print -inrep reply.tsr
-                        </source>
+c) timestamp -print -inrep reply.tsr</source>
                     </subsection>
 
                     <subsection name="validatecertificate">
@@ -771,8 +766,7 @@ a) validatecertificate -service CertValidationWorker -hosts localhost -cert
 b) validatecertificate -service 5806 -hosts localhost -cert certificate.pem
     -truststore p12/truststore.jks -truststorepwd changeit
 c) validatecertificate -service CertValidationWorker -hosts localhost
-    -cert certificate.pem -protocol HTTP
-                        </source>
+    -cert certificate.pem -protocol HTTP</source>
                     </subsection>
 
                     <subsection name="signdatagroups">
@@ -819,8 +813,7 @@ Request MRTD data groups to be signed
 
 Sample usages:
 a) signdatagroups -workername MRTDSODSigner -data "1=value1&amp;2=value2&amp;3=value3"
-b) signdatagroups -workername MRTDSODSigner -data "1=value1&amp;2=value2&amp;3=value3" -metadata param1=value1 -metadata param2=value2
-                        </source>
+b) signdatagroups -workername MRTDSODSigner -data "1=value1&amp;2=value2&amp;3=value3" -metadata param1=value1 -metadata param2=value2</source>
                     </subsection>
 
                 </section>
@@ -847,8 +840,7 @@ Usage: signserver wsadmins -list
 Example 1: signserver wsadmins -add -certserialno 123abcdef -issuerdn "C=SE, CN=Neo Morpheus"
 Example 2: signserver wsadmins -add -cert cert.pem
 Example 3: signserver wsadmins -remove -certserialno 123abcdef -issuerdn "C=SE, CN=Neo Morpheus"
-Example 4: signserver wsadmins -list
-                    </source>
+Example 4: signserver wsadmins -list</source>
                     <p>
 Notice that the certificate serial number should be entered as the hexadecimal
 representation (leading zeros and upper/lowercase is not significant). 
@@ -886,8 +878,7 @@ As the requests should go through the proxy you will probably want to configure 
                     <source>
 httpsserver.bindaddress.pubhttp=127.0.0.1
 httpsserver.bindaddress.pubhttps=127.0.0.1
-httpsserver.bindaddress.privhttps=127.0.0.1
-                </source>
+httpsserver.bindaddress.privhttps=127.0.0.1</source>
                     <p>
 Install the Apache web server and enable required modules (the following commands are for Ubuntu but should be similar in other distributions as well):
                     </p>
@@ -899,12 +890,10 @@ $ sudo ln -s ../mods-available/proxy_http.load proxy_http.load
 $ sudo ln -s ../mods-available/proxy_ajp.load proxy_ajp.load
 $ sudo ln -s ../mods-available/proxy_balancer.load proxy_balancer.load
 $ sudo ln -s ../mods-available/rewrite.load rewrite.load
-$ sudo ln -s ../mods-available/ssl.load ssl.load
-                </source>
+$ sudo ln -s ../mods-available/ssl.load ssl.load</source>
     
    
                 <subsection name="Example: Rewrite URLs for TSA (using mod_proxy and mod_rewrite)">
-   
                     <p>
 A sample configuration how to fix up nice URLs for time-stamping so that you can point your TSA clients to http://tsa.example.com/ instead of http://tsa.example.com:8080/signserver/process?workerName=TimeStampSigner1.
                     <br/>
@@ -928,8 +917,7 @@ This configuration combines mod_proxy with mod_rewrite to be able to set the wor
     &lt;/Proxy&gt;
     ProxyPass / http://127.0.0.1:8080/signserver/process
     ProxyPassReverse / http://127.0.0.1:8080/signserver/process
-&lt;/VirtualHost>
-                    </source>
+&lt;/VirtualHost></source>
                 </subsection>
                 
                 <subsection name="Example: Rewrite URLs and redirect to HTTPS (using AJP)">
@@ -1015,8 +1003,7 @@ Notice: Some application servers (i.e. JBoss 4) might have problems writing the 
     LogLevel warn
     ErrorLog /var/log/apache2/error.log
     CustomLog /var/log/apache2/access.log combined
-</VirtualHost>]]>
-                    </source>
+</VirtualHost>]]></source>
                 </subsection>
                 
                 <subsection name="Example: Granting access to specific workers only">
@@ -1091,8 +1078,7 @@ Also remember if you are proxying from multiple virtual hosts (i.e. if you have 
     	AuthUserFile /home/markus/.htpasswd
     	Require valid-user
     </Location>
-    ...]]>
-                    </source>
+    ...]]></source>
                 </subsection>
                 
             </section>

@@ -74,8 +74,7 @@ the logger will do log output. These are specified as standard Log4J levels
                         </p>
                         <source>
 WORKERLOGGER=org.signserver.server.log.AllFieldsWorkerLogger
-LOGLEVEL_DEFAULT=INFO
-                        </source>
+LOGLEVEL_DEFAULT=INFO</source>
 
                     <h4>SecurityEventsWorkerLogger</h4>
                         <p>
@@ -86,9 +85,7 @@ This logger included all fields in the additionalDetails fields in the audit log
 The properties LOGINCLUDEFIELDS and LOGEXCLUDEFIELDS can be used to restrict the fields included in additionalDetails by explicitly setting a
 comma-separated list of field names. Only one of these options can be set at a time.
                         </p>
-                        <source>
-WORKERLOGGER=org.signserver.server.log.SecurityEventsWorkerLogger
-                        </source>
+                        <source>WORKERLOGGER=org.signserver.server.log.SecurityEventsWorkerLogger</source>
 
                     <h4>PatternWorkerLogger</h4>
                     	<p>
@@ -100,29 +97,23 @@ LOGTIMEZONE=GMT
 LOGDATEFORMAT=yyyy-MM-dd:HH:mm:ss:z
 LOGPATTERN=\$\{(.+?)\}
 LOGORDER=AUDIT; LOG_ID: ${LOG_ID}; CLIENT_IP: ${CLIENT_IP}; REQUEST_FULLURL: ${REQUEST_FULLURL}; RequestTime: ${LOG_TIME}; ResponseTime: ${REPLY_TIME}; EXCEPTION: ${EXCEPTION};
-LOGLEVEL_DEFAULT=INFO
-                        </source>
+LOGLEVEL_DEFAULT=INFO</source>
 
                     <h4>DefaultTimeStampLogger</h4>
                         <p>
 Pattern logger with a default log order suitable for logging time-stamp requests. This logger is the default logger used by the <a href="complete.en.html#Time-stamp%20Signer">TimeStampSigner</a>.
                         </p>
                         <source>
-WORKERLOGGER=org.signserver.module.tsa.DefaultTimeStampLogger
-                        </source>
+WORKERLOGGER=org.signserver.module.tsa.DefaultTimeStampLogger</source>
 
                     <h4>NullWorkerLogger</h4>
                         <p>
 Worker logger that does not log anything.    
                         </p>
-                        <source>
-WORKERLOGGER=org.signserver.server.log.NullWorkerLogger                            
-                        </source>
+                        <source>WORKERLOGGER=org.signserver.server.log.NullWorkerLogger</source>
 
                     <h4>CustomTimeStampLogger1</h4>
-                        <source>
-WORKERLOGGER=org.signserver.module.tsa.CustomTimeStampLogger1
-                        </source>
+                        <source>WORKERLOGGER=org.signserver.module.tsa.CustomTimeStampLogger1</source>
 
                     <h4>FileWorkerLogger</h4>
                     	<p>
@@ -132,8 +123,7 @@ This logger is mainly intended for use by unit tests, and is not thread safe.
 						</p>
 						<source>
 WORKERLOGGER=org.signserver.server.log.FileWorkerLogger
-LOG_FILE_PATH=/path/to/logfile
-						</source>
+LOG_FILE_PATH=/path/to/logfile</source>
                 </subsection>
                 
                 <subsection name="System Log">
@@ -550,8 +540,7 @@ To enable signed audit logs configure conf/databaseprotection.properties (see co
                         </p>
                         <source>
 databaseprotection.enablesign.AuditRecordData = true
-databaseprotection.enableverify.AuditRecordData = true
-                        </source>
+databaseprotection.enableverify.AuditRecordData = true</source>
                         <p>
 Configure a key-pair to use for signing and verification of the log with something similar to this:
                         </p>
@@ -563,8 +552,7 @@ databaseprotection.classname.0 = org.cesecore.keys.token.PKCS11CryptoToken
 databaseprotection.properties.0 = sharedLibrary=/opt/utimaco/Software/PKCS11/lib/Linux-x86-64/libcs2_pkcs11.so, slotLabelType=SLOT_NUMBER, slotLabelValue=1
 databaseprotection.data.0 =
 databaseprotection.tokenpin.0 = userpin1
-databaseprotection.version.0 = 2
-                        </source>
+databaseprotection.version.0 = 2</source>
 
                         <p>
 Note: each SignServer node writing to the audit log needs to use different node IDs. By default the hostname is used. If multiple instances 
@@ -779,8 +767,7 @@ put the audit logs in a separate file.
 &lt;/category&gt;
 &lt;category name="org.signserver.server.log.IWorkerLogger"&gt;
     &lt;appender-ref ref="SIGNSERVER_AUDIT"/&gt;
-&lt;/category&gt;
-                    </source>
+&lt;/category&gt;</source>
                     <p>
 For GlassFish a similar setup is already configured in SIGNSERVER_HOME/modules/SignServer-Module-Log4j/src/log4j.properties. 
                     </p>
@@ -836,8 +823,7 @@ For JBoss 7/EAP6 the following can be edited in JBOSS_HOME/standalone/configurat
         </handlers>
     </logger>
     ...
-</subsystem>             
-                    ]]></source>
+</subsystem>]]></source>
                 </subsection>
                 
                 <subsection name="Status Repository Logging">
@@ -861,9 +847,7 @@ verifying the audit log.
 The DB CLI is built if the property databasecli.enabled=true is specified in 
 signserver_deploy.properties. It can also be built using:
                     </p>
-                    <source>
-$ bin/ant -f modules/SignServer-DatabaseCLI/build.xml dist-module
-                    </source>
+                    <source>$ bin/ant -f modules/SignServer-DatabaseCLI/build.xml dist-module</source>
                 </subsection>
                 
                 <subsection name="Configuring">
@@ -877,9 +861,7 @@ Configure the dbcli.* properties in conf/signserver_cli.properties.
 There is start-up script available under bin. You might have specify a classpath
 containing the JDBC connectors for the specific database type. Example:
                     </p>
-                    <source>
-$ OPTIONAL_CLASSPATH=/usr/share/java/mysql-connector-java.jar bin/signserver-db audit verifylog
-                    </source>
+                    <source>$ OPTIONAL_CLASSPATH=/usr/share/java/mysql-connector-java.jar bin/signserver-db audit verifylog</source>
                 </subsection>
             </section>
 
@@ -898,15 +880,11 @@ To increase throughput it is recommended to disable the key usage counter as eve
                     <p>
 In signserver_deploy.properties, set database.type to "nodb".
                     </p>
-					<source>
-database.type=nodb
-					</source>
+					<source>database.type=nodb</source>
 					<p>
 Set the location for the local file-based database.
 					</p>
-					<source>
-database.nodb.location=/path/to/filedb
-					</source>
+					<source>database.nodb.location=/path/to/filedb</source>
 					<p>
 Where the path is some location where SignServer can write files. The default value is empty. If an relative path is used it is most likely relative to the application server's working directory.
 					</p>

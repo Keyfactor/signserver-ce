@@ -48,11 +48,10 @@ Third, if the project should be called it should define the properties:
                 <p>
                     Example:
                 </p>
-                <pre>
+                <source>
 &lt;property name="modulename" value="module.pdfsigner"/&gt;
 &lt;property name="clean.available" value="true"/&gt;
-&lt;property name="dist-module.available" value="true"/&gt;    
-                </pre>
+&lt;property name="dist-module.available" value="true"/&gt;</source>
                 <p>
 Forth, the dist-module target should take care of moving all distributables to the ../../lib directory and if the module should be deployed as part of the signserver.ear file a module descriptor should be placed in ../../mods-available. The name of the descriptor file should be priority_modulename.properties where priority is the order in which the module should be built and modulename is the name as defined by the property with the same name.
                 </p>
@@ -84,16 +83,15 @@ The module descriptor can contain:
                 <p>
                     Example (mods-available/40_module.pdfsigner.properties):
                 </p>
-                <pre>
+                <source>
 module.name=module.pdfsigner
 module.type=lib
 to.root=
-to.lib=lib/ext/1.6/bcprov-jdk.jar,lib/ext/1.6/bctsp-jdk.jar,lib/ext/cert-cvc.jar,lib/ext/commons-collections-3.2.2.jar,lib/ext/commons-io-1.4.jar,lib/ext/commons-lang-2.5.jar,lib/ext/commons-logging-1.1.1.jar,lib/ext/ejbca-util.jar,lib/ext/log4j-1.2.14.jar,lib/ext/module/pdfsigner/itext/itext.jar,lib/SignServer-Common.jar,lib/SignServer-ejb-interfaces.jar,lib/SignServer-Module-PDFSigner.jar
-                </pre>
+to.lib=lib/ext/1.6/bcprov-jdk.jar,lib/ext/1.6/bctsp-jdk.jar,lib/ext/cert-cvc.jar,lib/ext/commons-collections-3.2.2.jar,lib/ext/commons-io-1.4.jar,lib/ext/commons-lang-2.5.jar,lib/ext/commons-logging-1.1.1.jar,lib/ext/ejbca-util.jar,lib/ext/log4j-1.2.14.jar,lib/ext/module/pdfsigner/itext/itext.jar,lib/SignServer-Common.jar,lib/SignServer-ejb-interfaces.jar,lib/SignServer-Module-PDFSigner.jar</source>
                 <p>
                 Example (mods-available/20_signserverws.properties):    
                 </p>
-                <pre>
+                <source>
 module.name=signserverws
 module.type=ejb
 module.ejb=SignServer-ejb-SignServerWS.jar
@@ -101,8 +99,7 @@ to.root=lib/SignServer-ejb-SignServerWS.jar
 to.lib=lib/ext/1.6/bcprov-jdk.jar,lib/ext/1.6/bctsp-jdk.jar,lib/ext/cert-cvc.jar,lib/ext/commons-collections-3.2.2.jar,lib/ext/commons-io-1.4.jar,lib/ext/commons-lang-2.5.jar,lib/ext/commons-logging-1.1.1.jar,lib/ext/ejbca-util.jar,lib/ext/log4j-1.2.14.jar,lib/SignServer-Common.jar,lib/SignServer-ejb-interfaces.jar
 postprocess.files=postprocess.file1
 postprocess.file1.src=SignServer-ejb-SignServerWS.jar
-postprocess.file1.includes=META-INF/ejb-jar.xml
-                </pre>
+postprocess.file1.includes=META-INF/ejb-jar.xml</source>
             
             </section>
             
@@ -226,7 +223,7 @@ To create a custom timed service class it should implement the org.signserver.se
                         <p>
 The work method that needs to be implemented is described here:
                         </p>
-                        <pre>
+                        <source>
 /**
  * Method that should do the actual work and should
  * be implemented by all services. The method is run
@@ -234,8 +231,7 @@ The work method that needs to be implemented is described here:
  *
  * @throws ServiceExecutionFailedException if execution of a service failed
  */
-public void work() throws ServiceExecutionFailedException;
-                        </pre>
+public void work() throws ServiceExecutionFailedException;</source>
                         <p>
 There exists a DummyTimedService implementation that is used for demonstration purposes.
                         </p>
@@ -245,7 +241,7 @@ There exists a DummyTimedService implementation that is used for demonstration p
                         <p>
 Just as the other worker plug-ins have the validator service a base class taking care of most of the common methods and the only method that needs to be implemented is the 'validate' method below. But for most applications should the DefaultValidationService work. What is probably more interesting is to develop a custom IValidator used to integrate the default validation service against different certificate status repositories. See section called 'Other Customizations' for details of how to implement a Validator.
                         </p>
-                        <pre>
+                        <source>
 /**
  * Method used to check the validation of a certificate
  *
@@ -257,8 +253,7 @@ Just as the other worker plug-ins have the validator service a base class taking
  * @see org.signserver.validationservice.common.ValidateRequest
  * @see org.signserver.validationservice.common.ValidateResponse
  */
-ValidateResponse validate(ValidateRequest validationRequest) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException;
-                        </pre>
+ValidateResponse validate(ValidateRequest validationRequest) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException;</source>
 
                 </subsection>
 
@@ -287,7 +282,7 @@ Reload the service with the CLI reload command.
                         <p>
 The ICryptoToken interface have the following methods that needs to be implemented:
                         </p>
-                        <pre>
+                        <source>
 public interface ICryptoToken {
 	public static final int PURPOSE_SIGN = 1;
 	public static final int PURPOSE_DECRYPT = 2;
@@ -384,8 +379,7 @@ public interface ICryptoToken {
 	 * @return true if removal was successful.
 	 */
 	public boolean destroyKey(int purpose);
-}
-                        </pre>
+}</source>
 
                 </subsection>
             
@@ -422,7 +416,7 @@ The following implementations are available:
                     <p>
 A Validator is used in the DefaultValidationService to connect to different kinds of certificate status repositories, such as CRL, OCSP, XKMS, database etc. It contains two methods 'validate' used for the actual certificate validation and 'testConnection' used by health check related functionality to check that the connection to the underlying validator resource is alright.
                     </p>
-                    <pre>
+                    <source>
 /**
  * Main method of a Validation Service responsible for validating certificates.
  *
@@ -450,8 +444,7 @@ Validation validate(ICertificate cert) throws IllegalRequestException, CryptoTok
  * @throws ConnectException if connection to underlying validator implementation failed.
  * @throws SignServerException for general failure exception during validation.
  */
-void testConnection() throws ConnectException, SignServerException;
-                    </pre>
+void testConnection() throws ConnectException, SignServerException;</source>
                 </subsection>
 
                 <subsection name="The IAuthorizer Interface">
@@ -461,7 +454,7 @@ It's possible to integrate the authorization of processable requests with extern
                     <p>
 To register that the customized authorizer should be used by a worker, all that's needed to be done is to set the property AUTHTYPE to the class path of the authorizer implementation.
                     </p>
-                    <pre>
+                    <source>
 public interface IAuthorizer {
 
 	/**
@@ -484,8 +477,7 @@ public interface IAuthorizer {
 	 * @throws IllegalRequestException if the requester isn't authorized or couldn't be authenticated for some other reason.
 	 */
 	void isAuthorized(ProcessRequest request, RequestContext requestContext) throws IllegalRequestException, SignServerException;
-}
-                    </pre>
+}</source>
                 </subsection>
                 
                 <subsection name="The Archiving API">
@@ -510,7 +502,7 @@ from the BaseWorker (inherited by most of the base component implementations). T
 GlobalConfigurationSession have the following methods that can be used (the other ones should be
 avoided)
                     </p>
-                    <pre>
+                    <source>
 /**
 * Method setting a global configuration property. For node. prefix will the
 node ID be appended.
@@ -534,8 +526,7 @@ public boolean removeProperty( java.lang.String scope,java.lang.String key )
 scopes properties for this node.
 * @return A GlobalConfiguration Object, nevel null
 */
-public org.signserver.common.GlobalConfiguration getGlobalConfiguration( ) ;
-                    </pre>
+public org.signserver.common.GlobalConfiguration getGlobalConfiguration( ) ;</source>
                     <p>
 The getGlobalConfiguration returns a GlobalConfiguration and have a method
 String getProperty(String scope, String property) that can be used.
@@ -599,9 +590,7 @@ has tests by executing the command from their project directory.
                     <p>
 If SignServer is configured to run without database some tests needs to be excluded by running like this:    
                     </p>
-                    <source>
-bin/ant test:run -Dexcludes="**/ArchivingCLITest*,**/Base64DatabaseArchiverTest*,**/OldDatabaseArchiverTest*,**/ArchiveTest*,**/AuditLogCLITest*,**/DatabaseCLITest*,**/VerifyLogCommandTest*"
-                    </source>
+                    <source>bin/ant test:run -Dexcludes="**/ArchivingCLITest*,**/Base64DatabaseArchiverTest*,**/OldDatabaseArchiverTest*,**/ArchiveTest*,**/AuditLogCLITest*,**/DatabaseCLITest*,**/VerifyLogCommandTest*"</source>
                     
                     <h4>System tests with HSM</h4>
                         <p>
@@ -611,14 +600,11 @@ To run system tests with an HSM create an properties file in SIGNSERVER_HOME cal
 test.p11.sharedlibrary=/opt/ETcpsdk/lib/linux-x86_64/libcryptoki.so
 test.p11.slot=1
 test.p11.pin=foo123
-test.p11.existingkey1=mykey001
-                        </source>
+test.p11.existingkey1=mykey001</source>
                         <p>
 The tests can be run with:
                         </p>
-                        <source>
-ant test:p11:run test:report
-                        </source>
+                        <source>ant test:p11:run test:report</source>
 
                 </subsection>
                 
@@ -691,8 +677,7 @@ Test suite: signWhileRenewing
 - Signs documents with the workers from group 1 with the number of threads
 defined for group 1
 - Renews signers from group 2 using the one renewal worker in group 3
-- Notice that group 3 should only include one renewal worker
-                        </source>
+- Notice that group 3 should only include one renewal worker</source>
 
                     
                 </subsection>
@@ -750,8 +735,7 @@ test.pdf
 d) stresstest -testsuite DocumentSigner1 -threads 4 -processurl
 http://localhost:8080/signserver/process -worker XMLSigner -data "&lt;root/&gt;"
 e) stresstest -testsuite DocumentSigner1 -threads 4 -workerurl
-http://localhost:8080/signserver/worker -worker 1 -data "&lt;root/&gt;"
-              			</source>
+http://localhost:8080/signserver/worker -worker 1 -data "&lt;root/&gt;"</source>
               			
               			<p>
               				When finished (after time limit expires, or process is stopped using control+c) a statistic

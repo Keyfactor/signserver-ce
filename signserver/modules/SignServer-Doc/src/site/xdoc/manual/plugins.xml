@@ -84,9 +84,7 @@ The time stamp signer currently don't support:
                         <p>
 Timestamps requests are served through a http service at the URL:
                         </p>
-                        <pre>
-'http://&lt;host name&gt;/signserver/process?workerId=&lt;worker Id&gt;'
-                        </pre>
+                        <source>http://&lt;host name&gt;/signserver/process?workerId=&lt;worker Id&gt;</source>
                         <p>
 If no 'worker Id' parameter is specified then will the ID of 1 be used as default.
                         </p>
@@ -1507,7 +1505,7 @@ Validator properties is specified with the prefix of 'validator&lt;validatorId&g
                         <p>
 Here is an example configuration of a validation service to clarify things even further
                         </p>
-                        <pre>
+                        <source>
 # Set up the worker -> validation service wrapper
 WORKER1.IMPLEMENTATION_CLASS=org.signserver.validationservice .server.ValidationServiceWorker
 #Uncomment and set class path to custom validation service, otherwise is default #used.
@@ -1527,8 +1525,7 @@ WORKER1.VAL1.ISSUER2.CERTCHAIN=EFWAASDFADFASDFKASDKFW1231.....
 
 # Define a validator in charge of issuer TestCA3
 WORKER1.VAL2.CLASSPATH=&lt;Class path to some validator&gt;
-WORKER1.VAL2.ISSUER1.CERTCHAIN=EFWAASDFADFASDFKASDKFW1231.....
-                        </pre>
+WORKER1.VAL2.ISSUER1.CERTCHAIN=EFWAASDFADFASDFKASDKFW1231.....</source>
 
                 </subsection>
 
@@ -1579,7 +1576,7 @@ When compiling, make sure that setting validationclient.enabled is set to "true"
                     <p>
 Use the client with 'java -jar lib/SignServer-Client-ValidationCLI.jar &lt;options&gt;'.
                     </p>
-                    <pre>
+                    <source>
 Here is a list of available options:
 
 -cert &lt;cert-file&gt; 			: Path to certificate file (DER or PEM) (Required).
@@ -1607,8 +1604,7 @@ The following return values is used:
 5   : CA Certificate have been revoked
 6   : CA Certificate is not yet valid
 7   : CA Certificate have expired
-8   : Certificate have no valid certificate purpose
-                   </pre>
+8   : Certificate have no valid certificate purpose</source>
 
                 </subsection>
 
@@ -1678,12 +1674,11 @@ is an alternative way of offering this reports.
                         <p>
 <b>Format:</b>
                         </p>
-                        <pre>
+                        <source>
 workerName=WORKERNAME1, status=STATUS1, KEY3=VALUE3, KEY4=VALUE4, ...
 workerName=WORKERNAME2, status=STATUS2, KEY3=VALUE3, KEY4=VALUE4, ...
 workerName=WORKERNAME3, status=STATUS3, KEY3=VALUE3, KEY4=VALUE4, ...
-...
-                        </pre>
+...</source>
                         <p>
 <b>Rules:</b>
                         </p>
@@ -1715,12 +1710,11 @@ to perfom or -1 if there is no limit.</li>
                         <p>
 <b>Examples:</b>
                         </p>
-                        <pre>
+                        <source>
 workerName=Sod71, status=ACTIVE, validityNotBefore=2010-07-05 17:32:36 CEST, validityNotAfter=2010-09-08 17:32:36 EEST, signings=132, signLimit=100000,
 workerName=Sod72, status=OFFLINE, validityNotBefore=2010-07-05 17:32:33 CEST, validityNotAfter=2010-09-08 17:32:33 EEST, signings=100000, signLimit=100000,
 workerName=Sod73, status=OFFLINE, validityNotBefore=2010-07-05 17:32:33 CEST, validityNotAfter=2010-09-08 17:32:33 EEST, signings=0, signLimit=100000,
-workerName=Sod74, status=OFFLINE,
-                        </pre>
+workerName=Sod74, status=OFFLINE,</source>
                         <p>
 <b>Examples explained:</b>
                         </p>
@@ -1866,8 +1860,7 @@ $ bin/signserver getstatus complete RenewalTimedService1
 ...
 Workers Renewal Prognose:
     - TimeStampSigner (102): Renewal after: 2016-03-02 16:14:07,000, with key generation, using renewal worker "RenewalWorker1".
-    - CMSSigner (3): Renewal after: 2016-02-22 16:01:00,000 (on next run), without key generation, using renewal worker "RenewalWorker1".
-                        </source>
+    - CMSSigner (3): Renewal after: 2016-02-22 16:01:00,000 (on next run), without key generation, using renewal worker "RenewalWorker1".</source>
                         <p>
 What we can see from the above example:
                         </p>
@@ -1893,9 +1886,7 @@ Finally we can see that both workers are configured with "RENEWWORKER=RenewalWor
                 
                 <subsection name="Installing a service">
                     <p>To install a service you use the same commands as for installing a worker:</p>
-                    <source>
-$ bin/signserver setproperties configuration.properties
-                    </source>
+                    <source>$ bin/signserver setproperties configuration.properties</source>
                     <p>Example:</p>
                     <source>
 $ bin/signserver setproperties doc/sample-configs/qs_signerstatusreport_configuration.properties
@@ -1915,8 +1906,7 @@ $ bin/signserver reload 2
 Executing Command on host : localhost
 ===========================================
 SignServer reloaded successfully
-Current configuration is now activated.
-                    </source>
+Current configuration is now activated.</source>
                 </subsection>
             </section>
 
@@ -1973,9 +1963,7 @@ AUTHCODE=foo123"</source>
                     <p>
 The renewal can also be initiated from the <a href="complete.en.html#Administration%20CLI">Admin CLI</a>:
                     </p>
-                    <source>
-bin/signserver renewsigner MySigner -renewalworker MyRenewalWorker -authcode foo123
-                    </source>
+                    <source>bin/signserver renewsigner MySigner -renewalworker MyRenewalWorker -authcode foo123</source>
 
                     
                     <h4>RenewalWorker operations</h4>
@@ -2208,8 +2196,7 @@ Status of Worker with ID 300 (TimeMonitorManager) is:
       2014-08-26 11:36:29,287 INFO  State changed to: UNKNOWN,REPORTED,UNKNOWN
       2014-08-26 11:36:44,255 INFO  Config changed to: 1ccdf46b
       2014-08-26 11:36:44,782 INFO  Time back in calibration: offset abs(0)  max accepted offset 997
-      2014-08-26 11:36:44,793 INFO  State changed to: INSYNC,REPORTED,NONE
-                        ]]></source>
+      2014-08-26 11:36:44,793 INFO  State changed to: INSYNC,REPORTED,NONE]]></source>
 
                 </subsection>
                 
@@ -2231,9 +2218,7 @@ Worker that outputs the TimeMonitor state line as described in the <a href="comp
                         <p>
                             Sample output:
                         </p>
-                        <source><![CDATA[
-1409055102120,INSYNC,REPORTED,NONE,1ccdf46b,0,507,7,6
-                        ]]></source>
+                        <source><![CDATA[1409055102120,INSYNC,REPORTED,NONE,1ccdf46b,0,507,7,6]]></source>
 
                 </subsection>
 
@@ -2465,7 +2450,7 @@ This properites are not allowed if the legacy properties below are specified.
                         <p>
 Sample p11attributes.cfg:
                         </p>
-                        <pre>
+                        <source>
 attributes(generate,CKO_PUBLIC_KEY,*) = {
         CKA_TOKEN = false
 	CKA_ENCRYPT = true
@@ -2492,8 +2477,7 @@ disabledMechanisms = {
     CKM_MD5_RSA_PKCS
     CKM_DSA_SHA1
     CKM_ECDSA_SHA1
-}
-                        </pre>
+}</source>
                         <p>
 <b>Notice:</b> The PKCS#11 attributes configuration is global per shared library. If specified in multiple workers only the configuration from the first worker loaded will be used. Changing the property might not take effect without restarting the application server.
                         </p>
@@ -2534,36 +2518,29 @@ The following properties can currently be specified in the global configuration:
                         <p>
 Edit (preferably a copy of) pkcs11-crypto-configuration.properties to match your PKCS#11 token. Run the following command to set up the token:
                         </p>
-<code>bin/signserver setproperties pkcs11-crypto-configuragtion.properties</code>
+<source>bin/signserver setproperties pkcs11-crypto-configuragtion.properties</source>
                         <p>
 Reload the configuration using the ID that was printed (in this example 8):
                         </p>
-                        <code>
-bin/signserver reload 8
-                        </code>
+                        <source>bin/signserver reload 8</source>
                         <p>
 Activate the crypto token by specifying the PIN code:
                         </p>
-                        <code>
-bin/signserver activatecryptotoken 8
-                        </code>
+                        <source>bin/signserver activatecryptotoken 8</source>
                         <p>
 Unless your DEFAULTKEY worker property points to an existing key in the HSM the activation will look like it failed. Don't worry and instead continue creating a key that can be used for testing slot activation:
                         </p>
                         <p>
 Generate a keypair in the token to be used as test key:
                         </p>
-                        <code>
-bin/signserver generatekey 8 -alias testkey1 -keyalg RSA -keyspec 2048
-                        </code>
+                        <source>bin/signserver generatekey 8 -alias testkey1 -keyalg RSA -keyspec 2048</source>
                         <p>
 Set the key as test key:
                         </p>
-                        <code>
+                        <source>
 bin/signserver setproperty 8 DEFAULTKEY testkey1<br/>
 bin/signserver reload 8<br/>
-bin/signserver activatecryptotoken 8
-                        </code>
+bin/signserver activatecryptotoken 8</source>
                         <p>
 Test the keypair:
 bin/signserver testkey 8
@@ -2604,7 +2581,7 @@ behaving in a backwards-compatible way, using the DEFAULTKEY property of the
 crypto worker being used.
                 </p>
                 <p>
-To configure an alternative alias selector, set the <source>ALIASSELECTOR</source>
+To configure an alternative alias selector, set the <code>ALIASSELECTOR</code>
 worker property of the worker pointing to the class name of an
 implementation for an alias selector to use.
                 </p>
@@ -2816,9 +2793,7 @@ Example:
                         </p>
                         <source>
 GLOBALCONFIGSAMPLEACCOUNTER_USERS = user1,password:account1; user2,password2:account2
-GLOBALCONFIGSAMPLEACCOUNTER_ACCOUNTS = account1:14375; account2:12
-                        </source>
-
+GLOBALCONFIGSAMPLEACCOUNTER_ACCOUNTS = account1:14375; account2:12</source>
                 </subsection>
             </section>
     </body>

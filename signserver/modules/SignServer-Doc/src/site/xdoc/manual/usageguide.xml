@@ -18,11 +18,6 @@
             <param name="toDepth" value="4"/>
         </macro>
 
-            <section name="Introduction">
-                <p>   
-                </p>
-            </section>
-
             <section name="Configuration/Administration">
                 <p>
 The SignServer administration command line interface (Admin CLI) is started
@@ -73,9 +68,7 @@ List the value of a worker or global property.
                         <p>
 Usage:
                         </p>
-                        <source>
-signserver getproperty &lt;signerid | signerName | global | node&gt; &lt;propertykey&gt;
-                        </source>
+                        <source>signserver getproperty &lt;signerid | signerName | global | node&gt; &lt;propertykey&gt;</source>
                         <p>
 <b>setproperties:</b>
 Command used to batch a set of properties, both for the global and worker configuration.
@@ -199,8 +192,7 @@ Usage:
                         <source>
 Example 1: signserver addauthorizedclient 1 EF34242D2324 &quot;CN=Test Root CA&quot;<br/>
 Example 2: signserver addauthorizedclient 1 EF3456789ABC &quot;CN=Client,O=Test Organization,C=SE&quot;<br/>
-Example 3: signserver addauthorizedclient 1 client.pem<br/>
-                        </source>
+Example 3: signserver addauthorizedclient 1 client.pem</source>
                         <p>
 <b>removeauthorizedclient:</b>
 Removes added client certificate entries.
@@ -267,16 +259,15 @@ Used to query contents of the archive. Actual archived data is not fetched by th
 Usage:
                         </p>
 			<source>
-signserver archive query -limit &lt;number&gt; [-criteria  \"&lt;field&gt; &lt;op&gt; &lt;value&gt;\" [-criteria...]] [-from &lt;index&gt;] [-header] [-request|-response]\n"
-        + "&lt;field&gt; is a field name from the archive: archiveId, requestCertSerialNumber, requestIP, requestIssuerDN, signerid, time, type\n"
-        + "&lt;op&gt; is a relational operator: GT, GE, LT, LE, EQ, NEQ, LIKE, NULL, NOTNULL\n"
-	+ "-request shows only entries for requests\n"
-	+ "-response shows only entries for responses\n"
-        + "Example: signserver archive query -limit 10 -criteria \"signerid EQ 1\"\n"
-	+ "Example: signserver archive query -limit 10 -criteria \"signerid EQ 1\" -request\n"
-        + "Example: signserver archive query -limit 10 -criteria \"time GT 1359623137000\" -criteria \"requestIP EQ 127.0.0.1\n"
-        + "Example: signserver archive query -limit 10 -criteria \"signerid EQ 1\" -outpath /tmp/out\n\n"
-			</source>
+signserver archive query -limit &lt;number&gt; [-criteria  "&lt;field&gt; &lt;op&gt; &lt;value&gt;" [-criteria...]] [-from &lt;index&gt;] [-header] [-request|-response]
+   &lt;field&gt; is a field name from the archive: archiveId, requestCertSerialNumber, requestIP, requestIssuerDN, signerid, time, type
+   &lt;op&gt; is a relational operator: GT, GE, LT, LE, EQ, NEQ, LIKE, NULL, NOTNULL
+   -request shows only entries for requests
+   -response shows only entries for responses
+   Example: signserver archive query -limit 10 -criteria "signerid EQ 1"
+   Example: signserver archive query -limit 10 -criteria "signerid EQ 1" -request
+   Example: signserver archive query -limit 10 -criteria "time GT 1359623137000" -criteria "requestIP EQ 127.0.0.1
+   Example: signserver archive query -limit 10 -criteria "signerid EQ 1" -outpath /tmp/out\n\n"</source>
 
                         <p><b>Administrators Related</b></p>
                         <p>
@@ -318,9 +309,8 @@ and issuer DN will be taken.
 Samples:
                         </p>
                         <source>
-Example 1: signserver wsadmins -add -certserialno 123ABCDEF -issuerdn &quot;CN=Neo Morpheus, C=SE&quot;<br/>
-Example 2: signserver wsadmins -add -cert wsadmin.pem<br/>
-                        </source>
+Example 1: signserver wsadmins -add -certserialno 123ABCDEF -issuerdn &quot;CN=Neo Morpheus, C=SE&quot;
+Example 2: signserver wsadmins -add -cert wsadmin.pem</source>
                         <p>
 <b>wsadmins -remove:</b>
                         </p>
@@ -391,9 +381,7 @@ Query the CESeCore audit log.
                         <p>
 Usage:
                         </p>
-                        <source>
-signserver auditlog -query -limit &lt;number&gt; [-criteria  "&lt;field&gt; &lt;op&gt; &lt;value&gt;" [-criteria...]] [-from &lt;index&gt;] [-header]
-                        </source>
+                        <source>signserver auditlog -query -limit &lt;number&gt; [-criteria  "&lt;field&gt; &lt;op&gt; &lt;value&gt;" [-criteria...]] [-from &lt;index&gt;] [-header]</source>
                         <p>
 -limit sets the maximum number of rows matched, this option is required to avoid putting too much load on the server.
                         </p>
@@ -426,9 +414,7 @@ Search conditions can be added to only search for entries with certain key alias
                         <p>
 Usage:
                         </p>
-                        <source>
-signserver querytokenentries -token &lt;id or name&gt; -limit &lt;number&gt; [-criteria  "&lt;field&gt; &lt;op&gt; &lt;value&gt;" [-criteria...]] [-from &lt;index&gt;] [-v]
-                        </source>
+                        <source>signserver querytokenentries -token &lt;id or name&gt; -limit &lt;number&gt; [-criteria  "&lt;field&gt; &lt;op&gt; &lt;value&gt;" [-criteria...]] [-from &lt;index&gt;] [-v]</source>
                         <p>
 -limit sets the maximum number of rows matched, this option is required to avoid putting too much load on the server.
                         </p>
@@ -463,9 +449,7 @@ to run the JUnit tests.
                     <p>
 Sample usage:
                     </p>
-                    <source>
-bin/signserver-db audit
-                    </source>
+                    <source>bin/signserver-db audit</source>
                     
                     <h4>Verify Auditlog Command</h4>
                         <source>
@@ -478,8 +462,7 @@ The JDBC connector of the database might have to be put on the classpath. See th
 
 Example: a) signserver-db audit verifylog -all
 Example: b) signserver-db audit verifylog -node server1 -node server2:708
-Example: c) OPTIONAL_CLASSPATH=/usr/share/java/mysql-connector-java.jar signserver-db audit verifylog -all
-                        </source>
+Example: c) OPTIONAL_CLASSPATH=/usr/share/java/mysql-connector-java.jar signserver-db audit verifylog -all</source>
                         <p>
 The command can be run to verify the signature of every entry in the auditlog 
 as well as checking the sequence number in order to make sure that it does not 
@@ -502,8 +485,7 @@ Sample output:
 2013-07-04 15:29:10,745 INFO  [VerifyLogCommand] Last sequence number: 7
 2013-07-04 15:29:10,747 INFO  [VerifyLogCommand] Audit log validation completed in 0 seconds. 11 rows found. Errors: 0 Warnings: 0
 2013-07-04 15:29:10,747 INFO  [VerifyLogCommand] Verification finished with success
-2013-07-04 15:29:10,747 INFO  [VerifyLogCommand] Last sequences: {server1=2, server2=7}
-                        </source>
+2013-07-04 15:29:10,747 INFO  [VerifyLogCommand] Last sequences: {server1=2, server2=7}</source>
                     
                     <h4>Archiving of the audit log</h4>
                         <p>
@@ -1060,24 +1042,18 @@ Sample configuration files are available in SIGNSERVER_HOME/sample-configs.
 To setup a PDFSigner using the quick start configuration file issue the
 following command:
                         </p>
-                        <source>
-bin/signserver setproperties sample-configs/qs_pdfsigner_configuration.properties
-                        </source>
+                        <source>bin/signserver setproperties sample-configs/qs_pdfsigner_configuration.properties</source>
                         <p>
 Notice the created workerId and use it when applying the configuration using the
 reload command:
                         </p>
-                        <source>
-bin/signserver reload WORKER-ID
-                        </source>
+                        <source>bin/signserver reload WORKER-ID</source>
 
                     <h4>Remove Workers</h4>
                     <p>
                     You can list which workers you have with the command:
                     </p>
-                    <source>
-bin/signserver getstatus brief all                    
-                    </source>
+                    <source>bin/signserver getstatus brief all</source>
                     <p>
                     If will display for example:
                     </p>
@@ -1092,15 +1068,13 @@ Current version of server is : SignServer 3.3.0alpha0
 
 Status of Signer with Id 1 is :
   SignToken Status : Offline
-  Signings: 0
-                    </source>
+  Signings: 0</source>
                     <p>
                     You can remove the worker with Id 1 with the command:                    
 					</p>
                     <source>
 bin/signserver removeworker 1
-bin/signserver reload all                    
-                    </source>
+bin/signserver reload all</source>
             </subsection>
             </section>
 
@@ -1143,7 +1117,7 @@ The following configuration parameters may be set to configure authorization and
                     </p>
                     <p>
 <source>healthcheck.authorizedips</source> - A semicolon-delimited list of IP addresses authorized to access
-the healthcheck servlet, if the list contains the keyword "ANY", any IP address is authorized access (defaults to <source>127.0.0.1</source>).
+the healthcheck servlet, if the list contains the keyword "ANY", any IP address is authorized access (defaults to <code>127.0.0.1</code>).
                     </p>
                     <p>
 <source>healthcheck.minimumfreememory</source> - Number of megabytes of memory that must be free before removing     
@@ -1152,19 +1126,19 @@ the node out of the cluster (defaults to 1).
                     <p>
 <source>healthcheck.checkdbstring</source> - The string that should be used to do 
 a minimal check that the database is working. May differ between databases.
-(defaults to <source>Select count(*) from signerconfigdata</source>, the property is not used when running without database).
+(defaults to <code>Select count(*) from signerconfigdata</code>, the property is not used when running without database).
                     </p>
                     <p>
 <source>healthcheck.maintenancefile</source> - The path to a file containing the maintenance state, this file is a
-standard Java property file and should have a property (by default named <source>DOWN_FOR_MAINTENANCE</source>").
-If this property has the value <source>true</source>, none of the standard health checks will be performed, and instead
-the result will be a string of the form <source>MAINT: DOWN_FOR_MAINTENANCE</source>.
+standard Java property file and should have a property (by default named <code>DOWN_FOR_MAINTENANCE</code>").
+If this property has the value <code>true</code>, none of the standard health checks will be performed, and instead
+the result will be a string of the form <code>MAINT: DOWN_FOR_MAINTENANCE</code>.
 If this property is not set (or an invalid file is given), the maintenance functionallity is disabled.
                     </p>
                     <p>
 <source>healthcheck.maintenancepropertyname</source> - The property name to be used in the maintenance file. This will also
-affect the error message returned when in maintenance mode (the part of the string after <source>MAINT: </source>
-(defaults to <source>DOWN_FOR_MAINTENANCE</source>).
+affect the error message returned when in maintenance mode (the part of the string after <code>MAINT:</code> 
+(defaults to <code>DOWN_FOR_MAINTENANCE</code>).
                     </p>
                 
                 <h4>Available tests and responses</h4>

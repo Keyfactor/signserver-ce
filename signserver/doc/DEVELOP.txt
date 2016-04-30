@@ -15,15 +15,9 @@ $ bin/ant init
 This will copy some files into the right location as well as creating the
 res/edition.properties file to flag that this has been done.
 
-
 After checking out the project there will be errors in the IDE because some 
 source files (i.e. Web Services stubs) has not been generated yet. Those errors 
 will disappear after configuring and building SignServer.
-
-See also the Developers page of the SignServer Wiki for the latest guidelines,
-http://sourceforge.net/apps/mediawiki/signserver/index.php?title=Developers or 
-click the Wiki link on http://www.signserver.org.
-
 
 
 Building
@@ -34,7 +28,7 @@ Maven is used for building the sources.
 Note 1:
 Before Maven version 3.2.3, plugins and artifacts were fetched from the Central 
 Repository over insecure HTTP. Make sure to edit your ~/.m2/settings.xml to
-override the URL of Maven Central. See doc/sample-maven-settings.xml for an
+override the URL of the Central. See doc/sample-maven-settings.xml for an
 example.
 
 Note 2:
@@ -50,25 +44,12 @@ This will build all of the SignServer modules, putting the artifacts under
 ./lib/ and the SignServer/DeployTools module descriptors in ./mods-available.
 
 
-Eclipse
--------
-
-
-To build successfully using Eclipse, there are .classpath and .project files in
-the package and in the source code repository.
-Checkout SignServer either using the Subversion CLI or as a project in Eclipse.
-Simply check out SignServer as projects and you are almost set. 
-Web service stubs for test classes are generated when the tests are built. To 
-get rid of all build errors in Eclipse you need to build classes and tests: 
-$ bin/ant clean build test:compile
-Then do a Refresh and Clean and Build in the IDE.
-
-
 NetBeans IDE
 ------------
+
 Open the Maven projects directly in the IDE.
 
-NetBeans IDE 8.0 is recommended with one exception:
+The latest NetBeans IDE (currently 8.1) is recommended with one exception:
 The SignServer AdminGUI uses the Swing Application Framework and requires 
 NetBeans IDE =7.0.x for changing some of the GUI parts.
 
@@ -83,7 +64,7 @@ TODO: This is currently untested.
 Writing Documentation
 ---------------------
 The SignServer documentation is built by maven-site-plugin using Doxia from 
-xdoc (XML) source files under modules/SignServer-Doc and are then placed
+XDOC 2.0 (XML) source files under modules/SignServer-Doc and are then placed
 in ./doc/htdocs as well as included in the SignServer-Doc-web.war.
 
 
@@ -109,6 +90,8 @@ instructions for how to run the tests.
 
 Test coverage with Clover
 -------------------------
+TODO: Is this still working in trunk (4.0)? 
+Should we consider some other test coverage tool at server (CI) side?
 
 To run Clover, copy the Clover installation folder (or make a symlink to it) 
 and store it as lib/ext/clover-dir. If the project has been built already an 

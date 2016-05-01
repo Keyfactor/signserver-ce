@@ -34,7 +34,6 @@ a64e0c73988fef8d5b73fc29d105a3a6e2dc5d9b90a94fca065cd2439dc56590  ./ext/commons-
 66fdef91e9739348df7a096aa384a5685f4e875584cce89386a7a47251c4d8e9  ./ext/ext/hamcrest-core-1.3.jar;                        "Hamcrest"
 c121a8b0afc2f4c182ee3af65f8c61132fb126870b43b9e94148ea1c797d59dc  ./ext/ext/jcommon-1.0.12.jar;                           "JFreeChart"
 4a2a1eb6d188a43e1e97bb7c7d204a5bdd1aaec0d82203cf1b1156ff697d7f8e  ./ext/ext/jfreechart-1.0.9.jar;                         "JFreeChart"
-e142af87ed5c390486afd915b556357162905a01eb3bf94b6cd5c507933c6679  ./ext/ext/jline-0.9.94.jar;                             "JLine"
 90a8e1603eeca48e7e879f3afbc9560715322985f39a274f6f6070b43f9d06fe  ./ext/ext/junit-4.11.jar;                               "JUnit"
 9fb545199584a41e8064e1232ca3f3c757366b27fc7aa488ac0fc98263642756  ./ext/guice-2.0.jar;                                    "Guice"
 a080af79f5c0bfd431ad337f28ad4e17d6f7e983235aa10dd0ea1dc355938d0c  ./ext/guice-multibindings-2.0.jar;                      "Guice"

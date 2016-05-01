@@ -23,7 +23,6 @@ Build-Depends: ant (>= 1.8.0), ant-optional, debhelper (>= 5),
  libjcommon-java,
  libjdom1-java,
  libjfreechart-java,
- libjline-java,
  liblog4j1.2-java,
  libnekohtml-java,
  libquartz-java,
@@ -35,7 +34,6 @@ Build-Depends: ant (>= 1.8.0), ant-optional, debhelper (>= 5),
  libbeansbinding-java,
  libxmltask-java,
  libxml-security-java (>=1.4),
- libjline-java,
  libdom4j-java,
  libjaxen-java
 Standards-Version: 3.7.2
@@ -61,7 +59,6 @@ Depends: libcertcvc-java (>= 1.2.11),
  libbcpkix1.47-java (>=1.47), 
  libjboss-j2ee-java,
  libjboss-ejb3x-java (>=4.2.3.GA-1),
- libjline-java,
  ${misc:Depends}
 Description: SignServer automated signing server
  Common classes for different parts of signserver

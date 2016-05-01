@@ -13,7 +13,6 @@
 "Jackson";                    "Apache 2.0";                                    "http://jackson.codehaus.org";                          "Dependency of CESeCore.";             "No.";
 "Jaxen";                      "BSD";                                           "http://jaxen.codehaus.org";                            "Dependency of OpenXML4J.";            "No.";
 "JFreeChart";                 "LGPLv2.1+";                                     "http://jfree.org";                                     "Used for plotting diagrams in performance test.";  "No.";
-"JLine";                      "BSD";                                           "http://jline.sourceforge.net";                         "Dependency of EJBCA.";                "No.";
 "Jsign";                      "Apache 2.0";                                    "https://ebourg.github.io/jsign";                       "Used by MSAuthCodeSigner to sign Portable Executables";  "Yes, support for overriding timestamp client implementation. Various minor improvments. Support for using newer versions of BouncyCastle (1.53). Patches has been contributed to upstream.";
 "JUnit";                      "Eclipse Public License";                        "http://junit.org";                                     "Core dependency used for automated testing.";  "No.";
 "Log4j";                      "Apache 2.0";                                    "http://logging.apache.org/log4j";                      "Core dependency used for producing logs." ;  "No.";

@@ -440,7 +440,6 @@ bin/ant systemtest:jars     Run all available systemtest JARs.
             <exclude name="**/nbproject/private/**" />
             <exclude name="lib/**/*.jar" />
             <exclude name="lib/**/*.zip" />
-            <exclude name="**/velocity.log" />
             
             <!-- Exclude libraries moved to lib/ext during build -->
             <exclude name="lib/ext/cesecore-ce/**"/>
@@ -480,7 +479,6 @@ bin/ant systemtest:jars     Run all available systemtest JARs.
             <exclude name="modules/**" />
             <exclude name="p12/**" />
             <exclude name="tmp/**" />
-            <exclude name="**/velocity.log" />
             <exclude name=".eclipse/**" />
             <exclude name=".settings/**" />
             <exclude name=".classpath" />

@@ -32,7 +32,6 @@
         <delete dir="${debian.pkgdist.destdir}"/>
         <delete dir="${mods-available}"/>
         <delete dir="${test.dir}" />
-        <delete file="../velocity.log"/>
     </target>
 
 </project>

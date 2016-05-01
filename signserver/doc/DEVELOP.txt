@@ -44,6 +44,19 @@ This will build all of the SignServer modules, putting the artifacts under
 ./lib/ and the SignServer/DeployTools module descriptors in ./mods-available.
 
 
+Gather dependencies for later offline build
+-------------------------------------------
+
+Install our dependencies:
+$ ./modules/maven-manually-install-deps.sh -Dmaven.repo.local=/tmp/signserver-repo/
+
+Let Maven gather all of the remaining dependencies:
+$ mvn -Dmaven.repo.local=/tmp/signserver-repo/ dependency:go-offline install -DskipTests=true
+
+Later building completely offline, for example:
+$ mvn -Dmaven.repo.local=/tmp/signserver-repo/ -o install
+
+
 NetBeans IDE
 ------------
 

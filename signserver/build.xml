@@ -736,7 +736,6 @@ SHA-256 checksum: ${zip.bin.sha256}
                 
                 <!-- EJB/Servlet (cli, gui) -->
                 <include name="ext/ext/jboss*.jar"/>
-                <include name="ext/ext/servlet-2.3.jar"/>
                 
                 <!-- CLI (both client and admin) -->
                 <include name="ext/commons-cli-1.2.jar"/>

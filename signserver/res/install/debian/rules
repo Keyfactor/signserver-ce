@@ -20,7 +20,6 @@ build-stamp:
 	jar cf lib/ext/no-clover/clover.jar cloverlib.xml
 	
 #	mkdir -p ${APPSRV_HOME}/client
-#	ln -s /usr/share/java/glassfish-javaee.jar ${APPSRV_HOME}/client/jboss-j2ee.jar
 
 #	Configuration
 	echo "includemodulesinbuild=false" > conf/signserver_build.properties

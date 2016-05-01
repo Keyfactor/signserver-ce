@@ -804,8 +804,6 @@ SHA-256 checksum: ${zip.bin.sha256}
                
                 <!-- EJB -->
                 <include name="hibernate/**"/>
-                <include name="javaee-api-6.0/**"/>
-                <include name="javaee-web-api-6.0/**"/>
                 
                 <!-- Quartz -->
                 <include name="quartz/**"/>

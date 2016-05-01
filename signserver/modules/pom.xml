@@ -144,10 +144,9 @@
             <version>${log4j.version}</version>
         </dependency>
         <dependency>
-            <groupId>javax</groupId>
+            <groupId>org.apache.openejb</groupId>
             <artifactId>javaee-api</artifactId>
-            <version>6.0</version>
-            <type>jar</type>
+            <version>6.0-6</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

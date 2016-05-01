@@ -51,9 +51,9 @@
             <version>${cesecore.version}</version>
         </dependency>
         <dependency>
-            <groupId>javax</groupId>
+            <groupId>org.apache.openejb</groupId>
             <artifactId>javaee-api</artifactId>
-            <version>6.0</version>
+            <version>6.0-6</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

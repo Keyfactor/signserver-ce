@@ -477,8 +477,8 @@ Sample output:
                         <source>
 2013-07-04 15:29:10,073 INFO  [VerifyLogCommand] The following nodes exists: [server1, server2]
 2013-07-04 15:29:10,074 INFO  [VerifyLogCommand] Start sequences: {server1=0, server2=0}
-2013-07-04 15:29:10,635 INFO  [KeystoreCryptoToken] Invalid authentication code. Token id=400.
-2013-07-04 15:29:10,716 INFO  [KeystoreCryptoToken] Activated Crypto Token with ID 400.
+2013-07-04 15:29:10,635 INFO  [SoftCryptoToken] Invalid authentication code. Token id=400.
+2013-07-04 15:29:10,716 INFO  [SoftCryptoToken] Activated Crypto Token with ID 400.
 2013-07-04 15:29:10,722 INFO  [VerifyLogCommand] Progress: node=server1 rowCount=3
 2013-07-04 15:29:10,722 INFO  [VerifyLogCommand] Last sequence number: 2
 2013-07-04 15:29:10,745 INFO  [VerifyLogCommand] Progress: node=server2 rowCount=11

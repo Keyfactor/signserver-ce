@@ -83,7 +83,7 @@ public class TimeStampCommand extends AbstractCommand {
     /** End key for certificates in PEM format. */
     private static final String PEM_END = "-----END CERTIFICATE-----";
     
-    /** OID for the ETSI qualified timestamping extension value */
+    /** OID for the ETSI qualified timestamping extension value. */
     private static final ASN1ObjectIdentifier ID_ETSI_TSTS;
 
     private String urlstring;
@@ -109,9 +109,9 @@ public class TimeStampCommand extends AbstractCommand {
     private boolean print;
 
     /** Number of milliseconds to sleep after a request. */
-    
-    private boolean certReq;    private int sleep = 1000;
+    private int sleep = 1000;
 
+    private boolean certReq;
     private String reqPolicy;
     
     private final Options options = new Options();

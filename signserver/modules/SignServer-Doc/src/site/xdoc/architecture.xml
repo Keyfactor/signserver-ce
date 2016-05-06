@@ -1,5 +1,8 @@
-<?xml version="1.0"?>
-<document>
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- $Id$ -->
+<document xmlns="http://maven.apache.org/XDOC/2.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
 
   <properties>
     <title>Architecture</title>
@@ -11,7 +14,7 @@
 SignServer is a framework designed to perform different kind of digital signatures for different applications. 
 </p>
 <p>
-<a href="images/architecture.png"><img src="images/architecture.png" align="middle" border="0" width="641" height="305" ALT="architecture"/></a>
+<a href="images/architecture.png"><img src="images/architecture.png" align="middle" border="0" width="641" height="305" alt="architecture"/></a>
 </p>
 <p>
 There are three kind of processable services.

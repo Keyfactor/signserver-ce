@@ -24,9 +24,9 @@
 
     <body>
         <links>
-            <item name="PrimeKey Solutions" href="https://www.primekey.se/" />
-            <item name="EJBCA" href="https://www.ejbca.org/"/>
-            <item name="SignServer.org" href="https://www.signserver.org"/>
+            <item name="PrimeKey Solutions"    href="https://www.primekey.se/" />
+            <item name="EJBCA"                 href="https://www.ejbca.org/"/>
+            <item name="SignServer.org"        href="https://www.signserver.org"/>
         </links>
 
         <menu name="Documentation">
@@ -34,22 +34,22 @@
 
             <item name="Architecture"          href="/architecture.html"/>
 
-            <item name="Manual Overview"	 href="/manual.html"/>
+            <item name="Manual Overview"       href="/manual.html"/>
         </menu>
 
         <menu name="Manual">    
-            <item name="Introduction"         href="/manual/introduction.html"/>
-            <item name="Installation Guide"	  href="/manual/installguide.html"/>        
-            <item name="Usage Guide"          href="/manual/usageguide.html"/>
-            <item name="Integration"          href="/manual/integration.html"/>
-            <item name="Common Configuration" href="/manual/commonconf.html"/>
-            <item name="Plugins"              href="/manual/plugins.html"/>
-            <item name="Development"          href="/manual/development.html"/>
-            <item name="Miscellaneous"        href="/manual/misc.html"/>
+            <item name="Introduction"          href="/manual/introduction.html"/>
+            <item name="Installation Guide"    href="/manual/installguide.html"/>        
+            <item name="Usage Guide"           href="/manual/usageguide.html"/>
+            <item name="Integration"           href="/manual/integration.html"/>
+            <item name="Common Configuration"  href="/manual/commonconf.html"/>
+            <item name="Plugins"               href="/manual/plugins.html"/>
+            <item name="Development"           href="/manual/development.html"/>
+            <item name="Miscellaneous"         href="/manual/misc.html"/>
         </menu>
 
         <menu name="Other">
-            <item name="signserver.org" href="https://www.signserver.org"/>
+            <item name="signserver.org"        href="https://www.signserver.org"/>
         </menu>
     </body>
 </project>

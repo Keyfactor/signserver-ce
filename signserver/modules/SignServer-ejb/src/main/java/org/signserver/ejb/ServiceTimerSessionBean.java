@@ -87,6 +87,9 @@ public class ServiceTimerSessionBean implements ServiceTimerSessionLocal {
      */
     private static final Integer SERVICELOADER_ID = new Integer(0);
     private static final long SERVICELOADER_PERIOD = 5 * 60 * 1000;
+    
+    // Don't persist the timer
+    private static final TimerConfig SERVICELOADER_CONFIG = new TimerConfig(SERVICELOADER_ID, false);
 
     /**
      * Default create for SessionBean without any creation Arguments.
@@ -150,7 +153,7 @@ public class ServiceTimerSessionBean implements ServiceTimerSessionLocal {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Running the internal Service loader.");
             }
-            sessionCtx.getTimerService().createTimer(SERVICELOADER_PERIOD, SERVICELOADER_ID);
+            sessionCtx.getTimerService().createSingleActionTimer(SERVICELOADER_PERIOD, SERVICELOADER_CONFIG);
             load(0);
         } else {
             ServiceConfig serviceConfig = null;
@@ -163,7 +166,7 @@ public class ServiceTimerSessionBean implements ServiceTimerSessionLocal {
                 IWorker worker = workerManagerSession.getWorker(new WorkerIdentifier(timerInfo));
                 serviceConfig = new ServiceConfig(worker.getConfig());
                 timedService = (ITimedService) worker;
-                sessionCtx.getTimerService().createTimer(timedService.getNextInterval(), timerInfo);
+                sessionCtx.getTimerService().createSingleActionTimer(timedService.getNextInterval(), new TimerConfig(timerInfo, false));
                 isSingleton = timedService.isSingleton();
                 if (!isSingleton) {
                     run = true;
@@ -309,7 +312,7 @@ public class ServiceTimerSessionBean implements ServiceTimerSessionLocal {
                     if (worker instanceof ITimedService) {
                         timedService = (ITimedService) worker;
                         if (timedService.isActive() && timedService.getNextInterval() != ITimedService.DONT_EXECUTE) {
-                            sessionCtx.getTimerService().createTimer((timedService.getNextInterval()), nextId);
+                            sessionCtx.getTimerService().createSingleActionTimer(timedService.getNextInterval(), new TimerConfig(nextId, false));
                         }
                     } else {
                         LOG.error("Worker implementation is not a timed service. Wrong worker TYPE? for worker " + nextId);
@@ -322,7 +325,7 @@ public class ServiceTimerSessionBean implements ServiceTimerSessionLocal {
 
         if (!existingTimers.contains(SERVICELOADER_ID)) {
             // load the service timer
-            sessionCtx.getTimerService().createTimer(SERVICELOADER_PERIOD, SERVICELOADER_ID);
+            sessionCtx.getTimerService().createSingleActionTimer(SERVICELOADER_PERIOD, SERVICELOADER_CONFIG);
         }
     }
 
@@ -370,7 +373,7 @@ public class ServiceTimerSessionBean implements ServiceTimerSessionLocal {
      */
     @Override
     public void addTimer(long interval, Integer id) {
-        sessionCtx.getTimerService().createTimer(interval, id);
+        sessionCtx.getTimerService().createSingleActionTimer(interval, new TimerConfig(id, false));
     }
 
     /**

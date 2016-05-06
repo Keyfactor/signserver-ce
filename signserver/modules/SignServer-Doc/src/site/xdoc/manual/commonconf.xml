@@ -264,7 +264,7 @@ ARCHIVERS=org.signserver.server.archive.olddbarchiver.OldDatabaseArchiver
 Default: FALSE.
                 </p>
                 <p>
-See also the section about all <a href="complete.en.html#Archivers">available Archivers</a>.
+See also the section about all <a href="plugins.html#Archivers">available Archivers</a>.
                 </p>
             </section>
 
@@ -286,7 +286,7 @@ The Accounter to use is configured using the ACCOUNTER worker property. By defau
 ACCOUNTER=org.signserver.server.GlobalConfigSampleAccounter
 </source>
                 <p>
-See also the section about all <a href="complete.en.html#Accounters">available Accounters</a>.
+See also the section about all <a href="plugins.html#Accounters">available Accounters</a>.
                 </p>
             </section>
 

@@ -200,7 +200,7 @@ signing certificate. This can not be set to true if the TSA property is set. (OP
 The generated serial number will always be positive (so the sign bit is always a zero).
 						</p>
                         <p>
-<b>WORKERLOGGER</b> = As for other workers this property can be used to specify which worker logger to use. By default the <a href="complete.en.html#DefaultTimeStampLogger">DefaultTimeStampLogger</a> is used.
+<b>WORKERLOGGER</b> = As for other workers this property can be used to specify which worker logger to use. By default the <a href="misc.html#DefaultTimeStampLogger">DefaultTimeStampLogger</a> is used.
                         </p>
                         <p>
 <b>INCLUDESTATUSSTRING</b> = Specifies if the status string is to be included in the response. Setting this to true triggers a bug in some
@@ -237,7 +237,7 @@ This time stamp signer is compatible with the Microsoft Authenticode time-stampi
                                         <h4>Available Properties</h4>
 					    <p>
 <b>TIMESOURCE</b> = property containing the fully qualified name of the class implementing  the ITimeSource that should be used (OPTIONAL).
-This property has the same values as for TimeStampSigner <a href="complete.en.html#Available%20Properties">above</a>.
+This property has the same values as for <a href="plugins.html#Time-stamp Signer">TimeStampSigner</a> above.
                         </p>
                         <p>
 <b>SIGNATUREALGORITHM</b> = property specifying the algorithm used to sign the timestamp (default: SHA1withRSA)
@@ -254,12 +254,13 @@ There is a howto about testing Authenticode signing available in <code>doc/howto
 				</subsection>
                                 
                 <subsection name="Extended Time Stamp Signer">
+                    <div class="frame note">
+                        <div class="label">Note</div>
+                        <div class="content">This is a SignServer Enterprise Edition (EE) feature.</div>
+                    </div>
                     <p>
 The extended time stamp signer has the class name: org.signserver.module.tsa.ExtendedTimeStampSigner
                     </p>
-                    <note>
-This is a SignServer Enterprise Edition (EE) feature.
-                    </note>
                     <subsubsection name="Overview">
                         <p>
 The extended time stamp signer, in addition to all features provided by the
@@ -302,7 +303,7 @@ The MRTD SOD Signer creates the complete security object (SOd) for a MRTD (Machi
                         <p>
 Note 1: The Document Signer (DS) certificate is included in the SOd.<br/>
 Note 2: The SOd is verified (including certificate path) before it is returned so the certificate chain must contain the Country Signing CA (CSCA) certificate.<br/>
-Note 3: See also the integration guide for <a href="complete.en.html#SODProcessServlet">SODProcessServlet</a> or the <a href="complete.en.html#Client%20Web%20Service">ClientWS</a> interface.
+Note 3: See also the integration guide for <a href="integration.html#SODProcessServlet">SODProcessServlet</a> or the <a href="integration.html#Client Web Service">ClientWS</a> interface.
                         </p>
 
                     <h4>Available Properties</h4>
@@ -1920,7 +1921,7 @@ Fully qualified class name: <b>org.signserver.server.signers.CryptoWorker</b>
                     </p>
                     <h4>Worker properties</h4>
                         <p>
-See the <a href="complete.en.html#Available%20CryptoTokens">Available CryptoTokens</a> for the required properties of the configured crypto token.
+See the <a href="plugins.html#Available CryptoTokens">Available CryptoTokens</a> for the required properties of the configured crypto token.
                         </p>
 
                 </subsection>
@@ -1941,7 +1942,7 @@ Fully qualified class name: <b>org.signserver.module.renewal.worker.RenewalWorke
                     
                     <h4>Requesting the worker</h4>
                     <p>
-After setting up an RenewalWorker and installing its certificate signers (and other workers), can easily be renewed using the SignServer AdminGUI. See <a href="complete.en.html#Renew%20signer%20dialog">Renew Signer dialog</a>. As the RenewalWorker is a worker it can also be invoked using the normal client APIs. Using the demo web pages: <a href="http://localhost:8080/signserver/demo/genericsign.jsp">Generic Signing Demo</a>:
+After setting up an RenewalWorker and installing its certificate signers (and other workers), can easily be renewed using the SignServer AdminGUI. See <a href="usageguide.html#Renew signer dialog">Renew Signer dialog</a>. As the RenewalWorker is a worker it can also be invoked using the normal client APIs. Using the demo web pages: <a href="http://localhost:8080/signserver/demo/genericsign.jsp">Generic Signing Demo</a>:
                     </p>
                     <p>
 Sign by Direct Input<br/>
@@ -1961,7 +1962,7 @@ AUTHCODE=foo123"</source>
 (Notice that the command is on two lines)
                     </p>
                     <p>
-The renewal can also be initiated from the <a href="complete.en.html#Administration%20CLI">Admin CLI</a>:
+The renewal can also be initiated from the <a href="usageguide.html#Administration CLI">Admin CLI</a>:
                     </p>
                     <source>bin/signserver renewsigner MySigner -renewalworker MyRenewalWorker -authcode foo123</source>
 
@@ -2106,7 +2107,7 @@ Similar to the StatusPropertiesWorker, the TimeMonitorManager also supports sett
 
                     <h4>Worker Properties</h4>
                         <p>All worker properties starting with either "TIMEMONITOR." or "TIMESERVER." are sent to the TimeMonitor if it asks for it.</p>
-                        <p>See the <a href="complete.en.html#SignServer%20TimeMonitor">SignServer TimeMonitor</a> manual for the list of available properties.</p>
+                        <p>See the <a href="misc.html#SignServer TimeMonitor">SignServer TimeMonitor</a> manual for the list of available properties.</p>
 
                     <h4>Request Properties</h4>
                         <p><b>x.VALUE</b> - Where x is a status property: Sets the value of the property</p>
@@ -2211,7 +2212,7 @@ Fully qualified class name: org.signserver.module.timemonitormanager.TimeMonitor
 
                     <h4>Overview</h4>
                         <p>
-Worker that outputs the TimeMonitor state line as described in the <a href="complete.en.html#SignServer%20TimeMonitor">SignServer TimeMonitor</a> manual.
+Worker that outputs the TimeMonitor state line as described in the <a href="misc.html#SignServer TimeMonitor">SignServer TimeMonitor</a> manual.
                         </p>
 
                     <h4>Response</h4>
@@ -2617,7 +2618,7 @@ the key alias.
             
             <section name="Archivers">
                 <p>
-See also the section about the <a href="complete.en.html#Archiving%20Responses">ARCHIVERS</a> worker property that can be set to one or more of the available Archiver implementations described below.
+See also the section about the <a href="commonconf.html#Archiving Responses">ARCHIVERS</a> worker property that can be set to one or more of the available Archiver implementations described below.
                 </p>
                 <subsection name="OldDatabaseArchiver">
                     <p>
@@ -2763,7 +2764,7 @@ The fully qualified class name is: <b>org.signserver.server.archive.base64dbarch
             
             <section name="Accounters">
                 <p>
-See also the section about the <a href="complete.en.html#Accounter">ACCOUNTER</a> worker property that can be set to one of the available Accounter implementations described below.
+See also the section about the <a href="commonconf.html#Accounter">ACCOUNTER</a> worker property that can be set to one of the available Accounter implementations described below.
                 </p>
                 <subsection name="NoAccounter">
                     <p>

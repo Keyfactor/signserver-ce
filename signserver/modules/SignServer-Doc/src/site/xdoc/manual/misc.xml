@@ -101,7 +101,7 @@ LOGLEVEL_DEFAULT=INFO</source>
 
                     <h4>DefaultTimeStampLogger</h4>
                         <p>
-Pattern logger with a default log order suitable for logging time-stamp requests. This logger is the default logger used by the <a href="complete.en.html#Time-stamp%20Signer">TimeStampSigner</a>.
+Pattern logger with a default log order suitable for logging time-stamp requests. This logger is the default logger used by the <a href="plugins.html#Time-stamp Signer">TimeStampSigner</a>.
                         </p>
                         <source>
 WORKERLOGGER=org.signserver.module.tsa.DefaultTimeStampLogger</source>
@@ -563,7 +563,7 @@ If enableverify is set to true, all individual log entries that are displayed
 using CLI, GUI or over web services are verified at the server side and in case 
 of inconsistent signatures an error message is displayed. This verification will 
 not discover missing log entries. To verify the complete log for all nodes as 
-well as detect gaps in the sequence numbering, run the <a href="complete.en.html#Database%20CLI">Database CLI</a>.
+well as detect gaps in the sequence numbering, run the <a href="usageguide.html#Database CLI">Database CLI</a>.
                         </p>
 
 
@@ -873,7 +873,7 @@ Since SignServer 3.2.3 it is sometimes possible to operate SignServer without a 
 Notice that all features of SignServer is not supported without having a database and that the performance and scalability characteristics might be different. Currently archiving to database is not supported.
                 </p>
                 <p>
-To increase throughput it is recommended to disable the key usage counter as every request would otherwise have to lock and update that file. See the property DISABLEKEYUSAGECOUNTER in the section <a href="complete.en.html#Limiting%20the%20number%20of%20signatures">Limiting the number of signatures</a>.
+To increase throughput it is recommended to disable the key usage counter as every request would otherwise have to lock and update that file. See the property DISABLEKEYUSAGECOUNTER in the section <a href="commonconf.html#Limiting the number of signatures">Limiting the number of signatures</a>.
                 </p>
                 
                 <subsection name="Configuration">
@@ -920,7 +920,7 @@ This is an external application that can be used together with the StatusReading
 informing SignServer about its state.
                 </p>
                 <p>
-In SignServer, either a <a href="complete.en.html#StatusPropertiesWorker">StatusPropertiesWorker</a> or a <a href="complete.en.html#TimeMonitorManager">TimeMonitorManager</a> is configured for accepting the status updates. The later also supports dynamic configuration of the TimeMonitor.
+In SignServer, either a <a href="plugins.html#StatusPropertiesWorker">StatusPropertiesWorker</a> or a <a href="plugins.html#TimeMonitorManager">TimeMonitorManager</a> is configured for accepting the status updates. The later also supports dynamic configuration of the TimeMonitor.
                 </p>
                 <p>
 For details see the <a href="../docs/TimeMonitor-Manual.pdf">TimeMonitor manual</a> (only available in Enterprise Edition).

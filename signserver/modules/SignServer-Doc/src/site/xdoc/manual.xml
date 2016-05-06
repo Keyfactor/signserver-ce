@@ -6,11 +6,6 @@
 
     <body>
         <section name="SignServer Manual">
-            <!-- <subsection name="Complete Manual">
-                <p>
-                   Display all chapters in one document: <a href="manual/complete.en.html">HTML</a>
-                </p>
-            </subsection> -->
             <subsection name="Chapter by Chapter">
                 <p>
                     Browse the manual by chapter:<br/>

@@ -205,7 +205,7 @@ Displays the current list of acceptable clients.
 <b>renewsigner:</b>
 Sends a request for renewal of the specified worker to the specified renewal worker. If the authcode parameter is omitted the command will renew the certificate without an authcode, assuming the crypto token is auto-activated or the worker is using a separate crypto worker (recommended).
 To get the old behaviour of prompting for the authcode, specify the -authprompt option. When the authcode is not passed as a parameter or prompted for, an explicit activation of the token will not be performed.
-See also the section about the <a href="complete.en.html#RenewalWorker">RenewalWorker</a>.
+See also the section about the <a href="plugins.html#RenewalWorker">RenewalWorker</a>.
                         </p>
 
                         <p><b>Database Related</b></p>
@@ -530,7 +530,7 @@ services. If the "-ws" command line option is specified the later option is
 already selected when the dialog opens.
                     </p>
                     <p>
-See also the <a href="#Admin%20GUI%20troubleshooting">Admin GUI troubleshooting</a> section.
+See also the <a href="#Admin GUI troubleshooting">Admin GUI troubleshooting</a> section.
                     </p>
 
                     <h4>Connect to SignServer dialog</h4>
@@ -578,10 +578,10 @@ right shows details for the selected workers (if any).
 
                     <h4>Main window: Menu bar</h4>
 		        <p>
-<b> File -&gt; Add Worker/Load Configuration…</b>: Opens the dialog to import a configuration or set-up a worker manually by specifying worker parameters. When selecting "Load from file" it is possible to load a configuration file. This is equivalent of the "setproperties" <a href="complete.en.html#Administration%20CLI">Admin CLI</a> command. Selecting "Add worker" enables setting up a worker from scratch by manually specifying a worker ID (the default selected will generate an ID dynamically), worker name, fully qualified class name for the implementation, and (optionally) a signer token implementation. Additional properties can be added using the table below. When the required parameters are given, the "Next" button will enable moving to the next step where additional manual editing of the resulting configuration can be made (the format is the same as the worker properties files). Clicking the "Apply" button from this stage will load the current configuration. The dialog can be dismissed in both states using the "Cancel" button.
+<b> File -&gt; Add Worker/Load Configuration…</b>: Opens the dialog to import a configuration or set-up a worker manually by specifying worker parameters. When selecting "Load from file" it is possible to load a configuration file. This is equivalent of the "setproperties" <a href="usageguide.html#Administration CLI">Admin CLI</a> command. Selecting "Add worker" enables setting up a worker from scratch by manually specifying a worker ID (the default selected will generate an ID dynamically), worker name, fully qualified class name for the implementation, and (optionally) a signer token implementation. Additional properties can be added using the table below. When the required parameters are given, the "Next" button will enable moving to the next step where additional manual editing of the resulting configuration can be made (the format is the same as the worker properties files). Clicking the "Apply" button from this stage will load the current configuration. The dialog can be dismissed in both states using the "Cancel" button.
 			</p>
                         <p>
-<b> File -&gt; Export...</b>: Opens the Export configuration dialog. This is the equivalent of the "dumpproperties" <a href="complete.en.html#Administration%20CLI">Admin CLI</a> command. The dialog gives the option to export all workers, the selected workers or none. In addition it also gives the option to include all global configurations not related to any worker (always enabled if no workers choosen for export). 
+<b> File -&gt; Export...</b>: Opens the Export configuration dialog. This is the equivalent of the "dumpproperties" <a href="usageguide.html#Administration CLI">Admin CLI</a> command. The dialog gives the option to export all workers, the selected workers or none. In addition it also gives the option to include all global configurations not related to any worker (always enabled if no workers choosen for export). 
                         </p>
                         <p>
 <b> File -&gt; Exit</b>: Exits the SignServer Administration GUI
@@ -791,19 +791,19 @@ After filling in a key alias a new row will automatically added which allows for
 Note that this dialog is different from the <a href="#Renew key dialog">Renew key dialog</a> as in this case the worker's next key property (NEXTCERTSIGNKEY) is not updated.
                         </p>
                         <p>
-<b>Test</b>: Opens the <a href="#Test%20key%20dialog">Test key dialog</a> for the selected entry.
+<b>Test</b>: Opens the <a href="#Test key dialog">Test key dialog</a> for the selected entry.
                         </p>
                         <p>
-<b>Generate CSR...</b>: Opens the <a href="#Generate%20CSR%20dialog">Generate CSR dialog</a> with the key aliases of the selected entries filled in.
+<b>Generate CSR...</b>: Opens the <a href="#Generate CSR dialog">Generate CSR dialog</a> with the key aliases of the selected entries filled in.
                         </p>
                         <p>
-                            <b>Import certificates...</b>: Opens the <a href="#Install%20certificates">Install certificates</a> dialog for importing ceritificates to the selected token entries.
+                            <b>Import certificates...</b>: Opens the <a href="#Install certificates">Install certificates</a> dialog for importing ceritificates to the selected token entries.
                         </p>
                         <p>
 Note that installing certificates this way it is only possible to store the certificates in the token and the worker's current key (DEFAULTKEY) and next key (NEXTCERTSIGNKEY) properties are not updated.
                         </p>
                         <p>
-<b>Remove</b>: Opens the <a href="#Remove%20key%20dialog">Remove key dialog</a> with the selected key aliases already filled in.
+<b>Remove</b>: Opens the <a href="#Remove key dialog">Remove key dialog</a> with the selected key aliases already filled in.
                         </p>
                         <p>
 <b>Details...</b>: Opens the details window displaying more information about the token entry:
@@ -1080,7 +1080,7 @@ bin/signserver reload all</source>
 
             <section name="Making the SignServer highly-available">
                 <p>
-Here are some tips on configuration used to make the SignServer redundant. Usually is the SignServer set-up with three nodes (required minimum for MySQL cluster) where one node is a management node from were all deployment and administration is done and the other two services are service nodes processing the actual requests.
+Here are some tips on configuration used to make the SignServer redundant.
                 </p>
                 
                 <subsection name="HTTP access requires a load balancer">
@@ -1093,17 +1093,8 @@ The health check servlet can also be used to monitor the SignServer by creating 
                     <p>
 Tip, heartbeat with ldirectord is a good solution for a load balancer and works well with the SignServer. KeepAlived is another open source solution.
                     </p>
-                    <p>
-The Main WebService using the Java client API manages the HA parts itself and then isn't a load balancer necessary.
-                    </p>
                 </subsection>
-                <subsection name="Setting up a MySQL Cluster">
-                    <p>
-The database backed of the SignServer can be made redundant using MySQL Cluster. Details on how to set-up the MySQL cluster can be found in the document <a href="../docs/SignServer_3_0_Installation_Guide.pdf">SignServer_3_0_Installation_Guide.pdf</a> that can be downloaded from <a href="https://www.signserver.org">www.signserver.org</a>.
-More information about the MySQL Cluster can be found at
-<a href="http://www.mysql.com/products/database/cluster/">http://www.mysql.com/products/database/cluster/</a>.
-                    </p>
-               </subsection>
+
                <subsection name="Healthcheck">
                    <h4>Setting up the Health check servlet</h4>
                     <p>

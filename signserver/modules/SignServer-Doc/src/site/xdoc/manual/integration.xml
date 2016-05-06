@@ -24,7 +24,7 @@
             <section name="JavaDoc">
                     <p>
                             The JavaDoc for SignServer is available at SIGNSERVER_HOME/doc/api/index.html
-                            after running "ant javadoc".
+                            after running "mvn javadoc:javadoc".    
                     </p>
 		</section>
 
@@ -188,7 +188,7 @@ The interface has two calls, the main one is 'process' which takes a collection 
                     </p>
                     <p>
                         <b>Notice:</b>
-All though the SignServerWS interface uses web services the actual process data is base64 encoded byte arrays in a special binary format. You will have to lookup the Java source code for the exact format of the request and response data. An alternative is to instead use the much simpler <a href="#Web%20Server%20Interface">Web Server Interface</a> or the newer <a href="#Client%20Web%20Service">ClientWS interface</a>. 
+All though the SignServerWS interface uses web services the actual process data is base64 encoded byte arrays in a special binary format. You will have to lookup the Java source code for the exact format of the request and response data. An alternative is to instead use the much simpler <a href="#Web Server Interface">Web Server Interface</a> or the newer <a href="#Client Web Service">ClientWS interface</a>. 
                     </p>
                     <p>
 The getStatus call can be used to implement high-availability towards the client. The Java client API described in the next section have built in support for different high availability policies.

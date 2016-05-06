@@ -34,7 +34,7 @@ Make sure all required softwares are installed:
                     <p>
 * When using Oracle JDK you must install the 'Unlimited Strength Jurisdiction Policy Files' for JDK for the parts of SignServer that  makes use of strong crypto to work. The policy files can be found at the same place as the JDK download at Oracle. Further information on this can be found in the Oracle documentation on the JCE. <br/>
 ** If the application server supports JDK 7. Works for GlassFish 3 and JBoss 7/EAP 6.<br/>
-*** See <a href="complete.en.html#SignServer%20without%20Database">SignServer without Database</a>
+*** See <a href="misc.html#SignServer without Database">SignServer without Database</a>
                     </p>
                 </subsection>
 
@@ -78,7 +78,7 @@ Set SIGNSERVER_NODEID to an unique ID for the server.
                 <subsection name="4. Setup database">
                     <p>
 Skip this section and instead follow the instructions in 
-<a href="complete.en.html#SignServer%20without%20Database">SignServer without Database</a> if
+<a href="misc.html#SignServer without Database">SignServer without Database</a> if
 you decide to run SignServer without a database management system.
                     </p>
                     <p>
@@ -505,7 +505,7 @@ module.log4j.include=true</source>
 
                     
                     <p>
-See <a href="complete.en.html#Signed%20log">Signed log</a> for how to configure for signed audit logs in the database.
+See <a href="misc.html#Signed%20log">Signed log</a> for how to configure for signed audit logs in the database.
                     </p>
                 </subsection>
 

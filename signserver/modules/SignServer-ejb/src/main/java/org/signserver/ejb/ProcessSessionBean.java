@@ -140,8 +140,5 @@ public class ProcessSessionBean implements ProcessSessionRemote, ProcessSessionL
         }
         return processImpl.process(adminInfo, wi, request, requestContext);
     }
-    
-    
-    // Add business logic below. (Right-click in editor and choose
-    // "Insert Code > Add Business Method")
+
 }

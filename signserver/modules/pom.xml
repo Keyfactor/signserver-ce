@@ -19,16 +19,6 @@
         <jsign.version>1.2-signserver4</jsign.version>
         <xades4j.version>1.3.2-signserver4</xades4j.version>
     </properties>
-    <distributionManagement>
-        <repository>
-            <id>nexus1.lab.primekey.se-releases</id>
-            <url>http://nexus1.lab.primekey.se:8081/nexus/content/repositories/releases/</url>
-        </repository>
-        <snapshotRepository>
-            <id>nexus1.lab.primekey.se-snapshots</id>
-            <url>http://nexus1.lab.primekey.se:8081/nexus/content/repositories/snapshots/</url>
-        </snapshotRepository>
-    </distributionManagement>
 
     <profiles>
         <profile>

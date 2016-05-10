@@ -56,7 +56,7 @@
           <version>${project.version}</version>
         </dependency>-->
         <dependency>
-            <groupId>org.cesecore</groupId>
+            <groupId>org.ejbca.cesecore</groupId>
             <artifactId>cesecore-entity</artifactId>
             <version>${cesecore.version}</version>
         </dependency>
@@ -67,7 +67,7 @@
         </dependency>
         <dependency>
             <artifactId>cesecore-common</artifactId>
-            <groupId>org.cesecore</groupId>
+            <groupId>org.ejbca.cesecore</groupId>
             <type>jar</type>
             <version>${cesecore.version}</version>
         </dependency>

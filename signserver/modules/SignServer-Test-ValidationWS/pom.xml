@@ -31,7 +31,7 @@
             <version>${log4j.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.cesecore</groupId>
+            <groupId>org.ejbca.cesecore</groupId>
             <artifactId>cesecore-common</artifactId>
             <version>${cesecore.version}</version>
         </dependency>

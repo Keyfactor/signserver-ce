@@ -71,7 +71,7 @@ public interface Archiver {
     /**
      * Get a list of fatal errors for the archiver implementation
      *
-     * @return 
+     * @return A list of fatal errors for the archiver implementation
      */
     List<String> getFatalErrors();
 }

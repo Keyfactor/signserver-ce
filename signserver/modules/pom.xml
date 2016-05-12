@@ -18,6 +18,7 @@
         <bouncycastle.bcprov.artifact>bcprov-jdk15on</bouncycastle.bcprov.artifact>
         <jsign.version>1.2-signserver4</jsign.version>
         <xades4j.version>1.3.2-signserver4</xades4j.version>
+        <primekey.customer>primekey</primekey.customer>
     </properties>
 
     <profiles>
@@ -188,4 +189,32 @@
             </plugin>
         </plugins>
     </build>
+    
+    <!--
+        PrimeKey Internal/Customer Repository Mirror.
+        Edit ~/.m2/settings.xml to enable by setting the primekey.customer
+        property as well as provide username and password.
+        See doc/sample-maven-settings.xml.
+    -->
+    <repositories>
+        <repository>
+            <id>primekey-mirror-test</id> <!-- TODO Change id, name and url when the production server is available -->
+            <name>PrimeKey Repository Mirror (Test Environment)</name>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <url>https://binrepo-mirror-test.se.lab.primekey/${primekey.customer}/repomirror</url>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>primekey-mirror-test</id>
+            <name>PrimeKey Repository Mirror (Test Environment)</name>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <url>https://binrepo-mirror-test.se.lab.primekey/${primekey.customer}/repomirror</url>
+        </pluginRepository>
+    </pluginRepositories>
+
 </project>

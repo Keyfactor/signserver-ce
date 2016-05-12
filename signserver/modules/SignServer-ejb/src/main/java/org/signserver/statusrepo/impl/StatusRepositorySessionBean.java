@@ -39,7 +39,6 @@ import org.signserver.statusrepo.StatusRepositorySessionRemote;
  * @version $Id$
  * @author Markus Kilås
  */
-@Stateless
 @Singleton
 public class StatusRepositorySessionBean implements
         StatusRepositorySessionLocal, StatusRepositorySessionRemote {

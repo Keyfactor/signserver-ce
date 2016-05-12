@@ -16,6 +16,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.ejb.EJB;
 import javax.ejb.EJBException;
+import javax.ejb.Singleton;
 import javax.ejb.Stateless;
 import org.apache.log4j.Logger;
 import org.cesecore.audit.enums.EventStatus;
@@ -39,6 +40,7 @@ import org.signserver.statusrepo.StatusRepositorySessionRemote;
  * @author Markus Kilås
  */
 @Stateless
+@Singleton
 public class StatusRepositorySessionBean implements
         StatusRepositorySessionLocal, StatusRepositorySessionRemote {
 

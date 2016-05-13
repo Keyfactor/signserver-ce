@@ -19,7 +19,6 @@ import javax.ejb.EJBException;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Singleton;
-import javax.ejb.Stateless;
 import org.apache.log4j.Logger;
 import org.cesecore.audit.enums.EventStatus;
 import org.cesecore.audit.log.AuditRecordStorageException;

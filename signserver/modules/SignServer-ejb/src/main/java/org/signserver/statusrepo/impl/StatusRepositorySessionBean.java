@@ -16,6 +16,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.ejb.EJB;
 import javax.ejb.EJBException;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
 import javax.ejb.Singleton;
 import javax.ejb.Stateless;
 import org.apache.log4j.Logger;
@@ -70,6 +72,7 @@ public class StatusRepositorySessionBean implements
      * @return The value if existing and not expired, otherwise null
      */
     @Override
+    @Lock(value=LockType.READ)
     public StatusEntry getValidEntry(String key) throws NoSuchPropertyException {
         try {
             final StatusEntry result;
@@ -101,6 +104,7 @@ public class StatusRepositorySessionBean implements
      * @param value The value to set
      */
     @Override
+    @Lock(value=LockType.WRITE)
     public void update(final String key, final String value) throws NoSuchPropertyException {
         update(key, value, 0L);
     }
@@ -114,20 +118,19 @@ public class StatusRepositorySessionBean implements
      * @param newValue The value to set
      */
     @Override
+    @Lock(value=LockType.WRITE)
     public void update(final String key, final String newValue,
             final long expiration) throws NoSuchPropertyException {
         try {
             final long currentTime = System.currentTimeMillis();
             final StatusName name = StatusName.valueOf(key);
             final StatusEntry oldEntry;
-            
-            synchronized (repository) { // Synchronization only for writes so we can detect changes
-                // Get the old value
-                oldEntry = repository.get(name);
-                // Set the new value
-                repository.set(name, new StatusEntry(currentTime, newValue, expiration));
-            }
-            
+
+            // Get the old value
+            oldEntry = repository.get(name);
+            // Set the new value
+            repository.set(name, new StatusEntry(currentTime, newValue, expiration));
+
             if (shouldLog(logUpdates, oldEntry, newValue)) {
                 auditLog(key, newValue, expiration);
             }
@@ -181,6 +184,7 @@ public class StatusRepositorySessionBean implements
      * @return An unmodifiable map of all properties
      */
     @Override
+    @Lock(value=LockType.READ)
     public Map<String, StatusEntry> getAllEntries() {
         return repository.getEntries();
     }

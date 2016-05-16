@@ -28,17 +28,14 @@
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
-            <version>${log4j.version}</version>
         </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>${bouncycastle.bcpkix.artifact}</artifactId>
-            <version>${bouncycastle.version}</version>
         </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>${bouncycastle.bcprov.artifact}</artifactId>
-            <version>${bouncycastle.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.santuario</groupId>

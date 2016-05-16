@@ -9,9 +9,62 @@
         <!-- fixedTime / dist.fixedTime is used for deterministic builds. -->
         <fixedTime/>
         <dist.fixedTime>${fixedTime}</dist.fixedTime>
+        
+        <cesecore.version>6.4.1</cesecore.version>
+        <commons-configuration.version>1.6</commons-configuration.version>
+        <bouncycastle.bcpkix.artifact>bcpkix-jdk15on</bouncycastle.bcpkix.artifact>
+        <bouncycastle.bcprov.artifact>bcprov-jdk15on</bouncycastle.bcprov.artifact>
+        <jsign.version>1.2-signserver4</jsign.version>
+        <xades4j.version>1.3.2-signserver4</xades4j.version>
     </properties>
 
     <modules>
         <module>modules</module>
     </modules>
+    
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <artifactId>${bouncycastle.bcpkix.artifact}</artifactId>
+                <groupId>org.bouncycastle</groupId>
+                <version>1.53</version>
+            </dependency>
+            <dependency>
+                <artifactId>${bouncycastle.bcprov.artifact}</artifactId>
+                <groupId>org.bouncycastle</groupId>
+                <type>jar</type>
+                <version>1.53</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>log4j</groupId>
+                <artifactId>log4j</artifactId>
+                <version>1.2.17</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>1.4</version>
+            </dependency>
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>4.11</version>
+                <scope>test</scope>
+            </dependency>
+            
+            <dependency>
+                <groupId>org.apache.santuario</groupId>
+                <artifactId>xmlsec</artifactId>
+                <version>1.5.5</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>org.apache.openejb</groupId>
+                <artifactId>javaee-api</artifactId>
+                <version>6.0-6</version>
+                <scope>provided</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 </project>

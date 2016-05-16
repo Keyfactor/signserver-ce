@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.signserver</groupId>
+        <artifactId>SignServer</artifactId>
+        <version>4.0.0-SNAPSHOT</version>
+    </parent>
     <groupId>org.signserver</groupId>
     <artifactId>SignServer-Modules</artifactId>
     <version>4.0.0-SNAPSHOT</version>
@@ -10,14 +15,6 @@
         <!-- fixedTime / dist.fixedTime is used for deterministic builds. -->
         <fixedTime/>
         <dist.fixedTime>${fixedTime}</dist.fixedTime>
-        <cesecore.version>6.4.1</cesecore.version>
-        <log4j.version>1.2.17</log4j.version>
-        <commons-configuration.version>1.6</commons-configuration.version>
-        <bouncycastle.version>1.53</bouncycastle.version>
-        <bouncycastle.bcpkix.artifact>bcpkix-jdk15on</bouncycastle.bcpkix.artifact>
-        <bouncycastle.bcprov.artifact>bcprov-jdk15on</bouncycastle.bcprov.artifact>
-        <jsign.version>1.2-signserver4</jsign.version>
-        <xades4j.version>1.3.2-signserver4</xades4j.version>
         <primekey.customer>primekey</primekey.customer>
     </properties>
 
@@ -105,13 +102,11 @@
             <artifactId>${bouncycastle.bcpkix.artifact}</artifactId>
             <groupId>org.bouncycastle</groupId>
             <type>jar</type>
-            <version>${bouncycastle.version}</version>
         </dependency>
         <dependency>
             <artifactId>${bouncycastle.bcprov.artifact}</artifactId>
             <groupId>org.bouncycastle</groupId>
             <type>jar</type>
-            <version>${bouncycastle.version}</version>
         </dependency>
         <dependency>
             <groupId>commons-lang</groupId>
@@ -132,7 +127,6 @@
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
-            <version>${log4j.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.openejb</groupId>

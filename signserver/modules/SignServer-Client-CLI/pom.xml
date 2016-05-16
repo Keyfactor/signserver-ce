@@ -22,7 +22,6 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>3.8.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -49,15 +48,9 @@
             <artifactId>SignServer-ejb-interfaces</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!--    <dependency>
-          <groupId>${project.groupId}</groupId>
-          <artifactId>SignServer-CESeCore-jars</artifactId>
-          <version>${project.version}</version>
-        </dependency>-->
         <dependency>
             <groupId>org.ejbca.cesecore</groupId>
             <artifactId>cesecore-entity</artifactId>
-            <version>${cesecore.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -73,12 +66,10 @@
             <artifactId>cesecore-common</artifactId>
             <groupId>org.ejbca.cesecore</groupId>
             <type>jar</type>
-            <version>${cesecore.version}</version>
         </dependency>
         <dependency>
             <groupId>commons-configuration</groupId>
             <artifactId>commons-configuration</artifactId>
-            <version>${commons-configuration.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>

@@ -62,12 +62,10 @@
     <dependency>
       <groupId>commons-configuration</groupId>
       <artifactId>commons-configuration</artifactId>
-      <version>${commons-configuration.version}</version>
     </dependency>
     <dependency>
         <groupId>org.ejbca.cesecore</groupId>
         <artifactId>cesecore-common</artifactId>
-        <version>${cesecore.version}</version>
     </dependency>
     <dependency>
       <groupId>commons-fileupload</groupId>

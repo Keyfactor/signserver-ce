@@ -23,7 +23,7 @@
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
-            <version>2.4</version>
+            <version>2.5</version>
         </dependency>
         <dependency>
             <groupId>log4j</groupId>
@@ -33,6 +33,12 @@
             <groupId>commons-configuration</groupId>
             <artifactId>commons-configuration</artifactId>
             <version>1.6</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-lang</groupId>
+                    <artifactId>commons-lang</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>commons-fileupload</groupId>
@@ -49,13 +55,11 @@
         <dependency>
             <groupId>org.ejbca.cesecore</groupId>
             <artifactId>cesecore-entity</artifactId>
-            <version>${cesecore.version}</version>
         </dependency>
         <dependency>
             <artifactId>cesecore-common</artifactId>
             <groupId>org.ejbca.cesecore</groupId>
             <type>jar</type>
-            <version>${cesecore.version}</version>
         </dependency>
         <dependency>
             <artifactId>cert-cvc</artifactId>

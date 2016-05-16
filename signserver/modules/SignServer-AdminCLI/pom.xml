@@ -51,7 +51,6 @@
         <dependency>
             <groupId>org.ejbca.cesecore</groupId>
             <artifactId>cesecore-entity</artifactId>
-            <version>${cesecore.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -67,12 +66,10 @@
             <artifactId>cesecore-common</artifactId>
             <groupId>org.ejbca.cesecore</groupId>
             <type>jar</type>
-            <version>${cesecore.version}</version>
         </dependency>
         <dependency>
             <groupId>commons-configuration</groupId>
             <artifactId>commons-configuration</artifactId>
-            <version>${commons-configuration.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.openejb</groupId>

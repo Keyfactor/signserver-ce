@@ -57,11 +57,6 @@
             <artifactId>SignServer-CLI-Common</artifactId>
             <version>${project.version}</version>
         </dependency>
-<!--        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>SignServer-Client-CLientWS</artifactId>
-            <version>${project.version}</version>
-        </dependency>-->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>SignServer-Client-CLI</artifactId>
@@ -70,32 +65,23 @@
         <dependency>
             <artifactId>cesecore-common</artifactId>
             <groupId>org.ejbca.cesecore</groupId>
-            <type>jar</type>
-            <version>${cesecore.version}</version>
         </dependency>
         <dependency>
             <artifactId>cesecore-entity</artifactId>
             <groupId>org.ejbca.cesecore</groupId>
-            <type>jar</type>
-            <version>${cesecore.version}</version>
         </dependency>
         <dependency>
             <artifactId>cesecore-interfaces</artifactId>
             <groupId>org.ejbca.cesecore</groupId>
-            <type>jar</type>
-            <version>${cesecore.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.openejb</groupId>
             <artifactId>javaee-api</artifactId>
-            <version>6.0-6</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.ejbca.cvc</groupId>
             <artifactId>cert-cvc</artifactId>
-            <version>1.4.3</version>
-            <type>jar</type>
         </dependency>
     </dependencies>
 </project>

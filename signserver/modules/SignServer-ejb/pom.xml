@@ -44,17 +44,14 @@
         <dependency>
             <groupId>org.ejbca.cesecore</groupId>
             <artifactId>cesecore-common</artifactId>
-            <version>${cesecore.version}</version>
         </dependency>
         <dependency>
             <groupId>org.ejbca.cesecore</groupId>
             <artifactId>cesecore-interfaces</artifactId>
-            <version>${cesecore.version}</version>
         </dependency>
         <dependency>
             <groupId>org.ejbca.cesecore</groupId>
             <artifactId>cesecore-entity</artifactId>
-            <version>${cesecore.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -65,7 +62,6 @@
         <dependency>
             <groupId>org.apache.openejb</groupId>
             <artifactId>javaee-api</artifactId>
-            <version>6.0-6</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

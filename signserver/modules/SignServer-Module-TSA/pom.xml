@@ -33,7 +33,6 @@
         <dependency>
             <groupId>org.ejbca.cesecore</groupId>
             <artifactId>cesecore-common</artifactId>
-            <version>${cesecore.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>

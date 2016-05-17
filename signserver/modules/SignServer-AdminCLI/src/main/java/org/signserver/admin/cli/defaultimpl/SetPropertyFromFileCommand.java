@@ -35,6 +35,7 @@ public class SetPropertyFromFileCommand extends AbstractAdminCommand {
         return "Sets a property for a given worker with byte data from file";
     }
 
+    @Override
     public String getUsages() {
         return "Usage: signserver setpropertyfromfile <signerid | signerName | global | node> <propertykey> <filename>\n"
                     + "Example 1: signserver setproperty 1 defaultKey myfile.dat\n"

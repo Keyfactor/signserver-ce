@@ -172,7 +172,7 @@ public class WSAdminsCommand extends AbstractAdminCommand {
             if (admins != null) {
                 entries = ClientEntry.clientEntriesFromProperty(admins);
             } else {
-                entries = new HashSet<ClientEntry>();
+                entries = new HashSet<>();
             }
 
             if (LIST.equals(operation)) {

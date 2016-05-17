@@ -39,6 +39,7 @@ public class SetPropertiesCommand extends AbstractAdminCommand {
                     + "Example 2: signserver setproperties -host node3.someorg.com mysettings.properties\n\n";
     }
 
+    @Override
     public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException, UnexpectedCommandFailureException {
         if (args.length != 1) {
             throw new IllegalCommandArgumentsException("Wrong number of arguments");

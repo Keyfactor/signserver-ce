@@ -43,6 +43,7 @@ public class FindFromRequestCertCommand extends AbstractAdminCommand {
                     + "Example: signserver archive findfromrequestcert 1 EF34242D2324 \"CN=Test Root CA\" /tmp/archivedata \n\n";
     }
 
+    @Override
     public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException, UnexpectedCommandFailureException {
         if (args.length != 4) {
             throw new IllegalCommandArgumentsException("Wrong number of arguments");

@@ -69,7 +69,7 @@ public class ImportCertificateChainCommand extends AbstractAdminCommand {
                 throw new IllegalCommandArgumentsException(FAIL);
             }
 
-            final ArrayList<byte[]> bcerts = new ArrayList<byte[]>();
+            final ArrayList<byte[]> bcerts = new ArrayList<>();
             for (final Certificate cert : certs) {
                 bcerts.add(cert.getEncoded());
             }

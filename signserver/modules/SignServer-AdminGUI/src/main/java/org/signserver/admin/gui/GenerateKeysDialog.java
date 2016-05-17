@@ -46,7 +46,7 @@ public class GenerateKeysDialog extends JDialog {
     public static final int CANCEL = 0;
     public static final int OK = 1;
 
-    private static final Vector<String> COLUMN_NAMES = new Vector<String>(Arrays.asList(
+    private static final Vector<String> COLUMN_NAMES = new Vector<>(Arrays.asList(
             new String[] {
         "New key alias", "Key algorithm", "Key specification"
     }));
@@ -76,7 +76,7 @@ public class GenerateKeysDialog extends JDialog {
         initComponents();
         setTitle("Generate new key(s) in token " + worker.getName());
 
-        data = new Vector<Vector<String>>();
+        data = new Vector<>();
         data.add(createRow());
         tableModel = new DefaultTableModel(data, COLUMN_NAMES) {
 
@@ -353,7 +353,7 @@ public class GenerateKeysDialog extends JDialog {
 
 
     private Vector<String> createRow() {
-        Vector<String> cols = new Vector<String>();
+        Vector<String> cols = new Vector<>();
         cols.add("");
         cols.add(worker.getConfiguration().getProperty("KEYALG"));
         cols.add(worker.getConfiguration().getProperty("KEYSPEC"));

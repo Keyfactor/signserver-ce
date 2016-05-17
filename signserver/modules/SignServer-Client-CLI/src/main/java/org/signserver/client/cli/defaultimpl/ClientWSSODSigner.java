@@ -81,6 +81,7 @@ public class ClientWSSODSigner extends AbstractSODSigner {
         this.metadata = metadata;
     }
 
+    @Override
     protected void doSign(final Map<Integer,byte[]> dataGroups, final String encoding,
             final OutputStream out) throws IllegalRequestException,
                 CryptoTokenOfflineException, SignServerException,
@@ -103,7 +104,7 @@ public class ClientWSSODSigner extends AbstractSODSigner {
                 sodRequest.getDataGroup().add(dg);
             }
             
-            List<Metadata> requestMetadata = new LinkedList<Metadata>();
+            List<Metadata> requestMetadata = new LinkedList<>();
             
             if (metadata != null) {
                 for (final String key : metadata.keySet()) {

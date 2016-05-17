@@ -33,10 +33,10 @@ import static org.signserver.common.util.PropertiesConstants.*;
  */
 public class SetPropertiesHelper {
 
-    private HashMap<String, Integer> genIds = new HashMap<String, Integer>();
+    private HashMap<String, Integer> genIds = new HashMap<>();
     private PrintStream out;
     private AdminCommandHelper helper = new AdminCommandHelper();
-    private List<Integer> workerDeclarations = new ArrayList<Integer>();
+    private List<Integer> workerDeclarations = new ArrayList<>();
 
     public SetPropertiesHelper(PrintStream out) {
         this.out = out;
@@ -120,9 +120,9 @@ public class SetPropertiesHelper {
     private int getGenId(String splittedKey) throws RemoteException, Exception {
         if (genIds.get(splittedKey) == null) {
             int genid = helper.getWorkerSession().genFreeWorkerId();
-            genIds.put(splittedKey, new Integer(genid));
+            genIds.put(splittedKey, genid);
         }
-        return ((Integer) genIds.get(splittedKey)).intValue();
+        return ((Integer) genIds.get(splittedKey));
     }
 
     private void processGlobalProperty(String scope, String strippedKey, String value, boolean add) throws RemoteException, Exception {
@@ -230,7 +230,7 @@ public class SetPropertiesHelper {
             } else {
                 if (propertykey.startsWith(DOT_SIGNERCERTCHAIN.substring(1))) {
                     String certs[] = propertyvalue.split(";");
-                    ArrayList<byte[]> chain = new ArrayList<byte[]>();
+                    ArrayList<byte[]> chain = new ArrayList<>();
                     for (String base64cert : certs) {
                         if (!base64cert.trim().isEmpty()) {
                             byte[] cert = Base64.decode(base64cert.getBytes());

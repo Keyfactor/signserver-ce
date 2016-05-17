@@ -38,9 +38,7 @@ public class AdminGUIPropertiesApplier extends PropertiesApplier {
             SignServerAdminGUIApplication.getAdminWS().setGlobalProperty(scope, key, value);
         } catch (AdminNotAuthorizedException_Exception e) {
             throw new PropertiesApplierException(e);
-        } catch (EJBException ex) {
-            throw new PropertiesApplierException("Operation failed on server side", ex);
-        } catch (SOAPFaultException ex) {
+        } catch (EJBException | SOAPFaultException ex) {
             throw new PropertiesApplierException("Operation failed on server side", ex);
         }
     }
@@ -51,9 +49,7 @@ public class AdminGUIPropertiesApplier extends PropertiesApplier {
             SignServerAdminGUIApplication.getAdminWS().removeGlobalProperty(scope, key);
         } catch (AdminNotAuthorizedException_Exception e) {
             throw new PropertiesApplierException(e);
-        } catch (EJBException ex) {
-            throw new PropertiesApplierException("Operation failed on server side", ex);
-        } catch (SOAPFaultException ex) {
+        } catch (EJBException | SOAPFaultException ex) {
             throw new PropertiesApplierException("Operation failed on server side", ex);
         }
     }
@@ -64,9 +60,7 @@ public class AdminGUIPropertiesApplier extends PropertiesApplier {
             SignServerAdminGUIApplication.getAdminWS().setWorkerProperty(workerId, key, value);
         } catch (AdminNotAuthorizedException_Exception e) {
             throw new PropertiesApplierException(e);
-        } catch (EJBException ex) {
-            throw new PropertiesApplierException("Operation failed on server side", ex);
-        } catch (SOAPFaultException ex) {
+        } catch (EJBException | SOAPFaultException ex) {
             throw new PropertiesApplierException("Operation failed on server side", ex);
         }
     }
@@ -77,9 +71,7 @@ public class AdminGUIPropertiesApplier extends PropertiesApplier {
             SignServerAdminGUIApplication.getAdminWS().removeWorkerProperty(workerId, key);
         } catch (AdminNotAuthorizedException_Exception e) {
             throw new PropertiesApplierException(e);
-        } catch (EJBException ex) {
-            throw new PropertiesApplierException("Operation failed on server side", ex);
-        } catch (SOAPFaultException ex) {
+        } catch (EJBException | SOAPFaultException ex) {
             throw new PropertiesApplierException("Operation failed on server side", ex);
         }
     }
@@ -92,9 +84,7 @@ public class AdminGUIPropertiesApplier extends PropertiesApplier {
             throw new PropertiesApplierException(e);
         } catch (IllegalRequestException_Exception ex) {
             throw new PropertiesApplierException("Illegal request", ex);
-        } catch (EJBException ex) {
-            throw new PropertiesApplierException("Operation failed on server side", ex);
-        } catch (SOAPFaultException ex) {
+        } catch (EJBException | SOAPFaultException ex) {
             throw new PropertiesApplierException("Operation failed on server side", ex);
         }
     }
@@ -108,9 +98,7 @@ public class AdminGUIPropertiesApplier extends PropertiesApplier {
             throw new PropertiesApplierException(e);
         } catch (IllegalRequestException_Exception ex) {
             throw new PropertiesApplierException("Illegal request", ex);
-        } catch (EJBException ex) {
-            throw new PropertiesApplierException("Operation failed on server side", ex);
-        } catch (SOAPFaultException ex) {
+        } catch (EJBException | SOAPFaultException ex) {
             throw new PropertiesApplierException("Operation failed on server side", ex);
         }
     }
@@ -161,9 +149,7 @@ public class AdminGUIPropertiesApplier extends PropertiesApplier {
             SignServerAdminGUIApplication.getAdminWS().addAuthorizedClient(workerId, authClient);
         } catch (AdminNotAuthorizedException_Exception e) {
             throw new PropertiesApplierException(e);
-        } catch (EJBException ex) {
-            throw new PropertiesApplierException("Operation failed on server side", ex);
-        } catch (SOAPFaultException ex) {
+        } catch (EJBException | SOAPFaultException ex) {
             throw new PropertiesApplierException("Operation failed on server side", ex);
         }
     }
@@ -179,9 +165,7 @@ public class AdminGUIPropertiesApplier extends PropertiesApplier {
             SignServerAdminGUIApplication.getAdminWS().removeAuthorizedClient(workerId, authClient);
         } catch (AdminNotAuthorizedException_Exception e) {
             throw new PropertiesApplierException(e);
-        } catch (EJBException ex) {
-            throw new PropertiesApplierException("Operation failed on server side", ex);
-        } catch (SOAPFaultException ex) {
+        } catch (EJBException | SOAPFaultException ex) {
             throw new PropertiesApplierException("Operation failed on server side", ex);
         }
     }

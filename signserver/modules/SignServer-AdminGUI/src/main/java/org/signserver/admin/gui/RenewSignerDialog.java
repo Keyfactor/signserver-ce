@@ -65,7 +65,7 @@ public class RenewSignerDialog extends javax.swing.JDialog {
         "Renew", "Signer", "Not valid after", "Signings", "Renewal worker"
     };
 
-    private List<Item> items = new ArrayList<Item>();
+    private List<Item> items = new ArrayList<>();
 
     private boolean renewButtonClicked;
 
@@ -179,16 +179,16 @@ public class RenewSignerDialog extends javax.swing.JDialog {
             }
         });
 
-        final Vector<String> workerNames = new Vector<String>();
+        final Vector<String> workerNames = new Vector<>();
         for (Worker worker : workers) {
             workerNames.add(worker.getName());
         }
         signersComboBox.setModel(new DefaultComboBoxModel(workerNames));
 
-        data = new Vector<Vector<String>>();
+        data = new Vector<>();
         for (int row = 0; row < signers.size(); row++) {
             Worker signer = signers.get(row);
-            Vector<String> cols = new Vector<String>();
+            Vector<String> cols = new Vector<>();
             cols.add(signer.getName() + " (" + signer.getWorkerId() + ")");
             
             final String renewalWorker = signer.getConfiguration().getProperty(
@@ -496,63 +496,7 @@ public class RenewSignerDialog extends javax.swing.JDialog {
                         errors.append("\n");
                         failure++;
                     }
-                } catch (CryptoTokenOfflineException_Exception ex) {
-                    final String error =
-                            "Problem renewing signer "
-                            + item.getSigner().getName();
-                    LOG.error(error, ex);
-                    errors.append(error).append(":\n").append(ex.getMessage());
-                    errors.append("\n");
-                    failure++;
-                } catch (SignServerException_Exception ex) {
-                    final String error =
-                            "Problem renewing signer "
-                            + item.getSigner().getName();
-                    LOG.error(error, ex);
-                    errors.append(error).append(":\n").append(ex.getMessage());
-                    errors.append("\n");
-                    failure++;
-                } catch (IllegalRequestException_Exception ex) {
-                    final String error =
-                            "Problem renewing signer "
-                            + item.getSigner().getName();
-                    LOG.error(error, ex);
-                    errors.append(error).append(":\n").append(ex.getMessage());
-                    errors.append("\n");
-                    failure++;
-                } catch (IOException ex) {
-                    final String error =
-                            "Problem renewing signer "
-                            + item.getSigner().getName();
-                    LOG.error(error, ex);
-                    errors.append(error).append(":\n").append(ex.getMessage());
-                    errors.append("\n");
-                    failure++;
-                } catch (AdminNotAuthorizedException_Exception ex) {
-                    final String error =
-                            "Problem renewing signer "
-                            + item.getSigner().getName();
-                    LOG.error(error, ex);
-                    errors.append(error).append(":\n").append(ex.getMessage());
-                    errors.append("\n");
-                    failure++;
-                } catch (InvalidWorkerIdException_Exception ex) {
-                    final String error =
-                            "Problem renewing signer "
-                            + item.getSigner().getName();
-                    LOG.error(error, ex);
-                    errors.append(error).append(":\n").append(ex.getMessage());
-                    errors.append("\n");
-                    failure++;
-                } catch (SOAPFaultException ex) {
-                    final String error =
-                            "Problem renewing signer "
-                            + item.getSigner().getName();
-                    LOG.error(error, ex);
-                    errors.append(error).append(":\n").append(ex.getMessage());
-                    errors.append("\n");
-                    failure++;
-                } catch (EJBException ex) {
+                } catch (CryptoTokenOfflineException_Exception | SignServerException_Exception | IllegalRequestException_Exception | IOException | AdminNotAuthorizedException_Exception | InvalidWorkerIdException_Exception | SOAPFaultException | EJBException ex) {
                     final String error =
                             "Problem renewing signer "
                             + item.getSigner().getName();
@@ -644,10 +588,7 @@ public class RenewSignerDialog extends javax.swing.JDialog {
             } else {
                 newNotAfter = notAfter.toGregorianCalendar().getTime();
             }
-        } catch (AdminNotAuthorizedException_Exception ex) {
-            LOG.error(ex, ex);
-            newNotAfter = null;
-        } catch(CryptoTokenOfflineException_Exception ex) {
+        } catch (AdminNotAuthorizedException_Exception | CryptoTokenOfflineException_Exception ex) {
             LOG.error(ex, ex);
             newNotAfter = null;
         }
@@ -658,9 +599,7 @@ public class RenewSignerDialog extends javax.swing.JDialog {
             newSignings =
                     SignServerAdminGUIApplication.getAdminWS()
                     .getKeyUsageCounterValue(item.getSigner().getWorkerId());
-        } catch (AdminNotAuthorizedException_Exception ex) {
-            LOG.error(ex, ex);
-        } catch(CryptoTokenOfflineException_Exception ex) {
+        } catch (AdminNotAuthorizedException_Exception | CryptoTokenOfflineException_Exception ex) {
             LOG.error(ex, ex);
         }
         item.setSignings(newSignings);

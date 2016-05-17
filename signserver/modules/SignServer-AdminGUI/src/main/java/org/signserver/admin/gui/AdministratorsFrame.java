@@ -533,10 +533,7 @@ public class AdministratorsFrame extends javax.swing.JFrame {
         } catch (AdminNotAuthorizedException_Exception ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage(),
                     "Authorization denied", JOptionPane.ERROR_MESSAGE);
-        } catch (SOAPFaultException ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage(),
-                "Operation failed on server side", JOptionPane.ERROR_MESSAGE);
-        } catch (EJBException ex) {
+        } catch (SOAPFaultException | EJBException ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage(),
                 "Operation failed on server side", JOptionPane.ERROR_MESSAGE);
         }
@@ -624,10 +621,7 @@ public class AdministratorsFrame extends javax.swing.JFrame {
         } catch (AdminNotAuthorizedException_Exception ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage(),
                     "Authorization denied", JOptionPane.ERROR_MESSAGE);
-        } catch (SOAPFaultException ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage(),
-                "Operation failed on server side", JOptionPane.ERROR_MESSAGE);
-        } catch (EJBException ex) {
+        } catch (SOAPFaultException | EJBException ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage(),
                 "Operation failed on server side", JOptionPane.ERROR_MESSAGE);
         }
@@ -677,10 +671,7 @@ public class AdministratorsFrame extends javax.swing.JFrame {
         } catch (AdminNotAuthorizedException_Exception ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage(),
                     "Authorization denied", JOptionPane.ERROR_MESSAGE);
-        } catch (SOAPFaultException ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage(),
-                "Operation failed on server side", JOptionPane.ERROR_MESSAGE);
-        } catch (EJBException ex) {
+        } catch (SOAPFaultException | EJBException ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage(),
                 "Operation failed on server side", JOptionPane.ERROR_MESSAGE);
         }
@@ -735,10 +726,7 @@ public class AdministratorsFrame extends javax.swing.JFrame {
         } catch (AdminNotAuthorizedException_Exception ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage(),
                     "Authorization denied", JOptionPane.ERROR_MESSAGE);
-        } catch (SOAPFaultException ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage(),
-                "Operation failed on server side", JOptionPane.ERROR_MESSAGE);
-        } catch (EJBException ex) {
+        } catch (SOAPFaultException | EJBException ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage(),
                 "Operation failed on server side", JOptionPane.ERROR_MESSAGE);
         }
@@ -788,7 +776,7 @@ public class AdministratorsFrame extends javax.swing.JFrame {
             List<Entry> result = null;
 
             try {
-               result = new ArrayList<Entry>(parseAdmins().values());
+               result = new ArrayList<>(parseAdmins().values());
             } catch (final AdminNotAuthorizedException_Exception ex) {
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
@@ -864,7 +852,7 @@ public class AdministratorsFrame extends javax.swing.JFrame {
         }
 
         final LinkedHashMap<ClientEntry, Entry> entryMap =
-                new LinkedHashMap<ClientEntry, Entry>();
+                new LinkedHashMap<>();
 
         // Admins
         if (admins != null && admins.contains(";")) {

@@ -40,12 +40,14 @@ public abstract class AbstractDocumentValidator implements DocumentValidator {
         doValidate(data, encoding, out, requestContext);
     }
 
+    @Override
     public void validate(final byte[] data, final String encoding) 
             throws IllegalRequestException, CryptoTokenOfflineException,
             SignServerException, IOException {
         validate(data, encoding, System.out);
     }
 
+    @Override
     public void validate(final byte[] data, final Map<String, Object> requestContext) throws IllegalRequestException,
             CryptoTokenOfflineException, SignServerException, IOException {
         validate(data, ENCODING_NONE, System.out, requestContext);

@@ -37,7 +37,7 @@ public abstract class ConditionsTableModel extends AbstractTableModel {
     
     private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ");
     
-    private List<QueryCondition> entries = new ArrayList<QueryCondition>();
+    private List<QueryCondition> entries = new ArrayList<>();
    
     @Override
     public int getRowCount() {

@@ -34,6 +34,7 @@ public abstract class AbstractDocumentSigner implements DocumentSigner {
     public AbstractDocumentSigner() {
     }
 
+    @Override
     public void sign(final InputStream data, long size, final String encoding, 
             final OutputStream out, final Map<String,Object> requestContext)
             throws IllegalRequestException, CryptoTokenOfflineException,
@@ -41,15 +42,18 @@ public abstract class AbstractDocumentSigner implements DocumentSigner {
         doSign(data, size, encoding, out, requestContext);
     }
 
+    @Override
     public void sign(final InputStream data, long size, final String encoding,
             final Map<String,Object> requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException, IOException {
         sign(data, size, encoding, System.out, requestContext);
     }
 
+    @Override
     public void sign(final InputStream data, long size) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException, IOException {
         sign(data, size, ENCODING_NONE, new HashMap<String, Object>());
     }
 
+    @Override
     public void sign(final InputStream data, long size, final OutputStream out,
             final Map<String, Object> requestContext) throws
             IllegalRequestException, CryptoTokenOfflineException,

@@ -33,7 +33,7 @@ public enum AuditlogColumn implements QueryColumn {
     EVENTSTATUS(AuditRecordData.FIELD_EVENTSTATUS, "Outcome", Type.TYPE) {
         @Override
         public Collection<String> getTypeValues() {
-            final List<String> values = new ArrayList<String>();
+            final List<String> values = new ArrayList<>();
             
             for (final EventStatus status : EventStatus.values()) {
                 values.add(status.name());

@@ -705,14 +705,8 @@ public class TimeStampCommand extends AbstractCommand {
                 } else {
                     outBytes = requestBytes;
                 }
-                FileOutputStream fos = null;
-                try {
-                    fos = new FileOutputStream(outreqstring);
+                try (FileOutputStream fos = new FileOutputStream(outreqstring)) {
                     fos.write(outBytes);
-                } finally {
-                    if (fos != null) {
-                        fos.close();
-                    }
                 }
             }
             
@@ -782,14 +776,8 @@ public class TimeStampCommand extends AbstractCommand {
                 } else {
                     outBytes = replyBytes;
                 }
-                FileOutputStream fos = null;
-                try {
-                    fos = new FileOutputStream(outrepstring);
+                try (FileOutputStream fos = new FileOutputStream(outrepstring)) {
                     fos.write(outBytes);
-                } finally {
-                    if (fos != null) {
-                        fos.close();
-                    }
                 }
             }
 
@@ -930,14 +918,8 @@ public class TimeStampCommand extends AbstractCommand {
      */
     private List<X509Certificate> getCertsFromPEM(final String certFile)
             throws IOException, CertificateException {
-        InputStream inStrm = null;
-        try {
-            inStrm = new FileInputStream(certFile);
+        try (InputStream inStrm = new FileInputStream(certFile)) {
             return getCertsFromPEM(inStrm);
-        } finally {
-            if (inStrm != null) {
-                inStrm.close();
-            }
         }
     }
 
@@ -958,33 +940,30 @@ public class TimeStampCommand extends AbstractCommand {
     private List<X509Certificate> getCertsFromPEM(
             final InputStream certstream) throws IOException,
             CertificateException {
-        final ArrayList<X509Certificate> ret = new ArrayList<X509Certificate>();
+        final ArrayList<X509Certificate> ret = new ArrayList<>();
         
         final BufferedReader bufRdr = new BufferedReader(new InputStreamReader(
                 certstream));
 
         while (bufRdr.ready()) {
-            final ByteArrayOutputStream ostr = new ByteArrayOutputStream();
-            final PrintStream opstr = new PrintStream(ostr);
-            String temp;
-            while ((temp = bufRdr.readLine()) != null
-                    && !temp.equals(PEM_BEGIN)) {}
-            if (temp == null) {
-                throw new IOException("Error in " + certstream.toString()
-                        + ", missing " + PEM_BEGIN + " boundary");
+            final byte[] certbuf;
+            try (ByteArrayOutputStream ostr = new ByteArrayOutputStream()) {
+                final PrintStream opstr = new PrintStream(ostr);
+                String temp;
+                while ((temp = bufRdr.readLine()) != null
+                        && !temp.equals(PEM_BEGIN)) {}
+                if (temp == null) {
+                    throw new IOException("Error in " + certstream.toString()
+                            + ", missing " + PEM_BEGIN + " boundary");
+                }   while ((temp = bufRdr.readLine()) != null
+                        && !temp.equals(PEM_END)) {
+                    opstr.print(temp);
+                }   if (temp == null) {
+                    throw new IOException("Error in " + certstream.toString()
+                            + ", missing " + PEM_END + " boundary");
+                }   opstr.close();
+                certbuf = Base64.decode(ostr.toByteArray());
             }
-            while ((temp = bufRdr.readLine()) != null
-                    && !temp.equals(PEM_END)) {
-                opstr.print(temp);
-            }
-            if (temp == null) {
-                throw new IOException("Error in " + certstream.toString()
-                        + ", missing " + PEM_END + " boundary");
-            }
-            opstr.close();
-
-            final byte[] certbuf = Base64.decode(ostr.toByteArray());
-            ostr.close();
             // Phweeew, were done, now decode the cert from file back to
             // X509Certificate object
             final CertificateFactory cf = getCertificateFactory();
@@ -999,10 +978,8 @@ public class TimeStampCommand extends AbstractCommand {
     private CertificateFactory getCertificateFactory() {
         try {
             return CertificateFactory.getInstance("X.509", "BC");
-        } catch (NoSuchProviderException nspe) {
+        } catch (NoSuchProviderException | CertificateException nspe) {
             LOG.error("Error creating certificate factory", nspe);
-        } catch (CertificateException ce) {
-            LOG.error("Error creating certificate factory", ce);
         }
         return null;
     }

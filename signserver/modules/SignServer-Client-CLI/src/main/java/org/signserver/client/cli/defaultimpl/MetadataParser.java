@@ -28,7 +28,7 @@ public class MetadataParser {
 
     public static Map<String, String> parseMetadata(final String[] optionValues) 
         throws IllegalCommandArgumentsException {
-        final Map<String, String> metadata = new HashMap<String, String>();
+        final Map<String, String> metadata = new HashMap<>();
         
         for (final String value : optionValues) {
             final String[] valueSplit = value.split("=");

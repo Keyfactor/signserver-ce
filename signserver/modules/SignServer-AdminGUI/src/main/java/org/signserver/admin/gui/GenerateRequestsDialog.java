@@ -61,7 +61,7 @@ public class GenerateRequestsDialog extends JDialog {
     public static final int CANCEL = 0;
     public static final int OK = 1;
 
-    private static final Vector<String> COLUMN_NAMES = new Vector<String>(Arrays.asList(
+    private static final Vector<String> COLUMN_NAMES = new Vector<>(Arrays.asList(
             new String[] {
         "Signer",
         "Key",
@@ -120,16 +120,16 @@ public class GenerateRequestsDialog extends JDialog {
         sigAlgComboBox.setEditable(true);
         initComponents();
 
-        data = new Vector<Vector<Object>>();
+        data = new Vector<>();
 
         if (worker != null) {
             setTitle("Generate CSRs for " + aliases.size() + " keys");
             Worker[] workersArray = new Worker[aliases.size()];
             Arrays.fill(workersArray, worker);
-            this.workers = new ArrayList<Worker>(Arrays.asList(workersArray));
+            this.workers = new ArrayList<>(Arrays.asList(workersArray));
             
             for (String a : aliases) {
-                Vector<Object> cols = new Vector<Object>();
+                Vector<Object> cols = new Vector<>();
                 cols.add(worker.getName() + " (" + worker.getWorkerId() + ")");
                 cols.add(a);
                 cols.add(worker.getConfiguration().getProperty("SIGNATUREALGORITHM",
@@ -139,10 +139,10 @@ public class GenerateRequestsDialog extends JDialog {
             }
         } else {
             setTitle("Generate CSRs for " + workers.size() + " signers");
-            this.workers = new ArrayList<Worker>(workers);
+            this.workers = new ArrayList<>(workers);
 
             for (Worker w : workers) {
-                Vector<Object> cols = new Vector<Object>();
+                Vector<Object> cols = new Vector<>();
                 cols.add(w.getName() + " (" + w.getWorkerId() + ")");
                 if (w.getConfiguration().getProperty("NEXTCERTSIGNKEY") != null) {
                     cols.add(new Utils.HardCodedAliasValue(Utils.HardCodedAlias.NEXT_KEY, w));

@@ -116,8 +116,8 @@ public class MainView extends FrameView {
 
     private ResourceBundle texts = ResourceBundle.getBundle("org/signserver/admin/gui/resources/SignServerAdminGUIApplication");
     
-    private List<Worker> allWorkers = new ArrayList<Worker>();
-    private List<Worker> selectedWorkers = new ArrayList<Worker>();
+    private List<Worker> allWorkers = new ArrayList<>();
+    private List<Worker> selectedWorkers = new ArrayList<>();
     private Worker selectedWorker;
     private Worker selectedWorkerBeforeRefresh;
     
@@ -238,7 +238,7 @@ public class MainView extends FrameView {
             @Override
             public void valueChanged(final ListSelectionEvent evt) {
                 if (!evt.getValueIsAdjusting()) {
-                    selectedWorkers = new ArrayList<Worker>();
+                    selectedWorkers = new ArrayList<>();
 
                     for(Object o : workersList.getSelectedValues()) {
                         if (o instanceof Worker) {
@@ -2612,7 +2612,7 @@ public class MainView extends FrameView {
             if (o instanceof X509Certificate) {
                 certificates = Collections.singletonList((X509Certificate) o);
             } else if (o instanceof Collection) {
-                certificates = new LinkedList<X509Certificate>();
+                certificates = new LinkedList<>();
                 for (Object c : (Collection) o) {
                     if (c instanceof X509Certificate) {
                         certificates.add((X509Certificate) c);
@@ -2841,7 +2841,7 @@ private void tokenEntriesGenerateCSRButtonActionPerformed(java.awt.event.ActionE
     if (selectedWorker != null) {
         final int[] sels = tokenEntriesTable.getSelectedRows();
         if (sels.length > 0) {
-            final List<String> aliases = new LinkedList<String>();
+            final List<String> aliases = new LinkedList<>();
             for (int sel : sels) {
                 aliases.add(tokenEntriesModel.getRow(sel).getAlias());
             }
@@ -2856,7 +2856,7 @@ private void tokenEntriesImportButtonActionPerformed(java.awt.event.ActionEvent 
     if (selectedWorker != null) {
         final int[] sels = tokenEntriesTable.getSelectedRows();
         if (sels.length > 0) {
-            final List<String> aliases = new LinkedList<String>();
+            final List<String> aliases = new LinkedList<>();
             for (int sel : sels) {
                 aliases.add(tokenEntriesModel.getRow(sel).getAlias());
             }
@@ -3012,7 +3012,7 @@ private void displayLogEntryAction() {
             if (worker.isCryptoConfigured()) {
                 loadCryptoTokenEntries(worker);
                 
-                if (!new HashSet<Component>(Arrays.asList(workerTabbedPane.getComponents())).contains(cryptoTokenTab)) {
+                if (!new HashSet<>(Arrays.asList(workerTabbedPane.getComponents())).contains(cryptoTokenTab)) {
                     workerTabbedPane.add("CryptoToken", cryptoTokenTab);
                 }
                 tokenEntriesStartIndexTextfield.setText(String.valueOf(1));
@@ -3049,7 +3049,7 @@ private void displayLogEntryAction() {
 
             setProgress(0);
 
-            List<Worker> newSigners = new ArrayList<Worker>();
+            List<Worker> newSigners = new ArrayList<>();
 
             try {
                 Properties globalConfig = toProperties(SignServerAdminGUIApplication.getAdminWS().getGlobalConfiguration());
@@ -3059,7 +3059,7 @@ private void displayLogEntryAction() {
                 int workers = 0;
                 for (Integer workerId : workerIds) {
                     setProgress(workers, 0, workerIds.size());
-                    final Vector<Object> workerInfo = new Vector<Object>();
+                    final Vector<Object> workerInfo = new Vector<>();
                     final WsWorkerConfig config = SignServerAdminGUIApplication.getAdminWS().getCurrentWorkerConfig(workerId);
                     final Properties properties = asProperties(config);
                     final String name = properties.getProperty("NAME");
@@ -3089,7 +3089,7 @@ private void displayLogEntryAction() {
                         LOG.debug("workerId: " + workerId + ", name: " + name);
                     }
                     // Configuration
-                    ArrayList<String> propertyNames = new ArrayList<String>(properties.stringPropertyNames());
+                    ArrayList<String> propertyNames = new ArrayList<>(properties.stringPropertyNames());
                     Collections.sort(propertyNames);
                     Object[][] configProperties = new Object[properties.size()][];
                     int j = 0;
@@ -3194,7 +3194,7 @@ private void displayLogEntryAction() {
                 
             } else {
                 // Save selection
-                ArrayList<Integer> indices = new ArrayList<Integer>();
+                ArrayList<Integer> indices = new ArrayList<>();
                 
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Selected signers: " + selectedWorkers);
@@ -3533,7 +3533,7 @@ private void displayLogEntryAction() {
         if (certs == null || certs.size() < 1) {
             results = null;
         } else {
-            results = new LinkedList<X509Certificate>();
+            results = new LinkedList<>();
             for (byte[] certbytes : certs) {
                 X509Certificate cert = null;
                 if (certbytes != null && certbytes.length > 0) {
@@ -3635,14 +3635,12 @@ private void displayLogEntryAction() {
                 // on a background thread, so don't reference
                 // the Swing GUI from here.
                 final ArrayList<QueryCondition> conditions =
-                        new ArrayList<QueryCondition>(auditlogConditionsModel.getEntries());
+                        new ArrayList<>(auditlogConditionsModel.getEntries());
                 final QueryOrdering order = new QueryOrdering();
                 order.setColumn(AuditRecordData.FIELD_TIMESTAMP);
                 order.setOrder(Order.DESC);
                 return SignServerAdminGUIApplication.getAdminWS().queryAuditLog(startIndex, maxEntries, conditions, Collections.singletonList(order));
-            } catch (AdminNotAuthorizedException_Exception ex) {
-                exception = ex;
-            } catch (SignServerException_Exception ex) {
+            } catch (AdminNotAuthorizedException_Exception | SignServerException_Exception ex) {
                 exception = ex;
             } catch (Exception ex) {
                 LOG.error("Reload failed", ex);
@@ -3707,16 +3705,14 @@ private void displayLogEntryAction() {
                 // on a background thread, so don't reference
                 // the Swing GUI from here.
                 final ArrayList<QueryCondition> conditions =
-                        new ArrayList<QueryCondition>(archiveConditionsModel.getEntries());
+                        new ArrayList<>(archiveConditionsModel.getEntries());
                 final QueryOrdering order = new QueryOrdering();
                 order.setColumn(ArchiveMetadata.TIME);
                 order.setOrder(Order.DESC);
                 return SignServerAdminGUIApplication.getAdminWS()
                         .queryArchive(startIndex, maxEntries, conditions,
                         Collections.singletonList(order), false);
-            } catch (AdminNotAuthorizedException_Exception ex) {
-                exception = ex;
-            } catch (SignServerException_Exception ex) {
+            } catch (AdminNotAuthorizedException_Exception | SignServerException_Exception ex) {
                 exception = ex;
             } catch (Exception ex) {
                 LOG.error("Reload failed", ex);
@@ -3796,7 +3792,7 @@ private void displayLogEntryAction() {
 
         private List<ArchiveEntry> getSelectedEntries() {
             final List<ArchiveEntry> entries = archiveModel.getEntries();
-            final List<ArchiveEntry> result = new ArrayList<ArchiveEntry>();
+            final List<ArchiveEntry> result = new ArrayList<>();
             
             for (final int row : archiveTable.getSelectedRows()) {
                 final ArchiveEntry entry = entries.get(row);
@@ -3808,7 +3804,7 @@ private void displayLogEntryAction() {
         
         @Override
         protected Boolean doInBackground() throws Exception {
-            final List<String> uniqueIds = new ArrayList<String>();
+            final List<String> uniqueIds = new ArrayList<>();
             
             // if no directory was selected, silently return
             if (outputDirectory == null) {
@@ -3827,16 +3823,9 @@ private void displayLogEntryAction() {
                     final File out =
                             new File(outputDirectory, 
                                     constructDumpFilename(entry));
-                    FileOutputStream os = null;
-
                     // TODO: check if output files already exists
-                    try {
-                        os = new FileOutputStream(out);
+                    try (FileOutputStream os = new FileOutputStream(out)) {
                         os.write(entry.getArchiveData());
-                    } finally {
-                        if (os != null) {
-                            os.close();
-                        }
                     }
                 }
                 // TODO: maybe we should check if all items where received
@@ -4061,15 +4050,7 @@ private void displayLogEntryAction() {
                 errorMessage = "Authorization denied:\n" + ex.getLocalizedMessage();
             } catch (CryptoTokenOfflineException_Exception ex) {
                 errorMessage = "Unable to remove key because token was not active:\n" + ex.getLocalizedMessage();
-            } catch (InvalidWorkerIdException_Exception ex) {
-                errorMessage = "Unable to remove key:\n" + ex.getLocalizedMessage();
-            } catch (KeyStoreException_Exception ex) {
-                errorMessage = "Unable to remove key:\n" + ex.getLocalizedMessage();
-            } catch (SignServerException_Exception ex) {
-                errorMessage = "Unable to remove key:\n" + ex.getLocalizedMessage();
-            } catch (SOAPFaultException ex) {
-                errorMessage = "Unable to remove key:\n" + ex.getLocalizedMessage();
-            } catch (EJBException ex) {
+            } catch (InvalidWorkerIdException_Exception | KeyStoreException_Exception | SignServerException_Exception | SOAPFaultException | EJBException ex) {
                 errorMessage = "Unable to remove key:\n" + ex.getLocalizedMessage();
             }
             return success;
@@ -4232,7 +4213,7 @@ private void displayLogEntryAction() {
                 if (exportAll) {
                     workers = allWorkers;
                 } else if (exportSelected) {
-                    workers = new ArrayList<Worker>();
+                    workers = new ArrayList<>();
                     for (int row : selected) {
                         workers.add(allWorkers.get(row));
                     }
@@ -4276,7 +4257,7 @@ private void displayLogEntryAction() {
         }
 
         private Collection<org.signserver.common.AuthorizedClient> convert(Collection<AuthorizedClient> wsList) {
-            Collection<org.signserver.common.AuthorizedClient> result = new LinkedList<org.signserver.common.AuthorizedClient>();
+            Collection<org.signserver.common.AuthorizedClient> result = new LinkedList<>();
             for (AuthorizedClient client : wsList) {
                 result.add(new org.signserver.common.AuthorizedClient(client.getCertSN(), client.getIssuerDN()));
             }
@@ -4328,37 +4309,7 @@ private Properties toProperties(WsGlobalConfiguration wsgc) {
                         Collections.<QueryCondition>emptyList(),
                         Arrays.asList(ordering),
                         true);
-            } catch (AdminNotAuthorizedException_Exception ex) {
-                exception = ex;
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Error during token entries query", ex);
-                }
-            } catch (AuthorizationDeniedException_Exception ex) {
-                exception = ex;
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Error during token entries query", ex);
-                }
-            } catch (CryptoTokenOfflineException_Exception ex) {
-                exception = ex;
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Error during token entries query", ex);
-                }
-            } catch (InvalidWorkerIdException_Exception ex) {
-                exception = ex;
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Error during token entries query", ex);
-                }
-            } catch (OperationUnsupportedException_Exception ex) {
-                exception = ex;
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Error during token entries query", ex);
-                }
-            } catch (QueryException_Exception ex) {
-                exception = ex;
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Error during token entries query", ex);
-                }
-            } catch (SignServerException_Exception ex) {
+            } catch (AdminNotAuthorizedException_Exception | AuthorizationDeniedException_Exception | CryptoTokenOfflineException_Exception | InvalidWorkerIdException_Exception | OperationUnsupportedException_Exception | QueryException_Exception | SignServerException_Exception ex) {
                 exception = ex;
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Error during token entries query", ex);

@@ -90,18 +90,18 @@ public class QueryTokenEntriesCommand extends AbstractAdminCommand {
         OPTIONS.addOption(LIMIT, true, "Maximum number of search results");
         OPTIONS.addOption(VERBOSE, false, "Output the certificate chain and other information available in each entry");
         
-        longFields = new HashSet<String>();
+        longFields = new HashSet<>();
         longFields.add(AuditRecordData.FIELD_SEQUENCENUMBER);
         
-        dateFields = new HashSet<String>();
+        dateFields = new HashSet<>();
         dateFields.add(AuditRecordData.FIELD_TIMESTAMP);
         
-        noArgOps = new HashSet<RelationalOperator>();
+        noArgOps = new HashSet<>();
         noArgOps.add(RelationalOperator.NULL);
         noArgOps.add(RelationalOperator.NOTNULL);
         
         // allowed fields
-        allowedFields = new HashSet<String>();
+        allowedFields = new HashSet<>();
         allowedFields.add("alias"); // TODO: Defined in CryptoTokenHelper.TokenEntryFields
     }
     
@@ -218,7 +218,7 @@ public class QueryTokenEntriesCommand extends AbstractAdminCommand {
         
         final String[] criterias = line.getOptionValues(CRITERIA);
         
-        terms = new LinkedList<Elem>();
+        terms = new LinkedList<>();
         if (criterias != null && criterias.length > 0) {
             for (final String criteria : criterias) {
                 try {

@@ -76,7 +76,7 @@ public class UploadSignerCertificateChainCommand extends AbstractAdminCommand {
 
             this.getOutputStream().println(TRYING);
 
-            ArrayList<byte[]> bcerts = new ArrayList<byte[]>();
+            ArrayList<byte[]> bcerts = new ArrayList<>();
             Iterator<Certificate> iter = certs.iterator();
             while (iter.hasNext()) {
                 X509Certificate cert = (X509Certificate) iter.next();

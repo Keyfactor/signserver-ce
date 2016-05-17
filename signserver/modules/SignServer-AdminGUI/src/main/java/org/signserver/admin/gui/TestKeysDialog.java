@@ -59,7 +59,7 @@ public class TestKeysDialog extends JDialog {
     public static final int CANCEL = 0;
     public static final int OK = 1;
 
-    private static final Vector<String> COLUMN_NAMES = new Vector<String>(Arrays.asList(
+    private static final Vector<String> COLUMN_NAMES = new Vector<>(Arrays.asList(
             new String[] {
         "Signer", "Key alias"
     }));
@@ -97,21 +97,21 @@ public class TestKeysDialog extends JDialog {
     
     private TestKeysDialog(final Frame parent, final boolean modal, final List<Worker> workers, String oneAlias) {
         super(parent, modal);
-        this.workers = new ArrayList<Worker>(workers);
+        this.workers = new ArrayList<>(workers);
         aliasComboBox.setEditable(true);
         initComponents();
         setTitle("Test keys for " + workers.size() + " signers");
 
-        data = new Vector<Vector<String>>();
+        data = new Vector<>();
         if (workers.size() == 1 && oneAlias != null) {
             Worker worker = workers.get(0);
-            Vector<String> cols = new Vector<String>();
+            Vector<String> cols = new Vector<>();
             cols.add(worker.getName() + " (" + worker.getWorkerId() + ")");
             cols.add(oneAlias);
             data.add(cols);
         } else {
             for (Worker worker : workers) {
-                Vector<String> cols = new Vector<String>();
+                Vector<String> cols = new Vector<>();
                 cols.add(worker.getName() + " (" + worker.getWorkerId() + ")");
                 String alias = worker.getConfiguration().getProperty("NEXTCERTSIGNKEY");
                 if (alias == null) {
@@ -185,7 +185,7 @@ public class TestKeysDialog extends JDialog {
             public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
 
                 Worker worker = workers.get(row);
-                Vector<String> keys = new Vector<String>();
+                Vector<String> keys = new Vector<>();
                 if (worker.getConfiguration().getProperty("NEXTCERTSIGNKEY")
                         != null) {
                     keys.add(worker.getConfiguration().getProperty("NEXTCERTSIGNKEY"));
@@ -394,16 +394,7 @@ public class TestKeysDialog extends JDialog {
                          }
                      }
 
-                 } catch (AdminNotAuthorizedException_Exception ex) {
-                     sb.append(ex.getMessage());
-                     sb.append("\n");
-                 } catch (CryptoTokenOfflineException_Exception ex) {
-                     sb.append(ex.getMessage());
-                     sb.append("\n");
-                 } catch (InvalidWorkerIdException_Exception ex) {
-                     sb.append(ex.getMessage());
-                     sb.append("\n");
-                 } catch (KeyStoreException_Exception ex) {
+                 } catch (AdminNotAuthorizedException_Exception | CryptoTokenOfflineException_Exception | InvalidWorkerIdException_Exception | KeyStoreException_Exception ex) {
                      sb.append(ex.getMessage());
                      sb.append("\n");
                  } catch (EJBException ex) {

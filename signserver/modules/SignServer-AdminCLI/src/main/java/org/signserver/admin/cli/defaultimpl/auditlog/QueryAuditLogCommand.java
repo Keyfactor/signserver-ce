@@ -88,19 +88,19 @@ public class QueryAuditLogCommand extends AbstractCommand {
         OPTIONS.addOption(LIMIT, true, "Maximum number of search results");
         OPTIONS.addOption(HEADER, false, "Print a column header");
         
-        longFields = new HashSet<String>();
+        longFields = new HashSet<>();
         longFields.add(AuditRecordData.FIELD_SEQUENCENUMBER);
         
-        dateFields = new HashSet<String>();
+        dateFields = new HashSet<>();
         dateFields.add(AuditRecordData.FIELD_TIMESTAMP);
         
-        noArgOps = new HashSet<RelationalOperator>();
+        noArgOps = new HashSet<>();
         noArgOps.add(RelationalOperator.NULL);
         noArgOps.add(RelationalOperator.NOTNULL);
         
         // allowed fields from CESeCore
         // TODO: should maybe define this in CESeCore?
-        allowedFields = new HashSet<String>();
+        allowedFields = new HashSet<>();
         allowedFields.add(AuditRecordData.FIELD_ADDITIONAL_DETAILS);
         allowedFields.add(AuditRecordData.FIELD_AUTHENTICATION_TOKEN);
         allowedFields.add(AuditRecordData.FIELD_CUSTOM_ID);
@@ -227,7 +227,7 @@ public class QueryAuditLogCommand extends AbstractCommand {
         
         final String[] criterias = line.getOptionValues(CRITERIA);
         
-        final List<Elem> terms = new LinkedList<Elem>();
+        final List<Elem> terms = new LinkedList<>();
         
         if (criterias != null && criterias.length > 0) {
             for (final String criteria : criterias) {

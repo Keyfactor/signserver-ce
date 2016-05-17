@@ -64,7 +64,7 @@ public class TokenEntryDetailsFrame extends javax.swing.JFrame {
         X509Certificate signerCert = null;
         try {
             if (entry.getChain() != null && !entry.getChain().isEmpty()) {
-                this.chain = new LinkedList<X509Certificate>();
+                this.chain = new LinkedList<>();
                 for (byte[] certBytes : entry.getChain()) {
                     Certificate cert = CertTools.getCertfromByteArray(certBytes, "BC");
                     if (cert instanceof X509Certificate) {
@@ -75,7 +75,7 @@ public class TokenEntryDetailsFrame extends javax.swing.JFrame {
                 }
                 signerCert = this.chain.get(0);
             } else if (entry.getTrustedCertificate() != null && entry.getTrustedCertificate().length > 0) {
-                this.chain = new LinkedList<X509Certificate>();
+                this.chain = new LinkedList<>();
                 Certificate cert = CertTools.getCertfromByteArray(entry.getTrustedCertificate(), "BC");
                 if (cert instanceof X509Certificate) {
                     this.chain.add((X509Certificate) cert);
@@ -102,20 +102,20 @@ public class TokenEntryDetailsFrame extends javax.swing.JFrame {
             certSubjectDN = "n/a";
         }
 
-        Vector<Vector<String>> data = new Vector<Vector<String>>();
+        Vector<Vector<String>> data = new Vector<>();
 
-        data.add(new Vector<String>(Arrays.asList("Alias", alias)));
-        data.add(new Vector<String>(Arrays.asList("Type", type)));
-        data.add(new Vector<String>(Arrays.asList("Creation date", creationDate)));
-        data.add(new Vector<String>(Arrays.asList(COLUMN_CERTIFICATE, certSubjectDN)));
+        data.add(new Vector<>(Arrays.asList("Alias", alias)));
+        data.add(new Vector<>(Arrays.asList("Type", type)));
+        data.add(new Vector<>(Arrays.asList("Creation date", creationDate)));
+        data.add(new Vector<>(Arrays.asList(COLUMN_CERTIFICATE, certSubjectDN)));
 
         if (entry.getInfo() != null && entry.getInfo().getEntry() != null) {
             for (Entry item : entry.getInfo().getEntry()) {
-                data.add(new Vector<String>(Arrays.asList(item.getKey(), item.getValue())));
+                data.add(new Vector<>(Arrays.asList(item.getKey(), item.getValue())));
             }
         }
         
-        DefaultTableModel model = new DefaultTableModel(data, new Vector<String>(Arrays.asList("Name", "Value"))) {
+        DefaultTableModel model = new DefaultTableModel(data, new Vector<>(Arrays.asList("Name", "Value"))) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return column == 1;

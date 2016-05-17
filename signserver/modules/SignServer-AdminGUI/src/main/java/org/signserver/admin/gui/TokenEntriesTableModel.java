@@ -31,7 +31,7 @@ public class TokenEntriesTableModel extends AbstractTableModel {
             "Alias", "Type", "Certificates"
         };
     
-    private static final Map<String, String> typeTitles = new HashMap<String, String>();
+    private static final Map<String, String> typeTitles = new HashMap<>();
     
     static {
         typeTitles.put(org.signserver.server.cryptotokens.TokenEntry.TYPE_PRIVATEKEY_ENTRY, "Asymmetric");

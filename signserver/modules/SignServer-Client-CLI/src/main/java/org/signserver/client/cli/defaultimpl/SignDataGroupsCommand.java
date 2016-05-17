@@ -186,9 +186,9 @@ public class SignDataGroupsCommand extends AbstractCommand {
                 .append("b) ").append(COMMAND).append(" -workername MRTDSODSigner -data \"1=value1&2=value2&3=value3\" -metadata param1=value1 -metadata param2=value2").append(NL);
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         final HelpFormatter formatter = new HelpFormatter();
-        PrintWriter pw = new PrintWriter(bout);
-        formatter.printHelp(pw, HelpFormatter.DEFAULT_WIDTH, "signdatagroups <options>", getDescription(), OPTIONS, HelpFormatter.DEFAULT_LEFT_PAD, HelpFormatter.DEFAULT_DESC_PAD, footer.toString());
-        pw.close();
+        try (PrintWriter pw = new PrintWriter(bout)) {
+            formatter.printHelp(pw, HelpFormatter.DEFAULT_WIDTH, "signdatagroups <options>", getDescription(), OPTIONS, HelpFormatter.DEFAULT_LEFT_PAD, HelpFormatter.DEFAULT_DESC_PAD, footer.toString());
+        }
         return bout.toString();
     }
 
@@ -219,7 +219,7 @@ public class SignDataGroupsCommand extends AbstractCommand {
         if (line.hasOption(DATA)) {
             data = line.getOptionValue(DATA, "");
 
-            dataGroups = new HashMap<Integer, byte[]>();
+            dataGroups = new HashMap<>();
 
             String[] groups = data.split("\\&");
             for(String group : groups) {
@@ -263,11 +263,7 @@ public class SignDataGroupsCommand extends AbstractCommand {
             }
         } catch (IOException ex) {
             throw new IllegalCommandArgumentsException("Failed to read password: " + ex.getLocalizedMessage());
-        } catch (NoSuchAlgorithmException ex) {
-            throw new IllegalCommandArgumentsException("Failure setting up keystores: " + ex.getMessage());
-        } catch (CertificateException ex) {
-            throw new IllegalCommandArgumentsException("Failure setting up keystores: " + ex.getMessage());
-        } catch (KeyStoreException ex) {
+        } catch (NoSuchAlgorithmException | CertificateException | KeyStoreException ex) {
             throw new IllegalCommandArgumentsException("Failure setting up keystores: " + ex.getMessage());
         }
     }
@@ -452,13 +448,7 @@ public class SignDataGroupsCommand extends AbstractCommand {
                 for (int i = 0; i < repeat || repeat == -1; i++) {
                     signer.sign(dataGroups, encoding, out);
                 }
-            } catch (IOException ex) {
-                exception = ex;
-            } catch (IllegalRequestException ex) {
-                exception = ex;
-            } catch (CryptoTokenOfflineException ex) {
-                exception = ex;
-            } catch (SignServerException ex) {
+            } catch (IOException | IllegalRequestException | CryptoTokenOfflineException | SignServerException ex) {
                 exception = ex;
             }
             LOG.info("Finished");

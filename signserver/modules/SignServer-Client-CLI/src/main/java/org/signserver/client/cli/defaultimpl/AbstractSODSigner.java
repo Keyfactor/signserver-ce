@@ -32,18 +32,22 @@ public abstract class AbstractSODSigner implements SODSigner {
     public AbstractSODSigner() {
     }
 
+    @Override
     public void sign(final Map<Integer, byte[]> dataGroups, final String encoding, final OutputStream out) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException, IOException {
         doSign(dataGroups, encoding, out);
     }
 
+    @Override
     public void sign(final Map<Integer, byte[]> dataGroups, final String encoding) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException, IOException {
         sign(dataGroups, encoding, System.out);
     }
 
+    @Override
     public void sign(final Map<Integer, byte[]> dataGroups) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException, IOException {
         sign(dataGroups, ENCODING_BINARY, System.out);
     }
 
+    @Override
     public void sign(final Map<Integer, byte[]> dataGroups, final OutputStream out) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException, IOException {
         doSign(dataGroups, ENCODING_BINARY, out);
     }

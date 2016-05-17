@@ -70,9 +70,9 @@ public class DumpPropertiesCommand extends AbstractAdminCommand {
                 }
             }
 
-            FileOutputStream fos = new FileOutputStream(outfile);
-            outProps.store(fos, null);
-            fos.close();
+            try (FileOutputStream fos = new FileOutputStream(outfile)) {
+                outProps.store(fos, null);
+            }
             getOutputStream().println("Properties successfully dumped into file " + outfile);
 
             this.getOutputStream().println("\n\n");

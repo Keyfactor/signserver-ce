@@ -33,7 +33,7 @@ public class TransferManager {
     private static final Logger LOG = Logger.getLogger(TransferManager.class);
 
     /** Queue of files to process. */
-    private final LinkedList<File> files = new LinkedList<File>();
+    private final LinkedList<File> files = new LinkedList<>();
     
     /** The username (if password auth). */
     private final String username;

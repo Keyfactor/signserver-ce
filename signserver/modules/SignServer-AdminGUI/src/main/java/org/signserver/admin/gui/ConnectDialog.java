@@ -118,7 +118,7 @@ public class ConnectDialog extends javax.swing.JDialog {
     private X509Certificate adminCertificate;
     
     /** Cache of loaded (PKCS#11 currently only) keystores, to not create a new one when already logged in. */
-    private static final Map<String, KeyStore> LOADED_KESTORES = new HashMap<String, KeyStore>();
+    private static final Map<String, KeyStore> LOADED_KESTORES = new HashMap<>();
 
     /** Flag indicating if connection succeeded. */
     private boolean connected;
@@ -772,7 +772,7 @@ public class ConnectDialog extends javax.swing.JDialog {
             KeyManager[] keyManagers = kKeyManagerFactory.getKeyManagers();
 
     //        final SSLSocketFactory factory = sslc.getSocketFactory();
-            List<GUIKeyManager> guiKeyManagers = new LinkedList<GUIKeyManager>();
+            List<GUIKeyManager> guiKeyManagers = new LinkedList<>();
             for (int i = 0; i < keyManagers.length; i++) {
                 if (keyManagers[i] instanceof X509KeyManager) {
                     final GUIKeyManager manager = new GUIKeyManager((X509KeyManager) keyManagers[i]);

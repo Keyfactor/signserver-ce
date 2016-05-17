@@ -188,15 +188,11 @@ public class KeyStoreOptions {
         if (truststoreFile != null) {
             try {
                 truststore = loadKeyStore(truststoreFile, truststorePassword);
-            } catch (KeyStoreException ex) {
+            } catch (KeyStoreException | NoSuchAlgorithmException | CertificateException ex) {
                 throw new RuntimeException("Could not load truststore", ex);
             } catch (FileNotFoundException ex) {
                 throw new RuntimeException("Could not load truststore", ex);
             } catch (IOException ex) {
-                throw new RuntimeException("Could not load truststore", ex);
-            } catch (NoSuchAlgorithmException ex) {
-                throw new RuntimeException("Could not load truststore", ex);
-            } catch (CertificateException ex) {
                 throw new RuntimeException("Could not load truststore", ex);
             }
         }
@@ -205,15 +201,11 @@ public class KeyStoreOptions {
         if (keystoreFile != null) {
             try {
                 keystore = loadKeyStore(keystoreFile, keystorePassword);
-            } catch (KeyStoreException ex) {
+            } catch (KeyStoreException | NoSuchAlgorithmException | CertificateException ex) {
                 throw new RuntimeException("Could not load keystore", ex);
             } catch (FileNotFoundException ex) {
                 throw new RuntimeException("Could not load keystore", ex);
             } catch (IOException ex) {
-                throw new RuntimeException("Could not load keystore", ex);
-            } catch (NoSuchAlgorithmException ex) {
-                throw new RuntimeException("Could not load keystore", ex);
-            } catch (CertificateException ex) {
                 throw new RuntimeException("Could not load keystore", ex);
             }
         }
@@ -234,13 +226,7 @@ public class KeyStoreOptions {
             try {
                 setDefaultSocketFactory(truststore, keystore, keyAlias,
                     keystorePassword == null ? null : keystorePassword.toCharArray());
-            } catch (NoSuchAlgorithmException ex) {
-                throw new RuntimeException("Could not setup HTTPS", ex);
-            } catch (KeyStoreException ex) {
-                throw new RuntimeException("Could not setup HTTPS", ex);
-            } catch (KeyManagementException ex) {
-                throw new RuntimeException("Could not setup HTTPS", ex);
-            } catch (UnrecoverableKeyException ex) {
+            } catch (NoSuchAlgorithmException | KeyStoreException | KeyManagementException | UnrecoverableKeyException ex) {
                 throw new RuntimeException("Could not setup HTTPS", ex);
             }
         }

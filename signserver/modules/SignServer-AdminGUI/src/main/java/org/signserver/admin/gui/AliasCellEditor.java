@@ -32,7 +32,7 @@ import javax.swing.table.TableCellEditor;
 public class AliasCellEditor extends DefaultCellEditor
         implements TableCellEditor {
     private final List<JComboBox> comboBoxes =
-            new ArrayList<JComboBox>();
+            new ArrayList<>();
     private Object value;
     private final List<Worker> workers;
     private JComboBox comboBox;

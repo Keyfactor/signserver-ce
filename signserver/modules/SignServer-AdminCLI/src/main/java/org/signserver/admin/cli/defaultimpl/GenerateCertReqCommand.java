@@ -49,6 +49,7 @@ public class GenerateCertReqCommand extends AbstractAdminCommand {
         return HELP;
     }
 
+    @Override
     public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException, UnexpectedCommandFailureException {
         if (args.length < 4 || args.length > 7) {
             throw new IllegalCommandArgumentsException(HELP);
@@ -123,20 +124,18 @@ public class GenerateCertReqCommand extends AbstractAdminCommand {
             if (reqData == null) {
                 throw new Exception("Base64SignerCertReqData returned was null. Unable to generate certificate request.");
             }
-            FileOutputStream fos = new FileOutputStream(filename);
-            fos.write("-----BEGIN CERTIFICATE REQUEST-----\n".getBytes());
-            fos.write(reqData.getBase64CertReq());
-            fos.write("\n-----END CERTIFICATE REQUEST-----\n".getBytes());
-            fos.close();
+            try (FileOutputStream fos = new FileOutputStream(filename)) {
+                fos.write("-----BEGIN CERTIFICATE REQUEST-----\n".getBytes());
+                fos.write(reqData.getBase64CertReq());
+                fos.write("\n-----END CERTIFICATE REQUEST-----\n".getBytes());
+            }
 
             getOutputStream().println(SUCCESS + filename);
             return 0;
-        } catch (InvalidWorkerIdException ex) {
+        } catch (InvalidWorkerIdException | FileNotFoundException ex) {
             throw new IllegalCommandArgumentsException(ex.getMessage());
         } catch (IllegalCommandArgumentsException e) {
             throw e;
-        } catch (FileNotFoundException ex) {
-            throw new IllegalCommandArgumentsException(ex.getMessage());
         } catch (Exception e) {
             throw new UnexpectedCommandFailureException(e);
         }

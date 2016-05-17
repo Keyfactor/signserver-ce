@@ -24,8 +24,8 @@ import java.util.Map;
  */
 public abstract class AbstractCommandFactory implements CommandFactory {
     
-    private Map<String, CommandEntry> commands = new HashMap<String, CommandEntry>();
-    private Map<String, Map<String, CommandEntry>> subCommands = new HashMap<String, Map<String, CommandEntry>>();
+    private Map<String, CommandEntry> commands = new HashMap<>();
+    private Map<String, Map<String, CommandEntry>> subCommands = new HashMap<>();
     
     private String usagePrefix = "";
     
@@ -57,7 +57,7 @@ public abstract class AbstractCommandFactory implements CommandFactory {
     protected void put(String group, String subCommand, Class<? extends AbstractCommand> clazz, boolean visible) {
         Map<String, CommandEntry> subCommandMap = subCommands.get(group);
         if (subCommandMap == null) {
-            subCommandMap = new HashMap<String, CommandEntry>();
+            subCommandMap = new HashMap<>();
             subCommands.put(group, subCommandMap);
         }
         subCommandMap.put(subCommand, new CommandEntry(clazz, visible));
@@ -101,9 +101,7 @@ public abstract class AbstractCommandFactory implements CommandFactory {
                 AbstractCommand command = entry.getCommandClazz().newInstance();
                 command.init(context);
                 return command;
-            } catch (InstantiationException ex) {
-                throw new RuntimeException(ex);
-            } catch (IllegalAccessException ex) {
+            } catch (InstantiationException | IllegalAccessException ex) {
                 throw new RuntimeException(ex);
             }
         } else {
@@ -113,7 +111,7 @@ public abstract class AbstractCommandFactory implements CommandFactory {
 
     @Override
     public Collection<Command> getTopLevelCommands() {
-        final LinkedList<Command> result = new LinkedList<Command>();
+        final LinkedList<Command> result = new LinkedList<>();
         for (String name : commands.keySet()) {
             Command command = getCommand(new String[] { name }, true);
             if (command != null) {
@@ -135,7 +133,7 @@ public abstract class AbstractCommandFactory implements CommandFactory {
         if (commandsInGroup == null) {
             result = null;
         } else {
-            result = new LinkedList<Command>();
+            result = new LinkedList<>();
             for (String command : commandsInGroup.keySet()) {
                 Command c = getCommand(new String[] { group, command }, true);
                 if (c != null) {

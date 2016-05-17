@@ -1044,12 +1044,8 @@ public class AddWorkerDialog extends javax.swing.JDialog {
                     for (final int workerId : modifiedWorkers) {
                         SignServerAdminGUIApplication.getAdminWS().reloadConfiguration(workerId);
                     }
-                } catch (AdminNotAuthorizedException_Exception e) {
+                } catch (AdminNotAuthorizedException_Exception | SOAPFaultException | EJBException e) {
                     return "Error reloading workers: " + e.getMessage();
-                }  catch (SOAPFaultException ex) {
-                    return "Error reloading workers: " + ex.getMessage();
-                } catch (EJBException ex) {
-                    return "Error reloading workers: " + ex.getMessage();
                 }
             }
 

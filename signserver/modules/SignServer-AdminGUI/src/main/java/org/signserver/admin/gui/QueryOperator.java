@@ -26,7 +26,7 @@ import org.signserver.admin.gui.adminws.gen.RelationalOperator;
  */
 public class QueryOperator {
     
-    private static final HashMap<RelationalOperator, QueryOperator> ENTRIES = new HashMap<RelationalOperator, QueryOperator>();
+    private static final HashMap<RelationalOperator, QueryOperator> ENTRIES = new HashMap<>();
     
     static {
         ENTRIES.put(RelationalOperator.BETWEEN, new QueryOperator(RelationalOperator.BETWEEN, "Between"));

@@ -53,7 +53,7 @@ public class RenewKeysDialog extends JDialog {
     public static final int CANCEL = 0;
     public static final int OK = 1;
 
-    private static final Vector<String> COLUMN_NAMES = new Vector<String>(Arrays.asList(
+    private static final Vector<String> COLUMN_NAMES = new Vector<>(Arrays.asList(
             new String[] {
         "Signer", "Old key alias", "Key algorithm", "Key specification",
         "New key alias"
@@ -76,14 +76,14 @@ public class RenewKeysDialog extends JDialog {
     public RenewKeysDialog(final Frame parent, final boolean modal,
             final List<Worker> workers) {
         super(parent, modal);
-        this.workers = new ArrayList<Worker>(workers);
+        this.workers = new ArrayList<>(workers);
         keyAlgComboBox.setEditable(true);
         initComponents();
         setTitle("Renew keys for " + workers.size() + " signers");
 
-        data = new Vector<Vector<String>>();
+        data = new Vector<>();
         for (Worker worker : workers) {
-            Vector<String> cols = new Vector<String>();
+            Vector<String> cols = new Vector<>();
             cols.add(worker.getName() + " (" + worker.getWorkerId() + ")");
             final String oldAlias
                     = worker.getConfiguration().getProperty("DEFAULTKEY");
@@ -334,7 +334,7 @@ public class RenewKeysDialog extends JDialog {
             // to RenewKeysTask fields, here.
             super(app);
             resultCode = OK;
-            rowsToRemove = new LinkedList<Integer>();
+            rowsToRemove = new LinkedList<>();
             textFieldEditor.stopCellEditing();
         }
         @Override protected String doInBackground() {
@@ -433,14 +433,7 @@ public class RenewKeysDialog extends JDialog {
                          LOG.error(error, e);
                          sb.append(error);
                          sb.append("\n");
-                     } catch (SOAPFaultException ex) {
-                         final String error =
-                             "Operation failed on server side for signer "
-                             + signerId;
-                         LOG.error(error, ex);
-                         sb.append(error).append(":\n").append(ex.getMessage());
-                         sb.append("\n");
-                     } catch (EJBException ex) {
+                     } catch (SOAPFaultException | EJBException ex) {
                          final String error =
                              "Operation failed on server side for signer "
                              + signerId;

@@ -255,9 +255,9 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         final HelpFormatter formatter = new HelpFormatter();
         
-        PrintWriter pw = new PrintWriter(bout);
-        formatter.printHelp(pw, HelpFormatter.DEFAULT_WIDTH, "signdocument <-workername WORKERNAME | -workerid WORKERID> [options]",  getDescription(), OPTIONS, HelpFormatter.DEFAULT_LEFT_PAD, HelpFormatter.DEFAULT_DESC_PAD, footer.toString());
-        pw.close();
+        try (PrintWriter pw = new PrintWriter(bout)) {
+            formatter.printHelp(pw, HelpFormatter.DEFAULT_WIDTH, "signdocument <-workername WORKERNAME | -workerid WORKERID> [options]",  getDescription(), OPTIONS, HelpFormatter.DEFAULT_LEFT_PAD, HelpFormatter.DEFAULT_DESC_PAD, footer.toString());
+        }
         
         return bout.toString();
     }
@@ -351,11 +351,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             }
         } catch (IOException ex) {
             throw new IllegalCommandArgumentsException("Failed to read password: " + ex.getLocalizedMessage());
-        } catch (NoSuchAlgorithmException ex) {
-            throw new IllegalCommandArgumentsException("Failure setting up keystores: " + ex.getMessage());
-        } catch (CertificateException ex) {
-            throw new IllegalCommandArgumentsException("Failure setting up keystores: " + ex.getMessage());
-        } catch (KeyStoreException ex) {
+        } catch (NoSuchAlgorithmException | CertificateException | KeyStoreException ex) {
             throw new IllegalCommandArgumentsException("Failure setting up keystores: " + ex.getMessage());
         }
     }
@@ -508,7 +504,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
         try {
             final long size;
 
-            Map<String, Object> requestContext = new HashMap<String, Object>();
+            Map<String, Object> requestContext = new HashMap<>();
             if (inFile == null) {
                 byte[] bs = data.getBytes();
                 fin = new ByteArrayInputStream(bs);
@@ -592,21 +588,6 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             if (manager != null) {
                 manager.registerFailure();
             }
-        } catch (IllegalRequestException ex) {
-            LOG.error("Failure for " + (inFile == null ? "" : inFile.getName()) + ": " + ex.getMessage());
-            if (manager != null) {
-                manager.registerFailure();
-            }
-        } catch (CryptoTokenOfflineException ex) {
-            LOG.error("Failure for " + (inFile == null ? "" : inFile.getName()) + ": " + ex.getMessage());
-            if (manager != null) {
-                manager.registerFailure();
-            }
-        } catch (SignServerException ex) {
-            LOG.error("Failure for " + (inFile == null ? "" : inFile.getName()) + ": " + ex.getMessage());
-            if (manager != null) {
-                manager.registerFailure();
-            }
         } catch (SOAPFaultException ex) {
             if (ex.getCause() instanceof AuthorizationRequiredException) {
                 final AuthorizationRequiredException authEx =
@@ -633,7 +614,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                     manager.registerFailure();
                 }
             }
-        } catch (IOException ex) {
+        } catch (IllegalRequestException | CryptoTokenOfflineException | SignServerException | IOException ex) {
             LOG.error("Failure for " + (inFile == null ? "" : inFile.getName()) + ": " + ex.getMessage());
             if (manager != null) {
                 manager.registerFailure();
@@ -664,7 +645,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                     threads = DEFAULT_THREADS;
                 }
                 final int threadCount = threads > inFiles.length ? inFiles.length : threads;
-                final ArrayList<TransferThread> consumers = new ArrayList<TransferThread>();
+                final ArrayList<TransferThread> consumers = new ArrayList<>();
                 
                 final Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {
                     @Override

@@ -109,8 +109,8 @@ import org.signserver.server.cryptotokens.TokenEntry;
 public class AdminLayerEJBImpl implements AdminWS {
     private static final Logger LOG = Logger.getLogger(AdminLayerEJBImpl.class);
 
-    private static final HashSet<String> LONG_COLUMNS = new HashSet<String>();
-    private static final HashSet<String> INT_COLUMNS = new HashSet<String>();
+    private static final HashSet<String> LONG_COLUMNS = new HashSet<>();
+    private static final HashSet<String> INT_COLUMNS = new HashSet<>();
     
     private static final String FIELD_SIGNERID = "signerid";
     private static final String FIELD_TIME = "time";
@@ -386,7 +386,7 @@ public class AdminLayerEJBImpl implements AdminWS {
                 authorizedClients = worker.getAuthorizedClients(workerId);
         
         final LinkedList<AuthorizedClient> result
-                = new LinkedList<AuthorizedClient>();
+                = new LinkedList<>();
         for (org.signserver.common.AuthorizedClient client
                 : authorizedClients) {
             AuthorizedClient newClient = new AuthorizedClient();
@@ -600,7 +600,7 @@ public class AdminLayerEJBImpl implements AdminWS {
             if (certs == null) {
                 result = null;
             } else {
-                result = new LinkedList<byte[]>();
+                result = new LinkedList<>();
                 for (Certificate cert : certs) {
                     result.add(getEncoded(cert));
                 }
@@ -757,7 +757,7 @@ public class AdminLayerEJBImpl implements AdminWS {
             throws CryptoTokenOfflineException_Exception,
             InvalidWorkerIdException_Exception, KeyStoreException_Exception {
         try {
-            final LinkedList<KeyTestResult> results = new LinkedList<KeyTestResult>();
+            final LinkedList<KeyTestResult> results = new LinkedList<>();
             final Collection<? extends Object> ress
                     = worker.testKey(new WorkerIdentifier(signerId), alias, authCode == null ? null : authCode.toCharArray());
             for (Object o : ress) {
@@ -981,7 +981,7 @@ public class AdminLayerEJBImpl implements AdminWS {
             CryptoTokenOfflineException_Exception,
             IllegalRequestException_Exception,
             InvalidWorkerIdException_Exception, SignServerException_Exception {
-        final List<byte[]> result = new LinkedList<byte[]>();
+        final List<byte[]> result = new LinkedList<>();
 
         for (byte[] requestBytes : requests) {
             final ProcessRequest req;
@@ -1043,7 +1043,7 @@ public class AdminLayerEJBImpl implements AdminWS {
     }
     
     private List<LogEntry> toLogEntries(final List<? extends AuditLogEntry> entries) {
-        final List<LogEntry> results = new LinkedList<LogEntry>();
+        final List<LogEntry> results = new LinkedList<>();
         for (AuditLogEntry entry : entries) {
             results.add(fromAuditLogEntry(entry));
         }
@@ -1051,7 +1051,7 @@ public class AdminLayerEJBImpl implements AdminWS {
     }
     
     private List<Elem> toElements(List<QueryCondition> conditions) {
-        final LinkedList<Elem> results = new LinkedList<Elem>();
+        final LinkedList<Elem> results = new LinkedList<>();
         for (QueryCondition cond : conditions) {
             final Object value;
             if (LONG_COLUMNS.contains(cond.getColumn()) 
@@ -1197,9 +1197,7 @@ public class AdminLayerEJBImpl implements AdminWS {
             throw wrap(ex);
         } catch (QueryException ex) {
             throw wrap(ex);
-        } catch (InvalidAlgorithmParameterException ex) {
-            throw new RuntimeException(ex); // TODO
-        } catch (UnsupportedCryptoTokenParameter ex) {
+        } catch (InvalidAlgorithmParameterException | UnsupportedCryptoTokenParameter ex) {
             throw new RuntimeException(ex); // TODO
         } catch (OperationUnsupportedException ex) {
             throw wrap(ex);
@@ -1214,7 +1212,7 @@ public class AdminLayerEJBImpl implements AdminWS {
      * @return List of WS archive entries
      */
     private List<ArchiveEntry> toArchiveEntries(final List<? extends ArchiveMetadata> entries) {
-        final List<ArchiveEntry> results = new LinkedList<ArchiveEntry>();
+        final List<ArchiveEntry> results = new LinkedList<>();
         
         for (final ArchiveMetadata entry : entries) {
             results.add(fromArchiveMetadata(entry));

@@ -165,7 +165,7 @@ public class PDFSigner extends BaseSigner {
             WorkerContext workerContext, EntityManager workerEntityManager) {
         super.init(signerId, config, workerContext, workerEntityManager);
 
-        configErrors = new LinkedList<String>();
+        configErrors = new LinkedList<>();
         
         // Check properties for archive to disk
         if (StringUtils.equalsIgnoreCase("TRUE",
@@ -258,6 +258,7 @@ public class PDFSigner extends BaseSigner {
      * @see org.signserver.server.IProcessable#processData(org.signserver.common.ProcessRequest,
      *      org.signserver.common.RequestContext)
      */
+    @Override
     public ProcessResponse processData(ProcessRequest signRequest,
             RequestContext requestContext) throws IllegalRequestException,
             CryptoTokenOfflineException, SignServerException {        
@@ -487,8 +488,8 @@ public class PDFSigner extends BaseSigner {
     		Calendar cal, PDFSignerParameters params, Certificate[] certChain, TSAClient tsc, byte[] ocsp,
     		PdfSignatureAppearance sap) throws IOException, DocumentException, SignServerException {
      
-        final HashMap<PdfName, Integer> exc = new HashMap<PdfName, Integer>();
-        exc.put(PdfName.CONTENTS, Integer.valueOf(size * 2 + 2));
+        final HashMap<PdfName, Integer> exc = new HashMap<>();
+        exc.put(PdfName.CONTENTS, size * 2 + 2);
         sap.preClose(exc);
 
 
@@ -764,11 +765,7 @@ public class PDFSigner extends BaseSigner {
         PdfPKCS7 sgn;
         try {
             sgn = new PdfPKCS7(privKey, certChain, crlList, digestAlgorithm, null, false);
-        } catch (InvalidKeyException e) {
-            throw new SignServerException("Error constructing PKCS7 package", e);
-        } catch (NoSuchProviderException e) {
-            throw new SignServerException("Error constructing PKCS7 package", e);
-        } catch (NoSuchAlgorithmException e) {
+        } catch (InvalidKeyException | NoSuchProviderException | NoSuchAlgorithmException e) {
             throw new SignServerException("Error constructing PKCS7 package", e);
         }
 
@@ -839,7 +836,7 @@ public class PDFSigner extends BaseSigner {
     private CRL[] getCrlsForChain(final Collection<Certificate> certChain)
             throws SignServerException {
 
-        List<CRL> retCrls = new ArrayList<CRL>();
+        List<CRL> retCrls = new ArrayList<>();
         for (Certificate currCert : certChain) {
             CRL currCrl = null;
             try {
@@ -907,7 +904,7 @@ public class PDFSigner extends BaseSigner {
         }
 
         // Fill in fields that can be used to construct path and filename
-        final Map<String, String> fields = new HashMap<String, String>();
+        final Map<String, String> fields = new HashMap<>();
         fields.put("WORKERID", String.valueOf(workerId));
         fields.put("WORKERNAME", config.getProperty("NAME"));
         fields.put("REMOTEIP", (String) requestContext.get(RequestContext.REMOTE_IP));
@@ -1037,7 +1034,7 @@ public class PDFSigner extends BaseSigner {
             LOG.debug(">checkForDuplicateObjects");
         }
         final PRTokeniser tokens = new PRTokeniser(pdfbytes);
-        final Set<String> idents = new HashSet<String>();
+        final Set<String> idents = new HashSet<>();
         final byte[] line = new byte[16];
 
         while (tokens.readLineSegment(line)) {

@@ -205,7 +205,7 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
         includeSigningCertificateAttribute =
                 Boolean.parseBoolean(config.getProperty(INCLUDE_SIGNING_CERTIFICATE_ATTRIBUTE, "false"));
         
-        configErrors = new LinkedList<String>();
+        configErrors = new LinkedList<>();
         
         if (hasSetIncludeCertificateLevels) {
             configErrors.add(WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS + " is not supported.");
@@ -222,6 +222,7 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
      * @return the sign response
      * @see org.signserver.server.IProcessable#processData(org.signserver.common.ProcessRequest, org.signserver.common.RequestContext)
      */
+    @Override
     public ProcessResponse processData(final ProcessRequest signRequest,
             final RequestContext requestContext) throws
                 IllegalRequestException,
@@ -538,27 +539,7 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
                         Certificate issuer = chain.get(i + 1);
                         try {
                             subject.verify(issuer.getPublicKey(), "BC");
-                        } catch (CertificateException ex) {
-                            if (LOG.isDebugEnabled()) {
-                                LOG.debug("Certificate could not be verified: " + ex.getMessage() + ": " + subject);
-                            }
-                            result = false;
-                        } catch (NoSuchAlgorithmException ex) {
-                            if (LOG.isDebugEnabled()) {
-                                LOG.debug("Certificate could not be verified: " + ex.getMessage() + ": " + subject);
-                            }
-                            result = false;
-                        } catch (InvalidKeyException ex) {
-                            if (LOG.isDebugEnabled()) {
-                                LOG.debug("Certificate could not be verified: " + ex.getMessage() + ": " + subject);
-                            }
-                            result = false;
-                        } catch (NoSuchProviderException ex) {
-                            if (LOG.isDebugEnabled()) {
-                                LOG.debug("Certificate could not be verified: " + ex.getMessage() + ": " + subject);
-                            }
-                            result = false;
-                        } catch (SignatureException ex) {
+                        } catch (CertificateException | NoSuchAlgorithmException | InvalidKeyException | NoSuchProviderException | SignatureException ex) {
                             if (LOG.isDebugEnabled()) {
                                 LOG.debug("Certificate could not be verified: " + ex.getMessage() + ": " + subject);
                             }

@@ -37,6 +37,7 @@ public class CustomTimeStampLogger1 implements ITimeStampLogger {
         // No properties
     }
 
+    @Override
     public void log(final AdminInfo adminInfo, final Map<String, String> fields, final RequestContext context)
             throws WorkerLoggerException {
         final StringBuilder str = new StringBuilder();

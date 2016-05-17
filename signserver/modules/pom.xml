@@ -190,9 +190,9 @@
         property as well as provide username and password.
         See doc/sample-maven-settings.xml.
     -->
-    <repositories>
+    <!-- <repositories>
         <repository>
-            <id>primekey-mirror-test</id> <!-- TODO Change id, name and url when the production server is available -->
+            <id>primekey-mirror-test</id> - TODO Change id, name and url when the production server is available -
             <name>PrimeKey Repository Mirror (Test Environment)</name>
             <releases>
                 <enabled>true</enabled>
@@ -209,6 +209,6 @@
             </releases>
             <url>https://binrepo-mirror-test.se.lab.primekey/${primekey.customer}/repomirror</url>
         </pluginRepository>
-    </pluginRepositories>
+    </pluginRepositories> -->
 
 </project>

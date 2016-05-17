@@ -80,6 +80,7 @@ public class SignServerHealthCheck implements IHealthCheck {
         return signserversession;
     }
 
+    @Override
     public void init(final ServletConfig config, final EntityManager em) {
         minfreememory = Integer.parseInt(config.getInitParameter("MinimumFreeMemory")) * 1024 * 1024;
         checkDBString = config.getInitParameter("checkDBString");
@@ -98,8 +99,9 @@ public class SignServerHealthCheck implements IHealthCheck {
         initMaintenanceFile();
     }
 
+    @Override
     public String checkHealth(HttpServletRequest request) {
-        final LinkedList<String> errors = new LinkedList<String>();
+        final LinkedList<String> errors = new LinkedList<>();
         
         if (LOG.isDebugEnabled()) {
             LOG.debug("Starting HealthCheck health check requested by : " + request.getRemoteAddr());
@@ -143,10 +145,10 @@ public class SignServerHealthCheck implements IHealthCheck {
     }
 
     private List<String> checkSigners() {
-        final LinkedList<String> result = new LinkedList<String>();
+        final LinkedList<String> result = new LinkedList<>();
         Iterator<Integer> iter = getWorkerSession().getWorkers(WorkerType.PROCESSABLE).iterator();
         while (iter.hasNext()) {
-            int processableId = ((Integer) iter.next()).intValue();
+            int processableId = ((Integer) iter.next());
 
             try {
                 WorkerStatus workerStatus = getWorkerSession().getStatus(new WorkerIdentifier(processableId));
@@ -171,7 +173,7 @@ public class SignServerHealthCheck implements IHealthCheck {
     }
     
 	private List<String> checkMaintenance() {
-        final LinkedList<String> result = new LinkedList<String>();
+        final LinkedList<String> result = new LinkedList<>();
 		if (StringUtils.isEmpty(maintenanceFile)) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Maintenance file not specified, node will be monitored");

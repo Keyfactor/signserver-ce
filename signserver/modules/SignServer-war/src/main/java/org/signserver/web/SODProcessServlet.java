@@ -174,7 +174,7 @@ public class SODProcessServlet extends AbstractProcessServlet {
             }
 
             // Collect all [dataGroup1, dataGroup2, ..., dataGroupN]
-            Map<Integer, byte[]> dataGroups = new HashMap<Integer, byte[]>(16);
+            Map<Integer, byte[]> dataGroups = new HashMap<>(16);
             Enumeration en = req.getParameterNames();
             while (en.hasMoreElements()) {
                 Object o = en.nextElement();

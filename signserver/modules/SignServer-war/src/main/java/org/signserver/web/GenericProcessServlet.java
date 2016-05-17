@@ -325,15 +325,16 @@ public class GenericProcessServlet extends AbstractProcessServlet {
                     LOG.debug("Request Content-type: " + req.getContentType());
                 }
 
-                // Get an input stream and read the bytes from the stream
-                InputStream in = req.getInputStream();
-                ByteArrayOutputStream os = new ByteArrayOutputStream();
-                int len;
-                byte[] buf = new byte[1024];
-                while ((len = in.read(buf)) > 0) {
-                    os.write(buf, 0, len);
+                ByteArrayOutputStream os;
+                try ( // Get an input stream and read the bytes from the stream
+                        InputStream in = req.getInputStream()) {
+                    os = new ByteArrayOutputStream();
+                    int len;
+                    byte[] buf = new byte[1024];
+                    while ((len = in.read(buf)) > 0) {
+                        os.write(buf, 0, len);
+                    }
                 }
-                in.close();
                 os.close();
                 data = os.toByteArray();
             }
@@ -544,9 +545,7 @@ public class GenericProcessServlet extends AbstractProcessServlet {
             res.sendError(HttpServletResponse.SC_NOT_FOUND, "Worker Not Found");
         } catch (IllegalRequestException e) {
             res.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
-        } catch (CryptoTokenOfflineException e) {
-            res.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, e.getMessage());
-        } catch (ServiceUnavailableException e) {
+        } catch (CryptoTokenOfflineException | ServiceUnavailableException e) {
             res.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, e.getMessage());
         } catch (NotGrantedException e) {
             res.sendError(HttpServletResponse.SC_FORBIDDEN, e.getMessage());

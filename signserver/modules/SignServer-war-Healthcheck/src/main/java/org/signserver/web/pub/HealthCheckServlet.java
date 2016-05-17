@@ -60,7 +60,7 @@ public class HealthCheckServlet extends HttpServlet {
     private String[] authIPs = null;
     private boolean allIPsAuth;
     
-    private static final SameRequestRateLimiter<String> rateLimiter = new SameRequestRateLimiter<String>();
+    private static final SameRequestRateLimiter<String> rateLimiter = new SameRequestRateLimiter<>();
     
     /** EntityManager is conditionally injected from web.xml. */
     private EntityManager em;
@@ -72,6 +72,7 @@ public class HealthCheckServlet extends HttpServlet {
      *
      * @throws ServletException on error
      */
+    @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
 
@@ -109,6 +110,7 @@ public class HealthCheckServlet extends HttpServlet {
      * @throws IOException input/output error
      * @throws ServletException on error
      */
+    @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
         throws IOException, ServletException {
         log.trace(">doPost()");
@@ -127,6 +129,7 @@ public class HealthCheckServlet extends HttpServlet {
      * @throws IOException input/output error
      * @throws ServletException on error
      */
+    @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
         throws IOException, ServletException {
         log.trace(">doGet()");

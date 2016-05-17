@@ -50,6 +50,7 @@ public class TextResponse implements IHealthResponse {
 	private String maintenanceMessage = null;
 	private String customErrorMessage = null;
 	
+        @Override
 	public void init(ServletConfig config) {
 		okMessage = config.getInitParameter("OKMessage");
 		if(okMessage == null){
@@ -70,10 +71,10 @@ public class TextResponse implements IHealthResponse {
 
 	}
 
+        @Override
 	public void respond(String status, HttpServletResponse resp) {
 		resp.setContentType("text/plain");
-		try {
-			Writer out = resp.getWriter();
+		try (Writer out = resp.getWriter()) {
 			if (status == null) {
 				// Return "EJBCAOK" Message
 				out.write(okMessage);
@@ -90,7 +91,6 @@ public class TextResponse implements IHealthResponse {
 				}
 			}
 			out.flush();
-			out.close();
 		} catch (IOException e) {
 			log.error("Error writing to Servlet Response.", e);
 		}

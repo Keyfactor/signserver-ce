@@ -70,7 +70,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
                 <configuration>
                     <compilerArguments>
                         <endorseddirs>${endorsed.dir}</endorseddirs>
@@ -80,17 +79,14 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>2.1.1</version>
                 <configuration>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
                     <packagingExcludes>WEB-INF/lib/*.jar</packagingExcludes>
                 </configuration>
-                
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
-                <version>2.1</version>
                 <executions>
                     <execution>
                         <phase>validate</phase>
@@ -116,4 +112,3 @@
     </build>
 
 </project>
-

@@ -85,7 +85,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
                 <configuration>
                     <compilerArguments>
                         <endorseddirs>${endorsed.dir}</endorseddirs>
@@ -95,7 +94,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-ejb-plugin</artifactId>
-                <version>2.3</version>
                 <configuration>
                     <ejbVersion>3.1</ejbVersion>
                 </configuration>

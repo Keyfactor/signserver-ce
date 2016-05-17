@@ -81,7 +81,7 @@ OPTIONAL_CLASSPATH=${EXTRA_CLASSPATH}
 # Construct the classpath
 CP="${ADMINCLI_JAR}"
 CP="${SIGNSRV_HOME}/conf":"$CP"
-CP="$CP:$SIGNSRV_HOME/res/cesecore"
+CP="$CP:$SIGNSRV_HOME/res/deploytools/cesecore"
 CP="$CP:$SIGNSRV_HOME/lib/ext/clover-dir/lib/clover.jar"
 CP="$CP":${OPTIONAL_CLASSPATH}
 
@@ -118,5 +118,5 @@ fi
 #JAVA_OPTS="$JAVA_OPTS -Xrunjdwp:transport=dt_socket,address=8788,server=y,suspend=y"
 
 # Execute the command
-#echo Class-Path: $CP
+echo Class-Path: $CP
 exec "$JAVACMD" ${JAVA_OPTS} -cp "${CP}" $class_name "$@"

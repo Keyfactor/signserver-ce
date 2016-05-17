@@ -738,7 +738,7 @@ SHA-256 checksum: ${zip.bin.sha256}
                 <include name="ext/ext/jboss*.jar"/>
                 
                 <!-- CLI (both client and admin) -->
-                <include name="ext/commons-cli-1.2.jar"/>
+                <include name="ext/commons-cli-1.3.1.jar"/>
                 
                 <!-- Common (all) -->
                 <include name="ext/cert-cvc.jar"/>

@@ -21,7 +21,7 @@ c6ea4802fbc9af277420d67d4db4b2fd0469773dda89489d834619b843f17ddd  ./ext/commons-
 0d67550ec0022b653453c759f063a643c2fe64bc48faa8b25f95a220e2a282e2  ./ext/commons-el-1.0.jar;                               "Apache Commons"
 f4ae31866d62f91054fb3dfd0696efd08705e5e8ccd657b01b460a80044be532  ./ext/commons-fileupload-1.3.1.jar;                     "Apache Commons"
 a7f713593007813bf07d19bd1df9f81c86c0719e9a0bb2ef1b98b78313fc940d  ./ext/commons-io-1.4.jar;                               "Apache Commons"
-a64e0c73988fef8d5b73fc29d105a3a6e2dc5d9b90a94fca065cd2439dc56590  ./ext/commons-lang-2.5.jar;                             "Apache Commons"
+50f11b09f877c294d56f24463f47d28f929cf5044f648661c0f0cfbae9a2f49c  ./ext/commons-lang-2.6.jar;                             "Apache Commons"
 47d0c01a41e2883fde74dd162e168ca65c7123de17de51973a4f821bb68466ac  ./ext/commons-logging-1.1.1.jar;                        "Apache Commons"
 3a5767d235f2d441b08a9a972379d8ccdfe8c071e7e721561c4f318b60b30178  ./ext/DeployTools-Ant-2.0.jar;                          "SignServer"
 8397045f601dff2aadbc2ef479a50360f237e2cb28fbec8bdeb2d1a5f9628539  ./ext/DeployTools-Ant-2.0-sources.jar;                  "SignServer"

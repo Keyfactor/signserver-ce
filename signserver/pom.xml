@@ -46,7 +46,7 @@
             <dependency>
                 <groupId>commons-lang</groupId>
                 <artifactId>commons-lang</artifactId>
-                <version>2.5</version> <!-- Old: 2.6 available -->
+                <version>2.6</version>
             </dependency>
             <dependency>
                 <groupId>commons-configuration</groupId>
@@ -61,7 +61,7 @@
             <dependency>
                 <groupId>commons-logging</groupId>
                 <artifactId>commons-logging</artifactId>
-                <version>1.1.1</version> <!-- Old: 1.2 available -->
+                <version>1.1.1</version> <!-- Old but latest 1.x -->
             </dependency>
             <dependency>
                 <groupId>commons-fileupload</groupId>

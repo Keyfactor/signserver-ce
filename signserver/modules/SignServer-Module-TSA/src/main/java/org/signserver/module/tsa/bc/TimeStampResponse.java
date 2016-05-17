@@ -74,11 +74,7 @@ public class TimeStampResponse
         {
             return TimeStampResp.getInstance(new ASN1InputStream(in).readObject());
         }
-        catch (IllegalArgumentException e)
-        {
-            throw new TSPException("malformed timestamp response: " + e, e);
-        }
-        catch (ClassCastException e)
+        catch (IllegalArgumentException | ClassCastException e)
         {
             throw new TSPException("malformed timestamp response: " + e, e);
         }

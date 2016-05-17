@@ -114,10 +114,9 @@ public class TSPUtil
 
                         DigestCalculator digCalc = digCalcProvider.get(tstInfo.getHashAlgorithm());
 
-                        OutputStream dOut = digCalc.getOutputStream();
-
-                        dOut.write(signerInfo.getSignature());
-                        dOut.close();
+                        try (OutputStream dOut = digCalc.getOutputStream()) {
+                            dOut.write(signerInfo.getSignature());
+                        }
 
                         byte[] expectedDigest = digCalc.getDigest();
 
@@ -187,7 +186,7 @@ public class TSPUtil
 
         if (length != null)
         {
-            return length.intValue();
+            return length;
         }
 
         throw new TSPException("digest algorithm cannot be found.");

@@ -253,7 +253,7 @@ public class TimeStampSigner extends BaseSigner {
     private static final HashMap<String, ASN1ObjectIdentifier> ACCEPTEDALGORITHMSMAP =
             new HashMap<String, ASN1ObjectIdentifier>();
     private static final HashMap<ASN1ObjectIdentifier, String> ACCEPTEDALGORITHMSREVERSEMAP =
-    		new HashMap<ASN1ObjectIdentifier, String>();
+    		new HashMap<>();
 
     static {
         for (int i = 0; i < ACCEPTEDALGORITHMSNAMES.length; i++) {
@@ -304,7 +304,7 @@ public class TimeStampSigner extends BaseSigner {
             final EntityManager workerEntityManager) {
         super.init(signerId, config, workerContext, workerEntityManager);
 
-        configErrors = new LinkedList<String>();
+        configErrors = new LinkedList<>();
 
         // Overrides the default worker logger to be this worker
         //  implementation's default instead of the WorkerSessionBean's
@@ -706,14 +706,13 @@ public class TimeStampSigner extends BaseSigner {
                         nonParsedAcceptedAlgorihms.split(";");
                 if (subStrings.length > 0) {
                     acceptedAlgorithms = new HashSet();
-                    for (int i = 0; i < subStrings.length; i++) {
-                        final ASN1ObjectIdentifier acceptAlg = ACCEPTEDALGORITHMSMAP.get(subStrings[i]);
+                    for (String subString : subStrings) {
+                        final ASN1ObjectIdentifier acceptAlg = ACCEPTEDALGORITHMSMAP.get(subString);
                         if (acceptAlg != null) {
                             acceptedAlgorithms.add(acceptAlg);
                         } else {
                             LOG.error("Error, signer " + workerId
-                                    + " configured with incompatible acceptable algorithm : "
-                                    + subStrings[i]);
+                                    + " configured with incompatible acceptable algorithm : " + subString);
                         }
                     }
                 }
@@ -752,7 +751,7 @@ public class TimeStampSigner extends BaseSigner {
      * @return Set of Strings
      */
     private Set<String> makeSetOfProperty(final String nonParsedPropery) {
-        Set<String> retval = new HashSet<String>();
+        Set<String> retval = new HashSet<>();
         if (nonParsedPropery != null) {
             final String[] subStrings = nonParsedPropery.split(";");
             for (String oid : subStrings) {
@@ -920,14 +919,17 @@ public class TimeStampSigner extends BaseSigner {
     		}
     	}
 
+            @Override
     	public AlgorithmIdentifier getAlgorithmIdentifier() {
     		return new AlgorithmIdentifier(OIWObjectIdentifiers.idSHA1);
     	}
 
+            @Override
     	public OutputStream getOutputStream() {
     		return bOut;
     	}
 
+            @Override
     	public byte[] getDigest() {
     		byte[] bytes = digest.digest(bOut.toByteArray());
 
@@ -958,27 +960,7 @@ public class TimeStampSigner extends BaseSigner {
                         Certificate issuer = chain.get(i + 1);
                         try {
                             subject.verify(issuer.getPublicKey(), "BC");
-                        } catch (CertificateException ex) {
-                            if (LOG.isDebugEnabled()) {
-                                LOG.debug("Certificate could not be verified: " + ex.getMessage() + ": " + subject);
-                            }
-                            result = false;
-                        } catch (NoSuchAlgorithmException ex) {
-                            if (LOG.isDebugEnabled()) {
-                                LOG.debug("Certificate could not be verified: " + ex.getMessage() + ": " + subject);
-                            }
-                            result = false;
-                        } catch (InvalidKeyException ex) {
-                            if (LOG.isDebugEnabled()) {
-                                LOG.debug("Certificate could not be verified: " + ex.getMessage() + ": " + subject);
-                            }
-                            result = false;
-                        } catch (NoSuchProviderException ex) {
-                            if (LOG.isDebugEnabled()) {
-                                LOG.debug("Certificate could not be verified: " + ex.getMessage() + ": " + subject);
-                            }
-                            result = false;
-                        } catch (SignatureException ex) {
+                        } catch (CertificateException | NoSuchAlgorithmException | InvalidKeyException | NoSuchProviderException | SignatureException ex) {
                             if (LOG.isDebugEnabled()) {
                                 LOG.debug("Certificate could not be verified: " + ex.getMessage() + ": " + subject);
                             }

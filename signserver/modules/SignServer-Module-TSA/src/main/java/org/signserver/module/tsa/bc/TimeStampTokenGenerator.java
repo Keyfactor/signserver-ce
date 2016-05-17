@@ -156,62 +156,59 @@ public class TimeStampTokenGenerator
         TSPUtil.validateCertificate(assocCert);
 
         try
-        {
-            OutputStream dOut = digestCalculator.getOutputStream();
+        (OutputStream dOut = digestCalculator.getOutputStream()) {
 
             dOut.write(assocCert.getEncoded());
 
-            dOut.close();
-
-            if (digestCalculator.getAlgorithmIdentifier().getAlgorithm().equals(OIWObjectIdentifiers.idSHA1))
-            {
-                final ESSCertID essCertid = new ESSCertID(digestCalculator.getDigest(),
-                                            isIssuerSerialIncluded ? new IssuerSerial(new GeneralNames(new GeneralName(assocCert.getIssuer())), assocCert.getSerialNumber())
-                                                                   : null);
-
-                this.signerInfoGen = new SignerInfoGenerator(signerInfoGen, new CMSAttributeTableGenerator()
-                {
-                    public AttributeTable getAttributes(Map parameters)
-                        throws CMSAttributeTableGenerationException
-                    {
-                        AttributeTable table = signerInfoGen.getSignedAttributeTableGenerator().getAttributes(parameters);
-
-                        if (table.get(PKCSObjectIdentifiers.id_aa_signingCertificate) == null)
-                        {
-                            return table.add(PKCSObjectIdentifiers.id_aa_signingCertificate, new SigningCertificate(essCertid));
-                        }
-
-                        return table;
-                    }
-                }, signerInfoGen.getUnsignedAttributeTableGenerator());
-            }
-            else
-            {
-                AlgorithmIdentifier digAlgID = new AlgorithmIdentifier(digestCalculator.getAlgorithmIdentifier().getAlgorithm());
-                final ESSCertIDv2   essCertid = new ESSCertIDv2(digAlgID, digestCalculator.getDigest(),
-                                                    isIssuerSerialIncluded ? new IssuerSerial(new GeneralNames(new GeneralName(assocCert.getIssuer())), new ASN1Integer(assocCert.getSerialNumber()))
-                                                                           : null);
-
-                this.signerInfoGen = new SignerInfoGenerator(signerInfoGen, new CMSAttributeTableGenerator()
-                {
-                    public AttributeTable getAttributes(Map parameters)
-                        throws CMSAttributeTableGenerationException
-                    {
-                        AttributeTable table = signerInfoGen.getSignedAttributeTableGenerator().getAttributes(parameters);
-
-                        if (table.get(PKCSObjectIdentifiers.id_aa_signingCertificateV2) == null)
-                        {
-                            return table.add(PKCSObjectIdentifiers.id_aa_signingCertificateV2, new SigningCertificateV2(essCertid));
-                        }
-
-                        return table;
-                    }
-                }, signerInfoGen.getUnsignedAttributeTableGenerator());
-            }
         }
         catch (IOException e)
         {
             throw new TSPException("Exception processing certificate.", e);
+        }
+        if (digestCalculator.getAlgorithmIdentifier().getAlgorithm().equals(OIWObjectIdentifiers.idSHA1))
+        {
+            final ESSCertID essCertid = new ESSCertID(digestCalculator.getDigest(),
+                    isIssuerSerialIncluded ? new IssuerSerial(new GeneralNames(new GeneralName(assocCert.getIssuer())), assocCert.getSerialNumber())
+                            : null);
+            
+            this.signerInfoGen = new SignerInfoGenerator(signerInfoGen, new CMSAttributeTableGenerator()
+            {
+                public AttributeTable getAttributes(Map parameters)
+                        throws CMSAttributeTableGenerationException
+                {
+                    AttributeTable table = signerInfoGen.getSignedAttributeTableGenerator().getAttributes(parameters);
+                    
+                    if (table.get(PKCSObjectIdentifiers.id_aa_signingCertificate) == null)
+                    {
+                        return table.add(PKCSObjectIdentifiers.id_aa_signingCertificate, new SigningCertificate(essCertid));
+                    }
+                    
+                    return table;
+                }
+            }, signerInfoGen.getUnsignedAttributeTableGenerator());
+        }
+        else
+        {
+            AlgorithmIdentifier digAlgID = new AlgorithmIdentifier(digestCalculator.getAlgorithmIdentifier().getAlgorithm());
+            final ESSCertIDv2   essCertid = new ESSCertIDv2(digAlgID, digestCalculator.getDigest(),
+                    isIssuerSerialIncluded ? new IssuerSerial(new GeneralNames(new GeneralName(assocCert.getIssuer())), new ASN1Integer(assocCert.getSerialNumber()))
+                            : null);
+            
+            this.signerInfoGen = new SignerInfoGenerator(signerInfoGen, new CMSAttributeTableGenerator()
+            {
+                public AttributeTable getAttributes(Map parameters)
+                        throws CMSAttributeTableGenerationException
+                {
+                    AttributeTable table = signerInfoGen.getSignedAttributeTableGenerator().getAttributes(parameters);
+                    
+                    if (table.get(PKCSObjectIdentifiers.id_aa_signingCertificateV2) == null)
+                    {
+                        return table.add(PKCSObjectIdentifiers.id_aa_signingCertificateV2, new SigningCertificateV2(essCertid));
+                    }
+                    
+                    return table;
+                }
+            }, signerInfoGen.getUnsignedAttributeTableGenerator());
         }
     }
 
@@ -353,7 +350,7 @@ public class TimeStampTokenGenerator
         if (additionalExtensions != null &&
             additionalExtensions.getExtensionOIDs().length > 0) {
             List<ASN1Encodable> allExtensions =
-                    new LinkedList<ASN1Encodable>();
+                    new LinkedList<>();
             
             if (exts != null) {
                 ASN1Sequence seq = (ASN1Sequence) exts.toASN1Primitive();

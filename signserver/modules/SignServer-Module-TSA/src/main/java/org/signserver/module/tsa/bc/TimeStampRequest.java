@@ -74,11 +74,7 @@ public class TimeStampRequest
         {
             return TimeStampReq.getInstance(new ASN1InputStream(in).readObject());
         }
-        catch (ClassCastException e)
-        {
-            throw new IOException("malformed request: " + e);
-        }
-        catch (IllegalArgumentException e)
+        catch (ClassCastException | IllegalArgumentException e)
         {
             throw new IOException("malformed request: " + e);
         }

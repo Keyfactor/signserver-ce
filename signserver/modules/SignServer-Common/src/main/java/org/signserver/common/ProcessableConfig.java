@@ -119,7 +119,7 @@ public class ProcessableConfig {
      */
     @SuppressWarnings("unchecked")
     public Collection<AuthorizedClient> getAuthorizedClients() {
-        ArrayList<AuthorizedClient> result = new ArrayList<AuthorizedClient>();
+        ArrayList<AuthorizedClient> result = new ArrayList<>();
         Iterator<AuthorizedClient> iter = ((HashSet<AuthorizedClient>) get(AUTHORIZED_CLIENTS)).iterator();
         while (iter.hasNext()) {
             result.add(iter.next());
@@ -160,9 +160,7 @@ public class ProcessableConfig {
                 if (certs.size() > 0) {
                     result = (X509Certificate) certs.iterator().next();
                 }
-            } catch (CertificateException e) {
-                LOG.error(e);
-            } catch (IllegalStateException e) {
+            } catch (CertificateException | IllegalStateException e) {
                 LOG.error(e);
             }
 
@@ -191,7 +189,7 @@ public class ProcessableConfig {
      * 
      */
     public void setSignerCertificate(X509Certificate signerCert, String scope) {
-        ArrayList<Certificate> list = new ArrayList<Certificate>();
+        ArrayList<Certificate> list = new ArrayList<>();
         list.add(signerCert);
         if (scope.equals(GlobalConfiguration.SCOPE_GLOBAL)) {
             try {
@@ -229,9 +227,7 @@ public class ProcessableConfig {
         if (stringcert != null && !stringcert.equals("")) {
             try {
                 result = CertTools.getCertsFromPEM(new ByteArrayInputStream(stringcert.getBytes()));
-            } catch (CertificateException e) {
-                LOG.error(e);
-            } catch (IllegalStateException e) {
+            } catch (CertificateException | IllegalStateException e) {
                 LOG.error(e);
             }
         }

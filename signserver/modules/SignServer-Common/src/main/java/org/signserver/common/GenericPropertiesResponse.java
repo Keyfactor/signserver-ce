@@ -56,6 +56,7 @@ public class GenericPropertiesResponse extends ProcessResponse {
         return properties;
     }
 
+    @Override
     public void parse(DataInput in) throws IOException {
         in.readInt();
         final int length = in.readInt();
@@ -64,6 +65,7 @@ public class GenericPropertiesResponse extends ProcessResponse {
         properties.load(new ByteArrayInputStream(data));
     }
 
+    @Override
     public void serialize(DataOutput out) throws IOException {
         out.writeInt(RequestAndResponseManager
                 .RESPONSETTYPE_GENERICPROPERTIESRESPONSE);

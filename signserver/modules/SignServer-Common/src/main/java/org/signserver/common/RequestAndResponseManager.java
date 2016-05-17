@@ -78,8 +78,8 @@ public class RequestAndResponseManager {
     // Generic Properties type
     public static final int REQUESTTYPE_GENERICPROPERTIESREQUEST = 401;
     public static final int RESPONSETTYPE_GENERICPROPERTIESRESPONSE = 401;
-    private static final HashMap<Integer, String> AVAILABLE_REQUEST_TYPES = new HashMap<Integer, String>();
-    private static final HashMap<Integer, String> AVAILABLE_RESPONSE_TYPES = new HashMap<Integer, String>();
+    private static final HashMap<Integer, String> AVAILABLE_REQUEST_TYPES = new HashMap<>();
+    private static final HashMap<Integer, String> AVAILABLE_RESPONSE_TYPES = new HashMap<>();
 
     static {
         AVAILABLE_REQUEST_TYPES.put(REQUESTTYPE_GENERICSIGNREQUEST, GenericSignRequest.class.getName());

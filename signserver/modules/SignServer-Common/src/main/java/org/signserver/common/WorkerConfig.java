@@ -231,7 +231,7 @@ public class WorkerConfig extends UpgradeableDataHashMap {
      */
     public static Map<String, Object> propertyDiff(final WorkerConfig oldConfig,
             final WorkerConfig newConfig) {
-        final Map<String, Object> result = new HashMap<String, Object>();
+        final Map<String, Object> result = new HashMap<>();
         final Properties oldProps = oldConfig.getProperties();
         final Properties newProps = newConfig.getProperties();
         

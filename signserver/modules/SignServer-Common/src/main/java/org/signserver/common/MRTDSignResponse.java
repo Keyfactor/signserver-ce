@@ -91,11 +91,12 @@ public class MRTDSignResponse extends ProcessResponse {
         return null;
     }
 
+    @Override
     public void parse(DataInput in) throws IOException {
         in.readInt();
         this.requestID = in.readInt();
         int arraySize = in.readInt();
-        this.signedData = new ArrayList<byte[]>();
+        this.signedData = new ArrayList<>();
         for (int i = 0; i < arraySize; i++) {
             int dataSize = in.readInt();
             byte[] data = new byte[dataSize];
@@ -116,6 +117,7 @@ public class MRTDSignResponse extends ProcessResponse {
         }
     }
 
+    @Override
     public void serialize(DataOutput out) throws IOException {
         out.writeInt(RequestAndResponseManager.RESPONSETYPE_MRTDSIGNRESPONSE);
         out.writeInt(this.requestID);

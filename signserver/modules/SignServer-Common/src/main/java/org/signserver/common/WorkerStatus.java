@@ -49,7 +49,7 @@ public abstract class WorkerStatus implements Serializable {
     
     private static final SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
     
-    private List<String> fatalErrors = new LinkedList<String>();
+    private List<String> fatalErrors = new LinkedList<>();
 
     public WorkerStatus() {
         try {
@@ -160,7 +160,7 @@ public abstract class WorkerStatus implements Serializable {
         if (legacyStatus == null) {
             results = fatalErrors;
         } else {
-            results = new LinkedList<String>(fatalErrors);
+            results = new LinkedList<>(fatalErrors);
             results.add(legacyStatus);
         }
         

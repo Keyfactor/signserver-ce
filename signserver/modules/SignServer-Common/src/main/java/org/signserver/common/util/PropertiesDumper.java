@@ -120,9 +120,7 @@ public class PropertiesDumper {
                 if (!certs.isEmpty()) {
                     result = (X509Certificate) certs.iterator().next();
                 }
-            } catch (CertificateException e) {
-                LOG.error(e);
-            } catch (IllegalStateException e) {
+            } catch (CertificateException | IllegalStateException e) {
                 LOG.error(e);
             }
         }
@@ -136,9 +134,7 @@ public class PropertiesDumper {
         if (stringcert != null && !stringcert.isEmpty()) {
             try {
                 result = CertTools.getCertsFromPEM(new ByteArrayInputStream(stringcert.getBytes()));
-            } catch (CertificateException e) {
-                LOG.error(e);
-            } catch (IllegalStateException e) {
+            } catch (CertificateException | IllegalStateException e) {
                 LOG.error(e);
             }
         }

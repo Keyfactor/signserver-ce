@@ -132,18 +132,18 @@ public class PropertiesParser {
 
     }
     
-    private final List<String> errors = new LinkedList<String>();
-    private final List<String> messages = new LinkedList<String>();
-    private final Map<GlobalProperty, String> setGlobalProperties = new HashMap<GlobalProperty, String>();
-    private final List<GlobalProperty> removeGlobalProperties = new LinkedList<GlobalProperty>();
-    private final Map<WorkerProperty, String> setWorkerProperties = new HashMap<WorkerProperty, String>();
-    private final List<WorkerProperty> removeWorkerProperties = new LinkedList<WorkerProperty>();
+    private final List<String> errors = new LinkedList<>();
+    private final List<String> messages = new LinkedList<>();
+    private final Map<GlobalProperty, String> setGlobalProperties = new HashMap<>();
+    private final List<GlobalProperty> removeGlobalProperties = new LinkedList<>();
+    private final Map<WorkerProperty, String> setWorkerProperties = new HashMap<>();
+    private final List<WorkerProperty> removeWorkerProperties = new LinkedList<>();
     
-    private final Map<String, List<AuthorizedClient>> addAuthorizedClients = new HashMap<String, List<AuthorizedClient>>();
-    private final Map<String, List<AuthorizedClient>> removeAuthorizedClients = new HashMap<String, List<AuthorizedClient>>();
+    private final Map<String, List<AuthorizedClient>> addAuthorizedClients = new HashMap<>();
+    private final Map<String, List<AuthorizedClient>> removeAuthorizedClients = new HashMap<>();
     
-    private final Map<String, byte[]> signerCertificates = new HashMap<String, byte[]>();
-    private final Map<String, List<byte[]>> signerCertificateChains = new HashMap<String, List<byte[]>>();
+    private final Map<String, byte[]> signerCertificates = new HashMap<>();
+    private final Map<String, List<byte[]>> signerCertificateChains = new HashMap<>();
 
     /**
      * Parse a set of properties.
@@ -246,7 +246,7 @@ public class PropertiesParser {
         List<T> datas = map.get(workerIdOrName);
         
         if (datas == null) {
-            datas = new LinkedList<T>();
+            datas = new LinkedList<>();
             map.put(workerIdOrName, datas);
         }
         
@@ -273,7 +273,7 @@ public class PropertiesParser {
             } else {
                 if (propertykey.startsWith(DOT_SIGNERCERTCHAIN.substring(1))) {
                     String certs[] = propertyvalue.split(";");
-                    ArrayList<byte[]> chain = new ArrayList<byte[]>();
+                    ArrayList<byte[]> chain = new ArrayList<>();
                     for (String base64cert : certs) {
                         if (!base64cert.trim().isEmpty()) {
                             byte[] cert = Base64.decode(base64cert.getBytes());

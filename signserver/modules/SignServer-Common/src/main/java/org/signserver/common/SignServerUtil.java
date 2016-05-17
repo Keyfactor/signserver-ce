@@ -70,7 +70,7 @@ public class SignServerUtil {
      * @return a list of values from the configuration, never null.
      */
     public static ArrayList<String> getCollectionOfValuesFromProperties(String propertyPrefix, WorkerConfig config) {
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<>();
         int n = 255;
         while (n >= 0) {
             n--;

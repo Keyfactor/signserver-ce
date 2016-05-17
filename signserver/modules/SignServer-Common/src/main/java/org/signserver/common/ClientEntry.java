@@ -93,7 +93,7 @@ public class ClientEntry {
      * @return Set of client entries
      */
     public static Set<ClientEntry> clientEntriesFromProperty(final String property) {
-        final Set<ClientEntry> result = new HashSet<ClientEntry>();
+        final Set<ClientEntry> result = new HashSet<>();
         
         for (final String entry : property.split(";")) {
             final String trimmedEntry = entry.trim();
@@ -126,7 +126,7 @@ public class ClientEntry {
      */
     public static Set<ClientEntry> clientEntriesFromAuthClients(
             final Collection<AuthorizedClient> authClients) {
-        final Set<ClientEntry> result = new HashSet<ClientEntry>();
+        final Set<ClientEntry> result = new HashSet<>();
         
         for (final AuthorizedClient authClient : authClients) {
             result.add(new ClientEntry(authClient));

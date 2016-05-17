@@ -16,7 +16,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         
         <dist.jar>${project.build.finalName}.jar</dist.jar>
-        <!--<dest.dist.jar>SignServer-ejb.jar</dest.dist.jar>-->
         <module.name>validationws</module.name>
         <module.priority>20</module.priority>
         <postprocess.files>postprocess.file1</postprocess.files>
@@ -28,8 +27,6 @@
         <dependency>
             <artifactId>commons-lang</artifactId>
             <groupId>commons-lang</groupId>
-            <type>jar</type>
-            <version>2.5</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>

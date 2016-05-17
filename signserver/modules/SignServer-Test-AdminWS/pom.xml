@@ -16,13 +16,11 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.11</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
-            <version>2.4</version>
         </dependency>
         <dependency>
             <groupId>log4j</groupId>
@@ -142,4 +140,3 @@
         </resources>
     </build>
 </project>
-

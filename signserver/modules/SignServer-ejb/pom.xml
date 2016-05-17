@@ -38,8 +38,6 @@
         <dependency>
             <artifactId>commons-lang</artifactId>
             <groupId>commons-lang</groupId>
-            <type>jar</type>
-            <version>2.5</version>
         </dependency>
         <dependency>
             <groupId>org.ejbca.cesecore</groupId>
@@ -67,19 +65,16 @@
         <dependency>
             <artifactId>SignServer-Common</artifactId>
             <groupId>${project.groupId}</groupId>
-            <type>jar</type>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <artifactId>SignServer-Entities</artifactId>
             <groupId>${project.groupId}</groupId>
-            <type>jar</type>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <artifactId>SignServer-Server</artifactId>
             <groupId>${project.groupId}</groupId>
-            <type>jar</type>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

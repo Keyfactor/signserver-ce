@@ -9,24 +9,19 @@
     </parent>
     <artifactId>SignServer-Test-Utils</artifactId>
     <name>SignServer-Test-Utils</name>
-    <url>http://maven.apache.org</url>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <dist.jar>${project.build.finalName}.jar</dist.jar>
-        <!--<dest.dist.jar>SignServer-ejb.jar</dest.dist.jar>-->
-        <!--<module.name>admincli</module.name>-->
     </properties>
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>compile</scope>
-            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
-            <version>2.4</version>
         </dependency>
         <dependency>
             <groupId>log4j</groupId>

@@ -24,8 +24,6 @@
         <dependency>
             <artifactId>commons-lang</artifactId>
             <groupId>commons-lang</groupId>
-            <type>jar</type>
-            <version>2.5</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>

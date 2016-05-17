@@ -133,7 +133,7 @@ public class SigningAndValidationWSBalanced implements ISigningAndValidation {
 
         try {
 
-            List<org.signserver.protocol.ws.ProcessRequestWS> list = new LinkedList<org.signserver.protocol.ws.ProcessRequestWS>();
+            List<org.signserver.protocol.ws.ProcessRequestWS> list = new LinkedList<>();
 
             for (ProcessRequest req : requests) {
                 org.signserver.protocol.ws.ProcessRequestWS reqWS = new org.signserver.protocol.ws.ProcessRequestWS();
@@ -148,7 +148,7 @@ public class SigningAndValidationWSBalanced implements ISigningAndValidation {
                 throw new SignServerException("Exception", exception);
             }
 
-            List<ProcessResponse> responses3 = new LinkedList<ProcessResponse>();
+            List<ProcessResponse> responses3 = new LinkedList<>();
 
             for (org.signserver.protocol.ws.ProcessResponseWS resp : resps) {
                 responses3.add(RequestAndResponseManager.parseProcessResponse(resp.getResponseData()));
@@ -172,6 +172,7 @@ public class SigningAndValidationWSBalanced implements ISigningAndValidation {
         return (GenericSignResponse) resp;
     }
 
+    @Override
     public GenericValidationResponse validate(String validatorIdOrName, byte[] document) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
         ProcessResponse resp = process(validatorIdOrName, new GenericValidationRequest(1, document), new RemoteRequestContext());
 

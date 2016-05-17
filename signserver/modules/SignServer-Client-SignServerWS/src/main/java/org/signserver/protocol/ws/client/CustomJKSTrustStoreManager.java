@@ -37,11 +37,13 @@ class CustomJKSTrustStoreManager implements X509TrustManager {
 
     }
 
+    @Override
     public void checkClientTrusted(X509Certificate[] arg0, String arg1)
             throws CertificateException {
         // Not Implemented
     }
 
+    @Override
     public void checkServerTrusted(X509Certificate[] certs, String authType)
             throws CertificateException {
         for (X509Certificate cert : certs) {
@@ -58,6 +60,7 @@ class CustomJKSTrustStoreManager implements X509TrustManager {
 
     }
 
+    @Override
     public X509Certificate[] getAcceptedIssuers() {
         //Not supported
         return null;

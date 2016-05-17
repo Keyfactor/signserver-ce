@@ -55,7 +55,7 @@ public class CallFirstNodeWithStatusOKWSClient implements ISignServerWSClient {
     private String protocol = SignServerWSClientFactory.PROTOCOL;
     private int port = 0;
     private String wSDLURL = null;
-    private HashMap<String, SignServerWS> serviceMap = new HashMap<String, SignServerWS>();
+    private HashMap<String, SignServerWS> serviceMap = new HashMap<>();
     private IFaultCallback faultCallback;
 
     /**
@@ -69,6 +69,7 @@ public class CallFirstNodeWithStatusOKWSClient implements ISignServerWSClient {
      * @param sSLSocketFactory the SSLSocketFactory to use, null means that the Default 
      * SSLSocketFactory will be used if necessary. 
      */
+    @Override
     public void init(String[] hosts, int port, int timeOut,
             String wSDLURL, boolean useHTTPS,
             IFaultCallback faultCallback,
@@ -87,14 +88,12 @@ public class CallFirstNodeWithStatusOKWSClient implements ISignServerWSClient {
             HttpsURLConnection.setDefaultSSLSocketFactory(sSLSocketFactory);
         }
 
-        for (int i = 0; i < hosts.length; i++) {
+        for (String host : hosts) {
             try {
-                connectToHost(hosts[i]);
+                connectToHost(host);
             } catch (Throwable e) {
-                faultCallback.addCommunicationError(new GenericCommunicationFault("Error initializing connection : " + e.getMessage(), hosts[i], e));
+                faultCallback.addCommunicationError(new GenericCommunicationFault("Error initializing connection : " + e.getMessage(), host, e));
             }
-
-
         }
     }
 
@@ -125,6 +124,7 @@ public class CallFirstNodeWithStatusOKWSClient implements ISignServerWSClient {
     /**
      * @see org.signserver.protocol.ws.client.ISignServerWSClient#process(String, List)
      */
+    @Override
     public List<ProcessResponseWS> process(String workerId, List<ProcessRequestWS> requests) {
         List<ProcessResponseWS> resp = null;
 
@@ -208,6 +208,7 @@ public class CallFirstNodeWithStatusOKWSClient implements ISignServerWSClient {
         }
 
         @SuppressWarnings("synthetic-access")
+        @Override
         public void run() {
             boolean statusOK = false;
             logStatusChecker.debug("Thread with id : " + id + " started.");

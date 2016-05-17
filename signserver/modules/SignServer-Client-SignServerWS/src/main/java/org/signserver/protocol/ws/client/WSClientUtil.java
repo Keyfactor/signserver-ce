@@ -38,9 +38,8 @@ public class WSClientUtil {
      */
     public static List<ProcessRequestWS> convertProcessRequestWS(
             List<org.signserver.protocol.ws.ProcessRequestWS> signRequestWS) {
-        List<ProcessRequestWS> retval = new ArrayList<ProcessRequestWS>();
-        for (Iterator<org.signserver.protocol.ws.ProcessRequestWS> iterator = signRequestWS.iterator(); iterator.hasNext();) {
-            org.signserver.protocol.ws.ProcessRequestWS next = iterator.next();
+        List<ProcessRequestWS> retval = new ArrayList<>();
+        for (org.signserver.protocol.ws.ProcessRequestWS next : signRequestWS) {
             ProcessRequestWS temp = new ProcessRequestWS();
             temp.setRequestDataBase64(next.getRequestDataBase64());
             retval.add(temp);
@@ -53,10 +52,9 @@ public class WSClientUtil {
      */
     public static List<org.signserver.protocol.ws.ProcessResponseWS> convertProcessResponseWS(
             List<ProcessResponseWS> signResponseWS) {
-        List<org.signserver.protocol.ws.ProcessResponseWS> retval = new ArrayList<org.signserver.protocol.ws.ProcessResponseWS>();
+        List<org.signserver.protocol.ws.ProcessResponseWS> retval = new ArrayList<>();
 
-        for (Iterator<ProcessResponseWS> iterator = signResponseWS.iterator(); iterator.hasNext();) {
-            ProcessResponseWS next = iterator.next();
+        for (ProcessResponseWS next : signResponseWS) {
             org.signserver.protocol.ws.ProcessResponseWS temp = new org.signserver.protocol.ws.ProcessResponseWS();
             temp.setResponseDataBase64(next.getResponseDataBase64());
             temp.setRequestID(next.getRequestID());
@@ -64,7 +62,7 @@ public class WSClientUtil {
                 temp.setWorkerCertificate(convertCertificate(next.getWorkerCertificate()));
             }
             if (next.getWorkerCertificateChain() != null) {
-                ArrayList<Certificate> certChain = new ArrayList<Certificate>();
+                ArrayList<Certificate> certChain = new ArrayList<>();
                 for (org.signserver.protocol.ws.gen.Certificate cert : next.getWorkerCertificateChain()) {
                     certChain.add(convertCertificate(cert));
                 }

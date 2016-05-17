@@ -203,9 +203,9 @@ public class ValidateCertificateCommand extends AbstractCommand {
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         final HelpFormatter formatter = new HelpFormatter();
         
-        PrintWriter pw = new PrintWriter(bout);
-        formatter.printHelp(pw, HelpFormatter.DEFAULT_WIDTH, "Usage: signclient validatecertificate <options>\n", null, options, HelpFormatter.DEFAULT_LEFT_PAD, HelpFormatter.DEFAULT_DESC_PAD, footer.toString(), false);        
-        pw.close();
+        try (PrintWriter pw = new PrintWriter(bout)) {
+            formatter.printHelp(pw, HelpFormatter.DEFAULT_WIDTH, "Usage: signclient validatecertificate <options>\n", null, options, HelpFormatter.DEFAULT_LEFT_PAD, HelpFormatter.DEFAULT_DESC_PAD, footer.toString(), false);
+        }
         return bout.toString();
     }
 
@@ -381,8 +381,7 @@ public class ValidateCertificateCommand extends AbstractCommand {
         
         // read certificate
         X509Certificate cert = null;
-        FileInputStream fis = new FileInputStream(certPath);
-        try {
+        try (FileInputStream fis = new FileInputStream(certPath)) {
             if (pemFlag) {
                 Collection<?> certs = CertTools.getCertsFromPEM(fis);
                 if (certs.iterator().hasNext()) {
@@ -393,8 +392,6 @@ public class ValidateCertificateCommand extends AbstractCommand {
                 fis.read(data, 0, fis.available());
                 cert = (X509Certificate) CertTools.getCertfromByteArray(data);
             }
-        } finally {
-            fis.close();
         }
 
         if (cert == null) {
@@ -465,7 +462,7 @@ public class ValidateCertificateCommand extends AbstractCommand {
 
         ValidateRequest vr = new ValidateRequest(cert, usages);
 
-        ArrayList<ProcessRequestWS> requests = new ArrayList<ProcessRequestWS>();
+        ArrayList<ProcessRequestWS> requests = new ArrayList<>();
         requests.add(new ProcessRequestWS(vr));
         List<ProcessResponseWS> response = client.process(service, requests);
         if (response == null) {
@@ -646,6 +643,7 @@ public class ValidateCertificateCommand extends AbstractCommand {
     class LogErrorCallback implements IFaultCallback {
 
         @SuppressWarnings("synthetic-access")
+        @Override
         public void addCommunicationError(ICommunicationFault error) {
             final String s = "Error communication with host : " + error.getHostName() + ", " + error.getDescription();
             if (error.getThrowed() != null) {

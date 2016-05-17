@@ -179,7 +179,7 @@ public class SigningAndValidationWS implements ISigningAndValidation {
 
     public List<ProcessResponse> process(String workerIdOrName, List<ProcessRequest> requests, RequestContext context) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
         try {
-            List<ProcessRequestWS> list = new LinkedList<ProcessRequestWS>();
+            List<ProcessRequestWS> list = new LinkedList<>();
 
             ProcessRequestWS.RequestMetadata metadata = new ProcessRequestWS.RequestMetadata();
             final RequestMetadata requestMetadata = RequestMetadata.getInstance(context);
@@ -206,10 +206,7 @@ public class SigningAndValidationWS implements ISigningAndValidation {
             } catch (CryptoTokenOfflineException_Exception e) {
                 LOG.error(null, e);
                 throw new CryptoTokenOfflineException(e.getMessage());
-            } catch (IllegalRequestException_Exception e) {
-                LOG.error(null, e);
-                throw new IllegalRequestException(e.getMessage());
-            } catch (InvalidWorkerIdException_Exception e) {
+            } catch (IllegalRequestException_Exception | InvalidWorkerIdException_Exception e) {
                 LOG.error(null, e);
                 throw new IllegalRequestException(e.getMessage());
             } catch (SignServerException_Exception e) {
@@ -219,7 +216,7 @@ public class SigningAndValidationWS implements ISigningAndValidation {
 
             List<org.signserver.protocol.ws.ProcessResponseWS> responses2 = WSClientUtil.convertProcessResponseWS(resps);
 
-            List<ProcessResponse> responses3 = new LinkedList<ProcessResponse>();
+            List<ProcessResponse> responses3 = new LinkedList<>();
             for (org.signserver.protocol.ws.ProcessResponseWS resp : responses2) {
                 responses3.add(RequestAndResponseManager.parseProcessResponse(resp.getResponseData()));
             }

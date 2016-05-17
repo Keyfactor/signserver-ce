@@ -76,9 +76,9 @@ public class SignServerWS implements ISignServerWS {
     public Collection<WorkerStatusWS> getStatus(String workerIdOrName)
             throws InvalidWorkerIdException {
         LOG.debug("WS getStatus called");
-        ArrayList<WorkerStatusWS> retval = new ArrayList<WorkerStatusWS>();
+        ArrayList<WorkerStatusWS> retval = new ArrayList<>();
 
-        final LinkedList<String> errors = new LinkedList<String>();
+        final LinkedList<String> errors = new LinkedList<>();
 
         if (FileBasedDatabaseManager.getInstance().isUsed()) {
             errors.addAll(FileBasedDatabaseManager.getInstance().getFatalErrors());
@@ -110,8 +110,7 @@ public class SignServerWS implements ISignServerWS {
         } else {
             // All Workers
             List<Integer> signers = getWorkerSession().getAllWorkers();
-            for (Iterator<Integer> iterator = signers.iterator(); iterator.hasNext();) {
-                int next = iterator.next();
+            for (int next : signers) {
                 if (errors.isEmpty()) {
                     errors.addAll(checkSigner(new WorkerIdentifier(next)));
                 }
@@ -146,11 +145,12 @@ public class SignServerWS implements ISignServerWS {
     /**
      * @see  org.signserver.protocol.ws.ISignServerWS#process(String, Collection)
      */
+    @Override
     public Collection<ProcessResponseWS> process(String workerIdOrName,
             Collection<ProcessRequestWS> requests)
             throws InvalidWorkerIdException, IllegalRequestException,
             CryptoTokenOfflineException, SignServerException {
-        ArrayList<ProcessResponseWS> retval = new ArrayList<ProcessResponseWS>();
+        ArrayList<ProcessResponseWS> retval = new ArrayList<>();
 
         final HttpServletRequest servletRequest =
                 (HttpServletRequest) wsContext.getMessageContext().get(MessageContext.SERVLET_REQUEST);
@@ -182,8 +182,7 @@ public class SignServerWS implements ISignServerWS {
 
         ArrayList<Certificate> signerCertificateChain = getSignerCertificateChain(wi);
 
-        for (Iterator<ProcessRequestWS> iterator = requests.iterator(); iterator.hasNext();) {
-            ProcessRequestWS next = iterator.next();
+        for (ProcessRequestWS next : requests) {
             ProcessRequest req;
             try {
                 req = RequestAndResponseManager.parseProcessRequest(next.getRequestData());
@@ -202,8 +201,8 @@ public class SignServerWS implements ISignServerWS {
             String fileName = metadata.get(RequestContext.FILENAME);
 
             if (fileName != null) {
-            	requestContext.put(RequestContext.FILENAME, fileName);
-            	logMap.put(IWorkerLogger.LOG_FILENAME, fileName);
+                requestContext.put(RequestContext.FILENAME, fileName);
+                logMap.put(IWorkerLogger.LOG_FILENAME, fileName);
             }
             
             if (wi.hasName()) {
@@ -245,7 +244,7 @@ public class SignServerWS implements ISignServerWS {
             Collection<java.security.cert.Certificate> signerCertificateChain = sc.getSignerCertificateChain();
 
             if (signerCertificateChain != null) {
-                retval = new ArrayList<Certificate>();
+                retval = new ArrayList<>();
                 for (Iterator<java.security.cert.Certificate> iterator = signerCertificateChain.iterator(); iterator.hasNext();) {
                     retval.add(new Certificate(iterator.next()));
                 }

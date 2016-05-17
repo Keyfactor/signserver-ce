@@ -66,7 +66,7 @@ public class WSAuditLogEntry {
      * @return the WSAuditLogEntry
      */
     public static WSAuditLogEntry fromAuditLogEntry(final AuditLogEntry src) {
-        HashMap<String, String> additionalDetails = new HashMap<String, String>();
+        HashMap<String, String> additionalDetails = new HashMap<>();
         for (Map.Entry<String, Object> entry : src.getMapAdditionalDetails().entrySet()) {
             if (entry.getKey() != null) {
                 additionalDetails.put(entry.getKey(), entry.getValue() == null ? null : entry.getValue().toString());

@@ -74,8 +74,8 @@ public class AdminWS {
 
     private static final String HTTP_AUTH_BASIC_AUTHORIZATION = "Authorization";
     
-    private static final HashSet<String> LONG_COLUMNS = new HashSet<String>();
-    private static final HashSet<String> INT_COLUMNS = new HashSet<String>();
+    private static final HashSet<String> LONG_COLUMNS = new HashSet<>();
+    private static final HashSet<String> INT_COLUMNS = new HashSet<>();
     
     static {
         LONG_COLUMNS.add(AuditLogEntry.FIELD_TIMESTAMP);
@@ -107,7 +107,7 @@ public class AdminWS {
         
         if (adminsProperty == null) {
             LOG.warn(String.format("No %s global property set.", propertyName));
-            return new HashSet<ClientEntry>();
+            return new HashSet<>();
         } else {
             return ClientEntry.clientEntriesFromProperty(adminsProperty);
         }
@@ -576,7 +576,7 @@ public class AdminWS {
         final Collection<KeyTestResult> results;
         Collection<?> res = worker.testKey(adminInfo, new WorkerIdentifier(signerId), alias, authCode == null ? null : authCode.toCharArray());
         if (res.size() < 1) {
-            results = new LinkedList<KeyTestResult>();
+            results = new LinkedList<>();
         } else {
             results = new LinkedList<>();
             for (Object o : res) {
@@ -796,7 +796,7 @@ public class AdminWS {
             AdminNotAuthorizedException {
         final AdminInfo adminInfo = requireAdminAuthorization("process", workerIdOrName);
 
-        final Collection<byte[]> result = new LinkedList<byte[]>();
+        final Collection<byte[]> result = new LinkedList<>();
 
         final X509Certificate[] clientCerts = getClientCertificates();
         final X509Certificate clientCertificate;
@@ -938,7 +938,7 @@ public class AdminWS {
      * Convert to WS model LogEntry:s.
      */
     private List<WSAuditLogEntry> toLogEntries(final List<? extends AuditLogEntry> entries) {
-        final List<WSAuditLogEntry> results = new LinkedList<WSAuditLogEntry>();
+        final List<WSAuditLogEntry> results = new LinkedList<>();
         for (AuditLogEntry entry : entries) {
             results.add(WSAuditLogEntry.fromAuditLogEntry(entry));
         }
@@ -1028,7 +1028,7 @@ public class AdminWS {
      * @return
      */
     private List<WSArchiveMetadata> toArchiveEntries(final List<? extends ArchiveMetadata> entries) {
-        final List<WSArchiveMetadata> results = new LinkedList<WSArchiveMetadata>();
+        final List<WSArchiveMetadata> results = new LinkedList<>();
         
         for (final ArchiveMetadata entry : entries) {
             results.add(WSArchiveMetadata.fromArchiveMetadata(entry));
@@ -1041,7 +1041,7 @@ public class AdminWS {
      * Convert to the CESeCore model Elem:s.
      */
     private List<Elem> toElements(final List<QueryCondition> conditions) {
-        final LinkedList<Elem> results = new LinkedList<Elem>();
+        final LinkedList<Elem> results = new LinkedList<>();
         
         if (conditions != null) {
             for (QueryCondition cond : conditions) {

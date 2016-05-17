@@ -144,7 +144,7 @@ public class ClientWS {
         
             // Collect all [dataGroup1, dataGroup2, ..., dataGroupN]
             final List<DataGroup> dataGroups = data.getDataGroups();
-            final HashMap<Integer,byte[]> dataGroupsMap = new HashMap<Integer, byte[]>();
+            final HashMap<Integer,byte[]> dataGroupsMap = new HashMap<>();
             for (DataGroup dataGroup : dataGroups) {
                 final int dataGroupId = dataGroup.getId();
                 if ((dataGroupId > -1) && (dataGroupId < 17)) {
@@ -288,7 +288,7 @@ public class ClientWS {
     }
 
     private List<Metadata> getResponseMetadata(final RequestContext requestContext) {
-        final LinkedList<Metadata> result = new LinkedList<Metadata>();
+        final LinkedList<Metadata> result = new LinkedList<>();
         // TODO: DSS-x: Implement support for "Response Metadata":
         //Object o = requestContext.get(RequestContext.REQUEST_METADATA);
         //if (o instanceof Map) {

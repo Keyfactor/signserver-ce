@@ -74,6 +74,7 @@ public class ValidationWS implements IValidationWS {
      * @see org.signserver.protocol.validationservice.ws.IValidationWS#isValid(String, String, String)
      */
     @WebMethod
+    @Override
     public ValidationResponse isValid(@WebParam(name = "serviceName") String serviceNameOrId, @WebParam(name = "base64Cert") String base64Cert, @WebParam(name = "certPurposes") String certPurposes) throws IllegalRequestException, SignServerException {
         Certificate reqCert;
 
@@ -146,6 +147,7 @@ public class ValidationWS implements IValidationWS {
      * @see org.signserver.protocol.validationservice.ws.IValidationWS#getStatus(java.lang.String)
      */
     @WebMethod
+    @Override
     public String getStatus(@WebParam(name = "serviceName") String serviceName) throws IllegalRequestException {
 
         int workerId = getWorkerId(serviceName);
@@ -154,7 +156,7 @@ public class ValidationWS implements IValidationWS {
             throw new IllegalRequestException("Illegal service name : " + serviceName + " no validation service with such name exists");
         }
         final String result;
-        final LinkedList<String> errors = new LinkedList<String>();
+        final LinkedList<String> errors = new LinkedList<>();
 
         if (FileBasedDatabaseManager.getInstance().isUsed()) {
             errors.addAll(FileBasedDatabaseManager.getInstance().getFatalErrors());
@@ -184,7 +186,7 @@ public class ValidationWS implements IValidationWS {
     }
 
     private List<String> checkValidationService(int workerId) {
-        final LinkedList<String> result = new LinkedList<String>();
+        final LinkedList<String> result = new LinkedList<>();
         try {
             WorkerStatus status = getWorkerSession().getStatus(new WorkerIdentifier(workerId));
             for (String error : status.getFatalErrors()) {

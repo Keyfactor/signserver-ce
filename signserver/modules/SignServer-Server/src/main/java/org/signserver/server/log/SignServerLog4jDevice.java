@@ -52,7 +52,7 @@ import org.cesecore.util.query.QueryCriteria;
 public class SignServerLog4jDevice implements AuditLogDevice {
 	private static final Logger LOG = Logger.getLogger(SignServerLog4jDevice.class);
 	private static final String UNSUPPORTED = SignServerLog4jDevice.class.getSimpleName() + " does not support query, verification or export operations.";
-	private final List<Log4jDeviceErrorHandler> errorHandlers = new ArrayList<Log4jDeviceErrorHandler>();
+	private final List<Log4jDeviceErrorHandler> errorHandlers = new ArrayList<>();
 	
 	public SignServerLog4jDevice() {
 		final Enumeration<Appender> enumeration = LOG.getAllAppenders();

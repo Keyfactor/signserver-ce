@@ -30,7 +30,7 @@ import org.signserver.validationservice.common.Validation;
  */
 public class ValidationCache {
 
-    private Set<String> cachedIssuersDNSet = new HashSet<String>();
+    private Set<String> cachedIssuersDNSet = new HashSet<>();
     private ValidationMap validationMap = new ValidationMap();
     private TimeQueue timeQueue;
 

@@ -131,11 +131,11 @@ public abstract class BaseWorker implements IWorker {
      */
     @Override
     public WorkerStatus getStatus(List<String> additionalFatalErrors, final IServices services) {
-        final List<String> errors = new LinkedList<String>(additionalFatalErrors);
+        final List<String> errors = new LinkedList<>(additionalFatalErrors);
         errors.addAll(getFatalErrors(services));
 
-        final List<WorkerStatusInfo.Entry> briefEntries = new LinkedList<WorkerStatusInfo.Entry>();
-        final List<WorkerStatusInfo.Entry> completeEntries = new LinkedList<WorkerStatusInfo.Entry>();
+        final List<WorkerStatusInfo.Entry> briefEntries = new LinkedList<>();
+        final List<WorkerStatusInfo.Entry> completeEntries = new LinkedList<>();
 
         // Worker status
         final boolean active = errors.isEmpty();

@@ -75,12 +75,12 @@ public abstract class BaseValidationService implements IValidationService {
     }
 
     private List<String> getCachedIssuers(Properties props) {
-        ArrayList<String> retval = new ArrayList<String>();
+        ArrayList<String> retval = new ArrayList<>();
         String fullString = props.getProperty(ValidationServiceConstants.VALIDATIONSERVICE_CACHEDISSUERS);
         if (fullString != null) {
             String[] issuerDNs = fullString.split(";");
-            for (int i = 0; i < issuerDNs.length; i++) {
-                retval.add(CertTools.stringToBCDNString(issuerDNs[i]));
+            for (String suerDN : issuerDNs) {
+                retval.add(CertTools.stringToBCDNString(suerDN));
             }
         }
 
@@ -92,8 +92,8 @@ public abstract class BaseValidationService implements IValidationService {
      */
     @Override
     public WorkerStatus getStatus(final IServices services) {
-        final List<WorkerStatusInfo.Entry> briefEntries = new LinkedList<WorkerStatusInfo.Entry>();
-        final List<WorkerStatusInfo.Entry> completeEntries = new LinkedList<WorkerStatusInfo.Entry>();
+        final List<WorkerStatusInfo.Entry> briefEntries = new LinkedList<>();
+        final List<WorkerStatusInfo.Entry> completeEntries = new LinkedList<>();
 
         // Number of validators
         if (validators != null) {
@@ -135,11 +135,7 @@ public abstract class BaseValidationService implements IValidationService {
                 Class<?> c = ValidationHelper.class.getClassLoader().loadClass(classpath);
                 certTypeChecker = (ICertPurposeChecker) c.newInstance();
                 certTypeChecker.init(config);
-            } catch (ClassNotFoundException e) {
-                throw new SignServerException("Error Validation Service with workerId " + workerId + " have got bad classpath  " + classpath + " for the setting " + ValidationServiceConstants.VALIDATIONSERVICE_CERTPURPOSECHECKER);
-            } catch (InstantiationException e) {
-                throw new SignServerException("Error Validation Service with workerId " + workerId + " have got bad classpath  " + classpath + " for the setting " + ValidationServiceConstants.VALIDATIONSERVICE_CERTPURPOSECHECKER);
-            } catch (IllegalAccessException e) {
+            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
                 throw new SignServerException("Error Validation Service with workerId " + workerId + " have got bad classpath  " + classpath + " for the setting " + ValidationServiceConstants.VALIDATIONSERVICE_CERTPURPOSECHECKER);
             }
         }

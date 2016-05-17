@@ -44,7 +44,7 @@ public class DummyValidator extends BaseValidator {
 
     /** Map with revoked certificates. */
     private static Map<String, Validation.Status> revokedMap =
-            new HashMap<String, Validation.Status>();
+            new HashMap<>();
 
     /**
      *

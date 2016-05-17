@@ -58,7 +58,7 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
     protected int includeCertificateLevels;
     protected boolean hasSetIncludeCertificateLevels;
     
-    private List<String> configErrors = new LinkedList<String>();
+    private List<String> configErrors = new LinkedList<>();
 
     private static final SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
     
@@ -89,7 +89,7 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
     @Override
     public WorkerStatus getStatus(final List<String> additionalFatalErrors, final IServices services) {
         WorkerStatusInfo info;
-        final List<String> fatalErrors = new LinkedList<String>(additionalFatalErrors);
+        final List<String> fatalErrors = new LinkedList<>(additionalFatalErrors);
         fatalErrors.addAll(getFatalErrors(services));
 
         final boolean keyUsageCounterDisabled = config.getProperty(SignServerConstants.DISABLEKEYUSAGECOUNTER, "FALSE").equalsIgnoreCase("TRUE");
@@ -102,8 +102,8 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
             // during creation of the crypto token
         }
 
-        List<WorkerStatusInfo.Entry> briefEntries = new LinkedList<WorkerStatusInfo.Entry>();
-        List<WorkerStatusInfo.Entry> completeEntries = new LinkedList<WorkerStatusInfo.Entry>();
+        List<WorkerStatusInfo.Entry> briefEntries = new LinkedList<>();
+        List<WorkerStatusInfo.Entry> completeEntries = new LinkedList<>();
 
         long keyUsageCounterValue = 0;
         int status = WorkerStatus.STATUS_OFFLINE;
@@ -221,7 +221,7 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
 
     @Override
     protected List<String> getFatalErrors(IServices services) {
-        final LinkedList<String> errors = new LinkedList<String>(super.getFatalErrors(services));
+        final LinkedList<String> errors = new LinkedList<>(super.getFatalErrors(services));
         // Load crypto token so its errors are checked
         try {
             getCryptoToken(services);
@@ -246,7 +246,7 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
      * @return List of errors or an empty list in case of no errors
      */
     protected List<String> getSignerCertificateFatalErrors(IServices services) {
-        final LinkedList<String> result = new LinkedList<String>(super.getFatalErrors(services));
+        final LinkedList<String> result = new LinkedList<>(super.getFatalErrors(services));
         // Check if certificate matches key
         RequestContext context = new RequestContext(true);
         context.setServices(services);

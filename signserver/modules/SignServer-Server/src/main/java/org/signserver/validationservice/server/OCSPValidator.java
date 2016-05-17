@@ -105,12 +105,12 @@ public class OCSPValidator extends BaseValidator {
         // certStore & certPath construction
         CertPath certPath = null;
         CertStore certStore;
-        List<Object> certs = new ArrayList<Object>();
+        List<Object> certs = new ArrayList<>();
         CertificateFactory certFactory;
         CertPathValidator validator = null;
         PKIXParameters params = null;
         Certificate rootCert = null;
-        List<X509Certificate> certChainWithoutRootCert = new ArrayList<X509Certificate>();
+        List<X509Certificate> certChainWithoutRootCert = new ArrayList<>();
         try {
 
             certFactory = CertificateFactory.getInstance("X509", "BC");
@@ -220,7 +220,7 @@ public class OCSPValidator extends BaseValidator {
      * @throws CertificateException 
      */
     protected List<X509Certificate> getIssuerAuthorizedOCSPResponderCertificates(Certificate cert) throws SignServerException, CertificateException, IOException {
-        ArrayList<X509Certificate> x509Certs = new ArrayList<X509Certificate>();
+        ArrayList<X509Certificate> x509Certs = new ArrayList<>();
         Properties issuerProps = getIssuerProperties(cert);
         if (issuerProps == null) {
             return null;

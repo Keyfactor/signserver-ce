@@ -247,14 +247,11 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
                     throw new CryptoTokenInitializationFailureException("Incorrect value for " + CryptoTokenHelper.PROPERTY_KEYGENERATIONLIMIT + ": " + ex.getLocalizedMessage());
                 }
             }
-        } catch (org.cesecore.keys.token.CryptoTokenOfflineException ex) {
+        } catch (org.cesecore.keys.token.CryptoTokenOfflineException | NumberFormatException ex) {
             LOG.error("Init failed", ex);
             throw new CryptoTokenInitializationFailureException(ex.getMessage());
         } catch (NoSuchSlotException ex) {
             LOG.error("Slot not found", ex);
-            throw new CryptoTokenInitializationFailureException(ex.getMessage());
-        } catch (NumberFormatException ex) {
-            LOG.error("Init failed", ex);
             throw new CryptoTokenInitializationFailureException(ex.getMessage());
         }
     }
@@ -282,15 +279,7 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
                         }
                     }
                 }
-            } catch (org.cesecore.keys.token.CryptoTokenOfflineException ex) {
-                LOG.error("Error testing activation", ex);
-            } catch (NoSuchAlgorithmException ex) {
-                LOG.error("Error testing activation", ex);
-            } catch (NoSuchProviderException ex) {
-                LOG.error("Error testing activation", ex);
-            } catch (InvalidKeyException ex) {
-                LOG.error("Error testing activation", ex);
-            } catch (SignatureException ex) {
+            } catch (org.cesecore.keys.token.CryptoTokenOfflineException | NoSuchAlgorithmException | NoSuchProviderException | InvalidKeyException | SignatureException ex) {
                 LOG.error("Error testing activation", ex);
             }
         }
@@ -434,28 +423,7 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
                 final KeyStore ks = delegate.getActivatedKeyStore();
                 CryptoTokenHelper.regenerateCertIfWanted(alias, authCode, params, ks, ks.getProvider().getName());
             }
-        } catch (InvalidAlgorithmParameterException ex) {
-            LOG.error(ex, ex);
-            throw new CryptoTokenOfflineException(ex);
-        } catch (org.cesecore.keys.token.CryptoTokenOfflineException ex) {
-            LOG.error(ex, ex);
-            throw new CryptoTokenOfflineException(ex);
-        } catch (CertificateException ex) {
-            LOG.error(ex, ex);
-            throw new CryptoTokenOfflineException(ex);
-        } catch (IOException ex) {
-            LOG.error(ex, ex);
-            throw new CryptoTokenOfflineException(ex);
-        } catch (KeyStoreException ex) {
-            LOG.error(ex, ex);
-            throw new CryptoTokenOfflineException(ex);
-        } catch (NoSuchAlgorithmException ex) {
-            LOG.error(ex, ex);
-            throw new CryptoTokenOfflineException(ex);
-        } catch (UnrecoverableKeyException ex) {
-            LOG.error(ex, ex);
-            throw new CryptoTokenOfflineException(ex);
-        } catch (OperatorCreationException ex) {
+        } catch (InvalidAlgorithmParameterException | org.cesecore.keys.token.CryptoTokenOfflineException | CertificateException | IOException | KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException | OperatorCreationException ex) {
             LOG.error(ex, ex);
             throw new CryptoTokenOfflineException(ex);
         }
@@ -476,13 +444,7 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
 
             keyStore.setKeyEntry(alias, key, athenticationCode,
                                  certChain.toArray(new Certificate[0]));
-        } catch (KeyStoreException ex) {
-            LOG.error(ex, ex);
-            throw new CryptoTokenOfflineException(ex);
-        } catch (NoSuchAlgorithmException ex) {
-            LOG.error(ex, ex);
-            throw new CryptoTokenOfflineException(ex);
-        } catch (UnrecoverableKeyException ex) {
+        } catch (KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException ex) {
             LOG.error(ex, ex);
             throw new CryptoTokenOfflineException(ex);
         }

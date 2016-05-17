@@ -32,7 +32,7 @@ public class ExceptionUtil {
      */
     public static final List<String> getCauseMessages(Exception exception) {
         // collect cause messages
-        final List<String> causes = new LinkedList<String>();
+        final List<String> causes = new LinkedList<>();
 
         causes.add(exception.getMessage());
 

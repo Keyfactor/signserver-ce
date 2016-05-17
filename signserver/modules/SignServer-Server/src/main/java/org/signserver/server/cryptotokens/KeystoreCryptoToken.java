@@ -146,7 +146,7 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
         }
         this.ks = getKeystore(keystoretype, keystorepath, authenticationCode, services);
 
-        entries = new HashMap<Object, KeyEntry>();
+        entries = new HashMap<>();
 
         Enumeration<String> e = ks.aliases();
         while (e.hasMoreElements()) {
@@ -444,37 +444,7 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
                 entries.put(ICryptoTokenV4.PURPOSE_DECRYPT, entry);
             }
 
-        } catch (UnsupportedOperationException ex) {
-            LOG.error(ex, ex);
-            throw new CryptoTokenOfflineException(ex);
-        } catch (KeyStoreException ex) {
-            LOG.error(ex, ex);
-            throw new CryptoTokenOfflineException(ex);
-        } catch (NoSuchAlgorithmException ex) {
-            LOG.error(ex, ex);
-            throw new CryptoTokenOfflineException(ex);
-        } catch (NoSuchProviderException ex) {
-            LOG.error(ex, ex);
-            throw new CryptoTokenOfflineException(ex);
-        } catch (InvalidAlgorithmParameterException ex) {
-            LOG.error(ex, ex);
-            throw new CryptoTokenOfflineException(ex);
-        } catch (NumberFormatException ex) {
-            LOG.error(ex, ex);
-            throw new CryptoTokenOfflineException(ex);
-        } catch (OperatorCreationException ex) {
-            LOG.error(ex, ex);
-            throw new CryptoTokenOfflineException(ex);
-        } catch (CertificateException ex) {
-            LOG.error(ex, ex);
-            throw new CryptoTokenOfflineException(ex);
-        } catch (IOException ex) {
-            LOG.error(ex, ex);
-            throw new CryptoTokenOfflineException(ex);
-        } catch (IllegalStateException ex) {
-            LOG.error(ex, ex);
-            throw new CryptoTokenOfflineException(ex);
-        }  catch (UnrecoverableKeyException ex) {
+        } catch (UnsupportedOperationException | KeyStoreException | NoSuchAlgorithmException | NoSuchProviderException | InvalidAlgorithmParameterException | NumberFormatException | OperatorCreationException | CertificateException | IOException | IllegalStateException | UnrecoverableKeyException ex) {
             LOG.error(ex, ex);
             throw new CryptoTokenOfflineException(ex);
         }
@@ -557,19 +527,7 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
                 }
                 
                 readFromKeystore(null, services);
-            } catch (IOException ex) {
-                LOG.error("Unable to persist new keystore after key removal: " + ex.getMessage(), ex);
-                throw new SignServerException("Unable to persist key removal");
-            } catch (NoSuchAlgorithmException ex) {
-                LOG.error("Unable to persist new keystore after key removal: " + ex.getMessage(), ex);
-                throw new SignServerException("Unable to persist key removal");
-            } catch (CertificateException ex) {
-                LOG.error("Unable to persist new keystore after key removal: " + ex.getMessage(), ex);
-                throw new SignServerException("Unable to persist key removal");
-            } catch (NoSuchProviderException ex) {
-                LOG.error("Unable to persist new keystore after key removal: " + ex.getMessage(), ex);
-                throw new SignServerException("Unable to persist key removal");
-            } catch (UnrecoverableKeyException ex) {
+            } catch (IOException | NoSuchAlgorithmException | CertificateException | NoSuchProviderException | UnrecoverableKeyException ex) {
                 LOG.error("Unable to persist new keystore after key removal: " + ex.getMessage(), ex);
                 throw new SignServerException("Unable to persist key removal");
             } finally {

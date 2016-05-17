@@ -118,8 +118,8 @@ public class CRLValidator extends BaseValidator {
             LOG.debug("***********************");
         }
         Certificate rootCert = null; // represents root Certificate of the certificate in question
-        List<X509Certificate> certChainWithoutRootCert = new ArrayList<X509Certificate>(); // chain without root for CertPath construction 
-        List<URL> cDPURLs = new ArrayList<URL>(); // list of CDPs obtained from certificates 
+        List<X509Certificate> certChainWithoutRootCert = new ArrayList<>(); // chain without root for CertPath construction 
+        List<URL> cDPURLs = new ArrayList<>(); // list of CDPs obtained from certificates 
         List<URL> CRLPaths = getIssuerCRLPaths(cert); 	// retrieved CRL paths from issuer properties
 
         // fetch crl's of requested certificate and all certificates in a chain
@@ -199,7 +199,7 @@ public class CRLValidator extends BaseValidator {
         // certStore & certPath construction
         CertPath certPath = null;
         CertStore certStore;
-        List<Object> certsAndCRLS = new ArrayList<Object>(); // object ?, specified to suppress warnings but is it good way ? 
+        List<Object> certsAndCRLS = new ArrayList<>(); // object ?, specified to suppress warnings but is it good way ? 
         CertificateFactory certFactory;
         CertPathValidator validator = null;
         PKIXParameters params = null;

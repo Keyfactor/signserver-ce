@@ -44,11 +44,11 @@ public abstract class BaseDispatcher extends BaseProcessable {
      */
     @Override
     public WorkerStatus getStatus(final List<String> additionalFatalErrors, final IServices services) {
-        final List<String> fatalErrors = new LinkedList<String>(additionalFatalErrors);
+        final List<String> fatalErrors = new LinkedList<>(additionalFatalErrors);
         fatalErrors.addAll(getFatalErrors(services));
 
-        final List<WorkerStatusInfo.Entry> briefEntries = new LinkedList<WorkerStatusInfo.Entry>();
-        final List<WorkerStatusInfo.Entry> completeEntries = new LinkedList<WorkerStatusInfo.Entry>();
+        final List<WorkerStatusInfo.Entry> briefEntries = new LinkedList<>();
+        final List<WorkerStatusInfo.Entry> completeEntries = new LinkedList<>();
 
         // Worker status
         briefEntries.add(new WorkerStatusInfo.Entry("Worker status", fatalErrors.isEmpty() ? "Active" : "Offline"));

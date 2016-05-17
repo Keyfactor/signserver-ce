@@ -229,7 +229,7 @@ public class CryptoTokenHelper {
             LOG.debug("testKey for alias: " + alias);
         }
 
-        final Collection<KeyTestResult> result = new LinkedList<KeyTestResult>();
+        final Collection<KeyTestResult> result = new LinkedList<>();
 
         try {
             final Enumeration<String> e = keyStore.aliases();
@@ -261,22 +261,7 @@ public class CryptoTokenHelper {
                         } catch (ClassCastException ce) {
                             status = "Not testing keys with alias "
                                     + keyAlias + ". Not a private key.";
-                        } catch (InvalidKeyException ex) {
-                            LOG.error("Error testing key: " + keyAlias, ex);
-                            status = ex.getMessage();
-                        } catch (KeyStoreException ex) {
-                            LOG.error("Error testing key: " + keyAlias, ex);
-                            status = ex.getMessage();
-                        } catch (NoSuchAlgorithmException ex) {
-                            LOG.error("Error testing key: " + keyAlias, ex);
-                            status = ex.getMessage();
-                        } catch (NoSuchProviderException ex) {
-                            LOG.error("Error testing key: " + keyAlias, ex);
-                            status = ex.getMessage();
-                        } catch (SignatureException ex) {
-                            LOG.error("Error testing key: " + keyAlias, ex);
-                            status = ex.getMessage();
-                        } catch (UnrecoverableKeyException ex) {
+                        } catch (InvalidKeyException | KeyStoreException | NoSuchAlgorithmException | NoSuchProviderException | SignatureException | UnrecoverableKeyException ex) {
                             LOG.error("Error testing key: " + keyAlias, ex);
                             status = ex.getMessage();
                         }
@@ -384,13 +369,7 @@ public class CryptoTokenHelper {
                 final ContentSigner contentSigner = new JcaContentSignerBuilder(reqInfo.getSignatureAlgorithm()).setProvider(signatureProvider).build(privateKey);
                 pkcs10 = builder.build(contentSigner);
                 retval = new Base64SignerCertReqData(Base64.encode(pkcs10.getEncoded()));
-            } catch (IOException e) {
-                throw new IllegalArgumentException("Certificate request error: " + e.getMessage(), e);
-            } catch (OperatorCreationException e) {
-                throw new IllegalArgumentException("Certificate request error: " + e.getMessage(), e);
-            } catch (NoSuchAlgorithmException e) {
-                throw new IllegalArgumentException("Certificate request error: " + e.getMessage(), e);
-            } catch (NoSuchProviderException e) {
+            } catch (IOException | OperatorCreationException | NoSuchAlgorithmException | NoSuchProviderException e) {
                 throw new IllegalArgumentException("Certificate request error: " + e.getMessage(), e);
             }
             LOG.debug("<genCertificateRequest");
@@ -520,7 +499,7 @@ public class CryptoTokenHelper {
     public static TokenSearchResults searchTokenEntries(final KeyStore keyStore, final int startIndex, final int max, final QueryCriteria qc, final boolean includeData) throws CryptoTokenOfflineException, QueryException {
         final TokenSearchResults result;
         try {
-            final ArrayList<TokenEntry> tokenEntries = new ArrayList<TokenEntry>();
+            final ArrayList<TokenEntry> tokenEntries = new ArrayList<>();
             final Enumeration<String> e = keyStore.aliases(); // We assume the order is the same for every call unless entries has been added or removed
             
             final long maxIndex = (long) startIndex + max;
@@ -552,7 +531,7 @@ public class CryptoTokenHelper {
 
                     // Add additional data
                     if (includeData) {
-                        Map<String, String> info = new HashMap<String, String>();
+                        Map<String, String> info = new HashMap<>();
                         try {
                             Date creationDate = keyStore.getCreationDate(keyAlias);
                             entry.setCreationDate(creationDate);
@@ -595,10 +574,7 @@ public class CryptoTokenHelper {
 
                                 info.put(INFO_KEY_ALGORITHM, secretKey.getAlgorithm());
                                 //info.put(INFO_KEY_SPECIFICATION, AlgorithmTools.getKeySpecification(chain[0].getPublicKey())); // TODO: Key specification support for secret keys
-                            } catch (NoSuchAlgorithmException ex) {
-                                info.put("Error", ex.getMessage());
-                                LOG.error("Unable to get secret key for alias: " + keyAlias, ex);
-                            } catch (UnrecoverableEntryException ex) {
+                            } catch (NoSuchAlgorithmException | UnrecoverableEntryException ex) {
                                 info.put("Error", ex.getMessage());
                                 LOG.error("Unable to get secret key for alias: " + keyAlias, ex);
                             }
@@ -622,7 +598,7 @@ public class CryptoTokenHelper {
     public static final String INFO_KEY_PUBLIC_EXPONENT = "Public exponent";
     
     private static boolean shouldBeIncluded(TokenEntry tokenEntry, QueryCriteria qc) throws QueryException {
-        final List<Elem> terms = new ArrayList<Elem>();
+        final List<Elem> terms = new ArrayList<>();
             
         CollectionUtils.selectRejected(qc.getElements(), PredicateUtils.instanceofPredicate(Order.class), terms);
         if (terms.isEmpty()) {

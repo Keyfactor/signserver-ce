@@ -49,7 +49,7 @@ public abstract class BaseValidator implements IValidator {
      */
     protected HashMap<String, List<Certificate>> getCertChainMap() {
         if (certChainMap == null) {
-            certChainMap = new HashMap<String, List<Certificate>>();
+            certChainMap = new HashMap<>();
             for (Integer issuerId : getIssuerProperties().keySet()) {
                 Properties issuerProps = getIssuerProperties().get(issuerId);
 
@@ -163,7 +163,7 @@ public abstract class BaseValidator implements IValidator {
             try {
                 Collection<?> certs = CertTools.getCertsFromPEM(new ByteArrayInputStream(issuerProps.getProperty(ValidationServiceConstants.VALIDATIONSERVICE_ISSUERCERTCHAIN).getBytes()));
                 Iterator<?> certiter = certs.iterator();
-                ArrayList<Certificate> icerts = new ArrayList<Certificate>();
+                ArrayList<Certificate> icerts = new ArrayList<>();
                 while (certiter.hasNext()) {
                     icerts.add((Certificate) certiter.next());
                 }
@@ -173,10 +173,7 @@ public abstract class BaseValidator implements IValidator {
                     retval = null;
                 }
 
-            } catch (CertificateException e) {
-                LOG.error("Error constructing certificate chain from setting " + ValidationServiceConstants.VALIDATIONSERVICE_ISSUERCERTCHAIN + " is missing for issuer "
-                        + issuerId + ", validator id " + validatorId + ", worker id" + workerId, e);
-            } catch (IllegalStateException e) {
+            } catch (CertificateException | IllegalStateException e) {
                 LOG.error("Error constructing certificate chain from setting " + ValidationServiceConstants.VALIDATIONSERVICE_ISSUERCERTCHAIN + " is missing for issuer "
                         + issuerId + ", validator id " + validatorId + ", worker id" + workerId, e);
             }
@@ -193,7 +190,7 @@ public abstract class BaseValidator implements IValidator {
     ArrayList<Certificate> sortCerts(final int issuerid,
             final ArrayList<Certificate> icerts) {
         LOG.trace(">sortCerts");
-        final ArrayList<Certificate> retval = new ArrayList<Certificate>();
+        final ArrayList<Certificate> retval = new ArrayList<>();
 
         // Start with finding root
         Certificate currentCert = null;
@@ -233,7 +230,7 @@ public abstract class BaseValidator implements IValidator {
 
     protected HashMap<Integer, Properties> getIssuerProperties() {
         if (issuerProperties == null) {
-            issuerProperties = new HashMap<Integer, Properties>();
+            issuerProperties = new HashMap<>();
             for (int i = 1; i < ValidationServiceConstants.NUM_OF_SUPPORTED_ISSUERS; i++) {
                 Properties issuerProps = ValidationHelper.getIssuerProperties(i, props);
                 if (issuerProps != null) {
@@ -353,7 +350,7 @@ public abstract class BaseValidator implements IValidator {
         if (issuerProps == null || !issuerProps.containsKey(ValidationServiceConstants.VALIDATIONSERVICE_ISSUERCRLPATHS)) {
             return null;
         }
-        retval = new ArrayList<URL>();
+        retval = new ArrayList<>();
 
         StringTokenizer strTokenizer = new StringTokenizer(issuerProps.getProperty(ValidationServiceConstants.VALIDATIONSERVICE_ISSUERCRLPATHS),
                 ValidationServiceConstants.VALIDATIONSERVICE_ISSUERCRLPATHSDELIMITER);

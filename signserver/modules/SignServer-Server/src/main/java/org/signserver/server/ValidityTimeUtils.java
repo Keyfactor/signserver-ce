@@ -93,15 +93,7 @@ public class ValidityTimeUtils {
                     privatekeyDate = notAfter ? p.getNotAfter().getDate()
                             : p.getNotBefore().getDate();
                 }
-            } catch (IOException e) {
-                LOG.error(e);
-                CryptoTokenOfflineException newe =
-                        new CryptoTokenOfflineException(
-                        "Error Signer " + workerId
-                        + " have a problem with PrivateKeyUsagePeriod, check server LOG.");
-                newe.initCause(e);
-                throw newe;
-            } catch (ParseException e) {
+            } catch (IOException | ParseException e) {
                 LOG.error(e);
                 CryptoTokenOfflineException newe =
                         new CryptoTokenOfflineException(

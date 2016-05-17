@@ -290,9 +290,7 @@ public class OCSPCRLPathChecker extends OCSPPathChecker {
             clonedOCSPCRLPathChecker.cACert = clonedPrevCert;
             return clonedOCSPCRLPathChecker;
 
-        } catch (CertificateException e) {
-            log.error("Exception occured on clone of OCSPCRLPathChecker", e);
-        } catch (NoSuchProviderException e) {
+        } catch (CertificateException | NoSuchProviderException e) {
             log.error("Exception occured on clone of OCSPCRLPathChecker", e);
         }
 

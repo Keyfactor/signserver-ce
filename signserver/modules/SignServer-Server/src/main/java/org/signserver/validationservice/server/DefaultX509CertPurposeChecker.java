@@ -44,7 +44,7 @@ public class DefaultX509CertPurposeChecker implements ICertPurposeChecker {
         String[] retval = null;
 
         for (String certPurpose : certPurposes) {
-            ArrayList<String> approvedCertPurposes = new ArrayList<String>();
+            ArrayList<String> approvedCertPurposes = new ArrayList<>();
             if (cert instanceof java.security.cert.X509Certificate) {
                 java.security.cert.X509Certificate c = (X509Certificate) cert;
                 if (certPurpose.equalsIgnoreCase(ValidationServiceConstants.CERTPURPOSE_IDENTIFICATION)) {

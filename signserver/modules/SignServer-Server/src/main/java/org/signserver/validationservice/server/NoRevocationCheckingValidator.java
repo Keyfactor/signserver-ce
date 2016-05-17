@@ -105,7 +105,7 @@ public class NoRevocationCheckingValidator extends BaseValidator {
             LOG.debug("***********************");
         }
         Certificate rootCert = null; // represents root Certificate of the certificate in question
-        List<X509Certificate> certChainWithoutRootCert = new ArrayList<X509Certificate>(); // chain without root for CertPath construction 
+        List<X509Certificate> certChainWithoutRootCert = new ArrayList<>(); // chain without root for CertPath construction 
 
         X509Certificate x509CurrentCert;
         Iterator<Certificate> cACerts = certChain.iterator();
@@ -143,7 +143,7 @@ public class NoRevocationCheckingValidator extends BaseValidator {
         // certStore & certPath construction
         CertPath certPath = null;
         CertStore certStore;
-        List<Object> certsAndCRLS = new ArrayList<Object>();
+        List<Object> certsAndCRLS = new ArrayList<>();
         CertificateFactory certFactory;
         CertPathValidator validator = null;
         PKIXParameters params = null;

@@ -94,7 +94,7 @@ public class Event {
      */
     public void addCustomStatistics(String type, Integer data) {
         if (customData == null) {
-            customData = new HashMap<String, Integer>();
+            customData = new HashMap<>();
         }
         customData.put(type, data);
     }

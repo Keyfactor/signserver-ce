@@ -39,7 +39,7 @@ import org.bouncycastle.util.encoders.Hex;
  */
 public class EjbcaPatternLogger {
 
-    private final Map<String, String> valuepairs = new HashMap<String, String>();
+    private final Map<String, String> valuepairs = new HashMap<>();
     private final StringWriter sw = new StringWriter();
     private final PrintWriter pw = new PrintWriter(this.sw);
     private final Matcher m;

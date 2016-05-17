@@ -135,7 +135,7 @@ public class ValidationHelper {
      * @throws SignServerException if validators are missconfigured.
      */
     public static HashMap<Integer, IValidator> genValidators(int workerId, WorkerConfig config, EntityManager em) throws SignServerException {
-        HashMap<Integer, IValidator> retval = new HashMap<Integer, IValidator>();
+        HashMap<Integer, IValidator> retval = new HashMap<>();
 
         for (int i = 1; i <= SUPPORTED_NUMBER_OF_VALIDATORS; i++) {
             Properties valprops = getValidatorProperties(i, config);
@@ -147,11 +147,7 @@ public class ValidationHelper {
                         IValidator v = (IValidator) c.newInstance();
                         v.init(workerId, i, valprops, em);
                         retval.put(i, v);
-                    } catch (ClassNotFoundException e) {
-                        throw new SignServerException("Error validator with validatorId " + i + " with workerId " + workerId + " have got the required setting " + ValidationServiceConstants.VALIDATOR_SETTING_CLASSPATH + " set correctly.");
-                    } catch (InstantiationException e) {
-                        throw new SignServerException("Error validator with validatorId " + i + " with workerId " + workerId + " have got the required setting " + ValidationServiceConstants.VALIDATOR_SETTING_CLASSPATH + " set correctly.");
-                    } catch (IllegalAccessException e) {
+                    } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
                         throw new SignServerException("Error validator with validatorId " + i + " with workerId " + workerId + " have got the required setting " + ValidationServiceConstants.VALIDATOR_SETTING_CLASSPATH + " set correctly.");
                     }
                 } else {

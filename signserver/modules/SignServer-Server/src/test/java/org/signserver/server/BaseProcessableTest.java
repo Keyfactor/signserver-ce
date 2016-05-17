@@ -528,7 +528,7 @@ public class BaseProcessableTest extends TestCase {
 
         private static final Certificate CERTIFICATE;
         private final Map<String, List<Certificate>> importedChains =
-                new HashMap<String, List<Certificate>>();
+                new HashMap<>();
         
         static {
             try {

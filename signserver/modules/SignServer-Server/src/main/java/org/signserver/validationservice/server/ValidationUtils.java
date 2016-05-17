@@ -65,10 +65,7 @@ public class ValidationUtils {
         CertificateFactory certFactory = null;
         try {
             certFactory = CertificateFactory.getInstance("X509", "BC");
-        } catch (CertificateException e) {
-            throw new SignServerException(
-                    "Error creating BC CertificateFactory provider", e);
-        } catch (NoSuchProviderException e) {
+        } catch (CertificateException | NoSuchProviderException e) {
             throw new SignServerException(
                     "Error creating BC CertificateFactory provider", e);
         }
@@ -241,14 +238,8 @@ public class ValidationUtils {
 
         // POST it
         con.setRequestProperty("Content-Type", "application/ocsp-request");
-        OutputStream os = null;
-        try {
-            os = con.getOutputStream();
+        try (OutputStream os = con.getOutputStream()) {
             os.write(request.getEncoded());
-        } finally {
-            if (os != null) {
-                os.close();
-            }
         }
 
         result.setHttpReturnCode(con.getResponseCode());

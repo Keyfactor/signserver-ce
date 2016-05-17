@@ -46,7 +46,7 @@ public abstract class BaseTimedService extends BaseWorker implements ITimedServi
 
     private final Set<ITimedService.LogType> logTypes =
             EnumSet.noneOf(ITimedService.LogType.class);
-    private final List<String> fatalErrors = new LinkedList<String>();
+    private final List<String> fatalErrors = new LinkedList<>();
     
     protected BaseTimedService() {
     }
@@ -145,11 +145,11 @@ public abstract class BaseTimedService extends BaseWorker implements ITimedServi
 
     @Override
     public WorkerStatus getStatus(final List<String> additionalFatalErrors, final IServices services) {
-        final List<String> fatalErrorsIncludingAdditionalErrors = new LinkedList<String>(additionalFatalErrors);
+        final List<String> fatalErrorsIncludingAdditionalErrors = new LinkedList<>(additionalFatalErrors);
         fatalErrorsIncludingAdditionalErrors.addAll(getFatalErrors(services));
 
-        List<WorkerStatusInfo.Entry> briefEntries = new LinkedList<WorkerStatusInfo.Entry>();
-        List<WorkerStatusInfo.Entry> completeEntries = new LinkedList<WorkerStatusInfo.Entry>();
+        List<WorkerStatusInfo.Entry> briefEntries = new LinkedList<>();
+        List<WorkerStatusInfo.Entry> completeEntries = new LinkedList<>();
 
         // Worker status
         briefEntries.add(new WorkerStatusInfo.Entry("Worker status", fatalErrorsIncludingAdditionalErrors.isEmpty() ? "Active" : "Offline"));
@@ -182,7 +182,7 @@ public abstract class BaseTimedService extends BaseWorker implements ITimedServi
 
     @Override
     protected List<String> getFatalErrors(IServices services) {
-        final List<String> errors = new LinkedList<String>(super.getFatalErrors(services));
+        final List<String> errors = new LinkedList<>(super.getFatalErrors(services));
         
         errors.addAll(fatalErrors);
         return errors;

@@ -189,9 +189,7 @@ public abstract class AbstractCustomCertPathChecker extends PKIXCertPathChecker 
                 }
             } catch (CertificateParsingException ex) {
                 throw new CertPathValidatorException("Failed to obtain CDP URL: " + ex.getMessage());
-            } catch (CertificateException ex) {
-                throw new CertPathValidatorException("Failed to fetch CRL: " + ex.getMessage());
-            } catch (IOException ex) {
+            } catch (CertificateException | IOException ex) {
                 throw new CertPathValidatorException("Failed to fetch CRL: " + ex.getMessage());
             } catch (SignServerException ex) {
                 throw new CertPathValidatorException("CRL verification failed: " + ex.getMessage());

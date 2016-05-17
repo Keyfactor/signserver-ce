@@ -43,7 +43,7 @@ public class InternalTimeStampTokenProvider implements TimeStampTokenProvider {
     /** Mapping from digest URI (xml-sec) to OID. */
     private static final Map<String, ASN1ObjectIdentifier> digestUriToOidMap;
     static {
-        digestUriToOidMap = new HashMap<String, ASN1ObjectIdentifier>(6);
+        digestUriToOidMap = new HashMap<>(6);
         digestUriToOidMap.put(MessageDigestAlgorithm.ALGO_ID_DIGEST_NOT_RECOMMENDED_MD5, TSPAlgorithms.MD5);
         digestUriToOidMap.put(MessageDigestAlgorithm.ALGO_ID_DIGEST_RIPEMD160, TSPAlgorithms.RIPEMD160);
         digestUriToOidMap.put(MessageDigestAlgorithm.ALGO_ID_DIGEST_SHA1, TSPAlgorithms.SHA1);

@@ -967,7 +967,7 @@ public class XAdESValidator2UnitTest {
     public void testSigner3_withOnlyOCSP_ca_ok() throws Exception {
         LOG.info("testSigner3_withOnlyOCSP_ca_ok");
 
-        final ArrayList<OCSPReq> requests = new ArrayList<OCSPReq>();
+        final ArrayList<OCSPReq> requests = new ArrayList<>();
         XAdESValidator instance = new XAdESValidator() {
             @Override
             protected OCSPResponse doQueryOCSPResponder(URL url, OCSPReq request) throws IOException, OCSPException {
@@ -1010,7 +1010,7 @@ public class XAdESValidator2UnitTest {
     public void testSigner3_withOnlyOCSP_responder_ok() throws Exception {
         LOG.info("testSigner3_withOnlyOCSP_responder_ok");
 
-        final ArrayList<OCSPReq> requests = new ArrayList<OCSPReq>();
+        final ArrayList<OCSPReq> requests = new ArrayList<>();
         XAdESValidator instance = new XAdESValidator() {
             @Override
             protected OCSPResponse doQueryOCSPResponder(URL url, OCSPReq request) throws IOException, OCSPException {
@@ -1053,7 +1053,7 @@ public class XAdESValidator2UnitTest {
     public void testSigner3_withOnlyOCSP_anotherKey() throws Exception {
         LOG.info("testSigner3_withOnlyOCSP_anotherKey");
 
-        final ArrayList<OCSPReq> requests = new ArrayList<OCSPReq>();
+        final ArrayList<OCSPReq> requests = new ArrayList<>();
         XAdESValidator instance = new XAdESValidator() {
             @Override
             protected OCSPResponse doQueryOCSPResponder(URL url, OCSPReq request) throws IOException, OCSPException {
@@ -1095,7 +1095,7 @@ public class XAdESValidator2UnitTest {
     public void testSigner3_withOnlyOCSP_unavailable() throws Exception {
         LOG.info("testSigner3_withOnlyOCSP_unavailable");
 
-        final ArrayList<OCSPReq> requests = new ArrayList<OCSPReq>();
+        final ArrayList<OCSPReq> requests = new ArrayList<>();
         XAdESValidator instance = new XAdESValidator() {
             @Override
             protected OCSPResponse doQueryOCSPResponder(URL url, OCSPReq request) throws IOException, OCSPException {
@@ -1129,7 +1129,7 @@ public class XAdESValidator2UnitTest {
     public void testSigner3_withOnlyOCSP_revoked() throws Exception {
         LOG.info("testSigner3_withOnlyOCSP_revoked");
 
-        final ArrayList<OCSPReq> requests = new ArrayList<OCSPReq>();
+        final ArrayList<OCSPReq> requests = new ArrayList<>();
         XAdESValidator instance = new XAdESValidator() {
             @Override
             protected OCSPResponse doQueryOCSPResponder(URL url, OCSPReq request) throws IOException, OCSPException {
@@ -1172,7 +1172,7 @@ public class XAdESValidator2UnitTest {
     public void testSigner4_withOnlyOCSP_ca_ok() throws Exception {
         LOG.info("testSigner4_withOnlyOCSP_ca_ok");
         
-        final ArrayList<OCSPReq> requests = new ArrayList<OCSPReq>();
+        final ArrayList<OCSPReq> requests = new ArrayList<>();
         XAdESValidator instance = new XAdESValidator() {
             @Override
             protected OCSPResponse doQueryOCSPResponder(URL url, OCSPReq request) throws IOException, OCSPException {
@@ -1224,7 +1224,7 @@ public class XAdESValidator2UnitTest {
     public void testSigner4_withOnlyOCSP_responder_ok() throws Exception {
         LOG.info("testSigner4_withOnlyOCSP_responder_ok");
 
-        final ArrayList<OCSPReq> requests = new ArrayList<OCSPReq>();
+        final ArrayList<OCSPReq> requests = new ArrayList<>();
         XAdESValidator instance = new XAdESValidator() {
             @Override
             protected OCSPResponse doQueryOCSPResponder(URL url, OCSPReq request) throws IOException, OCSPException {
@@ -1277,7 +1277,7 @@ public class XAdESValidator2UnitTest {
     public void testSigner4_withOnlyOCSP_certRevoked() throws Exception {
         LOG.info("testSigner4_withOnlyOCSP_certRevoked");
 
-        final ArrayList<OCSPReq> requests = new ArrayList<OCSPReq>();
+        final ArrayList<OCSPReq> requests = new ArrayList<>();
         XAdESValidator instance = new XAdESValidator() {
             @Override
             protected OCSPResponse doQueryOCSPResponder(URL url, OCSPReq request) throws IOException, OCSPException {
@@ -1329,7 +1329,7 @@ public class XAdESValidator2UnitTest {
     public void testSigner4_withOnlyOCSP_caRevoked() throws Exception {
         LOG.info("testSigner4_withOnlyOCSP_caRevoked");
 
-        final ArrayList<OCSPReq> requests = new ArrayList<OCSPReq>();
+        final ArrayList<OCSPReq> requests = new ArrayList<>();
         XAdESValidator instance = new XAdESValidator() {
             @Override
             protected OCSPResponse doQueryOCSPResponder(URL url, OCSPReq request) throws IOException, OCSPException {
@@ -1381,7 +1381,7 @@ public class XAdESValidator2UnitTest {
     public void testSigner5_withOCSPandCDP_ok() throws Exception {
         LOG.info("testSigner5_withOCSPandCDP_ok");
 
-        final ArrayList<OCSPReq> requests = new ArrayList<OCSPReq>();
+        final ArrayList<OCSPReq> requests = new ArrayList<>();
         XAdESValidator instance = new XAdESValidator() {
             @Override
             protected OCSPResponse doQueryOCSPResponder(URL url, OCSPReq request) throws IOException, OCSPException {
@@ -1416,7 +1416,7 @@ public class XAdESValidator2UnitTest {
 
         updateCRLs(rootcaCRLSigner5Revoked, subca1CRLEmpty);
         
-        final ArrayList<OCSPReq> requests = new ArrayList<OCSPReq>();
+        final ArrayList<OCSPReq> requests = new ArrayList<>();
         XAdESValidator instance = new XAdESValidator() {
             @Override
             protected OCSPResponse doQueryOCSPResponder(URL url, OCSPReq request) throws IOException, OCSPException {

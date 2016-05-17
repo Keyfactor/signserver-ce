@@ -103,7 +103,7 @@ public class XAdESValidator extends BaseValidator {
             final WorkerContext workerContext, final EntityManager workerEM) {
         super.init(workerId, config, workerContext, workerEM);
         
-        configErrors = new LinkedList<String>();
+        configErrors = new LinkedList<>();
         
         revocationEnabled = Boolean.parseBoolean(config.getProperty(REVOCATION_CHECKING, REVOCATION_CHECKING_DEFAULT));
 
@@ -113,18 +113,9 @@ public class XAdESValidator extends BaseValidator {
         try {
             final Collection<Certificate> certificates = loadCertificatesFromProperty(CERTIFICATES);
             certStore = CertStore.getInstance("Collection", new CollectionCertStoreParameters(certificates));
-        } catch (InvalidAlgorithmParameterException ex) {
-            logPropertyError(workerId, CERTIFICATES, ex);
-        } catch (NoSuchAlgorithmException ex) {
-            logPropertyError(workerId, CERTIFICATES, ex);
-        } catch (CertificateException ex) {
-            logPropertyError(workerId, CERTIFICATES, ex);
-        } catch (IOException ex) {
-            logPropertyError(workerId, CERTIFICATES, ex);
-        } catch (IllegalStateException ex) {
+        } catch (InvalidAlgorithmParameterException | NoSuchAlgorithmException | CertificateException | IOException | IllegalStateException ex) {
             logPropertyError(workerId, CERTIFICATES, ex);
         }
-        
         // TRUSTANCHORS
         try {
             final String value = config.getProperty(TRUSTANCHORS);
@@ -150,15 +141,7 @@ public class XAdESValidator extends BaseValidator {
                     LOG.debug(sb.toString());
                 }
             }
-        } catch (KeyStoreException ex) {
-            logPropertyError(workerId, TRUSTANCHORS, ex);
-        } catch (IOException ex) {
-            logPropertyError(workerId, TRUSTANCHORS, ex);
-        } catch (NoSuchAlgorithmException ex) {
-            logPropertyError(workerId, TRUSTANCHORS, ex);
-        } catch (CertificateException ex) {
-            logPropertyError(workerId, TRUSTANCHORS, ex);
-        } catch (IllegalStateException ex) {
+        } catch (KeyStoreException | IOException | NoSuchAlgorithmException | CertificateException | IllegalStateException ex) {
             logPropertyError(workerId, TRUSTANCHORS, ex);
         }
     }
@@ -236,11 +219,7 @@ public class XAdESValidator extends BaseValidator {
             dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
 
             doc = dbf.newDocumentBuilder().parse(new ByteArrayInputStream(data));
-        } catch (ParserConfigurationException ex) {
-            throw new SignServerException("Document parsing error", ex);
-        } catch (SAXException ex) {
-            throw new SignServerException("Document parsing error", ex);
-        } catch (IOException ex) {
+        } catch (ParserConfigurationException | SAXException | IOException ex) {
             throw new SignServerException("Document parsing error", ex);
         }
         
@@ -255,11 +234,7 @@ public class XAdESValidator extends BaseValidator {
             Element node = doc.getDocumentElement();
 
             result = verifier.verify(node, new SignatureSpecificVerificationOptions());
-        } catch (NoSuchAlgorithmException ex) {
-            throw new SignServerException("XML signature validation error", ex);
-        } catch (NoSuchProviderException ex) {
-            throw new SignServerException("XML signature validation error", ex);
-        } catch (XadesProfileResolutionException ex) {
+        } catch (NoSuchAlgorithmException | NoSuchProviderException | XadesProfileResolutionException ex) {
             throw new SignServerException("XML signature validation error", ex);
         } catch (XAdES4jException ex) {
             LOG.info("Request " + requestId + " signature valid: false, " + ex.getMessage());
@@ -267,7 +242,7 @@ public class XAdESValidator extends BaseValidator {
         }
         
         List<X509Certificate> xchain = result.getValidationData().getCerts();
-        List<Certificate> chain = new LinkedList<Certificate>();
+        List<Certificate> chain = new LinkedList<>();
         for (X509Certificate cert : xchain) {
             chain.add(cert);
         }
@@ -300,7 +275,7 @@ public class XAdESValidator extends BaseValidator {
 
     @Override
     protected List<String> getFatalErrors(final IServices services) {
-        final LinkedList<String> errors = new LinkedList<String>(super.getFatalErrors(services));
+        final LinkedList<String> errors = new LinkedList<>(super.getFatalErrors(services));
         errors.addAll(configErrors);
         return errors;
     }
@@ -357,16 +332,7 @@ public class XAdESValidator extends BaseValidator {
                 
             });
             
-        } catch (CertificateException e) {
-            LOG.error("Exception on preparing parameters for validation", e);
-            throw new SignServerException(e.toString(), e);
-        } catch (InvalidAlgorithmParameterException e) {
-            LOG.error("Exception on preparing parameters for validation", e);
-            throw new SignServerException(e.toString(), e);
-        } catch (NoSuchAlgorithmException e) {
-            LOG.error("Exception on preparing parameters for validation", e);
-            throw new SignServerException(e.toString(), e);
-        } catch (NoSuchProviderException e) {
+        } catch (CertificateException | InvalidAlgorithmParameterException | NoSuchAlgorithmException | NoSuchProviderException e) {
             LOG.error("Exception on preparing parameters for validation", e);
             throw new SignServerException(e.toString(), e);
         }
@@ -396,7 +362,7 @@ public class XAdESValidator extends BaseValidator {
     }
 
     private List<Certificate> toChain(final List<X509Certificate> xchain) {
-        final List<Certificate> chain = new LinkedList<Certificate>();
+        final List<Certificate> chain = new LinkedList<>();
         for (X509Certificate cert : xchain) {
             chain.add(cert);
         }

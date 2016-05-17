@@ -82,7 +82,7 @@ public class XMLValidator extends BaseValidator {
     private ProcessSessionLocal processSession;
     
     // Configuration errors
-    private final LinkedList<String> configErrors = new LinkedList<String>();
+    private final LinkedList<String> configErrors = new LinkedList<>();
     
     private String validationServiceWorker;
 
@@ -143,11 +143,7 @@ public class XMLValidator extends BaseValidator {
             dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
 
             doc = dbf.newDocumentBuilder().parse(new ByteArrayInputStream(data));
-        } catch (ParserConfigurationException ex) {
-            throw new SignServerException("Document parsing error", ex);
-        } catch (SAXException ex) {
-            throw new SignServerException("Document parsing error", ex);
-        } catch (IOException ex) {
+        } catch (ParserConfigurationException | SAXException | IOException ex) {
             throw new SignServerException("Document parsing error", ex);
         }
         NodeList nl = doc.getElementsByTagNameNS(XMLSignature.XMLNS, "Signature");
@@ -160,11 +156,7 @@ public class XMLValidator extends BaseValidator {
         XMLSignatureFactory fac;
         try {
             fac = XMLSignatureFactory.getInstance("DOM", (Provider) Class.forName(providerName).newInstance());
-        } catch (InstantiationException e) {
-            throw new SignServerException("Problem with JSR105 provider", e);
-        } catch (IllegalAccessException e) {
-            throw new SignServerException("Problem with JSR105 provider", e);
-        } catch (ClassNotFoundException e) {
+        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
             throw new SignServerException("Problem with JSR105 provider", e);
         }
 
@@ -239,11 +231,7 @@ public class XMLValidator extends BaseValidator {
                     validCertificate = true;
                 }
 
-            } catch (IllegalRequestException e) {
-                LOG.warn("Error validating certificate", e);
-            } catch (CryptoTokenOfflineException e) {
-                LOG.warn("Error validating certificate", e);
-            } catch (SignServerException e) {
+            } catch (IllegalRequestException | CryptoTokenOfflineException | SignServerException e) {
                 LOG.warn("Error validating certificate", e);
             }
             LOG.info("Request " + requestId + " valid certificate: " + validCertificate);
@@ -296,7 +284,7 @@ public class XMLValidator extends BaseValidator {
     @Override
     protected List<String> getFatalErrors(final IServices services) {
         // Add our errors to the list of errors
-        final LinkedList<String> errors = new LinkedList<String>(
+        final LinkedList<String> errors = new LinkedList<>(
                 super.getFatalErrors(services));
         errors.addAll(configErrors);
         return errors;

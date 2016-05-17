@@ -214,7 +214,7 @@ public class XAdESSigner extends BaseSigner {
         LOG.trace(">init");
         
         // Configuration errors
-        configErrors = new LinkedList<String>();
+        configErrors = new LinkedList<>();
         
         // PROPERTY_XADESFORM
         Profiles form = null;
@@ -259,7 +259,7 @@ public class XAdESSigner extends BaseSigner {
         // TODO: Other configuration options
         final String commitmentTypesProperty = config.getProperties().getProperty(PROPERTY_COMMITMENT_TYPES);
         
-        commitmentTypes = new LinkedList<AllDataObjsCommitmentTypeProperty>();
+        commitmentTypes = new LinkedList<>();
         
         if (commitmentTypesProperty != null) {
             if ("".equals(commitmentTypesProperty)) {
@@ -388,9 +388,7 @@ public class XAdESSigner extends BaseSigner {
 
         } catch (SAXException ex) {
             throw new IllegalRequestException("Document parsing error", ex);
-        } catch (IOException ex) {
-            throw new SignServerException("Document parsing error", ex);
-        } catch (ParserConfigurationException ex) {
+        } catch (IOException | ParserConfigurationException ex) {
             throw new SignServerException("Document parsing error", ex);
         } catch (XadesProfileResolutionException ex) {
             throw new SignServerException("Exception in XAdES profile resolution", ex);
@@ -440,7 +438,7 @@ public class XAdESSigner extends BaseSigner {
             throws SignServerException, XadesProfileResolutionException,
                    CryptoTokenOfflineException, IllegalRequestException {
         // Setup key and certificiates
-        final List<X509Certificate> xchain = new LinkedList<X509Certificate>();
+        final List<X509Certificate> xchain = new LinkedList<>();
         final List<Certificate> chain = this.getSigningCertificateChain(crypto);
         if (chain == null) {
             throw new CryptoTokenOfflineException("No certificate chain");
@@ -498,7 +496,7 @@ public class XAdESSigner extends BaseSigner {
 
     @Override
     protected List<String> getFatalErrors(final IServices services) {
-        final LinkedList<String> errors = new LinkedList<String>(super.getFatalErrors(services));
+        final LinkedList<String> errors = new LinkedList<>(super.getFatalErrors(services));
         errors.addAll(configErrors);
         return errors;
     }

@@ -129,11 +129,7 @@ public class XMLSigner extends BaseSigner {
         XMLSignatureFactory fac;
         try {
             fac = XMLSignatureFactory.getInstance("DOM", (Provider) Class.forName(providerName).newInstance());
-        } catch (InstantiationException e) {
-            throw new SignServerException("Problem with JSR105 provider", e);
-        } catch (IllegalAccessException e) {
-            throw new SignServerException("Problem with JSR105 provider", e);
-        } catch (ClassNotFoundException e) {
+        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
             throw new SignServerException("Problem with JSR105 provider", e);
         }
 
@@ -148,7 +144,7 @@ public class XMLSigner extends BaseSigner {
             if (certs == null) {
                 throw new IllegalArgumentException("Null certificate chain. This signer needs a certificate.");
             }
-            List<X509Certificate> x509CertChain = new LinkedList<X509Certificate>();
+            List<X509Certificate> x509CertChain = new LinkedList<>();
             for (Certificate c : includedCertificates(certs)) {
                 if (c instanceof X509Certificate) {
                     x509CertChain.add((X509Certificate) c);
@@ -175,9 +171,7 @@ public class XMLSigner extends BaseSigner {
                         fac.newSignatureMethod(getSignatureMethod(sigAlg), null),
                         Collections.singletonList(ref));
 
-            } catch (InvalidAlgorithmParameterException ex) {
-                throw new SignServerException("XML signing algorithm error", ex);
-            } catch (NoSuchAlgorithmException ex) {
+            } catch (InvalidAlgorithmParameterException | NoSuchAlgorithmException ex) {
                 throw new SignServerException("XML signing algorithm error", ex);
             }
 
@@ -187,7 +181,7 @@ public class XMLSigner extends BaseSigner {
                 KeyInfoFactory kif = fac.getKeyInfoFactory();
                 X509Data x509d = kif.newX509Data(x509CertChain);
 
-                List<XMLStructure> kviItems = new LinkedList<XMLStructure>();
+                List<XMLStructure> kviItems = new LinkedList<>();
                 kviItems.add(x509d);
                 ki = kif.newKeyInfo(kviItems);
             }
@@ -210,9 +204,7 @@ public class XMLSigner extends BaseSigner {
                 doc = dbf.newDocumentBuilder().parse(new ByteArrayInputStream(data));
             } catch (SAXException ex) {
                 throw new IllegalRequestException("Document parsing error", ex);
-            } catch (ParserConfigurationException ex) {
-                throw new SignServerException("Document parsing error", ex);
-            } catch (IOException ex) {
+            } catch (ParserConfigurationException | IOException ex) {
                 throw new SignServerException("Document parsing error", ex);
             }
             DOMSignContext dsc = new DOMSignContext(privKey, doc.getDocumentElement());
@@ -220,9 +212,7 @@ public class XMLSigner extends BaseSigner {
             XMLSignature signature = fac.newXMLSignature(si, ki);
             try {
                 signature.sign(dsc);
-            } catch (MarshalException ex) {
-                throw new SignServerException("Signature generation error", ex);
-            } catch (XMLSignatureException ex) {
+            } catch (MarshalException | XMLSignatureException ex) {
                 throw new SignServerException("Signature generation error", ex);
             }
         } finally {

@@ -28,7 +28,7 @@ public class HealthCheckUtils {
     private static final Logger LOG = Logger.getLogger(HealthCheckUtils.class);
 
     public static List<String> checkMemory(int minfreememory) {
-        final LinkedList<String> result = new LinkedList<String>();
+        final LinkedList<String> result = new LinkedList<>();
         if (minfreememory >= Runtime.getRuntime().freeMemory()) {
             result.add("Error Virtual Memory is about to run out, currently free memory :" + Runtime.getRuntime().freeMemory());
         }
@@ -36,7 +36,7 @@ public class HealthCheckUtils {
     }
 
     public static List<String> checkDB(final EntityManager em, final String checkDBString) {
-        final LinkedList<String> result = new LinkedList<String>();
+        final LinkedList<String> result = new LinkedList<>();
         try {
             em.createNativeQuery(checkDBString).getResultList();
         } catch (Exception e) {

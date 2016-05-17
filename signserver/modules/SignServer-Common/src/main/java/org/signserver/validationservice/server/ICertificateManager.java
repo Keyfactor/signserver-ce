@@ -51,9 +51,7 @@ public class ICertificateManager {
 
             try {
                 icert.verify(((X509Certificate) chain.get(0)).getPublicKey(), "BC");
-            } catch (InvalidKeyException e6) {
-                return new Validation(icert, chain, Validation.Status.DONTVERIFY, "Error certificates signature doesn't verify with CA certificates public key.");
-            } catch (SignatureException e6) {
+            } catch (InvalidKeyException | SignatureException e6) {
                 return new Validation(icert, chain, Validation.Status.DONTVERIFY, "Error certificates signature doesn't verify with CA certificates public key.");
             }
 
@@ -75,12 +73,12 @@ public class ICertificateManager {
                 }
             }
 
-            ArrayList<java.security.cert.X509Certificate> rootCerts = new ArrayList<java.security.cert.X509Certificate>();
+            ArrayList<java.security.cert.X509Certificate> rootCerts = new ArrayList<>();
             rootCerts.add((X509Certificate) chain.get(chain.size() - 1));
 
 
             //validating path
-            List<Certificate> certchain = new ArrayList<Certificate>();
+            List<Certificate> certchain = new ArrayList<>();
             for (int i = chain.size() - 1; i >= 0; i--) {
                 certchain.add((Certificate) chain.get(i));
             }
@@ -88,7 +86,7 @@ public class ICertificateManager {
 
             CertPath cp = CertificateFactory.getInstance("X.509", "BC").generateCertPath(certchain);
 
-            Set<TrustAnchor> trust = new HashSet<TrustAnchor>();
+            Set<TrustAnchor> trust = new HashSet<>();
             Iterator<java.security.cert.X509Certificate> iter = rootCerts.iterator();
             while (iter.hasNext()) {
                 trust.add(new TrustAnchor(iter.next(), null));
@@ -97,7 +95,7 @@ public class ICertificateManager {
 
             PKIXParameters param = new PKIXParameters(trust);
 
-            List<Object> list = new ArrayList<Object>();
+            List<Object> list = new ArrayList<>();
             list.addAll(certchain);
             CertStore store = CertStore.getInstance("Collection",
                     new CollectionCertStoreParameters(list));
@@ -110,13 +108,7 @@ public class ICertificateManager {
             } catch (CertPathValidatorException e) {
                 return new Validation(icert, chain, Validation.Status.DONTVERIFY, e.getMessage());
             }
-        } catch (NoSuchAlgorithmException e1) {
-            throw new SignServerException("Error verifying certificate chain ", e1);
-        } catch (NoSuchProviderException e1) {
-            throw new SignServerException("Error verifying certificate chain ", e1);
-        } catch (InvalidAlgorithmParameterException e1) {
-            throw new SignServerException("Error verifying certificate chain ", e1);
-        } catch (CertificateException e1) {
+        } catch (NoSuchAlgorithmException | NoSuchProviderException | InvalidAlgorithmParameterException | CertificateException e1) {
             throw new SignServerException("Error verifying certificate chain ", e1);
         }
 

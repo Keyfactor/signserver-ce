@@ -71,6 +71,7 @@ public class ValidateResponse extends ProcessResponse {
         return retval;
     }
 
+    @Override
     public void parse(DataInput in) throws IOException {
         in.readInt();
         validation = new Validation();
@@ -87,6 +88,7 @@ public class ValidateResponse extends ProcessResponse {
         }
     }
 
+    @Override
     public void serialize(DataOutput out) throws IOException {
         out.writeInt(RequestAndResponseManager.RESPONSETYPE_VALIDATE);
         validation.serialize(out);
@@ -94,8 +96,8 @@ public class ValidateResponse extends ProcessResponse {
             out.writeInt(0);
         } else {
             out.writeInt(validCertificatePurposes.length);
-            for (int i = 0; i < validCertificatePurposes.length; i++) {
-                byte[] stringData = validCertificatePurposes[i].getBytes("UTF-8");
+            for (String validCertificatePurpose : validCertificatePurposes) {
+                byte[] stringData = validCertificatePurpose.getBytes("UTF-8");
                 out.writeInt(stringData.length);
                 out.write(stringData);
             }

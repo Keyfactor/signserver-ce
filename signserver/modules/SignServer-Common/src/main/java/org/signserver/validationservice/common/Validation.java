@@ -112,7 +112,7 @@ public class Validation implements Serializable {
             this.certificateData = certificate.getEncoded();
 
             if (cAChain != null) {
-                this.cAChainData = new ArrayList<byte[]>();
+                this.cAChainData = new ArrayList<>();
                 for (Certificate cert : cAChain) {
                     cAChainData.add(0, cert.getEncoded());
                 }
@@ -172,7 +172,7 @@ public class Validation implements Serializable {
      */
     public List<Certificate> getCAChain() {
         if (cAChain == null && cAChainData != null) {
-            cAChain = new ArrayList<Certificate>();
+            cAChain = new ArrayList<>();
             for (byte[] certData : cAChainData) {
                 try {
                     Certificate cACert = CertTools.getCertfromByteArray(certData);
@@ -217,7 +217,7 @@ public class Validation implements Serializable {
 
         revokationReason = in.readInt();
 
-        cAChainData = new ArrayList<byte[]>();
+        cAChainData = new ArrayList<>();
         size = in.readInt();
         for (int i = 0; i < size; i++) {
             int dataLen = in.readInt();

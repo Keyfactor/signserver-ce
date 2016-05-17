@@ -252,11 +252,11 @@ public class PropertiesApplierTest extends TestCase {
      */
     private static class MockPropertiesApplier extends PropertiesApplier {
 
-        private Map<GlobalProperty, String> globalProperties = new HashMap<GlobalProperty, String>();
-        private Map<WorkerProperty, String> workerProperties = new HashMap<WorkerProperty, String>();
-        private Map<Integer, Set<AuthorizedClient>> authClients = new HashMap<Integer, Set<AuthorizedClient>>();
-        private Map<Integer, byte[]> signerCerts = new HashMap<Integer, byte[]>();
-        private Map<Integer, List<byte[]>> signerCertChains = new HashMap<Integer, List<byte[]>>();
+        private Map<GlobalProperty, String> globalProperties = new HashMap<>();
+        private Map<WorkerProperty, String> workerProperties = new HashMap<>();
+        private Map<Integer, Set<AuthorizedClient>> authClients = new HashMap<>();
+        private Map<Integer, byte[]> signerCerts = new HashMap<>();
+        private Map<Integer, List<byte[]>> signerCertChains = new HashMap<>();
         
         public static int FIRST_GENERATED_ID = 1000;
         
@@ -322,7 +322,7 @@ public class PropertiesApplierTest extends TestCase {
             Set<AuthorizedClient> acs = authClients.get(workerId);
             
             if (acs == null) {
-                acs = new HashSet<AuthorizedClient>();
+                acs = new HashSet<>();
                 authClients.put(workerId, acs);
             }
             

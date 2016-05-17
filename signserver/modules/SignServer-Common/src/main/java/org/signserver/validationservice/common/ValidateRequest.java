@@ -89,6 +89,7 @@ public class ValidateRequest extends ProcessRequest {
         return retval;
     }
 
+    @Override
     public void parse(DataInput in) throws IOException {
         in.readInt();
         int dataSize = in.readInt();
@@ -102,6 +103,7 @@ public class ValidateRequest extends ProcessRequest {
         }
     }
 
+    @Override
     public void serialize(DataOutput out) throws IOException {
         out.writeInt(RequestAndResponseManager.RESPONSETYPE_VALIDATE);
         out.writeInt(certificateData.length);

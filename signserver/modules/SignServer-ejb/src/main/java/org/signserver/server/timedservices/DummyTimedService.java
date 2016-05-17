@@ -59,18 +59,19 @@ public class DummyTimedService extends BaseTimedService {
     public void work(final ServiceContext context) throws ServiceExecutionFailedException {
 
         int currentCount = 0;
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         try (FileInputStream fis = new FileInputStream(outPath)) {
-            baos = new ByteArrayOutputStream();
             int next;
             while ((next = fis.read()) != -1) {
                 baos.write(next);
             }
+            currentCount = Integer.parseInt(new String(baos.toByteArray()));
         } catch (FileNotFoundException e) {
         } catch (IOException e) {
             throw new ServiceExecutionFailedException(e.getClass().getName() + " : " + e.getMessage());
         }
-        currentCount = Integer.parseInt(new String(baos.toByteArray()));
+
         currentCount++;
         try (FileOutputStream fos = new FileOutputStream(outPath)) {
             fos.write(("" + currentCount).getBytes());
